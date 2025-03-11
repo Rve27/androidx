@@ -19,6 +19,11 @@ package androidx.compose.runtime.samples
 import androidx.annotation.Sampled
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -28,6 +33,8 @@ import androidx.compose.runtime.RetainedEffect
 import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.retain
 import androidx.compose.runtime.retainControlledRetainScope
+import androidx.compose.runtime.retainRetainScopeHolder
+import androidx.compose.ui.graphics.painter.Painter
 
 @Sampled
 fun retainedContentHostSample() {
@@ -94,3 +101,46 @@ fun retainControlledRetainScopeSample() {
         }
     }
 }
+
+@Sampled
+fun retainScopeHolderSample() {
+    // List item that retains a value
+    @Composable
+    fun Contact(contact: Contact) {
+        Row {
+            // Retain this painter to cache the contact icon in memory
+            val contactIcon = retain { ContactIconPainter() }
+            Image(contactIcon, "Contact icon")
+            Text(contact.name)
+        }
+    }
+
+    @Composable
+    fun ContactsList(contacts: List<Contact>) {
+        // Create the RetainScopeHolder
+        val retainScopeHolder = retainRetainScopeHolder()
+        LazyColumn {
+            items(contacts) { contact ->
+                // Install it for an item in a list
+                retainScopeHolder.RetainScopeProvider(contact.id) {
+                    // This contact now gets its own retain scope.
+                    // If the scope of ContactsList starts keeping exited values, this nested
+                    // scope will too. If this contact leaves re-enters composition, it will keep
+                    // its previously retained values.
+                    Contact(contact)
+                }
+            }
+        }
+
+        // Optional: Purge child scopes if a contact gets deleted.
+        DisposableEffect(contacts) {
+            val contactIdsSet = contacts.map { it.id }
+            retainScopeHolder.clearChildren { it !in contactIdsSet }
+            onDispose {}
+        }
+    }
+}
+
+private fun ContactIconPainter(): Painter = TODO()
+
+private class Contact(val id: String, val name: String)
