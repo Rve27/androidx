@@ -62,4 +62,6 @@
     <string name="error_cannot_open_pdf" msgid="2361919778558145071">"PDF ഫയൽ തുറക്കാനാകുന്നില്ല"</string>
     <string name="cannot_edit_pdf" msgid="7677598370087228978">"ഈ PDF എഡിറ്റ് ചെയ്യാനാകില്ല"</string>
     <string name="clipboard_label" msgid="8943155331324944981">"ഉള്ളടക്കം PDF-ൽ നിന്ന് പകർത്തി"</string>
+    <!-- no translation found for fast_scroller_thumb (6712048991132846541) -->
+    <skip />
 </resources>

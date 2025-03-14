@@ -62,4 +62,6 @@
     <string name="error_cannot_open_pdf" msgid="2361919778558145071">"PDF файлът не може да се отвори"</string>
     <string name="cannot_edit_pdf" msgid="7677598370087228978">"Този PDF файл не може да бъде редактиран."</string>
     <string name="clipboard_label" msgid="8943155331324944981">"Съдържанието е копирано от PDF файла"</string>
+    <!-- no translation found for fast_scroller_thumb (6712048991132846541) -->
+    <skip />
 </resources>
