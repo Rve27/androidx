@@ -840,14 +840,14 @@ package androidx.wear.compose.material3 {
   }
 
   public final class PagerScaffoldDefaults {
-    method public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getFadeOutAnimation();
+    method public androidx.compose.animation.core.AnimationSpec<java.lang.Float> getFadeOutAnimationSpec();
     method @androidx.compose.runtime.Composable public androidx.compose.foundation.gestures.TargetedFlingBehavior snapWithSpringFlingBehavior(androidx.wear.compose.foundation.pager.PagerState state);
-    property public androidx.compose.animation.core.AnimationSpec<java.lang.Float> FadeOutAnimation;
+    property public androidx.compose.animation.core.AnimationSpec<java.lang.Float> FadeOutAnimationSpec;
     field public static final androidx.wear.compose.material3.PagerScaffoldDefaults INSTANCE;
   }
 
   public final class PagerScaffoldKt {
-    method @androidx.compose.runtime.Composable public static void AnimatedPage(int page, androidx.wear.compose.foundation.pager.PagerState pagerState, optional long contentScrimColor, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @androidx.compose.runtime.Composable public static void AnimatedPage(int pageIndex, androidx.wear.compose.foundation.pager.PagerState pagerState, optional long contentScrimColor, kotlin.jvm.functions.Function0<kotlin.Unit> content);
     method @androidx.compose.runtime.Composable public static void HorizontalPagerScaffold(androidx.wear.compose.foundation.pager.PagerState pagerState, optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.BoxScope,kotlin.Unit>? pageIndicator, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float>? pageIndicatorAnimationSpec, kotlin.jvm.functions.Function0<kotlin.Unit> content);
     method @androidx.compose.runtime.Composable public static void VerticalPagerScaffold(androidx.wear.compose.foundation.pager.PagerState pagerState, optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.BoxScope,kotlin.Unit>? pageIndicator, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float>? pageIndicatorAnimationSpec, kotlin.jvm.functions.Function0<kotlin.Unit> content);
   }

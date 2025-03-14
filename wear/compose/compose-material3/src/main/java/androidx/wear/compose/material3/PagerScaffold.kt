@@ -68,7 +68,7 @@ import kotlin.math.absoluteValue
  * @param pageIndicatorAnimationSpec - An optional parameter to set whether the page indicator
  *   should fade out when paging has finished. This is useful for when the underlying page content
  *   conflicts with the page indicator. By default this is null, so the page indicator will be
- *   visible at all times, setting this to [PagerScaffoldDefaults.FadeOutAnimation] ensures the
+ *   visible at all times, setting this to [PagerScaffoldDefaults.FadeOutAnimationSpec] ensures the
  *   indicator only shows during paging, and fades out when the Pager is idle.
  * @param content A composable function where a [HorizontalPager] can be added.
  */
@@ -114,7 +114,7 @@ public fun HorizontalPagerScaffold(
  * @param pageIndicatorAnimationSpec - An optional parameter to set whether the page indicator
  *   should fade out when paging has finished. This is useful for when the underlying page content
  *   conflicts with the page indicator. By default this is null, so the page indicator will be
- *   visible at all times, setting this to [PagerScaffoldDefaults.FadeOutAnimation] ensures the
+ *   visible at all times, setting this to [PagerScaffoldDefaults.FadeOutAnimationSpec] ensures the
  *   indicator only shows during paging, and fades out when the Pager is idle.
  * @param content A composable function where a [VerticalPager] can be added.
  */
@@ -143,7 +143,7 @@ public fun VerticalPagerScaffold(
  * visual cue for page transitions. The animation is responsive to the page's position within the
  * [Pager] and adapts to the device's reduce motion settings and layout direction.
  *
- * @param page The index of the page being animated.
+ * @param pageIndex The index of the page being animated.
  * @param pagerState The [PagerState] of the [Pager].
  * @param contentScrimColor The color of the scrim overlay applied during page transitions. Defaults
  *   to the background color of the [MaterialTheme]. Set this to transparent to have no scrim
@@ -152,14 +152,14 @@ public fun VerticalPagerScaffold(
  */
 @Composable
 public fun AnimatedPage(
-    page: Int,
+    pageIndex: Int,
     pagerState: PagerState,
     contentScrimColor: Color = MaterialTheme.colorScheme.background,
     content: @Composable (() -> Unit)
 ) {
     val isReduceMotionEnabled = LocalReduceMotion.current
     val isRtlEnabled = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val isCurrentPage: Boolean = page == pagerState.currentPage
+    val isCurrentPage: Boolean = pageIndex == pagerState.currentPage
     val pageTransitionFraction =
         if (isCurrentPage) {
             pagerState.currentPageOffsetFraction.absoluteValue
@@ -240,7 +240,7 @@ public object PagerScaffoldDefaults {
      * The default value for the indicator fade out animation spec. Use this to fade out the page
      * indicator when paging has stopped.
      */
-    public val FadeOutAnimation: AnimationSpec<Float> =
+    public val FadeOutAnimationSpec: AnimationSpec<Float> =
         spring(stiffness = Spring.StiffnessMediumLow)
 }
 
