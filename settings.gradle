@@ -1214,9 +1214,13 @@ includeProject(":xr:scenecore:integration-tests:commontestview", [BuildType.XR])
 includeProject(":xr:scenecore:integration-tests:headlocked-ui", [BuildType.XR])
 includeProject(":xr:scenecore:integration-tests:inputmoveresize", [BuildType.XR])
 includeProject(":xr:scenecore:integration-tests:movable", [BuildType.XR])
+includeProject(":xr:scenecore:integration-tests:panelroundedcorner", [BuildType.XR])
 includeProject(":xr:scenecore:integration-tests:spatialcapabilities", [BuildType.XR])
 includeProject(":xr:scenecore:integration-tests:spatialuser", [BuildType.XR])
+includeProject(":xr:scenecore:integration-tests:standalone", [BuildType.XR])
 includeProject(":xr:scenecore:integration-tests:svxr-example", [BuildType.XR])
+includeProject(":xr:scenecore:integration-tests:transformationtests", [BuildType.XR])
+includeProject(":xr:scenecore:integration-tests:visibilitytest", [BuildType.XR])
 includeProject(":xr:xr-stubs", [BuildType.XR])
 
 /////////////////////////////
