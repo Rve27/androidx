@@ -48,6 +48,7 @@ internal class NodeChain(val layoutNode: LayoutNode) {
 
     private var current: MutableVector<Modifier.Element>? = null
     private var buffer: MutableVector<Modifier.Element>? = null
+    private val stack = MutableVector<Modifier>(16)
     private var cachedDiffer: Differ? = null
     private var logger: Logger? = null
 
@@ -118,7 +119,7 @@ internal class NodeChain(val layoutNode: LayoutNode) {
         // vector in those cases.
         var before = current
         val beforeSize = before?.size ?: 0
-        val after = m.fillVector(buffer ?: mutableVectorOf())
+        val after = m.fillVector(buffer ?: mutableVectorOf(), stack)
         var i = 0
         if (after.size == beforeSize) {
             // assume if the sizes are the same, that we are in a common case of no structural
@@ -776,10 +777,10 @@ private fun <T : Modifier.Node> ModifierNodeElement<T>.updateUnsafe(node: Modifi
 }
 
 private fun Modifier.fillVector(
-    result: MutableVector<Modifier.Element>
+    result: MutableVector<Modifier.Element>,
+    stack: MutableVector<Modifier>,
 ): MutableVector<Modifier.Element> {
-    val capacity = result.size.coerceAtLeast(16)
-    val stack = MutableVector<Modifier>(capacity).also { it.add(this) }
+    stack.add(this)
     var predicate: ((Modifier.Element) -> Boolean)? = null
     while (stack.isNotEmpty()) {
         when (val next = stack.removeAt(stack.size - 1)) {
