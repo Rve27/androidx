@@ -16,6 +16,7 @@
 
 package androidx.navigation.testing
 
+import androidx.kruth.assertThat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
@@ -31,7 +32,6 @@ import androidx.navigation.SupportingPane
 import androidx.navigation.navOptions
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
-import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith

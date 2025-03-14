@@ -17,7 +17,6 @@
 package androidx.navigation.testing
 
 import android.content.Context
-import android.os.Bundle
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelStore
 import androidx.navigation.FloatingWindow
@@ -26,6 +25,8 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavViewModelStoreProvider
 import androidx.navigation.NavigatorState
 import androidx.navigation.SupportingPane
+import androidx.savedstate.SavedState
+import androidx.savedstate.savedState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -57,12 +58,12 @@ constructor(
                 viewModelStores.getOrPut(backStackEntryId) { ViewModelStore() }
         }
 
-    private val savedStates = mutableMapOf<String, Bundle>()
+    private val savedStates = mutableMapOf<String, SavedState>()
     private val entrySavedState = mutableMapOf<NavBackStackEntry, Boolean>()
 
     override fun createBackStackEntry(
         destination: NavDestination,
-        arguments: Bundle?
+        arguments: SavedState?
     ): NavBackStackEntry =
         NavBackStackEntry.create(
             context,
@@ -147,7 +148,7 @@ constructor(
                     ) {
                         // Move the NavBackStackEntry to the stopped state, then save its state
                         entry.maxLifecycle = Lifecycle.State.CREATED
-                        val savedState = Bundle()
+                        val savedState = savedState()
                         entry.saveState(savedState)
                         savedStates[entry.id] = savedState
                     }

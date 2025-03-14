@@ -20,7 +20,6 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphNavigator
 import androidx.navigation.Navigator
 import androidx.navigation.NavigatorProvider
-import java.lang.IllegalStateException
 
 /**
  * A [NavigatorProvider] for testing that only parses
@@ -42,7 +41,7 @@ internal class TestNavigatorProvider : NavigatorProvider() {
     override fun <T : Navigator<out NavDestination>> getNavigator(name: String): T {
         return try {
             super.getNavigator(name)
-        } catch (e: IllegalStateException) {
+        } catch (_: IllegalStateException) {
             @Suppress("UNCHECKED_CAST")
             navigator as T
         }

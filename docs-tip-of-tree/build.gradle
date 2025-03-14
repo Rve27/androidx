@@ -255,7 +255,7 @@ dependencies {
     docs(project(":navigation:navigation-fragment-ktx"))
     kmpDocs(project(":navigation:navigation-runtime"))
     docs(project(":navigation:navigation-runtime-ktx"))
-    docs(project(":navigation:navigation-testing"))
+    kmpDocs(project(":navigation:navigation-testing"))
     docs(project(":navigation:navigation-ui"))
     docs(project(":navigation:navigation-ui-ktx"))
     kmpDocs(project(":paging:paging-common"))
