@@ -120,6 +120,7 @@ public class WebViewFeature {
             DELETE_BROWSING_DATA,
             PRERENDER_WITH_URL,
             SAVE_STATE,
+            CACHE_PROVIDER,
     })
     @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.PARAMETER, ElementType.METHOD})
@@ -674,6 +675,13 @@ public class WebViewFeature {
      */
     @WebViewCompat.ExperimentalSaveState
     public static final String SAVE_STATE = "SAVE_STATE";
+
+    /**
+     * Feature for {@link #isFeatureSupported(String)}.
+     * This feature covers {@link WebViewCompat#setShouldCacheProvider(boolean)}.
+     */
+    @WebViewCompat.ExperimentalCacheProvider
+    public static final String CACHE_PROVIDER = "CACHE_PROVIDER";
 
     /**
      * Return whether a feature is supported at run-time. This will check whether a feature is

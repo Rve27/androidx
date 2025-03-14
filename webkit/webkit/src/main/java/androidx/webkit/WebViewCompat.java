@@ -38,6 +38,7 @@ import androidx.annotation.RequiresFeature;
 import androidx.annotation.RequiresOptIn;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.UiThread;
+import androidx.annotation.VisibleForTesting;
 import androidx.webkit.internal.ApiFeature;
 import androidx.webkit.internal.ApiHelperForM;
 import androidx.webkit.internal.ApiHelperForO;
@@ -67,6 +68,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.Executor;
 
 /**
@@ -75,6 +77,10 @@ import java.util.concurrent.Executor;
 public class WebViewCompat {
     private static final Uri WILDCARD_URI = Uri.parse("*");
     private static final Uri EMPTY_URI = Uri.parse("");
+
+    private static boolean sShouldCacheProvider = true;
+    private static final WeakHashMap<WebView, WebViewProviderAdapter> sProviderAdapterCache =
+            new WeakHashMap<>();
 
     private WebViewCompat() {
     } // Don't allow instances of this class to be constructed.
@@ -443,6 +449,15 @@ public class WebViewCompat {
     }
 
     private static WebViewProviderAdapter getProvider(WebView webview) {
+        ApiFeature.NoFramework feature = WebViewFeatureInternal.CACHE_PROVIDER;
+        if (feature.isSupportedByWebView() && sShouldCacheProvider) {
+            WebViewProviderAdapter adapter = sProviderAdapterCache.get(webview);
+            if (adapter == null) {
+                adapter = new WebViewProviderAdapter(createProvider(webview));
+                sProviderAdapterCache.put(webview, adapter);
+            }
+            return adapter;
+        }
         return new WebViewProviderAdapter(createProvider(webview));
     }
 
@@ -1470,6 +1485,37 @@ public class WebViewCompat {
         }
     }
 
+    /**
+     * Denotes that the WebViewCompat#setShouldCacheProvider API surface is experimental.
+     * <p>
+     * It may change without warning and should not be relied upon for non-experimental purposes.
+     */
+    @Retention(RetentionPolicy.CLASS)
+    @Target({ElementType.METHOD, ElementType.TYPE, ElementType.FIELD})
+    @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+    public @interface ExperimentalCacheProvider {
+    }
+
+    /**
+     * Enables or disables caching of WebView provider objects (objects internal to the
+     * androidx.webkit library). Caching should have no effect on behavior but will improve
+     * performance.
+     *
+     * @param shouldCacheProvider whether to enable caching of WebView provider objects.
+     */
+    @RequiresFeature(name = WebViewFeature.CACHE_PROVIDER,
+            enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
+    @AnyThread
+    @ExperimentalCacheProvider
+    public static void setShouldCacheProvider(boolean shouldCacheProvider) {
+        ApiFeature.NoFramework feature = WebViewFeatureInternal.CACHE_PROVIDER;
+        if (feature.isSupportedByWebView()) {
+            sShouldCacheProvider = shouldCacheProvider;
+        } else {
+            throw WebViewFeatureInternal.getUnsupportedOperationException();
+        }
+    }
+
     private static WebViewProviderFactory getFactory() {
         return WebViewGlueCommunicator.getFactory();
     }
@@ -1501,5 +1547,11 @@ public class WebViewCompat {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    @VisibleForTesting
+    /*package*/ static WeakHashMap<WebView, WebViewProviderAdapter>
+            getProviderAdapterCacheForTesting() {
+        return sProviderAdapterCache;
     }
 }
