@@ -33,6 +33,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
 import androidx.privacysandbox.ui.core.BackwardCompatUtil
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
+import androidx.privacysandbox.ui.core.SandboxedUiAdapterSignalOptions
 import androidx.privacysandbox.ui.core.SessionData
 import androidx.privacysandbox.ui.integration.testingutils.TestEventListener
 import androidx.privacysandbox.ui.provider.AbstractSandboxedUiAdapter
@@ -70,6 +71,7 @@ class SandboxedSdkViewTest {
     private lateinit var linearLayout: LinearLayout
     private var mainLayoutWidth = -1
     private var mainLayoutHeight = -1
+    private var signalOptions = setOf(SandboxedUiAdapterSignalOptions.GEOMETRY)
     @get:Rule var activityScenarioRule = ActivityScenarioRule(UiLibActivity::class.java)
 
     @Before
@@ -85,7 +87,7 @@ class SandboxedSdkViewTest {
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
             view.layoutParams = layoutParams
-            testSandboxedUiAdapter = TestSandboxedUiAdapter()
+            testSandboxedUiAdapter = TestSandboxedUiAdapter(signalOptions)
             view.setAdapter(testSandboxedUiAdapter)
         }
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -532,7 +534,6 @@ class SandboxedSdkViewTest {
         )
     }
 
-    @Ignore // b/356742276
     @Test
     fun signalsOnlyCollectedWhenSignalOptionsNonEmpty() {
         addViewToLayoutAndWaitToBeActive()
@@ -707,6 +708,15 @@ class SandboxedSdkViewTest {
     }
 
     @Test
+    fun supportedSignalOptionsSentWhenUiDisplayed() {
+        addViewToLayoutAndWaitToBeActive()
+        val session = testSandboxedUiAdapter.testSession!!
+        assertThat(session.sessionOpenedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS)).isTrue()
+        assertThat(session.supportedSignalOptions)
+            .containsExactly(SandboxedUiAdapterSignalOptions.GEOMETRY)
+    }
+
+    @Test
     fun addChildViewToSandboxedSdkView_throwsException() {
         addViewToLayout()
         val exception =
@@ -736,16 +746,22 @@ class SandboxedSdkViewTest {
         }
     }
 
-    private fun addViewToLayout(waitToBeActive: Boolean = false, viewToAdd: View = view) {
+    private fun addViewToLayout(
+        waitToBeActive: Boolean = false,
+        viewToAdd: SandboxedSdkView = view
+    ) {
         activityScenarioRule.withActivity {
             linearLayout = findViewById(R.id.mainlayout)
+            if (viewToAdd != view) {
+                linearLayout.removeView(view)
+            }
             mainLayoutWidth = linearLayout.width
             mainLayoutHeight = linearLayout.height
             linearLayout.addView(viewToAdd)
         }
         if (waitToBeActive) {
             val eventListener = TestEventListener()
-            view.setEventListener(eventListener)
+            viewToAdd.setEventListener(eventListener)
             assertThat(eventListener.uiDisplayedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS))
                 .isTrue()
         }
@@ -758,7 +774,7 @@ class SandboxedSdkViewTest {
         }
     }
 
-    private fun addViewToLayoutAndWaitToBeActive(viewToAdd: View = view) {
+    private fun addViewToLayoutAndWaitToBeActive(viewToAdd: SandboxedSdkView = view) {
         addViewToLayout(true, viewToAdd)
     }
 

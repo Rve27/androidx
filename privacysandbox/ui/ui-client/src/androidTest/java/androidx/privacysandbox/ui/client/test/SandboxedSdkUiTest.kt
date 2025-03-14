@@ -44,6 +44,7 @@ import androidx.privacysandbox.ui.client.test.SandboxedSdkViewTest.Companion.TIM
 import androidx.privacysandbox.ui.client.test.SandboxedSdkViewTest.Companion.UI_INTENSIVE_TIMEOUT
 import androidx.privacysandbox.ui.client.view.SandboxedSdkUi
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
+import androidx.privacysandbox.ui.core.SandboxedUiAdapterSignalOptions
 import androidx.privacysandbox.ui.integration.testingutils.TestEventListener
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -73,12 +74,13 @@ class SandboxedSdkUiTest {
     private var testSandboxedUiAdapter by mutableStateOf(TestSandboxedUiAdapter())
     private var eventListener by mutableStateOf(TestEventListener())
     private var providerUiOnTop by mutableStateOf(true)
+    private var signalOptions = setOf(SandboxedUiAdapterSignalOptions.GEOMETRY)
     private var size by mutableStateOf(20.dp)
     private lateinit var uiDevice: UiDevice
 
     @Before
     fun setup() {
-        testSandboxedUiAdapter = TestSandboxedUiAdapter()
+        testSandboxedUiAdapter = TestSandboxedUiAdapter(signalOptions)
         eventListener = TestEventListener()
         providerUiOnTop = true
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
@@ -260,6 +262,16 @@ class SandboxedSdkUiTest {
         }
         assertThat(session?.shortestGapBetweenUiChangeEvents)
             .isAtLeast(SHORTEST_TIME_BETWEEN_SIGNALS_MS)
+    }
+
+    @Test
+    fun supportedSignalOptionsSentWhenUiDisplayed() {
+        addNodeToLayout()
+        testSandboxedUiAdapter.assertSessionOpened()
+        val session = testSandboxedUiAdapter.testSession!!
+        assertThat(session.sessionOpenedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS)).isTrue()
+        assertThat(session.supportedSignalOptions)
+            .containsExactly(SandboxedUiAdapterSignalOptions.GEOMETRY)
     }
 
     @Test
