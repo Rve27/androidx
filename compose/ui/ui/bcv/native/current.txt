@@ -682,6 +682,8 @@ abstract interface androidx.compose.ui.layout/SubcomposeSlotReusePolicy { // and
     abstract fun getSlotsToRetain(androidx.compose.ui.layout/SubcomposeSlotReusePolicy.SlotIdsSet) // androidx.compose.ui.layout/SubcomposeSlotReusePolicy.getSlotsToRetain|getSlotsToRetain(androidx.compose.ui.layout.SubcomposeSlotReusePolicy.SlotIdsSet){}[0]
 
     final class SlotIdsSet : kotlin.collections/Collection<kotlin/Any?> { // androidx.compose.ui.layout/SubcomposeSlotReusePolicy.SlotIdsSet|null[0]
+        final val set // androidx.compose.ui.layout/SubcomposeSlotReusePolicy.SlotIdsSet.set|{}set[0]
+            final fun <get-set>(): androidx.collection/MutableOrderedScatterSet<kotlin/Any?> // androidx.compose.ui.layout/SubcomposeSlotReusePolicy.SlotIdsSet.set.<get-set>|<get-set>(){}[0]
         final val size // androidx.compose.ui.layout/SubcomposeSlotReusePolicy.SlotIdsSet.size|{}size[0]
             final fun <get-size>(): kotlin/Int // androidx.compose.ui.layout/SubcomposeSlotReusePolicy.SlotIdsSet.size.<get-size>|<get-size>(){}[0]
 
@@ -697,6 +699,7 @@ abstract interface androidx.compose.ui.layout/SubcomposeSlotReusePolicy { // and
         final fun retainAll(kotlin.collections/Collection<kotlin/Any?>): kotlin/Boolean // androidx.compose.ui.layout/SubcomposeSlotReusePolicy.SlotIdsSet.retainAll|retainAll(kotlin.collections.Collection<kotlin.Any?>){}[0]
         final fun retainAll(kotlin/Function1<kotlin/Any?, kotlin/Boolean>): kotlin/Boolean // androidx.compose.ui.layout/SubcomposeSlotReusePolicy.SlotIdsSet.retainAll|retainAll(kotlin.Function1<kotlin.Any?,kotlin.Boolean>){}[0]
         final fun trimToSize(kotlin/Int) // androidx.compose.ui.layout/SubcomposeSlotReusePolicy.SlotIdsSet.trimToSize|trimToSize(kotlin.Int){}[0]
+        final inline fun fastForEach(kotlin/Function1<kotlin/Any?, kotlin/Unit>) // androidx.compose.ui.layout/SubcomposeSlotReusePolicy.SlotIdsSet.fastForEach|fastForEach(kotlin.Function1<kotlin.Any?,kotlin.Unit>){}[0]
     }
 }
 

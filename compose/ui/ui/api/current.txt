@@ -2854,6 +2854,7 @@ package androidx.compose.ui.layout {
     method public void clear();
     method public boolean contains(Object? element);
     method public boolean containsAll(java.util.Collection<? extends java.lang.Object?> elements);
+    method public inline void fastForEach(kotlin.jvm.functions.Function1<java.lang.Object?,kotlin.Unit> block);
     method public void forEach(kotlin.jvm.functions.Function1<java.lang.Object?,kotlin.Unit> block);
     method public int getSize();
     method public boolean isEmpty();

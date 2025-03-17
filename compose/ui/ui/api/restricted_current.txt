@@ -2862,6 +2862,7 @@ package androidx.compose.ui.layout {
     method public void clear();
     method public boolean contains(Object? element);
     method public boolean containsAll(java.util.Collection<? extends java.lang.Object?> elements);
+    method public inline void fastForEach(kotlin.jvm.functions.Function1<java.lang.Object?,kotlin.Unit> block);
     method public void forEach(kotlin.jvm.functions.Function1<java.lang.Object?,kotlin.Unit> block);
     method public int getSize();
     method public boolean isEmpty();
@@ -2872,6 +2873,7 @@ package androidx.compose.ui.layout {
     method public boolean retainAll(java.util.Collection<? extends java.lang.Object?> slotIds);
     method public boolean retainAll(kotlin.jvm.functions.Function1<java.lang.Object?,java.lang.Boolean> predicate);
     method public void trimToSize(int maxSlotsToRetainForReuse);
+    property @kotlin.PublishedApi internal androidx.collection.MutableOrderedScatterSet<java.lang.Object?> set;
     property public int size;
   }
 

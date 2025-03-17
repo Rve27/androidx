@@ -377,7 +377,8 @@ interface SubcomposeSlotReusePolicy {
      */
     class SlotIdsSet
     internal constructor(
-        private val set: MutableOrderedScatterSet<Any?> = mutableOrderedScatterSetOf()
+        @PublishedApi
+        internal val set: MutableOrderedScatterSet<Any?> = mutableOrderedScatterSetOf()
     ) : Collection<Any?> {
 
         override val size: Int
@@ -452,8 +453,24 @@ interface SubcomposeSlotReusePolicy {
          * Iterates over every element stored in this set by invoking the specified [block] lambda.
          * The iteration order is the same as the insertion order. It is safe to remove the element
          * passed to [block] during iteration.
+         *
+         * NOTE: This method is obscured by `Collection<T>.forEach` since it is marked with
+         *
+         * @HidesMember, which means in practice this will never get called. Please use
+         *   [fastForEach] instead.
          */
         fun forEach(block: (Any?) -> Unit) = set.forEach(block)
+
+        /**
+         * Iterates over every element stored in this set by invoking the specified [block] lambda.
+         * The iteration order is the same as the insertion order. It is safe to remove the element
+         * passed to [block] during iteration.
+         *
+         * NOTE: this method was added in order to allow for a more performant forEach method. It is
+         * necessary because [forEach] is obscured by `Collection<T>.forEach` since it is marked
+         * with @HidesMember.
+         */
+        inline fun fastForEach(block: (Any?) -> Unit) = set.forEach(block)
     }
 }
 
