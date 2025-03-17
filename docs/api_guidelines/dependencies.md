@@ -411,7 +411,7 @@ androidx {
 Note that this propagates the version requirement to all dependencies and is not
 appropriate for low-level libraries.
 
-#### Java language
+#### Java language (host-side) {#java-host}
 
 The Java language level determines the minimum version of the Java runtime
 required for lint checks and other host-side libraries like compilers.
@@ -436,14 +436,11 @@ javaExtension.apply {
 When doing so, library owners **must** file a bug and establish a timeline to
 un-pin and rejoin the rest of AndroidX.
 
-#### Desugaring and R8/D8
+#### Java language (device-side) {#java-device}
 
 Currently, the highest Java language level supported for Android libraries is
-Java 1.8 (`VERSION_1_8``) via D8/R8 desugaring. See Use Java 8 language features
-and APIs for more details.
-
-AndroidX **does not** currently support library API desugaring, so the use of
-Java 8 APIs requires increasing the library's `minSdk`.
+Java 1.8 (`VERSION_1_8`). AndroidX **does not** currently support library API
+desugaring, so the use of Java 8 APIs requires `minSdk 26` or higher.
 
 #### Android SDK
 
