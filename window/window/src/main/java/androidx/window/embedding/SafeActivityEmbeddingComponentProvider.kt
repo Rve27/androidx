@@ -275,9 +275,7 @@ internal class SafeActivityEmbeddingComponentProvider(
      */
     @VisibleForTesting
     internal fun hasValidVendorApiLevel8(): Boolean =
-        // TODO(b/289875940): adding #isClassEmbeddingConfigurationBuilderApi8Valid() when API
-        //                    finalized.
-        hasValidVendorApiLevel7()
+        hasValidVendorApiLevel7() && isClassEmbeddingConfigurationBuilderApi8Valid()
 
     /**
      * Overlay features includes the following methods:
@@ -865,15 +863,13 @@ internal class SafeActivityEmbeddingComponentProvider(
     private fun isClassEmbeddingConfigurationBuilderApi5Valid(): Boolean =
         validateReflection("Class EmbeddingConfiguration.Builder is not valid") {
             val EmbeddingConfigurationBuilderClass = EmbeddingConfiguration.Builder::class.java
-            val setAutoSaveEmbeddingStateMethod =
+            val setDimAreaBehaviorMethod =
                 EmbeddingConfigurationBuilderClass.getMethod(
                     "setDimAreaBehavior",
                     DimAreaBehavior::class.java
                 )
-            setAutoSaveEmbeddingStateMethod.isPublic &&
-                setAutoSaveEmbeddingStateMethod.doesReturn(
-                    EmbeddingConfiguration.Builder::class.java
-                )
+            setDimAreaBehaviorMethod.isPublic &&
+                setDimAreaBehaviorMethod.doesReturn(EmbeddingConfiguration.Builder::class.java)
         }
 
     /** Vendor API level 6 validation methods */
