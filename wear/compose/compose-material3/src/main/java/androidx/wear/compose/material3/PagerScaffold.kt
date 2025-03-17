@@ -160,13 +160,6 @@ public fun AnimatedPage(
     val isReduceMotionEnabled = LocalReduceMotion.current
     val isRtlEnabled = LocalLayoutDirection.current == LayoutDirection.Rtl
     val isCurrentPage: Boolean = pageIndex == pagerState.currentPage
-    val pageTransitionFraction =
-        if (isCurrentPage) {
-            pagerState.currentPageOffsetFraction.absoluteValue
-        } else {
-            // interpolate left or right pages in opposite direction
-            1 - pagerState.currentPageOffsetFraction.absoluteValue
-        }
     val graphicsLayerModifier =
         if (isReduceMotionEnabled) Modifier
         else
@@ -187,6 +180,8 @@ public fun AnimatedPage(
                         // Flip X and Y for vertical pager
                         TransformOrigin(0.5f, pivotFractionX)
                     }
+                val pageTransitionFraction =
+                    getPageTransitionFraction(isCurrentPage, pagerState.currentPageOffsetFraction)
                 val scale = lerp(start = 1f, stop = 0.55f, fraction = pageTransitionFraction)
                 scaleX = scale
                 scaleY = scale
@@ -196,6 +191,8 @@ public fun AnimatedPage(
 
         if (contentScrimColor.isSpecified) {
             Canvas(Modifier.fillMaxSize()) {
+                val pageTransitionFraction =
+                    getPageTransitionFraction(isCurrentPage, pagerState.currentPageOffsetFraction)
                 val color =
                     contentScrimColor.copy(
                         alpha = lerp(start = 0f, stop = 0.5f, fraction = pageTransitionFraction)
@@ -282,5 +279,17 @@ private fun PagerScaffoldImpl(
             animationSpec = pageIndicatorAnimationSpec,
             content = pageIndicator,
         )
+    }
+}
+
+private fun getPageTransitionFraction(
+    isCurrentPage: Boolean,
+    currentPageOffsetFraction: Float
+): Float {
+    return if (isCurrentPage) {
+        currentPageOffsetFraction.absoluteValue
+    } else {
+        // interpolate left or right pages in opposite direction
+        1 - currentPageOffsetFraction.absoluteValue
     }
 }
