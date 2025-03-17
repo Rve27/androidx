@@ -16,8 +16,6 @@
 
 package androidx.compose.foundation.text
 
-import androidx.compose.foundation.ComposeFoundationFlags
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.Orientation
@@ -51,7 +49,6 @@ import androidx.compose.foundation.text.input.internal.selection.TextFieldSelect
 import androidx.compose.foundation.text.input.internal.selection.TextFieldSelectionState.InputType
 import androidx.compose.foundation.text.input.internal.selection.TextToolbarHandler
 import androidx.compose.foundation.text.input.internal.selection.TextToolbarState
-import androidx.compose.foundation.text.input.internal.selection.addBasicTextFieldTextContextMenuComponents
 import androidx.compose.foundation.text.input.internal.selection.menuItem
 import androidx.compose.foundation.text.selection.SelectionHandle
 import androidx.compose.runtime.Composable
@@ -88,7 +85,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -315,7 +311,6 @@ internal fun BasicTextField(
                     rect: Rect
                 ) =
                     with(selectionState) {
-                        selectionState.updateClipboardEntry()
                         currentTextToolbar.showMenu(
                             rect = rect,
                             onCopyRequested =
@@ -369,13 +364,7 @@ internal fun BasicTextField(
         )
     }
 
-    DisposableEffect(textFieldSelectionState) {
-        // This runs before the above SideEffect, but we need to ensure the clipboard is updated
-        // before updateClipboardEntry is called, so set it here as well.
-        textFieldSelectionState.updateClipboard(currentClipboard)
-        coroutineScope.launch { textFieldSelectionState.updateClipboardEntry() }
-        onDispose { textFieldSelectionState.dispose() }
-    }
+    DisposableEffect(textFieldSelectionState) { onDispose { textFieldSelectionState.dispose() } }
 
     val handwritingEnabled =
         !isPassword &&
@@ -439,7 +428,6 @@ internal fun BasicTextField(
                 interactionSource = interactionSource,
             )
             .pointerHoverIcon(PointerIcon.Text)
-            .addContextMenuComponents(textFieldSelectionState, coroutineScope)
 
     Box(decorationModifiers, propagateMinConstraints = true) {
         ContextMenuArea(textFieldSelectionState, enabled) {
@@ -510,15 +498,6 @@ internal fun BasicTextField(
         }
     }
 }
-
-@OptIn(ExperimentalFoundationApi::class)
-private fun Modifier.addContextMenuComponents(
-    textFieldSelectionState: TextFieldSelectionState,
-    coroutineScope: CoroutineScope
-): Modifier =
-    if (ComposeFoundationFlags.isNewContextMenuEnabled)
-        addBasicTextFieldTextContextMenuComponents(textFieldSelectionState, coroutineScope)
-    else this
 
 @Composable
 internal fun TextFieldCursorHandle(selectionState: TextFieldSelectionState) {
