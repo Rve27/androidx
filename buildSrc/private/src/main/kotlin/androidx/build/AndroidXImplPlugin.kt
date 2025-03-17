@@ -871,7 +871,7 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
         return when (compileSdk) {
             34 -> "8.1.1"
             35 -> "8.6.0"
-            36 -> "8.9.0"
+            36 -> "8.9.1"
             else -> throw Exception("Unknown compileSdk to minAgpVersion mapping")
         }
     }
