@@ -44,6 +44,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.Resources.Theme;
 import android.graphics.Color;
+import android.graphics.Outline;
 import android.graphics.Paint.Cap;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
@@ -1649,6 +1650,8 @@ public final class ProtoLayoutInflater {
         // apply corner
         final Corner corner = background.getCorner();
         final int radiusPx = corner.hasRadius() ? safeDpToPx(corner.getRadius()) : 0;
+
+        // Sort out specific corner radii.
         float[] radii = new float[8];
         Arrays.fill(radii, radiusPx);
         if (corner.hasTopLeftRadius()) {
@@ -1664,19 +1667,33 @@ public final class ProtoLayoutInflater {
             setCornerRadiusToArray(corner.getBottomLeftRadius(), radii, /* index= */ 6);
         }
 
-        if (areAllEqual(radii, /* count= */ 8)) {
+        boolean isCornerWithEqualRadii = areAllEqual(radii, /* count= */ 8);
+        if (isCornerWithEqualRadii) {
             if (radii[0] == 0) {
                 return;
             }
-            // The implementation in BackgroundDrawable is more efficient by calling setCornerRadius
-            // than calling setCornerRadii with an array of all equal items.
+            // We will clip the drawable view with all equal corner radii by using outline, but we
+            // still
+            // need to set corners for cases when we use border.
             drawable.setCornerRadius(radii[0]);
+
+            // Set outline provider to correctly clip to the given corner, when it's some form of
+            // rounded
+            // rectangular (i.e. all equal corner radii). This can't be done automatically by the
+            // drawable
+            // due to the aliasing issues. See b/357061501 for more details.
+            view.setOutlineProvider(
+                    new ViewOutlineProvider() {
+                        @Override
+                        public void getOutline(View view, Outline outline) {
+                            outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), radii[0]);
+                            outline.setAlpha(0.0f);
+                        }
+                    });
+            view.setClipToOutline(true);
         } else {
             drawable.setCornerRadii(radii);
         }
-
-        view.setClipToOutline(true);
-        view.setOutlineProvider(ViewOutlineProvider.BACKGROUND);
     }
 
     private void setCornerRadiusToArray(
