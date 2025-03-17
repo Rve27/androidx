@@ -7,7 +7,9 @@ package androidx.wear.compose.material3 {
     method @androidx.compose.runtime.Composable public void EdgeButton(kotlin.jvm.functions.Function0<kotlin.Unit> onClick, optional androidx.compose.ui.Modifier modifier, optional androidx.wear.compose.material3.ButtonColors colors, optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.RowScope,kotlin.Unit> content);
     method @androidx.compose.runtime.Composable public void GroupSeparator();
     method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.PaddingValues confirmDismissContentPadding();
+    method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.PaddingValues confirmDismissWithIconContentPadding();
     method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.PaddingValues contentPadding();
+    method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.PaddingValues contentWithIconPadding();
     method public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> getConfirmIcon();
     method public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> getDismissIcon();
     method public androidx.compose.foundation.layout.Arrangement.Vertical getVerticalArrangement();
