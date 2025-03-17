@@ -223,8 +223,6 @@ class CameraControlDeviceTest(
     @Test
     @SdkSuppress(maxSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM - 1)
     fun setTorchStrengthLevel_throwExceptionWhenApiNotMet() {
-        assumeTrue(cameraProvider.getCameraInfo(cameraSelector).isTorchStrengthSupported)
-
         bindUseCases()
 
         try {
