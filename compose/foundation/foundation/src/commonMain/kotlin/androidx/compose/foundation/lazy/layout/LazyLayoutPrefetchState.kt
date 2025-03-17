@@ -284,6 +284,10 @@ internal class PrefetchMetrics {
 internal class Averages {
     /** Average time the full composition phase has taken. */
     var compositionTimeNanos: Long = 0L
+    /** Average time needed to resume the pausable composition until the next interruption. */
+    var resumeTimeNanos: Long = 0L
+    /** Average time needed to pause the pausable composition. */
+    var pauseTimeNanos: Long = 0L
     /** Average time the apply phase has taken. */
     var applyTimeNanos: Long = 0L
     /** Average time the measure phase has taken. */
@@ -291,6 +295,14 @@ internal class Averages {
 
     fun saveCompositionTimeNanos(timeNanos: Long) {
         compositionTimeNanos = calculateAverageTime(timeNanos, compositionTimeNanos)
+    }
+
+    fun saveResumeTimeNanos(timeNanos: Long) {
+        resumeTimeNanos = calculateAverageTime(timeNanos, resumeTimeNanos)
+    }
+
+    fun savePauseTimeNanos(timeNanos: Long) {
+        pauseTimeNanos = calculateAverageTime(timeNanos, pauseTimeNanos)
     }
 
     fun saveApplyTimeNanos(timeNanos: Long) {
@@ -463,17 +475,27 @@ internal class PrefetchHandleProvider(
             // and manually update it later by calling updateElapsedAndAvailableTime()
             resetAvailableTimeTo(availableTimeNanos())
             if (!isComposed) {
-                if (shouldExecute(availableTimeNanos, average.compositionTimeNanos)) {
-                    trace("compose:lazy:prefetch:compose") {
-                        if (ComposeFoundationFlags.isPausableCompositionInPrefetchEnabled) {
-                            performPausableComposition(itemProvider, contentType)
-                        } else {
-                            performFullComposition(itemProvider, contentType)
+                if (ComposeFoundationFlags.isPausableCompositionInPrefetchEnabled) {
+                    if (
+                        shouldExecute(
+                            availableTimeNanos,
+                            average.resumeTimeNanos + average.pauseTimeNanos
+                        )
+                    ) {
+                        trace("compose:lazy:prefetch:compose") {
+                            performPausableComposition(itemProvider, contentType, average)
                         }
                     }
-                    updateElapsedAndAvailableTime()
-                    average.saveCompositionTimeNanos(elapsedTimeNanos)
                 } else {
+                    if (shouldExecute(availableTimeNanos, average.compositionTimeNanos)) {
+                        trace("compose:lazy:prefetch:compose") {
+                            performFullComposition(itemProvider, contentType)
+                        }
+                        updateElapsedAndAvailableTime()
+                        average.saveCompositionTimeNanos(elapsedTimeNanos)
+                    }
+                }
+                if (!isComposed) {
                     return true
                 }
             }
@@ -534,24 +556,46 @@ internal class PrefetchHandleProvider(
             return false
         }
 
+        private var pauseRequested = false
+
         private fun performPausableComposition(
             itemProvider: LazyLayoutItemProvider,
-            contentType: Any?
+            contentType: Any?,
+            averages: Averages
         ) {
-            requirePrecondition(precomposeHandle == null) { "Request was already composed!" }
-            val key = itemProvider.getKey(index)
-            val content = itemContentFactory.getContent(index, key, contentType)
-            val pausedPrecomposition =
-                subcomposeLayoutState.createPausedPrecomposition(key, content)
-            while (!pausedPrecomposition.isComplete) {
-                // as a first step we don't really pause the composition, but we split the
-                // whole composition and the apply step.
-                pausedPrecomposition.resume { /*should never pause*/
-                    false
+            val composition =
+                pausedPrecomposition
+                    ?: run {
+                        val key = itemProvider.getKey(index)
+                        val content = itemContentFactory.getContent(index, key, contentType)
+                        subcomposeLayoutState.createPausedPrecomposition(key, content).also {
+                            pausedPrecomposition = it
+                        }
+                    }
+
+            pauseRequested = false
+
+            composition.resume {
+                if (!pauseRequested) {
+                    updateElapsedAndAvailableTime()
+                    averages.saveResumeTimeNanos(elapsedTimeNanos)
+                    pauseRequested =
+                        !shouldExecute(
+                            availableTimeNanos,
+                            averages.resumeTimeNanos + averages.pauseTimeNanos
+                        )
                 }
+                pauseRequested
             }
-            this.pausedPrecomposition = pausedPrecomposition
-            isComposed = true
+
+            updateElapsedAndAvailableTime()
+            if (pauseRequested) {
+                averages.savePauseTimeNanos(elapsedTimeNanos)
+            } else {
+                averages.saveResumeTimeNanos(elapsedTimeNanos)
+            }
+
+            isComposed = composition.isComplete
         }
 
         private fun performFullComposition(
