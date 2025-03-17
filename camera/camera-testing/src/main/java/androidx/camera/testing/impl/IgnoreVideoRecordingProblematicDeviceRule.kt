@@ -36,8 +36,9 @@ public class IgnoreVideoRecordingProblematicDeviceRule : TestRule {
         public fun skipVideoRecordingTestIfNotSupportedByEmulator() {
             // Skip test for b/168175357, b/233661493
             Assume.assumeFalse(
-                "Cuttlefish has MediaCodec dequeInput/Output buffer fails issue. Unable to test.",
-                Build.MODEL.contains("Cuttlefish") && Build.VERSION.SDK_INT == 29
+                "Skip tests for Cuttlefish MediaCodec issues",
+                Build.MODEL.contains("Cuttlefish") &&
+                    (Build.VERSION.SDK_INT == 29 || Build.VERSION.SDK_INT == 33)
             )
             // Skip test for b/268102904
             Assume.assumeFalse(
