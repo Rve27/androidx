@@ -3267,7 +3267,8 @@ package androidx.compose.material3 {
     method @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material3.TopAppBarColors largeTopAppBarColors(optional long containerColor, optional long scrolledContainerColor, optional long navigationIconContentColor, optional long titleContentColor, optional long actionIconContentColor);
     method @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material3.TopAppBarColors mediumTopAppBarColors();
     method @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material3.TopAppBarColors mediumTopAppBarColors(optional long containerColor, optional long scrolledContainerColor, optional long navigationIconContentColor, optional long titleContentColor, optional long actionIconContentColor);
-    method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Composable public androidx.compose.material3.TopAppBarScrollBehavior pinnedScrollBehavior(optional androidx.compose.material3.TopAppBarState state, optional kotlin.jvm.functions.Function0<java.lang.Boolean> canScroll);
+    method @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Composable public androidx.compose.material3.TopAppBarScrollBehavior pinnedScrollBehavior(optional androidx.compose.material3.TopAppBarState state, optional kotlin.jvm.functions.Function0<java.lang.Boolean> canScroll);
+    method @androidx.compose.runtime.Composable public androidx.compose.material3.TopAppBarScrollBehavior pinnedScrollBehavior(optional androidx.compose.material3.TopAppBarState state, optional kotlin.jvm.functions.Function0<java.lang.Boolean> canScroll, optional boolean reverseLayout);
     method @androidx.compose.runtime.Composable public androidx.compose.material3.TopAppBarColors topAppBarColors();
     method @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material3.TopAppBarColors topAppBarColors(optional long containerColor, optional long scrolledContainerColor, optional long navigationIconContentColor, optional long titleContentColor, optional long actionIconContentColor);
     method @androidx.compose.runtime.Composable public androidx.compose.material3.TopAppBarColors topAppBarColors(optional long containerColor, optional long scrolledContainerColor, optional long navigationIconContentColor, optional long titleContentColor, optional long actionIconContentColor, optional long subtitleContentColor);
@@ -3287,12 +3288,14 @@ package androidx.compose.material3 {
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Stable public interface TopAppBarScrollBehavior {
     method public androidx.compose.animation.core.DecayAnimationSpec<java.lang.Float>? getFlingAnimationSpec();
     method public androidx.compose.ui.input.nestedscroll.NestedScrollConnection getNestedScrollConnection();
+    method public boolean getReverseLayout();
     method public androidx.compose.animation.core.AnimationSpec<java.lang.Float>? getSnapAnimationSpec();
     method public androidx.compose.material3.TopAppBarState getState();
     method public boolean isPinned();
     property public abstract androidx.compose.animation.core.DecayAnimationSpec<java.lang.Float>? flingAnimationSpec;
     property public abstract boolean isPinned;
     property public abstract androidx.compose.ui.input.nestedscroll.NestedScrollConnection nestedScrollConnection;
+    property public abstract boolean reverseLayout;
     property public abstract androidx.compose.animation.core.AnimationSpec<java.lang.Float>? snapAnimationSpec;
     property public abstract androidx.compose.material3.TopAppBarState state;
   }
@@ -3303,7 +3306,8 @@ package androidx.compose.material3 {
     method public float getContentOffset();
     method public float getHeightOffset();
     method public float getHeightOffsetLimit();
-    method public float getOverlappedFraction();
+    method @Deprecated public float getOverlappedFraction();
+    method public float overlappedFraction(optional boolean reverseLayout);
     method public void setContentOffset(float);
     method public void setHeightOffset(float);
     method public void setHeightOffsetLimit(float);
@@ -3311,7 +3315,7 @@ package androidx.compose.material3 {
     property public float contentOffset;
     property public float heightOffset;
     property public float heightOffsetLimit;
-    property public float overlappedFraction;
+    property @Deprecated public float overlappedFraction;
     field public static final androidx.compose.material3.TopAppBarState.Companion Companion;
   }
 
