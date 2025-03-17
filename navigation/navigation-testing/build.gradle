@@ -91,6 +91,10 @@ androidXMultiplatform {
 
         jvmCommonTest {
             dependsOn(commonTest)
+            dependencies {
+                runtimeOnly(libs.kotlinTestJunit)
+                implementation(libs.junit)
+            }
         }
 
         desktopMain {
