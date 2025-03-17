@@ -37,7 +37,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Offset
@@ -46,7 +45,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.TextToolbar
 import androidx.compose.ui.platform.TextToolbarStatus
@@ -172,11 +170,6 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
 
     /** The previous [SelectionLayout] where [SelectionLayout.shouldRecomputeSelection] was true. */
     private var previousSelectionLayout: SelectionLayout? = null
-
-    // TODO(grantapher) android ClipboardManager has a way to notify primary clip changes.
-    //  That could possibly be used so that this doesn't have to be updated manually.
-    /** The current clip entry. Updated via [updateClipboardEntry]. */
-    private var clipEntry: ClipEntry? by mutableStateOf(null)
 
     /** [TextDragObserver] for long press and drag to select in TextField. */
     internal val touchSelectionObserver =
@@ -614,30 +607,6 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
         state?.selectionPreviewHighlightRange = TextRange.Zero
     }
 
-    internal val textToolbarShown
-        get() = textToolbar?.status == TextToolbarStatus.Shown
-
-    private val isPassword: Boolean
-        get() = visualTransformation is PasswordVisualTransformation
-
-    private val hasSelection: Boolean
-        get() = !value.selection.collapsed
-
-    internal fun canCopy(): Boolean = hasSelection && !isPassword
-
-    internal suspend fun updateClipboardEntry() {
-        clipEntry = clipboard?.getClipEntry()
-    }
-
-    /** Only fully accurate if [updateClipboardEntry] has been called. */
-    internal fun canPaste(): Boolean = editable && clipEntry?.hasText() == true
-
-    internal fun canCut(): Boolean = hasSelection && editable && !isPassword
-
-    internal fun canSelectAll(): Boolean = value.selection.length != value.text.length
-
-    internal fun canAutofill(): Boolean = editable && value.selection.collapsed
-
     /**
      * The method for copying text.
      *
@@ -790,55 +759,50 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
      */
     internal fun showSelectionToolbar() =
         coroutineScope?.launch(start = CoroutineStart.UNDISPATCHED) {
-            // Because this is undispatched and the above is called once in CoreTextField
-            // composition, disable read observation to avoid reading many states and landing
-            // in a composition loop.
-            Snapshot.withoutReadObservation {
-                if (!enabled || state?.isInTouchMode == false) return@launch
-                val copy: (() -> Unit)? =
-                    if (canCopy()) {
-                        {
-                            coroutineScope?.launch(start = CoroutineStart.UNDISPATCHED) { copy() }
-                            hideSelectionToolbar()
-                        }
-                    } else null
+            if (!enabled || state?.isInTouchMode == false) return@launch
+            val isPassword = visualTransformation is PasswordVisualTransformation
+            val copy: (() -> Unit)? =
+                if (!value.selection.collapsed && !isPassword) {
+                    {
+                        coroutineScope?.launch(start = CoroutineStart.UNDISPATCHED) { copy() }
+                        hideSelectionToolbar()
+                    }
+                } else null
 
-                val cut: (() -> Unit)? =
-                    if (canCut()) {
-                        {
-                            coroutineScope?.launch(start = CoroutineStart.UNDISPATCHED) { cut() }
-                            hideSelectionToolbar()
-                        }
-                    } else null
+            val cut: (() -> Unit)? =
+                if (!value.selection.collapsed && editable && !isPassword) {
+                    {
+                        coroutineScope?.launch(start = CoroutineStart.UNDISPATCHED) { cut() }
+                        hideSelectionToolbar()
+                    }
+                } else null
 
-                updateClipboardEntry()
-                val paste: (() -> Unit)? =
-                    if (canPaste()) {
-                        {
-                            coroutineScope?.launch(start = CoroutineStart.UNDISPATCHED) { paste() }
-                            hideSelectionToolbar()
-                        }
-                    } else null
+            val paste: (() -> Unit)? =
+                if (editable && clipboard?.getClipEntry()?.hasText() == true) {
+                    {
+                        coroutineScope?.launch(start = CoroutineStart.UNDISPATCHED) { paste() }
+                        hideSelectionToolbar()
+                    }
+                } else null
 
-                val selectAll: (() -> Unit)? =
-                    if (canSelectAll()) {
-                        { selectAll() }
-                    } else null
+            val selectAll: (() -> Unit)? =
+                if (value.selection.length != value.text.length) {
+                    { selectAll() }
+                } else null
 
-                val autofill: (() -> Unit)? =
-                    if (canAutofill()) {
-                        { autofill() }
-                    } else null
+            val autofill: (() -> Unit)? =
+                if (editable && value.selection.collapsed) {
+                    { autofill() }
+                } else null
 
-                textToolbar?.showMenu(
-                    rect = getContentRect(),
-                    onCopyRequested = copy,
-                    onPasteRequested = paste,
-                    onCutRequested = cut,
-                    onSelectAllRequested = selectAll,
-                    onAutofillRequested = autofill
-                )
-            }
+            textToolbar?.showMenu(
+                rect = getContentRect(),
+                onCopyRequested = copy,
+                onPasteRequested = paste,
+                onCutRequested = cut,
+                onSelectAllRequested = selectAll,
+                onAutofillRequested = autofill
+            )
         }
 
     internal fun hideSelectionToolbar() {
@@ -1156,8 +1120,3 @@ internal fun calculateSelectionMagnifierCenterAndroid(
 
     return Offset(centerX, centerY)
 }
-
-internal expect fun Modifier.addBasicTextFieldTextContextMenuComponents(
-    manager: TextFieldSelectionManager,
-    coroutineScope: CoroutineScope,
-): Modifier

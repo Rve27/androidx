@@ -25,8 +25,6 @@ import androidx.compose.foundation.magnifier
 import androidx.compose.foundation.text.MenuItemsAvailability
 import androidx.compose.foundation.text.TextContextMenuItems
 import androidx.compose.foundation.text.TextItem
-import androidx.compose.foundation.text.contextmenu.modifier.addTextContextMenuComponentsWithResources
-import androidx.compose.foundation.text.textItem
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,9 +35,6 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.launch
 
 internal actual val PointerEvent.isShiftPressed: Boolean
     get() = false
@@ -72,41 +67,6 @@ internal actual fun Modifier.textFieldMagnifier(manager: TextFieldSelectionManag
             }
         )
     }
-}
-
-internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
-    manager: TextFieldSelectionManager,
-    coroutineScope: CoroutineScope,
-): Modifier = addTextContextMenuComponentsWithResources { resources ->
-    separator()
-    if (manager.canCut())
-        textItem(resources, TextContextMenuItems.Cut) {
-            coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) { manager.cut() }
-            close()
-        }
-    if (manager.canCopy())
-        textItem(resources, TextContextMenuItems.Copy) {
-            coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
-                manager.copy(cancelSelection = manager.textToolbarShown)
-            }
-            close()
-        }
-    if (manager.canPaste())
-        textItem(resources, TextContextMenuItems.Paste) {
-            coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) { manager.paste() }
-            close()
-        }
-    if (manager.canSelectAll())
-        textItem(resources, TextContextMenuItems.SelectAll) {
-            manager.selectAll()
-            if (!manager.textToolbarShown) close()
-        }
-    if (Build.VERSION.SDK_INT >= 26 && manager.canAutofill())
-        textItem(resources, TextContextMenuItems.Autofill) {
-            manager.autofill()
-            close()
-        }
-    separator()
 }
 
 internal fun TextFieldSelectionManager.contextMenuBuilder(
