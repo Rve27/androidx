@@ -130,7 +130,7 @@ fun rememberLazyListState(
         LazyListState(
             initialFirstVisibleItemIndex,
             initialFirstVisibleItemScrollOffset,
-            prefetchStrategy = CacheWindowListPrefetchStrategy(cacheWindow)
+            prefetchStrategy = LazyListCacheWindowStrategy(cacheWindow)
         )
     }
 }
@@ -171,7 +171,7 @@ constructor(
     ) : this(
         firstVisibleItemIndex,
         firstVisibleItemScrollOffset,
-        CacheWindowListPrefetchStrategy(cacheWindow)
+        LazyListCacheWindowStrategy(cacheWindow)
     )
 
     /**

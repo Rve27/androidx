@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.lazy.layout.CacheWindowLogic
 import androidx.compose.foundation.lazy.layout.LazyLayout
 import androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScope
 import androidx.compose.foundation.lazy.layout.StickyItemsPlacement
@@ -389,7 +390,7 @@ private fun rememberLazyListMeasurePolicy(
 
             state.applyMeasureResult(measureResult, isLookingAhead)
             // apply keep around after updating the strategy with measure result.
-            (state.prefetchStrategy as? CacheWindowListPrefetchStrategy)?.keepAroundItems(
+            (state.prefetchStrategy as? CacheWindowLogic)?.keepAroundItems(
                 measureResult.visibleItemsInfo,
                 measuredItemProvider
             )
@@ -398,7 +399,7 @@ private fun rememberLazyListMeasurePolicy(
     }
 
 @OptIn(ExperimentalFoundationApi::class)
-private fun CacheWindowListPrefetchStrategy.keepAroundItems(
+private fun CacheWindowLogic.keepAroundItems(
     visibleItemsList: List<LazyListMeasuredItem>,
     measuredItemProvider: LazyListMeasuredItemProvider
 ) {

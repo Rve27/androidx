@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.compose.foundation.lazy
+package androidx.compose.foundation.lazy.layout
 
 import androidx.collection.mutableIntIntMapOf
 import androidx.collection.mutableIntObjectMapOf
 import androidx.collection.mutableIntSetOf
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.snapping.singleAxisViewportSize
-import androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow
 import androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle
-import androidx.compose.foundation.lazy.layout.NestedPrefetchScope
-import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.util.traceValue
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 import kotlin.math.sign
 
-/**
- * This is a transition class based on [LazyListPrefetchStrategy] where we will perform a window
- * based prefetching for items in the direction of the scroll movement (ahead).
- */
+/** Implements the logic for [LazyLayoutCacheWindow] prefetching and item preservation. */
 @OptIn(ExperimentalFoundationApi::class)
-internal class CacheWindowListPrefetchStrategy(
+internal abstract class CacheWindowLogic(
     private val cacheWindow: LazyLayoutCacheWindow,
-) : LazyListPrefetchStrategy {
+) {
 
     /** Handles for prefetched items in the current forward window. */
     private val prefetchWindowHandles = mutableIntObjectMapOf<PrefetchHandle>()
@@ -50,7 +44,7 @@ internal class CacheWindowListPrefetchStrategy(
     private val windowCache = mutableIntIntMapOf()
     private var previousPassDelta = 0f
 
-    private var nestedPrefetchItemCount: Int = 2
+    protected var nestedPrefetchItemCount: Int = 2
 
     /**
      * Indices for the start and end of the cache window. The items between
@@ -80,9 +74,9 @@ internal class CacheWindowListPrefetchStrategy(
     /** Keep the latest item count where it can be used more easily. */
     private var itemsCount = 0
 
-    override fun LazyListPrefetchScope.onScroll(delta: Float, layoutInfo: LazyListLayoutInfo) {
+    fun CacheWindowScope.onScroll(delta: Float) {
         traceWindowInfo()
-        updateCacheWindow(delta, layoutInfo)
+        updateCacheWindow(delta)
         previousPassDelta = delta
         traceWindowInfo()
     }
@@ -94,16 +88,16 @@ internal class CacheWindowListPrefetchStrategy(
         traceValue("prefetchWindowEndIndex", prefetchWindowEndIndex.toLong())
     }
 
-    override fun LazyListPrefetchScope.onVisibleItemsUpdated(layoutInfo: LazyListLayoutInfo) {
-        itemsCount = layoutInfo.totalItemsCount
+    fun CacheWindowScope.onVisibleItemsUpdated() {
+        itemsCount = totalItemsCount
         // If visible items changed, update cached information. Any items that were visible
         // and became out of bounds will either count for the cache window or be cancelled/removed
         // by [cancelOutOfBounds]. If any items changed sizes we re-trigger the window filling
         // update.
-        if (layoutInfo.visibleItemsInfo.isNotEmpty()) {
-            layoutInfo.visibleItemsInfo.fastForEach { cacheVisibleItemsInfo(it.index, it.size) }
+        if (hasVisibleItems) {
+            forEachVisibleItem { index, mainAxisSize -> cacheVisibleItemsInfo(index, mainAxisSize) }
             if (shouldRefillWindow) {
-                updateCacheWindow(0.0f, layoutInfo)
+                updateCacheWindow(0.0f)
                 shouldRefillWindow = false
             }
         } else {
@@ -113,65 +107,39 @@ internal class CacheWindowListPrefetchStrategy(
         }
     }
 
-    override fun NestedPrefetchScope.onNestedPrefetch(firstVisibleItemIndex: Int) {
-        repeat(nestedPrefetchItemCount) { schedulePrecomposition(firstVisibleItemIndex + it) }
-    }
-
     fun hasValidBounds() =
         prefetchWindowStartIndex != Int.MAX_VALUE && prefetchWindowEndIndex != Int.MIN_VALUE
 
-    private fun LazyListPrefetchScope.updateCacheWindow(
-        delta: Float,
-        layoutInfo: LazyListLayoutInfo
-    ) {
-        with(layoutInfo) {
-            if (visibleItemsInfo.isNotEmpty()) {
-                val firstVisibleItem = visibleItemsInfo.first()
-                val lastVisibleItem = visibleItemsInfo.last()
+    private fun CacheWindowScope.updateCacheWindow(delta: Float) {
+        if (hasVisibleItems) {
+            val viewport = mainAxisViewportSize
 
-                val viewport = singleAxisViewportSize
-                // how much of the first item is peeking out of view at the start of the layout.
-                val firstItemOverflowOffset =
-                    (firstVisibleItem.offset + beforeContentPadding).coerceAtMost(0)
+            val prefetchForwardWindow =
+                with(cacheWindow) { density?.calculateAheadWindow(viewport) ?: 0 }
+            val keepAroundWindow =
+                with(cacheWindow) { density?.calculateBehindWindow(viewport) ?: 0 }
 
-                // how much of the last item is peeking out of view at the end of the layout
-                val lastItemOverflowOffset =
-                    lastVisibleItem.offset + lastVisibleItem.size + mainAxisItemSpacing
+            // save latest item count
+            itemsCount = totalItemsCount
 
-                // extra space is always positive in this context
-                val mainAxisExtraSpaceStart = firstItemOverflowOffset.absoluteValue
+            onKeepAround(
+                visibleWindowStart = firstVisibleItemIndex,
+                visibleWindowEnd = lastVisibleItemIndex,
+                keepAroundWindow = keepAroundWindow,
+                scrollDelta = delta,
+                itemsCount = totalItemsCount,
+                mainAxisExtraSpaceStart = mainAxisExtraSpaceStart,
+                mainAxisExtraSpaceEnd = mainAxisExtraSpaceEnd,
+            )
 
-                // extra space is always positive in this context
-                val mainAxisExtraSpaceEnd =
-                    (lastItemOverflowOffset - viewportEndOffset).absoluteValue
-                val density = (layoutInfo as? LazyListMeasureResult)?.density
-                val prefetchForwardWindow =
-                    with(cacheWindow) { density?.calculateAheadWindow(viewport) ?: 0 }
-                val keepAroundWindow =
-                    with(cacheWindow) { density?.calculateBehindWindow(viewport) ?: 0 }
-
-                // save latest item count
-                itemsCount = totalItemsCount
-
-                onKeepAround(
-                    visibleWindowStart = firstVisibleItem.index,
-                    visibleWindowEnd = lastVisibleItem.index,
-                    keepAroundWindow = keepAroundWindow,
-                    scrollDelta = delta,
-                    itemsCount = totalItemsCount,
-                    mainAxisExtraSpaceStart = mainAxisExtraSpaceStart,
-                    mainAxisExtraSpaceEnd = mainAxisExtraSpaceEnd,
-                )
-
-                onPrefetchForward(
-                    visibleWindowStart = firstVisibleItem.index,
-                    visibleWindowEnd = lastVisibleItem.index,
-                    prefetchForwardWindow = prefetchForwardWindow,
-                    scrollDelta = delta,
-                    mainAxisExtraSpaceStart = mainAxisExtraSpaceStart,
-                    mainAxisExtraSpaceEnd = mainAxisExtraSpaceEnd
-                )
-            }
+            onPrefetchForward(
+                visibleWindowStart = firstVisibleItemIndex,
+                visibleWindowEnd = lastVisibleItemIndex,
+                prefetchForwardWindow = prefetchForwardWindow,
+                scrollDelta = delta,
+                mainAxisExtraSpaceStart = mainAxisExtraSpaceStart,
+                mainAxisExtraSpaceEnd = mainAxisExtraSpaceEnd
+            )
         }
     }
 
@@ -194,7 +162,7 @@ internal class CacheWindowListPrefetchStrategy(
      * prefetch returns, we check if the window is filled and if not we schedule the next
      * prefetching.
      */
-    private fun LazyListPrefetchScope.onPrefetchForward(
+    private fun CacheWindowScope.onPrefetchForward(
         visibleWindowStart: Int,
         visibleWindowEnd: Int,
         prefetchForwardWindow: Int,
@@ -310,7 +278,7 @@ internal class CacheWindowListPrefetchStrategy(
         }
     }
 
-    private fun LazyListPrefetchScope.getItemSizeOrPrefetch(index: Int, isUrgent: Boolean): Int {
+    private fun CacheWindowScope.getItemSizeOrPrefetch(index: Int, isUrgent: Boolean): Int {
         return if (windowCache.containsKey(index)) {
             windowCache[index]
         } else if (prefetchWindowHandles.containsKey(index)) {
@@ -371,13 +339,13 @@ internal class CacheWindowListPrefetchStrategy(
      * Item prefetching finished, we can cache its information and schedule the next prefetching if
      * needed.
      */
-    private fun LazyListPrefetchScope.onItemPrefetched(index: Int, itemSize: Int) {
+    private fun CacheWindowScope.onItemPrefetched(index: Int, itemSize: Int) {
         cachePrefetchedItem(index, itemSize)
         scheduleNextItemIfNeeded()
         traceWindowInfo()
     }
 
-    private fun LazyListPrefetchScope.scheduleNextItemIfNeeded() {
+    private fun CacheWindowScope.scheduleNextItemIfNeeded() {
         var nextPrefetchableIndex: Int = -1
         // if was scrolling forward
         if (previousPassDelta.sign <= 0) {
@@ -394,6 +362,32 @@ internal class CacheWindowListPrefetchStrategy(
                 }
         }
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+/** Bridge between LazyLayout and its implementation. */
+internal interface CacheWindowScope {
+    val totalItemsCount: Int
+    val visibleItemCount: Int
+    val hasVisibleItems: Boolean
+    val mainAxisExtraSpaceStart: Int
+    val mainAxisExtraSpaceEnd: Int
+    val firstVisibleItemIndex: Int
+    val lastVisibleItemIndex: Int
+    val mainAxisViewportSize: Int
+    val density: Density?
+
+    fun schedulePrefetch(laneIndex: Int, onItemPrefetched: (Int) -> Unit): PrefetchHandle
+
+    fun getVisibleItemSize(indexInVisibleItems: Int): Int
+
+    fun getVisibleItemIndex(indexInVisibleItems: Int): Int
+}
+
+internal inline fun CacheWindowScope.forEachVisibleItem(
+    action: (itemIndex: Int, mainAxisSize: Int) -> Unit
+) {
+    repeat(visibleItemCount) { action(getVisibleItemIndex(it), getVisibleItemSize(it)) }
 }
 
 private const val InvalidItemSize = -1
