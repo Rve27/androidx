@@ -420,7 +420,6 @@ dependencies {
     docs(project(":xr:runtime:runtime-testing"))
     docs(project(":xr:scenecore:scenecore"))
     docs(project(":xr:scenecore:scenecore-testing"))
-    docs(project(":xr:xr-stubs"))
 }
 afterEvaluate {
   tasks["docs"].doFirst {
