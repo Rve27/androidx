@@ -16,6 +16,7 @@
 
 package androidx.compose.foundation.lazy.layout
 
+import androidx.annotation.FloatRange
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Density
@@ -32,16 +33,20 @@ import kotlin.math.roundToInt
 interface LazyLayoutCacheWindow {
 
     /**
-     * Calculates the prefetch window area for prefetching on the scroll direction, "ahead window".
-     * The prefetch window strategy will prepare items in the ahead area in advance so they're ready
-     * to be used when they become visible.
+     * Calculates the prefetch window area in pixels for prefetching on the scroll direction, "ahead
+     * window". The prefetch window strategy will prepare items in the ahead area in advance s they
+     * are ready to be used when they become visible.
+     *
+     * @param viewport The size of the viewport in this Lazy Layout in pixels.
      */
     fun Density.calculateAheadWindow(viewport: Int): Int = 0
 
     /**
-     * Calculates the window area for keeping items in the scroll counter direction, "behind
-     * window". Items in the behind window will not be disposed and can be accessed more quickly if
-     * they become visible again.
+     * Calculates the window area in pixels for keeping items in the scroll counter direction,
+     * "behind window". Items in the behind window will not be disposed and can be accessed more
+     * quickly if they become visible again.
+     *
+     * @param viewport The size of the viewport in this Lazy Layout in pixels.
      */
     fun Density.calculateBehindWindow(viewport: Int): Int = 0
 }
@@ -86,8 +91,8 @@ private class DpLazyLayoutCacheWindow(val ahead: Dp, val behind: Dp) : LazyLayou
  */
 @ExperimentalFoundationApi
 fun LazyLayoutCacheWindow(
-    aheadFraction: Float = 0.0f,
-    behindFraction: Float = 0.0f
+    @FloatRange(from = 0.0) aheadFraction: Float = 0.0f,
+    @FloatRange(from = 0.0) behindFraction: Float = 0.0f
 ): LazyLayoutCacheWindow = FractionLazyLayoutCacheWindow(aheadFraction, behindFraction)
 
 @OptIn(ExperimentalFoundationApi::class)
