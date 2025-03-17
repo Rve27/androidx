@@ -1459,11 +1459,12 @@ public class WebViewCompat {
      * {@link WebView#saveState(Bundle)} and the returned state can be restored through
      * {@link WebView#restoreState(Bundle)}.
      *
-     * @param webView the {@link WebView} whose state is to be saved.
-     * @param outState the {@link Bundle} to store the state in.
-     * @param maxSizeBytes the maximum size (in bytes) that the returned state can be. If the
-     *                     WebView contains more state, history entries further back will not be
-     *                     saved.
+     * @param webView             the {@link WebView} whose state is to be saved.
+     * @param outState            the {@link Bundle} to store the state in.
+     * @param maxSizeBytes        the maximum size (in bytes) that the returned state can be. If the
+     *                            WebView contains more state, history entries further back will
+     *                            not be
+     *                            saved.
      * @param includeForwardState whether to include entries that can only be reached through going
      *                            forward in history (such as through {@link WebView#goForward()}.
      *                            Some apps don't give the user a way to go forward, so won't need
@@ -1511,6 +1512,51 @@ public class WebViewCompat {
         ApiFeature.NoFramework feature = WebViewFeatureInternal.CACHE_PROVIDER;
         if (feature.isSupportedByWebView()) {
             sShouldCacheProvider = shouldCacheProvider;
+        } else {
+            throw WebViewFeatureInternal.getUnsupportedOperationException();
+        }
+    }
+
+    /**
+     * Sets the {@link WebNavigationClient} for the given {@link WebView}.
+     *
+     * @param webView The {@link WebView} to set the client for.
+     * @param client  The {@link WebNavigationClient} to set.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#NAVIGATION_CALLBACK_BASIC}
+     *                                       feature is not supported.
+     */
+    @RequiresFeature(name = WebViewFeature.NAVIGATION_CALLBACK_BASIC,
+            enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
+    @UiThread
+    @WebNavigationClient.ExperimentalNavigationCallback
+    public static void setWebNavigationClient(@NonNull WebView webView,
+            @NonNull WebNavigationClient client) {
+        ApiFeature.NoFramework feature = WebViewFeatureInternal.NAVIGATION_CALLBACK_BASIC;
+        if (feature.isSupportedByWebView()) {
+            getProvider(webView).setWebNavigationClient(client);
+        } else {
+            throw WebViewFeatureInternal.getUnsupportedOperationException();
+        }
+    }
+
+    /**
+     * Gets the {@link WebNavigationClient} currently set for the given {@link WebView}.
+     *
+     * @param webView The {@link WebView} to get the client from.
+     * @return The {@link WebNavigationClient} currently set, or {@code null} if none is set.
+     * @throws UnsupportedOperationException if the
+     *                                       {@link WebViewFeature#NAVIGATION_CALLBACK_BASIC}
+     *                                       feature is not supported.
+     */
+    @RequiresFeature(name = WebViewFeature.NAVIGATION_CALLBACK_BASIC,
+            enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
+    @UiThread
+    @WebNavigationClient.ExperimentalNavigationCallback
+    public static @NonNull WebNavigationClient getWebNavigationClient(@NonNull WebView webView) {
+        ApiFeature.NoFramework feature = WebViewFeatureInternal.NAVIGATION_CALLBACK_BASIC;
+        if (feature.isSupportedByWebView()) {
+            return getProvider(webView).getWebNavigationClient();
         } else {
             throw WebViewFeatureInternal.getUnsupportedOperationException();
         }
