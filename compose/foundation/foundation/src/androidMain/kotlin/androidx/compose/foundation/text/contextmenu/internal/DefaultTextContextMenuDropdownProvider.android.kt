@@ -33,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
@@ -41,6 +40,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.isUnspecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
@@ -64,20 +64,34 @@ internal fun ProvideDefaultTextContextMenuDropdown(content: @Composable () -> Un
     )
 }
 
+@Composable
+internal fun ProvideDefaultTextContextMenuDropdown(
+    modifier: Modifier,
+    content: @Composable () -> Unit
+) {
+    ProvideBasicTextContextMenu(
+        modifier = modifier,
+        providableCompositionLocal = LocalTextContextMenuDropdownProvider,
+        contextMenu = { session, dataProvider, anchorLayoutCoordinates ->
+            OpenContextMenu(session, dataProvider, anchorLayoutCoordinates)
+        },
+        content = content
+    )
+}
+
 private val DefaultPopupProperties = PopupProperties(focusable = true)
 
 @Composable
 private fun OpenContextMenu(
     session: TextContextMenuSession,
     dataProvider: TextContextMenuDataProvider,
-    anchorLayoutCoordinates: LayoutCoordinates,
+    anchorLayoutCoordinates: () -> LayoutCoordinates,
 ) {
-    val updatedAnchorLayoutCoordinates by rememberUpdatedState(anchorLayoutCoordinates)
     val popupPositionProvider =
         remember(dataProvider) {
             MaintainWindowPositionPopupPositionProvider(
                 ContextMenuPopupPositionProvider({
-                    dataProvider.position(updatedAnchorLayoutCoordinates).round()
+                    dataProvider.position(anchorLayoutCoordinates()).round()
                 })
             )
         }
@@ -121,8 +135,17 @@ private fun DefaultTextContextMenuDropdown(
 // Lift of relevant M3 Icon parts.
 @Composable
 private fun IconBox(@DrawableRes resId: Int, tint: Color) {
+    val context = LocalContext.current
+    val drawableResourceId =
+        remember(context, resId) {
+            context
+                .obtainStyledAttributes(intArrayOf(resId))
+                .getResourceId(/* index= */ 0, /* defValue= */ -1)
+        }
+    if (drawableResourceId == -1) return
+
+    val painter = painterResource(drawableResourceId)
     val colorFilter = remember(tint) { if (tint.isUnspecified) null else ColorFilter.tint(tint) }
-    val painter = painterResource(resId)
     Box(
         Modifier.size(ContextMenuSpec.IconSize)
             .paint(painter, colorFilter = colorFilter, contentScale = ContentScale.Fit)

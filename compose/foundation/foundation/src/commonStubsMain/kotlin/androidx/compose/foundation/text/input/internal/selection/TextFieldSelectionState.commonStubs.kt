@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.compose.foundation.text.selection
+package androidx.compose.foundation.text.input.internal.selection
 
 import androidx.compose.foundation.implementedInJetBrainsFork
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.PointerEvent
 import kotlinx.coroutines.CoroutineScope
 
-internal actual val PointerEvent.isShiftPressed: Boolean
-    get() = implementedInJetBrainsFork()
-
-internal actual fun Modifier.textFieldMagnifier(manager: TextFieldSelectionManager): Modifier =
-    implementedInJetBrainsFork()
-
 internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
-    manager: TextFieldSelectionManager,
+    state: TextFieldSelectionState,
     coroutineScope: CoroutineScope,
 ): Modifier = implementedInJetBrainsFork()

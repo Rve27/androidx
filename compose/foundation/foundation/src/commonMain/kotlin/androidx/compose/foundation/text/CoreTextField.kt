@@ -18,6 +18,8 @@
 
 package androidx.compose.foundation.text
 
+import androidx.compose.foundation.ComposeFoundationFlags
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.Interaction
@@ -38,6 +40,7 @@ import androidx.compose.foundation.text.selection.SelectionHandleInfoKey
 import androidx.compose.foundation.text.selection.SimpleLayout
 import androidx.compose.foundation.text.selection.TextFieldSelectionHandle
 import androidx.compose.foundation.text.selection.TextFieldSelectionManager
+import androidx.compose.foundation.text.selection.addBasicTextFieldTextContextMenuComponents
 import androidx.compose.foundation.text.selection.isSelectionHandleInVisibleBound
 import androidx.compose.foundation.text.selection.selectionGestureInput
 import androidx.compose.foundation.text.selection.textFieldMagnifier
@@ -114,6 +117,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastRoundToInt
 import kotlin.math.max
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -543,6 +547,7 @@ internal fun CoreTextField(
             .then(pointerModifier)
             .then(semanticsModifier)
             .onGloballyPositioned @DontMemoize { state.layoutResult?.decorationBoxCoordinates = it }
+            .addContextMenuComponents(manager, coroutineScope)
 
     val showHandleAndMagnifier =
         enabled && state.hasFocus && state.isInTouchMode && windowInfo.isWindowFocused
@@ -1130,3 +1135,12 @@ private fun notifyFocusedRect(
         )
     }
 }
+
+@OptIn(ExperimentalFoundationApi::class)
+private fun Modifier.addContextMenuComponents(
+    textFieldSelectionManager: TextFieldSelectionManager,
+    coroutineScope: CoroutineScope
+): Modifier =
+    if (ComposeFoundationFlags.isNewContextMenuEnabled)
+        addBasicTextFieldTextContextMenuComponents(textFieldSelectionManager, coroutineScope)
+    else this

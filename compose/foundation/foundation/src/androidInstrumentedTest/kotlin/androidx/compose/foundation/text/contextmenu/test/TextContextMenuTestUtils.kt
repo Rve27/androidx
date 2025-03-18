@@ -17,12 +17,10 @@
 package androidx.compose.foundation.text.contextmenu.test
 
 import androidx.compose.foundation.internal.checkPreconditionNotNull
-import androidx.compose.foundation.text.contextmenu.data.TextContextMenuComponent
 import androidx.compose.foundation.text.contextmenu.data.TextContextMenuData
 import androidx.compose.foundation.text.contextmenu.modifier.collectTextContextMenuData
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.node.ModifierNodeElement
-import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth.assertThat
 
 /**
@@ -74,11 +72,5 @@ internal class TestTextContextMenuDataReaderNode(
 }
 
 internal fun TextContextMenuData.assertItems(expectedKeys: List<Any>) {
-    assertThat(expectedKeys).comparingElementsUsing(keyCorrespondence)
+    assertThat(components.map { it.key }).containsExactly(*expectedKeys.toTypedArray()).inOrder()
 }
-
-private val keyCorrespondence =
-    Correspondence.from<TextContextMenuComponent, Any>(
-        /* predicate = */ { actual, expected -> actual?.key == expected },
-        /* description = */ "equals"
-    )
