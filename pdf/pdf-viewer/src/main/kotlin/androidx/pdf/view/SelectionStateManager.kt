@@ -18,6 +18,7 @@ package androidx.pdf.view
 
 import android.graphics.PointF
 import android.graphics.RectF
+import android.os.DeadObjectException
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import androidx.annotation.VisibleForTesting
@@ -237,18 +238,23 @@ internal class SelectionStateManager(
                     // TODO(b/386398335) Adapt this logic to support selections that span multiple
                     // pages
 
-                    val newSelection = getNewSelection()
-                    if (newSelection != null && newSelection.hasBounds) {
-                        _selectionModel.update {
-                            SelectionModel.fromSinglePageSelection(newSelection)
+                    try {
+                        val newSelection = getNewSelection()
+                        if (newSelection != null && newSelection.hasBounds) {
+                            _selectionModel.update {
+                                SelectionModel.fromSinglePageSelection(newSelection)
+                            }
+                            _selectionUiSignalBus.tryEmit(SelectionUiSignal.Invalidate)
+                            // Show the action mode if the user is not actively dragging the handles
+                            if (draggingState == null) {
+                                _selectionUiSignalBus.emit(
+                                    SelectionUiSignal.ToggleActionMode(show = true)
+                                )
+                            }
                         }
-                        _selectionUiSignalBus.tryEmit(SelectionUiSignal.Invalidate)
-                        // Show the action mode if the user is not actively dragging the handles
-                        if (draggingState == null) {
-                            _selectionUiSignalBus.emit(
-                                SelectionUiSignal.ToggleActionMode(show = true)
-                            )
-                        }
+                    } catch (e: DeadObjectException) {
+                        // Ignoring a dead object exception because the service died.
+                        // User can retry the operation.
                     }
                 }
                 .also { it.invokeOnCompletion { setSelectionJob = null } }
