@@ -142,15 +142,14 @@ fun Button(
     val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
     val containerColor = colors.containerColor(enabled)
     val contentColor = colors.contentColor(enabled)
-    val shadowElevation = elevation?.shadowElevation(enabled, interactionSource)?.value ?: 0.dp
     Surface(
         onClick = onClick,
+        elevation = elevation,
         modifier = modifier.semantics { role = Role.Button },
         enabled = enabled,
         shape = shape,
         color = containerColor,
         contentColor = contentColor,
-        shadowElevation = shadowElevation,
         border = border,
         interactionSource = interactionSource
     ) {
@@ -245,7 +244,6 @@ fun Button(
     val pressed by interactionSource.collectIsPressedAsState()
     val containerColor = colors.containerColor(enabled)
     val contentColor = colors.contentColor(enabled)
-    val shadowElevation = elevation?.shadowElevation(enabled, interactionSource)?.value ?: 0.dp
     val buttonShape = shapeByInteraction(shapes, pressed, defaultAnimationSpec)
 
     Surface(
@@ -255,7 +253,7 @@ fun Button(
         shape = buttonShape,
         color = containerColor,
         contentColor = contentColor,
-        shadowElevation = shadowElevation,
+        elevation = elevation,
         border = border,
         interactionSource = interactionSource
     ) {

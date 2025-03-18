@@ -1957,7 +1957,7 @@ private fun Chip(
         enabled = enabled,
         shape = shape,
         color = colors.containerColor(enabled),
-        shadowElevation = elevation?.shadowElevation(enabled, interactionSource)?.value ?: 0.dp,
+        elevation = elevation,
         border = border,
         interactionSource = interactionSource
     ) {
@@ -1995,8 +1995,6 @@ private fun SelectableChip(
     paddingValues: PaddingValues,
     interactionSource: MutableInteractionSource?
 ) {
-    @Suppress("NAME_SHADOWING")
-    val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
     // TODO(b/229794614): Animate transition between unselected and selected.
     Surface(
         selected = selected,
@@ -2005,7 +2003,7 @@ private fun SelectableChip(
         enabled = enabled,
         shape = shape,
         color = colors.containerColor(enabled, selected),
-        shadowElevation = elevation?.shadowElevation(enabled, interactionSource)?.value ?: 0.dp,
+        elevation = elevation,
         border = border,
         interactionSource = interactionSource
     ) {

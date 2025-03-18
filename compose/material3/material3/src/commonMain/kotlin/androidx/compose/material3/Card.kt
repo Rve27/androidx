@@ -142,9 +142,9 @@ fun Card(
         shape = shape,
         color = colors.containerColor(enabled),
         contentColor = colors.contentColor(enabled),
-        shadowElevation = elevation.shadowElevation(enabled, interactionSource).value,
         border = border,
         interactionSource = interactionSource,
+        elevation = elevation
     ) {
         Column(content = content)
     }

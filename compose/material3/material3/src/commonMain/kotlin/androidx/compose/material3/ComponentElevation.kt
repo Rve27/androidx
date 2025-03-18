@@ -31,6 +31,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 /**
@@ -95,6 +96,16 @@ sealed interface ComponentElevation {
         }
     }
 }
+
+internal val ComponentElevation.hasShadows: Boolean
+    get() {
+        return elevation != 0.dp ||
+            pressedElevation != 0.dp ||
+            focusedElevation != 0.dp ||
+            hoveredElevation != 0.dp ||
+            disabledElevation != 0.dp ||
+            draggedElevation != 0.dp
+    }
 
 /**
  * Represents the shadow elevation used in a component, depending on its [enabled] state and

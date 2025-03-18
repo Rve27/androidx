@@ -165,7 +165,7 @@ private fun FloatingActionButton(
         color = containerColor,
         contentColor = contentColor,
         tonalElevation = elevation.tonalElevation(),
-        shadowElevation = elevation.shadowElevation(interactionSource = interactionSource).value,
+        elevation = elevation,
         interactionSource = interactionSource
     ) {
         ProvideContentColorTextStyle(contentColor = contentColor, textStyle = textStyle) {
