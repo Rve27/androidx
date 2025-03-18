@@ -16,7 +16,6 @@
 
 package androidx.appfunctions.compiler.core
 
-import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
@@ -28,40 +27,39 @@ import com.google.devtools.ksp.symbol.KSType
  */
 data class AnnotatedAppFunctionSerializableProxy(
     private val appFunctionSerializableProxyClass: KSClassDeclaration
-) {
+) : AnnotatedAppFunctionSerializable(appFunctionSerializableProxyClass) {
 
-    /**
-     * The validator that can be used to validate the class annotated with AppFunctionSerializable.
-     */
-    private val serializableValidator: SerializableValidator by lazy {
-        SerializableValidator(classToValidate = appFunctionSerializableProxyClass)
-    }
-
-    fun validate(): AnnotatedAppFunctionSerializableProxy {
-        serializableValidator.validate()
-        val appFunctionSerializableProxyAnnotation =
-            appFunctionSerializableProxyClass.annotations.findAnnotation(
+    /** The type of the class that the proxy class is proxying. */
+    val targetClassDeclaration: KSClassDeclaration by lazy {
+        (appFunctionSerializableProxyClass.annotations.findAnnotation(
                 IntrospectionHelper.AppFunctionSerializableProxyAnnotation.CLASS_NAME
             )
                 ?: throw ProcessingException(
                     "Class Must have @AppFunctionSerializableProxy annotation",
                     appFunctionSerializableProxyClass
-                )
-        validateProxyHasToTargetClassMethod(appFunctionSerializableProxyAnnotation)
-        validateProxyHasFromTargetClassMethod(appFunctionSerializableProxyAnnotation)
+                ))
+            .requirePropertyValueOfType(
+                IntrospectionHelper.AppFunctionSerializableProxyAnnotation.PROPERTY_TARGET_CLASS,
+                KSType::class
+            )
+            .declaration as KSClassDeclaration
+    }
+
+    /**
+     * Validates the class annotated with @AppFunctionSerializableProxy.
+     *
+     * @return The validated class.
+     */
+    override fun validate(): AnnotatedAppFunctionSerializableProxy {
+        super.validate()
+        validateProxyHasToTargetClassMethod()
+        validateProxyHasFromTargetClassMethod()
         return this
     }
 
     /** Validates that the proxy class has a method that returns an instance of the target class. */
-    private fun validateProxyHasToTargetClassMethod(
-        appFunctionSerializableProxyAnnotation: KSAnnotation
-    ) {
-        val targetClass =
-            appFunctionSerializableProxyAnnotation.requirePropertyValueOfType(
-                IntrospectionHelper.AppFunctionSerializableProxyAnnotation.PROPERTY_TARGET_CLASS,
-                KSType::class
-            )
-        val targetClassName = checkNotNull(targetClass.declaration.simpleName).asString()
+    private fun validateProxyHasToTargetClassMethod() {
+        val targetClassName = checkNotNull(targetClassDeclaration.simpleName).asString()
         val toTargetClassNameFunctionName = "to$targetClassName"
         val toTargetClassNameFunctionList: List<KSFunctionDeclaration> =
             appFunctionSerializableProxyClass
@@ -82,7 +80,7 @@ data class AnnotatedAppFunctionSerializableProxy(
                         .declaration
                         .qualifiedName
                 )
-                .asString() != checkNotNull(targetClass.declaration.qualifiedName).asString()
+                .asString() != checkNotNull(targetClassDeclaration.qualifiedName).asString()
         ) {
             throw ProcessingException(
                 "Function $toTargetClassNameFunctionName should return an instance of target class",
@@ -92,15 +90,8 @@ data class AnnotatedAppFunctionSerializableProxy(
     }
 
     /** Validates that the proxy class has a method that returns an instance of the target class. */
-    private fun validateProxyHasFromTargetClassMethod(
-        appFunctionSerializableProxyAnnotation: KSAnnotation
-    ) {
-        val targetClass =
-            appFunctionSerializableProxyAnnotation.requirePropertyValueOfType(
-                IntrospectionHelper.AppFunctionSerializableProxyAnnotation.PROPERTY_TARGET_CLASS,
-                KSType::class
-            )
-        val targetClassName = checkNotNull(targetClass.declaration.simpleName).asString()
+    private fun validateProxyHasFromTargetClassMethod() {
+        val targetClassName = checkNotNull(targetClassDeclaration.simpleName).asString()
         val fromTargetClassNameFunctionName = "from$targetClassName"
         val targetCompanionClass =
             appFunctionSerializableProxyClass.declarations
@@ -124,7 +115,7 @@ data class AnnotatedAppFunctionSerializableProxy(
         if (
             fromTargetClassNameFunction.parameters.size != 1 ||
                 fromTargetClassNameFunction.parameters.first().type.toTypeName().toString() !=
-                    checkNotNull(targetClass.declaration.qualifiedName).asString()
+                    checkNotNull(targetClassDeclaration.qualifiedName).asString()
         ) {
             throw ProcessingException(
                 "Function $fromTargetClassNameFunctionName should have one parameter of type " +

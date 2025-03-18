@@ -210,6 +210,11 @@ class AppFunctionSerializableProcessorTest {
             compilationTestHelper.compileAll(
                 sourceFileNames = listOf("AppFunctionLocalDateTime.KT")
             )
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName = "\$LocalDateTimeFactory.kt",
+            goldenFileName = "\$LocalDateTimeFactory.KT"
+        )
     }
 
     @Test

@@ -20,12 +20,14 @@ import androidx.annotation.VisibleForTesting
 import androidx.appfunctions.AppFunctionData
 import androidx.appfunctions.compiler.AppFunctionCompiler
 import androidx.appfunctions.compiler.core.AnnotatedAppFunctionSerializable
+import androidx.appfunctions.compiler.core.AnnotatedAppFunctionSerializableProxy
 import androidx.appfunctions.compiler.core.AppFunctionSymbolResolver
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod.APP_FUNCTION_DATA_PARAM_NAME
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.APP_FUNCTION_SERIALIZABLE_PARAM_NAME
 import androidx.appfunctions.compiler.core.ProcessingException
 import androidx.appfunctions.compiler.core.logException
+import androidx.appfunctions.compiler.core.toClassName
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
@@ -41,11 +43,13 @@ import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asTypeName
+import com.squareup.kotlinpoet.buildCodeBlock
 
 /**
  * Generates a factory class with methods to convert classes annotated with
- * [androidx.appfunctions.AppFunctionSerializable] to [androidx.appfunctions.AppFunctionData], and
- * vice-versa.
+ * [androidx.appfunctions.AppFunctionSerializable] or
+ * [androidx.appfunctions.AppFunctionSerializableProxy] to [androidx.appfunctions.AppFunctionData],
+ * and vice-versa.
  *
  * **Example:**
  *
@@ -89,11 +93,13 @@ class AppFunctionSerializableProcessor(
         try {
             val entitySymbolResolver = AppFunctionSymbolResolver(resolver)
             val entityClasses = entitySymbolResolver.resolveAnnotatedAppFunctionSerializables()
-            // Todo: Actually use proxy classes in codeGen
             val entityProxyClasses =
                 entitySymbolResolver.resolveAnnotatedAppFunctionSerializableProxies()
             for (entity in entityClasses) {
                 buildAppFunctionSerializableFactoryClass(entity)
+            }
+            for (entityProxy in entityProxyClasses) {
+                buildAppFunctionSerializableProxyFactoryClass(entityProxy)
             }
         } catch (e: ProcessingException) {
             logger.logException(e)
@@ -142,6 +148,46 @@ class AppFunctionSerializableProcessor(
             .use { fileSpec.writeTo(it) }
     }
 
+    private fun buildAppFunctionSerializableProxyFactoryClass(
+        annotatedProxyClass: AnnotatedAppFunctionSerializableProxy
+    ) {
+        val proxySuperInterfaceClass =
+            AppFunctionSerializableFactoryClass.CLASS_NAME.parameterizedBy(
+                annotatedProxyClass.targetClassDeclaration.toClassName()
+            )
+        val generatedSerializableProxyFactoryClassName =
+            "\$${checkNotNull(
+                annotatedProxyClass.targetClassDeclaration.simpleName).asString()}Factory"
+        val serializableProxyClassBuilder =
+            TypeSpec.classBuilder(generatedSerializableProxyFactoryClassName)
+        serializableProxyClassBuilder.addAnnotation(AppFunctionCompiler.GENERATED_ANNOTATION)
+        serializableProxyClassBuilder.addSuperinterface(proxySuperInterfaceClass)
+        serializableProxyClassBuilder.addFunction(
+            buildProxyFromAppFunctionDataFunction(annotatedProxyClass)
+        )
+        serializableProxyClassBuilder.addFunction(
+            buildProxyToAppFunctionDataFunction(annotatedProxyClass)
+        )
+        val fileSpec =
+            FileSpec.builder(
+                    annotatedProxyClass.originalClassName.packageName,
+                    generatedSerializableProxyFactoryClassName
+                )
+                .addType(serializableProxyClassBuilder.build())
+                .build()
+        codeGenerator
+            .createNewFile(
+                Dependencies(
+                    aggregating = true,
+                    *annotatedProxyClass.getSerializableSourceFiles().toTypedArray()
+                ),
+                annotatedProxyClass.originalClassName.packageName,
+                generatedSerializableProxyFactoryClassName
+            )
+            .bufferedWriter()
+            .use { fileSpec.writeTo(it) }
+    }
+
     private fun buildFromAppFunctionDataFunction(
         annotatedClass: AnnotatedAppFunctionSerializable,
         factoryCodeBuilder: AppFunctionSerializableFactoryCodeBuilder,
@@ -155,6 +201,32 @@ class AppFunctionSerializableProcessor(
             )
             .addCode(factoryCodeBuilder.appendFromAppFunctionDataMethodBody())
             .returns(annotatedClass.originalClassName)
+            .build()
+    }
+
+    // Todo(b/403199251): Remove temp method
+    private fun buildProxyFromAppFunctionDataFunction(
+        annotatedProxyClass: AnnotatedAppFunctionSerializableProxy,
+    ): FunSpec {
+        return FunSpec.builder(
+                AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod.METHOD_NAME
+            )
+            .addModifiers(KModifier.OVERRIDE)
+            .addParameter(
+                ParameterSpec.builder(APP_FUNCTION_DATA_PARAM_NAME, AppFunctionData::class).build()
+            )
+            .addCode(
+                buildCodeBlock {
+                    addStatement(
+                        """
+                        return %T.now()
+                        """
+                            .trimIndent(),
+                        annotatedProxyClass.targetClassDeclaration.toClassName()
+                    )
+                }
+            )
+            .returns(annotatedProxyClass.targetClassDeclaration.toClassName())
             .build()
     }
 
@@ -174,6 +246,36 @@ class AppFunctionSerializableProcessor(
                     .build()
             )
             .addCode(factoryCodeBuilder.appendToAppFunctionDataMethodBody())
+            .returns(AppFunctionData::class.asTypeName())
+            .build()
+    }
+
+    // Todo(b/403199251): Remove temp method
+    private fun buildProxyToAppFunctionDataFunction(
+        annotatedProxyClass: AnnotatedAppFunctionSerializableProxy
+    ): FunSpec {
+        return FunSpec.builder(
+                AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.METHOD_NAME
+            )
+            .addModifiers(KModifier.OVERRIDE)
+            .addParameter(
+                ParameterSpec.builder(
+                        APP_FUNCTION_SERIALIZABLE_PARAM_NAME,
+                        annotatedProxyClass.targetClassDeclaration.toClassName()
+                    )
+                    .build()
+            )
+            .addCode(
+                buildCodeBlock {
+                    addStatement(
+                        """
+                        return %T.Builder("").build()
+                        """
+                            .trimIndent(),
+                        AppFunctionData::class.asTypeName()
+                    )
+                }
+            )
             .returns(AppFunctionData::class.asTypeName())
             .build()
     }
