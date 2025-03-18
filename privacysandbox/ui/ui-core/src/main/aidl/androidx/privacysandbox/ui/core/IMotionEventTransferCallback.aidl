@@ -16,16 +16,9 @@
 
 package androidx.privacysandbox.ui.core;
 
-import androidx.privacysandbox.ui.core.IMotionEventTransferCallback;
+import android.view.MotionEvent;
 
 @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
-oneway interface IRemoteSessionController {
-    void close();
-    void notifyConfigurationChanged(in Configuration configuration);
-    void notifyResized(int width, int height);
-    void notifyZOrderChanged(boolean isZOrderOnTop);
-    void notifyFetchUiForSession();
-    void notifyUiChanged(in Bundle uiContainerInfo);
-    void notifySessionRendered(in List<String> supportedSignalOptions);
-    void notifyMotionEvent(in MotionEvent motionEvent, in long eventTargetFrameTime, in @nullable IMotionEventTransferCallback eventTransferCallback);
+interface IMotionEventTransferCallback {
+    oneway void requestDisallowIntercept(boolean disallowIntercept);
 }

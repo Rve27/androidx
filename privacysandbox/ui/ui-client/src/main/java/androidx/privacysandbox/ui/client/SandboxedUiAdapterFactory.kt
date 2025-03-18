@@ -25,7 +25,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Display
 import android.view.SurfaceControlViewHost
-import android.view.SurfaceView
 import android.view.View
 import android.window.SurfaceSyncGroup
 import androidx.annotation.RequiresApi
@@ -321,7 +320,7 @@ object SandboxedUiAdapterFactory {
             val clientExecutor: Executor
         ) : IRemoteSessionClient.Stub() {
 
-            lateinit var surfaceView: SurfaceView
+            lateinit var contentView: ContentView
 
             override fun onRemoteSessionOpened(
                 surfacePackage: SurfaceControlViewHost.SurfacePackage,
@@ -329,10 +328,10 @@ object SandboxedUiAdapterFactory {
                 isZOrderOnTop: Boolean,
                 signalOptions: List<String>
             ) {
-                surfaceView = SurfaceView(context)
-                surfaceView.setChildSurfacePackage(surfacePackage)
-                surfaceView.setZOrderOnTop(isZOrderOnTop)
-                surfaceView.addOnAttachStateChangeListener(
+                contentView = ContentView(context, remoteSessionController)
+                contentView.setChildSurfacePackage(surfacePackage)
+                contentView.setZOrderOnTop(isZOrderOnTop)
+                contentView.addOnAttachStateChangeListener(
                     object : View.OnAttachStateChangeListener {
 
                         private var hasViewBeenPreviouslyAttached = false
@@ -354,7 +353,7 @@ object SandboxedUiAdapterFactory {
                 clientExecutor.execute {
                     client.onSessionOpened(
                         SessionImpl(
-                            surfaceView,
+                            contentView,
                             remoteSessionController,
                             surfacePackage,
                             signalOptions.toSet()
@@ -375,18 +374,18 @@ object SandboxedUiAdapterFactory {
             }
 
             override fun onSessionUiFetched(surfacePackage: SurfaceControlViewHost.SurfacePackage) {
-                surfaceView.setChildSurfacePackage(surfacePackage)
+                contentView.setChildSurfacePackage(surfacePackage)
             }
         }
 
         private class SessionImpl(
-            val surfaceView: SurfaceView,
+            val contentView: ContentView,
             val remoteSessionController: IRemoteSessionController,
             val surfacePackage: SurfaceControlViewHost.SurfacePackage,
             override val signalOptions: Set<String>
         ) : SandboxedUiAdapter.Session {
 
-            override val view: View = surfaceView
+            override val view: View = contentView
 
             override fun notifyConfigurationChanged(configuration: Configuration) {
                 tryToCallRemoteObject(remoteSessionController) {
@@ -396,10 +395,10 @@ object SandboxedUiAdapterFactory {
 
             override fun notifyResized(width: Int, height: Int) {
 
-                val parentView = surfaceView.parent as View
+                val parentView = contentView.parent as View
 
                 val clientResizeRunnable = Runnable {
-                    surfaceView.layout(
+                    contentView.layout(
                         /* left = */ parentView.paddingLeft,
                         /* top = */ parentView.paddingTop,
                         /* right = */ parentView.paddingLeft + width,
@@ -415,13 +414,13 @@ object SandboxedUiAdapterFactory {
 
                 val syncGroup = SurfaceSyncGroup("AppAndSdkViewsSurfaceSync")
 
-                syncGroup.add(surfaceView.rootSurfaceControl, clientResizeRunnable)
+                syncGroup.add(contentView.rootSurfaceControl, clientResizeRunnable)
                 syncGroup.add(surfacePackage, providerResizeRunnable)
                 syncGroup.markSyncReady()
             }
 
             override fun notifyZOrderChanged(isZOrderOnTop: Boolean) {
-                surfaceView.setZOrderOnTop(isZOrderOnTop)
+                contentView.setZOrderOnTop(isZOrderOnTop)
                 tryToCallRemoteObject(remoteSessionController) {
                     this.notifyZOrderChanged(isZOrderOnTop)
                 }
