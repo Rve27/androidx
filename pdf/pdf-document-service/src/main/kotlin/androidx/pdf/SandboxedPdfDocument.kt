@@ -22,6 +22,7 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
+import android.os.DeadObjectException
 import android.os.ParcelFileDescriptor
 import android.util.Size
 import android.util.SparseArray
@@ -36,11 +37,13 @@ import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.service.connect.PdfServiceConnection
 import androidx.pdf.utils.toAndroidClass
 import androidx.pdf.utils.toContentClass
+import java.util.concurrent.TimeoutException
 import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -220,6 +223,26 @@ public class SandboxedPdfDocument(
     }
 
     private suspend fun <T> withDocument(block: (PdfDocumentRemote) -> T): T {
+        var trial = 1
+        while (true) {
+            try {
+                return withDocumentWithoutRetry(block)
+            } catch (e: Exception) {
+                // We retry a max of 3 times if it is one of retry-able exceptions.
+                if (
+                    trial > MAX_RETRIES || ((e !is DeadObjectException) && (e !is TimeoutException))
+                ) {
+                    throw e
+                }
+                trial++
+                // We sleep for some duration to give the service some time to recover.
+                // The loop then retries it.
+                delay(MIN_RETRY_DURATION * trial)
+            }
+        }
+    }
+
+    private suspend fun <T> withDocumentWithoutRetry(block: (PdfDocumentRemote) -> T): T {
         // Create a new job in parent's context. Since with document can be called from any scope,
         // we need a handle to check coroutines actively working with document. Linking to parent's
         // job helps in cancellation.
@@ -257,6 +280,10 @@ public class SandboxedPdfDocument(
 
     private companion object {
         private const val DEFAULT_PAGE = 400
+        // Max number of retries to make on exceptions like DeadObjectExceptions on service.
+        private const val MAX_RETRIES = 3
+        // Min retry duration in milliseconds to start with.
+        private const val MIN_RETRY_DURATION = 400L
 
         /**
          * Converts a list of items into a SparseArray, using the item's index as the key.

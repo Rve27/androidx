@@ -25,6 +25,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.RectF
+import android.os.DeadObjectException
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
@@ -141,9 +142,15 @@ internal class Page(
             backgroundScope
                 .launch {
                     ensureActive()
-                    pageText =
-                        pdfDocument.getPageContent(pageNum)?.textContents?.joinToString { it.text }
-                    onPageTextReady.invoke(pageNum)
+                    try {
+                        pageText =
+                            pdfDocument.getPageContent(pageNum)?.textContents?.joinToString {
+                                it.text
+                            }
+                        onPageTextReady.invoke(pageNum)
+                    } catch (e: DeadObjectException) {
+                        // TODO show an error. May also need to handler error for accessibility.
+                    }
                 }
                 .also { it.invokeOnCompletion { fetchPageTextJob = null } }
     }
@@ -174,7 +181,11 @@ internal class Page(
             backgroundScope
                 .launch {
                     ensureActive()
-                    links = pdfDocument.getPageLinks(pageNum)
+                    try {
+                        links = pdfDocument.getPageLinks(pageNum)
+                    } catch (e: DeadObjectException) {
+                        // TODO show an error.
+                    }
                 }
                 .also { it.invokeOnCompletion { fetchLinksJob = null } }
     }

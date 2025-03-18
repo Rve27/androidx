@@ -20,6 +20,7 @@ import android.graphics.Bitmap
 import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Rect
+import android.os.DeadObjectException
 import android.util.Size
 import androidx.annotation.AnyThread
 import androidx.annotation.GuardedBy
@@ -240,9 +241,13 @@ internal class BitmapFetcher(
     private fun fetchFullPageBitmap(size: Size, onReady: (Bitmap) -> Unit): Job {
         return backgroundScope.launch {
             ensureActive()
-            val bitmap = bitmapSource.getBitmap(size)
-            ensureActive()
-            onReady(bitmap)
+            try {
+                val bitmap = bitmapSource.getBitmap(size)
+                ensureActive()
+                onReady(bitmap)
+            } catch (e: DeadObjectException) {
+                // TODO shown an error
+            }
         }
     }
 
@@ -259,13 +264,22 @@ internal class BitmapFetcher(
             backgroundScope.launch {
                 prevJob?.join()
                 ensureActive()
-                val bitmap =
-                    bitmapSource.getBitmap(
-                        Size((pageSize.x * scale).roundToInt(), (pageSize.y * scale).roundToInt()),
-                        tile.rectPx
-                    )
-                ensureActive()
-                tile.bitmap = bitmap
+                try {
+                    val bitmap =
+                        bitmapSource.getBitmap(
+                            Size(
+                                (pageSize.x * scale).roundToInt(),
+                                (pageSize.y * scale).roundToInt()
+                            ),
+                            tile.rectPx
+                        )
+                    ensureActive()
+                    tile.bitmap = bitmap
+                } catch (e: DeadObjectException) {
+                    // Service was disconnected.
+                    // TODO show an error message
+                    return@launch
+                }
                 onPageUpdate()
             }
         return job
