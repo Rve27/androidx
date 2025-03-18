@@ -69,6 +69,19 @@ public final class TrustedWebActivityIntent {
     }
 
     /**
+     * Used for Launch Handler API to provide client mode to a browser.
+     *
+     * {@see https://developer.mozilla.org/en-US/docs/Web/API/Launch_Handler_API}
+     *
+     * @return An integer that represents Launch Handler API client mode.
+     */
+    public @LaunchHandlerClientMode.ClientMode int getLaunchHandlerClientMode() {
+        return getIntent().getIntExtra(
+                TrustedWebActivityIntentBuilder.EXTRA_LAUNCH_HANDLER_CLIENT_MODE,
+                LaunchHandlerClientMode.AUTO);
+    }
+
+    /**
      * Launches a Trusted Web Activity.
      */
     public void launchTrustedWebActivity(@NonNull Context context) {
