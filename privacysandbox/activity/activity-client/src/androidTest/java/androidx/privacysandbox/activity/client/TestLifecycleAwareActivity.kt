@@ -18,4 +18,4 @@ package androidx.privacysandbox.activity.client
 
 import androidx.appcompat.app.AppCompatActivity
 
-class TestActivity : AppCompatActivity()
+class TestLifecycleAwareActivity : AppCompatActivity()
