@@ -616,6 +616,9 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     @Suppress("UnnecessaryOptInAnnotation")
     @OptIn(InternalCoreApi::class)
     override var showLayoutBounds = false
+        get() {
+            return if (SDK_INT >= 30) Api30Impl.isShowingLayoutBounds(this) else field
+        }
 
     private var _androidViewsHandler: AndroidViewsHandler? = null
     internal val androidViewsHandler: AndroidViewsHandler
@@ -974,7 +977,9 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     override fun onResume(owner: LifecycleOwner) {
         // Refresh in onResume in case the value has changed.
-        showLayoutBounds = getIsShowingLayoutBounds()
+        if (SDK_INT < 30) {
+            showLayoutBounds = getIsShowingLayoutBounds()
+        }
     }
 
     override fun focusSearch(focused: View?, direction: Int): View? {
@@ -1140,7 +1145,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         keyboardModifiersRequireUpdate = true
         super.onWindowFocusChanged(hasWindowFocus)
 
-        if (hasWindowFocus) {
+        if (hasWindowFocus && SDK_INT < 30) {
             // Refresh in onResume in case the value has changed from the quick settings tile, in
             // which case the activity won't be paused/resumed (b/225937688).
             getIsShowingLayoutBounds().also { newShowLayoutBounds ->
@@ -1985,6 +1990,10 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        if (SDK_INT < 30) {
+            showLayoutBounds = getIsShowingLayoutBounds()
+        }
+        addNotificationForSysPropsChange(this)
         _windowInfo.isWindowFocused = hasWindowFocus()
         _windowInfo.setOnInitializeContainerSize { calculateWindowSize(this) }
         updateWindowMetrics()
@@ -2055,6 +2064,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        removeNotificationForSysPropsChange(this)
         snapshotObserver.stopObserving()
         _windowInfo.setOnInitializeContainerSize(null)
         val lifecycle =
@@ -2818,13 +2828,17 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     companion object {
         private var systemPropertiesClass: Class<*>? = null
         private var getBooleanMethod: Method? = null
+        private var addChangeCallbackMethod: Method? = null
+        private val composeViews = mutableObjectListOf<AndroidComposeView>()
+        private var systemPropertiesChangedRunnable: Runnable? = null
 
-        // TODO(mount): replace with ViewCompat.isShowingLayoutBounds() when it becomes available.
         @Suppress("BanUncheckedReflection")
         private fun getIsShowingLayoutBounds(): Boolean =
             try {
                 if (systemPropertiesClass == null) {
                     systemPropertiesClass = Class.forName("android.os.SystemProperties")
+                }
+                if (getBooleanMethod == null) {
                     getBooleanMethod =
                         systemPropertiesClass?.getDeclaredMethod(
                             "getBoolean",
@@ -2832,10 +2846,54 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                             Boolean::class.java
                         )
                 }
-                getBooleanMethod?.invoke(null, "debug.layout", false) as? Boolean ?: false
-            } catch (e: Exception) {
+                getBooleanMethod?.invoke(null, "debug.layout", false) as? Boolean == true
+            } catch (_: Exception) {
                 false
             }
+
+        @Suppress("BanUncheckedReflection")
+        private fun addNotificationForSysPropsChange(composeView: AndroidComposeView) {
+            if (SDK_INT > 28) {
+                // Removing the callback is prohibited on newer versions, so we should only add one
+                // callback and use it for all AndroidComposeViews
+                if (systemPropertiesChangedRunnable == null) {
+                    try {
+                        if (systemPropertiesClass == null) {
+                            systemPropertiesClass = Class.forName("android.os.SystemProperties")
+                        }
+                        if (addChangeCallbackMethod == null) {
+                            addChangeCallbackMethod =
+                                systemPropertiesClass?.getDeclaredMethod(
+                                    "addChangeCallback",
+                                    Runnable::class.java
+                                )
+                        }
+                        val runnable = Runnable {
+                            synchronized(composeViews) {
+                                if (SDK_INT < 30) {
+                                    composeViews.forEach {
+                                        val oldValue = it.showLayoutBounds
+                                        it.showLayoutBounds = getIsShowingLayoutBounds()
+                                        if (oldValue != it.showLayoutBounds) {
+                                            it.invalidateDescendants()
+                                        }
+                                    }
+                                } else {
+                                    composeViews.forEach { it.invalidateDescendants() }
+                                }
+                            }
+                        }
+                        addChangeCallbackMethod?.invoke(null, runnable)
+                        systemPropertiesChangedRunnable = runnable
+                    } catch (_: Exception) {}
+                }
+                synchronized(composeViews) { composeViews += composeView }
+            }
+        }
+
+        private fun removeNotificationForSysPropsChange(composeView: AndroidComposeView) {
+            synchronized(composeViews) { composeViews -= composeView }
+        }
     }
 
     /** Combines objects populated via ViewTree*Owner */
@@ -3135,4 +3193,10 @@ private class BringIntoViewOnScreenResponderNode(var view: ViewGroup) :
             view.requestRectangleOnScreen(rootRect.toAndroidRect(), false)
         }
     }
+}
+
+/** Split out to avoid class verification errors. This class will only be loaded when SDK >= 30. */
+@RequiresApi(30)
+private object Api30Impl {
+    @DoNotInline fun isShowingLayoutBounds(view: View) = view.isShowingLayoutBounds
 }
