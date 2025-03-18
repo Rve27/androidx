@@ -64,4 +64,8 @@
     <string name="clipboard_label" msgid="8943155331324944981">"No PDF faila kopēts saturs"</string>
     <!-- no translation found for fast_scroller_thumb (6712048991132846541) -->
     <skip />
+    <!-- no translation found for service_disconnect_error_message (7077247973576767455) -->
+    <skip />
+    <!-- no translation found for pdf_view_error_message (1228656072516996088) -->
+    <skip />
 </resources>
