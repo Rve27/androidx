@@ -297,12 +297,12 @@ interface HealthConnectClient {
     suspend fun getChangesToken(request: ChangesTokenRequest): String
 
     /**
-     * Retrieves changes in Android Health Platform, from a specific point in time represented by
-     * provided [changesToken].
+     * Retrieves changes in Health Connect, from a specific point in time represented by provided
+     * [changesToken].
      *
      * The response returned may not provide all the changes due to IPC or memory limits, see
-     * [ChangesResponse.hasMore]. Clients can make more api calls to fetch more changes from the
-     * Android Health Platform with updated [ChangesResponse.nextChangesToken].
+     * [ChangesResponse.hasMore]. Clients can make more api calls to fetch more changes from Health
+     * Connect with updated [ChangesResponse.nextChangesToken].
      *
      * Provided [changesToken] may have expired if clients have not synced for extended period of
      * time (such as a month). In this case [ChangesResponse.changesTokenExpired] will be set, and
