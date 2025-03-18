@@ -40,7 +40,7 @@ class TestSandboxedUiAdapter(private val signalOptions: Set<String> = setOf()) :
     var isSessionOpened = false
     var internalClient: SandboxedUiAdapter.SessionClient? = null
     var testSession: TestSession? = null
-    var isZOrderOnTop = true
+    var isZOrderOnTop = false
     var sessionData: SessionData? = null
 
     // When set to true, the onSessionOpened callback will only be invoked when specified

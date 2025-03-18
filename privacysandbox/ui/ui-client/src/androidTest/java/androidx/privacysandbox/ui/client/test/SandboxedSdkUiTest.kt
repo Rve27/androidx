@@ -73,7 +73,7 @@ class SandboxedSdkUiTest {
     @get:Rule val composeTestRule = createAndroidComposeRule<UiLibComposeActivity>()
     private var testSandboxedUiAdapter by mutableStateOf(TestSandboxedUiAdapter())
     private var eventListener by mutableStateOf(TestEventListener())
-    private var providerUiOnTop by mutableStateOf(true)
+    private var providerUiOnTop by mutableStateOf(false)
     private var signalOptions = setOf(SandboxedUiAdapterSignalOptions.GEOMETRY)
     private var size by mutableStateOf(20.dp)
     private lateinit var uiDevice: UiDevice
@@ -82,7 +82,7 @@ class SandboxedSdkUiTest {
     fun setup() {
         testSandboxedUiAdapter = TestSandboxedUiAdapter(signalOptions)
         eventListener = TestEventListener()
-        providerUiOnTop = true
+        providerUiOnTop = false
         uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     }
 
@@ -155,18 +155,16 @@ class SandboxedSdkUiTest {
         testSandboxedUiAdapter.assertSessionOpened()
         val session = testSandboxedUiAdapter.testSession
         assertThat(session?.zOrderChangedLatch?.await(TIMEOUT, TimeUnit.MILLISECONDS)).isFalse()
-        assertThat(testSandboxedUiAdapter.isZOrderOnTop).isTrue()
-        // When state changes to false, the provider should be notified.
-        providerUiOnTop = false
-        composeTestRule.waitForIdle()
-        assertThat(session?.zOrderChangedLatch?.await(TIMEOUT, TimeUnit.MILLISECONDS)).isTrue()
         assertThat(testSandboxedUiAdapter.isZOrderOnTop).isFalse()
-        // When state changes back to true, the provider should be notified.
-        session?.zOrderChangedLatch = CountDownLatch(1)
         providerUiOnTop = true
         composeTestRule.waitForIdle()
         assertThat(session?.zOrderChangedLatch?.await(TIMEOUT, TimeUnit.MILLISECONDS)).isTrue()
         assertThat(testSandboxedUiAdapter.isZOrderOnTop).isTrue()
+        session?.zOrderChangedLatch = CountDownLatch(1)
+        providerUiOnTop = false
+        composeTestRule.waitForIdle()
+        assertThat(session?.zOrderChangedLatch?.await(TIMEOUT, TimeUnit.MILLISECONDS)).isTrue()
+        assertThat(testSandboxedUiAdapter.isZOrderOnTop).isFalse()
     }
 
     @Test
@@ -185,7 +183,7 @@ class SandboxedSdkUiTest {
         testSandboxedUiAdapter.delayOpenSessionCallback = true
         addNodeToLayout()
         testSandboxedUiAdapter.assertSessionOpened()
-        providerUiOnTop = false
+        providerUiOnTop = true
         composeTestRule.waitForIdle()
         val session = testSandboxedUiAdapter.testSession!!
         assertThat(session.zOrderChangedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS)).isFalse()
@@ -193,7 +191,7 @@ class SandboxedSdkUiTest {
         // After session has opened, the pending Z order changed made while loading is notified
         // to the session.
         assertThat(session.zOrderChangedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS)).isTrue()
-        assertThat(testSandboxedUiAdapter.isZOrderOnTop).isFalse()
+        assertThat(testSandboxedUiAdapter.isZOrderOnTop).isTrue()
     }
 
     @Test
