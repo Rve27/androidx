@@ -19,12 +19,7 @@ package androidx.wear.compose.material3
 import android.os.Build
 import android.text.format.DateFormat
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -269,38 +264,25 @@ public fun DatePicker(
         val maxTextLines = if (selectedIndex == null) 2 else 1
         val textPaddingPercentage = 24f
 
-        val headingAnimationSpec: FiniteAnimationSpec<Float> =
-            MaterialTheme.motionScheme.defaultEffectsSpec()
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(Modifier.height(14.dp))
-            AnimatedContent(
-                targetState = heading,
-                transitionSpec = {
-                    ContentTransform(
-                        targetContentEnter =
-                            fadeIn(animationSpec = headingAnimationSpec.delayMillis(200)),
-                        initialContentExit = fadeOut(animationSpec = headingAnimationSpec),
-                        sizeTransform = null
-                    )
-                }
-            ) { targetText ->
-                Text(
-                    modifier =
-                        Modifier.padding(
-                                horizontal =
-                                    PaddingDefaults.horizontalContentPadding(textPaddingPercentage)
-                            )
-                            .fillMaxWidth(),
-                    text = targetText,
-                    color = colors.pickerLabelColor,
-                    textAlign = TextAlign.Center,
-                    style = labelTextStyle,
-                    maxLines = maxTextLines,
-                )
-            }
+            FadeLabel(
+                text = heading,
+                animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
+                modifier =
+                    Modifier.padding(
+                            horizontal =
+                                PaddingDefaults.horizontalContentPadding(textPaddingPercentage)
+                        )
+                        .fillMaxWidth(),
+                color = colors.pickerLabelColor,
+                style = labelTextStyle,
+                maxLines = maxTextLines,
+                textAlign = TextAlign.Center
+            )
             Spacer(Modifier.height(if (isLargeScreen) 6.dp else 4.dp))
             FontScaleIndependent {
                 val measurer = rememberTextMeasurer()
