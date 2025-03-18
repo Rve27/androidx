@@ -1244,8 +1244,10 @@ package androidx.compose.foundation.lazy.layout {
   }
 
   public static interface LazyLayoutPrefetchState.LazyLayoutPrefetchResultScope {
+    method public int getIndex();
     method public int getPlaceablesCount();
-    method public long getSize(int index);
+    method public long getSize(int placeableIndex);
+    property public abstract int index;
     property public abstract int placeablesCount;
   }
 

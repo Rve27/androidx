@@ -166,8 +166,11 @@ class LazyLayoutPrefetchState(
         /** The amount of placeables composed into this item. */
         val placeablesCount: Int
 
-        /** Retrieves the latest measured size for a given placeable [index] in pixels. */
-        fun getSize(index: Int): IntSize
+        /** The index of the prefetched item. */
+        val index: Int
+
+        /** Retrieves the latest measured size for a given placeable [placeableIndex] in pixels. */
+        fun getSize(placeableIndex: Int): IntSize
     }
 
     private inner class NestedPrefetchScopeImpl : NestedPrefetchScope {
@@ -379,7 +382,7 @@ internal class PrefetchHandleProvider(
 
     @ExperimentalFoundationApi
     private inner class HandleAndRequestImpl(
-        private val index: Int,
+        override val index: Int,
         private val prefetchMetrics: PrefetchMetrics,
         private val onItemPremeasured: (LazyLayoutPrefetchResultScope.() -> Unit)?
     ) : PrefetchHandle, PrefetchRequest, LazyLayoutPrefetchResultScope {
@@ -419,8 +422,8 @@ internal class PrefetchHandleProvider(
         override val placeablesCount: Int
             get() = (precomposeHandle?.placeablesCount ?: 0)
 
-        override fun getSize(index: Int): IntSize {
-            return (precomposeHandle?.getSize(index) ?: IntSize.Zero)
+        override fun getSize(placeableIndex: Int): IntSize {
+            return (precomposeHandle?.getSize(placeableIndex) ?: IntSize.Zero)
         }
 
         private fun shouldExecute(available: Long, average: Long): Boolean {
