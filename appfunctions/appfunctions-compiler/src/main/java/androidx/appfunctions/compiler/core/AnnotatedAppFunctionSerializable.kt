@@ -21,7 +21,6 @@ import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionS
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSTypeReference
-import com.google.devtools.ksp.symbol.KSValueParameter
 import com.squareup.kotlinpoet.ClassName
 
 /** Represents a class annotated with [androidx.appfunctions.AppFunctionSerializable]. */
@@ -62,14 +61,16 @@ data class AnnotatedAppFunctionSerializable(
     }
 
     /** Returns the annotated class's properties as defined in its primary constructor. */
-    fun getProperties(): List<KSValueParameter> {
-        return checkNotNull(appFunctionSerializableClass.primaryConstructor).parameters
+    fun getProperties(): List<AppFunctionPropertyDeclaration> {
+        return checkNotNull(appFunctionSerializableClass.primaryConstructor).parameters.map {
+            AppFunctionPropertyDeclaration(it)
+        }
     }
 
     /** Returns the properties that have @AppFunctionSerializable class types. */
     fun getSerializablePropertyTypeReferences(): Set<AppFunctionTypeReference> {
         return getProperties()
-            .map { param -> AppFunctionTypeReference(param.type) }
+            .map { property -> AppFunctionTypeReference(property.type) }
             .filter { afType ->
                 afType.isOfTypeCategory(SERIALIZABLE_SINGULAR) ||
                     afType.isOfTypeCategory(SERIALIZABLE_LIST)

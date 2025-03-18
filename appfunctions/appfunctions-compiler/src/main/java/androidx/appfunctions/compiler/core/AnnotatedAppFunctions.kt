@@ -43,9 +43,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
-import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSTypeReference
-import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.validate
 import com.squareup.kotlinpoet.ClassName
 
@@ -366,7 +364,7 @@ data class AnnotatedAppFunctions(
     // TODO: Document traversal rules.
     private fun addSerializableTypeMetadataToSharedDataTypeMap(
         appFunctionSerializableType: AnnotatedAppFunctionSerializable,
-        unvisitedSerializableProperties: MutableMap<String, KSValueParameter>,
+        unvisitedSerializableProperties: MutableMap<String, AppFunctionPropertyDeclaration>,
         sharedDataTypeMap: MutableMap<String, AppFunctionDataTypeMetadata>,
         seenDataTypeQualifiers: MutableSet<String>,
     ) {
@@ -430,7 +428,10 @@ data class AnnotatedAppFunctions(
                     add(
                         buildObjectTypeMetadataForCapabilityProperties(
                             checkNotNull(capabilitySuperType.toClassName().canonicalName),
-                            capabilitySuperType.getDeclaredProperties().toList(),
+                            capabilitySuperType
+                                .getDeclaredProperties()
+                                .map { AppFunctionPropertyDeclaration(it) }
+                                .toList(),
                             unvisitedSerializableProperties,
                             sharedDataTypeMap,
                             seenDataTypeQualifiers
@@ -491,26 +492,20 @@ data class AnnotatedAppFunctions(
      */
     private fun buildObjectTypeMetadataForSerializableParameters(
         serializableTypeQualifiedName: String,
-        currentSerializableParametersList: List<KSValueParameter>,
-        unvisitedSerializableProperties: MutableMap<String, KSValueParameter>,
+        currentSerializableParametersList: List<AppFunctionPropertyDeclaration>,
+        unvisitedSerializableProperties: MutableMap<String, AppFunctionPropertyDeclaration>,
         sharedDataTypeMap: MutableMap<String, AppFunctionDataTypeMetadata>,
         seenDataTypeQualifiers: MutableSet<String>,
     ): AppFunctionObjectTypeMetadata {
-        val currentSerializableProperties: List<KSValueParameter> = buildList {
-            for (parameter in currentSerializableParametersList) {
+        val currentSerializableProperties: List<AppFunctionPropertyDeclaration> = buildList {
+            for (property in currentSerializableParametersList) {
                 // This property has now been visited. Remove it from the
                 // unvisitedSerializableProperties map so that we don't visit it again when
                 // processing the rest of a sub-class that implements this superclass.
                 // This is because before processing a subclass we process its superclass first
                 // so the unvisitedSerializableProperties could still contain properties not
                 // directly included in the current class being processed.
-                add(
-                    checkNotNull(
-                        unvisitedSerializableProperties.remove(
-                            checkNotNull(parameter.name.toString())
-                        )
-                    )
-                )
+                add(checkNotNull(unvisitedSerializableProperties.remove(property.name)))
             }
         }
         return buildObjectTypeMetadataForCapabilityProperty(
@@ -543,12 +538,12 @@ data class AnnotatedAppFunctions(
      */
     private fun buildObjectTypeMetadataForCapabilityProperties(
         capabilityTypeQualifiedName: String,
-        currentCapabilityPropertiesList: List<KSPropertyDeclaration>,
-        unvisitedSerializableProperties: MutableMap<String, KSValueParameter>,
+        currentCapabilityPropertiesList: List<AppFunctionPropertyDeclaration>,
+        unvisitedSerializableProperties: MutableMap<String, AppFunctionPropertyDeclaration>,
         sharedDataTypeMap: MutableMap<String, AppFunctionDataTypeMetadata>,
         seenDataTypeQualifiers: MutableSet<String>,
     ): AppFunctionObjectTypeMetadata {
-        val currentSerializableProperties: List<KSValueParameter> = buildList {
+        val currentSerializableProperties: List<AppFunctionPropertyDeclaration> = buildList {
             for (property in currentCapabilityPropertiesList) {
                 // This property has now been visited. Remove it from the
                 // unvisitedSerializableProperties map so that we don't visit it again when
@@ -556,13 +551,7 @@ data class AnnotatedAppFunctions(
                 // This is because before processing a subclass we process its superclass first
                 // so the unvisitedSerializableProperties could still contain properties not
                 // directly included in the current class being processed.
-                add(
-                    checkNotNull(
-                        unvisitedSerializableProperties.remove(
-                            checkNotNull(property.simpleName.toString())
-                        )
-                    )
-                )
+                add(checkNotNull(unvisitedSerializableProperties.remove(property.name)))
             }
         }
         return buildObjectTypeMetadataForCapabilityProperty(
@@ -575,25 +564,22 @@ data class AnnotatedAppFunctions(
 
     private fun buildObjectTypeMetadataForCapabilityProperty(
         serializableTypeQualifiedName: String,
-        currentSerializableProperties: List<KSValueParameter>,
+        currentSerializableProperties: List<AppFunctionPropertyDeclaration>,
         sharedDataTypeMap: MutableMap<String, AppFunctionDataTypeMetadata>,
         seenDataTypeQualifiers: MutableSet<String>,
     ): AppFunctionObjectTypeMetadata {
         val requiredPropertiesList: MutableList<String> = mutableListOf()
         val appFunctionSerializablePropertiesMap: Map<String, AppFunctionDataTypeMetadata> =
             buildMap {
-                for (parameterInSuperType in currentSerializableProperties) {
+                for (property in currentSerializableProperties) {
                     val innerAppFunctionDataTypeMetadata =
-                        parameterInSuperType.type.toAppFunctionDataTypeMetadata(
+                        property.type.toAppFunctionDataTypeMetadata(
                             sharedDataTypeMap,
                             seenDataTypeQualifiers,
                         )
-                    put(
-                        checkNotNull(parameterInSuperType.name).asString(),
-                        innerAppFunctionDataTypeMetadata
-                    )
+                    put(property.name, innerAppFunctionDataTypeMetadata)
                     // TODO(b/394553462): Parse required state from annotation.
-                    requiredPropertiesList.add(checkNotNull(parameterInSuperType.name).asString())
+                    requiredPropertiesList.add(property.name)
                 }
             }
         return AppFunctionObjectTypeMetadata(
