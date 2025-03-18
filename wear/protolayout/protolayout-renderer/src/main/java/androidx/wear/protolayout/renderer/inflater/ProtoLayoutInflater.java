@@ -454,7 +454,7 @@ public final class ProtoLayoutInflater {
                 return false;
             }
             ViewGroup sourceGroup = (ViewGroup) source;
-            if (sourceGroup.getChildCount() != mNumMissingChildren) {
+            if (getEffectiveChildCount(sourceGroup) != mNumMissingChildren) {
                 Log.w(
                         TAG,
                         String.format(
@@ -480,6 +480,20 @@ public final class ProtoLayoutInflater {
                         destinationGroup, (TouchDelegateComposite) source.getTouchDelegate());
             }
             return true;
+        }
+
+        /**
+         * Returns the number of children that the given {@link ViewGroup} has, ignoring the
+         * children that are {@link IgnorableSpace} type.
+         */
+        private static int getEffectiveChildCount(ViewGroup viewGroup) {
+            int nonIgnoredChildrenCnt = 0;
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                if (!(viewGroup.getChildAt(i) instanceof IgnorableSpace)) {
+                    nonIgnoredChildrenCnt++;
+                }
+            }
+            return nonIgnoredChildrenCnt;
         }
 
         @Nullable String getTag() {
@@ -2520,10 +2534,11 @@ public final class ProtoLayoutInflater {
         // bottom of FrameLayout#onMeasure).
         //
         // To work around this (without copying the whole of FrameLayout just to change a "1" to
-        // "0"),
-        // we add a Space element in if there is one MATCH_PARENT child. This has a tiny cost to the
-        // measure pass, and negligible cost to layout/draw (since it doesn't take part in those
-        // passes).
+        // "0"), we add a specific IgnorableSpace element in if there is one MATCH_PARENT child.
+        // This has a tiny cost to the measure pass, and negligible cost to layout/draw (since it
+        // doesn't take part in those passes).
+        // This element needs to be specific class that won't be counted towards the effective
+        // children of the parent when doing layout mutation. See b/345186544
         int numMatchParentChildren = 0;
         for (int i = 0; i < frame.getChildCount(); i++) {
             LayoutParams lp = frame.getChildAt(i).getLayoutParams();
@@ -2533,7 +2548,7 @@ public final class ProtoLayoutInflater {
         }
 
         if (numMatchParentChildren == 1) {
-            Space hackSpace = new Space(mUiContext);
+            IgnorableSpace hackSpace = new IgnorableSpace(mUiContext);
             LayoutParams hackSpaceLp =
                     new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             frame.addView(hackSpace, hackSpaceLp);
