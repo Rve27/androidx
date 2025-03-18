@@ -27,8 +27,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.ActivityPanelEntity
-import androidx.xr.scenecore.Dimensions
 import androidx.xr.scenecore.PanelEntity
+import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.Session
 import androidx.xr.scenecore.SpatialCapabilities
 import androidx.xr.scenecore.addSpatialCapabilitiesChangedListener
@@ -36,6 +36,7 @@ import androidx.xr.scenecore.samples.commontestview.CommonTestView
 
 const val TAG = "MainPanelActivity"
 
+@Suppress("DEPRECATION")
 class MainPanelActivity : AppCompatActivity() {
     private var activityPanelEntity: ActivityPanelEntity? = null
     private lateinit var panelEntity: PanelEntity
@@ -66,8 +67,7 @@ class MainPanelActivity : AppCompatActivity() {
             PanelEntity.create(
                 session,
                 panelEntityView,
-                Dimensions(640f, 880f),
-                Dimensions(0.1f, 0.1f, 0.1f),
+                PixelDimensions(640, 880),
                 "panel_entity",
                 Pose(Vector3(0f, 0f, 0.0f)),
             )

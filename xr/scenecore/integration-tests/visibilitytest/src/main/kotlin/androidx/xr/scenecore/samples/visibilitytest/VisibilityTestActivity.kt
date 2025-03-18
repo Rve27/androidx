@@ -26,12 +26,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.Dimensions
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
+import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.Session
 
 class VisibilityTestActivity : AppCompatActivity() {
@@ -155,8 +155,7 @@ class VisibilityTestActivity : AppCompatActivity() {
             PanelEntity.create(
                 session,
                 panelContentView,
-                Dimensions(640f, 480f),
-                Dimensions(0.1f, 0.1f, 0.1f),
+                PixelDimensions(640, 480),
                 name,
                 Pose(Vector3(-0.5f, -0.1f, 0f)),
             )

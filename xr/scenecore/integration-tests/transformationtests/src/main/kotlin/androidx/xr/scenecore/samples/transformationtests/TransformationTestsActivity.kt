@@ -30,9 +30,11 @@ import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.MovableComponent
+import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.PlaneSemantic
 import androidx.xr.scenecore.PlaneType
 import androidx.xr.scenecore.Session
+import androidx.xr.scenecore.Space
 import androidx.xr.scenecore.samples.commontestview.DebugTextLinearView
 import androidx.xr.scenecore.samples.commontestview.DebugTextPanel
 import com.google.errorprone.annotations.CanIgnoreReturnValue
@@ -197,10 +199,10 @@ class TransformationTestsActivity : AppCompatActivity() {
                 session,
                 trackedEntity,
                 name = name,
-                surfaceDimensionsPx =
-                    Dimensions(
-                        labelDimensions.width * trackedEntity.getWorldSpaceScale(),
-                        labelDimensions.height * trackedEntity.getWorldSpaceScale(),
+                pixelDimensions =
+                    PixelDimensions(
+                        (labelDimensions.width * trackedEntity.getScale(Space.REAL_WORLD)).toInt(),
+                        (labelDimensions.height * trackedEntity.getScale(Space.REAL_WORLD)).toInt(),
                     ),
             )
         return debugPanel
