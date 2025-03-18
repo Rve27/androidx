@@ -160,10 +160,11 @@ class AppFunctionSerializableProcessor(
                 annotatedProxyClass.targetClassDeclaration.simpleName).asString()}Factory"
         val serializableProxyClassBuilder =
             TypeSpec.classBuilder(generatedSerializableProxyFactoryClassName)
+        val factoryCodeBuilder = AppFunctionSerializableFactoryCodeBuilder(annotatedProxyClass)
         serializableProxyClassBuilder.addAnnotation(AppFunctionCompiler.GENERATED_ANNOTATION)
         serializableProxyClassBuilder.addSuperinterface(proxySuperInterfaceClass)
         serializableProxyClassBuilder.addFunction(
-            buildProxyFromAppFunctionDataFunction(annotatedProxyClass)
+            buildProxyFromAppFunctionDataFunction(annotatedProxyClass, factoryCodeBuilder)
         )
         serializableProxyClassBuilder.addFunction(
             buildProxyToAppFunctionDataFunction(annotatedProxyClass)
@@ -207,6 +208,7 @@ class AppFunctionSerializableProcessor(
     // Todo(b/403199251): Remove temp method
     private fun buildProxyFromAppFunctionDataFunction(
         annotatedProxyClass: AnnotatedAppFunctionSerializableProxy,
+        factoryCodeBuilder: AppFunctionSerializableFactoryCodeBuilder,
     ): FunSpec {
         return FunSpec.builder(
                 AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod.METHOD_NAME
@@ -215,17 +217,7 @@ class AppFunctionSerializableProcessor(
             .addParameter(
                 ParameterSpec.builder(APP_FUNCTION_DATA_PARAM_NAME, AppFunctionData::class).build()
             )
-            .addCode(
-                buildCodeBlock {
-                    addStatement(
-                        """
-                        return %T.now()
-                        """
-                            .trimIndent(),
-                        annotatedProxyClass.targetClassDeclaration.toClassName()
-                    )
-                }
-            )
+            .addCode(factoryCodeBuilder.appendFromAppFunctionDataMethodBodyForProxy())
             .returns(annotatedProxyClass.targetClassDeclaration.toClassName())
             .build()
     }
@@ -252,7 +244,7 @@ class AppFunctionSerializableProcessor(
 
     // Todo(b/403199251): Remove temp method
     private fun buildProxyToAppFunctionDataFunction(
-        annotatedProxyClass: AnnotatedAppFunctionSerializableProxy
+        annotatedProxyClass: AnnotatedAppFunctionSerializableProxy,
     ): FunSpec {
         return FunSpec.builder(
                 AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.METHOD_NAME

@@ -16,7 +16,8 @@ public class `$NestedBaseSerializableFactory` : AppFunctionSerializableFactory<N
       nestedBase = nestedBaseSerializableFactory.fromAppFunctionData(nestedBaseData)
     }
 
-    return NestedBaseSerializable(stringBaseName, nestedBase)
+    val resultNestedBaseSerializable = NestedBaseSerializable(stringBaseName, nestedBase)
+    return resultNestedBaseSerializable
   }
 
   override fun toAppFunctionData(appFunctionSerializable: NestedBaseSerializable): AppFunctionData {

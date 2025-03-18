@@ -17,7 +17,8 @@ public class `$NonNestedChildSerializableFactory` : AppFunctionSerializableFacto
     }
     val longBaseValue = checkNotNull(appFunctionData.getLongOrNull("longBaseValue"))
 
-    return NonNestedChildSerializable(stringBaseName, nestedBase, longBaseValue)
+    val resultNonNestedChildSerializable = NonNestedChildSerializable(stringBaseName, nestedBase, longBaseValue)
+    return resultNonNestedChildSerializable
   }
 
   override fun toAppFunctionData(appFunctionSerializable: NonNestedChildSerializable): AppFunctionData {

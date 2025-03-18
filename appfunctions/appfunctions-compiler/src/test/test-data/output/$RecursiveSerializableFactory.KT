@@ -15,7 +15,8 @@ public class `$RecursiveSerializableFactory` : AppFunctionSerializableFactory<Re
       nested = recursiveSerializableFactory.fromAppFunctionData(nestedData)
     }
 
-    return RecursiveSerializable(nested)
+    val resultRecursiveSerializable = RecursiveSerializable(nested)
+    return resultRecursiveSerializable
   }
 
   override fun toAppFunctionData(appFunctionSerializable: RecursiveSerializable): AppFunctionData {

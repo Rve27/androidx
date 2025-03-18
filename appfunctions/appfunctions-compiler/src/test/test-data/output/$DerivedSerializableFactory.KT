@@ -11,7 +11,8 @@ public class `$DerivedSerializableFactory` : AppFunctionSerializableFactory<Deri
     val stringToOpen = checkNotNull(appFunctionData.getString("stringToOpen"))
     val age = checkNotNull(appFunctionData.getLongOrNull("age"))
 
-    return DerivedSerializable(stringToOpen, age)
+    val resultDerivedSerializable = DerivedSerializable(stringToOpen, age)
+    return resultDerivedSerializable
   }
 
   override fun toAppFunctionData(appFunctionSerializable: DerivedSerializable): AppFunctionData {

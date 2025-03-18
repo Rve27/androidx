@@ -18,6 +18,7 @@ package androidx.appfunctions.compiler.processors
 
 import androidx.appfunctions.AppFunctionData
 import androidx.appfunctions.compiler.core.AnnotatedAppFunctionSerializable
+import androidx.appfunctions.compiler.core.AnnotatedAppFunctionSerializableProxy
 import androidx.appfunctions.compiler.core.AppFunctionPropertyDeclaration
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_ARRAY
@@ -28,6 +29,7 @@ import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionS
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod.APP_FUNCTION_DATA_PARAM_NAME
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.APP_FUNCTION_SERIALIZABLE_PARAM_NAME
+import androidx.appfunctions.compiler.core.ProcessingException
 import androidx.appfunctions.compiler.core.ensureQualifiedTypeName
 import androidx.appfunctions.compiler.core.isOfType
 import androidx.appfunctions.compiler.core.toTypeName
@@ -48,14 +50,52 @@ class AppFunctionSerializableFactoryCodeBuilder(
     /** Builds and appends the method body of fromAppFunctionData to the given code block. */
     fun appendFromAppFunctionDataMethodBody(): CodeBlock {
         return buildCodeBlock {
+            val getterResultName = "result${annotatedClass.originalClassName.simpleName}"
+            add(appendCommonFromAppFunctionDataMethodBody(getterResultName))
+            addStatement(
+                """
+                return %L
+                """
+                    .trimIndent(),
+                getterResultName
+            )
+        }
+    }
+
+    fun appendFromAppFunctionDataMethodBodyForProxy(): CodeBlock {
+        if (annotatedClass !is AnnotatedAppFunctionSerializableProxy) {
+            throw ProcessingException(
+                "Attempting to generate proxy getter for non proxy serializable.",
+                // TODO(b/403199251): provide KSNode to improve error message
+                null
+            )
+        }
+        return buildCodeBlock {
+            val getterResultName = "result${annotatedClass.originalClassName.simpleName}"
+            add(appendCommonFromAppFunctionDataMethodBody(getterResultName))
+            addStatement(
+                """
+                return %L.%L()
+                """
+                    .trimIndent(),
+                getterResultName,
+                annotatedClass.toTargetClassMethodName
+            )
+        }
+    }
+
+    private fun appendCommonFromAppFunctionDataMethodBody(getterResultName: String): CodeBlock {
+        return buildCodeBlock {
             add(factoryInitStatements)
             for ((paramName, paramType) in annotatedClass.getProperties()) {
                 appendGetterStatement(paramName, paramType)
             }
-            appendGetterReturnStatement(
+            appendGetterResultConstructorCallStatement(
                 annotatedClass.originalClassName,
-                annotatedClass.getProperties()
+                annotatedClass.getProperties(),
+                getterResultName
             )
+            add("\n")
         }
     }
 
@@ -201,17 +241,22 @@ class AppFunctionSerializableFactoryCodeBuilder(
         return this
     }
 
-    private fun CodeBlock.Builder.appendGetterReturnStatement(
+    private fun CodeBlock.Builder.appendGetterResultConstructorCallStatement(
         originalClassName: ClassName,
-        properties: List<AppFunctionPropertyDeclaration>
+        properties: List<AppFunctionPropertyDeclaration>,
+        getterResultName: String
     ): CodeBlock.Builder {
         val formatStringMap =
             mapOf<String, Any>(
                 "original_class_name" to originalClassName,
-                "params_list" to properties.joinToString(", ") { it.name }
+                "params_list" to properties.joinToString(", ") { it.name },
+                "getter_result_name" to getterResultName
             )
 
-        addNamed("\nreturn %original_class_name:T(%params_list:L)", formatStringMap)
+        addNamed(
+            "\nval %getter_result_name:L = %original_class_name:T(%params_list:L)",
+            formatStringMap
+        )
         return this
     }
 

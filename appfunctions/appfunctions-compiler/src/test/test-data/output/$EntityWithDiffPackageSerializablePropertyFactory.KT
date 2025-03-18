@@ -17,7 +17,8 @@ public class `$EntityWithDiffPackageSerializablePropertyFactory` : AppFunctionSe
       diffPackageSerializableFactory.fromAppFunctionData(data)
     }
 
-    return EntityWithDiffPackageSerializableProperty(inputSerializable, serializableList)
+    val resultEntityWithDiffPackageSerializableProperty = EntityWithDiffPackageSerializableProperty(inputSerializable, serializableList)
+    return resultEntityWithDiffPackageSerializableProperty
   }
 
   override fun toAppFunctionData(appFunctionSerializable: EntityWithDiffPackageSerializableProperty): AppFunctionData {

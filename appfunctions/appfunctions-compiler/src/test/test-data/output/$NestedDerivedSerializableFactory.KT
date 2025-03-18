@@ -23,7 +23,8 @@ public class `$NestedDerivedSerializableFactory` : AppFunctionSerializableFactor
       nestedDerived = nestedDerivedSerializableFactory.fromAppFunctionData(nestedDerivedData)
     }
 
-    return NestedDerivedSerializable(stringBaseName, nestedBase, longBaseValue, nestedDerived)
+    val resultNestedDerivedSerializable = NestedDerivedSerializable(stringBaseName, nestedBase, longBaseValue, nestedDerived)
+    return resultNestedDerivedSerializable
   }
 
   override fun toAppFunctionData(appFunctionSerializable: NestedDerivedSerializable): AppFunctionData {

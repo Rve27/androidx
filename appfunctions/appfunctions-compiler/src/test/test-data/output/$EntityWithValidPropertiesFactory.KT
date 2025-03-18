@@ -24,7 +24,8 @@ public class `$EntityWithValidPropertiesFactory` : AppFunctionSerializableFactor
       inputSerializableFactory.fromAppFunctionData(data)
     }
 
-    return EntityWithValidProperties(longParam, doubleParam, boolParam, stringParam, longArray, doubleArray, boolArray, stringList, inputSerializable, serializableList)
+    val resultEntityWithValidProperties = EntityWithValidProperties(longParam, doubleParam, boolParam, stringParam, longArray, doubleArray, boolArray, stringList, inputSerializable, serializableList)
+    return resultEntityWithValidProperties
   }
 
   override fun toAppFunctionData(appFunctionSerializable: EntityWithValidProperties): AppFunctionData {

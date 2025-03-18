@@ -45,6 +45,16 @@ data class AnnotatedAppFunctionSerializableProxy(
             .declaration as KSClassDeclaration
     }
 
+    /** The name of the method that returns an instance of the target class. */
+    val toTargetClassMethodName: String by lazy {
+        "to${targetClassDeclaration.simpleName.asString()}"
+    }
+
+    /** The name of the companion method that returns an instance of the proxy class. */
+    val fromTargetClassMethodName: String by lazy {
+        "from${targetClassDeclaration.simpleName.asString()}"
+    }
+
     /**
      * Validates the class annotated with @AppFunctionSerializableProxy.
      *
@@ -59,16 +69,14 @@ data class AnnotatedAppFunctionSerializableProxy(
 
     /** Validates that the proxy class has a method that returns an instance of the target class. */
     private fun validateProxyHasToTargetClassMethod() {
-        val targetClassName = checkNotNull(targetClassDeclaration.simpleName).asString()
-        val toTargetClassNameFunctionName = "to$targetClassName"
         val toTargetClassNameFunctionList: List<KSFunctionDeclaration> =
             appFunctionSerializableProxyClass
                 .getAllFunctions()
-                .filter { it.simpleName.asString() == toTargetClassNameFunctionName }
+                .filter { it.simpleName.asString() == toTargetClassMethodName }
                 .toList()
         if (toTargetClassNameFunctionList.size != 1) {
             throw ProcessingException(
-                "Class must have exactly one member function: $toTargetClassNameFunctionName",
+                "Class must have exactly one member function: $toTargetClassMethodName",
                 appFunctionSerializableProxyClass
             )
         }
@@ -83,7 +91,7 @@ data class AnnotatedAppFunctionSerializableProxy(
                 .asString() != checkNotNull(targetClassDeclaration.qualifiedName).asString()
         ) {
             throw ProcessingException(
-                "Function $toTargetClassNameFunctionName should return an instance of target class",
+                "Function $toTargetClassMethodName should return an instance of target class",
                 appFunctionSerializableProxyClass
             )
         }
@@ -92,7 +100,6 @@ data class AnnotatedAppFunctionSerializableProxy(
     /** Validates that the proxy class has a method that returns an instance of the target class. */
     private fun validateProxyHasFromTargetClassMethod() {
         val targetClassName = checkNotNull(targetClassDeclaration.simpleName).asString()
-        val fromTargetClassNameFunctionName = "from$targetClassName"
         val targetCompanionClass =
             appFunctionSerializableProxyClass.declarations
                 .filterIsInstance<KSClassDeclaration>()
@@ -102,12 +109,12 @@ data class AnnotatedAppFunctionSerializableProxy(
         val fromTargetClassNameFunctionList =
             targetCompanionClass
                 .getAllFunctions()
-                .filter { it.simpleName.asString() == fromTargetClassNameFunctionName }
+                .filter { it.simpleName.asString() == fromTargetClassMethodName }
                 .toList()
         if (fromTargetClassNameFunctionList.size != 1) {
             throw ProcessingException(
                 "Companion Class must have exactly one member function: " +
-                    fromTargetClassNameFunctionName,
+                    fromTargetClassMethodName,
                 appFunctionSerializableProxyClass
             )
         }
@@ -118,7 +125,7 @@ data class AnnotatedAppFunctionSerializableProxy(
                     checkNotNull(targetClassDeclaration.qualifiedName).asString()
         ) {
             throw ProcessingException(
-                "Function $fromTargetClassNameFunctionName should have one parameter of type " +
+                "Function $fromTargetClassMethodName should have one parameter of type " +
                     targetClassName,
                 appFunctionSerializableProxyClass
             )
@@ -128,7 +135,7 @@ data class AnnotatedAppFunctionSerializableProxy(
                 checkNotNull(appFunctionSerializableProxyClass.qualifiedName).asString()
         ) {
             throw ProcessingException(
-                "Function $fromTargetClassNameFunctionName should return an instance of " +
+                "Function $fromTargetClassMethodName should return an instance of " +
                     "this serializable class",
                 appFunctionSerializableProxyClass
             )

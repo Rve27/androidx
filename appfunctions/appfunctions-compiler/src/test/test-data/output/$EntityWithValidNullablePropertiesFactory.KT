@@ -27,7 +27,8 @@ public class `$EntityWithValidNullablePropertiesFactory` : AppFunctionSerializab
       inputSerializableFactory.fromAppFunctionData(data)
     }
 
-    return EntityWithValidNullableProperties(longParam, doubleParam, boolParam, stringParam, longArray, doubleArray, boolArray, stringList, inputSerializable, serializableList)
+    val resultEntityWithValidNullableProperties = EntityWithValidNullableProperties(longParam, doubleParam, boolParam, stringParam, longArray, doubleArray, boolArray, stringList, inputSerializable, serializableList)
+    return resultEntityWithValidNullableProperties
   }
 
   override fun toAppFunctionData(appFunctionSerializable: EntityWithValidNullableProperties): AppFunctionData {
