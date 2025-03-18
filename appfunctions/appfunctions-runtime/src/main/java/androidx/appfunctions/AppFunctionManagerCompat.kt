@@ -27,8 +27,10 @@ import androidx.appfunctions.internal.AppSearchAppFunctionReader
 import androidx.appfunctions.internal.ExtensionAppFunctionManagerApi
 import androidx.appfunctions.internal.TranslatorSelector
 import androidx.appfunctions.internal.TranslatorSelectorImpl
+import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 import com.android.extensions.appfunctions.AppFunctionManager
+import kotlinx.coroutines.flow.Flow
 
 /**
  * Provides access to interact with App Functions. This is a backward-compatible wrapper for the
@@ -179,6 +181,32 @@ internal constructor(
         } else {
             successResponse
         }
+    }
+
+    /**
+     * Observes for available app functions metadata based on the provided filters.
+     *
+     * Allows discovering app functions that match the given [searchSpec] criteria and continuously
+     * emits updates when relevant metadata changes.
+     *
+     * Updates to [AppFunctionMetadata] can occur when the app defining the function is updated or
+     * when a function's enabled state changes.
+     *
+     * If multiple updates happen within a short duration, only the latest update might be emitted.
+     *
+     * @param searchSpec an [AppFunctionSearchSpec] instance specifying the filters for searching
+     *   the app function metadata.
+     * @return a flow that emits a list of [AppFunctionMetadata] matching the search criteria and
+     *   updated versions of this list when underlying data changes.
+     * @throws UnsupportedOperationException if AppFunction is not supported on this device.
+     */
+    @RequiresPermission(value = "android.permission.EXECUTE_APP_FUNCTIONS", conditional = true)
+    public fun observeAppFunctions(
+        searchSpec: AppFunctionSearchSpec
+    ): Flow<List<AppFunctionMetadata>> {
+        checkAppFunctionsFeatureSupported()
+
+        return appFunctionReader.searchAppFunctions(searchSpec)
     }
 
     private fun checkAppFunctionsFeatureSupported() {
