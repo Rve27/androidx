@@ -25,8 +25,7 @@ dependencies {
     api(libs.kotlinStdlib)
     implementation(project(":core:core-backported-fixes"))
 
-    implementation(project(":activity:activity-compose"))
-    implementation(project(":activity:activity"))
+    implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.core:core-ktx:1.15.0")
     implementation(project(":compose:material:material"))
     implementation(project(":compose:material3:material3"))
@@ -38,8 +37,7 @@ dependencies {
 
     androidTestImplementation("androidx.core:core:1.15.0")
     androidTestImplementation("androidx.core:core-ktx:1.15.0")
-    androidTestImplementation(project(":activity:activity-compose"))
-    androidTestImplementation(project(":activity:activity-ktx"))
+    androidTestImplementation("androidx.activity:activity-compose:1.10.1")
     androidTestImplementation(project(":compose:ui:ui-test"))
     androidTestImplementation(project(":compose:ui:ui-test-junit4"))
     androidTestImplementation(libs.testRunner)
