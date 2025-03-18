@@ -22,7 +22,6 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Build
-import android.os.DeadObjectException
 import android.os.ParcelFileDescriptor
 import android.util.Size
 import android.util.SparseArray
@@ -37,8 +36,10 @@ import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.service.connect.PdfServiceConnection
 import androidx.pdf.utils.toAndroidClass
 import androidx.pdf.utils.toContentClass
+import kotlin.coroutines.coroutineContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -220,18 +221,39 @@ public class SandboxedPdfDocument(
     }
 
     private suspend fun <T> withDocument(block: (PdfDocumentRemote) -> T): T {
-        connection.blockUntilConnected()
+        // Create a new job in parent's context. Since with document can be called from any scope,
+        // we need a handle to check coroutines actively working with document. Linking to parent's
+        // job helps in cancellation.
+        val taskJob =
+            Job(parent = coroutineContext[Job]).also { job ->
+                connection.pendingJobs.add(job)
 
-        val binder =
-            connection.documentBinder
-                ?: throw DeadObjectException("Binder object to the service must not be null!")
+                // clean up on completion
+                job.invokeOnCompletion { connection.pendingJobs.remove(job) }
+            }
 
-        if (connection.needsToReopenDocument) {
-            binder.openPdfDocument(fileDescriptor, password)
-            connection.needsToReopenDocument = false
+        return withContext(dispatcher + taskJob) {
+            // Binder object will be null if the service is disconnected. Let's try reconnecting
+            // explicitly
+            if (connection.documentBinder == null) {
+                connection.connect(uri)
+            }
+
+            val binder = connection.documentBinder!!
+            if (connection.needsToReopenDocument) {
+                binder.openPdfDocument(fileDescriptor, password)
+                connection.needsToReopenDocument = false
+            }
+
+            val result = block(binder)
+
+            // Manually completing taskJob because a Job created using Job() does not complete on
+            // its own. Unlike coroutines launched with launch or async, a standalone Job() remains
+            // active indefinitely unless explicitly completed or canceled.
+            taskJob.complete()
+
+            return@withContext result
         }
-
-        return withContext(dispatcher) { block(binder) }
     }
 
     private companion object {
