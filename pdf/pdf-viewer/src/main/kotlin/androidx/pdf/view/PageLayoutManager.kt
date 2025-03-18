@@ -20,6 +20,7 @@ import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.RectF
+import android.os.DeadObjectException
 import android.util.Range
 import android.util.SparseArray
 import androidx.pdf.PdfDocument
@@ -48,7 +49,8 @@ internal class PageLayoutManager(
     topPageMarginPx: Int = 0,
     pageSpacingPx: Int = DEFAULT_PAGE_SPACING_PX,
     internal val paginationModel: PaginationModel =
-        PaginationModel(pageSpacingPx, pdfDocument.pageCount, topPageMarginPx)
+        PaginationModel(pageSpacingPx, pdfDocument.pageCount, topPageMarginPx),
+    private val errorFlow: MutableSharedFlow<Throwable>
 ) {
     /** The 0-indexed maximum page number whose dimensions are known to this model */
     val reach
@@ -231,11 +233,17 @@ internal class PageLayoutManager(
         currentDimensionsJob =
             backgroundScope.launch {
                 previousDimensionsJob?.join()
-                val pageMetadata = pdfDocument.getPageInfo(pageNum)
-                val size = Point(pageMetadata.width, pageMetadata.height)
-                // Add the value to the model before emitting, and on the main thread
-                withContext(Dispatchers.Main) { paginationModel.addPage(pageNum, size) }
-                _dimensions.emit(pageNum to Point(pageMetadata.width, pageMetadata.height))
+                try {
+                    val pageMetadata = pdfDocument.getPageInfo(pageNum)
+                    val size = Point(pageMetadata.width, pageMetadata.height)
+                    // Add the value to the model before emitting, and on the main thread
+                    withContext(Dispatchers.Main) { paginationModel.addPage(pageNum, size) }
+                    _dimensions.emit(pageNum to Point(pageMetadata.width, pageMetadata.height))
+                } catch (e: DeadObjectException) {
+                    // An exception happened above because of service disconnection. Propagate
+                    // error event to UI to take appropriate action.
+                    errorFlow.emit(e)
+                }
             }
     }
 

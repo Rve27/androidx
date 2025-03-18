@@ -28,6 +28,7 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.DeadObjectException
 import android.os.Looper
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -57,6 +58,7 @@ import androidx.pdf.view.fastscroll.FastScrollDrawer
 import androidx.pdf.view.fastscroll.FastScrollGestureDetector
 import androidx.pdf.view.fastscroll.FastScroller
 import androidx.pdf.view.fastscroll.getDimensions
+import com.google.android.material.snackbar.Snackbar
 import java.util.LinkedList
 import java.util.Queue
 import java.util.concurrent.Executors
@@ -71,6 +73,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.android.asCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -221,6 +224,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private var layoutInfoCollector: Job? = null
     private var pageSignalCollector: Job? = null
     private var selectionStateCollector: Job? = null
+    private var errorStateCollector: Job? = null
 
     private var deferredScrollPage: Int? = null
     private var deferredScrollPosition: PdfPoint? = null
@@ -230,6 +234,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private var awaitingFirstLayout: Boolean = true
     private var scrollPositionToRestore: PointF? = null
     private var zoomToRestore: Float? = null
+    private val errorFlow = MutableSharedFlow<Throwable>()
 
     /**
      * Indicates whether the fast scroller's visibility is managed externally.
@@ -748,7 +753,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     backgroundScope,
                     topPageMarginPx = context.getDimensions(R.dimen.top_page_margin).toInt(),
                     pageSpacingPx = context.getDimensions(R.dimen.page_spacing).toInt(),
-                    paginationModel = requireNotNull(localStateToRestore.paginationModel)
+                    paginationModel = requireNotNull(localStateToRestore.paginationModel),
+                    errorFlow = errorFlow
                 )
                 .apply { onViewportChanged(scrollY, height, zoom) }
         selectionStateManager =
@@ -843,12 +849,23 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     }
                 }
         }
+
+        val errorsToJoin = errorStateCollector?.apply { cancel() }
+        errorStateCollector =
+            mainScope.launch(start = CoroutineStart.UNDISPATCHED) {
+                // Prevent 2 copies from running concurrently
+                errorsToJoin?.join()
+                // Add debounce to prevents multiple, rapid error indicators from being displayed
+                // to the user in quick succession.
+                errorFlow.collect { handleError(it) }
+            }
     }
 
     private fun stopCollectingData() {
         layoutInfoCollector?.cancel()
         pageSignalCollector?.cancel()
         selectionStateCollector?.cancel()
+        errorStateCollector?.cancel()
     }
 
     private fun onSelectionUiSignal(signal: SelectionUiSignal) {
@@ -870,6 +887,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
     }
 
+    private fun handleError(error: Throwable) {
+        val errorMsg =
+            when (error) {
+                is DeadObjectException ->
+                    context.getString(R.string.service_disconnect_error_message)
+                else -> context.getString(R.string.pdf_view_error_message)
+            }
+        Snackbar.make(this, errorMsg, Snackbar.LENGTH_SHORT).show()
+    }
+
     /** Start using the [PdfDocument] to present PDF content */
     // Display.width and height are deprecated in favor of WindowMetrics, but in this case we
     // actually want to use the size of the display and not the size of the window.
@@ -887,7 +914,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 localPdfDocument,
                 backgroundScope,
                 Point(maxBitmapDimensionPx, maxBitmapDimensionPx),
-                isTouchExplorationEnabled
+                isTouchExplorationEnabled,
+                errorFlow
             )
 
         if (
@@ -931,7 +959,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                         localPdfDocument,
                         backgroundScope,
                         topPageMarginPx = context.getDimensions(R.dimen.top_page_margin).toInt(),
-                        pageSpacingPx = context.getDimensions(R.dimen.page_spacing).toInt()
+                        pageSpacingPx = context.getDimensions(R.dimen.page_spacing).toInt(),
+                        errorFlow = errorFlow
                     )
                     .apply { onViewportChanged(scrollY, height, zoom) }
             selectionStateManager =

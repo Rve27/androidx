@@ -22,6 +22,7 @@ import androidx.pdf.PdfDocument
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
@@ -58,12 +59,13 @@ class PageLayoutManagerTest {
     private val testDispatcher = UnconfinedTestDispatcher()
     private val testScope = TestScope(testDispatcher)
     private lateinit var paginationManager: PageLayoutManager
+    private val errorFlow = MutableSharedFlow<Throwable>()
 
     @Before
     fun setup() {
         // Required because loadPageDimensions jumps to the main thread to update PaginationModel
         Dispatchers.setMain(testDispatcher)
-        paginationManager = PageLayoutManager(pdfDocument, testScope)
+        paginationManager = PageLayoutManager(pdfDocument, testScope, errorFlow = errorFlow)
     }
 
     @Test

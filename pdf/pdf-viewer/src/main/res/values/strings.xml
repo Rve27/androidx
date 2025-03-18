@@ -167,4 +167,8 @@
 
     <!-- Content description of the fast scroller thumb -->
     <string name="fast_scroller_thumb">Scroll Bar</string>
+    <!-- error message when the service is disconnected -->
+    <string name="service_disconnect_error_message">Service disconnected. Please try again.</string>
+    <!-- error message when an unknown issue occurred in pdf view -->
+    <string name="pdf_view_error_message">Unknown error. Please try again.</string>
 </resources>

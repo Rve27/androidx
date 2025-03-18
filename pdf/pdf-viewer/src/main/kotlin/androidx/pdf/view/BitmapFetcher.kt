@@ -32,6 +32,7 @@ import kotlin.math.roundToInt
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -63,6 +64,8 @@ internal class BitmapFetcher(
      */
     private val maxBitmapSizePx: Point,
     private val onPageUpdate: () -> Unit,
+    /** Error flow for propagating error occurred while processing to [PdfView]. */
+    private val errorFlow: MutableSharedFlow<Throwable>
 ) : AutoCloseable {
 
     /**
@@ -246,7 +249,7 @@ internal class BitmapFetcher(
                 ensureActive()
                 onReady(bitmap)
             } catch (e: DeadObjectException) {
-                // TODO shown an error
+                errorFlow.emit(e)
             }
         }
     }
@@ -277,7 +280,7 @@ internal class BitmapFetcher(
                     tile.bitmap = bitmap
                 } catch (e: DeadObjectException) {
                     // Service was disconnected.
-                    // TODO show an error message
+                    errorFlow.emit(e)
                     return@launch
                 }
                 onPageUpdate()

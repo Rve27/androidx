@@ -44,7 +44,9 @@ internal class PageManager(
      * threshold for tiled rendering
      */
     private val maxBitmapSizePx: Point,
-    private val isTouchExplorationEnabled: Boolean
+    private val isTouchExplorationEnabled: Boolean,
+    /** Error flow for propagating error occurred while processing to [PdfView]. */
+    private val errorFlow: MutableSharedFlow<Throwable>
 ) {
     /**
      * Replay at least 1 value in case of an invalidation signal issued while [PdfView] is not
@@ -137,7 +139,8 @@ internal class PageManager(
                     maxBitmapSizePx,
                     isTouchExplorationEnabled,
                     onPageUpdate = { _invalidationSignalFlow.tryEmit(Unit) },
-                    onPageTextReady = { pageNumber -> _pageTextReadyFlow.tryEmit(pageNumber) }
+                    onPageTextReady = { pageNumber -> _pageTextReadyFlow.tryEmit(pageNumber) },
+                    errorFlow = errorFlow
                 )
                 .apply {
                     // If the page is visible, let it know

@@ -33,6 +33,7 @@ import androidx.pdf.PdfDocument
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 /** A single PDF page that knows how to render and draw itself */
@@ -57,7 +58,9 @@ internal class Page(
     /** A function to call when the [PdfView] hosting this [Page] ought to invalidate itself */
     private val onPageUpdate: () -> Unit,
     /** A function to call when page text is ready (invoked with page number). */
-    private val onPageTextReady: ((Int) -> Unit)
+    private val onPageTextReady: ((Int) -> Unit),
+    /** Error flow for propagating error occurred while processing to [PdfView]. */
+    private val errorFlow: MutableSharedFlow<Throwable>
 ) {
     init {
         require(pageNum >= 0) { "Invalid negative page" }
@@ -103,7 +106,8 @@ internal class Page(
                     pdfDocument,
                     backgroundScope,
                     maxBitmapSizePx,
-                    onPageUpdate
+                    onPageUpdate,
+                    errorFlow
                 )
         }
         bitmapFetcher?.maybeFetchNewBitmaps(zoom, viewArea)
@@ -149,7 +153,7 @@ internal class Page(
                             }
                         onPageTextReady.invoke(pageNum)
                     } catch (e: DeadObjectException) {
-                        // TODO show an error. May also need to handler error for accessibility.
+                        errorFlow.emit(e)
                     }
                 }
                 .also { it.invokeOnCompletion { fetchPageTextJob = null } }
@@ -184,7 +188,7 @@ internal class Page(
                     try {
                         links = pdfDocument.getPageLinks(pageNum)
                     } catch (e: DeadObjectException) {
-                        // TODO show an error.
+                        errorFlow.emit(e)
                     }
                 }
                 .also { it.invokeOnCompletion { fetchLinksJob = null } }
