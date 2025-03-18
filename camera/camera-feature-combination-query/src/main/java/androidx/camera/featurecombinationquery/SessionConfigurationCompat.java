@@ -17,6 +17,7 @@
 package androidx.camera.featurecombinationquery;
 
 import android.hardware.camera2.params.OutputConfiguration;
+import android.hardware.camera2.params.SessionConfiguration;
 
 import org.jspecify.annotations.NonNull;
 
@@ -36,6 +37,12 @@ import java.util.List;
  * {@link android.hardware.camera2.CameraDevice.CameraDeviceSetup}. Use
  * {@link android.hardware.camera2.CameraDevice.CameraDeviceSetup#createCaptureRequest} and
  * {@link android.hardware.camera2.params.SessionConfiguration} for those devices instead.
+ * <p>
+ * In situations where {@link android.hardware.camera2.CameraDevice} object is available, it is
+ * strongly recommended to use
+ * {@link CameraDeviceSetupCompat#isSessionConfigurationSupported(SessionConfiguration)} instead of
+ * {@link CameraDeviceSetupCompat#isSessionConfigurationSupported(SessionConfigurationCompat)} may
+ * lead to inaccurate results if not constructed accurately.
  */
 public class SessionConfigurationCompat {
     private final List<OutputConfiguration> mOutputConfigs;
