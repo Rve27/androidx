@@ -79,7 +79,7 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
     private var adapter: SandboxedUiAdapter? = null
     private var client: Client? = null
     private var clientSecondary: Client? = null
-    private var isZOrderOnTop = true
+    private var isZOrderOnTop = false
     private var contentView: View? = null
     private var refreshCallback: Consumer<Boolean>? = null
     private var requestedWidth = -1
@@ -119,9 +119,9 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
      * Sets the Z-ordering of the [SandboxedSdkView]'s surface, relative to its window.
      *
      * When [providerUiOnTop] is true, every [android.view.MotionEvent] on the [SandboxedSdkView]
-     * will be sent to the UI provider. When [providerUiOnTop] is false, every
-     * [android.view.MotionEvent] will be sent to the client. By default, motion events are sent to
-     * the UI provider.
+     * area will be sent to the UI provider. When [providerUiOnTop] is false, every
+     * [android.view.MotionEvent] will be sent to the client and will also be transferred to the UI
+     * provider. By default, [providerUiOnTop] is false.
      *
      * When [providerUiOnTop] is true, the UI provider's surface will be placed above the client's
      * window. In this case, none of the contents of the client's window beneath the provider's

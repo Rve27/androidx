@@ -178,16 +178,14 @@ class SandboxedSdkViewTest {
         val session = testSandboxedUiAdapter.testSession!!
         val adapter = testSandboxedUiAdapter
         assertThat(session.zOrderChangedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS)).isFalse()
-        assertThat(adapter.isZOrderOnTop).isTrue()
-        // When state changes to false, the provider should be notified.
-        view.orderProviderUiAboveClientUi(false)
-        assertThat(session.zOrderChangedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS)).isTrue()
         assertThat(adapter.isZOrderOnTop).isFalse()
-        // When state changes back to true, the provider should be notified.
-        session.zOrderChangedLatch = CountDownLatch(1)
         view.orderProviderUiAboveClientUi(true)
         assertThat(session.zOrderChangedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS)).isTrue()
         assertThat(adapter.isZOrderOnTop).isTrue()
+        session.zOrderChangedLatch = CountDownLatch(1)
+        view.orderProviderUiAboveClientUi(false)
+        assertThat(session.zOrderChangedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS)).isTrue()
+        assertThat(adapter.isZOrderOnTop).isFalse()
     }
 
     @Test
@@ -197,12 +195,12 @@ class SandboxedSdkViewTest {
         testSandboxedUiAdapter.assertSessionOpened()
         val session = testSandboxedUiAdapter.testSession!!
         val adapter = testSandboxedUiAdapter
-        assertThat(adapter.isZOrderOnTop).isTrue()
+        assertThat(adapter.isZOrderOnTop).isFalse()
         // When Z-order state is unchanged, the provider should not be notified.
         session.zOrderChangedLatch = CountDownLatch(1)
-        view.orderProviderUiAboveClientUi(true)
+        view.orderProviderUiAboveClientUi(false)
         assertThat(session.zOrderChangedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS)).isFalse()
-        assertThat(adapter.isZOrderOnTop).isTrue()
+        assertThat(adapter.isZOrderOnTop).isFalse()
     }
 
     @Test
@@ -221,14 +219,14 @@ class SandboxedSdkViewTest {
         testSandboxedUiAdapter.delayOpenSessionCallback = true
         addViewToLayout()
         testSandboxedUiAdapter.assertSessionOpened()
-        view.orderProviderUiAboveClientUi(false)
+        view.orderProviderUiAboveClientUi(true)
         val session = testSandboxedUiAdapter.testSession!!
         assertThat(session.zOrderChangedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS)).isFalse()
         activityScenarioRule.withActivity { testSandboxedUiAdapter.sendOnSessionOpened() }
         // After session has opened, the pending Z order changed made while loading is notified
         // th the session.
         assertThat(session.zOrderChangedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS)).isTrue()
-        assertThat(testSandboxedUiAdapter.isZOrderOnTop).isFalse()
+        assertThat(testSandboxedUiAdapter.isZOrderOnTop).isTrue()
     }
 
     @Test

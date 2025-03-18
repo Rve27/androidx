@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         titleBar = findViewById(R.id.title_bar)
         drawerLayout = findViewById(R.id.drawer)
         navigationView = findViewById(R.id.navigation_view)
-        zOrderToggleButton = findViewById(R.id.zorder_below_switch)
+        zOrderToggleButton = findViewById(R.id.zorder_above_switch)
         composeToggleButton = findViewById(R.id.compose_switch)
         viewabilityToggleButton = findViewById(R.id.display_viewability_switch)
         triggerSandboxDeathButton = findViewById(R.id.trigger_sandbox_death)
@@ -264,7 +264,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeZOrderToggleButton() {
         zOrderToggleButton.setOnCheckedChangeListener { _, isChecked ->
-            BaseFragment.isZOrderBelowToggleChecked = isChecked
+            BaseFragment.isZOrderAboveToggleChecked = isChecked
         }
     }
 
