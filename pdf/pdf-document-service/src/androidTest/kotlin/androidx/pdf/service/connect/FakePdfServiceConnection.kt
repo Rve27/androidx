@@ -23,7 +23,8 @@ import android.os.IBinder
 import androidx.pdf.PdfDocumentRemote
 import androidx.pdf.adapter.PdfDocumentRendererFactoryImpl
 import androidx.pdf.service.PdfDocumentRemoteImpl
-import java.util.concurrent.CopyOnWriteArraySet
+import java.util.Queue
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlinx.coroutines.Job
 
 class FakePdfServiceConnection(
@@ -34,7 +35,7 @@ class FakePdfServiceConnection(
     private val onServiceConnected: () -> Unit = {}
 ) : PdfServiceConnection {
 
-    override val pendingJobs: MutableSet<Job> = CopyOnWriteArraySet()
+    override val pendingJobs: Queue<Job> = ConcurrentLinkedQueue()
 
     override suspend fun connect(uri: Uri) {
         documentBinder = PdfDocumentRemoteImpl(PdfDocumentRendererFactoryImpl())

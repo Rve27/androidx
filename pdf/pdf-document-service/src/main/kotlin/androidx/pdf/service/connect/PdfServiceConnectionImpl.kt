@@ -24,7 +24,8 @@ import android.os.IBinder
 import androidx.annotation.RestrictTo
 import androidx.pdf.PdfDocumentRemote
 import androidx.pdf.service.PdfDocumentServiceImpl
-import java.util.concurrent.CopyOnWriteArraySet
+import java.util.Queue
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -34,7 +35,7 @@ import kotlinx.coroutines.flow.update
 internal class PdfServiceConnectionImpl(override val context: Context) : PdfServiceConnection {
     private val _eventStateFlow: MutableStateFlow<ConnectionState> = MutableStateFlow(Disconnected)
 
-    override val pendingJobs: MutableSet<Job> = CopyOnWriteArraySet()
+    override val pendingJobs: Queue<Job> = ConcurrentLinkedQueue()
 
     private val isProcessing: Boolean
         get() = pendingJobs.any { it.isActive }

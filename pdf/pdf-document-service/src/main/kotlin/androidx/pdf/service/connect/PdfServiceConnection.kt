@@ -21,6 +21,7 @@ import android.content.ServiceConnection
 import android.net.Uri
 import androidx.annotation.RestrictTo
 import androidx.pdf.PdfDocumentRemote
+import java.util.Queue
 import kotlinx.coroutines.Job
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -43,8 +44,12 @@ public interface PdfServiceConnection : ServiceConnection {
     /** The [PdfDocumentRemote] instance, if the service is actively bound */
     public val documentBinder: PdfDocumentRemote?
 
-    // Queue for all the job that are working with document
-    public val pendingJobs: MutableSet<Job>
+    /**
+     * Queue for all the job that are working with document. This does not enforce FIFO executing of
+     * the task, but rather works as a list with safe concurrent modifications. see
+     * [java.util.concurrent.ConcurrentLinkedQueue]
+     */
+    public val pendingJobs: Queue<Job>
 
     /** Initiates binding to the service, and suspends until the service is bound */
     public suspend fun connect(uri: Uri)
