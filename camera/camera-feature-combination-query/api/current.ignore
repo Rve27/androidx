@@ -1,3 +1,11 @@
 // Baseline format: 1.0
-AddedAbstractMethod: androidx.camera.featurecombinationquery.CameraDeviceSetupCompat#isSessionConfigurationSupported(androidx.camera.featurecombinationquery.SessionConfigurationCompat):
-    Added method androidx.camera.featurecombinationquery.CameraDeviceSetupCompat.isSessionConfigurationSupported(androidx.camera.featurecombinationquery.SessionConfigurationCompat)
+AddedMethod: androidx.camera.featurecombinationquery.SessionConfigurationCompat.Builder#Builder():
+    Added constructor androidx.camera.featurecombinationquery.SessionConfigurationCompat.Builder()
+AddedMethod: androidx.camera.featurecombinationquery.SessionParametersCompat.Builder#Builder():
+    Added constructor androidx.camera.featurecombinationquery.SessionParametersCompat.Builder()
+
+
+RemovedMethod: androidx.camera.featurecombinationquery.SessionConfigurationCompat#builder():
+    Removed method androidx.camera.featurecombinationquery.SessionConfigurationCompat.builder()
+RemovedMethod: androidx.camera.featurecombinationquery.SessionParametersCompat#builder():
+    Removed method androidx.camera.featurecombinationquery.SessionParametersCompat.builder()

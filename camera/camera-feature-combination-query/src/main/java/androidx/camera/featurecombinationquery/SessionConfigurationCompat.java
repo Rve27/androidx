@@ -55,14 +55,6 @@ public class SessionConfigurationCompat {
     }
 
     /**
-     * @return an instance of the {@link Builder} class.
-     */
-    @NonNull
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * @return the configured output configurations.
      */
     @NonNull
@@ -79,16 +71,16 @@ public class SessionConfigurationCompat {
     }
 
     /**
-     * Simple builder class for {@link SessionConfigurationCompat}. Use
-     * {@link SessionConfigurationCompat#builder()} to obtain a builder object.
+     * Simple builder class for {@link SessionConfigurationCompat}.
      */
     public static final class Builder {
         @NonNull
         private final ArrayList<OutputConfiguration> mOutputConfigs = new ArrayList<>();
         @NonNull
-        private SessionParametersCompat mSessionParams = SessionParametersCompat.builder().build();
+        private SessionParametersCompat mSessionParams =
+                new SessionParametersCompat.Builder().build();
 
-        private Builder() {
+        public Builder() {
         }
 
         /**

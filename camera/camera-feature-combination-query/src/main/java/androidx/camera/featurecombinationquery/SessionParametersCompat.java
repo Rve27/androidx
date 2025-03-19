@@ -54,14 +54,6 @@ public class SessionParametersCompat {
     }
 
     /**
-     * @return an instance of the {@link Builder} class.
-     */
-    @NonNull
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    /**
      * Returns a {@link Set} of the keys contained in this map.
      * <p>
      * The returned set is not modifiable, so any attempts to modify it will throw an
@@ -91,14 +83,13 @@ public class SessionParametersCompat {
     }
 
     /**
-     * Simple builder class to build a {@link SessionParametersCompat} object. A {@code Builder}
-     * object can be obtained using the {@link SessionParametersCompat#builder()} call.
+     * Simple builder class to build a {@link SessionParametersCompat} object.
      */
     public static final class Builder {
         @NonNull
         private final HashMap<CaptureRequest.Key<?>, Object> mKeyVal = new HashMap<>();
 
-        private Builder() {
+        public Builder() {
         }
 
         /**
