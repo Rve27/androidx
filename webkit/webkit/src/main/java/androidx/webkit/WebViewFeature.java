@@ -122,6 +122,7 @@ public class WebViewFeature {
             SAVE_STATE,
             NAVIGATION_CALLBACK_BASIC,
             CACHE_PROVIDER,
+            PAYMENT_REQUEST,
     })
     @Retention(RetentionPolicy.SOURCE)
     @Target({ElementType.PARAMETER, ElementType.METHOD})
@@ -702,6 +703,17 @@ public class WebViewFeature {
      */
     @WebViewCompat.ExperimentalCacheProvider
     public static final String CACHE_PROVIDER = "CACHE_PROVIDER";
+
+    /**
+     * Feature for {@link #isFeatureSupported(String)}.
+     * This feature covers
+     * {@link WebSettingsCompat#setPaymentRequestEnabled(WebSettings, boolean)},
+     * {@link WebSettingsCompat#getPaymentRequestEnabled(WebSettings)},
+     * {@link WebSettingsCompat#setHasEnrolledInstrumentEnabled(WebSettings, boolean)}, and
+     * {@link WebSettingsCompat#getHasEnrolledInstrumentEnabled(WebSettings)},
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public static final String PAYMENT_REQUEST = "PAYMENT_REQUEST";
 
     /**
      * Return whether a feature is supported at run-time. This will check whether a feature is

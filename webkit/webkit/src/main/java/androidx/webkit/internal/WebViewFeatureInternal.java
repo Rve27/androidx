@@ -734,6 +734,16 @@ public class WebViewFeatureInternal {
     public static final ApiFeature.NoFramework CACHE_PROVIDER =
             new ApiFeature.NoFramework(WebViewFeature.CACHE_PROVIDER,
                     Features.PROVIDER_WEAKLY_REF_WEBVIEW);
+    /**
+     * Feature for {@link WebSettingsFeature#isFeatureSupported(String)}.
+     * This feature covers {@link WebSettingsCompat#setPaymentRequestEnabled(boolean)},
+     * {@link WebSettingsCompat#getPaymentRequestEnabled()},
+     * {@link WebSettingsCompat#setHasEnrolledInstrumentEnabled(boolean)}, and
+     * {@link WebSettingsCompat#getHasEnrolledInstrumentEnabled()}.
+     */
+    public static final ApiFeature.NoFramework PAYMENT_REQUEST =
+            new ApiFeature.NoFramework(WebViewFeature.PAYMENT_REQUEST,
+                    Features.PAYMENT_REQUEST);
 
     // --- Add new feature constants above this line ---
 
