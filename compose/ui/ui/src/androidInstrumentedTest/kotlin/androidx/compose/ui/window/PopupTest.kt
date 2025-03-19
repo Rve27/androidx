@@ -15,6 +15,7 @@
  */
 package androidx.compose.ui.window
 
+import android.view.InputDevice
 import android.view.KeyEvent
 import android.view.View
 import android.view.View.MEASURED_STATE_TOO_SMALL
@@ -33,6 +34,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ComposeUiFlags
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -62,7 +65,6 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.BoundedMatcher
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.FlakyTest
 import androidx.test.filters.MediumTest
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import androidx.test.uiautomator.UiDevice
@@ -74,10 +76,15 @@ import kotlin.math.roundToInt
 import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.Description
 import org.hamcrest.TypeSafeMatcher
+import org.junit.After
+import org.junit.AfterClass
+import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@OptIn(ExperimentalComposeUiApi::class)
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 class PopupTest {
@@ -87,6 +94,30 @@ class PopupTest {
     private val testTag = "testedPopup"
     private val offset = IntOffset(10, 10)
     private val popupSize = IntSize(40, 20)
+
+    @Before
+    fun setup() {
+        if (ComposeUiFlags.isHitPathTrackerLoggingEnabled) {
+            val activeDeviceIds = InputDevice.getDeviceIds()
+
+            println(
+                "POINTER_INPUT_DEBUG_LOG_TAG PopupTest.setup(), " +
+                    "activeDeviceIds = $activeDeviceIds"
+            )
+        }
+    }
+
+    @After
+    fun tearDown() {
+        if (ComposeUiFlags.isHitPathTrackerLoggingEnabled) {
+            val activeDeviceIds = InputDevice.getDeviceIds()
+
+            println(
+                "POINTER_INPUT_DEBUG_LOG_TAG PopupTest.tearDown(), " +
+                    "activeDeviceIds = $activeDeviceIds"
+            )
+        }
+    }
 
     @Test
     fun isShowing() {
@@ -226,9 +257,12 @@ class PopupTest {
         rule.runOnIdle { assertThat(value).isEqualTo(LayoutDirection.Rtl) }
     }
 
-    @FlakyTest(bugId = 402738067)
     @Test
     fun isDismissedOnTapOutside() {
+        if (ComposeUiFlags.isHitPathTrackerLoggingEnabled) {
+            println("POINTER_INPUT_DEBUG_LOG_TAG PopupTest.isDismissedOnTapOutside() START")
+        }
+
         var showPopup by mutableStateOf(true)
         rule.setContent {
             Box(Modifier.fillMaxSize()) {
@@ -250,6 +284,10 @@ class PopupTest {
                 rule.onAllNodes(isRoot()).onFirst().getUnclippedBoundsInRoot().height.roundToPx() /
                     2
             }
+
+        if (ComposeUiFlags.isHitPathTrackerLoggingEnabled) {
+            println("POINTER_INPUT_DEBUG_LOG_TAG \t\tTrigger click outside (Popup)")
+        }
         UiDevice.getInstance(getInstrumentation()).click(outsideX, outsideY)
 
         rule.waitForIdle()
@@ -259,8 +297,16 @@ class PopupTest {
         // to the ui, because the input events aren't going through that standard input system.
         rule.waitUntil(timeoutMillis = 2000) { rule.onNodeWithTag(testTag).isNotDisplayed() }
 
+        if (ComposeUiFlags.isHitPathTrackerLoggingEnabled) {
+            println("POINTER_INPUT_DEBUG_LOG_TAG \t\tBefore assertDoesNotExist() (Popup)")
+        }
+
         // Popup should not exist
         rule.onNodeWithTag(testTag).assertDoesNotExist()
+
+        if (ComposeUiFlags.isHitPathTrackerLoggingEnabled) {
+            println("POINTER_INPUT_DEBUG_LOG_TAG PopupTest.isDismissedOnTapOutside() END")
+        }
     }
 
     @Test
@@ -586,6 +632,22 @@ class PopupTest {
             override fun describeTo(description: Description?) {
                 description?.appendText("with width = $width height = $height")
             }
+        }
+    }
+
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun enableComposeUiFlags() {
+            ComposeUiFlags.isHitPathTrackerLoggingEnabled = true
+            println("POINTER_INPUT_DEBUG_LOG_TAG PopupTest.enableComposeUiFlags()")
+        }
+
+        @AfterClass
+        @JvmStatic
+        fun disableComposeUiFlags() {
+            println("POINTER_INPUT_DEBUG_LOG_TAG PopupTest.disableComposeUiFlags()")
+            ComposeUiFlags.isHitPathTrackerLoggingEnabled = false
         }
     }
 }

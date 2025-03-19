@@ -90,4 +90,11 @@ object ComposeUiFlags {
      * the cost of initializing the focus system.
      */
     @Suppress("MutableBareField") @JvmField var isTrackFocusEnabled: Boolean = true
+
+    /**
+     * Enable lower-level logging of input events where a cancellation event does not stop input
+     * events from finishing processing before the cancellation event. This is to track down why a
+     * certain build of CI is failing with this functionality enabled: b/399055247
+     */
+    @Suppress("MutableBareField") @JvmField var isHitPathTrackerLoggingEnabled: Boolean = false
 }
