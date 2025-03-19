@@ -716,6 +716,25 @@ abstract class BaseConnectionPoolTest {
                 maxNumOfReaders = 100,
                 maxNumOfWriters = 1
             )
+
+        // prime the pool with connections
+        val barriers = List(100) { CompletableDeferred<Unit>() }
+        val latch = CompletableDeferred<Unit>()
+        repeat(100) { i ->
+            launch(Dispatchers.IO) {
+                pool.useReaderConnection {
+                    barriers[i].complete(Unit)
+                    latch.await()
+                }
+            }
+        }
+        barriers.awaitAll()
+        latch.complete(Unit)
+        assertThat(openedConnections.get()).isEqualTo(100)
+
+        // create a lot of coroutines, some timeout some don't, validating we are using withTimeout
+        // with resources correctly as recommended in
+        // https://kotlinlang.org/docs/cancellation-and-timeouts.html#asynchronous-timeout-and-resources
         check(pool is ConnectionPoolImpl)
         pool.timeout = 20.milliseconds
         coroutineScope {
@@ -743,8 +762,6 @@ abstract class BaseConnectionPoolTest {
             }
 
         pool.close()
-
-        assertThat(openedConnections.get()).isEqualTo(100)
     }
 
     @Test
