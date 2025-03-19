@@ -35,8 +35,8 @@ dependencies {
 
     implementation("androidx.annotation:annotation:1.8.1")
     implementation("androidx.core:core:1.15.0")
-    implementation(project(":media:media"))
 
+    androidTestImplementation(libs.junit)
     androidTestImplementation(libs.testCore)
     androidTestImplementation(libs.testRunner)
     implementation(libs.truth)
