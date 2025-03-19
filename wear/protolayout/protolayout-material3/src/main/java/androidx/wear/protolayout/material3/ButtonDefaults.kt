@@ -421,9 +421,9 @@ internal constructor(
             AvatarButtonStyle(
                 labelTypography = Typography.LABEL_MEDIUM,
                 secondaryLabelTypography = Typography.BODY_SMALL,
-                avatarSizeWeight = 19.6f,
-                avatarPaddingWeight = 4.16f,
-                labelsPaddingWeight = 7.1f,
+                avatarSizeWeight = 25f,
+                avatarPaddingWeight = 5.51f,
+                labelsPaddingWeight = 9.4f,
                 innerVerticalPadding = padding(vertical = 8f, horizontal = Float.NaN),
                 avatarToLabelsSpaceDp = 6,
             )
@@ -436,11 +436,11 @@ internal constructor(
             AvatarButtonStyle(
                 labelTypography = Typography.TITLE_MEDIUM,
                 secondaryLabelTypography = Typography.LABEL_SMALL,
-                avatarSizeWeight = 23.15f,
-                avatarPaddingWeight = 2.1f,
-                labelsPaddingWeight = 6f,
+                avatarSizeWeight = 29.6f,
+                avatarPaddingWeight = 2.78f,
+                labelsPaddingWeight = 7.95f,
                 innerVerticalPadding = padding(vertical = 6f, horizontal = Float.NaN),
-                avatarToLabelsSpaceDp = 8,
+                avatarToLabelsSpaceDp = 6,
             )
     }
 }
