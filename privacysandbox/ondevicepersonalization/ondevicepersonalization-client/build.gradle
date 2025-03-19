@@ -54,7 +54,7 @@ dependencies {
 android {
     compileSdk = 34
     compileSdkExtension = 12
-    namespace "androidx.privacysandbox.ondevicepersonalization"
+    namespace = "androidx.privacysandbox.ondevicepersonalization"
 }
 
 androidx {

@@ -71,7 +71,7 @@ dependencies {
 }
 
 android {
-    compileSdk 35
+    compileSdk = 35
     testOptions.unitTests.includeAndroidResources = true
     namespace = "androidx.camera.viewfinder.view"
     lint {
