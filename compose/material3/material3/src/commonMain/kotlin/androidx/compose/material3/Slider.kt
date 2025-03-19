@@ -97,6 +97,7 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.layout.layout
@@ -847,7 +848,10 @@ private fun SliderImpl(
         val isOnFirstOrLastStep =
             valueAsFraction == state.tickFractions.firstOrNull() ||
                 valueAsFraction == state.tickFractions.lastOrNull()
-        val trackCornerSize = trackPlaceable[CornerSizeAlignmentLine]
+        val trackCornerSize =
+            trackPlaceable[CornerSizeAlignmentLine].let {
+                if (it != AlignmentLine.Unspecified) it else 0
+            }
         if (state.orientation == Vertical) {
             sliderWidth = max(trackPlaceable.width, thumbPlaceable.width)
             sliderHeight = thumbPlaceable.height + trackPlaceable.height
@@ -1083,7 +1087,10 @@ private fun RangeSliderImpl(
             endValueAsFraction == state.tickFractions.firstOrNull() ||
                 endValueAsFraction == state.tickFractions.lastOrNull()
         val trackOffsetX = startThumbPlaceable.width / 2
-        val trackCornerSize = trackPlaceable[CornerSizeAlignmentLine]
+        val trackCornerSize =
+            trackPlaceable[CornerSizeAlignmentLine].let {
+                if (it != AlignmentLine.Unspecified) it else 0
+            }
         val startThumbOffsetX =
             if (state.steps > 0 && !isStartOnFirstOrLastStep) {
                 ((trackPlaceable.width - trackCornerSize * 2) * startValueAsFraction).roundToInt() +
