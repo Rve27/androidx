@@ -176,6 +176,9 @@ package androidx.health.connect.client.contracts {
 
 package androidx.health.connect.client.feature {
 
+  @SuppressCompatibility @kotlin.RequiresOptIn(message="This is an experimental API for mindfulness session records, part of experimental Health Connect APIs and could change in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalMindfulnessSessionApi {
+  }
+
   @SuppressCompatibility @kotlin.RequiresOptIn(message="This is a part of the Personal Health Record experimental Health Connect APIs and could change in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalPersonalHealthRecordApi {
   }
 
@@ -1377,6 +1380,44 @@ package androidx.health.connect.client.records {
     property public androidx.health.connect.client.records.metadata.Metadata metadata;
     property public java.time.Instant startTime;
     property public java.time.ZoneOffset? startZoneOffset;
+  }
+
+  @SuppressCompatibility @androidx.health.connect.client.feature.ExperimentalMindfulnessSessionApi public final class MindfulnessSessionRecord implements androidx.health.connect.client.records.Record {
+    ctor public MindfulnessSessionRecord(java.time.Instant startTime, java.time.ZoneOffset? startZoneOffset, java.time.Instant endTime, java.time.ZoneOffset? endZoneOffset, androidx.health.connect.client.records.metadata.Metadata metadata, int mindfulnessSessionType, optional String? title, optional String? notes);
+    method public java.time.Instant getEndTime();
+    method public java.time.ZoneOffset? getEndZoneOffset();
+    method public androidx.health.connect.client.records.metadata.Metadata getMetadata();
+    method public int getMindfulnessSessionType();
+    method public String? getNotes();
+    method public java.time.Instant getStartTime();
+    method public java.time.ZoneOffset? getStartZoneOffset();
+    method public String? getTitle();
+    property public java.time.Instant endTime;
+    property public java.time.ZoneOffset? endZoneOffset;
+    property public androidx.health.connect.client.records.metadata.Metadata metadata;
+    property public int mindfulnessSessionType;
+    property public String? notes;
+    property public java.time.Instant startTime;
+    property public java.time.ZoneOffset? startZoneOffset;
+    property public String? title;
+    field public static final androidx.health.connect.client.records.MindfulnessSessionRecord.Companion Companion;
+    field public static final androidx.health.connect.client.aggregate.AggregateMetric<java.time.Duration> MINDFULNESS_DURATION_TOTAL;
+    field public static final int MINDFULNESS_SESSION_TYPE_BREATHING = 2; // 0x2
+    field public static final int MINDFULNESS_SESSION_TYPE_MEDITATION = 1; // 0x1
+    field public static final int MINDFULNESS_SESSION_TYPE_MOVEMENT = 4; // 0x4
+    field public static final int MINDFULNESS_SESSION_TYPE_MUSIC = 3; // 0x3
+    field public static final int MINDFULNESS_SESSION_TYPE_UNGUIDED = 5; // 0x5
+    field public static final int MINDFULNESS_SESSION_TYPE_UNKNOWN = 0; // 0x0
+  }
+
+  public static final class MindfulnessSessionRecord.Companion {
+    property public androidx.health.connect.client.aggregate.AggregateMetric<? extends java.time.Duration> MINDFULNESS_DURATION_TOTAL;
+    property public static int MINDFULNESS_SESSION_TYPE_BREATHING;
+    property public static int MINDFULNESS_SESSION_TYPE_MEDITATION;
+    property public static int MINDFULNESS_SESSION_TYPE_MOVEMENT;
+    property public static int MINDFULNESS_SESSION_TYPE_MUSIC;
+    property public static int MINDFULNESS_SESSION_TYPE_UNGUIDED;
+    property public static int MINDFULNESS_SESSION_TYPE_UNKNOWN;
   }
 
   public final class NutritionRecord implements androidx.health.connect.client.records.Record {
