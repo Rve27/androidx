@@ -501,6 +501,7 @@ private fun createArc(
                 .setThickness(strokeWidth)
                 .setLinePattern(linePattern)
                 .setLength(arcLength)
+                .setArcDirection(arcDirection)
                 .setLayoutConstraintsForDynamicLength(
                     // We use one Arc container to put one arcline, so it is fine to put 360 here
                     // as layout constraint.
