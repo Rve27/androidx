@@ -890,9 +890,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private fun handleError(error: Throwable) {
         val errorMsg =
             when (error) {
-                is DeadObjectException ->
-                    context.getString(R.string.service_disconnect_error_message)
-                else -> context.getString(R.string.pdf_view_error_message)
+                // TODO(b/404836992): Fix strings after confirmation from UXW
+                is DeadObjectException -> context.getString(R.string.error_cannot_open_pdf)
+                else -> context.getString(R.string.error_cannot_open_pdf)
             }
         Snackbar.make(this, errorMsg, Snackbar.LENGTH_SHORT).show()
     }
