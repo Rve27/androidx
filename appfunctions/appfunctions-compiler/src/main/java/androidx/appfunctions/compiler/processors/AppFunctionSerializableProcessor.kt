@@ -43,7 +43,6 @@ import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asTypeName
-import com.squareup.kotlinpoet.buildCodeBlock
 
 /**
  * Generates a factory class with methods to convert classes annotated with
@@ -167,7 +166,7 @@ class AppFunctionSerializableProcessor(
             buildProxyFromAppFunctionDataFunction(annotatedProxyClass, factoryCodeBuilder)
         )
         serializableProxyClassBuilder.addFunction(
-            buildProxyToAppFunctionDataFunction(annotatedProxyClass)
+            buildProxyToAppFunctionDataFunction(annotatedProxyClass, factoryCodeBuilder)
         )
         val fileSpec =
             FileSpec.builder(
@@ -245,6 +244,7 @@ class AppFunctionSerializableProcessor(
     // Todo(b/403199251): Remove temp method
     private fun buildProxyToAppFunctionDataFunction(
         annotatedProxyClass: AnnotatedAppFunctionSerializableProxy,
+        factoryCodeBuilder: AppFunctionSerializableFactoryCodeBuilder
     ): FunSpec {
         return FunSpec.builder(
                 AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.METHOD_NAME
@@ -257,17 +257,7 @@ class AppFunctionSerializableProcessor(
                     )
                     .build()
             )
-            .addCode(
-                buildCodeBlock {
-                    addStatement(
-                        """
-                        return %T.Builder("").build()
-                        """
-                            .trimIndent(),
-                        AppFunctionData::class.asTypeName()
-                    )
-                }
-            )
+            .addCode(factoryCodeBuilder.appendToAppFunctionDataMethodBodyForProxy())
             .returns(AppFunctionData::class.asTypeName())
             .build()
     }

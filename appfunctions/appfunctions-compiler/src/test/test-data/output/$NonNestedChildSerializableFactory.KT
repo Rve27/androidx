@@ -22,16 +22,17 @@ public class `$NonNestedChildSerializableFactory` : AppFunctionSerializableFacto
   }
 
   override fun toAppFunctionData(appFunctionSerializable: NonNestedChildSerializable): AppFunctionData {
+    val nonNestedChildSerializable_appFunctionSerializable = appFunctionSerializable
     val nestedBaseSerializableFactory = `$NestedBaseSerializableFactory`()
 
     val builder = AppFunctionData.Builder("com.testdata.NonNestedChildSerializable")
-    val stringBaseName = appFunctionSerializable.stringBaseName
+    val stringBaseName = nonNestedChildSerializable_appFunctionSerializable.stringBaseName
     builder.setString("stringBaseName", stringBaseName)
-    val nestedBase = appFunctionSerializable.nestedBase
+    val nestedBase = nonNestedChildSerializable_appFunctionSerializable.nestedBase
     if (nestedBase != null) {
       builder.setAppFunctionData("nestedBase", nestedBaseSerializableFactory.toAppFunctionData(nestedBase))
     }
-    val longBaseValue = appFunctionSerializable.longBaseValue
+    val longBaseValue = nonNestedChildSerializable_appFunctionSerializable.longBaseValue
     builder.setLong("longBaseValue", longBaseValue)
 
     return builder.build()

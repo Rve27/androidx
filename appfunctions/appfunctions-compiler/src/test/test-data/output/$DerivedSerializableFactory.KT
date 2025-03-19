@@ -16,11 +16,12 @@ public class `$DerivedSerializableFactory` : AppFunctionSerializableFactory<Deri
   }
 
   override fun toAppFunctionData(appFunctionSerializable: DerivedSerializable): AppFunctionData {
+    val derivedSerializable_appFunctionSerializable = appFunctionSerializable
 
     val builder = AppFunctionData.Builder("com.testdata.DerivedSerializable")
-    val stringToOpen = appFunctionSerializable.stringToOpen
+    val stringToOpen = derivedSerializable_appFunctionSerializable.stringToOpen
     builder.setString("stringToOpen", stringToOpen)
-    val age = appFunctionSerializable.age
+    val age = derivedSerializable_appFunctionSerializable.age
     builder.setLong("age", age)
 
     return builder.build()

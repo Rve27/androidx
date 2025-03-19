@@ -21,12 +21,13 @@ public class `$NestedBaseSerializableFactory` : AppFunctionSerializableFactory<N
   }
 
   override fun toAppFunctionData(appFunctionSerializable: NestedBaseSerializable): AppFunctionData {
+    val nestedBaseSerializable_appFunctionSerializable = appFunctionSerializable
     val nestedBaseSerializableFactory = `$NestedBaseSerializableFactory`()
 
     val builder = AppFunctionData.Builder("com.testdata.NestedBaseSerializable")
-    val stringBaseName = appFunctionSerializable.stringBaseName
+    val stringBaseName = nestedBaseSerializable_appFunctionSerializable.stringBaseName
     builder.setString("stringBaseName", stringBaseName)
-    val nestedBase = appFunctionSerializable.nestedBase
+    val nestedBase = nestedBaseSerializable_appFunctionSerializable.nestedBase
     if (nestedBase != null) {
       builder.setAppFunctionData("nestedBase", nestedBaseSerializableFactory.toAppFunctionData(nestedBase))
     }

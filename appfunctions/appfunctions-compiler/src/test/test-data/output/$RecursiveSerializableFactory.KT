@@ -20,10 +20,11 @@ public class `$RecursiveSerializableFactory` : AppFunctionSerializableFactory<Re
   }
 
   override fun toAppFunctionData(appFunctionSerializable: RecursiveSerializable): AppFunctionData {
+    val recursiveSerializable_appFunctionSerializable = appFunctionSerializable
     val recursiveSerializableFactory = `$RecursiveSerializableFactory`()
 
     val builder = AppFunctionData.Builder("com.testdata.RecursiveSerializable")
-    val nested = appFunctionSerializable.nested
+    val nested = recursiveSerializable_appFunctionSerializable.nested
     if (nested != null) {
       builder.setAppFunctionData("nested", recursiveSerializableFactory.toAppFunctionData(nested))
     }

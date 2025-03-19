@@ -21,5 +21,25 @@ public class `$LocalDateTimeFactory` : AppFunctionSerializableFactory<LocalDateT
     return resultAppFunctionLocalDateTime.toLocalDateTime()
   }
 
-  override fun toAppFunctionData(appFunctionSerializable: LocalDateTime): AppFunctionData = AppFunctionData.Builder("").build()
+  override fun toAppFunctionData(appFunctionSerializable: LocalDateTime): AppFunctionData {
+    val appFunctionLocalDateTime_appFunctionSerializable = AppFunctionLocalDateTime.fromLocalDateTime(appFunctionSerializable)
+
+    val builder = AppFunctionData.Builder("com.testdata.AppFunctionLocalDateTime")
+    val year = appFunctionLocalDateTime_appFunctionSerializable.year
+    builder.setInt("year", year)
+    val month = appFunctionLocalDateTime_appFunctionSerializable.month
+    builder.setInt("month", month)
+    val dayOfMonth = appFunctionLocalDateTime_appFunctionSerializable.dayOfMonth
+    builder.setInt("dayOfMonth", dayOfMonth)
+    val hour = appFunctionLocalDateTime_appFunctionSerializable.hour
+    builder.setInt("hour", hour)
+    val minute = appFunctionLocalDateTime_appFunctionSerializable.minute
+    builder.setInt("minute", minute)
+    val second = appFunctionLocalDateTime_appFunctionSerializable.second
+    builder.setInt("second", second)
+    val nanoOfSecond = appFunctionLocalDateTime_appFunctionSerializable.nanoOfSecond
+    builder.setInt("nanoOfSecond", nanoOfSecond)
+
+    return builder.build()
+  }
 }

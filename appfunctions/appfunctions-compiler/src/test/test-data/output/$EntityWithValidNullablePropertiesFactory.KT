@@ -32,46 +32,47 @@ public class `$EntityWithValidNullablePropertiesFactory` : AppFunctionSerializab
   }
 
   override fun toAppFunctionData(appFunctionSerializable: EntityWithValidNullableProperties): AppFunctionData {
+    val entityWithValidNullableProperties_appFunctionSerializable = appFunctionSerializable
     val inputSerializableFactory = `$InputSerializableFactory`()
 
     val builder = AppFunctionData.Builder("com.testdata.EntityWithValidNullableProperties")
-    val longParam = appFunctionSerializable.longParam
+    val longParam = entityWithValidNullableProperties_appFunctionSerializable.longParam
     if (longParam != null) {
       builder.setLong("longParam", longParam)
     }
-    val doubleParam = appFunctionSerializable.doubleParam
+    val doubleParam = entityWithValidNullableProperties_appFunctionSerializable.doubleParam
     if (doubleParam != null) {
       builder.setDouble("doubleParam", doubleParam)
     }
-    val boolParam = appFunctionSerializable.boolParam
+    val boolParam = entityWithValidNullableProperties_appFunctionSerializable.boolParam
     if (boolParam != null) {
       builder.setBoolean("boolParam", boolParam)
     }
-    val stringParam = appFunctionSerializable.stringParam
+    val stringParam = entityWithValidNullableProperties_appFunctionSerializable.stringParam
     if (stringParam != null) {
       builder.setString("stringParam", stringParam)
     }
-    val longArray = appFunctionSerializable.longArray
+    val longArray = entityWithValidNullableProperties_appFunctionSerializable.longArray
     if (longArray != null) {
       builder.setLongArray("longArray", longArray)
     }
-    val doubleArray = appFunctionSerializable.doubleArray
+    val doubleArray = entityWithValidNullableProperties_appFunctionSerializable.doubleArray
     if (doubleArray != null) {
       builder.setDoubleArray("doubleArray", doubleArray)
     }
-    val boolArray = appFunctionSerializable.boolArray
+    val boolArray = entityWithValidNullableProperties_appFunctionSerializable.boolArray
     if (boolArray != null) {
       builder.setBooleanArray("boolArray", boolArray)
     }
-    val stringList = appFunctionSerializable.stringList
+    val stringList = entityWithValidNullableProperties_appFunctionSerializable.stringList
     if (stringList != null) {
       builder.setStringList("stringList", stringList)
     }
-    val inputSerializable = appFunctionSerializable.inputSerializable
+    val inputSerializable = entityWithValidNullableProperties_appFunctionSerializable.inputSerializable
     if (inputSerializable != null) {
       builder.setAppFunctionData("inputSerializable", inputSerializableFactory.toAppFunctionData(inputSerializable))
     }
-    val serializableList = appFunctionSerializable.serializableList
+    val serializableList = entityWithValidNullableProperties_appFunctionSerializable.serializableList
     if (serializableList != null) {
       builder.setAppFunctionDataList("serializableList", serializableList.map{ inputSerializable ->
         inputSerializableFactory.toAppFunctionData(inputSerializable)

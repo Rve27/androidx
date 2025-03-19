@@ -16,11 +16,12 @@ public class `$LongBaseSerializableFactory` : AppFunctionSerializableFactory<Lon
   }
 
   override fun toAppFunctionData(appFunctionSerializable: LongBaseSerializable): AppFunctionData {
+    val longBaseSerializable_appFunctionSerializable = appFunctionSerializable
 
     val builder = AppFunctionData.Builder("com.testdata.LongBaseSerializable")
-    val age = appFunctionSerializable.age
+    val age = longBaseSerializable_appFunctionSerializable.age
     builder.setLong("age", age)
-    val stringToOpen = appFunctionSerializable.stringToOpen
+    val stringToOpen = longBaseSerializable_appFunctionSerializable.stringToOpen
     builder.setString("stringToOpen", stringToOpen)
 
     return builder.build()
