@@ -249,6 +249,7 @@ class UpsertTest : TestDatabaseTest() {
         booksDao.upsertBookMaybe(TestUtil.BOOK_1).subscribeWith(testObserver)
         booksDao.getBookFlowable(TestUtil.BOOK_1.bookId).subscribeWith(subscriber)
         drain()
+        testObserver.await()
         testObserver.assertComplete()
         assertThat(subscriber.values().size).isEqualTo(1)
         assertThat(subscriber.values()[0]).isEqualTo(TestUtil.BOOK_1)
@@ -256,6 +257,8 @@ class UpsertTest : TestDatabaseTest() {
             .upsertBookMaybe(TestUtil.BOOK_1.copy(title = "changed title"))
             .subscribeWith(testObserver2)
         drain()
+        testObserver2.await()
+        testObserver2.assertComplete()
         assertThat(subscriber.values().size).isEqualTo(2)
         assertThat(subscriber.values()[1].title).isEqualTo("changed title")
     }
