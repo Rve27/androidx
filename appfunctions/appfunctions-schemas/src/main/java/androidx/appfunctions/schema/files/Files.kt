@@ -137,15 +137,24 @@ public interface GetFileContentUrisAppFunction<
      * retrieved.
      */
     public interface Response {
-        /** The list of [FileContentUri]s of the files successfully retrieved. */
+        /** The list of [FileContentUri]s of the successfully retrieved files. */
         public val fileContentUris: List<FileContentUri>
     }
 
-    /** A mapping of the file id to its URI. */
+    /** A mapping of [AppFunctionFile.id] to its content URI. */
     public interface FileContentUri {
         /** The [AppFunctionFile.id] of the file. */
         public val id: String
-        /** The URI of the file's content. */
+        /**
+         * The URI of the file's content.
+         *
+         * When providing an [androidx.appfunctions.schema.types.AppFunctionUri] to another app,
+         * that app must be granted URI permission using
+         * [android.content.Context.grantUriPermission] to the receiving app.
+         *
+         * The providing app should also consider revoking the URI permission by using
+         * [android.content.Context.revokeUriPermission] after a certain time period.
+         */
         public val uri: AppFunctionUri
     }
 
