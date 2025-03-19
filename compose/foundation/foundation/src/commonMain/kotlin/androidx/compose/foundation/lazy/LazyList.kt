@@ -410,11 +410,11 @@ private fun CacheWindowLogic.keepAroundItems(
             val lastVisibleItemIndex = visibleItemsList.last().index
             // we must send a message in case of changing directions for items
             // that were keep around and become prefetch forward
-            for (item in prefetchWindowStartIndex..<firstVisibleItemIndex) {
+            for (item in prefetchWindowStartLine..<firstVisibleItemIndex) {
                 measuredItemProvider.keepAround(item)
             }
 
-            for (item in (lastVisibleItemIndex + 1)..prefetchWindowEndIndex) {
+            for (item in (lastVisibleItemIndex + 1)..prefetchWindowEndLine) {
                 measuredItemProvider.keepAround(item)
             }
         }

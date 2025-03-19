@@ -14,33 +14,31 @@
  * limitations under the License.
  */
 
-package androidx.compose.foundation.lazy
+package androidx.compose.foundation.lazy.grid
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.gestures.snapping.singleAxisViewportSize
+import androidx.compose.foundation.gestures.snapping.offsetOnMainAxis
+import androidx.compose.foundation.gestures.snapping.sizeOnMainAxis
 import androidx.compose.foundation.lazy.layout.CacheWindowLogic
 import androidx.compose.foundation.lazy.layout.CacheWindowScope
 import androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow
 import androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle
 import androidx.compose.foundation.lazy.layout.NestedPrefetchScope
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.util.fastFilter
+import androidx.compose.ui.util.fastForEach
 import kotlin.math.absoluteValue
 
-/**
- * This is a transition class based on [androidx.compose.foundation.lazy.LazyListPrefetchStrategy]
- * where we will perform a window based prefetching for items in the direction of the scroll
- * movement (ahead).
- */
-@OptIn(ExperimentalFoundationApi::class)
-internal class LazyListCacheWindowStrategy(cacheWindow: LazyLayoutCacheWindow) :
-    CacheWindowLogic(cacheWindow), LazyListPrefetchStrategy {
-    private val cacheWindowScope = LazyListCacheWindowScope()
+@ExperimentalFoundationApi
+internal class LazyGridCacheWindowPrefetchStrategy(cacheWindow: LazyLayoutCacheWindow) :
+    CacheWindowLogic(cacheWindow), LazyGridPrefetchStrategy {
+    private val cacheWindowScope = LazyGridCacheWindowScope()
 
-    override fun LazyListPrefetchScope.onScroll(delta: Float, layoutInfo: LazyListLayoutInfo) {
+    override fun LazyGridPrefetchScope.onScroll(delta: Float, layoutInfo: LazyGridLayoutInfo) {
         applyWindowScope(layoutInfo) { onScroll(delta) }
     }
 
-    override fun LazyListPrefetchScope.onVisibleItemsUpdated(layoutInfo: LazyListLayoutInfo) {
+    override fun LazyGridPrefetchScope.onVisibleItemsUpdated(layoutInfo: LazyGridLayoutInfo) {
         applyWindowScope(layoutInfo) { onVisibleItemsUpdated() }
     }
 
@@ -48,9 +46,9 @@ internal class LazyListCacheWindowStrategy(cacheWindow: LazyLayoutCacheWindow) :
         repeat(nestedPrefetchItemCount) { schedulePrecomposition(firstVisibleItemIndex + it) }
     }
 
-    /** Adapts the LazyListPrefetchScope and LazyListLayoutInfo to a single scope. */
-    private inline fun LazyListPrefetchScope.applyWindowScope(
-        layoutInfo: LazyListLayoutInfo,
+    /** Adapts the LazyGridPrefetchScope and LazyGridLayoutInfo to a single scope. */
+    private inline fun LazyGridPrefetchScope.applyWindowScope(
+        layoutInfo: LazyGridLayoutInfo,
         block: CacheWindowScope.() -> Unit
     ) {
         cacheWindowScope.layoutInfo = layoutInfo
@@ -59,10 +57,10 @@ internal class LazyListCacheWindowStrategy(cacheWindow: LazyLayoutCacheWindow) :
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
-internal class LazyListCacheWindowScope() : CacheWindowScope {
-    lateinit var layoutInfo: LazyListLayoutInfo
-    lateinit var prefetchScope: LazyListPrefetchScope
+@ExperimentalFoundationApi
+private class LazyGridCacheWindowScope() : CacheWindowScope {
+    lateinit var layoutInfo: LazyGridLayoutInfo
+    lateinit var prefetchScope: LazyGridPrefetchScope
 
     override val totalItemsCount: Int
         get() = layoutInfo.totalItemsCount
@@ -75,7 +73,9 @@ internal class LazyListCacheWindowScope() : CacheWindowScope {
             val firstVisibleItem = layoutInfo.visibleItemsInfo.first()
             // how much of the first item is peeking out of view at the start of the layout.
             val firstItemOverflowOffset =
-                (firstVisibleItem.offset + layoutInfo.beforeContentPadding).coerceAtMost(0)
+                (firstVisibleItem.offsetOnMainAxis(layoutInfo.orientation) +
+                        layoutInfo.beforeContentPadding)
+                    .coerceAtMost(0)
             // extra space is always positive in this context
             return firstItemOverflowOffset.absoluteValue
         }
@@ -85,37 +85,54 @@ internal class LazyListCacheWindowScope() : CacheWindowScope {
             val lastVisibleItem = layoutInfo.visibleItemsInfo.last()
             // how much of the last item is peeking out of view at the end of the layout
             val lastItemOverflowOffset =
-                lastVisibleItem.offset + lastVisibleItem.size + layoutInfo.mainAxisItemSpacing
+                lastVisibleItem.offsetOnMainAxis(layoutInfo.orientation) +
+                    lastVisibleItem.sizeOnMainAxis(orientation = layoutInfo.orientation) +
+                    layoutInfo.mainAxisItemSpacing
 
             // extra space is always positive in this context
             return (lastItemOverflowOffset - layoutInfo.viewportEndOffset).absoluteValue
         }
 
     override val firstVisibleLineIndex: Int
-        get() = layoutInfo.visibleItemsInfo.first().index
+        get() {
+            return layoutInfo.visibleItemsInfo.first().lineIndex
+        }
 
     override val lastVisibleLineIndex: Int
-        get() = layoutInfo.visibleItemsInfo.last().index
+        get() = layoutInfo.visibleItemsInfo.last().lineIndex
 
     override val mainAxisViewportSize: Int
         get() = layoutInfo.singleAxisViewportSize
 
     override val density: Density?
-        get() = (layoutInfo as? LazyListMeasureResult)?.density
+        get() = (layoutInfo as? LazyGridMeasureResult)?.density
 
     override fun schedulePrefetch(
         laneIndex: Int,
         onItemPrefetched: (Int) -> Unit
     ): List<PrefetchHandle> {
-        return listOf(prefetchScope.schedulePrefetch(laneIndex, onItemPrefetched))
+        return prefetchScope.scheduleLinePrefetch(laneIndex) { onItemPrefetched(it.max()) }
     }
 
     override val visibleLineCount: Int
-        get() = layoutInfo.visibleItemsInfo.size
+        get() = lastVisibleLineIndex - firstVisibleLineIndex + 1
 
-    override fun getVisibleItemSize(indexInVisibleLines: Int): Int =
-        layoutInfo.visibleItemsInfo[indexInVisibleLines].size
+    override fun getVisibleItemSize(indexInVisibleLines: Int): Int {
+        val laneIndex = indexInVisibleLines + firstVisibleLineIndex
+        var tallestItemSize = 0
+        layoutInfo.visibleItemsInfo
+            .fastFilter { it.lineIndex == laneIndex }
+            .fastForEach {
+                tallestItemSize =
+                    maxOf(it.sizeOnMainAxis(orientation = layoutInfo.orientation), tallestItemSize)
+            }
+
+        return tallestItemSize
+    }
 
     override fun getVisibleItemLine(indexInVisibleLines: Int): Int =
-        layoutInfo.visibleItemsInfo[indexInVisibleLines].index
+        firstVisibleLineIndex + indexInVisibleLines
+
+    val LazyGridItemInfo.lineIndex: Int
+        get() = lineIndex(layoutInfo.orientation)
 }
