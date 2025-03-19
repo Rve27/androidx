@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.sp
 internal object TypeScaleTokens {
     val ArcLargeFont = TypefaceTokens.Brand
     val ArcLargeLineHeight = 22.0.sp
-    val ArcLargeSize = 20.sp
-    val ArcLargeTrackingBottom = 1.8.sp
+    val ArcLargeSize = 18.sp
+    val ArcLargeTrackingBottom = 1.6.sp
     val ArcLargeTrackingTop = 0.4.sp
     val ArcLargeWeight = 599.0f
     val ArcLargeWidth = 100.0f
@@ -38,7 +38,7 @@ internal object TypeScaleTokens {
     val ArcSmallFont = TypefaceTokens.Brand
     val ArcSmallLineHeight = 16.0.sp
     val ArcSmallSize = 14.sp
-    val ArcSmallTrackingBottom = 1.6.sp
+    val ArcSmallTrackingBottom = 1.4.sp
     val ArcSmallTrackingTop = 0.6.sp
     val ArcSmallWeight = 560.0f
     val ArcSmallWidth = 100.0f
