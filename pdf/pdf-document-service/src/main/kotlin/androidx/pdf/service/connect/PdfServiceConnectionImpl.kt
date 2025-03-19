@@ -77,11 +77,15 @@ internal class PdfServiceConnectionImpl(override val context: Context) : PdfServ
     }
 
     override fun disconnect() {
-        // Update connection state earlier to prevent any operations (e.g., page releases) on the
-        // closed document until the service unbinds.
-        _eventStateFlow.update { Disconnected }
+        if (isConnected) {
+            // Page releases are unnecessary after document closure; resources are released
+            // automatically server-side. Attempting a release on a closed document will result in
+            // an exception. To prevent such release calls, the connection is marked as disconnected
+            // before closing the document.
+            _eventStateFlow.update { Disconnected }
 
-        documentBinder?.closePdfDocument()
-        context.unbindService(this)
+            documentBinder?.closePdfDocument()
+            context.unbindService(this)
+        }
     }
 }
