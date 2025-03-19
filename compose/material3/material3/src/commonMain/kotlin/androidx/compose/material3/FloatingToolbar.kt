@@ -49,10 +49,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -194,80 +192,6 @@ fun HorizontalFloatingToolbar(
         collapsedShadowElevation = collapsedShadowElevation,
         content = content
     )
-}
-
-/**
- * A horizontal floating toolbar displays navigation and key actions in a [Row]. It can be
- * positioned anywhere on the screen and floats over the rest of the content.
- *
- * @sample androidx.compose.material3.samples.ExpandableHorizontalFloatingToolbarSample
- * @sample androidx.compose.material3.samples.ScrollableHorizontalFloatingToolbarSample
- * @param expanded whether the FloatingToolbar is in expanded mode, i.e. showing [leadingContent]
- *   and [trailingContent].
- * @param modifier the [Modifier] to be applied to this FloatingToolbar.
- * @param containerColor the color used for the background of this FloatingToolbar. Use
- *   [Color.Transparent] to have no color.
- * @param contentPadding the padding applied to the content of this FloatingToolbar.
- * @param scrollBehavior a [FloatingToolbarScrollBehavior]. If null, this FloatingToolbar will not
- *   automatically react to scrolling.
- * @param shape the shape used for this FloatingToolbar.
- * @param leadingContent the leading content of this FloatingToolbar. The default layout here is a
- *   [Row], so content inside will be placed horizontally. Only showing if [expanded] is true.
- * @param trailingContent the trailing content of this FloatingToolbar. The default layout here is a
- *   [Row], so content inside will be placed horizontally. Only showing if [expanded] is true.
- * @param content the main content of this FloatingToolbar. The default layout here is a [Row], so
- *   content inside will be placed horizontally.
- */
-@Deprecated(
-    message = "Use the HorizontalFloatingToolbar function that accepts FloatingToolbarColors",
-    level = DeprecationLevel.HIDDEN
-)
-@ExperimentalMaterial3ExpressiveApi
-@Composable
-fun HorizontalFloatingToolbar(
-    expanded: Boolean,
-    modifier: Modifier = Modifier,
-    containerColor: Color = ColorSchemeKeyTokens.PrimaryContainer.value,
-    contentPadding: PaddingValues = FloatingToolbarDefaults.ContentPadding,
-    scrollBehavior: FloatingToolbarScrollBehavior? = null,
-    shape: Shape = FloatingToolbarDefaults.ContainerShape,
-    leadingContent: @Composable (RowScope.() -> Unit)? = null,
-    trailingContent: @Composable (RowScope.() -> Unit)? = null,
-    content: @Composable RowScope.() -> Unit
-) {
-    Row(
-        modifier =
-            modifier
-                .then(
-                    scrollBehavior?.let { with(it) { Modifier.floatingScrollBehavior() } }
-                        ?: Modifier
-                )
-                .height(FloatingToolbarDefaults.ContainerSize)
-                .background(color = containerColor, shape = shape)
-                .padding(contentPadding),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        leadingContent?.let {
-            AnimatedVisibility(
-                visible = expanded,
-                enter = horizontalEnterTransition(expandFrom = Alignment.Start),
-                exit = horizontalExitTransition(shrinkTowards = Alignment.End),
-            ) {
-                Row(content = it)
-            }
-        }
-        content()
-        trailingContent?.let {
-            AnimatedVisibility(
-                visible = expanded,
-                enter = horizontalEnterTransition(expandFrom = Alignment.End),
-                exit = horizontalExitTransition(shrinkTowards = Alignment.Start),
-            ) {
-                Row(content = it)
-            }
-        }
-    }
 }
 
 /**
@@ -432,80 +356,6 @@ fun VerticalFloatingToolbar(
         collapsedShadowElevation = collapsedShadowElevation,
         content = content
     )
-}
-
-/**
- * A vertical floating toolbar displays navigation and key actions in a [Column]. It can be
- * positioned anywhere on the screen and floats over the rest of the content.
- *
- * @sample androidx.compose.material3.samples.ExpandableVerticalFloatingToolbarSample
- * @sample androidx.compose.material3.samples.ScrollableVerticalFloatingToolbarSample
- * @param expanded whether the FloatingToolbar is in expanded mode, i.e. showing [leadingContent]
- *   and [trailingContent].
- * @param modifier the [Modifier] to be applied to this FloatingToolbar.
- * @param containerColor the color used for the background of this FloatingToolbar. Use
- *   Color.Transparent] to have no color.
- * @param contentPadding the padding applied to the content of this FloatingToolbar.
- * @param scrollBehavior a [FloatingToolbarScrollBehavior]. If null, this FloatingToolbar will not
- *   automatically react to scrolling.
- * @param shape the shape used for this FloatingToolbar.
- * @param leadingContent the leading content of this FloatingToolbar. The default layout here is a
- *   [Column], so content inside will be placed vertically. Only showing if [expanded] is true.
- * @param trailingContent the trailing content of this FloatingToolbar. The default layout here is a
- *   [Column], so content inside will be placed vertically. Only showing if [expanded] is true.
- * @param content the main content of this FloatingToolbar. The default layout here is a [Column],
- *   so content inside will be placed vertically.
- */
-@Deprecated(
-    message = "Use the VerticalFloatingToolbar function that accepts FloatingToolbarColors",
-    level = DeprecationLevel.HIDDEN
-)
-@ExperimentalMaterial3ExpressiveApi
-@Composable
-fun VerticalFloatingToolbar(
-    expanded: Boolean,
-    modifier: Modifier = Modifier,
-    containerColor: Color = ColorSchemeKeyTokens.PrimaryContainer.value,
-    contentPadding: PaddingValues = FloatingToolbarDefaults.ContentPadding,
-    scrollBehavior: FloatingToolbarScrollBehavior? = null,
-    shape: Shape = FloatingToolbarDefaults.ContainerShape,
-    leadingContent: @Composable (ColumnScope.() -> Unit)? = null,
-    trailingContent: @Composable (ColumnScope.() -> Unit)? = null,
-    content: @Composable ColumnScope.() -> Unit
-) {
-    Column(
-        modifier =
-            modifier
-                .then(
-                    scrollBehavior?.let { with(it) { Modifier.floatingScrollBehavior() } }
-                        ?: Modifier
-                )
-                .width(FloatingToolbarDefaults.ContainerSize)
-                .background(color = containerColor, shape = shape)
-                .padding(contentPadding),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        leadingContent?.let {
-            AnimatedVisibility(
-                visible = expanded,
-                enter = verticalEnterTransition(expandFrom = Alignment.Bottom),
-                exit = verticalExitTransition(shrinkTowards = Alignment.Bottom),
-            ) {
-                Column(content = it)
-            }
-        }
-        content()
-        trailingContent?.let {
-            AnimatedVisibility(
-                visible = expanded,
-                enter = verticalEnterTransition(expandFrom = Alignment.Top),
-                exit = verticalExitTransition(shrinkTowards = Alignment.Top),
-            ) {
-                Column(content = it)
-            }
-        }
-    }
 }
 
 /**
@@ -749,24 +599,6 @@ object FloatingToolbarDefaults {
 
     /** Default size used for [HorizontalFloatingToolbar] and [VerticalFloatingToolbar] container */
     val ContainerSize: Dp = FloatingToolbarTokens.ContainerHeight
-
-    /**
-     * Default color used for [HorizontalFloatingToolbar] and [VerticalFloatingToolbar] container
-     */
-    @Deprecated(
-        "Use the FloatingToolbarColors object for defining the colors",
-        level = DeprecationLevel.HIDDEN
-    )
-    val ContainerColor: Color
-        @Composable get() = ColorSchemeKeyTokens.PrimaryContainer.value
-
-    @Deprecated(
-        "Use the ContainerExpandedElevation, ContainerCollapsedElevation, or their equivalent " +
-            "constants with FAB.",
-        level = DeprecationLevel.HIDDEN
-    )
-    /** Default elevation used for [HorizontalFloatingToolbar] and [VerticalFloatingToolbar] */
-    val ContainerElevation: Dp = ElevationTokens.Level0
 
     /**
      * Default expanded elevation used for [HorizontalFloatingToolbar] and [VerticalFloatingToolbar]
