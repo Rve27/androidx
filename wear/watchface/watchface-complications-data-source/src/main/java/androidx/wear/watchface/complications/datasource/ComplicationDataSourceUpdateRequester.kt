@@ -89,7 +89,10 @@ public interface ComplicationDataSourceUpdateRequester {
             context: Context,
             complicationDataSourceComponent: ComponentName
         ): ComplicationDataSourceUpdateRequester =
-            ComplicationDataSourceUpdateRequesterImpl(context, complicationDataSourceComponent)
+            ComplicationDataSourceUpdateRequesterImpl(
+                context.applicationContext,
+                complicationDataSourceComponent
+            )
 
         /**
          * Filters [requests] if they aren't keyed by [requesterComponent] or if their
