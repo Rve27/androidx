@@ -21,6 +21,8 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
+import android.content.res.Configuration.ORIENTATION_UNDEFINED
 import android.graphics.Canvas
 import android.graphics.Point
 import android.graphics.PointF
@@ -228,6 +230,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
     private var deferredScrollPage: Int? = null
     private var deferredScrollPosition: PdfPoint? = null
+    private var lastOrientation: Int = resources.configuration.orientation
 
     /** Used to restore saved state */
     private var stateToRestore: PdfViewSavedState? = null
@@ -563,8 +566,27 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             true
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        /**
+         * For activities which doesn't recreate upon orientation changes, restore path for
+         * [androidx.pdf.view.PdfView] will not kick-in. We need to manually store the current
+         * scroll position which then will be restored in [androidx.pdf.view.PdfView.onLayout].
+         */
+        if (newConfig?.orientation != lastOrientation) {
+            val contentCenterX = toContentX(viewportWidth.toFloat() / 2f)
+            // Keep scroll at top if previously at top.
+            val contentCenterY = if (scrollY <= 0) 0F else toContentY(viewportHeight.toFloat() / 2f)
+            scrollPositionToRestore = PointF(contentCenterX, contentCenterY)
+
+            lastOrientation = newConfig?.orientation ?: ORIENTATION_UNDEFINED
+        }
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
+        // Ignore oldw if we're just added to view hierarchy.
+        if (oldw != 0) oldWidth = oldw
         onViewportChanged()
     }
 
@@ -585,20 +607,21 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             pendingZoomRecalculation = false
         }
 
-        val positionToRestore = scrollPositionToRestore
-        if (changed && awaitingFirstLayout && positionToRestore != null) {
-            var resolvedZoom =
-                if (zoomToRestore != null && zoomToRestore != DEFAULT_INIT_ZOOM) zoomToRestore!!
-                else zoom
-            resolvedZoom = resolvedZoom * (width.toFloat() / (oldWidth ?: contentWidth))
-            val clampedZoom = MathUtils.clamp(resolvedZoom, minZoom, maxZoom)
-            this.zoom = clampedZoom
-            scrollToRestoredPosition(positionToRestore, clampedZoom)
-            scrollPositionToRestore = null
-            zoomToRestore = DEFAULT_INIT_ZOOM
+        if (changed || awaitingFirstLayout) {
+            val positionToRestore = scrollPositionToRestore
+            if (positionToRestore != null) {
+                var resolvedZoom =
+                    if (zoomToRestore != null && zoomToRestore != DEFAULT_INIT_ZOOM) zoomToRestore!!
+                    else zoom
+                resolvedZoom = resolvedZoom * (width.toFloat() / (oldWidth ?: contentWidth))
+                val clampedZoom = MathUtils.clamp(resolvedZoom, minZoom, maxZoom)
+                this.zoom = clampedZoom
+                scrollToRestoredPosition(positionToRestore, clampedZoom)
+                scrollPositionToRestore = null
+                zoomToRestore = DEFAULT_INIT_ZOOM
+            }
+            awaitingFirstLayout = false
         }
-
-        awaitingFirstLayout = false
     }
 
     override fun onAttachedToWindow() {
