@@ -667,7 +667,6 @@ internal constructor(
      *   instance of [serializableClass].
      * @see [AppFunctionSerializable]
      */
-    @RestrictTo(LIBRARY_GROUP)
     public fun <T : Any> deserialize(serializableClass: Class<T>): T {
         return try {
             val factory = getSerializableFactory(serializableClass)
@@ -1122,7 +1121,7 @@ internal constructor(
          *   [AppFunctionData].
          * @see [AppFunctionSerializable]
          */
-        @RestrictTo(LIBRARY_GROUP)
+        @JvmStatic
         public fun <T : Any> serialize(
             serializable: T,
             serializableClass: Class<T>
