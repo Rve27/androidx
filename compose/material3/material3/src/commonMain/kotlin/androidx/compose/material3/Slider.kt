@@ -444,7 +444,7 @@ fun VerticalSlider(
             colors = colors,
             enabled = enabled,
             sliderState = sliderState,
-            trackCornerSize = sliderState.trackWidth.dp / 2
+            trackCornerSize = Dp.Unspecified
         )
     }
 ) {
@@ -876,12 +876,7 @@ private fun SliderImpl(
             thumbOffsetY = (sliderHeight - thumbPlaceable.height) / 2
         }
 
-        state.updateDimensions(
-            trackPlaceable.width,
-            trackPlaceable.height,
-            sliderWidth,
-            sliderHeight
-        )
+        state.updateDimensions(newTotalWidth = sliderWidth, newTotalHeight = sliderHeight)
 
         layout(sliderWidth, sliderHeight) {
             trackPlaceable.placeRelative(trackOffsetX, trackOffsetY)
@@ -1065,8 +1060,6 @@ private fun RangeSliderImpl(
         val sliderHeight =
             maxOf(trackPlaceable.height, startThumbPlaceable.height, endThumbPlaceable.height)
 
-        state.trackWidth = trackPlaceable.width.toFloat()
-        state.trackHeight = trackPlaceable.height.toFloat()
         state.totalWidth = sliderWidth
 
         state.updateMinMaxPx()
@@ -1462,7 +1455,7 @@ object SliderDefaults {
         thumbTrackGapSize: Dp = ThumbTrackGapSize,
         trackInsideCornerSize: Dp = TrackInsideCornerSize
     ) {
-        DrawTrack(
+        TrackImpl(
             sliderState = sliderState,
             trackCornerSize = Dp.Unspecified,
             modifier = modifier,
@@ -1518,7 +1511,7 @@ object SliderDefaults {
         thumbTrackGapSize: Dp = ThumbTrackGapSize,
         trackInsideCornerSize: Dp = TrackInsideCornerSize
     ) {
-        DrawTrack(
+        TrackImpl(
             sliderState = sliderState,
             trackCornerSize = trackCornerSize,
             modifier = modifier,
@@ -1534,7 +1527,7 @@ object SliderDefaults {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun DrawTrack(
+    private fun TrackImpl(
         sliderState: SliderState,
         trackCornerSize: Dp,
         modifier: Modifier,
@@ -1592,8 +1585,6 @@ object SliderDefaults {
                 activeTrackColor = activeTrackColor,
                 inactiveTickColor = inactiveTickColor,
                 activeTickColor = activeTickColor,
-                width = sliderState.trackWidth.toDp(),
-                height = sliderState.trackHeight.toDp(),
                 startThumbWidth = 0.toDp(),
                 startThumbHeight = 0.toDp(),
                 endThumbWidth = sliderState.thumbWidth.toDp(),
@@ -1710,24 +1701,22 @@ object SliderDefaults {
                 }
         ) {
             drawTrack(
-                rangeSliderState.tickFractions,
-                rangeSliderState.coercedActiveRangeStartAsFraction,
-                rangeSliderState.coercedActiveRangeEndAsFraction,
-                inactiveTrackColor,
-                activeTrackColor,
-                inactiveTickColor,
-                activeTickColor,
-                rangeSliderState.trackWidth.toDp(),
-                rangeSliderState.trackHeight.toDp(),
-                rangeSliderState.startThumbWidth.toDp(),
-                rangeSliderState.startThumbHeight.toDp(),
-                rangeSliderState.endThumbWidth.toDp(),
-                rangeSliderState.endThumbHeight.toDp(),
-                thumbTrackGapSize,
-                trackInsideCornerSize,
-                trackCornerSize.toDp(),
-                drawStopIndicator,
-                drawTick,
+                tickFractions = rangeSliderState.tickFractions,
+                activeRangeStart = rangeSliderState.coercedActiveRangeStartAsFraction,
+                activeRangeEnd = rangeSliderState.coercedActiveRangeEndAsFraction,
+                inactiveTrackColor = inactiveTrackColor,
+                activeTrackColor = activeTrackColor,
+                inactiveTickColor = inactiveTickColor,
+                activeTickColor = activeTickColor,
+                startThumbWidth = rangeSliderState.startThumbWidth.toDp(),
+                startThumbHeight = rangeSliderState.startThumbHeight.toDp(),
+                endThumbWidth = rangeSliderState.endThumbWidth.toDp(),
+                endThumbHeight = rangeSliderState.endThumbHeight.toDp(),
+                thumbTrackGapSize = thumbTrackGapSize,
+                trackInsideCornerSize = trackInsideCornerSize,
+                trackCornerSize = trackCornerSize.toDp(),
+                drawStopIndicator = drawStopIndicator,
+                drawTick = drawTick,
                 isRangeSlider = true,
             )
         }
@@ -1741,8 +1730,6 @@ object SliderDefaults {
         activeTrackColor: Color,
         inactiveTickColor: Color,
         activeTickColor: Color,
-        width: Dp,
-        height: Dp,
         startThumbWidth: Dp,
         startThumbHeight: Dp,
         endThumbWidth: Dp,
@@ -1806,8 +1793,7 @@ object SliderDefaults {
             val start = sliderStart
             val end = sliderValueStart - startGap
             val size =
-                if (isVertical) Size(width.toPx(), end - start)
-                else Size(end - start, height.toPx())
+                if (isVertical) Size(size.width, end - start) else Size(end - start, size.height)
             drawTrackPath(
                 orientation,
                 Offset.Zero,
@@ -1832,8 +1818,8 @@ object SliderDefaults {
             val inactiveTrackWidth = end - start
             val trackOffset = if (isVertical) Offset(0f, start) else Offset(start, 0f)
             val size =
-                if (isVertical) Size(width.toPx(), inactiveTrackWidth)
-                else Size(inactiveTrackWidth, height.toPx())
+                if (isVertical) Size(size.width, inactiveTrackWidth)
+                else Size(inactiveTrackWidth, size.height)
             drawTrackPath(
                 orientation,
                 trackOffset,
@@ -1858,8 +1844,8 @@ object SliderDefaults {
             val trackOffset =
                 if (isVertical) Offset(0f, activeTrackStart) else Offset(activeTrackStart, 0f)
             val size =
-                if (isVertical) Size(width.toPx(), activeTrackWidth)
-                else Size(activeTrackWidth, height.toPx())
+                if (isVertical) Size(size.width, activeTrackWidth)
+                else Size(activeTrackWidth, size.height)
             drawTrackPath(
                 orientation,
                 trackOffset,
@@ -2564,8 +2550,6 @@ class SliderState(
     internal var isRtl = false
     internal var thumbWidth by mutableIntStateOf(0)
     internal var thumbHeight by mutableIntStateOf(0)
-    internal var trackWidth by mutableIntStateOf(0)
-    internal var trackHeight by mutableIntStateOf(0)
     internal var orientation = Horizontal
     internal var reverseVerticalDirection = false
 
@@ -2581,14 +2565,7 @@ class SliderState(
     var isDragging by mutableStateOf(false)
         private set
 
-    internal fun updateDimensions(
-        newTrackWidth: Int,
-        newTrackHeight: Int,
-        newTotalWidth: Int,
-        newTotalHeight: Int
-    ) {
-        trackWidth = newTrackWidth
-        trackHeight = newTrackHeight
+    internal fun updateDimensions(newTotalWidth: Int, newTotalHeight: Int) {
         totalWidth = newTotalWidth
         totalHeight = newTotalHeight
     }
@@ -2753,8 +2730,6 @@ class RangeSliderState(
 
     internal val tickFractions = stepsToTickFractions(steps)
 
-    internal var trackWidth by mutableFloatStateOf(0f)
-    internal var trackHeight by mutableFloatStateOf(0f)
     internal var startThumbWidth by mutableFloatStateOf(0f)
     internal var startThumbHeight by mutableFloatStateOf(0f)
     internal var endThumbWidth by mutableFloatStateOf(0f)
