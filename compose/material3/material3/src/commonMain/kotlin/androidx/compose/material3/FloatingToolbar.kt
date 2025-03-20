@@ -1984,40 +1984,44 @@ private class MinimumInteractiveBalancedPaddingNode(
         constraints: Constraints
     ): MeasureResult {
         val placeable = measurable.measure(constraints)
-        var verticalPadding = 0
-        var horizontalPadding = 0
+        var verticalAlignmentOffset = 0f
+        var horizontalAlignmentOffset = 0f
 
         // Resolve the top and left paddings from the alignment lines whenever either of the leading
         // or trailing content is missing.
-        var totalHorizontalPadding = 0
-        var totalVerticalPadding = 0
         if (!hasVisibleLeadingContent || !hasVisibleTrailingContent) {
             val progress = paddingAnimation.value
-            verticalPadding =
+            verticalAlignmentOffset =
                 placeable[MinimumInteractiveTopAlignmentLine].let {
-                    if (it != AlignmentLine.Unspecified) (it * progress).fastRoundToInt() else 0
+                    if (it != AlignmentLine.Unspecified) (it * progress) else 0f
                 }
-            horizontalPadding =
+            horizontalAlignmentOffset =
                 placeable[MinimumInteractiveLeftAlignmentLine].let {
-                    if (it != AlignmentLine.Unspecified) (it * progress).fastRoundToInt() else 0
+                    if (it != AlignmentLine.Unspecified) (it * progress) else 0f
                 }
-            // In case we are dealing with an imbalanced padding that were added to the component at
-            // the minimumInteractiveComponentSize, add paddings to balance them out visually.
-            if (horizontalPadding != verticalPadding) {
-                totalHorizontalPadding = horizontalPadding * 2
-                totalVerticalPadding = verticalPadding * 2
-            }
         }
+        // Add padding to balance the alignment by ensuring that the horizontal and vertical
+        // alignment offsets are visually similar.
+        // In case the vertical alignment offset is greater than the horizontal alignment
+        // offset, we add additional horizontal padding to balance the paddings.
+        val totalWidth =
+            placeable.width +
+                ((verticalAlignmentOffset - horizontalAlignmentOffset) * 2)
+                    .coerceAtLeast(0f)
+                    .fastRoundToInt()
+        // In case the horizontal alignment offset is greater than the vertical alignment
+        // offset, we add additional vertical padding to balance the paddings.
+        val totalHeight =
+            placeable.height +
+                ((horizontalAlignmentOffset - verticalAlignmentOffset) * 2)
+                    .coerceAtLeast(0f)
+                    .fastRoundToInt()
 
-        return layout(
-            width = placeable.width + totalHorizontalPadding,
-            height = placeable.height + totalVerticalPadding
-        ) {
-            if (horizontalPadding != verticalPadding) {
-                placeable.place(horizontalPadding, verticalPadding)
-            } else {
-                placeable.place(0, 0)
-            }
+        return layout(width = totalWidth, height = totalHeight) {
+            placeable.place(
+                (totalWidth - placeable.width) / 2,
+                (totalHeight - placeable.height) / 2
+            )
         }
     }
 

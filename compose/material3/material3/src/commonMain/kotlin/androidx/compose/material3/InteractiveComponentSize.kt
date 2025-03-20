@@ -145,24 +145,24 @@ internal class MinimumInteractiveModifierNode :
      */
     private fun updateAlignmentLines(enforcement: Boolean, sizePx: Int, placeable: Placeable) {
         if (enforcement && sizePx > placeable.width) {
-            // If the required size is larger than the placeable width, we add a vertical
-            // alignment line to indicate the amount of pixels a vertical padding will need to
-            // add in order to match the padding.
+            // If the required size is larger than the placeable width, set the
+            // MinimumInteractiveLeftAlignmentLine to indicate the amount of pixels that were added
+            // to the left.
             val cache = getAlignmentLinesCache()
-            val alignBy = ((sizePx - placeable.width) / 2f).fastRoundToInt()
-            cache[MinimumInteractiveTopAlignmentLine] = alignBy
-        } else if (alignmentLinesCache != null) {
-            alignmentLinesCache!![MinimumInteractiveTopAlignmentLine] = AlignmentLine.Unspecified
-        }
-        if (enforcement && sizePx > placeable.height) {
-            // If the required size is larger than the placeable height, we add a start
-            // alignment line to indicate the amount of pixels a horizontal padding will need to
-            // add in order to match the padding.
-            val cache = getAlignmentLinesCache()
-            val alignBy = ((sizePx - placeable.height) / 2f).fastRoundToInt()
-            cache[MinimumInteractiveLeftAlignmentLine] = alignBy
+            cache[MinimumInteractiveLeftAlignmentLine] =
+                ((sizePx - placeable.width) / 2f).fastRoundToInt()
         } else if (alignmentLinesCache != null) {
             alignmentLinesCache!![MinimumInteractiveLeftAlignmentLine] = AlignmentLine.Unspecified
+        }
+        if (enforcement && sizePx > placeable.height) {
+            // If the required size is larger than the placeable height, set the
+            // MinimumInteractiveTopAlignmentLine to indicate the amount of pixels that were added
+            // to the top.
+            val cache = getAlignmentLinesCache()
+            cache[MinimumInteractiveTopAlignmentLine] =
+                ((sizePx - placeable.height) / 2f).fastRoundToInt()
+        } else if (alignmentLinesCache != null) {
+            alignmentLinesCache!![MinimumInteractiveTopAlignmentLine] = AlignmentLine.Unspecified
         }
     }
 

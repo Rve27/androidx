@@ -336,6 +336,38 @@ class FloatingToolbarScreenshotTest(private val scheme: ColorSchemeWrapper) {
     }
 
     @Test
+    fun horizontalFloatingToolbar_imbalancedPadding() {
+        rule.setMaterialContent(scheme.colorScheme) {
+            Box(
+                Modifier.testTag(FloatingToolbarTestTag).padding(10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                val labels = listOf("S", "M", "T", "SA", "W", "All")
+                var selectedIndex = 2
+                HorizontalFloatingToolbar(
+                    expanded = false,
+                ) {
+                    labels.forEachIndexed { index, labelString ->
+                        if (selectedIndex == index) {
+                            FilledIconButton(onClick = {}) { Text(text = labelString) }
+                        } else {
+                            IconButton(onClick = {}) { Text(text = labelString) }
+                        }
+                    }
+                }
+            }
+        }
+
+        rule
+            .onNodeWithTag(FloatingToolbarTestTag)
+            .captureToImage()
+            .assertAgainstGolden(
+                screenshotRule,
+                "horizontalFloatingToolbar_imbalancedPadding_${scheme.name}"
+            )
+    }
+
+    @Test
     fun verticalFloatingToolbar_leading() {
         rule.setMaterialContent(scheme.colorScheme) {
             Box(Modifier.testTag(FloatingToolbarTestTag)) {
@@ -552,6 +584,38 @@ class FloatingToolbarScreenshotTest(private val scheme: ColorSchemeWrapper) {
             .assertAgainstGolden(
                 screenshotRule,
                 "verticalFloatingToolbar_balancedPaddingWhenCollapsed_${scheme.name}"
+            )
+    }
+
+    @Test
+    fun verticalFloatingToolbar_imbalancedPadding() {
+        rule.setMaterialContent(scheme.colorScheme) {
+            Box(
+                Modifier.testTag(FloatingToolbarTestTag).padding(10.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                val labels = listOf("S", "M", "T", "SA", "W", "All")
+                var selectedIndex = 2
+                VerticalFloatingToolbar(
+                    expanded = false,
+                ) {
+                    labels.forEachIndexed { index, labelString ->
+                        if (selectedIndex == index) {
+                            FilledIconButton(onClick = {}) { Text(text = labelString) }
+                        } else {
+                            IconButton(onClick = {}) { Text(text = labelString) }
+                        }
+                    }
+                }
+            }
+        }
+
+        rule
+            .onNodeWithTag(FloatingToolbarTestTag)
+            .captureToImage()
+            .assertAgainstGolden(
+                screenshotRule,
+                "verticalFloatingToolbar_imbalancedPadding_${scheme.name}"
             )
     }
 
