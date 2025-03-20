@@ -17,6 +17,7 @@
 package androidx.appfunctions.compiler.core
 
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_LIST
+import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_SINGULAR
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
@@ -75,6 +76,14 @@ open class AnnotatedAppFunctionSerializable(
                 afType.isOfTypeCategory(SERIALIZABLE_SINGULAR) ||
                     afType.isOfTypeCategory(SERIALIZABLE_LIST)
             }
+            .toSet()
+    }
+
+    /** Returns the properties that have @AppFunctionSerializableProxy class types. */
+    fun getSerializableProxyPropertyTypeReferences(): Set<AppFunctionTypeReference> {
+        return getProperties()
+            .map { it -> AppFunctionTypeReference(it.type) }
+            .filter { afType -> afType.isOfTypeCategory(SERIALIZABLE_PROXY_SINGULAR) }
             .toSet()
     }
 

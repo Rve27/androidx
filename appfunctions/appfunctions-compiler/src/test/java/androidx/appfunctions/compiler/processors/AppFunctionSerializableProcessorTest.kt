@@ -218,6 +218,21 @@ class AppFunctionSerializableProcessorTest {
     }
 
     @Test
+    fun testProcessor_validSerializableWithProxyProperties_success() {
+        val report =
+            compilationTestHelper.compileAll(
+                sourceFileNames =
+                    listOf("SerializableWithProxyType.KT", "AppFunctionLocalDateTime.KT")
+            )
+
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName = "\$SerializableWithProxyTypeFactory.kt",
+            goldenFileName = "\$SerializableWithProxyTypeFactory.KT"
+        )
+    }
+
+    @Test
     fun testProcessor_serializableProxyMissingToMethod_fails() {
         val report =
             compilationTestHelper.compileAll(

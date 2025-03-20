@@ -19,6 +19,7 @@ package androidx.appfunctions.compiler.core
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeReference
 
 /**
  * A class that represents a class annotated with @AppFunctionSerializableProxy.
@@ -53,6 +54,21 @@ data class AnnotatedAppFunctionSerializableProxy(
     /** The name of the companion method that returns an instance of the proxy class. */
     val fromTargetClassMethodName: String by lazy {
         "from${targetClassDeclaration.simpleName.asString()}"
+    }
+
+    /** The type of the serializable reference. */
+    // TODO(b/403199251): Clean up hack.
+    val serializableReferenceType: KSTypeReference by lazy {
+        checkNotNull(
+            appFunctionSerializableProxyClass.declarations
+                .filterIsInstance<KSClassDeclaration>()
+                .filter { it.isCompanionObject }
+                .single()
+                .getAllFunctions()
+                .filter { it.simpleName.asString() == fromTargetClassMethodName }
+                .first()
+                .returnType
+        )
     }
 
     /**

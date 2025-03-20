@@ -25,6 +25,7 @@ import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionS
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_LIST
+import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_SINGULAR
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod.APP_FUNCTION_DATA_PARAM_NAME
@@ -32,7 +33,9 @@ import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerial
 import androidx.appfunctions.compiler.core.ProcessingException
 import androidx.appfunctions.compiler.core.ensureQualifiedTypeName
 import androidx.appfunctions.compiler.core.isOfType
+import androidx.appfunctions.compiler.core.toClassName
 import androidx.appfunctions.compiler.core.toTypeName
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
@@ -45,7 +48,8 @@ import com.squareup.kotlinpoet.buildCodeBlock
  */
 // TODO(b/392587953): extract common format maps
 class AppFunctionSerializableFactoryCodeBuilder(
-    val annotatedClass: AnnotatedAppFunctionSerializable
+    val annotatedClass: AnnotatedAppFunctionSerializable,
+    val proxyTargetToSerializableProxy: Map<ClassName, AnnotatedAppFunctionSerializableProxy>
 ) {
     /**
      * Generates the method body of fromAppFunctionData for a non proxy serializable.
@@ -376,6 +380,13 @@ class AppFunctionSerializableFactoryCodeBuilder(
             PRIMITIVE_LIST -> appendPrimitiveGetterStatement(paramName, afType)
             SERIALIZABLE_SINGULAR -> appendSerializableGetterStatement(paramName, afType)
             SERIALIZABLE_LIST -> appendSerializableListGetterStatement(paramName, afType)
+            SERIALIZABLE_PROXY_SINGULAR -> {
+                val targetSerializableProxy = getTargetSerializableProxy(afType)
+                appendSerializableGetterStatement(
+                    paramName,
+                    AppFunctionTypeReference(targetSerializableProxy.serializableReferenceType)
+                )
+            }
         }
     }
 
@@ -525,6 +536,13 @@ class AppFunctionSerializableFactoryCodeBuilder(
             PRIMITIVE_LIST -> appendPrimitiveSetterStatement(paramName, afType)
             SERIALIZABLE_SINGULAR -> appendSerializableSetterStatement(paramName, afType)
             SERIALIZABLE_LIST -> appendSerializableListSetterStatement(paramName, afType)
+            SERIALIZABLE_PROXY_SINGULAR -> {
+                val targetSerializableProxy = getTargetSerializableProxy(afType)
+                appendSerializableSetterStatement(
+                    paramName,
+                    AppFunctionTypeReference(targetSerializableProxy.serializableReferenceType)
+                )
+            }
         }
     }
 
@@ -587,6 +605,15 @@ class AppFunctionSerializableFactoryCodeBuilder(
         return this
     }
 
+    private fun getTargetSerializableProxy(
+        afType: AppFunctionTypeReference
+    ): AnnotatedAppFunctionSerializableProxy {
+        val targetClassName =
+            (afType.selfOrItemTypeReference.resolve().declaration as KSClassDeclaration)
+                .toClassName()
+        return proxyTargetToSerializableProxy.getValue(targetClassName)
+    }
+
     private fun getAppFunctionDataGetterName(afType: AppFunctionTypeReference): String {
         val shortTypeName = afType.selfOrItemTypeReference.getTypeShortName()
         return when (afType.typeCategory) {
@@ -598,6 +625,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
                 }
             }
             PRIMITIVE_ARRAY -> "get$shortTypeName"
+            SERIALIZABLE_PROXY_SINGULAR,
             SERIALIZABLE_SINGULAR -> "getAppFunctionData"
             SERIALIZABLE_LIST -> "getAppFunctionDataList"
             PRIMITIVE_LIST -> "get${shortTypeName}List"
@@ -609,6 +637,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
     private fun getGetterDefaultValuePostfix(afType: AppFunctionTypeReference): String {
         return when (afType.typeCategory) {
             PRIMITIVE_SINGULAR,
+            SERIALIZABLE_PROXY_SINGULAR,
             SERIALIZABLE_SINGULAR -> ""
             PRIMITIVE_ARRAY ->
                 if (afType.isNullable) {
@@ -626,7 +655,8 @@ class AppFunctionSerializableFactoryCodeBuilder(
             PRIMITIVE_SINGULAR,
             PRIMITIVE_ARRAY -> "set${afType.selfOrItemTypeReference.getTypeShortName()}"
             PRIMITIVE_LIST -> "set${afType.selfOrItemTypeReference.getTypeShortName()}List"
-            SERIALIZABLE_SINGULAR -> "setAppFunctionData"
+            SERIALIZABLE_SINGULAR,
+            SERIALIZABLE_PROXY_SINGULAR -> "setAppFunctionData"
             SERIALIZABLE_LIST -> "setAppFunctionDataList"
         }
     }
@@ -641,6 +671,23 @@ class AppFunctionSerializableFactoryCodeBuilder(
                     ClassName(
                         qualifiedName.getQualifier(),
                         "`\$${qualifiedName.getShortName()}Factory`"
+                    )
+                )
+            }
+
+            for (proxyTypeReference in
+                annotatedClass.getSerializableProxyPropertyTypeReferences()) {
+                val targetClassName =
+                    (proxyTypeReference.selfOrItemTypeReference.resolve().declaration
+                            as KSClassDeclaration)
+                        .toClassName()
+                val targetSerializableProxy =
+                    checkNotNull(proxyTargetToSerializableProxy[targetClassName])
+                put(
+                    "${targetSerializableProxy.originalClassName.simpleName.lowerFirstChar()}Factory",
+                    ClassName(
+                        targetSerializableProxy.originalClassName.packageName,
+                        "`\$${targetSerializableProxy.targetClassDeclaration.simpleName.asString()}Factory`"
                     )
                 )
             }

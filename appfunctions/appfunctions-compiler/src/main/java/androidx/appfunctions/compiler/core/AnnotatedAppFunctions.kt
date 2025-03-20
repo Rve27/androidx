@@ -20,6 +20,7 @@ import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionS
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_LIST
+import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.Companion.SUPPORTED_TYPES_STRING
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.Companion.isSupportedType
@@ -344,6 +345,8 @@ data class AnnotatedAppFunctions(
                     isNullable = appFunctionTypeReference.isNullable,
                 )
             }
+            // TODO(b/403199251): Actually swap proxy metadata
+            SERIALIZABLE_PROXY_SINGULAR -> TODO()
         }
     }
 
@@ -551,6 +554,7 @@ data class AnnotatedAppFunctions(
     private fun AppFunctionTypeReference.toAppFunctionDataType(): Int {
         return when (this.typeCategory) {
             PRIMITIVE_SINGULAR -> selfTypeReference.toAppFunctionDatatype()
+            SERIALIZABLE_PROXY_SINGULAR,
             SERIALIZABLE_SINGULAR -> AppFunctionObjectTypeMetadata.TYPE
             PRIMITIVE_ARRAY,
             PRIMITIVE_LIST,
@@ -564,6 +568,7 @@ data class AnnotatedAppFunctions(
             PRIMITIVE_ARRAY -> selfTypeReference.toAppFunctionDatatype()
             PRIMITIVE_LIST -> itemTypeReference.toAppFunctionDatatype()
             PRIMITIVE_SINGULAR,
+            SERIALIZABLE_PROXY_SINGULAR,
             SERIALIZABLE_SINGULAR ->
                 throw ProcessingException(
                     "Not a supported array type " +
