@@ -67,6 +67,13 @@ import javax.crypto.Mac;
  * ongoing authentication session's callbacks to be received by the new fragment/activity instance.
  * Note that {@code cancelAuthentication()} should not be called, and {@code authenticate()} does
  * not need to be invoked during activity/fragment creation.
+ *
+ * <p>Note that if multiple instances of {@code BiometricPrompt} are created within a single
+ * Fragment or Activity, only the callback registered with the last created instance will be
+ * saved and receive authentication results. This behavior can lead to unexpected results if
+ * multiple independent biometric authentication flows are attempted within the same Fragment or
+ * Activity. It is highly recommended to avoid creating multiple BiometricPrompt instances in
+ * this scenario.
  */
 public class BiometricPrompt {
     private static final String TAG = "BiometricPromptCompat";
