@@ -370,6 +370,9 @@ internal interface Owner : PositionCalculator {
      */
     fun decrementSensitiveComponentCount() {}
 
+    val outOfFrameExecutor: OutOfFrameExecutor?
+        get() = null
+
     companion object {
         /**
          * Enables additional (and expensive to do in production) assertions. Useful to be set to

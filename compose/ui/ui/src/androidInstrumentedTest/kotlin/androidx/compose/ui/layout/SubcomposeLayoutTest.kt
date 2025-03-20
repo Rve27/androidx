@@ -3454,6 +3454,29 @@ class SubcomposeLayoutTest {
         }
     }
 
+    @Test
+    fun schedulingRecompositionOnDeactivatingChildIsNotCausingRecomposition() {
+        val state = SubcomposeLayoutState(SubcomposeSlotReusePolicy(1))
+        var counter by mutableStateOf(0)
+        var addSlot by mutableStateOf(true)
+        var counterInSubcomposition = 0
+        rule.setContent {
+            SubcomposeLayout(state) {
+                if (addSlot) {
+                    subcompose(Unit) { counterInSubcomposition = counter }
+                } else {
+                    counter = 1
+                    Snapshot.sendApplyNotifications()
+                }
+                layout(10, 10) {}
+            }
+        }
+
+        rule.runOnIdle { addSlot = false }
+
+        rule.runOnIdle { assertThat(counterInSubcomposition).isEqualTo(0) }
+    }
+
     private fun alternateLookaheadPlacement(shouldPlaceItem: BooleanArray) {
         var lookaheadPos: Offset? = null
         var approachPos: Offset? = null

@@ -175,6 +175,7 @@ import androidx.compose.ui.node.LayoutNodeDrawScope
 import androidx.compose.ui.node.MeasureAndLayoutDelegate
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.Nodes
+import androidx.compose.ui.node.OutOfFrameExecutor
 import androidx.compose.ui.node.OwnedLayer
 import androidx.compose.ui.node.Owner
 import androidx.compose.ui.node.OwnerSnapshotObserver
@@ -238,7 +239,12 @@ private const val ONE_FRAME_120_HERTZ_IN_MILLISECONDS = 8L
 @Suppress("ViewConstructor", "VisibleForTests", "ConstPropertyName", "NullAnnotationGroup")
 @OptIn(InternalComposeUiApi::class)
 internal class AndroidComposeView(context: Context, coroutineContext: CoroutineContext) :
-    ViewGroup(context), Owner, ViewRootForTest, MatrixPositionCalculator, DefaultLifecycleObserver {
+    ViewGroup(context),
+    Owner,
+    ViewRootForTest,
+    MatrixPositionCalculator,
+    DefaultLifecycleObserver,
+    OutOfFrameExecutor {
 
     /**
      * Remembers the position of the last pointer input event that was down. This position will be
@@ -2819,6 +2825,12 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             }
             sensitiveComponentCount -= 1
         }
+    }
+
+    override val outOfFrameExecutor = this
+
+    override fun schedule(block: () -> Unit) {
+        handler.postAtFrontOfQueue { trace("AndroidOwner:outOfFrameExecutor", block) }
     }
 
     companion object {

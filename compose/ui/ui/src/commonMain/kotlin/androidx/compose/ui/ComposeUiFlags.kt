@@ -97,4 +97,11 @@ object ComposeUiFlags {
      * certain build of CI is failing with this functionality enabled: b/399055247
      */
     @Suppress("MutableBareField") @JvmField var isHitPathTrackerLoggingEnabled: Boolean = false
+
+    /**
+     * With this flag on, SubcomposeLayout will deactivate not used content slots outside of the
+     * frame, not as part of a regular recomposition phase. It allows to not block the drawing
+     * phase, improving the scrolling performance for lazy layouts.
+     */
+    @Suppress("MutableBareField") @JvmField var isOutOfFrameDeactivationEnabled: Boolean = true
 }
