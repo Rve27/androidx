@@ -841,10 +841,14 @@ private fun SliderImpl(
         val isOnFirstOrLastStep =
             valueAsFraction == state.tickFractions.firstOrNull() ||
                 valueAsFraction == state.tickFractions.lastOrNull()
-        val trackCornerSize =
+        var trackCornerSize =
             trackPlaceable[CornerSizeAlignmentLine].let {
                 if (it != AlignmentLine.Unspecified) it else 0
             }
+
+        if (layoutDirection == LayoutDirection.Rtl && trackCornerSize != 0) {
+            trackCornerSize = trackPlaceable.width - trackCornerSize
+        }
         if (state.orientation == Vertical) {
             sliderWidth = max(trackPlaceable.width, thumbPlaceable.width)
             sliderHeight = thumbPlaceable.height + trackPlaceable.height
@@ -1073,10 +1077,15 @@ private fun RangeSliderImpl(
             endValueAsFraction == state.tickFractions.firstOrNull() ||
                 endValueAsFraction == state.tickFractions.lastOrNull()
         val trackOffsetX = startThumbPlaceable.width / 2
-        val trackCornerSize =
+        var trackCornerSize =
             trackPlaceable[CornerSizeAlignmentLine].let {
                 if (it != AlignmentLine.Unspecified) it else 0
             }
+
+        if (layoutDirection == LayoutDirection.Rtl && trackCornerSize != 0) {
+            trackCornerSize = trackPlaceable.width - trackCornerSize
+        }
+
         val startThumbOffsetX =
             if (state.steps > 0 && !isStartOnFirstOrLastStep) {
                 ((trackPlaceable.width - trackCornerSize * 2) * startValueAsFraction).roundToInt() +
