@@ -442,13 +442,13 @@ Currently, the highest Java language level supported for Android libraries is
 Java 1.8 (`VERSION_1_8`). AndroidX **does not** currently support library API
 desugaring, so the use of Java 8 APIs requires `minSdk 26` or higher.
 
-#### Android SDK
+#### Android SDK {#compile-sdk}
 
-The AndroidX Core & Tooling team automatically updates the `compileSdk` value
-following the first public release of a stable SDK, e.g. following SDK
-finalization during the Beta stage of platform SDK development.
+Similar to our library dependency versioning policy, libraries should depend on
+the lowest `compileSdk` version that provides the APIs needed by the library.
 
-Library owners **must not** attempt to pin their `compileSdk` to a lower value.
-
-Libraries that are developed against extension SDKs *may* pin their `compileSdk`
-to a higher value, e.g. `34-ext5` when the rest of AndroidX is using `34`.
+We try to avoid unnecessary SDK upgrades because raising a library's
+`compileSdk` implicitly raises its `minCompileSdk`, which means that clients are
+required to raise their own `compileSdk`. This often requires updating Android
+Gradle Plugin, which can turn into a long process of upgrading many other
+dependencies.
