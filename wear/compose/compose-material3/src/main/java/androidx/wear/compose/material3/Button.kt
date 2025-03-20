@@ -1961,7 +1961,7 @@ private fun ButtonImpl(
         Column {
             Row(content = labelContent)
             if (secondaryLabelContent != null) {
-                Spacer(modifier = Modifier.size(2.dp))
+                Spacer(modifier = Modifier.size(1.dp))
                 Row(content = secondaryLabelContent)
             }
         }
