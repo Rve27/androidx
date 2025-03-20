@@ -46,9 +46,8 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.util.fastRoundToInt
 
 /**
- * <a
- * href="https://m3.material.io/foundations/layout/understanding-layout/parts-of-layout#314a4c32-be52-414c-8da7-31f059f1776d"
- * class="external" target="_blank">Material Design Drag Handle</a>.
+ * [Material Design drag
+ * handle](https://m3.material.io/foundations/layout/understanding-layout/parts-of-layout#314a4c32-be52-414c-8da7-31f059f1776d)
  *
  * A drag handle is a capsule-like shape that can be used by users to change component size and/or
  * position by dragging. A typical usage of it will be pane expansion - when you split your screen

@@ -47,7 +47,8 @@ import kotlin.math.roundToInt
  * Reserves at least 48.dp in size to disambiguate touch interactions if the element would measure
  * smaller.
  *
- * https://m3.material.io/foundations/designing/structure#dab862b1-e042-4c40-b680-b484b9f077f6
+ * [Target
+ * sizes](https://m3.material.io/foundations/designing/structure#dab862b1-e042-4c40-b680-b484b9f077f6)
  *
  * This uses the Material recommended minimum size of 48.dp x 48.dp, which may not the same as the
  * system enforced minimum size. The minimum clickable / touch target size (48.dp by default) is

@@ -81,8 +81,8 @@ import androidx.compose.ui.util.fastFirstOrNull
 import kotlin.math.roundToInt
 
 /**
- * <a href="https://m3.material.io/components/navigation-rail/overview" class="external"
- * target="_blank">Material Design bottom navigation rail</a>.
+ * [Material Design bottom navigation
+ * rail](https://m3.material.io/components/navigation-rail/overview)
  *
  * Navigation rails provide access to primary destinations in apps when using tablet and desktop
  * screens.

@@ -186,8 +186,7 @@ actual object ModalBottomSheetDefaults {
 }
 
 /**
- * <a href="https://m3.material.io/components/bottom-sheets/overview" class="external"
- * target="_blank">Material Design modal bottom sheet</a>.
+ * [Material Design modal bottom sheet](https://m3.material.io/components/bottom-sheets/overview)
  *
  * Modal bottom sheets are used as an alternative to inline menus or simple dialogs on mobile,
  * especially when offering a long list of action items, or when items require longer descriptions

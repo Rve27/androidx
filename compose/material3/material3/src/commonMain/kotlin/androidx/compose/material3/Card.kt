@@ -36,8 +36,7 @@ import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.unit.Dp
 
 /**
- * <a href="https://m3.material.io/components/cards/overview" class="external"
- * target="_blank">Material Design filled card</a>.
+ * [Material Design filled card](https://m3.material.io/components/cards/overview)
  *
  * Cards contain contain content and actions that relate information about a subject. Filled cards
  * provide subtle separation from the background. This has less emphasis than elevated or outlined
@@ -86,8 +85,7 @@ fun Card(
 }
 
 /**
- * <a href="https://m3.material.io/components/cards/overview" class="external"
- * target="_blank">Material Design filled card</a>.
+ * [Material Design filled card](https://m3.material.io/components/cards/overview)
  *
  * Cards contain contain content and actions that relate information about a subject. Filled cards
  * provide subtle separation from the background. This has less emphasis than elevated or outlined
@@ -151,8 +149,7 @@ fun Card(
 }
 
 /**
- * <a href="https://m3.material.io/components/cards/overview" class="external"
- * target="_blank">Material Design elevated card</a>.
+ * [Material Design elevated card](https://m3.material.io/components/cards/overview)
  *
  * Elevated cards contain content and actions that relate information about a subject. They have a
  * drop shadow, providing more separation from the background than filled cards, but less than
@@ -195,8 +192,7 @@ fun ElevatedCard(
     )
 
 /**
- * <a href="https://m3.material.io/components/cards/overview" class="external"
- * target="_blank">Material Design elevated card</a>.
+ * [Material Design elevated card](https://m3.material.io/components/cards/overview)
  *
  * Elevated cards contain content and actions that relate information about a subject. They have a
  * drop shadow, providing more separation from the background than filled cards, but less than
@@ -252,8 +248,7 @@ fun ElevatedCard(
     )
 
 /**
- * <a href="https://m3.material.io/components/cards/overview" class="external"
- * target="_blank">Material Design outlined card</a>.
+ * [Material Design outlined card](https://m3.material.io/components/cards/overview)
  *
  * Outlined cards contain content and actions that relate information about a subject. They have a
  * visual boundary around the container. This can provide greater emphasis than the other types.
@@ -298,8 +293,7 @@ fun OutlinedCard(
     )
 
 /**
- * <a href="https://m3.material.io/components/cards/overview" class="external"
- * target="_blank">Material Design outlined card</a>.
+ * [Material Design outlined card](https://m3.material.io/components/cards/overview)
  *
  * Outlined cards contain content and actions that relate information about a subject. They have a
  * visual boundary around the container. This can provide greater emphasis than the other types.
