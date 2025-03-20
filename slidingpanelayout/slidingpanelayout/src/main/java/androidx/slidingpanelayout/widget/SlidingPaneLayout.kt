@@ -37,6 +37,7 @@ import android.view.ViewGroup.LayoutParams
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.ViewGroup.getChildMeasureSpec
+import android.view.ViewStructure
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.view.animation.Interpolator
@@ -2254,6 +2255,24 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             }
             return super.findFocus(focus)
         }
+    }
+
+    // Don't provide virtual structure. This addresses 2 issues:
+    //
+    // 1. Avoid StackOverflowException in View#populateVirtualStructure from API 23 to 27 caused by
+    //  it missing check on whether the virtualView points to the host view. Without this check,
+    // `populateVirtualStructure` will stuck in a loop traversing the child and parent indefinitely.
+    //
+    // 2. Above API 28, children views' ViewStructure are not properly created.
+    // This is because ViewGroup#dispatchProvideStructure will first create ViewStructure
+    // based on the node info returned by AccessibilityProvider(in onProvideVirtualStructure). And
+    // if any view structure is created, ViewGroup#dispatchProvideStructure won't continue
+    // dispatchProvideStructure for child view. This works fine for Views whose children are either
+    // all virtual or all real. But it doesn't work for SlidingPaneLayout who has both virtual
+    // child (divider) and real children. We choose not to provide virtual structure so that real
+    // children's ViewStructure is properly created.
+    override fun onProvideVirtualStructure(structure: ViewStructure?) {
+        // left blank
     }
 
     /**
