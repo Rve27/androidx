@@ -22,6 +22,7 @@ import android.hardware.camera2.params.SessionConfiguration;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -92,6 +93,19 @@ public class SessionConfigurationCompat {
         @NonNull
         public Builder addOutputConfiguration(@NonNull OutputConfiguration outputConfig) {
             mOutputConfigs.add(outputConfig);
+            return this;
+        }
+
+        /**
+         * Add a collection of {@link OutputConfiguration}s to the session configuration.
+         *
+         * @param outputConfigs {@link Collection} of {@link OutputConfiguration}s to add.
+         * @return the current builder
+         */
+        @NonNull
+        public Builder addOutputConfigurations(
+                @NonNull Collection<@NonNull OutputConfiguration> outputConfigs) {
+            mOutputConfigs.addAll(outputConfigs);
             return this;
         }
 

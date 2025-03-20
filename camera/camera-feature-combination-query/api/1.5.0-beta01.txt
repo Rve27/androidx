@@ -32,6 +32,7 @@ package androidx.camera.featurecombinationquery {
   public static final class SessionConfigurationCompat.Builder {
     ctor public SessionConfigurationCompat.Builder();
     method public androidx.camera.featurecombinationquery.SessionConfigurationCompat.Builder addOutputConfiguration(android.hardware.camera2.params.OutputConfiguration);
+    method public androidx.camera.featurecombinationquery.SessionConfigurationCompat.Builder addOutputConfigurations(java.util.Collection<android.hardware.camera2.params.OutputConfiguration>);
     method public androidx.camera.featurecombinationquery.SessionConfigurationCompat build();
     method public androidx.camera.featurecombinationquery.SessionConfigurationCompat.Builder setSessionParameters(androidx.camera.featurecombinationquery.SessionParametersCompat);
   }
