@@ -21,7 +21,7 @@ plugins {
 }
 android {
     namespace = "androidx.appfunctions.integration.testapp"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "androidx.appfunctions.integration.testapp"
         minSdk = 33

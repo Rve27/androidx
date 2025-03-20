@@ -65,7 +65,7 @@ kapt {
 }
 
 android {
-    compileSdk = 35
+    compileSdk = 36
     buildTypes.configureEach {
         consumerProguardFiles "proguard-rules.pro"
     }
