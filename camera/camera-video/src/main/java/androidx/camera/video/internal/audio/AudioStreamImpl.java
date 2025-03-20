@@ -284,13 +284,10 @@ public class AudioStreamImpl implements AudioStream {
 
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     private static @NonNull AudioRecord createAudioRecord(int bufferSizeInByte,
-            @NonNull AudioSettings settings, @Nullable Context context) {
+            @NonNull AudioSettings settings, @Nullable Context context)
+            throws IllegalArgumentException {
         if (Build.VERSION.SDK_INT >= 23) {
-            AudioFormat audioFormatObj = new AudioFormat.Builder()
-                    .setSampleRate(settings.getSampleRate())
-                    .setChannelMask(channelCountToChannelMask(settings.getChannelCount()))
-                    .setEncoding(settings.getAudioFormat())
-                    .build();
+            AudioFormat audioFormatObj = createAudioFormat(settings);
             AudioRecord.Builder audioRecordBuilder = Api23Impl.createAudioRecordBuilder();
             if (Build.VERSION.SDK_INT >= 31 && context != null) {
                 Api31Impl.setContext(audioRecordBuilder, context);
@@ -308,6 +305,23 @@ public class AudioStreamImpl implements AudioStream {
         }
     }
 
+    @NonNull
+    private static AudioFormat createAudioFormat(@NonNull AudioSettings settings)
+            throws IllegalArgumentException {
+        return createAudioFormat(settings.getSampleRate(), settings.getChannelCount(),
+                settings.getAudioFormat());
+    }
+
+    @NonNull
+    private static AudioFormat createAudioFormat(int sampleRate, int channelCount,
+            int audioFormat) throws IllegalArgumentException {
+        return new AudioFormat.Builder()
+                .setSampleRate(sampleRate)
+                .setChannelMask(channelCountToChannelMask(channelCount))
+                .setEncoding(audioFormat)
+                .build();
+    }
+
     private static void checkAudioRecordInitialStateOrReleaseAndThrow(
             @NonNull AudioRecord audioRecord) throws AudioStreamException {
         if (audioRecord.getState() != AudioRecord.STATE_INITIALIZED) {
@@ -321,7 +335,15 @@ public class AudioStreamImpl implements AudioStream {
         if (sampleRate <= 0 || channelCount <= 0) {
             return false;
         }
-        return getMinBufferSize(sampleRate, channelCount, audioFormat) > 0;
+        if (getMinBufferSize(sampleRate, channelCount, audioFormat) <= 0) {
+            return false;
+        }
+        try {
+            createAudioFormat(sampleRate, channelCount, audioFormat);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        return true;
     }
 
     private static boolean hasAudioTimestampQuirk() {
