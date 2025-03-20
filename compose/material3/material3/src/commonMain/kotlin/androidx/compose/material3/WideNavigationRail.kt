@@ -107,6 +107,12 @@ import kotlinx.coroutines.launch
  * Wide navigation rails provide access to primary destinations in apps when using tablet and
  * desktop screens.
  *
+ * ![Wide navigation rail collapsed
+ * image](https://developer.android.com/images/reference/androidx/compose/material3/wide-navigation-rail-collapsed.png)
+ *
+ * ![Wide navigation rail expanded
+ * image](https://developer.android.com/images/reference/androidx/compose/material3/wide-navigation-rail-expanded.png)
+ *
  * The wide navigation rail should be used to display multiple [WideNavigationRailItem]s, each
  * representing a singular app destination, and, optionally, a header containing a menu button, a
  * [FloatingActionButton], and/or a logo. Each destination is typically represented by an icon and a
