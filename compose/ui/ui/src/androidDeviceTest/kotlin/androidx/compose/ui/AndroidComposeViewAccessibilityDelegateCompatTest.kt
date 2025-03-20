@@ -44,6 +44,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
@@ -130,6 +132,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.accessibility.AccessibilityEventCompat.CONTENT_CHANGE_TYPE_CONTENT_DESCRIPTION
+import androidx.core.view.accessibility.AccessibilityEventCompat.CONTENT_CHANGE_TYPE_CONTENT_INVALID
+import androidx.core.view.accessibility.AccessibilityEventCompat.CONTENT_CHANGE_TYPE_ERROR
 import androidx.core.view.accessibility.AccessibilityEventCompat.CONTENT_CHANGE_TYPE_STATE_DESCRIPTION
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.ACTION_CLICK
@@ -2399,6 +2403,65 @@ class AndroidComposeViewAccessibilityDelegateCompatTest {
                     AccessibilityEvent().apply {
                         eventType = TYPE_WINDOW_CONTENT_CHANGED
                         contentDescription = null
+                    }
+                )
+        }
+    }
+
+    @Test
+    fun sendErrorEvent_onErrorSet() {
+        // Arrange.
+        var isError by mutableStateOf(false)
+        rule.setContentWithAccessibilityEnabled {
+            BasicTextField(
+                rememberTextFieldState("text"),
+                Modifier.semantics { if (isError) this.error("error") },
+            )
+        }
+
+        // Act.
+        rule.runOnIdle { isError = true }
+        rule.mainClock.advanceTimeBy(accessibilityEventLoopIntervalMs)
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(dispatchedAccessibilityEvents)
+                .comparingElementsUsing(AccessibilityEventComparator)
+                .contains(
+                    AccessibilityEvent().apply {
+                        eventType = TYPE_WINDOW_CONTENT_CHANGED
+                        contentChangeTypes =
+                            CONTENT_CHANGE_TYPE_CONTENT_INVALID or CONTENT_CHANGE_TYPE_ERROR
+                    }
+                )
+        }
+    }
+
+    @Test
+    fun sendErrorEvent_onErrorMessageChange() {
+        // Arrange.
+        var errorMessage by mutableStateOf("old error")
+        rule.setContentWithAccessibilityEnabled {
+            BasicTextField(
+                rememberTextFieldState("text"),
+                Modifier.semantics { this.error(errorMessage) },
+            )
+        }
+
+        // Act.
+        rule.runOnIdle { errorMessage = "new error" }
+        rule.mainClock.advanceTimeBy(accessibilityEventLoopIntervalMs)
+
+        // Assert.
+        // Assert.
+        rule.runOnIdle {
+            assertThat(dispatchedAccessibilityEvents)
+                .comparingElementsUsing(AccessibilityEventComparator)
+                .contains(
+                    AccessibilityEvent().apply {
+                        eventType = TYPE_WINDOW_CONTENT_CHANGED
+                        contentChangeTypes =
+                            CONTENT_CHANGE_TYPE_CONTENT_INVALID or CONTENT_CHANGE_TYPE_ERROR
                     }
                 )
         }
