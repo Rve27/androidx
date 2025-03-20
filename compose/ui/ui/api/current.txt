@@ -3981,7 +3981,9 @@ package androidx.compose.ui.semantics {
   }
 
   public final class SemanticsPropertiesAndroid {
+    method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> getAccessibilityClassName();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> getTestTagsAsResourceId();
+    property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> AccessibilityClassName;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> TestTagsAsResourceId;
     field public static final androidx.compose.ui.semantics.SemanticsPropertiesAndroid INSTANCE;
   }
@@ -4115,8 +4117,11 @@ package androidx.compose.ui.semantics {
   }
 
   public final class SemanticsProperties_androidKt {
+    method public static String getAccessibilityClassName(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static boolean getTestTagsAsResourceId(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
+    method public static void setAccessibilityClassName(androidx.compose.ui.semantics.SemanticsPropertyReceiver, String);
     method public static void setTestTagsAsResourceId(androidx.compose.ui.semantics.SemanticsPropertyReceiver, boolean);
+    property public static String androidx.compose.ui.semantics.SemanticsPropertyReceiver.accessibilityClassName;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.testTagsAsResourceId;
   }
 

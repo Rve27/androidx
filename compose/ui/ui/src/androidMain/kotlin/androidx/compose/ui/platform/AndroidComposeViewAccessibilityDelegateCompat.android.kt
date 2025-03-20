@@ -1027,6 +1027,12 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
                 )
             }
         }
+
+        // set the className provided through the [SemanticsPropertyReceiver.accessibilityClassName]
+        // as a last step to ensure it overrides a classname derived from other semantics properties
+        semanticsNode.unmergedConfig
+            .getOrNull(SemanticsPropertiesAndroid.AccessibilityClassName)
+            ?.let { info.className = it }
     }
 
     /** Set the error text for this node */
@@ -1184,6 +1190,7 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
     private fun createEvent(virtualViewId: Int, eventType: Int): AccessibilityEvent {
         val event: AccessibilityEvent = AccessibilityEvent.obtain(eventType)
         event.isEnabled = true
+        // TODO(b/403526104) this might need to also be a proper class name
         event.className = ClassName
 
         // Don't allow the client to override these properties.
