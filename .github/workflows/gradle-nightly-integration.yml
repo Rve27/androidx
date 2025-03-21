@@ -1,0 +1,41 @@
+# This workflow builds :collection:collection with the latest release-nightly build of Gradle.
+# It applies the patch file .github/integration-patches/gradle-nightly.patch if it exists.
+name: Gradle Nightly Integration Test
+
+on:
+  # Run workflow daily. Gradle nightly builds typically publish before 02:00.
+  schedule:
+    - cron: "0 3 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: "Checkout androidx repo"
+        uses: actions/checkout@v4
+
+      # Optionally apply a patch file needed to use the latest version of Gradle.
+      - name: "Apply patch"
+        # If the file exists, hashFiles will return a non-empty string.
+        if: ${{ hashFiles('.github/integration-patches/gradle-nightly.patch') != '' }}
+        run: git apply .github/integration-patches/gradle-nightly.patch
+
+      - name: "Run build"
+        uses: ./.github/actions/build-single-project
+        with:
+          project: collection
+          project-root: playground-projects/collection-playground
+          gradle-cache-password: ${{ secrets.GRADLE_BUILD_CACHE_PASSWORD }}
+          gradle-enterprise-access-key: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+          gradle-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
+          # Gradle flags match those used in presubmit.yml
+          gradle-flags: >
+            -Dorg.gradle.internal.http.connectionTimeout=60000
+            -Dorg.gradle.internal.http.socketTimeout=60000
+            -Dorg.gradle.internal.repository.max.retries=20
+            -Dorg.gradle.internal.repository.initial.backoff=500
+            --stacktrace
+          gradle-version: release-nightly
