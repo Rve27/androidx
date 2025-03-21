@@ -16,6 +16,7 @@
 
 package androidx.camera.video;
 
+import static androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED;
 import static androidx.camera.video.AudioStats.AUDIO_AMPLITUDE_NONE;
 import static androidx.camera.video.VideoRecordEvent.Finalize.ERROR_DURATION_LIMIT_REACHED;
 import static androidx.camera.video.VideoRecordEvent.Finalize.ERROR_ENCODING_FAILED;
@@ -217,6 +218,18 @@ public final class Recorder implements VideoOutput {
     @IntDef({VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE,
             VIDEO_CAPABILITIES_SOURCE_CODEC_CAPABILITIES})
     @interface VideoCapabilitiesSource {
+    }
+
+    /** Regular type video recording. */
+    static final int VIDEO_RECORDING_TYPE_REGULAR = 1;
+
+    /** High-speed type video recording. */
+    static final int VIDEO_RECORDING_TYPE_HIGH_SPEED = 2;
+
+    @Retention(SOURCE)
+    @IntDef({VIDEO_RECORDING_TYPE_REGULAR,
+            VIDEO_RECORDING_TYPE_HIGH_SPEED})
+    @interface VideoRecordingType {
     }
 
     enum State {
@@ -589,8 +602,11 @@ public final class Recorder implements VideoOutput {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     @Override
-    public @NonNull VideoCapabilities getMediaCapabilities(@NonNull CameraInfo cameraInfo) {
-        return getVideoCapabilities(cameraInfo, mVideoCapabilitiesSource);
+    public @NonNull VideoCapabilities getMediaCapabilities(@NonNull CameraInfo cameraInfo,
+            int sessionType) {
+        int videoCaptureType = sessionType == SESSION_TYPE_HIGH_SPEED
+                ? VIDEO_RECORDING_TYPE_HIGH_SPEED : VIDEO_RECORDING_TYPE_REGULAR;
+        return getVideoCapabilitiesInternal(videoCaptureType, cameraInfo, mVideoCapabilitiesSource);
     }
 
     /**
@@ -1199,8 +1215,9 @@ public final class Recorder implements VideoOutput {
         Size surfaceSize = surfaceRequest.getResolution();
         // Fetch and cache nearest encoder profiles, if one exists.
         DynamicRange dynamicRange = surfaceRequest.getDynamicRange();
-        VideoCapabilities capabilities = getVideoCapabilities(
-                surfaceRequest.getCamera().getCameraInfo());
+        VideoCapabilities capabilities = getMediaCapabilities(
+                surfaceRequest.getCamera().getCameraInfo(),
+                surfaceRequest.getSessionType());
         Quality highestSupportedQuality = capabilities.findNearestHigherSupportedQualityFor(
                 surfaceSize, dynamicRange);
         Logger.d(TAG, "Using supported quality of " + highestSupportedQuality
@@ -1213,6 +1230,8 @@ public final class Recorder implements VideoOutput {
                         + "produce EncoderProfiles  for advertised quality.");
             }
         }
+        Logger.d(TAG, "mResolvedEncoderProfiles = " + mResolvedEncoderProfiles);
+
         if (mSetupVideoTask != null) {
             mSetupVideoTask.cancelFailedRetry();
         }
@@ -3007,7 +3026,8 @@ public final class Recorder implements VideoOutput {
      * @return VideoCapabilities with respect to the input camera info.
      */
     public static @NonNull VideoCapabilities getVideoCapabilities(@NonNull CameraInfo cameraInfo) {
-        return getVideoCapabilities(cameraInfo, VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE);
+        return getVideoCapabilitiesInternal(VIDEO_RECORDING_TYPE_REGULAR, cameraInfo,
+                VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE);
     }
 
     /**
@@ -3029,8 +3049,49 @@ public final class Recorder implements VideoOutput {
      */
     public static @NonNull VideoCapabilities getVideoCapabilities(@NonNull CameraInfo cameraInfo,
             @VideoCapabilitiesSource int videoCapabilitiesSource) {
+        return getVideoCapabilitiesInternal(VIDEO_RECORDING_TYPE_REGULAR, cameraInfo,
+                videoCapabilitiesSource);
+    }
+
+    /**
+     * Returns the high-speed {@link VideoCapabilities} of Recorder with respect to input camera
+     * information.
+     *
+     * @param cameraInfo info about the camera.
+     * @return high-speed VideoCapabilities with respect to the input camera info, or null if
+     * high-speed recording is not supported.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY) // TODO(b/404096374): High-speed public API
+    public static @Nullable VideoCapabilities getHighSpeedVideoCapabilities(
+            @NonNull CameraInfo cameraInfo) {
+        return getHighSpeedVideoCapabilities(cameraInfo,
+                VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE);
+    }
+
+    /**
+     * Returns the high-speed {@link VideoCapabilities} of Recorder with respect to input camera
+     * information and video capabilities source.
+     *
+     * @param cameraInfo              info about the camera.
+     * @param videoCapabilitiesSource the video capabilities source.
+     * @return high-speed VideoCapabilities with respect to the input camera info and video
+     * capabilities source, or null if high-speed recording is not supported.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY) // TODO(b/404096374): High-speed public API
+    public static @Nullable VideoCapabilities getHighSpeedVideoCapabilities(
+            @NonNull CameraInfo cameraInfo,
+            @VideoCapabilitiesSource int videoCapabilitiesSource) {
+        VideoCapabilities videoCapabilities = getVideoCapabilitiesInternal(
+                VIDEO_RECORDING_TYPE_HIGH_SPEED, cameraInfo, videoCapabilitiesSource);
+        return videoCapabilities.getSupportedDynamicRanges().isEmpty() ? null : videoCapabilities;
+    }
+
+    private static @NonNull VideoCapabilities getVideoCapabilitiesInternal(
+            @VideoRecordingType int videoRecordingType,
+            @NonNull CameraInfo cameraInfo,
+            @VideoCapabilitiesSource int videoCapabilitiesSource) {
         return new RecorderVideoCapabilities(videoCapabilitiesSource,
-                (CameraInfoInternal) cameraInfo, VideoEncoderInfoImpl.FINDER);
+                (CameraInfoInternal) cameraInfo, videoRecordingType, VideoEncoderInfoImpl.FINDER);
     }
 
     @AutoValue
