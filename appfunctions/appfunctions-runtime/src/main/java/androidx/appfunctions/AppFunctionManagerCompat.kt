@@ -99,7 +99,7 @@ internal constructor(
     @RequiresPermission(value = "android.permission.EXECUTE_APP_FUNCTIONS", conditional = true)
     public suspend fun isAppFunctionEnabled(packageName: String, functionId: String): Boolean {
         checkAppFunctionsFeatureSupported()
-        return appFunctionManagerApi.isAppFunctionEnabled(functionId, packageName)
+        return appFunctionManagerApi.isAppFunctionEnabled(packageName, functionId)
     }
 
     /**
