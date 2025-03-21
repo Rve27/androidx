@@ -749,6 +749,7 @@ private fun Project.configureWasm() {
     }
 }
 
+@Suppress("DEPRECATION")
 private fun Project.configureNode() {
     extensions.findByType<NodeJsEnvSpec>()?.let { nodeJs ->
         nodeJs.version.set(getVersionByName("node"))

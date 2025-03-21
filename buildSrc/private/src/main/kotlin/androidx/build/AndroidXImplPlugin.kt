@@ -1757,6 +1757,7 @@ internal fun Project.hasAndroidMultiplatformPlugin(): Boolean =
     extensions.findByType(AndroidXMultiplatformExtension::class.java)?.hasAndroidMultiplatform()
         ?: false
 
+@Suppress("DEPRECATION")
 internal fun KotlinMultiplatformExtension.hasJavaEnabled(): Boolean =
     targets.withType(KotlinJvmTarget::class.java).singleOrNull()?.withJavaEnabled ?: false
 

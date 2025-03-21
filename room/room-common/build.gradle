@@ -33,9 +33,7 @@ plugins {
 
 androidXMultiplatform {
     js()
-    jvm() {
-        withJava()
-    }
+    jvm()
     mac()
     linux()
     ios()
