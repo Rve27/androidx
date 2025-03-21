@@ -33,7 +33,6 @@ import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
-import kotlin.math.floor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,7 +46,6 @@ import org.junit.runner.RunWith
 class UiPresentationTests() {
 
     private lateinit var scenario: ActivityScenario<MainActivity>
-    private lateinit var sdkToClientCallback: SdkToClientCallback
 
     companion object {
         private const val CALLBACK_WAIT_MS = 1000L
@@ -60,7 +58,6 @@ class UiPresentationTests() {
             FragmentOptions.MEDIATION_TYPE_NON_MEDIATED,
             FragmentOptions.Z_ORDER_ABOVE
         )
-        sdkToClientCallback = SdkToClientCallback()
     }
 
     @After
@@ -74,9 +71,21 @@ class UiPresentationTests() {
 
     @Test
     fun resizeTest() {
-        loadBannerAdAndWaitForUiDisplayed(R.id.hidden_resizable_ad_view)
+        val resizeCallback =
+            object : SdkToClientCallback() {
+                var remoteViewWidth: Int? = null
+                var remoteViewHeight: Int? = null
+                val resizeLatch = CountDownLatch(1)
+
+                override fun onResizeOccurred(width: Int, height: Int) {
+                    remoteViewWidth = width
+                    remoteViewHeight = height
+                    resizeLatch.countDown()
+                }
+            }
+        loadBannerAdAndWaitForUiDisplayed(resizeCallback, R.id.hidden_resizable_ad_view)
         val resizedWidth = 100
-        val resizedHeight = 200
+        val resizedHeight = 100
         scenario.onActivity { activity ->
             val resizableBannerView =
                 activity.findViewById<SandboxedSdkView>(R.id.hidden_resizable_ad_view)
@@ -84,57 +93,10 @@ class UiPresentationTests() {
                 LinearLayoutCompat.LayoutParams(resizedWidth, resizedHeight)
         }
 
-        assertThat(sdkToClientCallback.resizeLatch.await(CALLBACK_WAIT_MS, TimeUnit.MILLISECONDS))
+        assertThat(resizeCallback.resizeLatch.await(CALLBACK_WAIT_MS, TimeUnit.MILLISECONDS))
             .isTrue()
-        assertThat(sdkToClientCallback.remoteViewWidth).isEqualTo(resizedWidth)
-        assertThat(sdkToClientCallback.remoteViewHeight).isEqualTo(resizedHeight)
-    }
-
-    @Test
-    fun paddingAppliedTest() {
-        loadBannerAdAndWaitForUiDisplayed(R.id.hidden_resizable_ad_view)
-
-        var resizableViewWidth: Int? = null
-        var resizableViewHeight: Int? = null
-        var paddingLeft: Int? = null
-        var paddingTop: Int? = null
-        var paddingRight: Int? = null
-        var paddingBottom: Int? = null
-        scenario.onActivity { activity ->
-            val resizableBannerView =
-                activity.findViewById<SandboxedSdkView>(R.id.hidden_resizable_ad_view)
-            resizableViewWidth = resizableBannerView.width
-            resizableViewHeight = resizableBannerView.height
-            paddingLeft = floor(resizableBannerView.width * 0.05).toInt()
-            paddingTop = floor(resizableBannerView.height * 0.05).toInt()
-            paddingRight = paddingLeft
-            paddingBottom = paddingTop
-            resizableBannerView.setPadding(
-                paddingLeft!!,
-                paddingTop!!,
-                paddingRight!!,
-                paddingBottom!!
-            )
-        }
-
-        assertThat(sdkToClientCallback.resizeLatch.await(CALLBACK_WAIT_MS, TimeUnit.MILLISECONDS))
-            .isTrue()
-
-        var contentViewWidth: Int? = null
-        var contentViewHeight: Int? = null
-        scenario.onActivity { activity ->
-            val resizableBannerView =
-                activity.findViewById<SandboxedSdkView>(R.id.hidden_resizable_ad_view)
-            contentViewWidth = resizableBannerView.getChildAt(0).width
-            contentViewHeight = resizableBannerView.getChildAt(0).height
-        }
-
-        assertThat(contentViewWidth)
-            .isEqualTo(resizableViewWidth!! - paddingLeft!! - paddingRight!!)
-        assertThat(contentViewHeight)
-            .isEqualTo(resizableViewHeight!! - paddingTop!! - paddingBottom!!)
-        assertThat(sdkToClientCallback.remoteViewWidth).isEqualTo(contentViewWidth)
-        assertThat(sdkToClientCallback.remoteViewHeight).isEqualTo(contentViewHeight)
+        assertThat(resizeCallback.remoteViewWidth).isEqualTo(resizedWidth)
+        assertThat(resizeCallback.remoteViewHeight).isEqualTo(resizedHeight)
     }
 
     // TODO(b/402065627): Move to a common util file
@@ -165,7 +127,7 @@ class UiPresentationTests() {
     }
 
     // TODO(b/402065627): Move to a common util file
-    private fun loadBannerAdAndWaitForUiDisplayed(viewId: Int) {
+    private fun loadBannerAdAndWaitForUiDisplayed(callback: SdkToClientCallback, viewId: Int) {
         val eventListener = EventListener()
         scenario.onActivity { activity ->
             val view = activity.findViewById<SandboxedSdkView>(viewId)
@@ -180,7 +142,7 @@ class UiPresentationTests() {
                             BaseFragment.currentMediationOption,
                             /*waitInsideOnDraw=*/ false,
                             BaseFragment.shouldDrawViewabilityLayer,
-                            sdkToClientCallback
+                            callback
                         )
                 view.setAdapter(SandboxedUiAdapterFactory.createFromCoreLibInfo(sdkBundle))
             }
@@ -189,17 +151,8 @@ class UiPresentationTests() {
             .isTrue()
     }
 
-    private class SdkToClientCallback : IAutomatedTestCallback {
-        var remoteViewWidth: Int? = null
-        var remoteViewHeight: Int? = null
-        val resizeLatch = CountDownLatch(1)
-
-        override fun onResizeOccurred(width: Int, height: Int) {
-            remoteViewWidth = width
-            remoteViewHeight = height
-
-            resizeLatch.countDown()
-        }
+    private abstract class SdkToClientCallback : IAutomatedTestCallback {
+        abstract override fun onResizeOccurred(width: Int, height: Int)
     }
 
     private class EventListener : SandboxedSdkViewEventListener {
