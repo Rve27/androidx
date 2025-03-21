@@ -604,41 +604,48 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             pendingZoomRecalculation = false
         }
 
-        if (changed || awaitingFirstLayout) {
-            maybeAdjustZoom()
+        if (changed || awaitingFirstLayout) maybeAdjustZoomAndScroll()
 
-            val positionToRestore = scrollPositionToRestore
-            if (positionToRestore != null) {
-                scrollToRestoredPosition(positionToRestore, zoom)
-                scrollPositionToRestore = null
-            }
-
-            awaitingFirstLayout = false
-        }
+        awaitingFirstLayout = false
     }
 
-    private fun maybeAdjustZoom() {
+    private fun maybeAdjustZoomAndScroll() {
+        val localScrollPosition = scrollPositionToRestore
+        val localOldWidth = oldWidth
         /**
          * We only want to adjust zoom if we're restoring from a saved state or PdfView's size has
          * changed, i.e. we'll have a valid [oldWidth] to use.
          *
          * For view init scenario, zoom set from [getDefaultZoom] should be enough to fit to width.
          */
-        oldWidth?.let { oldW ->
+        if (localOldWidth != null) {
             // Either we're restoring or view size has changed; adjust zoom by factor of w / oldW.
-            val factor = width / oldW.toFloat()
-
-            val localZoomToRestore = zoomToRestore
-            val resolvedZoom = localZoomToRestore ?: this.zoom
+            val factor = width.toFloat() / localOldWidth
+            val resolvedZoom = zoomToRestore ?: zoom
 
             // Calculate new zoom, clamped between min and max zoom possible.
             val newZoom = (resolvedZoom * factor).coerceIn(minZoom, maxZoom)
             this.zoom = newZoom
-
-            // reset zoomToRestore and oldWidth as we've adjusted zoom
             zoomToRestore = null
-            oldWidth = null
+
+            /**
+             * If view isn't recreated, we won't have a scroll position from bundle. In this case,
+             * adjust view's current scrollX and scrollY according to change in zoom.
+             */
+            if (localScrollPosition == null) {
+                val newScrollX = (scrollX * (newZoom / resolvedZoom)).roundToInt()
+                val newScrollY = (scrollY * (newZoom / resolvedZoom)).roundToInt()
+                scrollTo(newScrollX, newScrollY)
+            }
         }
+
+        // The view is recreated, and we have a position to restore from bundle
+        if (localScrollPosition != null) {
+            scrollToRestoredPosition(localScrollPosition, this.zoom)
+            scrollPositionToRestore = null
+        }
+
+        oldWidth = null
     }
 
     override fun onAttachedToWindow() {
