@@ -52,6 +52,7 @@ import androidx.collection.mutableIntListOf
 import androidx.collection.mutableIntObjectMapOf
 import androidx.collection.mutableIntSetOf
 import androidx.collection.mutableObjectIntMapOf
+import androidx.compose.ui.ComposeUiFlags.isFocusActionExitsTouchModeEnabled
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.R
 import androidx.compose.ui.contentcapture.ContentCaptureManager
@@ -81,6 +82,7 @@ import androidx.compose.ui.semantics.SemanticsActions.PageDown
 import androidx.compose.ui.semantics.SemanticsActions.PageLeft
 import androidx.compose.ui.semantics.SemanticsActions.PageRight
 import androidx.compose.ui.semantics.SemanticsActions.PageUp
+import androidx.compose.ui.semantics.SemanticsActions.RequestFocus
 import androidx.compose.ui.semantics.SemanticsConfiguration
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsNodeWithAdjustedBounds
@@ -1475,10 +1477,15 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
                     ) ?: false
             }
             AccessibilityNodeInfoCompat.ACTION_FOCUS -> {
-                return node.unmergedConfig
-                    .getOrNull(SemanticsActions.RequestFocus)
-                    ?.action
-                    ?.invoke() ?: false
+                // The item might not be focusable in touch mode, so we use the base implementation
+                // of to switch the system to touch mode before requesting focus (b/387576999).
+                // Note that this causes a temporary focus shift to the view, which is then
+                // corrected by immediately focusing the desired Composable node
+                if (@OptIn(ExperimentalComposeUiApi::class) isFocusActionExitsTouchModeEnabled) {
+                    performAccessibilityAction(view, action, arguments)
+                }
+
+                return node.unmergedConfig.getOrNull(RequestFocus)?.action?.invoke() ?: false
             }
             AccessibilityNodeInfoCompat.ACTION_CLEAR_FOCUS -> {
                 return if (node.unmergedConfig.getOrNull(SemanticsProperties.Focused) == true) {

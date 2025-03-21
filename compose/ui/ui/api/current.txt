@@ -132,6 +132,7 @@ package androidx.compose.ui {
   }
 
   @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public final class ComposeUiFlags {
+    property public boolean isFocusActionExitsTouchModeEnabled;
     property public boolean isHitPathTrackerLoggingEnabled;
     property public boolean isOutOfFrameDeactivationEnabled;
     property public boolean isRectTrackingEnabled;
@@ -140,6 +141,7 @@ package androidx.compose.ui {
     property public boolean isTrackFocusEnabled;
     property public boolean isViewFocusFixEnabled;
     field public static final androidx.compose.ui.ComposeUiFlags INSTANCE;
+    field public static boolean isFocusActionExitsTouchModeEnabled;
     field public static boolean isHitPathTrackerLoggingEnabled;
     field public static boolean isOutOfFrameDeactivationEnabled;
     field public static boolean isRectTrackingEnabled;

@@ -92,6 +92,12 @@ object ComposeUiFlags {
     @Suppress("MutableBareField") @JvmField var isTrackFocusEnabled: Boolean = true
 
     /**
+     * With this flag on, when an AccessibilityService performs ACTION_FOCUS on a Composable node,
+     * if it is in touch mode, it will exit touch mode first, then try to request focus on the node.
+     */
+    @Suppress("MutableBareField") @JvmField var isFocusActionExitsTouchModeEnabled: Boolean = true
+
+    /*
      * Enable lower-level logging of input events where a cancellation event does not stop input
      * events from finishing processing before the cancellation event. This is to track down why a
      * certain build of CI is failing with this functionality enabled: b/399055247
