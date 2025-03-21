@@ -255,11 +255,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             else if (value == false) fastScroller?.hide()
         }
 
-    /**
-     * The width of the PdfView before the last layout change (e.g., before rotation). Used to
-     * preserve the zoom level when the device is rotated.
-     */
-    private var oldWidth: Int? = width
+    // Stores width set from onSizeChanged or while restoring state
+    private var oldWidth: Int? = null
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public var fastScroller: FastScroller? = null
     private var fastScrollGestureDetector: FastScrollGestureDetector? = null
@@ -608,19 +605,39 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
 
         if (changed || awaitingFirstLayout) {
+            maybeAdjustZoom()
+
             val positionToRestore = scrollPositionToRestore
             if (positionToRestore != null) {
-                var resolvedZoom =
-                    if (zoomToRestore != null && zoomToRestore != DEFAULT_INIT_ZOOM) zoomToRestore!!
-                    else zoom
-                resolvedZoom = resolvedZoom * (width.toFloat() / (oldWidth ?: contentWidth))
-                val clampedZoom = MathUtils.clamp(resolvedZoom, minZoom, maxZoom)
-                this.zoom = clampedZoom
-                scrollToRestoredPosition(positionToRestore, clampedZoom)
+                scrollToRestoredPosition(positionToRestore, zoom)
                 scrollPositionToRestore = null
-                zoomToRestore = DEFAULT_INIT_ZOOM
             }
+
             awaitingFirstLayout = false
+        }
+    }
+
+    private fun maybeAdjustZoom() {
+        /**
+         * We only want to adjust zoom if we're restoring from a saved state or PdfView's size has
+         * changed, i.e. we'll have a valid [oldWidth] to use.
+         *
+         * For view init scenario, zoom set from [getDefaultZoom] should be enough to fit to width.
+         */
+        oldWidth?.let { oldW ->
+            // Either we're restoring or view size has changed; adjust zoom by factor of w / oldW.
+            val factor = width / oldW.toFloat()
+
+            val localZoomToRestore = zoomToRestore
+            val resolvedZoom = localZoomToRestore ?: this.zoom
+
+            // Calculate new zoom, clamped between min and max zoom possible.
+            val newZoom = (resolvedZoom * factor).coerceIn(minZoom, maxZoom)
+            this.zoom = newZoom
+
+            // reset zoomToRestore and oldWidth as we've adjusted zoom
+            zoomToRestore = null
+            oldWidth = null
         }
     }
 
