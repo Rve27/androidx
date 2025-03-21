@@ -82,7 +82,7 @@ internal constructor(
      * @throws IllegalArgumentException If the [functionId] is not available in caller's package.
      */
     public suspend fun isAppFunctionEnabled(functionId: String): Boolean {
-        return isAppFunctionEnabled(context.packageName, functionId)
+        return isAppFunctionEnabled(packageName = context.packageName, functionId = functionId)
     }
 
     /**
@@ -99,7 +99,10 @@ internal constructor(
     @RequiresPermission(value = "android.permission.EXECUTE_APP_FUNCTIONS", conditional = true)
     public suspend fun isAppFunctionEnabled(packageName: String, functionId: String): Boolean {
         checkAppFunctionsFeatureSupported()
-        return appFunctionManagerApi.isAppFunctionEnabled(packageName, functionId)
+        return appFunctionManagerApi.isAppFunctionEnabled(
+            packageName = packageName,
+            functionId = functionId
+        )
     }
 
     /**
