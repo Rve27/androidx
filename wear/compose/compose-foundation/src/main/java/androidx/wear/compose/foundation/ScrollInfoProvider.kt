@@ -220,7 +220,9 @@ private class ScrollStateScrollInfoProvider(val state: ScrollState) : ScrollInfo
     override val isScrollAwayValid: Boolean
         get() = true
 
-    override val isScrollable = state.maxValue != 0
+    override val isScrollable: Boolean
+        get() = state.maxValue != 0
+
     // Work around the default implementation of ScrollState not providing a useful
     // isScrollInProgress
     private var prevOffset: Int? = null
