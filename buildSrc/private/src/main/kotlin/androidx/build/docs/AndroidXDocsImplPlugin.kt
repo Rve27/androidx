@@ -928,6 +928,10 @@ abstract class MergeMultiplatformMetadataTask : DefaultTask() {
                 mergedMetadata.merge(metadata)
             }
         val gson = GsonBuilder().setPrettyPrinting().create()
+        // Sort sourceSets to ensure that child sourceSets come after their parents, b/404784813
+        // Also ensure deterministic order--mergedMetadata.merge() uses .toSet() to deduplicate.
+        mergedMetadata.sourceSets =
+            mergedMetadata.sourceSets.sortedWith(compareBy({ it.dependencies.size }, { it.name }))
         val json = gson.toJson(mergedMetadata)
         mergedProjectMetadata.get().asFile.apply {
             parentFile.mkdirs()
