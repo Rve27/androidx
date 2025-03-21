@@ -26,6 +26,7 @@ import static org.mockito.Mockito.verify;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.os.Build;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -465,6 +466,16 @@ public class AccessibilityNodeInfoCompatTest {
         assertThat(
                 accessibilityNodeInfoCompat.getExtraRenderingInfo()).isEqualTo(
                         accessibilityNodeInfoCompat.unwrap().getExtraRenderingInfo());
+    }
+
+    @SmallTest
+    @Test
+    public void testGetSupplementalDescription() {
+        final CharSequence supplementalDescription = "supplemental description";
+        AccessibilityNodeInfoCompat nodeCompat = obtainedWrappedNodeCompat();
+        nodeCompat.setSupplementalDescription(supplementalDescription);
+        assertThat(TextUtils.equals(
+                supplementalDescription, nodeCompat.getSupplementalDescription())).isTrue();
     }
 
     @SmallTest
