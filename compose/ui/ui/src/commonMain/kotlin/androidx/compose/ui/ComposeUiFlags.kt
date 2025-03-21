@@ -126,4 +126,7 @@ object ComposeUiFlags {
      * phase, improving the scrolling performance for lazy layouts.
      */
     @Suppress("MutableBareField") @JvmField var isOutOfFrameDeactivationEnabled: Boolean = true
+
+    /** Enable clearing focus when a focused item is removed from a lazyList. */
+    @Suppress("MutableBareField") @JvmField var isClearFocusOnResetEnabled: Boolean = false
 }

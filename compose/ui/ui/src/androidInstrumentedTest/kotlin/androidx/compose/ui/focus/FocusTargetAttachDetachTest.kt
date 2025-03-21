@@ -16,14 +16,19 @@
 
 package androidx.compose.ui.focus
 
+import android.os.Build.VERSION.SDK_INT
+import android.view.View
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.ReusableContent
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ComposeUiFlags
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusStateImpl.Active
 import androidx.compose.ui.focus.FocusStateImpl.ActiveParent
@@ -41,7 +46,9 @@ import androidx.compose.ui.input.pointer.elementFor
 import androidx.compose.ui.input.rotary.RotaryInputModifierNode
 import androidx.compose.ui.input.rotary.RotaryScrollEvent
 import androidx.compose.ui.node.DelegatingNode
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInputModeManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -56,6 +63,7 @@ import androidx.test.filters.MediumTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import org.junit.After
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -243,6 +251,58 @@ class FocusTargetAttachDetachTest {
 
         // Assert.
         rule.runOnIdle { assertThat(focusState.isFocused).isFalse() }
+    }
+
+    @Test
+    fun removingActiveItemThatIsBeyondBounds_clearsFocusFromHierarchy() {
+        @OptIn(ExperimentalComposeUiApi::class)
+        assumeTrue(ComposeUiFlags.isClearFocusOnResetEnabled)
+
+        // Arrange.
+        val item0 = FocusRequester()
+        var item1FocusStates = mutableListOf<FocusState>()
+        lateinit var lazyColumnFocusState: FocusState
+        lateinit var focusManager: FocusManager
+        lateinit var view: View
+        rule.setFocusableContent {
+            focusManager = LocalFocusManager.current
+            view = LocalView.current
+            with(rule.density) {
+                LazyColumn(Modifier.size(10.dp).onFocusChanged { lazyColumnFocusState = it }) {
+                    item { Box(Modifier.size(10.dp).focusRequester(item0).focusTarget()) }
+                    item {
+                        Box(
+                            Modifier.size(10.dp)
+                                .onFocusChanged { item1FocusStates.add(it) }
+                                .focusTarget()
+                        )
+                    }
+                }
+            }
+        }
+        rule.runOnIdle { item0.requestFocus() }
+
+        // Act.
+        rule.runOnIdle {
+            // Move focus to item 1 using a beyond bounds layout.
+            focusManager.moveFocus(FocusDirection.Next)
+        }
+
+        // Assert.
+        rule.runOnIdle {
+            // Beyond bounds succeeds, but since the item is not pinned, it is immediately
+            // disposed, which ends up clearing focus.
+            assertThat(item1FocusStates).containsExactly(Inactive, Active, Inactive).inOrder()
+            assertThat(lazyColumnFocusState).isEqualTo(Inactive)
+
+            // In touch mode we clear focus from the view.
+            // https://developer.android.com/about/versions/pie/android-9.0-changes-28#focus
+            if (view.isInTouchMode && SDK_INT > 28) {
+                assertThat(view.hasFocus()).isFalse()
+            } else {
+                assertThat(view.hasFocus()).isTrue()
+            }
+        }
     }
 
     @Test

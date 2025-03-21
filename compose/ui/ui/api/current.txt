@@ -133,6 +133,7 @@ package androidx.compose.ui {
 
   @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public final class ComposeUiFlags {
     property public boolean areWindowInsetsRulersEnabled;
+    property public boolean isClearFocusOnResetEnabled;
     property public boolean isFocusActionExitsTouchModeEnabled;
     property public boolean isHitPathTrackerLoggingEnabled;
     property public boolean isOutOfFrameDeactivationEnabled;
@@ -143,6 +144,7 @@ package androidx.compose.ui {
     property public boolean isViewFocusFixEnabled;
     field public static final androidx.compose.ui.ComposeUiFlags INSTANCE;
     field public static boolean areWindowInsetsRulersEnabled;
+    field public static boolean isClearFocusOnResetEnabled;
     field public static boolean isFocusActionExitsTouchModeEnabled;
     field public static boolean isHitPathTrackerLoggingEnabled;
     field public static boolean isOutOfFrameDeactivationEnabled;
