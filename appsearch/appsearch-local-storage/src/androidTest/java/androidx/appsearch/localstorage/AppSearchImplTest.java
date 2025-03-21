@@ -44,6 +44,7 @@ import androidx.appsearch.app.AppSearchResult;
 import androidx.appsearch.app.AppSearchSchema;
 import androidx.appsearch.app.Features;
 import androidx.appsearch.app.GenericDocument;
+import androidx.appsearch.app.GetByDocumentIdRequest;
 import androidx.appsearch.app.GetSchemaResponse;
 import androidx.appsearch.app.InternalSetSchemaResponse;
 import androidx.appsearch.app.InternalVisibilityConfig;
@@ -9018,5 +9019,17 @@ public class AppSearchImplTest {
         expectedTypes.addAll(expectedProto.getTypesList());
         assertThat(mAppSearchImpl.getSchemaProtoLocked().getTypesList())
                 .containsExactlyElementsIn(expectedTypes);
+    }
+
+    @Test
+    public void testBatchGetDocumentsWithEmptyIdList() throws Exception {
+        AppSearchBatchResult<String, GenericDocument> batchGetResult =
+                mAppSearchImpl.batchGetDocuments(
+                        "packageName",
+                        "dbName",
+                        new GetByDocumentIdRequest.Builder("namespace").build(),
+                        /*callerAccess=*/ null);
+
+        assertThat(batchGetResult.getAll()).isEmpty();
     }
 }
