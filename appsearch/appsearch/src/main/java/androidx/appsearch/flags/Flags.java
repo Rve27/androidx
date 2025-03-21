@@ -230,6 +230,10 @@ public final class Flags {
     public static final String FLAG_ENABLE_EMBEDDING_MATCH_INFO =
             FLAG_PREFIX + "enable_embedding_match_info";
 
+    /** Enables to query visibility documents rather than get.  */
+    public static final String FLAG_ENABLE_QUERY_VISIBILITY_DOCUMENTS =
+            FLAG_PREFIX + "enable_query_visibility_documents";
+
     // Whether the features should be enabled.
     //
     // In Jetpack, those should always return true.
@@ -468,6 +472,13 @@ public final class Flags {
      * Whether to enable retrieving embedding match info during snippetting.
      */
     public static boolean enableEmbeddingMatchInfo() {
+        return true;
+    }
+
+    /**
+     * Whether to query visibility documents rather than get.
+     */
+    public static boolean enableQueryVisibilityDocuments() {
         return true;
     }
 }
