@@ -33,13 +33,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRight
-import androidx.compose.material.icons.filled.ArrowCircleDown
-import androidx.compose.material.icons.filled.ArrowCircleRight
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.DropdownMenu
@@ -227,18 +226,17 @@ fun ElevatedSuggestionChipSample() {
 @Sampled
 @Composable
 fun ChipGroupSingleLineSample() {
-    var selected by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
     val listSize = 9
     val chipData = List(listSize) { index -> "Chip $index" }
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-            FilterChip(
-                selected = selected,
-                onClick = { selected = !selected },
-                label = { Text("Filter") },
+            AssistChip(
+                onClick = { expanded = !expanded },
+                label = { Text("Show All") },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Filled.ArrowCircleRight,
+                        imageVector = Icons.Filled.Tune,
                         contentDescription = "Localized Description",
                         modifier = Modifier.size(FilterChipDefaults.IconSize)
                     )
@@ -250,7 +248,7 @@ fun ChipGroupSingleLineSample() {
              * all options are accessible while maintaining the position of the content below the
              * chip list.
              */
-            DropdownMenu(expanded = selected, onDismissRequest = { selected = false }) {
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 repeat(listSize) { index ->
                     DropdownMenuItem(
                         text = { Text(chipData[index]) },
@@ -278,7 +276,7 @@ fun ChipGroupSingleLineSample() {
 @Sampled
 @Composable
 fun ChipGroupReflowSample() {
-    var selected by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
     val colorNames =
         listOf(
             "Blue",
@@ -298,14 +296,14 @@ fun ChipGroupReflowSample() {
                 Modifier.fillMaxWidth(1f)
                     .wrapContentHeight(align = Alignment.Top)
                     .then(
-                        if (selected) {
+                        if (expanded) {
                             Modifier.verticalScroll(rememberScrollState())
                         } else {
                             Modifier.horizontalScroll(rememberScrollState())
                         }
                     ),
             horizontalArrangement = Arrangement.Start,
-            maxLines = if (!selected) 1 else Int.MAX_VALUE,
+            maxLines = if (!expanded) 1 else Int.MAX_VALUE,
         ) {
             /*
              * When chip lists exceed the available horizontal screen space, one option is to
@@ -313,27 +311,18 @@ fun ChipGroupReflowSample() {
              * ensures all options are accessible while maintaining the position of the content
              * below the chip list.
              */
-            FilterChip(
+            AssistChip(
                 modifier =
                     Modifier.padding(horizontal = 4.dp)
                         .align(alignment = Alignment.CenterVertically),
-                selected = selected,
-                onClick = { selected = !selected },
-                label = { Text(if (selected) "Collapse" else "Expand") },
+                onClick = { expanded = !expanded },
+                label = { Text(if (expanded) "Collapse" else "Show All") },
                 leadingIcon = {
-                    if (selected) {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowCircleDown,
-                            contentDescription = "Localized Description",
-                            modifier = Modifier.size(FilterChipDefaults.IconSize)
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Filled.ArrowCircleRight,
-                            contentDescription = "Localized Description",
-                            modifier = Modifier.size(FilterChipDefaults.IconSize)
-                        )
-                    }
+                    Icon(
+                        imageVector = Icons.Filled.Tune,
+                        contentDescription = "Localized Description",
+                        modifier = Modifier.size(FilterChipDefaults.IconSize)
+                    )
                 }
             )
             Box(
