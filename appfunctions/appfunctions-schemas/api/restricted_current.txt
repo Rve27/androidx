@@ -191,5 +191,11 @@ package androidx.appfunctions.schema.types {
     property public String value;
   }
 
+  public final class SetField<T> {
+    ctor public SetField(T value);
+    method public T getValue();
+    property public T value;
+  }
+
 }
 
