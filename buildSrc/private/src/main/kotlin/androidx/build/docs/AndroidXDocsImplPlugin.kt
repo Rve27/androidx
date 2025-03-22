@@ -582,7 +582,9 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
                     )
                     dependenciesClasspath.from(
                         dependencyClasspath +
-                            project.getAndroidJar() +
+                            project.getAndroidJar(
+                                project.defaultAndroidConfig.latestStableCompileSdk
+                            ) +
                             project.getExtraCommonDependencies()
                     )
                     excludedPackages.set(hiddenPackages.toSet())
