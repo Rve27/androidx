@@ -123,25 +123,17 @@ androidXMultiplatform {
             }
         }
 
-        nonJvmCommonMain {
-            dependsOn(nonAndroidMain)
-        }
+        nonJvmCommonMain { dependsOn(nonAndroidMain) }
 
-        nonJvmCommonTest {
-            dependsOn(nonAndroidTest)
-        }
+        nonJvmCommonTest { dependsOn(nonAndroidTest) }
 
-        nativeMain {
-            dependsOn(nonJvmCommonMain)
-        }
-        linuxMain.dependsOn(nativeMain)
-        darwinMain.dependsOn(nativeMain)
+        nativeMain { dependsOn(nonJvmCommonMain) }
+        linuxMain { dependsOn(nativeMain) }
+        darwinMain { dependsOn(nativeMain) }
 
-        nativeTest {
-            dependsOn(nonJvmCommonTest)
-        }
-        linuxTest.dependsOn(nativeTest)
-        darwinTest.dependsOn(nativeTest)
+        nativeTest { dependsOn(nonJvmCommonTest) }
+        linuxTest { dependsOn(nativeTest) }
+        darwinTest { dependsOn(nativeTest) }
 
         targets.configureEach { target ->
             if (target.platformType == KotlinPlatformType.native) {

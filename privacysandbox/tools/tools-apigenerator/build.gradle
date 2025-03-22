@@ -39,7 +39,7 @@ def compileSdk = AndroidXConfig.getDefaultAndroidConfig(project).getCompileSdk()
 
 configurations {
     // Configuration of shadowed / jarjared dependencies
-    shadowed
+    shadowed { }
     // Shadowed dependencies are compile only
     compileOnly.extendsFrom(shadowed)
     // Include shadowed dependencies for test compilation

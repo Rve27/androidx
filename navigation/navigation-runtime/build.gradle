@@ -119,22 +119,14 @@ androidXMultiplatform {
                 implementation(libs.mockitoCore)
             }
         }
-        nonJvmCommonMain {
-            dependsOn(nonAndroidMain)
-        }
-        nonJvmCommonTest {
-            dependsOn(nonAndroidTest)
-        }
-        nativeMain {
-            dependsOn(nonJvmCommonMain)
-        }
-        linuxMain.dependsOn(nativeMain)
-        darwinMain.dependsOn(nativeMain)
-        nativeTest {
-            dependsOn(nonJvmCommonTest)
-        }
-        linuxTest.dependsOn(nativeTest)
-        darwinTest.dependsOn(nativeTest)
+        nonJvmCommonMain { dependsOn(nonAndroidMain) }
+        nonJvmCommonTest { dependsOn(nonAndroidTest) }
+        nativeMain { dependsOn(nonJvmCommonMain) }
+        linuxMain { dependsOn(nativeMain) }
+        darwinMain { dependsOn(nativeMain) }
+        nativeTest { dependsOn(nonJvmCommonTest) }
+        linuxTest { dependsOn(nativeTest) }
+        darwinTest { dependsOn(nativeTest) }
         targets.configureEach { target ->
             if (target.platformType == KotlinPlatformType.native) {
                 if (target.konanTarget.family.appleFamily) {
