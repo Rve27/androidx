@@ -129,6 +129,32 @@ class AppFunctionCompilerTest {
     }
 
     @Test
+    fun testFunctionsWithSerializableProxyInput_genAppFunctionInventory_success() {
+        val report =
+            compilationTestHelper.compileAll(
+                sourceFileNames =
+                    listOf(
+                        "FunctionWithSerializableProxyInput.KT",
+                        "SerializableWithProxyType.KT",
+                        "AppFunctionLocalDateTime.KT"
+                    ),
+                processorOptions = mapOf("appfunctions:aggregateAppFunctions" to "true")
+            )
+
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName =
+                "${'$'}FunctionWithSerializableProxyInput_AppFunctionInventory.kt",
+            goldenFileName = "${'$'}FunctionWithSerializableProxyInput_AppFunctionInventory.KT",
+        )
+        compilationTestHelper.assertSuccessWithResourceContent(
+            report = report,
+            expectGeneratedResourceFileName = "app_functions_v2.xml",
+            goldenFileName = "functionWithSerializableProxyInput_app_function_dynamic_schema.xml",
+        )
+    }
+
+    @Test
     fun testSimpleFunction_genAppFunctionInvokerImpl_success() {
         val report = compilationTestHelper.compileAll(sourceFileNames = listOf("SimpleFunction.KT"))
 

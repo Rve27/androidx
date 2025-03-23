@@ -16,6 +16,7 @@
 
 package androidx.appfunctions.compiler.core
 
+import androidx.appfunctions.compiler.core.AnnotatedAppFunctionSerializableProxy.ResolvedAnnotatedSerializableProxies
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_ARRAY
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_SINGULAR
@@ -211,7 +212,9 @@ data class AnnotatedAppFunctions(
      * Creates a list of [CompileTimeAppFunctionMetadata]] instances for each of the app functions
      * defined in this class.
      */
-    fun createAppFunctionMetadataList(): List<CompileTimeAppFunctionMetadata> {
+    fun createAppFunctionMetadataList(
+        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
+    ): List<CompileTimeAppFunctionMetadata> {
         val sharedDataTypeMap: MutableMap<String, AppFunctionDataTypeMetadata> = mutableMapOf()
         val seenDataTypeQualifiers: MutableSet<String> = mutableSetOf()
         return appFunctionDeclarations.map { functionDeclaration ->
@@ -221,10 +224,15 @@ data class AnnotatedAppFunctions(
                 functionDeclaration.buildParameterTypeMetadataList(
                     sharedDataTypeMap,
                     seenDataTypeQualifiers,
+                    resolvedAnnotatedSerializableProxies
                 )
             val responseTypeMetadata =
                 checkNotNull(functionDeclaration.returnType)
-                    .toAppFunctionDataTypeMetadata(sharedDataTypeMap, seenDataTypeQualifiers)
+                    .toAppFunctionDataTypeMetadata(
+                        sharedDataTypeMap,
+                        seenDataTypeQualifiers,
+                        resolvedAnnotatedSerializableProxies
+                    )
 
             CompileTimeAppFunctionMetadata(
                 id = getAppFunctionIdentifier(functionDeclaration),
@@ -241,6 +249,7 @@ data class AnnotatedAppFunctions(
     private fun KSFunctionDeclaration.buildParameterTypeMetadataList(
         sharedDataTypeMap: MutableMap<String, AppFunctionDataTypeMetadata>,
         seenDataTypeQualifiers: MutableSet<String>,
+        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
     ): List<AppFunctionParameterMetadata> = buildList {
         for (ksValueParameter in parameters) {
             if (ksValueParameter.type.isOfType(AppFunctionContextClass.CLASS_NAME)) {
@@ -253,6 +262,7 @@ data class AnnotatedAppFunctions(
                 ksValueParameter.type.toAppFunctionDataTypeMetadata(
                     sharedDataTypeMap,
                     seenDataTypeQualifiers,
+                    resolvedAnnotatedSerializableProxies
                 )
 
             add(
@@ -269,6 +279,7 @@ data class AnnotatedAppFunctions(
     private fun KSTypeReference.toAppFunctionDataTypeMetadata(
         sharedDataTypeMap: MutableMap<String, AppFunctionDataTypeMetadata>,
         seenDataTypeQualifiers: MutableSet<String>,
+        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
     ): AppFunctionDataTypeMetadata {
         val appFunctionTypeReference = AppFunctionTypeReference(this)
         return when (appFunctionTypeReference.typeCategory) {
@@ -308,6 +319,7 @@ data class AnnotatedAppFunctions(
                         .toMutableMap(),
                     sharedDataTypeMap,
                     seenDataTypeQualifiers,
+                    resolvedAnnotatedSerializableProxies
                 )
                 AppFunctionReferenceTypeMetadata(
                     referenceDataType =
@@ -329,6 +341,7 @@ data class AnnotatedAppFunctions(
                         .toMutableMap(),
                     sharedDataTypeMap,
                     seenDataTypeQualifiers,
+                    resolvedAnnotatedSerializableProxies
                 )
                 AppFunctionArrayTypeMetadata(
                     itemType =
@@ -345,24 +358,49 @@ data class AnnotatedAppFunctions(
                     isNullable = appFunctionTypeReference.isNullable,
                 )
             }
-            // TODO(b/403199251): Actually swap proxy metadata
-            SERIALIZABLE_PROXY_SINGULAR -> TODO()
+            SERIALIZABLE_PROXY_SINGULAR -> {
+                val targetSerializableProxy =
+                    resolvedAnnotatedSerializableProxies.getSerializableProxyForTypeReference(
+                        appFunctionTypeReference
+                    )
+                addSerializableTypeMetadataToSharedDataTypeMap(
+                    targetSerializableProxy,
+                    targetSerializableProxy
+                        .getProperties()
+                        .associateBy { checkNotNull(it.name).toString() }
+                        .toMutableMap(),
+                    sharedDataTypeMap,
+                    seenDataTypeQualifiers,
+                    resolvedAnnotatedSerializableProxies
+                )
+                AppFunctionReferenceTypeMetadata(
+                    referenceDataType =
+                        appFunctionTypeReference.selfTypeReference
+                            .toTypeName()
+                            .ignoreNullable()
+                            .toString(),
+                    isNullable = appFunctionTypeReference.isNullable,
+                )
+            }
         }
     }
 
     /**
-     * Adds the [AppFunctionDataTypeMetadata] for a serializable type to the shared data type map.
+     * Adds the [AppFunctionDataTypeMetadata] for a serializable/capability type to the shared data
+     * type map.
      *
      * @param appFunctionSerializableType the [AnnotatedAppFunctionSerializable] for the
-     *   serializable type being processed.
+     *   serializable or capability type being processed.
      * @param unvisitedSerializableProperties a map of unvisited serializable properties. This map
      *   is used to track the properties that have not yet been visited. The map is updated as the
      *   properties are visited.
      * @param sharedDataTypeMap a map of shared data types. This map is used to store the
-     *   [AppFunctionDataTypeMetadata] for all serializable types that are used in an app function.
-     *   This map is used to avoid duplicating the metadata for the same serializable type.
+     *   [AppFunctionDataTypeMetadata] for all serializable/capability types that are used in an app
+     *   function. This map is used to avoid duplicating the metadata for the same serializable
+     *   type.
      * @param seenDataTypeQualifiers a set of seen data type qualifiers. This set is used to avoid
      *   processing the same serializable type multiple times.
+     * @param resolvedAnnotatedSerializableProxies The resolved annotated serializable proxies.
      */
     // TODO: Document traversal rules.
     private fun addSerializableTypeMetadataToSharedDataTypeMap(
@@ -370,8 +408,15 @@ data class AnnotatedAppFunctions(
         unvisitedSerializableProperties: MutableMap<String, AppFunctionPropertyDeclaration>,
         sharedDataTypeMap: MutableMap<String, AppFunctionDataTypeMetadata>,
         seenDataTypeQualifiers: MutableSet<String>,
+        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
     ) {
-        val serializableTypeQualifiedName = appFunctionSerializableType.qualifiedName
+        val serializableTypeQualifiedName =
+            if (appFunctionSerializableType is AnnotatedAppFunctionSerializableProxy) {
+                checkNotNull(appFunctionSerializableType.targetClassDeclaration.qualifiedName)
+                    .asString()
+            } else {
+                appFunctionSerializableType.qualifiedName
+            }
         // This type has already been added to the sharedDataMap.
         if (seenDataTypeQualifiers.contains(serializableTypeQualifiedName)) {
             return
@@ -401,7 +446,8 @@ data class AnnotatedAppFunctions(
                     appFunctionSerializableType.getProperties(),
                     unvisitedSerializableProperties,
                     sharedDataTypeMap,
-                    seenDataTypeQualifiers
+                    seenDataTypeQualifiers,
+                    resolvedAnnotatedSerializableProxies
                 )
             )
         } else {
@@ -413,7 +459,8 @@ data class AnnotatedAppFunctions(
                         AnnotatedAppFunctionSerializable(serializableSuperType),
                         unvisitedSerializableProperties,
                         sharedDataTypeMap,
-                        seenDataTypeQualifiers
+                        seenDataTypeQualifiers,
+                        resolvedAnnotatedSerializableProxies
                     )
                     add(
                         AppFunctionReferenceTypeMetadata(
@@ -437,7 +484,8 @@ data class AnnotatedAppFunctions(
                                 .toList(),
                             unvisitedSerializableProperties,
                             sharedDataTypeMap,
-                            seenDataTypeQualifiers
+                            seenDataTypeQualifiers,
+                            resolvedAnnotatedSerializableProxies
                         )
                     )
                 }
@@ -451,7 +499,8 @@ data class AnnotatedAppFunctions(
                             unvisitedSerializableProperties.values.toList(),
                             unvisitedSerializableProperties,
                             sharedDataTypeMap,
-                            seenDataTypeQualifiers
+                            seenDataTypeQualifiers,
+                            resolvedAnnotatedSerializableProxies
                         )
                     )
                 }
@@ -492,6 +541,7 @@ data class AnnotatedAppFunctions(
      *   This map is used to avoid duplicating the metadata for the same serializable type.
      * @param seenDataTypeQualifiers a set of seen data type qualifiers. This set is used to avoid
      *   processing the same serializable type multiple times.
+     * @param resolvedAnnotatedSerializableProxies The resolved annotated serializable proxies.
      * @return an [AppFunctionObjectTypeMetadata] for the serializable type.
      */
     private fun buildObjectTypeMetadataForObjectParameters(
@@ -500,6 +550,7 @@ data class AnnotatedAppFunctions(
         unvisitedSerializableProperties: MutableMap<String, AppFunctionPropertyDeclaration>,
         sharedDataTypeMap: MutableMap<String, AppFunctionDataTypeMetadata>,
         seenDataTypeQualifiers: MutableSet<String>,
+        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
     ): AppFunctionObjectTypeMetadata {
         val currentSerializableProperties: List<AppFunctionPropertyDeclaration> = buildList {
             for (property in currentPropertiesList) {
@@ -516,7 +567,8 @@ data class AnnotatedAppFunctions(
             typeQualifiedName,
             currentSerializableProperties,
             sharedDataTypeMap,
-            seenDataTypeQualifiers
+            seenDataTypeQualifiers,
+            resolvedAnnotatedSerializableProxies
         )
     }
 
@@ -525,6 +577,7 @@ data class AnnotatedAppFunctions(
         currentSerializableProperties: List<AppFunctionPropertyDeclaration>,
         sharedDataTypeMap: MutableMap<String, AppFunctionDataTypeMetadata>,
         seenDataTypeQualifiers: MutableSet<String>,
+        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
     ): AppFunctionObjectTypeMetadata {
         val requiredPropertiesList: MutableList<String> = mutableListOf()
         val appFunctionSerializablePropertiesMap: Map<String, AppFunctionDataTypeMetadata> =
@@ -534,6 +587,7 @@ data class AnnotatedAppFunctions(
                         property.type.toAppFunctionDataTypeMetadata(
                             sharedDataTypeMap,
                             seenDataTypeQualifiers,
+                            resolvedAnnotatedSerializableProxies
                         )
                     put(property.name, innerAppFunctionDataTypeMetadata)
                     // TODO(b/394553462): Parse required state from annotation.

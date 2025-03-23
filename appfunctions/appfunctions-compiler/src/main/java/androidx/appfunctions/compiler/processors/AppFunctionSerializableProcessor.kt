@@ -21,6 +21,7 @@ import androidx.appfunctions.AppFunctionData
 import androidx.appfunctions.compiler.AppFunctionCompiler
 import androidx.appfunctions.compiler.core.AnnotatedAppFunctionSerializable
 import androidx.appfunctions.compiler.core.AnnotatedAppFunctionSerializableProxy
+import androidx.appfunctions.compiler.core.AnnotatedAppFunctionSerializableProxy.ResolvedAnnotatedSerializableProxies
 import androidx.appfunctions.compiler.core.AppFunctionSymbolResolver
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod.APP_FUNCTION_DATA_PARAM_NAME
@@ -36,7 +37,6 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
@@ -93,28 +93,36 @@ class AppFunctionSerializableProcessor(
         try {
             val entitySymbolResolver = AppFunctionSymbolResolver(resolver)
             val entityClasses = entitySymbolResolver.resolveAnnotatedAppFunctionSerializables()
-            val entityProxyClasses =
-                entitySymbolResolver.resolveAnnotatedAppFunctionSerializableProxies()
-            val proxyTargetToSerializableProxy =
-                entityProxyClasses.associateBy { it.targetClassDeclaration.toClassName() }
+            val resolvedAnnotatedSerializableProxies =
+                ResolvedAnnotatedSerializableProxies(
+                    entitySymbolResolver.resolveAnnotatedAppFunctionSerializableProxies()
+                )
             for (entity in entityClasses) {
-                buildAppFunctionSerializableFactoryClass(entity, proxyTargetToSerializableProxy)
+                buildAppFunctionSerializableFactoryClass(
+                    entity,
+                    resolvedAnnotatedSerializableProxies
+                )
             }
-            for (entityProxy in entityProxyClasses) {
+            for (entityProxy in
+                resolvedAnnotatedSerializableProxies.resolvedAnnotatedSerializableProxies) {
                 buildAppFunctionSerializableProxyFactoryClass(
                     entityProxy,
-                    proxyTargetToSerializableProxy
+                    resolvedAnnotatedSerializableProxies
                 )
+            }
+            return resolvedAnnotatedSerializableProxies.resolvedAnnotatedSerializableProxies.map {
+                it.appFunctionSerializableProxyClass
             }
         } catch (e: ProcessingException) {
             logger.logException(e)
         }
+
         return emptyList()
     }
 
     private fun buildAppFunctionSerializableFactoryClass(
         annotatedClass: AnnotatedAppFunctionSerializable,
-        proxyTargetToSerializableProxy: Map<ClassName, AnnotatedAppFunctionSerializableProxy>
+        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
     ) {
         val superInterfaceClass =
             AppFunctionSerializableFactoryClass.CLASS_NAME.parameterizedBy(
@@ -124,7 +132,7 @@ class AppFunctionSerializableProcessor(
         val factoryCodeBuilder =
             AppFunctionSerializableFactoryCodeBuilder(
                 annotatedClass,
-                proxyTargetToSerializableProxy
+                resolvedAnnotatedSerializableProxies
             )
         val generatedFactoryClassName = "\$${annotatedClass.originalClassName.simpleName}Factory"
         val fileSpec =
@@ -160,7 +168,7 @@ class AppFunctionSerializableProcessor(
 
     private fun buildAppFunctionSerializableProxyFactoryClass(
         annotatedProxyClass: AnnotatedAppFunctionSerializableProxy,
-        proxyTargetToSerializableProxy: Map<ClassName, AnnotatedAppFunctionSerializableProxy>
+        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
     ) {
         val proxySuperInterfaceClass =
             AppFunctionSerializableFactoryClass.CLASS_NAME.parameterizedBy(
@@ -174,7 +182,7 @@ class AppFunctionSerializableProcessor(
         val factoryCodeBuilder =
             AppFunctionSerializableFactoryCodeBuilder(
                 annotatedProxyClass,
-                proxyTargetToSerializableProxy
+                resolvedAnnotatedSerializableProxies
             )
         serializableProxyClassBuilder.addAnnotation(AppFunctionCompiler.GENERATED_ANNOTATION)
         serializableProxyClassBuilder.addSuperinterface(proxySuperInterfaceClass)
