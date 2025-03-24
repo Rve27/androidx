@@ -45,4 +45,4 @@ package androidx.compose.runtime
 )
 @Retention(AnnotationRetention.BINARY)
 @StableMarker
-annotation class Stable
+public annotation class Stable

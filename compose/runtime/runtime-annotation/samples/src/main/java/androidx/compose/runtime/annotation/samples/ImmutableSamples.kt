@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.runtime.samples
+package androidx.compose.runtime.annotation.samples
 
 import androidx.annotation.Sampled
 import androidx.compose.foundation.layout.Column

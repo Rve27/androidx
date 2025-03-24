@@ -86,6 +86,7 @@ dependencies {
     kmpDocs(project(":compose:material:material-ripple"))
     docs(project(":compose:material:material-navigation"))
     kmpDocs(project(":compose:runtime:runtime"))
+    kmpDocs(project(":compose:runtime:runtime-annotation"))
     docs(project(":compose:runtime:runtime-livedata"))
     docs(project(":compose:runtime:runtime-rxjava2"))
     docs(project(":compose:runtime:runtime-rxjava3"))
