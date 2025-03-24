@@ -497,7 +497,6 @@ class AppFunctionManagerCompatTest {
             assertThat(appFunctionMetadata.isEnabled).isTrue()
         }
 
-    // TODO(b/397396289): Add test to check we don't trigger updates for unrelated changes.
     @Test
     fun observeAppFunctions_observeDocumentChanges_returnsListWithUpdatedValue() =
         runBlocking<Unit> {
@@ -587,7 +586,7 @@ class AppFunctionManagerCompatTest {
         }
 
     @Test
-    fun observeAppFunctions_multiplePackageInstall_onlyObservesSpecifiesPackageUpdate() =
+    fun observeAppFunctions_multiplePackageInstall_onlyObservesSpecifiedPackageUpdate() =
         runBlocking<Unit> {
             val searchFunctionSpec =
                 AppFunctionSearchSpec(packageNames = setOf(context.packageName))
@@ -614,6 +613,60 @@ class AppFunctionManagerCompatTest {
             assertThat(emittedValues.replayCache).hasSize(2)
             assertThat(
                     emittedValues.replayCache[1]
+                        .single {
+                            it.id ==
+                                AppFunctionMetadataTestHelper.FunctionIds
+                                    .NO_SCHEMA_ENABLED_BY_DEFAULT
+                        }
+                        .isEnabled
+                )
+                .isFalse()
+        }
+
+    @Test
+    fun observeAppFunctions_multiplePackagesInSpec_updatesEmittedForAllChanges() =
+        runBlocking<Unit> {
+            val searchFunctionSpec =
+                AppFunctionSearchSpec(
+                    packageNames = setOf(context.packageName, ADDITIONAL_APP_PACKAGE)
+                )
+            val appFunctionSearchFlow =
+                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec)
+            val emittedValues =
+                appFunctionSearchFlow.shareIn(
+                    scope = CoroutineScope(Dispatchers.Default),
+                    started = SharingStarted.Eagerly,
+                    replay = 10,
+                )
+            emittedValues.first() // Allow emitting initial value and registering callback.
+
+            installApk(ADDITIONAL_APK_FILE)
+            delay(1000) // Avoid debounce
+            appFunctionManagerCompat.setAppFunctionEnabled(
+                AppFunctionMetadataTestHelper.FunctionIds.NO_SCHEMA_ENABLED_BY_DEFAULT,
+                AppFunctionManagerCompat.APP_FUNCTION_STATE_DISABLED
+            )
+
+            // Collect in a separate scope to avoid deadlock within the testcase.
+            runBlocking(Dispatchers.Default) { emittedValues.take(3).collect {} }
+            assertThat(emittedValues.replayCache).hasSize(3)
+            // First result only contains functions from first package.
+            assertThat(emittedValues.replayCache[0].map { it.id })
+                .containsExactly(
+                    AppFunctionMetadataTestHelper.FunctionIds.NO_SCHEMA_ENABLED_BY_DEFAULT,
+                    AppFunctionMetadataTestHelper.FunctionIds.NO_SCHEMA_DISABLED_BY_DEFAULT,
+                    AppFunctionMetadataTestHelper.FunctionIds.MEDIA_SCHEMA_PRINT,
+                    AppFunctionMetadataTestHelper.FunctionIds.MEDIA_SCHEMA2_PRINT,
+                    AppFunctionMetadataTestHelper.FunctionIds.NOTES_SCHEMA_PRINT,
+                    AppFunctionMetadataTestHelper.FunctionIds.NO_SCHEMA_EXECUTION_FAIL,
+                    AppFunctionMetadataTestHelper.FunctionIds.NO_SCHEMA_EXECUTION_SUCCEED,
+                )
+            // Second result contains functionId from additional app install as well.
+            assertThat(emittedValues.replayCache[1].map { it.id })
+                .contains(ADDITIONAL_APP_FUNCTION_ID)
+            // Third result has modified value of isEnabled from the original package.
+            assertThat(
+                    emittedValues.replayCache[2]
                         .single {
                             it.id ==
                                 AppFunctionMetadataTestHelper.FunctionIds
