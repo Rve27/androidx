@@ -87,4 +87,13 @@ object ComposeFoundationFlags {
      * and then continue composing the rest of it in the next frames.
      */
     @Suppress("MutableBareField") @JvmField var isPausableCompositionInPrefetchEnabled = false
+
+    /**
+     * Selecting flag to enable the use of automatic nested prefetch. When this is enabled, nested
+     * prefetching using the default Prefetch Strategies
+     * [androidx.compose.foundation.lazy.LazyListPrefetchStrategy] and
+     * [androidx.compose.foundation.lazy.grid.LazyGridPrefetchStrategy] or Cache Window will be
+     * automatically defined by the number of visible items in the nested LazyLayout.
+     */
+    @Suppress("MutableBareField") @JvmField var isAutomaticNestedPrefetchEnabled = true
 }

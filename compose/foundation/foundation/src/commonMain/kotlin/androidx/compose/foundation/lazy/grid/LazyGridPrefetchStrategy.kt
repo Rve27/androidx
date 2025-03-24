@@ -23,6 +23,7 @@ import androidx.compose.foundation.gestures.snapping.sizeOnMainAxis
 import androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState
 import androidx.compose.foundation.lazy.layout.NestedPrefetchScope
 import androidx.compose.foundation.lazy.layout.PrefetchScheduler
+import androidx.compose.foundation.lazy.layout.UnspecifiedNestedPrefetchCount
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collection.mutableVectorOf
 
@@ -129,7 +130,9 @@ interface LazyGridPrefetchScope {
  * @param nestedPrefetchItemCount specifies how many inner items should be prefetched when this
  *   LazyGrid is nested inside another LazyLayout. For example, if this is the state for a
  *   horizontal LazyGrid nested in a vertical LazyGrid, you might want to set this to the number of
- *   items that will be visible when this grid is scrolled into view.
+ *   items that will be visible when this grid is scrolled into view. If automatic nested prefetch
+ *   is enabled, this value will be used as the initial count and the strategy will adapt the count
+ *   automatically.
  */
 @ExperimentalFoundationApi
 fun LazyGridPrefetchStrategy(nestedPrefetchItemCount: Int = 2): LazyGridPrefetchStrategy =
@@ -141,7 +144,7 @@ fun LazyGridPrefetchStrategy(nestedPrefetchItemCount: Int = 2): LazyGridPrefetch
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Stable
-private class DefaultLazyGridPrefetchStrategy(private val nestedPrefetchItemCount: Int = 2) :
+private class DefaultLazyGridPrefetchStrategy(private val initialNestedPrefetchItemCount: Int = 2) :
     LazyGridPrefetchStrategy {
 
     /**
@@ -244,6 +247,14 @@ private class DefaultLazyGridPrefetchStrategy(private val nestedPrefetchItemCoun
     }
 
     override fun NestedPrefetchScope.onNestedPrefetch(firstVisibleItemIndex: Int) {
-        repeat(nestedPrefetchItemCount) { i -> schedulePrecomposition(firstVisibleItemIndex + i) }
+        val resolvedNestedPrefetchItemCount =
+            if (nestedPrefetchItemCount == UnspecifiedNestedPrefetchCount) {
+                initialNestedPrefetchItemCount
+            } else {
+                nestedPrefetchItemCount
+            }
+        repeat(resolvedNestedPrefetchItemCount) { i ->
+            schedulePrecomposition(firstVisibleItemIndex + i)
+        }
     }
 }

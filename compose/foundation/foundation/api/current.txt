@@ -110,10 +110,12 @@ package androidx.compose.foundation {
 
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public final class ComposeFoundationFlags {
     property public boolean DragGesturePickUpEnabled;
+    property public boolean isAutomaticNestedPrefetchEnabled;
     property public boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
     property public boolean isPausableCompositionInPrefetchEnabled;
     field public static boolean DragGesturePickUpEnabled;
     field public static final androidx.compose.foundation.ComposeFoundationFlags INSTANCE;
+    field public static boolean isAutomaticNestedPrefetchEnabled;
     field public static boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
     field public static boolean isPausableCompositionInPrefetchEnabled;
   }
@@ -1286,10 +1288,12 @@ package androidx.compose.foundation.lazy.layout {
   }
 
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public sealed interface NestedPrefetchScope {
+    method public default int getNestedPrefetchItemCount();
     method public void schedulePrecomposition(int index);
     method public void schedulePrecompositionAndPremeasure(int index, long constraints);
     method @Deprecated public default void schedulePrefetch(int index);
     method @Deprecated public default void schedulePrefetch(int index, long constraints);
+    property public default int nestedPrefetchItemCount;
   }
 
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public sealed interface PrefetchRequest {

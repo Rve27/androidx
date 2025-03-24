@@ -18,6 +18,7 @@ package androidx.compose.foundation.lazy.layout
 
 import androidx.collection.mutableScatterMapOf
 import androidx.compose.foundation.ComposeFoundationFlags
+import androidx.compose.foundation.ComposeFoundationFlags.isAutomaticNestedPrefetchEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.internal.checkPrecondition
 import androidx.compose.foundation.internal.requirePrecondition
@@ -33,6 +34,7 @@ import androidx.compose.ui.node.TraversableNode.Companion.TraverseDescendantsAct
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.trace
 import androidx.compose.ui.util.traceValue
 import kotlin.time.TimeSource.Monotonic.markNow
@@ -58,6 +60,21 @@ class LazyLayoutPrefetchState(
 
     private val prefetchMetrics: PrefetchMetrics = PrefetchMetrics()
     internal var prefetchHandleProvider: PrefetchHandleProvider? = null
+
+    /**
+     * The nested prefetch count after collecting and averaging ideal counts for multiple lazy
+     * layouts
+     */
+    internal var realizedNestedPrefetchCount: Int = UnspecifiedNestedPrefetchCount
+
+    /**
+     * The ideal nested prefetch count this Lazy Layout would like to have prefetched as part of
+     * nested prefetching (e.g. number of visible items)
+     */
+    internal var idealNestedPrefetchCount = UnspecifiedNestedPrefetchCount
+
+    /** The number of items that were nested prefetched in the most recent nested prefetch pass. */
+    internal var lastNumberOfNestedPrefetchItems = 0
 
     /**
      * Schedules precomposition for the new item. If you also want to premeasure the item please use
@@ -134,10 +151,15 @@ class LazyLayoutPrefetchState(
     internal fun collectNestedPrefetchRequests(): List<PrefetchRequest> {
         val onNestedPrefetch = onNestedPrefetch ?: return emptyList()
 
-        return NestedPrefetchScopeImpl().run {
-            onNestedPrefetch()
-            requests
-        }
+        return NestedPrefetchScopeImpl(realizedNestedPrefetchCount)
+            .run {
+                onNestedPrefetch()
+                requests
+            }
+            .also {
+                // save the number of nested prefetch items we used
+                lastNumberOfNestedPrefetchItems = it.size
+            }
     }
 
     sealed interface PrefetchHandle {
@@ -173,7 +195,8 @@ class LazyLayoutPrefetchState(
         fun getSize(placeableIndex: Int): IntSize
     }
 
-    private inner class NestedPrefetchScopeImpl : NestedPrefetchScope {
+    private inner class NestedPrefetchScopeImpl(override val nestedPrefetchItemCount: Int) :
+        NestedPrefetchScope {
 
         val requests: List<PrefetchRequest>
             get() = _requests
@@ -200,11 +223,22 @@ class LazyLayoutPrefetchState(
     }
 }
 
+internal const val UnspecifiedNestedPrefetchCount = -1
+
 /**
  * A scope which allows nested prefetches to be requested for the precomposition of a LazyLayout.
  */
 @ExperimentalFoundationApi
 sealed interface NestedPrefetchScope {
+
+    /**
+     * The projected number of nested items that should be prefetched during a Nested Prefetching of
+     * an internal LazyLayout. This will return -1 if a projection isn't available yet. The parent
+     * Lazy Layout will use information about an item's content type and number of visible items to
+     * calculate the necessary number of items that a child layout will need to prefetch.
+     */
+    val nestedPrefetchItemCount: Int
+        get() = UnspecifiedNestedPrefetchCount
 
     /**
      * Requests a child index to be prefetched as part of the prefetch of a parent LazyLayout.
@@ -295,6 +329,8 @@ internal class Averages {
     var applyTimeNanos: Long = 0L
     /** Average time the measure phase has taken. */
     var measureTimeNanos: Long = 0L
+    /** Average number of nested prefetch items. */
+    var nestedPrefetchCount: Int = UnspecifiedNestedPrefetchCount
 
     fun saveCompositionTimeNanos(timeNanos: Long) {
         compositionTimeNanos = calculateAverageTime(timeNanos, compositionTimeNanos)
@@ -316,6 +352,10 @@ internal class Averages {
         measureTimeNanos = calculateAverageTime(timeNanos, measureTimeNanos)
     }
 
+    fun saveNestedPrefetchCount(count: Int) {
+        nestedPrefetchCount = calculateAverageCount(count, nestedPrefetchCount)
+    }
+
     private fun calculateAverageTime(new: Long, current: Long): Long {
         // Calculate a weighted moving average of time taken to compose an item. We use weighted
         // moving average to bias toward more recent measurements, and to minimize storage /
@@ -326,6 +366,18 @@ internal class Averages {
             // dividing first to avoid a potential overflow
             current / 4 * 3 + new / 4
         }
+    }
+
+    private fun calculateAverageCount(new: Int, current: Int): Int {
+        return if (current == UnspecifiedNestedPrefetchCount) {
+            new
+        } else {
+            (current * 3 + new) / 4
+        }
+    }
+
+    fun clearMeasureTime() {
+        measureTimeNanos = 0L
     }
 }
 
@@ -346,7 +398,7 @@ private object DummyHandle : PrefetchHandle {
 internal class PrefetchHandleProvider(
     private val itemContentFactory: LazyLayoutItemContentFactory,
     private val subcomposeLayoutState: SubcomposeLayoutState,
-    private val executor: PrefetchScheduler,
+    private val executor: PrefetchScheduler
 ) {
     fun schedulePrecomposition(
         index: Int,
@@ -527,7 +579,9 @@ internal class PrefetchHandleProvider(
                 }
             }
             val hasMoreWork =
-                nestedPrefetchController?.run { executeNestedPrefetches(isUrgent) } ?: false
+                nestedPrefetchController?.run {
+                    executeNestedPrefetches(average.nestedPrefetchCount, isUrgent)
+                } ?: false
             if (hasMoreWork) {
                 return true
             }
@@ -550,6 +604,27 @@ internal class PrefetchHandleProvider(
                     onItemPremeasured?.invoke(this@HandleAndRequestImpl)
                 } else {
                     return true
+                }
+            }
+
+            // once we've measured this item we now have the up to date "ideal" number of
+            // nested prefetches we'd like to perform, save that to the average.
+            val controller = nestedPrefetchController
+            if (
+                isAutomaticNestedPrefetchEnabled &&
+                    isMeasured &&
+                    hasResolvedNestedPrefetches &&
+                    controller != null
+            ) {
+                val idealNestedPrefetchCount = controller.collectIdealNestedPrefetchCount()
+                average.saveNestedPrefetchCount(idealNestedPrefetchCount)
+                val lastNumberOfNestedPrefetchItems = controller.collectNestedPrefetchedItemsCount()
+                // if in the last pass we nested prefetched less items than we will in the next
+                // pass,
+                // this means our measure time for this item will be wrong, let's reset it and
+                // collect it again the next time.
+                if (lastNumberOfNestedPrefetchItems < idealNestedPrefetchCount) {
+                    average.clearMeasureTime()
                 }
             }
 
@@ -669,12 +744,23 @@ internal class PrefetchHandleProvider(
                 }
             }
 
-            fun PrefetchRequestScope.executeNestedPrefetches(isUrgent: Boolean): Boolean {
+            fun PrefetchRequestScope.executeNestedPrefetches(
+                nestedPrefetchCount: Int,
+                isUrgent: Boolean
+            ): Boolean {
                 if (stateIndex >= states.size) {
                     return false
                 }
                 checkPrecondition(!isCanceled) {
                     "Should not execute nested prefetch on canceled request"
+                }
+
+                // If we have automatic nested prefetch enabled, it means we can update the
+                // nested prefetch count for some of the layouts in this item.
+                if (isAutomaticNestedPrefetchEnabled) {
+                    trace("compose:lazy:prefetch:update_nested_prefetch_count") {
+                        states.fastForEach { it.realizedNestedPrefetchCount = nestedPrefetchCount }
+                    }
                 }
 
                 trace("compose:lazy:prefetch:nested") {
@@ -716,6 +802,24 @@ internal class PrefetchHandleProvider(
                 }
 
                 return false
+            }
+
+            fun collectIdealNestedPrefetchCount(): Int {
+                var count = Int.MAX_VALUE
+                states.fastForEach {
+                    // use the minimum ideal counts provided by all nested layouts in this item.
+                    count = minOf(count, it.idealNestedPrefetchCount)
+                }
+                return if (count == Int.MAX_VALUE) 0 else count
+            }
+
+            fun collectNestedPrefetchedItemsCount(): Int {
+                var count = Int.MAX_VALUE
+                states.fastForEach {
+                    // use the minimum ideal counts provided by all nested layouts in this item.
+                    count = minOf(count, it.lastNumberOfNestedPrefetchItems)
+                }
+                return if (count == Int.MAX_VALUE) 0 else count
             }
         }
     }
