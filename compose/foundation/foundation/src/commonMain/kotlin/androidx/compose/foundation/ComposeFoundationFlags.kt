@@ -86,5 +86,5 @@ object ComposeFoundationFlags {
      * can only perform the composition for parts of the LazyColumn's next item during one ui frame,
      * and then continue composing the rest of it in the next frames.
      */
-    @Suppress("MutableBareField") @JvmField var isPausableCompositionInPrefetchEnabled = true
+    @Suppress("MutableBareField") @JvmField var isPausableCompositionInPrefetchEnabled = false
 }
