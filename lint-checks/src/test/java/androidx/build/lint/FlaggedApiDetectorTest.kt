@@ -17,6 +17,7 @@
 package androidx.build.lint
 
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
+import com.android.tools.lint.checks.infrastructure.ProjectDescription
 import com.android.tools.lint.checks.infrastructure.TestLintTask
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
@@ -137,19 +138,9 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
             .expectClean()
     }
 
-    fun testChecksAconfigFlagGating() {
+    fun testChecksAconfigFlagGating_javaIfCheck_isClean() {
         lint()
             .files(
-                java(
-                    """
-          package test.pkg;
-
-          public final class Flags {
-              @ChecksAconfigFlag("test.pkg.myFlag")
-              public static boolean myFlag() { return true; }
-          }
-          """
-                ),
                 kotlin(
                     """
           package test.pkg
@@ -169,32 +160,17 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
             import android.annotation.FlaggedApi;
 
             public class JavaTest {
-                interface MyInterface {
-                    void bar();
-                }
-
-                static class OldImpl implements MyInterface {
-                    @Override
-                    public void bar() {
+                static class FlaggedApiContainer {
+                    @FlaggedApi("test.pkg.myFlag")
+                    public static void flaggedApi() {
                     }
                 }
 
-                @FlaggedApi("test.pkg.myFlag")
-                static class NewImpl implements MyInterface {
-                    @Override
-                    public void bar() {
-                    }
-                 }
-
-                 void test(MyInterface f) {
-                     MyInterface obj = null;
-                     if (FlagsCompat.myFlag()) {
-                         obj = new NewImpl();
-                     } else {
-                         obj = new OldImpl();
-                     }
-                     f.bar();
-                 }
+                void callFlaggedApi(MyInterface f) {
+                   if (FlagsCompat.myFlag()) {
+                       FlaggedApiContainer.flaggedApi();
+                   }
+                }
             }
             """
                     )
@@ -206,7 +182,103 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
             .expectClean()
     }
 
-    fun testChecksAconfigFlagGating_withWrongFlag_raisesError() {
+    fun testChecksAconfigFlagGating_kotlinIfCheck_isClean() {
+        lint()
+            .files(
+                kotlin(
+                    """
+          package test.pkg
+
+          import androidx.annotation.ChecksAconfigFlag
+
+          object FlagsCompat {
+              @ChecksAconfigFlag("test.pkg.myFlag")
+              fun myFlag() { return true; }
+          }
+          """
+                ),
+                kotlin(
+                        """
+                    package test.pkg
+        
+                    import android.annotation.FlaggedApi
+        
+                    class KotlinTest {
+                        object FlaggedApiContainer {
+                            @FlaggedApi("test.pkg.myFlag")
+                            fun flaggedApi() {
+                            }
+                        }
+        
+                        fun callFlaggedApi() =
+                            if (FlagsCompat.myFlag()) {
+                                FlaggedApiContainer.flaggedApi()
+                            }
+                    }
+                    """
+                    )
+                    .indented(),
+                Stubs.FlaggedApi,
+                Stubs.ChecksAconfigFlag,
+            )
+            .run()
+            .expectClean()
+    }
+
+    fun testChecksAconfigFlagGating_kotlinIncorrectWhenCheck_raisesError() {
+        lint()
+            .files(
+                kotlin(
+                    """
+          package test.pkg
+
+          import androidx.annotation.ChecksAconfigFlag
+
+          object FlagsCompat {
+              @ChecksAconfigFlag("test.pkg.myFlag")
+              fun myFlag() { return true; }
+          }
+          """
+                ),
+                kotlin(
+                        """
+                    package test.pkg
+        
+                    import android.annotation.FlaggedApi
+        
+                    class KotlinTest {
+                        object FlaggedApiContainer {
+                            @FlaggedApi("test.pkg.myFlag")
+                            fun flaggedApi() {
+                            }
+                        }
+        
+                        fun callFlaggedApi() =
+                            when {
+                                FlagsCompat.myFlag() ->
+                                    println("")
+                                else ->
+                                    FlaggedApiContainer.flaggedApi()
+                            }
+                    }
+                    """
+                    )
+                    .indented(),
+                Stubs.FlaggedApi,
+                Stubs.ChecksAconfigFlag,
+            )
+            .run()
+            .expect(
+                """
+        src/test/pkg/KotlinTest.kt:17: Error: Method flaggedApi() is a flagged API and must be inside a flag check for "test.pkg.myFlag" [AndroidXFlaggedApi]
+                        FlaggedApiContainer.flaggedApi()
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        1 error
+        """
+            )
+    }
+
+    fun testChecksAconfigFlagGating_javaCheckForWrongFlag_raisesError() {
         lint()
             .files(
                 kotlin(
@@ -228,32 +300,17 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
             import android.annotation.FlaggedApi;
 
             public class JavaTest {
-                interface MyInterface {
-                    void bar();
-                }
-
-                static class OldImpl implements MyInterface {
-                    @Override
-                    public void bar() {
+                static class FlaggedApiContainer {
+                    @FlaggedApi("test.pkg.myFlag")
+                    public static void flaggedApi() {
                     }
                 }
 
-                @FlaggedApi("test.pkg.myFlag")
-                static class NewImpl implements MyInterface {
-                    @Override
-                    public void bar() {
-                    }
-                 }
-
-                 void test(MyInterface f) {
-                     MyInterface obj = null;
-                     if (FlagsCompat.myFlag()) {
-                         obj = new NewImpl();
-                     } else {
-                         obj = new OldImpl();
-                     }
-                     f.bar();
-                 }
+                void callFlaggedApi(MyInterface f) {
+                    if (FlagsCompat.INSTANCE.flaggedApi()) {
+                       FlaggedApiContainer.flaggedApi();
+                   }
+                }
             }
             """
                     )
@@ -264,15 +321,65 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-        src/test/pkg/JavaTest.java:26: Error: Constructor for class NewImpl is a flagged API and must be inside a flag check for "test.pkg.myFlag" [AndroidXFlaggedApi]
-                     obj = new NewImpl();
-                           ~~~~~~~~~~~~~
+        src/test/pkg/JavaTest.java:14: Error: Method flaggedApi() is a flagged API and must be inside a flag check for "test.pkg.myFlag" [AndroidXFlaggedApi]
+                   FlaggedApiContainer.flaggedApi();
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         1 error
         """
             )
     }
 
-    fun testChecksAconfigFlagGating_withFlaggedDeprecation_isClean() {
+    fun testChecksAconfigFlagGating_kotlinCheckForWrongFlag_raisesError() {
+        lint()
+            .files(
+                kotlin(
+                    """
+          package test.pkg
+
+          import androidx.annotation.ChecksAconfigFlag
+
+          object FlagsCompat {
+              @ChecksAconfigFlag("test.pkg.myOtherFlag")
+              fun myFlag() { return true; }
+          }
+          """
+                ),
+                kotlin(
+                        """
+                    package test.pkg
+
+                    import android.annotation.FlaggedApi
+
+                    class KotlinTest {
+                        object FlaggedApiContainer {
+                            @FlaggedApi("test.pkg.myFlag")
+                            fun flaggedApi() {
+                            }
+                        }
+
+                        fun callFlaggedApi() =
+                            if (FlagsCompat.myFlag()) {
+                                FlaggedApiContainer.flaggedApi()
+                            }
+                    }
+                    """
+                    )
+                    .indented(),
+                Stubs.FlaggedApi,
+                Stubs.ChecksAconfigFlag,
+            )
+            .run()
+            .expect(
+                """
+        src/test/pkg/KotlinTest.kt:14: Error: Method flaggedApi() is a flagged API and must be inside a flag check for "test.pkg.myFlag" [AndroidXFlaggedApi]
+                    FlaggedApiContainer.flaggedApi()
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        1 error
+        """
+            )
+    }
+
+    fun testChecksAconfigFlagGating_javaWithFlaggedDeprecation_isClean() {
         lint()
             .files(
                 java(
@@ -282,35 +389,47 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
             import android.annotation.FlaggedApi;
 
             public class JavaTest {
-                interface MyInterface {
-                    void bar();
-                }
-
-                static class OldImpl implements MyInterface {
-                    @Override
-                    public void bar() {
-                    }
-                }
-
-                @FlaggedApi("test.pkg.myFlag")
-                @Deprecated
-                static class NewImpl implements MyInterface {
-                    @Override
-                    public void bar() {
+                static class FlaggedApiContainer {
+                    @FlaggedApi("test.pkg.myFlag")
+                    @Deprecated
+                    public static void flaggedApi() {
                     }
                  }
 
-                 void test(MyInterface f) {
-                     MyInterface obj = null;
-                     if (FlagsCompat.myFlag()) {
-                         obj = new NewImpl();
-                     } else {
-                         obj = new OldImpl();
-                     }
-                     f.bar();
+                 void callFlaggedApi(MyInterface f) {
+                     FlaggedApiContainer.flaggedApi();
                  }
             }
             """
+                    )
+                    .indented(),
+                Stubs.FlaggedApi,
+            )
+            .run()
+            .expectClean()
+    }
+
+    fun testChecksAconfigFlagGating_kotlinWithFlaggedDeprecation_isClean() {
+        lint()
+            .files(
+                kotlin(
+                        """
+                    package test.pkg
+
+                    import android.annotation.FlaggedApi
+
+                    class KotlinTest {
+                        object FlaggedApiContainer {
+                            @FlaggedApi("test.pkg.myFlag")
+                            @Deprecated
+                            fun flaggedApi() {
+                            }
+                        }
+
+                        fun callFlaggedApi() =
+                            FlaggedApiContainer.flaggedApi()
+                    }
+                    """
                     )
                     .indented(),
                 Stubs.FlaggedApi,
@@ -326,7 +445,7 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
                 java(
                     """
           package test.pkg;
-          
+
           import androidx.annotation.ChecksAconfigFlag;
 
           public final class Flags {
@@ -377,7 +496,7 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
                 java(
                     """
           package test.pkg;
-          
+
           import androidx.annotation.ChecksAconfigFlag;
 
           public final class Flags {
@@ -423,7 +542,7 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
                 java(
                     """
           package test.pkg;
-          
+
           import androidx.annotation.ChecksAconfigFlag;
 
           public final class Flags {
@@ -479,5 +598,135 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
             )
             .run()
             .expectClean()
+    }
+
+    fun testChecksAconfigFlagGating_notInAllowlist_raisesError() {
+        val project =
+            project()
+                .name("notallowedArtifactId")
+                .type(ProjectDescription.Type.LIBRARY)
+                .report(false)
+                .files(
+                    gradle(
+                            """
+                    apply plugin: 'com.android.library'
+                    group=notallowedGroupId
+                    version=1.0.0-alpha01
+                    """
+                        )
+                        .indented(),
+                    kotlin(
+                        """
+                  package test.pkg
+
+                  import androidx.annotation.ChecksAconfigFlag
+
+                  object FlagsCompat {
+                      @ChecksAconfigFlag("test.pkg.myFlag")
+                      fun myFlag() { return true; }
+                  }
+                  """
+                    ),
+                    kotlin(
+                            """
+                    package test.pkg
+
+                    import android.annotation.FlaggedApi
+
+                    class KotlinTest {
+                        object FlaggedApiContainer {
+                            @FlaggedApi("test.pkg.myFlag")
+                            fun flaggedApi() {
+                            }
+                        }
+
+                        fun callFlaggedApi() =
+                            if (FlagsCompat.myFlag()) {
+                                FlaggedApiContainer.flaggedApi()
+                            }
+                    }
+                    """
+                        )
+                        .indented(),
+                    Stubs.FlaggedApi,
+                    Stubs.ChecksAconfigFlag,
+                )
+
+        lint()
+            .projects(project)
+            .run()
+            .expect(
+                """
+        src/main/kotlin/test/pkg/KotlinTest.kt:14: Error: Flagged APIs are subject to additional policies and may only be called by libraries that have been allowlisted by Jetpack Working Group [AndroidXFlaggedApi]
+                    FlaggedApiContainer.flaggedApi()
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        1 error
+        """
+            )
+    }
+
+    fun testChecksAconfigFlagGating_withBetaVersion_raisesError() {
+        val project =
+            project()
+                .name("allowedArtifactId")
+                .type(ProjectDescription.Type.LIBRARY)
+                .report(false)
+                .files(
+                    gradle(
+                            """
+                    apply plugin: 'com.android.library'
+                    group=test
+                    version=1.0.0-beta01
+                    """
+                        )
+                        .indented(),
+                    kotlin(
+                        """
+                  package test.pkg
+
+                  import androidx.annotation.ChecksAconfigFlag
+
+                  object FlagsCompat {
+                      @ChecksAconfigFlag("test.pkg.myFlag")
+                      fun myFlag() { return true; }
+                  }
+                  """
+                    ),
+                    kotlin(
+                            """
+                    package test.pkg
+
+                    import android.annotation.FlaggedApi
+
+                    class KotlinTest {
+                        object FlaggedApiContainer {
+                            @FlaggedApi("test.pkg.myFlag")
+                            fun flaggedApi() {
+                            }
+                        }
+
+                        fun callFlaggedApi() =
+                            if (FlagsCompat.myFlag()) {
+                                FlaggedApiContainer.flaggedApi()
+                            }
+                    }
+                    """
+                        )
+                        .indented(),
+                    Stubs.FlaggedApi,
+                    Stubs.ChecksAconfigFlag,
+                )
+
+        lint()
+            .projects(project)
+            .run()
+            .expect(
+                """
+        src/main/kotlin/test/pkg/KotlinTest.kt:14: Error: Flagged APIs may only be called during alpha and must be removed before moving to beta [AndroidXFlaggedApi]
+                    FlaggedApiContainer.flaggedApi()
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        1 error
+        """
+            )
     }
 }

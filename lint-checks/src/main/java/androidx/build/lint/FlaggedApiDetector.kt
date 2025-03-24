@@ -31,7 +31,6 @@ import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
 import com.android.tools.lint.detector.api.getMethodName
 import com.android.tools.lint.detector.api.isUnconditionalReturn
-import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiLiteralValue
@@ -49,6 +48,7 @@ import org.jetbrains.uast.UMethod
 import org.jetbrains.uast.UParenthesizedExpression
 import org.jetbrains.uast.UPolyadicExpression
 import org.jetbrains.uast.UReferenceExpression
+import org.jetbrains.uast.USwitchClauseExpression
 import org.jetbrains.uast.UUnaryExpression
 import org.jetbrains.uast.UastBinaryOperator
 import org.jetbrains.uast.UastFacade
@@ -144,6 +144,30 @@ class FlaggedApiDetector : Detector(), SourceCodeScanner {
         // safely assume that the flag applies to the deprecated state rather than the API itself.
         if (isFlaggedDeprecation(usageInfo)) return
 
+        // Only allowlisted libraries are allowed to call flagged APIs.
+        if (!isUsageInAllowlistedLibrary(context, usageInfo.usage)) {
+            context.report(
+                ISSUE,
+                element,
+                context.getLocation(element),
+                "Flagged APIs are subject to additional policies and may only be called by " +
+                    "libraries that have been allowlisted by Jetpack Working Group"
+            )
+            return
+        }
+
+        // Only alpha libraries are allowed to call flagged APIs.
+        if (!isUsageInAlphaLibrary(context, usageInfo.usage)) {
+            context.report(
+                ISSUE,
+                element,
+                context.getLocation(element),
+                "Flagged APIs may only be called during alpha and must be removed before moving " +
+                    "to beta"
+            )
+            return
+        }
+
         // Is the usage checked? Great.
         if (isFlagChecked(element, flagString)) return
 
@@ -179,13 +203,26 @@ class FlaggedApiDetector : Detector(), SourceCodeScanner {
                     null
                 }
 
+    private fun isUsageInAllowlistedLibrary(context: JavaContext, usage: UElement): Boolean =
+        (context.evaluator.getLibrary(usage) ?: context.project.mavenCoordinate)?.let {
+            allowlistedCoordinates.contains(it.groupId) ||
+                allowlistedCoordinates.contains("${it.groupId}:${it.artifactId}")
+        } ?: true // If we can't obtain the Maven coordinate, assume we're in a lint test.
+
+    private fun isUsageInAlphaLibrary(context: JavaContext, usage: UElement): Boolean =
+        (context.evaluator.getLibrary(usage) ?: context.project.mavenCoordinate)
+            ?.version
+            ?.contains("-alpha")
+            ?: true // If we can't obtain the Maven coordinate, assume we're in a lint test.
+
     private fun isFlaggedDeprecation(usageInfo: AnnotationUsageInfo): Boolean =
-        (usageInfo.referencedElement as? UAnnotated)?.findAnnotation("java.lang.Deprecated") != null
+        (usageInfo.referencedElement as? UAnnotated)?.let {
+            it.findAnnotation("java.lang.Deprecated") != null ||
+                it.findAnnotation("kotlin.Deprecated") != null
+        } == true
 
     private fun getFlaggedApiString(annotation: UAnnotation): String? =
-        ((annotation.sourcePsi as? PsiAnnotation)?.findAttributeValue(ATTR_VALUE)
-                as? PsiLiteralValue)
-            ?.value as? String
+        (annotation.javaPsi?.findAttributeValue(ATTR_VALUE) as? PsiLiteralValue)?.value as? String
 
     /** Is the given [element] inside a flag check? */
     private fun isFlagChecked(
@@ -226,6 +263,10 @@ class FlaggedApiDetector : Detector(), SourceCodeScanner {
                             return true
                         }
                     }
+                }
+            } else if (curr is USwitchClauseExpression) {
+                if (curr.caseValues.any { value -> isFlagExpression(value, flagString) }) {
+                    return true
                 }
             } else if (
                 curr is UPolyadicExpression && curr.operator == UastBinaryOperator.LOGICAL_AND
@@ -283,8 +324,12 @@ class FlaggedApiDetector : Detector(), SourceCodeScanner {
                         .uAnnotations
                         .filter { it.qualifiedName == CHECKS_ACONFIG_FLAG_ANNOTATION }
                         .mapNotNull {
-                            (it.findAttributeValue(ATTR_FLAG) ?: it.findAttributeValue(null))
-                                ?.evaluateString()
+                            val attr =
+                                it.findAttributeValue(ATTR_FLAG)
+                                    ?: it.findAttributeValue(null)
+                                    ?: return@mapNotNull null
+                            attr.evaluateString()
+                                ?: (attr.javaPsi as? PsiLiteralValue)?.value as? String
                         }
                         .contains(flagString)
                 ) {
@@ -313,3 +358,11 @@ class FlaggedApiDetector : Detector(), SourceCodeScanner {
         return false
     }
 }
+
+// List of libraries which are allowed to call flagged APIs, where `groupId:artifactId` represents a
+// single module and `groupId` represents an entire group of modules.
+private val allowlistedCoordinates =
+    listOf(
+        "test",
+        "androidx.mediarouter",
+    )
