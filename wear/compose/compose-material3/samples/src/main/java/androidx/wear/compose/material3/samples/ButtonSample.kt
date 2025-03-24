@@ -140,7 +140,7 @@ fun FilledTonalButtonSample(modifier: Modifier = Modifier.fillMaxWidth()) {
                 modifier = Modifier.size(ButtonDefaults.IconSize)
             )
         },
-        modifier = modifier,
+        modifier = modifier
     )
 }
 
@@ -180,7 +180,7 @@ fun SimpleOutlinedButtonSample(modifier: Modifier = Modifier.fillMaxWidth()) {
     OutlinedButton(
         onClick = { /* Do something */ },
         label = { Text("Outlined Button") },
-        modifier = modifier,
+        modifier = modifier
     )
 }
 

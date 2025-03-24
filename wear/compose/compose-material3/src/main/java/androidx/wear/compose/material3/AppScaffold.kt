@@ -56,6 +56,9 @@ public fun AppScaffold(
     contentColor: Color = contentColorFor(containerColor),
     content: @Composable BoxScope.() -> Unit,
 ) {
+    // Run the animator coordinator if needed.
+    AnimationCoordinator.Looper()
+
     CompositionLocalProvider(
         LocalScaffoldState provides
             ScaffoldState(appScaffoldPresent = true, appTimeText = timeText),

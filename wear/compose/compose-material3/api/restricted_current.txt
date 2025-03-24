@@ -906,27 +906,26 @@ package androidx.wear.compose.material3 {
   }
 
   public final class PlaceholderDefaults {
-    method public androidx.compose.ui.graphics.Shape getShape();
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.painter.Painter painterWithPlaceholderOverlayBackgroundBrush(androidx.wear.compose.material3.PlaceholderState placeholderState, androidx.compose.ui.graphics.painter.Painter originalPainter, optional long color);
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.painter.Painter placeholderBackgroundBrush(androidx.wear.compose.material3.PlaceholderState placeholderState, optional long color);
-    method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ButtonColors placeholderButtonColors(androidx.wear.compose.material3.ButtonColors originalButtonColors, androidx.wear.compose.material3.PlaceholderState placeholderState, optional long color);
-    method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ButtonColors placeholderButtonColors(androidx.wear.compose.material3.PlaceholderState placeholderState, optional long color);
-    property public androidx.compose.ui.graphics.Shape Shape;
+    method @androidx.compose.runtime.Composable public long getColor();
+    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape();
+    method @androidx.compose.runtime.Composable public long getShimmerColor();
+    property @androidx.compose.runtime.Composable public long color;
+    property @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape shape;
+    property @androidx.compose.runtime.Composable public long shimmerColor;
     field public static final androidx.wear.compose.material3.PlaceholderDefaults INSTANCE;
   }
 
   public final class PlaceholderKt {
     method @androidx.compose.runtime.Composable public static androidx.compose.ui.Modifier placeholder(androidx.compose.ui.Modifier, androidx.wear.compose.material3.PlaceholderState placeholderState, optional androidx.compose.ui.graphics.Shape shape, optional long color);
     method @androidx.compose.runtime.Composable public static androidx.compose.ui.Modifier placeholderShimmer(androidx.compose.ui.Modifier, androidx.wear.compose.material3.PlaceholderState placeholderState, optional androidx.compose.ui.graphics.Shape shape, optional long color);
-    method @androidx.compose.runtime.Composable public static androidx.wear.compose.material3.PlaceholderState rememberPlaceholderState(kotlin.jvm.functions.Function0<java.lang.Boolean> isContentReady);
+    method @androidx.compose.runtime.Composable public static androidx.wear.compose.material3.PlaceholderState rememberPlaceholderState(boolean isVisible);
   }
 
   @androidx.compose.runtime.Stable public final class PlaceholderState {
-    method public suspend Object? animatePlaceholder(kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public boolean isHidden();
-    method public boolean isWipingOff();
-    property public boolean isHidden;
-    property public boolean isWipingOff;
+    ctor public PlaceholderState(boolean isVisible);
+    method public boolean isVisible();
+    method public void setVisible(boolean);
+    property public boolean isVisible;
   }
 
   public final class ProgressIndicatorColors {
