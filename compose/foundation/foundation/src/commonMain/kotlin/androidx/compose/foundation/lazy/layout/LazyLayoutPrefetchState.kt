@@ -513,34 +513,32 @@ internal class PrefetchHandleProvider(
                 }
             }
 
-            // if the request is urgent we better proceed with the measuring straight away instead
-            // of spending time trying to split the work more via nested prefetch. nested prefetch
-            // is always an estimation and it could potentially do work we will not need in the end,
-            // but the measuring will only do exactly the needed work (including composing nested
-            // lazy layouts)
-            if (!isUrgent) {
-                // Nested prefetch logic is best-effort: if nested LazyLayout children are
-                // added/removed/updated after we've resolved nested prefetch states here or
-                // resolved
-                // nestedPrefetchRequests below, those changes won't be taken into account.
-                if (!hasResolvedNestedPrefetches) {
-                    if (availableTimeNanos > 0) {
-                        trace("compose:lazy:prefetch:resolve-nested") {
-                            nestedPrefetchController = resolveNestedPrefetchStates()
-                            hasResolvedNestedPrefetches = true
-                        }
-                    } else {
-                        return true
+            // Nested prefetch logic is best-effort: if nested LazyLayout children are
+            // added/removed/updated after we've resolved nested prefetch states here or
+            // resolved nestedPrefetchRequests below, those changes won't be taken into account.
+            if (!hasResolvedNestedPrefetches) {
+                if (availableTimeNanos > 0) {
+                    trace("compose:lazy:prefetch:resolve-nested") {
+                        nestedPrefetchController = resolveNestedPrefetchStates()
+                        hasResolvedNestedPrefetches = true
                     }
-                }
-                val hasMoreWork =
-                    nestedPrefetchController?.run { executeNestedPrefetches() } ?: false
-                if (hasMoreWork) {
+                } else {
                     return true
                 }
+            }
+            val hasMoreWork =
+                nestedPrefetchController?.run { executeNestedPrefetches(isUrgent) } ?: false
+            if (hasMoreWork) {
+                return true
+            }
+
+            // only update the time and traces if we actually executed a nested prefetch request
+            if (nestedPrefetchController?.executedNestedPrefetch == true) {
                 updateElapsedAndAvailableTime()
                 // set the item value again since it will have changed in the nested block.
                 traceValue("compose:lazy:prefetch:execute:item", index.toLong())
+                // re-enable it next time we execute a nested prefetch request
+                nestedPrefetchController?.executedNestedPrefetch = false
             }
 
             val constraints = premeasureConstraints
@@ -663,6 +661,7 @@ internal class PrefetchHandleProvider(
             private val requestsByState: Array<List<PrefetchRequest>?> = arrayOfNulls(states.size)
             private var stateIndex: Int = 0
             private var requestIndex: Int = 0
+            var executedNestedPrefetch: Boolean = false
 
             init {
                 requirePrecondition(states.isNotEmpty()) {
@@ -670,7 +669,7 @@ internal class PrefetchHandleProvider(
                 }
             }
 
-            fun PrefetchRequestScope.executeNestedPrefetches(): Boolean {
+            fun PrefetchRequestScope.executeNestedPrefetches(isUrgent: Boolean): Boolean {
                 if (stateIndex >= states.size) {
                     return false
                 }
@@ -693,7 +692,17 @@ internal class PrefetchHandleProvider(
 
                         val nestedRequests = requestsByState[stateIndex]!!
                         while (requestIndex < nestedRequests.size) {
-                            val hasMoreWork = with(nestedRequests[requestIndex]) { execute() }
+                            val hasMoreWork =
+                                with(nestedRequests[requestIndex]) {
+                                    // mark this nested request as urgent, because its parent
+                                    // request is
+                                    // urgent
+                                    if (isUrgent) {
+                                        (this as? HandleAndRequestImpl)?.markAsUrgent()
+                                    }
+                                    executedNestedPrefetch = true
+                                    execute()
+                                }
                             if (hasMoreWork) {
                                 return true
                             } else {
