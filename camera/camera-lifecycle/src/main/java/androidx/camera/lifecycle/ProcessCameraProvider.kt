@@ -219,5 +219,21 @@ private constructor(private val lifecycleCameraProvider: LifecycleCameraProvider
         public fun clearConfiguration(timeout: Duration = 10.seconds) {
             sAppInstance.shutdownAsync().get(timeout.inWholeNanoseconds, TimeUnit.NANOSECONDS)
         }
+
+        /**
+         * Shuts down the ProcessCameraProvider asynchronously.
+         *
+         * This will release all resources held by the provider. The returned [ListenableFuture]
+         * will complete once the shutdown is complete.
+         *
+         * @return A [ListenableFuture] which will complete when the provider has been shut down.
+         */
+        @JvmStatic
+        @VisibleForTesting
+        @ExperimentalCameraProviderConfiguration
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun shutdown(): ListenableFuture<Void> {
+            return sAppInstance.shutdownAsync()
+        }
     }
 }
