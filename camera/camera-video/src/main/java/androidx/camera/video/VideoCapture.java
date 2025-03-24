@@ -127,6 +127,7 @@ import androidx.camera.video.StreamInfo.StreamState;
 import androidx.camera.video.impl.VideoCaptureConfig;
 import androidx.camera.video.internal.VideoValidatedEncoderProfilesProxy;
 import androidx.camera.video.internal.compat.quirk.DeviceQuirks;
+import androidx.camera.video.internal.compat.quirk.HdrRepeatingRequestFailureQuirk;
 import androidx.camera.video.internal.compat.quirk.SizeCannotEncodeVideoQuirk;
 import androidx.camera.video.internal.config.VideoMimeInfo;
 import androidx.camera.video.internal.encoder.SwappedVideoEncoderInfo;
@@ -712,8 +713,12 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
             // pipeline when the transformation becomes invalid.
             mHasCompensatingTransformation = true;
         }
-        mCropRect = adjustCropRectByQuirk(mCropRect, mRotationDegrees,
-                isCreateNodeNeeded(camera, config, mCropRect, resolution), videoEncoderInfo);
+        mCropRect = adjustCropRectByQuirk(
+                mCropRect,
+                mRotationDegrees,
+                isCreateNodeNeeded(camera, config, mCropRect, resolution, dynamicRange),
+                videoEncoderInfo
+        );
         mNode = createNodeIfNeeded(camera, config, mCropRect, resolution, dynamicRange);
         boolean hasGlProcessing = !camera.getHasTransform() || mNode != null;
         Timebase timebase = resolveTimebase(camera, mNode);
@@ -1059,10 +1064,13 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
     private boolean isCreateNodeNeeded(@NonNull CameraInternal camera,
             @NonNull VideoCaptureConfig<?> config,
             @NonNull Rect cropRect,
-            @NonNull Size resolution) {
+            @NonNull Size resolution,
+            @NonNull DynamicRange dynamicRange
+    ) {
         return getEffect() != null
                 || shouldEnableSurfaceProcessingByConfig(camera, config)
                 || shouldEnableSurfaceProcessingByQuirk(camera)
+                || shouldEnableSurfaceProcessingBasedOnDynamicRangeByQuirk(camera, dynamicRange)
                 || shouldCrop(cropRect, resolution)
                 || shouldMirror(camera)
                 || shouldCompensateTransformation();
@@ -1073,7 +1081,7 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
             @NonNull Rect cropRect,
             @NonNull Size resolution,
             @NonNull DynamicRange dynamicRange) {
-        if (isCreateNodeNeeded(camera, config, cropRect, resolution)) {
+        if (isCreateNodeNeeded(camera, config, cropRect, resolution, dynamicRange)) {
             Logger.d(TAG, "Surface processing is enabled.");
             return new SurfaceProcessorNode(requireNonNull(getCamera()),
                     getEffect() != null ? getEffect().createSurfaceProcessorInternal() :
@@ -1279,6 +1287,16 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
         // input stream. Otherwise, enable it as needed.
         return camera.getHasTransform() && (workaroundBySurfaceProcessing(DeviceQuirks.getAll())
                 || workaroundBySurfaceProcessing(camera.getCameraInfoInternal().getCameraQuirks()));
+    }
+
+    private static boolean shouldEnableSurfaceProcessingBasedOnDynamicRangeByQuirk(
+            @NonNull CameraInternal camera, @NonNull DynamicRange dynamicRange) {
+        HdrRepeatingRequestFailureQuirk quirk = DeviceQuirks.get(
+                HdrRepeatingRequestFailureQuirk.class);
+        // If there has been a buffer copy, it means the surface processing is already enabled on
+        // input stream. Otherwise, enable it as needed.
+        return camera.getHasTransform() && quirk != null
+                && quirk.workaroundBySurfaceProcessing(dynamicRange);
     }
 
     private static int alignDown(int length, int alignment,

@@ -155,6 +155,11 @@ public class DeviceQuirksLoader {
                 MediaCodecDefaultDataSpaceQuirk.load())) {
             quirks.add(new MediaCodecDefaultDataSpaceQuirk());
         }
+        if (quirkSettings.shouldEnableQuirk(
+                HdrRepeatingRequestFailureQuirk.class,
+                HdrRepeatingRequestFailureQuirk.load())) {
+            quirks.add(new HdrRepeatingRequestFailureQuirk());
+        }
         return quirks;
     }
 }
