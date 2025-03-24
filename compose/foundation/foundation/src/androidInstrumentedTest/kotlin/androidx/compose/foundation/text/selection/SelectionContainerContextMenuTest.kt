@@ -23,6 +23,8 @@ import androidx.compose.foundation.contextmenu.clickOffPopup
 import androidx.compose.foundation.contextmenu.contextMenuItemInteraction
 import androidx.compose.foundation.internal.readText
 import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.contextmenu.test.ContextMenuFlagOverride
+import androidx.compose.foundation.text.contextmenu.test.ContextMenuFlagRule
 import androidx.compose.foundation.text.input.internal.selection.FakeClipboard
 import androidx.compose.foundation.text.selection.gestures.util.longPress
 import androidx.compose.runtime.CompositionLocalProvider
@@ -54,9 +56,15 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@ContextMenuFlagOverride(flagValue = true)
+@MediumTest
+class SelectionContainerContextMenuNewTextContextMenuTest : SelectionContainerContextMenuTest()
+
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 open class SelectionContainerContextMenuTest {
+    @get:Rule(order = Int.MIN_VALUE) val flagRule = ContextMenuFlagRule(defaultFlagValue = false)
+
     @get:Rule val rule = createComposeRule()
 
     private val textTag = "text"

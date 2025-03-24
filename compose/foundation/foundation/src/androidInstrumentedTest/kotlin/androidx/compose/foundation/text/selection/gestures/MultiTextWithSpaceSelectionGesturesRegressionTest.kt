@@ -90,6 +90,7 @@ internal class MultiTextWithSpaceSelectionGesturesRegressionTest : AbstractSelec
                     textContent = textContent,
                     rule = rule,
                     textToolbar = textToolbar,
+                    spyTextActionModeCallback = spyTextActionModeCallback,
                     hapticFeedback = hapticFeedback,
                     getActual = { selection.value }
                 ) {

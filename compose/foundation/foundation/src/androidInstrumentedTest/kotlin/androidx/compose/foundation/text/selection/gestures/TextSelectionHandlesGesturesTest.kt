@@ -65,6 +65,7 @@ internal class TextSelectionHandlesGesturesTest : AbstractSelectionGesturesTest(
                     textContent = textContent.value,
                     rule = rule,
                     textToolbar = textToolbar,
+                    spyTextActionModeCallback = spyTextActionModeCallback,
                     hapticFeedback = hapticFeedback,
                     getActual = { currentSelection.value },
                 ) {

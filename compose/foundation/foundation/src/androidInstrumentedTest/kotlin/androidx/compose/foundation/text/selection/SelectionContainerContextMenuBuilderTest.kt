@@ -16,8 +16,6 @@
 
 package androidx.compose.foundation.text.selection
 
-import androidx.compose.foundation.ComposeFoundationFlags
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.internal.readText
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.text.BasicText
@@ -26,6 +24,7 @@ import androidx.compose.foundation.text.contextmenu.data.TextContextMenuItem
 import androidx.compose.foundation.text.contextmenu.data.TextContextMenuKeys.CopyKey
 import androidx.compose.foundation.text.contextmenu.data.TextContextMenuKeys.SelectAllKey
 import androidx.compose.foundation.text.contextmenu.data.TextContextMenuSession
+import androidx.compose.foundation.text.contextmenu.test.ContextMenuFlagRule
 import androidx.compose.foundation.text.contextmenu.test.TestTextContextMenuDataInvoker
 import androidx.compose.foundation.text.contextmenu.test.assertItems
 import androidx.compose.foundation.text.contextmenu.test.testTextContextMenuDataReader
@@ -51,8 +50,6 @@ import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import kotlinx.coroutines.test.runTest
-import org.junit.After
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,26 +57,13 @@ import org.junit.runner.RunWith
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 class SelectionContainerContextMenuBuilderTest {
+    @get:Rule(order = Int.MIN_VALUE) val flagRule = ContextMenuFlagRule(defaultFlagValue = true)
+
     @get:Rule val rule = createComposeRule()
 
     private val textTag = "text"
     private val defaultText = "Text Text Text"
     private val initialClipboardText = "initialClipboardText"
-
-    private var initialIsNewContextMenuEnabled = false
-
-    @OptIn(ExperimentalFoundationApi::class)
-    @Before
-    fun setup() {
-        initialIsNewContextMenuEnabled = ComposeFoundationFlags.isNewContextMenuEnabled
-        ComposeFoundationFlags.isNewContextMenuEnabled = true
-    }
-
-    @OptIn(ExperimentalFoundationApi::class)
-    @After
-    fun cleanup() {
-        ComposeFoundationFlags.isNewContextMenuEnabled = initialIsNewContextMenuEnabled
-    }
 
     @Test
     fun whenTouch_onClick_copy() = runTest {

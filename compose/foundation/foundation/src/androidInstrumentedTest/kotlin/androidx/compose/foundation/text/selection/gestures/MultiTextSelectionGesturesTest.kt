@@ -66,6 +66,7 @@ internal class MultiTextSelectionGesturesTest : TextSelectionGesturesTest() {
                     textContent = textContent.value,
                     rule = rule,
                     textToolbar = textToolbar,
+                    spyTextActionModeCallback = spyTextActionModeCallback,
                     hapticFeedback = hapticFeedback,
                     getActual = { selection.value }
                 ) {

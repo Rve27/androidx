@@ -75,6 +75,7 @@ internal class ClippedTextSelectionGesturesTest : AbstractSelectionGesturesTest(
                         textContent = text,
                         rule = rule,
                         textToolbar = textToolbar,
+                        spyTextActionModeCallback = spyTextActionModeCallback,
                         hapticFeedback = hapticFeedback,
                         getActual = { selection.value },
                     ) {

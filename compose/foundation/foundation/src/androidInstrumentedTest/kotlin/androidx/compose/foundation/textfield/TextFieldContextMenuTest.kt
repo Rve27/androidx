@@ -26,6 +26,8 @@ import androidx.compose.foundation.internal.toClipEntry
 import androidx.compose.foundation.text.BasicSecureTextField
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.FocusedWindowTest
+import androidx.compose.foundation.text.contextmenu.test.ContextMenuFlagOverride
+import androidx.compose.foundation.text.contextmenu.test.ContextMenuFlagRule
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.internal.selection.FakeClipboard
 import androidx.compose.runtime.CompositionLocalProvider
@@ -59,9 +61,15 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@ContextMenuFlagOverride(flagValue = true)
+@MediumTest
+class TextFieldContextMenuNewTextContextMenuTest : TextFieldContextMenuTest()
+
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 open class TextFieldContextMenuTest : FocusedWindowTest {
+    @get:Rule(order = Int.MIN_VALUE) val flagRule = ContextMenuFlagRule(defaultFlagValue = false)
+
     @get:Rule val rule = createComposeRule()
 
     private val textFieldTag = "BTF"
