@@ -190,7 +190,10 @@ internal constructor(
      * Observes for available app functions metadata based on the provided filters.
      *
      * Allows discovering app functions that match the given [searchSpec] criteria and continuously
-     * emits updates when relevant metadata changes.
+     * emits updates when relevant metadata changes. The calling app can only observe metadata for
+     * functions in packages that it is allowed to query via
+     * [android.content.pm.PackageManager.canPackageQuery]. If a package is not queryable by the
+     * calling app, its functions' metadata will not be visible.
      *
      * Updates to [AppFunctionMetadata] can occur when the app defining the function is updated or
      * when a function's enabled state changes.
