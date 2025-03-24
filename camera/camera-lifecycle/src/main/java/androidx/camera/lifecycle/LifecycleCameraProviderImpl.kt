@@ -109,7 +109,7 @@ internal class LifecycleCameraProviderImpl : LifecycleCameraProvider {
                     }
 
                     override fun onFailure(t: Throwable) {
-                        shutdownAsync(clearConfigProvider = false)
+                        shutdownAsync()
                     }
                 },
                 CameraXExecutors.directExecutor()
@@ -140,7 +140,7 @@ internal class LifecycleCameraProviderImpl : LifecycleCameraProvider {
             }
         }
 
-    internal fun shutdownAsync(clearConfigProvider: Boolean = true): ListenableFuture<Void> {
+    internal fun shutdownAsync(): ListenableFuture<Void> {
         Threads.runOnMainSync {
             unbindAll()
             lifecycleCameraRepository.removeLifecycleCameras(lifecycleCameraKeys)
@@ -154,9 +154,7 @@ internal class LifecycleCameraProviderImpl : LifecycleCameraProvider {
             if (cameraX != null) cameraX!!.shutdown() else Futures.immediateFuture<Void>(null)
 
         synchronized(lock) {
-            if (clearConfigProvider) {
-                cameraXConfigProvider = null
-            }
+            cameraXConfigProvider = null
             cameraXInitializeFuture = null
             cameraXShutdownFuture = shutdownFuture
             cameraInfoMap.clear()
