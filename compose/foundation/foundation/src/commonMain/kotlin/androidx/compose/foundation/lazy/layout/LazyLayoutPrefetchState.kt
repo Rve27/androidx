@@ -404,10 +404,11 @@ internal class PrefetchHandleProvider(
         index: Int,
         prefetchMetrics: PrefetchMetrics,
     ): PrefetchHandle =
-        HandleAndRequestImpl(index, prefetchMetrics, null).also {
-            executor.schedulePrefetch(it)
-            traceValue("compose:lazy:schedule_prefetch:index", index.toLong())
-        }
+        HandleAndRequestImpl(index, prefetchMetrics, executor as? IdleAwarenessProvider, null)
+            .also {
+                executor.schedulePrefetch(it)
+                traceValue("compose:lazy:schedule_prefetch:index", index.toLong())
+            }
 
     fun schedulePremeasure(
         index: Int,
@@ -415,36 +416,52 @@ internal class PrefetchHandleProvider(
         prefetchMetrics: PrefetchMetrics,
         onItemPremeasured: (LazyLayoutPrefetchResultScope.() -> Unit)?
     ): PrefetchHandle =
-        HandleAndRequestImpl(index, constraints, prefetchMetrics, onItemPremeasured).also {
-            executor.schedulePrefetch(it)
-            traceValue("compose:lazy:schedule_prefetch:index", index.toLong())
-        }
+        HandleAndRequestImpl(
+                index,
+                constraints,
+                prefetchMetrics,
+                executor as? IdleAwarenessProvider,
+                onItemPremeasured
+            )
+            .also {
+                executor.schedulePrefetch(it)
+                traceValue("compose:lazy:schedule_prefetch:index", index.toLong())
+            }
 
     fun createNestedPrefetchRequest(
         index: Int,
         constraints: Constraints,
         prefetchMetrics: PrefetchMetrics,
     ): PrefetchRequest =
-        HandleAndRequestImpl(index, constraints = constraints, prefetchMetrics, null)
+        HandleAndRequestImpl(
+            index,
+            constraints = constraints,
+            prefetchMetrics,
+            executor as? IdleAwarenessProvider,
+            null
+        )
 
     fun createNestedPrefetchRequest(
         index: Int,
         prefetchMetrics: PrefetchMetrics,
-    ): PrefetchRequest = HandleAndRequestImpl(index, prefetchMetrics, null)
+    ): PrefetchRequest =
+        HandleAndRequestImpl(index, prefetchMetrics, executor as? IdleAwarenessProvider, null)
 
     @ExperimentalFoundationApi
     private inner class HandleAndRequestImpl(
         override val index: Int,
         private val prefetchMetrics: PrefetchMetrics,
-        private val onItemPremeasured: (LazyLayoutPrefetchResultScope.() -> Unit)?
+        private val idleAwarenessProvider: IdleAwarenessProvider?,
+        private val onItemPremeasured: (LazyLayoutPrefetchResultScope.() -> Unit)?,
     ) : PrefetchHandle, PrefetchRequest, LazyLayoutPrefetchResultScope {
 
         constructor(
             index: Int,
             constraints: Constraints,
             prefetchMetrics: PrefetchMetrics,
+            idleAwarenessProvider: IdleAwarenessProvider?,
             onItemPremeasured: (LazyLayoutPrefetchResultScope.() -> Unit)?
-        ) : this(index, prefetchMetrics, onItemPremeasured) {
+        ) : this(index, prefetchMetrics, idleAwarenessProvider, onItemPremeasured) {
             premeasureConstraints = constraints
         }
 
@@ -478,10 +495,15 @@ internal class PrefetchHandleProvider(
             return (precomposeHandle?.getSize(placeableIndex) ?: IntSize.Zero)
         }
 
-        private fun shouldExecute(available: Long, average: Long): Boolean {
-            // even for urgent request we only do the work if we have time available, as otherwise
-            // it is better to just return early to allow the next frame to start and do the work.
-            return (isUrgent && available > 0) || average < available
+        private fun PrefetchRequestScope.shouldExecute(available: Long, average: Long): Boolean {
+            // Each step execution is prioritized as follows:
+            // 1) If it is urgent, we always execute if we have time in the frame.
+            // 2) If we're in idle mode, we always execute if we have time in the frame.
+            // 3) In regular circumstances, we look at the average time this step took and execute
+            // only if we have time.
+            val required =
+                if (isUrgent || (idleAwarenessProvider?.isFrameIdle ?: false)) 0 else average
+            return available > required
         }
 
         private var availableTimeNanos = 0L
@@ -634,7 +656,7 @@ internal class PrefetchHandleProvider(
 
         private var pauseRequested = false
 
-        private fun performPausableComposition(
+        private fun PrefetchRequestScope.performPausableComposition(
             itemProvider: LazyLayoutItemProvider,
             contentType: Any?,
             averages: Averages

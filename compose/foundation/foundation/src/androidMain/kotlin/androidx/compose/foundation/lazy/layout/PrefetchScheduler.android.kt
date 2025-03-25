@@ -26,6 +26,7 @@ import androidx.compose.runtime.RememberObserver
 import androidx.compose.runtime.collection.mutableVectorOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.util.trace
 import androidx.compose.ui.util.traceValue
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
@@ -81,7 +82,11 @@ internal actual fun rememberDefaultPrefetchScheduler(): PrefetchScheduler {
  */
 @ExperimentalFoundationApi
 internal class AndroidPrefetchScheduler(private val view: View) :
-    PrefetchScheduler, RememberObserver, Runnable, Choreographer.FrameCallback {
+    PrefetchScheduler,
+    IdleAwarenessProvider,
+    RememberObserver,
+    Runnable,
+    Choreographer.FrameCallback {
 
     /**
      * The list of currently not processed prefetch requests. The requests will be processed one by
@@ -91,6 +96,7 @@ internal class AndroidPrefetchScheduler(private val view: View) :
     private var prefetchScheduled = false
     private val choreographer = Choreographer.getInstance()
     private val scope = PrefetchRequestScopeImpl()
+    override var isFrameIdle: Boolean = false
 
     /** Is true when LazyList was composed and not yet disposed. */
     private var isActive = false
@@ -127,22 +133,18 @@ internal class AndroidPrefetchScheduler(private val view: View) :
         // not have been a drawing operation. Using the choreographer frame start time will be
         // safe in these cases.
         val viewDrawTimeNanos = TimeUnit.MILLISECONDS.toNanos(view.drawingTime)
+
+        // enter idle mode if the last time we draw was 2 frames ago.
+        isFrameIdle = (System.nanoTime() > viewDrawTimeNanos + 2 * frameIntervalNs)
         scope.nextFrameTimeNs = maxOf(frameStartTimeNanos, viewDrawTimeNanos) + frameIntervalNs
         var scheduleForNextFrame = false
         while (prefetchRequests.isNotEmpty() && !scheduleForNextFrame) {
-            val availableTimeNanos = scope.availableTimeNanos()
-            traceValue("compose:lazy:prefetch:available_time_nanos", availableTimeNanos)
-            if (availableTimeNanos > 0) {
-                val request = prefetchRequests[0]
-                val hasMoreWorkToDo = with(request) { scope.execute() }
-                if (hasMoreWorkToDo) {
-                    scheduleForNextFrame = true
+            scheduleForNextFrame =
+                if (isFrameIdle) {
+                    trace("compose:lazy:prefetch:idle_frame") { runRequest() }
                 } else {
-                    prefetchRequests.removeAt(0)
+                    runRequest()
                 }
-            } else {
-                scheduleForNextFrame = true
-            }
         }
 
         if (scheduleForNextFrame) {
@@ -153,6 +155,24 @@ internal class AndroidPrefetchScheduler(private val view: View) :
             prefetchScheduled = false
         }
         traceValue("compose:lazy:prefetch:available_time_nanos", 0L) // reset counter
+    }
+
+    private fun runRequest(): Boolean {
+        var scheduleForNextFrame = false
+        val availableTimeNanos = scope.availableTimeNanos()
+        traceValue("compose:lazy:prefetch:available_time_nanos", availableTimeNanos)
+        if (availableTimeNanos > 0) {
+            val request = prefetchRequests[0]
+            val hasMoreWorkToDo = with(request) { scope.execute() }
+            if (hasMoreWorkToDo) {
+                scheduleForNextFrame = true
+            } else {
+                prefetchRequests.removeAt(0)
+            }
+        } else {
+            scheduleForNextFrame = true
+        }
+        return scheduleForNextFrame
     }
 
     /**
