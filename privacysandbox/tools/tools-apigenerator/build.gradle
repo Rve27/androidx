@@ -41,9 +41,9 @@ configurations {
     // Configuration of shadowed / jarjared dependencies
     shadowed { }
     // Shadowed dependencies are compile only
-    compileOnly.extendsFrom(shadowed)
+    compileOnly { extendsFrom(shadowed) }
     // Include shadowed dependencies for test compilation
-    testCompile.extendsFrom(shadowed)
+    testCompile { extendsFrom(shadowed) }
 
     // Replace the standard jar with the one built by 'shadowJar' in both api and runtime variants
     apiElements.outgoing.artifacts.clear()
