@@ -276,7 +276,7 @@ fun ChipGroupSingleLineSample() {
 @Sampled
 @Composable
 fun ChipGroupReflowSample() {
-    var expanded by remember { mutableStateOf(false) }
+    var selected by remember { mutableStateOf(false) }
     val colorNames =
         listOf(
             "Blue",
@@ -296,14 +296,14 @@ fun ChipGroupReflowSample() {
                 Modifier.fillMaxWidth(1f)
                     .wrapContentHeight(align = Alignment.Top)
                     .then(
-                        if (expanded) {
+                        if (selected) {
                             Modifier.verticalScroll(rememberScrollState())
                         } else {
                             Modifier.horizontalScroll(rememberScrollState())
                         }
                     ),
             horizontalArrangement = Arrangement.Start,
-            maxLines = if (!expanded) 1 else Int.MAX_VALUE,
+            maxLines = if (!selected) 1 else Int.MAX_VALUE,
         ) {
             /*
              * When chip lists exceed the available horizontal screen space, one option is to
@@ -311,12 +311,13 @@ fun ChipGroupReflowSample() {
              * ensures all options are accessible while maintaining the position of the content
              * below the chip list.
              */
-            AssistChip(
+            FilterChip(
+                selected = selected,
                 modifier =
                     Modifier.padding(horizontal = 4.dp)
                         .align(alignment = Alignment.CenterVertically),
-                onClick = { expanded = !expanded },
-                label = { Text(if (expanded) "Collapse" else "Show All") },
+                onClick = { selected = !selected },
+                label = { Text("Show All") },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.Tune,
