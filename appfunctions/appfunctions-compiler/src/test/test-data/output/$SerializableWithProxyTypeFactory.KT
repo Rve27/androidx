@@ -2,6 +2,7 @@ package com.testdata
 
 import androidx.appfunctions.AppFunctionData
 import androidx.appfunctions.`internal`.AppFunctionSerializableFactory
+import androidx.appfunctions.`internal`.serializableproxies.`$LocalDateTimeFactory`
 import javax.`annotation`.processing.Generated
 
 @Generated("androidx.appfunctions.compiler.AppFunctionCompiler")

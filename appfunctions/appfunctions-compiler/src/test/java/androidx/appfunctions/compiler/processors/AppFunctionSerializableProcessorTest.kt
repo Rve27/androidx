@@ -31,6 +31,10 @@ class AppFunctionSerializableProcessorTest {
             CompilationTestHelper(
                 testFileSrcDir = File("src/test/test-data/input"),
                 goldenFileSrcDir = File("src/test/test-data/output"), // unused
+                proxySourceFileNames =
+                    listOf(
+                        "androidx/appfunctions/internal/serializableproxies/AppFunctionLocalDateTime.KT"
+                    ),
                 symbolProcessorProviders = listOf(AppFunctionSerializableProcessor.Provider())
             )
     }
@@ -206,10 +210,7 @@ class AppFunctionSerializableProcessorTest {
 
     @Test
     fun testProcessor_validAppFunctionSerializableFactory_succeeds() {
-        val report =
-            compilationTestHelper.compileAll(
-                sourceFileNames = listOf("AppFunctionLocalDateTime.KT")
-            )
+        val report = compilationTestHelper.compileAll(sourceFileNames = listOf())
         compilationTestHelper.assertSuccessWithSourceContent(
             report = report,
             expectGeneratedSourceFileName = "\$LocalDateTimeFactory.kt",
@@ -221,8 +222,7 @@ class AppFunctionSerializableProcessorTest {
     fun testProcessor_validSerializableWithProxyProperties_success() {
         val report =
             compilationTestHelper.compileAll(
-                sourceFileNames =
-                    listOf("SerializableWithProxyType.KT", "AppFunctionLocalDateTime.KT")
+                sourceFileNames = listOf("SerializableWithProxyType.KT")
             )
 
         compilationTestHelper.assertSuccessWithSourceContent(

@@ -21,6 +21,7 @@ import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionAnnota
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionComponentRegistryAnnotation
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableAnnotation
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableProxyAnnotation
+import androidx.appfunctions.compiler.core.IntrospectionHelper.SERIALIZABLE_PROXY_PACKAGE_NAME
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -79,6 +80,7 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
      *
      * @return a list of AnnotatedAppFunctionSerializableProxy
      */
+    @OptIn(KspExperimental::class)
     fun resolveAnnotatedAppFunctionSerializableProxies():
         List<AnnotatedAppFunctionSerializableProxy> {
         return resolver
@@ -94,7 +96,23 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
                 }
                 AnnotatedAppFunctionSerializableProxy(declaration).validate()
             }
-            .toList()
+            .toList() +
+            resolver
+                .getDeclarationsFromPackage(SERIALIZABLE_PROXY_PACKAGE_NAME)
+                .filter {
+                    it.annotations.findAnnotation(
+                        AppFunctionSerializableProxyAnnotation.CLASS_NAME
+                    ) != null
+                }
+                .map { declaration ->
+                    if (declaration !is KSClassDeclaration) {
+                        throw ProcessingException(
+                            "Only classes can be annotated with @AppFunctionSerializableProxy",
+                            declaration
+                        )
+                    }
+                    AnnotatedAppFunctionSerializableProxy(declaration).validate()
+                }
     }
 
     /**

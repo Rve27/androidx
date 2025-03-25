@@ -31,6 +31,10 @@ class AppFunctionCompilerTest {
             CompilationTestHelper(
                 testFileSrcDir = File("src/test/test-data/input"),
                 goldenFileSrcDir = File("src/test/test-data/output"),
+                proxySourceFileNames =
+                    listOf(
+                        "androidx/appfunctions/internal/serializableproxies/AppFunctionLocalDateTime.KT"
+                    ),
                 symbolProcessorProviders = listOf(AppFunctionCompiler.Provider()),
             )
     }
@@ -133,11 +137,7 @@ class AppFunctionCompilerTest {
         val report =
             compilationTestHelper.compileAll(
                 sourceFileNames =
-                    listOf(
-                        "FunctionWithSerializableProxyInput.KT",
-                        "SerializableWithProxyType.KT",
-                        "AppFunctionLocalDateTime.KT"
-                    ),
+                    listOf("FunctionWithSerializableProxyInput.KT", "SerializableWithProxyType.KT"),
                 processorOptions = mapOf("appfunctions:aggregateAppFunctions" to "true")
             )
 

@@ -147,14 +147,19 @@ data class AnnotatedAppFunctionSerializableProxy(
                 appFunctionSerializableProxyClass
             )
         }
+        val returnTypeClassDeclaration =
+            checkNotNull(fromTargetClassNameFunction.returnType).resolve().declaration
+                as KSClassDeclaration
         if (
-            checkNotNull(fromTargetClassNameFunction.returnType).toTypeName().toString() !=
+            checkNotNull(returnTypeClassDeclaration.qualifiedName).asString() !=
                 checkNotNull(appFunctionSerializableProxyClass.qualifiedName).asString()
         ) {
             throw ProcessingException(
                 "Function $fromTargetClassMethodName should return an instance of " +
-                    "this serializable class",
-                appFunctionSerializableProxyClass
+                    "this serializable class (${checkNotNull(appFunctionSerializableProxyClass
+                        .qualifiedName).asString()}). Instead, it returns ${checkNotNull(
+                            returnTypeClassDeclaration.qualifiedName).asString()}",
+                fromTargetClassNameFunction.returnType
             )
         }
     }

@@ -177,13 +177,23 @@ class AppFunctionSerializableProcessor(
         annotatedProxyClass: AnnotatedAppFunctionSerializableProxy,
         resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
     ) {
+        val generatedSerializableProxyFactoryClassName =
+            "\$${checkNotNull(
+                annotatedProxyClass.targetClassDeclaration.simpleName).asString()}Factory"
+        // Check if the factory class has already been generated.
+        if (
+            codeGenerator.generatedFile.any {
+                it.path.contains(generatedSerializableProxyFactoryClassName)
+            }
+        ) {
+            return
+        }
+
         val proxySuperInterfaceClass =
             AppFunctionSerializableFactoryClass.CLASS_NAME.parameterizedBy(
                 annotatedProxyClass.targetClassDeclaration.toClassName()
             )
-        val generatedSerializableProxyFactoryClassName =
-            "\$${checkNotNull(
-                annotatedProxyClass.targetClassDeclaration.simpleName).asString()}Factory"
+
         val serializableProxyClassBuilder =
             TypeSpec.classBuilder(generatedSerializableProxyFactoryClassName)
         val factoryCodeBuilder =

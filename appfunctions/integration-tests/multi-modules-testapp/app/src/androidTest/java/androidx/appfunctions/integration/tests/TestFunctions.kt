@@ -16,10 +16,12 @@
 
 package androidx.appfunctions.integration.tests
 
+import android.util.Log
 import androidx.appfunctions.AppFunction
 import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionInvalidArgumentException
 import androidx.appfunctions.AppFunctionSerializable
+import java.time.LocalDateTime
 
 @AppFunctionSerializable
 data class CreateNoteParams(
@@ -48,10 +50,22 @@ data class Note(
     val attachments: List<Attachment>,
 )
 
+@AppFunctionSerializable data class DateTime(val localDateTime: LocalDateTime)
+
 @Suppress("UNUSED_PARAMETER")
 class TestFunctions {
     @AppFunction
     fun add(appFunctionContext: AppFunctionContext, num1: Long, num2: Long) = num1 + num2
+
+    @AppFunction
+    fun logLocalDateTime(appFunctionContext: AppFunctionContext, dateTime: DateTime) {
+        Log.d("TestFunctions", "LocalDateTime: ${dateTime.localDateTime}")
+    }
+
+    @AppFunction
+    fun getLocalDate(appFunctionContext: AppFunctionContext): DateTime {
+        return DateTime(localDateTime = LocalDateTime.now())
+    }
 
     @AppFunction
     fun doThrow(appFunctionContext: AppFunctionContext) {

@@ -28,6 +28,7 @@ import androidx.appfunctions.integration.tests.TestUtil.retryAssert
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import java.time.LocalDateTime
 import kotlin.test.assertIs
 import org.junit.After
 import org.junit.Assume.assumeTrue
@@ -224,6 +225,53 @@ class IntegrationTest {
             .isEqualTo(expectedNote)
     }
 
+    @Test
+    fun executeAppFunction_serializableProxyParam_success() = doBlocking {
+        val localDateTimeClass = DateTime(LocalDateTime.now())
+        val response =
+            appFunctionManager.executeAppFunction(
+                request =
+                    ExecuteAppFunctionRequest(
+                        targetPackageName = targetContext.packageName,
+                        functionIdentifier = TestFunctionsIds.LOG_LOCAL_DATE_TIME_ID,
+                        functionParameters =
+                            AppFunctionData.Builder("")
+                                .setAppFunctionData(
+                                    "dateTime",
+                                    AppFunctionData.serialize(
+                                        localDateTimeClass,
+                                        DateTime::class.java
+                                    )
+                                )
+                                .build()
+                    )
+            )
+
+        assertIs<ExecuteAppFunctionResponse.Success>(response)
+    }
+
+    @Test
+    fun executeAppFunction_serializableProxyResponse_success() = doBlocking {
+        val response =
+            appFunctionManager.executeAppFunction(
+                request =
+                    ExecuteAppFunctionRequest(
+                        targetPackageName = targetContext.packageName,
+                        functionIdentifier = TestFunctionsIds.GET_LOCAL_DATE_ID,
+                        functionParameters = AppFunctionData.Builder("").build()
+                    )
+            )
+
+        val successResponse = assertIs<ExecuteAppFunctionResponse.Success>(response)
+
+        assertIs<LocalDateTime>(
+            successResponse.returnValue
+                .getAppFunctionData(ExecuteAppFunctionResponse.Success.PROPERTY_RETURN_VALUE)
+                ?.deserialize(DateTime::class.java)
+                ?.localDateTime
+        )
+    }
+
     private suspend fun awaitAppFunctionsIndexed(expectedFunctionIds: Set<String>) {
         retryAssert {
             val functionIds = AppSearchMetadataHelper.collectSelfFunctionIds(targetContext)
@@ -240,8 +288,10 @@ class IntegrationTest {
                 TestFunctionsIds.DO_THROW_ID,
                 TestFunctionsIds.VOID_FUNCTION_ID,
                 TestFunctionsIds.CREATE_NOTE_ID,
+                TestFunctionsIds.LOG_LOCAL_DATE_TIME_ID,
+                TestFunctionsIds.GET_LOCAL_DATE_ID,
                 TestFactoryIds.IS_CREATED_BY_FACTORY_ID,
-                TestFunctions2Ids.CONCAT_ID
+                TestFunctions2Ids.CONCAT_ID,
             )
     }
 }
