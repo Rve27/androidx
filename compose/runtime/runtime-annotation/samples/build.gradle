@@ -53,6 +53,6 @@ androidx {
 }
 
 android {
-    compileSdk 35
-    namespace "androidx.compose.runtime.annotation.samples"
+    compileSdk = 35
+    namespace = "androidx.compose.runtime.annotation.samples"
 }
