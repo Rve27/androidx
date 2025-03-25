@@ -1,50 +1,50 @@
 // Signature format: 4.0
 package androidx.xr.runtime {
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class CoreState {
+  public final class CoreState {
     ctor public CoreState(kotlin.time.ComparableTimeMark timeMark);
     method public kotlin.time.ComparableTimeMark getTimeMark();
     property public kotlin.time.ComparableTimeMark timeMark;
   }
 
   public final class ManifestFeature {
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String FEATURE_XR_API_OPENXR;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String FEATURE_XR_API_SPATIAL;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String FEATURE_XR_INPUT_CONTROLLER;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String FEATURE_XR_INPUT_EYE_TRACKING;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String FEATURE_XR_INPUT_HAND_TRACKING;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String FEATURE_XR_API_OPENXR;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String FEATURE_XR_API_SPATIAL;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String FEATURE_XR_INPUT_CONTROLLER;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String FEATURE_XR_INPUT_EYE_TRACKING;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String FEATURE_XR_INPUT_HAND_TRACKING;
+    property public static String FEATURE_XR_API_OPENXR;
+    property public static String FEATURE_XR_API_SPATIAL;
+    property public static String FEATURE_XR_INPUT_CONTROLLER;
+    property public static String FEATURE_XR_INPUT_EYE_TRACKING;
+    property public static String FEATURE_XR_INPUT_HAND_TRACKING;
+    field public static final String FEATURE_XR_API_OPENXR;
+    field public static final String FEATURE_XR_API_SPATIAL;
+    field public static final String FEATURE_XR_INPUT_CONTROLLER;
+    field public static final String FEATURE_XR_INPUT_EYE_TRACKING;
+    field public static final String FEATURE_XR_INPUT_HAND_TRACKING;
   }
 
   public final class ManifestPermission {
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String EYE_TRACKING_COARSE;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String EYE_TRACKING_FINE;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String FACE_TRACKING;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String HAND_TRACKING;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String HEAD_TRACKING;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String SCENE_UNDERSTANDING_COARSE;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String SCENE_UNDERSTANDING_FINE;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String EYE_TRACKING_COARSE;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String EYE_TRACKING_FINE;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String FACE_TRACKING;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String HAND_TRACKING;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String HEAD_TRACKING;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String SCENE_UNDERSTANDING_COARSE;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String SCENE_UNDERSTANDING_FINE;
+    property public static String EYE_TRACKING_COARSE;
+    property public static String EYE_TRACKING_FINE;
+    property public static String FACE_TRACKING;
+    property public static String HAND_TRACKING;
+    property public static String HEAD_TRACKING;
+    property public static String SCENE_UNDERSTANDING_COARSE;
+    property public static String SCENE_UNDERSTANDING_FINE;
+    field public static final String EYE_TRACKING_COARSE;
+    field public static final String EYE_TRACKING_FINE;
+    field public static final String FACE_TRACKING;
+    field public static final String HAND_TRACKING;
+    field public static final String HEAD_TRACKING;
+    field public static final String SCENE_UNDERSTANDING_COARSE;
+    field public static final String SCENE_UNDERSTANDING_FINE;
   }
 
   public final class ManifestPermissionGroup {
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String XR_TRACKING;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String XR_TRACKING_SENSITIVE;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String XR_TRACKING;
-    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final String XR_TRACKING_SENSITIVE;
+    property public static String XR_TRACKING;
+    property public static String XR_TRACKING_SENSITIVE;
+    field public static final String XR_TRACKING;
+    field public static final String XR_TRACKING_SENSITIVE;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class Session implements androidx.lifecycle.LifecycleOwner {
+  public final class Session implements androidx.lifecycle.LifecycleOwner {
     method public androidx.xr.runtime.SessionConfigureResult configure();
     method public static androidx.xr.runtime.SessionCreateResult create(android.app.Activity activity);
     method public static androidx.xr.runtime.SessionCreateResult create(android.app.Activity activity, optional kotlinx.coroutines.CoroutineDispatcher coroutineDispatcher);
@@ -69,42 +69,42 @@ package androidx.xr.runtime {
     method public androidx.xr.runtime.SessionCreateResult create(android.app.Activity activity, optional kotlinx.coroutines.CoroutineDispatcher coroutineDispatcher);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SessionConfigureConfigurationNotSupported extends androidx.xr.runtime.SessionConfigureResult {
+  public final class SessionConfigureConfigurationNotSupported extends androidx.xr.runtime.SessionConfigureResult {
     ctor public SessionConfigureConfigurationNotSupported();
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract sealed class SessionConfigureResult {
+  public abstract sealed class SessionConfigureResult {
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SessionConfigureSuccess extends androidx.xr.runtime.SessionConfigureResult {
+  public final class SessionConfigureSuccess extends androidx.xr.runtime.SessionConfigureResult {
     ctor public SessionConfigureSuccess();
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SessionCreatePermissionsNotGranted extends androidx.xr.runtime.SessionCreateResult {
+  public final class SessionCreatePermissionsNotGranted extends androidx.xr.runtime.SessionCreateResult {
     ctor public SessionCreatePermissionsNotGranted(java.util.List<java.lang.String> permissions);
     method public java.util.List<java.lang.String> getPermissions();
     property public java.util.List<java.lang.String> permissions;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract sealed class SessionCreateResult {
+  public abstract sealed class SessionCreateResult {
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SessionCreateSuccess extends androidx.xr.runtime.SessionCreateResult {
+  public final class SessionCreateSuccess extends androidx.xr.runtime.SessionCreateResult {
     ctor public SessionCreateSuccess(androidx.xr.runtime.Session session);
     method public androidx.xr.runtime.Session getSession();
     property public androidx.xr.runtime.Session session;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SessionResumePermissionsNotGranted extends androidx.xr.runtime.SessionResumeResult {
+  public final class SessionResumePermissionsNotGranted extends androidx.xr.runtime.SessionResumeResult {
     ctor public SessionResumePermissionsNotGranted(java.util.List<java.lang.String> permissions);
     method public java.util.List<java.lang.String> getPermissions();
     property public java.util.List<java.lang.String> permissions;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract sealed class SessionResumeResult {
+  public abstract sealed class SessionResumeResult {
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SessionResumeSuccess extends androidx.xr.runtime.SessionResumeResult {
+  public final class SessionResumeSuccess extends androidx.xr.runtime.SessionResumeResult {
     ctor public SessionResumeSuccess();
   }
 
@@ -1077,11 +1077,11 @@ package androidx.xr.runtime.internal {
 package androidx.xr.runtime.java {
 
   public final class Coroutines {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static <T> com.google.common.util.concurrent.ListenableFuture<T> toFuture(androidx.xr.runtime.Session session, kotlin.jvm.functions.Function2<? super kotlinx.coroutines.CoroutineScope,? super kotlin.coroutines.Continuation<? super T>,? extends java.lang.Object?> coroutine);
+    method public static <T> com.google.common.util.concurrent.ListenableFuture<T> toFuture(androidx.xr.runtime.Session session, kotlin.jvm.functions.Function2<? super kotlinx.coroutines.CoroutineScope,? super kotlin.coroutines.Continuation<? super T>,? extends java.lang.Object?> coroutine);
   }
 
   public final class Flows {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static <T> io.reactivex.rxjava3.core.Observable<T> toObservable(androidx.xr.runtime.Session session, kotlinx.coroutines.flow.Flow<? extends T> flow);
+    method public static <T> io.reactivex.rxjava3.core.Observable<T> toObservable(androidx.xr.runtime.Session session, kotlinx.coroutines.flow.Flow<? extends T> flow);
   }
 
 }

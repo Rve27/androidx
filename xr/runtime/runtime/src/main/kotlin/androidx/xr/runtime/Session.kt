@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
+import androidx.xr.runtime.Session.Companion.create
 import androidx.xr.runtime.internal.Runtime
 import androidx.xr.runtime.internal.RuntimeFactory
 import java.util.ServiceLoader
@@ -49,7 +50,6 @@ import kotlinx.coroutines.launch
  * See [create], [resume], [pause], and [destroy] for more details.
  */
 @Suppress("NotCloseable")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class Session
 internal constructor(
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val runtime: Runtime,
