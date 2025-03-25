@@ -44,6 +44,7 @@ import androidx.navigation.NavDestination.Companion.createRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.childHierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.internal.AtomicInt
 import androidx.navigation.internal.NavContext
 import androidx.navigation.serialization.generateHashCode
 import androidx.navigation.serialization.generateRouteWithArgs
@@ -52,7 +53,6 @@ import androidx.savedstate.read
 import androidx.savedstate.savedState
 import androidx.savedstate.write
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.collections.removeFirst as removeFirstKt
 import kotlin.collections.removeLast as removeLastKt
 import kotlin.reflect.KClass
@@ -116,12 +116,12 @@ public actual open class NavController(
         _visibleEntries.asStateFlow()
 
     private val childToParentEntries = mutableMapOf<NavBackStackEntry, NavBackStackEntry>()
-    private val parentToChildCount = mutableMapOf<NavBackStackEntry, AtomicInteger>()
+    private val parentToChildCount = mutableMapOf<NavBackStackEntry, AtomicInt>()
 
     private fun linkChildToParent(child: NavBackStackEntry, parent: NavBackStackEntry) {
         childToParentEntries[child] = parent
         if (parentToChildCount[parent] == null) {
-            parentToChildCount[parent] = AtomicInteger(0)
+            parentToChildCount[parent] = AtomicInt(0)
         }
         parentToChildCount[parent]!!.incrementAndGet()
     }
