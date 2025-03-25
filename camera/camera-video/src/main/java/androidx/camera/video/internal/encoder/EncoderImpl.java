@@ -16,6 +16,7 @@
 
 package androidx.camera.video.internal.encoder;
 
+import static androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED;
 import static androidx.camera.core.impl.utils.executor.CameraXExecutors.mainThreadExecutor;
 import static androidx.camera.video.internal.encoder.EncoderImpl.InternalState.CONFIGURED;
 import static androidx.camera.video.internal.encoder.EncoderImpl.InternalState.ERROR;
@@ -56,6 +57,7 @@ import androidx.camera.video.internal.compat.quirk.CodecStuckOnFlushQuirk;
 import androidx.camera.video.internal.compat.quirk.DeviceQuirks;
 import androidx.camera.video.internal.compat.quirk.EncoderNotUsePersistentInputSurfaceQuirk;
 import androidx.camera.video.internal.compat.quirk.PrematureEndOfStreamVideoQuirk;
+import androidx.camera.video.internal.compat.quirk.PreviewFreezeAfterHighSpeedRecordingQuirk;
 import androidx.camera.video.internal.compat.quirk.SignalEosOutputBufferNotComeQuirk;
 import androidx.camera.video.internal.compat.quirk.StopCodecAfterSurfaceRemovalCrashMediaServerQuirk;
 import androidx.camera.video.internal.compat.quirk.VideoEncoderSuspendDoesNotIncludeSuspendTimeQuirk;
@@ -186,6 +188,7 @@ public class EncoderImpl implements Encoder {
     final Deque<Range<Long>> mActivePauseResumeTimeRanges = new ArrayDeque<>();
     final Timebase mInputTimebase;
     final TimeProvider mTimeProvider = new SystemTimeProvider();
+    private final boolean mCodecStopAsFlushWorkaroundEnabled;
 
     @SuppressWarnings("WeakerAccess") // synthetic accessor
     @GuardedBy("mLock")
@@ -219,9 +222,11 @@ public class EncoderImpl implements Encoder {
      *
      * @param executor      the executor suitable for background task
      * @param encoderConfig the encoder config
+     * @param sessionType   the session type
      * @throws InvalidConfigException when the encoder cannot be configured.
      */
-    public EncoderImpl(@NonNull Executor executor, @NonNull EncoderConfig encoderConfig)
+    public EncoderImpl(@NonNull Executor executor, @NonNull EncoderConfig encoderConfig,
+            int sessionType)
             throws InvalidConfigException {
         Preconditions.checkNotNull(executor);
         Preconditions.checkNotNull(encoderConfig);
@@ -264,6 +269,10 @@ public class EncoderImpl implements Encoder {
                     return "mReleasedFuture";
                 }));
         mReleasedCompleter = Preconditions.checkNotNull(releaseFutureRef.get());
+
+        mCodecStopAsFlushWorkaroundEnabled = mIsVideoEncoder
+                && sessionType == SESSION_TYPE_HIGH_SPEED
+                && DeviceQuirks.get(PreviewFreezeAfterHighSpeedRecordingQuirk.class) != null;
 
         setState(CONFIGURED);
     }
@@ -645,7 +654,10 @@ public class EncoderImpl implements Encoder {
         mEncoderExecutor.execute(() -> {
             mSourceStoppedSignalled = true;
             if (mIsFlushedAfterEndOfStream) {
-                mMediaCodec.stop();
+                // stop() should have been called before if workaround is enabled.
+                if (!mCodecStopAsFlushWorkaroundEnabled) {
+                    mMediaCodec.stop();
+                }
                 reset();
             }
         });
@@ -654,7 +666,10 @@ public class EncoderImpl implements Encoder {
     @ExecutedBy("mEncoderExecutor")
     private void releaseInternal() {
         if (mIsFlushedAfterEndOfStream) {
-            mMediaCodec.stop();
+            // stop() should have been called before if workaround is enabled.
+            if (!mCodecStopAsFlushWorkaroundEnabled) {
+                mMediaCodec.stop();
+            }
             mIsFlushedAfterEndOfStream = false;
         }
 
@@ -881,7 +896,11 @@ public class EncoderImpl implements Encoder {
                     // end-of-stream signal on an output buffer at this point, so those buffers
                     // are not needed anyways. We will defer resetting the codec until just
                     // before starting the codec again.
-                    mMediaCodec.flush();
+                    if (mCodecStopAsFlushWorkaroundEnabled) {
+                        mMediaCodec.stop();
+                    } else {
+                        mMediaCodec.flush();
+                    }
                     mIsFlushedAfterEndOfStream = true;
                 } else {
                     // Non-SurfaceInputs give us more control over input buffers. We can directly

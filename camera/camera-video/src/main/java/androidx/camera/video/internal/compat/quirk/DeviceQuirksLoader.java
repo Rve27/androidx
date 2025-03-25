@@ -160,6 +160,11 @@ public class DeviceQuirksLoader {
                 HdrRepeatingRequestFailureQuirk.load())) {
             quirks.add(new HdrRepeatingRequestFailureQuirk());
         }
+        if (quirkSettings.shouldEnableQuirk(
+                PreviewFreezeAfterHighSpeedRecordingQuirk.class,
+                PreviewFreezeAfterHighSpeedRecordingQuirk.load())) {
+            quirks.add(PreviewFreezeAfterHighSpeedRecordingQuirk.INSTANCE);
+        }
         return quirks;
     }
 }

@@ -18,6 +18,7 @@ package androidx.camera.video.internal.encoder
 import android.media.MediaCodecInfo
 import android.os.Build
 import androidx.camera.core.impl.Observable.Observer
+import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR
 import androidx.camera.core.impl.Timebase
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
 import androidx.camera.testing.impl.AndroidUtil.isEmulator
@@ -101,7 +102,8 @@ class AudioEncoderTest {
                     .setBitrate(BIT_RATE)
                     .setSampleRate(SAMPLE_RATE)
                     .setChannelCount(CHANNEL_COUNT)
-                    .build()
+                    .build(),
+                SESSION_TYPE_REGULAR
             )
         encoder.setEncoderCallback(encoderCallback, CameraXExecutors.directExecutor())
 
@@ -149,7 +151,7 @@ class AudioEncoderTest {
         // Arrange.
         fakeAudioLoop.start()
 
-        for (i in 0..3) {
+        repeat(3) {
             // Arrange.
             clearInvocations(encoderCallback)
 
@@ -363,7 +365,7 @@ class AudioEncoderTest {
         // Arrange.
         encoder.start()
 
-        for (i in 0..8) {
+        repeat(8) {
             // Act.
             val inputBuffer =
                 (encoder.input as Encoder.ByteBufferInput).acquireBuffer().get(3, TimeUnit.SECONDS)
@@ -474,7 +476,7 @@ class AudioEncoderTest {
                                 if (!acquireFuture.cancel(true)) {
                                     try {
                                         acquireFuture.await().cancel()
-                                    } catch (ignored: Exception) {}
+                                    } catch (_: Exception) {}
                                 }
                             }
                             // For simplicity, AudioLoop doesn't monitor the encoder's state.

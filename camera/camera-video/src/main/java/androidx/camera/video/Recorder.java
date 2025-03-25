@@ -1529,7 +1529,8 @@ public final class Recorder implements VideoOutput {
         // Select and create the audio encoder
         AudioEncoderConfig audioEncoderConfig = resolveAudioEncoderConfig(audioMimeInfo,
                 audioSourceTimebase, audioSettings, mediaSpec.getAudioSpec());
-        mAudioEncoder = mAudioEncoderFactory.createEncoder(mExecutor, audioEncoderConfig);
+        mAudioEncoder = mAudioEncoderFactory.createEncoder(mExecutor, audioEncoderConfig,
+                checkNotNull(mLatestSurfaceRequest).getSessionType());
 
         // Connect the audio source to the audio encoder
         Encoder.EncoderInput bufferProvider = mAudioEncoder.getInput();

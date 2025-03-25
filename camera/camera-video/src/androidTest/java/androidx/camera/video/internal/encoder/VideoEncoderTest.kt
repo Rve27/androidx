@@ -34,6 +34,7 @@ import androidx.camera.core.Preview
 import androidx.camera.core.Preview.SurfaceProvider
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.core.impl.CameraInfoInternal
+import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR
 import androidx.camera.core.impl.Timebase
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
 import androidx.camera.core.internal.CameraUseCaseAdapter
@@ -408,7 +409,7 @@ class VideoEncoderTest(
             doAnswer { encodeStopSemaphore.release() }.`when`(videoEncoderCallback).onEncodeStop()
         }
 
-        videoEncoder = EncoderImpl(encoderExecutor, videoEncoderConfig)
+        videoEncoder = EncoderImpl(encoderExecutor, videoEncoderConfig, SESSION_TYPE_REGULAR)
 
         videoEncoder.setEncoderCallback(videoEncoderCallback, CameraXExecutors.directExecutor())
 
