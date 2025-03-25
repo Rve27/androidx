@@ -34,6 +34,9 @@ open class AnnotatedAppFunctionSerializable(
     /** The super type of the class being annotated with AppFunctionSerializable */
     val superTypes: Sequence<KSTypeReference> by lazy { appFunctionSerializableClass.superTypes }
 
+    /** The modifier of the class being annotated with AppFunctionSerializable. */
+    val modifiers = appFunctionSerializableClass.modifiers
+
     /**
      * The validator that can be used to validate the class annotated with AppFunctionSerializable.
      */

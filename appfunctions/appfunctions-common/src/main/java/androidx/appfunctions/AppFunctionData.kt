@@ -24,6 +24,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
+import androidx.annotation.VisibleForTesting
 import androidx.appfunctions.internal.AppFunctionSerializableFactory
 import androidx.appfunctions.internal.Constants.APP_FUNCTIONS_TAG
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
@@ -66,12 +67,15 @@ public class AppFunctionData
 internal constructor(
     // TODO: Make it non-null once the constructor that takes qualifiedName has removed
     internal val spec: AppFunctionDataSpec?,
-    internal val genericDocument: GenericDocument,
+    @get:VisibleForTesting
+    @get:RestrictTo(LIBRARY_GROUP)
+    public val genericDocument: GenericDocument,
     internal val extras: Bundle
 ) {
 
     // TODO: Remove this constructor
-    internal constructor(
+    @RestrictTo(LIBRARY_GROUP)
+    public constructor(
         genericDocument: GenericDocument,
         extras: Bundle,
     ) : this(null, genericDocument, extras)
@@ -79,6 +83,11 @@ internal constructor(
     /** Qualified name of the underlying object */
     public val qualifiedName: String
         get() = genericDocument.schemaType
+
+    /**
+     * Returns the ID of the underlying [GenericDocument]. Only use this for handling legacy schema.
+     */
+    @get:RestrictTo(LIBRARY_GROUP) public val id: String = genericDocument.id
 
     /**
      * Checks if [AppFunctionData] has an associated value with the specified [key].
@@ -746,12 +755,16 @@ internal constructor(
         private val extrasBuilder = Bundle()
 
         // TODO(b/399823985): Clean up the usage without providing metadata.
+        /**
+         * @param id: Only set this when creating a document for the legacy schema. In the legacy
+         *   schema, ID is stored as [GenericDocument.id]. In Jetpack, ID is just a normal property.
+         */
         @RestrictTo(LIBRARY_GROUP)
-        public constructor(qualifiedName: String) {
+        public constructor(qualifiedName: String, id: String = "") {
             this.qualifiedName = qualifiedName
             spec = null
             genericDocumentBuilder =
-                GenericDocument.Builder<GenericDocument.Builder<*>>("", "", qualifiedName)
+                GenericDocument.Builder<GenericDocument.Builder<*>>("", id, qualifiedName)
         }
 
         /**

@@ -24,9 +24,9 @@ import androidx.annotation.RequiresPermission
 import androidx.appfunctions.internal.AppFunctionManagerApi
 import androidx.appfunctions.internal.AppFunctionReader
 import androidx.appfunctions.internal.AppSearchAppFunctionReader
+import androidx.appfunctions.internal.Dependencies
 import androidx.appfunctions.internal.ExtensionAppFunctionManagerApi
 import androidx.appfunctions.internal.TranslatorSelector
-import androidx.appfunctions.internal.TranslatorSelectorImpl
 import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 import com.android.extensions.appfunctions.AppFunctionManager
@@ -48,7 +48,7 @@ internal constructor(
         context: Context
     ) : this(
         context,
-        TranslatorSelectorImpl(),
+        Dependencies.translatorSelector,
         AppSearchAppFunctionReader(context),
         ExtensionAppFunctionManagerApi(context)
     )

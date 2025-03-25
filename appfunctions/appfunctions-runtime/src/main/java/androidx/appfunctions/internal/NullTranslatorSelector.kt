@@ -16,13 +16,9 @@
 
 package androidx.appfunctions.internal
 
-import androidx.annotation.RestrictTo
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 
-/** Selects the translator based on the schema metadata. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface TranslatorSelector {
-
-    /** Returns the translator for the given schema metadata, null if no translation is needed. */
-    public fun getTranslator(schemaMetadata: AppFunctionSchemaMetadata): Translator?
+/** Disables translation by always returning a null translator. */
+internal class NullTranslatorSelector : TranslatorSelector {
+    override fun getTranslator(schemaMetadata: AppFunctionSchemaMetadata): Translator? = null
 }

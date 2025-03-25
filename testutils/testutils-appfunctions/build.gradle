@@ -27,10 +27,15 @@ plugins {
     id("AndroidXPlugin")
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 dependencies {
     api(libs.kotlinStdlib)
+
+    implementation("androidx.appsearch:appsearch:1.1.0-beta01")
+    kapt("androidx.appsearch:appsearch-compiler:1.1.0-beta01")
+    kapt(libs.kotlinMetadataJvm)
 }
 
 android {

@@ -37,6 +37,7 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
@@ -134,6 +135,7 @@ class AppFunctionSerializableProcessor(
                 annotatedClass,
                 resolvedAnnotatedSerializableProxies
             )
+
         val generatedFactoryClassName = "\$${annotatedClass.originalClassName.simpleName}Factory"
         val fileSpec =
             FileSpec.builder(
@@ -144,6 +146,11 @@ class AppFunctionSerializableProcessor(
                     TypeSpec.classBuilder(generatedFactoryClassName)
                         .addAnnotation(AppFunctionCompiler.GENERATED_ANNOTATION)
                         .addSuperinterface(superInterfaceClass)
+                        .apply {
+                            if (annotatedClass.modifiers.contains(Modifier.INTERNAL)) {
+                                addModifiers(KModifier.INTERNAL)
+                            }
+                        }
                         .addFunction(
                             buildFromAppFunctionDataFunction(annotatedClass, factoryCodeBuilder)
                         )
@@ -289,7 +296,10 @@ class AppFunctionSerializableProcessor(
     @VisibleForTesting
     class Provider : SymbolProcessorProvider {
         override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-            return AppFunctionSerializableProcessor(environment.codeGenerator, environment.logger)
+            return AppFunctionSerializableProcessor(
+                environment.codeGenerator,
+                environment.logger,
+            )
         }
     }
 }
