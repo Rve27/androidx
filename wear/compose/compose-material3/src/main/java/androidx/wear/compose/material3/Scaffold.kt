@@ -16,7 +16,6 @@
 
 package androidx.wear.compose.material3
 
-import androidx.annotation.VisibleForTesting
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
@@ -42,18 +41,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.util.fastForEach
 import androidx.wear.compose.foundation.ScrollInfoProvider
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.collections.find
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-internal class ScaffoldState(
-    internal val appScaffoldPresent: Boolean,
-    appTimeText: (@Composable (() -> Unit))? = null
-) {
-    val fullScreenContent = FullScreenContent()
+internal class ScaffoldState(appTimeText: (@Composable (() -> Unit))? = null) {
     val screenContent = ScreenContent(appTimeText)
 
     /**
@@ -61,30 +55,6 @@ internal class ScaffoldState(
      * needed for transitions or other animations affecting the parent.
      */
     var parentScale = mutableFloatStateOf(1f)
-}
-
-/**
- * Manages an ordered list of full-screen composable content items. Used for displaying the full
- * screen content - such as various dialogs.
- */
-internal class FullScreenContent() {
-
-    fun addOrUpdateFullScreen(key: Any, content: @Composable () -> Unit) {
-        contentItems.apply {
-            find { it.key === key }?.let { it.content = content }
-                ?: add(FullScreenContentItem(key, content))
-        }
-    }
-
-    fun removeFullScreen(key: Any) {
-        contentItems.removeIf { it.key === key }
-    }
-
-    @Composable fun OverlayContent() = contentItems.forEach { it.content() }
-
-    @VisibleForTesting internal val contentItems = mutableStateListOf<FullScreenContentItem>()
-
-    internal data class FullScreenContentItem(val key: Any, var content: @Composable () -> Unit)
 }
 
 /**
@@ -200,7 +170,7 @@ internal fun AnimatedIndicator(
     }
 }
 
-internal val LocalScaffoldState = compositionLocalOf { ScaffoldState(appScaffoldPresent = false) }
+internal val LocalScaffoldState = compositionLocalOf { ScaffoldState() }
 
 private const val IDLE_DELAY = 2000L
 
