@@ -11,7 +11,7 @@ import androidx.stableaidl.StableAidlBuildTypeDslExtension
 plugins {
     id("AndroidXPlugin")
     id("com.android.library")
-    id("kotlin-android")
+    id("org.jetbrains.kotlin.android")
     id("androidx.stableaidl")
 }
 
