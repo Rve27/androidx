@@ -24,7 +24,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
-import android.os.Parcelable
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
@@ -98,7 +97,7 @@ public actual open class NavController(
         }
 
     private var navigatorStateToRestore: SavedState? = null
-    private var backStackToRestore: Array<Parcelable>? = null
+    private var backStackToRestore: Array<SavedState>? = null
     private var deepLinkHandled = false
 
     private val backQueue: ArrayDeque<NavBackStackEntry> = ArrayDeque()
@@ -1231,8 +1230,8 @@ public actual open class NavController(
             }
         }
         backStackToRestore?.let { backStackToRestore ->
-            for (parcelable in backStackToRestore) {
-                val state = parcelable as NavBackStackEntryState
+            for (savedState in backStackToRestore) {
+                val state = NavBackStackEntryState(savedState)
                 val node = findDestination(state.destinationId)
                 if (node == null) {
                     val dest = NavDestination.getDisplayName(navContext, state.destinationId)
@@ -2351,11 +2350,11 @@ public actual open class NavController(
             if (b == null) {
                 b = savedState()
             }
-            val backStack = arrayListOf<Parcelable>()
+            val backStack = arrayListOf<SavedState>()
             for (backStackEntry in this.backQueue) {
-                backStack.add(NavBackStackEntryState(backStackEntry))
+                backStack.add(NavBackStackEntryState(backStackEntry).writeToState())
             }
-            b.write { putParcelableList(KEY_BACK_STACK, backStack) }
+            b.write { putSavedStateList(KEY_BACK_STACK, backStack) }
         }
         if (backStackMap.isNotEmpty()) {
             if (b == null) {
@@ -2380,9 +2379,11 @@ public actual open class NavController(
             val backStackStateIds = ArrayList<String>()
             for ((id, backStackStates) in backStackStates) {
                 backStackStateIds += id
-                val states = arrayListOf<Parcelable>()
-                backStackStates.forEach { backStackState -> states.add(backStackState) }
-                b.write { putParcelableList(KEY_BACK_STACK_STATES_PREFIX + id, states) }
+                val states = arrayListOf<SavedState>()
+                backStackStates.forEach { backStackState ->
+                    states.add(backStackState.writeToState())
+                }
+                b.write { putSavedStateList(KEY_BACK_STACK_STATES_PREFIX + id, states) }
             }
             b.write { putStringList(KEY_BACK_STACK_STATES_IDS, backStackStateIds) }
         }
@@ -2408,7 +2409,7 @@ public actual open class NavController(
                 } else null
             backStackToRestore =
                 if (contains(KEY_BACK_STACK)) {
-                    getParcelableList<Parcelable>(KEY_BACK_STACK).toTypedArray()
+                    getSavedStateList(KEY_BACK_STACK).toTypedArray()
                 } else null
             backStackStates.clear()
             if (contains(KEY_BACK_STACK_DEST_IDS) && contains(KEY_BACK_STACK_IDS)) {
@@ -2427,12 +2428,11 @@ public actual open class NavController(
                 val backStackStateIds = getStringList(KEY_BACK_STACK_STATES_IDS)
                 backStackStateIds.forEach { id ->
                     if (contains(KEY_BACK_STACK_STATES_PREFIX + id)) {
-                        val backStackState =
-                            getParcelableList<Parcelable>(KEY_BACK_STACK_STATES_PREFIX + id)
+                        val backStackState = getSavedStateList(KEY_BACK_STACK_STATES_PREFIX + id)
                         backStackStates[id] =
                             ArrayDeque<NavBackStackEntryState>(backStackState.size).apply {
-                                for (parcelable in backStackState) {
-                                    add(parcelable as NavBackStackEntryState)
+                                for (savedState in backStackState) {
+                                    add(NavBackStackEntryState(savedState))
                                 }
                             }
                     }

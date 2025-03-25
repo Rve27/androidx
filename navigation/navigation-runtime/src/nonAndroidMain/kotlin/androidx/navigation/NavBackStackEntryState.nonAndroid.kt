@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package androidx.navigation
 
 import androidx.lifecycle.Lifecycle
@@ -36,11 +37,10 @@ internal actual class NavBackStackEntryState {
     private val impl: NavBackStackEntryStateImpl
 
     actual constructor(entry: NavBackStackEntry) {
-        impl = NavBackStackEntryStateImpl(entry, entry.destination.id)
+        impl = NavBackStackEntryStateImpl(entry, 0)
     }
 
     actual constructor(state: SavedState) {
-        state.classLoader = javaClass.classLoader
         impl = NavBackStackEntryStateImpl(state)
     }
 
@@ -54,11 +54,10 @@ internal actual class NavBackStackEntryState {
         hostLifecycleState: Lifecycle.State,
         viewModel: NavControllerViewModel?
     ): NavBackStackEntry {
-        val preparedArgs = args?.let { prepareArgs(it, context) }
-        return impl.instantiate(context, destination, preparedArgs, hostLifecycleState, viewModel)
+        return impl.instantiate(context, destination, args, hostLifecycleState, viewModel)
     }
 
     actual fun prepareArgs(args: SavedState, context: NavContext): SavedState? {
-        return args.apply { classLoader = context.context?.classLoader }
+        return args
     }
 }
