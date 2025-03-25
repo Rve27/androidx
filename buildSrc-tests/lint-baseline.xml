@@ -703,13 +703,4 @@
             file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/AndroidXImplPlugin.kt"/>
     </issue>
 
-    <issue
-        id="WithTypeWithoutConfigureEach"
-        message="Avoid passing a closure to withType, use withType().configureEach instead"
-        errorLine1="                targets.withType&lt;KotlinJvmTarget> {"
-        errorLine2="                        ~~~~~~~~">
-        <location
-            file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/AndroidXImplPlugin.kt"/>
-    </issue>
-
 </issues>

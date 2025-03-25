@@ -478,19 +478,19 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
                         }
                     }
                 }
-                targets.withType<KotlinJvmTarget> {
+                targets.withType(KotlinJvmTarget::class.java).configureEach { target ->
                     val defaultTargetVersionForNonAndroidTargets =
                         project.provider {
                             getDefaultTargetJavaVersion(
                                     softwareType = androidXExtension.type,
                                     projectName = project.name,
-                                    targetName = name
+                                    targetName = target.name
                                 )
                                 .toString()
                         }
                     val defaultJvmTargetForNonAndroidTargets =
                         defaultTargetVersionForNonAndroidTargets.map { JvmTarget.fromTarget(it) }
-                    compilations.configureEach { compilation ->
+                    target.compilations.configureEach { compilation ->
                         compilation.compileJavaTaskProvider?.configure { javaCompile ->
                             javaCompile.targetCompatibility =
                                 defaultTargetVersionForNonAndroidTargets.get()
