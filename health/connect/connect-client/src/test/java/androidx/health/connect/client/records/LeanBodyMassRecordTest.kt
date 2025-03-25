@@ -1,11 +1,11 @@
 /*
- * Copyright 2022 The Android Open Source Project
+ * Copyright (C) 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,69 +13,76 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package androidx.health.connect.client.records
 
 import androidx.health.connect.client.records.metadata.Metadata
+import androidx.health.connect.client.units.kilograms
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import java.time.Instant
 import java.time.ZoneOffset
+import kotlin.test.assertFailsWith
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
 @Config(minSdk = 28)
 @RunWith(AndroidJUnit4::class)
-class Vo2MaxRecordTest {
+class LeanBodyMassRecordTest {
 
     @Test
     fun validRecord_equals() {
         assertThat(
-                Vo2MaxRecord(
+                LeanBodyMassRecord(
                     time = Instant.ofEpochMilli(1678900000L),
                     zoneOffset = ZoneOffset.UTC,
                     metadata = Metadata.manualEntry(),
-                    vo2MillilitersPerMinuteKilogram = 45.5,
-                    measurementMethod = Vo2MaxRecord.MEASUREMENT_METHOD_METABOLIC_CART,
+                    mass = 70.5.kilograms,
                 )
             )
             .isEqualTo(
-                Vo2MaxRecord(
+                LeanBodyMassRecord(
                     time = Instant.ofEpochMilli(1678900000L),
                     zoneOffset = ZoneOffset.UTC,
                     metadata = Metadata.manualEntry(),
-                    vo2MillilitersPerMinuteKilogram = 45.5,
-                    measurementMethod = Vo2MaxRecord.MEASUREMENT_METHOD_METABOLIC_CART,
+                    mass = 70.5.kilograms,
                 )
             )
     }
 
     @Test
-    fun measurementMethodEnums_existMapping() {
-        val allEnums = getAllIntDefEnums<Vo2MaxRecord>("""MEASUREMENT_METHOD.*""")
-
-        Truth.assertThat(Vo2MaxRecord.MEASUREMENT_METHOD_STRING_TO_INT_MAP.values)
-            .containsExactlyElementsIn(allEnums)
-        Truth.assertThat(Vo2MaxRecord.MEASUREMENT_METHOD_INT_TO_STRING_MAP.keys)
-            .containsExactlyElementsIn(allEnums)
+    fun invalidMass_throws() {
+        assertFailsWith<IllegalArgumentException> {
+            LeanBodyMassRecord(
+                time = Instant.ofEpochMilli(1234L),
+                zoneOffset = null,
+                metadata = Metadata.manualEntry(),
+                mass = (-1.0).kilograms,
+            )
+        }
+        assertFailsWith<IllegalArgumentException> {
+            LeanBodyMassRecord(
+                time = Instant.ofEpochMilli(1234L),
+                zoneOffset = null,
+                metadata = Metadata.manualEntry(),
+                mass = 1001.0.kilograms,
+            )
+        }
     }
 
     @Test
     fun toString_containsMembers() {
         assertThat(
-                Vo2MaxRecord(
-                        time = Instant.ofEpochMilli(1234L),
-                        zoneOffset = null,
-                        vo2MillilitersPerMinuteKilogram = 95.0,
-                        measurementMethod = Vo2MaxRecord.MEASUREMENT_METHOD_ROCKPORT_FITNESS_TEST,
+                LeanBodyMassRecord(
+                        time = Instant.ofEpochMilli(123456789L),
+                        zoneOffset = ZoneOffset.UTC,
                         metadata = Metadata.unknownRecordingMethod(),
+                        mass = 65.0.kilograms,
                     )
                     .toString()
             )
             .isEqualTo(
-                "Vo2MaxRecord(time=1970-01-01T00:00:01.234Z, zoneOffset=null, vo2MillilitersPerMinuteKilogram=95.0, measurementMethod=5, metadata=Metadata(id='', dataOrigin=DataOrigin(packageName=''), lastModifiedTime=1970-01-01T00:00:00Z, clientRecordId=null, clientRecordVersion=0, device=null, recordingMethod=0))"
+                "LeanBodyMassRecord(time=1970-01-02T10:17:36.789Z, zoneOffset=Z, mass=65.0 kilograms, metadata=Metadata(id='', dataOrigin=DataOrigin(packageName=''), lastModifiedTime=1970-01-01T00:00:00Z, clientRecordId=null, clientRecordVersion=0, device=null, recordingMethod=0))"
             )
     }
 }
