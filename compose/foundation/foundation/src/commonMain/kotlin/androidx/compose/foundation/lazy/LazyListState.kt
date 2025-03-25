@@ -319,7 +319,7 @@ constructor(
         object : LazyListPrefetchScope {
             override fun schedulePrefetch(
                 index: Int,
-                onPrefetchFinished: ((Int) -> Unit)?
+                onPrefetchFinished: (LazyListPrefetchResultScope.() -> Unit)?
             ): LazyLayoutPrefetchState.PrefetchHandle {
                 // Without read observation since this can be triggered from scroll - this will then
                 // cause us to recompose when the measure result changes. We don't care since the
@@ -339,7 +339,10 @@ constructor(
                                     getSize(it).width
                                 }
                         }
-                        onPrefetchFinished.invoke(mainAxisItemSize)
+
+                        onPrefetchFinished.invoke(
+                            LazyListPrefetchResultScopeImpl(index, mainAxisItemSize)
+                        )
                     }
                 }
             }

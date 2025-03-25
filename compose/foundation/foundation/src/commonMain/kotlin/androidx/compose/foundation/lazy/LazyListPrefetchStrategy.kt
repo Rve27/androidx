@@ -97,12 +97,13 @@ interface LazyListPrefetchScope {
      * @param index the index of the child to prefetch
      * @param onPrefetchFinished A callback that will be invoked when the prefetching of this item
      *   is completed. This means precomposition and premeasuring. If the request is canceled before
-     *   either phases can complete, this callback won't be called. The main axis size in pixels of
-     *   the prefetched item is available as a parameter of this callback.
+     *   either phases can complete, this callback won't be called. The item index and the main axis
+     *   size in pixels of the prefetched item is available as a parameter of this callback. See
+     *   [LazyListPrefetchResultScope] for additional information about the prefetched item.
      */
     fun schedulePrefetch(
         index: Int,
-        onPrefetchFinished: ((Int) -> Unit)? = null
+        onPrefetchFinished: (LazyListPrefetchResultScope.() -> Unit)? = null
     ): LazyLayoutPrefetchState.PrefetchHandle
 }
 
@@ -215,3 +216,23 @@ private class DefaultLazyListPrefetchStrategy(private val initialNestedPrefetchI
         }
     }
 }
+
+/**
+ * A scope for [LazyListPrefetchScope.schedulePrefetch] callbacks. The scope provides additional
+ * information about a prefetched item.
+ */
+@ExperimentalFoundationApi
+interface LazyListPrefetchResultScope {
+
+    /** The index of the prefetched item */
+    val index: Int
+
+    /** The main axis size in pixels of the prefetched item */
+    val mainAxisSize: Int
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+internal class LazyListPrefetchResultScopeImpl(
+    override val index: Int,
+    override val mainAxisSize: Int
+) : LazyListPrefetchResultScope

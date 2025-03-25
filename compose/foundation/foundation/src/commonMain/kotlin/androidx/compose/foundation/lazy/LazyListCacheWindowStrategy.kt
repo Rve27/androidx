@@ -112,10 +112,15 @@ internal class LazyListCacheWindowScope() : CacheWindowScope {
         get() = (layoutInfo as? LazyListMeasureResult)?.density
 
     override fun schedulePrefetch(
-        laneIndex: Int,
-        onItemPrefetched: (Int) -> Unit
+        lineIndex: Int,
+        onItemPrefetched: (Int, Int) -> Unit
     ): List<PrefetchHandle> {
-        return listOf(prefetchScope.schedulePrefetch(laneIndex, onItemPrefetched))
+        return listOf(
+            prefetchScope.schedulePrefetch(
+                lineIndex,
+                { onItemPrefetched.invoke(index, mainAxisSize) }
+            )
+        )
     }
 
     override val visibleLineCount: Int

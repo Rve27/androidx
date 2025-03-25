@@ -324,7 +324,7 @@ constructor(
             @Suppress("PrimitiveInCollection")
             override fun scheduleLinePrefetch(
                 lineIndex: Int,
-                onPrefetchFinished: ((List<Int>) -> Unit)?
+                onPrefetchFinished: (LazyGridPrefetchResultScope.() -> Unit)?
             ): List<LazyLayoutPrefetchState.PrefetchHandle> {
                 // Without read observation since this can be triggered from scroll - this will then
                 // cause us to recompose when the measure result changes. We don't care since the
@@ -364,7 +364,12 @@ constructor(
                                     // all items in this line were prefetched, report the size
                                     if (completedCount == itemsInLineInfo.size) {
                                         if (onPrefetchFinished != null && itemSizes != null) {
-                                            onPrefetchFinished.invoke(itemSizes)
+                                            onPrefetchFinished.invoke(
+                                                LazyGridPrefetchResultScopeImpl(
+                                                    lineIndex,
+                                                    itemSizes
+                                                )
+                                            )
                                         }
                                     } else {
                                         completedCount++

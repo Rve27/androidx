@@ -910,8 +910,15 @@ package androidx.compose.foundation.lazy {
     property public abstract java.util.List<androidx.compose.foundation.lazy.LazyListItemInfo> visibleItemsInfo;
   }
 
+  @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface LazyListPrefetchResultScope {
+    method public int getIndex();
+    method public int getMainAxisSize();
+    property public abstract int index;
+    property public abstract int mainAxisSize;
+  }
+
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface LazyListPrefetchScope {
-    method public androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle schedulePrefetch(int index, optional kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit>? onPrefetchFinished);
+    method public androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle schedulePrefetch(int index, optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.lazy.LazyListPrefetchResultScope,kotlin.Unit>? onPrefetchFinished);
   }
 
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface LazyListPrefetchStrategy {
@@ -1083,9 +1090,17 @@ package androidx.compose.foundation.lazy.grid {
     property public abstract java.util.List<androidx.compose.foundation.lazy.grid.LazyGridItemInfo> visibleItemsInfo;
   }
 
+  @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface LazyGridPrefetchResultScope {
+    method public int getLineIndex();
+    method public int getLineItemCount();
+    method public int getMainAxisSize(int itemIndexInLine);
+    property public abstract int lineIndex;
+    property public abstract int lineItemCount;
+  }
+
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface LazyGridPrefetchScope {
     method public java.util.List<androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle> scheduleLinePrefetch(int lineIndex);
-    method public default java.util.List<androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle> scheduleLinePrefetch(int lineIndex, kotlin.jvm.functions.Function1<? super java.util.List<java.lang.Integer>,kotlin.Unit>? onPrefetchFinished);
+    method public default java.util.List<androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle> scheduleLinePrefetch(int lineIndex, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.lazy.grid.LazyGridPrefetchResultScope,kotlin.Unit>? onPrefetchFinished);
   }
 
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface LazyGridPrefetchStrategy {

@@ -114,12 +114,13 @@ interface LazyGridPrefetchScope {
      * @param onPrefetchFinished A callback that will be invoked when the prefetching of this line
      *   is completed. This means precomposition and premeasuring. If the request is canceled before
      *   either phases can complete, or before all items in this line have been prepared, this
-     *   callback won't be invoked. The main axis size in pixels of the prefetched items are
-     *   available as a parameter of this callback.
+     *   callback won't be invoked. The lineIndex and the main axis size in pixels of the prefetched
+     *   items are available as a parameter of this callback. See [LazyGridPrefetchResultScope] for
+     *   information about the line prefetched.
      */
     fun scheduleLinePrefetch(
         lineIndex: Int,
-        onPrefetchFinished: ((List<Int>) -> Unit)?
+        onPrefetchFinished: (LazyGridPrefetchResultScope.() -> Unit)?
     ): List<LazyLayoutPrefetchState.PrefetchHandle> = scheduleLinePrefetch(lineIndex)
 }
 
@@ -257,4 +258,36 @@ private class DefaultLazyGridPrefetchStrategy(private val initialNestedPrefetchI
             schedulePrecomposition(firstVisibleItemIndex + i)
         }
     }
+}
+
+/**
+ * A scope for [LazyGridPrefetchScope.scheduleLinePrefetch] callbacks. The scope provides additional
+ * information about a prefetched item.
+ */
+@ExperimentalFoundationApi
+interface LazyGridPrefetchResultScope {
+
+    /** The number of items in this prefetched line. */
+    val lineItemCount: Int
+
+    /** The index of the prefetched line */
+    val lineIndex: Int
+
+    /**
+     * Returns the main axis size in pixels of a prefecthed item in this line. [itemIndexInLine] is
+     * the item index from 0 to [lineItemCount] -1.
+     */
+    fun getMainAxisSize(itemIndexInLine: Int): Int
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Suppress("PrimitiveInCollection")
+internal class LazyGridPrefetchResultScopeImpl(
+    override val lineIndex: Int,
+    private val mainAxisSizes: List<Int>
+) : LazyGridPrefetchResultScope {
+    override val lineItemCount: Int
+        get() = mainAxisSizes.size
+
+    override fun getMainAxisSize(itemIndexInLine: Int): Int = mainAxisSizes[itemIndexInLine]
 }

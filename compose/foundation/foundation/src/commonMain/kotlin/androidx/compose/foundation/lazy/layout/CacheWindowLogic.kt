@@ -288,7 +288,10 @@ internal abstract class CacheWindowLogic(
             InvalidItemSize
         } else {
             // item is not scheduled
-            prefetchWindowHandles[index] = schedulePrefetch(index) { onItemPrefetched(index, it) }
+            prefetchWindowHandles[index] =
+                schedulePrefetch(index) { prefetchedIndex, size ->
+                    onItemPrefetched(prefetchedIndex, size)
+                }
             if (isUrgent) prefetchWindowHandles[index]?.fastForEach { it.markAsUrgent() }
             InvalidItemSize
         }
@@ -358,8 +361,8 @@ internal abstract class CacheWindowLogic(
 
         if (nextPrefetchableIndex in 0..itemsCount) {
             prefetchWindowHandles[nextPrefetchableIndex] =
-                schedulePrefetch(nextPrefetchableIndex) {
-                    onItemPrefetched(nextPrefetchableIndex, it)
+                schedulePrefetch(nextPrefetchableIndex) { index, mainAxisSize ->
+                    onItemPrefetched(index, mainAxisSize)
                 }
         }
     }
@@ -378,7 +381,7 @@ internal interface CacheWindowScope {
     val mainAxisViewportSize: Int
     val density: Density?
 
-    fun schedulePrefetch(laneIndex: Int, onItemPrefetched: (Int) -> Unit): List<PrefetchHandle>
+    fun schedulePrefetch(lineIndex: Int, onItemPrefetched: (Int, Int) -> Unit): List<PrefetchHandle>
 
     fun getVisibleItemSize(indexInVisibleLines: Int): Int
 
