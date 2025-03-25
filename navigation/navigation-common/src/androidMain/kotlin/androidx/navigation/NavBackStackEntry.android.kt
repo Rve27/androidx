@@ -20,7 +20,6 @@
 package androidx.navigation
 
 import android.app.Application
-import android.content.Context
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.lifecycle.DEFAULT_ARGS_KEY
@@ -42,6 +41,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.internal.NavContext
 import androidx.savedstate.SavedState
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
@@ -52,12 +52,12 @@ import java.util.UUID
 public actual class NavBackStackEntry
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 private constructor(
-    private val context: Context?,
+    private val context: NavContext?,
     @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public actual var destination: NavDestination,
     private val immutableArgs: SavedState? = null,
     private var hostLifecycleState: Lifecycle.State = Lifecycle.State.CREATED,
     private val viewModelStoreProvider: NavViewModelStoreProvider? = null,
-    public actual val id: String = UUID.randomUUID().toString(),
+    public actual val id: String = randomUUID(),
     private val savedState: SavedState? = null
 ) :
     LifecycleOwner,
@@ -82,16 +82,16 @@ private constructor(
         maxLifecycle = entry.maxLifecycle
     }
 
-    public companion object {
+    public actual companion object {
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun create(
-            context: Context?,
+        public actual fun create(
+            context: NavContext?,
             destination: NavDestination,
-            arguments: SavedState? = null,
-            hostLifecycleState: Lifecycle.State = Lifecycle.State.CREATED,
-            viewModelStoreProvider: NavViewModelStoreProvider? = null,
-            id: String = UUID.randomUUID().toString(),
-            savedState: SavedState? = null
+            arguments: SavedState?,
+            hostLifecycleState: Lifecycle.State,
+            viewModelStoreProvider: NavViewModelStoreProvider?,
+            id: String,
+            savedState: SavedState?
         ): NavBackStackEntry =
             NavBackStackEntry(
                 context,
@@ -102,14 +102,14 @@ private constructor(
                 id,
                 savedState
             )
+
+        internal actual fun randomUUID(): String = UUID.randomUUID().toString()
     }
 
     private var _lifecycle = LifecycleRegistry(this)
     private val savedStateRegistryController = SavedStateRegistryController.create(this)
     private var savedStateRegistryAttached = false
-    private val defaultFactory by lazy {
-        SavedStateViewModelFactory((context?.applicationContext as? Application), this, arguments)
-    }
+    private val defaultFactory by lazy { SavedStateViewModelFactory() }
 
     public actual val arguments: SavedState?
         get() =
@@ -194,7 +194,7 @@ private constructor(
     override actual val defaultViewModelCreationExtras: CreationExtras
         get() {
             val extras = MutableCreationExtras()
-            (context?.applicationContext as? Application)?.let { application ->
+            (context?.getApplication() as? Application)?.let { application ->
                 extras[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] = application
             }
             extras[SAVED_STATE_REGISTRY_OWNER_KEY] = this

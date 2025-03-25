@@ -25,18 +25,91 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation.internal.NavContext
 import androidx.savedstate.SavedState
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryOwner
+import kotlin.experimental.and
+import kotlin.experimental.or
+import kotlin.random.Random
 
-public actual class NavBackStackEntry :
+public actual class NavBackStackEntry
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+private constructor(
+    private val context: NavContext?,
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public actual var destination: NavDestination,
+    private val immutableArgs: SavedState? = null,
+    private var hostLifecycleState: Lifecycle.State = Lifecycle.State.CREATED,
+    private val viewModelStoreProvider: NavViewModelStoreProvider? = null,
+    public actual val id: String = randomUUID(),
+    private val savedState: SavedState? = null
+) :
     LifecycleOwner,
     ViewModelStoreOwner,
     HasDefaultViewModelProviderFactory,
     SavedStateRegistryOwner {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public actual constructor(entry: NavBackStackEntry, arguments: SavedState?)
+    public actual constructor(
+        entry: NavBackStackEntry,
+        arguments: SavedState?
+    ) : this(
+        entry.context,
+        entry.destination,
+        arguments,
+        entry.hostLifecycleState,
+        entry.viewModelStoreProvider,
+        entry.id,
+        entry.savedState
+    ) {
+        hostLifecycleState = entry.hostLifecycleState
+        maxLifecycle = entry.maxLifecycle
+    }
+
+    public actual companion object {
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public actual fun create(
+            context: NavContext?,
+            destination: NavDestination,
+            arguments: SavedState?,
+            hostLifecycleState: Lifecycle.State,
+            viewModelStoreProvider: NavViewModelStoreProvider?,
+            id: String,
+            savedState: SavedState?
+        ): NavBackStackEntry =
+            NavBackStackEntry(
+                context,
+                destination,
+                arguments,
+                hostLifecycleState,
+                viewModelStoreProvider,
+                id,
+                savedState
+            )
+
+        @OptIn(ExperimentalStdlibApi::class)
+        internal actual fun randomUUID(): String {
+            val bytes =
+                Random.nextBytes(16).also {
+                    it[6] = it[6] and 0x0f // clear version
+                    it[6] = it[6] or 0x40 // set to version 4
+                    it[8] = it[8] and 0x3f // clear variant
+                    it[8] = it[8] or 0x80.toByte() // set to IETF variant
+                }
+            return buildString(capacity = 36) {
+                append(bytes.toHexString(0, 4))
+                append('-')
+                append(bytes.toHexString(4, 6))
+                append('-')
+                append(bytes.toHexString(6, 8))
+                append('-')
+                append(bytes.toHexString(8, 10))
+                append('-')
+                append(bytes.toHexString(10))
+                toString()
+            }
+        }
+    }
 
     actual override val savedStateRegistry: SavedStateRegistry
         get() = implementedInJetBrainsFork()
@@ -48,16 +121,6 @@ public actual class NavBackStackEntry :
         get() = implementedInJetBrainsFork()
 
     actual override val defaultViewModelProviderFactory: ViewModelProvider.Factory
-        get() = implementedInJetBrainsFork()
-
-    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public actual var destination: NavDestination
-        get() = implementedInJetBrainsFork()
-        set(_) {
-            implementedInJetBrainsFork()
-        }
-
-    public actual val id: String
         get() = implementedInJetBrainsFork()
 
     public actual val arguments: SavedState?

@@ -159,6 +159,13 @@ final class <#A: kotlin/Any> androidx.navigation.serialization/RouteEncoder : ko
     final fun encodeValue(kotlin/Any) // androidx.navigation.serialization/RouteEncoder.encodeValue|encodeValue(kotlin.Any){}[0]
 }
 
+final class androidx.navigation.internal/NavContext { // androidx.navigation.internal/NavContext|null[0]
+    constructor <init>() // androidx.navigation.internal/NavContext.<init>|<init>(){}[0]
+
+    final fun getApplication(): kotlin/Any? // androidx.navigation.internal/NavContext.getApplication|getApplication(){}[0]
+    final fun getResourceName(kotlin/Int): kotlin/String // androidx.navigation.internal/NavContext.getResourceName|getResourceName(kotlin.Int){}[0]
+}
+
 final class androidx.navigation/NamedNavArgument { // androidx.navigation/NamedNavArgument|null[0]
     final val argument // androidx.navigation/NamedNavArgument.argument|{}argument[0]
         final fun <get-argument>(): androidx.navigation/NavArgument // androidx.navigation/NamedNavArgument.argument.<get-argument>|<get-argument>(){}[0]
@@ -239,6 +246,10 @@ final class androidx.navigation/NavBackStackEntry : androidx.lifecycle/HasDefaul
     final fun handleLifecycleEvent(androidx.lifecycle/Lifecycle.Event) // androidx.navigation/NavBackStackEntry.handleLifecycleEvent|handleLifecycleEvent(androidx.lifecycle.Lifecycle.Event){}[0]
     final fun saveState(androidx.savedstate/SavedState) // androidx.navigation/NavBackStackEntry.saveState|saveState(androidx.savedstate.SavedState){}[0]
     final fun updateState() // androidx.navigation/NavBackStackEntry.updateState|updateState(){}[0]
+
+    final object Companion { // androidx.navigation/NavBackStackEntry.Companion|null[0]
+        final fun create(androidx.navigation.internal/NavContext?, androidx.navigation/NavDestination, androidx.savedstate/SavedState? = ..., androidx.lifecycle/Lifecycle.State = ..., androidx.navigation/NavViewModelStoreProvider? = ..., kotlin/String = ..., androidx.savedstate/SavedState? = ...): androidx.navigation/NavBackStackEntry // androidx.navigation/NavBackStackEntry.Companion.create|create(androidx.navigation.internal.NavContext?;androidx.navigation.NavDestination;androidx.savedstate.SavedState?;androidx.lifecycle.Lifecycle.State;androidx.navigation.NavViewModelStoreProvider?;kotlin.String;androidx.savedstate.SavedState?){}[0]
+    }
 }
 
 final class androidx.navigation/NavDeepLink { // androidx.navigation/NavDeepLink|null[0]

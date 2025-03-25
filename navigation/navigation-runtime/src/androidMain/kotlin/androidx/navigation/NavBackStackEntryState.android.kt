@@ -16,10 +16,10 @@
 package androidx.navigation
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.internal.NavContext
 import androidx.savedstate.SavedState
 
 @SuppressLint("BanParcelableUsage")
@@ -45,12 +45,12 @@ internal class NavBackStackEntryState : Parcelable {
     }
 
     fun instantiate(
-        context: Context,
+        context: NavContext,
         destination: NavDestination,
         hostLifecycleState: Lifecycle.State,
         viewModel: NavControllerViewModel?
     ): NavBackStackEntry {
-        val args = args?.apply { classLoader = context.classLoader }
+        val args = args?.apply { classLoader = context.context?.classLoader }
         return NavBackStackEntry.create(
             context,
             destination,

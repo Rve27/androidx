@@ -25,6 +25,7 @@ import androidx.annotation.RestrictTo
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelStore
+import androidx.navigation.internal.NavContext
 import androidx.savedstate.SavedState
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
@@ -36,6 +37,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.InternalSerializationApi
 
 public actual open class NavController {
+
+    internal actual val navContext = NavContext()
 
     public actual open var graph: NavGraph
         @MainThread get() = implementedInJetBrainsFork()

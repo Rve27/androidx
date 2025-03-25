@@ -29,6 +29,7 @@ import androidx.collection.size
 import androidx.collection.valueIterator
 import androidx.core.content.res.use
 import androidx.navigation.common.R
+import androidx.navigation.internal.NavContext
 import androidx.navigation.serialization.generateHashCode
 import androidx.navigation.serialization.generateRouteWithArgs
 import kotlin.reflect.KClass
@@ -50,7 +51,7 @@ public actual open class NavGraph actual constructor(navGraphNavigator: Navigato
         super.onInflate(context, attrs)
         context.resources.obtainAttributes(attrs, R.styleable.NavGraphNavigator).use {
             startDestinationId = it.getResourceId(R.styleable.NavGraphNavigator_startDestination, 0)
-            startDestIdName = getDisplayName(context, startDestId)
+            startDestIdName = getDisplayName(NavContext(context), startDestId)
         }
     }
 

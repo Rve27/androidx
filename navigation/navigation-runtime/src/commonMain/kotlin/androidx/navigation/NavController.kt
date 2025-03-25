@@ -25,6 +25,7 @@ import androidx.annotation.RestrictTo
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelStore
+import androidx.navigation.internal.NavContext
 import androidx.savedstate.SavedState
 import kotlin.jvm.JvmMultifileClass
 import kotlin.jvm.JvmName
@@ -50,6 +51,8 @@ import kotlinx.serialization.InternalSerializationApi
  * by live data obtained' from a remote server.)
  */
 public expect open class NavController {
+
+    internal val navContext: NavContext
 
     /**
      * The topmost navigation graph associated with this NavController.

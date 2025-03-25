@@ -16,7 +16,6 @@
 package androidx.navigation
 
 import android.content.Context
-import android.content.res.Resources
 import android.net.Uri
 import android.util.AttributeSet
 import androidx.annotation.CallSuper
@@ -28,6 +27,7 @@ import androidx.collection.valueIterator
 import androidx.core.content.res.use
 import androidx.core.net.toUri
 import androidx.navigation.common.R
+import androidx.navigation.internal.NavContext
 import androidx.navigation.serialization.generateHashCode
 import androidx.savedstate.SavedState
 import androidx.savedstate.read
@@ -144,7 +144,7 @@ actual constructor(public actual val navigatorName: String) {
 
             if (array.hasValue(R.styleable.Navigator_android_id)) {
                 id = array.getResourceId(R.styleable.Navigator_android_id, 0)
-                idName = getDisplayName(context, id)
+                idName = getDisplayName(NavContext(context), id)
             }
             label = array.getText(R.styleable.Navigator_android_label)
         }
@@ -623,17 +623,14 @@ actual constructor(public actual val navigatorName: String) {
          */
         @JvmStatic
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun getDisplayName(context: Context, id: Int): String {
+        public fun getDisplayName(context: NavContext, id: Int): String {
             // aapt-generated IDs have the high byte nonzero,
             // so anything below that cannot be a valid resource id
             return if (id <= 0x00FFFFFF) {
                 id.toString()
-            } else
-                try {
-                    context.resources.getResourceName(id)
-                } catch (e: Resources.NotFoundException) {
-                    id.toString()
-                }
+            } else {
+                context.getResourceName(id)
+            }
         }
 
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)

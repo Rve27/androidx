@@ -45,6 +45,7 @@ import androidx.navigation.NavDestination.Companion.createRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.childHierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.internal.NavContext
 import androidx.navigation.serialization.generateHashCode
 import androidx.navigation.serialization.generateRouteWithArgs
 import androidx.savedstate.SavedState
@@ -69,6 +70,9 @@ import kotlinx.serialization.serializer
 public actual open class NavController(
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public val context: Context
 ) {
+
+    internal actual val navContext = NavContext(context)
+
     private var activity: Activity? =
         generateSequence(context) {
                 if (it is ContextWrapper) {
@@ -259,7 +263,13 @@ public actual open class NavController(
         }
 
         override fun createBackStackEntry(destination: NavDestination, arguments: SavedState?) =
-            NavBackStackEntry.create(context, destination, arguments, hostLifecycleState, viewModel)
+            NavBackStackEntry.create(
+                navContext,
+                destination,
+                arguments,
+                hostLifecycleState,
+                viewModel
+            )
 
         override fun pop(popUpTo: NavBackStackEntry, saveState: Boolean) {
             val destinationNavigator: Navigator<out NavDestination> =
@@ -493,7 +503,7 @@ public actual open class NavController(
         if (foundDestination == null) {
             // We were passed a destinationId that doesn't exist on our back stack.
             // Better to ignore the popBackStack than accidentally popping the entire stack
-            val destinationName = NavDestination.getDisplayName(context, destinationId)
+            val destinationName = NavDestination.getDisplayName(navContext, destinationId)
             Log.i(
                 TAG,
                 "Ignoring popBackStack to destination $destinationName as it was not found " +
@@ -1225,13 +1235,13 @@ public actual open class NavController(
                 val state = parcelable as NavBackStackEntryState
                 val node = findDestination(state.destinationId)
                 if (node == null) {
-                    val dest = NavDestination.getDisplayName(context, state.destinationId)
+                    val dest = NavDestination.getDisplayName(navContext, state.destinationId)
                     throw IllegalStateException(
                         "Restoring the Navigation back stack failed: destination $dest cannot be " +
                             "found from the current destination $currentDestination"
                     )
                 }
-                val entry = state.instantiate(context, node, hostLifecycleState, viewModel)
+                val entry = state.instantiate(navContext, node, hostLifecycleState, viewModel)
                 val navigator = _navigatorProvider.getNavigator<Navigator<*>>(node.navigatorName)
                 val navigatorBackStack =
                     navigatorState.getOrPut(navigator) { NavControllerNavigatorState(navigator) }
@@ -1420,7 +1430,7 @@ public actual open class NavController(
                 val arguments = args[index++]
                 val node = findDestination(destinationId)
                 if (node == null) {
-                    val dest = NavDestination.getDisplayName(context, destinationId)
+                    val dest = NavDestination.getDisplayName(navContext, destinationId)
                     throw IllegalStateException(
                         "Deep Linking failed: destination $dest cannot be found from the current " +
                             "destination $currentDestination"
@@ -1461,7 +1471,7 @@ public actual open class NavController(
             val arguments = args[i]
             val node = if (i == 0) _graph else graph!!.findNode(destinationId)
             if (node == null) {
-                val dest = NavDestination.getDisplayName(context, destinationId)
+                val dest = NavDestination.getDisplayName(navContext, destinationId)
                 throw IllegalStateException(
                     "Deep Linking failed: destination $dest cannot be found in graph $graph"
                 )
@@ -1509,7 +1519,7 @@ public actual open class NavController(
             val node =
                 (if (i == 0) if (_graph!!.id == destinationId) _graph else null
                 else graph!!.findNode(destinationId))
-                    ?: return NavDestination.getDisplayName(context, destinationId)
+                    ?: return NavDestination.getDisplayName(navContext, destinationId)
             if (i != deepLink.size - 1) {
                 // We're not at the final NavDestination yet, so keep going through the chain
                 if (node is NavGraph) {
@@ -1767,10 +1777,10 @@ public actual open class NavController(
         }
         val node = findDestination(destId)
         if (node == null) {
-            val dest = NavDestination.getDisplayName(context, destId)
+            val dest = NavDestination.getDisplayName(navContext, destId)
             require(navAction == null) {
                 "Navigation destination $dest referenced from action " +
-                    "${NavDestination.getDisplayName(context, resId)} cannot be found from " +
+                    "${NavDestination.getDisplayName(navContext, resId)} cannot be found from " +
                     "the current destination $currentNode"
             }
             throw IllegalArgumentException(
@@ -1903,7 +1913,7 @@ public actual open class NavController(
                 // Not a single top operation, so we're looking to add the node to the back stack
                 val backStackEntry =
                     NavBackStackEntry.create(
-                        context,
+                        navContext,
                         node,
                         finalArgs,
                         hostLifecycleState,
@@ -2082,11 +2092,11 @@ public actual open class NavController(
         backStackState?.forEach { state ->
             val node = currentDestination.findDestinationComprehensive(state.destinationId, true)
             checkNotNull(node) {
-                val dest = NavDestination.getDisplayName(context, state.destinationId)
+                val dest = NavDestination.getDisplayName(navContext, state.destinationId)
                 "Restore State failed: destination $dest cannot be found from the current " +
                     "destination $currentDestination"
             }
-            backStack += state.instantiate(context, node, hostLifecycleState, viewModel)
+            backStack += state.instantiate(navContext, node, hostLifecycleState, viewModel)
             currentDestination = node
         }
         return backStack
@@ -2125,7 +2135,7 @@ public actual open class NavController(
                             restoredEntry.destination == parent
                         }
                             ?: NavBackStackEntry.create(
-                                context,
+                                navContext,
                                 parent,
                                 finalArgs,
                                 hostLifecycleState,
@@ -2157,7 +2167,7 @@ public actual open class NavController(
                         restoredEntry.destination == parent
                     }
                         ?: NavBackStackEntry.create(
-                            context,
+                            navContext,
                             parent,
                             parent.addInDefaultArgs(args),
                             hostLifecycleState,
@@ -2186,7 +2196,7 @@ public actual open class NavController(
                     restoredEntry.destination == _graph!!
                 }
                     ?: NavBackStackEntry.create(
-                        context,
+                        navContext,
                         _graph!!,
                         _graph!!.addInDefaultArgs(finalArgs),
                         hostLifecycleState,
