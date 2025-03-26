@@ -52,7 +52,8 @@ androidXMultiplatform {
         commonTest {
             dependencies {
                 implementation(project(":kruth:kruth"))
-                implementation(libs.kotlinTest)
+                // https://youtrack.jetbrains.com/issue/KT-71032
+                implementation(libs.kotlinTestForWasmTests)
             }
         }
 
@@ -70,6 +71,20 @@ androidXMultiplatform {
 
         nativeMain {
             dependsOn(commonMain)
+        }
+
+        jsMain {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.kotlinStdlibJs)
+            }
+        }
+
+        wasmJsMain {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.kotlinStdlibWasm)
+            }
         }
 
         targets.configureEach { target ->

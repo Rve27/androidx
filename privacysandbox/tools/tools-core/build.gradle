@@ -46,7 +46,7 @@ repackage {
 
 dependencies {
     api(libs.kotlinStdlib)
-    api(libs.kotlinPoet)
+    api("com.squareup:kotlinpoet:2.0.0")
     api(project(":privacysandbox:tools:tools-core-external-protobuf"))
     // Must be compileOnly to not bring in protobufLite in runtime
     // Repackaged protobufLite brought in by

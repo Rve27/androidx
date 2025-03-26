@@ -43,7 +43,7 @@ dependencies {
     implementation(libs.autoValueAnnotations)
     implementation(libs.guava)
     implementation(libs.javapoet)
-    implementation(libs.kotlinMetadataJvm)
+    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:2.0.21")
     implementation(libs.kotlinStdlib)
 
     // For testing, add in the compiled classes from appsearch to get access to annotations.

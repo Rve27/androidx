@@ -665,7 +665,10 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
     private fun configureWithKspPlugin(project: Project, androidXExtension: AndroidXExtension) =
         project.extensions.getByType<KspExtension>().apply {
             useKsp2.set(
-                androidXExtension.kotlinTarget.map { it.apiVersion == KotlinVersion.KOTLIN_2_0 }
+                androidXExtension.kotlinTarget.map {
+                    it.apiVersion == KotlinVersion.KOTLIN_2_0 ||
+                        it.apiVersion == KotlinVersion.KOTLIN_2_1
+                }
             )
         }
 
