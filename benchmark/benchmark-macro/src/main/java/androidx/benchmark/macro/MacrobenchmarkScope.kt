@@ -139,7 +139,7 @@ public class MacrobenchmarkScope(
         private set
 
     /** `true` if the app is a system app. */
-    internal var isSystemApp: Boolean = false
+    internal val isSystemApp: Boolean = getInstalledPackageInfo(packageName).isSystemApp()
 
     /**
      * Current Macrobenchmark measurement iteration, or null if measurement is not yet enabled.
