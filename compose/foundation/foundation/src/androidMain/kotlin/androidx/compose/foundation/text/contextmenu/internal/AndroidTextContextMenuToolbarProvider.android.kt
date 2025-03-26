@@ -246,14 +246,14 @@ internal class AndroidTextContextMenuToolbarProvider(
             data.components.fastForEach { component ->
                 when (component) {
                     is TextContextMenuItem -> {
-                        val menuItem =
-                            menu.add(currentGroupId, Menu.NONE, currentOrderId++, component.label)
+                        val orderId = currentOrderId++
+                        // itemId (param 2) must be unique.
+                        val menuItem = menu.add(currentGroupId, orderId, orderId, component.label)
                         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
                         menuItem.setOnMenuItemClickListener {
                             with(component) { session.onClick() }
                             true
                         }
-                        component.leadingIcon?.let { menuItem.setIcon(it) }
                     }
                     is TextContextMenuSeparator -> currentGroupId++
                     else -> {
