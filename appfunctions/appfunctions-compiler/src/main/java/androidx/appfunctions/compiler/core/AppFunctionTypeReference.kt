@@ -20,6 +20,7 @@ import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionS
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_LIST
+import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_SINGULAR
 import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata
@@ -43,10 +44,9 @@ class AppFunctionTypeReference(val selfTypeReference: KSTypeReference) {
                 PRIMITIVE_SINGULAR
             selfTypeReference.asStringWithoutNullQualifier() in SUPPORTED_ARRAY_PRIMITIVE_TYPES ->
                 PRIMITIVE_ARRAY
-            selfTypeReference.asStringWithoutNullQualifier() in
-                SUPPORTED_SINGLE_SERIALIZABLE_PROXY_TYPES ||
-                isAppFunctionSerializableProxyType(selfTypeReference) -> SERIALIZABLE_PROXY_SINGULAR
+            isAppFunctionSerializableProxyType(selfTypeReference) -> SERIALIZABLE_PROXY_SINGULAR
             isSupportedPrimitiveListType(selfTypeReference) -> PRIMITIVE_LIST
+            isAppFunctionSerializableProxyListType(selfTypeReference) -> SERIALIZABLE_PROXY_LIST
             isAppFunctionSerializableListType(selfTypeReference) -> SERIALIZABLE_LIST
             isAppFunctionSerializableType(selfTypeReference) -> SERIALIZABLE_SINGULAR
             else ->
@@ -110,7 +110,8 @@ class AppFunctionTypeReference(val selfTypeReference: KSTypeReference) {
         PRIMITIVE_LIST,
         SERIALIZABLE_SINGULAR,
         SERIALIZABLE_LIST,
-        SERIALIZABLE_PROXY_SINGULAR
+        SERIALIZABLE_PROXY_SINGULAR,
+        SERIALIZABLE_PROXY_LIST
     }
 
     companion object {
@@ -124,7 +125,8 @@ class AppFunctionTypeReference(val selfTypeReference: KSTypeReference) {
             return typeReferenceArgument.asStringWithoutNullQualifier() in SUPPORTED_TYPES ||
                 isSupportedPrimitiveListType(typeReferenceArgument) ||
                 isAppFunctionSerializableType(typeReferenceArgument) ||
-                isAppFunctionSerializableListType(typeReferenceArgument)
+                isAppFunctionSerializableListType(typeReferenceArgument) ||
+                isAppFunctionSerializableProxyListType(typeReferenceArgument)
         }
 
         /**
@@ -185,16 +187,27 @@ class AppFunctionTypeReference(val selfTypeReference: KSTypeReference) {
                 null
         }
 
+        private fun isAppFunctionSerializableProxyListType(
+            typeReferenceArgument: KSTypeReference
+        ): Boolean {
+            return typeReferenceArgument.isOfType(LIST) &&
+                isAppFunctionSerializableProxyType(
+                    typeReferenceArgument.resolveListParameterizedType()
+                )
+        }
+
         private fun isAppFunctionSerializableProxyType(
             typeReferenceArgument: KSTypeReference
         ): Boolean {
-            return typeReferenceArgument
-                .resolve()
-                .declaration
-                .annotations
-                .findAnnotation(
-                    IntrospectionHelper.AppFunctionSerializableProxyAnnotation.CLASS_NAME
-                ) != null
+            return typeReferenceArgument.asStringWithoutNullQualifier() in
+                SUPPORTED_SINGLE_SERIALIZABLE_PROXY_TYPES ||
+                typeReferenceArgument
+                    .resolve()
+                    .declaration
+                    .annotations
+                    .findAnnotation(
+                        IntrospectionHelper.AppFunctionSerializableProxyAnnotation.CLASS_NAME
+                    ) != null
         }
 
         private fun TypeName.ignoreNullable(): TypeName {

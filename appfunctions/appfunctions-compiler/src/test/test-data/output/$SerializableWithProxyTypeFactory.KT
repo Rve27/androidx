@@ -12,8 +12,12 @@ public class `$SerializableWithProxyTypeFactory` : AppFunctionSerializableFactor
 
     val localDateTimeData = checkNotNull(appFunctionData.getAppFunctionData("localDateTime"))
     val localDateTime = appFunctionLocalDateTimeFactory.fromAppFunctionData(localDateTimeData)
+    val localDateTimeListData = appFunctionData.getAppFunctionDataList("localDateTimeList") ?: emptyList()
+    val localDateTimeList = localDateTimeListData.map { data ->
+      appFunctionLocalDateTimeFactory.fromAppFunctionData(data)
+    }
 
-    val resultSerializableWithProxyType = SerializableWithProxyType(localDateTime)
+    val resultSerializableWithProxyType = SerializableWithProxyType(localDateTime, localDateTimeList)
     return resultSerializableWithProxyType
   }
 
@@ -24,6 +28,10 @@ public class `$SerializableWithProxyTypeFactory` : AppFunctionSerializableFactor
     val builder = AppFunctionData.Builder("com.testdata.SerializableWithProxyType")
     val localDateTime = serializableWithProxyType_appFunctionSerializable.localDateTime
     builder.setAppFunctionData("localDateTime", appFunctionLocalDateTimeFactory.toAppFunctionData(localDateTime))
+    val localDateTimeList = serializableWithProxyType_appFunctionSerializable.localDateTimeList
+    builder.setAppFunctionDataList("localDateTimeList", localDateTimeList.map{ appFunctionLocalDateTime ->
+      appFunctionLocalDateTimeFactory.toAppFunctionData(appFunctionLocalDateTime)
+    })
 
     return builder.build()
   }

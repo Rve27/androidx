@@ -1,6 +1,7 @@
 package com.testdata
 
 import androidx.appfunctions.`internal`.AppFunctionInventory
+import androidx.appfunctions.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionDataTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
@@ -135,14 +136,28 @@ public class `$FunctionWithSerializableProxyInput_AppFunctionInventory` : AppFun
             isNullable = false
         )
 
+    private val COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP_LOCALDATETIMELIST_REFERENCE_ITEM_TYPE:
+        AppFunctionReferenceTypeMetadata = AppFunctionReferenceTypeMetadata(
+            referenceDataType = "java.time.LocalDateTime",
+            isNullable = false
+        )
+
+    private val COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP_LOCALDATETIMELIST:
+        AppFunctionArrayTypeMetadata = AppFunctionArrayTypeMetadata(
+            itemType = COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP_LOCALDATETIMELIST_REFERENCE_ITEM_TYPE,
+            isNullable = false
+        )
+
     private val COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP:
         Map<String, AppFunctionDataTypeMetadata> = mapOf(
       "localDateTime" to COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP_LOCALDATETIME,
+      "localDateTimeList" to COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP_LOCALDATETIMELIST,
     )
 
     private val COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_REQUIRED_PROPERTIES_LIST:
         List<String> = listOf(
       "localDateTime",
+      "localDateTimeList",
     )
 
     private val COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE:
@@ -282,14 +297,28 @@ public class `$FunctionWithSerializableProxyInput_AppFunctionInventory` : AppFun
             isNullable = false
         )
 
+    private val COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP_LOCALDATETIMELIST_REFERENCE_ITEM_TYPE:
+        AppFunctionReferenceTypeMetadata = AppFunctionReferenceTypeMetadata(
+            referenceDataType = "java.time.LocalDateTime",
+            isNullable = false
+        )
+
+    private val COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP_LOCALDATETIMELIST:
+        AppFunctionArrayTypeMetadata = AppFunctionArrayTypeMetadata(
+            itemType = COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP_LOCALDATETIMELIST_REFERENCE_ITEM_TYPE,
+            isNullable = false
+        )
+
     private val COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP:
         Map<String, AppFunctionDataTypeMetadata> = mapOf(
       "localDateTime" to COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP_LOCALDATETIME,
+      "localDateTimeList" to COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_PROPERTIES_MAP_LOCALDATETIMELIST,
     )
 
     private val COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE_REQUIRED_PROPERTIES_LIST:
         List<String> = listOf(
       "localDateTime",
+      "localDateTimeList",
     )
 
     private val COM_TESTDATA_SERIALIZABLEWITHPROXYTYPE_OBJECT_DATA_TYPE:

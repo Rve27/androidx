@@ -21,6 +21,7 @@ import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionS
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_LIST
+import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.Companion.SUPPORTED_TYPES_STRING
@@ -382,6 +383,36 @@ data class AnnotatedAppFunctions(
                     isNullable = appFunctionTypeReference.isNullable,
                 )
             }
+            SERIALIZABLE_PROXY_LIST -> {
+                val targetSerializableProxy =
+                    resolvedAnnotatedSerializableProxies.getSerializableProxyForTypeReference(
+                        appFunctionTypeReference
+                    )
+                addSerializableTypeMetadataToSharedDataTypeMap(
+                    targetSerializableProxy,
+                    targetSerializableProxy
+                        .getProperties()
+                        .associateBy { checkNotNull(it.name).toString() }
+                        .toMutableMap(),
+                    sharedDataTypeMap,
+                    seenDataTypeQualifiers,
+                    resolvedAnnotatedSerializableProxies
+                )
+                AppFunctionArrayTypeMetadata(
+                    itemType =
+                        AppFunctionReferenceTypeMetadata(
+                            referenceDataType =
+                                appFunctionTypeReference.itemTypeReference
+                                    .toTypeName()
+                                    .ignoreNullable()
+                                    .toString(),
+                            isNullable =
+                                AppFunctionTypeReference(appFunctionTypeReference.itemTypeReference)
+                                    .isNullable,
+                        ),
+                    isNullable = appFunctionTypeReference.isNullable,
+                )
+            }
         }
     }
 
@@ -612,6 +643,7 @@ data class AnnotatedAppFunctions(
             SERIALIZABLE_SINGULAR -> AppFunctionObjectTypeMetadata.TYPE
             PRIMITIVE_ARRAY,
             PRIMITIVE_LIST,
+            SERIALIZABLE_PROXY_LIST,
             SERIALIZABLE_LIST -> AppFunctionArrayTypeMetadata.TYPE
         }
     }
@@ -621,6 +653,7 @@ data class AnnotatedAppFunctions(
             SERIALIZABLE_LIST -> AppFunctionObjectTypeMetadata.TYPE
             PRIMITIVE_ARRAY -> selfTypeReference.toAppFunctionDatatype()
             PRIMITIVE_LIST -> itemTypeReference.toAppFunctionDatatype()
+            SERIALIZABLE_PROXY_LIST -> itemTypeReference.toAppFunctionDatatype()
             PRIMITIVE_SINGULAR,
             SERIALIZABLE_PROXY_SINGULAR,
             SERIALIZABLE_SINGULAR ->

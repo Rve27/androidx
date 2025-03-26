@@ -26,6 +26,7 @@ import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionS
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.PRIMITIVE_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_LIST
+import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_SINGULAR
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod
@@ -378,7 +379,12 @@ class AppFunctionSerializableFactoryCodeBuilder(
             PRIMITIVE_ARRAY,
             PRIMITIVE_LIST -> appendPrimitiveGetterStatement(paramName, afType)
             SERIALIZABLE_SINGULAR -> appendSerializableGetterStatement(paramName, afType)
-            SERIALIZABLE_LIST -> appendSerializableListGetterStatement(paramName, afType)
+            SERIALIZABLE_LIST ->
+                appendSerializableListGetterStatement(
+                    paramName,
+                    afType,
+                    afType.itemTypeReference.getTypeShortName()
+                )
             SERIALIZABLE_PROXY_SINGULAR -> {
                 val targetSerializableProxy =
                     resolvedAnnotatedSerializableProxies.getSerializableProxyForTypeReference(
@@ -387,6 +393,17 @@ class AppFunctionSerializableFactoryCodeBuilder(
                 appendSerializableGetterStatement(
                     paramName,
                     AppFunctionTypeReference(targetSerializableProxy.serializableReferenceType)
+                )
+            }
+            SERIALIZABLE_PROXY_LIST -> {
+                val targetSerializableProxy =
+                    resolvedAnnotatedSerializableProxies.getSerializableProxyForTypeReference(
+                        afType
+                    )
+                appendSerializableListGetterStatement(
+                    paramName,
+                    afType,
+                    targetSerializableProxy.serializableReferenceType.getTypeShortName()
                 )
             }
         }
@@ -462,10 +479,10 @@ class AppFunctionSerializableFactoryCodeBuilder(
 
     private fun CodeBlock.Builder.appendSerializableListGetterStatement(
         paramName: String,
-        afType: AppFunctionTypeReference
+        afType: AppFunctionTypeReference,
+        parametrizedItemTypeName: String
     ): CodeBlock.Builder {
-        val parametrizedTypeName = afType.itemTypeReference.getTypeShortName()
-        val factoryName = parametrizedTypeName + "Factory"
+        val factoryName = parametrizedItemTypeName + "Factory"
         val factoryInstanceName = factoryName.lowerFirstChar()
         val formatStringMap =
             mapOf<String, Any>(
@@ -537,7 +554,12 @@ class AppFunctionSerializableFactoryCodeBuilder(
             PRIMITIVE_ARRAY,
             PRIMITIVE_LIST -> appendPrimitiveSetterStatement(paramName, afType)
             SERIALIZABLE_SINGULAR -> appendSerializableSetterStatement(paramName, afType)
-            SERIALIZABLE_LIST -> appendSerializableListSetterStatement(paramName, afType)
+            SERIALIZABLE_LIST ->
+                appendSerializableListSetterStatement(
+                    paramName,
+                    afType,
+                    afType.itemTypeReference.getTypeShortName()
+                )
             SERIALIZABLE_PROXY_SINGULAR -> {
                 val targetSerializableProxy =
                     resolvedAnnotatedSerializableProxies.getSerializableProxyForTypeReference(
@@ -546,6 +568,17 @@ class AppFunctionSerializableFactoryCodeBuilder(
                 appendSerializableSetterStatement(
                     paramName,
                     AppFunctionTypeReference(targetSerializableProxy.serializableReferenceType)
+                )
+            }
+            SERIALIZABLE_PROXY_LIST -> {
+                val targetSerializableProxy =
+                    resolvedAnnotatedSerializableProxies.getSerializableProxyForTypeReference(
+                        afType
+                    )
+                appendSerializableListSetterStatement(
+                    paramName,
+                    afType,
+                    targetSerializableProxy.serializableReferenceType.getTypeShortName()
                 )
             }
         }
@@ -585,16 +618,16 @@ class AppFunctionSerializableFactoryCodeBuilder(
 
     private fun CodeBlock.Builder.appendSerializableListSetterStatement(
         paramName: String,
-        afType: AppFunctionTypeReference
+        afType: AppFunctionTypeReference,
+        parametrizedItemTypeName: String
     ): CodeBlock.Builder {
-        val parametrizedTypeName = afType.selfOrItemTypeReference.getTypeShortName()
 
         val formatStringMap =
             mapOf<String, Any>(
                 "param_name" to paramName,
-                "factory_name" to "${parametrizedTypeName}Factory".lowerFirstChar(),
+                "factory_name" to "${parametrizedItemTypeName}Factory".lowerFirstChar(),
                 "setter_name" to getAppFunctionDataSetterName(afType),
-                "lambda_param_name" to parametrizedTypeName.lowerFirstChar()
+                "lambda_param_name" to parametrizedItemTypeName.lowerFirstChar()
             )
 
         addNamed(
@@ -623,6 +656,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
             PRIMITIVE_ARRAY -> "get$shortTypeName"
             SERIALIZABLE_PROXY_SINGULAR,
             SERIALIZABLE_SINGULAR -> "getAppFunctionData"
+            SERIALIZABLE_PROXY_LIST,
             SERIALIZABLE_LIST -> "getAppFunctionDataList"
             PRIMITIVE_LIST -> "get${shortTypeName}List"
         }
@@ -642,6 +676,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
                     " ?: ${afType.selfOrItemTypeReference.getTypeShortName()}(0)"
                 }
             PRIMITIVE_LIST,
+            SERIALIZABLE_PROXY_LIST,
             SERIALIZABLE_LIST -> if (afType.isNullable) "" else " ?: emptyList()"
         }
     }
@@ -653,6 +688,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
             PRIMITIVE_LIST -> "set${afType.selfOrItemTypeReference.getTypeShortName()}List"
             SERIALIZABLE_SINGULAR,
             SERIALIZABLE_PROXY_SINGULAR -> "setAppFunctionData"
+            SERIALIZABLE_PROXY_LIST,
             SERIALIZABLE_LIST -> "setAppFunctionDataList"
         }
     }

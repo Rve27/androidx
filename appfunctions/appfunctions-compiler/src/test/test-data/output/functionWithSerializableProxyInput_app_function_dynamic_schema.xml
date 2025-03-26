@@ -97,7 +97,23 @@
                         <id>unused</id>
                         <name>localDateTime</name>
                     </properties>
+                    <properties>
+                        <dataTypeMetadata>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <itemType>
+                                <dataTypeReference>java.time.LocalDateTime</dataTypeReference>
+                                <id>unused</id>
+                                <isNullable>false</isNullable>
+                                <type>11</type>
+                            </itemType>
+                            <type>10</type>
+                        </dataTypeMetadata>
+                        <id>unused</id>
+                        <name>localDateTimeList</name>
+                    </properties>
                     <required>localDateTime</required>
+                    <required>localDateTimeList</required>
                     <type>3</type>
                 </dataTypeMetadata>
                 <id>unused</id>
@@ -225,7 +241,23 @@
                         <id>unused</id>
                         <name>localDateTime</name>
                     </properties>
+                    <properties>
+                        <dataTypeMetadata>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <itemType>
+                                <dataTypeReference>java.time.LocalDateTime</dataTypeReference>
+                                <id>unused</id>
+                                <isNullable>false</isNullable>
+                                <type>11</type>
+                            </itemType>
+                            <type>10</type>
+                        </dataTypeMetadata>
+                        <id>unused</id>
+                        <name>localDateTimeList</name>
+                    </properties>
                     <required>localDateTime</required>
+                    <required>localDateTimeList</required>
                     <type>3</type>
                 </dataTypeMetadata>
                 <id>unused</id>
