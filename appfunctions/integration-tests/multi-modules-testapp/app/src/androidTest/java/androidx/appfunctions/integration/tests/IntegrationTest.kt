@@ -38,7 +38,8 @@ import org.junit.Test
 
 @LargeTest
 class IntegrationTest {
-    private val targetContext = InstrumentationRegistry.getInstrumentation().context
+    private val context = InstrumentationRegistry.getInstrumentation().context
+    private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
     private lateinit var appFunctionManager: AppFunctionManagerCompat
     private val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation
 
@@ -72,7 +73,7 @@ class IntegrationTest {
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
-                        targetContext.packageName,
+                        context.packageName,
                         TestFunctionsIds.ADD_ID,
                         AppFunctionData.Builder("").setLong("num1", 1).setLong("num2", 2).build()
                     )
@@ -93,7 +94,7 @@ class IntegrationTest {
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
-                        targetContext.packageName,
+                        context.packageName,
                         TestFunctionsIds.VOID_FUNCTION_ID,
                         AppFunctionData.Builder("").build()
                     )
@@ -110,7 +111,7 @@ class IntegrationTest {
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
-                        targetContext.packageName,
+                        context.packageName,
                         TestFactoryIds.IS_CREATED_BY_FACTORY_ID,
                         AppFunctionData.Builder("").build()
                     )
@@ -133,7 +134,7 @@ class IntegrationTest {
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
-                        targetContext.packageName,
+                        context.packageName,
                         TestFunctions2Ids.CONCAT_ID,
                         AppFunctionData.Builder("")
                             .setString("str1", "log")
@@ -157,7 +158,7 @@ class IntegrationTest {
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
-                        targetContext.packageName,
+                        context.packageName,
                         "androidx.appfunctions.integration.testapp.TestFunctions#notExist",
                         AppFunctionData.Builder("").build()
                     )
@@ -174,7 +175,7 @@ class IntegrationTest {
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
-                        targetContext.packageName,
+                        context.packageName,
                         TestFunctionsIds.DO_THROW_ID,
                         AppFunctionData.Builder("").build()
                     )
@@ -192,7 +193,7 @@ class IntegrationTest {
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
-                        targetContext.packageName,
+                        context.packageName,
                         TestFunctionsIds.CREATE_NOTE_ID,
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
@@ -235,7 +236,7 @@ class IntegrationTest {
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
-                        targetPackageName = targetContext.packageName,
+                        targetPackageName = context.packageName,
                         functionIdentifier = TestFunctionsIds.LOG_LOCAL_DATE_TIME_ID,
                         functionParameters =
                             AppFunctionData.Builder("")
@@ -260,7 +261,7 @@ class IntegrationTest {
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
-                        targetPackageName = targetContext.packageName,
+                        targetPackageName = context.packageName,
                         functionIdentifier = TestFunctions2Ids.LOG_URI_ID,
                         functionParameters =
                             AppFunctionData.Builder("")
@@ -281,7 +282,7 @@ class IntegrationTest {
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
-                        targetPackageName = targetContext.packageName,
+                        targetPackageName = context.packageName,
                         functionIdentifier = TestFunctionsIds.GET_LOCAL_DATE_ID,
                         functionParameters = AppFunctionData.Builder("").build()
                     )
@@ -303,7 +304,7 @@ class IntegrationTest {
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
-                        targetPackageName = targetContext.packageName,
+                        targetPackageName = context.packageName,
                         functionIdentifier = TestFunctions2Ids.GET_URI_ID,
                         functionParameters = AppFunctionData.Builder("").build()
                     )
@@ -322,7 +323,7 @@ class IntegrationTest {
 
     private suspend fun awaitAppFunctionsIndexed(expectedFunctionIds: Set<String>) {
         retryAssert {
-            val functionIds = AppSearchMetadataHelper.collectSelfFunctionIds(targetContext)
+            val functionIds = AppSearchMetadataHelper.collectSelfFunctionIds(context)
             assertThat(functionIds).containsAtLeastElementsIn(expectedFunctionIds)
         }
     }
