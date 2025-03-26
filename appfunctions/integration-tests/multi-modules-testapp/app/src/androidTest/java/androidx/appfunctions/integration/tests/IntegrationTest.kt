@@ -16,6 +16,7 @@
 
 package androidx.appfunctions.integration.tests
 
+import android.net.Uri
 import androidx.appfunctions.AppFunctionData
 import androidx.appfunctions.AppFunctionFunctionNotFoundException
 import androidx.appfunctions.AppFunctionInvalidArgumentException
@@ -226,7 +227,7 @@ class IntegrationTest {
     }
 
     @Test
-    fun executeAppFunction_serializableProxyParam_success() = doBlocking {
+    fun executeAppFunction_serializableProxyParam_dateTime_success() = doBlocking {
         val localDateTimeClass = DateTime(LocalDateTime.now())
         val response =
             appFunctionManager.executeAppFunction(
@@ -251,7 +252,29 @@ class IntegrationTest {
     }
 
     @Test
-    fun executeAppFunction_serializableProxyResponse_success() = doBlocking {
+    fun executeAppFunction_serializableProxyParam_androidUri_success() = doBlocking {
+        val androidUri = Uri.parse("https://www.google.com/")
+        val response =
+            appFunctionManager.executeAppFunction(
+                request =
+                    ExecuteAppFunctionRequest(
+                        targetPackageName = targetContext.packageName,
+                        functionIdentifier = TestFunctions2Ids.LOG_URI_ID,
+                        functionParameters =
+                            AppFunctionData.Builder("")
+                                .setAppFunctionData(
+                                    "androidUri",
+                                    AppFunctionData.serialize(androidUri, Uri::class.java)
+                                )
+                                .build()
+                    )
+            )
+
+        assertIs<ExecuteAppFunctionResponse.Success>(response)
+    }
+
+    @Test
+    fun executeAppFunction_serializableProxyResponse_dateTime_success() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
@@ -270,6 +293,29 @@ class IntegrationTest {
                 ?.deserialize(DateTime::class.java)
                 ?.localDateTime
         )
+    }
+
+    @Test
+    fun executeAppFunction_serializableProxyResponse_androidUri_success() = doBlocking {
+        val response =
+            appFunctionManager.executeAppFunction(
+                request =
+                    ExecuteAppFunctionRequest(
+                        targetPackageName = targetContext.packageName,
+                        functionIdentifier = TestFunctions2Ids.GET_URI_ID,
+                        functionParameters = AppFunctionData.Builder("").build()
+                    )
+            )
+
+        val successResponse = assertIs<ExecuteAppFunctionResponse.Success>(response)
+
+        val androidUriResult =
+            assertIs<Uri>(
+                successResponse.returnValue
+                    .getAppFunctionData(ExecuteAppFunctionResponse.Success.PROPERTY_RETURN_VALUE)
+                    ?.deserialize(Uri::class.java)
+            )
+        assertThat(androidUriResult.toString()).isEqualTo("https://www.google.com/")
     }
 
     private suspend fun awaitAppFunctionsIndexed(expectedFunctionIds: Set<String>) {
@@ -292,6 +338,8 @@ class IntegrationTest {
                 TestFunctionsIds.GET_LOCAL_DATE_ID,
                 TestFactoryIds.IS_CREATED_BY_FACTORY_ID,
                 TestFunctions2Ids.CONCAT_ID,
+                TestFunctions2Ids.LOG_URI_ID,
+                TestFunctions2Ids.GET_URI_ID,
             )
     }
 }

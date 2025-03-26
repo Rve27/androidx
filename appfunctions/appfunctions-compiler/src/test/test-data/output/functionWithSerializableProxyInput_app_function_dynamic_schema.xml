@@ -86,6 +86,26 @@
                 <dataTypeMetadata>
                     <id>unused</id>
                     <isNullable>true</isNullable>
+                    <objectQualifiedName>android.net.Uri</objectQualifiedName>
+                    <properties>
+                        <dataTypeMetadata>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <type>8</type>
+                        </dataTypeMetadata>
+                        <id>unused</id>
+                        <name>uriString</name>
+                    </properties>
+                    <required>uriString</required>
+                    <type>3</type>
+                </dataTypeMetadata>
+                <id>unused</id>
+                <name>android.net.Uri</name>
+            </dataTypes>
+            <dataTypes>
+                <dataTypeMetadata>
+                    <id>unused</id>
+                    <isNullable>true</isNullable>
                     <objectQualifiedName>com.testdata.SerializableWithProxyType</objectQualifiedName>
                     <properties>
                         <dataTypeMetadata>
@@ -112,8 +132,35 @@
                         <id>unused</id>
                         <name>localDateTimeList</name>
                     </properties>
+                    <properties>
+                        <dataTypeMetadata>
+                            <dataTypeReference>android.net.Uri</dataTypeReference>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <type>11</type>
+                        </dataTypeMetadata>
+                        <id>unused</id>
+                        <name>androidUri</name>
+                    </properties>
+                    <properties>
+                        <dataTypeMetadata>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <itemType>
+                                <dataTypeReference>android.net.Uri</dataTypeReference>
+                                <id>unused</id>
+                                <isNullable>false</isNullable>
+                                <type>11</type>
+                            </itemType>
+                            <type>10</type>
+                        </dataTypeMetadata>
+                        <id>unused</id>
+                        <name>androidUriList</name>
+                    </properties>
                     <required>localDateTime</required>
                     <required>localDateTimeList</required>
+                    <required>androidUri</required>
+                    <required>androidUriList</required>
                     <type>3</type>
                 </dataTypeMetadata>
                 <id>unused</id>
@@ -230,6 +277,26 @@
                 <dataTypeMetadata>
                     <id>unused</id>
                     <isNullable>true</isNullable>
+                    <objectQualifiedName>android.net.Uri</objectQualifiedName>
+                    <properties>
+                        <dataTypeMetadata>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <type>8</type>
+                        </dataTypeMetadata>
+                        <id>unused</id>
+                        <name>uriString</name>
+                    </properties>
+                    <required>uriString</required>
+                    <type>3</type>
+                </dataTypeMetadata>
+                <id>unused</id>
+                <name>android.net.Uri</name>
+            </dataTypes>
+            <dataTypes>
+                <dataTypeMetadata>
+                    <id>unused</id>
+                    <isNullable>true</isNullable>
                     <objectQualifiedName>com.testdata.SerializableWithProxyType</objectQualifiedName>
                     <properties>
                         <dataTypeMetadata>
@@ -256,8 +323,35 @@
                         <id>unused</id>
                         <name>localDateTimeList</name>
                     </properties>
+                    <properties>
+                        <dataTypeMetadata>
+                            <dataTypeReference>android.net.Uri</dataTypeReference>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <type>11</type>
+                        </dataTypeMetadata>
+                        <id>unused</id>
+                        <name>androidUri</name>
+                    </properties>
+                    <properties>
+                        <dataTypeMetadata>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <itemType>
+                                <dataTypeReference>android.net.Uri</dataTypeReference>
+                                <id>unused</id>
+                                <isNullable>false</isNullable>
+                                <type>11</type>
+                            </itemType>
+                            <type>10</type>
+                        </dataTypeMetadata>
+                        <id>unused</id>
+                        <name>androidUriList</name>
+                    </properties>
                     <required>localDateTime</required>
                     <required>localDateTimeList</required>
+                    <required>androidUri</required>
+                    <required>androidUriList</required>
                     <type>3</type>
                 </dataTypeMetadata>
                 <id>unused</id>

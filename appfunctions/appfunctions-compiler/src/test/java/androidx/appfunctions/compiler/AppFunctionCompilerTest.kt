@@ -33,7 +33,8 @@ class AppFunctionCompilerTest {
                 goldenFileSrcDir = File("src/test/test-data/output"),
                 proxySourceFileNames =
                     listOf(
-                        "androidx/appfunctions/internal/serializableproxies/AppFunctionLocalDateTime.KT"
+                        "androidx/appfunctions/internal/serializableproxies/AppFunctionLocalDateTime.KT",
+                        "androidx/appfunctions/internal/serializableproxies/AppFunctionUri.KT",
                     ),
                 symbolProcessorProviders = listOf(AppFunctionCompiler.Provider()),
             )

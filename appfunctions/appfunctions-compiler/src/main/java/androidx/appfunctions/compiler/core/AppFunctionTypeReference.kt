@@ -219,6 +219,7 @@ class AppFunctionTypeReference(val selfTypeReference: KSTypeReference) {
 
         // Android Only primitives
         private const val ANDROID_PENDING_INTENT = "android.app.PendingIntent"
+        private const val ANDROID_URI = "android.net.Uri"
 
         private val SUPPORTED_ARRAY_PRIMITIVE_TYPES =
             setOf(
@@ -243,9 +244,7 @@ class AppFunctionTypeReference(val selfTypeReference: KSTypeReference) {
             )
 
         private val SUPPORTED_SINGLE_SERIALIZABLE_PROXY_TYPES =
-            setOf(
-                LocalDateTime::class.ensureQualifiedName(),
-            )
+            setOf(LocalDateTime::class.ensureQualifiedName(), ANDROID_URI)
 
         private val SUPPORTED_PRIMITIVE_TYPES_IN_LIST = setOf(String::class.ensureQualifiedName())
 

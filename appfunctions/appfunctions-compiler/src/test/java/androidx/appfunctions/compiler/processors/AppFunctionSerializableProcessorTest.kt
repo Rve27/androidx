@@ -33,7 +33,8 @@ class AppFunctionSerializableProcessorTest {
                 goldenFileSrcDir = File("src/test/test-data/output"), // unused
                 proxySourceFileNames =
                     listOf(
-                        "androidx/appfunctions/internal/serializableproxies/AppFunctionLocalDateTime.KT"
+                        "androidx/appfunctions/internal/serializableproxies/AppFunctionLocalDateTime.KT",
+                        "androidx/appfunctions/internal/serializableproxies/AppFunctionUri.KT",
                     ),
                 symbolProcessorProviders = listOf(AppFunctionSerializableProcessor.Provider())
             )
@@ -215,6 +216,11 @@ class AppFunctionSerializableProcessorTest {
             report = report,
             expectGeneratedSourceFileName = "\$LocalDateTimeFactory.kt",
             goldenFileName = "\$LocalDateTimeFactory.KT"
+        )
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName = "\$UriFactory.kt",
+            goldenFileName = "\$UriFactory.KT"
         )
     }
 

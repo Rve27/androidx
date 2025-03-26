@@ -18,6 +18,7 @@ package androidx.appfunctions
 
 import android.app.PendingIntent
 import android.app.appsearch.GenericDocument
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -30,7 +31,7 @@ import androidx.appfunctions.internal.Constants.APP_FUNCTIONS_TAG
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
-import kotlin.collections.isEmpty
+import java.time.LocalDateTime
 
 /**
  * A data class to contain information to be communicated between AppFunctions apps and agents.
@@ -1101,7 +1102,7 @@ internal constructor(
         private fun <T : Any> getSerializableFactory(
             serializableClass: Class<T>
         ): AppFunctionSerializableFactory<T> {
-            val packageName = serializableClass.packageName
+            val packageName = getPackageName(serializableClass)
             val serializableSimpleName = serializableClass.simpleName
 
             val factorySimpleName = "${'$'}${serializableSimpleName}Factory"
@@ -1122,6 +1123,16 @@ internal constructor(
                     "Unable to create AppFunctionSerializableFactory for $serializableClass"
                 )
             }
+        }
+
+        private fun getPackageName(serializableClass: Class<*>): String {
+            val setOfProxyTypes = setOf(LocalDateTime::class.simpleName, Uri::class.simpleName)
+            val serializableProxyPackageName = "androidx.appfunctions.internal.serializableproxies"
+            if (setOfProxyTypes.contains(serializableClass.simpleName)) {
+                return serializableProxyPackageName
+            }
+
+            return serializableClass.packageName
         }
 
         /**
