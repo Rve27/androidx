@@ -525,6 +525,11 @@ public final class AppSearchImpl implements Closeable {
         return mConfig;
     }
 
+    /** Returns whether pVM is enabled in this AppSearchImpl instance. */
+    public boolean isVMEnabled() {
+        return mIsVMEnabled;
+    }
+
     /**
      * Updates the AppSearch schema for this app.
      *
