@@ -965,7 +965,6 @@ class AppFunctionInventoryProcessor(
         )
     }
 
-    // TODO: Remove doc once done with impl
     private fun buildSourceFilesKdoc(appFunctionClass: AnnotatedAppFunctions): CodeBlock {
         return buildCodeBlock {
             addStatement("Source Files:")

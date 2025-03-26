@@ -25,9 +25,7 @@ import com.google.devtools.ksp.symbol.KSTypeReference
 import com.squareup.kotlinpoet.ClassName
 
 /** Represents a class annotated with [androidx.appfunctions.AppFunctionSerializable]. */
-open class AnnotatedAppFunctionSerializable(
-    private val appFunctionSerializableClass: KSClassDeclaration
-) {
+open class AnnotatedAppFunctionSerializable(val appFunctionSerializableClass: KSClassDeclaration) {
     /** The qualified name of the class being annotated with AppFunctionSerializable. */
     val qualifiedName: String by lazy { appFunctionSerializableClass.toClassName().canonicalName }
 

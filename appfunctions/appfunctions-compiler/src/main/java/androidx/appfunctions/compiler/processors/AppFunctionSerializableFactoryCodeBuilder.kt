@@ -134,8 +134,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
         if (annotatedClass !is AnnotatedAppFunctionSerializableProxy) {
             throw ProcessingException(
                 "Attempting to generate proxy getter for non proxy serializable.",
-                // TODO(b/403199251): provide KSNode to improve error message
-                null
+                annotatedClass.appFunctionSerializableClass
             )
         }
         return buildCodeBlock {
@@ -292,8 +291,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
         if (annotatedClass !is AnnotatedAppFunctionSerializableProxy) {
             throw ProcessingException(
                 "Attempting to generate proxy setter for non proxy serializable.",
-                // TODO(b/403199251): provide KSNode to improve error message
-                null
+                annotatedClass.appFunctionSerializableClass
             )
         }
         return buildCodeBlock {

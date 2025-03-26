@@ -55,10 +55,6 @@ dependencies {
 android {
     compileSdk = 36
     namespace = "androidx.appfunctions.schemas"
-    ksp {
-        // The generated factory classes are only used for translation internally.
-        arg("appfunctions:serializableFactoryVisibility", "internal")
-    }
 }
 
 androidx {

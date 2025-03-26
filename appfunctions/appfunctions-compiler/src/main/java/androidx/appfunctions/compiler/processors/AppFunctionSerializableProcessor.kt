@@ -245,7 +245,6 @@ class AppFunctionSerializableProcessor(
             .build()
     }
 
-    // Todo(b/403199251): Remove temp method
     private fun buildProxyFromAppFunctionDataFunction(
         annotatedProxyClass: AnnotatedAppFunctionSerializableProxy,
         factoryCodeBuilder: AppFunctionSerializableFactoryCodeBuilder,
@@ -282,7 +281,6 @@ class AppFunctionSerializableProcessor(
             .build()
     }
 
-    // Todo(b/403199251): Remove temp method
     private fun buildProxyToAppFunctionDataFunction(
         annotatedProxyClass: AnnotatedAppFunctionSerializableProxy,
         factoryCodeBuilder: AppFunctionSerializableFactoryCodeBuilder
