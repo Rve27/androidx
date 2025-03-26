@@ -45,7 +45,6 @@ package androidx.xr.runtime {
   }
 
   public final class Session implements androidx.lifecycle.LifecycleOwner {
-    method public androidx.xr.runtime.SessionConfigureResult configure();
     method public static androidx.xr.runtime.SessionCreateResult create(android.app.Activity activity);
     method public static androidx.xr.runtime.SessionCreateResult create(android.app.Activity activity, optional kotlinx.coroutines.CoroutineDispatcher coroutineDispatcher);
     method public void destroy();
@@ -65,6 +64,10 @@ package androidx.xr.runtime {
 
   public final class SessionConfigureConfigurationNotSupported extends androidx.xr.runtime.SessionConfigureResult {
     ctor public SessionConfigureConfigurationNotSupported();
+  }
+
+  public final class SessionConfigurePermissionNotGranted extends androidx.xr.runtime.SessionConfigureResult {
+    ctor public SessionConfigurePermissionNotGranted();
   }
 
   public abstract sealed class SessionConfigureResult {

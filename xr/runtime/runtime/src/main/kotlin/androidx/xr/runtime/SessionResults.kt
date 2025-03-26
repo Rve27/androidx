@@ -47,6 +47,12 @@ public class SessionConfigureSuccess() : SessionConfigureResult()
  */
 public class SessionConfigureConfigurationNotSupported() : SessionConfigureResult()
 
+/**
+ * Result of an unsuccessful [Session.configure] call. The session was not configured due to
+ * insufficient permissions.
+ */
+public class SessionConfigurePermissionNotGranted() : SessionConfigureResult()
+
 /** Result of a [Session.resume] call. */
 public sealed class SessionResumeResult
 
