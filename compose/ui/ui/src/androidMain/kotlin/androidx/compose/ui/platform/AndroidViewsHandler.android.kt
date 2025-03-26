@@ -94,11 +94,7 @@ internal class AndroidViewsHandler(context: Context) : ViewGroup(context) {
             val child = getChildAt(i)
             val node = holderToLayoutNode[child]
             if (child.isLayoutRequested && node != null) {
-                if (node.lookaheadRoot != null) {
-                    node.requestLookaheadRemeasure()
-                } else {
-                    node.requestRemeasure()
-                }
+                node.requestRemeasure()
             }
         }
     }
