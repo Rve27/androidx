@@ -92,22 +92,6 @@ object ComposeUiFlags {
     @Suppress("MutableBareField") @JvmField var isTrackFocusEnabled: Boolean = true
 
     /**
-     * Enable WindowInsets rulers:
-     * * `SystemBarsRulers`
-     * * `ImeRulers`
-     * * `StatusBarsRulers`
-     * * `NavigationBarsRulers`
-     * * `CaptionBarRulers`
-     * * `MandatorySystemGesturesRulers`
-     * * `TappableElementRulers`
-     * * `WaterfallRulers`
-     * * `SafeDrawingRulers`
-     * * `SafeGesturesRulers`
-     * * `SafeContentRulers`
-     */
-    @Suppress("MutableBareField") @JvmField var areWindowInsetsRulersEnabled = true
-
-    /**
      * With this flag on, when an AccessibilityService performs ACTION_FOCUS on a Composable node,
      * if it is in touch mode, it will exit touch mode first, then try to request focus on the node.
      */

@@ -16,7 +16,6 @@
 package androidx.compose.ui.layout
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.layout.Placeable.PlacementScope
 
 /**
  * A line that can be used to align layout children inside a [Placeable.PlacementScope].
@@ -44,7 +43,7 @@ sealed class Ruler {
  * [Placeable.PlacementScope.current] and can be set with [MeasureScope.layout] using
  * [RulerScope.provides] or [RulerScope.providesRelative].
  */
-open class VerticalRuler() : Ruler() {
+class VerticalRuler() : Ruler() {
     override fun calculateCoordinate(
         coordinate: Float,
         sourceCoordinates: LayoutCoordinates,
@@ -61,7 +60,7 @@ open class VerticalRuler() : Ruler() {
  * [Placeable.PlacementScope.current] and can be set with [MeasureScope.layout] using
  * [RulerScope.provides].
  */
-open class HorizontalRuler : Ruler() {
+class HorizontalRuler : Ruler() {
     override fun calculateCoordinate(
         coordinate: Float,
         sourceCoordinates: LayoutCoordinates,
@@ -70,56 +69,4 @@ open class HorizontalRuler : Ruler() {
         val offset = Offset(sourceCoordinates.size.width / 2f, coordinate)
         return targetCoordinates.localPositionOf(sourceCoordinates, offset).y
     }
-}
-
-/**
- * A class that allows deriving a [Ruler]'s value from other information.
- *
- * @sample androidx.compose.ui.samples.DerivedRulerUsage
- */
-interface DerivedRuler {
-    /**
-     * Calculates the [Ruler]'s value if it is available or returns [defaultValue] if the value has
-     * not been defined.
-     */
-    fun PlacementScope.calculate(defaultValue: Float): Float
-}
-
-/**
- * Merges several [VerticalRuler]s from [rulers] into one ruler value. It will choose the greater of
- * the values if [shouldUseGreater] is `true` or the smaller value if it is `false`.
- */
-class MergedVerticalRuler(
-    private val shouldUseGreater: Boolean,
-    private vararg val rulers: VerticalRuler
-) : VerticalRuler(), DerivedRuler {
-    override fun PlacementScope.calculate(defaultValue: Float): Float =
-        mergeRulerValues(shouldUseGreater, rulers, defaultValue)
-}
-
-/**
- * Merges several [HorizontalRuler]s from [rulers] into one ruler value. It will choose the greater
- * of the values if [shouldUseGreater] is `true` or the smaller value if it is `false`.
- */
-class MergedHorizontalRuler(
-    private val shouldUseGreater: Boolean,
-    private vararg val rulers: HorizontalRuler
-) : HorizontalRuler(), DerivedRuler {
-    override fun PlacementScope.calculate(defaultValue: Float): Float =
-        mergeRulerValues(shouldUseGreater, rulers, defaultValue)
-}
-
-private fun <R : Ruler> PlacementScope.mergeRulerValues(
-    useGreater: Boolean,
-    rulers: Array<out R>,
-    defaultValue: Float
-): Float {
-    var value = Float.NaN
-    rulers.forEach {
-        val nextValue = it.current(Float.NaN)
-        if (value.isNaN() || (useGreater == (nextValue > value))) {
-            value = nextValue
-        }
-    }
-    return if (value.isNaN()) defaultValue else value
 }

@@ -270,10 +270,7 @@ internal class LayoutModifierNodeCoordinator(
     override fun performDraw(canvas: Canvas, graphicsLayer: GraphicsLayer?) {
         wrappedNonNull.draw(canvas, graphicsLayer)
         if (layoutNode.requireOwner().showLayoutBounds) {
-            val wrapped = wrapped
-            if (wrapped != null && (size != wrapped.size || wrapped.position != IntOffset.Zero)) {
-                drawBorder(canvas, modifierBoundsPaint)
-            }
+            drawBorder(canvas, modifierBoundsPaint)
         }
     }
 
