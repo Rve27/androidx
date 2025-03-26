@@ -1004,7 +1004,6 @@ includeProject(":savedstate:savedstate-ktx", [BuildType.MAIN, BuildType.COMPOSE,
 includeProject(":savedstate:savedstate-samples", [BuildType.MAIN, BuildType.COMPOSE, BuildType.FLAN, BuildType.KMP])
 includeProject(":security:security-app-authenticator", [BuildType.MAIN])
 includeProject(":security:security-app-authenticator-testing", [BuildType.MAIN])
-includeProject(":security:security-biometric", [BuildType.MAIN])
 includeProject(":security:security-crypto", [BuildType.MAIN])
 includeProject(":security:security-crypto-ktx", [BuildType.MAIN])
 includeProject(":security:security-mls", [BuildType.MAIN])
