@@ -43,8 +43,6 @@ dependencies {
     docs(project(":benchmark:benchmark-macro-junit4"))
     kmpDocs(project(":benchmark:benchmark-traceprocessor"))
     docs(project(":biometric:biometric"))
-    docs(project(":bluetooth:bluetooth"))
-    docs(project(":bluetooth:bluetooth-testing"))
     docs(project(":browser:browser"))
     docs(project(":camera:camera-camera2"))
     docs(project(":camera:camera-compose"))

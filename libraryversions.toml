@@ -198,7 +198,6 @@ ASYNCLAYOUTINFLATER = { group = "androidx.asynclayoutinflater", atomicGroupVersi
 AUTOFILL = { group = "androidx.autofill", atomicGroupVersion = "versions.AUTOFILL" }
 BENCHMARK = { group = "androidx.benchmark", atomicGroupVersion = "versions.BENCHMARK" }
 BIOMETRIC = { group = "androidx.biometric", atomicGroupVersion = "versions.BIOMETRIC" }
-BLUETOOTH = { group = "androidx.bluetooth", atomicGroupVersion = "versions.BLUETOOTH" }
 BROWSER = { group = "androidx.browser", atomicGroupVersion = "versions.BROWSER" }
 BUILDSRC_TESTS_MAX_DEP_VERSIONS_DEP = { group = "androidx.buildSrc-tests-max-dep-versions-dep", atomicGroupVersion = "versions.BUILDSRC_TESTS", overrideInclude = [ ":buildSrc-tests:max-dep-versions:buildSrc-tests-max-dep-versions-dep" ] }
 BUILDSRC_TESTS_MAX_DEP_VERSIONS_MAIN = { group = "androidx.buildSrc-tests-max-dep-versions-main", atomicGroupVersion = "versions.BUILDSRC_TESTS", overrideInclude = [ ":buildSrc-tests:max-dep-versions:buildSrc-tests-max-dep-versions-main" ] }
