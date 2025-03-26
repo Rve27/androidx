@@ -400,15 +400,22 @@ internal class PrefetchHandleProvider(
     private val subcomposeLayoutState: SubcomposeLayoutState,
     private val executor: PrefetchScheduler
 ) {
+    // cleared during onDisposed.
+    private var isStateActive: Boolean = true
+
     fun schedulePrecomposition(
         index: Int,
         prefetchMetrics: PrefetchMetrics,
     ): PrefetchHandle =
-        HandleAndRequestImpl(index, prefetchMetrics, executor as? IdleAwarenessProvider, null)
+        HandleAndRequestImpl(index, prefetchMetrics, executor as? PriorityPrefetchScheduler, null)
             .also {
                 executor.schedulePrefetch(it)
                 traceValue("compose:lazy:schedule_prefetch:index", index.toLong())
             }
+
+    fun onDisposed() {
+        isStateActive = false
+    }
 
     fun schedulePremeasure(
         index: Int,
@@ -420,7 +427,7 @@ internal class PrefetchHandleProvider(
                 index,
                 constraints,
                 prefetchMetrics,
-                executor as? IdleAwarenessProvider,
+                executor as? PriorityPrefetchScheduler,
                 onItemPremeasured
             )
             .also {
@@ -437,7 +444,7 @@ internal class PrefetchHandleProvider(
             index,
             constraints = constraints,
             prefetchMetrics,
-            executor as? IdleAwarenessProvider,
+            executor as? PriorityPrefetchScheduler,
             null
         )
 
@@ -445,13 +452,13 @@ internal class PrefetchHandleProvider(
         index: Int,
         prefetchMetrics: PrefetchMetrics,
     ): PrefetchRequest =
-        HandleAndRequestImpl(index, prefetchMetrics, executor as? IdleAwarenessProvider, null)
+        HandleAndRequestImpl(index, prefetchMetrics, executor as? PriorityPrefetchScheduler, null)
 
     @ExperimentalFoundationApi
     private inner class HandleAndRequestImpl(
         override val index: Int,
         private val prefetchMetrics: PrefetchMetrics,
-        private val idleAwarenessProvider: IdleAwarenessProvider?,
+        private val priorityPrefetchScheduler: PriorityPrefetchScheduler?,
         private val onItemPremeasured: (LazyLayoutPrefetchResultScope.() -> Unit)?,
     ) : PrefetchHandle, PrefetchRequest, LazyLayoutPrefetchResultScope {
 
@@ -459,9 +466,9 @@ internal class PrefetchHandleProvider(
             index: Int,
             constraints: Constraints,
             prefetchMetrics: PrefetchMetrics,
-            idleAwarenessProvider: IdleAwarenessProvider?,
+            priorityPrefetchScheduler: PriorityPrefetchScheduler?,
             onItemPremeasured: (LazyLayoutPrefetchResultScope.() -> Unit)?
-        ) : this(index, prefetchMetrics, idleAwarenessProvider, onItemPremeasured) {
+        ) : this(index, prefetchMetrics, priorityPrefetchScheduler, onItemPremeasured) {
             premeasureConstraints = constraints
         }
 
@@ -502,7 +509,7 @@ internal class PrefetchHandleProvider(
             // 3) In regular circumstances, we look at the average time this step took and execute
             // only if we have time.
             val required =
-                if (isUrgent || (idleAwarenessProvider?.isFrameIdle ?: false)) 0 else average
+                if (isUrgent || (priorityPrefetchScheduler?.isFrameIdle ?: false)) 0 else average
             return available > required
         }
 
@@ -526,6 +533,8 @@ internal class PrefetchHandleProvider(
         }
 
         override fun PrefetchRequestScope.execute(): Boolean {
+            // check if the state that generated this request is still active.
+            if (!isStateActive) return false
             return if (isUrgent) {
                     trace("compose:lazy:prefetch:execute:urgent") { executeRequest() }
                 } else {

@@ -79,10 +79,11 @@ interface PrefetchRequestScope {
 }
 
 /**
- * Support internal interface to allow landing idle detection features to the default prefetcher.
+ * Support internal interface to allow landing idle detection features to the default prefetcher. It
+ * also provides the ability to schedule priority based requests.
  */
 @ExperimentalFoundationApi
-internal interface IdleAwarenessProvider {
+internal interface PriorityPrefetchScheduler : PrefetchScheduler {
 
     /**
      * If the [PrefetchRequest] execution can do "overtime". Overtime here means more time than what
@@ -95,4 +96,21 @@ internal interface IdleAwarenessProvider {
      * the requests).
      */
     val isFrameIdle: Boolean
+
+    override fun schedulePrefetch(prefetchRequest: PrefetchRequest) =
+        scheduleHighPriorityPrefetch(prefetchRequest)
+
+    /**
+     * Accepts a prefetch request. Implementations should find a time to execute them which will
+     * have minimal impact on user experience. Low priority requests will be executed after high
+     * priority ones.
+     */
+    fun scheduleLowPriorityPrefetch(prefetchRequest: PrefetchRequest)
+
+    /**
+     * Accepts a prefetch request. Implementations should find a time to execute them which will
+     * have minimal impact on user experience. High priority requests inserted at the start of the
+     * execution queue.
+     */
+    fun scheduleHighPriorityPrefetch(prefetchRequest: PrefetchRequest)
 }
