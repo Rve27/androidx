@@ -43,6 +43,7 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.junit.After
+import org.junit.Assume.assumeNotNull
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
@@ -51,9 +52,10 @@ import org.junit.Test
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 class AppFunctionManagerCompatTest {
 
-    private lateinit var context: Context
+    private val context: Context = InstrumentationRegistry.getInstrumentation().targetContext
 
-    private lateinit var metadataTestHelper: AppFunctionMetadataTestHelper
+    private val metadataTestHelper: AppFunctionMetadataTestHelper =
+        AppFunctionMetadataTestHelper(context)
 
     private lateinit var appFunctionManagerCompat: AppFunctionManagerCompat
 
@@ -68,11 +70,9 @@ class AppFunctionManagerCompatTest {
 
     @Before
     fun setup() {
-        context = InstrumentationRegistry.getInstrumentation().targetContext
-        appFunctionManagerCompat = AppFunctionManagerCompat(context)
-        metadataTestHelper = AppFunctionMetadataTestHelper(context)
-
-        assumeTrue(appFunctionManagerCompat.isSupported())
+        val appFunctionManagerCompatOrNull = AppFunctionManagerCompat.getInstance(context)
+        assumeNotNull(appFunctionManagerCompatOrNull)
+        appFunctionManagerCompat = checkNotNull(appFunctionManagerCompatOrNull)
 
         uiAutomation.adoptShellPermissionIdentity(
             Manifest.permission.INSTALL_PACKAGES,

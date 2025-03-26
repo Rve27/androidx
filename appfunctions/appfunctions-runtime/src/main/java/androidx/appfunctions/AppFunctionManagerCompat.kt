@@ -40,36 +40,11 @@ import kotlinx.coroutines.flow.Flow
 public class AppFunctionManagerCompat
 internal constructor(
     private val context: Context,
-    private val translatorSelector: TranslatorSelector,
-    private val appFunctionReader: AppFunctionReader,
-    private val appFunctionManagerApi: AppFunctionManagerApi
-) {
-    public constructor(
-        context: Context
-    ) : this(
-        context,
-        Dependencies.translatorSelector,
-        AppSearchAppFunctionReader(context),
+    private val translatorSelector: TranslatorSelector = Dependencies.translatorSelector,
+    private val appFunctionReader: AppFunctionReader = AppSearchAppFunctionReader(context),
+    private val appFunctionManagerApi: AppFunctionManagerApi =
         ExtensionAppFunctionManagerApi(context)
-    )
-
-    /**
-     * Checks whether the AppFunction feature is supported.
-     *
-     * Support is determined by verifying if the device implements the App Functions extension
-     * library
-     *
-     * @return `true` if the AppFunctions feature is supported on this device, `false` otherwise.
-     */
-    public fun isSupported(): Boolean {
-        // TODO(b/395589225): Check isSupported based on SDK version and update the document.
-        return try {
-            Class.forName("com.android.extensions.appfunctions.AppFunctionManager")
-            true
-        } catch (_: ClassNotFoundException) {
-            false
-        }
-    }
+) {
 
     /**
      * Checks if [functionId] in the caller's package is enabled.
@@ -78,7 +53,6 @@ internal constructor(
      * [android.app.appfunctions.AppFunctionManager.isAppFunctionEnabled].
      *
      * @param functionId The identifier of the app function.
-     * @throws UnsupportedOperationException if AppFunction is not supported on this device.
      * @throws IllegalArgumentException If the [functionId] is not available in caller's package.
      */
     public suspend fun isAppFunctionEnabled(functionId: String): Boolean {
@@ -93,12 +67,10 @@ internal constructor(
      *
      * @param packageName The package name of the owner of [functionId].
      * @param functionId The identifier of the app function.
-     * @throws UnsupportedOperationException if AppFunction is not supported on this device.
      * @throws IllegalArgumentException If the [functionId] is not available under [packageName].
      */
     @RequiresPermission(value = "android.permission.EXECUTE_APP_FUNCTIONS", conditional = true)
     public suspend fun isAppFunctionEnabled(packageName: String, functionId: String): Boolean {
-        checkAppFunctionsFeatureSupported()
         return appFunctionManagerApi.isAppFunctionEnabled(
             packageName = packageName,
             functionId = functionId
@@ -113,7 +85,6 @@ internal constructor(
      *
      * @param functionId The identifier of the app function.
      * @param newEnabledState The new state of the app function.
-     * @throws UnsupportedOperationException if AppFunction is not supported on this device.
      * @throws IllegalArgumentException If the [functionId] is not available.
      */
     @RequiresPermission(value = "android.permission.EXECUTE_APP_FUNCTIONS", conditional = true)
@@ -121,7 +92,6 @@ internal constructor(
         functionId: String,
         @EnabledState newEnabledState: Int
     ) {
-        checkAppFunctionsFeatureSupported()
         return appFunctionManagerApi.setAppFunctionEnabled(functionId, newEnabledState)
     }
 
@@ -133,13 +103,11 @@ internal constructor(
      *
      * @param request the app function details and the arguments.
      * @return the result of the attempt to execute the function.
-     * @throws UnsupportedOperationException if AppFunction is not supported on this device.
      */
     @RequiresPermission(value = "android.permission.EXECUTE_APP_FUNCTIONS", conditional = true)
     public suspend fun executeAppFunction(
         request: ExecuteAppFunctionRequest,
     ): ExecuteAppFunctionResponse {
-        checkAppFunctionsFeatureSupported()
 
         val schemaMetadata: AppFunctionSchemaMetadata? =
             try {
@@ -204,21 +172,12 @@ internal constructor(
      *   the app function metadata.
      * @return a flow that emits a list of [AppFunctionMetadata] matching the search criteria and
      *   updated versions of this list when underlying data changes.
-     * @throws UnsupportedOperationException if AppFunction is not supported on this device.
      */
     @RequiresPermission(value = "android.permission.EXECUTE_APP_FUNCTIONS", conditional = true)
     public fun observeAppFunctions(
         searchSpec: AppFunctionSearchSpec
     ): Flow<List<AppFunctionMetadata>> {
-        checkAppFunctionsFeatureSupported()
-
         return appFunctionReader.searchAppFunctions(searchSpec)
-    }
-
-    private fun checkAppFunctionsFeatureSupported() {
-        if (!isSupported()) {
-            throw UnsupportedOperationException("AppFunction feature is not supported.")
-        }
     }
 
     @IntDef(
@@ -250,5 +209,41 @@ internal constructor(
 
         /** The version shared across all schema defined in the legacy SDK. */
         private const val LEGACY_SDK_GLOBAL_SCHEMA_VERSION = 1L
+
+        /**
+         * Checks whether the AppFunction feature is supported.
+         *
+         * Support is determined by verifying if the device implements the App Functions extension
+         * library
+         *
+         * @return `true` if the AppFunctions feature is supported on this device, `false`
+         *   otherwise.
+         */
+        private fun isSupported(): Boolean {
+            // TODO(b/395589225): Check isSupported based on SDK version and update the document.
+            return try {
+                Class.forName("com.android.extensions.appfunctions.AppFunctionManager")
+                true
+            } catch (_: ClassNotFoundException) {
+                false
+            }
+        }
+
+        /**
+         * Gets an instance of [AppFunctionManagerCompat] if the AppFunction feature is supported.
+         *
+         * Support is determined by verifying if the device implements the App Functions extension
+         * library.
+         *
+         * @return an instance of [AppFunctionManagerCompat] if the AppFunction feature is supported
+         *   or `null`.
+         */
+        @JvmStatic
+        public fun getInstance(context: Context): AppFunctionManagerCompat? =
+            if (isSupported()) {
+                AppFunctionManagerCompat(context)
+            } else {
+                null
+            }
     }
 }

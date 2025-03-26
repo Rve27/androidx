@@ -32,20 +32,22 @@ import com.google.common.truth.Truth.assertThat
 import java.time.LocalDateTime
 import kotlin.test.assertIs
 import org.junit.After
-import org.junit.Assume.assumeTrue
+import org.junit.Assume.assumeNotNull
 import org.junit.Before
 import org.junit.Test
 
 @LargeTest
 class IntegrationTest {
     private val targetContext = InstrumentationRegistry.getInstrumentation().context
-    private val appFunctionManager =
-        AppFunctionManagerCompat(InstrumentationRegistry.getInstrumentation().targetContext)
+    private lateinit var appFunctionManager: AppFunctionManagerCompat
     private val uiAutomation = InstrumentationRegistry.getInstrumentation().uiAutomation
 
     @Before
     fun setup() = doBlocking {
-        assumeTrue(appFunctionManager.isSupported())
+        val appFunctionManagerCompatOrNull = AppFunctionManagerCompat.getInstance(targetContext)
+        assumeNotNull(appFunctionManagerCompatOrNull)
+        appFunctionManager = checkNotNull(appFunctionManagerCompatOrNull)
+
         uiAutomation.apply {
             // This is needed because the test is running under the UID of
             // "androidx.appfunctions.integration.testapp",
