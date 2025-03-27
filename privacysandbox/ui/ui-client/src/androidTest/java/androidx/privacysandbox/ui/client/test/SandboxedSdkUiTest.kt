@@ -439,7 +439,7 @@ class SandboxedSdkUiTest {
     fun signalsNotSentWhenViewUnchangedTest() {
         addNodeToLayout()
         val session = testSandboxedUiAdapter.testSession
-        session?.runAndRetrieveNextUiChange {}
+        session?.assertFirstUiChangeReceived()
         session?.assertNoSubsequentUiChanges()
     }
 
@@ -538,7 +538,7 @@ class SandboxedSdkUiTest {
     fun signalsSentWhenHostActivityStateChangesTest() {
         addNodeToLayout()
         val session = testSandboxedUiAdapter.testSession
-        session?.runAndRetrieveNextUiChange {}
+        session?.assertFirstUiChangeReceived()
         // Replace the first activity with a new activity. The onScreenGeometry should now be empty.
         var sandboxedSdkViewUiInfo =
             session?.runAndRetrieveNextUiChange {

@@ -547,7 +547,6 @@ class SandboxedSdkViewTest {
     fun signalsNotSentWhenViewUnchanged() {
         addViewToLayoutAndWaitToBeActive()
         val session = testSandboxedUiAdapter.testSession!!
-        session.runAndRetrieveNextUiChange {}
         session.assertNoSubsequentUiChanges()
     }
 
@@ -590,6 +589,7 @@ class SandboxedSdkViewTest {
                 activityScenarioRule.withActivity {
                     view.y -= yShiftDistance
                     view.x -= xShiftDistance
+                    view.requestLayout()
                 }
             }
         assertThat(sandboxedSdkViewUiInfo.uiContainerWidth).isEqualTo(clippedWidth)
@@ -607,7 +607,10 @@ class SandboxedSdkViewTest {
         val newXPosition = 100f
         val sandboxedSdkViewUiInfo =
             session.runAndRetrieveNextUiChange {
-                activityScenarioRule.withActivity { view.x = newXPosition }
+                activityScenarioRule.withActivity {
+                    view.x = newXPosition
+                    view.requestLayout()
+                }
             }
         val containerWidth = sandboxedSdkViewUiInfo.uiContainerWidth
         val onScreenWidth = sandboxedSdkViewUiInfo.onScreenGeometry.width().toFloat()
@@ -618,9 +621,6 @@ class SandboxedSdkViewTest {
     fun signalsSentWhenAlphaChanges() {
         addViewToLayoutAndWaitToBeActive()
         val session = testSandboxedUiAdapter.testSession!!
-        // Catch initial UI change so that the subsequent alpha change will be reflected in the
-        // next SandboxedSdkViewUiInfo
-        session.runAndRetrieveNextUiChange {}
         val newAlpha = 0.5f
         val sandboxedSdkViewUiInfo =
             session.runAndRetrieveNextUiChange {
@@ -676,7 +676,6 @@ class SandboxedSdkViewTest {
     fun signalsSentWhenHostActivityStateChanges() {
         addViewToLayoutAndWaitToBeActive()
         val session = testSandboxedUiAdapter.testSession!!
-        session.runAndRetrieveNextUiChange {}
         // Replace the first activity with a new activity. The onScreenGeometry should now be empty.
         var sandboxedSdkViewUiInfo =
             session.runAndRetrieveNextUiChange {
@@ -697,8 +696,6 @@ class SandboxedSdkViewTest {
         assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
         addViewToLayoutAndWaitToBeActive()
         val session = testSandboxedUiAdapter.testSession!!
-        // Catch initial UI change so that we can ensure the subsequent event is caught.
-        session.runAndRetrieveNextUiChange {}
         // If no viewability event occurs, this will throw an exception.
         session.runAndRetrieveNextUiChange {
             activityScenarioRule.withActivity { view.visibility = View.INVISIBLE }
@@ -762,6 +759,7 @@ class SandboxedSdkViewTest {
             viewToAdd.setEventListener(eventListener)
             assertThat(eventListener.uiDisplayedLatch.await(TIMEOUT, TimeUnit.MILLISECONDS))
                 .isTrue()
+            testSandboxedUiAdapter.testSession?.assertFirstUiChangeReceived()
         }
     }
 
