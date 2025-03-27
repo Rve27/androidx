@@ -451,6 +451,7 @@ open class androidx.navigation/NavDestination { // androidx.navigation/NavDestin
     final fun addDeepLink(androidx.navigation/NavDeepLink) // androidx.navigation/NavDestination.addDeepLink|addDeepLink(androidx.navigation.NavDeepLink){}[0]
     final fun addDeepLink(kotlin/String) // androidx.navigation/NavDestination.addDeepLink|addDeepLink(kotlin.String){}[0]
     final fun addInDefaultArgs(androidx.savedstate/SavedState?): androidx.savedstate/SavedState? // androidx.navigation/NavDestination.addInDefaultArgs|addInDefaultArgs(androidx.savedstate.SavedState?){}[0]
+    final fun buildDeepLinkDestinations(androidx.navigation/NavDestination? = ...): kotlin.collections/List<androidx.navigation/NavDestination> // androidx.navigation/NavDestination.buildDeepLinkDestinations|buildDeepLinkDestinations(androidx.navigation.NavDestination?){}[0]
     final fun hasRoute(kotlin/String, androidx.savedstate/SavedState?): kotlin/Boolean // androidx.navigation/NavDestination.hasRoute|hasRoute(kotlin.String;androidx.savedstate.SavedState?){}[0]
     final fun matchRoute(kotlin/String): androidx.navigation/NavDestination.DeepLinkMatch? // androidx.navigation/NavDestination.matchRoute|matchRoute(kotlin.String){}[0]
     final fun removeArgument(kotlin/String) // androidx.navigation/NavDestination.removeArgument|removeArgument(kotlin.String){}[0]
