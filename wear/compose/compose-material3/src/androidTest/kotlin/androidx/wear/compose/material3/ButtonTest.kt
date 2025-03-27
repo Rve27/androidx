@@ -40,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
@@ -1418,9 +1417,7 @@ private fun ComposeContentTestRule.verifyThreeSlotButtonColors(
     setContentWithTheme {
         val buttonColors = expectedColor()
         containerColor =
-            ((buttonColors.containerPainter(status.enabled()) as ColorPainter).color).compositeOver(
-                testBackgroundColor
-            )
+            (buttonColors.containerColor(status.enabled())).compositeOver(testBackgroundColor)
         labelColor = buttonColors.contentColor(status.enabled())
         secondaryLabelColor = buttonColors.secondaryContentColor(status.enabled())
         iconColor = buttonColors.iconColor(status.enabled())
@@ -1536,7 +1533,7 @@ private fun ComposeContentTestRule.isShape(
     setContentWithTheme {
         background = MaterialTheme.colorScheme.surfaceContainer
         Box(Modifier.background(background)) {
-            buttonColor = (colors().containerPainter(true) as ColorPainter).color
+            buttonColor = colors().containerColor(true)
             if (buttonColor == Color.Transparent) {
                 buttonColor = background
             }
@@ -1571,9 +1568,7 @@ private fun ComposeContentTestRule.verifyCompactButtonColors(
 
     setContentWithTheme {
         containerColor =
-            ((colors().containerPainter(status.enabled()) as ColorPainter).color).compositeOver(
-                testBackgroundColor
-            )
+            (colors().containerColor(status.enabled())).compositeOver(testBackgroundColor)
         labelColor = colors().contentColor(status.enabled())
         iconColor = colors().iconColor(status.enabled())
 
