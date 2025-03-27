@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("AndroidXPlugin")
     id("com.android.library")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -46,8 +47,8 @@ dependencies {
     implementation(project(":core:core-location-altitude-proto"))
     implementation("androidx.core:core:1.13.0")
     implementation(project(":room:room-runtime"))
-    implementation(project(':room:room-common'))
-    implementation(project(':sqlite:sqlite'))
+    implementation(project(":room:room-common"))
+    implementation(project(":sqlite:sqlite"))
     implementation(libs.autoValueAnnotations)
     implementation(libs.kotlinStdlib)
 
