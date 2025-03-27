@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -3475,6 +3476,49 @@ class SubcomposeLayoutTest {
         rule.runOnIdle { addSlot = false }
 
         rule.runOnIdle { assertThat(counterInSubcomposition).isEqualTo(0) }
+    }
+
+    @Test
+    fun precomposeOnTopOfCancelledPrecomposition() {
+        val state = SubcomposeLayoutState(SubcomposeSlotReusePolicy(1))
+
+        rule.setContent { SubcomposeLayout(state) { layout(10, 10) {} } }
+        var content1Composed = false
+        var content2Composed = false
+
+        rule.runOnIdle {
+            val precomposition =
+                state.createPausedPrecomposition(Unit) {
+                    Box(Modifier.size(100.dp))
+                    DisposableEffect(Unit) {
+                        content1Composed = true
+                        onDispose { content1Composed = false }
+                    }
+                }
+
+            while (!precomposition.isComplete) {
+                precomposition.resume { true }
+            }
+
+            precomposition.cancel()
+
+            val precomposition2 =
+                state.createPausedPrecomposition(Unit) {
+                    Box(Modifier.padding(5.dp))
+                    DisposableEffect(Unit) {
+                        content2Composed = true
+                        onDispose { content2Composed = false }
+                    }
+                }
+
+            while (!precomposition2.isComplete) {
+                precomposition2.resume { true }
+            }
+            precomposition2.apply()
+
+            assertThat(content1Composed).isFalse()
+            assertThat(content2Composed).isTrue()
+        }
     }
 
     private fun alternateLookaheadPlacement(shouldPlaceItem: BooleanArray) {

@@ -989,6 +989,8 @@ internal class LayoutNodeSubcompositionsState(
                 nodeState.pausedComposition?.let {
                     it.cancel()
                     nodeState.pausedComposition = null
+                    nodeState.composition?.dispose()
+                    nodeState.composition = null
                 }
             }
 
