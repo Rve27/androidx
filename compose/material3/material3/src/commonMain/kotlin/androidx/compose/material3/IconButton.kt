@@ -133,7 +133,7 @@ fun IconButton(
  *
  * Small-sized narrow round shape IconButton
  *
- * @sample androidx.compose.material3.samples.XSmallNarrowSquareIconButtonsSample
+ * @sample androidx.compose.material3.samples.ExtraSmallNarrowSquareIconButtonsSample
  *
  * Medium / default size round-shaped icon button
  *

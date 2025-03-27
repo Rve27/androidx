@@ -91,6 +91,7 @@ import androidx.compose.material3.samples.ExpandableVerticalFloatingToolbarSampl
 import androidx.compose.material3.samples.ExposedDropdownMenuSample
 import androidx.compose.material3.samples.ExtendedFloatingActionButtonSample
 import androidx.compose.material3.samples.ExtendedFloatingActionButtonTextSample
+import androidx.compose.material3.samples.ExtraSmallNarrowSquareIconButtonsSample
 import androidx.compose.material3.samples.FadingHorizontalMultiBrowseCarouselSample
 import androidx.compose.material3.samples.FancyIndicatorContainerTabs
 import androidx.compose.material3.samples.FancyIndicatorTabs
@@ -263,7 +264,6 @@ import androidx.compose.material3.samples.WideNavigationRailResponsiveSample
 import androidx.compose.material3.samples.XLargeButtonWithIconSample
 import androidx.compose.material3.samples.XLargeToggleButtonWithIconSample
 import androidx.compose.material3.samples.XSmallButtonWithIconSample
-import androidx.compose.material3.samples.XSmallNarrowSquareIconButtonsSample
 import androidx.compose.material3.samples.XSmallToggleButtonWithIconSample
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -1229,7 +1229,7 @@ val IconButtonExamples =
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
         ) {
-            XSmallNarrowSquareIconButtonsSample()
+            ExtraSmallNarrowSquareIconButtonsSample()
         },
         Example(
             name = "MediumRoundWideIconButtonSample",
