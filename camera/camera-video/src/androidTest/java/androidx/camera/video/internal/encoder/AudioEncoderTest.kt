@@ -100,7 +100,8 @@ class AudioEncoderTest {
                     .setProfile(ENCODER_PROFILE)
                     .setInputTimebase(INPUT_TIMEBASE)
                     .setBitrate(BIT_RATE)
-                    .setSampleRate(SAMPLE_RATE)
+                    .setCaptureSampleRate(SAMPLE_RATE)
+                    .setEncodeSampleRate(SAMPLE_RATE)
                     .setChannelCount(CHANNEL_COUNT)
                     .build(),
                 SESSION_TYPE_REGULAR

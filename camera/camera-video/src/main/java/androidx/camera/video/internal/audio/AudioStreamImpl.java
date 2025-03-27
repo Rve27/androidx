@@ -102,20 +102,20 @@ public class AudioStreamImpl implements AudioStream {
     @RequiresPermission(Manifest.permission.RECORD_AUDIO)
     public AudioStreamImpl(@NonNull AudioSettings settings, @Nullable Context attributionContext)
             throws IllegalArgumentException, AudioStreamException {
-        if (!isSettingsSupported(settings.getSampleRate(), settings.getChannelCount(),
+        if (!isSettingsSupported(settings.getCaptureSampleRate(), settings.getChannelCount(),
                 settings.getAudioFormat())) {
             throw new UnsupportedOperationException(String.format(
                     "The combination of sample rate %d, channel count %d and audio format"
                             + " %d is not supported.",
-                    settings.getSampleRate(), settings.getChannelCount(),
+                    settings.getCaptureSampleRate(), settings.getChannelCount(),
                     settings.getAudioFormat()));
         }
 
         mSettings = settings;
         mBytesPerFrame = settings.getBytesPerFrame();
 
-        int minBufferSize = getMinBufferSize(settings.getSampleRate(), settings.getChannelCount(),
-                settings.getAudioFormat());
+        int minBufferSize = getMinBufferSize(settings.getCaptureSampleRate(),
+                settings.getChannelCount(), settings.getAudioFormat());
         // The minBufferSize should be a positive value since the settings had already been checked
         // by the isSettingsSupported().
         Preconditions.checkState(minBufferSize > 0);
@@ -255,7 +255,7 @@ public class AudioStreamImpl implements AudioStream {
             AudioTimestamp audioTimestamp = new AudioTimestamp();
             if (Api24Impl.getTimestamp(mAudioRecord, audioTimestamp,
                     AudioTimestamp.TIMEBASE_MONOTONIC) == AudioRecord.SUCCESS) {
-                presentationTimeNs = computeInterpolatedTimeNs(mSettings.getSampleRate(),
+                presentationTimeNs = computeInterpolatedTimeNs(mSettings.getCaptureSampleRate(),
                         mTotalFramesRead, audioTimestamp);
 
                 // Once timestamp difference is out of limit, fallback to system time.
@@ -298,7 +298,7 @@ public class AudioStreamImpl implements AudioStream {
             return Api23Impl.build(audioRecordBuilder);
         } else {
             return new AudioRecord(settings.getAudioSource(),
-                    settings.getSampleRate(),
+                    settings.getCaptureSampleRate(),
                     channelCountToChannelConfig(settings.getChannelCount()),
                     settings.getAudioFormat(),
                     bufferSizeInByte);
@@ -308,7 +308,7 @@ public class AudioStreamImpl implements AudioStream {
     @NonNull
     private static AudioFormat createAudioFormat(@NonNull AudioSettings settings)
             throws IllegalArgumentException {
-        return createAudioFormat(settings.getSampleRate(), settings.getChannelCount(),
+        return createAudioFormat(settings.getCaptureSampleRate(), settings.getChannelCount(),
                 settings.getAudioFormat());
     }
 
