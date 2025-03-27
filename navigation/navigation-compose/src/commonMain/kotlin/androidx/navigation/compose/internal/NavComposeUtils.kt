@@ -17,12 +17,7 @@
 package androidx.navigation.compose.internal
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.ViewModelStoreOwner
 import kotlinx.coroutines.flow.Flow
-
-internal expect object LocalViewModelStoreOwner {
-    @get:Composable val current: ViewModelStoreOwner?
-}
 
 internal expect class BackEventCompat {
     val touchX: Float
@@ -36,3 +31,16 @@ internal expect fun PredictiveBackHandler(
     enabled: Boolean = true,
     onBack: suspend (progress: Flow<BackEventCompat>) -> Unit
 )
+
+internal expect fun randomUUID(): String
+
+/**
+ * Class WeakReference encapsulates weak reference to an object, which could be used to either
+ * retrieve a strong reference to an object, or return null, if object was already destroyed by the
+ * memory manager.
+ */
+internal expect class WeakReference<T : Any>(reference: T) {
+    fun get(): T?
+
+    fun clear()
+}
