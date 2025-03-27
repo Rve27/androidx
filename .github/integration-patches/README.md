@@ -14,3 +14,4 @@ Patches can be generated with `git diff > patch-file-name.patch`.
 | Workflow            | Patch File Name      |
 |---------------------|----------------------|
 | Gradle Nightly Test | gradle-nightly.patch |
+| KGP Nightly Test    | kgp-nightly.patch    |
