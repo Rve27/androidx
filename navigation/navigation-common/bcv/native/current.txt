@@ -299,6 +299,9 @@ final class androidx.navigation/NavDeepLinkDslBuilder { // androidx.navigation/N
 final class androidx.navigation/NavOptions { // androidx.navigation/NavOptions|null[0]
     constructor <init>() // androidx.navigation/NavOptions.<init>|<init>(){}[0]
 
+    final val popUpToId // androidx.navigation/NavOptions.popUpToId|{}popUpToId[0]
+        final fun <get-popUpToId>(): kotlin/Int // androidx.navigation/NavOptions.popUpToId.<get-popUpToId>|<get-popUpToId>(){}[0]
+
     final var popUpToRoute // androidx.navigation/NavOptions.popUpToRoute|{}popUpToRoute[0]
         final fun <get-popUpToRoute>(): kotlin/String? // androidx.navigation/NavOptions.popUpToRoute.<get-popUpToRoute>|<get-popUpToRoute>(){}[0]
         final fun <set-popUpToRoute>(kotlin/String?) // androidx.navigation/NavOptions.popUpToRoute.<set-popUpToRoute>|<set-popUpToRoute>(kotlin.String?){}[0]

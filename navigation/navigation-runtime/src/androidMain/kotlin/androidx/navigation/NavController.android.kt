@@ -24,7 +24,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcher
 import androidx.annotation.CallSuper
@@ -45,6 +44,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.childHierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.internal.AtomicInt
+import androidx.navigation.internal.Log
 import androidx.navigation.internal.NavContext
 import androidx.navigation.serialization.generateHashCode
 import androidx.navigation.serialization.generateRouteWithArgs
@@ -1307,7 +1307,11 @@ public actual open class NavController(
             try {
                 extras?.getIntArray(KEY_DEEP_LINK_IDS)
             } catch (e: Exception) {
-                Log.e(TAG, "handleDeepLink() could not extract deepLink from $intent", e)
+                android.util.Log.e(
+                    TAG,
+                    "handleDeepLink() could not extract deepLink from $intent",
+                    e
+                )
                 null
             }
         var deepLinkArgs = extras?.getParcelableArrayList<SavedState>(KEY_DEEP_LINK_ARGS)

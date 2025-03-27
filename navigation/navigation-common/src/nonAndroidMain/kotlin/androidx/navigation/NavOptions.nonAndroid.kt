@@ -20,6 +20,8 @@ import kotlin.jvm.JvmOverloads
 import kotlin.reflect.KClass
 
 public actual class NavOptions {
+    public actual val popUpToId: Int = 0
+
     public actual var popUpToRoute: String?
         get() = implementedInJetBrainsFork()
         set(_) {
