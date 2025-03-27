@@ -148,6 +148,7 @@ abstract interface androidx.compose.material3/BottomAppBarState { // androidx.co
 
 abstract interface androidx.compose.material3/ButtonGroupScope { // androidx.compose.material3/ButtonGroupScope|null[0]
     abstract fun (androidx.compose.ui/Modifier).animateWidth(androidx.compose.foundation.interaction/InteractionSource): androidx.compose.ui/Modifier // androidx.compose.material3/ButtonGroupScope.animateWidth|animateWidth@androidx.compose.ui.Modifier(androidx.compose.foundation.interaction.InteractionSource){}[0]
+    abstract fun (androidx.compose.ui/Modifier).weight(kotlin/Float): androidx.compose.ui/Modifier // androidx.compose.material3/ButtonGroupScope.weight|weight@androidx.compose.ui.Modifier(kotlin.Float){}[0]
     abstract fun (androidx.compose.ui/Modifier).weight(kotlin/Float, kotlin/Boolean = ...): androidx.compose.ui/Modifier // androidx.compose.material3/ButtonGroupScope.weight|weight@androidx.compose.ui.Modifier(kotlin.Float;kotlin.Boolean){}[0]
 }
 
