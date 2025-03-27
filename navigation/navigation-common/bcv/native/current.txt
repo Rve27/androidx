@@ -434,6 +434,9 @@ open class androidx.navigation/NavDestination { // androidx.navigation/NavDestin
     open val displayName // androidx.navigation/NavDestination.displayName|{}displayName[0]
         open fun <get-displayName>(): kotlin/String // androidx.navigation/NavDestination.displayName.<get-displayName>|<get-displayName>(){}[0]
 
+    final var id // androidx.navigation/NavDestination.id|{}id[0]
+        final fun <get-id>(): kotlin/Int // androidx.navigation/NavDestination.id.<get-id>|<get-id>(){}[0]
+        final fun <set-id>(kotlin/Int) // androidx.navigation/NavDestination.id.<set-id>|<set-id>(kotlin.Int){}[0]
     final var label // androidx.navigation/NavDestination.label|{}label[0]
         final fun <get-label>(): kotlin/CharSequence? // androidx.navigation/NavDestination.label.<get-label>|<get-label>(){}[0]
         final fun <set-label>(kotlin/CharSequence?) // androidx.navigation/NavDestination.label.<set-label>|<set-label>(kotlin.CharSequence?){}[0]
@@ -473,6 +476,7 @@ open class androidx.navigation/NavDestination { // androidx.navigation/NavDestin
 
         final fun <#A2: kotlin/Any> (androidx.navigation/NavDestination).hasRoute(kotlin.reflect/KClass<#A2>): kotlin/Boolean // androidx.navigation/NavDestination.Companion.hasRoute|hasRoute@androidx.navigation.NavDestination(kotlin.reflect.KClass<0:0>){0§<kotlin.Any>}[0]
         final fun createRoute(kotlin/String?): kotlin/String // androidx.navigation/NavDestination.Companion.createRoute|createRoute(kotlin.String?){}[0]
+        final fun getDisplayName(androidx.navigation.internal/NavContext, kotlin/Int): kotlin/String // androidx.navigation/NavDestination.Companion.getDisplayName|getDisplayName(androidx.navigation.internal.NavContext;kotlin.Int){}[0]
         final inline fun <#A2: reified kotlin/Any> (androidx.navigation/NavDestination).hasRoute(): kotlin/Boolean // androidx.navigation/NavDestination.Companion.hasRoute|hasRoute@androidx.navigation.NavDestination(){0§<kotlin.Any>}[0]
     }
 }
@@ -485,6 +489,8 @@ open class androidx.navigation/NavGraph : androidx.navigation/NavDestination, ko
     final val startDestDisplayName // androidx.navigation/NavGraph.startDestDisplayName|{}startDestDisplayName[0]
         final fun <get-startDestDisplayName>(): kotlin/String // androidx.navigation/NavGraph.startDestDisplayName.<get-startDestDisplayName>|<get-startDestDisplayName>(){}[0]
 
+    final var startDestinationId // androidx.navigation/NavGraph.startDestinationId|{}startDestinationId[0]
+        final fun <get-startDestinationId>(): kotlin/Int // androidx.navigation/NavGraph.startDestinationId.<get-startDestinationId>|<get-startDestinationId>(){}[0]
     final var startDestinationRoute // androidx.navigation/NavGraph.startDestinationRoute|{}startDestinationRoute[0]
         final fun <get-startDestinationRoute>(): kotlin/String? // androidx.navigation/NavGraph.startDestinationRoute.<get-startDestinationRoute>|<get-startDestinationRoute>(){}[0]
         final fun <set-startDestinationRoute>(kotlin/String?) // androidx.navigation/NavGraph.startDestinationRoute.<set-startDestinationRoute>|<set-startDestinationRoute>(kotlin.String?){}[0]
@@ -501,6 +507,7 @@ open class androidx.navigation/NavGraph : androidx.navigation/NavDestination, ko
     final fun findNode(kotlin.reflect/KClass<*>): androidx.navigation/NavDestination? // androidx.navigation/NavGraph.findNode|findNode(kotlin.reflect.KClass<*>){}[0]
     final fun findNode(kotlin/String, kotlin/Boolean): androidx.navigation/NavDestination? // androidx.navigation/NavGraph.findNode|findNode(kotlin.String;kotlin.Boolean){}[0]
     final fun findNode(kotlin/String?): androidx.navigation/NavDestination? // androidx.navigation/NavGraph.findNode|findNode(kotlin.String?){}[0]
+    final fun findNodeComprehensive(kotlin/Int, androidx.navigation/NavDestination?, kotlin/Boolean, androidx.navigation/NavDestination? = ...): androidx.navigation/NavDestination? // androidx.navigation/NavGraph.findNodeComprehensive|findNodeComprehensive(kotlin.Int;androidx.navigation.NavDestination?;kotlin.Boolean;androidx.navigation.NavDestination?){}[0]
     final fun matchDeepLinkComprehensive(androidx.navigation/NavDeepLinkRequest, kotlin/Boolean, kotlin/Boolean, androidx.navigation/NavDestination): androidx.navigation/NavDestination.DeepLinkMatch? // androidx.navigation/NavGraph.matchDeepLinkComprehensive|matchDeepLinkComprehensive(androidx.navigation.NavDeepLinkRequest;kotlin.Boolean;kotlin.Boolean;androidx.navigation.NavDestination){}[0]
     final fun matchRouteComprehensive(kotlin/String, kotlin/Boolean, kotlin/Boolean, androidx.navigation/NavDestination): androidx.navigation/NavDestination.DeepLinkMatch? // androidx.navigation/NavGraph.matchRouteComprehensive|matchRouteComprehensive(kotlin.String;kotlin.Boolean;kotlin.Boolean;androidx.navigation.NavDestination){}[0]
     final fun remove(androidx.navigation/NavDestination) // androidx.navigation/NavGraph.remove|remove(androidx.navigation.NavDestination){}[0]

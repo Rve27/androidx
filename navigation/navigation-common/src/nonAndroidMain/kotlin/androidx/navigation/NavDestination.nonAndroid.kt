@@ -17,6 +17,7 @@
 package androidx.navigation
 
 import androidx.annotation.RestrictTo
+import androidx.navigation.internal.NavContext
 import androidx.savedstate.SavedState
 import kotlin.jvm.JvmStatic
 import kotlin.reflect.KClass
@@ -48,6 +49,8 @@ public actual open class NavDestination actual constructor(navigatorName: String
     public actual var label: CharSequence? = implementedInJetBrainsFork()
 
     public actual val arguments: Map<String, NavArgument> = implementedInJetBrainsFork()
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public actual var id: Int = 0
 
     public actual var route: String? = implementedInJetBrainsFork()
         set(_) {
@@ -102,6 +105,11 @@ public actual open class NavDestination actual constructor(navigatorName: String
     }
 
     public actual companion object {
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public actual fun getDisplayName(context: NavContext, id: Int): String {
+            return context.getResourceName(id)
+        }
+
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
         public actual fun createRoute(route: String?): String {
             implementedInJetBrainsFork()

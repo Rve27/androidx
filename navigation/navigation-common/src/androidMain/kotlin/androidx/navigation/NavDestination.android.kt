@@ -158,7 +158,7 @@ actual constructor(public actual val navigatorName: String) {
      * from KClass.
      */
     @get:IdRes
-    public var id: Int = 0
+    public actual var id: Int = 0
         set(@IdRes id) {
             field = id
             idName = null
@@ -623,7 +623,7 @@ actual constructor(public actual val navigatorName: String) {
          */
         @JvmStatic
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun getDisplayName(context: NavContext, id: Int): String {
+        public actual fun getDisplayName(context: NavContext, id: Int): String {
             // aapt-generated IDs have the high byte nonzero,
             // so anything below that cannot be a valid resource id
             return if (id <= 0x00FFFFFF) {

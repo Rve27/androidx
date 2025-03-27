@@ -201,11 +201,11 @@ public actual open class NavGraph actual constructor(navGraphNavigator: Navigato
      *   id.
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public fun findNodeComprehensive(
+    public actual fun findNodeComprehensive(
         @IdRes resId: Int,
         lastVisited: NavDestination?,
         searchChildren: Boolean,
-        matchingDest: NavDestination? = null,
+        matchingDest: NavDestination?,
     ): NavDestination? {
         // first search direct children
         var destination = nodes[resId]
@@ -340,7 +340,7 @@ public actual open class NavGraph actual constructor(navGraphNavigator: Navigato
      * destination represented by this id is the one the user will initially see.
      */
     @get:IdRes
-    public var startDestinationId: Int
+    public actual var startDestinationId: Int
         get() = startDestId
         private set(startDestId) {
             require(startDestId != id) {

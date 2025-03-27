@@ -17,6 +17,7 @@ package androidx.navigation
 
 import androidx.annotation.RestrictTo
 import androidx.collection.SparseArrayCompat
+import androidx.collection.valueIterator
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 import kotlin.reflect.KClass
@@ -26,6 +27,9 @@ public actual open class NavGraph actual constructor(navGraphNavigator: Navigato
     NavDestination(navGraphNavigator), Iterable<NavDestination> {
     public actual val nodes: SparseArrayCompat<NavDestination>
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) get() = implementedInJetBrainsFork()
+
+    private var startDestId = 0
+    private var startDestIdName: String? = null
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual fun matchRouteComprehensive(
@@ -57,6 +61,44 @@ public actual open class NavGraph actual constructor(navGraphNavigator: Navigato
 
     public actual fun addDestinations(vararg nodes: NavDestination) {
         implementedInJetBrainsFork()
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public actual fun findNodeComprehensive(
+        resId: Int,
+        lastVisited: NavDestination?,
+        searchChildren: Boolean,
+        matchingDest: NavDestination?,
+    ): NavDestination? {
+        // first search direct children
+        var destination = nodes[resId]
+        when {
+            matchingDest != null ->
+                // check parent in case of duplicated destinations to ensure it finds the correct
+                // nested destination
+                if (destination == matchingDest && destination.parent == matchingDest.parent)
+                    return destination
+                else destination = null
+            else -> if (destination != null) return destination
+        }
+
+        if (searchChildren) {
+            // then dfs through children. Avoid re-visiting children that were recursing up this
+            // way.
+            destination =
+                nodes.valueIterator().asSequence().firstNotNullOfOrNull { child ->
+                    if (child is NavGraph && child != lastVisited) {
+                        child.findNodeComprehensive(resId, this, true, matchingDest)
+                    } else null
+                }
+        }
+
+        // lastly search through parents. Avoid re-visiting parents that were recursing down
+        // this way.
+        return destination
+            ?: if (parent != null && parent != lastVisited) {
+                parent!!.findNodeComprehensive(resId, this, searchChildren, matchingDest)
+            } else null
     }
 
     public actual fun findNode(route: String?): NavDestination? {
@@ -95,6 +137,23 @@ public actual open class NavGraph actual constructor(navGraphNavigator: Navigato
     public actual fun clear() {
         implementedInJetBrainsFork()
     }
+
+    /**
+     * The starting destination id for this NavGraph. When navigating to the NavGraph, the
+     * destination represented by this id is the one the user will initially see.
+     */
+    public actual var startDestinationId: Int
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) get() = startDestId
+        private set(startDestId) {
+            require(startDestId != id) {
+                "Start destination $startDestId cannot use the same id as the graph $this"
+            }
+            if (startDestinationRoute != null) {
+                startDestinationRoute = null
+            }
+            this.startDestId = startDestId
+            startDestIdName = null
+        }
 
     public actual fun setStartDestination(startDestRoute: String) {
         implementedInJetBrainsFork()
