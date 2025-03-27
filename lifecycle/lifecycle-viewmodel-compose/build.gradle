@@ -35,7 +35,8 @@ plugins {
 
 androidXMultiplatform {
     androidTarget()
-    desktop()
+    jvmStubs()
+    linuxX64Stubs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
 
@@ -45,7 +46,7 @@ androidXMultiplatform {
                 api(project(":lifecycle:lifecycle-common"))
                 api(project(":lifecycle:lifecycle-viewmodel"))
                 api("androidx.annotation:annotation:1.8.1")
-                api("androidx.compose.runtime:runtime:1.6.0")
+                api("androidx.compose.runtime:runtime:1.7.8")
                 api(libs.kotlinSerializationCore)
                 implementation(libs.kotlinStdlib)
             }
@@ -63,7 +64,7 @@ androidXMultiplatform {
             dependsOn(commonMain)
             dependencies {
                 api(project(":lifecycle:lifecycle-viewmodel-savedstate"))
-                api("androidx.compose.ui:ui:1.6.0")
+                api("androidx.compose.ui:ui:1.7.8")
                 // Converting `lifecycle-viewmodel-compose` to KMP and including a transitive
                 // dependency on `lifecycle-livedata-core` triggered a Gradle bug. Adding the
                 // `livedata` dependency directly works around the issue.
@@ -91,6 +92,18 @@ androidXMultiplatform {
                 implementation(project(":lifecycle:lifecycle-common-java8"))
                 implementation("androidx.activity:activity-compose:1.10.1")
             }
+        }
+
+        nonAndroidMain {
+            dependsOn(commonMain)
+        }
+
+        jvmStubsMain {
+            dependsOn(nonAndroidMain)
+        }
+
+        linuxx64StubsMain {
+            dependsOn(nonAndroidMain)
         }
     }
 }
