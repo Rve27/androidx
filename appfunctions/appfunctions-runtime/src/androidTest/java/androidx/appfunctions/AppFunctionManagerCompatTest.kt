@@ -25,7 +25,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageInstaller
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.appfunctions.core.AppFunctionMetadataTestHelper
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
@@ -49,7 +48,6 @@ import org.junit.Before
 import org.junit.Test
 
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
-@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 class AppFunctionManagerCompatTest {
 
     private val context: Context = InstrumentationRegistry.getInstrumentation().targetContext

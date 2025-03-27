@@ -18,7 +18,6 @@ package androidx.compose.ui
 
 import android.os.Build
 import android.view.View
-import androidx.annotation.RequiresApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +30,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.FlakyTest
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.After
 import org.junit.Assert
@@ -42,7 +42,7 @@ import org.junit.runner.RunWith
 
 @MediumTest
 @RunWith(AndroidJUnit4::class)
-@RequiresApi(35)
+@SdkSuppress(minSdkVersion = 35)
 class SensitiveContentModifierTest {
     @get:Rule val rule = createAndroidComposeRule<TestActivity>()
     private lateinit var androidComposeView: View

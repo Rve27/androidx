@@ -388,7 +388,7 @@ class ZoomControlDeviceTest(
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.R)
     @Test
     fun setLinearZoom_androidRZoomRatio_cropWidthChangedLinearly() = runBlocking {
         checkTestPreconditions(isAndroidRZoom = true)

@@ -28,7 +28,6 @@ import android.view.ViewGroup.LayoutParams
 import android.view.ViewTreeObserver
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.Lifecycle
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
 import androidx.privacysandbox.ui.core.BackwardCompatUtil
@@ -40,6 +39,7 @@ import androidx.privacysandbox.ui.provider.AbstractSandboxedUiAdapter
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
@@ -479,7 +479,7 @@ class SandboxedSdkViewTest {
         assertThat(testSandboxedUiAdapter.sessionData?.windowInputToken).isEqualTo(token)
     }
 
-    @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
     @Test
     fun inputTransferTokenIsCorrect() {
         // InputTransferToken is only sent on V+

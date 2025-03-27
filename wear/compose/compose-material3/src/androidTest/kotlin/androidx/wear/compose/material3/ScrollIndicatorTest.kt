@@ -17,7 +17,6 @@
 package androidx.wear.compose.material3
 
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollBy
@@ -49,6 +48,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
@@ -539,7 +539,7 @@ class ScrollIndicatorTest {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_indicator_custom_color() {
         val customIndicatorColor = Color.Red
@@ -567,7 +567,7 @@ class ScrollIndicatorTest {
         rule.onNodeWithTag(TEST_TAG).captureToImage().assertContainsColor(customIndicatorColor)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_track_custom_color() {
         val customTrackColor = Color.Red

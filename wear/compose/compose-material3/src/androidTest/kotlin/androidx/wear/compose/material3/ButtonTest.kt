@@ -69,6 +69,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.height
+import androidx.test.filters.SdkSuppress
 import androidx.wear.compose.material3.samples.FilledTonalCompactButtonSample
 import androidx.wear.compose.material3.samples.SimpleButtonSample
 import com.google.common.truth.Truth.assertThat
@@ -284,7 +285,7 @@ class ButtonTest {
         assertEquals(expectedSecondaryTextStyle, actualSecondaryLabelTextStyle)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun default_shape_is_stadium() {
         rule.isShape(
@@ -297,7 +298,7 @@ class ButtonTest {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun allows_custom_shape_override() {
         val shape = CutCornerShape(4.dp)
@@ -429,7 +430,7 @@ class ButtonTest {
             .assertTopPositionInRootIsEqualTo((itemBounds.height - iconBounds.height) / 2)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_base_button_correct_colors() {
         rule.verifyButtonColors(
@@ -439,7 +440,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_base_button_correct_colors() {
         rule.verifyButtonColors(
@@ -453,7 +454,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_filled_tonal_base_button_correct_colors() {
         rule.verifyButtonColors(
@@ -464,7 +465,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_filled_tonal_base_button_correct_colors() {
         rule.verifyButtonColors(
@@ -479,7 +480,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_button_correct_filled_variant_colors() {
         rule.verifyButtonColors(
@@ -490,7 +491,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_button_correct_filled_variant_colors() {
         rule.verifyButtonColors(
@@ -505,7 +506,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_outlined_base_button_correct_colors() {
         rule.verifyButtonColors(
@@ -516,7 +517,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_outlined_base_button_correct_colors() {
         rule.verifyButtonColors(
@@ -529,7 +530,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_child_base_button_correct_colors() {
         rule.verifyButtonColors(
@@ -540,7 +541,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_child_base_button_correct_colors() {
         rule.verifyButtonColors(
@@ -553,7 +554,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_three_slot_button_correct_colors() {
         rule.verifyThreeSlotButtonColors(
@@ -563,7 +564,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_three_slot_button_correct_colors() {
         rule.verifyThreeSlotButtonColors(
@@ -573,7 +574,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_filled_tonal_three_slot_button_correct_colors() {
         rule.verifyThreeSlotButtonColors(
@@ -583,7 +584,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_filled_tonal_three_slot_button_correct_colors() {
         rule.verifyThreeSlotButtonColors(
@@ -593,7 +594,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_outlined_three_slot_button_correct_colors() {
         rule.verifyThreeSlotButtonColors(
@@ -603,7 +604,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_outlined_three_slot_button_correct_colors() {
         rule.verifyThreeSlotButtonColors(
@@ -613,7 +614,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_child_three_slot_button_correct_colors() {
         rule.verifyThreeSlotButtonColors(
@@ -623,7 +624,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_child_three_slot_button_correct_colors() {
         rule.verifyThreeSlotButtonColors(
@@ -633,7 +634,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_outlined_button_correct_border_colors() {
         val status = Status.Enabled
@@ -645,7 +646,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_outlined_button_correct_border_colors() {
         val status = Status.Disabled
@@ -667,7 +668,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun overrides_enabled_outlined_button_border_color() {
         val status = Status.Enabled
@@ -689,7 +690,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun overrides_disabled_outlined_button_border_color() {
         val status = Status.Disabled
@@ -827,7 +828,7 @@ class ButtonTest {
             )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_compact_button_correct_colors() {
         rule.verifyCompactButtonColors(
@@ -836,7 +837,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_compact_button_correct_colors() {
         rule.verifyCompactButtonColors(
@@ -845,7 +846,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_filled_tonal_compact_button_correct_colors() {
         rule.verifyCompactButtonColors(
@@ -854,7 +855,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_filled_tonal_compact_button_correct_colors() {
         rule.verifyCompactButtonColors(
@@ -863,7 +864,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_outlined_compact_button_correct_colors() {
         rule.verifyCompactButtonColors(
@@ -872,7 +873,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_outlined_compact_button_correct_colors() {
         rule.verifyCompactButtonColors(
@@ -881,7 +882,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_enabled_child_compact_button_correct_colors() {
         rule.verifyCompactButtonColors(
@@ -890,7 +891,7 @@ class ButtonTest {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
     @Test
     fun gives_disabled_child_compact_button_correct_colors() {
         rule.verifyCompactButtonColors(

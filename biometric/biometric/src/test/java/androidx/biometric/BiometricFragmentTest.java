@@ -33,10 +33,10 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.testing.FragmentScenario;
+import androidx.test.filters.SdkSuppress;
 
 import com.google.common.util.concurrent.MoreExecutors;
 
@@ -192,7 +192,7 @@ public class BiometricFragmentTest {
 
     @Test
     @Config(minSdk = Build.VERSION_CODES.P)
-    @RequiresApi(Build.VERSION_CODES.P)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.P)
     public void testAuthenticateWithBiometricPrompt_DoesShowErrorAndDismiss_WhenNPEThrown() {
         final int errMsgId = BiometricPrompt.ERROR_HW_UNAVAILABLE;
         final String errString = "test string";

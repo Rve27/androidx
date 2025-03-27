@@ -27,6 +27,7 @@ import androidx.core.util.Consumer
 import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.filters.SdkSuppress
 import androidx.window.TestActivity
 import androidx.window.TestConsumer
 import androidx.window.WindowTestUtils
@@ -547,7 +548,7 @@ class ExtensionWindowBackendTest {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.R)
     @Test
     fun testLayoutChangeCallback_emitNewValue() {
         assumeBeforeWindowExtensionVersion(2)
@@ -586,7 +587,7 @@ class ExtensionWindowBackendTest {
         verify(consumer).accept(translate(windowContext, windowLayoutInfo))
     }
 
-    @RequiresApi(Build.VERSION_CODES.R)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.R)
     @Test
     fun testWindowLayoutInfo_updatesOnSubsequentRegistration() {
         assumeAtLeastWindowExtensionVersion(1)
@@ -709,7 +710,7 @@ class ExtensionWindowBackendTest {
     }
 
     @Test
-    @RequiresApi(Build.VERSION_CODES.R)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.R)
     fun testGetCurrentWindowLayoutInfo_overlayWindowContext_returnsWindowLayoutInfo() {
         assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
         assumeAtLeastWindowExtensionVersion(9)

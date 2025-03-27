@@ -20,7 +20,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.appfunctions.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
@@ -41,7 +40,6 @@ import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
 class AppFunctionDataTest {
 
