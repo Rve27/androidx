@@ -2405,6 +2405,8 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
             val result =
                 pointerInputEventProcessor.process(pointerInputEvent, this, isInBounds(motionEvent))
+            // Clear the MotionEvent reference after dispatching it.
+            pointerInputEvent.motionEvent = null
             val action = motionEvent.actionMasked
             if (
                 (action == ACTION_DOWN || action == ACTION_POINTER_DOWN) &&

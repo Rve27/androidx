@@ -2051,11 +2051,13 @@ package androidx.compose.ui.input.pointer {
     method public java.util.List<androidx.compose.ui.input.pointer.PointerInputChange> getChanges();
     method public int getClassification();
     method public int getKeyboardModifiers();
+    method public android.view.MotionEvent? getMotionEvent();
     method public int getType();
     property public int buttons;
     property public java.util.List<androidx.compose.ui.input.pointer.PointerInputChange> changes;
     property public int classification;
     property public int keyboardModifiers;
+    property public android.view.MotionEvent? motionEvent;
     property public int type;
   }
 
