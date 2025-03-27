@@ -19,6 +19,7 @@ package androidx.compose.material3.adaptive.layout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
+import kotlin.jvm.JvmInline
 
 @Immutable
 @JvmInline

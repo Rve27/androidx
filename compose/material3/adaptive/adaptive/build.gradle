@@ -21,6 +21,8 @@
  * Please use that script when creating a new project, rather than copying an existing project and
  * modifying its settings.
  */
+
+import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 import androidx.build.PlatformIdentifier
 
@@ -33,6 +35,7 @@ plugins {
 androidXMultiplatform {
     androidTarget()
     jvmStubs()
+    linuxX64Stubs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
 
@@ -40,9 +43,9 @@ androidXMultiplatform {
         commonMain {
             dependencies {
                 implementation(libs.kotlinStdlib)
-                api("androidx.compose.foundation:foundation:1.6.5")
-                api("androidx.compose.ui:ui-geometry:1.6.5")
-                api("androidx.window:window-core:1.3.0")
+                api(project(":compose:foundation:foundation"))
+                api(project(":compose:ui:ui-geometry"))
+                api(project(":window:window-core"))
             }
         }
 
@@ -66,10 +69,16 @@ androidXMultiplatform {
             }
         }
 
+        commonStubsMain {
+            dependsOn(commonMain)
+        }
+
         jvmStubsMain {
-            dependsOn(jvmMain)
-            dependencies {
-            }
+            dependsOn(commonStubsMain)
+        }
+
+        linuxx64StubsMain {
+            dependsOn(commonStubsMain)
         }
 
         androidInstrumentedTest {
@@ -101,6 +110,7 @@ androidx {
     inceptionYear = "2023"
     description = "Compose Material Design Adaptive Library"
     legacyDisableKotlinStrictApiMode = true
+    kotlinTarget = KotlinTarget.KOTLIN_1_9
 }
 
 android {

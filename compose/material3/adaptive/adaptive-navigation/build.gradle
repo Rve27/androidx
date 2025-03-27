@@ -21,6 +21,8 @@
  * Please use that script when creating a new project, rather than copying an existing project and
  * modifying its settings.
  */
+
+import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 import androidx.build.PlatformIdentifier
 
@@ -33,6 +35,7 @@ plugins {
 androidXMultiplatform {
     androidTarget()
     jvmStubs()
+    linuxX64Stubs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
 
@@ -66,12 +69,17 @@ androidXMultiplatform {
             }
         }
 
-        jvmStubsMain {
-            dependsOn(jvmMain)
-            dependencies {
-            }
+        commonStubsMain {
+            dependsOn(commonMain)
         }
 
+        jvmStubsMain {
+            dependsOn(commonStubsMain)
+        }
+
+        linuxx64StubsMain {
+            dependsOn(commonStubsMain)
+        }
         androidInstrumentedTest {
             dependsOn(commonTest)
             dependencies {
@@ -101,6 +109,7 @@ androidx {
     inceptionYear = "2023"
     description = "Compose Material Design Adaptive Library"
     legacyDisableKotlinStrictApiMode = true
+    kotlinTarget = KotlinTarget.KOTLIN_1_9
 }
 
 android {
