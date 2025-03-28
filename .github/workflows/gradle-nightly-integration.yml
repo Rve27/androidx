@@ -30,9 +30,7 @@ jobs:
         with:
           project: collection
           project-root: playground-projects/collection-playground
-          gradle-cache-password: ${{ secrets.GRADLE_BUILD_CACHE_PASSWORD }}
           gradle-enterprise-access-key: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
-          gradle-encryption-key: ${{ secrets.GRADLE_ENCRYPTION_KEY }}
           # Gradle flags match those used in presubmit.yml
           gradle-flags: >
             -Dorg.gradle.internal.http.connectionTimeout=60000
@@ -41,3 +39,5 @@ jobs:
             -Dorg.gradle.internal.repository.initial.backoff=500
             --stacktrace
           gradle-version: release-nightly
+          # Disable the cache since this is the only build using the gradle nightly.
+          gradle-cache-disabled: true

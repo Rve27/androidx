@@ -8,17 +8,26 @@ inputs:
     description: "Root folder of the project (used for building)"
     required: true
   gradle-cache-password:
-    description: "password for gradle cache"
+    description: "password for gradle cache, should be specified if gradle-cache-disabled is false"
+    required: false
+    default: ""
   gradle-enterprise-access-key:
     description: "access key for gradle enterprise"
   gradle-encryption-key:
-    description: "key for gradle configuration cache encryption"
+    description: "key for gradle configuration cache encryption, should be specified if gradle-cache-disabled is false"
+    required: false
+    default: ""
   gradle-flags:
     description: "flags to pass while invoking gradle"
   gradle-version:
     description: "Version of gradle to use. Defaults to the version of gradlew if not specified."
     required: false
     default: wrapper
+  gradle-cache-disabled:
+    description: "Whether to disable the gradle build cache. Defaults to false (cache enabled)."
+    required: false
+    default: false
+
 runs:
   using: "composite"
   steps:
@@ -70,6 +79,8 @@ runs:
           caches/transforms-3
 
         gradle-version: ${{ inputs.gradle-version }}
+
+        cache-disabled: ${{ inputs.gradle-cache-disabled }}
 
     - name: "gradle buildOnServer zipTestConfigsWithApks"
       env:
