@@ -47,7 +47,6 @@ import androidx.navigation.NavigatorState
 import androidx.navigation.SupportingPane
 import androidx.navigation.get
 import androidx.navigation.navOptions
-import androidx.navigation.parseStringAsNavUri
 import androidx.navigation.serialization.generateHashCode
 import androidx.navigation.serialization.generateRouteWithArgs
 import androidx.savedstate.SavedState
@@ -1554,10 +1553,7 @@ internal class NavControllerImpl(
             val args = destination.addInDefaultArgs(deepLinkMatch.matchingArgs) ?: savedState()
             val node = deepLinkMatch.destination
             val request =
-                NavDeepLinkRequest.Builder.fromUri(
-                        parseStringAsNavUri(createRoute(destination.route))
-                    )
-                    .build()
+                NavDeepLinkRequest.Builder.fromUri(NavUri(createRoute(destination.route))).build()
             navController.writeIntent(request, args)
             navigate(node, args, navOptions, navigatorExtras)
         } else {
