@@ -140,10 +140,10 @@ index 602817ac256..4a533e56e60 100644
          isVararg = isVararg,
          hasDefaultArg = hasDefaultArg,
 diff --git a/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt b/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt
-index eb12c50491d..7f931b832bc 100644
+index f397f1ad4d4..dabb21d8699 100644
 --- a/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt
 +++ b/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt
-@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.DefaultIncrementalSyncTask
+@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.DefaultIncrementalSyncTask
  import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
  import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
  import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
@@ -151,7 +151,7 @@ index eb12c50491d..7f931b832bc 100644
  import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
  import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
  import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-@@ -763,9 +764,11 @@ private fun Project.configureNode() {
+@@ -765,10 +766,12 @@ private fun Project.configureNode() {
      }
 
      // https://youtrack.jetbrains.com/issue/KT-73913/K-Wasm-yarn-version-per-project
@@ -160,6 +160,7 @@ index eb12c50491d..7f931b832bc 100644
 +        yarn.yarnLockMismatchReport.set(YarnLockMismatchReport.FAIL)
 +    }
      rootProject.extensions.findByType(YarnRootExtension::class.java)?.let { yarn ->
+         @Suppress("DEPRECATION")
 -        yarn.version = getVersionByName("yarn")
 -        yarn.yarnLockMismatchReport = YarnLockMismatchReport.FAIL
          if (!ProjectLayoutType.isPlayground(this)) {
@@ -316,3 +317,4 @@ index 0be4bde5cca..2bbb95691a8 100644
                          task.annotationProcessorOptionProviders.add(argProvider)
                      }
                  }
+
