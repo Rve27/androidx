@@ -455,14 +455,7 @@ data class AnnotatedAppFunctions(
         seenDataTypeQualifiers.add(serializableTypeQualifiedName)
 
         val superTypesWithSerializableAnnotation =
-            appFunctionSerializableType.superTypes
-                .map { it.resolve().declaration as KSClassDeclaration }
-                .filter {
-                    it.annotations.findAnnotation(
-                        IntrospectionHelper.AppFunctionSerializableAnnotation.CLASS_NAME
-                    ) != null
-                }
-                .toSet()
+            appFunctionSerializableType.findSuperTypesWithSerializableAnnotation()
         val superTypesWithCapabilityAnnotation =
             appFunctionSerializableType.findSuperTypesWithCapabilityAnnotation()
         if (

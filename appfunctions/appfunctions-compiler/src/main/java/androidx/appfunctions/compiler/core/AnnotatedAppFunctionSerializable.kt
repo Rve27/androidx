@@ -19,9 +19,13 @@ package androidx.appfunctions.compiler.core
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_SINGULAR
+import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
+import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.ClassName
 
 /** Represents a class annotated with [androidx.appfunctions.AppFunctionSerializable]. */
@@ -33,14 +37,15 @@ open class AnnotatedAppFunctionSerializable(val appFunctionSerializableClass: KS
     val superTypes: Sequence<KSTypeReference> by lazy { appFunctionSerializableClass.superTypes }
 
     /** The modifier of the class being annotated with AppFunctionSerializable. */
-    val modifiers = appFunctionSerializableClass.modifiers
+    val modifiers: Set<Modifier> by lazy { appFunctionSerializableClass.modifiers }
 
-    /**
-     * The validator that can be used to validate the class annotated with AppFunctionSerializable.
-     */
-    private val validator: SerializableValidator by lazy {
-        SerializableValidator(classToValidate = appFunctionSerializableClass)
+    /** The primary constructor if available. */
+    val primaryConstructor: KSFunctionDeclaration? by lazy {
+        appFunctionSerializableClass.primaryConstructor
     }
+
+    /** The [KSNode] to which the processing error is attributed. */
+    val attributeNode: KSNode by lazy { appFunctionSerializableClass }
 
     // TODO(b/392587953): throw an error if a property has the same name as one of the factory
     //  method parameters
@@ -50,16 +55,107 @@ open class AnnotatedAppFunctionSerializable(val appFunctionSerializableClass: KS
      * @throws ProcessingException if the class does not adhere to the requirements
      */
     open fun validate(): AnnotatedAppFunctionSerializable {
-        validator.validate()
+        val validateHelper = AppFunctionSerializableValidateHelper(this)
+        validateHelper.validatePrimaryConstructor()
+        validateHelper.validateParameters()
         return this
     }
 
     /**
-     * Returns the set of super types of [appFunctionSerializableClass] that are annotated with
-     * [androidx.appfunctions.AppFunctionSchemaCapability].
+     * Finds all super types of the serializable [appFunctionSerializableClass] that are annotated
+     * with the [androidx.appfunctions.AppFunctionSchemaCapability] annotation.
+     *
+     * For example, consider the following classes:
+     * ```
+     * @AppFunctionSchemaCapability
+     * public interface AppFunctionOpenable {
+     *     public val intentToOpen: PendingIntent
+     * }
+     *
+     * public interface OpenableResponse : AppFunctionOpenable {
+     *     override val intentToOpen: PendingIntent
+     * }
+     *
+     * @AppFunctionSerializable
+     * class MySerializableClass(
+     *   override val intentToOpen: PendingIntent
+     * ) : OpenableResponse
+     * ```
+     *
+     * This method will return the [KSClassDeclaration] of `AppFunctionOpenable` since it is a super
+     * type of `MySerializableClass` and is annotated with the
+     * [androidx.appfunctions.AppFunctionSchemaCapability] annotation.
+     *
+     * @return a set of [KSClassDeclaration] for all super types of the
+     *   [appFunctionSerializableClass] that are annotated with
+     *   [androidx.appfunctions.AppFunctionSchemaCapability].
      */
     fun findSuperTypesWithCapabilityAnnotation(): Set<KSClassDeclaration> {
-        return validator.findSuperTypesWithCapabilityAnnotation()
+        return buildSet {
+            val unvisitedSuperTypes: MutableList<KSTypeReference> =
+                appFunctionSerializableClass.superTypes.toMutableList()
+
+            while (!unvisitedSuperTypes.isEmpty()) {
+                val superTypeClassDeclaration =
+                    unvisitedSuperTypes.removeLast().resolve().declaration as KSClassDeclaration
+                if (
+                    superTypeClassDeclaration.annotations.findAnnotation(
+                        IntrospectionHelper.AppFunctionSchemaCapability.CLASS_NAME
+                    ) != null
+                ) {
+                    add(superTypeClassDeclaration)
+                }
+                if (
+                    superTypeClassDeclaration.annotations.findAnnotation(
+                        IntrospectionHelper.AppFunctionSerializableAnnotation.CLASS_NAME
+                    ) == null
+                ) {
+                    // Only consider non serializable super types since serializable super types
+                    // are already handled separately
+                    unvisitedSuperTypes.addAll(superTypeClassDeclaration.superTypes)
+                }
+            }
+        }
+    }
+
+    /**
+     * Finds all super types of the serializable [appFunctionSerializableClass] that are annotated
+     * with the [androidx.appfunctions.AppFunctionSerializable] annotation.
+     *
+     * For example, consider the following classes:
+     * ```
+     * @AppFunctionSerializable
+     * open class Address (
+     *     open val street: String,
+     *     open val city: String,
+     *     open val state: String,
+     *     open val zipCode: String,
+     * )
+     *
+     * @AppFunctionSerializable
+     * class MySerializableClass(
+     *     override val street: String,
+     *     override val city: String,
+     *     override val state: String,
+     *     override val zipCode: String,
+     * ) : Address
+     * ```
+     *
+     * This method will return the [KSClassDeclaration] of `Address` since it is a super type of
+     * `MySerializableClass` and is annotated with the
+     * [androidx.appfunctions.AppFunctionSerializable] annotation.
+     *
+     * @return a set of [KSClassDeclaration] for all super types of the
+     *   [appFunctionSerializableClass] that are annotated with
+     *   [androidx.appfunctions.AppFunctionSerializable].
+     */
+    fun findSuperTypesWithSerializableAnnotation(): Set<KSClassDeclaration> {
+        return appFunctionSerializableClass.superTypes
+            .map { it.resolve().declaration as KSClassDeclaration }
+            .filter {
+                it.annotations.findAnnotation(AppFunctionSerializableAnnotation.CLASS_NAME) != null
+            }
+            .toSet()
     }
 
     /** Returns the annotated class's properties as defined in its primary constructor. */
