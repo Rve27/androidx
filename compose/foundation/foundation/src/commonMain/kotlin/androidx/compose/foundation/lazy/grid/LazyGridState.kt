@@ -129,9 +129,9 @@ fun rememberLazyGridState(
 ): LazyGridState {
     return rememberSaveable(cacheWindow, saver = LazyGridState.saver(cacheWindow)) {
         LazyGridState(
+            cacheWindow,
             initialFirstVisibleItemIndex,
             initialFirstVisibleItemScrollOffset,
-            LazyGridCacheWindowPrefetchStrategy(cacheWindow),
         )
     }
 }
@@ -190,6 +190,9 @@ constructor(
 
     internal var approachLayoutInfo: LazyGridMeasureResult? = null
         private set
+
+    // always execute requests in high priority
+    private var executeRequestsInHighPriorityMode = false
 
     /** The holder class for the current scroll position. */
     private val scrollPosition =
@@ -348,7 +351,8 @@ constructor(
                             prefetchHandles.add(
                                 prefetchState.schedulePrecompositionAndPremeasure(
                                     lineInfo.first,
-                                    lineInfo.second
+                                    lineInfo.second,
+                                    executeRequestsInHighPriorityMode
                                 ) {
                                     var itemMainAxisItemSize = 0
                                     repeat(placeablesCount) {

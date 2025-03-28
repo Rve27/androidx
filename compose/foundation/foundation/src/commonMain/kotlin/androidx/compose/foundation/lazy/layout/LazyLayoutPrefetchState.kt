@@ -89,6 +89,7 @@ class LazyLayoutPrefetchState(
     fun schedulePrefetch(index: Int): PrefetchHandle {
         return prefetchHandleProvider?.schedulePrecomposition(
             index,
+            true,
             prefetchMetrics,
         ) ?: DummyHandle
     }
@@ -102,9 +103,23 @@ class LazyLayoutPrefetchState(
      *
      * @param index item index to prefetch.
      */
-    fun schedulePrecomposition(index: Int): PrefetchHandle {
+    fun schedulePrecomposition(index: Int): PrefetchHandle = schedulePrecomposition(index, true)
+
+    /**
+     * Internal implementation only. Schedules precomposition for the new item. If you also want to
+     * premeasure the item please use [schedulePrecompositionAndPremeasure] instead. This function
+     * should only be called once per item. If the item has already been composed at the time this
+     * request executes, either from a previous call to this function or because the item is already
+     * visible, this request should have no meaningful effect.
+     *
+     * @param index item index to prefetch.
+     * @param isHighPriority If this request is high priority. High priority requests are executed
+     *   in the order they're scheduled, but will take precedence over low priority requests.
+     */
+    internal fun schedulePrecomposition(index: Int, isHighPriority: Boolean): PrefetchHandle {
         return prefetchHandleProvider?.schedulePrecomposition(
             index,
+            isHighPriority,
             prefetchMetrics,
         ) ?: DummyHandle
     }
@@ -139,11 +154,35 @@ class LazyLayoutPrefetchState(
         index: Int,
         constraints: Constraints,
         onItemPremeasured: (LazyLayoutPrefetchResultScope.() -> Unit)? = null
+    ): PrefetchHandle =
+        schedulePrecompositionAndPremeasure(index, constraints, true, onItemPremeasured)
+
+    /**
+     * Internal implementation only. Schedules precomposition and premeasure for the new item. This
+     * should be used instead of [schedulePrecomposition] if you also want to premeasure the item.
+     * This function should only be called once per item. If the item has already been composed /
+     * measured at the time this request executes, either from a previous call to this function or
+     * because the item is already visible, this request should have no meaningful effect.
+     *
+     * @param index item index to prefetch.
+     * @param constraints [Constraints] to use for premeasuring.
+     * @param isHighPriority If this request is high priority. High priority requests are executed
+     *   in the order they're scheduled, but will take precedence over low priority requests.
+     * @param onItemPremeasured This callback is called when the item premeasuring is finished. If
+     *   the request is canceled or no measuring is performed this callback won't be called. Use
+     *   [LazyLayoutPrefetchResultScope.getSize] to get the item's size.
+     */
+    internal fun schedulePrecompositionAndPremeasure(
+        index: Int,
+        constraints: Constraints,
+        isHighPriority: Boolean,
+        onItemPremeasured: (LazyLayoutPrefetchResultScope.() -> Unit)? = null
     ): PrefetchHandle {
         return prefetchHandleProvider?.schedulePremeasure(
             index,
             constraints,
             prefetchMetrics,
+            isHighPriority,
             onItemPremeasured
         ) ?: DummyHandle
     }
@@ -405,11 +444,12 @@ internal class PrefetchHandleProvider(
 
     fun schedulePrecomposition(
         index: Int,
+        isHighPriority: Boolean,
         prefetchMetrics: PrefetchMetrics,
     ): PrefetchHandle =
         HandleAndRequestImpl(index, prefetchMetrics, executor as? PriorityPrefetchScheduler, null)
             .also {
-                executor.schedulePrefetch(it)
+                executor.executeWithPriority(it, isHighPriority)
                 traceValue("compose:lazy:schedule_prefetch:index", index.toLong())
             }
 
@@ -421,6 +461,7 @@ internal class PrefetchHandleProvider(
         index: Int,
         constraints: Constraints,
         prefetchMetrics: PrefetchMetrics,
+        isHighPriority: Boolean,
         onItemPremeasured: (LazyLayoutPrefetchResultScope.() -> Unit)?
     ): PrefetchHandle =
         HandleAndRequestImpl(
@@ -431,9 +472,21 @@ internal class PrefetchHandleProvider(
                 onItemPremeasured
             )
             .also {
-                executor.schedulePrefetch(it)
+                executor.executeWithPriority(it, isHighPriority)
                 traceValue("compose:lazy:schedule_prefetch:index", index.toLong())
             }
+
+    fun PrefetchScheduler.executeWithPriority(request: PrefetchRequest, isHighPriority: Boolean) {
+        if (this is PriorityPrefetchScheduler) {
+            if (isHighPriority) {
+                scheduleHighPriorityPrefetch(request)
+            } else {
+                scheduleLowPriorityPrefetch(request)
+            }
+        } else {
+            schedulePrefetch(request)
+        }
+    }
 
     fun createNestedPrefetchRequest(
         index: Int,
