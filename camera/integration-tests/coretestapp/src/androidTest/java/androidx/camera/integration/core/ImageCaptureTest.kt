@@ -71,8 +71,8 @@ import androidx.camera.core.resolutionselector.ResolutionFilter
 import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.core.resolutionselector.ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE
 import androidx.camera.core.resolutionselector.ResolutionStrategy
+import androidx.camera.integration.core.util.Camera2InteropUtil
 import androidx.camera.integration.core.util.CameraInfoUtil
-import androidx.camera.integration.core.util.CameraPipeUtil
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.testing.impl.CameraAvailabilityUtil.assumeDeviceHasFrontCamera
 import androidx.camera.testing.impl.CameraPipeConfigTestRule
@@ -878,7 +878,7 @@ class ImageCaptureTest(private val implName: String, private val cameraXConfig: 
                 }
             }
         val builder = ImageCapture.Builder()
-        CameraPipeUtil.setCameraCaptureSessionCallback(implName, builder, captureCallback)
+        Camera2InteropUtil.setCameraCaptureSessionCallback(implName, builder, captureCallback)
 
         val useCase = builder.build()
 
@@ -1825,7 +1825,7 @@ class ImageCaptureTest(private val implName: String, private val cameraXConfig: 
         val preview =
             Preview.Builder()
                 .also {
-                    CameraPipeUtil.setCameraCaptureSessionCallback(
+                    Camera2InteropUtil.setCameraCaptureSessionCallback(
                         implName,
                         it,
                         object : CaptureCallback() {

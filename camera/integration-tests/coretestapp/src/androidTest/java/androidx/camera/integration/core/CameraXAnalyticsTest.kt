@@ -28,7 +28,7 @@ import androidx.camera.core.Preview
 import androidx.camera.core.impl.TagBundle
 import androidx.camera.extensions.ExtensionMode
 import androidx.camera.extensions.ExtensionsManager
-import androidx.camera.integration.core.util.CameraPipeUtil
+import androidx.camera.integration.core.util.Camera2InteropUtil
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
 import androidx.camera.testing.impl.CameraPipeConfigTestRule
@@ -102,7 +102,7 @@ class CameraXAnalyticsTest(private val implName: String, private val cameraXConf
         val preview =
             Preview.Builder()
                 .also {
-                    CameraPipeUtil.setCameraCaptureSessionCallback(
+                    Camera2InteropUtil.setCameraCaptureSessionCallback(
                         implName,
                         it,
                         object : CameraCaptureSession.CaptureCallback() {
