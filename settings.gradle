@@ -1220,7 +1220,6 @@ includeProject(":xr:scenecore:integration-tests:standalone", [BuildType.XR])
 includeProject(":xr:scenecore:integration-tests:svxr-example", [BuildType.XR])
 includeProject(":xr:scenecore:integration-tests:transformationtests", [BuildType.XR])
 includeProject(":xr:scenecore:integration-tests:visibilitytest", [BuildType.XR])
-includeProject(":xr:xr-stubs", [BuildType.XR])
 
 /////////////////////////////
 //
