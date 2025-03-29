@@ -16,9 +16,12 @@
 
 package androidx.privacysandbox.ui.client.view
 
+import androidx.compose.ui.platform.compositionContext
+import androidx.compose.ui.platform.findViewTreeCompositionContext
 import androidx.privacysandbox.ui.client.GeometryMeasurer
 import androidx.privacysandbox.ui.core.SandboxedSdkViewUiInfo
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
+import androidx.privacysandbox.ui.core.SandboxedUiAdapterSignalOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -30,20 +33,28 @@ internal class SandboxedSdkViewSignalMeasurer(
     private val session: SandboxedUiAdapter.Session
 ) {
     private var geometryMeasurer = GeometryMeasurer.getInstance()
+    private var compositionContext =
+        view.rootView.compositionContext ?: view.findViewTreeCompositionContext()
+    // TODO(b/395075188): Handle Compose nodes and mixed nodes better.
+    private var isMeasuringObstructions =
+        session.signalOptions.contains(SandboxedUiAdapterSignalOptions.OBSTRUCTIONS) &&
+            view.rootView.compositionContext == null &&
+            compositionContext == null
     private var scope = CoroutineScope(Dispatchers.Default)
     private var childView = view.getChildAt(0)
     private var isMeasuring = true
 
     init {
         scope.launch {
-            var geometryFlow = geometryMeasurer.registerView(childView)
+            var geometryFlow = geometryMeasurer.registerView(childView, isMeasuringObstructions)
             geometryFlow.collect { geometryData ->
                 val sandboxedSdkViewUiInfo =
                     SandboxedSdkViewUiInfo(
                         geometryData.widthPx,
                         geometryData.heightPx,
                         geometryData.onScreenGeometry,
-                        view.alpha
+                        view.alpha,
+                        geometryData.obstructions
                     )
                 session.notifyUiChanged(SandboxedSdkViewUiInfo.toBundle(sandboxedSdkViewUiInfo))
             }
@@ -54,9 +65,13 @@ internal class SandboxedSdkViewSignalMeasurer(
      * Requests for the associated [GeometryMeasurer] to emit a new set of geometry signals. The
      * [GeometryMeasurer] is responsible for throttling these requests so that data is not emitted
      * too frequently.
+     *
+     * When [onLayoutEventOccurred] is true, this indicates that onLayout has been called on [view].
+     * This is used as a signal to recompute the view's parents when performing the obstructions
+     * calculation, if required.
      */
-    fun requestUpdatedSignals() {
-        geometryMeasurer.requestUpdatedSignals()
+    fun requestUpdatedSignals(onLayoutEventOccurred: Boolean = false) {
+        geometryMeasurer.requestUpdatedSignals(onLayoutEventOccurred)
     }
 
     /**
@@ -69,7 +84,7 @@ internal class SandboxedSdkViewSignalMeasurer(
             return
         }
         scope.launch {
-            geometryMeasurer.registerView(childView)
+            geometryMeasurer.registerView(childView, isMeasuringObstructions)
             isMeasuring = true
         }
     }

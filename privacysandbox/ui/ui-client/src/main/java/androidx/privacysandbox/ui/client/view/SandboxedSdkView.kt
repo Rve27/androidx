@@ -134,6 +134,10 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
         checkClientOpenSession()
     }
 
+    internal fun isProviderUiAboveClientUi(): Boolean {
+        return isZOrderOnTop
+    }
+
     private fun checkClientOpenSession(
         isSecondary: Boolean = false,
         callback: Consumer<Boolean>? = null
@@ -296,7 +300,7 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
             previousChildWidth = childWidth
         }
         checkClientOpenSession()
-        signalMeasurer?.requestUpdatedSignals()
+        signalMeasurer?.requestUpdatedSignals(onLayoutEventOccurred = true)
     }
 
     override fun onWindowVisibilityChanged(visibility: Int) {
