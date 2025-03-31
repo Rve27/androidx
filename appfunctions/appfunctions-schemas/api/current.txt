@@ -157,6 +157,24 @@ package androidx.appfunctions.schema.notes {
     property public abstract java.util.List<androidx.appfunctions.schema.notes.AppFunctionNote> notes;
   }
 
+  public interface GetNotesAppFunction<Parameters extends androidx.appfunctions.schema.notes.GetNotesAppFunction.Parameters, Response extends androidx.appfunctions.schema.notes.GetNotesAppFunction.Response> {
+    method public suspend Object? getNotes(androidx.appfunctions.AppFunctionContext appFunctionContext, Parameters parameters, kotlin.coroutines.Continuation<? super Response>);
+    field public static final androidx.appfunctions.schema.notes.GetNotesAppFunction.Companion Companion;
+  }
+
+  public static final class GetNotesAppFunction.Companion {
+  }
+
+  public static interface GetNotesAppFunction.Parameters {
+    method public java.util.List<java.lang.String> getNoteIds();
+    property public abstract java.util.List<java.lang.String> noteIds;
+  }
+
+  public static interface GetNotesAppFunction.Response {
+    method public java.util.List<androidx.appfunctions.schema.notes.AppFunctionNote> getNotes();
+    property public abstract java.util.List<androidx.appfunctions.schema.notes.AppFunctionNote> notes;
+  }
+
   public final class NotesKt {
     property public static String APP_FUNCTION_SCHEMA_CATEGORY_NOTES;
     field public static final String APP_FUNCTION_SCHEMA_CATEGORY_NOTES = "notes";
@@ -176,6 +194,30 @@ package androidx.appfunctions.schema.notes {
   }
 
   public static interface ShowNoteAppFunction.Response extends androidx.appfunctions.AppFunctionOpenable {
+  }
+
+  public interface UpdateNoteAppFunction<Parameters extends androidx.appfunctions.schema.notes.UpdateNoteAppFunction.Parameters, Response extends androidx.appfunctions.schema.notes.UpdateNoteAppFunction.Response> {
+    method public suspend Object? updateNote(androidx.appfunctions.AppFunctionContext appFunctionContext, Parameters parameters, kotlin.coroutines.Continuation<? super Response>);
+    field public static final androidx.appfunctions.schema.notes.UpdateNoteAppFunction.Companion Companion;
+  }
+
+  public static final class UpdateNoteAppFunction.Companion {
+  }
+
+  public static interface UpdateNoteAppFunction.Parameters {
+    method public default androidx.appfunctions.schema.types.SetField<java.util.List<androidx.appfunctions.schema.notes.AppFunctionNote.Attachment>>? getAttachments();
+    method public default androidx.appfunctions.schema.types.SetField<java.lang.String?>? getContent();
+    method public String getNoteId();
+    method public default androidx.appfunctions.schema.types.SetField<java.lang.String>? getTitle();
+    property public default androidx.appfunctions.schema.types.SetField<java.util.List<androidx.appfunctions.schema.notes.AppFunctionNote.Attachment>>? attachments;
+    property public default androidx.appfunctions.schema.types.SetField<java.lang.String?>? content;
+    property public abstract String noteId;
+    property public default androidx.appfunctions.schema.types.SetField<java.lang.String>? title;
+  }
+
+  public static interface UpdateNoteAppFunction.Response {
+    method public androidx.appfunctions.schema.notes.AppFunctionNote getUpdatedNote();
+    property public abstract androidx.appfunctions.schema.notes.AppFunctionNote updatedNote;
   }
 
 }
