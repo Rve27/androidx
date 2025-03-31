@@ -1228,16 +1228,12 @@ object NavigationSuiteScaffoldDefaults {
         return with(adaptiveInfo) {
             if (
                 windowPosture.isTabletop ||
-                    windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT
+                    windowSizeClass.windowHeightSizeClass == WindowHeightSizeClass.COMPACT ||
+                    windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.COMPACT
             ) {
                 NavigationSuiteType.NavigationBar
-            } else if (
-                windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.EXPANDED ||
-                    windowSizeClass.windowWidthSizeClass == WindowWidthSizeClass.MEDIUM
-            ) {
-                NavigationSuiteType.NavigationRail
             } else {
-                NavigationSuiteType.NavigationBar
+                NavigationSuiteType.NavigationRail
             }
         }
     }
