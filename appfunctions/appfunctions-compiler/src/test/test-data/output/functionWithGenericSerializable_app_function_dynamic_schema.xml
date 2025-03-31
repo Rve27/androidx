@@ -46,7 +46,7 @@
                 <dataTypeMetadata>
                     <id>unused</id>
                     <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.SetField&lt;kotlin.collections.List&gt;</objectQualifiedName>
+                    <objectQualifiedName>com.testdata.SetField&lt;kotlin.collections.List&lt;com.testdata.Attachment&gt;&gt;</objectQualifiedName>
                     <properties>
                         <dataTypeMetadata>
                             <id>unused</id>
@@ -66,7 +66,7 @@
                     <type>3</type>
                 </dataTypeMetadata>
                 <id>unused</id>
-                <name>com.testdata.SetField&lt;kotlin.collections.List&gt;</name>
+                <name>com.testdata.SetField&lt;kotlin.collections.List&lt;com.testdata.Attachment&gt;&gt;</name>
             </dataTypes>
             <dataTypes>
                 <dataTypeMetadata>

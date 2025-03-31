@@ -123,7 +123,7 @@ fun <T : Any> KSAnnotation.requirePropertyValueOfType(
 
 // TODO: Import KotlinPoet KSP to replace these KSPUtils.
 fun KSTypeReference.toTypeName(): TypeName {
-    val args = element?.typeArguments ?: emptyList()
+    val args = resolve().arguments
     return resolve().toTypeName(args)
 }
 
