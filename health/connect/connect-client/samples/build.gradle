@@ -50,6 +50,5 @@ android {
     defaultConfig {
         minSdk = 26
     }
-    // TODO(b/381533698): change to compileSdk = 36
-    compileSdkPreview = "Baklava"
+    compileSdk = 36
 }
