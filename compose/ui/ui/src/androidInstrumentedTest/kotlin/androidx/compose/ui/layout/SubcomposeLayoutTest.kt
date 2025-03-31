@@ -63,6 +63,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.RootMeasurePolicy.measure
+import androidx.compose.ui.layout.SubcomposeLayoutState.PrecomposedSlotHandle
 import androidx.compose.ui.node.LayoutModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.invalidateMeasurement
@@ -3496,10 +3497,7 @@ class SubcomposeLayoutTest {
                     }
                 }
 
-            while (!precomposition.isComplete) {
-                precomposition.resume { true }
-            }
-
+            precomposition.resume { false }
             precomposition.cancel()
 
             val precomposition2 =
@@ -3511,9 +3509,295 @@ class SubcomposeLayoutTest {
                     }
                 }
 
-            while (!precomposition2.isComplete) {
-                precomposition2.resume { true }
+            precomposition2.resume { false }
+            precomposition2.apply()
+
+            assertThat(content1Composed).isFalse()
+            assertThat(content2Composed).isTrue()
+        }
+    }
+
+    @Test
+    fun precomposingDifferentContentOnTop() {
+        val state = SubcomposeLayoutState()
+
+        rule.setContent { SubcomposeLayout(state) { layout(10, 10) {} } }
+        var content1Composed = false
+        var content2Composed = false
+
+        rule.runOnIdle {
+            state.precompose(Unit) {
+                Box(Modifier.size(100.dp))
+                DisposableEffect(Unit) {
+                    content1Composed = true
+                    onDispose { content1Composed = false }
+                }
             }
+
+            assertThat(content1Composed).isTrue()
+
+            val precomposition2 =
+                state.precompose(Unit) {
+                    Box(Modifier.padding(5.dp))
+                    DisposableEffect(Unit) {
+                        content2Composed = true
+                        onDispose { content2Composed = false }
+                    }
+                }
+
+            assertThat(content1Composed).isFalse()
+            assertThat(content2Composed).isTrue()
+
+            precomposition2.dispose()
+
+            assertThat(content1Composed).isFalse()
+            assertThat(content2Composed).isFalse()
+        }
+    }
+
+    @Test
+    fun precomposingDifferentContentOnTop_paused() {
+        val state = SubcomposeLayoutState()
+
+        rule.setContent { SubcomposeLayout(state) { layout(10, 10) {} } }
+        var content1Composed = false
+        var content2Composed = false
+
+        rule.runOnIdle {
+            val precomposition =
+                state.createPausedPrecomposition(Unit) {
+                    Box(Modifier.size(100.dp))
+                    DisposableEffect(Unit) {
+                        content1Composed = true
+                        onDispose { content1Composed = false }
+                    }
+                }
+
+            precomposition.resume { false }
+            precomposition.apply()
+
+            assertThat(content1Composed).isTrue()
+
+            val precomposition2 =
+                state.createPausedPrecomposition(Unit) {
+                    Box(Modifier.padding(5.dp))
+                    DisposableEffect(Unit) {
+                        content2Composed = true
+                        onDispose { content2Composed = false }
+                    }
+                }
+
+            precomposition2.resume { false }
+            val handle = precomposition2.apply()
+
+            assertThat(content1Composed).isFalse()
+            assertThat(content2Composed).isTrue()
+
+            handle.dispose()
+
+            assertThat(content1Composed).isFalse()
+            assertThat(content2Composed).isFalse()
+        }
+    }
+
+    @Test
+    fun precomposingNotPausedOnTopOfPaused() {
+        val state = SubcomposeLayoutState()
+
+        rule.setContent { SubcomposeLayout(state) { layout(10, 10) {} } }
+        var content1Composed = false
+        var content2Composed = false
+
+        rule.runOnIdle {
+            val precomposition =
+                state.createPausedPrecomposition(Unit) {
+                    Box(Modifier.size(100.dp))
+                    DisposableEffect(Unit) {
+                        content1Composed = true
+                        onDispose { content1Composed = false }
+                    }
+                }
+
+            precomposition.resume { false }
+            precomposition.apply()
+
+            assertThat(content1Composed).isTrue()
+
+            val handle =
+                state.precompose(Unit) {
+                    Box(Modifier.padding(5.dp))
+                    DisposableEffect(Unit) {
+                        content2Composed = true
+                        onDispose { content2Composed = false }
+                    }
+                }
+
+            assertThat(content1Composed).isFalse()
+            assertThat(content2Composed).isTrue()
+
+            handle.dispose()
+
+            assertThat(content1Composed).isFalse()
+            assertThat(content2Composed).isFalse()
+        }
+    }
+
+    @Test
+    fun precomposingNotPausedOnTopOfNotAppliedPaused() {
+        val state = SubcomposeLayoutState()
+
+        rule.setContent { SubcomposeLayout(state) { layout(10, 10) {} } }
+        var contentComposed = false
+        val content =
+            @Composable {
+                Box(Modifier.size(100.dp))
+                DisposableEffect(Unit) {
+                    contentComposed = true
+                    onDispose { contentComposed = false }
+                }
+            }
+
+        rule.runOnIdle {
+            val precomposition = state.createPausedPrecomposition(Unit, content)
+
+            precomposition.resume { false } // but not applying
+
+            assertThat(contentComposed).isFalse()
+
+            val handle = state.precompose(Unit, content)
+
+            assertThat(contentComposed).isTrue()
+
+            // should do nothing as we already composed another content over
+            precomposition.cancel()
+
+            assertThat(contentComposed).isTrue()
+
+            handle.dispose()
+
+            assertThat(contentComposed).isFalse()
+        }
+    }
+
+    @Test
+    fun precomposingNotPausedOnTopOfNotAppliedPaused_differentContent() {
+        val state = SubcomposeLayoutState()
+
+        rule.setContent { SubcomposeLayout(state) { layout(10, 10) {} } }
+        var content1Composed = false
+        var content2Composed = false
+
+        rule.runOnIdle {
+            val precomposition =
+                state.createPausedPrecomposition(Unit) {
+                    Box(Modifier.size(100.dp))
+                    DisposableEffect(Unit) {
+                        content1Composed = true
+                        onDispose { content1Composed = false }
+                    }
+                }
+
+            precomposition.resume { false } // but not applying
+
+            val handle =
+                state.precompose(Unit) {
+                    Box(Modifier.padding(5.dp))
+                    DisposableEffect(Unit) {
+                        content2Composed = true
+                        onDispose { content2Composed = false }
+                    }
+                }
+
+            assertThat(content1Composed).isFalse()
+            assertThat(content2Composed).isTrue()
+
+            // should do nothing as we already composed another content over
+            precomposition.cancel()
+
+            assertThat(content2Composed).isTrue()
+
+            handle.dispose()
+
+            assertThat(content2Composed).isFalse()
+        }
+    }
+
+    @Test
+    fun precomposingPausedOnTopOfNotAppliedPaused() {
+        val state = SubcomposeLayoutState()
+
+        rule.setContent { SubcomposeLayout(state) { layout(10, 10) {} } }
+        var contentComposed = false
+        val content =
+            @Composable {
+                Box(Modifier.size(100.dp))
+                DisposableEffect(Unit) {
+                    contentComposed = true
+                    onDispose { contentComposed = false }
+                }
+            }
+
+        rule.runOnIdle {
+            val precomposition = state.createPausedPrecomposition(Unit, content)
+
+            precomposition.resume { false } // but not applying
+
+            assertThat(contentComposed).isFalse()
+
+            val precomposition2 = state.createPausedPrecomposition(Unit, content)
+
+            assertThat(contentComposed).isFalse()
+
+            precomposition2.resume { false }
+            val handle = precomposition2.apply()
+
+            assertThat(contentComposed).isTrue()
+
+            // both should do nothing as we already applied
+            precomposition.cancel()
+            precomposition2.cancel()
+
+            assertThat(contentComposed).isTrue()
+
+            handle.dispose()
+
+            assertThat(contentComposed).isFalse()
+        }
+    }
+
+    @Test
+    fun precomposingPausedOnTopOfNotAppliedPaused_differentContent() {
+        val state = SubcomposeLayoutState()
+
+        rule.setContent { SubcomposeLayout(state) { layout(10, 10) {} } }
+        var content1Composed = false
+        var content2Composed = false
+
+        rule.runOnIdle {
+            val precomposition =
+                state.createPausedPrecomposition(Unit) {
+                    Box(Modifier.size(100.dp))
+                    DisposableEffect(Unit) {
+                        content1Composed = true
+                        onDispose { content1Composed = false }
+                    }
+                }
+
+            precomposition.resume { false } // but not applying
+
+            val precomposition2 =
+                state.createPausedPrecomposition(Unit) {
+                    Box(Modifier.padding(5.dp))
+                    DisposableEffect(Unit) {
+                        content2Composed = true
+                        onDispose { content2Composed = false }
+                    }
+                }
+
+            assertThat(content1Composed).isFalse()
+            assertThat(content2Composed).isFalse()
+
+            precomposition2.resume { false }
             precomposition2.apply()
 
             assertThat(content1Composed).isFalse()
