@@ -18,5 +18,9 @@ data class UpdateNoteParams(
 
 class FunctionWithGenericSerializable {
     @AppFunction
-    suspend fun test(appFunctionContext: AppFunctionContext, params: UpdateNoteParams) {}
+    suspend fun test(
+        appFunctionContext: AppFunctionContext,
+        params: UpdateNoteParams,
+        topLevelGenericParam: SetField<Int>?
+    ) {}
 }

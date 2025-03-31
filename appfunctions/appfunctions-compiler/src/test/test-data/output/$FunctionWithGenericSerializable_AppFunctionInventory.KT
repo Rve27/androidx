@@ -42,8 +42,22 @@ public class `$FunctionWithGenericSerializable_AppFunctionInventory` : AppFuncti
             dataType = PARAMETER_METADATA_PARAMS_REFERENCE_DATA_TYPE
         )
 
+    private val PARAMETER_METADATA_TOPLEVELGENERICPARAM_REFERENCE_DATA_TYPE:
+        AppFunctionReferenceTypeMetadata = AppFunctionReferenceTypeMetadata(
+            referenceDataType = "com.testdata.SetField<kotlin.Int>",
+            isNullable = true
+        )
+
+    private val TOPLEVELGENERICPARAM_PARAMETER_METADATA: AppFunctionParameterMetadata =
+        AppFunctionParameterMetadata(
+            name = "topLevelGenericParam",
+            isRequired = true,
+            dataType = PARAMETER_METADATA_TOPLEVELGENERICPARAM_REFERENCE_DATA_TYPE
+        )
+
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
       PARAMS_PARAMETER_METADATA,
+      TOPLEVELGENERICPARAM_PARAMETER_METADATA,
     )
 
     private val PRIMITIVE_RESPONSE_VALUE_TYPE: AppFunctionPrimitiveTypeMetadata =
@@ -166,12 +180,37 @@ public class `$FunctionWithGenericSerializable_AppFunctionInventory` : AppFuncti
             isNullable = true
         )
 
+    private val COM_TESTDATA_SETFIELD_KOTLIN_INT__OBJECT_DATA_TYPE_PROPERTIES_MAP_VALUE:
+        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
+            type = 7,
+            isNullable = false
+        )
+
+    private val COM_TESTDATA_SETFIELD_KOTLIN_INT__OBJECT_DATA_TYPE_PROPERTIES_MAP:
+        Map<String, AppFunctionDataTypeMetadata> = mapOf(
+      "value" to COM_TESTDATA_SETFIELD_KOTLIN_INT__OBJECT_DATA_TYPE_PROPERTIES_MAP_VALUE,
+    )
+
+    private val COM_TESTDATA_SETFIELD_KOTLIN_INT__OBJECT_DATA_TYPE_REQUIRED_PROPERTIES_LIST:
+        List<String> = listOf(
+      "value",
+    )
+
+    private val COM_TESTDATA_SETFIELD_KOTLIN_INT__OBJECT_DATA_TYPE: AppFunctionObjectTypeMetadata =
+        AppFunctionObjectTypeMetadata(
+            properties = COM_TESTDATA_SETFIELD_KOTLIN_INT__OBJECT_DATA_TYPE_PROPERTIES_MAP,
+            required = COM_TESTDATA_SETFIELD_KOTLIN_INT__OBJECT_DATA_TYPE_REQUIRED_PROPERTIES_LIST,
+            qualifiedName = "com.testdata.SetField<kotlin.Int>",
+            isNullable = true
+        )
+
     private val COMPONENTS_METADATA_DATA_TYPES_MAP: Map<String, AppFunctionDataTypeMetadata> =
         mapOf(
       "com.testdata.SetField<kotlin.String>" to COM_TESTDATA_SETFIELD_KOTLIN_STRING__OBJECT_DATA_TYPE,
       "com.testdata.Attachment" to COM_TESTDATA_ATTACHMENT_OBJECT_DATA_TYPE,
       "com.testdata.SetField<kotlin.collections.List<com.testdata.Attachment>>" to COM_TESTDATA_SETFIELD_KOTLIN_COLLECTIONS_LIST_COM_TESTDATA_ATTACHMENT___OBJECT_DATA_TYPE,
       "com.testdata.UpdateNoteParams" to COM_TESTDATA_UPDATENOTEPARAMS_OBJECT_DATA_TYPE,
+      "com.testdata.SetField<kotlin.Int>" to COM_TESTDATA_SETFIELD_KOTLIN_INT__OBJECT_DATA_TYPE,
       )
 
     private val COMPONENTS_METADATA: AppFunctionComponentsMetadata = AppFunctionComponentsMetadata(

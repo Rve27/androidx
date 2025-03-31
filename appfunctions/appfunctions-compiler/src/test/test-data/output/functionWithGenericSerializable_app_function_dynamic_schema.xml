@@ -100,6 +100,26 @@
                 <id>unused</id>
                 <name>com.testdata.UpdateNoteParams</name>
             </dataTypes>
+            <dataTypes>
+                <dataTypeMetadata>
+                    <id>unused</id>
+                    <isNullable>true</isNullable>
+                    <objectQualifiedName>com.testdata.SetField&lt;kotlin.Int&gt;</objectQualifiedName>
+                    <properties>
+                        <dataTypeMetadata>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <type>7</type>
+                        </dataTypeMetadata>
+                        <id>unused</id>
+                        <name>value</name>
+                    </properties>
+                    <required>value</required>
+                    <type>3</type>
+                </dataTypeMetadata>
+                <id>unused</id>
+                <name>com.testdata.SetField&lt;kotlin.Int&gt;</name>
+            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.FunctionWithGenericSerializable#test</id>
@@ -114,6 +134,17 @@
             <id>unused</id>
             <isRequired>true</isRequired>
             <name>params</name>
+        </parameters>
+        <parameters>
+            <dataTypeMetadata>
+                <dataTypeReference>com.testdata.SetField&lt;kotlin.Int&gt;</dataTypeReference>
+                <id>unused</id>
+                <isNullable>true</isNullable>
+                <type>11</type>
+            </dataTypeMetadata>
+            <id>unused</id>
+            <isRequired>true</isRequired>
+            <name>topLevelGenericParam</name>
         </parameters>
         <response>
             <id>unused</id>
