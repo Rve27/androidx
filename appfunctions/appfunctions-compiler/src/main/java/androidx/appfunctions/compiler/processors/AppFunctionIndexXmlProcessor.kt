@@ -50,7 +50,7 @@ class AppFunctionIndexXmlProcessor(
         val appFunctionSymbolResolver = AppFunctionSymbolResolver(resolver)
         val resolvedAnnotatedSerializableProxies =
             ResolvedAnnotatedSerializableProxies(
-                appFunctionSymbolResolver.resolveAnnotatedAppFunctionSerializableProxies()
+                appFunctionSymbolResolver.resolveAllAnnotatedSerializableProxiesFromModule()
             )
         generateIndexXml(
             appFunctionSymbolResolver.getAnnotatedAppFunctionsFromAllModules(),

@@ -105,12 +105,12 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
     }
 
     /**
-     * Resolves all classes annotated with @AppFunctionSerializableProxy
+     * Resolves all classes annotated with @AppFunctionSerializableProxy from the current
+     * compilation unit.
      *
      * @return a list of AnnotatedAppFunctionSerializableProxy
      */
-    @OptIn(KspExperimental::class)
-    fun resolveAnnotatedAppFunctionSerializableProxies():
+    fun resolveLocalAnnotatedAppFunctionSerializableProxy():
         List<AnnotatedAppFunctionSerializableProxy> {
         return resolver
             .getSymbolsWithAnnotation(
@@ -125,23 +125,34 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
                 }
                 AnnotatedAppFunctionSerializableProxy(declaration).validate()
             }
-            .toList() +
-            resolver
-                .getDeclarationsFromPackage(SERIALIZABLE_PROXY_PACKAGE_NAME)
-                .filter {
-                    it.annotations.findAnnotation(
-                        AppFunctionSerializableProxyAnnotation.CLASS_NAME
-                    ) != null
+            .toList()
+    }
+
+    /**
+     * Resolves all classes annotated with @AppFunctionSerializableProxy from the
+     * [SERIALIZABLE_PROXY_PACKAGE_NAME] package.
+     *
+     * @return a list of AnnotatedAppFunctionSerializableProxy
+     */
+    @OptIn(KspExperimental::class)
+    fun resolveAllAnnotatedSerializableProxiesFromModule():
+        List<AnnotatedAppFunctionSerializableProxy> {
+        return resolver
+            .getDeclarationsFromPackage(SERIALIZABLE_PROXY_PACKAGE_NAME)
+            .filter {
+                it.annotations.findAnnotation(AppFunctionSerializableProxyAnnotation.CLASS_NAME) !=
+                    null
+            }
+            .map { declaration ->
+                if (declaration !is KSClassDeclaration) {
+                    throw ProcessingException(
+                        "Only classes can be annotated with @AppFunctionSerializableProxy",
+                        declaration
+                    )
                 }
-                .map { declaration ->
-                    if (declaration !is KSClassDeclaration) {
-                        throw ProcessingException(
-                            "Only classes can be annotated with @AppFunctionSerializableProxy",
-                            declaration
-                        )
-                    }
-                    AnnotatedAppFunctionSerializableProxy(declaration).validate()
-                }
+                AnnotatedAppFunctionSerializableProxy(declaration).validate()
+            }
+            .toList()
     }
 
     /**

@@ -51,7 +51,7 @@ class AppFunctionLegacyIndexXmlProcessor(
         val appFunctionSymbolResolver = AppFunctionSymbolResolver(resolver)
         val resolvedAnnotatedSerializableProxies =
             ResolvedAnnotatedSerializableProxies(
-                appFunctionSymbolResolver.resolveAnnotatedAppFunctionSerializableProxies()
+                appFunctionSymbolResolver.resolveAllAnnotatedSerializableProxiesFromModule()
             )
         generateLegacyIndexXml(
             appFunctionSymbolResolver.getAnnotatedAppFunctionsFromAllModules(),

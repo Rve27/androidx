@@ -94,26 +94,31 @@ class AppFunctionSerializableProcessor(
         try {
             val entitySymbolResolver = AppFunctionSymbolResolver(resolver)
             val entityClasses = entitySymbolResolver.resolveAnnotatedAppFunctionSerializables()
-            val resolvedAnnotatedSerializableProxies =
+            val globalResolvedAnnotatedSerializableProxies =
                 ResolvedAnnotatedSerializableProxies(
-                    entitySymbolResolver.resolveAnnotatedAppFunctionSerializableProxies()
+                    entitySymbolResolver.resolveAllAnnotatedSerializableProxiesFromModule()
+                )
+            val localResolvedAnnotatedSerializableProxies =
+                ResolvedAnnotatedSerializableProxies(
+                    entitySymbolResolver.resolveLocalAnnotatedAppFunctionSerializableProxy()
                 )
             for (entity in entityClasses) {
                 buildAppFunctionSerializableFactoryClass(
                     entity,
-                    resolvedAnnotatedSerializableProxies
+                    globalResolvedAnnotatedSerializableProxies
                 )
             }
             for (entityProxy in
-                resolvedAnnotatedSerializableProxies.resolvedAnnotatedSerializableProxies) {
+                localResolvedAnnotatedSerializableProxies.resolvedAnnotatedSerializableProxies) {
+                // Only generate factory for local proxy classes to ensure that the factory is
+                // only generated once in the same compilation unit as the prexy definition.
                 buildAppFunctionSerializableProxyFactoryClass(
                     entityProxy,
-                    resolvedAnnotatedSerializableProxies
+                    globalResolvedAnnotatedSerializableProxies
                 )
             }
-            return resolvedAnnotatedSerializableProxies.resolvedAnnotatedSerializableProxies.map {
-                it.appFunctionSerializableProxyClass
-            }
+            return globalResolvedAnnotatedSerializableProxies.resolvedAnnotatedSerializableProxies
+                .map { it.appFunctionSerializableProxyClass }
         } catch (e: ProcessingException) {
             logger.logException(e)
         }

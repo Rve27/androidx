@@ -27,12 +27,14 @@ plugins {
     id("AndroidXPlugin")
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 }
 
 dependencies {
     api(libs.kotlinStdlib)
     api(libs.kotlinCoroutinesAndroid)
     api project(":appfunctions:appfunctions-common")
+    ksp(project(":appfunctions:appfunctions-compiler"))
 
     // Internal dependencies
     implementation("androidx.appsearch:appsearch:1.1.0-beta01")

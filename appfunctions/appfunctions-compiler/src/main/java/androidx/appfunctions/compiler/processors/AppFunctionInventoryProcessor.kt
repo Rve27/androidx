@@ -76,7 +76,7 @@ class AppFunctionInventoryProcessor(
         val appFunctionClasses = appFunctionSymbolResolver.resolveAnnotatedAppFunctions()
         val resolvedAnnotatedSerializableProxies =
             ResolvedAnnotatedSerializableProxies(
-                appFunctionSymbolResolver.resolveAnnotatedAppFunctionSerializableProxies()
+                appFunctionSymbolResolver.resolveAllAnnotatedSerializableProxiesFromModule()
             )
         val generatedInventoryComponents =
             buildList<AppFunctionComponent> {
