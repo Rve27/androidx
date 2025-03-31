@@ -727,8 +727,8 @@ data class AnnotatedAppFunctions(
                 as KSClassDeclaration
         return AnnotatedAppFunctionSerializable(
                 appFunctionSerializableClassDeclaration,
-                appFunctionTypeReference.selfOrItemTypeReference.resolve().arguments
             )
+            .parameterizedBy(appFunctionTypeReference.selfOrItemTypeReference.resolve().arguments)
             .validate()
     }
 

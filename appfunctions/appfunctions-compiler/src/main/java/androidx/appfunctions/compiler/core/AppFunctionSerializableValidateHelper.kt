@@ -150,6 +150,11 @@ class AppFunctionSerializableValidateHelper(
     }
 
     private fun validateSerializableParameter(propertyDeclaration: AppFunctionPropertyDeclaration) {
+        if (propertyDeclaration.isGenericType) {
+            // Don't validate a generic type. Whether a generic type is valid or not would be
+            // validated when it is parameterized.
+            return
+        }
         if (!isSupportedType(propertyDeclaration.type)) {
             throw ProcessingException(
                 "AppFunctionSerializable properties must be one of the following types:\n" +
