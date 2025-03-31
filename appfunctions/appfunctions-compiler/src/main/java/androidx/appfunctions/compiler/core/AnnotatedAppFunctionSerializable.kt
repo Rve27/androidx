@@ -24,14 +24,61 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
+import com.google.devtools.ksp.symbol.KSTypeArgument
+import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.ClassName
 
-/** Represents a class annotated with [androidx.appfunctions.AppFunctionSerializable]. */
-open class AnnotatedAppFunctionSerializable(val appFunctionSerializableClass: KSClassDeclaration) {
-    /** The qualified name of the class being annotated with AppFunctionSerializable. */
-    val qualifiedName: String by lazy { appFunctionSerializableClass.toClassName().canonicalName }
+/**
+ * Represents a class annotated with [androidx.appfunctions.AppFunctionSerializable].
+ *
+ * When the serializable has type parameter (e.g. `SetField<T>`), the type arguments must be
+ * provided as [arguments] to resolve the actual type reference.
+ */
+open class AnnotatedAppFunctionSerializable(
+    private val appFunctionSerializableClass: KSClassDeclaration,
+    private val arguments: List<KSTypeArgument> = emptyList()
+) {
+    /** A map of type parameter name to its parameterized type. */
+    private val typeParameterMap: Map<String, KSTypeReference> = buildMap {
+        for ((index, typeParameter) in appFunctionSerializableClass.typeParameters.withIndex()) {
+            val typeParameterName = typeParameter.name.asString()
+            val actualType =
+                arguments.getOrNull(index)?.type
+                    ?: throw ProcessingException(
+                        "Missing type argument for $typeParameterName",
+                        typeParameter
+                    )
+            this[typeParameterName] = actualType
+        }
+    }
+
+    /**
+     * The qualified name of the class being annotated with AppFunctionSerializable.
+     *
+     * When the AppFunctionSerializable contains type parameters, the parameterized type information
+     * would be included as a suffix.
+     */
+    val qualifiedName: String by lazy {
+        buildString {
+            append(appFunctionSerializableClass.toClassName().canonicalName)
+            for ((index, entry) in typeParameterMap.entries.withIndex()) {
+                if (index == 0) {
+                    append("<")
+                }
+
+                val (_, typeRef) = entry
+                append(typeRef.toTypeName().ignoreNullable().toString())
+
+                if (index != typeParameterMap.size - 1) {
+                    append(",")
+                } else {
+                    append(">")
+                }
+            }
+        }
+    }
 
     /** The super type of the class being annotated with AppFunctionSerializable */
     val superTypes: Sequence<KSTypeReference> by lazy { appFunctionSerializableClass.superTypes }
@@ -158,10 +205,30 @@ open class AnnotatedAppFunctionSerializable(val appFunctionSerializableClass: KS
             .toSet()
     }
 
-    /** Returns the annotated class's properties as defined in its primary constructor. */
+    /**
+     * Returns the annotated class's properties as defined in its primary constructor.
+     *
+     * When the property is generic type, it will try to resolve the actual type reference from
+     * [arguments].
+     */
     fun getProperties(): List<AppFunctionPropertyDeclaration> {
         return checkNotNull(appFunctionSerializableClass.primaryConstructor).parameters.map {
-            AppFunctionPropertyDeclaration(it)
+            valueParameter ->
+            val valueTypeDeclaration = valueParameter.type.resolve().declaration
+            if (valueTypeDeclaration is KSTypeParameter) {
+                val actualType =
+                    typeParameterMap[valueTypeDeclaration.name.asString()]
+                        ?: throw ProcessingException(
+                            "Unable to resolve actual type",
+                            valueParameter
+                        )
+                AppFunctionPropertyDeclaration(
+                    checkNotNull(valueParameter.name).asString(),
+                    actualType
+                )
+            } else {
+                AppFunctionPropertyDeclaration(valueParameter)
+            }
         }
     }
 
@@ -233,7 +300,10 @@ open class AnnotatedAppFunctionSerializable(val appFunctionSerializableClass: KS
             }
             // Process newly found serializable
             sourceFileSet.addAll(
-                AnnotatedAppFunctionSerializable(appFunctionSerializableDefinition)
+                AnnotatedAppFunctionSerializable(
+                        appFunctionSerializableDefinition,
+                        serializableAfType.selfOrItemTypeReference.resolve().arguments
+                    )
                     .getTransitiveSerializableSourceFiles()
             )
         }

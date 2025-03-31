@@ -134,7 +134,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
         if (annotatedClass !is AnnotatedAppFunctionSerializableProxy) {
             throw ProcessingException(
                 "Attempting to generate proxy getter for non proxy serializable.",
-                annotatedClass.appFunctionSerializableClass
+                annotatedClass.attributeNode
             )
         }
         return buildCodeBlock {
@@ -291,7 +291,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
         if (annotatedClass !is AnnotatedAppFunctionSerializableProxy) {
             throw ProcessingException(
                 "Attempting to generate proxy setter for non proxy serializable.",
-                annotatedClass.appFunctionSerializableClass
+                annotatedClass.attributeNode
             )
         }
         return buildCodeBlock {

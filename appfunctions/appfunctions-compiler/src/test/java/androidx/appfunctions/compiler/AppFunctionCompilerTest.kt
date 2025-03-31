@@ -462,6 +462,50 @@ class AppFunctionCompilerTest {
     }
 
     @Test
+    fun testFunctionWithInvalidGenericSerializable_fail() {
+        val report =
+            compilationTestHelper.compileAll(
+                sourceFileNames = listOf("FunctionWithInvalidGenericSerializable.KT")
+            )
+
+        compilationTestHelper.assertErrorWithMessage(
+            report = report,
+            expectedErrorMessage =
+                "AppFunctionSerializable properties must be one of the following types:\n"
+        )
+    }
+
+    @Test
+    fun testFunctionWithGenericSerializable_genAppFunctionInventory_success() {
+        val report =
+            compilationTestHelper.compileAll(
+                sourceFileNames = listOf("FunctionWithGenericSerializable.KT")
+            )
+
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName =
+                "${'$'}FunctionWithGenericSerializable_AppFunctionInventory.kt",
+            goldenFileName = "${'$'}FunctionWithGenericSerializable_AppFunctionInventory.KT",
+        )
+    }
+
+    @Test
+    fun testFunctionWithGenericSerializable_genDynamicIndexXmlFile_success() {
+        val report =
+            compilationTestHelper.compileAll(
+                sourceFileNames = listOf("FunctionWithGenericSerializable.KT"),
+                processorOptions = mapOf("appfunctions:aggregateAppFunctions" to "true"),
+            )
+
+        compilationTestHelper.assertSuccessWithResourceContent(
+            report = report,
+            expectGeneratedResourceFileName = "app_functions_v2.xml",
+            goldenFileName = "functionWithGenericSerializable_app_function_dynamic_schema.xml",
+        )
+    }
+
+    @Test
     fun testFakeNoArgImpl_genLegacyIndexXmlFile_success() {
         val report =
             compilationTestHelper.compileAll(

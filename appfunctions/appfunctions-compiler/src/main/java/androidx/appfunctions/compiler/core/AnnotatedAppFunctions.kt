@@ -725,7 +725,11 @@ data class AnnotatedAppFunctions(
         val appFunctionSerializableClassDeclaration =
             appFunctionTypeReference.selfOrItemTypeReference.resolve().declaration
                 as KSClassDeclaration
-        return AnnotatedAppFunctionSerializable(appFunctionSerializableClassDeclaration)
+        return AnnotatedAppFunctionSerializable(
+                appFunctionSerializableClassDeclaration,
+                appFunctionTypeReference.selfOrItemTypeReference.resolve().arguments
+            )
+            .validate()
     }
 
     private fun AppFunctionAnnotationProperties.toAppFunctionSchemaMetadata():
