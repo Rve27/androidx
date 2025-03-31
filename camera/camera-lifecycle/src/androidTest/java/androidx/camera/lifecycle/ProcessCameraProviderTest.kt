@@ -19,6 +19,8 @@ package androidx.camera.lifecycle
 import android.content.Context
 import android.content.pm.PackageManager.FEATURE_CAMERA_CONCURRENT
 import android.graphics.Rect
+import android.os.Handler
+import android.os.Looper
 import android.util.Rational
 import android.view.Surface
 import androidx.annotation.OptIn
@@ -43,6 +45,7 @@ import androidx.camera.core.impl.AdapterCameraInfo
 import androidx.camera.core.impl.CameraConfig
 import androidx.camera.core.impl.CameraFactory
 import androidx.camera.core.impl.CameraInfoInternal
+import androidx.camera.core.impl.CameraThreadConfig
 import androidx.camera.core.impl.Config
 import androidx.camera.core.impl.ExtendedCameraConfigProviderStore
 import androidx.camera.core.impl.Identifier
@@ -583,7 +586,22 @@ class ProcessCameraProviderTest(
         ProcessCameraProvider.configureInstance(cameraConfig)
         runBlocking {
             provider = ProcessCameraProvider.getInstance(context).await()
-            assertThat(provider.availableCameraInfos.size).isEqualTo(2)
+            val cameraCount =
+                cameraConfig
+                    .getCameraFactoryProvider(null)!!
+                    .newInstance(
+                        context,
+                        CameraThreadConfig.create(
+                            mainThreadExecutor(),
+                            Handler(Looper.getMainLooper())
+                        ),
+                        null,
+                        -1L
+                    )
+                    .availableCameraIds
+                    .size
+
+            assertThat(provider.availableCameraInfos.size).isEqualTo(cameraCount)
         }
     }
 
