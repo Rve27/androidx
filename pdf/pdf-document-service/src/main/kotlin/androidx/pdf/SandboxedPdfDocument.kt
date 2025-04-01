@@ -261,7 +261,13 @@ public class SandboxedPdfDocument(
                 connection.connect(uri)
             }
 
-            val binder = connection.documentBinder!!
+            // The documentBinder may be null if the service disconnects immediately after a
+            // reconnection attempt. This is a rare, but recoverable, condition that subsequent
+            // retries(triggered from `withDocument()`) should resolve.
+            val binder =
+                connection.documentBinder
+                    ?: throw DeadObjectException("connection.documentBinder is still null")
+
             if (connection.needsToReopenDocument) {
                 binder.openPdfDocument(fileDescriptor, password)
                 connection.needsToReopenDocument = false
