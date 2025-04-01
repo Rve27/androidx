@@ -15,7 +15,6 @@
  */
 
 
-import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 import androidx.build.PlatformIdentifier
 
@@ -160,7 +159,6 @@ androidx {
     inceptionYear = "2020"
     description = "Compose integration with Navigation"
     samples(project(":navigation:navigation-compose:navigation-compose-samples"))
-    kotlinTarget = KotlinTarget.KOTLIN_1_9
     metalavaK2UastEnabled = false
     addGoldenImageAssets()
 }

@@ -21,7 +21,6 @@
  * Please use that script when creating a new project, rather than copying an existing project and
  * modifying its settings.
  */
-import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 import androidx.build.SdkHelperKt
 import androidx.build.AndroidXConfig
@@ -126,5 +125,4 @@ androidx {
     type = SoftwareType.OTHER_CODE_PROCESSOR
     inceptionYear = "2022"
     description = "Generate sources for communication with SDKs in the Privacy Sandbox."
-    kotlinTarget = KotlinTarget.KOTLIN_2_0
 }

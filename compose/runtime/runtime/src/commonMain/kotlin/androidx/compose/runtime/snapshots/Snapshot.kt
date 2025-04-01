@@ -1887,7 +1887,7 @@ private val threadSnapshot = SnapshotThreadLocal<Snapshot>()
  */
 @PublishedApi internal val lock = makeSynchronizedObject()
 
-@Suppress("BanInlineOptIn")
+@Suppress("BanInlineOptIn", "LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 @OptIn(ExperimentalContracts::class)
 @PublishedApi
 internal inline fun <T> sync(block: () -> T): T {

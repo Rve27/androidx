@@ -21,7 +21,6 @@
  * Please use that script when creating a new project, rather than copying an existing project and
  * modifying its settings.
  */
-import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 import androidx.build.SdkHelperKt
 
@@ -71,5 +70,4 @@ androidx {
     type = SoftwareType.OTHER_CODE_PROCESSOR
     inceptionYear = "2017"
     description = "Android Navigation TypeSafe Arguments Generator"
-    kotlinTarget = KotlinTarget.KOTLIN_2_0
 }

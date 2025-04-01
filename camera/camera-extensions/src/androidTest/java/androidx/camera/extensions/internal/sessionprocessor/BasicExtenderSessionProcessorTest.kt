@@ -119,6 +119,7 @@ class BasicExtenderSessionProcessorTest(
     private val previewProcessorType: ProcessorType
 ) {
     companion object {
+        @Suppress("TYPE_INTERSECTION_AS_REIFIED_WARNING")
         @Parameterized.Parameters(name = "hasCaptureProcessor = {0}, previewProcessorType = {1}")
         @JvmStatic
         fun parameters() =

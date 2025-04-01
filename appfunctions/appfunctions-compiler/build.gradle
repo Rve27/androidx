@@ -22,7 +22,6 @@
  * modifying its settings.
  */
 
-import androidx.build.KotlinTarget
 import androidx.build.SdkHelperKt
 import androidx.build.SoftwareType
 
@@ -69,5 +68,4 @@ androidx {
     type = SoftwareType.ANNOTATION_PROCESSOR
     inceptionYear = "2025"
     description = "AppFunction Compiler"
-    kotlinTarget = KotlinTarget.KOTLIN_2_0
 }

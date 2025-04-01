@@ -18,7 +18,6 @@
 // This project is stored outside of buildSrc/ so that waiting for these tests to complete doesn't delay the rest of the build
 
 import androidx.build.SoftwareType
-import androidx.build.KotlinTarget
 
 plugins {
     id("AndroidXPlugin")
@@ -93,7 +92,6 @@ tasks.withType(Test).configureEach {
 
 androidx {
     type = SoftwareType.INTERNAL_GRADLE_PLUGIN
-    kotlinTarget = KotlinTarget.KOTLIN_1_9
 }
 
 // Also do style checking of the buildSrc project from within this project

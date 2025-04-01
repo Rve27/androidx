@@ -21,6 +21,8 @@
  * Please use that script when creating a new project, rather than copying an existing project and
  * modifying its settings.
  */
+
+import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 
 plugins {
@@ -60,7 +62,8 @@ android {
 androidx {
     name = "androidx.appfunctions:appfunctions-schemas"
     type = SoftwareType.PUBLISHED_LIBRARY
+    //TODO(b/407634710): Task :appfunctions:appfunctions-schemas:kspReleaseKotlin fails when targeting Kotlin 2
+    kotlinTarget = KotlinTarget.KOTLIN_1_9
     inceptionYear = "2025"
     description = "Provide pre-defined schema for imlpementing AppFunctions."
-
 }

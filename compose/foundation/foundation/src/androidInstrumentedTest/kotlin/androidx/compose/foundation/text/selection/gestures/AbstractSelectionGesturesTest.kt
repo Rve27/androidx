@@ -205,7 +205,6 @@ internal abstract class AbstractSelectionGesturesTest : FocusedWindowTest {
         when (this) {
             ResolvedTextDirection.Ltr -> ltr
             ResolvedTextDirection.Rtl -> rtl
-            else -> throw AssertionError("Unrecognized text direction $textDirection")
         }
 
     // TODO(b/281584353) When touch mode can be changed globally,

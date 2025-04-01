@@ -475,7 +475,8 @@ abstract class AndroidXDocsImplPlugin : Plugin<Project> {
             project.configurations.create("docs-runtime-classpath") {
                 it.setResolveClasspathForUsage(Usage.JAVA_RUNTIME)
             }
-        val kotlinDefaultCatalogVersion = androidx.build.KotlinTarget.DEFAULT.catalogVersion
+        // TODO: Set to DEFAULT when b/407754247 is fixed
+        val kotlinDefaultCatalogVersion = androidx.build.KotlinTarget.KOTLIN_1_8.catalogVersion
         val kotlinLatest = project.versionCatalog.findVersion(kotlinDefaultCatalogVersion).get()
         listOf(docsCompileClasspath, docsRuntimeClasspath).forEach { config ->
             config.resolutionStrategy {

@@ -21,10 +21,8 @@
  * Please use that script when creating a new project, rather than copying an existing project and
  * modifying its settings.
  */
-import androidx.build.BundleInsideHelper
-import androidx.build.KotlinTarget
+
 import androidx.build.SoftwareType
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("AndroidXPlugin")
@@ -68,5 +66,4 @@ androidx {
     mavenVersion = LibraryVersions.CORE_LOCATION_ALTITUDE
     inceptionYear = "2022"
     description = "Provides compatibility APIs concerning location altitudes."
-    kotlinTarget = KotlinTarget.KOTLIN_2_0
 }

@@ -22,7 +22,6 @@
  * modifying its settings.
  */
 
-import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -73,5 +72,4 @@ androidx {
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2019"
     description = "Android Dynamic Feature Navigation Fragment"
-    kotlinTarget = KotlinTarget.KOTLIN_1_9
 }

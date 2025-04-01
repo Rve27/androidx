@@ -23,7 +23,6 @@
  */
 
 
-import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 import androidx.build.PlatformIdentifier
 
@@ -116,5 +115,4 @@ androidx {
     description = "Compose Material Design Adaptive Navigation Suite Library"
     legacyDisableKotlinStrictApiMode = true
     samples(project(":compose:material3:material3-adaptive-navigation-suite:material3-adaptive-navigation-suite-samples"))
-    kotlinTarget = KotlinTarget.KOTLIN_1_9
 }

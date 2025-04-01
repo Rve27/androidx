@@ -119,7 +119,6 @@ androidx {
     description = "Compose Material Design Adaptive Library"
     legacyDisableKotlinStrictApiMode = true
     metalavaK2UastEnabled = false
-    kotlinTarget = KotlinTarget.KOTLIN_1_9
     samples(project(":compose:material3:adaptive:adaptive-samples"))
     addGoldenImageAssets()
 }

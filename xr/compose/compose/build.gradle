@@ -24,7 +24,6 @@
 
 import androidx.build.AndroidXConfig
 import androidx.build.SoftwareType
-import androidx.build.KotlinTarget
 
 plugins {
     id("AndroidXPlugin")
@@ -80,7 +79,6 @@ androidx {
     type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
     inceptionYear = "2024"
     description = "Compose libraries for the androidx.xr namespace."
-    kotlinTarget = KotlinTarget.KOTLIN_1_9
     // TODO: b/326456246
     optOutJSpecify = true
     // b/384785925

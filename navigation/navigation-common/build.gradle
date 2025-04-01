@@ -22,7 +22,6 @@
  * modifying its settings.
  */
 
-import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 import androidx.build.PlatformIdentifier
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
@@ -169,5 +168,4 @@ androidx {
     inceptionYear = "2017"
     description = "Android Navigation-Common"
     metalavaK2UastEnabled = false
-    kotlinTarget = KotlinTarget.KOTLIN_1_9
 }

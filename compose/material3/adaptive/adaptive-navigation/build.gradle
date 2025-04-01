@@ -109,7 +109,6 @@ androidx {
     inceptionYear = "2023"
     description = "Compose Material Design Adaptive Library"
     legacyDisableKotlinStrictApiMode = true
-    kotlinTarget = KotlinTarget.KOTLIN_1_9
 }
 
 android {

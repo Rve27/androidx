@@ -13,6 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import androidx.build.KotlinTarget
+
 plugins {
     id("AndroidXPlugin")
     id("com.android.application")
@@ -58,4 +61,9 @@ dependencies {
     androidTestImplementation('androidx.concurrent:concurrent-futures-ktx:1.1.0')
     androidTestImplementation(project(":appfunctions:integration-tests:multi-modules-testapp:shared-library"))
     kspAndroidTest(project(":appfunctions:appfunctions-compiler"))
+}
+
+androidx {
+    //TODO(b/407637586): Target Kotlin 2. Fails :appfunctions:integration-tests:multi-modules-testapp:app:kspDebugAndroidTestKotlin
+    kotlinTarget = KotlinTarget.KOTLIN_1_9
 }

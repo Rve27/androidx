@@ -22,7 +22,6 @@
  * modifying its settings.
  */
 
-import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 
 plugins {
@@ -54,7 +53,6 @@ androidx {
     inceptionYear = "2017"
     description = "Android Room RXJava2"
     legacyDisableKotlinStrictApiMode = true
-    kotlinTarget = KotlinTarget.KOTLIN_2_0
 }
 
 android {

@@ -21,6 +21,7 @@
  * Please use that script when creating a new project, rather than copying an existing project and
  * modifying its settings.
  */
+
 import androidx.build.SoftwareType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -104,3 +105,13 @@ android {
 inspection {
     name = "compose-ui-inspection.jar"
 }
+
+// TODO(b/407640608): Fix :compose:ui:ui-inspection:connectedCheck to work without this block
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs += [
+                "-Xlambdas=class"
+        ]
+    }
+}
+
