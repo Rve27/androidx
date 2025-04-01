@@ -54,7 +54,7 @@ public class TraceProcessor
 @Suppress("ExecutorRegistration") // purely synchronous
 @JvmOverloads
 @ExperimentalTraceProcessorApi
-constructor(
+internal constructor(
     private val serverLifecycleManager: ServerLifecycleManager,
     private val tracer: Tracer = Tracer(),
     private val eventCallback: EventCallback = EventCallback.Noop,
@@ -104,8 +104,8 @@ constructor(
          * @param serverLifecycleManager controls starting and stopping the TraceProcessor process.
          * @param eventCallback callback for events such as trace load failure.
          * @param tracer used to trace begin and end of significant events within this managed run.
-         * @param timeoutMs maximum duration for waiting for operations like loading the server, or
-         *   querying a trace.
+         * @param timeoutMs maximum duration in milliseconds for waiting for operations like loading
+         *   the server, or querying a trace.
          */
         @Suppress(
             "ExecutorRegistration", // purely synchronous
