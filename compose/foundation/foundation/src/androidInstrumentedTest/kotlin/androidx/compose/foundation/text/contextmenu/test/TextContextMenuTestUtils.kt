@@ -20,8 +20,6 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.compose.foundation.ComposeFoundationFlags
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.internal.checkPreconditionNotNull
 import androidx.compose.foundation.test.R
 import androidx.compose.foundation.text.contextmenu.data.TextContextMenuData
@@ -44,8 +42,6 @@ import androidx.compose.ui.unit.toIntRect
 import androidx.compose.ui.unit.toOffset
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
 
 /**
  * Can collect the context menu items wherever its associated
@@ -206,54 +202,3 @@ internal fun <T : Any> assertNotNull(obj: T?, messageBlock: (() -> String)? = nu
             }
         subject.isNotNull()
     }!!
-
-/**
- * Annotation which, when applied to a test class or test function, will set the
- * [ComposeFoundationFlags.isNewContextMenuEnabled] default value for the respective class/function.
- */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-annotation class ContextMenuFlagOverride(val flagValue: Boolean)
-
-/**
- * Allows changing of the [ComposeFoundationFlags.isNewContextMenuEnabled] flag in tests while
- * resetting it to the initial value at the end of each test.
- *
- * Use the [ContextMenuFlagOverride] annotation to mark your test classes/functions to use a
- * specific flag value.
- *
- * Make sure the [Rule][org.junit.Rule]'s [order][org.junit.Rule.order] is lower than that of the
- * compose test rule so that the flag is set correctly before/after the test starts.
- *
- * @param defaultFlagValue The default flag state to set to at the start of the test. This allows a
- *   class to set the default value of the flag for each test, while still resetting the flag after
- *   each test to the initial value. Leaving this null will let the flag stay its initial value at
- *   the beginning of each test. This should only be set if your tests are for a specific flag state
- *   and the rule is being inherited by some other class. Otherwise, use the
- *   [ContextMenuFlagOverride] to set this for a single test class.
- */
-@OptIn(ExperimentalFoundationApi::class)
-class ContextMenuFlagRule(private val defaultFlagValue: Boolean? = null) : TestWatcher() {
-    private var initialFlagValue: Boolean? = null
-
-    override fun starting(description: Description?) {
-        initialFlagValue = ComposeFoundationFlags.isNewContextMenuEnabled
-        getFlagValue(description)?.let { ComposeFoundationFlags.isNewContextMenuEnabled = it }
-    }
-
-    override fun finished(description: Description?) {
-        ComposeFoundationFlags.isNewContextMenuEnabled =
-            checkPreconditionNotNull(initialFlagValue) { "Initial flag value never set!" }
-    }
-
-    /**
-     * Returns the flag value to use for this test. This is determined in this order:
-     * 1. test function specific [ContextMenuFlagOverride] value
-     * 2. test class specific [ContextMenuFlagOverride] value
-     * 3. [defaultFlagValue]
-     */
-    private fun getFlagValue(description: Description?) =
-        description?.getAnnotation(ContextMenuFlagOverride::class.java)?.flagValue
-            ?: description?.testClass?.getAnnotation(ContextMenuFlagOverride::class.java)?.flagValue
-            ?: defaultFlagValue
-}

@@ -26,7 +26,6 @@ import androidx.compose.foundation.text.FocusedWindowTest
 import androidx.compose.foundation.text.Handle
 import androidx.compose.foundation.text.TEST_FONT_FAMILY
 import androidx.compose.foundation.text.contextmenu.internal.ProvidePlatformTextContextMenuToolbar
-import androidx.compose.foundation.text.contextmenu.test.ContextMenuFlagRule
 import androidx.compose.foundation.text.contextmenu.test.SpyTextActionModeCallback
 import androidx.compose.foundation.text.selection.HandlePressedScope
 import androidx.compose.foundation.text.selection.gestures.util.FakeHapticFeedback
@@ -65,8 +64,6 @@ import org.junit.Rule
 const val RtlChar = "\u05D1"
 
 internal abstract class AbstractSelectionGesturesTest : FocusedWindowTest {
-    @get:Rule(order = Int.MIN_VALUE) val flagRule = ContextMenuFlagRule(defaultFlagValue = false)
-
     @get:Rule val rule = createComposeRule()
 
     protected abstract val pointerAreaTag: String

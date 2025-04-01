@@ -24,7 +24,8 @@ import androidx.compose.foundation.text.contextmenu.data.TextContextMenuItem
 import androidx.compose.foundation.text.contextmenu.data.TextContextMenuKeys.CopyKey
 import androidx.compose.foundation.text.contextmenu.data.TextContextMenuKeys.SelectAllKey
 import androidx.compose.foundation.text.contextmenu.data.TextContextMenuSession
-import androidx.compose.foundation.text.contextmenu.test.ContextMenuFlagRule
+import androidx.compose.foundation.text.contextmenu.test.ContextMenuFlagFlipperRunner
+import androidx.compose.foundation.text.contextmenu.test.ContextMenuFlagSuppress
 import androidx.compose.foundation.text.contextmenu.test.TestTextContextMenuDataInvoker
 import androidx.compose.foundation.text.contextmenu.test.assertItems
 import androidx.compose.foundation.text.contextmenu.test.testTextContextMenuDataReader
@@ -45,7 +46,6 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performMouseInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.text.TextRange
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
@@ -55,10 +55,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @MediumTest
-@RunWith(AndroidJUnit4::class)
+@RunWith(ContextMenuFlagFlipperRunner::class)
+@ContextMenuFlagSuppress(suppressedFlagValue = false)
 class SelectionContainerContextMenuBuilderTest {
-    @get:Rule(order = Int.MIN_VALUE) val flagRule = ContextMenuFlagRule(defaultFlagValue = true)
-
     @get:Rule val rule = createComposeRule()
 
     private val textTag = "text"
