@@ -128,6 +128,38 @@ package androidx.appsearch.builtintypes {
     method public androidx.appsearch.builtintypes.ContactPoint.Builder setUrl(String?);
   }
 
+  @androidx.appsearch.annotation.Document(name="builtin:Event") public class Event extends androidx.appsearch.builtintypes.Thing {
+    ctor protected Event(String, String, int, long, long, String?, java.util.List<java.lang.String!>?, String?, String?, String?, java.util.List<androidx.appsearch.builtintypes.PotentialAction!>, java.time.Instant?, java.time.Instant?, java.time.Duration?, String?, androidx.appsearch.builtintypes.ImageObject?);
+    method public java.time.Duration? getDuration();
+    method public java.time.Instant? getEndDate();
+    method public String? getLocation();
+    method public androidx.appsearch.builtintypes.ImageObject? getLogo();
+    method public java.time.Instant getStartDate();
+  }
+
+  @androidx.appsearch.annotation.Document.BuilderProducer public static final class Event.Builder {
+    ctor public Event.Builder(androidx.appsearch.builtintypes.Event);
+    ctor public Event.Builder(String, String, java.time.Instant);
+    method public androidx.appsearch.builtintypes.Event.Builder addAlternateName(String);
+    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public androidx.appsearch.builtintypes.Event.Builder addPotentialAction(androidx.appsearch.builtintypes.PotentialAction);
+    method public androidx.appsearch.builtintypes.Event build();
+    method public androidx.appsearch.builtintypes.Event.Builder clearAlternateNames();
+    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public androidx.appsearch.builtintypes.Event.Builder clearPotentialActions();
+    method public androidx.appsearch.builtintypes.Event.Builder setAlternateNames(java.util.List<java.lang.String!>?);
+    method public androidx.appsearch.builtintypes.Event.Builder setCreationTimestampMillis(long);
+    method public androidx.appsearch.builtintypes.Event.Builder setDescription(String?);
+    method public androidx.appsearch.builtintypes.Event.Builder setDocumentScore(int);
+    method public androidx.appsearch.builtintypes.Event.Builder setDocumentTtlMillis(long);
+    method public androidx.appsearch.builtintypes.Event.Builder setDuration(java.time.Duration?);
+    method public androidx.appsearch.builtintypes.Event.Builder setEndDate(java.time.Instant?);
+    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public androidx.appsearch.builtintypes.Event.Builder setImage(String?);
+    method public androidx.appsearch.builtintypes.Event.Builder setLocation(String?);
+    method public androidx.appsearch.builtintypes.Event.Builder setLogo(androidx.appsearch.builtintypes.ImageObject?);
+    method public androidx.appsearch.builtintypes.Event.Builder setName(String?);
+    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public androidx.appsearch.builtintypes.Event.Builder setPotentialActions(java.util.List<androidx.appsearch.builtintypes.PotentialAction!>?);
+    method public androidx.appsearch.builtintypes.Event.Builder setUrl(String?);
+  }
+
   @SuppressCompatibility @RequiresFeature(enforcement="androidx.appsearch.app.Features#isFeatureSupported", name=androidx.appsearch.app.Features.VERBATIM_SEARCH) @androidx.appsearch.annotation.Document(name="builtin:GlobalSearchApplicationInfo") @androidx.appsearch.app.ExperimentalAppSearchApi public final class GlobalSearchApplicationInfo {
     method public int getApplicationType();
     method public String getId();
@@ -461,6 +493,22 @@ package androidx.appsearch.builtintypes.properties {
   @androidx.appsearch.annotation.Document public final class Keyword {
     ctor public Keyword(String);
     method public String? asText();
+  }
+
+}
+
+package androidx.appsearch.serializers {
+
+  @RequiresApi(api=android.os.Build.VERSION_CODES.O) public class DurationAsLongSerializer implements androidx.appsearch.app.LongSerializer<java.time.Duration!> {
+    ctor public DurationAsLongSerializer();
+    method public java.time.Duration deserialize(long);
+    method public long serialize(java.time.Duration);
+  }
+
+  @RequiresApi(api=android.os.Build.VERSION_CODES.O) public class InstantAsLongSerializer implements androidx.appsearch.app.LongSerializer<java.time.Instant!> {
+    ctor public InstantAsLongSerializer();
+    method public java.time.Instant deserialize(long);
+    method public long serialize(java.time.Instant);
   }
 
 }
