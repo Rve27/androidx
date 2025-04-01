@@ -28,7 +28,6 @@ import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.C
 import androidx.privacysandbox.ui.integration.testsdkprovider.IAutomatedTestCallback
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.CountDownLatch
@@ -41,16 +40,22 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
 @MediumTest
-@RunWith(AndroidJUnit4::class)
-class UiPresentationTests() {
+@RunWith(Parameterized::class)
+class UiPresentationTests(@FragmentOption val zOrdering: String) {
 
     private lateinit var scenario: ActivityScenario<MainActivity>
     private lateinit var sdkToClientCallback: SdkToClientCallback
 
     companion object {
-        private const val CALLBACK_WAIT_MS = 1000L
+        private const val CALLBACK_WAIT_MS = 2000L
+
+        @JvmStatic
+        @Parameterized.Parameters(name = "zOrdering={0}")
+        fun data(): Array<Any> =
+            arrayOf(arrayOf(FragmentOptions.Z_ORDER_BELOW), arrayOf(FragmentOptions.Z_ORDER_ABOVE))
     }
 
     @Before
@@ -58,7 +63,7 @@ class UiPresentationTests() {
         launchTestAppAndWaitForLoadingSdks(
             FragmentOptions.FRAGMENT_RESIZE_HIDDEN,
             FragmentOptions.MEDIATION_TYPE_NON_MEDIATED,
-            FragmentOptions.Z_ORDER_ABOVE
+            zOrdering
         )
         sdkToClientCallback = SdkToClientCallback()
     }
