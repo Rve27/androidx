@@ -1015,12 +1015,9 @@ final class androidx.compose.material3/MenuItemColors { // androidx.compose.mate
 }
 
 final class androidx.compose.material3/ModalBottomSheetProperties { // androidx.compose.material3/ModalBottomSheetProperties|null[0]
-    constructor <init>(kotlin/Boolean = ..., kotlin/Boolean = ..., kotlin/Boolean = ...) // androidx.compose.material3/ModalBottomSheetProperties.<init>|<init>(kotlin.Boolean;kotlin.Boolean;kotlin.Boolean){}[0]
+    constructor <init>(kotlin/Boolean = ...) // androidx.compose.material3/ModalBottomSheetProperties.<init>|<init>(kotlin.Boolean){}[0]
+    constructor <init>(kotlin/Boolean, kotlin/Boolean, kotlin/Boolean) // androidx.compose.material3/ModalBottomSheetProperties.<init>|<init>(kotlin.Boolean;kotlin.Boolean;kotlin.Boolean){}[0]
 
-    final val isAppearanceLightNavigationBars // androidx.compose.material3/ModalBottomSheetProperties.isAppearanceLightNavigationBars|{}isAppearanceLightNavigationBars[0]
-        final fun <get-isAppearanceLightNavigationBars>(): kotlin/Boolean // androidx.compose.material3/ModalBottomSheetProperties.isAppearanceLightNavigationBars.<get-isAppearanceLightNavigationBars>|<get-isAppearanceLightNavigationBars>(){}[0]
-    final val isAppearanceLightStatusBars // androidx.compose.material3/ModalBottomSheetProperties.isAppearanceLightStatusBars|{}isAppearanceLightStatusBars[0]
-        final fun <get-isAppearanceLightStatusBars>(): kotlin/Boolean // androidx.compose.material3/ModalBottomSheetProperties.isAppearanceLightStatusBars.<get-isAppearanceLightStatusBars>|<get-isAppearanceLightStatusBars>(){}[0]
     final val shouldDismissOnBackPress // androidx.compose.material3/ModalBottomSheetProperties.shouldDismissOnBackPress|{}shouldDismissOnBackPress[0]
         final fun <get-shouldDismissOnBackPress>(): kotlin/Boolean // androidx.compose.material3/ModalBottomSheetProperties.shouldDismissOnBackPress.<get-shouldDismissOnBackPress>|<get-shouldDismissOnBackPress>(){}[0]
 }
