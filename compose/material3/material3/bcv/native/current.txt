@@ -3321,13 +3321,11 @@ final object androidx.compose.material3/TopAppBarDefaults { // androidx.compose.
 }
 
 final object androidx.compose.material3/VerticalDragHandleDefaults { // androidx.compose.material3/VerticalDragHandleDefaults|null[0]
-    final val Sizes // androidx.compose.material3/VerticalDragHandleDefaults.Sizes|{}Sizes[0]
-        final fun <get-Sizes>(): androidx.compose.material3/DragHandleSizes // androidx.compose.material3/VerticalDragHandleDefaults.Sizes.<get-Sizes>|<get-Sizes>(){}[0]
-
     final fun colors(): androidx.compose.material3/DragHandleColors // androidx.compose.material3/VerticalDragHandleDefaults.colors|colors(){}[0]
     final fun colors(androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.graphics/Color = ...): androidx.compose.material3/DragHandleColors // androidx.compose.material3/VerticalDragHandleDefaults.colors|colors(androidx.compose.ui.graphics.Color;androidx.compose.ui.graphics.Color;androidx.compose.ui.graphics.Color){}[0]
     final fun shapes(): androidx.compose.material3/DragHandleShapes // androidx.compose.material3/VerticalDragHandleDefaults.shapes|shapes(){}[0]
     final fun shapes(androidx.compose.ui.graphics/Shape? = ..., androidx.compose.ui.graphics/Shape? = ..., androidx.compose.ui.graphics/Shape? = ...): androidx.compose.material3/DragHandleShapes // androidx.compose.material3/VerticalDragHandleDefaults.shapes|shapes(androidx.compose.ui.graphics.Shape?;androidx.compose.ui.graphics.Shape?;androidx.compose.ui.graphics.Shape?){}[0]
+    final fun sizes(): androidx.compose.material3/DragHandleSizes // androidx.compose.material3/VerticalDragHandleDefaults.sizes|sizes(){}[0]
     final fun sizes(androidx.compose.ui.unit/DpSize = ..., androidx.compose.ui.unit/DpSize = ..., androidx.compose.ui.unit/DpSize = ...): androidx.compose.material3/DragHandleSizes // androidx.compose.material3/VerticalDragHandleDefaults.sizes|sizes(androidx.compose.ui.unit.DpSize;androidx.compose.ui.unit.DpSize;androidx.compose.ui.unit.DpSize){}[0]
 }
 
