@@ -19,6 +19,7 @@ dependencies {
     // ads-identifier is deprecated
     kmpDocs(project(":annotation:annotation"))
     docs(project(":annotation:annotation-experimental"))
+    kmpDocs(project(":annotation:annotation-keep"))
     docs(project(":appcompat:appcompat"))
     docs(project(":appcompat:appcompat-resources"))
     docs(project(":appfunctions:appfunctions-common"))
