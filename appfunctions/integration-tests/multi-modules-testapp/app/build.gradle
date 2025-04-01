@@ -45,6 +45,7 @@ dependencies {
     androidTestImplementation(libs.kotlinCoroutinesAndroid)
     androidTestImplementation(project(":appfunctions:appfunctions-common"))
     androidTestImplementation(project(":appfunctions:appfunctions-runtime"))
+    androidTestImplementation(project(":appfunctions:appfunctions-schemas"))
     androidTestImplementation(libs.junit)
     androidTestImplementation(libs.truth)
     androidTestImplementation(libs.kotlinCoroutinesTest)
