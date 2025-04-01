@@ -48,6 +48,12 @@ public expect class NavBackStackEntry :
     HasDefaultViewModelProviderFactory,
     SavedStateRegistryOwner {
 
+    internal val context: NavContext?
+    internal val immutableArgs: SavedState?
+    internal var hostLifecycleState: Lifecycle.State
+    internal val viewModelStoreProvider: NavViewModelStoreProvider?
+    internal val savedState: SavedState?
+
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public constructor(entry: NavBackStackEntry, arguments: SavedState? = entry.arguments)
 

@@ -25,6 +25,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.navigation.internal.NavBackStackEntryImpl
 import androidx.navigation.internal.NavContext
 import androidx.savedstate.SavedState
 import androidx.savedstate.SavedStateRegistry
@@ -36,13 +38,13 @@ import kotlin.random.Random
 public actual class NavBackStackEntry
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 private constructor(
-    private val context: NavContext?,
+    internal actual val context: NavContext?,
     @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public actual var destination: NavDestination,
-    private val immutableArgs: SavedState? = null,
-    private var hostLifecycleState: Lifecycle.State = Lifecycle.State.CREATED,
-    private val viewModelStoreProvider: NavViewModelStoreProvider? = null,
+    internal actual val immutableArgs: SavedState? = null,
+    internal actual var hostLifecycleState: Lifecycle.State = Lifecycle.State.CREATED,
+    internal actual val viewModelStoreProvider: NavViewModelStoreProvider? = null,
     public actual val id: String = randomUUID(),
-    private val savedState: SavedState? = null
+    internal actual val savedState: SavedState? = null
 ) :
     LifecycleOwner,
     ViewModelStoreOwner,
@@ -62,8 +64,8 @@ private constructor(
         entry.id,
         entry.savedState
     ) {
-        hostLifecycleState = entry.hostLifecycleState
-        maxLifecycle = entry.maxLifecycle
+        impl.hostLifecycleState = entry.hostLifecycleState
+        impl.maxLifecycle = entry.maxLifecycle
     }
 
     public actual companion object {
@@ -106,50 +108,49 @@ private constructor(
                 append(bytes.toHexString(8, 10))
                 append('-')
                 append(bytes.toHexString(10))
-                toString()
             }
         }
     }
 
-    actual override val savedStateRegistry: SavedStateRegistry
-        get() = implementedInJetBrainsFork()
+    private val impl: NavBackStackEntryImpl = NavBackStackEntryImpl(this)
 
-    actual override val lifecycle: Lifecycle
-        get() = implementedInJetBrainsFork()
-
-    actual override val viewModelStore: ViewModelStore
-        get() = implementedInJetBrainsFork()
-
-    actual override val defaultViewModelProviderFactory: ViewModelProvider.Factory
-        get() = implementedInJetBrainsFork()
-
-    public actual val arguments: SavedState?
-        get() = implementedInJetBrainsFork()
+    public actual val arguments: SavedState? by impl::arguments
 
     @get:MainThread
-    public actual val savedStateHandle: SavedStateHandle
-        get() = implementedInJetBrainsFork()
+    public actual val savedStateHandle: SavedStateHandle by lazy { impl.savedStateHandle }
+
+    actual override val lifecycle: Lifecycle by impl::lifecycle
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual var maxLifecycle: Lifecycle.State
-        get() = implementedInJetBrainsFork()
-        set(_) {
-            implementedInJetBrainsFork()
+        get() = impl.maxLifecycle
+        set(value) {
+            impl.maxLifecycle = value
         }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual fun handleLifecycleEvent(event: Lifecycle.Event) {
-        implementedInJetBrainsFork()
+        impl.handleLifecycleEvent(event)
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual fun updateState() {
-        implementedInJetBrainsFork()
+        impl.updateState()
     }
+
+    public actual override val viewModelStore: ViewModelStore by impl::viewModelStore
+
+    actual override val defaultViewModelProviderFactory: ViewModelProvider.Factory by
+        impl::defaultViewModelProviderFactory
+
+    actual override val defaultViewModelCreationExtras: CreationExtras by
+        impl::defaultViewModelCreationExtras
+
+    actual override val savedStateRegistry: SavedStateRegistry by impl::savedStateRegistry
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual fun saveState(outBundle: SavedState) {
-        implementedInJetBrainsFork()
+        impl.saveState(outBundle)
     }
 }

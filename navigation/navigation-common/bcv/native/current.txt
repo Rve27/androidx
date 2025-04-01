@@ -223,6 +223,8 @@ final class androidx.navigation/NavBackStackEntry : androidx.lifecycle/HasDefaul
 
     final val arguments // androidx.navigation/NavBackStackEntry.arguments|{}arguments[0]
         final fun <get-arguments>(): androidx.savedstate/SavedState? // androidx.navigation/NavBackStackEntry.arguments.<get-arguments>|<get-arguments>(){}[0]
+    final val defaultViewModelCreationExtras // androidx.navigation/NavBackStackEntry.defaultViewModelCreationExtras|{}defaultViewModelCreationExtras[0]
+        final fun <get-defaultViewModelCreationExtras>(): androidx.lifecycle.viewmodel/CreationExtras // androidx.navigation/NavBackStackEntry.defaultViewModelCreationExtras.<get-defaultViewModelCreationExtras>|<get-defaultViewModelCreationExtras>(){}[0]
     final val defaultViewModelProviderFactory // androidx.navigation/NavBackStackEntry.defaultViewModelProviderFactory|{}defaultViewModelProviderFactory[0]
         final fun <get-defaultViewModelProviderFactory>(): androidx.lifecycle/ViewModelProvider.Factory // androidx.navigation/NavBackStackEntry.defaultViewModelProviderFactory.<get-defaultViewModelProviderFactory>|<get-defaultViewModelProviderFactory>(){}[0]
     final val id // androidx.navigation/NavBackStackEntry.id|{}id[0]
