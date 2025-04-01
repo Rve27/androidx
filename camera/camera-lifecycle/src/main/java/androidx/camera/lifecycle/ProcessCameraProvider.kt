@@ -103,11 +103,14 @@ private constructor(private val lifecycleCameraProvider: LifecycleCameraProvider
     override val availableCameraInfos: List<CameraInfo>
         get() = lifecycleCameraProvider.availableCameraInfos
 
-    final override val availableConcurrentCameraInfos: List<List<CameraInfo>>
+    override val availableConcurrentCameraInfos: List<List<CameraInfo>>
         get() = lifecycleCameraProvider.availableConcurrentCameraInfos
 
-    final override val isConcurrentCameraModeOn: Boolean
+    override val isConcurrentCameraModeOn: Boolean
         @MainThread get() = lifecycleCameraProvider.isConcurrentCameraModeOn
+
+    override val configImplType: Int
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) get() = lifecycleCameraProvider.configImplType
 
     @Throws(CameraInfoUnavailableException::class)
     override fun hasCamera(cameraSelector: CameraSelector): Boolean {
