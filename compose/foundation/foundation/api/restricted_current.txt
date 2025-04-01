@@ -815,7 +815,7 @@ package androidx.compose.foundation.interaction {
   }
 
   public final class InteractionSourceKt {
-    method public static androidx.compose.foundation.interaction.MutableInteractionSource MutableInteractionSource();
+    method @androidx.compose.runtime.annotation.RememberInComposition public static androidx.compose.foundation.interaction.MutableInteractionSource MutableInteractionSource();
   }
 
   @androidx.compose.runtime.Stable public interface MutableInteractionSource extends androidx.compose.foundation.interaction.InteractionSource {
