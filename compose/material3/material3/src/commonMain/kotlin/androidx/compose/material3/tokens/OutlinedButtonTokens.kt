@@ -32,7 +32,7 @@ internal object OutlinedButtonTokens {
     val HoveredLabelTextColor = ColorSchemeKeyTokens.OnSurfaceVariant
     val HoveredOutlineColor = ColorSchemeKeyTokens.OutlineVariant
     val IconColor = ColorSchemeKeyTokens.OnSurfaceVariant
-    val LabelTextColor = ColorSchemeKeyTokens.OnSurfaceVariant
+    val LabelTextColor = ColorSchemeKeyTokens.Primary
     val OutlineColor = ColorSchemeKeyTokens.OutlineVariant
     val PressedIconColor = ColorSchemeKeyTokens.OnSurfaceVariant
     val PressedLabelTextColor = ColorSchemeKeyTokens.OnSurfaceVariant
