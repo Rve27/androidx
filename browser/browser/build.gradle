@@ -27,7 +27,7 @@ android {
 }
 
 android {
-    compileSdkPreview "Baklava"
+    compileSdk = 36
 }
 
 dependencies {

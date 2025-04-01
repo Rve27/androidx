@@ -29,7 +29,7 @@ plugins {
 }
 
 android {
-    compileSdkPreview = "Baklava"
+    compileSdk = 36
     namespace = "androidx.appsearch.debugview"
 }
 
