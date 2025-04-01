@@ -72,7 +72,7 @@ fun NavigationSuiteScaffoldSample() {
                         Icon(
                             if (selectedItem == index) Icons.Filled.Favorite
                             else Icons.Outlined.FavoriteBorder,
-                            contentDescription = navItem
+                            contentDescription = null
                         )
                     },
                     label = { Text(navItem) },
@@ -142,7 +142,7 @@ fun NavigationSuiteScaffoldCustomConfigSample() {
                         Icon(
                             if (selectedItem == index) Icons.Filled.Favorite
                             else Icons.Outlined.FavoriteBorder,
-                            contentDescription = navItem
+                            contentDescription = null
                         )
                     },
                     label = { Text(navItem) },

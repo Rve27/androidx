@@ -84,6 +84,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
@@ -236,7 +237,8 @@ private fun WideNavigationRailLayout(
                     .windowInsetsPadding(windowInsets)
                     .widthIn(max = ExpandedRailMaxWidth)
                     .padding(top = WNRVerticalPadding)
-                    .selectableGroup(),
+                    .selectableGroup()
+                    .semantics { isTraversalGroup = true },
             content = {
                 if (header != null) {
                     Box(Modifier.layoutId(HeaderLayoutIdTag)) { header() }
