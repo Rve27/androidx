@@ -28,6 +28,7 @@ import android.os.Build.VERSION_CODES.N
 import android.os.Build.VERSION_CODES.O
 import android.os.Build.VERSION_CODES.Q
 import android.os.Build.VERSION_CODES.S
+import android.os.Build.VERSION_CODES.VANILLA_ICE_CREAM
 import android.os.Looper
 import android.os.StrictMode
 import android.os.SystemClock
@@ -74,9 +75,11 @@ import androidx.compose.runtime.referentialEqualityPolicy
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.ComposeUiFlags
+import androidx.compose.ui.ComposeUiFlags.isAdaptiveRefreshRateEnabled
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.R
 import androidx.compose.ui.SessionMutex
 import androidx.compose.ui.autofill.AndroidAutofill
 import androidx.compose.ui.autofill.AndroidAutofillManager
@@ -271,6 +274,12 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     override var density by mutableStateOf(Density(context), referentialEqualityPolicy())
         private set
+
+    private lateinit var frameRateCategoryView: View
+
+    internal val isArrEnabled =
+        @OptIn(ExperimentalComposeUiApi::class) isAdaptiveRefreshRateEnabled &&
+            SDK_INT >= VANILLA_ICE_CREAM
 
     private val rootSemanticsNode = EmptySemanticsModifier()
     private val semanticsModifier = EmptySemanticsElement(rootSemanticsNode)
@@ -829,6 +838,9 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     /** List of lambdas to be called when [onEndApplyChanges] is called. */
     private val endApplyChangesListeners = mutableObjectListOf<(() -> Unit)?>()
 
+    private var currentFrameRate = 0f
+    private var currentFrameRateCategory = 0f
+
     /**
      * Runnable used to update the pointer position after layout. If another pointer event comes in
      * before this runs, this Runnable will be removed and not executed.
@@ -930,6 +942,16 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
         // Support for this feature in Compose is tracked here: b/207654434
         if (SDK_INT >= Q) AndroidComposeViewForceDarkModeQ.disallowForceDark(this)
+
+        if (isArrEnabled) {
+            frameRateCategoryView =
+                View(context).apply {
+                    layoutParams = LayoutParams(1, 1)
+                    // hide this View from layout inspector
+                    setTag(R.id.hide_in_inspector_tag, true)
+                }
+            addView(frameRateCategoryView)
+        }
     }
 
     /**
@@ -1936,6 +1958,20 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             dirtyLayers.addAll(postponed)
             postponed.clear()
         }
+
+        // Used to handle frame rate information
+        if (isArrEnabled) {
+            super.setRequestedFrameRate(currentFrameRate)
+            frameRateCategoryView.requestedFrameRate = currentFrameRateCategory
+
+            if (!currentFrameRateCategory.isNaN()) {
+                frameRateCategoryView.invalidate()
+                drawChild(canvas, frameRateCategoryView, drawingTime)
+            }
+
+            currentFrameRate = Float.NaN
+            currentFrameRateCategory = Float.NaN
+        }
     }
 
     internal fun notifyLayerIsDirty(layer: OwnedLayer, isDirty: Boolean) {
@@ -2071,6 +2107,10 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        if (isArrEnabled) {
+            removeView(frameRateCategoryView)
+        }
+
         removeNotificationForSysPropsChange(this)
         snapshotObserver.stopObserving()
         _windowInfo.setOnInitializeContainerSize(null)
@@ -2844,6 +2884,30 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     override fun schedule(block: () -> Unit) {
         handler.postAtFrontOfQueue { trace("AndroidOwner:outOfFrameExecutor", block) }
+    }
+
+    @RequiresApi(VANILLA_ICE_CREAM)
+    override fun setRequestedFrameRate(frameRate: Float) {
+        if (isArrEnabled) {
+            if (frameRate > 0) {
+                if (currentFrameRate.isNaN() || frameRate > currentFrameRate) {
+                    currentFrameRate = frameRate // set frame rate
+                }
+            } else if (frameRate < 0) {
+                if (currentFrameRateCategory.isNaN() || frameRate < currentFrameRateCategory) {
+                    currentFrameRateCategory = frameRate // set frame rate category
+                }
+            }
+        } else {
+            super.setRequestedFrameRate(frameRate)
+        }
+    }
+
+    @RequiresApi(VANILLA_ICE_CREAM)
+    override fun voteFrameRate(frameRate: Float) {
+        if (isArrEnabled) {
+            requestedFrameRate = frameRate
+        }
     }
 
     companion object {

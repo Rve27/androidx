@@ -132,6 +132,7 @@ package androidx.compose.ui {
   }
 
   @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public final class ComposeUiFlags {
+    property public boolean isAdaptiveRefreshRateEnabled;
     property public boolean isClearFocusOnResetEnabled;
     property public boolean isFocusActionExitsTouchModeEnabled;
     property public boolean isHitPathTrackerLoggingEnabled;
@@ -142,6 +143,7 @@ package androidx.compose.ui {
     property public boolean isTrackFocusEnabled;
     property public boolean isViewFocusFixEnabled;
     field public static final androidx.compose.ui.ComposeUiFlags INSTANCE;
+    field public static boolean isAdaptiveRefreshRateEnabled;
     field public static boolean isClearFocusOnResetEnabled;
     field public static boolean isFocusActionExitsTouchModeEnabled;
     field public static boolean isHitPathTrackerLoggingEnabled;
@@ -4252,6 +4254,32 @@ package androidx.compose.ui.text {
 
   public final class TextMeasurerHelperKt {
     method @androidx.compose.runtime.Composable public static androidx.compose.ui.text.TextMeasurer rememberTextMeasurer(optional int cacheSize);
+  }
+
+}
+
+package androidx.compose.ui.ui {
+
+  @kotlin.jvm.JvmInline public final value class FrameRateCategory {
+    method public float getValue();
+    property public float value;
+    field public static final androidx.compose.ui.ui.FrameRateCategory.Companion Companion;
+  }
+
+  public static final class FrameRateCategory.Companion {
+    method public float getDefault();
+    method public float getHigh();
+    method public float getNoPreference();
+    method public float getNormal();
+    property public float Default;
+    property public float High;
+    property public float NoPreference;
+    property public float Normal;
+  }
+
+  public final class FrameRateKt {
+    method public static androidx.compose.ui.Modifier requestedFrameRate(androidx.compose.ui.Modifier, float frameRate);
+    method public static androidx.compose.ui.Modifier requestedFrameRate(androidx.compose.ui.Modifier, float frameRateCategory);
   }
 
 }
