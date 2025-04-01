@@ -2144,25 +2144,23 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
             node.contentDescription = getDividerContentDescription()
 
-            if (dividerHasA11yFocus) {
-                if (!dividerAtLeftEdge) {
-                    node.addAction(AccessibilityActionCompat.ACTION_SCROLL_LEFT)
-                    if (isLayoutRtl) {
-                        node.addAction(AccessibilityActionCompat.ACTION_SCROLL_FORWARD)
-                    } else {
-                        // In LTR layout, scroll backward goes to left
-                        node.addAction(AccessibilityActionCompat.ACTION_SCROLL_BACKWARD)
-                    }
+            if (!dividerAtLeftEdge) {
+                node.addAction(AccessibilityActionCompat.ACTION_SCROLL_LEFT)
+                if (isLayoutRtl) {
+                    node.addAction(AccessibilityActionCompat.ACTION_SCROLL_FORWARD)
+                } else {
+                    // In LTR layout, scroll backward goes to left
+                    node.addAction(AccessibilityActionCompat.ACTION_SCROLL_BACKWARD)
                 }
+            }
 
-                if (!dividerAtRightEdge) {
-                    node.addAction(AccessibilityActionCompat.ACTION_SCROLL_RIGHT)
-                    if (isLayoutRtl) {
-                        node.addAction(AccessibilityActionCompat.ACTION_SCROLL_BACKWARD)
-                    } else {
-                        // In LTR layout, scroll forward goes to right
-                        node.addAction(AccessibilityActionCompat.ACTION_SCROLL_FORWARD)
-                    }
+            if (!dividerAtRightEdge) {
+                node.addAction(AccessibilityActionCompat.ACTION_SCROLL_RIGHT)
+                if (isLayoutRtl) {
+                    node.addAction(AccessibilityActionCompat.ACTION_SCROLL_BACKWARD)
+                } else {
+                    // In LTR layout, scroll forward goes to right
+                    node.addAction(AccessibilityActionCompat.ACTION_SCROLL_FORWARD)
                 }
             }
 
@@ -2216,6 +2214,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     }
                     android.R.id.accessibilityActionScrollLeft,
                     android.R.id.accessibilityActionScrollRight -> {
+                        if (!dividerHasA11yFocus) return false
                         userResizeBehavior.onAccessibilityResize(
                             this@SlidingPaneLayout,
                             direction =
@@ -2229,6 +2228,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     }
                     AccessibilityNodeInfoCompat.ACTION_SCROLL_BACKWARD,
                     AccessibilityNodeInfoCompat.ACTION_SCROLL_FORWARD -> {
+                        if (!dividerHasA11yFocus) return false
                         val direction =
                             if (
                                 isLayoutRtl xor
