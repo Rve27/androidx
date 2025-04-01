@@ -71,6 +71,8 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.constrainHeight
@@ -156,7 +158,8 @@ object DefaultNavigationRailOverride : NavigationRailOverride {
                     .windowInsetsPadding(windowInsets)
                     .widthIn(min = NavigationRailCollapsedTokens.NarrowContainerWidth)
                     .padding(vertical = NavigationRailVerticalPadding)
-                    .selectableGroup(),
+                    .selectableGroup()
+                    .semantics { isTraversalGroup = true },
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(NavigationRailVerticalPadding)
             ) {
