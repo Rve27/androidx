@@ -647,6 +647,61 @@ internal constructor(
         return extras.getParcelableArrayList(key, PendingIntent::class.java)
     }
 
+    /**
+     * Retrieves a generic value of type [T] associated with the specified [key].
+     *
+     * @param T The type of the associated value.
+     * @param key The key to retrieve the value for.
+     * @param valueClass The class of the type [T].
+     * @return The value associated with the [key]. Or null if the associated value is not found.
+     * @throws IllegalArgumentException if the [key] is not allowed or the value type is incorrect
+     *   according to the metadata specification.
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public fun <T> getGenericField(key: String, valueClass: Class<T>): T {
+        @Suppress("UNCHECKED_CAST")
+        return when (valueClass) {
+            Int::class.java -> getIntOrNull(key) as T
+            Long::class.java -> getLongOrNull(key) as T
+            Float::class.java -> getFloatOrNull(key) as T
+            Double::class.java -> getDoubleOrNull(key) as T
+            Boolean::class.java -> getBooleanOrNull(key) as T
+            String::class.java -> getString(key) as T
+            PendingIntent::class.java -> getPendingIntent(key) as T
+            AppFunctionData::class.java -> getAppFunctionData(key) as T
+            IntArray::class.java -> getIntArray(key) as T
+            LongArray::class.java -> getLongArray(key) as T
+            FloatArray::class.java -> getFloatArray(key) as T
+            DoubleArray::class.java -> getDoubleArray(key) as T
+            BooleanArray::class.java -> getBooleanArray(key) as T
+            ByteArray::class.java -> getByteArray(key) as T
+            else -> throw IllegalArgumentException("Unsupported type $valueClass")
+        }
+    }
+
+    /**
+     * Retrieves a [List] of generic value of type [T] associated with the specified [key].
+     *
+     * @param I The [T]'s item type.
+     * @param T The type of the associated value.
+     * @param key The key to retrieve the value for.
+     * @param itemValueClass The class of the type [T].
+     * @return The list value associated with the [key]. Or null if the associated value is not
+     *   found.
+     * @throws IllegalArgumentException if the [key] is not allowed or the value type is incorrect
+     *   according to the metadata specification.
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public fun <I, T : List<I>?> getGenericListField(key: String, itemValueClass: Class<I>): T {
+        @Suppress("UNCHECKED_CAST")
+        return when (itemValueClass) {
+            String::class.java -> getStringList(key) as T
+            PendingIntent::class.java -> getPendingIntentList(key) as T
+            AppFunctionData::class.java -> getAppFunctionDataList(key) as T
+            else -> throw IllegalArgumentException()
+        }
+    }
+
     override fun toString(): String {
         // TODO(b/391419368): Improve output to avoid reference to underlying GenericDocument
         return "AppFunctionData(genericDocument=$genericDocument, extras=$extras)"
@@ -1067,6 +1122,68 @@ internal constructor(
             spec?.validateWriteRequest(key, PendingIntent::class.java, isCollection = true)
             extrasBuilder.putParcelableArrayList(key, ArrayList<PendingIntent>(value))
             return this
+        }
+
+        /**
+         * Sets a generic type [value] of class [valueClass] for the given [key].
+         *
+         * @param T The type [value].
+         * @param key The key to set the generic type [value] for.
+         * @param value The generic type value to set.
+         * @param valueClass The class of type [T].
+         * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
+         *   match the metadata specification associated with the [key].
+         */
+        @RestrictTo(LIBRARY_GROUP)
+        public fun <T : Any?> setGenericField(
+            key: String,
+            value: T,
+            valueClass: Class<T>
+        ): Builder {
+            return when (valueClass) {
+                Int::class.java -> setInt(key, value as Int)
+                Long::class.java -> setLong(key, value as Long)
+                Float::class.java -> setFloat(key, value as Float)
+                Double::class.java -> setDouble(key, value as Double)
+                Boolean::class.java -> setBoolean(key, value as Boolean)
+                String::class.java -> setString(key, value as String)
+                PendingIntent::class.java -> setPendingIntent(key, value as PendingIntent)
+                AppFunctionData::class.java -> setAppFunctionData(key, value as AppFunctionData)
+                IntArray::class.java -> setIntArray(key, value as IntArray)
+                LongArray::class.java -> setLongArray(key, value as LongArray)
+                FloatArray::class.java -> setFloatArray(key, value as FloatArray)
+                DoubleArray::class.java -> setDoubleArray(key, value as DoubleArray)
+                BooleanArray::class.java -> setBooleanArray(key, value as BooleanArray)
+                ByteArray::class.java -> setByteArray(key, value as ByteArray)
+                else -> throw IllegalArgumentException("Unsupported type $valueClass")
+            }
+        }
+
+        /**
+         * Sets a list generic type [value] of class [itemValueClass] for the given [key].
+         *
+         * @param I The [value]'s item type.
+         * @param T The type [value].
+         * @param key The key to set the generic type [value] for.
+         * @param value The generic type value to set.
+         * @param itemValueClass The [value]'s item class.
+         * @throws IllegalArgumentException if the [key] is not allowed or the [value] does not
+         *   match the metadata specification associated with the [key].
+         */
+        @RestrictTo(LIBRARY_GROUP)
+        public fun <I, T : List<I>?> setGenericListField(
+            key: String,
+            value: T,
+            itemValueClass: Class<I>
+        ): Builder {
+            @Suppress("UNCHECKED_CAST")
+            return when (itemValueClass) {
+                String::class.java -> setStringList(key, value as List<String>)
+                PendingIntent::class.java -> setPendingIntentList(key, value as List<PendingIntent>)
+                AppFunctionData::class.java ->
+                    setAppFunctionDataList(key, value as List<AppFunctionData>)
+                else -> throw IllegalArgumentException()
+            }
         }
 
         /** Builds [AppFunctionData] */
