@@ -1,5 +1,5 @@
 diff --git a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt
-index ea7087c5287..479abcd3114 100644
+index 7bf5f69ce3c..aec4c02cb99 100644
 --- a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt
 +++ b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt
 @@ -36,6 +36,7 @@ import org.jetbrains.kotlin.library.abi.AbiTypeArgument.StarProjection
@@ -9,7 +9,7 @@ index ea7087c5287..479abcd3114 100644
 +import org.jetbrains.kotlin.library.abi.AbiValueParameterKind
  import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
  import org.jetbrains.kotlin.library.abi.LibraryAbi
-
+ 
 @@ -271,18 +272,22 @@ class BinaryCompatibilityChecker(
                      "$qualifiedName"
              )
@@ -40,7 +40,7 @@ index ea7087c5287..479abcd3114 100644
          }
          returnType.isBinaryCompatibleWith(
 diff --git a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KLibDumpParser.kt b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KLibDumpParser.kt
-index b1f05c6089c..6da86e5c3d0 100644
+index af5ccdf46bb..c28bc0389c3 100644
 --- a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KLibDumpParser.kt
 +++ b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KLibDumpParser.kt
 @@ -32,9 +32,11 @@ import org.jetbrains.kotlin.library.abi.AbiProperty
@@ -81,7 +81,7 @@ index b1f05c6089c..6da86e5c3d0 100644
 +            annotations = AbiAnnotationListImpl.EMPTY
          )
      }
-
+ 
 @@ -286,6 +288,7 @@ class KlibDumpParser(klibDump: String, private val fileName: String? = null) {
              if (null != functionReceiver) {
                  val functionReceiverAsValueParam =
@@ -120,7 +120,7 @@ index b1f05c6089c..6da86e5c3d0 100644
          )
      }
 diff --git a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KlibParsingCursorExtensions.kt b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KlibParsingCursorExtensions.kt
-index 602817ac256..4a533e56e60 100644
+index b72a7407ab2..087c784d342 100644
 --- a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KlibParsingCursorExtensions.kt
 +++ b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KlibParsingCursorExtensions.kt
 @@ -31,6 +31,7 @@ import org.jetbrains.kotlin.library.abi.AbiTypeArgument
@@ -139,11 +139,69 @@ index 602817ac256..4a533e56e60 100644
          type = type,
          isVararg = isVararg,
          hasDefaultArg = hasDefaultArg,
+diff --git a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/test/java/androidx/binarycompatibilityvalidator/KLibDumpParserTest.kt b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/test/java/androidx/binarycompatibilityvalidator/KLibDumpParserTest.kt
+index 4fecfcf2ee3..36dd0e93956 100644
+--- a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/test/java/androidx/binarycompatibilityvalidator/KLibDumpParserTest.kt
++++ b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/test/java/androidx/binarycompatibilityvalidator/KLibDumpParserTest.kt
+@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.library.abi.AbiModality
+ import org.jetbrains.kotlin.library.abi.AbiProperty
+ import org.jetbrains.kotlin.library.abi.AbiQualifiedName
+ import org.jetbrains.kotlin.library.abi.AbiSignatureVersion
++import org.jetbrains.kotlin.library.abi.AbiValueParameterKind
+ import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
+ import org.jetbrains.kotlin.library.abi.LibraryAbi
+ import org.junit.Test
+@@ -188,7 +189,10 @@ class KlibDumpParserTest {
+         val parentQName =
+             AbiQualifiedName(AbiCompoundName("androidx.collection"), AbiCompoundName("ObjectList"))
+         val parsed = KlibDumpParser(input).parseFunction(parentQName, isGetterOrSetter = true)
+-        assertThat(parsed.hasExtensionReceiverParameter).isTrue()
++        assertThat(
++                parsed.valueParameters.any { it.kind == AbiValueParameterKind.EXTENSION_RECEIVER }
++            )
++            .isTrue()
+     }
+ 
+     @Test
+@@ -197,7 +201,10 @@ class KlibDumpParserTest {
+             "final inline fun <#A: androidx.datastore.core/Closeable, #B: kotlin/Any?> " +
+                 "(#A).androidx.datastore.core/use(kotlin/Function1<#A, #B>): #B"
+         val parsed = KlibDumpParser(input).parseFunction()
+-        assertThat(parsed.hasExtensionReceiverParameter).isTrue()
++        assertThat(
++                parsed.valueParameters.any { it.kind == AbiValueParameterKind.EXTENSION_RECEIVER }
++            )
++            .isTrue()
+         assertThat(parsed.typeParameters).hasSize(2)
+     }
+ 
+@@ -274,7 +281,12 @@ class KlibDumpParserTest {
+                 .trimIndent()
+         val parsed = KlibDumpParser(input).parseProperty()
+         assertThat(parsed.getter).isNotNull()
+-        assertThat(parsed.getter?.hasExtensionReceiverParameter).isTrue()
++        assertThat(
++                parsed.getter?.valueParameters?.any {
++                    it.kind == AbiValueParameterKind.EXTENSION_RECEIVER
++                }
++            )
++            .isTrue()
+     }
+ 
+     @Test
 diff --git a/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt b/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt
-index f397f1ad4d4..dabb21d8699 100644
+index f397f1ad4d4..750d0c45e70 100644
 --- a/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt
 +++ b/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt
-@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.DefaultIncrementalSyncTask
+@@ -47,13 +47,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithHostTests
+-import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootExtension
++import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenRootEnvSpec
+ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
+ import org.jetbrains.kotlin.gradle.targets.js.ir.DefaultIncrementalSyncTask
  import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec
  import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
  import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
@@ -151,21 +209,79 @@ index f397f1ad4d4..dabb21d8699 100644
  import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
  import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
  import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-@@ -765,10 +766,12 @@ private fun Project.configureNode() {
+@@ -765,10 +766,11 @@ private fun Project.configureNode() {
      }
-
+ 
      // https://youtrack.jetbrains.com/issue/KT-73913/K-Wasm-yarn-version-per-project
 +    rootProject.extensions.findByType(YarnRootEnvSpec::class.java)?.let { yarn ->
 +        yarn.version.set(getVersionByName("yarn"))
 +        yarn.yarnLockMismatchReport.set(YarnLockMismatchReport.FAIL)
 +    }
      rootProject.extensions.findByType(YarnRootExtension::class.java)?.let { yarn ->
-         @Suppress("DEPRECATION")
+-        @Suppress("DEPRECATION")
 -        yarn.version = getVersionByName("yarn")
 -        yarn.yarnLockMismatchReport = YarnLockMismatchReport.FAIL
          if (!ProjectLayoutType.isPlayground(this)) {
              yarn.lockFileDirectory =
                  File(project.getPrebuiltsRoot(), "androidx/javascript-for-kotlin")
+@@ -776,15 +778,17 @@ private fun Project.configureNode() {
+     }
+ }
+ 
++@OptIn(ExperimentalWasmDsl::class)
+ private fun Project.configureBinaryen() {
+     // https://youtrack.jetbrains.com/issue/KT-74840
+-    rootProject.extensions.findByType<BinaryenRootExtension>()?.let { binaryen ->
+-        @Suppress("DEPRECATION")
+-        binaryen.downloadBaseUrl =
++    rootProject.extensions
++        .findByType(BinaryenRootEnvSpec::class.java)
++        ?.downloadBaseUrl
++        ?.set(
+             File(project.getPrebuiltsRoot(), "androidx/javascript-for-kotlin/binaryen")
+                 .toURI()
+                 .toString()
+-    }
++        )
+ }
+ 
+ private fun Project.configureKotlinJsTests() =
+diff --git a/buildSrc/private/src/main/kotlin/androidx/build/ListTaskOutputsTask.kt b/buildSrc/private/src/main/kotlin/androidx/build/ListTaskOutputsTask.kt
+index 34ab6725f9e..1b3a67bdb99 100644
+--- a/buildSrc/private/src/main/kotlin/androidx/build/ListTaskOutputsTask.kt
++++ b/buildSrc/private/src/main/kotlin/androidx/build/ListTaskOutputsTask.kt
+@@ -134,6 +134,15 @@ val taskNamesKnownToDuplicateOutputs =
+         "kotlinStorePackageLock",
+         "kotlinStoreYarnLock",
+ 
++        // The following tasks have the same output file:
++        // $OUT_DIR/androidx/build/wasm/yarn.lock
++        "wasmKotlinRestoreYarnLock",
++        "wasmKotlinNpmInstall",
++        "wasmKotlinUpgradePackageLock",
++        "wasmKotlinStorePackageLock",
++        "wasmKotlinUpgradeYarnLock",
++        "wasmKotlinStoreYarnLock",
++
+         // The following tasks have the same output configFile file:
+         // projectBuildDir/js/packages/projectName-wasm-js/webpack.config.js
+         // Remove when https://youtrack.jetbrains.com/issue/KT-70029 / b/361319689 is resolved
+@@ -150,7 +159,15 @@ val taskNamesKnownToDuplicateOutputs =
+         "wasmJsTestTestProductionExecutableCompileSync",
+ 
+         // TODO file a bug
++        // $OUT_DIR/.gradle/nodejs/node-v22.13.0-darwin-arm64.hash
+         "kotlinNodeJsSetup",
++        "wasmKotlinNodeJsSetup",
++        // $OUT_DIR/.gradle/yarn/yarn-v1.22.17.hash
++        "wasmKotlinYarnSetup",
++        "kotlinYarnSetup",
++
++        // $OUT_DIR/.gradle/binaryen/binaryen-version_122.hash
++        "kotlinBinaryenSetup",
+     )
+ 
+ fun shouldValidateTaskOutput(task: Task): Boolean {
 diff --git a/buildSrc/private/src/main/kotlin/androidx/build/clang/KonanBuildService.kt b/buildSrc/private/src/main/kotlin/androidx/build/clang/KonanBuildService.kt
 index b0b2916af1e..417db30e233 100644
 --- a/buildSrc/private/src/main/kotlin/androidx/build/clang/KonanBuildService.kt
@@ -180,13 +296,13 @@ index b0b2916af1e..417db30e233 100644
                      )
                      .finalLinkCommands()
 diff --git a/buildSrc/public/src/main/kotlin/androidx/build/AndroidXConfiguration.kt b/buildSrc/public/src/main/kotlin/androidx/build/AndroidXConfiguration.kt
-index b499b06428e..a22578246c0 100644
+index f433fd6b56d..7c6325963a2 100644
 --- a/buildSrc/public/src/main/kotlin/androidx/build/AndroidXConfiguration.kt
 +++ b/buildSrc/public/src/main/kotlin/androidx/build/AndroidXConfiguration.kt
 @@ -37,6 +37,7 @@ interface AndroidXConfiguration {
      val kotlinBomVersion: Provider<String>
  }
-
+ 
 +@Suppress("DEPRECATION")
  enum class KotlinTarget(val apiVersion: KotlinVersion, val catalogVersion: String) {
      KOTLIN_1_8(KotlinVersion.KOTLIN_1_8, "kotlin18"),
@@ -217,7 +333,7 @@ index 383c7735f14..b2841b05a18 100644
 @@ -6174,6 +6174,31 @@ FJXLEW77wWHN+QpRD6BShYZDvUA2mtO0zlB8reU+VCxgnFfm66DkUg==
  =jYDe
  -----END PGP PUBLIC KEY BLOCK-----
-
+ 
 +pub    17A27CE7A60FF5F0
 +sub    E86F52398AF20855
 +-----BEGIN PGP PUBLIC KEY BLOCK-----
@@ -247,7 +363,7 @@ index 383c7735f14..b2841b05a18 100644
  sub    9A347756830C4541
  -----BEGIN PGP PUBLIC KEY BLOCK-----
 diff --git a/gradle/verification-metadata.xml b/gradle/verification-metadata.xml
-index bcb2670ecdd..b8418fb1f0d 100644
+index 875514c6d8c..22fc48fe5cc 100644
 --- a/gradle/verification-metadata.xml
 +++ b/gradle/verification-metadata.xml
 @@ -196,6 +196,7 @@
@@ -258,7 +374,7 @@ index bcb2670ecdd..b8418fb1f0d 100644
           <trusted-key id="4021EEEAFF5DE8404DCD0A270AA3E5C3D232E79B" group="jakarta.inject" name="jakarta.inject-api"/>
           <trusted-key id="41A1A08C62FCA78B79D3081164A16FAAEC16A4BE" group="org.apache.commons" name="commons-math3"/>
           <trusted-key id="41CD49B4EF5876F9E9F691DABAC30622339994C4">
-@@ -711,6 +712,17 @@
+@@ -717,6 +718,17 @@
              <sha256 value="74bb0f3a80307c529421c3ed84517b8f543867709f41e53cd73df99e6442af4d" origin="Generated by Node" reason="Artifact is not signed. Remove when https://github.com/nodejs/node/issues/53917 is resolved"/>
           </artifact>
        </component>
@@ -276,12 +392,39 @@ index bcb2670ecdd..b8418fb1f0d 100644
        <component group="org.ow2" name="ow2" version="1.5">
           <artifact name="ow2-1.5.pom">
              <sha256 value="0f8a1b116e760b8fe6389c51b84e4b07a70fc11082d4f936e453b583dd50b43b" origin="Generated by Gradle" reason="Artifact is not signed"/>
+diff --git a/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/TestDefaultOptions.kt b/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/TestDefaultOptions.kt
+index 919bd8ace17..f28cea3ad44 100644
+--- a/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/TestDefaultOptions.kt
++++ b/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/TestDefaultOptions.kt
+@@ -26,6 +26,6 @@ internal object TestDefaultOptions {
+     internal val kotlinLanguageVersion = LanguageVersion.KOTLIN_2_0
+     internal val kotlinApiVersion = ApiVersion.createByLanguageVersion(kotlinLanguageVersion)
+     internal val jvmTarget = JvmTarget.JVM_1_8
+-    internal val jvmDefaultMode = JvmDefaultMode.ALL_COMPATIBILITY
++    internal val jvmDefaultMode = JvmDefaultMode.ENABLE
+     internal val jvmModuleName = "main"
+ }
+diff --git a/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/steps/KaptCompilationStep.kt b/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/steps/KaptCompilationStep.kt
+index 96a7404c58c..51d128dcfee 100644
+--- a/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/steps/KaptCompilationStep.kt
++++ b/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/steps/KaptCompilationStep.kt
+@@ -26,9 +26,9 @@ import java.util.Base64
+ import javax.annotation.processing.Processor
+ import org.jetbrains.kotlin.cli.common.ExitCode
+ import org.jetbrains.kotlin.com.intellij.util.PathUtil
++import org.jetbrains.kotlin.kapt.base.AptMode
+ import org.jetbrains.kotlin.kapt.cli.CliToolOption
+ import org.jetbrains.kotlin.kapt.cli.KaptCliOption
+-import org.jetbrains.kotlin.kapt3.base.AptMode
+ 
+ /** Runs KAPT to run Java annotation processors. */
+ internal class KaptCompilationStep(
 diff --git a/room/room-compiler/src/main/kotlin/androidx/room/vo/InsertFunction.kt b/room/room-compiler/src/main/kotlin/androidx/room/vo/InsertFunction.kt
 index 3a966ff01e5..dcdd96355ac 100644
 --- a/room/room-compiler/src/main/kotlin/androidx/room/vo/InsertFunction.kt
 +++ b/room/room-compiler/src/main/kotlin/androidx/room/vo/InsertFunction.kt
 @@ -23,7 +23,7 @@ import androidx.room.solver.shortcut.binder.InsertOrUpsertFunctionBinder
-
+ 
  class InsertFunction(
      element: XMethodElement,
 -    @OnConflictStrategy val onConflict: Int,
@@ -317,4 +460,3 @@ index 0be4bde5cca..2bbb95691a8 100644
                          task.annotationProcessorOptionProviders.add(argProvider)
                      }
                  }
-
