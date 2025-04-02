@@ -39,7 +39,7 @@ import kotlinx.serialization.KSerializer
 public actual open class NavGraph actual constructor(navGraphNavigator: Navigator<out NavGraph>) :
     NavDestination(navGraphNavigator), Iterable<NavDestination> {
 
-    internal val impl = NavGraphImpl(this)
+    private val impl: NavGraphImpl = NavGraphImpl(this)
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual val nodes: SparseArrayCompat<NavDestination> by impl::nodes
@@ -300,4 +300,4 @@ public inline operator fun NavGraph.get(@IdRes id: Int): NavDestination =
     findNode(id) ?: throw IllegalArgumentException("No destination for $id was found in $this")
 
 /** Returns `true` if a destination with `id` is found in this navigation graph. */
-public operator fun NavGraph.contains(@IdRes id: Int): Boolean = impl.findNode(id) != null
+public operator fun NavGraph.contains(@IdRes id: Int): Boolean = findNode(id) != null

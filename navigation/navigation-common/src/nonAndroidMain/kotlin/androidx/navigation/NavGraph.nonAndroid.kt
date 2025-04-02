@@ -30,7 +30,7 @@ import kotlinx.serialization.KSerializer
 public actual open class NavGraph actual constructor(navGraphNavigator: Navigator<out NavGraph>) :
     NavDestination(navGraphNavigator), Iterable<NavDestination> {
 
-    internal val impl = NavGraphImpl(this)
+    private val impl = NavGraphImpl(this)
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual val nodes: SparseArrayCompat<NavDestination> by impl::nodes
