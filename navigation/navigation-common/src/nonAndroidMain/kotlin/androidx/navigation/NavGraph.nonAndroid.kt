@@ -17,7 +17,11 @@ package androidx.navigation
 
 import androidx.annotation.RestrictTo
 import androidx.collection.SparseArrayCompat
+import androidx.collection.forEach
+import androidx.collection.size
 import androidx.collection.valueIterator
+import androidx.navigation.internal.NavGraphImpl
+import kotlin.getValue
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
 import kotlin.reflect.KClass
@@ -25,11 +29,11 @@ import kotlinx.serialization.KSerializer
 
 public actual open class NavGraph actual constructor(navGraphNavigator: Navigator<out NavGraph>) :
     NavDestination(navGraphNavigator), Iterable<NavDestination> {
-    public actual val nodes: SparseArrayCompat<NavDestination>
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) get() = implementedInJetBrainsFork()
 
-    private var startDestId = 0
-    private var startDestIdName: String? = null
+    internal val impl = NavGraphImpl(this)
+
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public actual val nodes: SparseArrayCompat<NavDestination> by impl::nodes
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual fun matchRouteComprehensive(
@@ -38,7 +42,7 @@ public actual open class NavGraph actual constructor(navGraphNavigator: Navigato
         searchParent: Boolean,
         lastVisited: NavDestination
     ): DeepLinkMatch? {
-        implementedInJetBrainsFork()
+        return impl.matchRouteComprehensive(route, searchChildren, searchParent, lastVisited)
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -48,20 +52,37 @@ public actual open class NavGraph actual constructor(navGraphNavigator: Navigato
         searchParent: Boolean,
         lastVisited: NavDestination
     ): DeepLinkMatch? {
-        implementedInJetBrainsFork()
+        // First search through any deep links directly added to this NavGraph
+        val bestMatch = super.matchDeepLink(navDeepLinkRequest)
+        return impl.matchDeepLinkComprehensive(
+            bestMatch,
+            navDeepLinkRequest,
+            searchChildren,
+            searchParent,
+            lastVisited
+        )
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public actual override fun matchDeepLink(
+        navDeepLinkRequest: NavDeepLinkRequest
+    ): DeepLinkMatch? =
+        impl.matchDeepLink(super.matchDeepLink(navDeepLinkRequest), navDeepLinkRequest)
+
     public actual fun addDestination(node: NavDestination) {
-        implementedInJetBrainsFork()
+        impl.addDestination(node)
     }
 
     public actual fun addDestinations(nodes: Collection<NavDestination?>) {
-        implementedInJetBrainsFork()
+        impl.addDestinations(nodes)
     }
 
     public actual fun addDestinations(vararg nodes: NavDestination) {
-        implementedInJetBrainsFork()
+        impl.addDestinations(*nodes)
     }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun findNode(resId: Int): NavDestination? = impl.findNode(resId)
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual fun findNodeComprehensive(
@@ -70,106 +91,65 @@ public actual open class NavGraph actual constructor(navGraphNavigator: Navigato
         searchChildren: Boolean,
         matchingDest: NavDestination?,
     ): NavDestination? {
-        // first search direct children
-        var destination = nodes[resId]
-        when {
-            matchingDest != null ->
-                // check parent in case of duplicated destinations to ensure it finds the correct
-                // nested destination
-                if (destination == matchingDest && destination.parent == matchingDest.parent)
-                    return destination
-                else destination = null
-            else -> if (destination != null) return destination
-        }
-
-        if (searchChildren) {
-            // then dfs through children. Avoid re-visiting children that were recursing up this
-            // way.
-            destination =
-                nodes.valueIterator().asSequence().firstNotNullOfOrNull { child ->
-                    if (child is NavGraph && child != lastVisited) {
-                        child.findNodeComprehensive(resId, this, true, matchingDest)
-                    } else null
-                }
-        }
-
-        // lastly search through parents. Avoid re-visiting parents that were recursing down
-        // this way.
-        return destination
-            ?: if (parent != null && parent != lastVisited) {
-                parent!!.findNodeComprehensive(resId, this, searchChildren, matchingDest)
-            } else null
+        return impl.findNodeComprehensive(resId, lastVisited, searchChildren, matchingDest)
     }
 
     public actual fun findNode(route: String?): NavDestination? {
-        implementedInJetBrainsFork()
+        return impl.findNode(route)
     }
 
-    public actual inline fun <reified T> findNode(): NavDestination? {
-        implementedInJetBrainsFork()
-    }
+    public actual inline fun <reified T> findNode(): NavDestination? = findNode(T::class)
 
-    public actual fun findNode(route: KClass<*>): NavDestination? {
-        implementedInJetBrainsFork()
-    }
+    public actual fun findNode(route: KClass<*>): NavDestination? = impl.findNode(route)
 
-    public actual fun <T> findNode(route: T?): NavDestination? {
-        implementedInJetBrainsFork()
-    }
+    public actual fun <T> findNode(route: T?): NavDestination? = impl.findNode(route)
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual fun findNode(route: String, searchParents: Boolean): NavDestination? {
-        implementedInJetBrainsFork()
+        return impl.findNode(route, searchParents)
     }
 
     actual override fun iterator(): MutableIterator<NavDestination> {
-        implementedInJetBrainsFork()
+        return impl.iterator()
     }
 
     public actual fun addAll(other: NavGraph) {
-        implementedInJetBrainsFork()
+        impl.addAll(other)
     }
 
     public actual fun remove(node: NavDestination) {
-        implementedInJetBrainsFork()
+        impl.remove(node)
     }
 
     public actual fun clear() {
-        implementedInJetBrainsFork()
+        impl.clear()
     }
+
+    actual override val displayName: String
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) get() = impl.getDisplayName(super.displayName)
 
     /**
      * The starting destination id for this NavGraph. When navigating to the NavGraph, the
      * destination represented by this id is the one the user will initially see.
      */
-    public actual var startDestinationId: Int
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) get() = startDestId
-        private set(startDestId) {
-            require(startDestId != id) {
-                "Start destination $startDestId cannot use the same id as the graph $this"
-            }
-            if (startDestinationRoute != null) {
-                startDestinationRoute = null
-            }
-            this.startDestId = startDestId
-            startDestIdName = null
-        }
+    public actual var startDestinationId: Int by impl::startDestinationId
+        private set
 
     public actual fun setStartDestination(startDestRoute: String) {
-        implementedInJetBrainsFork()
+        impl.setStartDestination(startDestRoute)
     }
 
     public actual inline fun <reified T : Any> setStartDestination() {
-        implementedInJetBrainsFork()
+        setStartDestination(T::class)
     }
 
     @JvmSynthetic
     public actual fun <T : Any> setStartDestination(startDestRoute: KClass<T>) {
-        implementedInJetBrainsFork()
+        impl.setStartDestination(startDestRoute)
     }
 
     public actual fun <T : Any> setStartDestination(startDestRoute: T) {
-        implementedInJetBrainsFork()
+        impl.setStartDestination(startDestRoute)
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -177,27 +157,65 @@ public actual open class NavGraph actual constructor(navGraphNavigator: Navigato
         serializer: KSerializer<T>,
         parseRoute: (NavDestination) -> String
     ) {
-        implementedInJetBrainsFork()
+        impl.setStartDestination(serializer, parseRoute)
     }
 
-    public actual var startDestinationRoute: String?
-        get() = implementedInJetBrainsFork()
-        set(_) {
-            implementedInJetBrainsFork()
-        }
+    public actual var startDestinationRoute: String? by impl::startDestinationRoute
+        private set
 
-    public actual val startDestDisplayName: String
-        get() = implementedInJetBrainsFork()
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public actual val startDestDisplayName: String by impl::startDestDisplayName
+
+    @OptIn(ExperimentalStdlibApi::class)
+    public override fun toString(): String {
+        return buildString {
+            append(super.toString())
+            val startDestination = findNode(startDestinationRoute) ?: findNode(startDestinationId)
+            append(" startDestination=")
+            if (startDestination == null) {
+                when {
+                    startDestinationRoute != null -> append(startDestinationRoute)
+                    impl.startDestIdName != null -> append(impl.startDestIdName)
+                    else -> append("0x${impl.startDestId.toHexString()}")
+                }
+            } else {
+                append("{")
+                append(startDestination.toString())
+                append("}")
+            }
+        }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || other !is NavGraph) return false
+        return super.equals(other) &&
+            nodes.size == other.nodes.size &&
+            startDestinationId == other.startDestinationId &&
+            nodes.valueIterator().asSequence().all { it == other.nodes.get(it.id) }
+    }
+
+    override fun hashCode(): Int {
+        var result = startDestinationId
+        nodes.forEach { key, value ->
+            result = 31 * result + key
+            result = 31 * result + value.hashCode()
+        }
+        return result
+    }
 
     public actual companion object {
         @JvmStatic
-        public actual fun NavGraph.findStartDestination(): NavDestination {
-            implementedInJetBrainsFork()
-        }
+        public actual fun NavGraph.findStartDestination(): NavDestination = childHierarchy().last()
 
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public actual fun NavGraph.childHierarchy(): Sequence<NavDestination> {
-            implementedInJetBrainsFork()
-        }
+        public actual fun NavGraph.childHierarchy(): Sequence<NavDestination> =
+            generateSequence(this as NavDestination) {
+                if (it is NavGraph) {
+                    it.findNode(it.startDestinationId)
+                } else {
+                    null
+                }
+            }
     }
 }
