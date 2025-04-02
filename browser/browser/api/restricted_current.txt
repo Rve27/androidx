@@ -193,7 +193,8 @@ package androidx.browser.customtabs {
     method public static boolean bindCustomTabsService(android.content.Context, String?, androidx.browser.customtabs.CustomTabsServiceConnection);
     method public static boolean bindCustomTabsServicePreservePriority(android.content.Context, String?, androidx.browser.customtabs.CustomTabsServiceConnection);
     method public static boolean connectAndInitialize(android.content.Context, String);
-    method @SuppressCompatibility @androidx.browser.auth.ExperimentalAuthTab @androidx.browser.customtabs.ExperimentalPendingSession public static androidx.browser.auth.AuthTabSession.PendingSession createPendingAuthTabSession(android.content.Context, int, java.util.concurrent.Executor?, androidx.browser.auth.AuthTabCallback?);
+    method @SuppressCompatibility @androidx.browser.auth.ExperimentalAuthTab @androidx.browser.customtabs.ExperimentalPendingSession public static androidx.browser.auth.AuthTabSession.PendingSession createPendingAuthTabSession(android.content.Context, int);
+    method @SuppressCompatibility @androidx.browser.auth.ExperimentalAuthTab @androidx.browser.customtabs.ExperimentalPendingSession public static androidx.browser.auth.AuthTabSession.PendingSession createPendingAuthTabSession(android.content.Context, int, java.util.concurrent.Executor, androidx.browser.auth.AuthTabCallback);
     method public android.os.Bundle? extraCommand(String, android.os.Bundle?);
     method public static String? getPackageName(android.content.Context, java.util.List<java.lang.String!>?);
     method public static String? getPackageName(android.content.Context, java.util.List<java.lang.String!>?, boolean);

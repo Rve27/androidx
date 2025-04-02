@@ -295,25 +295,41 @@ public class CustomTabsClient {
     }
 
     /**
-     * Creates a new pending session with an optional callback. This session can be converted to
-     * a standard session using {@link #attachSession} after connection.
+     * Creates a new pending session with a callback. This session can be converted to a standard
+     * session using {@link #attachSession} after connection.
      *
      * @param context The {@link Context} to use.
-     * @param id      The session id.
-     * @param executor The {@link Executor} to be used to execute the callbacks. If null, the
-     *                 callbacks will be received on the UI thread.
+     * @param id The session id.
+     * @param executor The {@link Executor} to be used to execute the callbacks.
      * @param callback The callback through which the client will receive updates about the created
-     *                 session. Can be null.
+     *                 session.
      * @return The newly created {@link AuthTabSession.PendingSession}.
      */
     @ExperimentalAuthTab
     @ExperimentalPendingSession
     public static AuthTabSession.@NonNull PendingSession createPendingAuthTabSession(
-            @NonNull Context context, int id, @Nullable Executor executor,
-            @Nullable AuthTabCallback callback) {
+            @NonNull Context context, int id, @NonNull Executor executor,
+            @NonNull AuthTabCallback callback) {
         PendingIntent sessionId = createSessionId(context, id);
 
         return new AuthTabSession.PendingSession(sessionId, executor, callback);
+    }
+
+    /**
+     * Creates a new pending session without a callback. This session can be converted to a standard
+     * session using {@link #attachSession} after connection.
+     *
+     * @param context The {@link Context} to use.
+     * @param id      The session id.
+     * @return The newly created {@link AuthTabSession.PendingSession}.
+     */
+    @ExperimentalAuthTab
+    @ExperimentalPendingSession
+    public static AuthTabSession.@NonNull PendingSession createPendingAuthTabSession(
+            @NonNull Context context, int id) {
+        PendingIntent sessionId = createSessionId(context, id);
+
+        return new AuthTabSession.PendingSession(sessionId, null, null);
     }
 
     /**
