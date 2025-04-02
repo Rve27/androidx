@@ -9034,6 +9034,7 @@ public class AppSearchImplTest {
     }
 
     @Test
+    @RequiresFlagsEnabled(Flags.FLAG_ENABLE_COMPRESSION_THRESHOLD)
     public void testCompressionThreshold() throws Exception {
         mAppSearchImpl.close();
         // Initialize AppSearch with a small compression threshold, which should force

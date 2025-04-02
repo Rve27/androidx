@@ -310,7 +310,9 @@ public interface IcingOptionsConfig {
                 // use this trank-stable flag.
                 .setEnableStrictPageByteSizeLimit(
                         Flags.enableStrictPageByteSizeLimit() || isVMEnabled)
-                .setCompressionThresholdBytes(Math.max(0, getCompressionThresholdBytes()))
+                .setCompressionThresholdBytes(
+                        (Flags.enableCompressionThreshold() || isVMEnabled)
+                                ? Math.max(0, getCompressionThresholdBytes()) : 0)
                 .build();
     }
 }
