@@ -600,6 +600,8 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
 
         val toggleState =
             semanticsNode.unmergedConfig.getOrNull(SemanticsProperties.ToggleableState)
+        // TODO(b/406574577): Remove suppression once 1.17.0 stable is released.
+        @Suppress("DEPRECATION")
         toggleState?.let {
             if (toggleState == ToggleableState.On) {
                 info.isChecked = true
@@ -612,6 +614,8 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
                 // Tab in native android uses selected property
                 info.isSelected = it
             } else {
+                // TODO(b/406574577): Remove suppression once 1.17.0 stable is released.
+                @Suppress("DEPRECATION")
                 info.isChecked = it
             }
         }
