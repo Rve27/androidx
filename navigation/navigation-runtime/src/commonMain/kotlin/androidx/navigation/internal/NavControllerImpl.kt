@@ -968,11 +968,9 @@ internal class NavControllerImpl(
                 navigator.onAttach(navigatorBackStack)
             }
         if (_graph != null && backQueue.isEmpty()) {
-            println("I should make it here")
             if (!navController.checkDeepLinkHandled()) {
                 // Navigate to the first destination in the graph
                 // if we haven't deep linked to a destination
-                println("time to navigate")
                 navigate(_graph!!, startDestinationArgs, null, null)
             }
         } else {
@@ -1006,7 +1004,6 @@ internal class NavControllerImpl(
 
     internal val currentDestination: NavDestination?
         get() {
-            println("what is the backqueue $backQueue")
             return currentBackStackEntry?.destination
         }
 
@@ -1215,10 +1212,8 @@ internal class NavControllerImpl(
                     )
                 val navigator =
                     _navigatorProvider.getNavigator<Navigator<NavDestination>>(node.navigatorName)
-                println("navigateInternal")
                 navigateInternal(navigator, listOf(backStackEntry), navOptions, navigatorExtras) {
                     navigated = true
-                    println("AddEntryTobackstack")
                     addEntryToBackStack(node, finalArgs, it)
                 }
             }
@@ -1513,7 +1508,6 @@ internal class NavControllerImpl(
         }
         backQueue.addAll(hierarchy)
 
-        println("adding $backStackEntry to back stack")
         // And finally, add the new destination
         backQueue.add(backStackEntry)
 
