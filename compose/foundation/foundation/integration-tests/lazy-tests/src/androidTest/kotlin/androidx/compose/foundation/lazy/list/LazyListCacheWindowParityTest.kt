@@ -415,7 +415,7 @@ class LazyListCacheWindowParityTest(orientation: Orientation) :
     }
 
     private fun waitForPrefetch() {
-        scheduler.executeActiveRequests()
+        rule.runOnIdle { scheduler.executeActiveRequests() }
     }
 
     private val activeNodes = mutableSetOf<Int>()

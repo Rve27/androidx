@@ -403,7 +403,7 @@ class LazyGridCacheWindowParityTest(orientation: Orientation) :
     }
 
     private fun waitForPrefetch() {
-        scheduler.executeActiveRequests()
+        rule.runOnUiThread { scheduler.executeActiveRequests() }
     }
 
     private val activeNodes = mutableSetOf<Int>()
