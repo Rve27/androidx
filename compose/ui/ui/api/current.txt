@@ -732,7 +732,7 @@ package androidx.compose.ui.focus {
   }
 
   @androidx.compose.runtime.Stable public final class FocusRequester {
-    ctor public FocusRequester();
+    ctor @androidx.compose.runtime.annotation.RememberInComposition public FocusRequester();
     method public boolean captureFocus();
     method public boolean freeFocus();
     method @Deprecated public void requestFocus();

@@ -17,6 +17,7 @@
 package androidx.compose.ui.focus
 
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.annotation.RememberInComposition
 import androidx.compose.runtime.collection.MutableVector
 import androidx.compose.runtime.collection.mutableVectorOf
 import androidx.compose.ui.focus.FocusDirection.Companion.Enter
@@ -48,7 +49,7 @@ private const val InvalidFocusRequesterInvocation =
  * @see androidx.compose.ui.focus.focusRequester
  */
 @Stable
-class FocusRequester {
+class FocusRequester @RememberInComposition constructor() {
 
     internal val focusRequesterNodes: MutableVector<FocusRequesterModifierNode> = mutableVectorOf()
 
