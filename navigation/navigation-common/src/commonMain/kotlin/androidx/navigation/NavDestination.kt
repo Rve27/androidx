@@ -43,7 +43,7 @@ public expect open class NavDestination(navigatorName: String) {
     public val navigatorName: String
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    @Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED")
+    @Suppress("ABSTRACT_MEMBER_NOT_IMPLEMENTED") // b/407925403
     public class DeepLinkMatch : Comparable<DeepLinkMatch> {
         public val destination: NavDestination
         public val matchingArgs: SavedState?

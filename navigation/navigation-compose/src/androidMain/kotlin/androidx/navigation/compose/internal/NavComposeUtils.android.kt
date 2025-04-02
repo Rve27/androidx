@@ -22,7 +22,6 @@ import java.lang.ref.WeakReference
 import java.util.UUID
 import kotlinx.coroutines.flow.Flow
 
-@Suppress("ACTUAL_WITHOUT_EXPECT") // https://youtrack.jetbrains.com/issue/KT-59355
 internal actual typealias BackEventCompat = androidx.activity.BackEventCompat
 
 @Composable
