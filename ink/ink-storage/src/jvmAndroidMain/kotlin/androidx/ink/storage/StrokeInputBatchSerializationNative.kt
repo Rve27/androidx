@@ -21,7 +21,7 @@ import androidx.ink.nativeloader.UsedByNative
 import java.nio.ByteBuffer
 
 @UsedByNative
-internal object StrokeInputBatchSerializationJni {
+internal object StrokeInputBatchSerializationNative {
     init {
         NativeLoader.load()
     }
@@ -33,14 +33,13 @@ internal object StrokeInputBatchSerializationJni {
      * [ImmutableStrokeInputBatch].
      */
     @UsedByNative
-    external fun nativeNewStrokeInputBatchFromProto(
-        strokeInputBatchDirectBuffer: ByteBuffer?,
-        strokeInputBatchBytes: ByteArray?,
-        strokeInputBatchOffset: Int,
-        strokeInputBatchLength: Int,
+    external fun newFromProto(
+        directByteBuffer: ByteBuffer?,
+        byteArray: ByteArray?,
+        offset: Int,
+        length: Int,
         throwOnParseError: Boolean,
     ): Long
 
-    @UsedByNative
-    external fun nativeSerializeStrokeInputBatch(nativeStrokeInputBatchPointer: Long): ByteArray
+    @UsedByNative external fun serialize(nativeStrokeInputBatchPointer: Long): ByteArray
 }
