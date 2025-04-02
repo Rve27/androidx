@@ -28,13 +28,13 @@ abstract interface androidx.navigation/SupportingPane // androidx.navigation/Sup
 
 abstract class <#A: androidx.navigation/NavDestination> androidx.navigation/Navigator { // androidx.navigation/Navigator|null[0]
     constructor <init>() // androidx.navigation/Navigator.<init>|<init>(){}[0]
+    constructor <init>(kotlin/String) // androidx.navigation/Navigator.<init>|<init>(kotlin.String){}[0]
 
     final val state // androidx.navigation/Navigator.state|{}state[0]
         final fun <get-state>(): androidx.navigation/NavigatorState // androidx.navigation/Navigator.state.<get-state>|<get-state>(){}[0]
 
     final var isAttached // androidx.navigation/Navigator.isAttached|{}isAttached[0]
         final fun <get-isAttached>(): kotlin/Boolean // androidx.navigation/Navigator.isAttached.<get-isAttached>|<get-isAttached>(){}[0]
-        final fun <set-isAttached>(kotlin/Boolean) // androidx.navigation/Navigator.isAttached.<set-isAttached>|<set-isAttached>(kotlin.Boolean){}[0]
 
     abstract fun createDestination(): #A // androidx.navigation/Navigator.createDestination|createDestination(){}[0]
     open fun navigate(#A, androidx.savedstate/SavedState?, androidx.navigation/NavOptions?, androidx.navigation/Navigator.Extras?): androidx.navigation/NavDestination? // androidx.navigation/Navigator.navigate|navigate(1:0;androidx.savedstate.SavedState?;androidx.navigation.NavOptions?;androidx.navigation.Navigator.Extras?){}[0]
@@ -45,6 +45,13 @@ abstract class <#A: androidx.navigation/NavDestination> androidx.navigation/Navi
     open fun onSaveState(): androidx.savedstate/SavedState? // androidx.navigation/Navigator.onSaveState|onSaveState(){}[0]
     open fun popBackStack(): kotlin/Boolean // androidx.navigation/Navigator.popBackStack|popBackStack(){}[0]
     open fun popBackStack(androidx.navigation/NavBackStackEntry, kotlin/Boolean) // androidx.navigation/Navigator.popBackStack|popBackStack(androidx.navigation.NavBackStackEntry;kotlin.Boolean){}[0]
+
+    open annotation class Name : kotlin/Annotation { // androidx.navigation/Navigator.Name|null[0]
+        constructor <init>(kotlin/String) // androidx.navigation/Navigator.Name.<init>|<init>(kotlin.String){}[0]
+
+        final val value // androidx.navigation/Navigator.Name.value|{}value[0]
+            final fun <get-value>(): kotlin/String // androidx.navigation/Navigator.Name.value.<get-value>|<get-value>(){}[0]
+    }
 
     abstract interface Extras // androidx.navigation/Navigator.Extras|null[0]
 }
