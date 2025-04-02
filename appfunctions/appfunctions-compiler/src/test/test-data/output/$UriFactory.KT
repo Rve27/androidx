@@ -9,7 +9,7 @@ import javax.`annotation`.processing.Generated
 public class `$UriFactory` : AppFunctionSerializableFactory<Uri> {
   override fun fromAppFunctionData(appFunctionData: AppFunctionData): Uri {
 
-    val uriString = checkNotNull(appFunctionData.getString("uriString"))
+    val uriString = checkNotNull(appFunctionData.getStringOrNull("uriString"))
 
     val resultAppFunctionUri = AppFunctionUri(uriString)
     return resultAppFunctionUri.toUri()

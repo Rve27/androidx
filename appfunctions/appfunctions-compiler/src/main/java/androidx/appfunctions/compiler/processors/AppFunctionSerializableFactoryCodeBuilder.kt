@@ -35,13 +35,11 @@ import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerial
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.APP_FUNCTION_SERIALIZABLE_PARAM_NAME
 import androidx.appfunctions.compiler.core.ProcessingException
 import androidx.appfunctions.compiler.core.ensureQualifiedTypeName
-import androidx.appfunctions.compiler.core.isOfType
 import androidx.appfunctions.compiler.core.toTypeName
 import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.STRING
 import com.squareup.kotlinpoet.buildCodeBlock
 
 /**
@@ -758,13 +756,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
     private fun getAppFunctionDataGetterName(afType: AppFunctionTypeReference): String {
         val shortTypeName = afType.selfOrItemTypeReference.getTypeShortName()
         return when (afType.typeCategory) {
-            PRIMITIVE_SINGULAR -> {
-                if (afType.selfTypeReference.isOfType(STRING)) {
-                    "getString"
-                } else {
-                    "get${shortTypeName}OrNull"
-                }
-            }
+            PRIMITIVE_SINGULAR -> "get${shortTypeName}OrNull"
             PRIMITIVE_ARRAY -> "get$shortTypeName"
             SERIALIZABLE_PROXY_SINGULAR,
             SERIALIZABLE_SINGULAR -> "getAppFunctionData"

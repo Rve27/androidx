@@ -392,6 +392,23 @@ internal constructor(
      *   according to the metadata specification.
      */
     public fun getString(key: String): String? {
+        return getStringOrNull(key)
+    }
+
+    /**
+     * Retrieves a [String] value associated with the specified [key], or returns null if the
+     * associated value is not found.
+     *
+     * This method is used internally by the [AppFunctionSerializableFactory] to retrieve the
+     * underlying string value.
+     *
+     * @param key The key to retrieve the value for.
+     * @return The value associated with the [key], or null if the associated value is not found.
+     * @throws IllegalArgumentException if the [key] is not allowed or the value type is incorrect
+     *   according to the metadata specification.
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public fun getStringOrNull(key: String): String? {
         val array = unsafeGetProperty(key, Array<String>::class.java)
         val stringValue =
             if (array == null || array.isEmpty()) {
@@ -446,6 +463,23 @@ internal constructor(
      *   according to the metadata specification.
      */
     public fun getPendingIntent(key: String): PendingIntent? {
+        return getPendingIntentOrNull(key)
+    }
+
+    /**
+     * Retrieves a [PendingIntent] value associated with the specified [key], or returns null if the
+     * associated value is not found.
+     *
+     * This method is used internally by the [AppFunctionSerializableFactory] to retrieve the
+     * underlying PendingIntent value.
+     *
+     * @param key The key to retrieve the value for.
+     * @return The value associated with the [key], or null if the associated value is not found.
+     * @throws IllegalArgumentException if the [key] is not allowed or the value type is incorrect
+     *   according to the metadata specification.
+     */
+    @RestrictTo(LIBRARY_GROUP)
+    public fun getPendingIntentOrNull(key: String): PendingIntent? {
         spec?.validateReadRequest(key, PendingIntent::class.java, isCollection = false)
         return extras.getParcelable(key, PendingIntent::class.java)
     }
