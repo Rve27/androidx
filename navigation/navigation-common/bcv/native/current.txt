@@ -411,6 +411,8 @@ open class androidx.navigation/NavDeepLinkRequest { // androidx.navigation/NavDe
     open val uri // androidx.navigation/NavDeepLinkRequest.uri|{}uri[0]
         open fun <get-uri>(): androidx.navigation/NavUri? // androidx.navigation/NavDeepLinkRequest.uri.<get-uri>|<get-uri>(){}[0]
 
+    open fun toString(): kotlin/String // androidx.navigation/NavDeepLinkRequest.toString|toString(){}[0]
+
     final class Builder { // androidx.navigation/NavDeepLinkRequest.Builder|null[0]
         final fun build(): androidx.navigation/NavDeepLinkRequest // androidx.navigation/NavDeepLinkRequest.Builder.build|build(){}[0]
         final fun setAction(kotlin/String): androidx.navigation/NavDeepLinkRequest.Builder // androidx.navigation/NavDeepLinkRequest.Builder.setAction|setAction(kotlin.String){}[0]

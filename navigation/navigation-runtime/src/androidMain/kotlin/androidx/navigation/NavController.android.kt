@@ -1200,3 +1200,6 @@ public inline fun NavController.createGraph(
     @IdRes startDestination: Int,
     builder: NavGraphBuilder.() -> Unit
 ): NavGraph = navigatorProvider.navigation(id, startDestination, builder)
+
+internal fun NavDeepLinkRequest(intent: Intent): NavDeepLinkRequest =
+    NavDeepLinkRequest(intent.data, intent.action, intent.type)
