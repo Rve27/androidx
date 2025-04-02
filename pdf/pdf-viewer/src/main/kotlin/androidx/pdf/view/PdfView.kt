@@ -1582,12 +1582,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         ): Boolean {
             links.externalLinks.forEach { externalLink ->
                 if (externalLink.bounds.any { it.contains(pdfCoordinates.x, pdfCoordinates.y) }) {
-                    var uri = externalLink.uri
-                    linkClickListener?.onLinkClicked(uri)
-                        ?: run {
+                    val uri = externalLink.uri
+                    if (linkClickListener != null) {
+                        linkClickListener?.onLinkClicked(uri)
+                    } else {
+                        try {
                             val intent = Intent(Intent.ACTION_VIEW, uri)
                             context.startActivity(intent)
+                        } catch (_: Exception) {
+                            return false
                         }
+                    }
                     return true
                 }
             }
