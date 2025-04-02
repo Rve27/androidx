@@ -41,14 +41,9 @@ actual constructor(public actual val navigatorName: String) {
 
     private val impl = NavDestinationImpl(this)
 
-    /**
-     * This optional annotation allows tooling to offer auto-complete for the `android:name`
-     * attribute. This should match the class type passed to [parseClassFromName] when parsing the
-     * `android:name` attribute.
-     */
-    @kotlin.annotation.Retention(AnnotationRetention.BINARY)
+    @Retention(AnnotationRetention.BINARY)
     @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
-    public annotation class ClassType(val value: KClass<*>)
+    public actual annotation class ClassType(actual val value: KClass<*>)
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public actual class DeepLinkMatch

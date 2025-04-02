@@ -29,6 +29,11 @@ import kotlinx.serialization.serializer
 
 public actual open class NavDestination
 actual constructor(public actual val navigatorName: String) {
+
+    @Retention(AnnotationRetention.BINARY)
+    @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
+    public actual annotation class ClassType(actual val value: KClass<*>)
+
     private val impl = NavDestinationImpl(this)
 
     public actual constructor(navigator: Navigator<out NavDestination>) : this("")

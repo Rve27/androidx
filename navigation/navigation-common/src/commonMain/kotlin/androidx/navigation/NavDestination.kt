@@ -39,6 +39,15 @@ import kotlin.reflect.KClass
  */
 public expect open class NavDestination(navigatorName: String) {
 
+    /**
+     * This optional annotation allows tooling to offer auto-complete for the `android:name`
+     * attribute. This should match the class type passed to [parseClassFromName] when parsing the
+     * `android:name` attribute.
+     */
+    @Retention(AnnotationRetention.BINARY)
+    @Target(AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
+    public annotation class ClassType(val value: KClass<*>)
+
     /** The name associated with this destination's [Navigator]. */
     public val navigatorName: String
 
