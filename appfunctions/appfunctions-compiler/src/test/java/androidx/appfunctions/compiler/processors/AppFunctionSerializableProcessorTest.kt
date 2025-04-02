@@ -261,4 +261,18 @@ class AppFunctionSerializableProcessorTest {
             "Companion Class must have exactly one member function: fromLocalDateTime"
         )
     }
+
+    @Test
+    fun testProcessor_genericFactory_success() {
+        val report =
+            compilationTestHelper.compileAll(
+                sourceFileNames = listOf("FunctionWithGenericSerializable.KT")
+            )
+
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName = "${'$'}SetFieldFactory.kt",
+            goldenFileName = "${'$'}SetFieldFactory.KT"
+        )
+    }
 }

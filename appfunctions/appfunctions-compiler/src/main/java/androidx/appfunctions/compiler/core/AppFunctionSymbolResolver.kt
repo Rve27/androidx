@@ -83,10 +83,6 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
 
     // TODO(b/405063847): Remove this once the generic serializable factory is ready
     private fun KSClassDeclaration.hasTypeParameter(): Boolean {
-        if (typeParameters.isNotEmpty()) {
-            return true
-        }
-
         // Or if any of the parameter has type parameter.
         return primaryConstructor?.parameters?.firstOrNull { valueParameter ->
             val type = valueParameter.type.resolve()

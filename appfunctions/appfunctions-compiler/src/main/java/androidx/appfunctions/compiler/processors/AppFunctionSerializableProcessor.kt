@@ -29,6 +29,7 @@ import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerial
 import androidx.appfunctions.compiler.core.ProcessingException
 import androidx.appfunctions.compiler.core.logException
 import androidx.appfunctions.compiler.core.toClassName
+import androidx.appfunctions.compiler.processors.AppFunctionSerializableFactoryCodeBuilder.Companion.getTypeParameterPropertyName
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.KSPLogger
@@ -37,13 +38,16 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.asTypeName
 
 /**
@@ -132,7 +136,7 @@ class AppFunctionSerializableProcessor(
     ) {
         val superInterfaceClass =
             AppFunctionSerializableFactoryClass.CLASS_NAME.parameterizedBy(
-                listOf(annotatedClass.originalClassName)
+                listOf(annotatedClass.typeName)
             )
 
         val factoryCodeBuilder =
@@ -155,6 +159,10 @@ class AppFunctionSerializableProcessor(
                             if (annotatedClass.modifiers.contains(Modifier.INTERNAL)) {
                                 addModifiers(KModifier.INTERNAL)
                             }
+
+                            if (annotatedClass.typeParameters.isNotEmpty()) {
+                                setGenericPrimaryConstructor(annotatedClass.typeParameters)
+                            }
                         }
                         .addFunction(
                             buildFromAppFunctionDataFunction(annotatedClass, factoryCodeBuilder)
@@ -176,6 +184,35 @@ class AppFunctionSerializableProcessor(
             )
             .bufferedWriter()
             .use { fileSpec.writeTo(it) }
+    }
+
+    private fun TypeSpec.Builder.setGenericPrimaryConstructor(
+        typeParameters: List<KSTypeParameter>
+    ) {
+        val primaryConstructorBuilder = FunSpec.constructorBuilder()
+        for (typeParameter in typeParameters) {
+            val typeParamName = typeParameter.name.asString()
+            val typeTokenType =
+                AppFunctionSerializableFactoryClass.TypeParameterClass.CLASS_NAME.parameterizedBy(
+                    TypeVariableName(typeParameter.name.asString())
+                )
+            val typeParameterPropertyName = getTypeParameterPropertyName(typeParameter)
+
+            primaryConstructorBuilder.addParameter(
+                typeParameterPropertyName,
+                typeTokenType,
+            )
+
+            addProperty(
+                PropertySpec.builder(typeParameterPropertyName, typeTokenType)
+                    .initializer(typeParameterPropertyName)
+                    .addModifiers(KModifier.PRIVATE)
+                    .build()
+            )
+            addTypeVariable(TypeVariableName(typeParamName))
+        }
+
+        primaryConstructor(primaryConstructorBuilder.build())
     }
 
     private fun buildAppFunctionSerializableProxyFactoryClass(
@@ -246,7 +283,7 @@ class AppFunctionSerializableProcessor(
                 ParameterSpec.builder(APP_FUNCTION_DATA_PARAM_NAME, AppFunctionData::class).build()
             )
             .addCode(factoryCodeBuilder.appendFromAppFunctionDataMethodBody())
-            .returns(annotatedClass.originalClassName)
+            .returns(annotatedClass.typeName)
             .build()
     }
 
@@ -275,10 +312,7 @@ class AppFunctionSerializableProcessor(
             )
             .addModifiers(KModifier.OVERRIDE)
             .addParameter(
-                ParameterSpec.builder(
-                        APP_FUNCTION_SERIALIZABLE_PARAM_NAME,
-                        annotatedClass.originalClassName
-                    )
+                ParameterSpec.builder(APP_FUNCTION_SERIALIZABLE_PARAM_NAME, annotatedClass.typeName)
                     .build()
             )
             .addCode(factoryCodeBuilder.appendToAppFunctionDataMethodBody())

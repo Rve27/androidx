@@ -1171,7 +1171,7 @@ internal constructor(
          *   match the metadata specification associated with the [key].
          */
         @RestrictTo(LIBRARY_GROUP)
-        public fun <I, T : List<I>?> setGenericListField(
+        public fun <I, T : List<*>?> setGenericListField(
             key: String,
             value: T,
             itemValueClass: Class<I>

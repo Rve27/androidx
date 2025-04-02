@@ -29,6 +29,7 @@ import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionS
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_SINGULAR
+import androidx.appfunctions.compiler.core.IntrospectionHelper
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod.APP_FUNCTION_DATA_PARAM_NAME
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.APP_FUNCTION_SERIALIZABLE_PARAM_NAME
@@ -36,6 +37,7 @@ import androidx.appfunctions.compiler.core.ProcessingException
 import androidx.appfunctions.compiler.core.ensureQualifiedTypeName
 import androidx.appfunctions.compiler.core.isOfType
 import androidx.appfunctions.compiler.core.toTypeName
+import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
@@ -186,7 +188,12 @@ class AppFunctionSerializableFactoryCodeBuilder(
         return buildCodeBlock {
             add(factoryInitStatements)
             for ((paramName, paramType) in annotatedClass.getProperties()) {
-                appendGetterStatement(paramName, paramType)
+                val declaration = paramType.resolve().declaration
+                if (declaration is KSTypeParameter) {
+                    appendGenericGetterStatement(paramName, declaration)
+                } else {
+                    appendGetterStatement(paramName, paramType)
+                }
             }
             appendGetterResultConstructorCallStatement(
                 annotatedClass.originalClassName,
@@ -347,7 +354,6 @@ class AppFunctionSerializableFactoryCodeBuilder(
             val qualifiedClassName = annotatedClass.qualifiedName
             addStatement("val builder = %T(%S)", AppFunctionData.Builder::class, qualifiedClassName)
             for (property in annotatedClass.getProperties()) {
-                val afType = AppFunctionTypeReference(property.type)
                 val formatStringMap =
                     mapOf<String, Any>(
                         "param_name" to property.name,
@@ -357,14 +363,71 @@ class AppFunctionSerializableFactoryCodeBuilder(
                     "val %param_name:L = %annotated_class_instance:L.%param_name:L\n",
                     formatStringMap
                 )
-                if (afType.isNullable) {
-                    appendNullableSetterStatement(property.name, afType)
+                val resolvedType = property.type.resolve()
+                val declaration = resolvedType.declaration
+                if (declaration is KSTypeParameter) {
+                    appendGenericSetterStatement(property.name, declaration)
                 } else {
-                    appendSetterStatement(property.name, afType)
+                    if (resolvedType.isMarkedNullable) {
+                        appendNullableSetterStatement(property.name, property.type)
+                    } else {
+                        appendSetterStatement(property.name, property.type)
+                    }
                 }
             }
             add("\nreturn builder.build()")
         }
+    }
+
+    private fun CodeBlock.Builder.appendGenericGetterStatement(
+        paramName: String,
+        paramTypeParameter: KSTypeParameter
+    ): CodeBlock.Builder {
+        val formatStringMap =
+            mapOf<String, Any>(
+                "param_name" to paramName,
+                "app_function_data_param_name" to APP_FUNCTION_DATA_PARAM_NAME,
+                "type_parameter_property_name" to getTypeParameterPropertyName(paramTypeParameter),
+                "property_item_clazz_name" to
+                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                        .ListTypeParameterClass
+                        .PROPERTY_ITEM_CLAZZ_NAME,
+                "property_clazz_name" to
+                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                        .PrimitiveTypeParameterClass
+                        .PROPERTY_CLAZZ_NAME,
+            )
+        addNamed("val %param_name:L = when (%type_parameter_property_name:L) {\n", formatStringMap)
+        indent()
+        add(
+            "is %T<*, *> -> {\n",
+            IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                .ListTypeParameterClass
+                .CLASS_NAME
+        )
+        indent()
+        addNamed(
+            "%app_function_data_param_name:L.getGenericListField(\"%param_name:L\", %type_parameter_property_name:L.%property_item_clazz_name:L)\n",
+            formatStringMap
+        )
+        unindent()
+        add("}\n")
+        add(
+            "is %T -> {\n",
+            IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                .PrimitiveTypeParameterClass
+                .CLASS_NAME
+        )
+        indent()
+        addNamed(
+            "%app_function_data_param_name:L.getGenericField(\"%param_name:L\", %type_parameter_property_name:L.%property_clazz_name:L)\n",
+            formatStringMap
+        )
+        unindent()
+        add("}\n")
+        unindent()
+        add("}\n")
+        return this
     }
 
     private fun CodeBlock.Builder.appendGetterStatement(
@@ -527,9 +590,59 @@ class AppFunctionSerializableFactoryCodeBuilder(
         return this
     }
 
+    private fun CodeBlock.Builder.appendGenericSetterStatement(
+        paramName: String,
+        paramTypeParameter: KSTypeParameter
+    ): CodeBlock.Builder {
+        val formatStringMap =
+            mapOf<String, Any>(
+                "param_name" to paramName,
+                "type_parameter_property_name" to getTypeParameterPropertyName(paramTypeParameter),
+                "property_item_clazz_name" to
+                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                        .ListTypeParameterClass
+                        .PROPERTY_ITEM_CLAZZ_NAME,
+                "property_clazz_name" to
+                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                        .PrimitiveTypeParameterClass
+                        .PROPERTY_CLAZZ_NAME,
+            )
+        addNamed("when (%type_parameter_property_name:L) {\n", formatStringMap)
+        indent()
+        add(
+            "is %T<*, *> -> {\n",
+            IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                .ListTypeParameterClass
+                .CLASS_NAME
+        )
+        indent()
+        addNamed(
+            "builder.setGenericListField(\"%param_name:L\", %param_name:L as List<*>, %type_parameter_property_name:L.%property_item_clazz_name:L)\n",
+            formatStringMap
+        )
+        unindent()
+        add("}\n")
+        add(
+            "is %T -> {\n",
+            IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                .PrimitiveTypeParameterClass
+                .CLASS_NAME
+        )
+        indent()
+        addNamed(
+            "builder.setGenericField(\"%param_name:L\", %param_name:L, %type_parameter_property_name:L.%property_clazz_name:L)\n",
+            formatStringMap
+        )
+        unindent()
+        add("}\n")
+        unindent()
+        add("}\n")
+        return this
+    }
+
     private fun CodeBlock.Builder.appendNullableSetterStatement(
         paramName: String,
-        afType: AppFunctionTypeReference
+        typeReference: KSTypeReference,
     ): CodeBlock.Builder {
         val formatStringMap =
             mapOf<String, Any>(
@@ -538,15 +651,16 @@ class AppFunctionSerializableFactoryCodeBuilder(
 
         return addNamed("if (%param_name:L != null) {\n", formatStringMap)
             .indent()
-            .appendSetterStatement(paramName, afType)
+            .appendSetterStatement(paramName, typeReference)
             .unindent()
             .addStatement("}")
     }
 
     private fun CodeBlock.Builder.appendSetterStatement(
         paramName: String,
-        afType: AppFunctionTypeReference
+        typeReference: KSTypeReference,
     ): CodeBlock.Builder {
+        val afType = AppFunctionTypeReference(typeReference)
         return when (afType.typeCategory) {
             PRIMITIVE_SINGULAR,
             PRIMITIVE_ARRAY,
@@ -741,5 +855,12 @@ class AppFunctionSerializableFactoryCodeBuilder(
     private fun getSerializableParamName(annotatedClass: AnnotatedAppFunctionSerializable): String {
         return "${annotatedClass.originalClassName.simpleName.replaceFirstChar {
                 it -> it.lowercase() }}_appFunctionSerializable"
+    }
+
+    companion object {
+        /** Gets the TypeParameter property name used by generic AppFunctionSerializableFactory */
+        fun getTypeParameterPropertyName(typeParameter: KSTypeParameter): String {
+            return "${typeParameter.name.asString().uppercase().replaceFirstChar { it.lowercase() }}TypeParameter"
+        }
     }
 }

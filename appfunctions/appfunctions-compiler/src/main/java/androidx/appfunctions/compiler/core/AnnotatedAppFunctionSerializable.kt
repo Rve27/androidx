@@ -25,9 +25,12 @@ import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSTypeArgument
+import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.TypeName
 
 /** Represents a class annotated with [androidx.appfunctions.AppFunctionSerializable]. */
 open class AnnotatedAppFunctionSerializable(
@@ -51,6 +54,30 @@ open class AnnotatedAppFunctionSerializable(
 
     /** The [KSNode] to which the processing error is attributed. */
     val attributeNode: KSNode by lazy { appFunctionSerializableClass }
+
+    /** The list of [KSTypeParameter] of the AppFunctionSerializable */
+    val typeParameters: List<KSTypeParameter> by lazy {
+        appFunctionSerializableClass.typeParameters
+    }
+
+    /** The original [ClassName] of the AppFunctionSerializable. */
+    val originalClassName: ClassName by lazy {
+        ClassName(
+            appFunctionSerializableClass.packageName.asString(),
+            appFunctionSerializableClass.simpleName.asString()
+        )
+    }
+
+    /** The [TypeName] of the AppFunctionSerializable. */
+    val typeName: TypeName by lazy {
+        if (typeParameters.isEmpty()) {
+            originalClassName
+        } else {
+            originalClassName.parameterizedBy(
+                typeParameters.map(KSTypeParameter::toTypeVariableName)
+            )
+        }
+    }
 
     /**
      * Parameterize [AnnotatedAppFunctionSerializable] with [arguments].
@@ -190,6 +217,7 @@ open class AnnotatedAppFunctionSerializable(
     /** Returns the properties that have @AppFunctionSerializable class types. */
     fun getSerializablePropertyTypeReferences(): Set<AppFunctionTypeReference> {
         return getProperties()
+            .filterNot { it.isGenericType }
             .map { property -> AppFunctionTypeReference(property.type) }
             .filter { afType ->
                 afType.isOfTypeCategory(SERIALIZABLE_SINGULAR) ||
@@ -201,6 +229,7 @@ open class AnnotatedAppFunctionSerializable(
     /** Returns the properties that have @AppFunctionSerializableProxy class types. */
     fun getSerializableProxyPropertyTypeReferences(): Set<AppFunctionTypeReference> {
         return getProperties()
+            .filterNot { it.isGenericType }
             .map { it -> AppFunctionTypeReference(it.type) }
             .filter { afType -> afType.isOfTypeCategory(SERIALIZABLE_PROXY_SINGULAR) }
             .toSet()
@@ -260,12 +289,5 @@ open class AnnotatedAppFunctionSerializable(
                     .getTransitiveSerializableSourceFiles()
             )
         }
-    }
-
-    val originalClassName: ClassName by lazy {
-        ClassName(
-            appFunctionSerializableClass.packageName.asString(),
-            appFunctionSerializableClass.simpleName.asString()
-        )
     }
 }
