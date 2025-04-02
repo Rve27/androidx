@@ -295,7 +295,11 @@ public class AudioStreamImpl implements AudioStream {
             Api23Impl.setAudioSource(audioRecordBuilder, settings.getAudioSource());
             Api23Impl.setAudioFormat(audioRecordBuilder, audioFormatObj);
             Api23Impl.setBufferSizeInBytes(audioRecordBuilder, bufferSizeInByte);
-            return Api23Impl.build(audioRecordBuilder);
+            try {
+                return Api23Impl.build(audioRecordBuilder);
+            } catch (UnsupportedOperationException e) {
+                throw new IllegalArgumentException(e);
+            }
         } else {
             return new AudioRecord(settings.getAudioSource(),
                     settings.getCaptureSampleRate(),
