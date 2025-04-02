@@ -21,14 +21,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.os.ConfigurationCompat
 import java.util.Locale
 
 @Composable
 @ReadOnlyComposable
 internal actual fun getString(string: Strings): String {
-    return LocalResources.current.getString(string.value)
+    // Do a no-op reading so when LocalConfiguration changes, this function will be recomposed.
+    LocalConfiguration.current
+    val resources = LocalContext.current.resources
+    return resources.getString(string.value)
 }
 
 @Composable
