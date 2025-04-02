@@ -20,7 +20,7 @@ import androidx.annotation.RestrictTo
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public actual class NavContext {
-    public actual fun getResourceName(id: Int): String = id.toString()
+    public actual fun getResourceName(id: Int): String = "0x${id.toString(16)}"
 
     public actual fun getApplication(): Any? = null
 }

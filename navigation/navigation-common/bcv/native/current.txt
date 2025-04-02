@@ -464,7 +464,7 @@ open class androidx.navigation/NavDestination { // androidx.navigation/NavDestin
     open fun matchDeepLink(androidx.navigation/NavDeepLinkRequest): androidx.navigation/NavDestination.DeepLinkMatch? // androidx.navigation/NavDestination.matchDeepLink|matchDeepLink(androidx.navigation.NavDeepLinkRequest){}[0]
 
     final class DeepLinkMatch : kotlin/Comparable<androidx.navigation/NavDestination.DeepLinkMatch> { // androidx.navigation/NavDestination.DeepLinkMatch|null[0]
-        constructor <init>() // androidx.navigation/NavDestination.DeepLinkMatch.<init>|<init>(){}[0]
+        constructor <init>(androidx.navigation/NavDestination, androidx.savedstate/SavedState?, kotlin/Boolean, kotlin/Int, kotlin/Boolean, kotlin/Int) // androidx.navigation/NavDestination.DeepLinkMatch.<init>|<init>(androidx.navigation.NavDestination;androidx.savedstate.SavedState?;kotlin.Boolean;kotlin.Int;kotlin.Boolean;kotlin.Int){}[0]
 
         final val destination // androidx.navigation/NavDestination.DeepLinkMatch.destination|{}destination[0]
             final fun <get-destination>(): androidx.navigation/NavDestination // androidx.navigation/NavDestination.DeepLinkMatch.destination.<get-destination>|<get-destination>(){}[0]
