@@ -34,7 +34,7 @@ import java.util.List;
  * <p>See <a href="https://schema.org/WebPage">https://schema.org/WebPage</a> for more context.
  */
 @Document(name = WebPage.SCHEMA_NAME)
-public final class WebPage extends Thing {
+public class WebPage extends Thing {
 
     // DO NOT CHANGE since it will alter schema definition
     public static final String SCHEMA_NAME = "builtin:WebPage";
@@ -47,7 +47,7 @@ public final class WebPage extends Thing {
     private final @Nullable String mSource;
 
     @OptIn(markerClass = ExperimentalAppSearchApi.class)
-    WebPage(@NonNull String namespace, @NonNull String id, int documentScore,
+    public WebPage(@NonNull String namespace, @NonNull String id, int documentScore,
             long creationTimestampMillis, long documentTtlMillis, @Nullable String name,
             @Nullable List<String> alternateNames,
             @Nullable String description,
