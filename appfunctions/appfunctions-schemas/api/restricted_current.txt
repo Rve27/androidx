@@ -58,9 +58,9 @@ package androidx.appfunctions.schema.files {
 
   public static interface GetFileContentUrisAppFunction.FileContentUri {
     method public String getId();
-    method public androidx.appfunctions.schema.types.AppFunctionUri getUri();
+    method public android.net.Uri getUri();
     property public abstract String id;
-    property public abstract androidx.appfunctions.schema.types.AppFunctionUri uri;
+    property public abstract android.net.Uri uri;
   }
 
   public static interface GetFileContentUrisAppFunction.Parameters {
@@ -93,10 +93,10 @@ package androidx.appfunctions.schema.notes {
   public static interface AppFunctionNote.Attachment {
     method public String getDisplayName();
     method public default String? getMimeType();
-    method public androidx.appfunctions.schema.types.AppFunctionUri getUri();
+    method public android.net.Uri getUri();
     property public abstract String displayName;
     property public default String? mimeType;
-    property public abstract androidx.appfunctions.schema.types.AppFunctionUri uri;
+    property public abstract android.net.Uri uri;
   }
 
   public interface AppFunctionNotesGroup {
@@ -288,15 +288,6 @@ package androidx.appfunctions.schema.notes {
 }
 
 package androidx.appfunctions.schema.types {
-
-  @androidx.appfunctions.AppFunctionSerializable public final class AppFunctionUri {
-    ctor public AppFunctionUri(android.net.Uri uri);
-    ctor public AppFunctionUri(String value);
-    method public android.net.Uri getUri();
-    method public String getValue();
-    property public android.net.Uri uri;
-    property public String value;
-  }
 
   public final class SetField<T> {
     ctor public SetField(T value);

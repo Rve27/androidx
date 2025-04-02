@@ -16,12 +16,12 @@
 
 package androidx.appfunctions.schema.notes
 
+import android.net.Uri
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionOpenable
 import androidx.appfunctions.AppFunctionSchemaDefinition
-import androidx.appfunctions.schema.types.AppFunctionUri
 import androidx.appfunctions.schema.types.SetField
 
 // TODO(b/401517540): Add remaining APIs: folder APIs
@@ -532,14 +532,13 @@ public interface AppFunctionNote {
         /**
          * The URI of the attached file.
          *
-         * When providing an [androidx.appfunctions.schema.types.AppFunctionUri] to another app,
-         * that app must be granted URI permission using
+         * When providing an [Uri] to another app, that app must be granted URI permission using
          * [android.content.Context.grantUriPermission] to the receiving app.
          *
          * The providing app should also consider revoking the URI permission by using
          * [android.content.Context.revokeUriPermission] after a certain time period.
          */
-        public val uri: AppFunctionUri
+        public val uri: Uri
 
         /** The display name of the attached file. */
         public val displayName: String
