@@ -461,6 +461,7 @@ package androidx.appsearch.builtintypes {
 
   @androidx.appsearch.annotation.Document(name=androidx.appsearch.builtintypes.WebPage.SCHEMA_NAME) public final class WebPage extends androidx.appsearch.builtintypes.Thing {
     method public androidx.appsearch.builtintypes.ImageObject? getFavicon();
+    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public String? getSource();
     field public static final String SCHEMA_NAME = "builtin:WebPage";
   }
 
@@ -481,6 +482,7 @@ package androidx.appsearch.builtintypes {
     method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public androidx.appsearch.builtintypes.WebPage.Builder setImage(String?);
     method public androidx.appsearch.builtintypes.WebPage.Builder setName(String?);
     method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public androidx.appsearch.builtintypes.WebPage.Builder setPotentialActions(java.util.List<androidx.appsearch.builtintypes.PotentialAction!>?);
+    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public androidx.appsearch.builtintypes.WebPage.Builder setSource(String?);
     method public androidx.appsearch.builtintypes.WebPage.Builder setUrl(String?);
   }
 
