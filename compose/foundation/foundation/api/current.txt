@@ -1589,7 +1589,7 @@ package androidx.compose.foundation.relocation {
   }
 
   public final class BringIntoViewRequesterKt {
-    method public static androidx.compose.foundation.relocation.BringIntoViewRequester BringIntoViewRequester();
+    method @androidx.compose.runtime.annotation.RememberInComposition public static androidx.compose.foundation.relocation.BringIntoViewRequester BringIntoViewRequester();
     method public static androidx.compose.ui.Modifier bringIntoViewRequester(androidx.compose.ui.Modifier, androidx.compose.foundation.relocation.BringIntoViewRequester bringIntoViewRequester);
     method @Deprecated public static androidx.compose.ui.Modifier bringIntoViewResponder(androidx.compose.ui.Modifier, androidx.compose.foundation.relocation.BringIntoViewResponder responder);
   }
@@ -1980,7 +1980,7 @@ package androidx.compose.foundation.text.input {
   }
 
   @androidx.compose.runtime.Stable public final class TextFieldState {
-    ctor public TextFieldState(optional String initialText, optional long initialSelection);
+    ctor @androidx.compose.runtime.annotation.RememberInComposition public TextFieldState(optional String initialText, optional long initialSelection);
     method public inline void edit(kotlin.jvm.functions.Function1<? super androidx.compose.foundation.text.input.TextFieldBuffer,kotlin.Unit> block);
     method public androidx.compose.ui.text.TextRange? getComposition();
     method public long getSelection();
