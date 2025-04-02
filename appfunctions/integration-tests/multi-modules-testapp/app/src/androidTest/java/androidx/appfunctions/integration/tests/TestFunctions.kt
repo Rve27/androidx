@@ -16,10 +16,13 @@
 
 package androidx.appfunctions.integration.tests
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.util.Log
 import androidx.appfunctions.AppFunction
 import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionInvalidArgumentException
+import androidx.appfunctions.AppFunctionOpenable
 import androidx.appfunctions.AppFunctionSerializable
 import java.time.LocalDateTime
 
@@ -49,6 +52,15 @@ data class Note(
     val owner: Owner,
     val attachments: List<Attachment>,
 )
+
+@AppFunctionSerializable
+data class OpenableNote(
+    val title: String,
+    val content: List<String>,
+    val owner: Owner,
+    val attachments: List<Attachment>,
+    override val intentToOpen: PendingIntent
+) : AppFunctionOpenable
 
 @AppFunctionSerializable data class DateTime(val localDateTime: LocalDateTime)
 
@@ -84,6 +96,26 @@ class TestFunctions {
             content = createNoteParams.content,
             owner = createNoteParams.owner,
             attachments = createNoteParams.attachments
+        )
+    }
+
+    @AppFunction
+    fun getOpenableNote(
+        appFunctionContext: AppFunctionContext,
+        createNoteParams: CreateNoteParams
+    ): OpenableNote {
+        return OpenableNote(
+            title = createNoteParams.title,
+            content = createNoteParams.content,
+            owner = createNoteParams.owner,
+            attachments = createNoteParams.attachments,
+            intentToOpen =
+                PendingIntent.getActivity(
+                    appFunctionContext.context,
+                    0,
+                    Intent(),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
         )
     }
 }

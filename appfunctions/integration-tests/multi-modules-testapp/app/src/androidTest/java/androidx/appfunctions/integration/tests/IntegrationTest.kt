@@ -230,6 +230,96 @@ class IntegrationTest {
     }
 
     @Test
+    fun executeAppFunction_createNote_withOpenableCapability_returnsNote() = doBlocking {
+        val response =
+            appFunctionManager.executeAppFunction(
+                request =
+                    ExecuteAppFunctionRequest(
+                        context.packageName,
+                        TestFunctionsIds.GET_OPENABLE_NOTE_ID,
+                        AppFunctionData.Builder("")
+                            .setAppFunctionData(
+                                "createNoteParams",
+                                AppFunctionData.serialize(
+                                    CreateNoteParams(
+                                        title = "Test Title",
+                                        content = listOf("1", "2"),
+                                        owner = Owner("test"),
+                                        attachments =
+                                            listOf(Attachment("Uri1", Attachment("nested")))
+                                    ),
+                                    CreateNoteParams::class.java
+                                )
+                            )
+                            .build()
+                    )
+            )
+
+        val successResponse = assertIs<ExecuteAppFunctionResponse.Success>(response)
+        val expectedNote =
+            Note(
+                title = "Test Title",
+                content = listOf("1", "2"),
+                owner = Owner("test"),
+                attachments = listOf(Attachment("Uri1", Attachment("nested")))
+            )
+        assertThat(
+                successResponse.returnValue
+                    .getAppFunctionData(ExecuteAppFunctionResponse.Success.PROPERTY_RETURN_VALUE)
+                    ?.deserialize(Note::class.java)
+            )
+            .isEqualTo(expectedNote)
+    }
+
+    @Test
+    fun executeAppFunction_createNote_withOpenableCapability_returnsOpenableNote() = doBlocking {
+        val response =
+            appFunctionManager.executeAppFunction(
+                request =
+                    ExecuteAppFunctionRequest(
+                        context.packageName,
+                        TestFunctionsIds.GET_OPENABLE_NOTE_ID,
+                        AppFunctionData.Builder("")
+                            .setAppFunctionData(
+                                "createNoteParams",
+                                AppFunctionData.serialize(
+                                    CreateNoteParams(
+                                        title = "Test Title",
+                                        content = listOf("1", "2"),
+                                        owner = Owner("test"),
+                                        attachments =
+                                            listOf(Attachment("Uri1", Attachment("nested")))
+                                    ),
+                                    CreateNoteParams::class.java
+                                )
+                            )
+                            .build()
+                    )
+            )
+
+        val successResponse = assertIs<ExecuteAppFunctionResponse.Success>(response)
+        val expectedNote =
+            Note(
+                title = "Test Title",
+                content = listOf("1", "2"),
+                owner = Owner("test"),
+                attachments = listOf(Attachment("Uri1", Attachment("nested"))),
+            )
+        val openableNoteResult =
+            assertIs<OpenableNote>(
+                successResponse.returnValue
+                    .getAppFunctionData(ExecuteAppFunctionResponse.Success.PROPERTY_RETURN_VALUE)
+                    ?.deserialize(OpenableNote::class.java)
+            )
+
+        assertThat(openableNoteResult.title).isEqualTo(expectedNote.title)
+        assertThat(openableNoteResult.content).isEqualTo(expectedNote.content)
+        assertThat(openableNoteResult.owner).isEqualTo(expectedNote.owner)
+        assertThat(openableNoteResult.attachments).isEqualTo(expectedNote.attachments)
+        assertThat(openableNoteResult.intentToOpen).isNotNull()
+    }
+
+    @Test
     fun executeAppFunction_serializableProxyParam_dateTime_success() = doBlocking {
         val localDateTimeClass = DateTime(LocalDateTime.now())
         val response =
@@ -339,6 +429,7 @@ class IntegrationTest {
                 TestFunctionsIds.CREATE_NOTE_ID,
                 TestFunctionsIds.LOG_LOCAL_DATE_TIME_ID,
                 TestFunctionsIds.GET_LOCAL_DATE_ID,
+                TestFunctionsIds.GET_OPENABLE_NOTE_ID,
                 TestFactoryIds.IS_CREATED_BY_FACTORY_ID,
                 TestFunctions2Ids.CONCAT_ID,
                 TestFunctions2Ids.LOG_URI_ID,
