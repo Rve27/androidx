@@ -256,8 +256,9 @@ private class TransformingLazyColumnStateScrollInfoProvider(
         get() = state.layoutInfo.totalItemsCount > 0
 
     override val isScrollable
-        // TODO: b/349071165 - Update to respect the scroll bounds.
-        get() = state.layoutInfo.totalItemsCount > 0
+        get() =
+            state.layoutInfo.totalItemsCount > 0 &&
+                (state.canScrollBackward || state.canScrollForward)
 
     override val isScrollInProgress
         get() = state.isScrollInProgress
