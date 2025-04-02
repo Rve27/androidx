@@ -386,23 +386,6 @@ sealed interface androidx.compose.material3.carousel/CarouselItemScope { // andr
     abstract fun rememberMaskShape(androidx.compose.ui.graphics/Shape): androidx.compose.foundation.shape/GenericShape // androidx.compose.material3.carousel/CarouselItemScope.rememberMaskShape|rememberMaskShape(androidx.compose.ui.graphics.Shape){}[0]
 }
 
-sealed interface androidx.compose.material3/ComponentElevation { // androidx.compose.material3/ComponentElevation|null[0]
-    abstract val disabledElevation // androidx.compose.material3/ComponentElevation.disabledElevation|{}disabledElevation[0]
-        abstract fun <get-disabledElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ComponentElevation.disabledElevation.<get-disabledElevation>|<get-disabledElevation>(){}[0]
-    abstract val draggedElevation // androidx.compose.material3/ComponentElevation.draggedElevation|{}draggedElevation[0]
-        abstract fun <get-draggedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ComponentElevation.draggedElevation.<get-draggedElevation>|<get-draggedElevation>(){}[0]
-    abstract val elevation // androidx.compose.material3/ComponentElevation.elevation|{}elevation[0]
-        abstract fun <get-elevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ComponentElevation.elevation.<get-elevation>|<get-elevation>(){}[0]
-    abstract val focusedElevation // androidx.compose.material3/ComponentElevation.focusedElevation|{}focusedElevation[0]
-        abstract fun <get-focusedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ComponentElevation.focusedElevation.<get-focusedElevation>|<get-focusedElevation>(){}[0]
-    abstract val hoveredElevation // androidx.compose.material3/ComponentElevation.hoveredElevation|{}hoveredElevation[0]
-        abstract fun <get-hoveredElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ComponentElevation.hoveredElevation.<get-hoveredElevation>|<get-hoveredElevation>(){}[0]
-    abstract val pressedElevation // androidx.compose.material3/ComponentElevation.pressedElevation|{}pressedElevation[0]
-        abstract fun <get-pressedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ComponentElevation.pressedElevation.<get-pressedElevation>|<get-pressedElevation>(){}[0]
-
-    final object Companion // androidx.compose.material3/ComponentElevation.Companion|null[0]
-}
-
 sealed interface androidx.compose.material3/FloatingToolbarScrollBehavior : androidx.compose.ui.input.nestedscroll/NestedScrollConnection { // androidx.compose.material3/FloatingToolbarScrollBehavior|null[0]
     abstract val exitDirection // androidx.compose.material3/FloatingToolbarScrollBehavior.exitDirection|{}exitDirection[0]
         abstract fun <get-exitDirection>(): androidx.compose.material3/FloatingToolbarExitDirection // androidx.compose.material3/FloatingToolbarScrollBehavior.exitDirection.<get-exitDirection>|<get-exitDirection>(){}[0]
@@ -500,22 +483,7 @@ final class androidx.compose.material3/ButtonColors { // androidx.compose.materi
     final fun hashCode(): kotlin/Int // androidx.compose.material3/ButtonColors.hashCode|hashCode(){}[0]
 }
 
-final class androidx.compose.material3/ButtonElevation : androidx.compose.material3/ComponentElevation { // androidx.compose.material3/ButtonElevation|null[0]
-    constructor <init>(androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp) // androidx.compose.material3/ButtonElevation.<init>|<init>(androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp){}[0]
-
-    final val disabledElevation // androidx.compose.material3/ButtonElevation.disabledElevation|{}disabledElevation[0]
-        final fun <get-disabledElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ButtonElevation.disabledElevation.<get-disabledElevation>|<get-disabledElevation>(){}[0]
-    final val draggedElevation // androidx.compose.material3/ButtonElevation.draggedElevation|{}draggedElevation[0]
-        final fun <get-draggedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ButtonElevation.draggedElevation.<get-draggedElevation>|<get-draggedElevation>(){}[0]
-    final val elevation // androidx.compose.material3/ButtonElevation.elevation|{}elevation[0]
-        final fun <get-elevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ButtonElevation.elevation.<get-elevation>|<get-elevation>(){}[0]
-    final val focusedElevation // androidx.compose.material3/ButtonElevation.focusedElevation|{}focusedElevation[0]
-        final fun <get-focusedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ButtonElevation.focusedElevation.<get-focusedElevation>|<get-focusedElevation>(){}[0]
-    final val hoveredElevation // androidx.compose.material3/ButtonElevation.hoveredElevation|{}hoveredElevation[0]
-        final fun <get-hoveredElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ButtonElevation.hoveredElevation.<get-hoveredElevation>|<get-hoveredElevation>(){}[0]
-    final val pressedElevation // androidx.compose.material3/ButtonElevation.pressedElevation|{}pressedElevation[0]
-        final fun <get-pressedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ButtonElevation.pressedElevation.<get-pressedElevation>|<get-pressedElevation>(){}[0]
-
+final class androidx.compose.material3/ButtonElevation { // androidx.compose.material3/ButtonElevation|null[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.material3/ButtonElevation.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // androidx.compose.material3/ButtonElevation.hashCode|hashCode(){}[0]
 }
@@ -554,22 +522,7 @@ final class androidx.compose.material3/CardColors { // androidx.compose.material
     final fun hashCode(): kotlin/Int // androidx.compose.material3/CardColors.hashCode|hashCode(){}[0]
 }
 
-final class androidx.compose.material3/CardElevation : androidx.compose.material3/ComponentElevation { // androidx.compose.material3/CardElevation|null[0]
-    constructor <init>(androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp) // androidx.compose.material3/CardElevation.<init>|<init>(androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp){}[0]
-
-    final val disabledElevation // androidx.compose.material3/CardElevation.disabledElevation|{}disabledElevation[0]
-        final fun <get-disabledElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/CardElevation.disabledElevation.<get-disabledElevation>|<get-disabledElevation>(){}[0]
-    final val draggedElevation // androidx.compose.material3/CardElevation.draggedElevation|{}draggedElevation[0]
-        final fun <get-draggedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/CardElevation.draggedElevation.<get-draggedElevation>|<get-draggedElevation>(){}[0]
-    final val elevation // androidx.compose.material3/CardElevation.elevation|{}elevation[0]
-        final fun <get-elevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/CardElevation.elevation.<get-elevation>|<get-elevation>(){}[0]
-    final val focusedElevation // androidx.compose.material3/CardElevation.focusedElevation|{}focusedElevation[0]
-        final fun <get-focusedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/CardElevation.focusedElevation.<get-focusedElevation>|<get-focusedElevation>(){}[0]
-    final val hoveredElevation // androidx.compose.material3/CardElevation.hoveredElevation|{}hoveredElevation[0]
-        final fun <get-hoveredElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/CardElevation.hoveredElevation.<get-hoveredElevation>|<get-hoveredElevation>(){}[0]
-    final val pressedElevation // androidx.compose.material3/CardElevation.pressedElevation|{}pressedElevation[0]
-        final fun <get-pressedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/CardElevation.pressedElevation.<get-pressedElevation>|<get-pressedElevation>(){}[0]
-
+final class androidx.compose.material3/CardElevation { // androidx.compose.material3/CardElevation|null[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.material3/CardElevation.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // androidx.compose.material3/CardElevation.hashCode|hashCode(){}[0]
 }
@@ -637,7 +590,7 @@ final class androidx.compose.material3/ChipColors { // androidx.compose.material
     final fun hashCode(): kotlin/Int // androidx.compose.material3/ChipColors.hashCode|hashCode(){}[0]
 }
 
-final class androidx.compose.material3/ChipElevation : androidx.compose.material3/ComponentElevation { // androidx.compose.material3/ChipElevation|null[0]
+final class androidx.compose.material3/ChipElevation { // androidx.compose.material3/ChipElevation|null[0]
     constructor <init>(androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp) // androidx.compose.material3/ChipElevation.<init>|<init>(androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp){}[0]
 
     final val disabledElevation // androidx.compose.material3/ChipElevation.disabledElevation|{}disabledElevation[0]
@@ -1281,7 +1234,7 @@ final class androidx.compose.material3/SelectableChipColors { // androidx.compos
     final fun hashCode(): kotlin/Int // androidx.compose.material3/SelectableChipColors.hashCode|hashCode(){}[0]
 }
 
-final class androidx.compose.material3/SelectableChipElevation : androidx.compose.material3/ComponentElevation { // androidx.compose.material3/SelectableChipElevation|null[0]
+final class androidx.compose.material3/SelectableChipElevation { // androidx.compose.material3/SelectableChipElevation|null[0]
     constructor <init>(androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp) // androidx.compose.material3/SelectableChipElevation.<init>|<init>(androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp){}[0]
 
     final val disabledElevation // androidx.compose.material3/SelectableChipElevation.disabledElevation|{}disabledElevation[0]
@@ -2059,22 +2012,7 @@ final value class androidx.compose.material3/TimePickerSelectionMode { // androi
     }
 }
 
-open class androidx.compose.material3/FloatingActionButtonElevation : androidx.compose.material3/ComponentElevation { // androidx.compose.material3/FloatingActionButtonElevation|null[0]
-    constructor <init>(androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp, androidx.compose.ui.unit/Dp) // androidx.compose.material3/FloatingActionButtonElevation.<init>|<init>(androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp;androidx.compose.ui.unit.Dp){}[0]
-
-    open val disabledElevation // androidx.compose.material3/FloatingActionButtonElevation.disabledElevation|{}disabledElevation[0]
-        open fun <get-disabledElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/FloatingActionButtonElevation.disabledElevation.<get-disabledElevation>|<get-disabledElevation>(){}[0]
-    open val draggedElevation // androidx.compose.material3/FloatingActionButtonElevation.draggedElevation|{}draggedElevation[0]
-        open fun <get-draggedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/FloatingActionButtonElevation.draggedElevation.<get-draggedElevation>|<get-draggedElevation>(){}[0]
-    open val elevation // androidx.compose.material3/FloatingActionButtonElevation.elevation|{}elevation[0]
-        open fun <get-elevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/FloatingActionButtonElevation.elevation.<get-elevation>|<get-elevation>(){}[0]
-    open val focusedElevation // androidx.compose.material3/FloatingActionButtonElevation.focusedElevation|{}focusedElevation[0]
-        open fun <get-focusedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/FloatingActionButtonElevation.focusedElevation.<get-focusedElevation>|<get-focusedElevation>(){}[0]
-    open val hoveredElevation // androidx.compose.material3/FloatingActionButtonElevation.hoveredElevation|{}hoveredElevation[0]
-        open fun <get-hoveredElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/FloatingActionButtonElevation.hoveredElevation.<get-hoveredElevation>|<get-hoveredElevation>(){}[0]
-    open val pressedElevation // androidx.compose.material3/FloatingActionButtonElevation.pressedElevation|{}pressedElevation[0]
-        open fun <get-pressedElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/FloatingActionButtonElevation.pressedElevation.<get-pressedElevation>|<get-pressedElevation>(){}[0]
-
+open class androidx.compose.material3/FloatingActionButtonElevation { // androidx.compose.material3/FloatingActionButtonElevation|null[0]
     open fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.material3/FloatingActionButtonElevation.equals|equals(kotlin.Any?){}[0]
     open fun hashCode(): kotlin/Int // androidx.compose.material3/FloatingActionButtonElevation.hashCode|hashCode(){}[0]
 }

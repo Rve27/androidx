@@ -313,20 +313,7 @@ package androidx.compose.material3 {
     field public static final androidx.compose.material3.ButtonDefaults INSTANCE;
   }
 
-  @androidx.compose.runtime.Stable public final class ButtonElevation implements androidx.compose.material3.ComponentElevation {
-    ctor public ButtonElevation(float elevation, float pressedElevation, float focusedElevation, float hoveredElevation, float draggedElevation, float disabledElevation);
-    method public float getDisabledElevation();
-    method public float getDraggedElevation();
-    method public float getElevation();
-    method public float getFocusedElevation();
-    method public float getHoveredElevation();
-    method public float getPressedElevation();
-    property public float disabledElevation;
-    property public float draggedElevation;
-    property public float elevation;
-    property public float focusedElevation;
-    property public float hoveredElevation;
-    property public float pressedElevation;
+  @androidx.compose.runtime.Stable public final class ButtonElevation {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public final class ButtonGroupDefaults {
@@ -419,20 +406,7 @@ package androidx.compose.material3 {
     field public static final androidx.compose.material3.CardDefaults INSTANCE;
   }
 
-  @androidx.compose.runtime.Immutable public final class CardElevation implements androidx.compose.material3.ComponentElevation {
-    ctor public CardElevation(float elevation, float pressedElevation, float focusedElevation, float hoveredElevation, float draggedElevation, float disabledElevation);
-    method public float getDisabledElevation();
-    method public float getDraggedElevation();
-    method public float getElevation();
-    method public float getFocusedElevation();
-    method public float getHoveredElevation();
-    method public float getPressedElevation();
-    property public float disabledElevation;
-    property public float draggedElevation;
-    property public float elevation;
-    property public float focusedElevation;
-    property public float hoveredElevation;
-    property public float pressedElevation;
+  @androidx.compose.runtime.Immutable public final class CardElevation {
   }
 
   public final class CardKt {
@@ -512,7 +486,7 @@ package androidx.compose.material3 {
     property public long trailingIconContentColor;
   }
 
-  @androidx.compose.runtime.Immutable public final class ChipElevation implements androidx.compose.material3.ComponentElevation {
+  @androidx.compose.runtime.Immutable public final class ChipElevation {
     ctor public ChipElevation(float elevation, float pressedElevation, float focusedElevation, float hoveredElevation, float draggedElevation, float disabledElevation);
     method public float getDisabledElevation();
     method public float getDraggedElevation();
@@ -632,25 +606,6 @@ package androidx.compose.material3 {
     method public static androidx.compose.material3.ColorScheme lightColorScheme(optional long primary, optional long onPrimary, optional long primaryContainer, optional long onPrimaryContainer, optional long inversePrimary, optional long secondary, optional long onSecondary, optional long secondaryContainer, optional long onSecondaryContainer, optional long tertiary, optional long onTertiary, optional long tertiaryContainer, optional long onTertiaryContainer, optional long background, optional long onBackground, optional long surface, optional long onSurface, optional long surfaceVariant, optional long onSurfaceVariant, optional long surfaceTint, optional long inverseSurface, optional long inverseOnSurface, optional long error, optional long onError, optional long errorContainer, optional long onErrorContainer, optional long outline, optional long outlineVariant, optional long scrim, optional long surfaceBright, optional long surfaceContainer, optional long surfaceContainerHigh, optional long surfaceContainerHighest, optional long surfaceContainerLow, optional long surfaceContainerLowest, optional long surfaceDim);
     method @androidx.compose.runtime.Stable public static long surfaceColorAtElevation(androidx.compose.material3.ColorScheme, float elevation);
     property public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> LocalTonalElevationEnabled;
-  }
-
-  public sealed interface ComponentElevation {
-    method public float getDisabledElevation();
-    method public float getDraggedElevation();
-    method public float getElevation();
-    method public float getFocusedElevation();
-    method public float getHoveredElevation();
-    method public float getPressedElevation();
-    property public abstract float disabledElevation;
-    property public abstract float draggedElevation;
-    property public abstract float elevation;
-    property public abstract float focusedElevation;
-    property public abstract float hoveredElevation;
-    property public abstract float pressedElevation;
-    field public static final androidx.compose.material3.ComponentElevation.Companion Companion;
-  }
-
-  public static final class ComponentElevation.Companion {
   }
 
   public final class ContentColorKt {
@@ -1077,20 +1032,7 @@ package androidx.compose.material3 {
     field public static final androidx.compose.material3.FloatingActionButtonDefaults INSTANCE;
   }
 
-  @androidx.compose.runtime.Stable public class FloatingActionButtonElevation implements androidx.compose.material3.ComponentElevation {
-    ctor public FloatingActionButtonElevation(float elevation, float pressedElevation, float focusedElevation, float hoveredElevation);
-    method public float getDisabledElevation();
-    method public float getDraggedElevation();
-    method public float getElevation();
-    method public float getFocusedElevation();
-    method public float getHoveredElevation();
-    method public float getPressedElevation();
-    property public float disabledElevation;
-    property public float draggedElevation;
-    property public float elevation;
-    property public float focusedElevation;
-    property public float hoveredElevation;
-    property public float pressedElevation;
+  @androidx.compose.runtime.Stable public class FloatingActionButtonElevation {
   }
 
   public final class FloatingActionButtonKt {
@@ -2244,7 +2186,7 @@ package androidx.compose.material3 {
     method public androidx.compose.material3.SelectableChipColors copy(optional long containerColor, optional long labelColor, optional long leadingIconColor, optional long trailingIconColor, optional long disabledContainerColor, optional long disabledLabelColor, optional long disabledLeadingIconColor, optional long disabledTrailingIconColor, optional long selectedContainerColor, optional long disabledSelectedContainerColor, optional long selectedLabelColor, optional long selectedLeadingIconColor, optional long selectedTrailingIconColor);
   }
 
-  @androidx.compose.runtime.Immutable public final class SelectableChipElevation implements androidx.compose.material3.ComponentElevation {
+  @androidx.compose.runtime.Immutable public final class SelectableChipElevation {
     ctor public SelectableChipElevation(float elevation, float pressedElevation, float focusedElevation, float hoveredElevation, float draggedElevation, float disabledElevation);
     method public float getDisabledElevation();
     method public float getDraggedElevation();
