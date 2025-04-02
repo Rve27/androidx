@@ -401,7 +401,7 @@ internal class ShapeHelper(private val density: Density) {
     fun contentWidthDp() = with(density) { contentWindow.width.toDp() }
 
     fun updateIfNeeded(size: Size) {
-        if (size == lastSize || size.height == 0f) return
+        if (size == lastSize || size.height == 0f || size.height.isNaN()) return
 
         lastSize = size
 
