@@ -36,11 +36,13 @@ data class CreateNoteParams(
     val attachments: List<Attachment>,
 )
 
-// TODO(b/401517540): Test nullable and AppFunctionSerializable
+// TODO(b/401517540): Test AppFunctionSerializable
 @AppFunctionSerializable
 data class UpdateNoteParams(
     val title: SetField<String>? = null,
+    val nullableTitle: SetField<String?>? = null,
     val content: SetField<List<String>>? = null,
+    val nullableContent: SetField<List<String>?>? = null,
 )
 
 @AppFunctionSerializable
@@ -114,8 +116,13 @@ class TestFunctions {
         updateNoteParams: UpdateNoteParams,
     ): Note {
         return Note(
-            title = updateNoteParams.title?.value ?: "",
-            content = updateNoteParams.content?.value ?: listOf(),
+            title =
+                (updateNoteParams.title?.value ?: "DefaultTitle") +
+                    "_" +
+                    (updateNoteParams.nullableTitle?.value ?: "DefaultTitle"),
+            content =
+                (updateNoteParams.content?.value ?: listOf("DefaultContent")) +
+                    (updateNoteParams.nullableContent?.value ?: listOf("DefaultContent")),
             owner = Owner("test"),
             attachments = listOf(),
         )

@@ -12,8 +12,16 @@ public class `$UpdateNoteParamsFactory` : AppFunctionSerializableFactory<UpdateN
     val setFieldKotlinStringFactory = `$SetFieldFactory`<String>(
       AppFunctionSerializableFactory.TypeParameter.PrimitiveTypeParameter(String::class.java),
     )
+    val setFieldKotlinStringNullableFactory = `$SetFieldFactory`<String?>(
+      @Suppress("UNCHECKED_CAST")
+      AppFunctionSerializableFactory.TypeParameter.PrimitiveTypeParameter(String::class.java as Class<String?>),
+    )
     val setFieldKotlinCollectionsListComTestdataAttachmentFactory = `$SetFieldFactory`<List<Attachment>>(
       AppFunctionSerializableFactory.TypeParameter.ListTypeParameter(Attachment::class.java),
+    )
+    val setFieldKotlinCollectionsListComTestdataAttachmentNullableFactory = `$SetFieldFactory`<List<Attachment>?>(
+      @Suppress("UNCHECKED_CAST")
+      AppFunctionSerializableFactory.TypeParameter.ListTypeParameter(Attachment::class.java as Class<List<Attachment>?>),
     )
 
     val titleData = appFunctionData.getAppFunctionData("title")
@@ -21,13 +29,23 @@ public class `$UpdateNoteParamsFactory` : AppFunctionSerializableFactory<UpdateN
     if (titleData != null) {
       title = setFieldKotlinStringFactory.fromAppFunctionData(titleData)
     }
+    val nullableTitleData = appFunctionData.getAppFunctionData("nullableTitle")
+    var nullableTitle: SetField<String?>? = null
+    if (nullableTitleData != null) {
+      nullableTitle = setFieldKotlinStringNullableFactory.fromAppFunctionData(nullableTitleData)
+    }
     val attachmentsData = appFunctionData.getAppFunctionData("attachments")
     var attachments: SetField<List<Attachment>>? = null
     if (attachmentsData != null) {
       attachments = setFieldKotlinCollectionsListComTestdataAttachmentFactory.fromAppFunctionData(attachmentsData)
     }
+    val nullableAttachmentsData = appFunctionData.getAppFunctionData("nullableAttachments")
+    var nullableAttachments: SetField<List<Attachment>?>? = null
+    if (nullableAttachmentsData != null) {
+      nullableAttachments = setFieldKotlinCollectionsListComTestdataAttachmentNullableFactory.fromAppFunctionData(nullableAttachmentsData)
+    }
 
-    val resultUpdateNoteParams = UpdateNoteParams(title, attachments)
+    val resultUpdateNoteParams = UpdateNoteParams(title, nullableTitle, attachments, nullableAttachments)
     return resultUpdateNoteParams
   }
 
@@ -36,8 +54,16 @@ public class `$UpdateNoteParamsFactory` : AppFunctionSerializableFactory<UpdateN
     val setFieldKotlinStringFactory = `$SetFieldFactory`<String>(
       AppFunctionSerializableFactory.TypeParameter.PrimitiveTypeParameter(String::class.java),
     )
+    val setFieldKotlinStringNullableFactory = `$SetFieldFactory`<String?>(
+      @Suppress("UNCHECKED_CAST")
+      AppFunctionSerializableFactory.TypeParameter.PrimitiveTypeParameter(String::class.java as Class<String?>),
+    )
     val setFieldKotlinCollectionsListComTestdataAttachmentFactory = `$SetFieldFactory`<List<Attachment>>(
       AppFunctionSerializableFactory.TypeParameter.ListTypeParameter(Attachment::class.java),
+    )
+    val setFieldKotlinCollectionsListComTestdataAttachmentNullableFactory = `$SetFieldFactory`<List<Attachment>?>(
+      @Suppress("UNCHECKED_CAST")
+      AppFunctionSerializableFactory.TypeParameter.ListTypeParameter(Attachment::class.java as Class<List<Attachment>?>),
     )
 
     val builder = AppFunctionData.Builder("com.testdata.UpdateNoteParams")
@@ -45,9 +71,17 @@ public class `$UpdateNoteParamsFactory` : AppFunctionSerializableFactory<UpdateN
     if (title != null) {
       builder.setAppFunctionData("title", setFieldKotlinStringFactory.toAppFunctionData(title))
     }
+    val nullableTitle = updateNoteParams_appFunctionSerializable.nullableTitle
+    if (nullableTitle != null) {
+      builder.setAppFunctionData("nullableTitle", setFieldKotlinStringNullableFactory.toAppFunctionData(nullableTitle))
+    }
     val attachments = updateNoteParams_appFunctionSerializable.attachments
     if (attachments != null) {
       builder.setAppFunctionData("attachments", setFieldKotlinCollectionsListComTestdataAttachmentFactory.toAppFunctionData(attachments))
+    }
+    val nullableAttachments = updateNoteParams_appFunctionSerializable.nullableAttachments
+    if (nullableAttachments != null) {
+      builder.setAppFunctionData("nullableAttachments", setFieldKotlinCollectionsListComTestdataAttachmentNullableFactory.toAppFunctionData(nullableAttachments))
     }
 
     return builder.build()

@@ -61,7 +61,7 @@ class AnnotatedParameterizedAppFunctionSerializable(
                 }
 
                 val (_, typeRef) = entry
-                append(typeRef.toTypeName().ignoreNullable())
+                append(typeRef.toTypeName())
 
                 if (index != typeParameterMap.size - 1) {
                     append(",")
