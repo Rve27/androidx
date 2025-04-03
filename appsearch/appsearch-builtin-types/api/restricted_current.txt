@@ -240,6 +240,31 @@ package androidx.appsearch.builtintypes {
     method public androidx.appsearch.builtintypes.MobileApplication.Builder setUrl(String?);
   }
 
+  @androidx.appsearch.annotation.Document(name="builtin:Organization") public class Organization extends androidx.appsearch.builtintypes.Thing {
+    ctor protected Organization(String, String, int, long, long, String?, java.util.List<java.lang.String!>?, String?, String?, String?, java.util.List<androidx.appsearch.builtintypes.PotentialAction!>, androidx.appsearch.builtintypes.ImageObject?);
+    method public androidx.appsearch.builtintypes.ImageObject? getLogo();
+  }
+
+  @androidx.appsearch.annotation.Document.BuilderProducer public static final class Organization.Builder {
+    ctor public Organization.Builder(androidx.appsearch.builtintypes.Organization);
+    ctor public Organization.Builder(String, String);
+    method public androidx.appsearch.builtintypes.Organization.Builder addAlternateName(String);
+    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public androidx.appsearch.builtintypes.Organization.Builder addPotentialAction(androidx.appsearch.builtintypes.PotentialAction);
+    method public androidx.appsearch.builtintypes.Organization build();
+    method public androidx.appsearch.builtintypes.Organization.Builder clearAlternateNames();
+    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public androidx.appsearch.builtintypes.Organization.Builder clearPotentialActions();
+    method public androidx.appsearch.builtintypes.Organization.Builder setAlternateNames(java.util.List<java.lang.String!>?);
+    method public androidx.appsearch.builtintypes.Organization.Builder setCreationTimestampMillis(long);
+    method public androidx.appsearch.builtintypes.Organization.Builder setDescription(String?);
+    method public androidx.appsearch.builtintypes.Organization.Builder setDocumentScore(int);
+    method public androidx.appsearch.builtintypes.Organization.Builder setDocumentTtlMillis(long);
+    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public androidx.appsearch.builtintypes.Organization.Builder setImage(String?);
+    method public androidx.appsearch.builtintypes.Organization.Builder setLogo(androidx.appsearch.builtintypes.ImageObject?);
+    method public androidx.appsearch.builtintypes.Organization.Builder setName(String?);
+    method @SuppressCompatibility @androidx.appsearch.app.ExperimentalAppSearchApi public androidx.appsearch.builtintypes.Organization.Builder setPotentialActions(java.util.List<androidx.appsearch.builtintypes.PotentialAction!>?);
+    method public androidx.appsearch.builtintypes.Organization.Builder setUrl(String?);
+  }
+
   @androidx.appsearch.annotation.Document(name="builtin:Person") public class Person extends androidx.appsearch.builtintypes.Thing {
     method public java.util.List<java.lang.String!> getAdditionalNames();
     method public java.util.List<java.lang.String!> getAffiliations();
