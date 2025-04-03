@@ -33,7 +33,7 @@ class AnnotatedParameterizedAppFunctionSerializable(
     private val arguments: List<KSTypeArgument>
 ) : AnnotatedAppFunctionSerializable(appFunctionSerializableClass) {
     /** A map of type parameter name to its parameterized type. */
-    private val typeParameterMap: Map<String, KSTypeReference> = buildMap {
+    val typeParameterMap: Map<String, KSTypeReference> = buildMap {
         for ((index, typeParameter) in appFunctionSerializableClass.typeParameters.withIndex()) {
             val typeParameterName = typeParameter.name.asString()
             val actualType =
