@@ -866,6 +866,7 @@ fun ColorScheme.contentColorFor(backgroundColor: Color): Color =
         surfaceContainerHighest -> onSurface
         surfaceContainerLow -> onSurface
         surfaceContainerLowest -> onSurface
+        surfaceDim -> onSurface
         else -> Color.Unspecified
     }
 
