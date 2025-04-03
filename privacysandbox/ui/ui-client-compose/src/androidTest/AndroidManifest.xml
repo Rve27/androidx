@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  Copyright 2022 The Android Open Source Project
+  Copyright 2025 The Android Open Source Project
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -20,15 +20,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
         <activity
-            android:name="androidx.privacysandbox.ui.client.test.UiLibActivity"
+            android:name="androidx.privacysandbox.ui.client.compose.test.UiLibComposeActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true" />
         <activity
-            android:name="androidx.privacysandbox.ui.client.test.SecondActivity"
+            android:name="androidx.privacysandbox.ui.client.compose.test.SecondActivity"
             android:exported="true" />
     </application>
     <queries>
-        <package android:name="androidx.privacysandbox.ui.client.test" />
+        <package android:name="androidx.privacysandbox.ui.compose.test" />
     </queries>
 
     <uses-sdk tools:overrideLibrary="android_libs.ub_uiautomator, androidx.test.uiautomator" />

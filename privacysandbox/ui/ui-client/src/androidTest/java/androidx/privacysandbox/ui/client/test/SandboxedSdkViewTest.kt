@@ -99,6 +99,38 @@ class SandboxedSdkViewTest {
     }
 
     @Test
+    fun nullAdapterClosesEstablishedSessionTest() {
+        addViewToLayout()
+        testSandboxedUiAdapter.assertSessionOpened()
+
+        activityScenarioRule.withActivity { view.setAdapter(null) }
+        testSandboxedUiAdapter.assertSessionClosed()
+    }
+
+    @Test
+    fun preserveSessionOnWindowDetachmentSessionRemainsOpenOnWindowDetachment() {
+        addViewToLayout()
+        testSandboxedUiAdapter.assertSessionOpened()
+
+        activityScenarioRule.withActivity { view.preserveSessionOnWindowDetachment() }
+        removeAllViewsFromLayout()
+        testSandboxedUiAdapter.assertSessionNotClosed()
+    }
+
+    @Test
+    fun doNotPreserveSessionOnWindowDetachmentSessionClosesOnWindowDetachment() {
+        addViewToLayout()
+        testSandboxedUiAdapter.assertSessionOpened()
+
+        activityScenarioRule.withActivity {
+            view.preserveSessionOnWindowDetachment()
+            view.preserveSessionOnWindowDetachment(false)
+        }
+        removeAllViewsFromLayout()
+        testSandboxedUiAdapter.assertSessionClosed()
+    }
+
+    @Test
     fun eventListenerErrorTest() {
         activityScenarioRule.withActivity { view.setAdapter(FailingTestSandboxedUiAdapter()) }
         addViewToLayout()
