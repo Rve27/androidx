@@ -411,6 +411,45 @@ class IntegrationTest {
         assertThat(androidUriResult.toString()).isEqualTo("https://www.google.com/")
     }
 
+    @Test
+    fun executeAppFunction_updateNote_success() = doBlocking {
+        val response =
+            appFunctionManager.executeAppFunction(
+                request =
+                    ExecuteAppFunctionRequest(
+                        context.packageName,
+                        TestFunctionsIds.UPDATE_NOTE_ID,
+                        AppFunctionData.Builder("")
+                            .setAppFunctionData(
+                                "updateNoteParams",
+                                AppFunctionData.serialize(
+                                    UpdateNoteParams(
+                                        title = SetField("New Title"),
+                                        content = SetField(listOf("New", "Content"))
+                                    ),
+                                    UpdateNoteParams::class.java
+                                )
+                            )
+                            .build()
+                    )
+            )
+
+        val successResponse = assertIs<ExecuteAppFunctionResponse.Success>(response)
+        val expectedNote =
+            Note(
+                title = "New Title",
+                content = listOf("New", "Content"),
+                owner = Owner("test"),
+                attachments = listOf()
+            )
+        assertThat(
+                successResponse.returnValue
+                    .getAppFunctionData(ExecuteAppFunctionResponse.Success.PROPERTY_RETURN_VALUE)
+                    ?.deserialize(Note::class.java)
+            )
+            .isEqualTo(expectedNote)
+    }
+
     private suspend fun awaitAppFunctionsIndexed(expectedFunctionIds: Set<String>) {
         retryAssert {
             val functionIds = AppSearchMetadataHelper.collectSelfFunctionIds(context)
@@ -427,6 +466,7 @@ class IntegrationTest {
                 TestFunctionsIds.DO_THROW_ID,
                 TestFunctionsIds.VOID_FUNCTION_ID,
                 TestFunctionsIds.CREATE_NOTE_ID,
+                TestFunctionsIds.UPDATE_NOTE_ID,
                 TestFunctionsIds.LOG_LOCAL_DATE_TIME_ID,
                 TestFunctionsIds.GET_LOCAL_DATE_ID,
                 TestFunctionsIds.GET_OPENABLE_NOTE_ID,

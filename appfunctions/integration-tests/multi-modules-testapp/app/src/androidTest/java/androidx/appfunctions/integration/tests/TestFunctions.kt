@@ -26,12 +26,21 @@ import androidx.appfunctions.AppFunctionOpenable
 import androidx.appfunctions.AppFunctionSerializable
 import java.time.LocalDateTime
 
+@AppFunctionSerializable data class SetField<T>(val value: T)
+
 @AppFunctionSerializable
 data class CreateNoteParams(
     val title: String,
     val content: List<String>,
     val owner: Owner,
     val attachments: List<Attachment>,
+)
+
+// TODO(b/401517540): Test nullable and AppFunctionSerializable
+@AppFunctionSerializable
+data class UpdateNoteParams(
+    val title: SetField<String>? = null,
+    val content: SetField<List<String>>? = null,
 )
 
 @AppFunctionSerializable
@@ -96,6 +105,19 @@ class TestFunctions {
             content = createNoteParams.content,
             owner = createNoteParams.owner,
             attachments = createNoteParams.attachments
+        )
+    }
+
+    @AppFunction
+    fun updateNote(
+        appFunctionContext: AppFunctionContext,
+        updateNoteParams: UpdateNoteParams,
+    ): Note {
+        return Note(
+            title = updateNoteParams.title?.value ?: "",
+            content = updateNoteParams.content?.value ?: listOf(),
+            owner = Owner("test"),
+            attachments = listOf(),
         )
     }
 
