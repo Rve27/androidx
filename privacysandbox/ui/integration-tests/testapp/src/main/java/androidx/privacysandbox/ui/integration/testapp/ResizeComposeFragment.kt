@@ -170,6 +170,7 @@ class ResizeComposeFragment : BaseFragment() {
                         },
                 )
             }
+            // TODO(b/399399902): Add Alpha CUJ once fixed
             Row {
                 Button(onClick = { onResizeClicked(bannerDimension) }) { Text("Resize") }
                 Button(onClick = { onChangePaddingClicked(BannerDimension(ssvWidth, ssvHeight)) }) {

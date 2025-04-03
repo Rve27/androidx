@@ -623,6 +623,17 @@ class SandboxedSdkViewTest {
     }
 
     @Test
+    fun setAlphaUpdatesContentViewAlpha() {
+        addViewToLayoutAndWaitToBeActive()
+        val session = testSandboxedUiAdapter.testSession!!
+        val newAlpha = 0.5f
+        session.runAndRetrieveNextUiChange {
+            activityScenarioRule.withActivity { view.alpha = newAlpha }
+        }
+        assertThat(view.getChildAt(0).alpha).isEqualTo(newAlpha)
+    }
+
+    @Test
     fun signalsSentWhenAlphaChanges() {
         addViewToLayoutAndWaitToBeActive()
         val session = testSandboxedUiAdapter.testSession!!

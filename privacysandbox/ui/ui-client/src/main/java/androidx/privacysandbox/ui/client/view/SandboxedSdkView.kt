@@ -319,6 +319,7 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
     override fun setAlpha(alpha: Float) {
         super.setAlpha(alpha)
         signalMeasurer?.requestUpdatedSignals()
+        contentView?.alpha = alpha
     }
 
     internal fun closeClient() {
