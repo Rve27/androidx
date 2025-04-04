@@ -61,8 +61,15 @@ package androidx.xr.arcore {
   }
 
   public static final class Hand.Companion {
+    method public androidx.xr.arcore.Hand.Handedness getHandedness(android.content.ContentResolver resolver);
     method public androidx.xr.arcore.Hand? left(androidx.xr.runtime.Session session);
     method public androidx.xr.arcore.Hand? right(androidx.xr.runtime.Session session);
+  }
+
+  public enum Hand.Handedness {
+    enum_constant public static final androidx.xr.arcore.Hand.Handedness LEFT;
+    enum_constant public static final androidx.xr.arcore.Hand.Handedness RIGHT;
+    enum_constant public static final androidx.xr.arcore.Hand.Handedness UNKNOWN;
   }
 
   public static final class Hand.State {

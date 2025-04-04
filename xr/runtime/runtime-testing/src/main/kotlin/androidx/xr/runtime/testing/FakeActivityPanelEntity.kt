@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime
+package androidx.xr.runtime.testing
 
-import java.util.concurrent.Executors
-import kotlinx.coroutines.asCoroutineDispatcher
+import android.app.Activity
+import android.content.Intent
+import android.os.Bundle
+import androidx.annotation.RestrictTo
+import androidx.xr.runtime.internal.ActivityPanelEntity
 
-/** Provides the [CoroutineDispatcher] objects for all coroutines in Jetpack XR Runtime. */
-internal object CoroutineDispatchers {
+// TODO: b/405218432 - Implement this correctly instead of stubbing it out.
+/** Test-only implementation of [ActivityPanelEntity] */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+public class FakeActivityPanelEntity : ActivityPanelEntity, FakePanelEntity() {
+    override fun launchActivity(intent: Intent, bundle: Bundle?) {}
 
-    /** A [CoroutineDispatcher] for lightweight tasks that are small and non-blocking. */
-    val Lightweight = Executors.newCachedThreadPool().asCoroutineDispatcher()
+    override fun moveActivity(activity: Activity) {}
 }

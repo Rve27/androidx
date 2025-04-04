@@ -47,7 +47,7 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
-import androidx.xr.scenecore.Session as JxrCoreSession
+import androidx.xr.scenecore.scene
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 
@@ -137,8 +137,6 @@ class HandTrackingActivity : ComponentActivity() {
     private lateinit var session: Session
     private lateinit var sessionHelper: SessionLifecycleHelper
 
-    private lateinit var jxrCoreSession: JxrCoreSession
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -147,17 +145,16 @@ class HandTrackingActivity : ComponentActivity() {
         session = sessionHelper.session
         lifecycle.addObserver(sessionHelper)
 
-        jxrCoreSession = JxrCoreSession.create(this)
         lifecycleScope.launch {
             session.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 session.configure(Config(handTracking = HandTrackingMode.Enabled))
                 setContent { MainPanel(session) }
 
-                val xyzModel = GltfModel.create(jxrCoreSession, "models/xyzArrows.glb").await()
+                val xyzModel = GltfModel.create(session, "models/xyzArrows.glb").await()
 
                 val leftHandJointEntityMap =
                     HandJointType.entries.associateWith {
-                        GltfModelEntity.create(jxrCoreSession, xyzModel).also {
+                        GltfModelEntity.create(session, xyzModel).also {
                             it.setScale(0.015f)
                             it.setHidden(true)
                         }
@@ -165,7 +162,7 @@ class HandTrackingActivity : ComponentActivity() {
 
                 val rightHandJointEntityMap =
                     HandJointType.entries.associateWith {
-                        GltfModelEntity.create(jxrCoreSession, xyzModel).also {
+                        GltfModelEntity.create(session, xyzModel).also {
                             it.setScale(0.015f)
                             it.setHidden(true)
                         }
@@ -199,9 +196,9 @@ class HandTrackingActivity : ComponentActivity() {
                     gltfModelEntity.setHidden(false)
                 }
                 val transformedPose =
-                    jxrCoreSession.perceptionSpace.transformPoseTo(
+                    session.scene.perceptionSpace.transformPoseTo(
                         handState.handJoints[jointType]!!,
-                        jxrCoreSession.activitySpace,
+                        session.scene.activitySpace,
                     )
                 gltfModelEntity.setPose(transformedPose)
             } else {
@@ -306,6 +303,8 @@ class HandTrackingActivity : ComponentActivity() {
             if (leftHand == null || rightHand == null) {
                 Text("Hand module is not supported.")
             } else {
+                val handedness = Hand.getHandedness(contentResolver)
+                Text("Handedness: ${handedness}")
                 val leftHandState = leftHand.state.collectAsState().value
                 val rightHandState = rightHand.state.collectAsState().value
                 Text("Left hand tracking state: ${leftHandState.trackingState}")

@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime.internal
+package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.internal.GltfEntity
+import androidx.xr.runtime.internal.MaterialResource
 
-/** Custom class for exceptions that returned from [Session.configure()]. */
+// TODO: b/405218432 - Implement this correctly instead of stubbing it out.
+/** Test-only implementation of [GltfEntity] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-open public class ConfigurationException(message: String) : Exception(message)
+public class FakeGltfEntity : GltfEntity, FakeEntity() {
 
-/**
- * A [Feature] attempting to be enabled did not have their required permission(s) granted before
- * configuration.
- */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class PermissionNotGrantedException() :
-    ConfigurationException("Failed to configure session, required permission(s) are not granted.")
+    @GltfEntity.AnimationState override val animationState: Int = GltfEntity.AnimationState.STOPPED
+
+    override fun startAnimation(loop: Boolean, animationName: String?) {}
+
+    override fun stopAnimation() {}
+
+    override fun setMaterialOverride(material: MaterialResource, meshName: String) {}
+}

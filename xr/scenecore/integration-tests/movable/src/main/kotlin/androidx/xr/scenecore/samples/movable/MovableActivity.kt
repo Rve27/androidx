@@ -23,6 +23,8 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
+import androidx.xr.runtime.Session
+import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Ray
 import androidx.xr.runtime.math.Vector3
@@ -35,7 +37,7 @@ import androidx.xr.scenecore.PermissionHelper
 import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.PlaneSemantic
 import androidx.xr.scenecore.PlaneType
-import androidx.xr.scenecore.Session
+import androidx.xr.scenecore.scene
 import java.util.concurrent.Executors
 
 /**
@@ -51,7 +53,7 @@ import java.util.concurrent.Executors
  */
 class MovableActivity : AppCompatActivity() {
 
-    private val session by lazy { Session.create(this) }
+    private val session by lazy { (Session.create(this) as SessionCreateSuccess).session }
     private var systemMovable = false
     private var scaleInZ = false
     private var anchorable = false
@@ -118,7 +120,7 @@ class MovableActivity : AppCompatActivity() {
         parentSwitch.setOnCheckedChangeListener { _, isChecked: Boolean ->
             when (isChecked) {
                 true -> movablePanelEntity.setParent(stationaryPanelEntity)
-                false -> movablePanelEntity.setParent(session.activitySpace)
+                false -> movablePanelEntity.setParent(session.scene.activitySpace)
             }
             movablePanelEntity.setPose(Pose(Vector3(0f, 0f, 0.1f)))
         }

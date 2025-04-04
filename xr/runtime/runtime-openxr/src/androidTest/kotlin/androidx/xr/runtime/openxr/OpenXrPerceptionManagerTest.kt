@@ -22,6 +22,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import androidx.xr.runtime.internal.AnchorResourcesExhaustedException
+import androidx.xr.runtime.internal.Config
 import androidx.xr.runtime.internal.HandJointType
 import androidx.xr.runtime.internal.TrackingState
 import androidx.xr.runtime.math.Pose
@@ -270,6 +271,7 @@ class OpenXrPerceptionManagerTest {
             openXrManager = OpenXrManager(it, underTest, timeSource)
             openXrManager.create()
             openXrManager.resume()
+            openXrManager.configure(Config(handTracking = Config.HandTrackingMode.Enabled))
 
             testBody()
 

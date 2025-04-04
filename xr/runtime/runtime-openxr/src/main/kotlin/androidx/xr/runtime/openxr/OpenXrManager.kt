@@ -74,6 +74,21 @@ internal constructor(
             -1000710000L ->
                 throw PermissionNotGrantedException() // XR_ERROR_PERMISSION_INSUFFICIENT
         }
+
+        if (config.handTracking != this.config.handTracking) {
+            if (config.handTracking == Config.HandTrackingMode.Enabled) {
+                perceptionManager.xrResources.addUpdatable(perceptionManager.xrResources.leftHand)
+                perceptionManager.xrResources.addUpdatable(perceptionManager.xrResources.rightHand)
+            } else {
+                perceptionManager.xrResources.removeUpdatable(
+                    perceptionManager.xrResources.leftHand
+                )
+                perceptionManager.xrResources.removeUpdatable(
+                    perceptionManager.xrResources.rightHand
+                )
+            }
+        }
+
         this.config = config
     }
 

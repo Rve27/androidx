@@ -81,6 +81,20 @@ class OpenXrManagerTest {
         assertThat(underTest.nativePointer).isGreaterThan(0L)
     }
 
+    @Test
+    fun configure_handTrackingEnabled_addsHandToUpdatables() = initOpenXrManagerAndRunTest {
+        check(underTest.config.handTracking == HandTrackingMode.Disabled)
+        check(perceptionManager.xrResources.updatables.isEmpty())
+
+        underTest.configure(Config(handTracking = Config.HandTrackingMode.Enabled))
+
+        assertThat(perceptionManager.xrResources.updatables)
+            .containsExactly(
+                perceptionManager.xrResources.leftHand,
+                perceptionManager.xrResources.rightHand,
+            )
+    }
+
     // TODO(b/392660855): Add a test for all APIs gated by a feature that needs to be configured.
     @Test
     fun configure_withSufficientPermissions_doesNotThrowException() = initOpenXrManagerAndRunTest {

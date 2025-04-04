@@ -75,23 +75,17 @@ class OpenXrPlaneTest {
 
     @Test
     fun createAnchor_addsAnchor() = initOpenXrManagerAndRunTest {
-        check(xrResources.updatables.size == 3)
+        check(xrResources.updatables.size == 1)
         check(xrResources.updatables.contains(underTest))
 
         val anchor = underTest.createAnchor(Pose())
 
-        assertThat(xrResources.updatables)
-            .containsExactly(
-                underTest,
-                xrResources.leftHand,
-                xrResources.rightHand,
-                anchor as Updatable
-            )
+        assertThat(xrResources.updatables).containsExactly(underTest, anchor as Updatable)
     }
 
     @Test
     fun createAnchor_anchorResourcesExhausted_throwsException() = initOpenXrManagerAndRunTest {
-        check(xrResources.updatables.size == 3)
+        check(xrResources.updatables.size == 1)
         check(xrResources.updatables.contains(underTest))
 
         // Number of calls comes from 'kAnchorResourcesLimit' defined in
@@ -106,14 +100,13 @@ class OpenXrPlaneTest {
     @Test
     fun detachAnchor_removesAnchorWhenItDetaches() = initOpenXrManagerAndRunTest {
         val anchor = underTest.createAnchor(Pose())
-        check(xrResources.updatables.size == 4)
+        check(xrResources.updatables.size == 2)
         check(xrResources.updatables.contains(underTest))
         check(xrResources.updatables.contains(anchor as Updatable))
 
         anchor.detach()
 
-        assertThat(xrResources.updatables)
-            .containsExactly(underTest, xrResources.leftHand, xrResources.rightHand)
+        assertThat(xrResources.updatables).containsExactly(underTest)
     }
 
     @Test

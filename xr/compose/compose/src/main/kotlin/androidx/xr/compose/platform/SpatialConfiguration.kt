@@ -28,7 +28,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.xr.compose.unit.DpVolumeSize
 import androidx.xr.compose.unit.toDpVolumeSize
-import androidx.xr.scenecore.Session
+import androidx.xr.runtime.Session
+import androidx.xr.scenecore.scene
 
 /**
  * The name of the system feature that indicates whether the system supports XR Spatial features.
@@ -157,18 +158,18 @@ private class SessionSpatialConfiguration(
     override val hasXrSpatialFeature: Boolean,
 ) : SpatialConfiguration {
     private var boundsState by
-        mutableStateOf(session.activitySpace.getBounds()).apply {
-            session.activitySpace.addBoundsChangedListener { value = it }
+        mutableStateOf(session.scene.activitySpace.getBounds()).apply {
+            session.scene.activitySpace.addBoundsChangedListener { value = it }
         }
 
     override val bounds: DpVolumeSize
         get() = boundsState.toDpVolumeSize()
 
     override fun requestHomeSpaceMode() {
-        session.spatialEnvironment.requestHomeSpaceMode()
+        session.scene.spatialEnvironment.requestHomeSpaceMode()
     }
 
     override fun requestFullSpaceMode() {
-        session.spatialEnvironment.requestFullSpaceMode()
+        session.scene.spatialEnvironment.requestFullSpaceMode()
     }
 }

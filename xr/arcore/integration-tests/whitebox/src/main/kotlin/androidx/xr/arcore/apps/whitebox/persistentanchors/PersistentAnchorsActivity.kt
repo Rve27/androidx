@@ -70,7 +70,7 @@ import androidx.xr.scenecore.AnchorEntity
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.PixelDimensions
-import androidx.xr.scenecore.Session as JxrCoreSession
+import androidx.xr.scenecore.scene
 import java.util.UUID
 import kotlin.collections.List
 import kotlin.time.Duration.Companion.seconds
@@ -83,7 +83,6 @@ class PersistentAnchorsActivity : ComponentActivity() {
 
     private lateinit var session: Session
     private lateinit var sessionHelper: SessionLifecycleHelper
-    private lateinit var jxrCoreSession: JxrCoreSession
     private lateinit var movableEntity: Entity
     private val movableEntityOffset = Pose(Vector3(0f, 1f, -2.0f))
     private val uuids = MutableStateFlow<List<UUID>>(emptyList())
@@ -95,8 +94,6 @@ class PersistentAnchorsActivity : ComponentActivity() {
         sessionHelper = SessionLifecycleHelper(this)
         session = sessionHelper.session
         lifecycle.addObserver(sessionHelper)
-
-        jxrCoreSession = JxrCoreSession.create(this)
 
         createTargetPanel()
 
@@ -115,13 +112,13 @@ class PersistentAnchorsActivity : ComponentActivity() {
         configureComposeView(composeView, this)
         movableEntity =
             PanelEntity.create(
-                jxrCoreSession,
+                session,
                 composeView,
                 PixelDimensions(640, 640),
                 "movableEntity",
                 movableEntityOffset,
             )
-        movableEntity.setParent(jxrCoreSession.activitySpace)
+        movableEntity.setParent(session.scene.activitySpace)
     }
 
     private fun onResumeCallback() {
@@ -135,9 +132,9 @@ class PersistentAnchorsActivity : ComponentActivity() {
     }
 
     private fun updatePlaneEntity() {
-        jxrCoreSession.spatialUser.head?.let {
+        session.scene.spatialUser.head?.let {
             movableEntity.setPose(
-                it.transformPoseTo(movableEntityOffset, jxrCoreSession.activitySpace)
+                it.transformPoseTo(movableEntityOffset, session.scene.activitySpace)
             )
         }
     }
@@ -225,9 +222,9 @@ class PersistentAnchorsActivity : ComponentActivity() {
         // the target panel and future anchors.
         anchorOffset.value += 0.25f
         val anchorPose =
-            jxrCoreSession.activitySpace.transformPoseTo(
+            session.scene.activitySpace.transformPoseTo(
                 movableEntity.getPose().translate(Vector3(anchorOffset.value, 0f, 0f)),
-                jxrCoreSession.perceptionSpace,
+                session.scene.perceptionSpace,
             )
         try {
             when (val anchorResult = Anchor.create(session, anchorPose)) {
@@ -249,10 +246,10 @@ class PersistentAnchorsActivity : ComponentActivity() {
     private fun createAnchorPanel(anchor: Anchor) {
         val composeView = ComposeView(this)
         configureComposeView(composeView, this)
-        val anchorEntity = AnchorEntity.create(jxrCoreSession, anchor)
+        val anchorEntity = AnchorEntity.create(session, anchor)
         val panelEntity =
             PanelEntity.create(
-                jxrCoreSession,
+                session,
                 composeView,
                 PixelDimensions(640, 640),
                 "anchorEntity ${anchor.hashCode()}",

@@ -17,6 +17,8 @@
 package androidx.xr.arcore
 
 import android.app.Activity
+import android.content.ContentResolver
+import android.provider.Settings
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
@@ -47,6 +49,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
 
 @RunWith(AndroidJUnit4::class)
 class HandTest {
@@ -65,12 +68,15 @@ class HandTest {
             "android.permission.HAND_TRACKING",
         )
 
+    private lateinit var mockContentResolver: ContentResolver
+
     @Before
     fun setUp() {
         xrResourcesManager = XrResourcesManager()
         testDispatcher = StandardTestDispatcher()
         testScope = TestScope(testDispatcher)
         FakeRuntimeAnchor.anchorsCreated = 0
+        mockContentResolver = mock<ContentResolver>()
     }
 
     @After
@@ -199,6 +205,20 @@ class HandTest {
             )
         }
     }
+
+    @Test
+    fun getHandedness_settingNotConfigured_returnsUnknown() =
+        createTestSessionAndRunTest(testDispatcher) {
+            assertThat(Hand.getHandedness(mockContentResolver)).isEqualTo(Hand.Handedness.UNKNOWN)
+        }
+
+    @Test
+    fun getHandedness_settingConfigured_returnsCorrectHandedness() =
+        createTestSessionAndRunTest(testDispatcher) {
+            Settings.System.putInt(mockContentResolver, Hand.PRIMARY_HAND_SETTING_NAME, 1)
+
+            assertThat(Hand.getHandedness(mockContentResolver)).isEqualTo(Hand.Handedness.RIGHT)
+        }
 
     private fun createTestSessionAndRunTest(
         coroutineDispatcher: CoroutineDispatcher = StandardTestDispatcher(),

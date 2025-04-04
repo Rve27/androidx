@@ -45,6 +45,7 @@ dependencies {
     androidTestImplementation(libs.truth)
     androidTestImplementation("androidx.appcompat:appcompat:1.2.0")
     androidTestImplementation(project(":kruth:kruth"))
+    androidTestImplementation(project(":xr:runtime:runtime-testing"))
 }
 
 android {

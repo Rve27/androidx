@@ -608,9 +608,11 @@ public class MovableComponentImplTest {
         assertThat(entity.addComponent(movableComponent)).isTrue();
         ReformOptions options = mNodeRepository.getReformOptions(getEntityNode(entity));
         MoveEventListener mockMoveEventListener = mock(MoveEventListener.class);
+        MoveEventListener mockMoveEventListener2 = mock(MoveEventListener.class);
         FakeScheduledExecutorService executorService = new FakeScheduledExecutorService();
 
         movableComponent.addMoveEventListener(executorService, mockMoveEventListener);
+        movableComponent.addMoveEventListener(directExecutor(), mockMoveEventListener2);
         assertThat(options.getEventCallback()).isNotNull();
         assertThat(options.getEventExecutor()).isNotNull();
 
@@ -622,6 +624,7 @@ public class MovableComponentImplTest {
         assertThat(executorService.hasNext()).isTrue();
         executorService.runAll();
         verify(mockMoveEventListener).onMoveEvent(any());
+        verify(mockMoveEventListener2).onMoveEvent(any());
     }
 
     @Test

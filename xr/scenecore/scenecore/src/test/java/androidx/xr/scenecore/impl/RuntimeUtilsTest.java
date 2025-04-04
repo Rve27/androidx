@@ -38,13 +38,13 @@ import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.perception.Plane;
 
-import com.android.extensions.xr.VisibilityChangedEvent;
 import com.android.extensions.xr.environment.EnvironmentVisibilityState;
 import com.android.extensions.xr.environment.PassthroughVisibilityState;
 import com.android.extensions.xr.environment.ShadowPassthroughVisibilityState;
 import com.android.extensions.xr.node.Mat4f;
 import com.android.extensions.xr.node.Vec3;
 import com.android.extensions.xr.space.ShadowSpatialCapabilities;
+import com.android.extensions.xr.space.VisibilityState;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -534,23 +534,22 @@ public final class RuntimeUtilsTest {
     public void convertSpatialVisibility_convertsFromExtensionVisibility() {
         assertThat(
                         RuntimeUtils.convertSpatialVisibility(
-                                new VisibilityChangedEvent(VisibilityChangedEvent.VISIBLE)))
+                                new VisibilityState(VisibilityState.FULLY_VISIBLE)))
                 .isEqualTo(new SpatialVisibility(SpatialVisibility.WITHIN_FOV));
 
         assertThat(
                         RuntimeUtils.convertSpatialVisibility(
-                                new VisibilityChangedEvent(
-                                        VisibilityChangedEvent.PARTIALLY_VISIBLE)))
+                                new VisibilityState(VisibilityState.PARTIALLY_VISIBLE)))
                 .isEqualTo(new SpatialVisibility(SpatialVisibility.PARTIALLY_WITHIN_FOV));
 
         assertThat(
                         RuntimeUtils.convertSpatialVisibility(
-                                new VisibilityChangedEvent(VisibilityChangedEvent.OUTSIDE_OF_FOV)))
+                                new VisibilityState(VisibilityState.NOT_VISIBLE)))
                 .isEqualTo(new SpatialVisibility(SpatialVisibility.OUTSIDE_FOV));
 
         assertThat(
                         RuntimeUtils.convertSpatialVisibility(
-                                new VisibilityChangedEvent(VisibilityChangedEvent.UNKNOWN)))
+                                new VisibilityState(VisibilityState.UNKNOWN)))
                 .isEqualTo(new SpatialVisibility(SpatialVisibility.UNKNOWN));
     }
 
@@ -558,6 +557,6 @@ public final class RuntimeUtilsTest {
     public void convertSpatialVisibility_throwsExceptionForInvalidValue() {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> RuntimeUtils.convertSpatialVisibility(new VisibilityChangedEvent(100)));
+                () -> RuntimeUtils.convertSpatialVisibility(new VisibilityState(100)));
     }
 }

@@ -20,6 +20,10 @@ import android.os.Bundle
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.xr.runtime.Config
+import androidx.xr.runtime.PlaneTrackingMode
+import androidx.xr.runtime.Session
+import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
@@ -34,10 +38,10 @@ import androidx.xr.scenecore.PermissionHelper
 import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.PlaneSemantic
 import androidx.xr.scenecore.PlaneType
-import androidx.xr.scenecore.Session
 import androidx.xr.scenecore.Space
 import androidx.xr.scenecore.samples.commontestview.DebugTextLinearView
 import androidx.xr.scenecore.samples.commontestview.DebugTextPanel
+import androidx.xr.scenecore.scene
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import java.lang.UnsupportedOperationException
 import kotlin.math.cos
@@ -49,7 +53,7 @@ import kotlinx.coroutines.launch
 
 class TransformationTestsActivity : AppCompatActivity() {
 
-    private val session by lazy { Session.create(this) }
+    private val session by lazy { (Session.create(this) as SessionCreateSuccess).session }
 
     private var anchor: AnchorEntity? = null
     private var moveableActive = false
@@ -72,6 +76,8 @@ class TransformationTestsActivity : AppCompatActivity() {
                 PermissionHelper.SCENE_UNDERSTANDING_PERMISSION_CODE,
             )
         }
+        session.resume()
+        session.configure(Config(planeTracking = PlaneTrackingMode.HorizontalAndVertical))
         setupMovableMainPanel()
 
         // Create a transform widget model and assign it to an Anchor
@@ -109,7 +115,7 @@ class TransformationTestsActivity : AppCompatActivity() {
 
         // Create debug panels for the activitySpace and the Anchor
         val activitySpaceDebugPanel =
-            createDebugPanelAndLabel("ActivitySpace", session.activitySpace)
+            createDebugPanelAndLabel("ActivitySpace", session.scene.activitySpace)
         val anchorDebugPanel = createDebugPanelAndLabel("Anchor", anchor!!)
 
         // Set callbacks for the Activity Space and anchor's underlying space updating
@@ -119,7 +125,7 @@ class TransformationTestsActivity : AppCompatActivity() {
             "onActivitySpaceUpdatedCount",
             (++onActivitySpaceUpdatedCount).toString(),
         )
-        session.activitySpace.setOnSpaceUpdatedListener({
+        session.scene.activitySpace.setOnSpaceUpdatedListener({
             // Use lifecycleScope to update the UI view in the same thread it was created in
             lifecycleScope.launch {
                 activitySpaceDebugPanel.view.setLine(
@@ -158,7 +164,11 @@ class TransformationTestsActivity : AppCompatActivity() {
                     updateDebugTextPanel(panel.view, panel.trackedEntity!!, anchorState)
                 }
                 // Also update the main activity panel
-                updateDebugTextPanel(mainActivityDebugView, session.mainPanelEntity, anchorState)
+                updateDebugTextPanel(
+                    mainActivityDebugView,
+                    session.scene.mainPanelEntity,
+                    anchorState
+                )
             }
         }
     }
@@ -176,10 +186,12 @@ class TransformationTestsActivity : AppCompatActivity() {
         movablePanelSwitch.setOnCheckedChangeListener { _, isChecked ->
             when (isChecked) {
                 true -> {
-                    moveableActive = session.mainPanelEntity.addComponent(movableComponent)
+                    moveableActive = session.scene.mainPanelEntity.addComponent(movableComponent)
                 }
                 false ->
-                    moveableActive.let { session.mainPanelEntity.removeComponent(movableComponent) }
+                    moveableActive.let {
+                        session.scene.mainPanelEntity.removeComponent(movableComponent)
+                    }
             }
         }
     }
@@ -199,7 +211,13 @@ class TransformationTestsActivity : AppCompatActivity() {
 
         // Create the debug panel with info on the tracked entity
         val debugPanel =
-            DebugTextPanel(this, session, session.activitySpace, name = name, pose = panelPose)
+            DebugTextPanel(
+                this,
+                session,
+                session.scene.activitySpace,
+                name = name,
+                pose = panelPose
+            )
         debugPanel.trackedEntity = trackedEntity
         debugTextPanelsToUpdate.add(debugPanel)
 
@@ -238,11 +256,12 @@ class TransformationTestsActivity : AppCompatActivity() {
         view.setLine("worldSpacePose", trackedEntity.getActivitySpacePose().toFormattedString())
         view.setLine("worldSpaceScale", trackedEntity.getScale(Space.REAL_WORLD).toString())
 
-        val activitySpacePose = trackedEntity.transformPoseTo(Pose.Identity, session.activitySpace)
+        val activitySpacePose =
+            trackedEntity.transformPoseTo(Pose.Identity, session.scene.activitySpace)
         view.setLine("ActivitySpacePose", activitySpacePose.toFormattedString())
 
         val mainPanelSpacePose =
-            trackedEntity.transformPoseTo(Pose.Identity, session.mainPanelEntity)
+            trackedEntity.transformPoseTo(Pose.Identity, session.scene.mainPanelEntity)
         view.setLine("MainPanelSpacePose", mainPanelSpacePose.toFormattedString())
 
         // Pose in Anchor Space is only retrieved if anchor is anchored
@@ -268,7 +287,7 @@ class TransformationTestsActivity : AppCompatActivity() {
     private fun createModelSolarSystem(session: Session, model: GltfModel) {
         val sunShark = GltfModelEntity.create(session, model, Pose(Vector3(-0.5f, 3f, -9f)))
         sunShark.setScale(3f)
-        sunShark.setParent(session.activitySpace)
+        sunShark.setParent(session.scene.activitySpace)
 
         val planetShark = GltfModelEntity.create(session, model, Pose(Vector3(-1f, 3f, -9f)))
         planetShark.setScale(0.5f)
