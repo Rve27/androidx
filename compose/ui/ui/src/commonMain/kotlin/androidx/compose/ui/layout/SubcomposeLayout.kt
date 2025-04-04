@@ -268,7 +268,10 @@ class SubcomposeLayoutState(private val slotReusePolicy: SubcomposeSlotReusePoli
         /**
          * Returns `true` when the [PausedPrecomposition] is complete. [isComplete] matches the last
          * value returned from [resume]. Once a [PausedPrecomposition] is [isComplete] the [apply]
-         * method should be called.
+         * method should be called. If the [apply] method is not called synchronously and
+         * immediately after [resume] returns `true` then this [isComplete] can return `false` as
+         * any state changes read by the paused composition while it is paused will cause the
+         * composition to require the paused composition to need to be resumed before it is used.
          */
         val isComplete: Boolean
 
@@ -295,6 +298,13 @@ class SubcomposeLayoutState(private val slotReusePolicy: SubcomposeSlotReusePoli
         /**
          * Apply the composition. This is the last step of a paused composition and is required to
          * be called prior to the composition is usable.
+         *
+         * Calling [apply] should always be proceeded with a check of [isComplete] before it is
+         * called and potentially calling [resume] in a loop until [isComplete] returns `true`. This
+         * can happen if [resume] returned `true` but [apply] was not synchronously called
+         * immediately afterwords. Any state that was read that changed between when [resume] being
+         * called and [apply] being called may require the paused composition to be resumed before
+         * applied.
          *
          * @return [PrecomposedSlotHandle] you can use to premeasure the slot as well, or to dispose
          *   the composed content.
