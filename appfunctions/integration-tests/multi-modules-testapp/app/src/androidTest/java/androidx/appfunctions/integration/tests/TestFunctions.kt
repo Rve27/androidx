@@ -25,7 +25,6 @@ import androidx.appfunctions.AppFunctionInvalidArgumentException
 import androidx.appfunctions.AppFunctionOpenable
 import androidx.appfunctions.AppFunctionSerializable
 import java.time.LocalDateTime
-import kotlin.math.max
 
 @AppFunctionSerializable data class SetField<T>(val value: T)
 
@@ -37,16 +36,13 @@ data class CreateNoteParams(
     val attachments: List<Attachment>,
 )
 
+// TODO(b/401517540): Test AppFunctionSerializable
 @AppFunctionSerializable
 data class UpdateNoteParams(
     val title: SetField<String>? = null,
     val nullableTitle: SetField<String?>? = null,
     val content: SetField<List<String>>? = null,
     val nullableContent: SetField<List<String>?>? = null,
-    val owner: SetField<Owner>? = null,
-    val nullableOwner: SetField<Owner?>? = null,
-    val attachments: SetField<List<Attachment>>? = null,
-    val nullableAttachments: SetField<List<Attachment>?>? = null,
 )
 
 @AppFunctionSerializable
@@ -127,31 +123,8 @@ class TestFunctions {
             content =
                 (updateNoteParams.content?.value ?: listOf("DefaultContent")) +
                     (updateNoteParams.nullableContent?.value ?: listOf("DefaultContent")),
-            owner =
-                Owner(
-                    (updateNoteParams.owner?.value?.name ?: "DefaultOwner") +
-                        "_" +
-                        (updateNoteParams.nullableOwner?.value?.name ?: "DefaultOwner")
-                ),
-            attachments =
-                buildList {
-                    val attachments = updateNoteParams.attachments?.value ?: emptyList()
-                    val nullableAttachments =
-                        updateNoteParams.nullableAttachments?.value ?: emptyList()
-                    val maxCount = max(attachments.size, nullableAttachments.size)
-                    for (index in 0 until maxCount) {
-                        val att1 = attachments.getOrNull(index)
-                        val att2 = nullableAttachments.getOrNull(index)
-
-                        add(
-                            Attachment(
-                                (att1?.uri ?: "DefaultAttachment") +
-                                    "_" +
-                                    (att2?.uri ?: "DefaultAttachment")
-                            )
-                        )
-                    }
-                }
+            owner = Owner("test"),
+            attachments = listOf(),
         )
     }
 

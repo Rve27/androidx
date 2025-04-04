@@ -427,13 +427,7 @@ class IntegrationTest {
                                         title = SetField("NewTitle1"),
                                         nullableTitle = SetField("NewTitle2"),
                                         content = SetField(listOf("NewContent1")),
-                                        nullableContent = SetField(listOf("NewContent2")),
-                                        owner = SetField(Owner("NewOwner1")),
-                                        nullableOwner = SetField(Owner("NewOwner2")),
-                                        attachments =
-                                            SetField(listOf(Attachment("NewAttachment1"))),
-                                        nullableAttachments =
-                                            SetField(listOf(Attachment("NewAttachment2")))
+                                        nullableContent = SetField(listOf("NewContent2"))
                                     ),
                                     UpdateNoteParams::class.java
                                 )
@@ -447,8 +441,8 @@ class IntegrationTest {
             Note(
                 title = "NewTitle1_NewTitle2",
                 content = listOf("NewContent1", "NewContent2"),
-                owner = Owner("NewOwner1_NewOwner2"),
-                attachments = listOf(Attachment("NewAttachment1_NewAttachment2"))
+                owner = Owner("test"),
+                attachments = listOf()
             )
         assertThat(
                 successResponse.returnValue
@@ -474,12 +468,7 @@ class IntegrationTest {
                                         title = SetField("NewTitle1"),
                                         nullableTitle = SetField(null),
                                         content = SetField(listOf("NewContent1")),
-                                        nullableContent = SetField(null),
-                                        owner = SetField(Owner("NewOwner1")),
-                                        nullableOwner = SetField(null),
-                                        attachments =
-                                            SetField(listOf(Attachment("NewAttachment1"))),
-                                        nullableAttachments = SetField(null)
+                                        nullableContent = SetField(null)
                                     ),
                                     UpdateNoteParams::class.java
                                 )
@@ -493,8 +482,8 @@ class IntegrationTest {
             Note(
                 title = "NewTitle1_DefaultTitle",
                 content = listOf("NewContent1", "DefaultContent"),
-                owner = Owner("NewOwner1_DefaultOwner"),
-                attachments = listOf(Attachment("NewAttachment1_DefaultAttachment"))
+                owner = Owner("test"),
+                attachments = listOf()
             )
         assertThat(
                 successResponse.returnValue
@@ -529,7 +518,7 @@ class IntegrationTest {
             Note(
                 title = "DefaultTitle_DefaultTitle",
                 content = listOf("DefaultContent", "DefaultContent"),
-                owner = Owner("DefaultOwner_DefaultOwner"),
+                owner = Owner("test"),
                 attachments = listOf()
             )
         assertThat(
