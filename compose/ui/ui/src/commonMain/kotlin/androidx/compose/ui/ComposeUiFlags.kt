@@ -97,6 +97,12 @@ object ComposeUiFlags {
      */
     @Suppress("MutableBareField") @JvmField var isFocusActionExitsTouchModeEnabled: Boolean = true
 
+    /**
+     * With this flag on, Modifier.focusRestorer() will not pin the item that needs to be restored.
+     * Users are responsible for providing a key for the item that needs to be restored b/330696779.
+     */
+    @Suppress("MutableBareField") @JvmField var isNoPinningInFocusRestorationEnabled: Boolean = true
+
     /*
      * Enable lower-level logging of input events where a cancellation event does not stop input
      * events from finishing processing before the cancellation event. This is to track down why a
