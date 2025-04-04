@@ -115,7 +115,7 @@ class ViewModelStoreNavEntryDecoratorTest {
             backStack = remember { mutableStateListOf("Home") }
             SinglePaneNavDisplay(
                 backStack = backStack,
-                localProviders =
+                entryDecorators =
                     listOf(SavedStateNavEntryDecorator, ViewModelStoreNavEntryDecorator),
                 onBack = { backStack.removeAt(backStack.lastIndex) },
             ) { key ->
@@ -166,7 +166,7 @@ class ViewModelStoreNavEntryDecoratorTest {
             backStack = remember { mutableStateListOf("Home") }
             SinglePaneNavDisplay(
                 backStack = backStack,
-                localProviders =
+                entryDecorators =
                     listOf(SavedStateNavEntryDecorator, ViewModelStoreNavEntryDecorator),
                 onBack = { backStack.removeAt(backStack.lastIndex) },
             ) { key ->

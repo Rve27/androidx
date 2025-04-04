@@ -51,7 +51,7 @@ fun BaseNav() {
     val showDialog = remember { mutableStateOf(false) }
     SinglePaneNavDisplay(
         backStack = backStack,
-        localProviders =
+        entryDecorators =
             listOf(
                 SaveableStateNavEntryDecorator,
                 SavedStateNavEntryDecorator,
@@ -125,12 +125,12 @@ fun <T : Any> NavSharedElementSample() {
 fun <T : Any> CustomBasicDisplay(
     backstack: List<T>,
     modifier: Modifier = Modifier,
-    localProviders: List<NavEntryDecorator> = emptyList(),
+    entryDecorators: List<NavEntryDecorator> = emptyList(),
     onBack: () -> Unit = { if (backstack is MutableList) backstack.removeAt(backstack.size - 1) },
     entryProvider: (key: T) -> NavEntry<out T>
 ) {
     BackHandler(backstack.size > 1, onBack)
-    DecoratedNavEntryProvider(backstack, entryProvider, localProviders) { entries ->
+    DecoratedNavEntryProvider(backstack, entryProvider, entryDecorators) { entries ->
         val entry = entries.last()
         Box(modifier = modifier) { entry.content.invoke(entry.key) }
     }

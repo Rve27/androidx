@@ -84,7 +84,7 @@ public object SinglePaneNavDisplay {
  * The NavDisplay displays the content associated with the last key on the back stack.
  *
  * @param backStack the collection of keys that represents the state that needs to be handled
- * @param localProviders list of [NavEntryDecorator] to add information to the provided entriess
+ * @param entryDecorators list of [NavEntryDecorator] to add information to the provided entriess
  * @param modifier the modifier to be applied to the layout.
  * @param contentAlignment The [Alignment] of the [AnimatedContent]
  * @param enterTransition Default [EnterTransition] when navigating to [NavEntry]s. Can be
@@ -108,7 +108,7 @@ public object SinglePaneNavDisplay {
 public fun <T : Any> SinglePaneNavDisplay(
     backStack: List<T>,
     modifier: Modifier = Modifier,
-    localProviders: List<NavEntryDecorator> = listOf(SaveableStateNavEntryDecorator),
+    entryDecorators: List<NavEntryDecorator> = listOf(SaveableStateNavEntryDecorator),
     contentAlignment: Alignment = Alignment.TopStart,
     sizeTransform: SizeTransform? = null,
     enterTransition: EnterTransition =
@@ -150,7 +150,7 @@ public fun <T : Any> SinglePaneNavDisplay(
     DecoratedNavEntryProvider(
         backStack,
         entryProvider,
-        localProviders + transitionAwareLifecycleNavEntryDecorator
+        entryDecorators + transitionAwareLifecycleNavEntryDecorator
     ) { entries ->
         // Make a copy shallow copy so that transition.currentState and transition.targetState are
         // different backstack instances. This ensures currentState reflects the old backstack when
