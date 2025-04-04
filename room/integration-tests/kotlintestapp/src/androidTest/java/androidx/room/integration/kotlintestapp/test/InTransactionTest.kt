@@ -16,6 +16,7 @@
 
 package androidx.room.integration.kotlintestapp.test
 
+import android.database.sqlite.SQLiteTransactionListener
 import androidx.kruth.assertThat
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -23,6 +24,7 @@ import androidx.room.integration.kotlintestapp.TestDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
+import kotlin.test.fail
 import org.junit.Test
 
 @SmallTest
@@ -45,5 +47,65 @@ class InTransactionTest {
         database.close()
         assertThat(database.inTransaction()).isFalse()
         assertThat(onOpenCalled).isEqualTo(0)
+    }
+
+    @Test
+    fun beginTransactionWithListener_commit() {
+        val roomDb =
+            Room.inMemoryDatabaseBuilder<TestDatabase>(ApplicationProvider.getApplicationContext())
+                .build()
+        val supportDb = roomDb.openHelper.writableDatabase
+        supportDb.beginTransactionWithListenerNonExclusive(
+            object : SQLiteTransactionListener {
+                override fun onBegin() {
+                    // TODO(b/408279360): Assert this case once fixed in framework.
+                    // We do not assert that `inTransaction()` is true here because at the time this
+                    // callback is invoked the transaction stack has not been set and the API
+                    // will return false. Meanwhile starting a transaction here will fail due to
+                    // the recursive invocation of beginTransaction(), i.e. the database is
+                    // neither in a transaction nor once can be started at this time.
+                }
+
+                override fun onCommit() {
+                    assertThat(supportDb.inTransaction()).isTrue()
+                    roomDb.booksDao().insertPublisher("p1", "pub1")
+                }
+
+                override fun onRollback() {
+                    fail("onRollback should not be called")
+                }
+            }
+        )
+        supportDb.setTransactionSuccessful()
+        supportDb.endTransaction()
+
+        assertThat(roomDb.booksDao().getPublishers()).isNotEmpty()
+        roomDb.close()
+    }
+
+    @Test
+    fun beginTransactionWithListener_rollback() {
+        val roomDb =
+            Room.inMemoryDatabaseBuilder<TestDatabase>(ApplicationProvider.getApplicationContext())
+                .build()
+        val supportDb = roomDb.openHelper.writableDatabase
+        supportDb.beginTransactionWithListenerNonExclusive(
+            object : SQLiteTransactionListener {
+                override fun onBegin() {}
+
+                override fun onCommit() {
+                    fail("onCommit should not be called")
+                }
+
+                override fun onRollback() {
+                    assertThat(supportDb.inTransaction()).isTrue()
+                    roomDb.booksDao().insertPublisher("p1", "pub1")
+                }
+            }
+        )
+        supportDb.endTransaction()
+
+        assertThat(roomDb.booksDao().getPublishers()).isEmpty()
+        roomDb.close()
     }
 }

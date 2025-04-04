@@ -67,6 +67,10 @@ fun <R> performBlocking(
     db.assertNotMainThread()
     db.assertNotSuspendingTransaction()
     return runBlockingUninterruptible {
+        // If in compatibility mode and the database is already in a transaction, then do not
+        // start a nested transaction to avoid the overhead and because the SupportSQLite APIs
+        // do not support real SAVEPOINT-based nested transactions.
+        val inTransaction = !(db.inCompatibilityMode() && db.inTransaction()) && inTransaction
         db.internalPerform(isReadOnly, inTransaction) { connection ->
             val rawConnection = (connection as RawConnectionAccessor).rawConnection
             block.invoke(rawConnection)
