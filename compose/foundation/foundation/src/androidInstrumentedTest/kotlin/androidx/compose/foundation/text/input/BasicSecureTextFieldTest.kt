@@ -163,6 +163,27 @@ internal class BasicSecureTextFieldTest {
     }
 
     @Test
+    fun lastTypedCharacterIsRevealed_whenReplacingSelection() {
+        inputMethodInterceptor.setContent {
+            BasicSecureTextField(state = rememberTextFieldState(), modifier = Modifier.testTag(Tag))
+        }
+
+        with(rule.onNodeWithTag(Tag)) {
+            performTextInput("abc")
+            rule.mainClock.advanceTimeBy(200)
+            assertThat(fetchTextLayoutResult().layoutInput.text.text)
+                .isEqualTo("\u2022\u2022\u2022")
+            performTextInputSelection(TextRange(1, 2))
+            performTextInput("#")
+            rule.mainClock.advanceTimeBy(50)
+            assertThat(fetchTextLayoutResult().layoutInput.text.text).isEqualTo("\u2022#\u2022")
+            rule.mainClock.advanceTimeBy(1500)
+            assertThat(fetchTextLayoutResult().layoutInput.text.text)
+                .isEqualTo("\u2022\u2022\u2022")
+        }
+    }
+
+    @Test
     fun lastTypedCharacterIsRevealed_hidesAfterFocusIsLost() {
         inputMethodInterceptor.setContent {
             Column {
