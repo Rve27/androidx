@@ -153,11 +153,15 @@ public class WatchFacePushManager(private var context: Context) {
     }
 
     /**
-     * Updates an existing watch face that was previously added by this app. **Watch faces added by
-     * other apps or already existing on the device cannot be updated using this method.**
+     * Updates a watch face slot with a new watch face. **Watch faces added by other apps or already
+     * existing on the device cannot be updated using this method.** The new watch face could be a
+     * newer version of the existing watch face or a completely different watch face. If the slot is
+     * updated with a watch face that has the same package name as the existing watch face, all the
+     * associated user configuration settings of the watch face will be preserved. If the package
+     * name is different, the user configuration settings will be reset to the default values.
      *
-     * @param slotId The slot ID of the watch face to update.
-     * @param apkFd The [ParcelFileDescriptor] containing the updated watch face APK.
+     * @param slotId The slot ID to update.
+     * @param apkFd The [ParcelFileDescriptor] containing the new watch face APK.
      * @param validationToken A token proving that the watch face has gone through the required
      *   validation checks.
      * @return The [WatchFaceDetails] representing the updated watch face in the specified slot.
