@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RestrictTo;
+import androidx.biometric.BiometricPrompt;
+import androidx.biometric.PromptContentItemBulletedText;
+import androidx.biometric.PromptContentItemPlainText;
+import androidx.biometric.PromptContentView;
+import androidx.biometric.PromptContentViewWithMoreOptionsButton;
+import androidx.biometric.PromptVerticalListContentView;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -31,7 +38,8 @@ import java.util.concurrent.Executor;
  * Utility class for creating and converting between different types of prompt content view that may
  * be used internally by {@link BiometricPrompt}
  */
-class PromptContentViewUtils {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class PromptContentViewUtils {
     // Prevent instantiation.
     private PromptContentViewUtils() {
     }
@@ -46,7 +54,7 @@ class PromptContentViewUtils {
      * {@link android.hardware.biometrics.PromptContentView}.
      */
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-    static android.hardware.biometrics.@Nullable PromptContentView wrapForBiometricPrompt(
+    public static android.hardware.biometrics.@Nullable PromptContentView wrapForBiometricPrompt(
             @Nullable PromptContentView contentView, @NonNull Executor executor,
             DialogInterface.@NonNull OnClickListener moreOptionsButtonListener) {
 
@@ -86,8 +94,8 @@ class PromptContentViewUtils {
          * @return An instance of {@link android.hardware.biometrics.PromptVerticalListContentView}.
          */
         static android.hardware.biometrics.@NonNull PromptContentView
-                    createPromptVerticalListContentView(
-                            @NonNull PromptVerticalListContentView contentView) {
+                createPromptVerticalListContentView(
+                @NonNull PromptVerticalListContentView contentView) {
             android.hardware.biometrics.PromptVerticalListContentView.Builder
                     contentViewBuilder =
                     new android.hardware.biometrics.PromptVerticalListContentView.Builder();
@@ -122,9 +130,9 @@ class PromptContentViewUtils {
          */
         static android.hardware.biometrics.@NonNull PromptContentView
                 createPromptContentViewWithMoreOptionsButton(
-                        @NonNull PromptContentViewWithMoreOptionsButton contentView,
-                        @NonNull Executor executor,
-                        DialogInterface.@NonNull OnClickListener moreOptionsButtonListener) {
+                @NonNull PromptContentViewWithMoreOptionsButton contentView,
+                @NonNull Executor executor,
+                DialogInterface.@NonNull OnClickListener moreOptionsButtonListener) {
             android.hardware.biometrics.PromptContentViewWithMoreOptionsButton.Builder
                     contentViewBuilder =
                     new android.hardware.biometrics.PromptContentViewWithMoreOptionsButton

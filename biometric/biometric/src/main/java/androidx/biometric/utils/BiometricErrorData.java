@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
+
+import androidx.annotation.RestrictTo;
+import androidx.biometric.BiometricPrompt;
 
 import org.jspecify.annotations.Nullable;
 
@@ -24,34 +27,37 @@ import java.util.Arrays;
  * A container for data associated with a biometric authentication error, which may be handled by
  * the client application's callback.
  */
-class BiometricErrorData {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class BiometricErrorData {
     /**
      * An integer ID associated with this error.
      */
-    @BiometricPrompt.AuthenticationError private final int mErrorCode;
+    @BiometricPrompt.AuthenticationError
+    private final int mErrorCode;
 
     /**
      * A human-readable message that describes the error.
      */
     private final @Nullable CharSequence mErrorMessage;
 
-    BiometricErrorData(int errorCode, @Nullable CharSequence errorMessage) {
+    public BiometricErrorData(int errorCode, @Nullable CharSequence errorMessage) {
         mErrorCode = errorCode;
         mErrorMessage = errorMessage;
     }
 
     @BiometricPrompt.AuthenticationError
-    int getErrorCode() {
+    public int getErrorCode() {
         return mErrorCode;
     }
 
-    @Nullable CharSequence getErrorMessage() {
+    @Nullable
+    public CharSequence getErrorMessage() {
         return mErrorMessage;
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(new Object[] {mErrorCode, convertToString(mErrorMessage)});
+        return Arrays.hashCode(new Object[]{mErrorCode, convertToString(mErrorMessage)});
     }
 
     @Override

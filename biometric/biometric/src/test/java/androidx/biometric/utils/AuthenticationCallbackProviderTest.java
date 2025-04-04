@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -24,6 +24,8 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import android.os.Build;
+
+import androidx.biometric.BiometricPrompt;
 
 import org.junit.Before;
 import org.junit.Rule;

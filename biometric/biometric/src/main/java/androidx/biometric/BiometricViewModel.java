@@ -24,6 +24,11 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.RestrictTo;
+import androidx.biometric.utils.AuthenticationCallbackProvider;
+import androidx.biometric.utils.AuthenticatorUtils;
+import androidx.biometric.utils.BiometricErrorData;
+import androidx.biometric.utils.CancellationSignalProvider;
+import androidx.biometric.utils.CryptoObjectUtils;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -78,7 +83,7 @@ public class BiometricViewModel extends ViewModel {
         }
 
         @Override
-        void onSuccess(BiometricPrompt.@NonNull AuthenticationResult result) {
+        public void onSuccess(BiometricPrompt.@NonNull AuthenticationResult result) {
             if (mViewModelRef.get() != null && mViewModelRef.get().isAwaitingResult()) {
                 // Try to infer the authentication type if unknown.
                 if (result.getAuthenticationType()
@@ -93,7 +98,7 @@ public class BiometricViewModel extends ViewModel {
         }
 
         @Override
-        void onError(int errorCode, @Nullable CharSequence errorMessage) {
+        public  void onError(int errorCode, @Nullable CharSequence errorMessage) {
             if (mViewModelRef.get() != null
                     && !mViewModelRef.get().isConfirmingDeviceCredential()
                     && mViewModelRef.get().isAwaitingResult()) {
@@ -103,14 +108,14 @@ public class BiometricViewModel extends ViewModel {
         }
 
         @Override
-        void onHelp(@Nullable CharSequence helpMessage) {
+        public  void onHelp(@Nullable CharSequence helpMessage) {
             if (mViewModelRef.get() != null) {
                 mViewModelRef.get().setAuthenticationHelpMessage(helpMessage);
             }
         }
 
         @Override
-        void onFailure() {
+        public  void onFailure() {
             if (mViewModelRef.get() != null && mViewModelRef.get().isAwaitingResult()) {
                 mViewModelRef.get().setAuthenticationFailurePending(true);
             }

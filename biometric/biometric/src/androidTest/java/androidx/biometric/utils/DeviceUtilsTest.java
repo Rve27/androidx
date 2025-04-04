@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.os.Build;
 
+import androidx.biometric.R;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.MediumTest;
 

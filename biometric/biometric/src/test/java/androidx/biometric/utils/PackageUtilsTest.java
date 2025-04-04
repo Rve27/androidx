@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import static com.google.common.truth.Truth.assertThat;
 

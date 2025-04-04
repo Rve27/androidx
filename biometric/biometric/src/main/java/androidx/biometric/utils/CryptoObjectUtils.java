@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
@@ -23,6 +23,9 @@ import android.security.keystore.KeyProperties;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RestrictTo;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -49,7 +52,8 @@ import javax.crypto.SecretKey;
  * Utility class for creating and converting between different types of crypto objects that may be
  * used internally by {@link BiometricPrompt} and {@link BiometricManager}.
  */
-class CryptoObjectUtils {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class CryptoObjectUtils {
     private static final String TAG = "CryptoObjectUtils";
 
     /**
@@ -63,7 +67,8 @@ class CryptoObjectUtils {
     private static final String KEYSTORE_INSTANCE = "AndroidKeyStore";
 
     // Prevent instantiation.
-    private CryptoObjectUtils() {}
+    private CryptoObjectUtils() {
+    }
 
     /**
      * Unwraps a crypto object returned by {@link android.hardware.biometrics.BiometricPrompt}.
@@ -136,7 +141,7 @@ class CryptoObjectUtils {
      */
     @RequiresApi(Build.VERSION_CODES.P)
     @SuppressWarnings("deprecation")
-    static android.hardware.biometrics.BiometricPrompt.@Nullable CryptoObject
+    public static android.hardware.biometrics.BiometricPrompt.@Nullable CryptoObject
             wrapForBiometricPrompt(BiometricPrompt.@Nullable CryptoObject cryptoObject) {
 
         if (cryptoObject == null) {
@@ -197,12 +202,12 @@ class CryptoObjectUtils {
      * @return The {@code operationHandle} associated with this object or 0 if none.
      */
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-    static long getOperationHandle(BiometricPrompt.@Nullable CryptoObject cryptoObject) {
-            final android.hardware.biometrics.BiometricPrompt.CryptoObject wrappedCryptoObject =
-                    CryptoObjectUtils.wrapForBiometricPrompt(cryptoObject);
-            if (wrappedCryptoObject != null) {
-                return Api35Impl.getOperationHandle(wrappedCryptoObject);
-            }
+    public static long getOperationHandle(BiometricPrompt.@Nullable CryptoObject cryptoObject) {
+        final android.hardware.biometrics.BiometricPrompt.CryptoObject wrappedCryptoObject =
+                CryptoObjectUtils.wrapForBiometricPrompt(cryptoObject);
+        if (wrappedCryptoObject != null) {
+            return Api35Impl.getOperationHandle(wrappedCryptoObject);
+        }
         return 0;
     }
 
@@ -250,7 +255,7 @@ class CryptoObjectUtils {
      * {@link androidx.core.hardware.fingerprint.FingerprintManagerCompat}.
      */
     @SuppressWarnings("deprecation")
-    static androidx.core.hardware.fingerprint.FingerprintManagerCompat.@Nullable CryptoObject
+    public static androidx.core.hardware.fingerprint.FingerprintManagerCompat.@Nullable CryptoObject
             wrapForFingerprintManager(BiometricPrompt.@Nullable CryptoObject cryptoObject) {
 
         if (cryptoObject == null) {
@@ -304,7 +309,7 @@ class CryptoObjectUtils {
      */
     @SuppressLint("TrulyRandom")
     @RequiresApi(Build.VERSION_CODES.M)
-    static BiometricPrompt.@Nullable CryptoObject createFakeCryptoObject() {
+    public static BiometricPrompt.@Nullable CryptoObject createFakeCryptoObject() {
         try {
             final KeyStore keystore = KeyStore.getInstance(KEYSTORE_INSTANCE);
             keystore.load(null);
@@ -331,8 +336,8 @@ class CryptoObjectUtils {
 
             return new BiometricPrompt.CryptoObject(cipher);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | CertificateException
-                | KeyStoreException | InvalidKeyException | InvalidAlgorithmParameterException
-                | UnrecoverableKeyException | IOException | NoSuchProviderException e) {
+                 | KeyStoreException | InvalidKeyException | InvalidAlgorithmParameterException
+                 | UnrecoverableKeyException | IOException | NoSuchProviderException e) {
             Log.w(TAG, "Failed to create fake crypto object.", e);
             return null;
         }
@@ -344,7 +349,8 @@ class CryptoObjectUtils {
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     private static class Api35Impl {
         // Prevent instantiation.
-        private Api35Impl() {}
+        private Api35Impl() {
+        }
 
         /**
          * Creates an instance of the framework class
@@ -378,7 +384,8 @@ class CryptoObjectUtils {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private static class Api33Impl {
         // Prevent instantiation.
-        private Api33Impl() {}
+        private Api33Impl() {
+        }
 
         /**
          * Creates an instance of the framework class
@@ -391,7 +398,8 @@ class CryptoObjectUtils {
         @SuppressWarnings("deprecation")
         static android.hardware.biometrics.BiometricPrompt.@NonNull CryptoObject create(
                 android.security.identity.@NonNull PresentationSession presentationSession) {
-            return new android.hardware.biometrics.BiometricPrompt.CryptoObject(presentationSession);
+            return new android.hardware.biometrics.BiometricPrompt.CryptoObject(
+                    presentationSession);
         }
 
         /**
@@ -414,7 +422,8 @@ class CryptoObjectUtils {
     @RequiresApi(Build.VERSION_CODES.R)
     private static class Api30Impl {
         // Prevent instantiation.
-        private Api30Impl() {}
+        private Api30Impl() {
+        }
 
         /**
          * Creates an instance of the framework class
@@ -450,7 +459,8 @@ class CryptoObjectUtils {
     @RequiresApi(Build.VERSION_CODES.P)
     private static class Api28Impl {
         // Prevent instantiation.
-        private Api28Impl() {}
+        private Api28Impl() {
+        }
 
         /**
          * Creates an instance of the framework class
@@ -532,7 +542,8 @@ class CryptoObjectUtils {
     @RequiresApi(Build.VERSION_CODES.M)
     private static class Api23Impl {
         // Prevent instantiation.
-        private Api23Impl() {}
+        private Api23Impl() {
+        }
 
         /**
          * Creates a new instance of {@link KeyGenParameterSpec.Builder}.
@@ -582,7 +593,6 @@ class CryptoObjectUtils {
          *
          * @param keyGenerator An instance of {@link KeyGenerator}.
          * @param keySpec      The key spec with which to initialize the generator.
-         *
          * @throws InvalidAlgorithmParameterException If the key spec is invalid.
          */
         static void initKeyGenerator(

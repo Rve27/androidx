@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RestrictTo;
+import androidx.biometric.BiometricPrompt;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -29,20 +31,22 @@ import org.jspecify.annotations.Nullable;
  * {@link androidx.core.hardware.fingerprint.FingerprintManagerCompat}.
  */
 @SuppressWarnings("deprecation")
-class AuthenticationCallbackProvider {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class AuthenticationCallbackProvider {
     /**
      * A listener object that can receive events from either
      * {@link android.hardware.biometrics.BiometricPrompt.AuthenticationCallback} or
      * {@link androidx.core.hardware.fingerprint.FingerprintManagerCompat.AuthenticationCallback}.
      */
-    static class Listener {
+    public static class Listener {
         /**
          * See {@link BiometricPrompt.AuthenticationCallback#onAuthenticationSucceeded(
-         * BiometricPrompt.AuthenticationResult)}.
+         *BiometricPrompt.AuthenticationResult)}.
          *
          * @param result An object containing authentication-related data.
          */
-        void onSuccess(BiometricPrompt.@NonNull AuthenticationResult result) {}
+        public void onSuccess(BiometricPrompt.@NonNull AuthenticationResult result) {
+        }
 
         /**
          * See {@link BiometricPrompt.AuthenticationCallback#onAuthenticationError(int,
@@ -51,19 +55,22 @@ class AuthenticationCallbackProvider {
          * @param errorCode    An integer ID associated with the error.
          * @param errorMessage A human-readable message that describes the error.
          */
-        void onError(int errorCode, @Nullable CharSequence errorMessage) {}
+        public void onError(int errorCode, @Nullable CharSequence errorMessage) {
+        }
 
         /**
          * Called when a recoverable error/event has been encountered during authentication.
          *
          * @param helpMessage A human-readable message that describes the event.
          */
-        void onHelp(@Nullable CharSequence helpMessage) {}
+        public void onHelp(@Nullable CharSequence helpMessage) {
+        }
 
         /**
          * See {@link BiometricPrompt.AuthenticationCallback#onAuthenticationFailed()}.
          */
-        void onFailure() {}
+        public void onFailure() {
+        }
     }
 
     /**
@@ -92,7 +99,7 @@ class AuthenticationCallbackProvider {
      *
      * @param listener A listener that will receive authentication events.
      */
-    AuthenticationCallbackProvider(@NonNull Listener listener) {
+    public AuthenticationCallbackProvider(@NonNull Listener listener) {
         mListener = listener;
     }
 
@@ -107,7 +114,7 @@ class AuthenticationCallbackProvider {
      * {@link android.hardware.biometrics.BiometricPrompt}.
      */
     @RequiresApi(Build.VERSION_CODES.P)
-    android.hardware.biometrics.BiometricPrompt.@NonNull AuthenticationCallback
+    public android.hardware.biometrics.BiometricPrompt.@NonNull AuthenticationCallback
             getBiometricCallback() {
         if (mBiometricCallback == null) {
             mBiometricCallback = Api28Impl.createCallback(mListener);
@@ -125,7 +132,7 @@ class AuthenticationCallbackProvider {
      * @return A callback object that can be passed to
      * {@link androidx.core.hardware.fingerprint.FingerprintManagerCompat}.
      */
-    androidx.core.hardware.fingerprint.FingerprintManagerCompat.@NonNull AuthenticationCallback
+    public androidx.core.hardware.fingerprint.FingerprintManagerCompat.@NonNull AuthenticationCallback
             getFingerprintCallback() {
         if (mFingerprintCallback == null) {
             mFingerprintCallback = new androidx.core.hardware.fingerprint.FingerprintManagerCompat
@@ -146,7 +153,7 @@ class AuthenticationCallbackProvider {
 
                     final BiometricPrompt.CryptoObject crypto = result != null
                             ? CryptoObjectUtils.unwrapFromFingerprintManager(
-                                    result.getCryptoObject())
+                            result.getCryptoObject())
                             : null;
 
                     final BiometricPrompt.AuthenticationResult resultCompat =
@@ -171,7 +178,8 @@ class AuthenticationCallbackProvider {
     @RequiresApi(Build.VERSION_CODES.R)
     private static class Api30Impl {
         // Prevent instantiation.
-        private Api30Impl() {}
+        private Api30Impl() {
+        }
 
         /**
          * Gets the authentication type from the given framework authentication result.
@@ -197,7 +205,8 @@ class AuthenticationCallbackProvider {
     @RequiresApi(Build.VERSION_CODES.P)
     private static class Api28Impl {
         // Prevent instantiation.
-        private Api28Impl() {}
+        private Api28Impl() {
+        }
 
         /**
          * Creates a {@link android.hardware.biometrics.BiometricPrompt.AuthenticationCallback} that
@@ -208,8 +217,8 @@ class AuthenticationCallbackProvider {
          * {@link android.hardware.biometrics.BiometricPrompt.AuthenticationCallback}.
          */
         static android.hardware.biometrics.BiometricPrompt.@NonNull AuthenticationCallback
-                    createCallback(
-                        final @NonNull Listener listener) {
+                createCallback(
+                final @NonNull Listener listener) {
             return new android.hardware.biometrics.BiometricPrompt.AuthenticationCallback() {
                 @Override
                 public void onAuthenticationError(int errorCode, CharSequence errString) {

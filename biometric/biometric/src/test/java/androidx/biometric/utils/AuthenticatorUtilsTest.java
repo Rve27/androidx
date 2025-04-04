@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import static com.google.common.truth.Truth.assertThat;
 
 import android.os.Build;
 
+import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricManager.Authenticators;
+import androidx.biometric.BiometricPrompt;
 
 import org.junit.Before;
 import org.junit.Test;

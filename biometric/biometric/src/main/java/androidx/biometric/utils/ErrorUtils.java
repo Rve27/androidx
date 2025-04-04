@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import android.content.Context;
 import android.util.Log;
+
+import androidx.annotation.RestrictTo;
+import androidx.biometric.BiometricPrompt;
+import androidx.biometric.R;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -25,9 +29,11 @@ import org.jspecify.annotations.Nullable;
 /**
  * Utilities related to biometric authentication errors.
  */
-class ErrorUtils {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class ErrorUtils {
     // Prevent instantiation.
-    private ErrorUtils() {}
+    private ErrorUtils() {
+    }
 
     /**
      * Checks if the given error code matches any known (i.e. publicly defined) error and matches
@@ -37,7 +43,7 @@ class ErrorUtils {
      * @return A matched known error.
      */
     @BiometricPrompt.AuthenticationError
-    static int toKnownErrorCode(@BiometricPrompt.AuthenticationError int errorCode) {
+    public static int toKnownErrorCode(@BiometricPrompt.AuthenticationError int errorCode) {
         switch (errorCode) {
             case BiometricPrompt.ERROR_HW_UNAVAILABLE:
             case BiometricPrompt.ERROR_UNABLE_TO_PROCESS:
@@ -71,7 +77,7 @@ class ErrorUtils {
      * @param errorCode An integer ID associated with the error.
      * @return Whether the error code indicates that the user has been locked out.
      */
-    static boolean isLockoutError(int errorCode) {
+    public static boolean isLockoutError(int errorCode) {
         return errorCode == BiometricPrompt.ERROR_LOCKOUT
                 || errorCode == BiometricPrompt.ERROR_LOCKOUT_PERMANENT;
     }
@@ -80,7 +86,8 @@ class ErrorUtils {
      * Only needs to provide a subset of the fingerprint error strings since the rest are translated
      * in FingerprintManager
      */
-    static @NonNull String getFingerprintErrorString(@Nullable Context context, int errorCode) {
+    public static @NonNull String getFingerprintErrorString(@Nullable Context context,
+            int errorCode) {
         if (context == null) {
             return "";
         }

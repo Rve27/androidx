@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import android.content.Context;
 import android.os.Build;
+
+import androidx.annotation.RestrictTo;
+import androidx.biometric.BiometricPrompt;
+import androidx.biometric.FingerprintDialogFragment;
+import androidx.biometric.R;
 
 import org.jspecify.annotations.NonNull;
 
 /**
  * Utility class for specifying custom behavior based on the vendor and model of the device.
  */
-class DeviceUtils {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class DeviceUtils {
     // Prevent instantiation.
-    private DeviceUtils() {}
+    private DeviceUtils() {
+    }
 
     /**
      * Checks if the current device should explicitly fall back to using
@@ -35,19 +42,20 @@ class DeviceUtils {
      * BiometricPrompt.CryptoObject)} is called.
      *
      * @param context The application or activity context.
-     * @param vendor Name of the device vendor/manufacturer.
-     * @param model Model name of the current device.
+     * @param vendor  Name of the device vendor/manufacturer.
+     * @param model   Model name of the current device.
      * @return Whether the current device should fall back to fingerprint for crypto-based
-     *  authentication.
+     * authentication.
      */
-    static boolean shouldUseFingerprintForCrypto(
-            @NonNull Context context, String vendor, String model) {
+    public static boolean shouldUseFingerprintForCrypto(
+            @NonNull Context context, @NonNull String vendor, @NonNull String model) {
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.P) {
             // This workaround is only needed for API 28.
             return false;
         }
         return isVendorInList(context, vendor, R.array.crypto_fingerprint_fallback_vendors)
-            || isModelInPrefixList(context, model, R.array.crypto_fingerprint_fallback_prefixes);
+                || isModelInPrefixList(context, model,
+                R.array.crypto_fingerprint_fallback_prefixes);
     }
 
     /**
@@ -56,10 +64,11 @@ class DeviceUtils {
      * cancel signal (e.g. if the dialog is shown behind an overlay).
      *
      * @param context The application or activity context.
-     * @param model Model name of the current device.
+     * @param model   Model name of the current device.
      * @return Whether the {@link FingerprintDialogFragment} should be hidden.
      */
-    static boolean shouldHideFingerprintDialog(@NonNull Context context, String model) {
+    public static boolean shouldHideFingerprintDialog(@NonNull Context context,
+            @NonNull String model) {
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.P) {
             // This workaround is only needed for API 28.
             return false;
@@ -72,10 +81,11 @@ class DeviceUtils {
      * prompt was recently dismissed.
      *
      * @param context The application or activity context.
-     * @param model Model name of the current device.
+     * @param model   Model name of the current device.
      * @return Whether showing the prompt should be delayed after dismissal.
      */
-    static boolean shouldDelayShowingPrompt(@NonNull Context context, String model) {
+    public static boolean shouldDelayShowingPrompt(@NonNull Context context,
+            @NonNull String model) {
         if (Build.VERSION.SDK_INT != Build.VERSION_CODES.Q) {
             // This workaround is only needed for API 29.
             return false;
@@ -88,10 +98,11 @@ class DeviceUtils {
      * <strong>Class 3</strong> (formerly <strong>Strong</strong>) security threshold.
      *
      * @param context The application or activity context.
-     * @param model Model name of the current device.
+     * @param model   Model name of the current device.
      * @return Whether the device can be assumed to have only <strong>Class 3</strong> biometrics.
      */
-    static boolean canAssumeStrongBiometrics(@NonNull Context context, String model) {
+    public static boolean canAssumeStrongBiometrics(@NonNull Context context,
+            @NonNull String model) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             // Android 11 (API 30) and above may downgrade a sensor's security class at runtime.
             return false;
@@ -104,8 +115,8 @@ class DeviceUtils {
      * resource.
      *
      * @param context The application or activity context.
-     * @param vendor Case-insensitive name of the device vendor.
-     * @param resId Resource ID for the string array of vendor names to check against.
+     * @param vendor  Case-insensitive name of the device vendor.
+     * @param resId   Resource ID for the string array of vendor names to check against.
      * @return Whether the vendor name matches one in the string array.
      */
     private static boolean isVendorInList(@NonNull Context context, String vendor, int resId) {
@@ -126,8 +137,8 @@ class DeviceUtils {
      * Checks if the current device model matches a prefix in the given string array resource.
      *
      * @param context The application or activity context.
-     * @param model Model name of the current device.
-     * @param resId Resource ID for the string array of device model prefixes to check against.
+     * @param model   Model name of the current device.
+     * @param resId   Resource ID for the string array of device model prefixes to check against.
      * @return Whether the model matches a prefix in the string array.
      */
     private static boolean isModelInPrefixList(@NonNull Context context, String model, int resId) {
@@ -148,8 +159,8 @@ class DeviceUtils {
      * Checks if the current device model matches one in the given string array resource.
      *
      * @param context The application or activity context.
-     * @param model Model name of the current device.
-     * @param resId Resource ID for the string array of device model prefixes to check against.
+     * @param model   Model name of the current device.
+     * @param resId   Resource ID for the string array of device model prefixes to check against.
      * @return Whether the model matches one in the string array.
      */
     private static boolean isModelInList(@NonNull Context context, String model, int resId) {

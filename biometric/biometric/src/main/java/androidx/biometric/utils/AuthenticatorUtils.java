@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import android.annotation.SuppressLint;
 import android.os.Build;
 
+import androidx.annotation.RestrictTo;
+import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricManager.Authenticators;
+import androidx.biometric.BiometricPrompt;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
- * Utilities related to {@link BiometricManager.Authenticators} constants.
+ * Utilities related to {@link Authenticators} constants.
  */
-class AuthenticatorUtils {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class AuthenticatorUtils {
     /**
      * A bitmask for the portion of an {@link BiometricManager.AuthenticatorTypes} value related to
      * biometric sensor class.
@@ -46,7 +50,8 @@ class AuthenticatorUtils {
      * developer-facing contexts (e.g. error messages).
      */
     @SuppressLint("WrongConstant")
-    static String convertToString(@BiometricManager.AuthenticatorTypes int authenticators) {
+    public static @NonNull String convertToString(
+            @BiometricManager.AuthenticatorTypes int authenticators) {
         String result;
         switch (authenticators & ~Authenticators.IDENTITY_CHECK) {
             case Authenticators.BIOMETRIC_STRONG:
@@ -83,7 +88,8 @@ class AuthenticatorUtils {
      * @return A bit field representing the allowed biometric authenticator types.
      */
     @BiometricManager.AuthenticatorTypes
-    static int getBiometricAuthenticators(@BiometricManager.AuthenticatorTypes int authenticators) {
+    public static int getBiometricAuthenticators(
+            @BiometricManager.AuthenticatorTypes int authenticators) {
         return authenticators & BIOMETRIC_CLASS_MASK;
     }
 
@@ -105,7 +111,7 @@ class AuthenticatorUtils {
     @SuppressLint("WrongConstant")
     @SuppressWarnings("deprecation")
     @BiometricManager.AuthenticatorTypes
-    static int getConsolidatedAuthenticators(
+    public static int getConsolidatedAuthenticators(
             BiometricPrompt.@NonNull PromptInfo info,
             BiometricPrompt.@Nullable CryptoObject crypto,
             boolean isIdentityCheckAvailable) {
@@ -148,7 +154,8 @@ class AuthenticatorUtils {
      * supported on the current Android version.
      */
     @SuppressLint("WrongConstant")
-    static boolean isSupportedCombination(@BiometricManager.AuthenticatorTypes int authenticators) {
+    public static boolean isSupportedCombination(
+            @BiometricManager.AuthenticatorTypes int authenticators) {
         // Ignore identity check. We don't want identity check to block the authentication. See
         // getConsolidatedAuthenticators() for more information.
         // TODO(b/375693808): Add this information to setAllowedAuthenticators() doc.
@@ -181,7 +188,7 @@ class AuthenticatorUtils {
      * @param authenticators A bit field representing a set of allowed authenticator types.
      * @return Whether {@link Authenticators#DEVICE_CREDENTIAL} is an allowed authenticator type.
      */
-    static boolean isDeviceCredentialAllowed(
+    public static boolean isDeviceCredentialAllowed(
             @BiometricManager.AuthenticatorTypes int authenticators) {
         return (authenticators & Authenticators.DEVICE_CREDENTIAL) != 0;
     }
@@ -192,7 +199,8 @@ class AuthenticatorUtils {
      * @param authenticators A bit field representing a set of allowed authenticator types.
      * @return Whether the allowed authenticator types include one or more biometric classes.
      */
-    static boolean isSomeBiometricAllowed(@BiometricManager.AuthenticatorTypes int authenticators) {
+    public static boolean isSomeBiometricAllowed(
+            @BiometricManager.AuthenticatorTypes int authenticators) {
         return getBiometricAuthenticators(authenticators) != 0;
     }
 
@@ -203,7 +211,8 @@ class AuthenticatorUtils {
      * @param authenticators A bit field representing a set of allowed authenticator types.
      * @return Whether {@link Authenticators#BIOMETRIC_WEAK} is an allowed authenticator type.
      */
-    static boolean isWeakBiometricAllowed(@BiometricManager.AuthenticatorTypes int authenticators) {
+    public static boolean isWeakBiometricAllowed(
+            @BiometricManager.AuthenticatorTypes int authenticators) {
         return (authenticators & Authenticators.BIOMETRIC_WEAK) == Authenticators.BIOMETRIC_WEAK;
     }
 

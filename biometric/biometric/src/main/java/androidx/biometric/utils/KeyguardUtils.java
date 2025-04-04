@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RestrictTo;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -28,9 +29,11 @@ import org.jspecify.annotations.Nullable;
 /**
  * Utilities related to the {@link KeyguardManager} system service.
  */
-class KeyguardUtils {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class KeyguardUtils {
     // Prevent instantiation.
-    private KeyguardUtils() {}
+    private KeyguardUtils() {
+    }
 
     /**
      * Gets an instance of the {@link KeyguardManager} system service.
@@ -38,7 +41,7 @@ class KeyguardUtils {
      * @param context The application or activity context.
      * @return An instance of {@link KeyguardManager}.
      */
-    static @Nullable KeyguardManager getKeyguardManager(@NonNull Context context) {
+    public static @Nullable KeyguardManager getKeyguardManager(@NonNull Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return Api23Impl.getKeyguardManager(context);
         }
@@ -52,7 +55,7 @@ class KeyguardUtils {
      * @param context The application or activity context.
      * @return Whether a PIN/pattern/password has been set, or {@code false} if unsure.
      */
-    static boolean isDeviceSecuredWithCredential(@NonNull Context context) {
+    public static boolean isDeviceSecuredWithCredential(@NonNull Context context) {
         final KeyguardManager keyguardManager = getKeyguardManager(context);
         if (keyguardManager == null) {
             return false;
@@ -69,7 +72,8 @@ class KeyguardUtils {
     @RequiresApi(Build.VERSION_CODES.M)
     private static class Api23Impl {
         // Prevent instantiation.
-        private Api23Impl() {}
+        private Api23Impl() {
+        }
 
         /**
          * Gets an instance of the {@link KeyguardManager} system service.

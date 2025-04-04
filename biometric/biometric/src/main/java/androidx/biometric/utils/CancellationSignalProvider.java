@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import android.os.CancellationSignal;
 import android.util.Log;
 
+import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 
 import org.jspecify.annotations.NonNull;
@@ -30,7 +31,8 @@ import org.jspecify.annotations.Nullable;
  * {@link androidx.core.hardware.fingerprint.FingerprintManagerCompat}.
  */
 @SuppressWarnings("deprecation")
-class CancellationSignalProvider {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class CancellationSignalProvider {
     private static final String TAG = "CancelSignalProvider";
 
     /**
@@ -75,7 +77,7 @@ class CancellationSignalProvider {
     /**
      * Creates a new cancellation signal provider instance.
      */
-    CancellationSignalProvider() {
+    public CancellationSignalProvider() {
         mInjector = new Injector() {
             @Override
             public @NonNull CancellationSignal getBiometricCancellationSignal() {
@@ -95,7 +97,7 @@ class CancellationSignalProvider {
      * @param injector An injector for class and method dependencies.
      */
     @VisibleForTesting
-    CancellationSignalProvider(Injector injector) {
+    public CancellationSignalProvider(@Nullable Injector injector) {
         mInjector = injector;
     }
 
@@ -107,9 +109,9 @@ class CancellationSignalProvider {
      * cancellation signal, until {@link #cancel()} is invoked.
      *
      * @return A cancellation signal that can be passed to
-     *  {@link android.hardware.biometrics.BiometricPrompt}.
+     * {@link android.hardware.biometrics.BiometricPrompt}.
      */
-    android.os.@NonNull CancellationSignal getBiometricCancellationSignal() {
+    public android.os.@NonNull CancellationSignal getBiometricCancellationSignal() {
         if (mBiometricCancellationSignal == null) {
             mBiometricCancellationSignal = mInjector.getBiometricCancellationSignal();
         }
@@ -124,9 +126,9 @@ class CancellationSignalProvider {
      * cancellation signal, until {@link #cancel()} is invoked.
      *
      * @return A cancellation signal that can be passed to
-     *  {@link androidx.core.hardware.fingerprint.FingerprintManagerCompat}.
+     * {@link androidx.core.hardware.fingerprint.FingerprintManagerCompat}.
      */
-    androidx.core.os.@NonNull CancellationSignal getFingerprintCancellationSignal() {
+    public androidx.core.os.@NonNull CancellationSignal getFingerprintCancellationSignal() {
         if (mFingerprintCancellationSignal == null) {
             mFingerprintCancellationSignal = mInjector.getFingerprintCancellationSignal();
         }
@@ -136,7 +138,7 @@ class CancellationSignalProvider {
     /**
      * Invokes cancel for all cached cancellation signal objects and clears any references to them.
      */
-    void cancel() {
+    public void cancel() {
         if (mBiometricCancellationSignal != null) {
             try {
                 mBiometricCancellationSignal.cancel();

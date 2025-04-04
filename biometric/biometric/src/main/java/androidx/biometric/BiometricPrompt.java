@@ -33,6 +33,8 @@ import androidx.annotation.RequiresPermission;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.biometric.BiometricManager.Authenticators;
+import androidx.biometric.utils.AuthenticatorUtils;
+import androidx.biometric.utils.CryptoObjectUtils;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -260,7 +262,8 @@ public class BiometricPrompt {
         AUTHENTICATION_RESULT_TYPE_BIOMETRIC
     })
     @Retention(RetentionPolicy.SOURCE)
-    @interface AuthenticationResultType {}
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public @interface AuthenticationResultType {}
 
     /**
      * Tag used to identify the {@link BiometricFragment} attached to the client activity/fragment.
@@ -447,7 +450,8 @@ public class BiometricPrompt {
          * this {@link androidx.biometric.BiometricPrompt.CryptoObject} to
          * {@link android.hardware.biometrics.BiometricPrompt}.
          */
-        long getOperationHandleCryptoObject() {
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
+        public long getOperationHandleCryptoObject() {
             return mOperationHandle;
         }
     }
@@ -460,8 +464,9 @@ public class BiometricPrompt {
         private final CryptoObject mCryptoObject;
         @AuthenticationResultType private final int mAuthenticationType;
 
-        AuthenticationResult(
-                CryptoObject crypto, @AuthenticationResultType int authenticationType) {
+        @RestrictTo(RestrictTo.Scope.LIBRARY)
+        public AuthenticationResult(@Nullable CryptoObject crypto,
+                @AuthenticationResultType int authenticationType) {
             mCryptoObject = crypto;
             mAuthenticationType = authenticationType;
         }

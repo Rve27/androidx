@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.utils;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+import androidx.annotation.RestrictTo;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -28,9 +29,11 @@ import org.jspecify.annotations.Nullable;
 /**
  * Utilities related to the system {@link PackageManager}.
  */
-class PackageUtils {
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class PackageUtils {
     // Prevent instantiation.
-    private PackageUtils() {}
+    private PackageUtils() {
+    }
 
     /**
      * Checks if the current device supports fingerprint authentication.
@@ -38,7 +41,7 @@ class PackageUtils {
      * @param context The application or activity context.
      * @return Whether fingerprint is supported.
      */
-    static boolean hasSystemFeatureFingerprint(@Nullable Context context) {
+    public static boolean hasSystemFeatureFingerprint(@Nullable Context context) {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && context != null
                 && context.getPackageManager() != null
@@ -51,7 +54,7 @@ class PackageUtils {
      * @param context The application or activity context.
      * @return Whether fingerprint is supported.
      */
-    static boolean hasSystemFeatureFace(@Nullable Context context) {
+    public static boolean hasSystemFeatureFace(@Nullable Context context) {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
                 && context != null
                 && context.getPackageManager() != null
@@ -64,7 +67,7 @@ class PackageUtils {
      * @param context The application or activity context.
      * @return Whether fingerprint is supported.
      */
-    static boolean hasSystemFeatureIris(@Nullable Context context) {
+    public static boolean hasSystemFeatureIris(@Nullable Context context) {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
                 && context != null
                 && context.getPackageManager() != null
@@ -77,7 +80,8 @@ class PackageUtils {
     @RequiresApi(Build.VERSION_CODES.M)
     private static class Api23Impl {
         // Prevent instantiation.
-        private Api23Impl() {}
+        private Api23Impl() {
+        }
 
         /**
          * Checks if the given package manager has support for the fingerprint system feature.
@@ -96,7 +100,8 @@ class PackageUtils {
     @RequiresApi(Build.VERSION_CODES.Q)
     private static class Api29Impl {
         // Prevent instantiation.
-        private Api29Impl() {}
+        private Api29Impl() {
+        }
 
         /**
          * Checks if the given package manager has support for the face system feature.
