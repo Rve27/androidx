@@ -24,7 +24,7 @@ import androidx.appfunctions.AppFunctionOpenable
 import androidx.appfunctions.AppFunctionSchemaDefinition
 import androidx.appfunctions.schema.types.SetField
 
-// TODO(b/401517540): Add remaining APIs: folder APIs
+// TODO(b/407951385): Expose schema version.
 /**
  * The category name of Notes related app functions.
  *
@@ -447,8 +447,8 @@ public interface CreateNotesGroupAppFunction<
 
     /** The parameters for creating a group. */
     public interface Parameters {
-        /** The name of the group. */
-        public val name: String
+        /** The label of the group. */
+        public val label: String
     }
 
     /** The response including the created group. */
@@ -511,6 +511,62 @@ public interface DeleteNotesGroupsAppFunction<
     }
 }
 
+/** Updates an existing [AppFunctionNotesGroup]. */
+@AppFunctionSchemaDefinition(
+    name = "updateNotesGroup",
+    version = UpdateNotesGroupAppFunction.SCHEMA_VERSION,
+    category = APP_FUNCTION_SCHEMA_CATEGORY_NOTES
+)
+public interface UpdateNotesGroupAppFunction<
+    Parameters : UpdateNotesGroupAppFunction.Parameters,
+    Response : UpdateNotesGroupAppFunction.Response
+> {
+    /**
+     * Updates an existing [AppFunctionNotesGroup] with the given parameters.
+     *
+     * For each field in [Parameters], if the corresponding [SetField] is not null, the note group's
+     * field will be updated. The value within the [SetField] will be used to update the original
+     * value. Fields with a null [SetField] will not be updated.
+     *
+     * The implementing app should throw an appropriate subclass of
+     * [androidx.appfunctions.AppFunctionException] in exceptional cases.
+     *
+     * @param appFunctionContext The AppFunction execution context.
+     * @param parameters The parameters defining the notes group to update and the new values.
+     * @return The response including the updated notes group.
+     */
+    public suspend fun updateNotesGroup(
+        appFunctionContext: AppFunctionContext,
+        parameters: Parameters,
+    ): Response
+
+    /** The parameters for updating a notes group. */
+    public interface Parameters {
+        /**
+         * The ID of the notes group to update.
+         *
+         * [androidx.appfunctions.AppFunctionElementNotFoundException] should be thrown when a group
+         * with the specified notesGroupId doesn't exist.
+         */
+        public val notesGroupId: String
+
+        /** The new label for the group, if it should be updated. */
+        public val label: SetField<String>?
+            get() = null
+    }
+
+    /** The response including the updated notes group. */
+    public interface Response {
+        /** The updated notes group. */
+        public val updatedNotesGroup: AppFunctionNotesGroup
+    }
+
+    public companion object {
+        /** Current schema version. */
+        @RestrictTo(LIBRARY_GROUP) internal const val SCHEMA_VERSION: Int = 2
+    }
+}
+
 /** A note entity. */
 public interface AppFunctionNote {
     /** The ID of the note. */
@@ -557,6 +613,6 @@ public interface AppFunctionNote {
 public interface AppFunctionNotesGroup {
     /** The ID of the group. */
     public val id: String
-    /** The name of the group. */
-    public val name: String
+    /** The label of the group. */
+    public val label: String
 }

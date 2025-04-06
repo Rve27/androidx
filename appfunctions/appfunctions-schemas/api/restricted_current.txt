@@ -101,9 +101,9 @@ package androidx.appfunctions.schema.notes {
 
   public interface AppFunctionNotesGroup {
     method public String getId();
-    method public String getName();
+    method public String getLabel();
     property public abstract String id;
-    property public abstract String name;
+    property public abstract String label;
   }
 
   public interface CreateNoteAppFunction<Parameters extends androidx.appfunctions.schema.notes.CreateNoteAppFunction.Parameters, Response extends androidx.appfunctions.schema.notes.CreateNoteAppFunction.Response> {
@@ -141,8 +141,8 @@ package androidx.appfunctions.schema.notes {
   }
 
   public static interface CreateNotesGroupAppFunction.Parameters {
-    method public String getName();
-    property public abstract String name;
+    method public String getLabel();
+    property public abstract String label;
   }
 
   public static interface CreateNotesGroupAppFunction.Response {
@@ -283,6 +283,26 @@ package androidx.appfunctions.schema.notes {
   public static interface UpdateNoteAppFunction.Response {
     method public androidx.appfunctions.schema.notes.AppFunctionNote getUpdatedNote();
     property public abstract androidx.appfunctions.schema.notes.AppFunctionNote updatedNote;
+  }
+
+  public interface UpdateNotesGroupAppFunction<Parameters extends androidx.appfunctions.schema.notes.UpdateNotesGroupAppFunction.Parameters, Response extends androidx.appfunctions.schema.notes.UpdateNotesGroupAppFunction.Response> {
+    method public suspend Object? updateNotesGroup(androidx.appfunctions.AppFunctionContext appFunctionContext, Parameters parameters, kotlin.coroutines.Continuation<? super Response>);
+    field public static final androidx.appfunctions.schema.notes.UpdateNotesGroupAppFunction.Companion Companion;
+  }
+
+  public static final class UpdateNotesGroupAppFunction.Companion {
+  }
+
+  public static interface UpdateNotesGroupAppFunction.Parameters {
+    method public default androidx.appfunctions.schema.types.SetField<java.lang.String>? getLabel();
+    method public String getNotesGroupId();
+    property public default androidx.appfunctions.schema.types.SetField<java.lang.String>? label;
+    property public abstract String notesGroupId;
+  }
+
+  public static interface UpdateNotesGroupAppFunction.Response {
+    method public androidx.appfunctions.schema.notes.AppFunctionNotesGroup getUpdatedNotesGroup();
+    property public abstract androidx.appfunctions.schema.notes.AppFunctionNotesGroup updatedNotesGroup;
   }
 
 }
