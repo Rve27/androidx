@@ -1806,12 +1806,6 @@ package androidx.wear.compose.material3.lazy {
     method @androidx.compose.runtime.Composable public static androidx.wear.compose.material3.lazy.TransformationSpec rememberTransformationSpec(androidx.wear.compose.material3.lazy.ResponsiveTransformationSpec... specs);
   }
 
-  public final class ScrollTransformKt {
-    method @androidx.compose.runtime.Composable public static androidx.compose.ui.Modifier scrollTransform(androidx.compose.ui.Modifier, androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope scope);
-    method @androidx.compose.runtime.Composable public static androidx.compose.ui.Modifier scrollTransform(androidx.compose.ui.Modifier, androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope scope, androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.painter.Painter painter, optional androidx.compose.foundation.BorderStroke? border);
-    method @androidx.compose.runtime.Composable public static androidx.compose.ui.Modifier scrollTransform(androidx.compose.ui.Modifier, androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope scope, long backgroundColor, optional androidx.compose.ui.graphics.Shape shape);
-  }
-
   public interface TransformationSpec {
     method public void applyContainerTransformation(androidx.compose.ui.graphics.GraphicsLayerScope, long scrollProgress);
     method public void applyContentTransformation(androidx.compose.ui.graphics.GraphicsLayerScope, long scrollProgress);
