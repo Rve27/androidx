@@ -17,7 +17,6 @@ CAMERA = "1.5.0-beta01"
 CAMERA_MEDIA3 = "1.0.0-alpha02"
 CAMERA_PIPE = "1.0.0-alpha01"
 CAMERA_TESTING = "1.0.0-alpha01"
-CAMERA_VIEWFINDER = "1.4.0-beta01"
 CARDVIEW = "1.1.0-alpha01"
 CAR_APP = "1.8.0-alpha01"
 COLLECTION = "1.5.0"
@@ -205,7 +204,7 @@ CAMERA = { group = "androidx.camera", atomicGroupVersion = "versions.CAMERA" }
 CAMERA_MEDIA3 = { group = "androidx.camera.media3", atomicGroupVersion = "versions.CAMERA_MEDIA3" }
 CAMERA_PIPE = { group = "androidx.camera", atomicGroupVersion = "versions.CAMERA_PIPE", overrideInclude = [ ":camera:camera-camera2-pipe", ":camera:camera-camera2-pipe-integration" ] }
 CAMERA_TESTING = { group = "androidx.camera", atomicGroupVersion = "versions.CAMERA_TESTING", overrideInclude = [ ":camera:camera-testing" ] }
-CAMERA_VIEWFINDER = { group = "androidx.camera.viewfinder", atomicGroupVersion = "versions.CAMERA_VIEWFINDER" }
+CAMERA_VIEWFINDER = { group = "androidx.camera.viewfinder", atomicGroupVersion = "versions.CAMERA" }
 CARDVIEW = { group = "androidx.cardview", atomicGroupVersion = "versions.CARDVIEW" }
 CAR_APP = { group = "androidx.car.app", atomicGroupVersion = "versions.CAR_APP" }
 COLLECTION = { group = "androidx.collection", atomicGroupVersion = "versions.COLLECTION" }
