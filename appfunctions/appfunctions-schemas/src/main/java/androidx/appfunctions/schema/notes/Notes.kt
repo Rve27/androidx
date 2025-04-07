@@ -399,7 +399,7 @@ public interface ShowNoteAppFunction<
 
 /** Finds notes groups with the given search criteria. */
 @AppFunctionSchemaDefinition(
-    name = "findNotesGroups",
+    name = "findFolders",
     version = FindNotesGroupsAppFunction.SCHEMA_VERSION,
     category = APP_FUNCTION_SCHEMA_CATEGORY_NOTES
 )
@@ -451,7 +451,7 @@ public interface FindNotesGroupsAppFunction<
 
 /** Creates a group with the given parameters. */
 @AppFunctionSchemaDefinition(
-    name = "createNotesGroup",
+    name = "createFolder",
     version = CreateNotesGroupAppFunction.SCHEMA_VERSION,
     category = APP_FUNCTION_SCHEMA_CATEGORY_NOTES
 )
@@ -495,7 +495,7 @@ public interface CreateNotesGroupAppFunction<
 
 /** Deletes groups with the given parameters. */
 @AppFunctionSchemaDefinition(
-    name = "deleteNotesGroups",
+    name = "deleteFolders",
     version = DeleteNotesGroupsAppFunction.SCHEMA_VERSION,
     category = APP_FUNCTION_SCHEMA_CATEGORY_NOTES
 )
@@ -542,7 +542,7 @@ public interface DeleteNotesGroupsAppFunction<
 
 /** Updates an existing [AppFunctionNotesGroup]. */
 @AppFunctionSchemaDefinition(
-    name = "updateNotesGroup",
+    name = "updateFolder",
     version = UpdateNotesGroupAppFunction.SCHEMA_VERSION,
     category = APP_FUNCTION_SCHEMA_CATEGORY_NOTES
 )
