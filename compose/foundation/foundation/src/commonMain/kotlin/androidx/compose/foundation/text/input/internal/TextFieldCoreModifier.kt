@@ -176,6 +176,7 @@ internal class TextFieldCoreModifierNode(
     private var previousSelection: TextRange? = null
     private var previousCursorRect: Rect = Rect(-1f, -1f, -1f, -1f)
     private var previousTextLayoutSize: Int = 0
+    private var previousContainerSize: Int = 0
 
     private val textFieldMagnifierNode =
         delegate(
@@ -327,11 +328,16 @@ internal class TextFieldCoreModifierNode(
     }
 
     /** Returns which offset to follow to bring into view. */
-    private fun calculateOffsetToFollow(currSelection: TextRange, currTextLayoutSize: Int): Int {
+    private fun calculateOffsetToFollow(
+        currSelection: TextRange,
+        currContainerSize: Int,
+        currTextLayoutSize: Int
+    ): Int {
         return when {
             currSelection.end != previousSelection?.end -> currSelection.end
             currSelection.start != previousSelection?.start -> currSelection.start
-            currTextLayoutSize != previousTextLayoutSize -> currSelection.start
+            currTextLayoutSize != previousTextLayoutSize ||
+                currContainerSize != previousContainerSize -> currSelection.start
             else -> -1
         }
     }
@@ -361,7 +367,7 @@ internal class TextFieldCoreModifierNode(
         scrollState.maxValue = difference
 
         // figure out if and which offset is going to be scrolled into view
-        val offsetToFollow = calculateOffsetToFollow(currSelection, textLayoutSize)
+        val offsetToFollow = calculateOffsetToFollow(currSelection, containerSize, textLayoutSize)
 
         // if the cursor is not showing or there's no offset to be followed, we can return early.
         if (offsetToFollow < 0 || !showCursor) return
@@ -379,12 +385,13 @@ internal class TextFieldCoreModifierNode(
                 textLayoutSize = textLayoutSize
             )
 
-        // Check if cursor's location or text layout size was changed compared to the previous run.
-        if (
+        val shouldBringIntoView =
             cursorRect.left != previousCursorRect.left ||
                 cursorRect.top != previousCursorRect.top ||
                 textLayoutSize != previousTextLayoutSize
-        ) {
+
+        // Check if cursor's location or text layout size was changed compared to the previous run.
+        if (shouldBringIntoView || containerSize != previousContainerSize) {
             val vertical = orientation == Orientation.Vertical
             val cursorStart = if (vertical) cursorRect.top else cursorRect.left
             val cursorEnd = if (vertical) cursorRect.bottom else cursorRect.right
@@ -441,6 +448,7 @@ internal class TextFieldCoreModifierNode(
 
             previousSelection = currSelection
             previousCursorRect = cursorRect
+            previousContainerSize = containerSize
             previousTextLayoutSize = textLayoutSize
 
             // this call will respect the earlier set [scrollState.maxValue]
@@ -448,9 +456,13 @@ internal class TextFieldCoreModifierNode(
             // prefer to use immediate dispatch instead of suspending scroll calls
             coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
                 scrollState.scrollBy(offsetDifference.roundToNext())
-                // make sure to use the cursor rect from text layout since bringIntoView does its
-                // own checks for RTL layouts.
-                textLayoutState.bringIntoViewRequester.bringIntoView(rawCursorRect)
+                // Don't bring into view if only the container size changed to avoid
+                // unexpected scrolls
+                if (shouldBringIntoView) {
+                    // make sure to use the cursor rect from text layout since bringIntoView does
+                    // its own checks for RTL layouts.
+                    textLayoutState.bringIntoViewRequester.bringIntoView(rawCursorRect)
+                }
             }
         }
     }
