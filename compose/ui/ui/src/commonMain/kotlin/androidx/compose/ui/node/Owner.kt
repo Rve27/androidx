@@ -370,6 +370,7 @@ internal interface Owner : PositionCalculator {
      */
     fun decrementSensitiveComponentCount() {}
 
+    /** On Android it is only available when the view is attached. */
     val outOfFrameExecutor: OutOfFrameExecutor?
         get() = null
 

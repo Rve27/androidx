@@ -2881,9 +2881,14 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         }
     }
 
-    override val outOfFrameExecutor = this
+    override val outOfFrameExecutor
+        get() = if (isAttachedToWindow) this else null
 
     override fun schedule(block: () -> Unit) {
+        val handler =
+            requireNotNull(handler) {
+                "schedule is called when outOfFrameExecutor is not available (view is detached)"
+            }
         handler.postAtFrontOfQueue { trace("AndroidOwner:outOfFrameExecutor", block) }
     }
 

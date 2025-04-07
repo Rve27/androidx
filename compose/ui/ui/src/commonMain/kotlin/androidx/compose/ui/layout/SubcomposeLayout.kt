@@ -674,8 +674,10 @@ internal class LayoutNodeSubcompositionsState(
                 val content = nodeState.content
                 val composable: @Composable () -> Unit =
                     if (outOfFrameExecutor != null) {
+                        nodeState.composedWithReusableContentHost = false
                         content
                     } else {
+                        nodeState.composedWithReusableContentHost = true
                         { ReusableContentHost(nodeState.active, content) }
                     }
                 if (pausable) {
@@ -733,7 +735,11 @@ internal class LayoutNodeSubcompositionsState(
                                 nodeState.deactivateOutOfFrame(outOfFrameExecutor)
                             } else {
                                 nodeState.active = false
-                                needApplyNotification = true
+                                if (nodeState.composedWithReusableContentHost) {
+                                    needApplyNotification = true
+                                } else {
+                                    nodeState.composition?.deactivate()
+                                }
                             }
                         }
                     } else {
@@ -789,6 +795,9 @@ internal class LayoutNodeSubcompositionsState(
                                 nodeState.deactivateOutOfFrame(outOfFrameExecutor)
                             } else {
                                 nodeState.active = false
+                                if (!nodeState.composedWithReusableContentHost) {
+                                    nodeState.composition?.deactivate()
+                                }
                             }
                         }
                         // create a new instance to avoid change notifications
@@ -1193,6 +1202,7 @@ internal class LayoutNodeSubcompositionsState(
         var forceReuse = false
         var pausedComposition: PausedComposition? = null
         var activeState = mutableStateOf(true)
+        var composedWithReusableContentHost = false
         var active: Boolean
             get() = activeState.value
             set(value) {
