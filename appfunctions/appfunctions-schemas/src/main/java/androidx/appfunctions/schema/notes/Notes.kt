@@ -23,6 +23,7 @@ import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionOpenable
 import androidx.appfunctions.AppFunctionSchemaDefinition
 import androidx.appfunctions.schema.types.SetField
+import java.time.LocalDateTime
 
 // TODO(b/407951385): Expose schema version.
 /**
@@ -62,7 +63,6 @@ public interface FindNotesAppFunction<
     ): Response
 
     /** The parameters for finding notes. */
-    // TODO(b/401517540): Add start and end dates when DateTime is supported.
     public interface Parameters {
         /**
          * The search query to be processed. A null value means to query all notes with the
@@ -73,6 +73,35 @@ public interface FindNotesAppFunction<
          * processed; for example by name matching or semantic analysis.
          */
         public val query: String?
+            get() = null
+
+        /**
+         * The date/time on or after which a note must have been modified to be included in the
+         * results.
+         *
+         * Acts as a lower bound for filtering notes based on their modification timestamp. A `null`
+         * value means no lower bound is applied.
+         *
+         * If `modifiedAfter` is equal to `modifiedBefore`, an empty list will be returned.
+         *
+         * [androidx.appfunctions.AppFunctionInvalidArgumentException] should be thrown if
+         * `modifiedAfter` is specified and is after `modifiedBefore`.
+         */
+        public val modifiedAfter: LocalDateTime?
+            get() = null
+
+        /**
+         * The date/time before which a note must have been modified to be included in the results.
+         *
+         * Acts as a strict upper bound for filtering notes based on their modification timestamp. A
+         * `null` value means no upper bound is applied.
+         *
+         * If `modifiedAfter` is equal to `modifiedBefore`, an empty list will be returned.
+         *
+         * [androidx.appfunctions.AppFunctionInvalidArgumentException] should be thrown if
+         * `modifiedAfter` is specified and is after `modifiedBefore`.
+         */
+        public val modifiedBefore: LocalDateTime?
             get() = null
     }
 

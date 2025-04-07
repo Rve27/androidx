@@ -195,7 +195,11 @@ package androidx.appfunctions.schema.notes {
   }
 
   public static interface FindNotesAppFunction.Parameters {
+    method public default java.time.LocalDateTime? getModifiedAfter();
+    method public default java.time.LocalDateTime? getModifiedBefore();
     method public default String? getQuery();
+    property public default java.time.LocalDateTime? modifiedAfter;
+    property public default java.time.LocalDateTime? modifiedBefore;
     property public default String? query;
   }
 
