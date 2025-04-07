@@ -46,6 +46,7 @@ import androidx.room.support.QueryInterceptorOpenHelperFactory
 import androidx.room.util.contains as containsCommon
 import androidx.room.util.findAndInstantiateDatabaseImpl
 import androidx.room.util.findMigrationPath as findMigrationPathExt
+import androidx.room.util.performBlocking
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.db.SimpleSQLiteQuery
@@ -116,7 +117,11 @@ actual abstract class RoomDatabase {
 
     private lateinit var internalTransactionExecutor: Executor
 
-    /** The SQLite open helper used by this database. */
+    /**
+     * The SQLite open helper used by this database.
+     *
+     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
+     */
     open val openHelper: SupportSQLiteOpenHelper
         get() =
             connectionManager.supportOpenHelper
@@ -607,6 +612,7 @@ actual abstract class RoomDatabase {
      * @param query The sql query
      * @param args The bind arguments for the placeholders in the query
      * @return A Cursor obtained by running the given query in the Room database.
+     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
      */
     open fun query(query: String, args: Array<out Any?>?): Cursor {
         assertNotMainThread()
@@ -620,6 +626,7 @@ actual abstract class RoomDatabase {
      * @param query The Query which includes the SQL and a bind callback for bind arguments.
      * @param signal The cancellation signal to be attached to the query.
      * @return Result of the query.
+     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
      */
     @JvmOverloads
     open fun query(query: SupportSQLiteQuery, signal: CancellationSignal? = null): Cursor {
@@ -637,6 +644,7 @@ actual abstract class RoomDatabase {
      *
      * @param sql The query to compile.
      * @return The compiled query.
+     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
      */
     open fun compileStatement(sql: String): SupportSQLiteStatement {
         assertNotMainThread()
@@ -644,7 +652,11 @@ actual abstract class RoomDatabase {
         return openHelper.writableDatabase.compileStatement(sql)
     }
 
-    /** Wrapper for [SupportSQLiteDatabase.beginTransaction]. */
+    /**
+     * Wrapper for [SupportSQLiteDatabase.beginTransaction].
+     *
+     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
+     */
     @Deprecated("beginTransaction() is deprecated", ReplaceWith("runInTransaction(Runnable)"))
     open fun beginTransaction() {
         assertNotMainThread()
@@ -669,7 +681,11 @@ actual abstract class RoomDatabase {
         }
     }
 
-    /** Wrapper for [SupportSQLiteDatabase.endTransaction]. */
+    /**
+     * Wrapper for [SupportSQLiteDatabase.endTransaction].
+     *
+     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
+     */
     @Deprecated("endTransaction() is deprecated", ReplaceWith("runInTransaction(Runnable)"))
     open fun endTransaction() {
         val autoCloser = autoCloser
@@ -689,7 +705,11 @@ actual abstract class RoomDatabase {
         }
     }
 
-    /** Wrapper for [SupportSQLiteDatabase.setTransactionSuccessful]. */
+    /**
+     * Wrapper for [SupportSQLiteDatabase.setTransactionSuccessful].
+     *
+     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
+     */
     @Deprecated(
         "setTransactionSuccessful() is deprecated",
         ReplaceWith("runInTransaction(Runnable)")
@@ -704,17 +724,13 @@ actual abstract class RoomDatabase {
      *
      * Room will only perform at most one transaction at a time.
      *
+     * If a [SQLiteDriver] is configured with this database, then it is best to use
+     * [useWriterConnection] along with [immediateTransaction] to perform transactional operations.
+     *
      * @param body The piece of code to execute.
      */
-    @Suppress("DEPRECATION")
     open fun runInTransaction(body: Runnable) {
-        beginTransaction()
-        try {
-            body.run()
-            setTransactionSuccessful()
-        } finally {
-            endTransaction()
-        }
+        runInTransaction { body.run() }
     }
 
     /**
@@ -723,19 +739,32 @@ actual abstract class RoomDatabase {
      *
      * Room will only perform at most one transaction at a time.
      *
+     * If a [SQLiteDriver] is configured with this database, then it is best to use
+     * [useWriterConnection] along with [immediateTransaction] to perform transactional operations.
+     *
      * @param body The piece of code to execute.
      * @param V The type of the return value.
      * @return The value returned from the [Callable].
      */
-    @Suppress("DEPRECATION")
     open fun <V> runInTransaction(body: Callable<V>): V {
-        beginTransaction()
-        return try {
-            val result = body.call()
-            setTransactionSuccessful()
-            result
-        } finally {
-            endTransaction()
+        return runInTransaction { body.call() }
+    }
+
+    @Suppress("DEPRECATION") // Usage of try-finally transaction idiom APIs
+    private fun <T> runInTransaction(body: () -> T): T {
+        if (inCompatibilityMode()) {
+            beginTransaction()
+            try {
+                val result = body.invoke()
+                setTransactionSuccessful()
+                return result
+            } finally {
+                endTransaction()
+            }
+        } else {
+            return performBlocking(db = this, isReadOnly = false, inTransaction = true) {
+                body.invoke()
+            }
         }
     }
 
@@ -762,9 +791,11 @@ actual abstract class RoomDatabase {
     }
 
     /**
-     * Returns true if current thread is in a transaction.
+     * Wrapper for [SupportSQLiteDatabase.inTransaction]. Returns true if current thread is in a
+     * transaction.
      *
      * @return True if there is an active transaction in current thread, false otherwise.
+     * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
      * @see SupportSQLiteDatabase.inTransaction
      */
     open fun inTransaction(): Boolean {

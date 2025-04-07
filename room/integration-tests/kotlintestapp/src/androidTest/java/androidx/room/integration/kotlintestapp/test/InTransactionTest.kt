@@ -18,10 +18,14 @@ package androidx.room.integration.kotlintestapp.test
 
 import android.database.sqlite.SQLiteTransactionListener
 import androidx.kruth.assertThat
+import androidx.kruth.assertThrows
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.integration.kotlintestapp.TestDatabase
+import androidx.room.integration.kotlintestapp.vo.Publisher
+import androidx.sqlite.SQLiteException
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SmallTest
 import kotlin.test.fail
@@ -51,6 +55,7 @@ class InTransactionTest {
 
     @Test
     fun beginTransactionWithListener_commit() {
+        val publisher = Publisher("p1", "pub1")
         val roomDb =
             Room.inMemoryDatabaseBuilder<TestDatabase>(ApplicationProvider.getApplicationContext())
                 .build()
@@ -68,7 +73,7 @@ class InTransactionTest {
 
                 override fun onCommit() {
                     assertThat(supportDb.inTransaction()).isTrue()
-                    roomDb.booksDao().insertPublisher("p1", "pub1")
+                    roomDb.booksDao().insertPublisher(publisher.publisherId, publisher.name)
                 }
 
                 override fun onRollback() {
@@ -79,7 +84,7 @@ class InTransactionTest {
         supportDb.setTransactionSuccessful()
         supportDb.endTransaction()
 
-        assertThat(roomDb.booksDao().getPublishers()).isNotEmpty()
+        assertThat(roomDb.booksDao().getPublishers()).containsExactly(publisher)
         roomDb.close()
     }
 
@@ -106,6 +111,66 @@ class InTransactionTest {
         supportDb.endTransaction()
 
         assertThat(roomDb.booksDao().getPublishers()).isEmpty()
+        roomDb.close()
+    }
+
+    @Test
+    fun daoTransactionBlock() {
+        val roomDb =
+            Room.inMemoryDatabaseBuilder<TestDatabase>(ApplicationProvider.getApplicationContext())
+                .build()
+        val supportDb = roomDb.openHelper.writableDatabase
+        roomDb.booksDao().executeTransaction {
+            assertThat(roomDb.inTransaction()).isTrue()
+            assertThat(supportDb.inTransaction()).isTrue()
+        }
+    }
+
+    @Test
+    fun daoTransactionBlock_withDriver() {
+        val publisher = Publisher("p1", "pub1")
+
+        val roomDb =
+            Room.inMemoryDatabaseBuilder<TestDatabase>(ApplicationProvider.getApplicationContext())
+                .setDriver(BundledSQLiteDriver())
+                .build()
+        roomDb.booksDao().executeTransaction {
+            roomDb.booksDao().insertPublisher(publisher.publisherId, publisher.name)
+        }
+        assertThat(roomDb.booksDao().getPublishers()).containsExactly(publisher)
+
+        assertThrows<SQLiteException> {
+            roomDb.booksDao().executeTransaction {
+                // will fails due to non unique id
+                roomDb.booksDao().insertPublisher(publisher.publisherId, publisher.name)
+            }
+        }
+        assertThat(roomDb.booksDao().getPublishers()).containsExactly(publisher)
+
+        roomDb.close()
+    }
+
+    @Test
+    fun runInTransaction_withDriver() {
+        val publisher = Publisher("p1", "pub1")
+
+        val roomDb =
+            Room.inMemoryDatabaseBuilder<TestDatabase>(ApplicationProvider.getApplicationContext())
+                .setDriver(BundledSQLiteDriver())
+                .build()
+        roomDb.runInTransaction {
+            roomDb.booksDao().insertPublisher(publisher.publisherId, publisher.name)
+        }
+        assertThat(roomDb.booksDao().getPublishers()).containsExactly(publisher)
+
+        assertThrows<SQLiteException> {
+            roomDb.runInTransaction {
+                // will fails due to non unique id
+                roomDb.booksDao().insertPublisher(publisher.publisherId, publisher.name)
+            }
+        }
+        assertThat(roomDb.booksDao().getPublishers()).containsExactly(publisher)
+
         roomDb.close()
     }
 }
