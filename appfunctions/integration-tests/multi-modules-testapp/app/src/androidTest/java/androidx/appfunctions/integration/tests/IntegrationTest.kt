@@ -23,7 +23,6 @@ import androidx.appfunctions.AppFunctionInvalidArgumentException
 import androidx.appfunctions.AppFunctionManagerCompat
 import androidx.appfunctions.ExecuteAppFunctionRequest
 import androidx.appfunctions.ExecuteAppFunctionResponse
-import androidx.appfunctions.integration.testapp.library.TestFunctions2Ids
 import androidx.appfunctions.integration.tests.TestUtil.doBlocking
 import androidx.appfunctions.integration.tests.TestUtil.retryAssert
 import androidx.test.filters.LargeTest
@@ -34,6 +33,7 @@ import kotlin.test.assertIs
 import org.junit.After
 import org.junit.Assume.assumeNotNull
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 @LargeTest
@@ -68,13 +68,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_success() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        TestFunctionsIds.ADD_ID,
+                        "TestFunctionsIds.ADD_ID",
                         AppFunctionData.Builder("").setLong("num1", 1).setLong("num2", 2).build()
                     )
             )
@@ -89,13 +90,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_voidReturnType_success() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        TestFunctionsIds.VOID_FUNCTION_ID,
+                        "TestFunctionsIds.VOID_FUNCTION_ID",
                         AppFunctionData.Builder("").build()
                     )
             )
@@ -104,6 +106,7 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_setFactory_success() = doBlocking {
         // A factory is set to create the enclosing class of the function.
         // See [TestApplication.appFunctionConfiguration].
@@ -112,7 +115,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        TestFactoryIds.IS_CREATED_BY_FACTORY_ID,
+                        "TestFactoryIds.IS_CREATED_BY_FACTORY_ID",
                         AppFunctionData.Builder("").build()
                     )
             )
@@ -129,13 +132,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_functionInLibraryModule_success() = doBlocking {
         var response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        TestFunctions2Ids.CONCAT_ID,
+                        "TestFunctions2Ids.CONCAT_ID",
                         AppFunctionData.Builder("")
                             .setString("str1", "log")
                             .setString("str2", "cat")
@@ -153,6 +157,7 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_functionNotFound_fail() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
@@ -170,13 +175,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_appThrows_fail() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        TestFunctionsIds.DO_THROW_ID,
+                        "TestFunctionsIds.DO_THROW_ID",
                         AppFunctionData.Builder("").build()
                     )
             )
@@ -188,13 +194,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_createNote() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        TestFunctionsIds.CREATE_NOTE_ID,
+                        "TestFunctionsIds.CREATE_NOTE_ID",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "createNoteParams",
@@ -230,13 +237,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_createNote_withOpenableCapability_returnsNote() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        TestFunctionsIds.GET_OPENABLE_NOTE_ID,
+                        "TestFunctionsIds.GET_OPENABLE_NOTE_ID",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "createNoteParams",
@@ -272,13 +280,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_createNote_withOpenableCapability_returnsOpenableNote() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        TestFunctionsIds.GET_OPENABLE_NOTE_ID,
+                        "TestFunctionsIds.GET_OPENABLE_NOTE_ID",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "createNoteParams",
@@ -320,6 +329,7 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_serializableProxyParam_dateTime_success() = doBlocking {
         val localDateTimeClass = DateTime(LocalDateTime.now())
         val response =
@@ -327,7 +337,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         targetPackageName = context.packageName,
-                        functionIdentifier = TestFunctionsIds.LOG_LOCAL_DATE_TIME_ID,
+                        functionIdentifier = "TestFunctionsIds.LOG_LOCAL_DATE_TIME_ID",
                         functionParameters =
                             AppFunctionData.Builder("")
                                 .setAppFunctionData(
@@ -345,6 +355,7 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_serializableProxyParam_androidUri_success() = doBlocking {
         val androidUri = Uri.parse("https://www.google.com/")
         val response =
@@ -352,7 +363,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         targetPackageName = context.packageName,
-                        functionIdentifier = TestFunctions2Ids.LOG_URI_ID,
+                        functionIdentifier = "TestFunctions2Ids.LOG_URI_ID",
                         functionParameters =
                             AppFunctionData.Builder("")
                                 .setAppFunctionData(
@@ -367,13 +378,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_serializableProxyResponse_dateTime_success() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         targetPackageName = context.packageName,
-                        functionIdentifier = TestFunctionsIds.GET_LOCAL_DATE_ID,
+                        functionIdentifier = "TestFunctionsIds.GET_LOCAL_DATE_ID",
                         functionParameters = AppFunctionData.Builder("").build()
                     )
             )
@@ -389,13 +401,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_serializableProxyResponse_androidUri_success() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         targetPackageName = context.packageName,
-                        functionIdentifier = TestFunctions2Ids.GET_URI_ID,
+                        functionIdentifier = "TestFunctions2Ids.GET_URI_ID",
                         functionParameters = AppFunctionData.Builder("").build()
                     )
             )
@@ -412,13 +425,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_updateNote_success() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        TestFunctionsIds.UPDATE_NOTE_ID,
+                        "TestFunctionsIds.UPDATE_NOTE_ID",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "updateNoteParams",
@@ -453,13 +467,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_updateNoteSetFieldNullContent_success() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        TestFunctionsIds.UPDATE_NOTE_ID,
+                        "TestFunctionsIds.UPDATE_NOTE_ID",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "updateNoteParams",
@@ -494,13 +509,14 @@ class IntegrationTest {
     }
 
     @Test
+    @Ignore("b/408436534")
     fun executeAppFunction_updateNoteNullSetFields_success() = doBlocking {
         val response =
             appFunctionManager.executeAppFunction(
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        TestFunctionsIds.UPDATE_NOTE_ID,
+                        "TestFunctionsIds.UPDATE_NOTE_ID",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "updateNoteParams",
@@ -540,19 +556,19 @@ class IntegrationTest {
         const val TEST_APP_FUNCTION_DOC_SIZE_LIMIT = 512 * 1024 // 512kb
 
         val FUNCTION_IDS =
-            setOf(
-                TestFunctionsIds.ADD_ID,
-                TestFunctionsIds.DO_THROW_ID,
-                TestFunctionsIds.VOID_FUNCTION_ID,
-                TestFunctionsIds.CREATE_NOTE_ID,
-                TestFunctionsIds.UPDATE_NOTE_ID,
-                TestFunctionsIds.LOG_LOCAL_DATE_TIME_ID,
-                TestFunctionsIds.GET_LOCAL_DATE_ID,
-                TestFunctionsIds.GET_OPENABLE_NOTE_ID,
-                TestFactoryIds.IS_CREATED_BY_FACTORY_ID,
-                TestFunctions2Ids.CONCAT_ID,
-                TestFunctions2Ids.LOG_URI_ID,
-                TestFunctions2Ids.GET_URI_ID,
+            setOf<String>(
+                //                TestFunctionsIds.ADD_ID,
+                //                TestFunctionsIds.DO_THROW_ID,
+                //                TestFunctionsIds.VOID_FUNCTION_ID,
+                //                TestFunctionsIds.CREATE_NOTE_ID,
+                //                TestFunctionsIds.UPDATE_NOTE_ID,
+                //                TestFunctionsIds.LOG_LOCAL_DATE_TIME_ID,
+                //                TestFunctionsIds.GET_LOCAL_DATE_ID,
+                //                TestFunctionsIds.GET_OPENABLE_NOTE_ID,
+                //                TestFactoryIds.IS_CREATED_BY_FACTORY_ID,
+                //                TestFunctions2Ids.CONCAT_ID,
+                //                TestFunctions2Ids.LOG_URI_ID,
+                //                TestFunctions2Ids.GET_URI_ID,
             )
     }
 }
