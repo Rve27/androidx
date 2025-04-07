@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions.internal
+package androidx.appfunctions.schema.notes.translators
 
+import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
-import androidx.appfunctions.schema.notes.APP_FUNCTION_SCHEMA_CATEGORY_NOTES
-import androidx.appfunctions.schema.notes.translators.NotesTranslatorSelector
+import androidx.appfunctions.internal.Translator
 
-@RequiresApi(33)
-internal class TranslatorSelectorImpl : TranslatorSelector {
-
-    override fun getTranslator(schemaMetadata: AppFunctionSchemaMetadata): Translator? {
-        // TODO: Generate the mapping.
-        if (schemaMetadata.category == APP_FUNCTION_SCHEMA_CATEGORY_NOTES) {
-            return NotesTranslatorSelector.getTranslator(schemaMetadata.name)
+internal object NotesTranslatorSelector {
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    fun getTranslator(schemaName: String): Translator? =
+        when (schemaName) {
+            "createNote" -> CreateNoteTranslator()
+            "findNotes" -> FindNotesTranslator()
+            else -> null
         }
-        return null
-    }
 }

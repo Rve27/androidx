@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions.schema.translator
+package androidx.appfunctions.schema
 
 import android.os.Build
 import androidx.annotation.RequiresApi

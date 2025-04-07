@@ -36,3 +36,44 @@ data class LegacyUri(
     @Document.Id val id: String = "", // unused
     @Document.StringProperty(required = true) val uri: String,
 )
+
+/** A date and time. */
+@Document(name = "com.google.android.appfunctions.schema.common.v1.types.DateTime")
+data class LegacyDateTime(
+    @Document.Namespace val namespace: String = "", // unused
+    @Document.Id val id: String = "", // unused
+    /** The time zone. Formatted as an IANA Time Zone Database name (e.g. "Europe/Zurich"). */
+    @Document.StringProperty(required = true) val timeZone: String,
+    /** The date. */
+    @Document.DocumentProperty(required = true) val date: LegacyDate,
+    /** The time. */
+    @Document.DocumentProperty(required = true) val timeOfDay: LegacyTimeOfDay,
+)
+
+/** A date. */
+@Document(name = "com.google.android.appfunctions.schema.common.v1.types.Date")
+data class LegacyDate(
+    @Document.Namespace val namespace: String = "", // unused
+    @Document.Id val id: String = "", // unused
+    /** The year. */
+    @Document.LongProperty(required = true) val year: Int,
+    /** The month. */
+    @Document.LongProperty(required = true) val month: Int,
+    /** The day. */
+    @Document.LongProperty(required = true) val day: Int,
+)
+
+/** A time of day. */
+@Document(name = "com.google.android.appfunctions.schema.common.v1.types.TimeOfDay")
+data class LegacyTimeOfDay(
+    @Document.Namespace val namespace: String = "", // unused
+    @Document.Id val id: String = "", // unused
+    /** The hours. */
+    @Document.LongProperty(required = true) val hours: Int,
+    /** The minutes. */
+    @Document.LongProperty(required = true) val minutes: Int,
+    /** The seconds. */
+    @Document.LongProperty(required = true) val seconds: Int,
+    /** The nanoseconds. */
+    @Document.LongProperty(required = true) val nanos: Int,
+)

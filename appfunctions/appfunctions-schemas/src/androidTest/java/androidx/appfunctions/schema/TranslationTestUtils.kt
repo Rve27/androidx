@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions.testing
+package androidx.appfunctions.schema
 
 import android.app.appfunctions.ExecuteAppFunctionResponse.PROPERTY_RETURN_VALUE
 import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.appfunctions.AppFunctionData
 import androidx.appfunctions.internal.Translator
-import androidx.appfunctions.schema.translator.toJetpackGenericDocument
-import androidx.appfunctions.schema.translator.toPlatformGenericDocument
 import androidx.appsearch.app.GenericDocument
 import com.google.common.truth.Truth.assertThat
 
@@ -72,12 +70,59 @@ internal class TranslatorTestUtils(private val translator: Translator) {
         assertThat(downgradedResponse).isEqualTo(expectedLegacyOutput)
     }
 
+    internal inline fun <reified T : Any> assertDowngradeResponseTranslation(
+        jetpackInput: Any,
+        expectedLegacyOutput: List<T>
+    ) {
+        val jetpackData =
+            AppFunctionData.Builder(
+                    qualifiedName = "",
+                )
+                .setAppFunctionData(
+                    PROPERTY_RETURN_VALUE,
+                    AppFunctionData.serialize(jetpackInput, jetpackInput.javaClass)
+                )
+                .build()
+        val downgradedResponse =
+            translator
+                .downgradeResponse(jetpackData)
+                .getAppFunctionDataList(PROPERTY_RETURN_VALUE)!!
+                .map {
+                    it.genericDocument.toJetpackGenericDocument().toDocumentClass(T::class.java)
+                }
+        assertThat(downgradedResponse).isEqualTo(expectedLegacyOutput)
+    }
+
     internal fun assertUpgradeResponseTranslation(legacyInput: Any, expectedJetpackOutput: Any) {
         val legacyGenericDocument =
             GenericDocument.Builder<GenericDocument.Builder<*>>("", "", "")
                 .setPropertyDocument(
                     PROPERTY_RETURN_VALUE,
                     GenericDocument.fromDocumentClass(legacyInput)
+                )
+                .build()
+        val legacyData =
+            AppFunctionData(
+                genericDocument = legacyGenericDocument.toPlatformGenericDocument(),
+                extras = Bundle.EMPTY
+            )
+        val upgradedResponse =
+            translator
+                .upgradeResponse(legacyData)
+                .getAppFunctionData(PROPERTY_RETURN_VALUE)!!
+                .deserialize(expectedJetpackOutput::class.java)
+        assertThat(upgradedResponse).isEqualTo(expectedJetpackOutput)
+    }
+
+    internal fun <T : Any> assertUpgradeResponseTranslation(
+        legacyInput: List<T>,
+        expectedJetpackOutput: Any
+    ) {
+        val legacyGenericDocument =
+            GenericDocument.Builder<GenericDocument.Builder<*>>("", "", "")
+                .setPropertyDocument(
+                    PROPERTY_RETURN_VALUE,
+                    *legacyInput.map { GenericDocument.fromDocumentClass(it) }.toTypedArray()
                 )
                 .build()
         val legacyData =

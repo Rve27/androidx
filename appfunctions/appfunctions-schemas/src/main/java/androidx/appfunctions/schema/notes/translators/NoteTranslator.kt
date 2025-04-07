@@ -19,10 +19,10 @@ package androidx.appfunctions.schema.notes.translators
 import androidx.annotation.RequiresApi
 import androidx.appfunctions.AppFunctionData
 import androidx.appfunctions.schema.notes.translators.AttachmentTranslator.downgradeAttachment
+import androidx.appfunctions.schema.notes.translators.AttachmentTranslator.upgradeAttachment
 
 @RequiresApi(33)
 internal object NoteTranslator {
-
     fun AppFunctionNoteImpl.downgradeNote(): AppFunctionData {
         return AppFunctionData.Builder(
                 qualifiedName = "",
@@ -40,4 +40,15 @@ internal object NoteTranslator {
             }
             .build()
     }
+
+    fun AppFunctionData.upgradeNote(): AppFunctionNoteImpl =
+        AppFunctionNoteImpl(
+            id = id,
+            title = checkNotNull(getString("title")),
+            content = getStringOrNull("content"),
+            attachments =
+                getAppFunctionDataList("attachments")?.map { it.upgradeAttachment() }
+                    ?: emptyList(),
+            groupId = getStringOrNull("folderId")
+        )
 }

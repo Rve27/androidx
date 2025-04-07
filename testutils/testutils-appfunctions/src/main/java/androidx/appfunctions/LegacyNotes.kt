@@ -52,3 +52,21 @@ data class LegacyNote(
     /** The ID of the folder the note is in, if any. */
     @Document.StringProperty val folderId: String? = null,
 )
+
+/**
+ * The parameters for finding notes. A null value means that there is no restriction on the given
+ * field. If all fields are null, it returns all the notes (up to [maxCount]).
+ */
+@Document(name = "com.google.android.appfunctions.schema.common.v1.notes.FindNotesParams")
+data class LegacyFindNotesParams(
+    @Document.Namespace val namespace: String = "", // unused
+    @Document.Id val id: String = "", // unused
+    /** The query to search for notes. */
+    @Document.StringProperty val query: String? = null,
+    /** The start date (inclusive) of the notes to find. */
+    @Document.DocumentProperty val startDate: LegacyDateTime? = null,
+    /** The end date (exclusive) of the notes to find. */
+    @Document.DocumentProperty val endDate: LegacyDateTime? = null,
+    /** The maximum number of notes to return. */
+    @Document.LongProperty(required = true) val maxCount: Int,
+)

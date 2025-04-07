@@ -21,7 +21,7 @@ import androidx.appfunctions.LegacyAttachment
 import androidx.appfunctions.LegacyCreateNoteParams
 import androidx.appfunctions.LegacyNote
 import androidx.appfunctions.LegacyUri
-import androidx.appfunctions.testing.TranslatorTestUtils
+import androidx.appfunctions.schema.TranslatorTestUtils
 import androidx.test.filters.SdkSuppress
 import org.junit.Test
 
