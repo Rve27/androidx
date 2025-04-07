@@ -19,6 +19,8 @@ package androidx.appfunctions.compiler.processors
 import androidx.appfunctions.compiler.core.AnnotatedAppFunctionSerializableProxy.ResolvedAnnotatedSerializableProxies
 import androidx.appfunctions.compiler.core.AnnotatedAppFunctions
 import androidx.appfunctions.compiler.core.AppFunctionSymbolResolver
+import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
+import androidx.appfunctions.metadata.AppFunctionDataTypeMetadata
 import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
@@ -82,9 +84,7 @@ class AppFunctionIndexXmlProcessor(
     ) {
         val appFunctionMetadataList =
             appFunctionsByClass.flatMap {
-                it.createAppFunctionMetadataList(resolvedAnnotatedSerializableProxies).map {
-                    it.toAppFunctionMetadataDocument()
-                }
+                it.createAppFunctionMetadataList(resolvedAnnotatedSerializableProxies)
             }
 
         val xmlDocumentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
@@ -93,11 +93,18 @@ class AppFunctionIndexXmlProcessor(
         val appFunctionsElement = xmlDocument.createElement(APP_FUNCTIONS_ELEMENTS_TAG)
         xmlDocument.appendChild(appFunctionsElement)
 
+        val aggregatedDataTypes: MutableMap<String, AppFunctionDataTypeMetadata> = mutableMapOf()
         for (appFunctionMetadata in appFunctionMetadataList) {
+            appFunctionMetadata.components.dataTypes.forEach { (objectKey, dataTypeMetadata) ->
+                aggregatedDataTypes.putIfAbsent(objectKey, dataTypeMetadata)
+            }
+            val sanitizedAppFunctionMetadata =
+                appFunctionMetadata.copy(components = AppFunctionComponentsMetadata())
+
             val appFunctionElement =
                 xmlDocument.createElementWithInstance(
                     APP_FUNCTION_ITEM_TAG,
-                    appFunctionMetadata,
+                    sanitizedAppFunctionMetadata.toAppFunctionMetadataDocument(),
                     // Below properties are named differently in platform's
                     // AppFunctionStaticMetadata GD hence we encode them in XML accordingly.
                     customTagNames = mapOf("isEnabledByDefault" to "enabledByDefault"),
@@ -105,10 +112,26 @@ class AppFunctionIndexXmlProcessor(
                     skipProperties = setOf("namespace")
                 )
             appFunctionElement.appendChild(
-                xmlDocument.createElementWithTextNode(APP_FUNCTION_ID_TAG, appFunctionMetadata.id)
+                xmlDocument.createElementWithTextNode(
+                    APP_FUNCTION_ID_TAG,
+                    sanitizedAppFunctionMetadata.id
+                )
             )
             appFunctionsElement.appendChild(appFunctionElement)
         }
+
+        val componentElement =
+            xmlDocument.createElementWithInstance(
+                COMPONENT_ITEM_TAG,
+                AppFunctionComponentsMetadata(aggregatedDataTypes)
+                    .toAppFunctionComponentsMetadataDocument(),
+                // Below properties are named differently in platform's
+                // AppFunctionStaticMetadata GD hence we encode them in XML accordingly.
+                customTagNames = mapOf("isEnabledByDefault" to "enabledByDefault"),
+                // Irrelevant properties that do not need to be encoded in XML.
+                skipProperties = setOf("namespace")
+            )
+        appFunctionsElement.appendChild(componentElement)
 
         val transformer =
             TransformerFactory.newInstance().newTransformer().apply {
@@ -212,6 +235,7 @@ class AppFunctionIndexXmlProcessor(
         const val XML_EXTENSION = "xml"
         const val APP_FUNCTIONS_ELEMENTS_TAG = "appfunctions"
         const val APP_FUNCTION_ITEM_TAG = "appfunction"
+        const val COMPONENT_ITEM_TAG = "components"
         const val APP_FUNCTION_ID_TAG = "functionId"
     }
 }

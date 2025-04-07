@@ -2,64 +2,6 @@
 <appfunctions>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.AppFunctionOpenable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>8</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>stringToOpen</name>
-                        </properties>
-                        <required>stringToOpen</required>
-                        <type>3</type>
-                    </allOf>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>6</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>age</name>
-                        </properties>
-                        <required>age</required>
-                        <type>3</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.LongBaseSerializable</name>
-            </dataTypes>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <dataTypeReference>com.testdata.LongBaseSerializable</dataTypeReference>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <type>11</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.DerivedSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.DerivedSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.DerivedSerializableInputFunctions#simpleFunctionWithBothDerivedSerializableListAndListItemNullable</id>
@@ -92,64 +34,6 @@
     </appfunction>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.AppFunctionOpenable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>8</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>stringToOpen</name>
-                        </properties>
-                        <required>stringToOpen</required>
-                        <type>3</type>
-                    </allOf>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>6</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>age</name>
-                        </properties>
-                        <required>age</required>
-                        <type>3</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.LongBaseSerializable</name>
-            </dataTypes>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <dataTypeReference>com.testdata.LongBaseSerializable</dataTypeReference>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <type>11</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.DerivedSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.DerivedSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.DerivedSerializableInputFunctions#simpleFunctionWithDerivedSerializable</id>
@@ -177,64 +61,6 @@
     </appfunction>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.AppFunctionOpenable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>8</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>stringToOpen</name>
-                        </properties>
-                        <required>stringToOpen</required>
-                        <type>3</type>
-                    </allOf>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>6</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>age</name>
-                        </properties>
-                        <required>age</required>
-                        <type>3</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.LongBaseSerializable</name>
-            </dataTypes>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <dataTypeReference>com.testdata.LongBaseSerializable</dataTypeReference>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <type>11</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.DerivedSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.DerivedSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.DerivedSerializableInputFunctions#simpleFunctionWithDerivedSerializableList</id>
@@ -267,64 +93,6 @@
     </appfunction>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.AppFunctionOpenable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>8</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>stringToOpen</name>
-                        </properties>
-                        <required>stringToOpen</required>
-                        <type>3</type>
-                    </allOf>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>6</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>age</name>
-                        </properties>
-                        <required>age</required>
-                        <type>3</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.LongBaseSerializable</name>
-            </dataTypes>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <dataTypeReference>com.testdata.LongBaseSerializable</dataTypeReference>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <type>11</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.DerivedSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.DerivedSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.DerivedSerializableInputFunctions#simpleFunctionWithDerivedSerializableListItemNullable</id>
@@ -357,64 +125,6 @@
     </appfunction>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.AppFunctionOpenable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>8</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>stringToOpen</name>
-                        </properties>
-                        <required>stringToOpen</required>
-                        <type>3</type>
-                    </allOf>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>6</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>age</name>
-                        </properties>
-                        <required>age</required>
-                        <type>3</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.LongBaseSerializable</name>
-            </dataTypes>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <dataTypeReference>com.testdata.LongBaseSerializable</dataTypeReference>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <type>11</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.DerivedSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.DerivedSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.DerivedSerializableInputFunctions#simpleFunctionWithNullableDerivedSerializable</id>
@@ -442,64 +152,6 @@
     </appfunction>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.AppFunctionOpenable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>8</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>stringToOpen</name>
-                        </properties>
-                        <required>stringToOpen</required>
-                        <type>3</type>
-                    </allOf>
-                    <allOf>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                        <properties>
-                            <dataTypeMetadata>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>6</type>
-                            </dataTypeMetadata>
-                            <id>unused</id>
-                            <name>age</name>
-                        </properties>
-                        <required>age</required>
-                        <type>3</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.LongBaseSerializable</name>
-            </dataTypes>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <allOf>
-                        <dataTypeReference>com.testdata.LongBaseSerializable</dataTypeReference>
-                        <id>unused</id>
-                        <isNullable>true</isNullable>
-                        <type>11</type>
-                    </allOf>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.DerivedSerializable</objectQualifiedName>
-                    <type>12</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.DerivedSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.DerivedSerializableInputFunctions#simpleFunctionWithNullableDerivedSerializableList</id>
@@ -530,4 +182,65 @@
         </response>
         <functionId>com.testdata.DerivedSerializableInputFunctions#simpleFunctionWithNullableDerivedSerializableList</functionId>
     </appfunction>
+    <components>
+        <dataTypes>
+            <dataTypeMetadata>
+                <allOf>
+                    <id>unused</id>
+                    <isNullable>true</isNullable>
+                    <objectQualifiedName>com.testdata.AppFunctionOpenable</objectQualifiedName>
+                    <properties>
+                        <dataTypeMetadata>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <type>8</type>
+                        </dataTypeMetadata>
+                        <id>unused</id>
+                        <name>stringToOpen</name>
+                    </properties>
+                    <required>stringToOpen</required>
+                    <type>3</type>
+                </allOf>
+                <allOf>
+                    <id>unused</id>
+                    <isNullable>true</isNullable>
+                    <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
+                    <properties>
+                        <dataTypeMetadata>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <type>6</type>
+                        </dataTypeMetadata>
+                        <id>unused</id>
+                        <name>age</name>
+                    </properties>
+                    <required>age</required>
+                    <type>3</type>
+                </allOf>
+                <id>unused</id>
+                <isNullable>true</isNullable>
+                <objectQualifiedName>com.testdata.LongBaseSerializable</objectQualifiedName>
+                <type>12</type>
+            </dataTypeMetadata>
+            <id>unused</id>
+            <name>com.testdata.LongBaseSerializable</name>
+        </dataTypes>
+        <dataTypes>
+            <dataTypeMetadata>
+                <allOf>
+                    <dataTypeReference>com.testdata.LongBaseSerializable</dataTypeReference>
+                    <id>unused</id>
+                    <isNullable>true</isNullable>
+                    <type>11</type>
+                </allOf>
+                <id>unused</id>
+                <isNullable>true</isNullable>
+                <objectQualifiedName>com.testdata.DerivedSerializable</objectQualifiedName>
+                <type>12</type>
+            </dataTypeMetadata>
+            <id>unused</id>
+            <name>com.testdata.DerivedSerializable</name>
+        </dataTypes>
+        <id>unused</id>
+    </components>
 </appfunctions>

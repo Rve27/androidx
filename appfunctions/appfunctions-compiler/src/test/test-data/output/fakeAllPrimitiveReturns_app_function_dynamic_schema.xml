@@ -607,4 +607,7 @@
         <schemaVersion>1</schemaVersion>
         <functionId>com.testdata.FakeAllPrimitiveReturnsImpl#unitReturn</functionId>
     </appfunction>
+    <components>
+        <id>unused</id>
+    </components>
 </appfunctions>

@@ -2,41 +2,6 @@
 <appfunctions>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.SampleSerializable</objectQualifiedName>
-                    <properties>
-                        <dataTypeMetadata>
-                            <id>unused</id>
-                            <isNullable>false</isNullable>
-                            <type>8</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>value</name>
-                    </properties>
-                    <properties>
-                        <dataTypeMetadata>
-                            <id>unused</id>
-                            <isNullable>false</isNullable>
-                            <itemType>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>8</type>
-                            </itemType>
-                            <type>10</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>listValue</name>
-                    </properties>
-                    <required>value</required>
-                    <required>listValue</required>
-                    <type>3</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.SampleSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.SerializableOutputFunctions#simpleFunction</id>
@@ -54,41 +19,6 @@
     </appfunction>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.SampleSerializable</objectQualifiedName>
-                    <properties>
-                        <dataTypeMetadata>
-                            <id>unused</id>
-                            <isNullable>false</isNullable>
-                            <type>8</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>value</name>
-                    </properties>
-                    <properties>
-                        <dataTypeMetadata>
-                            <id>unused</id>
-                            <isNullable>false</isNullable>
-                            <itemType>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>8</type>
-                            </itemType>
-                            <type>10</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>listValue</name>
-                    </properties>
-                    <required>value</required>
-                    <required>listValue</required>
-                    <type>3</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.SampleSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.SerializableOutputFunctions#simpleFunctionNullableSerializable</id>
@@ -106,41 +36,6 @@
     </appfunction>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.SampleSerializable</objectQualifiedName>
-                    <properties>
-                        <dataTypeMetadata>
-                            <id>unused</id>
-                            <isNullable>false</isNullable>
-                            <type>8</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>value</name>
-                    </properties>
-                    <properties>
-                        <dataTypeMetadata>
-                            <id>unused</id>
-                            <isNullable>false</isNullable>
-                            <itemType>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>8</type>
-                            </itemType>
-                            <type>10</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>listValue</name>
-                    </properties>
-                    <required>value</required>
-                    <required>listValue</required>
-                    <type>3</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.SampleSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.SerializableOutputFunctions#simpleFunctionNullableSerializableList</id>
@@ -163,41 +58,6 @@
     </appfunction>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.SampleSerializable</objectQualifiedName>
-                    <properties>
-                        <dataTypeMetadata>
-                            <id>unused</id>
-                            <isNullable>false</isNullable>
-                            <type>8</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>value</name>
-                    </properties>
-                    <properties>
-                        <dataTypeMetadata>
-                            <id>unused</id>
-                            <isNullable>false</isNullable>
-                            <itemType>
-                                <id>unused</id>
-                                <isNullable>false</isNullable>
-                                <type>8</type>
-                            </itemType>
-                            <type>10</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>listValue</name>
-                    </properties>
-                    <required>value</required>
-                    <required>listValue</required>
-                    <type>3</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.SampleSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.SerializableOutputFunctions#simpleFunctionSerializableList</id>
@@ -218,4 +78,42 @@
         </response>
         <functionId>com.testdata.SerializableOutputFunctions#simpleFunctionSerializableList</functionId>
     </appfunction>
+    <components>
+        <dataTypes>
+            <dataTypeMetadata>
+                <id>unused</id>
+                <isNullable>true</isNullable>
+                <objectQualifiedName>com.testdata.SampleSerializable</objectQualifiedName>
+                <properties>
+                    <dataTypeMetadata>
+                        <id>unused</id>
+                        <isNullable>false</isNullable>
+                        <type>8</type>
+                    </dataTypeMetadata>
+                    <id>unused</id>
+                    <name>value</name>
+                </properties>
+                <properties>
+                    <dataTypeMetadata>
+                        <id>unused</id>
+                        <isNullable>false</isNullable>
+                        <itemType>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <type>8</type>
+                        </itemType>
+                        <type>10</type>
+                    </dataTypeMetadata>
+                    <id>unused</id>
+                    <name>listValue</name>
+                </properties>
+                <required>value</required>
+                <required>listValue</required>
+                <type>3</type>
+            </dataTypeMetadata>
+            <id>unused</id>
+            <name>com.testdata.SampleSerializable</name>
+        </dataTypes>
+        <id>unused</id>
+    </components>
 </appfunctions>

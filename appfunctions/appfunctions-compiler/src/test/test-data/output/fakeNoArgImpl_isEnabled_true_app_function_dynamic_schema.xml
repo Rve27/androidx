@@ -19,4 +19,7 @@
         <schemaVersion>1</schemaVersion>
         <functionId>com.testdata.FakeNoArgImpl_IsEnabled_True#noArg</functionId>
     </appfunction>
+    <components>
+        <id>unused</id>
+    </components>
 </appfunctions>

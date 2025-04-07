@@ -2,27 +2,6 @@
 <appfunctions>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.RecursiveSerializable</objectQualifiedName>
-                    <properties>
-                        <dataTypeMetadata>
-                            <dataTypeReference>com.testdata.RecursiveSerializable</dataTypeReference>
-                            <id>unused</id>
-                            <isNullable>true</isNullable>
-                            <type>11</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>nested</name>
-                    </properties>
-                    <required>nested</required>
-                    <type>3</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.RecursiveSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.RecursiveSerializableInputFunctions#simpleFunction</id>
@@ -50,27 +29,6 @@
     </appfunction>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.RecursiveSerializable</objectQualifiedName>
-                    <properties>
-                        <dataTypeMetadata>
-                            <dataTypeReference>com.testdata.RecursiveSerializable</dataTypeReference>
-                            <id>unused</id>
-                            <isNullable>true</isNullable>
-                            <type>11</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>nested</name>
-                    </properties>
-                    <required>nested</required>
-                    <type>3</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.RecursiveSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.RecursiveSerializableInputFunctions#simpleFunctionNullableSerializable</id>
@@ -98,27 +56,6 @@
     </appfunction>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.RecursiveSerializable</objectQualifiedName>
-                    <properties>
-                        <dataTypeMetadata>
-                            <dataTypeReference>com.testdata.RecursiveSerializable</dataTypeReference>
-                            <id>unused</id>
-                            <isNullable>true</isNullable>
-                            <type>11</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>nested</name>
-                    </properties>
-                    <required>nested</required>
-                    <type>3</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.RecursiveSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.RecursiveSerializableInputFunctions#simpleFunctionNullableSerializableList</id>
@@ -151,27 +88,6 @@
     </appfunction>
     <appfunction>
         <components>
-            <dataTypes>
-                <dataTypeMetadata>
-                    <id>unused</id>
-                    <isNullable>true</isNullable>
-                    <objectQualifiedName>com.testdata.RecursiveSerializable</objectQualifiedName>
-                    <properties>
-                        <dataTypeMetadata>
-                            <dataTypeReference>com.testdata.RecursiveSerializable</dataTypeReference>
-                            <id>unused</id>
-                            <isNullable>true</isNullable>
-                            <type>11</type>
-                        </dataTypeMetadata>
-                        <id>unused</id>
-                        <name>nested</name>
-                    </properties>
-                    <required>nested</required>
-                    <type>3</type>
-                </dataTypeMetadata>
-                <id>unused</id>
-                <name>com.testdata.RecursiveSerializable</name>
-            </dataTypes>
             <id>unused</id>
         </components>
         <id>com.testdata.RecursiveSerializableInputFunctions#simpleFunctionSerializableList</id>
@@ -202,4 +118,28 @@
         </response>
         <functionId>com.testdata.RecursiveSerializableInputFunctions#simpleFunctionSerializableList</functionId>
     </appfunction>
+    <components>
+        <dataTypes>
+            <dataTypeMetadata>
+                <id>unused</id>
+                <isNullable>true</isNullable>
+                <objectQualifiedName>com.testdata.RecursiveSerializable</objectQualifiedName>
+                <properties>
+                    <dataTypeMetadata>
+                        <dataTypeReference>com.testdata.RecursiveSerializable</dataTypeReference>
+                        <id>unused</id>
+                        <isNullable>true</isNullable>
+                        <type>11</type>
+                    </dataTypeMetadata>
+                    <id>unused</id>
+                    <name>nested</name>
+                </properties>
+                <required>nested</required>
+                <type>3</type>
+            </dataTypeMetadata>
+            <id>unused</id>
+            <name>com.testdata.RecursiveSerializable</name>
+        </dataTypes>
+        <id>unused</id>
+    </components>
 </appfunctions>

@@ -218,4 +218,7 @@
         <schemaVersion>1</schemaVersion>
         <functionId>com.testdata.FakeAllPrimitiveParamsImpl#allPrimitiveParams</functionId>
     </appfunction>
+    <components>
+        <id>unused</id>
+    </components>
 </appfunctions>

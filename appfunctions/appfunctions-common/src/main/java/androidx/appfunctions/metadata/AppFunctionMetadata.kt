@@ -126,6 +126,26 @@ public data class CompileTimeAppFunctionMetadata(
     /** Reusable components that could be shared within the function specification. */
     public val components: AppFunctionComponentsMetadata = AppFunctionComponentsMetadata(),
 ) {
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun copy(
+        id: String? = null,
+        isEnabledByDefault: Boolean? = null,
+        schema: AppFunctionSchemaMetadata? = null,
+        parameters: List<AppFunctionParameterMetadata>? = null,
+        response: AppFunctionResponseMetadata? = null,
+        components: AppFunctionComponentsMetadata? = null
+    ): CompileTimeAppFunctionMetadata {
+        return CompileTimeAppFunctionMetadata(
+            id = id ?: this.id,
+            isEnabledByDefault = isEnabledByDefault ?: this.isEnabledByDefault,
+            schema = schema ?: this.schema,
+            parameters = parameters ?: this.parameters,
+            response = response ?: this.response,
+            components = components ?: this.components
+        )
+    }
+
     /**
      * Converts the [CompileTimeAppFunctionMetadata] to an [AppFunctionMetadataDocument].
      *
