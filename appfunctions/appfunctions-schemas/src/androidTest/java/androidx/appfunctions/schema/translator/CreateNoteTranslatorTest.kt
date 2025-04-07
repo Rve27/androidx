@@ -44,7 +44,8 @@ class CreateNoteTranslatorTest {
                             mimeType = "text/html",
                             uri = LegacyUri(uri = "content://xxx")
                         )
-                    )
+                    ),
+                folderId = "folderId",
             )
 
         val expectedUpgradedParams =
@@ -59,7 +60,8 @@ class CreateNoteTranslatorTest {
                             mimeType = "text/html",
                             uri = Uri.parse("content://xxx")
                         )
-                    )
+                    ),
+                groupId = "folderId",
             )
         translatorTestUtils.assertUpgradeRequestTranslation(
             "createNoteParams",
@@ -103,7 +105,8 @@ class CreateNoteTranslatorTest {
                             mimeType = "text/html",
                             uri = Uri.parse("content://xxx")
                         )
-                    )
+                    ),
+                groupId = "groupId"
             )
 
         val expectedDowngradedParams =
@@ -118,7 +121,8 @@ class CreateNoteTranslatorTest {
                             mimeType = "text/html",
                             uri = LegacyUri(uri = "content://xxx")
                         )
-                    )
+                    ),
+                folderId = "groupId",
             )
         translatorTestUtils.assertDowngradeRequestTranslation(
             "createNoteParams",
@@ -134,7 +138,8 @@ class CreateNoteTranslatorTest {
                 title = "Title",
                 content = null,
                 externalUuid = null,
-                attachments = emptyList()
+                attachments = emptyList(),
+                groupId = null,
             )
 
         val expectedDowngradedParams = LegacyCreateNoteParams(title = "Title")
@@ -159,7 +164,8 @@ class CreateNoteTranslatorTest {
                             mimeType = "text/html",
                             uri = LegacyUri(uri = "content://xxx")
                         )
-                    )
+                    ),
+                folderId = "folderId"
             )
 
         val expectedUpgradedResponse =
@@ -176,7 +182,8 @@ class CreateNoteTranslatorTest {
                                     mimeType = "text/html",
                                     uri = Uri.parse("content://xxx")
                                 )
-                            )
+                            ),
+                        groupId = "folderId"
                     )
             )
         translatorTestUtils.assertUpgradeResponseTranslation(legacyNote, expectedUpgradedResponse)
@@ -219,7 +226,8 @@ class CreateNoteTranslatorTest {
                                     mimeType = "text/html",
                                     uri = Uri.parse("content://xxx")
                                 )
-                            )
+                            ),
+                        groupId = "groupId",
                     )
             )
 
@@ -235,7 +243,8 @@ class CreateNoteTranslatorTest {
                             mimeType = "text/html",
                             uri = LegacyUri(uri = "content://xxx")
                         )
-                    )
+                    ),
+                folderId = "groupId",
             )
         translatorTestUtils.assertDowngradeResponseTranslation(
             jetpackResponse,
