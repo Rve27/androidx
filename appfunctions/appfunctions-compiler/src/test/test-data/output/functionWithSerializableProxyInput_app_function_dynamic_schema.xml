@@ -187,6 +187,16 @@
                 </properties>
                 <properties>
                     <dataTypeMetadata>
+                        <dataTypeReference>java.time.LocalDateTime</dataTypeReference>
+                        <id>unused</id>
+                        <isNullable>true</isNullable>
+                        <type>11</type>
+                    </dataTypeMetadata>
+                    <id>unused</id>
+                    <name>localDateTimeNullable</name>
+                </properties>
+                <properties>
+                    <dataTypeMetadata>
                         <dataTypeReference>android.net.Uri</dataTypeReference>
                         <id>unused</id>
                         <isNullable>false</isNullable>
@@ -210,10 +220,27 @@
                     <id>unused</id>
                     <name>androidUriList</name>
                 </properties>
+                <properties>
+                    <dataTypeMetadata>
+                        <id>unused</id>
+                        <isNullable>true</isNullable>
+                        <itemType>
+                            <dataTypeReference>android.net.Uri</dataTypeReference>
+                            <id>unused</id>
+                            <isNullable>false</isNullable>
+                            <type>11</type>
+                        </itemType>
+                        <type>10</type>
+                    </dataTypeMetadata>
+                    <id>unused</id>
+                    <name>androidUriNullable</name>
+                </properties>
                 <required>localDateTime</required>
                 <required>localDateTimeList</required>
+                <required>localDateTimeNullable</required>
                 <required>androidUri</required>
                 <required>androidUriList</required>
+                <required>androidUriNullable</required>
                 <type>3</type>
             </dataTypeMetadata>
             <id>unused</id>
