@@ -475,6 +475,137 @@ class ErrorTraceTests {
             state = true
             advance()
         }
+
+    @Test
+    fun setContentMovableContent() =
+        exceptionTest(
+            "<lambda>(ErrorTraceTests.kt:<unknown line>)",
+            "<lambda>(MovableContent.kt:<line number>)",
+            "<lambda>(Composer.kt:<line number>)",
+            "<lambda>(MovableContent.kt:<unknown line>)",
+            "MovableWrapper(ErrorTraceComposables.kt:156)",
+            "<lambda>(ErrorTraceTests.kt:<line number>)"
+        ) {
+            compose { MovableWrapper { throwTestException() } }
+        }
+
+    @Test
+    fun recomposeMovableContent() =
+        exceptionTest(
+            "<lambda>(ErrorTraceTests.kt:<unknown line>)",
+            "<lambda>(MovableContent.kt:<line number>)",
+            "<lambda>(Composer.kt:<line number>)",
+            "<lambda>(MovableContent.kt:<unknown line>)",
+            "MovableWrapper(ErrorTraceComposables.kt:156)",
+            "<lambda>(ErrorTraceTests.kt:<line number>)"
+        ) {
+            var state by mutableStateOf(false)
+            compose {
+                MovableWrapper {
+                    if (state) {
+                        throwTestException()
+                    }
+                }
+            }
+
+            state = true
+            advance()
+        }
+
+    @Test
+    fun moveMovableContentOf() =
+        exceptionTest(
+            "<lambda>(ErrorTraceTests.kt:<unknown line>)",
+            "<lambda>(Composer.kt:<line number>)",
+            "<lambda>(MovableContent.kt:<unknown line>)",
+            "<lambda>(ErrorTraceTests.kt:<line number>)",
+            "WrappedMovableContent(ErrorTraceComposables.kt:166)",
+            "<lambda>(ErrorTraceTests.kt:<line number>)"
+        ) {
+            var state by mutableStateOf(false)
+            compose {
+                WrappedMovableContent(
+                    content = {
+                        if (it) {
+                            throwTestException()
+                        }
+                    }
+                ) { movableContent ->
+                    if (!state) {
+                        movableContent(false)
+                    } else {
+                        Wrapper { movableContent(true) }
+                    }
+                }
+            }
+
+            state = true
+            advance()
+        }
+
+    @Test
+    fun moveMovableContentOfStateRead() =
+        exceptionTest(
+            "<lambda>(ErrorTraceTests.kt:<unknown line>)",
+            "<lambda>(Composer.kt:<line number>)",
+            "<lambda>(MovableContent.kt:<unknown line>)",
+            "<lambda>(ErrorTraceTests.kt:<line number>)",
+            "WrappedMovableContent(ErrorTraceComposables.kt:166)",
+            "<lambda>(ErrorTraceTests.kt:<line number>)"
+        ) {
+            var state by mutableStateOf(false)
+            compose {
+                WrappedMovableContent(
+                    content = {
+                        if (state) {
+                            throwTestException()
+                        }
+                    }
+                ) { movableContent ->
+                    if (!state) {
+                        movableContent(state)
+                    } else {
+                        Wrapper { movableContent(state) }
+                    }
+                }
+            }
+
+            state = true
+            advance()
+        }
+
+    @Test
+    fun moveMovableContentOfReverse() =
+        exceptionTest(
+            "<lambda>(ErrorTraceTests.kt:<unknown line>)",
+            "<lambda>(Composer.kt:<line number>)",
+            "<lambda>(MovableContent.kt:<unknown line>)",
+            "<lambda>(ErrorTraceTests.kt:<line number>)",
+            "Wrapper(ErrorTraceComposables.kt:149)",
+            "<lambda>(ErrorTraceTests.kt:<line number>)",
+            "WrappedMovableContent(ErrorTraceComposables.kt:166)",
+            "<lambda>(ErrorTraceTests.kt:<line number>)"
+        ) {
+            var state by mutableStateOf(true)
+            compose {
+                WrappedMovableContent(
+                    content = {
+                        if (it) {
+                            throwTestException()
+                        }
+                    }
+                ) { movableContent ->
+                    if (!state) {
+                        movableContent(false)
+                    } else {
+                        Wrapper { movableContent(true) }
+                    }
+                }
+            }
+
+            state = false
+            advance()
+        }
 }
 
 private fun throwTestException(): Nothing = throw TestComposeException()
