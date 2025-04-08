@@ -313,7 +313,7 @@ package androidx.appfunctions.schema.notes {
 
 package androidx.appfunctions.schema.types {
 
-  public final class SetField<T> {
+  @androidx.appfunctions.AppFunctionSerializable public final class SetField<T> {
     ctor public SetField(T value);
     method public T getValue();
     property public T value;
