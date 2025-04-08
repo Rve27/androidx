@@ -52,7 +52,7 @@ import java.util.Objects
  * @param value The new field value.
  */
 @AppFunctionSerializable
-public class SetField<T>(public val value: T) {
+public class SetField<out T>(public val value: T) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is SetField<*>) return false
