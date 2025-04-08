@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.mediateesdkprovider
+package androidx.privacysandbox.ui.integration.sdkproviderutils;
 
-import android.os.Bundle
-import androidx.privacysandbox.tools.PrivacySandboxService
-
-@PrivacySandboxService
-interface IMediateeSdkApi {
-    suspend fun loadAd(
-        adFormat: Int,
-        adType: Int,
-        waitInsideOnDraw: Boolean,
-        drawViewability: Boolean,
-        mediationTestCallbackBundle: Bundle
-    ): Bundle
+/*
+ * This callback is registered onto the mediatee to receive callbacks regarding the
+ * automated testing using mediation.
+ */
+interface IMediationTestCallbackProxy {
+    void onResizeOccurred(int width, int height);
 }
