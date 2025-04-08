@@ -59,6 +59,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMap
 import androidx.compose.ui.util.fastMapIndexed
@@ -456,21 +457,31 @@ private class NonAdaptiveButtonGroupMeasurePolicy(
             }
         }
 
+        // The item's widths that we'll adjust for animation
         val widths =
             IntArray(measurables.size) { (childrenConstraints[it] ?: constraints).maxWidth }
+        // The growths used to know how much each
+        // item should be adjusted in the horizontal placement
+        val growths = IntArray(measurables.size) { 0 }
 
         if (measurables.size > 1) {
             for (index in measurables.indices) {
+                // The amount the current item is expanding
                 val growth = animatables[index].value * expandedRatio * widths[index]
                 if (index in 1 until measurables.lastIndex) {
+                    // We are a middle button, so we must compress both neighbors
+                    growths[index] = (growth / 2f).roundToInt()
                     widths[index - 1] -= (growth / 2f).roundToInt()
                     widths[index + 1] -= (growth / 2).roundToInt()
                 } else {
                     if (index == 0) {
+                        // We are the first item, so we need to compress the next item
                         widths[index + 1] -= growth.roundToInt()
                     } else {
+                        // We are the last item, so we need to compress the previous item
                         widths[index - 1] -= growth.roundToInt()
                     }
+                    growths[index] = growth.roundToInt()
                 }
 
                 widths[index] += growth.roundToInt()
@@ -499,10 +510,24 @@ private class NonAdaptiveButtonGroupMeasurePolicy(
 
         val height = placeables.fastMaxBy { it.height }?.height ?: constraints.minHeight
         return layout(mainAxisLayoutSize, height) {
-            var currentX = 0
-            placeables.fastForEach {
-                it.place(currentX, 0)
-                currentX += it.width + arrangementSpacingInt
+            for (index in placeables.indices) {
+                // We adjust the placement here depending on the expansion/compression of items
+                val growth =
+                    when (layoutDirection) {
+                        LayoutDirection.Ltr ->
+                            if (index > 0) {
+                                growths[index - 1] - growths[index]
+                            } else {
+                                0
+                            }
+                        LayoutDirection.Rtl ->
+                            if (index < placeables.lastIndex) {
+                                growths[index + 1] - growths[index]
+                            } else {
+                                0
+                            }
+                    }
+                placeables[index].place(x = mainAxisPositions[index] + growth, y = 0)
             }
         }
     }
@@ -634,7 +659,11 @@ private class ButtonGroupMeasurePolicy(
         }
 
         var remainingSpace = mainAxisMax
+        // Total space required for shown items and overflow
         var mainSpace = 0
+        // Space required for shown items
+        var shownItemSpace = 0
+        // The item's widths that we'll adjust for animation
         val widths =
             IntArray(contentMeasurables.size) { (childrenConstraints[it] ?: constraints).maxWidth }
         // The desired widths of all of the items plus the spacing between the items
@@ -659,11 +688,13 @@ private class ButtonGroupMeasurePolicy(
                 // Figure out how many items can fit with overflow included
                 while (lastItem < widths.size && widths[lastItem] <= remainingSpace) {
                     mainSpace += widths[lastItem]
+                    shownItemSpace += widths[lastItem]
                     remainingSpace -= widths[lastItem++] + arrangementSpacingInt
                 }
 
                 // Add spacing to mainSpace
                 mainSpace += arrangementSpacingInt * lastItem
+                shownItemSpace += arrangementSpacingInt * lastItem
 
                 overflowMeasurables.fastMap {
                     it.measure(constraints.copy(maxWidth = remainingSpace + overflowWidth))
@@ -672,21 +703,28 @@ private class ButtonGroupMeasurePolicy(
 
         overflowState.visibleItemCount = lastItem
 
+        // The growths used to know how much each
+        // item should be adjusted in the horizontal placement
+        val growths = IntArray(lastItem) { 0 }
         if (contentMeasurables.size > 1) {
             // The expand and compress logic of button groups.
             for (index in 0 until lastItem) {
+                // The amount the current item is expanding
                 val growth = animatables[index].value * expandedRatio * widths[index]
                 if (index in 1 until lastItem - 1) {
-                    // The item at index is a middle item
+                    // We are a middle button, so we must compress both neighbors
+                    growths[index] = (growth / 2f).roundToInt()
                     widths[index - 1] -= (growth / 2f).roundToInt()
                     widths[index + 1] -= (growth / 2).roundToInt()
                 } else {
-                    // The item at index is either at the beginning or end
                     if (index == 0) {
+                        // We are the first item, so we need to compress the next item
                         widths[index + 1] -= growth.roundToInt()
                     } else {
+                        // We are the last item, so we need to compress the previous item
                         widths[index - 1] -= growth.roundToInt()
                     }
+                    growths[index] = growth.roundToInt()
                 }
 
                 widths[index] += growth.roundToInt()
@@ -704,12 +742,12 @@ private class ButtonGroupMeasurePolicy(
         // Compute the row size and position the children.
         val mainAxisLayoutSize = min(mainSpace.coerceAtLeast(0), mainAxisMax)
 
-        val mainAxisPositions = IntArray(size)
+        val mainAxisPositions = IntArray(lastItem)
         val measureScope = this
         with(horizontalArrangement) {
             measureScope.arrange(
                 mainAxisLayoutSize,
-                childrenMainAxisSize,
+                childrenMainAxisSize.sliceArray(0..lastItem - 1),
                 measureScope.layoutDirection,
                 mainAxisPositions
             )
@@ -718,12 +756,26 @@ private class ButtonGroupMeasurePolicy(
         val height = placeables.fastMaxBy { it.height }?.height ?: constraints.minHeight
 
         return layout(mainAxisLayoutSize, height) {
-            var currentX = 0
-            placeables.fastForEach {
-                it.placeRelative(currentX, 0)
-                currentX += it.width + arrangementSpacingInt
+            for (index in placeables.indices) {
+                // We adjust the placement here depending on the expansion/compression of items
+                val growth =
+                    when (layoutDirection) {
+                        LayoutDirection.Ltr ->
+                            if (index > 0) {
+                                growths[index - 1] - growths[index]
+                            } else {
+                                0
+                            }
+                        LayoutDirection.Rtl ->
+                            if (index < placeables.lastIndex) {
+                                growths[index + 1] - growths[index]
+                            } else {
+                                0
+                            }
+                    }
+                placeables[index].place(x = mainAxisPositions[index] + growth, y = 0)
             }
-            overflowPlaceables?.fastForEach { it.placeRelative(currentX, 0) }
+            overflowPlaceables?.fastForEach { it.placeRelative(shownItemSpace, 0) }
         }
     }
 }
