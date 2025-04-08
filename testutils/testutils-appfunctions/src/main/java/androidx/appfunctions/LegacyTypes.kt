@@ -77,3 +77,36 @@ data class LegacyTimeOfDay(
     /** The nanoseconds. */
     @Document.LongProperty(required = true) val nanos: Int,
 )
+
+/**
+ * An interface for [@Document] classes that carry a decision to set a field of the given type in an
+ * entity. These `Set*Field` classes are used as properties of `Upgrade*Params` classes, always
+ * nullable. The convention is that when the property is set to `null`, the field of the entity is
+ * not modified. Otherwise, it is set to the value carried by the `Set*Field` object. In particular,
+ * for a nullable field, that value could be `null` which allows setting a field of the entity to
+ * `null`.
+ */
+interface LegacySetField<T> {
+    val value: T
+}
+
+@Document(name = "com.google.android.appfunctions.schema.common.v1.types.SetStringField")
+data class LegacySetStringField(
+    @Document.Namespace val namespace: String = "", // unused
+    @Document.Id val id: String = "", // unused
+    @Document.StringProperty(required = true) override val value: String,
+) : LegacySetField<String>
+
+@Document(name = "com.google.android.appfunctions.schema.common.v1.types.SetStringNullableField")
+data class LegacySetStringNullableField(
+    @Document.Namespace val namespace: String = "", // unused
+    @Document.Id val id: String = "", // unused
+    @Document.StringProperty override val value: String?,
+) : LegacySetField<String?>
+
+@Document(name = "com.google.android.appfunctions.schema.common.v1.types.SetAttachmentListField")
+data class LegacySetAttachmentListField(
+    @Document.Namespace val namespace: String = "", // unused
+    @Document.Id val id: String = "", // unused
+    @Document.DocumentProperty override val value: List<LegacyAttachment>,
+) : LegacySetField<List<LegacyAttachment>>

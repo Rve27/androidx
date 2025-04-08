@@ -26,6 +26,7 @@ internal object NotesTranslatorSelector {
         when (schemaName) {
             "createNote" -> CreateNoteTranslator()
             "findNotes" -> FindNotesTranslator()
+            "updateNote" -> UpdateNoteTranslator()
             else -> null
         }
 }

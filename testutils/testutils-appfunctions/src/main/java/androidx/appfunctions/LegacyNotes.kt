@@ -70,3 +70,20 @@ data class LegacyFindNotesParams(
     /** The maximum number of notes to return. */
     @Document.LongProperty(required = true) val maxCount: Int,
 )
+
+/** The parameters for updating a note. */
+@Document(name = "com.google.android.appfunctions.schema.common.v1.notes.UpdateNoteParams")
+data class LegacyUpdateNoteParams(
+    @Document.Namespace val namespace: String = "", // unused
+    @Document.Id val id: String = "", // unused
+    /** The ID of the note to update. */
+    @Document.StringProperty(required = true) val noteId: String,
+    /** The title of the note. */
+    @Document.DocumentProperty val title: LegacySetStringField? = null,
+    /** The content of the note. */
+    @Document.DocumentProperty val content: LegacySetStringNullableField? = null,
+    /** The attachments of the note. */
+    @Document.DocumentProperty val attachments: LegacySetAttachmentListField? = null,
+    /** The ID of the folder the note is in, if any. */
+    @Document.DocumentProperty val folderId: LegacySetStringNullableField? = null,
+)
