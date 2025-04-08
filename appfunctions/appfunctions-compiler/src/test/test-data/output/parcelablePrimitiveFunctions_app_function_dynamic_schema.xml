@@ -42,7 +42,7 @@
         </response>
         <functionId>com.testdata.ParcelablePrimitiveFunctions#pendingIntentOutput</functionId>
     </appfunction>
-    <components>
+    <AppFunctionComponentMetadataDocument>
         <id>unused</id>
-    </components>
+    </AppFunctionComponentMetadataDocument>
 </appfunctions>

@@ -54,7 +54,7 @@
         </response>
         <functionId>com.testdata.FunctionWithSerializableProxyInput#simpleFunctionWithSerializableWithProxy</functionId>
     </appfunction>
-    <components>
+    <AppFunctionComponentMetadataDocument>
         <dataTypes>
             <dataTypeMetadata>
                 <id>unused</id>
@@ -247,5 +247,5 @@
             <name>com.testdata.SerializableWithProxyType</name>
         </dataTypes>
         <id>unused</id>
-    </components>
+    </AppFunctionComponentMetadataDocument>
 </appfunctions>

@@ -235,7 +235,7 @@ class AppFunctionIndexXmlProcessor(
         const val XML_EXTENSION = "xml"
         const val APP_FUNCTIONS_ELEMENTS_TAG = "appfunctions"
         const val APP_FUNCTION_ITEM_TAG = "appfunction"
-        const val COMPONENT_ITEM_TAG = "components"
+        const val COMPONENT_ITEM_TAG = "AppFunctionComponentMetadataDocument"
         const val APP_FUNCTION_ID_TAG = "functionId"
     }
 }

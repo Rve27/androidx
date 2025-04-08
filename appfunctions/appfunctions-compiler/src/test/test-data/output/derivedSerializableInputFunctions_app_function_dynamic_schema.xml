@@ -182,7 +182,7 @@
         </response>
         <functionId>com.testdata.DerivedSerializableInputFunctions#simpleFunctionWithNullableDerivedSerializableList</functionId>
     </appfunction>
-    <components>
+    <AppFunctionComponentMetadataDocument>
         <dataTypes>
             <dataTypeMetadata>
                 <allOf>
@@ -242,5 +242,5 @@
             <name>com.testdata.DerivedSerializable</name>
         </dataTypes>
         <id>unused</id>
-    </components>
+    </AppFunctionComponentMetadataDocument>
 </appfunctions>

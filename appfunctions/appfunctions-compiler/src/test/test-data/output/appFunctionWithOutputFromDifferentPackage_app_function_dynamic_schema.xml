@@ -45,7 +45,7 @@
         <schemaVersion>1</schemaVersion>
         <functionId>com.testdata.AppFunctionWithOutputFromDifferentPackage#functionWithDiffPackageOutput</functionId>
     </appfunction>
-    <components>
+    <AppFunctionComponentMetadataDocument>
         <dataTypes>
             <dataTypeMetadata>
                 <id>unused</id>
@@ -87,5 +87,5 @@
             <name>com.testdata.differentPackage.DiffPackageSerializable</name>
         </dataTypes>
         <id>unused</id>
-    </components>
+    </AppFunctionComponentMetadataDocument>
 </appfunctions>

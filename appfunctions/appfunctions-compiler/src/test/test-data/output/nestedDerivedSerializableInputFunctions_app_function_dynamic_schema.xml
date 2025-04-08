@@ -59,7 +59,7 @@
         </response>
         <functionId>com.testdata.NestedDerivedSerializableInputFunctions#functionWithDerivedSerializableList</functionId>
     </appfunction>
-    <components>
+    <AppFunctionComponentMetadataDocument>
         <dataTypes>
             <dataTypeMetadata>
                 <id>unused</id>
@@ -151,5 +151,5 @@
             <name>com.testdata.NestedDerivedSerializable</name>
         </dataTypes>
         <id>unused</id>
-    </components>
+    </AppFunctionComponentMetadataDocument>
 </appfunctions>

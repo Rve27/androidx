@@ -38,7 +38,7 @@
         </response>
         <functionId>com.testdata.FunctionWithGenericSerializable#test</functionId>
     </appfunction>
-    <components>
+    <AppFunctionComponentMetadataDocument>
         <dataTypes>
             <dataTypeMetadata>
                 <id>unused</id>
@@ -226,5 +226,5 @@
             <name>com.testdata.SetField&lt;kotlin.Int&gt;</name>
         </dataTypes>
         <id>unused</id>
-    </components>
+    </AppFunctionComponentMetadataDocument>
 </appfunctions>

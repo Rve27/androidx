@@ -16,7 +16,7 @@
         </response>
         <functionId>com.testdata.FakeNoArg#noArg</functionId>
     </appfunction>
-    <components>
+    <AppFunctionComponentMetadataDocument>
         <id>unused</id>
-    </components>
+    </AppFunctionComponentMetadataDocument>
 </appfunctions>

@@ -19,7 +19,7 @@
         <schemaVersion>1</schemaVersion>
         <functionId>com.testdata.FakeNoArgImpl#noArg</functionId>
     </appfunction>
-    <components>
+    <AppFunctionComponentMetadataDocument>
         <id>unused</id>
-    </components>
+    </AppFunctionComponentMetadataDocument>
 </appfunctions>

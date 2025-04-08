@@ -78,7 +78,7 @@
         </response>
         <functionId>com.testdata.DerivedSerializableOutputFunctions#simpleFunctionSerializableList</functionId>
     </appfunction>
-    <components>
+    <AppFunctionComponentMetadataDocument>
         <dataTypes>
             <dataTypeMetadata>
                 <allOf>
@@ -138,5 +138,5 @@
             <name>com.testdata.DerivedSerializable</name>
         </dataTypes>
         <id>unused</id>
-    </components>
+    </AppFunctionComponentMetadataDocument>
 </appfunctions>
