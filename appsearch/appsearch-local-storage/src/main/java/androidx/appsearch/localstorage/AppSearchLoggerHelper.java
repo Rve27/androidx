@@ -175,7 +175,13 @@ public final class AppSearchLoggerHelper {
         toStatsBuilder
                 .setNativeLatencyMillis(fromNativeStats.getLatencyMs())
                 .setDeleteType(RemoveStats.QUERY)
-                .setDeletedDocumentCount(fromNativeStats.getNumDocumentsDeleted());
+                .setDeletedDocumentCount(fromNativeStats.getNumDocumentsDeleted())
+                .setQueryLength(fromNativeStats.getQueryLength())
+                .setNumTerms(fromNativeStats.getNumTerms())
+                .setNumNamespacesFiltered(fromNativeStats.getNumNamespacesFiltered())
+                .setNumSchemaTypesFiltered(fromNativeStats.getNumSchemaTypesFiltered())
+                .setParseQueryLatencyMillis(fromNativeStats.getParseQueryLatencyMs())
+                .setDocumentRemovalLatencyMillis(fromNativeStats.getDocumentRemovalLatencyMs());
     }
 
     /**
