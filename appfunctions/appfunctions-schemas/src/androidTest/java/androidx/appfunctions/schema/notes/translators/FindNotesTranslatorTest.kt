@@ -28,7 +28,6 @@ import androidx.appfunctions.schema.TranslatorTestUtils
 import androidx.test.filters.SdkSuppress
 import java.time.LocalDateTime
 import java.time.ZoneId
-import org.junit.Ignore
 import org.junit.Test
 
 @SdkSuppress(minSdkVersion = 33)
@@ -90,7 +89,6 @@ class FindNotesTranslatorTest {
     }
 
     @Test
-    @Ignore("TODO: b/409056418 - Enable once nullable proxy bug is fixed.")
     fun upgradeRequest_optionalFieldsNotSet() {
         val legacyParams = LegacyFindNotesParams(maxCount = Int.MAX_VALUE)
 
@@ -156,7 +154,6 @@ class FindNotesTranslatorTest {
     }
 
     @Test
-    @Ignore("TODO: b/409056418 - Enable once nullable proxy bug is fixed.")
     fun downgradeRequest_nullableFieldsNotSet() {
         val jetpackParams = FindNotesAppFunctionParams()
 
