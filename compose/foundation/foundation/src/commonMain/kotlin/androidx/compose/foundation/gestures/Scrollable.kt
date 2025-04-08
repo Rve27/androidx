@@ -628,7 +628,7 @@ internal interface ScrollConfig {
 internal expect fun CompositionLocalConsumerModifierNode.platformScrollConfig(): ScrollConfig
 
 // TODO: provide public way to drag by mouse (especially requested for Pager)
-private val CanDragCalculation: (PointerInputChange) -> Boolean = { change ->
+internal val CanDragCalculation: (PointerInputChange) -> Boolean = { change ->
     change.type != PointerType.Mouse
 }
 
@@ -645,9 +645,9 @@ internal class ScrollingLogic(
     private var nestedScrollDispatcher: NestedScrollDispatcher,
     private var onScrollChangedDispatcher: OnScrollChangedDispatcher,
     private val isScrollableNodeAttached: () -> Boolean
-) {
+) : ScrollLogic {
     // specifies if this scrollable node is currently flinging
-    var isFlinging = false
+    override var isFlinging = false
         private set
 
     fun Float.toOffset(): Offset =
@@ -739,7 +739,7 @@ internal class ScrollingLogic(
     private val shouldDispatchOverscroll
         get() = scrollableState.canScrollForward || scrollableState.canScrollBackward
 
-    fun performRawScroll(scroll: Offset): Offset {
+    override fun performRawScroll(scroll: Offset): Offset {
         return if (scrollableState.isScrollInProgress) {
             Offset.Zero
         } else {
@@ -792,7 +792,7 @@ internal class ScrollingLogic(
     }
 
     @OptIn(ExperimentalFoundationApi::class)
-    suspend fun doFlingAnimation(available: Velocity): Velocity {
+    override suspend fun doFlingAnimation(available: Velocity): Velocity {
         var result: Velocity = available
         isFlinging = true
         try {
@@ -891,8 +891,8 @@ private val NoOpScrollScope: ScrollScope =
         override fun scrollBy(pixels: Float): Float = pixels
     }
 
-private class ScrollableNestedScrollConnection(
-    val scrollingLogic: ScrollingLogic,
+internal class ScrollableNestedScrollConnection(
+    val scrollingLogic: ScrollLogic,
     var enabled: Boolean
 ) : NestedScrollConnection {
 
@@ -923,6 +923,15 @@ private class ScrollableNestedScrollConnection(
     }
 }
 
+/** Interface to allow re-use across Scrollable and Scrollable2D. */
+internal interface ScrollLogic {
+    val isFlinging: Boolean
+
+    fun performRawScroll(scroll: Offset): Offset
+
+    suspend fun doFlingAnimation(available: Velocity): Velocity
+}
+
 /** Compatibility interface for default fling behaviors that depends on [Density]. */
 internal interface ScrollableDefaultFlingBehavior : FlingBehavior {
     /**
@@ -941,7 +950,7 @@ internal interface ScrollableDefaultFlingBehavior : FlingBehavior {
  *   [androidx.compose.foundation.pager.Pager] or
  *   [androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior].
  */
-private val FlingBehavior.shouldBeTriggeredByMouseWheel
+internal val FlingBehavior.shouldBeTriggeredByMouseWheel
     // TODO: Figure out more precise condition to trigger fling by mouse wheel.
     get() = false // this !is ScrollableDefaultFlingBehavior
 
@@ -1014,7 +1023,7 @@ internal class ScrollableContainerNode(enabled: Boolean) : Modifier.Node(), Trav
     }
 }
 
-private val UnityDensity =
+internal val UnityDensity =
     object : Density {
         override val density: Float
             get() = 1f
