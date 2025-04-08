@@ -169,6 +169,8 @@ public class AppSearchLoggerTest {
         final int nativeIntegerIndexLatencyMillis = 10;
         final int nativeQualifiedIdJoinIndexLatencyMillis = 11;
         final int nativeLiteIndexSortLatencyMillis = 12;
+        final int mMetadataTermIndexLatencyMillis = 13;
+        final int mEmbeddingIndexLatencyMillis = 14;
         PutDocumentStatsProto nativePutDocumentStats = PutDocumentStatsProto.newBuilder()
                 .setLatencyMs(nativeLatencyMillis)
                 .setDocumentStoreLatencyMs(nativeDocumentStoreLatencyMillis)
@@ -182,6 +184,8 @@ public class AppSearchLoggerTest {
                 .setIntegerIndexLatencyMs(nativeIntegerIndexLatencyMillis)
                 .setQualifiedIdJoinIndexLatencyMs(nativeQualifiedIdJoinIndexLatencyMillis)
                 .setLiteIndexSortLatencyMs(nativeLiteIndexSortLatencyMillis)
+                .setMetadataTermIndexLatencyMs(mMetadataTermIndexLatencyMillis)
+                .setEmbeddingIndexLatencyMs(mEmbeddingIndexLatencyMillis)
                 .build();
         PutDocumentStats.Builder pBuilder = new PutDocumentStats.Builder(PACKAGE_NAME, DATABASE);
 
@@ -204,6 +208,10 @@ public class AppSearchLoggerTest {
                 nativeQualifiedIdJoinIndexLatencyMillis);
         assertThat(pStats.getNativeLiteIndexSortLatencyMillis()).isEqualTo(
                 nativeLiteIndexSortLatencyMillis);
+        assertThat(pStats.getMetadataTermIndexLatencyMillis()).isEqualTo(
+                mMetadataTermIndexLatencyMillis);
+        assertThat(pStats.getEmbeddingIndexLatencyMillis()).isEqualTo(
+                mEmbeddingIndexLatencyMillis);
     }
 
     @Test

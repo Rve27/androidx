@@ -71,7 +71,9 @@ public final class AppSearchLoggerHelper {
                 .setNativeQualifiedIdJoinIndexLatencyMillis(
                         fromNativeStats.getQualifiedIdJoinIndexLatencyMs())
                 .setNativeLiteIndexSortLatencyMillis(
-                        fromNativeStats.getLiteIndexSortLatencyMs());
+                        fromNativeStats.getLiteIndexSortLatencyMs())
+                .setMetadataTermIndexLatencyMillis(fromNativeStats.getMetadataTermIndexLatencyMs())
+                .setEmbeddingIndexLatencyMillis(fromNativeStats.getEmbeddingIndexLatencyMs());
     }
 
     /**

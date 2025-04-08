@@ -111,6 +111,8 @@ public class AppSearchStatsTest {
         final int nativeQualifiedIdJoinIndexLatencyMillis = 11;
         final int nativeLiteIndexSortLatencyMillis = 12;
         final int enabledFeatures = 1;
+        int metadataTermIndexLatencyMillis = 13;
+        int embeddingIndexLatencyMillis = 14;
         final PutDocumentStats.Builder pStatsBuilder =
                 new PutDocumentStats.Builder(TEST_PACKAGE_NAME, TEST_DATA_BASE)
                         .setStatusCode(TEST_STATUS_CODE)
@@ -128,7 +130,9 @@ public class AppSearchStatsTest {
                         .setNativeQualifiedIdJoinIndexLatencyMillis(
                                 nativeQualifiedIdJoinIndexLatencyMillis)
                         .setNativeLiteIndexSortLatencyMillis(nativeLiteIndexSortLatencyMillis)
-                        .setLaunchVMEnabled(true);
+                        .setLaunchVMEnabled(true)
+                        .setMetadataTermIndexLatencyMillis(metadataTermIndexLatencyMillis)
+                        .setEmbeddingIndexLatencyMillis(embeddingIndexLatencyMillis);
 
         final PutDocumentStats pStats = pStatsBuilder.build();
 
@@ -159,6 +163,10 @@ public class AppSearchStatsTest {
                 nativeLiteIndexSortLatencyMillis);
         assertThat(pStats.getEnabledFeatures()).isEqualTo(
                 enabledFeatures);
+        assertThat(pStats.getMetadataTermIndexLatencyMillis()).isEqualTo(
+                metadataTermIndexLatencyMillis);
+        assertThat(pStats.getEmbeddingIndexLatencyMillis()).isEqualTo(
+                embeddingIndexLatencyMillis);
     }
 
     @Test
