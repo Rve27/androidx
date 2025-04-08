@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.BasicText
@@ -249,7 +250,7 @@ class BasicSwipeToDismissBoxTest {
                     BasicText(
                         text = "Inner",
                         color = { Color.Red },
-                        modifier = Modifier.testTag(TEST_TAG)
+                        modifier = Modifier.fillMaxWidth().testTag(TEST_TAG)
                     )
                 }
             }
@@ -258,8 +259,8 @@ class BasicSwipeToDismissBoxTest {
         rule.onNodeWithTag(TEST_TAG).performTouchInput { swipeRight() }
 
         rule.runOnIdle {
-            assertEquals(true, innerDismissed)
-            assertEquals(false, outerDismissed)
+            assertTrue(innerDismissed)
+            assertFalse(outerDismissed)
         }
     }
 
