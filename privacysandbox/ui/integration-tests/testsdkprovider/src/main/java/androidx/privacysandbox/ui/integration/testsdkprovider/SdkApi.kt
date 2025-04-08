@@ -359,7 +359,8 @@ class SdkApi(private val sdkContext: Context) : ISdkApi {
                     adFormat,
                     adType,
                     waitInsideOnDraw,
-                    drawViewability
+                    drawViewability,
+                    mediationTestCallbackBundle
                 )
             }
             else -> return loadFallbackAd(adFormat, adType, waitInsideOnDraw)

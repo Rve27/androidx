@@ -57,7 +57,8 @@ class UiPresentationTests(
         private val mediationOptions =
             arrayOf(
                 FragmentOptions.MEDIATION_TYPE_NON_MEDIATED,
-                FragmentOptions.MEDIATION_TYPE_IN_RUNTIME
+                FragmentOptions.MEDIATION_TYPE_IN_RUNTIME,
+                FragmentOptions.MEDIATION_TYPE_IN_APP
             )
         private val zOrderings =
             arrayOf(FragmentOptions.Z_ORDER_BELOW, FragmentOptions.Z_ORDER_ABOVE)
