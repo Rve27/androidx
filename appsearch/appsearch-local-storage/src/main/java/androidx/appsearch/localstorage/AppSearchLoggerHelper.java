@@ -204,7 +204,10 @@ public final class AppSearchLoggerHelper {
                 .setExpiredDocumentCount(fromNativeStats.getNumExpiredDocuments())
                 .setStorageSizeBeforeBytes(fromNativeStats.getStorageSizeBefore())
                 .setStorageSizeAfterBytes(fromNativeStats.getStorageSizeAfter())
-                .setTimeSinceLastOptimizeMillis(fromNativeStats.getTimeSinceLastOptimizeMs());
+                .setTimeSinceLastOptimizeMillis(fromNativeStats.getTimeSinceLastOptimizeMs())
+                .setIndexRestorationMode(fromNativeStats.getIndexRestorationMode().getNumber())
+                .setNumOriginalNamespaces(fromNativeStats.getNumOriginalNamespaces())
+                .setNumDeletedNamespaces(fromNativeStats.getNumDeletedNamespaces());
     }
 
     /*
