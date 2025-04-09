@@ -132,6 +132,7 @@ package androidx.compose.ui {
   }
 
   @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public final class ComposeUiFlags {
+    property public boolean areWindowInsetsRulersEnabled;
     property public boolean isAdaptiveRefreshRateEnabled;
     property public boolean isClearFocusOnResetEnabled;
     property public boolean isFocusActionExitsTouchModeEnabled;
@@ -144,6 +145,7 @@ package androidx.compose.ui {
     property public boolean isTrackFocusEnabled;
     property public boolean isViewFocusFixEnabled;
     field public static final androidx.compose.ui.ComposeUiFlags INSTANCE;
+    field public static boolean areWindowInsetsRulersEnabled;
     field public static boolean isAdaptiveRefreshRateEnabled;
     field public static boolean isClearFocusOnResetEnabled;
     field public static boolean isFocusActionExitsTouchModeEnabled;
@@ -2389,6 +2391,37 @@ package androidx.compose.ui.layout {
     property public static androidx.compose.ui.layout.HorizontalAlignmentLine LastBaseline;
   }
 
+  public final class AnimatableInsetsRulers implements androidx.compose.ui.layout.BasicAnimatableInsetsRulers {
+    method public float alpha(androidx.compose.ui.layout.Placeable.PlacementScope placementScope);
+    method public float alpha(androidx.compose.ui.node.DelegatableNode node);
+    method public long durationMillis(androidx.compose.ui.layout.Placeable.PlacementScope placementScope);
+    method public long durationMillis(androidx.compose.ui.node.DelegatableNode node);
+    method public float fraction(androidx.compose.ui.layout.Placeable.PlacementScope placementScope);
+    method public float fraction(androidx.compose.ui.node.DelegatableNode node);
+    method public androidx.compose.ui.layout.HorizontalRuler getBottom();
+    method public androidx.compose.ui.layout.VerticalRuler getLeft();
+    method public androidx.compose.ui.layout.VerticalRuler getRight();
+    method public androidx.compose.ui.layout.RectRulers getRulersIgnoringVisibility();
+    method public androidx.compose.ui.layout.RectRulers getSource();
+    method public androidx.compose.ui.layout.RectRulers getTarget();
+    method public androidx.compose.ui.layout.HorizontalRuler getTop();
+    method public float interpolatedFraction(androidx.compose.ui.layout.Placeable.PlacementScope placementScope);
+    method public float interpolatedFraction(androidx.compose.ui.node.DelegatableNode node);
+    method public android.view.animation.Interpolator? interpolator(androidx.compose.ui.layout.Placeable.PlacementScope placementScope);
+    method public android.view.animation.Interpolator? interpolator(androidx.compose.ui.node.DelegatableNode node);
+    method public boolean isAnimating(androidx.compose.ui.layout.Placeable.PlacementScope placementScope);
+    method public boolean isAnimating(androidx.compose.ui.node.DelegatableNode node);
+    method public boolean isVisible(androidx.compose.ui.layout.Placeable.PlacementScope placementScope);
+    method public boolean isVisible(androidx.compose.ui.node.DelegatableNode node);
+    property public androidx.compose.ui.layout.HorizontalRuler bottom;
+    property public androidx.compose.ui.layout.VerticalRuler left;
+    property public androidx.compose.ui.layout.VerticalRuler right;
+    property public androidx.compose.ui.layout.RectRulers rulersIgnoringVisibility;
+    property public androidx.compose.ui.layout.RectRulers source;
+    property public androidx.compose.ui.layout.RectRulers target;
+    property public androidx.compose.ui.layout.HorizontalRuler top;
+  }
+
   public sealed interface ApproachIntrinsicMeasureScope extends androidx.compose.ui.layout.IntrinsicMeasureScope {
     method public long getLookaheadConstraints();
     method public long getLookaheadSize();
@@ -2408,6 +2441,15 @@ package androidx.compose.ui.layout {
   }
 
   public sealed interface ApproachMeasureScope extends androidx.compose.ui.layout.ApproachIntrinsicMeasureScope androidx.compose.ui.layout.MeasureScope {
+  }
+
+  public sealed interface BasicAnimatableInsetsRulers extends androidx.compose.ui.layout.RectRulers {
+    method public androidx.compose.ui.layout.RectRulers getSource();
+    method public androidx.compose.ui.layout.RectRulers getTarget();
+    method public boolean isAnimating(androidx.compose.ui.layout.Placeable.PlacementScope placementScope);
+    method public boolean isAnimating(androidx.compose.ui.node.DelegatableNode node);
+    property public abstract androidx.compose.ui.layout.RectRulers source;
+    property public abstract androidx.compose.ui.layout.RectRulers target;
   }
 
   public interface BeyondBoundsLayout {
@@ -2465,6 +2507,23 @@ package androidx.compose.ui.layout {
     property @androidx.compose.runtime.Stable public androidx.compose.ui.layout.FixedScale None;
   }
 
+  public interface DerivedRuler {
+    method public float calculate(androidx.compose.ui.layout.Placeable.PlacementScope, float defaultValue);
+  }
+
+  public final class DisplayCutoutInsetsRulers implements androidx.compose.ui.layout.RectRulers {
+    method public java.util.List<androidx.compose.ui.layout.RectRulers> cutoutInsets(androidx.compose.ui.layout.Placeable.PlacementScope placementScope);
+    method public java.util.List<androidx.compose.ui.layout.RectRulers> cutoutInsets(androidx.compose.ui.node.DelegatableNode node);
+    method public androidx.compose.ui.layout.HorizontalRuler getBottom();
+    method public androidx.compose.ui.layout.VerticalRuler getLeft();
+    method public androidx.compose.ui.layout.VerticalRuler getRight();
+    method public androidx.compose.ui.layout.HorizontalRuler getTop();
+    property public androidx.compose.ui.layout.HorizontalRuler bottom;
+    property public androidx.compose.ui.layout.VerticalRuler left;
+    property public androidx.compose.ui.layout.VerticalRuler right;
+    property public androidx.compose.ui.layout.HorizontalRuler top;
+  }
+
   @androidx.compose.runtime.Immutable public final class FixedScale implements androidx.compose.ui.layout.ContentScale {
     ctor public FixedScale(float value);
     method public float component1();
@@ -2485,8 +2544,70 @@ package androidx.compose.ui.layout {
     ctor public HorizontalAlignmentLine(kotlin.jvm.functions.Function2<? super java.lang.Integer,? super java.lang.Integer,java.lang.Integer> merger);
   }
 
-  public final class HorizontalRuler extends androidx.compose.ui.layout.Ruler {
+  public class HorizontalRuler extends androidx.compose.ui.layout.Ruler {
     ctor public HorizontalRuler();
+  }
+
+  public final class InnerInsetsRulers implements androidx.compose.ui.layout.BasicAnimatableInsetsRulers {
+    ctor public InnerInsetsRulers(androidx.compose.ui.layout.RectRulers... rulers);
+    method public androidx.compose.ui.layout.HorizontalRuler getBottom();
+    method public androidx.compose.ui.layout.VerticalRuler getLeft();
+    method public androidx.compose.ui.layout.VerticalRuler getRight();
+    method public androidx.compose.ui.layout.RectRulers[] getRulers();
+    method public androidx.compose.ui.layout.RectRulers getSource();
+    method public androidx.compose.ui.layout.RectRulers getTarget();
+    method public androidx.compose.ui.layout.HorizontalRuler getTop();
+    method public boolean isAnimating(androidx.compose.ui.layout.Placeable.PlacementScope placementScope);
+    method public boolean isAnimating(androidx.compose.ui.node.DelegatableNode node);
+    property public androidx.compose.ui.layout.HorizontalRuler bottom;
+    property public androidx.compose.ui.layout.VerticalRuler left;
+    property public androidx.compose.ui.layout.VerticalRuler right;
+    property public androidx.compose.ui.layout.RectRulers[] rulers;
+    property public androidx.compose.ui.layout.RectRulers source;
+    property public androidx.compose.ui.layout.RectRulers target;
+    property public androidx.compose.ui.layout.HorizontalRuler top;
+  }
+
+  public final class InnerRectRulers implements androidx.compose.ui.layout.RectRulers {
+    ctor public InnerRectRulers(androidx.compose.ui.layout.RectRulers... rulers);
+    method public androidx.compose.ui.layout.HorizontalRuler getBottom();
+    method public androidx.compose.ui.layout.VerticalRuler getLeft();
+    method public androidx.compose.ui.layout.VerticalRuler getRight();
+    method public androidx.compose.ui.layout.HorizontalRuler getTop();
+    property public androidx.compose.ui.layout.HorizontalRuler bottom;
+    property public androidx.compose.ui.layout.VerticalRuler left;
+    property public androidx.compose.ui.layout.VerticalRuler right;
+    property public androidx.compose.ui.layout.HorizontalRuler top;
+  }
+
+  public final class InsetsRulers {
+    method public androidx.compose.ui.layout.AnimatableInsetsRulers getCaptionBar();
+    method public androidx.compose.ui.layout.DisplayCutoutInsetsRulers getDisplayCutout();
+    method public androidx.compose.ui.layout.AnimatableInsetsRulers getIme();
+    method public androidx.compose.ui.layout.AnimatableInsetsRulers getMandatorySystemGestures();
+    method public androidx.compose.ui.layout.AnimatableInsetsRulers getNavigationBars();
+    method public androidx.compose.ui.layout.BasicAnimatableInsetsRulers getSafeContent();
+    method public androidx.compose.ui.layout.BasicAnimatableInsetsRulers getSafeDrawing();
+    method public androidx.compose.ui.layout.BasicAnimatableInsetsRulers getSafeGestures();
+    method public androidx.compose.ui.layout.AnimatableInsetsRulers getStatusBars();
+    method public androidx.compose.ui.layout.BasicAnimatableInsetsRulers getSystemBars();
+    method public androidx.compose.ui.layout.AnimatableInsetsRulers getSystemGestures();
+    method public androidx.compose.ui.layout.AnimatableInsetsRulers getTappableElement();
+    method public androidx.compose.ui.layout.RectRulers getWaterfall();
+    property public androidx.compose.ui.layout.AnimatableInsetsRulers CaptionBar;
+    property public androidx.compose.ui.layout.DisplayCutoutInsetsRulers DisplayCutout;
+    property public androidx.compose.ui.layout.AnimatableInsetsRulers Ime;
+    property public androidx.compose.ui.layout.AnimatableInsetsRulers MandatorySystemGestures;
+    property public androidx.compose.ui.layout.AnimatableInsetsRulers NavigationBars;
+    property public androidx.compose.ui.layout.BasicAnimatableInsetsRulers SafeContent;
+    property public androidx.compose.ui.layout.BasicAnimatableInsetsRulers SafeDrawing;
+    property public androidx.compose.ui.layout.BasicAnimatableInsetsRulers SafeGestures;
+    property public androidx.compose.ui.layout.AnimatableInsetsRulers StatusBars;
+    property public androidx.compose.ui.layout.BasicAnimatableInsetsRulers SystemBars;
+    property public androidx.compose.ui.layout.AnimatableInsetsRulers SystemGestures;
+    property public androidx.compose.ui.layout.AnimatableInsetsRulers TappableElement;
+    property public androidx.compose.ui.layout.RectRulers Waterfall;
+    field public static final androidx.compose.ui.layout.InsetsRulers INSTANCE;
   }
 
   public interface IntrinsicMeasurable {
@@ -2657,6 +2778,16 @@ package androidx.compose.ui.layout {
     property public default Object? parentData;
   }
 
+  public final class MergedHorizontalRuler extends androidx.compose.ui.layout.HorizontalRuler implements androidx.compose.ui.layout.DerivedRuler {
+    ctor public MergedHorizontalRuler(boolean shouldUseGreater, androidx.compose.ui.layout.HorizontalRuler... rulers);
+    method public float calculate(androidx.compose.ui.layout.Placeable.PlacementScope, float defaultValue);
+  }
+
+  public final class MergedVerticalRuler extends androidx.compose.ui.layout.VerticalRuler implements androidx.compose.ui.layout.DerivedRuler {
+    ctor public MergedVerticalRuler(boolean shouldUseGreater, androidx.compose.ui.layout.VerticalRuler... rulers);
+    method public float calculate(androidx.compose.ui.layout.Placeable.PlacementScope, float defaultValue);
+  }
+
   public final class ModifierInfo {
     ctor public ModifierInfo(androidx.compose.ui.Modifier modifier, androidx.compose.ui.layout.LayoutCoordinates coordinates, optional Object? extra);
     method public androidx.compose.ui.layout.LayoutCoordinates getCoordinates();
@@ -2708,6 +2839,18 @@ package androidx.compose.ui.layout {
     method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier onSizeChanged(androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super androidx.compose.ui.unit.IntSize,kotlin.Unit> onSizeChanged);
   }
 
+  public final class OuterRectRulers implements androidx.compose.ui.layout.RectRulers {
+    ctor public OuterRectRulers(androidx.compose.ui.layout.RectRulers... rulers);
+    method public androidx.compose.ui.layout.HorizontalRuler getBottom();
+    method public androidx.compose.ui.layout.VerticalRuler getLeft();
+    method public androidx.compose.ui.layout.VerticalRuler getRight();
+    method public androidx.compose.ui.layout.HorizontalRuler getTop();
+    property public androidx.compose.ui.layout.HorizontalRuler bottom;
+    property public androidx.compose.ui.layout.VerticalRuler left;
+    property public androidx.compose.ui.layout.VerticalRuler right;
+    property public androidx.compose.ui.layout.HorizontalRuler top;
+  }
+
   @kotlin.jvm.JvmDefaultWithCompatibility public interface ParentDataModifier extends androidx.compose.ui.Modifier.Element {
     method public Object? modifyParentData(androidx.compose.ui.unit.Density, Object? parentData);
   }
@@ -2747,10 +2890,12 @@ package androidx.compose.ui.layout {
     property public final int width;
   }
 
-  @androidx.compose.ui.layout.PlacementScopeMarker public abstract static class Placeable.PlacementScope {
+  @androidx.compose.ui.layout.PlacementScopeMarker public abstract static class Placeable.PlacementScope implements androidx.compose.ui.unit.Density {
     ctor public Placeable.PlacementScope();
     method public float current(androidx.compose.ui.layout.Ruler, float defaultValue);
     method public androidx.compose.ui.layout.LayoutCoordinates? getCoordinates();
+    method public float getDensity();
+    method public float getFontScale();
     method protected abstract androidx.compose.ui.unit.LayoutDirection getParentLayoutDirection();
     method protected abstract int getParentWidth();
     method public final void place(androidx.compose.ui.layout.Placeable, int x, int y, optional float zIndex);
@@ -2767,11 +2912,28 @@ package androidx.compose.ui.layout {
     method public final void placeWithLayer(androidx.compose.ui.layout.Placeable, long position, optional float zIndex, optional kotlin.jvm.functions.Function1<? super androidx.compose.ui.graphics.GraphicsLayerScope,kotlin.Unit> layerBlock);
     method public final void withMotionFrameOfReferencePlacement(kotlin.jvm.functions.Function1<? super androidx.compose.ui.layout.Placeable.PlacementScope,kotlin.Unit> block);
     property public androidx.compose.ui.layout.LayoutCoordinates? coordinates;
+    property public float density;
+    property public float fontScale;
     property protected abstract androidx.compose.ui.unit.LayoutDirection parentLayoutDirection;
     property protected abstract int parentWidth;
   }
 
   @kotlin.DslMarker public @interface PlacementScopeMarker {
+  }
+
+  public interface RectRulers {
+    method public androidx.compose.ui.layout.HorizontalRuler getBottom();
+    method public androidx.compose.ui.layout.VerticalRuler getLeft();
+    method public androidx.compose.ui.layout.VerticalRuler getRight();
+    method public androidx.compose.ui.layout.HorizontalRuler getTop();
+    property public abstract androidx.compose.ui.layout.HorizontalRuler bottom;
+    property public abstract androidx.compose.ui.layout.VerticalRuler left;
+    property public abstract androidx.compose.ui.layout.VerticalRuler right;
+    property public abstract androidx.compose.ui.layout.HorizontalRuler top;
+  }
+
+  public final class RectRulersKt {
+    method public static androidx.compose.ui.layout.RectRulers RectRulers(optional String? name);
   }
 
   public interface Remeasurement {
@@ -2886,7 +3048,7 @@ package androidx.compose.ui.layout {
     ctor public VerticalAlignmentLine(kotlin.jvm.functions.Function2<? super java.lang.Integer,? super java.lang.Integer,java.lang.Integer> merger);
   }
 
-  public final class VerticalRuler extends androidx.compose.ui.layout.Ruler {
+  public class VerticalRuler extends androidx.compose.ui.layout.Ruler {
     ctor public VerticalRuler();
   }
 
