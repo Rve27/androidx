@@ -41,7 +41,8 @@ public class AppFunctionManagerCompat
 internal constructor(
     private val context: Context,
     private val translatorSelector: TranslatorSelector = Dependencies.translatorSelector,
-    private val appFunctionReader: AppFunctionReader = AppSearchAppFunctionReader(context),
+    private val appFunctionReader: AppFunctionReader =
+        AppSearchAppFunctionReader(context, Dependencies.schemaAppFunctionInventory),
     private val appFunctionManagerApi: AppFunctionManagerApi =
         ExtensionAppFunctionManagerApi(context)
 ) {
