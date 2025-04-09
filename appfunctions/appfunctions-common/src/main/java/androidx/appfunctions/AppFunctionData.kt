@@ -62,6 +62,8 @@ import java.time.LocalDateTime
  *   }
  * }
  * ```
+ *
+ * @see [AppFunctionData.Builder]
  */
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 public class AppFunctionData
@@ -869,6 +871,8 @@ internal constructor(
          * @param parameterMetadataList List of [AppFunctionParameterMetadata] defining the input
          *   parameters.
          * @param componentMetadata [AppFunctionComponentsMetadata] that has the shared data type.
+         * @see [AppFunctionParameterMetadata]
+         * @see [AppFunctionComponentsMetadata]
          */
         public constructor(
             parameterMetadataList: List<AppFunctionParameterMetadata>,
@@ -885,6 +889,8 @@ internal constructor(
          *
          * @param objectTypeMetadata [AppFunctionObjectTypeMetadata] defining the object structure.
          * @param componentMetadata [AppFunctionComponentsMetadata] that has the shared data type.
+         * @see [AppFunctionObjectTypeMetadata]
+         * @see [AppFunctionComponentsMetadata]
          */
         public constructor(
             objectTypeMetadata: AppFunctionObjectTypeMetadata,
