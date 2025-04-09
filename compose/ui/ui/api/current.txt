@@ -4105,6 +4105,7 @@ package androidx.compose.ui.semantics {
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.Role> getRole();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> getSelectableGroup();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> getSelected();
+    method public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.graphics.Shape> getShape();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> getStateDescription();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> getTestTag();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.util.List<androidx.compose.ui.text.AnnotatedString>> getText();
@@ -4144,6 +4145,7 @@ package androidx.compose.ui.semantics {
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.semantics.Role> Role;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> SelectableGroup;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> Selected;
+    property public androidx.compose.ui.semantics.SemanticsPropertyKey<androidx.compose.ui.graphics.Shape> Shape;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> StateDescription;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.String> TestTag;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.util.List<androidx.compose.ui.text.AnnotatedString>> Text;
@@ -4191,6 +4193,7 @@ package androidx.compose.ui.semantics {
     method public static int getRole(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static void getScrollViewportLength(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function0<java.lang.Float?> action);
     method public static boolean getSelected(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
+    method public static androidx.compose.ui.graphics.Shape getShape(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static String getStateDescription(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static String getTestTag(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static androidx.compose.ui.text.AnnotatedString getText(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
@@ -4247,6 +4250,7 @@ package androidx.compose.ui.semantics {
     method public static void setRole(androidx.compose.ui.semantics.SemanticsPropertyReceiver, int);
     method public static void setSelected(androidx.compose.ui.semantics.SemanticsPropertyReceiver, boolean);
     method public static void setSelection(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function3<? super java.lang.Integer,? super java.lang.Integer,? super java.lang.Boolean,java.lang.Boolean>? action);
+    method public static void setShape(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.graphics.Shape);
     method public static void setShowingTextSubstitution(androidx.compose.ui.semantics.SemanticsPropertyReceiver, boolean);
     method public static void setStateDescription(androidx.compose.ui.semantics.SemanticsPropertyReceiver, String);
     method public static void setTestTag(androidx.compose.ui.semantics.SemanticsPropertyReceiver, String);
@@ -4281,6 +4285,7 @@ package androidx.compose.ui.semantics {
     property public static androidx.compose.ui.semantics.ProgressBarRangeInfo androidx.compose.ui.semantics.SemanticsPropertyReceiver.progressBarRangeInfo;
     property public static int androidx.compose.ui.semantics.SemanticsPropertyReceiver.role;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.selected;
+    property public static androidx.compose.ui.graphics.Shape androidx.compose.ui.semantics.SemanticsPropertyReceiver.shape;
     property public static String androidx.compose.ui.semantics.SemanticsPropertyReceiver.stateDescription;
     property public static String androidx.compose.ui.semantics.SemanticsPropertyReceiver.testTag;
     property public static androidx.compose.ui.text.AnnotatedString androidx.compose.ui.semantics.SemanticsPropertyReceiver.text;
