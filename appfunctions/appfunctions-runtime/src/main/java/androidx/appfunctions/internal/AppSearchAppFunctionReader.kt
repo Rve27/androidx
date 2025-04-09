@@ -25,8 +25,7 @@ import androidx.appfunctions.AppFunctionSearchSpec
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadataDocument
-import androidx.appfunctions.metadata.AppFunctionParameterMetadata
-import androidx.appfunctions.metadata.AppFunctionParameterMetadataDocument
+import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
 import androidx.appfunctions.metadata.AppFunctionRuntimeMetadata
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
@@ -61,15 +60,9 @@ import kotlinx.coroutines.launch
  * [AppFunctionMetadata] objects.
  *
  * @param context The context of the application, used for session creation.
- * @param schemaAppFunctionInventory If provided, use to looks up the statically generated
- *   [AppFunctionMetadata] based on the [AppFunctionSchemaMetadata] when unable to retrieve the
- *   details from AppSearch.
  */
 @RequiresApi(Build.VERSION_CODES.S)
-internal class AppSearchAppFunctionReader(
-    private val context: Context,
-    private val schemaAppFunctionInventory: SchemaAppFunctionInventory?,
-) : AppFunctionReader {
+internal class AppSearchAppFunctionReader(private val context: Context) : AppFunctionReader {
 
     @OptIn(FlowPreview::class)
     override fun searchAppFunctions(
@@ -184,22 +177,34 @@ internal class AppSearchAppFunctionReader(
                 .genericDocument
                 .toDocumentClass(AppFunctionRuntimeMetadata::class.java)
 
-        val schemaMetadata = buildSchemaMetadataFromGdForLegacyIndexer(searchResult.genericDocument)
-        val parameterMetadata =
-            getAppFunctionParameterMetadata(staticMetadataDocument, schemaMetadata) ?: return null
-        val responseMetadata =
-            getAppFunctionResponseMetadata(staticMetadataDocument, schemaMetadata) ?: return null
-        val componentsMetadata =
-            getAppFunctionComponentsMetadata(staticMetadataDocument, schemaMetadata) ?: return null
-
         return AppFunctionMetadata(
             id = functionId,
             packageName = packageName,
             isEnabled = computeEffectivelyEnabled(staticMetadataDocument, runtimeMetadataDocument),
-            schema = schemaMetadata,
-            parameters = parameterMetadata,
-            response = responseMetadata,
-            components = componentsMetadata,
+            schema = buildSchemaMetadataFromGdForLegacyIndexer(searchResult.genericDocument),
+            // TODO: Populate them separately for legacy indexer.
+            parameters =
+                // Since this is a list type it can be null for cases where an app function has no
+                // parameters.
+                if (staticMetadataDocument.response != null) {
+                    staticMetadataDocument.parameters?.map { it.toAppFunctionParameterMetadata() }
+                        ?: emptyList()
+                } else {
+                    // TODO - Populate for legacy indexer
+                    emptyList()
+                },
+            response =
+                staticMetadataDocument.response?.toAppFunctionResponseMetadata()
+                    ?: AppFunctionResponseMetadata(
+                        valueType =
+                            AppFunctionPrimitiveTypeMetadata(
+                                type = AppFunctionPrimitiveTypeMetadata.TYPE_UNIT,
+                                isNullable = false
+                            )
+                    ),
+            components =
+                staticMetadataDocument.components?.toAppFunctionComponentsMetadata()
+                    ?: AppFunctionComponentsMetadata(),
         )
     }
 
@@ -270,60 +275,6 @@ internal class AppSearchAppFunctionReader(
                     "Function with ID = $documentId is not available"
                 )
         return buildSchemaMetadataFromGdForLegacyIndexer(genericDocument)
-    }
-
-    private fun getAppFunctionParameterMetadata(
-        appFunctionMetadataDocument: AppFunctionMetadataDocument,
-        schemaMetadata: AppFunctionSchemaMetadata?,
-    ): List<AppFunctionParameterMetadata>? {
-        if (isAppFunctionMetadataDocumentFromDynamicIndexer(appFunctionMetadataDocument)) {
-            return checkNotNull(appFunctionMetadataDocument.parameters)
-                .map(AppFunctionParameterMetadataDocument::toAppFunctionParameterMetadata)
-        }
-
-        return if (schemaMetadata == null) {
-            null
-        } else {
-            schemaAppFunctionInventory?.schemaFunctionsMap?.get(schemaMetadata)?.parameters
-        }
-    }
-
-    private fun getAppFunctionResponseMetadata(
-        appFunctionMetadataDocument: AppFunctionMetadataDocument,
-        schemaMetadata: AppFunctionSchemaMetadata?,
-    ): AppFunctionResponseMetadata? {
-        if (isAppFunctionMetadataDocumentFromDynamicIndexer(appFunctionMetadataDocument)) {
-            return checkNotNull(appFunctionMetadataDocument.response)
-                .toAppFunctionResponseMetadata()
-        }
-
-        return if (schemaMetadata == null) {
-            null
-        } else {
-            schemaAppFunctionInventory?.schemaFunctionsMap?.get(schemaMetadata)?.response
-        }
-    }
-
-    private fun getAppFunctionComponentsMetadata(
-        appFunctionMetadataDocument: AppFunctionMetadataDocument,
-        schemaMetadata: AppFunctionSchemaMetadata?,
-    ): AppFunctionComponentsMetadata? {
-        if (isAppFunctionMetadataDocumentFromDynamicIndexer(appFunctionMetadataDocument)) {
-            return checkNotNull(appFunctionMetadataDocument.components)
-                .toAppFunctionComponentsMetadata()
-        }
-
-        return if (schemaMetadata == null) {
-            null
-        } else {
-            schemaAppFunctionInventory?.schemaFunctionsMap?.get(schemaMetadata)?.components
-        }
-    }
-
-    private fun isAppFunctionMetadataDocumentFromDynamicIndexer(
-        document: AppFunctionMetadataDocument
-    ): Boolean {
-        return document.response != null
     }
 
     private fun getAppFunctionId(packageName: String, functionId: String) =
