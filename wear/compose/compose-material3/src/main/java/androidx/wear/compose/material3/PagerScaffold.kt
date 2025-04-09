@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -158,7 +157,6 @@ public fun AnimatedPage(
 ) {
     val isReduceMotionEnabled = LocalReduceMotion.current
     val isRtlEnabled = LocalLayoutDirection.current == LayoutDirection.Rtl
-    val isCurrentPage: Boolean = pageIndex == pagerState.currentPage
     val graphicsLayerModifier =
         if (isReduceMotionEnabled) Modifier
         else
@@ -167,6 +165,7 @@ public fun AnimatedPage(
                 val currentPageOffsetFraction = pagerState.currentPageOffsetFraction
                 val isSwipingRightToLeft = direction * currentPageOffsetFraction > 0
                 val isSwipingLeftToRight = direction * currentPageOffsetFraction < 0
+                val isCurrentPage: Boolean = pageIndex == pagerState.currentPage
                 val shouldAnchorRight =
                     (isSwipingRightToLeft && isCurrentPage) ||
                         (isSwipingLeftToRight && !isCurrentPage)
@@ -189,6 +188,7 @@ public fun AnimatedPage(
 
         if (contentScrimColor.isSpecified) {
             Canvas(Modifier.fillMaxSize()) {
+                val isCurrentPage: Boolean = pageIndex == pagerState.currentPage
                 val pageTransitionFraction =
                     getPageTransitionFraction(isCurrentPage, pagerState.currentPageOffsetFraction)
                 val color =
