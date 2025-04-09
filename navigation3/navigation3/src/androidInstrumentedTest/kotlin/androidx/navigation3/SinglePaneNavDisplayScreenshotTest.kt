@@ -22,23 +22,28 @@ import androidx.activity.BackEventCompat
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.testutils.assertAgainstGolden
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
 import androidx.compose.ui.unit.dp
+import androidx.kruth.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
@@ -111,7 +116,388 @@ class SinglePaneNavDisplayScreenshotTest {
             .captureToImage()
             .assertAgainstGolden(screenshotRule, "testNavDisplayPredictiveBackAnimations")
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Test
+    fun testNavigateZIndex() {
+        lateinit var backStack: MutableList<Any>
+
+        composeTestRule.setContent {
+            backStack = remember { mutableStateListOf(first) }
+            SinglePaneNavDisplay(
+                backStack,
+                // both screens slide left to right, entering screens should be on top
+                enterTransition = slideInHorizontally { -it / 2 },
+                exitTransition = slideOutHorizontally { it },
+            ) {
+                when (it) {
+                    first ->
+                        NavEntry(first) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Blue),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(first, Modifier.size(50.dp))
+                            }
+                        }
+                    second ->
+                        NavEntry(second) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Red),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(second, Modifier.size(50.dp))
+                            }
+                        }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assertThat(composeTestRule.onNodeWithText(first).isDisplayed()).isTrue()
+
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.runOnIdle { backStack.add(second) }
+
+        composeTestRule.mainClock.advanceTimeByFrame()
+        composeTestRule.mainClock.advanceTimeByFrame()
+
+        // second screen should be on top with "second" text visible
+        composeTestRule
+            .onNodeWithText(second)
+            .onParent()
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, "testNavigateZIndex")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Test
+    fun testPopZIndex() {
+        lateinit var backStack: MutableList<Any>
+        val duration = 500
+        composeTestRule.setContent {
+            backStack = remember { mutableStateListOf(first, second) }
+            SinglePaneNavDisplay(
+                backStack,
+                // both screens slide right to left, exiting screen should be on top
+                popEnterTransition = slideInHorizontally(tween(duration)) { it / 2 },
+                popExitTransition = slideOutHorizontally(tween(duration)) { -it / 2 }
+            ) {
+                when (it) {
+                    first ->
+                        NavEntry(first) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Blue),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(first, Modifier.size(50.dp))
+                            }
+                        }
+                    second ->
+                        NavEntry(second) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Red),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(second, Modifier.size(50.dp))
+                            }
+                        }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assertThat(composeTestRule.onNodeWithText(second).isDisplayed()).isTrue()
+
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.runOnIdle { backStack.removeAt(1) }
+
+        composeTestRule.mainClock.advanceTimeBy((duration / 2).toLong())
+
+        // second screen should be on top with "second" text visible
+        composeTestRule
+            .onNodeWithText(second)
+            .onParent()
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, "testPopZIndex")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Test
+    fun testPopNavigateDuplicateZIndex() {
+        lateinit var backStack: MutableList<Any>
+
+        composeTestRule.setContent {
+            backStack = remember { mutableStateListOf(first, second, third) }
+            SinglePaneNavDisplay(
+                backStack,
+                // both screens slide left to right, entering screen should be on top
+                enterTransition = slideInHorizontally { -it / 2 },
+                exitTransition = slideOutHorizontally { it },
+            ) {
+                when (it) {
+                    first -> NavEntry(first) {}
+                    second -> NavEntry(second) {}
+                    third ->
+                        NavEntry(third) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Red),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(third, Modifier.size(50.dp))
+                            }
+                        }
+                    forth ->
+                        NavEntry(forth) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Green),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(forth, Modifier.size(50.dp))
+                            }
+                        }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assertThat(composeTestRule.onNodeWithText(third).isDisplayed()).isTrue()
+
+        composeTestRule.runOnIdle { backStack.add(forth) }
+        assertThat(composeTestRule.onNodeWithText(forth).isDisplayed()).isTrue()
+        assertThat(backStack).containsExactly(first, second, third, forth).inOrder()
+
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.runOnIdle {
+            backStack.removeAt(3)
+            backStack.removeAt(2)
+            backStack.removeAt(1)
+            backStack.add(third)
+            // resulting in (first, third)
+        }
+
+        composeTestRule.mainClock.advanceTimeByFrame()
+        composeTestRule.mainClock.advanceTimeByFrame()
+
+        // should be a navigate to third screen, with "third" text visible and on top
+        composeTestRule
+            .onNodeWithText(third)
+            .onParent()
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, "testPopNavigateDuplicateZIndex")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Test
+    fun testPopNavigateZIndex() {
+        lateinit var backStack: MutableList<Any>
+
+        composeTestRule.setContent {
+            backStack = remember { mutableStateListOf(first, second, third) }
+            SinglePaneNavDisplay(
+                backStack,
+                // both screens slide left to right, entering screen should be on top
+                enterTransition = slideInHorizontally { -it / 2 },
+                exitTransition = slideOutHorizontally { it },
+            ) {
+                when (it) {
+                    first ->
+                        NavEntry(first) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Blue),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(first, Modifier.size(50.dp))
+                            }
+                        }
+                    second -> NavEntry(second) {}
+                    third ->
+                        NavEntry(third) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Red),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(third, Modifier.size(50.dp))
+                            }
+                        }
+                    forth ->
+                        NavEntry(forth) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Green),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(forth, Modifier.size(50.dp))
+                            }
+                        }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assertThat(composeTestRule.onNodeWithText(third).isDisplayed()).isTrue()
+
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.runOnIdle {
+            backStack.removeAt(2)
+            backStack.removeAt(1)
+            backStack.add(forth)
+        }
+
+        composeTestRule.mainClock.advanceTimeByFrame()
+        composeTestRule.mainClock.advanceTimeByFrame()
+        assertThat(composeTestRule.onNodeWithText(forth).isDisplayed()).isTrue()
+
+        // forth screen should be on top with "forth" text visible
+        composeTestRule
+            .onNodeWithText(forth)
+            .onParent()
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, "testPopNavigateZIndex")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Test
+    fun testNavigateDuplicateZIndex() {
+        lateinit var backStack: MutableList<Any>
+
+        composeTestRule.setContent {
+            backStack = remember { mutableStateListOf(first) }
+            SinglePaneNavDisplay(
+                backStack,
+                // both screens slide left to right, entering screens should be on top
+                enterTransition = slideInHorizontally { -it / 2 },
+                exitTransition = slideOutHorizontally { it },
+            ) {
+                when (it) {
+                    first ->
+                        NavEntry(first) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Blue),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(first, Modifier.size(50.dp))
+                            }
+                        }
+                    second ->
+                        NavEntry(second) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Red),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(second, Modifier.size(50.dp))
+                            }
+                        }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assertThat(composeTestRule.onNodeWithText(first).isDisplayed()).isTrue()
+
+        composeTestRule.runOnIdle { backStack.add(second) }
+        assertThat(composeTestRule.onNodeWithText(second).isDisplayed()).isTrue()
+
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.runOnIdle { backStack.add(first) }
+
+        composeTestRule.mainClock.advanceTimeByFrame()
+        composeTestRule.mainClock.advanceTimeByFrame()
+
+        // first screen should be on top with "first" text visible
+        composeTestRule
+            .onNodeWithText(first)
+            .onParent()
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, "testNavigateDuplicateZIndex")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Test
+    fun testPopDuplicateZIndex() {
+        lateinit var backStack: MutableList<Any>
+        val duration = 200
+        composeTestRule.setContent {
+            backStack = remember { mutableStateListOf(first) }
+            SinglePaneNavDisplay(
+                backStack,
+                // both screens slide left to right, entering screens should be on top
+                enterTransition = slideInHorizontally { -it / 2 },
+                exitTransition = slideOutHorizontally { it },
+                // both screens slide right to left, exiting screen should be on top
+                popEnterTransition = slideInHorizontally(tween(duration)) { it / 2 },
+                popExitTransition = slideOutHorizontally(tween(duration)) { -it / 2 }
+            ) {
+                when (it) {
+                    first ->
+                        NavEntry(first) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Blue),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(first, Modifier.size(50.dp))
+                            }
+                        }
+                    second ->
+                        NavEntry(second) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Red),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(second, Modifier.size(50.dp))
+                            }
+                        }
+                    third ->
+                        NavEntry(third) {
+                            Box(
+                                Modifier.fillMaxSize().background(Color.Green),
+                                contentAlignment = Alignment.TopEnd
+                            ) {
+                                BasicText(third, Modifier.size(50.dp))
+                            }
+                        }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+
+        // navigate one by one to register every screen's initial zIndex
+        composeTestRule.waitForIdle()
+        assertThat(composeTestRule.onNodeWithText(first).isDisplayed()).isTrue()
+
+        composeTestRule.runOnIdle { backStack.add(second) }
+        assertThat(composeTestRule.onNodeWithText(second).isDisplayed()).isTrue()
+
+        composeTestRule.runOnIdle { backStack.add(third) }
+        assertThat(composeTestRule.onNodeWithText(third).isDisplayed()).isTrue()
+
+        // duplicate destination
+        composeTestRule.runOnIdle { backStack.add(second) }
+        assertThat(composeTestRule.onNodeWithText(second).isDisplayed()).isTrue()
+
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.runOnIdle {
+            // pop the duplicate destination
+            backStack.removeAt(backStack.lastIndex)
+        }
+
+        composeTestRule.mainClock.advanceTimeBy((duration / 2).toLong())
+        // when navigating to "second" for a second time, its zIndex should have been updated
+        // so that popping this duplicate would still go from a higher zIndex to lower zIndex,
+        // meaning we should see the exiting screen on top with "second" text visible
+        composeTestRule
+            .onNodeWithText(third)
+            .onParent()
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, "testPopDuplicateZIndex2")
+    }
 }
 
 private const val first = "first"
 private const val second = "second"
+private const val third = "third"
+private const val forth = "forth"

@@ -16,6 +16,7 @@
 package androidx.navigation3
 
 import androidx.activity.compose.PredictiveBackHandler
+import androidx.collection.mutableObjectFloatMapOf
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
@@ -33,6 +34,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -234,12 +236,26 @@ public fun <T : Any> SinglePaneNavDisplay(
             }
         }
 
+        val zIndices = remember { mutableObjectFloatMapOf<Int>() }
+        val initialKey = transition.currentState.lastOrNull()
+        val targetKey = transition.targetState.lastOrNull()
+        val initialZIndex = zIndices.getOrPut(initialKey.hashCode()) { 0f }
+        val targetZIndex =
+            when {
+                initialKey == targetKey -> initialZIndex
+                isPop || inPredictiveBack -> initialZIndex - 1f
+                else -> initialZIndex + 1f
+            }
+        zIndices[targetKey.hashCode()] = targetZIndex
+
         transition.AnimatedContent(
             modifier = modifier,
             transitionSpec = {
                 ContentTransform(
                     targetContentEnter = finalEnterTransition,
                     initialContentExit = finalExitTransition,
+                    // z-index increases during navigate and decreases during pop.
+                    targetContentZIndex = targetZIndex,
                     sizeTransform = sizeTransform
                 )
             },
@@ -255,6 +271,7 @@ public fun <T : Any> SinglePaneNavDisplay(
                 currEntry!!.content.invoke(currEntry.key)
             }
         }
+
         LaunchedEffect(transition.currentState, transition.targetState) {
             // If we've reached the targetState, our animation has settled
             val settled = transition.currentState == transition.targetState
