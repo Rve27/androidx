@@ -24,6 +24,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicSecureTextField
+import androidx.compose.foundation.text.contextmenu.internal.ProvidePlatformTextContextMenuToolbar
+import androidx.compose.foundation.text.contextmenu.test.ContextMenuFlagFlipperRunner
+import androidx.compose.foundation.text.contextmenu.test.ContextMenuFlagSuppress
+import androidx.compose.foundation.text.contextmenu.test.SpyTextActionModeCallback
+import androidx.compose.foundation.text.contextmenu.test.assertNotNull
+import androidx.compose.foundation.text.contextmenu.test.items
 import androidx.compose.foundation.text.selection.FakeTextToolbar
 import androidx.compose.foundation.text.selection.fetchTextLayoutResult
 import androidx.compose.runtime.CompositionLocalProvider
@@ -58,7 +64,6 @@ import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.dp
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
@@ -68,7 +73,7 @@ import org.junit.runner.RunWith
 
 @OptIn(ExperimentalTestApi::class)
 @MediumTest
-@RunWith(AndroidJUnit4::class)
+@RunWith(ContextMenuFlagFlipperRunner::class)
 internal class BasicSecureTextFieldTest {
 
     // Keyboard shortcut tests for BasicSecureTextField are in TextFieldKeyEventTest
@@ -421,6 +426,7 @@ internal class BasicSecureTextFieldTest {
         rule.onNodeWithTag(Tag).assert(SemanticsMatcher.keyNotDefined(SemanticsActions.CutText))
     }
 
+    @ContextMenuFlagSuppress(suppressedFlagValue = true)
     @Test
     fun toolbarDoesNotShowCopyOrCut() {
         var copyOptionAvailable = false
@@ -453,6 +459,34 @@ internal class BasicSecureTextFieldTest {
             assertThat(copyOptionAvailable).isFalse()
             assertThat(cutOptionAvailable).isFalse()
         }
+    }
+
+    @ContextMenuFlagSuppress(suppressedFlagValue = false)
+    @Test
+    fun toolbarDoesNotShowCopyOrCut_newContextMenu() {
+        val spyTextActionModeCallback = SpyTextActionModeCallback()
+        val state = TextFieldState("Hello")
+        inputMethodInterceptor.setContent {
+            ProvidePlatformTextContextMenuToolbar(
+                callbackInjector = { spyTextActionModeCallback.apply { delegate = it } }
+            ) {
+                BasicSecureTextField(state = state, modifier = Modifier.testTag(Tag))
+            }
+        }
+
+        rule.onNodeWithTag(Tag).requestFocus()
+        // We need to disable the traversalMode to show the toolbar.
+        rule.onNodeWithTag(Tag).performSemanticsAction(SemanticsActions.SetSelection) {
+            it(0, 5, false)
+        }
+
+        rule.waitForIdle()
+
+        val menu = assertNotNull(spyTextActionModeCallback.menu)
+        val actualLabels = menu.items().map { it.title }
+
+        assertThat(actualLabels).doesNotContain("Cut")
+        assertThat(actualLabels).doesNotContain("Copy")
     }
 
     @Test

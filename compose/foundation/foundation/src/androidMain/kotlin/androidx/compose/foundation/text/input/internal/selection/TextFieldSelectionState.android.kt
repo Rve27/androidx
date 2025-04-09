@@ -21,9 +21,14 @@ import androidx.compose.foundation.contextmenu.ContextMenuScope
 import androidx.compose.foundation.contextmenu.ContextMenuState
 import androidx.compose.foundation.text.MenuItemsAvailability
 import androidx.compose.foundation.text.TextContextMenuItems
+import androidx.compose.foundation.text.TextContextMenuItems.Autofill
+import androidx.compose.foundation.text.TextContextMenuItems.Copy
+import androidx.compose.foundation.text.TextContextMenuItems.Cut
+import androidx.compose.foundation.text.TextContextMenuItems.Paste
+import androidx.compose.foundation.text.TextContextMenuItems.SelectAll
 import androidx.compose.foundation.text.TextItem
+import androidx.compose.foundation.text.contextmenu.builder.TextContextMenuBuilderScope
 import androidx.compose.foundation.text.contextmenu.modifier.addTextContextMenuComponentsWithResources
-import androidx.compose.foundation.text.textItem
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
@@ -36,21 +41,13 @@ internal fun TextFieldSelectionState.contextMenuBuilder(
     onMenuItemClicked: TextFieldSelectionState.(TextContextMenuItems) -> Unit
 ): ContextMenuScope.() -> Unit = {
     val availability: MenuItemsAvailability = itemsAvailability.value
-    TextItem(state, TextContextMenuItems.Cut, enabled = availability.canCut) {
-        onMenuItemClicked(TextContextMenuItems.Cut)
-    }
-    TextItem(state, TextContextMenuItems.Copy, enabled = availability.canCopy) {
-        onMenuItemClicked(TextContextMenuItems.Copy)
-    }
-    TextItem(state, TextContextMenuItems.Paste, enabled = availability.canPaste) {
-        onMenuItemClicked(TextContextMenuItems.Paste)
-    }
-    TextItem(state, TextContextMenuItems.SelectAll, enabled = availability.canSelectAll) {
-        onMenuItemClicked(TextContextMenuItems.SelectAll)
-    }
+    TextItem(state, Cut, enabled = availability.canCut) { onMenuItemClicked(Cut) }
+    TextItem(state, Copy, enabled = availability.canCopy) { onMenuItemClicked(Copy) }
+    TextItem(state, Paste, enabled = availability.canPaste) { onMenuItemClicked(Paste) }
+    TextItem(state, SelectAll, enabled = availability.canSelectAll) { onMenuItemClicked(SelectAll) }
     if (Build.VERSION.SDK_INT >= 26) {
-        TextItem(state, TextContextMenuItems.Autofill, enabled = availability.canAutofill) {
-            onMenuItemClicked(TextContextMenuItems.Autofill)
+        TextItem(state, Autofill, enabled = availability.canAutofill) {
+            onMenuItemClicked(Autofill)
         }
     }
 }
@@ -60,33 +57,55 @@ internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
     state: TextFieldSelectionState,
     coroutineScope: CoroutineScope,
 ): Modifier = addTextContextMenuComponentsWithResources { resources ->
-    separator()
-    if (state.canCut())
-        textItem(resources, TextContextMenuItems.Cut) {
-            coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) { state.cut() }
-            close()
-        }
-    if (state.canCopy())
-        textItem(resources, TextContextMenuItems.Copy) {
-            coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
-                state.copy(cancelSelection = state.textToolbarShown)
+    fun TextContextMenuBuilderScope.textFieldItem(
+        item: TextContextMenuItems,
+        desiredState: TextToolbarState = TextToolbarState.None,
+        closePredicate: (() -> Boolean)? = null,
+        onClick: () -> Unit
+    ) {
+        item(
+            key = item.key,
+            label = item.resolveString(resources),
+            leadingIcon = item.drawableId,
+            onClick = {
+                onClick()
+                if (closePredicate?.invoke() ?: true) close()
+                state.updateTextToolbarState(desiredState)
             }
-            close()
+        )
+    }
+
+    fun TextContextMenuBuilderScope.textFieldSuspendItem(
+        item: TextContextMenuItems,
+        onClick: suspend () -> Unit
+    ) {
+        textFieldItem(item) {
+            coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) { onClick() }
         }
-    if (state.canPaste())
-        textItem(resources, TextContextMenuItems.Paste) {
-            coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) { state.paste() }
-            close()
-        }
-    if (state.canSelectAll())
-        textItem(resources, TextContextMenuItems.SelectAll) {
+    }
+
+    separator()
+    if (state.canCut()) {
+        textFieldSuspendItem(Cut) { state.cut() }
+    }
+    if (state.canCopy()) {
+        textFieldSuspendItem(Copy) { state.copy(cancelSelection = state.textToolbarShown) }
+    }
+    if (state.canPaste()) {
+        textFieldSuspendItem(Paste) { state.paste() }
+    }
+    if (state.canSelectAll()) {
+        textFieldItem(
+            item = SelectAll,
+            desiredState = TextToolbarState.Selection,
+            closePredicate = { !state.textToolbarShown },
+        ) {
             state.selectAll()
-            if (!state.textToolbarShown) close()
+            state.updateTextToolbarState(TextToolbarState.Selection)
         }
-    if (Build.VERSION.SDK_INT >= 26 && state.canAutofill())
-        textItem(resources, TextContextMenuItems.Autofill) {
-            state.autofill()
-            close()
-        }
+    }
+    if (Build.VERSION.SDK_INT >= 26 && state.canAutofill()) {
+        textFieldItem(Autofill) { state.autofill() }
+    }
     separator()
 }

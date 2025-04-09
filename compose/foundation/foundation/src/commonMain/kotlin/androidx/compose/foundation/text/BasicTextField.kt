@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.contextmenu.modifier.ToolbarRequesterImpl
 import androidx.compose.foundation.text.handwriting.stylusHandwriting
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.KeyboardActionHandler
@@ -290,6 +291,7 @@ internal fun BasicTextField(
     val resolvedKeyboardOptions =
         keyboardOptions.fillUnspecifiedValuesWith(inputTransformation?.keyboardOptions)
 
+    val toolbarRequester = remember { ToolbarRequesterImpl() }
     val textFieldSelectionState =
         remember(transformedState) {
             TextFieldSelectionState(
@@ -300,6 +302,7 @@ internal fun BasicTextField(
                 readOnly = readOnly,
                 isFocused = isWindowAndTextFieldFocused,
                 isPassword = isPassword,
+                toolbarRequester = toolbarRequester,
             )
         }
     val coroutineScope = rememberCoroutineScope()
@@ -470,7 +473,8 @@ internal fun BasicTextField(
                                     cursorBrush = cursorBrush,
                                     writeable = enabled && !readOnly,
                                     scrollState = scrollState,
-                                    orientation = orientation
+                                    orientation = orientation,
+                                    toolbarRequester = toolbarRequester,
                                 )
                             )
                 ) {

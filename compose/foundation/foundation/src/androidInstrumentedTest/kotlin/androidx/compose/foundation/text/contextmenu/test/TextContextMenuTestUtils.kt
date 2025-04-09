@@ -26,6 +26,7 @@ import androidx.compose.foundation.text.contextmenu.data.TextContextMenuData
 import androidx.compose.foundation.text.contextmenu.data.TextContextMenuItem
 import androidx.compose.foundation.text.contextmenu.data.TextContextMenuSession
 import androidx.compose.foundation.text.contextmenu.internal.TextActionModeCallback
+import androidx.compose.foundation.text.contextmenu.modifier.ToolbarRequester
 import androidx.compose.foundation.text.contextmenu.modifier.collectTextContextMenuData
 import androidx.compose.foundation.text.contextmenu.provider.TextContextMenuDataProvider
 import androidx.compose.ui.Modifier
@@ -202,3 +203,15 @@ internal fun <T : Any> assertNotNull(obj: T?, messageBlock: (() -> String)? = nu
             }
         subject.isNotNull()
     }!!
+
+internal class FakeToolbarRequester : ToolbarRequester() {
+    var shown = false
+
+    override fun show() {
+        shown = true
+    }
+
+    override fun hide() {
+        shown = false
+    }
+}

@@ -19,7 +19,11 @@ package androidx.compose.foundation.text.input.internal
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.internal.checkPreconditionNotNull
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.contextmenu.modifier.TextContextMenuToolbarHandlerNode
+import androidx.compose.foundation.text.contextmenu.modifier.ToolbarRequester
+import androidx.compose.foundation.text.contextmenu.modifier.translateRootToDestination
 import androidx.compose.foundation.text.input.TextHighlightType
 import androidx.compose.foundation.text.input.internal.selection.TextFieldSelectionState
 import androidx.compose.foundation.text.input.internal.selection.textFieldMagnifierNode
@@ -86,6 +90,7 @@ internal data class TextFieldCoreModifier(
     private val writeable: Boolean,
     private val scrollState: ScrollState,
     private val orientation: Orientation,
+    private val toolbarRequester: ToolbarRequester,
 ) : ModifierNodeElement<TextFieldCoreModifierNode>() {
 
     override fun create(): TextFieldCoreModifierNode =
@@ -99,6 +104,7 @@ internal data class TextFieldCoreModifier(
             writeable = writeable,
             scrollState = scrollState,
             orientation = orientation,
+            toolbarRequester = toolbarRequester,
         )
 
     override fun update(node: TextFieldCoreModifierNode) {
@@ -112,6 +118,7 @@ internal data class TextFieldCoreModifier(
             writeable = writeable,
             scrollState = scrollState,
             orientation = orientation,
+            toolbarRequester = toolbarRequester,
         )
     }
 
@@ -132,6 +139,7 @@ internal class TextFieldCoreModifierNode(
     private var writeable: Boolean,
     private var scrollState: ScrollState,
     private var orientation: Orientation,
+    private var toolbarRequester: ToolbarRequester,
 ) :
     DelegatingNode(),
     LayoutModifierNode,
@@ -188,6 +196,30 @@ internal class TextFieldCoreModifierNode(
             )
         )
 
+    init {
+        delegate(
+            TextContextMenuToolbarHandlerNode(
+                requester = toolbarRequester,
+                onShow = {
+                    textFieldSelectionState.updateClipboardEntry()
+                    textFieldSelectionState.textToolbarShown = true
+                },
+                onHide = { textFieldSelectionState.textToolbarShown = false },
+                computeContentBounds = { destinationCoordinates ->
+                    val rootBounds =
+                        textFieldSelectionState.derivedVisibleContentBounds ?: Rect.Zero
+                    val localCoordinates =
+                        checkPreconditionNotNull(textLayoutState.textLayoutNodeCoordinates)
+                    translateRootToDestination(
+                        rootContentBounds = rootBounds,
+                        localCoordinates = localCoordinates,
+                        destinationCoordinates = destinationCoordinates,
+                    )
+                }
+            )
+        )
+    }
+
     override fun onAttach() {
         // if the attributes are right during onAttach, start the cursor job immediately.
         // This is possible when BasicTextField2 decorator toggles innerTextField in-and-out of
@@ -208,6 +240,7 @@ internal class TextFieldCoreModifierNode(
         writeable: Boolean,
         scrollState: ScrollState,
         orientation: Orientation,
+        toolbarRequester: ToolbarRequester,
     ) {
         val previousShowCursor = this.showCursor
         val wasFocused = this.isFocused
@@ -225,6 +258,7 @@ internal class TextFieldCoreModifierNode(
         this.writeable = writeable
         this.scrollState = scrollState
         this.orientation = orientation
+        this.toolbarRequester = toolbarRequester
 
         textFieldMagnifierNode.update(
             textFieldState = textFieldState,
