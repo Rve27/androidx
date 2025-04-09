@@ -27,6 +27,7 @@ import androidx.appfunctions.LegacyUri
 import androidx.appfunctions.schema.TranslatorTestUtils
 import androidx.appfunctions.schema.types.SetField
 import androidx.test.filters.SdkSuppress
+import org.junit.Ignore
 import org.junit.Test
 
 @SdkSuppress(minSdkVersion = 33)
@@ -35,6 +36,7 @@ class UpdateNoteTranslatorTest {
     private val translatorTestUtils = TranslatorTestUtils(UpdateNoteTranslator())
 
     @Test
+    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun upgradeRequest_allFields() {
         val legacyParams =
             LegacyUpdateNoteParams(
@@ -78,6 +80,7 @@ class UpdateNoteTranslatorTest {
     }
 
     @Test
+    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun upgradeRequest_optionalFieldsNotSet() {
         val legacyParams = LegacyUpdateNoteParams(noteId = "noteId")
 
@@ -96,6 +99,7 @@ class UpdateNoteTranslatorTest {
     }
 
     @Test
+    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun upgradeRequest_nullableSetFieldType_setToNull() {
         val legacyParams =
             LegacyUpdateNoteParams(
@@ -116,6 +120,7 @@ class UpdateNoteTranslatorTest {
     }
 
     @Test
+    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun downgradeRequest_allFields() {
         val jetpackParams =
             UpdateNoteAppFunctionParams(
@@ -159,6 +164,7 @@ class UpdateNoteTranslatorTest {
     }
 
     @Test
+    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun downgradeRequest_nullableFieldsNotSet() {
         val jetpackParams =
             UpdateNoteAppFunctionParams(
@@ -177,6 +183,7 @@ class UpdateNoteTranslatorTest {
     }
 
     @Test
+    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun downgradeRequest_nullableSetFieldType_setToNull() {
         val jetpackParams =
             UpdateNoteAppFunctionParams(
@@ -197,6 +204,7 @@ class UpdateNoteTranslatorTest {
     }
 
     @Test
+    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun upgradeResponse_allFields() {
         val legacyNote =
             LegacyNote(
@@ -236,6 +244,7 @@ class UpdateNoteTranslatorTest {
     }
 
     @Test
+    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun upgradeResponse_optionalFieldsNotSet() {
         val legacyNote =
             LegacyNote(
@@ -257,6 +266,7 @@ class UpdateNoteTranslatorTest {
     }
 
     @Test
+    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun downgradeResponse_allFields() {
         val jetpackResponse =
             UpdateNoteAppFunctionResponse(
@@ -300,6 +310,7 @@ class UpdateNoteTranslatorTest {
     }
 
     @Test
+    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun downgradeResponse_optionalFieldsNotSet() {
         val jetpackResponse =
             UpdateNoteAppFunctionResponse(
