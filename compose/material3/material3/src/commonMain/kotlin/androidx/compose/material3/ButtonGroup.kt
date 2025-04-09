@@ -376,15 +376,7 @@ private class NonAdaptiveButtonGroupMeasurePolicy(
                 val remaining = mainAxisMax - fixedSpace
                 val desiredWidth = child.maxIntrinsicWidth(constraints.maxHeight)
                 childrenConstraints[i] =
-                    constraints.copy(
-                        minWidth = 0,
-                        maxWidth =
-                            if (mainAxisMax == Constraints.Infinity) {
-                                Constraints.Infinity
-                            } else {
-                                desiredWidth.coerceAtLeast(0)
-                            }
-                    )
+                    constraints.copy(minWidth = 0, maxWidth = desiredWidth.coerceAtLeast(0))
 
                 childrenMainAxisSize[i] = desiredWidth
 
@@ -491,7 +483,10 @@ private class NonAdaptiveButtonGroupMeasurePolicy(
         placeables =
             measurables.fastMapIndexed { index, placeable ->
                 placeable.measure(
-                    constraints.copy(minWidth = widths[index], maxWidth = widths[index])
+                    (childrenConstraints[index] ?: constraints).copy(
+                        minWidth = widths[index],
+                        maxWidth = widths[index]
+                    )
                 )
             }
 
@@ -577,15 +572,7 @@ private class ButtonGroupMeasurePolicy(
                 val remaining = mainAxisMax - fixedSpace
                 val desiredWidth = child.maxIntrinsicWidth(constraints.maxHeight)
                 childrenConstraints[i] =
-                    constraints.copy(
-                        minWidth = 0,
-                        maxWidth =
-                            if (mainAxisMax == Constraints.Infinity) {
-                                Constraints.Infinity
-                            } else {
-                                desiredWidth.coerceAtLeast(0)
-                            }
-                    )
+                    constraints.copy(minWidth = 0, maxWidth = desiredWidth.coerceAtLeast(0))
 
                 childrenMainAxisSize[i] = desiredWidth
 
@@ -734,7 +721,10 @@ private class ButtonGroupMeasurePolicy(
         for (index in 0 until lastItem) {
             placeables.add(
                 contentMeasurables[index].measure(
-                    constraints.copy(minWidth = widths[index], maxWidth = widths[index])
+                    (childrenConstraints[index] ?: constraints).copy(
+                        minWidth = widths[index],
+                        maxWidth = widths[index]
+                    )
                 )
             )
         }

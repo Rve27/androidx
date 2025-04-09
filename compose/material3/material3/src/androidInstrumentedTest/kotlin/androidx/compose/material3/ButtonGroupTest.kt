@@ -16,11 +16,14 @@
 
 package androidx.compose.material3
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.testutils.assertIsEqualTo
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -30,6 +33,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipe
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
@@ -44,6 +48,7 @@ class ButtonGroupTest {
     @get:Rule val rule = createComposeRule()
 
     private val wrapperTestTag = "WrapperTestTag"
+    private val buttonGroupTestTag = "buttonGroupTestTag"
     private val aButton = "AButton"
     private val bButton = "BButton"
     private val cButton = "CButton"
@@ -779,5 +784,42 @@ class ButtonGroupTest {
         rule.onNodeWithTag(overflowIndicator).performClick()
 
         rule.onNodeWithTag(buttonGroupMenuTestTag).assertIsDisplayed()
+    }
+
+    @Test
+    fun horizontalScroll_handlingScroll_buttonDisplay() {
+        val interactionSources = List(10) { MutableInteractionSource() }
+
+        rule.setMaterialContent(lightColorScheme()) {
+            Box(Modifier.testTag(wrapperTestTag)) {
+                ButtonGroup(
+                    overflowIndicator = {},
+                    modifier =
+                        Modifier.horizontalScroll(rememberScrollState()).testTag(buttonGroupTestTag)
+                ) {
+                    for (i in 0..interactionSources.lastIndex) {
+                        clickableItem(
+                            onClick = {},
+                            modifier =
+                                Modifier.animateWidth(interactionSources[i]).testTag("${i}Button"),
+                            interactionSource = interactionSources[i],
+                            label = "$i"
+                        )
+                    }
+                }
+            }
+        }
+
+        rule.onNodeWithTag("8Button").assertIsNotDisplayed()
+
+        rule.onNodeWithTag(buttonGroupTestTag).performTouchInput {
+            this.swipe(
+                start = this.center,
+                end = Offset(this.center.x - 1500f, this.center.y),
+                durationMillis = 100
+            )
+        }
+
+        rule.onNodeWithTag("8Button").assertIsDisplayed()
     }
 }
