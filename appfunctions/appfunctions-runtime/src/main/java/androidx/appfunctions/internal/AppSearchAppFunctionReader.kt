@@ -210,7 +210,9 @@ internal class AppSearchAppFunctionReader(private val context: Context) : AppFun
                 .toAppFunctionComponentsMetadata()
         // There is only a single component metadata per package, so we can safely overwrite the
         // existing value.
-        sharedTopLevelComponentsByPackage[packageName] = componentMetadataSearchResult
+        if (componentMetadataSearchResult.dataTypes.isNotEmpty()) {
+            sharedTopLevelComponentsByPackage[packageName] = componentMetadataSearchResult
+        }
     }
 
     private fun convertSearchResultToAppFunctionMetadata(

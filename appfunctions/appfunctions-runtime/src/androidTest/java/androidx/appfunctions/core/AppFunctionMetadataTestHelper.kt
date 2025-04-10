@@ -18,13 +18,14 @@ package androidx.appfunctions.core
 
 import android.content.Context
 import android.os.Build
-import androidx.`annotation`.RequiresApi
-import androidx.appfunctions.core.AppFunctionMetadataTestHelper.FunctionIds.NOTES_SCHEMA_PRINT
-import androidx.appfunctions.`internal`.readAll
+import androidx.annotation.RequiresApi
+import androidx.appfunctions.internal.readAll
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadataDocument
+import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 import androidx.appsearch.app.Features
@@ -136,6 +137,31 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
     }
 
     object FunctionMetadata {
+        private val sharedComponents =
+            AppFunctionComponentsMetadata(
+                dataTypes =
+                    buildMap {
+                        put(
+                            "com.testdata.RecursiveSerializable",
+                            AppFunctionObjectTypeMetadata(
+                                properties =
+                                    buildMap {
+                                        put(
+                                            "nested",
+                                            AppFunctionReferenceTypeMetadata(
+                                                referenceDataType =
+                                                    "com.testdata.RecursiveSerializable",
+                                                isNullable = true
+                                            )
+                                        )
+                                    },
+                                required = listOf("nested"),
+                                qualifiedName = "com.testdata.RecursiveSerializable",
+                                isNullable = true
+                            )
+                        )
+                    }
+            )
         val NO_SCHEMA_EXECUTION_SUCCEED =
             AppFunctionMetadata(
                 id = FunctionIds.NO_SCHEMA_EXECUTION_SUCCEED,
@@ -151,7 +177,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                                 isNullable = false
                             )
                     ),
-                components = AppFunctionComponentsMetadata()
+                components = sharedComponents
             )
 
         val NO_SCHEMA_ENABLED_BY_DEFAULT =
@@ -169,7 +195,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                                 isNullable = false
                             )
                     ),
-                components = AppFunctionComponentsMetadata()
+                components = sharedComponents
             )
 
         val NO_SCHEMA_DISABLED_BY_DEFAULT =
@@ -187,7 +213,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                                 isNullable = false
                             )
                     ),
-                components = AppFunctionComponentsMetadata()
+                components = sharedComponents
             )
 
         val MEDIA_SCHEMA2_PRINT =
@@ -205,7 +231,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                                 isNullable = false
                             )
                     ),
-                components = AppFunctionComponentsMetadata()
+                components = sharedComponents
             )
 
         val MEDIA_SCHEMA_PRINT =
@@ -223,7 +249,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                                 isNullable = false
                             )
                     ),
-                components = AppFunctionComponentsMetadata()
+                components = sharedComponents
             )
 
         val NOTES_SCHEMA_PRINT =
@@ -241,7 +267,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                                 isNullable = false
                             )
                     ),
-                components = AppFunctionComponentsMetadata()
+                components = sharedComponents
             )
 
         val NO_SCHEMA_EXECUTION_FAIL =
@@ -259,7 +285,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                                 isNullable = false
                             )
                     ),
-                components = AppFunctionComponentsMetadata()
+                components = sharedComponents
             )
     }
 

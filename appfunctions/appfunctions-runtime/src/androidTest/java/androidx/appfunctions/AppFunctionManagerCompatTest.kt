@@ -26,6 +26,9 @@ import android.content.IntentFilter
 import android.content.pm.PackageInstaller
 import android.os.Build
 import androidx.appfunctions.core.AppFunctionMetadataTestHelper
+import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
+import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
@@ -294,6 +297,44 @@ class AppFunctionManagerCompatTest {
             assertThat(appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first())
                 .isEmpty()
         }
+
+    @Test
+    fun observeAppFunction_queryFunctionsInMainPackage_returnsAllComponents() = runBlocking {
+        // Component metadata is only available with dynamic indexer
+        assumeTrue(metadataTestHelper.isDynamicIndexerAvailable())
+        val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
+        val expectedComponentsInMainPackage =
+            AppFunctionComponentsMetadata(
+                dataTypes =
+                    buildMap {
+                        put(
+                            "com.testdata.RecursiveSerializable",
+                            AppFunctionObjectTypeMetadata(
+                                properties =
+                                    buildMap {
+                                        put(
+                                            "nested",
+                                            AppFunctionReferenceTypeMetadata(
+                                                referenceDataType =
+                                                    "com.testdata.RecursiveSerializable",
+                                                isNullable = true
+                                            )
+                                        )
+                                    },
+                                required = listOf("nested"),
+                                qualifiedName = "com.testdata.RecursiveSerializable",
+                                isNullable = true
+                            )
+                        )
+                    }
+            )
+
+        val appFunctions = appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first()
+
+        assertThat(appFunctions).isNotEmpty()
+        assertThat(appFunctions.filter { it.components != expectedComponentsInMainPackage })
+            .isEmpty()
+    }
 
     @Test
     fun observeAppFunctions_packageListNotSetInSpec_returnsAllAppFunctions() =
