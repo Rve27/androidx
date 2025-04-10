@@ -77,8 +77,6 @@ android {
 androidx {
     name = "androidx.appfunctions:appfunctions-common"
     type = SoftwareType.PUBLISHED_LIBRARY
-    //TODO(b/407634710): Task :appfunctions:appfunctions-runtime:kspReleaseAndroidTestKotlin fails when targeting Kotlin 2
-    kotlinTarget = KotlinTarget.KOTLIN_1_9
     inceptionYear = "2024"
     description = "Contains the code shared by appfunctions-app-runtime , appfunctions-agent-runtime and appfunctions-schema libraries."
 }
