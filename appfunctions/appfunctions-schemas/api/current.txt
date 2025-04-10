@@ -8,6 +8,86 @@ package androidx.appfunctions {
 
 }
 
+package androidx.appfunctions.schema.calendars {
+
+  public interface AppFunctionCalendarEvent {
+    method public default String? getDescription();
+    method public java.time.Instant getEndsAt();
+    method public String getId();
+    method public default String? getLocation();
+    method public default String? getRecurrenceSchedule();
+    method public default String? getSelfAttendeeStatus();
+    method public java.time.Instant getStartsAt();
+    method public default String? getStatus();
+    method public java.time.ZoneId getTimeZone();
+    method public String getTitle();
+    method public default boolean isAllDay();
+    method public default boolean isInPublicCalendar();
+    method public default boolean isOrganizer();
+    method public default boolean isReadOnly();
+    property public default String? description;
+    property public abstract java.time.Instant endsAt;
+    property public abstract String id;
+    property public default boolean isAllDay;
+    property public default boolean isInPublicCalendar;
+    property public default boolean isOrganizer;
+    property public default boolean isReadOnly;
+    property public default String? location;
+    property public default String? recurrenceSchedule;
+    property public default String? selfAttendeeStatus;
+    property public abstract java.time.Instant startsAt;
+    property public default String? status;
+    property public abstract java.time.ZoneId timeZone;
+    property public abstract String title;
+    field public static final String ATTENDEE_ACCEPTED = "ACCEPTED";
+    field public static final String ATTENDEE_DECLINED = "DECLINED";
+    field public static final String ATTENDEE_TENTATIVE = "TENTATIVE";
+    field public static final androidx.appfunctions.schema.calendars.AppFunctionCalendarEvent.Companion Companion;
+    field public static final String EVENT_CANCELLED = "CANCELLED";
+    field public static final String EVENT_CONFIRMED = "CONFIRMED";
+    field public static final String EVENT_TENTATIVE = "TENTATIVE";
+  }
+
+  public static final class AppFunctionCalendarEvent.Companion {
+    property public static String ATTENDEE_ACCEPTED;
+    property public static String ATTENDEE_DECLINED;
+    property public static String ATTENDEE_TENTATIVE;
+    property public static String EVENT_CANCELLED;
+    property public static String EVENT_CONFIRMED;
+    property public static String EVENT_TENTATIVE;
+    field public static final String ATTENDEE_ACCEPTED = "ACCEPTED";
+    field public static final String ATTENDEE_DECLINED = "DECLINED";
+    field public static final String ATTENDEE_TENTATIVE = "TENTATIVE";
+    field public static final String EVENT_CANCELLED = "CANCELLED";
+    field public static final String EVENT_CONFIRMED = "CONFIRMED";
+    field public static final String EVENT_TENTATIVE = "TENTATIVE";
+  }
+
+  public final class CalendarsKt {
+    property public static String APP_FUNCTION_SCHEMA_CATEGORY_CALENDAR;
+    field public static final String APP_FUNCTION_SCHEMA_CATEGORY_CALENDAR = "calendar";
+  }
+
+  public interface GetCalendarEventsAppFunction<Parameters extends androidx.appfunctions.schema.calendars.GetCalendarEventsAppFunction.Parameters, Response extends androidx.appfunctions.schema.calendars.GetCalendarEventsAppFunction.Response> {
+    method public suspend Object? getCalendarEvents(androidx.appfunctions.AppFunctionContext appFunctionContext, Parameters parameters, kotlin.coroutines.Continuation<? super Response>);
+    field public static final androidx.appfunctions.schema.calendars.GetCalendarEventsAppFunction.Companion Companion;
+  }
+
+  public static final class GetCalendarEventsAppFunction.Companion {
+  }
+
+  public static interface GetCalendarEventsAppFunction.Parameters {
+    method public java.util.List<java.lang.String> getCalendarEventIds();
+    property public abstract java.util.List<java.lang.String> calendarEventIds;
+  }
+
+  public static interface GetCalendarEventsAppFunction.Response {
+    method public java.util.List<androidx.appfunctions.schema.calendars.AppFunctionCalendarEvent> getCalendarEvents();
+    property public abstract java.util.List<androidx.appfunctions.schema.calendars.AppFunctionCalendarEvent> calendarEvents;
+  }
+
+}
+
 package androidx.appfunctions.schema.files {
 
   public interface AppFunctionFile {
