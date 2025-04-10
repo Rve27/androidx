@@ -40,7 +40,6 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -447,19 +446,17 @@ class BasicSwipeToDismissBoxTest {
                 modifier = Modifier.testTag(TEST_TAG),
             ) { isBackground ->
                 if (isBackground) {
-                    val focusRequester = rememberActiveFocusRequester()
                     BasicText(
                         BACKGROUND_MESSAGE,
                         Modifier.onFocusChanged { focusedBackground = it.isFocused }
-                            .focusRequester(focusRequester)
+                            .hierarchicalFocusRequester()
                             .focusable()
                     )
                 } else {
-                    val focusRequester = rememberActiveFocusRequester()
                     BasicText(
                         CONTENT_MESSAGE,
                         Modifier.onFocusChanged { focusedContent = it.isFocused }
-                            .focusRequester(focusRequester)
+                            .hierarchicalFocusRequester()
                             .focusable()
                     )
                 }
