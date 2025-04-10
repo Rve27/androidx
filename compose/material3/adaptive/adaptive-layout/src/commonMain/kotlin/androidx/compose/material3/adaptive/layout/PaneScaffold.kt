@@ -133,6 +133,12 @@ sealed interface PaneScaffoldScope {
         interactionSource: MutableInteractionSource,
         semanticsProperties: (SemanticsPropertyReceiver.() -> Unit)
     ): Modifier
+
+    /**
+     * The saveable state holder to save pane states across their visibility life-cycles. The
+     * default pane implementations like [AnimatedPane] are supposed to use it to store states.
+     */
+    val saveableStateHolder: SaveableStateHolder
 }
 
 /**
@@ -173,8 +179,7 @@ sealed interface PaneScaffoldPaneScope<Role> {
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 internal abstract class PaneScaffoldScopeImpl(
-    // TODO(conradchen): Add it to PaneScaffoldScope API in 1.2
-    val saveableStateHolder: SaveableStateHolder
+    override val saveableStateHolder: SaveableStateHolder
 ) : PaneScaffoldScope {
     override fun Modifier.preferredWidth(width: Dp): Modifier {
         require(width == Dp.Unspecified || width > 0.dp) { "invalid width" }
