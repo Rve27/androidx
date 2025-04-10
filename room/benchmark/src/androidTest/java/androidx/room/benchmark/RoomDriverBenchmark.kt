@@ -47,7 +47,7 @@ import org.junit.runners.Parameterized.Parameters
 @LargeTest
 @RunWith(Parameterized::class)
 @SdkSuppress(minSdkVersion = 23)
-class DriverBenchmark(private val driver: SQLiteDriver?) {
+class RoomDriverBenchmark(private val driver: SQLiteDriver?) {
 
     @get:Rule val benchmarkRule = BenchmarkRule()
 
@@ -59,7 +59,7 @@ class DriverBenchmark(private val driver: SQLiteDriver?) {
     }
 
     private fun createFileDatabase(): TestDatabase {
-        return Room.inMemoryDatabaseBuilder<TestDatabase>(context).buildForTest()
+        return Room.databaseBuilder<TestDatabase>(context, "test.db").buildForTest()
     }
 
     private fun RoomDatabase.Builder<TestDatabase>.buildForTest(): TestDatabase {
@@ -79,14 +79,16 @@ class DriverBenchmark(private val driver: SQLiteDriver?) {
     @After
     fun cleanup() {
         database.close()
-        context.getDatabasePath("test.db")
     }
 
     @Test
     fun write_small() {
         val dao = createMemoryDatabase().getDao()
         benchmarkRule.measureRepeated {
-            runBlocking { repeat(SMALL_AMOUNT) { dao.add(TestEntity()) } }
+            runBlocking {
+                repeat(SMALL_AMOUNT) { dao.add(TestEntity()) }
+                dao.delete()
+            }
         }
     }
 
@@ -94,7 +96,10 @@ class DriverBenchmark(private val driver: SQLiteDriver?) {
     fun write_large() {
         val dao = createMemoryDatabase().getDao()
         benchmarkRule.measureRepeated {
-            runBlocking { repeat(LARGE_AMOUNT) { dao.add(TestEntity()) } }
+            runBlocking {
+                repeat(LARGE_AMOUNT) { dao.add(TestEntity()) }
+                dao.delete()
+            }
         }
     }
 
@@ -147,6 +152,7 @@ class DriverBenchmark(private val driver: SQLiteDriver?) {
                     repeat(CONCURRENT_WRITERS) { launch(Dispatchers.IO) { dao.add(TestEntity()) } }
                     repeat(CONCURRENT_READERS) { launch(Dispatchers.IO) { dao.get() } }
                 }
+                dao.delete()
             }
         }
     }
@@ -163,6 +169,8 @@ class DriverBenchmark(private val driver: SQLiteDriver?) {
         @Insert suspend fun add(item: TestEntity)
 
         @Query("SELECT * FROM TestEntity") suspend fun get(): List<TestEntity>
+
+        @Query("DELETE FROM TestEntity") suspend fun delete()
     }
 
     companion object {
