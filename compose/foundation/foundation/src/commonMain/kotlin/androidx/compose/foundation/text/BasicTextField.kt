@@ -144,10 +144,10 @@ private object BasicTextFieldDefaults {
  * @param keyboardOptions Software keyboard options that contain configurations such as
  *   [KeyboardType] and [ImeAction].
  * @param onKeyboardAction Called when the user presses the action button in the input method editor
- *   (IME), or by pressing the enter key on a hardware keyboard. By default this parameter is null,
- *   and would execute the default behavior for a received IME Action e.g., [ImeAction.Done] would
- *   close the keyboard, [ImeAction.Next] would switch the focus to the next focusable item on the
- *   screen.
+ *   (IME), or by pressing the enter key on a hardware keyboard if the [lineLimits] is configured as
+ *   [TextFieldLineLimits.SingleLine]. By default this parameter is null, and would execute the
+ *   default behavior for a received IME Action e.g., [ImeAction.Done] would close the keyboard,
+ *   [ImeAction.Next] would switch the focus to the next focusable item on the screen.
  * @param lineLimits Whether the text field should be [SingleLine], scroll horizontally, and ignore
  *   newlines; or [MultiLine] and grow and scroll vertically. If [SingleLine] is passed, all newline
  *   characters ('\n') within the text will be replaced with regular whitespace (' '), ensuring that
