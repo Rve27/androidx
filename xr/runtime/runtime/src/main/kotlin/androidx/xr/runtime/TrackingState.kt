@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime.internal
-
-import androidx.annotation.RestrictTo
+package androidx.xr.runtime
 
 /** Describes the state of the tracking performed. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class TrackingState private constructor(private val value: Int) {
     public companion object {
         /** The trackable is currently tracked and its pose is current. */

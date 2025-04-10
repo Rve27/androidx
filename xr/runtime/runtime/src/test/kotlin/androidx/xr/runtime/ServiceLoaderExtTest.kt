@@ -16,8 +16,13 @@
 
 package androidx.xr.runtime
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.xr.runtime.internal.Feature
 import androidx.xr.runtime.internal.JxrPlatformAdapterFactory
 import androidx.xr.runtime.internal.RuntimeFactory
+import androidx.xr.runtime.internal.Service
 import androidx.xr.runtime.testing.AnotherFakeStateExtender
 import androidx.xr.runtime.testing.FakeJxrPlatformAdapterFactory
 import androidx.xr.runtime.testing.FakeRuntimeFactory
@@ -25,15 +30,16 @@ import androidx.xr.runtime.testing.FakeStateExtender
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.robolectric.Shadows.shadowOf
+import org.robolectric.shadows.ShadowBuild
 
-@RunWith(JUnit4::class)
+@RunWith(AndroidJUnit4::class)
 class ServiceLoaderExtTest {
 
     @Test
-    fun fastServiceLoad_loadsServices() {
+    fun loadProviders_loadsProviders() {
         assertThat(
-                fastServiceLoad(
+                loadProviders(
                         RuntimeFactory::class.java,
                         listOf(FakeRuntimeFactory::class.java.name)
                     )
@@ -41,7 +47,7 @@ class ServiceLoaderExtTest {
             )
             .isInstanceOf(FakeRuntimeFactory::class.java)
         assertThat(
-                fastServiceLoad(
+                loadProviders(
                         JxrPlatformAdapterFactory::class.java,
                         listOf(FakeJxrPlatformAdapterFactory::class.java.name),
                     )
@@ -49,10 +55,7 @@ class ServiceLoaderExtTest {
             )
             .isInstanceOf(FakeJxrPlatformAdapterFactory::class.java)
         assertThat(
-                fastServiceLoad(
-                        StateExtender::class.java,
-                        listOf(FakeStateExtender::class.java.name)
-                    )
+                loadProviders(StateExtender::class.java, listOf(FakeStateExtender::class.java.name))
                     .iterator()
                     .next()
             )
@@ -60,13 +63,76 @@ class ServiceLoaderExtTest {
     }
 
     @Test
-    fun fastServiceLoad_combinesFastAndLoaderServices() {
+    fun loadProviders_combinesFastAndLoaderProviders() {
         val stateExtenders =
-            fastServiceLoad(StateExtender::class.java, listOf(FakeStateExtender::class.java.name))
-        assertThat(stateExtenders.size).isEqualTo(1)
+            loadProviders(StateExtender::class.java, listOf(FakeStateExtender::class.java.name))
 
+        assertThat(stateExtenders.size).isEqualTo(1)
         for (stateExtender in stateExtenders) {
             assert(stateExtender is FakeStateExtender || stateExtender is AnotherFakeStateExtender)
         }
+    }
+
+    @Test
+    fun getDeviceFeatures_onRobolectric_returnsEmptySet() {
+        assertThat(getDeviceFeatures(ApplicationProvider.getApplicationContext())).isEmpty()
+    }
+
+    @Test
+    fun getDeviceFeatures_notOnRobolectric_addsFullStack() {
+        ShadowBuild.setFingerprint("a_real_device")
+
+        assertThat(getDeviceFeatures(ApplicationProvider.getApplicationContext()))
+            .containsExactly(Feature.FullStack)
+    }
+
+    @Test
+    fun getDeviceFeatures_onOpenXrDevice_addsOpenXr() {
+        ShadowBuild.setFingerprint("a_real_device")
+        val context: Context = ApplicationProvider.getApplicationContext()
+        shadowOf(context.packageManager)
+            .setSystemFeature(FEATURE_XR_API_OPENXR, /* supported= */ true)
+
+        assertThat(getDeviceFeatures(context)).contains(Feature.OpenXr)
+    }
+
+    @Test
+    fun getDeviceFeatures_onSpatialDevice_addsSpatial() {
+        ShadowBuild.setFingerprint("a_real_device")
+        val context: Context = ApplicationProvider.getApplicationContext()
+        shadowOf(context.packageManager)
+            .setSystemFeature(FEATURE_XR_API_SPATIAL, /* supported= */ true)
+
+        assertThat(getDeviceFeatures(context)).contains(Feature.Spatial)
+    }
+
+    @Test
+    fun selectProvider_selectsSupportedProvider() {
+        val supportedProvider =
+            object : Service {
+                override val requirements: Set<Feature> = setOf(Feature.FullStack)
+            }
+        val unsupportedProvider =
+            object : Service {
+                override val requirements: Set<Feature> = setOf(Feature.FullStack, Feature.OpenXr)
+            }
+
+        assertThat(
+                selectProvider(
+                    listOf(unsupportedProvider, supportedProvider),
+                    setOf(Feature.FullStack)
+                )
+            )
+            .isEqualTo(supportedProvider)
+    }
+
+    @Test
+    fun selectProvider_noSupportedProvider_returnsNull() {
+        val unsupportedProvider =
+            object : Service {
+                override val requirements: Set<Feature> = setOf(Feature.FullStack, Feature.OpenXr)
+            }
+
+        assertThat(selectProvider(listOf(unsupportedProvider), emptySet())).isNull()
     }
 }

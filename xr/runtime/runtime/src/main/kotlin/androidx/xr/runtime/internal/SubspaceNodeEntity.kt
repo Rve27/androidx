@@ -17,18 +17,10 @@
 package androidx.xr.runtime.internal
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.TrackingState
-import androidx.xr.runtime.math.Pose
 
-/** A trackable is something can be tracked in space and that an [Anchor] can be attached to. */
+/** Represents an entity that manages a subspace node. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface Trackable {
-    /**
-     * Creates an [Anchor] that is attached to this trackable, using the given initial [pose] in the
-     * world coordinate space.
-     */
-    public fun createAnchor(pose: Pose): Anchor
-
-    /** The [TrackingState] of this trackable. */
-    public val trackingState: TrackingState
+public interface SubspaceNodeEntity : Entity {
+    /** The size of the [SubspaceNodeEntity] in meters, in unscaled local space. */
+    public var size: Dimensions
 }

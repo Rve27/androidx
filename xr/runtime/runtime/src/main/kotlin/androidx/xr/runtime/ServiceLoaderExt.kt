@@ -16,20 +16,27 @@
 
 package androidx.xr.runtime
 
+import android.content.Context
+import android.os.Build
+import androidx.xr.runtime.internal.Feature
+import androidx.xr.runtime.internal.Service
 import java.util.ServiceLoader
 
 /**
  * Loads all well-known service providers directly. Combines the results with any additional
- * services discovered via the default service loader.
+ * providers discovered via the default service loader implementation.
  *
- * This is useful in some app configurations where the APK is too big and the class loader is not
- * able to automatically find the service providers.
+ * This is useful in some app configurations where the APK is too big and the default service loader
+ * implementation is not able to automatically find all the available service providers.
  *
  * @param service the service to load.
  * @param providersClassNames the list of known service providers to load.
- * @return the list of loaded services.
+ * @return the list of loaded service providers.
  */
-internal fun <S> fastServiceLoad(service: Class<S>, providersClassNames: List<String>): List<S> {
+internal fun <S : Any> loadProviders(
+    service: Class<S>,
+    providersClassNames: List<String>,
+): List<S> {
     val providers = mutableListOf<S>()
 
     val filteredProviderClassNames =
@@ -55,4 +62,38 @@ internal fun <S> fastServiceLoad(service: Class<S>, providersClassNames: List<St
         }
 
     return providers + filteredServiceLoaderClasses
+}
+
+/**
+ * Returns the first service provider from [providers] that has its requirements satisfied by the
+ * [features] supported by the current device.
+ */
+internal fun <S : Service> selectProvider(providers: List<S>, features: Set<Feature>): S? =
+    providers.firstOrNull { features.containsAll(it.requirements) }
+
+/** Returns the features that this device supports. */
+internal fun getDeviceFeatures(context: Context): Set<Feature> {
+    // Short-circuit for unit tests environments.
+    if (Build.FINGERPRINT.contains("robolectric")) return emptySet()
+
+    val features = mutableSetOf<Feature>(Feature.FullStack)
+    val packageManager = context.packageManager
+
+    // TODO(b/398957058): Remove emulator check once the emulator has the system feature.
+    if (
+        packageManager.hasSystemFeature(FEATURE_XR_API_OPENXR) ||
+            Build.FINGERPRINT.contains("emulator")
+    ) {
+        features.add(Feature.OpenXr)
+    }
+
+    // TODO(b/398957058): Remove emulator check once the emulator has the system feature.
+    if (
+        packageManager.hasSystemFeature(FEATURE_XR_API_SPATIAL) ||
+            Build.FINGERPRINT.contains("emulator")
+    ) {
+        features.add(Feature.Spatial)
+    }
+
+    return features
 }

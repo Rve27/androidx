@@ -17,6 +17,7 @@
 package androidx.xr.runtime
 
 import java.util.concurrent.Executors
+import java.util.concurrent.ThreadFactory
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.asCoroutineDispatcher
 
@@ -24,5 +25,13 @@ import kotlinx.coroutines.asCoroutineDispatcher
 internal object CoroutineContexts {
 
     /** A [CoroutineContext] for lightweight tasks that are small and non-blocking. */
-    val Lightweight: CoroutineContext = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+    val Lightweight: CoroutineContext =
+        Executors.newSingleThreadExecutor(
+                object : ThreadFactory {
+                    override fun newThread(r: Runnable): Thread {
+                        return Thread(r, "JXRRuntimeSession")
+                    }
+                }
+            )
+            .asCoroutineDispatcher()
 }

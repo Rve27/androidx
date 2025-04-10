@@ -19,10 +19,7 @@
 package androidx.xr.runtime
 
 import android.app.Activity
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.annotation.RestrictTo
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
@@ -66,10 +63,10 @@ public constructor(
     private val _platformAdapter: JxrPlatformAdapter?,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val stateExtenders: List<StateExtender> =
-        fastServiceLoad(StateExtender::class.java, STATE_EXTENDER_PROVIDERS),
+        loadProviders(StateExtender::class.java, STATE_EXTENDER_PROVIDERS),
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val sessionConnectors: List<SessionConnector> =
-        fastServiceLoad(SessionConnector::class.java, SESSION_CONNECTOR_PROVIDERS),
+        loadProviders(SessionConnector::class.java, SESSION_CONNECTOR_PROVIDERS),
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val coroutineScope: CoroutineScope =
         CoroutineScope(context = CoroutineContexts.Lightweight),
@@ -79,14 +76,14 @@ public constructor(
             "Session already exists for activity: $activity"
         }
         activitySessionMap[activity] = this
-        _platformAdapter?.let {
-            for (sessionConnector in sessionConnectors) {
-                sessionConnector.initialize(it)
-            }
-        }
         _runtime?.let {
             for (stateExtender in stateExtenders) {
                 stateExtender.initialize(it)
+            }
+        }
+        _platformAdapter?.let {
+            for (sessionConnector in sessionConnectors) {
+                sessionConnector.initialize(_runtime!!.lifecycleManager, it)
             }
         }
     }
@@ -113,13 +110,14 @@ public constructor(
             if (activitySessionMap.containsKey(activity)) {
                 return SessionCreateSuccess(activitySessionMap[activity]!!)
             }
+            val features = getDeviceFeatures(activity)
+            println("Detected device features: $features")
 
-            val runtimeFactory =
-                fastServiceLoad(
-                        RuntimeFactory::class.java,
-                        filterProviders(RUNTIME_FACTORY_PROVIDERS)
-                    )
-                    .firstOrNull()
+            val runtimeFactory: RuntimeFactory? =
+                selectProvider(
+                    loadProviders(RuntimeFactory::class.java, RUNTIME_FACTORY_PROVIDERS),
+                    features,
+                )
             val runtime = runtimeFactory?.createRuntime(activity)
             try {
                 runtime?.lifecycleManager?.create()
@@ -128,22 +126,23 @@ public constructor(
             }
 
             val jxrPlatformAdapterFactory =
-                fastServiceLoad(
+                selectProvider(
+                    loadProviders(
                         JxrPlatformAdapterFactory::class.java,
-                        filterProviders(JXR_PLATFORM_ADAPTER_FACTORY_PROVIDERS),
-                    )
-                    .firstOrNull()
+                        JXR_PLATFORM_ADAPTER_FACTORY_PROVIDERS,
+                    ),
+                    features,
+                )
             val jxrPlatformAdapter = jxrPlatformAdapterFactory?.createPlatformAdapter(activity)
 
             check(runtime != null || jxrPlatformAdapter != null) {
                 "Neither ARCore nor SceneCore are available. Did you forget to add a dependency?"
             }
 
-            val stateExtenders =
-                fastServiceLoad(StateExtender::class.java, STATE_EXTENDER_PROVIDERS)
-
+            val stateExtenders = loadProviders(StateExtender::class.java, STATE_EXTENDER_PROVIDERS)
             val sessionConnectors =
-                fastServiceLoad(SessionConnector::class.java, SESSION_CONNECTOR_PROVIDERS)
+                loadProviders(SessionConnector::class.java, SESSION_CONNECTOR_PROVIDERS)
+
             val session =
                 Session(
                     activity,
@@ -155,13 +154,8 @@ public constructor(
                 )
 
             session.lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-
             return SessionCreateSuccess(session)
         }
-
-        /** Filters the list of providers to return only the ones supported by the current build. */
-        private fun filterProviders(providers: List<String>) =
-            if (Build.FINGERPRINT.contains("robolectric")) listOf(providers.last()) else providers
 
         private val RUNTIME_FACTORY_PROVIDERS =
             listOf(
@@ -178,8 +172,6 @@ public constructor(
                 "androidx.xr.arcore.PerceptionStateExtender",
                 "androidx.xr.runtime.testing.FakeStateExtender",
             )
-        private val ENTITY_MANAGER_PROVIDERS =
-            listOf("androidx.xr.scenecore.EntityManagerSessionConnector")
         private val SESSION_CONNECTOR_PROVIDERS =
             listOf(
                 "androidx.xr.scenecore.Scene",
@@ -188,15 +180,11 @@ public constructor(
     }
 
     private val lifecycleRegistry: LifecycleRegistry = LifecycleRegistry(this)
-
     override public val lifecycle: Lifecycle = lifecycleRegistry
 
     private val _state = MutableStateFlow<CoreState>(CoreState(TimeSource.Monotonic.markNow()))
-
     /** A [StateFlow] of the current state. */
     public val state: StateFlow<CoreState> = _state.asStateFlow()
-
-    private lateinit var entityManagerSessionConnector: SessionConnector
 
     /**
      * The [Runtime] instance that is used to manage the session. Applications must NOT use this
@@ -205,6 +193,7 @@ public constructor(
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val runtime: Runtime =
         checkNotNull(_runtime) { "ARCore is not available. Did you forget to add a dependency?" }
+
     /**
      * The [JxrPlatformAdapter] instance that is used to manage the session. Applications must NOT
      * use this property directly; they should use SceneCore APIs instead.
@@ -258,10 +247,13 @@ public constructor(
             "Session has been destroyed."
         }
         if (lifecycleRegistry.currentState != Lifecycle.State.RESUMED) {
-            runtime.lifecycleManager.resume()
-            platformAdapter.startRenderer()
+            _runtime?.let {
+                it.lifecycleManager.resume()
+                // The update loop is only required when the runtime is present.
+                updateJob = coroutineScope.launch { updateLoop() }
+            }
+            _platformAdapter?.startRenderer()
             lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
-            updateJob = coroutineScope.launch { updateLoop() }
         }
 
         return SessionResumeSuccess()
@@ -282,8 +274,8 @@ public constructor(
 
         if (lifecycleRegistry.currentState == Lifecycle.State.RESUMED) {
             lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-            runtime.lifecycleManager.pause()
-            platformAdapter.stopRenderer()
+            _runtime?.lifecycleManager?.pause()
+            _platformAdapter?.stopRenderer()
             updateJob?.cancel()
             updateJob = null
         }
@@ -303,12 +295,12 @@ public constructor(
             pause()
         }
         lifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-        runtime.lifecycleManager.stop()
+        _runtime?.lifecycleManager?.stop()
         activitySessionMap.remove(activity)
         for (sessionConnector in sessionConnectors) {
             sessionConnector.close()
         }
-        platformAdapter.dispose()
+        _platformAdapter?.dispose()
         coroutineScope.cancel()
     }
 
@@ -330,9 +322,3 @@ public constructor(
         _state.emit(state)
     }
 }
-
-private fun Activity.selectMissing(permissions: List<String>): List<String> =
-    permissions.filter { permission -> !hasPermission(permission) }
-
-private fun Activity.hasPermission(permission: String): Boolean =
-    ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
