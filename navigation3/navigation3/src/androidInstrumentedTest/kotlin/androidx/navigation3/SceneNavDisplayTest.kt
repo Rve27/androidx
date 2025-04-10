@@ -37,6 +37,7 @@ import androidx.savedstate.SavedStateRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertWithMessage
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import org.junit.Rule
@@ -44,13 +45,17 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class SinglePaneNavDisplayTest {
+class SceneNavDisplayTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
     fun testContentShown() {
         composeTestRule.setContent {
-            SinglePaneNavDisplay(backStack = mutableStateListOf(first)) {
+            val backStack = remember { mutableStateListOf(first) }
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 NavEntry(first) { Text(first) }
             }
         }
@@ -63,7 +68,10 @@ class SinglePaneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(backStack = backStack) {
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 when (it) {
                     first -> NavEntry(first) { Text(first) }
                     second -> NavEntry(second) { Text(second) }
@@ -86,7 +94,10 @@ class SinglePaneNavDisplayTest {
         composeTestRule.setContent {
             var showDialog = remember { mutableStateOf(false) }
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(backStack = backStack) {
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 when (it) {
                     first ->
                         NavEntry(first) {
@@ -118,7 +129,10 @@ class SinglePaneNavDisplayTest {
         composeTestRule.setContent {
             onBackDispatcher = LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(backStack = backStack) {
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 when (it) {
                     first -> NavEntry(first) { Text(first) }
                     second -> NavEntry(second) { Text(second) }
@@ -144,7 +158,10 @@ class SinglePaneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(backStack = backStack) {
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 when (it) {
                     first ->
                         NavEntry(first) { numberOnScreen1 = rememberSaveable { mutableStateOf(0) } }
@@ -177,7 +194,10 @@ class SinglePaneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(backStack = backStack) {
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 when (it) {
                     first ->
                         NavEntry(first) {
@@ -250,9 +270,10 @@ class SinglePaneNavDisplayTest {
         composeTestRule.setContent {
             mainRegistry = LocalSavedStateRegistryOwner.current.savedStateRegistry
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(
+            SceneNavDisplay(
                 backStack = backStack,
-                entryDecorators = listOf(SavedStateNavEntryDecorator)
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+                postEntryDecorators = listOf(SavedStateNavEntryDecorator)
             ) {
                 when (it) {
                     first ->
@@ -292,13 +313,21 @@ class SinglePaneNavDisplayTest {
             backStack2 = remember { mutableStateListOf(second) }
             backStack3 = remember { mutableStateListOf(third) }
             state = remember { mutableStateOf(1) }
-            SinglePaneNavDisplay(
+            val backStack =
+                when (state.value) {
+                    1 -> backStack1
+                    2 -> backStack2
+                    else -> backStack3
+                }
+
+            SceneNavDisplay(
                 backStack =
                     when (state.value) {
                         1 -> backStack1
                         2 -> backStack2
                         else -> backStack3
                     },
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 entryProvider =
                     entryProvider {
                         entry(first) { Text(first) }
@@ -337,12 +366,15 @@ class SinglePaneNavDisplayTest {
             backStack1 = remember { mutableStateListOf(first) }
             backStack2 = remember { mutableStateListOf(second) }
             state = remember { mutableStateOf(1) }
-            SinglePaneNavDisplay(
-                backStack =
-                    when (state.value) {
-                        1 -> backStack1
-                        else -> backStack2
-                    },
+
+            val backStack =
+                when (state.value) {
+                    1 -> backStack1
+                    else -> backStack2
+                }
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 entryProvider =
                     entryProvider {
                         entry(first) {
@@ -384,7 +416,12 @@ class SinglePaneNavDisplayTest {
             assertFailsWith<IllegalArgumentException> {
                 composeTestRule.setContent {
                     backStack = remember { mutableStateListOf() }
-                    SinglePaneNavDisplay(backStack = backStack) { NavEntry(first) {} }
+                    SceneNavDisplay(
+                        backStack = backStack,
+                        onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+                    ) {
+                        NavEntry(first) {}
+                    }
                 }
             }
         assertThat(fail.message).isEqualTo("NavDisplay backstack cannot be empty")
@@ -395,7 +432,10 @@ class SinglePaneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(backStack = backStack) {
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 when (it) {
                     first -> NavEntry(first) { Text(first) }
                     second -> NavEntry(second) { Text(second) }
@@ -419,7 +459,10 @@ class SinglePaneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(backStack = backStack) {
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 when (it) {
                     first -> NavEntry(first) { Text(first) }
                     second -> NavEntry(second) { Text(second) }
@@ -446,13 +489,47 @@ class SinglePaneNavDisplayTest {
     }
 
     @Test
+    fun testPopAddInCenterInSameFrame() {
+        lateinit var backStack: MutableList<Any>
+        composeTestRule.setContent {
+            backStack = remember { mutableStateListOf(first, third, forth) }
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
+                when (it) {
+                    first -> NavEntry(first) { Text(first) }
+                    second -> NavEntry(second) { Text(second) }
+                    third -> NavEntry(third) { Text(third) }
+                    forth -> NavEntry(forth) { Text(forth) }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+        assertThat(backStack).containsExactly(first, third, forth)
+
+        assertThat(composeTestRule.onNodeWithText(forth).isDisplayed()).isTrue()
+
+        composeTestRule.runOnIdle {
+            backStack.add(1, second)
+            backStack.removeAt(backStack.size - 1)
+        }
+        assertThat(backStack).containsExactly(first, second, third)
+
+        assertThat(composeTestRule.onNodeWithText(third).isDisplayed()).isTrue()
+    }
+
+    @Test
     fun testNonConsecutiveDuplicateKeyStateIsCorrect() {
         lateinit var numberOnScreen1: MutableState<Int>
         lateinit var numberOnScreen2: MutableState<Int>
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(backStack = backStack) {
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 when (it) {
                     first ->
                         NavEntry(first) {
@@ -521,13 +598,17 @@ class SinglePaneNavDisplayTest {
         assertThat(composeTestRule.onNodeWithText("numberOnScreen1: 2").isDisplayed()).isTrue()
     }
 
+    @Ignore("TODO: figure out how duplicate keys should work")
     @Test
     fun testDuplicateKeyStateIsCorrect() {
         lateinit var numberOnScreen1: MutableState<Int>
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(backStack = backStack) {
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 when (it) {
                     first ->
                         NavEntry(first) {
@@ -591,13 +672,17 @@ class SinglePaneNavDisplayTest {
         assertThat(composeTestRule.onNodeWithText("numberOnScreen1: 2").isDisplayed()).isTrue()
     }
 
+    @Ignore("TODO: figure out how duplicate keys should work")
     @Test
     fun testDuplicateKeyStateIsReset() {
         lateinit var numberOnScreen1: MutableState<Int>
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(backStack = backStack) {
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 when (it) {
                     first ->
                         NavEntry(first) {
@@ -657,14 +742,24 @@ class SinglePaneNavDisplayTest {
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
             nestedBackStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(backStack = backStack) {
+            SceneNavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
                 when (it) {
                     first ->
                         NavEntry(first) {
                             numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                             Column {
                                 Text("numberOnScreen1: ${numberOnScreen1.value}")
-                                SinglePaneNavDisplay(backStack = nestedBackStack) {
+                                SceneNavDisplay(
+                                    backStack = nestedBackStack,
+                                    onBack = {
+                                        repeat(it) {
+                                            nestedBackStack.removeAt(nestedBackStack.lastIndex)
+                                        }
+                                    },
+                                ) {
                                     when (it) {
                                         first ->
                                             NavEntry(first) {

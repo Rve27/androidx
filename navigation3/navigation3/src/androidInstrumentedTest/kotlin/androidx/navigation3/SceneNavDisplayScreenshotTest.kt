@@ -54,7 +54,7 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class SinglePaneNavDisplayScreenshotTest {
+class SceneNavDisplayScreenshotTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @get:Rule val screenshotRule = AndroidXScreenshotTestRule("navigation3/navigation3")
@@ -69,7 +69,7 @@ class SinglePaneNavDisplayScreenshotTest {
             backStack = remember { mutableStateListOf(first) }
             backPressedDispatcher =
                 LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
-            SinglePaneNavDisplay(
+            SceneNavDisplay(
                 backStack = backStack,
                 enterTransition = slideInHorizontally { it / 2 },
                 exitTransition = slideOutHorizontally { -it / 2 },
@@ -124,7 +124,7 @@ class SinglePaneNavDisplayScreenshotTest {
 
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(
+            SceneNavDisplay(
                 backStack,
                 // both screens slide left to right, entering screens should be on top
                 enterTransition = slideInHorizontally { -it / 2 },
@@ -178,7 +178,7 @@ class SinglePaneNavDisplayScreenshotTest {
         val duration = 500
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second) }
-            SinglePaneNavDisplay(
+            SceneNavDisplay(
                 backStack,
                 // both screens slide right to left, exiting screen should be on top
                 popEnterTransition = slideInHorizontally(tween(duration)) { it / 2 },
@@ -231,7 +231,7 @@ class SinglePaneNavDisplayScreenshotTest {
 
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second, third) }
-            SinglePaneNavDisplay(
+            SceneNavDisplay(
                 backStack,
                 // both screens slide left to right, entering screen should be on top
                 enterTransition = slideInHorizontally { -it / 2 },
@@ -297,7 +297,7 @@ class SinglePaneNavDisplayScreenshotTest {
 
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second, third) }
-            SinglePaneNavDisplay(
+            SceneNavDisplay(
                 backStack,
                 // both screens slide left to right, entering screen should be on top
                 enterTransition = slideInHorizontally { -it / 2 },
@@ -366,7 +366,7 @@ class SinglePaneNavDisplayScreenshotTest {
 
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(
+            SceneNavDisplay(
                 backStack,
                 // both screens slide left to right, entering screens should be on top
                 enterTransition = slideInHorizontally { -it / 2 },
@@ -423,7 +423,7 @@ class SinglePaneNavDisplayScreenshotTest {
         val duration = 200
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SinglePaneNavDisplay(
+            SceneNavDisplay(
                 backStack,
                 // both screens slide left to right, entering screens should be on top
                 enterTransition = slideInHorizontally { -it / 2 },
