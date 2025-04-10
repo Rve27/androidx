@@ -23,6 +23,7 @@ import androidx.annotation.RequiresApi
 import androidx.appfunctions.AppFunctionFunctionNotFoundException
 import androidx.appfunctions.AppFunctionSearchSpec
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
+import androidx.appfunctions.metadata.AppFunctionComponentsMetadataDocument
 import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadataDocument
 import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata
@@ -142,7 +143,7 @@ internal class AppSearchAppFunctionReader(private val context: Context) : AppFun
                 .setNestedSearch("", RUNTIME_SEARCH_SPEC)
                 .build()
 
-        val staticSearchSpec =
+        val staticMetadataSearchSpecWithJoin =
             SearchSpec.Builder()
                 .addFilterNamespaces(APP_FUNCTIONS_NAMESPACE)
                 .addFilterDocumentClasses(AppFunctionMetadataDocument::class.java)
@@ -152,10 +153,64 @@ internal class AppSearchAppFunctionReader(private val context: Context) : AppFun
                 .setNumericSearchEnabled(true)
                 .setListFilterQueryLanguageEnabled(true)
                 .build()
-        return session
-            .search(searchFunctionSpec.toStaticMetadataAppSearchQuery(), staticSearchSpec)
-            .readAll(::convertSearchResultToAppFunctionMetadata)
-            .filterNotNull()
+
+        val topLevelComponentsSearchSpec =
+            SearchSpec.Builder()
+                .addFilterNamespaces(APP_FUNCTIONS_NAMESPACE)
+                .addFilterSchemas(
+                    (searchFunctionSpec.packageNames ?: emptySet()).flatMap {
+                        listOf("AppFunctionComponentMetadataDocument-$it")
+                    }
+                )
+                .addFilterPackageNames(SYSTEM_PACKAGE_NAME)
+                .setVerbatimSearchEnabled(true)
+                .setNumericSearchEnabled(true)
+                .setListFilterQueryLanguageEnabled(true)
+                .build()
+
+        val sharedTopLevelComponentsByPackage: MutableMap<String, AppFunctionComponentsMetadata> =
+            mutableMapOf()
+        session.search("", topLevelComponentsSearchSpec).readAll { searchResult ->
+            extractAppFunctionComponentsMetadataFromSearchResult(
+                searchResult,
+                sharedTopLevelComponentsByPackage
+            )
+        }
+
+        val rawAppFunctionMetadataSearchResults =
+            session
+                .search(
+                    searchFunctionSpec.toStaticMetadataAppSearchQuery(),
+                    staticMetadataSearchSpecWithJoin
+                )
+                .readAll(::convertSearchResultToAppFunctionMetadata)
+                .filterNotNull()
+
+        return buildList {
+            for (functionMetadata in rawAppFunctionMetadataSearchResults) {
+                // Make each appfunction hold a shared component reference containing all the
+                // components in the application.
+                val componentMetadataByPackage: AppFunctionComponentsMetadata =
+                    sharedTopLevelComponentsByPackage[functionMetadata.packageName]
+                        ?: AppFunctionComponentsMetadata()
+                add(functionMetadata.copy(components = componentMetadataByPackage))
+            }
+        }
+    }
+
+    private fun extractAppFunctionComponentsMetadataFromSearchResult(
+        searchResult: SearchResult,
+        sharedTopLevelComponentsByPackage: MutableMap<String, AppFunctionComponentsMetadata>
+    ) {
+        val packageName =
+            checkNotNull(searchResult.genericDocument.getPropertyString("packageName"))
+        val componentMetadataSearchResult =
+            searchResult.genericDocument
+                .toDocumentClass(AppFunctionComponentsMetadataDocument::class.java)
+                .toAppFunctionComponentsMetadata()
+        // There is only a single component metadata per package, so we can safely overwrite the
+        // existing value.
+        sharedTopLevelComponentsByPackage[packageName] = componentMetadataSearchResult
     }
 
     private fun convertSearchResultToAppFunctionMetadata(
@@ -202,9 +257,9 @@ internal class AppSearchAppFunctionReader(private val context: Context) : AppFun
                                 isNullable = false
                             )
                     ),
-            components =
-                staticMetadataDocument.components?.toAppFunctionComponentsMetadata()
-                    ?: AppFunctionComponentsMetadata(),
+            // AppFunctionComponents get written at the top level when queried from appsearch
+            // because they are indexed as global components per application package.
+            components = AppFunctionComponentsMetadata(),
         )
     }
 

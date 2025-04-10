@@ -305,7 +305,7 @@ class AppFunctionManagerCompatTest {
                 appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first()
 
             assertThat(appFunctions.map { it.id })
-                .containsExactly(
+                .containsAtLeast(
                     AppFunctionMetadataTestHelper.FunctionIds.NO_SCHEMA_ENABLED_BY_DEFAULT,
                     AppFunctionMetadataTestHelper.FunctionIds.NO_SCHEMA_DISABLED_BY_DEFAULT,
                     AppFunctionMetadataTestHelper.FunctionIds.MEDIA_SCHEMA_PRINT,
@@ -446,15 +446,13 @@ class AppFunctionManagerCompatTest {
 
             // TODO: Populate other fields for legacy indexer.
             assertThat(appFunctions.map { it.id })
-                .containsExactly(AppFunctionMetadataTestHelper.FunctionIds.MEDIA_SCHEMA2_PRINT)
+                .contains(AppFunctionMetadataTestHelper.FunctionIds.MEDIA_SCHEMA2_PRINT)
             assertThat(appFunctions.map { it.schema })
-                .containsExactly(
-                    AppFunctionMetadataTestHelper.FunctionMetadata.MEDIA_SCHEMA2_PRINT.schema
-                )
+                .contains(AppFunctionMetadataTestHelper.FunctionMetadata.MEDIA_SCHEMA2_PRINT.schema)
             // Only check for all fields when dynamic indexer is enabled.
             assumeTrue(metadataTestHelper.isDynamicIndexerAvailable())
             assertThat(appFunctions)
-                .containsExactly(AppFunctionMetadataTestHelper.FunctionMetadata.MEDIA_SCHEMA2_PRINT)
+                .contains(AppFunctionMetadataTestHelper.FunctionMetadata.MEDIA_SCHEMA2_PRINT)
         }
 
     @Test

@@ -92,6 +92,27 @@ constructor(
         append("components=$components")
         append(")")
     }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun copy(
+        id: String = this.id,
+        packageName: String = this.packageName,
+        isEnabled: Boolean = this.isEnabled,
+        schema: AppFunctionSchemaMetadata? = this.schema,
+        parameters: List<AppFunctionParameterMetadata> = this.parameters,
+        response: AppFunctionResponseMetadata = this.response,
+        components: AppFunctionComponentsMetadata = this.components
+    ): AppFunctionMetadata {
+        return AppFunctionMetadata(
+            id = id,
+            packageName = packageName,
+            isEnabled = isEnabled,
+            schema = schema,
+            parameters = parameters,
+            response = response,
+            components = components
+        )
+    }
 }
 
 /**

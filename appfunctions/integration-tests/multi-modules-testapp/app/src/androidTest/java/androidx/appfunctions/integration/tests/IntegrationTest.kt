@@ -21,6 +21,7 @@ import androidx.appfunctions.AppFunctionData
 import androidx.appfunctions.AppFunctionFunctionNotFoundException
 import androidx.appfunctions.AppFunctionInvalidArgumentException
 import androidx.appfunctions.AppFunctionManagerCompat
+import androidx.appfunctions.AppFunctionSearchSpec
 import androidx.appfunctions.ExecuteAppFunctionRequest
 import androidx.appfunctions.ExecuteAppFunctionResponse
 import androidx.appfunctions.integration.tests.TestUtil.doBlocking
@@ -30,6 +31,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import java.time.LocalDateTime
 import kotlin.test.assertIs
+import kotlinx.coroutines.flow.first
 import org.junit.After
 import org.junit.Assume.assumeNotNull
 import org.junit.Before
@@ -87,6 +89,19 @@ class IntegrationTest {
                 )
             )
             .isEqualTo(3)
+    }
+
+    @Test
+    @Ignore("b/408436534")
+    fun searchAllAppFunctions_success() = doBlocking {
+        val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
+        // Total number of serializable types used as an appfunction parameter or return value in
+        // the set of appfunctions defined by this integration test.
+        val expectedSize = 13
+
+        val appFunctions = appFunctionManager.observeAppFunctions(searchFunctionSpec).first()
+
+        assertThat(appFunctions.first().components.dataTypes.size).isEqualTo(expectedSize)
     }
 
     @Test
