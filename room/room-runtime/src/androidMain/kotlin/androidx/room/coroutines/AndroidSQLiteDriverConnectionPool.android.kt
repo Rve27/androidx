@@ -33,22 +33,19 @@ internal class AndroidSQLiteDriverConnectionPool(
     private val fileName: String
 ) : ConnectionPool {
 
-    private val pooledConnection by lazy {
+    private val androidConnection by lazy {
         AndroidSQLiteDriverPooledConnection(driver.open(fileName) as AndroidSQLiteConnection)
     }
-
-    internal val androidConnection: AndroidSQLiteConnection
-        get() = pooledConnection.delegate
 
     override suspend fun <R> useConnection(
         isReadOnly: Boolean,
         block: suspend (Transactor) -> R
     ): R {
-        return block.invoke(pooledConnection)
+        return block.invoke(androidConnection)
     }
 
     override fun close() {
-        pooledConnection.delegate.close()
+        androidConnection.delegate.close()
     }
 }
 

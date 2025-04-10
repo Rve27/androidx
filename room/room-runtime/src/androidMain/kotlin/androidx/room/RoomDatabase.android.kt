@@ -33,8 +33,6 @@ import androidx.annotation.WorkerThread
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.room.Room.LOG_TAG
 import androidx.room.concurrent.CloseBarrier
-import androidx.room.coroutines.AndroidSQLiteDriverConnectionPool
-import androidx.room.coroutines.ConnectionPool
 import androidx.room.coroutines.runBlockingUninterruptible
 import androidx.room.driver.SupportSQLiteConnection
 import androidx.room.migration.AutoMigrationSpec
@@ -56,7 +54,6 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteStatement
-import androidx.sqlite.db.framework.FrameworkSQLiteDatabase
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import java.io.File
 import java.io.InputStream
@@ -105,13 +102,8 @@ actual abstract class RoomDatabase {
     )
     protected var mDatabase: SupportSQLiteDatabase? = null
 
-    private lateinit var configuration: DatabaseConfiguration
     private lateinit var coroutineScope: CoroutineScope
     private lateinit var transactionContext: CoroutineContext
-
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    val path: String?
-        get() = configuration.name?.let { configuration.context.getDatabasePath(it).path }
 
     /** The Executor in use by this database for async queries. */
     open val queryExecutor: Executor
@@ -130,7 +122,6 @@ actual abstract class RoomDatabase {
      *
      * @throws IllegalStateException If a [SQLiteDriver] is configured with this database.
      */
-    // TODO(b/408062492): @Deprecate with replace to wrapper
     open val openHelper: SupportSQLiteOpenHelper
         get() =
             connectionManager.supportOpenHelper
@@ -140,9 +131,6 @@ actual abstract class RoomDatabase {
                 )
 
     private lateinit var connectionManager: RoomConnectionManager
-
-    internal val connectionPool: ConnectionPool
-        get() = connectionManager.connectionPool
 
     /**
      * The invalidation tracker for this database.
@@ -234,8 +222,8 @@ actual abstract class RoomDatabase {
      * @throws IllegalArgumentException if initialization fails.
      */
     @CallSuper
+    @OptIn(ExperimentalCoroutinesApi::class) // For limitedParallelism(1)
     actual open fun init(configuration: DatabaseConfiguration) {
-        this.configuration = configuration
         useTempTrackingTable = configuration.useTempTrackingTable
 
         connectionManager = createConnectionManager(configuration)
@@ -259,7 +247,6 @@ actual abstract class RoomDatabase {
                 if (inCompatibilityMode()) {
                     // To prevent starvation due to primary connection blocking in
                     // SupportSQLiteDatabase a limited dispatcher is used for transactions.
-                    @OptIn(ExperimentalCoroutinesApi::class) // For limitedParallelism(1)
                     coroutineScope.coroutineContext + dispatcher.limitedParallelism(1)
                 } else {
                     // When a SQLiteDriver is provided a suspending connection pool is used and
@@ -614,8 +601,7 @@ actual abstract class RoomDatabase {
      *
      * @see RoomConnectionManager
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    fun inCompatibilityMode(): Boolean = connectionManager.supportOpenHelper != null
+    internal fun inCompatibilityMode(): Boolean = connectionManager.supportOpenHelper != null
 
     // Below, there are wrapper methods for SupportSQLiteDatabase. This helps us track which
     // methods we are using and also helps unit tests to mock this class without mocking
@@ -2162,10 +2148,3 @@ fun RoomDatabase.invalidationTrackerFlow(
     vararg tables: String,
     emitInitialState: Boolean = true
 ): Flow<Set<String>> = invalidationTracker.createFlow(*tables, emitInitialState = emitInitialState)
-
-// TODO(b/408010324): Avoid exposing this restricted APIs, create separation of concerns.
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-fun RoomDatabase.getAndroidDriverDatabase(): SupportSQLiteDatabase? =
-    (connectionPool as? AndroidSQLiteDriverConnectionPool)?.androidConnection?.db?.let {
-        FrameworkSQLiteDatabase(it)
-    }

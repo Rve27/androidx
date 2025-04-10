@@ -29,7 +29,6 @@ import android.os.CancellationSignal
 import android.text.TextUtils
 import android.util.Pair
 import androidx.annotation.RequiresApi
-import androidx.annotation.RestrictTo
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteQuery
@@ -43,9 +42,8 @@ import java.util.Locale
  * @param delegate The delegate to receive all calls.
  * @constructor Creates a wrapper around [SQLiteDatabase].
  */
-// TODO(b/408010324): Make internal and remove @RestrictTo
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FrameworkSQLiteDatabase(private val delegate: SQLiteDatabase) : SupportSQLiteDatabase {
+internal class FrameworkSQLiteDatabase(private val delegate: SQLiteDatabase) :
+    SupportSQLiteDatabase {
     override fun compileStatement(sql: String): SupportSQLiteStatement {
         return FrameworkSQLiteStatement(delegate.compileStatement(sql))
     }
@@ -319,7 +317,7 @@ public class FrameworkSQLiteDatabase(private val delegate: SQLiteDatabase) : Sup
     }
 
     /** Checks if this object delegates to the same given database reference. */
-    internal fun isDelegate(sqLiteDatabase: SQLiteDatabase): Boolean {
+    fun isDelegate(sqLiteDatabase: SQLiteDatabase): Boolean {
         return delegate == sqLiteDatabase
     }
 
@@ -334,7 +332,7 @@ public class FrameworkSQLiteDatabase(private val delegate: SQLiteDatabase) : Sup
         }
     }
 
-    private companion object {
+    companion object {
         private val CONFLICT_VALUES =
             arrayOf("", " OR ROLLBACK ", " OR ABORT ", " OR FAIL ", " OR IGNORE ", " OR REPLACE ")
         private val EMPTY_STRING_ARRAY = arrayOfNulls<String>(0)
