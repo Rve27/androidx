@@ -17,6 +17,8 @@
 package androidx.xr.runtime.openxr
 
 import android.app.Activity
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -24,6 +26,7 @@ import androidx.test.filters.SdkSuppress
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import com.google.common.truth.Truth.assertThat
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,8 +47,11 @@ class OpenXrRuntimeFactoryTest {
 
     @get:Rule val activityRule = ActivityScenarioRule(Activity::class.java)
 
+    @Ignore("Source utilizes robolectric which does not work with androidTests.")
     @Test
     fun createRuntime_createsOpenXrRuntime() {
+        val context: Context = ApplicationProvider.getApplicationContext()
+
         activityRule.scenario.onActivity {
             assertThat((Session.create(it) as SessionCreateSuccess).session.runtime)
                 .isInstanceOf(OpenXrRuntime::class.java)

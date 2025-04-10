@@ -24,10 +24,9 @@ import android.widget.TextView
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.xr.arcore.Plane
-import androidx.xr.arcore.TrackingState
-import androidx.xr.runtime.Config
 import androidx.xr.runtime.PlaneTrackingMode
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector2
@@ -54,7 +53,9 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
     private lateinit var updateJob: CompletableJob
 
     override fun onResume(owner: LifecycleOwner) {
-        session.configure(Config(planeTracking = PlaneTrackingMode.HorizontalAndVertical))
+        session.configure(
+            session.config.copy(planeTracking = PlaneTrackingMode.HorizontalAndVertical)
+        )
         updateJob =
             SupervisorJob(
                 coroutineScope.launch { Plane.subscribe(session).collect { updatePlaneModels(it) } }

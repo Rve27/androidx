@@ -49,6 +49,8 @@ import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
+import androidx.xr.runtime.Config
+import androidx.xr.runtime.HeadTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.Pose
@@ -79,6 +81,8 @@ class HeadLockedUiActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val mActivity = this
+        mSession.resume()
+        mSession.configure(Config(headTracking = HeadTrackingMode.Enabled))
 
         // Set the main panel size and make the main panel movable.
         mSession.scene.mainPanelEntity.setSizeInPixels(PixelDimensions(width = 1500, height = 1100))

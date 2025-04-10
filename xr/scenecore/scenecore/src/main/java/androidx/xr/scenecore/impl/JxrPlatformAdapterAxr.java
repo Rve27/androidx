@@ -80,6 +80,7 @@ import com.android.extensions.xr.space.ActivityPanelLaunchParameters;
 import com.android.extensions.xr.space.SpatialState;
 
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
+import com.google.androidxr.splitengine.SubspaceNode;
 import com.google.ar.imp.apibindings.ImpressApi;
 import com.google.ar.imp.apibindings.ImpressApiImpl;
 import com.google.ar.imp.apibindings.Texture;
@@ -1513,10 +1514,17 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
         return exrImageResourceFuture;
     }
 
+    @Override
     @NonNull
-    public SubspaceNodeEntityImpl createSubspaceNodeEntity(@NonNull Node subspaceNode) {
+    public SubspaceNodeEntityImpl createSubspaceNodeEntity(
+            @NonNull SubspaceNode subspaceNode, @NonNull Dimensions size) {
         SubspaceNodeEntityImpl subspaceNodeEntity =
-                new SubspaceNodeEntityImpl(mExtensions, mEntityManager, mExecutor, subspaceNode);
+                new SubspaceNodeEntityImpl(
+                        mExtensions,
+                        mEntityManager,
+                        mExecutor,
+                        subspaceNode.getSubspaceNode(),
+                        size);
         subspaceNodeEntity.setParent(mActivitySpace);
         return subspaceNodeEntity;
     }

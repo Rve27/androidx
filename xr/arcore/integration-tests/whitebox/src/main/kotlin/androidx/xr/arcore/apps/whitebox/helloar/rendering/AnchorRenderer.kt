@@ -25,10 +25,12 @@ import androidx.xr.arcore.Anchor
 import androidx.xr.arcore.AnchorCreateNotTracking
 import androidx.xr.arcore.AnchorCreateResourcesExhausted
 import androidx.xr.arcore.AnchorCreateSuccess
+import androidx.xr.arcore.AnchorLoadInvalidUuid
 import androidx.xr.arcore.Plane
-import androidx.xr.arcore.TrackingState
 import androidx.xr.arcore.hitTest
+import androidx.xr.runtime.HeadTrackingMode
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Ray
@@ -59,6 +61,7 @@ internal class AnchorRenderer(
     private lateinit var updateJob: CompletableJob
 
     override fun onResume(owner: LifecycleOwner) {
+        session.configure(session.config.copy(headTracking = HeadTrackingMode.Enabled))
         updateJob =
             SupervisorJob(
                 coroutineScope.launch() {
@@ -138,6 +141,18 @@ internal class AnchorRenderer(
                                                         activity,
                                                         "Anchor failed to start tracking.",
                                                         Toast.LENGTH_LONG,
+                                                    )
+                                                    .show()
+                                            }
+                                            is AnchorLoadInvalidUuid -> {
+                                                Log.e(
+                                                    activity::class.simpleName,
+                                                    "Failed to create anchor: invalid UUID."
+                                                )
+                                                Toast.makeText(
+                                                        activity,
+                                                        "Anchor failed to load.",
+                                                        Toast.LENGTH_LONG
                                                     )
                                                     .show()
                                             }

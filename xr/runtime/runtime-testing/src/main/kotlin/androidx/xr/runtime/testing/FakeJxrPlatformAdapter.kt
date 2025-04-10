@@ -52,10 +52,12 @@ import androidx.xr.runtime.internal.SoundPoolExtensionsWrapper
 import androidx.xr.runtime.internal.SpatialCapabilities
 import androidx.xr.runtime.internal.SpatialEnvironment
 import androidx.xr.runtime.internal.SpatialVisibility
+import androidx.xr.runtime.internal.SubspaceNodeEntity
 import androidx.xr.runtime.internal.SurfaceEntity
 import androidx.xr.runtime.internal.TextureResource
 import androidx.xr.runtime.internal.TextureSampler
 import androidx.xr.runtime.math.Pose
+import com.google.androidxr.splitengine.SubspaceNode
 import com.google.common.util.concurrent.Futures.immediateFailedFuture
 import com.google.common.util.concurrent.ListenableFuture
 import java.time.Duration
@@ -221,6 +223,11 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
     override fun createAnchorEntity(anchor: Anchor): AnchorEntity = FakeAnchorEntity()
 
     override fun createEntity(pose: Pose, name: String, parent: Entity): Entity = FakeEntity()
+
+    override fun createSubspaceNodeEntity(
+        subspaceNode: SubspaceNode,
+        size: Dimensions,
+    ): SubspaceNodeEntity = FakeSubspaceNodeEntity(subspaceNode, size)
 
     @Suppress("ExecutorRegistration")
     override fun createInteractableComponent(

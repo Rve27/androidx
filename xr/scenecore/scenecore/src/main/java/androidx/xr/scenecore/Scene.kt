@@ -24,6 +24,7 @@ import androidx.annotation.RestrictTo
 import androidx.xr.runtime.SessionConnector
 import androidx.xr.runtime.internal.Entity as RtEntity
 import androidx.xr.runtime.internal.JxrPlatformAdapter
+import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.internal.SpatialCapabilities as RtSpatialCapabilities
 import androidx.xr.runtime.internal.SpatialVisibility as RtSpatialVisibility
 import java.util.concurrent.ConcurrentHashMap
@@ -91,12 +92,15 @@ public class Scene : SessionConnector {
         ConcurrentMap<Consumer<SpatialCapabilities>, Consumer<RtSpatialCapabilities>> =
         ConcurrentHashMap()
 
-    override fun initialize(platformAdapter: JxrPlatformAdapter): Unit {
+    override fun initialize(
+        lifecycleManager: LifecycleManager,
+        platformAdapter: JxrPlatformAdapter,
+    ): Unit {
         this.platformAdapter = platformAdapter
         spatialEnvironment = SpatialEnvironment(platformAdapter)
         perceptionSpace = PerceptionSpace.create(platformAdapter)
         activitySpace = ActivitySpace.create(platformAdapter, entityManager)
-        spatialUser = SpatialUser.create(platformAdapter)
+        spatialUser = SpatialUser.create(lifecycleManager, platformAdapter)
         mainPanelEntity = PanelEntity.createMainPanelEntity(platformAdapter, entityManager)
         activitySpaceRoot =
             entityManager.getEntityForRtEntity(platformAdapter.activitySpaceRootImpl)!!

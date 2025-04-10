@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.xr.arcore
+package androidx.xr.runtime.testing
 
-public typealias HandJointType = androidx.xr.runtime.internal.HandJointType
+import androidx.annotation.RestrictTo
+import androidx.xr.runtime.internal.Dimensions
+import androidx.xr.runtime.internal.SubspaceNodeEntity
+import com.google.androidxr.splitengine.SubspaceNode
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+public class FakeSubspaceNodeEntity(
+    subspaceNode: SubspaceNode,
+    public override var size: Dimensions,
+) : SubspaceNodeEntity, FakeEntity() {}

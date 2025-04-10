@@ -456,18 +456,6 @@ package @RequiresApi(34) androidx.xr.scenecore {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class PerceptionSpace extends androidx.xr.scenecore.BaseActivityPose<androidx.xr.runtime.internal.PerceptionSpaceActivityPose> {
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class PermissionHelper {
-    method public boolean hasPermission(android.app.Activity activity, String permission);
-    method public void launchPermissionSettings(android.app.Activity activity);
-    method public void requestPermission(android.app.Activity activity, String permission, int permissionCode);
-    method public boolean shouldShowRequestPermissionRationale(android.app.Activity activity, String permission);
-    property public static String SCENE_UNDERSTANDING_PERMISSION;
-    property public static int SCENE_UNDERSTANDING_PERMISSION_CODE;
-    field public static final androidx.xr.scenecore.PermissionHelper INSTANCE;
-    field public static final String SCENE_UNDERSTANDING_PERMISSION = "android.permission.SCENE_UNDERSTANDING";
-    field public static final int SCENE_UNDERSTANDING_PERMISSION_CODE = 0; // 0x0
-  }
-
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class PixelDimensions {
     ctor public PixelDimensions();
     ctor public PixelDimensions(optional int width, optional int height);
@@ -588,7 +576,7 @@ package @RequiresApi(34) androidx.xr.scenecore {
     method public androidx.xr.scenecore.SpatialCapabilities getSpatialCapabilities();
     method public androidx.xr.scenecore.SpatialEnvironment getSpatialEnvironment();
     method public androidx.xr.scenecore.SpatialUser getSpatialUser();
-    method public void initialize(androidx.xr.runtime.internal.JxrPlatformAdapter platformAdapter);
+    method public void initialize(androidx.xr.runtime.internal.LifecycleManager lifecycleManager, androidx.xr.runtime.internal.JxrPlatformAdapter platformAdapter);
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
     method public void setActivitySpace(androidx.xr.scenecore.ActivitySpace);
     method public void setActivitySpaceRoot(androidx.xr.scenecore.Entity);
@@ -784,7 +772,7 @@ package @RequiresApi(34) androidx.xr.scenecore {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialUser {
-    ctor public SpatialUser(androidx.xr.runtime.internal.JxrPlatformAdapter runtime);
+    ctor public SpatialUser(androidx.xr.runtime.internal.LifecycleManager lifecycleManager, androidx.xr.runtime.internal.JxrPlatformAdapter runtime);
     method public androidx.xr.scenecore.CameraView? getCameraView(androidx.xr.scenecore.CameraView.CameraType cameraType);
     method public java.util.List<androidx.xr.scenecore.CameraView> getCameraViews();
     method public androidx.xr.scenecore.Head? getHead();
@@ -833,6 +821,18 @@ package @RequiresApi(34) androidx.xr.scenecore {
     field public static final int SOURCE_TYPE_BYPASS = 0; // 0x0
     field public static final int SOURCE_TYPE_POINT_SOURCE = 1; // 0x1
     field public static final int SOURCE_TYPE_SOUND_FIELD = 2; // 0x2
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SubspaceNodeEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.SubspaceNodeEntity> {
+    method public static androidx.xr.scenecore.SubspaceNodeEntity create(androidx.xr.runtime.Session session, com.google.androidxr.splitengine.SubspaceNode subspaceNode, androidx.xr.scenecore.Dimensions size);
+    method public androidx.xr.scenecore.Dimensions getSize();
+    method public void setSize(androidx.xr.scenecore.Dimensions);
+    property public androidx.xr.scenecore.Dimensions size;
+    field public static final androidx.xr.scenecore.SubspaceNodeEntity.Companion Companion;
+  }
+
+  public static final class SubspaceNodeEntity.Companion {
+    method public androidx.xr.scenecore.SubspaceNodeEntity create(androidx.xr.runtime.Session session, com.google.androidxr.splitengine.SubspaceNode subspaceNode, androidx.xr.scenecore.Dimensions size);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SurfaceEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.SurfaceEntity> {
@@ -1112,7 +1112,7 @@ package @RequiresApi(34) androidx.xr.scenecore.impl {
     method public androidx.xr.runtime.internal.AnchorEntity createPersistedAnchorEntity(java.util.UUID, java.time.Duration);
     method public androidx.xr.runtime.internal.PointerCaptureComponent createPointerCaptureComponent(java.util.concurrent.Executor, androidx.xr.runtime.internal.PointerCaptureComponent.StateListener, androidx.xr.runtime.internal.InputEventListener);
     method public androidx.xr.runtime.internal.ResizableComponent createResizableComponent(androidx.xr.runtime.internal.Dimensions, androidx.xr.runtime.internal.Dimensions);
-    method public androidx.xr.scenecore.impl.SubspaceNodeEntityImpl createSubspaceNodeEntity(com.android.extensions.xr.node.Node);
+    method public androidx.xr.scenecore.impl.SubspaceNodeEntityImpl createSubspaceNodeEntity(com.google.androidxr.splitengine.SubspaceNode, androidx.xr.runtime.internal.Dimensions);
     method public androidx.xr.runtime.internal.SurfaceEntity createSurfaceEntity(@androidx.xr.runtime.internal.SurfaceEntity.StereoMode int, androidx.xr.runtime.internal.SurfaceEntity.CanvasShape, androidx.xr.runtime.math.Pose, androidx.xr.runtime.internal.Entity);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource!>? createWaterMaterial(boolean);
     method public void destroyTexture(androidx.xr.runtime.internal.TextureResource);
@@ -1162,6 +1162,8 @@ package @RequiresApi(34) androidx.xr.scenecore.impl {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class JxrPlatformAdapterFactoryAxr implements androidx.xr.runtime.internal.JxrPlatformAdapterFactory {
     ctor public JxrPlatformAdapterFactoryAxr();
     method public androidx.xr.scenecore.impl.JxrPlatformAdapterAxr createPlatformAdapter(android.app.Activity activity);
+    method public java.util.Set<androidx.xr.runtime.internal.Feature> getRequirements();
+    property public java.util.Set<androidx.xr.runtime.internal.Feature> requirements;
   }
 
   public final class Matrix4Ext {
@@ -1171,11 +1173,12 @@ package @RequiresApi(34) androidx.xr.scenecore.impl {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class MediaUtils {
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SubspaceNodeEntityImpl extends androidx.xr.scenecore.common.BaseEntity implements androidx.xr.runtime.internal.Entity {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SubspaceNodeEntityImpl extends androidx.xr.scenecore.common.BaseEntity implements androidx.xr.runtime.internal.Entity androidx.xr.runtime.internal.SubspaceNodeEntity {
     method public void addInputEventListener(java.util.concurrent.Executor, androidx.xr.runtime.internal.InputEventListener);
     method public void addReformEventConsumer(com.android.extensions.xr.function.Consumer<com.android.extensions.xr.node.ReformEvent!>!, java.util.concurrent.Executor!);
     method public com.android.extensions.xr.node.Node! getNode();
     method public com.android.extensions.xr.node.ReformOptions! getReformOptions();
+    method public androidx.xr.runtime.internal.Dimensions getSize();
     method public void removeInputEventListener(androidx.xr.runtime.internal.InputEventListener);
     method public void removeReformEventConsumer(com.android.extensions.xr.function.Consumer<com.android.extensions.xr.node.ReformEvent!>!);
     method public boolean requestPointerCapture(java.util.concurrent.Executor!, androidx.xr.runtime.internal.InputEventListener!, androidx.xr.runtime.internal.PointerCaptureComponent.StateListener!);

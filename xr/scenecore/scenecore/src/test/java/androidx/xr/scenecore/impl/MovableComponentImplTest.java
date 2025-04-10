@@ -97,7 +97,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.android.controller.ActivityController;
 
-import java.time.Duration;
 import java.util.List;
 
 @RunWith(RobolectricTestRunner.class)
@@ -160,10 +159,6 @@ public class MovableComponentImplTest {
         mActivitySpaceNode = mActivitySpaceImpl.getNode();
         mPerceptionSpaceActivityPose =
                 (PerceptionSpaceActivityPoseImpl) mFakeRuntime.getPerceptionSpaceActivityPose();
-        // TODO: b/377554103 - Remove delay once the subscription API are synced with the node
-        // creation.
-        mFakeExecutor.simulateSleepExecutingAllTasks(
-                Duration.ofMillis(SystemSpaceEntityImpl.SUBSCRIPTION_DELAY_MS));
     }
 
     @After

@@ -36,13 +36,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.xr.arcore.Hand
-import androidx.xr.arcore.HandJointType
-import androidx.xr.arcore.TrackingState
 import androidx.xr.arcore.apps.whitebox.common.BackToMainActivityButton
 import androidx.xr.arcore.apps.whitebox.common.SessionLifecycleHelper
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.HandJointType
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.GltfModel
@@ -141,46 +141,51 @@ class HandTrackingActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // Create session and renderers.
-        sessionHelper = SessionLifecycleHelper(this)
-        session = sessionHelper.session
+        sessionHelper =
+            SessionLifecycleHelper(
+                this,
+                onSessionAvailable = { session ->
+                    this.session = session
+
+                    lifecycleScope.launch {
+                        session.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                            session.configure(Config(handTracking = HandTrackingMode.Enabled))
+                            setContent { MainPanel(session) }
+
+                            val xyzModel = GltfModel.create(session, "models/xyzArrows.glb").await()
+
+                            val leftHandJointEntityMap =
+                                HandJointType.entries.associateWith {
+                                    GltfModelEntity.create(session, xyzModel).also {
+                                        it.setScale(0.015f)
+                                        it.setHidden(true)
+                                    }
+                                }
+
+                            val rightHandJointEntityMap =
+                                HandJointType.entries.associateWith {
+                                    GltfModelEntity.create(session, xyzModel).also {
+                                        it.setScale(0.015f)
+                                        it.setHidden(true)
+                                    }
+                                }
+
+                            launch {
+                                Hand.left(session)?.state?.collect { leftHandState ->
+                                    renderHandGizmos(leftHandState, leftHandJointEntityMap)
+                                }
+                            }
+
+                            launch {
+                                Hand.right(session)?.state?.collect { rightHandState ->
+                                    renderHandGizmos(rightHandState, rightHandJointEntityMap)
+                                }
+                            }
+                        }
+                    }
+                },
+            )
         lifecycle.addObserver(sessionHelper)
-
-        lifecycleScope.launch {
-            session.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                session.configure(Config(handTracking = HandTrackingMode.Enabled))
-                setContent { MainPanel(session) }
-
-                val xyzModel = GltfModel.create(session, "models/xyzArrows.glb").await()
-
-                val leftHandJointEntityMap =
-                    HandJointType.entries.associateWith {
-                        GltfModelEntity.create(session, xyzModel).also {
-                            it.setScale(0.015f)
-                            it.setHidden(true)
-                        }
-                    }
-
-                val rightHandJointEntityMap =
-                    HandJointType.entries.associateWith {
-                        GltfModelEntity.create(session, xyzModel).also {
-                            it.setScale(0.015f)
-                            it.setHidden(true)
-                        }
-                    }
-
-                launch {
-                    Hand.left(session)?.state?.collect { leftHandState ->
-                        renderHandGizmos(leftHandState, leftHandJointEntityMap)
-                    }
-                }
-
-                launch {
-                    Hand.right(session)?.state?.collect { rightHandState ->
-                        renderHandGizmos(rightHandState, rightHandJointEntityMap)
-                    }
-                }
-            }
-        }
     }
 
     private fun renderHandGizmos(

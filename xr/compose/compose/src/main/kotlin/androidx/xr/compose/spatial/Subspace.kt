@@ -56,6 +56,7 @@ import androidx.xr.compose.subspace.node.SubspaceNodeApplier
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.compose.unit.Meter
 import androidx.xr.compose.unit.VolumeConstraints
+import androidx.xr.runtime.HeadTrackingMode
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.CameraView
 import androidx.xr.scenecore.CameraView.CameraType
@@ -67,6 +68,7 @@ import androidx.xr.scenecore.scene
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.tan
+import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
 
 private val LocalIsInApplicationSubspace: ProvidableCompositionLocal<Boolean> =
@@ -100,6 +102,10 @@ public object SubspaceDefaults {
  * Z direction according to the constraints imposed by its containing [Subspace].
  *
  * This is a no-op and does not render anything in non-XR environments (i.e. Phone and Tablet).
+ *
+ * [Subspace] attempts to use the SpatialUser's field of view as width/height constraints for the
+ * subspace being created. If the calculation fails or if the `HEAD_TRACKING` Android permission is
+ * not granted, the default field of view width/height values will be used.
  *
  * @param content The 3D content to render within this Subspace.
  */
@@ -167,7 +173,8 @@ public value class ConstraintsBehavior private constructor(private val value: In
  * @param constraintsBehavior Specifies how the provided [constraints] should be applied. Use
  *   [ConstraintsBehavior.Specified] to directly use the provided constraints, or
  *   [ConstraintsBehavior.FieldOfView] to attempt to use calculated field of view constraints,
- *   falling back to the provided constraints if calculation fails.
+ *   falling back to the provided constraints if calculation fails or if the `HEAD_TRACKING` Android
+ *   permission is not granted.
  * @param content The 3D content to render within this Subspace
  */
 @Composable
@@ -217,6 +224,7 @@ private fun ApplicationSubspace(
     constraintsBehavior: ConstraintsBehavior,
     content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit,
 ) {
+
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val compositionContext = rememberCompositionContext()
     val rootConstraints =
@@ -265,6 +273,7 @@ private fun NestedSubspace(
         disposableValueOf(
             ContentlessEntity.create(session, "SubspaceRootContainer").apply {
                 setParent(coreEntity.entity)
+                setHidden(true)
             }
         ) {
             it.dispose()
@@ -301,6 +310,12 @@ private fun NestedSubspace(
                 density
             )
         )
+        // We need to wait for a single frame to ensure that the pose changes are batched to the
+        // root
+        // container before we show it.
+        if (subspaceRootContainer.isHidden(false) && awaitFrame() > 0) {
+            subspaceRootContainer.setHidden(false)
+        }
     }
 
     Layout(modifier = Modifier.onGloballyPositioned { contentOffset = it.positionInRoot() }) {
@@ -359,7 +374,8 @@ private object PerceptionStackRetryConstants {
  * Used internally by [ApplicationSubspace] when [ConstraintsBehavior.FieldOfView] is specified.
  *
  * Calculates the FOV width/height in pixels at the user's distance from the origin. Uses the
- * provided [fallbackFovConstraints] if the calculation times out, fails, or the distance is zero.
+ * provided [fallbackFovConstraints] if the calculation times out, fails, or the distance is zero,
+ * or the `HEAD_TRACKING` Android permission is not granted.
  *
  * If the perception stack components (Head, Cameras) are not yet available, it retries periodically
  * ([PerceptionStackRetryConstants.RETRY_INTERVAL_MILLIS]) up to a maximum number of attempts
@@ -384,6 +400,12 @@ private fun rememberCalculatedFovConstraints(
     val session = LocalSession.current ?: return null
     val density = LocalDensity.current
     val calculatedFovConstraints = remember { mutableStateOf<VolumeConstraints?>(null) }
+
+    if (session.config.headTracking == HeadTrackingMode.Disabled) {
+        calculatedFovConstraints.value = fallbackFovConstraints
+        return calculatedFovConstraints.value
+    }
+
     val spaceUpdated = remember { mutableStateOf(false) }
     val activitySpace = session.scene.activitySpace
 

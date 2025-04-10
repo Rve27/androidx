@@ -227,7 +227,6 @@ package @RequiresApi(34) androidx.xr.compose.spatial {
 
   public final class SpatialPopupKt {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable public static void SpatialPopup(optional androidx.compose.ui.Alignment alignment, optional long offset, optional kotlin.jvm.functions.Function0<kotlin.Unit>? onDismissRequest, optional androidx.xr.compose.spatial.SpatialPopupProperties properties, kotlin.jvm.functions.Function0<kotlin.Unit> content);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable public static void SpatialPopup(optional float spatialElevationLevel, kotlin.jvm.functions.Function1<? super kotlin.jvm.functions.Function1<? super androidx.compose.ui.layout.LayoutCoordinates,kotlin.Unit>,kotlin.Unit> content);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialPopupProperties {

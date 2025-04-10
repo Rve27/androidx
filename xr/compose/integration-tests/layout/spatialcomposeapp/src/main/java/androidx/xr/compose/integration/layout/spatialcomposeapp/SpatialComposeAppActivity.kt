@@ -167,6 +167,18 @@ class SpatialComposeAppActivity : ComponentActivity() {
                 ) {
                     Text("Launch Video Player")
                 }
+                Button(
+                    onClick = {
+                        val intent =
+                            Intent(
+                                this@SpatialComposeAppActivity,
+                                WindowManagerJxrTestActivity::class.java
+                            )
+                        startActivity(intent)
+                    }
+                ) {
+                    Text("Launch Window Manager JXR Test")
+                }
             }
         }
     }

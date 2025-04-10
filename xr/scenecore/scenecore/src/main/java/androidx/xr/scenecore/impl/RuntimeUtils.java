@@ -20,6 +20,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.xr.runtime.internal.ActivityPose.HitTestFilter;
+import androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue;
 import androidx.xr.runtime.internal.CameraViewActivityPose.Fov;
 import androidx.xr.runtime.internal.Entity;
 import androidx.xr.runtime.internal.HitTestResult;
@@ -37,6 +39,7 @@ import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.perception.Plane;
 
+import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.environment.EnvironmentVisibilityState;
 import com.android.extensions.xr.environment.PassthroughVisibilityState;
 import com.android.extensions.xr.node.Mat4f;
@@ -551,5 +554,16 @@ final class RuntimeUtils {
         int surfaceType = getHitTestSurfaceType(hitTestResultExt.getSurfaceType());
         return new HitTestResult(
                 hitPosition, surfaceNormal, surfaceType, hitTestResultExt.getDistance());
+    }
+
+    static int getHitTestFilter(@HitTestFilterValue int hitTestFilter) {
+        int hitTestFilterResult = 0;
+        if ((hitTestFilter & HitTestFilter.SELF_SCENE) != 0) {
+            hitTestFilterResult |= XrExtensions.HIT_TEST_FILTER_INCLUDE_INSIDE_ACTIVITY;
+        }
+        if ((hitTestFilter & HitTestFilter.OTHER_SCENES) != 0) {
+            hitTestFilterResult |= XrExtensions.HIT_TEST_FILTER_INCLUDE_OUTSIDE_ACTIVITY;
+        }
+        return hitTestFilterResult;
     }
 }

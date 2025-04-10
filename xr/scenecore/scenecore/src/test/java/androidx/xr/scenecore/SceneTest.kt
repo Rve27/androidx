@@ -156,7 +156,8 @@ class SceneTest {
     @Test
     fun setPreferredAspectRatio_callsThrough() {
         // Test that Session calls into the runtime.
-        session.scene.setPreferredAspectRatio(activity, 1.23f)
+        @Suppress("UNUSED_VARIABLE")
+        val unused = session.scene.setPreferredAspectRatio(activity, 1.23f)
         verify(mockPlatformAdapter).setPreferredAspectRatio(activity, 1.23f)
     }
 

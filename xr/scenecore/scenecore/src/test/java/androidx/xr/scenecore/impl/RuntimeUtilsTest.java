@@ -25,6 +25,8 @@ import static org.junit.Assert.assertThrows;
 
 import android.util.Log;
 
+import androidx.xr.runtime.internal.ActivityPose.HitTestFilter;
+import androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue;
 import androidx.xr.runtime.internal.HitTestResult;
 import androidx.xr.runtime.internal.InputEvent;
 import androidx.xr.runtime.internal.PlaneSemantic;
@@ -38,6 +40,7 @@ import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.perception.Plane;
 
+import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.environment.EnvironmentVisibilityState;
 import com.android.extensions.xr.environment.PassthroughVisibilityState;
 import com.android.extensions.xr.environment.ShadowPassthroughVisibilityState;
@@ -528,6 +531,39 @@ public final class RuntimeUtilsTest {
         assertThat(hitTestResult.getSurfaceNormal()).isNull();
         assertThat(hitTestResult.getSurfaceType())
                 .isEqualTo(HitTestResult.HitTestSurfaceType.HIT_TEST_RESULT_SURFACE_TYPE_UNKNOWN);
+    }
+
+    @Test
+    public void getHitTestFilter_convertsToExtensionHitTestFilter_noFilter() {
+        @HitTestFilterValue int hitTestFilter = 0;
+        int expectedHitTestFilter = 0;
+
+        int extensionsHitTestFilter = RuntimeUtils.getHitTestFilter(hitTestFilter);
+
+        assertThat(extensionsHitTestFilter).isEqualTo(expectedHitTestFilter);
+    }
+
+    @Test
+    public void getHitTestFilter_convertsToExtensionHitTestFilter_oneFilter() {
+        @HitTestFilterValue int hitTestFilter = HitTestFilter.OTHER_SCENES;
+        int expectedHitTestFilter = XrExtensions.HIT_TEST_FILTER_INCLUDE_OUTSIDE_ACTIVITY;
+
+        int extensionsHitTestFilter = RuntimeUtils.getHitTestFilter(hitTestFilter);
+
+        assertThat(extensionsHitTestFilter).isEqualTo(expectedHitTestFilter);
+    }
+
+    @Test
+    public void getHitTestFilter_convertsToExtensionHitTestFilter_multipleFilters() {
+        @HitTestFilterValue
+        int hitTestFilter = HitTestFilter.SELF_SCENE | HitTestFilter.OTHER_SCENES;
+        int expectedHitTestFilter =
+                XrExtensions.HIT_TEST_FILTER_INCLUDE_INSIDE_ACTIVITY
+                        | XrExtensions.HIT_TEST_FILTER_INCLUDE_OUTSIDE_ACTIVITY;
+
+        int extensionsHitTestFilter = RuntimeUtils.getHitTestFilter(hitTestFilter);
+
+        assertThat(extensionsHitTestFilter).isEqualTo(expectedHitTestFilter);
     }
 
     @Test

@@ -19,8 +19,10 @@ package androidx.xr.arcore
 import android.content.ContentResolver
 import android.provider.Settings.System
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.HandJointType
 import androidx.xr.runtime.HandTrackingMode
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.internal.Hand as RuntimeHand
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion

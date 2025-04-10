@@ -122,7 +122,12 @@ public fun AndroidComposeTestRule<*, SubspaceTestingActivity>.onAllSubspaceNodes
 public fun createFakeSession(
     activity: SubspaceTestingActivity,
     runtime: JxrPlatformAdapter = createFakeRuntime(activity),
-): Session = Session(activity, FakeRuntimeFactory().createRuntime(activity), runtime)
+): Session =
+    Session(
+        activity,
+        FakeRuntimeFactory().createRuntime(activity).apply { lifecycleManager.create() },
+        runtime,
+    )
 
 /**
  * Create a fake [Session] for testing using configs from [TestJxrPlatformAdapter].
@@ -136,7 +141,12 @@ public fun createFakeSession(
 internal fun createFakeSessionWithTestConfigs(
     activity: Activity,
     runtime: JxrPlatformAdapter = createFakeRuntime(activity),
-): Session = Session(activity, FakeRuntimeFactory().createRuntime(activity), runtime)
+): Session =
+    Session(
+        activity,
+        FakeRuntimeFactory().createRuntime(activity).apply { lifecycleManager.create() },
+        runtime,
+    )
 
 /**
  * Create a fake [JxrPlatformAdapter] for testing.

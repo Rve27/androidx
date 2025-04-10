@@ -33,7 +33,6 @@ import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.MoveListener
 import androidx.xr.scenecore.PanelEntity
-import androidx.xr.scenecore.PermissionHelper
 import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.PlaneSemantic
 import androidx.xr.scenecore.PlaneType
@@ -70,15 +69,7 @@ class MovableActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.movable_activity)
-        if (
-            !PermissionHelper.hasPermission(this, PermissionHelper.SCENE_UNDERSTANDING_PERMISSION)
-        ) {
-            PermissionHelper.requestPermission(
-                this,
-                PermissionHelper.SCENE_UNDERSTANDING_PERMISSION,
-                PermissionHelper.SCENE_UNDERSTANDING_PERMISSION_CODE,
-            )
-        }
+
         @SuppressLint("InflateParams")
         val stationaryPanelContentView = layoutInflater.inflate(R.layout.stationary_panel, null)
         val stationaryPanelEntity =

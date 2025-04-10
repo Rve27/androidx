@@ -148,11 +148,28 @@ class OpenXrManagerTest {
         }
 
     @Test
-    fun update_updatesPerceptionManager() = initOpenXrManagerAndRunTest {
+    fun update_planeTrackingDisabled_doesNotUpdateTrackables() = initOpenXrManagerAndRunTest {
         runTest {
             underTest.create()
             underTest.resume()
             check(perceptionManager.trackables.isEmpty())
+            check(underTest.config.planeTracking == PlaneTrackingMode.Disabled)
+
+            underTest.update()
+
+            assertThat(perceptionManager.trackables).isEmpty()
+        }
+    }
+
+    @Test
+    fun update_planeTrackingEnabled_addsPlaneToUpdatables() = initOpenXrManagerAndRunTest {
+        runTest {
+            underTest.create()
+            underTest.resume()
+            check(perceptionManager.xrResources.updatables.isEmpty())
+            underTest.configure(
+                Config(planeTracking = Config.PlaneTrackingMode.HorizontalAndVertical)
+            )
 
             underTest.update()
 

@@ -20,11 +20,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RestrictTo;
 import androidx.xr.runtime.internal.Dimensions;
 import androidx.xr.runtime.internal.SpaceValue;
+import androidx.xr.runtime.internal.SubspaceNodeEntity;
 import androidx.xr.runtime.math.Pose;
 
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.NodeTransaction;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -35,16 +38,22 @@ import java.util.concurrent.ScheduledExecutorService;
  * the entity to be user interactable.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public final class SubspaceNodeEntityImpl extends AndroidXrEntity {
+public final class SubspaceNodeEntityImpl extends AndroidXrEntity implements SubspaceNodeEntity {
     private final Node mSubspaceNode;
+    private Dimensions mSize;
 
     SubspaceNodeEntityImpl(
             XrExtensions extensions,
             EntityManager entityManager,
             ScheduledExecutorService executor,
-            Node subspaceNode) {
+            Node subspaceNode,
+            Dimensions size) {
         super(extensions.createNode(), extensions, entityManager, executor);
         this.mSubspaceNode = subspaceNode;
+        this.mSize = size;
+        try (NodeTransaction transaction = extensions.createNodeTransaction()) {
+            transaction.setParent(mSubspaceNode, mNode).apply();
+        }
     }
 
     @Override
@@ -67,9 +76,16 @@ public final class SubspaceNodeEntityImpl extends AndroidXrEntity {
         }
     }
 
+    @Override
     public void setSize(@NonNull Dimensions size) {
+        mSize = size;
         try (NodeTransaction transaction = mExtensions.createNodeTransaction()) {
             transaction.setScale(mSubspaceNode, size.width, size.height, size.depth).apply();
         }
+    }
+
+    @Override
+    public @NotNull Dimensions getSize() {
+        return mSize;
     }
 }

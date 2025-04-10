@@ -28,6 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.xr.compose.unit.DpVolumeSize
 import androidx.xr.compose.unit.toDpVolumeSize
+import androidx.xr.runtime.FEATURE_XR_API_SPATIAL
 import androidx.xr.runtime.Session
 import androidx.xr.scenecore.scene
 
@@ -119,11 +120,16 @@ public interface SpatialConfiguration {
     public companion object {
         /**
          * XR Spatial APIs are supported for this system. This is equivalent to
-         * PackageManager.hasSystemFeature(FEATURE_XR_SPATIAL, version) where version is the minimum
-         * version for features available in the XR Compose library used.
+         * PackageManager.hasSystemFeature(FEATURE_XR_API_SPATIAL) or
+         * PackageManager.hasSystemFeature(XR_IMMERSIVE_FEATURE). When one of these features is
+         * available, it is safe to assume we are in an XR environment.
          */
         public fun hasXrSpatialFeature(context: Context): Boolean {
-            return context.packageManager.hasSystemFeature(XR_IMMERSIVE_FEATURE)
+            // TODO(b/398957058): Remove the XR_IMMERSIVE_FEATURE check once the google play team
+            // logic
+            // is updated.
+            return (context.packageManager.hasSystemFeature(XR_IMMERSIVE_FEATURE) ||
+                context.packageManager.hasSystemFeature(FEATURE_XR_API_SPATIAL))
         }
 
         private val sessionInstances: MutableMap<Session, SpatialConfiguration> = mutableMapOf()

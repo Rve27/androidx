@@ -18,6 +18,7 @@ package androidx.xr.scenecore.impl
 
 import android.app.Activity
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.internal.Feature
 import androidx.xr.runtime.internal.JxrPlatformAdapterFactory
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadFactory
@@ -25,6 +26,9 @@ import java.util.concurrent.ThreadFactory
 /** Factory for creating instances of [JxrPlatformAdapter] for Android XR devices. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class JxrPlatformAdapterFactoryAxr() : JxrPlatformAdapterFactory {
+    override val requirements: Set<Feature> =
+        setOf(Feature.FullStack, Feature.OpenXr, Feature.Spatial)
+
     override fun createPlatformAdapter(activity: Activity): JxrPlatformAdapterAxr =
         JxrPlatformAdapterAxr.create(
             activity,

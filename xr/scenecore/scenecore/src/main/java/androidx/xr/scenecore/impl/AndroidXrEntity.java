@@ -49,7 +49,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 
 /**
- * Implementation of a RealityCore Entity that wraps an android XR extension Node.
+ * Implementation of a JXR SceneCore Entity that wraps an android XR extension Node.
  *
  * <p>This should not be created on its own but should be inherited by objects that need to wrap an
  * Android extension node.

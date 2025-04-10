@@ -190,10 +190,6 @@ public final class JxrPlatformAdapterAxrTest {
         when(mPerceptionLibrary.initSession(mActivity, OPEN_XR_REFERENCE_SPACE_TYPE, mFakeExecutor))
                 .thenReturn(immediateFuture(mSession));
         when(mPerceptionLibrary.getActivity()).thenReturn(mActivity);
-        // TODO: b/377554103 - Remove delay once the subscription API are synced with the node
-        // creation.
-        mFakeExecutor.simulateSleepExecutingAllTasks(
-                Duration.ofMillis(SystemSpaceEntityImpl.SUBSCRIPTION_DELAY_MS));
         // This is a little unrealistic because it's going to return the same subspace for all the
         // entities created in this test. In practice this is an implementation detail that's
         // irrelevant

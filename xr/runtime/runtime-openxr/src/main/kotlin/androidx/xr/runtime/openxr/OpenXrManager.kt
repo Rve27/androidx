@@ -19,6 +19,7 @@ package androidx.xr.runtime.openxr
 import android.app.Activity
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.internal.Config
+import androidx.xr.runtime.internal.Config.PlaneTrackingMode
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.internal.PermissionNotGrantedException
 import kotlin.time.ComparableTimeMark
@@ -100,7 +101,12 @@ internal constructor(
         // TODO: b/345314364 - Implement this method properly once the native manager supports it.
         // Currently the native manager handles this via an internal looping mechanism.
         val now = timeSource.markNow()
-        perceptionManager.update(timeSource.getXrTime(now))
+        val xrTime = timeSource.getXrTime(now)
+
+        if (config.planeTracking != PlaneTrackingMode.Disabled) {
+            perceptionManager.updatePlanes(xrTime)
+        }
+        perceptionManager.update(xrTime)
         // Block the call for a time that is appropriate for OpenXR devices.
         // TODO: b/359871229 - Implement dynamic delay. We start with a fixed 20ms delay as it is
         // a nice round number that produces a reasonable frame rate @50 Hz, but this value may need

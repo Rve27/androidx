@@ -49,16 +49,21 @@ class HelloArActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         // Create session and renderers.
-        sessionHelper = SessionLifecycleHelper(this)
-        session = sessionHelper.session
+        sessionHelper =
+            SessionLifecycleHelper(
+                this,
+                onSessionAvailable = { session ->
+                    this.session = session
+
+                    planeRenderer = PlaneRenderer(session, lifecycleScope)
+                    anchorRenderer = AnchorRenderer(this, planeRenderer, session, lifecycleScope)
+                    session.lifecycle.addObserver(planeRenderer)
+                    session.lifecycle.addObserver(anchorRenderer)
+
+                    setContent { HelloWorld(session) }
+                },
+            )
         lifecycle.addObserver(sessionHelper)
-
-        planeRenderer = PlaneRenderer(session, lifecycleScope)
-        anchorRenderer = AnchorRenderer(this, planeRenderer, session, lifecycleScope)
-        session.lifecycle.addObserver(planeRenderer)
-        session.lifecycle.addObserver(anchorRenderer)
-
-        setContent { HelloWorld(session) }
     }
 }
 

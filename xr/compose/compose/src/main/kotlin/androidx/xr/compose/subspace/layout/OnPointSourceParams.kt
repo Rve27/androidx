@@ -27,7 +27,10 @@ import androidx.xr.scenecore.PointSourceParams
  * PointSourceParams are used to configure a sound to be spatialized as a point in 3D space.
  *
  * @param onPointSourceParams - Will be called with a [PointSourceParams] once it is generated. This
- *   is only executed one time.
+ *   will generally only execute one time, but may be executed again if the modifier chain is
+ *   updated with significant insertions and/or deletions, causing this modifier to be recreated. It
+ *   is recommended to order this modifier before conditional modifiers in a chain to maintain one
+ *   time execution, or to handle re-execution appropriately.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun SubspaceModifier.onPointSourceParams(

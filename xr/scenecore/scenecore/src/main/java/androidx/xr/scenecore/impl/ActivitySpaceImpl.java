@@ -191,8 +191,9 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
                 mActivity,
                 new Vec3(origin.getX(), origin.getY(), origin.getZ()),
                 new Vec3(direction.getX(), direction.getY(), direction.getZ()),
-                hitTestConsumer,
-                mExecutor);
+                RuntimeUtils.getHitTestFilter(hitTestFilter),
+                mExecutor,
+                hitTestConsumer);
         return hitTestFuture;
     }
 
