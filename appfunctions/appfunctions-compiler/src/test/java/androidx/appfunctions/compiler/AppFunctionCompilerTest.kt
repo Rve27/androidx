@@ -773,4 +773,11 @@ class AppFunctionCompilerTest {
             goldenFileName = "${'$'}AggregatedAppFunctionInvoker_Impl.KT",
         )
     }
+
+    @Test
+    fun testGenerateSchemaInventory() {
+        compilationTestHelper.compileAll(sourceFileNames = listOf("NoteSchemaDefinitions.KT"))
+
+        // TODO(b/403525399): Examine test content
+    }
 }
