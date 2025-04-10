@@ -16,11 +16,15 @@
 
 package androidx.compose.runtime.snapshots
 
-import androidx.compose.runtime.implementedInJetBrainsFork
 import kotlin.coroutines.CoroutineContext
 
-internal actual class SnapshotContextElementImpl
-actual constructor(private val snapshot: Snapshot) : SnapshotContextElement {
+internal actual class SnapshotContextElementImpl actual constructor(snapshot: Snapshot) :
+    SnapshotContextElement {
+
+    init {
+        error("provide SnapshotContextElementImpl when coroutines lib has necessary APIs")
+    }
+
     actual override val key: CoroutineContext.Key<*>
-        get() = implementedInJetBrainsFork()
+        get() = SnapshotContextElement
 }
