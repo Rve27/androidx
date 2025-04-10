@@ -28,7 +28,6 @@ import androidx.appfunctions.schema.TranslatorTestUtils
 import androidx.test.filters.SdkSuppress
 import java.time.LocalDateTime
 import java.time.ZoneId
-import org.junit.Ignore
 import org.junit.Test
 
 @SdkSuppress(minSdkVersion = 33)
@@ -37,7 +36,6 @@ class FindNotesTranslatorTest {
     private val translatorTestUtils = TranslatorTestUtils(FindNotesTranslator())
 
     @Test
-    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun upgradeRequest_allFields() {
         val legacyParams =
             LegacyFindNotesParams(
@@ -91,7 +89,6 @@ class FindNotesTranslatorTest {
     }
 
     @Test
-    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun upgradeRequest_optionalFieldsNotSet() {
         val legacyParams = LegacyFindNotesParams(maxCount = Int.MAX_VALUE)
 
@@ -104,7 +101,6 @@ class FindNotesTranslatorTest {
     }
 
     @Test
-    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun downgradeRequest_allFields() {
         val jetpackParams =
             FindNotesAppFunctionParams(
@@ -158,7 +154,6 @@ class FindNotesTranslatorTest {
     }
 
     @Test
-    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun downgradeRequest_nullableFieldsNotSet() {
         val jetpackParams = FindNotesAppFunctionParams()
 
@@ -171,7 +166,6 @@ class FindNotesTranslatorTest {
     }
 
     @Test
-    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun upgradeResponse_allFields() {
         val legacyNotes =
             listOf(
@@ -217,7 +211,6 @@ class FindNotesTranslatorTest {
     }
 
     @Test
-    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun upgradeResponse_optionalFieldsNotSet() {
         val legacyNotes =
             listOf(
@@ -245,7 +238,6 @@ class FindNotesTranslatorTest {
     }
 
     @Test
-    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun downgradeResponse_allFields() {
         val jetpackResponse =
             FindNotesAppFunctionResponse(
@@ -293,7 +285,6 @@ class FindNotesTranslatorTest {
     }
 
     @Test
-    @Ignore("b/408436534 - Enable when KSP bug is fixed")
     fun downgradeResponse_optionalFieldsNotSet() {
         val jetpackResponse =
             FindNotesAppFunctionResponse(

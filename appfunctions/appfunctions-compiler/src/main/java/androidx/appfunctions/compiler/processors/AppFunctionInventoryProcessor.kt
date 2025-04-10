@@ -25,6 +25,7 @@ import androidx.appfunctions.compiler.core.AppFunctionSymbolResolver
 import androidx.appfunctions.compiler.core.IntrospectionHelper
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionComponentRegistryAnnotation
 import androidx.appfunctions.compiler.core.ProcessingException
+import androidx.appfunctions.compiler.core.addGeneratedTimeStamp
 import androidx.appfunctions.metadata.AppFunctionAllOfTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
@@ -131,6 +132,7 @@ class AppFunctionInventoryProcessor(
 
         val fileSpec =
             FileSpec.builder(originalPackageName, inventoryClassName)
+                .addGeneratedTimeStamp()
                 .addType(inventoryClassBuilder.build())
                 .build()
         codeGenerator
