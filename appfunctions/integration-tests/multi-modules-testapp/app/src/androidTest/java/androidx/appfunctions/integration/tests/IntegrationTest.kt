@@ -75,7 +75,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "TestFunctionsIds.ADD_ID",
+                        "androidx.appfunctions.integration.tests.TestFunctions#add",
                         AppFunctionData.Builder("").setLong("num1", 1).setLong("num2", 2).build()
                     )
             )
@@ -97,7 +97,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "TestFunctionsIds.VOID_FUNCTION_ID",
+                        "androidx.appfunctions.integration.tests.TestFunctions#voidFunction",
                         AppFunctionData.Builder("").build()
                     )
             )
@@ -115,7 +115,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "TestFactoryIds.IS_CREATED_BY_FACTORY_ID",
+                        "androidx.appfunctions.integration.tests.TestFactory#isCreatedByFactory",
                         AppFunctionData.Builder("").build()
                     )
             )
@@ -139,7 +139,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "TestFunctions2Ids.CONCAT_ID",
+                        "androidx.appfunctions.integration.testapp.library.TestFunctions2#concat",
                         AppFunctionData.Builder("")
                             .setString("str1", "log")
                             .setString("str2", "cat")
@@ -164,7 +164,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "androidx.appfunctions.integration.testapp.TestFunctions#notExist",
+                        "androidx.appfunctions.integration.tests.TestFunctions#notExist",
                         AppFunctionData.Builder("").build()
                     )
             )
@@ -182,7 +182,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "TestFunctionsIds.DO_THROW_ID",
+                        "androidx.appfunctions.integration.tests.TestFunctions#doThrow",
                         AppFunctionData.Builder("").build()
                     )
             )
@@ -201,7 +201,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "TestFunctionsIds.CREATE_NOTE_ID",
+                        "androidx.appfunctions.integration.tests.TestFunctions#createNote",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "createNoteParams",
@@ -244,7 +244,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "TestFunctionsIds.GET_OPENABLE_NOTE_ID",
+                        "androidx.appfunctions.integration.tests.TestFunctions#getOpenableNote",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "createNoteParams",
@@ -287,7 +287,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "TestFunctionsIds.GET_OPENABLE_NOTE_ID",
+                        "androidx.appfunctions.integration.tests.TestFunctions#getOpenableNote",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "createNoteParams",
@@ -337,7 +337,8 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         targetPackageName = context.packageName,
-                        functionIdentifier = "TestFunctionsIds.LOG_LOCAL_DATE_TIME_ID",
+                        functionIdentifier =
+                            "androidx.appfunctions.integration.tests.TestFunctions#logLocalDateTime",
                         functionParameters =
                             AppFunctionData.Builder("")
                                 .setAppFunctionData(
@@ -363,7 +364,8 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         targetPackageName = context.packageName,
-                        functionIdentifier = "TestFunctions2Ids.LOG_URI_ID",
+                        functionIdentifier =
+                            "androidx.appfunctions.integration.testapp.library.TestFunctions2#logUri",
                         functionParameters =
                             AppFunctionData.Builder("")
                                 .setAppFunctionData(
@@ -385,7 +387,8 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         targetPackageName = context.packageName,
-                        functionIdentifier = "TestFunctionsIds.GET_LOCAL_DATE_ID",
+                        functionIdentifier =
+                            "androidx.appfunctions.integration.tests.TestFunctions#getLocalDate",
                         functionParameters = AppFunctionData.Builder("").build()
                     )
             )
@@ -408,7 +411,8 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         targetPackageName = context.packageName,
-                        functionIdentifier = "TestFunctions2Ids.GET_URI_ID",
+                        functionIdentifier =
+                            "androidx.appfunctions.integration.testapp.library.TestFunctions2#getUri",
                         functionParameters = AppFunctionData.Builder("").build()
                     )
             )
@@ -432,7 +436,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "TestFunctionsIds.UPDATE_NOTE_ID",
+                        "androidx.appfunctions.integration.tests.TestFunctions#updateNote",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "updateNoteParams",
@@ -474,7 +478,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "TestFunctionsIds.UPDATE_NOTE_ID",
+                        "androidx.appfunctions.integration.tests.TestFunctions#updateNote",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "updateNoteParams",
@@ -516,7 +520,7 @@ class IntegrationTest {
                 request =
                     ExecuteAppFunctionRequest(
                         context.packageName,
-                        "TestFunctionsIds.UPDATE_NOTE_ID",
+                        "androidx.appfunctions.integration.tests.TestFunctions#updateNote",
                         AppFunctionData.Builder("")
                             .setAppFunctionData(
                                 "updateNoteParams",
@@ -557,18 +561,18 @@ class IntegrationTest {
 
         val FUNCTION_IDS =
             setOf<String>(
-                //                TestFunctionsIds.ADD_ID,
-                //                TestFunctionsIds.DO_THROW_ID,
-                //                TestFunctionsIds.VOID_FUNCTION_ID,
-                //                TestFunctionsIds.CREATE_NOTE_ID,
-                //                TestFunctionsIds.UPDATE_NOTE_ID,
-                //                TestFunctionsIds.LOG_LOCAL_DATE_TIME_ID,
-                //                TestFunctionsIds.GET_LOCAL_DATE_ID,
-                //                TestFunctionsIds.GET_OPENABLE_NOTE_ID,
-                //                TestFactoryIds.IS_CREATED_BY_FACTORY_ID,
-                //                TestFunctions2Ids.CONCAT_ID,
-                //                TestFunctions2Ids.LOG_URI_ID,
-                //                TestFunctions2Ids.GET_URI_ID,
+                "androidx.appfunctions.integration.tests.TestFunctions#add",
+                "androidx.appfunctions.integration.tests.TestFunctions#doThrow",
+                "androidx.appfunctions.integration.tests.TestFunctions#voidFunction",
+                "androidx.appfunctions.integration.tests.TestFunctions#createNote",
+                "androidx.appfunctions.integration.tests.TestFunctions#updateNote",
+                "androidx.appfunctions.integration.tests.TestFunctions#logLocalDateTime",
+                "androidx.appfunctions.integration.tests.TestFunctions#getLocalDate",
+                "androidx.appfunctions.integration.tests.TestFunctions#getOpenableNote",
+                "androidx.appfunctions.integration.tests.TestFactory#isCreatedByFactory",
+                "androidx.appfunctions.integration.testapp.library.TestFunctions2#concat",
+                "androidx.appfunctions.integration.testapp.library.TestFunctions2#logUri",
+                "androidx.appfunctions.integration.testapp.library.TestFunctions2#getUri",
             )
     }
 }
