@@ -223,7 +223,7 @@ class LazyLayoutPrefetchState(
      * A scope for [schedulePrefetch] callbacks. The scope provides additional information about a
      * prefetched item.
      */
-    interface LazyLayoutPrefetchResultScope {
+    sealed interface LazyLayoutPrefetchResultScope {
 
         /** The amount of placeables composed into this item. */
         val placeablesCount: Int
