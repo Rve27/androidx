@@ -233,7 +233,7 @@ private object DefaultThreePaneScaffoldOverride : ThreePaneScaffoldOverride {
                     )
                 }
                 .apply {
-                    this.scaffoldDirective = scaffoldDirective
+                    this.scaffoldDirective = this@ThreePaneScaffold.scaffoldDirective
                     this.scaffoldValue = scaffoldState.targetState
                     this.paneOrder = ltrPaneOrder
                 }
