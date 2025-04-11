@@ -425,7 +425,7 @@ fun Project.configureTestConfigGeneration(
     componentsExtension: KotlinMultiplatformAndroidComponentsExtension,
     projectIsolationEnabled: Boolean,
 ) {
-    componentsExtension.onVariant { variant ->
+    componentsExtension.onVariants { variant ->
         variant.deviceTests.forEach { (_, deviceTest) ->
             createTestConfigurationGenerationTask(
                 deviceTest.name,
