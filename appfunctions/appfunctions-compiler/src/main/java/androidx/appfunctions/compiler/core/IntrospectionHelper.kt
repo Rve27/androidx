@@ -62,6 +62,7 @@ object IntrospectionHelper {
             const val INVENTORY = "INVENTORY"
             const val INVOKER = "INVOKER"
             const val FUNCTION = "FUNCTION"
+            const val SCHEMA_DEFINITION = "SCHEMA_DEFINITION"
         }
     }
 

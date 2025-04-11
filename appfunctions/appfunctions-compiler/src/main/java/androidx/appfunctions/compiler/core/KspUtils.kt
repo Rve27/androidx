@@ -18,7 +18,7 @@ package androidx.appfunctions.compiler.core
 
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSName
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeArgument
@@ -45,11 +45,11 @@ fun KSTypeParameter.toTypeVariableName(): TypeVariableName {
 }
 
 /**
- * Gets the qualified name from [KSFunctionDeclaration].
+ * Gets the qualified name from [KSDeclaration].
  *
  * @throws ProcessingException if unable to resolve qualified name.
  */
-fun KSFunctionDeclaration.ensureQualifiedName(): String {
+fun KSDeclaration.ensureQualifiedName(): String {
     return this.qualifiedName?.asString()
         ?: throw ProcessingException("Unable to resolve the qualified name", this)
 }

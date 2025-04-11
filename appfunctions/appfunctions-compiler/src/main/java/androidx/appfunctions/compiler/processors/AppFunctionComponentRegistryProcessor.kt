@@ -28,7 +28,13 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 
 /**
- * Generates the registry of all @AppFunction symbols for later aggregation processing.
+ * Generates the registry of all symbols that are needed for later aggregation processing.
+ *
+ * This includes
+ * * @AppFunction - The function declaration that are needed for generating the aggregated
+ *   inventory, invoker and function signature XML file.
+ * * @AppFunctionSchemaDefinition - The schema definition that are needed to generating a statically
+ *   mapped inventory to look up AppFunctionMetadata with schema key.
  *
  * For example, if there are two functions in the module "myLibrary":
  * ```
@@ -60,20 +66,27 @@ import com.google.devtools.ksp.symbol.KSAnnotated
  * public class `$Mylibrary_FunctionComponentRegistry`
  * ```
  *
- * **Important:** [androidx.appfunctions.compiler.processors.AppFunctionFunctionRegistryProcessor]
+ * **Important:** [androidx.appfunctions.compiler.processors.AppFunctionComponentRegistryProcessor]
  * will process exactly once for each compilation unit to generate a single registry for looking up
- * all AppFunctions within the compilation unit.
+ * all symbols that are needed for later processing within the compilation unit.
  */
-class AppFunctionFunctionRegistryProcessor(private val codeGenerator: CodeGenerator) :
+class AppFunctionComponentRegistryProcessor(private val codeGenerator: CodeGenerator) :
     SymbolProcessor {
 
     private var hasProcessed = false
 
-    @OptIn(KspExperimental::class)
     override fun process(resolver: Resolver): List<KSAnnotated> {
         if (hasProcessed) return emptyList()
         hasProcessed = true
 
+        generateFunctionComponentRegistry(resolver)
+        generateSchemaDefinitionComponentRegistry(resolver)
+
+        return emptyList()
+    }
+
+    @OptIn(KspExperimental::class)
+    private fun generateFunctionComponentRegistry(resolver: Resolver) {
         val annotatedAppFunctions =
             AppFunctionSymbolResolver(resolver).resolveAnnotatedAppFunctions()
         val functionComponents =
@@ -96,6 +109,25 @@ class AppFunctionFunctionRegistryProcessor(private val codeGenerator: CodeGenera
                 AppFunctionComponentRegistryAnnotation.Category.FUNCTION,
                 functionComponents
             )
-        return emptyList()
+    }
+
+    @OptIn(KspExperimental::class)
+    private fun generateSchemaDefinitionComponentRegistry(resolver: Resolver) {
+        val annotatedSchemaDefinitions =
+            AppFunctionSymbolResolver(resolver).resolveAnnotatedAppFunctionSchemaDefinitions()
+        val schemaDefinitionComponents =
+            annotatedSchemaDefinitions.map { annotatedSchemaDefinition ->
+                AppFunctionComponent(
+                    qualifiedName = annotatedSchemaDefinition.qualifiedName,
+                    sourceFiles = annotatedSchemaDefinition.getSourceFiles()
+                )
+            }
+
+        AppFunctionComponentRegistryGenerator(codeGenerator)
+            .generateRegistry(
+                resolver.getModuleName().asString(),
+                AppFunctionComponentRegistryAnnotation.Category.SCHEMA_DEFINITION,
+                schemaDefinitionComponents
+            )
     }
 }

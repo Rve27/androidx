@@ -775,6 +775,27 @@ class AppFunctionCompilerTest {
     }
 
     @Test
+    fun testGenerateSchemaDefinitionRegistry() {
+        val report =
+            compilationTestHelper.compileAll(
+                sourceFileNames =
+                    listOf(
+                        "NoteSchemaDefinitions.KT",
+                        "FakeSchemas.KT",
+                        "DiffPackageSerializable.KT",
+                        "DiffPackageSchemas.KT",
+                        "AnotherDiffPackageSerializable.KT",
+                    )
+            )
+
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName = "${'$'}Main_SchemaDefinitionComponentRegistry.kt",
+            goldenFileName = "${'$'}Main_SchemaDefinitionComponentRegistry.KT",
+        )
+    }
+
+    @Test
     fun testGenerateSchemaInventory() {
         compilationTestHelper.compileAll(sourceFileNames = listOf("NoteSchemaDefinitions.KT"))
 
