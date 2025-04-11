@@ -26,6 +26,7 @@ import androidx.appfunctions.compiler.processors.AppFunctionComponentRegistryPro
 import androidx.appfunctions.compiler.processors.AppFunctionIdProcessor
 import androidx.appfunctions.compiler.processors.AppFunctionInventoryProcessor
 import androidx.appfunctions.compiler.processors.AppFunctionInvokerProcessor
+import androidx.appfunctions.compiler.processors.AppFunctionSchemaInventoryProcessor
 import androidx.appfunctions.compiler.processors.AppFunctionSerializableProcessor
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
@@ -96,6 +97,8 @@ class AppFunctionCompiler(
                 AppFunctionSerializableProcessor(environment.codeGenerator, environment.logger)
             val aggregateProcessor =
                 AppFunctionAggregateProcessor(options, environment.codeGenerator)
+            val schemaInventoryProcessor =
+                AppFunctionSchemaInventoryProcessor(environment.codeGenerator, options)
             return AppFunctionCompiler(
                 listOf(
                     functionRegistryProcessor,
@@ -104,6 +107,7 @@ class AppFunctionCompiler(
                     invokerProcessor,
                     entityProcessor,
                     aggregateProcessor,
+                    schemaInventoryProcessor,
                 ),
                 environment.logger,
             )

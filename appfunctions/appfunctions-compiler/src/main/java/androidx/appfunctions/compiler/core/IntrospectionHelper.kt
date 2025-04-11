@@ -69,6 +69,8 @@ object IntrospectionHelper {
     // Classes
     val APP_FUNCTION_INVENTORY_CLASS =
         ClassName(APP_FUNCTIONS_INTERNAL_PACKAGE_NAME, "AppFunctionInventory")
+    val SCHEMA_APP_FUNCTION_INVENTORY_CLASS =
+        ClassName(APP_FUNCTIONS_INTERNAL_PACKAGE_NAME, "SchemaAppFunctionInventory")
     val APP_FUNCTION_METADATA_CLASS =
         ClassName(APP_FUNCTIONS_METADATA_PACKAGE_NAME, "CompileTimeAppFunctionMetadata")
     val APP_FUNCTION_FUNCTION_NOT_FOUND_EXCEPTION_CLASS =

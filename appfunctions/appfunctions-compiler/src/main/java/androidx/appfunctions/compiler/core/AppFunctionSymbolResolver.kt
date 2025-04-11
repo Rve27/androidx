@@ -215,6 +215,23 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
             }
     }
 
+    /** Gets all @AppFunctionSchemaDefinition from all modules. */
+    fun getAppFunctionSchemaDefinitionFromAllModules(): List<AnnotatedAppFunctionSchemaDefinition> {
+        return filterAppFunctionComponentQualifiedNames(
+                AppFunctionComponentRegistryAnnotation.Category.SCHEMA_DEFINITION
+            )
+            .map { componentName ->
+                val ksName = resolver.getKSNameFromString(componentName)
+                val classDeclaration =
+                    resolver.getClassDeclarationByName(ksName)
+                        ?: throw ProcessingException(
+                            "Unable to find KSClassDeclaration for ${ksName.asString()}",
+                            null
+                        )
+                AnnotatedAppFunctionSchemaDefinition(classDeclaration)
+            }
+    }
+
     @OptIn(KspExperimental::class)
     private fun filterAppFunctionComponentQualifiedNames(
         filterComponentCategory: String,

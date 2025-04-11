@@ -16,6 +16,11 @@
 
 package androidx.appfunctions.compiler.core
 
+import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSchemaDefinitionAnnotation
+import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionResponseMetadata
+import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
+import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
@@ -40,5 +45,45 @@ class AnnotatedAppFunctionSchemaDefinition(
                 add(containingFile)
             }
         }
+    }
+
+    // TODO(b/403525399): Reuse the logic from AnnotatedAppFunction to create metadata
+    /** Creates [CompileTimeAppFunctionMetadata] from @AppFunctionSchemaDefinition. */
+    fun createAppFunctionMetadata(): CompileTimeAppFunctionMetadata {
+        val annotation =
+            classDeclaration.annotations.findAnnotation(
+                AppFunctionSchemaDefinitionAnnotation.CLASS_NAME
+            )
+                ?: throw ProcessingException(
+                    "Class not annotated with @AppFunctionSchemaDefinition",
+                    classDeclaration
+                )
+
+        val schemaCategory =
+            annotation.requirePropertyValueOfType(
+                AppFunctionSchemaDefinitionAnnotation.PROPERTY_CATEGORY,
+                String::class,
+            )
+        val schemaName =
+            annotation.requirePropertyValueOfType(
+                AppFunctionSchemaDefinitionAnnotation.PROPERTY_NAME,
+                String::class,
+            )
+        val schemaVersion =
+            annotation
+                .requirePropertyValueOfType(
+                    AppFunctionSchemaDefinitionAnnotation.PROPERTY_VERSION,
+                    Int::class,
+                )
+                .toLong()
+
+        return CompileTimeAppFunctionMetadata(
+            id = "${schemaCategory}/${schemaName}/${schemaVersion}",
+            isEnabledByDefault = true,
+            schema = AppFunctionSchemaMetadata(schemaCategory, schemaName, schemaVersion),
+            parameters = emptyList(),
+            response =
+                AppFunctionResponseMetadata(AppFunctionReferenceTypeMetadata("placeholder", false)),
+        )
     }
 }

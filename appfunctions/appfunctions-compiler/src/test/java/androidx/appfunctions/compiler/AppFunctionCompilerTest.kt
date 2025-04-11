@@ -797,8 +797,16 @@ class AppFunctionCompilerTest {
 
     @Test
     fun testGenerateSchemaInventory() {
-        compilationTestHelper.compileAll(sourceFileNames = listOf("NoteSchemaDefinitions.KT"))
+        val report =
+            compilationTestHelper.compileAll(
+                sourceFileNames = listOf("NoteSchemaDefinitions.KT"),
+                processorOptions = mapOf("appfunctions:generateMetadataFromSchema" to "true")
+            )
 
-        // TODO(b/403525399): Examine test content
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName = "${'$'}SchemaAppFunctionInventory_Impl.kt",
+            goldenFileName = "${'$'}SchemaAppFunctionInventory_Impl.KT"
+        )
     }
 }
