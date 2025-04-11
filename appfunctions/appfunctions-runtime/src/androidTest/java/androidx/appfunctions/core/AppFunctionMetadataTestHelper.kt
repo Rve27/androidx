@@ -134,6 +134,9 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
         const val NOTES_SCHEMA_PRINT = "androidx.appfunctions.test#notesSchema_print"
         const val MEDIA_SCHEMA_PRINT = "androidx.appfunctions.test#mediaSchema_print"
         const val MEDIA_SCHEMA2_PRINT = "androidx.appfunctions.test#mediaSchema2_print"
+
+        const val ADDITIONAL_LEGACY_CREATE_NOTE =
+            "com.example.android.architecture.blueprints.todoapp#NoteFunctions_createNote"
     }
 
     object FunctionMetadata {
@@ -220,7 +223,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
             AppFunctionMetadata(
                 id = FunctionIds.MEDIA_SCHEMA2_PRINT,
                 packageName = "androidx.appfunctions.runtime.test",
-                isEnabled = true,
+                isEnabled = false,
                 schema = AppFunctionSchemaMetadata(category = "media", name = "print", version = 2),
                 parameters = emptyList(),
                 response =
@@ -286,6 +289,25 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                             )
                     ),
                 components = sharedComponents
+            )
+
+        val ADDITIONAL_LEGACY_CREATE_NOTE =
+            AppFunctionMetadata(
+                id = FunctionIds.ADDITIONAL_LEGACY_CREATE_NOTE,
+                packageName = "com.google.android.app.notes",
+                isEnabled = true,
+                schema =
+                    AppFunctionSchemaMetadata(
+                        category = "notes",
+                        name = "createNote",
+                        version = 1,
+                    ),
+                parameters = emptyList(),
+                response =
+                    AppFunctionResponseMetadata(
+                        AppFunctionReferenceTypeMetadata("test", isNullable = false)
+                    ),
+                components = AppFunctionComponentsMetadata(emptyMap())
             )
     }
 

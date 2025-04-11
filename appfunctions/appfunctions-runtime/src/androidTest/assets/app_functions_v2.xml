@@ -87,7 +87,7 @@
     <appfunction>
         <id>androidx.appfunctions.test#mediaSchema2_print</id>
         <function_id>androidx.appfunctions.test#mediaSchema2_print</function_id>
-        <enabled_by_default>true</enabled_by_default>
+        <enabled_by_default>false</enabled_by_default>
         <schemaName>print</schemaName>
         <schemaCategory>media</schemaCategory>
         <schemaVersion>2</schemaVersion>
