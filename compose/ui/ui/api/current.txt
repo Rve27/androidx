@@ -171,6 +171,10 @@ package androidx.compose.ui {
     method public static androidx.compose.ui.Modifier materializeModifier(androidx.compose.runtime.Composer, androidx.compose.ui.Modifier modifier);
   }
 
+  public final class KeepScreenOnKt {
+    method public static androidx.compose.ui.Modifier keepScreenOn(androidx.compose.ui.Modifier);
+  }
+
   @androidx.compose.runtime.Stable @kotlin.jvm.JvmDefaultWithCompatibility public interface Modifier {
     method public boolean all(kotlin.jvm.functions.Function1<? super androidx.compose.ui.Modifier.Element,java.lang.Boolean> predicate);
     method public boolean any(kotlin.jvm.functions.Function1<? super androidx.compose.ui.Modifier.Element,java.lang.Boolean> predicate);

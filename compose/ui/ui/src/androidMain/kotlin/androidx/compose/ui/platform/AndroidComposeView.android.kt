@@ -2899,6 +2899,18 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         }
     }
 
+    private var keepScreenOnCount = 0
+
+    override fun incrementKeepScreenOnCount() {
+        keepScreenOnCount++
+        view.keepScreenOn = keepScreenOnCount > 0
+    }
+
+    override fun decrementKeepScreenOnCount() {
+        keepScreenOnCount--
+        view.keepScreenOn = keepScreenOnCount > 0
+    }
+
     override val outOfFrameExecutor
         get() = if (isAttachedToWindow) this else null
 
