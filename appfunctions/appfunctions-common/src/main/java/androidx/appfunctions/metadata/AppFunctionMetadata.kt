@@ -181,8 +181,7 @@ public data class CompileTimeAppFunctionMetadata(
             schemaCategory = schema?.category,
             schemaVersion = schema?.version,
             parameters = parameters.map { it.toAppFunctionParameterMetadataDocument() },
-            response = response.toAppFunctionResponseMetadataDocument(),
-            components = components.toAppFunctionComponentsMetadataDocument()
+            response = response.toAppFunctionResponseMetadataDocument()
         )
     }
 }
@@ -213,6 +212,4 @@ public data class AppFunctionMetadataDocument(
     @Document.DocumentProperty public val parameters: List<AppFunctionParameterMetadataDocument>?,
     /** The response of the AppFunction. */
     @Document.DocumentProperty public val response: AppFunctionResponseMetadataDocument?,
-    /** The reusable components for the AppFunction. */
-    @Document.DocumentProperty public val components: AppFunctionComponentsMetadataDocument?,
 )
