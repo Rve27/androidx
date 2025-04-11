@@ -91,7 +91,7 @@ androidx {
     name = "Saved State Compose"
     type = SoftwareType.PUBLISHED_LIBRARY
     samples(project(":savedstate:savedstate-compose"))
-    inceptionYear = "2018"
+    inceptionYear = "2024"
     description = "Compose integration with Saved State"
     metalavaK2UastEnabled = false
 }
