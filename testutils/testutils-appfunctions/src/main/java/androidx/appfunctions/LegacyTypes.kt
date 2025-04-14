@@ -16,8 +16,12 @@
 
 package androidx.appfunctions
 
+import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appsearch.annotation.Document
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 
 @Document(name = "com.google.android.appfunctions.schema.common.v1.types.Attachment")
@@ -50,7 +54,15 @@ data class LegacyDateTime(
     @Document.DocumentProperty(required = true) val date: LegacyDate,
     /** The time. */
     @Document.DocumentProperty(required = true) val timeOfDay: LegacyTimeOfDay,
-)
+) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun toZonedDateTime(): ZonedDateTime =
+        ZonedDateTime.of(
+            LocalDate.of(date.year, date.month, date.day),
+            LocalTime.of(timeOfDay.hours, timeOfDay.minutes, timeOfDay.seconds, timeOfDay.nanos),
+            ZoneId.of(timeZone)
+        )
+}
 
 /** A date. */
 @Document(name = "com.google.android.appfunctions.schema.common.v1.types.Date")
