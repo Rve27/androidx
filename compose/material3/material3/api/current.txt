@@ -375,9 +375,9 @@ package androidx.compose.material3 {
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public interface ButtonGroupScope {
     method public androidx.compose.ui.Modifier animateWidth(androidx.compose.ui.Modifier, androidx.compose.foundation.interaction.InteractionSource interactionSource);
-    method public void clickableItem(kotlin.jvm.functions.Function0<kotlin.Unit> onClick, String label, optional androidx.compose.ui.Modifier modifier, optional androidx.compose.foundation.interaction.MutableInteractionSource interactionSource, optional kotlin.jvm.functions.Function0<kotlin.Unit>? icon, optional boolean enabled);
+    method public void clickableItem(kotlin.jvm.functions.Function0<kotlin.Unit> onClick, String label, optional kotlin.jvm.functions.Function0<kotlin.Unit>? icon, optional float weight, optional boolean enabled);
     method public void customItem(kotlin.jvm.functions.Function0<kotlin.Unit> buttonGroupContent, kotlin.jvm.functions.Function1<? super androidx.compose.material3.ButtonGroupMenuState,kotlin.Unit> menuContent);
-    method public void toggleableItem(boolean checked, String label, kotlin.jvm.functions.Function1<? super java.lang.Boolean,kotlin.Unit> onCheckedChange, optional androidx.compose.ui.Modifier modifier, optional androidx.compose.foundation.interaction.MutableInteractionSource interactionSource, optional kotlin.jvm.functions.Function0<kotlin.Unit>? icon, optional boolean enabled);
+    method public void toggleableItem(boolean checked, String label, kotlin.jvm.functions.Function1<? super java.lang.Boolean,kotlin.Unit> onCheckedChange, optional kotlin.jvm.functions.Function0<kotlin.Unit>? icon, optional float weight, optional boolean enabled);
     method public androidx.compose.ui.Modifier weight(androidx.compose.ui.Modifier, @FloatRange(from=0.0, fromInclusive=false) float weight);
     method @Deprecated public androidx.compose.ui.Modifier weight(androidx.compose.ui.Modifier, @FloatRange(from=0.0, fromInclusive=false) float weight, optional boolean fill);
   }
