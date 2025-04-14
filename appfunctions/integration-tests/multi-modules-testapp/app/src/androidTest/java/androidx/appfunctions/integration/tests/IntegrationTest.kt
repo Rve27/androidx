@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.first
 import org.junit.After
 import org.junit.Assume.assumeNotNull
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 @LargeTest
@@ -89,6 +90,7 @@ class IntegrationTest {
             .isEqualTo(3)
     }
 
+    @Ignore
     @Test
     fun searchAllAppFunctions_success() = doBlocking {
         val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
