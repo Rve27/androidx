@@ -36,7 +36,8 @@ internal object EventTranslator {
             description = legacyEvent.getString("description"),
             startsAt = DateTimeTranslator.upgradeToInstant(legacyStateDate),
             endsAt = DateTimeTranslator.upgradeToInstant(legacyEndDate),
-            timeZone = ZoneId.of(timeZone),
+            startTimeZone = ZoneId.of(timeZone),
+            endTimeZone = ZoneId.of(timeZone),
             isAllDay = legacyEvent.getBoolean("allDay"),
             location = legacyEvent.getString("location"),
             recurrenceSchedule = legacyEvent.getString("recurrenceSchedule"),
@@ -57,13 +58,13 @@ internal object EventTranslator {
             .setString("title", event.title)
             .setAppFunctionData(
                 "startDate",
-                DateTimeTranslator.downgradeToDateTime(event.startsAt, event.timeZone)
+                DateTimeTranslator.downgradeToDateTime(event.startsAt, event.startTimeZone)
             )
             .setAppFunctionData(
                 "endDate",
-                DateTimeTranslator.downgradeToDateTime(event.endsAt, event.timeZone)
+                DateTimeTranslator.downgradeToDateTime(event.endsAt, event.endTimeZone)
             )
-            .setString("timeZone", event.timeZone.id)
+            .setString("timeZone", event.startTimeZone.id)
             .setBoolean("allDay", event.isAllDay)
             .setBoolean("isReadOnly", event.isReadOnly)
             .setBoolean("isInPublicCalendar", event.isInPublicCalendar)
