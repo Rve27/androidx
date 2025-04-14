@@ -529,7 +529,7 @@ private class NonAdaptiveButtonGroupMeasurePolicy(
 }
 
 private class ButtonGroupMeasurePolicy(
-    val overflowState: OverflowState,
+    val overflowState: ButtonGroupOverflowState,
     val horizontalArrangement: Arrangement.Horizontal,
     val expandedRatio: Float
 ) : MultiContentMeasurePolicy {
@@ -1111,7 +1111,7 @@ internal class CustomButtonGroupItem(
 }
 
 /** State containing information about the overflow in an [ButtonGroup]. */
-internal interface OverflowState {
+private interface ButtonGroupOverflowState {
     /**
      * The total number of items available to show in the [ButtonGroup]'s `content` lambda. This
      * includes items that may not be displayed. This does not include the overflow indicator.
@@ -1124,12 +1124,12 @@ internal interface OverflowState {
 
 /** Remembers and saves the state of the overflow in an [ButtonGroup]. */
 @Composable
-internal fun rememberOverflowState(): OverflowState {
+private fun rememberOverflowState(): ButtonGroupOverflowState {
     return rememberSaveable(saver = OverflowStateImpl.Saver) { OverflowStateImpl() }
 }
 
-/** Implementation of [OverflowState]. */
-private class OverflowStateImpl : OverflowState {
+/** Implementation of [ButtonGroupOverflowState]. */
+private class OverflowStateImpl : ButtonGroupOverflowState {
     override var totalItemCount: Int by mutableIntStateOf(0)
     override var visibleItemCount: Int by mutableIntStateOf(0)
 
