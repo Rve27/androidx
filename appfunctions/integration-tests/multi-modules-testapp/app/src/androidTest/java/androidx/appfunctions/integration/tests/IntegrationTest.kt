@@ -24,6 +24,7 @@ import androidx.appfunctions.AppFunctionManagerCompat
 import androidx.appfunctions.AppFunctionSearchSpec
 import androidx.appfunctions.ExecuteAppFunctionRequest
 import androidx.appfunctions.ExecuteAppFunctionResponse
+import androidx.appfunctions.integration.tests.AppSearchMetadataHelper.isDynamicIndexerAvailable
 import androidx.appfunctions.integration.tests.TestUtil.doBlocking
 import androidx.appfunctions.integration.tests.TestUtil.retryAssert
 import androidx.test.filters.LargeTest
@@ -34,8 +35,8 @@ import kotlin.test.assertIs
 import kotlinx.coroutines.flow.first
 import org.junit.After
 import org.junit.Assume.assumeNotNull
+import org.junit.Assume.assumeTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 @LargeTest
@@ -90,9 +91,10 @@ class IntegrationTest {
             .isEqualTo(3)
     }
 
-    @Ignore
+    // TODO: b/410548653 - Add proper tests for query API
     @Test
     fun searchAllAppFunctions_success() = doBlocking {
+        assumeTrue(isDynamicIndexerAvailable(context))
         val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
         // Total number of serializable types used as an appfunction parameter or return value in
         // the set of appfunctions defined by this integration test.
