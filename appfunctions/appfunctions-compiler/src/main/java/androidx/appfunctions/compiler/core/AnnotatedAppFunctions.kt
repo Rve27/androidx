@@ -54,6 +54,7 @@ data class AnnotatedAppFunctions(
         }
     }
 
+    // TODO(b/410746104): Re-evaluate the validation pipeline.
     /**
      * Validates if the AppFunction implementation is valid.
      *
