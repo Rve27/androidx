@@ -28,6 +28,7 @@ import static android.hardware.camera2.CameraMetadata.SENSOR_INFO_TIMESTAMP_SOUR
 import static androidx.camera.camera2.internal.ZslUtil.isCapabilitySupported;
 
 import android.annotation.SuppressLint;
+import android.graphics.Rect;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraMetadata;
 import android.os.Build;
@@ -545,6 +546,16 @@ public final class Camera2CameraInfoImpl implements CameraInfoInternal {
             Logger.w(TAG, "Can't get high speed resolutions for " + fpsRange, e);
         }
         return sizes != null ? Arrays.asList(sizes) : Collections.emptyList();
+    }
+
+    @Override
+    public @NonNull Rect getSensorRect() {
+        Rect sensorRect = mCameraCharacteristicsCompat.get(
+                CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE);
+        if ("robolectric".equals(Build.FINGERPRINT) && sensorRect == null) {
+            return new Rect(0, 0, 4000, 3000);
+        }
+        return Preconditions.checkNotNull(sensorRect);
     }
 
     @Override

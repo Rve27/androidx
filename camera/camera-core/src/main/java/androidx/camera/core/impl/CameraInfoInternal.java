@@ -18,6 +18,7 @@ package androidx.camera.core.impl;
 
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.hardware.camera2.CaptureRequest;
 import android.util.Range;
 import android.util.Size;
@@ -156,6 +157,12 @@ public interface CameraInfoInternal extends CameraInfo {
      */
     @NonNull
     List<Size> getSupportedHighSpeedResolutionsFor(@NonNull Range<Integer> fpsRange);
+
+    /**
+     * Gets the full sensor rect.
+     */
+    @NonNull
+    Rect getSensorRect();
 
     /**
      * Returns if preview stabilization is supported on the device.

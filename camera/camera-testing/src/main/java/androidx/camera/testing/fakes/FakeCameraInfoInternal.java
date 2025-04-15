@@ -17,8 +17,10 @@
 package androidx.camera.testing.fakes;
 
 import static androidx.camera.core.DynamicRange.SDR;
+import static androidx.camera.testing.impl.fakes.FakeCameraDeviceSurfaceManager.MAX_OUTPUT_SIZE;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraManager;
 import android.util.Range;
@@ -45,6 +47,7 @@ import androidx.camera.core.impl.Quirks;
 import androidx.camera.core.impl.Timebase;
 import androidx.camera.core.impl.utils.CameraOrientationUtil;
 import androidx.camera.core.internal.ImmutableZoomState;
+import androidx.camera.testing.impl.fakes.FakeCameraDeviceSurfaceManager;
 import androidx.core.util.Preconditions;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -330,6 +333,16 @@ public final class FakeCameraInfoInternal implements CameraInfoInternal {
     public List<Size> getSupportedHighSpeedResolutionsFor(@NonNull Range<Integer> fpsRange) {
         List<Size> resolutions = mSupportedHighSpeedFpsToSizeMap.get(fpsRange);
         return resolutions != null ? resolutions : Collections.emptyList();
+    }
+
+    /**
+     * Returns a {@link Rect} corresponding to
+     * {@link FakeCameraDeviceSurfaceManager#MAX_OUTPUT_SIZE}.
+     */
+    @Override
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public @NonNull Rect getSensorRect() {
+        return new Rect(0, 0, MAX_OUTPUT_SIZE.getWidth(), MAX_OUTPUT_SIZE.getHeight());
     }
 
     /**

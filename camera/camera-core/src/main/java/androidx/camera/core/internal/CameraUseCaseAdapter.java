@@ -823,7 +823,7 @@ public final class CameraUseCaseAdapter implements Camera {
             Map<UseCaseConfig<?>, List<Size>> configToSupportedSizesMap = new HashMap<>();
             Rect sensorRect;
             try {
-                sensorRect = mCameraInternal.getCameraControlInternal().getSensorRect();
+                sensorRect = mCameraInternal.getCameraInfoInternal().getSensorRect();
             } catch (NullPointerException e) {
                 // TODO(b/274531208): Remove the unnecessary SENSOR_INFO_ACTIVE_ARRAY_SIZE NPE
                 //  check related code only which is used for robolectric tests
@@ -931,7 +931,7 @@ public final class CameraUseCaseAdapter implements Camera {
                 }
                 // Calculate crop rect if view port is provided.
                 Map<UseCase, Rect> cropRectMap = ViewPorts.calculateViewPortRects(
-                        mCameraInternal.getCameraControlInternal().getSensorRect(),
+                        mCameraInternal.getCameraInfoInternal().getSensorRect(),
                         isFrontCamera,
                         mViewPort.getAspectRatio(),
                         mCameraInternal.getCameraInfoInternal().getSensorRotationDegrees(
@@ -950,7 +950,7 @@ public final class CameraUseCaseAdapter implements Camera {
             for (UseCase useCase : useCases) {
                 useCase.setSensorToBufferTransformMatrix(
                         calculateSensorToBufferTransformMatrix(
-                                mCameraInternal.getCameraControlInternal().getSensorRect(),
+                                mCameraInternal.getCameraInfoInternal().getSensorRect(),
                                 Preconditions.checkNotNull(
                                         suggestedStreamSpecMap.get(useCase)).getResolution()));
             }

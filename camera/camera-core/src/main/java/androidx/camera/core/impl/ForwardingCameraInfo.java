@@ -16,6 +16,7 @@
 
 package androidx.camera.core.impl;
 
+import android.graphics.Rect;
 import android.util.Range;
 import android.util.Size;
 
@@ -229,6 +230,11 @@ public class ForwardingCameraInfo implements CameraInfoInternal {
     @Override
     public @NonNull List<Size> getSupportedHighSpeedResolutionsFor(@NonNull Range<Integer> fpsRange) {
         return mCameraInfoInternal.getSupportedHighSpeedResolutionsFor(fpsRange);
+    }
+
+    @Override
+    public @NonNull Rect getSensorRect() {
+        return mCameraInfoInternal.getSensorRect();
     }
 
     @Override

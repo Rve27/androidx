@@ -17,6 +17,7 @@
 package androidx.camera.camera2.pipe.integration.adapter
 
 import android.annotation.SuppressLint
+import android.graphics.Rect
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_ON
 import android.hardware.camera2.CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_PREVIEW_STABILIZATION
@@ -304,6 +305,15 @@ constructor(
                 streamConfigurationMapCompat.getHighSpeedVideoSizesFor(fpsRange)?.toList()
             }
             .getOrNull() ?: emptyList()
+    }
+
+    override fun getSensorRect(): Rect {
+        val sensorRect =
+            cameraProperties.metadata[CameraCharacteristics.SENSOR_INFO_ACTIVE_ARRAY_SIZE]
+        if ("robolectric" == Build.FINGERPRINT && sensorRect == null) {
+            return Rect(0, 0, 4000, 3000)
+        }
+        return sensorRect!!
     }
 
     override fun querySupportedDynamicRanges(
