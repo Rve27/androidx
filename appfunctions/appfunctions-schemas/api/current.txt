@@ -431,6 +431,75 @@ package androidx.appfunctions.schema.notes {
 
 }
 
+package androidx.appfunctions.schema.tasks {
+
+  public interface AppFunctionTask {
+    method public default String? getDescription();
+    method public String getId();
+    method public androidx.appfunctions.schema.tasks.AppFunctionTask.Schedule? getSchedule();
+    method public String getStatus();
+    method public String getTitle();
+    property public default String? description;
+    property public abstract String id;
+    property public abstract androidx.appfunctions.schema.tasks.AppFunctionTask.Schedule? schedule;
+    property public abstract String status;
+    property public abstract String title;
+    field public static final androidx.appfunctions.schema.tasks.AppFunctionTask.Companion Companion;
+    field public static final String STATUS_COMPLETED = "COMPLETED";
+    field public static final String STATUS_PENDING = "PENDING";
+  }
+
+  public static final class AppFunctionTask.Companion {
+    property public static String STATUS_COMPLETED;
+    property public static String STATUS_PENDING;
+    field public static final String STATUS_COMPLETED = "COMPLETED";
+    field public static final String STATUS_PENDING = "PENDING";
+  }
+
+  public static interface AppFunctionTask.Schedule {
+    method public java.time.Instant getInstant();
+    method public default String? getRecurrenceSchedule();
+    method public java.time.ZoneId getTimeZone();
+    method public default boolean isAllDay();
+    property public abstract java.time.Instant instant;
+    property public default boolean isAllDay;
+    property public default String? recurrenceSchedule;
+    property public abstract java.time.ZoneId timeZone;
+  }
+
+  public interface CreateTaskAppFunction<Parameters extends androidx.appfunctions.schema.tasks.CreateTaskAppFunction.Parameters, Response extends androidx.appfunctions.schema.tasks.CreateTaskAppFunction.Response> {
+    method public suspend Object? createTask(androidx.appfunctions.AppFunctionContext appFunctionContext, Parameters parameters, kotlin.coroutines.Continuation<? super Response>);
+    field public static final androidx.appfunctions.schema.tasks.CreateTaskAppFunction.Companion Companion;
+  }
+
+  public static final class CreateTaskAppFunction.Companion {
+  }
+
+  public static interface CreateTaskAppFunction.Parameters {
+    method public default String? getDescription();
+    method public default String? getExternalUuid();
+    method public androidx.appfunctions.schema.tasks.AppFunctionTask.Schedule? getSchedule();
+    method public String getStatus();
+    method public String getTitle();
+    property public default String? description;
+    property public default String? externalUuid;
+    property public abstract androidx.appfunctions.schema.tasks.AppFunctionTask.Schedule? schedule;
+    property public abstract String status;
+    property public abstract String title;
+  }
+
+  public static interface CreateTaskAppFunction.Response {
+    method public androidx.appfunctions.schema.tasks.AppFunctionTask getCreatedTask();
+    property public abstract androidx.appfunctions.schema.tasks.AppFunctionTask createdTask;
+  }
+
+  public final class TasksKt {
+    property public static String APP_FUNCTION_SCHEMA_CATEGORY_TASKS;
+    field public static final String APP_FUNCTION_SCHEMA_CATEGORY_TASKS = "tasks";
+  }
+
+}
+
 package androidx.appfunctions.schema.types {
 
   @androidx.appfunctions.AppFunctionSerializable public final class SetField<T> {
