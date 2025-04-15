@@ -103,6 +103,7 @@ MEDIAROUTER = "1.8.0-alpha04"
 METRICS = "1.0.0-beta02"
 NAVIGATION = "2.9.0-rc01"
 NAVIGATION3 = "0.1.0-dev01"
+NAVIGATIONEVENT = "1.0.0-alpha01"
 PAGING = "3.4.0-alpha01"
 PALETTE = "1.1.0-alpha01"
 PDF = "1.0.0-alpha09"
@@ -267,6 +268,7 @@ MEDIAROUTER = { group = "androidx.mediarouter", atomicGroupVersion = "versions.M
 METRICS = { group = "androidx.metrics", atomicGroupVersion = "versions.METRICS" }
 NAVIGATION = { group = "androidx.navigation", atomicGroupVersion = "versions.NAVIGATION" }
 NAVIGATION3 = { group = "androidx.navigation3", atomicGroupVersion = "versions.NAVIGATION3" }
+NAVIGATIONEVENT = { group = "androidx.navigationevent", atomicGroupVersion = "versions.NAVIGATIONEVENT" }
 PAGING = { group = "androidx.paging", atomicGroupVersion = "versions.PAGING" }
 PALETTE = { group = "androidx.palette", atomicGroupVersion = "versions.PALETTE" }
 PDF = { group = "androidx.pdf", atomicGroupVersion = "versions.PDF" }
