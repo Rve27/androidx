@@ -61,15 +61,14 @@ object SharedUiAdapterFactory {
     @ExperimentalFeatures.SharedUiPresentationApi
     fun createFromCoreLibInfo(coreLibInfo: Bundle): SharedUiAdapter {
         val uiAdapterBinder = uiAdapterFactoryDelegate.requireNotNullAdapterBinder(coreLibInfo)
-        val adapterInterface = ISharedUiAdapter.Stub.asInterface(uiAdapterBinder)
 
         return if (
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
                 !uiAdapterFactoryDelegate.shouldUseLocalAdapter(coreLibInfo)
         ) {
-            RemoteAdapter(adapterInterface)
+            RemoteAdapter(coreLibInfo)
         } else {
-            LocalAdapter(adapterInterface)
+            LocalAdapter(coreLibInfo)
         }
     }
 
@@ -78,8 +77,10 @@ object SharedUiAdapterFactory {
      * different class loader.
      */
     @SuppressLint("BanUncheckedReflection") // using reflection on library classes
-    private class LocalAdapter(adapterInterface: ISharedUiAdapter) : SharedUiAdapter {
-        private val uiProviderBinder = adapterInterface.asBinder()
+    private class LocalAdapter(adapterBundle: Bundle) :
+        SharedUiAdapter, ClientAdapter(adapterBundle) {
+        private val uiProviderBinder =
+            uiAdapterFactoryDelegate.requireNotNullAdapterBinder(adapterBundle)
 
         private val targetSharedSessionClientClass =
             Class.forName(
@@ -164,7 +165,11 @@ object SharedUiAdapterFactory {
      * [RemoteAdapter] maintains a shared session with a UI provider living in a different process.
      */
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    private class RemoteAdapter(private val adapterInterface: ISharedUiAdapter) : SharedUiAdapter {
+    private class RemoteAdapter(adapterBundle: Bundle) :
+        SharedUiAdapter, ClientAdapter(adapterBundle) {
+        val uiAdapterBinder = uiAdapterFactoryDelegate.requireNotNullAdapterBinder(adapterBundle)
+        val adapterInterface: ISharedUiAdapter = ISharedUiAdapter.Stub.asInterface(uiAdapterBinder)
+
         override fun openSession(clientExecutor: Executor, client: SharedUiAdapter.SessionClient) {
             tryToCallRemoteObject(adapterInterface) {
                 this.openRemoteSession(RemoteSharedUiSessionClient(client, clientExecutor))

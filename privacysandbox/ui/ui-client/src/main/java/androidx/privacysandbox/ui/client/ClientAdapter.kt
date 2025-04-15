@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.core
+package androidx.privacysandbox.ui.client
 
 import android.os.Bundle
 import androidx.annotation.RestrictTo
+import androidx.privacysandbox.ui.core.ClientAdapterWrapper
 
-/**
- * Interface implemented by client side UI adapters. This interface provides the underlying Bundle
- * of the various UI adapters.
- */
+/** ui-client implementation of the interface for client side UI adapters. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-interface ClientAdapterWrapper {
-    /** Provides the underlying Bundle with which the client side UI adapter was created. */
-    fun getSourceBundle(): Bundle
+open class ClientAdapter(val adapterBundle: Bundle) : ClientAdapterWrapper {
+    override fun getSourceBundle(): Bundle = adapterBundle
 }
