@@ -377,13 +377,15 @@ internal constructor(
 }
 
 /**
- * A Compose compiler plugin API. DO NOT call directly.
+ * A Compose compiler plugin API. DO NOT call directly. Use [movableContentOf] instead.
  *
  * An instance used to track the identity of the movable content. Using a holder object allows
  * creating unique movable content instances from the same instance of a lambda. This avoids using
  * the identity of a lambda instance as it can be merged into a singleton or merged by later
  * rewritings and using its identity might lead to unpredictable results that might change from the
  * debug and release builds.
+ *
+ * @see movableContentOf
  */
 @InternalComposeApi class MovableContent<P>(val content: @Composable (parameter: P) -> Unit)
 
