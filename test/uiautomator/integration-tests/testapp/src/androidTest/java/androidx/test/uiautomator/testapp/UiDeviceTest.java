@@ -16,14 +16,18 @@
 
 package androidx.test.uiautomator.testapp;
 
+import static android.content.pm.PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.os.Build;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.widget.TextView;
@@ -253,7 +257,7 @@ public class UiDeviceTest extends BaseTest {
         mDevice.pressKeyCodes(new int[]{KeyEvent.KEYCODE_Z,
                 KeyEvent.KEYCODE_SHIFT_LEFT});
         assertTrue(textView.wait(Until.textEquals(
-                "keycode Z pressed; keycode shift left pressed; with meta shift left on; "),
+                        "keycode Z pressed; keycode shift left pressed; with meta shift left on; "),
                 TIMEOUT_MS));
     }
 
@@ -264,13 +268,21 @@ public class UiDeviceTest extends BaseTest {
         UiObject2 textView = mDevice.findObject(By.res(TEST_APP, "text_view"));
         mDevice.pressKeyCodes(new int[]{KeyEvent.KEYCODE_SHIFT_LEFT, KeyEvent.KEYCODE_Z});
         assertTrue(textView.wait(Until.textEquals(
-                "keycode shift left pressed; with meta shift left on; keycode Z pressed;"
-                        + " with meta shift left on; "),
+                        "keycode shift left pressed; with meta shift left on; keycode Z pressed;"
+                                + " with meta shift left on; "),
                 TIMEOUT_MS));
     }
 
+    boolean isDesktopWindowing() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+                && InstrumentationRegistry.getInstrumentation().getContext().getPackageManager()
+                .hasSystemFeature(FEATURE_FREEFORM_WINDOW_MANAGEMENT);
+    }
+
     @Test
+    @SdkSuppress(minSdkVersion = 24) // required for multi-window
     public void testPressRecentApps() throws Exception {
+        assumeFalse("The app title is in the header in desktop mode", isDesktopWindowing());
         launchTestActivity(MainActivity.class);
 
         // Test app appears in the "Recent Apps" screen after pressing button (may need to wait
