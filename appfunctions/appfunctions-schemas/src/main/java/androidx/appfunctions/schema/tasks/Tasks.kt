@@ -19,6 +19,7 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import androidx.annotation.StringDef
 import androidx.appfunctions.AppFunctionContext
+import androidx.appfunctions.AppFunctionOpenable
 import androidx.appfunctions.AppFunctionSchemaDefinition
 import androidx.appfunctions.schema.tasks.AppFunctionTask.Schedule
 import java.time.Instant
@@ -33,6 +34,66 @@ import java.time.ZoneId
  * [androidx.appfunctions.AppFunctionSearchSpec.schemaCategory].
  */
 public const val APP_FUNCTION_SCHEMA_CATEGORY_TASKS: String = "tasks"
+
+/** Finds tasks matching the given parameters. */
+@AppFunctionSchemaDefinition(
+    name = "findTasks",
+    version = FindTasksAppFunction.SCHEMA_VERSION,
+    category = APP_FUNCTION_SCHEMA_CATEGORY_TASKS
+)
+public interface FindTasksAppFunction<
+    Parameters : FindTasksAppFunction.Parameters,
+    Response : FindTasksAppFunction.Response
+> {
+    /**
+     * Finds tasks matching the given parameters.
+     *
+     * @param appFunctionContext The AppFunction execution context.
+     * @param parameters The parameters for finding tasks.
+     * @return The response including a list of tasks that match the parameters.
+     */
+    public suspend fun findTasks(
+        appFunctionContext: AppFunctionContext,
+        parameters: Parameters,
+    ): Response
+
+    /** The parameters for finding tasks. */
+    public interface Parameters {
+        /**
+         * The search query to be processed. A null value means to query all tasks with the
+         * remaining parameters.
+         *
+         * This parameter is analogous to the caller typing a query into a search box. The app
+         * providing the app function has full control over how the query is interpreted and
+         * processed; for example by name matching or semantic analysis.
+         */
+        public val query: String?
+            get() = null
+
+        /** The status of the task. */
+        @TaskStatus
+        public val status: String?
+            get() = null
+
+        /** The lower bound (inclusive) of the [AppFunctionTask.schedule] time. */
+        public val scheduledAfter: Instant?
+            get() = null
+
+        /** The upper bound (exclusive) of the [AppFunctionTask.schedule] time. */
+        public val scheduledBefore: Instant?
+            get() = null
+    }
+
+    /** The response including the list of tasks that match the parameters. */
+    public interface Response {
+        public val tasks: List<AppFunctionTask>
+    }
+
+    public companion object {
+        /** Current schema version. */
+        @RestrictTo(LIBRARY_GROUP) internal const val SCHEMA_VERSION: Int = 2
+    }
+}
 
 /** Creates an [AppFunctionTask]. */
 @AppFunctionSchemaDefinition(
@@ -95,6 +156,56 @@ public interface CreateTaskAppFunction<
         /** The created task. */
         public val createdTask: AppFunctionTask
     }
+
+    public companion object {
+        /** Current schema version. */
+        @RestrictTo(LIBRARY_GROUP) internal const val SCHEMA_VERSION: Int = 2
+    }
+}
+
+/**
+ * Shows the task.
+ *
+ * @param Parameters The parameters of the task to show.
+ * @param Response The response including the [AppFunctionOpenable] to show the task.
+ */
+@AppFunctionSchemaDefinition(
+    name = "showTask",
+    version = ShowTaskAppFunction.SCHEMA_VERSION,
+    category = APP_FUNCTION_SCHEMA_CATEGORY_TASKS
+)
+public interface ShowTaskAppFunction<
+    Parameters : ShowTaskAppFunction.Parameters,
+    Response : ShowTaskAppFunction.Response
+> {
+    /**
+     * Shows the task.
+     *
+     * The implementing app should throw an appropriate subclass of
+     * [androidx.appfunctions.AppFunctionException] in exceptional cases.
+     *
+     * @param appFunctionContext The AppFunction execution context.
+     * @param parameters The params of the task to show.
+     * @return The response including the intent to show the task.
+     */
+    public suspend fun showTask(
+        appFunctionContext: AppFunctionContext,
+        parameters: Parameters
+    ): Response
+
+    /** The parameters for [showTask]. */
+    public interface Parameters {
+        /**
+         * The [AppFunctionTask.id] of the task to show.
+         *
+         * [androidx.appfunctions.AppFunctionElementNotFoundException] should be thrown when a task
+         * with the specified taskId doesn't exist.
+         */
+        public val taskId: String
+    }
+
+    /** The [AppFunctionOpenable] response for [showTask]. */
+    public interface Response : AppFunctionOpenable
 
     public companion object {
         /** Current schema version. */

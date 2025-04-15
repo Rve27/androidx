@@ -493,6 +493,46 @@ package androidx.appfunctions.schema.tasks {
     property public abstract androidx.appfunctions.schema.tasks.AppFunctionTask createdTask;
   }
 
+  public interface FindTasksAppFunction<Parameters extends androidx.appfunctions.schema.tasks.FindTasksAppFunction.Parameters, Response extends androidx.appfunctions.schema.tasks.FindTasksAppFunction.Response> {
+    method public suspend Object? findTasks(androidx.appfunctions.AppFunctionContext appFunctionContext, Parameters parameters, kotlin.coroutines.Continuation<? super Response>);
+    field public static final androidx.appfunctions.schema.tasks.FindTasksAppFunction.Companion Companion;
+  }
+
+  public static final class FindTasksAppFunction.Companion {
+  }
+
+  public static interface FindTasksAppFunction.Parameters {
+    method public default String? getQuery();
+    method public default java.time.Instant? getScheduledAfter();
+    method public default java.time.Instant? getScheduledBefore();
+    method public default String? getStatus();
+    property public default String? query;
+    property public default java.time.Instant? scheduledAfter;
+    property public default java.time.Instant? scheduledBefore;
+    property public default String? status;
+  }
+
+  public static interface FindTasksAppFunction.Response {
+    method public java.util.List<androidx.appfunctions.schema.tasks.AppFunctionTask> getTasks();
+    property public abstract java.util.List<androidx.appfunctions.schema.tasks.AppFunctionTask> tasks;
+  }
+
+  public interface ShowTaskAppFunction<Parameters extends androidx.appfunctions.schema.tasks.ShowTaskAppFunction.Parameters, Response extends androidx.appfunctions.schema.tasks.ShowTaskAppFunction.Response> {
+    method public suspend Object? showTask(androidx.appfunctions.AppFunctionContext appFunctionContext, Parameters parameters, kotlin.coroutines.Continuation<? super Response>);
+    field public static final androidx.appfunctions.schema.tasks.ShowTaskAppFunction.Companion Companion;
+  }
+
+  public static final class ShowTaskAppFunction.Companion {
+  }
+
+  public static interface ShowTaskAppFunction.Parameters {
+    method public String getTaskId();
+    property public abstract String taskId;
+  }
+
+  public static interface ShowTaskAppFunction.Response extends androidx.appfunctions.AppFunctionOpenable {
+  }
+
   public final class TasksKt {
     property public static String APP_FUNCTION_SCHEMA_CATEGORY_TASKS;
     field public static final String APP_FUNCTION_SCHEMA_CATEGORY_TASKS = "tasks";
