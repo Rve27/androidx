@@ -68,7 +68,7 @@ actual constructor(public actual val navigatorName: String) {
             return true
         }
 
-        override fun compareTo(other: DeepLinkMatch): Int {
+        actual override fun compareTo(other: DeepLinkMatch): Int {
             // Prefer exact deep links
             if (isExactDeepLink && !other.isExactDeepLink) {
                 return 1
