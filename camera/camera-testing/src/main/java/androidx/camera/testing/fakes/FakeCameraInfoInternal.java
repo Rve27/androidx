@@ -17,6 +17,7 @@
 package androidx.camera.testing.fakes;
 
 import static androidx.camera.core.DynamicRange.SDR;
+import static androidx.camera.core.internal.StreamSpecsCalculator.NO_OP_STREAM_SPECS_CALCULATOR;
 import static androidx.camera.testing.impl.fakes.FakeCameraDeviceSurfaceManager.MAX_OUTPUT_SIZE;
 
 import android.content.Context;
@@ -36,6 +37,7 @@ import androidx.camera.core.DynamicRange;
 import androidx.camera.core.ExposureState;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.TorchState;
+import androidx.camera.core.UseCase;
 import androidx.camera.core.ZoomState;
 import androidx.camera.core.impl.CameraCaptureCallback;
 import androidx.camera.core.impl.CameraInfoInternal;
@@ -47,6 +49,7 @@ import androidx.camera.core.impl.Quirks;
 import androidx.camera.core.impl.Timebase;
 import androidx.camera.core.impl.utils.CameraOrientationUtil;
 import androidx.camera.core.internal.ImmutableZoomState;
+import androidx.camera.core.internal.StreamSpecsCalculator;
 import androidx.camera.testing.impl.fakes.FakeCameraDeviceSurfaceManager;
 import androidx.core.util.Preconditions;
 import androidx.lifecycle.LiveData;
@@ -112,8 +115,16 @@ public final class FakeCameraInfoInternal implements CameraInfoInternal {
 
     private @Nullable CameraManager mCameraManager;
 
+    private final @NonNull StreamSpecsCalculator mStreamSpecsCalculator;
+
     public FakeCameraInfoInternal() {
         this(/*sensorRotation=*/ 0, /*lensFacing=*/ CameraSelector.LENS_FACING_BACK);
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public FakeCameraInfoInternal(@NonNull StreamSpecsCalculator streamSpecsCalculator) {
+        this(/*cameraId=*/ "0", /*sensorRotation=*/ 0, CameraSelector.LENS_FACING_BACK,
+                ApplicationProvider.getApplicationContext(), streamSpecsCalculator);
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -148,11 +159,19 @@ public final class FakeCameraInfoInternal implements CameraInfoInternal {
     public FakeCameraInfoInternal(@NonNull String cameraId, int sensorRotation,
             @CameraSelector.LensFacing int lensFacing,
             @NonNull Context context) {
+        this(cameraId, sensorRotation, lensFacing, context, NO_OP_STREAM_SPECS_CALCULATOR);
+    }
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public FakeCameraInfoInternal(@NonNull String cameraId, int sensorRotation,
+            @CameraSelector.LensFacing int lensFacing,
+            @NonNull Context context, @NonNull StreamSpecsCalculator streamSpecsCalculator) {
         mCameraId = cameraId;
         mSensorRotation = sensorRotation;
         mLensFacing = lensFacing;
         mZoomLiveData = new MutableLiveData<>(ImmutableZoomState.create(1.0f, 4.0f, 1.0f, 0.0f));
         mCameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+        mStreamSpecsCalculator = streamSpecsCalculator;
     }
 
     /**
@@ -512,6 +531,23 @@ public final class FakeCameraInfoInternal implements CameraInfoInternal {
         } catch (CameraAccessException e) {
             throw new IllegalStateException("can't get CameraCharacteristics", e);
         }
+    }
+
+    @Override
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public boolean isUseCaseCombinationSupported(@NonNull List<@NonNull UseCase> useCases,
+            int cameraMode) {
+        try {
+            mStreamSpecsCalculator.calculateSuggestedStreamSpecs(
+                    cameraMode,
+                    this,
+                    useCases
+            );
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+
+        return true;
     }
 
     static final class FakeExposureState implements ExposureState {

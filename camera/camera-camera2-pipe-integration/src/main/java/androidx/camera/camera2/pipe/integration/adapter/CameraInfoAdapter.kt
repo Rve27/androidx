@@ -66,6 +66,7 @@ import androidx.camera.core.DynamicRange.HLG_10_BIT
 import androidx.camera.core.DynamicRange.SDR
 import androidx.camera.core.ExposureState
 import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.UseCase
 import androidx.camera.core.ZoomState
 import androidx.camera.core.impl.CameraCaptureCallback
 import androidx.camera.core.impl.CameraInfoInternal
@@ -74,6 +75,7 @@ import androidx.camera.core.impl.EncoderProfilesProvider
 import androidx.camera.core.impl.Quirks
 import androidx.camera.core.impl.Timebase
 import androidx.camera.core.impl.utils.CameraOrientationUtil
+import androidx.camera.core.internal.StreamSpecsCalculator
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import java.util.concurrent.Executor
@@ -98,6 +100,7 @@ constructor(
     private val encoderProfilesProvider: EncoderProfilesProvider,
     private val streamConfigurationMapCompat: StreamConfigurationMapCompat,
     private val cameraFovInfo: CameraFovInfo,
+    private val streamSpecsCalculator: StreamSpecsCalculator
 ) : CameraInfoInternal, UnsafeWrapper {
     init {
         DeviceInfoLogger.logDeviceInfo(cameraProperties)
@@ -351,6 +354,20 @@ constructor(
         }
 
         return intrinsicZoomRatio
+    }
+
+    override fun isUseCaseCombinationSupported(useCases: List<UseCase>, cameraMode: Int): Boolean {
+        // If the UseCases exceed the resolutions then it will throw an exception
+        try {
+            streamSpecsCalculator.calculateSuggestedStreamSpecs(
+                cameraMode = cameraMode,
+                cameraInfoInternal = this,
+                newUseCases = useCases
+            )
+        } catch (_: IllegalArgumentException) {
+            return false
+        }
+        return true
     }
 
     private fun profileSetToDynamicRangeSet(profileSet: Set<Long>): Set<DynamicRange> {
