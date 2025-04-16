@@ -136,7 +136,6 @@ package androidx.compose.ui {
     property public boolean isAdaptiveRefreshRateEnabled;
     property public boolean isClearFocusOnResetEnabled;
     property public boolean isFocusActionExitsTouchModeEnabled;
-    property public boolean isHitPathTrackerLoggingEnabled;
     property public boolean isNoPinningInFocusRestorationEnabled;
     property public boolean isOutOfFrameDeactivationEnabled;
     property public boolean isRectTrackingEnabled;
@@ -149,7 +148,6 @@ package androidx.compose.ui {
     field public static boolean isAdaptiveRefreshRateEnabled;
     field public static boolean isClearFocusOnResetEnabled;
     field public static boolean isFocusActionExitsTouchModeEnabled;
-    field public static boolean isHitPathTrackerLoggingEnabled;
     field public static boolean isNoPinningInFocusRestorationEnabled;
     field public static boolean isOutOfFrameDeactivationEnabled;
     field public static boolean isRectTrackingEnabled;
