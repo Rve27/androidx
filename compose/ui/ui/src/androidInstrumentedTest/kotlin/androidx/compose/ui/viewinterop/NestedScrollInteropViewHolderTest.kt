@@ -89,8 +89,6 @@ class NestedScrollInteropViewHolderTest {
         // act
         onView(withId(R.id.main_layout)).perform(swipeUp())
 
-        rule.waitForIdle()
-
         // assert
         rule.runOnIdle { assertThat(connection.offeredFromChild).isNotEqualTo(Offset.Zero) }
     }
