@@ -79,6 +79,7 @@ class AppFunctionSchemaInventoryProcessor(
         resolvedAnnotatedSerializableProxies:
             AnnotatedAppFunctionSerializableProxy.ResolvedAnnotatedSerializableProxies,
     ) {
+        val packageName = IntrospectionHelper.SCHEMA_APP_FUNCTION_INVENTORY_CLASS.packageName
         val inventoryClassName = SCHEMA_INVENTORY_CLASS_NAME
         val inventoryClassBuilder = TypeSpec.classBuilder(inventoryClassName)
         inventoryClassBuilder.superclass(IntrospectionHelper.SCHEMA_APP_FUNCTION_INVENTORY_CLASS)
@@ -91,10 +92,7 @@ class AppFunctionSchemaInventoryProcessor(
             )
 
         val fileSpec =
-            FileSpec.builder(
-                    IntrospectionHelper.APP_FUNCTIONS_AGGREGATED_DEPS_PACKAGE_NAME,
-                    inventoryClassName
-                )
+            FileSpec.builder(packageName, inventoryClassName)
                 .addGeneratedTimeStamp()
                 .addType(inventoryClassBuilder.build())
                 .build()
@@ -106,7 +104,7 @@ class AppFunctionSchemaInventoryProcessor(
                         .flatMap(AnnotatedAppFunctionSchemaDefinition::getSourceFiles)
                         .toTypedArray()
                 ),
-                IntrospectionHelper.APP_FUNCTIONS_AGGREGATED_DEPS_PACKAGE_NAME,
+                packageName,
                 inventoryClassName
             )
             .bufferedWriter()

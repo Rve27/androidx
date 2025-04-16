@@ -1,6 +1,5 @@
-package appfunctions_aggregated_deps
+package androidx.appfunctions.`internal`
 
-import androidx.appfunctions.`internal`.SchemaAppFunctionInventory
 import androidx.appfunctions.metadata.AppFunctionAllOfTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata

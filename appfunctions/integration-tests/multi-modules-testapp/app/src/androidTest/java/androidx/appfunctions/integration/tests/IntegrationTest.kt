@@ -27,6 +27,11 @@ import androidx.appfunctions.ExecuteAppFunctionResponse
 import androidx.appfunctions.integration.tests.AppSearchMetadataHelper.isDynamicIndexerAvailable
 import androidx.appfunctions.integration.tests.TestUtil.doBlocking
 import androidx.appfunctions.integration.tests.TestUtil.retryAssert
+import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
+import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionParameterMetadata
+import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
+import androidx.appfunctions.schema.notes.APP_FUNCTION_SCHEMA_CATEGORY_NOTES
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
@@ -34,6 +39,8 @@ import java.time.LocalDateTime
 import kotlin.test.assertIs
 import kotlinx.coroutines.flow.first
 import org.junit.After
+import org.junit.Assert.assertThrows
+import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeNotNull
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -91,18 +98,24 @@ class IntegrationTest {
             .isEqualTo(3)
     }
 
-    // TODO: b/410548653 - Add proper tests for query API
     @Test
-    fun searchAllAppFunctions_success() = doBlocking {
+    fun searchAllAppFunctions_returnsAllAppFunction_withDynamicIndexer() = doBlocking {
         assumeTrue(isDynamicIndexerAvailable(context))
         val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
-        // Total number of serializable types used as an appfunction parameter or return value in
-        // the set of appfunctions defined by this integration test.
-        val expectedSize = 13
 
         val appFunctions = appFunctionManager.observeAppFunctions(searchFunctionSpec).first()
 
-        assertThat(appFunctions.first().components.dataTypes.size).isEqualTo(expectedSize)
+        assertThat(appFunctions).hasSize(13)
+    }
+
+    @Test
+    fun searchAllAppFunctions_returnsAllSchemaAppFunction_withLegacyIndexer() = doBlocking {
+        assumeFalse(isDynamicIndexerAvailable(context))
+        val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
+
+        val appFunctions = appFunctionManager.observeAppFunctions(searchFunctionSpec).first()
+
+        assertThat(appFunctions).hasSize(1)
     }
 
     @Test
@@ -548,6 +561,157 @@ class IntegrationTest {
                     ?.deserialize(Note::class.java)
             )
             .isEqualTo(expectedNote)
+    }
+
+    @Test
+    fun executeAppFunction_schemaCreateNote_success() = doBlocking {
+        val createNoteMetadata =
+            appFunctionManager
+                .observeAppFunctions(
+                    AppFunctionSearchSpec(
+                        packageNames = setOf(context.packageName),
+                        schemaCategory = APP_FUNCTION_SCHEMA_CATEGORY_NOTES,
+                        schemaName = "createNote",
+                        minSchemaVersion = 2,
+                    )
+                )
+                .first()
+                .single()
+        val request =
+            ExecuteAppFunctionRequest(
+                functionIdentifier = createNoteMetadata.id,
+                targetPackageName = createNoteMetadata.packageName,
+                functionParameters =
+                    AppFunctionData.Builder(
+                            createNoteMetadata.parameters,
+                            createNoteMetadata.components
+                        )
+                        .setAppFunctionData(
+                            "parameters",
+                            AppFunctionData.Builder(
+                                    requireTargetObjectTypeMetadata(
+                                        "parameters",
+                                        createNoteMetadata.parameters,
+                                        createNoteMetadata.components
+                                    ),
+                                    createNoteMetadata.components
+                                )
+                                .setString("title", "Test Title")
+                                .build()
+                        )
+                        .build()
+            )
+
+        val response = appFunctionManager.executeAppFunction(request)
+
+        assertIs<ExecuteAppFunctionResponse.Success>(response)
+        val resultNote =
+            response.returnValue
+                .getAppFunctionData(ExecuteAppFunctionResponse.Success.PROPERTY_RETURN_VALUE)
+                ?.getAppFunctionData("createdNote")
+        assertThat(resultNote?.getString("id")).isEqualTo("testId")
+        assertThat(resultNote?.getString("title")).isEqualTo("Test Title")
+    }
+
+    @Test
+    fun prepareAppFunctionData_wrongTopLevelParameterName_fail() = doBlocking {
+        val createNoteMetadata =
+            appFunctionManager
+                .observeAppFunctions(
+                    AppFunctionSearchSpec(
+                        packageNames = setOf(context.packageName),
+                        schemaCategory = APP_FUNCTION_SCHEMA_CATEGORY_NOTES,
+                        schemaName = "createNote",
+                        minSchemaVersion = 2,
+                    )
+                )
+                .first()
+                .single()
+
+        val innerData =
+            AppFunctionData.Builder(
+                    requireTargetObjectTypeMetadata(
+                        "parameters",
+                        createNoteMetadata.parameters,
+                        createNoteMetadata.components
+                    ),
+                    createNoteMetadata.components
+                )
+                .setString("title", "Test Title")
+                .build()
+        assertThrows(IllegalArgumentException::class.java) {
+            AppFunctionData.Builder(createNoteMetadata.parameters, createNoteMetadata.components)
+                .setAppFunctionData(
+                    "wrongParameters",
+                    innerData,
+                )
+        }
+    }
+
+    @Test
+    fun prepareAppFunctionData_wrongNestedParameterName_fail() = doBlocking {
+        val createNoteMetadata =
+            appFunctionManager
+                .observeAppFunctions(
+                    AppFunctionSearchSpec(
+                        packageNames = setOf(context.packageName),
+                        schemaCategory = APP_FUNCTION_SCHEMA_CATEGORY_NOTES,
+                        schemaName = "createNote",
+                        minSchemaVersion = 2,
+                    )
+                )
+                .first()
+                .single()
+
+        assertThrows(IllegalArgumentException::class.java) {
+            AppFunctionData.Builder(
+                    requireTargetObjectTypeMetadata(
+                        "parameters",
+                        createNoteMetadata.parameters,
+                        createNoteMetadata.components
+                    ),
+                    createNoteMetadata.components
+                )
+                .setString("wrongTitle", "Test Title")
+                .build()
+        }
+    }
+
+    /**
+     * Requires that [parameters] contains the [AppFunctionObjectTypeMetadata] under
+     * [parameterName].
+     *
+     * @throws IllegalArgumentException If unable to find the target
+     *   [AppFunctionObjectTypeMetadata].
+     */
+    private fun requireTargetObjectTypeMetadata(
+        parameterName: String,
+        parameters: List<AppFunctionParameterMetadata>,
+        components: AppFunctionComponentsMetadata
+    ): AppFunctionObjectTypeMetadata {
+        val targetParameterMetadata =
+            parameters.find { it.name == parameterName }
+                ?: throw IllegalArgumentException(
+                    "Unable to find parameter metadata with name $parameterName"
+                )
+        val parameterDataTypeMetadata = targetParameterMetadata.dataType
+        return when (parameterDataTypeMetadata) {
+            is AppFunctionObjectTypeMetadata -> {
+                parameterDataTypeMetadata
+            }
+            is AppFunctionReferenceTypeMetadata -> {
+                components.dataTypes[parameterDataTypeMetadata.referenceDataType]
+                    as? AppFunctionObjectTypeMetadata
+                    ?: throw IllegalArgumentException(
+                        "Unable to find object metadata with reference name ${parameterDataTypeMetadata.referenceDataType}"
+                    )
+            }
+            else -> {
+                throw IllegalArgumentException(
+                    "The parameter metadata of $parameterName is not an object type."
+                )
+            }
+        }
     }
 
     private suspend fun awaitAppFunctionsIndexed(expectedFunctionIds: Set<String>) {
