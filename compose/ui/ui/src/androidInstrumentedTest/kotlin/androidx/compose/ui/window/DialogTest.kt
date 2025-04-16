@@ -145,7 +145,6 @@ class DialogTest {
         textInteraction.assertIsDisplayed()
 
         clickOutsideDialog()
-        rule.waitForIdle()
         textInteraction.assertDoesNotExist()
     }
 
@@ -156,7 +155,6 @@ class DialogTest {
         textInteraction.assertIsDisplayed()
 
         clickOutsideDialog()
-        rule.waitForIdle()
         textInteraction.assertDoesNotExist()
     }
 
