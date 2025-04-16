@@ -40,12 +40,6 @@ class AppFunctionSerializableValidateHelper(
             )
         }
         val primaryConstructorDeclaration = checkNotNull(primaryConstructor)
-        if (primaryConstructorDeclaration.parameters.isEmpty()) {
-            throw ProcessingException(
-                "A valid AppFunctionSerializable must have a non-empty primary constructor.",
-                annotatedSerializable.attributeNode
-            )
-        }
 
         if (primaryConstructorDeclaration.getVisibility() != Visibility.PUBLIC) {
             throw ProcessingException(
