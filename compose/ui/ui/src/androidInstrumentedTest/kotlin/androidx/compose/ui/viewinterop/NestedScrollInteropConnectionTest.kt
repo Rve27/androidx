@@ -59,9 +59,7 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import com.google.common.truth.Truth.assertThat
 import kotlin.math.abs
 import org.hamcrest.Matchers.not
-import org.junit.AfterClass
 import org.junit.Before
-import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -126,13 +124,6 @@ class NestedScrollInteropConnectionTest {
                     InputDevice.SOURCE_TOUCHSCREEN, /* source */
                     0, /* flags */
                 )
-
-            if (ComposeUiFlags.isHitPathTrackerLoggingEnabled) {
-                println(
-                    "POINTER_INPUT_DEBUG_LOG_TAG " + "pointerId $pointerId cancelled: $motionEvent"
-                )
-            }
-
             instrumentation.sendPointerSync(motionEvent)
             motionEvent.recycle()
         }
@@ -407,26 +398,6 @@ class NestedScrollInteropConnectionTest {
             enableInterop = enableInterop,
             content = content
         )
-    }
-
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun enableComposeUiFlags() {
-            ComposeUiFlags.isHitPathTrackerLoggingEnabled = true
-            println(
-                "POINTER_INPUT_DEBUG_LOG_TAG NestedScrollInteropConnectionTest.enableComposeUiFlags()"
-            )
-        }
-
-        @AfterClass
-        @JvmStatic
-        fun disableComposeUiFlags() {
-            println(
-                "POINTER_INPUT_DEBUG_LOG_TAG NestedScrollInteropConnectionTest.disableComposeUiFlags()"
-            )
-            ComposeUiFlags.isHitPathTrackerLoggingEnabled = false
-        }
     }
 }
 
