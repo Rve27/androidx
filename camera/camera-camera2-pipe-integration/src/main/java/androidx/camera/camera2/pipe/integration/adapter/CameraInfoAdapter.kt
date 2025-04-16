@@ -356,13 +356,18 @@ constructor(
         return intrinsicZoomRatio
     }
 
-    override fun isUseCaseCombinationSupported(useCases: List<UseCase>, cameraMode: Int): Boolean {
+    override fun isUseCaseCombinationSupported(
+        useCases: List<UseCase>,
+        cameraMode: Int,
+        cameraConfig: androidx.camera.core.impl.CameraConfig
+    ): Boolean {
         // If the UseCases exceed the resolutions then it will throw an exception
         try {
             streamSpecsCalculator.calculateSuggestedStreamSpecs(
                 cameraMode = cameraMode,
                 cameraInfoInternal = this,
-                newUseCases = useCases
+                newUseCases = useCases,
+                cameraConfig = cameraConfig,
             )
         } catch (_: IllegalArgumentException) {
             return false

@@ -240,6 +240,15 @@ public interface CameraInfoInternal extends CameraInfo {
             @NonNull List<@NonNull UseCase> useCases,
             @CameraMode.Mode int cameraMode
     ) {
-        return false;
+        return isUseCaseCombinationSupported(useCases, cameraMode, CameraConfigs.defaultConfig());
     }
+
+    /**
+     * Checks if a use case combination is supported for some specific camera mode and
+     * {@link CameraConfig}.
+     */
+    default boolean isUseCaseCombinationSupported(@NonNull List<@NonNull UseCase> useCases,
+            int cameraMode, @NonNull CameraConfig cameraConfig) {
+        return false;
+    };
 }

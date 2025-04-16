@@ -28,6 +28,7 @@ import androidx.camera.core.DynamicRange;
 import androidx.camera.core.ExperimentalZeroShutterLag;
 import androidx.camera.core.ExposureState;
 import androidx.camera.core.FocusMeteringAction;
+import androidx.camera.core.UseCase;
 import androidx.camera.core.ZoomState;
 import androidx.lifecycle.LiveData;
 
@@ -276,5 +277,12 @@ public class ForwardingCameraInfo implements CameraInfoInternal {
     @Override
     public @NonNull Set<CameraInfo> getPhysicalCameraInfos() {
         return mCameraInfoInternal.getPhysicalCameraInfos();
+    }
+
+    @Override
+    public boolean isUseCaseCombinationSupported(@NonNull List<@NonNull UseCase> useCases,
+            int cameraMode, @NonNull CameraConfig cameraConfig) {
+        return mCameraInfoInternal.isUseCaseCombinationSupported(useCases, cameraMode,
+                cameraConfig);
     }
 }

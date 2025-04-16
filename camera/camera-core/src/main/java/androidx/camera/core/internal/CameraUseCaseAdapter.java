@@ -1094,7 +1094,7 @@ public final class CameraUseCaseAdapter implements Camera {
             useCasesToVerify = calculateCameraUseCases(useCasesToVerify, null, streamSharing);
         }
         return mCameraInternal.getCameraInfoInternal().isUseCaseCombinationSupported(
-                new ArrayList<>(useCasesToVerify), getCameraMode());
+                new ArrayList<>(useCasesToVerify), getCameraMode(), mCameraConfig);
     }
 
     /**

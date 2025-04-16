@@ -45,9 +45,6 @@ public interface StreamSpecsCalculator {
         // no-op by default
     }
 
-    // Not using default parameters here since @JvmOverloads is not supported for interface methods
-    // and we may need to call this from Java codes like Camera2CameraInfoImpl or
-    // camera-core.CameraUseCaseAdapter.
     /**
      * Calculates the stream specs for a given combination of use cases and other
      * settings/capabilities.
@@ -59,31 +56,9 @@ public interface StreamSpecsCalculator {
         @CameraMode.Mode cameraMode: Int,
         cameraInfoInternal: CameraInfoInternal,
         newUseCases: List<UseCase>,
-    ): Map<UseCase, StreamSpec> {
-        return calculateSuggestedStreamSpecs(
-            cameraMode = cameraMode,
-            cameraInfoInternal = cameraInfoInternal,
-            newUseCases = newUseCases,
-            attachedUseCases = emptyList(),
-            cameraConfig = CameraConfigs.defaultConfig(), // different only for extensions
-            targetHighSpeedFrameRate = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
-        )
-    }
-
-    /**
-     * Calculates the stream specs for a given combination of use cases and other
-     * settings/capabilities.
-     *
-     * @throws kotlin.UninitializedPropertyAccessException if the camera device surface manager has
-     *   not been set yet.
-     */
-    public fun calculateSuggestedStreamSpecs(
-        @CameraMode.Mode cameraMode: Int,
-        cameraInfoInternal: CameraInfoInternal,
-        newUseCases: List<UseCase>,
-        attachedUseCases: List<UseCase>,
-        cameraConfig: CameraConfig,
-        targetHighSpeedFrameRate: Range<Int>,
+        attachedUseCases: List<UseCase> = emptyList(),
+        cameraConfig: CameraConfig = CameraConfigs.defaultConfig(),
+        targetHighSpeedFrameRate: Range<Int> = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
     ): Map<UseCase, StreamSpec>
 
     public companion object {
@@ -101,6 +76,35 @@ public interface StreamSpecsCalculator {
                     return emptyMap()
                 }
             }
+
+        // Since @JvmOverloads is not supported for interface methods and we may need to call this
+        // from Java codes like Camera2CameraInfoImpl, creating an extension function for Java
+        // callers wanting to take advantage of the default params.
+        /**
+         * Calculates the stream specs for a given combination of use cases and other
+         * settings/capabilities.
+         *
+         * @throws kotlin.UninitializedPropertyAccessException if the camera device surface manager
+         *   has not been set yet.
+         */
+        @JvmOverloads
+        public fun StreamSpecsCalculator.calculateSuggestedStreamSpecsCompat(
+            @CameraMode.Mode cameraMode: Int,
+            cameraInfoInternal: CameraInfoInternal,
+            newUseCases: List<UseCase>,
+            cameraConfig: CameraConfig = CameraConfigs.defaultConfig(),
+            attachedUseCases: List<UseCase> = emptyList(),
+            targetHighSpeedFrameRate: Range<Int> = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
+        ): Map<UseCase, StreamSpec> {
+            return calculateSuggestedStreamSpecs(
+                cameraMode = cameraMode,
+                cameraInfoInternal = cameraInfoInternal,
+                newUseCases = newUseCases,
+                attachedUseCases = attachedUseCases,
+                cameraConfig = cameraConfig,
+                targetHighSpeedFrameRate = targetHighSpeedFrameRate
+            )
+        }
     }
 }
 

@@ -63,6 +63,7 @@ import androidx.camera.core.Logger;
 import androidx.camera.core.UseCase;
 import androidx.camera.core.ZoomState;
 import androidx.camera.core.impl.CameraCaptureCallback;
+import androidx.camera.core.impl.CameraConfig;
 import androidx.camera.core.impl.CameraInfoInternal;
 import androidx.camera.core.impl.DynamicRanges;
 import androidx.camera.core.impl.EncoderProfilesProvider;
@@ -781,12 +782,14 @@ public final class Camera2CameraInfoImpl implements CameraInfoInternal {
 
     @Override
     public boolean isUseCaseCombinationSupported(@NonNull List<@NonNull UseCase> useCases,
-            int cameraMode) {
+            int cameraMode, @NonNull CameraConfig cameraConfig) {
         try {
-            mStreamSpecsCalculator.calculateSuggestedStreamSpecs(
+            StreamSpecsCalculator.Companion.calculateSuggestedStreamSpecsCompat(
+                    mStreamSpecsCalculator,
                     cameraMode,
                     this,
-                    useCases
+                    useCases,
+                    cameraConfig
             );
         } catch (IllegalArgumentException e) {
             return false;
