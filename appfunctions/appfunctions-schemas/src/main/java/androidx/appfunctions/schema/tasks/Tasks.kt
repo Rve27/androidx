@@ -21,6 +21,7 @@ import androidx.annotation.StringDef
 import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionOpenable
 import androidx.appfunctions.AppFunctionSchemaDefinition
+import androidx.appfunctions.AppFunctionSerializableInterface
 import androidx.appfunctions.schema.tasks.AppFunctionTask.Schedule
 import java.time.Instant
 import java.time.ZoneId
@@ -58,6 +59,7 @@ public interface FindTasksAppFunction<
     ): Response
 
     /** The parameters for finding tasks. */
+    @AppFunctionSerializableInterface
     public interface Parameters {
         /**
          * The search query to be processed. A null value means to query all tasks with the
@@ -85,6 +87,7 @@ public interface FindTasksAppFunction<
     }
 
     /** The response including the list of tasks that match the parameters. */
+    @AppFunctionSerializableInterface
     public interface Response {
         public val tasks: List<AppFunctionTask>
     }
@@ -119,6 +122,7 @@ public interface CreateTaskAppFunction<
     ): Response
 
     /** The parameters for creating a task. */
+    @AppFunctionSerializableInterface
     public interface Parameters {
         /** The title of the task. */
         public val title: String
@@ -152,6 +156,7 @@ public interface CreateTaskAppFunction<
     }
 
     /** The response including the created task. */
+    @AppFunctionSerializableInterface
     public interface Response {
         /** The created task. */
         public val createdTask: AppFunctionTask
@@ -194,6 +199,7 @@ public interface ShowTaskAppFunction<
     ): Response
 
     /** The parameters for [showTask]. */
+    @AppFunctionSerializableInterface
     public interface Parameters {
         /**
          * The [AppFunctionTask.id] of the task to show.
@@ -205,7 +211,7 @@ public interface ShowTaskAppFunction<
     }
 
     /** The [AppFunctionOpenable] response for [showTask]. */
-    public interface Response : AppFunctionOpenable
+    @AppFunctionSerializableInterface public interface Response : AppFunctionOpenable
 
     public companion object {
         /** Current schema version. */
@@ -214,6 +220,7 @@ public interface ShowTaskAppFunction<
 }
 
 /** A task entity. */
+@AppFunctionSerializableInterface
 public interface AppFunctionTask {
     /** The ID of the task. */
     public val id: String
@@ -236,6 +243,7 @@ public interface AppFunctionTask {
      * details.
      */
     // TODO: refactor this along with Calendar's schedule fields after alignment.
+    @AppFunctionSerializableInterface
     public interface Schedule {
         /**
          * The date and time that the task is scheduled for, if any. If [isAllDay] is true, this
