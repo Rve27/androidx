@@ -27,6 +27,7 @@ android {
         minSdk = 33
         ksp {
             arg("appfunctions:aggregateAppFunctions", "true")
+            arg("appfunctions:generateMetadataFromSchema", "true")
         }
     }
     buildTypes {

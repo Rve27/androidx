@@ -21,6 +21,7 @@ import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import androidx.annotation.StringDef
 import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionSchemaDefinition
+import androidx.appfunctions.AppFunctionSerializableInterface
 import java.time.Instant
 import java.time.ZoneId
 
@@ -62,12 +63,14 @@ public interface GetCalendarEventsAppFunction<
     ): Response
 
     /** The parameters defining the IDs of the events to get. */
+    @AppFunctionSerializableInterface
     public interface Parameters {
         /** The IDs of the events to get. Can be application-generated IDs. */
         public val calendarEventIds: List<String>
     }
 
     /** The response including the list of events that match the given IDs. */
+    @AppFunctionSerializableInterface
     public interface Response {
         /**
          * The list of events that match the given IDs. Will be empty if no matching events are
@@ -108,6 +111,7 @@ public interface CreateCalendarEventAppFunction<
     ): Response
 
     /** The parameters for creating a calendar event. */
+    @AppFunctionSerializableInterface
     public interface Parameters {
         /** The title of the event. */
         public val title: String
@@ -182,6 +186,7 @@ public interface CreateCalendarEventAppFunction<
     }
 
     /** The response including the created event. */
+    @AppFunctionSerializableInterface
     public interface Response {
         /** The created calendar event. */
         public val createdCalendarEvent: AppFunctionCalendarEvent
@@ -194,6 +199,7 @@ public interface CreateCalendarEventAppFunction<
 }
 
 /** Represents a calendar event entity. */
+@AppFunctionSerializableInterface
 public interface AppFunctionCalendarEvent {
     /** The unique ID of the event. */
     public val id: String
