@@ -44,7 +44,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.TestActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
-import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.isRoot
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onFirst
@@ -251,11 +250,6 @@ class PopupTest {
         UiDevice.getInstance(getInstrumentation()).click(outsideX, outsideY)
 
         rule.waitForIdle()
-
-        // Wait for the ui to disappear AND events to fully propagate through the non-standard
-        // input system used in this test. We can't rely on waitForIdle() or other methods related
-        // to the ui, because the input events aren't going through that standard input system.
-        rule.waitUntil(timeoutMillis = 2000) { rule.onNodeWithTag(testTag).isNotDisplayed() }
 
         // Popup should not exist
         rule.onNodeWithTag(testTag).assertDoesNotExist()
