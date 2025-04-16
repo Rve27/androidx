@@ -86,6 +86,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.FlakyTest
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
@@ -167,7 +168,6 @@ class DialogTest {
 
         // Click inside the dialog
         interaction.performClick()
-        rule.waitForIdle()
 
         // Check that the Clickable was pressed and the Dialog is still visible.
         interaction.assertIsDisplayed()
@@ -198,7 +198,6 @@ class DialogTest {
 
         // Click inside the dialog
         interaction.performClick()
-        rule.waitForIdle()
 
         // Check that the Clickable was pressed and the Dialog is still visible.
         interaction.assertIsDisplayed()
@@ -211,6 +210,7 @@ class DialogTest {
         }
     }
 
+    @FlakyTest(bugId = 402738067)
     @Test
     fun dialogTest_isDismissed_whenSpecified() {
         if (ComposeUiFlags.isHitPathTrackerLoggingEnabled) {
@@ -247,6 +247,7 @@ class DialogTest {
         }
     }
 
+    @FlakyTest(bugId = 402738067)
     @Test
     fun dialogTest_isDismissed_whenSpecified_decorFitsFalse() {
         if (ComposeUiFlags.isHitPathTrackerLoggingEnabled) {
