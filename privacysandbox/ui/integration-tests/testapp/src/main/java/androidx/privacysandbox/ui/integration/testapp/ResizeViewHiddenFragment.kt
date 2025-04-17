@@ -20,9 +20,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
+import androidx.privacysandbox.ui.integration.testsdkprovider.IAutomatedTestCallback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class ResizeHiddenFragment : BaseHiddenFragment() {
+class ResizeViewHiddenFragment : AbstractResizeHiddenFragment() {
     private lateinit var resizableBannerView: SandboxedSdkView
     private lateinit var inflatedView: View
 
@@ -33,6 +38,18 @@ class ResizeHiddenFragment : BaseHiddenFragment() {
     ): View {
         inflatedView = inflater.inflate(R.layout.fragment_resize_hidden, container, false)
         resizableBannerView = inflatedView.findViewById(R.id.hidden_resizable_ad_view)
+        resizableBannerView.orderProviderUiAboveClientUi(providerUiOnTop)
+        resizableBannerView.setEventListener(eventListener)
         return inflatedView
+    }
+
+    override fun performResize(width: Int, height: Int) {
+        resizableBannerView.layoutParams = LinearLayoutCompat.LayoutParams(width, height)
+    }
+
+    override fun loadAd(sdkToClientCallback: IAutomatedTestCallback) {
+        CoroutineScope(Dispatchers.Main).launch {
+            resizableBannerView.setAdapter(buildAdapter(sdkToClientCallback))
+        }
     }
 }
