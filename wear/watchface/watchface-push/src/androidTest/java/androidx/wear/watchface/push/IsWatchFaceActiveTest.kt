@@ -33,7 +33,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-public class IsWatchFaceActiveTest {
+class IsWatchFaceActiveTest {
     private var context: Context = ApplicationProvider.getApplicationContext()
     private var wfp = WatchFacePushManager(context)
 
@@ -48,6 +48,7 @@ public class IsWatchFaceActiveTest {
     }
 
     @Test
+    @RequiresWatch
     fun isWatchFaceActive_onNonActive() {
         assertThat(
                 runBlocking {
@@ -61,6 +62,7 @@ public class IsWatchFaceActiveTest {
     }
 
     @Test
+    @RequiresWatch
     fun isWatchFaceActive_onActive() {
         assertThat(
                 runBlocking {
@@ -76,6 +78,7 @@ public class IsWatchFaceActiveTest {
     }
 
     @Test
+    @RequiresWatch
     fun isWatchFaceActive_onNotInstalledPackage() {
         val exception =
             assertThrows(IsWatchFaceActiveException::class.java) {
@@ -89,6 +92,7 @@ public class IsWatchFaceActiveTest {
     }
 
     @Test
+    @RequiresWatch
     fun isWatchFaceActive_setActive_badSlot() {
         val exception =
             assertThrows(SetWatchFaceAsActiveException::class.java) {
