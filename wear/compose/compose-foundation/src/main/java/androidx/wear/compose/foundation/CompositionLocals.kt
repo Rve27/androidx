@@ -24,6 +24,7 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.view.View.OnAttachStateChangeListener
+import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
@@ -35,7 +36,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.os.HandlerCompat
 
 /**
- * CompositionLocal for global reduce-motion setting, which turns off animations and screen
+ * [CompositionLocal] for global reduce-motion setting, which turns off animations and screen
  * movements. To use, call LocalReduceMotion.current, which returns a Boolean.
  */
 public val LocalReduceMotion: ProvidableCompositionLocal<Boolean> =
@@ -81,7 +82,7 @@ public val LocalReduceMotion: ProvidableCompositionLocal<Boolean> =
     }
 
 /**
- * CompositionLocal containing the background scrim color of [BasicSwipeToDismissBox].
+ * [CompositionLocal] containing the background scrim color of [BasicSwipeToDismissBox].
  *
  * Defaults to [Color.Black] if not explicitly set.
  */
@@ -91,7 +92,7 @@ public val LocalSwipeToDismissBackgroundScrimColor: ProvidableCompositionLocal<C
     }
 
 /**
- * CompositionLocal containing the content scrim color of [BasicSwipeToDismissBox].
+ * [CompositionLocal] containing the content scrim color of [BasicSwipeToDismissBox].
  *
  * Defaults to [Color.Black] if not explicitly set.
  */
@@ -99,6 +100,16 @@ public val LocalSwipeToDismissContentScrimColor: ProvidableCompositionLocal<Colo
     compositionLocalOf {
         Color.Black
     }
+
+/**
+ * [CompositionLocal] used to express/determine if a screen is active, as specified by each
+ * component (for example, it could be updated when the user is in the middle of the gesture to
+ * switch screens, or after the gesture is done). Pager and swipe to dismiss inform this, and can be
+ * used at the screen level to update the UI or perform optimizations on inactive screens.
+ *
+ * Defaults to true
+ */
+public val LocalScreenIsActive: ProvidableCompositionLocal<Boolean> = compositionLocalOf { true }
 
 private fun getReducedMotionSettingValue(resolver: ContentResolver): Boolean {
     return try {

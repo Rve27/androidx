@@ -30,6 +30,7 @@ import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,8 +53,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
+import androidx.wear.compose.foundation.LocalScreenIsActive
 import androidx.wear.compose.foundation.ScrollInfoProvider
-import androidx.wear.compose.foundation.hierarchicalFocus
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
@@ -694,17 +695,17 @@ public fun ScreenScaffold(
 
     scaffoldState.screenContent.UpdateIdlingDetectorIfNeeded()
 
+    val screenIsActive = LocalScreenIsActive.current
+    LaunchedEffect(screenIsActive) {
+        if (screenIsActive) {
+            scaffoldState.screenContent.addScreen(key, timeText, scrollInfoProvider)
+        } else {
+            scaffoldState.screenContent.removeScreen(key)
+        }
+    }
+
     WrapWithOverscrollFactoryIfRequired(overscrollEffect) {
-        Box(
-            modifier =
-                modifier.fillMaxSize().hierarchicalFocus(true) { focused ->
-                    if (focused) {
-                        scaffoldState.screenContent.addScreen(key, timeText, scrollInfoProvider)
-                    } else {
-                        scaffoldState.screenContent.removeScreen(key)
-                    }
-                }
-        ) {
+        Box(modifier.fillMaxSize()) {
             Box(modifier = Modifier.overscroll(overscrollEffect)) { content(contentPadding) }
             scrollInfoProvider?.let {
                 AnimatedIndicator(
