@@ -113,7 +113,7 @@ class DirectBootDataStoreFactoryTest {
             // If the phone is UNLOCKED and the path is in CE storage, the exception should
             // be returned as is.
             assertThat(wrapExceptionIfDueToDirectBoot(filePath.parent, noOpException))
-                .isInstanceOf<FileNotFoundException>()
+                .isSameInstanceAs(noOpException)
         }
     }
 }
