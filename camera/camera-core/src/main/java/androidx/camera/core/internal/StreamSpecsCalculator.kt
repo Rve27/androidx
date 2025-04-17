@@ -145,7 +145,7 @@ public class StreamSpecsCalculatorImpl(
                     newUseCases,
                     cameraConfig.useCaseConfigFactory,
                     useCaseConfigFactory,
-                    StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
+                    targetHighSpeedFrameRate
                 )
             )
     }
