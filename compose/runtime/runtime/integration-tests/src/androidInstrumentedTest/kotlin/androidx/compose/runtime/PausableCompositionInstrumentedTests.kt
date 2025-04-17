@@ -16,6 +16,8 @@
 
 package androidx.compose.runtime
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
@@ -27,6 +29,7 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.SubcomposeLayoutState
 import androidx.compose.ui.layout.SubcomposeSlotReusePolicy
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
@@ -160,5 +163,48 @@ class PausableCompositionInstrumentedTests {
         }
 
         rule.waitForIdle()
+    }
+
+    @Test
+    fun movableContentDisposed() {
+        val state = SubcomposeLayoutState()
+        var something by mutableStateOf("")
+        var emitMovable by mutableStateOf(true)
+        var activeMovableContentsCount = 0
+        val movableContent = movableContentOf {
+            Box(Modifier.size(10.dp))
+            DisposableEffect(Unit) {
+                activeMovableContentsCount++
+                onDispose { activeMovableContentsCount-- }
+            }
+        }
+
+        rule.setContent {
+            something
+            SubcomposeLayout(state) { layout(10, 10) {} }
+        }
+        val precomposition =
+            rule.runOnIdle {
+                val precomposition =
+                    state.createPausedPrecomposition(Unit) {
+                        if (emitMovable) {
+                            movableContent()
+                        }
+                    }
+                precomposition.resume { false }
+
+                emitMovable = false
+
+                precomposition
+            }
+
+        rule.runOnIdle {
+            while (!precomposition.isComplete) {
+                precomposition.resume { false }
+            }
+            precomposition.apply()
+        }
+
+        rule.runOnIdle { assertThat(activeMovableContentsCount).isEqualTo(0) }
     }
 }
