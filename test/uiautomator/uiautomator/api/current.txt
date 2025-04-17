@@ -197,6 +197,12 @@ package androidx.test.uiautomator {
     ctor public SearchCondition();
   }
 
+  public interface Searchable {
+    method public androidx.test.uiautomator.UiObject2! findObject(androidx.test.uiautomator.BySelector);
+    method public java.util.List<androidx.test.uiautomator.UiObject2!> findObjects(androidx.test.uiautomator.BySelector);
+    method public boolean hasObject(androidx.test.uiautomator.BySelector);
+  }
+
   public final class StableResult {
     method public android.view.accessibility.AccessibilityNodeInfo getNode();
     method public android.graphics.Bitmap? getScreenshot();
@@ -273,7 +279,7 @@ package androidx.test.uiautomator {
     method public int getChildCount(androidx.test.uiautomator.UiSelector);
   }
 
-  public class UiDevice {
+  public class UiDevice implements androidx.test.uiautomator.Searchable {
     method public void clearLastTraversedText();
     method public boolean click(int, int);
     method public boolean drag(int, int, int, int, int);
@@ -431,7 +437,7 @@ package androidx.test.uiautomator {
     field protected static final long WAIT_FOR_WINDOW_TMEOUT = 5500L; // 0x157cL
   }
 
-  public class UiObject2 {
+  public class UiObject2 implements androidx.test.uiautomator.Searchable {
     method public void clear();
     method public void click();
     method public void click(android.graphics.Point);
