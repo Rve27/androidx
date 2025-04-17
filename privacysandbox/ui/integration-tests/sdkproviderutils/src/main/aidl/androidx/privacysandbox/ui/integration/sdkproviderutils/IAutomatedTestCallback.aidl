@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.privacysandbox.ui.integration.testsdkprovider
 
-import androidx.privacysandbox.tools.PrivacySandboxCallback
+package androidx.privacysandbox.ui.integration.sdkproviderutils;
 
-// TODO("b/385321326"): The same callback can replace IAutomatedTestCallbackProxy.
-@PrivacySandboxCallback
+/*
+ * This is registered onto the SDK to receive callbacks for automated testing.
+ */
 interface IAutomatedTestCallback {
-    fun onResizeOccurred(width: Int, height: Int)
+    void onResizeOccurred(int width, int height);
 }

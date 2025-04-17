@@ -16,11 +16,11 @@
 
 package androidx.privacysandbox.ui.integration.testapp
 
+import android.os.Bundle
 import androidx.privacysandbox.ui.client.SandboxedUiAdapterFactory
 import androidx.privacysandbox.ui.client.view.SandboxedSdkViewEventListener
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants
-import androidx.privacysandbox.ui.integration.testsdkprovider.IAutomatedTestCallback
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -46,13 +46,13 @@ abstract class AbstractResizeHiddenFragment : BaseHiddenFragment() {
         paddingBottom: Int
     )
 
-    abstract fun loadAd(sdkToClientCallback: IAutomatedTestCallback)
+    abstract fun loadAd(automatedTestCallbackBundle: Bundle)
 
     fun ensureUiIsDisplayed(callBackWaitMs: Long): Boolean {
         return uiDisplayedLatch.await(callBackWaitMs, TimeUnit.MILLISECONDS)
     }
 
-    suspend fun buildAdapter(sdkToClientCallback: IAutomatedTestCallback): SandboxedUiAdapter {
+    suspend fun buildAdapter(automatedTestCallbackBundle: Bundle): SandboxedUiAdapter {
         return SandboxedUiAdapterFactory.createFromCoreLibInfo(
             getSdkApi()
                 .loadBannerAdForAutomatedTests(
@@ -61,7 +61,7 @@ abstract class AbstractResizeHiddenFragment : BaseHiddenFragment() {
                     currentMediationOption,
                     false,
                     shouldDrawViewabilityLayer,
-                    sdkToClientCallback
+                    automatedTestCallbackBundle
                 )
         )
     }

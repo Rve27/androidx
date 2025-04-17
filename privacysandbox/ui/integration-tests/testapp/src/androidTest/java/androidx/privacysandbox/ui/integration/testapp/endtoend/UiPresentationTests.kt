@@ -20,9 +20,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.privacysandbox.sdkruntime.client.SdkSandboxManagerCompat
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
+import androidx.privacysandbox.ui.integration.sdkproviderutils.IAutomatedTestCallback
 import androidx.privacysandbox.ui.integration.sdkproviderutils.ILoadSdkCallback
+import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AUTOMATED_TEST_CALLBACK
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.FragmentOption
-import androidx.privacysandbox.ui.integration.testsdkprovider.IAutomatedTestCallback
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
@@ -49,6 +50,7 @@ class UiPresentationTests(
     @FragmentOption val zOrdering: String
 ) {
     private lateinit var scenario: ActivityScenario<MainActivity>
+    private lateinit var sdkToClientCallbackBundle: Bundle
     private lateinit var sdkToClientCallback: SdkToClientCallback
     private lateinit var resizeFragment: AbstractResizeHiddenFragment
 
@@ -87,9 +89,11 @@ class UiPresentationTests(
     fun setup() {
         launchTestAppAndWaitForLoadingSdks(uiFrameworkOption, mediationOption, zOrdering)
         sdkToClientCallback = SdkToClientCallback()
+        sdkToClientCallbackBundle = Bundle()
+        sdkToClientCallbackBundle.putBinder(AUTOMATED_TEST_CALLBACK, sdkToClientCallback)
         scenario.onActivity { activity ->
             resizeFragment = activity.getCurrentFragment() as AbstractResizeHiddenFragment
-            resizeFragment.loadAd(sdkToClientCallback)
+            resizeFragment.loadAd(sdkToClientCallbackBundle)
         }
         assertThat(resizeFragment.ensureUiIsDisplayed(CALLBACK_WAIT_MS)).isTrue()
     }
@@ -186,7 +190,7 @@ class UiPresentationTests(
         assertThat(loadSdkCallback.latch.await(CALLBACK_WAIT_MS, TimeUnit.MILLISECONDS)).isTrue()
     }
 
-    private class SdkToClientCallback : IAutomatedTestCallback {
+    private class SdkToClientCallback : IAutomatedTestCallback.Stub() {
         var remoteViewWidth: Int? = null
         var remoteViewHeight: Int? = null
         val resizeLatch = CountDownLatch(1)

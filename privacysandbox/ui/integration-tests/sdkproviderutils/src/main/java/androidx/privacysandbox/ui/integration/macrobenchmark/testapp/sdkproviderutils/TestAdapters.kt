@@ -47,6 +47,7 @@ import androidx.privacysandbox.ui.client.SandboxedUiAdapterFactory
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
 import androidx.privacysandbox.ui.core.SessionData
+import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AUTOMATED_TEST_CALLBACK
 import androidx.privacysandbox.ui.provider.AbstractSandboxedUiAdapter
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
@@ -188,10 +189,10 @@ class TestAdapters(private val sdkContext: Context) {
     inner class TestBannerAd(
         private val text: String,
         private val withSlowDraw: Boolean,
-        private val automatedTestCallbackProxy: IAutomatedTestCallbackProxy? = null
+        private val automatedTestCallbackBundle: Bundle = Bundle()
     ) : BannerAd() {
         override fun buildAdView(sessionContext: Context, width: Int, height: Int): View? {
-            return TestView(sessionContext, withSlowDraw, text, automatedTestCallbackProxy)
+            return TestView(sessionContext, withSlowDraw, text, automatedTestCallbackBundle)
         }
     }
 
@@ -276,8 +277,16 @@ class TestAdapters(private val sdkContext: Context) {
         context: Context,
         private val withSlowDraw: Boolean,
         private val text: String,
-        private val automatedTestCallbackProxy: IAutomatedTestCallbackProxy? = null
+        private val automatedTestCallbackBundle: Bundle
     ) : View(context) {
+
+        private val automatedTestCallbackBinder =
+            automatedTestCallbackBundle.getBinder(AUTOMATED_TEST_CALLBACK)
+        private val automatedTestCallback: IAutomatedTestCallback? =
+            automatedTestCallbackBinder?.let { IAutomatedTestCallback.Stub.asInterface(it) }
+                ?: throw IllegalStateException(
+                    "Received Binder for callback is not of expected type"
+                )
 
         init {
             setOnClickListener {
@@ -311,7 +320,7 @@ class TestAdapters(private val sdkContext: Context) {
             if (isFirstLayout) {
                 isFirstLayout = false
             } else {
-                automatedTestCallbackProxy?.onResizeOccurred(right - left, bottom - top)
+                automatedTestCallback?.onResizeOccurred(right - left, bottom - top)
             }
         }
     }

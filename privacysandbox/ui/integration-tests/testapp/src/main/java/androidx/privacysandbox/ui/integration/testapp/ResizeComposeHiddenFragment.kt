@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.privacysandbox.ui.client.compose.SandboxedSdkUi
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
-import androidx.privacysandbox.ui.integration.testsdkprovider.IAutomatedTestCallback
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -133,9 +132,9 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
         }
     }
 
-    override fun loadAd(sdkToClientCallback: IAutomatedTestCallback) {
+    override fun loadAd(automatedTestCallbackBundle: Bundle) {
         val coroutineScope = MainScope()
-        coroutineScope.launch { adapter = buildAdapter(sdkToClientCallback) }
+        coroutineScope.launch { adapter = buildAdapter(automatedTestCallbackBundle) }
     }
 
     override fun performResize(width: Int, height: Int) {

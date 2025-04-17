@@ -22,7 +22,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
-import androidx.privacysandbox.ui.integration.testsdkprovider.IAutomatedTestCallback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,9 +55,10 @@ class ResizeViewHiddenFragment : AbstractResizeHiddenFragment() {
         resizableBannerView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
     }
 
-    override fun loadAd(sdkToClientCallback: IAutomatedTestCallback) {
+    override fun loadAd(automatedTestCallbackBundle: Bundle) {
+        resizableBannerView.setEventListener(eventListener)
         CoroutineScope(Dispatchers.Main).launch {
-            resizableBannerView.setAdapter(buildAdapter(sdkToClientCallback))
+            resizableBannerView.setAdapter(buildAdapter(automatedTestCallbackBundle))
         }
     }
 }
