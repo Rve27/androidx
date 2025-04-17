@@ -20,8 +20,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.SubcomposeLayoutState
+import androidx.compose.ui.layout.SubcomposeSlotReusePolicy
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
@@ -115,5 +119,46 @@ class PausableCompositionInstrumentedTests {
             // recomposition happened
             assertThat(composed).isEqualTo(listOf("2"))
         }
+    }
+
+    @Test // b/404058957
+    fun test() {
+        val state = SubcomposeLayoutState(SubcomposeSlotReusePolicy(1))
+        var active by mutableStateOf(true)
+        var modifier by mutableStateOf<Modifier>(Modifier)
+
+        rule.setContent { SubcomposeLayout(state) { layout(10, 10) {} } }
+        val precomposition =
+            rule.runOnIdle {
+                active = true
+                val precomposition =
+                    state.createPausedPrecomposition(Unit) {
+                        ReusableContentHost(active) {
+                            Layout(modifier) { _, _ -> layout(10, 10) {} }
+                        }
+                    }
+                precomposition.resume { false }
+
+                active = false
+
+                precomposition
+            }
+
+        rule.runOnIdle {
+            precomposition.resume { false }
+            active = true
+        }
+
+        rule.runOnIdle {
+            while (!precomposition.isComplete) {
+                precomposition.resume { false }
+            }
+            precomposition.apply()
+
+            // update modifier on just applied composition
+            modifier = Modifier.drawBehind {}
+        }
+
+        rule.waitForIdle()
     }
 }

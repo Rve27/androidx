@@ -356,6 +356,74 @@ class PausableCompositionTests {
         )
     }
 
+    @Test // b/404058957
+    fun pausableComposition_reuseDeactivateOrder_100() = compositionTest {
+        val awaiter = Awaiter()
+        var active by mutableStateOf(true)
+        var text by mutableStateOf("Value")
+        val workFlow = workflow {
+            setContent()
+
+            resumeTillComplete { true }
+
+            repeat(100) {
+                active = false
+                advance()
+
+                resumeTillComplete { true }
+
+                active = true
+                advance()
+
+                resumeTillComplete { true }
+            }
+
+            apply()
+
+            text = "Changed Value"
+            advance()
+
+            awaiter.done()
+        }
+
+        compose { PausableContent(workFlow) { ReusableContentHost(active) { Text(text) } } }
+
+        awaiter.await()
+    }
+
+    @Test // b/404058957
+    fun pausableComposition_reuseDeactivateOrder() = compositionTest {
+        val awaiter = Awaiter()
+        var active by mutableStateOf(true)
+        var text by mutableStateOf("Value")
+        val workFlow = workflow {
+            setContent()
+
+            resumeTillComplete { true }
+
+            active = false
+            advance()
+
+            resumeTillComplete { true }
+
+            active = true
+            advance()
+
+            resumeTillComplete { true }
+
+            apply()
+
+            text = "Changed Value"
+            advance()
+
+            awaiter.done()
+        }
+
+        compose { PausableContent(workFlow) { ReusableContentHost(active) { Text(text) } } }
+
+        awaiter.await()
+    }
+
     @Test(expected = IllegalStateException::class)
     fun pausableComposition_throwInResume() = runTest {
         val recomposer = Recomposer(coroutineContext)
