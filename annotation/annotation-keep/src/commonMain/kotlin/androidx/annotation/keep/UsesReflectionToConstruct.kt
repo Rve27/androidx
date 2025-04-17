@@ -19,17 +19,17 @@ package androidx.annotation.keep
 import kotlin.reflect.KClass
 
 /**
- * Generate a conditional keep rule for code that indirectly accesses a field.
+ * The annotated code uses reflection to indirectly invoke a constructor of a class/interface, or
+ * its subclasses / interface implementers.
  *
- * This annotation should be used in code which accesses a field by reflection (or a similar
- * indirect means, such as JNI).
+ * This annotation indicates to optimizers or shrinkers that the target constructor should be kept
+ * if the annotated code is reachable in the final application build.
  *
- * The generated keep rule will be conditional, which indicates to optimizers / shrinkers that it
- * should only keep the target field in the final application if the annotated code is reachable in
- * the final application.
+ * `@UsesReflectionToConstruct()` is a convenience for `@UsesReflectionToAccessMethod(methodName =
+ * "<init>")`
  *
- * @see GenerateKeepForConstructor
- * @see GenerateKeepForMethod
+ * @see UsesReflectionToAccessMethod
+ * @see UsesReflectionToAccessField
  */
 @Retention(AnnotationRetention.BINARY)
 @Repeatable
@@ -39,39 +39,36 @@ import kotlin.reflect.KClass
     AnnotationTarget.FUNCTION,
     AnnotationTarget.CONSTRUCTOR,
 )
-public annotation class GenerateKeepForField(
+public annotation class UsesReflectionToConstruct(
     /**
-     * Class containing the field accessed by reflection.
+     * Class to be instantiated.
      *
      * Mutually exclusive with [className].
      */
     val classConstant: KClass<*> = Unspecified::class,
 
     /**
-     * Class name (or pattern) containing the field accessed by reflection.
+     * Class to be instantiated.
      *
      * Mutually exclusive with [classConstant].
      */
     val className: String = "",
 
-    /** Field name (or pattern) accessed by reflection. */
-    val fieldName: String,
+    /**
+     * Defines which constructor to keep by specifying set of parameter classes passed.
+     *
+     * Defaults to `[ Unspecified::class ]`, which will keep all constructors.
+     *
+     * Mutually exclusive with [paramClassNames].
+     */
+    val params: Array<KClass<*>> = [Unspecified::class],
 
     /**
-     * Class of field accessed by reflection.
+     * Defines which constructor to keep by specifying set of parameter classes passed.
      *
-     * Ignored if not specified.
+     * Defaults to `[""]`, which will keep all constructors.
      *
-     * Mutually exclusive with [fieldClassName].
+     * Mutually exclusive with [params]
      */
-    val fieldClass: KClass<*> = Unspecified::class,
-
-    /**
-     * Class (or class pattern) of field accessed by reflection.
-     *
-     * Ignored if not specified.
-     *
-     * Mutually exclusive with [fieldClass].
-     */
-    val fieldClassName: String = "",
+    val paramClassNames: Array<String> = [""],
 )

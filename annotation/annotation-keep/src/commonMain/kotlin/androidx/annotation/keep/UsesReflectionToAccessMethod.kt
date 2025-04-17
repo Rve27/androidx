@@ -19,17 +19,14 @@ package androidx.annotation.keep
 import kotlin.reflect.KClass
 
 /**
- * Generate a conditional keep rule for code that indirectly accesses a method.
+ * The annotated code uses reflection to indirectly access a method of the specified
+ * class/interface, or its subclasses / interface implementers.
  *
- * This annotation should be used in code which uses reflection (or a similar indirect means, such
- * as JNI) to call a method.
+ * This annotation indicates to optimizers or shrinkers that the target method should be preserved
+ * if the annotated code is reachable in the final application build.
  *
- * The generated keep rule will be conditional, which indicates to optimizers / shrinkers that it
- * should only keep the target method in the final application if the annotated code is reachable in
- * the final application.
- *
- * @see GenerateKeepForConstructor
- * @see GenerateKeepForField
+ * @see UsesReflectionToConstruct
+ * @see UsesReflectionToAccessField
  */
 @Retention(AnnotationRetention.BINARY)
 @Repeatable
@@ -39,7 +36,7 @@ import kotlin.reflect.KClass
     AnnotationTarget.FUNCTION,
     AnnotationTarget.CONSTRUCTOR,
 )
-public annotation class GenerateKeepForMethod(
+public annotation class UsesReflectionToAccessMethod(
     /**
      * Class containing the field accessed by reflection.
      *

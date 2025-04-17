@@ -25,12 +25,12 @@ package androidx.annotation.keep
  * used.
  *
  * If reflection or JNI access occurs inside the application, instead prefer the
- * `@GenerateKeepFor***` annotations, as they will keep conditionally, rather than unconditionally
- * as this annotation does.
+ * `@UsesReflection***` annotations, as they will keep conditionally, rather than unconditionally as
+ * this annotation does.
  *
- * @see GenerateKeepForConstructor
- * @see GenerateKeepForMethod
- * @see GenerateKeepForField
+ * @see UsesReflectionToConstruct
+ * @see UsesReflectionToAccessMethod
+ * @see UsesReflectionToAccessField
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(
@@ -39,7 +39,7 @@ package androidx.annotation.keep
     AnnotationTarget.FUNCTION,
     AnnotationTarget.CONSTRUCTOR,
 )
-public annotation class GenerateUnconditionalKeep(
+public annotation class UnconditionallyKeep(
     /**
      * Should the name be preserved.
      *
