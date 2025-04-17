@@ -133,10 +133,9 @@ data class AnnotatedAppFunctions(
      * The format of the identifier is `packageName.className#methodName`.
      */
     fun getAppFunctionIdentifier(functionDeclaration: KSFunctionDeclaration): String {
-        val packageName = classDeclaration.packageName.asString()
-        val className = classDeclaration.simpleName.asString()
+        val fullClassName = classDeclaration.toClassName()
         val methodName = functionDeclaration.simpleName.asString()
-        return "${packageName}.${className}#${methodName}"
+        return "$fullClassName#${methodName}"
     }
 
     /**
@@ -189,10 +188,7 @@ data class AnnotatedAppFunctions(
 
     /** Gets the [classDeclaration]'s [ClassName]. */
     fun getEnclosingClassName(): ClassName {
-        return ClassName(
-            classDeclaration.packageName.asString(),
-            classDeclaration.simpleName.asString(),
-        )
+        return classDeclaration.toClassName()
     }
 
     /**

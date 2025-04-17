@@ -925,7 +925,7 @@ class AppFunctionInventoryCodeBuilder(
      * @return The name of the property.
      */
     private fun getObjectTypeMetadataPropertyNameForComponent(componentName: String): String {
-        return "${componentName.uppercase().replace(Regex("[.<>]"), "_").replace("?", "_NULLABLE")}_OBJECT_DATA_TYPE"
+        return "${componentName.uppercase().replace(Regex("[.<>$]"), "_").replace("?", "_NULLABLE")}_OBJECT_DATA_TYPE"
     }
 
     /**
@@ -935,6 +935,6 @@ class AppFunctionInventoryCodeBuilder(
      * @return The name of the property.
      */
     private fun getAllOfTypeMetadataPropertyNameForComponent(componentName: String): String {
-        return "${componentName.uppercase().replace(".", "_")}_ALL_OF_DATA_TYPE"
+        return "${componentName.uppercase().replace(Regex("[.<>$]"), "_")}_ALL_OF_DATA_TYPE"
     }
 }

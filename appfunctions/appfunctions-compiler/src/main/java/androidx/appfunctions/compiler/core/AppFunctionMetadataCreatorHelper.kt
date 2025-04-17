@@ -222,7 +222,7 @@ class AppFunctionMetadataCreatorHelper {
                     allowSerializableInterfaceTypes,
                 )
                 AppFunctionReferenceTypeMetadata(
-                    referenceDataType = annotatedAppFunctionSerializable.qualifiedName,
+                    referenceDataType = annotatedAppFunctionSerializable.jvmQualifiedName,
                     isNullable = appFunctionTypeReference.isNullable,
                 )
             }
@@ -247,7 +247,7 @@ class AppFunctionMetadataCreatorHelper {
                 AppFunctionArrayTypeMetadata(
                     itemType =
                         AppFunctionReferenceTypeMetadata(
-                            referenceDataType = annotatedAppFunctionSerializable.qualifiedName,
+                            referenceDataType = annotatedAppFunctionSerializable.jvmQualifiedName,
                             isNullable =
                                 AppFunctionTypeReference(appFunctionTypeReference.itemTypeReference)
                                     .isNullable,
@@ -345,10 +345,9 @@ class AppFunctionMetadataCreatorHelper {
     ) {
         val serializableTypeQualifiedName =
             if (appFunctionSerializableType is AnnotatedAppFunctionSerializableProxy) {
-                checkNotNull(appFunctionSerializableType.targetClassDeclaration.qualifiedName)
-                    .asString()
+                appFunctionSerializableType.targetClassDeclaration.getJvmQualifiedName()
             } else {
-                appFunctionSerializableType.qualifiedName
+                appFunctionSerializableType.jvmQualifiedName
             }
         // This type has already been added to the sharedDataMap.
         if (seenDataTypeQualifiers.contains(serializableTypeQualifiedName)) {

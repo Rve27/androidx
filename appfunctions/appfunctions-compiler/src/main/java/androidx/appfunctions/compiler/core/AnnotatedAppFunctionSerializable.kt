@@ -38,8 +38,8 @@ import com.squareup.kotlinpoet.TypeName
 open class AnnotatedAppFunctionSerializable(
     private val appFunctionSerializableClass: KSClassDeclaration,
 ) {
-    /** The qualified name of the class being annotated with AppFunctionSerializable. */
-    open val qualifiedName: String by lazy { appFunctionSerializableClass.ensureQualifiedName() }
+    /** The JVM qualified name of the class being annotated with AppFunctionSerializable. */
+    open val jvmQualifiedName: String by lazy { appFunctionSerializableClass.getJvmQualifiedName() }
 
     /** The super type of the class being annotated with AppFunctionSerializable */
     val superTypes: Sequence<KSTypeReference> by lazy { appFunctionSerializableClass.superTypes }
@@ -61,12 +61,7 @@ open class AnnotatedAppFunctionSerializable(
     }
 
     /** The original [ClassName] of the AppFunctionSerializable. */
-    val originalClassName: ClassName by lazy {
-        ClassName(
-            appFunctionSerializableClass.packageName.asString(),
-            appFunctionSerializableClass.simpleName.asString()
-        )
-    }
+    val originalClassName: ClassName by lazy { appFunctionSerializableClass.toClassName() }
 
     /** The [TypeName] of the AppFunctionSerializable. */
     val typeName: TypeName by lazy {

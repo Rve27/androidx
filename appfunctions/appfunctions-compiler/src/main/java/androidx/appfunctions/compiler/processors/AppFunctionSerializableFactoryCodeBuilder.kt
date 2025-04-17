@@ -355,7 +355,7 @@ class AppFunctionSerializableFactoryCodeBuilder(
     private fun appendToAppFunctionDataMethodBodyCommon(): CodeBlock {
         return buildCodeBlock {
             add(factoryInitStatements)
-            val qualifiedClassName = annotatedClass.qualifiedName
+            val qualifiedClassName = annotatedClass.jvmQualifiedName
             addStatement("val builder = %T(%S)", AppFunctionData.Builder::class, qualifiedClassName)
             for (property in annotatedClass.getProperties()) {
                 val formatStringMap =
