@@ -17,6 +17,8 @@
 package androidx.privacysandbox.ui.integration.testapp
 
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.privacysandbox.sdkruntime.client.SdkSandboxManagerCompat
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
@@ -152,6 +154,18 @@ class UiPresentationTests(
         assertThat(sdkToClientCallback.remoteViewHeight).isEqualTo(contentView.height)
     }
 
+    @Test
+    fun orientationChangedTest() {
+        scenario.onActivity { activity ->
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
+
+        assertThat(sdkToClientCallback.configLatch.await(CALLBACK_WAIT_MS, TimeUnit.MILLISECONDS))
+            .isTrue()
+        assertThat(getSandboxedSdkView().context.resources.configuration)
+            .isEqualTo(sdkToClientCallback.remoteViewConfiguration)
+    }
+
     private fun getSandboxedSdkView(): SandboxedSdkView {
         var sandboxedSdkView: SandboxedSdkView? = null
         Espresso.onView(instanceOf(SandboxedSdkView::class.java))
@@ -193,12 +207,19 @@ class UiPresentationTests(
     private class SdkToClientCallback : IAutomatedTestCallback.Stub() {
         var remoteViewWidth: Int? = null
         var remoteViewHeight: Int? = null
+        var remoteViewConfiguration: Configuration? = null
         val resizeLatch = CountDownLatch(1)
+        val configLatch = CountDownLatch(1)
 
         override fun onResizeOccurred(width: Int, height: Int) {
             remoteViewWidth = width
             remoteViewHeight = height
             resizeLatch.countDown()
+        }
+
+        override fun onConfigurationChanged(configuration: Configuration) {
+            remoteViewConfiguration = configuration
+            configLatch.countDown()
         }
     }
 }
