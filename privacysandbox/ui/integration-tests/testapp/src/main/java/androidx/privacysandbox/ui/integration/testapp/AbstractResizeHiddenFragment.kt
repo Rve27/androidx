@@ -20,19 +20,22 @@ import android.os.Bundle
 import androidx.privacysandbox.ui.client.SandboxedUiAdapterFactory
 import androidx.privacysandbox.ui.client.view.SandboxedSdkViewEventListener
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
+import androidx.privacysandbox.ui.integration.sdkproviderutils.IAutomatedTestCallback
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
+import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AUTOMATED_TEST_CALLBACK
 
 abstract class AbstractResizeHiddenFragment : BaseHiddenFragment() {
-    val uiDisplayedLatch = CountDownLatch(1)
+    var automatedTestCallback: IAutomatedTestCallback? = null
+
     val eventListener =
         object : SandboxedSdkViewEventListener {
             override fun onUiDisplayed() {
-                uiDisplayedLatch.countDown()
+                automatedTestCallback?.onUiDisplayed()
             }
 
-            override fun onUiError(error: Throwable) {}
+            override fun onUiError(error: Throwable) {
+                automatedTestCallback?.onUiError(error.message.toString())
+            }
 
             override fun onUiClosed() {}
         }
@@ -48,11 +51,8 @@ abstract class AbstractResizeHiddenFragment : BaseHiddenFragment() {
 
     abstract fun loadAd(automatedTestCallbackBundle: Bundle)
 
-    fun ensureUiIsDisplayed(callBackWaitMs: Long): Boolean {
-        return uiDisplayedLatch.await(callBackWaitMs, TimeUnit.MILLISECONDS)
-    }
-
     suspend fun buildAdapter(automatedTestCallbackBundle: Bundle): SandboxedUiAdapter {
+        automatedTestCallback = getAutomatedTestCallback(automatedTestCallbackBundle)
         return SandboxedUiAdapterFactory.createFromCoreLibInfo(
             getSdkApi()
                 .loadBannerAdForAutomatedTests(
@@ -64,5 +64,15 @@ abstract class AbstractResizeHiddenFragment : BaseHiddenFragment() {
                     automatedTestCallbackBundle
                 )
         )
+    }
+
+    private fun getAutomatedTestCallback(
+        automatedTestCallbackBundle: Bundle?
+    ): IAutomatedTestCallback? {
+        val automatedTestCallbackBinder =
+            automatedTestCallbackBundle?.getBinder(AUTOMATED_TEST_CALLBACK)
+        val automatedTestCallback: IAutomatedTestCallback? =
+            automatedTestCallbackBinder?.let { IAutomatedTestCallback.Stub.asInterface(it) }
+        return automatedTestCallback
     }
 }
