@@ -138,6 +138,7 @@ package androidx.compose.ui {
     property public boolean isFocusActionExitsTouchModeEnabled;
     property public boolean isNoPinningInFocusRestorationEnabled;
     property public boolean isOutOfFrameDeactivationEnabled;
+    property public boolean isPointerInteropFilterDispatchingFixEnabled;
     property public boolean isRectTrackingEnabled;
     property public boolean isRemoveFocusedViewFixEnabled;
     property public boolean isSemanticAutofillEnabled;
@@ -150,6 +151,7 @@ package androidx.compose.ui {
     field public static boolean isFocusActionExitsTouchModeEnabled;
     field public static boolean isNoPinningInFocusRestorationEnabled;
     field public static boolean isOutOfFrameDeactivationEnabled;
+    field public static boolean isPointerInteropFilterDispatchingFixEnabled;
     field public static boolean isRectTrackingEnabled;
     field public static boolean isRemoveFocusedViewFixEnabled;
     field public static boolean isSemanticAutofillEnabled;
