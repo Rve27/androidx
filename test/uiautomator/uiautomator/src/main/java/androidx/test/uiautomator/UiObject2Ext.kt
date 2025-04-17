@@ -122,10 +122,10 @@ public fun UiObject2.onViews(
  * @param timeoutMs a timeout to find the view that satisfies the given condition.
  * @param pollIntervalMs an interval to wait before rechecking the accessibility tree for updates.
  * @param block a block that specifies a condition on the node to find.
- * @return a list of [UiObject2] from nodes that matches the given [block] condition.
+ * @return a [UiObject2] that matches the given [block] condition.
  */
 @JvmOverloads
-public fun UiObject2.scrollUntilView(
+public fun UiObject2.scrollToViewWhere(
     direction: Direction,
     timeoutMs: Long = 10000,
     pollIntervalMs: Long = 100,

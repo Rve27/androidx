@@ -41,6 +41,8 @@ public fun UiDevice.activeWindow(): AccessibilityWindowInfo = waitForRootInActiv
  * @param sleepIntervalMs a interval to wait before retrying checking if the node is available.
  * @param clearCache whether the accessibility nodes cache should be cleared when checking.
  * @return the root node for this window.
+ * @throws [IllegalStateException] if the root node in the active window cannot be acquired before
+ *   the give timeout [timeoutMs].
  */
 @JvmOverloads
 public fun UiDevice.waitForRootInActiveWindow(
