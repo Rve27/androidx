@@ -19,6 +19,7 @@
 package androidx.build
 
 import androidx.build.clang.AndroidXClang
+import androidx.build.clang.CombineObjectFilesTask
 import androidx.build.clang.MultiTargetNativeCompilation
 import androidx.build.clang.NativeLibraryBundler
 import androidx.build.clang.configureCinterop
@@ -57,6 +58,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
+import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 
 /**
  * [AndroidXMultiplatformExtension] is an extension that wraps specific functionality of the Kotlin
@@ -194,13 +196,20 @@ abstract class AndroidXMultiplatformExtension(val project: Project) {
      *   [addNativeLibrariesToJniLibs] function.
      *
      * @param archiveName The archive file name for the native artifacts (.so, .a or .o)
+     * @param outputKind The kind of output it should be produced (library or executable).
      * @param configure Action block to configure the compilation.
      */
+    @JvmOverloads
     fun createNativeCompilation(
         archiveName: String,
+        outputKind: LinkerOutputKind = LinkerOutputKind.DYNAMIC_LIBRARY,
         configure: Action<MultiTargetNativeCompilation>
     ): MultiTargetNativeCompilation {
-        return clang.createNativeCompilation(archiveName = archiveName, configure = configure)
+        return clang.createNativeCompilation(
+            archiveName = archiveName,
+            configure = configure,
+            outputKind = outputKind
+        )
     }
 
     /**
@@ -271,17 +280,41 @@ abstract class AndroidXMultiplatformExtension(val project: Project) {
         configureCinterop(project, kotlinNativeCompilation, configuration)
     }
 
-    /** @see NativeLibraryBundler.addNativeLibrariesToJniLibs */
+    /**
+     * Adds the native outputs from [nativeCompilation] to the assets of the [androidTarget].
+     *
+     * @see CombineObjectFilesTask for details.
+     */
+    @JvmOverloads
+    fun addNativeLibrariesToVariantAssets(
+        androidTarget: KotlinAndroidTarget,
+        nativeCompilation: MultiTargetNativeCompilation,
+        forTest: Boolean = false,
+    ) =
+        nativeLibraryBundler.addNativeLibrariesToAndroidVariantSources(
+            androidTarget = androidTarget,
+            nativeCompilation = nativeCompilation,
+            forTest = forTest,
+            provideSourceDirectories = { assets }
+        )
+
+    /**
+     * Adds the native outputs from [nativeCompilation] to the jni libs dependency of the
+     * [androidTarget].
+     *
+     * @see CombineObjectFilesTask for details.
+     */
     @JvmOverloads
     fun addNativeLibrariesToJniLibs(
         androidTarget: KotlinAndroidTarget,
         nativeCompilation: MultiTargetNativeCompilation,
         forTest: Boolean = false
     ) =
-        nativeLibraryBundler.addNativeLibrariesToJniLibs(
+        nativeLibraryBundler.addNativeLibrariesToAndroidVariantSources(
             androidTarget = androidTarget,
             nativeCompilation = nativeCompilation,
-            forTest = forTest
+            forTest = forTest,
+            provideSourceDirectories = { jniLibs }
         )
 
     /**

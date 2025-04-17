@@ -34,32 +34,37 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
+import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 
 @CacheableTask
-abstract class ClangSharedLibraryTask
-@Inject
-constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
+abstract class ClangLinkerTask @Inject constructor(private val workerExecutor: WorkerExecutor) :
+    DefaultTask() {
     init {
         description =
-            "Combines multiple object files (.o) into a shared library file" + "(.so / .dylib)."
+            "Combines multiple object files (.o) into either a shared library file" +
+                "(.so / .dylib) or an executable."
         group = "Build"
     }
 
     @get:ServiceReference(KonanBuildService.KEY)
     abstract val konanBuildService: Property<KonanBuildService>
 
-    @get:Nested abstract val clangParameters: ClangSharedLibraryParameters
+    @get:Nested abstract val clangParameters: ClangLinkerParameters
 
     @TaskAction
     fun archive() {
-        workerExecutor.noIsolation().submit(ClangSharedLibraryWorker::class.java) {
+        workerExecutor.noIsolation().submit(ClangLinkerWorker::class.java) {
             it.clangParameters.set(clangParameters)
             it.buildService.set(konanBuildService)
         }
     }
 }
 
-abstract class ClangSharedLibraryParameters {
+abstract class ClangLinkerParameters {
+
+    /** The kind of output the linker should produce. */
+    @get:Input abstract val linkerOutputKind: Property<LinkerOutputKind>
+
     /** The target platform for the shared file. */
     @get:Input abstract val konanTarget: Property<SerializableKonanTarget>
 
@@ -86,14 +91,14 @@ abstract class ClangSharedLibraryParameters {
     @get:Input abstract val linkerArgs: ListProperty<String>
 }
 
-private abstract class ClangSharedLibraryWorker : WorkAction<ClangSharedLibraryWorker.Params> {
+private abstract class ClangLinkerWorker : WorkAction<ClangLinkerWorker.Params> {
     interface Params : WorkParameters {
-        val clangParameters: Property<ClangSharedLibraryParameters>
+        val clangParameters: Property<ClangLinkerParameters>
         val buildService: Property<KonanBuildService>
     }
 
     override fun execute() {
         val buildService = parameters.buildService.get()
-        buildService.createSharedLibrary(parameters.clangParameters.get())
+        buildService.runLinker(parameters.clangParameters.get())
     }
 }
