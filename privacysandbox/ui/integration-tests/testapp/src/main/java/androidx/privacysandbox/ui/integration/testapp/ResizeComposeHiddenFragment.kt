@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -108,9 +109,11 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
                 return
             }
             var ssuModifier =
-                Modifier.padding(
-                    horizontal = bannerPadding.horizontalPadding,
-                    vertical = bannerPadding.verticalPadding
+                Modifier.absolutePadding(
+                    bannerPadding.paddingLeft,
+                    bannerPadding.paddingTop,
+                    bannerPadding.paddingRight,
+                    bannerPadding.paddingBottom
                 )
 
             ssuModifier =
@@ -138,6 +141,22 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
     override fun performResize(width: Int, height: Int) {
         bannerDimension =
             BannerDimension(convertPixelsToDpExternal(width), convertPixelsToDpExternal(height))
+        BannerDimension(convertPixelsToDpExternal(width), convertPixelsToDpExternal(height))
+    }
+
+    override fun applyPadding(
+        paddingLeft: Int,
+        paddingTop: Int,
+        paddingRight: Int,
+        paddingBottom: Int
+    ) {
+        bannerPadding =
+            BannerPadding(
+                convertPixelsToDpExternal(paddingLeft),
+                convertPixelsToDpExternal(paddingTop),
+                convertPixelsToDpExternal(paddingRight),
+                convertPixelsToDpExternal(paddingBottom)
+            )
     }
 
     fun convertPixelsToDpExternal(pixelValue: Int): Dp {
@@ -146,5 +165,10 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
 
     data class BannerDimension(val width: Dp = 0.dp, val height: Dp = 0.dp)
 
-    data class BannerPadding(val horizontalPadding: Dp = 0.dp, val verticalPadding: Dp = 0.dp)
+    data class BannerPadding(
+        val paddingLeft: Dp = 0.dp,
+        val paddingTop: Dp = 0.dp,
+        val paddingRight: Dp = 0.dp,
+        val paddingBottom: Dp = 0.dp
+    )
 }

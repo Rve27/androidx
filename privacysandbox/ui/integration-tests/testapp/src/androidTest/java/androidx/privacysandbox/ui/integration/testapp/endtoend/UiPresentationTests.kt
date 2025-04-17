@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.floor
 import org.hamcrest.Matchers.instanceOf
 import org.junit.After
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -126,50 +125,27 @@ class UiPresentationTests(
 
     @Test
     fun paddingAppliedTest() {
-        // TODO(b/409264217): Add support for compose padding test
-        assumeTrue(uiFrameworkOption != FragmentOptions.UI_FRAMEWORK_COMPOSE)
+        val sandboxedSdkView = getSandboxedSdkView()
+        val resizableViewWidth = sandboxedSdkView.width
+        val resizableViewHeight = sandboxedSdkView.height
+        val paddingLeft = floor(resizableViewWidth * 0.05).toInt()
+        val paddingTop = floor(resizableViewHeight * 0.05).toInt()
+        val paddingRight = paddingLeft
+        val paddingBottom = paddingTop
 
-        var resizableViewWidth: Int? = null
-        var resizableViewHeight: Int? = null
-        var paddingLeft: Int? = null
-        var paddingTop: Int? = null
-        var paddingRight: Int? = null
-        var paddingBottom: Int? = null
         scenario.onActivity { activity ->
-            val resizableBannerView =
-                activity.findViewById<SandboxedSdkView>(R.id.hidden_resizable_ad_view)
-            resizableViewWidth = resizableBannerView.width
-            resizableViewHeight = resizableBannerView.height
-            paddingLeft = floor(resizableBannerView.width * 0.05).toInt()
-            paddingTop = floor(resizableBannerView.height * 0.05).toInt()
-            paddingRight = paddingLeft
-            paddingBottom = paddingTop
-            resizableBannerView.setPadding(
-                paddingLeft!!,
-                paddingTop!!,
-                paddingRight!!,
-                paddingBottom!!
-            )
+            resizeFragment.applyPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
         }
 
         assertThat(sdkToClientCallback.resizeLatch.await(CALLBACK_WAIT_MS, TimeUnit.MILLISECONDS))
             .isTrue()
 
-        var contentViewWidth: Int? = null
-        var contentViewHeight: Int? = null
-        scenario.onActivity { activity ->
-            val resizableBannerView =
-                activity.findViewById<SandboxedSdkView>(R.id.hidden_resizable_ad_view)
-            contentViewWidth = resizableBannerView.getChildAt(0).width
-            contentViewHeight = resizableBannerView.getChildAt(0).height
-        }
-
-        assertThat(contentViewWidth)
-            .isEqualTo(resizableViewWidth!! - paddingLeft!! - paddingRight!!)
-        assertThat(contentViewHeight)
-            .isEqualTo(resizableViewHeight!! - paddingTop!! - paddingBottom!!)
-        assertThat(sdkToClientCallback.remoteViewWidth).isEqualTo(contentViewWidth)
-        assertThat(sdkToClientCallback.remoteViewHeight).isEqualTo(contentViewHeight)
+        // TODO(b/411324280): Verify the size of SandboxedSdkView after applying padding.
+        val contentView = sandboxedSdkView.getChildAt(0)
+        assertThat(contentView.width).isEqualTo(resizableViewWidth - paddingLeft - paddingRight)
+        assertThat(contentView.height).isEqualTo(resizableViewHeight - paddingTop - paddingBottom)
+        assertThat(sdkToClientCallback.remoteViewWidth).isEqualTo(contentView.width)
+        assertThat(sdkToClientCallback.remoteViewHeight).isEqualTo(contentView.height)
     }
 
     private fun getSandboxedSdkView(): SandboxedSdkView {

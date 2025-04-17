@@ -47,6 +47,15 @@ class ResizeViewHiddenFragment : AbstractResizeHiddenFragment() {
         resizableBannerView.layoutParams = LinearLayoutCompat.LayoutParams(width, height)
     }
 
+    override fun applyPadding(
+        paddingLeft: Int,
+        paddingTop: Int,
+        paddingRight: Int,
+        paddingBottom: Int
+    ) {
+        resizableBannerView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+    }
+
     override fun loadAd(sdkToClientCallback: IAutomatedTestCallback) {
         CoroutineScope(Dispatchers.Main).launch {
             resizableBannerView.setAdapter(buildAdapter(sdkToClientCallback))
