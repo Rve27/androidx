@@ -22,6 +22,4 @@ package androidx.privacysandbox.ui.integration.sdkproviderutils;
 interface IAutomatedTestCallback {
     void onResizeOccurred(int width, int height);
     void onConfigurationChanged(in Configuration configuration);
-    void onUiDisplayed();
-    void onUiError(String error);
 }

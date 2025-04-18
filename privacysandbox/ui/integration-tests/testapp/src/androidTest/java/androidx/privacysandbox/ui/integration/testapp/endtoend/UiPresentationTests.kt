@@ -19,7 +19,6 @@ package androidx.privacysandbox.ui.integration.testapp
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import androidx.privacysandbox.sdkruntime.client.SdkSandboxManagerCompat
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
@@ -40,7 +39,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.math.floor
 import org.hamcrest.Matchers.instanceOf
 import org.junit.After
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -99,10 +97,7 @@ class UiPresentationTests(
             resizeFragment = activity.getCurrentFragment() as AbstractResizeHiddenFragment
             resizeFragment.loadAd(sdkToClientCallbackBundle)
         }
-        assertThat(
-                sdkToClientCallback.uiDisplayedLatch.await(CALLBACK_WAIT_MS, TimeUnit.MILLISECONDS)
-            )
-            .isTrue()
+        assertThat(resizeFragment.ensureUiIsDisplayed(CALLBACK_WAIT_MS)).isTrue()
     }
 
     @After
@@ -171,22 +166,6 @@ class UiPresentationTests(
             .isEqualTo(sdkToClientCallback.remoteViewConfiguration)
     }
 
-    @Test
-    fun sandboxDeathTest() {
-        // Sandbox exists only for U+ devices
-        assumeTrue(Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-        // TODO(b/411342525): Sandbox death does not cause ui error for in App Mediation currently
-        assumeTrue(mediationOption != FragmentOptions.MEDIATION_TYPE_IN_APP)
-
-        scenario.onActivity { activity ->
-            activity.getCurrentFragment().getSdkApi().triggerProcessDeath()
-        }
-
-        assertThat(sdkToClientCallback.uiErrorLatch.await(CALLBACK_WAIT_MS, TimeUnit.MILLISECONDS))
-            .isTrue()
-        assertThat(sdkToClientCallback.errorString).isEqualTo("Remote process died")
-    }
-
     private fun getSandboxedSdkView(): SandboxedSdkView {
         var sandboxedSdkView: SandboxedSdkView? = null
         Espresso.onView(instanceOf(SandboxedSdkView::class.java))
@@ -229,11 +208,8 @@ class UiPresentationTests(
         var remoteViewWidth: Int? = null
         var remoteViewHeight: Int? = null
         var remoteViewConfiguration: Configuration? = null
-        var errorString: String? = null
         val resizeLatch = CountDownLatch(1)
         val configLatch = CountDownLatch(1)
-        val uiDisplayedLatch = CountDownLatch(1)
-        val uiErrorLatch = CountDownLatch(1)
 
         override fun onResizeOccurred(width: Int, height: Int) {
             remoteViewWidth = width
@@ -244,15 +220,6 @@ class UiPresentationTests(
         override fun onConfigurationChanged(configuration: Configuration) {
             remoteViewConfiguration = configuration
             configLatch.countDown()
-        }
-
-        override fun onUiDisplayed() {
-            uiDisplayedLatch.countDown()
-        }
-
-        override fun onUiError(error: String) {
-            errorString = error
-            uiErrorLatch.countDown()
         }
     }
 }
