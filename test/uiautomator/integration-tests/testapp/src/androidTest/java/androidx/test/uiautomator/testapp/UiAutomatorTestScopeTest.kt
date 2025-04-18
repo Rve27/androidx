@@ -29,7 +29,7 @@ import androidx.test.uiautomator.id
 import androidx.test.uiautomator.isClass
 import androidx.test.uiautomator.onView
 import androidx.test.uiautomator.onViewOrNull
-import androidx.test.uiautomator.scrollToViewWhere
+import androidx.test.uiautomator.scrollToView
 import androidx.test.uiautomator.textAsString
 import androidx.test.uiautomator.uiAutomator
 import androidx.test.uiautomator.waitForStable
@@ -116,7 +116,7 @@ class UiAutomatorTestScopeTest {
         onView { id == "top-text" }
         val button =
             onView { isScrollable }
-                .scrollToViewWhere(Direction.DOWN) { className == Button::class.java.name }
+                .scrollToView(Direction.DOWN) { className == Button::class.java.name }
         val textView = onView { textAsString == "Initial" }
         button.click()
         assertThat(textView.text).isEqualTo("Updated")

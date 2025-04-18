@@ -115,7 +115,7 @@ public fun UiObject2.onViews(
  *
  * Example:
  * ```kotlin
- * onView { isScrollable }.scrollUntilView(Direction.DOWN) { id == "button" }.click()
+ * onView { isScrollable }.scrollToView(Direction.DOWN) { id == "button" }.click()
  * ```
  *
  * @param direction the scroll [Direction].
@@ -125,13 +125,13 @@ public fun UiObject2.onViews(
  * @return a [UiObject2] that matches the given [block] condition.
  */
 @JvmOverloads
-public fun UiObject2.scrollToViewWhere(
+public fun UiObject2.scrollToView(
     direction: Direction,
     timeoutMs: Long = 10000,
     pollIntervalMs: Long = 100,
     block: AccessibilityNodeInfo.() -> (Boolean),
 ): UiObject2 =
-    scrollUntilViewOrNull(
+    scrollToViewOrNull(
             direction = direction,
             timeoutMs = timeoutMs,
             pollIntervalMs = pollIntervalMs,
@@ -145,7 +145,7 @@ public fun UiObject2.scrollToViewWhere(
  *
  * Example:
  * ```kotlin
- * onView { isScrollable }.scrollUntilView(Direction.DOWN) { id == "button" }.click()
+ * onView { isScrollable }.scrollToView(Direction.DOWN) { id == "button" }.click()
  * ```
  *
  * @param direction the scroll [Direction].
@@ -155,7 +155,7 @@ public fun UiObject2.scrollToViewWhere(
  * @return a [UiObject2] that matches the given [block] condition.
  */
 @JvmOverloads
-public fun UiObject2.scrollUntilViewOrNull(
+public fun UiObject2.scrollToViewOrNull(
     direction: Direction,
     timeoutMs: Long = 10000,
     pollIntervalMs: Long = 100,
