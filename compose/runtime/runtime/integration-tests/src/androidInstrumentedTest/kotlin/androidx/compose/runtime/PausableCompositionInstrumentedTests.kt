@@ -16,7 +16,9 @@
 
 package androidx.compose.runtime
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.SaveableStateHolder
@@ -24,6 +26,7 @@ import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.SubcomposeLayoutState
@@ -206,5 +209,46 @@ class PausableCompositionInstrumentedTests {
         }
 
         rule.runOnIdle { assertThat(activeMovableContentsCount).isEqualTo(0) }
+    }
+
+    @Test
+    fun movableContent_virtual_node() {
+        val state = SubcomposeLayoutState()
+        var emitMovable by mutableStateOf(true)
+        val movableContent =
+            movableContentOf<Boolean> { flag ->
+                Box(if (flag) Modifier.background(Color.Red) else Modifier)
+            }
+        rule.setContent { SubcomposeLayout(state) { layout(10, 10) {} } }
+        val precomposition =
+            rule.runOnIdle {
+                val precomposition =
+                    state.createPausedPrecomposition(Unit) {
+                        Box {}
+                        if (emitMovable) {
+                            Box {}
+                            movableContent(emitMovable)
+                        } else {
+                            Row {
+                                Box {}
+                                movableContent(emitMovable)
+                            }
+                        }
+                    }
+                precomposition.resume { false }
+
+                emitMovable = false
+
+                precomposition
+            }
+
+        rule.runOnIdle {
+            while (!precomposition.isComplete) {
+                precomposition.resume { false }
+            }
+            precomposition.apply()
+        }
+
+        rule.runOnIdle {}
     }
 }
