@@ -59,7 +59,7 @@ dependencies {
 }
 
 android {
-    namespace "androidx.privacysandbox.ui.client.compose"
+    namespace = "androidx.privacysandbox.ui.client.compose"
     compileSdk = 35
 }
 

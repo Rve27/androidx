@@ -173,5 +173,5 @@ androidx {
 }
 
 android {
-    namespace "androidx.lifecycle.viewmodel.testing"
+    namespace = "androidx.lifecycle.viewmodel.testing"
 }
