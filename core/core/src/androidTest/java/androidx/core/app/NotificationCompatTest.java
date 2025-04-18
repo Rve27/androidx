@@ -2458,7 +2458,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
 
     @Test
     @SdkSuppress(minSdkVersion = 20)
-    public void testCallStyle_preservesCustomActions() {
+    public void testCallStyle_preservesOneCustomAction() {
         PendingIntent hangupIntent = createIntent("hangup");
         Person person = new Person.Builder().setName("test name").build();
         NotificationCompat.CallStyle callStyle = NotificationCompat.CallStyle.forOngoingCall(
@@ -2502,6 +2502,59 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         }
     }
 
+    @Test
+    @SdkSuppress(minSdkVersion = 20)
+    public void testCallStyle_preservesTwoCustomActions() {
+        PendingIntent hangupIntent = createIntent("hangup");
+        Person person = new Person.Builder().setName("test name").build();
+        NotificationCompat.CallStyle callStyle = NotificationCompat.CallStyle.forOngoingCall(
+                person, hangupIntent);
+        NotificationCompat.Action customAction1 = new NotificationCompat.Action.Builder(
+                IconCompat.createWithResource(mContext, R.drawable.notification_bg),
+                "Custom 1!", null).build();
+        NotificationCompat.Action customAction2 = new NotificationCompat.Action.Builder(
+                IconCompat.createWithResource(mContext, R.drawable.notification_bg),
+                "Custom 2!", null).build();
+
+        Notification notification = new NotificationCompat.Builder(mContext, "test id")
+                .setSmallIcon(1)
+                .setContentTitle("test title")
+                .addAction(customAction1)
+                .addAction(customAction2)
+                .setStyle(callStyle)
+                .build();
+
+        // Actions as Hang up + Custom (fits on all Android versions).
+        assertThat(notification.actions).hasLength(3);
+
+        // But order is different per Android version. CallStyle was introduced in SDK 31 and
+        // placed custom actions first. A QPR of SDK 33 switched to system actions first. Pre-31
+        // there is no native CallStyle, so the Compat version uses the newer ordering there too.
+        List<String> actionTitles = Lists.transform(Arrays.asList(notification.actions),
+                a -> a.title.toString());
+        if (Build.VERSION.SDK_INT < 31 || Build.VERSION.SDK_INT >= 34) {
+            assertThat(actionTitles).containsExactly(
+                            mContext.getString(R.string.call_notification_hang_up_action),
+                            customAction1.title.toString(),
+                            customAction2.title.toString())
+                    .inOrder();
+        } else if (Build.VERSION.SDK_INT >= 31 && Build.VERSION.SDK_INT <= 32) {
+            assertThat(actionTitles).containsExactly(
+                            customAction1.title.toString(),
+                            customAction2.title.toString(),
+                            mContext.getString(R.string.call_notification_hang_up_action))
+                    .inOrder();
+        } else if (Build.VERSION.SDK_INT == 33) {
+            // Could be either, so check presence but not ordering.
+            assertThat(actionTitles).containsExactly(
+                            mContext.getString(R.string.call_notification_hang_up_action),
+                            customAction1.title.toString(),
+                            customAction2.title.toString());
+        } else {
+            throw new AssertionError("All SDK_INT values are covered!");
+        }
+    }
+
     @SdkSuppress(minSdkVersion = 20)
     @Test
     public void testCallStyle_getActionsListWithSystemAndContextualActionsForIncoming() {
@@ -2533,7 +2586,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
                 callStyle.getActionsListWithSystemActions();
         // Note that contextual actions do not count toward the MAX_ACTION_BUTTON limit.
         // Thus the resulting number of actions can be more than MAX_ACTION_BUTTON.
-        assertEquals(4, resultActions.size());
+        assertEquals(5, resultActions.size());
 
         // The negative action always gets placed first.
         assertEquals(mContext.getString(R.string.call_notification_decline_action),
@@ -2549,6 +2602,8 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
 
         // The "bar" action is Contextual, so it is always included, beyond the limit of 3.
         assertEquals("bar", resultActions.get(3).getTitle().toString());
+        // even non-contextual actions are included, beyond the visible limit of 3.
+        assertEquals("baz", resultActions.get(4).getTitle().toString());
     }
 
     @SdkSuppress(minSdkVersion = 20)
@@ -2582,7 +2637,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
 
         ArrayList<NotificationCompat.Action> resultActions =
                 callStyle.getActionsListWithSystemActions();
-        assertEquals(3, resultActions.size());
+        assertEquals(5, resultActions.size());
 
         // The negative Intent is always placed first.
         assertEquals(mContext.getString(R.string.call_notification_hang_up_action),
@@ -2590,6 +2645,9 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertEquals(negativeIntent, resultActions.get(0).getActionIntent());
         assertEquals("foo", resultActions.get(1).getTitle().toString());
         assertEquals("bar", resultActions.get(2).getTitle().toString());
+        // even non-contextual actions are included, beyond the visible limit of 3.
+        assertEquals("baz", resultActions.get(3).getTitle().toString());
+        assertEquals("bbq", resultActions.get(4).getTitle().toString());
     }
 
     @SdkSuppress(minSdkVersion = 20)
@@ -2621,7 +2679,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
 
         ArrayList<NotificationCompat.Action> resultActions =
                 callStyle.getActionsListWithSystemActions();
-        assertEquals(4, resultActions.size());
+        assertEquals(5, resultActions.size());
 
         // The negative intent is always placed first.
         assertEquals(mContext.getString(R.string.call_notification_hang_up_action),
@@ -2634,7 +2692,10 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
                 resultActions.get(2).getTitle().toString());
         assertEquals(positiveIntent, resultActions.get(2).getActionIntent());
 
+        // contextual actions are always included, beyond the visible limit of 3.
         assertEquals("bar", resultActions.get(3).getTitle().toString());
+        // even non-contextual actions are included, beyond the visible limit of 3.
+        assertEquals("baz", resultActions.get(4).getTitle().toString());
     }
 
     @SdkSuppress(minSdkVersion = 20)
