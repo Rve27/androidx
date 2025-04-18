@@ -29,7 +29,7 @@ import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 const val zipComposeReportsTaskName = "zipComposeCompilerReports"
 const val zipComposeMetricsTaskName = "zipComposeCompilerMetrics"
@@ -185,7 +185,7 @@ private fun configureComposeCompilerPlugin(project: Project, extension: AndroidX
         val enableMetrics = project.enableComposeCompilerMetrics()
         val enableReports = project.enableComposeCompilerReports()
 
-        val compileTasks = project.tasks.withType(KotlinCompile::class.java)
+        val compileTasks = project.tasks.withType(AbstractKotlinCompile::class.java)
 
         compileTasks.configureEach { compile ->
             compile.inputs.property("composeMetricsEnabled", enableMetrics)
@@ -228,7 +228,7 @@ private fun configureComposeCompilerPlugin(project: Project, extension: AndroidX
     }
 }
 
-private fun KotlinCompile.addPluginOption(
+private fun AbstractKotlinCompile<*>.addPluginOption(
     composeCompileOptions: ComposeCompileOptions,
     value: String
 ) =
@@ -241,12 +241,8 @@ private fun KotlinCompile.addPluginOption(
         }
     )
 
-private fun KotlinCompile.enableFeatureFlag(featureFlag: ComposeFeatureFlag) {
+private fun AbstractKotlinCompile<*>.enableFeatureFlag(featureFlag: ComposeFeatureFlag) {
     addPluginOption(ComposeCompileOptions.FeatureFlagOption, featureFlag.featureName)
-}
-
-private fun KotlinCompile.disableFeatureFlag(featureFlag: ComposeFeatureFlag) {
-    addPluginOption(ComposeCompileOptions.FeatureFlagOption, "-${featureFlag.featureName}")
 }
 
 internal fun Project.zipComposeCompilerMetrics() {
