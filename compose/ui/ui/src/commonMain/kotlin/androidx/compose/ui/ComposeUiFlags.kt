@@ -105,7 +105,8 @@ object ComposeUiFlags {
      * * `SafeGesturesRulers`
      * * `SafeContentRulers`
      */
-    @Suppress("MutableBareField") @JvmField var areWindowInsetsRulersEnabled = true
+    // off for b/410868572
+    @Suppress("MutableBareField") @JvmField var areWindowInsetsRulersEnabled = false
 
     /**
      * With this flag on, when an AccessibilityService performs ACTION_FOCUS on a Composable node,
