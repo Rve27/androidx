@@ -162,7 +162,7 @@ public final class CameraUseCaseAdapter implements Camera {
     private final StreamSpecsCalculator mStreamSpecsCalculator;
 
     /**
-     * Create a new {@link CameraUseCaseAdapter} instance.
+     * Creates a new {@link CameraUseCaseAdapter} instance.
      *
      * @param camera               The camera that is wrapped.
      * @param cameraCoordinator    Camera coordinator that exposes concurrent camera mode.
@@ -187,7 +187,7 @@ public final class CameraUseCaseAdapter implements Camera {
     }
 
     /**
-     * Create a new {@link CameraUseCaseAdapter} instance.
+     * Creates a new {@link CameraUseCaseAdapter} instance.
      *
      * @param camera                     The camera that is wrapped.
      * @param secondaryCamera            The secondary camera that is wrapped.
@@ -258,7 +258,7 @@ public final class CameraUseCaseAdapter implements Camera {
     }
 
     /**
-     * Set the viewport that will be used for the {@link UseCase} attached to the camera.
+     * Sets the viewport that will be used for the {@link UseCase} attached to the camera.
      */
     public void setViewPort(@Nullable ViewPort viewPort) {
         synchronized (mLock) {
@@ -267,7 +267,7 @@ public final class CameraUseCaseAdapter implements Camera {
     }
 
     /**
-     * Set the effects that will be used for the {@link UseCase} attached to the camera.
+     * Sets the effects that will be used for the {@link UseCase} attached to the camera.
      */
     public void setEffects(@Nullable List<CameraEffect> effects) {
         synchronized (mLock) {
@@ -276,12 +276,43 @@ public final class CameraUseCaseAdapter implements Camera {
     }
 
     /**
-     * Set the target high speed frame rate that will be used for the {@link UseCase} attached to
+     * Gets the {@link ViewPort} that is attached to the camera.
+     */
+    @Nullable
+    public ViewPort getViewPort() {
+        synchronized (mLock) {
+            return mViewPort;
+        }
+    }
+
+    /**
+     * Gets the {@link CameraEffect}s that are attached to the camera.
+     */
+    @NonNull
+    public List<CameraEffect> getEffects() {
+        synchronized (mLock) {
+            return mEffects;
+        }
+    }
+
+    /**
+     * Sets the target high speed frame rate that will be used for the {@link UseCase} attached to
      * the camera.
      */
     public void setTargetHighSpeedFrameRate(@NonNull Range<Integer> frameRate) {
         synchronized (mLock) {
             mTargetHighSpeedFps = frameRate;
+        }
+    }
+
+
+    /**
+     * Gets the target high speed frame rate.
+     */
+    @NonNull
+    public Range<Integer> getTargetHighSpeedFps() {
+        synchronized (mLock) {
+            return mTargetHighSpeedFps;
         }
     }
 
