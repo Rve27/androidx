@@ -48,10 +48,12 @@ sealed interface AdaptStrategy {
      * Note that if the current layout can have more than one horizontal partitions, the pane will
      * never be reflowed.
      *
+     * To provide custom adapt strategies, see the following sample:
+     *
+     * @sample androidx.compose.material3.adaptive.samples.ReflowAdaptStrategySample
      * @param targetPane the target pane of the reflowing, i.e., the pane that the reflowed pane
      *   will be put under.
      */
-    // TODO(conradchen): Add usage samples.
     class Reflow(val targetPane: Any) : AdaptStrategy {
         override fun toString() = "AdaptStrategy[Reflow to $targetPane]"
 
