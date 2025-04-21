@@ -29,7 +29,6 @@ import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.contextmenu.modifier.ToolbarRequesterImpl
 import androidx.compose.foundation.text.handwriting.stylusHandwriting
@@ -423,8 +422,7 @@ internal fun BasicTextField(
                 state = scrollState,
                 orientation = orientation,
                 // Disable scrolling when textField is disabled or another dragging gesture is
-                // taking
-                // place
+                // taking place
                 enabled =
                     enabled && textFieldSelectionState.directDragGestureInitiator == InputType.None,
                 reverseDirection =
@@ -480,17 +478,14 @@ internal fun BasicTextField(
                 ) {
                     Box(
                         modifier =
-                            Modifier.bringIntoViewRequester(textLayoutState.bringIntoViewRequester)
-                                .then(
-                                    TextFieldTextLayoutModifier(
-                                        textLayoutState = textLayoutState,
-                                        textFieldState = transformedState,
-                                        textStyle = textStyle,
-                                        singleLine = singleLine,
-                                        onTextLayout = onTextLayout,
-                                        keyboardOptions = resolvedKeyboardOptions,
-                                    )
-                                )
+                            TextFieldTextLayoutModifier(
+                                textLayoutState = textLayoutState,
+                                textFieldState = transformedState,
+                                textStyle = textStyle,
+                                singleLine = singleLine,
+                                onTextLayout = onTextLayout,
+                                keyboardOptions = resolvedKeyboardOptions,
+                            )
                     )
 
                     if (
