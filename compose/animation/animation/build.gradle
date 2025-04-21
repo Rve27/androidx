@@ -44,7 +44,6 @@ androidXMultiplatform {
         }
 
         compileSdk = 35
-        aarMetadata.minCompileSdk = 35
     }
     jvmStubs()
     linuxX64Stubs()
