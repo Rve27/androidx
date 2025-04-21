@@ -91,6 +91,9 @@ import androidx.annotation.RestrictTo;
 import androidx.annotation.RestrictTo.Scope;
 import androidx.annotation.UiThread;
 import androidx.annotation.VisibleForTesting;
+import androidx.camera.core.featurecombination.ExperimentalFeatureCombination;
+import androidx.camera.core.featurecombination.Feature;
+import androidx.camera.core.featurecombination.impl.feature.ImageFormatFeature;
 import androidx.camera.core.imagecapture.ImageCaptureControl;
 import androidx.camera.core.imagecapture.ImagePipeline;
 import androidx.camera.core.imagecapture.PostviewSettings;
@@ -507,7 +510,52 @@ public final class ImageCapture extends UseCase {
                 }
             }
         }
+
+        applyFeatureCombinationToConfig(builder);
+
         return builder.getUseCaseConfig();
+    }
+
+    /**
+     * Applies {@link #mFeatureCombination} to the config for ImageCapture specific changes.
+     *
+     * <p> When the feature combination mode is enabled (i.e. not null), the default for all config
+     * options should use the same default as of Feature Combination API.
+     *
+     * <p> Note that feature combination mode may be enabled with zero or single feature (e.g.
+     * when the preferred features user set are not supported). In such case, it is still better to
+     * configure the camera with feature combination mode and its defaults since
+     * <ul>
+     *   <li>this is more consistent with other feature combination results</li>
+     *   <li>may give more accurate query result</li>
+     *   <li>may also support additional resolution combinations</li>
+     * </ul>
+     *
+     * @see #setFeatureCombination
+     */
+    @OptIn(markerClass = ExperimentalFeatureCombination.class)
+    private void applyFeatureCombinationToConfig(UseCaseConfig.@NonNull Builder<?, ?, ?> builder) {
+        Set<@NonNull Feature> featureCombination = getFeatureCombination();
+
+        if (featureCombination != null) {
+            @OutputFormat int imageCaptureOutputFormat =
+                    ImageFormatFeature.DEFAULT_IMAGE_CAPTURE_OUTPUT_FORMAT;
+
+            for (Feature feature : featureCombination) {
+                if (feature instanceof ImageFormatFeature) {
+                    imageCaptureOutputFormat =
+                            ((ImageFormatFeature) feature).getImageCaptureOutputFormat();
+                }
+            }
+
+            int inputFormat = ImageFormat.JPEG;
+            if (imageCaptureOutputFormat == ImageCapture.OUTPUT_FORMAT_JPEG_ULTRA_HDR) {
+                inputFormat = ImageFormat.JPEG_R;
+            }
+
+            builder.getMutableConfig().insertOption(OPTION_INPUT_FORMAT, inputFormat);
+            builder.getMutableConfig().insertOption(OPTION_OUTPUT_FORMAT, imageCaptureOutputFormat);
+        }
     }
 
     private static boolean isImageFormatSupported(List<Pair<Integer, Size[]>> supportedSizes,
