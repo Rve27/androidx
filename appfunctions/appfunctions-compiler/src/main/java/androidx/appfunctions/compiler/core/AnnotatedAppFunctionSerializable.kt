@@ -17,6 +17,7 @@
 package androidx.appfunctions.compiler.core
 
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_LIST
+import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_LIST
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_PROXY_SINGULAR
 import androidx.appfunctions.compiler.core.AppFunctionTypeReference.AppFunctionSupportedTypeCategory.SERIALIZABLE_SINGULAR
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableAnnotation
@@ -234,7 +235,10 @@ open class AnnotatedAppFunctionSerializable(
         return getProperties()
             .filterNot { it.isGenericType }
             .map { it -> AppFunctionTypeReference(it.type) }
-            .filter { afType -> afType.isOfTypeCategory(SERIALIZABLE_PROXY_SINGULAR) }
+            .filter { afType ->
+                afType.isOfTypeCategory(SERIALIZABLE_PROXY_SINGULAR) ||
+                    afType.isOfTypeCategory(SERIALIZABLE_PROXY_LIST)
+            }
             .toSet()
     }
 
