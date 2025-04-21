@@ -758,6 +758,22 @@ package androidx.compose.material3 {
     property public abstract kotlin.ranges.IntRange yearRange;
   }
 
+  public final class DatePicker_androidKt {
+    method @SuppressCompatibility @RequiresApi(android.os.Build.VERSION_CODES.O) @androidx.compose.material3.ExperimentalMaterial3Api public static androidx.compose.material3.DatePickerState DatePickerState(java.util.Locale locale, java.time.LocalDate? initialSelectedDate, optional java.time.YearMonth? initialDisplayedMonth, optional kotlin.ranges.IntRange yearRange, optional int initialDisplayMode, optional androidx.compose.material3.SelectableDates selectableDates);
+    method @SuppressCompatibility @RequiresApi(android.os.Build.VERSION_CODES.O) @androidx.compose.material3.ExperimentalMaterial3Api public static androidx.compose.material3.DateRangePickerState DateRangePickerState(java.util.Locale locale, java.time.LocalDate? initialSelectedStartDate, optional java.time.LocalDate? initialSelectedEndDate, optional java.time.YearMonth? initialDisplayedMonth, optional kotlin.ranges.IntRange yearRange, optional int initialDisplayMode, optional androidx.compose.material3.SelectableDates selectableDates);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static java.time.YearMonth? getDisplayedMonth(androidx.compose.material3.DatePickerState);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static java.time.YearMonth? getDisplayedMonth(androidx.compose.material3.DateRangePickerState);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static java.time.LocalDate? getSelectedDate(androidx.compose.material3.DatePickerState);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static java.time.LocalDate? getSelectedEndDate(androidx.compose.material3.DateRangePickerState);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static java.time.LocalDate? getSelectedStartDate(androidx.compose.material3.DateRangePickerState);
+    method @SuppressCompatibility @RequiresApi(android.os.Build.VERSION_CODES.O) @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Composable public static androidx.compose.material3.DatePickerState rememberDatePickerState(java.time.LocalDate? initialSelectedDate, optional java.time.YearMonth? initialDisplayedMonth, optional kotlin.ranges.IntRange yearRange, optional int initialDisplayMode, optional androidx.compose.material3.SelectableDates selectableDates);
+    method @SuppressCompatibility @RequiresApi(android.os.Build.VERSION_CODES.O) @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Composable public static androidx.compose.material3.DateRangePickerState rememberDateRangePickerState(java.time.LocalDate? initialSelectedStartDate, optional java.time.LocalDate? initialSelectedEndDate, optional java.time.YearMonth? initialDisplayedMonth, optional kotlin.ranges.IntRange yearRange, optional int initialDisplayMode, optional androidx.compose.material3.SelectableDates selectableDates);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static void setDisplayedMonth(androidx.compose.material3.DatePickerState, java.time.YearMonth yearMonth);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static void setDisplayedMonth(androidx.compose.material3.DateRangePickerState, java.time.YearMonth yearMonth);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static void setSelectedDate(androidx.compose.material3.DatePickerState, java.time.LocalDate? date);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static void setSelection(androidx.compose.material3.DateRangePickerState, java.time.LocalDate? startDate, java.time.LocalDate? endDate);
+  }
+
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Stable public final class DateRangePickerDefaults {
     method @Deprecated @androidx.compose.runtime.Composable public void DateRangePickerHeadline(Long? selectedStartDateMillis, Long? selectedEndDateMillis, int displayMode, androidx.compose.material3.DatePickerFormatter dateFormatter, optional androidx.compose.ui.Modifier modifier);
     method @androidx.compose.runtime.Composable public void DateRangePickerHeadline(Long? selectedStartDateMillis, Long? selectedEndDateMillis, int displayMode, androidx.compose.material3.DatePickerFormatter dateFormatter, optional androidx.compose.ui.Modifier modifier, optional long contentColor);
