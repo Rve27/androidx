@@ -184,11 +184,13 @@ internal class PointerInteropFilter : PointerInputModifier {
     private enum class DispatchToViewState {
         /** We have yet to dispatch a new event stream to the child Android View. */
         Unknown,
+
         /**
          * We have dispatched to the child Android View and it wants to continue to receive events
          * for the current event stream.
          */
         Dispatching,
+
         /**
          * We intercepted the event stream, or the Android View no longer wanted to receive events
          * for the current event stream.
@@ -243,6 +245,18 @@ internal class PointerInteropFilter : PointerInputModifier {
                         dispatchToView(pointerEvent, shouldConsumeNow)
                     }
 
+                    // the view requested disallow during the initial pass,
+                    // consume the events before we bubble them up to Compose.
+                    if (
+                        pass == PointerEventPass.Main &&
+                            isMoveEvent &&
+                            pointerEvent == lastEventDispatchedToInitialPass &&
+                            disallowIntercept &&
+                            isPointerInteropFilterDispatchingFixEnabled
+                    ) {
+                        changes.fastForEach { it.consume() }
+                    }
+
                     val dispatchToFinalCriteria =
                         if (isPointerInteropFilterDispatchingFixEnabled) {
                             pass == PointerEventPass.Final &&
@@ -269,7 +283,14 @@ internal class PointerInteropFilter : PointerInputModifier {
                             isMoveEvent &&
                             isPointerInteropFilterDispatchingFixEnabled
                     ) {
-                        changes.fastForEach { it.consume() }
+                        // we've reached the final pass, if the motion event that was sent
+                        // during the initial pass was consumed, it means Compose claimed it
+                        // so we should stop dispatching to the View
+                        if (changes.fastAny { it.isConsumed } && !disallowIntercept) {
+                            stopDispatching(pointerEvent)
+                        } else {
+                            changes.fastForEach { it.consume() }
+                        }
                     }
                 }
             }
@@ -308,16 +329,7 @@ internal class PointerInteropFilter : PointerInputModifier {
 
                 if (changes.fastAny { it.isConsumed }) {
                     // We should no longer dispatch to the Android View.
-                    if (state === DispatchToViewState.Dispatching) {
-                        // If we were dispatching, send ACTION_CANCEL.
-                        pointerEvent.toCancelMotionEventScope(
-                            this.layoutCoordinates?.localToRoot(Offset.Zero)
-                                ?: error("layoutCoordinates not set")
-                        ) { motionEvent ->
-                            onTouchEvent(motionEvent)
-                        }
-                    }
-                    state = DispatchToViewState.NotDispatching
+                    stopDispatching(pointerEvent)
                 } else {
                     // Dispatch and update our state with the result.
                     pointerEvent.toMotionEventScope(
@@ -351,6 +363,19 @@ internal class PointerInteropFilter : PointerInputModifier {
                             !disallowIntercept
                     }
                 }
+            }
+
+            private fun stopDispatching(pointerEvent: PointerEvent) {
+                if (state === DispatchToViewState.Dispatching) {
+                    // If we were dispatching, send ACTION_CANCEL.
+                    pointerEvent.toCancelMotionEventScope(
+                        this.layoutCoordinates?.localToRoot(Offset.Zero)
+                            ?: error("layoutCoordinates not set")
+                    ) { motionEvent ->
+                        onTouchEvent(motionEvent)
+                    }
+                }
+                state = DispatchToViewState.NotDispatching
             }
         }
 }
