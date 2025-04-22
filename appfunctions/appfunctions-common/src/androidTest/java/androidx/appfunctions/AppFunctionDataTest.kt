@@ -17,9 +17,12 @@
 package androidx.appfunctions
 
 import android.app.PendingIntent
+import android.app.appsearch.GenericDocument
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.os.Bundle
+import android.os.ext.SdkExtensions
 import androidx.appfunctions.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
@@ -37,6 +40,7 @@ import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import org.junit.Assert.assertThrows
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 
@@ -919,6 +923,25 @@ class AppFunctionDataTest {
         assertThrows(IllegalArgumentException::class.java) {
             data.deserialize(MissingFactoryClass::class.java)
         }
+    }
+
+    @Test
+    fun testId_buildAsAppFunctionData_ReadAsGenericDocument() {
+        assumeTrue(SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 13)
+        val data = AppFunctionData.Builder("").setString("id", "123456").build()
+        val gd = data.genericDocument
+
+        assertThat(gd.id).isEqualTo("123456")
+    }
+
+    @Test
+    fun testId_buildAsGenericDocument_ReadAsAppFunctionData() {
+        val extras = Bundle.EMPTY
+        val gd = GenericDocument.Builder<GenericDocument.Builder<*>>("", "123456", "").build()
+
+        val data = AppFunctionData(gd, extras)
+
+        assertThat(data.getString("id")).isEqualTo("123456")
     }
 
     companion object {

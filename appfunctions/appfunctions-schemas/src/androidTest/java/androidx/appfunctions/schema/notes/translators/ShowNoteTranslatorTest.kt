@@ -18,15 +18,24 @@ package androidx.appfunctions.schema.notes.translators
 
 import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
+import android.os.ext.SdkExtensions
 import androidx.appfunctions.schema.TranslatorTestUtils
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
+import org.junit.Assume.assumeTrue
+import org.junit.Before
 import org.junit.Test
 
 @SdkSuppress(minSdkVersion = 33)
 class ShowNoteTranslatorTest {
 
     private val translatorTestUtils = TranslatorTestUtils(ShowNoteTranslator())
+
+    @Before
+    fun setup() {
+        assumeTrue(SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 13)
+    }
 
     @Test
     fun upgradeRequest_allFields() {

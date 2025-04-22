@@ -17,18 +17,27 @@
 package androidx.appfunctions.schema.notes.translators
 
 import android.net.Uri
+import android.os.Build
+import android.os.ext.SdkExtensions
 import androidx.appfunctions.LegacyAttachment
 import androidx.appfunctions.LegacyCreateNoteParams
 import androidx.appfunctions.LegacyNote
 import androidx.appfunctions.LegacyUri
 import androidx.appfunctions.schema.TranslatorTestUtils
 import androidx.test.filters.SdkSuppress
+import org.junit.Assume.assumeTrue
+import org.junit.Before
 import org.junit.Test
 
 @SdkSuppress(minSdkVersion = 33)
 class CreateNoteTranslatorTest {
 
     private val translatorTestUtils = TranslatorTestUtils(CreateNoteTranslator())
+
+    @Before
+    fun setup() {
+        assumeTrue(SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 13)
+    }
 
     @Test
     fun upgradeRequest_allFields() {
