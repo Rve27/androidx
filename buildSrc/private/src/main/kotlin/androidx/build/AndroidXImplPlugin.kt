@@ -1208,6 +1208,21 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
                 it.isIncludeAndroidResources = true
             }
 
+        @Suppress("UnstableApiUsage") // usage of withHostTestBuilder
+        withHostTestBuilder {
+            @Suppress("DEPRECATION")
+            defaultSourceSetName = "androidUnitTest"
+        }
+
+        @Suppress("UnstableApiUsage") // usage of withDeviceTestBuilder
+        withDeviceTestBuilder {
+            @Suppress("DEPRECATION")
+            compilationName = "instrumentedTest"
+            @Suppress("DEPRECATION")
+            defaultSourceSetName = "androidInstrumentedTest"
+            sourceSetTreeName = "test"
+        }
+
         // validate that SDK versions haven't been altered during evaluation
         project.afterEvaluate {
             val minSdkVersion = minSdk!!

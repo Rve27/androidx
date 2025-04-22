@@ -34,16 +34,6 @@ androidXMultiplatform {
     androidLibrary {
         namespace = "androidx.navigation.testing"
         experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
-
-        withAndroidTestOnDeviceBuilder {
-            it.compilationName = "instrumentedTest"
-            it.defaultSourceSetName = "androidInstrumentedTest"
-            it.sourceSetTreeName = "test"
-        }
-        withAndroidTestOnJvmBuilder {
-            it.compilationName = "unitTest"
-            it.defaultSourceSetName = "androidUnitTest"
-        }
     }
     jvmStubs()
     linuxX64Stubs()
