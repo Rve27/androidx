@@ -22,14 +22,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 // Keeping the file for backwards compatibility
 
 @Deprecated(
-    "Replaced by Modifier.hierarchicalFocusRequester(), use that instead",
+    "Replaced by Modifier.requestFocusOnHierarchyActive(), use that instead",
     level = DeprecationLevel.WARNING // TODO: b/369332589 - Make hidden in a follow up cl
 )
 @Composable
@@ -52,7 +51,7 @@ public fun HierarchicalFocusCoordinator(
 }
 
 @Deprecated(
-    "Replaced by Modifier.hierarchicalFocusRequester(), or the new LocalScreenIsActive, use that instead",
+    "Replaced by Modifier.requestFocusOnHierarchyActive(), or the new LocalScreenIsActive, use that instead",
     level = DeprecationLevel.WARNING // TODO: b/369332589 - Make hidden in a follow up cl
 )
 @Composable

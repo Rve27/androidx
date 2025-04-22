@@ -16,7 +16,9 @@
 
 package androidx.wear.compose.foundation
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusRequesterModifierNode
 import androidx.compose.ui.focus.requestFocus
 import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
@@ -44,15 +46,19 @@ import androidx.wear.compose.foundation.pager.VerticalPager
  * useful if you implement a custom component that needs to direct focus to one of several children,
  * like a custom Pager, a Tabbed layout, etc.
  *
- * [hierarchicalFocusGroup]s can be nested to form a focus tree, with an implicit root. Within the
- * focus tree, components that need to request focus can do so using
- * [Modifier.requestFocusOnHierarchyActive] We call those nodes which have
- * [requestFocusOnHierarchyActive] leaves in the tree. Note that ScalingLazyColumn and
- * TransformingLazyColumn are using it already, so there is no need to add it explicitly.
+ * [hierarchicalFocusGroup]s can be nested to form a focus tree, with an implicit root. For sibling
+ * [hierarchicalFocusGroup]s, only one should have active = true. Within the focus tree, components
+ * that need to request focus can do so using [Modifier.requestFocusOnHierarchyActive]. Note that
+ * ScalingLazyColumn and TransformingLazyColumn are using it already, so there is no need to add it
+ * explicitly.
  *
  * When focus changes, the focus tree is examined and the topmost (closest to the root of the tree)
  * [requestFocusOnHierarchyActive] which has all its [hierarchicalFocusGroup] ancestors with active
- * = true will request focus. If no such leaf exists, the focus will be cleared.
+ * = true will request focus. If no such [requestFocusOnHierarchyActive] exists, the focus will be
+ * cleared.
+ *
+ * NOTE: This shouldn't be used together with [FocusRequester.requestFocus] calls in
+ * [LaunchedEffect].
  *
  * Example usage:
  *
@@ -80,6 +86,17 @@ public fun Modifier.hierarchicalFocusGroup(active: Boolean): Modifier {
  * following focusable element when needed (i.e. this needs to be before that element in the
  * Modifier chain). The focusable element is usually a [Modifier.rotaryScrollable] (or, in some
  * rarer cases a [Modifier.focusable] or [Modifier.focusTarget])
+ *
+ * Multiple [requestFocusOnHierarchyActive] Modifiers shouldn't be siblings, in those cases they
+ * need to surround each with a [hierarchicalFocusGroup], and at most one of them should have active
+ * = true, to inform which [requestFocusOnHierarchyActive] should get the focus.
+ *
+ * NOTE: This shouldn't be used together with [FocusRequester.requestFocus] calls in
+ * [LaunchedEffect].
+ *
+ * Example usage:
+ *
+ * @sample androidx.wear.compose.foundation.samples.HierarchicalFocusSample
  */
 public fun Modifier.requestFocusOnHierarchyActive() =
     this.then(

@@ -111,7 +111,7 @@ fun HierarchicalFocus2Levels() {
                     Box(
                         Modifier.weight(1f).hierarchicalFocusGroup(active = selectedItem == itemIx)
                     ) {
-                        // ScalingLazyColumn uses requestFocusOnActive internally
+                        // ScalingLazyColumn uses requestFocusOnHierarchyActive internally
                         ScalingLazyColumn(
                             Modifier.fillMaxWidth().clickable {
                                 selectedRow = rowIx

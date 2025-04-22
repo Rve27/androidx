@@ -104,8 +104,9 @@ public val LocalSwipeToDismissContentScrimColor: ProvidableCompositionLocal<Colo
 /**
  * [CompositionLocal] used to express/determine if a screen is active, as specified by each
  * component (for example, it could be updated when the user is in the middle of the gesture to
- * switch screens, or after the gesture is done). Pager and swipe to dismiss inform this, and can be
- * used at the screen level to update the UI or perform optimizations on inactive screens.
+ * switch screens, or after the gesture is done). Components that manage multiple screens (like
+ * pager and swipe to dismiss) provide this, and can be used at the screen level to update the UI or
+ * perform optimizations on inactive screens.
  *
  * Defaults to true
  */
