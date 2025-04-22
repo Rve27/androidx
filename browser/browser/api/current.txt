@@ -153,11 +153,11 @@ package androidx.browser.customtabs {
     method public void onActivityLayout(@Dimension(unit=androidx.annotation.Dimension.PX) int, @Dimension(unit=androidx.annotation.Dimension.PX) int, @Dimension(unit=androidx.annotation.Dimension.PX) int, @Dimension(unit=androidx.annotation.Dimension.PX) int, int, android.os.Bundle);
     method public void onActivityResized(@Dimension(unit=androidx.annotation.Dimension.PX) int, @Dimension(unit=androidx.annotation.Dimension.PX) int, android.os.Bundle);
     method public void onMessageChannelReady(android.os.Bundle?);
-    method @SuppressCompatibility @androidx.browser.customtabs.ExperimentalMinimizationCallback public void onMinimized(android.os.Bundle);
+    method public void onMinimized(android.os.Bundle);
     method public void onNavigationEvent(int, android.os.Bundle?);
     method public void onPostMessage(String, android.os.Bundle?);
     method public void onRelationshipValidationResult(@androidx.browser.customtabs.CustomTabsService.Relation int, android.net.Uri, boolean, android.os.Bundle?);
-    method @SuppressCompatibility @androidx.browser.customtabs.ExperimentalMinimizationCallback public void onUnminimized(android.os.Bundle);
+    method public void onUnminimized(android.os.Bundle);
     method public void onWarmupCompleted(android.os.Bundle);
     field public static final int ACTIVITY_LAYOUT_STATE_BOTTOM_SHEET = 1; // 0x1
     field public static final int ACTIVITY_LAYOUT_STATE_BOTTOM_SHEET_MAXIMIZED = 2; // 0x2
@@ -184,6 +184,7 @@ package androidx.browser.customtabs {
     method public android.os.Bundle? extraCommand(String, android.os.Bundle?);
     method public static String? getPackageName(android.content.Context, java.util.List<java.lang.String!>?);
     method public static String? getPackageName(android.content.Context, java.util.List<java.lang.String!>?, boolean);
+    method public static boolean isAuthTabSupported(android.content.Context, String);
     method public static boolean isSetNetworkSupported(android.content.Context, String);
     method public androidx.browser.auth.AuthTabSession? newAuthTabSession(androidx.browser.auth.AuthTabCallback?, java.util.concurrent.Executor?);
     method public androidx.browser.auth.AuthTabSession? newAuthTabSession(androidx.browser.auth.AuthTabCallback?, java.util.concurrent.Executor?, int);
@@ -365,6 +366,7 @@ package androidx.browser.customtabs {
     method protected abstract boolean validateRelationship(androidx.browser.customtabs.CustomTabsSessionToken, @androidx.browser.customtabs.CustomTabsService.Relation int, android.net.Uri, android.os.Bundle?);
     method protected abstract boolean warmup(long);
     field public static final String ACTION_CUSTOM_TABS_CONNECTION = "android.support.customtabs.action.CustomTabsService";
+    field public static final String CATEGORY_AUTH_TAB = "androidx.browser.auth.category.AuthTab";
     field public static final String CATEGORY_COLOR_SCHEME_CUSTOMIZATION = "androidx.browser.customtabs.category.ColorSchemeCustomization";
     field public static final String CATEGORY_NAVBAR_COLOR_CUSTOMIZATION = "androidx.browser.customtabs.category.NavBarColorCustomization";
     field public static final String CATEGORY_SET_NETWORK = "androidx.browser.customtabs.category.SetNetwork";
@@ -431,9 +433,6 @@ package androidx.browser.customtabs {
   }
 
   @SuppressCompatibility @RequiresOptIn(level=androidx.annotation.RequiresOptIn.Level.WARNING) @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.CLASS) public @interface ExperimentalEphemeralBrowsing {
-  }
-
-  @SuppressCompatibility @RequiresOptIn(level=androidx.annotation.RequiresOptIn.Level.WARNING) @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.CLASS) public @interface ExperimentalMinimizationCallback {
   }
 
   @SuppressCompatibility @RequiresOptIn(level=androidx.annotation.RequiresOptIn.Level.WARNING) @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.CLASS) public @interface ExperimentalPendingSession {
