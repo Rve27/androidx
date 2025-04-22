@@ -176,7 +176,8 @@ public fun Card(
  * @param shape Defines the card's shape. It is strongly recommended to use the default as this
  *   shape is a key characteristic of the Wear Material Theme
  * @param colors [CardColors] that will be used to resolve the colors used for this card in
- *   different states. See [CardDefaults.cardWithContainerPainterColors].
+ *   different states (the containerColor is overridden by containerPainter). See
+ *   [CardDefaults.cardWithContainerPainterColors].
  * @param border A BorderStroke object which is used for drawing outlines.
  * @param contentPadding The spacing values to apply internally between the container and the
  *   content
@@ -537,7 +538,8 @@ public fun TitleCard(
  * @param shape Defines the card's shape. It is strongly recommended to use the default as this
  *   shape is a key characteristic of the Wear Material Theme
  * @param colors [CardColors] that will be used to resolve the colors used for this card in
- *   different states. See [CardDefaults.cardWithContainerPainterColors].
+ *   different states (the containerColor is overridden by containerPainter). See
+ *   [CardDefaults.cardWithContainerPainterColors].
  * @param border A BorderStroke object which is used for drawing outlines.
  * @param contentPadding The spacing values to apply internally between the container and the
  *   content
@@ -935,7 +937,8 @@ private fun Modifier.cardSizeModifier(): Modifier = defaultMinSize(minHeight = C
  * color appearance when they are disabled. All colors remain the same in enabled and disabled
  * states.
  *
- * @param containerColor the background color of this [Card].
+ * @param containerColor the background color of this [Card] (overridden by the containerPainter
+ *   parameter on Cards with image backgrounds).
  * @param contentColor the content color of this [Card].
  * @param appNameColor the color used for appName, only applies to [AppCard].
  * @param timeColor the color used for time, applies to [AppCard] and [TitleCard].
