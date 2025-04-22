@@ -125,7 +125,7 @@ internal constructor(
         // Translate the request when necessary by looking into the target schema version.
         val translator =
             if (schemaMetadata?.version == LEGACY_SDK_GLOBAL_SCHEMA_VERSION) {
-                checkNotNull(translatorSelector.getTranslator(schemaMetadata))
+                translatorSelector.getTranslator(schemaMetadata)
             } else {
                 null
             }

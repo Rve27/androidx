@@ -24,7 +24,6 @@ import androidx.appfunctions.testing.FakeTranslator
 import androidx.appfunctions.testing.FakeTranslatorSelector
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
-import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -116,24 +115,5 @@ class AppFunctionManagerCompatUnitTest {
         assertThat(fakeTranslator.upgradeRequestCalled).isFalse()
         assertThat(fakeTranslator.downgradeResponseCalled).isFalse()
         assertThat(fakeTranslator.upgradeResponseCalled).isFalse()
-    }
-
-    @Test
-    fun executeAppFunction_appUsesV1AndMissingTranslator_shouldThrow() = runTest {
-        val functionId = "functionId"
-        val packageName = "com.pkg"
-        fakeAppFunctionReader.addAppFunctionMetadata(
-            functionId,
-            packageName,
-            AppFunctionSchemaMetadata(category = "notes", name = "createNote", version = 1)
-        )
-        fakeAppFunctionApi.executeAppFunctionResponse =
-            ExecuteAppFunctionResponse.Success(AppFunctionData.EMPTY)
-
-        assertFailsWith<IllegalStateException> {
-            appFunctionManagerCompat.executeAppFunction(
-                request = ExecuteAppFunctionRequest(packageName, functionId, AppFunctionData.EMPTY)
-            )
-        }
     }
 }
