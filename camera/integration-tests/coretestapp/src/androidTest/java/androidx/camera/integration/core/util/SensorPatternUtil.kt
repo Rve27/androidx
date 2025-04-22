@@ -99,11 +99,13 @@ object SensorPatternUtil {
             "Emulator API 30 reports incorrect supported available test pattern modes",
             Build.VERSION.SDK_INT == 30 && AndroidUtil.isEmulator()
         )
+        // Skip for b/412262667
         assumeFalse(
-            "Emulator API 33-35 can not correctly apply solid color pattern",
+            "Emulator API 33-36 can not correctly apply solid color pattern",
             (Build.VERSION.SDK_INT == 33 ||
                 Build.VERSION.SDK_INT == 34 ||
-                Build.VERSION.SDK_INT == 35) && AndroidUtil.isEmulator()
+                Build.VERSION.SDK_INT == 35 ||
+                Build.VERSION.SDK_INT == 36) && AndroidUtil.isEmulator()
         )
 
         with(Camera2InteropUtil.Camera2CameraInfoWrapper.from(implName, cameraInfo)) {
