@@ -1544,7 +1544,6 @@ object SliderDefaults {
         val activeTrackColor = colors.trackColor(enabled = enabled, active = true)
         val inactiveTickColor = colors.tickColor(enabled = enabled, active = false)
         val activeTickColor = colors.tickColor(enabled = enabled, active = true)
-        var cornerSize by remember { mutableIntStateOf(0) }
         Canvas(
             if (sliderState.orientation == Vertical) {
                     modifier.width(TrackHeight).fillMaxHeight().let {
@@ -1556,7 +1555,7 @@ object SliderDefaults {
                 .then(
                     Modifier.layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
-                        cornerSize =
+                        val cornerSize =
                             if (trackCornerSize == Dp.Unspecified) {
                                 if (sliderState.orientation == Vertical) {
                                     placeable.width / 2
@@ -1576,6 +1575,16 @@ object SliderDefaults {
                     }
                 )
         ) {
+            val cornerSize: Float =
+                if (trackCornerSize == Dp.Unspecified) {
+                    if (sliderState.orientation == Vertical) {
+                        size.width / 2
+                    } else {
+                        size.height / 2
+                    }
+                } else {
+                    trackCornerSize.toPx()
+                }
             drawTrack(
                 tickFractions = sliderState.tickFractions,
                 activeRangeStart = 0f,
@@ -1681,11 +1690,10 @@ object SliderDefaults {
         val activeTrackColor = colors.trackColor(enabled, active = true)
         val inactiveTickColor = colors.tickColor(enabled, active = false)
         val activeTickColor = colors.tickColor(enabled, active = true)
-        var trackCornerSize by remember { mutableIntStateOf(0) }
         Canvas(
             modifier.fillMaxWidth().height(TrackHeight).layout { measurable, constraints ->
                 val placeable = measurable.measure(constraints)
-                trackCornerSize = placeable.height / 2
+                val trackCornerSize = placeable.height / 2
                 layout(
                     width = placeable.width,
                     height = placeable.height,
@@ -1709,7 +1717,7 @@ object SliderDefaults {
                 endThumbHeight = rangeSliderState.endThumbHeight.toDp(),
                 thumbTrackGapSize = thumbTrackGapSize,
                 trackInsideCornerSize = trackInsideCornerSize,
-                trackCornerSize = trackCornerSize.toDp(),
+                trackCornerSize = (size.height / 2).toDp(),
                 drawStopIndicator = drawStopIndicator,
                 drawTick = drawTick,
                 isRangeSlider = true
