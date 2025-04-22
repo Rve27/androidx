@@ -55,6 +55,8 @@ class NetworkRequestConstraintControllerTest {
 
     @Test
     fun testRequestWifi() = runTest {
+        toggleWifi(true)
+
         val workConstraintsTracker = WorkConstraintsTracker(listOf(controller))
         val state =
             async(Dispatchers.IO) {
@@ -81,6 +83,8 @@ class NetworkRequestConstraintControllerTest {
 
     @Test
     fun testTooManyTrackers() = runTest {
+        toggleWifi(true)
+
         // Current OS limit of network callback is 100 per app, we register more to test
         // https://cs.android.com/android/platform/superproject/main/+/main:packages/modules/Connectivity/service/src/com/android/server/ConnectivityService.java;bpv=0;bpt=1?q=MAX_NETWORK_REQUESTS_PER_UID&sq=&ss=android
         val states =
