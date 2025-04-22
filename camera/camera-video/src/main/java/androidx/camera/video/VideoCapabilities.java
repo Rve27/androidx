@@ -16,6 +16,7 @@
 
 package androidx.camera.video;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
 import android.hardware.camera2.CaptureRequest;
@@ -114,7 +115,6 @@ public interface VideoCapabilities {
      */
     boolean isQualitySupported(@NonNull Quality quality, @NonNull DynamicRange dynamicRange);
 
-
     /**
      * Gets all supported frame ranges for the input quality and dynamic range.
      */
@@ -122,6 +122,36 @@ public interface VideoCapabilities {
     @NonNull
     Set<Range<Integer>> getSupportedFrameRateRanges(@NonNull Quality quality,
             @NonNull DynamicRange dynamicRange);
+
+    /**
+     * Gets the supported slow-motion configurations for a given quality, dynamic range,
+     * encoding frame rate, and audio enablement.
+     *
+     * <p>A target encode frame rate of 30 FPS is guaranteed to be supported if the device
+     * supports any slow-motion recording for the given quality and dynamic range. Others like
+     * 15 and 60 FPS are also possible.
+     *
+     * <p>If {@code withAudioEnabled} is {@code true}, the returned list will contain only
+     * configurations that support audio recording during slow-motion. This list will be a
+     * subset of the configurations returned when {@code withAudioEnabled} is {@code false}.
+     * Consequently, if you fetch all configurations (with {@code false}), avoid calling
+     * {@link PendingRecording#withAudioEnabled()} during recording unless you've confirmed that
+     * the specific configuration also appears in the audio-enabled subset. Doing otherwise might
+     * lead to audio setup issues.
+     *
+     * @param quality          the desired video quality.
+     * @param dynamicRange     the desired dynamic range.
+     * @param encodeFrameRate  the desired encoding frame rate for the output video.
+     * @param withAudioEnabled {@code true} to filter for configurations that support audio,
+     *                         {@code false} to include all supported slow-motion configurations.
+     * @return a list of supported slow-motion configurations.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY) // TODO(b/404096374): High-speed public API
+    @NonNull
+    default List<SlowMotionConfig> getSupportedSlowMotionConfigs(@NonNull Quality quality,
+            @NonNull DynamicRange dynamicRange, int encodeFrameRate, boolean withAudioEnabled) {
+        return emptyList();
+    }
 
     /**
      * Returns if video stabilization is supported on the device. Video stabilization can be

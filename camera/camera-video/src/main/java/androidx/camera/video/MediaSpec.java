@@ -136,10 +136,14 @@ public abstract class MediaSpec {
     @OutputFormat
     public abstract int getOutputFormat();
 
+    /** Gets the video speed */
+    public abstract @NonNull Speed getSpeed();
+
     /** Creates a {@link Builder}. */
     public static @NonNull Builder builder() {
         return new AutoValue_MediaSpec.Builder()
                 .setOutputFormat(OUTPUT_FORMAT_AUTO)
+                .setSpeed(Speed.SPEED_AUTO)
                 .setAudioSpec(AudioSpec.builder().build())
                 .setVideoSpec(VideoSpec.builder().build());
     }
@@ -271,6 +275,13 @@ public abstract class MediaSpec {
          * {@link MediaSpec#OUTPUT_FORMAT_WEBM}.
          */
         public abstract @NonNull Builder setOutputFormat(@OutputFormat int format);
+
+        /**
+         * Sets the intended video speed.
+         *
+         * <p>If not set, defaults to {@link Speed#SPEED_AUTO}.
+         */
+        public abstract @NonNull Builder setSpeed(@NonNull Speed speed);
 
         /** Build the {@link MediaSpec} from this builder. */
         public abstract @NonNull MediaSpec build();

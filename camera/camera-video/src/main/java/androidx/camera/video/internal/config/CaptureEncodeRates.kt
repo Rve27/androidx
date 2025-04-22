@@ -18,6 +18,7 @@ package androidx.camera.video.internal.config
 
 import android.util.Rational
 import androidx.camera.core.Logger
+import androidx.camera.video.Speed
 import kotlin.math.roundToInt
 
 /**
@@ -52,6 +53,18 @@ internal fun toCaptureRate(encodeRate: Int, captureToEncodeRatio: Rational?): In
         return encodeRate
     }
     return (encodeRate * captureToEncodeRatio.toFloat()).roundToInt()
+}
+
+internal fun resolveCaptureEncodeRatio(speed: Speed): Rational? {
+    return if (speed == Speed.SPEED_AUTO) {
+        null
+    } else if (speed.multiplier.toFloat() < 1) {
+        // Slow-motion
+        Speed.toCaptureEncodeRatio(speed)
+    } else {
+        // Speed-up: currently unsupported.
+        null
+    }
 }
 
 private fun isInvalidCaptureToEncodeRatio(ratio: Rational): Boolean =

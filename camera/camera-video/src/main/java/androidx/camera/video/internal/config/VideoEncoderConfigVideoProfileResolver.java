@@ -17,6 +17,7 @@
 package androidx.camera.video.internal.config;
 
 import android.util.Range;
+import android.util.Rational;
 import android.util.Size;
 
 import androidx.camera.core.DynamicRange;
@@ -30,6 +31,7 @@ import androidx.camera.video.internal.encoder.VideoEncoderDataSpace;
 import androidx.core.util.Supplier;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * A {@link VideoEncoderConfig} supplier that resolves requested encoder settings from a
@@ -46,6 +48,8 @@ public class VideoEncoderConfigVideoProfileResolver implements Supplier<VideoEnc
     private final VideoProfileProxy mVideoProfile;
     private final DynamicRange mDynamicRange;
     private final Range<Integer> mExpectedFrameRateRange;
+    @Nullable
+    private final Rational mCaptureEncodeRatio;
 
     /**
      * Constructor for a VideoEncoderConfigVideoProfileResolver.
@@ -65,6 +69,7 @@ public class VideoEncoderConfigVideoProfileResolver implements Supplier<VideoEnc
      *                               equal to {@link SurfaceRequest#FRAME_RATE_RANGE_UNSPECIFIED},
      *                               then no information about the source frame rate is available
      *                               and it does not need to be used in calculations.
+     * @param captureEncodeRatio the capture to encode frame rate ratio.
      */
     public VideoEncoderConfigVideoProfileResolver(@NonNull String mimeType,
             @NonNull Timebase inputTimebase,
@@ -72,7 +77,8 @@ public class VideoEncoderConfigVideoProfileResolver implements Supplier<VideoEnc
             @NonNull Size surfaceSize,
             @NonNull VideoProfileProxy videoProfile,
             @NonNull DynamicRange dynamicRange,
-            @NonNull Range<Integer> expectedFrameRateRange) {
+            @NonNull Range<Integer> expectedFrameRateRange,
+            @Nullable Rational captureEncodeRatio) {
         mMimeType = mimeType;
         mInputTimebase = inputTimebase;
         mVideoSpec = videoSpec;
@@ -80,12 +86,13 @@ public class VideoEncoderConfigVideoProfileResolver implements Supplier<VideoEnc
         mVideoProfile = videoProfile;
         mDynamicRange = dynamicRange;
         mExpectedFrameRateRange = expectedFrameRateRange;
+        mCaptureEncodeRatio = captureEncodeRatio;
     }
 
     @Override
     public @NonNull VideoEncoderConfig get() {
-        CaptureEncodeRates resolvedFrameRates = VideoConfigUtil.resolveFrameRates(mVideoSpec,
-                mExpectedFrameRateRange);
+        CaptureEncodeRates resolvedFrameRates = VideoConfigUtil.resolveFrameRates(
+                mExpectedFrameRateRange, mCaptureEncodeRatio);
         Logger.d(TAG, "Resolved VIDEO frame rates: "
                 + "Capture frame rate = " + resolvedFrameRates.getCaptureRate() + "fps. "
                 + "Encode frame rate = " + resolvedFrameRates.getEncodeRate() + "fps.");

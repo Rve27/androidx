@@ -17,8 +17,8 @@
 package androidx.camera.video
 
 import android.os.Build
-import android.util.Range
 import androidx.camera.testing.impl.AndroidUtil.isEmulator
+import androidx.camera.video.Speed.Companion.SPEED_AUTO
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
@@ -45,21 +45,8 @@ class MediaSpecTest {
         val defaultVideoSpec = VideoSpec.builder().build()
         assertThat(mediaSpec.audioSpec).isEqualTo(defaultAudioSpec)
         assertThat(mediaSpec.videoSpec).isEqualTo(defaultVideoSpec)
+        assertThat(mediaSpec.speed).isEqualTo(SPEED_AUTO)
         assertThat(mediaSpec.outputFormat).isEqualTo(MediaSpec.OUTPUT_FORMAT_AUTO)
-    }
-
-    @Test
-    fun canConfigureVideo_fromMediaSpecBuilder() {
-        // Skip for b/264902324
-        assumeFalse(
-            "Emulator API 30 crashes running this test.",
-            Build.VERSION.SDK_INT == 30 && isEmulator()
-        )
-        val testFrameRate = Range(15, 30)
-        val mediaSpec =
-            MediaSpec.builder().configureVideo { it.setFrameRate(testFrameRate) }.build()
-
-        assertThat(mediaSpec.videoSpec.frameRate).isEqualTo(testFrameRate)
     }
 
     @Test

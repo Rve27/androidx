@@ -20,6 +20,7 @@ import android.media.MediaCodecInfo.CodecProfileLevel
 import android.media.MediaFormat
 import android.os.Build
 import android.util.Range
+import android.util.Rational
 import androidx.camera.core.DynamicRange
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.core.impl.EncoderProfilesProxy
@@ -48,6 +49,7 @@ class VideoEncoderConfigDefaultResolverTest {
         const val FRAME_RATE_30 = 30
         const val FRAME_RATE_45 = 45
         val DEFAULT_VIDEO_SPEC: VideoSpec by lazy { VideoSpec.builder().build() }
+        val DEFAULT_CAPTURE_ENCODE_RATIO: Rational? = null
     }
 
     @Test
@@ -70,7 +72,8 @@ class VideoEncoderConfigDefaultResolverTest {
                 DEFAULT_VIDEO_SPEC,
                 surfaceSizeCif,
                 DynamicRange.SDR,
-                expectedCaptureFrameRateRange
+                expectedCaptureFrameRateRange,
+                DEFAULT_CAPTURE_ENCODE_RATIO
             )
         val configSupplier720p =
             VideoEncoderConfigDefaultResolver(
@@ -79,7 +82,8 @@ class VideoEncoderConfigDefaultResolverTest {
                 DEFAULT_VIDEO_SPEC,
                 surfaceSize720p,
                 DynamicRange.SDR,
-                expectedCaptureFrameRateRange
+                expectedCaptureFrameRateRange,
+                DEFAULT_CAPTURE_ENCODE_RATIO
             )
         val configSupplier1080p =
             VideoEncoderConfigDefaultResolver(
@@ -88,7 +92,8 @@ class VideoEncoderConfigDefaultResolverTest {
                 DEFAULT_VIDEO_SPEC,
                 surfaceSize1080p,
                 DynamicRange.SDR,
-                expectedCaptureFrameRateRange
+                expectedCaptureFrameRateRange,
+                DEFAULT_CAPTURE_ENCODE_RATIO
             )
 
         val configCif = configSupplierCif.get()
@@ -130,7 +135,8 @@ class VideoEncoderConfigDefaultResolverTest {
                     DEFAULT_VIDEO_SPEC,
                     surfaceSize720p,
                     DynamicRange.SDR,
-                    SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED
+                    SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED,
+                    DEFAULT_CAPTURE_ENCODE_RATIO
                 )
                 .get()
         val defaultBitrate = defaultConfig.bitrate
@@ -151,7 +157,8 @@ class VideoEncoderConfigDefaultResolverTest {
                         higherVideoSpec,
                         surfaceSize720p,
                         DynamicRange.SDR,
-                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED
+                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED,
+                        DEFAULT_CAPTURE_ENCODE_RATIO
                     )
                     .get()
                     .bitrate
@@ -165,7 +172,8 @@ class VideoEncoderConfigDefaultResolverTest {
                         lowerVideoSpec,
                         surfaceSize720p,
                         DynamicRange.SDR,
-                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED
+                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED,
+                        DEFAULT_CAPTURE_ENCODE_RATIO
                     )
                     .get()
                     .bitrate
@@ -189,7 +197,8 @@ class VideoEncoderConfigDefaultResolverTest {
                         DEFAULT_VIDEO_SPEC,
                         size,
                         DynamicRange.SDR,
-                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED
+                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED,
+                        DEFAULT_CAPTURE_ENCODE_RATIO
                     )
                     .get()
                     .encodeFrameRate
@@ -216,7 +225,8 @@ class VideoEncoderConfigDefaultResolverTest {
                         DEFAULT_VIDEO_SPEC,
                         size,
                         DynamicRange.SDR,
-                        expectedCaptureFrameRateRange
+                        expectedCaptureFrameRateRange,
+                        DEFAULT_CAPTURE_ENCODE_RATIO
                     )
                     .get()
                     .encodeFrameRate
@@ -488,7 +498,8 @@ class VideoEncoderConfigDefaultResolverTest {
                         DEFAULT_VIDEO_SPEC,
                         EncoderProfilesUtil.RESOLUTION_1080P,
                         dynamicRange,
-                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED
+                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED,
+                        DEFAULT_CAPTURE_ENCODE_RATIO
                     )
                     .get()
                     .profile
@@ -508,7 +519,8 @@ class VideoEncoderConfigDefaultResolverTest {
                         DEFAULT_VIDEO_SPEC,
                         EncoderProfilesUtil.RESOLUTION_1080P,
                         dynamicRange,
-                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED
+                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED,
+                        DEFAULT_CAPTURE_ENCODE_RATIO
                     )
                     .get()
                     .dataSpace

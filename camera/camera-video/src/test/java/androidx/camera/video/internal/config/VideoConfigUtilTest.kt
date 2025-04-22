@@ -21,13 +21,13 @@ import android.media.MediaFormat
 import android.media.MediaRecorder
 import android.os.Build
 import android.util.Range
+import android.util.Rational
 import android.util.Size
 import androidx.camera.core.DynamicRange
 import androidx.camera.core.SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.EncoderProfilesProxy.VideoProfileProxy
 import androidx.camera.testing.impl.EncoderProfilesUtil
 import androidx.camera.video.MediaSpec
-import androidx.camera.video.VideoSpec
 import androidx.camera.video.internal.VideoValidatedEncoderProfilesProxy
 import androidx.camera.video.internal.config.VideoConfigUtil.VIDEO_FRAME_RATE_FIXED_DEFAULT
 import com.google.common.truth.Truth.assertThat
@@ -141,47 +141,51 @@ class VideoConfigUtilTest {
     }
 
     @Test
-    fun resolveFrameRates_expectedCaptureFrameRateUnspecified_videoSpecAuto() {
-        val videoSpec = VideoSpec.builder().build()
+    fun resolveFrameRates_expectedCaptureFrameRateUnspecified_noCaptureEncodeRatio() {
         val expectedCaptureFrameRateRange = FRAME_RATE_RANGE_UNSPECIFIED
+        val captureEncodeRatio: Rational? = null
 
-        val result = VideoConfigUtil.resolveFrameRates(videoSpec, expectedCaptureFrameRateRange)
+        val result =
+            VideoConfigUtil.resolveFrameRates(expectedCaptureFrameRateRange, captureEncodeRatio)
 
         assertThat(result.captureRate).isEqualTo(VIDEO_FRAME_RATE_FIXED_DEFAULT)
         assertThat(result.encodeRate).isEqualTo(VIDEO_FRAME_RATE_FIXED_DEFAULT)
     }
 
     @Test
-    fun resolveFrameRates_expectedCaptureFrameRateSpecified_videoSpecAuto() {
-        val videoSpec = VideoSpec.builder().build()
+    fun resolveFrameRates_expectedCaptureFrameRateSpecified_noCaptureEncodeRatio() {
         val expectedCaptureFrameRateRange = Range(24, 60)
+        val captureEncodeRatio: Rational? = null
 
-        val result = VideoConfigUtil.resolveFrameRates(videoSpec, expectedCaptureFrameRateRange)
+        val result =
+            VideoConfigUtil.resolveFrameRates(expectedCaptureFrameRateRange, captureEncodeRatio)
 
         assertThat(result.captureRate).isEqualTo(60)
         assertThat(result.encodeRate).isEqualTo(60)
     }
 
     @Test
-    fun resolveFrameRates_expectedCaptureFrameRateUnspecified_videoSpecSpecified() {
-        val videoSpec = VideoSpec.builder().setFrameRate(Range(30, 30)).build()
+    fun resolveFrameRates_expectedCaptureFrameRateUnspecified_captureEncodeRatioSpecified() {
         val expectedCaptureFrameRateRange = FRAME_RATE_RANGE_UNSPECIFIED
+        val captureEncodeRatio = Rational(3, 1)
 
-        val result = VideoConfigUtil.resolveFrameRates(videoSpec, expectedCaptureFrameRateRange)
+        val result =
+            VideoConfigUtil.resolveFrameRates(expectedCaptureFrameRateRange, captureEncodeRatio)
 
         assertThat(result.captureRate).isEqualTo(VIDEO_FRAME_RATE_FIXED_DEFAULT)
-        assertThat(result.encodeRate).isEqualTo(30)
+        assertThat(result.encodeRate).isEqualTo(10)
     }
 
     @Test
-    fun resolveFrameRates_expectedCaptureFrameRateSpecified_videoSpecSpecified() {
-        val videoSpec = VideoSpec.builder().setFrameRate(Range(30, 30)).build()
+    fun resolveFrameRates_expectedCaptureFrameRateSpecified_captureEncodeRatioSpecified() {
         val expectedCaptureFrameRateRange = Range(24, 60)
+        val captureEncodeRatio = Rational(3, 1)
 
-        val result = VideoConfigUtil.resolveFrameRates(videoSpec, expectedCaptureFrameRateRange)
+        val result =
+            VideoConfigUtil.resolveFrameRates(expectedCaptureFrameRateRange, captureEncodeRatio)
 
         assertThat(result.captureRate).isEqualTo(60)
-        assertThat(result.encodeRate).isEqualTo(30)
+        assertThat(result.encodeRate).isEqualTo(20)
     }
 
     companion object {

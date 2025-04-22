@@ -39,6 +39,7 @@ import androidx.camera.core.DynamicRange.HLG_10_BIT
 import androidx.camera.core.DynamicRange.SDR
 import androidx.camera.core.DynamicRange.UNSPECIFIED
 import androidx.camera.core.impl.EncoderProfilesProvider
+import androidx.camera.core.impl.EncoderProfilesProxy
 import androidx.camera.core.impl.ImageFormatConstants.INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE
 import androidx.camera.testing.fakes.FakeCameraInfoInternal
 import androidx.camera.testing.impl.EncoderProfilesUtil.PROFILES_2160P
@@ -51,6 +52,7 @@ import androidx.camera.testing.impl.EncoderProfilesUtil.createFakeHighSpeedEncod
 import androidx.camera.testing.impl.FrameRateUtil.FPS_120_120
 import androidx.camera.testing.impl.FrameRateUtil.FPS_240
 import androidx.camera.testing.impl.FrameRateUtil.FPS_240_240
+import androidx.camera.testing.impl.FrameRateUtil.FPS_30
 import androidx.camera.testing.impl.FrameRateUtil.FPS_30_120
 import androidx.camera.testing.impl.FrameRateUtil.FPS_30_240
 import androidx.camera.testing.impl.FrameRateUtil.FPS_30_480
@@ -68,7 +70,11 @@ import androidx.camera.video.Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFIL
 import androidx.camera.video.Recorder.VIDEO_CAPABILITIES_SOURCE_CODEC_CAPABILITIES
 import androidx.camera.video.Recorder.VIDEO_RECORDING_TYPE_HIGH_SPEED
 import androidx.camera.video.Recorder.VIDEO_RECORDING_TYPE_REGULAR
+import androidx.camera.video.Speed.Companion.SPEED_1_16X
+import androidx.camera.video.Speed.Companion.SPEED_1_4X
+import androidx.camera.video.Speed.Companion.SPEED_1_8X
 import androidx.camera.video.internal.VideoValidatedEncoderProfilesProxy
+import androidx.camera.video.internal.config.SlowMotionConfigUtil.resolveSampleRates
 import androidx.core.util.component1
 import androidx.core.util.component2
 import com.google.common.truth.Truth.assertThat
@@ -440,6 +446,157 @@ class RecorderVideoCapabilitiesTest(private val videoCaptureType: Int) {
     }
 
     @Test
+    fun canGetHighSpeedSupportedSlowMotionConfigs_noAudio() {
+        assumeTrue(isHighSpeed)
+
+        // UHD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(UHD, SDR, FPS_30, false))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30)
+            )
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(UHD, HLG_10_BIT, FPS_30, false))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30)
+            )
+
+        // FHD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(FHD, SDR, FPS_30, false))
+            .isEmpty()
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(FHD, HLG_10_BIT, FPS_30, false))
+            .isEmpty()
+
+        // HD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(HD, SDR, FPS_30, false))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30),
+                SlowMotionConfig(FPS_480_480, FPS_30)
+            )
+        SlowMotionConfig(FPS_480_480, FPS_30)
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(HD, HLG_10_BIT, FPS_30, false))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30),
+                SlowMotionConfig(FPS_480_480, FPS_30)
+            )
+
+        // SD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(SD, SDR, FPS_30, false))
+            .isEmpty()
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(SD, HLG_10_BIT, FPS_30, false))
+            .isEmpty()
+
+        // HIGHEST is UHD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(HIGHEST, SDR, FPS_30, false))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30)
+            )
+        assertThat(
+                videoCapabilities.getSupportedSlowMotionConfigs(HIGHEST, HLG_10_BIT, FPS_30, false)
+            )
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30)
+            )
+
+        // LOWEST is HD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(LOWEST, SDR, FPS_30, false))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30),
+                SlowMotionConfig(FPS_480_480, FPS_30)
+            )
+        assertThat(
+                videoCapabilities.getSupportedSlowMotionConfigs(LOWEST, HLG_10_BIT, FPS_30, false)
+            )
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30),
+                SlowMotionConfig(FPS_480_480, FPS_30)
+            )
+    }
+
+    @Test
+    fun canGetHighSpeedSupportedSlowMotionConfigs_withAudio() {
+        assumeTrue(isHighSpeed)
+        assumeTrue(
+            "Speed is not supported by audio",
+            isAudioSpeedSupported(validatedProfiles2160p, SPEED_1_4X, SPEED_1_8X) &&
+                isAudioSpeedSupported(validatedProfiles720p, SPEED_1_4X, SPEED_1_8X, SPEED_1_16X)
+        )
+
+        // UHD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(UHD, SDR, FPS_30, true))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30)
+            )
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(UHD, HLG_10_BIT, FPS_30, true))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30)
+            )
+
+        // FHD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(FHD, SDR, FPS_30, true))
+            .isEmpty()
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(FHD, HLG_10_BIT, FPS_30, true))
+            .isEmpty()
+
+        // HD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(HD, SDR, FPS_30, true))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30),
+                SlowMotionConfig(FPS_480_480, FPS_30)
+            )
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(HD, HLG_10_BIT, FPS_30, true))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30),
+                SlowMotionConfig(FPS_480_480, FPS_30)
+            )
+
+        // SD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(SD, SDR, FPS_30, true)).isEmpty()
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(SD, HLG_10_BIT, FPS_30, true))
+            .isEmpty()
+
+        // HIGHEST is UHD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(HIGHEST, SDR, FPS_30, true))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30)
+            )
+        assertThat(
+                videoCapabilities.getSupportedSlowMotionConfigs(HIGHEST, HLG_10_BIT, FPS_30, true)
+            )
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30)
+            )
+
+        // LOWEST is HD
+        assertThat(videoCapabilities.getSupportedSlowMotionConfigs(LOWEST, SDR, FPS_30, true))
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30),
+                SlowMotionConfig(FPS_480_480, FPS_30)
+            )
+        assertThat(
+                videoCapabilities.getSupportedSlowMotionConfigs(LOWEST, HLG_10_BIT, FPS_30, true)
+            )
+            .containsExactly(
+                SlowMotionConfig(FPS_120_120, FPS_30),
+                SlowMotionConfig(FPS_240_240, FPS_30),
+                SlowMotionConfig(FPS_480_480, FPS_30)
+            )
+    }
+
+    @Test
     fun createBySourceCodecCapabilities_additionalQualitiesAreSupported() {
         // TODO(b/399585664): Remove this assumption when high speed quality exploration is
         //  supported.
@@ -482,5 +639,14 @@ class RecorderVideoCapabilitiesTest(private val videoCaptureType: Int) {
         assertThat(codecVideoCapabilities.isQualitySupported(FHD, SDR)).isTrue()
         assertThat(codecVideoCapabilities.isQualitySupported(HD, SDR)).isTrue()
         assertThat(codecVideoCapabilities.isQualitySupported(SD, SDR)).isTrue()
+    }
+
+    private fun isAudioSpeedSupported(
+        profiles: EncoderProfilesProxy,
+        vararg speeds: Speed
+    ): Boolean {
+        val audioProfile = profiles.audioProfiles[0] // should not be empty.
+
+        return speeds.all { speed -> resolveSampleRates(speed, audioProfile) != null }
     }
 }

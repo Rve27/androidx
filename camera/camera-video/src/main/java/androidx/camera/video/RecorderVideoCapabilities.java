@@ -29,8 +29,14 @@ import static androidx.camera.video.Quality.getSortedQualities;
 import static androidx.camera.video.Recorder.VIDEO_CAPABILITIES_SOURCE_CAMCORDER_PROFILE;
 import static androidx.camera.video.Recorder.VIDEO_CAPABILITIES_SOURCE_CODEC_CAPABILITIES;
 import static androidx.camera.video.Recorder.VIDEO_RECORDING_TYPE_HIGH_SPEED;
+import static androidx.camera.video.Speed.SPEED_1_16X;
+import static androidx.camera.video.Speed.SPEED_1_32X;
+import static androidx.camera.video.Speed.SPEED_1_4X;
+import static androidx.camera.video.Speed.SPEED_1_8X;
 import static androidx.core.util.Preconditions.checkArgument;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 
@@ -53,6 +59,7 @@ import androidx.camera.video.internal.DynamicRangeMatchedEncoderProfilesProvider
 import androidx.camera.video.internal.QualityExploredEncoderProfilesProvider;
 import androidx.camera.video.internal.VideoValidatedEncoderProfilesProxy;
 import androidx.camera.video.internal.compat.quirk.DeviceQuirks;
+import androidx.camera.video.internal.config.SlowMotionConfigUtil;
 import androidx.camera.video.internal.encoder.VideoEncoderInfo;
 import androidx.camera.video.internal.workaround.DefaultEncoderProfilesProvider;
 import androidx.camera.video.internal.workaround.QualityAddedEncoderProfilesProvider;
@@ -63,7 +70,6 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -83,6 +89,12 @@ import java.util.Set;
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class RecorderVideoCapabilities implements VideoCapabilities {
     private static final String TAG = "RecorderVideoCapabilities";
+
+    private static final List<Integer> SUPPORTED_SLOW_MOTION_ENCODE_FRAME_RATES = asList(15, 30,
+            60);
+
+    private static final List<Speed> SUPPORTED_SLOW_MOTION_SPEEDS = asList(
+            SPEED_1_4X, SPEED_1_8X, SPEED_1_16X, SPEED_1_32X);
 
     private final CameraInfoInternal mCameraInfo;
     private final EncoderProfilesProvider mProfilesProvider;
@@ -174,6 +186,32 @@ public class RecorderVideoCapabilities implements VideoCapabilities {
     }
 
     @Override
+    public @NonNull List<SlowMotionConfig> getSupportedSlowMotionConfigs(@NonNull Quality quality,
+            @NonNull DynamicRange dynamicRange, int encodeFrameRate, boolean withAudioEnabled) {
+        if (mQualitySource != QUALITY_SOURCE_HIGH_SPEED) {
+            // Currently we only support slow-motion for high-speed session. We could consider
+            // supporting regular session in the future and then eliminating this aggressive
+            // return.
+            return emptyList();
+        }
+
+        if (!SUPPORTED_SLOW_MOTION_ENCODE_FRAME_RATES.contains(encodeFrameRate)) {
+            return emptyList();
+        }
+
+        VideoValidatedEncoderProfilesProxy profiles = getProfiles(quality, dynamicRange);
+        if (profiles == null) {
+            return emptyList();
+        }
+
+        Set<Range<Integer>> captureFrameRateRanges = getSupportedFrameRateRanges(quality,
+                dynamicRange);
+
+        return SlowMotionConfigUtil.resolveSlowMotionConfigs(profiles, captureFrameRateRanges,
+                encodeFrameRate, withAudioEnabled, SUPPORTED_SLOW_MOTION_SPEEDS);
+    }
+
+    @Override
     public boolean isStabilizationSupported() {
         return mIsStabilizationSupported;
     }
@@ -225,7 +263,7 @@ public class RecorderVideoCapabilities implements VideoCapabilities {
             // supported resolution.
             // See: https://source.android.com/static/docs/compatibility/5.1/android-5.1-cdd.pdf,
             // 5.2. Video Encoding.
-            List<Quality> targetQualities = Arrays.asList(FHD, HD, SD);
+            List<Quality> targetQualities = asList(FHD, HD, SD);
             encoderProfilesProvider = new DefaultEncoderProfilesProvider(cameraInfo,
                     targetQualities, videoEncoderInfoFinder);
         }

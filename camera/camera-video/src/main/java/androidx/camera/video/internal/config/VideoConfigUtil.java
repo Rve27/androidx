@@ -36,7 +36,8 @@ import static android.media.MediaCodecInfo.CodecProfileLevel.VP9Profile3HDR;
 import static android.media.MediaCodecInfo.CodecProfileLevel.VP9Profile3HDR10Plus;
 
 import static androidx.camera.core.SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED;
-import static androidx.camera.video.VideoSpec.FRAME_RATE_RANGE_AUTO;
+import static androidx.camera.video.internal.config.CaptureEncodeRatesKt.resolveCaptureEncodeRatio;
+import static androidx.camera.video.internal.config.CaptureEncodeRatesKt.toEncodeRate;
 import static androidx.camera.video.internal.encoder.VideoEncoderDataSpace.ENCODER_DATA_SPACE_BT2020_HLG;
 import static androidx.camera.video.internal.encoder.VideoEncoderDataSpace.ENCODER_DATA_SPACE_BT2020_PQ;
 import static androidx.camera.video.internal.encoder.VideoEncoderDataSpace.ENCODER_DATA_SPACE_BT709;
@@ -52,6 +53,7 @@ import androidx.camera.core.Logger;
 import androidx.camera.core.impl.EncoderProfilesProxy.VideoProfileProxy;
 import androidx.camera.core.impl.Timebase;
 import androidx.camera.video.MediaSpec;
+import androidx.camera.video.Speed;
 import androidx.camera.video.VideoSpec;
 import androidx.camera.video.internal.VideoValidatedEncoderProfilesProxy;
 import androidx.camera.video.internal.compat.quirk.DeviceQuirks;
@@ -245,22 +247,26 @@ public final class VideoConfigUtil {
      * @param inputTimebase          the timebase of the input frame.
      * @param surfaceSize            the surface size.
      * @param expectedFrameRateRange the expected frame rate range.
+     * @param speed                  the video speed.
      * @return a VideoEncoderConfig.
      */
     public static @NonNull VideoEncoderConfig resolveVideoEncoderConfig(
             @NonNull VideoMimeInfo videoMimeInfo, @NonNull Timebase inputTimebase,
             @NonNull VideoSpec videoSpec, @NonNull Size surfaceSize,
-            @NonNull DynamicRange dynamicRange, @NonNull Range<Integer> expectedFrameRateRange
+            @NonNull DynamicRange dynamicRange, @NonNull Range<Integer> expectedFrameRateRange,
+            @NonNull Speed speed
     ) {
         Supplier<VideoEncoderConfig> configSupplier;
         VideoProfileProxy videoProfile = videoMimeInfo.getCompatibleVideoProfile();
+        Rational captureEncodeRatio = resolveCaptureEncodeRatio(speed);
         if (videoProfile != null) {
             configSupplier = new VideoEncoderConfigVideoProfileResolver(
                     videoMimeInfo.getMimeType(), inputTimebase, videoSpec, surfaceSize,
-                    videoProfile, dynamicRange, expectedFrameRateRange);
+                    videoProfile, dynamicRange, expectedFrameRateRange, captureEncodeRatio);
         } else {
             configSupplier = new VideoEncoderConfigDefaultResolver(videoMimeInfo.getMimeType(),
-                    inputTimebase, videoSpec, surfaceSize, dynamicRange, expectedFrameRateRange);
+                    inputTimebase, videoSpec, surfaceSize, dynamicRange, expectedFrameRateRange,
+                    captureEncodeRatio);
         }
 
         return configSupplier.get();
@@ -374,8 +380,9 @@ public final class VideoConfigUtil {
     }
 
     @NonNull
-    static CaptureEncodeRates resolveFrameRates(@NonNull VideoSpec videoSpec,
-            @NonNull Range<Integer> expectedCaptureFrameRateRange) {
+    static CaptureEncodeRates resolveFrameRates(
+            @NonNull Range<Integer> expectedCaptureFrameRateRange,
+            @Nullable Rational captureEncodeRatio) {
         int captureFrameRate;
         if (FRAME_RATE_RANGE_UNSPECIFIED.equals(expectedCaptureFrameRateRange)) {
             captureFrameRate = VIDEO_FRAME_RATE_FIXED_DEFAULT;
@@ -384,10 +391,10 @@ public final class VideoConfigUtil {
         }
 
         int encodeFrameRate;
-        if (FRAME_RATE_RANGE_AUTO.equals(videoSpec.getFrameRate())) {
+        if (captureEncodeRatio == null) {
             encodeFrameRate = captureFrameRate;
         } else {
-            encodeFrameRate = videoSpec.getFrameRate().getUpper();
+            encodeFrameRate = toEncodeRate(captureFrameRate, captureEncodeRatio);
         }
 
         Logger.d(TAG, String.format(Locale.ENGLISH,
