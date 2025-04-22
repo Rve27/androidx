@@ -109,8 +109,8 @@ public final class Flags {
             FLAG_PREFIX + "enable_enterprise_global_search_session";
 
     /**
-     * Enable {@link android.appsearch.app.AppSearchSchema#getDescription} and
-     * {@link android.appsearch.app.AppSearchSchema.PropertyConfig#getDescription} and the related
+     * Enable {@link androidx.appsearch.app.AppSearchSchema#getDescription} and
+     * {@link androidx.appsearch.app.AppSearchSchema.PropertyConfig#getDescription} and the related
      * builders.
      */
     public static final String FLAG_ENABLE_SCHEMA_DESCRIPTION =
@@ -245,6 +245,10 @@ public final class Flags {
     /** Enables setting the gzip compression memlevel to 1. */
     public static final String FLAG_ENABLE_COMPRESSION_MEM_LEVEL_ONE =
             FLAG_PREFIX + "enable_compression_mem_level_one";
+
+    /** Enables {@link androidx.appsearch.app.AppSearchResult#RESULT_ABORTED}. */
+    public static final String FLAG_ENABLE_RESULT_ABORTED =
+            FLAG_PREFIX + "enable_result_aborted";
 
     // Whether the features should be enabled.
     //
@@ -510,6 +514,14 @@ public final class Flags {
      * Whether to use a compression memlevel of 1.
      */
     public static boolean enableCompressionMemLevelOne() {
+        return true;
+    }
+
+    /**
+     * Whether {@link androidx.appsearch.app.AppSearchResult#RESULT_ABORTED} should be
+     * enabled.
+     */
+    public static boolean enableResultAborted() {
         return true;
     }
 }
