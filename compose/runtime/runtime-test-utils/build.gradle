@@ -24,14 +24,6 @@ plugins {
 androidXMultiplatform {
     androidLibrary {
         namespace = "androidx.compose.runtime.testutils"
-        withAndroidTestOnDeviceBuilder {
-            it.compilationName = "instrumentedTest"
-            it.defaultSourceSetName = "androidInstrumentedTest"
-            it.sourceSetTreeName = "test"
-        }
-        withAndroidTestOnJvmBuilder {
-            it.defaultSourceSetName = "androidUnitTest"
-        }
     }
     jvmStubs()
     linuxX64Stubs()
