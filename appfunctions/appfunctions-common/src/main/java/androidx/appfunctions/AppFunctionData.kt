@@ -483,7 +483,7 @@ internal constructor(
     @RestrictTo(LIBRARY_GROUP)
     public fun getPendingIntentOrNull(key: String): PendingIntent? {
         spec?.validateReadRequest(key, PendingIntent::class.java, isCollection = false)
-        return extras.getParcelable(key, PendingIntent::class.java)
+        return extras.getParcelable(extrasKey(key), PendingIntent::class.java)
     }
 
     /**
@@ -680,7 +680,7 @@ internal constructor(
     @Suppress("NullableCollection")
     public fun getPendingIntentList(key: String): List<PendingIntent>? {
         spec?.validateReadRequest(key, PendingIntent::class.java, isCollection = true)
-        return extras.getParcelableArrayList(key, PendingIntent::class.java)
+        return extras.getParcelableArrayList(extrasKey(key), PendingIntent::class.java)
     }
 
     /**
@@ -1021,7 +1021,7 @@ internal constructor(
          */
         public fun setPendingIntent(key: String, value: PendingIntent): Builder {
             spec?.validateWriteRequest(key, PendingIntent::class.java, isCollection = false)
-            extrasBuilder.putParcelable(key, value)
+            extrasBuilder.putParcelable(extrasKey(key), value)
             return this
         }
 
@@ -1162,7 +1162,7 @@ internal constructor(
          */
         public fun setPendingIntentList(key: String, value: List<PendingIntent>): Builder {
             spec?.validateWriteRequest(key, PendingIntent::class.java, isCollection = true)
-            extrasBuilder.putParcelableArrayList(key, ArrayList<PendingIntent>(value))
+            extrasBuilder.putParcelableArrayList(extrasKey(key), ArrayList<PendingIntent>(value))
             return this
         }
 
