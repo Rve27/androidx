@@ -195,6 +195,7 @@ package androidx.browser.customtabs {
     method public android.os.Bundle? extraCommand(String, android.os.Bundle?);
     method public static String? getPackageName(android.content.Context, java.util.List<java.lang.String!>?);
     method public static String? getPackageName(android.content.Context, java.util.List<java.lang.String!>?, boolean);
+    method public static boolean isAuthTabSupported(android.content.Context, String);
     method public static boolean isSetNetworkSupported(android.content.Context, String);
     method public androidx.browser.auth.AuthTabSession? newAuthTabSession(androidx.browser.auth.AuthTabCallback?, java.util.concurrent.Executor?);
     method public androidx.browser.auth.AuthTabSession? newAuthTabSession(androidx.browser.auth.AuthTabCallback?, java.util.concurrent.Executor?, int);
@@ -376,6 +377,7 @@ package androidx.browser.customtabs {
     method protected abstract boolean validateRelationship(androidx.browser.customtabs.CustomTabsSessionToken, @androidx.browser.customtabs.CustomTabsService.Relation int, android.net.Uri, android.os.Bundle?);
     method protected abstract boolean warmup(long);
     field public static final String ACTION_CUSTOM_TABS_CONNECTION = "android.support.customtabs.action.CustomTabsService";
+    field public static final String CATEGORY_AUTH_TAB = "androidx.browser.auth.category.AuthTab";
     field public static final String CATEGORY_COLOR_SCHEME_CUSTOMIZATION = "androidx.browser.customtabs.category.ColorSchemeCustomization";
     field public static final String CATEGORY_NAVBAR_COLOR_CUSTOMIZATION = "androidx.browser.customtabs.category.NavBarColorCustomization";
     field public static final String CATEGORY_SET_NETWORK = "androidx.browser.customtabs.category.SetNetwork";
