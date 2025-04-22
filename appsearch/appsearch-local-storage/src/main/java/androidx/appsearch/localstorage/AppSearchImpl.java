@@ -189,9 +189,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public final class AppSearchImpl implements Closeable {
     private static final String TAG = "AppSearchImpl";
 
-    /** A value 0 means that there're no more pages in the search results. */
-    public static final long EMPTY_PAGE_TOKEN = 0;
-
     @VisibleForTesting
     static final int CHECK_OPTIMIZE_INTERVAL = 100;
 
@@ -2494,8 +2491,8 @@ public final class AppSearchImpl implements Closeable {
                     searchResultProto.getResultsCount(),
                     searchResultProto);
             checkSuccess(searchResultProto.getStatus());
-            if (nextPageToken != EMPTY_PAGE_TOKEN
-                    && searchResultProto.getNextPageToken() == EMPTY_PAGE_TOKEN) {
+            if (nextPageToken != SearchResultPage.EMPTY_PAGE_TOKEN
+                    && searchResultProto.getNextPageToken() == SearchResultPage.EMPTY_PAGE_TOKEN) {
                 // At this point, we're guaranteed that this nextPageToken exists for this package,
                 // otherwise checkNextPageToken would've thrown an exception.
                 // Since the new token is 0, this is the last page. We should remove the old token
@@ -2537,7 +2534,7 @@ public final class AppSearchImpl implements Closeable {
      */
     public void invalidateNextPageToken(@NonNull String packageName, long nextPageToken)
             throws AppSearchException {
-        if (nextPageToken == EMPTY_PAGE_TOKEN) {
+        if (nextPageToken == SearchResultPage.EMPTY_PAGE_TOKEN) {
             // (b/208305352) Directly return here since we are no longer caching EMPTY_PAGE_TOKEN
             // in the cached token set. So no need to remove it anymore.
             return;
@@ -3428,7 +3425,7 @@ public final class AppSearchImpl implements Closeable {
     }
 
     private void addNextPageToken(String packageName, long nextPageToken) {
-        if (nextPageToken == EMPTY_PAGE_TOKEN) {
+        if (nextPageToken == SearchResultPage.EMPTY_PAGE_TOKEN) {
             // There is no more pages. No need to add it.
             return;
         }
@@ -3444,7 +3441,7 @@ public final class AppSearchImpl implements Closeable {
 
     private void checkNextPageToken(String packageName, long nextPageToken)
             throws AppSearchException {
-        if (nextPageToken == EMPTY_PAGE_TOKEN) {
+        if (nextPageToken == SearchResultPage.EMPTY_PAGE_TOKEN) {
             // Swallow the check for empty page token, token = 0 means there is no more page and it
             // won't return anything from Icing.
             return;
