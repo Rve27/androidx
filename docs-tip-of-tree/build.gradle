@@ -338,6 +338,7 @@ dependencies {
     // androidx.test is not hosted in androidx
     docs(project(":test:ext:junit-gtest"))
     docs(project(":test:uiautomator:uiautomator"))
+    kmpDocs(project(":test:uiautomator:uiautomator-shell"))
     // androidx.textclassifier is not hosted in androidx
     docs(project(":text:text-vertical"))
     kmpDocs(project(":tracing:tracing"))
