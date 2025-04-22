@@ -20,6 +20,7 @@ import androidx.annotation.RestrictTo;
 import androidx.appsearch.localstorage.stats.InitializeStats;
 import androidx.appsearch.localstorage.stats.OptimizeStats;
 import androidx.appsearch.localstorage.stats.PutDocumentStats;
+import androidx.appsearch.localstorage.stats.QueryStats;
 import androidx.appsearch.localstorage.stats.RemoveStats;
 import androidx.appsearch.localstorage.stats.SearchStats;
 import androidx.appsearch.localstorage.stats.SetSchemaStats;
@@ -113,36 +114,64 @@ public final class AppSearchLoggerHelper {
      * @param toStatsBuilder Stats copied to.
      */
     static void copyNativeStats(@NonNull QueryStatsProto fromNativeStats,
-            SearchStats.@NonNull Builder toStatsBuilder) {
+            QueryStats.@NonNull Builder toStatsBuilder) {
         Preconditions.checkNotNull(fromNativeStats);
         Preconditions.checkNotNull(toStatsBuilder);
         toStatsBuilder
-                .setNativeLatencyMillis(fromNativeStats.getLatencyMs())
-                .setTermCount(fromNativeStats.getNumTerms())
-                .setQueryLength(fromNativeStats.getQueryLength())
-                .setFilteredNamespaceCount(fromNativeStats.getNumNamespacesFiltered())
-                .setFilteredSchemaTypeCount(fromNativeStats.getNumSchemaTypesFiltered())
+                .setIsFirstPage(fromNativeStats.getIsFirstPage())
                 .setRequestedPageSize(fromNativeStats.getRequestedPageSize())
                 .setCurrentPageReturnedResultCount(
                         fromNativeStats.getNumResultsReturnedCurrentPage())
-                .setIsFirstPage(fromNativeStats.getIsFirstPage())
-                .setParseQueryLatencyMillis(fromNativeStats.getParseQueryLatencyMs())
-                .setRankingStrategy(fromNativeStats.getRankingStrategy().getNumber())
-                .setScoredDocumentCount(fromNativeStats.getNumDocumentsScored())
-                .setScoringLatencyMillis(fromNativeStats.getScoringLatencyMs())
+                .setNativeLatencyMillis(fromNativeStats.getLatencyMs())
                 .setRankingLatencyMillis(fromNativeStats.getRankingLatencyMs())
-                .setResultWithSnippetsCount(fromNativeStats.getNumResultsWithSnippets())
                 .setDocumentRetrievingLatencyMillis(
                         fromNativeStats.getDocumentRetrievalLatencyMs())
+                .setResultWithSnippetsCount(fromNativeStats.getNumResultsWithSnippets())
                 .setNativeLockAcquisitionLatencyMillis(
                         fromNativeStats.getLockAcquisitionLatencyMs())
                 .setJavaToNativeJniLatencyMillis(
                         fromNativeStats.getJavaToNativeJniLatencyMs())
                 .setNativeToJavaJniLatencyMillis(
                         fromNativeStats.getNativeToJavaJniLatencyMs())
+                .setNativeJoinLatencyMillis(fromNativeStats.getJoinLatencyMs())
                 .setNativeNumJoinedResultsCurrentPage(
                         fromNativeStats.getNumJoinedResultsReturnedCurrentPage())
-                .setNativeJoinLatencyMillis(fromNativeStats.getJoinLatencyMs());
+                .setParentSearchStats(copyNativeStats(fromNativeStats.getParentSearchStats()))
+                .setChildSearchStats(copyNativeStats(fromNativeStats.getChildSearchStats()))
+                .setLiteIndexHitBufferByteSize(fromNativeStats.getLiteIndexHitBufferByteSize())
+                .setLiteIndexHitBufferUnsortedByteSize(
+                        fromNativeStats.getLiteIndexHitBufferUnsortedByteSize());
+    }
+
+    /**
+     * Copies native Search stats to {@link SearchStats}.
+     *
+     * @param fromNativeStats Stats copied from.
+     */
+    static @NonNull SearchStats copyNativeStats(
+            QueryStatsProto.@NonNull SearchStats fromNativeStats) {
+        Preconditions.checkNotNull(fromNativeStats);
+        return new SearchStats.Builder()
+                .setNativeQueryLength(fromNativeStats.getQueryLength())
+                .setNativeTermCount(fromNativeStats.getNumTerms())
+                .setNativeFilteredNamespaceCount(fromNativeStats.getNumNamespacesFiltered())
+                .setNativeFilteredSchemaTypeCount(fromNativeStats.getNumSchemaTypesFiltered())
+                .setNativeRankingStrategy(fromNativeStats.getRankingStrategy().getNumber())
+                .setNativeScoredDocumentCount(fromNativeStats.getNumDocumentsScored())
+                .setNativeParseQueryLatencyMillis(fromNativeStats.getParseQueryLatencyMs())
+                .setNativeScoringLatencyMillis(fromNativeStats.getScoringLatencyMs())
+                .setNativeIsNumericQuery(fromNativeStats.getIsNumericQuery())
+                .setNativeNumFetchedHitsLiteIndex(fromNativeStats.getNumFetchedHitsLiteIndex())
+                .setNativeNumFetchedHitsMainIndex(fromNativeStats.getNumFetchedHitsMainIndex())
+                .setNativeNumFetchedHitsIntegerIndex(
+                        fromNativeStats.getNumFetchedHitsIntegerIndex())
+                .setNativeQueryProcessorLexerExtractTokenLatencyMillis(
+                        fromNativeStats.getQueryProcessorLexerExtractTokenLatencyMs())
+                .setNativeQueryProcessorParserConsumeQueryLatencyMillis(
+                        fromNativeStats.getQueryProcessorParserConsumeQueryLatencyMs())
+                .setNativeQueryProcessorQueryVisitorLatencyMillis(
+                        fromNativeStats.getQueryProcessorQueryVisitorLatencyMs())
+                .build();
     }
 
     /**

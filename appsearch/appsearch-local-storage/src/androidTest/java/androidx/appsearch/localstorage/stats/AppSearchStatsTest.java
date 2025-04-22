@@ -239,62 +239,167 @@ public class AppSearchStatsTest {
 
     @Test
     public void testAppSearchStats_SearchStats() {
-        int rewriteSearchSpecLatencyMillis = 1;
-        int rewriteSearchResultLatencyMillis = 2;
-        int javaLockAcquisitionLatencyMillis = 3;
-        int aclCheckLatencyMillis = 4;
-        int visibilityScope = SearchStats.VISIBILITY_SCOPE_LOCAL;
-        int nativeLatencyMillis = 6;
-        int nativeNumTerms = 7;
-        int nativeQueryLength = 8;
-        int nativeNumNamespacesFiltered = 9;
-        int nativeNumSchemaTypesFiltered = 10;
-        int nativeRequestedPageSize = 11;
-        int nativeNumResultsReturnedCurrentPage = 12;
-        boolean nativeIsFirstPage = true;
-        int nativeParseQueryLatencyMillis = 13;
-        int nativeRankingStrategy = 14;
-        int nativeNumDocumentsScored = 15;
-        int nativeScoringLatencyMillis = 16;
-        int nativeRankingLatencyMillis = 17;
-        int nativeNumResultsSnippeted = 18;
-        int nativeDocumentRetrievingLatencyMillis = 19;
-        int nativeLockAcquisitionLatencyMillis = 20;
-        int javaToNativeJniLatencyMillis = 21;
-        int nativeToJavaJniLatencyMillis = 22;
-        String searchSourceLogTag = "tag";
+        int nativeQueryLength = 1;
+        int nativeNumTerms = 2;
+        int nativeNumNamespacesFiltered = 3;
+        int nativeNumSchemaTypesFiltered = 4;
+        int nativeRankingStrategy = 5;
+        int nativeNumDocumentsScored = 6;
+        int nativeParseQueryLatencyMillis = 7;
+        int nativeScoringLatencyMillis = 8;
+        boolean isNumericQuery = true;
+        int numFetchedHitsLiteIndex = 9;
+        int numFetchedHitsMainIndex = 10;
+        int numFetchedHitsIntegerIndex = 11;
+        int queryProcessorLexerExtractTokenLatencyMillis = 12;
+        int queryProcessorParserConsumeQueryLatencyMillis = 13;
+        int queryProcessorQueryVisitorLatencyMillis = 14;
+
+        final SearchStats.Builder sStatsBuilder = new SearchStats.Builder()
+                .setNativeQueryLength(nativeQueryLength)
+                .setNativeTermCount(nativeNumTerms)
+                .setNativeFilteredNamespaceCount(nativeNumNamespacesFiltered)
+                .setNativeFilteredSchemaTypeCount(nativeNumSchemaTypesFiltered)
+                .setNativeParseQueryLatencyMillis(nativeParseQueryLatencyMillis)
+                .setNativeRankingStrategy(nativeRankingStrategy)
+                .setNativeQueryProcessorParserConsumeQueryLatencyMillis(
+                        nativeParseQueryLatencyMillis)
+                .setNativeScoredDocumentCount(nativeNumDocumentsScored)
+                .setNativeScoringLatencyMillis(nativeScoringLatencyMillis)
+                .setNativeIsNumericQuery(isNumericQuery)
+                .setNativeNumFetchedHitsLiteIndex(numFetchedHitsLiteIndex)
+                .setNativeNumFetchedHitsMainIndex(numFetchedHitsMainIndex)
+                .setNativeNumFetchedHitsIntegerIndex(numFetchedHitsIntegerIndex)
+                .setNativeQueryProcessorLexerExtractTokenLatencyMillis(
+                        queryProcessorLexerExtractTokenLatencyMillis)
+                .setNativeQueryProcessorParserConsumeQueryLatencyMillis(
+                        queryProcessorParserConsumeQueryLatencyMillis)
+                .setNativeQueryProcessorQueryVisitorLatencyMillis(
+                        queryProcessorQueryVisitorLatencyMillis);
+        final SearchStats sStats = sStatsBuilder.build();
+
+        assertThat(sStats.getNativeQueryLength()).isEqualTo(nativeQueryLength);
+        assertThat(sStats.getNativeTermCount()).isEqualTo(nativeNumTerms);
+        assertThat(sStats.getNativeFilteredNamespaceCount()).isEqualTo(nativeNumNamespacesFiltered);
+        assertThat(sStats.getNativeFilteredSchemaTypeCount()).isEqualTo(
+                nativeNumSchemaTypesFiltered);
+        assertThat(sStats.getNativeRankingStrategy()).isEqualTo(nativeRankingStrategy);
+        assertThat(sStats.getNativeParseQueryLatencyMillis()).isEqualTo(
+                nativeParseQueryLatencyMillis);
+        assertThat(sStats.getNativeScoredDocumentCount()).isEqualTo(nativeNumDocumentsScored);
+        assertThat(sStats.getNativeScoringLatencyMillis()).isEqualTo(nativeScoringLatencyMillis);
+        assertThat(sStats.isNativeNumericQuery()).isEqualTo(isNumericQuery);
+        assertThat(sStats.getNativeNumFetchedHitsLiteIndex()).isEqualTo(numFetchedHitsLiteIndex);
+        assertThat(sStats.getNativeNumFetchedHitsMainIndex()).isEqualTo(numFetchedHitsMainIndex);
+        assertThat(sStats.getNativeNumFetchedHitsIntegerIndex())
+                .isEqualTo(numFetchedHitsIntegerIndex);
+        assertThat(sStats.getNativeQueryProcessorLexerExtractTokenLatencyMillis())
+                .isEqualTo(queryProcessorLexerExtractTokenLatencyMillis);
+        assertThat(sStats.getNativeQueryProcessorParserConsumeQueryLatencyMillis())
+                .isEqualTo(queryProcessorParserConsumeQueryLatencyMillis);
+        assertThat(sStats.getNativeQueryProcessorQueryVisitorLatencyMillis())
+                .isEqualTo(queryProcessorQueryVisitorLatencyMillis);
+        String expectedString = "SearchStats {\n"
+                + "query_length=1, num_terms=2, num_namespaces_filtered=3, "
+                + "num_schema_types_filtered=4,\n"
+                + "ranking_strategy=5, num_docs_scored=6, parse_query_latency=7, "
+                + "scoring_latency=8, is_numeric_query=true,\n"
+                + "num_fetched_hits_lite_index=9, num_fetched_hits_main_index=10, "
+                + "num_fetched_hits_integer_index=11,\n"
+                + "query_processor_lexer_extract_token_latency=12, "
+                + "query_processor_parser_consume_query_latency=13,\n"
+                + "query_processor_query_visitor_latency=14}";
+        assertThat(sStats.toString()).isEqualTo(expectedString);
+    }
+
+    @Test
+    public void testAppSearchStats_QueryStats() {
+        int nativeQueryLength = 101;
+        int nativeNumTerms = 102;
+        int nativeNumNamespacesFiltered = 103;
+        int nativeNumSchemaTypesFiltered = 104;
+        int nativeRankingStrategy = 105;
+        int nativeNumDocumentsScored = 106;
+        int nativeParseQueryLatencyMillis = 107;
+        int nativeScoringLatencyMillis = 108;
+        boolean isNumericQuery = true;
+        int numFetchedHitsLiteIndex = 109;
+        int numFetchedHitsMainIndex = 110;
+        int numFetchedHitsIntegerIndex = 111;
+        int queryProcessorLexerExtractTokenLatencyMillis = 112;
+        int queryProcessorParserConsumeQueryLatencyMillis = 113;
+        int queryProcessorQueryVisitorLatencyMillis = 114;
+
+        SearchStats searchStats = new SearchStats.Builder()
+                .setNativeQueryLength(nativeQueryLength)
+                .setNativeTermCount(nativeNumTerms)
+                .setNativeFilteredNamespaceCount(nativeNumNamespacesFiltered)
+                .setNativeFilteredSchemaTypeCount(nativeNumSchemaTypesFiltered)
+                .setNativeParseQueryLatencyMillis(nativeParseQueryLatencyMillis)
+                .setNativeRankingStrategy(nativeRankingStrategy)
+                .setNativeQueryProcessorParserConsumeQueryLatencyMillis(
+                        nativeParseQueryLatencyMillis)
+                .setNativeScoredDocumentCount(nativeNumDocumentsScored)
+                .setNativeScoringLatencyMillis(nativeScoringLatencyMillis)
+                .setNativeIsNumericQuery(isNumericQuery)
+                .setNativeNumFetchedHitsLiteIndex(numFetchedHitsLiteIndex)
+                .setNativeNumFetchedHitsMainIndex(numFetchedHitsMainIndex)
+                .setNativeNumFetchedHitsIntegerIndex(numFetchedHitsIntegerIndex)
+                .setNativeQueryProcessorLexerExtractTokenLatencyMillis(
+                        queryProcessorLexerExtractTokenLatencyMillis)
+                .setNativeQueryProcessorParserConsumeQueryLatencyMillis(
+                        queryProcessorParserConsumeQueryLatencyMillis)
+                .setNativeQueryProcessorQueryVisitorLatencyMillis(
+                        queryProcessorQueryVisitorLatencyMillis).build();
+
         int enabledFeatures = 1;
-        final SearchStats.Builder sStatsBuilder = new SearchStats.Builder(visibilityScope,
+        int rewriteSearchSpecLatencyMillis = 202;
+        int rewriteSearchResultLatencyMillis = 203;
+        int javaLockAcquisitionLatencyMillis = 204;
+        int aclCheckLatencyMillis = 205;
+        int visibilityScope = QueryStats.VISIBILITY_SCOPE_LOCAL;
+        String searchSourceLogTag = "tag";
+        boolean nativeIsFirstPage = true;
+        int nativeRequestedPageSize = 206;
+        int nativeNumResultsReturnedCurrentPage = 207;
+        int nativeLatencyMillis = 208;
+        int nativeRankingLatencyMillis = 209;
+        int nativeDocumentRetrievingLatencyMillis = 210;
+        int nativeNumResultsSnippeted = 211;
+        int nativeLockAcquisitionLatencyMillis = 212;
+        int javaToNativeJniLatencyMillis = 213;
+        int nativeToJavaJniLatencyMillis = 214;
+        long mLiteIndexHitBufferByteSize = 215;
+        long mLiteIndexHitBufferUnsortedByteSize = 216;
+
+        final QueryStats.Builder sStatsBuilder = new QueryStats.Builder(visibilityScope,
                 TEST_PACKAGE_NAME)
                 .setDatabase(TEST_DATA_BASE)
                 .setStatusCode(TEST_STATUS_CODE)
+                .setLaunchVMEnabled(true)
                 .setTotalLatencyMillis(TEST_TOTAL_LATENCY_MILLIS)
                 .setRewriteSearchSpecLatencyMillis(rewriteSearchSpecLatencyMillis)
                 .setRewriteSearchResultLatencyMillis(rewriteSearchResultLatencyMillis)
                 .setJavaLockAcquisitionLatencyMillis(javaLockAcquisitionLatencyMillis)
                 .setAclCheckLatencyMillis(aclCheckLatencyMillis)
-                .setNativeLatencyMillis(nativeLatencyMillis)
-                .setTermCount(nativeNumTerms)
-                .setQueryLength(nativeQueryLength)
-                .setFilteredNamespaceCount(nativeNumNamespacesFiltered)
-                .setFilteredSchemaTypeCount(nativeNumSchemaTypesFiltered)
+                .setSearchSourceLogTag(searchSourceLogTag)
+                .setIsFirstPage(nativeIsFirstPage)
                 .setRequestedPageSize(nativeRequestedPageSize)
                 .setCurrentPageReturnedResultCount(nativeNumResultsReturnedCurrentPage)
-                .setIsFirstPage(nativeIsFirstPage)
-                .setParseQueryLatencyMillis(nativeParseQueryLatencyMillis)
-                .setRankingStrategy(nativeRankingStrategy)
-                .setScoredDocumentCount(nativeNumDocumentsScored)
-                .setScoringLatencyMillis(nativeScoringLatencyMillis)
+                .setNativeLatencyMillis(nativeLatencyMillis)
                 .setRankingLatencyMillis(nativeRankingLatencyMillis)
-                .setResultWithSnippetsCount(nativeNumResultsSnippeted)
                 .setDocumentRetrievingLatencyMillis(nativeDocumentRetrievingLatencyMillis)
+                .setResultWithSnippetsCount(nativeNumResultsSnippeted)
                 .setNativeLockAcquisitionLatencyMillis(nativeLockAcquisitionLatencyMillis)
                 .setJavaToNativeJniLatencyMillis(javaToNativeJniLatencyMillis)
                 .setNativeToJavaJniLatencyMillis(nativeToJavaJniLatencyMillis)
-                .setSearchSourceLogTag(searchSourceLogTag)
-                .setLaunchVMEnabled(true);
-        final SearchStats sStats = sStatsBuilder.build();
+                .setChildSearchStats(searchStats)
+                .setParentSearchStats(searchStats)
+                .setLiteIndexHitBufferByteSize(mLiteIndexHitBufferByteSize)
+                .setLiteIndexHitBufferUnsortedByteSize(mLiteIndexHitBufferUnsortedByteSize);
+        final QueryStats sStats = sStatsBuilder.build();
 
+        assertThat(sStats.getEnabledFeatures()).isEqualTo(enabledFeatures);
         assertThat(sStats.getPackageName()).isEqualTo(TEST_PACKAGE_NAME);
         assertThat(sStats.getDatabase()).isEqualTo(TEST_DATA_BASE);
         assertThat(sStats.getStatusCode()).isEqualTo(TEST_STATUS_CODE);
@@ -309,21 +414,12 @@ public class AppSearchStatsTest {
         assertThat(sStats.getAclCheckLatencyMillis()).isEqualTo(
                 aclCheckLatencyMillis);
         assertThat(sStats.getVisibilityScope()).isEqualTo(visibilityScope);
-        assertThat(sStats.getNativeLatencyMillis()).isEqualTo(nativeLatencyMillis);
-        assertThat(sStats.getTermCount()).isEqualTo(nativeNumTerms);
-        assertThat(sStats.getQueryLength()).isEqualTo(nativeQueryLength);
-        assertThat(sStats.getFilteredNamespaceCount()).isEqualTo(nativeNumNamespacesFiltered);
-        assertThat(sStats.getFilteredSchemaTypeCount()).isEqualTo(
-                nativeNumSchemaTypesFiltered);
+        assertThat(sStats.getSearchSourceLogTag()).isEqualTo(searchSourceLogTag);
+        assertThat(sStats.isFirstPage()).isTrue();
         assertThat(sStats.getRequestedPageSize()).isEqualTo(nativeRequestedPageSize);
         assertThat(sStats.getCurrentPageReturnedResultCount()).isEqualTo(
                 nativeNumResultsReturnedCurrentPage);
-        assertThat(sStats.isFirstPage()).isTrue();
-        assertThat(sStats.getParseQueryLatencyMillis()).isEqualTo(
-                nativeParseQueryLatencyMillis);
-        assertThat(sStats.getRankingStrategy()).isEqualTo(nativeRankingStrategy);
-        assertThat(sStats.getScoredDocumentCount()).isEqualTo(nativeNumDocumentsScored);
-        assertThat(sStats.getScoringLatencyMillis()).isEqualTo(nativeScoringLatencyMillis);
+        assertThat(sStats.getNativeLatencyMillis()).isEqualTo(nativeLatencyMillis);
         assertThat(sStats.getRankingLatencyMillis()).isEqualTo(nativeRankingLatencyMillis);
         assertThat(sStats.getResultWithSnippetsCount()).isEqualTo(nativeNumResultsSnippeted);
         assertThat(sStats.getDocumentRetrievingLatencyMillis()).isEqualTo(
@@ -334,8 +430,37 @@ public class AppSearchStatsTest {
                 javaToNativeJniLatencyMillis);
         assertThat(sStats.getNativeToJavaJniLatencyMillis()).isEqualTo(
                 nativeToJavaJniLatencyMillis);
-        assertThat(sStats.getSearchSourceLogTag()).isEqualTo(searchSourceLogTag);
-        assertThat(sStats.getEnabledFeatures()).isEqualTo(enabledFeatures);
+        assertThat(sStats.getParentSearchStats()).isEqualTo(searchStats);
+        assertThat(sStats.getChildSearchStats()).isEqualTo(searchStats);
+        assertThat(sStats.getLiteIndexHitBufferByteSize()).isEqualTo(mLiteIndexHitBufferByteSize);
+        assertThat(sStats.getLiteIndexHitBufferUnsortedByteSize())
+                .isEqualTo(mLiteIndexHitBufferUnsortedByteSize);
+        String expectedString = "QueryStats {\n"
+                + "package=com.google.test, database=testDataBase, status=2, total_latency=20, "
+                + "rewrite_search_spec_latency=202,\n"
+                + "rewrite_search_result_latency=203, java_lock_acquisition_latency=204, "
+                + "acl_check_latency=205, visibility_score=1,\n"
+                + "search_source_log_tag=tag, is_first_page=true, requested_page_size=206, "
+                + "num_results_returned_current_page=207,\n"
+                + "native_latency=208, ranking_latency=209, document_retrieving_latency=210, "
+                + "num_results_with_snippets=211,\n"
+                + "native_lock_acquisition_latency=212, java_to_native_jni_latency=213, "
+                + "native_to_java_jin_latency=214,\n"
+                + "num_joined_results_current_page=0, join_type=0, "
+                + "lite_index_hit_buffer_byte_size=0,\n"
+                + "lite_index_hit_buffer_unsorted_byte_size=215\n"
+                + "parent_search_stats=216,\n"
+                + " child_search_stats=SearchStats {\n"
+                + "query_length=101, num_terms=102, num_namespaces_filtered=103, "
+                + "num_schema_types_filtered=104,\n"
+                + "ranking_strategy=105, num_docs_scored=106, parse_query_latency=107, "
+                + "scoring_latency=108, is_numeric_query=true,\n"
+                + "num_fetched_hits_lite_index=109, num_fetched_hits_main_index=110, "
+                + "num_fetched_hits_integer_index=111,\n"
+                + "query_processor_lexer_extract_token_latency=112, "
+                + "query_processor_parser_consume_query_latency=113,\n"
+                + "query_processor_query_visitor_latency=114}}";
+        assertThat(sStats.toString()).isEqualTo(expectedString);
     }
 
     @Test

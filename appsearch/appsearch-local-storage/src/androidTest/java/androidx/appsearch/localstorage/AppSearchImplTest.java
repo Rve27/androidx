@@ -63,8 +63,8 @@ import androidx.appsearch.flags.Flags;
 import androidx.appsearch.localstorage.stats.InitializeStats;
 import androidx.appsearch.localstorage.stats.OptimizeStats;
 import androidx.appsearch.localstorage.stats.PutDocumentStats;
+import androidx.appsearch.localstorage.stats.QueryStats;
 import androidx.appsearch.localstorage.stats.RemoveStats;
-import androidx.appsearch.localstorage.stats.SearchStats;
 import androidx.appsearch.localstorage.stats.SetSchemaStats;
 import androidx.appsearch.localstorage.util.PrefixUtil;
 import androidx.appsearch.localstorage.visibilitystore.CallerAccess;
@@ -4865,7 +4865,7 @@ public class AppSearchImplTest {
             }
 
             @Override
-            public void logStats(@NonNull SearchStats stats) {
+            public void logStats(@NonNull QueryStats stats) {
                 assertThat(stats.getEnabledFeatures()).isEqualTo(onlyLaunchVMFeature);
             }
         };
@@ -4954,7 +4954,7 @@ public class AppSearchImplTest {
             }
 
             @Override
-            public void logStats(@NonNull SearchStats stats) {
+            public void logStats(@NonNull QueryStats stats) {
                 assertThat(stats.getEnabledFeatures()).isEqualTo(noLaunchFeature);
             }
         };

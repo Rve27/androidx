@@ -69,8 +69,8 @@ import androidx.appsearch.localstorage.converter.TypePropertyPathToProtoConverte
 import androidx.appsearch.localstorage.stats.InitializeStats;
 import androidx.appsearch.localstorage.stats.OptimizeStats;
 import androidx.appsearch.localstorage.stats.PutDocumentStats;
+import androidx.appsearch.localstorage.stats.QueryStats;
 import androidx.appsearch.localstorage.stats.RemoveStats;
-import androidx.appsearch.localstorage.stats.SearchStats;
 import androidx.appsearch.localstorage.stats.SetSchemaStats;
 import androidx.appsearch.localstorage.util.PrefixUtil;
 import androidx.appsearch.localstorage.visibilitystore.CallerAccess;
@@ -2121,10 +2121,10 @@ public final class AppSearchImpl implements Closeable {
             @NonNull SearchSpec searchSpec,
             @Nullable AppSearchLogger logger) throws AppSearchException {
         long totalLatencyStartMillis = SystemClock.elapsedRealtime();
-        SearchStats.Builder sStatsBuilder = null;
+        QueryStats.Builder sStatsBuilder = null;
         if (logger != null) {
             sStatsBuilder =
-                    new SearchStats.Builder(SearchStats.VISIBILITY_SCOPE_LOCAL, packageName)
+                    new QueryStats.Builder(QueryStats.VISIBILITY_SCOPE_LOCAL, packageName)
                             .setDatabase(databaseName)
                             .setSearchSourceLogTag(searchSpec.getSearchSourceLogTag())
                             .setLaunchVMEnabled(mIsVMEnabled);
@@ -2197,11 +2197,11 @@ public final class AppSearchImpl implements Closeable {
             @NonNull CallerAccess callerAccess,
             @Nullable AppSearchLogger logger) throws AppSearchException {
         long totalLatencyStartMillis = SystemClock.elapsedRealtime();
-        SearchStats.Builder sStatsBuilder = null;
+        QueryStats.Builder sStatsBuilder = null;
         if (logger != null) {
             sStatsBuilder =
-                    new SearchStats.Builder(
-                            SearchStats.VISIBILITY_SCOPE_GLOBAL,
+                    new QueryStats.Builder(
+                            QueryStats.VISIBILITY_SCOPE_GLOBAL,
                             callerAccess.getCallingPackageName())
                             .setSearchSourceLogTag(searchSpec.getSearchSourceLogTag())
                             .setLaunchVMEnabled(mIsVMEnabled);
@@ -2289,7 +2289,7 @@ public final class AppSearchImpl implements Closeable {
     @GuardedBy("mReadWriteLock")
     private SearchResultPage doQueryLocked(
             @NonNull SearchSpecToProtoConverter searchSpecToProtoConverter,
-            SearchStats.@Nullable Builder sStatsBuilder)
+            QueryStats.@Nullable Builder sStatsBuilder)
             throws AppSearchException {
         // Rewrite the given SearchSpec into SearchSpecProto, ResultSpecProto and ScoringSpecProto.
         // All processes are counted in rewriteSearchSpecLatencyMillis
@@ -2326,7 +2326,7 @@ public final class AppSearchImpl implements Closeable {
             @NonNull SearchSpecProto searchSpec,
             @NonNull ResultSpecProto resultSpec,
             @NonNull ScoringSpecProto scoringSpec,
-            SearchStats.@Nullable Builder sStatsBuilder) throws AppSearchException {
+            QueryStats.@Nullable Builder sStatsBuilder) throws AppSearchException {
         if (LogUtil.isPiiTraceEnabled()) {
             LogUtil.piiTrace(
                     TAG,
@@ -2457,7 +2457,7 @@ public final class AppSearchImpl implements Closeable {
      * @throws AppSearchException on IcingSearchEngine error or if can't advance on nextPageToken.
      */
     public @NonNull SearchResultPage getNextPage(@NonNull String packageName, long nextPageToken,
-            SearchStats.@Nullable Builder sStatsBuilder)
+            QueryStats.@Nullable Builder sStatsBuilder)
             throws AppSearchException {
         long totalLatencyStartMillis = SystemClock.elapsedRealtime();
 
