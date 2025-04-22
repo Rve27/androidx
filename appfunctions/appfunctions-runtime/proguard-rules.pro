@@ -24,3 +24,6 @@
 -keep,allowoptimization class androidx.appfunctions.ExtensionAppFunctionService {
     public *;
 }
+
+-keep class androidx.appfunctions.internal.AggregatedAppFunctionInvoker { *; }
+-keep class androidx.appfunctions.internal.AggregatedAppFunctionInventory { *; }
