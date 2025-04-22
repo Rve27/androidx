@@ -103,7 +103,7 @@ class SearchResultsImpl implements SearchResults {
                             mPackageName, mDatabaseName, mQueryExpression, mSearchSpec, mLogger);
                 }
             } else {
-                if (mNextPageToken == AppSearchImpl.EMPTY_PAGE_TOKEN) {
+                if (mNextPageToken == SearchResultPage.EMPTY_PAGE_TOKEN) {
                     // Return an empty list directly if the next page token is empty token. This
                     // will save a binder call.
                     return Collections.emptyList();
@@ -139,7 +139,7 @@ class SearchResultsImpl implements SearchResults {
         // Checking the future result is not needed here since this is a cleanup step which is not
         // critical to the correct functioning of the system; also, the return value is void.
         if (!mIsClosed) {
-            if (mNextPageToken == AppSearchImpl.EMPTY_PAGE_TOKEN) {
+            if (mNextPageToken == SearchResultPage.EMPTY_PAGE_TOKEN) {
                 // Save a binder call for invalidateNextPageToken if the next page token is empty
                 // token.
                 mIsClosed = true;
