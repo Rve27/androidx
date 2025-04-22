@@ -337,7 +337,9 @@ class BinaryCompatibilityChecker(
                     kind == AbiPropertyKind.VAL &&
                     oldProperty.setter == null -> Unit
                 else ->
-                    errors.add("kind changed from ${oldProperty.kind} to $kind for $qualifiedName")
+                    errors.add(
+                        "kind changed from ${oldProperty.kind} to $kind for ${this.asTypeString()}"
+                    )
             }
         }
         val newGetter = getter
@@ -563,8 +565,27 @@ private fun AbiTypeArgument.isBinaryCompatibleWith(
 private fun AbiDeclaration.asTypeString() =
     when (this) {
         is AbiFunction -> qualifiedName.toString() + valueParameterString()
+        is AbiProperty -> asTypeString()
         else -> qualifiedName.toString()
     }
+
+private fun AbiProperty.asTypeString(): String {
+    val builder = StringBuilder()
+    val getterFunc = getter ?: return qualifiedName.toString()
+    val valueParameters = getterFunc.valueParameters.toMutableList()
+    if (getterFunc.contextReceiverParametersCount > 0) {
+        builder.append("context(")
+        repeat(getterFunc.contextReceiverParametersCount) {
+            builder.append(valueParameters.removeFirst().type.asString())
+        }
+        builder.append(") ")
+    }
+    if (getterFunc.hasExtensionReceiverParameter) {
+        builder.append("(${valueParameters.removeFirst().type.asString()}).")
+    }
+    builder.append(qualifiedName.toString())
+    return builder.toString()
+}
 
 private fun AbiDeclaration.asUnqualifiedTypeString(): String {
     val name = qualifiedName.relativeName.nameSegments.last().value
