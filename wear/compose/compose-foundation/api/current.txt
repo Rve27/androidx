@@ -563,7 +563,6 @@ package androidx.wear.compose.foundation.lazy {
   }
 
   @androidx.wear.compose.foundation.lazy.TransformingLazyColumnScopeMarker public sealed interface TransformingLazyColumnItemScope {
-    method @androidx.compose.runtime.Composable public default void TransformExclusion(kotlin.jvm.functions.Function1<? super androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope,kotlin.Unit> content);
     method public androidx.compose.ui.Modifier animateItem(androidx.compose.ui.Modifier, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float>? fadeInSpec, optional androidx.compose.animation.core.FiniteAnimationSpec<androidx.compose.ui.unit.IntOffset>? placementSpec, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float>? fadeOutSpec);
     method public long getScrollProgress(androidx.compose.ui.graphics.drawscope.DrawScope);
     method public long getScrollProgress(androidx.compose.ui.graphics.GraphicsLayerScope);
@@ -588,8 +587,6 @@ package androidx.wear.compose.foundation.lazy {
 
   public final class TransformingLazyColumnKt {
     method @androidx.compose.runtime.Composable public static void TransformingLazyColumn(optional androidx.compose.ui.Modifier modifier, optional androidx.wear.compose.foundation.lazy.TransformingLazyColumnState state, optional androidx.compose.foundation.layout.PaddingValues contentPadding, optional androidx.compose.foundation.layout.Arrangement.Vertical verticalArrangement, optional androidx.compose.ui.Alignment.Horizontal horizontalAlignment, optional androidx.compose.foundation.gestures.FlingBehavior flingBehavior, optional boolean userScrollEnabled, optional androidx.wear.compose.foundation.rotary.RotaryScrollableBehavior? rotaryScrollableBehavior, optional androidx.compose.foundation.OverscrollEffect? overscrollEffect, kotlin.jvm.functions.Function1<? super androidx.wear.compose.foundation.lazy.TransformingLazyColumnScope,kotlin.Unit> content);
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope?> getLocalTransformingLazyColumnItemScope();
-    property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope?> LocalTransformingLazyColumnItemScope;
   }
 
   public sealed interface TransformingLazyColumnLayoutInfo {

@@ -16,6 +16,8 @@
 
 package androidx.appfunctions.schema.calendars.translators
 
+import android.os.Build
+import android.os.ext.SdkExtensions
 import androidx.appfunctions.EventAttendeeStatus
 import androidx.appfunctions.EventStatus
 import androidx.appfunctions.LegacyEvent
@@ -25,11 +27,18 @@ import androidx.appfunctions.toLegacyDateTime
 import androidx.test.filters.SdkSuppress
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import org.junit.Assume.assumeTrue
+import org.junit.Before
 import org.junit.Test
 
 @SdkSuppress(minSdkVersion = 33)
 class GetEventsTranslatorTest {
     private val translatorTestUtils = TranslatorTestUtils(GetEventsTranslator())
+
+    @Before
+    fun setup() {
+        assumeTrue(SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 13)
+    }
 
     @Test
     fun upgradeRequest_allFields() {

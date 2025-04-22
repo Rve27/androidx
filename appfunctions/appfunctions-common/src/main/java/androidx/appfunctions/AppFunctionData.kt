@@ -21,6 +21,7 @@ import android.app.appsearch.GenericDocument
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.ext.SdkExtensions
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
@@ -413,11 +414,12 @@ internal constructor(
     public fun getStringOrNull(key: String): String? {
         val array = unsafeGetProperty(key, Array<String>::class.java)
         val stringValue =
-            if (array == null || array.isEmpty()) {
-                null
-            } else {
-                array[0]
+            when {
+                key == LEGACY_ID_FIELD_KEY -> id
+                array == null || array.isEmpty() -> null
+                else -> array[0]
             }
+
         spec?.validateReadRequest(
             key,
             String::class.java,
@@ -908,6 +910,14 @@ internal constructor(
                 )
         }
 
+        private fun setLegacyId(id: String) {
+            // TODO(b/412573017): setId is only available in certain Android T extensions. Check if
+            // we need to have a compat version of this API to set the ID.
+            if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 13) {
+                genericDocumentBuilder.setId(id)
+            }
+        }
+
         /**
          * Sets a [Boolean] value for the given [key].
          *
@@ -989,6 +999,9 @@ internal constructor(
         public fun setString(key: String, value: String): Builder {
             spec?.validateWriteRequest(key, String::class.java, isCollection = false)
             genericDocumentBuilder.setPropertyString(key, value)
+            if (key == LEGACY_ID_FIELD_KEY) {
+                setLegacyId(value)
+            }
             return this
         }
 
@@ -1251,6 +1264,8 @@ internal constructor(
         private const val DEFAULT_DOUBLE: Double = 0.0
         private const val DEFAULT_INT: Int = 0
         private const val DEFAULT_LONG: Long = 0L
+
+        private const val LEGACY_ID_FIELD_KEY = "id"
 
         private fun extrasKey(key: String) = "property/$key"
 

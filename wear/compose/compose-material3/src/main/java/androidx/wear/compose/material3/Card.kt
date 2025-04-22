@@ -51,7 +51,6 @@ import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.foundation.lazy.LocalTransformingLazyColumnItemScope
 import androidx.wear.compose.material3.tokens.CardTokens
 import androidx.wear.compose.material3.tokens.ImageCardTokens
 import androidx.wear.compose.material3.tokens.OutlinedCardTokens
@@ -1021,7 +1020,7 @@ private fun CardImpl(
     interactionSource: MutableInteractionSource?,
     transformation: SurfaceTransformation?,
     content: @Composable ColumnScope.() -> Unit,
-) {
+) =
     Column(
         modifier =
             modifier
@@ -1042,10 +1041,8 @@ private fun CardImpl(
                     interactionSource = interactionSource,
                 )
                 .padding(contentPadding),
-    ) {
-        CompositionLocalProvider(LocalTransformingLazyColumnItemScope provides null) { content() }
-    }
-}
+        content = content,
+    )
 
 @Composable
 private fun CardImpl(

@@ -227,24 +227,22 @@ fun SwipeToRevealWithTransformingLazyColumnSample() {
                     )
                 }
             ) {
-                TransformExclusion {
-                    TitleCard(
-                        onClick = {},
-                        title = { Text("Message #$index") },
-                        subtitle = { Text("Body of the message") },
-                        modifier =
-                            Modifier.semantics {
-                                // Use custom actions to make the primary action accessible
-                                customActions =
-                                    listOf(
-                                        CustomAccessibilityAction("Delete") {
-                                            /* Add the primary action click handler here */
-                                            true
-                                        },
-                                    )
-                            }
-                    )
-                }
+                TitleCard(
+                    onClick = {},
+                    title = { Text("Message #$index") },
+                    subtitle = { Text("Body of the message") },
+                    modifier =
+                        Modifier.semantics {
+                            // Use custom actions to make the primary action accessible
+                            customActions =
+                                listOf(
+                                    CustomAccessibilityAction("Delete") {
+                                        /* Add the primary action click handler here */
+                                        true
+                                    },
+                                )
+                        }
+                )
             }
         }
     }

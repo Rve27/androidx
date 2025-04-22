@@ -17,6 +17,8 @@
 package androidx.appfunctions.schema.notes.translators
 
 import android.net.Uri
+import android.os.Build
+import android.os.ext.SdkExtensions
 import androidx.appfunctions.LegacyAttachment
 import androidx.appfunctions.LegacyDate
 import androidx.appfunctions.LegacyDateTime
@@ -30,12 +32,19 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import org.junit.Assume.assumeTrue
+import org.junit.Before
 import org.junit.Test
 
 @SdkSuppress(minSdkVersion = 33)
 class FindNotesTranslatorTest {
 
     private val translatorTestUtils = TranslatorTestUtils(FindNotesTranslator())
+
+    @Before
+    fun setup() {
+        assumeTrue(SdkExtensions.getExtensionVersion(Build.VERSION_CODES.TIRAMISU) >= 13)
+    }
 
     @Test
     fun upgradeRequest_allFields() {
