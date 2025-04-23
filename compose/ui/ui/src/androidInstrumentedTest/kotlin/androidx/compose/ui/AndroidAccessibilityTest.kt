@@ -144,6 +144,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.isSensitiveData
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.pageUp
 import androidx.compose.ui.semantics.paneTitle
@@ -228,6 +229,7 @@ import kotlin.math.max
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.hamcrest.CoreMatchers.instanceOf
+import org.junit.After
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -294,6 +296,11 @@ class AndroidAccessibilityTest {
             delegate.accessibilityForceEnabledForTesting = true
             provider = delegate.getAccessibilityNodeProvider(androidComposeView)
         }
+    }
+
+    @After
+    fun teardown() {
+        delegate.requestFromAccessibilityToolForTesting = null
     }
 
     @Test
@@ -880,6 +887,69 @@ class AndroidAccessibilityTest {
                 @Suppress("DEPRECATION") recycle()
             }
         }
+    }
+
+    @Test
+    fun testCreateAccessibilityNodeInfo_visibleToToolIfSensitiveData() {
+        delegate.requestFromAccessibilityToolForTesting = true
+
+        val colTag = "column"
+        val text = "Test"
+        container.setContent {
+            Column(Modifier.testTag(colTag).semantics { isTraversalGroup = false }) {
+                BasicText(text = text, modifier = Modifier.semantics { isSensitiveData = true })
+            }
+        }
+        val columnNode = rule.onNodeWithTag(colTag).fetchSemanticsNode()
+        val columnNodeInfo = provider.createAccessibilityNodeInfo(columnNode.id)
+        val textNode = rule.onNodeWithText(text).fetchSemanticsNode()
+        val textNodeInfo = provider.createAccessibilityNodeInfo(textNode.id)
+
+        assertThat(columnNodeInfo).isNotNull()
+        assertThat(columnNodeInfo?.childCount).isEqualTo(1)
+        assertThat(textNodeInfo).isNotNull()
+    }
+
+    @Test
+    fun testCreateAccessibilityNodeInfo_visibleToNontoolIfNotSensitiveData() {
+        delegate.requestFromAccessibilityToolForTesting = false
+
+        val colTag = "column"
+        val text = "Test"
+        container.setContent {
+            Column(Modifier.testTag(colTag).semantics { isTraversalGroup = false }) {
+                BasicText(text = text, modifier = Modifier.semantics { isSensitiveData = false })
+            }
+        }
+        val columnNode = rule.onNodeWithTag(colTag).fetchSemanticsNode()
+        val columnNodeInfo = provider.createAccessibilityNodeInfo(columnNode.id)
+        val textNode = rule.onNodeWithText(text).fetchSemanticsNode()
+        val textNodeInfo = provider.createAccessibilityNodeInfo(textNode.id)
+
+        assertThat(columnNodeInfo).isNotNull()
+        assertThat(columnNodeInfo?.childCount).isEqualTo(1)
+        assertThat(textNodeInfo).isNotNull()
+    }
+
+    @Test
+    fun testCreateAccessibilityNodeInfo_hiddenFromNontoolIfSensitiveData() {
+        delegate.requestFromAccessibilityToolForTesting = false
+
+        val colTag = "column"
+        val text = "Test"
+        container.setContent {
+            Column(Modifier.testTag(colTag).semantics { isTraversalGroup = false }) {
+                BasicText(text = text, modifier = Modifier.semantics { isSensitiveData = true })
+            }
+        }
+        val columnNode = rule.onNodeWithTag(colTag).fetchSemanticsNode()
+        val columnNodeInfo = provider.createAccessibilityNodeInfo(columnNode.id)
+        val textNode = rule.onNodeWithText(text).fetchSemanticsNode()
+        val textNodeInfo = provider.createAccessibilityNodeInfo(textNode.id)
+
+        assertThat(columnNodeInfo).isNotNull()
+        assertThat(columnNodeInfo?.childCount).isEqualTo(0)
+        assertThat(textNodeInfo).isNull()
     }
 
     @Composable
@@ -2498,6 +2568,42 @@ class AndroidAccessibilityTest {
     }
 
     @Test
+    fun testPerformAction_succeedFromToolIfSensitiveData() {
+        delegate.requestFromAccessibilityToolForTesting = true
+
+        val tag = "node"
+        container.setContent {
+            Box(Modifier.testTag(tag).semantics { isSensitiveData = true }.focusable()) {
+                BasicText("focusable")
+            }
+        }
+
+        val focusableNode = rule.onNodeWithTag(tag).fetchSemanticsNode()
+        rule.runOnUiThread {
+            assertThat(provider.performAction(focusableNode.id, ACTION_FOCUS, null)).isTrue()
+        }
+        rule.onNodeWithTag(tag).assert(expectValue(SemanticsProperties.Focused, true))
+    }
+
+    @Test
+    fun testPerformAction_failFromNontoolIfSensitiveData() {
+        delegate.requestFromAccessibilityToolForTesting = false
+
+        val tag = "node"
+        container.setContent {
+            Box(Modifier.testTag(tag).semantics { isSensitiveData = true }.focusable()) {
+                BasicText("focusable")
+            }
+        }
+
+        val focusableNode = rule.onNodeWithTag(tag).fetchSemanticsNode()
+        rule.runOnUiThread {
+            assertThat(provider.performAction(focusableNode.id, ACTION_FOCUS, null)).isFalse()
+        }
+        rule.onNodeWithTag(tag).assert(expectValue(SemanticsProperties.Focused, false))
+    }
+
+    @Test
     fun testTextField_performClickAction_succeedOnEnabledNode() {
         // Arrange.
         setContent {
@@ -4111,6 +4217,29 @@ class AndroidAccessibilityTest {
                 .requestSendAccessibilityEvent(
                     eq(androidComposeView),
                     argThat(ArgumentMatcher { it.isPassword })
+                )
+        }
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = 34)
+    fun testCreateEvent_SensitiveDataFieldMatchesNode() {
+        setContent {
+            BasicTextField(
+                modifier = Modifier.testTag(tag).semantics { isSensitiveData = true },
+                value = "value",
+                onValueChange = {},
+            )
+        }
+
+        rule.onNodeWithTag(tag).performSemanticsAction(SetText) { it(AnnotatedString("new value")) }
+
+        rule.mainClock.advanceTimeBy(accessibilityEventLoopIntervalMs)
+        rule.runOnIdle {
+            verify(container, atLeastOnce())
+                .requestSendAccessibilityEvent(
+                    any(),
+                    argThat(ArgumentMatcher { it.isAccessibilityDataSensitive })
                 )
         }
     }

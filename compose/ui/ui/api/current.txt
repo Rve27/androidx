@@ -4080,6 +4080,7 @@ package androidx.compose.ui.semantics {
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> getIsDialog();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> getIsEditable();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> getIsPopup();
+    method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> getIsSensitiveData();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> getIsShowingTextSubstitution();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> getIsTraversalGroup();
     method public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> getLinkTestMarker();
@@ -4120,6 +4121,7 @@ package androidx.compose.ui.semantics {
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> IsDialog;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> IsEditable;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> IsPopup;
+    property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> IsSensitiveData;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> IsShowingTextSubstitution;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<java.lang.Boolean> IsTraversalGroup;
     property public androidx.compose.ui.semantics.SemanticsPropertyKey<kotlin.Unit> LinkTestMarker;
@@ -4196,6 +4198,7 @@ package androidx.compose.ui.semantics {
     method @Deprecated public static void invisibleToUser(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method @Deprecated public static boolean isContainer(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static boolean isEditable(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
+    method public static boolean isSensitiveData(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static boolean isShowingTextSubstitution(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static boolean isTraversalGroup(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static void onAutofillText(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function1<? super androidx.compose.ui.text.AnnotatedString,java.lang.Boolean>? action);
@@ -4236,6 +4239,7 @@ package androidx.compose.ui.semantics {
     method public static void setRole(androidx.compose.ui.semantics.SemanticsPropertyReceiver, int);
     method public static void setSelected(androidx.compose.ui.semantics.SemanticsPropertyReceiver, boolean);
     method public static void setSelection(androidx.compose.ui.semantics.SemanticsPropertyReceiver, optional String? label, kotlin.jvm.functions.Function3<? super java.lang.Integer,? super java.lang.Integer,? super java.lang.Boolean,java.lang.Boolean>? action);
+    method public static void setSensitiveData(androidx.compose.ui.semantics.SemanticsPropertyReceiver, boolean);
     method public static void setShape(androidx.compose.ui.semantics.SemanticsPropertyReceiver, androidx.compose.ui.graphics.Shape);
     method public static void setShowingTextSubstitution(androidx.compose.ui.semantics.SemanticsPropertyReceiver, boolean);
     method public static void setStateDescription(androidx.compose.ui.semantics.SemanticsPropertyReceiver, String);
@@ -4263,6 +4267,7 @@ package androidx.compose.ui.semantics {
     property public static androidx.compose.ui.text.AnnotatedString androidx.compose.ui.semantics.SemanticsPropertyReceiver.inputText;
     property @Deprecated public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isContainer;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isEditable;
+    property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isSensitiveData;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isShowingTextSubstitution;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isTraversalGroup;
     property public static int androidx.compose.ui.semantics.SemanticsPropertyReceiver.liveRegion;
