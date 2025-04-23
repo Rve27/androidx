@@ -59,11 +59,8 @@ class MainActivityV2 : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (pdfViewerFragment == null) {
-            pdfViewerFragment =
-                supportFragmentManager.findFragmentByTag(PDF_VIEWER_FRAGMENT_TAG)
-                    as PdfViewerFragment?
-        }
+        pdfViewerFragment =
+            supportFragmentManager.findFragmentByTag(PDF_VIEWER_FRAGMENT_TAG) as PdfViewerFragment?
 
         val getContentButton: MaterialButton = findViewById(R.id.launch_button)
         val searchButton: MaterialButton = findViewById(R.id.search_pdf_button)
