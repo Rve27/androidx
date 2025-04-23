@@ -19,7 +19,6 @@ package androidx.camera.video.internal.config
 import android.content.Context
 import android.os.Build
 import android.util.Range
-import android.util.Rational
 import android.util.Size
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.camera2.pipe.integration.CameraPipeConfig
@@ -84,7 +83,6 @@ class VideoEncoderConfigVideoProfileResolverTest(
     private val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private val defaultVideoSpec = VideoSpec.builder().build()
     private val timebase = Timebase.UPTIME
-    private val defaultCaptureEncodeRatio: Rational? = null
 
     private lateinit var dynamicRanges: Set<DynamicRange>
     private lateinit var cameraUseCaseAdapter: CameraUseCaseAdapter
@@ -139,8 +137,7 @@ class VideoEncoderConfigVideoProfileResolverTest(
                             videoProfile.resolution,
                             videoProfile,
                             dynamicRange,
-                            Range(videoProfile.frameRate, videoProfile.frameRate),
-                            defaultCaptureEncodeRatio
+                            Range(videoProfile.frameRate, videoProfile.frameRate)
                         )
                         .get()
 
@@ -170,7 +167,6 @@ class VideoEncoderConfigVideoProfileResolverTest(
                         profile,
                         dynamicRange,
                         profileFrameRate,
-                        defaultCaptureEncodeRatio
                     )
                     .get()
                     .bitrate
@@ -186,8 +182,7 @@ class VideoEncoderConfigVideoProfileResolverTest(
                             increasedSurfaceSize,
                             profile,
                             dynamicRange,
-                            profileFrameRate,
-                            defaultCaptureEncodeRatio
+                            profileFrameRate
                         )
                         .get()
                         .bitrate
@@ -202,8 +197,7 @@ class VideoEncoderConfigVideoProfileResolverTest(
                             decreasedSurfaceSize,
                             profile,
                             dynamicRange,
-                            profileFrameRate,
-                            defaultCaptureEncodeRatio
+                            profileFrameRate
                         )
                         .get()
                         .bitrate
@@ -227,8 +221,7 @@ class VideoEncoderConfigVideoProfileResolverTest(
                         surfaceSize,
                         profile,
                         dynamicRange,
-                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED,
-                        defaultCaptureEncodeRatio
+                        SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED
                     )
                     .get()
                     .bitrate
@@ -250,8 +243,7 @@ class VideoEncoderConfigVideoProfileResolverTest(
                             surfaceSize,
                             profile,
                             dynamicRange,
-                            SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED,
-                            defaultCaptureEncodeRatio
+                            SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED
                         )
                         .get()
                         .bitrate
@@ -266,8 +258,7 @@ class VideoEncoderConfigVideoProfileResolverTest(
                             surfaceSize,
                             profile,
                             dynamicRange,
-                            SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED,
-                            defaultCaptureEncodeRatio
+                            SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED
                         )
                         .get()
                         .bitrate
@@ -291,8 +282,7 @@ class VideoEncoderConfigVideoProfileResolverTest(
                             surfaceSize,
                             profile,
                             dynamicRange,
-                            SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED,
-                            defaultCaptureEncodeRatio
+                            SurfaceRequest.FRAME_RATE_RANGE_UNSPECIFIED
                         )
                         .get()
                         .encodeFrameRate
@@ -318,8 +308,7 @@ class VideoEncoderConfigVideoProfileResolverTest(
                         surfaceSize,
                         profile,
                         dynamicRange,
-                        expectedCaptureFrameRateRange,
-                        defaultCaptureEncodeRatio
+                        expectedCaptureFrameRateRange
                     )
                     .get()
                     .encodeFrameRate
@@ -347,8 +336,7 @@ class VideoEncoderConfigVideoProfileResolverTest(
                         surfaceSize,
                         profile,
                         dynamicRange,
-                        operatingRange,
-                        defaultCaptureEncodeRatio
+                        operatingRange
                     )
                     .get()
                     .bitrate
@@ -379,8 +367,7 @@ class VideoEncoderConfigVideoProfileResolverTest(
                             surfaceSize,
                             videoProfile,
                             dynamicRange,
-                            Range(videoProfile.frameRate, videoProfile.frameRate),
-                            defaultCaptureEncodeRatio
+                            Range(videoProfile.frameRate, videoProfile.frameRate)
                         )
                         .get()
                         .profile
@@ -410,8 +397,7 @@ class VideoEncoderConfigVideoProfileResolverTest(
                             surfaceSize,
                             videoProfile,
                             dynamicRange,
-                            Range(videoProfile.frameRate, videoProfile.frameRate),
-                            defaultCaptureEncodeRatio
+                            Range(videoProfile.frameRate, videoProfile.frameRate)
                         )
                         .get()
                         .dataSpace

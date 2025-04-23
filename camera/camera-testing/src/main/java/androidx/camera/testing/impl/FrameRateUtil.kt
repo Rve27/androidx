@@ -20,11 +20,9 @@ import android.util.Range
 
 public object FrameRateUtil {
     public const val FPS_30: Int = 30
-    public const val FPS_60: Int = 60
     public const val FPS_120: Int = 120
     public const val FPS_240: Int = 240
     public const val FPS_480: Int = 480
-    public const val FPS_960: Int = 960
 
     public val FPS_30_120: Range<Int> = Range(FPS_30, FPS_120)
     public val FPS_120_120: Range<Int> = Range(FPS_120, FPS_120)
@@ -32,5 +30,4 @@ public object FrameRateUtil {
     public val FPS_240_240: Range<Int> = Range(FPS_240, FPS_240)
     public val FPS_30_480: Range<Int> = Range(FPS_30, FPS_480)
     public val FPS_480_480: Range<Int> = Range(FPS_480, FPS_480)
-    public val FPS_960_960: Range<Int> = Range(FPS_960, FPS_960)
 }

@@ -58,6 +58,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Pair;
 import android.util.Range;
+import android.util.Rational;
 import android.util.Size;
 import android.view.Surface;
 
@@ -520,6 +521,7 @@ public final class Recorder implements VideoOutput {
     private boolean mNeedsResetBeforeNextStart = false;
     @SuppressWarnings("WeakerAccess") /* synthetic accessor */
     @NonNull VideoEncoderSession mVideoEncoderSession;
+    private @Nullable VideoEncoderConfig mVideoEncoderConfig = null;
     @SuppressWarnings("WeakerAccess") /* synthetic accessor */
     @Nullable VideoEncoderSession mVideoEncoderSessionToRelease = null;
     double mAudioAmplitude = 0;
@@ -1307,9 +1309,9 @@ public final class Recorder implements VideoOutput {
                         mediaSpec.getVideoSpec(),
                         request.getResolution(),
                         dynamicRange,
-                        request.getExpectedFrameRate(),
-                        mediaSpec.getSpeed());
+                        request.getExpectedFrameRate());
                 config = workaroundDataSpaceIfRequired(config, mHasGlProcessing);
+                mVideoEncoderConfig = config;
 
                 ListenableFuture<Encoder> configureFuture = videoEncoderSession.configure(request,
                         config);
@@ -1516,9 +1518,20 @@ public final class Recorder implements VideoOutput {
         AudioMimeInfo audioMimeInfo = resolveAudioMimeInfo(mediaSpec, mResolvedEncoderProfiles);
         Timebase audioSourceTimebase = Timebase.UPTIME;
 
+        // Gets the expected sample rate ratio for slow-motion effect.
+        VideoEncoderConfig videoEncoderConfig = checkNotNull(mVideoEncoderConfig);
+        Rational expectedSampleRateRatio;
+        if (videoEncoderConfig.getCaptureFrameRate() != videoEncoderConfig.getEncodeFrameRate()) {
+            expectedSampleRateRatio = new Rational(videoEncoderConfig.getCaptureFrameRate(),
+                    videoEncoderConfig.getEncodeFrameRate());
+        } else {
+            expectedSampleRateRatio = null;
+        }
+
         // Select and create the audio source
         AudioSettings audioSettings =
-                resolveAudioSettings(audioMimeInfo, mediaSpec.getAudioSpec(), mediaSpec.getSpeed());
+                resolveAudioSettings(audioMimeInfo, mediaSpec.getAudioSpec(),
+                expectedSampleRateRatio);
         if (mAudioSource != null) {
             releaseCurrentAudioSource();
         }

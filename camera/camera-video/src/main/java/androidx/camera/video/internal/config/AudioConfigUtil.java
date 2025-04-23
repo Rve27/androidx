@@ -16,9 +16,8 @@
 
 package androidx.camera.video.internal.config;
 
-import static androidx.camera.video.internal.config.CaptureEncodeRatesKt.resolveCaptureEncodeRatio;
-import static androidx.camera.video.internal.config.CaptureEncodeRatesKt.toCaptureRate;
 import static androidx.camera.video.internal.config.CaptureEncodeRatesKt.toEncodeRate;
+import static androidx.camera.video.internal.config.CaptureEncodeRatesKt.toCaptureRate;
 
 import android.util.Range;
 import android.util.Rational;
@@ -28,7 +27,6 @@ import androidx.camera.core.impl.EncoderProfilesProxy.AudioProfileProxy;
 import androidx.camera.core.impl.Timebase;
 import androidx.camera.video.AudioSpec;
 import androidx.camera.video.MediaSpec;
-import androidx.camera.video.Speed;
 import androidx.camera.video.internal.VideoValidatedEncoderProfilesProxy;
 import androidx.camera.video.internal.audio.AudioSettings;
 import androidx.camera.video.internal.audio.AudioSource;
@@ -127,14 +125,13 @@ public final class AudioConfigUtil {
      *
      * @param audioMimeInfo the audio mime info.
      * @param audioSpec     the audio spec.
-     * @param speed         the video speed.
+     * @param captureToEncodeRatio the capture to encode sample rate ratio.
      * @return an AudioSettings.
      */
     public static @NonNull AudioSettings resolveAudioSettings(@NonNull AudioMimeInfo audioMimeInfo,
-            @NonNull AudioSpec audioSpec, @NonNull Speed speed) {
+            @NonNull AudioSpec audioSpec, @Nullable Rational captureToEncodeRatio) {
         Supplier<AudioSettings> settingsSupplier;
         AudioProfileProxy compatibleAudioProfile = audioMimeInfo.getCompatibleAudioProfile();
-        Rational captureToEncodeRatio = resolveCaptureEncodeRatio(speed);
         if (compatibleAudioProfile != null) {
             settingsSupplier = new AudioSettingsAudioProfileResolver(audioSpec,
                     compatibleAudioProfile, captureToEncodeRatio);
