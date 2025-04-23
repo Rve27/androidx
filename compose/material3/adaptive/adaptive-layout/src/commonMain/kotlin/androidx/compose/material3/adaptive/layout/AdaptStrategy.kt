@@ -50,7 +50,7 @@ sealed interface AdaptStrategy {
      *
      * To provide custom adapt strategies, see the following sample:
      *
-     * @sample androidx.compose.material3.adaptive.samples.ReflowAdaptStrategySample
+     * @sample androidx.compose.material3.adaptive.samples.reflowAdaptStrategySample
      * @param targetPane the target pane of the reflowing, i.e., the pane that the reflowed pane
      *   will be put under.
      */

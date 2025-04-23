@@ -281,7 +281,7 @@ fun ThreePaneScaffoldScope.PaneExpansionDragHandleSample(
 @Preview
 @Sampled
 @Composable
-fun <T> ReflowAdaptStrategySample(): ThreePaneScaffoldNavigator<T> =
+fun <T> reflowAdaptStrategySample(): ThreePaneScaffoldNavigator<T> =
     rememberListDetailPaneScaffoldNavigator<T>(
         adaptStrategies =
             ListDetailPaneScaffoldDefaults.adaptStrategies(
