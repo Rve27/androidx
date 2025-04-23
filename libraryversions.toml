@@ -15,6 +15,7 @@ BLUETOOTH = "1.0.0-alpha02"
 BROWSER = "1.9.0-alpha03"
 BUILDSRC_TESTS = "1.0.0-alpha01"
 CAMERA = "1.5.0-beta01"
+CAMERA_FEATURE_COMBINATION_QUERY = "1.5.0-alpha06"
 CAMERA_MEDIA3 = "1.0.0-alpha02"
 CAMERA_PIPE = "1.0.0-alpha01"
 CAMERA_TESTING = "1.0.0-alpha01"
@@ -208,6 +209,7 @@ CAMERA_MEDIA3 = { group = "androidx.camera.media3", atomicGroupVersion = "versio
 CAMERA_PIPE = { group = "androidx.camera", atomicGroupVersion = "versions.CAMERA_PIPE", overrideInclude = [ ":camera:camera-camera2-pipe", ":camera:camera-camera2-pipe-integration" ] }
 CAMERA_TESTING = { group = "androidx.camera", atomicGroupVersion = "versions.CAMERA_TESTING", overrideInclude = [ ":camera:camera-testing" ] }
 CAMERA_VIEWFINDER = { group = "androidx.camera.viewfinder", atomicGroupVersion = "versions.CAMERA" }
+CAMERA_FEATURE_COMBINATION_QUERY = { group = "androidx.camera.featurecombinationquery", atomicGroupVersion = "versions.CAMERA_FEATURE_COMBINATION_QUERY" }
 CARDVIEW = { group = "androidx.cardview", atomicGroupVersion = "versions.CARDVIEW" }
 CAR_APP = { group = "androidx.car.app", atomicGroupVersion = "versions.CAR_APP" }
 COLLECTION = { group = "androidx.collection", atomicGroupVersion = "versions.COLLECTION" }
