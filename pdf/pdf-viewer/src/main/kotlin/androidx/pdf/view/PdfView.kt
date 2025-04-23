@@ -141,12 +141,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             onZoomChanged()
         }
 
-    /**
-     * A set of areas to be highlighted. Each [Highlight] may be a different color. Setting this
-     * property overrides any previous highlights, there is no merging behavior of new and previous
-     * values.
-     */
-    public var highlights: List<Highlight> = listOf()
+    private var appliedHighlights: List<Highlight> = listOf()
         set(value) {
             checkMainThread()
             val localPageManager =
@@ -408,6 +403,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      */
     public fun removeOnSelectionChangedListener(listener: OnSelectionChangedListener) {
         onSelectionChangedListeners.remove(listener)
+    }
+
+    /**
+     * Applies a set of [Highlight] to be drawn over this PDF. Each [Highlight] may be a different
+     * color. This overrides any previous highlights, there is no merging of new and previous
+     * values. [highlights] are defensively copied and the list or its contents may be modified
+     * after providing it here.
+     */
+    public fun setHighlights(highlights: List<Highlight>) {
+        this.appliedHighlights = ArrayList(highlights.map { highlight -> highlight.copy() })
     }
 
     private fun dispatchSelectionChanged(old: Selection?, new: Selection?) {
