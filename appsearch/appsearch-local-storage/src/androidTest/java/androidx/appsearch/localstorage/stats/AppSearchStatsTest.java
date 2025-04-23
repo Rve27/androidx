@@ -171,19 +171,26 @@ public class AppSearchStatsTest {
 
     @Test
     public void testAppSearchStats_InitializeStats() {
+        int enabledFeatures = 1;
         int prepareSchemaAndNamespacesLatencyMillis = 1;
         int prepareVisibilityFileLatencyMillis = 2;
         int nativeLatencyMillis = 3;
-        int nativeDocumentStoreRecoveryCause = 4;
-        int nativeIndexRestorationCause = 5;
-        int nativeSchemaStoreRecoveryCause = 6;
-        int nativeDocumentStoreRecoveryLatencyMillis = 7;
-        int nativeIndexRestorationLatencyMillis = 8;
-        int nativeSchemaStoreRecoveryLatencyMillis = 9;
-        int nativeDocumentStoreDataStatus = 10;
-        int nativeNumDocuments = 11;
-        int nativeNumSchemaTypes = 12;
-        int enabledFeatures = 1;
+        int nativeDocumentStoreRecoveryCause = InitializeStats.RECOVERY_CAUSE_DEPENDENCIES_CHANGED;
+        int nativeIndexRestorationCause = InitializeStats.RECOVERY_CAUSE_FEATURE_FLAG_CHANGED;
+        int nativeSchemaStoreRecoveryCause = InitializeStats.RECOVERY_CAUSE_IO_ERROR;
+        int nativeDocumentStoreRecoveryLatencyMillis = 4;
+        int nativeIndexRestorationLatencyMillis = 5;
+        int nativeSchemaStoreRecoveryLatencyMillis = 6;
+        int nativeDocumentStoreDataStatus = 7;
+        int nativeNumDocuments = 8;
+        int nativeNumSchemaTypes = 9;
+        int numPreviousInitFailures = 10;
+        int integerIndexRestorationCause = InitializeStats.RECOVERY_CAUSE_DATA_LOSS;
+        int qualifiedIdJoinIndexRestorationCause =
+                InitializeStats.RECOVERY_CAUSE_INCONSISTENT_WITH_GROUND_TRUTH;
+        int embeddingIndexRestorationCause = InitializeStats.RECOVERY_CAUSE_DATA_LOSS;
+        int initializeIcuDataStatusCode = 11;
+        int numFailedReindexedDocuments = 12;
 
         final InitializeStats.Builder iStatsBuilder = new InitializeStats.Builder()
                 .setStatusCode(TEST_STATUS_CODE)
@@ -192,21 +199,26 @@ public class AppSearchStatsTest {
                 .setPrepareSchemaAndNamespacesLatencyMillis(prepareSchemaAndNamespacesLatencyMillis)
                 .setPrepareVisibilityStoreLatencyMillis(prepareVisibilityFileLatencyMillis)
                 .setNativeLatencyMillis(nativeLatencyMillis)
-                .setDocumentStoreRecoveryCause(nativeDocumentStoreRecoveryCause)
-                .setIndexRestorationCause(nativeIndexRestorationCause)
-                .setSchemaStoreRecoveryCause(nativeSchemaStoreRecoveryCause)
-                .setDocumentStoreRecoveryLatencyMillis(
+                .setNativeDocumentStoreRecoveryCause(nativeDocumentStoreRecoveryCause)
+                .setNativeIndexRestorationCause(nativeIndexRestorationCause)
+                .setNativeSchemaStoreRecoveryCause(nativeSchemaStoreRecoveryCause)
+                .setNativeDocumentStoreRecoveryLatencyMillis(
                         nativeDocumentStoreRecoveryLatencyMillis)
-                .setIndexRestorationLatencyMillis(nativeIndexRestorationLatencyMillis)
-                .setSchemaStoreRecoveryLatencyMillis(nativeSchemaStoreRecoveryLatencyMillis)
-                .setDocumentStoreDataStatus(nativeDocumentStoreDataStatus)
-                .setDocumentCount(nativeNumDocuments)
-                .setSchemaTypeCount(nativeNumSchemaTypes)
+                .setNativeIndexRestorationLatencyMillis(nativeIndexRestorationLatencyMillis)
+                .setNativeSchemaStoreRecoveryLatencyMillis(nativeSchemaStoreRecoveryLatencyMillis)
+                .setNativeDocumentStoreDataStatus(nativeDocumentStoreDataStatus)
+                .setNativeDocumentCount(nativeNumDocuments)
+                .setNativeSchemaTypeCount(nativeNumSchemaTypes)
                 .setHasReset(true)
                 .setResetStatusCode(AppSearchResult.RESULT_INVALID_SCHEMA)
-                .setLaunchVMEnabled(true);
+                .setLaunchVMEnabled(true)
+                .setNativeNumPreviousInitFailures(numPreviousInitFailures)
+                .setNativeIntegerIndexRestorationCause(integerIndexRestorationCause)
+                .setNativeQualifiedIdJoinIndexRestorationCause(qualifiedIdJoinIndexRestorationCause)
+                .setNativeEmbeddingIndexRestorationCause(embeddingIndexRestorationCause)
+                .setNativeInitializeIcuDataStatusCode(initializeIcuDataStatusCode)
+                .setNativeNumFailedReindexedDocuments(numFailedReindexedDocuments);
         final InitializeStats iStats = iStatsBuilder.build();
-
 
         assertThat(iStats.getStatusCode()).isEqualTo(TEST_STATUS_CODE);
         assertThat(iStats.getTotalLatencyMillis()).isEqualTo(
@@ -217,24 +229,35 @@ public class AppSearchStatsTest {
         assertThat(iStats.getPrepareVisibilityStoreLatencyMillis()).isEqualTo(
                 prepareVisibilityFileLatencyMillis);
         assertThat(iStats.getNativeLatencyMillis()).isEqualTo(nativeLatencyMillis);
-        assertThat(iStats.getDocumentStoreRecoveryCause()).isEqualTo(
+        assertThat(iStats.getNativeDocumentStoreRecoveryCause()).isEqualTo(
                 nativeDocumentStoreRecoveryCause);
-        assertThat(iStats.getIndexRestorationCause()).isEqualTo(nativeIndexRestorationCause);
-        assertThat(iStats.getSchemaStoreRecoveryCause()).isEqualTo(
+        assertThat(iStats.getNativeIndexRestorationCause()).isEqualTo(nativeIndexRestorationCause);
+        assertThat(iStats.getNativeSchemaStoreRecoveryCause()).isEqualTo(
                 nativeSchemaStoreRecoveryCause);
-        assertThat(iStats.getDocumentStoreRecoveryLatencyMillis()).isEqualTo(
+        assertThat(iStats.getNativeDocumentStoreRecoveryLatencyMillis()).isEqualTo(
                 nativeDocumentStoreRecoveryLatencyMillis);
-        assertThat(iStats.getIndexRestorationLatencyMillis()).isEqualTo(
+        assertThat(iStats.getNativeIndexRestorationLatencyMillis()).isEqualTo(
                 nativeIndexRestorationLatencyMillis);
-        assertThat(iStats.getSchemaStoreRecoveryLatencyMillis()).isEqualTo(
+        assertThat(iStats.getNativeSchemaStoreRecoveryLatencyMillis()).isEqualTo(
                 nativeSchemaStoreRecoveryLatencyMillis);
-        assertThat(iStats.getDocumentStoreDataStatus()).isEqualTo(
+        assertThat(iStats.getNativeDocumentStoreDataStatus()).isEqualTo(
                 nativeDocumentStoreDataStatus);
-        assertThat(iStats.getDocumentCount()).isEqualTo(nativeNumDocuments);
-        assertThat(iStats.getSchemaTypeCount()).isEqualTo(nativeNumSchemaTypes);
+        assertThat(iStats.getNativeDocumentCount()).isEqualTo(nativeNumDocuments);
+        assertThat(iStats.getNativeSchemaTypeCount()).isEqualTo(nativeNumSchemaTypes);
         assertThat(iStats.hasReset()).isTrue();
         assertThat(iStats.getResetStatusCode()).isEqualTo(AppSearchResult.RESULT_INVALID_SCHEMA);
         assertThat(iStats.getEnabledFeatures()).isEqualTo(enabledFeatures);
+        assertThat(iStats.getNativeNumPreviousInitFailures()).isEqualTo(numPreviousInitFailures);
+        assertThat(iStats.getNativeIntegerIndexRestorationCause())
+                .isEqualTo(integerIndexRestorationCause);
+        assertThat(iStats.getNativeQualifiedIdJoinIndexRestorationCause())
+                .isEqualTo(qualifiedIdJoinIndexRestorationCause);
+        assertThat(iStats.getNativeEmbeddingIndexRestorationCause())
+                .isEqualTo(embeddingIndexRestorationCause);
+        assertThat(iStats.getNativeInitializeIcuDataStatusCode())
+                .isEqualTo(initializeIcuDataStatusCode);
+        assertThat(iStats.getNativeNumFailedReindexedDocuments())
+                .isEqualTo(numFailedReindexedDocuments);
     }
 
     @Test

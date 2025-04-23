@@ -89,22 +89,33 @@ public final class AppSearchLoggerHelper {
         Preconditions.checkNotNull(toStatsBuilder);
         toStatsBuilder
                 .setNativeLatencyMillis(fromNativeStats.getLatencyMs())
-                .setDocumentStoreRecoveryCause(
+                .setNativeDocumentStoreRecoveryCause(
                         fromNativeStats.getDocumentStoreRecoveryCause().getNumber())
-                .setIndexRestorationCause(
+                .setNativeIndexRestorationCause(
                         fromNativeStats.getIndexRestorationCause().getNumber())
-                .setSchemaStoreRecoveryCause(
+                .setNativeSchemaStoreRecoveryCause(
                         fromNativeStats.getSchemaStoreRecoveryCause().getNumber())
-                .setDocumentStoreRecoveryLatencyMillis(
+                .setNativeDocumentStoreRecoveryLatencyMillis(
                         fromNativeStats.getDocumentStoreRecoveryLatencyMs())
-                .setIndexRestorationLatencyMillis(
+                .setNativeIndexRestorationLatencyMillis(
                         fromNativeStats.getIndexRestorationLatencyMs())
-                .setSchemaStoreRecoveryLatencyMillis(
+                .setNativeSchemaStoreRecoveryLatencyMillis(
                         fromNativeStats.getSchemaStoreRecoveryLatencyMs())
-                .setDocumentStoreDataStatus(
+                .setNativeDocumentStoreDataStatus(
                         fromNativeStats.getDocumentStoreDataStatus().getNumber())
-                .setDocumentCount(fromNativeStats.getNumDocuments())
-                .setSchemaTypeCount(fromNativeStats.getNumSchemaTypes());
+                .setNativeDocumentCount(fromNativeStats.getNumDocuments())
+                .setNativeSchemaTypeCount(fromNativeStats.getNumSchemaTypes())
+                .setNativeNumPreviousInitFailures(fromNativeStats.getNumPreviousInitFailures())
+                .setNativeIntegerIndexRestorationCause(
+                        fromNativeStats.getIntegerIndexRestorationCause().getNumber())
+                .setNativeQualifiedIdJoinIndexRestorationCause(
+                        fromNativeStats.getQualifiedIdJoinIndexRestorationCause().getNumber())
+                .setNativeEmbeddingIndexRestorationCause(
+                        fromNativeStats.getEmbeddingIndexRestorationCause().getNumber())
+                .setNativeInitializeIcuDataStatusCode(
+                        fromNativeStats.getInitializeIcuDataStatus().getCode().getNumber())
+                .setNativeNumFailedReindexedDocuments(
+                        fromNativeStats.getNumFailedReindexedDocuments());
     }
 
     /**

@@ -561,13 +561,13 @@ public class AppSearchImplTest {
         assertThat(initStats).isNotNull();
         assertThat(initStats.getStatusCode()).isEqualTo(AppSearchResult.RESULT_INTERNAL_ERROR);
         assertThat(initStats.hasDeSync()).isFalse();
-        assertThat(initStats.getDocumentStoreRecoveryCause())
+        assertThat(initStats.getNativeDocumentStoreRecoveryCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_NONE);
-        assertThat(initStats.getIndexRestorationCause())
+        assertThat(initStats.getNativeIndexRestorationCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_NONE);
-        assertThat(initStats.getSchemaStoreRecoveryCause())
+        assertThat(initStats.getNativeSchemaStoreRecoveryCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_NONE);
-        assertThat(initStats.getDocumentStoreDataStatus())
+        assertThat(initStats.getNativeDocumentStoreDataStatus())
                 .isEqualTo(InitializeStats.DOCUMENT_STORE_DATA_STATUS_NO_DATA_LOSS);
         assertThat(initStats.hasReset()).isTrue();
         assertThat(initStats.getResetStatusCode()).isEqualTo(AppSearchResult.RESULT_OK);
@@ -4183,9 +4183,9 @@ public class AppSearchImplTest {
 
         // Initialization should trigger a recovery
         InitializeStats initStats = initStatsBuilder.build();
-        assertThat(initStats.getDocumentStoreRecoveryCause())
+        assertThat(initStats.getNativeDocumentStoreRecoveryCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_IO_ERROR);
-        assertThat(initStats.getIndexRestorationCause())
+        assertThat(initStats.getNativeIndexRestorationCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_IO_ERROR);
 
         // That document should be visible even from another instance.
@@ -4267,9 +4267,9 @@ public class AppSearchImplTest {
 
         // Initialization should trigger a recovery
         InitializeStats initStats = initStatsBuilder.build();
-        assertThat(initStats.getDocumentStoreRecoveryCause())
+        assertThat(initStats.getNativeDocumentStoreRecoveryCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_IO_ERROR);
-        assertThat(initStats.getIndexRestorationCause())
+        assertThat(initStats.getNativeIndexRestorationCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_IO_ERROR);
 
         // Only the second document should be retrievable from another instance.
@@ -4358,9 +4358,9 @@ public class AppSearchImplTest {
 
         // Initialization should trigger a recovery
         InitializeStats initStats = initStatsBuilder.build();
-        assertThat(initStats.getDocumentStoreRecoveryCause())
+        assertThat(initStats.getNativeDocumentStoreRecoveryCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_IO_ERROR);
-        assertThat(initStats.getIndexRestorationCause())
+        assertThat(initStats.getNativeIndexRestorationCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_IO_ERROR);
 
         // Only the second document should be retrievable from another instance.
@@ -4422,9 +4422,9 @@ public class AppSearchImplTest {
 
         // Initialization should NOT trigger a recovery
         InitializeStats initStats = initStatsBuilder.build();
-        assertThat(initStats.getDocumentStoreRecoveryCause())
+        assertThat(initStats.getNativeDocumentStoreRecoveryCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_NONE);
-        assertThat(initStats.getIndexRestorationCause())
+        assertThat(initStats.getNativeIndexRestorationCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_NONE);
 
         // That document should be visible even from another instance.
@@ -4506,9 +4506,9 @@ public class AppSearchImplTest {
 
         // Initialization should NOT trigger a recovery.
         InitializeStats initStats = initStatsBuilder.build();
-        assertThat(initStats.getDocumentStoreRecoveryCause())
+        assertThat(initStats.getNativeDocumentStoreRecoveryCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_NONE);
-        assertThat(initStats.getIndexRestorationCause())
+        assertThat(initStats.getNativeIndexRestorationCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_NONE);
 
         // Only the second document should be retrievable from another instance.
@@ -4597,9 +4597,9 @@ public class AppSearchImplTest {
 
         // Initialization should NOT trigger a recovery.
         InitializeStats initStats = initStatsBuilder.build();
-        assertThat(initStats.getDocumentStoreRecoveryCause())
+        assertThat(initStats.getNativeDocumentStoreRecoveryCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_NONE);
-        assertThat(initStats.getIndexRestorationCause())
+        assertThat(initStats.getNativeIndexRestorationCause())
                 .isEqualTo(InitializeStats.RECOVERY_CAUSE_NONE);
 
         // Only the second document should be retrievable from another instance.
