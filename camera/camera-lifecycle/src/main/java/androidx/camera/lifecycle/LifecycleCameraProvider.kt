@@ -53,8 +53,7 @@ import com.google.common.util.concurrent.ListenableFuture
  *
  * @sample androidx.camera.lifecycle.samples.configureAndCreateInstances
  */
-// TODO: Remove the annotation when LifecycleCameraProvider is ready to be public.
-@RestrictTo(Scope.LIBRARY_GROUP)
+@ExperimentalCameraProviderConfiguration
 public interface LifecycleCameraProvider : CameraProvider {
     /**
      * Returns `true` if this [UseCase] is bound to a lifecycle or included in a bound

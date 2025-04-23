@@ -17,6 +17,7 @@
 package androidx.camera.lifecycle.samples
 
 import android.content.Context
+import androidx.annotation.OptIn as JavaOptIn
 import androidx.annotation.Sampled
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.CameraEffect
@@ -27,6 +28,7 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.core.SessionConfig
 import androidx.camera.core.UseCase
+import androidx.camera.lifecycle.ExperimentalCameraProviderConfiguration
 import androidx.camera.lifecycle.LifecycleCameraProvider
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
@@ -34,6 +36,7 @@ import androidx.lifecycle.LifecycleOwner
 import java.util.concurrent.Executor
 
 @Sampled
+@JavaOptIn(ExperimentalCameraProviderConfiguration::class)
 suspend fun configureAndCreateInstances(
     context1: Context,
     context2: Context,
@@ -44,21 +47,24 @@ suspend fun configureAndCreateInstances(
     useCase1: UseCase,
     useCase2: UseCase
 ) {
-    suspend fun createInstance(context: Context, executor: Executor): LifecycleCameraProvider {
-        val config =
+    val cameraProvider1 =
+        LifecycleCameraProvider.createInstance(
+            context1,
             CameraXConfig.Builder.fromConfig(Camera2Config.defaultConfig())
-                .setCameraExecutor(executor)
+                .setCameraExecutor(executor1)
                 .build()
-        return LifecycleCameraProvider.createInstance(context, config)
-    }
-
-    val cameraProvider1 = createInstance(context1, executor1)
+        )
     cameraProvider1.bindToLifecycle(lifecycleOwner1, CameraSelector.DEFAULT_FRONT_CAMERA, useCase1)
 
-    // ...
-    // Switch to different lifecycle.
+    // Switch to different lifecycle owner.
 
-    val cameraProvider2 = createInstance(context2, executor2)
+    val cameraProvider2 =
+        LifecycleCameraProvider.createInstance(
+            context2,
+            CameraXConfig.Builder.fromConfig(Camera2Config.defaultConfig())
+                .setCameraExecutor(executor2)
+                .build()
+        )
     cameraProvider2.bindToLifecycle(lifecycleOwner2, CameraSelector.DEFAULT_BACK_CAMERA, useCase2)
 }
 

@@ -19,11 +19,13 @@ package androidx.camera.lifecycle
 import android.app.Application
 import android.content.Context
 import androidx.annotation.MainThread
+import androidx.annotation.OptIn
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraInfoUnavailableException
+import androidx.camera.core.CameraProvider
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraXConfig
 import androidx.camera.core.ConcurrentCamera
@@ -34,6 +36,7 @@ import androidx.camera.core.UseCase
 import androidx.camera.core.UseCaseGroup
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
 import androidx.camera.core.impl.utils.futures.Futures
+import androidx.camera.lifecycle.ProcessCameraProvider.Companion.configureInstance
 import androidx.camera.lifecycle.ProcessCameraProvider.Companion.getInstance
 import androidx.core.util.Preconditions
 import androidx.lifecycle.LifecycleOwner
@@ -57,40 +60,39 @@ import kotlin.time.Duration.Companion.seconds
  *
  * This is the standard provider for applications to use.
  */
-// TODO: Remove the annotation when LifecycleCameraProvider is ready to be public.
-@Suppress("HiddenSuperclass")
+@OptIn(ExperimentalCameraProviderConfiguration::class)
 public class ProcessCameraProvider
 private constructor(private val lifecycleCameraProvider: LifecycleCameraProviderImpl) :
-    LifecycleCameraProvider {
+    CameraProvider {
 
-    override fun isBound(useCase: UseCase): Boolean {
+    public fun isBound(useCase: UseCase): Boolean {
         return lifecycleCameraProvider.isBound(useCase)
     }
 
     @ExperimentalSessionConfig
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    override fun isBound(sessionConfig: SessionConfig): Boolean {
+    public fun isBound(sessionConfig: SessionConfig): Boolean {
         return lifecycleCameraProvider.isBound(sessionConfig)
     }
 
     @MainThread
-    override fun unbind(vararg useCases: UseCase?) {
+    public fun unbind(vararg useCases: UseCase?) {
         return lifecycleCameraProvider.unbind(*useCases)
     }
 
     @ExperimentalSessionConfig
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    override fun unbind(sessionConfig: SessionConfig) {
+    public fun unbind(sessionConfig: SessionConfig) {
         return lifecycleCameraProvider.unbind(sessionConfig)
     }
 
     @MainThread
-    override fun unbindAll() {
+    public fun unbindAll() {
         return lifecycleCameraProvider.unbindAll()
     }
 
     @MainThread
-    override fun bindToLifecycle(
+    public fun bindToLifecycle(
         lifecycleOwner: LifecycleOwner,
         cameraSelector: CameraSelector,
         vararg useCases: UseCase?
@@ -99,7 +101,7 @@ private constructor(private val lifecycleCameraProvider: LifecycleCameraProvider
     }
 
     @MainThread
-    override fun bindToLifecycle(
+    public fun bindToLifecycle(
         lifecycleOwner: LifecycleOwner,
         cameraSelector: CameraSelector,
         useCaseGroup: UseCaseGroup
@@ -109,7 +111,7 @@ private constructor(private val lifecycleCameraProvider: LifecycleCameraProvider
 
     @ExperimentalSessionConfig
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    override fun bindToLifecycle(
+    public fun bindToLifecycle(
         lifecycleOwner: LifecycleOwner,
         cameraSelector: CameraSelector,
         sessionConfig: SessionConfig
@@ -122,7 +124,7 @@ private constructor(private val lifecycleCameraProvider: LifecycleCameraProvider
     }
 
     @MainThread
-    override fun bindToLifecycle(
+    public fun bindToLifecycle(
         singleCameraConfigs: List<ConcurrentCamera.SingleCameraConfig?>
     ): ConcurrentCamera {
         return lifecycleCameraProvider.bindToLifecycle(singleCameraConfigs)

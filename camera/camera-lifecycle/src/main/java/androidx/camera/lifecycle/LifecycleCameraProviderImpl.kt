@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.pm.PackageManager.FEATURE_CAMERA_CONCURRENT
 import androidx.annotation.GuardedBy
 import androidx.annotation.MainThread
+import androidx.annotation.OptIn as JavaOptIn
 import androidx.annotation.VisibleForTesting
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraFilter
@@ -68,6 +69,7 @@ import java.util.Objects.requireNonNull
 
 /** Implementation of the [LifecycleCameraProvider] interface. */
 @OptIn(ExperimentalSessionConfig::class)
+@JavaOptIn(ExperimentalCameraProviderConfiguration::class)
 internal class LifecycleCameraProviderImpl : LifecycleCameraProvider {
     private val lock = Any()
     @VisibleForTesting
