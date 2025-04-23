@@ -55,7 +55,14 @@ public class ActionBarContextView extends AbsActionBarView {
     private int mSubtitleStyleRes;
     private boolean mTitleOptional;
     private int mCloseItemLayout;
-    private final int mInternalVerticalPadding;
+    private int mInsetsPaddingLeft;
+    private int mInsetsPaddingTop;
+    private int mInsetsPaddingRight;
+    private int mInsetsPaddingBottom;
+    private int mNonInsetsPaddingLeft;
+    private int mNonInsetsPaddingTop;
+    private int mNonInsetsPaddingRight;
+    private int mNonInsetsPaddingBottom;
 
     public ActionBarContextView(@NonNull Context context) {
         this(context, null);
@@ -86,7 +93,10 @@ public class ActionBarContextView extends AbsActionBarView {
 
         a.recycle();
 
-        mInternalVerticalPadding = getPaddingTop() + getPaddingBottom();
+        mNonInsetsPaddingLeft = getPaddingLeft();
+        mNonInsetsPaddingTop = getPaddingTop();
+        mNonInsetsPaddingRight = getPaddingRight();
+        mNonInsetsPaddingBottom = getPaddingBottom();
     }
 
     @Override
@@ -262,6 +272,47 @@ public class ActionBarContextView extends AbsActionBarView {
     }
 
     @Override
+    public void setPadding(int left, int top, int right, int bottom) {
+        if (mNonInsetsPaddingLeft != left || mNonInsetsPaddingTop != top
+                || mNonInsetsPaddingRight != right || mNonInsetsPaddingBottom != bottom) {
+            mNonInsetsPaddingLeft = left;
+            mNonInsetsPaddingTop = top;
+            mNonInsetsPaddingRight = right;
+            mNonInsetsPaddingBottom = bottom;
+            updatePadding();
+        }
+    }
+
+    /**
+     * Sets the padding for insets to prevent the content from extending into the insets area.
+     * The total visible padding will be the addition of the padding set with this method and the
+     * one set by {@link #setPadding(int, int, int, int)}.
+     *
+     * @param left the left padding in pixels.
+     * @param top the top padding in pixels.
+     * @param right the right padding in pixels.
+     * @param bottom the bottom padding in pixels.
+     */
+    public void setPaddingForInsets(int left, int top, int right, int bottom) {
+        if (mInsetsPaddingLeft != left || mInsetsPaddingTop != top
+                || mInsetsPaddingRight != right || mInsetsPaddingBottom != bottom) {
+            mInsetsPaddingLeft = left;
+            mInsetsPaddingTop = top;
+            mInsetsPaddingRight = right;
+            mInsetsPaddingBottom = bottom;
+            updatePadding();
+        }
+    }
+
+    private void updatePadding() {
+        super.setPadding(
+                mInsetsPaddingLeft + mNonInsetsPaddingLeft,
+                mInsetsPaddingTop + mNonInsetsPaddingTop,
+                mInsetsPaddingRight + mNonInsetsPaddingRight,
+                mInsetsPaddingBottom + mNonInsetsPaddingBottom);
+    }
+
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         if (widthMode != MeasureSpec.EXACTLY) {
@@ -279,9 +330,8 @@ public class ActionBarContextView extends AbsActionBarView {
         int availableWidth = contentWidth - getPaddingLeft() - getPaddingRight();
 
         final int verticalPadding = getPaddingTop() + getPaddingBottom();
-        final int externalVerticalPadding = Math.max(0, verticalPadding - mInternalVerticalPadding);
         final int maxHeight = mContentHeight > 0
-                ? mContentHeight + externalVerticalPadding
+                ? mContentHeight + mInsetsPaddingTop + mInsetsPaddingBottom
                 : MeasureSpec.getSize(heightMeasureSpec);
         final int height = maxHeight - verticalPadding;
         final int childSpecHeight = MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST);
