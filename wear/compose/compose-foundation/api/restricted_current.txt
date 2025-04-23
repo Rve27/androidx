@@ -268,75 +268,75 @@ package androidx.wear.compose.foundation {
     method public static androidx.compose.ui.Modifier requestFocusOnHierarchyActive(androidx.compose.ui.Modifier);
   }
 
-  @kotlin.jvm.JvmInline public final value class RevealActionType {
-    method public int getValue();
-    property public int value;
-    field public static final androidx.wear.compose.foundation.RevealActionType.Companion Companion;
+  @Deprecated @SuppressCompatibility @androidx.wear.compose.foundation.ExperimentalWearFoundationApi @kotlin.jvm.JvmInline public final value class RevealActionType {
+    method @Deprecated public int getValue();
+    property @Deprecated public int value;
+    field @Deprecated public static final androidx.wear.compose.foundation.RevealActionType.Companion Companion;
   }
 
-  public static final class RevealActionType.Companion {
-    method public int getNone();
-    method public int getPrimaryAction();
-    method public int getSecondaryAction();
-    method public int getUndoAction();
-    property public int None;
-    property public int PrimaryAction;
-    property public int SecondaryAction;
-    property public int UndoAction;
+  @Deprecated public static final class RevealActionType.Companion {
+    method @Deprecated public int getNone();
+    method @Deprecated public int getPrimaryAction();
+    method @Deprecated public int getSecondaryAction();
+    method @Deprecated public int getUndoAction();
+    property @Deprecated public int None;
+    property @Deprecated public int PrimaryAction;
+    property @Deprecated public int SecondaryAction;
+    property @Deprecated public int UndoAction;
   }
 
-  @kotlin.jvm.JvmInline public final value class RevealDirection {
-    method public int getValue();
-    property public int value;
-    field public static final androidx.wear.compose.foundation.RevealDirection.Companion Companion;
+  @Deprecated @SuppressCompatibility @androidx.wear.compose.foundation.ExperimentalWearFoundationApi @kotlin.jvm.JvmInline public final value class RevealDirection {
+    method @Deprecated public int getValue();
+    property @Deprecated public int value;
+    field @Deprecated public static final androidx.wear.compose.foundation.RevealDirection.Companion Companion;
   }
 
-  public static final class RevealDirection.Companion {
-    method public int getBoth();
-    method public int getRightToLeft();
-    property public int Both;
-    property public int RightToLeft;
+  @Deprecated public static final class RevealDirection.Companion {
+    method @Deprecated public int getBoth();
+    method @Deprecated public int getRightToLeft();
+    property @Deprecated public int Both;
+    property @Deprecated public int RightToLeft;
   }
 
-  public final class RevealState {
-    method public suspend Object? animateTo(int targetValue, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public int getCurrentValue();
-    method public int getLastActionType();
-    method public float getOffset();
-    method public float getRevealThreshold();
-    method public java.util.Map<androidx.wear.compose.foundation.RevealValue,java.lang.Float> getSwipeAnchors();
-    method public int getTargetValue();
-    method public androidx.compose.runtime.MutableFloatState getWidth();
-    method public boolean isAnimationRunning();
-    method public void setLastActionType(int);
-    method public suspend Object? snapTo(int targetValue, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    property public int currentValue;
-    property public boolean isAnimationRunning;
-    property public int lastActionType;
-    property public float offset;
-    property public float revealThreshold;
-    property public java.util.Map<androidx.wear.compose.foundation.RevealValue,java.lang.Float> swipeAnchors;
-    property public int targetValue;
-    property public androidx.compose.runtime.MutableFloatState width;
+  @Deprecated @SuppressCompatibility @androidx.wear.compose.foundation.ExperimentalWearFoundationApi public final class RevealState {
+    method @Deprecated public suspend Object? animateTo(int targetValue, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    method @Deprecated public int getCurrentValue();
+    method @Deprecated public int getLastActionType();
+    method @Deprecated public float getOffset();
+    method @Deprecated public float getRevealThreshold();
+    method @Deprecated public java.util.Map<androidx.wear.compose.foundation.RevealValue,java.lang.Float> getSwipeAnchors();
+    method @Deprecated public int getTargetValue();
+    method @Deprecated public androidx.compose.runtime.MutableFloatState getWidth();
+    method @Deprecated public boolean isAnimationRunning();
+    method @Deprecated public void setLastActionType(int);
+    method @Deprecated public suspend Object? snapTo(int targetValue, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    property @Deprecated public int currentValue;
+    property @Deprecated public boolean isAnimationRunning;
+    property @Deprecated public int lastActionType;
+    property @Deprecated public float offset;
+    property @Deprecated public float revealThreshold;
+    property @Deprecated public java.util.Map<androidx.wear.compose.foundation.RevealValue,java.lang.Float> swipeAnchors;
+    property @Deprecated public int targetValue;
+    property @Deprecated public androidx.compose.runtime.MutableFloatState width;
   }
 
-  @kotlin.jvm.JvmInline public final value class RevealValue {
-    method public int getValue();
-    property public int value;
-    field public static final androidx.wear.compose.foundation.RevealValue.Companion Companion;
+  @Deprecated @SuppressCompatibility @androidx.wear.compose.foundation.ExperimentalWearFoundationApi @kotlin.jvm.JvmInline public final value class RevealValue {
+    method @Deprecated public int getValue();
+    property @Deprecated public int value;
+    field @Deprecated public static final androidx.wear.compose.foundation.RevealValue.Companion Companion;
   }
 
-  public static final class RevealValue.Companion {
-    method public int getCovered();
-    method public int getLeftRevealed();
-    method public int getLeftRevealing();
-    method public int getRightRevealed();
-    method public int getRightRevealing();
-    property public int Covered;
-    property public int LeftRevealed;
-    property public int LeftRevealing;
-    property public int RightRevealed;
-    property public int RightRevealing;
+  @Deprecated public static final class RevealValue.Companion {
+    method @Deprecated public int getCovered();
+    method @Deprecated public int getLeftRevealed();
+    method @Deprecated public int getLeftRevealing();
+    method @Deprecated public int getRightRevealed();
+    method @Deprecated public int getRightRevealing();
+    property @Deprecated public int Covered;
+    property @Deprecated public int LeftRevealed;
+    property @Deprecated public int LeftRevealing;
+    property @Deprecated public int RightRevealed;
+    property @Deprecated public int RightRevealing;
   }
 
   public interface ScrollInfoProvider {
@@ -393,23 +393,23 @@ package androidx.wear.compose.foundation {
     enum_constant public static final androidx.wear.compose.foundation.SwipeToDismissValue Dismissed;
   }
 
-  public final class SwipeToRevealDefaults {
-    method public androidx.wear.compose.foundation.GestureInclusion gestureInclusion(androidx.wear.compose.foundation.RevealState state, optional @FloatRange(from=0.0, to=1.0) float edgeZoneFraction);
-    method public androidx.wear.compose.foundation.GestureInclusion getBidirectionalGestureInclusion();
-    method public float getLeftEdgeZoneFraction();
-    method public kotlin.jvm.functions.Function1<java.lang.Float,java.lang.Float> getPositionalThreshold();
-    method public float getRevealingRatio();
-    property public float LeftEdgeZoneFraction;
-    property public kotlin.jvm.functions.Function1<java.lang.Float,java.lang.Float> PositionalThreshold;
-    property public float RevealingRatio;
-    property public androidx.wear.compose.foundation.GestureInclusion bidirectionalGestureInclusion;
-    field public static final androidx.wear.compose.foundation.SwipeToRevealDefaults INSTANCE;
+  @Deprecated @SuppressCompatibility @androidx.wear.compose.foundation.ExperimentalWearFoundationApi public final class SwipeToRevealDefaults {
+    method @Deprecated public androidx.wear.compose.foundation.GestureInclusion gestureInclusion(androidx.wear.compose.foundation.RevealState state, optional @FloatRange(from=0.0, to=1.0) float edgeZoneFraction);
+    method @Deprecated public androidx.wear.compose.foundation.GestureInclusion getBidirectionalGestureInclusion();
+    method @Deprecated public float getLeftEdgeZoneFraction();
+    method @Deprecated public kotlin.jvm.functions.Function1<java.lang.Float,java.lang.Float> getPositionalThreshold();
+    method @Deprecated public float getRevealingRatio();
+    property @Deprecated public float LeftEdgeZoneFraction;
+    property @Deprecated public kotlin.jvm.functions.Function1<java.lang.Float,java.lang.Float> PositionalThreshold;
+    property @Deprecated public float RevealingRatio;
+    property @Deprecated public androidx.wear.compose.foundation.GestureInclusion bidirectionalGestureInclusion;
+    field @Deprecated public static final androidx.wear.compose.foundation.SwipeToRevealDefaults INSTANCE;
   }
 
   public final class SwipeToRevealKt {
-    method @androidx.compose.runtime.Composable public static void SwipeToReveal(kotlin.jvm.functions.Function0<kotlin.Unit> primaryAction, optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function0<kotlin.Unit> onFullSwipe, optional androidx.wear.compose.foundation.RevealState state, optional kotlin.jvm.functions.Function0<kotlin.Unit>? secondaryAction, optional kotlin.jvm.functions.Function0<kotlin.Unit>? undoAction, optional androidx.wear.compose.foundation.GestureInclusion gestureInclusion, kotlin.jvm.functions.Function0<kotlin.Unit> content);
-    method public static java.util.Map<androidx.wear.compose.foundation.RevealValue,java.lang.Float> createRevealAnchors(optional float coveredAnchor, optional float revealingAnchor, optional float revealedAnchor, optional int revealDirection);
-    method @androidx.compose.runtime.Composable public static androidx.wear.compose.foundation.RevealState rememberRevealState(optional int initialValue, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional kotlin.jvm.functions.Function1<? super androidx.wear.compose.foundation.RevealValue,java.lang.Boolean> confirmValueChange, optional kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold, optional java.util.Map<androidx.wear.compose.foundation.RevealValue,java.lang.Float> anchors);
+    method @Deprecated @SuppressCompatibility @androidx.compose.runtime.Composable @androidx.wear.compose.foundation.ExperimentalWearFoundationApi public static void SwipeToReveal(kotlin.jvm.functions.Function0<kotlin.Unit> primaryAction, optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function0<kotlin.Unit> onFullSwipe, optional androidx.wear.compose.foundation.RevealState state, optional kotlin.jvm.functions.Function0<kotlin.Unit>? secondaryAction, optional kotlin.jvm.functions.Function0<kotlin.Unit>? undoAction, optional androidx.wear.compose.foundation.GestureInclusion gestureInclusion, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @Deprecated @SuppressCompatibility @androidx.wear.compose.foundation.ExperimentalWearFoundationApi public static java.util.Map<androidx.wear.compose.foundation.RevealValue,java.lang.Float> createRevealAnchors(optional float coveredAnchor, optional float revealingAnchor, optional float revealedAnchor, optional int revealDirection);
+    method @Deprecated @SuppressCompatibility @androidx.compose.runtime.Composable @androidx.wear.compose.foundation.ExperimentalWearFoundationApi public static androidx.wear.compose.foundation.RevealState rememberRevealState(optional int initialValue, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, optional kotlin.jvm.functions.Function1<? super androidx.wear.compose.foundation.RevealValue,java.lang.Boolean> confirmValueChange, optional kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold, optional java.util.Map<androidx.wear.compose.foundation.RevealValue,java.lang.Float> anchors);
   }
 
 }

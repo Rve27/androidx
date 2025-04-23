@@ -631,6 +631,7 @@ fun Stepper() {
     }
 }
 
+@Suppress("DEPRECATION")
 @OptIn(ExperimentalWearFoundationApi::class)
 @Composable
 fun SwipeToReveal() {

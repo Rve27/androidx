@@ -42,11 +42,11 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.GestureInclusion
 import androidx.wear.compose.foundation.SwipeToDismissBoxState
 import androidx.wear.compose.foundation.edgeSwipeToDismiss
-import androidx.wear.compose.foundation.rememberRevealState
 import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.Card
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ListHeader
+import androidx.wear.compose.material3.RevealDirection.Companion.Bidirectional
 import androidx.wear.compose.material3.SplitSwitchButton
 import androidx.wear.compose.material3.SwipeToReveal
 import androidx.wear.compose.material3.SwipeToRevealDefaults
@@ -59,26 +59,25 @@ fun SwipeToRevealBothDirectionsNonAnchoring() {
     ScalingLazyDemo {
         item {
             SwipeToReveal(
-                revealState =
-                    rememberRevealState(
-                        anchors =
-                            SwipeToRevealDefaults.bidirectionalAnchors(
-                                useAnchoredActions = false,
-                            )
-                    ),
-                actions = {
-                    primaryAction(
+                primaryAction = {
+                    PrimaryActionButton(
                         onClick = { /* This block is called when the primary action is executed. */
                         },
                         icon = { Icon(Icons.Outlined.Delete, contentDescription = "Delete") },
                         text = { Text("Delete") }
                     )
-                    undoPrimaryAction(
+                },
+                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                },
+                undoPrimaryAction = {
+                    UndoActionButton(
                         onClick = { /* This block is called when the undo primary action is executed. */
                         },
                         text = { Text("Undo Delete") },
                     )
-                }
+                },
+                revealDirection = Bidirectional,
+                hasPartiallyRevealedState = false
             ) {
                 Button(
                     modifier =
@@ -106,37 +105,38 @@ fun SwipeToRevealBothDirections() {
     ScalingLazyDemo {
         item {
             SwipeToReveal(
-                revealState =
-                    rememberRevealState(
-                        anchors =
-                            SwipeToRevealDefaults.bidirectionalAnchors(
-                                // Use the double action anchor width when revealing two actions
-                                anchorWidth = SwipeToRevealDefaults.DoubleActionAnchorWidth,
-                            )
-                    ),
-                actions = {
-                    primaryAction(
+                primaryAction = {
+                    PrimaryActionButton(
                         onClick = { /* This block is called when the primary action is executed. */
                         },
                         icon = { Icon(Icons.Outlined.Delete, contentDescription = "Delete") },
                         text = { Text("Delete") }
                     )
-                    secondaryAction(
+                },
+                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                },
+                secondaryAction = {
+                    SecondaryActionButton(
                         onClick = { /* This block is called when the secondary action is executed. */
                         },
                         icon = { Icon(Icons.Outlined.MoreVert, contentDescription = "More") }
                     )
-                    undoPrimaryAction(
+                },
+                undoPrimaryAction = {
+                    UndoActionButton(
                         onClick = { /* This block is called when the undo primary action is executed. */
                         },
                         text = { Text("Undo Delete") },
                     )
-                    undoSecondaryAction(
+                },
+                undoSecondaryAction = {
+                    UndoActionButton(
                         onClick = { /* This block is called when the undo secondary action is executed. */
                         },
                         text = { Text("Undo Secondary") },
                     )
-                }
+                },
+                revealDirection = Bidirectional,
             ) {
                 Button(
                     modifier =
@@ -169,35 +169,25 @@ fun SwipeToRevealTwoActionsWithUndo() {
     val context = LocalContext.current
     val showToasts = remember { mutableStateOf(true) }
 
+    val primaryAction = {
+        if (showToasts.value) {
+            Toast.makeText(context, "Primary action executed.", Toast.LENGTH_SHORT).show()
+        }
+    }
     ScalingLazyDemo {
         item { ListHeader { Text("Two Undo Actions") } }
         item {
             SwipeToReveal(
-                revealState =
-                    rememberRevealState(
-                        anchors =
-                            SwipeToRevealDefaults.anchors(
-                                // Use the double action anchor width when revealing two actions
-                                anchorWidth = SwipeToRevealDefaults.DoubleActionAnchorWidth
-                            )
-                    ),
-                actionButtonHeight = SwipeToRevealDefaults.LargeActionButtonHeight,
-                actions = {
-                    primaryAction(
-                        onClick = {
-                            if (showToasts.value) {
-                                Toast.makeText(
-                                        context,
-                                        "Primary action executed.",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
-                            }
-                        },
+                primaryAction = {
+                    PrimaryActionButton(
+                        onClick = primaryAction,
                         icon = { Icon(Icons.Outlined.Delete, contentDescription = "Delete") },
                         text = { Text("Delete") }
                     )
-                    secondaryAction(
+                },
+                onFullSwipe = primaryAction,
+                secondaryAction = {
+                    SecondaryActionButton(
                         onClick = {
                             if (showToasts.value) {
                                 Toast.makeText(
@@ -210,7 +200,9 @@ fun SwipeToRevealTwoActionsWithUndo() {
                         },
                         icon = { Icon(Icons.Filled.Lock, contentDescription = "Lock") }
                     )
-                    undoPrimaryAction(
+                },
+                undoPrimaryAction = {
+                    UndoActionButton(
                         onClick = {
                             if (showToasts.value) {
                                 Toast.makeText(
@@ -223,7 +215,9 @@ fun SwipeToRevealTwoActionsWithUndo() {
                         },
                         text = { Text("Undo Delete") },
                     )
-                    undoSecondaryAction(
+                },
+                undoSecondaryAction = {
+                    UndoActionButton(
                         onClick = {
                             if (showToasts.value) {
                                 Toast.makeText(
@@ -237,6 +231,7 @@ fun SwipeToRevealTwoActionsWithUndo() {
                         text = { Text("Undo Lock") },
                     )
                 },
+                actionButtonHeight = SwipeToRevealDefaults.LargeActionButtonHeight,
             ) {
                 Card(
                     modifier =
@@ -289,42 +284,41 @@ fun SwipeToRevealInScalingLazyColumn() {
     val coroutineScope = rememberCoroutineScope()
     ScalingLazyDemo(contentPadding = PaddingValues(0.dp)) {
         items(listState.size, key = { listState[it].name }) { index ->
-            val revealState =
-                rememberRevealState(
-                    anchors =
-                        SwipeToRevealDefaults.bidirectionalAnchors(
-                            anchorWidth = SwipeToRevealDefaults.DoubleActionAnchorWidth
-                        )
-                )
             val item = remember { listState[index] }
+            val primaryAction: () -> Unit = {
+                coroutineScope.launch {
+                    delay(2000)
+                    // After a delay, remove the item from the list if the last
+                    // action performed by the user is still the primary action, so
+                    // the user didn't press "Undo".
+                    if (!item.undoButtonClicked) {
+                        listState.remove(item)
+                    }
+                }
+            }
             SwipeToReveal(
-                revealState = revealState,
-                actions = {
-                    primaryAction(
-                        onClick = {
-                            coroutineScope.launch {
-                                delay(2000)
-                                // After a delay, remove the item from the list if the last
-                                // action performed by the user is still the primary action, so
-                                // the user didn't press "Undo".
-                                if (!item.undoButtonClicked) {
-                                    listState.remove(item)
-                                }
-                            }
-                        },
+                primaryAction = {
+                    PrimaryActionButton(
+                        onClick = primaryAction,
                         icon = { Icon(Icons.Outlined.Delete, contentDescription = "Delete") },
                         text = { Text("Delete") }
                     )
-                    secondaryAction(
+                },
+                onFullSwipe = primaryAction,
+                secondaryAction = {
+                    SecondaryActionButton(
                         onClick = { /* This block is called when the secondary action is executed. */
                         },
                         icon = { Icon(Icons.Filled.MoreVert, contentDescription = "Duplicate") }
                     )
-                    undoPrimaryAction(
+                },
+                undoPrimaryAction = {
+                    UndoActionButton(
                         onClick = { item.undoButtonClicked = true },
                         text = { Text("Undo Delete") }
                     )
-                }
+                },
+                revealDirection = Bidirectional,
             ) {
                 Button(
                     {},
@@ -355,20 +349,23 @@ fun SwipeToRevealSingleButtonWithAnchoring() {
     ScalingLazyDemo {
         item {
             SwipeToReveal(
-                revealState = rememberRevealState(anchors = SwipeToRevealDefaults.anchors()),
-                actions = {
-                    primaryAction(
+                primaryAction = {
+                    PrimaryActionButton(
                         onClick = { /* This block is called when the primary action is executed. */
                         },
                         icon = { Icon(Icons.Outlined.Delete, contentDescription = "Delete") },
                         text = { Text("Delete") }
                     )
-                    undoPrimaryAction(
+                },
+                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                },
+                undoPrimaryAction = {
+                    UndoActionButton(
                         onClick = { /* This block is called when the undo primary action is executed. */
                         },
                         text = { Text("Undo Delete") },
                     )
-                }
+                },
             ) {
                 Button(
                     modifier =
@@ -396,16 +393,8 @@ fun SwipeToRevealWithLongLabels() {
     ScalingLazyDemo {
         item {
             SwipeToReveal(
-                revealState =
-                    rememberRevealState(
-                        anchors =
-                            SwipeToRevealDefaults.anchors(
-                                // Use the double action anchor width when revealing two actions
-                                anchorWidth = SwipeToRevealDefaults.DoubleActionAnchorWidth,
-                            )
-                    ),
-                actions = {
-                    primaryAction(
+                primaryAction = {
+                    PrimaryActionButton(
                         onClick = { /* This block is called when the primary action is executed. */
                         },
                         icon = { Icon(Icons.Outlined.Delete, contentDescription = "Delete") },
@@ -413,12 +402,18 @@ fun SwipeToRevealWithLongLabels() {
                             Text("Delete action with an extremely long label that should truncate.")
                         }
                     )
-                    secondaryAction(
+                },
+                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                },
+                secondaryAction = {
+                    SecondaryActionButton(
                         onClick = { /* This block is called when the secondary action is executed. */
                         },
                         icon = { Icon(Icons.Outlined.Lock, contentDescription = "Lock") }
                     )
-                    undoPrimaryAction(
+                },
+                undoPrimaryAction = {
+                    UndoActionButton(
                         onClick = { /* This block is called when the undo primary action is executed. */
                         },
                         text = {
@@ -427,7 +422,9 @@ fun SwipeToRevealWithLongLabels() {
                             )
                         },
                     )
-                    undoSecondaryAction(
+                },
+                undoSecondaryAction = {
+                    UndoActionButton(
                         onClick = { /* This block is called when the undo secondary action is executed. */
                         },
                         text = {
@@ -436,7 +433,7 @@ fun SwipeToRevealWithLongLabels() {
                             )
                         },
                     )
-                }
+                },
             ) {
                 Button(
                     modifier =
@@ -472,16 +469,8 @@ fun SwipeToRevealWithCustomIcons() {
     ScalingLazyDemo {
         item {
             SwipeToReveal(
-                revealState =
-                    rememberRevealState(
-                        anchors =
-                            SwipeToRevealDefaults.anchors(
-                                // Use the double action anchor width when revealing two actions
-                                anchorWidth = SwipeToRevealDefaults.DoubleActionAnchorWidth,
-                            )
-                    ),
-                actions = {
-                    primaryAction(
+                primaryAction = {
+                    PrimaryActionButton(
                         onClick = { /* This block is called when the primary action is executed. */
                         },
                         icon = {
@@ -496,7 +485,11 @@ fun SwipeToRevealWithCustomIcons() {
                         },
                         text = { Text("Delete") }
                     )
-                    secondaryAction(
+                },
+                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                },
+                secondaryAction = {
+                    SecondaryActionButton(
                         onClick = { /* This block is called when the secondary action is executed. */
                         },
                         icon = {
@@ -510,7 +503,9 @@ fun SwipeToRevealWithCustomIcons() {
                             )
                         }
                     )
-                    undoPrimaryAction(
+                },
+                undoPrimaryAction = {
+                    UndoActionButton(
                         onClick = { /* This block is called when the undo primary action is executed. */
                         },
                         icon = {
@@ -525,7 +520,9 @@ fun SwipeToRevealWithCustomIcons() {
                         },
                         text = { Text("Undo Delete") },
                     )
-                    undoSecondaryAction(
+                },
+                undoSecondaryAction = {
+                    UndoActionButton(
                         onClick = { /* This block is called when the undo secondary action is executed. */
                         },
                         icon = {
@@ -540,7 +537,7 @@ fun SwipeToRevealWithCustomIcons() {
                         },
                         text = { Text("Undo Update") },
                     )
-                }
+                },
             ) {
                 Button(
                     modifier =
@@ -580,15 +577,18 @@ fun SwipeToRevealWithEdgeSwipeToDismiss(swipeToDismissBoxState: SwipeToDismissBo
     ScalingLazyDemo {
         item {
             SwipeToReveal(
-                revealState = rememberRevealState(anchors = SwipeToRevealDefaults.anchors()),
-                actions = {
-                    primaryAction(
+                primaryAction = {
+                    PrimaryActionButton(
                         onClick = { /* This block is called when the primary action is executed. */
                         },
                         icon = { Icon(Icons.Outlined.Delete, contentDescription = "Delete") },
                         text = { Text("Delete") }
                     )
-                    undoPrimaryAction(
+                },
+                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                },
+                undoPrimaryAction = {
+                    UndoActionButton(
                         onClick = { /* This block is called when the undo primary action is executed. */
                         },
                         text = { Text("Undo Delete") },
