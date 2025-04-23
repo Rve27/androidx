@@ -42,6 +42,7 @@ import androidx.test.espresso.action.Press
 import androidx.test.espresso.action.Swipe
 import androidx.test.espresso.action.Tap
 import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.action.ViewActions.typeText
@@ -394,7 +395,44 @@ class PdfViewerFragmentV2TestSuite {
         }
     }
 
-    // TODO(b/401229449): Add Select Api in PdfDocument integration test
+    @Test
+    fun testPdfViewerFragment_whenSelectAllClicked_allContentShouldBeSelected() {
+        // Load the document and assert loading view is displayed
+        scenarioLoadDocument(
+            scenario = scenario,
+            filename = TEST_DOCUMENT_SELECT,
+            nextState = Lifecycle.State.STARTED,
+            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+        ) {
+            onView(withId(PdfR.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
+        }
+
+        // Assert loading progress bar is gone and document is loaded
+        onView(withId(PdfR.id.pdfLoadingProgressBar))
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+        scenario.onFragment {
+            Preconditions.checkArgument(
+                it.documentLoaded,
+                "Unable to load document due to ${it.documentError?.message}"
+            )
+        }
+
+        // Long click on the pdfView and click "Select All"
+        onView(withId(androidx.pdf.viewer.fragment.R.id.pdfView)).perform(longClick())
+        onView(ViewMatchers.withText(SELECT_ALL))
+            .inRoot(RootMatchers.isPlatformPopup())
+            .perform(click())
+
+        // Get the PdfView instance and assert selection
+        var pdfView: PdfView? = null
+        val expectedSelectionBoundsSize = 34
+        scenario.onFragment { fragment -> pdfView = fragment.getPdfViewInstance() }
+        assertNotNull(pdfView)
+        val selection = pdfView?.currentSelection
+        assertNotNull(selection)
+        assertNotNull(selection?.bounds)
+        assert(selection?.bounds?.size == expectedSelectionBoundsSize)
+    }
 
     private fun withPdfView(
         scenario: FragmentScenario<TestPdfViewerFragment>,
@@ -415,7 +453,9 @@ class PdfViewerFragmentV2TestSuite {
         private const val TEST_DOCUMENT_FILE = "sample.pdf"
         private const val TEST_PROTECTED_DOCUMENT_FILE = "sample-protected.pdf"
         private const val TEST_CORRUPTED_DOCUMENT_FILE = "corrupted.pdf"
+        private const val TEST_DOCUMENT_SELECT = "sample-select.pdf"
 
+        private const val SELECT_ALL = "Select all"
         private const val CANCEL = "Cancel"
         private const val SEARCH_QUERY = "ipsum"
         private const val KEYBOARD_CONTENT_DESC = "keyboard"
