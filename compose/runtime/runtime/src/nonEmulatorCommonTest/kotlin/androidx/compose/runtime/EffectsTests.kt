@@ -22,6 +22,7 @@ import androidx.compose.runtime.mock.expectChanges
 import androidx.compose.runtime.mock.expectNoChanges
 import androidx.compose.runtime.mock.validate
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
 class EffectsTests {
@@ -467,6 +468,224 @@ class EffectsTests {
         log("recompose")
         expectChanges()
         assertArrayEquals(listOf("recompose", "onDispose:2"), logHistory)
+    }
+
+    @Test
+    fun testRetainEffect_retained() = compositionTest {
+        var mount by mutableStateOf(false)
+
+        val logHistory = mutableListOf<String>()
+        fun log(x: String) = logHistory.add(x)
+
+        @Composable
+        fun RetainLogger(name: String) {
+            RetainedEffect(Unit) {
+                log("Retain:$name")
+                onRetire { log("Retire:$name") }
+            }
+        }
+
+        compose {
+            RetainLogger("1")
+            if (mount) {
+                RetainLogger("2")
+            }
+        }
+
+        assertContentEquals(
+            message = "Initial RetainedEffect sequence didn't match",
+            expected = listOf("Retain:1"),
+            actual = logHistory,
+        )
+        mount = true
+        log("recompose")
+        expectChanges()
+        assertContentEquals(
+            message = "RetainedEffect sequence didn't match after recomposing",
+            expected = listOf("Retain:1", "recompose", "Retain:2"),
+            actual = logHistory,
+        )
+    }
+
+    @Test
+    fun testRetainEffect_keysChanged() = compositionTest {
+        var keyDelta by mutableIntStateOf(0)
+
+        val logHistory = mutableListOf<String>()
+        fun log(x: String) = logHistory.add(x)
+
+        @Composable
+        fun RetainLogger(name: String) {
+            RetainedEffect(name) {
+                log("Retain:$name")
+                onRetire { log("Retire:$name") }
+            }
+        }
+
+        compose {
+            RetainLogger((keyDelta * 2).toString())
+            RetainLogger((keyDelta * 2 + 1).toString())
+        }
+
+        assertContentEquals(
+            message = "Initial RetainedEffect sequence didn't match",
+            expected = listOf("Retain:0", "Retain:1"),
+            actual = logHistory,
+        )
+        keyDelta++
+        log("recompose")
+        expectChanges()
+        assertContentEquals(
+            message = "RetainedEffect sequence didn't match after recomposing",
+            expected =
+                listOf(
+                    "Retain:0",
+                    "Retain:1",
+                    "recompose",
+                    "Retire:1",
+                    "Retire:0",
+                    "Retain:2",
+                    "Retain:3",
+                ),
+            actual = logHistory,
+        )
+    }
+
+    @Test
+    fun testRetainEffect_retireWhenRemovedNotKeepingExitedValues() = compositionTest {
+        var mount by mutableStateOf(true)
+
+        val logHistory = mutableListOf<String>()
+        fun log(x: String) = logHistory.add(x)
+
+        @Composable
+        fun RetainLogger(name: String) {
+            RetainedEffect(Unit) {
+                log("Retain:$name")
+                onRetire { log("Retire:$name") }
+            }
+        }
+
+        compose {
+            if (mount) {
+                RetainLogger("1")
+                RetainLogger("2")
+            }
+        }
+
+        assertContentEquals(
+            message = "Initial RetainedEffect sequence didn't match",
+            expected = listOf("Retain:1", "Retain:2"),
+            actual = logHistory,
+        )
+        mount = false
+        log("recompose")
+        expectChanges()
+        assertContentEquals(
+            message = "RetainedEffect sequence didn't match after recomposing",
+            expected = listOf("Retain:1", "Retain:2", "recompose", "Retire:2", "Retire:1"),
+            actual = logHistory,
+        )
+    }
+
+    @Test
+    fun testRetainEffect_retireWhenKeepExitedValuesEnds() = compositionTest {
+        var mount by mutableStateOf(true)
+
+        val logHistory = mutableListOf<String>()
+        fun log(x: String) = logHistory.add(x)
+
+        @Composable
+        fun RetainLogger(name: String) {
+            RetainedEffect(Unit) {
+                log("Retain:$name")
+                onRetire { log("Retire:$name") }
+            }
+        }
+
+        val retainScope = ControlledRetainScope()
+        compose {
+            CompositionLocalProvider(LocalRetainScope provides retainScope) {
+                RetainLogger("1")
+                if (mount) {
+                    RetainLogger("2")
+                }
+            }
+        }
+
+        assertContentEquals(
+            message = "Initial RetainedEffect sequence didn't match",
+            expected = listOf("Retain:1", "Retain:2"),
+            actual = logHistory,
+        )
+        retainScope.startKeepingExitedValues()
+        mount = false
+        log("recompose")
+        expectChanges()
+        assertContentEquals(
+            message = "RetainedEffect sequence didn't match after recomposing",
+            expected = listOf("Retain:1", "Retain:2", "recompose"),
+            actual = logHistory,
+        )
+
+        retainScope.stopKeepingExitedValues()
+        assertContentEquals(
+            message = "RetainedEffect sequence didn't match after ending retention",
+            expected = listOf("Retain:1", "Retain:2", "recompose", "Retire:2"),
+            actual = logHistory,
+        )
+    }
+
+    @Test
+    fun testRetainEffect_changeKeyWhenKeepingExitedValues() = compositionTest {
+        var key by mutableStateOf("A")
+
+        val logHistory = mutableListOf<String>()
+        fun log(x: String) = logHistory.add(x)
+
+        @Composable
+        fun RetainLogger(name: String) {
+            RetainedEffect(name) {
+                log("Retain:$name")
+                onRetire { log("Retire:$name") }
+            }
+        }
+
+        val retainScope = ControlledRetainScope()
+        compose {
+            CompositionLocalProvider(LocalRetainScope provides retainScope) { RetainLogger(key) }
+        }
+
+        assertContentEquals(
+            message = "Initial RetainedEffect sequence didn't match",
+            expected = listOf("Retain:A"),
+            actual = logHistory,
+        )
+        retainScope.startKeepingExitedValues()
+        key = "B"
+        log("recompose")
+        expectChanges()
+        assertContentEquals(
+            message = "RetainedEffect sequence didn't match after recomposing",
+            expected = listOf("Retain:A", "recompose", "Retain:B"),
+            actual = logHistory,
+        )
+
+        key = "A"
+        log("recompose")
+        expectChanges()
+        assertContentEquals(
+            message = "RetainedEffect sequence didn't match after recomposing",
+            expected = listOf("Retain:A", "recompose", "Retain:B", "recompose"),
+            actual = logHistory,
+        )
+
+        retainScope.stopKeepingExitedValues()
+        assertContentEquals(
+            message = "RetainedEffect sequence didn't match after ending retention",
+            expected = listOf("Retain:A", "recompose", "Retain:B", "recompose", "Retire:B"),
+            actual = logHistory,
+        )
     }
 
     @Test
