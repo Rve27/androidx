@@ -409,6 +409,7 @@ sealed interface androidx.compose.material3/FloatingToolbarScrollBehavior : andr
 }
 
 sealed interface androidx.compose.material3/TooltipScope { // androidx.compose.material3/TooltipScope|null[0]
+    abstract fun (androidx.compose.ui.layout/MeasureScope).obtainAnchorBounds(): androidx.compose.ui.layout/LayoutCoordinates? // androidx.compose.material3/TooltipScope.obtainAnchorBounds|obtainAnchorBounds@androidx.compose.ui.layout.MeasureScope(){}[0]
     abstract fun (androidx.compose.ui/Modifier).drawCaret(kotlin/Function2<androidx.compose.ui.draw/CacheDrawScope, androidx.compose.ui.layout/LayoutCoordinates?, androidx.compose.ui.draw/DrawResult>): androidx.compose.ui/Modifier // androidx.compose.material3/TooltipScope.drawCaret|drawCaret@androidx.compose.ui.Modifier(kotlin.Function2<androidx.compose.ui.draw.CacheDrawScope,androidx.compose.ui.layout.LayoutCoordinates?,androidx.compose.ui.draw.DrawResult>){}[0]
 }
 
