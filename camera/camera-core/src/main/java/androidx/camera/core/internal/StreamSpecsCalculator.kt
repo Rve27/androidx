@@ -59,6 +59,7 @@ public interface StreamSpecsCalculator {
         attachedUseCases: List<UseCase> = emptyList(),
         cameraConfig: CameraConfig = CameraConfigs.defaultConfig(),
         targetHighSpeedFrameRate: Range<Int> = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
+        allowFeatureCombinationResolutions: Boolean = false
     ): Map<UseCase, StreamSpec>
 
     public companion object {
@@ -71,7 +72,8 @@ public interface StreamSpecsCalculator {
                     newUseCases: List<UseCase>,
                     attachedUseCases: List<UseCase>,
                     cameraConfig: CameraConfig,
-                    targetHighSpeedFrameRate: Range<Int>
+                    targetHighSpeedFrameRate: Range<Int>,
+                    allowFeatureCombinationResolutions: Boolean
                 ): Map<UseCase, StreamSpec> {
                     return emptyMap()
                 }
@@ -93,6 +95,7 @@ public interface StreamSpecsCalculator {
             cameraInfoInternal: CameraInfoInternal,
             newUseCases: List<UseCase>,
             cameraConfig: CameraConfig = CameraConfigs.defaultConfig(),
+            allowFeatureCombinationResolutions: Boolean = false,
             attachedUseCases: List<UseCase> = emptyList(),
             targetHighSpeedFrameRate: Range<Int> = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
         ): Map<UseCase, StreamSpec> {
@@ -102,7 +105,8 @@ public interface StreamSpecsCalculator {
                 newUseCases = newUseCases,
                 attachedUseCases = attachedUseCases,
                 cameraConfig = cameraConfig,
-                targetHighSpeedFrameRate = targetHighSpeedFrameRate
+                targetHighSpeedFrameRate = targetHighSpeedFrameRate,
+                allowFeatureCombinationResolutions = allowFeatureCombinationResolutions,
             )
         }
     }
@@ -125,6 +129,7 @@ public class StreamSpecsCalculatorImpl(
         attachedUseCases: List<UseCase>,
         cameraConfig: CameraConfig,
         targetHighSpeedFrameRate: Range<Int>,
+        allowFeatureCombinationResolutions: Boolean
     ): Map<UseCase, StreamSpec> {
         // Calculate stream specs for use cases already attached.
         val result =

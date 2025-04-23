@@ -67,6 +67,7 @@ import androidx.camera.core.impl.StreamSpec;
 import androidx.camera.core.impl.UseCaseConfig;
 import androidx.camera.core.impl.UseCaseConfigFactory;
 import androidx.camera.core.impl.stabilization.StabilizationMode;
+import androidx.camera.core.internal.CameraUseCaseAdapter;
 import androidx.camera.core.internal.TargetConfig;
 import androidx.camera.core.internal.compat.quirk.AeFpsRangeQuirk;
 import androidx.camera.core.internal.utils.UseCaseConfigUtil;
@@ -1210,7 +1211,9 @@ public abstract class UseCase {
             }
         }
 
-        config.insertOption(OPTION_INPUT_DYNAMIC_RANGE, dynamicRange);
+        if (this instanceof Preview || CameraUseCaseAdapter.isVideoCapture(this)) {
+            config.insertOption(OPTION_INPUT_DYNAMIC_RANGE, dynamicRange);
+        }
 
         config.insertOption(OPTION_TARGET_FRAME_RATE, fpsRange);
 
@@ -1218,13 +1221,22 @@ public abstract class UseCase {
         config.insertOption(OPTION_VIDEO_STABILIZATION_MODE, StabilizationMode.OFF);
         switch (stabilizationMode) {
             case OFF:
+                config.insertOption(OPTION_PREVIEW_STABILIZATION_MODE, StabilizationMode.OFF);
+                config.insertOption(OPTION_VIDEO_STABILIZATION_MODE, StabilizationMode.OFF);
                 break;
             case ON:
+                config.insertOption(OPTION_PREVIEW_STABILIZATION_MODE,
+                        StabilizationMode.UNSPECIFIED);
                 config.insertOption(OPTION_VIDEO_STABILIZATION_MODE, StabilizationMode.ON);
+                // Will result to video stabilization overall as per the CameraX impl. and API docs
                 break;
             case PREVIEW:
                 if (this instanceof Preview) {
                     config.insertOption(OPTION_PREVIEW_STABILIZATION_MODE, StabilizationMode.ON);
+                    config.insertOption(OPTION_VIDEO_STABILIZATION_MODE,
+                            StabilizationMode.UNSPECIFIED);
+                    // Will result to preview stabilization overall as per the CameraX impl. and API
+                    // docs
                 }
                 break;
         }

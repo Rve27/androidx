@@ -30,6 +30,10 @@ import androidx.camera.core.featurecombination.Feature
 internal class DynamicRangeFeature(val dynamicRange: DynamicRange) : Feature() {
     override val featureTypeInternal: FeatureTypeInternal = FeatureTypeInternal.DYNAMIC_RANGE
 
+    override fun toString(): String {
+        return "DynamicRangeFeature(dynamicRange=$dynamicRange)"
+    }
+
     companion object {
         @JvmField val DEFAULT_DYNAMIC_RANGE = DynamicRange.SDR
     }

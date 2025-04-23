@@ -28,6 +28,18 @@ import androidx.camera.core.featurecombination.Feature
 internal class ImageFormatFeature(val imageCaptureOutputFormat: Int) : Feature() {
     override val featureTypeInternal: FeatureTypeInternal = FeatureTypeInternal.IMAGE_FORMAT
 
+    override fun toString(): String {
+        return "ImageFormatFeature(imageCaptureOutputFormat=${getOutputFormatLabel()})"
+    }
+
+    private fun getOutputFormatLabel(): String {
+        return when (imageCaptureOutputFormat) {
+            ImageCapture.OUTPUT_FORMAT_JPEG_ULTRA_HDR -> "JPEG_R"
+            ImageCapture.OUTPUT_FORMAT_JPEG -> "JPEG"
+            else -> "UNDEFINED($imageCaptureOutputFormat)"
+        }
+    }
+
     companion object {
         const val DEFAULT_IMAGE_CAPTURE_OUTPUT_FORMAT = ImageCapture.OUTPUT_FORMAT_JPEG
     }

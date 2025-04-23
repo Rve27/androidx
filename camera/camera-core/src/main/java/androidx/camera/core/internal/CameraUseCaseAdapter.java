@@ -416,7 +416,9 @@ public final class CameraUseCaseAdapter implements Camera {
                         /* newUseCases = */ cameraUseCasesToAttach,
                         /* attachedUseCases = */ cameraUseCasesToKeep,
                         mCameraConfig,
-                        mTargetHighSpeedFps);
+                        mTargetHighSpeedFps,
+                        // TODO: b/404131863 - Pass true when feature combination is bound
+                        /* allowFeatureCombinationResolutions = */ false);
                 if (mSecondaryCameraInternal != null) {
                     secondaryStreamSpecMap = mStreamSpecsCalculator.calculateSuggestedStreamSpecs(
                             getCameraMode(),
@@ -424,7 +426,9 @@ public final class CameraUseCaseAdapter implements Camera {
                             /* newUseCases = */ cameraUseCasesToAttach,
                             /* attachedUseCases = */ cameraUseCasesToKeep,
                             mCameraConfig,
-                            mTargetHighSpeedFps);
+                            mTargetHighSpeedFps,
+                            // TODO: b/404131863 - Pass true when feature combination is bound
+                            /* allowFeatureCombinationResolutions = */ false);
                 }
                 // TODO(b/265704882): enable stream sharing for LEVEL_3 and high preview
                 //  resolution. Throw exception here if (applyStreamSharing == false), both video
@@ -1125,7 +1129,7 @@ public final class CameraUseCaseAdapter implements Camera {
             useCasesToVerify = calculateCameraUseCases(useCasesToVerify, null, streamSharing);
         }
         return mCameraInternal.getCameraInfoInternal().isUseCaseCombinationSupported(
-                new ArrayList<>(useCasesToVerify), getCameraMode(), mCameraConfig);
+                new ArrayList<>(useCasesToVerify), getCameraMode(), false, mCameraConfig);
     }
 
     /**
@@ -1224,7 +1228,8 @@ public final class CameraUseCaseAdapter implements Camera {
         return false;
     }
 
-    private static boolean isVideoCapture(@Nullable UseCase useCase) {
+    /** Checks if a [UseCase] is a video capture use case instance. */
+    public static boolean isVideoCapture(@Nullable UseCase useCase) {
         if (useCase != null) {
             if (useCase.getCurrentConfig().containsOption(OPTION_CAPTURE_TYPE)) {
                 return useCase.getCurrentConfig().getCaptureType() == CaptureType.VIDEO_CAPTURE;

@@ -50,6 +50,7 @@ public class FakeStreamSpecsCalculator : StreamSpecsCalculator {
         attachedUseCases: List<UseCase>,
         cameraConfig: CameraConfig,
         targetHighSpeedFrameRate: Range<Int>,
+        allowFeatureCombinationResolutions: Boolean
     ): Map<UseCase, ExtendedStreamSpec> {
         Logger.d(TAG, "calculateSuggestedStreamSpecs: supportedStreamSpecs = $supportedStreamSpecs")
 
@@ -66,9 +67,7 @@ public class FakeStreamSpecsCalculator : StreamSpecsCalculator {
 
                     if (
                         streamSpec.expectedFrameRateRange !=
-                            useCaseConfig.getTargetFrameRate(
-                                StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
-                            )
+                            useCaseConfig.getTargetFrameRate(FRAME_RATE_RANGE_UNSPECIFIED)
                     ) {
                         return@find false
                     }
@@ -90,17 +89,16 @@ public class FakeStreamSpecsCalculator : StreamSpecsCalculator {
                 }
 
             if (supportedSpec == null) {
-                Logger.d(
-                    TAG,
-                    "useCase = $useCase" +
-                        ", dynamicRange = ${useCaseConfig.dynamicRange}" +
+                val logMsg =
+                    "No supported stream spec found for useCase = $useCase with " +
+                        "dynamicRange = ${useCaseConfig.dynamicRange}" +
                         ", fpsRange = " +
                         "${useCaseConfig.getTargetFrameRate(FRAME_RATE_RANGE_UNSPECIFIED)}" +
                         ", imageFormat = ${useCaseConfig.inputFormat}" +
                         ", previewStabilizationMode = ${useCaseConfig.previewStabilizationMode}"
-                )
 
-                throw IllegalArgumentException("No supported stream spec found for $useCase")
+                Logger.d(TAG, logMsg)
+                throw IllegalArgumentException(logMsg)
             } else {
                 streamSpecs[useCase] = supportedSpec
             }

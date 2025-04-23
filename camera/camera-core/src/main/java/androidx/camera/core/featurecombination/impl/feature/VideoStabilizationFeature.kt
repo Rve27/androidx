@@ -33,6 +33,10 @@ public class VideoStabilizationFeature(public val mode: StabilizationMode) : Fea
 
     override val featureTypeInternal: FeatureTypeInternal = FeatureTypeInternal.VIDEO_STABILIZATION
 
+    override fun toString(): String {
+        return "VideoStabilizationFeature(mode=${mode.name})"
+    }
+
     internal companion object {
         @JvmField val DEFAULT_STABILIZATION_MODE = StabilizationMode.OFF
     }
