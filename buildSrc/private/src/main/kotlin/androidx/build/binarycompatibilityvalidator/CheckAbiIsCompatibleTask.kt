@@ -105,9 +105,9 @@ constructor(@Internal protected val workerExecutor: WorkerExecutor) : DefaultTas
 
 private interface CheckCompatibilityParameters : WorkParameters {
     val previousApiDumpText: Property<String>
-    val previousApiPath: Property<String?>
+    val previousApiPath: Property<String>
     val currentApiDumpText: Property<String>
-    val currentApiPath: Property<String?>
+    val currentApiPath: Property<String>
     val baseline: RegularFileProperty
 }
 
