@@ -18,10 +18,6 @@ package androidx.appfunctions
 
 import android.content.Context
 import android.os.OutcomeReceiver
-import androidx.appfunctions.internal.AggregatedAppFunctionInventory
-import androidx.appfunctions.internal.AggregatedAppFunctionInvoker
-import androidx.appfunctions.internal.AppFunctionInventory
-import androidx.appfunctions.internal.AppFunctionInvoker
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
 import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata.Companion.TYPE_LONG
@@ -30,6 +26,11 @@ import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata.Companion
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
+import androidx.appfunctions.service.AppFunctionServiceDelegate
+import androidx.appfunctions.service.internal.AggregatedAppFunctionInventory
+import androidx.appfunctions.service.internal.AggregatedAppFunctionInvoker
+import androidx.appfunctions.service.internal.AppFunctionInventory
+import androidx.appfunctions.service.internal.AppFunctionInvoker
 import androidx.appfunctions.testing.FakeTranslator
 import androidx.appfunctions.testing.FakeTranslatorSelector
 import androidx.test.core.app.ApplicationProvider

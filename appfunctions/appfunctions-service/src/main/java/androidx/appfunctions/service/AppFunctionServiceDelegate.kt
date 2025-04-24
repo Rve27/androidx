@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions
+package androidx.appfunctions.service
 
 import android.content.Context
 import android.os.Build
 import android.os.OutcomeReceiver
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.appfunctions.internal.AggregatedAppFunctionInventory
-import androidx.appfunctions.internal.AggregatedAppFunctionInvoker
+import androidx.appfunctions.AppFunctionAppUnknownException
+import androidx.appfunctions.AppFunctionCancelledException
+import androidx.appfunctions.AppFunctionContext
+import androidx.appfunctions.AppFunctionException
+import androidx.appfunctions.AppFunctionFunctionNotFoundException
+import androidx.appfunctions.ExecuteAppFunctionRequest
+import androidx.appfunctions.ExecuteAppFunctionResponse
 import androidx.appfunctions.internal.Constants.APP_FUNCTIONS_TAG
 import androidx.appfunctions.internal.Translator
 import androidx.appfunctions.internal.TranslatorSelector
-import androidx.appfunctions.internal.unsafeBuildReturnValue
-import androidx.appfunctions.internal.unsafeGetParameterValue
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
+import androidx.appfunctions.service.internal.AggregatedAppFunctionInventory
+import androidx.appfunctions.service.internal.AggregatedAppFunctionInvoker
+import androidx.appfunctions.service.internal.unsafeBuildReturnValue
+import androidx.appfunctions.service.internal.unsafeGetParameterValue
 import kotlin.coroutines.CoroutineContext
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions.internal
+package androidx.appfunctions.service.internal
 
 import android.os.Build
 import android.util.Log
@@ -40,8 +40,8 @@ import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 /**
  * Gets the parameter value from [AppFunctionData] based on [parameterMetadata].
  *
- * @throws [androidx.appfunctions.AppFunctionInvalidArgumentException] if the parameter in
- *   [AppFunctionData] is not valid according to [parameterMetadata].
+ * @throws [AppFunctionInvalidArgumentException] if the parameter in [AppFunctionData] is not valid
+ *   according to [parameterMetadata].
  */
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 internal fun AppFunctionData.unsafeGetParameterValue(

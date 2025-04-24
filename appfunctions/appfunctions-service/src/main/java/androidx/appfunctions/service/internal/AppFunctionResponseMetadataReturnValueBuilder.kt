@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions.internal
+package androidx.appfunctions.service.internal
 
 import android.app.PendingIntent
 import android.os.Build

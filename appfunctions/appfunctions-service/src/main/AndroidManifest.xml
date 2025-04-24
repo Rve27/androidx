@@ -18,7 +18,7 @@
     <application>
         <!--TODO(b/395589225): Provide platform implementation service based on API level-->
         <service
-            android:name="androidx.appfunctions.ExtensionAppFunctionService"
+            android:name=".ExtensionAppFunctionService"
             android:permission="android.permission.BIND_APP_FUNCTION_SERVICE"
             android:exported="true">
             <!-- XML file property for Legacy AppSearch Indexer.-->

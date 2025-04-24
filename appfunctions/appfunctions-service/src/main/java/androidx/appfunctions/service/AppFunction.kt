@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions
+package androidx.appfunctions.service
 
 /**
  * Marks a function within a class as callable by other applications.

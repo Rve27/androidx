@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions.internal
+package androidx.appfunctions.service.internal
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.appfunctions.internal.findImpl
 
 /** Provides manual dependency injection for AppFunction runtime infrastructure. */
 @RequiresApi(Build.VERSION_CODES.S)

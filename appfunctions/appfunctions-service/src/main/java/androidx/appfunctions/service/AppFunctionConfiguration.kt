@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.appfunctions
+package androidx.appfunctions.service
 
 /** The configuration object used to customize AppFunction setup. */
 public class AppFunctionConfiguration

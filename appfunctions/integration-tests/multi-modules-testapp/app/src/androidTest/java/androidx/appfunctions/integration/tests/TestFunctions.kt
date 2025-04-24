@@ -19,13 +19,13 @@ package androidx.appfunctions.integration.tests
 import android.app.PendingIntent
 import android.content.Intent
 import android.util.Log
-import androidx.appfunctions.AppFunction
 import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionInvalidArgumentException
 import androidx.appfunctions.AppFunctionOpenable
 import androidx.appfunctions.AppFunctionSerializable
 import androidx.appfunctions.schema.notes.AppFunctionNote
 import androidx.appfunctions.schema.notes.CreateNoteAppFunction
+import androidx.appfunctions.service.AppFunction
 import java.time.LocalDateTime
 
 @AppFunctionSerializable data class SetField<T>(val value: T)

@@ -16,6 +16,7 @@
 
 package androidx.appfunctions
 
+import androidx.appfunctions.service.AppFunctionConfiguration
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
