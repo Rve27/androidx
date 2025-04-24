@@ -42,6 +42,6 @@ class AppFunctionUriTest {
         val resultAppFunctionUri = AppFunctionUri.fromUri(androidUri)
 
         assertIs<AppFunctionUri>(resultAppFunctionUri)
-        assertThat(resultAppFunctionUri.uriString).isEqualTo(uriString)
+        assertThat(resultAppFunctionUri.uri).isEqualTo(uriString)
     }
 }

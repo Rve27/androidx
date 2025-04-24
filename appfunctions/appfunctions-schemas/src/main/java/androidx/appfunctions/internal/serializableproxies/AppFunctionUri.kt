@@ -23,9 +23,9 @@ import androidx.appfunctions.AppFunctionSerializableProxy
 
 @RestrictTo(Scope.LIBRARY_GROUP)
 @AppFunctionSerializableProxy(targetClass = Uri::class)
-public data class AppFunctionUri(val uriString: String) {
+public data class AppFunctionUri(val uri: String) {
     public fun toUri(): Uri {
-        return Uri.parse(uriString)
+        return Uri.parse(uri)
     }
 
     public companion object {
