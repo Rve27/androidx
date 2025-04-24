@@ -438,10 +438,7 @@ public final class CameraUseCaseAdapter implements Camera {
                 //  combination directly with #isUseCasesCombinationSupported(). However
                 //  calculateSuggestedStreamSpecs() is currently slow. We will do it after it's
                 //  optimized
-                // Only allow StreamSharing for non-concurrent mode.
-                if (!applyStreamSharing && !hasExtension()
-                        && mCameraCoordinator.getCameraOperatingMode()
-                        != CameraCoordinator.CAMERA_OPERATING_MODE_CONCURRENT) {
+                if (!applyStreamSharing && isStreamSharingAllowed()) {
                     // Try again and see if StreamSharing resolves the issue.
                     updateUseCases(appUseCases, /*applyStreamSharing*/true, isDualCamera);
                     return;
@@ -536,6 +533,23 @@ public final class CameraUseCaseAdapter implements Camera {
             mPlaceholderForExtensions = placeholderForExtensions;
             mStreamSharing = streamSharing;
         }
+    }
+
+    /**
+     * Checks if StreamSharing is allowed under the current configuration.
+     *
+     * <p>StreamSharing is only allowed when the following conditions are met:
+     * <ul>
+     * <li>When extension is not enabled.</li>
+     * <li>When concurrent camera is not enabled.</li>
+     * <li>When high-speed session is not enabled.</li>
+     * </ul>
+     */
+    private boolean isStreamSharingAllowed() {
+        return !hasExtension()
+                && mCameraCoordinator.getCameraOperatingMode()
+                != CameraCoordinator.CAMERA_OPERATING_MODE_CONCURRENT
+                && mTargetHighSpeedFps.equals(FRAME_RATE_RANGE_UNSPECIFIED);
     }
 
     private boolean shouldForceEnableStreamSharing(@NonNull Collection<UseCase> appUseCases) {

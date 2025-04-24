@@ -772,6 +772,46 @@ public final class Recorder implements VideoOutput {
     }
 
     /**
+     * Gets the video encoding frame rate of the Recorder.
+     *
+     * @return the value provided to {@link Builder#setVideoEncodingFrameRate(int)} on the builder
+     * used to create this recorder. Returns 0, if {@link Builder#setVideoEncodingFrameRate(int)}
+     * is not called.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public int getVideoEncodingFrameRate() {
+        return getObservableData(mMediaSpec).getVideoSpec().getEncodeFrameRate();
+    }
+
+    /**
+     * Sets the intended video encoding frame rate for recording, enabling video speed
+     * adjustment.
+     *
+     * <p>This method is primarily intended for creating slow-motion video effects. It allows
+     * you to specify a different frame rate for the encoded video than the actual capture
+     * frame rate. Timestamps of the captured frames will be adjusted to achieve the desired
+     * encoding frame rate, resulting in a speed adjustment.
+     *
+     * <p>For example, to create a 1/4 slow-motion effect, you could configure the capture
+     * frame rate to 120fps and set the encoding frame rate to 30fps using this method.
+     *
+     * <p>If you only need to configure the capture frame rate without any speed adjustment,
+     * use {@link VideoCapture.Builder#setTargetFrameRate(Range)} instead.
+     *
+     * <p>By default, if this method is not called, the incoming frame rate from the camera
+     * will be used for encoding, resulting in no speed adjustment.
+     *
+     * @param frameRate the video encoding frame rate in frames per second.
+     * @throws IllegalArgumentException if frame rate is 0 or less.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public void setVideoEncodingFrameRate(@IntRange(from = 1) int frameRate) {
+        checkArgument(frameRate >= 1, "frameRate must be greater than 0.");
+        mMediaSpec.setState(getObservableData(mMediaSpec).toBuilder().configureVideo(
+                builder -> builder.setEncodeFrameRate(frameRate)).build());
+    }
+
+    /**
      * Gets the aspect ratio of this Recorder.
      *
      * @return the value from {@link Builder#setAspectRatio(int)} or
