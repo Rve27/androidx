@@ -168,7 +168,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
         val NO_SCHEMA_EXECUTION_SUCCEED =
             AppFunctionMetadata(
                 id = FunctionIds.NO_SCHEMA_EXECUTION_SUCCEED,
-                packageName = "androidx.appfunctions.runtime.test",
+                packageName = "androidx.appfunctions.service.test",
                 isEnabled = true,
                 schema = null,
                 parameters = emptyList(),
@@ -186,7 +186,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
         val NO_SCHEMA_ENABLED_BY_DEFAULT =
             AppFunctionMetadata(
                 id = FunctionIds.NO_SCHEMA_ENABLED_BY_DEFAULT,
-                packageName = "androidx.appfunctions.runtime.test",
+                packageName = "androidx.appfunctions.service.test",
                 isEnabled = true,
                 schema = null,
                 parameters = emptyList(),
@@ -204,7 +204,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
         val NO_SCHEMA_DISABLED_BY_DEFAULT =
             AppFunctionMetadata(
                 id = FunctionIds.NO_SCHEMA_DISABLED_BY_DEFAULT,
-                packageName = "androidx.appfunctions.runtime.test",
+                packageName = "androidx.appfunctions.service.test",
                 isEnabled = false,
                 schema = null,
                 parameters = emptyList(),
@@ -222,7 +222,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
         val MEDIA_SCHEMA2_PRINT =
             AppFunctionMetadata(
                 id = FunctionIds.MEDIA_SCHEMA2_PRINT,
-                packageName = "androidx.appfunctions.runtime.test",
+                packageName = "androidx.appfunctions.service.test",
                 isEnabled = false,
                 schema = AppFunctionSchemaMetadata(category = "media", name = "print", version = 2),
                 parameters = emptyList(),
@@ -240,7 +240,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
         val MEDIA_SCHEMA_PRINT =
             AppFunctionMetadata(
                 id = FunctionIds.MEDIA_SCHEMA_PRINT,
-                packageName = "androidx.appfunctions.runtime.test",
+                packageName = "androidx.appfunctions.service.test",
                 isEnabled = true,
                 schema = AppFunctionSchemaMetadata(category = "media", name = "print", version = 1),
                 parameters = emptyList(),
@@ -258,7 +258,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
         val NOTES_SCHEMA_PRINT =
             AppFunctionMetadata(
                 id = FunctionIds.NOTES_SCHEMA_PRINT,
-                packageName = "androidx.appfunctions.runtime.test",
+                packageName = "androidx.appfunctions.service.test",
                 isEnabled = true,
                 schema = AppFunctionSchemaMetadata(category = "notes", name = "print", version = 1),
                 parameters = emptyList(),
@@ -276,7 +276,7 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
         val NO_SCHEMA_EXECUTION_FAIL =
             AppFunctionMetadata(
                 id = FunctionIds.NO_SCHEMA_EXECUTION_FAIL,
-                packageName = "androidx.appfunctions.runtime.test",
+                packageName = "androidx.appfunctions.service.test",
                 isEnabled = true,
                 schema = null,
                 parameters = emptyList(),

@@ -21,15 +21,17 @@ import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
 
 /**
- * An [AppFunctionInventory] that provides the function metadata to look up based on
- * [AppFunctionSchemaMetadata].
+ * An inventory that provides the function metadata to look up based on [AppFunctionSchemaMetadata].
  *
  * When enabled, the AppFunction compiler will automatically generate the implementation of this
  * class to access statically generated metadata from the interfaces annotated with
  * [androidx.appfunctions.AppFunctionSchemaDefinition].
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public abstract class SchemaAppFunctionInventory : AppFunctionInventory {
+public abstract class SchemaAppFunctionInventory {
+    /** A map of function IDs to their corresponding [CompileTimeAppFunctionMetadata]. */
+    public abstract val functionIdToMetadataMap: Map<String, CompileTimeAppFunctionMetadata>
+
     /** The map of [AppFunctionSchemaMetadata] to [CompileTimeAppFunctionMetadata]. */
     public val schemaFunctionsMap:
         Map<AppFunctionSchemaMetadata, CompileTimeAppFunctionMetadata> by lazy {

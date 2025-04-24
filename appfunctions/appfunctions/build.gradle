@@ -71,12 +71,12 @@ android {
     buildTypes.configureEach {
         consumerProguardFiles "proguard-rules.pro"
     }
-    namespace = "androidx.appfunctions.common"
+    namespace = "androidx.appfunctions"
 }
 
 androidx {
-    name = "androidx.appfunctions:appfunctions-common"
+    name = "androidx.appfunctions:appfunctions"
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2024"
-    description = "Contains the code shared by appfunctions-app-runtime , appfunctions-agent-runtime and appfunctions-schema libraries."
+    description = "Provides the core functionality to use AppFunctions."
 }
