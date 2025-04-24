@@ -11,7 +11,27 @@ package androidx.compose.material3.adaptive.layout {
     property public androidx.compose.material3.adaptive.layout.AdaptStrategy Hide;
   }
 
-  public static final class AdaptStrategy.Reflow implements androidx.compose.material3.adaptive.layout.AdaptStrategy {
+  @androidx.compose.runtime.Immutable public static final class AdaptStrategy.Levitate implements androidx.compose.material3.adaptive.layout.AdaptStrategy {
+    ctor public AdaptStrategy.Levitate();
+    ctor public AdaptStrategy.Levitate(optional String strategy, optional androidx.compose.ui.Alignment alignment);
+    method public androidx.compose.ui.Alignment getAlignment();
+    method public String getStrategy();
+    property public androidx.compose.ui.Alignment alignment;
+    property public String strategy;
+  }
+
+  @kotlin.jvm.JvmInline public static final value class AdaptStrategy.Levitate.Strategy {
+    field public static final androidx.compose.material3.adaptive.layout.AdaptStrategy.Levitate.Strategy.Companion Companion;
+  }
+
+  public static final class AdaptStrategy.Levitate.Strategy.Companion {
+    method public String getAlways();
+    method public String getSinglePaneOnly();
+    property public String Always;
+    property public String SinglePaneOnly;
+  }
+
+  @androidx.compose.runtime.Immutable public static final class AdaptStrategy.Reflow implements androidx.compose.material3.adaptive.layout.AdaptStrategy {
     ctor public AdaptStrategy.Reflow(Object targetPane);
     method public Object getTargetPane();
     property public Object targetPane;
@@ -111,7 +131,13 @@ package androidx.compose.material3.adaptive.layout {
     property public androidx.compose.material3.adaptive.layout.PaneAdaptedValue Hidden;
   }
 
-  public static final class PaneAdaptedValue.Reflowed implements androidx.compose.material3.adaptive.layout.PaneAdaptedValue {
+  @androidx.compose.runtime.Immutable public static final class PaneAdaptedValue.Levitated implements androidx.compose.material3.adaptive.layout.PaneAdaptedValue {
+    ctor public PaneAdaptedValue.Levitated(androidx.compose.ui.Alignment alignment);
+    method public androidx.compose.ui.Alignment getAlignment();
+    property public androidx.compose.ui.Alignment alignment;
+  }
+
+  @androidx.compose.runtime.Immutable public static final class PaneAdaptedValue.Reflowed implements androidx.compose.material3.adaptive.layout.PaneAdaptedValue {
     ctor public PaneAdaptedValue.Reflowed(Object targetPane);
     method public Object getTargetPane();
     property public Object targetPane;
