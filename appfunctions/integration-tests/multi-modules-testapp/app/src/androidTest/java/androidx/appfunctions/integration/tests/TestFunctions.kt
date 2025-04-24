@@ -23,8 +23,6 @@ import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionInvalidArgumentException
 import androidx.appfunctions.AppFunctionOpenable
 import androidx.appfunctions.AppFunctionSerializable
-import androidx.appfunctions.schema.notes.AppFunctionNote
-import androidx.appfunctions.schema.notes.CreateNoteAppFunction
 import androidx.appfunctions.service.AppFunction
 import java.time.LocalDateTime
 
