@@ -250,11 +250,36 @@ internal constructor(
     public fun windowRoots(): List<AccessibilityNodeInfo> = uiDevice.windowRoots
 
     /**
-     * Returns the active window. Note that calling this method after [startApp], [startActivity] or
-     * [startIntent] without waiting for the app to be visible, will return the active window at the
-     * time of starting the app, i.e. the launcher if starting from there.
+     * Waits for the root node of the active window to become stable.
+     *
+     * A node is considered stable when it and its descendants have not changed over an interval of
+     * time. Optionally also the node image can be checked. Internally it works checking
+     * periodically that the internal properties of the node have not changed.
+     *
+     * @param stableTimeoutMs a timeout for the wait operation, to ensure not waiting forever for
+     *   stability.
+     * @param stableIntervalMs the interval during which the node should not be changing, in order
+     *   to be considered stable.
+     * @param stablePollIntervalMs specifies how often the ui should be checked for changes.
+     * @param requireStableScreenshot specifies if also the bitmap of the node should not change
+     *   over the specified [stableIntervalMs]. Note that this won't work with views that change
+     *   constantly, like a video player.
+     * @return a [StableResult] containing the latest acquired view hierarchy and screenshot, and a
+     *   flag indicating if the node was stable before timeout.
      */
-    public fun activeWindow(): AccessibilityWindowInfo = activeWindowRoot().window
+    @JvmOverloads
+    public fun waitForStableInActiveWindow(
+        stableTimeoutMs: Long = 3000,
+        stableIntervalMs: Long = 500,
+        stablePollIntervalMs: Long = 50,
+        requireStableScreenshot: Boolean = true,
+    ): StableResult =
+        uiDevice.waitForStableInActiveWindow(
+            stableTimeoutMs = stableTimeoutMs,
+            stablePollIntervalMs = stablePollIntervalMs,
+            stableIntervalMs = stableIntervalMs,
+            requireStableScreenshot = requireStableScreenshot,
+        )
 
     /**
      * Returns the active window root node. Note that calling this method after [startApp],

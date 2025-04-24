@@ -231,7 +231,6 @@ package androidx.test.uiautomator {
   }
 
   public final class UiAutomatorTestScope {
-    method public android.view.accessibility.AccessibilityWindowInfo activeWindow();
     method public android.view.accessibility.AccessibilityNodeInfo activeWindowRoot();
     method public void clearAppData();
     method public android.app.Instrumentation getInstrumentation();
@@ -259,6 +258,11 @@ package androidx.test.uiautomator {
     method public boolean waitForAppToBeVisible();
     method public boolean waitForAppToBeVisible(optional String appPackageName);
     method public boolean waitForAppToBeVisible(optional String appPackageName, optional long timeoutMs);
+    method public androidx.test.uiautomator.StableResult waitForStableInActiveWindow();
+    method public androidx.test.uiautomator.StableResult waitForStableInActiveWindow(optional long stableTimeoutMs);
+    method public androidx.test.uiautomator.StableResult waitForStableInActiveWindow(optional long stableTimeoutMs, optional long stableIntervalMs);
+    method public androidx.test.uiautomator.StableResult waitForStableInActiveWindow(optional long stableTimeoutMs, optional long stableIntervalMs, optional long stablePollIntervalMs);
+    method public androidx.test.uiautomator.StableResult waitForStableInActiveWindow(optional long stableTimeoutMs, optional long stableIntervalMs, optional long stablePollIntervalMs, optional boolean requireStableScreenshot);
     method public <T> androidx.test.uiautomator.watcher.WatcherRegistration watchFor(androidx.test.uiautomator.watcher.ScopedUiWatcher<T> watcher, kotlin.jvm.functions.Function1<? super T,kotlin.Unit> block);
     method public java.util.List<android.view.accessibility.AccessibilityNodeInfo> windowRoots();
     method public java.util.List<android.view.accessibility.AccessibilityWindowInfo> windows();
@@ -381,6 +385,11 @@ package androidx.test.uiautomator {
     method public static android.view.accessibility.AccessibilityNodeInfo waitForRootInActiveWindow(androidx.test.uiautomator.UiDevice, optional long timeoutMs);
     method public static android.view.accessibility.AccessibilityNodeInfo waitForRootInActiveWindow(androidx.test.uiautomator.UiDevice, optional long timeoutMs, optional long sleepIntervalMs);
     method public static android.view.accessibility.AccessibilityNodeInfo waitForRootInActiveWindow(androidx.test.uiautomator.UiDevice, optional long timeoutMs, optional long sleepIntervalMs, optional boolean clearCache);
+    method public static androidx.test.uiautomator.StableResult waitForStableInActiveWindow(androidx.test.uiautomator.UiDevice);
+    method public static androidx.test.uiautomator.StableResult waitForStableInActiveWindow(androidx.test.uiautomator.UiDevice, optional long stableTimeoutMs);
+    method public static androidx.test.uiautomator.StableResult waitForStableInActiveWindow(androidx.test.uiautomator.UiDevice, optional long stableTimeoutMs, optional long stableIntervalMs);
+    method public static androidx.test.uiautomator.StableResult waitForStableInActiveWindow(androidx.test.uiautomator.UiDevice, optional long stableTimeoutMs, optional long stableIntervalMs, optional long stablePollIntervalMs);
+    method public static androidx.test.uiautomator.StableResult waitForStableInActiveWindow(androidx.test.uiautomator.UiDevice, optional long stableTimeoutMs, optional long stableIntervalMs, optional long stablePollIntervalMs, optional boolean requireStableScreenshot);
     method public static java.util.List<android.view.accessibility.AccessibilityWindowInfo> windows(androidx.test.uiautomator.UiDevice);
   }
 

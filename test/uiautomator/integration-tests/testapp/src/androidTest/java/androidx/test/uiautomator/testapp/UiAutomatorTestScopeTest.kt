@@ -32,7 +32,6 @@ import androidx.test.uiautomator.onViewOrNull
 import androidx.test.uiautomator.scrollToView
 import androidx.test.uiautomator.textAsString
 import androidx.test.uiautomator.uiAutomator
-import androidx.test.uiautomator.waitForStable
 import androidx.test.uiautomator.watcher.ScopedUiWatcher
 import org.junit.Before
 import org.junit.Test
@@ -72,8 +71,11 @@ class UiAutomatorTestScopeTest {
     @LargeTest
     fun waitForStable() = uiAutomator {
         startActivity(MainActivity::class.java)
-        waitForAppToBeVisible()
-        activeWindow().waitForStable(stableTimeoutMs = 2000, stableIntervalMs = 1000)
+        waitForStableInActiveWindow(stableTimeoutMs = 10000, stableIntervalMs = 5000)
+
+        // The timeout of onView is set to `0`: this should fail if the previous transition
+        // hasn't completed.
+        onView(0) { id == "button" }.click()
     }
 
     @SdkSuppress(minSdkVersion = 26)
