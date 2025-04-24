@@ -59,12 +59,13 @@ import kotlinx.coroutines.launch
  * A class responsible for reading and searching for app functions based on a search specification.
  *
  * It searches for AppFunction documents using the [GlobalSearchSession] and converts them into
- * [AppFunctionMetadata] objects.
+ * [androidx.appfunctions.metadata.AppFunctionMetadata] objects.
  *
  * @param context The context of the application, used for session creation.
  * @param schemaAppFunctionInventory If provided, use to looks up the statically generated
- *   [AppFunctionMetadata] based on the [AppFunctionSchemaMetadata] when unable to retrieve the
- *   details from AppSearch.
+ *   [androidx.appfunctions.metadata.AppFunctionMetadata] based on the
+ *   [androidx.appfunctions.metadata.AppFunctionSchemaMetadata] when unable to retrieve the details
+ *   from AppSearch.
  */
 @RequiresApi(Build.VERSION_CODES.S)
 internal class AppSearchAppFunctionReader(
@@ -309,7 +310,8 @@ internal class AppSearchAppFunctionReader(
      * Returns the [AppFunctionSchemaMetadata] of the given app function. Returns null if the
      * function is not implementing a predefined schema.
      *
-     * @throws AppFunctionFunctionNotFoundException if the function does not exist.
+     * @throws androidx.appfunctions.AppFunctionFunctionNotFoundException if the function does not
+     *   exist.
      */
     override suspend fun getAppFunctionSchemaMetadata(
         functionId: String,

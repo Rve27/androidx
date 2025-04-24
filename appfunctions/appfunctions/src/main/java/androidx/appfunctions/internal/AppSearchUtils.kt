@@ -19,6 +19,7 @@ package androidx.appfunctions.internal
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.annotation.RestrictTo
 import androidx.appsearch.app.GlobalSearchSession
 import androidx.appsearch.app.SearchResult
 import androidx.appsearch.app.SearchResults
@@ -51,7 +52,8 @@ internal suspend fun createSearchSession(context: Context): GlobalSearchSession 
  * @return a list of [T] instances or null which contains the results from the query. Returns an
  *   empty list if nothing is found.
  */
-internal suspend fun <T : Any> SearchResults.readAll(
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public suspend fun <T : Any> SearchResults.readAll(
     transformToDocumentClassOrNull: (SearchResult) -> T?
 ): List<T?> {
     return buildList<T?> {

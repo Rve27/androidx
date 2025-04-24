@@ -22,7 +22,7 @@ import androidx.appfunctions.metadata.AppFunctionResponseMetadata
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
 import com.google.common.truth.Truth.assertThat
-import kotlin.test.Test
+import org.junit.Test
 
 class SchemaAppFunctionInventoryTest {
 

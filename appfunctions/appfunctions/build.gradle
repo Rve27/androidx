@@ -35,7 +35,12 @@ plugins {
 dependencies {
     api(libs.kotlinStdlib)
     // Public dependencies
+    implementation(libs.kotlinCoroutinesAndroid)
     implementation("androidx.appsearch:appsearch:1.1.0-beta01")
+    implementation("androidx.appsearch:appsearch-platform-storage:1.1.0-beta01")
+    implementation(libs.kotlinCoroutinesGuava) {
+        exclude group: "com.google.guava", module: "guava"
+    }
     // Manually specify the dependency on kotlinMetadataJvm due to missing prebuilt for appsearch
     // compiler.
     kapt(libs.kotlinMetadataJvm)
@@ -50,6 +55,14 @@ dependencies {
     // Test dependencies
     testImplementation(libs.junit)
     testImplementation(libs.truth)
+    testImplementation(libs.testMonitor)
+    testImplementation(libs.kotlinCoroutinesTest)
+    testImplementation(libs.testRunner)
+    testImplementation(project(":appfunctions:appfunctions-stubs"))
+    testImplementation(libs.mockitoCore)
+    testImplementation(libs.testCore)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.kotlinTest)
 
     // Test dependencies
     androidTestImplementation(libs.truth)

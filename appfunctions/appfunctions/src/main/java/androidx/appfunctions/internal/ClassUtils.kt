@@ -18,6 +18,7 @@ package androidx.appfunctions.internal
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.annotation.RestrictTo
 
 /**
  * Finds the implementation of the given [Class].
@@ -28,7 +29,8 @@ import androidx.annotation.RequiresApi
  * @throws RuntimeException if unable to find the implementation class.
  */
 @RequiresApi(Build.VERSION_CODES.S)
-internal fun <T : Any> Class<T>.findImpl(prefix: String, suffix: String): T {
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun <T : Any> Class<T>.findImpl(prefix: String, suffix: String): T {
     val fullPackage = this.packageName
     val name = this.canonicalName
     requireNotNull(name)
