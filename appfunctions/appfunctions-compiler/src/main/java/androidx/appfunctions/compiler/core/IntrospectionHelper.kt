@@ -190,4 +190,12 @@ object IntrospectionHelper {
 
         const val PROPERTY_INVOKERS_NAME = "invokers"
     }
+
+    object AppFunctionDataClass {
+        val CLASS_NAME = ClassName(APP_FUNCTIONS_PACKAGE_NAME, "AppFunctionData")
+
+        object BuilderClass {
+            val CLASS_NAME = ClassName(APP_FUNCTIONS_PACKAGE_NAME, "AppFunctionData", "Builder")
+        }
+    }
 }
