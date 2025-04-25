@@ -250,6 +250,14 @@ public final class Flags {
     public static final String FLAG_ENABLE_RESULT_ABORTED =
             FLAG_PREFIX + "enable_result_aborted";
 
+    /**
+     * Enables throwing {@link androidx.appsearch.exceptions.AppSearchException} with code
+     * {@link androidx.appsearch.app.AppSearchResult#RESULT_ABORTED} if the search result page token
+     * is not found in native.
+     */
+    public static final String FLAG_ENABLE_THROW_EXCEPTION_FOR_NATIVE_NOT_FOUND_PAGE_TOKEN =
+            FLAG_PREFIX + "enable_throw_exception_for_native_not_found_page_token";
+
     // Whether the features should be enabled.
     //
     // In Jetpack, those should always return true.
@@ -522,6 +530,15 @@ public final class Flags {
      * enabled.
      */
     public static boolean enableResultAborted() {
+        return true;
+    }
+
+    /**
+     * Whether {@link androidx.appsearch.exceptions.AppSearchException} with code
+     * {@link androidx.appsearch.app.AppSearchResult#RESULT_ABORTED} should be thrown if the search
+     * result page token is not found in native.
+     */
+    public static boolean enableThrowExceptionForNativeNotFoundPageToken() {
         return true;
     }
 }

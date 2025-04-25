@@ -2456,6 +2456,7 @@ public final class AppSearchImpl implements Closeable {
      * @return The next page of results of previously executed query.
      * @throws AppSearchException on IcingSearchEngine error or if can't advance on nextPageToken.
      */
+    @OptIn(markerClass = ExperimentalAppSearchApi.class)
     public @NonNull SearchResultPage getNextPage(@NonNull String packageName, long nextPageToken,
             QueryStats.@Nullable Builder sStatsBuilder)
             throws AppSearchException {
@@ -2474,15 +2475,25 @@ public final class AppSearchImpl implements Closeable {
 
             LogUtil.piiTrace(TAG, "getNextPage, request", nextPageToken);
             checkNextPageToken(packageName, nextPageToken);
-            SearchResultProto searchResultProto = mIcingSearchEngineLocked.getNextPage(
-                    nextPageToken);
+            SearchResultProto searchResultProto;
+            if (nextPageToken != SearchResultPage.EMPTY_PAGE_TOKEN) {
+                searchResultProto = mIcingSearchEngineLocked.getNextPage(nextPageToken);
+            } else {
+                // If it is an empty page token, then avoid sending it to Icing to save a JNI call.
+                searchResultProto = SearchResultProto.newBuilder()
+                        .setStatus(StatusProto.newBuilder().setCode(StatusProto.Code.OK).build())
+                        .setNextPageToken(SearchResultPage.EMPTY_PAGE_TOKEN)
+                        .build();
+            }
 
             if (sStatsBuilder != null) {
                 sStatsBuilder.setStatusCode(statusProtoToResultCode(searchResultProto.getStatus()));
                 // Join query stats are handled by SearchResultsImpl, which has access to the
                 // original SearchSpec.
-                AppSearchLoggerHelper.copyNativeStats(searchResultProto.getQueryStats(),
-                        sStatsBuilder);
+                if (nextPageToken != SearchResultPage.EMPTY_PAGE_TOKEN) {
+                    AppSearchLoggerHelper.copyNativeStats(searchResultProto.getQueryStats(),
+                            sStatsBuilder);
+                }
             }
 
             LogUtil.piiTrace(
@@ -2503,6 +2514,17 @@ public final class AppSearchImpl implements Closeable {
                     nextPageTokensForPackage.remove(nextPageToken);
                 }
             }
+
+            // In normal use case, the page token is guaranteed to be valid, so if page token not
+            // found flag is true, then it is mostly caused by pagination cache eviction. Therefore,
+            // throw an exception indicating that the search and pagination is aborted.
+            if (Flags.enableResultAborted()
+                    && Flags.enableThrowExceptionForNativeNotFoundPageToken()
+                    && searchResultProto.getPageTokenNotFound()) {
+                throw new AppSearchException(AppSearchResult.RESULT_ABORTED,
+                        "Page token not found. It is usually caused by pagination cache eviction.");
+            }
+
             long rewriteSearchResultLatencyStartMillis = SystemClock.elapsedRealtime();
             // Rewrite search result before we return.
             SearchResultPage searchResultPage = SearchResultToProtoConverter
