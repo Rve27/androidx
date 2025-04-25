@@ -16,5 +16,5 @@
 
 package androidx.navigationevent
 
-// TODO(mgalhardo): Empty file to prevent post-submit failures from empty KLibs on native targets.
-//  Delete once there's at least one shared source file.
+/** Provides input to the given [NavigationEventDispatcher]. */
+public expect class NavigationInputHandler(dispatcher: NavigationEventDispatcher)
