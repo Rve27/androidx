@@ -336,8 +336,8 @@ constructor(
                 targetIntent.data!!, // Already checked previously so it's safe.
                 targetIntent.categories!!.toList(), // Already checked previously so it's safe.
                 executor,
-                object : OutcomeReceiver<Void, Throwable> {
-                    override fun onResult(result: Void) {
+                object : OutcomeReceiver<Void?, Throwable> {
+                    override fun onResult(result: Void?) {
                         logDOrNotUser("startRemoteActivity", "onResult")
                         completer.set(null)
                     }

@@ -70,7 +70,7 @@ internal open class RemoteInteractionsManagerCompat(context: Context) : IRemoteI
         dataUri: Uri,
         additionalCategories: List<String>,
         executor: Executor,
-        outcomeReceiver: OutcomeReceiver<Void, Throwable>
+        outcomeReceiver: OutcomeReceiver<Void?, Throwable>
     ) {
         if (isStartRemoteActivityApiSupported) {
             remoteInteractionsManager!!.startRemoteActivity(
