@@ -34,6 +34,7 @@ import androidx.compose.material3.samples.AnimatedFloatingActionButtonSample
 import androidx.compose.material3.samples.AssistChipSample
 import androidx.compose.material3.samples.BasicAlertDialogSample
 import androidx.compose.material3.samples.BottomAppBarWithFAB
+import androidx.compose.material3.samples.BottomAppBarWithOverflow
 import androidx.compose.material3.samples.BottomSheetScaffoldNestedScrollSample
 import androidx.compose.material3.samples.ButtonGroupSample
 import androidx.compose.material3.samples.ButtonSample
@@ -161,6 +162,7 @@ import androidx.compose.material3.samples.OutlinedIconToggleButtonSample
 import androidx.compose.material3.samples.OutlinedSplitButtonSample
 import androidx.compose.material3.samples.OutlinedTextFieldWithInitialValueAndSelection
 import androidx.compose.material3.samples.OutlinedToggleButtonSample
+import androidx.compose.material3.samples.OverflowingHorizontalFloatingToolbarSample
 import androidx.compose.material3.samples.PasswordTextField
 import androidx.compose.material3.samples.PermanentNavigationDrawerSample
 import androidx.compose.material3.samples.PinnedTopAppBar
@@ -782,6 +784,13 @@ val BottomAppBarsExamples =
             BottomAppBarWithFAB()
         },
         Example(
+            name = "BottomAppBarWithOverflow",
+            description = BottomAppBarsExampleDescription,
+            sourceUrl = BottomAppBarsExampleSourceUrl,
+        ) {
+            BottomAppBarWithOverflow()
+        },
+        Example(
             name = "ExitAlwaysBottomAppBar",
             description = BottomAppBarsExampleDescription,
             sourceUrl = BottomAppBarsExampleSourceUrl,
@@ -919,6 +928,13 @@ val FloatingToolbarsExamples =
             sourceUrl = FloatingToolbarsExampleSourceUrl,
         ) {
             ExpandableHorizontalFloatingToolbarSample()
+        },
+        Example(
+            name = "OverflowingHorizontalFloatingToolbarSample",
+            description = FloatingToolbarsExampleDescription,
+            sourceUrl = FloatingToolbarsExampleSourceUrl,
+        ) {
+            OverflowingHorizontalFloatingToolbarSample()
         },
         Example(
             name = "ScrollableHorizontalFloatingToolbarSample",

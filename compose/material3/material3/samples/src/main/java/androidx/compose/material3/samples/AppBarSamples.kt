@@ -35,6 +35,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -1083,4 +1085,78 @@ fun ExitAlwaysBottomAppBarFixedVibrant() {
             }
         }
     )
+}
+
+/** A sample for a [FlexibleBottomAppBar] with an overflow behavior when the content doesn't fit. */
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@Preview
+@Sampled
+@Composable
+fun BottomAppBarWithOverflow() {
+    FlexibleBottomAppBar(
+        contentPadding = PaddingValues(horizontal = 96.dp),
+        horizontalArrangement = BottomAppBarDefaults.FlexibleFixedHorizontalArrangement,
+    ) {
+        AppBarRow(
+            overflowIndicator = { menuState ->
+                IconButton(
+                    onClick = {
+                        if (menuState.isExpanded) {
+                            menuState.dismiss()
+                        } else {
+                            menuState.show()
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.MoreVert,
+                        contentDescription = "Localized description"
+                    )
+                }
+            }
+        ) {
+            clickableItem(
+                onClick = { /* doSomething() */ },
+                icon = {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Localized description"
+                    )
+                },
+                label = "ArrowBack"
+            )
+            clickableItem(
+                onClick = { /* doSomething() */ },
+                icon = {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = "Localized description"
+                    )
+                },
+                label = "ArrowForward"
+            )
+            clickableItem(
+                onClick = { /* doSomething() */ },
+                icon = { Icon(Icons.Filled.Add, contentDescription = "Localized description") },
+                label = "Add"
+            )
+            clickableItem(
+                onClick = { /* doSomething() */ },
+                icon = { Icon(Icons.Filled.Check, contentDescription = "Localized description") },
+                label = "Check"
+            )
+            clickableItem(
+                onClick = { /* doSomething() */ },
+                icon = { Icon(Icons.Filled.Edit, contentDescription = "Localized description") },
+                label = "Edit"
+            )
+            clickableItem(
+                onClick = { /* doSomething() */ },
+                icon = {
+                    Icon(Icons.Filled.Favorite, contentDescription = "Localized description")
+                },
+                label = "Favorite"
+            )
+        }
+    }
 }

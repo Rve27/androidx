@@ -1308,6 +1308,7 @@ fun BottomAppBar(
  * customize its nested scrolling behavior when working in conjunction with a scrolling content
  * looks like:
  *
+ * @sample androidx.compose.material3.samples.BottomAppBarWithOverflow
  * @sample androidx.compose.material3.samples.ExitAlwaysBottomAppBarSpacedAround
  * @sample androidx.compose.material3.samples.ExitAlwaysBottomAppBarSpacedBetween
  * @sample androidx.compose.material3.samples.ExitAlwaysBottomAppBarSpacedEvenly
