@@ -46,6 +46,10 @@ dependencies {
     kapt(libs.kotlinMetadataJvm)
     kapt("androidx.appsearch:appsearch-compiler:1.1.0-beta01")
 
+    // Compiler dependencies
+    // TODO(b/413622177): Enable KSP on appfunctions module to generate proxy factory.
+    // ksp(project(":appfunctions:appfunctions-compiler"))
+
     // Internal dependencies
     implementation("androidx.annotation:annotation:1.8.1")
 
@@ -70,6 +74,7 @@ dependencies {
     androidTestImplementation(libs.testRunner)
     androidTestImplementation(libs.testParameterInjector)
     androidTestCompileOnly(project(":appfunctions:appfunctions-stubs"))
+    androidTestImplementation(libs.kotlinTest)
 }
 
 // Restricts AppSearch generated code to library to avoid it surfacing in public API.

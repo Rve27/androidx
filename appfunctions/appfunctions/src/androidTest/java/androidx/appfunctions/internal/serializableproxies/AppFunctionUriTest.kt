@@ -17,10 +17,13 @@
 package androidx.appfunctions.internal.serializableproxies
 
 import android.net.Uri
+import android.os.Build
+import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.Test
 import kotlin.test.assertIs
 
+@SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
 class AppFunctionUriTest {
 
     @Test

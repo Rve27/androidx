@@ -21,10 +21,15 @@ import android.content.Intent
 import android.util.Log
 import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionInvalidArgumentException
-import androidx.appfunctions.AppFunctionOpenable
+import androidx.appfunctions.AppFunctionSchemaCapability
 import androidx.appfunctions.AppFunctionSerializable
 import androidx.appfunctions.service.AppFunction
 import java.time.LocalDateTime
+
+@AppFunctionSchemaCapability
+interface AppFunctionOpenable {
+    val intentToOpen: PendingIntent
+}
 
 @AppFunctionSerializable data class SetField<T>(val value: T)
 
