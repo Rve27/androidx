@@ -57,14 +57,13 @@ internal class Page(
      * threshold for tiled rendering
      */
     private val maxBitmapSizePx: Point,
-    /** Whether touch exploration is enabled */
-    private val isTouchExplorationEnabled: Boolean,
     /** A function to call when the [PdfView] hosting this [Page] ought to invalidate itself */
     private val onPageUpdate: () -> Unit,
     /** A function to call when page text is ready (invoked with page number). */
     private val onPageTextReady: ((Int) -> Unit),
     /** Error flow for propagating error occurred while processing to [PdfView]. */
-    private val errorFlow: MutableSharedFlow<Throwable>
+    private val errorFlow: MutableSharedFlow<Throwable>,
+    isAccessibilityEnabled: Boolean
 ) {
     init {
         require(pageNum >= 0) { "Invalid negative page" }
@@ -93,6 +92,14 @@ internal class Page(
     internal var links: PdfDocument.PdfPageLinks? = null
         private set
 
+    internal var isAccessibilityEnabled: Boolean = isAccessibilityEnabled
+        set(value) {
+            field = value
+            if (value) {
+                maybeFetchPageText()
+            }
+        }
+
     /**
      * Puts this page into a "visible" state, and / or updates various properties related to the
      * page's visible state
@@ -117,7 +124,7 @@ internal class Page(
         bitmapFetcher?.maybeFetchNewBitmaps(zoom, viewArea)
         if (stablePosition) {
             maybeFetchLinks()
-            if (isTouchExplorationEnabled) {
+            if (isAccessibilityEnabled) {
                 maybeFetchPageText()
             }
         }

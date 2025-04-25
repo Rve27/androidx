@@ -44,9 +44,9 @@ internal class PageManager(
      * threshold for tiled rendering
      */
     private val maxBitmapSizePx: Point,
-    private val isTouchExplorationEnabled: Boolean,
     /** Error flow for propagating error occurred while processing to [PdfView]. */
-    private val errorFlow: MutableSharedFlow<Throwable>
+    private val errorFlow: MutableSharedFlow<Throwable>,
+    isAccessibilityEnabled: Boolean
 ) {
     /**
      * Replay at least 1 value in case of an invalidation signal issued while [PdfView] is not
@@ -69,6 +69,14 @@ internal class PageManager(
     private val _pageTextReadyFlow = MutableSharedFlow<Int>(replay = 1)
     val pageTextReadyFlow: SharedFlow<Int>
         get() = _pageTextReadyFlow
+
+    internal var isAccessibilityEnabled: Boolean = isAccessibilityEnabled
+        set(value) {
+            field = value
+            for (page in pages.valueIterator()) {
+                page.isAccessibilityEnabled = value
+            }
+        }
 
     /**
      * [Highlight]s supplied by the developer to be drawn along with the pages they belong to
@@ -137,10 +145,10 @@ internal class PageManager(
                     pdfDocument,
                     backgroundScope,
                     maxBitmapSizePx,
-                    isTouchExplorationEnabled,
                     onPageUpdate = { _invalidationSignalFlow.tryEmit(Unit) },
                     onPageTextReady = { pageNumber -> _pageTextReadyFlow.tryEmit(pageNumber) },
-                    errorFlow = errorFlow
+                    errorFlow = errorFlow,
+                    isAccessibilityEnabled = isAccessibilityEnabled
                 )
                 .apply {
                     // If the page is visible, let it know

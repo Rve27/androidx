@@ -41,6 +41,7 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import android.view.accessibility.AccessibilityManager
 import androidx.annotation.CallSuper
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
@@ -265,7 +266,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     // Stores width set from onSizeChanged or while restoring state
     private var oldWidth: Int? = null
 
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public var fastScroller: FastScroller? = null
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @VisibleForTesting
+    public var fastScroller: FastScroller? = null
     private var fastScrollGestureDetector: FastScrollGestureDetector? = null
 
     private val gestureHandler = ZoomScrollGestureHandler()
@@ -317,10 +320,22 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             }
         }
 
-    @VisibleForTesting internal var accessibilityPageHelper: AccessibilityPageHelper? = null
+    @VisibleForTesting internal var pdfViewAccessibilityManager: PdfViewAccessibilityManager? = null
     @VisibleForTesting
-    internal var isTouchExplorationEnabled: Boolean =
-        Accessibility.get().isTouchExplorationEnabled(context)
+    internal var isAccessibilityEnabled: Boolean =
+        Accessibility.get().isAccessibilityEnabled(context)
+        set(value) {
+            field = value
+            pageManager?.isAccessibilityEnabled = value
+        }
+
+    private var accessibilityManager: AccessibilityManager =
+        Accessibility.getAccessibilityManager(context)
+
+    internal val accessibilityStateChangeHandler =
+        AccessibilityManager.AccessibilityStateChangeListener { isEnabled ->
+            isAccessibilityEnabled = isEnabled
+        }
 
     private var selectionStateManager: SelectionStateManager? = null
     private val selectionRenderer = SelectionRenderer(context)
@@ -473,18 +488,18 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     }
 
     override fun dispatchHoverEvent(event: MotionEvent): Boolean {
-        return accessibilityPageHelper?.dispatchHoverEvent(event) == true ||
+        return pdfViewAccessibilityManager?.dispatchHoverEvent(event) == true ||
             super.dispatchHoverEvent(event)
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        return accessibilityPageHelper?.dispatchKeyEvent(event) == true ||
+        return pdfViewAccessibilityManager?.dispatchKeyEvent(event) == true ||
             super.dispatchKeyEvent(event)
     }
 
     override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect)
-        accessibilityPageHelper?.onFocusChanged(gainFocus, direction, previouslyFocusedRect)
+        pdfViewAccessibilityManager?.onFocusChanged(gainFocus, direction, previouslyFocusedRect)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -669,6 +684,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         super.onAttachedToWindow()
         stopCollectingData()
         awaitingFirstLayout = true
+
+        accessibilityManager.addAccessibilityStateChangeListener(accessibilityStateChangeHandler)
     }
 
     override fun onWindowVisibilityChanged(visibility: Int) {
@@ -689,6 +706,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         onSelectionUiSignal(SelectionUiSignal.ToggleActionMode(show = false))
         awaitingFirstLayout = true
         pageManager?.cleanup()
+
+        accessibilityManager.removeAccessibilityStateChangeListener(accessibilityStateChangeHandler)
     }
 
     override fun onSaveInstanceState(): Parcelable? {
@@ -898,7 +917,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     }
                     launch {
                         manager.pageTextReadyFlow.collect { pageNum ->
-                            accessibilityPageHelper?.onPageTextReady(pageNum)
+                            pdfViewAccessibilityManager?.onPageTextReady(pageNum)
                         }
                     }
                 }
@@ -994,8 +1013,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 localPdfDocument,
                 backgroundScope,
                 Point(maxBitmapDimensionPx, maxBitmapDimensionPx),
-                isTouchExplorationEnabled,
-                errorFlow
+                errorFlow,
+                isAccessibilityEnabled
             )
 
         if (
@@ -1021,7 +1040,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 if (lastFastScrollerVisibility != isVisible) {
                     lastFastScrollerVisibility = isVisible
                     if (!isVisible) {
-                        accessibilityPageHelper?.invalidateRoot()
+                        pdfViewAccessibilityManager?.invalidateRoot()
                     }
                 }
             }
@@ -1076,7 +1095,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private fun onViewportChanged() {
         pageLayoutManager?.onViewportChanged(scrollY, height, zoom)
         if (positionIsStable) maybeUpdatePageVisibility()
-        accessibilityPageHelper?.invalidateRoot()
+        pdfViewAccessibilityManager?.invalidateRoot()
         updateSelectionActionModeVisibility()
     }
 
@@ -1231,15 +1250,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     /**
      * Initializes and sets the accessibility delegate for the PdfView.
      *
-     * This method creates an instance of [AccessibilityPageHelper] if both [.pageLayoutManager] and
-     * [.pageManager] are initialized, and sets it as the accessibility delegate for the view using
-     * [ViewCompat.setAccessibilityDelegate].
+     * This method creates an instance of [PdfViewAccessibilityManager] if both [.pageLayoutManager]
+     * and [.pageManager] are initialized, and sets it as the accessibility delegate for the view
+     * using [ViewCompat.setAccessibilityDelegate].
      */
     private fun setAccessibility() {
         if (pageLayoutManager != null && pageManager != null) {
-            accessibilityPageHelper =
-                AccessibilityPageHelper(this, pageLayoutManager!!, pageManager!!)
-            ViewCompat.setAccessibilityDelegate(this, accessibilityPageHelper)
+            pdfViewAccessibilityManager =
+                PdfViewAccessibilityManager(this, pageLayoutManager!!, pageManager!!) {
+                    fastScroller
+                }
+            ViewCompat.setAccessibilityDelegate(this, pdfViewAccessibilityManager)
         }
     }
 

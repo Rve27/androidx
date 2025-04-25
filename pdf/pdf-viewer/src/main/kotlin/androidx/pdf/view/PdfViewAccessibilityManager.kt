@@ -29,6 +29,7 @@ import androidx.pdf.content.PdfPageGotoLinkContent
 import androidx.pdf.content.PdfPageLinkContent
 import androidx.pdf.util.ExternalLinks
 import androidx.pdf.util.buildPageIndicatorLabel
+import androidx.pdf.view.fastscroll.FastScroller
 
 /**
  * Accessibility delegate for PdfView that provides a virtual view hierarchy for pages.
@@ -36,10 +37,11 @@ import androidx.pdf.util.buildPageIndicatorLabel
  * This helper class allows accessibility services to interact with individual pages as virtual
  * views, enabling navigation and content exploration.
  */
-internal class AccessibilityPageHelper(
+internal class PdfViewAccessibilityManager(
     private val pdfView: PdfView,
     private val pageLayoutManager: PageLayoutManager,
     private val pageManager: PageManager,
+    private val getFastScroller: () -> FastScroller?,
 ) : ExploreByTouchHelper(pdfView) {
 
     private val gotoLinks: MutableMap<Int, LinkWrapper<PdfPageGotoLinkContent>> = mutableMapOf()
@@ -55,22 +57,23 @@ internal class AccessibilityPageHelper(
 
         if (
             pdfView.lastFastScrollerVisibility &&
-                pdfView.fastScroller?.isPointOnThumb(x, y, pdfView.width) == true
+                getFastScroller()?.isPointOnThumb(x, y, pdfView.width) == true
         ) {
             return fastScrollVerticalThumbDrawableId
         }
 
         if (
             pdfView.lastFastScrollerVisibility &&
-                pdfView.fastScroller?.isPointOnIndicator(
-                    pdfView.context,
-                    pageLayoutManager.fullyVisiblePages.value,
-                    x,
-                    y,
-                    totalPages,
-                    pdfView.width,
-                    pdfView.scrollX,
-                ) == true
+                getFastScroller()
+                    ?.isPointOnIndicator(
+                        pdfView.context,
+                        pageLayoutManager.fullyVisiblePages.value,
+                        x,
+                        y,
+                        totalPages,
+                        pdfView.width,
+                        pdfView.scrollX,
+                    ) == true
         ) {
             return fastScrollPageIndicatorBackgroundDrawableId
         }
@@ -148,7 +151,7 @@ internal class AccessibilityPageHelper(
             return
         }
 
-        val thumbBounds = pdfView.fastScroller?.getThumbScreenBounds() ?: Rect()
+        val thumbBounds = getFastScroller()?.getThumbScreenBounds() ?: Rect()
         node.apply {
             contentDescription = pdfView.context.getString(R.string.fast_scroller_thumb)
             setBoundsInScreenFromBoundsInParent(node, thumbBounds)
@@ -164,7 +167,7 @@ internal class AccessibilityPageHelper(
             return
         }
 
-        val indicatorBounds = pdfView.fastScroller?.getIndicatorScreenBounds() ?: Rect()
+        val indicatorBounds = getFastScroller()?.getIndicatorScreenBounds() ?: Rect()
         val currentLabel =
             buildPageIndicatorLabel(
                 pdfView.context,
