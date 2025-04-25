@@ -394,7 +394,6 @@ includeProject(":appcompat:integration-tests:receive-content-testapp", [BuildTyp
 includeProject(":appfunctions:appfunctions", [BuildType.MAIN])
 includeProject(":appfunctions:appfunctions-compiler", [BuildType.MAIN])
 includeProject(":appfunctions:appfunctions-service", [BuildType.MAIN])
-includeProject(":appfunctions:appfunctions-schemas", [BuildType.MAIN])
 includeProject(":appfunctions:appfunctions-stubs", [BuildType.MAIN])
 includeProject(":appfunctions:integration-tests:multi-modules-testapp:app", [BuildType.MAIN])
 includeProject(":appfunctions:integration-tests:multi-modules-testapp:shared-library", [BuildType.MAIN])
