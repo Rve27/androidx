@@ -96,16 +96,39 @@ public open class PdfView
 constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     View(context, attrs, defStyle) {
 
-    public val fastScrollVerticalThumbDrawable: Drawable?
-    private val fastScrollVerticalTrackDrawable: Drawable?
-    private val fastScrollPageIndicatorBackgroundDrawable: Drawable?
+    public var fastScrollVerticalThumbDrawable: Drawable? = null
+        set(value) {
+            field = value
+            fastScroller?.fastScrollDrawer?.thumbDrawable = value
+            invalidate()
+        }
+
+    public var fastScrollPageIndicatorBackgroundDrawable: Drawable? = null
+        set(value) {
+            field = value
+            fastScroller?.fastScrollDrawer?.pageIndicatorBackground = value
+            invalidate()
+        }
+
+    public var fastScrollVerticalThumbMarginEnd: Int = 0
+        set(value) {
+            field = value
+            fastScroller?.fastScrollDrawer?.thumbMarginEnd = value
+            invalidate()
+        }
+
+    public var fastScrollPageIndicatorMarginEnd: Int =
+        context.getDimensions(R.dimen.page_indicator_right_margin).toInt()
+        set(value) {
+            field = value
+            fastScroller?.fastScrollDrawer?.pageIndicatorMarginEnd = value
+            invalidate()
+        }
 
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.PdfView)
         fastScrollVerticalThumbDrawable =
             typedArray.getDrawable(R.styleable.PdfView_fastScrollVerticalThumbDrawable)
-        fastScrollVerticalTrackDrawable =
-            typedArray.getDrawable(R.styleable.PdfView_fastScrollVerticalTrackDrawable)
         fastScrollPageIndicatorBackgroundDrawable =
             typedArray.getDrawable(R.styleable.PdfView_fastScrollPageIndicatorBackgroundDrawable)
         typedArray.recycle()
@@ -1017,38 +1040,32 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 isAccessibilityEnabled
             )
 
-        if (
-            fastScrollVerticalThumbDrawable != null &&
-                fastScrollVerticalTrackDrawable != null &&
-                fastScrollPageIndicatorBackgroundDrawable != null
-        ) {
+        val fastScrollCalculator = FastScrollCalculator(context)
+        val fastScrollDrawer =
+            FastScrollDrawer(
+                context,
+                localPdfDocument,
+                fastScrollVerticalThumbDrawable,
+                fastScrollPageIndicatorBackgroundDrawable,
+                fastScrollVerticalThumbMarginEnd,
+                fastScrollPageIndicatorMarginEnd
+            )
 
-            val fastScrollCalculator = FastScrollCalculator(context)
-            val fastScrollDrawer =
-                FastScrollDrawer(
-                    context,
-                    localPdfDocument,
-                    fastScrollVerticalThumbDrawable,
-                    fastScrollVerticalTrackDrawable,
-                    fastScrollPageIndicatorBackgroundDrawable
-                )
-
-            val localFastScroller = FastScroller(fastScrollDrawer, fastScrollCalculator)
-            fastScroller = localFastScroller
-            /* Invalidate the virtual views within the accessibility hierarchy when the fast scroller auto-hides. */
-            fastScroller?.visibilityChangeListener = { isVisible ->
-                if (lastFastScrollerVisibility != isVisible) {
-                    lastFastScrollerVisibility = isVisible
-                    if (!isVisible) {
-                        pdfViewAccessibilityManager?.invalidateRoot()
-                    }
+        val localFastScroller = FastScroller(fastScrollDrawer, fastScrollCalculator)
+        fastScroller = localFastScroller
+        /* Invalidate the virtual views within the accessibility hierarchy when the fast scroller auto-hides. */
+        fastScroller?.visibilityChangeListener = { isVisible ->
+            if (lastFastScrollerVisibility != isVisible) {
+                lastFastScrollerVisibility = isVisible
+                if (!isVisible) {
+                    pdfViewAccessibilityManager?.invalidateRoot()
                 }
             }
-            fastScrollGestureDetector =
-                FastScrollGestureDetector(localFastScroller, fastScrollGestureHandler)
-            // set initial visibility of fast scroller
-            maybeHideFastScroller()
         }
+        fastScrollGestureDetector =
+            FastScrollGestureDetector(localFastScroller, fastScrollGestureHandler)
+        // set initial visibility of fast scroller
+        maybeHideFastScroller()
 
         // We'll either create our layout and selection managers from restored state, or
         // instantiate new ones

@@ -202,7 +202,8 @@ public class FastScroller(
      * @return True if the touch event is within the bounds of the scrubber, false otherwise.
      */
     internal fun isPointOnThumb(x: Float, y: Float, viewWidth: Int): Boolean {
-        val thumbX = viewWidth - fastScrollDrawer.thumbWidthPx.toFloat()
+        val thumbX =
+            viewWidth - (fastScrollDrawer.thumbWidthPx.toFloat() + fastScrollDrawer.thumbMarginEnd)
         val thumbYRange =
             fastScrollY.toFloat()..(fastScrollY.toFloat() +
                     fastScrollDrawer.thumbHeightPx.toFloat())

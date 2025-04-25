@@ -30,7 +30,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.pdf.testapp.databinding.MainActivityBinding
 import androidx.pdf.testapp.databinding.ScenarioButtonsBinding
-import androidx.pdf.testapp.ui.BasicPdfFragment
 import androidx.pdf.testapp.ui.XmlStyledPdfFragment
 import androidx.pdf.testapp.ui.scenarios.PageObjectPdfFragment
 import androidx.pdf.testapp.ui.scenarios.SinglePdfFragment
@@ -73,15 +72,11 @@ class MainActivity : AppCompatActivity() {
         tabsViewButton.setOnClickListener { loadFragment(TabsViewPdfFragment()) }
         pageObjectPdfButton.setOnClickListener { loadFragment(PageObjectPdfFragment()) }
         pdfFragmentV2Button.setOnClickListener {
-            startActivity(Intent(this@MainActivity, MainActivityV2::class.java))
+            launchPdfViewerFragmentV2(MainActivityV2.Companion.FragmentType.BASIC_FRAGMENT)
         }
         tabsViewV2Button.setOnClickListener { loadFragment(TabbedPdfViewerFragment()) }
         styledPdfFragmentButton.setOnClickListener {
-            loadFragment(
-                BasicPdfFragment.newInstance(
-                    BasicPdfFragment.Companion.FragmentType.STYLED_FRAGMENT
-                )
-            )
+            launchPdfViewerFragmentV2(MainActivityV2.Companion.FragmentType.STYLED_FRAGMENT)
         }
 
         xmlStyledPdfFragmentButton.setOnClickListener { loadFragment(XmlStyledPdfFragment()) }
@@ -97,6 +92,14 @@ class MainActivity : AppCompatActivity() {
             // Set Fragment Container Visible
             fragmentContainer.visibility = View.VISIBLE
         }
+    }
+
+    private fun launchPdfViewerFragmentV2(fragmentType: MainActivityV2.Companion.FragmentType) {
+        val intent = Intent(this, MainActivityV2::class.java)
+        val bundle = Bundle()
+        bundle.putSerializable(MainActivityV2.Companion.FRAGMENT_TYPE_KEY, fragmentType)
+        intent.putExtras(bundle)
+        startActivity(intent)
     }
 
     private fun handleBackPress() {
