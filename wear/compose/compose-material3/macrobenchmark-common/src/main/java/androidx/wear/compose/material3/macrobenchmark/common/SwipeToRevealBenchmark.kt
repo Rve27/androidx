@@ -49,7 +49,7 @@ object SwipeToRevealBenchmark : MacrobenchmarkScreen {
                         text = { Text("Delete") }
                     )
                 },
-                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
                 },
                 modifier =
                     Modifier.fillMaxWidth().semantics { contentDescription = CONTENT_DESCRIPTION },

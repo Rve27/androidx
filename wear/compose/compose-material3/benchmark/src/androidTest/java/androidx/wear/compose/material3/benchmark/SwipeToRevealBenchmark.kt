@@ -114,7 +114,7 @@ internal class SwipeToRevealTestCase : LayeredComposeTestCase(), ToggleableTestC
                     text = { Text("Delete") }
                 )
             },
-            onFullSwipe = {},
+            onSwipePrimaryAction = {},
             secondaryAction = {
                 SecondaryActionButton(
                     onClick = {},

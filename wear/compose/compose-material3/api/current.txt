@@ -1039,8 +1039,6 @@ package androidx.wear.compose.material3 {
   }
 
   @kotlin.jvm.JvmInline public final value class RevealDirection {
-    method public int getValue();
-    property public int value;
     field public static final androidx.wear.compose.material3.RevealDirection.Companion Companion;
   }
 
@@ -1066,8 +1064,6 @@ package androidx.wear.compose.material3 {
   }
 
   @kotlin.jvm.JvmInline public final value class RevealValue {
-    method public int getValue();
-    property public int value;
     field public static final androidx.wear.compose.material3.RevealValue.Companion Companion;
   }
 
@@ -1448,16 +1444,14 @@ package androidx.wear.compose.material3 {
     method public androidx.wear.compose.foundation.GestureInclusion getBidirectionalGestureInclusion();
     method public float getLargeActionButtonHeight();
     method public float getLeftEdgeZoneFraction();
-    method public float getSmallActionButtonHeight();
     property public float LargeActionButtonHeight;
     property public float LeftEdgeZoneFraction;
-    property public float SmallActionButtonHeight;
     property public androidx.wear.compose.foundation.GestureInclusion bidirectionalGestureInclusion;
     field public static final androidx.wear.compose.material3.SwipeToRevealDefaults INSTANCE;
   }
 
   public final class SwipeToRevealKt {
-    method @androidx.compose.runtime.Composable public static void SwipeToReveal(kotlin.jvm.functions.Function1<? super androidx.wear.compose.material3.SwipeToRevealScope,kotlin.Unit> primaryAction, kotlin.jvm.functions.Function0<kotlin.Unit> onFullSwipe, optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function1<? super androidx.wear.compose.material3.SwipeToRevealScope,kotlin.Unit>? secondaryAction, optional kotlin.jvm.functions.Function1<? super androidx.wear.compose.material3.SwipeToRevealScope,kotlin.Unit>? undoPrimaryAction, optional kotlin.jvm.functions.Function1<? super androidx.wear.compose.material3.SwipeToRevealScope,kotlin.Unit>? undoSecondaryAction, optional androidx.wear.compose.material3.RevealState revealState, optional int revealDirection, optional float actionButtonHeight, optional boolean hasPartiallyRevealedState, optional androidx.wear.compose.foundation.GestureInclusion gestureInclusion, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @androidx.compose.runtime.Composable public static void SwipeToReveal(kotlin.jvm.functions.Function1<? super androidx.wear.compose.material3.SwipeToRevealScope,kotlin.Unit> primaryAction, kotlin.jvm.functions.Function0<kotlin.Unit> onSwipePrimaryAction, optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function1<? super androidx.wear.compose.material3.SwipeToRevealScope,kotlin.Unit>? secondaryAction, optional kotlin.jvm.functions.Function1<? super androidx.wear.compose.material3.SwipeToRevealScope,kotlin.Unit>? undoPrimaryAction, optional kotlin.jvm.functions.Function1<? super androidx.wear.compose.material3.SwipeToRevealScope,kotlin.Unit>? undoSecondaryAction, optional androidx.wear.compose.material3.RevealState revealState, optional int revealDirection, optional boolean hasPartiallyRevealedState, optional androidx.wear.compose.foundation.GestureInclusion gestureInclusion, kotlin.jvm.functions.Function0<kotlin.Unit> content);
     method @androidx.compose.runtime.Composable public static androidx.wear.compose.material3.RevealState rememberRevealState(optional int initialValue);
   }
 

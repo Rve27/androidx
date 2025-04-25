@@ -80,11 +80,11 @@ class SwipeToRevealTest {
     fun swipeToReveal_undoPrimaryActionDisplayed_performsHaptics() {
         val results = mutableMapOf<HapticFeedbackType, Int>()
         val haptics = hapticFeedback(collectResultsFromHapticFeedback(results))
-        val revealStateFlow = MutableStateFlow(RightRevealing)
+        val revealValueFlow = MutableStateFlow(RightRevealing)
 
         rule.setContent {
             CompositionLocalProvider(LocalHapticFeedback provides haptics) {
-                val revealState by revealStateFlow.collectAsStateWithLifecycle()
+                val revealValue by revealValueFlow.collectAsStateWithLifecycle()
 
                 Box(modifier = Modifier.fillMaxSize()) {
                     SwipeToReveal(
@@ -95,11 +95,11 @@ class SwipeToRevealTest {
                                 { Text("Clear") }
                             )
                         },
-                        onFullSwipe = {},
+                        onSwipePrimaryAction = {},
                         modifier = Modifier.testTag(TEST_TAG),
                         revealState =
                             rememberRevealState(
-                                initialValue = revealState,
+                                initialValue = revealValue,
                             ),
                     ) {
                         Button({}, Modifier.fillMaxWidth()) {
@@ -112,7 +112,7 @@ class SwipeToRevealTest {
 
         rule.runOnIdle { assertThat(results).isEmpty() }
 
-        revealStateFlow.value = RightRevealed
+        revealValueFlow.value = RightRevealed
 
         rule.runOnIdle {
             assertThat(results).hasSize(1)
@@ -155,7 +155,7 @@ class SwipeToRevealTest {
         rule.setContent {
             SwipeToRevealWithDefaults(
                 primaryAction = { ActionContent(modifier = Modifier.testTag(TEST_TAG)) },
-                state = rememberRevealState(initialValue = RightRevealing)
+                state = rememberRevealState(RightRevealing),
             )
         }
 

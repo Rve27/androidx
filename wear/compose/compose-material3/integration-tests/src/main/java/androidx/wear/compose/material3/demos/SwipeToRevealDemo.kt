@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
@@ -67,7 +68,7 @@ fun SwipeToRevealBothDirectionsNonAnchoring() {
                         text = { Text("Delete") }
                     )
                 },
-                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
                 },
                 undoPrimaryAction = {
                     UndoActionButton(
@@ -113,7 +114,7 @@ fun SwipeToRevealBothDirections() {
                         text = { Text("Delete") }
                     )
                 },
-                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
                 },
                 secondaryAction = {
                     SecondaryActionButton(
@@ -182,10 +183,11 @@ fun SwipeToRevealTwoActionsWithUndo() {
                     PrimaryActionButton(
                         onClick = primaryAction,
                         icon = { Icon(Icons.Outlined.Delete, contentDescription = "Delete") },
-                        text = { Text("Delete") }
+                        text = { Text("Delete") },
+                        modifier = Modifier.height(SwipeToRevealDefaults.LargeActionButtonHeight)
                     )
                 },
-                onFullSwipe = primaryAction,
+                onSwipePrimaryAction = primaryAction,
                 secondaryAction = {
                     SecondaryActionButton(
                         onClick = {
@@ -198,7 +200,8 @@ fun SwipeToRevealTwoActionsWithUndo() {
                                     .show()
                             }
                         },
-                        icon = { Icon(Icons.Filled.Lock, contentDescription = "Lock") }
+                        icon = { Icon(Icons.Filled.Lock, contentDescription = "Lock") },
+                        modifier = Modifier.height(SwipeToRevealDefaults.LargeActionButtonHeight)
                     )
                 },
                 undoPrimaryAction = {
@@ -231,7 +234,6 @@ fun SwipeToRevealTwoActionsWithUndo() {
                         text = { Text("Undo Lock") },
                     )
                 },
-                actionButtonHeight = SwipeToRevealDefaults.LargeActionButtonHeight,
             ) {
                 Card(
                     modifier =
@@ -304,7 +306,7 @@ fun SwipeToRevealInScalingLazyColumn() {
                         text = { Text("Delete") }
                     )
                 },
-                onFullSwipe = primaryAction,
+                onSwipePrimaryAction = primaryAction,
                 secondaryAction = {
                     SecondaryActionButton(
                         onClick = { /* This block is called when the secondary action is executed. */
@@ -357,7 +359,7 @@ fun SwipeToRevealSingleButtonWithAnchoring() {
                         text = { Text("Delete") }
                     )
                 },
-                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
                 },
                 undoPrimaryAction = {
                     UndoActionButton(
@@ -403,7 +405,7 @@ fun SwipeToRevealWithLongLabels() {
                         }
                     )
                 },
-                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
                 },
                 secondaryAction = {
                     SecondaryActionButton(
@@ -486,7 +488,7 @@ fun SwipeToRevealWithCustomIcons() {
                         text = { Text("Delete") }
                     )
                 },
-                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
                 },
                 secondaryAction = {
                     SecondaryActionButton(
@@ -585,7 +587,7 @@ fun SwipeToRevealWithEdgeSwipeToDismiss(swipeToDismissBoxState: SwipeToDismissBo
                         text = { Text("Delete") }
                     )
                 },
-                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
                 },
                 undoPrimaryAction = {
                     UndoActionButton(

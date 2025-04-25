@@ -20,6 +20,7 @@ import android.os.Build
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.MoreVert
@@ -68,7 +69,7 @@ class SwipeToRevealScreenshotTest {
                             { Text("Clear") }
                         )
                     },
-                    onFullSwipe = {}, /* Empty for testing */
+                    onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
                     revealState =
                         rememberRevealState(
@@ -95,7 +96,7 @@ class SwipeToRevealScreenshotTest {
                             { Text("Clear") }
                         )
                     },
-                    onFullSwipe = {}, /* Empty for testing */
+                    onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
                     secondaryAction = {
                         SecondaryActionButton(
@@ -128,7 +129,7 @@ class SwipeToRevealScreenshotTest {
                             {} /* Empty for testing */
                         )
                     },
-                    onFullSwipe = {}, /* Empty for testing */
+                    onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
                     undoPrimaryAction = {
                         UndoActionButton({} /* Empty for testing */, { Text("Undo Primary") })
@@ -156,7 +157,7 @@ class SwipeToRevealScreenshotTest {
                             {} /* Empty for testing */
                         )
                     },
-                    onFullSwipe = {}, /* Empty for testing */
+                    onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
                     undoPrimaryAction = {
                         UndoActionButton(
@@ -191,7 +192,7 @@ class SwipeToRevealScreenshotTest {
                             {} /* Empty for testing */
                         )
                     },
-                    onFullSwipe = {}, /* Empty for testing */
+                    onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
                     secondaryAction = {
                         SecondaryActionButton(
@@ -230,7 +231,7 @@ class SwipeToRevealScreenshotTest {
                             {} /* Empty for testing */
                         )
                     },
-                    onFullSwipe = {}, /* Empty for testing */
+                    onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
                     secondaryAction = {
                         SecondaryActionButton(
@@ -278,7 +279,7 @@ class SwipeToRevealScreenshotTest {
                             {} /* Empty for testing */
                         )
                     },
-                    onFullSwipe = {}, /* Empty for testing */
+                    onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
                 ) {
                     Button({}, Modifier.fillMaxWidth()) {
@@ -298,16 +299,16 @@ class SwipeToRevealScreenshotTest {
                         PrimaryActionButton(
                             onClick = {}, /* Empty for testing */
                             { Icon(Icons.Outlined.Close, contentDescription = "Clear") },
-                            { Text("Clear") }
+                            { Text("Clear") },
+                            Modifier.height(SwipeToRevealDefaults.LargeActionButtonHeight),
                         )
                     },
-                    onFullSwipe = {}, /* Empty for testing */
+                    onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
                     revealState =
                         rememberRevealState(
                             initialValue = RevealValue.RightRevealing,
                         ),
-                    actionButtonHeight = SwipeToRevealDefaults.LargeActionButtonHeight,
                 ) {
                     Card({}, Modifier.fillMaxWidth()) {
                         Text("This content should be partially visible.")
@@ -328,22 +329,23 @@ class SwipeToRevealScreenshotTest {
                         PrimaryActionButton(
                             onClick = {}, /* Empty for testing */
                             { Icon(Icons.Outlined.Close, contentDescription = "Clear") },
-                            { Text("Clear") }
+                            { Text("Clear") },
+                            Modifier.height(SwipeToRevealDefaults.LargeActionButtonHeight),
                         )
                     },
-                    onFullSwipe = {}, /* Empty for testing */
+                    onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
                     secondaryAction = {
                         SecondaryActionButton(
                             {},
-                            { Icon(Icons.Outlined.MoreVert, contentDescription = "More") }
+                            { Icon(Icons.Outlined.MoreVert, contentDescription = "More") },
+                            Modifier.height(SwipeToRevealDefaults.LargeActionButtonHeight),
                         )
                     },
                     revealState =
                         rememberRevealState(
                             initialValue = RevealValue.RightRevealing,
                         ),
-                    actionButtonHeight = SwipeToRevealDefaults.LargeActionButtonHeight,
                 ) {
                     Card({}, Modifier.fillMaxWidth()) {
                         Text("This content should be partially visible.")
@@ -365,7 +367,7 @@ class SwipeToRevealScreenshotTest {
                             { Text("Clear") }
                         )
                     },
-                    onFullSwipe = {}, /* Empty for testing */
+                    onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
                     secondaryAction = {
                         SecondaryActionButton(
@@ -424,7 +426,7 @@ class SwipeToRevealScreenshotTest {
                                 { Text("Clear") }
                             )
                         },
-                        onFullSwipe = {}, /* Empty for testing */
+                        onSwipePrimaryAction = {}, /* Empty for testing */
                         modifier = Modifier.testTag(TEST_TAG),
                         secondaryAction = {
                             SecondaryActionButton(

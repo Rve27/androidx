@@ -21,6 +21,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.MoreVert
@@ -61,7 +62,8 @@ fun SwipeToRevealSample() {
                 text = { Text("Delete") }
             )
         },
-        onFullSwipe = { /* This block is called when the full swipe gesture is performed. */ },
+        onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
+        },
         secondaryAction = {
             SecondaryActionButton(
                 onClick = { /* This block is called when the secondary action is executed. */ },
@@ -106,17 +108,18 @@ fun SwipeToRevealSingleActionCardSample() {
             PrimaryActionButton(
                 onClick = { /* This block is called when the primary action is executed. */ },
                 icon = { Icon(Icons.Outlined.Delete, contentDescription = "Delete") },
-                text = { Text("Delete") }
+                text = { Text("Delete") },
+                modifier = Modifier.height(SwipeToRevealDefaults.LargeActionButtonHeight)
             )
         },
-        onFullSwipe = { /* This block is called when the full swipe gesture is performed. */ },
+        onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
+        },
         undoPrimaryAction = {
             UndoActionButton(
                 onClick = { /* This block is called when the undo primary action is executed. */ },
                 text = { Text("Undo Delete") },
             )
         },
-        actionButtonHeight = SwipeToRevealDefaults.LargeActionButtonHeight,
     ) {
         Card(
             modifier =
@@ -142,7 +145,7 @@ fun SwipeToRevealSingleActionCardSample() {
 
 @Composable
 @Sampled
-fun SwipeToRevealNonAnchoredSample() {
+fun SwipeToRevealNoPartiallyRevealedStateSample() {
     SwipeToReveal(
         primaryAction = {
             PrimaryActionButton(
@@ -151,7 +154,8 @@ fun SwipeToRevealNonAnchoredSample() {
                 text = { Text("Delete") }
             )
         },
-        onFullSwipe = { /* This block is called when the full swipe gesture is performed. */ },
+        onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
+        },
         undoPrimaryAction = {
             UndoActionButton(
                 onClick = { /* This block is called when the undo primary action is executed. */ },
@@ -213,7 +217,7 @@ fun SwipeToRevealWithTransformingLazyColumnSample() {
                     )
                 },
                 revealState = revealState,
-                onFullSwipe = { /* This block is called when the full swipe gesture is performed. */
+                onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
                 },
                 modifier =
                     Modifier.transformedHeight(this@items, transformationSpec).graphicsLayer {
