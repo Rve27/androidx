@@ -304,6 +304,8 @@ public class AppSearchLoggerTest {
         int nativeNumJoinedResultsCurrentPage = 110;
         long liteIndexHitBufferByteSize = 111;
         long liteIndexHitBufferUnsortedByteSize = 112;
+        int pageTokenType = QueryStatsProto.PageTokenType.Code.EMPTY_VALUE;
+        int numResultStatesEvicted = 113;
 
         QueryStatsProto nativeQueryStats = QueryStatsProto.newBuilder()
                 .setIsFirstPage(nativeIsFirstPage)
@@ -322,6 +324,8 @@ public class AppSearchLoggerTest {
                 .setChildSearchStats(searchStats)
                 .setLiteIndexHitBufferByteSize(liteIndexHitBufferByteSize)
                 .setLiteIndexHitBufferUnsortedByteSize(liteIndexHitBufferUnsortedByteSize)
+                .setPageTokenType(QueryStatsProto.PageTokenType.Code.forNumber(pageTokenType))
+                .setNumResultStatesEvicted(numResultStatesEvicted)
                 .build();
         QueryStats.Builder qBuilder = new QueryStats.Builder(QueryStats.VISIBILITY_SCOPE_LOCAL,
                 PACKAGE_NAME).setDatabase(DATABASE);
@@ -348,6 +352,8 @@ public class AppSearchLoggerTest {
         assertThat(sStats.getLiteIndexHitBufferByteSize()).isEqualTo(liteIndexHitBufferByteSize);
         assertThat(sStats.getLiteIndexHitBufferUnsortedByteSize())
                 .isEqualTo(liteIndexHitBufferUnsortedByteSize);
+        assertThat(sStats.getPageTokenType()).isEqualTo(pageTokenType);
+        assertThat(sStats.getNumResultStatesEvicted()).isEqualTo(numResultStatesEvicted);
 
         SearchStats parentSearchStats = sStats.getParentSearchStats();
 
@@ -942,7 +948,6 @@ public class AppSearchLoggerTest {
                 /*sendChangeNotifications=*/ false,
                 mLogger);
 
-
         // No query filters specified. package2 should only get its own documents back.
         SearchSpec searchSpec =
                 new SearchSpec.Builder().setTermMatch(TermMatchType.Code.PREFIX_VALUE)
@@ -971,6 +976,8 @@ public class AppSearchLoggerTest {
         assertThat(sStats.getResultWithSnippetsCount()).isEqualTo(0);
         assertThat(sStats.getLiteIndexHitBufferByteSize()).isGreaterThan(0);
         assertThat(sStats.getLiteIndexHitBufferUnsortedByteSize()).isGreaterThan(0);
+        assertThat(sStats.getPageTokenType()).isEqualTo(QueryStats.PAGE_TOKEN_TYPE_NONE);
+        assertThat(sStats.getNumResultStatesEvicted()).isEqualTo(0);
 
         SearchStats parentSearchStats = sStats.getParentSearchStats();
         assertThat(parentSearchStats.getNativeTermCount()).isEqualTo(2);
@@ -1167,6 +1174,8 @@ public class AppSearchLoggerTest {
         assertThat(sStats.getJoinType()).isEqualTo(
                 AppSearchSchema.StringPropertyConfig.JOINABLE_VALUE_TYPE_QUALIFIED_ID);
         assertThat(sStats.getNumJoinedResultsCurrentPage()).isEqualTo(4);
+        assertThat(sStats.getPageTokenType()).isEqualTo(QueryStats.PAGE_TOKEN_TYPE_NONE);
+        assertThat(sStats.getNumResultStatesEvicted()).isEqualTo(0);
 
         SearchStats parentSearchStats = sStats.getParentSearchStats();
         assertThat(parentSearchStats.getNativeTermCount()).isEqualTo(1);

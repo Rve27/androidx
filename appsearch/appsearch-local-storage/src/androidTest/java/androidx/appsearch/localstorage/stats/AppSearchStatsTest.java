@@ -392,8 +392,10 @@ public class AppSearchStatsTest {
         int nativeLockAcquisitionLatencyMillis = 212;
         int javaToNativeJniLatencyMillis = 213;
         int nativeToJavaJniLatencyMillis = 214;
-        long mLiteIndexHitBufferByteSize = 215;
-        long mLiteIndexHitBufferUnsortedByteSize = 216;
+        long liteIndexHitBufferByteSize = 215;
+        long liteIndexHitBufferUnsortedByteSize = 216;
+        int pageTypeToken = QueryStats.PAGE_TOKEN_TYPE_EMPTY;
+        int numResultStatesEvicted = 217;
 
         final QueryStats.Builder sStatsBuilder = new QueryStats.Builder(visibilityScope,
                 TEST_PACKAGE_NAME)
@@ -418,8 +420,10 @@ public class AppSearchStatsTest {
                 .setNativeToJavaJniLatencyMillis(nativeToJavaJniLatencyMillis)
                 .setChildSearchStats(searchStats)
                 .setParentSearchStats(searchStats)
-                .setLiteIndexHitBufferByteSize(mLiteIndexHitBufferByteSize)
-                .setLiteIndexHitBufferUnsortedByteSize(mLiteIndexHitBufferUnsortedByteSize);
+                .setLiteIndexHitBufferByteSize(liteIndexHitBufferByteSize)
+                .setLiteIndexHitBufferUnsortedByteSize(liteIndexHitBufferUnsortedByteSize)
+                .setPageTokenType(pageTypeToken)
+                .setNumResultStatsEvicted(numResultStatesEvicted);
         final QueryStats sStats = sStatsBuilder.build();
 
         assertThat(sStats.getEnabledFeatures()).isEqualTo(enabledFeatures);
@@ -455,9 +459,11 @@ public class AppSearchStatsTest {
                 nativeToJavaJniLatencyMillis);
         assertThat(sStats.getParentSearchStats()).isEqualTo(searchStats);
         assertThat(sStats.getChildSearchStats()).isEqualTo(searchStats);
-        assertThat(sStats.getLiteIndexHitBufferByteSize()).isEqualTo(mLiteIndexHitBufferByteSize);
+        assertThat(sStats.getLiteIndexHitBufferByteSize()).isEqualTo(liteIndexHitBufferByteSize);
         assertThat(sStats.getLiteIndexHitBufferUnsortedByteSize())
-                .isEqualTo(mLiteIndexHitBufferUnsortedByteSize);
+                .isEqualTo(liteIndexHitBufferUnsortedByteSize);
+        assertThat(sStats.getPageTokenType()).isEqualTo(pageTypeToken);
+        assertThat(sStats.getNumResultStatesEvicted()).isEqualTo(numResultStatesEvicted);
         String expectedString = "QueryStats {\n"
                 + "package=com.google.test, database=testDataBase, status=2, total_latency=20, "
                 + "rewrite_search_spec_latency=202,\n"
@@ -468,11 +474,21 @@ public class AppSearchStatsTest {
                 + "native_latency=208, ranking_latency=209, document_retrieving_latency=210, "
                 + "num_results_with_snippets=211,\n"
                 + "native_lock_acquisition_latency=212, java_to_native_jni_latency=213, "
-                + "native_to_java_jin_latency=214,\n"
-                + "num_joined_results_current_page=0, join_type=0, "
-                + "lite_index_hit_buffer_byte_size=0,\n"
-                + "lite_index_hit_buffer_unsorted_byte_size=215\n"
-                + "parent_search_stats=216,\n"
+                + "native_to_java_jni_latency=214,\n"
+                + "join_latency_ms=0, num_joined_results_current_page=0, join_type=0, "
+                + "lite_index_hit_buffer_byte_size=215,\n"
+                + "lite_index_hit_buffer_unsorted_byte_size=216\n"
+                + "page_token_type=3, num_result_states_evicted=217\n"
+                + "parent_search_stats=SearchStats {\n"
+                + "query_length=101, num_terms=102, num_namespaces_filtered=103, "
+                + "num_schema_types_filtered=104,\n"
+                + "ranking_strategy=105, num_docs_scored=106, parse_query_latency=107, "
+                + "scoring_latency=108, is_numeric_query=true,\n"
+                + "num_fetched_hits_lite_index=109, num_fetched_hits_main_index=110, "
+                + "num_fetched_hits_integer_index=111,\n"
+                + "query_processor_lexer_extract_token_latency=112, "
+                + "query_processor_parser_consume_query_latency=113,\n"
+                + "query_processor_query_visitor_latency=114},\n"
                 + " child_search_stats=SearchStats {\n"
                 + "query_length=101, num_terms=102, num_namespaces_filtered=103, "
                 + "num_schema_types_filtered=104,\n"

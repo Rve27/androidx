@@ -151,7 +151,9 @@ public final class AppSearchLoggerHelper {
                 .setChildSearchStats(copyNativeStats(fromNativeStats.getChildSearchStats()))
                 .setLiteIndexHitBufferByteSize(fromNativeStats.getLiteIndexHitBufferByteSize())
                 .setLiteIndexHitBufferUnsortedByteSize(
-                        fromNativeStats.getLiteIndexHitBufferUnsortedByteSize());
+                        fromNativeStats.getLiteIndexHitBufferUnsortedByteSize())
+                .setPageTokenType(fromNativeStats.getPageTokenType().getNumber())
+                .setNumResultStatsEvicted(fromNativeStats.getNumResultStatesEvicted());
     }
 
     /**

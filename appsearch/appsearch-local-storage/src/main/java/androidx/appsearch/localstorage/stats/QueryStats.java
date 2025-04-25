@@ -53,6 +53,26 @@ public final class QueryStats extends BaseStats {
     public @interface VisibilityScope {
     }
 
+    /** Types of page result for search. */
+    @IntDef(value = {
+            PAGE_TOKEN_TYPE_NONE,
+            PAGE_TOKEN_TYPE_VALID,
+            PAGE_TOKEN_TYPE_NOT_FOUND,
+            PAGE_TOKEN_TYPE_EMPTY,
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface PageTokenType {
+    }
+
+    // Default. Usually used when it is the first page.
+    public static final int PAGE_TOKEN_TYPE_NONE = 0;
+    public static final int PAGE_TOKEN_TYPE_VALID = 1;
+    // The current page token is not found in ResultStateManager. This is
+    // usually caused by cache eviction.
+    public static final int PAGE_TOKEN_TYPE_NOT_FOUND = 2;
+    // The current page token is empty (kInvalidNextPageToken).
+    public static final int PAGE_TOKEN_TYPE_EMPTY = 3;
+
     // Searches apps' own documents.
     public static final int VISIBILITY_SCOPE_LOCAL = 1;
     // Searches the global documents. Including platform surfaceable and 3p-access.
@@ -125,6 +145,11 @@ public final class QueryStats extends BaseStats {
     private final SearchStats mChildSearchStats;
     private final long mLiteIndexHitBufferByteSize;
     private final long mLiteIndexHitBufferUnsortedByteSize;
+    // The type of the input page token.
+    @PageTokenType int mPageTokenType;
+    // Number of result states being force-evicted from ResultStateManager due to
+    // budget limit. This doesn't include expired or invalidated states.
+    int mNumResultStatesEvicted;
 
     QueryStats(@NonNull Builder builder) {
         super(builder);
@@ -155,6 +180,8 @@ public final class QueryStats extends BaseStats {
         mChildSearchStats = builder.mChildSearchStats;
         mLiteIndexHitBufferByteSize = builder.mLiteIndexHitBufferByteSize;
         mLiteIndexHitBufferUnsortedByteSize = builder.mLiteIndexHitBufferUnsortedByteSize;
+        mPageTokenType = builder.mPageTokenType;
+        mNumResultStatesEvicted = builder.mNumResultStatesEvicted;
     }
 
     /** Returns the package name of the session. */
@@ -310,6 +337,17 @@ public final class QueryStats extends BaseStats {
         return mLiteIndexHitBufferUnsortedByteSize;
     }
 
+    /**  Returns the type of the input page token. */
+    @PageTokenType
+    public int getPageTokenType() {
+        return mPageTokenType;
+    }
+
+    /**  Returns the type of the input page token. */
+    public int getNumResultStatesEvicted() {
+        return mNumResultStatesEvicted;
+    }
+
     @NonNull
     @Override
     public String toString() {
@@ -324,10 +362,11 @@ public final class QueryStats extends BaseStats {
                         + "native_latency=%d, ranking_latency=%d, document_retrieving_latency=%d, "
                         + "num_results_with_snippets=%d,\n"
                         + "native_lock_acquisition_latency=%d, java_to_native_jni_latency=%d, "
-                        + "native_to_java_jin_latency=%d,\n"
-                        + "num_joined_results_current_page=%d, join_type=%d, "
+                        + "native_to_java_jni_latency=%d,\n"
+                        + "join_latency_ms=%d, num_joined_results_current_page=%d, join_type=%d, "
                         + "lite_index_hit_buffer_byte_size=%d,\n"
                         + "lite_index_hit_buffer_unsorted_byte_size=%d\n"
+                        + "page_token_type=%d, num_result_states_evicted=%d\n"
                         + "parent_search_stats=%s,\n child_search_stats=%s}",
                 mPackageName,
                 mDatabase,
@@ -354,6 +393,8 @@ public final class QueryStats extends BaseStats {
                 mJoinType,
                 mLiteIndexHitBufferByteSize,
                 mLiteIndexHitBufferUnsortedByteSize,
+                mPageTokenType,
+                mNumResultStatesEvicted,
                 mParentSearchStats.toString(),
                 mChildSearchStats.toString());
     }
@@ -387,6 +428,8 @@ public final class QueryStats extends BaseStats {
         SearchStats mChildSearchStats;
         long mLiteIndexHitBufferByteSize;
         long mLiteIndexHitBufferUnsortedByteSize;
+        @PageTokenType int mPageTokenType;
+        int mNumResultStatesEvicted;
 
         /**
          * Constructor of {@link QueryStats}.
@@ -586,6 +629,23 @@ public final class QueryStats extends BaseStats {
         public @NonNull Builder setLiteIndexHitBufferUnsortedByteSize(
                 long liteIndexHitBufferUnsortedByteSize) {
             mLiteIndexHitBufferUnsortedByteSize = liteIndexHitBufferUnsortedByteSize;
+            return this;
+        }
+
+        /** Sets the type of the input page token. */
+        @CanIgnoreReturnValue
+        public @NonNull Builder setPageTokenType(@PageTokenType int pageTokenType) {
+            mPageTokenType = pageTokenType;
+            return this;
+        }
+
+        /**
+         * Sets the Number of result states being force-evicted from ResultStateManager due to
+         * budget limit. This doesn't include expired or invalidated states.
+         */
+        @CanIgnoreReturnValue
+        public @NonNull Builder setNumResultStatsEvicted(int numResultStatesEvicted) {
+            mNumResultStatesEvicted = numResultStatesEvicted;
             return this;
         }
 
