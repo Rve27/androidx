@@ -187,6 +187,7 @@ WORK = "2.10.0-rc01"
 XR = "1.0.0-alpha04"
 XR_ARCORE = "1.0.0-alpha04"
 XR_COMPOSE = "1.0.0-alpha04"
+XR_GLIMMER = "0.1.0-dev01"
 XR_RUNTIME = "1.0.0-alpha04"
 XR_SCENECORE = "1.0.0-alpha04"
 
@@ -330,5 +331,6 @@ WORK = { group = "androidx.work", atomicGroupVersion = "versions.WORK" }
 XR = { group = "androidx.xr", atomicGroupVersion = "versions.XR" }
 XR_ARCORE = { group = "androidx.xr.arcore", atomicGroupVersion = "versions.XR_ARCORE" }
 XR_COMPOSE = { group = "androidx.xr.compose", atomicGroupVersion = "versions.XR_COMPOSE" }
+XR_GLIMMER = { group = "androidx.xr.glimmer", atomicGroupVersion = "versions.XR_GLIMMER" }
 XR_RUNTIME = { group = "androidx.xr.runtime", atomicGroupVersion = "versions.XR_RUNTIME" }
 XR_SCENECORE = { group = "androidx.xr.scenecore", atomicGroupVersion = "versions.XR_SCENECORE" }
