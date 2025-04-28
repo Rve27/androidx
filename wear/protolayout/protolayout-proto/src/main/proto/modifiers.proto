@@ -69,9 +69,6 @@ enum SemanticsRole {
   // This element is a RadioButton which is a component to represent two states,
   // selected and not selected.
   SEMANTICS_ROLE_RADIOBUTTON = 5;
-
-  // This element is a heading for a section of content.
-  SEMANTICS_ROLE_HEADING = 6;
 }
 
 // A modifier for an element which has accessibility semantics associated with

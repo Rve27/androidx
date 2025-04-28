@@ -194,8 +194,7 @@ public final class ModifiersBuilders {
         SEMANTICS_ROLE_BUTTON,
         SEMANTICS_ROLE_CHECKBOX,
         SEMANTICS_ROLE_SWITCH,
-        SEMANTICS_ROLE_RADIOBUTTON,
-        SEMANTICS_ROLE_HEADING
+        SEMANTICS_ROLE_RADIOBUTTON
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface SemanticsRole {}
@@ -232,12 +231,6 @@ public final class ModifiersBuilders {
      */
     @RequiresSchemaVersion(major = 1, minor = 200)
     public static final int SEMANTICS_ROLE_RADIOBUTTON = 5;
-
-    /** This element is a heading for a section of content. */
-    // TODO: b/413653475 - make SEMANTICS_ROLE_HEADING public
-    @RequiresSchemaVersion(major = 1, minor = 600)
-    @RestrictTo(Scope.LIBRARY_GROUP)
-    public static final int SEMANTICS_ROLE_HEADING = 6;
 
     /** The snap options to use when sliding using parent boundaries. */
     @RequiresSchemaVersion(major = 1, minor = 200)
