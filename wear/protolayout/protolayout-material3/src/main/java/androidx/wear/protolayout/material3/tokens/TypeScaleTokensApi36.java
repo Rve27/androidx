@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,9 +26,12 @@ import androidx.annotation.RestrictTo;
 import androidx.annotation.RestrictTo.Scope;
 import androidx.wear.protolayout.LayoutElementBuilders.FontSetting;
 
-/** A list of text style values in Material3 for supporting product needs. */
+/**
+ * A list of text style values in Material3 for supporting product needs. This spec should be used
+ * on API 36+, when all layouts are in the system font.
+ */
 @RestrictTo(Scope.LIBRARY)
-public final class TypeScaleTokens {
+public final class TypeScaleTokensApi36 {
     public static final String BODY_EXTRA_SMALL_FONT_FAMILY = TypefaceTokens.BRAND;
 
     @Dimension(unit = SP)
@@ -38,11 +41,11 @@ public final class TypeScaleTokens {
     public static final float BODY_EXTRA_SMALL_SIZE = 10.0f;
 
     @Dimension(unit = SP)
-    public static final float BODY_EXTRA_SMALL_TRACKING = 0.2f;
+    public static final float BODY_EXTRA_SMALL_TRACKING = 0.4f;
 
     public static final FontSetting BODY_EXTRA_SMALL_WEIGHT = FontSetting.weight(500);
 
-    public static final FontSetting BODY_EXTRA_SMALL_WIDTH = FontSetting.width(104.0f);
+    public static final FontSetting BODY_EXTRA_SMALL_WIDTH = FontSetting.width(84.0f);
 
     public static final String BODY_LARGE_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -57,7 +60,7 @@ public final class TypeScaleTokens {
 
     public static final FontSetting BODY_LARGE_WEIGHT = FontSetting.weight(450);
 
-    public static final FontSetting BODY_LARGE_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting BODY_LARGE_WIDTH = FontSetting.width(90.0f);
 
     public static final String BODY_MEDIUM_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -72,7 +75,7 @@ public final class TypeScaleTokens {
 
     public static final FontSetting BODY_MEDIUM_WEIGHT = FontSetting.weight(450);
 
-    public static final FontSetting BODY_MEDIUM_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting BODY_MEDIUM_WIDTH = FontSetting.width(90.0f);
 
     public static final String BODY_SMALL_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -87,7 +90,7 @@ public final class TypeScaleTokens {
 
     public static final FontSetting BODY_SMALL_WEIGHT = FontSetting.weight(500);
 
-    public static final FontSetting BODY_SMALL_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting BODY_SMALL_WIDTH = FontSetting.width(86.0f);
 
     public static final String DISPLAY_LARGE_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -98,11 +101,11 @@ public final class TypeScaleTokens {
     public static final float DISPLAY_LARGE_SIZE = 40.0f;
 
     @Dimension(unit = SP)
-    public static final float DISPLAY_LARGE_TRACKING = 0.2f;
+    public static final float DISPLAY_LARGE_TRACKING = 0.0f;
 
-    public static final FontSetting DISPLAY_LARGE_WEIGHT = FontSetting.weight(500);
+    public static final FontSetting DISPLAY_LARGE_WEIGHT = FontSetting.weight(450);
 
-    public static final FontSetting DISPLAY_LARGE_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting DISPLAY_LARGE_WIDTH = FontSetting.width(100.0f);
 
     public static final String DISPLAY_MEDIUM_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -113,11 +116,11 @@ public final class TypeScaleTokens {
     public static final float DISPLAY_MEDIUM_SIZE = 30.0f;
 
     @Dimension(unit = SP)
-    public static final float DISPLAY_MEDIUM_TRACKING = 0.2f;
+    public static final float DISPLAY_MEDIUM_TRACKING = 0.0f;
 
-    public static final FontSetting DISPLAY_MEDIUM_WEIGHT = FontSetting.weight(520);
+    public static final FontSetting DISPLAY_MEDIUM_WEIGHT = FontSetting.weight(500);
 
-    public static final FontSetting DISPLAY_MEDIUM_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting DISPLAY_MEDIUM_WIDTH = FontSetting.width(100.0f);
 
     public static final String DISPLAY_SMALL_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -128,11 +131,11 @@ public final class TypeScaleTokens {
     public static final float DISPLAY_SMALL_SIZE = 24.0f;
 
     @Dimension(unit = SP)
-    public static final float DISPLAY_SMALL_TRACKING = 0.2f;
+    public static final float DISPLAY_SMALL_TRACKING = 0.0f;
 
-    public static final FontSetting DISPLAY_SMALL_WEIGHT = FontSetting.weight(550);
+    public static final FontSetting DISPLAY_SMALL_WEIGHT = FontSetting.weight(500);
 
-    public static final FontSetting DISPLAY_SMALL_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting DISPLAY_SMALL_WIDTH = FontSetting.width(100.0f);
 
     public static final String LABEL_LARGE_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -147,7 +150,7 @@ public final class TypeScaleTokens {
 
     public static final FontSetting LABEL_LARGE_WEIGHT = FontSetting.weight(500);
 
-    public static final FontSetting LABEL_LARGE_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting LABEL_LARGE_WIDTH = FontSetting.width(100.0f);
 
     public static final String LABEL_MEDIUM_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -164,7 +167,7 @@ public final class TypeScaleTokens {
 
     public static final FontSetting LABEL_MEDIUM_WEIGHT = FontSetting.weight(500);
 
-    public static final FontSetting LABEL_MEDIUM_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting LABEL_MEDIUM_WIDTH = FontSetting.width(90.0f);
 
     public static final String LABEL_SMALL_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -179,7 +182,7 @@ public final class TypeScaleTokens {
 
     public static final FontSetting LABEL_SMALL_WEIGHT = FontSetting.weight(500);
 
-    public static final FontSetting LABEL_SMALL_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting LABEL_SMALL_WIDTH = FontSetting.width(84.0f);
 
     public static final String NUMERAL_EXTRA_LARGE_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -192,9 +195,9 @@ public final class TypeScaleTokens {
     @Dimension(unit = SP)
     public static final float NUMERAL_EXTRA_LARGE_TRACKING = 0.0f;
 
-    public static final FontSetting NUMERAL_EXTRA_LARGE_WEIGHT = FontSetting.weight(560);
+    public static final FontSetting NUMERAL_EXTRA_LARGE_WEIGHT = FontSetting.weight(550);
 
-    public static final FontSetting NUMERAL_EXTRA_LARGE_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting NUMERAL_EXTRA_LARGE_WIDTH = FontSetting.width(100.0f);
 
     public static final String NUMERAL_EXTRA_SMALL_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -222,9 +225,9 @@ public final class TypeScaleTokens {
     @Dimension(unit = SP)
     public static final float NUMERAL_LARGE_TRACKING = 0.0f;
 
-    public static final FontSetting NUMERAL_LARGE_WEIGHT = FontSetting.weight(580);
+    public static final FontSetting NUMERAL_LARGE_WEIGHT = FontSetting.weight(600);
 
-    public static final FontSetting NUMERAL_LARGE_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting NUMERAL_LARGE_WIDTH = FontSetting.width(100.0f);
 
     public static final String NUMERAL_MEDIUM_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -237,7 +240,7 @@ public final class TypeScaleTokens {
     @Dimension(unit = SP)
     public static final float NUMERAL_MEDIUM_TRACKING = 0.0f;
 
-    public static final FontSetting NUMERAL_MEDIUM_WEIGHT = FontSetting.weight(580);
+    public static final FontSetting NUMERAL_MEDIUM_WEIGHT = FontSetting.weight(600);
 
     public static final FontSetting NUMERAL_MEDIUM_WIDTH = FontSetting.width(100.0f);
 
@@ -252,7 +255,7 @@ public final class TypeScaleTokens {
     @Dimension(unit = SP)
     public static final float NUMERAL_SMALL_TRACKING = 0.0f;
 
-    public static final FontSetting NUMERAL_SMALL_WEIGHT = FontSetting.weight(550);
+    public static final FontSetting NUMERAL_SMALL_WEIGHT = FontSetting.weight(600);
 
     public static final FontSetting NUMERAL_SMALL_WIDTH = FontSetting.width(100.0f);
 
@@ -265,11 +268,11 @@ public final class TypeScaleTokens {
     public static final float TITLE_LARGE_SIZE = 18.0f;
 
     @Dimension(unit = SP)
-    public static final float TITLE_LARGE_TRACKING = 0.2f;
+    public static final float TITLE_LARGE_TRACKING = 0.0f;
 
     public static final FontSetting TITLE_LARGE_WEIGHT = FontSetting.weight(500);
 
-    public static final FontSetting TITLE_LARGE_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting TITLE_LARGE_WIDTH = FontSetting.width(100.0f);
 
     public static final String TITLE_MEDIUM_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -280,11 +283,11 @@ public final class TypeScaleTokens {
     public static final float TITLE_MEDIUM_SIZE = 16.0f;
 
     @Dimension(unit = SP)
-    public static final float TITLE_MEDIUM_TRACKING = 0.4f;
+    public static final float TITLE_MEDIUM_TRACKING = 0.2f;
 
-    public static final FontSetting TITLE_MEDIUM_WEIGHT = FontSetting.weight(500);
+    public static final FontSetting TITLE_MEDIUM_WEIGHT = FontSetting.weight(550);
 
-    public static final FontSetting TITLE_MEDIUM_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting TITLE_MEDIUM_WIDTH = FontSetting.width(100.0f);
 
     public static final String TITLE_SMALL_FONT_FAMILY = TypefaceTokens.BRAND;
 
@@ -295,13 +298,13 @@ public final class TypeScaleTokens {
     public static final float TITLE_SMALL_SIZE = 14.0f;
 
     @Dimension(unit = SP)
-    public static final float TITLE_SMALL_TRACKING = 0.4f;
+    public static final float TITLE_SMALL_TRACKING = 0.2f;
 
-    public static final FontSetting TITLE_SMALL_WEIGHT = FontSetting.weight(500);
+    public static final FontSetting TITLE_SMALL_WEIGHT = FontSetting.weight(550);
 
-    public static final FontSetting TITLE_SMALL_WIDTH = FontSetting.width(110.0f);
+    public static final FontSetting TITLE_SMALL_WIDTH = FontSetting.width(100.0f);
 
     public static final FontSetting DEFAULT_ROUNDNESS = FontSetting.roundness(100);
 
-    private TypeScaleTokens() {}
+    private TypeScaleTokensApi36() {}
 }
