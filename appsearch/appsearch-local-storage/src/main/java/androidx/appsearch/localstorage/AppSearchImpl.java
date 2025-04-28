@@ -1262,6 +1262,8 @@ public final class AppSearchImpl implements Closeable {
                     } catch (Throwable t) {
                         if (batchResultBuilder != null) {
                             batchResultBuilder.setResult(docId, throwableToFailedResult(t));
+                        } else {
+                            throw t;
                         }
                     }
                 }
@@ -2959,6 +2961,27 @@ public final class AppSearchImpl implements Closeable {
                     "getStorageInfo, response", storageInfoResult.getStatus(), storageInfoResult);
             checkSuccess(storageInfoResult.getStatus());
             return storageInfoResult.getStorageInfo();
+        } finally {
+            mReadWriteLock.readLock().unlock();
+        }
+    }
+
+    /** Get {@link GetSchemaResponse} for a given visibility database. */
+    @NonNull
+    public GetSchemaResponse getVisibilitySchema(@NonNull String prefix) throws AppSearchException {
+        mReadWriteLock.readLock().lock();
+        try {
+            GetSchemaResponse.Builder responseBuilder = new GetSchemaResponse.Builder();
+            Map<String, SchemaTypeConfigProto> visibilitySchemaProto =
+                    mSchemaCacheLocked.getSchemaMapForPrefix(prefix);
+            for (SchemaTypeConfigProto typeConfig : visibilitySchemaProto.values()) {
+                SchemaTypeConfigProto.Builder typeConfigBuilder = typeConfig.toBuilder();
+                PrefixUtil.removePrefixesFromSchemaType(typeConfigBuilder);
+                responseBuilder.setVersion(typeConfig.getVersion());
+                responseBuilder.addSchema(SchemaToProtoConverter.toAppSearchSchema(
+                        typeConfigBuilder));
+            }
+            return responseBuilder.build();
         } finally {
             mReadWriteLock.readLock().unlock();
         }

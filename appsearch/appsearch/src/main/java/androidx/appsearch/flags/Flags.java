@@ -541,4 +541,11 @@ public final class Flags {
     public static boolean enableThrowExceptionForNativeNotFoundPageToken() {
         return true;
     }
+
+    /**
+     * Whether to batch put visibility documents.
+     */
+    public static boolean enableBatchPutVisibilityDocuments() {
+        return true;
+    }
 }
