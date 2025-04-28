@@ -26,6 +26,7 @@ import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.Range
 import androidx.annotation.RestrictTo
+import androidx.annotation.VisibleForTesting
 import androidx.pdf.PdfDocument
 import androidx.pdf.R
 import androidx.pdf.util.buildPageIndicatorLabel
@@ -47,10 +48,10 @@ import com.google.android.material.color.MaterialColors
 public class FastScrollDrawer(
     internal val context: Context,
     private val pdfDocument: PdfDocument,
-    internal var thumbDrawable: Drawable?,
-    internal var pageIndicatorBackground: Drawable?,
-    internal var thumbMarginEnd: Int,
-    internal var pageIndicatorMarginEnd: Int
+    @get:VisibleForTesting public var thumbDrawable: Drawable?,
+    @get:VisibleForTesting public var pageIndicatorBackground: Drawable?,
+    @get:VisibleForTesting public var thumbMarginEnd: Int,
+    @get:VisibleForTesting public var pageIndicatorMarginEnd: Int
 ) {
     internal val thumbWidthPx = thumbDrawable?.intrinsicWidth ?: 0
     internal val thumbHeightPx = thumbDrawable?.intrinsicHeight ?: 0
