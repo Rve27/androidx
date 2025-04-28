@@ -147,6 +147,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -1425,7 +1426,7 @@ public final class ImageCapture extends UseCase {
                         + supportedOutputFormats);
 
         PostviewSettings postviewSettings = isPostviewEnabled() ? calculatePostviewSettings(
-                resolution) : null;
+                config.getInputFormat(), resolution) : null;
 
         CameraCharacteristics cameraCharacteristics = null;
         if (getCamera() != null) {
@@ -1492,7 +1493,8 @@ public final class ImageCapture extends UseCase {
      * @return the settings for the postview, or <code>null</code> if no supported format or
      * output size can be found.
      */
-    private @Nullable PostviewSettings calculatePostviewSettings(@NonNull Size targetResolution) {
+    private @Nullable PostviewSettings calculatePostviewSettings(int stillImageFormat,
+            @NonNull Size targetResolution) {
         SessionProcessor sessionProcessor = getSessionProcessor();
 
         // No session processor can be found which is necessary for supporting postview
@@ -1504,13 +1506,23 @@ public final class ImageCapture extends UseCase {
                 targetResolution);
 
         int format = ImageFormat.UNKNOWN;
+
+        List<Integer> supportedPostviewFormats = new ArrayList<>();
+
         // Prefer YUV because it takes less time to decode to bitmap.
         if (isPostviewImageFormatSupported(formatSizesMap, ImageFormat.YUV_420_888)) {
-            format = ImageFormat.YUV_420_888;
-        } else if (isPostviewImageFormatSupported(formatSizesMap, ImageFormat.JPEG)) {
-            format = ImageFormat.JPEG;
-        } else if (isPostviewImageFormatSupported(formatSizesMap, ImageFormat.JPEG_R)) {
-            format = ImageFormat.JPEG_R;
+            supportedPostviewFormats.add(ImageFormat.YUV_420_888);
+        }
+        if (isPostviewImageFormatSupported(formatSizesMap, ImageFormat.JPEG)) {
+            supportedPostviewFormats.add(ImageFormat.JPEG);
+        }
+        if (isPostviewImageFormatSupported(formatSizesMap, ImageFormat.JPEG_R)) {
+            supportedPostviewFormats.add(ImageFormat.JPEG_R);
+        }
+
+        if (!supportedPostviewFormats.isEmpty()) {
+            format = getCamera().getExtendedConfig().getPostviewFormatSelector().select(
+                    stillImageFormat, supportedPostviewFormats);
         }
 
         // No supported postview image format can be found
