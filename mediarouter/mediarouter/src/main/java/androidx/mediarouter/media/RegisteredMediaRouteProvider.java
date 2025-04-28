@@ -402,7 +402,9 @@ final class RegisteredMediaRouteProvider extends MediaRouteProvider
             if (mControllerCallback != null && controller instanceof RouteController) {
                 mControllerCallback.onControllerReleasedByProvider(((RouteController) controller));
             }
-            onControllerReleased(controller);
+            if (controller != null) {
+                onControllerReleased(controller);
+            }
         }
     }
 
@@ -425,7 +427,7 @@ final class RegisteredMediaRouteProvider extends MediaRouteProvider
         }
     }
 
-    void onControllerReleased(ControllerConnection controllerConnection) {
+    void onControllerReleased(@NonNull ControllerConnection controllerConnection) {
         mControllerConnections.remove(controllerConnection);
         controllerConnection.detachConnection();
         updateBinding();
