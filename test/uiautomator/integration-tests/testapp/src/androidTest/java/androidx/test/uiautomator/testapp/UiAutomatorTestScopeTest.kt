@@ -46,10 +46,10 @@ class UiAutomatorTestScopeTest {
 
     @Before
     fun setup() = uiAutomator {
-        uiDevice.wakeUp()
-        uiDevice.pressMenu()
-        uiDevice.pressHome()
-        uiDevice.setOrientationNatural()
+        device.wakeUp()
+        device.pressMenu()
+        device.pressHome()
+        device.setOrientationNatural()
     }
 
     @Test

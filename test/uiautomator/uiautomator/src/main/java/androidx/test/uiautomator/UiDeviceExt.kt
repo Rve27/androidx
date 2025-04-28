@@ -57,7 +57,9 @@ public fun UiDevice.waitForRootInActiveWindow(
 ): AccessibilityNodeInfo {
 
     val clock = TimeoutClock(timeoutMs = timeoutMs, sleepIntervalMs = sleepIntervalMs)
-    while (uiAutomation.rootInActiveWindow == null) {
+    while (
+        uiAutomation.rootInActiveWindow == null || uiAutomation.rootInActiveWindow.window == null
+    ) {
 
         // Clear accessibility cache: some nodes are cached and may not get updated.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE && clearCache) {
