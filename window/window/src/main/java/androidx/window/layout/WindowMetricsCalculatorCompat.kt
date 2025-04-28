@@ -18,8 +18,8 @@ package androidx.window.layout
 import android.app.Activity
 import android.content.Context
 import android.inputmethodservice.InputMethodService
-import androidx.annotation.UiContext
 import androidx.core.view.WindowInsetsCompat
+import androidx.window.layout.util.ContextCompatHelper
 import androidx.window.layout.util.DensityCompatHelper
 import androidx.window.layout.util.WindowMetricsCompatHelper
 
@@ -34,7 +34,10 @@ internal class WindowMetricsCalculatorCompat(
      *
      * @see WindowMetricsCalculator.computeCurrentWindowMetrics
      */
-    override fun computeCurrentWindowMetrics(@UiContext context: Context): WindowMetrics {
+    override fun computeCurrentWindowMetrics(context: Context): WindowMetrics {
+        require(ContextCompatHelper.isUiContextOrApplicationContext(context)) {
+            "Context must either be a UI context or the Application Context."
+        }
         return WindowMetricsCompatHelper.getInstance()
             .currentWindowMetrics(context, densityCompatHelper)
     }
@@ -60,11 +63,14 @@ internal class WindowMetricsCalculatorCompat(
     }
 
     /**
-     * Computes the maximum [WindowMetrics] for a given [UiContext]
+     * Computes the maximum [WindowMetrics] for a given [Context]
      *
      * @See WindowMetricsCalculator.computeMaximumWindowMetrics
      */
-    override fun computeMaximumWindowMetrics(@UiContext context: Context): WindowMetrics {
+    override fun computeMaximumWindowMetrics(context: Context): WindowMetrics {
+        require(ContextCompatHelper.isUiContextOrApplicationContext(context)) {
+            "Context must either be a UI context or the Application Context."
+        }
         return WindowMetricsCompatHelper.getInstance()
             .maximumWindowMetrics(context, densityCompatHelper)
     }
