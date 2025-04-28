@@ -98,6 +98,10 @@ message Semantics {
   //
   // This field is bindable and will use the dynamic value (if set).
   StringProp state_description = 3;
+
+  // Whether this element should be marked as heading for accessibility.
+  // Defaults to false.
+  bool heading = 5;
 }
 
 // A modifier to apply padding around an element.

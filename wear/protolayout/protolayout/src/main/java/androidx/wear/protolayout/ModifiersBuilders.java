@@ -560,6 +560,14 @@ public final class ModifiersBuilders {
             }
         }
 
+        /**
+         * Gets whether this element should be marked as heading for accessibility.
+         */
+        @RestrictTo(Scope.LIBRARY_GROUP)
+        public boolean isHeading() {
+            return mImpl.getHeading();
+        }
+
         /** Get the fingerprint for this object, or null if unknown. */
         @RestrictTo(Scope.LIBRARY_GROUP)
         public @Nullable Fingerprint getFingerprint() {
@@ -592,6 +600,8 @@ public final class ModifiersBuilders {
                     + getRole()
                     + ", stateDescription="
                     + getStateDescription()
+                    + ", heading="
+                    + isHeading()
                     + "}";
         }
 
@@ -626,6 +636,20 @@ public final class ModifiersBuilders {
                 mImpl.setStateDescription(stateDescription.toProto());
                 mFingerprint.recordPropertyUpdate(
                         3, checkNotNull(stateDescription.getFingerprint()).aggregateValueAsInt());
+                return this;
+            }
+
+            /**
+             * Sets whether this element should be marked as heading for accessibility. Defaults to
+             * false.
+             */
+            // TODO: b/413653475 - make setHeading() public
+            @RequiresSchemaVersion(major = 1, minor = 600)
+            @SuppressLint("MissingGetterMatchingBuilder")
+            @RestrictTo(Scope.LIBRARY_GROUP)
+            public @NonNull Builder setHeading(boolean heading) {
+                mImpl.setHeading(heading);
+                mFingerprint.recordPropertyUpdate(5, Boolean.hashCode(heading));
                 return this;
             }
 
