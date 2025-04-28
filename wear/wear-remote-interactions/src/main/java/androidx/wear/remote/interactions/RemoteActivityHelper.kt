@@ -278,7 +278,7 @@ constructor(
         targetIntent: Intent,
         targetNodeId: String? = null,
     ): ListenableFuture<Void> {
-        if (remoteInteractionsManager.isStartRemoteActivityApiSupported) {
+        if (remoteInteractionsManager.isWearSdkApiStartRemoteActivitySupported) {
             return startRemoteActivity(remoteInteractionsManager, targetIntent, executor)
         }
         return startRemoteActivityLegacy(targetIntent, targetNodeId)

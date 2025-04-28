@@ -28,8 +28,8 @@ internal interface IRemoteInteractionsManager {
     /** Whether the availability status API is supported. */
     val isAvailabilityStatusApiSupported: Boolean
 
-    /** Whether the startRemoteActivity API is supported. */
-    @get:ChecksSdkIntAtLeast(api = 36) val isStartRemoteActivityApiSupported: Boolean
+    /** Whether the startRemoteActivity from the Wear SDK is supported. */
+    @get:ChecksSdkIntAtLeast(api = 36) val isWearSdkApiStartRemoteActivitySupported: Boolean
 
     /**
      * Forwards a call to [RemoteInteractionsManager.registerRemoteActivityHelperStatusListener].

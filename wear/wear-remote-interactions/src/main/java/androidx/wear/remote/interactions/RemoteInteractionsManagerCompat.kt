@@ -39,7 +39,7 @@ internal open class RemoteInteractionsManagerCompat(context: Context) : IRemoteI
         get() = wearApiVersion.wearSdkVersion >= 4
 
     // TODO(b/411160115): Use `WearApiVersionHelper` once available.
-    override val isStartRemoteActivityApiSupported =
+    override val isWearSdkApiStartRemoteActivitySupported =
         isCurrentDeviceAWatch(context) &&
             android.os.Build.VERSION.SDK_INT >= 36 &&
             Sdk.isApiVersionAtLeast(Sdk.VERSION_CODES.WEAR_BAKLAVA_0)
@@ -72,7 +72,7 @@ internal open class RemoteInteractionsManagerCompat(context: Context) : IRemoteI
         executor: Executor,
         outcomeReceiver: OutcomeReceiver<Void?, Throwable>
     ) {
-        if (isStartRemoteActivityApiSupported) {
+        if (isWearSdkApiStartRemoteActivitySupported) {
             remoteInteractionsManager!!.startRemoteActivity(
                 dataUri,
                 additionalCategories,

@@ -470,13 +470,14 @@ class RemoteActivityHelperTest {
         mRemoteActivityHelper.startRemoteActivity(testExtraIntent)
         shadowOf(Looper.getMainLooper()).idle()
 
-        verify(remoteInteractionsManager).isStartRemoteActivityApiSupported
+        verify(remoteInteractionsManager).isWearSdkApiStartRemoteActivitySupported
         verifyNoMoreInteractions(remoteInteractionsManager)
     }
 
     @Test
     fun testStartRemoteActivity_isWatchAndUseWearSdkImplTrue_startRemoteActivityExecuted() {
-        whenever(remoteInteractionsManager.isStartRemoteActivityApiSupported).thenReturn(true)
+        whenever(remoteInteractionsManager.isWearSdkApiStartRemoteActivitySupported)
+            .thenReturn(true)
 
         mRemoteActivityHelper.startRemoteActivity(testExtraIntent)
         shadowOf(Looper.getMainLooper()).idle()
@@ -486,19 +487,21 @@ class RemoteActivityHelperTest {
 
     @Test
     fun testStartRemoteActivity_isWatchAndUseWearSdkImplFalse_startRemoteActivityNotExecuted() {
-        whenever(remoteInteractionsManager.isStartRemoteActivityApiSupported).thenReturn(false)
+        whenever(remoteInteractionsManager.isWearSdkApiStartRemoteActivitySupported)
+            .thenReturn(false)
 
         mRemoteActivityHelper.startRemoteActivity(testExtraIntent)
         shadowOf(Looper.getMainLooper()).idle()
 
-        verify(remoteInteractionsManager).isStartRemoteActivityApiSupported
+        verify(remoteInteractionsManager).isWearSdkApiStartRemoteActivitySupported
         verifyNoMoreInteractions(remoteInteractionsManager)
     }
 
     @Test
     @Config(minSdk = VERSION_CODES.TIRAMISU)
     fun testStartRemoteActivity_await_startRemoteActivityExecuted() = runTest {
-        whenever(remoteInteractionsManager.isStartRemoteActivityApiSupported).thenReturn(true)
+        whenever(remoteInteractionsManager.isWearSdkApiStartRemoteActivitySupported)
+            .thenReturn(true)
 
         val result = mRemoteActivityHelper.startRemoteActivity(testExtraIntent)
 
