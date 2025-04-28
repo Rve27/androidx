@@ -284,7 +284,6 @@ public class CustomTabsClient {
      *
      * {@see PendingSession}
      */
-    @ExperimentalPendingSession
     public static CustomTabsSession.@NonNull PendingSession newPendingSession(
             @NonNull Context context, final @Nullable CustomTabsCallback callback, int id) {
         PendingIntent sessionId = createSessionId(context, id);
@@ -642,7 +641,6 @@ public class CustomTabsClient {
      * and turn it into a {@link CustomTabsSession}.
      *
      */
-    @ExperimentalPendingSession
     @SuppressWarnings("NullAway") // TODO: b/141869399
     public @Nullable CustomTabsSession attachSession(
             CustomTabsSession.@NonNull PendingSession session) {
