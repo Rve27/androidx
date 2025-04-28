@@ -40,9 +40,16 @@ import kotlin.math.max
  * constructed through a DSL in [AppBarRowScope]. Each item provides a way to render itself in the
  * row layout, and an alternative way, to render inside of a dropdown menu, when there is overflow.
  *
+ * A sample with an [TopAppBar], that varies the number of actions shown.
+ *
+ * @sample androidx.compose.material3.samples.SimpleTopAppBarWithAdaptiveActions
  * @param overflowIndicator A composable that is displayed at the end of the row when the content
  *   overflows. It receives an [AppBarRowMenuState] instance.
  * @param modifier The modifier to be applied to the row.
+ * @param maxItemCount the max amount of items that should render in the row, before starting to use
+ *   the overflow menu. Consider that using large items or small constraints, will reduce the
+ *   effective maximum. Note: If the number of items supplied is bigger than max, at most max - 1
+ *   items will render, since the last one will be dedicated to the overflow composable.
  * @param content The content to be arranged in the row, defined using a dsl with [AppBarRowScope].
  */
 @Composable
@@ -50,12 +57,14 @@ import kotlin.math.max
 fun AppBarRow(
     overflowIndicator: @Composable (AppBarRowMenuState) -> Unit,
     modifier: Modifier = Modifier,
+    maxItemCount: Int = Int.MAX_VALUE,
     content: AppBarRowScope.() -> Unit,
 ) {
     val scope: AppBarRowScopeImpl by rememberAppBarRowScopeState(content)
     val menuState = remember { AppBarRowMenuState() }
     val overflowState = rememberAppBarRowOverflowState()
-    val measurePolicy = remember(overflowState) { OverflowMeasurePolicy(overflowState) }
+    val measurePolicy =
+        remember(overflowState, maxItemCount) { OverflowMeasurePolicy(overflowState, maxItemCount) }
 
     Layout(
         contents =
@@ -80,6 +89,22 @@ fun AppBarRow(
             ),
         modifier = modifier,
         measurePolicy = measurePolicy,
+    )
+}
+
+@Composable
+@Suppress("ComposableLambdaParameterPosition", "KotlinDefaultParameterOrder")
+@Deprecated(level = DeprecationLevel.HIDDEN, message = "For binary compat")
+fun AppBarRow(
+    overflowIndicator: @Composable (AppBarRowMenuState) -> Unit,
+    modifier: Modifier = Modifier,
+    content: AppBarRowScope.() -> Unit,
+) {
+    AppBarRow(
+        overflowIndicator = overflowIndicator,
+        modifier = modifier,
+        maxItemCount = Int.MAX_VALUE,
+        content = content,
     )
 }
 
@@ -331,8 +356,10 @@ private class AppBarRowOverflowStateImpl : AppBarRowAppBarRowOverflowState {
     }
 }
 
-private class OverflowMeasurePolicy(private val overflowState: AppBarRowAppBarRowOverflowState) :
-    MultiContentMeasurePolicy {
+private class OverflowMeasurePolicy(
+    private val overflowState: AppBarRowAppBarRowOverflowState,
+    val maxItemCount: Int
+) : MultiContentMeasurePolicy {
     override fun MeasureScope.measure(
         measurables: List<List<Measurable>>,
         constraints: Constraints
@@ -353,9 +380,11 @@ private class OverflowMeasurePolicy(private val overflowState: AppBarRowAppBarRo
 
         // Measure content until it doesn't fit
         for (i in contentMeasurables.indices) {
-            val measurable = contentMeasurables[i]
-            val placeable = measurable.measure(looseConstraints)
+            val placeable = contentMeasurables[i].measure(looseConstraints)
             val isLastContent = i == contentMeasurables.lastIndex
+            if (!isLastContent && (i == maxItemCount - 1)) {
+                break
+            }
             val hasSufficientSpace =
                 placeable.width <= remainingSpace ||
                     (isLastContent && placeable.width <= remainingSpace + reservedOverflowWidth)

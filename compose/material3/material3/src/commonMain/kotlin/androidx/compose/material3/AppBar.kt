@@ -129,8 +129,14 @@ import kotlin.math.roundToInt
  * A simple top app bar looks like:
  *
  * @sample androidx.compose.material3.samples.SimpleTopAppBar A top app bar that uses a
+ *
+ * A simple sample with an [AppBarRow], that varies the number of actions shown.
+ *
+ * @sample androidx.compose.material3.samples.SimpleTopAppBarWithAdaptiveActions
+ *
  *   [scrollBehavior] to customize its nested scrolling behavior when working in conjunction with a
  *   scrolling content looks like:
+ *
  * @sample androidx.compose.material3.samples.PinnedTopAppBar
  * @sample androidx.compose.material3.samples.EnterAlwaysTopAppBar
  * @param title the title to be displayed in the top app bar

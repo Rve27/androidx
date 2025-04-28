@@ -210,6 +210,7 @@ import androidx.compose.material3.samples.SimpleOutlinedTextFieldSample
 import androidx.compose.material3.samples.SimpleSearchBarSample
 import androidx.compose.material3.samples.SimpleTextFieldSample
 import androidx.compose.material3.samples.SimpleTopAppBar
+import androidx.compose.material3.samples.SimpleTopAppBarWithAdaptiveActions
 import androidx.compose.material3.samples.SimpleTopAppBarWithSubtitle
 import androidx.compose.material3.samples.SingleSelectConnectedButtonGroupSample
 import androidx.compose.material3.samples.SliderSample
@@ -844,6 +845,13 @@ val TopAppBarExamples =
             sourceUrl = TopAppBarExampleSourceUrl,
         ) {
             SimpleTopAppBar()
+        },
+        Example(
+            name = "SimpleTopAppBarWithAdaptiveActions",
+            description = TopAppBarExampleDescription,
+            sourceUrl = TopAppBarExampleDescription,
+        ) {
+            SimpleTopAppBarWithAdaptiveActions()
         },
         Example(
             name = "SimpleTopAppBarWithSubtitle",
