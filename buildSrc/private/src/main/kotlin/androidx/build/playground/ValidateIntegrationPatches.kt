@@ -17,7 +17,9 @@
 package androidx.build.playground
 
 import androidx.build.addToBuildOnServer
+import androidx.build.getSupportRootFolder
 import androidx.build.uptodatedness.cacheEvenIfNoOutputs
+import java.io.File
 import javax.inject.Inject
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -76,7 +78,7 @@ abstract class ValidateIntegrationPatches : DefaultTask() {
                     "validateIntegrationPatches",
                     ValidateIntegrationPatches::class.java
                 ) { task ->
-                    task.patchesDirectory.set(project.layout.projectDirectory.dir(PATCH_DIRECTORY))
+                    task.patchesDirectory.set(File(project.getSupportRootFolder(), PATCH_DIRECTORY))
                     task.cacheEvenIfNoOutputs()
                 }
             project.addToBuildOnServer(task)
