@@ -112,6 +112,7 @@ package androidx.compose.foundation {
 
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public final class ComposeFoundationFlags {
     property public boolean DragGesturePickUpEnabled;
+    property public boolean isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled;
     property public boolean isAutomaticNestedPrefetchEnabled;
     property public boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
     property public boolean isNonComposedClickableEnabled;
@@ -119,6 +120,7 @@ package androidx.compose.foundation {
     property public boolean isPausableCompositionInPrefetchEnabled;
     field public static boolean DragGesturePickUpEnabled;
     field public static final androidx.compose.foundation.ComposeFoundationFlags INSTANCE;
+    field public static boolean isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled;
     field public static boolean isAutomaticNestedPrefetchEnabled;
     field public static boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
     field public static boolean isNonComposedClickableEnabled;
