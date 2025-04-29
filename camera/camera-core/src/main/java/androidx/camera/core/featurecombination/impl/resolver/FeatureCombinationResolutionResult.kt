@@ -25,15 +25,15 @@ import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination
  *
  * @see FeatureCombinationResolver
  */
-internal sealed interface FeatureCombinationResolutionResult {
-    data class Supported(val resolvedFeatureCombination: ResolvedFeatureCombination) :
+public sealed interface FeatureCombinationResolutionResult {
+    public data class Supported(val resolvedFeatureCombination: ResolvedFeatureCombination) :
         FeatureCombinationResolutionResult
 
-    data class UseCaseMissing(val requiredUseCases: String, val featureRequiring: Feature) :
+    public data class UseCaseMissing(val requiredUseCases: String, val featureRequiring: Feature) :
         FeatureCombinationResolutionResult
 
-    data class UnsupportedUseCase(val unsupportedUseCase: UseCase) :
+    public data class UnsupportedUseCase(val unsupportedUseCase: UseCase) :
         FeatureCombinationResolutionResult
 
-    object Unsupported : FeatureCombinationResolutionResult
+    public object Unsupported : FeatureCombinationResolutionResult
 }

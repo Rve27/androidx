@@ -16,6 +16,9 @@
 
 package androidx.camera.lifecycle;
 
+import static androidx.camera.core.featurecombination.Feature.FPS_60;
+import static androidx.camera.core.featurecombination.Feature.HDR_HLG10;
+import static androidx.camera.core.featurecombination.Feature.PREVIEW_STABILIZATION;
 import static androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED;
 import static androidx.camera.core.impl.utils.executor.CameraXExecutors.directExecutor;
 
@@ -31,12 +34,14 @@ import androidx.annotation.OptIn;
 import androidx.camera.core.CameraEffect;
 import androidx.camera.core.ExperimentalSessionConfig;
 import androidx.camera.core.LegacySessionConfig;
+import androidx.camera.core.Preview;
 import androidx.camera.core.SessionConfig;
 import androidx.camera.core.UseCase;
 import androidx.camera.core.ViewPort;
 import androidx.camera.core.concurrent.CameraCoordinator;
 import androidx.camera.core.impl.Config;
 import androidx.camera.core.impl.MutableOptionsBundle;
+import androidx.camera.core.impl.utils.Threads;
 import androidx.camera.core.internal.CameraUseCaseAdapter;
 import androidx.camera.core.internal.StreamSpecsCalculatorImpl;
 import androidx.camera.testing.fakes.FakeCamera;
@@ -262,6 +267,30 @@ public class LifecycleCameraTest {
                 .isEqualTo(sessionConfig.getEffects());
         assertThat(mLifecycleCamera.getCameraUseCaseAdapter().getTargetHighSpeedFps())
                 .isEqualTo(sessionConfig.getTargetHighSpeedFrameRate());
+    }
+
+    @Test
+    public void bindSessionConfig_withFeatures_featuresSetToAttachedUseCases() {
+        mLifecycleCamera = new LifecycleCamera(mLifecycleOwner, mCameraUseCaseAdapter);
+        mLifecycleOwner.start();
+        Preview preview = new Preview.Builder().build();
+
+        SessionConfig sessionConfig =
+                new SessionConfig.Builder(Collections.singletonList(preview))
+                        .addRequiredFeatures(HDR_HLG10)
+                        .setPreferredFeatures(FPS_60, PREVIEW_STABILIZATION)
+                        .build();
+        Threads.runOnMainSync(() -> {
+            try {
+                mLifecycleCamera.bind(sessionConfig);
+            } catch (CameraUseCaseAdapter.CameraException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // All features are added since the fake surface manager supports all combinations.
+        assertThat(preview.getFeatureCombination()).containsExactly(HDR_HLG10, FPS_60,
+                PREVIEW_STABILIZATION);
     }
 
     @Test

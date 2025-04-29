@@ -26,7 +26,7 @@ import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination
  *
  * @see resolveFeatureCombination
  */
-internal interface FeatureCombinationResolver {
+public interface FeatureCombinationResolver {
     /**
      * Returns a [FeatureCombinationResolutionResult] which is either a supported
      * [ResolvedFeatureCombination] instance or some error.
@@ -41,7 +41,7 @@ internal interface FeatureCombinationResolver {
      *   [orderedPreferredFeatures] are empty.
      */
     @Throws(IllegalStateException::class)
-    fun resolveFeatureCombination(
+    public fun resolveFeatureCombination(
         useCases: Set<UseCase>,
         requiredFeatures: Set<Feature> = emptySet(),
         orderedPreferredFeatures: List<Feature> = emptyList()

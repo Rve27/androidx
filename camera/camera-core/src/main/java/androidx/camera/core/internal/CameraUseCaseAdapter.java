@@ -47,6 +47,7 @@ import android.util.Size;
 import android.view.Surface;
 
 import androidx.annotation.GuardedBy;
+import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraControl;
@@ -61,6 +62,9 @@ import androidx.camera.core.Preview;
 import androidx.camera.core.UseCase;
 import androidx.camera.core.ViewPort;
 import androidx.camera.core.concurrent.CameraCoordinator;
+import androidx.camera.core.featurecombination.ExperimentalFeatureCombination;
+import androidx.camera.core.featurecombination.Feature;
+import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination;
 import androidx.camera.core.impl.AdapterCameraInfo;
 import androidx.camera.core.impl.AdapterCameraInternal;
 import androidx.camera.core.impl.CameraConfig;
@@ -323,6 +327,41 @@ public final class CameraUseCaseAdapter implements Camera {
      *                         currently added UseCases exceed the capability of the camera.
      */
     public void addUseCases(@NonNull Collection<UseCase> appUseCasesToAdd) throws CameraException {
+        addUseCases(appUseCasesToAdd, /* featureCombination = */ null);
+    }
+
+    /**
+     * Add the specified collection of {@link UseCase} to the adapter with dual camera support and
+     * a feature combination.
+     *
+     * <p> If a non-null feature combination is set, the features are set to all the use cases, not
+     * only the new use cases. This ensures that all use case configs are updated with the correct
+     * feature combination-related values and there's no inconsistency among the use cases. On the
+     * other hand, a null feature combination represents that the Feature Combination API is not
+     * being used and all use cases should be updated accordingly just-in-case they were not unbound
+     * or cleaned up properly before. See {@link UseCase#setFeatureCombination(Set)} for details.
+     * Note that the new SessionConfig design prevents mixing use cases with and without feature
+     * combination, but it's still being handled here to some extent just-in-case.
+     *
+     * <p> For example, if there were some use cases already added before without a non-null feature
+     * combination, they also should be using feature combination configs if the new use cases are
+     * being added with a feature combination. Conversely, if the new use cases are being added
+     * with a null feature combination, all use cases are reset to use configs without using
+     * feature combination.
+     *
+     * @param appUseCasesToAdd The use cases an application wants to add.
+     * @param featureCombination A {@link ResolvedFeatureCombination} to use for all the use cases
+     *                           after adding these use cases. A null value represents that the
+     *                           feature combination API is not being used.
+     * @throws CameraException Thrown if the combination of newly added UseCases and the
+     *                         currently added UseCases exceed the capability of the camera.
+     */
+    @OptIn(markerClass = ExperimentalFeatureCombination.class)
+    public void addUseCases(@NonNull Collection<UseCase> appUseCasesToAdd,
+            @Nullable ResolvedFeatureCombination featureCombination) throws CameraException {
+        Logger.d(TAG, "addUseCases: appUseCasesToAdd = " + appUseCasesToAdd + ", featureCombination"
+                + featureCombination);
+
         synchronized (mLock) {
             // Configure the CameraConfig when binding
             mCameraInternal.setExtendedConfig(mCameraConfig);
@@ -333,10 +372,22 @@ public final class CameraUseCaseAdapter implements Camera {
             //TODO(b/266641900): must be LinkedHashSet otherwise ExistingActivityLifecycleTest
             // fails due to a camera-pipe integration bug.
             appUseCases.addAll(appUseCasesToAdd);
+
+            Map<UseCase, Set<Feature>> previousFeatureComboMap = new HashMap<>();
+            for (UseCase useCase : appUseCases) {
+                previousFeatureComboMap.put(useCase, useCase.getFeatureCombination());
+                useCase.setFeatureCombination(
+                        featureCombination != null ? featureCombination.getFeatures() : null);
+            }
+
             try {
                 updateUseCases(appUseCases,
                         mSecondaryCameraInternal != null, mSecondaryCameraInternal != null);
             } catch (IllegalArgumentException e) {
+                // Restore previous feature combinations at bind failure
+                for (Map.Entry<UseCase, Set<Feature>> entry : previousFeatureComboMap.entrySet()) {
+                    entry.getKey().setFeatureCombination(entry.getValue());
+                }
                 throw new CameraException(e);
             }
         }
@@ -347,6 +398,10 @@ public final class CameraUseCaseAdapter implements Camera {
      */
     public void removeUseCases(@NonNull Collection<UseCase> useCasesToRemove) {
         synchronized (mLock) {
+            for (UseCase useCase : useCasesToRemove) {
+                useCase.setFeatureCombination(null);
+            }
+
             Set<UseCase> appUseCases = new LinkedHashSet<>(mAppUseCases);
             appUseCases.removeAll(useCasesToRemove);
             updateUseCases(appUseCases,

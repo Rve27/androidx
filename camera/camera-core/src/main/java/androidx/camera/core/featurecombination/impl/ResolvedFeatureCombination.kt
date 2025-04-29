@@ -16,7 +16,9 @@
 
 package androidx.camera.core.featurecombination.impl
 
+import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.Logger
+import androidx.camera.core.SessionConfig
 import androidx.camera.core.UseCase
 import androidx.camera.core.featurecombination.Feature
 import androidx.camera.core.featurecombination.impl.resolver.DefaultFeatureCombinationResolver
@@ -32,20 +34,20 @@ import androidx.camera.core.impl.CameraInfoInternal
  *
  * In future, this can be used to contain resolved use case configs or stream specs as well.
  */
-internal data class ResolvedFeatureCombination(
-    val useCases: Set<UseCase>,
-    val features: Set<Feature>
+public class ResolvedFeatureCombination(
+    public val useCases: Set<UseCase>,
+    public val features: Set<Feature>
 ) {
     override fun toString(): String {
         return "ResolvedFeatureCombination(features=$features, useCases=$useCases)"
     }
 
-    internal companion object {
+    public companion object {
         private const val TAG = "ResolvedFeatureCombination"
 
         /**
-         * Finds a [ResolvedFeatureCombination] based on the provided preferred features with
-         * priority and device's camera capabilities.
+         * Resolves a [SessionConfig] to a [ResolvedFeatureCombination] based on the provided
+         * preferred feature priority and camera capabilities.
          *
          * <p>This function uses a [DefaultFeatureCombinationResolver] to determine the highest
          * priority and supported feature set, along with the correct use case resolutions for the
@@ -53,37 +55,36 @@ internal data class ResolvedFeatureCombination(
          *
          * @param cameraInfoInternal The [CameraInfoInternal] providing device-specific camera
          *   capabilities.
-         * @param useCases The list of use cases to use with the feature combination.
-         * @param requiredFeatures The set of required features, empty by default.
-         * @param orderedPreferredFeatures The list of preferred features in descending order of
-         *   priority, empty by default.
          * @param resolver The [FeatureCombinationResolver] used to resolve the feature,
          *   [DefaultFeatureCombinationResolver] by default.
          * @return The [ResolvedFeatureCombination] containing the resolved features and use case
-         *   resolutions.
+         *   resolutions, null if no feature is provided in input and thus resolving is not
+         *   applicable.
          * @throws IllegalArgumentException If resolving the feature combination fails for some
          *   reason.
          */
-        fun findResolvedFeatureCombination(
+        @OptIn(ExperimentalSessionConfig::class)
+        @JvmOverloads
+        public fun SessionConfig.resolveFeatureCombination(
             cameraInfoInternal: CameraInfoInternal,
-            useCases: Set<UseCase>,
-            requiredFeatures: Set<Feature> = emptySet(),
-            orderedPreferredFeatures: List<Feature> = emptyList(),
             resolver: FeatureCombinationResolver =
                 DefaultFeatureCombinationResolver(cameraInfoInternal)
-        ): ResolvedFeatureCombination {
+        ): ResolvedFeatureCombination? {
             Logger.d(
                 TAG,
-                "findResolvedFeatureCombination: featureCombination = $this," +
+                "resolveFeatureCombination: sessionConfig = $this," +
                     " lensFacing = ${cameraInfoInternal.lensFacing}"
             )
 
+            if (requiredFeatures.isEmpty() && preferredFeatures.isEmpty()) {
+                // nothing to resolve
+                return null
+            }
+
+            val useCases = this.useCases.toSet() // SessionConfig already removes duplicity
+
             val result =
-                resolver.resolveFeatureCombination(
-                    useCases,
-                    requiredFeatures,
-                    orderedPreferredFeatures
-                )
+                resolver.resolveFeatureCombination(useCases, requiredFeatures, preferredFeatures)
 
             when (result) {
                 is Supported -> {
