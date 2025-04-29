@@ -1155,7 +1155,8 @@ public abstract class UseCase {
      *
      * @param features The set of explicit features to use, a null value can be used to disable
      *   the feature combination mode.
-     * @see androidx.camera.core.featurecombination.FeatureCombination
+     * @see androidx.camera.core.SessionConfig#getRequiredFeatures()
+     * @see androidx.camera.core.SessionConfig#getPreferredFeatures()
      */
     @RestrictTo(Scope.LIBRARY_GROUP)
     @OptIn(markerClass = ExperimentalFeatureCombination.class)

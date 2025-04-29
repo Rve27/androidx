@@ -20,11 +20,18 @@ import android.os.Build
 import android.util.Range
 import android.util.Rational
 import android.view.Surface
+import androidx.camera.core.featurecombination.Feature
+import androidx.camera.core.featurecombination.Feature.Companion.FPS_60
+import androidx.camera.core.featurecombination.Feature.Companion.HDR_HLG10
+import androidx.camera.core.featurecombination.Feature.Companion.IMAGE_ULTRA_HDR
+import androidx.camera.core.featurecombination.Feature.Companion.PREVIEW_STABILIZATION
+import androidx.camera.core.featurecombination.impl.feature.FeatureTypeInternal
 import androidx.camera.core.impl.StreamSpec
 import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.utils.executor.CameraXExecutors.directExecutor
 import androidx.camera.testing.impl.fakes.FakeSurfaceEffect
 import androidx.camera.testing.impl.fakes.FakeSurfaceProcessor
+import androidx.testutils.assertThrows
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,6 +58,8 @@ class SessionConfigTest {
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(sessionConfig.effects).isEqualTo(effects)
         assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.requiredFeatures).isEmpty()
+        assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isMultipleBindingAllowed).isFalse()
     }
 
@@ -62,6 +71,8 @@ class SessionConfigTest {
         assertThat(sessionConfig.viewPort).isNull()
         assertThat(sessionConfig.effects).isEmpty()
         assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.requiredFeatures).isEmpty()
+        assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isMultipleBindingAllowed).isFalse()
     }
 
@@ -83,6 +94,30 @@ class SessionConfigTest {
     }
 
     @Test
+    fun sessionConfig_builderAddsRequiredFeatures() {
+        val sessionConfig =
+            SessionConfig.Builder(useCases)
+                .addRequiredFeatures(HDR_HLG10, FPS_60)
+                .addRequiredFeatures(PREVIEW_STABILIZATION)
+                .build()
+
+        assertThat(sessionConfig.requiredFeatures)
+            .containsExactly(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
+    }
+
+    @Test
+    fun sessionConfig_builderSetsPreferredFeatures() {
+        val sessionConfig =
+            SessionConfig.Builder(useCases)
+                .setPreferredFeatures(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
+                .build()
+
+        assertThat(sessionConfig.preferredFeatures)
+            .containsExactly(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
+            .inOrder()
+    }
+
+    @Test
     fun sessionConfig_builderBuildsCorrectSessionConfig() {
         val effect = mock(CameraEffect::class.java)
         val sessionConfig =
@@ -92,6 +127,8 @@ class SessionConfigTest {
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(sessionConfig.effects).containsExactly(effect)
         assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.requiredFeatures).isEmpty()
+        assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isMultipleBindingAllowed).isFalse()
     }
 
@@ -111,6 +148,8 @@ class SessionConfigTest {
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(sessionConfig.effects).containsExactly(effect)
         assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.requiredFeatures).isEmpty()
+        assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isMultipleBindingAllowed).isFalse()
     }
 
@@ -127,11 +166,36 @@ class SessionConfigTest {
         val sessionConfig = builder.build()
         builder.addEffect(effect2)
         builder.setViewPort(viewPort2)
+        builder.addRequiredFeatures(HDR_HLG10)
         mutableUseCasesList.add(ImageAnalysis.Builder().build())
 
         assertThat(sessionConfig.useCases).isEqualTo(useCases)
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(sessionConfig.effects).containsExactly(effect1)
+    }
+
+    @Test
+    fun sessionConfig_featuresModifiedAfterBuild_notAffectedByBuilderAfterBuilt() {
+        val mutableUseCasesList = useCases.toMutableList()
+        val viewPort2 = ViewPort.Builder(Rational(1, 1), Surface.ROTATION_0).build()
+
+        val builder =
+            SessionConfig.Builder(mutableUseCasesList)
+                .setViewPort(viewPort)
+                .addRequiredFeatures(FPS_60)
+                .setPreferredFeatures(IMAGE_ULTRA_HDR, PREVIEW_STABILIZATION)
+
+        val sessionConfig = builder.build()
+        builder.setViewPort(viewPort2)
+        builder.addRequiredFeatures(HDR_HLG10)
+        builder.setPreferredFeatures(PREVIEW_STABILIZATION)
+        mutableUseCasesList.add(ImageAnalysis.Builder().build())
+
+        assertThat(sessionConfig.useCases).isEqualTo(useCases)
+        assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
+        assertThat(sessionConfig.requiredFeatures).containsExactly(FPS_60)
+        assertThat(sessionConfig.preferredFeatures)
+            .containsExactly(IMAGE_ULTRA_HDR, PREVIEW_STABILIZATION)
     }
 
     @Test
@@ -149,6 +213,102 @@ class SessionConfigTest {
         assertThat(sessionConfigViaConstructor.useCases)
             .containsExactly(imageCapture, preview)
             .inOrder()
+    }
+
+    @Test
+    fun sessionConfig_conflictingReqFeatures_throwsIllegalArgumentExceptionWithCorrectMessage() {
+        // Arrange
+        val requiredFeatures =
+            setOf(
+                FPS_60,
+                FakeDynamicRangeFeature(DynamicRange.SDR),
+                FakeDynamicRangeFeature(DynamicRange.HLG_10_BIT)
+            )
+
+        // Act & assert
+        val exception =
+            try {
+                SessionConfig(useCases = useCases, requiredFeatures = requiredFeatures)
+                null
+            } catch (e: Exception) {
+                e
+            }
+
+        // Assert
+        assertThat(exception).isInstanceOf(IllegalArgumentException::class.java)
+        assertThat(exception).hasMessageThat().contains("{encoding=SDR, bitDepth=8}")
+        assertThat(exception).hasMessageThat().contains("{encoding=HLG, bitDepth=10}")
+    }
+
+    @Test
+    fun sessionConfig_noConflictingRequiredFeatures_noExceptionThrown() {
+        // Arrange
+        val requiredFeatures = setOf(FPS_60, IMAGE_ULTRA_HDR, PREVIEW_STABILIZATION)
+
+        // Act & assert
+        SessionConfig(useCases = useCases, requiredFeatures = requiredFeatures)
+    }
+
+    @Test
+    fun sessionConfig_sameFeatureTwiceInPreferredFeatures_illegalArgumentExceptionThrown() {
+        // Arrange
+        val features = listOf(FPS_60, IMAGE_ULTRA_HDR, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR)
+
+        // Act & assert
+        assertThrows<IllegalArgumentException> {
+            SessionConfig(useCases = useCases, preferredFeatures = features)
+        }
+    }
+
+    @Test
+    fun sessionConfig_requiredFeatureAlsoInPreferredFeatures_illegalArgumentExceptionThrown() {
+        // Act & assert
+        assertThrows<IllegalArgumentException> {
+            SessionConfig(
+                useCases = useCases,
+                requiredFeatures = setOf(FPS_60),
+                preferredFeatures = listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
+            )
+        }
+    }
+
+    @Test
+    fun sessionConfig_imageAnalysisAddedWithFeatureParam_illegalArgumentExceptionThrown() {
+        // Arrange
+        val features = listOf(FPS_60)
+
+        // Act & assert
+        assertThrows<IllegalArgumentException> {
+            SessionConfig(
+                useCases = listOf(ImageAnalysis.Builder().build()),
+                preferredFeatures = features
+            )
+        }
+    }
+
+    @Test
+    fun sessionConfig_imageAnalysisAddedWithoutFeatureParam_noExceptionThrown() {
+        // Act & assert
+        SessionConfig(
+            useCases = listOf(ImageAnalysis.Builder().build()),
+        )
+    }
+
+    @Test
+    fun sessionConfig_effectAddedWithFeatureParam_illegalArgumentExceptionThrown() {
+        // Arrange
+        val features = listOf(FPS_60)
+
+        // Act & assert
+        assertThrows<IllegalArgumentException> {
+            SessionConfig(useCases = useCases, preferredFeatures = features, effects = effects)
+        }
+    }
+
+    @Test
+    fun sessionConfig_effectAddedWithoutFeatureParam_noExceptionThrown() {
+        // Act & assert
+        SessionConfig(useCases = useCases, effects = effects)
     }
 
     @Test
@@ -195,5 +355,9 @@ class SessionConfigTest {
         assertThat(legacySessionConfig.targetHighSpeedFrameRate)
             .isEqualTo(useCaseGroup.targetHighSpeedFrameRate)
         assertThat(legacySessionConfig.isMultipleBindingAllowed).isTrue()
+    }
+
+    data class FakeDynamicRangeFeature(private val dynamicRange: DynamicRange) : Feature() {
+        override val featureTypeInternal: FeatureTypeInternal = FeatureTypeInternal.DYNAMIC_RANGE
     }
 }

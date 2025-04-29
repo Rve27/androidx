@@ -16,6 +16,7 @@
 
 package androidx.camera.lifecycle
 
+import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
@@ -68,6 +69,7 @@ import kotlin.time.Duration.Companion.seconds
  * This is the standard provider for applications to use.
  */
 @OptIn(ExperimentalCameraProviderConfiguration::class)
+@SuppressLint("NullAnnotationGroup")
 public class ProcessCameraProvider
 private constructor(private val lifecycleCameraProvider: LifecycleCameraProviderImpl) :
     CameraProvider {

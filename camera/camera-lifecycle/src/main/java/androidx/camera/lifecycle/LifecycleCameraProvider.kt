@@ -15,6 +15,7 @@
  */
 package androidx.camera.lifecycle
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.annotation.RestrictTo
@@ -72,6 +73,7 @@ public interface LifecycleCameraProvider : CameraProvider {
      * [unbindAll].
      */
     @RestrictTo(Scope.LIBRARY_GROUP)
+    @SuppressLint("NullAnnotationGroup")
     @ExperimentalSessionConfig
     public fun isBound(sessionConfig: SessionConfig): Boolean
 
@@ -107,6 +109,7 @@ public interface LifecycleCameraProvider : CameraProvider {
      * @throws UnsupportedOperationException If called in concurrent mode.
      */
     @RestrictTo(Scope.LIBRARY_GROUP)
+    @SuppressLint("NullAnnotationGroup")
     @ExperimentalSessionConfig
     public fun unbind(sessionConfig: SessionConfig): Unit
 
@@ -246,6 +249,7 @@ public interface LifecycleCameraProvider : CameraProvider {
      * @sample androidx.camera.lifecycle.samples.bindSessionConfigToLifecycle
      */
     @RestrictTo(Scope.LIBRARY_GROUP)
+    @SuppressLint("NullAnnotationGroup")
     @ExperimentalSessionConfig
     public fun bindToLifecycle(
         lifecycleOwner: LifecycleOwner,
