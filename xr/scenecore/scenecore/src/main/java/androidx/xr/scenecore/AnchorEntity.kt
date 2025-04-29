@@ -20,7 +20,7 @@ import android.annotation.SuppressLint
 import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.Anchor
-import androidx.xr.runtime.PlaneTrackingMode
+import androidx.xr.runtime.Config.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.AnchorEntity as RtAnchorEntity
 import androidx.xr.runtime.internal.JxrPlatformAdapter

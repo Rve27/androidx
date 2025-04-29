@@ -67,9 +67,7 @@ import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetCompos
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetCoreEntity
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetMeasurePolicy
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetModifier
-import androidx.xr.compose.unit.Meter.Companion.millimeters
 import androidx.xr.runtime.math.Pose
-import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.ActivityPanelEntity
 import androidx.xr.scenecore.Dimensions
 import androidx.xr.scenecore.PanelEntity
@@ -409,7 +407,6 @@ public fun SpatialPanel(
     shape: SpatialShape = SpatialPanelDefaults.shape,
 ) {
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
-    val dialogManager = LocalDialogManager.current
 
     val rect = Rect(0, 0, DEFAULT_SIZE_PX, DEFAULT_SIZE_PX)
     val activityPanelEntity = rememberCorePanelEntity {
@@ -417,49 +414,10 @@ public fun SpatialPanel(
             .also { it.launchActivity(intent) }
     }
 
-    SpatialBox {
-        SubspaceLayout(modifier = modifier, coreEntity = activityPanelEntity) { _, constraints ->
-            val width = DEFAULT_SIZE_PX.coerceIn(constraints.minWidth, constraints.maxWidth)
-            val height = DEFAULT_SIZE_PX.coerceIn(constraints.minHeight, constraints.maxHeight)
-            val depth = constraints.minDepth.coerceAtLeast(0)
-            layout(width, height, depth) {}
-        }
-
-        if (dialogManager.isSpatialDialogActive.value) {
-            val scrimView = rememberComposeView()
-
-            scrimView.setContent {
-                Box(
-                    modifier =
-                        Modifier.fillMaxSize()
-                            .background(UiColor.Black.copy(alpha = 0.5f))
-                            .pointerInput(Unit) {
-                                detectTapGestures {
-                                    dialogManager.isSpatialDialogActive.value = false
-                                }
-                            }
-                ) {}
-            }
-
-            val scrimPanelEntity =
-                rememberCorePanelEntity(shape = shape) {
-                    PanelEntity.create(
-                            session = session,
-                            view = scrimView,
-                            dimensions = SpatialPanelDefaults.minimumPanelDimension,
-                            name = entityName("ScrimPanel"),
-                            pose = Pose.Identity,
-                        )
-                        .also {
-                            it.setParent(activityPanelEntity.entity)
-                            it.setPose(Pose(translation = Vector3(0f, 0f, 3.millimeters.toM())))
-                        }
-                }
-
-            LaunchedEffect(activityPanelEntity.size) {
-                val size = activityPanelEntity.size
-                scrimPanelEntity.size = size
-            }
-        }
+    SubspaceLayout(modifier = modifier, coreEntity = activityPanelEntity) { _, constraints ->
+        val width = DEFAULT_SIZE_PX.coerceIn(constraints.minWidth, constraints.maxWidth)
+        val height = DEFAULT_SIZE_PX.coerceIn(constraints.minHeight, constraints.maxHeight)
+        val depth = constraints.minDepth.coerceAtLeast(0)
+        layout(width, height, depth) {}
     }
 }

@@ -17,7 +17,7 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.Config
+import androidx.xr.runtime.Config
 import androidx.xr.runtime.internal.ConfigurationNotSupportedException
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.internal.PermissionNotGrantedException

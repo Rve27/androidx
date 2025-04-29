@@ -56,7 +56,7 @@ import androidx.xr.compose.subspace.node.SubspaceNodeApplier
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.compose.unit.Meter
 import androidx.xr.compose.unit.VolumeConstraints
-import androidx.xr.runtime.HeadTrackingMode
+import androidx.xr.runtime.Config.HeadTrackingMode
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.CameraView
 import androidx.xr.scenecore.CameraView.CameraType

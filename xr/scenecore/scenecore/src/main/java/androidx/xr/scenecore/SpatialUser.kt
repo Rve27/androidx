@@ -17,7 +17,7 @@
 package androidx.xr.scenecore
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.HeadTrackingMode
+import androidx.xr.runtime.Config.HeadTrackingMode
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.LifecycleManager
 

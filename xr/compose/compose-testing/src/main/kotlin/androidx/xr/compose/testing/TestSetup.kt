@@ -28,7 +28,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.xr.compose.platform.LocalHasXrSpatialFeature
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.runtime.Config
-import androidx.xr.runtime.HeadTrackingMode
+import androidx.xr.runtime.Config.HeadTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.ActivityPose
 import androidx.xr.runtime.internal.ActivitySpace

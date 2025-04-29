@@ -17,7 +17,7 @@
 package androidx.xr.arcore
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.AnchorPersistenceMode
+import androidx.xr.runtime.Config.AnchorPersistenceMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.internal.Anchor as RuntimeAnchor

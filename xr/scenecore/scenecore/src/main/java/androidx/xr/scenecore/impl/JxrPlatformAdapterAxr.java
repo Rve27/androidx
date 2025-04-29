@@ -141,6 +141,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
     private SplitEngineSubspaceManager mSplitEngineSubspaceManager;
     private ImpSplitEngineRenderer mSplitEngineRenderer;
     private boolean mFrameLoopStarted;
+    private boolean mIsDisposed;
 
     // TODO b/373481538: remove lazy initialization once XR Extensions bug is fixed. This will allow
     // us to remove the lazySpatialStateProvider instance and pass the spatialState directly.
@@ -1306,6 +1307,12 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
 
     @Override
     public void dispose() {
+        // TODO(b/413711724): Further limit what this class does once it's disposed.
+        if (mIsDisposed) {
+            Log.i(TAG, "Ignoring repeated disposes");
+            return;
+        }
+
         Log.i(TAG, "Disposing resources");
         mEnvironment.dispose();
         mExtensions.clearSpatialStateCallback(mActivity);
@@ -1319,6 +1326,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
             mSplitEngineSubspaceManager.destroy();
             mSplitEngineRenderer.destroy();
         }
+        mIsDisposed = true;
     }
 
     public void setSplitEngineSubspaceManager(

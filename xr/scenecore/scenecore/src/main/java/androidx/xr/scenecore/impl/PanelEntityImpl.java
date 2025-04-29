@@ -63,10 +63,12 @@ final class PanelEntityImpl extends BasePanelEntity implements PanelEntity {
             @NonNull String name,
             ScheduledExecutorService executor) {
         super(node, extensions, entityManager, executor);
+
+        View reparentedView = maybeReparentView(view, name, context);
         mSurfaceControlViewHost =
                 new SurfaceControlViewHost(
                         context, Objects.requireNonNull(context.getDisplay()), new Binder());
-        setupSurfaceControlViewHostAndCornerRadius(view, surfaceDimensionsPx, name);
+        setupSurfaceControlViewHostAndCornerRadius(reparentedView, surfaceDimensionsPx, name);
         setDefaultOnBackInvokedCallback(view);
     }
 
