@@ -35,6 +35,7 @@ import androidx.pdf.testapp.ui.scenarios.PageObjectPdfFragment
 import androidx.pdf.testapp.ui.scenarios.SinglePdfFragment
 import androidx.pdf.testapp.ui.scenarios.TabsViewPdfFragment
 import androidx.pdf.testapp.ui.v2.TabbedPdfViewerFragment
+import androidx.pdf.testapp.ui.v2.compose.PdfComposeFragment
 import com.google.android.material.button.MaterialButton
 
 @SuppressLint("RestrictedApiAndroidX")
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var styledPdfFragmentButton: MaterialButton
     private lateinit var xmlStyledPdfFragmentButton: MaterialButton
     private lateinit var pageObjectPdfButton: MaterialButton
+    private lateinit var composePdfButton: MaterialButton
     private lateinit var fragmentContainer: FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +66,7 @@ class MainActivity : AppCompatActivity() {
         tabsViewV2Button = scenarioButtons.tabViewV2
         styledPdfFragmentButton = scenarioButtons.styledPdfFragment
         xmlStyledPdfFragmentButton = scenarioButtons.xmlStyledPdfFragment
+        composePdfButton = scenarioButtons.composeFragment
 
         pageObjectPdfButton = scenarioButtons.pageObjectPdf
         fragmentContainer = mainActivity.pdfInteractionFragmentContainerView
@@ -78,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         styledPdfFragmentButton.setOnClickListener {
             launchPdfViewerFragmentV2(MainActivityV2.Companion.FragmentType.STYLED_FRAGMENT)
         }
+        composePdfButton.setOnClickListener { loadFragment(PdfComposeFragment()) }
 
         xmlStyledPdfFragmentButton.setOnClickListener { loadFragment(XmlStyledPdfFragment()) }
 
@@ -167,6 +171,7 @@ class MainActivity : AppCompatActivity() {
         styledPdfFragmentButton.visibility = View.GONE
         xmlStyledPdfFragmentButton.visibility = View.GONE
         pageObjectPdfButton.visibility = View.GONE
+        composePdfButton.visibility = View.GONE
     }
 
     private fun handleWindowInsets() {

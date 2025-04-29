@@ -10,4 +10,5 @@
     <string name="xml_styled_pdf_fragment_name">Single XML Styled PDF V2</string>
     <string name="page_object_pdf_string">PageObject Pdf</string>
     <string name="save_pdf_string">Save Pdf</string>
+    <string name="compose_fragment">Compose PDF</string>
 </resources>
