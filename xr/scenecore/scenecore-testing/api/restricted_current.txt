@@ -1,5 +1,5 @@
 // Signature format: 4.0
-package @RequiresApi(34) androidx.xr.scenecore.testing {
+package androidx.xr.scenecore.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeImpressApi implements com.google.ar.imp.apibindings.ImpressApi {
     ctor public FakeImpressApi();

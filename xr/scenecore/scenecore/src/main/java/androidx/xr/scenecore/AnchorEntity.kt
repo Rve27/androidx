@@ -16,6 +16,7 @@
 
 package androidx.xr.scenecore
 
+import android.annotation.SuppressLint
 import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
 import androidx.xr.arcore.Anchor
@@ -38,6 +39,7 @@ import java.util.concurrent.atomic.AtomicReference
  * by the system.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+@SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
 public class AnchorEntity
 private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
     BaseEntity<RtAnchorEntity>(rtEntity, entityManager) {

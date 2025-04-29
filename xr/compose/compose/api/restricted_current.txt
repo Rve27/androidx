@@ -1,5 +1,5 @@
 // Signature format: 4.0
-package @RequiresApi(34) androidx.xr.compose.platform {
+package androidx.xr.compose.platform {
 
   public final class ActivityKt {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @VisibleForTesting public static void setSubspaceContent(androidx.activity.ComponentActivity, androidx.xr.runtime.Session session, kotlin.jvm.functions.Function0<kotlin.Unit> content);
@@ -78,7 +78,7 @@ package @RequiresApi(34) androidx.xr.compose.platform {
 
 }
 
-package @RequiresApi(34) androidx.xr.compose.spatial {
+package androidx.xr.compose.spatial {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @kotlin.jvm.JvmInline public final value class ConstraintsBehavior {
     field public static final androidx.xr.compose.spatial.ConstraintsBehavior.Companion Companion;
@@ -258,7 +258,7 @@ package @RequiresApi(34) androidx.xr.compose.spatial {
 
 }
 
-package @RequiresApi(34) androidx.xr.compose.subspace {
+package androidx.xr.compose.subspace {
 
   public final class RememberCoreEntityKt {
     method @kotlin.PublishedApi internal static String entityName(String name);
@@ -353,7 +353,7 @@ package @RequiresApi(34) androidx.xr.compose.subspace {
 
 }
 
-package @RequiresApi(34) androidx.xr.compose.subspace.layout {
+package androidx.xr.compose.subspace.layout {
 
   public final class AlphaKt {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SubspaceModifier alpha(androidx.xr.compose.subspace.layout.SubspaceModifier, @FloatRange(from=0.0, to=1.0) float alpha);
@@ -749,7 +749,7 @@ package @RequiresApi(34) androidx.xr.compose.subspace.layout {
 
 }
 
-package @RequiresApi(34) androidx.xr.compose.subspace.node {
+package androidx.xr.compose.subspace.node {
 
   @kotlin.PublishedApi internal interface ComposeSubspaceNode {
     method public androidx.compose.runtime.CompositionLocalMap getCompositionLocalMap();
@@ -838,7 +838,7 @@ package @RequiresApi(34) androidx.xr.compose.subspace.node {
 
 }
 
-package @RequiresApi(34) androidx.xr.compose.unit {
+package androidx.xr.compose.unit {
 
   public final class DpVolumeSize {
     ctor public DpVolumeSize(float width, float height, float depth);

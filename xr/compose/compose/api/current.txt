@@ -1,5 +1,5 @@
 // Signature format: 4.0
-package @RequiresApi(34) androidx.xr.compose.unit {
+package androidx.xr.compose.unit {
 
   public final class DpVolumeSize {
     ctor public DpVolumeSize(float width, float height, float depth);

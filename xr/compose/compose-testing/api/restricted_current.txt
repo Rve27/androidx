@@ -1,5 +1,5 @@
 // Signature format: 4.0
-package @RequiresApi(34) androidx.xr.compose.testing {
+package androidx.xr.compose.testing {
 
   public final class SubspaceAssertionsKt {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @com.google.errorprone.annotations.CanIgnoreReturnValue public static androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction assertDepthIsAtLeast(androidx.xr.compose.testing.SubspaceSemanticsNodeInteraction, float expectedMinDepth);
