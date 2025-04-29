@@ -48,6 +48,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.withStarted
 import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.util.AnnotationUtils
@@ -375,8 +376,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
         setupPdfViewListeners()
 
         onPdfSearchViewCreated(_pdfSearchView)
-
-        collectFlowOnLifecycleScope { collectFragmentUiScreenState() }
+        lifecycleScope.launch { collectFragmentUiScreenState() }
         toolboxView.hide()
         toolboxView.setOnCurrentPageRequested { _pdfView.visiblePages.getCenter() }
 
@@ -594,12 +594,18 @@ public open class PdfViewerFragment constructor() : Fragment() {
      * synchronized with any changes in the underlying data or user interactions.
      */
     private suspend fun collectFragmentUiScreenState() {
-        documentViewModel.fragmentUiScreenState.collect { uiState ->
-            when (uiState) {
-                is Loading -> handleLoading()
-                is PasswordRequested -> handlePasswordRequested(uiState)
-                is DocumentLoaded -> handleDocumentLoaded(uiState)
-                is DocumentError -> handleDocumentError(uiState)
+        // Collect fragment UI state using a "one-shot" API after fragment reaches at-least
+        // STARTED state
+        viewLifecycleOwner.lifecycle.withStarted {
+            viewLifecycleOwner.lifecycleScope.launch {
+                documentViewModel.fragmentUiScreenState.collect { uiState ->
+                    when (uiState) {
+                        is Loading -> handleLoading()
+                        is PasswordRequested -> handlePasswordRequested(uiState)
+                        is DocumentLoaded -> handleDocumentLoaded(uiState)
+                        is DocumentError -> handleDocumentError(uiState)
+                    }
+                }
             }
         }
     }
