@@ -107,14 +107,15 @@ public fun MaterialScope.iconEdgeButton(
 
     return edgeButton(onClick = onClick, modifier = modifier, colors = colors, style = style) {
         withStyle(
-                defaultIconStyle =
-                    IconStyle(
-                        width = style.iconSizeDp.dp,
-                        height = style.iconSizeDp.dp,
-                        tintColor = colors.iconColor
-                    )
-            )
-            .iconContent()
+            defaultIconStyle =
+                IconStyle(
+                    width = style.iconSizeDp.dp,
+                    height = style.iconSizeDp.dp,
+                    tintColor = colors.iconColor
+                )
+        ) {
+            iconContent()
+        }
     }
 }
 
@@ -166,14 +167,15 @@ public fun MaterialScope.textEdgeButton(
             }
     ) {
         withStyle(
-                defaultTextElementStyle =
-                    TextElementStyle(
-                        typography = Typography.LABEL_MEDIUM,
-                        color = colors.labelColor,
-                        scalable = false
-                    )
-            )
-            .labelContent()
+            defaultTextElementStyle =
+                TextElementStyle(
+                    typography = Typography.LABEL_MEDIUM,
+                    color = colors.labelColor,
+                    scalable = false
+                )
+        ) {
+            labelContent()
+        }
     }
 
 /**

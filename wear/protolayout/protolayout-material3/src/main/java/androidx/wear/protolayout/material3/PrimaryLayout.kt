@@ -178,14 +178,15 @@ public fun MaterialScope.primaryLayoutWithOverrideIcon(
     val labelSlot: LayoutElement? =
         labelForBottomSlot?.let {
             withStyle(
-                    defaultTextElementStyle =
-                        TextElementStyle(
-                            typography = Typography.TITLE_SMALL,
-                            color = theme.colorScheme.onSurface,
-                            importantForAccessibility = true
-                        )
-                )
-                .labelForBottomSlot()
+                defaultTextElementStyle =
+                    TextElementStyle(
+                        typography = Typography.TITLE_SMALL,
+                        color = theme.colorScheme.onSurface,
+                        importantForAccessibility = true
+                    )
+            ) {
+                labelForBottomSlot()
+            }
         }
 
     val modifiers =
@@ -204,14 +205,15 @@ public fun MaterialScope.primaryLayoutWithOverrideIcon(
                 getHeaderContent(
                     titleSlot?.let {
                         withStyle(
-                                defaultTextElementStyle =
-                                    TextElementStyle(
-                                        typography = Typography.TITLE_SMALL,
-                                        color = theme.colorScheme.onBackground,
-                                        importantForAccessibility = true
-                                    )
-                            )
-                            .titleSlot()
+                            defaultTextElementStyle =
+                                TextElementStyle(
+                                    typography = Typography.TITLE_SMALL,
+                                    color = theme.colorScheme.onBackground,
+                                    importantForAccessibility = true
+                                )
+                        ) {
+                            it()
+                        }
                     },
                     overrideIcon,
                     overrideIconColor,
@@ -221,41 +223,45 @@ public fun MaterialScope.primaryLayoutWithOverrideIcon(
     val bottomSlotValue =
         bottomSlot?.let {
             withStyle(
-                    defaultTextElementStyle =
-                        TextElementStyle(
-                            typography = Typography.TITLE_MEDIUM,
-                            color = theme.colorScheme.onBackground,
-                            importantForAccessibility = true
-                        )
-                )
-                .bottomSlot()
+                defaultTextElementStyle =
+                    TextElementStyle(
+                        typography = Typography.TITLE_MEDIUM,
+                        color = theme.colorScheme.onBackground,
+                        importantForAccessibility = true
+                    )
+            ) {
+                it()
+            }
         }
 
     val marginsValues: Padding =
-        withStyle(
-                layoutSlotsPresence =
-                    LayoutSlotsPresence(
-                        isTitleSlotPresent = titleSlot != null,
-                        isBottomSlotPresent = bottomSlot != null,
-                        isBottomSlotEdgeButton = bottomSlotValue?.isSlotEdgeButton() == true
-                    )
-            )
-            .let { scope ->
-                if (margins is PrimaryLayoutMarginsImpl) {
+        withStyleOnPadding(
+            layoutSlotsPresence =
+                LayoutSlotsPresence(
+                    isTitleSlotPresent = titleSlot != null,
+                    isBottomSlotPresent = bottomSlot != null,
+                    isBottomSlotEdgeButton = bottomSlotValue?.isSlotEdgeButton() == true
+                )
+        ) {
+            when (margins) {
+                is PrimaryLayoutMarginsImpl -> {
                     when (margins.size) {
-                        MIN -> scope.minPrimaryLayoutMargins()
-                        MID -> scope.midPrimaryLayoutMargins()
-                        MAX -> scope.maxPrimaryLayoutMargins()
-                        DEFAULT -> scope.defaultPrimaryLayoutMargins()
-                        else -> scope.defaultPrimaryLayoutMargins()
+                        MIN -> minPrimaryLayoutMargins()
+                        MID -> midPrimaryLayoutMargins()
+                        MAX -> maxPrimaryLayoutMargins()
+                        DEFAULT -> defaultPrimaryLayoutMargins()
+                        else -> defaultPrimaryLayoutMargins()
                     }
-                } else if (margins is CustomPrimaryLayoutMargins) {
-                    margins.toPadding(scope)
-                } else {
+                }
+                is CustomPrimaryLayoutMargins -> {
+                    margins.toPadding(this)
+                }
+                else -> {
                     // Fallback to default
-                    scope.defaultPrimaryLayoutMargins()
+                    defaultPrimaryLayoutMargins()
                 }
             }
+        }
 
     // Contains main content. This Box is needed to set to expand, even if empty so it
     // fills the empty space until bottom content.
