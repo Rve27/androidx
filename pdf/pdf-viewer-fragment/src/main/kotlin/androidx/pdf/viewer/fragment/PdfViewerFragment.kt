@@ -357,7 +357,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
                     when (event) {
                         is RequestFailureEvent -> {
                             // TODO(b/409464802): Propagate it through event callback
-                            onLoadDocumentError(event.exception)
+                            // onLoadDocumentError(event.exception)
                         }
                     }
                 }
