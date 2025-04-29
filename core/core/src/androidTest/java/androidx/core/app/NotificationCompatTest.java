@@ -68,6 +68,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.LocusIdCompat;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.graphics.drawable.IconCompat;
+import androidx.core.os.BundleCompat;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.FlakyTest;
 import androidx.test.filters.SdkSuppress;
@@ -3717,6 +3718,348 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
             expected.add("null\ttest:selfUri");
         }
         assertEquals(expected, people);
+    }
+
+    @Test
+    public void testProgressStyle_className() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+        assertThat(progressStyle.getClassName()).isEqualTo(
+                "androidx.core.app.NotificationCompat$ProgressStyle");
+    }
+
+    @Test
+    public void testProgressStyle_getAndSetProgressSegments() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        final List<NotificationCompat.ProgressStyle.Segment> segments = List.of(
+                new NotificationCompat.ProgressStyle.Segment(20).setColor(0xFF00FF00).setId(1),
+                new NotificationCompat.ProgressStyle.Segment(30).setColor(0xFFFF0000).setId(2));
+
+        progressStyle.setProgressSegments(segments);
+        assertThat(progressStyle.getProgressSegments()).isEqualTo(segments);
+    }
+
+    @Test
+    public void testProgressStyle_addProgressSegments() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        final NotificationCompat.ProgressStyle.Segment segment1 =
+                new NotificationCompat.ProgressStyle.Segment(25).setColor(0xFF0000FF).setId(3);
+        final NotificationCompat.ProgressStyle.Segment segment2 =
+                new NotificationCompat.ProgressStyle.Segment(45).setColor(0xFFFFFF00).setId(4);
+
+        progressStyle.addProgressSegment(segment1);
+        progressStyle.addProgressSegment(segment2);
+
+        final List<NotificationCompat.ProgressStyle.Segment> segments =
+                progressStyle.getProgressSegments();
+        assertThat(segments.size()).isEqualTo(2);
+        assertThat(segment1).isEqualTo(segments.get(0));
+        assertThat(segment2).isEqualTo(segments.get(1));
+    }
+
+    @Test
+    public void testProgressStyle_addSegment_ignoresNegativeLength() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(-10));
+        assertThat(progressStyle.getProgressSegments()).isEmpty();
+    }
+
+    @Test
+    public void testProgressStyle_addSegment_ignoresZeroLength() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(0));
+        assertThat(progressStyle.getProgressSegments()).isEmpty();
+    }
+
+    @Test
+    public void testProgressStyle_setSegments_ignoresNegativeLength() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        progressStyle.setProgressSegments(
+                List.of(new NotificationCompat.ProgressStyle.Segment(-10)));
+        assertThat(progressStyle.getProgressSegments()).isEmpty();
+    }
+
+    @Test
+    public void testProgressStyle_setSegments_ignoresZeroLength() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        progressStyle.setProgressSegments(List.of(new NotificationCompat.ProgressStyle.Segment(0)));
+        assertThat(progressStyle.getProgressSegments()).isEmpty();
+    }
+
+    @Test
+    public void testProgressStyle_getAndSetProgressPoints() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        final List<NotificationCompat.ProgressStyle.Point> points = List.of(
+                new NotificationCompat.ProgressStyle.Point(10).setColor(0xFF00FF00).setId(5),
+                new NotificationCompat.ProgressStyle.Point(50).setColor(0xFFFF0000).setId(6));
+        progressStyle.setProgressPoints(points);
+
+        assertThat(progressStyle.getProgressPoints()).isEqualTo(points);
+    }
+
+    @Test
+    public void testProgressStyle_addProgressPoints() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        final NotificationCompat.ProgressStyle.Point point1 =
+                new NotificationCompat.ProgressStyle.Point(20).setColor(0xFF0000FF).setId(7);
+        final NotificationCompat.ProgressStyle.Point point2 =
+                new NotificationCompat.ProgressStyle.Point(80).setColor(0xFFFFFF00).setId(8);
+
+        progressStyle.addProgressPoint(point1);
+        progressStyle.addProgressPoint(point2);
+
+        final List<NotificationCompat.ProgressStyle.Point> points =
+                progressStyle.getProgressPoints();
+        assertThat(points.size()).isEqualTo(2);
+        assertThat(points.get(0)).isEqualTo(point1);
+        assertThat(points.get(1)).isEqualTo(point2);
+    }
+
+    @Test
+    public void testProgressStyle_addPoint_ignoresNegativePosition() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        progressStyle.addProgressPoint(new NotificationCompat.ProgressStyle.Point(-5));
+
+        assertThat(progressStyle.getProgressPoints()).isEmpty();
+    }
+
+    @Test
+    public void testProgressStyle_addPoint_ignoresZeroPosition() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        progressStyle.addProgressPoint(new NotificationCompat.ProgressStyle.Point(0));
+
+        assertThat(progressStyle.getProgressPoints()).isEmpty();
+    }
+
+    @Test
+    public void testProgressStyle_getAndSetProgress() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        progressStyle.setProgress(75);
+
+        assertThat(progressStyle.getProgress()).isEqualTo(75);
+    }
+
+    @Test
+    public void testProgressStyle_getProgressMax_noSegments() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+        assertEquals(100, progressStyle.getProgressMax());
+    }
+
+    @Test
+    public void testProgressStyle_getProgressMax_withSegments() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(20));
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(30));
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(80));
+
+        assertThat(progressStyle.getProgressMax()).isEqualTo(130);
+    }
+
+    @Test
+    public void testProgressStyle_getProgressMax_zeroLength() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(20));
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(0));
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(30));
+
+        assertThat(progressStyle.getProgressMax()).isEqualTo(50);
+    }
+
+    @Test
+    public void testProgressStyle_getProgressMax_someNegativeLength() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(20));
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(-10));
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(30));
+
+        assertThat(progressStyle.getProgressMax()).isEqualTo(50);
+    }
+
+    @Test
+    public void testProgressStyle_getProgressMax_overflow() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+
+        progressStyle.addProgressSegment(
+                new NotificationCompat.ProgressStyle.Segment(Integer.MAX_VALUE));
+        progressStyle.addProgressSegment(new NotificationCompat.ProgressStyle.Segment(1));
+
+        assertThat(progressStyle.getProgressMax()).isEqualTo(100);
+    }
+
+    @Test
+    public void testProgressStyle_getAndSetProgressIndeterminate() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+        progressStyle.setProgressIndeterminate(true);
+        assertThat(progressStyle.isProgressIndeterminate()).isTrue();
+        progressStyle.setProgressIndeterminate(false);
+        assertThat(progressStyle.isProgressIndeterminate()).isFalse();
+    }
+
+    @Test
+    public void testProgressStyle_getAndSetStyledByProgress() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+        progressStyle.setStyledByProgress(false);
+        assertThat(progressStyle.isStyledByProgress()).isFalse();
+        progressStyle.setStyledByProgress(true);
+        assertThat(progressStyle.isStyledByProgress()).isTrue();
+    }
+
+    @Test
+    public void testProgressStyle_getAndSetProgressTrackerIcon() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+        final IconCompat icon = IconCompat.createWithAdaptiveBitmap(BitmapFactory.decodeResource(
+                mContext.getResources(),
+                R.drawable.notification_bg_normal));
+        progressStyle.setProgressTrackerIcon(icon);
+        assertThat(progressStyle.getProgressTrackerIcon()).isEqualTo(icon);
+    }
+
+    @Test
+    public void testProgressStyle_getAndSetProgressStartIcon() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+        final IconCompat icon = IconCompat.createWithAdaptiveBitmap(BitmapFactory.decodeResource(
+                mContext.getResources(),
+                R.drawable.notification_bg_normal));
+        progressStyle.setProgressStartIcon(icon);
+        assertThat(progressStyle.getProgressStartIcon()).isEqualTo(icon);
+    }
+
+    @Test
+    public void testProgressStyle_getAndSetProgressEndIcon() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+        final IconCompat icon = IconCompat.createWithAdaptiveBitmap(BitmapFactory.decodeResource(
+                mContext.getResources(),
+                R.drawable.notification_bg_normal));
+        progressStyle.setProgressEndIcon(icon);
+        assertThat(progressStyle.getProgressEndIcon()).isEqualTo(icon);
+    }
+
+    @Test
+    public void testProgressStyle_displayCustomViewInline() {
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+        assertTrue(progressStyle.displayCustomViewInline());
+    }
+
+    @Test
+    public void testProgressStyle_restoreFromCompatExtras() {
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext,
+                "test_channel");
+        final NotificationCompat.ProgressStyle progressStyle =
+                new NotificationCompat.ProgressStyle();
+        builder.setStyle(progressStyle);
+
+        // Set all the fields of ProgressStyle
+        progressStyle.setStyledByProgress(false);
+        progressStyle.setProgress(75);
+        progressStyle.setProgressIndeterminate(true);
+
+        final List<NotificationCompat.ProgressStyle.Segment> segments = List.of(
+                new NotificationCompat.ProgressStyle.Segment(20).setColor(0xFF00FF00).setId(1),
+                new NotificationCompat.ProgressStyle.Segment(80).setColor(0xFFFF0000).setId(2)
+        );
+        progressStyle.setProgressSegments(segments);
+
+        final List<NotificationCompat.ProgressStyle.Point> points = List.of(
+                new NotificationCompat.ProgressStyle.Point(10).setColor(0xFF0000FF).setId(3),
+                new NotificationCompat.ProgressStyle.Point(50).setColor(0xFFFFFF00).setId(4)
+        );
+        progressStyle.setProgressPoints(points);
+
+        final IconCompat trackerIconCompat = IconCompat.createWithResource(mContext,
+                android.R.drawable.ic_menu_compass);
+        progressStyle.setProgressTrackerIcon(trackerIconCompat);
+
+        final IconCompat startIconCompat = IconCompat.createWithResource(mContext,
+                android.R.drawable.ic_menu_call);
+        progressStyle.setProgressStartIcon(startIconCompat);
+
+        final IconCompat endIconCompat = IconCompat.createWithResource(mContext,
+                android.R.drawable.ic_menu_info_details);
+        progressStyle.setProgressEndIcon(endIconCompat);
+
+        final Notification n = builder.build();
+        final Bundle extras = NotificationCompat.getExtras(n);
+
+        assertThat(extras.getBoolean(NotificationCompat.EXTRA_STYLED_BY_PROGRESS)).isFalse();
+        assertThat(extras.getInt(NotificationCompat.EXTRA_PROGRESS)).isEqualTo(75);
+        assertThat(extras.getInt(NotificationCompat.EXTRA_PROGRESS_MAX)).isEqualTo(100);
+        assertThat(extras.getBoolean(NotificationCompat.EXTRA_PROGRESS_INDETERMINATE)).isTrue();
+
+        final List<Bundle> segmentList = BundleCompat.getParcelableArrayList(extras,
+                NotificationCompat.EXTRA_PROGRESS_SEGMENTS, Bundle.class);
+        assertThat(segmentList.size()).isEqualTo(2);
+        final Bundle segment1 = segmentList.get(0);
+        assertThat(segment1.getInt("id")).isEqualTo(1);
+        assertThat(segment1.getInt("length")).isEqualTo(20);
+        assertThat(segment1.getInt("colorInt")).isEqualTo(0xFF00FF00);
+        final Bundle segment2 = segmentList.get(1);
+        assertThat(segment2.getInt("id")).isEqualTo(2);
+        assertThat(segment2.getInt("length")).isEqualTo(80);
+        assertThat(segment2.getInt("colorInt")).isEqualTo(0xFFFF0000);
+
+        final List<Bundle> pointList = BundleCompat.getParcelableArrayList(extras,
+                NotificationCompat.EXTRA_PROGRESS_POINTS, Bundle.class);
+        assertThat(pointList.size()).isEqualTo(2);
+        final Bundle point1 = pointList.get(0);
+        assertThat(point1.getInt("id")).isEqualTo(3);
+        assertThat(point1.getInt("position")).isEqualTo(10);
+        assertThat(point1.getInt("colorInt")).isEqualTo(0xFF0000FF);
+        final Bundle point2 = pointList.get(1);
+        assertThat(point2.getInt("id")).isEqualTo(4);
+        assertThat(point2.getInt("position")).isEqualTo(50);
+        assertThat(point2.getInt("colorInt")).isEqualTo(0xFFFFFF00);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            assertThat(
+                    extras.containsKey(NotificationCompat.EXTRA_PROGRESS_TRACKER_ICON)).isTrue();
+            assertThat(
+                    extras.containsKey(NotificationCompat.EXTRA_PROGRESS_START_ICON)).isTrue();
+            assertThat(
+                    extras.containsKey(NotificationCompat.EXTRA_PROGRESS_END_ICON)).isTrue();
+        } else {
+            assertThat(
+                    extras.containsKey(NotificationCompat.EXTRA_PROGRESS_TRACKER_ICON)).isFalse();
+            assertThat(
+                    extras.containsKey(NotificationCompat.EXTRA_PROGRESS_START_ICON)).isFalse();
+            assertThat(
+                    extras.containsKey(NotificationCompat.EXTRA_PROGRESS_END_ICON)).isFalse();
+        }
     }
 
     // Add the @Test annotation to enable this test. This test is disabled by default as it's not a
