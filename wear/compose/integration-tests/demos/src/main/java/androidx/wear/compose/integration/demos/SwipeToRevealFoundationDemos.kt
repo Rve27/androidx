@@ -99,7 +99,17 @@ fun SwipeToRevealDemoBothDirections() {
         }
     ) {
         Chip(
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier.fillMaxWidth().semantics {
+                    // Use custom actions to make the primary and secondary actions accessible
+                    customActions =
+                        listOf(
+                            CustomAccessibilityAction("Delete") {
+                                /* Add the primary action click handler */
+                                true
+                            },
+                        )
+                },
             onClick = { /* the click action associated with chip */ },
             colors = ChipDefaults.secondaryChipColors(),
             label = { Text(text = "Swipe Me") }

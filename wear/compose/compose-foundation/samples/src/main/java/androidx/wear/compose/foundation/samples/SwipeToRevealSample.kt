@@ -68,17 +68,6 @@ fun SwipeToRevealSample() {
     val state = rememberRevealState()
     val coroutineScope = rememberCoroutineScope()
     SwipeToReveal(
-        modifier =
-            Modifier.semantics {
-                // Use custom actions to make the primary and secondary actions accessible
-                customActions =
-                    listOf(
-                        CustomAccessibilityAction("Delete") {
-                            /* Add the primary action click handler */
-                            true
-                        }
-                    )
-            },
         state = state,
         primaryAction = {
             Box(
@@ -105,7 +94,17 @@ fun SwipeToRevealSample() {
         }
     ) {
         Chip(
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier.fillMaxWidth().semantics {
+                    // Use custom actions to make the primary and secondary actions accessible
+                    customActions =
+                        listOf(
+                            CustomAccessibilityAction("Delete") {
+                                /* Add the primary action click handler */
+                                true
+                            }
+                        )
+                },
             onClick = { /* the click action associated with chip */ },
             colors = ChipDefaults.secondaryChipColors(),
             label = { Text(text = "Swipe Me") }
@@ -119,17 +118,6 @@ fun SwipeToRevealWithDelayedText() {
     val state = rememberRevealState()
     val coroutineScope = rememberCoroutineScope()
     SwipeToReveal(
-        modifier =
-            Modifier.semantics {
-                // Use custom actions to make the primary and secondary actions accessible
-                customActions =
-                    listOf(
-                        CustomAccessibilityAction("Delete") {
-                            /* Add the primary action click handler */
-                            true
-                        }
-                    )
-            },
         state = state,
         primaryAction = {
             Row(
@@ -170,7 +158,17 @@ fun SwipeToRevealWithDelayedText() {
         }
     ) {
         Chip(
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier.fillMaxWidth().semantics {
+                    // Use custom actions to make the primary and secondary actions accessible
+                    customActions =
+                        listOf(
+                            CustomAccessibilityAction("Delete") {
+                                /* Add the primary action click handler */
+                                true
+                            }
+                        )
+                },
             onClick = { /* the click action associated with chip */ },
             colors = ChipDefaults.secondaryChipColors(),
             label = { Text(text = "Swipe Me") }
@@ -200,20 +198,6 @@ fun SwipeToRevealWithExpandables() {
                 val revealState = rememberRevealState()
                 if (isExpanded) {
                     SwipeToReveal(
-                        modifier =
-                            Modifier.semantics {
-                                // Use custom actions to make the primary and secondary actions
-                                // accessible
-                                customActions =
-                                    listOf(
-                                        CustomAccessibilityAction("Delete") {
-                                            coroutineScope.launch {
-                                                revealState.animateTo(RevealValue.RightRevealed)
-                                            }
-                                            true
-                                        }
-                                    )
-                            },
                         state = revealState,
                         primaryAction = {
                             Box(
@@ -267,7 +251,25 @@ fun SwipeToRevealWithExpandables() {
                         }
                     ) {
                         Chip(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier =
+                                Modifier.fillMaxWidth().semantics {
+                                    // Use custom actions to make the primary and secondary actions
+                                    // accessible
+                                    customActions =
+                                        listOf(
+                                            CustomAccessibilityAction("Delete") {
+                                                /* Add the primary action click handler */
+                                                coroutineScope.launch {
+                                                    revealState.animateTo(RevealValue.RightRevealed)
+                                                }
+                                                true
+                                            },
+                                            CustomAccessibilityAction("More Options") {
+                                                /* Add the secondary action click handler */
+                                                true
+                                            }
+                                        )
+                                },
                             onClick = { /* the click action associated with chip */ },
                             colors = ChipDefaults.secondaryChipColors(),
                             label = { Text(text = "Swipe Me") }
