@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package androidx.xr.glimmer.demos
+package androidx.xr.glimmer
 
-import androidx.xr.glimmer.samples.ColorsSample
-
-val Demos = DemoCategory("Glimmer Demos", listOf(ComposableDemo("Colors") { ColorsSample() }))
+internal const val GOLDEN_DIRECTORY = "xr/glimmer/glimmer"

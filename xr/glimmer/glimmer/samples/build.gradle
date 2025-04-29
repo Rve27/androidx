@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import androidx.build.ApkCopyHelperKt
-
 /**
  * This file was created using the `create_project.py` script located in the
  * `<AndroidX root>/development/project-creator` directory.
@@ -23,34 +21,37 @@ import androidx.build.ApkCopyHelperKt
  * Please use that script when creating a new project, rather than copying an existing project and
  * modifying its settings.
  */
+
+import androidx.build.SoftwareType
+
 plugins {
     id("AndroidXPlugin")
+    id("com.android.library")
     id("AndroidXComposePlugin")
-    id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
 
 dependencies {
     implementation(libs.kotlinStdlib)
-
-    implementation("androidx.activity:activity-compose:1.10.1")
-    implementation(project(":compose:foundation:foundation"))
-    implementation(project(":compose:runtime:runtime"))
-    implementation(project(":compose:ui:ui"))
     implementation(project(":compose:ui:ui-tooling"))
+
+    compileOnly(project(":annotation:annotation-sampled"))
+
     implementation(project(":xr:glimmer:glimmer"))
-    implementation(project(":xr:glimmer:glimmer:glimmer-samples"))
 }
 
-// Publish an APK so demo app is available in ab/ for devs, PMs, QA to use.
-// Can also be used to bisect escaped defects in functionality.
-ApkCopyHelperKt.setupAppApkCopy(project, "release")
+androidx {
+    name = "Glimmer Samples"
+    type = SoftwareType.SAMPLES
+    inceptionYear = "2025"
+    description = "Contains the sample code for Glimmer"
+}
 
 android {
     compileSdk = 35
     defaultConfig {
         minSdk = 35
-        targetSdk = 35
     }
-    namespace = "androidx.xr.glimmer.demos"
+
+    namespace = "androidx.xr.glimmer.samples"
 }

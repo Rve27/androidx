@@ -37,15 +37,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.xr.glimmer.GlimmerTheme
 
 @Composable
 fun DemoApp(
     currentDemo: Demo,
     onNavigateToDemo: (Demo) -> Unit,
 ) {
-
-    Box(Modifier.background(Color.Black).windowInsetsPadding(WindowInsets.systemBars)) {
-        DisplayDemo(currentDemo, onNavigateToDemo)
+    GlimmerTheme {
+        Box(
+            Modifier.background(GlimmerTheme.colors.surface)
+                .windowInsetsPadding(WindowInsets.systemBars)
+        ) {
+            DisplayDemo(currentDemo, onNavigateToDemo)
+        }
     }
 }
 
