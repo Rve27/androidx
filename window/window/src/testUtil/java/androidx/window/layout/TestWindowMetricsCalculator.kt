@@ -19,7 +19,6 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
 import androidx.annotation.UiContext
-import androidx.window.layout.util.ContextCompatHelper
 
 /**
  * Implementation of [WindowMetricsCalculator] for testing.
@@ -66,9 +65,6 @@ internal class TestWindowMetricsCalculator : WindowMetricsCalculator {
     }
 
     override fun computeCurrentWindowMetrics(context: Context): WindowMetrics {
-        require(ContextCompatHelper.isUiContextOrApplicationContext(context)) {
-            "Context must either be a UI Context or an Application Context."
-        }
         val bounds = overrideBounds ?: currentBounds[context] ?: Rect()
         return WindowMetrics(bounds, density = 1f)
     }
@@ -78,9 +74,6 @@ internal class TestWindowMetricsCalculator : WindowMetricsCalculator {
     }
 
     override fun computeMaximumWindowMetrics(context: Context): WindowMetrics {
-        require(ContextCompatHelper.isUiContextOrApplicationContext(context)) {
-            "Context must either be a UI Context or an Application Context."
-        }
         val bounds = overrideMaxBounds ?: maxBounds[context] ?: Rect()
         return WindowMetrics(bounds, density = 1f)
     }

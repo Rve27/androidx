@@ -143,9 +143,6 @@ internal object WindowMetricsCompatHelperApi30Impl : WindowMetricsCompatHelper {
         context: Context,
         densityCompatHelper: DensityCompatHelper
     ): WindowMetrics {
-        require(ContextCompatHelper.isUiContextOrApplicationContext(context)) {
-            "Context must be Ui Context or Application Context."
-        }
         val wm = context.getSystemService(WindowManager::class.java)
         val density = context.resources.displayMetrics.density
         return WindowMetrics(wm.currentWindowMetrics.bounds, density)

@@ -20,20 +20,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.inputmethodservice.InputMethodService
-import android.os.Build
 
 internal object ContextCompatHelper {
-
-    fun isUiContextOrApplicationContext(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= 31) {
-            context.isUiContext || unwrapContext(context) == context.applicationContext
-        } else {
-            val baseContext = unwrapContext(context)
-            baseContext is Activity ||
-                baseContext is InputMethodService ||
-                context == context.applicationContext
-        }
-    }
 
     /** Return the base context from a context wrapper. */
     internal fun unwrapContext(context: Context): Context {
