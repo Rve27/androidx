@@ -128,7 +128,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
@@ -342,9 +341,7 @@ public final class Recorder implements VideoOutput {
      *
      * @see QualitySelector
      */
-    public static final QualitySelector DEFAULT_QUALITY_SELECTOR =
-            QualitySelector.fromOrderedList(Arrays.asList(Quality.FHD, Quality.HD, Quality.SD),
-                    FallbackStrategy.higherQualityOrLowerThan(Quality.FHD));
+    public static final QualitySelector DEFAULT_QUALITY_SELECTOR = VideoSpec.QUALITY_SELECTOR_AUTO;
 
     private static final VideoSpec VIDEO_SPEC_DEFAULT =
             VideoSpec.builder()

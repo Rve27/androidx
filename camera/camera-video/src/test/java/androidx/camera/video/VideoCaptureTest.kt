@@ -1998,6 +1998,51 @@ class VideoCaptureTest {
             .containsExactly(RESOLUTION_1080P, RESOLUTION_720P)
     }
 
+    @Test
+    fun customOrderedResolutionsIsSetAndQualitySelectorIsNotSet_notOverwrite() {
+        // Arrange.
+        val anySize1 = Size(640, 360)
+        val anySize2 = Size(500, 500)
+        val customOrderedResolutions = listOf(anySize1, anySize2)
+        setupCamera()
+        createCameraUseCaseAdapter()
+        val videoCapture =
+            createVideoCapture(
+                videoOutput = createVideoOutput(),
+                customOrderedResolutions = customOrderedResolutions
+            )
+
+        // Act.
+        addAndAttachUseCases(videoCapture)
+
+        // Assert: custom ordered resolutions is not overwritten.
+        assertCustomOrderedResolutions(videoCapture, anySize1, anySize2)
+    }
+
+    @Test
+    fun customOrderedResolutionsAndQualitySelectorAreSet_throwException() {
+        // Arrange.
+        val customOrderedResolutions = listOf(RESOLUTION_VGA, RESOLUTION_QHD)
+        setupCamera()
+        createCameraUseCaseAdapter()
+        val videoCapture =
+            createVideoCapture(
+                videoOutput =
+                    createVideoOutput(
+                        mediaSpec =
+                            MediaSpec.builder()
+                                .configureVideo { it.setQualitySelector(QualitySelector.from(FHD)) }
+                                .build()
+                    ),
+                customOrderedResolutions = customOrderedResolutions
+            )
+
+        // Act.
+        assertThrows(CameraUseCaseAdapter.CameraException::class.java) {
+            addAndAttachUseCases(videoCapture)
+        }
+    }
+
     private fun testSelectedQualityIsExpected(
         streamSpecConfiguredResolution: Size,
         streamSpecResolution: Size = streamSpecConfiguredResolution,
@@ -2261,6 +2306,7 @@ class VideoCaptureTest {
         targetHighSpeedFrameRate: Range<Int>? = null,
         dynamicRange: DynamicRange? = null,
         videoEncoderInfoFinder: VideoEncoderInfo.Finder? = null,
+        customOrderedResolutions: List<Size>? = null
     ): VideoCapture<VideoOutput> =
         VideoCapture.Builder(videoOutput ?: createVideoOutput())
             .setSessionOptionUnpacker { _, _, _ -> }
@@ -2277,6 +2323,7 @@ class VideoCaptureTest {
                     videoEncoderInfoFinder
                         ?: VideoEncoderInfo.Finder { _ -> createVideoEncoderInfo() }
                 )
+                customOrderedResolutions?.let { setCustomOrderedResolutions(it) }
             }
             .build()
 

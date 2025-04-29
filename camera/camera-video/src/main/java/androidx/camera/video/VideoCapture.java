@@ -1481,7 +1481,16 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
     private void updateCustomOrderedResolutionsByQuality(@NonNull CameraInfoInternal cameraInfo,
             UseCaseConfig.@NonNull Builder<?, ?, ?> builder) throws IllegalArgumentException {
         MediaSpec mediaSpec = getMediaSpecOrThrow();
+        QualitySelector qualitySelector = mediaSpec.getVideoSpec().getQualitySelector();
         VideoCaptureConfig<T> config = (VideoCaptureConfig<T>) builder.getUseCaseConfig();
+        if (config.containsOption(OPTION_CUSTOM_ORDERED_RESOLUTIONS)) {
+            checkArgument(qualitySelector == VideoSpec.QUALITY_SELECTOR_AUTO,
+                    "Custom ordered resolutions and QualitySelector can't both be set");
+            // If custom ordered resolutions is set and QualitySelector is not set, the default
+            // QualitySelector is skipped to avoid overwriting the custom ordered resolutions.
+            return;
+        }
+
         DynamicRange requestedDynamicRange = getDynamicRange();
         int sessionType = getSessionType(config);
         Range<Integer> targetFrameRate = getTargetFrameRateOrThrow(config);
@@ -1508,7 +1517,7 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
         // Get selected qualities, include:
         // * Filter by high-speed frame rate
         List<Quality> selectedQualities = getSelectedQualityOrThrow(supportedQualities,
-                videoCapabilities, mediaSpec.getVideoSpec().getQualitySelector(),
+                videoCapabilities, qualitySelector,
                 requestedDynamicRange, sessionType, targetFrameRate);
 
         // Map qualities to resolutions, include:
