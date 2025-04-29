@@ -75,8 +75,16 @@ public enum class UseCaseType(
     }
 
     public companion object {
+        /**
+         * Returns the [UseCaseType] corresponding to the given [UseCase] for feature combination.
+         *
+         * If the given use case is not supported for feature combination, [UNDEFINED] is returned.
+         *
+         * @return The corresponding [UseCaseType]. If the use case is not supported with feature
+         *   combination, [UseCaseType.UNDEFINED] is returned.
+         */
         @JvmStatic
-        public fun UseCase.getUseCaseType(): UseCaseType {
+        public fun UseCase.getFeatureComboUseCaseType(): UseCaseType {
             return if (this is Preview) {
                 PREVIEW
             } else if (this is ImageCapture) {

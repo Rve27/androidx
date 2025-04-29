@@ -24,7 +24,7 @@ import androidx.camera.core.featurecombination.ExperimentalFeatureCombination
 import androidx.camera.core.featurecombination.Feature
 import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination
 import androidx.camera.core.featurecombination.impl.UseCaseType
-import androidx.camera.core.featurecombination.impl.UseCaseType.Companion.getUseCaseType
+import androidx.camera.core.featurecombination.impl.UseCaseType.Companion.getFeatureComboUseCaseType
 import androidx.camera.core.featurecombination.impl.UseCaseType.IMAGE_CAPTURE
 import androidx.camera.core.featurecombination.impl.UseCaseType.PREVIEW
 import androidx.camera.core.featurecombination.impl.UseCaseType.VIDEO_CAPTURE
@@ -78,7 +78,7 @@ internal class DefaultFeatureCombinationResolver(
 
         // Return early if given use case combination is known to be unsupported
         useCases.forEach {
-            val useCaseType = it.getUseCaseType()
+            val useCaseType = it.getFeatureComboUseCaseType()
             if (useCaseType == UseCaseType.UNDEFINED) {
                 return UnsupportedUseCase(it)
             }
