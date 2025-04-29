@@ -356,10 +356,7 @@ internal class AppSearchAppFunctionReader(
         return if (schemaMetadata == null) {
             null
         } else {
-            schemaAppFunctionInventory
-                ?.schemaFunctionsMap
-                ?.get(prepareStaticMappingKey(schemaMetadata))
-                ?.parameters
+            schemaAppFunctionInventory?.schemaFunctionsMap?.get(schemaMetadata)?.parameters
         }
     }
 
@@ -375,10 +372,7 @@ internal class AppSearchAppFunctionReader(
         return if (schemaMetadata == null) {
             null
         } else {
-            schemaAppFunctionInventory
-                ?.schemaFunctionsMap
-                ?.get(prepareStaticMappingKey(schemaMetadata))
-                ?.response
+            schemaAppFunctionInventory?.schemaFunctionsMap?.get(schemaMetadata)?.response
         }
     }
 
@@ -395,10 +389,7 @@ internal class AppSearchAppFunctionReader(
         return if (schemaMetadata == null) {
             null
         } else {
-            schemaAppFunctionInventory
-                ?.schemaFunctionsMap
-                ?.get(prepareStaticMappingKey(schemaMetadata))
-                ?.components
+            schemaAppFunctionInventory?.schemaFunctionsMap?.get(schemaMetadata)?.components
         }
     }
 
@@ -406,22 +397,6 @@ internal class AppSearchAppFunctionReader(
         document: AppFunctionMetadataDocument
     ): Boolean {
         return document.response != null
-    }
-
-    /**
-     * Prepare the key for looking up [AppFunctionMetadata] from statically generated inventory.
-     *
-     * This is to ensure that when looking up [AppFunctionMetadata] for app that used legacy SDK, it
-     * can still resolve the compatible version defined in Jetpack.
-     */
-    private fun prepareStaticMappingKey(
-        schemaMetadata: AppFunctionSchemaMetadata
-    ): AppFunctionSchemaMetadata {
-        return AppFunctionSchemaMetadata(
-            category = schemaMetadata.category,
-            name = schemaMetadata.name,
-            version = 2,
-        )
     }
 
     private companion object {

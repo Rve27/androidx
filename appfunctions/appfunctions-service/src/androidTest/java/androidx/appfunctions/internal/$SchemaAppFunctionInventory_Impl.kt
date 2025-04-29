@@ -20,7 +20,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appfunctions.core.AppFunctionMetadataTestHelper
 import androidx.appfunctions.metadata.AppFunctionMetadata
-import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
 
 /** Test implementation of [SchemaAppFunctionInventory]. */
@@ -44,21 +43,10 @@ class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
             )
 
     private fun AppFunctionMetadata.toStaticCompileTimeMetadata(): CompileTimeAppFunctionMetadata {
-        val schema =
-            if (this.schema == null) {
-                null
-            } else {
-                AppFunctionSchemaMetadata(
-                    category = checkNotNull(this.schema).category,
-                    name = checkNotNull(this.schema).name,
-                    version = 2,
-                )
-            }
-
         return CompileTimeAppFunctionMetadata(
             id = this.id,
             isEnabledByDefault = this.isEnabled,
-            schema = schema,
+            schema = this.schema,
             parameters = this.parameters,
             response = this.response,
             components = this.components

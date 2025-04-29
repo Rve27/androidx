@@ -18,3 +18,7 @@
   public *;
 }
 
+-keep class androidx.appfunctions.internal.SchemaAppFunctionInventory { *; }
+-keep,allowoptimization class * implements androidx.appfunctions.internal.SchemaAppFunctionInventory {
+    public *;
+}
