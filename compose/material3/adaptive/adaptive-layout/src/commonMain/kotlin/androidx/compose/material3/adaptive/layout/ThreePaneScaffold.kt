@@ -758,9 +758,11 @@ private class ThreePaneContentMeasurePolicy(
         paneBounds: IntRect,
         measurable: PaneMeasurable,
         isLookingAhead: Boolean
-    ) {
-        measurable.measuredBounds = paneBounds.also { it.save(measurable.role, isLookingAhead) }
-    }
+    ) =
+        measurable.apply {
+            measuredBounds = paneBounds
+            recordMeasureResult(isLookingAhead)
+        }
 
     private fun placeLevitatedPanes(
         measurables: List<PaneMeasurable>,
@@ -797,35 +799,42 @@ private class ThreePaneContentMeasurePolicy(
                     measuredData.targetRight,
                     measuredData.targetBottom,
                 )
+            it.zIndex = measuredData.zIndex + ThreePaneScaffoldDefaults.HiddenPaneZIndexOffset
         }
     }
 
-    private fun IntRect.save(role: ThreePaneScaffoldRole, isLookingAhead: Boolean) {
-        if (!isLookingAhead) {
+    private fun PaneMeasurable.recordMeasureResult(isLookingAhead: Boolean) {
+        val paneMotionData = motionDataProvider[role]
+        if (!isLookingAhead && value != PaneAdaptedValue.Hidden) {
+            // Save zIndex for visible panes, so when it's hidden we can keep them at the same
+            // zIndex level.
+            paneMotionData.zIndex = zIndex
             return
         }
-        val paneMotionData = motionDataProvider[role]
-        if (!paneMotionData.isOriginSizeAndPositionSet) {
-            // During animation remeasuring can happen multiple times, with the measuring result
-            // equals to the lookahead measure. We don't want to override the original measurement
-            // so we only use the very first measurement
-            paneMotionData.originSize =
-                if (paneMotionData.isTargetSizeAndPositionSet) {
-                    paneMotionData.targetSize
-                } else {
-                    size
-                }
-            paneMotionData.originPosition =
-                if (paneMotionData.isTargetSizeAndPositionSet) {
-                    paneMotionData.targetPosition
-                } else {
-                    topLeft
-                }
-            paneMotionData.isOriginSizeAndPositionSet = true
+        measuredBounds?.apply {
+            if (!paneMotionData.isOriginSizeAndPositionSet) {
+                // During animation remeasuring can happen multiple times, with the measuring result
+                // equals to the lookahead measure. We don't want to override the original
+                // measurement
+                // so we only use the very first measurement
+                paneMotionData.originSize =
+                    if (paneMotionData.isTargetSizeAndPositionSet) {
+                        paneMotionData.targetSize
+                    } else {
+                        size
+                    }
+                paneMotionData.originPosition =
+                    if (paneMotionData.isTargetSizeAndPositionSet) {
+                        paneMotionData.targetPosition
+                    } else {
+                        topLeft
+                    }
+                paneMotionData.isOriginSizeAndPositionSet = true
+            }
+            paneMotionData.targetSize = size
+            paneMotionData.targetPosition = topLeft
+            paneMotionData.isTargetSizeAndPositionSet = true
         }
-        paneMotionData.targetSize = size
-        paneMotionData.targetPosition = topLeft
-        paneMotionData.isTargetSizeAndPositionSet = true
     }
 
     private fun Placeable.PlacementScope.getLocalBounds(bounds: Rect): IntRect {
@@ -923,10 +932,9 @@ private class PaneMeasurable(
     val placedPositionY
         get() = measuredBounds?.top ?: 0
 
-    val zIndex: Float =
+    var zIndex: Float =
         when {
             (value is PaneAdaptedValue.Levitated) -> ThreePaneScaffoldDefaults.LevitatedPaneZIndex
-            (value == PaneAdaptedValue.Hidden) -> ThreePaneScaffoldDefaults.HiddenPaneZIndex
             else -> 0f
         }
 
@@ -1001,10 +1009,10 @@ internal object ThreePaneScaffoldDefaults {
     const val LevitatedPaneZIndex = 1f
 
     /**
-     * The negative z-index of hidden panes to make visible panes always show upon hidden panes
-     * during pane animations.
+     * The z-index offset of hidden panes to make visible panes always show upon the hidden panes at
+     * the same z-index level during pane animations.
      */
-    const val HiddenPaneZIndex = -0.1f
+    const val HiddenPaneZIndexOffset = -0.1f
 }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
