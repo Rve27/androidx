@@ -104,8 +104,8 @@ import kotlin.math.ceil
  *   [text] with [Typography.TITLE_SMALL] typography, describing the main purpose of this layout.
  *   Title is an optional slot which can be omitted to make space for other elements. Defaults to
  *   [ColorScheme.onBackground] color. When this [titleSlot] is [text], it is considered as
- *   important for accessibility by default, which can be overridden by adding
- *   [LayoutModifier.clearSemantics] into the [text] modifier.
+ *   important for accessibility by default, and is marked as heading role, which can be overridden
+ *   by adding [LayoutModifier.clearSemantics] into the [text] modifier.
  * @param bottomSlot The content for bottom slot in this layout, that will be anchored to the bottom
  *   edge of the screen. This should be either a small non tappable content such as Text with
  *   optional label for it or tappable main action with [textEdgeButton] or [iconEdgeButton] which
@@ -209,7 +209,8 @@ public fun MaterialScope.primaryLayoutWithOverrideIcon(
                                 TextElementStyle(
                                     typography = Typography.TITLE_SMALL,
                                     color = theme.colorScheme.onBackground,
-                                    importantForAccessibility = true
+                                    importantForAccessibility = true,
+                                    isAccessibilityHeading = true,
                                 )
                         ) {
                             it()

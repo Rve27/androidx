@@ -236,6 +236,9 @@ internal class TextElementStyle(
     // the text will have its string content added as default content description into the modifier,
     // which makes the text important for accessibility.
     val importantForAccessibility: Boolean = false,
+    // By default text is not marked as heading. By setting this to true, this text will be marked
+    // as heading for accessibility purpose.
+    val isAccessibilityHeading: Boolean = false,
 )
 
 internal class IconStyle(
