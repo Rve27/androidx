@@ -47,6 +47,7 @@ import androidx.wear.protolayout.material3.PrimaryLayoutDefaults.HEADER_ICON_SIZ
 import androidx.wear.protolayout.material3.PrimaryLayoutDefaults.HEADER_ICON_TITLE_SPACER_HEIGHT_LARGE_DP
 import androidx.wear.protolayout.material3.PrimaryLayoutDefaults.HEADER_ICON_TITLE_SPACER_HEIGHT_SMALL_DP
 import androidx.wear.protolayout.material3.PrimaryLayoutDefaults.HEADER_MARGIN_BOTTOM_DP
+import androidx.wear.protolayout.material3.PrimaryLayoutDefaults.HEADER_MARGIN_BOTTOM_DP_SMALL
 import androidx.wear.protolayout.material3.PrimaryLayoutDefaults.HEADER_MARGIN_SIDE_PERCENTAGE
 import androidx.wear.protolayout.material3.PrimaryLayoutDefaults.HEADER_MARGIN_TOP_DP
 import androidx.wear.protolayout.material3.PrimaryLayoutDefaults.METADATA_TAG
@@ -313,7 +314,9 @@ private fun MaterialScope.getHeaderContent(
         Column.Builder()
             .setWidth(wrap())
             .setHeight(wrap())
-            .setModifiers(Modifiers.Builder().setPadding(getMarginForHeader()).build())
+            .setModifiers(
+                Modifiers.Builder().setPadding(getMarginForHeader(titleSlot != null)).build()
+            )
             .addContent(getIconPlaceholder(overrideIcon, overrideIconColor))
 
     titleSlot?.apply {
@@ -441,10 +444,16 @@ private fun LayoutElement.generateLabelContent(sidePadding: DpProp): LayoutEleme
         .addContent(this)
         .build()
 
-private fun MaterialScope.getMarginForHeader() =
+private fun MaterialScope.getMarginForHeader(isTitleSlotPresent: Boolean) =
     padding(
         top = HEADER_MARGIN_TOP_DP,
-        bottom = HEADER_MARGIN_BOTTOM_DP,
+        // Only use the smaller margin on small screen with title slot.
+        bottom =
+            if (isTitleSlotPresent && !deviceConfiguration.screenHeightDp.isBreakpoint()) {
+                HEADER_MARGIN_BOTTOM_DP_SMALL
+            } else {
+                HEADER_MARGIN_BOTTOM_DP
+            },
         start = HEADER_MARGIN_SIDE_PERCENTAGE * deviceConfiguration.screenWidthDp,
         end = HEADER_MARGIN_SIDE_PERCENTAGE * deviceConfiguration.screenWidthDp
     )
@@ -463,6 +472,8 @@ internal object PrimaryLayoutDefaults {
     @VisibleForTesting internal const val METADATA_TAG: String = "M3_PL"
 
     @Dimension(DP) internal const val HEADER_MARGIN_TOP_DP = 3f
+
+    @Dimension(DP) internal const val HEADER_MARGIN_BOTTOM_DP_SMALL = 4f
 
     @Dimension(DP) internal const val HEADER_MARGIN_BOTTOM_DP = 6f
 
