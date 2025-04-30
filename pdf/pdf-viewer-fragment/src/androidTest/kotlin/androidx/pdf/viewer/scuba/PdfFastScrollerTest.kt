@@ -44,6 +44,7 @@ import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.AndroidXScreenshotTestRule
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -85,6 +86,7 @@ class PdfFastScrollerTest {
         scenario.close()
     }
 
+    @Ignore("TODO(b/414504429): Re-enable when metrics API for page rendering is available.")
     @Test
     fun pdfFragment_fastScroller_hiddenOnLoad() {
         scenarioLoadDocument(
