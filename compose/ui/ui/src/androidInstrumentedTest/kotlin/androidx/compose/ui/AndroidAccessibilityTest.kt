@@ -5342,6 +5342,143 @@ class AndroidAccessibilityTest {
     }
 
     @Test
+    fun testTransparentNode_withAlphaAndClickableModifiers_notAccessible() {
+        // Arrange.
+        setContent {
+            Column(Modifier.testTag("parent")) {
+                Box(
+                    modifier =
+                        Modifier.alpha(0f).clickable(onClick = {}).semantics {
+                            testTag = "child"
+                            contentDescription = "Test"
+                        }
+                )
+            }
+        }
+        val parentId = rule.onNodeWithTag("parent").semanticsId()
+        val childId = rule.onNodeWithTag("child").semanticsId()
+
+        // Act.
+        rule.waitForIdle()
+        val parent = createAccessibilityNodeInfo(parentId)
+        val child = createAccessibilityNodeInfo(childId)
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(parent.childCount).isEqualTo(1)
+            assertThat(child.isVisibleToUser).isFalse()
+        }
+    }
+
+    @Test
+    fun testTransparentNode_withAlphaAndMultipleClickableModifiers_accessible() {
+        // Arrange.
+        setContent {
+            Column(Modifier.testTag("parent")) {
+                Box(
+                    modifier =
+                        Modifier.clickable(onClick = {})
+                            .alpha(0f)
+                            .clickable(onClick = {})
+                            .semantics {
+                                testTag = "child"
+                                contentDescription = "Test"
+                            }
+                )
+            }
+        }
+        val parentId = rule.onNodeWithTag("parent").semanticsId()
+        val childId = rule.onNodeWithTag("child").semanticsId()
+
+        // Act.
+        rule.waitForIdle()
+        val parent = createAccessibilityNodeInfo(parentId)
+        val child = createAccessibilityNodeInfo(childId)
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(parent.childCount).isEqualTo(1)
+            assertThat(child.isVisibleToUser).isTrue()
+        }
+    }
+
+    @Test
+    fun testTransparentNode_withMultipleAlphaAndNestedClickableNodes_notAccessible() {
+        // Arrange.
+        setContent {
+            Column(Modifier.testTag("parent")) {
+                Box(
+                    Modifier.alpha(1f).alpha(0f).alpha(1f).clickable(onClick = {}).semantics {
+                        testTag = "child1"
+                        contentDescription = "test"
+                    }
+                ) {
+                    Box(
+                        Modifier.clickable(onClick = {}).semantics {
+                            testTag = "child2"
+                            contentDescription = "test"
+                        }
+                    )
+                }
+            }
+        }
+        val parentId = rule.onNodeWithTag("parent").semanticsId()
+        val child1Id = rule.onNodeWithTag("child1").semanticsId()
+        val child2Id = rule.onNodeWithTag("child2").semanticsId()
+
+        // Act.
+        rule.waitForIdle()
+        val parent = createAccessibilityNodeInfo(parentId)
+        val child1 = createAccessibilityNodeInfo(child1Id)
+        val child2 = createAccessibilityNodeInfo(child2Id)
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(parent.childCount).isEqualTo(1)
+            assertThat(child1.isVisibleToUser).isFalse()
+            assertThat(child2.isVisibleToUser).isFalse()
+        }
+    }
+
+    @Test
+    fun testNonTransparentNode_withMultipleAlphaAndNestedClickableNodes_parentAccessible() {
+        // Arrange.
+        setContent {
+            Column(Modifier.testTag("parent")) {
+                Box(
+                    Modifier.alpha(1f).clickable(onClick = {}).alpha(0f).alpha(1f).semantics {
+                        testTag = "child1"
+                        contentDescription = "test"
+                    }
+                ) {
+                    Box(
+                        Modifier.clickable(onClick = {}).semantics {
+                            testTag = "child2"
+                            contentDescription = "test"
+                        }
+                    )
+                }
+            }
+        }
+        val parentId = rule.onNodeWithTag("parent").semanticsId()
+        val child1Id = rule.onNodeWithTag("child1").semanticsId()
+        val child2Id = rule.onNodeWithTag("child2").semanticsId()
+
+        // Act.
+        rule.waitForIdle()
+        val parent = createAccessibilityNodeInfo(parentId)
+        val child1 = createAccessibilityNodeInfo(child1Id)
+        val child2 = createAccessibilityNodeInfo(child2Id)
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(parent.childCount).isEqualTo(1)
+            assertThat(child1.isVisibleToUser).isTrue()
+            assertThat(child2.isVisibleToUser).isFalse()
+        }
+    }
+
+    @Test
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.P)
     fun progressSemantics_mergesSemantics_forTalkback() {
         // Arrange.
