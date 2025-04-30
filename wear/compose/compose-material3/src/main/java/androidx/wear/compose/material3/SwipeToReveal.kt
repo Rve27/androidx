@@ -907,7 +907,7 @@ public fun rememberRevealState(
     }
 
 @Composable
-internal fun SwipeToRevealImpl(
+private fun SwipeToRevealImpl(
     primaryAction: @Composable () -> Unit,
     onFullSwipe: () -> Unit,
     @SuppressLint("PrimitiveInCollection") anchors: Set<RevealValue>,

@@ -39,6 +39,7 @@ import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.AndroidXScreenshotTestRule
 import androidx.wear.compose.material3.RevealDirection.Companion.Bidirectional
+import androidx.wear.compose.materialcore.CustomTouchSlopProvider
 import androidx.wear.compose.materialcore.screenWidthDp
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
@@ -407,6 +408,13 @@ class SwipeToRevealScreenshotTest {
         verifyScreenshotAfterSwipe(screenSize, testName.goldenIdentifier(), swipeScreenPercent)
     }
 
+    @Test
+    fun swipeToReveal_showsPrimaryActionWithLabel(@TestParameter screenSize: ScreenSize) {
+        val swipeScreenPercent = 0.8f
+
+        verifyScreenshotAfterSwipe(screenSize, testName.goldenIdentifier(), swipeScreenPercent)
+    }
+
     private fun verifyScreenshotAfterSwipe(
         screenSize: ScreenSize,
         goldenIdentifier: String,
@@ -414,28 +422,29 @@ class SwipeToRevealScreenshotTest {
     ) {
         var screenWidthPx: Float? = null
         rule.setContentWithTheme {
-            screenWidthPx = with(LocalDensity.current) { screenWidthDp().dp.toPx() }
-
             ScreenConfiguration(screenSize.size) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    SwipeToReveal(
-                        primaryAction = {
-                            PrimaryActionButton(
-                                onClick = {}, /* Empty for testing */
-                                { Icon(Icons.Outlined.Close, contentDescription = "Clear") },
-                                { Text("Clear") }
-                            )
-                        },
-                        onSwipePrimaryAction = {}, /* Empty for testing */
-                        modifier = Modifier.testTag(TEST_TAG),
-                        secondaryAction = {
-                            SecondaryActionButton(
-                                {},
-                                { Icon(Icons.Outlined.MoreVert, contentDescription = "More") }
-                            )
-                        },
-                    ) {
-                        Button({}, Modifier.fillMaxWidth()) { Text("Some text.") }
+                screenWidthPx = with(LocalDensity.current) { screenWidthDp().dp.toPx() }
+                CustomTouchSlopProvider(newTouchSlop = 0f) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        SwipeToReveal(
+                            primaryAction = {
+                                PrimaryActionButton(
+                                    onClick = {}, /* Empty for testing */
+                                    { Icon(Icons.Outlined.Close, contentDescription = "Clear") },
+                                    { Text("Clear") }
+                                )
+                            },
+                            onSwipePrimaryAction = {}, /* Empty for testing */
+                            modifier = Modifier.testTag(TEST_TAG),
+                            secondaryAction = {
+                                SecondaryActionButton(
+                                    {},
+                                    { Icon(Icons.Outlined.MoreVert, contentDescription = "More") }
+                                )
+                            },
+                        ) {
+                            Button({}, Modifier.fillMaxWidth()) { Text("Some text.") }
+                        }
                     }
                 }
             }
