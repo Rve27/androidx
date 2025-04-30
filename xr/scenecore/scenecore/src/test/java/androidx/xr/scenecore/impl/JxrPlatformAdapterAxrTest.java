@@ -2493,8 +2493,8 @@ public final class JxrPlatformAdapterAxrTest {
                         mFakeImpressApi.getImpressNodes().keySet().stream()
                                 .filter(
                                         node ->
-                                                node.materialOverride != null
-                                                        && node.materialOverride.type
+                                                node.getMaterialOverride() != null
+                                                        && node.getMaterialOverride().getType()
                                                                 == FakeImpressApi.MaterialData.Type
                                                                         .WATER)
                                 .toArray())
