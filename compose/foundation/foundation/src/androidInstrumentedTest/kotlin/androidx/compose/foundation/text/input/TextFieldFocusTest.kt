@@ -171,7 +171,7 @@ internal class TextFieldFocusTest {
         assertThat(interactions.filterIsInstance<FocusInteraction.Focus>()).isNotEmpty()
         val focusEvent = interactions.filterIsInstance<FocusInteraction.Focus>().first()
 
-        focusManager.moveFocus(FocusDirection.Next)
+        rule.runOnUiThread { focusManager.moveFocus(FocusDirection.Next) }
 
         rule.waitForIdle()
         assertThat(interactions.filterIsInstance<FocusInteraction.Unfocus>()).hasSize(1)
