@@ -22,8 +22,6 @@ import android.net.Uri
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
-import android.view.View
-import android.view.View.OnAttachStateChangeListener
 import androidx.compose.runtime.CompositionLocal
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.ProvidableCompositionLocal
@@ -32,7 +30,6 @@ import androidx.compose.runtime.compositionLocalWithComputedDefaultOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.core.os.HandlerCompat
 
 /**
@@ -41,44 +38,20 @@ import androidx.core.os.HandlerCompat
  */
 public val LocalReduceMotion: ProvidableCompositionLocal<Boolean> =
     compositionLocalWithComputedDefaultOf {
-        val view = LocalView.currentValue
-        @Suppress("UNCHECKED_CAST")
-        val cachedValue = view.getTag(R.id.reduce_motion_tag) as MutableState<Boolean>?
-        val currentState =
-            if (cachedValue != null) {
-                cachedValue
-            } else {
-                val resolver = LocalContext.currentValue.contentResolver
-                val currentValue = getReducedMotionSettingValue(resolver)
-                val state = mutableStateOf(currentValue)
-                view.setTag(R.id.reduce_motion_tag, state)
-                val contentObserver =
-                    object : ContentObserver(HandlerCompat.createAsync(Looper.getMainLooper())) {
-                        override fun onChange(selfChange: Boolean, uri: Uri?) {
-                            state.value = getReducedMotionSettingValue(resolver)
-                        }
+        if (cachedReducedMotion.value == null) {
+            val applicationContext = LocalContext.currentValue.applicationContext
+            val resolver = applicationContext.contentResolver
+            val contentObserver =
+                object : ContentObserver(HandlerCompat.createAsync(Looper.getMainLooper())) {
+                    override fun onChange(selfChange: Boolean, uri: Uri?) {
+                        cachedReducedMotion.value = getReducedMotionSettingValue(resolver)
                     }
-                val reduceMotionUri = Settings.Global.getUriFor(REDUCE_MOTION)
-                resolver.registerContentObserver(reduceMotionUri, false, contentObserver)
-                view.addOnAttachStateChangeListener(
-                    object : OnAttachStateChangeListener {
-                        override fun onViewAttachedToWindow(v: View) {
-                            resolver.registerContentObserver(
-                                reduceMotionUri,
-                                false,
-                                contentObserver
-                            )
-                        }
-
-                        override fun onViewDetachedFromWindow(v: View) {
-                            resolver.unregisterContentObserver(contentObserver)
-                        }
-                    }
-                )
-                state
-            }
-
-        currentState.value
+                }
+            val reduceMotionUri = Settings.Global.getUriFor(REDUCE_MOTION)
+            resolver.registerContentObserver(reduceMotionUri, false, contentObserver)
+            cachedReducedMotion.value = getReducedMotionSettingValue(resolver)
+        }
+        cachedReducedMotion.value!!
     }
 
 /**
@@ -126,3 +99,5 @@ private const val REDUCE_MOTION = "reduce_motion"
 private const val REDUCE_MOTION_DEFAULT = 0
 
 internal const val TAG = "CompositionLocals"
+
+private val cachedReducedMotion: MutableState<Boolean?> = mutableStateOf(null)
