@@ -19,6 +19,8 @@ package androidx.xr.glimmer.demos
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,7 +36,12 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.GlimmerTheme
@@ -44,12 +51,22 @@ fun DemoApp(
     currentDemo: Demo,
     onNavigateToDemo: (Demo) -> Unit,
 ) {
+    val overlayOnBackground = OverlayOnBackgroundSetting.asState().value
     GlimmerTheme {
-        Box(
-            Modifier.background(GlimmerTheme.colors.surface)
+        Column(
+            Modifier.demoBackground(overlayOnBackground)
                 .windowInsetsPadding(WindowInsets.systemBars)
         ) {
             DisplayDemo(currentDemo, onNavigateToDemo)
+            val context = LocalContext.current
+            Spacer(Modifier.weight(1f, fill = true))
+            ListItem(onClick = { OverlayOnBackgroundSetting.set(context, !overlayOnBackground) }) {
+                BasicText(
+                    "${if (overlayOnBackground) "Disable" else "Enable"} overlay on background",
+                    Modifier.height(56.dp).wrapContentSize(Alignment.Center),
+                    TextStyle(color = Color.White)
+                )
+            }
         }
     }
 }
@@ -95,3 +112,19 @@ private fun ListItem(
         content()
     }
 }
+
+@Composable
+private fun Modifier.demoBackground(overlayOnBackground: Boolean) =
+    this.then(
+        if (overlayOnBackground) {
+            Modifier.background(
+                    brush = Brush.linearGradient(0f to Color(0xFF375672), 1f to Color(0xFF6D6637))
+                )
+                .graphicsLayer {
+                    compositingStrategy = CompositingStrategy.Offscreen
+                    blendMode = BlendMode.Screen
+                }
+        } else {
+            Modifier.background(GlimmerTheme.colors.surface)
+        }
+    )
