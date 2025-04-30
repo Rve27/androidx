@@ -56,8 +56,8 @@ final class AggregatedCameraDeviceSetupCompat implements CameraDeviceSetupCompat
     }
 
     @Override
-    public @NonNull SupportQueryResult isSessionConfigurationSupported(
-            @NonNull SessionConfigurationCompat sessionConfig) {
+    public @NonNull SupportQueryResult isSessionConfigurationSupportedLegacy(
+            @NonNull SessionConfigurationLegacy sessionConfig) {
         // Ensure that IllegalStateException is thrown if Camera2's CameraDeviceSetup
         // is supported.
         for (CameraDeviceSetupCompat impl: mCameraDeviceSetupImpls) {
@@ -69,7 +69,7 @@ final class AggregatedCameraDeviceSetupCompat implements CameraDeviceSetupCompat
         }
 
         for (CameraDeviceSetupCompat impl : mCameraDeviceSetupImpls) {
-            SupportQueryResult result = impl.isSessionConfigurationSupported(sessionConfig);
+            SupportQueryResult result = impl.isSessionConfigurationSupportedLegacy(sessionConfig);
             if (result.getSupported() != RESULT_UNDEFINED) {
                 return result;
             }

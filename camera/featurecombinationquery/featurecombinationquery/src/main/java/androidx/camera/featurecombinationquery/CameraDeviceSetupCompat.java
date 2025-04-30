@@ -58,31 +58,52 @@ public interface CameraDeviceSetupCompat {
             @NonNull SessionConfiguration sessionConfig) throws CameraAccessException;
 
     /**
-     * Checks if the {@link SessionConfigurationCompat} is supported.
+     * Checks if the set of features in {@link SessionConfigurationLegacy} is supported for the
+     * given camera.
      * <p>
-     * This method and the compat classes are provided to allow querying camera device
-     * capabilities without the
-     * need to call {@link android.hardware.camera2.CameraManager#openCamera}. It should only be
-     * used for devices that do not support {@link CameraDevice.CameraDeviceSetup} and will
-     * throw an {@link IllegalStateException} when used for a {@code cameraId} for which
-     * {@link android.hardware.camera2.CameraManager#isCameraDeviceSetupSupported}
-     * returns true.
+     * This method and the legacy classes are provided to allow querying camera device
+     * capabilities without the need to call
+     * {@link android.hardware.camera2.CameraManager#openCamera}. It must only be used for
+     * devices that do not support {@link CameraDevice.CameraDeviceSetup} and will throw an
+     * {@link IllegalStateException} when used for a {@code cameraId} for which
+     * {@link android.hardware.camera2.CameraManager#isCameraDeviceSetupSupported} returns true.
      * <p>
-     * Note that the condition above means that this method does not query camera2's
+     * Even on older devices that do not support
+     * {@link android.hardware.camera2.CameraDevice.CameraDeviceSetup}, if the
+     * {@link CameraDevice} object can be obtained using
+     * {@link android.hardware.camera2.CameraManager#openCamera}, then
+     * {@link #isSessionConfigurationSupported(SessionConfiguration)} should be used as the
+     * {@link android.hardware.camera2.CaptureRequest} returned by Camera2 generally has more
+     * information pre-filled from the template which may change the result.
+     * <p>
+     * Note that this method does not, and can not query camera2's
      * {@link
      * android.hardware.camera2.CameraDevice.CameraDeviceSetup#isSessionConfigurationSupported},
      * so the returned {@link SupportQueryResult#getSource()} will never be
-     * {@link SupportQueryResult#SOURCE_ANDROID_FRAMEWORK}
+     * {@link SupportQueryResult#SOURCE_ANDROID_FRAMEWORK}. Additionally, there is a small
+     * possibility that the result of Camera2's
+     * {@link CameraDevice#isSessionConfigurationSupported(SessionConfiguration)} contradicts the
+     * result of this call. In such cases, a {@link SupportQueryResult#RESULT_UNSUPPORTED} result
+     * can be considered authoritative, but {@link SupportQueryResult#RESULT_SUPPORTED} may or
+     * may not be correct and is considered best effort.
+     * <p>
+     * <b>WARNING:</b> Use this method is discouraged for most developers.
+     * {@link #isSessionConfigurationSupported(SessionConfiguration)} should be used wherever
+     * possible. This method should only be used if performance is critical on older devices and
+     * you understand and protect against the caveats documented above.
      *
-     * @param sessionConfig The {@link SessionConfigurationCompat} to check.
-     * @return a {@link SupportQueryResult} indicating if the {@link SessionConfigurationCompat} is
-     * supported.
+     * @param sessionConfig The {@link SessionConfigurationLegacy} to check.
+     * @return a {@link SupportQueryResult} indicating if the {@link SessionConfigurationLegacy}
+     * is supported.
      * @throws IllegalStateException if the camera device supports
      * {@link android.hardware.camera2.CameraDevice.CameraDeviceSetup}
+     *
+     * @see SessionConfigurationLegacy
+     * @see SessionParametersLegacy
      */
     @NonNull
-    SupportQueryResult isSessionConfigurationSupported(
-            @NonNull SessionConfigurationCompat sessionConfig);
+    SupportQueryResult isSessionConfigurationSupportedLegacy(
+            @NonNull SessionConfigurationLegacy sessionConfig);
 
     /**
      * Result of a {@link CameraDeviceSetupCompat#isSessionConfigurationSupported} query.

@@ -54,8 +54,8 @@ class Camera2CameraDeviceSetupCompat implements CameraDeviceSetupCompat {
     }
 
     @Override
-    public @NonNull SupportQueryResult isSessionConfigurationSupported(
-            @NonNull SessionConfigurationCompat sessionConfig) {
+    public @NonNull SupportQueryResult isSessionConfigurationSupportedLegacy(
+            @NonNull SessionConfigurationLegacy sessionConfig) {
         throw new IllegalStateException(
                 "This device supports CameraDeviceSetup. Please use Camera2 "
                         + "SessionConfiguration for querying instead.");

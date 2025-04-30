@@ -17,7 +17,6 @@
 package androidx.camera.featurecombinationquery;
 
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.params.SessionConfiguration;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -27,29 +26,38 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A compat class to store Session Parameters for querying support. This class is a simple holder
- * class for holding {@link CaptureRequest.Key}s and associated values, similar to what
+ * A compat class to store Session Parameters for querying support. This class is a simple
+ * holder class for holding {@link CaptureRequest.Key}s and associated values, similar to what
  * {@link CaptureRequest} does in
  * {@link android.hardware.camera2.params.SessionConfiguration#setSessionParameters}.
  * <p>
- * This class <i>must not</i> be used for camera devices that support
- * {@link android.hardware.camera2.CameraDevice.CameraDeviceSetup}.
- * For device that support {@link android.hardware.camera2.CameraDevice.CameraDeviceSetup}, use
- * {@link android.hardware.camera2.CameraDevice.CameraDeviceSetup#createCaptureRequest} for
- * session parameters instead.
+ * This class allows querying on devices that do not support Camera2's
+ * {@link android.hardware.camera2.CameraDevice.CameraDeviceSetup} and need to query the camera
+ * capabilities before calling {@link android.hardware.camera2.CameraManager#openCamera}.
  * <p>
- * In situations where {@link android.hardware.camera2.CameraDevice} object is available, it is
- * strongly recommended to use
- * {@link CameraDeviceSetupCompat#isSessionConfigurationSupported(SessionConfiguration)} instead of
- * {@link CameraDeviceSetupCompat#isSessionConfigurationSupported(SessionConfigurationCompat)} as
- * {@link CameraDeviceSetupCompat#isSessionConfigurationSupported(SessionConfigurationCompat)} may
- * lead to inaccurate results if not constructed accurately.
+ * However, there are downsides to using the {@code *Legacy} classes.
+ * <ol>
+ *     <li>When {@code *Legacy} classes are used, only the non-Camera2 databases (if present)
+ *     will be queried.</li>
+ *     <li>The output of {@link android.hardware.camera2.CameraDevice#createCaptureRequest} will
+ *     often set defaults based on the Template passed to it. Without the capture request
+ *     provided by the camera2 API, there is no reasonable way for this API to guarantee that the
+ *     result returned is completely reliable.</li>
+ * </ol>
+ * <p>
+ * With those downsides, the usage of the {@code *Legacy} classes is restricted to devices
+ * that do not support {@link android.hardware.camera2.CameraDevice.CameraDeviceSetup}. On devices
+ * that do not support {@link android.hardware.camera2.CameraDevice.CameraDeviceSetup}, it is
+ * strongly recommended that this class is used if and only if calling
+ * {@link android.hardware.camera2.CameraManager#openCamera} is not possible before the query.
+ *
+ * @see CameraDeviceSetupCompat#isSessionConfigurationSupportedLegacy(SessionConfigurationLegacy)
  */
-public class SessionParametersCompat {
+public class SessionParametersLegacy {
     @NonNull
     private final Map<CaptureRequest.Key<?>, Object> mKeyVal;
 
-    private SessionParametersCompat(@NonNull Map<CaptureRequest.Key<?>, Object> keyValMap) {
+    private SessionParametersLegacy(@NonNull Map<CaptureRequest.Key<?>, Object> keyValMap) {
         mKeyVal = keyValMap;
     }
 
@@ -83,7 +91,7 @@ public class SessionParametersCompat {
     }
 
     /**
-     * Simple builder class to build a {@link SessionParametersCompat} object.
+     * Simple builder class to build a {@link SessionParametersLegacy} object.
      */
     public static final class Builder {
         @NonNull
@@ -108,13 +116,13 @@ public class SessionParametersCompat {
         }
 
         /**
-         * Builds the {@link SessionParametersCompat} object with the values set by {@link #set}
+         * Builds the {@link SessionParametersLegacy} object with the values set by {@link #set}
          *
-         * @return a new {@link SessionParametersCompat} object.
+         * @return a new {@link SessionParametersLegacy} object.
          */
         @NonNull
-        public SessionParametersCompat build() {
-            return new SessionParametersCompat(Map.copyOf(mKeyVal));
+        public SessionParametersLegacy build() {
+            return new SessionParametersLegacy(Map.copyOf(mKeyVal));
         }
 
     }

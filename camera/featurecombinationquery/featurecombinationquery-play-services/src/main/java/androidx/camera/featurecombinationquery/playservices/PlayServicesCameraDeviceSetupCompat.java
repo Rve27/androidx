@@ -23,7 +23,7 @@ import android.hardware.camera2.params.SessionConfiguration;
 
 import androidx.camera.featurecombinationquery.CameraDeviceSetupCompat;
 import androidx.camera.featurecombinationquery.CameraDeviceSetupCompatFactory;
-import androidx.camera.featurecombinationquery.SessionConfigurationCompat;
+import androidx.camera.featurecombinationquery.SessionConfigurationLegacy;
 
 import org.jspecify.annotations.NonNull;
 
@@ -48,8 +48,8 @@ public class PlayServicesCameraDeviceSetupCompat implements CameraDeviceSetupCom
     }
 
     @Override
-    public @NonNull SupportQueryResult isSessionConfigurationSupported(
-            @NonNull SessionConfigurationCompat sessionConfig) {
+    public @NonNull SupportQueryResult isSessionConfigurationSupportedLegacy(
+            @NonNull SessionConfigurationLegacy sessionConfig) {
         // TODO: Implement this once Google Play Services CameraDeviceSetup is available.
         return new SupportQueryResult(RESULT_UNDEFINED, SOURCE_PLAY_SERVICES, 0);
     }
