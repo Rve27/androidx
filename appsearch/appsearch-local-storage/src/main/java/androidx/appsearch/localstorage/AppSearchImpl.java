@@ -146,7 +146,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -785,18 +784,8 @@ public final class AppSearchImpl implements Closeable {
             boolean forceOverride,
             int version,
             SetSchemaStats.@Nullable Builder setSchemaStatsBuilder) throws AppSearchException {
-        long setRewriteSchemaLatencyStartTimeMillis = SystemClock.elapsedRealtime();
+        long rewriteSchemaStartTimeMillis = SystemClock.elapsedRealtime();
         String prefix = createPrefix(packageName, databaseName);
-        SchemaProto.Builder existingSchemaBuilder;
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
-            // Only retrieve the schema for a single database
-            // TODO (b/337913932): remove getSchema from the setSchema path and refactor
-            //  rewriteSchema so that it no longer needs to take in the full existing schema.
-            existingSchemaBuilder = getSchemaProtoForPrefixLocked(prefix).toBuilder();
-        } else {
-            existingSchemaBuilder = getSchemaProtoLocked().toBuilder();
-        }
-
         SchemaProto.Builder newSchemaBuilder = SchemaProto.newBuilder();
         for (int i = 0; i < schemas.size(); i++) {
             AppSearchSchema schema = schemas.get(i);
@@ -805,23 +794,20 @@ public final class AppSearchImpl implements Closeable {
             newSchemaBuilder.addTypes(schemaTypeProto);
         }
 
-        // Combine the existing schema (which may have types from other prefixes) with this
-        // prefix's new schema. Modifies the existingSchemaBuilder.
-        RewrittenSchemaResults rewrittenSchemaResults = rewriteSchema(prefix,
-                existingSchemaBuilder,
-                newSchemaBuilder.build());
-
-        long rewriteSchemaEndTimeMillis = SystemClock.elapsedRealtime();
-        if (setSchemaStatsBuilder != null) {
-            setSchemaStatsBuilder.setRewriteSchemaLatencyMillis(
-                    (int) (rewriteSchemaEndTimeMillis - setRewriteSchemaLatencyStartTimeMillis));
-        }
-
-        // Apply schema
-        long nativeLatencyStartTimeMillis = SystemClock.elapsedRealtime();
-        SchemaProto finalSchema = existingSchemaBuilder.build();
+        Set<String> deletedPrefixedTypes;
+        Map<String, SchemaTypeConfigProto> rewrittenPrefixedTypes;
         SetSchemaResultProto setSchemaResultProto;
+
+        long rewriteSchemaEndTimeMillis;
+        long nativeLatencyStartTimeMillis = SystemClock.elapsedRealtime();
+        // Rewrite and apply schema
         if (Flags.enableDatabaseScopedSchemaOperations()) {
+            rewrittenPrefixedTypes = getRewrittenPrefixedTypes(prefix, newSchemaBuilder.build());
+            rewriteSchemaEndTimeMillis = SystemClock.elapsedRealtime();
+
+            SchemaProto finalSchema = SchemaProto.newBuilder()
+                    .addAllTypes(rewrittenPrefixedTypes.values())
+                    .build();
             SetSchemaRequestProto setSchemaRequestProto = SetSchemaRequestProto.newBuilder()
                     .setSchema(finalSchema)
                     .setDatabase(PrefixUtil.getIcingSchemaDatabaseName(prefix))
@@ -831,14 +817,31 @@ public final class AppSearchImpl implements Closeable {
                     setSchemaRequestProto);
             setSchemaResultProto = mIcingSearchEngineLocked.setSchemaWithRequestProto(
                     setSchemaRequestProto);
+            deletedPrefixedTypes = new ArraySet<>(setSchemaResultProto.getDeletedSchemaTypesList());
         } else {
+            SchemaProto.Builder existingSchemaBuilder = getSchemaProtoLocked().toBuilder();
+            // Combine the existing schema (which may have types from other prefixes) with this
+            // prefix's new schema. Modifies the existingSchemaBuilder.
+            RewrittenSchemaResults rewrittenSchemaResults = rewriteSchema(prefix,
+                    existingSchemaBuilder,
+                    newSchemaBuilder.build());
+            rewriteSchemaEndTimeMillis = SystemClock.elapsedRealtime();
+
+            deletedPrefixedTypes = rewrittenSchemaResults.mDeletedPrefixedTypes;
+            rewrittenPrefixedTypes = rewrittenSchemaResults.mRewrittenPrefixedTypes;
+
+            SchemaProto finalSchema = existingSchemaBuilder.build();
             LogUtil.piiTrace(TAG, "setSchema, request", finalSchema.getTypesCount(), finalSchema);
             setSchemaResultProto = mIcingSearchEngineLocked.setSchema(finalSchema, forceOverride);
         }
         LogUtil.piiTrace(
                 TAG, "setSchema, response", setSchemaResultProto.getStatus(), setSchemaResultProto);
         long nativeLatencyEndTimeMillis = SystemClock.elapsedRealtime();
+
+        // Populate logging stats
         if (setSchemaStatsBuilder != null) {
+            setSchemaStatsBuilder.setRewriteSchemaLatencyMillis(
+                    (int) (rewriteSchemaEndTimeMillis - rewriteSchemaStartTimeMillis));
             setSchemaStatsBuilder
                     .setTotalNativeLatencyMillis(
                             (int) (nativeLatencyEndTimeMillis - nativeLatencyStartTimeMillis))
@@ -873,12 +876,11 @@ public final class AppSearchImpl implements Closeable {
 
         long saveVisibilitySettingStartTimeMillis = SystemClock.elapsedRealtime();
         // Update derived data structures.
-        for (SchemaTypeConfigProto schemaTypeConfigProto :
-                rewrittenSchemaResults.mRewrittenPrefixedTypes.values()) {
+        for (SchemaTypeConfigProto schemaTypeConfigProto : rewrittenPrefixedTypes.values()) {
             mSchemaCacheLocked.addToSchemaMap(prefix, schemaTypeConfigProto);
         }
 
-        for (String schemaType : rewrittenSchemaResults.mDeletedPrefixedTypes) {
+        for (String schemaType : deletedPrefixedTypes) {
             mSchemaCacheLocked.removeFromSchemaMap(prefix, schemaType);
         }
 
@@ -890,14 +892,14 @@ public final class AppSearchImpl implements Closeable {
             // Add prefix to all visibility documents.
             // Find out which Visibility document is deleted or changed to all-default settings.
             // We need to remove them from Visibility Store.
-            Set<String> deprecatedVisibilityDocuments =
-                    new ArraySet<>(rewrittenSchemaResults.mRewrittenPrefixedTypes.keySet());
+            Set<String> deprecatedVisibilityDocuments = new ArraySet<>(
+                    rewrittenPrefixedTypes.keySet());
             List<InternalVisibilityConfig> prefixedVisibilityConfigs = rewriteVisibilityConfigs(
                     prefix, visibilityConfigs, deprecatedVisibilityDocuments);
             // Now deprecatedVisibilityDocuments contains those existing schemas that has
             // all-default visibility settings, add deleted schemas. That's all we need to
             // remove.
-            deprecatedVisibilityDocuments.addAll(rewrittenSchemaResults.mDeletedPrefixedTypes);
+            deprecatedVisibilityDocuments.addAll(deletedPrefixedTypes);
             mDocumentVisibilityStoreLocked.removeVisibility(deprecatedVisibilityDocuments);
             mDocumentVisibilityStoreLocked.setVisibility(prefixedVisibilityConfigs);
         }
@@ -3405,6 +3407,8 @@ public final class AppSearchImpl implements Closeable {
     @VisibleForTesting
     static class RewrittenSchemaResults {
         // Any prefixed types that used to exist in the schema, but are deleted in the new one.
+        // This set will be empty if rewrittenSchema is called with database-scoped schema
+        // operations enabled.
         final Set<String> mDeletedPrefixedTypes = new ArraySet<>();
 
         // Map of prefixed schema types to SchemaTypeConfigProtos that were part of the new schema.
@@ -3425,15 +3429,57 @@ public final class AppSearchImpl implements Closeable {
      *                       types from {@code newSchema}.
      * @param newSchema      Schema with types to add to the {@code existingSchema}.
      * @return a RewrittenSchemaResults that contains all prefixed schema type names in the given
-     * prefix as well as a set of schema types that were deleted.
+     * prefix as well as a set of schema types that were deleted if
+     * {@link Flags#enableDatabaseScopedSchemaOperations()} is false.
      */
     @VisibleForTesting
-    // TODO (b/337913932): Refactor rewriteSchema so that it no longer needs to take in the
-    //  existing schema when database-scoped schema operations is enabled.
     static RewrittenSchemaResults rewriteSchema(@NonNull String prefix,
             SchemaProto.@NonNull Builder existingSchema,
             @NonNull SchemaProto newSchema) throws AppSearchException {
-        HashMap<String, SchemaTypeConfigProto> newTypesToProto = new HashMap<>();
+        Map<String, SchemaTypeConfigProto> newTypesToProto = getRewrittenPrefixedTypes(prefix,
+                newSchema);
+
+        // newTypesToProto is modified below, so we need a copy first
+        RewrittenSchemaResults rewrittenSchemaResults = new RewrittenSchemaResults();
+        rewrittenSchemaResults.mRewrittenPrefixedTypes.putAll(newTypesToProto);
+
+        // Combine the existing schema (which may have types from other prefixes if
+        // database-scoped schema operations is disabled) with this prefix's new schema. Modifies
+        // the existingSchemaBuilder.
+        // Check if we need to replace any old schema types with the new ones.
+        for (int i = 0; i < existingSchema.getTypesCount(); i++) {
+            String schemaType = existingSchema.getTypes(i).getSchemaType();
+            SchemaTypeConfigProto newProto = newTypesToProto.remove(schemaType);
+            if (newProto != null) {
+                // Replacement
+                existingSchema.setTypes(i, newProto);
+            } else if (prefix.equals(getPrefix(schemaType))) {
+                // All types existing before but not in newSchema should be removed.
+                existingSchema.removeTypes(i);
+                --i;
+                rewrittenSchemaResults.mDeletedPrefixedTypes.add(schemaType);
+            }
+        }
+        // We've been removing existing types from newTypesToProto, so everything that remains is
+        // new.
+        existingSchema.addAllTypes(newTypesToProto.values());
+
+        return rewrittenSchemaResults;
+    }
+
+    /**
+     * Rewrites all types in the given {@code schema}. The rewrite prepends {@code prefix} to the
+     * schema types, and also populates the schema's database field with {@code prefix} when
+     * {@link Flags#enableDatabaseScopedSchemaOperations()} is true.
+     *
+     * @param prefix       The full prefix to prepend to the schema.
+     * @param newSchema    Schema with types to rewrite.
+     * @return a map containing the rewritten schema type names and their corresponding rewritten
+     * protos.
+     */
+    static Map<String, SchemaTypeConfigProto> getRewrittenPrefixedTypes(@NonNull String prefix,
+            @NonNull SchemaProto newSchema) throws AppSearchException {
+        Map<String, SchemaTypeConfigProto> newTypesToProto = new ArrayMap<>();
         // Rewrite the schema type to include the typePrefix.
         for (int typeIdx = 0; typeIdx < newSchema.getTypesCount(); typeIdx++) {
             SchemaTypeConfigProto.Builder typeConfigBuilder =
@@ -3471,52 +3517,7 @@ public final class AppSearchImpl implements Closeable {
 
             newTypesToProto.put(newSchemaType, typeConfigBuilder.build());
         }
-
-        // newTypesToProto is modified below, so we need a copy first
-        RewrittenSchemaResults rewrittenSchemaResults = new RewrittenSchemaResults();
-        rewrittenSchemaResults.mRewrittenPrefixedTypes.putAll(newTypesToProto);
-
-        // Combine the existing schema (which may have types from other prefixes if
-        // database-scoped schema operations is disabled) with this prefix's new schema. Modifies
-        // the existingSchemaBuilder.
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
-            for (int i = 0; i < existingSchema.getTypesCount(); i++) {
-                String oldSchemaType = existingSchema.getTypes(i).getSchemaType();
-                if (!getPrefix(oldSchemaType).equals(prefix)) {
-                    // Sanity check. This should never happen
-                    throw new AppSearchException(AppSearchResult.RESULT_INVALID_ARGUMENT,
-                            "Mismatched existing schema type and prefix during database-scoped "
-                                    + "schema rewrite. Existing schema type:" + oldSchemaType
-                                    + ", prefix: " + prefix);
-                }
-                if (!newTypesToProto.containsKey(oldSchemaType)) {
-                    rewrittenSchemaResults.mDeletedPrefixedTypes.add(oldSchemaType);
-                }
-            }
-            // If database-scoped schema operations is enabled, existing schema will only contain
-            // types from the same prefix, and can be directly replaced with the new schema.
-            existingSchema.clearTypes();
-        } else {
-            // Check if we need to replace any old schema types with the new ones.
-            for (int i = 0; i < existingSchema.getTypesCount(); i++) {
-                String schemaType = existingSchema.getTypes(i).getSchemaType();
-                SchemaTypeConfigProto newProto = newTypesToProto.remove(schemaType);
-                if (newProto != null) {
-                    // Replacement
-                    existingSchema.setTypes(i, newProto);
-                } else if (prefix.equals(getPrefix(schemaType))) {
-                    // All types existing before but not in newSchema should be removed.
-                    existingSchema.removeTypes(i);
-                    --i;
-                    rewrittenSchemaResults.mDeletedPrefixedTypes.add(schemaType);
-                }
-            }
-        }
-        // We've been removing existing types from newTypesToProto, so everything that remains is
-        // new.
-        existingSchema.addAllTypes(newTypesToProto.values());
-
-        return rewrittenSchemaResults;
+        return newTypesToProto;
     }
 
     /**

@@ -335,8 +335,10 @@ public class AppSearchImplTest {
         assertThat(rewrittenSchemaResults.mRewrittenPrefixedTypes)
                 .containsKey("package$existingDatabase/Bar");
         assertThat(rewrittenSchemaResults.mRewrittenPrefixedTypes.keySet().size()).isEqualTo(1);
-        assertThat(rewrittenSchemaResults.mDeletedPrefixedTypes)
-                .containsExactly("package$existingDatabase/Foo");
+        if (!Flags.enableDatabaseScopedSchemaOperations()) {
+            assertThat(rewrittenSchemaResults.mDeletedPrefixedTypes)
+                    .containsExactly("package$existingDatabase/Foo");
+        }
 
         // Same schema since nothing was added.
         SchemaProto expectedSchema = SchemaProto.newBuilder()
