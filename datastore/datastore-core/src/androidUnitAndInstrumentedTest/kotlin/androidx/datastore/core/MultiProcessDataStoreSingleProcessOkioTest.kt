@@ -18,14 +18,17 @@ package androidx.datastore.core
 
 import androidx.datastore.OkioPath
 import androidx.datastore.OkioTestIO
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import java.io.File
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import org.junit.runner.RunWith
 
 @OptIn(ExperimentalCoroutinesApi::class, ObsoleteCoroutinesApi::class, FlowPreview::class)
 @InternalCoroutinesApi
+@RunWith(AndroidJUnit4::class)
 class MultiProcessDataStoreSingleProcessOkioTest :
     MultiProcessDataStoreSingleProcessTest<OkioPath>(OkioTestIO()) {
     override fun getJavaFile(file: OkioPath): File {

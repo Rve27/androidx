@@ -21,10 +21,11 @@ import androidx.datastore.TestFile
 import androidx.datastore.TestIO
 import androidx.datastore.TestingSerializerConfig
 import androidx.datastore.core.handlers.NoOpCorruptionHandler
+import androidx.kruth.assertThat
+import androidx.kruth.assertThrows
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.FlakyTest
 import androidx.test.filters.LargeTest
-import androidx.testutils.assertThrows
-import com.google.common.truth.Truth.assertThat
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
@@ -61,7 +62,6 @@ import kotlinx.coroutines.withTimeout
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 /**
  * A testing class based on duplicate from "SingleProcessDataStoreTest" that only tests the features
@@ -70,7 +70,7 @@ import org.junit.runners.JUnit4
 @OptIn(DelicateCoroutinesApi::class)
 @ExperimentalCoroutinesApi
 @LargeTest
-@RunWith(JUnit4::class)
+@RunWith(AndroidJUnit4::class)
 abstract class MultiProcessDataStoreSingleProcessTest<F : TestFile<F>>(
     protected val testIO: TestIO<F, *>
 ) {

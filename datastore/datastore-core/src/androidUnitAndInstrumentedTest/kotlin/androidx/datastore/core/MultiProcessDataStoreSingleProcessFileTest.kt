@@ -18,8 +18,9 @@ package androidx.datastore.core
 
 import androidx.datastore.FileTestIO
 import androidx.datastore.JavaIOFile
-import androidx.testutils.assertThrows
-import com.google.common.truth.Truth
+import androidx.kruth.assertThat
+import androidx.kruth.assertThrows
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -39,11 +40,14 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
+import org.junit.runner.RunWith
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalCoroutinesApi
+@RunWith(AndroidJUnit4::class)
 class MultiProcessDataStoreSingleProcessFileTest :
     MultiProcessDataStoreSingleProcessTest<JavaIOFile>(FileTestIO()) {
+
     override fun getJavaFile(file: JavaIOFile): File {
         return file.file
     }
@@ -55,8 +59,8 @@ class MultiProcessDataStoreSingleProcessFileTest :
         testFile.file.setReadable(false)
         val result = runCatching { store.data.first() }
 
-        Truth.assertThat(result.exceptionOrNull()).isInstanceOf(IOException::class.java)
-        Truth.assertThat(result.exceptionOrNull())
+        assertThat(result.exceptionOrNull()).isInstanceOf<IOException>()
+        assertThat(result.exceptionOrNull())
             .hasCauseThat()
             .hasMessageThat()
             .contains("Permission denied")
@@ -74,7 +78,7 @@ class MultiProcessDataStoreSingleProcessFileTest :
             .contains("Permission denied")
 
         testFile.file.setReadable(true)
-        Truth.assertThat(store.data.first()).isEqualTo(0)
+        assertThat(store.data.first()).isEqualTo(0)
     }
 
     @Test

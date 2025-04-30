@@ -18,7 +18,8 @@ package androidx.datastore.core
 
 import androidx.datastore.TestingSerializerConfig
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
-import com.google.common.truth.Truth.assertThat
+import androidx.kruth.assertThat
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -32,11 +33,10 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.rules.Timeout
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 /** A duplicated test of {@link androidx.datastore.core.DataStoreFactoryTest} with minor changes. */
 @ExperimentalCoroutinesApi
-@RunWith(JUnit4::class)
+@RunWith(AndroidJUnit4::class)
 class MultiProcessDataStoreFactoryTest {
     @get:Rule val timeout = Timeout(10, TimeUnit.SECONDS)
 

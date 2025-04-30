@@ -16,12 +16,11 @@
 
 package androidx.datastore.core
 
+import androidx.kruth.assertThat
+import androidx.kruth.assertThrows
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
-import androidx.testutils.assertThrows
-import com.google.common.truth.Truth.assertThat
 import java.io.File
-import java.io.IOException
-import kotlin.collections.MutableSet
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -31,19 +30,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 @ExperimentalCoroutinesApi
 @MediumTest
-@RunWith(JUnit4::class)
+@RunWith(AndroidJUnit4::class)
 class SharedCounterTest {
-
-    companion object {
-        init {
-            SharedCounter.loadLib()
-        }
-    }
-
     @get:Rule val tempFolder = TemporaryFolder()
     private lateinit var testFile: File
 
@@ -62,7 +53,7 @@ class SharedCounterTest {
     fun testCreate_failure() {
         val tempFile = tempFolder.newFile()
         tempFile.setReadable(false)
-        assertThrows(IOException::class.java) { SharedCounter.create { tempFile } }
+        assertThrows<IOException> { SharedCounter.create { tempFile } }
     }
 
     @Test
