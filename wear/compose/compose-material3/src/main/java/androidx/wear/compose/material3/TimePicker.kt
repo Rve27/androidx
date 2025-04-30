@@ -601,6 +601,7 @@ private fun getTimePickerStyles(
         remember(
             density.density,
             LocalConfiguration.current.screenWidthDp,
+            optionTextStyle,
         ) {
             val mm =
                 measurer.measure(

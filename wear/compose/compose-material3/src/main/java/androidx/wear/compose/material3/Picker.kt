@@ -66,6 +66,7 @@ import androidx.compose.ui.semantics.focused
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.scrollToIndex
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -580,6 +581,8 @@ internal fun pickerTextOption(
             Text(
                 text = indexToText(value),
                 maxLines = 1,
+                overflow = TextOverflow.Visible,
+                softWrap = false,
                 style = textStyle,
                 color =
                     when {

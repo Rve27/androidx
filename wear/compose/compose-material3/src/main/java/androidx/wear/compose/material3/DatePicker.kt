@@ -272,6 +272,7 @@ public fun DatePicker(
                     remember(
                         density.density,
                         LocalConfiguration.current.screenWidthDp,
+                        optionTextStyle
                     ) {
                         val mm =
                             measurer.measure(
