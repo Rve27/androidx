@@ -35,6 +35,13 @@ package androidx.compose.material3 {
     method @androidx.compose.runtime.Composable public static void DropdownMenuItem(kotlin.jvm.functions.Function0<kotlin.Unit> text, kotlin.jvm.functions.Function0<kotlin.Unit> onClick, optional androidx.compose.ui.Modifier modifier, optional kotlin.jvm.functions.Function0<kotlin.Unit>? leadingIcon, optional kotlin.jvm.functions.Function0<kotlin.Unit>? trailingIcon, optional boolean enabled, optional androidx.compose.material3.MenuItemColors colors, optional androidx.compose.foundation.layout.PaddingValues contentPadding, optional androidx.compose.foundation.interaction.MutableInteractionSource? interactionSource);
   }
 
+  public final class AppBarColumnKt {
+    method @androidx.compose.runtime.Composable public static void AppBarColumn(kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarMenuState,kotlin.Unit> overflowIndicator, optional androidx.compose.ui.Modifier modifier, optional int maxItemCount, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarColumnScope,kotlin.Unit> content);
+  }
+
+  public interface AppBarColumnScope extends androidx.compose.material3.AppBarScope {
+  }
+
   public final class AppBarKt {
     method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Composable public static void BottomAppBar(optional androidx.compose.ui.Modifier modifier, optional long containerColor, optional long contentColor, optional float tonalElevation, optional androidx.compose.foundation.layout.PaddingValues contentPadding, optional androidx.compose.foundation.layout.WindowInsets windowInsets, optional androidx.compose.material3.BottomAppBarScrollBehavior? scrollBehavior, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.RowScope,kotlin.Unit> content);
     method @androidx.compose.runtime.Composable public static void BottomAppBar(optional androidx.compose.ui.Modifier modifier, optional long containerColor, optional long contentColor, optional float tonalElevation, optional androidx.compose.foundation.layout.PaddingValues contentPadding, optional androidx.compose.foundation.layout.WindowInsets windowInsets, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.RowScope,kotlin.Unit> content);
@@ -62,22 +69,24 @@ package androidx.compose.material3 {
     property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material3.TwoRowsTopAppBarOverride> LocalTwoRowsTopAppBarOverride;
   }
 
-  public final class AppBarRowKt {
-    method @androidx.compose.runtime.Composable public static void AppBarRow(kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarRowMenuState,kotlin.Unit> overflowIndicator, optional androidx.compose.ui.Modifier modifier, optional int maxItemCount, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarRowScope,kotlin.Unit> content);
-    method @Deprecated @androidx.compose.runtime.Composable public static void AppBarRow(kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarRowMenuState,kotlin.Unit> overflowIndicator, optional androidx.compose.ui.Modifier modifier, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarRowScope,kotlin.Unit> content);
-  }
-
-  public final class AppBarRowMenuState {
-    ctor public AppBarRowMenuState();
+  public final class AppBarMenuState {
+    ctor public AppBarMenuState();
     method public void dismiss();
     method public boolean isExpanded();
     method public void show();
     property public boolean isExpanded;
   }
 
-  public interface AppBarRowScope {
+  public final class AppBarRowKt {
+    method @androidx.compose.runtime.Composable public static void AppBarRow(kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarMenuState,kotlin.Unit> overflowIndicator, optional androidx.compose.ui.Modifier modifier, optional int maxItemCount, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarRowScope,kotlin.Unit> content);
+  }
+
+  public interface AppBarRowScope extends androidx.compose.material3.AppBarScope {
+  }
+
+  public sealed interface AppBarScope {
     method public void clickableItem(kotlin.jvm.functions.Function0<kotlin.Unit> onClick, kotlin.jvm.functions.Function0<kotlin.Unit> icon, String label, optional boolean enabled);
-    method public void customItem(kotlin.jvm.functions.Function0<kotlin.Unit> appbarContent, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarRowMenuState,kotlin.Unit> menuContent);
+    method public void customItem(kotlin.jvm.functions.Function0<kotlin.Unit> appbarContent, kotlin.jvm.functions.Function1<? super androidx.compose.material3.AppBarMenuState,kotlin.Unit> menuContent);
     method public void toggleableItem(boolean checked, kotlin.jvm.functions.Function1<? super java.lang.Boolean,kotlin.Unit> onCheckedChange, kotlin.jvm.functions.Function0<kotlin.Unit> icon, String label, optional boolean enabled);
   }
 

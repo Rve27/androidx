@@ -17,7 +17,7 @@
 package androidx.compose.material3
 
 import android.os.Build
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.testutils.assertAgainstGolden
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.isPopup
@@ -45,7 +46,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-class AppBarRowScreenshotTest {
+class AppBarColumnScreenshotTest {
     @get:Rule val rule = createComposeRule()
 
     @get:Rule val screenshotRule = AndroidXScreenshotTestRule(GOLDEN_MATERIAL3)
@@ -53,29 +54,29 @@ class AppBarRowScreenshotTest {
     private val wrapperTestTag = "WrapperTestTag"
 
     @Test
-    fun appBarRow_fullWidth() {
-        rule.setContent { AppBarRowTest(itemCount = 2) }
+    fun appBarColumn_fullHeight() {
+        rule.setContent { AppBarColumnTest(itemCount = 2) }
 
-        assertAgainstGolden("appBarRow_no_overflow")
+        assertAgainstGolden("appBarColumn_no_overflow")
     }
 
     @Test
-    fun appBarRow_withOverflow() {
-        rule.setContent { AppBarRowTest(itemCount = 5) }
+    fun appBarColumn_withOverflow() {
+        rule.setContent { AppBarColumnTest(itemCount = 5) }
 
-        assertAgainstGolden("appBarRow_overflow")
+        assertAgainstGolden("appBarColumn_overflow")
     }
 
     @Test
-    fun appBarRow_withOverflow_menu() {
-        rule.setContent { AppBarRowTest(itemCount = 5) }
+    fun appBarColumn_withOverflow_menu() {
+        rule.setContent { AppBarColumnTest(itemCount = 5) }
 
         rule.onNodeWithTag("Overflow").performClick()
 
         rule
             .onNode(isPopup())
             .captureToImage()
-            .assertAgainstGolden(screenshotRule, "appBarRow_overflow_menu")
+            .assertAgainstGolden(screenshotRule, "appBarColumn_overflow_menu")
     }
 
     private fun assertAgainstGolden(goldenName: String) {
@@ -85,14 +86,10 @@ class AppBarRowScreenshotTest {
             .assertAgainstGolden(screenshotRule, goldenName)
     }
 
-    data class AppBarItem(
-        val label: String,
-        val icon: androidx.compose.ui.graphics.vector.ImageVector,
-        val onClick: () -> Unit
-    )
+    data class AppBarItem(val label: String, val icon: ImageVector, val onClick: () -> Unit)
 
     @Composable
-    fun AppBarRowTest(modifier: Modifier = Modifier, itemCount: Int) {
+    fun AppBarColumnTest(modifier: Modifier = Modifier, itemCount: Int) {
         val appBarItems =
             listOf(
                 AppBarItem(label = "Favorite", icon = Icons.Filled.Favorite, onClick = {}),
@@ -100,8 +97,8 @@ class AppBarRowScreenshotTest {
                 AppBarItem(label = "Edit", icon = Icons.Filled.Edit, onClick = {})
             )
 
-        AppBarRow(
-            modifier = modifier.width(150.dp).testTag(wrapperTestTag),
+        AppBarColumn(
+            modifier = modifier.height(150.dp).testTag(wrapperTestTag),
             overflowIndicator = { menuState ->
                 IconButton(
                     modifier = Modifier.testTag("Overflow"),

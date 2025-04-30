@@ -163,6 +163,7 @@ import androidx.compose.material3.samples.OutlinedSplitButtonSample
 import androidx.compose.material3.samples.OutlinedTextFieldWithInitialValueAndSelection
 import androidx.compose.material3.samples.OutlinedToggleButtonSample
 import androidx.compose.material3.samples.OverflowingHorizontalFloatingToolbarSample
+import androidx.compose.material3.samples.OverflowingVerticalFloatingToolbarSample
 import androidx.compose.material3.samples.PasswordTextField
 import androidx.compose.material3.samples.PermanentNavigationDrawerSample
 import androidx.compose.material3.samples.PinnedTopAppBar
@@ -957,6 +958,13 @@ val FloatingToolbarsExamples =
             sourceUrl = FloatingToolbarsExampleSourceUrl,
         ) {
             ExpandableVerticalFloatingToolbarSample()
+        },
+        Example(
+            name = "OverflowingVerticalFloatingToolbarSample",
+            description = FloatingToolbarsExampleDescription,
+            sourceUrl = FloatingToolbarsExampleSourceUrl,
+        ) {
+            OverflowingVerticalFloatingToolbarSample()
         },
         Example(
             name = "ScrollableVerticalFloatingToolbarSample",

@@ -38,6 +38,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AppBarColumn
 import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FabPosition
@@ -317,6 +318,117 @@ fun ExpandableVerticalFloatingToolbarSample() {
                             Icon(Icons.Filled.Add, contentDescription = "Localized description")
                         }
                     },
+                )
+            }
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Preview
+@Sampled
+@Composable
+fun OverflowingVerticalFloatingToolbarSample() {
+    Scaffold(
+        content = { innerPadding ->
+            Box(Modifier.padding(innerPadding)) {
+                LazyColumn(
+                    state = rememberLazyListState(),
+                    contentPadding = innerPadding,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    val list = (0..75).map { it.toString() }
+                    items(count = list.size) {
+                        Text(
+                            text = list[it],
+                            style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                        )
+                    }
+                }
+                VerticalFloatingToolbar(
+                    modifier = Modifier.align(Alignment.CenterEnd).offset(x = -ScreenOffset),
+                    expanded = true,
+                    leadingContent = { LeadingContent() },
+                    trailingContent = {
+                        AppBarColumn(
+                            overflowIndicator = { menuState ->
+                                IconButton(
+                                    onClick = {
+                                        if (menuState.isExpanded) {
+                                            menuState.dismiss()
+                                        } else {
+                                            menuState.show()
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.MoreVert,
+                                        contentDescription = "Localized description"
+                                    )
+                                }
+                            }
+                        ) {
+                            clickableItem(
+                                onClick = { /* doSomething() */ },
+                                icon = {
+                                    Icon(
+                                        Icons.Filled.Download,
+                                        contentDescription = "Localized description"
+                                    )
+                                },
+                                label = "Download"
+                            )
+                            clickableItem(
+                                onClick = { /* doSomething() */ },
+                                icon = {
+                                    Icon(
+                                        Icons.Filled.Favorite,
+                                        contentDescription = "Localized description"
+                                    )
+                                },
+                                label = "Favorite"
+                            )
+                            clickableItem(
+                                onClick = { /* doSomething() */ },
+                                icon = {
+                                    Icon(
+                                        Icons.Filled.Add,
+                                        contentDescription = "Localized description"
+                                    )
+                                },
+                                label = "Add"
+                            )
+                            clickableItem(
+                                onClick = { /* doSomething() */ },
+                                icon = {
+                                    Icon(
+                                        Icons.Filled.Person,
+                                        contentDescription = "Localized description"
+                                    )
+                                },
+                                label = "Person"
+                            )
+                            clickableItem(
+                                onClick = { /* doSomething() */ },
+                                icon = {
+                                    Icon(
+                                        Icons.Filled.ArrowUpward,
+                                        contentDescription = "Localized description"
+                                    )
+                                },
+                                label = "ArrowUpward"
+                            )
+                        }
+                    },
+                    content = {
+                        FilledIconButton(
+                            modifier = Modifier.height(64.dp),
+                            onClick = { /* doSomething() */ }
+                        ) {
+                            Icon(Icons.Filled.Add, contentDescription = "Localized description")
+                        }
+                    }
                 )
             }
         }

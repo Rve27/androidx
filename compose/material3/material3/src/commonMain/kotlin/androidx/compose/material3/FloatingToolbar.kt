@@ -302,6 +302,7 @@ fun HorizontalFloatingToolbar(
  * exploration services enabled (e.g., TalkBack).
  *
  * @sample androidx.compose.material3.samples.ExpandableVerticalFloatingToolbarSample
+ * @sample androidx.compose.material3.samples.OverflowingVerticalFloatingToolbarSample
  * @sample androidx.compose.material3.samples.ScrollableVerticalFloatingToolbarSample
  * @param expanded whether the FloatingToolbar is in expanded mode, i.e. showing [leadingContent]
  *   and [trailingContent]. Note that the toolbar will stay expanded in case a touch exploration

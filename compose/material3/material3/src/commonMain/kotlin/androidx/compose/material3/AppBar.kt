@@ -43,6 +43,7 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.BottomAppBarState.Companion.Saver
+import androidx.compose.material3.DefaultSingleRowTopAppBarOverride.SingleRowTopAppBar
 import androidx.compose.material3.DefaultTwoRowsTopAppBarOverride.TwoRowsTopAppBar
 import androidx.compose.material3.TopAppBarState.Companion.Saver
 import androidx.compose.material3.internal.FloatProducer

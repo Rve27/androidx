@@ -26,44 +26,42 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.util.fastForEach
 
 /**
- * An [AppBarRow] arranges its children in a horizontal sequence, and if any children overflow the
+ * An [AppBarColumn] arranges its children in a vertical sequence, and if any children overflow the
  * constraints, an overflow indicator is displayed.
  *
- * This composable lays out its children from left to right in LTR layouts and from right to left in
- * RTL layouts. If the children's combined width exceeds the available width, [overflowIndicator] is
- * displayed at the end of the row, replacing the content that otherwise cannot fit. The items are
- * constructed through a DSL in [AppBarRowScope]. Each item provides a way to render itself in the
- * row layout, and an alternative way, to render inside of a dropdown menu, when there is overflow.
+ * This composable lays out its children from top to bottom. If the children's combined width
+ * exceeds the available height, [overflowIndicator] is displayed at the bottom of the column,
+ * replacing the content that otherwise cannot fit. The items are constructed through a DSL in
+ * [AppBarColumnScope]. Each item provides a way to render itself in the column layout, and an
+ * alternative way, to render inside of a dropdown menu, when there is overflow.
  *
- * A sample with an [TopAppBar], that varies the number of actions shown.
- *
- * @sample androidx.compose.material3.samples.SimpleTopAppBarWithAdaptiveActions
- * @param overflowIndicator A composable that is displayed at the end of the row when the content
+ * @param overflowIndicator A composable that is displayed at the end of the column when the content
  *   overflows. It receives an [AppBarMenuState] instance.
- * @param modifier The modifier to be applied to the row.
- * @param maxItemCount the max amount of items that should render in the row, before starting to use
- *   the overflow menu. Consider that using large items or small constraints, will reduce the
+ * @param modifier The modifier to be applied to the column.
+ * @param maxItemCount the max amount of items that should render in the column, before starting to
+ *   use the overflow menu. Consider that using large items or small constraints, will reduce the
  *   effective maximum. Note: If the number of items supplied is bigger than max, at most max - 1
  *   items will render, since the last one will be dedicated to the overflow composable.
- * @param content The content to be arranged in the row, defined using a dsl with [AppBarRowScope].
+ * @param content The content to be arranged in the column, defined using a dsl with
+ *   [AppBarColumnScope].
  */
 @Composable
 @Suppress("ComposableLambdaParameterPosition", "KotlinDefaultParameterOrder")
-fun AppBarRow(
+fun AppBarColumn(
     overflowIndicator: @Composable (AppBarMenuState) -> Unit,
     modifier: Modifier = Modifier,
     maxItemCount: Int = Int.MAX_VALUE,
-    content: AppBarRowScope.() -> Unit,
+    content: AppBarColumnScope.() -> Unit,
 ) {
     val latestContent = rememberUpdatedState(content)
     val scope by remember {
-        derivedStateOf { AppBarRowScopeImpl(AppBarScopeImpl()).apply(latestContent.value) }
+        derivedStateOf { AppBarColumnScopeImpl(AppBarScopeImpl()).apply(latestContent.value) }
     }
     val menuState = remember { AppBarMenuState() }
     val overflowState = rememberAppBarOverflowState()
     val measurePolicy =
         remember(overflowState, maxItemCount) {
-            OverflowMeasurePolicy(overflowState, maxItemCount, isVertical = false)
+            OverflowMeasurePolicy(overflowState, maxItemCount, isVertical = true)
         }
 
     Layout(
@@ -92,8 +90,8 @@ fun AppBarRow(
     )
 }
 
-/** DSL scope for building the content of an [AppBarRow]. */
-interface AppBarRowScope : AppBarScope
+/** DSL scope for building the content of an [AppBarColumn]. */
+interface AppBarColumnScope : AppBarScope
 
-private class AppBarRowScopeImpl(val impl: AppBarScopeImpl) :
-    AppBarRowScope, AppBarScope by impl, AppBarItemProvider by impl
+private class AppBarColumnScopeImpl(val impl: AppBarScopeImpl) :
+    AppBarColumnScope, AppBarScope by impl, AppBarItemProvider by impl
