@@ -40,12 +40,17 @@ import androidx.compose.ui.node.DelegatableNode
  * overriding only the parts of the theme definition that need to change.
  *
  * @param colors [Colors] used by components within this hierarchy
+ * @param typography [Typography] used by components within this hierarchy
  * @param content The content that can retrieve values from this theme
  */
 @Composable
-public fun GlimmerTheme(colors: Colors = GlimmerTheme.colors, content: @Composable () -> Unit) {
+public fun GlimmerTheme(
+    colors: Colors = GlimmerTheme.colors,
+    typography: Typography = GlimmerTheme.typography,
+    content: @Composable () -> Unit
+) {
     CompositionLocalProvider(
-        _localGlimmerTheme provides GlimmerTheme(colors),
+        _localGlimmerTheme provides GlimmerTheme(colors, typography),
         // TODO: b/413429405
         LocalIndication provides NoIndication,
         content = content
@@ -58,13 +63,21 @@ public fun GlimmerTheme(colors: Colors = GlimmerTheme.colors, content: @Composab
  * Components use properties provided here when retrieving default values.
  *
  * @property colors [Colors] used by Glimmer components
+ * @property typography [Typography] used by Glimmer components
  */
 @Immutable
-public class GlimmerTheme(public val colors: Colors = Colors()) {
+public class GlimmerTheme(
+    public val colors: Colors = Colors(),
+    public val typography: Typography = Typography()
+) {
     public companion object {
         /** Retrieves the current [Colors] at the call site's position in the hierarchy. */
         public val colors: Colors
             @Composable @ReadOnlyComposable get() = LocalGlimmerTheme.current.colors
+
+        /** Retrieves the current [Typography] at the call site's position in the hierarchy. */
+        public val typography: Typography
+            @Composable @ReadOnlyComposable get() = LocalGlimmerTheme.current.typography
 
         /**
          * [CompositionLocal] providing [GlimmerTheme] throughout the hierarchy. You can use

@@ -15,14 +15,20 @@
  */
 package androidx.xr.glimmer
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.Composable
 import androidx.compose.testutils.assertAgainstGolden
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import androidx.test.screenshot.AndroidXScreenshotTestRule
+import androidx.test.screenshot.matchers.MSSIMMatcher
 import androidx.xr.glimmer.samples.ColorsSample
+import androidx.xr.glimmer.samples.TypographySample
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,11 +43,26 @@ class GlimmerThemeScreenshotTest() {
 
     @Test
     fun colors() {
-        rule.setContent { GlimmerTheme { ColorsSample() } }
+        setGlimmerThemeContent { ColorsSample() }
         assertRootAgainstGolden("glimmerTheme_colors")
     }
 
+    @Test
+    fun typography() {
+        setGlimmerThemeContent { TypographySample() }
+        assertRootAgainstGolden("glimmerTheme_typography")
+    }
+
     private fun assertRootAgainstGolden(goldenName: String) {
-        rule.onRoot().captureToImage().assertAgainstGolden(screenshotRule, goldenName)
+        rule
+            .onRoot()
+            .captureToImage()
+            .assertAgainstGolden(screenshotRule, goldenName, MSSIMMatcher(0.995))
+    }
+
+    private fun setGlimmerThemeContent(content: @Composable () -> Unit) {
+        rule.setContent {
+            GlimmerTheme { Box(Modifier.background(GlimmerTheme.colors.surface)) { content() } }
+        }
     }
 }
