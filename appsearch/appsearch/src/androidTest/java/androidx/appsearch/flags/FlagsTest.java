@@ -274,4 +274,10 @@ public class FlagsTest {
                 .isEqualTo("com.android.appsearch.flags"
                         + ".enable_throw_exception_for_native_not_found_page_token");
     }
+
+    @Test
+    public void testFlagValue_enableDatabaseScopedSchemaOperations() {
+        assertThat(Flags.FLAG_ENABLE_DATABASE_SCOPED_SCHEMA_OPERATIONS)
+                .isEqualTo("com.android.appsearch.flags.enable_database_scoped_schema_operations");
+    }
 }

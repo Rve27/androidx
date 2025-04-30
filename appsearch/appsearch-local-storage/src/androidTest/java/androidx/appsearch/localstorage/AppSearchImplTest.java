@@ -22,6 +22,8 @@ import static androidx.appsearch.app.AppSearchResult.RESULT_NOT_FOUND;
 import static androidx.appsearch.app.AppSearchResult.RESULT_OUT_OF_SPACE;
 import static androidx.appsearch.localstorage.util.PrefixUtil.addPrefixToDocument;
 import static androidx.appsearch.localstorage.util.PrefixUtil.createPrefix;
+import static androidx.appsearch.localstorage.util.PrefixUtil.getIcingSchemaDatabaseName;
+import static androidx.appsearch.localstorage.util.PrefixUtil.getPrefix;
 import static androidx.appsearch.localstorage.util.PrefixUtil.removePrefixesFromDocument;
 import static androidx.appsearch.localstorage.visibilitystore.VisibilityStore.BLOB_ANDROID_V_OVERLAY_DATABASE_NAME;
 import static androidx.appsearch.localstorage.visibilitystore.VisibilityStore.BLOB_VISIBILITY_DATABASE_NAME;
@@ -179,8 +181,12 @@ public class AppSearchImplTest {
      * Ensure that we can rewrite an incoming schema type by adding the database as a prefix. While
      * also keeping any other existing schema types that may already be part of Icing's persisted
      * schema.
+     *
+     * <p> This test is disabled when database-scoped schema operations are enabled, since
+     * rewriteSchema will not be called with existing types from multiple prefixes in that case.
      */
     @Test
+    @RequiresFlagsDisabled(Flags.FLAG_ENABLE_DATABASE_SCOPED_SCHEMA_OPERATIONS)
     public void testRewriteSchema_addType() throws Exception {
         SchemaProto.Builder existingSchemaBuilder = SchemaProto.newBuilder()
                 .addTypes(SchemaTypeConfigProto.newBuilder()
@@ -295,8 +301,12 @@ public class AppSearchImplTest {
                 "package$existingDatabase/Foo");
         assertThat(rewrittenSchemaResults.mDeletedPrefixedTypes).isEmpty();
 
-        // Same schema since nothing was added.
+        // Same schema since nothing was added, but the database field should be populated if
+        // Flags.enableDatabaseScopedSchemaOperations() is true
         SchemaProto expectedSchema = existingSchemaBuilder.build();
+        if (Flags.enableDatabaseScopedSchemaOperations()) {
+            expectedSchema = getSchemaProtoWithDatabase(expectedSchema);
+        }
         assertThat(existingSchemaBuilder.getTypesList())
                 .containsExactlyElementsIn(expectedSchema.getTypesList());
     }
@@ -331,8 +341,11 @@ public class AppSearchImplTest {
         // Same schema since nothing was added.
         SchemaProto expectedSchema = SchemaProto.newBuilder()
                 .addTypes(SchemaTypeConfigProto.newBuilder()
-                        .setSchemaType("package$existingDatabase/Bar").build())
+                        .setSchemaType("package$existingDatabase/Bar"))
                 .build();
+        if (Flags.enableDatabaseScopedSchemaOperations()) {
+            expectedSchema = getSchemaProtoWithDatabase(expectedSchema);
+        }
 
         assertThat(existingSchemaBuilder.getTypesList())
                 .containsExactlyElementsIn(expectedSchema.getTypesList());
@@ -2318,12 +2331,14 @@ public class AppSearchImplTest {
 
         // Create expected schemaType proto.
         SchemaProto expectedProto = SchemaProto.newBuilder()
-                .addTypes(
-                        SchemaTypeConfigProto.newBuilder()
-                                .setSchemaType("package$database1/Email")
-                                .setDescription("")
-                                .setVersion(0))
+                .addTypes(SchemaTypeConfigProto.newBuilder()
+                        .setSchemaType("package$database1/Email")
+                        .setDescription("")
+                        .setVersion(0))
                 .build();
+        if (Flags.enableDatabaseScopedSchemaOperations()) {
+            expectedProto = getSchemaProtoWithDatabase(expectedProto);
+        }
 
         List<SchemaTypeConfigProto> expectedTypes = new ArrayList<>();
         expectedTypes.addAll(existingSchemas);
@@ -2407,6 +2422,9 @@ public class AppSearchImplTest {
                                 .setDescription("")
                                 .setVersion(0))
                 .build();
+        if (Flags.enableDatabaseScopedSchemaOperations()) {
+            expectedProto = getSchemaProtoWithDatabase(expectedProto);
+        }
 
         // Check both schema Email and Document saved correctly.
         List<SchemaTypeConfigProto> expectedTypes = new ArrayList<>();
@@ -2450,6 +2468,9 @@ public class AppSearchImplTest {
                                 .setDescription("")
                                 .setVersion(0))
                 .build();
+        if (Flags.enableDatabaseScopedSchemaOperations()) {
+            expectedProto = getSchemaProtoWithDatabase(expectedProto);
+        }
 
         expectedTypes = new ArrayList<>();
         expectedTypes.addAll(existingSchemas);
@@ -2511,6 +2532,9 @@ public class AppSearchImplTest {
                                 .setDescription("")
                                 .setVersion(0))
                 .build();
+        if (Flags.enableDatabaseScopedSchemaOperations()) {
+            expectedProto = getSchemaProtoWithDatabase(expectedProto);
+        }
 
         // Check Email and Document is saved in database 1 and 2 correctly.
         List<SchemaTypeConfigProto> expectedTypes = new ArrayList<>();
@@ -2550,6 +2574,9 @@ public class AppSearchImplTest {
                                 .setDescription("")
                                 .setVersion(0))
                 .build();
+        if (Flags.enableDatabaseScopedSchemaOperations()) {
+            expectedProto = getSchemaProtoWithDatabase(expectedProto);
+        }
 
         // Check nothing changed in database2.
         expectedTypes = new ArrayList<>();
@@ -3560,6 +3587,10 @@ public class AppSearchImplTest {
                                 .setDescription("")
                                 .setVersion(0))
                 .build();
+        if (Flags.enableDatabaseScopedSchemaOperations()) {
+            expectedProto = getSchemaProtoWithDatabase(expectedProto);
+        }
+
         List<SchemaTypeConfigProto> expectedTypes = new ArrayList<>();
         expectedTypes.addAll(existingSchemas);
         expectedTypes.addAll(expectedProto.getTypesList());
@@ -9138,14 +9169,32 @@ public class AppSearchImplTest {
         assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
 
         // Create expected schemaType proto.
-        SchemaProto expectedProto = SchemaProto.newBuilder()
-                .addTypes(
-                        SchemaTypeConfigProto.newBuilder()
-                                .setSchemaType("package$database1/Email")
-                                .setDescription("")
-                                .setVersion(0))
-                .addTypes(additionalConfigProto)
-                .build();
+        SchemaProto expectedProto;
+        if (Flags.enableDatabaseScopedSchemaOperations()) {
+            expectedProto = SchemaProto.newBuilder()
+                    .addTypes(
+                            SchemaTypeConfigProto.newBuilder()
+                                    .setSchemaType("package$database1/Email")
+                                    .setDatabase("package$database1")
+                                    .setDescription("")
+                                    .setVersion(0))
+                    .build();
+        } else {
+            expectedProto = SchemaProto.newBuilder()
+                    .addTypes(
+                            SchemaTypeConfigProto.newBuilder()
+                                    .setSchemaType("package$database1/Email")
+                                    .setDescription("")
+                                    .setVersion(0))
+                    // This type shows up twice in the expectedProto when it actually should only
+                    // be there once. This is because we call getSchema in the setSchema
+                    // operation, and then build on top of the retrieved schema. When the new
+                    // database-scoped schema operation we'll only retrieve the types from the
+                    // requested database, and so this shouldn't be built into the existing schema
+                    // again.
+                    .addTypes(additionalConfigProto)
+                    .build();
+        }
 
         List<SchemaTypeConfigProto> expectedTypes = new ArrayList<>();
         expectedTypes.addAll(existingSchemas);
@@ -9261,5 +9310,16 @@ public class AppSearchImplTest {
 
         // Check that previous size (compressed) is smaller than the latter (uncompressed)
         assertThat(compressedSize).isLessThan(uncompressedSize);
+    }
+
+    private SchemaProto getSchemaProtoWithDatabase(SchemaProto schema) throws AppSearchException {
+        SchemaProto.Builder schemaBuilder = SchemaProto.newBuilder();
+        for (int i = 0; i < schema.getTypesList().size(); i++) {
+            SchemaTypeConfigProto type = schema.getTypes(i);
+            SchemaTypeConfigProto.Builder typeBuilder = SchemaTypeConfigProto.newBuilder(type)
+                    .setDatabase(getIcingSchemaDatabaseName(getPrefix(type.getSchemaType())));
+            schemaBuilder.addTypes(typeBuilder);
+        }
+        return schemaBuilder.build();
     }
 }
