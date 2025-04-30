@@ -380,15 +380,6 @@ public final class AppSearchImpl implements Closeable {
                 long prepareSchemaAndNamespacesLatencyStartMillis = SystemClock.elapsedRealtime();
                 SchemaProto schemaProto = getSchemaProtoLocked();
 
-                LogUtil.piiTrace(TAG, "init:getAllNamespaces, request");
-                GetAllNamespacesResultProto getAllNamespacesResultProto =
-                        mIcingSearchEngineLocked.getAllNamespaces();
-                LogUtil.piiTrace(
-                        TAG,
-                        "init:getAllNamespaces, response",
-                        getAllNamespacesResultProto.getNamespacesCount(),
-                        getAllNamespacesResultProto);
-
                 StorageInfoProto storageInfoProto = getRawStorageInfoProto();
 
                 // Log the time it took to read the data that goes into the cache maps
@@ -396,13 +387,12 @@ public final class AppSearchImpl implements Closeable {
                     // In case there is some error for getAllNamespaces, we can still
                     // set the latency for preparation.
                     // If there is no error, the value will be overridden by the actual one later.
-                    initStatsBuilder.setStatusCode(
-                            statusProtoToResultCode(getAllNamespacesResultProto.getStatus()))
+                    initStatsBuilder
+                            .setStatusCode(AppSearchResult.RESULT_OK)
                             .setPrepareSchemaAndNamespacesLatencyMillis(
                                     (int) (SystemClock.elapsedRealtime()
                                             - prepareSchemaAndNamespacesLatencyStartMillis));
                 }
-                checkSuccess(getAllNamespacesResultProto.getStatus());
 
                 // Populate schema map
                 List<SchemaTypeConfigProto> schemaProtoTypesList = schemaProto.getTypesList();
@@ -416,10 +406,10 @@ public final class AppSearchImpl implements Closeable {
                 mSchemaCacheLocked.rebuildCache();
 
                 // Populate namespace map
-                List<String> prefixedNamespaceList =
-                        getAllNamespacesResultProto.getNamespacesList();
-                for (int i = 0; i < prefixedNamespaceList.size(); i++) {
-                    String prefixedNamespace = prefixedNamespaceList.get(i);
+                List<NamespaceStorageInfoProto> namespaceInfos =
+                        storageInfoProto.getDocumentStorageInfo().getNamespaceStorageInfoList();
+                for (int i = 0; i < namespaceInfos.size(); i++) {
+                    String prefixedNamespace = namespaceInfos.get(i).getNamespace();
                     mNamespaceCacheLocked.addToDocumentNamespaceMap(
                             getPrefix(prefixedNamespace), prefixedNamespace);
                 }
