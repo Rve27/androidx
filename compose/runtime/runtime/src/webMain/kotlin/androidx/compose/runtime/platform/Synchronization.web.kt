@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package kotlinx.test
 
-// TODO(b/409723535): Differentiate between WASM and JS targets.
-expect annotation class IgnoreJsTarget()
+package androidx.compose.runtime.platform
+
+internal actual typealias SynchronizedObject = Any
+
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun makeSynchronizedObject(ref: Any?) = ref ?: SynchronizedObject()
+
+@PublishedApi
+internal actual inline fun <R> synchronized(lock: SynchronizedObject, block: () -> R): R = block()

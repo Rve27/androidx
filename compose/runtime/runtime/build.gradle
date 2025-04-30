@@ -35,6 +35,7 @@ androidXMultiplatform {
     androidTarget()
     jvmStubs(/* runTests */ true)
     linuxX64Stubs()
+    wasmJs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
 
@@ -50,7 +51,9 @@ androidXMultiplatform {
 
         commonTest {
             dependencies {
-                implementation kotlin("test")
+                // For KotlinWasm/Js, versions of toolchain and stdlib need to be the same (2.1):
+                // https://youtrack.jetbrains.com/issue/KT-71032
+                implementation(libs.kotlinTestForWasmTests)
                 implementation(libs.kotlinCoroutinesTest)
                 implementation(libs.kotlinReflect)
                 implementation(project(":compose:runtime:runtime-test-utils"))
@@ -121,8 +124,31 @@ androidXMultiplatform {
             dependsOn(nonEmulatorJvmTest)
         }
 
-        linuxx64StubsMain {
+        nonJvmMain {
             dependsOn(nonAndroidMain)
+        }
+
+        linuxx64StubsMain {
+            dependsOn(nonJvmMain)
+        }
+
+        webMain {
+            dependsOn(nonJvmMain)
+        }
+
+        wasmJsMain {
+            dependsOn(webMain)
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:0.1")
+            }
+        }
+
+        webTest {
+            dependsOn(nonEmulatorCommonTest)
+        }
+
+        wasmJsTest {
+            dependsOn(webTest)
         }
     }
 }
