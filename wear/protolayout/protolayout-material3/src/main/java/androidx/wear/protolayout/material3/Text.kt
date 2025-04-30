@@ -109,11 +109,13 @@ public fun MaterialScope.text(
                 overflow
             },
         modifier =
-            (if (defaultTextElementStyle.isAccessibilityHeading) {
-                    LayoutModifier.semanticsHeading(true)
-                } else {
-                    LayoutModifier
-                })
+            LayoutModifier.let {
+                    if (defaultTextElementStyle.isAccessibilityHeading) {
+                        it.semanticsHeading(true)
+                    } else {
+                        it
+                    }
+                }
                 .let {
                     // Text by default is not important for accessibility.
                     // In M3 spec, text in primaryLayout tileSlot, bottomSlot and labelForBottomSlot
