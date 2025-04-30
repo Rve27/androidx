@@ -19,6 +19,7 @@ package androidx.camera.core.internal
 import android.util.Pair
 import android.util.Range
 import android.util.Size
+import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
 import androidx.camera.core.impl.AttachedSurfaceInfo
 import androidx.camera.core.impl.CameraConfig
@@ -26,7 +27,6 @@ import androidx.camera.core.impl.CameraConfigs
 import androidx.camera.core.impl.CameraDeviceSurfaceManager
 import androidx.camera.core.impl.CameraInfoInternal
 import androidx.camera.core.impl.CameraMode
-import androidx.camera.core.impl.PreviewConfig
 import androidx.camera.core.impl.StreamSpec
 import androidx.camera.core.impl.SurfaceConfig
 import androidx.camera.core.impl.UseCaseConfig
@@ -252,10 +252,11 @@ public class StreamSpecsCalculatorImpl(
                     supportedOutputSizesSorter.getSortedSupportedOutputSizes(combinedUseCaseConfig)
                 )
 
-                if (useCase.currentConfig is PreviewConfig) {
+                if (useCase is Preview || useCase is StreamSharing) {
+                    // Let isPreviewStabilizationOn be true only if stabilization mode of Preview
+                    // or StreamSharing (wrapping Preview) is on.
                     isPreviewStabilizationOn =
-                        (useCase.currentConfig as PreviewConfig).previewStabilizationMode ==
-                            StabilizationMode.ON
+                        combinedUseCaseConfig.previewStabilizationMode == StabilizationMode.ON
                 }
             }
 
