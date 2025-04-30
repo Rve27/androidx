@@ -278,6 +278,7 @@ class DefaultTextContextMenuDropdownProviderTest {
 
     @Ignore // b/414664796
     @Test
+    @Ignore
     fun whenAnchorLayoutScrolled_popupDoesNotMove() {
         val scrollState = ScrollState(0)
         runTest(
@@ -314,6 +315,7 @@ class DefaultTextContextMenuDropdownProviderTest {
 
     @Ignore // b/414664796
     @Test
+    @Ignore
     fun whenDataProviderPositionUpdates_popupDoesNotMove() {
         var offset by mutableStateOf(Offset.Zero)
         runTest {
