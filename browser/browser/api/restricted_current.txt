@@ -546,6 +546,11 @@ package androidx.browser.trusted {
     field public static final String KEY_ID = "androidx.browser.trusted.displaymode.KEY_ID";
   }
 
+  public static class TrustedWebActivityDisplayMode.BrowserMode implements androidx.browser.trusted.TrustedWebActivityDisplayMode {
+    ctor public TrustedWebActivityDisplayMode.BrowserMode();
+    method public android.os.Bundle toBundle();
+  }
+
   public static class TrustedWebActivityDisplayMode.DefaultMode implements androidx.browser.trusted.TrustedWebActivityDisplayMode {
     ctor public TrustedWebActivityDisplayMode.DefaultMode();
     method public android.os.Bundle toBundle();
@@ -558,6 +563,11 @@ package androidx.browser.trusted {
     method public android.os.Bundle toBundle();
     field public static final String KEY_CUTOUT_MODE = "androidx.browser.trusted.displaymode.KEY_CUTOUT_MODE";
     field public static final String KEY_STICKY = "androidx.browser.trusted.displaymode.KEY_STICKY";
+  }
+
+  public static class TrustedWebActivityDisplayMode.MinimalUiMode implements androidx.browser.trusted.TrustedWebActivityDisplayMode {
+    ctor public TrustedWebActivityDisplayMode.MinimalUiMode();
+    method public android.os.Bundle toBundle();
   }
 
   public final class TrustedWebActivityIntent {
