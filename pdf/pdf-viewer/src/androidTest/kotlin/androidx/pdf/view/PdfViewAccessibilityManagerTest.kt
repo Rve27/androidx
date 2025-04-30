@@ -28,6 +28,7 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
+import kotlin.math.roundToInt
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
@@ -86,7 +87,9 @@ class PdfViewAccessibilityManagerTest {
                 "PdfViewAccessibilityManager must not be null."
             }
 
-        val topPageMargin = pdfView.context.getDimensions(R.dimen.top_page_margin)
+        // Round to an integer before using in any test case, i.e. matching the logic that makes
+        // use of this value
+        val topPageMargin = pdfView.context.getDimensions(R.dimen.top_page_margin).roundToInt()
 
         // Wait until layout completes for the required pages
         pdfDocument.waitForLayout(untilPage = 2)
@@ -96,7 +99,7 @@ class PdfViewAccessibilityManagerTest {
             listOf(
                 Triple(25f, 25f, 0), // Maps to page 0
                 Triple(25f, 250f, 1), // Maps to page 1
-                Triple(0f, topPageMargin, 0), // Maps to the very start of the first page
+                Triple(0f, topPageMargin.toFloat(), 0), // Maps to the very start of the first page
                 Triple(0f, 100f, 0), // Edge of the first page
                 Triple(110f, 25f, -1), // Outside valid page bounds
                 Triple(-10f, -10f, -1), // Outside viewport

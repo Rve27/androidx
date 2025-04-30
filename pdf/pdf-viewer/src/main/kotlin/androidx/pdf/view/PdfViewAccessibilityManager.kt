@@ -30,6 +30,7 @@ import androidx.pdf.content.PdfPageLinkContent
 import androidx.pdf.util.ExternalLinks
 import androidx.pdf.util.buildPageIndicatorLabel
 import androidx.pdf.view.fastscroll.FastScroller
+import kotlin.math.roundToInt
 
 /**
  * Accessibility delegate for PdfView that provides a virtual view hierarchy for pages.
@@ -53,7 +54,7 @@ internal class PdfViewAccessibilityManager(
     private val fastScrollPageIndicatorBackgroundDrawableId = FAST_SCROLLER_OFFSET + 2
 
     public override fun getVirtualViewAt(x: Float, y: Float): Int {
-        val visiblePages = pageLayoutManager.visiblePages.value
+        val visiblePages = pageLayoutManager.visiblePages
 
         if (
             pdfView.lastFastScrollerVisibility &&
@@ -67,7 +68,7 @@ internal class PdfViewAccessibilityManager(
                 getFastScroller()
                     ?.isPointOnIndicator(
                         pdfView.context,
-                        pageLayoutManager.fullyVisiblePages.value,
+                        pageLayoutManager.fullyVisiblePages,
                         x,
                         y,
                         totalPages,
@@ -102,7 +103,7 @@ internal class PdfViewAccessibilityManager(
             }
 
         // Check if the coordinates fall within the visible page bounds
-        return (visiblePages.pages.lower..visiblePages.pages.upper).firstOrNull { page ->
+        return (visiblePages.lower..visiblePages.upper).firstOrNull { page ->
             pageLayoutManager
                 .getPageLocation(page, pdfView.getVisibleAreaInContentCoords())
                 .contains(contentX, contentY)
@@ -110,11 +111,11 @@ internal class PdfViewAccessibilityManager(
     }
 
     public override fun getVisibleVirtualViews(virtualViewIds: MutableList<Int>) {
-        val visiblePages = pageLayoutManager.visiblePages.value
+        val visiblePages = pageLayoutManager.visiblePages
         loadPageLinks()
 
         virtualViewIds.apply {
-            addAll(visiblePages.pages.lower..visiblePages.pages.upper)
+            addAll(visiblePages.lower..visiblePages.upper)
             addAll(gotoLinks.keys)
             addAll(urlLinks.keys)
             if (isFastScrollerStateValid()) {
@@ -171,7 +172,7 @@ internal class PdfViewAccessibilityManager(
         val currentLabel =
             buildPageIndicatorLabel(
                 pdfView.context,
-                pageLayoutManager.fullyVisiblePages.value,
+                pageLayoutManager.fullyVisiblePages,
                 totalPages,
                 R.string.desc_page_single,
                 R.string.desc_page_single
@@ -280,10 +281,10 @@ internal class PdfViewAccessibilityManager(
     @VisibleForTesting
     fun scalePageBounds(bounds: RectF, zoom: Float): Rect {
         return Rect(
-            (bounds.left * zoom).toInt(),
-            (bounds.top * zoom).toInt(),
-            (bounds.right * zoom).toInt(),
-            (bounds.bottom * zoom).toInt()
+            (bounds.left * zoom).roundToInt(),
+            (bounds.top * zoom).roundToInt(),
+            (bounds.right * zoom).roundToInt(),
+            (bounds.bottom * zoom).roundToInt(),
         )
     }
 
@@ -294,7 +295,7 @@ internal class PdfViewAccessibilityManager(
      * them in the corresponding maps.
      */
     fun loadPageLinks() {
-        val visiblePages = pageLayoutManager.visiblePages.value
+        val visiblePages = pageLayoutManager.visiblePages
 
         // Clear existing links and fetch new ones for the visible pages
         gotoLinks.clear()
@@ -302,7 +303,7 @@ internal class PdfViewAccessibilityManager(
 
         var cumulativeId = totalPages
 
-        (visiblePages.pages.lower..visiblePages.pages.upper).forEach { pageIndex ->
+        (visiblePages.lower..visiblePages.upper).forEach { pageIndex ->
             pageManager.pages[pageIndex]?.links?.let { links ->
                 links.gotoLinks.forEach { link ->
                     gotoLinks[cumulativeId] =

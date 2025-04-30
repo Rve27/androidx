@@ -21,7 +21,9 @@ import android.graphics.Point
 import android.graphics.Rect
 import android.util.Range
 import android.util.SparseArray
+import androidx.core.util.isEmpty
 import androidx.core.util.keyIterator
+import androidx.core.util.size
 import androidx.core.util.valueIterator
 import androidx.pdf.PdfDocument
 import kotlinx.coroutines.CoroutineScope
@@ -92,18 +94,23 @@ internal class PageManager(
      * @param visiblePageAreas the visible area of each visible page, in page coordinates
      * @param currentZoomLevel the current zoom level
      * @param stablePosition true if we don't believe our position is actively changing
+     * @param pauseBitmapFetch true if we should avoid fetching Bitmaps, regardless of current
+     *   visibility
      */
     fun updatePageVisibilities(
         visiblePageAreas: SparseArray<Rect>,
         currentZoomLevel: Float,
-        stablePosition: Boolean
+        stablePosition: Boolean,
+        pauseBitmapFetch: Boolean,
     ) {
+        if (visiblePageAreas.isEmpty()) return
         // Start preparing UI for visible pages
         visiblePageAreas.keyIterator().forEach { pageNum ->
             pages[pageNum]?.setVisible(
                 currentZoomLevel,
                 visiblePageAreas.get(pageNum),
-                stablePosition
+                stablePosition,
+                pauseBitmapFetch,
             )
         }
 
@@ -135,7 +142,8 @@ internal class PageManager(
         size: Point,
         currentZoomLevel: Float,
         stablePosition: Boolean,
-        viewArea: Rect? = null
+        viewArea: Rect? = null,
+        pauseBitmapFetch: Boolean,
     ) {
         if (pages.contains(pageNum)) return
         val page =
@@ -153,7 +161,7 @@ internal class PageManager(
                 .apply {
                     // If the page is visible, let it know
                     if (viewArea != null) {
-                        setVisible(currentZoomLevel, viewArea, stablePosition)
+                        setVisible(currentZoomLevel, viewArea, stablePosition, pauseBitmapFetch)
                     }
                 }
         pages.put(pageNum, page)

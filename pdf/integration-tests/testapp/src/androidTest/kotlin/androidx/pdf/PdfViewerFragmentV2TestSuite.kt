@@ -17,6 +17,7 @@
 package androidx.pdf
 
 import android.content.pm.ActivityInfo
+import android.graphics.PointF
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.InputDevice
@@ -28,8 +29,10 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.Lifecycle
 import androidx.pdf.FragmentUtils.scenarioLoadDocument
 import androidx.pdf.TestUtils.waitFor
+import androidx.pdf.actions.clickOnPdfPoint
 import androidx.pdf.matchers.SearchViewAssertions
 import androidx.pdf.util.Preconditions
+import androidx.pdf.view.PdfPoint
 import androidx.pdf.view.PdfView
 import androidx.pdf.view.fastscroll.FastScrollDrawer
 import androidx.pdf.view.fastscroll.FastScroller
@@ -42,7 +45,6 @@ import androidx.test.espresso.action.Press
 import androidx.test.espresso.action.Swipe
 import androidx.test.espresso.action.Tap
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.action.ViewActions.typeText
@@ -417,8 +419,11 @@ class PdfViewerFragmentV2TestSuite {
             )
         }
 
-        // Long click on the pdfView and click "Select All"
-        onView(withId(androidx.pdf.viewer.fragment.R.id.pdfView)).perform(longClick())
+        // The exact View position of any piece of text will vary by device, scroll position, zoom
+        // level, etc. Act on an absolute PDF coordinate that's known to contain text instead.
+        val pdfPointWithText = PdfPoint(pageNum = 0, pagePoint = PointF(297.22455F, 619.1273F))
+        onView(withId(androidx.pdf.viewer.fragment.R.id.pdfView))
+            .perform(clickOnPdfPoint(pdfPointWithText, Tap.LONG))
         onView(ViewMatchers.withText(SELECT_ALL))
             .inRoot(RootMatchers.isPlatformPopup())
             .perform(click())
