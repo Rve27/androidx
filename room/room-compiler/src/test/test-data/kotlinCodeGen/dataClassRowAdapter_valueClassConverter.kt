@@ -107,7 +107,7 @@ public class MyDao_Impl(
           _tmpGenericData = GenericValueClass<String>(_password)
           _result = MyEntity(_tmpPk,_tmpUuidData,_tmpNullableUuidData,_tmpNullableLongData,_tmpDoubleNullableLongData,_tmpGenericData)
         } else {
-          error("The query result was empty, but expected a single row to return a NON-NULL object of type <MyEntity>.")
+          error("The query result was empty, but expected a single row to return a NON-NULL object of type 'MyEntity'.")
         }
         _result
       } finally {
@@ -125,7 +125,7 @@ public class MyDao_Impl(
         if (_stmt.step()) {
           _result = __entityStatementConverter_MyEntity(_stmt)
         } else {
-          error("The query result was empty, but expected a single row to return a NON-NULL object of type <MyEntity>.")
+          error("The query result was empty, but expected a single row to return a NON-NULL object of type 'MyEntity'.")
         }
         _result
       } finally {
@@ -145,7 +145,7 @@ public class MyDao_Impl(
           _data = convertByteToUUID(_stmt.getBlob(0))
           _result = UUIDValueClass(_data)
         } else {
-          error("The query result was empty, but expected a single row to return a NON-NULL object of type <UUIDValueClass>.")
+          error("The query result was empty, but expected a single row to return a NON-NULL object of type 'UUIDValueClass'.")
         }
         _result
       } finally {
