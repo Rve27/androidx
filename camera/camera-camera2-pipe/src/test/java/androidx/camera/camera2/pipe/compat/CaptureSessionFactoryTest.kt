@@ -209,6 +209,7 @@ class FakeCameraGraphModule {
 class FakeCamera2Module {
     @Provides
     @Singleton
+    @JvmName("provideFakeCamera2MetadataProvider")
     internal fun provideFakeCamera2MetadataProvider(
         fakeCamera: RobolectricCameras.FakeCamera
     ): Camera2MetadataProvider =
