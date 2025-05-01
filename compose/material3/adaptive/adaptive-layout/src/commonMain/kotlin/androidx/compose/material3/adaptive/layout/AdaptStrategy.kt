@@ -74,9 +74,12 @@ sealed interface AdaptStrategy {
     }
 
     /**
-     * Indicate the associated pane should be levitated when certain conditions are met. With the
-     * default calculation functions [calculateThreePaneScaffoldValue] we provide. A pane with a
-     * levitate strategy will be adapted to either:
+     * Indicate the associated pane should be levitated when certain conditions are met. A levitated
+     * pane will be rendered above other panes in the pane scaffold like a pop-up, may or may not
+     * cast a scrim to block interaction with the underlying panes.
+     *
+     * With the default calculation functions [calculateThreePaneScaffoldValue] we provide. A pane
+     * with a levitate strategy will be adapted to either:
      * 1. [PaneAdaptedValue.Levitated] with specified [alignment], when the levitated pane is the
      *    current destination, and the provided [Strategy] is [Strategy.Always] or it's a
      *    single-pane layout;
@@ -125,14 +128,15 @@ sealed interface AdaptStrategy {
 
             companion object {
                 /**
-                 * Specifies that the associated pane should always be levitated when the navigation
-                 * conditions meet, no matter it's a single-pane or multi-pane layout.
+                 * Specifies that the associated pane should always be levitated when it's the
+                 * current navigation destination, no matter it's a single-pane or multi-pane
+                 * layout.
                  */
                 val Always = Strategy("Always")
 
                 /**
-                 * Specifies that the associated pane should only be levitated when the navigation
-                 * conditions meet and it's a single-pane layout.
+                 * Specifies that the associated pane should only be levitated when it's a
+                 * single-pane layout and the associated pane is the current navigation destination.
                  */
                 val SinglePaneOnly = Strategy("SinglePaneOnly")
             }
