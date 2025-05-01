@@ -1450,6 +1450,20 @@ class BinaryCompatibilityCheckerTest {
     }
 
     @Test
+    fun removedTargetsWhenBaselinedSucceeds() {
+        val beforeText = createDumpText("", listOf("iosX64", "linuxX64"))
+        val afterText = createDumpText("", listOf("linuxX64"))
+        val beforeLibs = KlibDumpParser(beforeText).parse()
+        val afterLibs = KlibDumpParser(afterText).parse()
+
+        BinaryCompatibilityChecker.checkAllBinariesAreCompatible(
+            afterLibs,
+            beforeLibs,
+            setOf("[iosX64]: Target was removed")
+        )
+    }
+
+    @Test
     fun returnsErrorsObjectWhenValidateIsFalse() {
         val beforeText =
             createDumpText(

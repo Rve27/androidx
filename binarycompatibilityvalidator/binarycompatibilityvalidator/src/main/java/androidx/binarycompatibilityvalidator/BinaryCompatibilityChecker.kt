@@ -401,7 +401,11 @@ class BinaryCompatibilityChecker(
                 return errors
             }
             return oldLibraries.keys.flatMap { target ->
-                val newLib = newLibraries[target]!!
+                val newLib =
+                    newLibraries[target]
+                        // We can't compare targets if they've been removed. We'll throw on removed
+                        // targets but if that removal is baselined we can still make it here.
+                        ?: return@flatMap emptyList()
                 val oldLib = oldLibraries[target]!!
                 val errorsForTarget = CompatibilityErrors(baselines, target)
                 BinaryCompatibilityChecker(newLib, oldLib)
