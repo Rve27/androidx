@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.concurrent.futures.SuspendToFutureAdapter.launchFuture
 import androidx.datastore.core.CurrentDataProviderStore
 import androidx.datastore.core.DataMigration
+import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.MultiProcessDataStoreFactory
 import androidx.datastore.core.Serializer
@@ -190,5 +191,32 @@ internal constructor(
                     ),
                 coroutineDispatcher,
             )
+    }
+
+    public companion object {
+        /**
+         * Wraps a [GuavaDataStore] around a [DataStore]. This method does not create a new
+         * [DataStore], so all [getDataAsync] and [updateDataAsync] called from the resulting
+         * [GuavaDataStore] will be sequenced by the underlying [DataStore]. It is thread-safe.
+         *
+         * @param dataStore the DataStore used to create GuavaDataStore
+         * @param coroutineContext the CoroutineContext used to launch the calls to DataStore. The
+         *   default value is [Dispatchers.IO]
+         * @return the GuavaDataStore created with the provided parameters
+         */
+        @JvmStatic
+        @JvmOverloads
+        public fun <T : Any> from(
+            dataStore: DataStore<T>,
+            coroutineContext: CoroutineContext = Dispatchers.IO
+        ): GuavaDataStore<T> {
+            return GuavaDataStore(
+                dataStore as? CurrentDataProviderStore
+                    ?: error(
+                        "Unexpected DataStore object that does not implement CurrentDataProviderStore"
+                    ),
+                coroutineContext
+            )
+        }
     }
 }
