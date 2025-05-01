@@ -236,25 +236,33 @@ internal constructor(
          */
         @JvmStatic
         public fun getInstance(context: Context): AppFunctionManagerCompat? {
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-                AppFunctionManagerCompat(
-                    context,
-                    Dependencies.translatorSelector,
-                    AppSearchAppFunctionReader(context, Dependencies.schemaAppFunctionInventory),
-                    PlatformAppFunctionManagerApi(context),
-                )
-            } else if (
+            return when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA -> {
+                    AppFunctionManagerCompat(
+                        context,
+                        Dependencies.translatorSelector,
+                        AppSearchAppFunctionReader(
+                            context,
+                            Dependencies.schemaAppFunctionInventory
+                        ),
+                        PlatformAppFunctionManagerApi(context),
+                    )
+                }
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                    isExtensionLibraryAvailable()
-            ) {
-                AppFunctionManagerCompat(
-                    context,
-                    Dependencies.translatorSelector,
-                    AppSearchAppFunctionReader(context, Dependencies.schemaAppFunctionInventory),
-                    ExtensionAppFunctionManagerApi(context),
-                )
-            } else {
-                null
+                    isExtensionLibraryAvailable() -> {
+                    AppFunctionManagerCompat(
+                        context,
+                        Dependencies.translatorSelector,
+                        AppSearchAppFunctionReader(
+                            context,
+                            Dependencies.schemaAppFunctionInventory
+                        ),
+                        ExtensionAppFunctionManagerApi(context),
+                    )
+                }
+                else -> {
+                    null
+                }
             }
         }
     }
