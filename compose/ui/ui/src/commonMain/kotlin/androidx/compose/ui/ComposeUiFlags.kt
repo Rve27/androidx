@@ -144,4 +144,12 @@ object ComposeUiFlags {
     @Suppress("MutableBareField")
     @JvmField
     var isPointerInteropFilterDispatchingFixEnabled: Boolean = true
+
+    /**
+     * Flag for enabling the fix for calling the correct nested scrolling methods from the
+     * connection created by [rememberNestedScrollInteropConnection].
+     */
+    @Suppress("MutableBareField")
+    @JvmField
+    var isNestedScrollInteropPostFlingFixEnabled: Boolean = true
 }

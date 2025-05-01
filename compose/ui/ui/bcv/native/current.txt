@@ -966,6 +966,8 @@ abstract interface androidx.compose.ui.platform/ViewConfiguration { // androidx.
         open fun <get-handwritingSlop>(): kotlin/Float // androidx.compose.ui.platform/ViewConfiguration.handwritingSlop.<get-handwritingSlop>|<get-handwritingSlop>(){}[0]
     open val maximumFlingVelocity // androidx.compose.ui.platform/ViewConfiguration.maximumFlingVelocity|{}maximumFlingVelocity[0]
         open fun <get-maximumFlingVelocity>(): kotlin/Float // androidx.compose.ui.platform/ViewConfiguration.maximumFlingVelocity.<get-maximumFlingVelocity>|<get-maximumFlingVelocity>(){}[0]
+    open val minimumFlingVelocity // androidx.compose.ui.platform/ViewConfiguration.minimumFlingVelocity|{}minimumFlingVelocity[0]
+        open fun <get-minimumFlingVelocity>(): kotlin/Float // androidx.compose.ui.platform/ViewConfiguration.minimumFlingVelocity.<get-minimumFlingVelocity>|<get-minimumFlingVelocity>(){}[0]
     open val minimumTouchTargetSize // androidx.compose.ui.platform/ViewConfiguration.minimumTouchTargetSize|{}minimumTouchTargetSize[0]
         open fun <get-minimumTouchTargetSize>(): androidx.compose.ui.unit/DpSize // androidx.compose.ui.platform/ViewConfiguration.minimumTouchTargetSize.<get-minimumTouchTargetSize>|<get-minimumTouchTargetSize>(){}[0]
 }

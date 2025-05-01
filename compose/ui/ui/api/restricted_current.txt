@@ -136,6 +136,7 @@ package androidx.compose.ui {
     property public boolean isAdaptiveRefreshRateEnabled;
     property public boolean isClearFocusOnResetEnabled;
     property public boolean isFocusActionExitsTouchModeEnabled;
+    property public boolean isNestedScrollInteropPostFlingFixEnabled;
     property public boolean isNoPinningInFocusRestorationEnabled;
     property public boolean isOutOfFrameDeactivationEnabled;
     property public boolean isPointerInteropFilterDispatchingFixEnabled;
@@ -149,6 +150,7 @@ package androidx.compose.ui {
     field public static boolean isAdaptiveRefreshRateEnabled;
     field public static boolean isClearFocusOnResetEnabled;
     field public static boolean isFocusActionExitsTouchModeEnabled;
+    field public static boolean isNestedScrollInteropPostFlingFixEnabled;
     field public static boolean isNoPinningInFocusRestorationEnabled;
     field public static boolean isOutOfFrameDeactivationEnabled;
     field public static boolean isPointerInteropFilterDispatchingFixEnabled;
@@ -3481,6 +3483,7 @@ package androidx.compose.ui.platform {
     property public float handwritingSlop;
     property public long longPressTimeoutMillis;
     property public float maximumFlingVelocity;
+    property public float minimumFlingVelocity;
     property public float touchSlop;
   }
 
@@ -3751,6 +3754,7 @@ package androidx.compose.ui.platform {
     method public default float getHandwritingSlop();
     method public long getLongPressTimeoutMillis();
     method public default float getMaximumFlingVelocity();
+    method public default float getMinimumFlingVelocity();
     method public default long getMinimumTouchTargetSize();
     method public float getTouchSlop();
     property public abstract long doubleTapMinTimeMillis;
@@ -3759,6 +3763,7 @@ package androidx.compose.ui.platform {
     property public default float handwritingSlop;
     property public abstract long longPressTimeoutMillis;
     property public default float maximumFlingVelocity;
+    property public default float minimumFlingVelocity;
     property public default long minimumTouchTargetSize;
     property public abstract float touchSlop;
   }
