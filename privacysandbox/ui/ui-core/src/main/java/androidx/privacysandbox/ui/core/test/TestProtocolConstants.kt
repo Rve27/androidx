@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.core
+package androidx.privacysandbox.ui.core.test
 
 import androidx.annotation.RestrictTo
 
-/**
- * Constants shared between UI library artifacts to establish an IPC protocol across library
- * versions. Adding new constants is allowed, but **never change the value of a constant**, or
- * you'll break binary compatibility between UI library versions.
- */
+/** Constants used for testing of UI library artifacts. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-object ProtocolConstants {
-    const val delegateKey = "delegate"
-    const val uiAdapterBinderKey = "uiAdapterBinder"
-    const val uiProviderVersionKey = "uiProviderVersion"
-    const val sharedUiAdapterBinderKey = "sharedUiAdapterBinder"
+object TestProtocolConstants {
+    const val testOnlyUseRemoteAdapterKey = "testOnlyUseRemoteAdapter"
 }

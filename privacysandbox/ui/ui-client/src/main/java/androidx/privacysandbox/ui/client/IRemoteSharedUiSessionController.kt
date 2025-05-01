@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.core;
+package androidx.privacysandbox.ui.client
 
-// Any api change in this interface should also be made to [androidx.privacysandbox.ui.client.IRemoteSharedUiSessionController]
-@JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
-oneway interface IRemoteSharedUiSessionController {
-    void close();
+/**
+ * Wrapper interface to perform check on provider version before delegating call to
+ * [androidx.privacysandbox.ui.core.IRemoteSharedUiSessionController]
+ */
+
+// TODO(b/414583457) : Ensure any api change in
+//  [androidx.privacysandbox.ui.core.IRemoteSharedUiSessionController] is updated in wrapper
+//  interface as well
+internal interface IRemoteSharedUiSessionController {
+    fun close()
 }
