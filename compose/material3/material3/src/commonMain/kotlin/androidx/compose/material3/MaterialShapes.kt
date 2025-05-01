@@ -89,15 +89,13 @@ fun RoundedPolygon.toShape(startAngle: Int = 0): Shape {
             // manipulating and using on the createOutline would be a copy of this to ensure we
             // don't mutate the original.
             private val shapePath: Path = toPath(startAngle = startAngle)
-            private val workPath: Path = Path()
 
             override fun createOutline(
                 size: Size,
                 layoutDirection: LayoutDirection,
                 density: Density
             ): Outline {
-                workPath.rewind()
-                workPath.addPath(shapePath)
+                val workPath = Path().apply { addPath(shapePath) }
                 val scaleMatrix = Matrix().apply { scale(x = size.width, y = size.height) }
                 // Scale and translate the path to align its center with the available size
                 // center.
