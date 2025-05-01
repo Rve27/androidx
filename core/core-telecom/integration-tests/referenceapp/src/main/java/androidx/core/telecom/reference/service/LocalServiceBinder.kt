@@ -22,10 +22,10 @@ import androidx.core.telecom.reference.model.CallData
 import kotlinx.coroutines.flow.StateFlow
 
 /** Local interface used to define the local connection between a component and this Service. */
-interface LocalIcsBinder {
+interface LocalServiceBinder {
     /** Connector used during Service binding to capture the instance of this class */
     interface Connector {
-        fun getService(): LocalIcsBinder
+        fun getService(): LocalServiceBinder
     }
 
     /** the state of active calls on this device */
@@ -42,4 +42,12 @@ interface LocalIcsBinder {
     fun switchCallEndpoint(callId: String, endpoint: CallEndpointCompat)
 
     fun toggleGlobalMute(isMuted: Boolean)
+
+    fun toggleLocalCallSilence(callId: String, isMuted: Boolean)
+
+    fun addParticipant(callId: String)
+
+    fun removeParticipant(callId: String)
+
+    fun changeCallIcon(callId: String)
 }

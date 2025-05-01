@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.core.telecom.reference
+package androidx.core.telecom.reference.model
 
-import android.app.Application
+import android.graphics.Bitmap
+import android.net.Uri
 
-/** class for managing application-level components. */
-class VoipApplication : Application() {
-    val callRepository: CallRepository by lazy { CallRepository() }
-}
+data class IconData(
+    var uri: Uri,
+    val bitmap: Bitmap?,
+    val fileName: String,
+)

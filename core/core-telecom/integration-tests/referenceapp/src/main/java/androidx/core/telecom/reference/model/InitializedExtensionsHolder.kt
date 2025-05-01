@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.core.telecom.reference
+package androidx.core.telecom.reference.model
 
-import android.app.Application
+import androidx.core.telecom.extensions.*
+import androidx.core.telecom.reference.ParticipantsExtensionManager
+import androidx.core.telecom.util.ExperimentalAppActions
 
-/** class for managing application-level components. */
-class VoipApplication : Application() {
-    val callRepository: CallRepository by lazy { CallRepository() }
-}
+@OptIn(ExperimentalAppActions::class)
+data class InitializedExtensionsHolder(
+    val localCallSilence: LocalCallSilenceExtension? = null,
+    val callIcon: CallIconExtension? = null,
+    val iconData: IconData? = null,
+    val participants: ParticipantExtension? = null,
+    val raiseHand: RaiseHandState? = null,
+    val participantsManager: ParticipantsExtensionManager? = null
+)

@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.core.telecom.reference
+package androidx.core.telecom.reference.view
 
-import android.app.Application
-
-/** class for managing application-level components. */
-class VoipApplication : Application() {
-    val callRepository: CallRepository by lazy { CallRepository() }
+/**
+ * Defines the navigation route constants used within the application.
+ *
+ * Using constants for routes helps prevent typos and makes navigation logic easier to manage.
+ */
+object NavRoutes {
+    /** Route for the main Dialer screen. */
+    const val DIALER = "dialer"
+    /** Route for the Settings screen. */
+    const val SETTINGS = "settings"
+    /** Route for the In-Call screen displayed during an active call. */
+    const val IN_CALL = "inCall"
 }
