@@ -824,7 +824,9 @@ constructor(
                 mutableListOf<SurfaceConfig>().apply {
                     addAll(sessionSurfacesConfigs)
                     add(createMeteringRepeatingSurfaceConfig())
-                }
+                },
+                // TODO: b/406367951 - Properly pass feature combo info for MeteringRepeating case
+                false
             )
             .also {
                 Log.debug {

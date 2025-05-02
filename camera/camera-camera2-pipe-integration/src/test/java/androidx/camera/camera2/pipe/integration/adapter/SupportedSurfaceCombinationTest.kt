@@ -1658,7 +1658,8 @@ class SupportedSurfaceCombinationTest {
                 attachedSurfaceInfoList,
                 useCaseConfigToOutputSizesMap,
                 isPreviewStabilizationOn,
-                hasVideoCapture
+                hasVideoCapture,
+                false
             )
         val suggestedStreamSpecsForNewUseCases = resultPair.first
         val suggestedStreamSpecsForOldSurfaces = resultPair.second

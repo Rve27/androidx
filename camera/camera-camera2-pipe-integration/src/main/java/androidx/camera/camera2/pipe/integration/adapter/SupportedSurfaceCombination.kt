@@ -32,6 +32,9 @@ import android.util.Rational
 import android.util.Size
 import androidx.annotation.VisibleForTesting
 import androidx.camera.camera2.pipe.CameraMetadata
+import androidx.camera.camera2.pipe.integration.adapter.SupportedSurfaceCombination.CheckingMethod.WITHOUT_FEATURE_COMBO
+import androidx.camera.camera2.pipe.integration.adapter.SupportedSurfaceCombination.CheckingMethod.WITHOUT_FEATURE_COMBO_FIRST_AND_THEN_WITH_IT
+import androidx.camera.camera2.pipe.integration.adapter.SupportedSurfaceCombination.CheckingMethod.WITH_FEATURE_COMBO
 import androidx.camera.camera2.pipe.integration.compat.StreamConfigurationMapCompat
 import androidx.camera.camera2.pipe.integration.compat.workaround.ExtraSupportedSurfaceCombinationsContainer
 import androidx.camera.camera2.pipe.integration.compat.workaround.OutputSizesCorrector
@@ -153,13 +156,34 @@ public class SupportedSurfaceCombination(
      * of this object.
      *
      * @param featureSettings the settings for the camera's features/capabilities.
-     * @param surfaceConfigList the surface configuration list to be compared
+     * @param surfaceConfigList the surface configuration list to be compared.
+     * @return the check result that whether it could be supported
+     */
+    @VisibleForTesting // TODO: Update the tests and remove this function totally
+    public fun checkSupported(
+        featureSettings: FeatureSettings,
+        surfaceConfigList: List<SurfaceConfig>,
+    ): Boolean {
+        return checkSupported(featureSettings, surfaceConfigList, false)
+    }
+
+    /**
+     * Check whether the input surface configuration list is under the capability of any combination
+     * of this object.
+     *
+     * @param featureSettings the settings for the camera's features/capabilities.
+     * @param surfaceConfigList the surface configuration list to be compared.
+     * @param checkViaFeatureComboQuery whether feature combination query API should be used for the
+     *   checking, false by default.
      * @return the check result that whether it could be supported
      */
     public fun checkSupported(
         featureSettings: FeatureSettings,
-        surfaceConfigList: List<SurfaceConfig>
+        surfaceConfigList: List<SurfaceConfig>,
+        checkViaFeatureComboQuery: Boolean = false
     ): Boolean {
+        // TODO: Use feature combination query API when checkViaFeatureComboQuery is true
+
         return getSurfaceCombinationsByFeatureSettings(featureSettings).any {
             it.getOrderedSupportedSurfaceConfigList(surfaceConfigList) != null
         }
@@ -270,6 +294,7 @@ public class SupportedSurfaceCombination(
         newUseCaseConfigsSupportedSizeMap: Map<UseCaseConfig<*>, List<Size>>,
         isPreviewStabilizationOn: Boolean = false,
         hasVideoCapture: Boolean = false,
+        allowFeatureCombinationResolutions: Boolean,
     ): Pair<Map<UseCaseConfig<*>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>> {
         // Refresh Preview Size based on current display configurations.
         refreshPreviewSize()
@@ -315,16 +340,28 @@ public class SupportedSurfaceCombination(
                 attachedSurfaces,
                 filteredNewUseCaseConfigsSupportedSizeMap
             )
-        require(isSurfaceCombinationSupported) {
-            "No supported surface combination is found for camera device - Id : $cameraId. " +
-                "May be attempting to bind too many use cases. Existing surfaces: " +
-                "$attachedSurfaces. New configs: $newUseCaseConfigs."
-        }
 
         // Calculates the target FPS range
         val targetFpsRange =
             if (isHighSpeedOn) targetHighSpeedFpsRange
             else getTargetFpsRange(attachedSurfaces, newUseCaseConfigs, useCasesPriorityOrder)
+
+        val checkingMethod: CheckingMethod =
+            getCheckingMethod(
+                featureSettings,
+                resolvedDynamicRanges.values,
+                targetFpsRange,
+                allowFeatureCombinationResolutions
+            )
+
+        // TODO: b/414489781 - Return early even with feature combo checking method for possible
+        //  cases  (e.g. the number of streams is higher than what FCQ can ever support)
+        require(checkingMethod == WITHOUT_FEATURE_COMBO && isSurfaceCombinationSupported) {
+            "No supported surface combination is found for camera device - Id : $cameraId. " +
+                "May be attempting to bind too many use cases. Existing surfaces: " +
+                "$attachedSurfaces. New configs: $newUseCaseConfigs."
+        }
+
         // Filters the unnecessary output sizes for performance improvement. This will
         // significantly reduce the number of all possible size arrangements below.
         val useCaseConfigToFilteredSupportedSizesMap =
@@ -371,7 +408,8 @@ public class SupportedSurfaceCombination(
 
         val maxSupportedFps =
             getMaxSupportedFpsFromAttachedSurfaces(attachedSurfaces, isHighSpeedOn)
-        val bestSizesAndFps =
+
+        val bestSizesAndFps: BestSizesAndMaxFpsForConfigs? =
             findBestSizesAndFps(
                 allPossibleSizeArrangements,
                 attachedSurfaces,
@@ -380,8 +418,16 @@ public class SupportedSurfaceCombination(
                 useCasesPriorityOrder,
                 targetFpsRange,
                 featureSettings,
-                orderedSurfaceConfigListForStreamUseCase
+                orderedSurfaceConfigListForStreamUseCase,
+                checkingMethod
             )
+
+        require(bestSizesAndFps != null) {
+            "No supported surface combination is found for camera device - Id : $cameraId " +
+                "and Hardware level: $hardwareLevel. " +
+                "May be the specified resolution is too large and not supported. " +
+                "Existing surfaces: $attachedSurfaces. New configs: $newUseCaseConfigs."
+        }
 
         val suggestedStreamSpecMap =
             generateSuggestedStreamSpecMap(
@@ -406,6 +452,42 @@ public class SupportedSurfaceCombination(
         )
 
         return Pair.create(suggestedStreamSpecMap, attachedSurfaceStreamSpecMap)
+    }
+
+    private fun getCheckingMethod(
+        featureSettings: FeatureSettings,
+        dynamicRanges: Collection<DynamicRange>,
+        fps: Range<Int>?,
+        allowFeatureCombinationResolutions: Boolean
+    ): CheckingMethod {
+        if (!allowFeatureCombinationResolutions) {
+            return WITHOUT_FEATURE_COMBO
+        }
+
+        // TODO: Enforce all supported features are handled by going through some exhaustive list
+        //  of supported features.
+        var count = 0
+
+        if (dynamicRanges.contains(DynamicRange.HLG_10_BIT)) {
+            count++
+        }
+        if (fps?.getUpper() == 60) {
+            count++
+        }
+        if (featureSettings.isPreviewStabilizationOn) {
+            count++
+        }
+        if (featureSettings.isUltraHdrOn) {
+            count++
+        }
+
+        return if (count > 1) {
+            WITH_FEATURE_COMBO
+        } else if (count == 1) {
+            WITHOUT_FEATURE_COMBO_FIRST_AND_THEN_WITH_IT
+        } else {
+            WITHOUT_FEATURE_COMBO
+        }
     }
 
     /**
@@ -501,7 +583,11 @@ public class SupportedSurfaceCombination(
                 )
             )
         }
-        return checkSupported(featureSettings, surfaceConfigs)
+
+        // This method doesn't use feature combo resolutions since feature combo API doesn't
+        // guarantee that a lower resolution will always be supported if higher resolution is
+        // supported with same set of features
+        return checkSupported(featureSettings, surfaceConfigs, false)
     }
 
     /**
@@ -530,7 +616,8 @@ public class SupportedSurfaceCombination(
                     newUseCaseConfigs,
                     useCasesPriorityOrder,
                     surfaceConfigIndexAttachedSurfaceInfoMap,
-                    surfaceConfigIndexUseCaseConfigMap
+                    surfaceConfigIndexUseCaseConfigMap,
+                    false
                 )
             orderedSurfaceConfigListForStreamUseCase =
                 getOrderedSupportedStreamUseCaseSurfaceConfigList(featureSettings, surfaceConfigs)
@@ -767,8 +854,71 @@ public class SupportedSurfaceCombination(
         useCasesPriorityOrder: List<Int>,
         targetFrameRateForConfig: Range<Int>?,
         featureSettings: FeatureSettings,
-        orderedSurfaceConfigListForStreamUseCase: List<SurfaceConfig>?
-    ): BestSizesAndMaxFpsForConfigs {
+        orderedSurfaceConfigListForStreamUseCase: List<SurfaceConfig>?,
+        checkingMethod: CheckingMethod
+    ): BestSizesAndMaxFpsForConfigs? {
+        return when (checkingMethod) {
+            WITHOUT_FEATURE_COMBO ->
+                findBestSizesAndFps(
+                    allPossibleSizeArrangements,
+                    attachedSurfaces,
+                    newUseCaseConfigs,
+                    existingSurfaceFrameRateCeiling,
+                    useCasesPriorityOrder,
+                    targetFrameRateForConfig,
+                    featureSettings,
+                    orderedSurfaceConfigListForStreamUseCase,
+                    false
+                )
+            WITH_FEATURE_COMBO ->
+                findBestSizesAndFps(
+                    allPossibleSizeArrangements,
+                    attachedSurfaces,
+                    newUseCaseConfigs,
+                    existingSurfaceFrameRateCeiling,
+                    useCasesPriorityOrder,
+                    targetFrameRateForConfig,
+                    featureSettings,
+                    orderedSurfaceConfigListForStreamUseCase,
+                    true
+                )
+            WITHOUT_FEATURE_COMBO_FIRST_AND_THEN_WITH_IT ->
+                findBestSizesAndFps(
+                    allPossibleSizeArrangements,
+                    attachedSurfaces,
+                    newUseCaseConfigs,
+                    existingSurfaceFrameRateCeiling,
+                    useCasesPriorityOrder,
+                    targetFrameRateForConfig,
+                    featureSettings,
+                    orderedSurfaceConfigListForStreamUseCase,
+                    false
+                )
+                    ?: findBestSizesAndFps(
+                        allPossibleSizeArrangements,
+                        attachedSurfaces,
+                        newUseCaseConfigs,
+                        existingSurfaceFrameRateCeiling,
+                        useCasesPriorityOrder,
+                        targetFrameRateForConfig,
+                        featureSettings,
+                        orderedSurfaceConfigListForStreamUseCase,
+                        true
+                    )
+        }
+    }
+
+    private fun findBestSizesAndFps(
+        allPossibleSizeArrangements: List<List<Size>>,
+        attachedSurfaces: List<AttachedSurfaceInfo>,
+        newUseCaseConfigs: List<UseCaseConfig<*>>,
+        existingSurfaceFrameRateCeiling: Int,
+        useCasesPriorityOrder: List<Int>,
+        targetFrameRateForConfig: Range<Int>?,
+        featureSettings: FeatureSettings,
+        orderedSurfaceConfigListForStreamUseCase: List<SurfaceConfig>?,
+        checkViaFeatureComboQuery: Boolean
+    ): BestSizesAndMaxFpsForConfigs? {
         var bestSizes: List<Size>? = null
         var maxFps = Int.MAX_VALUE
         var bestSizesForStreamUseCase: List<Size>? = null
@@ -787,7 +937,8 @@ public class SupportedSurfaceCombination(
                     newUseCaseConfigs,
                     useCasesPriorityOrder,
                     null,
-                    null
+                    null,
+                    checkViaFeatureComboQuery
                 )
             val currentConfigFrameRateCeiling =
                 getCurrentConfigFrameRateCeiling(
@@ -799,6 +950,13 @@ public class SupportedSurfaceCombination(
                 )
             var isConfigFrameRateAcceptable = true
             if (targetFrameRateForConfig != null) {
+                // TODO: b/402372530 - currentConfigFramerateCeiling < targetFpsRange.getLower()
+                //  means that 'targetFpsRange.getLower() < currentConfigFramerateCeiling  < upper'
+                //  is also acceptable i.e. partially supporting a target FPS range is acceptable.
+                //  However, for feature combo cases, we should strictly maintain the target FPS
+                //  range being fully supported. It doesn't need to be handled right now though
+                //  since feature combo API supports lower == upper case (i.e. FPS_60) only right
+                //  now.
                 if (
                     existingSurfaceFrameRateCeiling > currentConfigFrameRateCeiling &&
                         currentConfigFrameRateCeiling < targetFrameRateForConfig.lower
@@ -815,7 +973,10 @@ public class SupportedSurfaceCombination(
             // if we found one earlier.
 
             // only change the saved config if you get another that has a better max fps
-            if (!supportedSizesFound && checkSupported(featureSettings, surfaceConfigList)) {
+            if (
+                !supportedSizesFound &&
+                    checkSupported(featureSettings, surfaceConfigList, checkViaFeatureComboQuery)
+            ) {
                 // if the config is supported by the device but doesn't meet the target frame rate,
                 // save the config
                 if (maxFps == Int.MAX_VALUE) {
@@ -866,12 +1027,11 @@ public class SupportedSurfaceCombination(
                 }
             }
         }
-        require(bestSizes != null) {
-            "No supported surface combination is found for camera device - Id : $cameraId " +
-                "and Hardware level: $hardwareLevel. " +
-                "May be the specified resolution is too large and not supported. " +
-                "Existing surfaces: $attachedSurfaces. New configs: $newUseCaseConfigs."
+
+        if (bestSizes == null) {
+            return null
         }
+
         return BestSizesAndMaxFpsForConfigs(
             bestSizes,
             bestSizesForStreamUseCase,
@@ -946,8 +1106,12 @@ public class SupportedSurfaceCombination(
         newUseCaseConfigs: List<UseCaseConfig<*>>,
         useCasesPriorityOrder: List<Int>,
         surfaceConfigIndexAttachedSurfaceInfoMap: MutableMap<Int, AttachedSurfaceInfo>?,
-        surfaceConfigIndexUseCaseConfigMap: MutableMap<Int, UseCaseConfig<*>>?
-    ): MutableList<SurfaceConfig> {
+        surfaceConfigIndexUseCaseConfigMap: MutableMap<Int, UseCaseConfig<*>>?,
+        checkViaFeatureComboQuery: Boolean,
+    ): List<SurfaceConfig> {
+        // TODO: b/413946820 Implement the logic to find the correct SurfaceConfig list for feature
+        //  combination resolutions
+
         val surfaceConfigList: MutableList<SurfaceConfig> = mutableListOf()
         for (attachedSurfaceInfo in attachedSurfaces) {
             surfaceConfigList.add(attachedSurfaceInfo.surfaceConfig)
@@ -1723,6 +1887,12 @@ public class SupportedSurfaceCombination(
         val maxFps: Int,
         val maxFpsForStreamUseCase: Int
     )
+
+    private enum class CheckingMethod {
+        WITHOUT_FEATURE_COMBO,
+        WITH_FEATURE_COMBO,
+        WITHOUT_FEATURE_COMBO_FIRST_AND_THEN_WITH_IT
+    }
 
     public companion object {
         private fun isUltraHdrOn(
