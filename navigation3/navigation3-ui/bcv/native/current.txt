@@ -1,0 +1,30 @@
+// Klib ABI Dump
+// Targets: [linuxX64.linuxx64Stubs]
+// Rendering settings:
+// - Signature version: 2
+// - Show manifest properties: true
+// - Show declarations: true
+
+// Library unique name: <androidx.navigation3:navigation3-ui>
+abstract fun interface <#A: kotlin/Any> androidx.navigation3.ui/SceneStrategy { // androidx.navigation3.ui/SceneStrategy|null[0]
+    abstract fun calculateScene(kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>): androidx.navigation3.ui/SceneStrategyResult<#A>? // androidx.navigation3.ui/SceneStrategy.calculateScene|calculateScene(kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>){}[0]
+    open fun then(androidx.navigation3.ui/SceneStrategy<#A>): androidx.navigation3.ui/SceneStrategy<#A> // androidx.navigation3.ui/SceneStrategy.then|then(androidx.navigation3.ui.SceneStrategy<1:0>){}[0]
+}
+
+abstract interface <#A: kotlin/Any> androidx.navigation3.ui/Scene { // androidx.navigation3.ui/Scene|null[0]
+    abstract val content // androidx.navigation3.ui/Scene.content|{}content[0]
+        abstract fun <get-content>(): kotlin/Function0<kotlin/Unit> // androidx.navigation3.ui/Scene.content.<get-content>|<get-content>(){}[0]
+    abstract val entries // androidx.navigation3.ui/Scene.entries|{}entries[0]
+        abstract fun <get-entries>(): kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>> // androidx.navigation3.ui/Scene.entries.<get-entries>|<get-entries>(){}[0]
+    abstract val key // androidx.navigation3.ui/Scene.key|{}key[0]
+        abstract fun <get-key>(): kotlin/Any // androidx.navigation3.ui/Scene.key.<get-key>|<get-key>(){}[0]
+}
+
+final class <#A: kotlin/Any> androidx.navigation3.ui/SceneStrategyResult { // androidx.navigation3.ui/SceneStrategyResult|null[0]
+    constructor <init>(androidx.navigation3.ui/Scene<#A>, kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>) // androidx.navigation3.ui/SceneStrategyResult.<init>|<init>(androidx.navigation3.ui.Scene<1:0>;kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>){}[0]
+
+    final val previousEntries // androidx.navigation3.ui/SceneStrategyResult.previousEntries|{}previousEntries[0]
+        final fun <get-previousEntries>(): kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>> // androidx.navigation3.ui/SceneStrategyResult.previousEntries.<get-previousEntries>|<get-previousEntries>(){}[0]
+    final val scene // androidx.navigation3.ui/SceneStrategyResult.scene|{}scene[0]
+        final fun <get-scene>(): androidx.navigation3.ui/Scene<#A> // androidx.navigation3.ui/SceneStrategyResult.scene.<get-scene>|<get-scene>(){}[0]
+}

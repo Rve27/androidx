@@ -25,9 +25,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation3.NavEntry
-import androidx.navigation3.SavedStateNavEntryDecorator
-import androidx.navigation3.SceneNavDisplay
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.SavedStateNavEntryDecorator
+import androidx.navigation3.ui.SceneNavDisplay
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import kotlin.test.Test
