@@ -171,8 +171,6 @@ androidXMultiplatform {
         linuxx64StubsMain.dependsOn(linuxMain)
         linuxx64StubsTest.dependsOn(linuxTest)
     }
-
-    enableBinaryCompatibilityValidator = false
 }
 
 androidx {
