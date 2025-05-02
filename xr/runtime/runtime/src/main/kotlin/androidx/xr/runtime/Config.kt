@@ -24,6 +24,7 @@ import androidx.annotation.RestrictTo
  * An instance of this class should be passed to [Session.configure()] to modify the current
  * configuration.
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class Config
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 constructor(

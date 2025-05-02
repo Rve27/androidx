@@ -26,10 +26,17 @@ public interface PanelEntity : Entity {
      * Sets the pixel (not Dp) dimensions of the view underlying this PanelEntity. Calling this
      * might cause the layout of the Panel contents to change. Updating this will not cause the
      * scale or pixel density to change.
+     *
+     * @param dimensions The [PixelDimensions] of the underlying surface to set.
      */
     public var sizeInPixels: PixelDimensions
 
-    /** Sets a corner radius on all four corners of this PanelEntity. */
+    /**
+     * Sets a corner radius on all four corners of this PanelEntity.
+     *
+     * @param value Corner radius in meters.
+     * @throws IllegalArgumentException if radius is <= 0.0f.
+     */
     public var cornerRadius: Float
 
     /**

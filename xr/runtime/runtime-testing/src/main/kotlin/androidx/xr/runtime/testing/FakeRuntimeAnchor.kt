@@ -16,6 +16,7 @@
 
 package androidx.xr.runtime.testing
 
+import androidx.annotation.RestrictTo
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.internal.Anchor as RuntimeAnchor
 import androidx.xr.runtime.internal.AnchorNotTrackingException
@@ -24,6 +25,7 @@ import androidx.xr.runtime.math.Pose
 import java.util.UUID
 
 /** Test-only implementation of [RuntimeAnchor] */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeRuntimeAnchor(
     override var pose: Pose,
     public val anchorHolder: AnchorHolder? = null,
@@ -66,6 +68,6 @@ public class FakeRuntimeAnchor(
 
     public companion object {
         public const val ANCHOR_RESOURCE_LIMIT: Int = 5
-        @JvmStatic public var anchorsCreated: Int = 0
+        public var anchorsCreated: Int = 0
     }
 }

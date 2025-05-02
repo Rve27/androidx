@@ -16,6 +16,7 @@
 
 package androidx.xr.compose.platform
 
+import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalWithComputedDefaultOf
@@ -30,6 +31,7 @@ import androidx.xr.runtime.SessionCreateSuccess
  *
  * In non-XR environments, this composition local will return `null`.
  */
+@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public val LocalSession: ProvidableCompositionLocal<Session?> =
     compositionLocalWithComputedDefaultOf {
         if (SpatialConfiguration.hasXrSpatialFeature(LocalContext.currentValue)) {

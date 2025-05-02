@@ -18,6 +18,7 @@ package androidx.xr.scenecore
 
 import android.annotation.SuppressLint
 import androidx.annotation.IntDef
+import androidx.annotation.RestrictTo
 import androidx.xr.arcore.Anchor
 import androidx.xr.runtime.Config.PlaneTrackingMode
 import androidx.xr.runtime.Session
@@ -37,6 +38,7 @@ import java.util.concurrent.atomic.AtomicReference
  * calling setParent() on an AnchorEntity has no effect, as the parenting of an Anchor is controlled
  * by the system.
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 @SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
 public class AnchorEntity
 private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
@@ -285,6 +287,7 @@ private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
     }
 }
 
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun interface OnStateChangedListener {
     public fun onStateChanged(newState: @AnchorEntity.StateValue Int)
 }

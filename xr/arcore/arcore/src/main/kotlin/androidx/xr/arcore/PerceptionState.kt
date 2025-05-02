@@ -16,6 +16,7 @@
 
 package androidx.xr.arcore
 
+import androidx.annotation.RestrictTo
 import kotlin.time.ComparableTimeMark
 
 /**
@@ -28,6 +29,7 @@ import kotlin.time.ComparableTimeMark
  * @property leftHand the left hand, or null when not supported by the current platform.
  * @property rightHand the right hand, or null when not supported by the current platform.
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class PerceptionState
 internal constructor(
     public val timeMark: ComparableTimeMark,

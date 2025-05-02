@@ -22,6 +22,7 @@ import android.view.Surface;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RestrictTo;
 import androidx.concurrent.futures.ResolvableFuture;
 
 import com.google.ar.imp.apibindings.ImpressApi;
@@ -40,6 +41,7 @@ import java.util.Map;
  * Fake implementation of the JNI API for communicating with the Impress Split Engine instance for
  * testing purposes.
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeImpressApi implements ImpressApi {
 
     // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
@@ -54,6 +56,8 @@ public class FakeImpressApi implements ImpressApi {
     /** Test bookkeeping data for a Android Surface */
     @SuppressWarnings({"ParcelCreator", "ParcelNotFinal"})
     public static class TestSurface extends Surface {
+        public int id;
+
         public TestSurface(int id) {
             super(new SurfaceTexture(id));
         }
@@ -125,44 +129,26 @@ public class FakeImpressApi implements ImpressApi {
             WATER_ALPHA
         }
 
-        @NonNull Type mType;
-        long mMaterialHandle;
+        @NonNull public Type type;
+        public long materialHandle;
 
         public MaterialData(@NonNull Type type, long materialHandle) {
-            this.mType = type;
-            this.mMaterialHandle = materialHandle;
-        }
-
-        @NonNull
-        public Type getType() {
-            return mType;
-        }
-
-        public long getMaterialHandle() {
-            return mMaterialHandle;
+            this.type = type;
+            this.materialHandle = materialHandle;
         }
     }
 
     /** Test bookkeeping data for a Gltf gltfToken */
     public static class GltfNodeData {
-        int mEntityId;
-        @Nullable MaterialData mMaterialOverride;
+        public int entityId;
+        @Nullable public MaterialData materialOverride;
 
         public void setEntityId(int entityId) {
-            this.mEntityId = entityId;
+            this.entityId = entityId;
         }
 
         public void setMaterialOverride(@Nullable MaterialData materialOverride) {
-            this.mMaterialOverride = materialOverride;
-        }
-
-        public int getEntityId() {
-            return mEntityId;
-        }
-
-        @Nullable
-        public MaterialData getMaterialOverride() {
-            return mMaterialOverride;
+            this.materialOverride = materialOverride;
         }
     }
 
@@ -185,10 +171,10 @@ public class FakeImpressApi implements ImpressApi {
     final Map<Integer, StereoSurfaceEntityData> mStereoSurfaceEntities = new HashMap<>();
 
     // Map of texture image tokens to their associated Texture object
-    final Map<Long, Texture> mTextureImages = new HashMap<>();
+    public final Map<Long, Texture> mTextureImages = new HashMap<>();
 
     // Map of material tokens to their associated MaterialData object
-    final Map<Long, MaterialData> mMaterials = new HashMap<>();
+    public final Map<Long, MaterialData> mMaterials = new HashMap<>();
 
     private int mNextImageBasedLightingAssetId = 1;
     private int mNextModelId = 1;
@@ -402,7 +388,7 @@ public class FakeImpressApi implements ImpressApi {
         if (gltfNodeData == null) {
             return -1;
         }
-        return mImpressNodes.get(gltfNodeData).mEntityId;
+        return mImpressNodes.get(gltfNodeData).entityId;
     }
 
     /** Returns the number of impress nodes that are currently animating. */
@@ -544,7 +530,7 @@ public class FakeImpressApi implements ImpressApi {
     }
 
     @Override
-    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
+    @SuppressWarnings("RestrictTo")
     @NonNull
     public ListenableFuture<WaterMaterial> createWaterMaterial(boolean isAlphaMapVersion) {
         long materialToken = mNextMaterialId++;
@@ -699,7 +685,7 @@ public class FakeImpressApi implements ImpressApi {
     @Nullable
     private GltfNodeData getGltfNodeData(int impressNode) {
         for (Map.Entry<GltfNodeData, GltfNodeData> pair : mImpressNodes.entrySet()) {
-            if (pair.getKey().mEntityId == impressNode) {
+            if (pair.getKey().entityId == impressNode) {
                 return pair.getKey();
             }
         }

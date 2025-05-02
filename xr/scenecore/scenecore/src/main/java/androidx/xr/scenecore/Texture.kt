@@ -17,6 +17,7 @@
 package androidx.xr.scenecore
 
 import androidx.annotation.MainThread
+import androidx.annotation.RestrictTo
 import androidx.concurrent.futures.ResolvableFuture
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.JxrPlatformAdapter
@@ -25,6 +26,7 @@ import com.google.common.util.concurrent.ListenableFuture
 
 /** [Texture] represents a texture that can be used with materials. */
 @Suppress("NotCloseable")
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public open class Texture
 internal constructor(
     internal val texture: RtTextureResource,
@@ -86,13 +88,11 @@ internal constructor(
          *
          * @param session The [Session] to use for loading the model.
          * @param name The URL or asset-relative path of a texture to be loaded
-         * @param sampler The [TextureSampler] for the texture being created.
          * @return a ListenableFuture<Texture>. Listeners will be called on the main thread if
          *   Runnable::run is supplied.
          */
         @MainThread
         @JvmStatic
-        @Suppress("AsyncSuffixFuture")
         public fun create(
             session: Session,
             name: String,

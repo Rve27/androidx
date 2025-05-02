@@ -17,6 +17,7 @@
 package androidx.xr.scenecore
 
 import androidx.annotation.MainThread
+import androidx.annotation.RestrictTo
 import androidx.concurrent.futures.ResolvableFuture
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.ExrImageResource as RtExrImage
@@ -24,7 +25,7 @@ import androidx.xr.runtime.internal.JxrPlatformAdapter
 import com.google.common.util.concurrent.ListenableFuture
 
 /** Interface for image formats in SceneCore. */
-public interface Image
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Image
 
 /**
  * ExrImage represents an EXR Image resource in SceneCore. EXR images are used by the [Environment]
@@ -32,6 +33,7 @@ public interface Image
  */
 // TODO(b/319269278): Make this and GltfModel derive from a common Resource base class which has
 //                    async helpers.
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class ExrImage
 internal constructor(internal val image: RtExrImage, internal val session: Session? = null) :
     Image {
@@ -103,7 +105,6 @@ internal constructor(internal val image: RtExrImage, internal val session: Sessi
          */
         @MainThread
         @JvmStatic
-        @Suppress("AsyncSuffixFuture")
         public fun create(session: Session, name: String): ListenableFuture<ExrImage> {
             return ExrImage.createAsync(session.platformAdapter, name, session)
         }
@@ -124,7 +125,6 @@ internal constructor(internal val image: RtExrImage, internal val session: Sessi
          */
         @MainThread
         @JvmStatic
-        @Suppress("AsyncSuffixFuture")
         public fun create(
             session: Session,
             assetData: ByteArray,

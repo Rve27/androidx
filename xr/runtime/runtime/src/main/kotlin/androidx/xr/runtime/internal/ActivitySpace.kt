@@ -71,7 +71,6 @@ public interface ActivitySpace : SystemSpaceEntity {
      *   something and where relative to the given ActivityPose. Listeners will be called on the
      *   main thread if Runnable::run is supplied.
      */
-    @Suppress("AsyncSuffixFuture")
     public fun hitTestRelativeToActivityPose(
         origin: Vector3,
         direction: Vector3,

@@ -17,6 +17,7 @@
 package androidx.xr.compose.subspace
 
 import android.view.Surface
+import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -36,6 +37,7 @@ private const val DEFAULT_SIZE_PX = 400
  * [SpatialExternalSurfaceScope] is a scoped environment that provides the [Surface] associated with
  * a [SpatialExternalSurface]
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public interface SpatialExternalSurfaceScope {
     /**
      * Invoked only one time when the Surface is created. This will execute before any layout or
@@ -72,6 +74,7 @@ private class SpatialExternalSurfaceScopeInstance(private val entity: CoreSurfac
 
 /** Mode for SpatialExternalSurface display. */
 @JvmInline
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public value class StereoMode private constructor(public val value: Int) {
     public companion object {
         /** Each eye will see the entire surface (no separation). */
@@ -107,6 +110,7 @@ public value class StereoMode private constructor(public val value: Int) {
  */
 @Composable
 @SubspaceComposable
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun SpatialExternalSurface(
     stereoMode: StereoMode,
     modifier: SubspaceModifier = SubspaceModifier,

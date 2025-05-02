@@ -17,6 +17,7 @@
 package androidx.xr.compose.spatial
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RestrictTo
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloat
@@ -71,6 +72,7 @@ import kotlinx.coroutines.launch
  *   [SpatialElevationLevel.DialogDefault].
  * @see [SpatialDialog]
  */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class SpatialDialogProperties(
     @get:Suppress("GetterSetterNames") public val dismissOnBackPress: Boolean = true,
     @get:Suppress("GetterSetterNames") public val dismissOnClickOutside: Boolean = true,
@@ -140,6 +142,7 @@ private fun SpatialDialogProperties.toBaseDialogProperties() =
  * @param content the content of the dialog.
  */
 @Composable
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun SpatialDialog(
     onDismissRequest: () -> Unit,
     properties: SpatialDialogProperties = SpatialDialogProperties(),
