@@ -23,6 +23,7 @@
  */
 
 
+import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 import androidx.build.PlatformIdentifier
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -226,5 +227,6 @@ androidx {
     description = "Android Room-Runtime"
     legacyDisableKotlinStrictApiMode = true
     metalavaK2UastEnabled = false
+    kotlinTarget = KotlinTarget.KOTLIN_2_1
 }
 
