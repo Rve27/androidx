@@ -28,8 +28,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.RemoteViews
+import androidx.annotation.CheckResult
 import androidx.annotation.DoNotInline
+import androidx.annotation.IntDef
 import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
 import androidx.collection.IntSet
@@ -317,19 +320,21 @@ class GlanceAppWidgetManager(private val context: Context) {
      * @param widgetCategories the widget categories for which to set previews. Each element of this
      *   set must be a combination of [WIDGET_CATEGORY_HOME_SCREEN], [WIDGET_CATEGORY_KEYGUARD], or
      *   [WIDGET_CATEGORY_SEARCHBOX].
-     * @return true if the preview was successfully updated, false if otherwise.
-     *   [AppWidgetManager.setWidgetPreview] will return false when the caller has hit a
-     *   system-defined rate limit on setting previews for a particular provider. In this case, you
-     *   may opt to schedule a task in the future to try again, if necessary.
+     * @return [SET_WIDGET_PREVIEWS_RESULT_SUCCESS] if the preview was successfully updated. Returns
+     *   [SET_WIDGET_PREVIEWS_RESULT_RATE_LIMITED] when the caller has hit a system-defined rate
+     *   limit on setting previews for a particular provider. In this case, you may opt to schedule
+     *   a task in the future to try again, if necessary.
+     * @sample androidx.glance.appwidget.samples.setWidgetPreviews
      */
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+    @CheckResult
     suspend fun setWidgetPreviews(
         receiver: KClass<out GlanceAppWidgetReceiver>,
         widgetCategories: IntSet =
             intSetOf(
                 WIDGET_CATEGORY_HOME_SCREEN or WIDGET_CATEGORY_KEYGUARD or WIDGET_CATEGORY_SEARCHBOX
             ),
-    ): Boolean {
+    ): @SetWidgetPreviewsResult Int {
         val glanceAppWidget =
             (receiver.java.constructors.first { it.parameters.isEmpty() }.newInstance()
                     as GlanceAppWidgetReceiver)
@@ -341,14 +346,29 @@ class GlanceAppWidgetManager(private val context: Context) {
             } else {
                 null
             }
-        return widgetCategories.all { category ->
-            val preview = glanceAppWidget.composeForPreview(context, category, providerInfo)
-            AppWidgetManagerApi35Impl.setWidgetPreview(
-                appWidgetManager,
-                componentName,
-                category,
-                preview,
-            )
+        val success =
+            widgetCategories.all { category ->
+                val preview = glanceAppWidget.composeForPreview(context, category, providerInfo)
+                val result =
+                    AppWidgetManagerApi35Impl.setWidgetPreview(
+                        appWidgetManager,
+                        componentName,
+                        category,
+                        preview,
+                    )
+                if (!result) {
+                    Log.w(
+                        TAG,
+                        "setWidgetPreview call for $componentName with categories $category was " +
+                            "rate-limited"
+                    )
+                }
+                result
+            }
+        return if (success) {
+            SET_WIDGET_PREVIEWS_RESULT_SUCCESS
+        } else {
+            SET_WIDGET_PREVIEWS_RESULT_RATE_LIMITED
         }
     }
 
@@ -426,7 +446,24 @@ class GlanceAppWidgetManager(private val context: Context) {
         dataStore.edit { it.clear() }
     }
 
-    private companion object {
+    /** Annotation that describes which values can be returned from [setWidgetPreviews] */
+    @IntDef(SET_WIDGET_PREVIEWS_RESULT_SUCCESS, SET_WIDGET_PREVIEWS_RESULT_RATE_LIMITED)
+    @Retention(AnnotationRetention.SOURCE)
+    @Target(AnnotationTarget.TYPE)
+    internal annotation class SetWidgetPreviewsResult
+
+    companion object {
+        /**
+         * Returned from [setWidgetPreviews] to indicate that the previews were set successfully.
+         */
+        const val SET_WIDGET_PREVIEWS_RESULT_SUCCESS = 0
+
+        /**
+         * Return from [setWidgetPreviews] to indicate that the operation was not successful due to
+         * a rate limit.
+         */
+        const val SET_WIDGET_PREVIEWS_RESULT_RATE_LIMITED = 1
+
         private val Context.appManagerDataStore by
             preferencesDataStore(name = "GlanceAppWidgetManager-$processName")
 
@@ -516,18 +553,21 @@ class GlanceAppWidgetManager(private val context: Context) {
  * @param widgetCategories the widget categories for which to set previews. Each element of this set
  *   must be a combination of [WIDGET_CATEGORY_HOME_SCREEN], [WIDGET_CATEGORY_KEYGUARD], or
  *   [WIDGET_CATEGORY_SEARCHBOX].
- * @return true if the preview was successfully updated, false if otherwise.
- *   [AppWidgetManager.setWidgetPreview] will return false when the caller has hit a system-defined
- *   rate limit on setting previews for a particular provider. In this case, you may opt to schedule
- *   a task in the future to try again, if necessary.
+ * @return [GlanceAppWidgetManager.SET_WIDGET_PREVIEWS_RESULT_SUCCESS] if the preview was
+ *   successfully updated. Returns [GlanceAppWidgetManager.SET_WIDGET_PREVIEWS_RESULT_RATE_LIMITED]
+ *   when the caller has hit a system-defined rate limit on setting previews for a particular
+ *   provider. In this case, you may opt to schedule a task in the future to try again, if
+ *   necessary.
+ * @sample androidx.glance.appwidget.samples.setWidgetPreviews
  */
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@CheckResult
 suspend inline fun <reified T : GlanceAppWidgetReceiver> GlanceAppWidgetManager.setWidgetPreviews(
     widgetCategories: IntSet =
         intSetOf(
             WIDGET_CATEGORY_HOME_SCREEN or WIDGET_CATEGORY_KEYGUARD or WIDGET_CATEGORY_SEARCHBOX
         ),
-): Boolean {
+): @GlanceAppWidgetManager.SetWidgetPreviewsResult Int {
     return setWidgetPreviews(T::class, widgetCategories)
 }
 
