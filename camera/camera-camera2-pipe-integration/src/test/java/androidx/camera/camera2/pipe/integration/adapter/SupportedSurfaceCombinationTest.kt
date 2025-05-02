@@ -770,7 +770,7 @@ class SupportedSurfaceCombinationTest {
                 ImageFormat.PRIVATE,
                 RESOLUTION_720P
             )
-        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.PRIV, ConfigSize.s720p)
+        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.PRIV, ConfigSize.S720P_16_9)
         assertThat(surfaceConfig).isEqualTo(expectedSurfaceConfig)
     }
 
@@ -787,7 +787,7 @@ class SupportedSurfaceCombinationTest {
                 ImageFormat.YUV_420_888,
                 RESOLUTION_720P
             )
-        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.YUV, ConfigSize.s720p)
+        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.YUV, ConfigSize.S720P_16_9)
         assertThat(surfaceConfig).isEqualTo(expectedSurfaceConfig)
     }
 
@@ -804,7 +804,7 @@ class SupportedSurfaceCombinationTest {
                 ImageFormat.JPEG,
                 RESOLUTION_720P
             )
-        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.JPEG, ConfigSize.s720p)
+        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.JPEG, ConfigSize.S720P_16_9)
         assertThat(surfaceConfig).isEqualTo(expectedSurfaceConfig)
     }
 
@@ -821,7 +821,7 @@ class SupportedSurfaceCombinationTest {
                 ImageFormat.PRIVATE,
                 RESOLUTION_1440P
             )
-        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.PRIV, ConfigSize.s1440p)
+        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.PRIV, ConfigSize.S1440P_4_3)
         assertThat(surfaceConfig).isEqualTo(expectedSurfaceConfig)
     }
 
@@ -838,7 +838,7 @@ class SupportedSurfaceCombinationTest {
                 ImageFormat.YUV_420_888,
                 RESOLUTION_1440P
             )
-        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.YUV, ConfigSize.s1440p)
+        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.YUV, ConfigSize.S1440P_4_3)
         assertThat(surfaceConfig).isEqualTo(expectedSurfaceConfig)
     }
 
@@ -855,7 +855,7 @@ class SupportedSurfaceCombinationTest {
                 ImageFormat.JPEG,
                 RESOLUTION_1440P
             )
-        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.JPEG, ConfigSize.s1440p)
+        val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.JPEG, ConfigSize.S1440P_4_3)
         assertThat(surfaceConfig).isEqualTo(expectedSurfaceConfig)
     }
 

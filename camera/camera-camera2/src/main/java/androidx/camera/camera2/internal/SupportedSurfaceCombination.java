@@ -64,6 +64,7 @@ import androidx.camera.core.impl.ImageFormatConstants;
 import androidx.camera.core.impl.StreamSpec;
 import androidx.camera.core.impl.SurfaceCombination;
 import androidx.camera.core.impl.SurfaceConfig;
+import androidx.camera.core.impl.SurfaceConfig.ConfigSource;
 import androidx.camera.core.impl.SurfaceSizeDefinition;
 import androidx.camera.core.impl.UseCaseConfig;
 import androidx.camera.core.impl.utils.AspectRatioUtil;
@@ -352,7 +353,9 @@ final class SupportedSurfaceCombination {
                 cameraMode,
                 imageFormat,
                 size,
-                getUpdatedSurfaceSizeDefinitionByFormat(imageFormat));
+                getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                // FEATURE_COMBINATION_TABLE N/A for the code flows leading to this call
+                ConfigSource.CAPTURE_SESSION_TABLES);
     }
 
     private int getMaxFrameRate(int imageFormat, @NonNull Size size, boolean isHighSpeedOn) {
@@ -1105,7 +1108,9 @@ final class SupportedSurfaceCombination {
                             featureSettings.getCameraMode(),
                             imageFormat,
                             minSize,
-                            getUpdatedSurfaceSizeDefinitionByFormat(imageFormat)));
+                            getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                            // Feature combo src not needed for the code flows leading to this call
+                            ConfigSource.CAPTURE_SESSION_TABLES));
         }
 
         // This method doesn't use feature combo resolutions since feature combo API doesn't
@@ -1172,9 +1177,11 @@ final class SupportedSurfaceCombination {
                     new HashMap<>();
             for (Size size : newUseCaseConfigsSupportedSizeMap.get(useCaseConfig)) {
                 int imageFormat = useCaseConfig.getInputFormat();
+                // TODO: b/414472116 - Filter sizes with ConfigSource.FEATURE_COMBINATION_TABLE too
                 SurfaceConfig.ConfigSize configSize = SurfaceConfig.transformSurfaceConfig(
                         featureSettings.getCameraMode(), imageFormat, size,
-                        getUpdatedSurfaceSizeDefinitionByFormat(imageFormat)).getConfigSize();
+                        getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                        ConfigSource.CAPTURE_SESSION_TABLES).getConfigSize();
                 int maxFrameRate = Integer.MAX_VALUE;
                 // Filters the sizes with frame rate only if there is target FPS setting
                 if (targetFpsRange != null) {
@@ -1233,9 +1240,6 @@ final class SupportedSurfaceCombination {
             @Nullable Map<Integer, AttachedSurfaceInfo> surfaceConfigIndexAttachedSurfaceInfoMap,
             @Nullable Map<Integer, UseCaseConfig<?>> surfaceConfigIndexUseCaseConfigMap,
             boolean checkViaFeatureComboQuery) {
-        // TODO: b/413946820 Implement the logic to find the correct SurfaceConfig list for feature
-        //  combination resolutions
-
         List<SurfaceConfig> surfaceConfigList = new ArrayList<>();
         for (AttachedSurfaceInfo attachedSurfaceInfo : attachedSurfaces) {
             surfaceConfigList.add(attachedSurfaceInfo.getSurfaceConfig());
@@ -1252,11 +1256,16 @@ final class SupportedSurfaceCombination {
                     newUseCaseConfigs.get(useCasesPriorityOrder.get(i));
             int imageFormat = newUseCase.getInputFormat();
             // add new use case/size config to list of surfaces
+            ConfigSource configSource = ConfigSource.CAPTURE_SESSION_TABLES;
+            if (checkViaFeatureComboQuery) {
+                configSource = ConfigSource.FEATURE_COMBINATION_TABLE;
+            }
             SurfaceConfig surfaceConfig = SurfaceConfig.transformSurfaceConfig(
                     cameraMode,
                     imageFormat,
                     size,
-                    getUpdatedSurfaceSizeDefinitionByFormat(imageFormat));
+                    getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                    configSource);
             surfaceConfigList.add(surfaceConfig);
             if (surfaceConfigIndexUseCaseConfigMap != null) {
                 surfaceConfigIndexUseCaseConfigMap.put(surfaceConfigList.size() - 1, newUseCase);

@@ -56,6 +56,7 @@ import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.SurfaceCombination
 import androidx.camera.core.impl.SurfaceConfig
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize
+import androidx.camera.core.impl.SurfaceConfig.ConfigSource
 import androidx.camera.core.impl.SurfaceSizeDefinition
 import androidx.camera.core.impl.UseCaseConfig
 import androidx.camera.core.impl.utils.AspectRatioUtil
@@ -270,7 +271,9 @@ public class SupportedSurfaceCombination(
             cameraMode,
             imageFormat,
             size,
-            getUpdatedSurfaceSizeDefinitionByFormat(imageFormat)
+            getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+            // FEATURE_COMBINATION_TABLE N/A for the code flows leading to this call
+            ConfigSource.CAPTURE_SESSION_TABLES
         )
     }
 
@@ -579,7 +582,9 @@ public class SupportedSurfaceCombination(
                     featureSettings.cameraMode,
                     imageFormat,
                     minSize,
-                    getUpdatedSurfaceSizeDefinitionByFormat(imageFormat)
+                    getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                    // FEATURE_COMBINATION_TABLE not needed for the code flows leading to this call
+                    ConfigSource.CAPTURE_SESSION_TABLES
                 )
             )
         }
@@ -788,12 +793,14 @@ public class SupportedSurfaceCombination(
             val configSizeUniqueMaxFpsMap = mutableMapOf<ConfigSize, MutableSet<Int>>()
             for (size in newUseCaseConfigsSupportedSizeMap[useCaseConfig]!!) {
                 val imageFormat = useCaseConfig.inputFormat
+                // TODO: b/413849280 - Filter sizes with ConfigSource.FEATURE_COMBINATION_TABLE
                 val configSize =
                     SurfaceConfig.transformSurfaceConfig(
                             featureSettings.cameraMode,
                             imageFormat,
                             size,
-                            getUpdatedSurfaceSizeDefinitionByFormat(imageFormat)
+                            getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                            ConfigSource.CAPTURE_SESSION_TABLES
                         )
                         .configSize
                 // Filters the sizes with frame rate only if there is target FPS setting
@@ -1109,9 +1116,6 @@ public class SupportedSurfaceCombination(
         surfaceConfigIndexUseCaseConfigMap: MutableMap<Int, UseCaseConfig<*>>?,
         checkViaFeatureComboQuery: Boolean,
     ): List<SurfaceConfig> {
-        // TODO: b/413946820 Implement the logic to find the correct SurfaceConfig list for feature
-        //  combination resolutions
-
         val surfaceConfigList: MutableList<SurfaceConfig> = mutableListOf()
         for (attachedSurfaceInfo in attachedSurfaces) {
             surfaceConfigList.add(attachedSurfaceInfo.surfaceConfig)
@@ -1131,7 +1135,12 @@ public class SupportedSurfaceCombination(
                     cameraMode,
                     imageFormat,
                     size,
-                    getUpdatedSurfaceSizeDefinitionByFormat(imageFormat)
+                    getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                    if (checkViaFeatureComboQuery) {
+                        ConfigSource.FEATURE_COMBINATION_TABLE
+                    } else {
+                        ConfigSource.CAPTURE_SESSION_TABLES
+                    }
                 )
             surfaceConfigList.add(surfaceConfig)
             if (surfaceConfigIndexUseCaseConfigMap != null) {
