@@ -217,6 +217,7 @@ import androidx.compose.material3.samples.SimpleTopAppBar
 import androidx.compose.material3.samples.SimpleTopAppBarWithAdaptiveActions
 import androidx.compose.material3.samples.SimpleTopAppBarWithSubtitle
 import androidx.compose.material3.samples.SingleSelectConnectedButtonGroupSample
+import androidx.compose.material3.samples.SingleSelectConnectedButtonGroupWithFlowLayoutSample
 import androidx.compose.material3.samples.SliderSample
 import androidx.compose.material3.samples.SliderWithCustomThumbSample
 import androidx.compose.material3.samples.SliderWithCustomTrackAndThumbSample
@@ -494,6 +495,13 @@ val ButtonGroupsExamples =
             sourceUrl = ButtonGroupsExampleSourceUrl,
         ) {
             SingleSelectConnectedButtonGroupSample()
+        },
+        Example(
+            name = "SingleSelectConnectedButtonGroupWithFlowLayoutSample",
+            description = ButtonGroupsExampleDescription,
+            sourceUrl = ButtonGroupsExampleSourceUrl,
+        ) {
+            SingleSelectConnectedButtonGroupWithFlowLayoutSample()
         },
         Example(
             name = "MultiSelectConnectedButtonGroupSample",
