@@ -1323,6 +1323,8 @@ includeProject(":noto-emoji-compat-flatbuffers", new File(externalRoot, "noto-fo
 includeProject(":compose-hero-benchmarks", new File(externalRoot, "compose-hero-benchmarks"), [BuildType.COMPOSE])
 includeProject(":compose-hero-benchmarks:poxedex-compose", new File(externalRoot, "compose-hero-benchmarks/poxedex-compose"), [BuildType.COMPOSE])
 includeProject(":compose-hero-benchmarks:poxedex-compose:app", new File(externalRoot, "compose-hero-benchmarks/poxedex-compose/app"), [BuildType.COMPOSE])
+includeProject(":compose-hero-benchmarks:pokedex-views", new File(externalRoot, "compose-hero-benchmarks/pokedex-views"), [BuildType.COMPOSE])
+includeProject(":compose-hero-benchmarks:pokedex-views:app", new File(externalRoot, "compose-hero-benchmarks/pokedex-views/app"), [BuildType.COMPOSE])
 
 if (isAllProjects()) {
     includeProject(":docs-tip-of-tree")

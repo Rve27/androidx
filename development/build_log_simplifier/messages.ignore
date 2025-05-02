@@ -394,3 +394,6 @@ WARN: \$OUT_DIR/androidx/docs\-public/build/unzippedJvmSources/androidx/biometri
 .*This code uses error suppression for '(ABSTRACT_MEMBER_NOT_IMPLEMENTED|CANNOT_OVERRIDE_INVISIBLE_MEMBER|INVISIBLE_REFERENCE|OPT_IN_MARKER_ON_WRONG_TARGET|UNSAFE_CALL|WRONG_ANNOTATION_TARGET)'.*
 # Remove when https://youtrack.jetbrains.com/issue/KT-70013 is fixed, o/w anytime a new entry is added to this list, this message will be printed.
 Calculating task graph as configuration cache cannot be reused because the set of paths ignored in file-system-check input tracking.*
+# b/414775532
+# > Task :compose-hero-benchmarks:poxedex-compose:app:kspReleaseKotlin
+w: \[ksp\] LibraryGlideModules \[\] are included more than once, keeping only one\!

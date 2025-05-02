@@ -40,4 +40,5 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.4.1")
 
     implementation(project(":compose-hero-benchmarks:poxedex-compose:app"))
+    implementation(project(":compose-hero-benchmarks:pokedex-views:app"))
 }
