@@ -23,8 +23,12 @@ plugins {
 dependencies {
     api(libs.jspecify)
     api(project(":camera:camera-core"))
+    api("androidx.arch.core:core-common:2.2.0")
+    api(libs.androidx.core)
+    api(libs.guavaListenableFuture)
     implementation(libs.autoValueAnnotations)
     implementation("androidx.concurrent:concurrent-futures:1.0.0")
+    implementation(libs.androidx.annotation)
 
     annotationProcessor(libs.autoValue)
 
@@ -34,6 +38,9 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.testRules)
     testImplementation(libs.testCore)
+    testImplementation("org.robolectric:annotations:4.14")
+    testImplementation("org.robolectric:shadowapi:4.14")
+    testImplementation(libs.junit)
 
     androidTestImplementation(libs.testExtJunit)
     androidTestImplementation(libs.testCore)
@@ -47,6 +54,10 @@ dependencies {
     androidTestImplementation(libs.kotlinStdlib)
     androidTestImplementation(libs.kotlinCoroutinesAndroid)
     androidTestImplementation("androidx.concurrent:concurrent-futures-ktx:1.1.0")
+    androidTestImplementation(libs.guavaAndroid)
+    androidTestImplementation(libs.junit)
+    androidTestImplementation(libs.kotlinCoroutinesCore)
+    androidTestImplementation(libs.testMonitor)
 }
 android {
     compileSdk = 35
