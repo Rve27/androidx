@@ -46,14 +46,12 @@ import androidx.compose.ui.graphics.PathMeasure
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.node.DelegatingNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.invalidateDraw
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.fastRoundToInt
@@ -556,7 +554,10 @@ private class DeterminateCircularWavyProgressNode(
                 val targetAmplitude = amplitude(currentProgress).fastCoerceIn(0f, 1f)
 
                 amplitudeAnimatable
-                    ?: Animatable(initialValue = 0f).also { amplitudeAnimatable = it }
+                    ?: Animatable(initialValue = targetAmplitude).also {
+                        amplitudeAnimatable = it
+                        amplitudeState.floatValue = targetAmplitude
+                    }
 
                 // Launch amplitude animation if target changed and node attached/active
                 if (
@@ -639,27 +640,13 @@ private class DeterminateCircularWavyProgressNode(
                         stroke = stroke,
                         trackStroke = trackStroke
                     )
-
-                    if (layoutDirection == LayoutDirection.Rtl) {
-                        // Scaling on the X will flip the drawing for RTL
-                        scale(scaleX = -1f, scaleY = 1f) {
-                            drawCircularIndicator(
-                                color = color,
-                                trackColor = trackColor,
-                                stroke = stroke,
-                                trackStroke = trackStroke,
-                                drawingCache = progressDrawingCache
-                            )
-                        }
-                    } else {
-                        drawCircularIndicator(
-                            color = color,
-                            trackColor = trackColor,
-                            stroke = stroke,
-                            trackStroke = trackStroke,
-                            drawingCache = progressDrawingCache
-                        )
-                    }
+                    drawCircularIndicator(
+                        color = color,
+                        trackColor = trackColor,
+                        stroke = stroke,
+                        trackStroke = trackStroke,
+                        drawingCache = progressDrawingCache
+                    )
                 }
             }
         )
@@ -853,11 +840,6 @@ private class IndeterminateCircularWavyProgressNode(
                     // Draw
                     withTransform(
                         transformBlock = {
-                            // RTL flip before rotation to effectively reverse the rotation
-                            // direction
-                            if (this@onDrawWithContent.layoutDirection == LayoutDirection.Rtl) {
-                                scale(scaleX = -1f, scaleY = 1f, pivot = size.center)
-                            }
                             // Apply rotation
                             rotate(
                                 degrees = currentGlobalRotation + currentAdditionalRotation + 90f
