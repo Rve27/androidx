@@ -43,10 +43,12 @@ androidXMultiplatform {
                 api(project(":navigation3:navigation3-runtime"))
                 implementation(libs.kotlinStdlib)
                 implementation("androidx.collection:collection:1.4.5")
-                implementation("androidx.compose.runtime:runtime:1.7.5")
-                implementation("androidx.compose.runtime:runtime-saveable:1.7.5")
-                implementation("androidx.lifecycle:lifecycle-runtime:2.8.7")
-                implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+                implementation(project(":compose:animation:animation"))
+                implementation(project(":compose:runtime:runtime"))
+                implementation(project(":compose:runtime:runtime-saveable"))
+                implementation(project(":compose:ui:ui"))
+                implementation(project(":lifecycle:lifecycle-runtime"))
+                implementation(project(":lifecycle:lifecycle-runtime-compose"))
                 implementation(project(":savedstate:savedstate"))
                 implementation(project(":savedstate:savedstate-compose"))
             }
@@ -69,10 +71,8 @@ androidXMultiplatform {
         androidMain {
             dependsOn(jvmMain)
             dependencies {
-                api("androidx.compose.animation:animation:1.7.5")
-                api("androidx.compose.ui:ui:1.7.5")
-                implementation("androidx.activity:activity-compose:1.9.3")
                 implementation("androidx.annotation:annotation:1.8.0")
+                implementation(project(":activity:activity-compose"))
             }
         }
 
@@ -108,7 +108,7 @@ androidXMultiplatform {
 }
 
 android {
-    compileSdk = 35
+    compileSdk = 36
     namespace = "androidx.navigation3.ui"
 }
 

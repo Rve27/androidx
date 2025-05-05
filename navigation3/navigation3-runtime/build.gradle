@@ -42,9 +42,9 @@ androidXMultiplatform {
             dependencies {
                 implementation(libs.kotlinStdlib)
                 implementation("androidx.collection:collection:1.4.5")
-                implementation("androidx.compose.runtime:runtime:1.7.5")
-                implementation("androidx.compose.runtime:runtime-saveable:1.7.5")
-                implementation("androidx.lifecycle:lifecycle-runtime:2.8.7")
+                implementation(project(":compose:runtime:runtime"))
+                implementation(project(":compose:runtime:runtime-saveable"))
+                implementation(project(":lifecycle:lifecycle-runtime"))
                 implementation(project(":savedstate:savedstate"))
                 implementation(project(":savedstate:savedstate-compose"))
             }
