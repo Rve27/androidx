@@ -46,6 +46,7 @@ androidXMultiplatform {
                 implementation("androidx.compose.runtime:runtime:1.7.5")
                 implementation("androidx.compose.runtime:runtime-saveable:1.7.5")
                 implementation("androidx.lifecycle:lifecycle-runtime:2.8.7")
+                implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
                 implementation(project(":savedstate:savedstate"))
                 implementation(project(":savedstate:savedstate-compose"))
             }

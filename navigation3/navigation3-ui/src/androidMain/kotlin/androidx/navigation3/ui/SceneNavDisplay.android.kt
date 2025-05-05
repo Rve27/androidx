@@ -31,15 +31,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.ProvidableCompositionLocal
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -47,15 +40,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.util.fastForEachReversed
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation3.runtime.DecoratedNavEntryProvider
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
@@ -66,7 +53,6 @@ import androidx.navigation3.ui.SceneNavDisplay.EXIT_TRANSITION_KEY
 import androidx.navigation3.ui.SceneNavDisplay.POP_ENTER_TRANSITION_KEY
 import androidx.navigation3.ui.SceneNavDisplay.POP_EXIT_TRANSITION_KEY
 import kotlin.reflect.KClass
-import kotlin.text.get
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
@@ -102,7 +88,7 @@ public object SceneNavDisplay {
  *
  * The [Scene]s are calculated with the given [SceneStrategy], which may be an assembled delegated
  * chain of [SceneStrategy]s. If no [Scene] is calculated, the fallback will be to a
- * [androidx.navigation3.ui.SinglePaneSceneStrategy].
+ * [SinglePaneSceneStrategy].
  *
  * It is allowable for different [Scene]s to render the same [NavEntry]s, perhaps on some conditions
  * as determined by the [sceneStrategy] based on window size, form factor, other arbitrary logic.
@@ -421,218 +407,4 @@ private fun <T : Any> isPop(oldBackStack: List<T>, newBackStack: List<T>): Boole
     // if newBackStack never diverged from oldBackStack, then it is a clean subset of the oldStack
     // and is a pop
     return divergingIndex == null && newBackStack.size != oldBackStack.size
-}
-
-/**
- * A [NavEntryDecorator] that wraps each entry in a [movableContentOf] to allow nav displays to
- * arbitrarily place entries in different places in the composable call hierarchy.
- *
- * This should likely be the first [NavEntryDecorator] to ensure that other
- * [NavEntryDecorator.DecorateEntry] calls that are stateful are moved properly inside the
- * [movableContentOf].
- */
-internal object MovableContentNavEntryDecorator : NavEntryDecorator {
-
-    @Composable
-    override fun DecorateBackStack(backStack: List<Any>, content: @Composable (() -> Unit)) {
-        val backStackKeys = backStack.toSet()
-
-        // This is an intricate dance to create a movableContentOf for each entry that is scoped
-        // to the backstack, that calls the correct updated content.
-        // First we associate each key in the backstack with a MutableState that will contain
-        // the actual content of the entry, as updated in DecorateEntry.
-        // The MutableState's remembered lifecycle precisely matches when its key is in the
-        // backstack.
-        val movableContentContentHolderMap: Map<Any, MutableState<@Composable () -> Unit>> =
-            backStackKeys.associateWith { key ->
-                key(key) {
-                    remember {
-                        mutableStateOf(
-                            @Composable {
-                                error(
-                                    "Should not be called, this should always be updated in" +
-                                        "DecorateEntry with the real content"
-                                )
-                            }
-                        )
-                    }
-                }
-            }
-
-        // Second we create another map containing the movable contents themselves, again
-        // by associating the backstack key with a remembered movableContentOf
-        // The critical thing here is that the movableContentOf's remembered lifecycle precisely
-        // matches when its key is in the backstack.
-        val movableContentHolderMap: Map<Any, @Composable () -> Unit> =
-            backStackKeys.associateWith { key ->
-                key(key) {
-                    remember {
-                        movableContentOf {
-                            // In case the key is removed from the backstack while this is still
-                            // being rendered, we remember the MutableState directly to allow
-                            // rendering it while we are animating out.
-                            remember { movableContentContentHolderMap.getValue(key) }.value()
-                        }
-                    }
-                }
-            }
-        CompositionLocalProvider(
-            LocalMovableContentNavLocalInfo provides
-                MovableContentNavLocalInfo(movableContentHolderMap, movableContentContentHolderMap),
-            content = content,
-        )
-    }
-
-    @Composable
-    override fun <T : Any> DecorateEntry(entry: NavEntry<T>) {
-        val movableContentNavLocalInfo = LocalMovableContentNavLocalInfo.current
-        key(entry.key) {
-            // In case the key is removed from the backstack while this is still
-            // being rendered, we remember the MutableState directly to allow
-            // updating it while we are animating out.
-            val movableContentContentHolder = remember {
-                movableContentNavLocalInfo.movableContentContentHolderMap.getValue(entry.key)
-            }
-            // Update the state holder with the actual entry content
-            movableContentContentHolder.value = { entry.content(entry.key) }
-            // In case the key is removed from the backstack while this is still
-            // being rendered, we remember the movableContent directly to allow
-            // rendering it while we are animating out.
-            val movableContentHolder = remember {
-                movableContentNavLocalInfo.movableContentHolderMap.getValue(entry.key)
-            }
-            // Finally, render the entry content via the movableContentOf
-            movableContentHolder()
-        }
-    }
-}
-
-internal val LocalMovableContentNavLocalInfo =
-    staticCompositionLocalOf<MovableContentNavLocalInfo> {
-        error(
-            "CompositionLocal LocalMovableContentNavLocalInfo not present. You must call " +
-                "DecorateBackStack before calling DecorateEntry."
-        )
-    }
-
-@Immutable
-internal class MovableContentNavLocalInfo(
-    val movableContentHolderMap: Map<Any, @Composable () -> Unit>,
-    val movableContentContentHolderMap: Map<Any, MutableState<@Composable () -> Unit>>
-)
-
-/**
- * A [NavEntryDecorator] that wraps each entry in a shared element that is controlled by the
- * [Scene].
- */
-internal object RenderCurrentEntriesOnlyDecorator : NavEntryDecorator {
-    @Composable
-    override fun <T : Any> DecorateEntry(entry: NavEntry<T>) {
-        if (LocalEntriesToRenderInCurrentScene.current.contains(entry.key)) {
-            entry.content(entry.key)
-        }
-    }
-}
-
-/**
- * The entry keys to render in the current [Scene], in the sense of the target of the animation for
- * an [AnimatedContent] that is transitioning between different scenes.
- */
-public val LocalEntriesToRenderInCurrentScene: ProvidableCompositionLocal<Set<Any>> =
-    compositionLocalOf<Set<Any>> {
-        throw IllegalStateException(
-            "Unexpected access to LocalEntriesToRenderInCurrentScene. You should only " +
-                "access LocalEntriesToRenderInCurrentScene inside a NavEntry passed " +
-                "to SceneNavDisplay."
-        )
-    }
-
-private val LocalTransitionAwareLifecycleNavLocalInfo =
-    compositionLocalOf<TransitionAwareLifecycleNavLocalInfo> {
-        error(
-            "CompositionLocal LocalTransitionAwareLifecycleNavLocalInfo not present. You must " +
-                "call DecorateBackStack before calling DecorateEntry."
-        )
-    }
-
-private class TransitionAwareLifecycleNavEntryDecorator : NavEntryDecorator {
-
-    var isSettled by mutableStateOf(true)
-
-    @Composable
-    override fun DecorateBackStack(backStack: List<Any>, content: @Composable (() -> Unit)) {
-        val localInfo = remember(backStack) { TransitionAwareLifecycleNavLocalInfo(backStack) }
-        CompositionLocalProvider(LocalTransitionAwareLifecycleNavLocalInfo provides localInfo) {
-            content.invoke()
-        }
-    }
-
-    @Composable
-    override fun <T : Any> DecorateEntry(entry: NavEntry<T>) {
-        val backStack = LocalTransitionAwareLifecycleNavLocalInfo.current.backStack
-        // TODO: Handle duplicate keys
-        val isInBackStack = entry.key in backStack
-        val maxLifecycle =
-            when {
-                isInBackStack && isSettled -> Lifecycle.State.RESUMED
-                isInBackStack && !isSettled -> Lifecycle.State.STARTED
-                else /* !isInBackStack */ -> Lifecycle.State.CREATED
-            }
-        LifecycleOwner(maxLifecycle = maxLifecycle) { entry.content.invoke(entry.key) }
-    }
-}
-
-private class TransitionAwareLifecycleNavLocalInfo(val backStack: List<Any>)
-
-@Composable
-private fun LifecycleOwner(
-    maxLifecycle: Lifecycle.State = Lifecycle.State.RESUMED,
-    parentLifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-    content: @Composable () -> Unit
-) {
-    val childLifecycleOwner = remember(parentLifecycleOwner) { ChildLifecycleOwner() }
-    // Pass LifecycleEvents from the parent down to the child
-    DisposableEffect(childLifecycleOwner, parentLifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            childLifecycleOwner.handleLifecycleEvent(event)
-        }
-
-        parentLifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose { parentLifecycleOwner.lifecycle.removeObserver(observer) }
-    }
-    // Ensure that the child lifecycle is capped at the maxLifecycle
-    LaunchedEffect(childLifecycleOwner, maxLifecycle) {
-        childLifecycleOwner.maxLifecycle = maxLifecycle
-    }
-    // Now install the LifecycleOwner as a composition local
-    CompositionLocalProvider(LocalLifecycleOwner provides childLifecycleOwner) { content.invoke() }
-}
-
-private class ChildLifecycleOwner : LifecycleOwner {
-    private val lifecycleRegistry = LifecycleRegistry(this)
-
-    override val lifecycle: Lifecycle
-        get() = lifecycleRegistry
-
-    var maxLifecycle: Lifecycle.State = Lifecycle.State.INITIALIZED
-        set(maxState) {
-            field = maxState
-            updateState()
-        }
-
-    private var parentLifecycleState: Lifecycle.State = Lifecycle.State.CREATED
-
-    fun handleLifecycleEvent(event: Lifecycle.Event) {
-        parentLifecycleState = event.targetState
-        updateState()
-    }
-
-    fun updateState() {
-        if (parentLifecycleState.ordinal < maxLifecycle.ordinal) {
-            lifecycleRegistry.currentState = parentLifecycleState
-        } else {
-            lifecycleRegistry.currentState = maxLifecycle
-        }
-    }
 }
