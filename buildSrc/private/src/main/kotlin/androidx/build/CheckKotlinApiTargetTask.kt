@@ -53,8 +53,8 @@ abstract class CheckKotlinApiTargetTask : DefaultTask() {
                 .filter { it.first.startsWith("kotlin-stdlib:") }
                 .map { it.first.substringAfter(":") to it.second }
                 .map { KotlinVersion.fromVersion(it.first.substringBeforeLast('.')) to it.second }
-                .filter { it.first != kotlinTarget.get() }
-                .map { it.second }
+                .filter { it.first > kotlinTarget.get() }
+                .map { "${it.second} (${it.first})" }
                 .toList()
 
         val outputFile = outputFile.get().asFile
@@ -63,11 +63,12 @@ abstract class CheckKotlinApiTargetTask : DefaultTask() {
         if (incompatibleConfigurations.isNotEmpty()) {
             val errorMessage =
                 incompatibleConfigurations.joinToString(
+                    separator = "\n - ",
                     prefix =
                         "The project's kotlin-stdlib target is ${kotlinTarget.get()} but these " +
-                            "configurations are pulling in different versions of kotlin-stdlib: ",
+                            "configurations are pulling in higher versions of kotlin-stdlib:\n - ",
                     postfix =
-                        "\nRun ./gradlew $projectPath:dependencies to see which dependency is " +
+                        "\n\nRun ./gradlew $projectPath:dependencies to see which dependency is " +
                             "pulling in the incompatible kotlin-stdlib"
                 )
             outputFile.writeText("FAILURE: $errorMessage")
