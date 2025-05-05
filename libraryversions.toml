@@ -205,11 +205,11 @@ BROWSER = { group = "androidx.browser", atomicGroupVersion = "versions.BROWSER" 
 BUILDSRC_TESTS_MAX_DEP_VERSIONS_DEP = { group = "androidx.buildSrc-tests-max-dep-versions-dep", atomicGroupVersion = "versions.BUILDSRC_TESTS", overrideInclude = [ ":buildSrc-tests:max-dep-versions:buildSrc-tests-max-dep-versions-dep" ] }
 BUILDSRC_TESTS_MAX_DEP_VERSIONS_MAIN = { group = "androidx.buildSrc-tests-max-dep-versions-main", atomicGroupVersion = "versions.BUILDSRC_TESTS", overrideInclude = [ ":buildSrc-tests:max-dep-versions:buildSrc-tests-max-dep-versions-main" ] }
 CAMERA = { group = "androidx.camera", atomicGroupVersion = "versions.CAMERA" }
+CAMERA_FEATURE_COMBINATION_QUERY = { group = "androidx.camera.featurecombinationquery", atomicGroupVersion = "versions.CAMERA_FEATURE_COMBINATION_QUERY" }
 CAMERA_MEDIA3 = { group = "androidx.camera.media3", atomicGroupVersion = "versions.CAMERA_MEDIA3" }
 CAMERA_PIPE = { group = "androidx.camera", atomicGroupVersion = "versions.CAMERA_PIPE", overrideInclude = [ ":camera:camera-camera2-pipe", ":camera:camera-camera2-pipe-integration" ] }
 CAMERA_TESTING = { group = "androidx.camera", atomicGroupVersion = "versions.CAMERA_TESTING", overrideInclude = [ ":camera:camera-testing" ] }
 CAMERA_VIEWFINDER = { group = "androidx.camera.viewfinder", atomicGroupVersion = "versions.CAMERA" }
-CAMERA_FEATURE_COMBINATION_QUERY = { group = "androidx.camera.featurecombinationquery", atomicGroupVersion = "versions.CAMERA_FEATURE_COMBINATION_QUERY" }
 CARDVIEW = { group = "androidx.cardview", atomicGroupVersion = "versions.CARDVIEW" }
 CAR_APP = { group = "androidx.car.app", atomicGroupVersion = "versions.CAR_APP" }
 COLLECTION = { group = "androidx.collection", atomicGroupVersion = "versions.COLLECTION" }
