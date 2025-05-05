@@ -22,6 +22,7 @@ import androidx.navigation3.runtime.NavEntry
 internal data class SinglePaneScene<T : Any>(
     override val key: T,
     val entry: NavEntry<T>,
+    override val previousEntries: List<NavEntry<T>>,
 ) : Scene<T> {
     override val entries: List<NavEntry<T>> = listOf(entry)
 
@@ -34,13 +35,10 @@ internal data class SinglePaneScene<T : Any>(
  */
 public class SinglePaneSceneStrategy<T : Any> : SceneStrategy<T> {
     @Composable
-    override fun calculateScene(entries: List<NavEntry<T>>): SceneStrategyResult<T> =
-        SceneStrategyResult(
-            scene =
-                SinglePaneScene(
-                    key = entries.last().key,
-                    entry = entries.last(),
-                ),
+    override fun calculateScene(entries: List<NavEntry<T>>): Scene<T> =
+        SinglePaneScene(
+            key = entries.last().key,
+            entry = entries.last(),
             previousEntries = entries.dropLast(1)
         )
 }
@@ -48,5 +46,4 @@ public class SinglePaneSceneStrategy<T : Any> : SceneStrategy<T> {
 @Composable
 internal fun <T : Any> SceneStrategy<T>.calculateSceneWithSinglePaneFallback(
     entries: List<NavEntry<T>>
-): SceneStrategyResult<T> =
-    calculateScene(entries) ?: SinglePaneSceneStrategy<T>().calculateScene(entries)
+): Scene<T> = calculateScene(entries) ?: SinglePaneSceneStrategy<T>().calculateScene(entries)

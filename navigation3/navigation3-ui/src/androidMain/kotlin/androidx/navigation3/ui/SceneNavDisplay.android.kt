@@ -191,12 +191,12 @@ public fun <T : Any> SceneNavDisplay(
                 postEntryDecorators,
         entryProvider = entryProvider
     ) { entries ->
-        val sceneResult = sceneStrategy.calculateSceneWithSinglePaneFallback(entries = entries)
+        val scene = sceneStrategy.calculateSceneWithSinglePaneFallback(entries = entries)
 
         var progress by remember { mutableFloatStateOf(0f) }
         var inPredictiveBack by remember { mutableStateOf(false) }
 
-        PredictiveBackHandler(sceneResult.previousEntries.isNotEmpty()) { backEvent ->
+        PredictiveBackHandler(scene.previousEntries.isNotEmpty()) { backEvent ->
             progress = 0f
             try {
                 backEvent.collect { value ->
@@ -204,18 +204,18 @@ public fun <T : Any> SceneNavDisplay(
                     progress = value.progress
                 }
                 inPredictiveBack = false
-                onBack(entries.size - sceneResult.previousEntries.size)
+                onBack(entries.size - scene.previousEntries.size)
             } finally {
                 inPredictiveBack = false
             }
         }
 
-        val sceneKey = sceneResult.scene::class to sceneResult.scene.key
+        val sceneKey = scene::class to scene.key
 
         val scenes = remember { mutableStateMapOf<Pair<KClass<*>, Any>, Scene<T>>() }
         // TODO: This should really be a mutableOrderedStateSetOf
         val mostRecentSceneKeys = remember { mutableStateListOf<Pair<KClass<*>, Any>>() }
-        scenes[sceneKey] = sceneResult.scene
+        scenes[sceneKey] = scene
 
         val transitionState = remember {
             // The state returned here cannot be nullable cause it produces the input of the
@@ -271,10 +271,10 @@ public fun <T : Any> SceneNavDisplay(
             }
 
         if (inPredictiveBack) {
-            val peekSceneResult =
-                sceneStrategy.calculateSceneWithSinglePaneFallback(sceneResult.previousEntries)
-            val peekSceneKey = peekSceneResult.scene::class to peekSceneResult.scene.key
-            scenes[peekSceneKey] = peekSceneResult.scene
+            val peekScene =
+                sceneStrategy.calculateSceneWithSinglePaneFallback(scene.previousEntries)
+            val peekSceneKey = peekScene::class to peekScene.key
+            scenes[peekSceneKey] = peekScene
             if (transitionState.currentState != peekSceneKey) {
                 LaunchedEffect(progress) { transitionState.seekTo(progress, peekSceneKey) }
             }

@@ -69,6 +69,17 @@ public interface Scene<T : Any> {
     public val entries: List<NavEntry<T>>
 
     /**
+     * The resulting [NavEntry]s that should be computed after pressing back updates the backstack.
+     *
+     * This is required for calculating the proper predictive back state, which may result in a
+     * different scene being shown.
+     *
+     * When predictive back is occurring, this list of entries will be passed through the
+     * [SceneStrategy] again, to determine what the resulting scene would be if the back happens.
+     */
+    public val previousEntries: List<NavEntry<T>>
+
+    /**
      * The content rendering the [Scene] itself.
      *
      * This should call the content for the [entries], and can add any arbitrary UI around them

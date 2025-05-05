@@ -41,7 +41,6 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.Scene
 import androidx.navigation3.ui.SceneNavDisplay
 import androidx.navigation3.ui.SceneStrategy
-import androidx.navigation3.ui.SceneStrategyResult
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertWithMessage
@@ -51,6 +50,7 @@ import org.junit.runner.RunWith
 
 private class HierarchicalScene<T : Any>(
     private val navEntries: List<NavEntry<T>?>,
+    override val previousEntries: List<NavEntry<T>>
 ) : Scene<T> {
     override val key: T = navEntries.filterNotNull().first().key
     override val entries: List<NavEntry<T>> = navEntries.filterNotNull()
@@ -72,14 +72,11 @@ private class HierarchicalSceneStrategy<T : Any>(
     private val columns: Int,
 ) : SceneStrategy<T> {
     @Composable
-    override fun calculateScene(entries: List<NavEntry<T>>): SceneStrategyResult<T> {
+    override fun calculateScene(entries: List<NavEntry<T>>): Scene<T> {
         val includedEntries = entries.takeLast(columns)
         return remember(columns, includedEntries) {
-            SceneStrategyResult(
-                scene =
-                    HierarchicalScene(
-                        List(columns, includedEntries::getOrNull),
-                    ),
+            HierarchicalScene(
+                List(columns, includedEntries::getOrNull),
                 previousEntries =
                     if (entries.size > columns) {
                         entries.dropLast(1)

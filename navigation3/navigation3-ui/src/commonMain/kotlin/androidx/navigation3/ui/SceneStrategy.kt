@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.NavEntry
 
 /**
- * A strategy that tries to calculate a [SceneStrategyResult] given a list of [NavEntry].
+ * A strategy that tries to calculate a [Scene] given a list of [NavEntry].
  *
  * If the list of [NavEntry] does not result in a [Scene] for this strategy, `null` will be returned
  * instead to delegate to another strategy.
@@ -29,7 +29,7 @@ public fun interface SceneStrategy<T : Any> {
     @Composable
     public fun calculateScene(
         entries: List<NavEntry<T>>,
-    ): SceneStrategyResult<T>?
+    ): Scene<T>?
 
     /**
      * Chains this [SceneStrategy] with another [sceneStrategy] to return a combined
@@ -40,20 +40,3 @@ public fun interface SceneStrategy<T : Any> {
             calculateScene(entries) ?: sceneStrategy.calculateScene(entries)
         }
 }
-
-/** The result of a [SceneStrategy] calculating a [Scene] from a list of [NavEntry]s. */
-public class SceneStrategyResult<T : Any>(
-    /** The scene to render. */
-    public val scene: Scene<T>,
-
-    /**
-     * The resulting [NavEntry]s that should be computed after pressing back updates the backstack.
-     *
-     * This is required for calculating the proper predictive back state, which may result in a
-     * different scene being shown.
-     *
-     * When predictive back is occurring, this list of entries will be passed through the
-     * [SceneStrategy] again, to determine what the resulting scene would be if the back happens.
-     */
-    public val previousEntries: List<NavEntry<T>>,
-)

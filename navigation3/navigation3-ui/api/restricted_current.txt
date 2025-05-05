@@ -15,9 +15,11 @@ package androidx.navigation3.ui {
     method public kotlin.jvm.functions.Function0<kotlin.Unit> getContent();
     method public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getEntries();
     method public Object getKey();
+    method public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getPreviousEntries();
     property public abstract kotlin.jvm.functions.Function0<kotlin.Unit> content;
     property public abstract java.util.List<androidx.navigation3.runtime.NavEntry<T>> entries;
     property public abstract Object key;
+    property public abstract java.util.List<androidx.navigation3.runtime.NavEntry<T>> previousEntries;
   }
 
   public final class SceneNavDisplay {
@@ -31,21 +33,13 @@ package androidx.navigation3.ui {
   }
 
   public fun interface SceneStrategy<T> {
-    method @androidx.compose.runtime.Composable public androidx.navigation3.ui.SceneStrategyResult<T>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries);
+    method @androidx.compose.runtime.Composable public androidx.navigation3.ui.Scene<T>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries);
     method public default infix androidx.navigation3.ui.SceneStrategy<T> then(androidx.navigation3.ui.SceneStrategy<T> sceneStrategy);
-  }
-
-  public final class SceneStrategyResult<T> {
-    ctor public SceneStrategyResult(androidx.navigation3.ui.Scene<T> scene, java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> previousEntries);
-    method public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getPreviousEntries();
-    method public androidx.navigation3.ui.Scene<T> getScene();
-    property public java.util.List<androidx.navigation3.runtime.NavEntry<T>> previousEntries;
-    property public androidx.navigation3.ui.Scene<T> scene;
   }
 
   public final class SinglePaneSceneStrategy<T> implements androidx.navigation3.ui.SceneStrategy<T> {
     ctor public SinglePaneSceneStrategy();
-    method @androidx.compose.runtime.Composable public androidx.navigation3.ui.SceneStrategyResult<T> calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries);
+    method @androidx.compose.runtime.Composable public androidx.navigation3.ui.Scene<T> calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries);
   }
 
 }

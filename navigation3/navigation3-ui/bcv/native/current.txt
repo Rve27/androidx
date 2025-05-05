@@ -7,7 +7,7 @@
 
 // Library unique name: <androidx.navigation3:navigation3-ui>
 abstract fun interface <#A: kotlin/Any> androidx.navigation3.ui/SceneStrategy { // androidx.navigation3.ui/SceneStrategy|null[0]
-    abstract fun calculateScene(kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>): androidx.navigation3.ui/SceneStrategyResult<#A>? // androidx.navigation3.ui/SceneStrategy.calculateScene|calculateScene(kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>){}[0]
+    abstract fun calculateScene(kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>): androidx.navigation3.ui/Scene<#A>? // androidx.navigation3.ui/SceneStrategy.calculateScene|calculateScene(kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>){}[0]
     open fun then(androidx.navigation3.ui/SceneStrategy<#A>): androidx.navigation3.ui/SceneStrategy<#A> // androidx.navigation3.ui/SceneStrategy.then|then(androidx.navigation3.ui.SceneStrategy<1:0>){}[0]
 }
 
@@ -18,21 +18,14 @@ abstract interface <#A: kotlin/Any> androidx.navigation3.ui/Scene { // androidx.
         abstract fun <get-entries>(): kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>> // androidx.navigation3.ui/Scene.entries.<get-entries>|<get-entries>(){}[0]
     abstract val key // androidx.navigation3.ui/Scene.key|{}key[0]
         abstract fun <get-key>(): kotlin/Any // androidx.navigation3.ui/Scene.key.<get-key>|<get-key>(){}[0]
-}
-
-final class <#A: kotlin/Any> androidx.navigation3.ui/SceneStrategyResult { // androidx.navigation3.ui/SceneStrategyResult|null[0]
-    constructor <init>(androidx.navigation3.ui/Scene<#A>, kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>) // androidx.navigation3.ui/SceneStrategyResult.<init>|<init>(androidx.navigation3.ui.Scene<1:0>;kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>){}[0]
-
-    final val previousEntries // androidx.navigation3.ui/SceneStrategyResult.previousEntries|{}previousEntries[0]
-        final fun <get-previousEntries>(): kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>> // androidx.navigation3.ui/SceneStrategyResult.previousEntries.<get-previousEntries>|<get-previousEntries>(){}[0]
-    final val scene // androidx.navigation3.ui/SceneStrategyResult.scene|{}scene[0]
-        final fun <get-scene>(): androidx.navigation3.ui/Scene<#A> // androidx.navigation3.ui/SceneStrategyResult.scene.<get-scene>|<get-scene>(){}[0]
+    abstract val previousEntries // androidx.navigation3.ui/Scene.previousEntries|{}previousEntries[0]
+        abstract fun <get-previousEntries>(): kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>> // androidx.navigation3.ui/Scene.previousEntries.<get-previousEntries>|<get-previousEntries>(){}[0]
 }
 
 final class <#A: kotlin/Any> androidx.navigation3.ui/SinglePaneSceneStrategy : androidx.navigation3.ui/SceneStrategy<#A> { // androidx.navigation3.ui/SinglePaneSceneStrategy|null[0]
     constructor <init>() // androidx.navigation3.ui/SinglePaneSceneStrategy.<init>|<init>(){}[0]
 
-    final fun calculateScene(kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>): androidx.navigation3.ui/SceneStrategyResult<#A> // androidx.navigation3.ui/SinglePaneSceneStrategy.calculateScene|calculateScene(kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>){}[0]
+    final fun calculateScene(kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>): androidx.navigation3.ui/Scene<#A> // androidx.navigation3.ui/SinglePaneSceneStrategy.calculateScene|calculateScene(kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>){}[0]
 }
 
 final val androidx.navigation3.ui/LocalEntriesToRenderInCurrentScene // androidx.navigation3.ui/LocalEntriesToRenderInCurrentScene|{}LocalEntriesToRenderInCurrentScene[0]
