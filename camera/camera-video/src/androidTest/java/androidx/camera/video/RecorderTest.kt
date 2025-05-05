@@ -1076,6 +1076,44 @@ class RecorderTest(
     }
 
     @Test
+    fun insufficientStorageOnNextRecordingStarts_shouldFailWithInsufficientStorageError() {
+        // Arrange.
+        var storageAvailableBytes = 100L * 1024L * 1024L // 100MB
+        // Required size is less than storage size.
+        val requiredFreeStorageBytes = storageAvailableBytes - 10L
+        val outputStorageFactory =
+            object : OutputStorage.Factory {
+                override fun create(outputOptions: OutputOptions): OutputStorage =
+                    object : OutputStorage {
+                        override fun getOutputOptions(): OutputOptions = outputOptions
+
+                        override fun getAvailableBytes(): Long = storageAvailableBytes
+                    }
+            }
+        val recorder =
+            createRecorder(
+                outputStorageFactory = outputStorageFactory,
+                requiredFreeStorageBytes = requiredFreeStorageBytes
+            )
+        val recording = recordingSession.createRecording(recorder = recorder)
+
+        // Act: first recording should succeed.
+        recording.recordAndVerify()
+
+        // Arrange: reduce the storage size to be less than requiredFreeStorageBytes.
+        @Suppress("AssignedValueIsNeverRead") // it will be read by the next recording.
+        storageAvailableBytes = requiredFreeStorageBytes - 10L
+
+        // Act: start next recording
+        val recording2 = recordingSession.createRecording(recorder = recorder).start()
+
+        // Verify.
+        val result = recording2.verifyFinalize(error = ERROR_INSUFFICIENT_STORAGE)
+        // Video is not saved.
+        assertThat(result.uri).isEqualTo(Uri.EMPTY)
+    }
+
+    @Test
     @SdkSuppress(minSdkVersion = 23)
     fun getVideoCapabilitiesStabilizationSupportIsCorrect_whenNotSupportedInExtensions() {
         assumeTrue(
