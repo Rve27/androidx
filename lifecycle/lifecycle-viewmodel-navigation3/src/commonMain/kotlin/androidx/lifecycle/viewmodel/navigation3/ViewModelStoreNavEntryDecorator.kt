@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package androidx.lifecycle.viewmodel.navigation3
 
-import androidx.activity.compose.LocalActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -37,6 +36,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.navigation3.internal.shouldRemoveViewModelStoreCallback
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.savedstate.SavedStateRegistryOwner
@@ -59,7 +59,7 @@ public object ViewModelStoreNavEntryDecorator : NavEntryDecorator {
         val localInfo = remember { ViewModelStoreNavLocalInfo() }
         DisposableEffect(key1 = backStack) { onDispose { localInfo.refCount.clear() } }
 
-        val activity = LocalActivity.current
+        val shouldRemoveStore = shouldRemoveViewModelStoreCallback()
         backStack.forEachIndexed { index, key ->
             // We update here as part of composition to ensure the value is available to
             // DecorateEntry
@@ -81,7 +81,7 @@ public object ViewModelStoreNavEntryDecorator : NavEntryDecorator {
                         val id = idsSet.last()
                         idsSet.remove(id)
                         if (!localInfo.idsInComposition.contains(id)) {
-                            if (activity?.isChangingConfigurations != true) {
+                            if (shouldRemoveStore()) {
                                 entryViewModelStoreProvider
                                     .removeViewModelStoreOwnerForKey(id)
                                     ?.clear()
@@ -107,7 +107,7 @@ public object ViewModelStoreNavEntryDecorator : NavEntryDecorator {
         val key = entry.key
         val entryViewModelStoreProvider = viewModel { EntryViewModel() }
 
-        val activity = LocalActivity.current
+        val shouldRemoveStore = shouldRemoveViewModelStoreCallback()
         val localInfo = LocalViewModelStoreNavLocalInfo.current
         // Tracks whether the key is changed
         var keyChanged = false
@@ -141,7 +141,7 @@ public object ViewModelStoreNavEntryDecorator : NavEntryDecorator {
             localInfo.idsInComposition.add(id)
             onDispose {
                 if (localInfo.idsInComposition.remove(id) && !localInfo.refCount.contains(key)) {
-                    if (activity?.isChangingConfigurations != true) {
+                    if (shouldRemoveStore()) {
                         entryViewModelStoreProvider.removeViewModelStoreOwnerForKey(id)?.clear()
                     }
                     // If the refCount is 0, remove the key from the refCount.
