@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,9 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.camera.integration.core.camera2
+
+package androidx.camera.integration.core
 
 import android.content.Context
+import android.hardware.camera2.CameraMetadata.CONTROL_AE_MODE_ON_LOW_LIGHT_BOOST_BRIGHTNESS_PRIORITY
+import android.hardware.camera2.CameraMetadata.FLASH_MODE_OFF
+import android.hardware.camera2.CaptureResult
 import android.os.Build
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.camera2.pipe.integration.CameraPipeConfig
@@ -26,6 +30,7 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
 import androidx.camera.core.internal.CameraUseCaseAdapter.CameraException
+import androidx.camera.integration.core.util.Camera2InteropUtil
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
 import androidx.camera.testing.impl.CameraPipeConfigTestRule
@@ -106,6 +111,7 @@ class CameraControlDeviceTest(
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val analyzer = ImageAnalysis.Analyzer { obj: ImageProxy -> obj.close() }
     private val lifecycleOwner = FakeLifecycleOwner().also { it.startAndResume() }
+    private val captureCallback = Camera2InteropUtil.CaptureCallback()
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var camera: Camera
 
@@ -157,15 +163,21 @@ class CameraControlDeviceTest(
 
     @Test
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
-    fun setTorchStrengthLevel_torchEnabled_futureCompletes() {
+    fun setTorchStrengthLevel_resultUpdated() {
         assumeTrue(cameraProvider.getCameraInfo(cameraSelector).isTorchStrengthSupported)
 
         bindUseCases()
 
         camera.cameraControl.enableTorch(true).get()
-        assertFutureCompletes(
-            camera.cameraControl.setTorchStrengthLevel(camera.cameraInfo.maxTorchStrengthLevel)
-        )
+        camera.cameraControl.setTorchStrengthLevel(camera.cameraInfo.maxTorchStrengthLevel).get()
+
+        captureCallback.waitFor(numOfCaptures = 30) { _, captureResults ->
+            {
+                val captureResult = captureResults.last()
+                assertThat(captureResult.get(CaptureResult.FLASH_STRENGTH_LEVEL))
+                    .isEqualTo(camera.cameraInfo.maxTorchStrengthLevel)
+            }
+        }
     }
 
     @Test
@@ -230,7 +242,7 @@ class CameraControlDeviceTest(
                 .setTorchStrengthLevel(camera.cameraInfo.maxTorchStrengthLevel)
                 .get()
         } catch (e: ExecutionException) {
-            assertThat(e.cause).isInstanceOf(java.lang.UnsupportedOperationException::class.java)
+            assertThat(e.cause).isInstanceOf(UnsupportedOperationException::class.java)
             return
         }
 
@@ -239,11 +251,39 @@ class CameraControlDeviceTest(
         )
     }
 
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
+    fun setLowLightBoost_resultUpdated() {
+        assumeTrue(cameraProvider.getCameraInfo(cameraSelector).isLowLightBoostSupported)
+
+        bindUseCases()
+
+        camera.cameraControl.enableLowLightBoostAsync(true).get()
+
+        captureCallback.waitFor(numOfCaptures = 30) { _, captureResults ->
+            {
+                val captureResult = captureResults.last()
+                assertThat(captureResult.get(CaptureResult.CONTROL_AE_MODE))
+                    .isEqualTo(CONTROL_AE_MODE_ON_LOW_LIGHT_BOOST_BRIGHTNESS_PRIORITY)
+                assertThat(captureResult.get(CaptureResult.FLASH_MODE)).isEqualTo(FLASH_MODE_OFF)
+            }
+        }
+    }
+
     private fun bindUseCases() {
         instrumentation.runOnMainSync {
             try {
-                val useCase = ImageAnalysis.Builder().build()
-                useCase.setAnalyzer(CameraXExecutors.ioExecutor(), analyzer)
+                val useCase =
+                    ImageAnalysis.Builder()
+                        .also { imageAnalysisBuilder ->
+                            Camera2InteropUtil.setCamera2InteropOptions(
+                                implName = implName,
+                                builder = imageAnalysisBuilder,
+                                captureCallback = captureCallback
+                            )
+                        }
+                        .build()
+                        .apply { setAnalyzer(CameraXExecutors.ioExecutor(), analyzer) }
                 camera = cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, useCase)
             } catch (e: CameraException) {
                 throw IllegalArgumentException(e)

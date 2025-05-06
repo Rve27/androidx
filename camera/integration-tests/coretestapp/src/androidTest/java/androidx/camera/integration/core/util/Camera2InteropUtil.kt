@@ -20,6 +20,7 @@ import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CaptureRequest
+import android.hardware.camera2.TotalCaptureResult
 import android.os.Build
 import androidx.annotation.OptIn
 import androidx.camera.camera2.Camera2Config
@@ -38,6 +39,9 @@ import androidx.camera.core.CameraControl
 import androidx.camera.core.CameraInfo
 import androidx.camera.core.ExtendableBuilder
 import com.google.common.util.concurrent.ListenableFuture
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import org.junit.Assert.assertTrue
 
 @kotlin.OptIn(CPExperimentalCamera2Interop::class)
 @OptIn(markerClass = [ExperimentalCamera2Interop::class])
@@ -278,4 +282,45 @@ object Camera2InteropUtil {
             else -> throw IllegalArgumentException("Unexpected implementation: $implName")
         }
     }
+
+    class CaptureCallback : CameraCaptureSession.CaptureCallback() {
+
+        val waitingList = mutableListOf<CaptureContainer>()
+
+        fun waitFor(
+            timeout: Long = TimeUnit.SECONDS.toMillis(5),
+            numOfCaptures: Int = 1,
+            verifyResults:
+                (
+                    captureRequests: List<CaptureRequest>, captureResults: List<TotalCaptureResult>
+                ) -> Unit =
+                { _, _ ->
+                    // No-op
+                }
+        ) {
+            val resultContainer = CaptureContainer(CountDownLatch(numOfCaptures))
+            waitingList.add(resultContainer)
+            assertTrue(resultContainer.countDownLatch.await(timeout, TimeUnit.MILLISECONDS))
+            verifyResults(resultContainer.captureRequests, resultContainer.captureResults)
+            waitingList.remove(resultContainer)
+        }
+
+        override fun onCaptureCompleted(
+            session: CameraCaptureSession,
+            request: CaptureRequest,
+            result: TotalCaptureResult
+        ) {
+            waitingList.toList().forEach {
+                it.captureRequests.add(request)
+                it.captureResults.add(result)
+                it.countDownLatch.countDown()
+            }
+        }
+    }
+
+    data class CaptureContainer(
+        val countDownLatch: CountDownLatch,
+        val captureRequests: MutableList<CaptureRequest> = mutableListOf(),
+        val captureResults: MutableList<TotalCaptureResult> = mutableListOf()
+    )
 }
