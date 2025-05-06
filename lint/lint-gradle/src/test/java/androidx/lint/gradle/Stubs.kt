@@ -210,5 +210,22 @@ internal val STUBS =
                 class ExecException : Exception()
             """
                 .trimIndent()
-        )
+        ),
+        kotlin(
+            """
+                package org.jetbrains.kotlin.gradle.internal
+
+                import java.io.File
+
+                fun File.ensureParentDirsCreated() {
+                    val parentFile = parentFile
+                    if (!parentFile.exists()) {
+                        check(parentFile.mkdirs()) {
+                            "Cannot create parent directories"
+                        }
+                    }
+                }
+            """
+                .trimIndent()
+        ),
     )
