@@ -52,6 +52,11 @@ package androidx.compose.ui.graphics {
     method @RequiresApi(android.os.Build.VERSION_CODES.O) public static androidx.compose.ui.graphics.colorspace.ColorSpace toComposeColorSpace(android.graphics.ColorSpace);
   }
 
+  public final class AndroidColor_androidKt {
+    method public static long fromColorLong(androidx.compose.ui.graphics.Color.Companion, long colorLong);
+    method public static long toColorLong(long);
+  }
+
   public final class AndroidGraphicsContext_androidKt {
     method public static androidx.compose.ui.graphics.GraphicsContext GraphicsContext(android.view.ViewGroup layerContainer);
   }
