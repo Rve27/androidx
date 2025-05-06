@@ -701,11 +701,16 @@ abstract class BaseConnectionPoolTest {
                 override fun open(fileName: String): SQLiteConnection {
                     openedConnections.incrementAndGet()
                     return object : SQLiteConnection {
+
+                        override fun inTransaction() = false
+
                         override fun prepare(sql: String): SQLiteStatement {
                             return FakeSQLiteStatement()
                         }
 
-                        override fun close() {}
+                        override fun close() {
+                            openedConnections.decrementAndGet()
+                        }
                     }
                 }
             }
@@ -720,19 +725,23 @@ abstract class BaseConnectionPoolTest {
         // prime the pool with connections
         val barriers = List(100) { CompletableDeferred<Unit>() }
         val latch = CompletableDeferred<Unit>()
-        repeat(100) { i ->
-            launch(Dispatchers.IO) {
-                pool.useReaderConnection {
-                    barriers[i].complete(Unit)
-                    latch.await()
+        List(100) { i ->
+                launch(Dispatchers.IO) {
+                    pool.useReaderConnection {
+                        barriers[i].complete(Unit)
+                        latch.await()
+                    }
                 }
             }
-        }
-        barriers.awaitAll()
-        latch.complete(Unit)
+            .run {
+                barriers.awaitAll()
+                latch.complete(Unit)
+                joinAll() // wait for all coroutines to prime the pool
+            }
+
         assertThat(openedConnections.get()).isEqualTo(100)
 
-        // create a lot of coroutines, some timeout some don't, validating we are using withTimeout
+        // create a lot of coroutines, some timeout, some don't, validating we are using withTimeout
         // with resources correctly as recommended in
         // https://kotlinlang.org/docs/cancellation-and-timeouts.html#asynchronous-timeout-and-resources
         check(pool is ConnectionPoolImpl)

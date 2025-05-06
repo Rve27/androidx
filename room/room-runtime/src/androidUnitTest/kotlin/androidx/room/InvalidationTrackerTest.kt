@@ -675,6 +675,8 @@ class InvalidationTrackerTest {
 
         private inner class FakeSQLiteConnection : SQLiteConnection {
 
+            override fun inTransaction() = false
+
             override fun prepare(sql: String): SQLiteStatement {
                 preparedQueries.add(sql)
                 val invalidatedTables =

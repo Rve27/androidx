@@ -25,6 +25,9 @@ import androidx.sqlite.throwSQLiteException
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class AndroidSQLiteConnection(public val db: SQLiteDatabase) : SQLiteConnection {
+
+    override fun inTransaction(): Boolean = db.inTransaction()
+
     override fun prepare(sql: String): SQLiteStatement {
         if (db.isOpen) {
             return AndroidSQLiteStatement.create(db, sql)

@@ -22,6 +22,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 class SupportSQLiteConnection(val db: SupportSQLiteDatabase) : SQLiteConnection {
+
+    override fun inTransaction(): Boolean = db.inTransaction()
+
     override fun prepare(sql: String): SupportSQLiteStatement {
         return SupportSQLiteStatement.create(db, sql)
     }
