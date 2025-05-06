@@ -6,11 +6,6 @@ package androidx.navigation3.ui {
     property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.animation.AnimatedContentScope> LocalNavAnimatedContentScope;
   }
 
-  public final class RenderCurrentEntriesOnlyDecoratorKt {
-    method public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> getLocalEntriesToRenderInCurrentScene();
-    property public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> LocalEntriesToRenderInCurrentScene;
-  }
-
   public interface Scene<T> {
     method public kotlin.jvm.functions.Function0<kotlin.Unit> getContent();
     method public java.util.List<androidx.navigation3.runtime.NavEntry<T>> getEntries();
@@ -29,7 +24,18 @@ package androidx.navigation3.ui {
   }
 
   public final class SceneNavDisplay_androidKt {
-    method @androidx.compose.runtime.Composable public static <T> void SceneNavDisplay(java.util.List<? extends T> backStack, optional androidx.compose.ui.Modifier modifier, optional androidx.compose.ui.Alignment contentAlignment, optional kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit> onBack, optional java.util.List<? extends androidx.navigation3.runtime.NavEntryDecorator> preEntryDecorators, optional java.util.List<? extends androidx.navigation3.runtime.NavEntryDecorator> postEntryDecorators, optional androidx.navigation3.ui.SceneStrategy<T> sceneStrategy, optional androidx.compose.animation.SizeTransform? sizeTransform, optional androidx.compose.animation.EnterTransition enterTransition, optional androidx.compose.animation.ExitTransition exitTransition, optional androidx.compose.animation.EnterTransition popEnterTransition, optional androidx.compose.animation.ExitTransition popExitTransition, kotlin.jvm.functions.Function1<? super T,? extends androidx.navigation3.runtime.NavEntry<T>> entryProvider);
+    method @androidx.compose.runtime.Composable public static <T> void SceneNavDisplay(java.util.List<? extends T> backStack, optional androidx.compose.ui.Modifier modifier, optional androidx.compose.ui.Alignment contentAlignment, optional kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit> onBack, optional java.util.List<? extends androidx.navigation3.runtime.NavEntryDecorator> entryDecorators, optional androidx.navigation3.ui.SceneStrategy<T> sceneStrategy, optional androidx.compose.animation.SizeTransform? sizeTransform, optional androidx.compose.animation.EnterTransition enterTransition, optional androidx.compose.animation.ExitTransition exitTransition, optional androidx.compose.animation.EnterTransition popEnterTransition, optional androidx.compose.animation.ExitTransition popExitTransition, kotlin.jvm.functions.Function1<? super T,? extends androidx.navigation3.runtime.NavEntry<T>> entryProvider);
+  }
+
+  public final class SceneSetupNavEntryDecorator implements androidx.navigation3.runtime.NavEntryDecorator {
+    method @androidx.compose.runtime.Composable public void DecorateBackStack(java.util.List<?> backStack, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @androidx.compose.runtime.Composable public <T> void DecorateEntry(androidx.navigation3.runtime.NavEntry<T> entry);
+    field public static final androidx.navigation3.ui.SceneSetupNavEntryDecorator INSTANCE;
+  }
+
+  public final class SceneSetupNavEntryDecoratorKt {
+    method public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> getLocalEntriesToRenderInCurrentScene();
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<java.util.Set<java.lang.Object>> LocalEntriesToRenderInCurrentScene;
   }
 
   public fun interface SceneStrategy<T> {

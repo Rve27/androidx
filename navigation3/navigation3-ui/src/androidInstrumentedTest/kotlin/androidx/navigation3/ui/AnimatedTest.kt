@@ -802,7 +802,7 @@ class AnimatedTest {
         var secondEntryIsWrapped = false
         composeTestRule.setContent {
             backstack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(backstack, postEntryDecorators = listOf(provider)) {
+            SceneNavDisplay(backstack, entryDecorators = listOf(provider)) {
                 when (it) {
                     first ->
                         NavEntry(

@@ -56,6 +56,7 @@ import androidx.navigation3.runtime.samples.rememberMutableStateListOf
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.Scene
 import androidx.navigation3.ui.SceneNavDisplay
+import androidx.navigation3.ui.SceneSetupNavEntryDecorator
 import kotlinx.serialization.Serializable
 
 @Sampled
@@ -65,8 +66,9 @@ fun SceneNav() {
     val showDialog = remember { mutableStateOf(false) }
     SceneNavDisplay(
         backStack = backStack,
-        postEntryDecorators =
+        entryDecorators =
             listOf(
+                SceneSetupNavEntryDecorator,
                 SaveableStateNavEntryDecorator,
                 SavedStateNavEntryDecorator,
                 ViewModelStoreNavEntryDecorator
@@ -141,7 +143,12 @@ fun <T : Any> SceneNavSharedEntrySample() {
             SceneNavDisplay(
                 backStack = backStack,
                 onBack = { backStack.removeAt(backStack.lastIndex) },
-                preEntryDecorators = listOf(sharedEntryInSceneNavEntryDecorator),
+                entryDecorators =
+                    listOf(
+                        sharedEntryInSceneNavEntryDecorator,
+                        SceneSetupNavEntryDecorator,
+                        SaveableStateNavEntryDecorator
+                    ),
                 entryProvider =
                     entryProvider {
                         entry<CatList> {

@@ -277,7 +277,7 @@ class SceneNavDisplayTest {
             SceneNavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
-                postEntryDecorators = listOf(SavedStateNavEntryDecorator)
+                entryDecorators = listOf(SavedStateNavEntryDecorator)
             ) {
                 when (it) {
                     first ->

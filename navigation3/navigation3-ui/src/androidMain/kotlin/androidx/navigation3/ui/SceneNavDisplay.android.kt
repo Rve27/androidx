@@ -103,10 +103,7 @@ public object SceneNavDisplay {
  * @param contentAlignment The [Alignment] of the [AnimatedContent]
  * @param onBack a callback for handling system back press. The passed [Int] refers to the number of
  *   entries to pop from the end of the backstack, as calculated by the [sceneStrategy].
- * @param preEntryDecorators a list of [NavEntryDecorator]s to include before the entry content
- *   invocation is made unique.
- * @param postEntryDecorators a list of [NavEntryDecorator]s to include after the entry content
- *   invocation is made unique.
+ * @param entryDecorators list of [NavEntryDecorator] to add information to the entry content
  * @param sceneStrategy the [SceneStrategy] to determine which scene to render a list of entries.
  * @param sizeTransform the [SizeTransform] for the [AnimatedContent].
  * @param enterTransition Default [EnterTransition] when navigating to [NavEntry]s.
@@ -128,8 +125,8 @@ public fun <T : Any> SceneNavDisplay(
             repeat(it) { backStack.removeAt(backStack.lastIndex) }
         }
     },
-    preEntryDecorators: List<NavEntryDecorator> = emptyList(),
-    postEntryDecorators: List<NavEntryDecorator> = emptyList(),
+    entryDecorators: List<NavEntryDecorator> =
+        listOf(SceneSetupNavEntryDecorator, SaveableStateNavEntryDecorator),
     sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
     sizeTransform: SizeTransform? = null,
     enterTransition: EnterTransition =
@@ -170,25 +167,7 @@ public fun <T : Any> SceneNavDisplay(
 
     DecoratedNavEntryProvider(
         backStack = backStack,
-        entryDecorators =
-            // Order here is very important:
-            // First we include any entry decorators that should apply to concurrent calls to
-            // entries (like setting up shared elements for entire entries)
-            preEntryDecorators +
-                listOf(
-                    // Next, we enforce that we only render 1 call for each entry, depending on the
-                    // most recent scenes displayed
-                    RenderCurrentEntriesOnlyDecorator,
-                    // Afterwards, we wrap everything after in a movableContentOf call to ensure
-                    // that
-                    // the rest of the content entries can be moved around between different call
-                    // sites
-                    // while maintaining their instance
-                    MovableContentNavEntryDecorator,
-                    SaveableStateNavEntryDecorator,
-                    transitionAwareLifecycleNavEntryDecorator,
-                ) +
-                postEntryDecorators,
+        entryDecorators = entryDecorators + transitionAwareLifecycleNavEntryDecorator,
         entryProvider = entryProvider
     ) { entries ->
         val scene = sceneStrategy.calculateSceneWithSinglePaneFallback(entries = entries)
