@@ -24,17 +24,17 @@ import androidx.core.flagging.Flags
 class FlaggedUsageInOutline {
     fun testWithCheck() {
         if (Flags.getBooleanFlagValue("flaggedapi", "myFlag")) {
-            FlagFlaggedApiImpl.flaggedApi()
+            FlagFlaggedApiImpl.innerApi()
         }
     }
 
     fun testWithoutCheck() {
-        FlagFlaggedApiImpl.flaggedApi()
+        FlagFlaggedApiImpl.innerApi()
     }
 
     @RequiresAconfigFlag("flaggedapi.myFlag")
     object FlagFlaggedApiImpl {
-        fun flaggedApi(): Boolean {
+        fun innerApi(): Boolean {
             return FlaggedApiContainer.innerApi()
         }
     }
