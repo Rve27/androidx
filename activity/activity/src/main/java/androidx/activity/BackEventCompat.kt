@@ -23,6 +23,7 @@ import androidx.annotation.IntDef
 import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
+import androidx.navigationevent.NavigationEvent
 
 /** Compat around the [BackEvent] class */
 class BackEventCompat
@@ -57,6 +58,20 @@ constructor(
         Api34Impl.swipeEdge(backEvent),
         if (Build.VERSION.SDK_INT >= 36) {
             Api36Impl.frameTimeMillis(backEvent)
+        } else {
+            0
+        }
+    )
+
+    constructor(
+        navEvent: NavigationEvent
+    ) : this(
+        navEvent.touchX,
+        navEvent.touchY,
+        navEvent.progress,
+        navEvent.swipeEdge,
+        if (Build.VERSION.SDK_INT >= 36) {
+            navEvent.frameTimeMillis
         } else {
             0
         }
