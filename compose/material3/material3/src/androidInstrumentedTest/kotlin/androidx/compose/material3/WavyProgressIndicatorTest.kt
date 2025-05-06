@@ -18,6 +18,7 @@ package androidx.compose.material3
 import android.os.Build
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -499,5 +500,21 @@ class WavyProgressIndicatorTest {
         rule.mainClock.advanceTimeByFrame() // Kick off the animation
 
         contentToTest.assertIsSquareWithSize(WavyProgressIndicatorDefaults.CircularContainerSize)
+    }
+
+    @Test
+    fun circularWavyProgressIndicator_ZeroSize() {
+        val tag = "circular"
+        rule.mainClock.autoAdvance = false
+        rule.setMaterialContentForSizeAssertions {
+            Box(modifier = Modifier.size(50.dp)) {
+                CircularWavyProgressIndicator(modifier = Modifier.requiredSize(0.dp).testTag(tag))
+            }
+        }
+
+        rule.mainClock.advanceTimeBy(100)
+
+        // Test that we allow zero sizing without any exception.
+        rule.onNodeWithTag(tag).assertIsSquareWithSize(0.dp)
     }
 }

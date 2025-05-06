@@ -1307,7 +1307,6 @@ private class CircularShapes {
         requiresMorph: Boolean
     ) {
         require(wavelength > 0f) { "Wavelength should be greater than zero" }
-        require(size.minDimension > 0f) { "Size min dimension should be greater than zero" }
         if (size == currentSize && wavelength == currentWavelength) {
             if (requiresMorph && activeIndicatorMorph == null) {
                 // This is the first time a requiredMorph is set, so we need to create a new Morph.
