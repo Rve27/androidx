@@ -56,8 +56,6 @@ public class FakeImpressApi implements ImpressApi {
     /** Test bookkeeping data for a Android Surface */
     @SuppressWarnings({"ParcelCreator", "ParcelNotFinal"})
     public static class TestSurface extends Surface {
-        public int id;
-
         public TestSurface(int id) {
             super(new SurfaceTexture(id));
         }
@@ -129,26 +127,44 @@ public class FakeImpressApi implements ImpressApi {
             WATER_ALPHA
         }
 
-        @NonNull public Type type;
-        public long materialHandle;
+        @NonNull Type mType;
+        long mMaterialHandle;
 
         public MaterialData(@NonNull Type type, long materialHandle) {
-            this.type = type;
-            this.materialHandle = materialHandle;
+            this.mType = type;
+            this.mMaterialHandle = materialHandle;
+        }
+
+        @NonNull
+        public Type getType() {
+            return mType;
+        }
+
+        public long getMaterialHandle() {
+            return mMaterialHandle;
         }
     }
 
     /** Test bookkeeping data for a Gltf gltfToken */
     public static class GltfNodeData {
-        public int entityId;
-        @Nullable public MaterialData materialOverride;
+        int mEntityId;
+        @Nullable MaterialData mMaterialOverride;
 
         public void setEntityId(int entityId) {
-            this.entityId = entityId;
+            this.mEntityId = entityId;
         }
 
         public void setMaterialOverride(@Nullable MaterialData materialOverride) {
-            this.materialOverride = materialOverride;
+            this.mMaterialOverride = materialOverride;
+        }
+
+        public int getEntityId() {
+            return mEntityId;
+        }
+
+        @Nullable
+        public MaterialData getMaterialOverride() {
+            return mMaterialOverride;
         }
     }
 
@@ -171,10 +187,10 @@ public class FakeImpressApi implements ImpressApi {
     final Map<Integer, StereoSurfaceEntityData> mStereoSurfaceEntities = new HashMap<>();
 
     // Map of texture image tokens to their associated Texture object
-    public final Map<Long, Texture> mTextureImages = new HashMap<>();
+    final Map<Long, Texture> mTextureImages = new HashMap<>();
 
     // Map of material tokens to their associated MaterialData object
-    public final Map<Long, MaterialData> mMaterials = new HashMap<>();
+    final Map<Long, MaterialData> mMaterials = new HashMap<>();
 
     private int mNextImageBasedLightingAssetId = 1;
     private int mNextModelId = 1;
@@ -388,7 +404,7 @@ public class FakeImpressApi implements ImpressApi {
         if (gltfNodeData == null) {
             return -1;
         }
-        return mImpressNodes.get(gltfNodeData).entityId;
+        return mImpressNodes.get(gltfNodeData).mEntityId;
     }
 
     /** Returns the number of impress nodes that are currently animating. */
@@ -403,6 +419,13 @@ public class FakeImpressApi implements ImpressApi {
 
     @Override
     public int createStereoSurface(@StereoMode int stereoMode) {
+        return createStereoSurface(stereoMode, ContentSecurityLevel.NONE);
+    }
+
+    // TODO - b/410899125: Set the content security level properly.
+    @Override
+    public int createStereoSurface(
+            @StereoMode int stereoMode, @ContentSecurityLevel int contentSecurityLevel) {
         StereoSurfaceEntityData data = new StereoSurfaceEntityData();
         data.mImpressNode = createImpressNode();
         data.mSurface = new TestSurface(data.mImpressNode);
@@ -530,7 +553,7 @@ public class FakeImpressApi implements ImpressApi {
     }
 
     @Override
-    @SuppressWarnings("RestrictTo")
+    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
     @NonNull
     public ListenableFuture<WaterMaterial> createWaterMaterial(boolean isAlphaMapVersion) {
         long materialToken = mNextMaterialId++;
@@ -546,7 +569,7 @@ public class FakeImpressApi implements ImpressApi {
     }
 
     @Override
-    public void setReflectionCubeOnWaterMaterial(long nativeMaterial, long reflectionCube) {
+    public void setReflectionMapOnWaterMaterial(long nativeMaterial, long reflectionMap) {
         throw new IllegalArgumentException("not implemented");
     }
 
@@ -685,7 +708,7 @@ public class FakeImpressApi implements ImpressApi {
     @Nullable
     private GltfNodeData getGltfNodeData(int impressNode) {
         for (Map.Entry<GltfNodeData, GltfNodeData> pair : mImpressNodes.entrySet()) {
-            if (pair.getKey().entityId == impressNode) {
+            if (pair.getKey().mEntityId == impressNode) {
                 return pair.getKey();
             }
         }

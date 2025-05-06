@@ -68,6 +68,6 @@ public class FakeRuntimeAnchor(
 
     public companion object {
         public const val ANCHOR_RESOURCE_LIMIT: Int = 5
-        public var anchorsCreated: Int = 0
+        @JvmStatic public var anchorsCreated: Int = 0
     }
 }

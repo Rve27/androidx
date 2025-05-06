@@ -28,8 +28,8 @@ import androidx.xr.compose.subspace.node.SubspaceSemanticsInfo
  * as well as developer tooling to help semantically identify parts of the compose tree. It is not
  * intended to be used in individual apps.
  */
-@Suppress("NotCloseable")
 @SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
+@Suppress("NotCloseable")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public object SceneManager : AutoCloseable {
     private val registeredScenes: MutableList<SpatialComposeScene> = mutableListOf()

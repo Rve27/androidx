@@ -8,6 +8,7 @@ package androidx.xr.scenecore.testing {
     method public void clearPreferredEnvironmentIblAsset();
     method public int createImpressNode();
     method public int createStereoSurface(@com.google.ar.imp.apibindings.ImpressApi.StereoMode int);
+    method public int createStereoSurface(@com.google.ar.imp.apibindings.ImpressApi.StereoMode int, @com.google.ar.imp.apibindings.ImpressApi.ContentSecurityLevel int);
     method public com.google.common.util.concurrent.ListenableFuture<com.google.ar.imp.apibindings.WaterMaterial!> createWaterMaterial(boolean);
     method public void destroyImpressNode(int);
     method public void destroyNativeObject(long);
@@ -53,29 +54,27 @@ package androidx.xr.scenecore.testing {
     method public void setNormalZOnWaterMaterial(long, float);
     method public void setPreferredEnvironmentLight(long);
     method public void setPrimaryAlphaMaskForStereoSurface(int, long);
-    method public void setReflectionCubeOnWaterMaterial(long, long);
+    method public void setReflectionMapOnWaterMaterial(long, long);
     method public void setStereoModeForStereoSurface(int, @com.google.ar.imp.apibindings.ImpressApi.StereoMode int);
     method public void setStereoSurfaceEntityCanvasShapeHemisphere(int, float);
     method public void setStereoSurfaceEntityCanvasShapeQuad(int, float, float);
     method public void setStereoSurfaceEntityCanvasShapeSphere(int, float);
     method public void setup(com.google.ar.imp.view.View);
     method public void stopGltfModelAnimation(int);
-    field public final java.util.Map<java.lang.Long!,androidx.xr.scenecore.testing.FakeImpressApi.MaterialData!>! mMaterials;
-    field public final java.util.Map<java.lang.Long!,com.google.ar.imp.apibindings.Texture!>! mTextureImages;
   }
 
   public static class FakeImpressApi.GltfNodeData {
     ctor public FakeImpressApi.GltfNodeData();
+    method public int getEntityId();
+    method public androidx.xr.scenecore.testing.FakeImpressApi.MaterialData? getMaterialOverride();
     method public void setEntityId(int);
     method public void setMaterialOverride(androidx.xr.scenecore.testing.FakeImpressApi.MaterialData?);
-    field public int entityId;
-    field public androidx.xr.scenecore.testing.FakeImpressApi.MaterialData? materialOverride;
   }
 
   public static class FakeImpressApi.MaterialData {
     ctor public FakeImpressApi.MaterialData(androidx.xr.scenecore.testing.FakeImpressApi.MaterialData.Type, long);
-    field public long materialHandle;
-    field public androidx.xr.scenecore.testing.FakeImpressApi.MaterialData.Type type;
+    method public long getMaterialHandle();
+    method public androidx.xr.scenecore.testing.FakeImpressApi.MaterialData.Type getType();
   }
 
   public enum FakeImpressApi.MaterialData.Type {
@@ -104,7 +103,6 @@ package androidx.xr.scenecore.testing {
 
   public static class FakeImpressApi.TestSurface extends android.view.Surface {
     ctor public FakeImpressApi.TestSurface(int);
-    field public int id;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeScheduledExecutorService extends java.util.concurrent.AbstractExecutorService implements java.lang.AutoCloseable java.util.concurrent.ScheduledExecutorService {

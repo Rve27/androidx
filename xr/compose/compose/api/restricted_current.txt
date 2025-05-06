@@ -260,6 +260,19 @@ package androidx.xr.compose.spatial {
 
 package androidx.xr.compose.subspace {
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @kotlin.jvm.JvmInline public final value class ContentSecurityLevel {
+    method public int getValue();
+    property public int value;
+    field public static final androidx.xr.compose.subspace.ContentSecurityLevel.Companion Companion;
+  }
+
+  public static final class ContentSecurityLevel.Companion {
+    method public int getDrmProtected();
+    method public int getNone();
+    property public int DrmProtected;
+    property public int None;
+  }
+
   public final class RememberCoreEntityKt {
     method @kotlin.PublishedApi internal static String entityName(String name);
     method @androidx.compose.runtime.Composable @kotlin.PublishedApi internal static androidx.xr.compose.subspace.layout.CoreContentlessEntity rememberCoreContentlessEntity(kotlin.jvm.functions.Function1<? super androidx.xr.runtime.Session,? extends androidx.xr.scenecore.Entity> entityFactory);
@@ -290,7 +303,7 @@ package androidx.xr.compose.subspace {
   }
 
   public final class SpatialExternalSurfaceKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialExternalSurface(int stereoMode, optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialFeatheringEffect featheringEffect, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.SpatialExternalSurfaceScope,kotlin.Unit> content);
+    method @SuppressCompatibility @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable @androidx.compose.runtime.ExperimentalComposeApi @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialExternalSurface(int stereoMode, optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialFeatheringEffect featheringEffect, optional int contentSecurityLevel, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.SpatialExternalSurfaceScope,kotlin.Unit> content);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialExternalSurfaceScope {

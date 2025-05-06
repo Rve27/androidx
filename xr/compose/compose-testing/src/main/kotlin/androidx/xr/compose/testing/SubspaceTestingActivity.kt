@@ -45,7 +45,7 @@ import org.robolectric.shadows.ShadowDisplay
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class SubspaceTestingActivity : ComponentActivity() {
     public val extensions: XrExtensions = XrExtensionsProvider.getXrExtensions()!!
-    @Suppress("MutableBareField") public lateinit var session: Session
+    @Suppress("MutableBareField") public var session: Session? = null
 
     /** Throws an exception by default under test; return Robolectric Display impl instead. */
     @NonNull override fun getDisplay(): Display = ShadowDisplay.getDefaultDisplay()

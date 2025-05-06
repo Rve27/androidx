@@ -182,6 +182,7 @@ public final class AnchorEntityImplTest extends SystemSpaceEntityImplTest {
                         mXrExtensions,
                         mEntityManager,
                         () -> mXrExtensions.getSpatialState(activity),
+                        /* unscaledGravityAlignedActivitySpace= */ false,
                         mExecutor);
         SystemClock.setCurrentTimeMillis(mCurrentTimeMillis);
 

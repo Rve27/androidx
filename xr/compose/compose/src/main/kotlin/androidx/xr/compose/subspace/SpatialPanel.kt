@@ -16,18 +16,15 @@
 
 package androidx.xr.compose.subspace
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.ColorDrawable
 import android.view.View
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.RestrictTo
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,7 +42,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
-import androidx.compose.ui.graphics.Color as UiColor
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
@@ -53,9 +49,11 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMaxOfOrNull
+import androidx.core.graphics.drawable.toDrawable
 import androidx.xr.compose.platform.LocalDialogManager
 import androidx.xr.compose.platform.LocalOpaqueEntity
 import androidx.xr.compose.platform.LocalSession
+import androidx.xr.compose.platform.coreMainPanelEntity
 import androidx.xr.compose.platform.getActivity
 import androidx.xr.compose.subspace.layout.MeasurePolicy
 import androidx.xr.compose.subspace.layout.SpatialRoundedCornerShape
@@ -73,6 +71,9 @@ import androidx.xr.scenecore.Dimensions
 import androidx.xr.scenecore.PanelEntity
 
 private const val DEFAULT_SIZE_PX = 400
+
+/** Set the scrim alpha to 32% opacity across all spatial panels. */
+private const val DEFAULT_SCRIM_ALPHA = 0x52000000
 
 /** Contains default values used by spatial panels. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -126,7 +127,7 @@ public fun SpatialPanel(
 
     LaunchedEffect(dialogManager.isSpatialDialogActive.value) {
         if (dialogManager.isSpatialDialogActive.value) {
-            scrim.setBackgroundColor(0x7D000000)
+            scrim.setBackgroundColor(DEFAULT_SCRIM_ALPHA)
 
             if (scrim.parent == null) {
                 val scrimLayoutParams =
@@ -176,7 +177,6 @@ public fun SpatialPanel(
  * @param update A lambda that allows updating the created Android View [T].
  * @param shape The shape of this Spatial Panel.
  */
-@SuppressLint("UseKtx")
 @Composable
 @SubspaceComposable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -189,22 +189,17 @@ public fun <T : View> SpatialPanel(
     val dialogManager = LocalDialogManager.current
     val context = LocalContext.current
 
+    @Suppress("UnnecessaryLambdaCreation")
     AndroidViewPanel(
-        factory = {
-            val frameLayout = FrameLayout(context)
-            val view = factory(context)
-            frameLayout.addView(view)
-
-            frameLayout
-        },
+        factory = { factory(context) },
         modifier = modifier,
-        update = { frameLayout ->
-            @Suppress("UNCHECKED_CAST") val view = frameLayout.getChildAt(0) as T
+        update = { view ->
             if (dialogManager.isSpatialDialogActive.value) {
-                frameLayout.setForeground(ColorDrawable(0x7D000000))
-                frameLayout.setOnClickListener { dialogManager.isSpatialDialogActive.value = false }
+                view.foreground = DEFAULT_SCRIM_ALPHA.toDrawable()
+                view.setOnClickListener { dialogManager.isSpatialDialogActive.value = false }
             } else {
-                frameLayout.setForeground(ColorDrawable(Color.TRANSPARENT))
+                view.foreground = Color.TRANSPARENT.toDrawable()
+                view.setOnClickListener(null)
             }
             update(view)
         },
@@ -329,18 +324,16 @@ public fun SpatialPanel(
                     }
                 }
             }
-
             if (dialogManager.isSpatialDialogActive.value) {
+                view.foreground = DEFAULT_SCRIM_ALPHA.toDrawable()
                 Box(
                     modifier =
-                        Modifier.fillMaxSize()
-                            .background(UiColor.Black.copy(alpha = 0.5f))
-                            .pointerInput(Unit) {
-                                detectTapGestures {
-                                    dialogManager.isSpatialDialogActive.value = false
-                                }
-                            }
+                        Modifier.fillMaxSize().pointerInput(Unit) {
+                            detectTapGestures { dialogManager.isSpatialDialogActive.value = false }
+                        }
                 ) {}
+            } else {
+                view.foreground = Color.TRANSPARENT.toDrawable()
             }
         }
         val width = intrinsicWidth.coerceIn(volumeConstraints.minWidth, volumeConstraints.maxWidth)
@@ -375,13 +368,18 @@ public fun MainPanel(
     modifier: SubspaceModifier = SubspaceModifier,
     shape: SpatialShape = SpatialPanelDefaults.shape,
 ) {
-    val mainPanel = rememberCoreMainPanelEntity(shape = shape)
+    val session = checkNotNull(LocalSession.current) { "session must be initialized" }
+    val mainPanel = session.coreMainPanelEntity
+    LaunchedEffect(shape) { mainPanel.shape = shape }
+
     val view = LocalContext.current.getActivity().window?.decorView ?: LocalView.current
 
-    DisposableEffect(Unit) {
-        mainPanel.hidden = false
-        onDispose { mainPanel.hidden = true }
-    }
+    // When the MainPanel enters the compose hierarchy, we can't directly set the mainPanel.hidden
+    // to false here because the hidden state is a subcomponent of the size calculation, see
+    // [SubspaceLayoutNode.MeasureLayout.placeAt] and [CoreEntity.size].
+    // This means hidden will be set after layout completes, on the first frame when the MainPanel
+    // enters the Compose hierarchy.
+    DisposableEffect(Unit) { onDispose { mainPanel.hidden = true } }
 
     SubspaceLayout(modifier = modifier, coreEntity = mainPanel) { _, constraints ->
         val width = view.measuredWidth.coerceIn(constraints.minWidth, constraints.maxWidth)

@@ -39,8 +39,6 @@ import java.util.function.Consumer
  * Once created, the application can use the Scene object to create spatialized entities, such as
  * Widget panels and geometric models, set the background environment, and anchor content to the
  * real world.
- *
- * @param session the Session to create the Scene for.
  */
 @Suppress("NotCloseable")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -110,6 +108,30 @@ public class Scene : SessionConnector {
     override fun close(): Unit {
         entityManager.clear()
     }
+
+    /**
+     * Sets whether the depth test is enabled for all panels in the Scene when the Scene is in full
+     * space mode. Panels in home space mode are unaffected.
+     *
+     * <p>When the depth test for panels is enabled, panels in the Scene will undergo depth testing,
+     * where they can appear behind other content in the Scene. When the depth test is disabled,
+     * panels in the Scene do not undergo depth tests, that will always be drawn on top of other
+     * objects in the Scene that were already drawn. Panels and non-panel content (ex:
+     * SurfaceEntity, GltfEntity) are always drawn after the SpatialEnvironment in back to front
+     * order when such an order exists. Subsequent content will be drawn on top of panels with no
+     * depth test if the subsequent content is drawn later.
+     *
+     * <p>This method says "panel" because it only affects panels. Other content in the Scene is
+     * unaffected by this setting.
+     *
+     * <p>By default the depth test is enabled for all panels in the Scene. It can be disabled, or
+     * re-enabled, by using this method.
+     *
+     * @param enabled true to enable the depth test for all panels in the Scene (default), false to
+     *   disable the depth test for all panels in the Scene.
+     */
+    public fun enablePanelDepthTest(enabled: Boolean): Unit =
+        platformAdapter.enablePanelDepthTest(enabled)
 
     /**
      * Adds the given [Consumer] as a listener to be invoked when this Session's current

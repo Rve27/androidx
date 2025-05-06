@@ -28,6 +28,7 @@ import androidx.xr.runtime.internal.Dimensions;
 import androidx.xr.runtime.internal.Entity;
 import androidx.xr.runtime.internal.HitTestResult;
 import androidx.xr.runtime.internal.SpaceValue;
+import androidx.xr.runtime.math.Matrix4;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Vector3;
 
@@ -63,6 +64,9 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
     private final Activity mActivity;
     private final Supplier<SpatialState> mSpatialStateProvider;
     private final AtomicReference<Dimensions> mBounds = new AtomicReference<>();
+    // The current scene parent aka ActivitySpace origin transform.
+    private final AtomicReference<Matrix4> mOriginTransform = new AtomicReference<>();
+    private final boolean mUnscaledGravityAlignedActivitySpace;
 
     ActivitySpaceImpl(
             Node taskNode,
@@ -70,10 +74,16 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
             XrExtensions extensions,
             EntityManager entityManager,
             Supplier<SpatialState> spatialStateProvider,
+            boolean unscaledGravityAlignedActivitySpace,
             ScheduledExecutorService executor) {
         super(taskNode, extensions, entityManager, executor);
         mActivity = activity;
         mSpatialStateProvider = spatialStateProvider;
+        mUnscaledGravityAlignedActivitySpace = unscaledGravityAlignedActivitySpace;
+        Log.i(
+                TAG,
+                "ActivitySpaceImpl: mUnscaledGravityAlignedActivitySpace: "
+                        + mUnscaledGravityAlignedActivitySpace);
     }
 
     /** Returns the identity pose since this entity defines the origin of the activity space. */
@@ -107,11 +117,26 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
         Log.e(TAG, "Cannot set scale for the ActivitySpace.");
     }
 
+    @Override
+    public void setPose(Pose p, @SpaceValue int s) {
+        Log.e(TAG, "Cannot set pose for the ActivitySpace.");
+    }
+
     @SuppressWarnings("ObjectToString")
     @Override
     public void dispose() {
         Log.i(TAG, "Disposing " + this);
         super.dispose();
+    }
+
+    public void handleOriginUpdate(Matrix4 newTransform) {
+        Matrix4 oldTransform = mOriginTransform.getAndSet(newTransform);
+        Log.i(
+                TAG,
+                "handleOriginUpdate: oldTransform: "
+                        + oldTransform
+                        + " newTransform: "
+                        + newTransform);
     }
 
     @NonNull

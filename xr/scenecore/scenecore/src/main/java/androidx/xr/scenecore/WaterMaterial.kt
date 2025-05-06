@@ -56,16 +56,16 @@ internal constructor(
     }
 
     /**
-     * Sets the reflection cube texture for the water material.
+     * Sets the reflection map texture for the water material.
      *
      * This method must be called from the main thread.
      * https://developer.android.com/guide/components/processes-and-threads
      *
-     * @param reflectionCube The [CubeMapTexture] to be used as the reflection cube.
+     * @param reflectionMap The [CubeMapTexture] to be used as the reflection cube.
      */
     @MainThread
-    public fun setReflectionCube(reflectionCube: CubeMapTexture) {
-        session.platformAdapter.setReflectionCube(materialResource, reflectionCube.texture)
+    public fun setReflectionMap(reflectionMap: CubeMapTexture) {
+        session.platformAdapter.setReflectionMap(materialResource, reflectionMap.texture)
     }
 
     /**
@@ -233,6 +233,7 @@ internal constructor(
          */
         @MainThread
         @JvmStatic
+        @Suppress("AsyncSuffixFuture")
         public fun create(
             session: Session,
             isAlphaMapVersion: Boolean,

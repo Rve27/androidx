@@ -143,16 +143,13 @@ class HandTrackingActivity : ComponentActivity() {
         sessionHelper =
             SessionLifecycleHelper(
                 this,
+                Config(handTracking = Config.HandTrackingMode.Enabled),
                 onSessionAvailable = { session ->
                     this.session = session
 
                     lifecycleScope.launch {
                         session.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                            session.configure(
-                                Config(handTracking = Config.HandTrackingMode.Enabled)
-                            )
                             setContent { MainPanel(session) }
-
                             val xyzModel = GltfModel.create(session, "models/xyzArrows.glb").await()
 
                             val leftHandJointEntityMap =
@@ -325,5 +322,9 @@ class HandTrackingActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        const val ACTIVITY_NAME = "PersistentAnchorsActivity"
     }
 }

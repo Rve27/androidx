@@ -37,6 +37,7 @@ import androidx.xr.runtime.testing.FakeRuntimeHand
 import com.google.common.truth.Truth.assertThat
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.nio.FloatBuffer
 import kotlin.test.assertFailsWith
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -245,7 +246,7 @@ class HandTest {
         session.pause()
     }
 
-    fun generateTestBuffer(handJoints: Map<HandJointType, Pose>): ByteBuffer {
+    fun generateTestBuffer(handJoints: Map<HandJointType, Pose>): FloatBuffer {
         val buffer = ByteBuffer.allocate(handJointBufferSize).order(ByteOrder.nativeOrder())
 
         repeat(26) {
@@ -261,7 +262,7 @@ class HandTest {
         }
 
         buffer.flip()
-        return buffer
+        return buffer.asFloatBuffer()
     }
 
     fun assertRotationEquals(actual: Quaternion, expected: Quaternion) {

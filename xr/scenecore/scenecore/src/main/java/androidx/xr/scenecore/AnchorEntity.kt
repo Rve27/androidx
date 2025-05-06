@@ -38,8 +38,8 @@ import java.util.concurrent.atomic.AtomicReference
  * calling setParent() on an AnchorEntity has no effect, as the parenting of an Anchor is controlled
  * by the system.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 @SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class AnchorEntity
 private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
     BaseEntity<RtAnchorEntity>(rtEntity, entityManager) {

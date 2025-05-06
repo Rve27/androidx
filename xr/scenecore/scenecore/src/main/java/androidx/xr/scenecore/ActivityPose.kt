@@ -61,7 +61,7 @@ public interface ActivityPose {
         public const val SELF_SCENE: Int = 1 shl 0
         /**
          * Register hit tests only for other scenes. An Application will only have access to other
-         * scenes if it has the android.permission.ACCESS_OVERLAY_SPACE permission.
+         * scenes if it has the com.android.extensions.xr.ACCESS_XR_OVERLAY_SPACE permission.
          */
         public const val OTHER_SCENES: Int = 1 shl 1
     }
@@ -88,7 +88,7 @@ public interface ActivityPose {
      * @param origin The translation of the origin of the hit test relative to this ActivityPose.
      * @param direction The direction for the hit test ray from the origin
      * @param hitTestFilter Filter for which scenes to hit test. Hitting other scenes is only
-     *   allowed for apps with the `android.permission.ACCESS_OVERLAY_SPACE` permission.
+     *   allowed for apps with the `com.android.extensions.xr.ACCESS_XR_OVERLAY_SPACE` permission.
      * @return a ListenableFuture<HitResult>. The HitResult describes if it hit something and where
      *   relative to this [ActivityPose]. Listeners will be called on the main thread if
      *   Runnable::run is supplied.

@@ -49,7 +49,7 @@ constructor(
         depthEstimation,
         anchorPersistence,
         headTracking,
-        GeospatialMode.Disabled
+        GeospatialMode.Disabled,
     )
 
     override fun equals(other: Any?): Boolean {
@@ -94,6 +94,7 @@ constructor(
         )
     }
 
+    @Suppress("MissingJvmstatic")
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public fun copy(
         planeTracking: PlaneTrackingMode = this.planeTracking,

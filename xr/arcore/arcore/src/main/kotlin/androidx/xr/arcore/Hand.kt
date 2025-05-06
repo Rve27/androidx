@@ -28,7 +28,7 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
 import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import java.nio.FloatBuffer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -80,6 +80,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
          * @return the [Handedness] of the user's primary hand. If the setting is not configured,
          *   returns [Handedness.UNKNOWN].
          */
+        @JvmStatic
         public fun getHandedness(resolver: ContentResolver): Handedness =
             Handedness.values()[
                     System.getInt(resolver, PRIMARY_HAND_SETTING_NAME, Handedness.UNKNOWN.ordinal)]
@@ -104,16 +105,16 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
      * The representation of the current state of [Hand].
      *
      * @param trackingState the current [TrackingState] of the hand.
-     * @param handJointsBuffer the [ByteBuffer] containing the pose of each joint in the hand.
+     * @param handJointsBuffer the [FloatBuffer] containing the pose of each joint in the hand.
      */
     public class State(
         public val trackingState: TrackingState,
-        public val handJointsBuffer: ByteBuffer,
+        public val handJointsBuffer: FloatBuffer,
     ) {
 
         private class JointsMap(
             val trackingState: TrackingState,
-            val handJointsBuffer: ByteBuffer
+            val handJointsBuffer: FloatBuffer
         ) : Map<HandJointType, Pose> {
             override val entries: Set<Map.Entry<HandJointType, Pose>>
                 get() =
@@ -151,17 +152,16 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
             }
 
             private fun locateHandJointFromBuffer(handJointType: HandJointType): Pose {
-                val buffer = handJointsBuffer.duplicate().order(ByteOrder.nativeOrder())
-                val bytePerPose = 7 * 4
-                val byteOffset = handJointType.ordinal * bytePerPose
-                buffer.position(byteOffset)
-                val qx = buffer.float
-                val qy = buffer.float
-                val qz = buffer.float
-                val qw = buffer.float
-                val px = buffer.float
-                val py = buffer.float
-                val pz = buffer.float
+                val buffer = handJointsBuffer.duplicate()
+                val floatOffset = handJointType.ordinal * FLOATS_PER_POSE
+                buffer.position(floatOffset)
+                val qx = buffer.get()
+                val qy = buffer.get()
+                val qz = buffer.get()
+                val qw = buffer.get()
+                val px = buffer.get()
+                val py = buffer.get()
+                val pz = buffer.get()
                 return Pose(Vector3(px, py, pz), Quaternion(qx, qy, qz, qw))
             }
         }
@@ -186,10 +186,14 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
             result = 31 * result + handJointsBuffer.hashCode()
             return result
         }
+
+        private companion object {
+            const val FLOATS_PER_POSE = 7
+        }
     }
 
     private val _state =
-        MutableStateFlow<State>(State(TrackingState.Paused, ByteBuffer.allocate(0)))
+        MutableStateFlow<State>(State(TrackingState.Paused, ByteBuffer.allocate(0).asFloatBuffer()))
     /** The current [State] of this hand. */
     public val state: StateFlow<State> = _state.asStateFlow()
 

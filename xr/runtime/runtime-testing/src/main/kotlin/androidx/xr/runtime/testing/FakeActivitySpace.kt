@@ -36,6 +36,7 @@ public class FakeActivitySpace : ActivitySpace, FakeSystemSpaceEntity() {
 
     override fun removeOnBoundsChangedListener(listener: ActivitySpace.OnBoundsChangedListener) {}
 
+    @Suppress("AsyncSuffixFuture")
     override fun hitTestRelativeToActivityPose(
         origin: Vector3,
         direction: Vector3,

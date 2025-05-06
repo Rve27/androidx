@@ -107,7 +107,8 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
                         mPerceptionLibrary,
                         mSplitEngineSubspaceManager,
                         mSplitEngineRenderer,
-                        /* useSplitEngine= */ false);
+                        /* useSplitEngine= */ false,
+                        /* unscaledGravityAlignedActivitySpace= */ false);
 
         mActivitySpace = mTestRuntime.getActivitySpace();
 

@@ -19,6 +19,7 @@ package androidx.xr.runtime.testing
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.internal.Anchor
 import androidx.xr.runtime.internal.AnchorInvalidUuidException
+import androidx.xr.runtime.internal.Earth
 import androidx.xr.runtime.internal.Hand
 import androidx.xr.runtime.internal.HitResult
 import androidx.xr.runtime.internal.PerceptionManager
@@ -36,6 +37,8 @@ public class FakePerceptionManager : PerceptionManager, AnchorHolder {
 
     override val leftHand: Hand? = FakeRuntimeHand()
     override val rightHand: Hand? = FakeRuntimeHand()
+
+    override val earth: Earth = FakeRuntimeEarth()
 
     private val hitResults = mutableListOf<HitResult>()
     private val anchorUuids = mutableListOf<UUID>()

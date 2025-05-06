@@ -150,6 +150,10 @@ public class MoveStartEvent(
         return super.equals(other)
     }
 
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
+
     override fun toString(): String {
         return "OnMoveStart(pose=$pose, scale=$scale, size=$size)"
     }
@@ -175,6 +179,10 @@ public class MoveEndEvent(
         if (this === other) return true
         if (other !is MoveEndEvent) return false
         return super.equals(other)
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
     }
 
     override fun toString(): String {

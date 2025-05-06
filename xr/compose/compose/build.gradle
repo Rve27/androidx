@@ -54,6 +54,7 @@ dependencies {
 
     testImplementation(libs.espressoCore)
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinCoroutinesTest)
     testImplementation(libs.kotlinTest)
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.robolectric)

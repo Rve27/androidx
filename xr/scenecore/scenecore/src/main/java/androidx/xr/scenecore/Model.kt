@@ -100,6 +100,7 @@ public class GltfModel internal constructor(internal val model: RtGltfModel) : M
          */
         @MainThread
         @JvmStatic
+        @Suppress("AsyncSuffixFuture")
         public fun create(
             session: Session,
             assetData: ByteArray,

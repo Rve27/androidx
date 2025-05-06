@@ -83,6 +83,7 @@ class OpenXrManagerTest {
 
     @Test
     fun configure_handTrackingEnabled_addsHandToUpdatables() = initOpenXrManagerAndRunTest {
+        underTest.create()
         check(underTest.config.handTracking == HandTrackingMode.Disabled)
         check(perceptionManager.xrResources.updatables.isEmpty())
 
@@ -97,6 +98,7 @@ class OpenXrManagerTest {
 
     @Test
     fun configure_handTrackingDisabled_removesHandsFromUpdatables() = initOpenXrManagerAndRunTest {
+        underTest.create()
         underTest.configure(Config(handTracking = Config.HandTrackingMode.Enabled))
         check(
             perceptionManager.xrResources.updatables.containsAll(
@@ -115,6 +117,8 @@ class OpenXrManagerTest {
     // TODO(b/392660855): Add a test for all APIs gated by a feature that needs to be configured.
     @Test
     fun configure_withSufficientPermissions_doesNotThrowException() = initOpenXrManagerAndRunTest {
+        underTest.create()
+
         underTest.configure(
             Config(
                 Config.PlaneTrackingMode.HorizontalAndVertical,
@@ -130,6 +134,8 @@ class OpenXrManagerTest {
     // stub's current implementation.
     fun configure_insufficientPermissions_throwsPermissionNotGrantedException() =
         initOpenXrManagerAndRunTest {
+            underTest.create()
+
             // The OpenXR stub returns `XR_ERROR_PERMISSION_INSUFFICIENT` when calling
             // `xrEnumerateDepthResolutionsANDROID` which is triggered by attempting to enable the
             // DepthEstimation feature.
@@ -144,6 +150,23 @@ class OpenXrManagerTest {
                 )
             }
         }
+
+    @Test
+    fun configure_withoutCreate_throwsIllegalStateException() = initOpenXrManagerAndRunTest {
+        // The OpenXR stub returns `XR_ERROR_HANDLE_INVALID` if the `xrSession` has not been
+        // initialized
+        // by `OpenXrManager.create()`.
+        assertThrows(IllegalStateException::class.java) {
+            underTest.configure(
+                Config(
+                    Config.PlaneTrackingMode.Disabled,
+                    Config.HandTrackingMode.Disabled,
+                    Config.DepthEstimationMode.Enabled,
+                    Config.AnchorPersistenceMode.Disabled,
+                )
+            )
+        }
+    }
 
     // TODO: b/344962771 - Add a more meaningful test once we can use the update() method.
     @Test

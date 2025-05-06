@@ -66,6 +66,13 @@ public class FakeLifecycleManager(
     override fun create() {
         check(state == State.NOT_INITIALIZED)
         if (!hasCreatePermission) throw PermissionNotGrantedException()
+        if (FakeRuntimeFactory.lifecycleCreateException != null) {
+            // FakeRuntimeFactory will continue to throw exception on subsequent tests unless
+            // cleared.
+            var exceptionToThrow = FakeRuntimeFactory.lifecycleCreateException!!
+            FakeRuntimeFactory.lifecycleCreateException = null
+            throw exceptionToThrow
+        }
         state = State.INITIALIZED
     }
 

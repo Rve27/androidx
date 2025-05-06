@@ -288,7 +288,7 @@ class EntityTest {
             .thenReturn(mockActivityPanelEntity)
         whenever(mockPlatformAdapter.createEntity(any(), any(), any()))
             .thenReturn(mockContentlessEntity)
-        whenever(mockPlatformAdapter.createSurfaceEntity(any(), any(), any(), any()))
+        whenever(mockPlatformAdapter.createSurfaceEntity(any(), any(), any(), any(), any()))
             .thenReturn(mockSurfaceEntity)
         whenever(mockPlatformAdapter.mainPanelEntity).thenReturn(mockPanelEntityImpl)
         session = Session(activity, fakeRuntimeFactory.createRuntime(activity), mockPlatformAdapter)

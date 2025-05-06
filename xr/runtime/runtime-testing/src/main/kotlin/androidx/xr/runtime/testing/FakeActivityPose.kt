@@ -36,6 +36,7 @@ public open class FakeActivityPose : ActivityPose {
 
     override fun transformPoseTo(pose: Pose, destination: ActivityPose): Pose = pose
 
+    @Suppress("AsyncSuffixFuture")
     override fun hitTest(
         origin: Vector3,
         direction: Vector3,

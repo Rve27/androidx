@@ -20,9 +20,12 @@ import androidx.annotation.RestrictTo
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.internal.Hand as RuntimeHand
 import java.nio.ByteBuffer
+import java.nio.FloatBuffer
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeRuntimeHand(
     override var trackingState: TrackingState = TrackingState.Paused,
-    override var handJointsBuffer: ByteBuffer = ByteBuffer.allocate(0),
-) : RuntimeHand {}
+    override var handJointsBuffer: FloatBuffer = ByteBuffer.allocate(0).asFloatBuffer(),
+) : RuntimeHand {
+    public companion object {}
+}

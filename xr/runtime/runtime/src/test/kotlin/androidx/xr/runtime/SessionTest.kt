@@ -19,6 +19,11 @@ package androidx.xr.runtime
 import android.app.Activity
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.xr.runtime.internal.ApkCheckAvailabilityErrorException
+import androidx.xr.runtime.internal.ApkCheckAvailabilityInProgressException
+import androidx.xr.runtime.internal.ApkNotInstalledException
+import androidx.xr.runtime.internal.UnsupportedDeviceException
+import androidx.xr.runtime.testing.FakeJxrPlatformAdapter
 import androidx.xr.runtime.testing.FakeLifecycleManager
 import androidx.xr.runtime.testing.FakeRuntimeFactory
 import androidx.xr.runtime.testing.FakeStateExtender
@@ -92,6 +97,59 @@ class SessionTest {
         FakeRuntimeFactory.hasCreatePermission = true
 
         assertThat(result).isInstanceOf(SessionCreatePermissionsNotGranted::class.java)
+    }
+
+    @Test
+    fun create_arcoreNotInstalledException_returnsApkRequiredResult() {
+        FakeRuntimeFactory.lifecycleCreateException = ApkNotInstalledException(ARCORE_PACKAGE_NAME)
+
+        val result = Session.create(activity)
+
+        assertThat(result).isInstanceOf(SessionCreateApkRequired::class.java)
+        assertThat((result as SessionCreateApkRequired).requiredApk).isEqualTo(ARCORE_PACKAGE_NAME)
+    }
+
+    @Test
+    fun create_arcoreUnsupportedDeviceException_returnsUnsupportedDeviceResult() {
+        FakeRuntimeFactory.lifecycleCreateException = UnsupportedDeviceException()
+
+        val result = Session.create(activity)
+
+        assertThat(result).isInstanceOf(SessionCreateUnsupportedDevice::class.java)
+    }
+
+    @Test
+    fun create_arcoreCheckAvailabilityInProgressException_returnsApkRequiredResult() {
+        FakeRuntimeFactory.lifecycleCreateException =
+            ApkCheckAvailabilityInProgressException(ARCORE_PACKAGE_NAME)
+
+        val result = Session.create(activity)
+
+        assertThat(result).isInstanceOf(SessionCreateApkRequired::class.java)
+        assertThat((result as SessionCreateApkRequired).requiredApk).isEqualTo(ARCORE_PACKAGE_NAME)
+    }
+
+    @Test
+    fun create_arcoreCheckAvailabilityErrorException_returnsApkRequiredResult() {
+        FakeRuntimeFactory.lifecycleCreateException =
+            ApkCheckAvailabilityErrorException(ARCORE_PACKAGE_NAME)
+
+        val result = Session.create(activity)
+
+        assertThat(result).isInstanceOf(SessionCreateApkRequired::class.java)
+        assertThat((result as SessionCreateApkRequired).requiredApk).isEqualTo(ARCORE_PACKAGE_NAME)
+    }
+
+    @Test
+    fun create_initializesPlatformAdapter() {
+        val underTest = (Session.create(activity) as SessionCreateSuccess).session
+
+        // The FakeJxrPlatformAdapter is being loaded in Session here because it is defined as a
+        // class
+        // in the "//third_party/arcore/androidx/java/androidx/xr/testing" dependency.
+        val platformAdapter = underTest.platformAdapter as FakeJxrPlatformAdapter
+        assertThat(platformAdapter).isNotNull()
+        assertThat(platformAdapter.state.name).isEqualTo("CREATED")
     }
 
     @Test
@@ -177,6 +235,16 @@ class SessionTest {
     }
 
     @Test
+    fun resume_returnsSuccessAndSetsPlatformAdapterToResumed() {
+        val underTest = (Session.create(activity) as SessionCreateSuccess).session
+        val result = underTest.resume()
+
+        assertThat(result).isInstanceOf(SessionResumeSuccess::class.java)
+        assertThat((underTest.platformAdapter as FakeJxrPlatformAdapter).state.name)
+            .isEqualTo("STARTED")
+    }
+
+    @Test
     fun resume_destroyed_throwsIllegalStateException() {
         val underTest = (Session.create(activity) as SessionCreateSuccess).session
         underTest.destroy()
@@ -234,6 +302,17 @@ class SessionTest {
     }
 
     @Test
+    fun pause_setsPlatformAdapterToPaused() {
+        val underTest = (Session.create(activity) as SessionCreateSuccess).session
+        underTest.resume()
+
+        underTest.pause()
+
+        val platformAdapter = underTest.platformAdapter as FakeJxrPlatformAdapter
+        assertThat(platformAdapter.state.name).isEqualTo("PAUSED")
+    }
+
+    @Test
     fun pause_destroyed_throwsIllegalStateException() {
         val underTest = (Session.create(activity) as SessionCreateSuccess).session
         underTest.destroy()
@@ -263,6 +342,17 @@ class SessionTest {
     }
 
     @Test
+    fun destroy_setsPlatformAdapterToStopped() {
+        val underTest = (Session.create(activity) as SessionCreateSuccess).session
+        underTest.resume()
+
+        underTest.destroy()
+
+        val platformAdapter = underTest.platformAdapter as FakeJxrPlatformAdapter
+        assertThat(platformAdapter.state.name).isEqualTo("STOPPED")
+    }
+
+    @Test
     fun destroy_cancelsCoroutineScope() {
         val underTest = (Session.create(activity) as SessionCreateSuccess).session
         // Creating a job that will not finish by the time destroy is called.
@@ -280,5 +370,9 @@ class SessionTest {
         session.resume()
         testScope.advanceUntilIdle()
         session.pause()
+    }
+
+    private companion object {
+        const private val ARCORE_PACKAGE_NAME = "com.google.ar.core"
     }
 }
