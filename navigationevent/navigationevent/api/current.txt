@@ -26,22 +26,25 @@ package androidx.navigationevent {
   }
 
   public abstract class NavigationEventCallback {
-    ctor public NavigationEventCallback(boolean isEnabled, androidx.navigationevent.NavigationEventDispatcher dispatcher, optional int priority);
+    ctor public NavigationEventCallback(boolean isEnabled, optional int priority);
     method public final int getPriority();
+    method public final boolean isEnabled();
     method public final boolean isPassThrough();
     method public void onEventCancelled();
     method public void onEventCompleted();
     method public void onEventProgressed(androidx.navigationevent.NavigationEvent event);
     method public void onEventStarted(androidx.navigationevent.NavigationEvent event);
     method public final void remove();
+    method public final void setEnabled(boolean);
     method public final void setPassThrough(boolean);
+    property public final boolean isEnabled;
     property public final boolean isPassThrough;
     property public final int priority;
   }
 
   public final class NavigationEventDispatcher {
-    ctor public NavigationEventDispatcher(Runnable? fallbackOnBackPressed);
-    ctor public NavigationEventDispatcher(Runnable? fallbackOnBackPressed, java.util.function.Consumer<java.lang.Boolean>? onHasEnabledCallbacksChanged);
+    ctor public NavigationEventDispatcher(kotlin.jvm.functions.Function0<kotlin.Unit>? fallbackOnBackPressed);
+    ctor public NavigationEventDispatcher(kotlin.jvm.functions.Function0<kotlin.Unit>? fallbackOnBackPressed, kotlin.jvm.functions.Function1<? super java.lang.Boolean,kotlin.Unit>? onHasEnabledCallbacksChanged);
     method @MainThread public void addCallback(androidx.navigationevent.NavigationEventCallback callback, optional int priority);
     method @MainThread public void dispatchOnCancelled();
     method @MainThread public void dispatchOnCompleted();

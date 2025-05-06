@@ -19,10 +19,9 @@ package androidx.navigationevent
 /**
  * Call for handling [NavigationEventDispatcher] callbacks.
  *
- * This class maintains its own [enabled] state and will only receive callbacks when enabled.
+ * This class maintains its own [isEnabled] state and will only receive callbacks when enabled.
  *
  * @param isEnabled The default enabled state for this callback.
- * @param dispatcher The dispatcher this callback is being added to.
  * @param priority The priority this callback should be registered with.
  * @see NavigationEventDispatcher
  */
@@ -32,13 +31,11 @@ public abstract class NavigationEventCallback(
      * callbacks to [onEventCompleted].
      */
     isEnabled: Boolean,
-    /** The dispatcher that this callback is being added to. */
-    internal val dispatcher: NavigationEventDispatcher,
     /** The priority of this callback. */
     public val priority: NavigationEventPriority = NavigationEventPriority.Default
 ) {
 
-    internal var enabled: Boolean = isEnabled
+    public var isEnabled: Boolean = isEnabled
         set(value) {
             field = value
             enabledChangedCallback?.invoke()
@@ -52,9 +49,26 @@ public abstract class NavigationEventCallback(
      */
     public var isPassThrough: Boolean = false
 
-    /** Removes this callback from the [NavigationEventDispatcher] it is currently added to. */
+    /**
+     * A set of active [Subscription]s associated with this [NavigationEventCallback].
+     *
+     * Each subscription represents a registration with a [NavigationEventDispatcher]. These are
+     * automatically unsubscribed when [remove] is called to avoid unintended event dispatches.
+     */
+    private val subscriptions = mutableSetOf<Subscription>()
+
+    /**
+     * Unsubscribes this [NavigationEventCallback] from all registered [NavigationEventDispatcher]s.
+     *
+     * This method invokes [Subscription.unsubscribe] on all tracked subscriptions and clears them,
+     * ensuring the callback no longer receives navigation events from any dispatcher it was
+     * previously registered with.
+     */
     public fun remove() {
-        dispatcher.removeCallback(this)
+        for (subscription in subscriptions) {
+            subscription.unsubscribe()
+        }
+        subscriptions.clear()
     }
 
     /** Callback for handling the [NavigationEventDispatcher.dispatchOnStarted] callback. */
@@ -68,4 +82,31 @@ public abstract class NavigationEventCallback(
 
     /** Callback for handling the [NavigationEventDispatcher.dispatchOnCancelled] callback. */
     public open fun onEventCancelled() {}
+
+    /**
+     * Tracks a [Subscription] associated with this [NavigationEventCallback].
+     *
+     * Tracked subscriptions will be automatically unsubscribed when [remove] is called, preventing
+     * unintended callback invocations.
+     *
+     * @param subscription The [Subscription] to be tracked for later unsubscription.
+     */
+    internal fun addSubscription(subscription: Subscription) {
+        subscriptions += subscription
+    }
+
+    /**
+     * Represents a registration link between a [NavigationEventDispatcher] and a
+     * [NavigationEventCallback].
+     *
+     * This allows a [NavigationEventCallback] to unsubscribe from all associated dispatchers by
+     * calling [NavigationEventCallback.remove], effectively stopping event delivery to the
+     * callback.
+     */
+    internal fun interface Subscription {
+        /**
+         * Unsubscribes a [NavigationEventCallback] from an associated [NavigationEventDispatcher].
+         */
+        fun unsubscribe()
+    }
 }

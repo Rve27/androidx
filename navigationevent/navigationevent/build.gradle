@@ -32,6 +32,7 @@ plugins {
 
 androidXMultiplatform {
     androidTarget()
+    desktop()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
 
@@ -54,26 +55,16 @@ androidXMultiplatform {
             }
         }
 
-        jvmCommonMain {
-            dependsOn(commonMain)
-        }
-
-        jvmCommonTest {
-            dependsOn(commonTest)
-            dependencies {
-                runtimeOnly(libs.kotlinTestJunit)
-                implementation(libs.junit)
-            }
-        }
-
         androidMain {
-            dependsOn(jvmCommonMain)
+            dependsOn(commonMain)
             dependencies { }
         }
 
         androidInstrumentedTest {
-            dependsOn(jvmCommonTest)
+            dependsOn(commonTest)
             dependencies {
+                runtimeOnly(libs.kotlinTestJunit)
+                implementation(libs.junit)
                 implementation(libs.espressoCore)
                 implementation(libs.hamcrestCore)
                 implementation(libs.testCore)

@@ -16,23 +16,21 @@
 
 package androidx.navigationevent
 
-import android.os.Build
 import androidx.annotation.MainThread
-import java.util.function.Consumer
 
 /**
  * Dispatcher that can be used to register [NavigationEventCallback] instances for handling the
  * in-app callbacks via composition.
  */
 public class NavigationEventDispatcher(
-    private var fallbackOnBackPressed: Runnable?,
-    private val onHasEnabledCallbacksChanged: Consumer<Boolean>?
+    private val fallbackOnBackPressed: (() -> Unit)?,
+    private val onHasEnabledCallbacksChanged: ((Boolean) -> Unit)?,
 ) {
     /**
      * Dispatcher that can be used to register [NavigationEventCallback] instances for handling the
      * in-app callbacks via composition.
      */
-    public constructor(fallbackOnBackPressed: Runnable?) : this(fallbackOnBackPressed, null)
+    public constructor(fallbackOnBackPressed: (() -> Unit)?) : this(fallbackOnBackPressed, null)
 
     private var inProgressCallbacks: MutableList<NavigationEventCallback> = mutableListOf()
 
@@ -45,12 +43,12 @@ public class NavigationEventDispatcher(
 
     internal fun updateEnabledCallbacks() {
         val hadEnabledCallbacks = hasEnabledCallbacks
-        val hasEnabledCallbacks = (overlayCallbacks + normalCallbacks).any { it.enabled }
+        val hasEnabledCallbacks = (overlayCallbacks + normalCallbacks).any { it.isEnabled }
         this.hasEnabledCallbacks = hasEnabledCallbacks
         if (hasEnabledCallbacks != hadEnabledCallbacks) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                onHasEnabledCallbacksChanged?.accept(hasEnabledCallbacks)
-            }
+            // onHasEnabledCallbacksChanged is for Android N (API 24+) specific notifications.
+            // It's null on older versions, and will not be called.
+            onHasEnabledCallbacksChanged?.invoke(hasEnabledCallbacks)
             updateInputHandler()
         }
     }
@@ -75,6 +73,7 @@ public class NavigationEventDispatcher(
             NavigationEventPriority.Overlay -> overlayCallbacks.addFirst(callback)
             NavigationEventPriority.Default -> normalCallbacks.addFirst(callback)
         }
+        callback.addSubscription { removeCallback(callback) }
         updateEnabledCallbacks()
         callback.enabledChangedCallback = ::updateEnabledCallbacks
     }
@@ -137,7 +136,7 @@ public class NavigationEventDispatcher(
             if (!callback.isPassThrough) return
         }
 
-        fallbackOnBackPressed?.run()
+        fallbackOnBackPressed?.invoke()
     }
 
     /**
@@ -157,7 +156,13 @@ public class NavigationEventDispatcher(
     }
 
     internal fun getEnabledCallbackSequence(): Sequence<NavigationEventCallback> {
-        return overlayCallbacks.asSequence().filter { it.enabled } +
-            normalCallbacks.asSequence().filter { it.enabled }
+        // Use a sequence builder to create a single `Sequence` instance that lazily access the
+        // yield lists, rather than calling `asSequence` on each list and chaining with `plus`,
+        // which results in three separate sequence instances being created.
+        return sequence {
+                yieldAll(elements = overlayCallbacks)
+                yieldAll(elements = normalCallbacks)
+            }
+            .filter { callback -> callback.isEnabled }
     }
 }

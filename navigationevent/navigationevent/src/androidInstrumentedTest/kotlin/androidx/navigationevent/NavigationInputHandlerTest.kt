@@ -53,7 +53,7 @@ class NavigationInputHandlerTest {
         inputHandler.setOnBackInvokedDispatcher(invoker)
 
         val callback =
-            object : NavigationEventCallback(true, dispatcher) {
+            object : NavigationEventCallback(true) {
                 override fun onEventCompleted() {}
             }
 
@@ -87,7 +87,7 @@ class NavigationInputHandlerTest {
         inputHandler.setOnBackInvokedDispatcher(invoker)
 
         val callback =
-            object : NavigationEventCallback(true, dispatcher) {
+            object : NavigationEventCallback(true) {
                 override fun onEventCompleted() {}
             }
 
@@ -95,11 +95,11 @@ class NavigationInputHandlerTest {
 
         assertThat(registerCount).isEqualTo(1)
 
-        callback.enabled = false
+        callback.isEnabled = false
 
         assertThat(unregisterCount).isEqualTo(1)
 
-        callback.enabled = true
+        callback.isEnabled = true
 
         assertThat(registerCount).isEqualTo(2)
     }
@@ -107,14 +107,14 @@ class NavigationInputHandlerTest {
     @Test
     fun testCallbackEnabledDisabled() {
         val callback =
-            object : NavigationEventCallback(false, NavigationEventDispatcher {}) {
+            object : NavigationEventCallback(false) {
                 override fun onEventCompleted() {
                     TODO("Not yet implemented")
                 }
             }
 
-        callback.enabled = true
-        callback.enabled = false
+        callback.isEnabled = true
+        callback.isEnabled = false
     }
 
     @Test
@@ -135,7 +135,7 @@ class NavigationInputHandlerTest {
         val dispatcher = NavigationEventDispatcher {}
 
         val callback =
-            object : NavigationEventCallback(false, dispatcher) {
+            object : NavigationEventCallback(false) {
                 override fun onEventCompleted() {}
             }
 
@@ -147,11 +147,11 @@ class NavigationInputHandlerTest {
 
         assertThat(registerCount).isEqualTo(0)
 
-        callback.enabled = true
+        callback.isEnabled = true
 
         assertThat(registerCount).isEqualTo(1)
 
-        callback.enabled = false
+        callback.isEnabled = false
 
         assertThat(unregisterCount).isEqualTo(1)
     }
@@ -174,7 +174,7 @@ class NavigationInputHandlerTest {
         val dispatcher = NavigationEventDispatcher {}
 
         val callback =
-            object : NavigationEventCallback(true, dispatcher) {
+            object : NavigationEventCallback(true) {
                 override fun onEventCompleted() {}
             }
 
@@ -186,7 +186,7 @@ class NavigationInputHandlerTest {
 
         assertThat(registerCount).isEqualTo(1)
 
-        callback.enabled = false
+        callback.isEnabled = false
 
         assertThat(unregisterCount).isEqualTo(1)
     }
@@ -215,7 +215,7 @@ class NavigationInputHandlerTest {
         var progressedCount = 0
         var cancelledCount = 0
         val callback =
-            object : NavigationEventCallback(true, dispatcher) {
+            object : NavigationEventCallback(true) {
                 override fun onEventStarted(event: NavigationEvent) {
                     startedCount++
                 }

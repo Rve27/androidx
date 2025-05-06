@@ -23,8 +23,13 @@ import android.window.OnBackInvokedCallback
 import android.window.OnBackInvokedDispatcher
 import androidx.annotation.RequiresApi
 
-public actual class NavigationInputHandler
-actual constructor(private val dispatcher: NavigationEventDispatcher) {
+/**
+ * Provides input to the given [NavigationEventDispatcher].
+ *
+ * TODO(mgalhardo): Consider moving this to `commonMain` once the design of `InputHandler` for other
+ *   platforms is better understood.
+ */
+public class NavigationInputHandler(private val dispatcher: NavigationEventDispatcher) {
     private var invoker: OnBackInvokedDispatcher? = null
     private var onBackInvokedCallback: OnBackInvokedCallback? = null
     private var backInvokedCallbackRegistered = false
