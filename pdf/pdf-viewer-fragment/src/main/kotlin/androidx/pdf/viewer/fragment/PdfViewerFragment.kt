@@ -180,9 +180,10 @@ public open class PdfViewerFragment constructor() : Fragment() {
     public var isToolboxVisible: Boolean
         // We can't use toolbox.visibility because toolboxView is the layout here, and
         // its visibility doesn't change.
-        get() = if (::toolboxView.isInitialized) toolboxView.toolboxVisibility == VISIBLE else false
+        get() =
+            if (::_toolboxView.isInitialized) _toolboxView.toolboxVisibility == VISIBLE else false
         set(value) {
-            if (value && isAnnotationIntentResolvable) toolboxView.show() else toolboxView.hide()
+            if (isAnnotationIntentResolvable && value) _toolboxView.show() else _toolboxView.hide()
         }
 
     /**
@@ -235,9 +236,18 @@ public open class PdfViewerFragment constructor() : Fragment() {
     protected val pdfSearchView: PdfSearchView
         @RestrictTo(RestrictTo.Scope.LIBRARY) get() = _pdfSearchView
 
+    @VisibleForTesting
+    protected val toolboxView: ToolBoxView
+        @RestrictTo(RestrictTo.Scope.LIBRARY) get() = _toolboxView
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    protected fun setAnnotationIntentResolvability(value: Boolean) {
+        isAnnotationIntentResolvable = value
+    }
+
     private lateinit var _pdfView: PdfView
     private lateinit var _pdfSearchView: PdfSearchView
-    private lateinit var toolboxView: ToolBoxView
+    private lateinit var _toolboxView: ToolBoxView
     private lateinit var errorView: TextView
     private lateinit var loadingView: ProgressBar
     private lateinit var pdfViewManager: PdfViewManager
@@ -331,7 +341,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
             errorView = findViewById(R.id.errorTextView)
             loadingView = findViewById(R.id.pdfLoadingProgressBar)
             _pdfSearchView = findViewById(R.id.pdfSearchView)
-            toolboxView = findViewById(R.id.toolBoxView)
+            _toolboxView = findViewById(R.id.toolBoxView)
         }
         val gestureDetector =
             GestureDetector(
@@ -377,8 +387,8 @@ public open class PdfViewerFragment constructor() : Fragment() {
 
         onPdfSearchViewCreated(_pdfSearchView)
         lifecycleScope.launch { collectFragmentUiScreenState() }
-        toolboxView.hide()
-        toolboxView.setOnCurrentPageRequested { _pdfView.visiblePages.getCenter() }
+        _toolboxView.hide()
+        _toolboxView.setOnCurrentPageRequested { _pdfView.visiblePages.getCenter() }
 
         val stylingOptions = pdfStylingOptions
         if (stylingOptions != null) {
@@ -631,7 +641,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
         dismissPasswordDialog()
         onLoadDocumentSuccess()
         _pdfView.pdfDocument = uiState.pdfDocument
-        toolboxView.setPdfDocument(uiState.pdfDocument)
+        _toolboxView.setPdfDocument(uiState.pdfDocument)
         setAnnotationIntentResolvability(uiState.pdfDocument.uri)
         setViewVisibility(
             pdfView = VISIBLE,
@@ -646,7 +656,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
         isAnnotationIntentResolvable =
             AnnotationUtils.resolveAnnotationIntent(requireContext(), uri)
         if (!isAnnotationIntentResolvable) {
-            toolboxView.hide()
+            _toolboxView.hide()
         }
     }
 

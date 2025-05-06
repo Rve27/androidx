@@ -371,7 +371,75 @@ class PdfViewerFragmentV2TestSuite {
             .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
     }
 
-    // TODO(b/392638037): Add immersive mode integration test
+    /**
+     * This test verifies the behavior of the Pdf viewer in immersive mode, specifically the
+     * visibility of the toolbox
+     */
+    @Test
+    fun testPdfViewerFragment_immersiveMode_toggleMenu() {
+        scenarioLoadDocument(
+            scenario = scenario,
+            filename = TEST_DOCUMENT_FILE,
+            nextState = Lifecycle.State.STARTED,
+            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+        ) {
+            // Loading view assertion
+            onView(withId(PdfR.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
+        }
+
+        onView(withId(PdfR.id.pdfLoadingProgressBar))
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+        scenario.onFragment {
+            it.setIsAnnotationIntentResolvable(true)
+            Preconditions.checkArgument(
+                it.documentLoaded,
+                "Unable to load document due to ${it.documentError?.message}"
+            )
+        }
+
+        // Show the toolbox and check visibility
+        scenario.onFragment { it.isToolboxVisible = true }
+        onView(withId(R.id.edit_fab)).check(matches(isDisplayed()))
+
+        // Hide the toolbox and check visibility
+        scenario.onFragment { it.isToolboxVisible = false }
+
+        onView(withId(R.id.edit_fab))
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+
+        // Show the toolbox and check visibility
+        scenario.onFragment { it.isToolboxVisible = true }
+        onView(withId(R.id.edit_fab)).check(matches(isDisplayed()))
+
+        // Swipe down to hide the toolbox and check visibility
+        onView(withId(PdfR.id.pdfView)).perform(swipeUp())
+        scenario.onFragment { it.pdfScrollIdlingResource.increment() }
+        onView(withId(R.id.edit_fab))
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+
+        // Swipe up to top of pdf show the toolbox and check visibility
+        onView(withId(PdfR.id.pdfView)).perform(swipeDown())
+        scenario.onFragment { it.pdfScrollIdlingResource.increment() }
+        onView(withId(R.id.edit_fab)).check(matches(isDisplayed()))
+
+        // Enter immersive mode and check visibility
+        scenario.onFragment { it.onRequestImmersiveMode(true) }
+        onView(withId(R.id.edit_fab))
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+
+        // Exit immersive mode and check visibility
+        scenario.onFragment { it.onRequestImmersiveMode(false) }
+        onView(withId(R.id.edit_fab)).check(matches(isDisplayed()))
+
+        // Click the host app search button and check visibility
+        scenario.onFragment {
+            it.pdfSearchViewVisibleIdlingResource.increment()
+            it.isTextSearchActive = true
+        }
+        onView(withId(PdfR.id.pdfSearchView)).check(matches(isDisplayed()))
+        onView(withId(R.id.edit_fab))
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+    }
 
     @Test
     fun testPdfViewerFragment_dismissPasswordDialog() {
