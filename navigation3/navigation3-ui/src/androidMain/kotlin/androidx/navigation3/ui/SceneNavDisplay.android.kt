@@ -29,6 +29,7 @@ import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -52,6 +53,8 @@ import androidx.navigation3.ui.SceneNavDisplay.ENTER_TRANSITION_KEY
 import androidx.navigation3.ui.SceneNavDisplay.EXIT_TRANSITION_KEY
 import androidx.navigation3.ui.SceneNavDisplay.POP_ENTER_TRANSITION_KEY
 import androidx.navigation3.ui.SceneNavDisplay.POP_EXIT_TRANSITION_KEY
+import androidx.navigation3.ui.SceneNavDisplay.POP_TRANSITION_SPEC
+import androidx.navigation3.ui.SceneNavDisplay.TRANSITION_SPEC
 import kotlin.reflect.KClass
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
@@ -60,7 +63,27 @@ import kotlinx.coroutines.launch
 public object SceneNavDisplay {
     /**
      * Function to be called on the [NavEntry.metadata] to notify the [SceneNavDisplay] that the
+     * content should be animated using the provided [ContentTransform].
+     *
+     * Transitions passed into the given [ContentTransform] will have the highest priority.
+     */
+    public fun transitionSpec(contentTransform: ContentTransform?): Map<String, Any> =
+        if (contentTransform == null) emptyMap() else mapOf(TRANSITION_SPEC to contentTransform)
+
+    /**
+     * Function to be called on the [NavEntry.metadata] to notify the [SceneNavDisplay] that, when
+     * popping from backstack, the content should be animated using the provided [ContentTransform].
+     *
+     * Transitions passed into the given [ContentTransform] will have the highest priority.
+     */
+    public fun popTransitionSpec(contentTransform: ContentTransform?): Map<String, Any> =
+        if (contentTransform == null) emptyMap() else mapOf(POP_TRANSITION_SPEC to contentTransform)
+
+    /**
+     * Function to be called on the [NavEntry.metadata] to notify the [SceneNavDisplay] that the
      * content should be animated using the provided transitions.
+     *
+     * Transitions passed into this function will run unless there is a [transitionSpec] available.
      */
     public fun transition(enter: EnterTransition?, exit: ExitTransition?): Map<String, Any> =
         if (enter == null || exit == null) emptyMap()
@@ -69,11 +92,16 @@ public object SceneNavDisplay {
     /**
      * Function to be called on the [NavEntry.metadata] to notify the [SceneNavDisplay] that, when
      * popping from backstack, the content should be animated using the provided transitions.
+     *
+     * Transitions passed into this function will run unless there is a [popTransitionSpec]
+     * available.
      */
     public fun popTransition(enter: EnterTransition?, exit: ExitTransition?): Map<String, Any> =
         if (enter == null || exit == null) emptyMap()
         else mapOf(POP_ENTER_TRANSITION_KEY to enter, POP_EXIT_TRANSITION_KEY to exit)
 
+    internal const val TRANSITION_SPEC = "transitionSpec"
+    internal const val POP_TRANSITION_SPEC = "popTransitionSpec"
     internal const val ENTER_TRANSITION_KEY = "enterTransition"
     internal const val EXIT_TRANSITION_KEY = "exitTransition"
     internal const val POP_ENTER_TRANSITION_KEY = "popEnterTransition"
@@ -107,9 +135,7 @@ public object SceneNavDisplay {
  * @param sceneStrategy the [SceneStrategy] to determine which scene to render a list of entries.
  * @param sizeTransform the [SizeTransform] for the [AnimatedContent].
  * @param enterTransition Default [EnterTransition] when navigating to [NavEntry]s.
- * @param exitTransition Default [ExitTransition] when navigating to [NavEntry]s.
  * @param popEnterTransition Default [EnterTransition] when popping [NavEntry]s.
- * @param popExitTransition Default [ExitTransition] when popping [NavEntry]s.
  * @param entryProvider lambda used to construct each possible [NavEntry]
  * @sample androidx.navigation3.ui.samples.SceneNav
  * @sample androidx.navigation3.ui.samples.SceneNavSharedEntrySample
@@ -157,6 +183,80 @@ public fun <T : Any> SceneNavDisplay(
                     DEFAULT_TRANSITION_DURATION_MILLISECOND,
                 )
         ),
+    entryProvider: (key: T) -> NavEntry<T>,
+) {
+    SceneNavDisplay(
+        backStack = backStack,
+        modifier = modifier,
+        contentAlignment = contentAlignment,
+        onBack = onBack,
+        entryDecorators = entryDecorators,
+        sceneStrategy = sceneStrategy,
+        transitionSpec = ContentTransform(enterTransition, exitTransition),
+        popTransitionSpec = ContentTransform(popEnterTransition, popExitTransition),
+        entryProvider = entryProvider
+    )
+}
+
+/**
+ * A nav display that renders and animates between different [Scene]s, each of which can render one
+ * or more [NavEntry]s.
+ *
+ * The [Scene]s are calculated with the given [SceneStrategy], which may be an assembled delegated
+ * chain of [SceneStrategy]s. If no [Scene] is calculated, the fallback will be to a
+ * [SinglePaneSceneStrategy].
+ *
+ * It is allowable for different [Scene]s to render the same [NavEntry]s, perhaps on some conditions
+ * as determined by the [sceneStrategy] based on window size, form factor, other arbitrary logic.
+ *
+ * If this happens, and these [Scene]s are rendered at the same time due to animation or predictive
+ * back, then the content for the [NavEntry] will only be rendered in the most recent [Scene] that
+ * is the target for being the current scene as determined by [sceneStrategy]. This enforces a
+ * unique invocation of each [NavEntry], even if it is displayable by two different [Scene]s.
+ *
+ * @param backStack the collection of keys that represents the state that needs to be handled
+ * @param modifier the modifier to be applied to the layout.
+ * @param contentAlignment The [Alignment] of the [AnimatedContent]
+ * @param onBack a callback for handling system back press. The passed [Int] refers to the number of
+ *   entries to pop from the end of the backstack, as calculated by the [sceneStrategy].
+ * @param entryDecorators list of [NavEntryDecorator] to add information to the entry content
+ * @param sceneStrategy the [SceneStrategy] to determine which scene to render a list of entries.
+ * @param transitionSpec Default [ContentTransform] when navigating to [NavEntry]s.
+ * @param popTransitionSpec Default [ContentTransform] when popping [NavEntry]s.
+ * @param entryProvider lambda used to construct each possible [NavEntry]
+ * @sample androidx.navigation3.ui.samples.SceneNav
+ * @sample androidx.navigation3.ui.samples.SceneNavSharedEntrySample
+ * @sample androidx.navigation3.ui.samples.SceneNavSharedElementSample
+ */
+@Composable
+public fun <T : Any> SceneNavDisplay(
+    backStack: List<T>,
+    modifier: Modifier = Modifier,
+    contentAlignment: Alignment = Alignment.TopStart,
+    onBack: (Int) -> Unit = {
+        if (backStack is MutableList<T>) {
+            repeat(it) { backStack.removeAt(backStack.lastIndex) }
+        }
+    },
+    entryDecorators: List<NavEntryDecorator> =
+        listOf(SceneSetupNavEntryDecorator, SaveableStateNavEntryDecorator),
+    sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
+    transitionSpec: ContentTransform =
+        fadeIn(
+            animationSpec =
+                tween(
+                    DEFAULT_TRANSITION_DURATION_MILLISECOND,
+                )
+        ) togetherWith
+            fadeOut(
+                animationSpec =
+                    tween(
+                        DEFAULT_TRANSITION_DURATION_MILLISECOND,
+                    )
+            ),
+    popTransitionSpec: ContentTransform =
+        fadeIn(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)) togetherWith
+            fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
     entryProvider: (key: T) -> NavEntry<T>,
 ) {
     require(backStack.isNotEmpty()) { "NavDisplay backstack cannot be empty" }
@@ -233,21 +333,31 @@ public fun <T : Any> SceneNavDisplay(
             } else {
                 scenes[targetKey]!!.entries.last()
             }
+        val contentTransform =
+            if (isPop || inPredictiveBack) {
+                transitionEntry.metadata[POP_TRANSITION_SPEC] as? ContentTransform
+            } else {
+                transitionEntry.metadata[TRANSITION_SPEC] as? ContentTransform
+            }
+        val sizeTransform = contentTransform?.sizeTransform
         val finalEnterTransition =
-            if (isPop || inPredictiveBack) {
-                transitionEntry.metadata[POP_ENTER_TRANSITION_KEY] as? EnterTransition
-                    ?: popEnterTransition
-            } else {
-                transitionEntry.metadata[ENTER_TRANSITION_KEY] as? EnterTransition
-                    ?: enterTransition
-            }
+            contentTransform?.targetContentEnter
+                ?: if (isPop || inPredictiveBack) {
+                    transitionEntry.metadata[POP_ENTER_TRANSITION_KEY] as? EnterTransition
+                        ?: popTransitionSpec.targetContentEnter
+                } else {
+                    transitionEntry.metadata[ENTER_TRANSITION_KEY] as? EnterTransition
+                        ?: transitionSpec.targetContentEnter
+                }
         val finalExitTransition =
-            if (isPop || inPredictiveBack) {
-                transitionEntry.metadata[POP_EXIT_TRANSITION_KEY] as? ExitTransition
-                    ?: popExitTransition
-            } else {
-                transitionEntry.metadata[EXIT_TRANSITION_KEY] as? ExitTransition ?: exitTransition
-            }
+            contentTransform?.initialContentExit
+                ?: if (isPop || inPredictiveBack) {
+                    transitionEntry.metadata[POP_EXIT_TRANSITION_KEY] as? ExitTransition
+                        ?: popTransitionSpec.initialContentExit
+                } else {
+                    transitionEntry.metadata[EXIT_TRANSITION_KEY] as? ExitTransition
+                        ?: popTransitionSpec.initialContentExit
+                }
 
         if (inPredictiveBack) {
             val peekScene =
