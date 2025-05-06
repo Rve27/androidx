@@ -18,6 +18,7 @@ package androidx.build.lint
 
 import androidx.build.lint.Stubs.Companion.DoNotInline
 import androidx.build.lint.Stubs.Companion.RequiresApi
+import com.android.tools.lint.checks.infrastructure.TestLintTask
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -35,6 +36,12 @@ class ImplicitCastVerificationFailureDetectorTest :
                 DoNotInline,
             ),
     ) {
+
+    override fun lint(): TestLintTask {
+        return super.lint()
+            .configureOption(ClassVerificationFailureDetector.IMPLICIT_CAST_ALLUSAGES_OPTION, true)
+    }
+
     @Test
     fun `Unsafe implicit cast for method argument`() {
         val input =

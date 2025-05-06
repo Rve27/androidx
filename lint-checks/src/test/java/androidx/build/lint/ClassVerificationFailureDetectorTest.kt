@@ -22,6 +22,7 @@ import androidx.build.lint.Stubs.Companion.DoNotInline
 import androidx.build.lint.Stubs.Companion.FlaggedApi
 import androidx.build.lint.Stubs.Companion.IntRange
 import androidx.build.lint.Stubs.Companion.RequiresApi
+import com.android.tools.lint.checks.infrastructure.TestLintTask
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -37,6 +38,11 @@ class ClassVerificationFailureDetectorTest :
                 manifest().minSdk(14),
             ),
     ) {
+
+    override fun lint(): TestLintTask {
+        return super.lint()
+            .configureOption(ClassVerificationFailureDetector.METHOD_CALL_ALLUSAGES_OPTION, true)
+    }
 
     @Test
     fun `Detection of unsafe references in Java sources`() {
@@ -546,24 +552,6 @@ Fix for src/androidx/AutofixUnsafeCallToThis.java line 48: Extract to static inn
 +
 @@ -61 +72
 + }
-Fix for src/androidx/AutofixUnsafeCallToThis.java line 57: Extract to static inner class:
-@@ -57 +57
--             super.getClipToPadding();
-+             Api21Impl.getClipToPadding(super);
-@@ -60 +60
-+ @androidx.annotation.RequiresApi(21)
-+ static class Api21Impl {
-+     private Api21Impl() {
-+         // This class is not instantiable.
-+     }
-+
-+     @androidx.annotation.DoNotInline
-+     static boolean getClipToPadding(ViewGroup viewGroup) {
-+         return viewGroup.getClipToPadding();
-+     }
-+
-@@ -61 +72
-+ }
         """
 
         check(*input).expect(expected).expectFixDiffs(expectedFix)
@@ -997,12 +985,12 @@ src/com/example/MyClass.java:7: Error: This call references a method guarded by 
 Fix for src/com/example/MyClass.java line 7: Extract to static inner class:
 @@ -4 +4
 + import androidx.annotation.DoNotInline;
-+ import androidx.annotation.FlaggedApi;
++ import androidx.annotation.RequiresAconfigFlag;
 @@ -7 +9
 -        FlaggedApiContainer.flaggedApi();
 +        FlagMyFlagImpl.flaggedApi();
 @@ -9 +11
-+ @FlaggedApi("test.pkg.myFlag")
++ @RequiresAconfigFlag("test.pkg.myFlag")
 + static class FlagMyFlagImpl {
 +     private FlagMyFlagImpl() {
 +         // This class is not instantiable.

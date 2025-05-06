@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package flaggedapi;
+package flaggedapi
 
-import android.annotation.FlaggedApi;
+import android.flagging.FlaggedApiContainer
+import androidx.core.flagging.Flags
 
-@FlaggedApi("flaggedapi.myFlag")
-public class FlaggedApiContainer {
-    private FlaggedApiContainer() {
-        // Do not instantiate.
+@Suppress("unused")
+class FlaggedUsageWithoutOutline {
+    fun testWithCheck() {
+        if (Flags.getBooleanFlagValue("flaggedapi", "myFlag")) {
+            FlaggedApiContainer.innerApi()
+        }
     }
 
-    static boolean innerApi() {
-        return false;
+    fun testWithoutCheck() {
+        FlaggedApiContainer.innerApi()
     }
 }

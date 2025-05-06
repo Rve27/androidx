@@ -24,6 +24,7 @@ import com.android.tools.lint.checks.ApiLookup
 import com.android.tools.lint.checks.ApiLookup.equivalentName
 import com.android.tools.lint.checks.DesugaredMethodLookup
 import com.android.tools.lint.client.api.UElementHandler
+import com.android.tools.lint.detector.api.BooleanOption
 import com.android.tools.lint.detector.api.Category
 import com.android.tools.lint.detector.api.Context
 import com.android.tools.lint.detector.api.Desugaring
@@ -59,6 +60,7 @@ import com.intellij.psi.PsiType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
 import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.util.findParentInFile
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -102,9 +104,16 @@ import org.jetbrains.uast.util.isMethodCall
 class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
     private var apiDatabase: ApiLookup? = null
 
+    /**
+     * Finds the first `@FlaggedApi` annotation within the element's PSI hierarchy and returns the
+     * flag name, or returns `null` if none is found.
+     */
     private fun findFlagNameForElement(element: PsiModifierListOwner): String? =
-        (element.getAnnotation(FLAGGED_API_ANNOTATION)?.findAttributeValue(ATTR_VALUE)
-                as? PsiLiteralValue)
+        ((element.findParentInFile(true) {
+                    (it as? PsiModifierListOwner)?.hasAnnotation(FLAGGED_API_ANNOTATION) == true
+                } as? PsiModifierListOwner)
+                ?.getAnnotation(FLAGGED_API_ANNOTATION)
+                ?.findAttributeValue(ATTR_VALUE) as? PsiLiteralValue)
             ?.value as? String
 
     private fun getMethodVersion(
@@ -154,7 +163,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             "Flag${flagName.substringAfterLast('.').capitalizeAsciiOnly()}Impl"
         }
         override val wrapperClassAnnotation by lazy {
-            "@androidx.annotation.FlaggedApi(\"$flagName\")"
+            "@androidx.annotation.RequiresAconfigFlag(\"$flagName\")"
         }
         override val stringForMessage by lazy { "guarded by Trunk Stable flag \"$flagName\"" }
 
@@ -256,6 +265,15 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             val expectedType = getExpectedTypeByParent(node) ?: return
             val expectedTypeStr = expectedType.canonicalText
             val expectedTypeApi = getMinApiOfClass(expectedTypeStr) ?: return
+
+            // Change: Unless we've been told to check all usages, only check flagged APIs.
+            if (
+                !IMPLICIT_CAST_ALLUSAGES_OPTION.getValue(context) &&
+                    actualTypeApi !is ApiFlagRequirement &&
+                    expectedTypeApi !is ApiFlagRequirement
+            ) {
+                return
+            }
 
             if (!isInvalidCast(actualTypeStr, expectedTypeStr, actualTypeApi, expectedTypeApi)) {
                 return
@@ -364,6 +382,17 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                 } else {
                     null
                 }
+
+            // Change: R8 automatically outlines most calls to new APIs, but we still need to warn
+            // for all references to flagged APIs and super call references to new APIs.
+            if (
+                !METHOD_CALL_ALLUSAGES_OPTION.getValue(context) &&
+                    api is ApiLevelRequirement &&
+                    receiver !is USuperExpression
+            ) {
+                // Don't warn for non-super call references to new APIs.
+                return
+            }
 
             // The lint API database contains two optimizations:
             // First, all members that were available in API 1 are omitted from the database,
@@ -667,6 +696,10 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             val callPsi = call.sourcePsi ?: return null
             if (isKotlin(callPsi.language)) {
                 // We only support Java right now.
+                return null
+            }
+            if (call.receiver is USuperExpression) {
+                // We can't outline super calls.
                 return null
             }
 
@@ -1308,6 +1341,26 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                 "org.xmlpull.v1.",
             )
 
+        val METHOD_CALL_ALLUSAGES_OPTION =
+            BooleanOption(
+                name = "allusages",
+                description =
+                    "Whether to check all usages, including all types of references to both new " +
+                        "and flagged APIs. By default, only references to flagged APIs and super " +
+                        "calls to new APIs are checked",
+                defaultValue = false,
+            )
+
+        // Must be separate because `Option`s have a backreference to their registered `Issue`.
+        val IMPLICIT_CAST_ALLUSAGES_OPTION =
+            BooleanOption(
+                name = "allusages",
+                description =
+                    "Whether to check all usages, including all types of references to both new and" +
+                        "flagged APIs. By default, only references to flagged APIs are checked",
+                defaultValue = false,
+            )
+
         val METHOD_CALL_ISSUE =
             Issue.create(
                     "ClassVerificationFailure",
@@ -1337,6 +1390,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                         Scope.JAVA_FILE_SCOPE
                     )
                 )
+                .setOptions(listOf(METHOD_CALL_ALLUSAGES_OPTION))
                 .setAndroidSpecific(true)
 
         val IMPLICIT_CAST_ISSUE =
@@ -1364,6 +1418,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                         Scope.JAVA_FILE_SCOPE
                     )
                 )
+                .setOptions(listOf(IMPLICIT_CAST_ALLUSAGES_OPTION))
                 .setAndroidSpecific(true)
     }
 }

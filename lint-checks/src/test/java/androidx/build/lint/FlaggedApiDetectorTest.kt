@@ -139,7 +139,7 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
     fun testApiGating_fromFiles() {
         lint()
             .files(
-                javaSample("flaggedapi.FlaggedApiContainer"),
+                javaSample("android.flagging.FlaggedApiContainer"),
                 ktSample("flaggedapi.FlaggedUsageInOutline"),
                 Stubs.FlaggedApi,
                 Stubs.RequiresAconfigFlag,
@@ -148,10 +148,10 @@ class FlaggedApiDetectorTest : LintDetectorTest() {
             .run()
             .expect(
                 """
-                src/flaggedapi/FlaggedUsageInOutline.kt:31: Error: Class FlagFlaggedApiImpl is a flagged API and must be inside a flag check for "flaggedapi.myFlag" [AndroidXFlaggedApi]
+                src/flaggedapi/FlaggedUsageInOutline.kt:32: Error: Class FlagFlaggedApiImpl is a flagged API and must be inside a flag check for "flaggedapi.myFlag" [AndroidXFlaggedApi]
                         FlagFlaggedApiImpl.flaggedApi()
                         ~~~~~~~~~~~~~~~~~~
-                src/flaggedapi/FlaggedUsageInOutline.kt:31: Error: Method flaggedApi() is a flagged API and must be inside a flag check for "flaggedapi.myFlag" [AndroidXFlaggedApi]
+                src/flaggedapi/FlaggedUsageInOutline.kt:32: Error: Method flaggedApi() is a flagged API and must be inside a flag check for "flaggedapi.myFlag" [AndroidXFlaggedApi]
                         FlagFlaggedApiImpl.flaggedApi()
                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                 2 errors

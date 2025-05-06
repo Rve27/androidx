@@ -14,28 +14,24 @@
  * limitations under the License.
  */
 
-package flaggedapi
+package android.flagging;
 
-import android.flagging.FlaggedApiContainer
-import androidx.annotation.RequiresAconfigFlag
-import androidx.core.flagging.Flags
+import android.annotation.FlaggedApi;
 
-@Suppress("unused")
-class FlaggedUsageInOutline {
-    fun testWithCheck() {
-        if (Flags.getBooleanFlagValue("flaggedapi", "myFlag")) {
-            FlagFlaggedApiImpl.flaggedApi()
-        }
+/**
+ * Class that is flagged and exposes APIs.
+ */
+@SuppressWarnings("unused")
+@FlaggedApi("flaggedapi.myFlag")
+public class FlaggedApiContainer {
+    private FlaggedApiContainer() {
+        // Do not instantiate.
     }
 
-    fun testWithoutCheck() {
-        FlagFlaggedApiImpl.flaggedApi()
-    }
-
-    @RequiresAconfigFlag("flaggedapi.myFlag")
-    object FlagFlaggedApiImpl {
-        fun flaggedApi(): Boolean {
-            return FlaggedApiContainer.innerApi()
-        }
+    /**
+     * API contained within a flagged class.
+     */
+    public static boolean innerApi() {
+        return false;
     }
 }
