@@ -55,7 +55,7 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class SceneNavDisplayScreenshotTest {
+class NavDisplayScreenshotTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @get:Rule val screenshotRule = AndroidXScreenshotTestRule("navigation3/navigation3-ui")
@@ -70,7 +70,7 @@ class SceneNavDisplayScreenshotTest {
             backStack = remember { mutableStateListOf(first) }
             backPressedDispatcher =
                 LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 enterTransition = slideInHorizontally { it / 2 },
                 exitTransition = slideOutHorizontally { -it / 2 },
@@ -125,7 +125,7 @@ class SceneNavDisplayScreenshotTest {
 
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack,
                 // both screens slide left to right, entering screens should be on top
                 enterTransition = slideInHorizontally { -it / 2 },
@@ -179,7 +179,7 @@ class SceneNavDisplayScreenshotTest {
         val duration = 500
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack,
             ) {
                 when (it) {
@@ -197,7 +197,7 @@ class SceneNavDisplayScreenshotTest {
                             second,
                             // both screens slide right to left, exiting screen should be on top
                             metadata =
-                                SceneNavDisplay.popTransition(
+                                NavDisplay.popTransition(
                                     enter = slideInHorizontally(tween(duration)) { it / 2 },
                                     exit = slideOutHorizontally(tween(duration)) { -it / 2 }
                                 )
@@ -237,7 +237,7 @@ class SceneNavDisplayScreenshotTest {
 
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second, third) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack,
                 // both screens slide left to right, entering screen should be on top
                 enterTransition = slideInHorizontally { -it / 2 },
@@ -303,7 +303,7 @@ class SceneNavDisplayScreenshotTest {
 
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second, third) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack,
                 // both screens slide left to right, entering screen should be on top
                 enterTransition = slideInHorizontally { -it / 2 },
@@ -372,7 +372,7 @@ class SceneNavDisplayScreenshotTest {
 
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack,
                 // both screens slide left to right, entering screens should be on top
                 enterTransition = slideInHorizontally { -it / 2 },
@@ -429,7 +429,7 @@ class SceneNavDisplayScreenshotTest {
         val duration = 200
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack,
                 // both screens slide left to right, entering screens should be on top
                 enterTransition = slideInHorizontally { -it / 2 },
@@ -450,7 +450,7 @@ class SceneNavDisplayScreenshotTest {
                             second,
                             // both screens slide right to left, exiting screen should be on top
                             metadata =
-                                SceneNavDisplay.popTransition(
+                                NavDisplay.popTransition(
                                     enter = slideInHorizontally(tween(duration)) { it / 2 },
                                     exit = slideOutHorizontally(tween(duration)) { -it / 2 }
                                 )

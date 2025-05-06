@@ -49,14 +49,14 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class SceneNavDisplayTest {
+class NavDisplayTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
     fun testContentShown() {
         composeTestRule.setContent {
             val backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -72,7 +72,7 @@ class SceneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -98,7 +98,7 @@ class SceneNavDisplayTest {
         composeTestRule.setContent {
             var showDialog = remember { mutableStateOf(false) }
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -133,7 +133,7 @@ class SceneNavDisplayTest {
         composeTestRule.setContent {
             onBackDispatcher = LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -162,7 +162,7 @@ class SceneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -198,7 +198,7 @@ class SceneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -274,7 +274,7 @@ class SceneNavDisplayTest {
         composeTestRule.setContent {
             mainRegistry = LocalSavedStateRegistryOwner.current.savedStateRegistry
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 entryDecorators = listOf(SavedStateNavEntryDecorator)
@@ -324,7 +324,7 @@ class SceneNavDisplayTest {
                     else -> backStack3
                 }
 
-            SceneNavDisplay(
+            NavDisplay(
                 backStack =
                     when (state.value) {
                         1 -> backStack1
@@ -376,7 +376,7 @@ class SceneNavDisplayTest {
                     1 -> backStack1
                     else -> backStack2
                 }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 entryProvider =
@@ -420,7 +420,7 @@ class SceneNavDisplayTest {
             assertFailsWith<IllegalArgumentException> {
                 composeTestRule.setContent {
                     backStack = remember { mutableStateListOf() }
-                    SceneNavDisplay(
+                    NavDisplay(
                         backStack = backStack,
                         onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                     ) {
@@ -436,7 +436,7 @@ class SceneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -463,7 +463,7 @@ class SceneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -497,7 +497,7 @@ class SceneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, third, forth) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -530,7 +530,7 @@ class SceneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -609,7 +609,7 @@ class SceneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -683,7 +683,7 @@ class SceneNavDisplayTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -746,7 +746,7 @@ class SceneNavDisplayTest {
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
             nestedBackStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
@@ -756,7 +756,7 @@ class SceneNavDisplayTest {
                             numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                             Column {
                                 Text("numberOnScreen1: ${numberOnScreen1.value}")
-                                SceneNavDisplay(
+                                NavDisplay(
                                     backStack = nestedBackStack,
                                     onBack = {
                                         repeat(it) {

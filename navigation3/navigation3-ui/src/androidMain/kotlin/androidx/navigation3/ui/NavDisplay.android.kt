@@ -48,22 +48,22 @@ import androidx.navigation3.runtime.DecoratedNavEntryProvider
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.SaveableStateNavEntryDecorator
-import androidx.navigation3.ui.SceneNavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
-import androidx.navigation3.ui.SceneNavDisplay.ENTER_TRANSITION_KEY
-import androidx.navigation3.ui.SceneNavDisplay.EXIT_TRANSITION_KEY
-import androidx.navigation3.ui.SceneNavDisplay.POP_ENTER_TRANSITION_KEY
-import androidx.navigation3.ui.SceneNavDisplay.POP_EXIT_TRANSITION_KEY
-import androidx.navigation3.ui.SceneNavDisplay.POP_TRANSITION_SPEC
-import androidx.navigation3.ui.SceneNavDisplay.TRANSITION_SPEC
+import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
+import androidx.navigation3.ui.NavDisplay.ENTER_TRANSITION_KEY
+import androidx.navigation3.ui.NavDisplay.EXIT_TRANSITION_KEY
+import androidx.navigation3.ui.NavDisplay.POP_ENTER_TRANSITION_KEY
+import androidx.navigation3.ui.NavDisplay.POP_EXIT_TRANSITION_KEY
+import androidx.navigation3.ui.NavDisplay.POP_TRANSITION_SPEC
+import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
 import kotlin.reflect.KClass
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
-/** Object that indicates the features that can be handled by the [SceneNavDisplay] */
-public object SceneNavDisplay {
+/** Object that indicates the features that can be handled by the [NavDisplay] */
+public object NavDisplay {
     /**
-     * Function to be called on the [NavEntry.metadata] to notify the [SceneNavDisplay] that the
-     * content should be animated using the provided [ContentTransform].
+     * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that the content
+     * should be animated using the provided [ContentTransform].
      *
      * Transitions passed into the given [ContentTransform] will have the highest priority.
      */
@@ -71,7 +71,7 @@ public object SceneNavDisplay {
         if (contentTransform == null) emptyMap() else mapOf(TRANSITION_SPEC to contentTransform)
 
     /**
-     * Function to be called on the [NavEntry.metadata] to notify the [SceneNavDisplay] that, when
+     * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that, when
      * popping from backstack, the content should be animated using the provided [ContentTransform].
      *
      * Transitions passed into the given [ContentTransform] will have the highest priority.
@@ -80,8 +80,8 @@ public object SceneNavDisplay {
         if (contentTransform == null) emptyMap() else mapOf(POP_TRANSITION_SPEC to contentTransform)
 
     /**
-     * Function to be called on the [NavEntry.metadata] to notify the [SceneNavDisplay] that the
-     * content should be animated using the provided transitions.
+     * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that the content
+     * should be animated using the provided transitions.
      *
      * Transitions passed into this function will run unless there is a [transitionSpec] available.
      */
@@ -90,7 +90,7 @@ public object SceneNavDisplay {
         else mapOf(ENTER_TRANSITION_KEY to enter, EXIT_TRANSITION_KEY to exit)
 
     /**
-     * Function to be called on the [NavEntry.metadata] to notify the [SceneNavDisplay] that, when
+     * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that, when
      * popping from backstack, the content should be animated using the provided transitions.
      *
      * Transitions passed into this function will run unless there is a [popTransitionSpec]
@@ -142,7 +142,7 @@ public object SceneNavDisplay {
  * @sample androidx.navigation3.ui.samples.SceneNavSharedElementSample
  */
 @Composable
-public fun <T : Any> SceneNavDisplay(
+public fun <T : Any> NavDisplay(
     backStack: List<T>,
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.TopStart,
@@ -185,7 +185,7 @@ public fun <T : Any> SceneNavDisplay(
         ),
     entryProvider: (key: T) -> NavEntry<T>,
 ) {
-    SceneNavDisplay(
+    NavDisplay(
         backStack = backStack,
         modifier = modifier,
         contentAlignment = contentAlignment,
@@ -229,7 +229,7 @@ public fun <T : Any> SceneNavDisplay(
  * @sample androidx.navigation3.ui.samples.SceneNavSharedElementSample
  */
 @Composable
-public fun <T : Any> SceneNavDisplay(
+public fun <T : Any> NavDisplay(
     backStack: List<T>,
     modifier: Modifier = Modifier,
     contentAlignment: Alignment = Alignment.TopStart,

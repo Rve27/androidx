@@ -43,7 +43,7 @@ import androidx.kruth.assertThat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.ui.SceneNavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
+import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import kotlin.test.Test
@@ -67,7 +67,7 @@ class AnimatedTest {
 
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(first) {
@@ -122,7 +122,7 @@ class AnimatedTest {
 
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -134,7 +134,7 @@ class AnimatedTest {
                         NavEntry(
                             second,
                             metadata =
-                                SceneNavDisplay.transition(
+                                NavDisplay.transition(
                                     enter = fadeIn(tween(customDuration)),
                                     exit = fadeOut(tween(customDuration))
                                 )
@@ -177,7 +177,7 @@ class AnimatedTest {
         val testDuration = DEFAULT_TRANSITION_DURATION_MILLISECOND / 5
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -189,7 +189,7 @@ class AnimatedTest {
                         NavEntry(
                             second,
                             metadata =
-                                SceneNavDisplay.popTransition(
+                                NavDisplay.popTransition(
                                     enter = fadeIn(tween(testDuration)),
                                     exit = fadeOut(tween(testDuration))
                                 )
@@ -225,7 +225,7 @@ class AnimatedTest {
         val testDuration = DEFAULT_TRANSITION_DURATION_MILLISECOND / 5
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second, third) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -243,7 +243,7 @@ class AnimatedTest {
                         NavEntry(
                             third,
                             metadata =
-                                SceneNavDisplay.popTransition(
+                                NavDisplay.popTransition(
                                     enter = fadeIn(tween(testDuration)),
                                     exit = fadeOut(tween(testDuration))
                                 )
@@ -283,7 +283,7 @@ class AnimatedTest {
         val testDuration = DEFAULT_TRANSITION_DURATION_MILLISECOND / 5
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -301,7 +301,7 @@ class AnimatedTest {
                         NavEntry(
                             third,
                             metadata =
-                                SceneNavDisplay.transition(
+                                NavDisplay.transition(
                                     enter = fadeIn(tween(testDuration)),
                                     exit = fadeOut(tween(testDuration))
                                 )
@@ -340,7 +340,7 @@ class AnimatedTest {
         val testDuration = DEFAULT_TRANSITION_DURATION_MILLISECOND / 5
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second, third) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -358,7 +358,7 @@ class AnimatedTest {
                         NavEntry(
                             third,
                             metadata =
-                                SceneNavDisplay.transition(
+                                NavDisplay.transition(
                                     enter = fadeIn(tween(testDuration)),
                                     exit = fadeOut(tween(testDuration))
                                 )
@@ -394,7 +394,7 @@ class AnimatedTest {
         val testDuration = DEFAULT_TRANSITION_DURATION_MILLISECOND / 5
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, third) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -412,7 +412,7 @@ class AnimatedTest {
                         NavEntry(
                             third,
                             metadata =
-                                SceneNavDisplay.transition(
+                                NavDisplay.transition(
                                     enter = fadeIn(tween(testDuration)),
                                     exit = fadeOut(tween(testDuration))
                                 )
@@ -448,7 +448,7 @@ class AnimatedTest {
         val testDuration = DEFAULT_TRANSITION_DURATION_MILLISECOND / 5
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second, third, fourth) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -465,7 +465,7 @@ class AnimatedTest {
                     third ->
                         NavEntry(
                             third,
-                            SceneNavDisplay.transition(
+                            NavDisplay.transition(
                                 enter = fadeIn(tween(testDuration)),
                                 exit = fadeOut(tween(testDuration))
                             )
@@ -511,7 +511,7 @@ class AnimatedTest {
         val testDuration = DEFAULT_TRANSITION_DURATION_MILLISECOND / 5
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second, third) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -535,7 +535,7 @@ class AnimatedTest {
                         NavEntry(
                             fourth,
                             metadata =
-                                SceneNavDisplay.transition(
+                                NavDisplay.transition(
                                     enter = fadeIn(tween(testDuration)),
                                     exit = fadeOut(tween(testDuration))
                                 )
@@ -574,7 +574,7 @@ class AnimatedTest {
         val testDuration = DEFAULT_TRANSITION_DURATION_MILLISECOND / 5
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, third, fourth) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -592,7 +592,7 @@ class AnimatedTest {
                         NavEntry(
                             third,
                             metadata =
-                                SceneNavDisplay.transition(
+                                NavDisplay.transition(
                                     enter = fadeIn(tween(testDuration)),
                                     exit = fadeOut(tween(testDuration))
                                 )
@@ -637,7 +637,7 @@ class AnimatedTest {
         val testDuration = DEFAULT_TRANSITION_DURATION_MILLISECOND / 5
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, third) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -660,7 +660,7 @@ class AnimatedTest {
                     fourth ->
                         NavEntry(
                             fourth,
-                            SceneNavDisplay.transition(
+                            NavDisplay.transition(
                                 enter = fadeIn(tween(testDuration)),
                                 exit = fadeOut(tween(testDuration))
                             )
@@ -700,7 +700,7 @@ class AnimatedTest {
         val testDuration = DEFAULT_TRANSITION_DURATION_MILLISECOND / 5
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -711,7 +711,7 @@ class AnimatedTest {
                     second ->
                         NavEntry(
                             second,
-                            SceneNavDisplay.transition(
+                            NavDisplay.transition(
                                 enter = fadeIn(tween(testDuration)),
                                 exit = fadeOut(tween(testDuration))
                             )
@@ -748,7 +748,7 @@ class AnimatedTest {
         lateinit var backstack: MutableList<Any>
         composeTestRule.setContent {
             backstack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(backstack) {
+            NavDisplay(backstack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -802,7 +802,7 @@ class AnimatedTest {
         var secondEntryIsWrapped = false
         composeTestRule.setContent {
             backstack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(backstack, entryDecorators = listOf(provider)) {
+            NavDisplay(backstack, entryDecorators = listOf(provider)) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -842,7 +842,7 @@ class AnimatedTest {
         val testDuration = DEFAULT_TRANSITION_DURATION_MILLISECOND / 5
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second, third) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(
@@ -854,7 +854,7 @@ class AnimatedTest {
                         NavEntry(
                             second,
                             metadata =
-                                SceneNavDisplay.transition(
+                                NavDisplay.transition(
                                     enter = fadeIn(tween(testDuration)),
                                     exit = fadeOut(tween(testDuration))
                                 )
@@ -903,7 +903,7 @@ class AnimatedTest {
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first) }
             SharedTransitionLayout {
-                SceneNavDisplay(backStack = backStack) {
+                NavDisplay(backStack = backStack) {
                     transitionScope = this
                     when (it) {
                         first ->
@@ -965,7 +965,7 @@ class AnimatedTest {
 
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(backStack) {
+            NavDisplay(backStack) {
                 when (it) {
                     first ->
                         NavEntry(

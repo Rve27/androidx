@@ -36,8 +36,7 @@ import androidx.navigation3.runtime.NavEntry
 public interface Scene<T : Any> {
     /**
      * The key identifying the [Scene]. This key will be combined with the class of the [Scene] to
-     * determine the key that drives the transition in the top-level animation for the
-     * SceneNavDisplay.
+     * determine the key that drives the transition in the top-level animation for the NavDisplay.
      *
      * Because the class of the [Scene] is also used, this [key] only needs to be unique for a given
      * type of [Scene] to indicate a different instance of the [Scene].

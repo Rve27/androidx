@@ -27,7 +27,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.SavedStateNavEntryDecorator
-import androidx.navigation3.ui.SceneNavDisplay
+import androidx.navigation3.ui.NavDisplay
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import kotlin.test.Test
@@ -113,7 +113,7 @@ class ViewModelStoreNavEntryDecoratorTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf("Home") }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 entryDecorators =
                     listOf(SavedStateNavEntryDecorator, ViewModelStoreNavEntryDecorator),
@@ -164,7 +164,7 @@ class ViewModelStoreNavEntryDecoratorTest {
         lateinit var viewModel: SavedStateViewModel
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf("Home") }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 entryDecorators =
                     listOf(SavedStateNavEntryDecorator, ViewModelStoreNavEntryDecorator),

@@ -38,8 +38,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.kruth.assertThat
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.Scene
-import androidx.navigation3.ui.SceneNavDisplay
 import androidx.navigation3.ui.SceneStrategy
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -97,7 +97,7 @@ class HierarchicalSceneTest {
     fun testContentShown() {
         composeTestRule.setContent {
             val backStack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 sceneStrategy = remember { HierarchicalSceneStrategy(2) },
@@ -121,7 +121,7 @@ class HierarchicalSceneTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 sceneStrategy = remember { HierarchicalSceneStrategy(2) },
@@ -153,7 +153,7 @@ class HierarchicalSceneTest {
         composeTestRule.setContent {
             onBackDispatcher = LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
             backStack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 sceneStrategy = remember { HierarchicalSceneStrategy(2) },
@@ -193,7 +193,7 @@ class HierarchicalSceneTest {
         composeTestRule.setContent {
             onBackDispatcher = LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
             backStack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 sceneStrategy = remember(columns) { HierarchicalSceneStrategy(columns) },
@@ -242,7 +242,7 @@ class HierarchicalSceneTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 sceneStrategy = remember { HierarchicalSceneStrategy(2) },
@@ -280,7 +280,7 @@ class HierarchicalSceneTest {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
             backStack = remember { mutableStateListOf(first, second) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 sceneStrategy = remember { HierarchicalSceneStrategy(2) },
@@ -357,7 +357,7 @@ class HierarchicalSceneTest {
             backPressedDispatcher =
                 LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
             backStack = remember { mutableStateListOf(first, second, third) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 sceneStrategy = remember { HierarchicalSceneStrategy(2) },

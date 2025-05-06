@@ -134,7 +134,7 @@ public val LocalEntriesToRenderInCurrentScene: ProvidableCompositionLocal<Set<An
         throw IllegalStateException(
             "Unexpected access to LocalEntriesToRenderInCurrentScene. You should only " +
                 "access LocalEntriesToRenderInCurrentScene inside a NavEntry passed " +
-                "to SceneNavDisplay."
+                "to NavDisplay."
         )
     }
 

@@ -54,8 +54,8 @@ import androidx.navigation3.runtime.samples.ProfileViewModel
 import androidx.navigation3.runtime.samples.Scrollable
 import androidx.navigation3.runtime.samples.rememberMutableStateListOf
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
+import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.Scene
-import androidx.navigation3.ui.SceneNavDisplay
 import androidx.navigation3.ui.SceneSetupNavEntryDecorator
 import kotlinx.serialization.Serializable
 
@@ -64,7 +64,7 @@ import kotlinx.serialization.Serializable
 fun SceneNav() {
     val backStack = rememberMutableStateListOf(Profile)
     val showDialog = remember { mutableStateOf(false) }
-    SceneNavDisplay(
+    NavDisplay(
         backStack = backStack,
         entryDecorators =
             listOf(
@@ -106,7 +106,7 @@ fun SceneNav() {
 @Composable
 fun <T : Any> SceneNavSharedEntrySample() {
 
-    /** The [SharedTransitionScope] of the [SceneNavDisplay]. */
+    /** The [SharedTransitionScope] of the [NavDisplay]. */
     val localNavSharedTransitionScope: ProvidableCompositionLocal<SharedTransitionScope> =
         compositionLocalOf {
             throw IllegalStateException(
@@ -140,7 +140,7 @@ fun <T : Any> SceneNavSharedEntrySample() {
     val backStack = rememberMutableStateListOf(CatList)
     SharedTransitionLayout {
         CompositionLocalProvider(localNavSharedTransitionScope provides this) {
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { backStack.removeAt(backStack.lastIndex) },
                 entryDecorators =
@@ -173,7 +173,7 @@ fun <T : Any> SceneNavSharedEntrySample() {
 fun <T : Any> SceneNavSharedElementSample() {
     val backStack = rememberMutableStateListOf(CatList)
     SharedTransitionLayout {
-        SceneNavDisplay(
+        NavDisplay(
             backStack = backStack,
             onBack = { backStack.removeAt(backStack.lastIndex) },
             entryProvider =

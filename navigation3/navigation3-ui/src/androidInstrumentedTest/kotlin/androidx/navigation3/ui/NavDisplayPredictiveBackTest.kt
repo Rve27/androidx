@@ -40,7 +40,7 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-class SceneNavDisplayPredictiveBackTest {
+class NavDisplayPredictiveBackTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
@@ -53,7 +53,7 @@ class SceneNavDisplayPredictiveBackTest {
             backPressedDispatcher =
                 LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
             backStack = remember { mutableStateListOf(first) }
-            SceneNavDisplay(
+            NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
