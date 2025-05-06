@@ -329,14 +329,15 @@ public class WatchFacePushManager(private var context: Context) {
         private val rootCause: WatchFacePushManager.AddException,
     ) : Exception(rootCause) {
 
-        internal companion object {
+        public companion object {
             /**
              * Unknown error while adding a watch face.
              *
              * This typically means that the Watch Face Push service on the watch could not be
              * accessed or that the watch may be in a bad state.
              */
-            const val ERROR_UNKNOWN: Int = WatchFacePushManager.AddException.ADD_UNKNOWN_ERROR
+            public const val ERROR_UNKNOWN: Int =
+                WatchFacePushManager.AddException.ADD_UNKNOWN_ERROR
 
             /**
              * Unexpected content in the APK.
@@ -345,7 +346,7 @@ public class WatchFacePushManager(private var context: Context) {
              * associated resources. The APK can't contain any executable code. Developers should
              * ensure that the APK conforms to the Watch Face Format.
              */
-            const val ERROR_UNEXPECTED_CONTENT: Int =
+            public const val ERROR_UNEXPECTED_CONTENT: Int =
                 WatchFacePushManager.AddException.ADD_SECURITY_ERROR
 
             /**
@@ -355,7 +356,7 @@ public class WatchFacePushManager(private var context: Context) {
              * Push client, followed by the 'watchfacepush' keyword, ending with the unique watch
              * face name. Developers should verify that the package name follows this format.
              */
-            const val ERROR_INVALID_PACKAGE_NAME: Int =
+            public const val ERROR_INVALID_PACKAGE_NAME: Int =
                 WatchFacePushManager.AddException.ADD_INVALID_PACKAGE_NAME_ERROR
 
             /**
@@ -363,7 +364,7 @@ public class WatchFacePushManager(private var context: Context) {
              *
              * Developers should ensure that the provided file is a valid APK file.
              */
-            const val ERROR_MALFORMED_WATCHFACE_APK: Int =
+            public const val ERROR_MALFORMED_WATCHFACE_APK: Int =
                 WatchFacePushManager.AddException.ADD_INVALID_CONTENT_ERROR
 
             /**
@@ -372,7 +373,7 @@ public class WatchFacePushManager(private var context: Context) {
              * No more watch faces can be added. Developers should instruct the user to remove
              * existing watch faces added by this app before attempting to add new ones.
              */
-            const val ERROR_SLOT_LIMIT_REACHED: Int =
+            public const val ERROR_SLOT_LIMIT_REACHED: Int =
                 WatchFacePushManager.AddException.ADD_SLOT_LIMIT_REACHED_ERROR
 
             /**
@@ -381,7 +382,7 @@ public class WatchFacePushManager(private var context: Context) {
              * Developers should see the Watch Face Push documentation to see how to generate a
              * validation token correctly.
              */
-            const val ERROR_INVALID_VALIDATION_TOKEN: Int =
+            public const val ERROR_INVALID_VALIDATION_TOKEN: Int =
                 WatchFacePushManager.AddException.ADD_INVALID_VALIDATION_TOKEN_ERROR
 
             /**
@@ -436,20 +437,21 @@ public class WatchFacePushManager(private var context: Context) {
         private val rootCause: WatchFacePushManager.UpdateException,
     ) : Exception(rootCause) {
 
-        internal companion object {
+        public companion object {
             /**
              * Unknown error while updating a watch face. Typically this means that the Watch Face
              * Push service on the watch could not be accessed or that the watch may be in a bad
              * state.
              */
-            const val ERROR_UNKNOWN: Int = WatchFacePushManager.UpdateException.UPDATE_UNKNOWN_ERROR
+            public const val ERROR_UNKNOWN: Int =
+                WatchFacePushManager.UpdateException.UPDATE_UNKNOWN_ERROR
 
             /**
              * Unexpected content in the APK. The APK must be a WFF watchface which only contains
              * the watchface XML file and the associated resources. The APK can't contain any
              * executable code.
              */
-            const val ERROR_UNEXPECTED_CONTENT: Int =
+            public const val ERROR_UNEXPECTED_CONTENT: Int =
                 WatchFacePushManager.UpdateException.UPDATE_SECURITY_ERROR
 
             /**
@@ -459,11 +461,11 @@ public class WatchFacePushManager(private var context: Context) {
              * Push client, followed by the 'watchfacepush' keyword, ending with the unique watch
              * face name.
              */
-            const val ERROR_INVALID_PACKAGE_NAME: Int =
+            public const val ERROR_INVALID_PACKAGE_NAME: Int =
                 WatchFacePushManager.UpdateException.UPDATE_INVALID_PACKAGE_NAME_ERROR
 
             /** The provided watch face is not a valid Android APK. */
-            const val ERROR_MALFORMED_WATCHFACE_APK: Int =
+            public const val ERROR_MALFORMED_WATCHFACE_APK: Int =
                 WatchFacePushManager.UpdateException.UPDATE_INVALID_CONTENT_ERROR
 
             /**
@@ -471,14 +473,14 @@ public class WatchFacePushManager(private var context: Context) {
              * or the ID is simply incorrect. Developers should make sure to retrieve slot IDs by
              * calling [listWatchFaces] or [addWatchFace].
              */
-            const val ERROR_INVALID_SLOT_ID: Int =
+            public const val ERROR_INVALID_SLOT_ID: Int =
                 WatchFacePushManager.UpdateException.UPDATE_INVALID_SLOT_ID_ERROR
 
             /**
              * The validation token provided does not match the watch face. Please see the Watch
              * Face Push documentation to see how to generate a validation token correctly.
              */
-            const val ERROR_INVALID_VALIDATION_TOKEN: Int =
+            public const val ERROR_INVALID_VALIDATION_TOKEN: Int =
                 WatchFacePushManager.UpdateException.UPDATE_INVALID_VALIDATION_TOKEN_ERROR
 
             /**
@@ -533,20 +535,21 @@ public class WatchFacePushManager(private var context: Context) {
         private val rootCause: WatchFacePushManager.RemoveException,
     ) : Exception(rootCause) {
 
-        internal companion object {
+        public companion object {
             /**
              * Unknown error while removing a watch face. Typically this means that the Watch Face
              * Push service on the watch could not be accessed or that the watch may be in a bad
              * state.
              */
-            const val ERROR_UNKNOWN: Int = WatchFacePushManager.RemoveException.REMOVE_UNKNOWN_ERROR
+            public const val ERROR_UNKNOWN: Int =
+                WatchFacePushManager.RemoveException.REMOVE_UNKNOWN_ERROR
 
             /**
              * The slot ID provided is not valid. The watch face might have been removed previously,
              * or the ID is simply incorrect. Developers should make sure to retrieve slot IDs by
              * calling [listWatchFaces] or [addWatchFace].
              */
-            const val ERROR_INVALID_SLOT_ID: Int =
+            public const val ERROR_INVALID_SLOT_ID: Int =
                 WatchFacePushManager.RemoveException.REMOVE_INVALID_SLOT_ID_ERROR
 
             /**
@@ -593,13 +596,13 @@ public class WatchFacePushManager(private var context: Context) {
             rootCause: WatchFacePushManager.SetActiveException?
         ) : this(rootCause, rootCause?.errorCode ?: ERROR_UNKNOWN)
 
-        internal companion object {
+        public companion object {
             /**
              * Unknown error while setting a watch face as active. Typically this means that the
              * Watch Face Push service on the watch could not be accessed or that the watch may be
              * in a bad state.
              */
-            const val ERROR_UNKNOWN: Int =
+            public const val ERROR_UNKNOWN: Int =
                 WatchFacePushManager.SetActiveException.SET_ACTIVE_UNKNOWN_ERROR
 
             /**
@@ -607,17 +610,17 @@ public class WatchFacePushManager(private var context: Context) {
              * or the ID is simply incorrect. Make sure to retrieve slot IDs by calling
              * [listWatchFaces] or [addWatchFace].
              */
-            const val ERROR_INVALID_SLOT_ID: Int =
+            public const val ERROR_INVALID_SLOT_ID: Int =
                 WatchFacePushManager.SetActiveException.SET_ACTIVE_INVALID_SLOT_ID_ERROR
 
             /** The maximum number of attempts to set the watch face as active has been reached. */
-            const val ERROR_MAXIMUM_ATTEMPTS_REACHED: Int =
+            public const val ERROR_MAXIMUM_ATTEMPTS_REACHED: Int =
                 WatchFacePushManager.SetActiveException.SET_ACTIVE_MAXIMUM_ATTEMPTS_REACHED_ERROR
 
             /** The required permission to set the watch face as active is missing. */
             // A number that does not conflict with the
             // WatchFacePushManager.SetActiveException namespace
-            const val ERROR_MISSING_PERMISSION: Int = 1000
+            public const val ERROR_MISSING_PERMISSION: Int = 1000
 
             /**
              * Defines the allowed integer values for [setWatchFaceAsActive] error codes.
@@ -660,13 +663,13 @@ public class WatchFacePushManager(private var context: Context) {
         private val rootCause: WatchFacePushManager.IsActiveException,
     ) : Exception(rootCause) {
 
-        internal companion object {
+        public companion object {
             /**
              * Unknown error while querying for watch face. Typically this means that the Watch Face
              * Push service on the watch could not be accessed or that the watch may be in a bad
              * state.
              */
-            const val ERROR_UNKNOWN: Int =
+            public const val ERROR_UNKNOWN: Int =
                 WatchFacePushManager.IsActiveException.IS_ACTIVE_UNKNOWN_ERROR
 
             /**
@@ -674,7 +677,7 @@ public class WatchFacePushManager(private var context: Context) {
              * previously, or the package name is simply incorrect. Make sure to retrieve the
              * package name by calling [listWatchFaces] or [addWatchFace].
              */
-            const val ERROR_INVALID_PACKAGE_NAME: Int =
+            public const val ERROR_INVALID_PACKAGE_NAME: Int =
                 WatchFacePushManager.IsActiveException.IS_ACTIVE_FORBIDDEN_ERROR
 
             /**
@@ -713,13 +716,14 @@ public class WatchFacePushManager(private var context: Context) {
         private val rootCause: WatchFacePushManager.ListException,
     ) : Exception(rootCause) {
 
-        internal companion object {
+        public companion object {
             /**
              * Unknown error while listing watch faces. Typically this means that the Watch Face
              * Push service on the watch could not be accessed or that the watch may be in a bad
              * state.
              */
-            const val ERROR_UNKNOWN: Int = WatchFacePushManager.ListException.LIST_UNKNOWN_ERROR
+            public const val ERROR_UNKNOWN: Int =
+                WatchFacePushManager.ListException.LIST_UNKNOWN_ERROR
 
             /**
              * Defines the allowed integer values for [isWatchFaceActive] error codes.
