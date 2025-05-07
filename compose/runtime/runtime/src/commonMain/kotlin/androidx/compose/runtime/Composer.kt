@@ -2894,7 +2894,10 @@ internal class ComposerImpl(
 
                 // Invoke the scope's composition function
                 val shouldRestartReusing = !reusing && firstInRange.scope.reusing
-                if (shouldRestartReusing) reusing = true
+                if (shouldRestartReusing) {
+                    reusing = true
+                    firstInRange.scope.reusing = false
+                }
                 firstInRange.scope.compose(this)
                 if (shouldRestartReusing) reusing = false
 

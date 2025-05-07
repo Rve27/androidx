@@ -252,7 +252,6 @@ class PausableCompositionInstrumentedTests {
         rule.runOnIdle {}
     }
 
-    //
     @Test
     fun precomposingWithPauseAndExtraRecomposition_effectAppliedOnlyOnce() {
         // initialize SubcomposeLayout with one composition in a reuse pool
@@ -348,6 +347,59 @@ class PausableCompositionInstrumentedTests {
             assertThat(applyCalls).isEqualTo(1)
         }
     }
+
+    @Test
+    fun precomposingWithPauseAndExtraRecomposition_rememberedValueNotRecreated() {
+        // initialize SubcomposeLayout with one composition in a reuse pool
+        val state = SubcomposeLayoutState(SubcomposeSlotReusePolicy(1))
+        var addSlot by mutableStateOf(true)
+
+        rule.setContent {
+            SubcomposeLayout(state) {
+                if (addSlot) {
+                    subcompose("for-reuse") {}
+                }
+                layout(10, 10) {}
+            }
+        }
+        rule.runOnIdle { addSlot = false }
+
+        // do pausable precomposition
+        var outerCompositionHappened = false
+        var recompositionTrigger by mutableStateOf(Unit, neverEqualPolicy())
+        var rememberCalls = 0
+
+        val precomposition =
+            rule.runOnIdle {
+                val precomposition =
+                    state.createPausedPrecomposition(Unit) {
+                        outerCompositionHappened = true
+                        RememberWrapper(
+                            onComposed = { recompositionTrigger },
+                            onRemembered = { rememberCalls++ }
+                        )
+                    }
+
+                // resume and pause before composing DisposableEffectWrapper
+                precomposition.resume { outerCompositionHappened }
+
+                // continue after the pause
+                precomposition.resume { false }
+
+                // trigger recomposition
+                recompositionTrigger = Unit
+
+                precomposition
+            }
+
+        rule.runOnIdle {
+            while (!precomposition.isComplete) {
+                precomposition.resume { false }
+            }
+
+            assertThat(rememberCalls).isEqualTo(1)
+        }
+    }
 }
 
 @Composable
@@ -357,4 +409,14 @@ fun DisposableEffectWrapper(onComposed: () -> Unit, onApplied: () -> Unit) {
         onApplied()
         onDispose {}
     }
+}
+
+@Composable
+fun RememberWrapper(onComposed: () -> Unit, onRemembered: () -> Unit) {
+    onComposed()
+    val a = remember {
+        onRemembered()
+        object {}
+    }
+    println(a)
 }
