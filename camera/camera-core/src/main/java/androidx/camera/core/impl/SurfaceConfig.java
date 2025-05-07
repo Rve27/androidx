@@ -31,6 +31,7 @@ import androidx.camera.core.internal.utils.SizeUtil;
 import com.google.auto.value.AutoValue;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -167,7 +168,9 @@ public abstract class SurfaceConfig {
                 configSize = ConfigSize.S1440P_4_3;
             }
         } else if (configSource == ConfigSource.FEATURE_COMBINATION_TABLE) {
-            // Try all fixes sizes first for exact match
+            Size maximumSize = surfaceSizeDefinition.getMaximumSize(imageFormat);
+
+            // Try all fixed sizes first for exact match
             for (ConfigSize supportedSize : FEATURE_COMBO_QUERY_SUPPORTED_SIZES) {
                 if (size.equals(supportedSize.getRelatedFixedSize())) {
                     configSize = supportedSize;
@@ -177,9 +180,8 @@ public abstract class SurfaceConfig {
 
             // There was no fixed size match, so try the max supported size next
             if (configSize == ConfigSize.NOT_SUPPORT) {
-                Size maximumSize = surfaceSizeDefinition.getMaximumSize(imageFormat);
 
-                if (size == maximumSize) {
+                if (size.equals(maximumSize)) {
                     configSize = ConfigSize.MAXIMUM;
                 }
             }
@@ -396,7 +398,7 @@ public abstract class SurfaceConfig {
          * <p> For config sizes without any pre-defined fixed related to it (e.g.
          * {@link ConfigSize#RECORD}), a null value will be returned.
          */
-        Size getRelatedFixedSize() {
+        public @Nullable Size getRelatedFixedSize() {
             return mRelatedFixedSize;
         }
     }

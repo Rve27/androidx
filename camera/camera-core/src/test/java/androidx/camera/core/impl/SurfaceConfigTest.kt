@@ -290,7 +290,8 @@ class SurfaceConfigTest {
             SurfaceConfig.transformSurfaceConfig(
                 cameraMode,
                 imageFormat,
-                maxSize,
+                // creating new size instance to ensure different size instance than max supported
+                Size(maxSize.width, maxSize.height),
                 surfaceSizeDefinition,
                 configSource
             )
