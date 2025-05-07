@@ -104,6 +104,14 @@ class HealthConnectClientUpsideDownImplTest {
         // availability, which would lead to a crash.
         private val FHIR_VERSION_4_0_1 by lazy { FhirVersion(4, 0, 1) }
 
+        private val TEST_RECORD_TYPES =
+            listOf(
+                StepsRecord::class,
+                HeartRateRecord::class,
+                NutritionRecord::class,
+                WeightRecord::class
+            )
+
         fun getAllRecordPermissions(): Array<String> {
             val permissions: HashSet<String> = HashSet()
 
@@ -142,13 +150,8 @@ class HealthConnectClientUpsideDownImplTest {
 
     @After
     fun tearDown() = runTest {
-        for (recordType in SDK_TO_PLATFORM_RECORD_CLASS.keys) {
+        for (recordType in TEST_RECORD_TYPES) {
             healthConnectClient.deleteRecords(recordType, TimeRangeFilter.after(Instant.EPOCH))
-        }
-        if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) >= 13) {
-            for (recordType in SDK_TO_PLATFORM_RECORD_CLASS_EXT_13.keys) {
-                healthConnectClient.deleteRecords(recordType, TimeRangeFilter.after(Instant.EPOCH))
-            }
         }
         if (isPersonalHealthRecordFeatureAvailableInPlatform()) {
             healthConnectClient
