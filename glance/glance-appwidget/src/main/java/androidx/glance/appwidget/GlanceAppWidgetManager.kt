@@ -56,7 +56,7 @@ import kotlinx.coroutines.flow.firstOrNull
  * This is used to query the app widgets currently installed on the system, and some of their
  * properties.
  */
-class GlanceAppWidgetManager(private val context: Context) {
+public class GlanceAppWidgetManager(private val context: Context) {
 
     private data class State(
         val receiverToProviderName: Map<ComponentName, String> = emptyMap(),
@@ -135,7 +135,7 @@ class GlanceAppWidgetManager(private val context: Context) {
     }
 
     /** Returns the [GlanceId] of the App Widgets installed for a particular provider. */
-    suspend fun <T : GlanceAppWidget> getGlanceIds(provider: Class<T>): List<GlanceId> {
+    public suspend fun <T : GlanceAppWidget> getGlanceIds(provider: Class<T>): List<GlanceId> {
         val state = getState()
         val providerName = requireNotNull(provider.canonicalName) { "no canonical provider name" }
         val receivers = state.providerNameToReceivers[providerName] ?: return emptyList()
@@ -153,7 +153,7 @@ class GlanceAppWidgetManager(private val context: Context) {
      * portrait sizes will be estimated from those and returned. Otherwise, the list will contain
      * [DpSize.Zero] only.
      */
-    suspend fun getAppWidgetSizes(glanceId: GlanceId): List<DpSize> {
+    public suspend fun getAppWidgetSizes(glanceId: GlanceId): List<DpSize> {
         require(glanceId is AppWidgetId) { "This method only accepts App Widget Glance Id" }
         val bundle = appWidgetManager.getAppWidgetOptions(glanceId.appWidgetId)
         return bundle.extractAllSizes { DpSize.Zero }
@@ -166,7 +166,7 @@ class GlanceAppWidgetManager(private val context: Context) {
      * the GlanceStateDefinition. This method should only be used for compatibility or IPC
      * communication reasons in conjunction with [getGlanceIdBy]
      */
-    fun getAppWidgetId(glanceId: GlanceId): Int {
+    public fun getAppWidgetId(glanceId: GlanceId): Int {
         require(glanceId is AppWidgetId) { "This method only accepts App Widget Glance Id" }
         return glanceId.appWidgetId
     }
@@ -177,13 +177,13 @@ class GlanceAppWidgetManager(private val context: Context) {
      * @throws IllegalArgumentException if the provided id is not associated with an existing
      *   GlanceId
      */
-    fun getGlanceIdBy(appWidgetId: Int): GlanceId {
+    public fun getGlanceIdBy(appWidgetId: Int): GlanceId {
         requireNotNull(appWidgetManager.getAppWidgetInfo(appWidgetId)) { "Invalid AppWidget ID." }
         return AppWidgetId(appWidgetId)
     }
 
     /** Retrieve the GlanceId from the configuration activity intent or null if not valid */
-    fun getGlanceIdBy(configurationIntent: Intent): GlanceId? {
+    public fun getGlanceIdBy(configurationIntent: Intent): GlanceId? {
         val appWidgetId =
             configurationIntent.extras?.getInt(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
@@ -215,7 +215,7 @@ class GlanceAppWidgetManager(private val context: Context) {
      * @return true if the request was successfully sent to the system, false otherwise
      * @see AppWidgetManager.requestPinAppWidget for more information and limitations
      */
-    suspend fun <T : GlanceAppWidgetReceiver> requestPinGlanceAppWidget(
+    public suspend fun <T : GlanceAppWidgetReceiver> requestPinGlanceAppWidget(
         receiver: Class<T>,
         preview: GlanceAppWidget? = null,
         previewState: Any? = null,
@@ -250,7 +250,7 @@ class GlanceAppWidgetManager(private val context: Context) {
      * @return true if the request was successfully sent to the system, false otherwise
      * @see AppWidgetManager.requestPinAppWidget for more information and limitations
      */
-    suspend fun <T : GlanceAppWidgetReceiver> requestPinGlanceAppWidget(
+    public suspend fun <T : GlanceAppWidgetReceiver> requestPinGlanceAppWidget(
         receiver: Class<T>,
         preview: GlanceAppWidget? = null,
         previewSize: DpSize? = null,
@@ -328,7 +328,7 @@ class GlanceAppWidgetManager(private val context: Context) {
      */
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     @CheckResult
-    suspend fun setWidgetPreviews(
+    public suspend fun setWidgetPreviews(
         receiver: KClass<out GlanceAppWidgetReceiver>,
         widgetCategories: IntSet =
             intSetOf(
@@ -452,17 +452,17 @@ class GlanceAppWidgetManager(private val context: Context) {
     @Target(AnnotationTarget.TYPE)
     internal annotation class SetWidgetPreviewsResult
 
-    companion object {
+    public companion object {
         /**
          * Returned from [setWidgetPreviews] to indicate that the previews were set successfully.
          */
-        const val SET_WIDGET_PREVIEWS_RESULT_SUCCESS = 0
+        public const val SET_WIDGET_PREVIEWS_RESULT_SUCCESS: Int = 0
 
         /**
          * Return from [setWidgetPreviews] to indicate that the operation was not successful due to
          * a rate limit.
          */
-        const val SET_WIDGET_PREVIEWS_RESULT_RATE_LIMITED = 1
+        public const val SET_WIDGET_PREVIEWS_RESULT_RATE_LIMITED: Int = 1
 
         private val Context.appManagerDataStore by
             preferencesDataStore(name = "GlanceAppWidgetManager-$processName")
@@ -562,7 +562,8 @@ class GlanceAppWidgetManager(private val context: Context) {
  */
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @CheckResult
-suspend inline fun <reified T : GlanceAppWidgetReceiver> GlanceAppWidgetManager.setWidgetPreviews(
+public suspend inline fun <reified T : GlanceAppWidgetReceiver> GlanceAppWidgetManager
+    .setWidgetPreviews(
     widgetCategories: IntSet =
         intSetOf(
             WIDGET_CATEGORY_HOME_SCREEN or WIDGET_CATEGORY_KEYGUARD or WIDGET_CATEGORY_SEARCHBOX
