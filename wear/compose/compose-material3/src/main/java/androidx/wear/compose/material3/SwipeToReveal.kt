@@ -394,7 +394,7 @@ internal constructor(
             RevealActionType.UndoAction,
             iconStartFadeInFraction = startFadeInFraction(hasSecondaryAction),
             iconEndFadeInFraction = endFadeInFraction(hasSecondaryAction),
-            modifier = modifier,
+            modifier = modifier.height(ButtonDefaults.Height),
         )
     }
 }
