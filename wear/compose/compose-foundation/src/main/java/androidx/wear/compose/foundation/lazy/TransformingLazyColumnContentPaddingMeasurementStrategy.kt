@@ -310,7 +310,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 )
             visibleItems.addFirst(additionalItem)
             topOffset -= additionalItem.transformedHeight + itemSpacing
-            topPassIndex -= 1
+            topPassIndex -= 1 // Indexes must be incremental.
         }
     }
 
@@ -336,7 +336,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 )
             bottomOffset += additionalItem.transformedHeight + itemSpacing
             visibleItems.add(additionalItem)
-            bottomPassIndex += 1
+            bottomPassIndex += 1 // Indexes must be incremental.
         }
     }
 
