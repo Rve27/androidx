@@ -98,6 +98,10 @@ private constructor(
             cameraPipeInternal.globalAudioRestrictionMode = value
         }
 
+    override fun shutdown() {
+        // Nothing to shutdown
+    }
+
     /** Directly create and return a new [CameraGraph] and [CameraGraphSimulator]. */
     public fun createCameraGraphSimulator(graphConfig: CameraGraph.Config): CameraGraphSimulator {
         check(!closed.value) { "Cannot interact with CameraPipeSimulator after close!" }

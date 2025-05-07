@@ -34,7 +34,7 @@ public class Threads(
     public val lightweightExecutor: Executor,
     public val lightweightDispatcher: CoroutineDispatcher,
     camera2Handler: () -> Handler,
-    camera2Executor: () -> Executor
+    camera2Executor: () -> Executor,
 ) {
     private val _camera2Handler = lazy { camera2Handler() }
     private val _camera2Executor = lazy { camera2Executor() }

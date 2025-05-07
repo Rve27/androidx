@@ -39,6 +39,7 @@ import androidx.camera.camera2.pipe.core.Threads
 import androidx.camera.camera2.pipe.core.TimeSource
 import androidx.camera.camera2.pipe.internal.CameraBackendsImpl
 import androidx.camera.camera2.pipe.internal.CameraDevicesImpl
+import androidx.camera.camera2.pipe.internal.CameraPipeLifetime
 import androidx.camera.camera2.pipe.media.ImageReaderImageSources
 import androidx.camera.camera2.pipe.media.ImageSources
 import dagger.Binds
@@ -65,6 +66,8 @@ import javax.inject.Singleton
         ]
 )
 internal interface CameraPipeComponent {
+    fun cameraPipeLifetime(): CameraPipeLifetime
+
     fun cameraGraphComponentBuilder(): CameraGraphComponent.Builder
 
     fun cameras(): CameraDevices
@@ -143,6 +146,7 @@ internal abstract class CameraPipeModules {
             @DefaultCameraBackend defaultCameraBackend: Provider<CameraBackend>,
             @CameraPipeContext cameraPipeContext: Context,
             threads: Threads,
+            cameraPipeLifetime: CameraPipeLifetime,
         ): CameraBackends {
             // This is intentionally lazy. If an internalBackend is defined as part of the
             // CameraPipe configuration, we will never create the default cameraPipeCameraBackend.
@@ -164,7 +168,13 @@ internal abstract class CameraPipeModules {
                 "Failed to find $defaultBackendId in the list of available CameraPipe backends! " +
                     "Available values are ${allBackends.keys}"
             }
-            return CameraBackendsImpl(defaultBackendId, allBackends, cameraPipeContext, threads)
+            return CameraBackendsImpl(
+                defaultBackendId,
+                allBackends,
+                cameraPipeContext,
+                threads,
+                cameraPipeLifetime,
+            )
         }
 
         @Provides

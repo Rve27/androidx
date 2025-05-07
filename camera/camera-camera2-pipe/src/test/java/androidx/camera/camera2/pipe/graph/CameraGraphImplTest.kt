@@ -32,6 +32,7 @@ import androidx.camera.camera2.pipe.Request
 import androidx.camera.camera2.pipe.StreamFormat
 import androidx.camera.camera2.pipe.internal.CameraBackendsImpl
 import androidx.camera.camera2.pipe.internal.CameraGraphParametersImpl
+import androidx.camera.camera2.pipe.internal.CameraPipeLifetime
 import androidx.camera.camera2.pipe.internal.FrameCaptureQueue
 import androidx.camera.camera2.pipe.internal.FrameDistributor
 import androidx.camera.camera2.pipe.internal.ImageSourceMap
@@ -99,13 +100,15 @@ internal class CameraGraphImplTest {
             streams = listOf(stream1Config, stream2Config),
         )
     private val threads = FakeThreads.fromTestScope(testScope)
+    private val cameraPipeLifetime = CameraPipeLifetime()
     private val backend = FakeCameraBackend(fakeCameras = mapOf(metadata.camera to metadata))
     private val backends =
         CameraBackendsImpl(
             defaultBackendId = backend.id,
             cameraBackends = mapOf(backend.id to CameraBackendFactory { backend }),
             context,
-            threads
+            threads,
+            cameraPipeLifetime,
         )
     private val cameraContext = CameraBackendsImpl.CameraBackendContext(context, threads, backends)
     private val imageSources = ImageReaderImageSources(threads)

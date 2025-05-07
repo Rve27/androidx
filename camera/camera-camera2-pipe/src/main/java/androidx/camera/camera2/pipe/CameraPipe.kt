@@ -87,6 +87,13 @@ public interface CameraPipe {
     public var globalAudioRestrictionMode: AudioRestrictionMode
 
     /**
+     * This shuts down the CameraPipe instance completely, releasing all its resources, notably the
+     * threads it created. After shutdown, a new CameraPipe instance should be recreated for any
+     * additional capture sessions the users would like to create.
+     */
+    public fun shutdown()
+
+    /**
      * Application level configuration for [CameraPipe]. Nullable values are optional and reasonable
      * defaults will be provided if values are not specified.
      */
@@ -244,6 +251,10 @@ internal class CameraPipeImpl(private val component: CameraPipeComponent) : Came
         set(value) {
             component.cameraAudioRestrictionController().globalAudioRestrictionMode = value
         }
+
+    override fun shutdown() {
+        component.cameraPipeLifetime().shutdown()
+    }
 
     override fun toString(): String = "CameraPipe-$debugId"
 }
