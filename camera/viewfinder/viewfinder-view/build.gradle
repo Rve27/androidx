@@ -43,7 +43,6 @@ dependencies {
     implementation(libs.kotlinCoroutinesAndroid)
 
     testImplementation(libs.testRunner)
-    testImplementation(libs.robolectric)
     testImplementation(libs.kotlinStdlib)
     testImplementation(libs.truth)
     testImplementation(libs.testRules)
@@ -70,7 +69,6 @@ dependencies {
 
 android {
     compileSdk = 35
-    testOptions.unitTests.includeAndroidResources = true
     namespace = "androidx.camera.viewfinder.view"
     lint {
         enable.add("CameraXQuirksClassDetector")
@@ -84,4 +82,5 @@ androidx {
     description = "Standalone View-based Viewfinder for Camera"
     legacyDisableKotlinStrictApiMode = true
     addGoldenImageAssets()
+    enableRobolectric()
 }

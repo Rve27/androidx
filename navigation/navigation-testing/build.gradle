@@ -121,8 +121,6 @@ androidXMultiplatform {
         androidUnitTest {
             dependsOn(commonTest)
             dependencies {
-                implementation(libs.robolectric)
-
                 runtimeOnly(libs.testCore)
                 runtimeOnly(libs.kotlinTestJunit)
                 implementation(libs.junit)
@@ -178,4 +176,5 @@ androidx {
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2017"
     description = "Android Navigation-Testing"
+    enableRobolectric()
 }

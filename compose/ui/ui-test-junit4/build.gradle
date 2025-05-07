@@ -104,7 +104,6 @@ androidXMultiplatform {
                 implementation(project(":compose:material:material"))
                 implementation(project(":compose:test-utils"))
                 implementation(libs.truth)
-                implementation(libs.robolectric)
             }
         }
     }
@@ -122,4 +121,5 @@ androidx {
     description = "Compose testing integration with JUnit4"
     legacyDisableKotlinStrictApiMode = true
     metalavaK2UastEnabled = false
+    enableRobolectric()
 }

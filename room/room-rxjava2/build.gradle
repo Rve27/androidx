@@ -59,4 +59,5 @@ androidx {
 
 android {
     namespace = "androidx.room.rxjava2"
+    testOptions.unitTests.returnDefaultValues = true
 }

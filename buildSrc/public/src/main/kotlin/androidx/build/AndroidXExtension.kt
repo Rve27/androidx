@@ -425,6 +425,11 @@ abstract class AndroidXExtension(
         }
     }
 
+    /** Enable Robolectric tests for Android Host Tests. */
+    fun enableRobolectric() {
+        configureRobolectric(project)
+    }
+
     /** Locates a project by path. */
     // This method is needed for Gradle project isolation to avoid calls to parent projects due to
     // androidx { samples(project(":foo")) }

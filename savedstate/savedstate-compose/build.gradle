@@ -51,7 +51,6 @@ androidXMultiplatform {
         androidUnitTest {
             dependsOn(commonTest)
             dependencies {
-                implementation(libs.robolectric)
             }
         }
 
@@ -94,4 +93,5 @@ androidx {
     inceptionYear = "2024"
     description = "Compose integration with Saved State"
     metalavaK2UastEnabled = false
+    enableRobolectric()
 }

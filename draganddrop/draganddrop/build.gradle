@@ -45,7 +45,6 @@ android {
     defaultConfig {
         minSdk = 24
     }
-    testOptions.unitTests.includeAndroidResources = true
     namespace = "androidx.draganddrop"
 }
 

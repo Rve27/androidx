@@ -42,7 +42,6 @@ dependencies {
     testImplementation(libs.testCore)
     testImplementation(libs.testRunner)
     testImplementation(libs.junit)
-    testImplementation(libs.robolectric)
 
     androidTestImplementation(libs.testExtJunit)
     androidTestImplementation(libs.testCore)
@@ -63,11 +62,7 @@ dependencies {
 
 android {
     compileSdk = 35
-    testOptions.unitTests.includeAndroidResources = true
     namespace = "androidx.camera.media3.effect"
-    lint {
-        baseline = file("lint-baseline.xml")
-    }
 }
 
 androidx {
@@ -75,4 +70,5 @@ androidx {
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2024"
     description = "Media3 effect components for the Jetpack Camera Library, a library providing a seamless integration that enables media3 effect in CameraX."
+    enableRobolectric()
 }
