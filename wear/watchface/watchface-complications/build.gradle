@@ -22,8 +22,6 @@
  * modifying its settings.
  */
 
-
-import androidx.build.KotlinTarget
 import androidx.build.SoftwareType
 
 plugins {
@@ -65,8 +63,6 @@ android {
 androidx {
     name = "Android Wear Complications"
     type = SoftwareType.PUBLISHED_LIBRARY
-    //TODO(b/407632515): Target Kotlin 2. Fails :wear:watchface:watchface-complications-data-source-ktx:generateApi
-    kotlinTarget = KotlinTarget.KOTLIN_1_9
     inceptionYear = "2021"
     description = "Android Wear Complications"
     legacyDisableKotlinStrictApiMode = true
