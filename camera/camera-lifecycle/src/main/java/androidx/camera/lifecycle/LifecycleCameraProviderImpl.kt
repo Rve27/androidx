@@ -606,8 +606,15 @@ internal class LifecycleCameraProviderImpl : LifecycleCameraProvider {
             val lifecycleCameras = lifecycleCameraRepository.lifecycleCameras
             sessionConfig.useCases.forEach { useCase ->
                 for (lifecycleCamera: LifecycleCamera in lifecycleCameras) {
+                    // We should only check if the useCases are bound in other LifecycleOwners.
+                    // If there are UseCases bound in the same LifecycleOwner but different camera
+                    // id, it will throw exceptions in LifecycleCameraRepository so we don't need to
+                    // check here. For the new SessionConfig, it is allowed to have UseCases bound
+                    // to the same LifecycleOwner with different camera id because binding a
+                    // SessionConfig to the same LifecycleOwner will implicitly unbind them first.
                     if (
-                        lifecycleCamera.isBound(useCase) && lifecycleCamera != lifecycleCameraToBind
+                        lifecycleCamera.isBound(useCase) &&
+                            lifecycleCamera.lifecycleOwner != lifecycleOwner
                     ) {
                         throw IllegalStateException(
                             String.format(

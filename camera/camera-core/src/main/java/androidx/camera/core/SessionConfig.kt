@@ -34,9 +34,6 @@ import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
  * and common properties like the field-of-view defined by [ViewPort], the [CameraEffect], required
  * or preferred [Feature]s etc.
  *
- * The following shows the example of how to configure the SessionConfig in CameraX.
- *
- * @sample androidx.camera.lifecycle.samples.bindSessionConfigToLifecycle
  * @property useCases The list of [UseCase] to be attached to the camera and receive camera data.
  *   This can't be empty.
  * @property viewPort The [ViewPort] to be applied on the camera session. If not set, the default is
@@ -81,8 +78,7 @@ constructor(
 ) {
     public val useCases: List<UseCase> = useCases.distinct()
 
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public open val isMultipleBindingAllowed: Boolean = false
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public open val isLegacy: Boolean = false
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public open val targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
 
@@ -201,7 +197,7 @@ constructor(
     }
 }
 
-/** The legacy SessionConfig which allows multiple binding. This is used internally. */
+/** The legacy SessionConfig which allows sequential binding. This is used internally. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @OptIn(ExperimentalSessionConfig::class)
 public class LegacySessionConfig(
@@ -210,7 +206,7 @@ public class LegacySessionConfig(
     effects: List<CameraEffect> = emptyList(),
     public override val targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
 ) : SessionConfig(useCases, viewPort, effects) {
-    public override val isMultipleBindingAllowed: Boolean = true
+    public override val isLegacy: Boolean = true
 
     public constructor(
         useCaseGroup: UseCaseGroup

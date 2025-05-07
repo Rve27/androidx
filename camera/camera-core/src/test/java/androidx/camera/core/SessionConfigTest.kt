@@ -60,7 +60,7 @@ class SessionConfigTest {
         assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
-        assertThat(sessionConfig.isMultipleBindingAllowed).isFalse()
+        assertThat(sessionConfig.isLegacy).isFalse()
     }
 
     @Test
@@ -73,7 +73,7 @@ class SessionConfigTest {
         assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
-        assertThat(sessionConfig.isMultipleBindingAllowed).isFalse()
+        assertThat(sessionConfig.isLegacy).isFalse()
     }
 
     @Test
@@ -129,7 +129,7 @@ class SessionConfigTest {
         assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
-        assertThat(sessionConfig.isMultipleBindingAllowed).isFalse()
+        assertThat(sessionConfig.isLegacy).isFalse()
     }
 
     @Test
@@ -150,7 +150,7 @@ class SessionConfigTest {
         assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
-        assertThat(sessionConfig.isMultipleBindingAllowed).isFalse()
+        assertThat(sessionConfig.isLegacy).isFalse()
     }
 
     @Test
@@ -321,7 +321,7 @@ class SessionConfigTest {
         assertThat(legacySessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(legacySessionConfig.effects).isEqualTo(effects)
         assertThat(legacySessionConfig.targetHighSpeedFrameRate).isEqualTo(frameRateRange)
-        assertThat(legacySessionConfig.isMultipleBindingAllowed).isTrue()
+        assertThat(legacySessionConfig.isLegacy).isTrue()
     }
 
     @Test
@@ -333,7 +333,7 @@ class SessionConfigTest {
         assertThat(legacySessionConfig.effects).isEmpty()
         assertThat(legacySessionConfig.targetHighSpeedFrameRate)
             .isEqualTo(StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED)
-        assertThat(legacySessionConfig.isMultipleBindingAllowed).isTrue()
+        assertThat(legacySessionConfig.isLegacy).isTrue()
     }
 
     @Test
@@ -354,7 +354,7 @@ class SessionConfigTest {
         assertThat(legacySessionConfig.effects).isEqualTo(effects)
         assertThat(legacySessionConfig.targetHighSpeedFrameRate)
             .isEqualTo(useCaseGroup.targetHighSpeedFrameRate)
-        assertThat(legacySessionConfig.isMultipleBindingAllowed).isTrue()
+        assertThat(legacySessionConfig.isLegacy).isTrue()
     }
 
     data class FakeDynamicRangeFeature(private val dynamicRange: DynamicRange) : Feature() {

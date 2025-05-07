@@ -352,9 +352,15 @@ final class LifecycleCameraRepository {
                 for (Key key : lifecycleCameraKeySet) {
                     LifecycleCamera camera = Preconditions.checkNotNull(mCameraMap.get(key));
                     if (!camera.equals(lifecycleCamera) && !camera.getUseCases().isEmpty()) {
-                        throw new IllegalArgumentException(
-                                "Multiple LifecycleCameras with use cases "
-                                        + "are registered to the same LifecycleOwner.");
+                        if (!camera.isLegacySessionConfigBound() && !sessionConfig.isLegacy()) {
+                            // Non-Legacy SessionConfig allows updating SessionConfig to the same
+                            // LifecycleOwner with implicit unbinding.
+                            camera.unbindAll();
+                        } else {
+                            throw new IllegalArgumentException(
+                                    "Multiple LifecycleCameras with use cases are registered to "
+                                    + "the same LifecycleOwner. Please unbind first.");
+                        }
                     }
                 }
             }
