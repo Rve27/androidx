@@ -34,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
@@ -216,19 +217,29 @@ private object DefaultThreePaneScaffoldOverride : ThreePaneScaffoldOverride {
         val layoutDirection = LocalLayoutDirection.current
         val ltrPaneOrder =
             remember(paneOrder, layoutDirection) { paneOrder.toLtrOrder(layoutDirection) }
+        val scaffoldValue = scaffoldState.targetState
         val contents =
             listOf<@Composable () -> Unit>(
                 primaryPane,
                 secondaryPane,
                 tertiaryPane ?: {},
-                { paneExpansionDragHandle?.invoke(paneExpansionState) }
+                { paneExpansionDragHandle?.invoke(paneExpansionState) },
+                {
+                    // A default scrim when no AnimatedPane is being used.
+                    scaffoldValue.forEach { _, value ->
+                        (value as? PaneAdaptedValue.Levitated)
+                            ?.scrim
+                            ?.Content(ThreePaneScaffoldDefaults.ScrimColor, true)
+                        return@listOf
+                    }
+                }
             )
 
         val measurePolicy =
             remember(paneExpansionState) {
                     ThreePaneContentMeasurePolicy(
                         scaffoldDirective,
-                        scaffoldState.targetState,
+                        scaffoldValue,
                         paneExpansionState,
                         ltrPaneOrder,
                         motionDataProvider
@@ -236,7 +247,7 @@ private object DefaultThreePaneScaffoldOverride : ThreePaneScaffoldOverride {
                 }
                 .apply {
                     this.scaffoldDirective = this@ThreePaneScaffold.scaffoldDirective
-                    this.scaffoldValue = scaffoldState.targetState
+                    this.scaffoldValue = scaffoldValue
                     this.paneOrder = ltrPaneOrder
                 }
 
@@ -269,6 +280,7 @@ private class ThreePaneContentMeasurePolicy(
         val secondaryMeasurable = measurables[1].firstOrNull()
         val tertiaryMeasurable = measurables[2].firstOrNull()
         val dragHandleMeasurable = measurables[3].firstOrNull()
+        val scrimMeasurable = getScrimMeasurable(measurables)
         return layout(constraints.maxWidth, constraints.maxHeight) {
             if (coordinates == null) {
                 return@layout
@@ -581,6 +593,9 @@ private class ThreePaneContentMeasurePolicy(
             expandedPanes.fastForEach { with(it) { doMeasureAndPlace() } }
             reflowedPanes.fastForEach { with(it) { doMeasureAndPlace() } }
             dragHandle?.apply { doMeasureAndPlace() }
+            scrimMeasurable?.apply {
+                measure(Constraints.fixed(outerBounds.width, outerBounds.height)).place(0, 0)
+            }
             levitatedPanes.fastForEach { with(it) { doMeasureAndPlace() } }
             hiddenPanes.fastForEach { with(it) { doMeasureAndPlace() } }
         }
@@ -886,6 +901,15 @@ private class ThreePaneContentMeasurePolicy(
             else -> PaneExpansionState.Unspecified
         }
     }
+
+    private fun getScrimMeasurable(measurables: List<List<Measurable>>): Measurable? {
+        measurables.subList(0, 3).fastForEach {
+            if (it.size > 1) {
+                return it[1]
+            }
+        }
+        return measurables[4].firstOrNull()
+    }
 }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -1013,6 +1037,8 @@ internal object ThreePaneScaffoldDefaults {
      * the same z-index level during pane animations.
      */
     const val HiddenPaneZIndexOffset = -0.1f
+
+    val ScrimColor = Color.Black.copy(alpha = 0.32f)
 }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)

@@ -92,26 +92,33 @@ sealed interface AdaptStrategy {
      *   [Strategy] for more detailed descriptions.
      * @param alignment the alignment of the associated pane when it's levitated, relatively to the
      *   pane scaffold.
+     * @param scrim the scrim to show when the pane is levitated to block user interaction with the
+     *   underlying layout and emphasize the levitated pane; by default it will be `null` and no
+     *   scrim will show.
      */
     // TODO(conradchen): Add usage samples.
     @Immutable
     class Levitate(
         val strategy: Strategy = Strategy.Always,
-        val alignment: Alignment = Alignment.Center
+        val alignment: Alignment = Alignment.Center,
+        val scrim: Scrim? = null
     ) : AdaptStrategy {
-        override fun toString() = "AdaptStrategy[Levitate, type=$strategy, alignment=$alignment)]"
+        override fun toString() =
+            "AdaptStrategy[Levitate, type=$strategy, alignment=$alignment, scrim=$scrim]"
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is Levitate) return false
             if (strategy != other.strategy) return false
             if (alignment != other.alignment) return false
+            if (scrim != other.scrim) return false
             return true
         }
 
         override fun hashCode(): Int {
             var result = strategy.hashCode()
             result = 31 * result + alignment.hashCode()
+            result = 31 * result + scrim.hashCode()
             return result
         }
 

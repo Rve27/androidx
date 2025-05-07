@@ -13,10 +13,12 @@ package androidx.compose.material3.adaptive.layout {
 
   @androidx.compose.runtime.Immutable public static final class AdaptStrategy.Levitate implements androidx.compose.material3.adaptive.layout.AdaptStrategy {
     ctor public AdaptStrategy.Levitate();
-    ctor public AdaptStrategy.Levitate(optional String strategy, optional androidx.compose.ui.Alignment alignment);
+    ctor public AdaptStrategy.Levitate(optional String strategy, optional androidx.compose.ui.Alignment alignment, optional androidx.compose.material3.adaptive.layout.Scrim? scrim);
     method public androidx.compose.ui.Alignment getAlignment();
+    method public androidx.compose.material3.adaptive.layout.Scrim? getScrim();
     method public String getStrategy();
     property public androidx.compose.ui.Alignment alignment;
+    property public androidx.compose.material3.adaptive.layout.Scrim? scrim;
     property public String strategy;
   }
 
@@ -132,9 +134,11 @@ package androidx.compose.material3.adaptive.layout {
   }
 
   @androidx.compose.runtime.Immutable public static final class PaneAdaptedValue.Levitated implements androidx.compose.material3.adaptive.layout.PaneAdaptedValue {
-    ctor public PaneAdaptedValue.Levitated(androidx.compose.ui.Alignment alignment);
+    ctor public PaneAdaptedValue.Levitated(androidx.compose.ui.Alignment alignment, optional androidx.compose.material3.adaptive.layout.Scrim? scrim);
     method public androidx.compose.ui.Alignment getAlignment();
+    method public androidx.compose.material3.adaptive.layout.Scrim? getScrim();
     property public androidx.compose.ui.Alignment alignment;
+    property public androidx.compose.material3.adaptive.layout.Scrim? scrim;
   }
 
   @androidx.compose.runtime.Immutable public static final class PaneAdaptedValue.Reflowed implements androidx.compose.material3.adaptive.layout.PaneAdaptedValue {
@@ -396,6 +400,15 @@ package androidx.compose.material3.adaptive.layout {
 
   @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public sealed interface PaneScaffoldValue<T> {
     method public operator androidx.compose.material3.adaptive.layout.PaneAdaptedValue get(T role);
+  }
+
+  @androidx.compose.runtime.Immutable public final class Scrim {
+    ctor public Scrim();
+    ctor public Scrim(optional long color, optional kotlin.jvm.functions.Function0<kotlin.Unit>? onClick);
+    method public long getColor();
+    method public kotlin.jvm.functions.Function0<kotlin.Unit>? getOnClick();
+    property public long color;
+    property public kotlin.jvm.functions.Function0<kotlin.Unit>? onClick;
   }
 
   @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public final class SupportingPaneScaffoldDefaults {
