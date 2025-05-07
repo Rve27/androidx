@@ -87,6 +87,7 @@ import androidx.camera.video.VideoRecordEvent.Resume
 import androidx.camera.video.internal.OutputStorage
 import androidx.camera.video.internal.compat.quirk.DeactivateEncoderSurfaceBeforeStopEncoderQuirk
 import androidx.camera.video.internal.compat.quirk.DeviceQuirks
+import androidx.camera.video.internal.compat.quirk.EncoderNotUsePersistentInputSurfaceQuirk
 import androidx.camera.video.internal.compat.quirk.ExtraSupportedResolutionQuirk
 import androidx.camera.video.internal.compat.quirk.MediaStoreVideoCannotWrite
 import androidx.camera.video.internal.encoder.EncoderFactory
@@ -1077,6 +1078,10 @@ class RecorderTest(
 
     @Test
     fun insufficientStorageOnNextRecordingStarts_shouldFailWithInsufficientStorageError() {
+        assumeTrue(
+            "RecorderTest can't support second recording when using non persistent input surface",
+            DeviceQuirks.get(EncoderNotUsePersistentInputSurfaceQuirk::class.java) == null
+        )
         // Arrange.
         var storageAvailableBytes = 100L * 1024L * 1024L // 100MB
         // Required size is less than storage size.
