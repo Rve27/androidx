@@ -37,12 +37,12 @@ import androidx.sqlite.throwSQLiteException
 private typealias SupportStatement = androidx.sqlite.db.SupportSQLiteStatement
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-sealed class SupportSQLiteStatement(
+public sealed class SupportSQLiteStatement(
     protected val db: SupportSQLiteDatabase,
     protected val sql: String,
 ) : SQLiteStatement {
 
-    protected var isClosed = false
+    protected var isClosed: Boolean = false
 
     protected fun throwIfClosed() {
         if (isClosed) {
@@ -50,8 +50,8 @@ sealed class SupportSQLiteStatement(
         }
     }
 
-    companion object {
-        fun create(db: SupportSQLiteDatabase, sql: String): SupportSQLiteStatement {
+    public companion object {
+        public fun create(db: SupportSQLiteDatabase, sql: String): SupportSQLiteStatement {
             return if (isRowStatement(sql)) {
                 // Statements that return rows (SQLITE_ROW)
                 SupportAndroidSQLiteStatement(db, sql)

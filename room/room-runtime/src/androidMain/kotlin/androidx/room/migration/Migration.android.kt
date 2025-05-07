@@ -36,8 +36,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  *
  * @constructor Creates a new migration between [startVersion] and [endVersion] inclusive.
  */
-actual abstract class Migration
-actual constructor(@JvmField actual val startVersion: Int, @JvmField actual val endVersion: Int) {
+public actual abstract class Migration
+actual constructor(
+    @JvmField public actual val startVersion: Int,
+    @JvmField public actual val endVersion: Int
+) {
     /**
      * Should run the necessary migrations.
      *
@@ -53,7 +56,7 @@ actual constructor(@JvmField actual val startVersion: Int, @JvmField actual val 
      * @param db The database instance
      * @throws NotImplementedError if migrate(SQLiteConnection) is not overridden.
      */
-    open fun migrate(db: SupportSQLiteDatabase) {
+    public open fun migrate(db: SupportSQLiteDatabase) {
         throw NotImplementedError(
             "Migration functionality with a SupportSQLiteDatabase " +
                 "(without a provided SQLiteDriver) requires overriding the " +
@@ -70,7 +73,7 @@ actual constructor(@JvmField actual val startVersion: Int, @JvmField actual val 
      * @param connection The database connection
      * @throws NotImplementedError if a driver is provided, but this function is not overridden.
      */
-    actual open fun migrate(connection: SQLiteConnection) {
+    public actual open fun migrate(connection: SQLiteConnection) {
         if (connection is SupportSQLiteConnection) {
             // Compatibility mode
             migrate(connection.db)

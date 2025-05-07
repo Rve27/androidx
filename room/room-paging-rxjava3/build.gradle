@@ -56,7 +56,6 @@ androidx {
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2022"
     description = "RxJava3 integration in Room Paging"
-    legacyDisableKotlinStrictApiMode = true
     kotlinTarget = KotlinTarget.KOTLIN_2_1
 }
 

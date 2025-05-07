@@ -28,7 +28,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
  *
  * @see [androidx.room.AutoMigration]
  */
-actual interface AutoMigrationSpec {
+public actual interface AutoMigrationSpec {
     /**
      * Invoked after the migration is completed.
      *
@@ -38,14 +38,14 @@ actual interface AutoMigrationSpec {
      *
      * @param db The SQLite database.
      */
-    fun onPostMigrate(db: SupportSQLiteDatabase) {}
+    public fun onPostMigrate(db: SupportSQLiteDatabase) {}
 
     /**
      * Invoked after the migration is completed.
      *
      * @param connection The database connection.
      */
-    actual fun onPostMigrate(connection: SQLiteConnection) {
+    public actual fun onPostMigrate(connection: SQLiteConnection) {
         if (connection is SupportSQLiteConnection) {
             onPostMigrate(connection.db)
         }
