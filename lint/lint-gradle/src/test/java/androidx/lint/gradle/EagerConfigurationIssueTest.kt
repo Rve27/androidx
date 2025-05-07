@@ -61,6 +61,40 @@ class EagerConfigurationIssueTest :
     }
 
     @Test
+    fun `Test usage of ConfigurationContainer#create`() {
+        val input =
+            kotlin(
+                """
+                import org.gradle.api.Project
+
+                fun configure(project: Project) {
+                    project.configurations.create("example")
+                }
+            """
+                    .trimIndent()
+            )
+
+        val expected =
+            """
+                src/test.kt:4: Error: Use register instead of create [EagerGradleConfiguration]
+                    project.configurations.create("example")
+                                           ~~~~~~
+                1 errors, 0 warnings
+        """
+                .trimIndent()
+        val expectedFixDiffs =
+            """
+            Fix for src/test.kt line 4: Replace with register:
+            @@ -4 +4
+            -     project.configurations.create("example")
+            +     project.configurations.register("example")
+        """
+                .trimIndent()
+
+        check(input).expect(expected).expectFixDiffs(expectedFixDiffs)
+    }
+
+    @Test
     fun `Test usage of unrelated create method`() {
         val input =
             kotlin(
