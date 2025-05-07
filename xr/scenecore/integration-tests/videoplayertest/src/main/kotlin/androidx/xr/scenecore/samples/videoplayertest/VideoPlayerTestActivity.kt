@@ -371,7 +371,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
         if (!file.exists()) {
             Toast.makeText(
                     activity,
-                    "File does not exist. Did you download all the assets?",
+                    "File ($videoUri) does not exist. Did you download all the assets?",
                     Toast.LENGTH_LONG,
                 )
                 .show()
@@ -652,8 +652,11 @@ class VideoPlayerTestActivity : ComponentActivity() {
         PlayVideoButton(
             session = session,
             activity = activity,
-            // For Testers: This file should be packaged with the APK.
-            videoUri = "asset:///sdr_singleview_protected.mp4",
+            // For Testers: Note that this translates to
+            // "/sdcard/Download/sdr_singleview_protected.mp4"
+            videoUri =
+                Environment.getExternalStorageDirectory().getPath() +
+                    "/Download/sdr_singleview_protected.mp4",
             stereoMode = SurfaceEntity.StereoMode.SIDE_BY_SIDE,
             pose = Pose(Vector3(0.0f, 0.0f, -1.5f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
             canvasShape = SurfaceEntity.CanvasShape.Quad(1.0f, 1.0f),
@@ -674,8 +677,11 @@ class VideoPlayerTestActivity : ComponentActivity() {
         PlayVideoButton(
             session = session,
             activity = activity,
-            // For Testers: This file should be packaged with the APK.
-            videoUri = "asset:///mvhevc_flat_left_primary_1080_protected.mp4",
+            // For Testers: Note that this translates to
+            // "/sdcard/Download/mvhevc_flat_left_primary_1080_protected.mp4"
+            videoUri =
+                Environment.getExternalStorageDirectory().getPath() +
+                    "/Download/mvhevc_flat_left_primary_1080_protected.mp4",
             stereoMode = SurfaceEntity.StereoMode.MULTIVIEW_LEFT_PRIMARY,
             pose = Pose(Vector3(0.0f, 0.0f, -1.5f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
             canvasShape = SurfaceEntity.CanvasShape.Quad(1.0f, 1.0f),
