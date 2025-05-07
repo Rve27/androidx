@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.camera.camera2.pipe.testing
+package androidx.camera.camera2.pipe.integration.testing
 
 import android.content.Context
 import android.hardware.camera2.CameraCharacteristics

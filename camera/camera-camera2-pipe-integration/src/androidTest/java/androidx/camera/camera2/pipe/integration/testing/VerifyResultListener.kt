@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.camera.camera2.pipe.testing
+package androidx.camera.camera2.pipe.integration.testing
 
 import androidx.camera.camera2.pipe.FrameInfo
 import androidx.camera.camera2.pipe.FrameNumber
