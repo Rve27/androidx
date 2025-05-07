@@ -579,16 +579,9 @@ package androidx.xr.scenecore {
     method public androidx.xr.scenecore.SpatialUser getSpatialUser();
     method public void initialize(androidx.xr.runtime.internal.LifecycleManager lifecycleManager, androidx.xr.runtime.internal.JxrPlatformAdapter platformAdapter);
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
-    method public void setActivitySpace(androidx.xr.scenecore.ActivitySpace);
-    method public void setActivitySpaceRoot(androidx.xr.scenecore.Entity);
     method public android.os.Bundle setFullSpaceMode(android.os.Bundle bundle);
     method public android.os.Bundle setFullSpaceModeWithEnvironmentInherited(android.os.Bundle bundle);
-    method public void setMainPanelEntity(androidx.xr.scenecore.PanelEntity);
-    method public void setPerceptionSpace(androidx.xr.scenecore.PerceptionSpace);
     method public void setPreferredAspectRatio(android.app.Activity activity, float preferredRatio);
-    method public void setSpatialCapabilities(androidx.xr.scenecore.SpatialCapabilities);
-    method public void setSpatialEnvironment(androidx.xr.scenecore.SpatialEnvironment);
-    method public void setSpatialUser(androidx.xr.scenecore.SpatialUser);
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.SpatialVisibility> listener);
     method public void setSpatialVisibilityChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialVisibility> listener);
     property public androidx.xr.scenecore.ActivitySpace activitySpace;
@@ -598,13 +591,6 @@ package androidx.xr.scenecore {
     property public androidx.xr.scenecore.SpatialCapabilities spatialCapabilities;
     property public androidx.xr.scenecore.SpatialEnvironment spatialEnvironment;
     property public androidx.xr.scenecore.SpatialUser spatialUser;
-    field public androidx.xr.scenecore.ActivitySpace activitySpace;
-    field public androidx.xr.scenecore.Entity activitySpaceRoot;
-    field public androidx.xr.scenecore.PanelEntity mainPanelEntity;
-    field public androidx.xr.scenecore.PerceptionSpace perceptionSpace;
-    field public androidx.xr.scenecore.SpatialCapabilities spatialCapabilities;
-    field public androidx.xr.scenecore.SpatialEnvironment spatialEnvironment;
-    field public androidx.xr.scenecore.SpatialUser spatialUser;
   }
 
   public final class SessionExt {

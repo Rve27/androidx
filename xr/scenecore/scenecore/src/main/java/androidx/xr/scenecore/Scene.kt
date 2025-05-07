@@ -47,15 +47,18 @@ public class Scene : SessionConnector {
     internal val entityManager = EntityManager()
 
     internal lateinit var platformAdapter: JxrPlatformAdapter
+        private set
 
-    @Suppress("MutableBareField") public lateinit var spatialEnvironment: SpatialEnvironment
+    public lateinit var spatialEnvironment: SpatialEnvironment
+        private set
 
     /**
      * The PerceptionSpace represents the origin of the space in which the ARCore for XR API
      * provides tracking info. The transformations provided by the PerceptionSpace are only valid
      * for the call frame, as the transformation can be changed by the system at any time.
      */
-    @Suppress("MutableBareField") public lateinit var perceptionSpace: PerceptionSpace
+    public lateinit var perceptionSpace: PerceptionSpace
+        private set
 
     /**
      * The ActivitySpace is a special entity that represents the space in which the application is
@@ -63,13 +66,16 @@ public class Scene : SessionConnector {
      *
      * The ActivitySpace is created automatically when the Session is created.
      */
-    @Suppress("MutableBareField") public lateinit var activitySpace: ActivitySpace
+    public lateinit var activitySpace: ActivitySpace
+        private set
 
     // TODO: 378706624 - Remove this method once we have a better way to handle the root entity.
-    @Suppress("MutableBareField") public lateinit var activitySpaceRoot: Entity
+    public lateinit var activitySpaceRoot: Entity
+        private set
 
     /** The SpatialUser contains information about the user. */
-    @Suppress("MutableBareField") public lateinit var spatialUser: SpatialUser
+    public lateinit var spatialUser: SpatialUser
+        private set
 
     /**
      * A spatialized PanelEntity associated with the "main window" for the Activity. When in
@@ -77,14 +83,16 @@ public class Scene : SessionConnector {
      *
      * If called multiple times, this will return the same PanelEntity.
      */
-    @Suppress("MutableBareField") public lateinit var mainPanelEntity: PanelEntity
+    public lateinit var mainPanelEntity: PanelEntity
+        private set
 
     /**
      * Returns the current [SpatialCapabilities] of the Session. The set of capabilities can change
      * within a session. The returned object will not update if the capabilities change; this method
      * should be called again to get the latest set of capabilities.
      */
-    @Suppress("MutableBareField") public lateinit var spatialCapabilities: SpatialCapabilities
+    public lateinit var spatialCapabilities: SpatialCapabilities
+        private set
 
     private val spatialCapabilitiesListeners:
         ConcurrentMap<Consumer<SpatialCapabilities>, Consumer<RtSpatialCapabilities>> =
