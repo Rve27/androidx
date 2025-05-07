@@ -103,6 +103,16 @@ constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr
             }
         }
 
+    // Note: public experimental properties are not allowed because the accessors will not appear
+    // experimental to Java clients. There are public accessors for this property below.
+    @ExperimentalInkCustomBrushApi
+    private var textureBitmapStore: TextureBitmapStore = TextureBitmapStore { null }
+        @JvmName("setTextureBitmapStorePrivate")
+        set(value) {
+            check(!isInitialized()) { "Cannot set textureBitmapStore after initialization." }
+            field = value
+        }
+
     /**
      * [TextureBitmapStore] used by the default value for [rendererFactory].
      *
@@ -111,17 +121,20 @@ constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr
      * something that does load and store texture images, it must be set before the first call to
      * [startStroke] or [eagerInit].
      */
-    // Needed on both property and on getter for AndroidX build, but the Kotlin compiler doesn't
-    // like it on the getter so suppress its complaint.
-    @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
     @ExperimentalInkCustomBrushApi
-    @get:ExperimentalInkCustomBrushApi
-    @set:ExperimentalInkCustomBrushApi
-    public var textureBitmapStore: TextureBitmapStore = TextureBitmapStore { null }
-        set(value) {
-            check(!isInitialized()) { "Cannot set textureBitmapStore after initialization." }
-            field = value
-        }
+    public fun getTextureBitmapStore(): TextureBitmapStore {
+        return textureBitmapStore
+    }
+
+    /**
+     * Sets the [TextureBitmapStore] used by the default value for [rendererFactory].
+     *
+     * See [getTextureBitmapStore].
+     */
+    @ExperimentalInkCustomBrushApi
+    public fun setTextureBitmapStore(value: TextureBitmapStore) {
+        textureBitmapStore = value
+    }
 
     /**
      * A function that creates a [CanvasStrokeRenderer] when invoked. The default implementation of
@@ -194,6 +207,10 @@ constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr
             }
         }
 
+    // Note: public experimental properties are not allowed because the accessors will not appear
+    // experimental to Java clients. There are public accessors for this property below.
+    @ExperimentalLatencyDataApi private var latencyDataCallback: LatencyDataCallback? = null
+
     /**
      * An optional callback for reporting latency of the processing of input events for in-progress
      * strokes. Clients may implement the [LatencyDataCallback] interface and set this field to
@@ -206,16 +223,22 @@ constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr
      * allocation may trigger the garbage collector).
      */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // NonPublicApi
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // NonPublicApi
-    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // NonPublicApi
-
-    // Needed on both property and on getter for AndroidX build, but the Kotlin compiler doesn't
-    // like it on the getter so suppress its complaint.
-    @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
     @ExperimentalLatencyDataApi
-    @get:ExperimentalLatencyDataApi
-    @set:ExperimentalLatencyDataApi
-    public var latencyDataCallback: LatencyDataCallback? = null
+    public fun getLatencyDataCallback(): LatencyDataCallback? {
+        return latencyDataCallback
+    }
+
+    /**
+     * Sets the callback for reporting latency of the processing of input events for in-progress
+     * strokes.
+     *
+     * See [getLatencyDataCallback]
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // NonPublicApi
+    @ExperimentalLatencyDataApi
+    public fun setLatencyDataCallback(value: LatencyDataCallback?) {
+        latencyDataCallback = value
+    }
 
     private val renderHelperCallback =
         object : InProgressStrokesRenderHelper.Callback {

@@ -47,15 +47,11 @@ import kotlin.jvm.JvmStatic
 @OptIn(ExperimentalInkCustomBrushApi::class)
 public object StockBrushes {
 
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // NonPublicApi
-
-    // Needed on both property and on getter for AndroidX build, but the Kotlin compiler doesn't
-    // like it on the getter so suppress its complaint.
+    // Note: public experimental properties are not allowed because the accessors will not appear
+    // experimental to Java clients. There is a public accessor for this property below.
     @ExperimentalInkCustomBrushApi
-    @get:ExperimentalInkCustomBrushApi
-    @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
     @JvmStatic
-    public val predictionFadeOutBehavior: BrushBehavior =
+    private val predictionFadeOutBehavior: BrushBehavior =
         BrushBehavior(
             terminalNodes =
                 listOf(
@@ -90,6 +86,13 @@ public object StockBrushes {
                     )
                 )
         )
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // NonPublicApi
+    @ExperimentalInkCustomBrushApi
+    @JvmStatic
+    public fun getPredictionFadeOutBehavior(): BrushBehavior {
+        return predictionFadeOutBehavior
+    }
 
     /**
      * Version 1 of a simple, circular fixed-width brush.
