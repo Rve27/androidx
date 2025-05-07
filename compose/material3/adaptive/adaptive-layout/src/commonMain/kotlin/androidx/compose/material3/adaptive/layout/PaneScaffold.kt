@@ -352,5 +352,6 @@ internal data class PaneScaffoldParentDataImpl(
     override var preferredHeight: Dp = Dp.Unspecified,
     var paneMargins: PaneMargins = PaneMargins.Unspecified,
     override var isAnimatedPane: Boolean = false,
-    override var minTouchTargetSize: Dp = Dp.Unspecified
+    override var minTouchTargetSize: Dp = Dp.Unspecified,
+    var dragToResizeState: DragToResizeState? = null
 ) : PaneScaffoldParentData
