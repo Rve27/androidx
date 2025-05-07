@@ -158,47 +158,8 @@ class ColorScheme(
     val surfaceContainerLowest: Color,
 ) {
     @Deprecated(
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.HIDDEN,
         message = "Use constructor with additional 'surfaceContainer' roles.",
-        replaceWith =
-            ReplaceWith(
-                "ColorScheme(primary,\n" +
-                    "onPrimary,\n" +
-                    "primaryContainer,\n" +
-                    "onPrimaryContainer,\n" +
-                    "inversePrimary,\n" +
-                    "secondary,\n" +
-                    "onSecondary,\n" +
-                    "secondaryContainer,\n" +
-                    "onSecondaryContainer,\n" +
-                    "tertiary,\n" +
-                    "onTertiary,\n" +
-                    "tertiaryContainer,\n" +
-                    "onTertiaryContainer,\n" +
-                    "background,\n" +
-                    "onBackground,\n" +
-                    "surface,\n" +
-                    "onSurface,\n" +
-                    "surfaceVariant,\n" +
-                    "onSurfaceVariant,\n" +
-                    "surfaceTint,\n" +
-                    "inverseSurface,\n" +
-                    "inverseOnSurface,\n" +
-                    "error,\n" +
-                    "onError,\n" +
-                    "errorContainer,\n" +
-                    "onErrorContainer,\n" +
-                    "outline,\n" +
-                    "outlineVariant,\n" +
-                    "scrim,\n" +
-                    "surfaceBright,\n" +
-                    "surfaceDim,\n" +
-                    "surfaceContainer,\n" +
-                    "surfaceContainerHigh,\n" +
-                    "surfaceContainerHighest,\n" +
-                    "surfaceContainerLow,\n" +
-                    "surfaceContainerLowest,)"
-            )
     )
     constructor(
         primary: Color,
