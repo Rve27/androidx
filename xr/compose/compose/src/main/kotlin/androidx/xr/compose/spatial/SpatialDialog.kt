@@ -19,7 +19,6 @@ package androidx.xr.compose.spatial
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RestrictTo
 import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
@@ -33,7 +32,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,16 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.xr.compose.platform.LocalDialogManager
-import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.LocalSpatialCapabilities
-import androidx.xr.compose.unit.Meter
 import androidx.xr.compose.unit.Meter.Companion.meters
 import androidx.xr.compose.unit.toMeter
-import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.Pose
-import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.scene
-import kotlinx.coroutines.launch
 
 /**
  * Properties for configuring a [SpatialDialog].
@@ -166,8 +158,6 @@ private fun LayoutSpatialDialog(
     content: @Composable () -> Unit,
 ) {
     val view = LocalView.current
-    val scope = rememberCoroutineScope()
-    val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     // Start elevation at Level0 to prevent effects where the dialog flashes behind its parent.
     var spatialElevationLevel by remember { mutableStateOf(SpatialElevationLevel.Level0) }
     val dialogManager = LocalDialogManager.current
@@ -176,20 +166,8 @@ private fun LayoutSpatialDialog(
         dialogManager.isSpatialDialogActive.value = false
     }
     DisposableEffect(Unit) {
-        scope.launch {
-            animate(
-                initialValue = SpatialElevationLevel.ActivityDefault.level.toMeter().toM(),
-                targetValue = -properties.spatialElevationLevel.level.toMeter().toM(),
-                animationSpec = properties.restingLevelAnimationSpec,
-            ) { value, _ ->
-                session.setActivitySpaceZDepth(value.meters)
-            }
-        }
         dialogManager.isSpatialDialogActive.value = true
-        onDispose {
-            session.resetActivitySpaceZDepth()
-            dialogManager.isSpatialDialogActive.value = false
-        }
+        onDispose { dialogManager.isSpatialDialogActive.value = false }
     }
 
     LaunchedEffect(Unit) { spatialElevationLevel = properties.spatialElevationLevel }
@@ -202,18 +180,7 @@ private fun LayoutSpatialDialog(
 
     // Paint the scrim on the parent panel and capture dismiss events.
     Dialog(
-        onDismissRequest = {
-            scope.launch {
-                animate(
-                    initialValue = -properties.spatialElevationLevel.level.toMeter().toM(),
-                    targetValue = SpatialElevationLevel.ActivityDefault.level.toMeter().toM(),
-                    animationSpec = properties.restingLevelAnimationSpec,
-                ) { value, _ ->
-                    session.setActivitySpaceZDepth(value.meters)
-                }
-            }
-            dialogManager.isSpatialDialogActive.value = false
-        },
+        onDismissRequest = { dialogManager.isSpatialDialogActive.value = false },
         properties = properties.toBaseDialogProperties(),
     ) {
         // We need a very small (non-zero) content to fill the remaining space with the scrim.
@@ -239,12 +206,4 @@ private fun LayoutSpatialDialog(
             Box(modifier = Modifier.onSizeChanged { contentSize = it }) { content() }
         }
     }
-}
-
-private fun Session.setActivitySpaceZDepth(value: Meter) {
-    scene.activitySpace.setPose(Pose(translation = Vector3(0f, 0f, value.toM())))
-}
-
-private fun Session.resetActivitySpaceZDepth() {
-    setActivitySpaceZDepth(SpatialElevationLevel.ActivityDefault.level.toMeter())
 }
