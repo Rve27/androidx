@@ -85,13 +85,9 @@ open class <#A: kotlin/Any> androidx.navigation3.runtime/NavEntryWrapper : andro
         open fun <get-metadata>(): kotlin.collections/Map<kotlin/String, kotlin/Any> // androidx.navigation3.runtime/NavEntryWrapper.metadata.<get-metadata>|<get-metadata>(){}[0]
 }
 
-final object androidx.navigation3.runtime/SaveableStateNavEntryDecorator : androidx.navigation3.runtime/NavEntryDecorator { // androidx.navigation3.runtime/SaveableStateNavEntryDecorator|null[0]
-    final fun <#A1: kotlin/Any> DecorateEntry(androidx.navigation3.runtime/NavEntry<#A1>) // androidx.navigation3.runtime/SaveableStateNavEntryDecorator.DecorateEntry|DecorateEntry(androidx.navigation3.runtime.NavEntry<0:0>){0§<kotlin.Any>}[0]
-    final fun DecorateBackStack(kotlin.collections/List<kotlin/Any>, kotlin/Function0<kotlin/Unit>) // androidx.navigation3.runtime/SaveableStateNavEntryDecorator.DecorateBackStack|DecorateBackStack(kotlin.collections.List<kotlin.Any>;kotlin.Function0<kotlin.Unit>){}[0]
-}
-
 final object androidx.navigation3.runtime/SavedStateNavEntryDecorator : androidx.navigation3.runtime/NavEntryDecorator { // androidx.navigation3.runtime/SavedStateNavEntryDecorator|null[0]
     final fun <#A1: kotlin/Any> DecorateEntry(androidx.navigation3.runtime/NavEntry<#A1>) // androidx.navigation3.runtime/SavedStateNavEntryDecorator.DecorateEntry|DecorateEntry(androidx.navigation3.runtime.NavEntry<0:0>){0§<kotlin.Any>}[0]
+    final fun DecorateBackStack(kotlin.collections/List<kotlin/Any>, kotlin/Function0<kotlin/Unit>) // androidx.navigation3.runtime/SavedStateNavEntryDecorator.DecorateBackStack|DecorateBackStack(kotlin.collections.List<kotlin.Any>;kotlin.Function0<kotlin.Unit>){}[0]
 }
 
 final fun <#A: kotlin/Any> (androidx.navigation3.runtime/EntryProviderBuilder<#A>).androidx.navigation3.runtime/entry(#A, kotlin.collections/Map<kotlin/String, kotlin/Any> = ..., kotlin/Function1<#A, kotlin/Unit>) // androidx.navigation3.runtime/entry|entry@androidx.navigation3.runtime.EntryProviderBuilder<0:0>(0:0;kotlin.collections.Map<kotlin.String,kotlin.Any>;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any>}[0]

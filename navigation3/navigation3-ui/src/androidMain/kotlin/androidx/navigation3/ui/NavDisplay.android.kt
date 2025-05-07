@@ -47,7 +47,7 @@ import androidx.compose.ui.util.fastForEachReversed
 import androidx.navigation3.runtime.DecoratedNavEntryProvider
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
-import androidx.navigation3.runtime.SaveableStateNavEntryDecorator
+import androidx.navigation3.runtime.SavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
 import androidx.navigation3.ui.NavDisplay.ENTER_TRANSITION_KEY
 import androidx.navigation3.ui.NavDisplay.EXIT_TRANSITION_KEY
@@ -152,7 +152,7 @@ public fun <T : Any> NavDisplay(
         }
     },
     entryDecorators: List<NavEntryDecorator> =
-        listOf(SceneSetupNavEntryDecorator, SaveableStateNavEntryDecorator),
+        listOf(SceneSetupNavEntryDecorator, SavedStateNavEntryDecorator),
     sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
     sizeTransform: SizeTransform? = null,
     enterTransition: EnterTransition =
@@ -239,7 +239,7 @@ public fun <T : Any> NavDisplay(
         }
     },
     entryDecorators: List<NavEntryDecorator> =
-        listOf(SceneSetupNavEntryDecorator, SaveableStateNavEntryDecorator),
+        listOf(SceneSetupNavEntryDecorator, SavedStateNavEntryDecorator),
     sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
     transitionSpec: ContentTransform =
         fadeIn(

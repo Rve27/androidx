@@ -41,7 +41,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
-import androidx.navigation3.runtime.SaveableStateNavEntryDecorator
 import androidx.navigation3.runtime.SavedStateNavEntryDecorator
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
@@ -69,7 +68,6 @@ fun SceneNav() {
         entryDecorators =
             listOf(
                 SceneSetupNavEntryDecorator,
-                SaveableStateNavEntryDecorator,
                 SavedStateNavEntryDecorator,
                 ViewModelStoreNavEntryDecorator
             ),
@@ -147,7 +145,7 @@ fun <T : Any> SceneNavSharedEntrySample() {
                     listOf(
                         sharedEntryInSceneNavEntryDecorator,
                         SceneSetupNavEntryDecorator,
-                        SaveableStateNavEntryDecorator
+                        SavedStateNavEntryDecorator
                     ),
                 entryProvider =
                     entryProvider {

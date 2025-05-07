@@ -36,7 +36,7 @@ import androidx.compose.runtime.Composable
 public fun <T : Any> DecoratedNavEntryProvider(
     backStack: List<T>,
     entryProvider: (key: T) -> NavEntry<out T>,
-    entryDecorators: List<NavEntryDecorator> = listOf(SaveableStateNavEntryDecorator),
+    entryDecorators: List<NavEntryDecorator> = listOf(SavedStateNavEntryDecorator),
     content: @Composable (List<NavEntry<T>>) -> Unit
 ) {
     // Kotlin does not know these things are compatible so we need this explicit cast

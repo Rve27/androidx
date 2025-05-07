@@ -73,11 +73,6 @@ package androidx.navigation3.runtime {
     property public final androidx.navigation3.runtime.NavEntry<T> navEntry;
   }
 
-  public final class SaveableStateNavEntryDecorator implements androidx.navigation3.runtime.NavEntryDecorator {
-    method @androidx.compose.runtime.Composable public <T> void DecorateEntry(androidx.navigation3.runtime.NavEntry<T> entry);
-    field public static final androidx.navigation3.runtime.SaveableStateNavEntryDecorator INSTANCE;
-  }
-
   public final class SavedStateNavEntryDecorator implements androidx.navigation3.runtime.NavEntryDecorator {
     method @androidx.compose.runtime.Composable public <T> void DecorateEntry(androidx.navigation3.runtime.NavEntry<T> entry);
     field public static final androidx.navigation3.runtime.SavedStateNavEntryDecorator INSTANCE;
