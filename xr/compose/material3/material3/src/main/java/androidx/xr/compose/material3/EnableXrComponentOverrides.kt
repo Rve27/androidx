@@ -16,6 +16,7 @@
 
 package androidx.xr.compose.material3
 
+import android.os.Build
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi
 import androidx.compose.material3.LocalBasicAlertDialogOverride
@@ -49,6 +50,10 @@ public fun EnableXrComponentOverrides(
     overrideEnabler: XrComponentOverrideEnabler = DefaultXrComponentOverrideEnabler,
     content: @Composable () -> Unit,
 ) {
+    if (Build.VERSION.SDK_INT < 34) {
+        content()
+        return
+    }
     val context = XrComponentOverrideEnablerContextImpl
 
     // Override CompositionLocals for all ComponentOverrides, as specified by the provided enabler.
