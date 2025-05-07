@@ -25,9 +25,13 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.node.LayoutModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.Nodes
+import androidx.compose.ui.node.SemanticsModifierNode
+import androidx.compose.ui.node.invalidateSemantics
 import androidx.compose.ui.node.requireCoordinator
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
+import androidx.compose.ui.semantics.SemanticsPropertyReceiver
+import androidx.compose.ui.semantics.shape
 import androidx.compose.ui.unit.Constraints
 
 /**
@@ -547,9 +551,14 @@ private data class GraphicsLayerElement(
     }
 
     override fun update(node: SimpleGraphicsLayerModifier) {
+        if (node.alpha != alpha || node.shape != shape || node.clip != clip) {
+            node.alpha = alpha
+            node.shape = shape
+            node.clip = clip
+            node.invalidateSemantics()
+        }
         node.scaleX = scaleX
         node.scaleY = scaleY
-        node.alpha = alpha
         node.translationX = translationX
         node.translationY = translationY
         node.shadowElevation = shadowElevation
@@ -558,8 +567,6 @@ private data class GraphicsLayerElement(
         node.rotationZ = rotationZ
         node.cameraDistance = cameraDistance
         node.transformOrigin = transformOrigin
-        node.shape = shape
-        node.clip = clip
         node.renderEffect = renderEffect
         node.ambientShadowColor = ambientShadowColor
         node.spotShadowColor = spotShadowColor
@@ -741,7 +748,7 @@ private class SimpleGraphicsLayerModifier(
     var compositingStrategy: CompositingStrategy = CompositingStrategy.Auto,
     var blendMode: BlendMode = BlendMode.SrcOver,
     var colorFilter: ColorFilter? = null
-) : LayoutModifierNode, Modifier.Node() {
+) : LayoutModifierNode, SemanticsModifierNode, Modifier.Node() {
 
     /**
      * We can skip remeasuring as we only need to rerun the placement block. we request it manually
@@ -810,4 +817,10 @@ private class SimpleGraphicsLayerModifier(
             "blendMode=$blendMode, " +
             "colorFilter=$colorFilter" +
             ")"
+
+    override fun SemanticsPropertyReceiver.applySemantics() {
+        if (clip && this@SimpleGraphicsLayerModifier.shape != RectangleShape) {
+            this.shape = this@SimpleGraphicsLayerModifier.shape
+        }
+    }
 }

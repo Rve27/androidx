@@ -338,7 +338,7 @@ class SliderTest {
         rule.waitForIdle()
         rule
             .onNodeWithTag(TEST_TAG, true)
-            // 0 is the index of decrease button, 1 - increase button
+            // 0 is the index of decrease button, 1 - clip shape, 2 - increase button
             .onChildAt(0)
             .onChild()
             .assertContentDescriptionContains(
@@ -360,8 +360,8 @@ class SliderTest {
         rule.waitForIdle()
         rule
             .onNodeWithTag(TEST_TAG, true)
-            // 0 is the index of decrease button, 1 - increase button
-            .onChildAt(1)
+            // 0 is the index of decrease button, 1 - clip shape, 2 - increase button
+            .onChildAt(2)
             .onChild()
             .assertContentDescriptionContains(
                 getString(Strings.SliderIncreaseIconContentDescription)
