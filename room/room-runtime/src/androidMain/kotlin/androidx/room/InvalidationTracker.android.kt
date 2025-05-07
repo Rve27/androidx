@@ -145,9 +145,6 @@ actual constructor(
      * @see refreshAsync
      */
     internal actual suspend fun sync() {
-        if (database.inCompatibilityMode() && !database.isOpenInternal) {
-            return
-        }
         implementation.syncTriggers()
     }
 

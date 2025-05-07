@@ -550,9 +550,10 @@ public actual abstract class RoomDatabase {
         get() = autoCloser?.isActive ?: connectionManager.isSupportDatabaseOpen()
 
     /** True if the actual database connection is open, regardless of auto-close. */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public val isOpenInternal: Boolean
-        get() = connectionManager.isSupportDatabaseOpen()
+    internal val isOpenInternal: Boolean
+        get() =
+            autoCloser?.let { it.delegateDatabase?.isOpen ?: false }
+                ?: connectionManager.isSupportDatabaseOpen()
 
     /**
      * Closes the database.
@@ -676,12 +677,7 @@ public actual abstract class RoomDatabase {
     @Deprecated("beginTransaction() is deprecated", ReplaceWith("runInTransaction(Runnable)"))
     public open fun beginTransaction() {
         assertNotMainThread()
-        val autoCloser = autoCloser
-        if (autoCloser == null) {
-            internalBeginTransaction()
-        } else {
-            autoCloser.executeRefCountingFunction { internalBeginTransaction() }
-        }
+        internalBeginTransaction()
     }
 
     private fun internalBeginTransaction() {
@@ -704,12 +700,7 @@ public actual abstract class RoomDatabase {
      */
     @Deprecated("endTransaction() is deprecated", ReplaceWith("runInTransaction(Runnable)"))
     public open fun endTransaction() {
-        val autoCloser = autoCloser
-        if (autoCloser == null) {
-            internalEndTransaction()
-        } else {
-            autoCloser.executeRefCountingFunction { internalEndTransaction() }
-        }
+        internalEndTransaction()
     }
 
     private fun internalEndTransaction() {
