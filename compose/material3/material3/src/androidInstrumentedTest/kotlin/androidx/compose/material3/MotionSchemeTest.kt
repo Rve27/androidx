@@ -18,6 +18,7 @@ package androidx.compose.material3
 
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.material3.tokens.MotionSchemeKeyTokens
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
@@ -42,7 +43,7 @@ class MotionSchemeTest {
         lateinit var fastEffectsSpec: FiniteAnimationSpec<Float>
         lateinit var slowEffectsSpec: FiniteAnimationSpec<Float>
         rule.setMaterialContent(lightColorScheme()) {
-            motionScheme = LocalMotionScheme.current
+            motionScheme = MaterialTheme.motionScheme
             defaultSpatialSpec = MotionSchemeKeyTokens.DefaultSpatial.value()
             fastSpatialSpec = MotionSchemeKeyTokens.FastSpatial.value()
             slowSpatialSpec = MotionSchemeKeyTokens.SlowSpatial.value()
@@ -59,5 +60,20 @@ class MotionSchemeTest {
             assertThat(motionScheme.fastEffectsSpec<Float>()).isEqualTo(fastEffectsSpec)
             assertThat(motionScheme.slowEffectsSpec<Float>()).isEqualTo(slowEffectsSpec)
         }
+    }
+
+    @Test
+    fun appliedWithLocalComposition() {
+        lateinit var initialMotionScheme: MotionScheme
+        lateinit var appliedMotionScheme: MotionScheme
+        rule.setMaterialContent(lightColorScheme()) {
+            initialMotionScheme = MaterialTheme.motionScheme
+            CompositionLocalProvider(LocalMotionScheme provides MotionScheme.expressive()) {
+                appliedMotionScheme = MaterialTheme.motionScheme
+            }
+        }
+
+        assertThat(initialMotionScheme).isEqualTo(MotionScheme.standard())
+        assertThat(appliedMotionScheme).isEqualTo(MotionScheme.expressive())
     }
 }
