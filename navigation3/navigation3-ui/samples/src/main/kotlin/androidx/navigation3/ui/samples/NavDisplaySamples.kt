@@ -102,7 +102,7 @@ fun SceneNav() {
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Sampled
 @Composable
-fun <T : Any> SceneNavSharedEntrySample() {
+fun SceneNavSharedEntrySample() {
 
     /** The [SharedTransitionScope] of the [NavDisplay]. */
     val localNavSharedTransitionScope: ProvidableCompositionLocal<SharedTransitionScope> =
@@ -168,7 +168,7 @@ fun <T : Any> SceneNavSharedEntrySample() {
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Sampled
 @Composable
-fun <T : Any> SceneNavSharedElementSample() {
+fun SceneNavSharedElementSample() {
     val backStack = rememberMutableStateListOf(CatList)
     SharedTransitionLayout {
         NavDisplay(
