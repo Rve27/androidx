@@ -36,7 +36,7 @@ import org.junit.runners.Parameterized
 @OptIn(ExperimentalMetricApi::class)
 @LargeTest
 @RunWith(Parameterized::class)
-class SwipeToDismissBenchmark(private val compilationMode: CompilationMode) {
+class SwipeToDismissBoxBenchmark(private val compilationMode: CompilationMode) {
     @get:Rule val benchmarkRule = MacrobenchmarkRule()
 
     @Before
