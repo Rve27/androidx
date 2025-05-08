@@ -17,6 +17,7 @@
 package androidx.camera.camera2.pipe.compat
 
 import android.hardware.camera2.CameraCaptureSession
+import android.hardware.camera2.CameraExtensionSession
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.TotalCaptureResult
 import android.os.Build
@@ -632,12 +633,16 @@ internal class Camera2RequestMetadata(
 
     override fun <T> getOrDefault(key: Metadata.Key<T>, default: T): T = get(key) ?: default
 
-    @Suppress("UNCHECKED_CAST")
+    @Suppress("UNCHECKED_CAST", "NewApi")
     override fun <T : Any> unwrapAs(type: KClass<T>): T? =
         when (type) {
             CaptureRequest::class -> captureRequest as T
             CameraCaptureSession::class ->
                 cameraCaptureSessionWrapper.unwrapAs(CameraCaptureSession::class) as? T
+            CameraExtensionSession::class -> {
+                check(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+                cameraCaptureSessionWrapper.unwrapAs(CameraExtensionSession::class) as? T
+            }
             else -> null
         }
 }
