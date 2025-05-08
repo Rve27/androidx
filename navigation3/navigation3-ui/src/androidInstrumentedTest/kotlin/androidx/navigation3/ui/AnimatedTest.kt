@@ -23,6 +23,7 @@ import androidx.compose.animation.SharedTransitionScope.SharedContentState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -134,10 +135,10 @@ class AnimatedTest {
                         NavEntry(
                             second,
                             metadata =
-                                NavDisplay.transition(
-                                    enter = fadeIn(tween(customDuration)),
-                                    exit = fadeOut(tween(customDuration))
-                                )
+                                NavDisplay.transitionSpec {
+                                    fadeIn(tween(customDuration)) togetherWith
+                                        fadeOut(tween(customDuration))
+                                }
                         ) {
                             Text(second)
                         }
@@ -189,10 +190,10 @@ class AnimatedTest {
                         NavEntry(
                             second,
                             metadata =
-                                NavDisplay.popTransition(
-                                    enter = fadeIn(tween(testDuration)),
-                                    exit = fadeOut(tween(testDuration))
-                                )
+                                NavDisplay.popTransitionSpec {
+                                    fadeIn(tween(testDuration)) togetherWith
+                                        fadeOut(tween(testDuration))
+                                }
                         ) {
                             Text(second)
                         }
@@ -243,10 +244,10 @@ class AnimatedTest {
                         NavEntry(
                             third,
                             metadata =
-                                NavDisplay.popTransition(
-                                    enter = fadeIn(tween(testDuration)),
-                                    exit = fadeOut(tween(testDuration))
-                                )
+                                NavDisplay.popTransitionSpec {
+                                    fadeIn(tween(testDuration)) togetherWith
+                                        fadeOut(tween(testDuration))
+                                }
                         ) {
                             Text(third)
                         }
@@ -301,10 +302,10 @@ class AnimatedTest {
                         NavEntry(
                             third,
                             metadata =
-                                NavDisplay.transition(
-                                    enter = fadeIn(tween(testDuration)),
-                                    exit = fadeOut(tween(testDuration))
-                                )
+                                NavDisplay.transitionSpec {
+                                    fadeIn(tween(testDuration)) togetherWith
+                                        fadeOut(tween(testDuration))
+                                }
                         ) {
                             Text(third)
                         }
@@ -358,10 +359,10 @@ class AnimatedTest {
                         NavEntry(
                             third,
                             metadata =
-                                NavDisplay.transition(
-                                    enter = fadeIn(tween(testDuration)),
-                                    exit = fadeOut(tween(testDuration))
-                                )
+                                NavDisplay.transitionSpec {
+                                    fadeIn(tween(testDuration)) togetherWith
+                                        fadeOut(tween(testDuration))
+                                }
                         ) {
                             Text(third)
                         }
@@ -412,10 +413,10 @@ class AnimatedTest {
                         NavEntry(
                             third,
                             metadata =
-                                NavDisplay.transition(
-                                    enter = fadeIn(tween(testDuration)),
-                                    exit = fadeOut(tween(testDuration))
-                                )
+                                NavDisplay.transitionSpec {
+                                    fadeIn(tween(testDuration)) togetherWith
+                                        fadeOut(tween(testDuration))
+                                }
                         ) {
                             Text(third)
                         }
@@ -465,10 +466,10 @@ class AnimatedTest {
                     third ->
                         NavEntry(
                             third,
-                            NavDisplay.transition(
-                                enter = fadeIn(tween(testDuration)),
-                                exit = fadeOut(tween(testDuration))
-                            )
+                            NavDisplay.transitionSpec {
+                                fadeIn(tween(testDuration)) togetherWith
+                                    fadeOut(tween(testDuration))
+                            }
                         ) {
                             Text(third)
                         }
@@ -535,10 +536,10 @@ class AnimatedTest {
                         NavEntry(
                             fourth,
                             metadata =
-                                NavDisplay.transition(
-                                    enter = fadeIn(tween(testDuration)),
-                                    exit = fadeOut(tween(testDuration))
-                                )
+                                NavDisplay.transitionSpec {
+                                    fadeIn(tween(testDuration)) togetherWith
+                                        fadeOut(tween(testDuration))
+                                }
                         ) {
                             Text(fourth)
                         }
@@ -592,10 +593,10 @@ class AnimatedTest {
                         NavEntry(
                             third,
                             metadata =
-                                NavDisplay.transition(
-                                    enter = fadeIn(tween(testDuration)),
-                                    exit = fadeOut(tween(testDuration))
-                                )
+                                NavDisplay.transitionSpec {
+                                    fadeIn(tween(testDuration)) togetherWith
+                                        fadeOut(tween(testDuration))
+                                }
                         ) {
                             Text(third)
                         }
@@ -660,10 +661,10 @@ class AnimatedTest {
                     fourth ->
                         NavEntry(
                             fourth,
-                            NavDisplay.transition(
-                                enter = fadeIn(tween(testDuration)),
-                                exit = fadeOut(tween(testDuration))
-                            )
+                            NavDisplay.transitionSpec {
+                                fadeIn(tween(testDuration)) togetherWith
+                                    fadeOut(tween(testDuration))
+                            }
                         ) {
                             Text(fourth)
                         }
@@ -711,10 +712,10 @@ class AnimatedTest {
                     second ->
                         NavEntry(
                             second,
-                            NavDisplay.transition(
-                                enter = fadeIn(tween(testDuration)),
-                                exit = fadeOut(tween(testDuration))
-                            )
+                            NavDisplay.transitionSpec {
+                                fadeIn(tween(testDuration)) togetherWith
+                                    fadeOut(tween(testDuration))
+                            }
                         ) {
                             Text(second)
                         }
@@ -854,10 +855,10 @@ class AnimatedTest {
                         NavEntry(
                             second,
                             metadata =
-                                NavDisplay.transition(
-                                    enter = fadeIn(tween(testDuration)),
-                                    exit = fadeOut(tween(testDuration))
-                                )
+                                NavDisplay.transitionSpec {
+                                    fadeIn(tween(testDuration)) togetherWith
+                                        fadeOut(tween(testDuration))
+                                }
                         ) {
                             Text(second)
                         }

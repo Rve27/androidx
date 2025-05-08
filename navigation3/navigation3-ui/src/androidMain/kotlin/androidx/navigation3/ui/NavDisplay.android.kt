@@ -19,9 +19,8 @@ package androidx.navigation3.ui
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.collection.mutableObjectFloatMapOf
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.animation.core.animate
@@ -29,7 +28,6 @@ import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -49,10 +47,6 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.SavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
-import androidx.navigation3.ui.NavDisplay.ENTER_TRANSITION_KEY
-import androidx.navigation3.ui.NavDisplay.EXIT_TRANSITION_KEY
-import androidx.navigation3.ui.NavDisplay.POP_ENTER_TRANSITION_KEY
-import androidx.navigation3.ui.NavDisplay.POP_EXIT_TRANSITION_KEY
 import androidx.navigation3.ui.NavDisplay.POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
 import kotlin.reflect.KClass
@@ -64,138 +58,23 @@ public object NavDisplay {
     /**
      * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that the content
      * should be animated using the provided [ContentTransform].
-     *
-     * Transitions passed into the given [ContentTransform] will have the highest priority.
      */
-    public fun transitionSpec(contentTransform: ContentTransform?): Map<String, Any> =
-        if (contentTransform == null) emptyMap() else mapOf(TRANSITION_SPEC to contentTransform)
+    public fun transitionSpec(
+        transitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform?
+    ): Map<String, Any> = mapOf(TRANSITION_SPEC to transitionSpec)
 
     /**
      * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that, when
      * popping from backstack, the content should be animated using the provided [ContentTransform].
-     *
-     * Transitions passed into the given [ContentTransform] will have the highest priority.
      */
-    public fun popTransitionSpec(contentTransform: ContentTransform?): Map<String, Any> =
-        if (contentTransform == null) emptyMap() else mapOf(POP_TRANSITION_SPEC to contentTransform)
-
-    /**
-     * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that the content
-     * should be animated using the provided transitions.
-     *
-     * Transitions passed into this function will run unless there is a [transitionSpec] available.
-     */
-    public fun transition(enter: EnterTransition?, exit: ExitTransition?): Map<String, Any> =
-        if (enter == null || exit == null) emptyMap()
-        else mapOf(ENTER_TRANSITION_KEY to enter, EXIT_TRANSITION_KEY to exit)
-
-    /**
-     * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that, when
-     * popping from backstack, the content should be animated using the provided transitions.
-     *
-     * Transitions passed into this function will run unless there is a [popTransitionSpec]
-     * available.
-     */
-    public fun popTransition(enter: EnterTransition?, exit: ExitTransition?): Map<String, Any> =
-        if (enter == null || exit == null) emptyMap()
-        else mapOf(POP_ENTER_TRANSITION_KEY to enter, POP_EXIT_TRANSITION_KEY to exit)
+    public fun popTransitionSpec(
+        popTransitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform?
+    ): Map<String, Any> = mapOf(POP_TRANSITION_SPEC to popTransitionSpec)
 
     internal const val TRANSITION_SPEC = "transitionSpec"
     internal const val POP_TRANSITION_SPEC = "popTransitionSpec"
-    internal const val ENTER_TRANSITION_KEY = "enterTransition"
-    internal const val EXIT_TRANSITION_KEY = "exitTransition"
-    internal const val POP_ENTER_TRANSITION_KEY = "popEnterTransition"
-    internal const val POP_EXIT_TRANSITION_KEY = "popExitTransition"
 
     internal const val DEFAULT_TRANSITION_DURATION_MILLISECOND = 700
-}
-
-/**
- * A nav display that renders and animates between different [Scene]s, each of which can render one
- * or more [NavEntry]s.
- *
- * The [Scene]s are calculated with the given [SceneStrategy], which may be an assembled delegated
- * chain of [SceneStrategy]s. If no [Scene] is calculated, the fallback will be to a
- * [SinglePaneSceneStrategy].
- *
- * It is allowable for different [Scene]s to render the same [NavEntry]s, perhaps on some conditions
- * as determined by the [sceneStrategy] based on window size, form factor, other arbitrary logic.
- *
- * If this happens, and these [Scene]s are rendered at the same time due to animation or predictive
- * back, then the content for the [NavEntry] will only be rendered in the most recent [Scene] that
- * is the target for being the current scene as determined by [sceneStrategy]. This enforces a
- * unique invocation of each [NavEntry], even if it is displayable by two different [Scene]s.
- *
- * @param backStack the collection of keys that represents the state that needs to be handled
- * @param modifier the modifier to be applied to the layout.
- * @param contentAlignment The [Alignment] of the [AnimatedContent]
- * @param onBack a callback for handling system back press. The passed [Int] refers to the number of
- *   entries to pop from the end of the backstack, as calculated by the [sceneStrategy].
- * @param entryDecorators list of [NavEntryDecorator] to add information to the entry content
- * @param sceneStrategy the [SceneStrategy] to determine which scene to render a list of entries.
- * @param sizeTransform the [SizeTransform] for the [AnimatedContent].
- * @param enterTransition Default [EnterTransition] when navigating to [NavEntry]s.
- * @param popEnterTransition Default [EnterTransition] when popping [NavEntry]s.
- * @param entryProvider lambda used to construct each possible [NavEntry]
- * @sample androidx.navigation3.ui.samples.SceneNav
- * @sample androidx.navigation3.ui.samples.SceneNavSharedEntrySample
- * @sample androidx.navigation3.ui.samples.SceneNavSharedElementSample
- */
-@Composable
-public fun <T : Any> NavDisplay(
-    backStack: List<T>,
-    modifier: Modifier = Modifier,
-    contentAlignment: Alignment = Alignment.TopStart,
-    onBack: (Int) -> Unit = {
-        if (backStack is MutableList<T>) {
-            repeat(it) { backStack.removeAt(backStack.lastIndex) }
-        }
-    },
-    entryDecorators: List<NavEntryDecorator> =
-        listOf(SceneSetupNavEntryDecorator, SavedStateNavEntryDecorator),
-    sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
-    sizeTransform: SizeTransform? = null,
-    enterTransition: EnterTransition =
-        fadeIn(
-            animationSpec =
-                tween(
-                    DEFAULT_TRANSITION_DURATION_MILLISECOND,
-                )
-        ),
-    exitTransition: ExitTransition =
-        fadeOut(
-            animationSpec =
-                tween(
-                    DEFAULT_TRANSITION_DURATION_MILLISECOND,
-                )
-        ),
-    popEnterTransition: EnterTransition =
-        fadeIn(
-            animationSpec =
-                tween(
-                    DEFAULT_TRANSITION_DURATION_MILLISECOND,
-                )
-        ),
-    popExitTransition: ExitTransition =
-        fadeOut(
-            animationSpec =
-                tween(
-                    DEFAULT_TRANSITION_DURATION_MILLISECOND,
-                )
-        ),
-    entryProvider: (key: T) -> NavEntry<T>,
-) {
-    NavDisplay(
-        backStack = backStack,
-        modifier = modifier,
-        contentAlignment = contentAlignment,
-        onBack = onBack,
-        entryDecorators = entryDecorators,
-        sceneStrategy = sceneStrategy,
-        transitionSpec = ContentTransform(enterTransition, exitTransition),
-        popTransitionSpec = ContentTransform(popEnterTransition, popExitTransition),
-        entryProvider = entryProvider
-    )
 }
 
 /**
@@ -241,22 +120,19 @@ public fun <T : Any> NavDisplay(
     entryDecorators: List<NavEntryDecorator> =
         listOf(SceneSetupNavEntryDecorator, SavedStateNavEntryDecorator),
     sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
-    transitionSpec: ContentTransform =
-        fadeIn(
-            animationSpec =
-                tween(
-                    DEFAULT_TRANSITION_DURATION_MILLISECOND,
-                )
-        ) togetherWith
-            fadeOut(
-                animationSpec =
-                    tween(
-                        DEFAULT_TRANSITION_DURATION_MILLISECOND,
-                    )
-            ),
-    popTransitionSpec: ContentTransform =
-        fadeIn(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)) togetherWith
-            fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
+    sizeTransform: SizeTransform? = null,
+    transitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
+        ContentTransform(
+            fadeIn(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
+            fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND))
+        )
+    },
+    popTransitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
+        ContentTransform(
+            fadeIn(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
+            fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND))
+        )
+    },
     entryProvider: (key: T) -> NavEntry<T>,
 ) {
     require(backStack.isNotEmpty()) { "NavDisplay backstack cannot be empty" }
@@ -272,6 +148,7 @@ public fun <T : Any> NavDisplay(
     ) { entries ->
         val scene = sceneStrategy.calculateSceneWithSinglePaneFallback(entries = entries)
 
+        // Predictive Back Handling
         var progress by remember { mutableFloatStateOf(0f) }
         var inPredictiveBack by remember { mutableStateOf(false) }
 
@@ -289,6 +166,7 @@ public fun <T : Any> NavDisplay(
             }
         }
 
+        // Scene Handling
         val sceneKey = scene::class to scene.key
 
         val scenes = remember { mutableStateMapOf<Pair<KClass<*>, Any>, Scene<T>>() }
@@ -305,6 +183,41 @@ public fun <T : Any> NavDisplay(
 
         val transition = rememberTransition(transitionState, label = sceneKey.toString())
 
+        LaunchedEffect(transition.targetState) {
+            if (mostRecentSceneKeys.lastOrNull() != transition.targetState) {
+                mostRecentSceneKeys.remove(transition.targetState)
+                mostRecentSceneKeys.add(transition.targetState)
+            }
+        }
+        // Determine which NavEntrys should be rendered within each scene.
+        // Each renderable Scene, in order from the scene that is most recently the target scene to
+        // the scene that is least recently the target scene will be assigned each visible
+        // entry that hasn't already been assigned to a Scene that is more recent.
+        val sceneToRenderableEntryMap =
+            remember(
+                mostRecentSceneKeys.toList(),
+                scenes.values.map { scene -> scene.entries.map(NavEntry<T>::key) },
+                transition.targetState,
+            ) {
+                buildMap {
+                    val coveredEntryKeys = mutableSetOf<T>()
+                    (mostRecentSceneKeys.filter { it != transition.targetState } +
+                            listOf(transition.targetState))
+                        .fastForEachReversed { sceneKey ->
+                            val scene = scenes.getValue(sceneKey)
+                            put(
+                                sceneKey,
+                                scene.entries
+                                    .map { it.key }
+                                    .filterNot(coveredEntryKeys::contains)
+                                    .toSet(),
+                            )
+                            scene.entries.forEach { coveredEntryKeys.add(it.key) }
+                        }
+                }
+            }
+
+        // Transition Handling
         /** Keep track of the previous entries for the transition's current scene. */
         val transitionCurrentStateEntries = remember(transition.currentState) { entries.toList() }
 
@@ -333,31 +246,6 @@ public fun <T : Any> NavDisplay(
             } else {
                 scenes[targetKey]!!.entries.last()
             }
-        val contentTransform =
-            if (isPop || inPredictiveBack) {
-                transitionEntry.metadata[POP_TRANSITION_SPEC] as? ContentTransform
-            } else {
-                transitionEntry.metadata[TRANSITION_SPEC] as? ContentTransform
-            }
-        val sizeTransform = contentTransform?.sizeTransform
-        val finalEnterTransition =
-            contentTransform?.targetContentEnter
-                ?: if (isPop || inPredictiveBack) {
-                    transitionEntry.metadata[POP_ENTER_TRANSITION_KEY] as? EnterTransition
-                        ?: popTransitionSpec.targetContentEnter
-                } else {
-                    transitionEntry.metadata[ENTER_TRANSITION_KEY] as? EnterTransition
-                        ?: transitionSpec.targetContentEnter
-                }
-        val finalExitTransition =
-            contentTransform?.initialContentExit
-                ?: if (isPop || inPredictiveBack) {
-                    transitionEntry.metadata[POP_EXIT_TRANSITION_KEY] as? ExitTransition
-                        ?: popTransitionSpec.initialContentExit
-                } else {
-                    transitionEntry.metadata[EXIT_TRANSITION_KEY] as? ExitTransition
-                        ?: popTransitionSpec.initialContentExit
-                }
 
         if (inPredictiveBack) {
             val peekScene =
@@ -402,47 +290,23 @@ public fun <T : Any> NavDisplay(
             }
         }
 
-        LaunchedEffect(transition.targetState) {
-            if (mostRecentSceneKeys.lastOrNull() != transition.targetState) {
-                mostRecentSceneKeys.remove(transition.targetState)
-                mostRecentSceneKeys.add(transition.targetState)
+        val contentTransform: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
+            if (isPop || inPredictiveBack) {
+                transitionEntry.contentTransform(POP_TRANSITION_SPEC)?.invoke(this)
+                    ?: popTransitionSpec(this)
+            } else {
+                transitionEntry.contentTransform(TRANSITION_SPEC)?.invoke(this)
+                    ?: transitionSpec(this)
             }
         }
-        // Determine which NavEntrys should be rendered within each scene.
-        // Each renderable Scene, in order from the scene that is most recently the target scene to
-        // the scene that is least recently the target scene will be assigned each visible
-        // entry that hasn't already been assigned to a Scene that is more recent.
-        val sceneToRenderableEntryMap =
-            remember(
-                mostRecentSceneKeys.toList(),
-                scenes.values.map { scene -> scene.entries.map(NavEntry<T>::key) },
-                transition.targetState,
-            ) {
-                buildMap {
-                    val coveredEntryKeys = mutableSetOf<T>()
-                    (mostRecentSceneKeys.filter { it != transition.targetState } +
-                            listOf(transition.targetState))
-                        .fastForEachReversed { sceneKey ->
-                            val scene = scenes.getValue(sceneKey)
-                            put(
-                                sceneKey,
-                                scene.entries
-                                    .map { it.key }
-                                    .filterNot(coveredEntryKeys::contains)
-                                    .toSet(),
-                            )
-                            scene.entries.forEach { coveredEntryKeys.add(it.key) }
-                        }
-                }
-            }
 
         transition.AnimatedContent(
             contentAlignment = contentAlignment,
             modifier = modifier,
             transitionSpec = {
                 ContentTransform(
-                    targetContentEnter = finalEnterTransition,
-                    initialContentExit = finalExitTransition,
+                    targetContentEnter = contentTransform(this).targetContentEnter,
+                    initialContentExit = contentTransform(this).initialContentExit,
                     // z-index increases during navigate and decreases during pop.
                     targetContentZIndex = targetZIndex,
                     sizeTransform = sizeTransform
@@ -496,4 +360,11 @@ private fun <T : Any> isPop(oldBackStack: List<T>, newBackStack: List<T>): Boole
     // if newBackStack never diverged from oldBackStack, then it is a clean subset of the oldStack
     // and is a pop
     return divergingIndex == null && newBackStack.size != oldBackStack.size
+}
+
+@Suppress("UNCHECKED_CAST")
+private fun <T : Any> NavEntry<T>.contentTransform(
+    key: String
+): (AnimatedContentTransitionScope<*>.() -> ContentTransform)? {
+    return metadata[key] as? AnimatedContentTransitionScope<*>.() -> ContentTransform
 }

@@ -18,9 +18,8 @@ package androidx.navigation3.runtime.samples
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -39,36 +38,33 @@ import androidx.navigation3.runtime.DecoratedNavEntryProvider
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.samples.CommonUiNavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
-import androidx.navigation3.runtime.samples.CommonUiNavDisplay.ENTER_TRANSITION_KEY
-import androidx.navigation3.runtime.samples.CommonUiNavDisplay.EXIT_TRANSITION_KEY
 import androidx.navigation3.runtime.samples.CommonUiNavDisplay.NAV_UI_LAYOUT_POLICY
-import androidx.navigation3.runtime.samples.CommonUiNavDisplay.POP_ENTER_TRANSITION_KEY
-import androidx.navigation3.runtime.samples.CommonUiNavDisplay.POP_EXIT_TRANSITION_KEY
+import androidx.navigation3.runtime.samples.CommonUiNavDisplay.POP_TRANSITION_SPEC
+import androidx.navigation3.runtime.samples.CommonUiNavDisplay.TRANSITION_SPEC
 
 /** Object that indicates the features that can be handled by the [CommonUiNavDisplay] */
 object CommonUiNavDisplay {
-    internal const val ENTER_TRANSITION_KEY = "enterTransition"
-    internal const val EXIT_TRANSITION_KEY = "exitTransition"
-    internal const val POP_ENTER_TRANSITION_KEY = "popEnterTransition"
-    internal const val POP_EXIT_TRANSITION_KEY = "popExitTransition"
+    internal const val TRANSITION_SPEC = "transitionSpec"
+    internal const val POP_TRANSITION_SPEC = "popTransitionSpec"
     internal const val NAV_UI_LAYOUT_POLICY = "navUiLayoutPolicy"
     const val DEFAULT_TRANSITION_DURATION_MILLISECOND = 700
 
     /**
      * Function to be called on the [NavEntry.metadata] to notify the [CommonUiNavDisplay] that the
-     * content should be animated using the provided transitions.
+     * content should be animated using the provided [ContentTransform].
      */
-    fun transition(enter: EnterTransition?, exit: ExitTransition?): Map<String, Any> =
-        if (enter == null || exit == null) emptyMap()
-        else mapOf(ENTER_TRANSITION_KEY to enter, EXIT_TRANSITION_KEY to exit)
+    public fun transitionSpec(
+        transitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform?
+    ): Map<String, Any> = mapOf(TRANSITION_SPEC to transitionSpec)
 
     /**
      * Function to be called on the [NavEntry.metadata] to notify the [CommonUiNavDisplay] that,
-     * when popping from backstack, the content should be animated using the provided transitions.
+     * when popping from backstack, the content should be animated using the provided
+     * [ContentTransform].
      */
-    fun popTransition(enter: EnterTransition?, exit: ExitTransition?): Map<String, Any> =
-        if (enter == null || exit == null) emptyMap()
-        else mapOf(POP_ENTER_TRANSITION_KEY to enter, POP_EXIT_TRANSITION_KEY to exit)
+    public fun popTransitionSpec(
+        popTransitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform?
+    ): Map<String, Any> = mapOf(POP_TRANSITION_SPEC to popTransitionSpec)
 
     /**
      * Function to be called on the [NavEntry.metadata] to notify the [CommonUiNavDisplay] that
@@ -87,22 +83,13 @@ fun <T : Any> CommonUiNavDisplay(
     entryDecorators: List<NavEntryDecorator> = emptyList(),
     contentAlignment: Alignment = Alignment.TopStart,
     sizeTransform: SizeTransform? = null,
-    enterTransition: EnterTransition =
-        fadeIn(
-            animationSpec =
-                tween(
-                    DEFAULT_TRANSITION_DURATION_MILLISECOND,
-                )
+    transitionSpec: ContentTransform =
+        ContentTransform(
+            fadeIn(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
+            fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND)),
+            sizeTransform = null
         ),
-    exitTransition: ExitTransition =
-        fadeOut(
-            animationSpec =
-                tween(
-                    DEFAULT_TRANSITION_DURATION_MILLISECOND,
-                )
-        ),
-    popEnterTransition: EnterTransition = enterTransition,
-    popExitTransition: ExitTransition = exitTransition,
+    popTransitionSpec: ContentTransform = transitionSpec,
     onBack: () -> Unit = { if (backstack is MutableList) backstack.removeAt(backstack.size - 1) },
     entryProvider: (key: T) -> NavEntry<out T>
 ) {
@@ -117,25 +104,19 @@ fun <T : Any> CommonUiNavDisplay(
         val isPop = isPop(transition.currentState, newStack)
         // Incoming entry defines transitions, otherwise it uses default transitions from
         // NavDisplay
-        val finalEnterTransition =
+        val contentTransform =
             if (isPop) {
-                entry.metadata[POP_ENTER_TRANSITION_KEY] as? EnterTransition ?: popEnterTransition
+                entry.metadata[POP_TRANSITION_SPEC] as? ContentTransform ?: popTransitionSpec
             } else {
-                entry.metadata[ENTER_TRANSITION_KEY] as? EnterTransition ?: enterTransition
-            }
-        val finalExitTransition =
-            if (isPop) {
-                entry.metadata[POP_EXIT_TRANSITION_KEY] as? ExitTransition ?: popExitTransition
-            } else {
-                entry.metadata[EXIT_TRANSITION_KEY] as? ExitTransition ?: exitTransition
+                entry.metadata[TRANSITION_SPEC] as? ContentTransform ?: transitionSpec
             }
         transition.AnimatedContent(
             modifier = modifier,
             transitionSpec = {
                 ContentTransform(
-                    targetContentEnter = finalEnterTransition,
-                    initialContentExit = finalExitTransition,
-                    sizeTransform = sizeTransform
+                    targetContentEnter = contentTransform.targetContentEnter,
+                    initialContentExit = contentTransform.initialContentExit,
+                    sizeTransform = contentTransform.sizeTransform
                 )
             },
             contentAlignment = contentAlignment,

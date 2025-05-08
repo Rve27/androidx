@@ -25,6 +25,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -72,10 +73,12 @@ class NavDisplayScreenshotTest {
                 LocalOnBackPressedDispatcherOwner.current!!.onBackPressedDispatcher
             NavDisplay(
                 backStack = backStack,
-                enterTransition = slideInHorizontally { it / 2 },
-                exitTransition = slideOutHorizontally { -it / 2 },
-                popEnterTransition = slideInHorizontally { -it / 2 },
-                popExitTransition = slideOutHorizontally { it / 2 }
+                transitionSpec = {
+                    slideInHorizontally { it / 2 } togetherWith slideOutHorizontally { -it / 2 }
+                },
+                popTransitionSpec = {
+                    slideInHorizontally { -it / 2 } togetherWith slideOutHorizontally { it / 2 }
+                }
             ) {
                 when (it) {
                     first -> NavEntry(first) { Text(first) }
@@ -128,8 +131,9 @@ class NavDisplayScreenshotTest {
             NavDisplay(
                 backStack,
                 // both screens slide left to right, entering screens should be on top
-                enterTransition = slideInHorizontally { -it / 2 },
-                exitTransition = slideOutHorizontally { it },
+                transitionSpec = {
+                    slideInHorizontally { -it / 2 } togetherWith slideOutHorizontally { it }
+                },
             ) {
                 when (it) {
                     first ->
@@ -181,8 +185,8 @@ class NavDisplayScreenshotTest {
             backStack = remember { mutableStateListOf(first, second) }
             NavDisplay(
                 backStack,
-            ) {
-                when (it) {
+            ) { key ->
+                when (key) {
                     first ->
                         NavEntry(first) {
                             Box(
@@ -197,10 +201,10 @@ class NavDisplayScreenshotTest {
                             second,
                             // both screens slide right to left, exiting screen should be on top
                             metadata =
-                                NavDisplay.popTransition(
-                                    enter = slideInHorizontally(tween(duration)) { it / 2 },
-                                    exit = slideOutHorizontally(tween(duration)) { -it / 2 }
-                                )
+                                NavDisplay.popTransitionSpec {
+                                    slideInHorizontally(tween(duration)) { it / 2 } togetherWith
+                                        slideOutHorizontally(tween(duration)) { -it / 2 }
+                                }
                         ) {
                             Box(
                                 Modifier.fillMaxSize().background(Color.Red),
@@ -240,8 +244,9 @@ class NavDisplayScreenshotTest {
             NavDisplay(
                 backStack,
                 // both screens slide left to right, entering screen should be on top
-                enterTransition = slideInHorizontally { -it / 2 },
-                exitTransition = slideOutHorizontally { it },
+                transitionSpec = {
+                    slideInHorizontally { -it / 2 } togetherWith slideOutHorizontally { it }
+                },
             ) {
                 when (it) {
                     first -> NavEntry(first) {}
@@ -306,8 +311,9 @@ class NavDisplayScreenshotTest {
             NavDisplay(
                 backStack,
                 // both screens slide left to right, entering screen should be on top
-                enterTransition = slideInHorizontally { -it / 2 },
-                exitTransition = slideOutHorizontally { it },
+                transitionSpec = {
+                    slideInHorizontally { -it / 2 } togetherWith slideOutHorizontally { it }
+                },
             ) {
                 when (it) {
                     first ->
@@ -375,8 +381,9 @@ class NavDisplayScreenshotTest {
             NavDisplay(
                 backStack,
                 // both screens slide left to right, entering screens should be on top
-                enterTransition = slideInHorizontally { -it / 2 },
-                exitTransition = slideOutHorizontally { it },
+                transitionSpec = {
+                    slideInHorizontally { -it / 2 } togetherWith slideOutHorizontally { it }
+                },
             ) {
                 when (it) {
                     first ->
@@ -432,10 +439,11 @@ class NavDisplayScreenshotTest {
             NavDisplay(
                 backStack,
                 // both screens slide left to right, entering screens should be on top
-                enterTransition = slideInHorizontally { -it / 2 },
-                exitTransition = slideOutHorizontally { it },
-            ) {
-                when (it) {
+                transitionSpec = {
+                    slideInHorizontally { -it / 2 } togetherWith slideOutHorizontally { it }
+                },
+            ) { key ->
+                when (key) {
                     first ->
                         NavEntry(first) {
                             Box(
@@ -450,10 +458,10 @@ class NavDisplayScreenshotTest {
                             second,
                             // both screens slide right to left, exiting screen should be on top
                             metadata =
-                                NavDisplay.popTransition(
-                                    enter = slideInHorizontally(tween(duration)) { it / 2 },
-                                    exit = slideOutHorizontally(tween(duration)) { -it / 2 }
-                                )
+                                NavDisplay.popTransitionSpec {
+                                    slideInHorizontally(tween(duration)) { it / 2 } togetherWith
+                                        slideOutHorizontally(tween(duration)) { -it / 2 }
+                                }
                         ) {
                             Box(
                                 Modifier.fillMaxSize().background(Color.Red),
