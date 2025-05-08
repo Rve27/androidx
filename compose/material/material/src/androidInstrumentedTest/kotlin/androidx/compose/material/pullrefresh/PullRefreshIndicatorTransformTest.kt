@@ -90,10 +90,10 @@ class PullRefreshIndicatorTransformTest {
             state = rememberPullRefreshState(refreshing = false, onRefresh = {})
             Box(
                 Modifier.fillMaxSize()
-                    .background(Color.White)
                     .wrapContentSize(Alignment.Center)
                     // Set a larger size so that when offset the indicator will still appear
                     .size(ContainingBoxSize)
+                    .background(Color.White)
                     .testTag(BoxTag),
                 contentAlignment = Alignment.Center
             ) {
@@ -151,10 +151,10 @@ class PullRefreshIndicatorTransformTest {
                 )
             Box(
                 Modifier.fillMaxSize()
-                    .background(Color.White)
                     .wrapContentSize(Alignment.Center)
                     // Set a larger size so that when offset the indicator will still appear
                     .size(ContainingBoxSize)
+                    .background(Color.White)
                     .testTag(BoxTag),
                 contentAlignment = Alignment.Center
             ) {

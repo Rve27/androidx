@@ -39,7 +39,6 @@ import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.height
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -136,11 +135,13 @@ class BadgeTest {
     @SdkSuppress(maxSdkVersion = 34) // b/384973010: Failing on SDK 35
     fun badgeBox_shortContent_position() {
         rule.setMaterialContent(lightColorScheme()) {
-            BadgedBox(badge = { Badge { Text("8") } }) {
+            BadgedBox(
+                badge = { Badge { Text("8", modifier = Modifier.testTag(TestBadgeContentTag)) } }
+            ) {
                 Icon(icon, null, modifier = Modifier.testTag(TestAnchorTag))
             }
         }
-        val badge = rule.onNodeWithTag(TestAnchorTag).onSibling()
+        val badge = rule.onNodeWithTag(TestBadgeContentTag)
         val anchorBounds = rule.onNodeWithTag(TestAnchorTag).getUnclippedBoundsInRoot()
         val badgeBounds = badge.getUnclippedBoundsInRoot()
 
@@ -155,11 +156,13 @@ class BadgeTest {
     @Test
     fun badgeBox_longContent_position() {
         rule.setMaterialContent(lightColorScheme()) {
-            BadgedBox(badge = { Badge { Text("999+") } }) {
+            BadgedBox(
+                badge = { Badge { Text("999+", modifier = Modifier.testTag(TestBadgeContentTag)) } }
+            ) {
                 Icon(icon, null, modifier = Modifier.testTag(TestAnchorTag))
             }
         }
-        val badge = rule.onNodeWithTag(TestAnchorTag).onSibling()
+        val badge = rule.onNodeWithTag(TestBadgeContentTag)
         val anchorBounds = rule.onNodeWithTag(TestAnchorTag).getUnclippedBoundsInRoot()
         val badgeBounds = badge.getUnclippedBoundsInRoot()
 
@@ -237,4 +240,5 @@ class BadgeTest {
 }
 
 private const val TestBadgeTag = "badge"
+private const val TestBadgeContentTag = "badgeContent"
 private const val TestAnchorTag = "anchor"

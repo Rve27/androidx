@@ -30,10 +30,14 @@ import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.node.DrawModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.ObserverModifierNode
+import androidx.compose.ui.node.SemanticsModifierNode
 import androidx.compose.ui.node.invalidateDraw
+import androidx.compose.ui.node.invalidateSemantics
 import androidx.compose.ui.node.observeReads
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.semantics.SemanticsPropertyReceiver
+import androidx.compose.ui.semantics.shape
 import androidx.compose.ui.unit.LayoutDirection
 
 /**
@@ -107,7 +111,10 @@ private class BackgroundElement(
         node.color = color
         node.brush = brush
         node.alpha = alpha
-        node.shape = shape
+        if (node.shape != shape) {
+            node.shape = shape
+            node.invalidateSemantics()
+        }
     }
 
     override fun InspectorInfo.inspectableProperties() {
@@ -136,7 +143,7 @@ private class BackgroundNode(
     var brush: Brush?,
     var alpha: Float,
     var shape: Shape,
-) : DrawModifierNode, Modifier.Node(), ObserverModifierNode {
+) : DrawModifierNode, Modifier.Node(), ObserverModifierNode, SemanticsModifierNode {
 
     // Naively cache outline calculation if input parameters are the same, we manually observe
     // reads inside shape#createOutline separately
@@ -194,5 +201,11 @@ private class BackgroundNode(
         lastLayoutDirection = layoutDirection
         lastShape = shape
         return outline!!
+    }
+
+    override fun SemanticsPropertyReceiver.applySemantics() {
+        if (this@BackgroundNode.shape != RectangleShape) {
+            this.shape = this@BackgroundNode.shape
+        }
     }
 }
