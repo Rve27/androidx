@@ -51,6 +51,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -104,7 +107,7 @@ fun SingleSelectConnectedButtonGroupSample() {
             ToggleButton(
                 checked = selectedIndex == index,
                 onCheckedChange = { selectedIndex = index },
-                modifier = modifiers[index],
+                modifier = modifiers[index].semantics { role = Role.RadioButton },
                 shapes =
                     when (index) {
                         0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
@@ -160,7 +163,8 @@ fun SingleSelectConnectedButtonGroupWithFlowLayoutSample() {
                         0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
                         options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
                         else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
-                    }
+                    },
+                modifier = Modifier.semantics { role = Role.RadioButton }
             ) {
                 Icon(
                     if (selectedIndex == index) checkedIcons[index] else unCheckedIcons[index],
