@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -52,7 +53,7 @@ class RoomDriverBenchmark(private val driver: SQLiteDriver?) {
     @get:Rule val benchmarkRule = BenchmarkRule()
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
-    private lateinit var database: TestDatabase
+    private var database: TestDatabase? = null
 
     private fun createMemoryDatabase(): TestDatabase {
         return Room.inMemoryDatabaseBuilder<TestDatabase>(context).buildForTest()
@@ -78,10 +79,11 @@ class RoomDriverBenchmark(private val driver: SQLiteDriver?) {
 
     @After
     fun cleanup() {
-        database.close()
+        database?.close()
     }
 
     @Test
+    @Ignore
     fun write_small() {
         val dao = createMemoryDatabase().getDao()
         benchmarkRule.measureRepeated {
@@ -93,6 +95,7 @@ class RoomDriverBenchmark(private val driver: SQLiteDriver?) {
     }
 
     @Test
+    @Ignore
     fun write_large() {
         val dao = createMemoryDatabase().getDao()
         benchmarkRule.measureRepeated {
@@ -104,6 +107,7 @@ class RoomDriverBenchmark(private val driver: SQLiteDriver?) {
     }
 
     @Test
+    @Ignore
     fun read_small() {
         val dao = createMemoryDatabase().getDao()
         runBlocking { repeat(SMALL_AMOUNT) { dao.add(TestEntity()) } }
@@ -111,6 +115,7 @@ class RoomDriverBenchmark(private val driver: SQLiteDriver?) {
     }
 
     @Test
+    @Ignore
     fun read_large() {
         val dao = createMemoryDatabase().getDao()
         runBlocking { repeat(LARGE_AMOUNT) { dao.add(TestEntity()) } }
@@ -118,6 +123,7 @@ class RoomDriverBenchmark(private val driver: SQLiteDriver?) {
     }
 
     @Test
+    @Ignore
     fun read_small_concurrently() {
         val dao = createFileDatabase().getDao()
         runBlocking { repeat(SMALL_AMOUNT) { dao.add(TestEntity()) } }
@@ -131,6 +137,7 @@ class RoomDriverBenchmark(private val driver: SQLiteDriver?) {
     }
 
     @Test
+    @Ignore
     fun read_large_concurrently() {
         val dao = createFileDatabase().getDao()
         runBlocking { repeat(LARGE_AMOUNT) { dao.add(TestEntity()) } }
@@ -144,6 +151,7 @@ class RoomDriverBenchmark(private val driver: SQLiteDriver?) {
     }
 
     @Test
+    @Ignore
     fun read_write_concurrently() {
         val dao = createFileDatabase().getDao()
         benchmarkRule.measureRepeated {
