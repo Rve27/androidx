@@ -379,6 +379,24 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
     }
 
     @Test
+    public void setShortCriticalText() {
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext,
+                "test_channel");
+        final String shortCriticalText = "shortCriticalText";
+        builder.setShortCriticalText(shortCriticalText);
+
+        Notification notification = builder.build();
+        if (Build.VERSION.SDK_INT >= 36) {
+          assertThat(NotificationCompat.getShortCriticalText(notification))
+              .isEqualTo(shortCriticalText);
+          notification = builder.setShortCriticalText(null).build();
+          assertThat(NotificationCompat.getShortCriticalText(notification)).isNull();
+        } else {
+          assertThat(NotificationCompat.getShortCriticalText(notification)).isNull();
+        }
+    }
+
+    @Test
     public void testVisibility() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
 
