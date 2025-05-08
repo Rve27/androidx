@@ -26,7 +26,6 @@ import androidx.camera.core.featurecombination.Feature.Companion.HDR_HLG10
 import androidx.camera.core.featurecombination.Feature.Companion.IMAGE_ULTRA_HDR
 import androidx.camera.core.featurecombination.Feature.Companion.PREVIEW_STABILIZATION
 import androidx.camera.core.featurecombination.impl.feature.FeatureTypeInternal
-import androidx.camera.core.impl.StreamSpec
 import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.utils.executor.CameraXExecutors.directExecutor
 import androidx.camera.testing.impl.fakes.FakeSurfaceEffect
@@ -332,7 +331,7 @@ class SessionConfigTest {
         assertThat(legacySessionConfig.viewPort).isNull()
         assertThat(legacySessionConfig.effects).isEmpty()
         assertThat(legacySessionConfig.targetHighSpeedFrameRate)
-            .isEqualTo(StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED)
+            .isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(legacySessionConfig.isLegacy).isTrue()
     }
 
@@ -353,7 +352,7 @@ class SessionConfigTest {
         assertThat(legacySessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(legacySessionConfig.effects).isEqualTo(effects)
         assertThat(legacySessionConfig.targetHighSpeedFrameRate)
-            .isEqualTo(useCaseGroup.targetHighSpeedFrameRate)
+            .isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(legacySessionConfig.isLegacy).isTrue()
     }
 

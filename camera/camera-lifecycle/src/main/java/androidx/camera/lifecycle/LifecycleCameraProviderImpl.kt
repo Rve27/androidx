@@ -355,8 +355,6 @@ internal class LifecycleCameraProviderImpl : LifecycleCameraProvider {
                 val cameraSelector = firstCameraConfig.cameraSelector
                 val viewPort = firstCameraConfig.useCaseGroup.viewPort
                 val effects = firstCameraConfig.useCaseGroup.effects
-                val targetHighSpeedFrameRate =
-                    firstCameraConfig.useCaseGroup.targetHighSpeedFrameRate
                 val useCases: MutableList<UseCase> = ArrayList()
                 for (config: SingleCameraConfig? in singleCameraConfigs) {
                     // Connect physical camera id with use case.
@@ -378,7 +376,6 @@ internal class LifecycleCameraProviderImpl : LifecycleCameraProvider {
                                 useCases = useCases,
                                 viewPort = viewPort,
                                 effects = effects,
-                                targetHighSpeedFrameRate = targetHighSpeedFrameRate,
                             )
                     )
                 cameras.add(camera)

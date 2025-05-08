@@ -210,10 +210,5 @@ public class LegacySessionConfig(
 
     public constructor(
         useCaseGroup: UseCaseGroup
-    ) : this(
-        useCaseGroup.useCases,
-        useCaseGroup.viewPort,
-        useCaseGroup.effects,
-        useCaseGroup.targetHighSpeedFrameRate
-    )
+    ) : this(useCaseGroup.useCases, useCaseGroup.viewPort, useCaseGroup.effects)
 }
