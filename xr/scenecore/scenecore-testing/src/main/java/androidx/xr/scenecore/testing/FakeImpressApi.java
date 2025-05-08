@@ -26,6 +26,8 @@ import androidx.annotation.RestrictTo;
 import androidx.concurrent.futures.ResolvableFuture;
 
 import com.google.ar.imp.apibindings.ImpressApi;
+import com.google.ar.imp.apibindings.KhronosPbrMaterial;
+import com.google.ar.imp.apibindings.KhronosPbrMaterialSpec;
 import com.google.ar.imp.apibindings.Texture;
 import com.google.ar.imp.apibindings.TextureSampler;
 import com.google.ar.imp.apibindings.WaterMaterial;
@@ -124,7 +126,8 @@ public class FakeImpressApi implements ImpressApi {
         public enum Type {
             GENERIC,
             WATER,
-            WATER_ALPHA
+            WATER_ALPHA,
+            KHRONOS_PBR
         }
 
         @NonNull Type mType;
@@ -618,6 +621,250 @@ public class FakeImpressApi implements ImpressApi {
     @Override
     public void setAlphaStepVOnWaterMaterial(
             long nativeWaterMaterial, float x, float y, float z, float w) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    @SuppressWarnings("RestrictTo")
+    @NonNull
+    public ListenableFuture<KhronosPbrMaterial> createKhronosPbrMaterial(
+        @NonNull KhronosPbrMaterialSpec spec) {
+        long materialToken = mNextMaterialId++;
+        KhronosPbrMaterial material =
+            new KhronosPbrMaterial.Builder()
+                .setImpressApi(this)
+                .setNativeMaterial(materialToken)
+                .build();
+        mMaterials.put(materialToken, new MaterialData(
+            MaterialData.Type.KHRONOS_PBR, materialToken));
+        ResolvableFuture<KhronosPbrMaterial> ret = ResolvableFuture.create();
+        ret.set(material);
+        return ret;
+    }
+
+    @Override
+    public void setBaseColorTextureOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, long baseColorTexture) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setBaseColorUvTransformOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial,
+        float ux,
+        float uy,
+        float uz,
+        float vx,
+        float vy,
+        float vz,
+        float wx,
+        float wy,
+        float wz) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setBaseColorFactorsOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, float x, float y, float z, float w) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setMetallicRoughnessTextureOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, long metallicRoughnessTexture) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setMetallicRoughnessUvTransformOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial,
+        float ux,
+        float uy,
+        float uz,
+        float vx,
+        float vy,
+        float vz,
+        float wx,
+        float wy,
+        float wz) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setMetallicFactorOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, float factor) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setRoughnessFactorOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, float factor) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setNormalTextureOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, long normalTexture) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setNormalUvTransformOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial,
+        float ux,
+        float uy,
+        float uz,
+        float vx,
+        float vy,
+        float vz,
+        float wx,
+        float wy,
+        float wz) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setNormalFactorOnKhronosPbrMaterial(long nativeKhronosPbrMaterial, float factor) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setAmbientOcclusionTextureOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, long ambientOcclusionTexture) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setAmbientOcclusionUvTransformOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial,
+        float ux,
+        float uy,
+        float uz,
+        float vx,
+        float vy,
+        float vz,
+        float wx,
+        float wy,
+        float wz) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setAmbientOcclusionFactorOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, float factor) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setEmissiveTextureOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, long emissiveTexture) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setEmissiveUvTransformOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial,
+        float ux,
+        float uy,
+        float uz,
+        float vx,
+        float vy,
+        float vz,
+        float wx,
+        float wy,
+        float wz) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setEmissiveFactorsOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, float x, float y, float z) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setClearcoatTextureOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, long clearcoatTexture) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setClearcoatNormalTextureOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, long clearcoatNormalTexture) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setClearcoatRoughnessTextureOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, long clearcoatRoughnessTexture) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setClearcoatFactorsOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, float intensity, float roughness, float normal) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setSheenColorTextureOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, long sheenColorTexture) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setSheenColorFactorsOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, float x, float y, float z) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setSheenRoughnessTextureOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, long sheenRoughnessTexture) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setSheenRoughnessFactorOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, float factor) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setTransmissionTextureOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, long transmissionTexture) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setTransmissionUvTransformOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial,
+        float ux,
+        float uy,
+        float uz,
+        float vx,
+        float vy,
+        float vz,
+        float wx,
+        float wy,
+        float wz) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setTransmissionFactorOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, float factor) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setIndexOfRefractionOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, float indexOfRefraction) {
+        throw new IllegalArgumentException("not implemented");
+    }
+
+    @Override
+    public void setAlphaCutoffOnKhronosPbrMaterial(
+        long nativeKhronosPbrMaterial, float alphaCutoff) {
         throw new IllegalArgumentException("not implemented");
     }
 
