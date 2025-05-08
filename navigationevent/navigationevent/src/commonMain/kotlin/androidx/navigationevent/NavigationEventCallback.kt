@@ -50,25 +50,26 @@ public abstract class NavigationEventCallback(
     public var isPassThrough: Boolean = false
 
     /**
-     * A set of active [Subscription]s associated with this [NavigationEventCallback].
+     * A set of active [AutoCloseable] resources associated with this [NavigationEventCallback].
      *
-     * Each subscription represents a registration with a [NavigationEventDispatcher]. These are
-     * automatically unsubscribed when [remove] is called to avoid unintended event dispatches.
+     * Each closeable typically represents a registration with a [NavigationEventDispatcher] or
+     * another resource that should be properly closed. These are automatically closed when [remove]
+     * is called to avoid unintended event dispatches or resource leaks.
      */
-    private val subscriptions = mutableSetOf<Subscription>()
+    private val closeables = mutableSetOf<AutoCloseable>()
 
     /**
-     * Unsubscribes this [NavigationEventCallback] from all registered [NavigationEventDispatcher]s.
+     * Cleans up all tracked [AutoCloseable] resources associated with this
+     * [NavigationEventCallback].
      *
-     * This method invokes [Subscription.unsubscribe] on all tracked subscriptions and clears them,
-     * ensuring the callback no longer receives navigation events from any dispatcher it was
-     * previously registered with.
+     * This method calls [AutoCloseable.close] on each tracked resource, ensuring that no lingering
+     * event registrations or resources remain active.
      */
     public fun remove() {
-        for (subscription in subscriptions) {
-            subscription.unsubscribe()
+        for (closeable in closeables) {
+            closeable.close()
         }
-        subscriptions.clear()
+        // Don't clear `closeables`; each closeable may remove itself via `removeCloseable`.
     }
 
     /** Callback for handling the [NavigationEventDispatcher.dispatchOnStarted] callback. */
@@ -84,29 +85,26 @@ public abstract class NavigationEventCallback(
     public open fun onEventCancelled() {}
 
     /**
-     * Tracks a [Subscription] associated with this [NavigationEventCallback].
+     * Tracks an [AutoCloseable] resource associated with this [NavigationEventCallback].
      *
-     * Tracked subscriptions will be automatically unsubscribed when [remove] is called, preventing
-     * unintended callback invocations.
+     * Tracked resources will be automatically closed when [remove] is called, preventing unintended
+     * behavior or resource leaks.
      *
-     * @param subscription The [Subscription] to be tracked for later unsubscription.
+     * @param closeable The [AutoCloseable] to track for later cleanup.
      */
-    internal fun addSubscription(subscription: Subscription) {
-        subscriptions += subscription
+    internal fun addCloseable(closeable: AutoCloseable) {
+        closeables += closeable
     }
 
     /**
-     * Represents a registration link between a [NavigationEventDispatcher] and a
-     * [NavigationEventCallback].
+     * Removes a specific [AutoCloseable] from the tracked set without closing it.
      *
-     * This allows a [NavigationEventCallback] to unsubscribe from all associated dispatchers by
-     * calling [NavigationEventCallback.remove], effectively stopping event delivery to the
-     * callback.
+     * This is useful if the resource has already been closed manually or should no longer be
+     * managed by this [NavigationEventCallback].
+     *
+     * @param closeable The [AutoCloseable] to stop tracking.
      */
-    internal fun interface Subscription {
-        /**
-         * Unsubscribes a [NavigationEventCallback] from an associated [NavigationEventDispatcher].
-         */
-        fun unsubscribe()
+    internal fun removeCloseable(closeable: AutoCloseable) {
+        closeables -= closeable
     }
 }

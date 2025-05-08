@@ -143,22 +143,24 @@ constructor(
     }
 
     /**
-     * Internal implementation of [addCallback] that gives access to the [Cancellable] that
+     * Internal implementation of [addCallback] that gives access to the [AutoCloseable] that
      * specifically removes this callback from the dispatcher without relying on
      * [OnBackPressedCallback.remove] which is what external developers should be using.
      *
      * @param onBackPressedCallback The callback to add
-     * @return a [Cancellable] which can be used to [cancel][Cancellable.cancel] the callback and
-     *   remove it from the set of OnBackPressedCallbacks.
+     * @return a [AutoCloseable] which can be used to `close()` the callback and remove it from the
+     *   set of OnBackPressedCallbacks.
      */
     @MainThread
-    internal fun addCancellableCallback(onBackPressedCallback: OnBackPressedCallback): Cancellable {
+    internal fun addCancellableCallback(
+        onBackPressedCallback: OnBackPressedCallback,
+    ): AutoCloseable {
         onBackPressedCallbacks.add(onBackPressedCallback)
-        val cancellable = OnBackPressedCancellable(onBackPressedCallback)
-        onBackPressedCallback.addCancellable(cancellable)
+        val closeable = OnBackPressedCloseable(onBackPressedCallback)
+        onBackPressedCallback.addCloseable(closeable)
         updateEnabledCallbacks()
         onBackPressedCallback.enabledChangedCallback = ::updateEnabledCallbacks
-        return cancellable
+        return closeable
     }
 
     /**
@@ -188,8 +190,8 @@ constructor(
         if (lifecycle.currentState === Lifecycle.State.DESTROYED) {
             return
         }
-        onBackPressedCallback.addCancellable(
-            LifecycleOnBackPressedCancellable(lifecycle, onBackPressedCallback)
+        onBackPressedCallback.addCloseable(
+            closeable = LifecycleOnBackPressedCloseable(lifecycle, onBackPressedCallback)
         )
         updateEnabledCallbacks()
         onBackPressedCallback.enabledChangedCallback = ::updateEnabledCallbacks
@@ -272,47 +274,47 @@ constructor(
         }
     }
 
-    private inner class OnBackPressedCancellable(
+    private inner class OnBackPressedCloseable(
         private val onBackPressedCallback: OnBackPressedCallback
-    ) : Cancellable {
-        override fun cancel() {
+    ) : AutoCloseable {
+        override fun close() {
             onBackPressedCallbacks.remove(onBackPressedCallback)
             if (inProgressCallback == onBackPressedCallback) {
                 onBackPressedCallback.handleOnBackCancelled()
                 inProgressCallback = null
             }
-            onBackPressedCallback.removeCancellable(this)
+            onBackPressedCallback.removeCloseable(closeable = this)
             onBackPressedCallback.enabledChangedCallback?.invoke()
             onBackPressedCallback.enabledChangedCallback = null
         }
     }
 
-    private inner class LifecycleOnBackPressedCancellable(
+    private inner class LifecycleOnBackPressedCloseable(
         private val lifecycle: Lifecycle,
         private val onBackPressedCallback: OnBackPressedCallback
-    ) : LifecycleEventObserver, Cancellable {
-        private var currentCancellable: Cancellable? = null
+    ) : LifecycleEventObserver, AutoCloseable {
+        private var currentCloseable: AutoCloseable? = null
 
         init {
-            lifecycle.addObserver(this)
+            lifecycle.addObserver(observer = this)
         }
 
         override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
             if (event === Lifecycle.Event.ON_START) {
-                currentCancellable = addCancellableCallback(onBackPressedCallback)
+                currentCloseable = addCancellableCallback(onBackPressedCallback)
             } else if (event === Lifecycle.Event.ON_STOP) {
                 // Should always be non-null
-                currentCancellable?.cancel()
+                currentCloseable?.close()
             } else if (event === Lifecycle.Event.ON_DESTROY) {
-                cancel()
+                close()
             }
         }
 
-        override fun cancel() {
-            lifecycle.removeObserver(this)
-            onBackPressedCallback.removeCancellable(this)
-            currentCancellable?.cancel()
-            currentCancellable = null
+        override fun close() {
+            lifecycle.removeObserver(observer = this)
+            onBackPressedCallback.removeCloseable(closeable = this)
+            currentCloseable?.close()
+            currentCloseable = null
         }
     }
 }

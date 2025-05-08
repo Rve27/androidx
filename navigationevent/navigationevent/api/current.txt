@@ -50,7 +50,6 @@ package androidx.navigationevent {
     method @MainThread public void dispatchOnCompleted();
     method @MainThread public void dispatchOnProgressed(androidx.navigationevent.NavigationEvent event);
     method @MainThread public void dispatchOnStarted(androidx.navigationevent.NavigationEvent event);
-    method @MainThread public void removeCallback(androidx.navigationevent.NavigationEventCallback callback);
   }
 
   public interface NavigationEventDispatcherOwner {

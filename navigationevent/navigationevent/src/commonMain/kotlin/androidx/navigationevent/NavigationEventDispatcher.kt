@@ -32,8 +32,7 @@ public class NavigationEventDispatcher(
      */
     public constructor(fallbackOnBackPressed: (() -> Unit)?) : this(fallbackOnBackPressed, null)
 
-    private var inProgressCallbacks: MutableList<NavigationEventCallback> = mutableListOf()
-
+    internal val inProgressCallbacks: MutableList<NavigationEventCallback> = mutableListOf()
     /** Callbacks that should be processed with higher priority, before [normalCallbacks]. */
     internal val overlayCallbacks = ArrayDeque<NavigationEventCallback>()
 
@@ -77,8 +76,11 @@ public class NavigationEventDispatcher(
      * are added, so this newly added [NavigationEventCallback] will be the first callback to be
      * called.
      *
+     * To remove a callback, use [NavigationEventCallback.remove].
+     *
      * The callbacks provided will be invoked on the main thread.
      */
+    @Suppress("PairedRegistration") // Callback is removed via `NavigationEventCallback.remove()`
     @MainThread
     public fun addCallback(
         callback: NavigationEventCallback,
@@ -88,30 +90,14 @@ public class NavigationEventDispatcher(
             NavigationEventPriority.Overlay -> overlayCallbacks.addFirst(callback)
             NavigationEventPriority.Default -> normalCallbacks.addFirst(callback)
         }
-        callback.addSubscription { removeCallback(callback) }
+
+        // Register a closeable link between this dispatcher and the callback.
+        // This allows callback.remove() to later remove this dispatcher registration.
+        val closeable = NavigationEventCallbackCloseable(dispatcher = this, callback)
+        callback.addCloseable(closeable)
+
         updateEnabledCallbacks()
         callback.enabledChangedCallback = ::updateEnabledCallbacks
-    }
-
-    /** Remove the given [NavigationEventCallback]. */
-    @MainThread
-    public fun removeCallback(callback: NavigationEventCallback) {
-        // Attempt to remove the callback from both overlay and normal callback lists.
-        // It's okay if the callback is not present in one or both.
-        overlayCallbacks -= callback
-        normalCallbacks -= callback
-
-        // If the callback is currently being processed (i.e., it's in `inProgressCallbacks`),
-        // it needs to be notified of cancellation and then removed from the in-progress tracking.
-        if (callback in inProgressCallbacks) {
-            callback.onEventCancelled()
-            inProgressCallbacks -= callback
-        }
-
-        // After removing a callback, the list of enabled callbacks might have changed.
-        // This call ensures the `enabledCallbacks` list is updated and any dependent logic
-        // (like input handlers or listeners for enabled state changes) is also refreshed.
-        updateEnabledCallbacks()
     }
 
     /**

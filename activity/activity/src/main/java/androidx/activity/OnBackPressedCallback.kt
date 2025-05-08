@@ -17,6 +17,8 @@ package androidx.activity
 
 import androidx.annotation.MainThread
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.collections.minusAssign
+import kotlin.collections.plusAssign
 
 /**
  * Class for handling [OnBackPressedDispatcher.onBackPressed] callbacks without strongly coupling
@@ -53,11 +55,17 @@ abstract class OnBackPressedCallback(enabled: Boolean) {
             enabledChangedCallback?.invoke()
         }
 
-    private val cancellables = CopyOnWriteArrayList<Cancellable>()
+    private val closeables = CopyOnWriteArrayList<AutoCloseable>()
     internal var enabledChangedCallback: (() -> Unit)? = null
 
     /** Removes this callback from any [OnBackPressedDispatcher] it is currently added to. */
-    @MainThread fun remove() = cancellables.forEach { it.cancel() }
+    @MainThread
+    fun remove() {
+        for (closeable in closeables) {
+            closeable.close()
+        }
+        // Don't clear `closeables`; each closeable may remove itself via `removeCloseable`.
+    }
 
     /**
      * Callback for handling the system UI generated equivalent to
@@ -92,13 +100,11 @@ abstract class OnBackPressedCallback(enabled: Boolean) {
     @MainThread
     open fun handleOnBackCancelled() {}
 
-    @JvmName("addCancellable")
-    internal fun addCancellable(cancellable: Cancellable) {
-        cancellables.add(cancellable)
+    internal fun addCloseable(closeable: AutoCloseable) {
+        closeables += closeable
     }
 
-    @JvmName("removeCancellable")
-    internal fun removeCancellable(cancellable: Cancellable) {
-        cancellables.remove(cancellable)
+    internal fun removeCloseable(closeable: AutoCloseable) {
+        closeables -= closeable
     }
 }
