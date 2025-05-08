@@ -69,6 +69,7 @@ class EagerConfigurationIssueTest :
 
                 fun configure(project: Project) {
                     project.configurations.create("example")
+                    project.configurations.maybeCreate("example2")
                 }
             """
                     .trimIndent()
@@ -79,7 +80,10 @@ class EagerConfigurationIssueTest :
                 src/test.kt:4: Error: Use register instead of create [EagerGradleConfiguration]
                     project.configurations.create("example")
                                            ~~~~~~
-                1 errors, 0 warnings
+                src/test.kt:5: Error: Use register instead of maybeCreate [EagerGradleConfiguration]
+                    project.configurations.maybeCreate("example2")
+                                           ~~~~~~~~~~~
+                2 errors, 0 warnings
         """
                 .trimIndent()
         val expectedFixDiffs =
@@ -88,6 +92,10 @@ class EagerConfigurationIssueTest :
             @@ -4 +4
             -     project.configurations.create("example")
             +     project.configurations.register("example")
+            Fix for src/test.kt line 5: Replace with register:
+            @@ -5 +5
+            -     project.configurations.maybeCreate("example2")
+            +     project.configurations.register("example2")
         """
                 .trimIndent()
 

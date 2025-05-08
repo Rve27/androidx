@@ -290,6 +290,11 @@ class DiscouragedGradleMethodDetector : Detector(), Detector.UastScanner {
                 "map" to mapOf(TASK_CONTAINER to Replacement(null, EAGER_CONFIGURATION_ISSUE)),
                 "mapNotNull" to
                     mapOf(TASK_CONTAINER to Replacement(null, EAGER_CONFIGURATION_ISSUE)),
+                "maybeCreate" to
+                    mapOf(
+                        CONFIGURATION_CONTAINER to
+                            Replacement("register", EAGER_CONFIGURATION_ISSUE)
+                    ),
                 "replace" to mapOf(TASK_CONTAINER to Replacement(null, EAGER_CONFIGURATION_ISSUE)),
                 "remove" to mapOf(TASK_CONTAINER to Replacement(null, EAGER_CONFIGURATION_ISSUE)),
                 "toString" to mapOf(PROVIDER to Replacement("get", TO_STRING_ON_PROVIDER_ISSUE)),

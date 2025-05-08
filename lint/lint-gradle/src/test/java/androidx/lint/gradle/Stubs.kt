@@ -91,6 +91,7 @@ internal val STUBS =
 
                 class ConfigurationContainer : NamedDomainObjectContainer<Configuration> {
                     override fun create(name: String): Configuration = TODO()
+                    override fun maybeCreate(name: String): Configuration = TODO()
                     override fun register(name: String): Provider<Configuration> = TODO()
                 }
             """
