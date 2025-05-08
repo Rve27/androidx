@@ -18,7 +18,6 @@ package androidx.compose.ui.graphics
 
 import android.graphics.PorterDuffXfermode
 import android.os.Build
-import androidx.annotation.DoNotInline
 import androidx.annotation.RequiresApi
 
 actual typealias NativePaint = android.graphics.Paint
@@ -166,11 +165,7 @@ internal fun NativePaint.setNativeAntiAlias(value: Boolean) {
 internal fun NativePaint.getNativeColor(): Color = Color(this.color)
 
 internal fun NativePaint.setNativeColor(value: Color) {
-    if (Build.VERSION.SDK_INT < 29) {
-        this.color = value.toArgb()
-    } else {
-        Api29Impl.setColorLong(this, value)
-    }
+    this.color = value.toArgb()
 }
 
 internal fun NativePaint.setNativeStyle(value: PaintingStyle) {
@@ -269,13 +264,5 @@ internal fun NativePaint.setNativePathEffect(value: PathEffect?) {
 internal object WrapperVerificationHelperMethods {
     fun setBlendMode(paint: NativePaint, mode: BlendMode) {
         paint.blendMode = mode.toAndroidBlendMode()
-    }
-}
-
-@RequiresApi(29)
-private object Api29Impl {
-    @DoNotInline
-    fun setColorLong(paint: NativePaint, color: Color) {
-        paint.setColor(color.toColorLong())
     }
 }

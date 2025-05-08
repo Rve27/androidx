@@ -29,8 +29,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.fromColorLong
-import androidx.compose.ui.graphics.toColorLong
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -254,7 +252,7 @@ internal class EncodeHelper {
     }
 
     fun encode(color: Color) {
-        encode(color.toColorLong().toULong())
+        encode(color.value)
     }
 
     fun encode(textUnit: TextUnit) {
@@ -427,7 +425,7 @@ internal class DecodeHelper(string: String) {
     }
 
     fun decodeColor(): Color {
-        return Color.fromColorLong(parcel.readLong())
+        return Color(decodeULong())
     }
 
     @OptIn(ExperimentalUnitApi::class)
