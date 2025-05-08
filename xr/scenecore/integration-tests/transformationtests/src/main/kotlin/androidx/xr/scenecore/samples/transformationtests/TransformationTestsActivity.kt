@@ -66,7 +66,7 @@ class TransformationTestsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.transformationtests_activity)
         session.resume()
-        session.configure(Config(planeTracking = PlaneTrackingMode.HorizontalAndVertical))
+        session.configure(Config(planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL))
         setupMovableMainPanel()
 
         // Create a transform widget model and assign it to an Anchor

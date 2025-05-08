@@ -24,7 +24,7 @@ import java.nio.FloatBuffer
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class FakeRuntimeHand(
-    override var trackingState: TrackingState = TrackingState.Paused,
+    override var trackingState: TrackingState = TrackingState.PAUSED,
     override var handJointsBuffer: FloatBuffer = ByteBuffer.allocate(0).asFloatBuffer(),
 ) : RuntimeHand {
     public companion object {}

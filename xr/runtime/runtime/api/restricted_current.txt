@@ -30,78 +30,78 @@ package androidx.xr.runtime {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int getMode();
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int mode;
     field public static final androidx.xr.runtime.Config.AnchorPersistenceMode.Companion Companion;
-    field public static final androidx.xr.runtime.Config.AnchorPersistenceMode Disabled;
-    field public static final androidx.xr.runtime.Config.AnchorPersistenceMode Enabled;
+    field public static final androidx.xr.runtime.Config.AnchorPersistenceMode DISABLED;
+    field public static final androidx.xr.runtime.Config.AnchorPersistenceMode ENABLED;
   }
 
   public static final class Config.AnchorPersistenceMode.Companion {
-    property public androidx.xr.runtime.Config.AnchorPersistenceMode Disabled;
-    property public androidx.xr.runtime.Config.AnchorPersistenceMode Enabled;
+    property public androidx.xr.runtime.Config.AnchorPersistenceMode DISABLED;
+    property public androidx.xr.runtime.Config.AnchorPersistenceMode ENABLED;
   }
 
   public static final class Config.DepthEstimationMode {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int getMode();
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int mode;
     field public static final androidx.xr.runtime.Config.DepthEstimationMode.Companion Companion;
-    field public static final androidx.xr.runtime.Config.DepthEstimationMode Disabled;
-    field public static final androidx.xr.runtime.Config.DepthEstimationMode Enabled;
+    field public static final androidx.xr.runtime.Config.DepthEstimationMode DISABLED;
+    field public static final androidx.xr.runtime.Config.DepthEstimationMode ENABLED;
   }
 
   public static final class Config.DepthEstimationMode.Companion {
-    property public androidx.xr.runtime.Config.DepthEstimationMode Disabled;
-    property public androidx.xr.runtime.Config.DepthEstimationMode Enabled;
+    property public androidx.xr.runtime.Config.DepthEstimationMode DISABLED;
+    property public androidx.xr.runtime.Config.DepthEstimationMode ENABLED;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final class Config.GeospatialMode {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int getMode();
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int mode;
     field public static final androidx.xr.runtime.Config.GeospatialMode.Companion Companion;
-    field public static final androidx.xr.runtime.Config.GeospatialMode Disabled;
-    field public static final androidx.xr.runtime.Config.GeospatialMode Enabled;
+    field public static final androidx.xr.runtime.Config.GeospatialMode DISABLED;
+    field public static final androidx.xr.runtime.Config.GeospatialMode ENABLED;
   }
 
   public static final class Config.GeospatialMode.Companion {
-    property public androidx.xr.runtime.Config.GeospatialMode Disabled;
-    property public androidx.xr.runtime.Config.GeospatialMode Enabled;
+    property public androidx.xr.runtime.Config.GeospatialMode DISABLED;
+    property public androidx.xr.runtime.Config.GeospatialMode ENABLED;
   }
 
   public static final class Config.HandTrackingMode {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int getMode();
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int mode;
     field public static final androidx.xr.runtime.Config.HandTrackingMode.Companion Companion;
-    field public static final androidx.xr.runtime.Config.HandTrackingMode Disabled;
-    field public static final androidx.xr.runtime.Config.HandTrackingMode Enabled;
+    field public static final androidx.xr.runtime.Config.HandTrackingMode DISABLED;
+    field public static final androidx.xr.runtime.Config.HandTrackingMode ENABLED;
   }
 
   public static final class Config.HandTrackingMode.Companion {
-    property public androidx.xr.runtime.Config.HandTrackingMode Disabled;
-    property public androidx.xr.runtime.Config.HandTrackingMode Enabled;
+    property public androidx.xr.runtime.Config.HandTrackingMode DISABLED;
+    property public androidx.xr.runtime.Config.HandTrackingMode ENABLED;
   }
 
   public static final class Config.HeadTrackingMode {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int getMode();
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int mode;
     field public static final androidx.xr.runtime.Config.HeadTrackingMode.Companion Companion;
-    field public static final androidx.xr.runtime.Config.HeadTrackingMode Disabled;
-    field public static final androidx.xr.runtime.Config.HeadTrackingMode Enabled;
+    field public static final androidx.xr.runtime.Config.HeadTrackingMode DISABLED;
+    field public static final androidx.xr.runtime.Config.HeadTrackingMode ENABLED;
   }
 
   public static final class Config.HeadTrackingMode.Companion {
-    property public androidx.xr.runtime.Config.HeadTrackingMode Disabled;
-    property public androidx.xr.runtime.Config.HeadTrackingMode Enabled;
+    property public androidx.xr.runtime.Config.HeadTrackingMode DISABLED;
+    property public androidx.xr.runtime.Config.HeadTrackingMode ENABLED;
   }
 
   public static final class Config.PlaneTrackingMode {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int getMode();
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public int mode;
     field public static final androidx.xr.runtime.Config.PlaneTrackingMode.Companion Companion;
-    field public static final androidx.xr.runtime.Config.PlaneTrackingMode Disabled;
-    field public static final androidx.xr.runtime.Config.PlaneTrackingMode HorizontalAndVertical;
+    field public static final androidx.xr.runtime.Config.PlaneTrackingMode DISABLED;
+    field public static final androidx.xr.runtime.Config.PlaneTrackingMode HORIZONTAL_AND_VERTICAL;
   }
 
   public static final class Config.PlaneTrackingMode.Companion {
-    property public androidx.xr.runtime.Config.PlaneTrackingMode Disabled;
-    property public androidx.xr.runtime.Config.PlaneTrackingMode HorizontalAndVertical;
+    property public androidx.xr.runtime.Config.PlaneTrackingMode DISABLED;
+    property public androidx.xr.runtime.Config.PlaneTrackingMode HORIZONTAL_AND_VERTICAL;
   }
 
   public final class CoreState {
@@ -307,15 +307,15 @@ package androidx.xr.runtime {
 
   public final class TrackingState {
     field public static final androidx.xr.runtime.TrackingState.Companion Companion;
-    field public static final androidx.xr.runtime.TrackingState Paused;
-    field public static final androidx.xr.runtime.TrackingState Stopped;
-    field public static final androidx.xr.runtime.TrackingState Tracking;
+    field public static final androidx.xr.runtime.TrackingState PAUSED;
+    field public static final androidx.xr.runtime.TrackingState STOPPED;
+    field public static final androidx.xr.runtime.TrackingState TRACKING;
   }
 
   public static final class TrackingState.Companion {
-    property public androidx.xr.runtime.TrackingState Paused;
-    property public androidx.xr.runtime.TrackingState Stopped;
-    property public androidx.xr.runtime.TrackingState Tracking;
+    property public androidx.xr.runtime.TrackingState PAUSED;
+    property public androidx.xr.runtime.TrackingState STOPPED;
+    property public androidx.xr.runtime.TrackingState TRACKING;
   }
 
 }
@@ -376,15 +376,15 @@ package androidx.xr.runtime.internal {
 
   public static final class Anchor.PersistenceState {
     field public static final androidx.xr.runtime.internal.Anchor.PersistenceState.Companion Companion;
-    field public static final androidx.xr.runtime.internal.Anchor.PersistenceState NotPersisted;
-    field public static final androidx.xr.runtime.internal.Anchor.PersistenceState Pending;
-    field public static final androidx.xr.runtime.internal.Anchor.PersistenceState Persisted;
+    field public static final androidx.xr.runtime.internal.Anchor.PersistenceState NOT_PERSISTED;
+    field public static final androidx.xr.runtime.internal.Anchor.PersistenceState PENDING;
+    field public static final androidx.xr.runtime.internal.Anchor.PersistenceState PERSISTED;
   }
 
   public static final class Anchor.PersistenceState.Companion {
-    property public androidx.xr.runtime.internal.Anchor.PersistenceState NotPersisted;
-    property public androidx.xr.runtime.internal.Anchor.PersistenceState Pending;
-    property public androidx.xr.runtime.internal.Anchor.PersistenceState Persisted;
+    property public androidx.xr.runtime.internal.Anchor.PersistenceState NOT_PERSISTED;
+    property public androidx.xr.runtime.internal.Anchor.PersistenceState PENDING;
+    property public androidx.xr.runtime.internal.Anchor.PersistenceState PERSISTED;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface AnchorEntity extends androidx.xr.runtime.internal.SystemSpaceEntity {
@@ -556,34 +556,34 @@ package androidx.xr.runtime.internal {
 
   public static final class Earth.State {
     field public static final androidx.xr.runtime.internal.Earth.State.Companion Companion;
-    field public static final androidx.xr.runtime.internal.Earth.State ErrorApkVersionTooOld;
-    field public static final androidx.xr.runtime.internal.Earth.State ErrorAppPreempted;
-    field public static final androidx.xr.runtime.internal.Earth.State ErrorInternal;
-    field public static final androidx.xr.runtime.internal.Earth.State ErrorNotAuthorized;
-    field public static final androidx.xr.runtime.internal.Earth.State ErrorResourceExhausted;
-    field public static final androidx.xr.runtime.internal.Earth.State Running;
-    field public static final androidx.xr.runtime.internal.Earth.State Stopped;
+    field public static final androidx.xr.runtime.internal.Earth.State ERROR_APK_VERSION_TOO_OLD;
+    field public static final androidx.xr.runtime.internal.Earth.State ERROR_APP_PREEMPTED;
+    field public static final androidx.xr.runtime.internal.Earth.State ERROR_INTERNAL;
+    field public static final androidx.xr.runtime.internal.Earth.State ERROR_NOT_AUTHORIZED;
+    field public static final androidx.xr.runtime.internal.Earth.State ERROR_RESOURCES_EXHAUSTED;
+    field public static final androidx.xr.runtime.internal.Earth.State RUNNING;
+    field public static final androidx.xr.runtime.internal.Earth.State STOPPED;
   }
 
   public static final class Earth.State.Companion {
-    property public androidx.xr.runtime.internal.Earth.State ErrorApkVersionTooOld;
-    property public androidx.xr.runtime.internal.Earth.State ErrorAppPreempted;
-    property public androidx.xr.runtime.internal.Earth.State ErrorInternal;
-    property public androidx.xr.runtime.internal.Earth.State ErrorNotAuthorized;
-    property public androidx.xr.runtime.internal.Earth.State ErrorResourceExhausted;
-    property public androidx.xr.runtime.internal.Earth.State Running;
-    property public androidx.xr.runtime.internal.Earth.State Stopped;
+    property public androidx.xr.runtime.internal.Earth.State ERROR_APK_VERSION_TOO_OLD;
+    property public androidx.xr.runtime.internal.Earth.State ERROR_APP_PREEMPTED;
+    property public androidx.xr.runtime.internal.Earth.State ERROR_INTERNAL;
+    property public androidx.xr.runtime.internal.Earth.State ERROR_NOT_AUTHORIZED;
+    property public androidx.xr.runtime.internal.Earth.State ERROR_RESOURCES_EXHAUSTED;
+    property public androidx.xr.runtime.internal.Earth.State RUNNING;
+    property public androidx.xr.runtime.internal.Earth.State STOPPED;
   }
 
   public static final class Earth.Surface {
     field public static final androidx.xr.runtime.internal.Earth.Surface.Companion Companion;
-    field public static final androidx.xr.runtime.internal.Earth.Surface Rooftop;
-    field public static final androidx.xr.runtime.internal.Earth.Surface Terrain;
+    field public static final androidx.xr.runtime.internal.Earth.Surface ROOFTOP;
+    field public static final androidx.xr.runtime.internal.Earth.Surface TERRAIN;
   }
 
   public static final class Earth.Surface.Companion {
-    property public androidx.xr.runtime.internal.Earth.Surface Rooftop;
-    property public androidx.xr.runtime.internal.Earth.Surface Terrain;
+    property public androidx.xr.runtime.internal.Earth.Surface ROOFTOP;
+    property public androidx.xr.runtime.internal.Earth.Surface TERRAIN;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Entity extends androidx.xr.runtime.internal.ActivityPose {
@@ -1017,33 +1017,33 @@ package androidx.xr.runtime.internal {
   }
 
   public static final class Plane.Label {
-    field public static final androidx.xr.runtime.internal.Plane.Label Ceiling;
+    field public static final androidx.xr.runtime.internal.Plane.Label CEILING;
     field public static final androidx.xr.runtime.internal.Plane.Label.Companion Companion;
-    field public static final androidx.xr.runtime.internal.Plane.Label Floor;
-    field public static final androidx.xr.runtime.internal.Plane.Label Table;
-    field public static final androidx.xr.runtime.internal.Plane.Label Unknown;
-    field public static final androidx.xr.runtime.internal.Plane.Label Wall;
+    field public static final androidx.xr.runtime.internal.Plane.Label FLOOR;
+    field public static final androidx.xr.runtime.internal.Plane.Label TABLE;
+    field public static final androidx.xr.runtime.internal.Plane.Label UNKNOWN;
+    field public static final androidx.xr.runtime.internal.Plane.Label WALL;
   }
 
   public static final class Plane.Label.Companion {
-    property public androidx.xr.runtime.internal.Plane.Label Ceiling;
-    property public androidx.xr.runtime.internal.Plane.Label Floor;
-    property public androidx.xr.runtime.internal.Plane.Label Table;
-    property public androidx.xr.runtime.internal.Plane.Label Unknown;
-    property public androidx.xr.runtime.internal.Plane.Label Wall;
+    property public androidx.xr.runtime.internal.Plane.Label CEILING;
+    property public androidx.xr.runtime.internal.Plane.Label FLOOR;
+    property public androidx.xr.runtime.internal.Plane.Label TABLE;
+    property public androidx.xr.runtime.internal.Plane.Label UNKNOWN;
+    property public androidx.xr.runtime.internal.Plane.Label WALL;
   }
 
   public static final class Plane.Type {
     field public static final androidx.xr.runtime.internal.Plane.Type.Companion Companion;
-    field public static final androidx.xr.runtime.internal.Plane.Type HorizontalDownwardFacing;
-    field public static final androidx.xr.runtime.internal.Plane.Type HorizontalUpwardFacing;
-    field public static final androidx.xr.runtime.internal.Plane.Type Vertical;
+    field public static final androidx.xr.runtime.internal.Plane.Type HORIZONTAL_DOWNWARD_FACING;
+    field public static final androidx.xr.runtime.internal.Plane.Type HORIZONTAL_UPWARD_FACING;
+    field public static final androidx.xr.runtime.internal.Plane.Type VERTICAL;
   }
 
   public static final class Plane.Type.Companion {
-    property public androidx.xr.runtime.internal.Plane.Type HorizontalDownwardFacing;
-    property public androidx.xr.runtime.internal.Plane.Type HorizontalUpwardFacing;
-    property public androidx.xr.runtime.internal.Plane.Type Vertical;
+    property public androidx.xr.runtime.internal.Plane.Type HORIZONTAL_DOWNWARD_FACING;
+    property public androidx.xr.runtime.internal.Plane.Type HORIZONTAL_UPWARD_FACING;
+    property public androidx.xr.runtime.internal.Plane.Type VERTICAL;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public enum PlaneSemantic {

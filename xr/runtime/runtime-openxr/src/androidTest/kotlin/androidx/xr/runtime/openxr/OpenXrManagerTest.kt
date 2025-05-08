@@ -22,8 +22,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import androidx.xr.runtime.Config
-import androidx.xr.runtime.Config.AnchorPersistenceMode
-import androidx.xr.runtime.Config.DepthEstimationMode
 import androidx.xr.runtime.Config.HandTrackingMode
 import androidx.xr.runtime.Config.PlaneTrackingMode
 import androidx.xr.runtime.internal.PermissionNotGrantedException
@@ -84,10 +82,10 @@ class OpenXrManagerTest {
     @Test
     fun configure_handTrackingEnabled_addsHandToUpdatables() = initOpenXrManagerAndRunTest {
         underTest.create()
-        check(underTest.config.handTracking == HandTrackingMode.Disabled)
+        check(underTest.config.handTracking == HandTrackingMode.DISABLED)
         check(perceptionManager.xrResources.updatables.isEmpty())
 
-        underTest.configure(Config(handTracking = Config.HandTrackingMode.Enabled))
+        underTest.configure(Config(handTracking = Config.HandTrackingMode.ENABLED))
 
         assertThat(perceptionManager.xrResources.updatables)
             .containsExactly(
@@ -99,7 +97,7 @@ class OpenXrManagerTest {
     @Test
     fun configure_handTrackingDisabled_removesHandsFromUpdatables() = initOpenXrManagerAndRunTest {
         underTest.create()
-        underTest.configure(Config(handTracking = Config.HandTrackingMode.Enabled))
+        underTest.configure(Config(handTracking = Config.HandTrackingMode.ENABLED))
         check(
             perceptionManager.xrResources.updatables.containsAll(
                 listOf(
@@ -109,7 +107,7 @@ class OpenXrManagerTest {
             )
         )
 
-        underTest.configure(Config(handTracking = Config.HandTrackingMode.Disabled))
+        underTest.configure(Config(handTracking = Config.HandTrackingMode.DISABLED))
 
         assertThat(perceptionManager.xrResources.updatables).isEmpty()
     }
@@ -121,10 +119,10 @@ class OpenXrManagerTest {
 
         underTest.configure(
             Config(
-                Config.PlaneTrackingMode.HorizontalAndVertical,
-                Config.HandTrackingMode.Enabled,
-                Config.DepthEstimationMode.Disabled,
-                Config.AnchorPersistenceMode.Enabled,
+                Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                Config.HandTrackingMode.ENABLED,
+                Config.DepthEstimationMode.DISABLED,
+                Config.AnchorPersistenceMode.ENABLED,
             )
         )
     }
@@ -142,10 +140,10 @@ class OpenXrManagerTest {
             assertThrows(PermissionNotGrantedException::class.java) {
                 underTest.configure(
                     Config(
-                        Config.PlaneTrackingMode.Disabled,
-                        Config.HandTrackingMode.Disabled,
-                        Config.DepthEstimationMode.Enabled,
-                        Config.AnchorPersistenceMode.Disabled,
+                        Config.PlaneTrackingMode.DISABLED,
+                        Config.HandTrackingMode.DISABLED,
+                        Config.DepthEstimationMode.ENABLED,
+                        Config.AnchorPersistenceMode.DISABLED,
                     )
                 )
             }
@@ -159,10 +157,10 @@ class OpenXrManagerTest {
         assertThrows(IllegalStateException::class.java) {
             underTest.configure(
                 Config(
-                    Config.PlaneTrackingMode.Disabled,
-                    Config.HandTrackingMode.Disabled,
-                    Config.DepthEstimationMode.Enabled,
-                    Config.AnchorPersistenceMode.Disabled,
+                    Config.PlaneTrackingMode.DISABLED,
+                    Config.HandTrackingMode.DISABLED,
+                    Config.DepthEstimationMode.ENABLED,
+                    Config.AnchorPersistenceMode.DISABLED,
                 )
             )
         }
@@ -193,7 +191,7 @@ class OpenXrManagerTest {
             underTest.create()
             underTest.resume()
             check(perceptionManager.trackables.isEmpty())
-            check(underTest.config.planeTracking == PlaneTrackingMode.Disabled)
+            check(underTest.config.planeTracking == PlaneTrackingMode.DISABLED)
 
             underTest.update()
 
@@ -208,7 +206,7 @@ class OpenXrManagerTest {
             underTest.resume()
             check(perceptionManager.xrResources.updatables.isEmpty())
             underTest.configure(
-                Config(planeTracking = Config.PlaneTrackingMode.HorizontalAndVertical)
+                Config(planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL)
             )
 
             underTest.update()

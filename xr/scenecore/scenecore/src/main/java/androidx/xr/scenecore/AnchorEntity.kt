@@ -219,7 +219,7 @@ private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
          *   before the anchor state is updated. If the timeout duration is zero it will search for
          *   the anchor indefinitely.
          * @throws [IllegalStateException] if [session.config.planeTracking] is set to
-         *   [PlaneTrackingMode.Disabled].
+         *   [PlaneTrackingMode.DISABLED].
          */
         @JvmStatic
         @JvmOverloads
@@ -230,7 +230,7 @@ private constructor(rtEntity: RtAnchorEntity, entityManager: EntityManager) :
             planeSemantic: @PlaneSemanticValue Int,
             timeout: Duration = Duration.ZERO,
         ): AnchorEntity {
-            check(session.config.planeTracking != PlaneTrackingMode.Disabled) {
+            check(session.config.planeTracking != PlaneTrackingMode.DISABLED) {
                 "Config.PlaneTrackingMode is set to Disabled."
             }
 

@@ -78,10 +78,10 @@ public class FakeLifecycleManager(
 
     override var config: Config =
         Config(
-            Config.PlaneTrackingMode.HorizontalAndVertical,
-            Config.HandTrackingMode.Enabled,
-            Config.DepthEstimationMode.Enabled,
-            Config.AnchorPersistenceMode.Enabled,
+            Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+            Config.HandTrackingMode.ENABLED,
+            Config.DepthEstimationMode.ENABLED,
+            Config.AnchorPersistenceMode.ENABLED,
         )
 
     override fun configure(config: Config) {
@@ -92,7 +92,7 @@ public class FakeLifecycleManager(
                 state == State.PAUSED
         )
         if (
-            !shouldSupportPlaneTracking && config.planeTracking != Config.PlaneTrackingMode.Disabled
+            !shouldSupportPlaneTracking && config.planeTracking != Config.PlaneTrackingMode.DISABLED
         ) {
             throw ConfigurationNotSupportedException()
         }

@@ -51,7 +51,6 @@ import androidx.xr.compose.unit.VolumeConstraints
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.HeadTrackingMode
 import androidx.xr.runtime.internal.CameraViewActivityPose
-import androidx.xr.runtime.internal.CameraViewActivityPose.Fov
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.scene
@@ -3022,7 +3021,7 @@ class SubspaceTest {
                 TestSetup {
                     val session = LocalSession.current
                     assertNotNull(session)
-                    session.configure(Config(headTracking = HeadTrackingMode.Disabled))
+                    session.configure(Config(headTracking = HeadTrackingMode.DISABLED))
                     ApplicationSubspace {
                         SpatialBox(
                             SubspaceModifier.fillMaxWidth().fillMaxHeight().testTag("box")

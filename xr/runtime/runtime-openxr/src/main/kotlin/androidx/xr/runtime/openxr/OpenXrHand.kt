@@ -27,7 +27,7 @@ import java.nio.FloatBuffer
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class OpenXrHand internal constructor(private val isLeftHand: Boolean) : Hand, Updatable {
 
-    override var trackingState: TrackingState = TrackingState.Paused
+    override var trackingState: TrackingState = TrackingState.PAUSED
         private set
 
     override var handJointsBuffer: FloatBuffer = ByteBuffer.allocate(0).asFloatBuffer()
@@ -38,7 +38,7 @@ public class OpenXrHand internal constructor(private val isLeftHand: Boolean) : 
             nativeGetHandDataBuffer(isLeftHand, xrTime)
                 ?: throw IllegalStateException("Could not get hand data buffer.")
         trackingState =
-            if (handDataBuffer.int != 0) TrackingState.Tracking else TrackingState.Paused
+            if (handDataBuffer.int != 0) TrackingState.TRACKING else TrackingState.PAUSED
         handJointsBuffer = handDataBuffer.slice().order(ByteOrder.nativeOrder()).asFloatBuffer()
     }
 

@@ -350,7 +350,7 @@ class EntityTest {
 
     @Test
     fun anchorEntity_planeTrackingDisabled_throwsIllegalStateException() {
-        session.configure(Config(planeTracking = PlaneTrackingMode.Disabled))
+        session.configure(Config(planeTracking = PlaneTrackingMode.DISABLED))
 
         assertFailsWith<IllegalStateException> {
             AnchorEntity.create(session, Dimensions(), PlaneType.ANY, PlaneSemantic.ANY)

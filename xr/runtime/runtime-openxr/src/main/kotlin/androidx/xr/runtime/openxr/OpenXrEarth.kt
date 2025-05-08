@@ -28,7 +28,7 @@ import androidx.xr.runtime.math.Quaternion
 public class OpenXrEarth internal constructor(private val xrResources: XrResources) :
     Earth, Updatable {
 
-    public override var state: Earth.State = Earth.State.Stopped
+    public override var state: Earth.State = Earth.State.STOPPED
         private set
 
     override public fun createPoseFromGeospatialPose(geospatialPose: GeospatialPose): Pose {

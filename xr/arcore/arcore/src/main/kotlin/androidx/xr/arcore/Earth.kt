@@ -347,21 +347,21 @@ internal constructor(
 
     private fun runtimeStateToState(runtimeState: RuntimeEarth.State): State {
         return when (runtimeState) {
-            RuntimeEarth.State.Running -> State.Running
-            RuntimeEarth.State.Stopped -> State.Stopped
-            RuntimeEarth.State.ErrorInternal -> State.ErrorInternal
-            RuntimeEarth.State.ErrorNotAuthorized -> State.ErrorNotAuthorized
-            RuntimeEarth.State.ErrorResourceExhausted -> State.ErrorResourceExhausted
-            RuntimeEarth.State.ErrorApkVersionTooOld -> State.ErrorApkVersionTooOld
-            RuntimeEarth.State.ErrorAppPreempted -> State.ErrorAppPreempted
+            RuntimeEarth.State.RUNNING -> State.Running
+            RuntimeEarth.State.STOPPED -> State.Stopped
+            RuntimeEarth.State.ERROR_INTERNAL -> State.ErrorInternal
+            RuntimeEarth.State.ERROR_NOT_AUTHORIZED -> State.ErrorNotAuthorized
+            RuntimeEarth.State.ERROR_RESOURCES_EXHAUSTED -> State.ErrorResourceExhausted
+            RuntimeEarth.State.ERROR_APK_VERSION_TOO_OLD -> State.ErrorApkVersionTooOld
+            RuntimeEarth.State.ERROR_APP_PREEMPTED -> State.ErrorAppPreempted
             else -> throw IllegalStateException("Unknown EarthErrorState: $runtimeState")
         }
     }
 
     private fun surfaceToRuntimeSurface(surface: Surface): RuntimeEarth.Surface {
         return when (surface) {
-            Surface.Terrain -> RuntimeEarth.Surface.Terrain
-            Surface.Rooftop -> RuntimeEarth.Surface.Rooftop
+            Surface.Terrain -> RuntimeEarth.Surface.TERRAIN
+            Surface.Rooftop -> RuntimeEarth.Surface.ROOFTOP
             else -> throw IllegalStateException("Unknown Surface: $surface")
         }
     }

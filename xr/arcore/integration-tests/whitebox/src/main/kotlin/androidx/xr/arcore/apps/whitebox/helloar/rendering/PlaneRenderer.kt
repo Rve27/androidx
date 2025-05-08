@@ -92,8 +92,8 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
         val renderJob =
             coroutineScope.launch(updateJob) {
                 plane.state.collect { state ->
-                    if (state.trackingState == TrackingState.Tracking) {
-                        if (state.label == Plane.Label.Unknown) {
+                    if (state.trackingState == TrackingState.TRACKING) {
+                        if (state.label == Plane.Label.UNKNOWN) {
                             entity.setHidden(true)
                         } else {
                             entity.setHidden(false)
@@ -119,7 +119,7 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
                                 counter = 0
                             }
                         }
-                    } else if (state.trackingState == TrackingState.Stopped) {
+                    } else if (state.trackingState == TrackingState.STOPPED) {
                         entity.setHidden(true)
                     }
                 }
@@ -154,10 +154,10 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
 
     private fun convertPlaneLabelToColor(label: Plane.Label): Int =
         when (label) {
-            Plane.Label.Wall -> Color.GREEN
-            Plane.Label.Floor -> Color.BLUE
-            Plane.Label.Ceiling -> Color.YELLOW
-            Plane.Label.Table -> Color.MAGENTA
+            Plane.Label.WALL -> Color.GREEN
+            Plane.Label.FLOOR -> Color.BLUE
+            Plane.Label.CEILING -> Color.YELLOW
+            Plane.Label.TABLE -> Color.MAGENTA
             // Planes with Unknown Label are currently not rendered.
             else -> Color.RED
         }

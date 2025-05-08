@@ -143,7 +143,7 @@ class HandTrackingActivity : ComponentActivity() {
         sessionHelper =
             SessionLifecycleHelper(
                 this,
-                Config(handTracking = Config.HandTrackingMode.Enabled),
+                Config(handTracking = Config.HandTrackingMode.ENABLED),
                 onSessionAvailable = { session ->
                     this.session = session
 
@@ -191,7 +191,7 @@ class HandTrackingActivity : ComponentActivity() {
         jointEntityMap: Map<HandJointType, GltfModelEntity>,
     ) {
         for ((jointType, gltfModelEntity) in jointEntityMap) {
-            if (handState.trackingState == TrackingState.Tracking) {
+            if (handState.trackingState == TrackingState.TRACKING) {
                 // According to the experiment, calling setHidden will significantly
                 // increase the latency. Thus, check the hidden state before calling
                 // setHidden.
@@ -311,12 +311,12 @@ class HandTrackingActivity : ComponentActivity() {
                 val leftHandState = leftHand.state.collectAsState().value
                 val rightHandState = rightHand.state.collectAsState().value
                 Text("Left hand tracking state: ${leftHandState.trackingState}")
-                if (leftHandState.trackingState == TrackingState.Tracking) {
+                if (leftHandState.trackingState == TrackingState.TRACKING) {
                     val angles = deriveAngles(leftHandState.handJoints)
                     Text("Left hand gesture detected: ${guessGesture(angles)}")
                 }
                 Text("Right hand tracking state: ${rightHandState.trackingState}")
-                if (rightHandState.trackingState == TrackingState.Tracking) {
+                if (rightHandState.trackingState == TrackingState.TRACKING) {
                     val angles = deriveAngles(rightHandState.handJoints)
                     Text("Right hand gesture detected: ${guessGesture(angles)}")
                 }

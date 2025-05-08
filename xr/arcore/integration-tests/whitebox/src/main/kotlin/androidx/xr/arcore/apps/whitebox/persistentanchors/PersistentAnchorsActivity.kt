@@ -97,8 +97,8 @@ class PersistentAnchorsActivity : ComponentActivity() {
             SessionLifecycleHelper(
                 this,
                 Config(
-                    anchorPersistence = AnchorPersistenceMode.Enabled,
-                    headTracking = HeadTrackingMode.Enabled,
+                    anchorPersistence = AnchorPersistenceMode.ENABLED,
+                    headTracking = HeadTrackingMode.ENABLED,
                 ),
                 onSessionAvailable = { session ->
                     this.session = session
@@ -255,7 +255,7 @@ class PersistentAnchorsActivity : ComponentActivity() {
 
         lifecycleScope.launch {
             anchor.state.collect { anchorState ->
-                if (anchorState.trackingState == TrackingState.Tracking) {
+                if (anchorState.trackingState == TrackingState.TRACKING) {
                     val panelEntity =
                         PanelEntity.create(
                             session,

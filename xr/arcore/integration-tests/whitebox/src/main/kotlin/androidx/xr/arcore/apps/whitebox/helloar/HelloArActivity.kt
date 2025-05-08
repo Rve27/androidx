@@ -54,8 +54,8 @@ class HelloArActivity : ComponentActivity() {
             SessionLifecycleHelper(
                 this,
                 Config(
-                    planeTracking = Config.PlaneTrackingMode.HorizontalAndVertical,
-                    headTracking = Config.HeadTrackingMode.Enabled,
+                    planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                    headTracking = Config.HeadTrackingMode.ENABLED,
                 ),
                 onSessionAvailable = { session ->
                     this.session = session

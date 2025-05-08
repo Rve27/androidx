@@ -42,10 +42,10 @@ public class FakeRuntimeAnchor(
         }
     }
 
-    override var trackingState: TrackingState = TrackingState.Tracking
+    override var trackingState: TrackingState = TrackingState.TRACKING
 
     override var persistenceState: RuntimeAnchor.PersistenceState =
-        RuntimeAnchor.PersistenceState.NotPersisted
+        RuntimeAnchor.PersistenceState.NOT_PERSISTED
 
     override var uuid: UUID? = null
 
@@ -55,7 +55,7 @@ public class FakeRuntimeAnchor(
 
     override fun persist() {
         uuid = UUID.randomUUID()
-        persistenceState = RuntimeAnchor.PersistenceState.Persisted
+        persistenceState = RuntimeAnchor.PersistenceState.PERSISTED
         anchorHolder?.persistAnchor(this)
     }
 

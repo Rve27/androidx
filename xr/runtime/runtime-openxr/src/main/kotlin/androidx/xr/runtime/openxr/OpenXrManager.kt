@@ -52,10 +52,10 @@ internal constructor(
     // TODO(b/392660855): Disable all features by default once this API is fully implemented.
     override var config: Config =
         Config(
-            Config.PlaneTrackingMode.Disabled,
-            Config.HandTrackingMode.Disabled,
-            Config.DepthEstimationMode.Disabled,
-            Config.AnchorPersistenceMode.Enabled,
+            Config.PlaneTrackingMode.DISABLED,
+            Config.HandTrackingMode.DISABLED,
+            Config.DepthEstimationMode.DISABLED,
+            Config.AnchorPersistenceMode.ENABLED,
         )
         private set
 
@@ -82,7 +82,7 @@ internal constructor(
         }
 
         if (config.handTracking != this.config.handTracking) {
-            if (config.handTracking == Config.HandTrackingMode.Enabled) {
+            if (config.handTracking == Config.HandTrackingMode.ENABLED) {
                 perceptionManager.xrResources.addUpdatable(perceptionManager.xrResources.leftHand)
                 perceptionManager.xrResources.addUpdatable(perceptionManager.xrResources.rightHand)
             } else {
@@ -112,7 +112,7 @@ internal constructor(
         val now = timeSource.markNow()
         val xrTime = timeSource.getXrTime(now)
 
-        if (config.planeTracking != Config.PlaneTrackingMode.Disabled) {
+        if (config.planeTracking != Config.PlaneTrackingMode.DISABLED) {
             perceptionManager.updatePlanes(xrTime)
         }
         perceptionManager.update(xrTime)

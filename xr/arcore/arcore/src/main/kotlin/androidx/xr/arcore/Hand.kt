@@ -51,7 +51,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
         public fun left(session: Session): Hand? {
             val perceptionStateExtender = getPerceptionStateExtender(session)
             val config = perceptionStateExtender.xrResourcesManager.lifecycleManager.config
-            check(config.handTracking != HandTrackingMode.Disabled) {
+            check(config.handTracking != HandTrackingMode.DISABLED) {
                 "Config.HandTrackingMode is set to Disabled."
             }
             return perceptionStateExtender.xrResourcesManager.leftHand
@@ -67,7 +67,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
         public fun right(session: Session): Hand? {
             val perceptionStateExtender = getPerceptionStateExtender(session)
             val config = perceptionStateExtender.xrResourcesManager.lifecycleManager.config
-            check(config.handTracking != HandTrackingMode.Disabled) {
+            check(config.handTracking != HandTrackingMode.DISABLED) {
                 "Config.HandTrackingMode is set to Disabled."
             }
             return perceptionStateExtender.xrResourcesManager.rightHand
@@ -118,7 +118,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
         ) : Map<HandJointType, Pose> {
             override val entries: Set<Map.Entry<HandJointType, Pose>>
                 get() =
-                    if (trackingState == TrackingState.Tracking) {
+                    if (trackingState == TrackingState.TRACKING) {
                         RuntimeHand.parseHandJoint(trackingState, handJointsBuffer).entries.toSet()
                     } else {
                         emptySet()
@@ -126,7 +126,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
 
             override val keys: Set<HandJointType>
                 get() =
-                    if (trackingState == TrackingState.Tracking) HandJointType.values().toSet()
+                    if (trackingState == TrackingState.TRACKING) HandJointType.values().toSet()
                     else emptySet()
 
             override val size: Int
@@ -144,11 +144,11 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
             }
 
             override fun get(key: HandJointType): Pose? =
-                if (trackingState == TrackingState.Tracking) locateHandJointFromBuffer(key)
+                if (trackingState == TrackingState.TRACKING) locateHandJointFromBuffer(key)
                 else null
 
             override fun isEmpty(): Boolean {
-                return trackingState != TrackingState.Tracking
+                return trackingState != TrackingState.TRACKING
             }
 
             private fun locateHandJointFromBuffer(handJointType: HandJointType): Pose {
@@ -193,7 +193,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
     }
 
     private val _state =
-        MutableStateFlow<State>(State(TrackingState.Paused, ByteBuffer.allocate(0).asFloatBuffer()))
+        MutableStateFlow<State>(State(TrackingState.PAUSED, ByteBuffer.allocate(0).asFloatBuffer()))
     /** The current [State] of this hand. */
     public val state: StateFlow<State> = _state.asStateFlow()
 

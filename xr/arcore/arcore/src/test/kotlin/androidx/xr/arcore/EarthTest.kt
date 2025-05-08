@@ -71,7 +71,7 @@ class EarthTest {
     @Before
     fun setUp() {
         xrResourcesManager = XrResourcesManager()
-        runtimeEarth = FakeRuntimeEarth(RuntimeEarth.State.Stopped)
+        runtimeEarth = FakeRuntimeEarth(RuntimeEarth.State.STOPPED)
     }
 
     @Test
@@ -104,18 +104,18 @@ class EarthTest {
 
     @Test
     fun update_stateMatchesRuntimeEarth() = runBlocking {
-        val runtimeEarth = FakeRuntimeEarth(RuntimeEarth.State.Stopped)
+        val runtimeEarth = FakeRuntimeEarth(RuntimeEarth.State.STOPPED)
         val underTest = Earth(runtimeEarth, xrResourcesManager)
         check(underTest.state.value == Earth.State.Stopped)
 
         // Update to Running state.
-        runtimeEarth.state = RuntimeEarth.State.Running
+        runtimeEarth.state = RuntimeEarth.State.RUNNING
         underTest.update()
 
         assertThat(underTest.state.value).isEqualTo(Earth.State.Running)
 
         // Update to Stopped state with error.
-        runtimeEarth.state = RuntimeEarth.State.ErrorInternal
+        runtimeEarth.state = RuntimeEarth.State.ERROR_INTERNAL
         underTest.update()
 
         assertThat(underTest.state.value).isEqualTo(Earth.State.ErrorInternal)

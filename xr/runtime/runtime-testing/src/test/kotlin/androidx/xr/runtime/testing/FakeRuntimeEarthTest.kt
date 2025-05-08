@@ -169,7 +169,7 @@ class FakeRuntimeEarthTest {
                 GEOSPATIAL_POSE.longitude,
                 GEOSPATIAL_POSE.altitude,
                 GEOSPATIAL_POSE.eastUpSouthQuaternion,
-                RuntimeEarth.Surface.Terrain,
+                RuntimeEarth.Surface.TERRAIN,
             )
 
         assertThat(result).isEqualTo(ANCHOR)
@@ -188,7 +188,7 @@ class FakeRuntimeEarthTest {
                     GEOSPATIAL_POSE.longitude,
                     GEOSPATIAL_POSE.altitude,
                     GEOSPATIAL_POSE.eastUpSouthQuaternion,
-                    RuntimeEarth.Surface.Terrain,
+                    RuntimeEarth.Surface.TERRAIN,
                 )
             }
 

@@ -154,7 +154,7 @@ class XrResourcesManagerTest {
         underTest.initiateEarth(runtimeEarth)
         underTest.update()
         check(underTest.earth.state.value == Earth.State.Stopped)
-        runtimeEarth.state = RuntimeEarth.State.Running
+        runtimeEarth.state = RuntimeEarth.State.RUNNING
 
         underTest.update()
 

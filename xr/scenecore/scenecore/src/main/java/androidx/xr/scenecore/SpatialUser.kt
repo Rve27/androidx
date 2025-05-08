@@ -67,11 +67,11 @@ public class SpatialUser(
      * Returns a Head for the SpatialUser or null if it is not yet available.
      *
      * @throws [IllegalStateException] if [session.config.headTracking] is set to
-     *   [HeadTrackingMode.Disabled].
+     *   [HeadTrackingMode.DISABLED].
      */
     public var head: Head? = null
         get() {
-            check(lifecycleManager.config.headTracking != HeadTrackingMode.Disabled) {
+            check(lifecycleManager.config.headTracking != HeadTrackingMode.DISABLED) {
                 "Config.HeadTrackingMode is set to Disabled."
             }
             if (cachedHead == null) {
@@ -85,10 +85,10 @@ public class SpatialUser(
      * the device type. The list will be empty if the cameras are not yet available.
      *
      * @throws [IllegalStateException] if [session.config.headTracking] is set to
-     *   [HeadTrackingMode.Disabled].
+     *   [HeadTrackingMode.DISABLED].
      */
     public fun getCameraViews(): List<CameraView> {
-        check(lifecycleManager.config.headTracking != HeadTrackingMode.Disabled) {
+        check(lifecycleManager.config.headTracking != HeadTrackingMode.DISABLED) {
             "Config.HeadTrackingMode is set to Disabled."
         }
         return listOfNotNull<CameraView>(leftCamera, rightCamera)
@@ -98,10 +98,10 @@ public class SpatialUser(
      * Returns a CameraView for the specified CameraType or null if it is not available.
      *
      * @throws [IllegalStateException] if [session.config.headTracking] is set to
-     *   [HeadTrackingMode.Disabled].
+     *   [HeadTrackingMode.DISABLED].
      */
     public fun getCameraView(cameraType: CameraView.CameraType): CameraView? {
-        check(lifecycleManager.config.headTracking != HeadTrackingMode.Disabled) {
+        check(lifecycleManager.config.headTracking != HeadTrackingMode.DISABLED) {
             "Config.HeadTrackingMode is set to Disabled."
         }
         if (cameraType == CameraView.CameraType.LEFT_EYE) {

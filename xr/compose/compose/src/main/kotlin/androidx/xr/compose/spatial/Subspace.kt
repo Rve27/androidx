@@ -418,7 +418,7 @@ private fun rememberCalculatedFovConstraints(
 
     val calculatedFovConstraints = remember {
         mutableStateOf<VolumeConstraints?>(
-            if (session.config.headTracking == HeadTrackingMode.Disabled) {
+            if (session.config.headTracking == HeadTrackingMode.DISABLED) {
                 fallbackFovConstraints
             } else {
                 val head: Head? = session.scene.spatialUser.head

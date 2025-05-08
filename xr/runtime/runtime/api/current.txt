@@ -173,15 +173,15 @@ package androidx.xr.runtime {
 
   public final class TrackingState {
     field public static final androidx.xr.runtime.TrackingState.Companion Companion;
-    field public static final androidx.xr.runtime.TrackingState Paused;
-    field public static final androidx.xr.runtime.TrackingState Stopped;
-    field public static final androidx.xr.runtime.TrackingState Tracking;
+    field public static final androidx.xr.runtime.TrackingState PAUSED;
+    field public static final androidx.xr.runtime.TrackingState STOPPED;
+    field public static final androidx.xr.runtime.TrackingState TRACKING;
   }
 
   public static final class TrackingState.Companion {
-    property public androidx.xr.runtime.TrackingState Paused;
-    property public androidx.xr.runtime.TrackingState Stopped;
-    property public androidx.xr.runtime.TrackingState Tracking;
+    property public androidx.xr.runtime.TrackingState PAUSED;
+    property public androidx.xr.runtime.TrackingState STOPPED;
+    property public androidx.xr.runtime.TrackingState TRACKING;
   }
 
 }

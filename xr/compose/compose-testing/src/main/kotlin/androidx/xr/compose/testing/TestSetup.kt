@@ -87,7 +87,7 @@ public fun TestSetup(
                         scene.spatialEnvironment.requestHomeSpaceMode()
                     }
                     resume()
-                    configure(Config(headTracking = HeadTrackingMode.Enabled))
+                    configure(Config(headTracking = HeadTrackingMode.ENABLED))
                 }
             } else {
                 null

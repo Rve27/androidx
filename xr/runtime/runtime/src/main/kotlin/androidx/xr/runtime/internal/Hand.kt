@@ -42,7 +42,7 @@ public interface Hand {
             trackingState: TrackingState,
             handJointsBuffer: FloatBuffer,
         ): Map<HandJointType, Pose> {
-            if (trackingState != TrackingState.Tracking) {
+            if (trackingState != TrackingState.TRACKING) {
                 return emptyMap()
             }
             val buffer = handJointsBuffer.duplicate()

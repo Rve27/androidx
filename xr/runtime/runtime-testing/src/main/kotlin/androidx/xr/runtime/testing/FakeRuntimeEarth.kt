@@ -26,7 +26,7 @@ import androidx.xr.runtime.math.Quaternion
 
 /** Test-only implementation of [RuntimeEarth]. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakeRuntimeEarth(override var state: RuntimeEarth.State = RuntimeEarth.State.Stopped) :
+public class FakeRuntimeEarth(override var state: RuntimeEarth.State = RuntimeEarth.State.STOPPED) :
     RuntimeEarth {
 
     /**

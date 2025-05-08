@@ -48,7 +48,7 @@ internal constructor(
          */
         @JvmStatic
         public fun subscribe(session: Session): StateFlow<Collection<Plane>> {
-            check(session.config.planeTracking != PlaneTrackingMode.Disabled) {
+            check(session.config.planeTracking != PlaneTrackingMode.DISABLED) {
                 "Config.PlaneTrackingMode is set to Disabled."
             }
 
@@ -113,21 +113,21 @@ internal constructor(
     public class Type private constructor(private val value: Int) {
         public companion object {
             /** A horizontal plane facing upward (e.g. floor or tabletop). */
-            @JvmField public val HorizontalUpwardFacing: Type = Type(0)
+            @JvmField public val HORIZONTAL_UPWARD_FACING: Type = Type(0)
 
             /** A horizontal plane facing downward (e.g. a ceiling). */
-            @JvmField public val HorizontalDownwardFacing: Type = Type(1)
+            @JvmField public val HORIZONTAL_DOWNWARD_FACING: Type = Type(1)
 
             /** A vertical plane (e.g. a wall). */
-            @JvmField public val Vertical: Type = Type(2)
+            @JvmField public val VERTICAL: Type = Type(2)
         }
 
         public override fun toString(): String =
             when (this) {
-                HorizontalUpwardFacing -> "HorizontalUpwardFacing"
-                HorizontalDownwardFacing -> "HorizontalDownwardFacing"
-                Vertical -> "Vertical"
-                else -> "Unknown"
+                HORIZONTAL_UPWARD_FACING -> "HORIZONTAL_UPWARD_FACING"
+                HORIZONTAL_DOWNWARD_FACING -> "HORIZONTAL_DOWNWARD_FACING"
+                VERTICAL -> "VERTICAL"
+                else -> "UNKNOWN"
             }
     }
 
@@ -135,28 +135,28 @@ internal constructor(
     public class Label private constructor(private val value: Int) {
         public companion object {
             /** The plane represents an unknown type. */
-            @JvmField public val Unknown: Label = Label(0)
+            @JvmField public val UNKNOWN: Label = Label(0)
 
             /** The plane represents a wall. */
-            @JvmField public val Wall: Label = Label(1)
+            @JvmField public val WALL: Label = Label(1)
 
             /** The plane represents a floor. */
-            @JvmField public val Floor: Label = Label(2)
+            @JvmField public val FLOOR: Label = Label(2)
 
             /** The plane represents a ceiling. */
-            @JvmField public val Ceiling: Label = Label(3)
+            @JvmField public val CEILING: Label = Label(3)
 
             /** The plane represents a table. */
-            @JvmField public val Table: Label = Label(4)
+            @JvmField public val TABLE: Label = Label(4)
         }
 
         public override fun toString(): String =
             when (this) {
-                Wall -> "Wall"
-                Floor -> "Floor"
-                Ceiling -> "Ceiling"
-                Table -> "Table"
-                else -> "Unknown"
+                WALL -> "WALL"
+                FLOOR -> "FLOOR"
+                CEILING -> "CEILING"
+                TABLE -> "TABLE"
+                else -> "UNKNOWN"
             }
     }
 
@@ -186,7 +186,7 @@ internal constructor(
      */
     override fun createAnchor(pose: Pose): AnchorCreateResult {
         check(
-            xrResourceManager.lifecycleManager.config.planeTracking != PlaneTrackingMode.Disabled
+            xrResourceManager.lifecycleManager.config.planeTracking != PlaneTrackingMode.DISABLED
         ) {
             "Config.PlaneTrackingMode is set to Disabled."
         }
@@ -217,20 +217,20 @@ internal constructor(
 
     private fun typeFromRuntimeType(): Type =
         when (runtimePlane.type) {
-            RuntimePlane.Type.HorizontalUpwardFacing -> Type.HorizontalUpwardFacing
-            RuntimePlane.Type.HorizontalDownwardFacing -> Type.HorizontalDownwardFacing
-            RuntimePlane.Type.Vertical -> Type.Vertical
-            else -> Type.HorizontalUpwardFacing
+            RuntimePlane.Type.HORIZONTAL_UPWARD_FACING -> Type.HORIZONTAL_UPWARD_FACING
+            RuntimePlane.Type.HORIZONTAL_DOWNWARD_FACING -> Type.HORIZONTAL_DOWNWARD_FACING
+            RuntimePlane.Type.VERTICAL -> Type.VERTICAL
+            else -> Type.HORIZONTAL_UPWARD_FACING
         }
 
     private fun labelFromRuntimeType(): Label =
         when (runtimePlane.label) {
-            RuntimePlane.Label.Unknown -> Label.Unknown
-            RuntimePlane.Label.Wall -> Label.Wall
-            RuntimePlane.Label.Floor -> Label.Floor
-            RuntimePlane.Label.Ceiling -> Label.Ceiling
-            RuntimePlane.Label.Table -> Label.Table
-            else -> Label.Unknown
+            RuntimePlane.Label.UNKNOWN -> Label.UNKNOWN
+            RuntimePlane.Label.WALL -> Label.WALL
+            RuntimePlane.Label.FLOOR -> Label.FLOOR
+            RuntimePlane.Label.CEILING -> Label.CEILING
+            RuntimePlane.Label.TABLE -> Label.TABLE
+            else -> Label.UNKNOWN
         }
 
     private fun subsumedByFromRuntimePlane(): Plane? =

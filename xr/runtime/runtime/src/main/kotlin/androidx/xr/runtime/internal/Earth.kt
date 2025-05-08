@@ -27,8 +27,8 @@ public interface Earth {
 
     /**
      * Describes the state of the [Earth]. The State must be Running to use the Earth functionality.
-     * If the [Earth] has entered an error state other than [ErrorAppPreempted], Geospatial must be
-     * re-enabled to use the Earth again.
+     * If the [Earth] has entered an error state other than [ERROR_APP_PREEMPTED], Geospatial must
+     * be re-enabled to use the Earth again.
      */
     public class State private constructor(private val value: Int) {
         public companion object {
@@ -36,16 +36,16 @@ public interface Earth {
              * The [Earth] is enabled and has not encountered an error. Functions to create anchors
              * or convert poses may still fail if the Earth is not tracking.
              */
-            @JvmField public val Running: State = State(1)
+            @JvmField public val RUNNING: State = State(1)
 
             /** The [Earth] is stopped. The Geospatial config must be enabled to use the Earth. */
-            @JvmField public val Stopped: State = State(0)
+            @JvmField public val STOPPED: State = State(0)
 
             /**
              * Earth localization has encountered an internal error. The app should not attempt to
              * recover from this error. Please see the Android logs for additional information.
              */
-            @JvmField public val ErrorInternal: State = State(-1)
+            @JvmField public val ERROR_INTERNAL: State = State(-1)
 
             /**
              * The authorization provided by the application is not valid.
@@ -59,7 +59,7 @@ public interface Earth {
              *   isn't installed, is too old, or is malfunctioning for some reason (e.g. killed due
              *   to memory pressure). </ul>
              */
-            @JvmField public val ErrorNotAuthorized: State = State(-2)
+            @JvmField public val ERROR_NOT_AUTHORIZED: State = State(-2)
 
             /**
              * The application has exhausted the quota allotted to the given Google Cloud project.
@@ -67,19 +67,19 @@ public interface Earth {
              * [request additional quota](https://cloud.google.com/docs/quota#requesting_higher_quota)
              * for the ARCore API for their project from the Google Cloud Console.
              */
-            @JvmField public val ErrorResourceExhausted: State = State(-3)
+            @JvmField public val ERROR_RESOURCES_EXHAUSTED: State = State(-3)
 
             /**
              * The APK is older than the current supported version. This error is only possible on
              * an ARCore runtime.
              */
-            @JvmField public val ErrorApkVersionTooOld: State = State(-4)
+            @JvmField public val ERROR_APK_VERSION_TOO_OLD: State = State(-4)
 
             /**
              * The app is no longer in full-space mode and has been disconnected from the Geospatial
              * Session. This is only possible on an OpenXR runtime.
              */
-            @JvmField public val ErrorAppPreempted: State = State(-5)
+            @JvmField public val ERROR_APP_PREEMPTED: State = State(-5)
         }
     }
 
@@ -87,9 +87,9 @@ public interface Earth {
     public class Surface private constructor(private val value: Int) {
         public companion object {
             /** The terrain surface. */
-            @JvmField public val Terrain: Surface = Surface(0)
+            @JvmField public val TERRAIN: Surface = Surface(0)
             /** The rooftop surface. */
-            @JvmField public val Rooftop: Surface = Surface(1)
+            @JvmField public val ROOFTOP: Surface = Surface(1)
         }
     }
 
