@@ -977,7 +977,7 @@ private fun SwipeToRevealImpl(
                             LeftRevealing,
                             RightRevealing -> {
                                 if (secondaryAction == null && !hasPartiallyRevealedState) {
-                                    0f
+                                    null
                                 } else {
                                     val anchorSideMultiplier =
                                         if (value == RightRevealing) -1 else 1
