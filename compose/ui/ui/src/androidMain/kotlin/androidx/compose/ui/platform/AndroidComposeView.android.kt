@@ -1741,6 +1741,8 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         }
     }
 
+    private var _rootView: View? = null
+
     private fun updatePositionCacheAndDispatch() {
         var positionChanged = false
         getLocationOnScreen(tmpPositionArray)
@@ -1759,7 +1761,21 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             }
         }
         recalculateWindowPosition()
-        rectManager.updateOffsets(globalPosition, windowPosition.round(), viewToWindowMatrix)
+
+        val rootView: View =
+            _rootView
+                ?: rootView.let {
+                    _rootView = it
+                    it
+                }
+
+        rectManager.updateOffsets(
+            globalPosition,
+            windowPosition.round(),
+            viewToWindowMatrix,
+            rootView.width,
+            rootView.height,
+        )
         measureAndLayoutDelegate.dispatchOnPositionedCallbacks(forceDispatch = positionChanged)
         @OptIn(ExperimentalComposeUiApi::class)
         if (ComposeUiFlags.isRectTrackingEnabled) {

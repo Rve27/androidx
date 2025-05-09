@@ -2625,6 +2625,16 @@ package androidx.compose.ui.layout {
     property public abstract androidx.compose.ui.unit.LayoutDirection layoutDirection;
   }
 
+  public final class LayoutBoundsHolder {
+    ctor public LayoutBoundsHolder();
+    method @androidx.compose.runtime.annotation.FrequentlyChangingValue public androidx.compose.ui.spatial.RelativeLayoutBounds? getBounds();
+    property @androidx.compose.runtime.annotation.FrequentlyChangingValue public androidx.compose.ui.spatial.RelativeLayoutBounds? bounds;
+  }
+
+  public final class LayoutBoundsHolderKt {
+    method public static androidx.compose.ui.Modifier layoutBounds(androidx.compose.ui.Modifier, androidx.compose.ui.layout.LayoutBoundsHolder holder);
+  }
+
   @kotlin.jvm.JvmDefaultWithCompatibility public interface LayoutCoordinates {
     method public operator int get(androidx.compose.ui.layout.AlignmentLine alignmentLine);
     method public default boolean getIntroducesMotionFrameOfReference();
@@ -2802,6 +2812,10 @@ package androidx.compose.ui.layout {
     method @kotlin.PublishedApi internal static androidx.compose.ui.layout.MeasurePolicy createMeasurePolicy(androidx.compose.ui.layout.MultiContentMeasurePolicy measurePolicy);
   }
 
+  public final class OnFirstVisibleModifierKt {
+    method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier onFirstVisible(androidx.compose.ui.Modifier, optional @IntRange(from=0L) long minDurationMs, optional @FloatRange(from=0.0, to=1.0) float minFractionVisible, optional androidx.compose.ui.layout.LayoutBoundsHolder? viewportBounds, kotlin.jvm.functions.Function0<kotlin.Unit> callback);
+  }
+
   public final class OnGlobalLayoutListenerKt {
     method public static androidx.compose.ui.node.DelegatableNode.RegistrationHandle registerOnGlobalLayoutListener(androidx.compose.ui.node.DelegatableNode, long throttleMillis, long debounceMillis, kotlin.jvm.functions.Function1<? super androidx.compose.ui.spatial.RelativeLayoutBounds,kotlin.Unit> callback);
   }
@@ -2833,6 +2847,10 @@ package androidx.compose.ui.layout {
 
   public final class OnRemeasuredModifierKt {
     method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier onSizeChanged(androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super androidx.compose.ui.unit.IntSize,kotlin.Unit> onSizeChanged);
+  }
+
+  public final class OnVisibilityChangedModifierKt {
+    method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier onVisibilityChanged(androidx.compose.ui.Modifier, optional @IntRange(from=0L) long minDurationMs, optional @FloatRange(from=0.0, to=1.0) float minFractionVisible, optional androidx.compose.ui.layout.LayoutBoundsHolder? viewportBounds, kotlin.jvm.functions.Function1<? super java.lang.Boolean,kotlin.Unit> callback);
   }
 
   @kotlin.jvm.JvmDefaultWithCompatibility public interface ParentDataModifier extends androidx.compose.ui.Modifier.Element {
@@ -4383,6 +4401,10 @@ package androidx.compose.ui.spatial {
 
   public final class RelativeLayoutBounds {
     method public java.util.List<androidx.compose.ui.unit.IntRect> calculateOcclusions();
+    method public float fractionVisibleIn(androidx.compose.ui.spatial.RelativeLayoutBounds viewport);
+    method public float fractionVisibleInRect(int left, int top, int right, int bottom);
+    method public float fractionVisibleInWindow();
+    method public float fractionVisibleInWindowWithInsets(long topLeftInset, long bottomRightInset);
     method public androidx.compose.ui.unit.IntRect getBoundsInRoot();
     method public androidx.compose.ui.unit.IntRect getBoundsInScreen();
     method public androidx.compose.ui.unit.IntRect getBoundsInWindow();
