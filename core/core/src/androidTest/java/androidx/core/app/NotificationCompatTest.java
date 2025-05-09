@@ -649,7 +649,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         RemoteViews standardView = builder.createContentView();
         assertNotNull(standardView);
         String layoutName = mContext.getResources().getResourceName(standardView.getLayoutId());
-        assertThat(layoutName).startsWith("android:layout/notification_template_");
+        assertThat(layoutName).startsWith("android:layout/notification_");
 
         // If we set a custom view, it should be returned if there's no style
         RemoteViews customRemoteViews = new RemoteViews(mContext.getPackageName(),
@@ -674,7 +674,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertNotSame(customRemoteViews, decoratedCustomView);
         layoutName = mContext.getResources().getResourceName(decoratedCustomView.getLayoutId());
         if (Build.VERSION.SDK_INT >= 24) {
-            assertThat(layoutName).startsWith("android:layout/notification_template_");
+            assertThat(layoutName).startsWith("android:layout/notification_");
         } else {
             // AndroidX is providing a decorated style not available on these platforms natively
             // NOTE: this is the 'big' one because androidx has only one template, but hides
@@ -700,7 +700,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         RemoteViews standardView = builder.createBigContentView();
         assertNotNull(standardView);
         String layoutName = mContext.getResources().getResourceName(standardView.getLayoutId());
-        assertThat(layoutName).startsWith("android:layout/notification_template_");
+        assertThat(layoutName).startsWith("android:layout/notification_");
 
         // If we set a custom view, it should be returned if there's no style
         RemoteViews customRemoteViews = new RemoteViews(mContext.getPackageName(),
@@ -725,7 +725,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertNotSame(customRemoteViews, decoratedCustomView);
         layoutName = mContext.getResources().getResourceName(decoratedCustomView.getLayoutId());
         if (Build.VERSION.SDK_INT >= 24) {
-            assertThat(layoutName).startsWith("android:layout/notification_template_");
+            assertThat(layoutName).startsWith("android:layout/notification_");
         } else {
             // AndroidX is providing a decorated style not available on these platforms natively
             String packageName = mContext.getPackageName();
@@ -754,7 +754,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         RemoteViews standardView = builder.createHeadsUpContentView();
         assertNotNull(standardView);
         String layoutName = mContext.getResources().getResourceName(standardView.getLayoutId());
-        assertThat(layoutName).startsWith("android:layout/notification_template_");
+        assertThat(layoutName).startsWith("android:layout/notification_");
 
         // If we set a custom view, it should be returned if there's no style
         RemoteViews customRemoteViews = new RemoteViews(mContext.getPackageName(),
@@ -779,7 +779,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertNotSame(customRemoteViews, decoratedCustomView);
         layoutName = mContext.getResources().getResourceName(decoratedCustomView.getLayoutId());
         if (Build.VERSION.SDK_INT >= 24) {
-            assertThat(layoutName).startsWith("android:layout/notification_template_");
+            assertThat(layoutName).startsWith("android:layout/notification_");
         } else {
             // AndroidX is providing a decorated style not available on these platforms natively
             String packageName = mContext.getPackageName();
