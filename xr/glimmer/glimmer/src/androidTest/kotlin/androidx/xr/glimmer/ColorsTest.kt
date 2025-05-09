@@ -38,7 +38,7 @@ class ColorsTest {
     @Test
     fun themeUpdatesWithNewColors() {
         val colors = Colors()
-        val customColors = Colors(primary = Color.Magenta, onPrimary = Color.White)
+        val customColors = Colors(primary = Color.Magenta)
         val colorsState = mutableStateOf(colors)
         var currentColors: Colors? = null
         rule.setContent { GlimmerTheme(colorsState.value) { currentColors = GlimmerTheme.colors } }
@@ -57,15 +57,15 @@ class ColorsTest {
         val colors = Colors()
 
         with(colors) {
-            assertThat(calculateContrastRatio(onPrimary, primary)).isAtLeast(expectedContrastValue)
-            assertThat(calculateContrastRatio(onSecondary, secondary))
+            assertThat(calculateContrastRatio(Color.Black, primary))
                 .isAtLeast(expectedContrastValue)
-            assertThat(calculateContrastRatio(onPositive, positive))
+            assertThat(calculateContrastRatio(Color.Black, secondary))
                 .isAtLeast(expectedContrastValue)
-            assertThat(calculateContrastRatio(onNegative, negative))
+            assertThat(calculateContrastRatio(Color.Black, positive))
                 .isAtLeast(expectedContrastValue)
-            assertThat(calculateContrastRatio(onSurface, surface)).isAtLeast(expectedContrastValue)
-            assertThat(calculateContrastRatio(onSurface, surfaceLow))
+            assertThat(calculateContrastRatio(Color.Black, negative))
+                .isAtLeast(expectedContrastValue)
+            assertThat(calculateContrastRatio(Color.White, surface))
                 .isAtLeast(expectedContrastValue)
         }
     }
