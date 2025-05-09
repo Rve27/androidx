@@ -332,7 +332,7 @@ package androidx.xr.runtime.testing {
     ctor public FakeRuntime(androidx.xr.runtime.testing.FakeLifecycleManager lifecycleManager, androidx.xr.runtime.testing.FakePerceptionManager perceptionManager);
     method public androidx.xr.runtime.testing.FakeLifecycleManager component1();
     method public androidx.xr.runtime.testing.FakePerceptionManager component2();
-    method public androidx.xr.runtime.testing.FakeRuntime copy(androidx.xr.runtime.testing.FakeLifecycleManager lifecycleManager, androidx.xr.runtime.testing.FakePerceptionManager perceptionManager);
+    method public androidx.xr.runtime.testing.FakeRuntime copy(optional androidx.xr.runtime.testing.FakeLifecycleManager lifecycleManager, optional androidx.xr.runtime.testing.FakePerceptionManager perceptionManager);
     method public androidx.xr.runtime.testing.FakeLifecycleManager getLifecycleManager();
     method public androidx.xr.runtime.testing.FakePerceptionManager getPerceptionManager();
     property public androidx.xr.runtime.testing.FakeLifecycleManager lifecycleManager;

@@ -177,7 +177,7 @@ package androidx.xr.scenecore {
     method public float component1();
     method public float component2();
     method public float component3();
-    method public androidx.xr.scenecore.Dimensions copy(float width, float height, float depth);
+    method public androidx.xr.scenecore.Dimensions copy(optional float width, optional float height, optional float depth);
     method public float getDepth();
     method public float getHeight();
     method public float getWidth();
@@ -461,7 +461,7 @@ package androidx.xr.scenecore {
     ctor public PixelDimensions(optional int width, optional int height);
     method public int component1();
     method public int component2();
-    method public androidx.xr.scenecore.PixelDimensions copy(int width, int height);
+    method public androidx.xr.scenecore.PixelDimensions copy(optional int width, optional int height);
     method public int getHeight();
     method public int getWidth();
     property public int height;

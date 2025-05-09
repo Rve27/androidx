@@ -499,7 +499,7 @@ package androidx.compose.material {
   @Deprecated @SuppressCompatibility @androidx.compose.material.ExperimentalMaterialApi @androidx.compose.runtime.Immutable public final class FractionalThreshold implements androidx.compose.material.ThresholdConfig {
     ctor @Deprecated public FractionalThreshold(float fraction);
     method @Deprecated public float computeThreshold(androidx.compose.ui.unit.Density, float fromValue, float toValue);
-    method @Deprecated public androidx.compose.material.FractionalThreshold copy(float fraction);
+    method @Deprecated public androidx.compose.material.FractionalThreshold copy(optional float fraction);
   }
 
   public final class IconButtonKt {

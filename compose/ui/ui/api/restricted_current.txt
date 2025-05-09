@@ -74,7 +74,7 @@ package androidx.compose.ui {
     method public long align(long size, long space, androidx.compose.ui.unit.LayoutDirection layoutDirection);
     method public float component1();
     method public float component2();
-    method public androidx.compose.ui.BiasAbsoluteAlignment copy(float horizontalBias, float verticalBias);
+    method public androidx.compose.ui.BiasAbsoluteAlignment copy(optional float horizontalBias, optional float verticalBias);
     method public float getHorizontalBias();
     method public float getVerticalBias();
     property public float horizontalBias;
@@ -85,7 +85,7 @@ package androidx.compose.ui {
     ctor public BiasAbsoluteAlignment.Horizontal(float bias);
     method public int align(int size, int space, androidx.compose.ui.unit.LayoutDirection layoutDirection);
     method public float component1();
-    method public androidx.compose.ui.BiasAbsoluteAlignment.Horizontal copy(float bias);
+    method public androidx.compose.ui.BiasAbsoluteAlignment.Horizontal copy(optional float bias);
     method public float getBias();
     method public androidx.compose.ui.Alignment plus(androidx.compose.ui.Alignment.Vertical other);
     property public float bias;
@@ -96,7 +96,7 @@ package androidx.compose.ui {
     method public long align(long size, long space, androidx.compose.ui.unit.LayoutDirection layoutDirection);
     method public float component1();
     method public float component2();
-    method public androidx.compose.ui.BiasAlignment copy(float horizontalBias, float verticalBias);
+    method public androidx.compose.ui.BiasAlignment copy(optional float horizontalBias, optional float verticalBias);
     method public float getHorizontalBias();
     method public float getVerticalBias();
     property public float horizontalBias;
@@ -107,7 +107,7 @@ package androidx.compose.ui {
     ctor public BiasAlignment.Horizontal(float bias);
     method public int align(int size, int space, androidx.compose.ui.unit.LayoutDirection layoutDirection);
     method public float component1();
-    method public androidx.compose.ui.BiasAlignment.Horizontal copy(float bias);
+    method public androidx.compose.ui.BiasAlignment.Horizontal copy(optional float bias);
     method public float getBias();
     method public androidx.compose.ui.Alignment plus(androidx.compose.ui.Alignment.Vertical other);
     property public float bias;
@@ -117,7 +117,7 @@ package androidx.compose.ui {
     ctor public BiasAlignment.Vertical(float bias);
     method public int align(int size, int space);
     method public float component1();
-    method public androidx.compose.ui.BiasAlignment.Vertical copy(float bias);
+    method public androidx.compose.ui.BiasAlignment.Vertical copy(optional float bias);
     method public float getBias();
     method public androidx.compose.ui.Alignment plus(androidx.compose.ui.Alignment.Horizontal other);
     property public float bias;
@@ -2532,7 +2532,7 @@ package androidx.compose.ui.layout {
     ctor public FixedScale(float value);
     method public float component1();
     method public long computeScaleFactor(long srcSize, long dstSize);
-    method public androidx.compose.ui.layout.FixedScale copy(float value);
+    method public androidx.compose.ui.layout.FixedScale copy(optional float value);
     method public float getValue();
     property public float value;
   }
@@ -3721,7 +3721,7 @@ package androidx.compose.ui.platform {
     ctor public ValueElement(String name, Object? value);
     method public String component1();
     method public Object? component2();
-    method public androidx.compose.ui.platform.ValueElement copy(String name, Object? value);
+    method public androidx.compose.ui.platform.ValueElement copy(optional String name, optional Object? value);
     method public String getName();
     method public Object? getValue();
     property public String name;

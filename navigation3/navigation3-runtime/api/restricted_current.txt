@@ -10,7 +10,7 @@ package androidx.navigation3.runtime {
     method public kotlin.reflect.KClass<T> component1();
     method public java.util.Map<java.lang.String,java.lang.Object> component2();
     method public kotlin.jvm.functions.Function1<T,kotlin.Unit> component3();
-    method public androidx.navigation3.runtime.EntryClassProvider<T> copy(kotlin.reflect.KClass<T> clazz, java.util.Map<java.lang.String,?> metadata, kotlin.jvm.functions.Function1<? super T,kotlin.Unit> content);
+    method public androidx.navigation3.runtime.EntryClassProvider<T> copy(optional kotlin.reflect.KClass<T> clazz, optional java.util.Map<java.lang.String,?> metadata, optional kotlin.jvm.functions.Function1<? super T,kotlin.Unit> content);
     method public kotlin.reflect.KClass<T> getClazz();
     method public kotlin.jvm.functions.Function1<T,kotlin.Unit> getContent();
     method public java.util.Map<java.lang.String,java.lang.Object> getMetadata();
@@ -27,7 +27,7 @@ package androidx.navigation3.runtime {
     method public T component1();
     method public java.util.Map<java.lang.String,java.lang.Object> component2();
     method public kotlin.jvm.functions.Function1<T,kotlin.Unit> component3();
-    method public androidx.navigation3.runtime.EntryProvider<T> copy(T key, java.util.Map<java.lang.String,?> metadata, kotlin.jvm.functions.Function1<? super T,kotlin.Unit> content);
+    method public androidx.navigation3.runtime.EntryProvider<T> copy(optional T key, optional java.util.Map<java.lang.String,?> metadata, optional kotlin.jvm.functions.Function1<? super T,kotlin.Unit> content);
     method public kotlin.jvm.functions.Function1<T,kotlin.Unit> getContent();
     method public T getKey();
     method public java.util.Map<java.lang.String,java.lang.Object> getMetadata();

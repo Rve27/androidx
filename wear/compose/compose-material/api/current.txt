@@ -211,7 +211,7 @@ package androidx.wear.compose.material {
   @SuppressCompatibility @androidx.compose.runtime.Immutable @androidx.wear.compose.material.ExperimentalWearMaterialApi public final class FractionalThreshold implements androidx.wear.compose.material.ThresholdConfig {
     ctor public FractionalThreshold(@FloatRange(from=0.0, to=1.0) float fraction);
     method public float computeThreshold(androidx.compose.ui.unit.Density, float fromValue, float toValue);
-    method public androidx.wear.compose.material.FractionalThreshold copy(@FloatRange(from=0.0, to=1.0) float fraction);
+    method public androidx.wear.compose.material.FractionalThreshold copy(optional @FloatRange(from=0.0, to=1.0) float fraction);
   }
 
   public final class HorizontalPageIndicatorKt {

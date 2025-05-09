@@ -6,7 +6,7 @@ package androidx.xr.runtime.openxr {
     ctor public AnchorState(optional androidx.xr.runtime.TrackingState trackingState, optional androidx.xr.runtime.math.Pose? pose);
     method public androidx.xr.runtime.TrackingState component1();
     method public androidx.xr.runtime.math.Pose? component2();
-    method public androidx.xr.runtime.openxr.AnchorState copy(androidx.xr.runtime.TrackingState trackingState, androidx.xr.runtime.math.Pose? pose);
+    method public androidx.xr.runtime.openxr.AnchorState copy(optional androidx.xr.runtime.TrackingState trackingState, optional androidx.xr.runtime.math.Pose? pose);
     method public androidx.xr.runtime.math.Pose? getPose();
     method public androidx.xr.runtime.TrackingState getTrackingState();
     property public androidx.xr.runtime.math.Pose? pose;
@@ -29,7 +29,7 @@ package androidx.xr.runtime.openxr {
     ctor public HitData(androidx.xr.runtime.math.Pose pose, long id);
     method public androidx.xr.runtime.math.Pose component1();
     method public long component2();
-    method public androidx.xr.runtime.openxr.HitData copy(androidx.xr.runtime.math.Pose pose, long id);
+    method public androidx.xr.runtime.openxr.HitData copy(optional androidx.xr.runtime.math.Pose pose, optional long id);
     method public long getId();
     method public androidx.xr.runtime.math.Pose getPose();
     property public long id;
