@@ -130,37 +130,10 @@
     <issue
         id="EagerGradleConfiguration"
         message="Use register instead of create"
-        errorLine1="            project.configurations.create(&quot;androidIntermediates&quot;) {"
-        errorLine2="                                   ~~~~~~">
-        <location
-            file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/AndroidXImplPlugin.kt"/>
-    </issue>
-
-    <issue
-        id="EagerGradleConfiguration"
-        message="Use register instead of create"
         errorLine1="            val constraintConfiguration = project.configurations.create(&quot;groupConstraints&quot;)"
         errorLine2="                                                                 ~~~~~~">
         <location
             file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/AndroidXImplPlugin.kt"/>
-    </issue>
-
-    <issue
-        id="EagerGradleConfiguration"
-        message="Use register instead of create"
-        errorLine1="            configurations.create(&quot;repackage&quot;) { config ->"
-        errorLine2="                           ~~~~~~">
-        <location
-            file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/AndroidXRepackageImplPlugin.kt"/>
-    </issue>
-
-    <issue
-        id="EagerGradleConfiguration"
-        message="Use register instead of create"
-        errorLine1="        configurations.create(&quot;repackageClasspath&quot;) { config ->"
-        errorLine2="                       ~~~~~~">
-        <location
-            file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/AndroidXRepackageImplPlugin.kt"/>
     </issue>
 
     <issue
@@ -184,15 +157,6 @@
     <issue
         id="EagerGradleConfiguration"
         message="Use register instead of create"
-        errorLine1="        project.configurations.create(&quot;${configurationName}AarAsJar&quot;) {"
-        errorLine2="                               ~~~~~~">
-        <location
-            file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/transform/ConfigureAarAsJar.kt"/>
-    </issue>
-
-    <issue
-        id="EagerGradleConfiguration"
-        message="Use register instead of create"
         errorLine1="        ?: configurations.create(ERROR_PRONE_CONFIGURATION).apply {"
         errorLine2="                          ~~~~~~">
         <location
@@ -206,15 +170,6 @@
         errorLine2="                                                   ~~~">
         <location
             file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/ErrorProneConfiguration.kt"/>
-    </issue>
-
-    <issue
-        id="EagerGradleConfiguration"
-        message="Use register instead of create"
-        errorLine1="    configurations.create(&quot;libraryVersionMetadata&quot;) { configuration ->"
-        errorLine2="                   ~~~~~~">
-        <location
-            file="${:buildSrc-tests*main*MAIN*sourceProvider*0*javaDir*4}/androidx/build/metalava/GenerateApiLevels.kt"/>
     </issue>
 
     <issue

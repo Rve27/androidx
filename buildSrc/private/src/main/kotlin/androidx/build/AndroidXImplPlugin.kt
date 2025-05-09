@@ -747,7 +747,7 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
             project.addToBuildOnServer("assembleAndroidMain")
             project.addToBuildOnServer("lint")
             // Created to be consumed by docs-tip-of-tree
-            project.configurations.create("androidIntermediates") {
+            project.configurations.register("androidIntermediates") {
                 it.isVisible = false
                 it.isCanBeResolved = false
                 it.attributes.attribute(

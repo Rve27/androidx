@@ -89,7 +89,7 @@ internal val Project.versionMetadataUsage: Usage
 internal fun Project.registerVersionMetadataComponent(
     generateApiTask: TaskProvider<GenerateApiTask>
 ) {
-    configurations.create("libraryVersionMetadata") { configuration ->
+    configurations.register("libraryVersionMetadata") { configuration ->
         configuration.isVisible = false
         configuration.isCanBeResolved = false
 
