@@ -669,12 +669,22 @@ abstract class BaseConnectionPoolTest {
         check(pool is ConnectionPoolImpl)
         pool.timeout = 100.milliseconds
 
-        val barrier = CompletableDeferred<Unit>()
-        val busyJob = launch(multiThreadContext) { pool.useReaderConnection { barrier.await() } }
+        val firstBarrier = CompletableDeferred<Unit>()
+        val secondBarrier = CompletableDeferred<Unit>()
+        val busyJob =
+            launch(multiThreadContext) {
+                pool.useReaderConnection {
+                    firstBarrier.complete(Unit)
+                    secondBarrier.await()
+                }
+            }
 
         val timeoutJob =
             launch(multiThreadContext) {
-                assertThrows<SQLiteException> { pool.useReaderConnection {} }
+                assertThrows<SQLiteException> {
+                        firstBarrier.await()
+                        pool.useReaderConnection {}
+                    }
                     .hasMessageThat()
                     .contains(
                         "Error code: 5, message: Timed out attempting to acquire a reader connection"
@@ -682,7 +692,7 @@ abstract class BaseConnectionPoolTest {
             }
 
         timeoutJob.join()
-        barrier.complete(Unit)
+        secondBarrier.complete(Unit)
         busyJob.join()
 
         pool.useReaderConnection {
