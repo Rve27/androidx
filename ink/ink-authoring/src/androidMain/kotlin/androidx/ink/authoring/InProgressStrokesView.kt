@@ -45,7 +45,7 @@ import androidx.ink.authoring.latency.LatencyData
 import androidx.ink.authoring.latency.LatencyDataCallback
 import androidx.ink.brush.Brush
 import androidx.ink.brush.ExperimentalInkCustomBrushApi
-import androidx.ink.rendering.android.TextureBitmapStore
+import androidx.ink.brush.TextureBitmapStore
 import androidx.ink.rendering.android.canvas.CanvasStrokeRenderer
 import androidx.ink.strokes.ImmutableStrokeInputBatch
 import androidx.ink.strokes.Stroke
@@ -672,6 +672,8 @@ constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr
      * resulting [Stroke] object will be passed to the [InProgressStrokesFinishedListener] instances
      * registered with this [InProgressStrokesView] using [addFinishedStrokesListener].
      *
+     * Does nothing if a stroke with the given [strokeId] is not in progress.
+     *
      * @param event The last [MotionEvent] as part of a stroke's input data, typically one with
      *   [MotionEvent.getActionMasked] of [MotionEvent.ACTION_UP] or
      *   [MotionEvent.ACTION_POINTER_UP], but can also be other actions.
@@ -741,6 +743,8 @@ constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr
      *    start inking when the first pointer goes down, but when the second pointer goes down it
      *    may want to cancel the stroke from the first pointer rather than leave the small ink marks
      *    on the screen.
+     *
+     * Does nothing if a stroke with the given [strokeId] is not in progress.
      *
      * @param strokeId The [InProgressStrokeId] of the stroke to be canceled.
      * @param event The [MotionEvent] that led to this cancellation, if applicable.
@@ -863,6 +867,7 @@ constructor(context: Context, attrs: AttributeSet? = null, @AttrRes defStyleAttr
      * either a visual gap where the stroke is not drawn during a frame, or a double draw where the
      * stroke is drawn twice and translucent strokes appear more opaque than they should.
      */
+    @UiThread
     public fun removeFinishedStrokes(strokeIds: Set<InProgressStrokeId>) {
         for (id in strokeIds) finishedStrokes.remove(id)
         finishedStrokesView.removeStrokes(strokeIds)
