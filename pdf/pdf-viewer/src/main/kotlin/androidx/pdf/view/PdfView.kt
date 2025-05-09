@@ -129,12 +129,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             invalidate()
         }
 
+    public var isFormFillingEnabled: Boolean
+
     init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.PdfView)
         fastScrollVerticalThumbDrawable =
             typedArray.getDrawable(R.styleable.PdfView_fastScrollVerticalThumbDrawable)
         fastScrollPageIndicatorBackgroundDrawable =
             typedArray.getDrawable(R.styleable.PdfView_fastScrollPageIndicatorBackgroundDrawable)
+        isFormFillingEnabled =
+            typedArray.getBoolean(R.styleable.PdfView_isFormFillingEnabled, false)
         typedArray.recycle()
     }
 
