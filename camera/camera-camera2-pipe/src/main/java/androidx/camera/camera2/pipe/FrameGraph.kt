@@ -22,23 +22,56 @@ import kotlinx.coroutines.Deferred
 
 /** [FrameGraph] extends the capabilities of [CameraGraph] to provide stream controls. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface FrameGraph : BaseGraph {
-    public class Config
+public interface FrameGraph : BaseGraph, UnsafeWrapper {
+    public class Config(
+        public val cameraGraphConfig: CameraGraph.Config,
+    )
+
+    public class ConcurrentConfig(
+        public val cameraGraphConfigs: CameraGraph.ConcurrentConfig,
+        public val frameGraphConfigs: List<Config>
+    ) {
+        init {
+            val cameraGraphCount = cameraGraphConfigs.graphConfigs.size
+            val frameGraphCount = cameraGraphConfigs.graphConfigs.size
+
+            require(frameGraphCount == cameraGraphCount) {
+                "Invalid FrameGraph.ConcurrentConfig! Expected $cameraGraphCount configs, but " +
+                    "received $frameGraphCount FrameGraph.Config(s)."
+            }
+            for (frameGraphConfig in frameGraphConfigs) {
+                require(
+                    cameraGraphConfigs.graphConfigs.contains(frameGraphConfig.cameraGraphConfig)
+                ) {
+                    "Mismatched $frameGraphConfig! Config is not present within" +
+                        " ${cameraGraphConfigs.graphConfigs}"
+                }
+            }
+        }
+    }
 
     /** A [FrameBuffer] is a handle to a set of streams that are attached to a [FrameGraph]. */
     public interface FrameBuffer : AutoCloseable {
         public val streams: Set<StreamId>
 
         public val parameters: Map<Any, Any?>
+        public val capacity: Int
     }
 
     /**
-     * Attach a stream(s) and associated parameters. Closing the return value will detach the
-     * stream(s).
+     * Add the set of [streamIds] and [parameters] to the current repeating request, updating and
+     * submitting a new repeating repeating request as needed.
+     *
+     * Returns a buffer with [capacity] that will accumulate and cycle Frames that are produced by
+     * the FrameGraph that have the attached [streamIds] and [parameters] until closed.
+     *
+     * Closing the FrameBuffer will detach the streams and parameters, and the repeating request may
+     * be re-issued.
      */
     public fun captureWith(
         streamIds: Set<StreamId> = emptySet(),
-        parameters: Map<Any, Any?> = emptyMap()
+        parameters: Map<Any, Any?> = emptyMap(),
+        capacity: Int = 1
     ): FrameBuffer
 
     /**

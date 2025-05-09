@@ -115,7 +115,7 @@ class TestUseCaseCamera(
                 NoOpTemplateParamsOverride,
                 cameraMetadata,
             )
-        val cameraGraph = cameraPipe.create(cameraGraphConfig)
+        val cameraGraph = cameraPipe.createCameraGraph(cameraGraphConfig)
 
         useCaseCameraGraphConfig =
             UseCaseCameraConfig(

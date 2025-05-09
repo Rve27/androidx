@@ -108,8 +108,7 @@ class FrameGraphImplTest {
     private val cameraControllerProvider: () -> CameraControllerSimulator = { cameraController }
     private val streamGraph = StreamGraphImpl(metadata, graphConfig, cameraControllerProvider)
     private val imageSourceMap = ImageSourceMap(graphConfig, streamGraph, imageSources)
-    private val frameDistributor =
-        FrameDistributor(imageSourceMap.imageSources, frameCaptureQueue) {}
+    private val frameDistributor = FrameDistributor(imageSourceMap.imageSources, frameCaptureQueue)
     private val surfaceGraph =
         SurfaceGraph(streamGraph, cameraControllerProvider, cameraSurfaceManager, emptyMap())
     private val audioRestriction = FakeAudioRestrictionController()
@@ -138,7 +137,7 @@ class FrameGraphImplTest {
 
     private val frameBuffers = FrameBuffers(cameraGraph, testScope)
     private val frameGraph: FrameGraph =
-        FrameGraphImpl(cameraGraphParameters, cameraGraph, cameraGraph.id, frameBuffers)
+        FrameGraphImpl(cameraGraph, frameDistributor, frameBuffers, testScope.backgroundScope)
 
     private val streamId1: StreamId = StreamId(1)
     private val streamId2: StreamId = StreamId(2)

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.camera.camera2.pipe.framegraph
+package androidx.camera.camera2.pipe.testing
 
 import androidx.camera.camera2.pipe.FrameGraph
-import dagger.Binds
-import dagger.Module
 
-@Module
-internal abstract class FrameGraphModule {
-    @Binds abstract fun bindFrameGraph(frameGraph: FrameGraphImpl): FrameGraph
-}
+public class FrameGraphSimulator(
+    private val realFrameGraph: FrameGraph,
+    private val cameraGraphSimulator: CameraGraphSimulator
+) : FrameGraph by realFrameGraph, AutoCloseable {}

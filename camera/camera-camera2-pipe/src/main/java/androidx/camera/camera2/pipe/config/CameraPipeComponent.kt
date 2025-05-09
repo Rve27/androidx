@@ -60,8 +60,8 @@ import javax.inject.Singleton
 @Component(
     modules =
         [
+            CameraPipeModule::class,
             CameraPipeConfigModule::class,
-            CameraPipeModules::class,
             Camera2Module::class,
         ]
 )
@@ -69,6 +69,8 @@ internal interface CameraPipeComponent {
     fun cameraPipeLifetime(): CameraPipeLifetime
 
     fun cameraGraphComponentBuilder(): CameraGraphComponent.Builder
+
+    fun frameGraphComponentBuilder(): FrameGraphComponent.Builder
 
     fun cameras(): CameraDevices
 
@@ -79,7 +81,14 @@ internal interface CameraPipeComponent {
     fun cameraAudioRestrictionController(): AudioRestrictionController
 }
 
-@Module(includes = [ThreadConfigModule::class], subcomponents = [CameraGraphComponent::class])
+@Module(
+    includes = [ThreadConfigModule::class],
+    subcomponents =
+        [
+            CameraGraphComponent::class,
+            FrameGraphComponent::class,
+        ]
+)
 internal class CameraPipeConfigModule(private val config: CameraPipe.Config) {
     @Provides fun provideCameraPipeConfig(): CameraPipe.Config = config
 
@@ -92,7 +101,7 @@ internal class CameraPipeConfigModule(private val config: CameraPipe.Config) {
 }
 
 @Module
-internal abstract class CameraPipeModules {
+internal abstract class CameraPipeModule {
     @Binds abstract fun bindCameras(impl: CameraDevicesImpl): CameraDevices
 
     @Binds abstract fun bindTimeSource(timeSource: SystemTimeSource): TimeSource

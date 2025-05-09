@@ -583,7 +583,7 @@ constructor(
             deferredUseCaseManagerConfig = useCaseManagerConfig
             return
         }
-        val cameraGraph = cameraPipe.create(useCaseManagerConfig.cameraGraphConfig)
+        val cameraGraph = cameraPipe.createCameraGraph(useCaseManagerConfig.cameraGraphConfig)
         beginComponentCreation(useCaseManagerConfig, cameraGraph)
     }
 
