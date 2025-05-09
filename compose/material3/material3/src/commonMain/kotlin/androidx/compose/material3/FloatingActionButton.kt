@@ -1253,7 +1253,8 @@ internal class FabVisibleNode(
             scaleAnimatable.animateTo(
                 targetValue = if (visible) 1f else 0f,
                 animationSpec =
-                    scaleAnimationSpec ?: currentValueOf(LocalMotionScheme).fastSpatialSpec()
+                    scaleAnimationSpec
+                        ?: currentValueOf(MaterialTheme.LocalMotionScheme).fastSpatialSpec()
             )
         }
 
@@ -1262,7 +1263,8 @@ internal class FabVisibleNode(
             alphaAnimatable.animateTo(
                 targetValue = if (visible) 1f else 0f,
                 animationSpec =
-                    alphaAnimationSpec ?: currentValueOf(LocalMotionScheme).fastEffectsSpec()
+                    alphaAnimationSpec
+                        ?: currentValueOf(MaterialTheme.LocalMotionScheme).fastEffectsSpec()
             )
         }
     }

@@ -2785,6 +2785,8 @@ final object androidx.compose.material3/LoadingIndicatorDefaults { // androidx.c
 }
 
 final object androidx.compose.material3/MaterialTheme { // androidx.compose.material3/MaterialTheme|null[0]
+    final val LocalMotionScheme // androidx.compose.material3/MaterialTheme.LocalMotionScheme|{}LocalMotionScheme[0]
+        final fun <get-LocalMotionScheme>(): androidx.compose.runtime/CompositionLocal<androidx.compose.material3/MotionScheme> // androidx.compose.material3/MaterialTheme.LocalMotionScheme.<get-LocalMotionScheme>|<get-LocalMotionScheme>(){}[0]
     final val colorScheme // androidx.compose.material3/MaterialTheme.colorScheme|{}colorScheme[0]
         final fun <get-colorScheme>(): androidx.compose.material3/ColorScheme // androidx.compose.material3/MaterialTheme.colorScheme.<get-colorScheme>|<get-colorScheme>(){}[0]
     final val motionScheme // androidx.compose.material3/MaterialTheme.motionScheme|{}motionScheme[0]
@@ -3458,8 +3460,6 @@ final val androidx.compose.material3/LocalMinimumInteractiveComponentEnforcement
     final fun <get-LocalMinimumInteractiveComponentEnforcement>(): androidx.compose.runtime/ProvidableCompositionLocal<kotlin/Boolean> // androidx.compose.material3/LocalMinimumInteractiveComponentEnforcement.<get-LocalMinimumInteractiveComponentEnforcement>|<get-LocalMinimumInteractiveComponentEnforcement>(){}[0]
 final val androidx.compose.material3/LocalMinimumInteractiveComponentSize // androidx.compose.material3/LocalMinimumInteractiveComponentSize|{}LocalMinimumInteractiveComponentSize[0]
     final fun <get-LocalMinimumInteractiveComponentSize>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.ui.unit/Dp> // androidx.compose.material3/LocalMinimumInteractiveComponentSize.<get-LocalMinimumInteractiveComponentSize>|<get-LocalMinimumInteractiveComponentSize>(){}[0]
-final val androidx.compose.material3/LocalMotionScheme // androidx.compose.material3/LocalMotionScheme|{}LocalMotionScheme[0]
-    final fun <get-LocalMotionScheme>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/MotionScheme> // androidx.compose.material3/LocalMotionScheme.<get-LocalMotionScheme>|<get-LocalMotionScheme>(){}[0]
 final val androidx.compose.material3/LocalNavigationBarOverride // androidx.compose.material3/LocalNavigationBarOverride|{}LocalNavigationBarOverride[0]
     final fun <get-LocalNavigationBarOverride>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/NavigationBarOverride> // androidx.compose.material3/LocalNavigationBarOverride.<get-LocalNavigationBarOverride>|<get-LocalNavigationBarOverride>(){}[0]
 final val androidx.compose.material3/LocalNavigationRailOverride // androidx.compose.material3/LocalNavigationRailOverride|{}LocalNavigationRailOverride[0]

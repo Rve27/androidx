@@ -18,7 +18,6 @@ package androidx.compose.material3
 
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.material3.tokens.MotionSchemeKeyTokens
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
@@ -63,17 +62,20 @@ class MotionSchemeTest {
     }
 
     @Test
-    fun appliedWithLocalComposition() {
-        lateinit var initialMotionScheme: MotionScheme
-        lateinit var appliedMotionScheme: MotionScheme
-        rule.setMaterialContent(lightColorScheme()) {
-            initialMotionScheme = MaterialTheme.motionScheme
-            CompositionLocalProvider(LocalMotionScheme provides MotionScheme.expressive()) {
-                appliedMotionScheme = MaterialTheme.motionScheme
+    fun readLocalMotionScheme() {
+        lateinit var mainMotionScheme: MotionScheme
+        lateinit var nestedMotionScheme: MotionScheme
+        rule.setContent {
+            MaterialTheme {
+                mainMotionScheme = MaterialTheme.LocalMotionScheme.current
+
+                MaterialTheme(motionScheme = MotionScheme.expressive()) {
+                    nestedMotionScheme = MaterialTheme.LocalMotionScheme.current
+                }
             }
         }
 
-        assertThat(initialMotionScheme).isEqualTo(MotionScheme.standard())
-        assertThat(appliedMotionScheme).isEqualTo(MotionScheme.expressive())
+        assertThat(mainMotionScheme).isEqualTo(MotionScheme.standard())
+        assertThat(nestedMotionScheme).isEqualTo(MotionScheme.expressive())
     }
 }

@@ -29,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.staticCompositionLocalOf
 
 /**
  * A motion scheme provides all the [FiniteAnimationSpec]s for a [MaterialTheme].
@@ -265,27 +264,6 @@ interface MotionScheme {
         }
     }
 }
-
-/**
- * A `CompositionLocal` that provides the current [MotionScheme] to Material 3 components.
- *
- * The motion scheme is typically supplied by [MaterialTheme.motionScheme]. It can be overridden for
- * specific UI subtrees using `CompositionLocalProvider`.
- *
- * To access the current motion scheme, use `LocalMotionScheme.current` or
- * [MaterialTheme.motionScheme].
- *
- * Example of overriding:
- * ```
- * CompositionLocalProvider(LocalMotionScheme provides MotionScheme.expressive()) {
- *     // MyComposable(...)
- * }
- * ```
- */
-@Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-@get:ExperimentalMaterial3ExpressiveApi
-@ExperimentalMaterial3ExpressiveApi
-val LocalMotionScheme = staticCompositionLocalOf { standard() }
 
 /**
  * Helper function for component motion tokens.
