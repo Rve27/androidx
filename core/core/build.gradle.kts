@@ -44,7 +44,7 @@ dependencies {
 
     androidTestImplementation("androidx.activity:activity:1.0.0")
     androidTestImplementation("androidx.appcompat:appcompat:1.1.0")
-    androidTestImplementation(project(":lifecycle:lifecycle-common"))
+    androidTestImplementation("androidx.lifecycle:lifecycle-common:2.9.0")
     androidTestImplementation("androidx.lifecycle:lifecycle-runtime-testing:2.6.2")
     androidTestImplementation(project(":internal-testutils-runtime"))
     androidTestImplementation(project(":internal-testutils-lifecycle"))
