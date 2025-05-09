@@ -101,9 +101,4 @@ public interface CameraFactory {
     default @NonNull StreamSpecsCalculator getStreamSpecsCalculator() {
         return StreamSpecsCalculator.NO_OP_STREAM_SPECS_CALCULATOR;
     }
-
-    /**
-     * Instructs the CameraFactory to shut down, releasing all its held resources like threads.
-     */
-    default void shutdown() {}
 }

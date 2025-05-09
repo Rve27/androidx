@@ -17,6 +17,7 @@
 package androidx.camera.camera2.pipe.integration.adapter
 
 import android.content.Context
+import androidx.annotation.GuardedBy
 import androidx.camera.camera2.pipe.CameraPipe
 import androidx.camera.camera2.pipe.core.Debug
 import androidx.camera.camera2.pipe.core.DurationNs
@@ -37,10 +38,14 @@ import androidx.camera.core.internal.StreamSpecsCalculator
  * instance per CameraX instance.
  */
 public class CameraFactoryProvider(
+    private val sharedCameraPipe: CameraPipe? = null,
     private val sharedAppContext: Context? = null,
     private val sharedThreadConfig: CameraThreadConfig? = null
 ) : CameraFactory.Provider {
     private val sharedInteropCallbacks = CameraInteropStateCallbackRepository()
+    private val lock = Any()
+
+    @GuardedBy("lock") private var cachedCameraPipe: Pair<Context, Lazy<CameraPipe>>? = null
 
     override fun newInstance(
         context: Context,
@@ -54,7 +59,7 @@ public class CameraFactoryProvider(
             if (cameraOpenRetryMaxTimeoutInMs != -1L) null
             else DurationNs(cameraOpenRetryMaxTimeoutInMs)
 
-        val lazyCameraPipe = lazy { createCameraPipe(context, openRetryMaxTimeout) }
+        val lazyCameraPipe = getOrCreateCameraPipe(context, openRetryMaxTimeout)
 
         return CameraFactoryAdapter(
             lazyCameraPipe,
@@ -64,6 +69,30 @@ public class CameraFactoryProvider(
             availableCamerasLimiter,
             streamSpecsCalculator
         )
+    }
+
+    private fun getOrCreateCameraPipe(
+        context: Context,
+        openRetryMaxTimeout: DurationNs?,
+    ): Lazy<CameraPipe> {
+        if (sharedCameraPipe != null) {
+            return lazyOf(sharedCameraPipe)
+        }
+
+        synchronized(lock) {
+            val existing = cachedCameraPipe
+            if (existing == null) {
+                val lazyCameraPipe = lazy { createCameraPipe(context, openRetryMaxTimeout) }
+                cachedCameraPipe = context to lazyCameraPipe
+                return lazyCameraPipe
+            } else {
+                check(context == existing.first) {
+                    "Failed to create CameraPipe, existing instance was created using " +
+                        "${existing.first}, but received $context."
+                }
+                return existing.second
+            }
+        }
     }
 
     private fun createCameraPipe(context: Context, openRetryMaxTimeout: DurationNs?): CameraPipe {
