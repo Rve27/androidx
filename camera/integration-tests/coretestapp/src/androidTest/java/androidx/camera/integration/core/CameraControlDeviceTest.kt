@@ -17,17 +17,32 @@
 package androidx.camera.integration.core
 
 import android.content.Context
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraCharacteristics.CONTROL_MAX_REGIONS_AE
+import android.hardware.camera2.CameraCharacteristics.CONTROL_MAX_REGIONS_AF
+import android.hardware.camera2.CameraCharacteristics.CONTROL_MAX_REGIONS_AWB
+import android.hardware.camera2.CameraMetadata.CONTROL_AE_MODE_ON
+import android.hardware.camera2.CameraMetadata.CONTROL_AE_MODE_ON_ALWAYS_FLASH
+import android.hardware.camera2.CameraMetadata.CONTROL_AE_MODE_ON_AUTO_FLASH
 import android.hardware.camera2.CameraMetadata.CONTROL_AE_MODE_ON_LOW_LIGHT_BOOST_BRIGHTNESS_PRIORITY
 import android.hardware.camera2.CameraMetadata.FLASH_MODE_OFF
+import android.hardware.camera2.CameraMetadata.FLASH_MODE_TORCH
+import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.CaptureResult
+import android.hardware.camera2.CaptureResult.CONTROL_AE_EXPOSURE_COMPENSATION
+import android.hardware.camera2.params.MeteringRectangle
 import android.os.Build
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.camera2.pipe.integration.CameraPipeConfig
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraXConfig
+import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageProxy
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory
+import androidx.camera.core.impl.CameraControlInternal
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
 import androidx.camera.core.internal.CameraUseCaseAdapter.CameraException
 import androidx.camera.integration.core.util.Camera2InteropUtil
@@ -37,6 +52,7 @@ import androidx.camera.testing.impl.CameraPipeConfigTestRule
 import androidx.camera.testing.impl.CameraUtil
 import androidx.camera.testing.impl.CameraUtil.PreTestCameraIdList
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
+import androidx.concurrent.futures.await
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
@@ -45,9 +61,7 @@ import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Assert
 import org.junit.Assume.assumeTrue
@@ -57,11 +71,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
-/**
- * Test if camera control functionality can run well in real devices. Autofocus may not work well in
- * devices because the camera might be faced down to the desktop and the auto-focus will never
- * finish on some devices. Thus we don't test AF related functions.
- */
+/** Test if camera control functionality can run well in real devices. */
 @LargeTest
 @RunWith(Parameterized::class)
 @SdkSuppress(minSdkVersion = 21)
@@ -106,14 +116,22 @@ class CameraControlDeviceTest(
                     CameraPipeConfig.defaultConfig()
                 )
             )
+
+        private val METERING_REGIONS_DEFAULT: Array<MeteringRectangle> =
+            arrayOf(MeteringRectangle(0, 0, 0, 0, 0))
     }
 
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val analyzer = ImageAnalysis.Analyzer { obj: ImageProxy -> obj.close() }
     private val lifecycleOwner = FakeLifecycleOwner().also { it.startAndResume() }
     private val captureCallback = Camera2InteropUtil.CaptureCallback()
+    private val cameraCharacteristics =
+        CameraUtil.getCameraCharacteristics(
+            CameraUtil.getCameraIdWithLensFacing(cameraSelector.lensFacing!!)!!
+        )!!
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var camera: Camera
+    private lateinit var cameraControl: CameraControlInternal
 
     @Before
     fun setUp() = runBlocking {
@@ -131,34 +149,123 @@ class CameraControlDeviceTest(
     }
 
     @Test
-    fun enableTorch_futureCompletes() {
+    fun setFlashModeAuto_aeModeSetAndResultUpdated() {
         assumeTrue(CameraUtil.hasFlashUnitWithLensFacing(cameraSelector.lensFacing!!))
-
         bindUseCases()
 
-        assertFutureCompletes(camera.cameraControl.enableTorch(true))
+        cameraControl.flashMode = ImageCapture.FLASH_MODE_AUTO
+
+        verifyCaptureResult(mapOf(CaptureResult.CONTROL_AE_MODE to CONTROL_AE_MODE_ON_AUTO_FLASH))
+        assertThat(cameraControl.flashMode).isEqualTo(ImageCapture.FLASH_MODE_AUTO)
     }
 
     @Test
-    fun rebindAndEnableTorch_futureCompletes() = runBlocking {
+    fun setFlashModeOff_aeModeSetAndResultUpdated() {
         assumeTrue(CameraUtil.hasFlashUnitWithLensFacing(cameraSelector.lensFacing!!))
-        val camera =
-            withContext(Dispatchers.Main) {
-                try {
-                    val useCase1 = ImageAnalysis.Builder().build()
-                    useCase1.setAnalyzer(CameraXExecutors.ioExecutor(), analyzer)
-                    cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, useCase1)
-                    cameraProvider.unbindAll()
+        bindUseCases()
 
-                    val useCase2 = ImageAnalysis.Builder().build()
-                    useCase2.setAnalyzer(CameraXExecutors.ioExecutor(), analyzer)
-                    cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, useCase2)
-                } catch (e: CameraException) {
-                    throw IllegalArgumentException(e)
-                }
+        cameraControl.flashMode = ImageCapture.FLASH_MODE_OFF
+
+        verifyCaptureResult(mapOf(CaptureResult.CONTROL_AE_MODE to CONTROL_AE_MODE_ON))
+        assertThat(cameraControl.flashMode).isEqualTo(ImageCapture.FLASH_MODE_OFF)
+    }
+
+    @Test
+    fun setFlashModeOn_aeModeSetAndResultUpdated() {
+        assumeTrue(CameraUtil.hasFlashUnitWithLensFacing(cameraSelector.lensFacing!!))
+        bindUseCases()
+
+        cameraControl.flashMode = ImageCapture.FLASH_MODE_ON
+
+        verifyCaptureResult(mapOf(CaptureResult.CONTROL_AE_MODE to CONTROL_AE_MODE_ON_ALWAYS_FLASH))
+        assertThat(cameraControl.flashMode).isEqualTo(ImageCapture.FLASH_MODE_ON)
+    }
+
+    @Test
+    fun startFocusAndMetering_3ARegionsUpdated() = runBlocking {
+        assumeTrue(is3ASupported())
+        val factory = SurfaceOrientedMeteringPointFactory(1.0f, 1.0f)
+        val action = FocusMeteringAction.Builder(factory.createPoint(0f, 0f)).build()
+        bindUseCases()
+
+        cameraControl.startFocusAndMetering(action).await()
+
+        val expectedAfCount =
+            cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AF).coerceAtMost(1)
+        val expectedAeCount =
+            cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AE).coerceAtMost(1)
+        val expectedAwbCount =
+            cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AWB).coerceAtMost(1)
+        // Check capture request instead of capture result because the focus and metering may not
+        // converge depending on the environment.
+        captureCallback.waitFor(numOfCaptures = 60) { captureRequests, _ ->
+            {
+                val captureRequest = captureRequests.last()
+                assertThat(
+                        captureRequest.get(CaptureRequest.CONTROL_AF_REGIONS)!!.weightedRegionCount
+                    )
+                    .isEqualTo(expectedAfCount)
+                assertThat(
+                        captureRequest.get(CaptureRequest.CONTROL_AE_REGIONS)!!.weightedRegionCount
+                    )
+                    .isEqualTo(expectedAeCount)
+                assertThat(
+                        captureRequest.get(CaptureRequest.CONTROL_AWB_REGIONS)!!.weightedRegionCount
+                    )
+                    .isEqualTo(expectedAwbCount)
             }
-        val result = camera.cameraControl.enableTorch(true)
-        assertFutureCompletes(result)
+        }
+    }
+
+    @Test
+    fun cancelFocusAndMetering_3ARegionsReset() = runBlocking {
+        assumeTrue(is3ASupported())
+        val factory = SurfaceOrientedMeteringPointFactory(1.0f, 1.0f)
+        val action = FocusMeteringAction.Builder(factory.createPoint(0f, 0f)).build()
+        bindUseCases()
+
+        cameraControl.startFocusAndMetering(action).await()
+        cameraControl.cancelFocusAndMetering().await()
+        // Check capture request instead of capture result because the focus and metering may not
+        // converge depending on the environment.
+        captureCallback.waitFor(numOfCaptures = 60) { captureRequests, _ ->
+            {
+                val captureRequest = captureRequests.last()
+                val afRegions = captureRequest[CaptureRequest.CONTROL_AF_REGIONS] ?: emptyArray()
+                assertThat(afRegions.isEmpty() || afRegions.contentEquals(METERING_REGIONS_DEFAULT))
+                    .isTrue()
+                val aeRegions = captureRequest[CaptureRequest.CONTROL_AE_REGIONS] ?: emptyArray()
+                assertThat(aeRegions.isEmpty() || aeRegions.contentEquals(METERING_REGIONS_DEFAULT))
+                    .isTrue()
+                val awbRegions = captureRequest[CaptureRequest.CONTROL_AWB_REGIONS] ?: emptyArray()
+                assertThat(
+                        awbRegions.isEmpty() || awbRegions.contentEquals(METERING_REGIONS_DEFAULT)
+                    )
+                    .isTrue()
+            }
+        }
+    }
+
+    @Test
+    fun setExposureCompensation_resultUpdated() {
+        val exposureState = cameraProvider.getCameraInfo(cameraSelector).exposureState
+        assumeTrue(exposureState.isExposureCompensationSupported)
+        val upper = exposureState.exposureCompensationRange.upper
+        bindUseCases()
+
+        cameraControl.setExposureCompensationIndex(upper).get(3000, TimeUnit.MILLISECONDS)
+
+        verifyCaptureResult(mapOf(CONTROL_AE_EXPOSURE_COMPENSATION to upper))
+    }
+
+    @Test
+    fun enableTorch_resultUpdated() = runBlocking {
+        assumeTrue(CameraUtil.hasFlashUnitWithLensFacing(cameraSelector.lensFacing!!))
+        bindUseCases()
+
+        assertFutureCompletes(cameraControl.enableTorch(true))
+
+        verifyCaptureResult(mapOf(CaptureResult.FLASH_MODE to FLASH_MODE_TORCH))
     }
 
     @Test
@@ -168,16 +275,14 @@ class CameraControlDeviceTest(
 
         bindUseCases()
 
-        camera.cameraControl.enableTorch(true).get()
-        camera.cameraControl.setTorchStrengthLevel(camera.cameraInfo.maxTorchStrengthLevel).get()
+        cameraControl.enableTorch(true).get(3000, TimeUnit.MILLISECONDS)
+        cameraControl
+            .setTorchStrengthLevel(camera.cameraInfo.maxTorchStrengthLevel)
+            .get(3000, TimeUnit.MILLISECONDS)
 
-        captureCallback.waitFor(numOfCaptures = 30) { _, captureResults ->
-            {
-                val captureResult = captureResults.last()
-                assertThat(captureResult.get(CaptureResult.FLASH_STRENGTH_LEVEL))
-                    .isEqualTo(camera.cameraInfo.maxTorchStrengthLevel)
-            }
-        }
+        verifyCaptureResult(
+            mapOf(CaptureResult.FLASH_STRENGTH_LEVEL to camera.cameraInfo.maxTorchStrengthLevel)
+        )
     }
 
     @Test
@@ -188,7 +293,7 @@ class CameraControlDeviceTest(
         bindUseCases()
 
         assertFutureCompletes(
-            camera.cameraControl.setTorchStrengthLevel(camera.cameraInfo.maxTorchStrengthLevel)
+            cameraControl.setTorchStrengthLevel(camera.cameraInfo.maxTorchStrengthLevel)
         )
     }
 
@@ -200,7 +305,7 @@ class CameraControlDeviceTest(
         bindUseCases()
 
         try {
-            camera.cameraControl.setTorchStrengthLevel(0).get()
+            cameraControl.setTorchStrengthLevel(0).get(3000, TimeUnit.MILLISECONDS)
         } catch (e: ExecutionException) {
             assertThat(e.cause).isInstanceOf(java.lang.IllegalArgumentException::class.java)
             return
@@ -219,9 +324,9 @@ class CameraControlDeviceTest(
         bindUseCases()
 
         try {
-            camera.cameraControl
+            cameraControl
                 .setTorchStrengthLevel(camera.cameraInfo.maxTorchStrengthLevel + 1)
-                .get()
+                .get(3000, TimeUnit.MILLISECONDS)
         } catch (e: ExecutionException) {
             assertThat(e.cause).isInstanceOf(java.lang.IllegalArgumentException::class.java)
             return
@@ -238,9 +343,9 @@ class CameraControlDeviceTest(
         bindUseCases()
 
         try {
-            camera.cameraControl
+            cameraControl
                 .setTorchStrengthLevel(camera.cameraInfo.maxTorchStrengthLevel)
-                .get()
+                .get(3000, TimeUnit.MILLISECONDS)
         } catch (e: ExecutionException) {
             assertThat(e.cause).isInstanceOf(UnsupportedOperationException::class.java)
             return
@@ -258,16 +363,15 @@ class CameraControlDeviceTest(
 
         bindUseCases()
 
-        camera.cameraControl.enableLowLightBoostAsync(true).get()
+        cameraControl.enableLowLightBoostAsync(true).get(3000, TimeUnit.MILLISECONDS)
 
-        captureCallback.waitFor(numOfCaptures = 30) { _, captureResults ->
-            {
-                val captureResult = captureResults.last()
-                assertThat(captureResult.get(CaptureResult.CONTROL_AE_MODE))
-                    .isEqualTo(CONTROL_AE_MODE_ON_LOW_LIGHT_BOOST_BRIGHTNESS_PRIORITY)
-                assertThat(captureResult.get(CaptureResult.FLASH_MODE)).isEqualTo(FLASH_MODE_OFF)
-            }
-        }
+        verifyCaptureResult(
+            mapOf(
+                CaptureResult.CONTROL_AE_MODE to
+                    CONTROL_AE_MODE_ON_LOW_LIGHT_BOOST_BRIGHTNESS_PRIORITY,
+                CaptureResult.FLASH_MODE to FLASH_MODE_OFF
+            )
+        )
     }
 
     private fun bindUseCases() {
@@ -285,8 +389,35 @@ class CameraControlDeviceTest(
                         .build()
                         .apply { setAnalyzer(CameraXExecutors.ioExecutor(), analyzer) }
                 camera = cameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, useCase)
+                cameraControl = camera.cameraControl as CameraControlInternal
             } catch (e: CameraException) {
                 throw IllegalArgumentException(e)
+            }
+        }
+    }
+
+    private fun CameraCharacteristics.getMaxRegionCount(
+        optionMaxRegions: CameraCharacteristics.Key<Int>
+    ) = get(optionMaxRegions) ?: 0
+
+    private val Array<MeteringRectangle>.weightedRegionCount: Int
+        get() {
+            var count = 0
+            forEach { count += if (it.meteringWeight != 0) 1 else 0 }
+            return count
+        }
+
+    private fun is3ASupported(): Boolean {
+        return cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AF) > 0 ||
+            cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AE) > 0 ||
+            cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AWB) > 0
+    }
+
+    private fun <T> verifyCaptureResult(keyValueMap: Map<CaptureResult.Key<T>, T>) {
+        captureCallback.waitFor(numOfCaptures = 30) { _, captureResults ->
+            {
+                val captureResult = captureResults.last()
+                keyValueMap.forEach { assertThat(captureResult.get(it.key)).isEqualTo(it.value) }
             }
         }
     }
