@@ -3634,6 +3634,95 @@ public class AppSearchImplTest {
     }
 
     @Test
+    public void testPrunePackageData_overDatabaseScopedThreshold() throws AppSearchException {
+        List<SchemaTypeConfigProto> existingSchemas =
+                mAppSearchImpl.getSchemaProtoLocked().getTypesList();
+        Map<String, Set<String>> existingDatabases = mAppSearchImpl.getPackageToDatabases();
+
+        Set<String> existingPackages = new ArraySet<>(existingSchemas.size());
+        for (int i = 0; i < existingSchemas.size(); i++) {
+            existingPackages.add(PrefixUtil.getPackageName(existingSchemas.get(i).getSchemaType()));
+        }
+
+        // Create VisibilityConfig
+        InternalVisibilityConfig visibilityConfig = new InternalVisibilityConfig.Builder("schema")
+                .setNotDisplayedBySystem(true)
+                .addVisibleToPackage(new PackageIdentifier("pkgBar", new byte[32]))
+                .build();
+
+        // Insert schema for package A and B.
+        List<AppSearchSchema> schema =
+                ImmutableList.of(new AppSearchSchema.Builder("schema").build());
+        SchemaProto.Builder expectedProtoBuilder = SchemaProto.newBuilder();
+        for (int i = 0; i < AppSearchImpl.PRUNE_PACKAGE_USING_FULL_SET_SCHEMA_THRESHOLD;
+                i++) {
+            String packageName = "package" + i;
+            String databaseName = "database";
+            InternalSetSchemaResponse internalSetSchemaResponse = mAppSearchImpl.setSchema(
+                    packageName,
+                    databaseName,
+                    schema,
+                    /*visibilityConfigs=*/ ImmutableList.of(visibilityConfig),
+                    /*forceOverride=*/ false,
+                    /*version=*/ 0,
+                    /* setSchemaStatsBuilder= */ null);
+            assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+
+            String schemaType = PrefixUtil.createPrefix(packageName, databaseName) + "schema";
+            expectedProtoBuilder.addTypes(
+                    SchemaTypeConfigProto.newBuilder()
+                            .setSchemaType(schemaType)
+                            .setDescription("")
+                            .setVersion(0));
+        }
+
+        // Verify these two packages are stored in AppSearch.
+        SchemaProto expectedProto = expectedProtoBuilder.build();
+        if (Flags.enableDatabaseScopedSchemaOperations()) {
+            expectedProto = getSchemaProtoWithDatabase(expectedProto);
+        }
+
+        List<SchemaTypeConfigProto> expectedTypes = new ArrayList<>();
+        expectedTypes.addAll(existingSchemas);
+        expectedTypes.addAll(expectedProto.getTypesList());
+        assertThat(mAppSearchImpl.getSchemaProtoLocked().getTypesList())
+                .containsExactlyElementsIn(expectedTypes);
+
+        // Verify some visibility documents
+        InternalVisibilityConfig expectedVisibilityConfig1 =
+                new InternalVisibilityConfig.Builder("package1$database/schema")
+                        .setNotDisplayedBySystem(true)
+                        .addVisibleToPackage(new PackageIdentifier("pkgBar", new byte[32]))
+                        .build();
+        InternalVisibilityConfig expectedVisibilityConfig2 =
+                new InternalVisibilityConfig.Builder("package2$database/schema")
+                        .setNotDisplayedBySystem(true)
+                        .addVisibleToPackage(new PackageIdentifier("pkgBar", new byte[32]))
+                        .build();
+        assertThat(mAppSearchImpl.mDocumentVisibilityStoreLocked
+                .getVisibility("package1$database/schema"))
+                .isEqualTo(expectedVisibilityConfig1);
+        assertThat(mAppSearchImpl.mDocumentVisibilityStoreLocked
+                .getVisibility("package2$database/schema"))
+                .isEqualTo(expectedVisibilityConfig2);
+
+        // Prune packages
+        mAppSearchImpl.prunePackageData(existingPackages);
+
+        // Verify the schema is same as beginning.
+        assertThat(mAppSearchImpl.getSchemaProtoLocked().getTypesList())
+                .containsExactlyElementsIn(existingSchemas);
+        assertThat(mAppSearchImpl.getPackageToDatabases())
+                .containsExactlyEntriesIn(existingDatabases);
+
+        // Verify the VisibilitySetting is removed.
+        assertThat(mAppSearchImpl.mDocumentVisibilityStoreLocked
+                .getVisibility("package1$database/schema")).isNull();
+        assertThat(mAppSearchImpl.mDocumentVisibilityStoreLocked
+                .getVisibility("package2$database/schema")).isNull();
+    }
+
+    @Test
     public void testGetPackageToDatabases() throws Exception {
         Map<String, Set<String>> existingMapping = mAppSearchImpl.getPackageToDatabases();
         Map<String, Set<String>> expectedMapping = new ArrayMap<>();
