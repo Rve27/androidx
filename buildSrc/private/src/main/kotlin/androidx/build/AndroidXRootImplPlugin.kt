@@ -185,7 +185,8 @@ abstract class AndroidXRootImplPlugin : Plugin<Project> {
         val createYarnRcFileTask =
             tasks.register("createYarnRcFile", CreateYarnRcFileTask::class.java) {
                 it.offlineMirrorStorage.set(offlineMirrorStorage)
-                it.yarnrcFile.set(layout.buildDirectory.file("js/.yarnrc"))
+                it.cacheStorage.set(layout.buildDirectory.dir("yarnCache"))
+                it.yarnrcFile.set(layout.buildDirectory.file(".yarnrc"))
             }
 
         tasks.withType<KotlinNpmInstallTask>().configureEach {
