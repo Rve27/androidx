@@ -175,7 +175,7 @@ internal class CredentialProviderGetDigitalCredentialController(private val cont
                     RESULT_RECEIVER_TAG,
                     toIpcFriendlyResultReceiver(resultReceiver)
                 )
-                hiddenIntent.putExtra(EXTRA_GET_CREDENTIAL_INTENT, result.pendingIntent)
+                hiddenIntent.putExtra(EXTRA_FLOW_PENDING_INTENT, result.pendingIntent)
                 context.startActivity(hiddenIntent)
             }
             .addOnFailureListener { e ->

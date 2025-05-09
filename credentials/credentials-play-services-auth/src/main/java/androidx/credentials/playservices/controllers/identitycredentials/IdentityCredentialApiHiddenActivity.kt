@@ -53,7 +53,7 @@ open class IdentityCredentialApiHiddenActivity : Activity() {
         }
         val pendingIntent: PendingIntent? =
             intent.getParcelableExtra(
-                CredentialProviderBaseController.Companion.EXTRA_GET_CREDENTIAL_INTENT
+                CredentialProviderBaseController.Companion.EXTRA_FLOW_PENDING_INTENT
             )
 
         if (pendingIntent != null) {
