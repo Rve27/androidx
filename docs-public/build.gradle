@@ -148,7 +148,6 @@ dependencies {
     docs("androidx.credentials.registry:registry-provider-play-services:1.0.0-alpha01")
     docs("androidx.credentials:credentials:1.6.0-alpha01")
     docs("androidx.credentials:credentials-e2ee:1.0.0-alpha02")
-    docs("androidx.credentials:credentials-fido:1.0.0-alpha02")
     docs("androidx.credentials:credentials-play-services-auth:1.6.0-alpha01")
     docs("androidx.cursoradapter:cursoradapter:1.0.0")
     docs("androidx.customview:customview:1.2.0")

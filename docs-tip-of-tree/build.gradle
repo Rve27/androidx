@@ -132,7 +132,6 @@ dependencies {
     docs(project(":core:uwb:uwb"))
     docs(project(":core:uwb:uwb-rxjava3"))
     docs(project(":credentials:credentials"))
-    docs(project(":credentials:credentials-fido"))
     docs(project(":credentials:credentials-play-services-auth"))
     docs(project(":credentials:credentials-e2ee"))
     docs(project(":credentials:credentials-play-services-e2ee"))
