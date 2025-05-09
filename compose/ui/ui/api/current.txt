@@ -3347,11 +3347,11 @@ package androidx.compose.ui.platform {
     method public final void disposeComposition();
     method public final boolean getHasComposition();
     method protected boolean getShouldCreateCompositionOnAttachedToWindow();
-    method public final boolean getShowLayoutBounds();
+    method @SuppressCompatibility @androidx.compose.ui.InternalComposeUiApi public final boolean getShowLayoutBounds();
     method protected final void onLayout(boolean changed, int left, int top, int right, int bottom);
     method protected final void onMeasure(int widthMeasureSpec, int heightMeasureSpec);
     method public final void setParentCompositionContext(androidx.compose.runtime.CompositionContext? parent);
-    method public final void setShowLayoutBounds(boolean);
+    method @SuppressCompatibility @androidx.compose.ui.InternalComposeUiApi public final void setShowLayoutBounds(boolean);
     method public final void setViewCompositionStrategy(androidx.compose.ui.platform.ViewCompositionStrategy strategy);
     property public final boolean hasComposition;
     property protected boolean shouldCreateCompositionOnAttachedToWindow;

@@ -1950,7 +1950,7 @@ package androidx.compose.foundation.text.input {
     method public Appendable append(CharSequence? text, int start, int end);
     method public CharSequence asCharSequence();
     method public char charAt(int index);
-    method public androidx.compose.foundation.text.input.TextFieldBuffer.ChangeList getChanges();
+    method @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public androidx.compose.foundation.text.input.TextFieldBuffer.ChangeList getChanges();
     method public int getLength();
     method public long getOriginalSelection();
     method public CharSequence getOriginalText();
