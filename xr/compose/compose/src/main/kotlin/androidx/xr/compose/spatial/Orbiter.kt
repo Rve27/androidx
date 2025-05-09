@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.ZeroCornerSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableOpenTarget
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +52,7 @@ import androidx.xr.compose.platform.LocalSpatialCapabilities
 import androidx.xr.compose.spatial.EdgeOffset.Companion.outer
 import androidx.xr.compose.subspace.layout.SpatialRoundedCornerShape
 import androidx.xr.compose.subspace.layout.SpatialShape
+import androidx.xr.compose.subspace.node.SubspaceNodeApplier
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.runtime.Session
 import androidx.xr.scenecore.PixelDimensions
@@ -323,7 +325,10 @@ public fun Orbiter(
 
 @Composable
 private fun Orbiter(data: OrbiterData) {
-    if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
+    if (
+        LocalSpatialCapabilities.current.isSpatialUiEnabled ||
+            currentComposer.applier is SubspaceNodeApplier
+    ) {
         PositionedOrbiter(data)
     } else if (data.settings.shouldRenderInNonSpatial) {
         data.content()

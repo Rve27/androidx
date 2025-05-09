@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.xr.compose.platform.LocalHasXrSpatialFeature
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.spatial.EdgeOffset.Companion.inner
 import androidx.xr.compose.subspace.MainPanel
@@ -439,6 +441,24 @@ class OrbiterTest {
             .onNodeWithTag("orbiterContentBox")
             .assertWidthIsEqualTo(0.toDp())
             .assertHeightIsEqualTo(0.toDp())
+    }
+
+    @Test
+    fun orbiter_inSubspace_noSpatialCapabilities_doesNotThrow() {
+        composeTestRule.setContent {
+            TestSetup {
+                ApplicationSubspace {
+                    // Say we are not in XR so the SpatialCapabilities are false.
+                    CompositionLocalProvider(LocalHasXrSpatialFeature provides false) {
+                        Orbiter(position = OrbiterEdge.Top) {
+                            Box(modifier = Modifier.fillMaxSize().testTag("orbiterContentBox")) {}
+                        }
+                    }
+                }
+            }
+        }
+
+        composeTestRule.onNodeWithTag("orbiterContentBox").assertExists()
     }
 
     @Test
