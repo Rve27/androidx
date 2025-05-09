@@ -2,15 +2,6 @@
 <issues format="6" by="lint 8.11.0-alpha05" type="baseline" client="gradle" dependencies="false" name="AGP (8.11.0-alpha05)" variant="all" version="8.11.0-alpha05">
 
     <issue
-        id="InternalKgpApiUsage"
-        message="Avoid using internal Kotlin Gradle Plugin APIs"
-        errorLine1="import org.jetbrains.kotlin.gradle.internal.KaptTask"
-        errorLine2="~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/androidx/room/gradle/integration/AndroidPluginIntegration.kt"/>
-    </issue>
-
-    <issue
         id="WithPluginClasspathUsage"
         message="Avoid usage of GradleRunner#withPluginClasspath, which is broken. Instead use something like https://github.com/autonomousapps/dependency-analysis-gradle-plugin/tree/main/testkit#gradle-testkit-support-plugin"
         errorLine1="            .withPluginClasspath()"
