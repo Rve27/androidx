@@ -169,7 +169,7 @@ internal fun Project.createVerifyDependencyVersionsTask():
     return taskProvider
 }
 
-private fun Project.shouldVerifyConfiguration(configuration: Configuration): Boolean {
+internal fun Project.shouldVerifyConfiguration(configuration: Configuration): Boolean {
     // Only verify configurations that are exported to POM. In an ideal world, this would be an
     // inclusion derived from the mappings used by the Maven Publish Plugin; however, since we
     // don't have direct access to those, this should remain an exclusion list.
@@ -189,12 +189,18 @@ private fun Project.shouldVerifyConfiguration(configuration: Configuration): Boo
     if (name.startsWith("release")) return false
     if (name.startsWith("test")) return false
     if (name.startsWith("jvmTest")) return false
+    if (name.startsWith("_agp_internal")) return false
 
     // Don't check any tooling configurations.
     if (name == "annotationProcessor") return false
     if (name == "errorprone") return false
     if (name.startsWith("lint")) return false
     if (name == "metalava") return false
+    if (name.startsWith("kotlinBuild")) return false
+    if (name.startsWith("kotlinCompiler")) return false
+    if (name.startsWith("kotlinKlib")) return false
+    if (name.startsWith("kapt")) return false
+    if (name.startsWith("ksp")) return false
 
     // Don't check bundled inspector configurations.
     if (name == "consumeInspector") return false
