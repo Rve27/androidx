@@ -16,7 +16,6 @@ dependencies {
     docs(project(":activity:activity"))
     docs(project(":activity:activity-compose"))
     docs(project(":activity:activity-ktx"))
-    // ads-identifier is deprecated
     kmpDocs(project(":annotation:annotation"))
     docs(project(":annotation:annotation-experimental"))
     kmpDocs(project(":annotation:annotation-keep"))
