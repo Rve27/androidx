@@ -64,7 +64,7 @@ public class NavigationInputHandler(private val dispatcher: NavigationEventDispa
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     internal fun updateBackInvokedCallbackState() {
-        val shouldBeRegistered = dispatcher.hasEnabledCallbacks
+        val shouldBeRegistered = dispatcher.hasEnabledCallbacks()
         val dispatcher = invoker
         val onBackInvokedCallback = onBackInvokedCallback
         if (dispatcher != null && onBackInvokedCallback != null) {

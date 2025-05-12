@@ -16,6 +16,8 @@
 package androidx.activity
 
 import androidx.annotation.MainThread
+import androidx.navigationevent.NavigationEvent
+import androidx.navigationevent.NavigationEventCallback
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.collections.minusAssign
 import kotlin.collections.plusAssign
@@ -39,6 +41,28 @@ import kotlin.collections.plusAssign
  * @see OnBackPressedDispatcher
  */
 abstract class OnBackPressedCallback(enabled: Boolean) {
+
+    internal val callback =
+        object : NavigationEventCallback(isEnabled = enabled) {
+            override fun onEventStarted(event: NavigationEvent) {
+                handleOnBackStarted(BackEventCompat(event))
+            }
+
+            override fun onEventProgressed(event: NavigationEvent) {
+                handleOnBackProgressed(BackEventCompat(event))
+            }
+
+            override fun onEventCompleted() {
+                handleOnBackPressed()
+            }
+
+            override fun onEventCancelled() {
+                handleOnBackCancelled()
+            }
+        }
+
+    internal val closeable = AutoCloseable { remove() }
+
     /**
      * The enabled state of the callback. Only when this callback is enabled will it receive
      * callbacks to [handleOnBackPressed].
@@ -47,16 +71,9 @@ abstract class OnBackPressedCallback(enabled: Boolean) {
      * [androidx.lifecycle.LifecycleOwner] passed to [OnBackPressedDispatcher.addCallback] which
      * controls when the callback is added and removed to the dispatcher.
      */
-    @get:MainThread
-    @set:MainThread
-    var isEnabled: Boolean = enabled
-        set(value) {
-            field = value
-            enabledChangedCallback?.invoke()
-        }
+    @get:MainThread @set:MainThread var isEnabled: Boolean by callback::isEnabled
 
     private val closeables = CopyOnWriteArrayList<AutoCloseable>()
-    internal var enabledChangedCallback: (() -> Unit)? = null
 
     /** Removes this callback from any [OnBackPressedDispatcher] it is currently added to. */
     @MainThread
@@ -65,6 +82,8 @@ abstract class OnBackPressedCallback(enabled: Boolean) {
             closeable.close()
         }
         // Don't clear `closeables`; each closeable may remove itself via `removeCloseable`.
+
+        callback.remove()
     }
 
     /**

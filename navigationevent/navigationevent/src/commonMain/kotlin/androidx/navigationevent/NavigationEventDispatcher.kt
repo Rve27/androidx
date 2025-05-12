@@ -39,7 +39,7 @@ public class NavigationEventDispatcher(
     /** Standard or default callbacks for navigation events. */
     internal val normalCallbacks = ArrayDeque<NavigationEventCallback>()
 
-    internal var hasEnabledCallbacks: Boolean = false
+    private var hasEnabledCallbacks: Boolean = false
 
     private var updateInputHandler: () -> Unit = {}
 
@@ -70,6 +70,14 @@ public class NavigationEventDispatcher(
     internal fun updateInput(update: () -> Unit) {
         updateInputHandler = update
     }
+
+    /**
+     * Returns `true` if there is at least one [NavigationEventDispatcher.isEnabled] callback
+     * registered with this dispatcher.
+     *
+     * @return True if there is at least one enabled callback.
+     */
+    public fun hasEnabledCallbacks(): Boolean = hasEnabledCallbacks
 
     /**
      * Add a new [NavigationEventCallback]. Callbacks are invoked in the reverse order in which they

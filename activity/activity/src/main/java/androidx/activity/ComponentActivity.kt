@@ -94,7 +94,6 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.navigationevent.NavigationEventDispatcher
 import androidx.navigationevent.NavigationEventDispatcherOwner
-import androidx.navigationevent.NavigationInputHandler
 import androidx.navigationevent.setViewTreeNavigationEventDispatcherOwner
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.SavedStateRegistryController
@@ -600,9 +599,40 @@ open class ComponentActivity() :
      * @return The [OnBackPressedDispatcher] associated with this ComponentActivity.
      */
     final override val onBackPressedDispatcher: OnBackPressedDispatcher by lazy {
-        OnBackPressedDispatcher(fallbackOnBackPressed = ::tryOnBackPressed).also { dispatcher ->
-            dispatcher.setNavigationEventDispatcher(navigationEventDispatcher)
-        }
+        OnBackPressedDispatcher(
+                fallbackOnBackPressed = {
+                    // Calling onBackPressed() on an Activity with its state saved can cause an
+                    // error on devices on API levels before 26. We catch that specific error
+                    // and throw all others.
+                    try {
+                        @Suppress("DEPRECATION") super@ComponentActivity.onBackPressed()
+                    } catch (e: IllegalStateException) {
+                        if (e.message != "Can not perform this action after onSaveInstanceState") {
+                            throw e
+                        }
+                    } catch (e: NullPointerException) {
+                        if (
+                            e.message !=
+                                "Attempt to invoke virtual method 'android.os.Handler " +
+                                    "android.app.FragmentHostCallback.getHandler()' on a " +
+                                    "null object reference"
+                        ) {
+                            throw e
+                        }
+                    }
+                }
+            )
+            .also { dispatcher ->
+                if (Build.VERSION.SDK_INT >= 33) {
+                    if (Looper.myLooper() != Looper.getMainLooper()) {
+                        Handler(Looper.getMainLooper()).post {
+                            addObserverForBackInvoker(dispatcher)
+                        }
+                    } else {
+                        addObserverForBackInvoker(dispatcher)
+                    }
+                }
+            }
     }
 
     /**
@@ -612,60 +642,16 @@ open class ComponentActivity() :
      * This dispatcher acts as the central point for back navigation events. When a navigation event
      * occurs (e.g., a back gesture), it safely invokes [ComponentActivity.onBackPressed].
      */
-    override val navigationEventDispatcher: NavigationEventDispatcher by lazy {
-        NavigationEventDispatcher(fallbackOnBackPressed = ::tryOnBackPressed).also { dispatcher ->
-            if (Build.VERSION.SDK_INT >= 33) {
-                if (Looper.myLooper() != Looper.getMainLooper()) {
-                    Handler(Looper.getMainLooper()).post { addObserverForBackInvoker(dispatcher) }
-                } else {
-                    addObserverForBackInvoker(dispatcher)
-                }
-            }
-        }
-    }
-
-    /**
-     * Safely calls [ComponentActivity.onBackPressedDispatcher], suppressing specific known
-     * exceptions to prevent crashes.
-     *
-     * Catches and silences:
-     * - [IllegalStateException]: API < 26 issue, post activity state save.
-     * - [NullPointerException]: fragment host callback related.
-     *
-     * [IllegalStateException] or [NullPointerException] with different messages, or any other
-     * exceptions, are rethrown.
-     */
-    private fun tryOnBackPressed() {
-        // Calling onBackPressed() on an Activity with its state saved can cause an
-        // error on devices on API levels before 26. We catch that specific error
-        // and throw all others.
-        try {
-            @Suppress("DEPRECATION") super@ComponentActivity.onBackPressed()
-        } catch (e: IllegalStateException) {
-            if (e.message != "Can not perform this action after onSaveInstanceState") {
-                throw e
-            }
-        } catch (e: NullPointerException) {
-            if (
-                e.message !=
-                    "Attempt to invoke virtual method 'android.os.Handler " +
-                        "android.app.FragmentHostCallback.getHandler()' on a " +
-                        "null object reference"
-            ) {
-                throw e
-            }
-        }
-    }
+    override val navigationEventDispatcher: NavigationEventDispatcher by
+        onBackPressedDispatcher::eventDispatcher
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun addObserverForBackInvoker(dispatcher: NavigationEventDispatcher) {
+    private fun addObserverForBackInvoker(dispatcher: OnBackPressedDispatcher) {
         lifecycle.addObserver(
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_CREATE) {
-                    NavigationInputHandler(dispatcher)
-                        .setOnBackInvokedDispatcher(
-                            Api33Impl.getOnBackInvokedDispatcher(this@ComponentActivity)
-                        )
+                    val invoker = Api33Impl.getOnBackInvokedDispatcher(this@ComponentActivity)
+                    dispatcher.setOnBackInvokedDispatcher(invoker)
                 }
             }
         )

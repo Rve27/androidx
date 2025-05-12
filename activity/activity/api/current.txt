@@ -17,6 +17,7 @@ package androidx.activity {
     method public float getTouchX();
     method public float getTouchY();
     method @RequiresApi(34) public android.window.BackEvent toBackEvent();
+    method public androidx.navigationevent.NavigationEvent toNavigationEvent();
     property public long frameTimeMillis;
     property @FloatRange(from=0.0, to=1.0) public float progress;
     property public int swipeEdge;
@@ -152,7 +153,6 @@ package androidx.activity {
     method @MainThread @VisibleForTesting public void dispatchOnBackStarted(androidx.activity.BackEventCompat backEvent);
     method @MainThread public boolean hasEnabledCallbacks();
     method @MainThread public void onBackPressed();
-    method public void setNavigationEventDispatcher(androidx.navigationevent.NavigationEventDispatcher eventDispatcher);
     method @RequiresApi(android.os.Build.VERSION_CODES.TIRAMISU) public void setOnBackInvokedDispatcher(android.window.OnBackInvokedDispatcher invoker);
   }
 
