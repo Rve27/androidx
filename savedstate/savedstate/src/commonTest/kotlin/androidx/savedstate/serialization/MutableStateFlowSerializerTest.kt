@@ -18,7 +18,7 @@ package androidx.savedstate.serialization
 
 import androidx.kruth.assertThat
 import androidx.savedstate.RobolectricTest
-import androidx.savedstate.SavedStateCodecTestUtils.encodeDecode
+import androidx.savedstate.serialization.SavedStateCodecTestUtils.encodeDecode
 import androidx.savedstate.serialization.serializers.MutableStateFlowSerializer
 import kotlin.test.Test
 import kotlinx.coroutines.flow.MutableStateFlow

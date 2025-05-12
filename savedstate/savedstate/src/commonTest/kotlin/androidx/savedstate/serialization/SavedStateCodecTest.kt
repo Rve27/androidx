@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package androidx.savedstate
+package androidx.savedstate.serialization
 
 import androidx.kruth.assertThat
 import androidx.kruth.assertThrows
-import androidx.savedstate.SavedStateCodecTestUtils.encodeDecode
-import androidx.savedstate.serialization.SavedStateConfiguration
-import androidx.savedstate.serialization.decodeFromSavedState
-import androidx.savedstate.serialization.encodeToSavedState
+import androidx.savedstate.RobolectricTest
+import androidx.savedstate.SavedState
+import androidx.savedstate.read
+import androidx.savedstate.savedState
+import androidx.savedstate.serialization.SavedStateCodecTestUtils.encodeDecode
 import androidx.savedstate.serialization.serializers.SavedStateSerializer
+import androidx.savedstate.write
 import kotlin.jvm.JvmInline
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -408,7 +410,7 @@ internal class SavedStateCodecTest : RobolectricTest() {
         // Should use base type for encoding/decoding.
         Node.Add(Node.Operand(3), Node.Operand(5)).encodeDecode<Node> {
             assertThat(size()).isEqualTo(2)
-            assertThat(getString("type")).isEqualTo("androidx.savedstate.Node.Add")
+            assertThat(getString("type")).isEqualTo("androidx.savedstate.serialization.Node.Add")
             getSavedState("value").read {
                 getSavedState("lhs").read {
                     assertThat(size()).isEqualTo(1)
@@ -480,7 +482,7 @@ internal class SavedStateCodecTest : RobolectricTest() {
         // Nullable in parent
         G(i = 3).encodeDecode<F> {
             assertThat(size()).isEqualTo(2)
-            assertThat(getString("type")).isEqualTo("androidx.savedstate.G")
+            assertThat(getString("type")).isEqualTo("androidx.savedstate.serialization.G")
             getSavedState("value").read {
                 assertThat(size()).isEqualTo(1)
                 assertThat(getInt("i")).isEqualTo(3)
@@ -645,7 +647,7 @@ internal class SavedStateCodecTest : RobolectricTest() {
             serializer = PolymorphicSerializer(Shape::class)
         ) {
             assertThat(size()).isEqualTo(2)
-            assertThat(getString("type")).isEqualTo("androidx.savedstate.Circle")
+            assertThat(getString("type")).isEqualTo("androidx.savedstate.serialization.Circle")
             getSavedState("value").read {
                 assertThat(size()).isEqualTo(1)
                 assertThat(getInt("radius")).isEqualTo(3)
@@ -657,7 +659,7 @@ internal class SavedStateCodecTest : RobolectricTest() {
             serializer = PolymorphicSerializer(Shape::class)
         ) {
             assertThat(size()).isEqualTo(2)
-            assertThat(getString("type")).isEqualTo("androidx.savedstate.Rectangle")
+            assertThat(getString("type")).isEqualTo("androidx.savedstate.serialization.Rectangle")
             getSavedState("value").read {
                 assertThat(size()).isEqualTo(2)
                 assertThat(getInt("width")).isEqualTo(3)
