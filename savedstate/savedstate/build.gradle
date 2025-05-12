@@ -168,6 +168,5 @@ androidx {
     samples(project(":savedstate:savedstate-samples"))
     inceptionYear = "2018"
     description = "Android Lifecycle Saved State"
-    metalavaK2UastEnabled = false
     enableRobolectric()
 }

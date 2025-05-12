@@ -253,8 +253,8 @@ package androidx.navigation {
   }
 
   @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.CLASS}) public static @interface NavDestination.ClassType {
-    method public abstract kotlin.reflect.KClass<? extends java.lang.Object?> value();
-    property public abstract kotlin.reflect.KClass<? extends java.lang.Object?> value;
+    method public abstract Class<? extends java.lang.Object?> value();
+    property public abstract Class<? extends java.lang.Object?> value;
   }
 
   public static final class NavDestination.Companion {

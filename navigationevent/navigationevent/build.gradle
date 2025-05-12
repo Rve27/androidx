@@ -90,5 +90,4 @@ androidx {
     inceptionYear = "2025"
     description = "Provides APIs to easily intercept platform navigation events, including " +
             "swipes and clicks, to provide a consistent API surface for handling these events."
-    metalavaK2UastEnabled = false
 }
