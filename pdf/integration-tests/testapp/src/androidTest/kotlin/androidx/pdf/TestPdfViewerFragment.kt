@@ -16,6 +16,7 @@
 
 package androidx.pdf
 
+import android.app.AlertDialog
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -27,6 +28,7 @@ import androidx.annotation.RequiresExtension
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.pdf.content.ExternalLink
 import androidx.pdf.idlingresource.PdfIdlingResource
 import androidx.pdf.testapp.R
 import androidx.pdf.view.PdfView
@@ -57,6 +59,8 @@ internal class TestPdfViewerFragment : PdfViewerFragment {
 
     var documentLoaded = false
     var documentError: Throwable? = null
+
+    var shouldOverrideLinkHandling: Boolean = false
 
     fun getPdfViewInstance(): PdfView = pdfView
 
@@ -143,6 +147,18 @@ internal class TestPdfViewerFragment : PdfViewerFragment {
     override fun onLoadDocumentError(error: Throwable) {
         documentError = error
         pdfLoadingIdlingResource.decrement()
+    }
+
+    override fun onLinkClicked(externalLink: ExternalLink): Boolean {
+        requireActivity().runOnUiThread {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Handled by custom link handler")
+                .setMessage(externalLink.uri.toString())
+                .setPositiveButton("OK", null)
+                .show()
+        }
+        // true = handled, false = use default behavior
+        return shouldOverrideLinkHandling
     }
 
     companion object {

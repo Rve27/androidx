@@ -16,8 +16,12 @@
 
 package androidx.pdf
 
+import android.app.Activity
+import android.app.Instrumentation
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.PointF
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.InputDevice
@@ -29,6 +33,7 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.Lifecycle
 import androidx.pdf.FragmentUtils.scenarioLoadDocument
 import androidx.pdf.TestUtils.waitFor
+import androidx.pdf.actions.SelectionViewActions
 import androidx.pdf.actions.clickOnPdfPoint
 import androidx.pdf.matchers.SearchViewAssertions
 import androidx.pdf.util.Preconditions
@@ -49,12 +54,17 @@ import androidx.test.espresso.action.ViewActions.swipeDown
 import androidx.test.espresso.action.ViewActions.swipeUp
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents
+import androidx.test.espresso.intent.Intents.intending
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.matcher.RootMatchers
+import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
@@ -80,6 +90,7 @@ class PdfViewerFragmentV2TestSuite {
 
     @Before
     fun setup() {
+        Intents.init()
         scenario =
             launchFragmentInContainer<TestPdfViewerFragment>(
                 themeResId =
@@ -109,6 +120,7 @@ class PdfViewerFragmentV2TestSuite {
                 .unregister(fragment.pdfSearchViewVisibleIdlingResource.countingIdlingResource)
         }
         scenario.close()
+        Intents.release()
     }
 
     @Test
@@ -507,6 +519,79 @@ class PdfViewerFragmentV2TestSuite {
         assert(selection?.bounds?.size == expectedSelectionBoundsSize)
     }
 
+    @Test
+    fun testPdfViewerFragment_customLinkHandler_isCalledAndOverridesDefault() {
+        scenario.onFragment { fragment -> fragment.shouldOverrideLinkHandling = true }
+
+        scenarioLoadDocument(
+            scenario = scenario,
+            filename = TEST_SAMPLE_LINKS_FILE,
+            nextState = Lifecycle.State.STARTED,
+            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+        ) {
+            // Loading view assertion
+            onView(withId(PdfR.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
+        }
+
+        onView(withId(PdfR.id.pdfLoadingProgressBar))
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+        scenario.onFragment {
+            Preconditions.checkArgument(
+                it.documentLoaded,
+                "Unable to load document due to ${it.documentError?.message}"
+            )
+        }
+
+        val selectionViewActions = SelectionViewActions()
+
+        // PDF Link coordinates for sample link PDF
+        val linkBounds = RectF(89.0f, 311.0f, 236.0f, 327.0f)
+        onView(withId(PdfR.id.pdfView)).perform(selectionViewActions.tapOnPosition(linkBounds))
+
+        onView(withText("Handled by custom link handler"))
+            .inRoot(isDialog())
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun testPdfViewerFragment_defaultLinkHandling_launchesBrowserIntent() {
+        scenario.onFragment { fragment -> fragment.shouldOverrideLinkHandling = false }
+
+        scenarioLoadDocument(
+            scenario = scenario,
+            filename = TEST_SAMPLE_LINKS_FILE,
+            nextState = Lifecycle.State.STARTED,
+            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+        ) {
+            // Loading view assertion
+            onView(withId(PdfR.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
+        }
+
+        onView(withId(PdfR.id.pdfLoadingProgressBar))
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+        scenario.onFragment {
+            Preconditions.checkArgument(
+                it.documentLoaded,
+                "Unable to load document due to ${it.documentError?.message}"
+            )
+        }
+
+        intending(hasAction(Intent.ACTION_VIEW))
+            .respondWith(Instrumentation.ActivityResult(Activity.RESULT_OK, null))
+
+        val selectionViewActions = SelectionViewActions()
+
+        // PDF Link coordinates for sample link PDF
+        val linkBounds = RectF(89.0f, 311.0f, 236.0f, 327.0f)
+        onView(withId(PdfR.id.pdfView)).perform(selectionViewActions.tapOnPosition(linkBounds))
+
+        val capturedIntent = Intents.getIntents().firstOrNull()
+        assertNotNull(
+            "Expected an external link intent to be launched, but it was null.",
+            capturedIntent
+        )
+    }
+
     private fun withPdfView(
         scenario: FragmentScenario<TestPdfViewerFragment>,
         callback: (TestPdfViewerFragment, PdfView, Drawable) -> Unit
@@ -527,6 +612,7 @@ class PdfViewerFragmentV2TestSuite {
         private const val TEST_PROTECTED_DOCUMENT_FILE = "sample-protected.pdf"
         private const val TEST_CORRUPTED_DOCUMENT_FILE = "corrupted.pdf"
         private const val TEST_DOCUMENT_SELECT = "sample-select.pdf"
+        private const val TEST_SAMPLE_LINKS_FILE = "sample_links.pdf"
 
         private const val SELECT_ALL = "Select all"
         private const val CANCEL = "Cancel"
