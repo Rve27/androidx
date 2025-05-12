@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * A wrapper around Espresso's [CountingIdlingResource] that will help to define idling resource for
  * any background work.
  */
-internal class PdfIdlingResource(private val resourceName: String) {
+internal class PdfCountingIdlingResource(private val resourceName: String) {
 
     val countingIdlingResource: CountingIdlingResource = CountingIdlingResource(resourceName)
     val decrementCounter: AtomicInteger = AtomicInteger()

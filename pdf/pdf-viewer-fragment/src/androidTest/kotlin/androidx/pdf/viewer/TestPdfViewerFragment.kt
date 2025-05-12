@@ -31,7 +31,8 @@ import androidx.pdf.view.PdfView
 import androidx.pdf.view.PdfView.OnScrollStateChangedListener
 import androidx.pdf.viewer.fragment.PdfViewerFragment
 import androidx.pdf.viewer.fragment.test.R
-import androidx.pdf.viewer.idlingresource.PdfIdlingResource
+import androidx.pdf.viewer.idlingresource.PdfCountingIdlingResource
+import androidx.pdf.viewer.idlingresource.PdfLambdaIdlingResource
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.UUID
 
@@ -42,12 +43,15 @@ import java.util.UUID
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
 internal class TestPdfViewerFragment : PdfViewerFragment() {
 
-    val pdfLoadingIdlingResource = PdfIdlingResource(PDF_LOAD_RESOURCE_NAME)
-    val pdfScrollIdlingResource = PdfIdlingResource(PDF_SCROLL_RESOURCE_NAME)
-    val pdfSearchFocusIdlingResource = PdfIdlingResource(PDF_SEARCH_FOCUS_RESOURCE_NAME)
+    val pdfLoadingIdlingResource = PdfCountingIdlingResource(PDF_LOAD_RESOURCE_NAME)
+    val pdfScrollIdlingResource = PdfCountingIdlingResource(PDF_SCROLL_RESOURCE_NAME)
+    val pdfSearchFocusIdlingResource = PdfCountingIdlingResource(PDF_SEARCH_FOCUS_RESOURCE_NAME)
     val pdfSearchViewVisibleIdlingResource =
-        PdfIdlingResource(PDF_SEARCH_VIEW_VISIBLE_RESOURCE_NAME)
-
+        PdfCountingIdlingResource(PDF_SEARCH_VIEW_VISIBLE_RESOURCE_NAME)
+    val pdfPagesFullyRenderedIdlingResource =
+        PdfLambdaIdlingResource(PDF_PAGES_FULLY_RENDERED_RESOURCE_NAME) {
+            pdfView.arePagesFullyRendered()
+        }
     private var hostView: FrameLayout? = null
     private var search: FloatingActionButton? = null
 
@@ -124,6 +128,7 @@ internal class TestPdfViewerFragment : PdfViewerFragment() {
     override fun onLoadDocumentSuccess() {
         documentLoaded = true
         pdfLoadingIdlingResource.decrement()
+        pdfPagesFullyRenderedIdlingResource.startPolling()
     }
 
     override fun onLoadDocumentError(error: Throwable) {
@@ -138,6 +143,8 @@ internal class TestPdfViewerFragment : PdfViewerFragment() {
         private val PDF_SEARCH_FOCUS_RESOURCE_NAME = "PdfSearchFocus-${UUID.randomUUID()}"
         private val PDF_SEARCH_VIEW_VISIBLE_RESOURCE_NAME =
             "PdfSearchViewVisible-${UUID.randomUUID()}"
+        private val PDF_PAGES_FULLY_RENDERED_RESOURCE_NAME =
+            "PdfPagesFullyRendered-${UUID.randomUUID()}"
 
         fun handleInsets(hostView: View) {
             ViewCompat.setOnApplyWindowInsetsListener(hostView) { view, insets ->

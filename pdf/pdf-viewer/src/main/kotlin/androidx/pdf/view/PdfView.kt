@@ -389,6 +389,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             }
         }
 
+    @VisibleForTesting
+    public fun arePagesFullyRendered(): Boolean {
+        // If no document is set, there are no pages to render. In that case, we assume all pages
+        // are rendered. For testing purposes, the idling resource can be registered before
+        // the document is loaded during test setup. Consequently, this method may be called
+        // before the document is ready, and it must return true to avoid a timeout;
+        // otherwise, the idling resource might never become idle.
+        return pageManager?.areAllVisiblePagesFullyRendered(visiblePages) ?: true
+    }
+
     @VisibleForTesting internal var pdfViewAccessibilityManager: PdfViewAccessibilityManager? = null
     @VisibleForTesting
     internal var isAccessibilityEnabled: Boolean =
