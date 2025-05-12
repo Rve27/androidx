@@ -29,7 +29,6 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.Looper
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -56,6 +55,7 @@ import androidx.core.util.valueIterator
 import androidx.core.view.ViewCompat
 import androidx.pdf.PdfDocument
 import androidx.pdf.R
+import androidx.pdf.content.ExternalLink
 import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.exceptions.RequestFailedException
@@ -233,9 +233,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         /**
          * Called when a link in the PDF is clicked.
          *
-         * @param uri The URI associated with the link.
+         * @param externalLink The ExternalLink associated with the link.
+         * @return True if the link click was handled, false to use the default behavior.
          */
-        public fun onLinkClicked(uri: Uri)
+        public fun onLinkClicked(externalLink: ExternalLink): Boolean
     }
 
     /** The listener that is notified when a link in the PDF is clicked. */
@@ -1811,12 +1812,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         ): Boolean {
             links.externalLinks.forEach { externalLink ->
                 if (externalLink.bounds.any { it.contains(pdfCoordinates.x, pdfCoordinates.y) }) {
-                    val uri = externalLink.uri
-                    if (linkClickListener != null) {
-                        linkClickListener?.onLinkClicked(uri)
+                    val link = ExternalLink(externalLink.uri)
+                    if (linkClickListener?.onLinkClicked(link) == true) {
+                        return true
                     } else {
                         try {
-                            val intent = Intent(Intent.ACTION_VIEW, uri)
+                            val intent = Intent(Intent.ACTION_VIEW, link.uri)
                             context.startActivity(intent)
                         } catch (_: Exception) {
                             return false

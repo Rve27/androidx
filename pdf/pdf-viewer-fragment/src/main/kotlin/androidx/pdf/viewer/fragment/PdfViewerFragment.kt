@@ -443,6 +443,12 @@ public open class PdfViewerFragment constructor() : Fragment() {
         pdfView.pdfDocument?.uri?.let { uri -> setAnnotationIntentResolvability(uri) }
     }
 
+    override fun onDestroyView() {
+        // Clean up the listener to avoid potential memory leaks
+        pdfView.linkClickListener = null
+        super.onDestroyView()
+    }
+
     /**
      * Called from Fragment.onViewCreated(). This gives subclasses a chance to customize component.
      */
@@ -496,6 +502,14 @@ public open class PdfViewerFragment constructor() : Fragment() {
                 }
             }
         )
+
+        // Set the internal LinkClickListener on PdfView
+        pdfView.linkClickListener =
+            object : PdfView.LinkClickListener {
+                override fun onLinkClicked(externalLink: ExternalLink): Boolean {
+                    return this@PdfViewerFragment.onLinkClicked(externalLink)
+                }
+            }
     }
 
     private fun setupSearchViewListeners(searchView: PdfSearchView) {
