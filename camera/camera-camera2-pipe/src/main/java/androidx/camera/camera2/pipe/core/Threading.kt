@@ -70,9 +70,14 @@ internal object Threading {
         timeoutMs: Long,
         block: suspend () -> T
     ): T? {
-        return runBlocking(coroutineContext) {
-            val result = runAsyncSupervised(dispatcher, block)
-            withTimeoutOrNull(timeoutMs) { result.await() }
+        return try {
+            runBlocking(coroutineContext) {
+                val result = runAsyncSupervised(dispatcher, block)
+                withTimeoutOrNull(timeoutMs) { result.await() }
+            }
+        } catch (e: InterruptedException) {
+            Log.info(e) { "runBlockingCheckedOrNull cancelled by thread interruption" }
+            null
         }
     }
 
