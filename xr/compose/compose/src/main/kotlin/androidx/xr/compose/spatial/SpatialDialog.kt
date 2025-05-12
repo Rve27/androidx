@@ -24,7 +24,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -33,10 +32,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -157,7 +156,6 @@ private fun LayoutSpatialDialog(
     properties: SpatialDialogProperties = SpatialDialogProperties(),
     content: @Composable () -> Unit,
 ) {
-    val view = LocalView.current
     // Start elevation at Level0 to prevent effects where the dialog flashes behind its parent.
     var spatialElevationLevel by remember { mutableStateOf(SpatialElevationLevel.Level0) }
     val dialogManager = LocalDialogManager.current
@@ -187,7 +185,7 @@ private fun LayoutSpatialDialog(
         Spacer(Modifier.size(1.dp))
     }
 
-    var contentSize by remember { mutableStateOf(view.size) }
+    var contentSize: IntSize? by remember { mutableStateOf(null) }
 
     val zDepth by
         updateTransition(targetState = spatialElevationLevel, label = "restingLevelTransition")
@@ -199,11 +197,11 @@ private fun LayoutSpatialDialog(
             }
 
     ElevatedPanel(
-        contentSize = contentSize,
+        contentSize = contentSize ?: IntSize.Zero,
         pose = Pose(translation = MeterPosition(z = zDepth.meters).toVector3()),
     ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Box(modifier = Modifier.onSizeChanged { contentSize = it }) { content() }
+        Box(modifier = Modifier.constrainTo(Constraints()).onSizeChanged { contentSize = it }) {
+            content()
         }
     }
 }
