@@ -120,9 +120,19 @@ internal class TestPdfViewerFragment : PdfViewerFragment() {
             )
     }
 
+    fun setIsAnnotationIntentResolvable(value: Boolean) {
+        setAnnotationIntentResolvability(value)
+    }
+
     override fun onRequestImmersiveMode(enterImmersive: Boolean) {
         super.onRequestImmersiveMode(enterImmersive)
-        if (!enterImmersive) search?.show() else search?.hide()
+        if (!enterImmersive) {
+            isToolboxVisible = true
+            search?.show()
+        } else {
+            isToolboxVisible = false
+            search?.hide()
+        }
     }
 
     override fun onLoadDocumentSuccess() {

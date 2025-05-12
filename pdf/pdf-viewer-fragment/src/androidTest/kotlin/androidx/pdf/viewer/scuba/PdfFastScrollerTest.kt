@@ -22,6 +22,7 @@ import androidx.annotation.RequiresExtension
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.Lifecycle
+import androidx.pdf.util.Preconditions
 import androidx.pdf.viewer.FragmentUtils.scenarioLoadDocument
 import androidx.pdf.viewer.TestPdfViewerFragment
 import androidx.pdf.viewer.fragment.R
@@ -139,6 +140,15 @@ class PdfFastScrollerTest {
 
         onView(withId(R.id.pdfLoadingProgressBar))
             .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+
+        scenario.onFragment {
+            Preconditions.checkArgument(
+                it.documentLoaded,
+                "Unable to load document due to ${it.documentError?.message}"
+            )
+            it.setIsAnnotationIntentResolvable(true)
+            it.isToolboxVisible = true
+        }
 
         // Swipe actions
         onView(withId(R.id.pdfView)).perform(swipeUp())
