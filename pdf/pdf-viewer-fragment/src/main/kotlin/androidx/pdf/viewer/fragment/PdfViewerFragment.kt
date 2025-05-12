@@ -49,6 +49,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.withStarted
+import androidx.pdf.content.ExternalLink
 import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.util.AnnotationUtils
@@ -464,6 +465,20 @@ public open class PdfViewerFragment constructor() : Fragment() {
                 )
             )
         }
+    }
+
+    /**
+     * Called when an external link in the PDF is clicked. Override this method to provide custom
+     * handling for external links (e.g., URLs), as opposed to internal document navigation like
+     * `goTo` links, which are handled separately.
+     *
+     * @param externalLink The [ExternalLink] model representing the clicked link. It contains
+     *   metadata such as the link's URL, bounds, and the page it was found on.
+     * @return `true` if the link click was handled; `false` to fall back to the default behaviour.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    protected open fun onLinkClicked(externalLink: ExternalLink): Boolean {
+        return false
     }
 
     private fun setupPdfViewListeners() {
