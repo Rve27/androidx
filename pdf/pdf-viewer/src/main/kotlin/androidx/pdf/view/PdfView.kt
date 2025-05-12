@@ -938,7 +938,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
     @VisibleForTesting
     internal fun getDefaultZoom(): Float {
-        if (contentWidth == 0 || viewportWidth == 0) {
+        if (contentWidth == 0 || viewportWidth <= 0) {
             if (awaitingFirstLayout) pendingZoomRecalculation = true
             return DEFAULT_INIT_ZOOM
         }
