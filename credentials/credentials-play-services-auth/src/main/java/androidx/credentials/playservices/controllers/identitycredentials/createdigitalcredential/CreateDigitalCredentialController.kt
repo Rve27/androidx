@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.credentials.playservices.controllers.identitycredentials.getdigitalcredential
+package androidx.credentials.playservices.controllers.identitycredentials.createdigitalcredential
 
 import android.content.Context
 import android.content.Intent
@@ -26,50 +26,47 @@ import android.os.ResultReceiver
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.annotation.VisibleForTesting
-import androidx.credentials.Credential
+import androidx.credentials.CreateDigitalCredentialRequest
 import androidx.credentials.CredentialManagerCallback
 import androidx.credentials.DigitalCredential
 import androidx.credentials.ExperimentalDigitalCredentialApi
-import androidx.credentials.GetCredentialRequest
-import androidx.credentials.GetCredentialResponse
-import androidx.credentials.GetDigitalCredentialOption
-import androidx.credentials.exceptions.GetCredentialCancellationException
-import androidx.credentials.exceptions.GetCredentialException
-import androidx.credentials.exceptions.GetCredentialInterruptedException
-import androidx.credentials.exceptions.GetCredentialUnknownException
-import androidx.credentials.internal.toJetpackGetException
+import androidx.credentials.exceptions.CreateCredentialException
+import androidx.credentials.exceptions.CreateCredentialUnknownException
 import androidx.credentials.playservices.CredentialProviderPlayServicesImpl
 import androidx.credentials.playservices.controllers.CredentialProviderBaseController
 import androidx.credentials.playservices.controllers.CredentialProviderController
 import androidx.credentials.playservices.controllers.identitycredentials.IdentityCredentialApiHiddenActivity
 import androidx.credentials.provider.PendingIntentHandler
-import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.common.api.CommonStatusCodes
-import com.google.android.gms.identitycredentials.CredentialOption
+import com.google.android.gms.identitycredentials.CreateCredentialRequest
+import com.google.android.gms.identitycredentials.CreateCredentialResponse
 import com.google.android.gms.identitycredentials.IdentityCredentialManager
 import java.util.concurrent.Executor
 
-/** A controller to handle the GetRestoreCredential flow with play services. */
+/** A controller to handle the CreateCredential flow with play services. */
 @OptIn(ExperimentalDigitalCredentialApi::class)
 @RequiresApi(23)
-internal class CredentialProviderGetDigitalCredentialController(private val context: Context) :
+internal class CreateDigitalCredentialController(private val context: Context) :
     CredentialProviderController<
-        GetCredentialRequest,
-        com.google.android.gms.identitycredentials.GetCredentialRequest,
-        com.google.android.gms.identitycredentials.GetCredentialResponse,
-        GetCredentialResponse,
-        GetCredentialException
+        CreateDigitalCredentialRequest,
+        CreateCredentialRequest,
+        CreateCredentialResponse,
+        androidx.credentials.CreateCredentialResponse,
+        CreateCredentialException
     >(context) {
 
     /** The callback object state, used in the protected handleResponse method. */
     @VisibleForTesting
-    lateinit var callback: CredentialManagerCallback<GetCredentialResponse, GetCredentialException>
+    lateinit var callback:
+        CredentialManagerCallback<
+            androidx.credentials.CreateCredentialResponse,
+            CreateCredentialException
+        >
 
     /** The callback requires an executor to invoke it. */
     @VisibleForTesting lateinit var executor: Executor
 
     /**
-     * The cancellation signal, which is shuttled around to stop the flow at any moment prior to
+     * The cancellation signal. Which is shuttled around to stop the flow at any moment prior to
      * returning data.
      */
     @VisibleForTesting private var cancellationSignal: CancellationSignal? = null
@@ -82,7 +79,7 @@ internal class CredentialProviderGetDigitalCredentialController(private val cont
                     maybeReportErrorFromResultReceiver(
                         resultData,
                         CredentialProviderBaseController.Companion::
-                            getCredentialExceptionTypeToException,
+                            createCredentialExceptionTypeToException,
                         executor,
                         callback,
                         cancellationSignal
@@ -108,9 +105,8 @@ internal class CredentialProviderGetDigitalCredentialController(private val cont
             )
             return
         }
-
         if (
-            maybeReportErrorResultCodeGet(
+            maybeReportErrorResultCodeCreate(
                 resultCode,
                 { s, f -> cancelOrCallbackExceptionOrResult(s, f) },
                 { e -> this.executor.execute { this.callback.onError(e) } },
@@ -124,47 +120,56 @@ internal class CredentialProviderGetDigitalCredentialController(private val cont
             cancelOrCallbackExceptionOrResult(cancellationSignal) {
                 this.executor.execute {
                     this.callback.onError(
-                        GetCredentialUnknownException("No provider data returned.")
+                        CreateCredentialUnknownException("No provider data returned.")
                     )
                 }
             }
         } else {
-            val response = PendingIntentHandler.retrieveGetCredentialResponse(data)
-            if (response != null) {
-                cancelOrCallbackExceptionOrResult(cancellationSignal) {
-                    this.executor.execute { this.callback.onResult(response) }
-                }
-            } else {
-                val providerException = PendingIntentHandler.retrieveGetCredentialException(data)
+            val response =
+                PendingIntentHandler.retrieveCreateCredentialResponse(
+                    type = DigitalCredential.TYPE_DIGITAL_CREDENTIAL,
+                    intent = data
+                )
+            if (response == null) {
+                val providerException = PendingIntentHandler.retrieveCreateCredentialException(data)
                 cancelOrCallbackExceptionOrResult(cancellationSignal) {
                     this.executor.execute {
                         this.callback.onError(
                             providerException
-                                ?: GetCredentialUnknownException("Unexpected configuration error")
+                                ?: CreateCredentialUnknownException(
+                                    "Unexpected configuration error"
+                                )
                         )
                     }
+                }
+            } else {
+                cancelOrCallbackExceptionOrResult(cancellationSignal) {
+                    this.executor.execute { this.callback.onResult(response) }
                 }
             }
         }
     }
 
     override fun invokePlayServices(
-        request: GetCredentialRequest,
-        callback: CredentialManagerCallback<GetCredentialResponse, GetCredentialException>,
+        request: CreateDigitalCredentialRequest,
+        callback:
+            CredentialManagerCallback<
+                androidx.credentials.CreateCredentialResponse,
+                CreateCredentialException
+            >,
         executor: Executor,
         cancellationSignal: CancellationSignal?
     ) {
         this.cancellationSignal = cancellationSignal
         this.callback = callback
         this.executor = executor
-
         if (CredentialProviderPlayServicesImpl.cancellationReviewer(cancellationSignal)) {
             return
         }
 
         val convertedRequest = this.convertRequestToPlayServices(request)
         IdentityCredentialManager.getClient(context)
-            .getCredential(convertedRequest)
+            .createCredential(convertedRequest)
             .addOnSuccessListener { result ->
                 if (CredentialProviderPlayServicesImpl.cancellationReviewer(cancellationSignal)) {
                     return@addOnSuccessListener
@@ -176,72 +181,37 @@ internal class CredentialProviderGetDigitalCredentialController(private val cont
                     toIpcFriendlyResultReceiver(resultReceiver)
                 )
                 hiddenIntent.putExtra(EXTRA_FLOW_PENDING_INTENT, result.pendingIntent)
-                hiddenIntent.putExtra(EXTRA_ERROR_NAME, GET_UNKNOWN)
+                hiddenIntent.putExtra(EXTRA_ERROR_NAME, CREATE_UNKNOWN)
                 context.startActivity(hiddenIntent)
             }
             .addOnFailureListener { e ->
-                val getException = fromGmsException(e)
                 cancelOrCallbackExceptionOrResult(cancellationSignal) {
-                    executor.execute { callback.onError(getException) }
+                    executor.execute {
+                        callback.onError(CreateCredentialUnknownException(e.message))
+                    }
                 }
             }
-    }
-
-    private fun fromGmsException(e: Throwable): GetCredentialException {
-        return when (e) {
-            is com.google.android.gms.identitycredentials.GetCredentialException ->
-                toJetpackGetException(e.type, e.message)
-            is ApiException ->
-                when (e.statusCode) {
-                    CommonStatusCodes.CANCELED -> {
-                        GetCredentialCancellationException(e.message)
-                    }
-                    in retryables -> {
-                        GetCredentialInterruptedException(e.message)
-                    }
-                    else -> {
-                        GetCredentialUnknownException("Get digital credential failed, failure: $e")
-                    }
-                }
-            else -> GetCredentialUnknownException("Get digital credential failed, failure: $e")
-        }
     }
 
     public override fun convertRequestToPlayServices(
-        request: GetCredentialRequest
-    ): com.google.android.gms.identitycredentials.GetCredentialRequest {
-        val credOptions = mutableListOf<CredentialOption>()
-        for (option in request.credentialOptions) {
-            if (option is GetDigitalCredentialOption) {
-                credOptions.add(
-                    CredentialOption(
-                        option.type,
-                        option.requestData,
-                        option.candidateQueryData,
-                        option.requestJson,
-                        requestType = "",
-                        protocolType = "",
-                    )
-                )
-            }
-        }
-        return com.google.android.gms.identitycredentials.GetCredentialRequest(
-            credOptions,
-            GetCredentialRequest.getRequestMetadataBundle(request),
-            request.origin,
-            ResultReceiver(null) // No-op
+        request: CreateDigitalCredentialRequest
+    ): CreateCredentialRequest {
+        return CreateCredentialRequest(
+            type = request.type,
+            credentialData = request.credentialData,
+            candidateQueryData = request.candidateQueryData,
+            origin = request.origin,
+            requestJson = request.requestJson,
+            resultReceiver = resultReceiver,
         )
     }
 
     public override fun convertResponseToCredentialManager(
-        response: com.google.android.gms.identitycredentials.GetCredentialResponse
-    ): GetCredentialResponse {
-        return GetCredentialResponse(
-            Credential.createFrom(
-                DigitalCredential.TYPE_DIGITAL_CREDENTIAL, // TODO: b/361100869 - use the real type
-                // returned as the response
-                response.credential.data,
-            )
+        response: CreateCredentialResponse
+    ): androidx.credentials.CreateCredentialResponse {
+        return androidx.credentials.CreateCredentialResponse.createFrom(
+            type = DigitalCredential.TYPE_DIGITAL_CREDENTIAL,
+            data = response.data
         )
     }
 
