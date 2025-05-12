@@ -26,7 +26,6 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.layout.positionOnScreen
-import androidx.compose.ui.node.LayoutModifierNode
 import androidx.compose.ui.node.LayoutNode
 import androidx.compose.ui.node.NodeCoordinator
 import androidx.compose.ui.node.Nodes
@@ -192,21 +191,7 @@ internal constructor(
 
     /** Whether this node is transparent. */
     internal val isTransparent: Boolean
-        get() = findCoordinatorToGetTransparency()?.isTransparent() ?: false
-
-    private fun findCoordinatorToGetTransparency(): NodeCoordinator? {
-        if (isFake) return parent?.findCoordinatorToGetTransparency()
-        val outerMergingSemantics = layoutNode.outerMergingSemantics
-        if (outerMergingSemantics != null) {
-            return outerMergingSemantics.requireCoordinator(Nodes.Semantics)
-        }
-        val outerSemanticsNodeCoordinator = outerSemanticsNode.requireCoordinator(Nodes.Semantics)
-        if (outerSemanticsNode is LayoutModifierNode) {
-            // We need to check the wrapped coordinator in case the semantics node sets the alpha
-            return outerSemanticsNodeCoordinator.wrapped ?: outerSemanticsNodeCoordinator
-        }
-        return outerSemanticsNodeCoordinator
-    }
+        get() = findCoordinatorToGetBounds()?.isTransparent() ?: false
 
     /**
      * Returns the position of an [alignment line][AlignmentLine], or [AlignmentLine.Unspecified] if

@@ -46,6 +46,7 @@ import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onParent
+import androidx.compose.ui.test.onSibling
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.height
@@ -146,11 +147,11 @@ class BadgeTest {
     @Test
     fun badgeBox_shortContent_position() {
         rule.setMaterialContent {
-            BadgedBox(badge = { Badge { Text("8", Modifier.testTag(TestBadgeContentTag)) } }) {
+            BadgedBox(badge = { Badge { Text("8") } }) {
                 Icon(icon, null, modifier = Modifier.testTag(TestAnchorTag))
             }
         }
-        val badge = rule.onNodeWithTag(TestBadgeContentTag)
+        val badge = rule.onNodeWithTag(TestAnchorTag).onSibling()
         val anchorBounds = rule.onNodeWithTag(TestAnchorTag).getUnclippedBoundsInRoot()
         val badgeBounds = badge.getUnclippedBoundsInRoot()
         badge.assertPositionInRootIsEqualTo(
@@ -166,11 +167,11 @@ class BadgeTest {
     @Test
     fun badgeBox_longContent_position() {
         rule.setMaterialContent {
-            BadgedBox(badge = { Badge { Text("999+", Modifier.testTag(TestBadgeContentTag)) } }) {
+            BadgedBox(badge = { Badge { Text("999+") } }) {
                 Icon(icon, null, modifier = Modifier.testTag(TestAnchorTag))
             }
         }
-        val badge = rule.onNodeWithTag(TestBadgeContentTag)
+        val badge = rule.onNodeWithTag(TestAnchorTag).onSibling()
         val anchorBounds = rule.onNodeWithTag(TestAnchorTag).getUnclippedBoundsInRoot()
         val badgeBounds = badge.getUnclippedBoundsInRoot()
 
@@ -282,5 +283,4 @@ class BadgeTest {
 }
 
 private const val TestBadgeTag = "badge"
-private const val TestBadgeContentTag = "badgeContent"
 private const val TestAnchorTag = "anchor"
