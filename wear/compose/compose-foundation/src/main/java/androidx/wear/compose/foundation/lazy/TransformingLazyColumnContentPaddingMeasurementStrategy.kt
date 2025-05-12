@@ -398,7 +398,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
 
     private fun overscrolledBackwards(
         visibleItem: TransformingLazyColumnMeasuredItem,
-    ): Boolean = visibleItem.let { it.index == 0 && it.offset >= beforeContentPadding }
+    ): Boolean = visibleItem.let { it.index == 0 && it.offset > beforeContentPadding }
 
     private fun overscrolledForward(
         visibleItem: TransformingLazyColumnMeasuredItem,
