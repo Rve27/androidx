@@ -1269,6 +1269,7 @@ sealed interface Composer {
          * - Compose ships with a minifier config that removes source information from the release
          *   builds. Enabling this flag in minified builds will have no effect.
          */
+        @ExperimentalComposeRuntimeApi
         fun setDiagnosticStackTraceEnabled(enabled: Boolean) {
             composeStackTraceEnabled = enabled
         }
