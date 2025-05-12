@@ -611,10 +611,10 @@ final class LifecycleCameraRepository {
         static Key create(@NonNull LifecycleOwner lifecycleOwner,
                 CameraUseCaseAdapter.@NonNull CameraId cameraId) {
             return new AutoValue_LifecycleCameraRepository_Key(
-                    lifecycleOwner, cameraId);
+                    System.identityHashCode(lifecycleOwner), cameraId);
         }
 
-        public abstract @NonNull LifecycleOwner getLifecycleOwner();
+        public abstract int getLifecycleOwnerHash();
 
         public abstract CameraUseCaseAdapter.@NonNull CameraId getCameraId();
     }
