@@ -29,6 +29,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.pdf.view.PdfView
 import androidx.pdf.view.PdfView.OnScrollStateChangedListener
+import androidx.pdf.viewer.fragment.PdfStylingOptions
 import androidx.pdf.viewer.fragment.PdfViewerFragment
 import androidx.pdf.viewer.fragment.test.R
 import androidx.pdf.viewer.idlingresource.PdfCountingIdlingResource
@@ -41,7 +42,11 @@ import java.util.UUID
  * while loading pdf document.
  */
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
-internal class TestPdfViewerFragment : PdfViewerFragment() {
+internal class TestPdfViewerFragment : PdfViewerFragment {
+
+    constructor() : super()
+
+    constructor(pdfStylingOptions: PdfStylingOptions) : super(pdfStylingOptions)
 
     val pdfLoadingIdlingResource = PdfCountingIdlingResource(PDF_LOAD_RESOURCE_NAME)
     val pdfScrollIdlingResource = PdfCountingIdlingResource(PDF_SCROLL_RESOURCE_NAME)
