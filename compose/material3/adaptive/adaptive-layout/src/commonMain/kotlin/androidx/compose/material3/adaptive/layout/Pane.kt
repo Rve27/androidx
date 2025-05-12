@@ -198,8 +198,6 @@ internal constructor(
 )
 
 /** CompositionLocal containing the currently-selected [AnimatedPaneOverride]. */
-@Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-@get:ExperimentalMaterial3AdaptiveComponentOverrideApi
 @ExperimentalMaterial3AdaptiveComponentOverrideApi
 val LocalAnimatedPaneOverride: ProvidableCompositionLocal<AnimatedPaneOverride> =
     compositionLocalOf {

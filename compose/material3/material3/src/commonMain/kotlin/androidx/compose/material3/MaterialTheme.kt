@@ -154,8 +154,6 @@ object MaterialTheme {
      * `CompositionLocalConsumerModifierNode` implementations, but in most cases it's recommended to
      * read the motion values from [MaterialTheme.motionScheme].
      */
-    @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-    @get:ExperimentalMaterial3ExpressiveApi
     @ExperimentalMaterial3ExpressiveApi
     val LocalMotionScheme: CompositionLocal<MotionScheme>
         get() = _localMotionScheme
@@ -236,7 +234,6 @@ internal fun rememberTextSelectionColors(colorScheme: ColorScheme): TextSelectio
 internal const val TextSelectionBackgroundOpacity = 0.4f
 
 /** Use [MaterialTheme.LocalMotionScheme] to access this publicly. */
-@Suppress("OPT_IN_MARKER_ON_WRONG_TARGET", "CompositionLocalNaming")
-@get:ExperimentalMaterial3ExpressiveApi
+@Suppress("CompositionLocalNaming")
 @ExperimentalMaterial3ExpressiveApi
 private val _localMotionScheme = staticCompositionLocalOf { standard() }

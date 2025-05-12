@@ -327,8 +327,6 @@ internal inline fun <R> ControlledComposition.pausable(
 // ControlledComposition with a default implementation.
 @ExperimentalComposeApi
 val ControlledComposition.recomposeCoroutineContext: CoroutineContext
-    @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-    @ExperimentalComposeApi
     get() = (this as? CompositionImpl)?.recomposeContext ?: EmptyCoroutineContext
 
 /**

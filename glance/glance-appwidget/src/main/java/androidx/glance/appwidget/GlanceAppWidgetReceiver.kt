@@ -86,10 +86,7 @@ public abstract class GlanceAppWidgetReceiver : AppWidgetProvider() {
      * Note: This does not set the [CoroutineContext] for the GlanceAppWidget, which will always run
      * on the main thread.
      */
-    @get:ExperimentalGlanceApi
-    @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-    @ExperimentalGlanceApi
-    public open val coroutineContext: CoroutineContext = Dispatchers.Default
+    @ExperimentalGlanceApi public open val coroutineContext: CoroutineContext = Dispatchers.Default
 
     @CallSuper
     override fun onUpdate(

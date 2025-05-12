@@ -1655,8 +1655,6 @@ internal constructor(
 )
 
 /** CompositionLocal containing the currently-selected [NavigationSuiteScaffoldOverride]. */
-@Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-@get:ExperimentalMaterial3AdaptiveComponentOverrideApi
 @ExperimentalMaterial3AdaptiveComponentOverrideApi
 val LocalNavigationSuiteScaffoldOverride:
     ProvidableCompositionLocal<NavigationSuiteScaffoldOverride> =

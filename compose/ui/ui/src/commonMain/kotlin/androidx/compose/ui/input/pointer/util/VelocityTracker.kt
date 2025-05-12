@@ -702,10 +702,7 @@ private inline operator fun Matrix.set(row: Int, col: Int, value: Float) {
  * with the new fix, flip this flag to false to confirm they are newly introduced then file a bug.
  * Tracking bug: (b/318621681)
  */
-@Suppress("GetterSetterNames", "OPT_IN_MARKER_ON_WRONG_TARGET")
-@get:Suppress("GetterSetterNames")
-@get:ExperimentalComposeUiApi
-@set:ExperimentalComposeUiApi
+@Suppress("GetterSetterNames", "NullAnnotationGroup")
 @ExperimentalComposeUiApi
 var VelocityTrackerAddPointsFix: Boolean = true
 
@@ -715,10 +712,7 @@ var VelocityTrackerAddPointsFix: Boolean = true
  * use the true path once the flag is removed. If you find any issues with the new fix, flip this
  * flag to false to confirm they are newly introduced then file a bug. Tracking bug: (b/318621681)
  */
-@Suppress("GetterSetterNames", "OPT_IN_MARKER_ON_WRONG_TARGET")
-@get:Suppress("GetterSetterNames")
-@get:ExperimentalVelocityTrackerApi
-@set:ExperimentalVelocityTrackerApi
+@Suppress("GetterSetterNames")
 @ExperimentalVelocityTrackerApi
 var VelocityTrackerStrategyUseImpulse = false
 

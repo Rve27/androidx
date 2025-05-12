@@ -1087,8 +1087,6 @@ internal constructor(
 )
 
 /** CompositionLocal containing the currently-selected [ThreePaneScaffoldOverride]. */
-@Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-@get:ExperimentalMaterial3AdaptiveComponentOverrideApi
 @ExperimentalMaterial3AdaptiveComponentOverrideApi
 val LocalThreePaneScaffoldOverride: ProvidableCompositionLocal<ThreePaneScaffoldOverride> =
     compositionLocalOf {

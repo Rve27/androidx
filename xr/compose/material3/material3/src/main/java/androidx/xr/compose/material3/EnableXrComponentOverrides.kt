@@ -130,46 +130,32 @@ public sealed interface XrComponentOverrideEnablerContext {
 public value class XrComponentOverride private constructor(private val name: String) {
     public companion object {
         /** Material3 NavigationRail. */
-        @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-        @get:ExperimentalMaterial3XrApi
         @ExperimentalMaterial3XrApi
         public val NavigationRail: XrComponentOverride = XrComponentOverride("NavigationRail")
 
         /** Material3 NavigationBar. */
-        @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-        @get:ExperimentalMaterial3XrApi
         @ExperimentalMaterial3XrApi
         public val NavigationBar: XrComponentOverride = XrComponentOverride("NavigationBar")
 
         /** Material3 Adaptive NavigationSuiteScaffold. */
-        @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-        @get:ExperimentalMaterial3XrApi
         @ExperimentalMaterial3XrApi
         public val NavigationSuiteScaffold: XrComponentOverride =
             XrComponentOverride("NavigationSuiteScaffold")
 
         /** Material3 Adaptive ThreePaneScaffold. */
-        @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-        @get:ExperimentalMaterial3XrApi
         @ExperimentalMaterial3XrApi
         public val ThreePaneScaffold: XrComponentOverride = XrComponentOverride("ThreePaneScaffold")
 
         /** Material3 single-row TopAppBar. */
-        @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-        @get:ExperimentalMaterial3XrApi
         @ExperimentalMaterial3XrApi
         public val SingleRowTopAppBar: XrComponentOverride =
             XrComponentOverride("SingleRowTopAppBar")
 
         /** Material3 two-rows TopAppBar. */
-        @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-        @get:ExperimentalMaterial3XrApi
         @ExperimentalMaterial3XrApi
         public val TwoRowsTopAppBar: XrComponentOverride = XrComponentOverride("TwoRowsTopAppBar")
 
         /** Material3 BasicAlertDialog. */
-        @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
-        @get:ExperimentalMaterial3XrApi
         @ExperimentalMaterial3XrApi
         public val BasicAlertDialog: XrComponentOverride = XrComponentOverride("BasicAlertDialog")
     }

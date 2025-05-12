@@ -4134,9 +4134,7 @@ internal class ComposerImpl(
         override val effectCoroutineContext: CoroutineContext
             get() = parentContext.effectCoroutineContext
 
-        @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
         @OptIn(ExperimentalComposeApi::class)
-        @get:OptIn(ExperimentalComposeApi::class)
         override val recomposeCoroutineContext: CoroutineContext
             get() = this@ComposerImpl.composition.recomposeCoroutineContext
 
