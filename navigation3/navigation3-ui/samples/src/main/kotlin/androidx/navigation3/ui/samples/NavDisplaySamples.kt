@@ -41,9 +41,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.SavedStateNavEntryDecorator
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.samples.Dashboard
 import androidx.navigation3.runtime.samples.DialogBase
 import androidx.navigation3.runtime.samples.DialogContent
@@ -51,7 +53,6 @@ import androidx.navigation3.runtime.samples.NavigateBackButton
 import androidx.navigation3.runtime.samples.Profile
 import androidx.navigation3.runtime.samples.ProfileViewModel
 import androidx.navigation3.runtime.samples.Scrollable
-import androidx.navigation3.runtime.samples.rememberMutableStateListOf
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.Scene
@@ -61,7 +62,7 @@ import kotlinx.serialization.Serializable
 @Sampled
 @Composable
 fun SceneNav() {
-    val backStack = rememberMutableStateListOf(Profile)
+    val backStack = rememberNavBackStack(Profile)
     val showDialog = remember { mutableStateOf(false) }
     NavDisplay(
         backStack = backStack,
@@ -73,7 +74,7 @@ fun SceneNav() {
             ),
         onBack = { backStack.removeAt(backStack.lastIndex) },
         entryProvider =
-            entryProvider({ NavEntry(Unit) { Text(text = "Invalid Key") } }) {
+            entryProvider({ NavEntry(it) { Text(text = "Invalid Key") } }) {
                 entry<Profile> {
                     val viewModel = viewModel<ProfileViewModel>()
                     Profile(viewModel, { backStack.add(it) }) {
@@ -135,7 +136,7 @@ fun SceneNavSharedEntrySample() {
             }
         }
 
-    val backStack = rememberMutableStateListOf(CatList)
+    val backStack = rememberNavBackStack(CatList)
     SharedTransitionLayout {
         CompositionLocalProvider(localNavSharedTransitionScope provides this) {
             NavDisplay(
@@ -169,7 +170,7 @@ fun SceneNavSharedEntrySample() {
 @Sampled
 @Composable
 fun SceneNavSharedElementSample() {
-    val backStack = rememberMutableStateListOf(CatList)
+    val backStack = rememberNavBackStack(CatList)
     SharedTransitionLayout {
         NavDisplay(
             backStack = backStack,
@@ -191,9 +192,9 @@ fun SceneNavSharedElementSample() {
     }
 }
 
-@Serializable object CatList
+object CatList : NavKey()
 
-@Serializable data class CatDetail(val cat: Cat)
+@Serializable data class CatDetail(val cat: Cat) : NavKey()
 
 @Serializable
 data class Cat(@DrawableRes val imageId: Int, val name: String, val description: String)

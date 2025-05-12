@@ -85,6 +85,24 @@ open class <#A: kotlin/Any> androidx.navigation3.runtime/NavEntryWrapper : andro
         open fun <get-metadata>(): kotlin.collections/Map<kotlin/String, kotlin/Any> // androidx.navigation3.runtime/NavEntryWrapper.metadata.<get-metadata>|<get-metadata>(){}[0]
 }
 
+open class androidx.navigation3.runtime/NavKey { // androidx.navigation3.runtime/NavKey|null[0]
+    constructor <init>(kotlin.uuid/Uuid = ...) // androidx.navigation3.runtime/NavKey.<init>|<init>(kotlin.uuid.Uuid){}[0]
+    constructor <init>(kotlin/Int, kotlin.uuid/Uuid?, kotlinx.serialization.internal/SerializationConstructorMarker?) // androidx.navigation3.runtime/NavKey.<init>|<init>(kotlin.Int;kotlin.uuid.Uuid?;kotlinx.serialization.internal.SerializationConstructorMarker?){}[0]
+
+    final object $serializer : kotlinx.serialization.internal/GeneratedSerializer<androidx.navigation3.runtime/NavKey> { // androidx.navigation3.runtime/NavKey.$serializer|null[0]
+        final val descriptor // androidx.navigation3.runtime/NavKey.$serializer.descriptor|{}descriptor[0]
+            final fun <get-descriptor>(): kotlinx.serialization.descriptors/SerialDescriptor // androidx.navigation3.runtime/NavKey.$serializer.descriptor.<get-descriptor>|<get-descriptor>(){}[0]
+
+        final fun childSerializers(): kotlin/Array<kotlinx.serialization/KSerializer<*>> // androidx.navigation3.runtime/NavKey.$serializer.childSerializers|childSerializers(){}[0]
+        final fun deserialize(kotlinx.serialization.encoding/Decoder): androidx.navigation3.runtime/NavKey // androidx.navigation3.runtime/NavKey.$serializer.deserialize|deserialize(kotlinx.serialization.encoding.Decoder){}[0]
+        final fun serialize(kotlinx.serialization.encoding/Encoder, androidx.navigation3.runtime/NavKey) // androidx.navigation3.runtime/NavKey.$serializer.serialize|serialize(kotlinx.serialization.encoding.Encoder;androidx.navigation3.runtime.NavKey){}[0]
+    }
+
+    final object Companion { // androidx.navigation3.runtime/NavKey.Companion|null[0]
+        final fun serializer(): kotlinx.serialization/KSerializer<androidx.navigation3.runtime/NavKey> // androidx.navigation3.runtime/NavKey.Companion.serializer|serializer(){}[0]
+    }
+}
+
 final object androidx.navigation3.runtime/SavedStateNavEntryDecorator : androidx.navigation3.runtime/NavEntryDecorator { // androidx.navigation3.runtime/SavedStateNavEntryDecorator|null[0]
     final fun <#A1: kotlin/Any> DecorateEntry(androidx.navigation3.runtime/NavEntry<#A1>) // androidx.navigation3.runtime/SavedStateNavEntryDecorator.DecorateEntry|DecorateEntry(androidx.navigation3.runtime.NavEntry<0:0>){0§<kotlin.Any>}[0]
     final fun DecorateBackStack(kotlin.collections/List<kotlin/Any>, kotlin/Function0<kotlin/Unit>) // androidx.navigation3.runtime/SavedStateNavEntryDecorator.DecorateBackStack|DecorateBackStack(kotlin.collections.List<kotlin.Any>;kotlin.Function0<kotlin.Unit>){}[0]

@@ -28,6 +28,7 @@ plugins {
     id("AndroidXPlugin")
     id("AndroidXComposePlugin")
     id("com.android.library")
+    alias(libs.plugins.kotlinSerialization)
 }
 
 androidXMultiplatform {
@@ -47,6 +48,7 @@ androidXMultiplatform {
                 implementation(project(":lifecycle:lifecycle-runtime"))
                 implementation(project(":savedstate:savedstate"))
                 implementation(project(":savedstate:savedstate-compose"))
+                implementation(libs.kotlinSerializationCore)
             }
         }
 
@@ -76,6 +78,7 @@ androidXMultiplatform {
                 implementation(project(":compose:test-utils"))
                 implementation("androidx.compose.ui:ui-test:1.7.5")
                 implementation("androidx.compose.ui:ui-test-junit4:1.7.5")
+                implementation(libs.kotlinSerializationCore)
             }
         }
 

@@ -49,6 +49,11 @@ package androidx.navigation3.runtime {
     method public static inline <T> kotlin.jvm.functions.Function1<T,androidx.navigation3.runtime.NavEntry<T>> entryProvider(optional kotlin.jvm.functions.Function1<? super T,? extends androidx.navigation3.runtime.NavEntry<T>> fallback, kotlin.jvm.functions.Function1<? super androidx.navigation3.runtime.EntryProviderBuilder<T>,kotlin.Unit> builder);
   }
 
+  public final class NavBackStack_androidKt {
+    method @androidx.compose.runtime.Composable public static <T> androidx.compose.runtime.snapshots.SnapshotStateList<T> rememberMutableStateListOf(T... elements);
+    method @androidx.compose.runtime.Composable public static <T extends androidx.navigation3.runtime.NavKey> androidx.compose.runtime.snapshots.SnapshotStateList<androidx.navigation3.runtime.NavKey> rememberNavBackStack(T... elements);
+  }
+
   public class NavEntry<T> {
     ctor public NavEntry(T key, optional java.util.Map<java.lang.String,?> metadata, kotlin.jvm.functions.Function1<? super T,kotlin.Unit> content);
     method public kotlin.jvm.functions.Function1<T,kotlin.Unit> getContent();
@@ -71,6 +76,11 @@ package androidx.navigation3.runtime {
     property public T key;
     property public java.util.Map<java.lang.String,java.lang.Object> metadata;
     property public final androidx.navigation3.runtime.NavEntry<T> navEntry;
+  }
+
+  @kotlinx.serialization.Serializable public class NavKey {
+    ctor public NavKey();
+    ctor public NavKey(optional kotlin.uuid.Uuid uuid);
   }
 
   public final class SavedStateNavEntryDecorator implements androidx.navigation3.runtime.NavEntryDecorator {

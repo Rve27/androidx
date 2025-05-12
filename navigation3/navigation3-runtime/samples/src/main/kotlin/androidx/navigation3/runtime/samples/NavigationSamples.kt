@@ -30,12 +30,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.autoSaver
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.LightGray
@@ -44,21 +38,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
-import androidx.savedstate.serialization.decodeFromSavedState
-import androidx.savedstate.serialization.encodeToSavedState
-import kotlinx.serialization.InternalSerializationApi
-import kotlinx.serialization.KSerializer
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.buildClassSerialDescriptor
-import kotlinx.serialization.descriptors.serialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.encoding.decodeStructure
-import kotlinx.serialization.encoding.encodeStructure
-import kotlinx.serialization.serializer
 
 @Serializable
-object Profile {
+object Profile : NavKey() {
     val resourceId: Int = R.string.profile
 }
 
@@ -67,24 +51,24 @@ class ProfileViewModel : ViewModel() {
 }
 
 @Serializable
-object Scrollable {
+object Scrollable : NavKey() {
     val resourceId: Int = R.string.scrollable
 }
 
 @Serializable
-object DialogBase {
+object DialogBase : NavKey() {
     val resourceId: Int = R.string.dialog
 }
 
 @Serializable
-data class Dashboard(val userId: String? = "no value given") {
+data class Dashboard(val userId: String? = "no value given") : NavKey() {
     companion object {
         val resourceId: Int = R.string.dashboard
     }
 }
 
 @Composable
-fun Profile(viewModel: ProfileViewModel, navigateTo: (Any) -> Unit, onBack: () -> Unit) {
+fun Profile(viewModel: ProfileViewModel, navigateTo: (NavKey) -> Unit, onBack: () -> Unit) {
     Column(Modifier.fillMaxSize().then(Modifier.padding(8.dp))) {
         Text(text = "${viewModel.name} ${stringResource(Profile.resourceId)}")
         NavigateButton(stringResource(Dashboard.resourceId)) { navigateTo(Dashboard()) }
@@ -107,7 +91,7 @@ fun Dashboard(title: String? = null, onBack: () -> Unit) {
 }
 
 @Composable
-fun Scrollable(navigateTo: (Any) -> Unit, onBack: () -> Unit) {
+fun Scrollable(navigateTo: (NavKey) -> Unit, onBack: () -> Unit) {
     Column(Modifier.fillMaxSize().then(Modifier.padding(8.dp))) {
         NavigateButton(stringResource(Dashboard.resourceId)) { navigateTo(Dashboard()) }
         LazyColumn(modifier = Modifier.weight(1f)) {
@@ -195,65 +179,3 @@ private val phrases =
         "Fight Fire With Fire",
         "Go For Broke"
     )
-
-@Composable
-fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<Any> {
-    return rememberSaveable(saver = snapshotStateListSaver(serializableListSaver())) {
-        elements.toList().toMutableStateList()
-    }
-}
-
-inline fun <reified T : Any> serializableListSaver(
-    serializer: KSerializer<T> = UnsafePolymorphicSerializer()
-) =
-    listSaver(
-        save = { list -> list.map { encodeToSavedState(serializer, it) } },
-        restore = { list -> list.map { decodeFromSavedState(serializer, it) } }
-    )
-
-@Suppress("UNCHECKED_CAST")
-fun <T> snapshotStateListSaver(
-    listSaver: Saver<List<T>, out Any> = autoSaver()
-): Saver<SnapshotStateList<T>, Any> =
-    with(listSaver as Saver<List<T>, Any>) {
-        Saver(
-            save = { state ->
-                // We use toMutableList() here to ensure that save() is
-                // sent a list that is saveable by default (e.g., something
-                // that autoSaver() can handle)
-                save(state.toList().toMutableList())
-            },
-            restore = { state -> restore(state)?.toMutableStateList() }
-        )
-    }
-
-@OptIn(InternalSerializationApi::class)
-class UnsafePolymorphicSerializer<T : Any> : KSerializer<T> {
-
-    override val descriptor =
-        buildClassSerialDescriptor("PolymorphicData") {
-            element(elementName = "type", serialDescriptor<String>())
-            element(elementName = "payload", buildClassSerialDescriptor("Any"))
-        }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun deserialize(decoder: Decoder): T {
-        return decoder.decodeStructure(descriptor) {
-            val className = decodeStringElement(descriptor, decodeElementIndex(descriptor))
-            val classRef = Class.forName(className).kotlin
-            val serializer = classRef.serializer()
-
-            decodeSerializableElement(descriptor, decodeElementIndex(descriptor), serializer) as T
-        }
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun serialize(encoder: Encoder, value: T) {
-        encoder.encodeStructure(descriptor) {
-            val className = value::class.java.name!!
-            encodeStringElement(descriptor, index = 0, className)
-            val serializer = value::class.serializer() as KSerializer<T>
-            encodeSerializableElement(descriptor, index = 1, serializer, value)
-        }
-    }
-}

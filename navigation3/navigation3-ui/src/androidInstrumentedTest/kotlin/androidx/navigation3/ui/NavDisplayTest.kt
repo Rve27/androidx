@@ -32,10 +32,13 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.window.Dialog
 import androidx.kruth.assertThat
+import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.SavedStateNavEntryDecorator
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.savedstate.SavedStateRegistry
 import androidx.savedstate.compose.LocalSavedStateRegistryOwner
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -44,6 +47,7 @@ import com.google.common.truth.Truth.assertWithMessage
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
+import kotlinx.serialization.Serializable
 import org.junit.Rule
 import org.junit.runner.RunWith
 
@@ -159,17 +163,17 @@ class NavDisplayTest {
     @Test
     fun testStateOfInactiveContentIsRestoredWhenWeGoBackToIt() {
         lateinit var numberOnScreen1: MutableState<Int>
-        lateinit var backStack: MutableList<Any>
+        lateinit var backStack: NavBackStack
         composeTestRule.setContent {
-            backStack = remember { mutableStateListOf(first) }
+            backStack = rememberNavBackStack(First)
             NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
                 when (it) {
-                    first ->
-                        NavEntry(first) { numberOnScreen1 = rememberSaveable { mutableStateOf(0) } }
-                    second -> NavEntry(second) {}
+                    First ->
+                        NavEntry(First) { numberOnScreen1 = rememberSaveable { mutableStateOf(0) } }
+                    Second -> NavEntry(Second) {}
                     else -> error("Invalid key passed")
                 }
             }
@@ -179,7 +183,7 @@ class NavDisplayTest {
             assertWithMessage("Initial number should be 0").that(numberOnScreen1.value).isEqualTo(0)
             numberOnScreen1.value++
             assertWithMessage("The number should be 1").that(numberOnScreen1.value).isEqualTo(1)
-            backStack.add(second)
+            backStack.add(Second)
         }
 
         composeTestRule.runOnIdle { backStack.removeAt(backStack.size - 1) }
@@ -195,21 +199,21 @@ class NavDisplayTest {
     fun testStateIsRemovedOnPop() {
         lateinit var numberOnScreen1: MutableState<Int>
         lateinit var numberOnScreen2: MutableState<Int>
-        lateinit var backStack: MutableList<Any>
+        lateinit var backStack: NavBackStack
         composeTestRule.setContent {
-            backStack = remember { mutableStateListOf(first) }
+            backStack = rememberNavBackStack(First)
             NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
                 when (it) {
-                    first ->
-                        NavEntry(first) {
+                    First ->
+                        NavEntry(First) {
                             numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                             Text("numberOnScreen1: ${numberOnScreen1.value}")
                         }
-                    second ->
-                        NavEntry(second) {
+                    Second ->
+                        NavEntry(Second) {
                             numberOnScreen2 = rememberSaveable { mutableStateOf(0) }
                             Text("numberOnScreen2: ${numberOnScreen2.value}")
                         }
@@ -230,7 +234,7 @@ class NavDisplayTest {
 
         assertThat(composeTestRule.onNodeWithText("numberOnScreen1: 2").isDisplayed()).isTrue()
 
-        composeTestRule.runOnIdle { backStack.add(second) }
+        composeTestRule.runOnIdle { backStack.add(Second) }
 
         composeTestRule.runOnIdle {
             assertWithMessage("Initial number should be 0").that(numberOnScreen2.value).isEqualTo(0)
@@ -256,7 +260,7 @@ class NavDisplayTest {
 
         assertThat(composeTestRule.onNodeWithText("numberOnScreen1: 2").isDisplayed()).isTrue()
 
-        composeTestRule.runOnIdle { backStack.add(second) }
+        composeTestRule.runOnIdle { backStack.add(Second) }
 
         composeTestRule.runOnIdle {
             assertWithMessage("Initial number should be 0").that(numberOnScreen2.value).isEqualTo(0)
@@ -362,13 +366,13 @@ class NavDisplayTest {
     @Test
     fun swappingBackStackClearsState() {
         lateinit var numberOnScreen1: MutableState<Int>
-        lateinit var backStack1: MutableList<String>
-        lateinit var backStack2: MutableList<String>
+        lateinit var backStack1: NavBackStack
+        lateinit var backStack2: NavBackStack
         lateinit var state: MutableState<Int>
 
         composeTestRule.setContent {
-            backStack1 = remember { mutableStateListOf(first) }
-            backStack2 = remember { mutableStateListOf(second) }
+            backStack1 = rememberNavBackStack(First)
+            backStack2 = rememberNavBackStack(Second)
             state = remember { mutableStateOf(1) }
 
             val backStack =
@@ -381,11 +385,11 @@ class NavDisplayTest {
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
                 entryProvider =
                     entryProvider {
-                        entry(first) {
+                        entry(First) {
                             numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                             Text("numberOnScreen1: ${numberOnScreen1.value}")
                         }
-                        entry(second) { Text(second) }
+                        entry(Second) { Text(second) }
                     }
             )
         }
@@ -527,21 +531,21 @@ class NavDisplayTest {
     fun testNonConsecutiveDuplicateKeyStateIsCorrect() {
         lateinit var numberOnScreen1: MutableState<Int>
         lateinit var numberOnScreen2: MutableState<Int>
-        lateinit var backStack: MutableList<Any>
+        lateinit var backStack: NavBackStack
         composeTestRule.setContent {
-            backStack = remember { mutableStateListOf(first) }
+            backStack = rememberNavBackStack(First)
             NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
                 when (it) {
-                    first ->
-                        NavEntry(first) {
+                    First ->
+                        NavEntry(First) {
                             numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                             Text("numberOnScreen1: ${numberOnScreen1.value}")
                         }
-                    second ->
-                        NavEntry(second) {
+                    Second ->
+                        NavEntry(Second) {
                             numberOnScreen2 = rememberSaveable { mutableStateOf(0) }
                             Text("numberOnScreen2: ${numberOnScreen2.value}")
                         }
@@ -558,7 +562,7 @@ class NavDisplayTest {
 
         assertThat(composeTestRule.onNodeWithText("numberOnScreen1: 2").isDisplayed()).isTrue()
 
-        composeTestRule.runOnIdle { backStack.add(second) }
+        composeTestRule.runOnIdle { backStack.add(Second) }
 
         composeTestRule.runOnIdle {
             assertWithMessage("Initial number should be 0").that(numberOnScreen2.value).isEqualTo(0)
@@ -570,7 +574,7 @@ class NavDisplayTest {
 
         assertThat(composeTestRule.onNodeWithText("numberOnScreen2: 4").isDisplayed()).isTrue()
 
-        composeTestRule.runOnIdle { backStack.add(first) }
+        composeTestRule.runOnIdle { backStack.add(First) }
 
         composeTestRule.runOnIdle {
             assertWithMessage("Initial number should be 0").that(numberOnScreen1.value).isEqualTo(0)
@@ -606,16 +610,16 @@ class NavDisplayTest {
     @Test
     fun testDuplicateKeyStateIsCorrect() {
         lateinit var numberOnScreen1: MutableState<Int>
-        lateinit var backStack: MutableList<Any>
+        lateinit var backStack: NavBackStack
         composeTestRule.setContent {
-            backStack = remember { mutableStateListOf(first) }
+            backStack = rememberNavBackStack(First)
             NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
                 when (it) {
-                    first ->
-                        NavEntry(first) {
+                    First ->
+                        NavEntry(First) {
                             numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                             Text("numberOnScreen1: ${numberOnScreen1.value}")
                         }
@@ -632,7 +636,7 @@ class NavDisplayTest {
 
         assertThat(composeTestRule.onNodeWithText("numberOnScreen1: 2").isDisplayed()).isTrue()
 
-        composeTestRule.runOnIdle { backStack.add(first) }
+        composeTestRule.runOnIdle { backStack.add(First) }
 
         composeTestRule.runOnIdle {
             assertWithMessage("Initial number should be 0").that(numberOnScreen1.value).isEqualTo(0)
@@ -644,7 +648,7 @@ class NavDisplayTest {
 
         assertThat(composeTestRule.onNodeWithText("numberOnScreen1: 4").isDisplayed()).isTrue()
 
-        composeTestRule.runOnIdle { backStack.add(first) }
+        composeTestRule.runOnIdle { backStack.add(First) }
 
         composeTestRule.runOnIdle {
             assertWithMessage("Initial number should be 0").that(numberOnScreen1.value).isEqualTo(0)
@@ -680,16 +684,16 @@ class NavDisplayTest {
     @Test
     fun testDuplicateKeyStateIsReset() {
         lateinit var numberOnScreen1: MutableState<Int>
-        lateinit var backStack: MutableList<Any>
+        lateinit var backStack: NavBackStack
         composeTestRule.setContent {
-            backStack = remember { mutableStateListOf(first) }
+            backStack = rememberNavBackStack(First)
             NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
             ) {
                 when (it) {
-                    first ->
-                        NavEntry(first) {
+                    First ->
+                        NavEntry(First) {
                             numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                             Text("numberOnScreen1: ${numberOnScreen1.value}")
                         }
@@ -706,7 +710,7 @@ class NavDisplayTest {
 
         assertThat(composeTestRule.onNodeWithText("numberOnScreen1: 2").isDisplayed()).isTrue()
 
-        composeTestRule.runOnIdle { backStack.add(first) }
+        composeTestRule.runOnIdle { backStack.add(First) }
 
         composeTestRule.runOnIdle {
             assertWithMessage("Initial number should be 0").that(numberOnScreen1.value).isEqualTo(0)
@@ -728,7 +732,7 @@ class NavDisplayTest {
 
         assertThat(composeTestRule.onNodeWithText("numberOnScreen1: 2").isDisplayed()).isTrue()
 
-        composeTestRule.runOnIdle { backStack.add(first) }
+        composeTestRule.runOnIdle { backStack.add(First) }
 
         composeTestRule.runOnIdle {
             assertWithMessage("Initial number should be 0").that(numberOnScreen1.value).isEqualTo(0)
@@ -741,18 +745,18 @@ class NavDisplayTest {
     fun testDuplicateKeyStateNestedStateIsCorrect() {
         lateinit var numberOnScreen1: MutableState<Int>
         lateinit var nestedNumberOnScreen1: MutableState<Int>
-        lateinit var backStack: MutableList<Any>
-        lateinit var nestedBackStack: MutableList<Any>
+        lateinit var backStack: NavBackStack
+        lateinit var nestedBackStack: NavBackStack
         composeTestRule.setContent {
-            backStack = remember { mutableStateListOf(first) }
-            nestedBackStack = remember { mutableStateListOf(first) }
+            backStack = rememberNavBackStack(First)
+            nestedBackStack = rememberNavBackStack(First)
             NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
-            ) {
-                when (it) {
-                    first ->
-                        NavEntry(first) {
+            ) { outerKey ->
+                when (outerKey) {
+                    First ->
+                        NavEntry(First) {
                             numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                             Column {
                                 Text("numberOnScreen1: ${numberOnScreen1.value}")
@@ -763,10 +767,10 @@ class NavDisplayTest {
                                             nestedBackStack.removeAt(nestedBackStack.lastIndex)
                                         }
                                     },
-                                ) {
-                                    when (it) {
-                                        first ->
-                                            NavEntry(first) {
+                                ) { innerKey ->
+                                    when (innerKey) {
+                                        First ->
+                                            NavEntry(First) {
                                                 nestedNumberOnScreen1 = rememberSaveable {
                                                     mutableStateOf(0)
                                                 }
@@ -808,3 +812,7 @@ private const val first = "first"
 private const val second = "second"
 private const val third = "third"
 private const val forth = "forth"
+
+@Serializable object First : NavKey()
+
+@Serializable object Second : NavKey()
