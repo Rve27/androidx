@@ -424,14 +424,31 @@ private class DeterminateCircularWavyProgressElement(
 
     override fun update(node: DeterminateCircularWavyProgressNode) {
         super.update(node)
-        node.progress = progress
-        node.amplitude = amplitude
+        if (node.progress !== progress || node.amplitude !== amplitude) {
+            node.progress = progress
+            node.amplitude = amplitude
+            node.cacheDrawNode.invalidateDrawCache()
+        }
     }
 
     override fun InspectorInfo.inspectableProperties() {
         name = "determinateCircularWavyProgressIndicator"
         baseInspectableProperties()
         // Lambdas are excluded
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (!super.equals(other)) return false
+        if (other !is DeterminateCircularWavyProgressElement) return false
+        if (progress !== other.progress || amplitude !== other.amplitude) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + progress.hashCode()
+        result = 31 * result + amplitude.hashCode()
+        return result
     }
 }
 
@@ -542,7 +559,7 @@ private class DeterminateCircularWavyProgressNode(
 
     override fun isDrawingWave() = amplitudeState.floatValue > 0f
 
-    private val cacheDrawNode =
+    val cacheDrawNode =
         delegate(
             CacheDrawModifierNode {
                 val currentProgress = progress().fastCoerceIn(0f, 1f)
