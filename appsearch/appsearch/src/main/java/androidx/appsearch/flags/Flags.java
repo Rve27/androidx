@@ -566,9 +566,7 @@ public final class Flags {
      * Whether to enable database-scoped set and get schema operations for AppSearch internal impl.
      */
     public static boolean enableDatabaseScopedSchemaOperations() {
-        // TODO(b/337913932): enable once Icing-side schema change to allow setting the full
-        //  schema is completed
-        return false;
+        return true;
     }
 
     /**

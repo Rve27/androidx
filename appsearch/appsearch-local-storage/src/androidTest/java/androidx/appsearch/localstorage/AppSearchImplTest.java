@@ -22,7 +22,6 @@ import static androidx.appsearch.app.AppSearchResult.RESULT_NOT_FOUND;
 import static androidx.appsearch.app.AppSearchResult.RESULT_OUT_OF_SPACE;
 import static androidx.appsearch.localstorage.util.PrefixUtil.addPrefixToDocument;
 import static androidx.appsearch.localstorage.util.PrefixUtil.createPrefix;
-import static androidx.appsearch.localstorage.util.PrefixUtil.getIcingSchemaDatabaseName;
 import static androidx.appsearch.localstorage.util.PrefixUtil.getPrefix;
 import static androidx.appsearch.localstorage.util.PrefixUtil.removePrefixesFromDocument;
 import static androidx.appsearch.localstorage.visibilitystore.VisibilityStore.BLOB_ANDROID_V_OVERLAY_DATABASE_NAME;
@@ -228,7 +227,7 @@ public class AppSearchImplTest {
 
         AppSearchImpl.RewrittenSchemaResults rewrittenSchemaResults = AppSearchImpl.rewriteSchema(
                 createPrefix("package", "newDatabase"), existingSchemaBuilder,
-                newSchema);
+                newSchema, mAppSearchImpl.useDatabaseScopedSchemaOperations());
 
         // We rewrote all the new types that were added. And nothing was removed.
         assertThat(rewrittenSchemaResults.mRewrittenPrefixedTypes.keySet()).containsExactly(
@@ -294,7 +293,7 @@ public class AppSearchImplTest {
 
         AppSearchImpl.RewrittenSchemaResults rewrittenSchemaResults = AppSearchImpl.rewriteSchema(
                 createPrefix("package", "existingDatabase"), existingSchemaBuilder,
-                newSchema);
+                newSchema, mAppSearchImpl.useDatabaseScopedSchemaOperations());
 
         // Nothing was removed, but the method did rewrite the type name.
         assertThat(rewrittenSchemaResults.mRewrittenPrefixedTypes.keySet()).containsExactly(
@@ -302,9 +301,9 @@ public class AppSearchImplTest {
         assertThat(rewrittenSchemaResults.mDeletedPrefixedTypes).isEmpty();
 
         // Same schema since nothing was added, but the database field should be populated if
-        // Flags.enableDatabaseScopedSchemaOperations() is true
+        // useDatabaseScopedSchemaOperations() is true
         SchemaProto expectedSchema = existingSchemaBuilder.build();
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
+        if (mAppSearchImpl.useDatabaseScopedSchemaOperations()) {
             expectedSchema = getSchemaProtoWithDatabase(expectedSchema);
         }
         assertThat(existingSchemaBuilder.getTypesList())
@@ -328,24 +327,22 @@ public class AppSearchImplTest {
 
         AppSearchImpl.RewrittenSchemaResults rewrittenSchemaResults = AppSearchImpl.rewriteSchema(
                 createPrefix("package", "existingDatabase"), existingSchemaBuilder,
-                newSchema);
+                newSchema, mAppSearchImpl.useDatabaseScopedSchemaOperations());
 
         // Bar type was rewritten, but Foo ended up being deleted since it wasn't included in the
         // new schema.
         assertThat(rewrittenSchemaResults.mRewrittenPrefixedTypes)
                 .containsKey("package$existingDatabase/Bar");
         assertThat(rewrittenSchemaResults.mRewrittenPrefixedTypes.keySet().size()).isEqualTo(1);
-        if (!Flags.enableDatabaseScopedSchemaOperations()) {
-            assertThat(rewrittenSchemaResults.mDeletedPrefixedTypes)
-                    .containsExactly("package$existingDatabase/Foo");
-        }
+        assertThat(rewrittenSchemaResults.mDeletedPrefixedTypes)
+                .containsExactly("package$existingDatabase/Foo");
 
         // Same schema since nothing was added.
         SchemaProto expectedSchema = SchemaProto.newBuilder()
                 .addTypes(SchemaTypeConfigProto.newBuilder()
                         .setSchemaType("package$existingDatabase/Bar"))
                 .build();
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
+        if (mAppSearchImpl.useDatabaseScopedSchemaOperations()) {
             expectedSchema = getSchemaProtoWithDatabase(expectedSchema);
         }
 
@@ -2338,7 +2335,7 @@ public class AppSearchImplTest {
                         .setDescription("")
                         .setVersion(0))
                 .build();
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
+        if (mAppSearchImpl.useDatabaseScopedSchemaOperations()) {
             expectedProto = getSchemaProtoWithDatabase(expectedProto);
         }
 
@@ -2424,7 +2421,7 @@ public class AppSearchImplTest {
                                 .setDescription("")
                                 .setVersion(0))
                 .build();
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
+        if (mAppSearchImpl.useDatabaseScopedSchemaOperations()) {
             expectedProto = getSchemaProtoWithDatabase(expectedProto);
         }
 
@@ -2470,7 +2467,7 @@ public class AppSearchImplTest {
                                 .setDescription("")
                                 .setVersion(0))
                 .build();
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
+        if (mAppSearchImpl.useDatabaseScopedSchemaOperations()) {
             expectedProto = getSchemaProtoWithDatabase(expectedProto);
         }
 
@@ -2534,7 +2531,7 @@ public class AppSearchImplTest {
                                 .setDescription("")
                                 .setVersion(0))
                 .build();
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
+        if (mAppSearchImpl.useDatabaseScopedSchemaOperations()) {
             expectedProto = getSchemaProtoWithDatabase(expectedProto);
         }
 
@@ -2576,7 +2573,7 @@ public class AppSearchImplTest {
                                 .setDescription("")
                                 .setVersion(0))
                 .build();
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
+        if (mAppSearchImpl.useDatabaseScopedSchemaOperations()) {
             expectedProto = getSchemaProtoWithDatabase(expectedProto);
         }
 
@@ -3589,7 +3586,7 @@ public class AppSearchImplTest {
                                 .setDescription("")
                                 .setVersion(0))
                 .build();
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
+        if (mAppSearchImpl.useDatabaseScopedSchemaOperations()) {
             expectedProto = getSchemaProtoWithDatabase(expectedProto);
         }
 
@@ -3678,7 +3675,7 @@ public class AppSearchImplTest {
 
         // Verify these two packages are stored in AppSearch.
         SchemaProto expectedProto = expectedProtoBuilder.build();
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
+        if (mAppSearchImpl.useDatabaseScopedSchemaOperations()) {
             expectedProto = getSchemaProtoWithDatabase(expectedProto);
         }
 
@@ -9261,12 +9258,12 @@ public class AppSearchImplTest {
 
         // Create expected schemaType proto.
         SchemaProto expectedProto;
-        if (Flags.enableDatabaseScopedSchemaOperations()) {
+        if (mAppSearchImpl.useDatabaseScopedSchemaOperations()) {
             expectedProto = SchemaProto.newBuilder()
                     .addTypes(
                             SchemaTypeConfigProto.newBuilder()
                                     .setSchemaType("package$database1/Email")
-                                    .setDatabase("package$database1")
+                                    .setDatabase("package$database1/")
                                     .setDescription("")
                                     .setVersion(0))
                     .build();
@@ -9408,7 +9405,7 @@ public class AppSearchImplTest {
         for (int i = 0; i < schema.getTypesList().size(); i++) {
             SchemaTypeConfigProto type = schema.getTypes(i);
             SchemaTypeConfigProto.Builder typeBuilder = SchemaTypeConfigProto.newBuilder(type)
-                    .setDatabase(getIcingSchemaDatabaseName(getPrefix(type.getSchemaType())));
+                    .setDatabase(getPrefix(type.getSchemaType()));
             schemaBuilder.addTypes(typeBuilder);
         }
         return schemaBuilder.build();
