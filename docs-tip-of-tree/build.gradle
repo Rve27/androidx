@@ -275,6 +275,7 @@ dependencies {
     docs(project(":pdf:pdf-viewer-fragment"))
     docs(project(":percentlayout:percentlayout"))
     kmpDocs(project(":performance:performance-annotation"))
+    docs(project(":photopicker:photopicker-testing"))
     docs(project(":preference:preference"))
     docs(project(":preference:preference-ktx"))
     docs(project(":print:print"))
