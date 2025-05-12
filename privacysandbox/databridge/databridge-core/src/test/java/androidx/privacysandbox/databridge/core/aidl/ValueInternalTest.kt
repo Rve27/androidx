@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.databridge.core
+package androidx.privacysandbox.databridge.core.aidl
 
 import android.os.Build
 import android.os.Parcel

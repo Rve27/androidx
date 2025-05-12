@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.databridge.core
+package androidx.privacysandbox.databridge.core.aidl
 
 import android.annotation.SuppressLint
 import android.os.Build
