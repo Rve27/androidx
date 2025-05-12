@@ -16,8 +16,6 @@
 
 package androidx.compose.material3.adaptive.layout
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi
 import androidx.compose.runtime.Composable
@@ -29,14 +27,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.layout.Measurable
@@ -138,7 +133,11 @@ internal fun ThreePaneScaffold(
     val paneMotions = scaffoldState.calculateThreePaneMotion(ltrPaneOrder)
     val motionDataProvider =
         remember { ThreePaneScaffoldMotionDataProvider() }
-            .apply { update(paneMotions, ltrPaneOrder) }
+            .apply {
+                // TODO(conradchen): Find a better way to provide predictive back state
+                this.scaffoldState = scaffoldState
+                update(paneMotions, ltrPaneOrder)
+            }
 
     val currentTransition = scaffoldState.rememberTransition()
     val transitionScope =
@@ -251,10 +250,11 @@ private object DefaultThreePaneScaffoldOverride : ThreePaneScaffoldOverride {
                     this.paneOrder = ltrPaneOrder
                 }
 
-        // TODO(b/371450910): add predictive back scaling
+        scaffoldState.CollectPredictiveBackScale(motionDataProvider.predictiveBackScaleState)
+
         Layout(
             contents = contents,
-            modifier = modifier,
+            modifier = modifier.predictiveBackScale(motionDataProvider.predictiveBackScaleState),
             measurePolicy = measurePolicy,
         )
     }
@@ -1040,46 +1040,6 @@ internal object ThreePaneScaffoldDefaults {
 
     val ScrimColor = Color.Black.copy(alpha = 0.32f)
 }
-
-@OptIn(ExperimentalMaterial3AdaptiveApi::class)
-@Composable
-private fun PredictiveBackScaleEffect(
-    scaffoldState: ThreePaneScaffoldState,
-    scaleAnimatable: Animatable<Float, AnimationVector1D>,
-) {
-    LaunchedEffect(scaffoldState) {
-        snapshotFlow { scaffoldState.progressFraction }
-            .collect { value ->
-                if (scaffoldState.isPredictiveBackInProgress) {
-                    val scale = convertStateProgressToPredictiveBackScale(value)
-                    scaleAnimatable.snapTo(scale)
-                } else {
-                    scaleAnimatable.animateTo(1f)
-                }
-            }
-    }
-}
-
-private const val PredictiveBackMinScale: Float = 0.95f
-
-private fun convertStateProgressToPredictiveBackScale(fraction: Float): Float {
-    // A decay curve such that: When fraction = 0, function returns 1.
-    // When fraction -> 1, function asymptotically approaches PredictiveBackMinScale
-    val delta = 1f - PredictiveBackMinScale
-    val shift = delta / 2
-    val curveScale = delta * delta / 2
-    return curveScale / (fraction + shift) + PredictiveBackMinScale
-}
-
-private fun Modifier.predictiveBackTransform(scale: () -> Float): Modifier = graphicsLayer {
-    val scaleValue = scale()
-    scaleX = scaleValue
-    scaleY = scaleValue
-    transformOrigin = TransformOriginTopCenter
-}
-
-// TODO(371450910): Investigate why animation fails if transform origin has y != 0.
-private val TransformOriginTopCenter = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0f)
 
 /**
  * Interface that allows libraries to override the behavior of [ThreePaneScaffold].

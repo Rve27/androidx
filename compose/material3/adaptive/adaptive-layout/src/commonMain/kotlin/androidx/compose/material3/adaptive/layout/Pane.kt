@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.dp
 
@@ -88,6 +89,11 @@ private object DefaultAnimatedPaneOverride : AnimatedPaneOverride {
     @Composable
     override fun <S, T : PaneScaffoldValue<S>> AnimatedPaneOverrideScope<S, T>.AnimatedPane() {
         with(scope) {
+            val scaleConversion = { offset: IntOffset ->
+                (motionDataProvider as? ThreePaneScaffoldMotionDataProvider)?.run {
+                    predictiveBackScaleState.convert(offset)
+                } ?: offset
+            }
             val animatingBounds = paneMotion == PaneMotion.AnimateBounds
             val motionProgress = { motionProgress }
             val paneValue = scaffoldStateTransition.targetState[paneRole]
@@ -99,6 +105,7 @@ private object DefaultAnimatedPaneOverride : AnimatedPaneOverride {
                         .animateBounds(
                             animateFraction = motionProgress,
                             animationSpec = boundsAnimationSpec,
+                            scaleConversion = scaleConversion,
                             lookaheadScope = this,
                             enabled = animatingBounds
                         )
