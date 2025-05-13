@@ -228,6 +228,9 @@ internal fun Project.shouldVerifyConfiguration(configuration: Configuration): Bo
     // https://github.com/JetBrains/kotlin/blob/v1.9.10/libraries/tools/kotlin-gradle-plugin/src/common/kotlin/org/jetbrains/kotlin/gradle/plugin/mpp/resolvableMetadataConfiguration.kt#L102
     if (name.endsWith("DependenciesMetadata")) return false
 
+    // Don't check KGP internal configuration used for tooling
+    if (name == "kotlinInternalAbiValidation") return false
+
     // don't verify test configurations of KMP projects
     if (name.contains("TestCompilation")) return false
     if (name.contains("TestCompile")) return false
