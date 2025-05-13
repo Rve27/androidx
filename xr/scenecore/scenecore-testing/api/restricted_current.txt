@@ -39,6 +39,7 @@ package androidx.xr.scenecore.testing {
     method public void onResume();
     method public void releaseGltfAsset(long);
     method public void releaseImageBasedLightingAsset(long);
+    method public void resetContentColorMetadataForStereoSurface(int);
     method public void setAlphaCutoffOnKhronosPbrMaterial(long, float);
     method public void setAlphaMapOnWaterMaterial(long, long);
     method public void setAlphaStepMultiplierOnWaterMaterial(long, float);
@@ -55,6 +56,7 @@ package androidx.xr.scenecore.testing {
     method public void setClearcoatNormalTextureOnKhronosPbrMaterial(long, long);
     method public void setClearcoatRoughnessTextureOnKhronosPbrMaterial(long, long);
     method public void setClearcoatTextureOnKhronosPbrMaterial(long, long);
+    method public void setContentColorMetadataForStereoSurface(int, @com.google.ar.imp.apibindings.ImpressApi.ColorSpace int, @com.google.ar.imp.apibindings.ImpressApi.ColorTransfer int, @com.google.ar.imp.apibindings.ImpressApi.ColorRange int, int);
     method public void setEmissiveFactorsOnKhronosPbrMaterial(long, float, float, float);
     method public void setEmissiveTextureOnKhronosPbrMaterial(long, long);
     method public void setEmissiveUvTransformOnKhronosPbrMaterial(long, float, float, float, float, float, float, float, float, float);

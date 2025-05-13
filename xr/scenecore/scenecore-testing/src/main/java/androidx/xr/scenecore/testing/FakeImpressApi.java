@@ -516,6 +516,17 @@ public class FakeImpressApi implements ImpressApi {
     }
 
     @Override
+    public void setContentColorMetadataForStereoSurface(
+        int stereoSurfaceNode,
+        @ColorSpace int colorSpace,
+        @ColorTransfer int colorTransfer,
+        @ColorRange int colorRange,
+        int maxLuminance) {}
+
+    @Override
+    public void resetContentColorMetadataForStereoSurface(int stereoSurfaceNode) {}
+
+    @Override
     @NonNull
     @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
     public ListenableFuture<Texture> loadTexture(
