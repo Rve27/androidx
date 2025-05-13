@@ -1,0 +1,27 @@
+// Signature format: 4.0
+package androidx.compose.material3.adaptive.navigation3 {
+
+  @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public final class ListDetailPaneScaffoldSceneStrategy<T> implements androidx.navigation3.ui.SceneStrategy<T> {
+    ctor public ListDetailPaneScaffoldSceneStrategy(kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit> onBack, String backNavigationBehavior, androidx.compose.material3.adaptive.layout.PaneScaffoldDirective directive);
+    method @androidx.compose.runtime.Composable public androidx.navigation3.ui.Scene<T>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries);
+    method public String getBackNavigationBehavior();
+    method public androidx.compose.material3.adaptive.layout.PaneScaffoldDirective getDirective();
+    method public kotlin.jvm.functions.Function1<java.lang.Integer,kotlin.Unit> getOnBack();
+    property public String backNavigationBehavior;
+    property public androidx.compose.material3.adaptive.layout.PaneScaffoldDirective directive;
+    property public kotlin.jvm.functions.Function1<java.lang.Integer,kotlin.Unit> onBack;
+    field public static final androidx.compose.material3.adaptive.navigation3.ListDetailPaneScaffoldSceneStrategy.Companion Companion;
+  }
+
+  public static final class ListDetailPaneScaffoldSceneStrategy.Companion {
+    method public java.util.Map<java.lang.String,java.lang.Object> detailPane(optional Object sceneKey);
+    method public java.util.Map<java.lang.String,java.lang.Object> extraPane(optional Object sceneKey);
+    method public java.util.Map<java.lang.String,java.lang.Object> listPane(optional Object sceneKey, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.adaptive.layout.ThreePaneScaffoldScope,kotlin.Unit> detailPlaceholder);
+  }
+
+  public final class ListDetailPaneScaffoldSceneStrategy_androidKt {
+    method @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Composable public static <T> androidx.compose.material3.adaptive.navigation3.ListDetailPaneScaffoldSceneStrategy<T> rememberListDetailSceneStrategy(kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit> onBack, optional String backNavigationBehavior, optional androidx.compose.material3.adaptive.layout.PaneScaffoldDirective directive);
+  }
+
+}
+
