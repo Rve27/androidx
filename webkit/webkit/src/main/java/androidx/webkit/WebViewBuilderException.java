@@ -16,9 +16,10 @@
 
 package androidx.webkit;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
+
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Thrown by {@link WebViewBuilder#build} if there was an issue with validation, or constructing the
