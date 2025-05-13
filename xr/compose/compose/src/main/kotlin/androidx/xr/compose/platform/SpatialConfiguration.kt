@@ -32,11 +32,6 @@ import androidx.xr.runtime.FEATURE_XR_API_SPATIAL
 import androidx.xr.runtime.Session
 import androidx.xr.scenecore.scene
 
-/**
- * The name of the system feature that indicates whether the system supports XR Spatial features.
- */
-internal const val XR_IMMERSIVE_FEATURE = "android.software.xr.immersive"
-
 /** CompositionLocal indicating whether the system XR Spatial feature is enabled. */
 @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public val LocalHasXrSpatialFeature: ProvidableCompositionLocal<Boolean> =
@@ -120,16 +115,11 @@ public interface SpatialConfiguration {
     public companion object {
         /**
          * XR Spatial APIs are supported for this system. This is equivalent to
-         * PackageManager.hasSystemFeature(FEATURE_XR_API_SPATIAL) or
-         * PackageManager.hasSystemFeature(XR_IMMERSIVE_FEATURE). When one of these features is
-         * available, it is safe to assume we are in an XR environment.
+         * PackageManager.hasSystemFeature(FEATURE_XR_API_SPATIAL). When this feature is available,
+         * it is safe to assume we are in an XR environment.
          */
         public fun hasXrSpatialFeature(context: Context): Boolean {
-            // TODO(b/398957058): Remove the XR_IMMERSIVE_FEATURE check once the google play team
-            // logic
-            // is updated.
-            return (context.packageManager.hasSystemFeature(XR_IMMERSIVE_FEATURE) ||
-                context.packageManager.hasSystemFeature(FEATURE_XR_API_SPATIAL))
+            return context.packageManager.hasSystemFeature(FEATURE_XR_API_SPATIAL)
         }
 
         private val sessionInstances: MutableMap<Session, SpatialConfiguration> = mutableMapOf()
