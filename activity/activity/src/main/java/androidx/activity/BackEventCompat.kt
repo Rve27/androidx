@@ -48,6 +48,14 @@ constructor(
     val frameTimeMillis: Long = 0
 ) {
 
+    /**
+     * Constructs a [BackEventCompat] from a [BackEvent] object.
+     *
+     * This constructor is used for API level 34 and above, mapping the [BackEvent]'s properties to
+     * the corresponding values in [BackEventCompat].
+     *
+     * @param backEvent The [BackEvent] instance to convert.
+     */
     @RequiresApi(34)
     constructor(
         backEvent: BackEvent
@@ -63,6 +71,14 @@ constructor(
         }
     )
 
+    /**
+     * Constructs a [BackEventCompat] from a [NavigationEvent] object.
+     *
+     * This constructor is used for compatibility with [NavigationEvent] and maps its properties to
+     * the corresponding values in [BackEventCompat].
+     *
+     * @param navEvent The [NavigationEvent] instance to convert.
+     */
     constructor(
         navEvent: NavigationEvent
     ) : this(
