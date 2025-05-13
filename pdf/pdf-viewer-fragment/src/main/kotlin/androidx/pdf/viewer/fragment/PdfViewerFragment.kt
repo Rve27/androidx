@@ -166,9 +166,11 @@ public open class PdfViewerFragment constructor() : Fragment() {
     public var isTextSearchActive: Boolean
         get() = documentViewModel.isTextSearchActiveFromState
         set(value) {
-            documentViewModel.updateSearchState(value)
-            // entering the immersive mode when search is active and exiting when search is closes
-            documentViewModel.setImmersiveModeDesired(enterImmersive = value)
+            if (isTextSearchActive != value) {
+                // entering the immersive mode when search is active and exiting when search closes
+                documentViewModel.setImmersiveModeDesired(enterImmersive = value)
+                documentViewModel.updateSearchState(value)
+            }
         }
 
     /**
