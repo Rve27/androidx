@@ -99,6 +99,18 @@ class SupportSQLiteDriverTest : BaseConformanceTest() {
         fileDriver.open(path).close()
     }
 
+    @Test
+    fun openHelperShortFileNameMatch_reverse() {
+        val configBuilder = getDefaultConfigBuilder()
+        val path = context.getDatabasePath("file_database.db").path
+        val fileDriver =
+            SupportSQLiteDriver(
+                FrameworkSQLiteOpenHelperFactory().create(configBuilder.name(path).build())
+            )
+
+        fileDriver.open("file_database.db").close()
+    }
+
     private fun getDefaultConfigBuilder() =
         SupportSQLiteOpenHelper.Configuration.builder(context)
             .callback(

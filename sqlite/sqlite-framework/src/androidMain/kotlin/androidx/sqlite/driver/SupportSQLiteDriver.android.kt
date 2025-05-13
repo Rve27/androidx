@@ -38,15 +38,17 @@ public class SupportSQLiteDriver(private val openHelper: SupportSQLiteOpenHelper
         get() = true
 
     override fun open(fileName: String): SupportSQLiteConnection {
-        if (openHelper.databaseName == null) {
+        val openHelperDatabaseName = openHelper.databaseName
+        if (openHelperDatabaseName == null) {
             require(fileName == ":memory:") {
                 "This driver is configured to open an in-memory database but a file-based named " +
                     "'$fileName' was requested."
             }
         } else {
             require(
-                openHelper.databaseName == fileName ||
-                    openHelper.databaseName == fileName.substringAfterLast('/')
+                openHelperDatabaseName == fileName ||
+                    openHelperDatabaseName.substringAfterLast('/') ==
+                        fileName.substringAfterLast('/')
             ) {
                 "This driver is configured to open a database named '${openHelper.databaseName}' " +
                     "but '$fileName' was requested."
