@@ -188,7 +188,7 @@ class RecorderTest(
     private val context: Context = ApplicationProvider.getApplicationContext()
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var camera: Camera
-    private val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private lateinit var cameraSelector: CameraSelector
 
     private lateinit var preview: Preview
     private lateinit var surfaceTexturePreview: Preview
@@ -196,7 +196,7 @@ class RecorderTest(
 
     @Before
     fun setUp() = runBlocking {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(CameraSelector.LENS_FACING_BACK))
+        cameraSelector = CameraUtil.assumeFirstAvailableCameraSelector()
         // Skip for b/241876294
         assumeFalse(
             "Skip test for devices with ExtraSupportedResolutionQuirk, since the extra" +
@@ -1138,7 +1138,7 @@ class RecorderTest(
         val cameraSelector =
             ExtensionsUtil.getCameraSelectorWithSessionProcessor(
                 cameraProvider,
-                CameraSelector.DEFAULT_BACK_CAMERA,
+                cameraSelector,
                 sessionProcessor
             )
         val capabilities =
@@ -1167,7 +1167,7 @@ class RecorderTest(
         val cameraSelector =
             ExtensionsUtil.getCameraSelectorWithSessionProcessor(
                 cameraProvider,
-                CameraSelector.DEFAULT_BACK_CAMERA,
+                cameraSelector,
                 sessionProcessor
             )
         val capabilities =
