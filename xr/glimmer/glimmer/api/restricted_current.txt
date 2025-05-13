@@ -21,6 +21,12 @@ package androidx.xr.glimmer {
     property public long surface;
   }
 
+  public final class ContentColorKt {
+    method public static long calculateContentColor(long backgroundColor);
+    method public static androidx.compose.ui.modifier.ProvidableModifierLocal<androidx.compose.ui.graphics.Color> getModifierLocalContentColor();
+    property public static androidx.compose.ui.modifier.ProvidableModifierLocal<androidx.compose.ui.graphics.Color> ModifierLocalContentColor;
+  }
+
   @androidx.compose.runtime.Immutable public final class GlimmerTheme {
     ctor public GlimmerTheme();
     ctor public GlimmerTheme(optional androidx.xr.glimmer.Colors colors, optional androidx.xr.glimmer.Typography typography);
@@ -53,7 +59,7 @@ package androidx.xr.glimmer {
   }
 
   public final class SurfaceKt {
-    method @androidx.compose.runtime.Composable public static androidx.compose.ui.Modifier surface(androidx.compose.ui.Modifier, optional androidx.compose.ui.graphics.Shape shape, optional long color, optional androidx.compose.foundation.BorderStroke? border);
+    method @androidx.compose.runtime.Composable public static androidx.compose.ui.Modifier surface(androidx.compose.ui.Modifier, optional androidx.compose.ui.graphics.Shape shape, optional long color, optional long contentColor, optional androidx.compose.foundation.BorderStroke? border);
   }
 
   @androidx.compose.runtime.Immutable public final class Typography {

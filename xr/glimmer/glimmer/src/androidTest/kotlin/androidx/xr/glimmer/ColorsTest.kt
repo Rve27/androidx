@@ -51,21 +51,31 @@ class ColorsTest {
         rule.runOnIdle { assertThat(currentColors).isEqualTo(customColors) }
     }
 
+    /**
+     * Test to ensure that the baseline theme colors have acceptable contrast with the calculated
+     * content colors. Note that primarily surface should be used to fill surfaces - other colors
+     * such as primary should be used very rarely, if ever.
+     */
     @Test
     fun baselineContentContrast() {
         val expectedContrastValue = 3 // Minimum 3:1 contrast ratio
         val colors = Colors()
 
         with(colors) {
-            assertThat(calculateContrastRatio(Color.Black, primary))
+            val primaryContentColor = calculateContentColor(primary)
+            val secondaryContentColor = calculateContentColor(secondary)
+            val positiveContentColor = calculateContentColor(positive)
+            val negativeContentColor = calculateContentColor(negative)
+            val surfaceContentColor = calculateContentColor(surface)
+            assertThat(calculateContrastRatio(primaryContentColor, primary))
                 .isAtLeast(expectedContrastValue)
-            assertThat(calculateContrastRatio(Color.Black, secondary))
+            assertThat(calculateContrastRatio(secondaryContentColor, secondary))
                 .isAtLeast(expectedContrastValue)
-            assertThat(calculateContrastRatio(Color.Black, positive))
+            assertThat(calculateContrastRatio(positiveContentColor, positive))
                 .isAtLeast(expectedContrastValue)
-            assertThat(calculateContrastRatio(Color.Black, negative))
+            assertThat(calculateContrastRatio(negativeContentColor, negative))
                 .isAtLeast(expectedContrastValue)
-            assertThat(calculateContrastRatio(Color.White, surface))
+            assertThat(calculateContrastRatio(surfaceContentColor, surface))
                 .isAtLeast(expectedContrastValue)
         }
     }

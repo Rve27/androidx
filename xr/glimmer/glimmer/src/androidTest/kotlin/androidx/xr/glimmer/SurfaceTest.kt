@@ -21,14 +21,22 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.testutils.assertPixels
+import androidx.compose.testutils.toList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.modifier.modifierLocalProvider
+import androidx.compose.ui.platform.InspectableValue
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -41,6 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,17 +61,43 @@ class SurfaceTest {
 
     @get:Rule val rule = createComposeRule()
 
+    @Before
+    fun before() {
+        isDebugInspectorInfoEnabled = true
+    }
+
+    @After
+    fun after() {
+        isDebugInspectorInfoEnabled = false
+    }
+
     @Test
     fun equality() {
         lateinit var surface: Modifier
         lateinit var surfaceWithSameParameters: Modifier
         lateinit var surfaceWithDifferentParameters: Modifier
         rule.setGlimmerThemeContent {
-            surface = Modifier.surface(RectangleShape, Color.Blue, BorderStroke(1.dp, Color.Red))
+            surface =
+                Modifier.surface(
+                    shape = RectangleShape,
+                    color = Color.Blue,
+                    contentColor = Color.Magenta,
+                    border = BorderStroke(1.dp, Color.Red)
+                )
             surfaceWithSameParameters =
-                Modifier.surface(RectangleShape, Color.Blue, BorderStroke(1.dp, Color.Red))
+                Modifier.surface(
+                    shape = RectangleShape,
+                    color = Color.Blue,
+                    contentColor = Color.Magenta,
+                    border = BorderStroke(1.dp, Color.Red)
+                )
             surfaceWithDifferentParameters =
-                Modifier.surface(CircleShape, Color.Blue, BorderStroke(1.dp, Color.Red))
+                Modifier.surface(
+                    shape = CircleShape,
+                    color = Color.Blue,
+                    contentColor = Color.Magenta,
+                    border = BorderStroke(1.dp, Color.Red)
+                )
         }
 
         rule.runOnIdle {
@@ -76,6 +112,21 @@ class SurfaceTest {
         rule
             .onNodeWithTag("surface")
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.IsTraversalGroup, true))
+    }
+
+    @Test
+    fun inspectorValue() {
+        rule.setContent {
+            val modifiers = Modifier.surface().toList()
+            assertThat((modifiers[0] as InspectableValue).nameFallback).isEqualTo("graphicsLayer")
+            assertThat((modifiers[1] as InspectableValue).nameFallback).isEqualTo("border")
+            assertThat((modifiers[2] as InspectableValue).nameFallback).isEqualTo("background")
+            val surfaceModifier = modifiers[3] as InspectableValue
+            assertThat(surfaceModifier.nameFallback).isEqualTo("surface")
+            assertThat(surfaceModifier.valueOverride).isNull()
+            assertThat(surfaceModifier.inspectableElements.map { it.name }.asIterable())
+                .containsExactly("contentColor")
+        }
     }
 
     @Test
@@ -144,5 +195,78 @@ class SurfaceTest {
             assertThat((customBorder.brush as SolidColor).value).isEqualTo(Color.Red)
             assertThat(customBorder.width).isEqualTo(3.dp)
         }
+    }
+
+    @Test
+    fun providesContentColor_default() {
+        var color: Color = Color.Unspecified
+        rule.setGlimmerThemeContent {
+            Box(
+                Modifier.modifierLocalProvider(ModifierLocalContentColor) { Color.Unspecified }
+                    .surface()
+                    .modifierLocalConsumer { color = ModifierLocalContentColor.current }
+            )
+        }
+
+        rule.runOnIdle { assertThat(color).isEqualTo(Color.White) }
+    }
+
+    @Test
+    fun providesContentColor_calculatedFromBackground() {
+        var color: Color = Color.Unspecified
+        rule.setGlimmerThemeContent {
+            Box(
+                Modifier.modifierLocalProvider(ModifierLocalContentColor) { Color.Unspecified }
+                    .surface(color = Color.White)
+                    .modifierLocalConsumer { color = ModifierLocalContentColor.current }
+            )
+        }
+
+        // Surface color is white, so the content color should be black
+        rule.runOnIdle { assertThat(color).isEqualTo(Color.Black) }
+    }
+
+    @Test
+    fun providesContentColor_updates_backgroundColor() {
+        var backgroundColor by mutableStateOf(Color.White)
+        var contentColor: Color = Color.Unspecified
+        rule.setGlimmerThemeContent {
+            Box(
+                Modifier.modifierLocalProvider(ModifierLocalContentColor) { Color.Unspecified }
+                    .surface(color = backgroundColor)
+                    .modifierLocalConsumer { contentColor = ModifierLocalContentColor.current }
+            )
+        }
+
+        rule.runOnIdle {
+            // Surface color is white, so the content color should be black
+            assertThat(contentColor).isEqualTo(Color.Black)
+            backgroundColor = Color.Black
+        }
+
+        rule.runOnIdle {
+            // Surface color is now black, so the content color should be white
+            assertThat(contentColor).isEqualTo(Color.White)
+        }
+    }
+
+    @Test
+    fun providesContentColor_updates_contentColor() {
+        var expectedColor by mutableStateOf(Color.White)
+        var actualColor: Color = Color.Unspecified
+        rule.setGlimmerThemeContent {
+            Box(
+                Modifier.modifierLocalProvider(ModifierLocalContentColor) { Color.Unspecified }
+                    .surface(contentColor = expectedColor)
+                    .modifierLocalConsumer { actualColor = ModifierLocalContentColor.current }
+            )
+        }
+
+        rule.runOnIdle {
+            assertThat(actualColor).isEqualTo(Color.White)
+            expectedColor = Color.Blue
+        }
+
+        rule.runOnIdle { assertThat(actualColor).isEqualTo(Color.Blue) }
     }
 }

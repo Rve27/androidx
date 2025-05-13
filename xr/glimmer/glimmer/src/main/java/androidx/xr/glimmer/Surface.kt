@@ -25,8 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.modifier.ModifierLocalModifierNode
+import androidx.compose.ui.modifier.modifierLocalMapOf
+import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.SemanticsModifierNode
+import androidx.compose.ui.platform.InspectorInfo
+import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.isTraversalGroup
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -35,25 +40,29 @@ import androidx.compose.ui.unit.dp
  * or 'physical' boundary for components such as buttons and cards. A surface is responsible for:
  * 1) Clipping: a surface clips its children to the shape specified by [shape]
  * 2) Border: a surface draws an inner [border] to emphasize the boundary of the component
- * 3) Background: a surface has a background color of [color]. Content inside surface such as text
- *    and icons should use the corresponding 'on' color from [GlimmerTheme.colors].
+ * 3) Background: a surface has a background color of [color].
+ * 4) Content color: a surface provides a [contentColor] through a ModifierLocal for text and icons
+ *    inside the surface. By default this is calculated from the provided background color. See
+ *    [ModifierLocalContentColor].
  *
  * @sample androidx.xr.glimmer.samples.SurfaceSample
  * @param shape the [Shape] used to clip this surface, and also used to draw the background and
  *   border
  * @param color the background [Color] for this surface
+ * @param contentColor the [Color] for content inside this surface
  * @param border an optional inner border for this surface
  */
 @Composable
 public fun Modifier.surface(
     shape: Shape = SurfaceDefaults.Shape,
     color: Color = GlimmerTheme.colors.surface,
+    contentColor: Color = calculateContentColor(color),
     border: BorderStroke? = SurfaceDefaults.border()
 ): Modifier =
     this.clip(shape)
         .then(if (border != null) Modifier.border(border, shape) else Modifier)
         .background(color = color, shape = shape)
-        .then(SurfaceSemantics)
+        .then(SurfaceNodeElement(contentColor))
 
 /** Default values used for [surface]. */
 public object SurfaceDefaults {
@@ -94,12 +103,46 @@ public object SurfaceDefaults {
         }
 }
 
+private class SurfaceNodeElement(private val contentColor: Color) :
+    ModifierNodeElement<SurfaceNode>() {
+    override fun create(): SurfaceNode = SurfaceNode(contentColor)
+
+    override fun update(node: SurfaceNode) = node.update(contentColor)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is SurfaceNodeElement) return false
+
+        if (contentColor != other.contentColor) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return contentColor.hashCode()
+    }
+
+    override fun InspectorInfo.inspectableProperties() {
+        name = "surface"
+        properties["contentColor"] = contentColor
+    }
+}
+
+private class SurfaceNode(private var contentColor: Color) :
+    SemanticsModifierNode, ModifierLocalModifierNode, Modifier.Node() {
+    override val providedValues = modifierLocalMapOf(ModifierLocalContentColor to contentColor)
+
+    override val shouldAutoInvalidate = false
+
+    fun update(contentColor: Color) {
+        this.contentColor = contentColor
+        provide(ModifierLocalContentColor, contentColor)
+    }
+
+    override fun SemanticsPropertyReceiver.applySemantics() {
+        isTraversalGroup = true
+    }
+}
+
 /** Default border width for a [surface]. */
 private val DefaultSurfaceBorderWidth = 3.dp
-
-/**
- * Default semantics for a surface. Extracted to a separate val to avoid re-allocating a lambda, and
- * causing modifier inequality.
- */
-private val SurfaceSemantics =
-    Modifier.semantics(mergeDescendants = false) { isTraversalGroup = true }
