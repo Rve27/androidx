@@ -22,6 +22,7 @@ import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -90,6 +91,7 @@ internal fun rememberThreePaneScaffoldPaneScope(
         .apply { this.paneMotion = paneMotion }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
+@Stable
 internal class ThreePaneScaffoldPaneScopeImpl(
     override val paneRole: ThreePaneScaffoldRole,
     scaffoldScope: ThreePaneScaffoldScope,

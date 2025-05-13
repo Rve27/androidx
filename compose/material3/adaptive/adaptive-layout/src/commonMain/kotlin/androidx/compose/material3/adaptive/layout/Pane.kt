@@ -25,6 +25,7 @@ import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi
 import androidx.compose.material3.adaptive.layout.DefaultAnimatedPaneOverride.AnimatedPane
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
@@ -187,6 +188,7 @@ interface AnimatedPaneOverride {
  */
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @ExperimentalMaterial3AdaptiveComponentOverrideApi
+@Immutable
 class AnimatedPaneOverrideScope<S, T : PaneScaffoldValue<S>>
 internal constructor(
     val scope: ExtendedPaneScaffoldPaneScope<S, T>,

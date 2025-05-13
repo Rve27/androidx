@@ -21,7 +21,6 @@ import androidx.compose.foundation.MutatorMutex
 import androidx.compose.foundation.gestures.DragScope
 import androidx.compose.foundation.gestures.DraggableState
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -30,94 +29,49 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.node.ModifierNodeElement
-import androidx.compose.ui.node.ParentDataModifierNode
-import androidx.compose.ui.platform.InspectorInfo
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.isSpecified
+import kotlin.math.min
 import kotlinx.coroutines.coroutineScope
-
-/**
- * A [Modifier] that enables dragging to resize a pane.
- *
- * @param state The [DragToResizeState] which controls the resizing behavior.
- */
-internal fun Modifier.dragToResize(state: DragToResizeState): Modifier =
-    this.draggable(state = state, orientation = state.orientation).then(DragToResizeElement(state))
-
-private class DragToResizeElement(
-    val state: DragToResizeState,
-) : ModifierNodeElement<DragToResizeNode>() {
-    override fun create(): DragToResizeNode = DragToResizeNode(state)
-
-    override fun update(node: DragToResizeNode) {
-        node.state = state
-    }
-
-    override fun InspectorInfo.inspectableProperties() {
-        name = "dragToResize"
-        properties["state"] = state
-    }
-
-    override fun hashCode(): Int {
-        return state.hashCode()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is DragToResizeElement) return false
-
-        if (state != other.state) return false
-
-        return true
-    }
-}
-
-private class DragToResizeNode(
-    var state: DragToResizeState,
-) : ParentDataModifierNode, Modifier.Node() {
-    override fun Density.modifyParentData(parentData: Any?) =
-        ((parentData as? PaneScaffoldParentDataImpl) ?: PaneScaffoldParentDataImpl()).also {
-            it.dragToResizeState = state
-        }
-}
-
-/**
- * Represents the edge of a resizable pane that is docked, i.e. the edge that will stay in the same
- * position during resizing.
- *
- * For example if the edge is [DockedEdge.Top], the top edge of the pane won't move and the bottom
- * edge will be moveable to resize the pane.
- */
-internal enum class DockedEdge {
-    /** The top edge of the pane is fixed, and resizing happens by moving the bottom edge. */
-    Top,
-    /** The bottom edge of the pane is fixed, and resizing happens by moving the top edge. */
-    Bottom,
-    /** The start edge of the pane is fixed, and resizing happens by moving the end edge. */
-    Start,
-    /** The end edge of the pane is fixed, and resizing happens by moving the start edge. */
-    End
-}
 
 /**
  * Creates and remembers a [DragToResizeState] instance.
  *
- * This function is used to create a state object that can be used to track and control the resizing
- * behavior of a composable element via dragging. The state is saved and restored across
- * recompositions and configuration changes using [rememberSaveable].
+ * This function creates a state object that tracks and controls the resizing behavior of a
+ * composable element via dragging. The state is saved and restored across recompositions and
+ * configuration changes using [rememberSaveable].
  *
  * @param dockedEdge The edge to which the element is docked. This determines the orientation of the
  *   resizing operation (horizontal or vertical) and the direction of the size change when dragging.
+ * @param minSize The minimum allowed size for the resizable element, as a [Dp]. Defaults to
+ *   [Dp.Unspecified], which instructs scaffold to use its default setting.
+ * @param maxSize The maximum allowed size for the resizable element, as a [Dp]. Defaults to
+ *   [Dp.Unspecified]. Note that the dragged size cannot be larger than the scaffold's size, even if
+ *   the max size set here is larger than the scaffold's size.
  */
 @Composable
-internal fun rememberDragToResizeState(dockedEdge: DockedEdge): DragToResizeState {
+fun rememberDragToResizeState(
+    dockedEdge: DockedEdge,
+    minSize: Dp = Dp.Unspecified,
+    maxSize: Dp = Dp.Unspecified
+): DragToResizeState {
     val layoutDirection = LocalLayoutDirection.current
-    return rememberSaveable(saver = DragToResizeState.Saver(dockedEdge, layoutDirection)) {
-        DragToResizeState(dockedEdge, layoutDirection)
-    }
+    val density = LocalDensity.current
+    return rememberSaveable(
+            dockedEdge,
+            saver = DragToResizeState.Saver(dockedEdge, layoutDirection)
+        ) {
+            DragToResizeState(dockedEdge, layoutDirection)
+        }
+        .apply {
+            this.minSize =
+                if (minSize.isSpecified) with(density) { minSize.roundToPx() } else Int.MIN_VALUE
+            this.maxSize =
+                if (maxSize.isSpecified) with(density) { maxSize.roundToPx() } else Int.MAX_VALUE
+        }
 }
 
 private fun DragToResizeState(
@@ -149,26 +103,36 @@ private fun DragToResizeState(
  *
  * This state object is primarily designed for internal use within pane scaffolds.
  *
- * @see androidx.compose.material3.adaptive.layout.dragToResize
+ * @see androidx.compose.material3.adaptive.layout.PaneScaffoldScope.dragToResize
  */
 @Stable
-internal abstract class DragToResizeState private constructor() : DraggableState {
+abstract class DragToResizeState private constructor() : DraggableState {
     internal var size: Float by mutableFloatStateOf(Float.NaN)
 
     internal abstract val orientation: Orientation
 
-    internal open fun getDraggedWidth(measuringWidth: Int, widthRange: IntRange) = measuringWidth
+    internal open fun getDraggedWidth(
+        measuringWidth: Int,
+        defaultMinWidth: Int,
+        scaffoldWidth: Int
+    ) = measuringWidth
 
-    internal open fun getDraggedHeight(measuringHeight: Int, heightRange: IntRange) =
-        measuringHeight
+    internal open fun getDraggedHeight(
+        measuringHeight: Int,
+        defaultMinHeight: Int,
+        scaffoldHeight: Int
+    ) = measuringHeight
 
-    protected abstract val sizeRange: ClosedFloatingPointRange<Float>
+    internal abstract val sizeRange: ClosedFloatingPointRange<Float>
 
-    protected open fun convertDelta(delta: Float) = delta
+    internal open fun convertDelta(delta: Float) = delta
 
-    protected var isDragged: Boolean = false
-    protected var widthRange: ClosedFloatingPointRange<Float> = 0f..0f
-    protected var heightRange: ClosedFloatingPointRange<Float> = 0f..0f
+    internal var isDragged: Boolean = false
+    internal var widthRange: ClosedFloatingPointRange<Float> = 0f..0f
+    internal var heightRange: ClosedFloatingPointRange<Float> = 0f..0f
+
+    internal var minSize: Int = 0
+    internal var maxSize: Int = 0
 
     private val dragMutex = MutatorMutex()
 
@@ -197,8 +161,13 @@ internal abstract class DragToResizeState private constructor() : DraggableState
 
         override val orientation: Orientation = Orientation.Horizontal
 
-        override fun getDraggedWidth(measuringWidth: Int, widthRange: IntRange): Int {
-            this.widthRange = widthRange.toFloatRange()
+        override fun getDraggedWidth(
+            measuringWidth: Int,
+            defaultMinWidth: Int,
+            scaffoldWidth: Int
+        ): Int {
+            val minWidth = if (minSize == Int.MIN_VALUE) defaultMinWidth else minSize
+            this.widthRange = (minWidth..min(maxSize, scaffoldWidth)).toFloatRange()
             if (size.isNaN() || !isDragged) {
                 size = measuringWidth.toFloat()
                 return measuringWidth
@@ -214,8 +183,13 @@ internal abstract class DragToResizeState private constructor() : DraggableState
 
         override val orientation: Orientation = Orientation.Vertical
 
-        override fun getDraggedHeight(measuringHeight: Int, heightRange: IntRange): Int {
-            this.heightRange = heightRange.toFloatRange()
+        override fun getDraggedHeight(
+            measuringHeight: Int,
+            defaultMinHeight: Int,
+            scaffoldHeight: Int
+        ): Int {
+            val minHeight = if (minSize == Int.MIN_VALUE) defaultMinHeight else minSize
+            this.heightRange = (minHeight..min(maxSize, scaffoldHeight)).toFloatRange()
             if (size.isNaN() || !isDragged) {
                 size = measuringHeight.toFloat()
                 return measuringHeight
@@ -263,6 +237,28 @@ internal abstract class DragToResizeState private constructor() : DraggableState
                 }
             )
     }
+}
+
+/**
+ * Represents the edge of a resizable pane that is docked, i.e. the edge that will stay in the same
+ * position during resizing.
+ *
+ * For example if the edge is [DockedEdge.Top], the top edge of the pane won't move and the bottom
+ * edge will be moveable to resize the pane.
+ *
+ * Note that [PaneScaffoldScope.dragToResize] and [DragToResizeState] only supports resizing along
+ * one orientation according to their [DockedEdge]. For example if [DockedEdge.Top] or
+ * [DockedEdge.Bottom] has been set, the resizing can only happen along the vertical axis.
+ */
+enum class DockedEdge {
+    /** The top edge of the pane is fixed, and resizing happens by moving the bottom edge. */
+    Top,
+    /** The bottom edge of the pane is fixed, and resizing happens by moving the top edge. */
+    Bottom,
+    /** The start edge of the pane is fixed, and resizing happens by moving the end edge. */
+    Start,
+    /** The end edge of the pane is fixed, and resizing happens by moving the start edge. */
+    End
 }
 
 private fun IntRange.toFloatRange() = first.toFloat()..last.toFloat()

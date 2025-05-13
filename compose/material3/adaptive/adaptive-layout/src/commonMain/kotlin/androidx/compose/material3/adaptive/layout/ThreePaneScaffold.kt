@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isUnspecified
 import androidx.compose.ui.unit.roundToIntRect
 import androidx.compose.ui.util.fastForEach
@@ -582,7 +583,13 @@ private class ThreePaneContentMeasurePolicy(
                 paneExpansionState.onExpansionOffsetMeasured(PaneExpansionState.Unspecified)
             }
 
-            placeLevitatedPanes(levitatedPanes, outerBounds, layoutDirection, isLookingAhead)
+            placeLevitatedPanes(
+                measurables = levitatedPanes,
+                scaffoldBounds = outerBounds,
+                layoutDirection = layoutDirection,
+                density = this@measure,
+                isLookingAhead = isLookingAhead
+            )
 
             // Place the hidden panes to ensure a proper motion at the AnimatedVisibility,
             // otherwise the pane will be gone immediately when it's hidden.
@@ -783,13 +790,30 @@ private class ThreePaneContentMeasurePolicy(
         measurables: List<PaneMeasurable>,
         scaffoldBounds: IntRect,
         layoutDirection: LayoutDirection,
+        density: Density,
         isLookingAhead: Boolean
     ) {
         measurables.fastForEach {
             val paneSize =
                 IntSize(
-                    min(it.measuringWidth, scaffoldBounds.width),
-                    min(it.measuringHeight, scaffoldBounds.height)
+                    width =
+                        it.dragToResizeState?.getDraggedWidth(
+                            measuringWidth = it.measuringWidth,
+                            defaultMinWidth =
+                                with(density) {
+                                    ThreePaneScaffoldDefaults.MinPaneWidth.roundToPx()
+                                },
+                            scaffoldWidth = scaffoldBounds.width
+                        ) ?: it.measuringWidth,
+                    height =
+                        it.dragToResizeState?.getDraggedHeight(
+                            measuringHeight = it.measuringHeight,
+                            defaultMinHeight =
+                                with(density) {
+                                    ThreePaneScaffoldDefaults.MinPaneHeight.roundToPx()
+                                },
+                            scaffoldHeight = scaffoldBounds.height
+                        ) ?: it.measuringHeight
                 )
             val alignment = (it.value as? PaneAdaptedValue.Levitated)?.alignment ?: Alignment.Center
             val offset = alignment.align(paneSize, scaffoldBounds.size, layoutDirection)
@@ -962,6 +986,9 @@ private class PaneMeasurable(
             else -> 0f
         }
 
+    val dragToResizeState
+        get() = data.dragToResizeState
+
     val measuredAndPlaced
         get() = measuredBounds != null
 
@@ -1039,6 +1066,10 @@ internal object ThreePaneScaffoldDefaults {
     const val HiddenPaneZIndexOffset = -0.1f
 
     val ScrimColor = Color.Black.copy(alpha = 0.32f)
+
+    val MinPaneWidth = 48.dp
+
+    val MinPaneHeight = 48.dp
 }
 
 /**
