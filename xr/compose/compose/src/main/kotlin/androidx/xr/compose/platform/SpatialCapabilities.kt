@@ -45,7 +45,6 @@ public val LocalSpatialCapabilities: CompositionLocal<SpatialCapabilities> =
 /**
  * Provides information and functionality related to the spatial capabilities of the application.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public interface SpatialCapabilities {
     /**
      * Indicates whether the application may create spatial UI elements (e.g. SpatialPanel).
@@ -83,9 +82,10 @@ public interface SpatialCapabilities {
     public val isSpatialAudioEnabled: Boolean
 
     public companion object {
+        // TODO(b/417291809): Consider removing this map.
         private val sessionInstances: MutableMap<Session, SpatialCapabilities> = mutableMapOf()
 
-        public fun getOrCreate(session: Session): SpatialCapabilities =
+        internal fun getOrCreate(session: Session): SpatialCapabilities =
             sessionInstances.getOrPut(session) { SessionSpatialCapabilities(session) }
     }
 }

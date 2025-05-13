@@ -1,4 +1,53 @@
 // Signature format: 4.0
+package androidx.xr.compose.platform {
+
+  public final class ActivityKt {
+    method public static void setSubspaceContent(androidx.activity.ComponentActivity, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+  }
+
+  public final class LocalSessionKt {
+    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.runtime.Session?> getLocalSession();
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.runtime.Session?> LocalSession;
+  }
+
+  public interface SpatialCapabilities {
+    method public boolean isAppEnvironmentEnabled();
+    method public boolean isContent3dEnabled();
+    method public boolean isPassthroughControlEnabled();
+    method public boolean isSpatialAudioEnabled();
+    method public boolean isSpatialUiEnabled();
+    property public abstract boolean isAppEnvironmentEnabled;
+    property public abstract boolean isContent3dEnabled;
+    property public abstract boolean isPassthroughControlEnabled;
+    property public abstract boolean isSpatialAudioEnabled;
+    property public abstract boolean isSpatialUiEnabled;
+    field public static final androidx.xr.compose.platform.SpatialCapabilities.Companion Companion;
+  }
+
+  public static final class SpatialCapabilities.Companion {
+  }
+
+  public sealed interface SpatialConfiguration {
+    method public default androidx.xr.compose.unit.DpVolumeSize getBounds();
+    method public default boolean hasXrSpatialFeature();
+    method public default void requestFullSpaceMode();
+    method public default void requestHomeSpaceMode();
+    property public default androidx.xr.compose.unit.DpVolumeSize bounds;
+    property public default boolean hasXrSpatialFeature;
+    field public static final androidx.xr.compose.platform.SpatialConfiguration.Companion Companion;
+  }
+
+  public static final class SpatialConfiguration.Companion {
+    method public boolean hasXrSpatialFeature(android.content.Context context);
+  }
+
+  public final class SpatialConfigurationKt {
+    method public static androidx.compose.runtime.CompositionLocal<androidx.xr.compose.platform.SpatialConfiguration> getLocalSpatialConfiguration();
+    property public static androidx.compose.runtime.CompositionLocal<androidx.xr.compose.platform.SpatialConfiguration> LocalSpatialConfiguration;
+  }
+
+}
+
 package androidx.xr.compose.subspace {
 
   @androidx.compose.runtime.ComposableTargetMarker(description="Subspace Composable") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER}) public @interface SubspaceComposable {

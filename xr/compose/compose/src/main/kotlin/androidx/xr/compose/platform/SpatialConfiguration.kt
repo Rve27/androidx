@@ -33,13 +33,20 @@ import androidx.xr.runtime.Session
 import androidx.xr.scenecore.scene
 
 /** CompositionLocal indicating whether the system XR Spatial feature is enabled. */
+// TODO(b/417276392): Consider removing this composition local.
 @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public val LocalHasXrSpatialFeature: ProvidableCompositionLocal<Boolean> =
     compositionLocalWithComputedDefaultOf {
         SpatialConfiguration.hasXrSpatialFeature(LocalContext.currentValue)
     }
 
-@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+/**
+ * Provides the current `SpatialConfiguration`.
+ *
+ * The behavior of the configuration object will depend on whether the system XR Spatial feature is
+ * enabled. For example, if the feature is not enabled, attempting to request different mode types
+ * cause an exception.
+ */
 public val LocalSpatialConfiguration: CompositionLocal<SpatialConfiguration> =
     compositionLocalWithComputedDefaultOf {
         if (LocalHasXrSpatialFeature.currentValue) {
@@ -55,8 +62,7 @@ public val LocalSpatialConfiguration: CompositionLocal<SpatialConfiguration> =
 /**
  * Provides information and functionality related to the spatial configuration of the application.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface SpatialConfiguration {
+public sealed interface SpatialConfiguration {
     /**
      * A volume whose width, height, and depth represent the space available to the application.
      *
@@ -90,6 +96,8 @@ public interface SpatialConfiguration {
      *
      * In home space, the visible space may be shared with other applications; however, applications
      * in home space will have their spatial capabilities and physical bounds limited.
+     *
+     * See [modes in XR](https://developer.android.com/design/ui/xr/guides/foundations#modes).
      */
     public fun requestHomeSpaceMode() {
         throw UnsupportedOperationException(
@@ -105,6 +113,8 @@ public interface SpatialConfiguration {
      * In full space, this application will be the only application in the visible space, its
      * spatial capabilities will be expanded, and its physical bounds will expand to fill the entire
      * virtual space.
+     *
+     * See [modes in XR](https://developer.android.com/design/ui/xr/guides/foundations#modes).
      */
     public fun requestFullSpaceMode() {
         throw UnsupportedOperationException(
@@ -124,7 +134,7 @@ public interface SpatialConfiguration {
 
         private val sessionInstances: MutableMap<Session, SpatialConfiguration> = mutableMapOf()
 
-        public fun getOrCreate(
+        internal fun getOrCreate(
             session: Session,
             hasXrSpatialFeature: Boolean
         ): SpatialConfiguration =

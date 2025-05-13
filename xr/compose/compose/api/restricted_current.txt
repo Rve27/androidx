@@ -2,8 +2,7 @@
 package androidx.xr.compose.platform {
 
   public final class ActivityKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @VisibleForTesting public static void setSubspaceContent(androidx.activity.ComponentActivity, androidx.xr.runtime.Session session, kotlin.jvm.functions.Function0<kotlin.Unit> content);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static void setSubspaceContent(androidx.activity.ComponentActivity, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method public static void setSubspaceContent(androidx.activity.ComponentActivity, kotlin.jvm.functions.Function0<kotlin.Unit> content);
   }
 
   public final class LocalCoreEntityKt {
@@ -12,8 +11,8 @@ package androidx.xr.compose.platform {
   }
 
   public final class LocalSessionKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.runtime.Session?> getLocalSession();
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.runtime.Session?> LocalSession;
+    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.runtime.Session?> getLocalSession();
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.runtime.Session?> LocalSession;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class Logger {
@@ -31,7 +30,7 @@ package androidx.xr.compose.platform {
     field public static final androidx.xr.compose.platform.SceneManager INSTANCE;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialCapabilities {
+  public interface SpatialCapabilities {
     method public boolean isAppEnvironmentEnabled();
     method public boolean isContent3dEnabled();
     method public boolean isPassthroughControlEnabled();
@@ -46,7 +45,6 @@ package androidx.xr.compose.platform {
   }
 
   public static final class SpatialCapabilities.Companion {
-    method public androidx.xr.compose.platform.SpatialCapabilities getOrCreate(androidx.xr.runtime.Session session);
   }
 
   public final class SpatialCapabilitiesKt {
@@ -54,7 +52,7 @@ package androidx.xr.compose.platform {
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.compose.runtime.CompositionLocal<androidx.xr.compose.platform.SpatialCapabilities> LocalSpatialCapabilities;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialConfiguration {
+  public sealed interface SpatialConfiguration {
     method public default androidx.xr.compose.unit.DpVolumeSize getBounds();
     method public default boolean hasXrSpatialFeature();
     method public default void requestFullSpaceMode();
@@ -65,15 +63,14 @@ package androidx.xr.compose.platform {
   }
 
   public static final class SpatialConfiguration.Companion {
-    method public androidx.xr.compose.platform.SpatialConfiguration getOrCreate(androidx.xr.runtime.Session session, boolean hasXrSpatialFeature);
     method public boolean hasXrSpatialFeature(android.content.Context context);
   }
 
   public final class SpatialConfigurationKt {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> getLocalHasXrSpatialFeature();
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.compose.runtime.CompositionLocal<androidx.xr.compose.platform.SpatialConfiguration> getLocalSpatialConfiguration();
+    method public static androidx.compose.runtime.CompositionLocal<androidx.xr.compose.platform.SpatialConfiguration> getLocalSpatialConfiguration();
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.compose.runtime.ProvidableCompositionLocal<java.lang.Boolean> LocalHasXrSpatialFeature;
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.compose.runtime.CompositionLocal<androidx.xr.compose.platform.SpatialConfiguration> LocalSpatialConfiguration;
+    property public static androidx.compose.runtime.CompositionLocal<androidx.xr.compose.platform.SpatialConfiguration> LocalSpatialConfiguration;
   }
 
 }
