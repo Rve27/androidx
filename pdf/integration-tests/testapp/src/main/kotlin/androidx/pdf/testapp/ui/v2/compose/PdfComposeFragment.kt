@@ -29,7 +29,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.pdf.compose.PdfViewer
-import androidx.pdf.compose.rememberPdfViewerState
 import androidx.pdf.testapp.databinding.FragmentComposeBinding
 
 /**
@@ -61,9 +60,7 @@ class PdfComposeFragment() : Fragment() {
                     ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
                 )
                 setContent {
-                    val pdfViewerState = rememberPdfViewerState()
                     PdfViewer(
-                        state = pdfViewerState,
                         pdfDocument =
                             viewModel.loadedDocumentStateFlow.collectAsStateWithLifecycle().value
                     )
