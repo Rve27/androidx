@@ -21,7 +21,6 @@ import android.os.ParcelFileDescriptor
 import androidx.annotation.IntDef
 import androidx.core.content.ContextCompat
 import com.google.wear.Sdk
-import com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
 import java.util.concurrent.Executor
 import kotlin.coroutines.ContinuationInterceptor
 import kotlin.coroutines.resume
@@ -47,7 +46,7 @@ private const val PERMISSION_NAME = "com.google.wear.permission.SET_PUSHED_WATCH
  *   val token1 = "1234" // Get it from the provided validation library.
  *   lateinit var wf2: android.os.ParcelFileDescriptor
  *   val token2 = "4567"
- *   val wfp = WatchFacePushManager(context)
+ *   val wfp = WatchFacePushManagerFactory.createWatchFacePushManager(context)
  *   with(wfp) {
  *     val slot = addWatchFace(wf1, token1)
  *     setWatchFaceAsActive(slot.slotId)
@@ -55,13 +54,8 @@ private const val PERMISSION_NAME = "com.google.wear.permission.SET_PUSHED_WATCH
  *     removeWatchFace(slot.slotId)
  *   }</code>
  * </pre>
- *
- * @param context The application context.
  */
-public class WatchFacePushManager(private var context: Context) {
-    private val receiverManager: WatchFacePushManager =
-        Sdk.getWearManager(context, WatchFacePushManager::class.java)
-
+public interface WatchFacePushManager {
     /**
      * Lists all watch faces that were added by the app invoking this method. Watch faces added by
      * other apps will not be included in the response.
@@ -72,27 +66,7 @@ public class WatchFacePushManager(private var context: Context) {
      *   could happen if the Watch Face Push service on the watch cannot be accessed. See
      *   [ListWatchFacesException.errorCode] for details.
      */
-    public suspend fun listWatchFaces(): ListWatchFacesResponse {
-        val currentExecutor = executor()
-        return suspendCancellableCoroutine { cont ->
-            receiverManager.listWatchFaceSlots(
-                currentExecutor,
-                outcomeReceiver(
-                    cont,
-                    { result ->
-                        ListWatchFacesResponse(
-                            installedWatchFaceDetails =
-                                (result?.installedWatchFaceSlots ?: emptyList()).map { w ->
-                                    WatchFaceDetails(w)
-                                },
-                            remainingSlotCount = result?.availableSlotCount ?: 0
-                        )
-                    },
-                    { e -> ListWatchFacesException(e) }
-                )
-            )
-        }
-    }
+    public suspend fun listWatchFaces(): ListWatchFacesResponse
 
     /**
      * Removes an existing watch face that was previously added by this application. On success, the
@@ -108,16 +82,7 @@ public class WatchFacePushManager(private var context: Context) {
      *   watch cannot be accessed. See [RemoveWatchFaceException.errorCode] for details.
      * @see addWatchFace
      */
-    public suspend fun removeWatchFace(slotId: String) {
-        val currentExecutor = executor()
-        return suspendCancellableCoroutine { cont ->
-            receiverManager.removeWatchFace(
-                slotId,
-                currentExecutor,
-                outcomeReceiver(cont, {}, { it -> RemoveWatchFaceException(it) })
-            )
-        }
-    }
+    public suspend fun removeWatchFace(slotId: String)
 
     /**
      * Adds a new watch face. On success, the given watch face will be available in the watch face
@@ -136,21 +101,7 @@ public class WatchFacePushManager(private var context: Context) {
     public suspend fun addWatchFace(
         apkFd: ParcelFileDescriptor,
         validationToken: String
-    ): WatchFaceDetails {
-        val currentExecutor = executor()
-        return suspendCancellableCoroutine { cont ->
-            receiverManager.addWatchFace(
-                apkFd,
-                validationToken,
-                currentExecutor,
-                outcomeReceiver(
-                    cont,
-                    { result -> WatchFaceDetails(result!!) },
-                    { it -> AddWatchFaceException(it) }
-                )
-            )
-        }
-    }
+    ): WatchFaceDetails
 
     /**
      * Updates a watch face slot with a new watch face. **Watch faces added by other apps or already
@@ -175,22 +126,7 @@ public class WatchFacePushManager(private var context: Context) {
         slotId: String,
         apkFd: ParcelFileDescriptor,
         validationToken: String
-    ): WatchFaceDetails {
-        val currentExecutor = executor()
-        return suspendCancellableCoroutine { cont ->
-            receiverManager.updateWatchFace(
-                slotId,
-                apkFd,
-                validationToken,
-                currentExecutor,
-                outcomeReceiver(
-                    cont,
-                    { result -> WatchFaceDetails(result!!) },
-                    { e -> UpdateWatchFaceException(e) }
-                )
-            )
-        }
-    }
+    ): WatchFaceDetails
 
     /**
      * Checks if a watch face with the given package name is active. **This method can only be used
@@ -203,16 +139,7 @@ public class WatchFacePushManager(private var context: Context) {
      *   Face Push service on the watch cannot be accessed. See
      *   [IsWatchFaceActiveException.errorCode] for details.
      */
-    public suspend fun isWatchFaceActive(watchfacePackageName: String): Boolean {
-        val currentExecutor = executor()
-        return suspendCancellableCoroutine { cont: CancellableContinuation<Boolean> ->
-            receiverManager.isWatchFaceActive(
-                watchfacePackageName,
-                currentExecutor,
-                outcomeReceiver(cont, { t: Boolean -> t }, { e -> IsWatchFaceActiveException(e) })
-            )
-        }
-    }
+    public suspend fun isWatchFaceActive(watchfacePackageName: String): Boolean
 
     /**
      * Sets a watch face with the given slot ID as the active watch face. **This method can only be
@@ -225,59 +152,10 @@ public class WatchFacePushManager(private var context: Context) {
      *   missing, or if the Watch Face Push service on the watch cannot be accessed. See
      *   [SetWatchFaceAsActiveException.errorCode] for details.
      */
-    public suspend fun setWatchFaceAsActive(slotId: String) {
-        val currentExecutor = executor()
-        return suspendCancellableCoroutine { cont ->
-            if (
-                ContextCompat.checkSelfPermission(context, PERMISSION_NAME) ==
-                    android.content.pm.PackageManager.PERMISSION_DENIED
-            ) {
-                throw SetWatchFaceAsActiveException(
-                    SetWatchFaceAsActiveException.ERROR_MISSING_PERMISSION
-                )
-            }
-            receiverManager.setWatchFaceAsActive(
-                slotId,
-                currentExecutor,
-                outcomeReceiver(cont, {}, { e -> SetWatchFaceAsActiveException(e) })
-            )
-        }
-    }
-
-    private suspend fun executor(): Executor {
-        return (currentCoroutineContext()[ContinuationInterceptor] as CoroutineDispatcher)
-            .asExecutor()
-    }
+    public suspend fun setWatchFaceAsActive(slotId: String)
 
     /**
-     * Helper method that provides an outcome receiver that converts an error into an exception.
-     *
-     * @param <T> The type of the value received from the remote service.
-     * @param <R> The type of the value to be returned by the call.
-     * @param transform A function that transforms the received value of type {@code T} from the
-     *   remote service into the desired return type {@code R}.
-     * @param transformException A function that transforms a remote service exception into an
-     *   AndroidX-compatible exception.
-     */
-    private fun <I, O, E : Throwable, EO : Throwable> outcomeReceiver(
-        cont: CancellableContinuation<O>,
-        transform: (I) -> O,
-        transformException: (E) -> EO
-    ): OutcomeReceiver<I, E> {
-        return object : OutcomeReceiver<I, E> {
-            override fun onResult(result: I) {
-                cont.resume(transform(result))
-            }
-
-            override fun onError(error: E) {
-                super.onError(error)
-                cont.resumeWithException(transformException(error))
-            }
-        }
-    }
-
-    /**
-     * Represents the response from listing watch faces. See [WatchFacePushManager.listWatchFaces]
+     * Represents the response from listing watch faces. See [listWatchFaces]
      *
      * @property installedWatchFaceDetails The list of installed watch face slots. **This list only
      *   contains watch faces that were added by the calling application.**
@@ -326,7 +204,8 @@ public class WatchFacePushManager(private var context: Context) {
 
     /** An exception that can be thrown by [addWatchFace] */
     public class AddWatchFaceException(
-        private val rootCause: WatchFacePushManager.AddException,
+        private val rootCause:
+            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.AddException,
     ) : Exception(rootCause) {
 
         public companion object {
@@ -337,7 +216,8 @@ public class WatchFacePushManager(private var context: Context) {
              * accessed or that the watch may be in a bad state.
              */
             public const val ERROR_UNKNOWN: Int =
-                WatchFacePushManager.AddException.ADD_UNKNOWN_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.AddException
+                    .ADD_UNKNOWN_ERROR
 
             /**
              * Unexpected content in the APK.
@@ -347,7 +227,8 @@ public class WatchFacePushManager(private var context: Context) {
              * ensure that the APK conforms to the Watch Face Format.
              */
             public const val ERROR_UNEXPECTED_CONTENT: Int =
-                WatchFacePushManager.AddException.ADD_SECURITY_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.AddException
+                    .ADD_SECURITY_ERROR
 
             /**
              * The package name of the watch face is invalid.
@@ -357,7 +238,8 @@ public class WatchFacePushManager(private var context: Context) {
              * face name. Developers should verify that the package name follows this format.
              */
             public const val ERROR_INVALID_PACKAGE_NAME: Int =
-                WatchFacePushManager.AddException.ADD_INVALID_PACKAGE_NAME_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.AddException
+                    .ADD_INVALID_PACKAGE_NAME_ERROR
 
             /**
              * The provided watch face is not a valid Android APK.
@@ -365,7 +247,8 @@ public class WatchFacePushManager(private var context: Context) {
              * Developers should ensure that the provided file is a valid APK file.
              */
             public const val ERROR_MALFORMED_WATCHFACE_APK: Int =
-                WatchFacePushManager.AddException.ADD_INVALID_CONTENT_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.AddException
+                    .ADD_INVALID_CONTENT_ERROR
 
             /**
              * The limit of watch faces that can be installed by this application has been reached.
@@ -374,7 +257,8 @@ public class WatchFacePushManager(private var context: Context) {
              * existing watch faces added by this app before attempting to add new ones.
              */
             public const val ERROR_SLOT_LIMIT_REACHED: Int =
-                WatchFacePushManager.AddException.ADD_SLOT_LIMIT_REACHED_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.AddException
+                    .ADD_SLOT_LIMIT_REACHED_ERROR
 
             /**
              * The validation token provided does not match the watch face.
@@ -383,7 +267,8 @@ public class WatchFacePushManager(private var context: Context) {
              * validation token correctly.
              */
             public const val ERROR_INVALID_VALIDATION_TOKEN: Int =
-                WatchFacePushManager.AddException.ADD_INVALID_VALIDATION_TOKEN_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.AddException
+                    .ADD_INVALID_VALIDATION_TOKEN_ERROR
 
             /**
              * Defines the allowed integer values for [addWatchFace] error codes.
@@ -434,7 +319,8 @@ public class WatchFacePushManager(private var context: Context) {
 
     /** An exception that can be thrown by [updateWatchFace] */
     public class UpdateWatchFaceException(
-        private val rootCause: WatchFacePushManager.UpdateException,
+        private val rootCause:
+            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.UpdateException,
     ) : Exception(rootCause) {
 
         public companion object {
@@ -444,7 +330,9 @@ public class WatchFacePushManager(private var context: Context) {
              * state.
              */
             public const val ERROR_UNKNOWN: Int =
-                WatchFacePushManager.UpdateException.UPDATE_UNKNOWN_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .UpdateException
+                    .UPDATE_UNKNOWN_ERROR
 
             /**
              * Unexpected content in the APK. The APK must be a WFF watchface which only contains
@@ -452,7 +340,9 @@ public class WatchFacePushManager(private var context: Context) {
              * executable code.
              */
             public const val ERROR_UNEXPECTED_CONTENT: Int =
-                WatchFacePushManager.UpdateException.UPDATE_SECURITY_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .UpdateException
+                    .UPDATE_SECURITY_ERROR
 
             /**
              * The package name of the watch face is invalid.
@@ -462,11 +352,15 @@ public class WatchFacePushManager(private var context: Context) {
              * face name.
              */
             public const val ERROR_INVALID_PACKAGE_NAME: Int =
-                WatchFacePushManager.UpdateException.UPDATE_INVALID_PACKAGE_NAME_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .UpdateException
+                    .UPDATE_INVALID_PACKAGE_NAME_ERROR
 
             /** The provided watch face is not a valid Android APK. */
             public const val ERROR_MALFORMED_WATCHFACE_APK: Int =
-                WatchFacePushManager.UpdateException.UPDATE_INVALID_CONTENT_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .UpdateException
+                    .UPDATE_INVALID_CONTENT_ERROR
 
             /**
              * The slot ID provided is not valid. The watch face might have been removed previously,
@@ -474,14 +368,18 @@ public class WatchFacePushManager(private var context: Context) {
              * calling [listWatchFaces] or [addWatchFace].
              */
             public const val ERROR_INVALID_SLOT_ID: Int =
-                WatchFacePushManager.UpdateException.UPDATE_INVALID_SLOT_ID_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .UpdateException
+                    .UPDATE_INVALID_SLOT_ID_ERROR
 
             /**
              * The validation token provided does not match the watch face. Please see the Watch
              * Face Push documentation to see how to generate a validation token correctly.
              */
             public const val ERROR_INVALID_VALIDATION_TOKEN: Int =
-                WatchFacePushManager.UpdateException.UPDATE_INVALID_VALIDATION_TOKEN_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .UpdateException
+                    .UPDATE_INVALID_VALIDATION_TOKEN_ERROR
 
             /**
              * Defines the allowed integer values for [updateWatchFace] error codes.
@@ -532,7 +430,8 @@ public class WatchFacePushManager(private var context: Context) {
 
     /** An exception that can be thrown by [removeWatchFace] */
     public class RemoveWatchFaceException(
-        private val rootCause: WatchFacePushManager.RemoveException,
+        private val rootCause:
+            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.RemoveException,
     ) : Exception(rootCause) {
 
         public companion object {
@@ -542,7 +441,9 @@ public class WatchFacePushManager(private var context: Context) {
              * state.
              */
             public const val ERROR_UNKNOWN: Int =
-                WatchFacePushManager.RemoveException.REMOVE_UNKNOWN_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .RemoveException
+                    .REMOVE_UNKNOWN_ERROR
 
             /**
              * The slot ID provided is not valid. The watch face might have been removed previously,
@@ -550,7 +451,9 @@ public class WatchFacePushManager(private var context: Context) {
              * calling [listWatchFaces] or [addWatchFace].
              */
             public const val ERROR_INVALID_SLOT_ID: Int =
-                WatchFacePushManager.RemoveException.REMOVE_INVALID_SLOT_ID_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .RemoveException
+                    .REMOVE_INVALID_SLOT_ID_ERROR
 
             /**
              * Defines the allowed integer values for [removeWatchFace] error codes.
@@ -586,14 +489,16 @@ public class WatchFacePushManager(private var context: Context) {
     /** An exception that can be thrown by [setWatchFaceAsActive] */
     public class SetWatchFaceAsActiveException
     private constructor(
-        rootCause: WatchFacePushManager.SetActiveException?,
+        rootCause:
+            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.SetActiveException?,
         @ErrorCode public val errorCode: Int,
     ) : Exception(rootCause) {
 
         public constructor(@ErrorCode errorCode: Int) : this(null, errorCode)
 
         public constructor(
-            rootCause: WatchFacePushManager.SetActiveException?
+            rootCause:
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.SetActiveException?
         ) : this(rootCause, rootCause?.errorCode ?: ERROR_UNKNOWN)
 
         public companion object {
@@ -603,7 +508,9 @@ public class WatchFacePushManager(private var context: Context) {
              * in a bad state.
              */
             public const val ERROR_UNKNOWN: Int =
-                WatchFacePushManager.SetActiveException.SET_ACTIVE_UNKNOWN_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .SetActiveException
+                    .SET_ACTIVE_UNKNOWN_ERROR
 
             /**
              * The slot ID provided is not valid. The watch face might have been removed previously,
@@ -611,11 +518,15 @@ public class WatchFacePushManager(private var context: Context) {
              * [listWatchFaces] or [addWatchFace].
              */
             public const val ERROR_INVALID_SLOT_ID: Int =
-                WatchFacePushManager.SetActiveException.SET_ACTIVE_INVALID_SLOT_ID_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .SetActiveException
+                    .SET_ACTIVE_INVALID_SLOT_ID_ERROR
 
             /** The maximum number of attempts to set the watch face as active has been reached. */
             public const val ERROR_MAXIMUM_ATTEMPTS_REACHED: Int =
-                WatchFacePushManager.SetActiveException.SET_ACTIVE_MAXIMUM_ATTEMPTS_REACHED_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .SetActiveException
+                    .SET_ACTIVE_MAXIMUM_ATTEMPTS_REACHED_ERROR
 
             /** The required permission to set the watch face as active is missing. */
             // A number that does not conflict with the
@@ -660,7 +571,8 @@ public class WatchFacePushManager(private var context: Context) {
 
     /** An exception that can be thrown by [isWatchFaceActive] */
     public class IsWatchFaceActiveException(
-        private val rootCause: WatchFacePushManager.IsActiveException,
+        private val rootCause:
+            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.IsActiveException,
     ) : Exception(rootCause) {
 
         public companion object {
@@ -670,7 +582,9 @@ public class WatchFacePushManager(private var context: Context) {
              * state.
              */
             public const val ERROR_UNKNOWN: Int =
-                WatchFacePushManager.IsActiveException.IS_ACTIVE_UNKNOWN_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .IsActiveException
+                    .IS_ACTIVE_UNKNOWN_ERROR
 
             /**
              * The package name provided is not valid. The watch face might have been removed
@@ -678,7 +592,9 @@ public class WatchFacePushManager(private var context: Context) {
              * package name by calling [listWatchFaces] or [addWatchFace].
              */
             public const val ERROR_INVALID_PACKAGE_NAME: Int =
-                WatchFacePushManager.IsActiveException.IS_ACTIVE_FORBIDDEN_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager
+                    .IsActiveException
+                    .IS_ACTIVE_FORBIDDEN_ERROR
 
             /**
              * Defines the allowed integer values for [isWatchFaceActive] error codes.
@@ -713,7 +629,8 @@ public class WatchFacePushManager(private var context: Context) {
 
     /** An exception that can be thrown by [listWatchFaces] */
     public class ListWatchFacesException(
-        private val rootCause: WatchFacePushManager.ListException,
+        private val rootCause:
+            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.ListException,
     ) : Exception(rootCause) {
 
         public companion object {
@@ -723,7 +640,8 @@ public class WatchFacePushManager(private var context: Context) {
              * state.
              */
             public const val ERROR_UNKNOWN: Int =
-                WatchFacePushManager.ListException.LIST_UNKNOWN_ERROR
+                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.ListException
+                    .LIST_UNKNOWN_ERROR
 
             /**
              * Defines the allowed integer values for [isWatchFaceActive] error codes.
@@ -750,5 +668,169 @@ public class WatchFacePushManager(private var context: Context) {
                         "Unknown error while listing watch faces. Typically this means that the Watch Face Push service on the watch could not be accessed."
                     else -> "Unknown error code"
                 }
+    }
+}
+
+public object WatchFacePushManagerFactory {
+
+    @JvmStatic
+    public fun createWatchFacePushManager(context: Context): WatchFacePushManager =
+        WatchFacePushManagerImpl(context)
+}
+
+/** @param context The application context. */
+internal class WatchFacePushManagerImpl(private var context: Context) : WatchFacePushManager {
+    private val receiverManager:
+        com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager =
+        Sdk.getWearManager(
+            context,
+            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager::class.java
+        )
+
+    override suspend fun listWatchFaces(): WatchFacePushManager.ListWatchFacesResponse {
+        val currentExecutor = executor()
+        return suspendCancellableCoroutine { cont ->
+            receiverManager.listWatchFaceSlots(
+                currentExecutor,
+                outcomeReceiver(
+                    cont,
+                    { result ->
+                        WatchFacePushManager.ListWatchFacesResponse(
+                            installedWatchFaceDetails =
+                                (result?.installedWatchFaceSlots ?: emptyList()).map { w ->
+                                    WatchFacePushManager.WatchFaceDetails(w)
+                                },
+                            remainingSlotCount = result?.availableSlotCount ?: 0
+                        )
+                    },
+                    { e -> WatchFacePushManager.ListWatchFacesException(e) }
+                )
+            )
+        }
+    }
+
+    override suspend fun removeWatchFace(slotId: String) {
+        val currentExecutor = executor()
+        return suspendCancellableCoroutine { cont ->
+            receiverManager.removeWatchFace(
+                slotId,
+                currentExecutor,
+                outcomeReceiver(
+                    cont,
+                    {},
+                    { it -> WatchFacePushManager.RemoveWatchFaceException(it) }
+                )
+            )
+        }
+    }
+
+    override suspend fun addWatchFace(
+        apkFd: ParcelFileDescriptor,
+        validationToken: String
+    ): WatchFacePushManager.WatchFaceDetails {
+        val currentExecutor = executor()
+        return suspendCancellableCoroutine { cont ->
+            receiverManager.addWatchFace(
+                apkFd,
+                validationToken,
+                currentExecutor,
+                outcomeReceiver(
+                    cont,
+                    { result -> WatchFacePushManager.WatchFaceDetails(result!!) },
+                    { it -> WatchFacePushManager.AddWatchFaceException(it) }
+                )
+            )
+        }
+    }
+
+    override suspend fun updateWatchFace(
+        slotId: String,
+        apkFd: ParcelFileDescriptor,
+        validationToken: String
+    ): WatchFacePushManager.WatchFaceDetails {
+        val currentExecutor = executor()
+        return suspendCancellableCoroutine { cont ->
+            receiverManager.updateWatchFace(
+                slotId,
+                apkFd,
+                validationToken,
+                currentExecutor,
+                outcomeReceiver(
+                    cont,
+                    { result -> WatchFacePushManager.WatchFaceDetails(result!!) },
+                    { e -> WatchFacePushManager.UpdateWatchFaceException(e) }
+                )
+            )
+        }
+    }
+
+    override suspend fun isWatchFaceActive(watchfacePackageName: String): Boolean {
+        val currentExecutor = executor()
+        return suspendCancellableCoroutine { cont: CancellableContinuation<Boolean> ->
+            receiverManager.isWatchFaceActive(
+                watchfacePackageName,
+                currentExecutor,
+                outcomeReceiver(
+                    cont,
+                    { t: Boolean -> t },
+                    { e -> WatchFacePushManager.IsWatchFaceActiveException(e) }
+                )
+            )
+        }
+    }
+
+    override suspend fun setWatchFaceAsActive(slotId: String) {
+        val currentExecutor = executor()
+        return suspendCancellableCoroutine { cont ->
+            if (
+                ContextCompat.checkSelfPermission(context, PERMISSION_NAME) ==
+                    android.content.pm.PackageManager.PERMISSION_DENIED
+            ) {
+                throw WatchFacePushManager.SetWatchFaceAsActiveException(
+                    WatchFacePushManager.SetWatchFaceAsActiveException.ERROR_MISSING_PERMISSION
+                )
+            }
+            receiverManager.setWatchFaceAsActive(
+                slotId,
+                currentExecutor,
+                outcomeReceiver(
+                    cont,
+                    {},
+                    { e -> WatchFacePushManager.SetWatchFaceAsActiveException(e) }
+                )
+            )
+        }
+    }
+
+    private suspend fun executor(): Executor {
+        return (currentCoroutineContext()[ContinuationInterceptor] as CoroutineDispatcher)
+            .asExecutor()
+    }
+
+    /**
+     * Helper method that provides an outcome receiver that converts an error into an exception.
+     *
+     * @param <T> The type of the value received from the remote service.
+     * @param <R> The type of the value to be returned by the call.
+     * @param transform A function that transforms the received value of type {@code T} from the
+     *   remote service into the desired return type {@code R}.
+     * @param transformException A function that transforms a remote service exception into an
+     *   AndroidX-compatible exception.
+     */
+    private fun <I, O, E : Throwable, EO : Throwable> outcomeReceiver(
+        cont: CancellableContinuation<O>,
+        transform: (I) -> O,
+        transformException: (E) -> EO
+    ): OutcomeReceiver<I, E> {
+        return object : OutcomeReceiver<I, E> {
+            override fun onResult(result: I) {
+                cont.resume(transform(result))
+            }
+
+            override fun onError(error: E) {
+                super.onError(error)
+                cont.resumeWithException(transformException(error))
+            }
+        }
     }
 }

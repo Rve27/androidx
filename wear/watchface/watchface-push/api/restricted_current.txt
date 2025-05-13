@@ -1,8 +1,7 @@
 // Signature format: 4.0
 package androidx.wear.watchface.push {
 
-  public final class WatchFacePushManager {
-    ctor public WatchFacePushManager(android.content.Context context);
+  public interface WatchFacePushManager {
     method public suspend Object? addWatchFace(android.os.ParcelFileDescriptor apkFd, String validationToken, kotlin.coroutines.Continuation<? super androidx.wear.watchface.push.WatchFacePushManager.WatchFaceDetails>);
     method public suspend Object? isWatchFaceActive(String watchfacePackageName, kotlin.coroutines.Continuation<? super java.lang.Boolean>);
     method public suspend Object? listWatchFaces(kotlin.coroutines.Continuation<? super androidx.wear.watchface.push.WatchFacePushManager.ListWatchFacesResponse>);
@@ -137,6 +136,11 @@ package androidx.wear.watchface.push {
     property public String packageName;
     property public String slotId;
     property public long versionCode;
+  }
+
+  public final class WatchFacePushManagerFactory {
+    method public static androidx.wear.watchface.push.WatchFacePushManager createWatchFacePushManager(android.content.Context context);
+    field public static final androidx.wear.watchface.push.WatchFacePushManagerFactory INSTANCE;
   }
 
 }
