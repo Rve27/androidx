@@ -146,7 +146,20 @@ public fun <T : Any> NavDisplay(
         entryDecorators = entryDecorators + transitionAwareLifecycleNavEntryDecorator,
         entryProvider = entryProvider
     ) { entries ->
-        val scene = sceneStrategy.calculateSceneWithSinglePaneFallback(entries = entries)
+        val allScenes = mutableListOf(sceneStrategy.calculateSceneWithSinglePaneFallback(entries))
+        do {
+            val overlayScene = allScenes.last() as? OverlayScene
+            val overlaidEntries = overlayScene?.overlaidEntries
+            if (overlaidEntries != null) {
+                // TODO Consider allowing a NavDisplay of only OverlayScene instances
+                require(overlaidEntries.isNotEmpty()) {
+                    "Overlaid entries from $overlayScene must not be empty"
+                }
+                allScenes += sceneStrategy.calculateSceneWithSinglePaneFallback(overlaidEntries)
+            }
+        } while (overlaidEntries != null)
+        val overlayScenes = allScenes.dropLast(1)
+        val scene = allScenes.last()
 
         // Predictive Back Handling
         var progress by remember { mutableFloatStateOf(0f) }
@@ -345,6 +358,15 @@ public fun <T : Any> NavDisplay(
             // If we've reached the targetState, our animation has settled
             val settled = transition.currentState == transition.targetState
             transitionAwareLifecycleNavEntryDecorator.isSettled = settled
+        }
+
+        // Show all OverlayScene instances above the AnimatedContent
+        overlayScenes.fastForEachReversed { overlayScene ->
+            // TODO Calculate what entries should be displayed from sceneToRenderableEntryMap
+            val allEntries = overlayScene.entries.map { it.key }.toSet()
+            CompositionLocalProvider(LocalEntriesToRenderInCurrentScene provides allEntries) {
+                overlayScene.content.invoke()
+            }
         }
     }
 }

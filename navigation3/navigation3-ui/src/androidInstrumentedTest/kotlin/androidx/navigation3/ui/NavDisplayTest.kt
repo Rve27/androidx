@@ -30,7 +30,6 @@ import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.window.Dialog
 import androidx.kruth.assertThat
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
@@ -100,22 +99,22 @@ class NavDisplayTest {
     fun testDialog() {
         lateinit var backStack: MutableList<Any>
         composeTestRule.setContent {
-            var showDialog = remember { mutableStateOf(false) }
             backStack = remember { mutableStateListOf(first) }
             NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+                sceneStrategy =
+                    DialogSceneStrategy(onBack = { backStack.removeAt(backStack.lastIndex) }),
             ) {
                 when (it) {
                     first ->
                         NavEntry(first) {
-                            Button(onClick = { showDialog.value = true }) { Text(first) }
+                            Button(onClick = { backStack += second }) { Text(first) }
                         }
+                    second ->
+                        NavEntry(second, metadata = DialogSceneStrategy.dialog()) { Text(second) }
                     else -> error("Invalid key passed")
                 }
-            }
-            if (showDialog.value) {
-                Dialog(onDismissRequest = {}) { Text(second) }
             }
         }
 
