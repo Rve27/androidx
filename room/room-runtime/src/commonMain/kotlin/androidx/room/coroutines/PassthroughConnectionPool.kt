@@ -71,7 +71,12 @@ private class PassthroughPooledConnection(
         get() = delegate
 
     override suspend fun <R> usePrepared(sql: String, block: (SQLiteStatement) -> R): R {
-        return delegate.prepare(sql).use { block.invoke(it) }
+        return if (inTransaction() && transactionWrapper != null) {
+            @Suppress("UNCHECKED_CAST") // Safe to cast since it just pipes the result
+            transactionWrapper.invoke { delegate.prepare(sql).use { block.invoke(it) } } as R
+        } else {
+            delegate.prepare(sql).use { block.invoke(it) }
+        }
     }
 
     override suspend fun <R> withTransaction(

@@ -56,6 +56,76 @@ class CompatibilityModeTest : TestDatabaseTest() {
     }
 
     @Test
+    fun transaction_useConnection_yield() = runTest {
+        database.useWriterConnection { transactor ->
+            transactor.immediateTransaction {
+                yield() // to likely resume on another thread
+                usePrepared("INSERT INTO publisher (publisherId, name) VALUES (?, ?)") { stmt ->
+                    stmt.bindText(1, "p1")
+                    stmt.bindText(2, "pub1")
+                    stmt.step()
+                }
+            }
+        }
+        assertThat(database.booksDao().getPublishersSuspend()).hasSize(1)
+    }
+
+    @Test
+    fun transaction_useConnection_withContext() = runTest {
+        database.useWriterConnection { transactor ->
+            transactor.immediateTransaction {
+                val ctx = newSingleThreadContext("TestThread")
+                withContext(ctx) {
+                    usePrepared("INSERT INTO publisher (publisherId, name) VALUES (?, ?)") { stmt ->
+                        stmt.bindText(1, "p1")
+                        stmt.bindText(2, "pub1")
+                        stmt.step()
+                    }
+                }
+                ctx.close()
+            }
+        }
+        assertThat(database.booksDao().getPublishersSuspend()).hasSize(1)
+    }
+
+    @Test
+    fun transaction_reUseConnection() = runTest {
+        database.useWriterConnection { transactor ->
+            transactor.immediateTransaction {
+                database.useWriterConnection {
+                    usePrepared("INSERT INTO publisher (publisherId, name) VALUES (?, ?)") { stmt ->
+                        stmt.bindText(1, "p1")
+                        stmt.bindText(2, "pub1")
+                        stmt.step()
+                    }
+                }
+            }
+        }
+        assertThat(database.booksDao().getPublishersSuspend()).hasSize(1)
+    }
+
+    @Test
+    fun transaction_reUseConnection_withContext() = runTest {
+        database.useWriterConnection { transactor ->
+            transactor.immediateTransaction {
+                val ctx = newSingleThreadContext("TestThread")
+                withContext(ctx) {
+                    database.useWriterConnection {
+                        usePrepared("INSERT INTO publisher (publisherId, name) VALUES (?, ?)") {
+                            stmt ->
+                            stmt.bindText(1, "p1")
+                            stmt.bindText(2, "pub1")
+                            stmt.step()
+                        }
+                    }
+                }
+                ctx.close()
+            }
+        }
+        assertThat(database.booksDao().getPublishersSuspend()).hasSize(1)
+    }
+
+    @Test
     fun transaction_daoFunction() = runTest {
         database.useWriterConnection { transactor ->
             transactor.immediateTransaction {
@@ -167,6 +237,47 @@ class CompatibilityModeTest : TestDatabaseTest() {
         database.useWriterConnection { transactor ->
             transactor.immediateTransaction {
                 database.withTransaction { database.booksDao().insertPublisher("p1", "pub1") }
+            }
+        }
+        assertThat(database.booksDao().getPublishersSuspend()).hasSize(1)
+    }
+
+    @Test
+    fun transaction_extensionFunction_nestedTransaction_withContext() = runTest {
+        database.useWriterConnection { transactor ->
+            transactor.immediateTransaction {
+                val ctx = newSingleThreadContext("TestThread")
+                withContext(ctx) {
+                    database.withTransaction { database.booksDao().insertPublisher("p1", "pub1") }
+                }
+                ctx.close()
+            }
+        }
+        assertThat(database.booksDao().getPublishersSuspend()).hasSize(1)
+    }
+
+    @Test
+    fun transaction_extensionFunction_nestedTransaction_reverse() = runTest {
+        database.withTransaction {
+            database.useWriterConnection { transactor ->
+                transactor.immediateTransaction {
+                    database.booksDao().insertPublisher("p1", "pub1")
+                }
+            }
+        }
+        assertThat(database.booksDao().getPublishersSuspend()).hasSize(1)
+    }
+
+    @Test
+    fun transaction_extensionFunction_nestedTransaction_reverse_withContext() = runTest {
+        database.withTransaction {
+            val ctx = newSingleThreadContext("TestThread")
+            withContext(ctx) {
+                database.useWriterConnection { transactor ->
+                    transactor.immediateTransaction {
+                        database.booksDao().insertPublisher("p1", "pub1")
+                    }
+                }
             }
         }
         assertThat(database.booksDao().getPublishersSuspend()).hasSize(1)
