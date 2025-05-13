@@ -210,8 +210,8 @@ abstract class KonanBuildService @Inject constructor(private val execOperations:
         val errorStream = ByteArrayOutputStream()
         val execResult = exec {
             block(it)
-            it.setErrorOutput(errorStream)
-            it.setStandardOutput(outputStream)
+            it.errorOutput = errorStream
+            it.standardOutput = outputStream
             it.isIgnoreExitValue = true // we'll check it below
         }
         if (execResult.exitValue != 0) {

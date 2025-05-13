@@ -397,7 +397,7 @@ private fun ConfigurableFileCollection.withChangesAllowed(
 private fun Any.findDeclaredFieldOnClass(name: String): Field? =
     try {
         this::class.java.getDeclaredField(name)
-    } catch (e: NoSuchFieldException) {
+    } catch (_: NoSuchFieldException) {
         null
     }
 

@@ -264,12 +264,7 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
                     configureAarAsJarForConfiguration(project, configurationName)
                 }
             )
-            .apply {
-                kotlinTarget.set(
-                    if (project.shouldForceKotlin20Target().get()) KotlinTarget.KOTLIN_2_0
-                    else KotlinTarget.DEFAULT
-                )
-            }
+            .apply { kotlinTarget.set(KotlinTarget.DEFAULT) }
     }
 
     /**

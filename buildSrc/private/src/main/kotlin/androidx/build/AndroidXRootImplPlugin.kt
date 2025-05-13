@@ -176,7 +176,7 @@ abstract class AndroidXRootImplPlugin : Plugin<Project> {
             if (ProjectLayoutType.isPlayground(this)) {
                 project.file(
                     layout.buildDirectory.dir("javascript-for-playground").map {
-                        it.asFile.also { it.mkdirs() }
+                        it.asFile.also { file -> file.mkdirs() }
                     }
                 )
             } else {

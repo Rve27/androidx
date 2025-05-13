@@ -55,6 +55,7 @@ fun Project.configureSourceJarForAndroid(
     libraryVariant: LibraryVariant,
     samplesProjects: MutableCollection<Project>
 ) {
+    @Suppress("UnstableApiUsage") // Call to .kotlin
     val allSources =
         project.files(libraryVariant.sources.java?.all) +
             project.files(libraryVariant.sources.kotlin?.all)
