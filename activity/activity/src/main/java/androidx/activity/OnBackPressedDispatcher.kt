@@ -63,6 +63,13 @@ class OnBackPressedDispatcher(
     @Suppress("unused") private val onHasEnabledCallbacksChanged: Consumer<Boolean>?
 ) {
 
+    /**
+     * This [OnBackPressedDispatcher] class will delegate all interactions to [eventDispatcher],
+     * which provides a KMP-compatible API while preserving behavior compatibility with existing
+     * callback mechanisms.
+     *
+     * @see [OnBackPressedCallback.eventCallback]
+     */
     internal var eventDispatcher: NavigationEventDispatcher =
         NavigationEventDispatcher(
             fallbackOnBackPressed = { fallbackOnBackPressed?.run() },
@@ -98,7 +105,7 @@ class OnBackPressedDispatcher(
      */
     @MainThread
     fun addCallback(onBackPressedCallback: OnBackPressedCallback) {
-        eventDispatcher.addCallback(callback = onBackPressedCallback.callback)
+        eventDispatcher.addCallback(onBackPressedCallback.eventCallback)
     }
 
     /**
@@ -134,41 +141,56 @@ class OnBackPressedDispatcher(
         // `addCallback()` are called on every STOP/START, the callback is effectively moved to the
         // top of the dispatching stack within its lifecycle group each time. This ensures the
         // dispatching ordering follows the lifecycle state.
-        val lifecycleObserverCloseable =
+        val lifecycleObserver =
             object : LifecycleEventObserver, AutoCloseable {
 
+                /**
+                 * Manages lifecycle-aware registration of an [OnBackPressedCallback].
+                 *
+                 * Adds the callback to the top of the [NavigationEventDispatcher]'s stack on
+                 * `ON_START`, and removes it on `ON_STOP` without closing, allowing it to
+                 * re-register on restart.
+                 *
+                 * On `ON_DESTROY`, the callback is permanently removed and cleaned up.
+                 *
+                 * Repeated add/remove calls ensure the callback stays at the top of its lifecycle
+                 * group's dispatching stack, maintaining correct dispatch order based on lifecycle
+                 * state.
+                 */
                 override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
                     if (event === Lifecycle.Event.ON_START) {
-                        // Register the callback ONLY when the lifecycle enters STARTED.
-                        // NOTE: This **ADDS** the callback to the top of the dispatching stack.
-                        this@OnBackPressedDispatcher.addCallback(onBackPressedCallback)
+                        // Register the INNER callback only when the lifecycle enters STARTED.
+                        // NOTE: This ADDS the callback to the top of the dispatching stack.
+                        eventDispatcher.addCallback(onBackPressedCallback.eventCallback)
                     } else if (event === Lifecycle.Event.ON_STOP) {
-                        // Temporarily remove the closeable and callback, then reattach the
-                        // closeable. This prevents triggering `this.close()`, which would stop
-                        // lifecycle tracking.
-                        // NOTE: This **REMOVES** the callback from the dispatching stack.
-                        onBackPressedCallback.removeCloseable(closeable = this)
-                        onBackPressedCallback.remove()
-                        onBackPressedCallback.addCloseable(closeable = this)
+                        // Remove the INNER callback without triggering this `close()`. This avoids
+                        // stopping lifecycle tracking and keeps this observer active.
+                        // NOTE: This REMOVES the callback from the dispatching stack.
+                        onBackPressedCallback.eventCallback.remove()
                     } else if (event === Lifecycle.Event.ON_DESTROY) {
-                        close() // Cleanup and stop lifecycle tracking if destroyed.
+                        // Remove the OUTER callback, which also triggers its cleanup, including
+                        // closing this lifecycle observer.
+                        onBackPressedCallback.remove()
                     }
                 }
 
-                // Performs cleanup when lifecycle is destroyed or the callback is manually removed.
+                /**
+                 * Detaches this observer from the [Lifecycle] and removes it from
+                 * [OnBackPressedCallback.closeables].
+                 *
+                 * Called when the [LifecycleOwner] is destroyed or the callback is manually
+                 * removed, ensuring lifecycle events stop and resources are cleaned up.
+                 */
                 override fun close() {
                     lifecycle.removeObserver(observer = this)
-
-                    // Remove the closeable before the callback to prevent infinite recursion.
                     onBackPressedCallback.removeCloseable(closeable = this)
-                    onBackPressedCallback.remove()
                 }
             }
 
-        // Ensures `LifecycleOwner` events are tracked.
-        lifecycle.addObserver(observer = lifecycleObserverCloseable)
-        // Ensures `Callback.remove()` will stop lifecycle tracking.
-        onBackPressedCallback.addCloseable(closeable = lifecycleObserverCloseable)
+        // Ensures `LifecycleOwner` events are tracked by this observer.
+        lifecycle.addObserver(observer = lifecycleObserver)
+        // Ensures `OnBackPressedCallback.remove()` will stop lifecycle tracking.
+        onBackPressedCallback.addCloseable(closeable = lifecycleObserver)
     }
 
     /**

@@ -511,7 +511,7 @@ class OnBackPressedHandlerTest {
     @Test
     fun testBothCallbacksAdded() {
         val callback1 = CountingOnBackPressedCallback()
-        dispatcher.eventDispatcher.addCallback(callback1.callback)
+        dispatcher.eventDispatcher.addCallback(callback1.eventCallback)
 
         val callback2 = CountingOnBackPressedCallback()
         dispatcher.addCallback(callback2)
@@ -568,7 +568,7 @@ class OnBackPressedHandlerTest {
     @Test
     fun testOnBackPressedDispatchesToNavigationEventCallback() {
         val callback = CountingOnBackPressedCallback()
-        dispatcher.eventDispatcher.addCallback(callback.callback)
+        dispatcher.eventDispatcher.addCallback(callback.eventCallback)
 
         dispatcher.onBackPressed()
 
