@@ -105,6 +105,23 @@ class PaneScaffoldDirectiveTest {
     }
 
     @Test
+    fun test_calculateStandardPaneScaffoldDirective_extraLargeWidth() {
+        val scaffoldDirective =
+            calculatePaneScaffoldDirective(
+                WindowAdaptiveInfo(
+                    WindowSizeClass(1600, WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND),
+                    Posture()
+                )
+            )
+
+        assertThat(scaffoldDirective.maxHorizontalPartitions).isEqualTo(3)
+        assertThat(scaffoldDirective.maxVerticalPartitions).isEqualTo(1)
+        assertThat(scaffoldDirective.horizontalPartitionSpacerSize).isEqualTo(24.dp)
+        assertThat(scaffoldDirective.verticalPartitionSpacerSize).isEqualTo(0.dp)
+        assertThat(scaffoldDirective.defaultPanePreferredWidth).isEqualTo(412.dp)
+    }
+
+    @Test
     fun test_calculateStandardPaneScaffoldDirective_tabletop() {
         val scaffoldDirective =
             calculatePaneScaffoldDirective(
@@ -180,6 +197,23 @@ class PaneScaffoldDirectiveTest {
         assertThat(scaffoldDirective.horizontalPartitionSpacerSize).isEqualTo(24.dp)
         assertThat(scaffoldDirective.verticalPartitionSpacerSize).isEqualTo(0.dp)
         assertThat(scaffoldDirective.defaultPanePreferredWidth).isEqualTo(360.dp)
+    }
+
+    @Test
+    fun test_calculateDensePaneScaffoldDirective_extraLargeWidth() {
+        val scaffoldDirective =
+            calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(
+                WindowAdaptiveInfo(
+                    WindowSizeClass(1600, WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND),
+                    Posture()
+                )
+            )
+
+        assertThat(scaffoldDirective.maxHorizontalPartitions).isEqualTo(3)
+        assertThat(scaffoldDirective.maxVerticalPartitions).isEqualTo(1)
+        assertThat(scaffoldDirective.horizontalPartitionSpacerSize).isEqualTo(24.dp)
+        assertThat(scaffoldDirective.verticalPartitionSpacerSize).isEqualTo(0.dp)
+        assertThat(scaffoldDirective.defaultPanePreferredWidth).isEqualTo(412.dp)
     }
 
     @Test

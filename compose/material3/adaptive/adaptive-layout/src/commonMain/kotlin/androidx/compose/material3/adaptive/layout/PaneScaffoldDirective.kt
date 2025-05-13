@@ -51,18 +51,27 @@ fun calculatePaneScaffoldDirective(
 ): PaneScaffoldDirective {
     val maxHorizontalPartitions: Int
     val horizontalPartitionSpacerSize: Dp
+    val defaultPanePreferredWidth: Dp
     when (windowAdaptiveInfo.windowSizeClass.minWidth) {
         WindowSizeClass.WidthSizeClasses.Compact -> {
             maxHorizontalPartitions = 1
             horizontalPartitionSpacerSize = 0.dp
+            defaultPanePreferredWidth = PaneScaffoldDirective.DefaultPreferredWidth
         }
         WindowSizeClass.WidthSizeClasses.Medium -> {
             maxHorizontalPartitions = 1
             horizontalPartitionSpacerSize = 0.dp
+            defaultPanePreferredWidth = PaneScaffoldDirective.DefaultPreferredWidth
         }
-        else -> {
+        WindowSizeClass.WidthSizeClasses.Expanded -> {
             maxHorizontalPartitions = 2
             horizontalPartitionSpacerSize = 24.dp
+            defaultPanePreferredWidth = PaneScaffoldDirective.DefaultPreferredWidth
+        }
+        else -> {
+            maxHorizontalPartitions = 3
+            horizontalPartitionSpacerSize = 24.dp
+            defaultPanePreferredWidth = PaneScaffoldDirective.DefaultPreferredWidthXL
         }
     }
     val maxVerticalPartitions: Int
@@ -81,9 +90,6 @@ fun calculatePaneScaffoldDirective(
         maxVerticalPartitions = 1
         verticalPartitionSpacerSize = 0.dp
     }
-
-    // TODO(conradchen): add 412.dp for L/XL window size class when they are available
-    val defaultPanePreferredWidth = PaneScaffoldDirective.DefaultPreferredWidth
 
     val defaultPanePreferredHeight = PaneScaffoldDirective.DefaultPreferredHeight
 
@@ -314,6 +320,7 @@ class PaneScaffoldDirective(
 
     companion object {
         internal val DefaultPreferredWidth = 360.dp
+        internal val DefaultPreferredWidthXL = 412.dp
         internal val DefaultPreferredHeight = 420.dp
 
         /**
