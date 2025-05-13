@@ -16,11 +16,11 @@
 package androidx.room
 
 import androidx.annotation.RestrictTo
-import androidx.room.driver.SupportSQLiteConnection
 import androidx.room.util.useCursor
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
+import androidx.sqlite.driver.SupportSQLiteConnection
 
 /** An open helper that holds a reference to the configuration until the database is opened. */
 @Suppress("DEPRECATION") // Due to usage of RoomOpenHelper.Delegate

@@ -16,9 +16,9 @@
 package androidx.room.util
 
 import androidx.annotation.RestrictTo
-import androidx.room.driver.SupportSQLiteConnection
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.driver.SupportSQLiteConnection
 
 /**
  * A data class that holds the information about a view.

@@ -55,7 +55,7 @@ public abstract class BaseRoomConnectionManager {
     internal open fun resolveFileName(fileName: String): String = fileName
 
     /* A driver wrapper that configures opened connections per the manager. */
-    protected inner class DriverWrapper(private val actual: SQLiteDriver) : SQLiteDriver {
+    protected inner class DriverWrapper(private val actual: SQLiteDriver) : SQLiteDriver by actual {
         override fun open(fileName: String): SQLiteConnection {
             return openLocked(resolveFileName(fileName))
         }

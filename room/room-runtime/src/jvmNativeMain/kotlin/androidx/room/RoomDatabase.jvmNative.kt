@@ -247,7 +247,8 @@ public actual abstract class RoomDatabase {
      * be used by Room generated code paths. For the public version see [useReaderConnection] and
      * [useWriterConnection].
      */
-    internal actual suspend fun <R> useConnection(
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public actual suspend fun <R> useConnection(
         isReadOnly: Boolean,
         block: suspend (Transactor) -> R
     ): R {

@@ -17,6 +17,9 @@ abstract interface androidx.sqlite/SQLiteConnection : kotlin/AutoCloseable { // 
 }
 
 abstract interface androidx.sqlite/SQLiteDriver { // androidx.sqlite/SQLiteDriver|null[0]
+    open val hasConnectionPool // androidx.sqlite/SQLiteDriver.hasConnectionPool|{}hasConnectionPool[0]
+        open fun <get-hasConnectionPool>(): kotlin/Boolean // androidx.sqlite/SQLiteDriver.hasConnectionPool.<get-hasConnectionPool>|<get-hasConnectionPool>(){}[0]
+
     abstract fun open(kotlin/String): androidx.sqlite/SQLiteConnection // androidx.sqlite/SQLiteDriver.open|open(kotlin.String){}[0]
 }
 

@@ -48,12 +48,12 @@ import org.junit.runners.Parameterized.Parameters
 
 @MediumTest
 @RunWith(Parameterized::class)
-class BooksDaoTest(useBundledSQLite: Boolean) : TestDatabaseTest(useBundledSQLite) {
+class BooksDaoTest(useDriver: UseDriver) : TestDatabaseTest(useDriver) {
 
     private companion object {
         @JvmStatic
-        @Parameters(name = "useBundledSQLite={0}")
-        fun parameters() = arrayOf(false, true)
+        @Parameters(name = "useDriver={0}")
+        fun parameters() = UseDriver.entries.toTypedArray()
     }
 
     @Test

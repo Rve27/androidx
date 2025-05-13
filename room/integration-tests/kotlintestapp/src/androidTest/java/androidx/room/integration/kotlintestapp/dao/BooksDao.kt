@@ -492,4 +492,9 @@ interface BooksDao {
     fun executeTransaction(block: () -> Unit) {
         block.invoke()
     }
+
+    @Transaction
+    suspend fun executeTransactionSuspending(block: suspend () -> Unit) {
+        block.invoke()
+    }
 }

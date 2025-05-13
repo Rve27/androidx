@@ -23,8 +23,6 @@ import androidx.room.DatabaseConfiguration
 import androidx.room.InvalidationTracker
 import androidx.room.RoomDatabase
 import androidx.room.RoomOpenDelegate
-import androidx.room.driver.SupportSQLiteConnection
-import androidx.room.driver.SupportSQLiteDriver
 import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
 import androidx.room.migration.bundle.SchemaBundle
@@ -34,6 +32,8 @@ import androidx.sqlite.SQLiteDriver
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
+import androidx.sqlite.driver.SupportSQLiteConnection
+import androidx.sqlite.driver.SupportSQLiteDriver
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException

@@ -33,10 +33,7 @@ import androidx.annotation.WorkerThread
 import androidx.arch.core.executor.ArchTaskExecutor
 import androidx.room.Room.LOG_TAG
 import androidx.room.concurrent.CloseBarrier
-import androidx.room.coroutines.AndroidSQLiteDriverConnectionPool
-import androidx.room.coroutines.ConnectionPool
 import androidx.room.coroutines.runBlockingUninterruptible
-import androidx.room.driver.SupportSQLiteConnection
 import androidx.room.migration.AutoMigrationSpec
 import androidx.room.migration.Migration
 import androidx.room.support.AutoCloser
@@ -56,8 +53,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteOpenHelper
 import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteStatement
-import androidx.sqlite.db.framework.FrameworkSQLiteDatabase
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
+import androidx.sqlite.driver.SupportSQLiteConnection
 import java.io.File
 import java.io.InputStream
 import java.util.TreeMap
@@ -65,7 +62,6 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Executor
 import java.util.concurrent.RejectedExecutionException
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicInteger
 import kotlin.coroutines.ContinuationInterceptor
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.coroutineContext
@@ -139,10 +135,11 @@ public actual abstract class RoomDatabase {
                         "SupportSQLiteOpenHelper.Factory was configured with Room."
                 )
 
-    private lateinit var connectionManager: RoomConnectionManager
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public val driver: SQLiteDriver
+        get() = configuration.sqliteDriver ?: error("No SQLiteDriver was configured with Room.")
 
-    internal val connectionPool: ConnectionPool
-        get() = connectionManager.connectionPool
+    private lateinit var connectionManager: RoomConnectionManager
 
     /**
      * The invalidation tracker for this database.
@@ -178,13 +175,18 @@ public actual abstract class RoomDatabase {
     private var autoCloser: AutoCloser? = null
 
     /**
-     * Suspending transaction id of the current thread.
+     * Suspending transaction context of the current thread containing a [TransactionElement].
      *
-     * This id is only set on threads that are used to dispatch coroutines within a suspending
-     * database transaction.
+     * This is set on threads that are used to dispatch coroutines within a suspending database
+     * transaction. It can also be set by the SupportSQLite wrapper when there is an active
+     * compatibility transaction so DAO functions can interop with the active transaction.
      */
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public val suspendingTransactionId: ThreadLocal<Int> = ThreadLocal<Int>()
+    public val suspendingTransactionContext: ThreadLocal<CoroutineContext> =
+        ThreadLocal<CoroutineContext>()
+
+    private val isThreadInSuspendingTransaction: Boolean
+        get() = suspendingTransactionContext.get()?.get(TransactionElement) != null
 
     private val typeConverters: MutableMap<KClass<*>, Any> = mutableMapOf()
 
@@ -326,10 +328,15 @@ public actual abstract class RoomDatabase {
             @Suppress("DEPRECATION")
             RoomConnectionManager(
                 config = configuration,
-                supportOpenHelperFactory = { config -> createOpenHelper(config) }
+                supportOpenHelperFactory = { config -> createOpenHelper(config) },
+                transactionWrapper = ::compatTransactionCoroutineExecute
             )
         } else {
-            RoomConnectionManager(config = configuration, openDelegate = openDelegate)
+            RoomConnectionManager(
+                config = configuration,
+                openDelegate = openDelegate,
+                transactionWrapper = ::compatTransactionCoroutineExecute
+            )
         }
     }
 
@@ -589,7 +596,7 @@ public actual abstract class RoomDatabase {
     /** Asserts that we are not on a suspending transaction. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
     public open fun assertNotSuspendingTransaction() {
-        check(!inCompatibilityMode() || inTransaction() || suspendingTransactionId.get() == null) {
+        check(!inCompatibilityMode() || inTransaction() || !isThreadInSuspendingTransaction) {
             "Cannot access database on a different coroutine" +
                 " context inherited from a suspending transaction."
         }
@@ -602,7 +609,8 @@ public actual abstract class RoomDatabase {
      * be used by Room generated code paths. For the public version see [useReaderConnection] and
      * [useWriterConnection].
      */
-    internal actual suspend fun <R> useConnection(
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public actual suspend fun <R> useConnection(
         isReadOnly: Boolean,
         block: suspend (Transactor) -> R
     ): R {
@@ -2042,31 +2050,27 @@ public suspend fun <R> RoomDatabase.withTransaction(block: suspend () -> R): R =
 /** Calls the specified suspending [block] with Room's transaction context. */
 internal suspend fun <R> RoomDatabase.withTransactionContext(block: suspend () -> R): R {
     val transactionBlock: suspend CoroutineScope.() -> R = transaction@{
-        val transactionElement = coroutineContext[TransactionElement]!!
-        transactionElement.acquire()
-        try {
-            return@transaction block.invoke()
-        } finally {
-            transactionElement.release()
+        checkNotNull(coroutineContext[TransactionElement]) {
+            "Expected a TransactionElement in the CoroutineContext but none was found."
         }
+        return@transaction block.invoke()
     }
     // Use inherited transaction context if available, this allows nested suspending transactions.
     val transactionDispatcher = coroutineContext[TransactionElement]?.transactionDispatcher
     return if (transactionDispatcher != null) {
         withContext(transactionDispatcher, transactionBlock)
     } else {
-        startTransactionCoroutine(coroutineContext, transactionBlock)
+        startTransactionCoroutine(transactionBlock)
     }
 }
 
 /**
  * Suspend caller coroutine and start the transaction coroutine in a thread from the
  * [RoomDatabase.transactionExecutor], resuming the caller coroutine with the result once done. The
- * [context] will be a parent of the started coroutine to propagating cancellation and release the
- * thread when cancelled.
+ * caller's `context` will be a parent of the started coroutine to propagating cancellation and
+ * release the thread when cancelled.
  */
 private suspend fun <R> RoomDatabase.startTransactionCoroutine(
-    context: CoroutineContext,
     transactionBlock: suspend CoroutineScope.() -> R
 ): R = suspendCancellableCoroutine { continuation ->
     try {
@@ -2075,7 +2079,7 @@ private suspend fun <R> RoomDatabase.startTransactionCoroutine(
                 // Thread acquired, start the transaction coroutine using the parent context.
                 // The started coroutine will have an event loop dispatcher that we'll use for the
                 // transaction context.
-                runBlocking(context.minusKey(ContinuationInterceptor)) {
+                runBlocking(continuation.context.minusKey(ContinuationInterceptor)) {
                     val dispatcher = coroutineContext[ContinuationInterceptor]!!
                     val transactionContext = createTransactionContext(dispatcher)
                     continuation.resume(withContext(transactionContext, transactionBlock))
@@ -2109,19 +2113,22 @@ private suspend fun <R> RoomDatabase.startTransactionCoroutine(
  *   database operation to the transaction thread.
  * * The thread local element serves as a second indicator and marks threads that are used to
  *   execute coroutines within the coroutine transaction, more specifically it allows us to identify
- *   if a blocking DAO method is invoked within the transaction coroutine. Never assign meaning to
- *   this value, for now all we care is if its present or not.
+ *   if a blocking DAO method is invoked within the transaction coroutine.
  */
 private fun RoomDatabase.createTransactionContext(
     dispatcher: ContinuationInterceptor
 ): CoroutineContext {
-    val transactionElement = TransactionElement(dispatcher)
-    val threadLocalElement =
-        suspendingTransactionId.asContextElement(System.identityHashCode(transactionElement))
-    return dispatcher + transactionElement + threadLocalElement
+    val baseContext = dispatcher + TransactionElement(dispatcher)
+    val threadLocalElement = suspendingTransactionContext.asContextElement(baseContext)
+    return baseContext + threadLocalElement
 }
 
-/** A [CoroutineContext.Element] that indicates there is an on-going database transaction. */
+/**
+ * A [CoroutineContext.Element] that indicates there is an on-going database transaction.
+ *
+ * Even though all this element contains is a [ContinuationInterceptor], it is required since its
+ * key will be unique which prevents the interceptor to be overridden during a context folding.
+ */
 internal class TransactionElement(internal val transactionDispatcher: ContinuationInterceptor) :
     CoroutineContext.Element {
 
@@ -2129,23 +2136,6 @@ internal class TransactionElement(internal val transactionDispatcher: Continuati
 
     override val key: CoroutineContext.Key<TransactionElement>
         get() = TransactionElement
-
-    /**
-     * Number of transactions (including nested ones) started with this element. Call [acquire] to
-     * increase the count and [release] to decrease it.
-     */
-    private val referenceCount = AtomicInteger(0)
-
-    fun acquire() {
-        referenceCount.incrementAndGet()
-    }
-
-    fun release() {
-        val count = referenceCount.decrementAndGet()
-        if (count < 0) {
-            throw IllegalStateException("Transaction was never started or was already released.")
-        }
-    }
 }
 
 /**
@@ -2182,9 +2172,17 @@ public fun RoomDatabase.invalidationTrackerFlow(
     emitInitialState: Boolean = true
 ): Flow<Set<String>> = invalidationTracker.createFlow(*tables, emitInitialState = emitInitialState)
 
-// TODO(b/408010324): Avoid exposing this restricted APIs, create separation of concerns.
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun RoomDatabase.getAndroidDriverDatabase(): SupportSQLiteDatabase? =
-    (connectionPool as? AndroidSQLiteDriverConnectionPool)?.androidConnection?.db?.let {
-        FrameworkSQLiteDatabase(it)
+/**
+ * Compatibility suspend transaction execution with driver usage. This will maintain the dispatcher
+ * behaviour in [withTransaction] when Room is in compatibility mode executing driver transactions
+ * and maintains compatibility with suspend DAO usages.
+ */
+internal suspend fun <R> RoomDatabase.compatTransactionCoroutineExecute(block: suspend () -> R): R {
+    if (inCompatibilityMode() && isOpenInternal && inTransaction()) {
+        return block.invoke()
     }
+    if (coroutineContext[RoomExternalOperationElement] == null) {
+        return block.invoke()
+    }
+    return withTransactionContext(block)
+}

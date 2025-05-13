@@ -28,11 +28,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TransactionElement
 import androidx.room.coroutines.RawConnectionAccessor
 import androidx.room.coroutines.runBlockingUninterruptible
-import androidx.room.driver.SupportSQLiteConnection
 import androidx.room.withTransactionContext
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteQuery
+import androidx.sqlite.driver.SupportSQLiteConnection
 import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
@@ -57,14 +57,6 @@ public actual suspend fun <R> performSuspending(
         }
     }
 
-/**
- * The thread transaction coroutine context is set by the SupportSQLite wrapper when there is an
- * active transaction so DAO function can interop with the active transaction.
- */
-@get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public val activeThreadTransactionContext: ThreadLocal<CoroutineContext> =
-    ThreadLocal<CoroutineContext>()
-
 /** Blocking version of [performSuspending] */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) // used in generated code
 public fun <R> performBlocking(
@@ -75,7 +67,7 @@ public fun <R> performBlocking(
 ): R {
     db.assertNotMainThread()
     db.assertNotSuspendingTransaction()
-    val context = activeThreadTransactionContext.get() ?: EmptyCoroutineContext
+    val context = db.suspendingTransactionContext.get() ?: EmptyCoroutineContext
     return runBlockingUninterruptible {
         withContext(context) {
             // If in compatibility mode and the database is already in a transaction, then do not
@@ -106,7 +98,7 @@ public actual suspend fun <R> performInTransactionSuspending(
             db.internalPerform(isReadOnly = false, inTransaction = true) { block.invoke() }
         }
     } else {
-        withContext(db.getCoroutineScope().coroutineContext) {
+        db.compatCoroutineExecute(true) {
             db.internalPerform(isReadOnly = false, inTransaction = true) { block.invoke() }
         }
     }
@@ -134,13 +126,19 @@ private suspend inline fun <R> RoomDatabase.compatCoroutineExecute(
 internal actual suspend fun RoomDatabase.getCoroutineContext(
     inTransaction: Boolean
 ): CoroutineContext {
+    val transactionDispatcher = coroutineContext[TransactionElement]?.transactionDispatcher
     return if (inCompatibilityMode()) {
         // If in compatibility mode check if we are on a transaction coroutine, if so combine
         // it with the database context, otherwise use the database dispatchers.
-        coroutineContext[TransactionElement]?.transactionDispatcher?.let { getQueryContext() + it }
-            ?: if (inTransaction) getTransactionContext() else getQueryContext()
+        if (transactionDispatcher != null) {
+            getQueryContext() + transactionDispatcher
+        } else if (inTransaction) {
+            getTransactionContext()
+        } else {
+            getQueryContext()
+        }
     } else {
-        getCoroutineScope().coroutineContext
+        getQueryContext() + (transactionDispatcher ?: EmptyCoroutineContext)
     }
 }
 

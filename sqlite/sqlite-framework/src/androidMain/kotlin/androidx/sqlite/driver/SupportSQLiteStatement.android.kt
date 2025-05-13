@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,42 +22,74 @@ import android.database.Cursor.FIELD_TYPE_FLOAT
 import android.database.Cursor.FIELD_TYPE_INTEGER
 import android.database.Cursor.FIELD_TYPE_NULL
 import android.database.Cursor.FIELD_TYPE_STRING
-import android.database.sqlite.SQLiteCursor
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteProgram
 import androidx.sqlite.SQLITE_DATA_BLOB
 import androidx.sqlite.SQLITE_DATA_FLOAT
 import androidx.sqlite.SQLITE_DATA_INTEGER
 import androidx.sqlite.SQLITE_DATA_NULL
 import androidx.sqlite.SQLITE_DATA_TEXT
 import androidx.sqlite.SQLiteStatement
-import androidx.sqlite.driver.ResultCode.SQLITE_MISUSE
-import androidx.sqlite.driver.ResultCode.SQLITE_RANGE
+import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.db.SupportSQLiteProgram
+import androidx.sqlite.db.SupportSQLiteQuery
 import androidx.sqlite.throwSQLiteException
 
-private typealias FrameworkStatement = android.database.sqlite.SQLiteStatement
+private typealias SupportStatement = androidx.sqlite.db.SupportSQLiteStatement
 
-internal sealed class AndroidSQLiteStatement(
-    protected val db: SQLiteDatabase,
+internal sealed class SupportSQLiteStatement(
+    protected val db: SupportSQLiteDatabase,
     protected val sql: String,
 ) : SQLiteStatement {
 
-    protected var isClosed = false
+    protected var isClosed: Boolean = false
 
     protected fun throwIfClosed() {
         if (isClosed) {
-            throwSQLiteException(SQLITE_MISUSE, "statement is closed")
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "statement is closed")
         }
     }
 
-    companion object {
-        fun create(db: SQLiteDatabase, sql: String): AndroidSQLiteStatement {
-            return if (isRowStatement(sql)) {
+    public companion object {
+        public fun create(db: SupportSQLiteDatabase, sql: String): SupportSQLiteStatement {
+            // TODO(b/413061402): Improve categorization to handle for comments.
+            // https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/database/DatabaseUtils.java;drc=61197364367c9e404c7da6900658f1b16c42d0da;l=1581
+            val sqlString = sql.trim().uppercase()
+            val transactionOp = getTransactionOperation(sqlString)
+            return if (transactionOp != null) {
+                // Special-case statement for transactions
+                TransactionSQLiteStatement(db, sql, transactionOp)
+            } else if (isRowStatement(sqlString)) {
                 // Statements that return rows (SQLITE_ROW)
-                SelectAndroidSQLiteStatement(db, sql)
+                RowSQLiteStatement(db, sql)
             } else {
                 // Statements that don't return row (SQLITE_DONE)
-                OtherAndroidSQLiteStatement(db, sql)
+                OtherSQLiteStatement(db, sql)
+            }
+        }
+
+        private fun getTransactionOperation(sql: String): TransactionOperation? {
+            val prefix = sql.trim()
+            if (prefix.length < 3) {
+                return null
+            }
+            return when (prefix.substring(0, 3)) {
+                "END",
+                "COM" -> TransactionOperation.END
+                "ROL" ->
+                    if (sql.contains(" TO ")) {
+                        null
+                    } else {
+                        TransactionOperation.ROLLBACK
+                    }
+                "BEG" -> {
+                    if (sql.contains("EXCLUSIVE")) {
+                        TransactionOperation.BEGIN_EXCLUSIVE
+                    } else if (sql.contains("IMMEDIATE")) {
+                        TransactionOperation.BEGIN_IMMEDIATE
+                    } else {
+                        TransactionOperation.BEGIN_DEFERRED
+                    }
+                }
+                else -> null
             }
         }
 
@@ -73,11 +105,117 @@ internal sealed class AndroidSQLiteStatement(
                 else -> false
             }
         }
+
+        private enum class TransactionOperation {
+            END,
+            ROLLBACK,
+            BEGIN_EXCLUSIVE,
+            BEGIN_IMMEDIATE,
+            BEGIN_DEFERRED
+        }
+    }
+
+    private class TransactionSQLiteStatement(
+        db: SupportSQLiteDatabase,
+        sql: String,
+        val operation: TransactionOperation
+    ) : SupportSQLiteStatement(db, sql) {
+
+        override fun bindBlob(index: Int, value: ByteArray) {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_RANGE, "column index out of range")
+        }
+
+        override fun bindDouble(index: Int, value: Double) {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_RANGE, "column index out of range")
+        }
+
+        override fun bindLong(index: Int, value: Long) {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_RANGE, "column index out of range")
+        }
+
+        override fun bindText(index: Int, value: String) {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_RANGE, "column index out of range")
+        }
+
+        override fun bindNull(index: Int) {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_RANGE, "column index out of range")
+        }
+
+        override fun getBlob(index: Int): ByteArray {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
+        }
+
+        override fun getDouble(index: Int): Double {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
+        }
+
+        override fun getLong(index: Int): Long {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
+        }
+
+        override fun getText(index: Int): String {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
+        }
+
+        override fun isNull(index: Int): Boolean {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
+        }
+
+        override fun getColumnCount(): Int {
+            throwIfClosed()
+            return 0
+        }
+
+        override fun getColumnName(index: Int): String {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
+        }
+
+        override fun getColumnType(index: Int): Int {
+            throwIfClosed()
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
+        }
+
+        override fun step(): Boolean {
+            when (operation) {
+                TransactionOperation.END -> {
+                    db.setTransactionSuccessful()
+                    db.endTransaction()
+                }
+                TransactionOperation.ROLLBACK -> db.endTransaction()
+                TransactionOperation.BEGIN_EXCLUSIVE -> db.beginTransaction()
+                TransactionOperation.BEGIN_IMMEDIATE -> db.beginTransactionNonExclusive()
+                TransactionOperation.BEGIN_DEFERRED -> db.beginTransactionReadOnly()
+            }
+            return false
+        }
+
+        override fun reset() {
+            throwIfClosed()
+        }
+
+        override fun clearBindings() {
+            throwIfClosed()
+        }
+
+        override fun close() {
+            isClosed = true
+        }
     }
 
     // TODO(b/304298743): Use android.database.SQLiteRawStatement on Android V+
-    private class SelectAndroidSQLiteStatement(db: SQLiteDatabase, sql: String) :
-        AndroidSQLiteStatement(db, sql) {
+    private class RowSQLiteStatement(db: SupportSQLiteDatabase, sql: String) :
+        SupportSQLiteStatement(db, sql) {
 
         private var bindingTypes: IntArray = IntArray(0)
         private var longBindings: LongArray = LongArray(0)
@@ -202,6 +340,7 @@ internal sealed class AndroidSQLiteStatement(
 
         override fun close() {
             if (!isClosed) {
+                clearBindings()
                 reset()
             }
             isClosed = true
@@ -239,37 +378,41 @@ internal sealed class AndroidSQLiteStatement(
         private fun ensureCursor() {
             if (cursor == null) {
                 cursor =
-                    db.rawQueryWithFactory(
-                        /* cursorFactory = */ { _, masterQuery, editTable, query ->
-                            bindTo(query)
-                            SQLiteCursor(masterQuery, editTable, query)
-                        },
-                        /* sql = */ sql,
-                        /* selectionArgs = */ arrayOfNulls(0),
-                        /* editTable = */ null
+                    db.query(
+                        object : SupportSQLiteQuery {
+                            override val sql: String
+                                get() = this@RowSQLiteStatement.sql
+
+                            override fun bindTo(statement: SupportSQLiteProgram) {
+                                for (index in 1 until bindingTypes.size) {
+                                    when (bindingTypes[index]) {
+                                        SQLITE_DATA_INTEGER ->
+                                            statement.bindLong(index, longBindings[index])
+                                        SQLITE_DATA_FLOAT ->
+                                            statement.bindDouble(index, doubleBindings[index])
+                                        SQLITE_DATA_TEXT ->
+                                            statement.bindString(index, stringBindings[index]!!)
+                                        SQLITE_DATA_BLOB ->
+                                            statement.bindBlob(index, blobBindings[index]!!)
+                                        SQLITE_DATA_NULL -> statement.bindNull(index)
+                                    }
+                                }
+                            }
+
+                            override val argCount: Int
+                                get() = bindingTypes.size
+                        }
                     )
             }
         }
 
-        private fun bindTo(query: SQLiteProgram) {
-            for (index in 1 until bindingTypes.size) {
-                when (bindingTypes[index]) {
-                    SQLITE_DATA_INTEGER -> query.bindLong(index, longBindings[index])
-                    SQLITE_DATA_FLOAT -> query.bindDouble(index, doubleBindings[index])
-                    SQLITE_DATA_TEXT -> query.bindString(index, stringBindings[index])
-                    SQLITE_DATA_BLOB -> query.bindBlob(index, blobBindings[index])
-                    SQLITE_DATA_NULL -> query.bindNull(index)
-                }
-            }
-        }
-
         private fun throwIfNoRow(): Cursor {
-            return cursor ?: throwSQLiteException(SQLITE_MISUSE, "no row")
+            return cursor ?: throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
         }
 
         private fun throwIfInvalidColumn(c: Cursor, index: Int) {
             if (index < 0 || index >= c.columnCount) {
-                throwSQLiteException(SQLITE_RANGE, "column index out of range")
+                throwSQLiteException(ResultCode.SQLITE_RANGE, "column index out of range")
             }
         }
 
@@ -288,10 +431,10 @@ internal sealed class AndroidSQLiteStatement(
         }
     }
 
-    private class OtherAndroidSQLiteStatement(db: SQLiteDatabase, sql: String) :
-        AndroidSQLiteStatement(db, sql) {
+    private class OtherSQLiteStatement(db: SupportSQLiteDatabase, sql: String) :
+        SupportSQLiteStatement(db, sql) {
 
-        private val delegate: FrameworkStatement = db.compileStatement(sql)
+        private val delegate: SupportStatement = db.compileStatement(sql)
 
         override fun bindBlob(index: Int, value: ByteArray) {
             throwIfClosed()
@@ -320,27 +463,27 @@ internal sealed class AndroidSQLiteStatement(
 
         override fun getBlob(index: Int): ByteArray {
             throwIfClosed()
-            throwSQLiteException(SQLITE_MISUSE, "no row")
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
         }
 
         override fun getDouble(index: Int): Double {
             throwIfClosed()
-            throwSQLiteException(SQLITE_MISUSE, "no row")
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
         }
 
         override fun getLong(index: Int): Long {
             throwIfClosed()
-            throwSQLiteException(SQLITE_MISUSE, "no row")
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
         }
 
         override fun getText(index: Int): String {
             throwIfClosed()
-            throwSQLiteException(SQLITE_MISUSE, "no row")
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
         }
 
         override fun isNull(index: Int): Boolean {
             throwIfClosed()
-            throwSQLiteException(SQLITE_MISUSE, "no row")
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
         }
 
         override fun getColumnCount(): Int {
@@ -350,12 +493,12 @@ internal sealed class AndroidSQLiteStatement(
 
         override fun getColumnName(index: Int): String {
             throwIfClosed()
-            throwSQLiteException(SQLITE_MISUSE, "no row")
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
         }
 
         override fun getColumnType(index: Int): Int {
             throwIfClosed()
-            throwSQLiteException(SQLITE_MISUSE, "no row")
+            throwSQLiteException(ResultCode.SQLITE_MISUSE, "no row")
         }
 
         override fun step(): Boolean {
@@ -365,6 +508,7 @@ internal sealed class AndroidSQLiteStatement(
         }
 
         override fun reset() {
+            throwIfClosed()
             // Android executes and releases non-query statements, so there is nothing to 'reset'.
         }
 

@@ -15,9 +15,9 @@
  */
 package androidx.room.migration
 
-import androidx.room.driver.SupportSQLiteConnection
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.driver.SupportSQLiteConnection
 
 /**
  * Interface for defining an automatic migration specification for Room databases.

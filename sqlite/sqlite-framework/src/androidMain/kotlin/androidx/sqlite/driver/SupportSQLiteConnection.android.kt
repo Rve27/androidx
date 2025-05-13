@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-package androidx.room.driver
+package androidx.sqlite.driver
 
-import androidx.annotation.RestrictTo
 import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.SQLiteStatement
 import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.driver.ResultCode.SQLITE_MISUSE
+import androidx.sqlite.throwSQLiteException
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+/**
+ * A [SQLiteConnection] implemented by [androidx.sqlite.db.SupportSQLiteDatabase] and that uses the
+ * Android's SQLite through the `SupportSQLite` APIs.
+ */
 public class SupportSQLiteConnection(public val db: SupportSQLiteDatabase) : SQLiteConnection {
 
     override fun inTransaction(): Boolean = db.inTransaction()
 
-    override fun prepare(sql: String): SupportSQLiteStatement {
-        return SupportSQLiteStatement.create(db, sql)
+    override fun prepare(sql: String): SQLiteStatement {
+        if (db.isOpen) {
+            return SupportSQLiteStatement.create(db, sql)
+        } else {
+            throwSQLiteException(SQLITE_MISUSE, "connection is closed")
+        }
     }
 
     override fun close() {

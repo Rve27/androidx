@@ -186,10 +186,12 @@ public expect abstract class RoomDatabase() {
      * Use a connection to perform database operations.
      *
      * This function is for internal access to the pool, it is an unconfined coroutine function to
-     * be used by Room generated code paths. For the public version see [useReaderConnection] and
+     * be used by Room generated code paths and runtime internals and is not marked with
+     * [RoomExternalOperationElement]. For the public version see [useReaderConnection] and
      * [useWriterConnection].
      */
-    internal suspend fun <R> useConnection(isReadOnly: Boolean, block: suspend (Transactor) -> R): R
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public suspend fun <R> useConnection(isReadOnly: Boolean, block: suspend (Transactor) -> R): R
 
     /**
      * Journal modes for SQLite database.
@@ -465,7 +467,9 @@ public expect abstract class RoomDatabase() {
  * @see [useWriterConnection]
  */
 public suspend fun <R> RoomDatabase.useReaderConnection(block: suspend (Transactor) -> R): R =
-    withContext(getCoroutineScope().coroutineContext) { useConnection(isReadOnly = true, block) }
+    withContext(getCoroutineScope().coroutineContext + RoomExternalOperationElement) {
+        useConnection(isReadOnly = true, block)
+    }
 
 /**
  * Acquires a WRITE connection, suspending while waiting if none is available and then calling the
@@ -493,8 +497,23 @@ public suspend fun <R> RoomDatabase.useReaderConnection(block: suspend (Transact
  * @see [useReaderConnection]
  */
 public suspend fun <R> RoomDatabase.useWriterConnection(block: suspend (Transactor) -> R): R =
-    withContext(getCoroutineScope().coroutineContext) { useConnection(isReadOnly = false, block) }
+    withContext(getCoroutineScope().coroutineContext + RoomExternalOperationElement) {
+            useConnection(isReadOnly = false, block)
+        }
         .also { invalidationTracker.refreshAsync() }
+
+/**
+ * A coroutine context element to mark coroutines that requested the use of a connection.
+ *
+ * This marker is used to identify database operations external to Room generated code or runtime
+ * internals and is specifically needed to continue coroutines dispatching behaviour before the
+ * introduction of the driver APIs and its ability to create suspending transactions.
+ */
+internal object RoomExternalOperationElement :
+    CoroutineContext.Element, CoroutineContext.Key<RoomExternalOperationElement> {
+    override val key: CoroutineContext.Key<RoomExternalOperationElement>
+        get() = RoomExternalOperationElement
+}
 
 /**
  * Validates that no added migration start or end are also marked as fallback to destructive
