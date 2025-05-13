@@ -397,6 +397,19 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
     }
 
     @Test
+    public void setRequestPromotedOngoing() {
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext,
+                "test_channel");
+
+        Notification notification = builder.build();
+        // default is false.
+        assertThat(NotificationCompat.hasRequestedPromotedOngoing(notification)).isFalse();
+        // set to true.
+        notification = builder.setRequestPromotedOngoing(true).build();
+        assertThat(NotificationCompat.hasRequestedPromotedOngoing(notification)).isTrue();
+    }
+
+    @Test
     public void testVisibility() {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
 
