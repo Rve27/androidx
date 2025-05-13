@@ -150,7 +150,8 @@ package androidx.xr.compose.unit {
   }
 
   public final class VolumeConstraints {
-    ctor public VolumeConstraints(int minWidth, int maxWidth, int minHeight, int maxHeight, optional int minDepth, optional int maxDepth);
+    ctor public VolumeConstraints();
+    ctor public VolumeConstraints(optional @IntRange(from=0L) int minWidth, optional @IntRange(from=0L) int maxWidth, optional @IntRange(from=0L) int minHeight, optional @IntRange(from=0L) int maxHeight, optional @IntRange(from=0L) int minDepth, optional @IntRange(from=0L) int maxDepth);
     method public androidx.xr.compose.unit.VolumeConstraints copy(optional int minWidth, optional int maxWidth, optional int minHeight, optional int maxHeight, optional int minDepth, optional int maxDepth);
     method public int getMaxDepth();
     method public int getMaxHeight();
@@ -164,20 +165,18 @@ package androidx.xr.compose.unit {
     property public boolean hasBoundedDepth;
     property public boolean hasBoundedHeight;
     property public boolean hasBoundedWidth;
-    property public int maxDepth;
-    property public int maxHeight;
-    property public int maxWidth;
-    property public int minDepth;
-    property public int minHeight;
-    property public int minWidth;
+    property @IntRange(from=0L) public int maxDepth;
+    property @IntRange(from=0L) public int maxHeight;
+    property @IntRange(from=0L) public int maxWidth;
+    property @IntRange(from=0L) public int minDepth;
+    property @IntRange(from=0L) public int minHeight;
+    property @IntRange(from=0L) public int minWidth;
     field public static final androidx.xr.compose.unit.VolumeConstraints.Companion Companion;
     field public static final int INFINITY = 2147483647; // 0x7fffffff
   }
 
   public static final class VolumeConstraints.Companion {
-    method public androidx.xr.compose.unit.VolumeConstraints getUnbounded();
     property public static int INFINITY;
-    property public androidx.xr.compose.unit.VolumeConstraints Unbounded;
   }
 
   public final class VolumeConstraintsKt {

@@ -72,6 +72,9 @@ import androidx.xr.scenecore.PanelEntity
 
 private const val DEFAULT_SIZE_PX = 400
 
+// Max allowed size for makeMeasureSpec is (1 << MeasureSpec.MODE_SHIFT) - 1.
+private const val MAX_MEASURE_SPEC_SIZE = (1 shl 30) - 1
+
 /** Set the scrim alpha to 32% opacity across all spatial panels. */
 private const val DEFAULT_SCRIM_ALPHA = 0x52000000
 
@@ -146,8 +149,14 @@ public fun SpatialPanel(
 
     SubspaceLayout(modifier = modifier, coreEntity = corePanelEntity) { _, constraints ->
         view.measure(
-            MeasureSpec.makeMeasureSpec(constraints.maxWidth, MeasureSpec.AT_MOST),
-            MeasureSpec.makeMeasureSpec(constraints.maxHeight, MeasureSpec.AT_MOST),
+            MeasureSpec.makeMeasureSpec(
+                constraints.maxWidth.coerceAtMost(MAX_MEASURE_SPEC_SIZE),
+                MeasureSpec.AT_MOST
+            ),
+            MeasureSpec.makeMeasureSpec(
+                constraints.maxHeight.coerceAtMost(MAX_MEASURE_SPEC_SIZE),
+                MeasureSpec.AT_MOST
+            ),
         )
         val width = view.measuredWidth.coerceIn(constraints.minWidth, constraints.maxWidth)
         val height = view.measuredHeight.coerceIn(constraints.minHeight, constraints.maxHeight)
@@ -240,8 +249,14 @@ private fun <T : View> AndroidViewPanel(
 
     val measurePolicy = MeasurePolicy { _, constraints ->
         view.measure(
-            MeasureSpec.makeMeasureSpec(constraints.maxWidth, MeasureSpec.AT_MOST),
-            MeasureSpec.makeMeasureSpec(constraints.maxHeight, MeasureSpec.AT_MOST),
+            MeasureSpec.makeMeasureSpec(
+                constraints.maxWidth.coerceAtMost(MAX_MEASURE_SPEC_SIZE),
+                MeasureSpec.AT_MOST
+            ),
+            MeasureSpec.makeMeasureSpec(
+                constraints.maxHeight.coerceAtMost(MAX_MEASURE_SPEC_SIZE),
+                MeasureSpec.AT_MOST
+            ),
         )
         val width = view.measuredWidth.coerceIn(constraints.minWidth, constraints.maxWidth)
         val height = view.measuredHeight.coerceIn(constraints.minHeight, constraints.maxHeight)

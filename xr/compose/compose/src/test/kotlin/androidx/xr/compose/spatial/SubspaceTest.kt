@@ -248,7 +248,7 @@ class SubspaceTest {
             composeTestRule.setContent {
                 TestSetup {
                     ApplicationSubspace(
-                        constraints = VolumeConstraints.Unbounded,
+                        constraints = VolumeConstraints(),
                         constraintsBehavior = ConstraintsBehavior.Specified,
                     ) {
                         SpatialPanel(SubspaceModifier.testTag("panel")) {}
@@ -326,7 +326,7 @@ class SubspaceTest {
             composeTestRule.setContent {
                 TestSetup(isXrEnabled = false) {
                     ApplicationSubspace(
-                        constraints = VolumeConstraints.Unbounded,
+                        constraints = VolumeConstraints(),
                         constraintsBehavior = ConstraintsBehavior.Specified,
                     ) {
                         SpatialPanel(SubspaceModifier.testTag("panel")) {}
@@ -401,7 +401,7 @@ class SubspaceTest {
             composeTestRule.setContent {
                 TestSetup {
                     ApplicationSubspace(
-                        constraints = VolumeConstraints.Unbounded,
+                        constraints = VolumeConstraints(),
                         constraintsBehavior = ConstraintsBehavior.Specified,
                     ) {
                         SpatialPanel(SubspaceModifier.testTag("panel")) {}
@@ -506,7 +506,7 @@ class SubspaceTest {
             composeTestRule.setContent {
                 TestSetup {
                     ApplicationSubspace(
-                        constraints = VolumeConstraints.Unbounded,
+                        constraints = VolumeConstraints(),
                         constraintsBehavior = ConstraintsBehavior.Specified,
                     ) {
                         SpatialPanel(SubspaceModifier.testTag("panel")) {
@@ -634,7 +634,7 @@ class SubspaceTest {
                 TestSetup {
                     if (showSubspace) {
                         ApplicationSubspace(
-                            constraints = VolumeConstraints.Unbounded,
+                            constraints = VolumeConstraints(),
                             constraintsBehavior = ConstraintsBehavior.Specified,
                         ) {
                             SpatialPanel(SubspaceModifier.testTag("panel")) {}
@@ -759,7 +759,7 @@ class SubspaceTest {
             composeTestRule.setContent {
                 TestSetup(runtime = fakeRuntime) {
                     ApplicationSubspace(
-                        constraints = VolumeConstraints.Unbounded,
+                        constraints = VolumeConstraints(),
                         constraintsBehavior = ConstraintsBehavior.Specified,
                     ) {
                         SpatialPanel(SubspaceModifier.testTag("panel")) {}
@@ -878,7 +878,7 @@ class SubspaceTest {
                         Subspace {
                             SpatialPanel {
                                 ApplicationSubspace(
-                                    constraints = VolumeConstraints.Unbounded,
+                                    constraints = VolumeConstraints(),
                                     constraintsBehavior = ConstraintsBehavior.Specified,
                                 ) {}
                             }
@@ -942,11 +942,11 @@ class SubspaceTest {
                 composeTestRule.setContent {
                     TestSetup {
                         ApplicationSubspace(
-                            constraints = VolumeConstraints.Unbounded,
+                            constraints = VolumeConstraints(),
                             constraintsBehavior = ConstraintsBehavior.Specified,
                         ) {
                             SpatialPanel() {
-                                ApplicationSubspace(constraints = VolumeConstraints.Unbounded) {}
+                                ApplicationSubspace(constraints = VolumeConstraints()) {}
                             }
                         }
                     }
@@ -966,7 +966,7 @@ class SubspaceTest {
                     TestSetup {
                         ApplicationSubspace {
                             SpatialPanel {
-                                ApplicationSubspace(constraints = VolumeConstraints.Unbounded) {}
+                                ApplicationSubspace(constraints = VolumeConstraints()) {}
                             }
                         }
                     }
@@ -1036,7 +1036,7 @@ class SubspaceTest {
             ) {
                 composeTestRule.setContent {
                     TestSetup {
-                        ApplicationSubspace(constraints = VolumeConstraints.Unbounded) {
+                        ApplicationSubspace(constraints = VolumeConstraints()) {
                             SpatialPanel { ApplicationSubspace {} }
                         }
                     }
@@ -1702,7 +1702,7 @@ class SubspaceTest {
             composeTestRule.setContent {
                 TestSetup {
                     ApplicationSubspace(
-                        constraints = VolumeConstraints.Unbounded,
+                        constraints = VolumeConstraints(),
                         constraintsBehavior = ConstraintsBehavior.Specified,
                     ) {
                         SpatialBox(
@@ -1717,8 +1717,8 @@ class SubspaceTest {
             composeTestRule
                 .onSubspaceNodeWithTag("box")
                 .assertPositionInRootIsEqualTo(0.dp, 0.dp, 0.dp)
-                .assertWidthIsNotEqualTo(VolumeConstraints.Unbounded.maxWidth.toDp())
-                .assertHeightIsNotEqualTo(VolumeConstraints.Unbounded.maxHeight.toDp())
+                .assertWidthIsNotEqualTo(VolumeConstraints().maxWidth.toDp())
+                .assertHeightIsNotEqualTo(VolumeConstraints().maxHeight.toDp())
         }
 
     @Test
