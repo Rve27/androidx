@@ -570,7 +570,7 @@ final class SpatialEnvironmentImpl implements SpatialEnvironment {
         mOnPassthroughOpacityChangedListeners.clear();
         mOnSpatialEnvironmentChangedListeners.clear();
         // TODO: b/376934871 - Check async results.
-        mXrExtensions.detachSpatialEnvironment(mActivity, (result) -> {}, Runnable::run);
+        mXrExtensions.detachSpatialEnvironment(mActivity, Runnable::run, (result) -> {});
         mActivity = null;
     }
 }
