@@ -160,8 +160,10 @@ private fun LayoutSpatialDialog(
     var spatialElevationLevel by remember { mutableStateOf(SpatialElevationLevel.Level0) }
     val dialogManager = LocalDialogManager.current
     BackHandler {
-        // TODO(b/401028662) Investigate if we need the animation inside of this scope.
-        dialogManager.isSpatialDialogActive.value = false
+        if (properties.dismissOnBackPress) {
+            // TODO(b/401028662) Investigate if we need the animation inside of this scope.
+            dialogManager.isSpatialDialogActive.value = false
+        }
     }
     DisposableEffect(Unit) {
         dialogManager.isSpatialDialogActive.value = true
