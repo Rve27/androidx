@@ -386,14 +386,11 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         builder.setShortCriticalText(shortCriticalText);
 
         Notification notification = builder.build();
-        if (Build.VERSION.SDK_INT >= 36) {
-          assertThat(NotificationCompat.getShortCriticalText(notification))
-              .isEqualTo(shortCriticalText);
-          notification = builder.setShortCriticalText(null).build();
-          assertThat(NotificationCompat.getShortCriticalText(notification)).isNull();
-        } else {
-          assertThat(NotificationCompat.getShortCriticalText(notification)).isNull();
-        }
+        assertThat(NotificationCompat.getShortCriticalText(notification))
+            .isEqualTo(shortCriticalText);
+
+        notification = builder.setShortCriticalText(null).build();
+        assertThat(NotificationCompat.getShortCriticalText(notification)).isNull();
     }
 
     @Test
