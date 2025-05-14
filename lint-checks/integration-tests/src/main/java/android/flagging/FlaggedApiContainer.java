@@ -18,6 +18,9 @@ package android.flagging;
 
 import android.annotation.FlaggedApi;
 
+import java.util.List;
+import java.util.function.BiConsumer;
+
 /**
  * Class that is flagged and exposes APIs.
  */
@@ -33,5 +36,26 @@ public class FlaggedApiContainer {
      */
     public static boolean innerApi() {
         return false;
+    }
+
+    /**
+     * API that uses type arguments.
+     */
+    public static List<int[]> apiWithTypeArgument(BiConsumer<Integer, Float> param) {
+        return null;
+    }
+
+    /**
+     * API that uses primitive arrays.
+     */
+    public static float[][] apiWithTwoDimensionalArray(int[] param) {
+        return null;
+    }
+
+    /**
+     * API that uses generic types.
+     */
+    public static <T, R> T apiWithGenericType(R param) {
+        return null;
     }
 }

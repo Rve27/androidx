@@ -171,17 +171,16 @@ Fix for src/com/example/MyClass.java line 7: Extract to static inner class:
 -        FlaggedApiContainer.flaggedApi();
 +        FlagMyFlagImpl.flaggedApi();
 @@ -9 +11
++
 + @RequiresAconfigFlag("test.pkg.myFlag")
 + static class FlagMyFlagImpl {
 +     private FlagMyFlagImpl() {
 +         // This class is not instantiable.
 +     }
-+
 +     @DoNotInline
 +     static void flaggedApi() {
 +         FlaggedApiContainer.flaggedApi();
 +     }
-+
 + }
         """
                 .trimIndent()

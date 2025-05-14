@@ -44,6 +44,7 @@ import com.android.tools.lint.detector.api.getInternalMethodName
 import com.android.tools.lint.detector.api.isKotlin
 import com.android.tools.lint.detector.api.minSdkLessThan
 import com.intellij.psi.PsiAnonymousClass
+import com.intellij.psi.PsiArrayType
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiCompiledElement
@@ -60,13 +61,18 @@ import com.intellij.psi.PsiType
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
 import com.intellij.psi.util.PsiUtil
+import com.intellij.psi.util.childrenOfType
 import com.intellij.psi.util.findParentInFile
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtClassBody
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.uast.UBinaryExpression
 import org.jetbrains.uast.UCallExpression
@@ -83,6 +89,7 @@ import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.getContainingUMethod
 import org.jetbrains.uast.getParentOfType
 import org.jetbrains.uast.toUElement
+import org.jetbrains.uast.toUElementOfType
 import org.jetbrains.uast.util.isConstructorCall
 import org.jetbrains.uast.util.isMethodCall
 
@@ -106,9 +113,9 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
 
     /**
      * Finds the first `@FlaggedApi` annotation within the element's PSI hierarchy and returns the
-     * flag name, or returns `null` if none is found.
+     * flag string, or returns `null` if none is found.
      */
-    private fun findFlagNameForElement(element: PsiModifierListOwner): String? =
+    private fun findFlagStringForElement(element: PsiModifierListOwner): String? =
         ((element.findParentInFile(true) {
                     (it as? PsiModifierListOwner)?.hasAnnotation(FLAGGED_API_ANNOTATION) == true
                 } as? PsiModifierListOwner)
@@ -123,21 +130,21 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
         desc: String
     ): ApiRequirement {
         val apiDatabase = apiDatabase ?: return NO_API_REQUIREMENT
-        val flagName = findFlagNameForElement(method)
-        if (flagName != null) return ApiFlagRequirement(flagName)
+        val flagString = findFlagStringForElement(method)
+        if (flagString != null) return ApiFlagRequirement(flagString)
 
         val apiLevel = apiDatabase.getMethodVersions(owner, name, desc).min()
         return if (apiLevel == API_LEVEL_UNKNOWN_OR_1) NO_API_REQUIREMENT
         else ApiLevelRequirement(apiLevel)
     }
 
-    private fun findFlagNameForClass(context: JavaContext, className: String): String? =
-        context.evaluator.findClass(className)?.let { findFlagNameForElement(it) }
+    private fun findFlagStringForClass(context: JavaContext, className: String): String? =
+        context.evaluator.findClass(className)?.let { findFlagStringForElement(it) }
 
     private fun getClassVersion(context: JavaContext, className: String): ApiRequirement {
         val apiDatabase = apiDatabase ?: return NO_API_REQUIREMENT
-        val flagName = findFlagNameForClass(context, className)
-        if (flagName != null) return ApiFlagRequirement(flagName)
+        val flagString = findFlagStringForClass(context, className)
+        if (flagString != null) return ApiFlagRequirement(flagString)
 
         val apiLevel = apiDatabase.getClassVersions(className).min()
         return if (apiLevel == API_LEVEL_UNKNOWN_OR_1) NO_API_REQUIREMENT
@@ -158,20 +165,20 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
     }
 
     @Suppress("MemberExtensionConflict") // Lint bug when using String.compareTo()
-    private class ApiFlagRequirement(val flagName: String) : ApiRequirement {
+    private class ApiFlagRequirement(val flagString: String) : ApiRequirement {
         override val wrapperClassName by lazy {
-            "Flag${flagName.substringAfterLast('.').capitalizeAsciiOnly()}Impl"
+            "Flag${flagString.substringAfterLast('.').capitalizeAsciiOnly()}Impl"
         }
         override val wrapperClassAnnotation by lazy {
-            "@androidx.annotation.RequiresAconfigFlag(\"$flagName\")"
+            "@$REQUIRES_ACONFIG_FLAG_ANNOTATION(\"$flagString\")"
         }
-        override val stringForMessage by lazy { "guarded by Trunk Stable flag \"$flagName\"" }
+        override val stringForMessage by lazy { "guarded by Trunk Stable flag \"$flagString\"" }
 
         override fun compareTo(other: Int): Int = 1
 
         override fun compareTo(other: ApiRequirement): Int =
             when {
-                other is ApiFlagRequirement -> flagName.compareTo(other.flagName)
+                other is ApiFlagRequirement -> flagString.compareTo(other.flagString)
                 else -> 1
             }
     }
@@ -179,7 +186,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
     private class ApiLevelRequirement(val apiLevel: Int) : ApiRequirement {
         override val wrapperClassName by lazy { "Api${apiLevel}Impl" }
         override val wrapperClassAnnotation by lazy {
-            "@androidx.annotation.RequiresApi($apiLevel)"
+            "@${REQUIRES_API_ANNOTATION.newName()}($apiLevel)"
         }
         override val stringForMessage by lazy { "added in API level $apiLevel" }
 
@@ -259,8 +266,8 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             val actualTypeStr = actualType.canonicalText
             val actualTypeApi = getMinApiOfClass(actualTypeStr) ?: return
 
-            // Not an issue if this is contained within a class annotated with @RequiresApi
-            if (node.containedInRequiresApiClass(actualTypeApi)) return
+            // Not an issue if this is contained within a class annotated with the same requirement
+            if (node.containedInClassWithApiRequirement(actualTypeApi)) return
 
             val expectedType = getExpectedTypeByParent(node) ?: return
             val expectedTypeStr = expectedType.canonicalText
@@ -321,7 +328,11 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
         override fun visitCallExpression(node: UCallExpression) {
             val method = node.resolve() ?: return
 
-            visitCall(method, node, node)
+            try {
+                visitCall(method, node, node)
+            } catch (e: Exception) {
+                throw e
+            }
         }
 
         /**
@@ -637,18 +648,30 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
         }
 
         /**
-         * Walks up the class hierarchy from the element to find if there is any RequiresApi
-         * annotation for [minApi] or higher.
+         * Walks up the class hierarchy from the element to find if there is any `@RequiresApi` or
+         * `@RequiresAconfigFlag` annotation applicable to [requiredApi] API requirement.
          */
-        fun UElement.containedInRequiresApiClass(minApi: ApiRequirement): Boolean {
+        fun UElement.containedInClassWithApiRequirement(requiredApi: ApiRequirement): Boolean {
             var classUnderInspection: UClass? = this.getContainingUClass() ?: return false
 
             while (classUnderInspection != null) {
-                val potentialRequiresApiVersion =
-                    getRequiresApiFromAnnotations(classUnderInspection.javaPsi)
+                if (requiredApi is ApiFlagRequirement) {
+                    val potentialRequiresAconfigFlag =
+                        ((classUnderInspection
+                                .getAnnotation(REQUIRES_ACONFIG_FLAG_ANNOTATION)
+                                ?.findAttributeValue(ATTR_VALUE) as? PsiLiteralValue)
+                            ?.value as? String)
+                    if (requiredApi.flagString == potentialRequiresAconfigFlag) {
+                        return true
+                    }
+                }
 
-                if (minApi <= potentialRequiresApiVersion) {
-                    return true
+                if (requiredApi is ApiLevelRequirement) {
+                    val potentialRequiresApiVersion =
+                        getRequiresApiFromAnnotations(classUnderInspection.javaPsi)
+                    if (requiredApi.apiLevel <= potentialRequiresApiVersion) {
+                        return true
+                    }
                 }
 
                 classUnderInspection = classUnderInspection.getContainingUClass()
@@ -663,7 +686,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             reference: UElement,
             location: Location
         ) {
-            if (call.containedInRequiresApiClass(api)) return
+            if (call.containedInClassWithApiRequirement(api)) return
 
             // call.getContainingUClass()!! refers to the direct parent class of this method
             val containingClassName = call.getContainingUClass()!!.qualifiedName.toString()
@@ -694,10 +717,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             api: ApiRequirement
         ): LintFix? {
             val callPsi = call.sourcePsi ?: return null
-            if (isKotlin(callPsi.language)) {
-                // We only support Java right now.
-                return null
-            }
+            val isKotlin = isKotlin(callPsi.language)
             if (call.receiver is USuperExpression) {
                 // We can't outline super calls.
                 return null
@@ -711,7 +731,8 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                     method,
                     // Find what type the result of this call is used as
                     getExpectedTypeByParent(call),
-                    call.valueArguments.map { it.getExpressionType() }
+                    call.valueArguments.map { it.getExpressionType() },
+                    isKotlin,
                 ) ?: return null
 
             val (wrapperClassName, insertionPoint, insertionSource) =
@@ -720,8 +741,9 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                     callContainingClass,
                     wrapperMethodName,
                     wrapperMethodParams,
-                    methodForInsertion
-                )
+                    methodForInsertion,
+                    isKotlin,
+                ) ?: return null
 
             val replacementCall =
                 generateWrapperCall(
@@ -729,7 +751,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                     call.receiver,
                     call.valueArguments,
                     wrapperClassName,
-                    wrapperMethodName
+                    wrapperMethodName,
                 )
 
             return createCompositeFix(call, replacementCall, insertionPoint, insertionSource)
@@ -753,8 +775,9 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                     containingClass,
                     wrapperMethodName,
                     listOf(actualType),
-                    wrapperMethod
-                )
+                    wrapperMethod,
+                    isKotlin = false,
+                ) ?: return null
             val wrapperCall = "$wrapperClassName.$wrapperMethodName(${node.asSourceString()})"
 
             return createCompositeFix(node, wrapperCall, insertionPoint, insertionSource)
@@ -780,6 +803,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                         .beginning()
                         .with(insertionSource)
                         .shortenNames()
+                        .reformat(true)
                         .build()
                 )
             }
@@ -790,6 +814,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                     .range(context.getLocation(node))
                     .with(replacementCall)
                     .shortenNames()
+                    .reformat(true)
                     .build()
             )
 
@@ -814,7 +839,12 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
 
             // PsiTypesUtil didn't know the expected type, but it doesn't handle all cases in Java
             // and doesn't handle Kotlin. Test for a few known gaps.
-            val (parent, childOfParent) = getParentSkipParens(psi)
+            val childOfParent =
+                element.sourcePsi?.findParent(true) {
+                    it?.parent !is PsiParenthesizedExpression &&
+                        it?.parent !is KtDotQualifiedExpression
+                }
+            val parent = childOfParent?.parent
             if (parent is PsiExpressionList) {
                 // Handles the case when the element is an argument in a Java method call.
                 val grandparent = PsiUtil.skipParenthesizedExprUp(parent.parent)
@@ -861,19 +891,6 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
         }
 
         /**
-         * Return the first parent of the element which isn't a PsiParenthesizedExpression, and also
-         * return the direct child element of that parent.
-         */
-        private fun getParentSkipParens(element: PsiElement): Pair<PsiElement, PsiElement> {
-            val parent = element.parent
-            return if (parent is PsiParenthesizedExpression) {
-                getParentSkipParens(parent)
-            } else {
-                Pair(parent, element)
-            }
-        }
-
-        /**
          * Generates source code for a wrapper method and class (where applicable) and calculates
          * the insertion point. If the wrapper class already exists, returns source code for the
          * method body only with an insertion point at the end of the existing wrapper class body.
@@ -907,30 +924,64 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             wrapperMethodName: String,
             wrapperMethodParams: List<PsiType>,
             wrapperMethodBody: String,
-        ): Triple<String, Location?, String?> {
+            isKotlin: Boolean,
+        ): Triple<String, Location?, String?>? {
             val wrapperClassName = api.wrapperClassName
             val implInsertionPoint: Location?
             val implForInsertion: String?
 
+            val callContainingSourcePsi = callContainingClass.sourcePsi
             val existingWrapperClass =
-                callContainingClass.innerClasses.find { innerClass ->
-                    innerClass.name == wrapperClassName
+                when (callContainingSourcePsi) {
+                    // The call container is a file facade class.
+                    null ->
+                        callContainingClass.containingFile
+                            .childrenOfType<KtClassOrObject>()
+                            .find { innerClass -> innerClass.name == wrapperClassName }
+                            .toUElementOfType<UClass>()
+                    // The call container is a real class or object.
+                    else ->
+                        callContainingClass.innerClasses.find { innerClass ->
+                            innerClass.name == wrapperClassName
+                        }
                 }
 
             if (existingWrapperClass == null) {
-                implInsertionPoint = context.getLocation(callContainingClass.lastChild)
+                val insertionContainer =
+                    when (callContainingSourcePsi) {
+                        // The call container is a file facade class.
+                        null -> callContainingClass.containingFile
+                        // The call container is a real Kotlin class or object.
+                        is KtClassOrObject -> callContainingSourcePsi.getChildOfType<KtClassBody>()
+                        // The call container is a real Java class.
+                        else -> callContainingClass
+                    } ?: return null
+                implInsertionPoint = context.getLocation(insertionContainer.lastChild)
                 implForInsertion =
-                    """
-                ${api.wrapperClassAnnotation}
-                static class $wrapperClassName {
-                    private $wrapperClassName() {
-                        // This class is not instantiable.
-                    }
-                    $wrapperMethodBody
-                }
+                    if (isKotlin) {
+                        """
 
-                """
-                        .trimIndent()
+                        ${api.wrapperClassAnnotation}
+                        internal object $wrapperClassName {
+${wrapperMethodBody.prependIndent("                            ")}
+                        }
+
+                    """
+                            .trimIndent()
+                    } else {
+                        """
+
+                        ${api.wrapperClassAnnotation}
+                        static class $wrapperClassName {
+                            private $wrapperClassName() {
+                                // This class is not instantiable.
+                            }
+${wrapperMethodBody.prependIndent("                            ")}
+                        }
+
+                    """
+                            .trimIndent()
+                    }
             } else {
                 val existingWrapperMethod =
                     existingWrapperClass.methods.find { method ->
@@ -938,9 +989,15 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                             wrapperMethodParams == getParameterTypes(method)
                     }
                 if (existingWrapperMethod == null) {
-                    implInsertionPoint = context.getLocation(existingWrapperClass.lastChild)
-                    // Add a newline to force the `}`s for the class and method onto different lines
-                    implForInsertion = wrapperMethodBody.trimIndent() + "\n"
+                    val existingWrapperSourcePsi = existingWrapperClass.sourcePsi
+                    val implInsertionElement =
+                        when (existingWrapperSourcePsi) {
+                            is KtClassOrObject ->
+                                existingWrapperSourcePsi.getChildOfType<KtClassBody>()
+                            else -> existingWrapperClass
+                        } ?: return null
+                    implInsertionPoint = context.getLocation(implInsertionElement.lastChild)
+                    implForInsertion = "$wrapperMethodBody\n"
                 } else {
                     implInsertionPoint = null
                     implForInsertion = null
@@ -970,7 +1027,7 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             callReceiver: UExpression?,
             callValueArguments: List<UExpression>,
             wrapperClassName: String,
-            wrapperMethodName: String
+            wrapperMethodName: String,
         ): String {
             val callReceiverStr =
                 when {
@@ -1031,7 +1088,8 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
         private fun generateWrapperMethod(
             method: PsiMethod,
             expectedReturnType: PsiType?,
-            expectedParamTypes: List<PsiType?>
+            expectedParamTypes: List<PsiType?>,
+            isKotlin: Boolean,
         ): Triple<String, List<PsiType>, String>? {
             val evaluator = context.evaluator
             val isStatic = evaluator.isStatic(method)
@@ -1048,6 +1106,8 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             val hostParam =
                 if (isStatic || isConstructor) {
                     null
+                } else if (isKotlin) {
+                    "$hostVar: $hostType"
                 } else {
                     "$hostType $hostVar"
                 }
@@ -1065,14 +1125,16 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                     val expectedType = expectedParamTypes.getOrNull(i)
                     val actualType = (param.type as? PsiType) ?: return null
                     // If the actual type isn't a PsiEllipsisType (the method is varargs) and
-                    // casting
-                    // from the expected to the actual type would be an invalid implicit cast, use
-                    // the expected type. Otherwise, use the actual type.
+                    // casting from the expected to the actual type would be an invalid implicit
+                    // cast, use the expected type. Otherwise, use the actual type.
                     val typeToUse =
                         if (
                             expectedType != null &&
                                 actualType !is PsiEllipsisType &&
-                                isInvalidCast(expectedType.canonicalText, actualType.canonicalText)
+                                isInvalidCast(
+                                    expectedType.canonicalTextForLanguage(isKotlin),
+                                    actualType.canonicalTextForLanguage(isKotlin)
+                                )
                         ) {
                             expectedType
                         } else {
@@ -1080,7 +1142,19 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                         }
                     Pair(typeToUse, param.name)
                 }
-            val paramStrings = paramsWithTypes.map { (type, name) -> "${type.canonicalText} $name" }
+            val paramStrings =
+                paramsWithTypes.map { (type, name) ->
+                    val typeText = type.canonicalTextForLanguage(isKotlin)
+                    if (isKotlin) {
+                        if (type is PsiEllipsisType) {
+                            "vararg $name: ${type.componentType.canonicalTextForLanguage(isKotlin)}"
+                        } else {
+                            "$name: $typeText"
+                        }
+                    } else {
+                        "$typeText $name"
+                    }
+                }
             val typedParamsStr = (listOfNotNull(hostParam) + paramStrings).joinToString(", ")
 
             val paramTypes =
@@ -1099,13 +1173,13 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                 methodName = hostType
                 wrapperMethodName = "create$hostClassName"
                 returnTypeStr = hostType
-                receiverStr = "new "
+                receiverStr = if (isKotlin) "" else "new "
             } else {
                 methodName = method.name
                 wrapperMethodName = methodName
                 // PsiMethod.returnType is only supposed to be null if the method is a constructor,
                 // so something has gone wrong if it's null here.
-                returnTypeStr = method.returnType?.canonicalText ?: return null
+                returnTypeStr = method.returnType?.canonicalTextForLanguage(isKotlin) ?: return null
                 receiverStr = if (isStatic) "$hostType." else "$hostVar."
             }
 
@@ -1115,12 +1189,15 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             // The real return type should be the same or a subtype of what the parent is expecting.
             // Also changes the method name to avoid conflicts if the same method with a different
             // expected return type is needed elsewhere.
-            if (expectedReturnType != null && expectedReturnType.canonicalText != returnTypeStr) {
-                returnTypeStr = expectedReturnType.canonicalText
+            if (
+                expectedReturnType != null &&
+                    expectedReturnType.canonicalTextForLanguage(isKotlin) != returnTypeStr
+            ) {
+                returnTypeStr = expectedReturnType.canonicalTextForLanguage(isKotlin)
                 wrapperMethodName += "Returns${expectedReturnType.presentableText}"
             } else if (
                 expectedReturnType == null &&
-                    returnTypeStr != "void" &&
+                    isVoidType(returnTypeStr) &&
                     !classAvailableAtMinSdk(returnTypeStr)
             ) {
                 // This method returns a value of a type that isn't available at the min SDK.
@@ -1131,17 +1208,31 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                 return null
             }
 
-            val returnStmtStr = if ("void" == returnTypeStr) "" else "return "
-
-            return Triple(
-                wrapperMethodName,
-                paramTypes,
+            val returnStmtStr = if (isVoidType(returnTypeStr)) "" else "return "
+            val methodBlock =
+                if (isKotlin) {
+                    """
+                    @androidx.annotation.DoNotInline
+                    @JvmStatic
+                    fun $typeParamsStr$wrapperMethodName($typedParamsStr): $returnTypeStr {
+                        $returnStmtStr$receiverStr$methodName($namedParamsStr)
+                    }
                 """
+                        .trimIndent()
+                } else {
+                    """
                     @androidx.annotation.DoNotInline
                     static $typeParamsStr$returnTypeStr $wrapperMethodName($typedParamsStr) {
                         $returnStmtStr$receiverStr$methodName($namedParamsStr);
                     }
                 """
+                        .trimIndent()
+                }
+
+            return Triple(
+                wrapperMethodName,
+                paramTypes,
+                methodBlock,
             )
         }
 
@@ -1157,11 +1248,14 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
             return Pair(
                 methodName,
                 """
+
                     @androidx.annotation.DoNotInline
                     static ${toType.canonicalText} $methodName(${fromType.canonicalText} $varName) {
                         return $varName;
                     }
+
                 """
+                    .trimIndent()
             )
         }
 
@@ -1320,10 +1414,28 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
         return SdkVersionInfo.getApiByBuildCode(buildCode, true)
     }
 
+    private fun isVoidType(type: String): Boolean = type == "void" || type == "Unit"
+
+    /**
+     * Returns the first parent element -- or the element itself when [withSelf] if `true` -- that
+     * matches the [predicate].
+     */
+    private fun PsiElement.findParent(
+        withSelf: Boolean,
+        predicate: (PsiElement?) -> Boolean
+    ): PsiElement? {
+        var current = if (withSelf) this else this.parent
+        while (current != null && !predicate(current)) {
+            current = current.parent
+        }
+        return current
+    }
+
     companion object {
         const val API_LEVEL_UNKNOWN_OR_1 = -1
 
         const val FLAGGED_API_ANNOTATION = "android.annotation.FlaggedApi"
+        const val REQUIRES_ACONFIG_FLAG_ANNOTATION = "androidx.annotation.RequiresAconfigFlag"
 
         private val NO_API_REQUIREMENT = ApiLevelRequirement(API_LEVEL_UNKNOWN_OR_1)
 
@@ -1422,3 +1534,41 @@ class ClassVerificationFailureDetector : Detector(), SourceCodeScanner {
                 .setAndroidSpecific(true)
     }
 }
+
+private fun PsiType.canonicalTextForLanguage(isKotlin: Boolean): String =
+    if (isKotlin) {
+        when (this) {
+            is PsiArrayType -> {
+                // If it's a multi-dimensional array, the `componentType` is still an array and we
+                // should not use `arrayDimensions` as a shortcut to unwrap all dimensions.
+                val typeString = componentType.canonicalTextForLanguage(true)
+                "Array<$typeString>"
+            }
+            is PsiClassType -> {
+                val typeArguments =
+                    typeArguments().map { typeArgument ->
+                        (typeArgument as PsiType).canonicalTextForLanguage(true)
+                    }
+                if (typeArguments.isNotEmpty()) {
+                    className + "<" + typeArguments.joinToString(", ") + ">"
+                } else {
+                    canonicalText
+                }
+            }
+            else ->
+                when (canonicalText) {
+                    "boolean" -> "Boolean"
+                    "char" -> "Char"
+                    "byte" -> "Byte"
+                    "short" -> "Short"
+                    "int" -> "Int"
+                    "long" -> "Long"
+                    "float" -> "Float"
+                    "double" -> "Double"
+                    "void" -> "Unit"
+                    else -> canonicalText
+                }
+        }
+    } else {
+        canonicalText
+    }
