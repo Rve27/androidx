@@ -178,19 +178,14 @@ public interface WatchFacePushManager {
      * @property versionCode The version code of the watch face defined in the watch face manifest
      *   file.
      * @property packageName The package name of the watch face defined in the watch face manifest
-     *   file..
+     *   file.
      */
     public class WatchFaceDetails(
-        private val slot: com.google.wear.services.watchfaces.watchfacepush.WatchFaceSlot
+        public val slotId: String,
+        public val versionCode: Long,
+        public val packageName: String,
+        private val getMetaDataFunc: (String) -> List<String>
     ) {
-        public val slotId: String
-            get() = slot.slotId
-
-        public val versionCode: Long
-            get() = slot.versionCode
-
-        public val packageName: String
-            get() = slot.packageName
 
         /**
          * Returns a function that, when invoked, returns the list of metadata values for the given
@@ -199,7 +194,7 @@ public interface WatchFacePushManager {
          * @param key The key for the metadata to retrieve.
          * @return A function returning a list of metadata values.
          */
-        public fun getMetaData(key: String): () -> List<String> = { slot.getMetaDataValues(key) }
+        public fun getMetaData(key: String): () -> List<String> = { getMetaDataFunc(key) }
     }
 
     /** An exception that can be thrown by [addWatchFace] */
@@ -698,7 +693,13 @@ internal class WatchFacePushManagerImpl(private var context: Context) : WatchFac
                         WatchFacePushManager.ListWatchFacesResponse(
                             installedWatchFaceDetails =
                                 (result?.installedWatchFaceSlots ?: emptyList()).map { w ->
-                                    WatchFacePushManager.WatchFaceDetails(w)
+                                    WatchFacePushManager.WatchFaceDetails(
+                                        w.slotId,
+                                        w.versionCode,
+                                        w.packageName
+                                    ) { key ->
+                                        w.getMetaDataValues(key)
+                                    }
                                 },
                             remainingSlotCount = result?.availableSlotCount ?: 0
                         )
@@ -736,7 +737,15 @@ internal class WatchFacePushManagerImpl(private var context: Context) : WatchFac
                 currentExecutor,
                 outcomeReceiver(
                     cont,
-                    { result -> WatchFacePushManager.WatchFaceDetails(result!!) },
+                    { result ->
+                        WatchFacePushManager.WatchFaceDetails(
+                            result.slotId,
+                            result.versionCode,
+                            result.packageName
+                        ) { key ->
+                            result.getMetaDataValues(key)
+                        }
+                    },
                     { it -> WatchFacePushManager.AddWatchFaceException(it) }
                 )
             )
@@ -757,7 +766,15 @@ internal class WatchFacePushManagerImpl(private var context: Context) : WatchFac
                 currentExecutor,
                 outcomeReceiver(
                     cont,
-                    { result -> WatchFacePushManager.WatchFaceDetails(result!!) },
+                    { result ->
+                        WatchFacePushManager.WatchFaceDetails(
+                            result.slotId,
+                            result.versionCode,
+                            result.packageName
+                        ) { key ->
+                            result.getMetaDataValues(key)
+                        }
+                    },
                     { e -> WatchFacePushManager.UpdateWatchFaceException(e) }
                 )
             )
