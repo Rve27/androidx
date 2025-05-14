@@ -3,24 +3,6 @@
 
     <issue
         id="WrongConstant"
-        message="Must be one or more of: TracingConfig.CATEGORIES_NONE, TracingConfig.CATEGORIES_ALL, TracingConfig.CATEGORIES_ANDROID_WEBVIEW, TracingConfig.CATEGORIES_WEB_DEVELOPER, TracingConfig.CATEGORIES_INPUT_LATENCY, TracingConfig.CATEGORIES_RENDERING, TracingConfig.CATEGORIES_JAVASCRIPT_AND_RENDERING, TracingConfig.CATEGORIES_FRAME_VIEWER"
-        errorLine1="                        .addCategories(tracingConfig.getPredefinedCategories())"
-        errorLine2="                                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/androidx/webkit/internal/ApiHelperForP.java"/>
-    </issue>
-
-    <issue
-        id="WrongConstant"
-        message="Must be one of: TracingConfig.RECORD_UNTIL_FULL, TracingConfig.RECORD_CONTINUOUSLY"
-        errorLine1="                        .setTracingMode(tracingConfig.getTracingMode())"
-        errorLine2="                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/androidx/webkit/internal/ApiHelperForP.java"/>
-    </issue>
-
-    <issue
-        id="WrongConstant"
         message="Must be one or more of: WebMessagePayloadType.TYPE_STRING, WebMessagePayloadType.TYPE_ARRAY_BUFFER"
         errorLine1="        mType = WebMessageCompat.TYPE_STRING;"
         errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
