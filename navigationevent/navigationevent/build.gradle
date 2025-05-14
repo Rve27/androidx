@@ -38,6 +38,9 @@ androidXMultiplatform {
     ios()
     watchos()
     tvos()
+    mingwX64()
+    js()
+    wasmJs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
 
@@ -79,6 +82,20 @@ androidXMultiplatform {
                 implementation(libs.testExtTruth)
                 implementation(libs.testRules)
                 implementation(libs.testRunner)
+            }
+        }
+
+        wasmJsMain {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.kotlinStdlibWasm)
+            }
+        }
+
+        jsMain {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.kotlinStdlibJs)
             }
         }
     }
