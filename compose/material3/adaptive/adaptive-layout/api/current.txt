@@ -167,7 +167,7 @@ package androidx.compose.material3.adaptive.layout {
     property public Object targetPane;
   }
 
-  @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public abstract sealed class PaneExpansionAnchor {
+  public abstract sealed class PaneExpansionAnchor {
     method @androidx.compose.runtime.Composable public abstract String getDescription();
     property @androidx.compose.runtime.Composable public abstract String description;
   }
@@ -205,10 +205,10 @@ package androidx.compose.material3.adaptive.layout {
   }
 
   public final class PaneExpansionDraggableModifierKt {
-    method @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Composable public static kotlin.jvm.functions.Function1<androidx.compose.ui.semantics.SemanticsPropertyReceiver,kotlin.Unit> defaultDragHandleSemantics(androidx.compose.material3.adaptive.layout.PaneExpansionState);
+    method @Deprecated @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Composable public static kotlin.jvm.functions.Function1<androidx.compose.ui.semantics.SemanticsPropertyReceiver,kotlin.Unit> defaultDragHandleSemantics(androidx.compose.material3.adaptive.layout.PaneExpansionState);
   }
 
-  @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi @androidx.compose.runtime.Stable public final class PaneExpansionState {
+  @androidx.compose.runtime.Stable public final class PaneExpansionState {
     method public suspend Object? animateTo(androidx.compose.material3.adaptive.layout.PaneExpansionAnchor anchor, optional float initialVelocity, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public void clear();
     method public androidx.compose.material3.adaptive.layout.PaneExpansionAnchor? getCurrentAnchor();
@@ -406,7 +406,7 @@ package androidx.compose.material3.adaptive.layout {
   public sealed interface PaneScaffoldScope {
     method public default androidx.compose.ui.Modifier dragToResize(androidx.compose.ui.Modifier, androidx.compose.material3.adaptive.layout.DragToResizeState state);
     method public androidx.compose.runtime.saveable.SaveableStateHolder getSaveableStateHolder();
-    method @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public androidx.compose.ui.Modifier paneExpansionDraggable(androidx.compose.ui.Modifier, androidx.compose.material3.adaptive.layout.PaneExpansionState state, float minTouchTargetSize, androidx.compose.foundation.interaction.MutableInteractionSource interactionSource, kotlin.jvm.functions.Function1<? super androidx.compose.ui.semantics.SemanticsPropertyReceiver,kotlin.Unit> semanticsProperties);
+    method public androidx.compose.ui.Modifier paneExpansionDraggable(androidx.compose.ui.Modifier, androidx.compose.material3.adaptive.layout.PaneExpansionState state, float minTouchTargetSize, androidx.compose.foundation.interaction.MutableInteractionSource interactionSource, optional kotlin.jvm.functions.Function1<? super androidx.compose.ui.semantics.SemanticsPropertyReceiver,kotlin.Unit>? semanticsProperties);
     method public androidx.compose.ui.Modifier preferredHeight(androidx.compose.ui.Modifier, float height);
     method public androidx.compose.ui.Modifier preferredWidth(androidx.compose.ui.Modifier, float width);
     property public abstract androidx.compose.runtime.saveable.SaveableStateHolder saveableStateHolder;

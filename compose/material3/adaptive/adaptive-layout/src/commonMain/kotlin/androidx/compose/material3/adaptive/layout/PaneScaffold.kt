@@ -123,16 +123,14 @@ sealed interface PaneScaffoldScope {
      *   scaffold
      * @param minTouchTargetSize the minimum touch target size of the drag handle
      * @param interactionSource the [MutableInteractionSource] to address user interactions
-     * @param semanticsProperties the semantics setup working with accessibility services
+     * @param semanticsProperties the optional semantics setup working with accessibility services;
+     *   a default implementation will be used if nothing is provided.
      */
-    @ExperimentalMaterial3AdaptiveApi
-    // TODO(conradchen): Change this to a composable function with default semantics after
-    //  b/165812010 is fixed
     fun Modifier.paneExpansionDraggable(
         state: PaneExpansionState,
         minTouchTargetSize: Dp,
         interactionSource: MutableInteractionSource,
-        semanticsProperties: (SemanticsPropertyReceiver.() -> Unit)
+        semanticsProperties: (SemanticsPropertyReceiver.() -> Unit)? = null
     ): Modifier
 
     /**
