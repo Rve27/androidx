@@ -138,9 +138,8 @@ internal class CaptureSessionFactoryTest {
                             finalizeSessionOnCloseBehavior = FinalizeSessionOnCloseBehavior.OFF,
                             closeCaptureSessionOnDisconnect = false,
                         ),
-                        threads.blockingDispatcher,
-                        threads.backgroundDispatcher,
-                        this
+                        threads,
+                        this,
                     )
             )
 

@@ -90,7 +90,7 @@ constructor(
     override fun shutdownAsync(): Deferred<Unit> {
         Log.debug { "Camera2Backend#shutdownAsync" }
         camera2DeviceCache.shutdown()
-        return threads.globalScope.async {
+        return threads.cameraPipeScope.async {
             val controllers = synchronized(lock) { activeCameraControllers }
             for (controller in controllers) {
                 Log.debug { "Camera2Backend#shutdownAsync: Awaiting closure from $controller" }

@@ -219,9 +219,8 @@ constructor(
                 cameraSurfaceManager,
                 timeSource,
                 graphConfig.flags,
-                threads.blockingDispatcher,
-                threads.backgroundDispatcher,
-                scope
+                threads,
+                scope,
             )
         currentSession = session
 

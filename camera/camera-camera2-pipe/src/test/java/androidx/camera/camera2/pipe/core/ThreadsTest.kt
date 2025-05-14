@@ -16,6 +16,7 @@
 
 package androidx.camera.camera2.pipe.core
 
+import androidx.camera.camera2.pipe.testing.FakeThreads
 import androidx.test.filters.SdkSuppress
 import androidx.testutils.assertThrows
 import com.google.common.truth.Truth.assertThat
@@ -29,11 +30,13 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 @SdkSuppress(minSdkVersion = 21)
 class ThreadingTest {
+    private val threads = FakeThreads.fromDispatcher(Dispatchers.IO)
+
     @Test
     fun runBlockingCheckedThrowsOnTimeout() = runTest {
         val latch = CountDownLatch(1)
         assertThrows<IllegalStateException> {
-            Threading.runBlockingChecked(Dispatchers.IO, Dispatchers.IO, 500L) {
+            threads.runBlockingChecked(500L) {
                 // Simulate a long call that should time out.
                 latch.await(10, TimeUnit.SECONDS)
             }
@@ -43,16 +46,14 @@ class ThreadingTest {
     @Test
     fun runBlockingCheckedDoesNotThrowWhenNotTimedOut() = runTest {
         val latch = CountDownLatch(1)
-        Threading.runBlockingChecked(Dispatchers.IO, Dispatchers.IO, 10_000L) {
-            latch.await(500, TimeUnit.MILLISECONDS)
-        }
+        threads.runBlockingChecked(10_000L) { latch.await(500, TimeUnit.MILLISECONDS) }
     }
 
     @Test
     fun runBlockingCheckedOrNullReturnsNullOnTimeout() = runTest {
         val latch = CountDownLatch(1)
         val result =
-            Threading.runBlockingCheckedOrNull(Dispatchers.IO, Dispatchers.IO, 500L) {
+            threads.runBlockingCheckedOrNull(500L) {
                 // Simulate a long call that should time out.
                 latch.await(10, TimeUnit.SECONDS)
             }
@@ -63,7 +64,7 @@ class ThreadingTest {
     fun runBlockingCheckedOrNullReturnsNonNullWhenNotTimeout() = runTest {
         val latch = CountDownLatch(1)
         val result =
-            Threading.runBlockingCheckedOrNull(Dispatchers.IO, Dispatchers.IO, 10_000L) {
+            threads.runBlockingCheckedOrNull(10_000L) {
                 // Simulate a long call that should time out.
                 latch.await(500, TimeUnit.MILLISECONDS)
             }

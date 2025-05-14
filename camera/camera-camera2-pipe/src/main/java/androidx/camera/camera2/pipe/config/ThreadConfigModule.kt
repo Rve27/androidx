@@ -144,14 +144,19 @@ internal class ThreadConfigModule(private val threadConfig: CameraPipe.ThreadCon
             }
         }
 
-        val globalScope =
+        val cameraPipeScope =
             CoroutineScope(SupervisorJob() + lightweightDispatcher + CoroutineName("CXCP"))
+        val cameraPipeDispatchScope =
+            CoroutineScope(SupervisorJob() + CoroutineName("CXCP-Dispatch"))
+
         cameraPipeLifetime.addShutdownAction(CameraPipeLifetime.ShutdownType.SCOPE) {
-            globalScope.cancel()
+            cameraPipeScope.cancel()
+            cameraPipeDispatchScope.cancel()
         }
 
         return Threads(
-            globalScope = globalScope,
+            cameraPipeScope = cameraPipeScope,
+            cameraPipeDispatchScope = cameraPipeDispatchScope,
             blockingExecutor = blockingExecutor,
             blockingDispatcher = blockingDispatcher,
             backgroundExecutor = backgroundExecutor,
@@ -177,7 +182,8 @@ internal class ThreadConfigModule(private val threadConfig: CameraPipe.ThreadCon
         }
 
         return Threads(
-            globalScope = testScope,
+            cameraPipeScope = testScope,
+            cameraPipeDispatchScope = testScope,
             blockingExecutor = testExecutor,
             blockingDispatcher = testDispatcher,
             backgroundExecutor = testExecutor,
