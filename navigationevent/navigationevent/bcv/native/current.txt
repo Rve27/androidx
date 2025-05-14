@@ -45,6 +45,10 @@ final class androidx.navigationevent/NavigationEvent { // androidx.navigationeve
     final val touchY // androidx.navigationevent/NavigationEvent.touchY|{}touchY[0]
         final fun <get-touchY>(): kotlin/Float // androidx.navigationevent/NavigationEvent.touchY.<get-touchY>|<get-touchY>(){}[0]
 
+    final fun equals(kotlin/Any?): kotlin/Boolean // androidx.navigationevent/NavigationEvent.equals|equals(kotlin.Any?){}[0]
+    final fun hashCode(): kotlin/Int // androidx.navigationevent/NavigationEvent.hashCode|hashCode(){}[0]
+    final fun toString(): kotlin/String // androidx.navigationevent/NavigationEvent.toString|toString(){}[0]
+
     open annotation class SwipeEdge : kotlin/Annotation { // androidx.navigationevent/NavigationEvent.SwipeEdge|null[0]
         constructor <init>() // androidx.navigationevent/NavigationEvent.SwipeEdge.<init>|<init>(){}[0]
     }

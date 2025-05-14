@@ -63,4 +63,32 @@ public class NavigationEvent(
          */
         public const val EDGE_NONE: Int = 2
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as NavigationEvent
+
+        if (touchX != other.touchX) return false
+        if (touchY != other.touchY) return false
+        if (progress != other.progress) return false
+        if (swipeEdge != other.swipeEdge) return false
+        if (frameTimeMillis != other.frameTimeMillis) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = touchX.hashCode()
+        result = 31 * result + touchY.hashCode()
+        result = 31 * result + progress.hashCode()
+        result = 31 * result + swipeEdge
+        result = 31 * result + frameTimeMillis.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "NavigationEvent(touchX=$touchX, touchY=$touchY, progress=$progress, swipeEdge=$swipeEdge, frameTimeMillis=$frameTimeMillis)"
+    }
 }
