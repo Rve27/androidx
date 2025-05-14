@@ -83,7 +83,8 @@ class AnchorTest {
         val fakePerceptionManager = session.runtime.perceptionManager as FakePerceptionManager
         fakePerceptionManager.isTrackingAvailable = false
 
-        assertThat(Anchor.create(session, Pose())).isInstanceOf(AnchorCreateNotTracking::class.java)
+        assertThat(Anchor.create(session, Pose()))
+            .isInstanceOf(AnchorCreateTrackingUnavailable::class.java)
     }
 
     @Test

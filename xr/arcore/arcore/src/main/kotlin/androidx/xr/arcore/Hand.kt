@@ -19,7 +19,7 @@ package androidx.xr.arcore
 import android.content.ContentResolver
 import android.provider.Settings.System
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.Config.HandTrackingMode
+import androidx.xr.runtime.Config
 import androidx.xr.runtime.HandJointType
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.TrackingState
@@ -34,7 +34,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /** Contains the tracking information of one of the user's hands. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : Updatable {
     /** * Companion object holding info to the left and right hands. */
     public companion object {
@@ -45,14 +44,15 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
          * Returns the Hand object that corresponds to the user's left hand when available.
          *
          * @param session the currently active [Session].
-         * @throws [IllegalStateException] if [HandTrackingMode] is set to Disabled.
+         * @throws [IllegalStateException] if [Session.config] is set to
+         *   [Config.HandTrackingMode.DISABLED].
          */
         @JvmStatic
         public fun left(session: Session): Hand? {
             val perceptionStateExtender = getPerceptionStateExtender(session)
             val config = perceptionStateExtender.xrResourcesManager.lifecycleManager.config
-            check(config.handTracking != HandTrackingMode.DISABLED) {
-                "Config.HandTrackingMode is set to Disabled."
+            check(config.handTracking != Config.HandTrackingMode.DISABLED) {
+                "Config.HandTrackingMode is set to DISABLED."
             }
             return perceptionStateExtender.xrResourcesManager.leftHand
         }
@@ -61,14 +61,15 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
          * Returns the Hand object that corresponds to the user's right hand when available.
          *
          * @param session the currently active [Session].
-         * @throws [IllegalStateException] if [HandTrackingMode] is set to Disabled.
+         * @throws [IllegalStateException] if [Session.config] is set to
+         *   [Config.HandTrackingMode.DISABLED].
          */
         @JvmStatic
         public fun right(session: Session): Hand? {
             val perceptionStateExtender = getPerceptionStateExtender(session)
             val config = perceptionStateExtender.xrResourcesManager.lifecycleManager.config
-            check(config.handTracking != HandTrackingMode.DISABLED) {
-                "Config.HandTrackingMode is set to Disabled."
+            check(config.handTracking != Config.HandTrackingMode.DISABLED) {
+                "Config.HandTrackingMode is set to DISABLED."
             }
             return perceptionStateExtender.xrResourcesManager.rightHand
         }
@@ -81,6 +82,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
          *   returns [Handedness.UNKNOWN].
          */
         @JvmStatic
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
         public fun getHandedness(resolver: ContentResolver): Handedness =
             Handedness.values()[
                     System.getInt(resolver, PRIMARY_HAND_SETTING_NAME, Handedness.UNKNOWN.ordinal)]
@@ -94,6 +96,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
     }
 
     /** The handedness of the user's hand. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public enum class Handedness {
         LEFT,
         RIGHT,
@@ -105,10 +108,11 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
      * The representation of the current state of [Hand].
      *
      * @param trackingState the current [TrackingState] of the hand.
-     * @param handJointsBuffer the [FloatBuffer] containing the pose of each joint in the hand.
      */
-    public class State(
+    public class State
+    internal constructor(
         public val trackingState: TrackingState,
+        @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
         public val handJointsBuffer: FloatBuffer,
     ) {
 
@@ -188,7 +192,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
         }
 
         private companion object {
-            const val FLOATS_PER_POSE = 7
+            private const val FLOATS_PER_POSE = 7
         }
     }
 
@@ -197,6 +201,7 @@ public class Hand internal constructor(internal val runtimeHand: RuntimeHand) : 
     /** The current [State] of this hand. */
     public val state: StateFlow<State> = _state.asStateFlow()
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     override suspend fun update() {
         _state.emit(State(runtimeHand.trackingState, runtimeHand.handJointsBuffer))
     }
