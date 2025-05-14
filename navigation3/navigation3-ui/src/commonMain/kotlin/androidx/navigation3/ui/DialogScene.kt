@@ -48,6 +48,8 @@ internal class DialogScene<T : Any>(
  * within a [Dialog] instance.
  *
  * This strategy should always be added before any non-overlay scene strategies.
+ *
+ * @param onBack a callback for handling system back press.
  */
 public class DialogSceneStrategy<T : Any>(private val onBack: () -> Unit) : SceneStrategy<T> {
     @Composable
@@ -73,7 +75,7 @@ public class DialogSceneStrategy<T : Any>(private val onBack: () -> Unit) : Scen
          * Function to be called on the [NavEntry.metadata] to mark this entry as something that
          * should be displayed within a [Dialog].
          *
-         * @param dialogProperties
+         * @param dialogProperties properties that should be passed to the containing [Dialog].
          */
         public fun dialog(
             dialogProperties: DialogProperties = DialogProperties()
