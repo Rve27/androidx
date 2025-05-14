@@ -22,6 +22,7 @@ import androidx.build.dackka.DokkaAnalysisPlatform
 import androidx.build.dackka.docsPlatform
 import androidx.build.hasAndroidMultiplatformPlugin
 import androidx.build.multiplatformExtension
+import androidx.build.registerAsComponentForKmpPublishing
 import androidx.build.registerAsComponentForPublishing
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
@@ -200,7 +201,9 @@ internal val Project.multiplatformUsage
     get() = objects.named<Usage>("androidx-multiplatform-docs")
 
 private fun Project.registerMultiplatformSourcesVariant(sourceJar: TaskProvider<Jar>) =
-    registerSourcesVariant(kmpSourcesConfigurationName, sourceJar, multiplatformUsage)
+    registerSourcesVariant(kmpSourcesConfigurationName, sourceJar, multiplatformUsage).also {
+        registerAsComponentForKmpPublishing(it)
+    }
 
 private fun Project.registerSourcesVariant(sourceJar: TaskProvider<Jar>) =
     registerSourcesVariant(sourcesConfigurationName, sourceJar, objects.named(Usage.JAVA_RUNTIME))
