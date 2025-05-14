@@ -43,7 +43,7 @@ import androidx.navigation3.ui.Scene
 import kotlinx.coroutines.CancellationException
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
-internal class ListDetailPaneScaffoldScene<T : Any>(
+internal class ListDetailScene<T : Any>(
     override val key: Any,
     val onBack: (Int) -> Unit,
     val backNavBehavior: BackNavigationBehavior,
@@ -231,13 +231,12 @@ internal class ListDetailPaneScaffoldScene<T : Any>(
 private val <T : Any> NavEntry<T>.paneRole: ThreePaneScaffoldRole?
     get() {
         val metadata =
-            this.metadata[ListDetailPaneScaffoldSceneStrategy.ListDetailRoleKey]
-                as? ListDetailPaneScaffoldSceneStrategy.PaneMetadata ?: return null
+            this.metadata[ListDetailSceneStrategy.ListDetailRoleKey]
+                as? ListDetailSceneStrategy.PaneMetadata ?: return null
         return when (metadata) {
-            is ListDetailPaneScaffoldSceneStrategy.ListMetadata -> ListDetailPaneScaffoldRole.List
-            is ListDetailPaneScaffoldSceneStrategy.DetailMetadata ->
-                ListDetailPaneScaffoldRole.Detail
-            is ListDetailPaneScaffoldSceneStrategy.ExtraMetadata -> ListDetailPaneScaffoldRole.Extra
+            is ListDetailSceneStrategy.ListMetadata -> ListDetailPaneScaffoldRole.List
+            is ListDetailSceneStrategy.DetailMetadata -> ListDetailPaneScaffoldRole.Detail
+            is ListDetailSceneStrategy.ExtraMetadata -> ListDetailPaneScaffoldRole.Extra
         }
     }
 

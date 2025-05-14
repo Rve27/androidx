@@ -34,7 +34,7 @@ import androidx.navigation3.ui.Scene
 import androidx.navigation3.ui.SceneStrategy
 
 /**
- * Creates and remembers a [ListDetailPaneScaffoldSceneStrategy].
+ * Creates and remembers a [ListDetailSceneStrategy].
  *
  * @param backNavigationBehavior the behavior describing which backstack entries may be skipped
  *   during the back navigation. See [BackNavigationBehavior].
@@ -47,9 +47,9 @@ public fun <T : Any> rememberListDetailSceneStrategy(
     backNavigationBehavior: BackNavigationBehavior =
         BackNavigationBehavior.PopUntilCurrentDestinationChange,
     directive: PaneScaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo()),
-): ListDetailPaneScaffoldSceneStrategy<T> {
+): ListDetailSceneStrategy<T> {
     return remember(backNavigationBehavior, directive) {
-        ListDetailPaneScaffoldSceneStrategy(
+        ListDetailSceneStrategy(
             backNavigationBehavior = backNavigationBehavior,
             directive = directive,
         )
@@ -57,7 +57,7 @@ public fun <T : Any> rememberListDetailSceneStrategy(
 }
 
 /**
- * A [ListDetailPaneScaffoldSceneStrategy] supports arranging [NavEntry]s into an adaptive
+ * A [ListDetailSceneStrategy] supports arranging [NavEntry]s into an adaptive
  * [ListDetailPaneScaffold]. By using [listPane], [detailPane], or [extraPane] in a NavEntry's
  * metadata, entries can be assigned as belonging to a list pane, detail pane, or extra pane. These
  * panes will be displayed together if the window size is sufficiently large, and will automatically
@@ -69,7 +69,7 @@ public fun <T : Any> rememberListDetailSceneStrategy(
  *   panes.
  */
 @ExperimentalMaterial3AdaptiveApi
-public class ListDetailPaneScaffoldSceneStrategy<T : Any>(
+public class ListDetailSceneStrategy<T : Any>(
     public val backNavigationBehavior: BackNavigationBehavior,
     public val directive: PaneScaffoldDirective,
 ) : SceneStrategy<T> {
@@ -101,7 +101,7 @@ public class ListDetailPaneScaffoldSceneStrategy<T : Any>(
         if (scaffoldEntries.isEmpty()) return null
 
         val scene =
-            ListDetailPaneScaffoldScene(
+            ListDetailScene(
                 key = sceneKey,
                 onBack = onBack,
                 backNavBehavior = backNavigationBehavior,
@@ -175,7 +175,7 @@ public class ListDetailPaneScaffoldSceneStrategy<T : Any>(
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 private fun <T : Any> NavEntry<T>.isListDetailEntry(): Boolean =
-    metadata[ListDetailPaneScaffoldSceneStrategy.ListDetailRoleKey] != null
+    metadata[ListDetailSceneStrategy.ListDetailRoleKey] != null
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 private val ThreePaneScaffoldValue.paneCount: Int
