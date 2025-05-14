@@ -102,6 +102,7 @@ import com.google.android.icing.proto.PropertyProto;
 import com.google.android.icing.proto.PutResultProto;
 import com.google.android.icing.proto.SchemaProto;
 import com.google.android.icing.proto.SchemaTypeConfigProto;
+import com.google.android.icing.proto.SetSchemaRequestProto;
 import com.google.android.icing.proto.StatusProto;
 import com.google.android.icing.proto.StorageInfoProto;
 import com.google.android.icing.proto.StringIndexingConfig;
@@ -626,6 +627,135 @@ public class AppSearchImplTest {
                 /*logger=*/ null);
         assertThat(results.getResults()).hasSize(1);
         assertThat(results.getResults().get(0).getGenericDocument()).isEqualTo(validDoc);
+    }
+
+    @Test
+    public void testResetWithSchemaDatabaseMigration() throws Exception {
+        IcingSearchEngineOptions.Builder optionsBuilder =
+                IcingSearchEngineOptions.newBuilder(mUnlimitedConfig.toIcingSearchEngineOptions(
+                        mAppSearchDir.getAbsolutePath(),  /* isVMEnabled= */ false));
+        // Initialize Icing without schema database enabled.
+        IcingSearchEngine icingSearchEngine = new IcingSearchEngine(
+                optionsBuilder.setEnableSchemaDatabase(false).build());
+        mAppSearchImpl = AppSearchImpl.create(
+                mAppSearchDir,
+                mUnlimitedConfig,
+                /*initStatsBuilder=*/ null,
+                /*visibilityChecker=*/ null,
+                /*revocableFileDescriptorStore=*/ null,
+                // Initializing with a custom icing instance will cause AppSearch to assume
+                // isVMEnabled. Therefore we cannot call AppSearch::setSchema below since it'll
+                // still use database-scoped operations.
+                icingSearchEngine,
+                ALWAYS_OPTIMIZE);
+
+        SchemaProto existingSchema = mAppSearchImpl.getSchemaProtoLocked();
+        // Insert some schemas in 2 databases. We need to use the SchemaProto and call Icing's
+        // set schema API directly as AppSearch will use database-scoped schema operation since
+        // we initialized with a custom icing instance (which AppSearch understands as having VM
+        // enabled). This will fail as the Icing instance has not enabled schema database.
+        SchemaProto fullSchema = SchemaProto.newBuilder(existingSchema)
+                .addTypes(SchemaTypeConfigProto.newBuilder()
+                        .setSchemaType("package$database1/Type1")
+                        .setDescription("")
+                        .setVersion(0))
+                .addTypes(SchemaTypeConfigProto.newBuilder()
+                        .setSchemaType("package$database1/Type2")
+                        .setDescription("")
+                        .setVersion(0))
+                .addTypes(SchemaTypeConfigProto.newBuilder()
+                        .setSchemaType("package$database2/Type3")
+                        .setDescription("")
+                        .setVersion(0))
+                .build();
+        SetSchemaRequestProto requestProto = SetSchemaRequestProto.newBuilder()
+                .setSchema(fullSchema)
+                .setIgnoreErrorsAndDeleteDocuments(false)
+                .build();
+        assertThat(icingSearchEngine.setSchemaWithRequestProto(requestProto).getStatus().getCode())
+                .isEqualTo(StatusProto.Code.OK);
+
+        // Create expected schemaType proto. These protos should not contain the database field.
+        SchemaProto expectedProto = SchemaProto.newBuilder()
+                .addTypes(SchemaTypeConfigProto.newBuilder()
+                        .setSchemaType("package$database1/Type1")
+                        .setDescription("")
+                        .setVersion(0))
+                .addTypes(SchemaTypeConfigProto.newBuilder()
+                        .setSchemaType("package$database1/Type2")
+                        .setDescription("")
+                        .setVersion(0))
+                .addTypes(SchemaTypeConfigProto.newBuilder()
+                        .setSchemaType("package$database2/Type3")
+                        .setDescription("")
+                        .setVersion(0))
+                .build();
+        List<SchemaTypeConfigProto> expectedTypes = new ArrayList<>();
+        expectedTypes.addAll(existingSchema.getTypesList());
+        expectedTypes.addAll(expectedProto.getTypesList());
+        assertThat(mAppSearchImpl.getSchemaProtoLocked().getTypesList())
+                .containsExactlyElementsIn(expectedTypes);
+
+        // Reinitialize Icing and AppSearch, this time with schema database enabled.
+        InitializeStats.Builder initStatsBuilder = new InitializeStats.Builder();
+        icingSearchEngine = new IcingSearchEngine(
+                optionsBuilder.setEnableSchemaDatabase(true).build());
+        mAppSearchImpl = AppSearchImpl.create(
+                mAppSearchDir,
+                mUnlimitedConfig,
+                initStatsBuilder,
+                /*visibilityChecker=*/ null,
+                /*revocableFileDescriptorStore=*/ null,
+                icingSearchEngine,
+                ALWAYS_OPTIMIZE);
+
+        // Initialization should NOT trigger a recovery
+        InitializeStats initStats = initStatsBuilder.build();
+        assertThat(initStats.getNativeDocumentStoreRecoveryCause())
+                .isEqualTo(InitializeStats.RECOVERY_CAUSE_NONE);
+        assertThat(initStats.getNativeIndexRestorationCause())
+                .isEqualTo(InitializeStats.RECOVERY_CAUSE_NONE);
+
+        // GetSchema. The old schema should have the database field populated after the migration
+        expectedTypes = new ArrayList<>();
+        expectedTypes.addAll(getSchemaProtoWithDatabase(existingSchema).getTypesList());
+        expectedTypes.addAll(getSchemaProtoWithDatabase(expectedProto).getTypesList());
+        assertThat(mAppSearchImpl.getSchemaProtoLocked().getTypesList())
+                .containsExactlyElementsIn(expectedTypes);
+
+        // SetSchema for database 1 again. We can use the AppSearch API this time since we've
+        // enabled database-scoped schema operation for Icing too. Check that the old db1 schema
+        // gets overridden and db2 is not affected
+        List<AppSearchSchema> schemas = Collections.singletonList(
+                new AppSearchSchema.Builder("Type4").build());
+        InternalSetSchemaResponse internalSetSchemaResponse = mAppSearchImpl.setSchema(
+                "package",
+                "database1",
+                schemas,
+                /*visibilityConfigs=*/ Collections.emptyList(),
+                /*forceOverride=*/ true,
+                /*version=*/ 0,
+                /*setSchemaStatsBuilder=*/ null);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+
+        // Create expected schemaType proto. These protos should contain the database field.
+        expectedProto = SchemaProto.newBuilder()
+                .addTypes(SchemaTypeConfigProto.newBuilder()
+                        .setSchemaType("package$database1/Type4")
+                        .setDatabase("package$database1/")
+                        .setDescription("")
+                        .setVersion(0))
+                .addTypes(SchemaTypeConfigProto.newBuilder()
+                        .setSchemaType("package$database2/Type3")
+                        .setDatabase("package$database2/")
+                        .setDescription("")
+                        .setVersion(0))
+                .build();
+        expectedTypes = new ArrayList<>();
+        expectedTypes.addAll(getSchemaProtoWithDatabase(existingSchema).getTypesList());
+        expectedTypes.addAll(expectedProto.getTypesList());
+        assertThat(mAppSearchImpl.getSchemaProtoLocked().getTypesList())
+                .containsExactlyElementsIn(expectedTypes);
     }
 
     @Test
