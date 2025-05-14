@@ -1918,6 +1918,11 @@ package androidx.compose.foundation.text.handwriting {
 
 package androidx.compose.foundation.text.input {
 
+  public fun interface AnnotatedOutputTransformation extends androidx.compose.foundation.text.input.OutputTransformation {
+    method public void annotateOutput(androidx.compose.foundation.text.input.OutputTransformationAnnotationScope);
+    method public default void transformOutput(androidx.compose.foundation.text.input.TextFieldBuffer);
+  }
+
   @androidx.compose.runtime.Stable public fun interface InputTransformation {
     method public default void applySemantics(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public default androidx.compose.foundation.text.KeyboardOptions? getKeyboardOptions();
@@ -1943,6 +1948,12 @@ package androidx.compose.foundation.text.input {
 
   @androidx.compose.runtime.Stable public fun interface OutputTransformation {
     method public void transformOutput(androidx.compose.foundation.text.input.TextFieldBuffer);
+  }
+
+  public sealed interface OutputTransformationAnnotationScope {
+    method public void addAnnotation(androidx.compose.ui.text.AnnotatedString.Annotation annotation, int start, int end);
+    method public CharSequence getText();
+    property public abstract CharSequence text;
   }
 
   public final class TextFieldBuffer implements java.lang.Appendable {
