@@ -124,7 +124,6 @@ class CameraControlDeviceTest(
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val analyzer = ImageAnalysis.Analyzer { obj: ImageProxy -> obj.close() }
     private val lifecycleOwner = FakeLifecycleOwner().also { it.startAndResume() }
-    private val captureCallback = Camera2InteropUtil.CaptureCallback()
     private val cameraCharacteristics =
         CameraUtil.getCameraCharacteristics(
             CameraUtil.getCameraIdWithLensFacing(cameraSelector.lensFacing!!)!!
@@ -132,6 +131,7 @@ class CameraControlDeviceTest(
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var camera: Camera
     private lateinit var cameraControl: CameraControlInternal
+    private lateinit var captureCallback: Camera2InteropUtil.CaptureCallback
 
     @Before
     fun setUp() = runBlocking {
@@ -139,6 +139,7 @@ class CameraControlDeviceTest(
         ProcessCameraProvider.configureInstance(cameraConfig)
         cameraProvider = ProcessCameraProvider.awaitInstance(context)
         assumeTrue(cameraProvider.hasCamera(cameraSelector))
+        captureCallback = Camera2InteropUtil.CaptureCallback()
     }
 
     @After
@@ -155,7 +156,9 @@ class CameraControlDeviceTest(
 
         cameraControl.flashMode = ImageCapture.FLASH_MODE_AUTO
 
-        verifyCaptureResult(mapOf(CaptureResult.CONTROL_AE_MODE to CONTROL_AE_MODE_ON_AUTO_FLASH))
+        captureCallback.verifyLastCaptureResult(
+            mapOf(CaptureResult.CONTROL_AE_MODE to CONTROL_AE_MODE_ON_AUTO_FLASH)
+        )
         assertThat(cameraControl.flashMode).isEqualTo(ImageCapture.FLASH_MODE_AUTO)
     }
 
@@ -166,7 +169,9 @@ class CameraControlDeviceTest(
 
         cameraControl.flashMode = ImageCapture.FLASH_MODE_OFF
 
-        verifyCaptureResult(mapOf(CaptureResult.CONTROL_AE_MODE to CONTROL_AE_MODE_ON))
+        captureCallback.verifyLastCaptureResult(
+            mapOf(CaptureResult.CONTROL_AE_MODE to CONTROL_AE_MODE_ON)
+        )
         assertThat(cameraControl.flashMode).isEqualTo(ImageCapture.FLASH_MODE_OFF)
     }
 
@@ -177,7 +182,9 @@ class CameraControlDeviceTest(
 
         cameraControl.flashMode = ImageCapture.FLASH_MODE_ON
 
-        verifyCaptureResult(mapOf(CaptureResult.CONTROL_AE_MODE to CONTROL_AE_MODE_ON_ALWAYS_FLASH))
+        captureCallback.verifyLastCaptureResult(
+            mapOf(CaptureResult.CONTROL_AE_MODE to CONTROL_AE_MODE_ON_ALWAYS_FLASH)
+        )
         assertThat(cameraControl.flashMode).isEqualTo(ImageCapture.FLASH_MODE_ON)
     }
 
@@ -198,22 +205,14 @@ class CameraControlDeviceTest(
             cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AWB).coerceAtMost(1)
         // Check capture request instead of capture result because the focus and metering may not
         // converge depending on the environment.
-        captureCallback.waitFor(numOfCaptures = 60) { captureRequests, _ ->
-            {
-                val captureRequest = captureRequests.last()
-                assertThat(
-                        captureRequest.get(CaptureRequest.CONTROL_AF_REGIONS)!!.weightedRegionCount
-                    )
-                    .isEqualTo(expectedAfCount)
-                assertThat(
-                        captureRequest.get(CaptureRequest.CONTROL_AE_REGIONS)!!.weightedRegionCount
-                    )
-                    .isEqualTo(expectedAeCount)
-                assertThat(
-                        captureRequest.get(CaptureRequest.CONTROL_AWB_REGIONS)!!.weightedRegionCount
-                    )
-                    .isEqualTo(expectedAwbCount)
-            }
+        captureCallback.verifyFor(numOfCaptures = 60) { captureRequests, _ ->
+            val captureRequest = captureRequests.last()
+            val afRegions = captureRequest[CaptureRequest.CONTROL_AF_REGIONS] ?: emptyArray()
+            val aeRegions = captureRequest[CaptureRequest.CONTROL_AE_REGIONS] ?: emptyArray()
+            val awbRegions = captureRequest[CaptureRequest.CONTROL_AWB_REGIONS] ?: emptyArray()
+            afRegions.weightedRegionCount == expectedAfCount &&
+                aeRegions.weightedRegionCount == expectedAeCount &&
+                awbRegions.weightedRegionCount == expectedAwbCount
         }
     }
 
@@ -228,21 +227,15 @@ class CameraControlDeviceTest(
         cameraControl.cancelFocusAndMetering().await()
         // Check capture request instead of capture result because the focus and metering may not
         // converge depending on the environment.
-        captureCallback.waitFor(numOfCaptures = 60) { captureRequests, _ ->
-            {
-                val captureRequest = captureRequests.last()
-                val afRegions = captureRequest[CaptureRequest.CONTROL_AF_REGIONS] ?: emptyArray()
-                assertThat(afRegions.isEmpty() || afRegions.contentEquals(METERING_REGIONS_DEFAULT))
-                    .isTrue()
-                val aeRegions = captureRequest[CaptureRequest.CONTROL_AE_REGIONS] ?: emptyArray()
-                assertThat(aeRegions.isEmpty() || aeRegions.contentEquals(METERING_REGIONS_DEFAULT))
-                    .isTrue()
-                val awbRegions = captureRequest[CaptureRequest.CONTROL_AWB_REGIONS] ?: emptyArray()
-                assertThat(
-                        awbRegions.isEmpty() || awbRegions.contentEquals(METERING_REGIONS_DEFAULT)
-                    )
-                    .isTrue()
-            }
+        captureCallback.verifyFor(numOfCaptures = 60) { captureRequests, _ ->
+            val captureRequest = captureRequests.last()
+            val afRegions = captureRequest[CaptureRequest.CONTROL_AF_REGIONS] ?: emptyArray()
+            val aeRegions = captureRequest[CaptureRequest.CONTROL_AE_REGIONS] ?: emptyArray()
+            val awbRegions = captureRequest[CaptureRequest.CONTROL_AWB_REGIONS] ?: emptyArray()
+
+            afRegions.weightedRegionCount == 0 &&
+                aeRegions.weightedRegionCount == 0 &&
+                awbRegions.weightedRegionCount == 0
         }
     }
 
@@ -255,7 +248,7 @@ class CameraControlDeviceTest(
 
         cameraControl.setExposureCompensationIndex(upper).get(3000, TimeUnit.MILLISECONDS)
 
-        verifyCaptureResult(mapOf(CONTROL_AE_EXPOSURE_COMPENSATION to upper))
+        captureCallback.verifyLastCaptureResult(mapOf(CONTROL_AE_EXPOSURE_COMPENSATION to upper))
     }
 
     @Test
@@ -265,7 +258,7 @@ class CameraControlDeviceTest(
 
         assertFutureCompletes(cameraControl.enableTorch(true))
 
-        verifyCaptureResult(mapOf(CaptureResult.FLASH_MODE to FLASH_MODE_TORCH))
+        captureCallback.verifyLastCaptureResult(mapOf(CaptureResult.FLASH_MODE to FLASH_MODE_TORCH))
     }
 
     @Test
@@ -280,7 +273,7 @@ class CameraControlDeviceTest(
             .setTorchStrengthLevel(camera.cameraInfo.maxTorchStrengthLevel)
             .get(3000, TimeUnit.MILLISECONDS)
 
-        verifyCaptureResult(
+        captureCallback.verifyLastCaptureResult(
             mapOf(CaptureResult.FLASH_STRENGTH_LEVEL to camera.cameraInfo.maxTorchStrengthLevel)
         )
     }
@@ -365,7 +358,7 @@ class CameraControlDeviceTest(
 
         cameraControl.enableLowLightBoostAsync(true).get(3000, TimeUnit.MILLISECONDS)
 
-        verifyCaptureResult(
+        captureCallback.verifyLastCaptureResult(
             mapOf(
                 CaptureResult.CONTROL_AE_MODE to
                     CONTROL_AE_MODE_ON_LOW_LIGHT_BOOST_BRIGHTNESS_PRIORITY,
@@ -411,15 +404,6 @@ class CameraControlDeviceTest(
         return cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AF) > 0 ||
             cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AE) > 0 ||
             cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AWB) > 0
-    }
-
-    private fun <T> verifyCaptureResult(keyValueMap: Map<CaptureResult.Key<T>, T>) {
-        captureCallback.waitFor(numOfCaptures = 30) { _, captureResults ->
-            {
-                val captureResult = captureResults.last()
-                keyValueMap.forEach { assertThat(captureResult.get(it.key)).isEqualTo(it.value) }
-            }
-        }
     }
 
     private fun <T> assertFutureCompletes(future: ListenableFuture<T>) {

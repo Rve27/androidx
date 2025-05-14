@@ -92,7 +92,7 @@ class Camera2InteropIntegrationTest(
 
     private var processCameraProvider: ProcessCameraProvider? = null
     private val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-    private val captureCallback = Camera2InteropUtil.CaptureCallback()
+    lateinit var captureCallback: Camera2InteropUtil.CaptureCallback
 
     companion object {
         @JvmStatic
@@ -110,8 +110,8 @@ class Camera2InteropIntegrationTest(
         // Configures the test target config
         ProcessCameraProvider.configureInstance(cameraConfig)
         processCameraProvider = ProcessCameraProvider.awaitInstance(context)
-
         assumeTrue(processCameraProvider!!.hasCamera(cameraSelector))
+        captureCallback = Camera2InteropUtil.CaptureCallback()
     }
 
     @After
@@ -263,9 +263,7 @@ class Camera2InteropIntegrationTest(
         }
 
         // Assert.
-        captureCallback.waitFor(numOfCaptures = 20) { captureRequests, _ ->
-            assertThat(captureRequests.last().get(testKey)).isEqualTo(testValue)
-        }
+        captureCallback.verifyLastCaptureRequest(mapOf(testKey to testValue))
     }
 
     @Test
@@ -288,9 +286,7 @@ class Camera2InteropIntegrationTest(
         }
 
         // Assert.
-        captureCallback.waitFor(numOfCaptures = 20) { captureRequests, _ ->
-            assertThat(captureRequests.last().get(testKey)).isEqualTo(testValue)
-        }
+        captureCallback.verifyLastCaptureRequest(mapOf(testKey to testValue))
     }
 
     @Test
@@ -310,8 +306,8 @@ class Camera2InteropIntegrationTest(
         camera.clearInteropOptions()
 
         // Assert.
-        captureCallback.waitFor(numOfCaptures = 20) { captureRequests, _ ->
-            assertThat(captureRequests.last().get(testKey)).isNotEqualTo(testValue)
+        captureCallback.verifyFor(numOfCaptures = 20) { captureRequests, _ ->
+            captureRequests.last()[testKey] != testValue
         }
     }
 
@@ -333,14 +329,14 @@ class Camera2InteropIntegrationTest(
         }
 
         // Assert.
-        captureCallback.waitFor(numOfCaptures = 20) { _, captureResults ->
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                assertThat(captureResults.last().physicalCameraTotalResults.keys)
-                    .containsExactly(testCameraId)
-            } else {
-                assertThat(captureResults.last().physicalCameraResults.keys)
-                    .containsExactly(testCameraId)
-            }
+        captureCallback.verifyFor(numOfCaptures = 20) { _, captureResults ->
+            val cameraIds =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    captureResults.last().physicalCameraTotalResults.keys
+                } else {
+                    captureResults.last().physicalCameraResults.keys
+                }
+            cameraIds.size == 1 && cameraIds.contains(testCameraId)
         }
     }
 
