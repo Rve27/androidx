@@ -16,7 +16,6 @@
 
 package androidx.navigation3.ui
 
-import androidx.activity.compose.PredictiveBackHandler
 import androidx.collection.mutableObjectFloatMapOf
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -117,7 +116,7 @@ public fun <T : Any> NavDisplay(
             repeat(it) { backStack.removeAt(backStack.lastIndex) }
         }
     },
-    entryDecorators: List<@JvmSuppressWildcards NavEntryDecorator<*>> =
+    entryDecorators: List<NavEntryDecorator<*>> =
         listOf(rememberSceneSetupNavEntryDecorator(), rememberSavedStateNavEntryDecorator()),
     sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
     sizeTransform: SizeTransform? = null,
@@ -165,10 +164,10 @@ public fun <T : Any> NavDisplay(
         var progress by remember { mutableFloatStateOf(0f) }
         var inPredictiveBack by remember { mutableStateOf(false) }
 
-        PredictiveBackHandler(scene.previousEntries.isNotEmpty()) { backEvent ->
+        NavigationEventHandler({ scene.previousEntries.isNotEmpty() }) { navEvent ->
             progress = 0f
             try {
-                backEvent.collect { value ->
+                navEvent.collect { value ->
                     inPredictiveBack = true
                     progress = value.progress
                 }

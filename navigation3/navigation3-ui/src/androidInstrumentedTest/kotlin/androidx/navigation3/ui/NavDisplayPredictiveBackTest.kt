@@ -31,6 +31,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.kruth.assertThat
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigationevent.NavigationEvent
+import androidx.navigationevent.NavigationEventDispatcher
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertWithMessage
@@ -44,7 +46,7 @@ class NavDisplayPredictiveBackTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testStateIsRestoredOnPredictiveBack() {
+    fun testStateIsRestoredOnBackPressedPredictiveBack() {
         lateinit var numberOnScreen1: MutableState<Int>
         lateinit var numberOnScreen2: MutableState<Int>
         lateinit var backPressedDispatcher: OnBackPressedDispatcher
@@ -113,6 +115,86 @@ class NavDisplayPredictiveBackTest {
         composeTestRule.waitForIdle()
 
         composeTestRule.runOnIdle { backPressedDispatcher.onBackPressed() }
+
+        composeTestRule.runOnIdle {
+            assertWithMessage("The number should be restored")
+                .that(numberOnScreen1.value)
+                .isEqualTo(2)
+        }
+
+        assertThat(composeTestRule.onNodeWithText("numberOnScreen1: 2").isDisplayed()).isTrue()
+    }
+
+    @Test
+    fun testStateIsRestoredOnNavEventPredictiveBack() {
+        lateinit var numberOnScreen1: MutableState<Int>
+        lateinit var numberOnScreen2: MutableState<Int>
+        lateinit var navEventDispatcher: NavigationEventDispatcher
+        lateinit var backStack: MutableList<Any>
+        composeTestRule.setContent {
+            navEventDispatcher =
+                LocalNavigationEventDispatcherOwner.current!!.navigationEventDispatcher
+            backStack = remember { mutableStateListOf(first) }
+            NavDisplay(
+                backStack = backStack,
+                onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
+            ) {
+                when (it) {
+                    first ->
+                        NavEntry(first) {
+                            numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
+                            Text("numberOnScreen1: ${numberOnScreen1.value}")
+                        }
+                    second ->
+                        NavEntry(second) {
+                            numberOnScreen2 = rememberSaveable { mutableStateOf(0) }
+                            Text("numberOnScreen2: ${numberOnScreen2.value}")
+                        }
+                    else -> error("Invalid key passed")
+                }
+            }
+        }
+
+        composeTestRule.runOnIdle {
+            assertWithMessage("Initial number should be 0").that(numberOnScreen1.value).isEqualTo(0)
+            numberOnScreen1.value++
+            numberOnScreen1.value++
+        }
+
+        composeTestRule.runOnIdle {
+            assertWithMessage("The number should be 2").that(numberOnScreen1.value).isEqualTo(2)
+        }
+
+        assertThat(composeTestRule.onNodeWithText("numberOnScreen1: 2").isDisplayed()).isTrue()
+
+        composeTestRule.runOnIdle { backStack.add(second) }
+
+        composeTestRule.runOnIdle {
+            assertWithMessage("Initial number should be 0").that(numberOnScreen2.value).isEqualTo(0)
+            numberOnScreen2.value++
+            numberOnScreen2.value++
+            numberOnScreen2.value++
+            numberOnScreen2.value++
+        }
+
+        composeTestRule.runOnIdle {
+            assertWithMessage("The number should be 4").that(numberOnScreen2.value).isEqualTo(4)
+        }
+
+        assertThat(composeTestRule.onNodeWithText("numberOnScreen2: 4").isDisplayed()).isTrue()
+
+        composeTestRule.runOnIdle {
+            navEventDispatcher.dispatchOnStarted(
+                NavigationEvent(0.1F, 0.1F, 0.1F, BackEvent.EDGE_LEFT)
+            )
+            navEventDispatcher.dispatchOnProgressed(
+                NavigationEvent(0.1F, 0.1F, 0.5F, BackEvent.EDGE_LEFT)
+            )
+        }
+
+        composeTestRule.waitForIdle()
+
+        composeTestRule.runOnIdle { navEventDispatcher.dispatchOnCompleted() }
 
         composeTestRule.runOnIdle {
             assertWithMessage("The number should be restored")
