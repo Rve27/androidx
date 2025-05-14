@@ -804,7 +804,7 @@ private class ThreePaneContentMeasurePolicy(
                                     ThreePaneScaffoldDefaults.MinPaneWidth.roundToPx()
                                 },
                             scaffoldWidth = scaffoldBounds.width
-                        ) ?: it.measuringWidth,
+                        ) ?: min(it.measuringWidth, scaffoldBounds.width),
                     height =
                         it.dragToResizeState?.getDraggedHeight(
                             measuringHeight = it.measuringHeight,
@@ -813,7 +813,7 @@ private class ThreePaneContentMeasurePolicy(
                                     ThreePaneScaffoldDefaults.MinPaneHeight.roundToPx()
                                 },
                             scaffoldHeight = scaffoldBounds.height
-                        ) ?: it.measuringHeight
+                        ) ?: min(it.measuringHeight, scaffoldBounds.height)
                 )
             val alignment = (it.value as? PaneAdaptedValue.Levitated)?.alignment ?: Alignment.Center
             val offset = alignment.align(paneSize, scaffoldBounds.size, layoutDirection)

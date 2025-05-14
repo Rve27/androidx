@@ -44,6 +44,7 @@ import kotlinx.coroutines.coroutineScope
  * composable element via dragging. The state is saved and restored across recompositions and
  * configuration changes using [rememberSaveable].
  *
+ * @sample androidx.compose.material3.adaptive.samples.SupportingPaneScaffoldSampleWithExtraPaneLevitatedAsBottomSheet
  * @param dockedEdge The edge to which the element is docked. This determines the orientation of the
  *   resizing operation (horizontal or vertical) and the direction of the size change when dragging.
  * @param minSize The minimum allowed size for the resizable element, as a [Dp]. Defaults to
@@ -103,6 +104,7 @@ private fun DragToResizeState(
  *
  * This state object is primarily designed for internal use within pane scaffolds.
  *
+ * @sample androidx.compose.material3.adaptive.samples.SupportingPaneScaffoldSampleWithExtraPaneLevitatedAsBottomSheet
  * @see androidx.compose.material3.adaptive.layout.PaneScaffoldScope.dragToResize
  */
 @Stable
@@ -249,6 +251,8 @@ abstract class DragToResizeState private constructor() : DraggableState {
  * Note that [PaneScaffoldScope.dragToResize] and [DragToResizeState] only supports resizing along
  * one orientation according to their [DockedEdge]. For example if [DockedEdge.Top] or
  * [DockedEdge.Bottom] has been set, the resizing can only happen along the vertical axis.
+ *
+ * @sample androidx.compose.material3.adaptive.samples.SupportingPaneScaffoldSampleWithExtraPaneLevitatedAsBottomSheet
  */
 enum class DockedEdge {
     /** The top edge of the pane is fixed, and resizing happens by moving the bottom edge. */

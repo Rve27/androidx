@@ -139,6 +139,7 @@ sealed interface PaneScaffoldScope {
      * A [Modifier] that enables dragging to resize a pane. Note that this modifier will only take
      * effect when a pane is [PaneAdaptedValue.Levitated].
      *
+     * @sample androidx.compose.material3.adaptive.samples.SupportingPaneScaffoldSampleWithExtraPaneLevitatedAsBottomSheet
      * @param state The [DragToResizeState] which controls the resizing behavior.
      */
     fun Modifier.dragToResize(state: DragToResizeState): Modifier =

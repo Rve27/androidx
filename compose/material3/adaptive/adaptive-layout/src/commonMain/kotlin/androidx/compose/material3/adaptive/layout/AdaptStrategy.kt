@@ -88,6 +88,8 @@ sealed interface AdaptStrategy {
      *    single-pane layout; or
      * 3. [PaneAdaptedValue.Hidden] otherwise.
      *
+     * @sample androidx.compose.material3.adaptive.samples.levitateAdaptStrategySample
+     * @sample androidx.compose.material3.adaptive.samples.SupportingPaneScaffoldSampleWithExtraPaneLevitatedAsBottomSheet
      * @param strategy the strategy that specifies when the associated pane should be levitated; see
      *   [Strategy] for more detailed descriptions.
      * @param alignment the alignment of the associated pane when it's levitated, relatively to the
@@ -96,7 +98,6 @@ sealed interface AdaptStrategy {
      *   underlying layout and emphasize the levitated pane; by default it will be `null` and no
      *   scrim will show.
      */
-    // TODO(conradchen): Add usage samples.
     @Immutable
     class Levitate(
         val strategy: Strategy = Strategy.Always,
