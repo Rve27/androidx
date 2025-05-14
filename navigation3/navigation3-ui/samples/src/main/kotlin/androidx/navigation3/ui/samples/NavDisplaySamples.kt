@@ -21,6 +21,10 @@ import androidx.annotation.Sampled
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -90,7 +94,13 @@ fun SceneNav() {
                         backStack.removeAt(backStack.lastIndex)
                     }
                 }
-                entry<Dashboard> { dashboardArgs ->
+                entry<Dashboard>(
+                    metadata =
+                        NavDisplay.predictivePopTransitionSpec {
+                            slideInHorizontally(tween(700)) { it / 2 } togetherWith
+                                slideOutHorizontally(tween(700)) { -it / 2 }
+                        }
+                ) { dashboardArgs ->
                     val userId = dashboardArgs.userId
                     Dashboard(userId, onBack = { backStack.removeAt(backStack.lastIndex) })
                 }

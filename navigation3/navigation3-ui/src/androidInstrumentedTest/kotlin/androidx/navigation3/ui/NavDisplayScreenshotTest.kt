@@ -76,7 +76,7 @@ class NavDisplayScreenshotTest {
                 transitionSpec = {
                     slideInHorizontally { it / 2 } togetherWith slideOutHorizontally { -it / 2 }
                 },
-                popTransitionSpec = {
+                predictivePopTransitionSpec = {
                     slideInHorizontally { -it / 2 } togetherWith slideOutHorizontally { it / 2 }
                 }
             ) {

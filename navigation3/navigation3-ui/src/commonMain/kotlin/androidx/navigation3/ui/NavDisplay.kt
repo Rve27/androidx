@@ -24,9 +24,11 @@ import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.rememberTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +49,7 @@ import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
 import androidx.navigation3.ui.NavDisplay.POP_TRANSITION_SPEC
+import androidx.navigation3.ui.NavDisplay.PREDICTIVE_POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
 import kotlin.reflect.KClass
 import kotlinx.coroutines.flow.filter
@@ -70,8 +73,34 @@ public object NavDisplay {
         popTransitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform?
     ): Map<String, Any> = mapOf(POP_TRANSITION_SPEC to popTransitionSpec)
 
+    /**
+     * Function to be called on the [NavEntry.metadata] to notify the [NavDisplay] that, when
+     * popping from backstack using a Predictive back gesture, the content should be animated using
+     * the provided [ContentTransform].
+     */
+    public fun predictivePopTransitionSpec(
+        predictivePopTransitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform?
+    ): Map<String, Any> = mapOf(PREDICTIVE_POP_TRANSITION_SPEC to predictivePopTransitionSpec)
+
+    public val defaultPredictivePopTransitionSpec:
+        AnimatedContentTransitionScope<*>.() -> ContentTransform =
+        {
+            ContentTransform(
+                fadeIn(
+                    spring(
+                        dampingRatio = 1.0f, // reflects material3 motionScheme.defaultEffectsSpec()
+                        stiffness = 1600.0f // reflects material3 motionScheme.defaultEffectsSpec()
+                    )
+                ),
+                scaleOut(
+                    targetScale = 0.7f,
+                ),
+            )
+        }
+
     internal const val TRANSITION_SPEC = "transitionSpec"
     internal const val POP_TRANSITION_SPEC = "popTransitionSpec"
+    internal const val PREDICTIVE_POP_TRANSITION_SPEC = "predictivePopTransitionSpec"
 
     internal const val DEFAULT_TRANSITION_DURATION_MILLISECOND = 700
 }
@@ -101,6 +130,8 @@ public object NavDisplay {
  * @param sceneStrategy the [SceneStrategy] to determine which scene to render a list of entries.
  * @param transitionSpec Default [ContentTransform] when navigating to [NavEntry]s.
  * @param popTransitionSpec Default [ContentTransform] when popping [NavEntry]s.
+ * @param predictivePopTransitionSpec Default [ContentTransform] when popping with predictive back
+ *   [NavEntry]s.
  * @param entryProvider lambda used to construct each possible [NavEntry]
  * @sample androidx.navigation3.ui.samples.SceneNav
  * @sample androidx.navigation3.ui.samples.SceneNavSharedEntrySample
@@ -132,6 +163,8 @@ public fun <T : Any> NavDisplay(
             fadeOut(animationSpec = tween(DEFAULT_TRANSITION_DURATION_MILLISECOND))
         )
     },
+    predictivePopTransitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform =
+        NavDisplay.defaultPredictivePopTransitionSpec,
     entryProvider: (key: T) -> NavEntry<T>,
 ) {
     require(backStack.isNotEmpty()) { "NavDisplay backstack cannot be empty" }
@@ -303,12 +336,19 @@ public fun <T : Any> NavDisplay(
         }
 
         val contentTransform: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
-            if (isPop || inPredictiveBack) {
-                transitionEntry.contentTransform(POP_TRANSITION_SPEC)?.invoke(this)
-                    ?: popTransitionSpec(this)
-            } else {
-                transitionEntry.contentTransform(TRANSITION_SPEC)?.invoke(this)
-                    ?: transitionSpec(this)
+            when {
+                inPredictiveBack -> {
+                    transitionEntry.contentTransform(PREDICTIVE_POP_TRANSITION_SPEC)?.invoke(this)
+                        ?: predictivePopTransitionSpec(this)
+                }
+                isPop -> {
+                    transitionEntry.contentTransform(POP_TRANSITION_SPEC)?.invoke(this)
+                        ?: popTransitionSpec(this)
+                }
+                else -> {
+                    transitionEntry.contentTransform(TRANSITION_SPEC)?.invoke(this)
+                        ?: transitionSpec(this)
+                }
             }
         }
 
