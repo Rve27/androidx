@@ -28,14 +28,14 @@ internal class DialogScene<T : Any>(
     override val overlaidEntries: List<NavEntry<T>>,
     private val entry: NavEntry<T>,
     private val dialogProperties: DialogProperties,
-    private val onBack: () -> Unit,
+    private val onBack: (count: Int) -> Unit,
 ) : OverlayScene<T> {
 
     override val entries: List<NavEntry<T>> = listOf(entry)
 
     override val content: @Composable (() -> Unit) = {
         Dialog(
-            onDismissRequest = onBack,
+            onDismissRequest = { onBack(1) },
             properties = dialogProperties,
         ) {
             entry.content.invoke(entry.key)
@@ -48,13 +48,12 @@ internal class DialogScene<T : Any>(
  * within a [Dialog] instance.
  *
  * This strategy should always be added before any non-overlay scene strategies.
- *
- * @param onBack a callback for handling system back press.
  */
-public class DialogSceneStrategy<T : Any>(private val onBack: () -> Unit) : SceneStrategy<T> {
+public class DialogSceneStrategy<T : Any>() : SceneStrategy<T> {
     @Composable
     public override fun calculateScene(
         entries: List<NavEntry<T>>,
+        onBack: (count: Int) -> Unit,
     ): Scene<T>? {
         val lastEntry = entries.lastOrNull()
         val dialogProperties = lastEntry?.metadata?.get(DIALOG_KEY) as? DialogProperties

@@ -72,7 +72,10 @@ private class HierarchicalSceneStrategy<T : Any>(
     private val columns: Int,
 ) : SceneStrategy<T> {
     @Composable
-    override fun calculateScene(entries: List<NavEntry<T>>): Scene<T> {
+    override fun calculateScene(
+        entries: List<NavEntry<T>>,
+        onBack: (count: Int) -> Unit,
+    ): Scene<T> {
         val includedEntries = entries.takeLast(columns)
         return remember(columns, includedEntries) {
             HierarchicalScene(

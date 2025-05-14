@@ -178,7 +178,8 @@ public fun <T : Any> NavDisplay(
         entryDecorators = entryDecorators + transitionAwareLifecycleNavEntryDecorator,
         entryProvider = entryProvider
     ) { entries ->
-        val allScenes = mutableListOf(sceneStrategy.calculateSceneWithSinglePaneFallback(entries))
+        val allScenes =
+            mutableListOf(sceneStrategy.calculateSceneWithSinglePaneFallback(entries, onBack))
         do {
             val overlayScene = allScenes.last() as? OverlayScene
             val overlaidEntries = overlayScene?.overlaidEntries
@@ -187,7 +188,8 @@ public fun <T : Any> NavDisplay(
                 require(overlaidEntries.isNotEmpty()) {
                     "Overlaid entries from $overlayScene must not be empty"
                 }
-                allScenes += sceneStrategy.calculateSceneWithSinglePaneFallback(overlaidEntries)
+                allScenes +=
+                    sceneStrategy.calculateSceneWithSinglePaneFallback(overlaidEntries, onBack)
             }
         } while (overlaidEntries != null)
         val overlayScenes = allScenes.dropLast(1)
@@ -294,7 +296,7 @@ public fun <T : Any> NavDisplay(
 
         if (inPredictiveBack) {
             val peekScene =
-                sceneStrategy.calculateSceneWithSinglePaneFallback(scene.previousEntries)
+                sceneStrategy.calculateSceneWithSinglePaneFallback(scene.previousEntries, onBack)
             val peekSceneKey = peekScene::class to peekScene.key
             scenes[peekSceneKey] = peekScene
             if (transitionState.currentState != peekSceneKey) {

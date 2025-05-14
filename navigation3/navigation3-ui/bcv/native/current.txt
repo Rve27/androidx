@@ -7,7 +7,7 @@
 
 // Library unique name: <androidx.navigation3:navigation3-ui>
 abstract fun interface <#A: kotlin/Any> androidx.navigation3.ui/SceneStrategy { // androidx.navigation3.ui/SceneStrategy|null[0]
-    abstract fun calculateScene(kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>): androidx.navigation3.ui/Scene<#A>? // androidx.navigation3.ui/SceneStrategy.calculateScene|calculateScene(kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>){}[0]
+    abstract fun calculateScene(kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>, kotlin/Function1<kotlin/Int, kotlin/Unit>): androidx.navigation3.ui/Scene<#A>? // androidx.navigation3.ui/SceneStrategy.calculateScene|calculateScene(kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>;kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
     open fun then(androidx.navigation3.ui/SceneStrategy<#A>): androidx.navigation3.ui/SceneStrategy<#A> // androidx.navigation3.ui/SceneStrategy.then|then(androidx.navigation3.ui.SceneStrategy<1:0>){}[0]
 }
 
@@ -28,9 +28,9 @@ abstract interface <#A: kotlin/Any> androidx.navigation3.ui/Scene { // androidx.
 }
 
 final class <#A: kotlin/Any> androidx.navigation3.ui/DialogSceneStrategy : androidx.navigation3.ui/SceneStrategy<#A> { // androidx.navigation3.ui/DialogSceneStrategy|null[0]
-    constructor <init>(kotlin/Function0<kotlin/Unit>) // androidx.navigation3.ui/DialogSceneStrategy.<init>|<init>(kotlin.Function0<kotlin.Unit>){}[0]
+    constructor <init>() // androidx.navigation3.ui/DialogSceneStrategy.<init>|<init>(){}[0]
 
-    final fun calculateScene(kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>): androidx.navigation3.ui/Scene<#A>? // androidx.navigation3.ui/DialogSceneStrategy.calculateScene|calculateScene(kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>){}[0]
+    final fun calculateScene(kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>, kotlin/Function1<kotlin/Int, kotlin/Unit>): androidx.navigation3.ui/Scene<#A>? // androidx.navigation3.ui/DialogSceneStrategy.calculateScene|calculateScene(kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>;kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
 
     final object Companion { // androidx.navigation3.ui/DialogSceneStrategy.Companion|null[0]
         final fun dialog(androidx.compose.ui.window/DialogProperties = ...): kotlin.collections/Map<kotlin/String, kotlin/Any> // androidx.navigation3.ui/DialogSceneStrategy.Companion.dialog|dialog(androidx.compose.ui.window.DialogProperties){}[0]
@@ -40,7 +40,7 @@ final class <#A: kotlin/Any> androidx.navigation3.ui/DialogSceneStrategy : andro
 final class <#A: kotlin/Any> androidx.navigation3.ui/SinglePaneSceneStrategy : androidx.navigation3.ui/SceneStrategy<#A> { // androidx.navigation3.ui/SinglePaneSceneStrategy|null[0]
     constructor <init>() // androidx.navigation3.ui/SinglePaneSceneStrategy.<init>|<init>(){}[0]
 
-    final fun calculateScene(kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>): androidx.navigation3.ui/Scene<#A> // androidx.navigation3.ui/SinglePaneSceneStrategy.calculateScene|calculateScene(kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>){}[0]
+    final fun calculateScene(kotlin.collections/List<androidx.navigation3.runtime/NavEntry<#A>>, kotlin/Function1<kotlin/Int, kotlin/Unit>): androidx.navigation3.ui/Scene<#A> // androidx.navigation3.ui/SinglePaneSceneStrategy.calculateScene|calculateScene(kotlin.collections.List<androidx.navigation3.runtime.NavEntry<1:0>>;kotlin.Function1<kotlin.Int,kotlin.Unit>){}[0]
 }
 
 final object androidx.navigation3.ui/NavDisplay { // androidx.navigation3.ui/NavDisplay|null[0]

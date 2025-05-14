@@ -26,9 +26,23 @@ import androidx.navigation3.runtime.NavEntry
  * instead to delegate to another strategy.
  */
 public fun interface SceneStrategy<T : Any> {
+    /**
+     * Given a back stack of [entries], calculate whether this [SceneStrategy] should take on the
+     * task of rendering one or more of those entries.
+     *
+     * By returning a non-null [Scene], your [Scene] takes on the responsibility of rendering the
+     * set of entries you declare in [Scene.entries]. If you return `null`, the next available
+     * [SceneStrategy] will be called.
+     *
+     * @param entries The entries on the back stack that should be considered valid to render via a
+     *   returned Scene.
+     * @param onBack a callback that should be connected to any internal handling of system back
+     *   done by the returned [Scene]. The passed [Int] should be the number of entries were popped.
+     */
     @Composable
     public fun calculateScene(
         entries: List<NavEntry<T>>,
+        onBack: (count: Int) -> Unit,
     ): Scene<T>?
 
     /**
@@ -36,7 +50,7 @@ public fun interface SceneStrategy<T : Any> {
      * [SceneStrategy].
      */
     public infix fun then(sceneStrategy: SceneStrategy<T>): SceneStrategy<T> =
-        SceneStrategy { entries ->
-            calculateScene(entries) ?: sceneStrategy.calculateScene(entries)
+        SceneStrategy { entries, onBack ->
+            calculateScene(entries, onBack) ?: sceneStrategy.calculateScene(entries, onBack)
         }
 }

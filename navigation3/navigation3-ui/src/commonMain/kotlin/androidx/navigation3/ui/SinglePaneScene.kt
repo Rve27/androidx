@@ -35,7 +35,7 @@ internal data class SinglePaneScene<T : Any>(
  */
 public class SinglePaneSceneStrategy<T : Any> : SceneStrategy<T> {
     @Composable
-    override fun calculateScene(entries: List<NavEntry<T>>): Scene<T> =
+    override fun calculateScene(entries: List<NavEntry<T>>, onBack: (Int) -> Unit): Scene<T> =
         SinglePaneScene(
             key = entries.last().key,
             entry = entries.last(),
@@ -45,5 +45,7 @@ public class SinglePaneSceneStrategy<T : Any> : SceneStrategy<T> {
 
 @Composable
 internal fun <T : Any> SceneStrategy<T>.calculateSceneWithSinglePaneFallback(
-    entries: List<NavEntry<T>>
-): Scene<T> = calculateScene(entries) ?: SinglePaneSceneStrategy<T>().calculateScene(entries)
+    entries: List<NavEntry<T>>,
+    onBack: (count: Int) -> Unit,
+): Scene<T> =
+    calculateScene(entries, onBack) ?: SinglePaneSceneStrategy<T>().calculateScene(entries, onBack)

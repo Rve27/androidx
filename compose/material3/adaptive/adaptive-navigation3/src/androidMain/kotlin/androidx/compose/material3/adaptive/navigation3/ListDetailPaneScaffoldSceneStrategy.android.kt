@@ -36,9 +36,6 @@ import androidx.navigation3.ui.SceneStrategy
 /**
  * Creates and remembers a [ListDetailPaneScaffoldSceneStrategy].
  *
- * @param onBack a callback for handling system back press. The passed [Int] refers to the number of
- *   entries to pop from the end of the backstack, as calculated by the
- *   [ListDetailPaneScaffoldSceneStrategy].
  * @param backNavigationBehavior the behavior describing which backstack entries may be skipped
  *   during the back navigation. See [BackNavigationBehavior].
  * @param directive The top-level directives about how the list-detail scaffold should arrange its
@@ -47,14 +44,12 @@ import androidx.navigation3.ui.SceneStrategy
 @ExperimentalMaterial3AdaptiveApi
 @Composable
 public fun <T : Any> rememberListDetailSceneStrategy(
-    onBack: (Int) -> Unit,
     backNavigationBehavior: BackNavigationBehavior =
         BackNavigationBehavior.PopUntilCurrentDestinationChange,
     directive: PaneScaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfo()),
 ): ListDetailPaneScaffoldSceneStrategy<T> {
-    return remember(onBack, backNavigationBehavior, directive) {
+    return remember(backNavigationBehavior, directive) {
         ListDetailPaneScaffoldSceneStrategy(
-            onBack = onBack,
             backNavigationBehavior = backNavigationBehavior,
             directive = directive,
         )
@@ -68,9 +63,6 @@ public fun <T : Any> rememberListDetailSceneStrategy(
  * panes will be displayed together if the window size is sufficiently large, and will automatically
  * adapt if the window size changes, for example, on a foldable device.
  *
- * @param onBack a callback for handling system back press. The passed [Int] refers to the number of
- *   entries to pop from the end of the backstack, as calculated by the
- *   [ListDetailPaneScaffoldSceneStrategy].
  * @param backNavigationBehavior the behavior describing which backstack entries may be skipped
  *   during the back navigation. See [BackNavigationBehavior].
  * @param directive The top-level directives about how the list-detail scaffold should arrange its
@@ -78,12 +70,14 @@ public fun <T : Any> rememberListDetailSceneStrategy(
  */
 @ExperimentalMaterial3AdaptiveApi
 public class ListDetailPaneScaffoldSceneStrategy<T : Any>(
-    public val onBack: (Int) -> Unit,
     public val backNavigationBehavior: BackNavigationBehavior,
     public val directive: PaneScaffoldDirective,
 ) : SceneStrategy<T> {
     @Composable
-    override fun calculateScene(entries: List<NavEntry<T>>): Scene<T>? {
+    override fun calculateScene(
+        entries: List<NavEntry<T>>,
+        onBack: (count: Int) -> Unit,
+    ): Scene<T>? {
         if (!entries.last().isListDetailEntry()) return null
 
         val sceneKey = (entries.last().metadata[ListDetailRoleKey] as PaneMetadata).sceneKey

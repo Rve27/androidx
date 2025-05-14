@@ -2,8 +2,8 @@
 package androidx.navigation3.ui {
 
   public final class DialogSceneStrategy<T> implements androidx.navigation3.ui.SceneStrategy<T> {
-    ctor public DialogSceneStrategy(kotlin.jvm.functions.Function0<kotlin.Unit> onBack);
-    method @androidx.compose.runtime.Composable public androidx.navigation3.ui.Scene<T>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries);
+    ctor public DialogSceneStrategy();
+    method @androidx.compose.runtime.Composable public androidx.navigation3.ui.Scene<T>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries, kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit> onBack);
     field public static final androidx.navigation3.ui.DialogSceneStrategy.Companion Companion;
   }
 
@@ -53,13 +53,13 @@ package androidx.navigation3.ui {
   }
 
   public fun interface SceneStrategy<T> {
-    method @androidx.compose.runtime.Composable public androidx.navigation3.ui.Scene<T>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries);
+    method @androidx.compose.runtime.Composable public androidx.navigation3.ui.Scene<T>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries, kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit> onBack);
     method public default infix androidx.navigation3.ui.SceneStrategy<T> then(androidx.navigation3.ui.SceneStrategy<T> sceneStrategy);
   }
 
   public final class SinglePaneSceneStrategy<T> implements androidx.navigation3.ui.SceneStrategy<T> {
     ctor public SinglePaneSceneStrategy();
-    method @androidx.compose.runtime.Composable public androidx.navigation3.ui.Scene<T> calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries);
+    method @androidx.compose.runtime.Composable public androidx.navigation3.ui.Scene<T> calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries, kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit> onBack);
   }
 
 }

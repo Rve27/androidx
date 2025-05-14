@@ -103,8 +103,7 @@ class NavDisplayTest {
             NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
-                sceneStrategy =
-                    DialogSceneStrategy(onBack = { backStack.removeAt(backStack.lastIndex) }),
+                sceneStrategy = DialogSceneStrategy(),
             ) {
                 when (it) {
                     first ->
