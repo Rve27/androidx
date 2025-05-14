@@ -227,6 +227,15 @@ class CallRepository {
         mBinder?.addCall(callAttributesCompat, getNextNotificationId())
     }
 
+    fun onIncomingCallDetected(attributes: CallAttributesCompat, id: Int) {
+        if (!mIsBound || mBinder == null) {
+            Log.w(LOG_TAG, "onIncomingCallDetected: Service is not connected/bound.")
+            return
+        }
+        Log.i(LOG_TAG, "onIncomingCallDetected: ")
+        mBinder?.addCall(attributes, id)
+    }
+
     fun setCallActive(callId: String) {
         if (!mIsBound || mBinder == null) {
             Log.w(LOG_TAG, "setCallActive: Service is not connected/bound.")

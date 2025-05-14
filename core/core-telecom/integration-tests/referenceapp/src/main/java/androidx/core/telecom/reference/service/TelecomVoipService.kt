@@ -230,11 +230,6 @@ class TelecomVoipService() : LocalServiceBinder, LifecycleService() {
                                         // For outgoing calls, simulate the remote user connecting
                                         delay(CALL_CONNECTS_DELAY)
                                         setCallActive(callId)
-                                    } else {
-                                        // For incoming calls, the call can only be answered via the
-                                        // notification. This block will only be entered if onAnswer
-                                        // is clicked on the call-style notification
-                                        setCallActive(callId)
                                     }
                                 }
                             }
@@ -743,7 +738,7 @@ class TelecomVoipService() : LocalServiceBinder, LifecycleService() {
                                 attributes
                             )
                         startForegroundWithNotification(notificationId, notification)
-                        addCall(attributes, notificationId)
+                        setCallActive(callId)
                     } else {
                         Log.w(
                             TAG,
@@ -754,12 +749,13 @@ class TelecomVoipService() : LocalServiceBinder, LifecycleService() {
                 }
                 ACTION_DECLINE_CALL -> {
                     Log.i(TAG, "[$callId] Notification Action: Decline")
+                    endCall(callId)
                     checkAndStopForegroundIfNeeded()
-                    mCallNotificationManager.cancelCallNotification(callId)
                 }
                 ACTION_HANGUP_CALL -> {
                     Log.i(TAG, "[$callId] Notification Action: Hangup")
                     endCall(callId)
+                    checkAndStopForegroundIfNeeded()
                 }
             }
         } else {
