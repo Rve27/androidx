@@ -2,16 +2,16 @@
 package androidx.wear.watchface.push {
 
   public interface WatchFacePushManager {
-    method public suspend Object? addWatchFace(android.os.ParcelFileDescriptor apkFd, String validationToken, kotlin.coroutines.Continuation<? super androidx.wear.watchface.push.WatchFacePushManager.WatchFaceDetails>);
-    method public suspend Object? isWatchFaceActive(String watchfacePackageName, kotlin.coroutines.Continuation<? super java.lang.Boolean>);
-    method public suspend Object? listWatchFaces(kotlin.coroutines.Continuation<? super androidx.wear.watchface.push.WatchFacePushManager.ListWatchFacesResponse>);
-    method public suspend Object? removeWatchFace(String slotId, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public suspend Object? setWatchFaceAsActive(String slotId, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public suspend Object? updateWatchFace(String slotId, android.os.ParcelFileDescriptor apkFd, String validationToken, kotlin.coroutines.Continuation<? super androidx.wear.watchface.push.WatchFacePushManager.WatchFaceDetails>);
+    method @kotlin.jvm.Throws(exceptionClasses=AddWatchFaceException::class) public suspend Object? addWatchFace(android.os.ParcelFileDescriptor apkFd, String validationToken, kotlin.coroutines.Continuation<? super androidx.wear.watchface.push.WatchFacePushManager.WatchFaceDetails>) throws androidx.wear.watchface.push.WatchFacePushManager.AddWatchFaceException;
+    method @kotlin.jvm.Throws(exceptionClasses=IsWatchFaceActiveException::class) public suspend Object? isWatchFaceActive(String watchfacePackageName, kotlin.coroutines.Continuation<? super java.lang.Boolean>) throws androidx.wear.watchface.push.WatchFacePushManager.IsWatchFaceActiveException;
+    method @kotlin.jvm.Throws(exceptionClasses=ListWatchFacesException::class) public suspend Object? listWatchFaces(kotlin.coroutines.Continuation<? super androidx.wear.watchface.push.WatchFacePushManager.ListWatchFacesResponse>) throws androidx.wear.watchface.push.WatchFacePushManager.ListWatchFacesException;
+    method @kotlin.jvm.Throws(exceptionClasses=RemoveWatchFaceException::class) public suspend Object? removeWatchFace(String slotId, kotlin.coroutines.Continuation<? super kotlin.Unit>) throws androidx.wear.watchface.push.WatchFacePushManager.RemoveWatchFaceException;
+    method @kotlin.jvm.Throws(exceptionClasses=SetWatchFaceAsActiveException::class) public suspend Object? setWatchFaceAsActive(String slotId, kotlin.coroutines.Continuation<? super kotlin.Unit>) throws androidx.wear.watchface.push.WatchFacePushManager.SetWatchFaceAsActiveException;
+    method @kotlin.jvm.Throws(exceptionClasses=UpdateWatchFaceException::class) public suspend Object? updateWatchFace(String slotId, android.os.ParcelFileDescriptor apkFd, String validationToken, kotlin.coroutines.Continuation<? super androidx.wear.watchface.push.WatchFacePushManager.WatchFaceDetails>) throws androidx.wear.watchface.push.WatchFacePushManager.UpdateWatchFaceException;
   }
 
   public static final class WatchFacePushManager.AddWatchFaceException extends java.lang.Exception {
-    ctor public WatchFacePushManager.AddWatchFaceException(com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.AddException rootCause);
+    ctor public WatchFacePushManager.AddWatchFaceException(int errorCode, Throwable rootCause);
     method public int getErrorCode();
     property public int errorCode;
     property public String? message;
@@ -34,7 +34,7 @@ package androidx.wear.watchface.push {
   }
 
   public static final class WatchFacePushManager.IsWatchFaceActiveException extends java.lang.Exception {
-    ctor public WatchFacePushManager.IsWatchFaceActiveException(com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.IsActiveException rootCause);
+    ctor public WatchFacePushManager.IsWatchFaceActiveException(int errorCode, Throwable rootCause);
     method public int getErrorCode();
     property public int errorCode;
     property public String? message;
@@ -49,7 +49,7 @@ package androidx.wear.watchface.push {
   }
 
   public static final class WatchFacePushManager.ListWatchFacesException extends java.lang.Exception {
-    ctor public WatchFacePushManager.ListWatchFacesException(com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.ListException rootCause);
+    ctor public WatchFacePushManager.ListWatchFacesException(int errorCode, Throwable rootCause);
     method public int getErrorCode();
     property public int errorCode;
     property public String? message;
@@ -70,7 +70,7 @@ package androidx.wear.watchface.push {
   }
 
   public static final class WatchFacePushManager.RemoveWatchFaceException extends java.lang.Exception {
-    ctor public WatchFacePushManager.RemoveWatchFaceException(com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.RemoveException rootCause);
+    ctor public WatchFacePushManager.RemoveWatchFaceException(int errorCode, Throwable rootCause);
     method public int getErrorCode();
     property public int errorCode;
     property public String? message;
@@ -85,8 +85,7 @@ package androidx.wear.watchface.push {
   }
 
   public static final class WatchFacePushManager.SetWatchFaceAsActiveException extends java.lang.Exception {
-    ctor public WatchFacePushManager.SetWatchFaceAsActiveException(com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.SetActiveException? rootCause);
-    ctor public WatchFacePushManager.SetWatchFaceAsActiveException(int errorCode);
+    ctor public WatchFacePushManager.SetWatchFaceAsActiveException(int errorCode, optional Throwable? rootCause);
     method public int getErrorCode();
     property public int errorCode;
     property public String? message;
@@ -105,7 +104,7 @@ package androidx.wear.watchface.push {
   }
 
   public static final class WatchFacePushManager.UpdateWatchFaceException extends java.lang.Exception {
-    ctor public WatchFacePushManager.UpdateWatchFaceException(com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.UpdateException rootCause);
+    ctor public WatchFacePushManager.UpdateWatchFaceException(int errorCode, Throwable rootCause);
     method public int getErrorCode();
     property public int errorCode;
     property public String? message;

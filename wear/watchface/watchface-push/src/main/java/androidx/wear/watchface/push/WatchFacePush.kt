@@ -66,6 +66,7 @@ public interface WatchFacePushManager {
      *   could happen if the Watch Face Push service on the watch cannot be accessed. See
      *   [ListWatchFacesException.errorCode] for details.
      */
+    @Throws(ListWatchFacesException::class)
     public suspend fun listWatchFaces(): ListWatchFacesResponse
 
     /**
@@ -82,7 +83,7 @@ public interface WatchFacePushManager {
      *   watch cannot be accessed. See [RemoveWatchFaceException.errorCode] for details.
      * @see addWatchFace
      */
-    public suspend fun removeWatchFace(slotId: String)
+    @Throws(RemoveWatchFaceException::class) public suspend fun removeWatchFace(slotId: String)
 
     /**
      * Adds a new watch face. On success, the given watch face will be available in the watch face
@@ -98,6 +99,7 @@ public interface WatchFacePushManager {
      *   Face Push service on the watch cannot be accessed. See [AddWatchFaceException.errorCode]
      *   for the possible errors thrown by this method if the watch face cannot be added.
      */
+    @Throws(AddWatchFaceException::class)
     public suspend fun addWatchFace(
         apkFd: ParcelFileDescriptor,
         validationToken: String
@@ -122,6 +124,7 @@ public interface WatchFacePushManager {
      *   [UpdateWatchFaceException.errorCode] for the possible errors thrown by this method if the
      *   watch face cannot be updated.
      */
+    @Throws(UpdateWatchFaceException::class)
     public suspend fun updateWatchFace(
         slotId: String,
         apkFd: ParcelFileDescriptor,
@@ -139,6 +142,7 @@ public interface WatchFacePushManager {
      *   Face Push service on the watch cannot be accessed. See
      *   [IsWatchFaceActiveException.errorCode] for details.
      */
+    @Throws(IsWatchFaceActiveException::class)
     public suspend fun isWatchFaceActive(watchfacePackageName: String): Boolean
 
     /**
@@ -152,6 +156,7 @@ public interface WatchFacePushManager {
      *   missing, or if the Watch Face Push service on the watch cannot be accessed. See
      *   [SetWatchFaceAsActiveException.errorCode] for details.
      */
+    @Throws(SetWatchFaceAsActiveException::class)
     public suspend fun setWatchFaceAsActive(slotId: String)
 
     /**
@@ -197,13 +202,29 @@ public interface WatchFacePushManager {
         public fun getMetaData(key: String): () -> List<String> = { getMetaDataFunc(key) }
     }
 
-    /** An exception that can be thrown by [addWatchFace] */
+    /**
+     * An exception that can be thrown by [addWatchFace]
+     *
+     * @param errorCode The specific subtype of error occurred. See [ErrorCode] for the possible
+     *   values.
+     * @param rootCause The exception that caused the problem in the first place.
+     */
     public class AddWatchFaceException(
-        private val rootCause:
-            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.AddException,
+        public val errorCode: @ErrorCode Int,
+        private val rootCause: Throwable
     ) : Exception(rootCause) {
 
         public companion object {
+
+            internal fun errorCodeFromWearSdkException(
+                wearSdkException:
+                    com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.AddException
+            ): @ErrorCode Int {
+                // Given that the error codes in this enum are defined in terms of the error codes
+                // of the wearSdkException, we can simply return these values as they are.
+                return wearSdkException.errorCode
+            }
+
             /**
              * Unknown error while adding a watch face.
              *
@@ -289,13 +310,9 @@ public interface WatchFacePushManager {
             internal annotation class ErrorCode
         }
 
-        /** The specific subtype of error occurred. See [ErrorCode] for the possible values. */
-        public val errorCode: @ErrorCode Int
-            get() = rootCause.errorCode
-
         override val message: String?
             get() =
-                when (rootCause.errorCode) {
+                when (errorCode) {
                     ERROR_UNKNOWN ->
                         "Unknown error while adding a watch face. Typically this means that the Watch Face Push service on the watch could not be accessed."
                     ERROR_UNEXPECTED_CONTENT ->
@@ -312,13 +329,29 @@ public interface WatchFacePushManager {
                 }
     }
 
-    /** An exception that can be thrown by [updateWatchFace] */
+    /**
+     * An exception that can be thrown by [updateWatchFace]
+     *
+     * @param errorCode The specific subtype of error occurred. See [ErrorCode] for the possible
+     *   values.
+     * @param rootCause The exception that caused the problem in the first place.
+     */
     public class UpdateWatchFaceException(
-        private val rootCause:
-            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.UpdateException,
+        public val errorCode: @ErrorCode Int,
+        private val rootCause: Throwable,
     ) : Exception(rootCause) {
 
         public companion object {
+
+            internal fun errorCodeFromWearSdkException(
+                wearSdkException:
+                    com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.UpdateException
+            ): @ErrorCode Int {
+                // Given that the error codes in this enum are defined in terms of the error codes
+                // of the wearSdkException, we can simply return these values as they are.
+                return wearSdkException.errorCode
+            }
+
             /**
              * Unknown error while updating a watch face. Typically this means that the Watch Face
              * Push service on the watch could not be accessed or that the watch may be in a bad
@@ -400,13 +433,9 @@ public interface WatchFacePushManager {
             internal annotation class ErrorCode
         }
 
-        /** The specific subtype of error occurred. See [ErrorCode] for the possible values. */
-        public val errorCode: @ErrorCode Int
-            get() = rootCause.errorCode
-
         override val message: String?
             get() =
-                when (rootCause.errorCode) {
+                when (errorCode) {
                     ERROR_UNKNOWN ->
                         "Unknown error while updating a watch face. Typically this means that the Watch Face Push service on the watch could not be accessed."
                     ERROR_UNEXPECTED_CONTENT ->
@@ -423,13 +452,29 @@ public interface WatchFacePushManager {
                 }
     }
 
-    /** An exception that can be thrown by [removeWatchFace] */
+    /**
+     * An exception that can be thrown by [removeWatchFace]
+     *
+     * @param errorCode The specific subtype of error occurred. See [ErrorCode] for the possible
+     *   values.
+     * @param rootCause The exception that caused the problem in the first place.
+     */
     public class RemoveWatchFaceException(
-        private val rootCause:
-            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.RemoveException,
+        public val errorCode: @ErrorCode Int,
+        private val rootCause: Throwable,
     ) : Exception(rootCause) {
 
         public companion object {
+
+            internal fun errorCodeFromWearSdkException(
+                wearSdkException:
+                    com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.RemoveException
+            ): @ErrorCode Int {
+                // Given that the error codes in this enum are defined in terms of the error codes
+                // of the wearSdkException, we can simply return these values as they are.
+                return wearSdkException.errorCode
+            }
+
             /**
              * Unknown error while removing a watch face. Typically this means that the Watch Face
              * Push service on the watch could not be accessed or that the watch may be in a bad
@@ -466,13 +511,9 @@ public interface WatchFacePushManager {
             internal annotation class ErrorCode
         }
 
-        /** The specific subtype of error occurred. See [ErrorCode] for the possible values. */
-        public val errorCode: @ErrorCode Int
-            get() = rootCause.errorCode
-
         override val message: String?
             get() =
-                when (rootCause.errorCode) {
+                when (errorCode) {
                     ERROR_UNKNOWN ->
                         "Unknown error while removing a watch face. Typically this means that the Watch Face Push service on the watch could not be accessed."
                     ERROR_INVALID_SLOT_ID ->
@@ -481,22 +522,29 @@ public interface WatchFacePushManager {
                 }
     }
 
-    /** An exception that can be thrown by [setWatchFaceAsActive] */
-    public class SetWatchFaceAsActiveException
-    private constructor(
-        rootCause:
-            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.SetActiveException?,
-        @ErrorCode public val errorCode: Int,
+    /**
+     * An exception that can be thrown by [setWatchFaceAsActive]
+     *
+     * @param errorCode The specific subtype of error occurred. See [ErrorCode] for the possible
+     *   values.
+     * @param rootCause The exception that caused the problem in the first place.
+     */
+    public class SetWatchFaceAsActiveException(
+        public val errorCode: @ErrorCode Int,
+        private val rootCause: Throwable? = null,
     ) : Exception(rootCause) {
 
-        public constructor(@ErrorCode errorCode: Int) : this(null, errorCode)
-
-        public constructor(
-            rootCause:
-                com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.SetActiveException?
-        ) : this(rootCause, rootCause?.errorCode ?: ERROR_UNKNOWN)
-
         public companion object {
+
+            internal fun errorCodeFromWearSdkException(
+                wearSdkException:
+                    com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.SetActiveException
+            ): @ErrorCode Int {
+                // Given that the error codes in this enum are defined in terms of the error codes
+                // of the wearSdkException, we can simply return these values as they are.
+                return wearSdkException.errorCode
+            }
+
             /**
              * Unknown error while setting a watch face as active. Typically this means that the
              * Watch Face Push service on the watch could not be accessed or that the watch may be
@@ -548,7 +596,6 @@ public interface WatchFacePushManager {
             internal annotation class ErrorCode
         }
 
-        /** The specific subtype of error occurred. See [ErrorCode] for the possible values. */
         override val message: String?
             get() =
                 when (errorCode) {
@@ -564,13 +611,29 @@ public interface WatchFacePushManager {
                 }
     }
 
-    /** An exception that can be thrown by [isWatchFaceActive] */
+    /**
+     * An exception that can be thrown by [isWatchFaceActive]
+     *
+     * @param errorCode The specific subtype of error occurred. See [ErrorCode] for the possible
+     *   values.
+     * @param rootCause The exception that caused the problem in the first place.
+     */
     public class IsWatchFaceActiveException(
-        private val rootCause:
-            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.IsActiveException,
+        public val errorCode: @ErrorCode Int,
+        private val rootCause: Throwable,
     ) : Exception(rootCause) {
 
         public companion object {
+
+            internal fun errorCodeFromWearSdkException(
+                wearSdkException:
+                    com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.IsActiveException
+            ): @ErrorCode Int {
+                // Given that the error codes in this enum are defined in terms of the error codes
+                // of the wearSdkException, we can simply return these values as they are.
+                return wearSdkException.errorCode
+            }
+
             /**
              * Unknown error while querying for watch face. Typically this means that the Watch Face
              * Push service on the watch could not be accessed or that the watch may be in a bad
@@ -607,13 +670,9 @@ public interface WatchFacePushManager {
             internal annotation class ErrorCode
         }
 
-        /** The specific subtype of error occurred. See [ErrorCode] for the possible values. */
-        public val errorCode: @ErrorCode Int
-            get() = rootCause.errorCode
-
         override val message: String?
             get() =
-                when (rootCause.errorCode) {
+                when (errorCode) {
                     ERROR_UNKNOWN ->
                         "Unknown error while querying for a watch face. Typically this means that the Watch Face Push service on the watch could not be accessed."
                     ERROR_INVALID_PACKAGE_NAME ->
@@ -622,13 +681,29 @@ public interface WatchFacePushManager {
                 }
     }
 
-    /** An exception that can be thrown by [listWatchFaces] */
+    /**
+     * An exception that can be thrown by [listWatchFaces]
+     *
+     * @param errorCode The specific subtype of error occurred. See [ErrorCode] for the possible
+     *   values.
+     * @param rootCause The exception that caused the problem in the first place.
+     */
     public class ListWatchFacesException(
-        private val rootCause:
-            com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.ListException,
+        public val errorCode: @ErrorCode Int,
+        private val rootCause: Throwable
     ) : Exception(rootCause) {
 
         public companion object {
+
+            internal fun errorCodeFromWearSdkException(
+                wearSdkException:
+                    com.google.wear.services.watchfaces.watchfacepush.WatchFacePushManager.ListException
+            ): @ErrorCode Int {
+                // Given that the error codes in this enum are defined in terms of the error codes
+                // of the wearSdkException, we can simply return these values as they are.
+                return wearSdkException.errorCode
+            }
+
             /**
              * Unknown error while listing watch faces. Typically this means that the Watch Face
              * Push service on the watch could not be accessed or that the watch may be in a bad
@@ -652,13 +727,9 @@ public interface WatchFacePushManager {
             internal annotation class ErrorCode
         }
 
-        /** The specific subtype of error occurred. See [ErrorCode] for the possible values. */
-        public val errorCode: @ErrorCode Int
-            get() = rootCause.errorCode
-
         override val message: String?
             get() =
-                when (rootCause.errorCode) {
+                when (errorCode) {
                     ERROR_UNKNOWN ->
                         "Unknown error while listing watch faces. Typically this means that the Watch Face Push service on the watch could not be accessed."
                     else -> "Unknown error code"
@@ -704,7 +775,13 @@ internal class WatchFacePushManagerImpl(private var context: Context) : WatchFac
                             remainingSlotCount = result?.availableSlotCount ?: 0
                         )
                     },
-                    { e -> WatchFacePushManager.ListWatchFacesException(e) }
+                    { e ->
+                        WatchFacePushManager.ListWatchFacesException(
+                            WatchFacePushManager.ListWatchFacesException
+                                .errorCodeFromWearSdkException(e),
+                            e
+                        )
+                    }
                 )
             )
         }
@@ -719,7 +796,13 @@ internal class WatchFacePushManagerImpl(private var context: Context) : WatchFac
                 outcomeReceiver(
                     cont,
                     {},
-                    { it -> WatchFacePushManager.RemoveWatchFaceException(it) }
+                    { e ->
+                        WatchFacePushManager.RemoveWatchFaceException(
+                            WatchFacePushManager.RemoveWatchFaceException
+                                .errorCodeFromWearSdkException(e),
+                            e
+                        )
+                    }
                 )
             )
         }
@@ -746,7 +829,13 @@ internal class WatchFacePushManagerImpl(private var context: Context) : WatchFac
                             result.getMetaDataValues(key)
                         }
                     },
-                    { it -> WatchFacePushManager.AddWatchFaceException(it) }
+                    { e ->
+                        WatchFacePushManager.AddWatchFaceException(
+                            WatchFacePushManager.AddWatchFaceException
+                                .errorCodeFromWearSdkException(e),
+                            e
+                        )
+                    }
                 )
             )
         }
@@ -775,7 +864,13 @@ internal class WatchFacePushManagerImpl(private var context: Context) : WatchFac
                             result.getMetaDataValues(key)
                         }
                     },
-                    { e -> WatchFacePushManager.UpdateWatchFaceException(e) }
+                    { e ->
+                        WatchFacePushManager.UpdateWatchFaceException(
+                            WatchFacePushManager.UpdateWatchFaceException
+                                .errorCodeFromWearSdkException(e),
+                            e
+                        )
+                    }
                 )
             )
         }
@@ -790,7 +885,13 @@ internal class WatchFacePushManagerImpl(private var context: Context) : WatchFac
                 outcomeReceiver(
                     cont,
                     { t: Boolean -> t },
-                    { e -> WatchFacePushManager.IsWatchFaceActiveException(e) }
+                    { e ->
+                        WatchFacePushManager.IsWatchFaceActiveException(
+                            WatchFacePushManager.IsWatchFaceActiveException
+                                .errorCodeFromWearSdkException(e),
+                            e
+                        )
+                    }
                 )
             )
         }
@@ -813,7 +914,13 @@ internal class WatchFacePushManagerImpl(private var context: Context) : WatchFac
                 outcomeReceiver(
                     cont,
                     {},
-                    { e -> WatchFacePushManager.SetWatchFaceAsActiveException(e) }
+                    { e ->
+                        WatchFacePushManager.SetWatchFaceAsActiveException(
+                            WatchFacePushManager.SetWatchFaceAsActiveException
+                                .errorCodeFromWearSdkException(e),
+                            e
+                        )
+                    }
                 )
             )
         }
