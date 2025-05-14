@@ -240,6 +240,8 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
         actuallyVisibleItems.fastForEach { item ->
             itemAnimator.getAnimation(item.key, 0)?.let {
                 it.transformedHeight = item.transformedHeight
+                it.measuredHeight = item.measuredHeight
+                it.measurementDirection = item.measurementDirection
             }
         }
 
