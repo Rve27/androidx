@@ -992,7 +992,6 @@ internal class CompositionImpl(
 
     override fun recompose(): Boolean =
         synchronized(lock) {
-            drainPendingModificationsForCompositionLocked()
             val pendingPausedComposition = pendingPausedComposition
             if (pendingPausedComposition != null && !pendingPausedComposition.isRecomposing) {
                 // If the composition is pending do not recompose it now as the recomposition
@@ -1003,6 +1002,7 @@ internal class CompositionImpl(
                 pendingPausedComposition.markIncomplete()
                 return false
             }
+            drainPendingModificationsForCompositionLocked()
             guardChanges {
                 guardInvalidationsLocked { invalidations ->
                     val observer = observer()

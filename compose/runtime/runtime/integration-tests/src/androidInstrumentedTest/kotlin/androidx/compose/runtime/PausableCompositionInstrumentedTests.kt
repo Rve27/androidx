@@ -400,6 +400,35 @@ class PausableCompositionInstrumentedTests {
             assertThat(rememberCalls).isEqualTo(1)
         }
     }
+
+    @Test
+    fun pausedPrecompositionIsNotCrashingWhenRecompositionIsTriggeredAndIgnoredMultipleTimes() {
+        val state = SubcomposeLayoutState()
+        var key by mutableStateOf("1")
+        lateinit var scope: RecomposeScope
+
+        rule.setContent { SubcomposeLayout(state) { layout(10, 10) {} } }
+
+        rule.runOnIdle {
+            val precomposition =
+                state.createPausedPrecomposition(Unit) {
+                    key
+                    scope = currentRecomposeScope
+                }
+            while (!precomposition.isComplete) {
+                precomposition.resume { false }
+            }
+
+            // first recomposition could be triggered by a state change
+            key = "2"
+        }
+
+        rule.runOnIdle {
+            // second recomposition should happen not because of the state change
+            scope.invalidate()
+        }
+        rule.waitForIdle()
+    }
 }
 
 @Composable
