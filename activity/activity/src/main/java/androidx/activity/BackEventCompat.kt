@@ -77,17 +77,17 @@ constructor(
      * This constructor is used for compatibility with [NavigationEvent] and maps its properties to
      * the corresponding values in [BackEventCompat].
      *
-     * @param navEvent The [NavigationEvent] instance to convert.
+     * @param navigationEvent The [NavigationEvent] instance to convert.
      */
     constructor(
-        navEvent: NavigationEvent
+        navigationEvent: NavigationEvent
     ) : this(
-        navEvent.touchX,
-        navEvent.touchY,
-        navEvent.progress,
-        navEvent.swipeEdge,
+        navigationEvent.touchX,
+        navigationEvent.touchY,
+        navigationEvent.progress,
+        navigationEvent.swipeEdge,
         if (Build.VERSION.SDK_INT >= 36) {
-            navEvent.frameTimeMillis
+            navigationEvent.frameTimeMillis
         } else {
             0
         }
