@@ -65,6 +65,7 @@ import androidx.camera.testing.fakes.FakeCameraInfoInternal
 import androidx.camera.testing.impl.CameraPipeConfigTestRule
 import androidx.camera.testing.impl.CameraUtil
 import androidx.camera.testing.impl.ExtensionsUtil
+import androidx.camera.testing.impl.GarbageCollectionUtil
 import androidx.camera.testing.impl.SurfaceTextureProvider
 import androidx.camera.testing.impl.fakes.FakeCameraConfig
 import androidx.camera.testing.impl.fakes.FakeCameraCoordinator
@@ -81,11 +82,15 @@ import androidx.camera.testing.impl.fakes.FakeUseCaseConfigFactory
 import androidx.camera.video.Recorder
 import androidx.camera.video.VideoCapture
 import androidx.concurrent.futures.await
+import androidx.lifecycle.LifecycleOwner
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.testutils.assertThrows
 import com.google.common.truth.Truth.assertThat
+import java.lang.ref.PhantomReference
+import java.lang.ref.ReferenceQueue
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
@@ -130,6 +135,7 @@ class ProcessCameraProviderTest(
             )
     }
 
+    private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val context = ApplicationProvider.getApplicationContext() as Context
     private val lifecycleOwner0 = FakeLifecycleOwner()
     private val lifecycleOwner1 = FakeLifecycleOwner()
@@ -596,6 +602,49 @@ class ProcessCameraProviderTest(
             assertThat(provider.isBound(useCase)).isFalse()
             assertThat(provider.isBound(sessionConfig)).isFalse()
             assertThat(provider.isConcurrentCameraModeOn).isFalse()
+        }
+    }
+
+    @Test
+    fun lifecycleOwner_dereferencedAfterDestroyed() = runBlocking {
+        // Arrange.
+        ProcessCameraProvider.configureInstance(cameraConfig)
+        provider = ProcessCameraProvider.awaitInstance(context)
+        var lifecycleOwner: FakeLifecycleOwner? = FakeLifecycleOwner()
+        val referenceQueue = ReferenceQueue<LifecycleOwner>()
+        val phantomReference = PhantomReference(lifecycleOwner, referenceQueue)
+        val frameLatch = CountDownLatch(1)
+        val preview = Preview.Builder().build()
+
+        instrumentation.runOnMainSync {
+            preview.surfaceProvider =
+                SurfaceTextureProvider.createAutoDrainingSurfaceTextureProvider {
+                    frameLatch.countDown()
+                }
+            lifecycleOwner!!.startAndResume()
+            val sessionConfig = SessionConfig(useCases = listOf(preview))
+            provider.bindToLifecycle(lifecycleOwner!!, cameraSelector, sessionConfig)
+        }
+        // Wait for the preview to start running.
+        assertThat(frameLatch.await(5, TimeUnit.SECONDS)).isTrue()
+
+        instrumentation.runOnMainSync {
+            lifecycleOwner!!.pauseAndStop()
+            // Assert: trigger onDestroy, which should release the references to the lifecycleOwner.
+            lifecycleOwner!!.destroy()
+        }
+        // Wait for the event to be processed.
+        instrumentation.waitForIdleSync()
+
+        try {
+            // Nullify the strong reference to the lifecycleOwner.
+            lifecycleOwner = null
+            // Trigger the garbage collection.
+            GarbageCollectionUtil.runFinalization()
+            // Assert: the reference should become phantom reachable.
+            assertThat(referenceQueue.poll()).isNotNull()
+        } finally {
+            phantomReference.clear()
         }
     }
 
