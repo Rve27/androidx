@@ -80,7 +80,7 @@ fun <T : Any> CommonUiNavDisplay(
     topLevelRoutes: List<TopLevelRoute>,
     onItemClick: (TopLevelRoute) -> Unit,
     modifier: Modifier = Modifier,
-    entryDecorators: List<NavEntryDecorator> = emptyList(),
+    entryDecorators: List<NavEntryDecorator<*>> = emptyList(),
     contentAlignment: Alignment = Alignment.TopStart,
     sizeTransform: SizeTransform? = null,
     transitionSpec: ContentTransform =

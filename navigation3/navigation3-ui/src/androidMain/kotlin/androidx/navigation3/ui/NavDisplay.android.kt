@@ -45,7 +45,7 @@ import androidx.compose.ui.util.fastForEachReversed
 import androidx.navigation3.runtime.DecoratedNavEntryProvider
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
-import androidx.navigation3.runtime.SavedStateNavEntryDecorator
+import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
 import androidx.navigation3.ui.NavDisplay.POP_TRANSITION_SPEC
 import androidx.navigation3.ui.NavDisplay.TRANSITION_SPEC
@@ -117,8 +117,8 @@ public fun <T : Any> NavDisplay(
             repeat(it) { backStack.removeAt(backStack.lastIndex) }
         }
     },
-    entryDecorators: List<NavEntryDecorator> =
-        listOf(SceneSetupNavEntryDecorator, SavedStateNavEntryDecorator),
+    entryDecorators: List<@JvmSuppressWildcards NavEntryDecorator<*>> =
+        listOf(rememberSceneSetupNavEntryDecorator(), rememberSavedStateNavEntryDecorator()),
     sceneStrategy: SceneStrategy<T> = SinglePaneSceneStrategy(),
     sizeTransform: SizeTransform? = null,
     transitionSpec: AnimatedContentTransitionScope<*>.() -> ContentTransform = {
@@ -137,9 +137,9 @@ public fun <T : Any> NavDisplay(
 ) {
     require(backStack.isNotEmpty()) { "NavDisplay backstack cannot be empty" }
 
-    val transitionAwareLifecycleNavEntryDecorator = remember {
-        TransitionAwareLifecycleNavEntryDecorator()
-    }
+    var isSettled by remember { mutableStateOf(true) }
+    val transitionAwareLifecycleNavEntryDecorator =
+        transitionAwareLifecycleNavEntryDecorator(backStack, isSettled)
 
     DecoratedNavEntryProvider(
         backStack = backStack,
@@ -357,7 +357,7 @@ public fun <T : Any> NavDisplay(
         LaunchedEffect(transition.currentState, transition.targetState) {
             // If we've reached the targetState, our animation has settled
             val settled = transition.currentState == transition.targetState
-            transitionAwareLifecycleNavEntryDecorator.isSettled = settled
+            isSettled = settled
         }
 
         // Show all OverlayScene instances above the AnimatedContent

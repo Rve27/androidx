@@ -38,14 +38,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.navigation3.ViewModelStoreNavEntryDecorator
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavEntryDecorator
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.SavedStateNavEntryDecorator
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.navEntryDecorator
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.runtime.samples.Dashboard
 import androidx.navigation3.runtime.samples.DialogBase
 import androidx.navigation3.runtime.samples.DialogContent
@@ -56,7 +57,7 @@ import androidx.navigation3.runtime.samples.Scrollable
 import androidx.navigation3.ui.LocalNavAnimatedContentScope
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.Scene
-import androidx.navigation3.ui.SceneSetupNavEntryDecorator
+import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 import kotlinx.serialization.Serializable
 
 @Sampled
@@ -68,9 +69,9 @@ fun SceneNav() {
         backStack = backStack,
         entryDecorators =
             listOf(
-                SceneSetupNavEntryDecorator,
-                SavedStateNavEntryDecorator,
-                ViewModelStoreNavEntryDecorator
+                rememberSceneSetupNavEntryDecorator(),
+                rememberSavedStateNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator()
             ),
         onBack = { backStack.removeAt(backStack.lastIndex) },
         entryProvider =
@@ -119,22 +120,18 @@ fun SceneNavSharedEntrySample() {
      * A [NavEntryDecorator] that wraps each entry in a shared element that is controlled by the
      * [Scene].
      */
-    val sharedEntryInSceneNavEntryDecorator =
-        object : NavEntryDecorator {
-            @Composable
-            override fun <T : Any> DecorateEntry(entry: NavEntry<T>) {
-                with(localNavSharedTransitionScope.current) {
-                    Box(
-                        Modifier.sharedElement(
-                            rememberSharedContentState(entry.key),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                        ),
-                    ) {
-                        entry.content(entry.key)
-                    }
-                }
+    val sharedEntryInSceneNavEntryDecorator = navEntryDecorator { entry ->
+        with(localNavSharedTransitionScope.current) {
+            Box(
+                Modifier.sharedElement(
+                    rememberSharedContentState(entry.key),
+                    animatedVisibilityScope = LocalNavAnimatedContentScope.current,
+                ),
+            ) {
+                entry.content(entry.key)
             }
         }
+    }
 
     val backStack = rememberNavBackStack(CatList)
     SharedTransitionLayout {
@@ -145,8 +142,8 @@ fun SceneNavSharedEntrySample() {
                 entryDecorators =
                     listOf(
                         sharedEntryInSceneNavEntryDecorator,
-                        SceneSetupNavEntryDecorator,
-                        SavedStateNavEntryDecorator
+                        rememberSceneSetupNavEntryDecorator(),
+                        rememberSavedStateNavEntryDecorator()
                     ),
                 entryProvider =
                     entryProvider {

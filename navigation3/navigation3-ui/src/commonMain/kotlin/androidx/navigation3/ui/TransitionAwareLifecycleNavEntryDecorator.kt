@@ -20,43 +20,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.NavEntryDecorator
+import androidx.navigation3.runtime.navEntryDecorator
 
-private val LocalTransitionAwareLifecycleNavLocalInfo =
-    compositionLocalOf<TransitionAwareLifecycleNavLocalInfo> {
-        error(
-            "CompositionLocal LocalTransitionAwareLifecycleNavLocalInfo not present. You must " +
-                "call DecorateBackStack before calling DecorateEntry."
-        )
-    }
-
-internal class TransitionAwareLifecycleNavEntryDecorator : NavEntryDecorator {
-
-    var isSettled by mutableStateOf(true)
-
-    @Composable
-    override fun DecorateBackStack(backStack: List<Any>, content: @Composable (() -> Unit)) {
-        val localInfo = remember(backStack) { TransitionAwareLifecycleNavLocalInfo(backStack) }
-        CompositionLocalProvider(LocalTransitionAwareLifecycleNavLocalInfo provides localInfo) {
-            content.invoke()
-        }
-    }
-
-    @Composable
-    override fun <T : Any> DecorateEntry(entry: NavEntry<T>) {
-        val backStack = LocalTransitionAwareLifecycleNavLocalInfo.current.backStack
-        // TODO: Handle duplicate keys
+@Composable
+internal fun transitionAwareLifecycleNavEntryDecorator(backStack: List<Any>, isSettled: Boolean) =
+    navEntryDecorator { entry ->
         val isInBackStack = entry.key in backStack
         val maxLifecycle =
             when {
@@ -66,9 +40,6 @@ internal class TransitionAwareLifecycleNavEntryDecorator : NavEntryDecorator {
             }
         LifecycleOwner(maxLifecycle = maxLifecycle) { entry.content.invoke(entry.key) }
     }
-}
-
-private class TransitionAwareLifecycleNavLocalInfo(val backStack: List<Any>)
 
 @Composable
 private fun LifecycleOwner(

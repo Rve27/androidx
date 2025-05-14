@@ -2,7 +2,7 @@
 package androidx.navigation3.runtime {
 
   public final class DecoratedNavEntryProviderKt {
-    method @androidx.compose.runtime.Composable public static <T> void DecoratedNavEntryProvider(java.util.List<? extends T> backStack, kotlin.jvm.functions.Function1<? super T,? extends androidx.navigation3.runtime.NavEntry<? extends T>> entryProvider, optional java.util.List<? extends androidx.navigation3.runtime.NavEntryDecorator> entryDecorators, kotlin.jvm.functions.Function1<? super java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>>,kotlin.Unit> content);
+    method @androidx.compose.runtime.Composable public static <T> void DecoratedNavEntryProvider(java.util.List<? extends T> backStack, kotlin.jvm.functions.Function1<? super T,? extends androidx.navigation3.runtime.NavEntry<? extends T>> entryProvider, optional java.util.List<androidx.navigation3.runtime.NavEntryDecorator<? extends java.lang.Object?>> entryDecorators, kotlin.jvm.functions.Function1<? super java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>>,kotlin.Unit> content);
   }
 
   public final class EntryClassProvider<T> {
@@ -64,9 +64,12 @@ package androidx.navigation3.runtime {
     property public java.util.Map<java.lang.String,java.lang.Object> metadata;
   }
 
-  public interface NavEntryDecorator {
-    method @androidx.compose.runtime.Composable public default void DecorateBackStack(java.util.List<?> backStack, kotlin.jvm.functions.Function0<kotlin.Unit> content);
-    method @androidx.compose.runtime.Composable public <T> void DecorateEntry(androidx.navigation3.runtime.NavEntry<T> entry);
+  public final class NavEntryDecorator<T> {
+  }
+
+  public final class NavEntryDecoratorKt {
+    method @androidx.compose.runtime.Composable public static <T> void DecorateNavEntry(androidx.navigation3.runtime.NavEntry<T> entry, java.util.List<androidx.navigation3.runtime.NavEntryDecorator<? extends java.lang.Object?>> entryDecorators);
+    method public static <T> androidx.navigation3.runtime.NavEntryDecorator<T> navEntryDecorator(optional kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit> onPop, kotlin.jvm.functions.Function1<? super androidx.navigation3.runtime.NavEntry<T>,kotlin.Unit> decorator);
   }
 
   public class NavEntryWrapper<T> extends androidx.navigation3.runtime.NavEntry<T> {
@@ -83,9 +86,9 @@ package androidx.navigation3.runtime {
     ctor public NavKey(optional kotlin.uuid.Uuid uuid);
   }
 
-  public final class SavedStateNavEntryDecorator implements androidx.navigation3.runtime.NavEntryDecorator {
-    method @androidx.compose.runtime.Composable public <T> void DecorateEntry(androidx.navigation3.runtime.NavEntry<T> entry);
-    field public static final androidx.navigation3.runtime.SavedStateNavEntryDecorator INSTANCE;
+  public final class SavedStateNavEntryDecoratorKt {
+    method public static androidx.navigation3.runtime.NavEntryDecorator<java.lang.Object> SavedStateNavEntryDecorator(androidx.compose.runtime.saveable.SaveableStateHolder saveableStateHolder);
+    method @androidx.compose.runtime.Composable public static androidx.navigation3.runtime.NavEntryDecorator<java.lang.Object> rememberSavedStateNavEntryDecorator(optional androidx.compose.runtime.saveable.SaveableStateHolder saveableStateHolder);
   }
 
 }

@@ -16,9 +16,8 @@
 
 package androidx.navigation3.runtime
 
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.kruth.assertThat
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -33,83 +32,64 @@ class DecoratedNavEntryProviderTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun callWrapperFunctions() {
-        var calledWrapBackStack = false
+    fun callDecorator() {
         var calledWrapContent = false
-        val provider =
-            createTestNavEntryDecorator<Any>(
-                decorateBackStack = { _, content ->
-                    calledWrapBackStack = true
-                    content.invoke()
-                },
-                decorateEntry = { _ -> calledWrapContent = true }
-            )
+
+        val decorator = createTestNavEntryDecorator<Any> { entry -> calledWrapContent = true }
 
         composeTestRule.setContent {
             DecoratedNavEntryProvider(
                 backStack = listOf("something"),
-                entryDecorators = listOf(provider),
+                entryDecorators = listOf(decorator),
                 entryProvider = { NavEntry("something") {} }
             ) { records ->
                 records.last().content.invoke("something")
             }
         }
 
-        assertThat(calledWrapBackStack).isTrue()
         assertThat(calledWrapContent).isTrue()
     }
 
     @Test
-    fun callWrapperFunctionsOnce() {
-        var calledWrapBackStackCount = 0
+    fun callDecoratorOnce() {
         var calledWrapContentCount = 0
-        val provider =
-            createTestNavEntryDecorator<Any>(
-                decorateBackStack = { _, content ->
-                    calledWrapBackStackCount++
-                    content.invoke()
-                },
-                decorateEntry = { _ -> calledWrapContentCount++ }
-            )
+
+        val decorator = createTestNavEntryDecorator<Any> { entry -> calledWrapContentCount++ }
 
         composeTestRule.setContent {
             DecoratedNavEntryProvider(
                 backStack = listOf("something"),
-                entryDecorators = listOf(provider, provider),
+                entryDecorators = listOf(decorator, decorator),
                 entryProvider = { NavEntry("something") {} }
             ) { records ->
                 records.last().content.invoke("something")
             }
         }
 
-        assertThat(calledWrapBackStackCount).isEqualTo(1)
-        assertThat(calledWrapContentCount).isEqualTo(1)
+        composeTestRule.runOnIdle { assertThat(calledWrapContentCount).isEqualTo(1) }
     }
 
     @Test
-    fun wrapperFunctionsCallOrder() {
+    fun nestedDecoratorsCallOrder() {
         var callOrder = -1
-        var backStackProvider: Int = -1
-        var entryProvider: Int = -1
-        val provider =
-            createTestNavEntryDecorator<Any>(
-                decorateBackStack = { _, content ->
-                    backStackProvider = ++callOrder
-                    content.invoke()
-                },
-                decorateEntry = { entry ->
-                    entryProvider = ++callOrder
-                    entry.content.invoke(entry.key)
-                }
-            )
+        var outerEntryDecorator: Int = -1
+        var innerEntryDecorator: Int = -1
+        val innerDecorator =
+            createTestNavEntryDecorator<Any> { entry ->
+                innerEntryDecorator = ++callOrder
+                entry.content.invoke(entry.key)
+            }
 
-        lateinit var backStack: MutableList<Any>
+        val outerDecorator =
+            createTestNavEntryDecorator<Any> { entry ->
+                outerEntryDecorator = ++callOrder
+                entry.content.invoke(entry.key)
+            }
 
         composeTestRule.setContent {
-            backStack = remember { mutableStateListOf("something") }
             DecoratedNavEntryProvider(
-                backStack = backStack,
-                entryDecorators = listOf(provider),
+                backStack = listOf("something"),
+                entryDecorators = listOf(outerDecorator, innerDecorator),
                 entryProvider = { NavEntry("something") {} }
             ) { entries ->
                 entries.lastOrNull()?.content?.invoke("something")
@@ -118,158 +98,332 @@ class DecoratedNavEntryProviderTest {
 
         composeTestRule.waitForIdle()
 
-        assertThat(backStackProvider).isEqualTo(0)
-        assertThat(entryProvider).isEqualTo(1)
+        assertThat(outerEntryDecorator).isEqualTo(0)
+        assertThat(innerEntryDecorator).isEqualTo(1)
     }
 
     @Test
-    fun nestedWrapperFunctionsCallOrder() {
-        var callOrder = -1
-        var outerBackStackProvider: Int = -1
-        var outerEntryProvider: Int = -1
-        var innerBackStackProvider: Int = -1
-        var innerEntryProvider: Int = -1
-        val innerProvider =
-            createTestNavEntryDecorator<Any>(
-                decorateBackStack = { _, content ->
-                    innerBackStackProvider = ++callOrder
-                    content.invoke()
-                },
-                decorateEntry = { entry ->
-                    innerEntryProvider = ++callOrder
-                    entry.content.invoke(entry.key)
-                }
-            )
-
-        val outerProvider =
-            createTestNavEntryDecorator<Any>(
-                decorateBackStack = { _, content ->
-                    outerBackStackProvider = ++callOrder
-                    content.invoke()
-                },
-                decorateEntry = { entry ->
-                    outerEntryProvider = ++callOrder
-                    entry.content.invoke(entry.key)
-                }
-            )
-
-        lateinit var backStack: MutableList<Any>
-
+    fun decoratorsOnPop() {
+        val poppedEntries = mutableListOf<Int>()
+        val decorator =
+            createTestNavEntryDecorator<Any>(onPop = { key -> poppedEntries.add(key as Int) }) {
+                entry ->
+                entry.content.invoke(entry.key)
+            }
+        lateinit var backStack: SnapshotStateList<Int>
         composeTestRule.setContent {
-            backStack = remember { mutableStateListOf("something") }
+            backStack = mutableStateListOf(1, 2)
             DecoratedNavEntryProvider(
                 backStack = backStack,
-                entryDecorators = listOf(outerProvider, innerProvider),
-                entryProvider = { NavEntry("something") {} }
-            ) { entries ->
-                entries.lastOrNull()?.content?.invoke("something")
-            }
-        }
-
-        composeTestRule.waitForIdle()
-
-        assertThat(outerBackStackProvider).isEqualTo(0)
-        assertThat(innerBackStackProvider).isEqualTo(1)
-        assertThat(outerEntryProvider).isEqualTo(2)
-        assertThat(innerEntryProvider).isEqualTo(3)
-    }
-
-    @Test
-    fun wrapperFunctionsDisposeOrder() {
-        var callOrder = -1
-        var backStackProvider: Int = -1
-        var entryProvider: Int = -1
-        val provider =
-            createTestNavEntryDecorator(
-                decorateBackStack = { backStack, content ->
-                    DisposableEffect(backStack.lastOrNull()) {
-                        onDispose { backStackProvider = ++callOrder }
+                entryDecorators = listOf(decorator),
+                entryProvider = { key ->
+                    when (key) {
+                        1 -> NavEntry(1) {}
+                        2 -> NavEntry(2) {}
+                        3 -> NavEntry(3) {}
+                        else -> error("Invalid Key")
                     }
-                    content.invoke()
-                },
-                decorateEntry = { entry ->
-                    DisposableEffect(entry.key) { onDispose { entryProvider = ++callOrder } }
-                    entry.content.invoke(entry.key)
                 }
-            )
-
-        lateinit var backStack: MutableList<Any>
-        composeTestRule.setContent {
-            backStack = remember { mutableStateListOf("something") }
-            DecoratedNavEntryProvider(
-                backStack = backStack,
-                entryDecorators =
-                    listOf(
-                        provider,
-                    ),
-                entryProvider = { NavEntry("something") {} }
             ) { entries ->
-                entries.lastOrNull()?.content?.invoke("something")
+                entries.lastOrNull()?.let { it.content.invoke(it.key) }
             }
         }
+        composeTestRule.runOnIdle { backStack.removeAt(backStack.lastIndex) }
 
-        composeTestRule.runOnIdle { backStack.clear() }
         composeTestRule.waitForIdle()
+        assertThat(poppedEntries).containsExactly(2)
 
-        assertThat(entryProvider).isEqualTo(0)
-        assertThat(backStackProvider).isEqualTo(1)
+        backStack.add(3)
+
+        composeTestRule.waitForIdle()
+        assertThat(backStack).containsExactly(1, 3).inOrder()
+
+        backStack.removeAt(backStack.lastIndex)
+
+        composeTestRule.waitForIdle()
+        assertThat(backStack).containsExactly(1)
+        assertThat(poppedEntries).containsExactly(2, 3).inOrder()
     }
 
     @Test
-    fun nestedWrapperFunctionsDisposeOrder() {
-        var callOrder = -1
-        var outerBackStackProvider: Int = -1
-        var outerEntryProvider: Int = -1
-        var innerBackStackProvider: Int = -1
-        var innerEntryProvider: Int = -1
-        val innerProvider =
-            createTestNavEntryDecorator(
-                decorateBackStack = { backStack, content ->
-                    DisposableEffect(backStack.lastOrNull()) {
-                        onDispose { innerBackStackProvider = ++callOrder }
-                    }
-                    content.invoke()
-                },
-                decorateEntry = { entry ->
-                    DisposableEffect(entry.key) { onDispose { innerEntryProvider = ++callOrder } }
-                    entry.content.invoke(entry.key)
-                }
-            )
-
-        val outerProvider =
-            createTestNavEntryDecorator(
-                decorateBackStack = { backStack, content ->
-                    DisposableEffect(backStack.lastOrNull()) {
-                        onDispose { outerBackStackProvider = ++callOrder }
-                    }
-                    content.invoke()
-                },
-                decorateEntry = { entry ->
-                    DisposableEffect(entry.key) { onDispose { outerEntryProvider = ++callOrder } }
-                    entry.content.invoke(entry.key)
-                }
-            )
-
-        lateinit var backStack: MutableList<Any>
-
+    fun decoratorsOnPopOrder() {
+        var count = -1
+        var outerPop = -1
+        var innerPop = -1
+        val innerDecorator =
+            createTestNavEntryDecorator<Any>(onPop = { _ -> innerPop = ++count }) { entry ->
+                entry.content.invoke(entry.key)
+            }
+        val outerDecorator =
+            createTestNavEntryDecorator<Any>(onPop = { _ -> outerPop = ++count }) { entry ->
+                entry.content.invoke(entry.key)
+            }
+        lateinit var backStack: SnapshotStateList<Int>
         composeTestRule.setContent {
-            backStack = remember { mutableStateListOf("something") }
+            backStack = mutableStateListOf(1, 2)
             DecoratedNavEntryProvider(
                 backStack = backStack,
-                entryDecorators = listOf(outerProvider, innerProvider),
-                entryProvider = { NavEntry("something") {} }
+                entryDecorators = listOf(outerDecorator, innerDecorator),
+                entryProvider = { key ->
+                    when (key) {
+                        1 -> NavEntry(1) {}
+                        2 -> NavEntry(2) {}
+                        else -> error("Invalid Key")
+                    }
+                }
             ) { entries ->
-                entries.lastOrNull()?.content?.invoke("something")
+                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+            }
+        }
+        composeTestRule.runOnIdle { backStack.removeAt(1) }
+
+        composeTestRule.waitForIdle()
+        assertThat(innerPop).isEqualTo(0)
+        assertThat(outerPop).isEqualTo(1)
+    }
+
+    @Test
+    fun decoratorsOnPopForNeverRenderedEntries() {
+        val entriesOnPop = mutableListOf<String>()
+        val entriesRendered = mutableListOf<String>()
+
+        val decorator =
+            createTestNavEntryDecorator<Any>(onPop = { key -> entriesOnPop.add(key as String) }) {
+                entry ->
+                entry.content.invoke(entry.key)
+            }
+        lateinit var backStack: SnapshotStateList<String>
+        composeTestRule.setContent {
+            backStack = mutableStateListOf("first", "second", "third")
+            DecoratedNavEntryProvider(
+                backStack = backStack,
+                entryDecorators = listOf(decorator),
+                entryProvider = { key ->
+                    when (key) {
+                        "first" -> NavEntry("first") { entriesRendered.add(it) }
+                        "second" -> NavEntry("second") { entriesRendered.add(it) }
+                        "third" -> NavEntry("third") { entriesRendered.add(it) }
+                        else -> error("Invalid Key")
+                    }
+                }
+            ) { entries ->
+                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+            }
+        }
+
+        assertThat(entriesRendered).containsExactly("third")
+        assertThat(entriesOnPop).isEmpty()
+
+        composeTestRule.runOnIdle {
+            backStack.removeAt(2)
+            backStack.removeAt(1)
+        }
+
+        composeTestRule.waitForIdle()
+        assertThat(entriesRendered).containsExactly("third", "first")
+        assertThat(entriesOnPop).containsExactly("third", "second").inOrder()
+    }
+
+    @Test
+    fun onPopCalledForNewlyAddedDecorator() {
+        val decoratorPopCallback = mutableListOf<String>()
+        val decorator1 =
+            createTestNavEntryDecorator<Any>(
+                onPop = { key -> decoratorPopCallback.add("decorator1") }
+            ) { entry ->
+                entry.content.invoke(entry.key)
+            }
+        val decorator2 =
+            createTestNavEntryDecorator<Any>(
+                onPop = { key -> decoratorPopCallback.add("decorator2") }
+            ) { entry ->
+                entry.content.invoke(entry.key)
+            }
+        val backStack = mutableStateListOf(1, 2)
+        val decorators = mutableStateListOf(decorator1)
+        composeTestRule.setContent {
+            DecoratedNavEntryProvider(
+                backStack = backStack,
+                entryDecorators = decorators,
+                entryProvider = { key ->
+                    when (key) {
+                        1 -> NavEntry(1) {}
+                        2 -> NavEntry(2) {}
+                        else -> error("Invalid Key")
+                    }
+                }
+            ) { entries ->
+                entries.lastOrNull()?.let { it.content.invoke(it.key) }
             }
         }
 
         composeTestRule.waitForIdle()
-        backStack.clear()
+
+        assertThat(backStack).containsExactly(1, 2)
+        assertThat(decoratorPopCallback).isEmpty()
+        decorators.add(decorator2)
+
         composeTestRule.waitForIdle()
 
-        assertThat(innerEntryProvider).isEqualTo(0)
-        assertThat(outerEntryProvider).isEqualTo(1)
-        assertThat(innerBackStackProvider).isEqualTo(2)
-        assertThat(outerBackStackProvider).isEqualTo(3)
+        assertThat(decoratorPopCallback).isEmpty()
+        backStack.removeAt(backStack.lastIndex)
+
+        composeTestRule.waitForIdle()
+        assertThat(backStack).containsExactly(1)
+        assertThat(decoratorPopCallback).containsExactly("decorator2", "decorator1").inOrder()
+    }
+
+    @Test
+    fun onPopCalledForRemovedDecorator() {
+        val decoratorPopCallback = mutableListOf<String>()
+        val decorator1 =
+            createTestNavEntryDecorator<Any>(
+                onPop = { key -> decoratorPopCallback.add("decorator1") }
+            ) { entry ->
+                entry.content.invoke(entry.key)
+            }
+        val decorator2 =
+            createTestNavEntryDecorator<Any>(
+                onPop = { key -> decoratorPopCallback.add("decorator2") }
+            ) { entry ->
+                entry.content.invoke(entry.key)
+            }
+        val backStack = mutableStateListOf(1, 2)
+        val decorators = mutableStateListOf(decorator1, decorator2)
+        composeTestRule.setContent {
+            DecoratedNavEntryProvider(
+                backStack = backStack,
+                entryDecorators = decorators,
+                entryProvider = { key ->
+                    when (key) {
+                        1 -> NavEntry(1) {}
+                        2 -> NavEntry(2) {}
+                        else -> error("Invalid Key")
+                    }
+                }
+            ) { entries ->
+                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+            }
+        }
+
+        composeTestRule.waitForIdle()
+
+        assertThat(backStack).containsExactly(1, 2)
+        assertThat(decoratorPopCallback).isEmpty()
+        decorators.remove(decorator2)
+
+        composeTestRule.waitForIdle()
+
+        assertThat(decoratorPopCallback).isEmpty()
+        backStack.removeAt(backStack.lastIndex)
+
+        composeTestRule.waitForIdle()
+        assertThat(backStack).containsExactly(1)
+        assertThat(decoratorPopCallback).containsExactly("decorator2", "decorator1").inOrder()
+    }
+
+    @Test
+    fun entryReWrappedWithNewlyAddedDecorator() {
+        var dec1Wrapped = 0
+        var dec2Wrapped = 0
+        val decorator1 =
+            createTestNavEntryDecorator<Any> {
+                dec1Wrapped++
+                it.content.invoke(it.key)
+            }
+        val decorator2 =
+            createTestNavEntryDecorator<Any> {
+                dec2Wrapped++
+                it.content.invoke(it.key)
+            }
+        val decorators = mutableStateListOf(decorator1)
+        composeTestRule.setContent {
+            DecoratedNavEntryProvider(
+                backStack = listOf("something"),
+                entryDecorators = decorators,
+                entryProvider = { NavEntry("something") {} }
+            ) { entries ->
+                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+            }
+        }
+        composeTestRule.waitForIdle()
+        assertThat(dec1Wrapped).isEqualTo(1)
+        assertThat(dec2Wrapped).isEqualTo(0)
+
+        decorators.add(decorator2)
+        composeTestRule.waitForIdle()
+
+        assertThat(dec1Wrapped).isEqualTo(2)
+        assertThat(dec2Wrapped).isEqualTo(1)
+    }
+
+    @Test
+    fun entryReWrappedWithRemovedDecorator() {
+        var dec1Wrapped = 0
+        var dec2Wrapped = 0
+        val decorator1 =
+            createTestNavEntryDecorator<Any> {
+                dec1Wrapped++
+                it.content.invoke(it.key)
+            }
+        val decorator2 =
+            createTestNavEntryDecorator<Any> {
+                dec2Wrapped++
+                it.content.invoke(it.key)
+            }
+        val decorators = mutableStateListOf(decorator1, decorator2)
+        composeTestRule.setContent {
+            DecoratedNavEntryProvider(
+                backStack = listOf("something"),
+                entryDecorators = decorators,
+                entryProvider = { NavEntry("something") {} }
+            ) { entries ->
+                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+            }
+        }
+        composeTestRule.waitForIdle()
+        assertThat(dec1Wrapped).isEqualTo(1)
+        assertThat(dec2Wrapped).isEqualTo(1)
+
+        decorators.remove(decorator1)
+        composeTestRule.waitForIdle()
+
+        assertThat(dec1Wrapped).isEqualTo(1)
+        assertThat(dec2Wrapped).isEqualTo(2)
+    }
+
+    @Test
+    fun decoratorsWrapAddedEntry() {
+        val wrappedEntries = mutableListOf<String>()
+        val decorator = createTestNavEntryDecorator {
+            wrappedEntries.add(it.key)
+            it.content.invoke(it.key)
+        }
+        val backStack = mutableStateListOf("first")
+        composeTestRule.setContent {
+            DecoratedNavEntryProvider(
+                backStack = backStack,
+                entryDecorators = listOf(decorator),
+                entryProvider = {
+                    when (it) {
+                        "first" -> NavEntry("first") {}
+                        "second" -> NavEntry("second") {}
+                        else -> error("Unknown key")
+                    }
+                }
+            ) { entries ->
+                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assertThat(backStack).containsExactly("first")
+        assertThat(wrappedEntries).containsExactly("first")
+
+        backStack.add("second")
+        composeTestRule.waitForIdle()
+
+        assertThat(backStack).containsExactly("first", "second")
+        assertThat(wrappedEntries).containsExactly("first", "second")
     }
 }

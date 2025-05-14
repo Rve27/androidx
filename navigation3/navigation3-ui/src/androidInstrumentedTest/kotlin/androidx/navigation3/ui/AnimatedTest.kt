@@ -44,6 +44,7 @@ import androidx.kruth.assertThat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.navEntryDecorator
 import androidx.navigation3.ui.NavDisplay.DEFAULT_TRANSITION_DURATION_MILLISECOND
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -788,18 +789,11 @@ class AnimatedTest {
         lateinit var backstack: MutableList<Any>
         val LocalHasProvidedToEntry = compositionLocalOf { false }
         val provider =
-            createTestNavEntryDecorator<String>(
-                decorateBackStack = { _, content ->
-                    CompositionLocalProvider(LocalHasProvidedToEntry provides false) {
-                        content.invoke()
-                    }
-                },
-                decorateEntry = { entry ->
-                    CompositionLocalProvider(LocalHasProvidedToEntry provides true) {
-                        entry.content.invoke(entry.key)
-                    }
+            navEntryDecorator<Any> { entry ->
+                CompositionLocalProvider(LocalHasProvidedToEntry provides true) {
+                    entry.content.invoke(entry.key)
                 }
-            )
+            }
         var secondEntryIsWrapped = false
         composeTestRule.setContent {
             backstack = remember { mutableStateListOf(first, second) }
