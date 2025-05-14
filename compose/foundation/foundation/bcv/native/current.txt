@@ -53,6 +53,10 @@ final enum class androidx.compose.foundation/MutatePriority : kotlin/Enum<androi
     final fun values(): kotlin/Array<androidx.compose.foundation/MutatePriority> // androidx.compose.foundation/MutatePriority.values|values#static(){}[0]
 }
 
+abstract fun interface androidx.compose.foundation.lazy.layout/LazyLayoutMeasurePolicy { // androidx.compose.foundation.lazy.layout/LazyLayoutMeasurePolicy|null[0]
+    abstract fun (androidx.compose.foundation.lazy.layout/LazyLayoutMeasureScope).measure(androidx.compose.ui.unit/Constraints): androidx.compose.ui.layout/MeasureResult // androidx.compose.foundation.lazy.layout/LazyLayoutMeasurePolicy.measure|measure@androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScope(androidx.compose.ui.unit.Constraints){}[0]
+}
+
 abstract fun interface androidx.compose.foundation.text.input/InputTransformation { // androidx.compose.foundation.text.input/InputTransformation|null[0]
     open val keyboardOptions // androidx.compose.foundation.text.input/InputTransformation.keyboardOptions|{}keyboardOptions[0]
         open fun <get-keyboardOptions>(): androidx.compose.foundation.text/KeyboardOptions? // androidx.compose.foundation.text.input/InputTransformation.keyboardOptions.<get-keyboardOptions>|<get-keyboardOptions>(){}[0]
@@ -580,6 +584,10 @@ sealed interface androidx.compose.foundation.lazy.grid/LazyGridScope { // androi
     abstract fun item(kotlin/Any? = ..., kotlin/Function1<androidx.compose.foundation.lazy.grid/LazyGridItemSpanScope, androidx.compose.foundation.lazy.grid/GridItemSpan>? = ..., kotlin/Any? = ..., kotlin/Function1<androidx.compose.foundation.lazy.grid/LazyGridItemScope, kotlin/Unit>) // androidx.compose.foundation.lazy.grid/LazyGridScope.item|item(kotlin.Any?;kotlin.Function1<androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope,androidx.compose.foundation.lazy.grid.GridItemSpan>?;kotlin.Any?;kotlin.Function1<androidx.compose.foundation.lazy.grid.LazyGridItemScope,kotlin.Unit>){}[0]
     abstract fun items(kotlin/Int, kotlin/Function1<kotlin/Int, kotlin/Any>? = ..., kotlin/Function2<androidx.compose.foundation.lazy.grid/LazyGridItemSpanScope, kotlin/Int, androidx.compose.foundation.lazy.grid/GridItemSpan>? = ..., kotlin/Function1<kotlin/Int, kotlin/Any?> = ..., kotlin/Function2<androidx.compose.foundation.lazy.grid/LazyGridItemScope, kotlin/Int, kotlin/Unit>) // androidx.compose.foundation.lazy.grid/LazyGridScope.items|items(kotlin.Int;kotlin.Function1<kotlin.Int,kotlin.Any>?;kotlin.Function2<androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope,kotlin.Int,androidx.compose.foundation.lazy.grid.GridItemSpan>?;kotlin.Function1<kotlin.Int,kotlin.Any?>;kotlin.Function2<androidx.compose.foundation.lazy.grid.LazyGridItemScope,kotlin.Int,kotlin.Unit>){}[0]
     abstract fun stickyHeader(kotlin/Any? = ..., kotlin/Any? = ..., kotlin/Function2<androidx.compose.foundation.lazy.grid/LazyGridItemScope, kotlin/Int, kotlin/Unit>) // androidx.compose.foundation.lazy.grid/LazyGridScope.stickyHeader|stickyHeader(kotlin.Any?;kotlin.Any?;kotlin.Function2<androidx.compose.foundation.lazy.grid.LazyGridItemScope,kotlin.Int,kotlin.Unit>){}[0]
+}
+
+sealed interface androidx.compose.foundation.lazy.layout/LazyLayoutMeasureScope : androidx.compose.ui.layout/MeasureScope { // androidx.compose.foundation.lazy.layout/LazyLayoutMeasureScope|null[0]
+    abstract fun compose(kotlin/Int): kotlin.collections/List<androidx.compose.ui.layout/Measurable> // androidx.compose.foundation.lazy.layout/LazyLayoutMeasureScope.compose|compose(kotlin.Int){}[0]
 }
 
 sealed interface androidx.compose.foundation.lazy.staggeredgrid/LazyStaggeredGridItemInfo { // androidx.compose.foundation.lazy.staggeredgrid/LazyStaggeredGridItemInfo|null[0]
