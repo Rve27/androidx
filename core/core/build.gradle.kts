@@ -68,6 +68,10 @@ dependencies {
     androidTestImplementation(libs.kotlinCoroutinesCore)
     androidTestImplementation(libs.testMonitor)
 
+    // DO NOT REMOVE. This is a required run time dependency for Mockito, but is not explicitly
+    // specified as a dependency by the Mockito artifact.
+    androidTestImplementation(libs.opentest4j)
+
     // Including both dexmakers allows support for all API levels plus final mocking support on
     // API 28+. The implementation is swapped based on the finality of the mock type. This
     // delegation is handled manually inside androidx.core.util.mockito.CustomMockMaker.
