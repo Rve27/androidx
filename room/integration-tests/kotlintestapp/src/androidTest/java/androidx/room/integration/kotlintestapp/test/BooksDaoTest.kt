@@ -294,6 +294,21 @@ class BooksDaoTest(useDriver: UseDriver) : TestDatabaseTest(useDriver) {
     }
 
     @Test
+    fun findBooksInMultiLineQueryWithComment() {
+        booksDao.addPublishers(TestUtil.PUBLISHER)
+        booksDao.addBooks(TestUtil.BOOK_1)
+        booksDao.addBooks(TestUtil.BOOK_2)
+
+        val books =
+            database
+                .booksDao()
+                .getBooksMultiLineQueryWithComment(
+                    arrayListOf(TestUtil.BOOK_1.bookId, TestUtil.BOOK_2.bookId)
+                )
+        assertThat(books, `is`(listOf(TestUtil.BOOK_2, TestUtil.BOOK_1)))
+    }
+
+    @Test
     fun findBooksByLanguage() {
         booksDao.addPublishers(TestUtil.PUBLISHER)
         val book1 = TestUtil.BOOK_1.copy(languages = setOf(Lang.TR))

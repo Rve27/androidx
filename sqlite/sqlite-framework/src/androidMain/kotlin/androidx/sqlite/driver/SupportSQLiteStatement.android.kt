@@ -22,6 +22,7 @@ import android.database.Cursor.FIELD_TYPE_FLOAT
 import android.database.Cursor.FIELD_TYPE_INTEGER
 import android.database.Cursor.FIELD_TYPE_NULL
 import android.database.Cursor.FIELD_TYPE_STRING
+import androidx.annotation.VisibleForTesting
 import androidx.sqlite.SQLITE_DATA_BLOB
 import androidx.sqlite.SQLITE_DATA_FLOAT
 import androidx.sqlite.SQLITE_DATA_INTEGER
@@ -50,14 +51,16 @@ internal sealed class SupportSQLiteStatement(
 
     public companion object {
         public fun create(db: SupportSQLiteDatabase, sql: String): SupportSQLiteStatement {
-            // TODO(b/413061402): Improve categorization to handle for comments.
-            // https://cs.android.com/android/platform/superproject/main/+/main:frameworks/base/core/java/android/database/DatabaseUtils.java;drc=61197364367c9e404c7da6900658f1b16c42d0da;l=1581
             val sqlString = sql.trim().uppercase()
-            val transactionOp = getTransactionOperation(sqlString)
+            val sqlPrefix = getStatementPrefix(sqlString)
+            if (sqlPrefix == null) {
+                return OtherSQLiteStatement(db, sql)
+            }
+            val transactionOp = getTransactionOperation(sqlPrefix, sqlString)
             return if (transactionOp != null) {
                 // Special-case statement for transactions
                 TransactionSQLiteStatement(db, sql, transactionOp)
-            } else if (isRowStatement(sqlString)) {
+            } else if (isRowStatement(sqlPrefix)) {
                 // Statements that return rows (SQLITE_ROW)
                 RowSQLiteStatement(db, sql)
             } else {
@@ -66,12 +69,8 @@ internal sealed class SupportSQLiteStatement(
             }
         }
 
-        private fun getTransactionOperation(sql: String): TransactionOperation? {
-            val prefix = sql.trim()
-            if (prefix.length < 3) {
-                return null
-            }
-            return when (prefix.substring(0, 3)) {
+        private fun getTransactionOperation(prefix: String, sql: String): TransactionOperation? =
+            when (prefix) {
                 "END",
                 "COM" -> TransactionOperation.END
                 "ROL" ->
@@ -91,19 +90,61 @@ internal sealed class SupportSQLiteStatement(
                 }
                 else -> null
             }
-        }
 
-        private fun isRowStatement(sql: String): Boolean {
-            val prefix = sql.trim()
-            if (prefix.length < 3) {
-                return false
-            }
-            return when (prefix.substring(0, 3).uppercase()) {
+        private fun isRowStatement(prefix: String) =
+            when (prefix) {
                 "SEL",
                 "PRA",
                 "WIT" -> true
                 else -> false
             }
+
+        /**
+         * Returns the 3-character prefix of the SQL statement or null if the statement is
+         * malformed.
+         */
+        @VisibleForTesting
+        internal fun getStatementPrefix(sql: String): String? {
+            val index = getStatementPrefixIndex(sql)
+            if (index < 0 || index > sql.length) {
+                // Bad comment syntax or incomplete statement
+                return null
+            }
+            return sql.substring(index, minOf(index + 3, sql.length))
+        }
+
+        /**
+         * Return the index of the first character past comments and whitespace.
+         *
+         * Taken from SQLiteDatabase.getSqlStatementPrefixOffset() implementation.
+         */
+        private fun getStatementPrefixIndex(s: String): Int {
+            val limit: Int = s.length - 2
+            if (limit < 0) return -1
+            var i = 0
+            while (i < limit) {
+                val c = s[i]
+                when {
+                    c <= ' ' -> i++
+                    c == '-' -> {
+                        if (s[i + 1] != '-') return i
+                        i = s.indexOf('\n', i + 2)
+                        if (i < 0) return -1
+                        i++
+                    }
+                    c == '/' -> {
+                        if (s[i + 1] != '*') return i
+                        i++
+                        do {
+                            i = s.indexOf('*', i + 1)
+                            if (i < 0) return -1
+                        } while (i + 1 < limit && s[i + 1] != '/')
+                        i += 2
+                    }
+                    else -> return i
+                }
+            }
+            return -1
         }
 
         private enum class TransactionOperation {

@@ -225,6 +225,16 @@ interface BooksDao {
     )
     fun getBooksMultiLineQuery(bookIds: List<String>): List<Book>
 
+    @Query(
+        """
+            --- this is a comment
+            SELECT * FROM book WHERE
+            bookId IN(:bookIds)
+            order by bookId DESC
+            """
+    )
+    fun getBooksMultiLineQueryWithComment(bookIds: List<String>): List<Book>
+
     @Query("SELECT * FROM book WHERE bookId = :bookId")
     fun getBookLiveData(bookId: String): LiveData<Book>
 
