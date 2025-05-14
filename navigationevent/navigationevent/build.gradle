@@ -85,6 +85,7 @@ androidXMultiplatform {
 }
 
 android {
+    compileSdk = 36
     namespace = "androidx.navigationevent"
 }
 

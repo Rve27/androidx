@@ -27,5 +27,6 @@ internal fun NavigationEvent(backEvent: BackEvent): NavigationEvent {
         touchY = backEvent.touchY,
         progress = backEvent.progress,
         swipeEdge = backEvent.swipeEdge,
+        frameTimeMillis = if (Build.VERSION.SDK_INT >= 36) backEvent.frameTimeMillis else 0,
     )
 }

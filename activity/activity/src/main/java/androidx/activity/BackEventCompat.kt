@@ -86,11 +86,7 @@ constructor(
         navigationEvent.touchY,
         navigationEvent.progress,
         navigationEvent.swipeEdge,
-        if (Build.VERSION.SDK_INT >= 36) {
-            navigationEvent.frameTimeMillis
-        } else {
-            0
-        }
+        navigationEvent.frameTimeMillis,
     )
 
     /**  */
