@@ -17,6 +17,7 @@
 package androidx.camera.camera2.internal;
 
 import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraMetadata;
 import android.os.Build;
 import android.util.Size;
@@ -1010,5 +1011,125 @@ public final class GuaranteedConfigurationsUtil {
         surfaceCombinations.add(surfaceCombination);
 
         return surfaceCombinations;
+    }
+
+    /**
+     * Generates the list of {@link SurfaceCombination} that are guaranteed to be queryable with
+     * feature combination query APIs.
+     *
+     * <p> Note that these stream combinations are not guaranteed to be always supported, but rather
+     * guaranteed to provide a valid result via feature combination query (i.e.
+     * {@link CameraDevice.CameraDeviceSetup#isSessionConfigurationSupported} API).
+     *
+     * <p> These combinations are generated based on the documentation of
+     * {@link CameraCharacteristics#INFO_SESSION_CONFIGURATION_QUERY_VERSION}.
+     */
+    public static @NonNull List<@NonNull SurfaceCombination> generateQueryableFcqCombinations() {
+        List<SurfaceCombination> combinations = new ArrayList<>();
+
+        // (PRIV, S1080P)
+        combinations.add(new SurfaceCombination(
+                SurfaceConfig.create(ConfigType.PRIV, ConfigSize.S1080P_16_9)));
+
+        // (PRIV, S720P)
+        combinations.add(new SurfaceCombination(
+                SurfaceConfig.create(ConfigType.PRIV, ConfigSize.S720P_16_9)));
+
+        // (PRIV, S1080P) + (JPEG/JPEG_R, MAX_16_9)
+        combinations.addAll(
+                createPrivJpegXCombinations(
+                        /* privSize = */ ConfigSize.S1080P_16_9,
+                        /* jpegXSize = */ ConfigSize.MAXIMUM_16_9
+                )
+        );
+
+        // (PRIV, S1080P) + (JPEG/JPEG_R, UHD)
+        combinations.addAll(
+                createPrivJpegXCombinations(
+                        /* privSize = */ ConfigSize.S1080P_16_9,
+                        /* jpegXSize = */ ConfigSize.UHD
+                )
+        );
+
+        // (PRIV, S1080P) + (JPEG/JPEG_R, S1440P)
+        combinations.addAll(
+                createPrivJpegXCombinations(
+                        /* privSize = */ ConfigSize.S1080P_16_9,
+                        /* jpegXSize = */ ConfigSize.S1440P_16_9
+                )
+        );
+
+        // (PRIV, S1080P) + (JPEG/JPEG_R, S1080P)
+        combinations.addAll(
+                createPrivJpegXCombinations(
+                        /* privSize = */ ConfigSize.S1080P_16_9,
+                        /* jpegXSize = */ ConfigSize.S1080P_16_9
+                )
+        );
+
+        // (PRIV, S720P) + (JPEG/JPEG_R, MAX_16_9)
+        combinations.addAll(
+                createPrivJpegXCombinations(
+                        /* privSize = */ ConfigSize.S720P_16_9,
+                        /* jpegXSize = */ ConfigSize.MAXIMUM_16_9
+                )
+        );
+
+        // (PRIV, S720P) + (JPEG/JPEG_R, UHD)
+        combinations.addAll(
+                createPrivJpegXCombinations(
+                        /* privSize = */ ConfigSize.S720P_16_9,
+                        /* jpegXSize = */ ConfigSize.UHD
+                )
+        );
+
+        // (PRIV, S720P) + (JPEG/JPEG_R, S1080P)
+        combinations.addAll(
+                createPrivJpegXCombinations(
+                        /* privSize = */ ConfigSize.S720P_16_9,
+                        /* jpegXSize = */ ConfigSize.S1080P_16_9
+                )
+        );
+
+        // (PRIV, XVGA) + (JPEG/JPEG_R, MAX_4_3)
+        combinations.addAll(
+                createPrivJpegXCombinations(
+                        /* privSize = */ ConfigSize.X_VGA,
+                        /* jpegXSize = */ ConfigSize.MAXIMUM_4_3
+                )
+        );
+
+        // (PRIV, S1080P_4_3) + (JPEG/JPEG_R, MAX_4_3)
+        combinations.addAll(
+                createPrivJpegXCombinations(
+                        /* privSize = */ ConfigSize.S1080P_4_3,
+                        /* jpegXSize = */ ConfigSize.MAXIMUM_4_3
+                )
+        );
+
+        // TODO: Add the combinations for Android 16
+
+        return combinations;
+    }
+
+    /**
+     * Creates a list of [SurfaceCombination] based on the input PRIV size and JPEG_X (i.e. JPEG
+     * and JPEG_R) size.
+     */
+    private static @NonNull List<@NonNull SurfaceCombination> createPrivJpegXCombinations(
+            ConfigSize privSize,
+            ConfigSize jpegXSize
+    ) {
+        List<SurfaceCombination> combinationList = new ArrayList<>();
+
+        combinationList.add(new SurfaceCombination(
+                SurfaceConfig.create(ConfigType.PRIV, privSize),
+                SurfaceConfig.create(ConfigType.JPEG, jpegXSize)));
+
+        combinationList.add(new SurfaceCombination(
+                SurfaceConfig.create(ConfigType.PRIV, privSize),
+                SurfaceConfig.create(ConfigType.JPEG_R, jpegXSize)));
+
+        return combinationList;
     }
 }
