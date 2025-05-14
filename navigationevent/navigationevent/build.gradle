@@ -33,7 +33,11 @@ plugins {
 androidXMultiplatform {
     androidTarget()
     desktop()
-    linuxX64Stubs()
+    mac()
+    linux()
+    ios()
+    watchos()
+    tvos()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
 
