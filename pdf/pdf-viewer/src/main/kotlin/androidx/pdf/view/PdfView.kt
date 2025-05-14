@@ -197,10 +197,32 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         get() = if (pdfDocument != null) visiblePages.upper - visiblePages.lower + 1 else 0
 
     /**
+     * The current state of the PDF view with respect to external inputs, e.g. user touch. Returns
+     * one of [GESTURE_STATE_IDLE], [GESTURE_STATE_INTERACTING], or [GESTURE_STATE_SETTLING]
+     */
+    public var gestureState: Int = GESTURE_STATE_IDLE
+        @MainThread private set
+
+    /**
      * A [Pools.Pool] of [Rect] for dispatching to [OnViewportChangedListener] to avoid excessive
      * per-frame allocations
      */
     private val pageLocationsPool = Pools.SimplePool<Rect>(maxPoolSize = 100)
+
+    /**
+     * Listener interface to receive callbacks when the PdfView starts and stops being affected by
+     * an external input like user touch.
+     */
+    public interface OnGestureStateChangedListener {
+        /**
+         * Callback when the PdfView starts and stops being affected by an external input like user
+         * touch. [newState] will be one of [GESTURE_STATE_IDLE], [GESTURE_STATE_INTERACTING], or
+         * [GESTURE_STATE_SETTLING]
+         */
+        public fun onGestureStateChanged(newState: Int)
+    }
+
+    private val onGestureStateChangedListeners = mutableListOf<OnGestureStateChangedListener>()
 
     /**
      * Listener interface to receive changes to the viewport, i.e. the window of visible PDF content
@@ -246,9 +268,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     public var selectionActionModeCallback: DefaultSelectionActionModeCallback =
         DefaultSelectionActionModeCallback(this)
 
-    /** Listener that notifies of scroll state changes */
-    public var scrollStateChangedListener: OnScrollStateChangedListener? = null
-
     /** The currently selected PDF content, as [Selection] */
     public val currentSelection: Selection?
         get() {
@@ -269,12 +288,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             previousSelection: Selection?,
             newSelection: Selection?,
         )
-    }
-
-    /** Listener interface to receive updates when the scroll state changes */
-    public interface OnScrollStateChangedListener {
-        /** Called when a scroll state changes */
-        public fun onScrollStateChanged(x: Int, y: Int, isStable: Boolean)
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -375,6 +388,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
     private val fastScrollGestureHandler =
         object : FastScrollGestureDetector.FastScrollGestureHandler {
+            override fun onFastScrollStart() {
+                dispatchGestureStateChanged(newState = GESTURE_STATE_INTERACTING)
+            }
+
+            override fun onFastScrollEnd() {
+                dispatchGestureStateChanged(newState = GESTURE_STATE_IDLE)
+            }
+
             override fun onFastScrollDetected(eventY: Float) {
                 fastScroller?.let {
                     val updatedY =
@@ -420,8 +441,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private var selectionStateManager: SelectionStateManager? = null
     private val selectionRenderer = SelectionRenderer(context)
     private var selectionActionMode: ActionMode? = null
-    private var gestureInProgress = false
-    private var isScrollReleased = false
 
     // True if the zoom was calculated before the layouting completed and needs to be recalculated
     private var pendingZoomRecalculation = false
@@ -498,6 +517,52 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      */
     public fun removeOnSelectionChangedListener(listener: OnSelectionChangedListener) {
         onSelectionChangedListeners.remove(listener)
+    }
+
+    /**
+     * Adds the specified listener to the list of listeners that will be notified of changes in
+     * state with respect to this PdfView being affected by an external input, e.g. user touch.
+     *
+     * @param listener listener to notify when interaction state change events occur
+     * @see removeOnGestureStateChangedListener
+     */
+    public fun addOnGestureStateChangedListener(listener: OnGestureStateChangedListener) {
+        onGestureStateChangedListeners.add(listener)
+    }
+
+    /**
+     * Removes the specified listener from the list of listeners that will be notified of changes in
+     * state with respect to this PdfView being affected by an external input, e.g. user touch.
+     *
+     * @param listener listener to remove
+     */
+    public fun removeOnGestureStateChangedListener(listener: OnGestureStateChangedListener) {
+        onGestureStateChangedListeners.remove(listener)
+    }
+
+    /**
+     * Fast scroll gestures and corresponding state changes are handled by separate logic than most
+     * other gesture events. This method dispatches state changes except during active fast scroll,
+     * i.e. to avoid noise from spurious non-fast-scroll gestures detected during a fast scroll
+     * sequence.
+     */
+    private fun dispatchGestureStateChangedUnlessFastScroll(newState: Int) {
+        if (fastScrollGestureDetector?.trackingFastScrollGesture == false) {
+            dispatchGestureStateChanged(newState)
+        }
+    }
+
+    private fun dispatchGestureStateChanged(newState: Int) {
+        require(newState in VALID_GESTURE_STATES) {
+            "Invalid state change from $gestureState to $newState"
+        }
+        if (newState == gestureState) {
+            return
+        }
+        gestureState = newState
+        for (listener in onGestureStateChangedListeners) {
+            listener.onGestureStateChanged(newState)
+        }
     }
 
     /**
@@ -733,7 +798,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         /**
          * For activities which doesn't recreate upon orientation changes, restore path for
          * [androidx.pdf.view.PdfView] will not kick-in. We need to manually store the current
-         * scroll position which then will be restored in [androidx.pdf.view.PdfView.onLayout].
+         * scroll position which then will be restored in [onLayout].
          */
         if (newConfig?.orientation != lastOrientation) {
             val contentCenterX = toContentX(viewportWidth.toFloat() / 2f)
@@ -857,7 +922,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         state.documentUri = pdfDocument?.uri
         state.paginationModel = pageLayoutManager?.paginationModel
         state.selectionModel = selectionStateManager?.selectionModel?.value
-        state.isScrollReleased = isScrollReleased
         return state
     }
 
@@ -880,16 +944,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             postInvalidateOnAnimation()
         } else if (isFling) {
             isFling = false
+            dispatchGestureStateChangedUnlessFastScroll(newState = GESTURE_STATE_IDLE)
             // We hide the action mode during a fling, so reveal it when the fling is over
             updateSelectionActionModeVisibility()
             // Once the fling has ended, prompt the page manager to start fetching data for pages
             // that we don't fetch during a fling
             maybeUpdatePageVisibility()
-        }
-
-        if (isScrollReleased && scroller.isFinished) {
-            isScrollReleased = false
-            scrollStateChangedListener?.onScrollStateChanged(scrollX, scrollY, isStable = true)
         }
     }
 
@@ -984,8 +1044,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         val positionToRestore =
             PointF(localStateToRestore.contentCenterX, localStateToRestore.contentCenterY)
-
-        isScrollReleased = localStateToRestore.isScrollReleased
 
         if (awaitingFirstLayout) {
             scrollPositionToRestore = positionToRestore
@@ -1255,9 +1313,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      * hidden.
      */
     private fun updateSelectionActionModeVisibility() {
-        // isFlinging != gestureInProgress. isFlinging refers to the animation that continues after
-        // the gesture stops
-        if (selectionIsVisible() && !gestureInProgress && !isFling) {
+        if (selectionIsVisible() && gestureState == GESTURE_STATE_IDLE) {
             selectionStateManager?.maybeShowActionMode()
             selectionActionMode?.invalidateContentRect()
         } else {
@@ -1613,8 +1669,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         override fun onGestureStart() {
             // Stop any in-progress fling when a new gesture begins
             scroller.forceFinished(true)
-            selectionStateManager?.maybeHideActionMode()
-            gestureInProgress = true
+            dispatchGestureStateChangedUnlessFastScroll(newState = GESTURE_STATE_INTERACTING)
             // We should hide the action mode during a gesture
             updateSelectionActionModeVisibility()
         }
@@ -1623,11 +1678,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             // Update page visibility after scroll / zoom gestures end, because we avoid fetching
             // certain data while those gestures are in progress
             if (gesture in ZOOM_OR_SCROLL_GESTURES) maybeUpdatePageVisibility()
+            val newState =
+                if (gesture !in ANIMATED_GESTURES) {
+                    GESTURE_STATE_IDLE
+                } else {
+                    GESTURE_STATE_SETTLING
+                }
+            dispatchGestureStateChangedUnlessFastScroll(newState)
             totalX = 0f
             totalY = 0f
             straightenCurrentVerticalScroll = true
             scrollQueue.clear()
-            gestureInProgress = false
             // We should reveal the action mode after a gesture
             updateSelectionActionModeVisibility()
         }
@@ -1744,7 +1805,20 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     }
                     // We avoid pinging pages with new zoom states and fetching new bitmaps during
                     // animations. Update pages with the final zoom state when the animation ends
-                    addListener(onEnd = { maybeUpdatePageVisibility() })
+                    addListener(
+                        onCancel = {
+                            dispatchGestureStateChangedUnlessFastScroll(
+                                newState = GESTURE_STATE_IDLE
+                            )
+                            maybeUpdatePageVisibility()
+                        },
+                        onEnd = {
+                            dispatchGestureStateChangedUnlessFastScroll(
+                                newState = GESTURE_STATE_IDLE
+                            )
+                            maybeUpdatePageVisibility()
+                        }
+                    )
 
                     start()
                 }
@@ -1777,10 +1851,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 if (handleExternalLinks(links, touchPoint.pagePoint)) return true
             }
             return super.onSingleTapConfirmed(e)
-        }
-
-        override fun onScrollTouchUp() {
-            isScrollReleased = true
         }
 
         private fun handleGotoLinks(
@@ -1831,6 +1901,18 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     }
 
     public companion object {
+        /** The PdfView is not currently being affected by an outside input, e.g. user touch */
+        public const val GESTURE_STATE_IDLE: Int = 0
+
+        /** The PdfView is currently being affected by an outside input, e.g. user touch */
+        public const val GESTURE_STATE_INTERACTING: Int = 1
+
+        /**
+         * The PdfView is currently animating to a final position while not under outside control,
+         * e.g. settling on a final position following a fling gesture.
+         */
+        public const val GESTURE_STATE_SETTLING: Int = 2
+
         public const val DEFAULT_INIT_ZOOM: Float = 1.0f
         public const val DEFAULT_MAX_ZOOM: Float = 25.0f
         public const val DEFAULT_MIN_ZOOM: Float = 0.5f
@@ -1852,8 +1934,18 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 GestureTracker.Gesture.ZOOM,
                 GestureTracker.Gesture.DRAG,
                 GestureTracker.Gesture.DRAG_X,
-                GestureTracker.Gesture.DRAG_Y
+                GestureTracker.Gesture.DRAG_Y,
+                GestureTracker.Gesture.FLING,
             )
+
+        private val ANIMATED_GESTURES =
+            setOf(
+                GestureTracker.Gesture.FLING,
+                GestureTracker.Gesture.DOUBLE_TAP,
+            )
+
+        private val VALID_GESTURE_STATES =
+            setOf(GESTURE_STATE_IDLE, GESTURE_STATE_INTERACTING, GESTURE_STATE_SETTLING)
 
         private fun checkMainThread() {
             check(Looper.myLooper() == Looper.getMainLooper()) {

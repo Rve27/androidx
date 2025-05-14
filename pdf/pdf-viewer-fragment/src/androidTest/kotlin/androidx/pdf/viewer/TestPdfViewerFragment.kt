@@ -28,7 +28,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.pdf.view.PdfView
-import androidx.pdf.view.PdfView.OnScrollStateChangedListener
 import androidx.pdf.viewer.fragment.PdfStylingOptions
 import androidx.pdf.viewer.fragment.PdfViewerFragment
 import androidx.pdf.viewer.fragment.test.R
@@ -63,6 +62,8 @@ internal class TestPdfViewerFragment : PdfViewerFragment {
     var documentLoaded = false
     var documentError: Throwable? = null
 
+    private var gestureStateChangedListener: PdfView.OnGestureStateChangedListener? = null
+
     fun getPdfViewInstance(): PdfView = pdfView
 
     override fun onCreateView(
@@ -94,20 +95,20 @@ internal class TestPdfViewerFragment : PdfViewerFragment {
             isTextSearchActive = true
         }
 
-        pdfView.scrollStateChangedListener =
-            object : OnScrollStateChangedListener {
-                override fun onScrollStateChanged(x: Int, y: Int, isStable: Boolean) {
-                    if (isStable) {
-                        pdfScrollIdlingResource.decrement()
+        gestureStateChangedListener =
+            object : PdfView.OnGestureStateChangedListener {
+                    override fun onGestureStateChanged(newState: Int) {
+                        if (newState == PdfView.GESTURE_STATE_IDLE) {
+                            pdfScrollIdlingResource.decrement()
+                        }
                     }
                 }
-            }
+                .also { pdfView.addOnGestureStateChangedListener(it) }
+
         pdfSearchView.searchQueryBox.onFocusChangeListener =
-            object : View.OnFocusChangeListener {
-                override fun onFocusChange(v: View?, hasFocus: Boolean) {
-                    if (!hasFocus) {
-                        pdfSearchFocusIdlingResource.decrement()
-                    }
+            View.OnFocusChangeListener { v, hasFocus ->
+                if (!hasFocus) {
+                    pdfSearchFocusIdlingResource.decrement()
                 }
             }
 
@@ -127,6 +128,11 @@ internal class TestPdfViewerFragment : PdfViewerFragment {
 
     fun setIsAnnotationIntentResolvable(value: Boolean) {
         setAnnotationIntentResolvability(value)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        gestureStateChangedListener?.let { pdfView.removeOnGestureStateChangedListener(it) }
     }
 
     override fun onRequestImmersiveMode(enterImmersive: Boolean) {
