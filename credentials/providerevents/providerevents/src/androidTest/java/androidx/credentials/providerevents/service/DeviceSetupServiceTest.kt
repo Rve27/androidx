@@ -29,18 +29,18 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
-class CredentialProviderEventsServiceTest {
+class DeviceSetupServiceTest {
 
     @Test
     fun onBind_nullIntent_returnsNull() {
-        val service = object : CredentialProviderEventsService() {}
+        val service = object : DeviceSetupService() {}
         val binder = service.onBind(null)
         assertThat(binder).isNull()
     }
 
     @Test
     fun onBind_noProviderFound_returnsNull() {
-        val service = object : CredentialProviderEventsService() {}
+        val service = object : DeviceSetupService() {}
         val intent = Intent()
         // No class name added to the intent
         val binder = service.onBind(intent)
@@ -49,7 +49,7 @@ class CredentialProviderEventsServiceTest {
 
     @Test
     fun onBind_validProvider_returnsBinder() {
-        val service = object : CredentialProviderEventsService() {}
+        val service = object : DeviceSetupService() {}
         val intent =
             Intent().apply {
                 putExtra(
