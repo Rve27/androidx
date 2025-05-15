@@ -2142,8 +2142,23 @@ private fun scale(a1: Float, b1: Float, x1: Float, a2: Float, b2: Float) =
     lerp(a2, b2, calcFraction(a1, b1, x1))
 
 // Scale x.start, x.endInclusive from a1..b1 range to a2..b2 range
-private fun scale(a1: Float, b1: Float, x: SliderRange, a2: Float, b2: Float) =
-    SliderRange(scale(a1, b1, x.start, a2, b2), scale(a1, b1, x.endInclusive, a2, b2))
+private fun scale(
+    isStart: Boolean,
+    a1: Float,
+    b1: Float,
+    x: SliderRange,
+    a2: Float,
+    b2: Float
+): SliderRange {
+    val start = scale(a1, b1, x.start, a2, b2)
+    val end = scale(a1, b1, x.endInclusive, a2, b2)
+
+    return if (isStart) {
+        SliderRange(start.coerceAtMost(end), end)
+    } else {
+        SliderRange(start, end.coerceAtLeast(start))
+    }
+}
 
 // Calculate the 0..1 fraction that `pos` value represents between `a` and `b`
 private fun calcFraction(a: Float, b: Float, pos: Float) =
@@ -2585,7 +2600,6 @@ private val ThumbSize = DpSize(ThumbWidth, ThumbHeight)
 private val VerticalThumbSize = DpSize(ThumbHeight, ThumbWidth)
 private val ThumbTrackGapSize: Dp = SliderTokens.ActiveHandleLeadingSpace
 private val TrackInsideCornerSize: Dp = 2.dp
-private const val SliderRangeTolerance = 0.0001
 
 private enum class SliderComponents {
     THUMB,
@@ -2936,16 +2950,16 @@ class RangeSliderState(
                 val offsetEnd = rawOffsetEnd
                 var offsetStart = rawOffsetStart.coerceIn(minPx, offsetEnd)
                 offsetStart = snapValueToTick(offsetStart, tickFractions, minPx, maxPx)
-                SliderRange(offsetStart, offsetEnd)
+                SliderRange(offsetStart.coerceAtMost(offsetEnd), offsetEnd)
             } else {
                 rawOffsetEnd = (rawOffsetEnd + offset)
                 rawOffsetStart = scaleToOffset(minPx, maxPx, activeRangeStart)
                 val offsetStart = rawOffsetStart
                 var offsetEnd = rawOffsetEnd.coerceIn(offsetStart, maxPx)
                 offsetEnd = snapValueToTick(offsetEnd, tickFractions, minPx, maxPx)
-                SliderRange(offsetStart, offsetEnd)
+                SliderRange(offsetStart, offsetEnd.coerceAtLeast(offsetStart))
             }
-        val scaledUserValue = scaleToUserValue(minPx, maxPx, offsetRange)
+        val scaledUserValue = scaleToUserValue(isStart, minPx, maxPx, offsetRange)
         if (scaledUserValue != SliderRange(activeRangeStart, activeRangeEnd)) {
             if (onValueChange != null) {
                 onValueChange?.let { it(scaledUserValue) }
@@ -2969,8 +2983,12 @@ class RangeSliderState(
         get() = floor(steps * (1f - coercedActiveRangeStartAsFraction)).toInt()
 
     // scales range offset from within minPx..maxPx to within valueRange.start..valueRange.end
-    private fun scaleToUserValue(minPx: Float, maxPx: Float, offset: SliderRange) =
-        scale(minPx, maxPx, offset, valueRange.start, valueRange.endInclusive)
+    private fun scaleToUserValue(
+        isStart: Boolean,
+        minPx: Float,
+        maxPx: Float,
+        offset: SliderRange
+    ) = scale(isStart, minPx, maxPx, offset, valueRange.start, valueRange.endInclusive)
 
     // scales float userValue within valueRange.start..valueRange.end to within minPx..maxPx
     private fun scaleToOffset(minPx: Float, maxPx: Float, userValue: Float) =
@@ -3116,7 +3134,7 @@ internal value class SliderRange(val packedValue: Long) {
 internal fun SliderRange(start: Float, endInclusive: Float): SliderRange {
     val isUnspecified = start.isNaN() && endInclusive.isNaN()
 
-    require(isUnspecified || start <= endInclusive + SliderRangeTolerance) {
+    require(isUnspecified || start <= endInclusive) {
         "start($start) must be <= endInclusive($endInclusive)"
     }
     return SliderRange(packFloats(start, endInclusive))
@@ -3133,7 +3151,7 @@ internal fun SliderRange(range: ClosedFloatingPointRange<Float>): SliderRange {
     val start = range.start
     val endInclusive = range.endInclusive
     val isUnspecified = start.isNaN() && endInclusive.isNaN()
-    require(isUnspecified || start <= endInclusive + SliderRangeTolerance) {
+    require(isUnspecified || start <= endInclusive) {
         "ClosedFloatingPointRange<Float>.start($start) must be <= " +
             "ClosedFloatingPoint.endInclusive($endInclusive)"
     }
