@@ -842,7 +842,7 @@ package androidx.xr.compose.subspace.node {
     property public abstract androidx.xr.compose.unit.IntVolumeSize size;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SubspaceSemanticsModifierNode {
+  public interface SubspaceSemanticsModifierNode {
     method public void applySemantics(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
   }
 

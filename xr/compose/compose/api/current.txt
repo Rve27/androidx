@@ -55,6 +55,14 @@ package androidx.xr.compose.subspace {
 
 }
 
+package androidx.xr.compose.subspace.node {
+
+  public interface SubspaceSemanticsModifierNode {
+    method public void applySemantics(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
+  }
+
+}
+
 package androidx.xr.compose.unit {
 
   public final class DpVolumeSize {
