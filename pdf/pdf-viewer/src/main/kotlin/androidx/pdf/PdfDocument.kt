@@ -22,6 +22,7 @@ import android.graphics.Rect
 import android.net.Uri
 import android.util.Size
 import android.util.SparseArray
+import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
@@ -306,8 +307,29 @@ public interface PdfDocument : Closeable {
         }
     }
 
+    @Retention(AnnotationRetention.SOURCE)
+    @IntDef(
+        PDF_FORM_TYPE_NONE,
+        PDF_FORM_TYPE_ACRO_FORM,
+        PDF_FORM_TYPE_XFA_FULL,
+        PDF_FORM_TYPE_XFA_FOREGROUND
+    )
+    public annotation class FormType
+
     public companion object {
         /** Flag used with [getPageInfo] to include form widget metadata in the [PageInfo] */
         public const val INCLUDE_FORM_WIDGET_INFO: Long = 1 shl 0
+
+        /** Represents a PDF with no form fields */
+        public const val PDF_FORM_TYPE_NONE: Int = 0
+
+        /** Represents a PDF with form fields specified using the AcroForm spec */
+        public const val PDF_FORM_TYPE_ACRO_FORM: Int = 1
+
+        /** Represents a PDF with form fields specified using the entire XFA spec */
+        public const val PDF_FORM_TYPE_XFA_FULL: Int = 2
+
+        /** Represents a PDF with form fields specified using the XFAF subset of the XFA spec */
+        public const val PDF_FORM_TYPE_XFA_FOREGROUND: Int = 3
     }
 }

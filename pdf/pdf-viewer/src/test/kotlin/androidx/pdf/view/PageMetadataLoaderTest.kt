@@ -22,10 +22,14 @@ import android.util.Range
 import android.util.SparseArray
 import androidx.core.util.keyIterator
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfDocument.Companion.INCLUDE_FORM_WIDGET_INFO
+import androidx.pdf.PdfDocument.Companion.PDF_FORM_TYPE_ACRO_FORM
+import androidx.pdf.models.FormWidgetInfo
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
@@ -45,11 +49,11 @@ import org.robolectric.RobolectricTestRunner
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
-class PageLayoutManagerTest {
+class PageMetadataLoaderTest {
     private val pdfDocument =
         mock<PdfDocument> {
             on { pageCount } doReturn TOTAL_PAGES
-            onBlocking { getPageInfo(any()) } doAnswer
+            onBlocking { getPageInfo(any(), any()) } doAnswer
                 { invocationOnMock ->
                     PdfDocument.PageInfo(
                         pageNum = invocationOnMock.getArgument(0),
@@ -59,16 +63,41 @@ class PageLayoutManagerTest {
                 }
         }
 
+    private val pdfDocumentWithForm =
+        mock<PdfDocument> {
+            on { pageCount } doReturn TOTAL_PAGES
+            on { formType } doReturn PDF_FORM_TYPE_ACRO_FORM
+            onBlocking { getPageInfo(any(), any()) } doAnswer
+                { invocationOnMock ->
+                    val pageInfoFlag =
+                        invocationOnMock.getArgument<PdfDocument.PageInfoFlags>(1).value
+                    if (pageInfoFlag and INCLUDE_FORM_WIDGET_INFO != 0L) {
+                        PdfDocument.PageInfo(
+                            pageNum = invocationOnMock.getArgument(0),
+                            height = PAGE_HEIGHT,
+                            width = PAGE_WIDTH,
+                            formWidgetInfos = FORM_WIDGET_INFOS
+                        )
+                    } else {
+                        PdfDocument.PageInfo(
+                            pageNum = invocationOnMock.getArgument(0),
+                            height = PAGE_HEIGHT,
+                            width = PAGE_WIDTH,
+                        )
+                    }
+                }
+        }
+
     private val testDispatcher = UnconfinedTestDispatcher()
     private val testScope = TestScope(testDispatcher)
-    private lateinit var paginationManager: PageLayoutManager
+    private lateinit var paginationManager: PageMetadataLoader
     private val errorFlow = MutableSharedFlow<Throwable>()
 
     @Before
     fun setup() {
         // Required because loadPageDimensions jumps to the main thread to update PaginationModel
         Dispatchers.setMain(testDispatcher)
-        paginationManager = PageLayoutManager(pdfDocument, testScope, errorFlow = errorFlow)
+        paginationManager = PageMetadataLoader(pdfDocument, testScope, errorFlow = errorFlow)
     }
 
     @Test
@@ -137,7 +166,8 @@ class PageLayoutManagerTest {
 
         // Make sure we've fetched all currently measured & visible pages + the page prefetch radius
         testScope.testScheduler.runCurrent()
-        assertThat(paginationManager.reach).isEqualTo(5 + PageLayoutManager.DEFAULT_PREFETCH_RADIUS)
+        assertThat(paginationManager.reach)
+            .isEqualTo(5 + PageMetadataLoader.DEFAULT_PREFETCH_RADIUS)
     }
 
     @Test
@@ -352,13 +382,15 @@ class PageLayoutManagerTest {
         // Start collecting from PaginationManager#dimensions
         val dimensionsValues = mutableListOf<Pair<Int, Point>>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            paginationManager.dimensions.toList(dimensionsValues)
+            paginationManager.pageInfos
+                .map { pageInfo -> pageInfo.pageNum to Point(pageInfo.width, pageInfo.height) }
+                .toList(dimensionsValues)
         }
 
         // Increase reach to 10 and make sure we requested and collected 11 values
         paginationManager.increaseReach(10)
         testScope.testScheduler.runCurrent()
-        verify(pdfDocument, times(11)).getPageInfo(any())
+        verify(pdfDocument, times(11)).getPageInfo(any(), any())
         assertThat(paginationManager.reach).isEqualTo(10)
         assertThat(dimensionsValues.size).isEqualTo(11)
 
@@ -366,7 +398,7 @@ class PageLayoutManagerTest {
         // that our reach remains 10
         paginationManager.increaseReach(8)
         testScope.testScheduler.runCurrent()
-        verify(pdfDocument, times(11)).getPageInfo(any())
+        verify(pdfDocument, times(11)).getPageInfo(any(), any())
         assertThat(paginationManager.reach).isEqualTo(10)
         assertThat(dimensionsValues.size).isEqualTo(11)
     }
@@ -376,20 +408,22 @@ class PageLayoutManagerTest {
         // Start collecting from PaginationManager#dimensions
         val dimensionsValues = mutableListOf<Pair<Int, Point>>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            paginationManager.dimensions.toList(dimensionsValues)
+            paginationManager.pageInfos
+                .map { pageInfo -> pageInfo.pageNum to Point(pageInfo.width, pageInfo.height) }
+                .toList(dimensionsValues)
         }
 
         // Increase reach to 10 and make sure we requested and collected 11 values
         paginationManager.increaseReach(10)
         testScope.testScheduler.runCurrent()
-        verify(pdfDocument, times(11)).getPageInfo(any())
+        verify(pdfDocument, times(11)).getPageInfo(any(), any())
         assertThat(paginationManager.reach).isEqualTo(10)
         assertThat(dimensionsValues.size).isEqualTo(11)
 
         // Increase reach to 20 and make sure we requested and collected 21 total values
         paginationManager.increaseReach(20)
         testScope.testScheduler.runCurrent()
-        verify(pdfDocument, times(21)).getPageInfo(any())
+        verify(pdfDocument, times(21)).getPageInfo(any(), any())
         assertThat(paginationManager.reach).isEqualTo(20)
         assertThat(dimensionsValues.size).isEqualTo(21)
     }
@@ -399,16 +433,103 @@ class PageLayoutManagerTest {
         // Start collecting from PaginationManager#dimensions
         val dimensionsValues = mutableListOf<Pair<Int, Point>>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
-            paginationManager.dimensions.toList(dimensionsValues)
+            paginationManager.pageInfos
+                .map { pageInfo -> pageInfo.pageNum to Point(pageInfo.width, pageInfo.height) }
+                .toList(dimensionsValues)
         }
 
         // Increase reach beyond the end of the document, and make sure we requested and collected
         // only the appropriate number of values
         paginationManager.increaseReach(TOTAL_PAGES + 10)
         testScope.testScheduler.runCurrent()
-        verify(pdfDocument, times(TOTAL_PAGES)).getPageInfo(any())
+        verify(pdfDocument, times(TOTAL_PAGES)).getPageInfo(any(), any())
         assertThat(paginationManager.reach).isEqualTo(TOTAL_PAGES - 1)
         assertThat(dimensionsValues.size).isEqualTo(TOTAL_PAGES)
+    }
+
+    @Test
+    fun assertFormWidgetInfoLoaded_whenFormFillingEnabledAndPdfIsValidFormType() = runTest {
+        val pageMetaData = mutableListOf<PdfDocument.PageInfo>()
+        val paginationManagerWithForm =
+            PageMetadataLoader(
+                pdfDocumentWithForm,
+                testScope,
+                errorFlow = errorFlow,
+                isFormFillingEnabled = true
+            )
+        paginationManagerWithForm.increaseReach(20)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScope.testScheduler)) {
+            paginationManagerWithForm.pageInfos.toList(pageMetaData)
+        }
+        testScope.testScheduler.runCurrent()
+        assertThat(paginationManagerWithForm.reach).isEqualTo(20)
+        assertThat(pageMetaData.size).isEqualTo(21)
+        for (i in 0..20) {
+            assertThat(pageMetaData[i].formWidgetInfos).isNotNull()
+            assertThat(pageMetaData[i].formWidgetInfos?.size).isEqualTo(1)
+        }
+    }
+
+    @Test
+    fun assertFormWidgetNotLoaded_whenFormFillingDisabledAndPdfIsValidFormType() = runTest {
+        val pageMetaData = mutableListOf<PdfDocument.PageInfo>()
+
+        val paginationManagerLocal =
+            PageMetadataLoader(
+                pdfDocumentWithForm,
+                testScope,
+                errorFlow = errorFlow,
+                isFormFillingEnabled = false
+            )
+        paginationManagerLocal.increaseReach(20)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScope.testScheduler)) {
+            paginationManagerLocal.pageInfos.toList(pageMetaData)
+        }
+        testScope.testScheduler.runCurrent()
+        assertThat(paginationManagerLocal.reach).isEqualTo(20)
+        assertThat(pageMetaData.size).isEqualTo(21)
+        for (i in 0..20) {
+            assertThat(pageMetaData[i].formWidgetInfos).isNull()
+        }
+    }
+
+    @Test
+    fun assertFormWidgetNotLoaded_whenFormFillingEnabledAndPdfIsInvalidFormType() = runTest {
+        val pageMetaData = mutableListOf<PdfDocument.PageInfo>()
+        val paginationManagerLocal =
+            PageMetadataLoader(
+                pdfDocument,
+                testScope,
+                errorFlow = errorFlow,
+                isFormFillingEnabled = true
+            )
+        paginationManagerLocal.increaseReach(20)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScope.testScheduler)) {
+            paginationManagerLocal.pageInfos.toList(pageMetaData)
+        }
+        testScope.testScheduler.runCurrent()
+        assertThat(paginationManagerLocal.reach).isEqualTo(20)
+        assertThat(pageMetaData.size).isEqualTo(21)
+        for (i in 0..20) {
+            assertThat(pageMetaData[i].formWidgetInfos).isNull()
+        }
+    }
+
+    @Test
+    fun assertFormWidgetInfoNotLoaded_whenFormFillingDisabledAndPdfIsInvalidFormType() = runTest {
+        val pageMetadata = mutableListOf<PdfDocument.PageInfo>()
+        // paginationManager.isFormFillingEnabled is false by default and
+        // pdfDocument.formType is none by default.
+        paginationManager.increaseReach(20)
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            paginationManager.pageInfos.toList(pageMetadata)
+        }
+        testScope.testScheduler.runCurrent()
+        assertThat(paginationManager.reach).isEqualTo(20)
+        assertThat(pageMetadata.size).isEqualTo(21)
+        for (i in 0..20) {
+            assertThat(pageMetadata[i].formWidgetInfos).isNull()
+        }
     }
 }
 
@@ -418,3 +539,14 @@ private val Rect.area: Int
 private const val TOTAL_PAGES = 100
 private const val PAGE_WIDTH = 100
 private const val PAGE_HEIGHT = 200
+
+private val FORM_WIDGET_INFOS =
+    listOf(
+        FormWidgetInfo(
+            FormWidgetInfo.WIDGET_TYPE_TEXTFIELD,
+            widgetIndex = 0,
+            widgetRect = Rect(10, 10, 20, 20),
+            textValue = "Hello",
+            accessibilityLabel = "Hello"
+        )
+    )

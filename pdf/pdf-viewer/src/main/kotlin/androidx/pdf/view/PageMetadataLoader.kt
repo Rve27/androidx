@@ -24,6 +24,7 @@ import android.os.DeadObjectException
 import android.util.Range
 import android.util.SparseArray
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfDocument.Companion.INCLUDE_FORM_WIDGET_INFO
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.exceptions.RequestMetadata
 import androidx.pdf.util.PAGE_INFO_REQUEST_NAME
@@ -43,27 +44,28 @@ import kotlinx.coroutines.withContext
  *
  * Not thread safe
  */
-internal class PageLayoutManager(
+internal class PageMetadataLoader(
     private val pdfDocument: PdfDocument,
     private val backgroundScope: CoroutineScope,
     topPageMarginPx: Int = 0,
     pageSpacingPx: Int = DEFAULT_PAGE_SPACING_PX,
     internal val paginationModel: PaginationModel =
         PaginationModel(pageSpacingPx, pdfDocument.pageCount, topPageMarginPx),
-    private val errorFlow: MutableSharedFlow<Throwable>
+    private val errorFlow: MutableSharedFlow<Throwable>,
+    private val isFormFillingEnabled: Boolean = false
 ) {
     /** The 0-indexed maximum page number whose dimensions are known to this model */
     val reach
         get() = paginationModel.reach
 
-    private val _dimensions = MutableSharedFlow<Pair<Int, Point>>(replay = pdfDocument.pageCount)
+    private val _pageInfos = MutableSharedFlow<PdfDocument.PageInfo>(replay = pdfDocument.pageCount)
 
     /**
-     * A [SharedFlow] of PDF page dimensions, represented by a [Pair] whose first value is the page
-     * number and whose second value is a [Point] representing the page's dimensions in PDF points
+     * A [SharedFlow] of [PdfDocument.PageInfo], containing the page width, height and
+     * formWidgetInfos.
      */
-    val dimensions: SharedFlow<Pair<Int, Point>>
-        get() = _dimensions
+    val pageInfos: SharedFlow<PdfDocument.PageInfo>
+        get() = _pageInfos
 
     /**
      * The [Range] of pages that are currently visible in the window.
@@ -112,7 +114,15 @@ internal class PageLayoutManager(
         // This is the restored instanceState case
         if (paginationModel.reach >= 0) {
             for (i in 0..paginationModel.reach) {
-                _dimensions.tryEmit(i to paginationModel.getPageSize(i))
+                _pageInfos.tryEmit(
+                    PdfDocument.PageInfo(
+                        i,
+                        paginationModel.getPageSize(i).x,
+                        paginationModel.getPageSize(i).y,
+                        // TODO: b/410009335 Save and Restore formWidgetInfos across config changes
+                        null
+                    )
+                )
             }
         }
 
@@ -261,7 +271,7 @@ internal class PageLayoutManager(
             pageLocations.put(i, paginationModel.getPageLocation(i, viewport))
         }
         this.pageLocations = pageLocations
-        return !prevLocations.contentEquals(this@PageLayoutManager.pageLocations)
+        return !prevLocations.contentEquals(this@PageMetadataLoader.pageLocations)
     }
 
     /**
@@ -297,11 +307,19 @@ internal class PageLayoutManager(
             backgroundScope.launch {
                 previousDimensionsJob?.join()
                 try {
-                    val pageMetadata = pdfDocument.getPageInfo(pageNum)
+                    val pageInfoFlags =
+                        if (
+                            isFormFillingEnabled and
+                                (pdfDocument.formType != PdfDocument.PDF_FORM_TYPE_NONE)
+                        )
+                            PdfDocument.PageInfoFlags.of(INCLUDE_FORM_WIDGET_INFO)
+                        else PdfDocument.PageInfoFlags.of(0)
+                    val pageMetadata = pdfDocument.getPageInfo(pageNum, pageInfoFlags)
+
                     val size = Point(pageMetadata.width, pageMetadata.height)
                     // Add the value to the model before emitting, and on the main thread
                     withContext(Dispatchers.Main) { paginationModel.addPage(pageNum, size) }
-                    _dimensions.emit(pageNum to Point(pageMetadata.width, pageMetadata.height))
+                    _pageInfos.emit(pageMetadata)
                 }
                 // TODO(b/409465579): Propagate custom exception from SandboxedPdfDocument to
                 // decouple
