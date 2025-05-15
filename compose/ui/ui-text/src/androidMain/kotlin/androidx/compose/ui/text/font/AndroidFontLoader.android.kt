@@ -63,7 +63,7 @@ internal class AndroidFontLoader(context: Context) : PlatformFontLoader {
 }
 
 private fun ResourceFont.load(context: Context): Typeface =
-    runCatching { ResourcesCompat.getFont(context, resId) }.getOrNull() ?: Typeface.DEFAULT
+    ResourcesCompat.getFont(context, resId)!!
 
 // TODO(seanmcq): Move to core-ktx to dedup
 private suspend fun ResourceFont.loadAsync(context: Context): Typeface {
