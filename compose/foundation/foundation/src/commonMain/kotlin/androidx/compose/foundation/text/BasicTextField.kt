@@ -52,7 +52,9 @@ import androidx.compose.foundation.text.input.internal.selection.TextToolbarHand
 import androidx.compose.foundation.text.input.internal.selection.TextToolbarState
 import androidx.compose.foundation.text.input.internal.selection.addBasicTextFieldTextContextMenuComponents
 import androidx.compose.foundation.text.input.internal.selection.menuItem
+import androidx.compose.foundation.text.selection.SelectedTextType
 import androidx.compose.foundation.text.selection.SelectionHandle
+import androidx.compose.foundation.text.selection.rememberPlatformSelectionBehaviors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.SideEffect
@@ -289,6 +291,14 @@ internal fun BasicTextField(
     val resolvedKeyboardOptions =
         keyboardOptions.fillUnspecifiedValuesWith(inputTransformation?.keyboardOptions)
 
+    val coroutineScope = rememberCoroutineScope()
+    @OptIn(ExperimentalFoundationApi::class)
+    val platformSelectionBehaviors =
+        if (ComposeFoundationFlags.isSmartSelectionEnabled) {
+            rememberPlatformSelectionBehaviors(SelectedTextType.EditableText, textStyle.localeList)
+        } else {
+            null
+        }
     val toolbarRequester = remember { ToolbarRequesterImpl() }
     val textFieldSelectionState =
         remember(transformedState) {
@@ -301,9 +311,10 @@ internal fun BasicTextField(
                 isFocused = isWindowAndTextFieldFocused,
                 isPassword = isPassword,
                 toolbarRequester = toolbarRequester,
+                coroutineScope = coroutineScope,
+                platformSelectionBehaviors = platformSelectionBehaviors,
             )
         }
-    val coroutineScope = rememberCoroutineScope()
     val currentHapticFeedback = LocalHapticFeedback.current
     val currentClipboard = LocalClipboard.current
     val currentTextToolbar = LocalTextToolbar.current

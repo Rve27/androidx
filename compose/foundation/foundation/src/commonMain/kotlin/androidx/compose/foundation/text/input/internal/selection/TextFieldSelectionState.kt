@@ -55,6 +55,7 @@ import androidx.compose.foundation.text.input.internal.selection.TextToolbarStat
 import androidx.compose.foundation.text.input.internal.selection.TextToolbarState.Selection
 import androidx.compose.foundation.text.input.internal.undo.TextFieldEditUndoBehavior
 import androidx.compose.foundation.text.selection.MouseSelectionObserver
+import androidx.compose.foundation.text.selection.PlatformSelectionBehaviors
 import androidx.compose.foundation.text.selection.SelectionAdjustment
 import androidx.compose.foundation.text.selection.SelectionLayout
 import androidx.compose.foundation.text.selection.containsInclusive
@@ -112,6 +113,9 @@ import kotlinx.coroutines.launch
  * @param readOnly If true, selection behaviors still work, but the text field cannot be edited.
  * @param isFocused True iff component is focused and the window is focused.
  * @param isPassword True if the text field is for a password.
+ * @param toolbarRequester The [ToolbarRequester] used to show and hide text floating toolbar.
+ * @param coroutineScope The [coroutineScope] bounds to the composition.
+ * @param platformSelectionBehaviors The platform specific selection behaviors.
  */
 @OptIn(ExperimentalFoundationApi::class)
 internal class TextFieldSelectionState(
@@ -123,6 +127,8 @@ internal class TextFieldSelectionState(
     var isFocused: Boolean,
     private var isPassword: Boolean,
     private val toolbarRequester: ToolbarRequester,
+    private val coroutineScope: CoroutineScope,
+    private val platformSelectionBehaviors: PlatformSelectionBehaviors?,
 ) {
     /** [HapticFeedback] handle to perform haptic feedback. */
     private var hapticFeedBack: HapticFeedback? = null
@@ -784,6 +790,7 @@ internal class TextFieldSelectionState(
         private var dragBeginPosition: Offset = Offset.Unspecified
         private var dragTotalDistance: Offset = Offset.Zero
         private var actingHandle: Handle = Handle.SelectionEnd // start with a placeholder.
+        private var isLongPressSelectionOnly = true
 
         private fun onDragStop() {
             // Only execute clear-up if drag was actually ongoing.
@@ -797,6 +804,35 @@ internal class TextFieldSelectionState(
 
                 directDragGestureInitiator = InputType.None
                 requestFocus()
+
+                val platformSelectionBehaviors =
+                    this@TextFieldSelectionState.platformSelectionBehaviors ?: return
+                val text = textFieldState.visualText.text
+                val selection = textFieldState.visualText.selection
+                if (isLongPressSelectionOnly && text.isNotEmpty() && !selection.collapsed) {
+                    coroutineScope.launch(start = CoroutineStart.UNDISPATCHED) {
+                        val suggestedSelection =
+                            platformSelectionBehaviors.suggestSelectionForLongPressOrDoubleClick(
+                                text,
+                                selection
+                            )
+
+                        // Ideally, the selection suggestion job should be cancelled whenever the
+                        // selection or text is updated. However, implementing this for all
+                        // selection/editing options is unmaintainable. Therefore, we only require
+                        // that the text and selection remain unchanged since the selection
+                        // suggestion was made.
+                        if (
+                            !isPassword &&
+                                suggestedSelection != null &&
+                                textFieldState.visualText.text == text &&
+                                textFieldState.visualText.selection == selection &&
+                                suggestedSelection != textFieldState.visualText.selection
+                        ) {
+                            textFieldState.selectCharsIn(suggestedSelection)
+                        }
+                    }
+                }
             }
         }
 
@@ -821,6 +857,7 @@ internal class TextFieldSelectionState(
             dragBeginPosition = startPoint
             dragTotalDistance = Offset.Zero
             previousRawDragOffset = -1
+            isLongPressSelectionOnly = true
 
             if (textLayoutState.layoutResult == null) return
 
@@ -831,6 +868,7 @@ internal class TextFieldSelectionState(
                 hapticFeedBack?.performHapticFeedback(HapticFeedbackType.TextHandleMove)
                 textFieldState.placeCursorBeforeCharAt(offset)
                 showCursorHandle = true
+                isLongPressSelectionOnly = false
                 updateTextToolbarState(Cursor)
             } else {
                 if (textFieldState.visualText.isEmpty()) return
@@ -971,6 +1009,7 @@ internal class TextFieldSelectionState(
                             }
                         }
                     }
+                isLongPressSelectionOnly = false
             }
 
             // Do not allow selection to collapse on itself while dragging. Selection can

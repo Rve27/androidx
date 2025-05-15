@@ -81,6 +81,13 @@ object ComposeFoundationFlags {
     @Suppress("MutableBareField") @JvmField internal var isNewContextMenuEnabled = false
 
     /**
+     * Whether to use the new smart selection feature in
+     * [androidx.compose.foundation.text.selection.SelectionContainer] and all
+     * [androidx.compose.foundation.text.BasicTextField]s.
+     */
+    @Suppress("MutableBareField") @JvmField var isSmartSelectionEnabled = true
+
+    /**
      * Selecting flag to enable the use of new PausableComposition in lazy layout prefetch. This
      * change allows us to distribute work we need to do during the prefetch better, for example we
      * can only perform the composition for parts of the LazyColumn's next item during one ui frame,

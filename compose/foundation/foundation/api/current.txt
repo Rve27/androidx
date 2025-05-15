@@ -118,6 +118,7 @@ package androidx.compose.foundation {
     property public boolean isNonComposedClickableEnabled;
     property public boolean isOnScrollChangedCallbackEnabled;
     property public boolean isPausableCompositionInPrefetchEnabled;
+    property public boolean isSmartSelectionEnabled;
     field public static boolean DragGesturePickUpEnabled;
     field public static final androidx.compose.foundation.ComposeFoundationFlags INSTANCE;
     field public static boolean isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled;
@@ -126,6 +127,7 @@ package androidx.compose.foundation {
     field public static boolean isNonComposedClickableEnabled;
     field public static boolean isOnScrollChangedCallbackEnabled;
     field public static boolean isPausableCompositionInPrefetchEnabled;
+    field public static boolean isSmartSelectionEnabled;
   }
 
   public final class DarkThemeKt {
@@ -2084,6 +2086,11 @@ package androidx.compose.foundation.text.modifiers {
 }
 
 package androidx.compose.foundation.text.selection {
+
+  public final class PlatformSelectionBehaviors_androidKt {
+    method public static androidx.compose.runtime.ProvidableCompositionLocal<kotlin.coroutines.CoroutineContext> getLocalTextClassifierCoroutineContext();
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<kotlin.coroutines.CoroutineContext> LocalTextClassifierCoroutineContext;
+  }
 
   public final class SelectionContainerKt {
     method @androidx.compose.runtime.Composable public static void DisableSelection(kotlin.jvm.functions.Function0<kotlin.Unit> content);

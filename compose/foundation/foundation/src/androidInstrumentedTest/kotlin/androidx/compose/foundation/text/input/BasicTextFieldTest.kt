@@ -124,7 +124,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.test.assertNotNull
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.test.runTest
@@ -1323,6 +1325,8 @@ internal class BasicTextFieldTest {
                     isFocused = false,
                     isPassword = false,
                     toolbarRequester = FakeToolbarRequester(),
+                    coroutineScope = CoroutineScope(EmptyCoroutineContext),
+                    platformSelectionBehaviors = null
                 )
                 .apply { requestAutofillAction = mockLambda }
 
