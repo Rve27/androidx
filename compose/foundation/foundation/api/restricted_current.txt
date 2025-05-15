@@ -115,6 +115,7 @@ package androidx.compose.foundation {
     property public boolean isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled;
     property public boolean isAutomaticNestedPrefetchEnabled;
     property public boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
+    property public boolean isNewContextMenuEnabled;
     property public boolean isNonComposedClickableEnabled;
     property public boolean isOnScrollChangedCallbackEnabled;
     property public boolean isPausableCompositionInPrefetchEnabled;
@@ -124,6 +125,7 @@ package androidx.compose.foundation {
     field public static boolean isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled;
     field public static boolean isAutomaticNestedPrefetchEnabled;
     field public static boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
+    field public static boolean isNewContextMenuEnabled;
     field public static boolean isNonComposedClickableEnabled;
     field public static boolean isOnScrollChangedCallbackEnabled;
     field public static boolean isPausableCompositionInPrefetchEnabled;
@@ -1902,6 +1904,101 @@ package androidx.compose.foundation.text {
     property public long MaxFontSize;
     property public long MinFontSize;
     field public static final androidx.compose.foundation.text.TextAutoSizeDefaults INSTANCE;
+  }
+
+}
+
+package androidx.compose.foundation.text.contextmenu.builder {
+
+  public final class TextContextMenuBuilderScope {
+    method public void separator();
+  }
+
+  public final class TextContextMenuBuilderScope_androidKt {
+    method public static void item(androidx.compose.foundation.text.contextmenu.builder.TextContextMenuBuilderScope, Object key, String label, optional @DrawableRes int leadingIcon, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.text.contextmenu.data.TextContextMenuSession,kotlin.Unit> onClick);
+  }
+
+}
+
+package androidx.compose.foundation.text.contextmenu.data {
+
+  public abstract class TextContextMenuComponent {
+    method public final Object getKey();
+    property public final Object key;
+  }
+
+  public final class TextContextMenuData {
+    ctor public TextContextMenuData(java.util.List<? extends androidx.compose.foundation.text.contextmenu.data.TextContextMenuComponent> components);
+    method public java.util.List<androidx.compose.foundation.text.contextmenu.data.TextContextMenuComponent> getComponents();
+    property public java.util.List<androidx.compose.foundation.text.contextmenu.data.TextContextMenuComponent> components;
+    field public static final androidx.compose.foundation.text.contextmenu.data.TextContextMenuData.Companion Companion;
+  }
+
+  public static final class TextContextMenuData.Companion {
+    method public androidx.compose.foundation.text.contextmenu.data.TextContextMenuData getEmpty();
+    property public androidx.compose.foundation.text.contextmenu.data.TextContextMenuData Empty;
+  }
+
+  public final class TextContextMenuItem extends androidx.compose.foundation.text.contextmenu.data.TextContextMenuComponent {
+    ctor public TextContextMenuItem(Object key, String label, optional int leadingIcon, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.text.contextmenu.data.TextContextMenuSession,kotlin.Unit> onClick);
+    method public String getLabel();
+    method public int getLeadingIcon();
+    method public kotlin.jvm.functions.Function1<androidx.compose.foundation.text.contextmenu.data.TextContextMenuSession,kotlin.Unit> getOnClick();
+    property public String label;
+    property public int leadingIcon;
+    property public kotlin.jvm.functions.Function1<androidx.compose.foundation.text.contextmenu.data.TextContextMenuSession,kotlin.Unit> onClick;
+  }
+
+  public final class TextContextMenuKeys {
+    method public Object getAutofillKey();
+    method public Object getCopyKey();
+    method public Object getCutKey();
+    method public Object getPasteKey();
+    method public Object getSelectAllKey();
+    property public Object AutofillKey;
+    property public Object CopyKey;
+    property public Object CutKey;
+    property public Object PasteKey;
+    property public Object SelectAllKey;
+    field public static final androidx.compose.foundation.text.contextmenu.data.TextContextMenuKeys INSTANCE;
+  }
+
+  public final class TextContextMenuSeparator extends androidx.compose.foundation.text.contextmenu.data.TextContextMenuComponent {
+    field public static final androidx.compose.foundation.text.contextmenu.data.TextContextMenuSeparator INSTANCE;
+  }
+
+  public interface TextContextMenuSession {
+    method public void close();
+  }
+
+}
+
+package androidx.compose.foundation.text.contextmenu.modifier {
+
+  public final class TextContextMenuModifierKt {
+    method public static androidx.compose.ui.Modifier addTextContextMenuComponents(androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.text.contextmenu.builder.TextContextMenuBuilderScope,kotlin.Unit> builder);
+    method public static androidx.compose.ui.Modifier filterTextContextMenuComponents(androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.text.contextmenu.data.TextContextMenuComponent,java.lang.Boolean> filter);
+  }
+
+}
+
+package androidx.compose.foundation.text.contextmenu.provider {
+
+  public interface TextContextMenuDataProvider {
+    method public androidx.compose.ui.geometry.Rect contentBounds(androidx.compose.ui.layout.LayoutCoordinates destinationCoordinates);
+    method public androidx.compose.foundation.text.contextmenu.data.TextContextMenuData data();
+    method public long position(androidx.compose.ui.layout.LayoutCoordinates destinationCoordinates);
+  }
+
+  public interface TextContextMenuProvider {
+    method public suspend Object? showTextContextMenu(androidx.compose.foundation.text.contextmenu.provider.TextContextMenuDataProvider dataProvider, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  }
+
+  public final class TextContextMenuProviderKt {
+    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.foundation.text.contextmenu.provider.TextContextMenuProvider?> getLocalTextContextMenuDropdownProvider();
+    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.foundation.text.contextmenu.provider.TextContextMenuProvider?> getLocalTextContextMenuToolbarProvider();
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.foundation.text.contextmenu.provider.TextContextMenuProvider?> LocalTextContextMenuDropdownProvider;
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.foundation.text.contextmenu.provider.TextContextMenuProvider?> LocalTextContextMenuToolbarProvider;
   }
 
 }

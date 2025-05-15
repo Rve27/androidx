@@ -470,6 +470,20 @@ abstract interface androidx.compose.foundation.shape/CornerSize { // androidx.co
     abstract fun toPx(androidx.compose.ui.geometry/Size, androidx.compose.ui.unit/Density): kotlin/Float // androidx.compose.foundation.shape/CornerSize.toPx|toPx(androidx.compose.ui.geometry.Size;androidx.compose.ui.unit.Density){}[0]
 }
 
+abstract interface androidx.compose.foundation.text.contextmenu.data/TextContextMenuSession { // androidx.compose.foundation.text.contextmenu.data/TextContextMenuSession|null[0]
+    abstract fun close() // androidx.compose.foundation.text.contextmenu.data/TextContextMenuSession.close|close(){}[0]
+}
+
+abstract interface androidx.compose.foundation.text.contextmenu.provider/TextContextMenuDataProvider { // androidx.compose.foundation.text.contextmenu.provider/TextContextMenuDataProvider|null[0]
+    abstract fun contentBounds(androidx.compose.ui.layout/LayoutCoordinates): androidx.compose.ui.geometry/Rect // androidx.compose.foundation.text.contextmenu.provider/TextContextMenuDataProvider.contentBounds|contentBounds(androidx.compose.ui.layout.LayoutCoordinates){}[0]
+    abstract fun data(): androidx.compose.foundation.text.contextmenu.data/TextContextMenuData // androidx.compose.foundation.text.contextmenu.provider/TextContextMenuDataProvider.data|data(){}[0]
+    abstract fun position(androidx.compose.ui.layout/LayoutCoordinates): androidx.compose.ui.geometry/Offset // androidx.compose.foundation.text.contextmenu.provider/TextContextMenuDataProvider.position|position(androidx.compose.ui.layout.LayoutCoordinates){}[0]
+}
+
+abstract interface androidx.compose.foundation.text.contextmenu.provider/TextContextMenuProvider { // androidx.compose.foundation.text.contextmenu.provider/TextContextMenuProvider|null[0]
+    abstract suspend fun showTextContextMenu(androidx.compose.foundation.text.contextmenu.provider/TextContextMenuDataProvider) // androidx.compose.foundation.text.contextmenu.provider/TextContextMenuProvider.showTextContextMenu|showTextContextMenu(androidx.compose.foundation.text.contextmenu.provider.TextContextMenuDataProvider){}[0]
+}
+
 abstract interface androidx.compose.foundation.text/KeyboardActionScope { // androidx.compose.foundation.text/KeyboardActionScope|null[0]
     abstract fun defaultKeyboardAction(androidx.compose.ui.text.input/ImeAction) // androidx.compose.foundation.text/KeyboardActionScope.defaultKeyboardAction|defaultKeyboardAction(androidx.compose.ui.text.input.ImeAction){}[0]
 }
@@ -804,6 +818,11 @@ abstract class androidx.compose.foundation.shape/CornerBasedShape : androidx.com
     final fun createOutline(androidx.compose.ui.geometry/Size, androidx.compose.ui.unit/LayoutDirection, androidx.compose.ui.unit/Density): androidx.compose.ui.graphics/Outline // androidx.compose.foundation.shape/CornerBasedShape.createOutline|createOutline(androidx.compose.ui.geometry.Size;androidx.compose.ui.unit.LayoutDirection;androidx.compose.ui.unit.Density){}[0]
 }
 
+abstract class androidx.compose.foundation.text.contextmenu.data/TextContextMenuComponent { // androidx.compose.foundation.text.contextmenu.data/TextContextMenuComponent|null[0]
+    final val key // androidx.compose.foundation.text.contextmenu.data/TextContextMenuComponent.key|{}key[0]
+        final fun <get-key>(): kotlin/Any // androidx.compose.foundation.text.contextmenu.data/TextContextMenuComponent.key.<get-key>|<get-key>(){}[0]
+}
+
 final class <#A: kotlin/Any?> androidx.compose.foundation.gestures/AnchoredDraggableState { // androidx.compose.foundation.gestures/AnchoredDraggableState|null[0]
     constructor <init>(#A) // androidx.compose.foundation.gestures/AnchoredDraggableState.<init>|<init>(1:0){}[0]
     constructor <init>(#A, androidx.compose.foundation.gestures/DraggableAnchors<#A>) // androidx.compose.foundation.gestures/AnchoredDraggableState.<init>|<init>(1:0;androidx.compose.foundation.gestures.DraggableAnchors<1:0>){}[0]
@@ -1074,6 +1093,24 @@ final class androidx.compose.foundation.shape/RoundedCornerShape : androidx.comp
     final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.foundation.shape/RoundedCornerShape.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // androidx.compose.foundation.shape/RoundedCornerShape.hashCode|hashCode(){}[0]
     final fun toString(): kotlin/String // androidx.compose.foundation.shape/RoundedCornerShape.toString|toString(){}[0]
+}
+
+final class androidx.compose.foundation.text.contextmenu.builder/TextContextMenuBuilderScope { // androidx.compose.foundation.text.contextmenu.builder/TextContextMenuBuilderScope|null[0]
+    final fun separator() // androidx.compose.foundation.text.contextmenu.builder/TextContextMenuBuilderScope.separator|separator(){}[0]
+}
+
+final class androidx.compose.foundation.text.contextmenu.data/TextContextMenuData { // androidx.compose.foundation.text.contextmenu.data/TextContextMenuData|null[0]
+    constructor <init>(kotlin.collections/List<androidx.compose.foundation.text.contextmenu.data/TextContextMenuComponent>) // androidx.compose.foundation.text.contextmenu.data/TextContextMenuData.<init>|<init>(kotlin.collections.List<androidx.compose.foundation.text.contextmenu.data.TextContextMenuComponent>){}[0]
+
+    final val components // androidx.compose.foundation.text.contextmenu.data/TextContextMenuData.components|{}components[0]
+        final fun <get-components>(): kotlin.collections/List<androidx.compose.foundation.text.contextmenu.data/TextContextMenuComponent> // androidx.compose.foundation.text.contextmenu.data/TextContextMenuData.components.<get-components>|<get-components>(){}[0]
+
+    final fun toString(): kotlin/String // androidx.compose.foundation.text.contextmenu.data/TextContextMenuData.toString|toString(){}[0]
+
+    final object Companion { // androidx.compose.foundation.text.contextmenu.data/TextContextMenuData.Companion|null[0]
+        final val Empty // androidx.compose.foundation.text.contextmenu.data/TextContextMenuData.Companion.Empty|{}Empty[0]
+            final fun <get-Empty>(): androidx.compose.foundation.text.contextmenu.data/TextContextMenuData // androidx.compose.foundation.text.contextmenu.data/TextContextMenuData.Companion.Empty.<get-Empty>|<get-Empty>(){}[0]
+    }
 }
 
 final class androidx.compose.foundation.text.input/TextFieldBuffer : kotlin.text/Appendable { // androidx.compose.foundation.text.input/TextFieldBuffer|null[0]
@@ -1353,6 +1390,21 @@ final object androidx.compose.foundation.pager/PagerDefaults { // androidx.compo
     final fun pageNestedScrollConnection(androidx.compose.foundation.pager/PagerState, androidx.compose.foundation.gestures/Orientation): androidx.compose.ui.input.nestedscroll/NestedScrollConnection // androidx.compose.foundation.pager/PagerDefaults.pageNestedScrollConnection|pageNestedScrollConnection(androidx.compose.foundation.pager.PagerState;androidx.compose.foundation.gestures.Orientation){}[0]
 }
 
+final object androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys { // androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys|null[0]
+    final val AutofillKey // androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys.AutofillKey|{}AutofillKey[0]
+        final fun <get-AutofillKey>(): kotlin/Any // androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys.AutofillKey.<get-AutofillKey>|<get-AutofillKey>(){}[0]
+    final val CopyKey // androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys.CopyKey|{}CopyKey[0]
+        final fun <get-CopyKey>(): kotlin/Any // androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys.CopyKey.<get-CopyKey>|<get-CopyKey>(){}[0]
+    final val CutKey // androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys.CutKey|{}CutKey[0]
+        final fun <get-CutKey>(): kotlin/Any // androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys.CutKey.<get-CutKey>|<get-CutKey>(){}[0]
+    final val PasteKey // androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys.PasteKey|{}PasteKey[0]
+        final fun <get-PasteKey>(): kotlin/Any // androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys.PasteKey.<get-PasteKey>|<get-PasteKey>(){}[0]
+    final val SelectAllKey // androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys.SelectAllKey|{}SelectAllKey[0]
+        final fun <get-SelectAllKey>(): kotlin/Any // androidx.compose.foundation.text.contextmenu.data/TextContextMenuKeys.SelectAllKey.<get-SelectAllKey>|<get-SelectAllKey>(){}[0]
+}
+
+final object androidx.compose.foundation.text.contextmenu.data/TextContextMenuSeparator : androidx.compose.foundation.text.contextmenu.data/TextContextMenuComponent // androidx.compose.foundation.text.contextmenu.data/TextContextMenuSeparator|null[0]
+
 final object androidx.compose.foundation.text/TextAutoSizeDefaults { // androidx.compose.foundation.text/TextAutoSizeDefaults|null[0]
     final val MaxFontSize // androidx.compose.foundation.text/TextAutoSizeDefaults.MaxFontSize|{}MaxFontSize[0]
         final fun <get-MaxFontSize>(): androidx.compose.ui.unit/TextUnit // androidx.compose.foundation.text/TextAutoSizeDefaults.MaxFontSize.<get-MaxFontSize>|<get-MaxFontSize>(){}[0]
@@ -1377,6 +1429,10 @@ final val androidx.compose.foundation.shape/CircleShape // androidx.compose.foun
     final fun <get-CircleShape>(): androidx.compose.foundation.shape/RoundedCornerShape // androidx.compose.foundation.shape/CircleShape.<get-CircleShape>|<get-CircleShape>(){}[0]
 final val androidx.compose.foundation.shape/ZeroCornerSize // androidx.compose.foundation.shape/ZeroCornerSize|{}ZeroCornerSize[0]
     final fun <get-ZeroCornerSize>(): androidx.compose.foundation.shape/CornerSize // androidx.compose.foundation.shape/ZeroCornerSize.<get-ZeroCornerSize>|<get-ZeroCornerSize>(){}[0]
+final val androidx.compose.foundation.text.contextmenu.provider/LocalTextContextMenuDropdownProvider // androidx.compose.foundation.text.contextmenu.provider/LocalTextContextMenuDropdownProvider|{}LocalTextContextMenuDropdownProvider[0]
+    final fun <get-LocalTextContextMenuDropdownProvider>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.foundation.text.contextmenu.provider/TextContextMenuProvider?> // androidx.compose.foundation.text.contextmenu.provider/LocalTextContextMenuDropdownProvider.<get-LocalTextContextMenuDropdownProvider>|<get-LocalTextContextMenuDropdownProvider>(){}[0]
+final val androidx.compose.foundation.text.contextmenu.provider/LocalTextContextMenuToolbarProvider // androidx.compose.foundation.text.contextmenu.provider/LocalTextContextMenuToolbarProvider|{}LocalTextContextMenuToolbarProvider[0]
+    final fun <get-LocalTextContextMenuToolbarProvider>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.foundation.text.contextmenu.provider/TextContextMenuProvider?> // androidx.compose.foundation.text.contextmenu.provider/LocalTextContextMenuToolbarProvider.<get-LocalTextContextMenuToolbarProvider>|<get-LocalTextContextMenuToolbarProvider>(){}[0]
 final val androidx.compose.foundation.text.selection/LocalTextSelectionColors // androidx.compose.foundation.text.selection/LocalTextSelectionColors|{}LocalTextSelectionColors[0]
     final fun <get-LocalTextSelectionColors>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.foundation.text.selection/TextSelectionColors> // androidx.compose.foundation.text.selection/LocalTextSelectionColors.<get-LocalTextSelectionColors>|<get-LocalTextSelectionColors>(){}[0]
 final val androidx.compose.foundation.text/LocalAutofillHighlightColor // androidx.compose.foundation.text/LocalAutofillHighlightColor|{}LocalAutofillHighlightColor[0]
@@ -1435,6 +1491,8 @@ final fun (androidx.compose.ui/Modifier).androidx.compose.foundation.selection/t
 final fun (androidx.compose.ui/Modifier).androidx.compose.foundation.selection/triStateToggleable(androidx.compose.ui.state/ToggleableState, androidx.compose.foundation.interaction/MutableInteractionSource?, androidx.compose.foundation/Indication?, kotlin/Boolean = ..., androidx.compose.ui.semantics/Role? = ..., kotlin/Function0<kotlin/Unit>): androidx.compose.ui/Modifier // androidx.compose.foundation.selection/triStateToggleable|triStateToggleable@androidx.compose.ui.Modifier(androidx.compose.ui.state.ToggleableState;androidx.compose.foundation.interaction.MutableInteractionSource?;androidx.compose.foundation.Indication?;kotlin.Boolean;androidx.compose.ui.semantics.Role?;kotlin.Function0<kotlin.Unit>){}[0]
 final fun (androidx.compose.ui/Modifier).androidx.compose.foundation.selection/triStateToggleable(androidx.compose.ui.state/ToggleableState, kotlin/Boolean = ..., androidx.compose.ui.semantics/Role? = ..., androidx.compose.foundation.interaction/MutableInteractionSource? = ..., kotlin/Function0<kotlin/Unit>): androidx.compose.ui/Modifier // androidx.compose.foundation.selection/triStateToggleable|triStateToggleable@androidx.compose.ui.Modifier(androidx.compose.ui.state.ToggleableState;kotlin.Boolean;androidx.compose.ui.semantics.Role?;androidx.compose.foundation.interaction.MutableInteractionSource?;kotlin.Function0<kotlin.Unit>){}[0]
 final fun (androidx.compose.ui/Modifier).androidx.compose.foundation.selection/triStateToggleable(androidx.compose.ui.state/ToggleableState, kotlin/Boolean = ..., androidx.compose.ui.semantics/Role? = ..., kotlin/Function0<kotlin/Unit>): androidx.compose.ui/Modifier // androidx.compose.foundation.selection/triStateToggleable|triStateToggleable@androidx.compose.ui.Modifier(androidx.compose.ui.state.ToggleableState;kotlin.Boolean;androidx.compose.ui.semantics.Role?;kotlin.Function0<kotlin.Unit>){}[0]
+final fun (androidx.compose.ui/Modifier).androidx.compose.foundation.text.contextmenu.modifier/addTextContextMenuComponents(kotlin/Function1<androidx.compose.foundation.text.contextmenu.builder/TextContextMenuBuilderScope, kotlin/Unit>): androidx.compose.ui/Modifier // androidx.compose.foundation.text.contextmenu.modifier/addTextContextMenuComponents|addTextContextMenuComponents@androidx.compose.ui.Modifier(kotlin.Function1<androidx.compose.foundation.text.contextmenu.builder.TextContextMenuBuilderScope,kotlin.Unit>){}[0]
+final fun (androidx.compose.ui/Modifier).androidx.compose.foundation.text.contextmenu.modifier/filterTextContextMenuComponents(kotlin/Function1<androidx.compose.foundation.text.contextmenu.data/TextContextMenuComponent, kotlin/Boolean>): androidx.compose.ui/Modifier // androidx.compose.foundation.text.contextmenu.modifier/filterTextContextMenuComponents|filterTextContextMenuComponents@androidx.compose.ui.Modifier(kotlin.Function1<androidx.compose.foundation.text.contextmenu.data.TextContextMenuComponent,kotlin.Boolean>){}[0]
 final fun (androidx.compose.ui/Modifier).androidx.compose.foundation/background(androidx.compose.ui.graphics/Brush, androidx.compose.ui.graphics/Shape = ..., kotlin/Float = ...): androidx.compose.ui/Modifier // androidx.compose.foundation/background|background@androidx.compose.ui.Modifier(androidx.compose.ui.graphics.Brush;androidx.compose.ui.graphics.Shape;kotlin.Float){}[0]
 final fun (androidx.compose.ui/Modifier).androidx.compose.foundation/background(androidx.compose.ui.graphics/Color, androidx.compose.ui.graphics/Shape = ...): androidx.compose.ui/Modifier // androidx.compose.foundation/background|background@androidx.compose.ui.Modifier(androidx.compose.ui.graphics.Color;androidx.compose.ui.graphics.Shape){}[0]
 final fun (androidx.compose.ui/Modifier).androidx.compose.foundation/basicMarquee(kotlin/Int = ..., androidx.compose.foundation/MarqueeAnimationMode = ..., kotlin/Int = ..., kotlin/Int = ..., androidx.compose.foundation/MarqueeSpacing = ..., androidx.compose.ui.unit/Dp = ...): androidx.compose.ui/Modifier // androidx.compose.foundation/basicMarquee|basicMarquee@androidx.compose.ui.Modifier(kotlin.Int;androidx.compose.foundation.MarqueeAnimationMode;kotlin.Int;kotlin.Int;androidx.compose.foundation.MarqueeSpacing;androidx.compose.ui.unit.Dp){}[0]
