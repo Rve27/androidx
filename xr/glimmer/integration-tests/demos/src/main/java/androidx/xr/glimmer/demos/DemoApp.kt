@@ -18,21 +18,18 @@ package androidx.xr.glimmer.demos
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,9 +39,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.GlimmerTheme
+import androidx.xr.glimmer.Text
+import androidx.xr.glimmer.surface
 
 @Composable
 fun DemoApp(
@@ -60,11 +58,12 @@ fun DemoApp(
             DisplayDemo(currentDemo, onNavigateToDemo)
             val context = LocalContext.current
             Spacer(Modifier.weight(1f, fill = true))
-            ListItem(onClick = { OverlayOnBackgroundSetting.set(context, !overlayOnBackground) }) {
-                BasicText(
+            ListItem(
+                onClick = { OverlayOnBackgroundSetting.set(context, !overlayOnBackground) },
+                Modifier.padding(16.dp)
+            ) {
+                Text(
                     "${if (overlayOnBackground) "Disable" else "Enable"} overlay on background",
-                    Modifier.height(56.dp).wrapContentSize(Alignment.Center),
-                    TextStyle(color = Color.White)
                 )
             }
         }
@@ -81,15 +80,13 @@ private fun DisplayDemo(demo: Demo, onNavigate: (Demo) -> Unit) {
 
 @Composable
 private fun DisplayDemoCategory(category: DemoCategory, onNavigate: (Demo) -> Unit) {
-    LazyColumn {
+    LazyColumn(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         items(category.demos) { demo ->
-            ListItem(onClick = { onNavigate(demo) }) {
-                BasicText(
-                    demo.title,
-                    Modifier.height(56.dp).wrapContentSize(Alignment.Center),
-                    TextStyle(color = Color.White)
-                )
-            }
+            ListItem(onClick = { onNavigate(demo) }) { Text(demo.title) }
         }
     }
 }
@@ -102,12 +99,10 @@ private fun ListItem(
 ) {
     Box(
         modifier
-            .heightIn(min = 48.dp)
             .fillMaxWidth()
+            .surface()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp)
-            .wrapContentHeight(Alignment.CenterVertically),
-        contentAlignment = Alignment.CenterStart
+            .padding(horizontal = 24.dp, vertical = 20.dp),
     ) {
         content()
     }

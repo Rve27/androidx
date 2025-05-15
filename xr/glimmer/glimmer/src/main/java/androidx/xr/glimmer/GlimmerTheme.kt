@@ -54,6 +54,7 @@ public fun GlimmerTheme(
         _localGlimmerTheme provides GlimmerTheme(colors, typography),
         // TODO: b/413429405
         LocalIndication provides NoIndication,
+        LocalTextStyle provides typography.bodySmall,
         content = content
     )
 }
