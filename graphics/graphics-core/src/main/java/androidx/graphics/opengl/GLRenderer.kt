@@ -164,6 +164,9 @@ class GLRenderer(
      * Note the render operation will only occur if the GLRenderer is started, that is if
      * [isRunning] returns true. Otherwise this is a no-op.
      *
+     * When rendering continuously callers should typically use [android.view.Choreographer] to
+     * render no more than the refresh rate of the display.
+     *
      * @param target RenderTarget to be re-rendered
      * @param onRenderComplete Optional callback invoked on the backing thread after the frame has
      *   been rendered.
