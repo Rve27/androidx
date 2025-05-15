@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.testutils.assertAgainstGolden
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.test.captureToImage
@@ -198,6 +199,101 @@ class ThreePaneScaffoldScreenshotTest {
             .assertAgainstGolden(
                 screenshotRule,
                 "threePaneScaffold_listDetailPaneOrder_withReflowedPane"
+            )
+    }
+
+    @Test
+    fun threePaneScaffold_singlePaneLayout_withLevitatedPane() {
+        rule.setContent {
+            SampleThreePaneScaffoldStandardMode(
+                overrideScaffoldValue =
+                    ThreePaneScaffoldValue(
+                        primary = PaneAdaptedValue.Expanded,
+                        secondary = PaneAdaptedValue.Levitated(alignment = Alignment.Center),
+                        tertiary = PaneAdaptedValue.Hidden,
+                    )
+            )
+        }
+
+        rule
+            .onNodeWithTag(ThreePaneScaffoldTestTag)
+            .captureToImage()
+            .assertAgainstGolden(
+                screenshotRule,
+                "threePaneScaffold_singlePaneLayout_withLevitatedPane"
+            )
+    }
+
+    @Test
+    fun threePaneScaffold_dualPaneLayout_withLevitatedPaneWithScrim() {
+        rule.setContentWithSimulatedSize(simulatedWidth = 1024.dp, simulatedHeight = 800.dp) {
+            SampleThreePaneScaffoldStandardMode(
+                overrideScaffoldValue =
+                    ThreePaneScaffoldValue(
+                        primary = PaneAdaptedValue.Expanded,
+                        secondary =
+                            PaneAdaptedValue.Levitated(
+                                alignment = Alignment.Center,
+                                scrim = Scrim()
+                            ),
+                        tertiary = PaneAdaptedValue.Hidden,
+                    )
+            )
+        }
+
+        rule
+            .onNodeWithTag(ThreePaneScaffoldTestTag)
+            .captureToImage()
+            .assertAgainstGolden(
+                screenshotRule,
+                "threePaneScaffold_dualPaneLayout_withLevitatedPaneWithScrim"
+            )
+    }
+
+    @Test
+    fun threePaneScaffold_singlePaneLayout_withLevitatedBottomAligned() {
+        rule.setContent {
+            SampleThreePaneScaffoldStandardMode(
+                overrideScaffoldValue =
+                    ThreePaneScaffoldValue(
+                        primary = PaneAdaptedValue.Expanded,
+                        secondary = PaneAdaptedValue.Levitated(alignment = Alignment.BottomCenter),
+                        tertiary = PaneAdaptedValue.Hidden,
+                    )
+            )
+        }
+
+        rule
+            .onNodeWithTag(ThreePaneScaffoldTestTag)
+            .captureToImage()
+            .assertAgainstGolden(
+                screenshotRule,
+                "threePaneScaffold_singlePaneLayout_withLevitatedBottomAligned"
+            )
+    }
+
+    @Test
+    fun threePaneScaffold_dualPaneLayout_withLevitatedPaneStartAligned() {
+        rule.setContentWithSimulatedSize(simulatedWidth = 1024.dp, simulatedHeight = 800.dp) {
+            SampleThreePaneScaffoldStandardMode(
+                overrideScaffoldValue =
+                    ThreePaneScaffoldValue(
+                        primary = PaneAdaptedValue.Expanded,
+                        secondary =
+                            PaneAdaptedValue.Levitated(
+                                alignment = Alignment.CenterStart,
+                            ),
+                        tertiary = PaneAdaptedValue.Expanded,
+                    )
+            )
+        }
+
+        rule
+            .onNodeWithTag(ThreePaneScaffoldTestTag)
+            .captureToImage()
+            .assertAgainstGolden(
+                screenshotRule,
+                "threePaneScaffold_dualPaneLayout_withLevitatedPaneStartAligned"
             )
     }
 
