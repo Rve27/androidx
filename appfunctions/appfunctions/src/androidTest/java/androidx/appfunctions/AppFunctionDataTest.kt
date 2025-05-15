@@ -36,6 +36,7 @@ import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata.Companion
 import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata.Companion.TYPE_LONG
 import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata.Companion.TYPE_PENDING_INTENT
 import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata.Companion.TYPE_STRING
+import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
@@ -695,6 +696,67 @@ class AppFunctionDataTest {
             .isEqualTo(20.0)
         assertThat(data.getAppFunctionDataList("dataList")?.get(1)?.getString("string"))
             .isEqualTo("testString")
+    }
+
+    @Test
+    fun getAppFunctionData_arrayWithReferenceType() {
+        val personMetadata =
+            AppFunctionObjectTypeMetadata(
+                properties =
+                    mapOf(
+                        "firstName" to
+                            AppFunctionPrimitiveTypeMetadata(
+                                type = TYPE_STRING,
+                                isNullable = false
+                            ),
+                    ),
+                required = listOf(),
+                qualifiedName =
+                    "com.testdata.anotherDifferentPackage.AnotherDiffPackageSerializable",
+                isNullable = true
+            )
+        val componentMetadata =
+            AppFunctionComponentsMetadata(dataTypes = mapOf("Person" to personMetadata))
+        val personsMetadata =
+            AppFunctionArrayTypeMetadata(
+                AppFunctionReferenceTypeMetadata("Person", isNullable = false),
+                isNullable = false,
+            )
+
+        val data =
+            AppFunctionData.Builder(
+                    listOf(
+                        AppFunctionParameterMetadata(
+                            name = "persons",
+                            dataType = personsMetadata,
+                            isRequired = true
+                        )
+                    ),
+                    componentMetadata
+                )
+                .setAppFunctionDataList(
+                    "persons",
+                    listOf(
+                        AppFunctionData.Builder(
+                                objectTypeMetadata = personMetadata,
+                                componentMetadata = componentMetadata
+                            )
+                            .setString("firstName", "John")
+                            .build(),
+                        AppFunctionData.Builder(
+                                objectTypeMetadata = personMetadata,
+                                componentMetadata = componentMetadata
+                            )
+                            .setString("firstName", "Mary")
+                            .build()
+                    )
+                )
+                .build()
+
+        assertThat(data.getAppFunctionDataList("persons")).hasSize(2)
+        val persons = data.getAppFunctionDataList("persons")
+        assertThat(persons?.get(0)?.getString("firstName")).isEqualTo("John")
+        assertThat(persons?.get(1)?.getString("firstName")).isEqualTo("Mary")
     }
 
     @Test

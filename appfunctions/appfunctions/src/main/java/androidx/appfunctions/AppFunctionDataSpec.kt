@@ -61,12 +61,27 @@ internal abstract class AppFunctionDataSpec {
                 ?: throw IllegalArgumentException("Value associated with $key is not an object")
         return when (childDataType) {
             is AppFunctionArrayTypeMetadata -> {
-                val itemObjectType =
-                    childDataType.itemType as? AppFunctionObjectTypeMetadata
-                        ?: throw IllegalArgumentException(
-                            "Value associated with $key is not an object array"
+                when (val itemType = childDataType.itemType) {
+                    is AppFunctionObjectTypeMetadata ->
+                        return ObjectSpec(itemType, componentMetadata)
+                    is AppFunctionReferenceTypeMetadata -> {
+                        val resolvedDataType =
+                            componentMetadata.dataTypes[itemType.referenceDataType]
+                        if (
+                            resolvedDataType == null ||
+                                resolvedDataType !is AppFunctionObjectTypeMetadata
+                        ) {
+                            throw IllegalArgumentException(
+                                "Unable to resolve the reference: " + itemType.referenceDataType
+                            )
+                        }
+                        ObjectSpec(resolvedDataType, componentMetadata)
+                    }
+                    else ->
+                        throw IllegalArgumentException(
+                            "Array itemType must be either an object or a reference"
                         )
-                ObjectSpec(itemObjectType, componentMetadata)
+                }
             }
             is AppFunctionObjectTypeMetadata -> {
                 ObjectSpec(childDataType, componentMetadata)
