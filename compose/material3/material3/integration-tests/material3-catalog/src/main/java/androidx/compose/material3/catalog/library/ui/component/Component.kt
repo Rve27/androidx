@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -114,18 +115,31 @@ fun Component(
                 )
                 Spacer(modifier = Modifier.height(ComponentPadding))
             }
-            if (component.examples.isNotEmpty()) {
-                items(component.examples) { example ->
-                    ExampleItem(example = example, onClick = onExampleClick)
+            // In case the theme has a showOnlyExpressiveComponents setting, filter the
+            // examples list to include only those that are expressive.
+            val filteredExamples =
+                if (theme.showOnlyExpressiveComponents) {
+                    component.examples.filter { it.isExpressive }
+                } else {
+                    component.examples
+                }
+            if (filteredExamples.isNotEmpty()) {
+                items(filteredExamples) { example ->
+                    ExampleItem(
+                        example = example,
+                        markExpressiveComponents = theme.markExpressiveComponents,
+                        onClick = onExampleClick
+                    )
                     Spacer(modifier = Modifier.height(ExampleItemPadding))
                 }
             } else {
                 item {
-                    Text(
-                        text = stringResource(id = R.string.no_examples),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Spacer(modifier = Modifier.height(ComponentPadding))
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = stringResource(id = R.string.no_examples),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                 }
             }
         }

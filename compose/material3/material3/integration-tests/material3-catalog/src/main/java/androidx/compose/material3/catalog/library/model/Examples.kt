@@ -283,6 +283,7 @@ data class Example(
     val name: String,
     val description: String,
     val sourceUrl: String,
+    val isExpressive: Boolean,
     val content: @Composable () -> Unit
 )
 
@@ -293,21 +294,24 @@ val AdaptiveExamples =
         Example(
             name = "ListDetailPaneScaffoldSample",
             description = AdaptiveExampleDescription,
-            sourceUrl = AdaptiveExampleSourceUrl
+            sourceUrl = AdaptiveExampleSourceUrl,
+            isExpressive = false,
         ) {
             ListDetailPaneScaffoldSample()
         },
         Example(
             name = "ListDetailPaneScaffoldSampleWithExtraPane",
             description = AdaptiveExampleDescription,
-            sourceUrl = AdaptiveExampleSourceUrl
+            sourceUrl = AdaptiveExampleSourceUrl,
+            isExpressive = false,
         ) {
             ListDetailPaneScaffoldSampleWithExtraPane()
         },
         Example(
             name = "NavigableListDetailPaneScaffoldSample",
             description = AdaptiveExampleDescription,
-            sourceUrl = AdaptiveExampleSourceUrl
+            sourceUrl = AdaptiveExampleSourceUrl,
+            isExpressive = false,
         ) {
             NavigableListDetailPaneScaffoldSample()
         }
@@ -320,7 +324,8 @@ val BadgeExamples =
         Example(
             name = "NavigationBarItemWithBadge",
             description = BadgeExampleDescription,
-            sourceUrl = BadgeExampleSourceUrl
+            sourceUrl = BadgeExampleSourceUrl,
+            isExpressive = false,
         ) {
             NavigationBarItemWithBadge()
         }
@@ -333,21 +338,24 @@ val BottomSheetExamples =
         Example(
             name = "ModalBottomSheetSample",
             description = BottomSheetExampleDescription,
-            sourceUrl = BottomSheetExampleSourceUrl
+            sourceUrl = BottomSheetExampleSourceUrl,
+            isExpressive = false,
         ) {
             ModalBottomSheetSample()
         },
         Example(
             name = "SimpleBottomSheetScaffoldSample",
             description = BottomSheetExampleDescription,
-            sourceUrl = BottomSheetExampleSourceUrl
+            sourceUrl = BottomSheetExampleSourceUrl,
+            isExpressive = false,
         ) {
             SimpleBottomSheetScaffoldSample()
         },
         Example(
             name = "BottomSheetScaffoldNestedScrollSample",
             description = BottomSheetExampleDescription,
-            sourceUrl = BottomSheetExampleSourceUrl
+            sourceUrl = BottomSheetExampleSourceUrl,
+            isExpressive = false,
         ) {
             BottomSheetScaffoldNestedScrollSample()
         }
@@ -361,6 +369,7 @@ val ButtonsExamples =
             name = "ButtonSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ButtonSample()
         },
@@ -368,6 +377,7 @@ val ButtonsExamples =
             name = "ButtonWithAnimatedShapeSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ButtonWithAnimatedShapeSample()
         },
@@ -375,6 +385,7 @@ val ButtonsExamples =
             name = "SquareButtonSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             SquareButtonSample()
         },
@@ -382,6 +393,7 @@ val ButtonsExamples =
             name = "SmallButtonSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             SmallButtonSample()
         },
@@ -389,6 +401,7 @@ val ButtonsExamples =
             name = "ElevatedButtonSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ElevatedButtonSample()
         },
@@ -396,6 +409,7 @@ val ButtonsExamples =
             name = "ElevatedButtonWithAnimatedShapeSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ElevatedButtonWithAnimatedShapeSample()
         },
@@ -403,6 +417,7 @@ val ButtonsExamples =
             name = "FilledTonalButtonSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = false,
         ) {
             FilledTonalButtonSample()
         },
@@ -410,6 +425,7 @@ val ButtonsExamples =
             name = "FilledTonalButtonWithAnimatedShapeSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             FilledTonalButtonWithAnimatedShapeSample()
         },
@@ -417,6 +433,7 @@ val ButtonsExamples =
             name = "OutlinedButtonSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = false,
         ) {
             OutlinedButtonSample()
         },
@@ -424,6 +441,7 @@ val ButtonsExamples =
             name = "OutlinedButtonWithAnimatedShapeSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             OutlinedButtonWithAnimatedShapeSample()
         },
@@ -431,6 +449,7 @@ val ButtonsExamples =
             name = "TextButtonSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = false,
         ) {
             TextButtonSample()
         },
@@ -438,6 +457,7 @@ val ButtonsExamples =
             name = "TextButtonWithAnimatedShapeSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             TextButtonWithAnimatedShapeSample()
         },
@@ -445,6 +465,7 @@ val ButtonsExamples =
             name = "ButtonWithIconSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ButtonWithIconSample()
         },
@@ -452,6 +473,7 @@ val ButtonsExamples =
             name = "XSmallButtonWithIconSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             XSmallButtonWithIconSample()
         },
@@ -459,6 +481,7 @@ val ButtonsExamples =
             name = "MediumButtonWithIconSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             MediumButtonWithIconSample()
         },
@@ -466,6 +489,7 @@ val ButtonsExamples =
             name = "LargeButtonWithIconSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             LargeButtonWithIconSample()
         },
@@ -473,6 +497,7 @@ val ButtonsExamples =
             name = "XLargeButtonWithIconSample",
             description = ButtonsExampleDescription,
             sourceUrl = ButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             XLargeButtonWithIconSample()
         },
@@ -486,6 +511,7 @@ val ButtonGroupsExamples =
             name = "ButtonGroupSample",
             description = ButtonGroupsExampleDescription,
             sourceUrl = ButtonGroupsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ButtonGroupSample()
         },
@@ -493,6 +519,7 @@ val ButtonGroupsExamples =
             name = "SingleSelectConnectedButtonGroupSample",
             description = ButtonGroupsExampleDescription,
             sourceUrl = ButtonGroupsExampleSourceUrl,
+            isExpressive = true,
         ) {
             SingleSelectConnectedButtonGroupSample()
         },
@@ -500,6 +527,7 @@ val ButtonGroupsExamples =
             name = "SingleSelectConnectedButtonGroupWithFlowLayoutSample",
             description = ButtonGroupsExampleDescription,
             sourceUrl = ButtonGroupsExampleSourceUrl,
+            isExpressive = true,
         ) {
             SingleSelectConnectedButtonGroupWithFlowLayoutSample()
         },
@@ -507,6 +535,7 @@ val ButtonGroupsExamples =
             name = "MultiSelectConnectedButtonGroupSample",
             description = ButtonGroupsExampleDescription,
             sourceUrl = ButtonGroupsExampleSourceUrl,
+            isExpressive = true,
         ) {
             MultiSelectConnectedButtonGroupSample()
         },
@@ -519,42 +548,48 @@ val CardExamples =
         Example(
             name = "CardSample",
             description = CardsExampleDescription,
-            sourceUrl = CardsExampleSourceUrl
+            sourceUrl = CardsExampleSourceUrl,
+            isExpressive = false,
         ) {
             CardSample()
         },
         Example(
             name = "ClickableCardSample",
             description = CardsExampleDescription,
-            sourceUrl = CardsExampleSourceUrl
+            sourceUrl = CardsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ClickableCardSample()
         },
         Example(
             name = "ElevatedCardSample",
             description = CardsExampleDescription,
-            sourceUrl = CardsExampleSourceUrl
+            sourceUrl = CardsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ElevatedCardSample()
         },
         Example(
             name = "ClickableElevatedCardSample",
             description = CardsExampleDescription,
-            sourceUrl = CardsExampleSourceUrl
+            sourceUrl = CardsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ClickableElevatedCardSample()
         },
         Example(
             name = "OutlinedCardSample",
             description = CardsExampleDescription,
-            sourceUrl = CardsExampleSourceUrl
+            sourceUrl = CardsExampleSourceUrl,
+            isExpressive = false,
         ) {
             OutlinedCardSample()
         },
         Example(
             name = "ClickableOutlinedCardSample",
             description = CardsExampleDescription,
-            sourceUrl = CardsExampleSourceUrl
+            sourceUrl = CardsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ClickableOutlinedCardSample()
         }
@@ -567,21 +602,24 @@ val CarouselExamples =
         Example(
             name = "HorizontalMultiBrowseCarouselSample",
             description = CarouselExampleDescription,
-            sourceUrl = CarouselExampleSourceUrl
+            sourceUrl = CarouselExampleSourceUrl,
+            isExpressive = false,
         ) {
             HorizontalMultiBrowseCarouselSample()
         },
         Example(
             name = "HorizontalUncontainedCarouselSample",
             description = CarouselExampleDescription,
-            sourceUrl = CarouselExampleSourceUrl
+            sourceUrl = CarouselExampleSourceUrl,
+            isExpressive = false,
         ) {
             HorizontalUncontainedCarouselSample()
         },
         Example(
             name = "FadingHorizontalMultiBrowseCarouselSample",
             description = CarouselExampleDescription,
-            sourceUrl = CarouselExampleSourceUrl
+            sourceUrl = CarouselExampleSourceUrl,
+            isExpressive = false,
         ) {
             FadingHorizontalMultiBrowseCarouselSample()
         }
@@ -594,35 +632,40 @@ val CheckboxesExamples =
         Example(
             name = "CheckboxSample",
             description = CheckboxesExampleDescription,
-            sourceUrl = CheckboxesExampleSourceUrl
+            sourceUrl = CheckboxesExampleSourceUrl,
+            isExpressive = false,
         ) {
             CheckboxSample()
         },
         Example(
             name = "CheckboxWithTextSample",
             description = CheckboxesExampleDescription,
-            sourceUrl = CheckboxesExampleSourceUrl
+            sourceUrl = CheckboxesExampleSourceUrl,
+            isExpressive = false,
         ) {
             CheckboxWithTextSample()
         },
         Example(
             name = "CheckboxRoundedStrokesSample",
             description = CheckboxesExampleDescription,
-            sourceUrl = CheckboxesExampleSourceUrl
+            sourceUrl = CheckboxesExampleSourceUrl,
+            isExpressive = false,
         ) {
             CheckboxRoundedStrokesSample()
         },
         Example(
             name = "TriStateCheckboxSample",
             description = CheckboxesExampleDescription,
-            sourceUrl = CheckboxesExampleSourceUrl
+            sourceUrl = CheckboxesExampleSourceUrl,
+            isExpressive = false,
         ) {
             TriStateCheckboxSample()
         },
         Example(
             name = "TriStateCheckboxRoundedStrokesSample",
             description = CheckboxesExampleDescription,
-            sourceUrl = CheckboxesExampleSourceUrl
+            sourceUrl = CheckboxesExampleSourceUrl,
+            isExpressive = false,
         ) {
             TriStateCheckboxRoundedStrokesSample()
         },
@@ -635,77 +678,88 @@ val ChipsExamples =
         Example(
             name = "AssistChipSample",
             description = ChipsExampleDescription,
-            sourceUrl = ChipsExampleSourceUrl
+            sourceUrl = ChipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             AssistChipSample()
         },
         Example(
             name = "ElevatedAssistChipSample",
             description = ChipsExampleDescription,
-            sourceUrl = ChipsExampleSourceUrl
+            sourceUrl = ChipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ElevatedAssistChipSample()
         },
         Example(
             name = "FilterChipSample",
             description = ChipsExampleDescription,
-            sourceUrl = ChipsExampleSourceUrl
+            sourceUrl = ChipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             FilterChipSample()
         },
         Example(
             name = "ElevatedFilterChipSample",
             description = ChipsExampleDescription,
-            sourceUrl = ChipsExampleSourceUrl
+            sourceUrl = ChipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ElevatedFilterChipSample()
         },
         Example(
             name = "FilterChipWithLeadingIconSample",
             description = ChipsExampleDescription,
-            sourceUrl = ChipsExampleSourceUrl
+            sourceUrl = ChipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             FilterChipWithLeadingIconSample()
         },
         Example(
             name = "InputChipSample",
             description = ChipsExampleDescription,
-            sourceUrl = ChipsExampleSourceUrl
+            sourceUrl = ChipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             InputChipSample()
         },
         Example(
             name = "InputChipWithAvatarSample",
             description = ChipsExampleDescription,
-            sourceUrl = ChipsExampleSourceUrl
+            sourceUrl = ChipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             InputChipWithAvatarSample()
         },
         Example(
             name = "SuggestionChipSample",
             description = ChipsExampleDescription,
-            sourceUrl = ChipsExampleSourceUrl
+            sourceUrl = ChipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             SuggestionChipSample()
         },
         Example(
             name = "ElevatedSuggestionChipSample",
             description = ChipsExampleDescription,
-            sourceUrl = ChipsExampleSourceUrl
+            sourceUrl = ChipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ElevatedSuggestionChipSample()
         },
         Example(
             name = "ChipGroupSingleLineSample",
             description = ChipsExampleDescription,
-            sourceUrl = ChipsExampleSourceUrl
+            sourceUrl = ChipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ChipGroupSingleLineSample()
         },
         Example(
             name = "ChipGroupReflowSample",
             description = ChipsExampleDescription,
-            sourceUrl = ChipsExampleSourceUrl
+            sourceUrl = ChipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ChipGroupReflowSample()
         }
@@ -718,35 +772,40 @@ val DatePickerExamples =
         Example(
             name = "DatePickerSample",
             description = DatePickerExampleDescription,
-            sourceUrl = DatePickerExampleSourceUrl
+            sourceUrl = DatePickerExampleSourceUrl,
+            isExpressive = false,
         ) {
             DatePickerSample()
         },
         Example(
             name = "DatePickerDialogSample",
             description = DatePickerExampleDescription,
-            sourceUrl = DatePickerExampleSourceUrl
+            sourceUrl = DatePickerExampleSourceUrl,
+            isExpressive = false,
         ) {
             DatePickerDialogSample()
         },
         Example(
             name = "DatePickerWithDateSelectableDatesSample",
             description = DatePickerExampleDescription,
-            sourceUrl = DatePickerExampleSourceUrl
+            sourceUrl = DatePickerExampleSourceUrl,
+            isExpressive = false,
         ) {
             DatePickerWithDateSelectableDatesSample()
         },
         Example(
             name = "DateInputSample",
             description = DatePickerExampleDescription,
-            sourceUrl = DatePickerExampleSourceUrl
+            sourceUrl = DatePickerExampleSourceUrl,
+            isExpressive = false,
         ) {
             DateInputSample()
         },
         Example(
             name = "DateRangePickerSample",
             description = DatePickerExampleDescription,
-            sourceUrl = DatePickerExampleSourceUrl
+            sourceUrl = DatePickerExampleSourceUrl,
+            isExpressive = false,
         ) {
             DateRangePickerSample()
         },
@@ -760,6 +819,7 @@ val DialogExamples =
             name = "AlertDialogSample",
             description = DialogExampleDescription,
             sourceUrl = DialogExampleSourceUrl,
+            isExpressive = false,
         ) {
             AlertDialogSample()
         },
@@ -767,6 +827,7 @@ val DialogExamples =
             name = "AlertDialogWithIconSample",
             description = DialogExampleDescription,
             sourceUrl = DialogExampleSourceUrl,
+            isExpressive = false,
         ) {
             AlertDialogWithIconSample()
         },
@@ -774,6 +835,7 @@ val DialogExamples =
             name = "BasicAlertDialogSample",
             description = DialogExampleDescription,
             sourceUrl = DialogExampleSourceUrl,
+            isExpressive = false,
         ) {
             BasicAlertDialogSample()
         },
@@ -787,6 +849,7 @@ val BottomAppBarsExamples =
             name = "SimpleBottomAppBar",
             description = BottomAppBarsExampleDescription,
             sourceUrl = BottomAppBarsExampleSourceUrl,
+            isExpressive = false,
         ) {
             SimpleBottomAppBar()
         },
@@ -794,6 +857,7 @@ val BottomAppBarsExamples =
             name = "BottomAppBarWithFAB",
             description = BottomAppBarsExampleDescription,
             sourceUrl = BottomAppBarsExampleSourceUrl,
+            isExpressive = false,
         ) {
             BottomAppBarWithFAB()
         },
@@ -801,6 +865,7 @@ val BottomAppBarsExamples =
             name = "BottomAppBarWithOverflow",
             description = BottomAppBarsExampleDescription,
             sourceUrl = BottomAppBarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             BottomAppBarWithOverflow()
         },
@@ -808,6 +873,7 @@ val BottomAppBarsExamples =
             name = "ExitAlwaysBottomAppBar",
             description = BottomAppBarsExampleDescription,
             sourceUrl = BottomAppBarsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ExitAlwaysBottomAppBar()
         },
@@ -815,6 +881,7 @@ val BottomAppBarsExamples =
             name = "ExitAlwaysBottomAppBarSpacedAround",
             description = BottomAppBarsExampleDescription,
             sourceUrl = BottomAppBarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ExitAlwaysBottomAppBarSpacedAround()
         },
@@ -822,6 +889,7 @@ val BottomAppBarsExamples =
             name = "ExitAlwaysBottomAppBarSpacedBetween",
             description = BottomAppBarsExampleDescription,
             sourceUrl = BottomAppBarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ExitAlwaysBottomAppBarSpacedBetween()
         },
@@ -829,6 +897,7 @@ val BottomAppBarsExamples =
             name = "ExitAlwaysBottomAppBarSpacedEvenly",
             description = BottomAppBarsExampleDescription,
             sourceUrl = BottomAppBarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ExitAlwaysBottomAppBarSpacedEvenly()
         },
@@ -836,6 +905,7 @@ val BottomAppBarsExamples =
             name = "ExitAlwaysBottomAppBarFixed",
             description = BottomAppBarsExampleDescription,
             sourceUrl = BottomAppBarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ExitAlwaysBottomAppBarFixed()
         },
@@ -843,6 +913,7 @@ val BottomAppBarsExamples =
             name = "ExitAlwaysBottomAppBarFixedVibrant",
             description = BottomAppBarsExampleDescription,
             sourceUrl = BottomAppBarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ExitAlwaysBottomAppBarFixedVibrant()
         }
@@ -856,6 +927,7 @@ val TopAppBarExamples =
             name = "SimpleTopAppBar",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleSourceUrl,
+            isExpressive = false,
         ) {
             SimpleTopAppBar()
         },
@@ -863,6 +935,7 @@ val TopAppBarExamples =
             name = "SimpleTopAppBarWithAdaptiveActions",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleDescription,
+            isExpressive = false,
         ) {
             SimpleTopAppBarWithAdaptiveActions()
         },
@@ -870,6 +943,7 @@ val TopAppBarExamples =
             name = "SimpleTopAppBarWithSubtitle",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleSourceUrl,
+            isExpressive = true,
         ) {
             SimpleTopAppBarWithSubtitle()
         },
@@ -877,6 +951,7 @@ val TopAppBarExamples =
             name = "SimpleCenterAlignedTopAppBar",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleSourceUrl,
+            isExpressive = false,
         ) {
             SimpleCenterAlignedTopAppBar()
         },
@@ -884,6 +959,7 @@ val TopAppBarExamples =
             name = "SimpleCenterAlignedTopAppBarWithSubtitle",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleSourceUrl,
+            isExpressive = true,
         ) {
             SimpleCenterAlignedTopAppBarWithSubtitle()
         },
@@ -891,6 +967,7 @@ val TopAppBarExamples =
             name = "PinnedTopAppBar",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleSourceUrl,
+            isExpressive = false,
         ) {
             PinnedTopAppBar()
         },
@@ -898,6 +975,7 @@ val TopAppBarExamples =
             name = "EnterAlwaysTopAppBar",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleSourceUrl,
+            isExpressive = true,
         ) {
             EnterAlwaysTopAppBar()
         },
@@ -905,6 +983,7 @@ val TopAppBarExamples =
             name = "ExitUntilCollapsedMediumTopAppBar",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleSourceUrl,
+            isExpressive = false,
         ) {
             ExitUntilCollapsedMediumTopAppBar()
         },
@@ -912,6 +991,7 @@ val TopAppBarExamples =
             name = "ExitUntilCollapsedCenterAlignedMediumFlexibleTopAppBar with subtitle",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleSourceUrl,
+            isExpressive = false,
         ) {
             ExitUntilCollapsedCenterAlignedMediumFlexibleTopAppBar()
         },
@@ -919,6 +999,7 @@ val TopAppBarExamples =
             name = "ExitUntilCollapsedLargeTopAppBar",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleSourceUrl,
+            isExpressive = false,
         ) {
             ExitUntilCollapsedLargeTopAppBar()
         },
@@ -926,6 +1007,7 @@ val TopAppBarExamples =
             name = "ExitUntilCollapsedCenterAlignedLargeFlexibleTopAppBar with subtitle",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleSourceUrl,
+            isExpressive = true,
         ) {
             ExitUntilCollapsedCenterAlignedLargeFlexibleTopAppBar()
         },
@@ -933,6 +1015,7 @@ val TopAppBarExamples =
             name = "CustomTwoRowsTopAppBar",
             description = TopAppBarExampleDescription,
             sourceUrl = TopAppBarExampleSourceUrl,
+            isExpressive = true,
         ) {
             CustomTwoRowsTopAppBar()
         },
@@ -947,6 +1030,7 @@ val FloatingToolbarsExamples =
             name = "ExpandableHorizontalFloatingToolbarSample",
             description = FloatingToolbarsExampleDescription,
             sourceUrl = FloatingToolbarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ExpandableHorizontalFloatingToolbarSample()
         },
@@ -954,6 +1038,7 @@ val FloatingToolbarsExamples =
             name = "OverflowingHorizontalFloatingToolbarSample",
             description = FloatingToolbarsExampleDescription,
             sourceUrl = FloatingToolbarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             OverflowingHorizontalFloatingToolbarSample()
         },
@@ -961,6 +1046,7 @@ val FloatingToolbarsExamples =
             name = "ScrollableHorizontalFloatingToolbarSample",
             description = FloatingToolbarsExampleDescription,
             sourceUrl = FloatingToolbarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ScrollableHorizontalFloatingToolbarSample()
         },
@@ -968,6 +1054,7 @@ val FloatingToolbarsExamples =
             name = "ExpandableVerticalFloatingToolbarSample",
             description = FloatingToolbarsExampleDescription,
             sourceUrl = FloatingToolbarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ExpandableVerticalFloatingToolbarSample()
         },
@@ -975,6 +1062,7 @@ val FloatingToolbarsExamples =
             name = "OverflowingVerticalFloatingToolbarSample",
             description = FloatingToolbarsExampleDescription,
             sourceUrl = FloatingToolbarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             OverflowingVerticalFloatingToolbarSample()
         },
@@ -982,6 +1070,7 @@ val FloatingToolbarsExamples =
             name = "ScrollableVerticalFloatingToolbarSample",
             description = FloatingToolbarsExampleDescription,
             sourceUrl = FloatingToolbarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ScrollableVerticalFloatingToolbarSample()
         },
@@ -989,6 +1078,7 @@ val FloatingToolbarsExamples =
             name = "HorizontalFloatingToolbarWithFabSample",
             description = FloatingToolbarsExampleDescription,
             sourceUrl = FloatingToolbarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             HorizontalFloatingToolbarWithFabSample()
         },
@@ -996,6 +1086,7 @@ val FloatingToolbarsExamples =
             name = "CenteredHorizontalFloatingToolbarWithFabSample",
             description = FloatingToolbarsExampleDescription,
             sourceUrl = FloatingToolbarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             CenteredHorizontalFloatingToolbarWithFabSample()
         },
@@ -1003,6 +1094,7 @@ val FloatingToolbarsExamples =
             name = "HorizontalFloatingToolbarAsScaffoldFabSample",
             description = FloatingToolbarsExampleDescription,
             sourceUrl = FloatingToolbarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             HorizontalFloatingToolbarAsScaffoldFabSample()
         },
@@ -1010,6 +1102,7 @@ val FloatingToolbarsExamples =
             name = "VerticalFloatingToolbarWithFabSample",
             description = FloatingToolbarsExampleDescription,
             sourceUrl = FloatingToolbarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             VerticalFloatingToolbarWithFabSample()
         },
@@ -1017,6 +1110,7 @@ val FloatingToolbarsExamples =
             name = "CenteredVerticalFloatingToolbarWithFabSample",
             description = FloatingToolbarsExampleDescription,
             sourceUrl = FloatingToolbarsExampleSourceUrl,
+            isExpressive = true,
         ) {
             CenteredVerticalFloatingToolbarWithFabSample()
         },
@@ -1030,6 +1124,7 @@ val ExtendedFABExamples =
             name = "ExtendedFloatingActionButtonSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = false,
         ) {
             ExtendedFloatingActionButtonSample()
         },
@@ -1037,6 +1132,7 @@ val ExtendedFABExamples =
             name = "SmallExtendedFloatingActionButtonSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = true,
         ) {
             SmallExtendedFloatingActionButtonSample()
         },
@@ -1044,6 +1140,7 @@ val ExtendedFABExamples =
             name = "MediumExtendedFloatingActionButtonSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = true,
         ) {
             MediumExtendedFloatingActionButtonSample()
         },
@@ -1051,6 +1148,7 @@ val ExtendedFABExamples =
             name = "LargeExtendedFloatingActionButtonSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = true,
         ) {
             LargeExtendedFloatingActionButtonSample()
         },
@@ -1058,6 +1156,7 @@ val ExtendedFABExamples =
             name = "ExtendedFloatingActionButtonTextSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = false,
         ) {
             ExtendedFloatingActionButtonTextSample()
         },
@@ -1065,6 +1164,7 @@ val ExtendedFABExamples =
             name = "SmallExtendedFloatingActionButtonTextSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = true,
         ) {
             SmallExtendedFloatingActionButtonTextSample()
         },
@@ -1072,6 +1172,7 @@ val ExtendedFABExamples =
             name = "MediumExtendedFloatingActionButtonTextSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = true,
         ) {
             MediumExtendedFloatingActionButtonTextSample()
         },
@@ -1079,6 +1180,7 @@ val ExtendedFABExamples =
             name = "LargeExtendedFloatingActionButtonTextSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = true,
         ) {
             LargeExtendedFloatingActionButtonTextSample()
         },
@@ -1086,6 +1188,7 @@ val ExtendedFABExamples =
             name = "AnimatedExtendedFloatingActionButtonSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = false,
         ) {
             AnimatedExtendedFloatingActionButtonSample()
         },
@@ -1093,6 +1196,7 @@ val ExtendedFABExamples =
             name = "SmallAnimatedExtendedFloatingActionButtonSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = true,
         ) {
             SmallAnimatedExtendedFloatingActionButtonSample()
         },
@@ -1100,6 +1204,7 @@ val ExtendedFABExamples =
             name = "MediumAnimatedExtendedFloatingActionButtonSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = true,
         ) {
             MediumAnimatedExtendedFloatingActionButtonSample()
         },
@@ -1107,6 +1212,7 @@ val ExtendedFABExamples =
             name = "LargeAnimatedExtendedFloatingActionButtonSample",
             description = ExtendedFABExampleDescription,
             sourceUrl = ExtendedFABExampleSourceUrl,
+            isExpressive = true,
         ) {
             LargeAnimatedExtendedFloatingActionButtonSample()
         },
@@ -1121,6 +1227,7 @@ val FloatingActionButtonsExamples =
             name = "FloatingActionButtonSample",
             description = FloatingActionButtonsExampleDescription,
             sourceUrl = FloatingActionButtonsExampleSourceUrl,
+            isExpressive = false,
         ) {
             FloatingActionButtonSample()
         },
@@ -1128,6 +1235,7 @@ val FloatingActionButtonsExamples =
             name = "LargeFloatingActionButtonSample",
             description = FloatingActionButtonsExampleDescription,
             sourceUrl = FloatingActionButtonsExampleSourceUrl,
+            isExpressive = false,
         ) {
             LargeFloatingActionButtonSample()
         },
@@ -1135,6 +1243,7 @@ val FloatingActionButtonsExamples =
             name = "AnimatedFloatingActionButtonSample",
             description = FloatingActionButtonsExampleDescription,
             sourceUrl = FloatingActionButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             AnimatedFloatingActionButtonSample()
         },
@@ -1142,6 +1251,7 @@ val FloatingActionButtonsExamples =
             name = "MediumFloatingActionButtonSample",
             description = FloatingActionButtonsExampleDescription,
             sourceUrl = FloatingActionButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             MediumFloatingActionButtonSample()
         },
@@ -1149,6 +1259,7 @@ val FloatingActionButtonsExamples =
             name = "SmallFloatingActionButtonSample",
             description = FloatingActionButtonsExampleDescription,
             sourceUrl = FloatingActionButtonsExampleSourceUrl,
+            isExpressive = false,
         ) {
             SmallFloatingActionButtonSample()
         }
@@ -1163,6 +1274,7 @@ val FloatingActionButtonMenuExamples =
             name = "FloatingActionButtonMenuSample",
             description = FloatingActionButtonMenuExampleDescription,
             sourceUrl = FloatingActionButtonMenuExampleSourceUrl,
+            isExpressive = true,
         ) {
             FloatingActionButtonMenuSample()
         },
@@ -1175,28 +1287,32 @@ val ListsExamples =
         Example(
             name = "OneLineListItem",
             description = ListsExampleDescription,
-            sourceUrl = ListsExampleSourceUrl
+            sourceUrl = ListsExampleSourceUrl,
+            isExpressive = false,
         ) {
             OneLineListItem()
         },
         Example(
             name = "TwoLineListItem",
             description = ListsExampleDescription,
-            sourceUrl = ListsExampleSourceUrl
+            sourceUrl = ListsExampleSourceUrl,
+            isExpressive = false,
         ) {
             TwoLineListItem()
         },
         Example(
             name = "ThreeLineListItemWithOverlineAndSupporting",
             description = ListsExampleDescription,
-            sourceUrl = ListsExampleSourceUrl
+            sourceUrl = ListsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ThreeLineListItemWithOverlineAndSupporting()
         },
         Example(
             name = "ThreeLineListItemWithExtendedSupporting",
             description = ListsExampleDescription,
-            sourceUrl = ListsExampleSourceUrl
+            sourceUrl = ListsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ThreeLineListItemWithExtendedSupporting()
         },
@@ -1210,6 +1326,7 @@ val IconButtonExamples =
             name = "IconButtonSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = false,
         ) {
             IconButtonSample()
         },
@@ -1217,6 +1334,7 @@ val IconButtonExamples =
             name = "TintedIconButtonSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = false,
         ) {
             TintedIconButtonSample()
         },
@@ -1224,6 +1342,7 @@ val IconButtonExamples =
             name = "IconToggleButtonSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = false,
         ) {
             IconToggleButtonSample()
         },
@@ -1231,6 +1350,7 @@ val IconButtonExamples =
             name = "FilledIconButtonSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = false,
         ) {
             FilledIconButtonSample()
         },
@@ -1238,6 +1358,7 @@ val IconButtonExamples =
             name = "FilledIconToggleButtonSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = false,
         ) {
             FilledIconToggleButtonSample()
         },
@@ -1245,6 +1366,7 @@ val IconButtonExamples =
             name = "FilledTonalIconButtonSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = false,
         ) {
             FilledTonalIconButtonSample()
         },
@@ -1252,6 +1374,7 @@ val IconButtonExamples =
             name = "FilledTonalIconToggleButtonSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = false,
         ) {
             FilledTonalIconToggleButtonSample()
         },
@@ -1259,6 +1382,7 @@ val IconButtonExamples =
             name = "OutlinedIconButtonSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = false,
         ) {
             OutlinedIconButtonSample()
         },
@@ -1266,6 +1390,7 @@ val IconButtonExamples =
             name = "OutlinedIconToggleButtonSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = false,
         ) {
             OutlinedIconToggleButtonSample()
         },
@@ -1273,6 +1398,7 @@ val IconButtonExamples =
             name = "XSmallNarrowSquareIconButtonsSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = true,
         ) {
             ExtraSmallNarrowSquareIconButtonsSample()
         },
@@ -1280,6 +1406,7 @@ val IconButtonExamples =
             name = "MediumRoundWideIconButtonSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = true,
         ) {
             MediumRoundWideIconButtonSample()
         },
@@ -1287,6 +1414,7 @@ val IconButtonExamples =
             name = "LargeRoundUniformOutlinedIconButtonSample",
             description = IconButtonExampleDescription,
             sourceUrl = IconButtonExampleSourceUrl,
+            isExpressive = true,
         ) {
             LargeRoundUniformOutlinedIconButtonSample()
         }
@@ -1300,35 +1428,40 @@ val LoadingIndicatorsExamples =
         Example(
             name = "LoadingIndicatorSample",
             description = LoadingIndicatorsExampleDescription,
-            sourceUrl = LoadingIndicatorsExampleSourceUrl
+            sourceUrl = LoadingIndicatorsExampleSourceUrl,
+            isExpressive = true,
         ) {
             LoadingIndicatorSample()
         },
         Example(
             name = "ContainedLoadingIndicatorSample",
             description = LoadingIndicatorsExampleDescription,
-            sourceUrl = LoadingIndicatorsExampleSourceUrl
+            sourceUrl = LoadingIndicatorsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ContainedLoadingIndicatorSample()
         },
         Example(
             name = "DeterminateLoadingIndicatorSample",
             description = LoadingIndicatorsExampleDescription,
-            sourceUrl = LoadingIndicatorsExampleSourceUrl
+            sourceUrl = LoadingIndicatorsExampleSourceUrl,
+            isExpressive = true,
         ) {
             DeterminateLoadingIndicatorSample()
         },
         Example(
             name = "DeterminateContainedLoadingIndicatorSample",
             description = LoadingIndicatorsExampleDescription,
-            sourceUrl = LoadingIndicatorsExampleSourceUrl
+            sourceUrl = LoadingIndicatorsExampleSourceUrl,
+            isExpressive = true,
         ) {
             DeterminateContainedLoadingIndicatorSample()
         },
         Example(
             name = "LoadingIndicatorPullToRefreshSample",
             description = LoadingIndicatorsExampleDescription,
-            sourceUrl = LoadingIndicatorsExampleSourceUrl
+            sourceUrl = LoadingIndicatorsExampleSourceUrl,
+            isExpressive = true,
         ) {
             LoadingIndicatorPullToRefreshSample()
         },
@@ -1341,35 +1474,40 @@ val MenusExamples =
         Example(
             name = "MenuSample",
             description = MenusExampleDescription,
-            sourceUrl = MenusExampleSourceUrl
+            sourceUrl = MenusExampleSourceUrl,
+            isExpressive = false,
         ) {
             MenuSample()
         },
         Example(
             name = "MenuWithScrollStateSample",
             description = MenusExampleDescription,
-            sourceUrl = MenusExampleSourceUrl
+            sourceUrl = MenusExampleSourceUrl,
+            isExpressive = false,
         ) {
             MenuWithScrollStateSample()
         },
         Example(
             name = "ExposedDropdownMenuSample",
             description = MenusExampleDescription,
-            sourceUrl = MenusExampleSourceUrl
+            sourceUrl = MenusExampleSourceUrl,
+            isExpressive = false,
         ) {
             ExposedDropdownMenuSample()
         },
         Example(
             name = "EditableExposedDropdownMenuSample",
             description = MenusExampleDescription,
-            sourceUrl = MenusExampleSourceUrl
+            sourceUrl = MenusExampleSourceUrl,
+            isExpressive = false,
         ) {
             EditableExposedDropdownMenuSample()
         },
         Example(
             name = "MultiAutocompleteExposedDropdownMenuSample",
             description = MenusExampleDescription,
-            sourceUrl = MenusExampleSourceUrl
+            sourceUrl = MenusExampleSourceUrl,
+            isExpressive = false,
         ) {
             MultiAutocompleteExposedDropdownMenuSample()
         },
@@ -1383,6 +1521,7 @@ val NavigationBarExamples =
             name = "ShortNavigationBarSample",
             description = NavigationBarExampleDescription,
             sourceUrl = NavigationBarExampleSourceUrl,
+            isExpressive = true,
         ) {
             ShortNavigationBarSample()
         },
@@ -1390,6 +1529,7 @@ val NavigationBarExamples =
             name = "ShortNavigationBarWithHorizontalItemsSample",
             description = NavigationBarExampleDescription,
             sourceUrl = NavigationBarExampleSourceUrl,
+            isExpressive = true,
         ) {
             ShortNavigationBarWithHorizontalItemsSample()
         },
@@ -1397,6 +1537,7 @@ val NavigationBarExamples =
             name = "NavigationBarSample",
             description = NavigationBarExampleDescription,
             sourceUrl = NavigationBarExampleSourceUrl,
+            isExpressive = false,
         ) {
             NavigationBarSample()
         },
@@ -1404,6 +1545,7 @@ val NavigationBarExamples =
             name = "NavigationBarWithOnlySelectedLabelsSample",
             description = NavigationBarExampleDescription,
             sourceUrl = NavigationBarExampleSourceUrl,
+            isExpressive = false,
         ) {
             NavigationBarWithOnlySelectedLabelsSample()
         },
@@ -1417,6 +1559,7 @@ val NavigationRailExamples =
             name = "WideNavigationRailResponsiveSample",
             description = NavigationRailExampleDescription,
             sourceUrl = NavigationRailExampleSourceUrl,
+            isExpressive = true,
         ) {
             WideNavigationRailResponsiveSample()
         },
@@ -1424,6 +1567,7 @@ val NavigationRailExamples =
             name = "ModalWideNavigationRailSample",
             description = NavigationRailExampleDescription,
             sourceUrl = NavigationRailExampleSourceUrl,
+            isExpressive = true,
         ) {
             ModalWideNavigationRailSample()
         },
@@ -1431,6 +1575,7 @@ val NavigationRailExamples =
             name = "DismissibleModalWideNavigationRailSample",
             description = NavigationRailExampleDescription,
             sourceUrl = NavigationRailExampleSourceUrl,
+            isExpressive = true,
         ) {
             DismissibleModalWideNavigationRailSample()
         },
@@ -1438,6 +1583,7 @@ val NavigationRailExamples =
             name = "WideNavigationRailCollapsedSample",
             description = NavigationRailExampleDescription,
             sourceUrl = NavigationRailExampleSourceUrl,
+            isExpressive = true,
         ) {
             WideNavigationRailCollapsedSample()
         },
@@ -1445,6 +1591,7 @@ val NavigationRailExamples =
             name = "WideNavigationRailExpandedSample",
             description = NavigationRailExampleDescription,
             sourceUrl = NavigationRailExampleSourceUrl,
+            isExpressive = true,
         ) {
             WideNavigationRailExpandedSample()
         },
@@ -1452,6 +1599,7 @@ val NavigationRailExamples =
             name = "WideNavigationRailArrangementsSample",
             description = NavigationRailExampleDescription,
             sourceUrl = NavigationRailExampleSourceUrl,
+            isExpressive = true,
         ) {
             WideNavigationRailArrangementsSample()
         },
@@ -1459,6 +1607,7 @@ val NavigationRailExamples =
             name = "NavigationRailSample",
             description = NavigationRailExampleDescription,
             sourceUrl = NavigationRailExampleSourceUrl,
+            isExpressive = false,
         ) {
             NavigationRailSample()
         },
@@ -1466,6 +1615,7 @@ val NavigationRailExamples =
             name = "NavigationRailWithOnlySelectedLabelsSample",
             description = NavigationRailExampleDescription,
             sourceUrl = NavigationRailExampleSourceUrl,
+            isExpressive = false,
         ) {
             NavigationRailWithOnlySelectedLabelsSample()
         },
@@ -1473,6 +1623,7 @@ val NavigationRailExamples =
             name = "NavigationRailBottomAlignSample",
             description = NavigationRailExampleDescription,
             sourceUrl = NavigationRailExampleSourceUrl,
+            isExpressive = false,
         ) {
             NavigationRailBottomAlignSample()
         },
@@ -1485,21 +1636,24 @@ val NavigationDrawerExamples =
         Example(
             name = "ModalNavigationDrawerSample",
             description = NavigationDrawerExampleDescription,
-            sourceUrl = NavigationDrawerExampleSourceUrl
+            sourceUrl = NavigationDrawerExampleSourceUrl,
+            isExpressive = false,
         ) {
             ModalNavigationDrawerSample()
         },
         Example(
             name = "PermanentNavigationDrawerSample",
             description = NavigationDrawerExampleDescription,
-            sourceUrl = NavigationDrawerExampleSourceUrl
+            sourceUrl = NavigationDrawerExampleSourceUrl,
+            isExpressive = false,
         ) {
             PermanentNavigationDrawerSample()
         },
         Example(
             name = "DismissibleNavigationDrawerSample",
             description = NavigationDrawerExampleDescription,
-            sourceUrl = NavigationDrawerExampleSourceUrl
+            sourceUrl = NavigationDrawerExampleSourceUrl,
+            isExpressive = false,
         ) {
             DismissibleNavigationDrawerSample()
         }
@@ -1514,6 +1668,7 @@ val NavigationSuiteScaffoldExamples =
             name = "NavigationSuiteScaffoldSample",
             description = NavigationSuiteScaffoldExampleDescription,
             sourceUrl = NavigationSuiteScaffoldExampleSourceUrl,
+            isExpressive = true,
         ) {
             NavigationSuiteScaffoldSample()
         },
@@ -1521,6 +1676,7 @@ val NavigationSuiteScaffoldExamples =
             name = "NavigationSuiteScaffoldCustomConfigSample",
             description = NavigationSuiteScaffoldExampleDescription,
             sourceUrl = NavigationSuiteScaffoldExampleSourceUrl,
+            isExpressive = true,
         ) {
             NavigationSuiteScaffoldCustomConfigSample()
         },
@@ -1534,56 +1690,64 @@ val ProgressIndicatorsExamples =
         Example(
             name = "LinearProgressIndicatorSample",
             description = ProgressIndicatorsExampleDescription,
-            sourceUrl = ProgressIndicatorsExampleSourceUrl
+            sourceUrl = ProgressIndicatorsExampleSourceUrl,
+            isExpressive = false,
         ) {
             LinearProgressIndicatorSample()
         },
         Example(
             name = "LinearWavyProgressIndicatorSample",
             description = ProgressIndicatorsExampleDescription,
-            sourceUrl = ProgressIndicatorsExampleSourceUrl
+            sourceUrl = ProgressIndicatorsExampleSourceUrl,
+            isExpressive = true,
         ) {
             LinearWavyProgressIndicatorSample()
         },
         Example(
             name = "IndeterminateLinearProgressIndicatorSample",
             description = ProgressIndicatorsExampleDescription,
-            sourceUrl = ProgressIndicatorsExampleSourceUrl
+            sourceUrl = ProgressIndicatorsExampleSourceUrl,
+            isExpressive = false,
         ) {
             IndeterminateLinearProgressIndicatorSample()
         },
         Example(
             name = "IndeterminateLinearWavyProgressIndicatorSample",
             description = ProgressIndicatorsExampleDescription,
-            sourceUrl = ProgressIndicatorsExampleSourceUrl
+            sourceUrl = ProgressIndicatorsExampleSourceUrl,
+            isExpressive = true,
         ) {
             IndeterminateLinearWavyProgressIndicatorSample()
         },
         Example(
             name = "CircularProgressIndicatorSample",
             description = ProgressIndicatorsExampleDescription,
-            sourceUrl = ProgressIndicatorsExampleSourceUrl
+            sourceUrl = ProgressIndicatorsExampleSourceUrl,
+            isExpressive = false,
         ) {
             CircularProgressIndicatorSample()
         },
         Example(
             name = "CircularWavyProgressIndicatorSample",
             description = ProgressIndicatorsExampleDescription,
-            sourceUrl = ProgressIndicatorsExampleSourceUrl
+            sourceUrl = ProgressIndicatorsExampleSourceUrl,
+            isExpressive = true,
         ) {
             CircularWavyProgressIndicatorSample()
         },
         Example(
             name = "IndeterminateCircularProgressIndicatorSample",
             description = ProgressIndicatorsExampleDescription,
-            sourceUrl = ProgressIndicatorsExampleSourceUrl
+            sourceUrl = ProgressIndicatorsExampleSourceUrl,
+            isExpressive = false,
         ) {
             IndeterminateCircularProgressIndicatorSample()
         },
         Example(
             name = "IndeterminateCircularWavyProgressIndicatorSample",
             description = ProgressIndicatorsExampleDescription,
-            sourceUrl = ProgressIndicatorsExampleSourceUrl
+            sourceUrl = ProgressIndicatorsExampleSourceUrl,
+            isExpressive = true,
         ) {
             IndeterminateCircularWavyProgressIndicatorSample()
         }
@@ -1596,42 +1760,48 @@ val PullToRefreshExamples =
         Example(
             name = "PullToRefreshSample",
             description = PullToRefreshExampleDescription,
-            sourceUrl = PullToRefreshExampleSourceUrl
+            sourceUrl = PullToRefreshExampleSourceUrl,
+            isExpressive = false,
         ) {
             PullToRefreshSample()
         },
         Example(
             name = "PullToRefreshWithLoadingIndicatorSample",
             description = PullToRefreshExampleDescription,
-            sourceUrl = PullToRefreshExampleSourceUrl
+            sourceUrl = PullToRefreshExampleSourceUrl,
+            isExpressive = true,
         ) {
             PullToRefreshWithLoadingIndicatorSample()
         },
         Example(
             name = "PullToRefreshScalingSample",
             description = PullToRefreshExampleDescription,
-            sourceUrl = PullToRefreshExampleSourceUrl
+            sourceUrl = PullToRefreshExampleSourceUrl,
+            isExpressive = false,
         ) {
             PullToRefreshScalingSample()
         },
         Example(
             name = "PullToRefreshSampleCustomState",
             description = PullToRefreshExampleDescription,
-            sourceUrl = PullToRefreshExampleSourceUrl
+            sourceUrl = PullToRefreshExampleSourceUrl,
+            isExpressive = false,
         ) {
             PullToRefreshSampleCustomState()
         },
         Example(
             name = "PullToRefreshViewModelSample",
             description = PullToRefreshExampleDescription,
-            sourceUrl = PullToRefreshExampleSourceUrl
+            sourceUrl = PullToRefreshExampleSourceUrl,
+            isExpressive = false,
         ) {
             PullToRefreshViewModelSample()
         },
         Example(
             name = "PullToRefreshCustomIndicatorWithDefaultTransform",
             description = PullToRefreshExampleDescription,
-            sourceUrl = PullToRefreshExampleSourceUrl
+            sourceUrl = PullToRefreshExampleSourceUrl,
+            isExpressive = false,
         ) {
             PullToRefreshCustomIndicatorWithDefaultTransform()
         },
@@ -1644,14 +1814,16 @@ val RadioButtonsExamples =
         Example(
             name = "RadioButtonSample",
             description = RadioButtonsExampleDescription,
-            sourceUrl = RadioButtonsExampleSourceUrl
+            sourceUrl = RadioButtonsExampleSourceUrl,
+            isExpressive = false,
         ) {
             RadioButtonSample()
         },
         Example(
             name = "RadioGroupSample",
             description = RadioButtonsExampleDescription,
-            sourceUrl = RadioButtonsExampleSourceUrl
+            sourceUrl = RadioButtonsExampleSourceUrl,
+            isExpressive = false,
         ) {
             RadioGroupSample()
         },
@@ -1664,21 +1836,24 @@ val SearchBarExamples =
         Example(
             name = "SimpleSearchBarSample",
             description = SearchBarExampleDescription,
-            sourceUrl = SearchBarExampleSourceUrl
+            sourceUrl = SearchBarExampleSourceUrl,
+            isExpressive = false,
         ) {
             SimpleSearchBarSample()
         },
         Example(
             name = "FullScreenSearchBarScaffoldSample",
             description = SearchBarExampleDescription,
-            sourceUrl = SearchBarExampleSourceUrl
+            sourceUrl = SearchBarExampleSourceUrl,
+            isExpressive = false,
         ) {
             FullScreenSearchBarScaffoldSample()
         },
         Example(
             name = "DockedSearchBarScaffoldSample",
             description = SearchBarExampleDescription,
-            sourceUrl = SearchBarExampleSourceUrl
+            sourceUrl = SearchBarExampleSourceUrl,
+            isExpressive = false,
         ) {
             DockedSearchBarScaffoldSample()
         }
@@ -1691,14 +1866,16 @@ val SegmentedButtonExamples =
         Example(
             name = "SegmentedButtonSingleSelectSample",
             description = SegmentedButtonExampleDescription,
-            sourceUrl = SegmentedButtonSourceUrl
+            sourceUrl = SegmentedButtonSourceUrl,
+            isExpressive = false,
         ) {
             SegmentedButtonSingleSelectSample()
         },
         Example(
             name = "SegmentedButtonMultiSelectSample",
             description = SegmentedButtonExampleDescription,
-            sourceUrl = SegmentedButtonSourceUrl
+            sourceUrl = SegmentedButtonSourceUrl,
+            isExpressive = false,
         ) {
             SegmentedButtonMultiSelectSample()
         },
@@ -1712,6 +1889,7 @@ val ToggleButtonsExamples =
             name = "ToggleButtonSample",
             description = ToggleButtonsExampleDescription,
             sourceUrl = ToggleButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ToggleButtonSample()
         },
@@ -1719,6 +1897,7 @@ val ToggleButtonsExamples =
             name = "RoundToggleButtonSample",
             description = ToggleButtonsExampleDescription,
             sourceUrl = ToggleButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             SquareToggleButtonSample()
         },
@@ -1726,6 +1905,7 @@ val ToggleButtonsExamples =
             name = "ElevatedToggleButtonSample",
             description = ToggleButtonsExampleDescription,
             sourceUrl = ToggleButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ElevatedToggleButtonSample()
         },
@@ -1733,6 +1913,7 @@ val ToggleButtonsExamples =
             name = "TonalToggleButtonSample",
             description = ToggleButtonsExampleDescription,
             sourceUrl = ToggleButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             TonalToggleButtonSample()
         },
@@ -1740,6 +1921,7 @@ val ToggleButtonsExamples =
             name = "OutlinedToggleButtonSample",
             description = ToggleButtonsExampleDescription,
             sourceUrl = ToggleButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             OutlinedToggleButtonSample()
         },
@@ -1747,6 +1929,7 @@ val ToggleButtonsExamples =
             name = "ToggleButtonWithIconSample",
             description = ToggleButtonsExampleDescription,
             sourceUrl = ToggleButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             ToggleButtonWithIconSample()
         },
@@ -1754,6 +1937,7 @@ val ToggleButtonsExamples =
             name = "XSmallToggleButtonWithIconSample",
             description = ToggleButtonsExampleDescription,
             sourceUrl = ToggleButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             XSmallToggleButtonWithIconSample()
         },
@@ -1761,6 +1945,7 @@ val ToggleButtonsExamples =
             name = "MediumToggleButtonWithIconSample",
             description = ToggleButtonsExampleDescription,
             sourceUrl = ToggleButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             MediumToggleButtonWithIconSample()
         },
@@ -1768,6 +1953,7 @@ val ToggleButtonsExamples =
             name = "LargeToggleButtonWithIconSample",
             description = ToggleButtonsExampleDescription,
             sourceUrl = ToggleButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             LargeToggleButtonWithIconSample()
         },
@@ -1775,6 +1961,7 @@ val ToggleButtonsExamples =
             name = "XLargeToggleButtonWithIconSample",
             description = ToggleButtonsExampleDescription,
             sourceUrl = ToggleButtonsExampleSourceUrl,
+            isExpressive = true,
         ) {
             XLargeToggleButtonWithIconSample()
         },
@@ -1787,77 +1974,88 @@ val SlidersExamples =
         Example(
             name = "SliderSample",
             description = SlidersExampleDescription,
-            sourceUrl = SlidersExampleSourceUrl
+            sourceUrl = SlidersExampleSourceUrl,
+            isExpressive = false,
         ) {
             SliderSample()
         },
         Example(
             name = "StepsSliderSample",
             description = SlidersExampleDescription,
-            sourceUrl = SlidersExampleSourceUrl
+            sourceUrl = SlidersExampleSourceUrl,
+            isExpressive = false,
         ) {
             StepsSliderSample()
         },
         Example(
             name = "SliderWithCustomThumbSample",
             description = SlidersExampleDescription,
-            sourceUrl = SlidersExampleSourceUrl
+            sourceUrl = SlidersExampleSourceUrl,
+            isExpressive = false,
         ) {
             SliderWithCustomThumbSample()
         },
         Example(
             name = "SliderWithCustomTrackAndThumbSample",
             description = SlidersExampleDescription,
-            sourceUrl = SlidersExampleSourceUrl
+            sourceUrl = SlidersExampleSourceUrl,
+            isExpressive = false,
         ) {
             SliderWithCustomTrackAndThumbSample()
         },
         Example(
             name = "SliderWithTrackIconsSample",
             description = SlidersExampleDescription,
-            sourceUrl = SlidersExampleSourceUrl
+            sourceUrl = SlidersExampleSourceUrl,
+            isExpressive = true,
         ) {
             SliderWithTrackIconsSample()
         },
         Example(
             name = "CenteredSliderSample",
             description = SlidersExampleDescription,
-            sourceUrl = SlidersExampleSourceUrl
+            sourceUrl = SlidersExampleSourceUrl,
+            isExpressive = true,
         ) {
             CenteredSliderSample()
         },
         Example(
             name = "VerticalSliderSample",
             description = SlidersExampleDescription,
-            sourceUrl = SlidersExampleSourceUrl
+            sourceUrl = SlidersExampleSourceUrl,
+            isExpressive = true,
         ) {
             VerticalSliderSample()
         },
         Example(
             name = "VerticalCenteredSliderSample",
             description = SlidersExampleDescription,
-            sourceUrl = SlidersExampleSourceUrl
+            sourceUrl = SlidersExampleSourceUrl,
+            isExpressive = false,
         ) {
             VerticalCenteredSliderSample()
         },
         Example(
             name = "RangeSliderSample",
             description = SlidersExampleDescription,
-            sourceUrl = SlidersExampleSourceUrl
+            sourceUrl = SlidersExampleSourceUrl,
+            isExpressive = true,
         ) {
             RangeSliderSample()
         },
         Example(
             name = "StepRangeSliderSample",
             description = SlidersExampleDescription,
-            sourceUrl = SlidersExampleSourceUrl
+            sourceUrl = SlidersExampleSourceUrl,
+            isExpressive = false,
         ) {
             StepRangeSliderSample()
         },
         Example(
             name = "RangeSliderWithCustomComponents",
             description = SlidersExampleDescription,
-            sourceUrl = SlidersExampleSourceUrl
+            sourceUrl = SlidersExampleSourceUrl,
+            isExpressive = false,
         ) {
             RangeSliderWithCustomComponents()
         }
@@ -1870,35 +2068,40 @@ val SnackbarsExamples =
         Example(
             name = "ScaffoldWithSimpleSnackbar",
             description = SnackbarsExampleDescription,
-            sourceUrl = SnackbarsExampleSourceUrl
+            sourceUrl = SnackbarsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ScaffoldWithSimpleSnackbar()
         },
         Example(
             name = "ScaffoldWithIndefiniteSnackbar",
             description = SnackbarsExampleDescription,
-            sourceUrl = SnackbarsExampleSourceUrl
+            sourceUrl = SnackbarsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ScaffoldWithIndefiniteSnackbar()
         },
         Example(
             name = "ScaffoldWithCustomSnackbar",
             description = SnackbarsExampleDescription,
-            sourceUrl = SnackbarsExampleSourceUrl
+            sourceUrl = SnackbarsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ScaffoldWithCustomSnackbar()
         },
         Example(
             name = "ScaffoldWithCoroutinesSnackbar",
             description = SnackbarsExampleDescription,
-            sourceUrl = SnackbarsExampleSourceUrl
+            sourceUrl = SnackbarsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ScaffoldWithCoroutinesSnackbar()
         },
         Example(
             name = "ScaffoldWithMultilineSnackbar",
             description = SnackbarsExampleDescription,
-            sourceUrl = SnackbarsExampleSourceUrl
+            sourceUrl = SnackbarsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ScaffoldWithMultilineSnackbar()
         }
@@ -1911,84 +2114,96 @@ val SplitButtonExamples =
         Example(
             name = "FilledSplitButtonSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             FilledSplitButtonSample()
         },
         Example(
             name = "SplitButtonWithUnCheckableTrailingButtonSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             SplitButtonWithUnCheckableTrailingButtonSample()
         },
         Example(
             name = "SplitButtonWithDropdownMenuSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             SplitButtonWithDropdownMenuSample()
         },
         Example(
             name = "TonalSplitButtonSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             TonalSplitButtonSample()
         },
         Example(
             name = "ElevatedSplitButtonSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             ElevatedSplitButtonSample()
         },
         Example(
             name = "OutlinedSplitButtonSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             OutlinedSplitButtonSample()
         },
         Example(
             name = "SplitButtonWithTextSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             SplitButtonWithTextSample()
         },
         Example(
             name = "SplitButtonWithIconSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             SplitButtonWithIconSample()
         },
         Example(
             name = "XSmallFilledSplitButtonSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             XSmallFilledSplitButtonSample()
         },
         Example(
             name = "MediumFilledSplitButtonSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             MediumFilledSplitButtonSample()
         },
         Example(
             name = "LargeFilledSplitButtonSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             LargeFilledSplitButtonSample()
         },
         Example(
             name = "ExtraLargeFilledSplitButtonSample",
             description = SplitButtonExampleDescription,
-            sourceUrl = SplitButtonSourceUrl
+            sourceUrl = SplitButtonSourceUrl,
+            isExpressive = true,
         ) {
             ExtraLargeFilledSplitButtonSample()
         },
@@ -2001,14 +2216,16 @@ val SwitchExamples =
         Example(
             name = "SwitchSample",
             description = SwitchExampleDescription,
-            sourceUrl = SwitchExampleSourceUrl
+            sourceUrl = SwitchExampleSourceUrl,
+            isExpressive = false,
         ) {
             SwitchSample()
         },
         Example(
             name = "SwitchWithThumbIconSample",
             description = SwitchExampleDescription,
-            sourceUrl = SwitchExampleSourceUrl
+            sourceUrl = SwitchExampleSourceUrl,
+            isExpressive = false,
         ) {
             SwitchWithThumbIconSample()
         },
@@ -2021,84 +2238,96 @@ val TabsExamples =
         Example(
             name = "PrimaryTextTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             PrimaryTextTabs()
         },
         Example(
             name = "PrimaryIconTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             PrimaryIconTabs()
         },
         Example(
             name = "SecondaryTextTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             SecondaryTextTabs()
         },
         Example(
             name = "SecondaryIconTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             SecondaryIconTabs()
         },
         Example(
             name = "TextAndIconTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             TextAndIconTabs()
         },
         Example(
             name = "LeadingIconTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             LeadingIconTabs()
         },
         Example(
             name = "ScrollingPrimaryTextTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ScrollingPrimaryTextTabs()
         },
         Example(
             name = "ScrollingSecondaryTextTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ScrollingSecondaryTextTabs()
         },
         Example(
             name = "FancyTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             FancyTabs()
         },
         Example(
             name = "FancyIndicatorTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             FancyIndicatorTabs()
         },
         Example(
             name = "FancyIndicatorContainerTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             FancyIndicatorContainerTabs()
         },
         Example(
             name = "ScrollingFancyIndicatorContainerTabs",
             description = TabsExampleDescription,
-            sourceUrl = TabsExampleSourceUrl
+            sourceUrl = TabsExampleSourceUrl,
+            isExpressive = false,
         ) {
             ScrollingFancyIndicatorContainerTabs()
         }
@@ -2111,21 +2340,24 @@ val TimePickerExamples =
         Example(
             name = "TimePickerSample",
             description = TimePickerDescription,
-            sourceUrl = TimePickerSourceUrl
+            sourceUrl = TimePickerSourceUrl,
+            isExpressive = false,
         ) {
             TimePickerSample()
         },
         Example(
             name = "TimeInputSample",
             description = TimePickerDescription,
-            sourceUrl = TimePickerSourceUrl
+            sourceUrl = TimePickerSourceUrl,
+            isExpressive = false,
         ) {
             TimeInputSample()
         },
         Example(
             name = "TimePickerSwitchableSample",
             description = TimePickerDescription,
-            sourceUrl = TimePickerSourceUrl
+            sourceUrl = TimePickerSourceUrl,
+            isExpressive = false,
         ) {
             TimePickerSwitchableSample()
         },
@@ -2138,98 +2370,112 @@ val TextFieldsExamples =
             Example(
                 name = "SimpleTextFieldSample",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 SimpleTextFieldSample()
             },
             Example(
                 name = "TextFieldWithInitialValueAndSelection",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 TextFieldWithInitialValueAndSelection()
             },
             Example(
                 name = "SimpleOutlinedTextFieldSample",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 SimpleOutlinedTextFieldSample()
             },
             Example(
                 name = "OutlinedTextFieldWithInitialValueAndSelection",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 OutlinedTextFieldWithInitialValueAndSelection()
             },
             Example(
                 name = "TextFieldWithTransformations",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 TextFieldWithTransformations()
             },
             Example(
                 name = "TextFieldWithIcons",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 TextFieldWithIcons()
             },
             Example(
                 name = "TextFieldWithPlaceholder",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 TextFieldWithPlaceholder()
             },
             Example(
                 name = "TextFieldWithPrefixAndSuffix",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 TextFieldWithPrefixAndSuffix()
             },
             Example(
                 name = "TextFieldWithErrorState",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 TextFieldWithErrorState()
             },
             Example(
                 name = "TextFieldWithSupportingText",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 TextFieldWithSupportingText()
             },
             Example(
                 name = "DenseTextFieldContentPadding",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 DenseTextFieldContentPadding()
             },
             Example(
                 name = "PasswordTextField",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 PasswordTextField()
             },
             Example(
                 name = "TextFieldWithHideKeyboardOnImeAction",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 TextFieldWithHideKeyboardOnImeAction()
             },
             Example(
                 name = "TextArea",
                 description = TextFieldsExampleDescription,
-                sourceUrl = TextFieldsExampleSourceUrl
+                sourceUrl = TextFieldsExampleSourceUrl,
+                isExpressive = false,
             ) {
                 TextArea()
             }
@@ -2249,56 +2495,64 @@ val TooltipsExamples =
         Example(
             name = "PlainTooltipSample",
             description = TooltipsExampleDescription,
-            sourceUrl = TooltipsExampleSourceUrl
+            sourceUrl = TooltipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             PlainTooltipSample()
         },
         Example(
             name = "PlainTooltipWithManualInvocationSample",
             description = TooltipsExampleDescription,
-            sourceUrl = TooltipsExampleSourceUrl
+            sourceUrl = TooltipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             PlainTooltipWithManualInvocationSample()
         },
         Example(
             name = "PlainTooltipWithCaret",
             description = TooltipsExampleDescription,
-            sourceUrl = TooltipsExampleSourceUrl
+            sourceUrl = TooltipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             PlainTooltipWithCaret()
         },
         Example(
             name = "PlainTooltipWithCustomCaret",
             description = TooltipsExampleDescription,
-            sourceUrl = TooltipsExampleSourceUrl
+            sourceUrl = TooltipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             PlainTooltipWithCustomCaret()
         },
         Example(
             name = "RichTooltipSample",
             description = TooltipsExampleDescription,
-            sourceUrl = TooltipsExampleSourceUrl
+            sourceUrl = TooltipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             RichTooltipSample()
         },
         Example(
             name = "RichTooltipWithManualInvocationSample",
             description = TooltipsExampleDescription,
-            sourceUrl = TooltipsExampleSourceUrl
+            sourceUrl = TooltipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             RichTooltipWithManualInvocationSample()
         },
         Example(
             name = "RichTooltipWithCaretSample",
             description = TooltipsExampleDescription,
-            sourceUrl = TooltipsExampleSourceUrl
+            sourceUrl = TooltipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             RichTooltipWithCaretSample()
         },
         Example(
             name = "RichTooltipWithCustomCaretSample",
             description = TooltipsExampleDescription,
-            sourceUrl = TooltipsExampleSourceUrl
+            sourceUrl = TooltipsExampleSourceUrl,
+            isExpressive = false,
         ) {
             RichTooltipWithCustomCaretSample()
         }

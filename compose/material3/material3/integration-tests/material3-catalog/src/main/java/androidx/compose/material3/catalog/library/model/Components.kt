@@ -37,7 +37,14 @@ data class Component(
     val docsUrl: String,
     val sourceUrl: String,
     val examples: List<Example>
-)
+) {
+    /** True if the component has expressive examples, false otherwise. */
+    val hasExpressiveExamples: Boolean
+        get() {
+            // Code to compute and return the property value
+            return examples.any { it.isExpressive }
+        }
+}
 
 private var nextId: Int = 1
 

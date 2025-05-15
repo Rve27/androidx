@@ -40,6 +40,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.catalog.library.R
 import androidx.compose.material3.catalog.library.model.ColorMode
@@ -259,6 +260,26 @@ fun ThemePicker(theme: Theme, onThemeChange: (theme: Theme) -> Unit) {
                         }
                     )
                 }
+                SwitchSetting(
+                    text = stringResource(id = R.string.mark_expressive_components),
+                    modifier = Modifier.fillMaxWidth(),
+                    checked = theme.markExpressiveComponents,
+                    onCheckedChange = { checked ->
+                        if (theme.markExpressiveComponents != checked) {
+                            onThemeChange(theme.copy(markExpressiveComponents = checked))
+                        }
+                    }
+                )
+                SwitchSetting(
+                    text = stringResource(id = R.string.display_only_expressive_components),
+                    modifier = Modifier.fillMaxWidth(),
+                    checked = theme.showOnlyExpressiveComponents,
+                    onCheckedChange = { checked ->
+                        if (theme.showOnlyExpressiveComponents != checked) {
+                            onThemeChange(theme.copy(showOnlyExpressiveComponents = checked))
+                        }
+                    }
+                )
             }
             HorizontalDivider(Modifier.padding(horizontal = ThemePickerPadding))
         }
@@ -327,6 +348,39 @@ private fun <T> RadioButtonOption(
             onClick = null,
         )
         Text(text = option.toString(), style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+@Composable
+private fun SwitchSetting(
+    text: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    Row(
+        modifier =
+            modifier
+                .selectable(
+                    selected = checked,
+                    enabled = enabled,
+                    onClick = { onCheckedChange(!checked) },
+                    role = Role.Switch,
+                )
+                .minimumInteractiveComponentSize(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+        )
+        Switch(
+            checked = checked,
+            onCheckedChange = null,
+            enabled = enabled,
+        )
     }
 }
 
