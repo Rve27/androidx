@@ -2397,6 +2397,7 @@ private fun Modifier.rangeSliderPressDragModifier(
 
                     val finishInteraction =
                         try {
+                            state.isDragging = true
                             val success =
                                 horizontalDrag(pointerId = event.id) {
                                     val deltaX = it.positionChange().x
@@ -2412,6 +2413,8 @@ private fun Modifier.rangeSliderPressDragModifier(
                             }
                         } catch (e: CancellationException) {
                             DragInteraction.Cancel(interaction)
+                        } finally {
+                            state.isDragging = false
                         }
 
                     state.gestureEndAction(draggingStart)
@@ -2916,6 +2919,7 @@ class RangeSliderState(
     internal var totalWidth by mutableIntStateOf(0)
     internal var rawOffsetStart by mutableFloatStateOf(0f)
     internal var rawOffsetEnd by mutableFloatStateOf(0f)
+    internal var isDragging by mutableStateOf(false)
 
     internal var isRtl by mutableStateOf(false)
 
@@ -2975,7 +2979,10 @@ class RangeSliderState(
     internal fun updateMinMaxPx() {
         val newMaxPx = max(totalWidth - endThumbWidth / 2, 0f)
         val newMinPx = min(startThumbWidth / 2, newMaxPx)
-        if (minPx != newMinPx || maxPx != newMaxPx) {
+        if (
+            !isDragging &&
+                (minPx != newMinPx || maxPx != newMaxPx || activeRangeStart != activeRangeEnd)
+        ) {
             minPx = newMinPx
             maxPx = newMaxPx
             rawOffsetStart = scaleToOffset(minPx, maxPx, activeRangeStart)

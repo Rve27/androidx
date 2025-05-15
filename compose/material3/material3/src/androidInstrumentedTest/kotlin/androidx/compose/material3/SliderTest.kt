@@ -34,6 +34,8 @@ import androidx.compose.material3.internal.HorizontalSemanticsBoundsPadding
 import androidx.compose.material3.tokens.SliderTokens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -1354,6 +1356,43 @@ class SliderTest {
         rule.runOnIdle {
             Truth.assertThat(state.activeRangeStart).isEqualTo(0f)
             Truth.assertThat(state.activeRangeEnd).isWithin(SliderTolerance).of(expected)
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Test
+    fun rangeSlider_valueUpdatedByLaunchEffectAndInteraction() {
+        lateinit var sliderPosition: MutableState<ClosedFloatingPointRange<Float>>
+
+        rule.setMaterialContent(lightColorScheme()) {
+            sliderPosition = remember { mutableStateOf(0f..100f) }
+            RangeSlider(
+                modifier = Modifier.testTag(tag),
+                value = sliderPosition.value,
+                steps = 0,
+                onValueChange = { range -> sliderPosition.value = range },
+                valueRange = 0f..100f,
+            )
+            LaunchedEffect(Unit) { sliderPosition.value = 0f..50f }
+        }
+
+        rule.waitForIdle()
+
+        rule.runOnIdle {
+            Truth.assertThat(sliderPosition.value.start).isEqualTo(0f)
+            Truth.assertThat(sliderPosition.value.endInclusive).isEqualTo(50f)
+        }
+
+        rule.onNodeWithTag(tag).performTouchInput {
+            down(Offset(centerX - 50, centerY))
+            up()
+        }
+
+        rule.waitForIdle()
+
+        rule.runOnIdle {
+            Truth.assertThat(sliderPosition.value.endInclusive).isNotEqualTo(50f)
+            Truth.assertThat(sliderPosition.value.start).isEqualTo(0f)
         }
     }
 }
