@@ -63,7 +63,6 @@ import androidx.wear.compose.foundation.CurvedScope
 import androidx.wear.compose.foundation.CurvedTextStyle
 import androidx.wear.compose.foundation.LocalReduceMotion
 import androidx.wear.compose.foundation.padding
-import androidx.wear.compose.material3.internal.Strings.Companion.OpenOnPhoneContentDescriptionIcon
 import androidx.wear.compose.material3.internal.getString
 import androidx.wear.compose.material3.tokens.ColorSchemeKeyTokens
 import androidx.wear.compose.material3.tokens.MotionTokens.DurationLong2
@@ -299,12 +298,10 @@ public object OpenOnPhoneDialogDefaults {
      * animation.
      *
      * @param modifier Modifier to be applied to the icon.
-     * @param contentDescription The content description for the icon.
      */
     @Composable
     public fun Icon(
         modifier: Modifier = Modifier,
-        contentDescription: String = iconContentDescription
     ) {
         val animation =
             AnimatedImageVector.animatedVectorResource(R.drawable.wear_m3c_open_on_phone_animation)
@@ -317,14 +314,10 @@ public object OpenOnPhoneDialogDefaults {
         }
         Icon(
             painter = rememberAnimatedVectorPainter(animation, atEnd),
-            contentDescription = contentDescription,
+            contentDescription = null,
             modifier = modifier.size(IconSize)
         )
     }
-
-    /** The default content description for the open on phone icon */
-    public val iconContentDescription: String
-        @Composable get() = getString(OpenOnPhoneContentDescriptionIcon)
 
     /**
      * Creates a [OpenOnPhoneDialogColors] that represents the default colors used in

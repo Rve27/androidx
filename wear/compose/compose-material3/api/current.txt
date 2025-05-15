@@ -422,8 +422,8 @@ package androidx.wear.compose.material3 {
   }
 
   public final class ConfirmationDialogDefaults {
-    method @androidx.compose.runtime.Composable public void FailureIcon();
-    method @androidx.compose.runtime.Composable public void SuccessIcon();
+    method @androidx.compose.runtime.Composable public void FailureIcon(optional androidx.compose.ui.Modifier modifier);
+    method @androidx.compose.runtime.Composable public void SuccessIcon(optional androidx.compose.ui.Modifier modifier);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ConfirmationDialogColors colors();
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ConfirmationDialogColors colors(optional long iconColor, optional long iconContainerColor, optional long textColor);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.ConfirmationDialogColors failureColors();
@@ -823,16 +823,14 @@ package androidx.wear.compose.material3 {
   }
 
   public final class OpenOnPhoneDialogDefaults {
-    method @androidx.compose.runtime.Composable public void Icon(optional androidx.compose.ui.Modifier modifier, optional String contentDescription);
+    method @androidx.compose.runtime.Composable public void Icon(optional androidx.compose.ui.Modifier modifier);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.OpenOnPhoneDialogColors colors();
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material3.OpenOnPhoneDialogColors colors(optional long iconColor, optional long iconContainerColor, optional long progressIndicatorColor, optional long progressTrackColor, optional long textColor);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.CurvedTextStyle getCurvedTextStyle();
     method public long getDurationMillis();
-    method @androidx.compose.runtime.Composable public String getIconContentDescription();
     method @androidx.compose.runtime.Composable public String getText();
     property public long DurationMillis;
     property @androidx.compose.runtime.Composable public androidx.wear.compose.foundation.CurvedTextStyle curvedTextStyle;
-    property @androidx.compose.runtime.Composable public String iconContentDescription;
     property @androidx.compose.runtime.Composable public String text;
     field public static final androidx.wear.compose.material3.OpenOnPhoneDialogDefaults INSTANCE;
   }

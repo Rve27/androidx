@@ -556,9 +556,11 @@ public object ConfirmationDialogDefaults {
     /**
      * A default composable used in [SuccessConfirmationDialog] that displays a success icon with an
      * animation.
+     *
+     * @param modifier Modifier to be applied to the success icon.
      */
     @Composable
-    public fun SuccessIcon() {
+    public fun SuccessIcon(modifier: Modifier = Modifier) {
         val animation =
             AnimatedImageVector.animatedVectorResource(R.drawable.wear_m3c_check_animation)
         var atEnd by remember { mutableStateOf(false) }
@@ -571,16 +573,18 @@ public object ConfirmationDialogDefaults {
         Icon(
             painter = rememberAnimatedVectorPainter(animation, atEnd),
             contentDescription = null,
-            modifier = Modifier.size(IconSize)
+            modifier = modifier.size(IconSize)
         )
     }
 
     /**
      * A default composable used in [FailureConfirmationDialog] that displays a failure icon with an
      * animation.
+     *
+     * @param modifier Modifier to be applied to the failure icon.
      */
     @Composable
-    public fun FailureIcon() {
+    public fun FailureIcon(modifier: Modifier = Modifier) {
         val animation =
             AnimatedImageVector.animatedVectorResource(R.drawable.wear_m3c_failure_animation)
         var atEnd by remember { mutableStateOf(false) }
@@ -593,7 +597,7 @@ public object ConfirmationDialogDefaults {
         Icon(
             painter = rememberAnimatedVectorPainter(animation, atEnd),
             contentDescription = null,
-            modifier = Modifier.size(IconSize)
+            modifier = modifier.size(IconSize)
         )
     }
 
