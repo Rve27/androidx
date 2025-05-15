@@ -20,12 +20,12 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -147,6 +147,7 @@ public class PickerGroupScope {
         val touchExplorationServicesEnabled by
             LocalTouchExplorationStateProvider.current.touchExplorationState()
 
+        val latestOnSelected by rememberUpdatedState(onSelected)
         Picker(
             state = pickerState,
             contentDescription = contentDescription,
@@ -159,6 +160,21 @@ public class PickerGroupScope {
                         if (selected && autoCenteringEnabled) Modifier.autoCenteringTarget()
                         else Modifier
                     )
+                    .then(
+                        Modifier.pointerInput(touchExplorationServicesEnabled, selected) {
+                            // better to restart this PointerInputScope when the keys change
+                            // than trigger the entire modifier chain
+                            if (touchExplorationServicesEnabled || selected) {
+                                return@pointerInput
+                            }
+                            coroutineScope {
+                                awaitEachGesture {
+                                    awaitFirstDown(requireUnconsumed = false)
+                                    latestOnSelected()
+                                }
+                            }
+                        }
+                    )
                     .hierarchicalFocusGroup(active = selected)
                     .then(
                         // If the user provided a focus requester, we add it here, otherwise,
@@ -168,30 +184,10 @@ public class PickerGroupScope {
                     ),
             // Do not need focusable as it's already set in ScalingLazyColumn
             readOnlyLabel = readOnlyLabel,
-            onSelected = onSelected,
+            onSelected = latestOnSelected,
             verticalSpacing = verticalSpacing,
             userScrollEnabled = !touchExplorationServicesEnabled || selected,
-            option = { optionIndex ->
-                Box(
-                    if (touchExplorationServicesEnabled || selected) {
-                        Modifier
-                    } else
-                        Modifier.pointerInput(Unit) {
-                            coroutineScope {
-                                // Keep looking for touch events on the picker if it is
-                                // not selected
-                                while (true) {
-                                    awaitEachGesture {
-                                        awaitFirstDown(requireUnconsumed = false)
-                                        onSelected()
-                                    }
-                                }
-                            }
-                        }
-                ) {
-                    option(optionIndex, selected)
-                }
-            }
+            option = { optionIndex -> option(optionIndex, selected) }
         )
     }
 
