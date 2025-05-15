@@ -46,6 +46,7 @@ import android.util.Size
 import android.view.WindowManager
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.camera2.impl.Camera2ImplConfig
+import androidx.camera.camera2.internal.GuaranteedConfigurationsUtil.generateQueryableFcqCombinations
 import androidx.camera.camera2.internal.SupportedSurfaceCombination.FeatureSettings
 import androidx.camera.camera2.internal.SupportedSurfaceCombination.RequiredMaxBitDepth
 import androidx.camera.camera2.internal.compat.CameraManagerCompat
@@ -63,6 +64,9 @@ import androidx.camera.core.DynamicRange.ENCODING_UNSPECIFIED
 import androidx.camera.core.DynamicRange.HLG_10_BIT
 import androidx.camera.core.DynamicRange.SDR
 import androidx.camera.core.UseCase
+import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery
+import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery.Companion.NO_OP_FEATURE_COMBINATION_QUERY
+import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature
 import androidx.camera.core.impl.AttachedSurfaceInfo
 import androidx.camera.core.impl.CameraDeviceSurfaceManager
 import androidx.camera.core.impl.CameraMode
@@ -76,9 +80,11 @@ import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.SurfaceCombination
 import androidx.camera.core.impl.SurfaceConfig
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize
+import androidx.camera.core.impl.SurfaceConfig.ConfigSize.S1080P_16_9
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize.S1440P_16_9
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize.S1440P_4_3
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize.S720P_16_9
+import androidx.camera.core.impl.SurfaceConfig.ConfigSize.UHD
 import androidx.camera.core.impl.SurfaceConfig.ConfigType
 import androidx.camera.core.impl.UseCaseConfig
 import androidx.camera.core.impl.UseCaseConfigFactory
@@ -86,7 +92,9 @@ import androidx.camera.core.impl.UseCaseConfigFactory.CaptureType
 import androidx.camera.core.impl.utils.CompareSizesByArea
 import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_1080P
 import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_1440P
+import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_1440P_16_9
 import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_720P
+import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_UHD
 import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_VGA
 import androidx.camera.testing.fakes.FakeCamera
 import androidx.camera.testing.fakes.FakeCameraInfoInternal
@@ -95,11 +103,14 @@ import androidx.camera.testing.impl.CameraXUtil
 import androidx.camera.testing.impl.EncoderProfilesUtil
 import androidx.camera.testing.impl.fakes.FakeCameraFactory
 import androidx.camera.testing.impl.fakes.FakeEncoderProfilesProvider
+import androidx.camera.testing.impl.fakes.FakeFeatureCombinationQuery
 import androidx.camera.testing.impl.fakes.FakeUseCaseConfig
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
+import kotlin.math.floor
 import org.codehaus.plexus.util.ReflectionUtils
 import org.junit.After
 import org.junit.Assert.assertThrows
@@ -116,7 +127,6 @@ import org.robolectric.annotation.internal.DoNotInstrument
 import org.robolectric.shadow.api.Shadow
 import org.robolectric.shadows.ShadowCameraCharacteristics
 import org.robolectric.shadows.ShadowCameraManager
-import org.robolectric.shadows.ShadowLog
 import org.robolectric.util.ReflectionHelpers
 
 private const val DEFAULT_CAMERA_ID = "0"
@@ -195,6 +205,7 @@ class SupportedSurfaceCombinationTest {
     private var cameraFactory: FakeCameraFactory? = null
     private var useCaseConfigFactory: UseCaseConfigFactory? = null
     private lateinit var cameraDeviceSurfaceManager: CameraDeviceSurfaceManager
+    private val fakeFeatureCombinationQuery = FakeFeatureCombinationQuery()
 
     @Suppress("DEPRECATION") // defaultDisplay
     @Before
@@ -232,7 +243,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getLegacySupportedCombinationList().forEach {
             assertThat(
@@ -253,7 +265,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getLimitedSupportedCombinationList().forEach {
             assertThat(
@@ -274,7 +287,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getFullSupportedCombinationList().forEach {
             assertThat(
@@ -295,7 +309,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getLevel3SupportedCombinationList().forEach {
             assertThat(
@@ -316,7 +331,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getLimitedSupportedCombinationList().forEach {
             assertThat(
@@ -337,7 +353,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getFullSupportedCombinationList().forEach {
             assertThat(
@@ -358,7 +375,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getLevel3SupportedCombinationList().forEach {
             assertThat(
@@ -381,7 +399,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getFullSupportedCombinationList().forEach {
             assertThat(
@@ -404,7 +423,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getLevel3SupportedCombinationList().forEach {
             assertThat(
@@ -428,7 +448,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getLimitedSupportedCombinationList().forEach {
             assertThat(
@@ -452,7 +473,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getLegacySupportedCombinationList().forEach {
             assertThat(
@@ -476,7 +498,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getFullSupportedCombinationList().forEach {
             assertThat(
@@ -500,7 +523,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getRAWSupportedCombinationList().forEach {
             assertThat(
@@ -523,7 +547,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getLevel3SupportedCombinationList().forEach {
             assertThat(
@@ -547,7 +572,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getConcurrentSupportedCombinationList().forEach {
             assertThat(
@@ -577,7 +603,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getUltraHighResolutionSupportedCombinationList().forEach {
             assertThat(
@@ -601,7 +628,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         GuaranteedConfigurationsUtil.getPreviewStabilizationSupportedCombinationList().forEach {
             assertThat(
@@ -626,7 +654,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
 
         // The expected SurfaceConfig is PRIV + RECORD because the max high speed size 1920x1080 is
@@ -690,7 +719,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -710,7 +740,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -730,7 +761,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -750,7 +782,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -770,7 +803,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -790,7 +824,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -810,7 +845,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -830,7 +866,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -851,7 +888,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -872,7 +910,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -893,7 +932,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -914,7 +954,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -935,7 +976,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -956,7 +998,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -985,7 +1028,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         assertThat(
                 supportedSurfaceCombination.transformSurfaceConfig(
@@ -1024,7 +1068,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -1047,7 +1092,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
@@ -1756,7 +1802,10 @@ class SupportedSurfaceCombinationTest {
         supportedHighSpeedSizeAndFpsMap: Map<Size, List<Range<Int>>>? = null,
         isPreviewStabilizationOn: Boolean = false,
         hasVideoCapture: Boolean = false,
-        expectedSessionType: Int = SESSION_TYPE_REGULAR
+        expectedSessionType: Int = SESSION_TYPE_REGULAR,
+        maxFpsBySizeMap: Map<Size, Int> = emptyMap(),
+        allowFeatureComboResolutions: Boolean = false,
+        featureCombinationQuery: FeatureCombinationQuery = NO_OP_FEATURE_COMBINATION_QUERY
     ): Pair<Map<UseCaseConfig<*>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>> {
         setupCameraAndInitCameraX(
             hardwareLevel = hardwareLevel,
@@ -1765,13 +1814,15 @@ class SupportedSurfaceCombinationTest {
             default10BitProfile = default10BitProfile,
             supportedFormats = supportedOutputFormats,
             supportedHighSpeedSizeAndFpsMap = supportedHighSpeedSizeAndFpsMap,
+            maxFpsBySizeMap = maxFpsBySizeMap,
         )
         val supportedSurfaceCombination =
             SupportedSurfaceCombination(
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                featureCombinationQuery
             )
         val useCaseConfigMap = getUseCaseToConfigMap(useCasesExpectedSizeMap.keys.toList())
         val useCaseConfigToOutputSizesMap =
@@ -1785,7 +1836,7 @@ class SupportedSurfaceCombinationTest {
                 useCaseConfigToOutputSizesMap,
                 isPreviewStabilizationOn,
                 hasVideoCapture,
-                false
+                allowFeatureComboResolutions
             )
         val suggestedStreamSpecsForNewUseCases = resultPair.first
         val suggestedStreamSpecsForOldSurfaces = resultPair.second
@@ -1891,7 +1942,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
 
         GuaranteedConfigurationsUtil.getUltraHdrSupportedCombinationList().forEach {
@@ -1918,7 +1970,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
 
         GuaranteedConfigurationsUtil.getUltraHdrSupportedCombinationList().forEach {
@@ -2041,7 +2094,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
 
         GuaranteedConfigurationsUtil.get10BitSupportedCombinationList().forEach {
@@ -3005,7 +3059,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val imageFormat = ImageFormat.JPEG
         val surfaceSizeDefinition =
@@ -3027,7 +3082,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val imageFormat = ImageFormat.JPEG
         val surfaceSizeDefinition =
@@ -3044,7 +3100,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val imageFormat = ImageFormat.JPEG
         val surfaceSizeDefinition =
@@ -3061,7 +3118,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val imageFormat = ImageFormat.JPEG
         val surfaceSizeDefinition =
@@ -3087,7 +3145,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val imageFormat = ImageFormat.JPEG
         val surfaceSizeDefinition =
@@ -3105,7 +3164,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 EXTERNAL_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         // Checks the determined RECORD size
         assertThat(supportedSurfaceCombination.mSurfaceSizeDefinition.recordSize)
@@ -3123,7 +3183,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 EXTERNAL_INT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockEmptyCamcorderProfileHelper
+                mockEmptyCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         // Checks the determined RECORD size
         assertThat(supportedSurfaceCombination.mSurfaceSizeDefinition.recordSize)
@@ -3168,7 +3229,8 @@ class SupportedSurfaceCombinationTest {
             context,
             DEFAULT_CAMERA_ID,
             cameraManagerCompat!!,
-            mockCamcorderProfileHelper
+            mockCamcorderProfileHelper,
+            NO_OP_FEATURE_COMBINATION_QUERY
         )
     }
 
@@ -3180,7 +3242,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val sortedSizeList =
             listOf(
@@ -3234,7 +3297,8 @@ class SupportedSurfaceCombinationTest {
                 context,
                 DEFAULT_CAMERA_ID,
                 cameraManagerCompat!!,
-                mockCamcorderProfileHelper
+                mockCamcorderProfileHelper,
+                NO_OP_FEATURE_COMBINATION_QUERY
             )
         val resultList =
             supportedSurfaceCombination.applyResolutionSelectionOrderRelatedWorkarounds(
@@ -3300,8 +3364,6 @@ class SupportedSurfaceCombinationTest {
     @Config(minSdk = Build.VERSION_CODES.TIRAMISU)
     @Test
     fun skipPopulateStreamUseCaseStreamSpecOption_unsupportedCombination() {
-        ShadowLog.stream = System.out
-
         val useCase1 = createUseCase(CaptureType.PREVIEW, streamUseCaseOverride = true) // PREVIEW
         val useCase2 = createUseCase(CaptureType.PREVIEW, streamUseCaseOverride = true) // PREVIEW
         val useCaseExpectedResultMap =
@@ -3752,7 +3814,191 @@ class SupportedSurfaceCombinationTest {
             .inOrder()
     }
 
-    // TODO: b/413849280 - Add feature combo tests for the full code flow of getSuggestedStreamSpecs
+    // //////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Feature combination tests
+    //
+    // //////////////////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    fun checkSupported_featureComboQueryNotRequiredInSettings_featureCombinationQueryNotInvoked() {
+        // Arrange: Setup resources with a FeatureCombinationQuery impl. tracking isSupported calls
+        setupCameraAndInitCameraX()
+        val latch = CountDownLatch(1)
+        val supportedSurfaceCombination =
+            SupportedSurfaceCombination(
+                context,
+                DEFAULT_CAMERA_ID,
+                cameraManagerCompat!!,
+                mockCamcorderProfileHelper,
+                object : FeatureCombinationQuery {
+                    override fun isSupported(config: FeatureCombinationQuery.Config): Boolean {
+                        latch.countDown()
+                        return false
+                    }
+                }
+            )
+        val surfaceConfigList = generateQueryableFcqCombinations().first().surfaceConfigList
+
+        // Act: Check for a FCQ SurfaceConfig combination
+        supportedSurfaceCombination.checkSupported(
+            createFeatureSettings(requiresFeatureComboQuery = false),
+            surfaceConfigList
+        )
+
+        // Assert: Waits a small time for latch update in isSupported call just in case any code
+        // flow happens asynchronously in future
+        assertThat(latch.await(100, TimeUnit.MILLISECONDS)).isFalse()
+    }
+
+    @Test
+    fun checkSupported_featureComboQueryReportsUnsupported_fcqSurfaceCombinationUnsupported() {
+        // Arrange: Setup resources with a FeatureCombinationQuery impl. that always returns false
+        setupCameraAndInitCameraX()
+        val supportedSurfaceCombination =
+            SupportedSurfaceCombination(
+                context,
+                DEFAULT_CAMERA_ID,
+                cameraManagerCompat!!,
+                mockCamcorderProfileHelper,
+                fakeFeatureCombinationQuery.apply { isSupported = false }
+            )
+        val surfaceConfigList = generateQueryableFcqCombinations().first().surfaceConfigList
+
+        // Act & assert
+        assertThat(
+                supportedSurfaceCombination.checkSupported(
+                    createFeatureSettings(requiresFeatureComboQuery = true),
+                    surfaceConfigList,
+                    surfaceConfigList.associateWith { DynamicRange.UNSPECIFIED },
+                    surfaceConfigList.map { FakeUseCaseConfig.Builder().useCaseConfig },
+                    (0 until surfaceConfigList.size).toList()
+                )
+            )
+            .isFalse()
+    }
+
+    @Test
+    fun checkSupported_featureComboQueryReportsSupported_fcqSurfaceCombinationSupported() {
+        // Arrange: Setup resources with a FeatureCombinationQuery impl. that always returns true
+        setupCameraAndInitCameraX()
+        val supportedSurfaceCombination =
+            SupportedSurfaceCombination(
+                context,
+                DEFAULT_CAMERA_ID,
+                cameraManagerCompat!!,
+                mockCamcorderProfileHelper,
+                fakeFeatureCombinationQuery.apply { isSupported = true }
+            )
+        val surfaceConfigList = generateQueryableFcqCombinations().first().surfaceConfigList
+
+        // Act & assert
+        assertThat(
+                supportedSurfaceCombination.checkSupported(
+                    createFeatureSettings(requiresFeatureComboQuery = true),
+                    surfaceConfigList,
+                    surfaceConfigList.associateWith { DynamicRange.UNSPECIFIED },
+                    surfaceConfigList.map { FakeUseCaseConfig.Builder().useCaseConfig },
+                    (0 until surfaceConfigList.size).toList()
+                )
+            )
+            .isTrue()
+    }
+
+    @Test
+    fun getSuggestedStreamSpecs_allFeatures_fcqInvokedWithCorrectParameters() {
+        // Arrange: All 3 FCQ-supported use cases with all FCQ features - HLG10, 60 FPS, Preview
+        // Stabilization, and Ultra HDR
+        val previewUseCase = createUseCase(CaptureType.PREVIEW)
+        val imageCaptureUseCase = createUseCase(CaptureType.IMAGE_CAPTURE, imageFormat = JPEG_R)
+        val videoCaptureUseCase =
+            createUseCase(
+                CaptureType.VIDEO_CAPTURE,
+                dynamicRange =
+                    if (Build.VERSION.SDK_INT >= 33) {
+                        HLG_10_BIT
+                    } else {
+                        DynamicRange.UNSPECIFIED
+                    },
+                targetFrameRate = Range(60, 60)
+            )
+
+        val useCasesOutputSizesMap =
+            mapOf(
+                previewUseCase to listOf(RESOLUTION_1080P),
+                imageCaptureUseCase to listOf(RESOLUTION_1440P_16_9),
+                videoCaptureUseCase to listOf(RESOLUTION_UHD),
+            )
+        val useCaseExpectedResultMap =
+            mapOf(
+                previewUseCase to RESOLUTION_1080P,
+                imageCaptureUseCase to RESOLUTION_1440P_16_9,
+                videoCaptureUseCase to RESOLUTION_UHD,
+            )
+
+        // Act
+        getSuggestedSpecsAndVerify(
+            useCaseExpectedResultMap,
+            useCasesOutputSizesMap = useCasesOutputSizesMap,
+            dynamicRangeProfiles = if (Build.VERSION.SDK_INT >= 33) HLG10_CONSTRAINED else null,
+            capabilities = intArrayOf(REQUEST_AVAILABLE_CAPABILITIES_DYNAMIC_RANGE_TEN_BIT),
+            isPreviewStabilizationOn = true,
+            allowFeatureComboResolutions = true,
+            featureCombinationQuery = fakeFeatureCombinationQuery.apply { isSupported = true },
+            maxFpsBySizeMap =
+                mapOf(
+                    RESOLUTION_1080P to 60,
+                    RESOLUTION_1440P_16_9 to 60,
+                    RESOLUTION_UHD to 60,
+                )
+        )
+
+        // Assert: Correct params were passed every time FeatureCombinationQuery API was queried
+        fakeFeatureCombinationQuery.queriedConfigs.forEach { config ->
+            // Verify surface configs
+            assertThat(
+                    config.streamConfigs.map {
+                        Pair(it.surfaceConfig.configType, it.surfaceConfig.configSize)
+                    }
+                )
+                .containsExactly(
+                    Pair(ConfigType.PRIV, S1080P_16_9), // Preview
+                    // JPEG_R verifies Ultra HDR
+                    Pair(ConfigType.JPEG_R, S1440P_16_9), // ImageCapture
+                    Pair(ConfigType.PRIV, UHD), // VideoCapture
+                )
+
+            // Verify UseCaseConfig capture types
+            assertThat(config.streamConfigs.map { it.useCaseConfig.captureType })
+                .containsExactly(
+                    CaptureType.PREVIEW,
+                    CaptureType.IMAGE_CAPTURE,
+                    CaptureType.VIDEO_CAPTURE
+                )
+
+            // Verify correct dynamic range for all surfaces
+            if (Build.VERSION.SDK_INT >= 33) {
+                assertThat(
+                        config.streamConfigs.map {
+                            Pair(it.surfaceConfig.configType, it.dynamicRange)
+                        }
+                    )
+                    .containsExactly(
+                        Pair(ConfigType.PRIV, HLG_10_BIT),
+                        Pair(ConfigType.PRIV, HLG_10_BIT),
+                        // ImageCapture original dynamic range is UNSPECIFIED, resolved to HLG_10
+                        Pair(ConfigType.JPEG_R, HLG_10_BIT)
+                    )
+            }
+
+            // Verify 60 FPS
+            assertThat(config.fpsRange).isEqualTo(Range(60, 60))
+
+            // Verify Preview Stabilization
+            assertThat(config.stabilizationMode)
+                .isEqualTo(VideoStabilizationFeature.StabilizationMode.PREVIEW)
+        }
+    }
 
     private fun createSupportedSurfaceCombination(): SupportedSurfaceCombination {
         setupCameraAndInitCameraX()
@@ -3760,7 +4006,8 @@ class SupportedSurfaceCombinationTest {
             context,
             DEFAULT_CAMERA_ID,
             cameraManagerCompat!!,
-            mockCamcorderProfileHelper
+            mockCamcorderProfileHelper,
+            NO_OP_FEATURE_COMBINATION_QUERY
         )
     }
 
@@ -3785,6 +4032,7 @@ class SupportedSurfaceCombinationTest {
      * @param maximumResolutionHighResolutionSupportedSizes the maximum resolution mode high
      *   resolution supported sizes of the camera. Default value is null.
      * @param capabilities the capabilities of the camera. Default value is null.
+     * @param maxFpsBySizeMap map of supported max FPS for different resolutions.
      */
     private fun setupCameraAndInitCameraX(
         cameraId: String = DEFAULT_CAMERA_ID,
@@ -3800,6 +4048,7 @@ class SupportedSurfaceCombinationTest {
         dynamicRangeProfiles: DynamicRangeProfiles? = null,
         default10BitProfile: Long? = null,
         capabilities: IntArray? = null,
+        maxFpsBySizeMap: Map<Size, Int> = emptyMap()
     ) {
         setupCamera(
             cameraId,
@@ -3815,6 +4064,7 @@ class SupportedSurfaceCombinationTest {
             dynamicRangeProfiles,
             default10BitProfile,
             capabilities,
+            maxFpsBySizeMap
         )
 
         @LensFacing
@@ -3867,6 +4117,7 @@ class SupportedSurfaceCombinationTest {
      * @param maximumResolutionHighResolutionSupportedSizes the maximum resolution mode high
      *   resolution supported sizes of the camera. Default value is null.
      * @param capabilities the capabilities of the camera. Default value is null.
+     * @param maxFpsBySizeMap map of supported max FPS for different resolutions.
      */
     private fun setupCamera(
         cameraId: String = DEFAULT_CAMERA_ID,
@@ -3882,6 +4133,7 @@ class SupportedSurfaceCombinationTest {
         dynamicRangeProfiles: DynamicRangeProfiles? = null,
         default10BitProfile: Long? = null,
         capabilities: IntArray? = null,
+        maxFpsBySizeMap: Map<Size, Int> = emptyMap(),
     ) {
         val mockMap =
             Mockito.mock(StreamConfigurationMap::class.java).also { map ->
@@ -3979,6 +4231,14 @@ class SupportedSurfaceCombinationTest {
                         map.getOutputMinFrameDuration(anyInt(), ArgumentMatchers.eq(Size(640, 480)))
                     )
                     .thenReturn(16666666L) // 60fps
+
+                maxFpsBySizeMap.forEach { (size, maxFps) ->
+                    Mockito.`when`(
+                            map.getOutputMinFrameDuration(anyInt(), ArgumentMatchers.eq(size))
+                        )
+                        // x FPS means 1 second for x frames, so min frame duration is (1e9 / x) ns
+                        .thenReturn(floor(1e9 / maxFps.toDouble()).toLong())
+                }
 
                 // Sets up the supported high resolution sizes
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -4241,6 +4501,19 @@ class SupportedSurfaceCombinationTest {
             isHighSpeedOn,
             requiresFeatureComboQuery,
             targetFpsRange,
+        )
+    }
+
+    private fun SupportedSurfaceCombination.checkSupported(
+        featureSettings: FeatureSettings,
+        surfaceConfigList: List<SurfaceConfig>
+    ): Boolean {
+        return checkSupported(
+            featureSettings,
+            surfaceConfigList,
+            emptyMap(),
+            emptyList(),
+            emptyList()
         )
     }
 }
