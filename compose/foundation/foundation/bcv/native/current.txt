@@ -330,6 +330,16 @@ abstract interface androidx.compose.foundation.lazy.grid/GridCells { // androidx
     }
 }
 
+abstract interface androidx.compose.foundation.lazy.layout/LazyLayoutItemProvider { // androidx.compose.foundation.lazy.layout/LazyLayoutItemProvider|null[0]
+    abstract val itemCount // androidx.compose.foundation.lazy.layout/LazyLayoutItemProvider.itemCount|{}itemCount[0]
+        abstract fun <get-itemCount>(): kotlin/Int // androidx.compose.foundation.lazy.layout/LazyLayoutItemProvider.itemCount.<get-itemCount>|<get-itemCount>(){}[0]
+
+    abstract fun Item(kotlin/Int, kotlin/Any) // androidx.compose.foundation.lazy.layout/LazyLayoutItemProvider.Item|Item(kotlin.Int;kotlin.Any){}[0]
+    open fun getContentType(kotlin/Int): kotlin/Any? // androidx.compose.foundation.lazy.layout/LazyLayoutItemProvider.getContentType|getContentType(kotlin.Int){}[0]
+    open fun getIndex(kotlin/Any): kotlin/Int // androidx.compose.foundation.lazy.layout/LazyLayoutItemProvider.getIndex|getIndex(kotlin.Any){}[0]
+    open fun getKey(kotlin/Int): kotlin/Any // androidx.compose.foundation.lazy.layout/LazyLayoutItemProvider.getKey|getKey(kotlin.Int){}[0]
+}
+
 abstract interface androidx.compose.foundation.lazy.layout/LazyLayoutScrollScope : androidx.compose.foundation.gestures/ScrollScope { // androidx.compose.foundation.lazy.layout/LazyLayoutScrollScope|null[0]
     abstract val firstVisibleItemIndex // androidx.compose.foundation.lazy.layout/LazyLayoutScrollScope.firstVisibleItemIndex|{}firstVisibleItemIndex[0]
         abstract fun <get-firstVisibleItemIndex>(): kotlin/Int // androidx.compose.foundation.lazy.layout/LazyLayoutScrollScope.firstVisibleItemIndex.<get-firstVisibleItemIndex>|<get-firstVisibleItemIndex>(){}[0]

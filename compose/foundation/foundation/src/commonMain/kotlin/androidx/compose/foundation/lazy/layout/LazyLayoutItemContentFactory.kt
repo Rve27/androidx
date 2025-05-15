@@ -17,7 +17,6 @@
 package androidx.compose.foundation.lazy.layout
 
 import androidx.collection.mutableScatterMapOf
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.Stable
@@ -33,7 +32,6 @@ import kotlin.jvm.JvmInline
  * 3) Adds state restoration on top of the composable returned by [itemProvider] with help of
  *    [saveableStateHolder].
  */
-@OptIn(ExperimentalFoundationApi::class)
 internal class LazyLayoutItemContentFactory(
     private val saveableStateHolder: SaveableStateHolder,
     val itemProvider: () -> LazyLayoutItemProvider,
@@ -118,7 +116,6 @@ internal class LazyLayoutItemContentFactory(
  * Hack around skippable functions to force skip SaveableStateProvider and Item block when nothing
  * changed. It allows us to skip heavy-weight composition local providers.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SkippableItem(
     itemProvider: LazyLayoutItemProvider,

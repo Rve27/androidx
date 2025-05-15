@@ -67,7 +67,6 @@ sealed interface LazyLayoutMeasureScope : MeasureScope {
     fun measure(index: Int, constraints: Constraints): List<Placeable>
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 internal class LazyLayoutMeasureScopeImpl
 internal constructor(
     private val itemContentFactory: LazyLayoutItemContentFactory,
@@ -98,6 +97,7 @@ internal constructor(
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Deprecated("Please use compose and measure")
     override fun measure(index: Int, constraints: Constraints): List<Placeable> {
         val cachedPlaceable = placeablesCache[index]

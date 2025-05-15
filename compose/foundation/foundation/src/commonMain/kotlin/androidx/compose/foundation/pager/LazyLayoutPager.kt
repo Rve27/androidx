@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package androidx.compose.foundation.pager
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -65,6 +63,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 import kotlinx.coroutines.coroutineScope
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun Pager(
     /** Modifier to be applied for the inner layout */

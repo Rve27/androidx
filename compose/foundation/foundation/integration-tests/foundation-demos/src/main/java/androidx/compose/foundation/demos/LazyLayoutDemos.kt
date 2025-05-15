@@ -52,7 +52,6 @@ import kotlin.math.sign
 private val tableItems: Array<Array<String>> =
     Array(20) { row -> Array(20) { column -> "$row,$column" } }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Preview
 @Composable
 fun Lazy2DGridDemo(modifier: Modifier = Modifier) {
@@ -63,7 +62,6 @@ fun Lazy2DGridDemo(modifier: Modifier = Modifier) {
     }
 }
 
-@ExperimentalFoundationApi
 private class Lazy2DGridItemProvider(
     rows: Int,
     private val columns: Int,
@@ -123,7 +121,7 @@ class Lazy2DGridState : Draggable2DState {
     }
 }
 
-@ExperimentalFoundationApi
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Lazy2DGrid(
     rows: Int,

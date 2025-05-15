@@ -20,12 +20,10 @@ import androidx.collection.IntList
 import androidx.collection.MutableIntList
 import androidx.collection.emptyIntList
 import androidx.collection.mutableIntListOf
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.layout.LazyLayoutIntervalContent
 import androidx.compose.foundation.lazy.layout.MutableIntervalList
 import androidx.compose.runtime.Composable
 
-@ExperimentalFoundationApi
 internal class LazyListIntervalContent(
     content: LazyListScope.() -> Unit,
 ) : LazyLayoutIntervalContent<LazyListInterval>(), LazyListScope {

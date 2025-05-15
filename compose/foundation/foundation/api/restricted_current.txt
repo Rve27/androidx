@@ -1252,13 +1252,13 @@ package androidx.compose.foundation.lazy.layout {
     property public default kotlin.jvm.functions.Function1<java.lang.Integer,java.lang.Object?> type;
   }
 
-  @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi @androidx.compose.runtime.Stable public interface LazyLayoutItemProvider {
-    method @androidx.compose.runtime.Composable public void Item(int index, Object key);
-    method public default Object? getContentType(int index);
+  @androidx.compose.runtime.Stable public interface LazyLayoutItemProvider {
+    method @androidx.compose.runtime.Composable public void Item(@IntRange(from=0L) int index, Object key);
+    method public default Object? getContentType(@IntRange(from=0L) int index);
     method public default int getIndex(Object key);
-    method public int getItemCount();
-    method public default Object getKey(int index);
-    property public abstract int itemCount;
+    method @IntRange(from=0L) public int getItemCount();
+    method public default Object getKey(@IntRange(from=0L) int index);
+    property @IntRange(from=0L) public abstract int itemCount;
   }
 
   public final class LazyLayoutKt {
