@@ -812,6 +812,6 @@ private const val second = "second"
 private const val third = "third"
 private const val forth = "forth"
 
-@Serializable object First : NavKey()
+@Serializable object First : NavKey
 
-@Serializable object Second : NavKey()
+@Serializable object Second : NavKey

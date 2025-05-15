@@ -199,9 +199,9 @@ fun SceneNavSharedElementSample() {
     }
 }
 
-object CatList : NavKey()
+@Serializable object CatList : NavKey
 
-@Serializable data class CatDetail(val cat: Cat) : NavKey()
+@Serializable data class CatDetail(val cat: Cat) : NavKey
 
 @Serializable
 data class Cat(@DrawableRes val imageId: Int, val name: String, val description: String)

@@ -50,7 +50,6 @@ package androidx.navigation3.runtime {
   }
 
   public final class NavBackStack_androidKt {
-    method @androidx.compose.runtime.Composable public static <T> androidx.compose.runtime.snapshots.SnapshotStateList<T> rememberMutableStateListOf(T... elements);
     method @androidx.compose.runtime.Composable public static <T extends androidx.navigation3.runtime.NavKey> androidx.compose.runtime.snapshots.SnapshotStateList<androidx.navigation3.runtime.NavKey> rememberNavBackStack(T... elements);
   }
 
@@ -81,9 +80,7 @@ package androidx.navigation3.runtime {
     property public final androidx.navigation3.runtime.NavEntry<T> navEntry;
   }
 
-  @kotlinx.serialization.Serializable public class NavKey {
-    ctor public NavKey();
-    ctor public NavKey(optional kotlin.uuid.Uuid uuid);
+  public interface NavKey {
   }
 
   public final class SavedStateNavEntryDecoratorKt {

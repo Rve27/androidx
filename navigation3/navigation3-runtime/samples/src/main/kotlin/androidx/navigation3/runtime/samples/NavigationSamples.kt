@@ -42,7 +42,7 @@ import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-object Profile : NavKey() {
+object Profile : NavKey {
     val resourceId: Int = R.string.profile
 }
 
@@ -51,17 +51,17 @@ class ProfileViewModel : ViewModel() {
 }
 
 @Serializable
-object Scrollable : NavKey() {
+object Scrollable : NavKey {
     val resourceId: Int = R.string.scrollable
 }
 
 @Serializable
-object DialogBase : NavKey() {
+object DialogBase : NavKey {
     val resourceId: Int = R.string.dialog
 }
 
 @Serializable
-data class Dashboard(val userId: String? = "no value given") : NavKey() {
+data class Dashboard(val userId: String? = "no value given") : NavKey {
     companion object {
         val resourceId: Int = R.string.dashboard
     }
