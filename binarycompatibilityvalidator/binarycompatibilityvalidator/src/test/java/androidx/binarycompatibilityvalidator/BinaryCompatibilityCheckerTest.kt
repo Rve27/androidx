@@ -17,6 +17,7 @@
 package androidx.binarycompatibilityvalidator
 
 import com.google.common.truth.Truth.assertThat
+import kotlin.test.Ignore
 import kotlin.test.assertFailsWith
 import kotlinx.validation.ExperimentalBCVApi
 import kotlinx.validation.api.klib.KlibDump
@@ -1477,6 +1478,35 @@ class BinaryCompatibilityCheckerTest {
         }
         """
         testBeforeAndAfterIsCompatible(beforeText, afterText)
+    }
+
+    @Ignore // b/409298472
+    @Test
+    fun changedOrdinalOfEnumEntries() {
+        val beforeText =
+            """
+        final enum class my.lib/Foo : kotlin/Enum<my.lib/Foo> { // my.lib/Foo|null[0]
+            enum entry BAR // my.lib/Foo.BAR|null[0]
+            enum entry BAZ // my.lib/Foo.BAZ|null[0]
+            final fun valueOf(kotlin/String): my.lib/Foo // my.lib/Foo.valueOf|valueOf#static(kotlin.String){}[0]
+            final fun values(): kotlin/Array<my.lib/Foo> // my.lib/Foo.values|values#static(){}[0]
+            final val entries // my.lib/Foo.entries|#static{}entries[0]
+                final fun <get-entries>(): kotlin.enums/EnumEntries<my.lib/Foo> // my.lib/Foo.entries.<get-entries>|<get-entries>#static(){}[0]
+        }
+        """
+        val afterText =
+            """
+        final enum class my.lib/Foo : kotlin/Enum<my.lib/Foo> { // my.lib/Foo|null[0]
+            enum entry BAR // my.lib/Foo.BAR|null[0]
+            enum entry BAZ // my.lib/Foo.BAZ|null[0]
+            final fun valueOf(kotlin/String): my.lib/Foo // my.lib/Foo.valueOf|valueOf#static(kotlin.String){}[0]
+            final fun values(): kotlin/Array<my.lib/Foo> // my.lib/Foo.values|values#static(){}[0]
+            final val entries // my.lib/Foo.entries|#static{}entries[0]
+                final fun <get-entries>(): kotlin.enums/EnumEntries<my.lib/Foo> // my.lib/Foo.entries.<get-entries>|<get-entries>#static(){}[0]
+        }
+        """
+        val expectedErrors = listOf("asbv")
+        testBeforeAndAfterIsIncompatible(beforeText, afterText, expectedErrors)
     }
 
     @Test
