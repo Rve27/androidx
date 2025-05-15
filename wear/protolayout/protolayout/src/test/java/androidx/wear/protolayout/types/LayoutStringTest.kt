@@ -51,6 +51,18 @@ class LayoutStringTest {
         assertThat(layoutString.layoutConstraint).isEqualTo(LAYOUT_CONSTRAINT)
     }
 
+    @Test
+    fun dynamicString_withoutLayoutConstraint_asLayoutString() {
+        val layoutString: LayoutString = DYNAMIC_STRING.asLayoutString(staticValue = STATIC_STRING)
+        val prop: StringProp = layoutString.prop
+
+        assertThat(layoutString.staticValue).isEqualTo(STATIC_STRING)
+        assertThat(prop.value).isEqualTo(STATIC_STRING)
+        assertThat(layoutString.dynamicValue?.toString()).isEqualTo(DYNAMIC_STRING.toString())
+        assertThat(prop.dynamicValue.toString()).isEqualTo(DYNAMIC_STRING.toString())
+        assertThat(layoutString.layoutConstraint).isNull()
+    }
+
     companion object {
         private const val STATIC_STRING = "staticString"
         private const val PATTERN_STRING = "patternString"
