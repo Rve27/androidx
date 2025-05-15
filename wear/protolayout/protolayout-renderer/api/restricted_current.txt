@@ -5,6 +5,8 @@ package androidx.wear.protolayout.renderer.common {
     method public boolean canLogD(String);
     method public void logD(String, String);
     method @com.google.errorprone.annotations.FormatMethod public void logD(String, @com.google.errorprone.annotations.FormatString String, java.lang.Object!...);
+    method public default void logDOrNotUser(String, String);
+    method @com.google.errorprone.annotations.FormatMethod public default void logDOrNotUser(String, @com.google.errorprone.annotations.FormatString String, java.lang.Object...);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class LoggingUtilsImpl implements androidx.wear.protolayout.renderer.common.LoggingUtils {
