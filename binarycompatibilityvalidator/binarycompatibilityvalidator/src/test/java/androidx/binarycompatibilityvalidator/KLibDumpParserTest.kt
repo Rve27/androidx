@@ -280,6 +280,21 @@ class KlibDumpParserTest {
     }
 
     @Test
+    fun parseAPropertyWithTheWordContextInIt() {
+        val input =
+            """
+            final val androidx.compose.foundation.text.contextmenu.provider/LocalTextContextMenuDropdownProvider // androidx.compose.foundation.text.contextmenu.provider/LocalTextContextMenuDropdownProvider|{}LocalTextContextMenuDropdownProvider[0]
+                final fun <get-LocalTextContextMenuDropdownProvider>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.foundation.text.contextmenu.provider/TextContextMenuProvider?> // androidx.compose.foundation.text.contextmenu.provider/LocalTextContextMenuDropdownProvider.<get-LocalTextContextMenuDropdownProvider>|<get-LocalTextContextMenuDropdownProvider>(){}[0]
+        """
+                .trimIndent()
+        val parsed = KlibDumpParser(input).parseProperty()
+        assertThat(parsed.qualifiedName.toString())
+            .isEqualTo(
+                "androidx.compose.foundation.text.contextmenu.provider/LocalTextContextMenuDropdownProvider"
+            )
+    }
+
+    @Test
     fun parseANestedValProperty() {
         val input = "final val size\n        final fun <get-size>(): kotlin/Int"
         val parsed =
