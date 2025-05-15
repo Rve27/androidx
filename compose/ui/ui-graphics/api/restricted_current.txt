@@ -53,8 +53,8 @@ package androidx.compose.ui.graphics {
   }
 
   public final class AndroidColor_androidKt {
-    method public static long fromColorLong(androidx.compose.ui.graphics.Color.Companion, long colorLong);
-    method public static long toColorLong(long);
+    method public static long fromColorLong(androidx.compose.ui.graphics.Color.Companion, @ColorLong long colorLong);
+    method @ColorLong public static long toColorLong(long);
   }
 
   public final class AndroidGraphicsContext_androidKt {
