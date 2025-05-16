@@ -25,6 +25,8 @@ import androidx.room.useWriterConnection
 import androidx.room.withTransaction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import kotlin.coroutines.ContinuationInterceptor
+import kotlin.coroutines.coroutineContext
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlinx.coroutines.CompletableDeferred
@@ -349,5 +351,26 @@ class CompatibilityModeTest : TestDatabaseTest() {
             }
         listOf(jobOne, jobTwo).joinAll()
         assertThat(database.booksDao().getPublishersSuspend()).hasSize(2)
+    }
+
+    @Test
+    fun transaction_dispatcherOptimization() = runTest {
+        // Validates that we avoid a dispatcher switch when requesting for a connection being
+        // already in a transaction.
+        database.useWriterConnection {
+            it.immediateTransaction {
+                val transactionDispatcher = extractInterceptor()
+                database.useWriterConnection {
+                    assertThat(transactionDispatcher).isSameInstanceAs(extractInterceptor())
+                }
+                database.useReaderConnection {
+                    assertThat(transactionDispatcher).isSameInstanceAs(extractInterceptor())
+                }
+            }
+        }
+    }
+
+    private suspend fun extractInterceptor(): ContinuationInterceptor? {
+        return coroutineContext[ContinuationInterceptor]
     }
 }
