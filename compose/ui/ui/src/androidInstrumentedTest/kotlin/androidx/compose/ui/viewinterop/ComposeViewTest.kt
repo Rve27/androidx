@@ -43,6 +43,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -73,6 +74,10 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.core.view.setPadding
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
@@ -80,6 +85,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.FlakyTest
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SmallTest
+import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
@@ -775,6 +781,74 @@ class ComposeViewTest {
         rule.runOnUiThread {
             // reset density to initial value to prevent it leaking to other tests
             rule.activity.resources.displayMetrics.density = density.density
+        }
+    }
+
+    @Test
+    fun composeViewProperlyChangesLifecycleOwner() {
+        val firstLifecycle = TestLifecycleOwner(Lifecycle.State.RESUMED)
+        val composeView = ComposeView(rule.activity.applicationContext)
+        val lifecycleInComposition = mutableListOf<LifecycleOwner>()
+        composeView.setContent { lifecycleInComposition.add(LocalLifecycleOwner.current) }
+
+        rule.activityRule.scenario.onActivity { activity ->
+            val container =
+                FrameLayout(activity).apply {
+                    layoutParams =
+                        FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                        )
+                }
+            activity.setContentView(container)
+            container.addView(composeView)
+            container.removeView(composeView)
+
+            lifecycleInComposition.clear()
+
+            container.setViewTreeLifecycleOwner(firstLifecycle)
+            container.addView(composeView)
+
+            assertThat(lifecycleInComposition).containsExactly(firstLifecycle)
+        }
+    }
+
+    @Test
+    fun composeViewNotDestroyedWhenOldLifecycleOwnerIsDestroyed() {
+        val firstLifecycle = TestLifecycleOwner(Lifecycle.State.RESUMED)
+        val secondLifecycle = TestLifecycleOwner(Lifecycle.State.RESUMED)
+        val composeView = ComposeView(rule.activity.applicationContext)
+
+        var isComposed = false
+        composeView.setContent {
+            DisposableEffect(Unit) {
+                isComposed = true
+                onDispose { isComposed = false }
+            }
+        }
+
+        rule.activityRule.scenario.onActivity { activity ->
+            val container =
+                FrameLayout(activity).apply {
+                    layoutParams =
+                        FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                        )
+                }
+            activity.setContentView(container)
+            container.setViewTreeLifecycleOwner(firstLifecycle)
+            container.addView(composeView)
+            container.removeView(composeView)
+
+            container.setViewTreeLifecycleOwner(secondLifecycle)
+            container.addView(composeView)
+
+            assertThat(isComposed).isTrue()
+
+            firstLifecycle.currentState = Lifecycle.State.DESTROYED
+
+            assertThat(isComposed).isTrue()
         }
     }
 }

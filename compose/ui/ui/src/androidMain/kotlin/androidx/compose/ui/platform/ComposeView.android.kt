@@ -276,8 +276,27 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
         previousAttachedWindowToken = windowToken
 
-        if (shouldCreateCompositionOnAttachedToWindow) {
-            ensureCompositionCreated()
+        if (shouldCreateCompositionOnAttachedToWindow && composition == null) {
+            if (childCount > 0) {
+                // onAttachedToWindow() is called on the parent before it is called on its children.
+                // if we call ensureCompositionCreated() the composition will happen too early,
+                // before AndroidComposeView will have attached callback and get the newest
+                // owners from the hierarchy. To prevent that we should start the composition
+                // only when the child is attached as well.
+                val child = getChildAt(0)
+                val listener =
+                    object : OnAttachStateChangeListener {
+                        override fun onViewAttachedToWindow(v: View) {
+                            child.removeOnAttachStateChangeListener(this)
+                            ensureCompositionCreated()
+                        }
+
+                        override fun onViewDetachedFromWindow(v: View) {}
+                    }
+                child.addOnAttachStateChangeListener(listener)
+            } else {
+                ensureCompositionCreated()
+            }
         }
     }
 
