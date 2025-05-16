@@ -215,6 +215,22 @@ class SessionConfigTest {
     }
 
     @Test
+    fun sessionConfig_constructorWithVarargUseCase() {
+        val preview = Preview.Builder().build()
+        val imageCapture = ImageCapture.Builder().build()
+        val imageAnalysis = ImageAnalysis.Builder().build()
+        val sessionConfig = SessionConfig(preview, imageCapture, imageAnalysis)
+
+        assertThat(sessionConfig.useCases).containsExactly(preview, imageCapture, imageAnalysis)
+        assertThat(sessionConfig.viewPort).isEqualTo(null)
+        assertThat(sessionConfig.effects).isEmpty()
+        assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.requiredFeatures).isEmpty()
+        assertThat(sessionConfig.preferredFeatures).isEmpty()
+        assertThat(sessionConfig.isLegacy).isFalse()
+    }
+
+    @Test
     fun sessionConfig_conflictingReqFeatures_throwsIllegalArgumentExceptionWithCorrectMessage() {
         // Arrange
         val requiredFeatures =

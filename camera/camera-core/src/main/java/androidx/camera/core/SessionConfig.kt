@@ -111,6 +111,9 @@ constructor(
         validateFeatureCombination()
     }
 
+    /** Creates the SessionConfig from use cases only. */
+    public constructor(vararg useCases: UseCase) : this(useCases.toList())
+
     private fun validateFeatureCombination() {
         if (requiredFeatures.isEmpty() && preferredFeatures.isEmpty()) {
             return
