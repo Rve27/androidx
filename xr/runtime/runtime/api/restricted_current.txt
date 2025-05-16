@@ -812,11 +812,11 @@ package androidx.xr.runtime.internal {
   }
 
   public static final class InputEvent.Companion.HitInfo {
-    ctor public InputEvent.Companion.HitInfo(androidx.xr.runtime.internal.Entity inputEntity, androidx.xr.runtime.math.Vector3 hitPosition, androidx.xr.runtime.math.Matrix4 transform);
-    method public androidx.xr.runtime.math.Vector3 getHitPosition();
+    ctor public InputEvent.Companion.HitInfo(androidx.xr.runtime.internal.Entity inputEntity, androidx.xr.runtime.math.Vector3? hitPosition, androidx.xr.runtime.math.Matrix4 transform);
+    method public androidx.xr.runtime.math.Vector3? getHitPosition();
     method public androidx.xr.runtime.internal.Entity getInputEntity();
     method public androidx.xr.runtime.math.Matrix4 getTransform();
-    property public androidx.xr.runtime.math.Vector3 hitPosition;
+    property public androidx.xr.runtime.math.Vector3? hitPosition;
     property public androidx.xr.runtime.internal.Entity inputEntity;
     property public androidx.xr.runtime.math.Matrix4 transform;
   }

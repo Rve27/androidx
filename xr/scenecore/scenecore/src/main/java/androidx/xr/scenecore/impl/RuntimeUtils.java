@@ -20,6 +20,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 import androidx.xr.runtime.internal.ActivityPose.HitTestFilter;
 import androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue;
 import androidx.xr.runtime.internal.CameraViewActivityPose.Fov;
@@ -117,7 +118,8 @@ final class RuntimeUtils {
     }
 
     @Nullable
-    private static HitInfo getHitInfo(
+    @VisibleForTesting
+    static HitInfo getHitInfo(
             com.android.extensions.xr.node.InputEvent.HitInfo xrHitInfo,
             EntityManager entityManager) {
         if (xrHitInfo == null
@@ -131,7 +133,7 @@ final class RuntimeUtils {
             return null;
         }
         return new HitInfo(
-                entityManager.getEntityForNode(xrHitInfo.getInputNode()),
+                hitEntity,
                 (xrHitInfo.getHitPosition() == null)
                         ? null
                         : getVector3(xrHitInfo.getHitPosition()),
