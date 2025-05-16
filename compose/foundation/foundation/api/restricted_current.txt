@@ -1922,6 +1922,11 @@ package androidx.compose.foundation.text.contextmenu.builder {
 
 package androidx.compose.foundation.text.contextmenu.data {
 
+  public final class ProcessTextKey {
+    method public int getId();
+    property public int id;
+  }
+
   public abstract class TextContextMenuComponent {
     method public final Object getKey();
     property public final Object key;
