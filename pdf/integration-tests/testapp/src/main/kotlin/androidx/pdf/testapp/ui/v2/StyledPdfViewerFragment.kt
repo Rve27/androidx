@@ -17,15 +17,14 @@
 package androidx.pdf.testapp.ui.v2
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Build
-import android.os.Bundle
-import android.view.View
 import androidx.annotation.RequiresExtension
 import androidx.core.os.OperationCanceledException
 import androidx.pdf.content.ExternalLink
+import androidx.pdf.testapp.ConfigurationProvider
 import androidx.pdf.testapp.R
 import androidx.pdf.testapp.ui.OpCancellationHandler
-import androidx.pdf.testapp.util.BehaviorFlags
 import androidx.pdf.viewer.fragment.PdfStylingOptions
 import androidx.pdf.viewer.fragment.PdfViewerFragment
 
@@ -33,15 +32,15 @@ import androidx.pdf.viewer.fragment.PdfViewerFragment
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
 class StyledPdfViewerFragment : PdfViewerFragment {
 
-    private lateinit var behaviorFlags: BehaviorFlags
-
     constructor() : super()
 
     private constructor(pdfStylingOptions: PdfStylingOptions) : super(pdfStylingOptions)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        behaviorFlags = BehaviorFlags.fromBundle(arguments)
+    private var configProvider: ConfigurationProvider? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is ConfigurationProvider) configProvider = context
     }
 
     override fun onLoadDocumentError(error: Throwable) {
@@ -53,7 +52,7 @@ class StyledPdfViewerFragment : PdfViewerFragment {
     }
 
     override fun onLinkClicked(externalLink: ExternalLink): Boolean {
-        return if (behaviorFlags.isCustomLinkHandlingEnabled()) {
+        return if (configProvider?.behaviourFlags?.customLinkHandlingEnabled == true) {
             AlertDialog.Builder(requireContext())
                 .setTitle("Custom Link Handler")
                 .setMessage("Intercepted link:\n${externalLink.uri}")
@@ -70,11 +69,6 @@ class StyledPdfViewerFragment : PdfViewerFragment {
             val stylingOptions = PdfStylingOptions(R.style.PdfViewCustomization)
 
             return StyledPdfViewerFragment(stylingOptions)
-        }
-
-        fun newInstance(flags: BehaviorFlags): StyledPdfViewerFragment {
-            val stylingOptions = PdfStylingOptions(R.style.PdfViewCustomization)
-            return StyledPdfViewerFragment(stylingOptions).apply { arguments = flags.toBundle() }
         }
     }
 }
