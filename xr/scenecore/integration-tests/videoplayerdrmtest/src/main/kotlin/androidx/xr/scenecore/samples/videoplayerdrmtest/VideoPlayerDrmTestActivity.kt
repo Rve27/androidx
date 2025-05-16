@@ -108,7 +108,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
 
         val session = (Session.create(this) as SessionCreateSuccess).session
         session.resume()
-        session.configure(Config(headTracking = HeadTrackingMode.ENABLED))
+        session.configure(Config(headTracking = HeadTrackingMode.LAST_KNOWN))
         session.scene.spatialEnvironment.setPassthroughOpacityPreference(0.0f)
 
         if (movableComponentMp == null) {

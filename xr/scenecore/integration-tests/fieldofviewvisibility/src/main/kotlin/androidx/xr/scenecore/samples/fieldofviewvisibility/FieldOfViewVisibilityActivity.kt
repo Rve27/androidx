@@ -73,7 +73,7 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val mActivity = this
         mSession.resume()
-        mSession.configure(Config(headTracking = HeadTrackingMode.ENABLED))
+        mSession.configure(Config(headTracking = HeadTrackingMode.LAST_KNOWN))
 
         // Set the main panel size and make the main panel movable.
         mSession.scene.mainPanelEntity.setSizeInPixels(PixelDimensions(width = 1500, height = 1400))

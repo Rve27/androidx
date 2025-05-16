@@ -128,7 +128,7 @@ class VideoPlayerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         session.resume()
-        session.configure(Config(headTracking = HeadTrackingMode.ENABLED))
+        session.configure(Config(headTracking = HeadTrackingMode.LAST_KNOWN))
         session.scene.spatialEnvironment.setPassthroughOpacityPreference(0.0f)
         setContent { Subspace { VideoOptionsContent(session) } }
     }

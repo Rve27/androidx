@@ -115,7 +115,7 @@ class OpenXrHandTest {
             openXrManager = OpenXrManager(it, perceptionManager, timeSource)
             openXrManager.create()
             openXrManager.resume()
-            openXrManager.configure(Config(handTracking = Config.HandTrackingMode.ENABLED))
+            openXrManager.configure(Config(handTracking = Config.HandTrackingMode.BOTH))
 
             testBody()
 

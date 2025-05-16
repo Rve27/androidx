@@ -79,9 +79,10 @@ public class FakeLifecycleManager(
     override var config: Config =
         Config(
             Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-            Config.HandTrackingMode.ENABLED,
-            Config.DepthEstimationMode.ENABLED,
-            Config.AnchorPersistenceMode.ENABLED,
+            Config.HandTrackingMode.BOTH,
+            Config.HeadTrackingMode.LAST_KNOWN,
+            Config.DepthEstimationMode.SMOOTH_AND_RAW,
+            Config.AnchorPersistenceMode.LOCAL,
         )
 
     override fun configure(config: Config) {

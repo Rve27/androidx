@@ -97,8 +97,8 @@ class PersistentAnchorsActivity : ComponentActivity() {
             SessionLifecycleHelper(
                 this,
                 Config(
-                    anchorPersistence = AnchorPersistenceMode.ENABLED,
-                    headTracking = HeadTrackingMode.ENABLED,
+                    anchorPersistence = AnchorPersistenceMode.LOCAL,
+                    headTracking = HeadTrackingMode.LAST_KNOWN,
                 ),
                 onSessionAvailable = { session ->
                     this.session = session

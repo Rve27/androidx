@@ -59,7 +59,7 @@ class SpatialUserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.spatialuser_activity)
         session.resume()
-        session.configure(Config(headTracking = HeadTrackingMode.ENABLED))
+        session.configure(Config(headTracking = HeadTrackingMode.LAST_KNOWN))
 
         // Create a single panel with text
         @SuppressLint("InflateParams")
