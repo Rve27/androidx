@@ -2893,14 +2893,9 @@ internal class ComposerImpl(
                 // We have moved so the cached lookup of the provider is invalid
                 providerCache = null
 
-                // Invoke the scope's composition function
-                val shouldRestartReusing = !reusing && firstInRange.scope.reusing
-                if (shouldRestartReusing) {
-                    reusing = true
-                    firstInRange.scope.reusing = false
-                }
+                // Invoke the function with the same parameters as the last composition (which
+                // were captured in the lambda set into the scope).
                 firstInRange.scope.compose(this)
-                if (shouldRestartReusing) reusing = false
 
                 // We could have moved out of a provider so the provider cache is invalid.
                 providerCache = null
@@ -3348,6 +3343,10 @@ internal class ComposerImpl(
                 scope.paused = false
                 scope.resuming = true
                 changeListWriter.startResumingScope(scope)
+                if (!reusing && scope.reusing) {
+                    reusing = true
+                    scope.resetReusing = true
+                }
             }
         }
     }
@@ -3372,6 +3371,11 @@ internal class ComposerImpl(
             if (scope.resuming) {
                 scope.resuming = false
                 changeListWriter.endResumingScope(scope)
+                scope.reusing = false
+                if (scope.resetReusing) {
+                    scope.resetReusing = false
+                    reusing = false
+                }
             }
         }
         val result =
