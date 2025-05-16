@@ -89,8 +89,8 @@ public object SpatialPanelDefaults {
     /** Default shape for a Spatial Panel. */
     public val shape: SpatialShape = SpatialRoundedCornerShape(CornerSize(32.dp))
 
-    /** Default minimum dimensions for a Spatial Panel. */
-    public val minimumPanelDimension: Dimensions = Dimensions(10f, 10f, 10f)
+    /** Default minimum dimensions for a Spatial Panel in Meters. */
+    public val minimumPanelDimension: Dimensions = Dimensions(0.1f, 0.1f, 0.1f)
 }
 
 /**
