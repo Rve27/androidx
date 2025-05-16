@@ -324,10 +324,7 @@ class SpatialComposeAppActivity : ComponentActivity() {
             if (showDialog) {
                 SpatialDialog(
                     onDismissRequest = { showDialog = false },
-                    properties =
-                        SpatialDialogProperties(
-                            spatialElevationLevel = SpatialElevationLevel(128.dp)
-                        ),
+                    properties = SpatialDialogProperties(elevation = 128.dp),
                 ) {
                     Surface(
                         color = Color.White,

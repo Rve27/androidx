@@ -68,7 +68,7 @@ public object OrbiterDefaults {
     public val Shape: SpatialShape = SpatialRoundedCornerShape(ZeroCornerSize)
 
     /** Default elevation level for an Orbiter. */
-    public val Elevation: SpatialElevationLevel = SpatialElevationLevel.Level1
+    public val Elevation: Dp = SpatialElevationLevel.Level1
 
     /** Default settings for an Orbiter */
     public val Settings: OrbiterSettings = OrbiterSettings()
@@ -145,7 +145,7 @@ public fun Orbiter(
     alignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     settings: OrbiterSettings = OrbiterDefaults.Settings,
     shape: SpatialShape = OrbiterDefaults.Shape,
-    elevation: SpatialElevationLevel = OrbiterDefaults.Elevation,
+    elevation: Dp = OrbiterDefaults.Elevation,
     content: @Composable @UiComposable () -> Unit,
 ) {
     Orbiter(
@@ -200,7 +200,7 @@ public fun Orbiter(
     alignment: Alignment.Horizontal = Alignment.CenterHorizontally,
     settings: OrbiterSettings = OrbiterDefaults.Settings,
     shape: SpatialShape = OrbiterDefaults.Shape,
-    elevation: SpatialElevationLevel = OrbiterDefaults.Elevation,
+    elevation: Dp = OrbiterDefaults.Elevation,
     content: @Composable @UiComposable () -> Unit,
 ) {
     Orbiter(
@@ -252,7 +252,7 @@ public fun Orbiter(
     alignment: Alignment.Vertical = Alignment.CenterVertically,
     settings: OrbiterSettings = OrbiterDefaults.Settings,
     shape: SpatialShape = OrbiterDefaults.Shape,
-    elevation: SpatialElevationLevel = OrbiterDefaults.Elevation,
+    elevation: Dp = OrbiterDefaults.Elevation,
     content: @Composable @UiComposable () -> Unit,
 ) {
     Orbiter(
@@ -307,7 +307,7 @@ public fun Orbiter(
     alignment: Alignment.Vertical = Alignment.CenterVertically,
     settings: OrbiterSettings = OrbiterDefaults.Settings,
     shape: SpatialShape = OrbiterDefaults.Shape,
-    elevation: SpatialElevationLevel = OrbiterDefaults.Elevation,
+    elevation: Dp = OrbiterDefaults.Elevation,
     content: @Composable @UiComposable () -> Unit,
 ) {
     Orbiter(
@@ -367,7 +367,7 @@ internal fun PositionedOrbiter(data: OrbiterData) {
                     ),
                     panelSize.run { IntSize(width, height) },
                     it,
-                    data.elevation.level,
+                    data.elevation,
                 )
             },
         shape = data.shape,
@@ -559,7 +559,7 @@ internal data class OrbiterData(
     public val settings: OrbiterSettings = OrbiterDefaults.Settings,
     public val content: @Composable () -> Unit,
     public val shape: SpatialShape,
-    public val elevation: SpatialElevationLevel = OrbiterDefaults.Elevation,
+    public val elevation: Dp = OrbiterDefaults.Elevation,
 )
 
 /**

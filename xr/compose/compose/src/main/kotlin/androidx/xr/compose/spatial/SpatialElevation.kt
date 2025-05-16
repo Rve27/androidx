@@ -34,6 +34,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.xr.compose.platform.LocalSpatialCapabilities
@@ -49,17 +50,17 @@ import androidx.xr.compose.platform.LocalSpatialCapabilities
  *
  * SpatialElevation does not support a [content] lambda that has a width or height of zero.
  *
- * @param spatialElevationLevel the desired elevation level for the panel in spatial environments.
+ * @param elevation the desired elevation level for the panel in spatial environments.
  * @param content the composable content to be displayed within the elevated panel.
  */
 @Composable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun SpatialElevation(
-    spatialElevationLevel: SpatialElevationLevel = SpatialElevationLevel.Level0,
+    elevation: Dp = SpatialElevationLevel.Level0,
     content: @Composable () -> Unit,
 ) {
     if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
-        LayoutSpatialElevation(spatialElevationLevel, content)
+        LayoutSpatialElevation(elevation, content)
     } else {
         content()
     }
@@ -67,7 +68,7 @@ public fun SpatialElevation(
 
 @Composable
 private fun LayoutSpatialElevation(
-    spatialElevationLevel: SpatialElevationLevel,
+    elevation: Dp,
     content: @Composable () -> Unit,
 ) {
     val bufferPadding = 1.dp
@@ -88,7 +89,7 @@ private fun LayoutSpatialElevation(
     // not know the constraints of the parent view.
     BoxWithConstraints {
         ElevatedPanel(
-            spatialElevationLevel = spatialElevationLevel,
+            elevation = elevation,
             contentSize = contentSize,
             contentOffset = contentOffset,
         ) {

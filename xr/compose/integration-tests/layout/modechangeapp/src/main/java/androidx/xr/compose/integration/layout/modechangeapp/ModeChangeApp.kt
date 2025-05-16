@@ -121,7 +121,7 @@ class ModeChangeApp : ComponentActivity() {
                     )
                 }
                 if (showButton) {
-                    SpatialElevation(spatialElevationLevel = SpatialElevationLevel.Level3) {
+                    SpatialElevation(elevation = SpatialElevationLevel.Level3) {
                         Button(onClick = buttonOnClick) { Text(text = buttonText) }
                     }
                 }

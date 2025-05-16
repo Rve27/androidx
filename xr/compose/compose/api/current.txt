@@ -48,6 +48,30 @@ package androidx.xr.compose.platform {
 
 }
 
+package androidx.xr.compose.spatial {
+
+  public final class SpatialElevationLevel {
+    method public float getActivityDefault();
+    method public float getDialogDefault();
+    method public float getLevel0();
+    method public float getLevel1();
+    method public float getLevel2();
+    method public float getLevel3();
+    method public float getLevel4();
+    method public float getLevel5();
+    property public float ActivityDefault;
+    property public float DialogDefault;
+    property public float Level0;
+    property public float Level1;
+    property public float Level2;
+    property public float Level3;
+    property public float Level4;
+    property public float Level5;
+    field public static final androidx.xr.compose.spatial.SpatialElevationLevel INSTANCE;
+  }
+
+}
+
 package androidx.xr.compose.subspace {
 
   @androidx.compose.runtime.ComposableTargetMarker(description="Subspace Composable") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER}) public @interface SubspaceComposable {

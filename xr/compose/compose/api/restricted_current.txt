@@ -182,44 +182,42 @@ package androidx.xr.compose.spatial {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialDialogProperties {
     ctor public SpatialDialogProperties();
-    ctor public SpatialDialogProperties(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> restingLevelAnimationSpec, optional float spatialElevationLevel);
-    method public androidx.xr.compose.spatial.SpatialDialogProperties copy(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> restingLevelAnimationSpec, optional float spatialElevationLevel);
+    ctor public SpatialDialogProperties(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> restingLevelAnimationSpec, optional float elevation);
+    method public androidx.xr.compose.spatial.SpatialDialogProperties copy(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> restingLevelAnimationSpec, optional float elevation);
     method public boolean getDismissOnBackPress();
     method public boolean getDismissOnClickOutside();
+    method public float getElevation();
     method public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> getRestingLevelAnimationSpec();
-    method public float getSpatialElevationLevel();
     method public boolean getUsePlatformDefaultWidth();
     property public boolean dismissOnBackPress;
     property public boolean dismissOnClickOutside;
+    property public float elevation;
     property public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> restingLevelAnimationSpec;
-    property public float spatialElevationLevel;
     property public boolean usePlatformDefaultWidth;
   }
 
   public final class SpatialElevationKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable public static void SpatialElevation(optional float spatialElevationLevel, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable public static void SpatialElevation(optional float elevation, kotlin.jvm.functions.Function0<kotlin.Unit> content);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @kotlin.jvm.JvmInline public final value class SpatialElevationLevel {
-    ctor public SpatialElevationLevel(float level);
-    method public float getLevel();
-    property public float level;
-    field public static final androidx.xr.compose.spatial.SpatialElevationLevel.Companion Companion;
-  }
-
-  public static final class SpatialElevationLevel.Companion {
+  public final class SpatialElevationLevel {
+    method public float getActivityDefault();
+    method public float getDialogDefault();
     method public float getLevel0();
     method public float getLevel1();
     method public float getLevel2();
     method public float getLevel3();
     method public float getLevel4();
     method public float getLevel5();
+    property public float ActivityDefault;
+    property public float DialogDefault;
     property public float Level0;
     property public float Level1;
     property public float Level2;
     property public float Level3;
     property public float Level4;
     property public float Level5;
+    field public static final androidx.xr.compose.spatial.SpatialElevationLevel INSTANCE;
   }
 
   public final class SpatialPopupKt {
@@ -228,18 +226,18 @@ package androidx.xr.compose.spatial {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialPopupProperties {
     ctor public SpatialPopupProperties();
-    ctor public SpatialPopupProperties(optional boolean focusable, optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean clippingEnabled, optional float spatialElevationLevel);
-    method public androidx.xr.compose.spatial.SpatialPopupProperties copy(optional boolean focusable, optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean clippingEnabled, optional float spatialElevationLevel);
+    ctor public SpatialPopupProperties(optional boolean focusable, optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean clippingEnabled, optional float elevation);
+    method public androidx.xr.compose.spatial.SpatialPopupProperties copy(optional boolean focusable, optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean clippingEnabled, optional float elevation);
     method public boolean getClippingEnabled();
     method public boolean getDismissOnBackPress();
     method public boolean getDismissOnClickOutside();
+    method public float getElevation();
     method public boolean getFocusable();
-    method public float getSpatialElevationLevel();
     property public boolean clippingEnabled;
     property public boolean dismissOnBackPress;
     property public boolean dismissOnClickOutside;
+    property public float elevation;
     property public boolean focusable;
-    property public float spatialElevationLevel;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SubspaceDefaults {

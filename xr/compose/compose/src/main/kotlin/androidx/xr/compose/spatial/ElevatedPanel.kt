@@ -65,22 +65,23 @@ internal object ElevatedPanelDefaults {
  */
 @Composable
 internal fun ElevatedPanel(
-    spatialElevationLevel: SpatialElevationLevel,
+    elevation: Dp,
     contentSize: IntSize,
     shape: SpatialShape = ElevatedPanelDefaults.shape,
     contentOffset: Offset? = null,
-    transitionSpec:
-        @Composable
-        Transition.Segment<SpatialElevationLevel>.() -> FiniteAnimationSpec<Dp> =
-        {
-            spring()
-        },
+    elevationTransitionSpec: @Composable Transition.Segment<Dp>.() -> FiniteAnimationSpec<Dp> = {
+        spring()
+    },
     content: @Composable () -> Unit,
 ) {
     val parentView = LocalView.current
     val zDepth by
-        updateTransition(targetState = spatialElevationLevel, label = "restingLevelTransition")
-            .animateDp(transitionSpec = transitionSpec, label = "zDepth") { state -> state.level }
+        updateTransition(targetState = elevation, label = "restingLevelTransition").animateDp(
+            transitionSpec = elevationTransitionSpec,
+            label = "zDepth"
+        ) { state ->
+            state
+        }
     var parentViewSize by remember { mutableStateOf(parentView.size) }
     DisposableEffect(parentView) {
         val listener =
