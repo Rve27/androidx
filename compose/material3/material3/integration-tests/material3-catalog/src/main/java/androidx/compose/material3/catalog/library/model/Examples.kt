@@ -2031,7 +2031,7 @@ val SlidersExamples =
             name = "VerticalCenteredSliderSample",
             description = SlidersExampleDescription,
             sourceUrl = SlidersExampleSourceUrl,
-            isExpressive = false,
+            isExpressive = true,
         ) {
             VerticalCenteredSliderSample()
         },
@@ -2039,7 +2039,7 @@ val SlidersExamples =
             name = "RangeSliderSample",
             description = SlidersExampleDescription,
             sourceUrl = SlidersExampleSourceUrl,
-            isExpressive = true,
+            isExpressive = false,
         ) {
             RangeSliderSample()
         },
