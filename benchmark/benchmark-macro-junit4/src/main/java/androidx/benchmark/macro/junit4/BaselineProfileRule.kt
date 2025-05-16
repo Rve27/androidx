@@ -158,11 +158,11 @@ class BaselineProfileRule : TestRule {
      * @param config which is used to manage the collection of Baseline Profiles.
      * @return [BaselineProfileResult] which can be used to determine the absolute paths of the
      *   collected baseline profiles.
-     * @see [configBuilder] to construct an instance of [BaselineProfileConfig].
+     * @see [BaselineProfileConfig.Builder] to construct an instance of [BaselineProfileConfig].
      */
     public fun collectWithResults(config: BaselineProfileConfig): BaselineProfileResult {
         return collect(
-            uniqueName = config.getOutputFilePrefix(),
+            uniqueName = config.getOutputFilePrefix() ?: currentDescription.toUniqueName(),
             packageName = config.getPackageName(),
             stableIterations = config.getStableIterations(),
             maxIterations = config.getMaxIterations(),
@@ -170,23 +170,6 @@ class BaselineProfileRule : TestRule {
             strictStability = config.isStrictStability(),
             filterPredicate = config.getFilterPredicate(),
             profileBlock = config.getProfileBlock()
-        )
-    }
-
-    /**
-     * @return An instance of [BaselineProfileConfig.Builder] that can be used to manage collection
-     *   of Baseline profiles.
-     */
-    @JvmOverloads
-    public fun configBuilder(
-        packageName: String,
-        outputFilePrefix: String? = null,
-        profileBlock: MacrobenchmarkScope.() -> Unit
-    ): BaselineProfileConfig.Builder {
-        return BaselineProfileConfig.Builder(
-            outputFilePrefix ?: currentDescription.toUniqueName(),
-            packageName,
-            profileBlock
         )
     }
 

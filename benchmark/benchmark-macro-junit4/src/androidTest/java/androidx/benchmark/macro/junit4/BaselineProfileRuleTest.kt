@@ -21,6 +21,7 @@ import android.os.Build
 import androidx.benchmark.Arguments
 import androidx.benchmark.DeviceInfo
 import androidx.benchmark.Outputs
+import androidx.benchmark.macro.BaselineProfileConfig
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import java.io.File
@@ -151,8 +152,7 @@ class BaselineProfileRuleTest {
         )
 
         val config =
-            baselineRule
-                .configBuilder(
+            BaselineProfileConfig.Builder(
                     packageName = Arguments.getTargetPackageNameOrThrow(),
                     profileBlock = {
                         startActivityAndWait(Intent(ACTION))
