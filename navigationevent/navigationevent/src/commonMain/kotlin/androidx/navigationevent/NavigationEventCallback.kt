@@ -66,7 +66,9 @@ public abstract class NavigationEventCallback(
      * event registrations or resources remain active.
      */
     public fun remove() {
-        for (closeable in closeables) {
+        // Iterate over a copy of the closeables list to prevent `ConcurrentModificationException`,
+        // as closing a closeable might lead to its removal from the original list during iteration.
+        for (closeable in closeables.toList()) {
             closeable.close()
         }
         // Don't clear `closeables`; each closeable may remove itself via `removeCloseable`.
