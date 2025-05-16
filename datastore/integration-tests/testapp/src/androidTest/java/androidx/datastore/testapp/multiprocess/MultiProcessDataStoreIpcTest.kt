@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-// Parcelize object is testing internal implementation of datastore-core library
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
-
 package androidx.datastore.testapp.multiprocess
 
 import androidx.datastore.core.CorruptionException
