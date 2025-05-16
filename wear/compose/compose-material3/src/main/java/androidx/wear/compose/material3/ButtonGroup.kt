@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.takeOrElse
 import androidx.compose.ui.util.fastForEachIndexed
@@ -173,9 +174,13 @@ public fun ButtonGroup(
             )
 
         layout(width, height) {
+            val actualWidth = widths.sum() + spacingPx * (measurables.size - 1)
             var x = 0
             placeables.fastForEachIndexed { index, placeable ->
-                placeable.place(x, verticalAlignment.align(placeable.height, height))
+                val actualX =
+                    if (layoutDirection == LayoutDirection.Ltr) x
+                    else actualWidth - x - widths[index]
+                placeable.place(actualX, verticalAlignment.align(placeable.height, height))
                 x += widths[index] + spacingPx
                 // TODO: rounding finalSizes & spacing means we may have a few extra pixels wasted
                 //  or take more room than available.
