@@ -129,7 +129,7 @@ class DelegatingAdapterIntegrationTests(invokeBackwardsCompatFlow: Boolean) {
             delegate =
                 TestSandboxedUiAdapter(false, placeViewInsideFrameLayout, failSessionCreation)
         }
-        val delegateBundle = sessionManager.getCoreLibInfoFromAdapter(delegate)
+        val delegateBundle = sessionManager.getCoreLibInfoFromSharedUiAdapter(delegate)
         delegatingAdapter.updateDelegate(delegateBundle)
         return TestDelegatingAdapterWithDelegate(delegatingAdapter, delegate)
     }

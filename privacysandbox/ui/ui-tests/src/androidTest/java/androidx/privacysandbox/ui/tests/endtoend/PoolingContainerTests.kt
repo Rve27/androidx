@@ -236,7 +236,7 @@ class PoolingContainerTests(private val invokeBackwardsCompatFlow: Boolean) {
 
                 val adapterFromCoreLibInfo =
                     SandboxedUiAdapterFactory.createFromCoreLibInfo(
-                        sessionManager.getCoreLibInfoFromAdapter(adapter)
+                        sessionManager.getCoreLibInfoFromSharedUiAdapter(adapter)
                     )
 
                 childSandboxedSdkView.setAdapter(adapterFromCoreLibInfo)

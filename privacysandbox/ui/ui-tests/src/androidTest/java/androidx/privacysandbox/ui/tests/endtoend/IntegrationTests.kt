@@ -146,10 +146,11 @@ class IntegrationTests(private val invokeBackwardsCompatFlow: Boolean) {
     fun testClientAdapterIsNotReWrapped() {
         val adapter =
             TestSandboxedUiAdapter(failToProvideUi = false, placeViewInsideFrameLayout = false)
-        val binderAdapter = sessionManager.getCoreLibInfoFromAdapter(adapter)
+        val binderAdapter = sessionManager.getCoreLibInfoFromSharedUiAdapter(adapter)
         val adapterFromCoreLibInfo = SandboxedUiAdapterFactory.createFromCoreLibInfo(binderAdapter)
         // send this back to the SDK and see if the same binder is sent back to the app.
-        val binderAdapter2 = sessionManager.getCoreLibInfoFromAdapter(adapterFromCoreLibInfo)
+        val binderAdapter2 =
+            sessionManager.getCoreLibInfoFromSharedUiAdapter(adapterFromCoreLibInfo)
         assertThat(binderAdapter).isEqualTo(binderAdapter2)
     }
 

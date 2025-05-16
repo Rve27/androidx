@@ -26,7 +26,9 @@ import android.view.Display
 import android.view.View
 import android.widget.FrameLayout
 import androidx.privacysandbox.ui.client.SandboxedUiAdapterFactory
+import androidx.privacysandbox.ui.client.SharedUiAdapterFactory
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
+import androidx.privacysandbox.ui.client.view.SharedUiContainer
 import androidx.privacysandbox.ui.core.DelegatingSandboxedUiAdapter
 import androidx.privacysandbox.ui.core.ExperimentalFeatures
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
@@ -34,6 +36,7 @@ import androidx.privacysandbox.ui.core.SessionData
 import androidx.privacysandbox.ui.core.SessionObserver
 import androidx.privacysandbox.ui.core.SessionObserverContext
 import androidx.privacysandbox.ui.core.SessionObserverFactory
+import androidx.privacysandbox.ui.core.SharedUiAdapter
 import androidx.privacysandbox.ui.core.test.TestProtocolConstants
 import androidx.privacysandbox.ui.integration.testingutils.TestEventListener
 import androidx.privacysandbox.ui.provider.AbstractSandboxedUiAdapter
@@ -78,7 +81,9 @@ class TestSessionManager(
         }
         sessionObserverFactories?.forEach { adapter.addObserverFactory(it) }
         val adapterFromCoreLibInfo =
-            SandboxedUiAdapterFactory.createFromCoreLibInfo(getCoreLibInfoFromAdapter(adapter))
+            SandboxedUiAdapterFactory.createFromCoreLibInfo(
+                getCoreLibInfoFromSharedUiAdapter(adapter)
+            )
         if (viewForSession != null) {
             viewForSession.setAdapter(adapterFromCoreLibInfo)
         } else {
@@ -126,12 +131,12 @@ class TestSessionManager(
         val delegate = TestSandboxedUiAdapter(failToProvideUi, placeViewInsideFrameLayout)
         sessionObserverFactories?.forEach { delegate.addObserverFactory(it) }
         val delegatingAdapterProvider =
-            DelegatingSandboxedUiAdapter(getCoreLibInfoFromAdapter(delegate))
+            DelegatingSandboxedUiAdapter(getCoreLibInfoFromSharedUiAdapter(delegate))
         val testEventListener = TestEventListener()
         viewForSession.setEventListener(testEventListener)
         val delegatingAdapterClient =
             SandboxedUiAdapterFactory.createFromCoreLibInfo(
-                getCoreLibInfoFromAdapter(delegatingAdapterProvider)
+                getCoreLibInfoFromSharedUiAdapter(delegatingAdapterProvider)
             )
 
         viewForSession.setAdapter(delegatingAdapterClient)
@@ -143,6 +148,27 @@ class TestSessionManager(
             .isTrue()
 
         return TestDelegatingAdapterWithDelegate(delegatingAdapterProvider, delegate)
+    }
+
+    @OptIn(ExperimentalFeatures.SharedUiPresentationApi::class)
+    fun createSharedUiAdapterAndEstablishSession(
+        sharedUiContainer: SharedUiContainer? = null,
+        testSharedSessionClient: TestSharedUiSessionClient = TestSharedUiSessionClient(),
+        isFailingSession: Boolean = false
+    ): TestSharedUiAdapter {
+        val adapter = TestSharedUiAdapter(isFailingSession)
+        val adapterFromCoreLibInfo =
+            SharedUiAdapterFactory.createFromCoreLibInfo(getCoreLibInfoFromSharedUiAdapter(adapter))
+        if (sharedUiContainer == null) {
+            adapterFromCoreLibInfo.openSession(Runnable::run, testSharedSessionClient)
+        } else {
+            sharedUiContainer.setAdapter(adapterFromCoreLibInfo)
+        }
+
+        assertWithMessage("openSession is called on adapter")
+            .that(adapter.isOpenSessionCalled)
+            .isTrue()
+        return adapter
     }
 
     fun createAdapterAndWaitToBeActive(
@@ -477,8 +503,18 @@ class TestSessionManager(
         }
     }
 
-    fun getCoreLibInfoFromAdapter(sdkAdapter: SandboxedUiAdapter): Bundle {
+    fun getCoreLibInfoFromSharedUiAdapter(sdkAdapter: SandboxedUiAdapter): Bundle {
         val bundle = sdkAdapter.toCoreLibInfo(SdkContext(context))
+        bundle.putBoolean(
+            TestProtocolConstants.testOnlyUseRemoteAdapterKey,
+            !invokeBackwardsCompatFlow
+        )
+        return bundle
+    }
+
+    @OptIn(ExperimentalFeatures.SharedUiPresentationApi::class)
+    fun getCoreLibInfoFromSharedUiAdapter(sdkAdapter: SharedUiAdapter): Bundle {
+        val bundle = sdkAdapter.toCoreLibInfo()
         bundle.putBoolean(
             TestProtocolConstants.testOnlyUseRemoteAdapterKey,
             !invokeBackwardsCompatFlow
