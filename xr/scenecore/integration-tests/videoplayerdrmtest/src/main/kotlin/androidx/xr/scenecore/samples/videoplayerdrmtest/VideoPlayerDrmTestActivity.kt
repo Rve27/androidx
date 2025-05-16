@@ -35,13 +35,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -94,6 +92,8 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
 
     private var surfaceEntity: SurfaceEntity? = null
     private var movableComponent: MovableComponent? = null // movable component for surfaceEntity
+    private var movableComponentMp: MovableComponent? = null // movable component for MainPanel
+
     private var videoPlaying by mutableStateOf<Boolean>(false)
     private var queueWithDelay by mutableStateOf<Boolean>(true)
     private var controlPanelEntity: PanelEntity? = null
@@ -111,7 +111,14 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
         session.configure(Config(headTracking = HeadTrackingMode.ENABLED))
         session.scene.spatialEnvironment.setPassthroughOpacityPreference(0.0f)
 
-        setContent { HelloWorld(session, activity) }
+        if (movableComponentMp == null) {
+            movableComponentMp = MovableComponent.create(session)
+            val unused = session.scene.mainPanelEntity.addComponent(movableComponentMp!!)
+        }
+
+        setContent { BootstrapUi(session, activity) }
+
+        checkExternalStoragePermission()
     }
 
     override fun onDestroy() {
@@ -174,7 +181,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 // panel edges
                 PixelDimensions(640, 480),
                 "playerControls",
-                Pose(Vector3(0.0f, -0.4f, -0.85f)), // kind of low, but within a 1m radius
+                Pose(Vector3(0.0f, -0.25f, 0.25f)), // below and slightly in front of the canvas
             )
         controlPanelEntity!!.setParent(surfaceEntity!!)
 
@@ -242,7 +249,6 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
         protected: Boolean = false,
     ) {
         if (surfaceEntity == null) {
-
             val surfaceContentLevel =
                 if (protected) {
                     SurfaceEntity.ContentSecurityLevel.PROTECTED
@@ -319,7 +325,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 }
 
                 override fun onPlayerError(error: PlaybackException) {
-                    Log.e("VideoPlayerTestActivity", "Player error: $error")
+                    Log.e("VideoPlayerDrmTestActivity", "Player error: $error")
                 }
             }
         )
@@ -335,7 +341,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
     // TODO: b/324947709 - Refactor common @Composable code into a utility library for common usage
     // across sample apps.
     @Composable
-    fun HelloWorld(session: Session, activity: Activity) {
+    fun BootstrapUi(session: Session, activity: Activity) {
         // Add a panel to the main activity with a button to toggle passthrough
         LaunchedEffect(Unit) {
             activity.setContentView(
@@ -360,8 +366,6 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
 
     @Composable
     fun VideoPlayerControls(session: Session) {
-        var featherRadiusX by remember { mutableFloatStateOf(0.0f) }
-        var featherRadiusY by remember { mutableFloatStateOf(0.0f) }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
@@ -375,76 +379,6 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                     Text(text = "End Video", fontSize = 10.sp)
                 }
             }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Feather Radius", fontSize = 10.sp)
-                Column {
-                    Slider(
-                        value = featherRadiusX,
-                        onValueChange = {
-                            featherRadiusX = it
-                            surfaceEntity!!.featherRadiusX = featherRadiusX
-                        },
-                        valueRange = 0.0f..0.5f,
-                    )
-                    Slider(
-                        value = featherRadiusY,
-                        onValueChange = {
-                            featherRadiusY = it
-                            surfaceEntity!!.featherRadiusY = featherRadiusY
-                        },
-                        valueRange = 0.0f..0.5f,
-                    )
-                }
-            }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Button(
-                    onClick = {
-                        surfaceEntity!!.canvasShape = SurfaceEntity.CanvasShape.Quad(1.0f, 1.0f)
-                        // Move the Quad-shaped canvas to a spot in front of the User.
-                        surfaceEntity!!.setPose(
-                            session.scene.spatialUser.head?.transformPoseTo(
-                                Pose(
-                                    Vector3(0.0f, 0.0f, -1.5f),
-                                    Quaternion(0.0f, 0.0f, 0.0f, 1.0f)
-                                ),
-                                session.scene.activitySpace,
-                            )!!
-                        )
-                    }
-                ) {
-                    Text(text = "Set Quad", fontSize = 10.sp)
-                }
-                Button(
-                    onClick = {
-                        surfaceEntity!!.canvasShape = SurfaceEntity.CanvasShape.Vr360Sphere(1.0f)
-                    }
-                ) {
-                    Text(text = "Set Vr360", fontSize = 10.sp)
-                }
-                Button(
-                    onClick = {
-                        surfaceEntity!!.canvasShape =
-                            SurfaceEntity.CanvasShape.Vr180Hemisphere(1.0f)
-                    }
-                ) {
-                    Text(text = "Set Vr180", fontSize = 10.sp)
-                }
-            } // end row
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Button(onClick = { surfaceEntity!!.stereoMode = SurfaceEntity.StereoMode.MONO }) {
-                    Text(text = "Mono", fontSize = 10.sp)
-                }
-                Button(
-                    onClick = { surfaceEntity!!.stereoMode = SurfaceEntity.StereoMode.TOP_BOTTOM }
-                ) {
-                    Text(text = "Top-Bottom", fontSize = 10.sp)
-                }
-                Button(
-                    onClick = { surfaceEntity!!.stereoMode = SurfaceEntity.StereoMode.SIDE_BY_SIDE }
-                ) {
-                    Text(text = "Side-by-Side", fontSize = 10.sp)
-                }
-            } // end row
         } // end column
     }
 
@@ -519,7 +453,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 session = session,
                 videoUri = videoUri,
                 stereoMode = SurfaceEntity.StereoMode.TOP_BOTTOM,
-                pose = Pose(Vector3(0.0f, -0.65f, 0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
+                pose = Pose(Vector3(0.0f, 0.0f, -0.25f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
                 canvasShape = SurfaceEntity.CanvasShape.Quad(1.0f, 1.0f),
                 loop = true,
                 protected = false
@@ -566,7 +500,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 session = session,
                 videoUri = videoUri,
                 stereoMode = SurfaceEntity.StereoMode.SIDE_BY_SIDE,
-                pose = Pose(Vector3(0.0f, -0.65f, 0f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
+                pose = Pose(Vector3(0.0f, 0.0f, -0.25f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
                 canvasShape = SurfaceEntity.CanvasShape.Quad(1.0f, 1.0f),
                 loop = true,
                 protected = true
@@ -602,7 +536,6 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
 
     @Composable
     fun VideoPlayerTestActivityUI(session: Session, activity: Activity) {
-        val movableComponentMP = remember { mutableStateOf<MovableComponent?>(null) }
         val videoPaused = remember { mutableStateOf(false) }
 
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
@@ -614,23 +547,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 Button(onClick = { togglePassthrough(session) }) {
                     Text(text = "Toggle Passthrough", fontSize = 30.sp)
                 }
-                Button(
-                    onClick = {
-                        session.scene.spatialEnvironment.requestFullSpaceMode()
-                        // Set up the MoveableComponent on the first jump into FSM so the user can
-                        // move the
-                        // Main Panel out of the way.
-                        if (movableComponentMP.value == null) {
-                            movableComponentMP.value = MovableComponent.create(session)
-                            val unused =
-                                session.scene.mainPanelEntity.addComponent(
-                                    movableComponentMP.value!!
-                                )
-                        }
-                        // We do this here to ensure that the Permissions popup isn't clipped.
-                        checkExternalStoragePermission()
-                    }
-                ) {
+                Button(onClick = { session.scene.spatialEnvironment.requestFullSpaceMode() }) {
                     Text(text = "Request FSM", fontSize = 30.sp)
                 }
                 Button(onClick = { session.scene.spatialEnvironment.requestHomeSpaceMode() }) {
@@ -654,7 +571,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.weight(1f).padding(8.dp),
             ) {
-                Text(text = "(Stereo) SurfaceEntity", fontSize = 50.sp)
+                Text(text = "SurfaceEntity Video Drm Test", fontSize = 30.sp)
 
                 Button(
                     onClick = {
