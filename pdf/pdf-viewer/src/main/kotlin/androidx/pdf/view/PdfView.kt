@@ -364,6 +364,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private var doubleTapAnimator: ValueAnimator? = null
     internal var lastFastScrollerVisibility: Boolean = false
 
+    private var isAutoScrolling = false
+    private var prevDragEvent: MotionEvent? = null
+
     /**
      * Returns true if neither zoom nor scroll are actively changing. Does not account for
      * externally-driven changes in position (e.g. a animating scrollY or zoom)
@@ -786,11 +789,48 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             )
 
         if (event.action == MotionEvent.ACTION_UP) {
+            isAutoScrolling = false
             parent?.requestDisallowInterceptTouchEvent(false)
         }
 
-        return selectionStateManager?.maybeDragSelectionHandle(event.action, touchPoint, zoom) ==
-            true
+        prevDragEvent = event
+        if (
+            selectionStateManager?.maybeDragSelectionHandle(event.action, touchPoint, zoom) == true
+        ) {
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                startAutoScrolling()
+            }
+            return true
+        }
+        return false
+    }
+
+    private fun startAutoScrolling() {
+        isAutoScrolling = true
+        handler?.post(
+            object : Runnable {
+                override fun run() {
+                    if (isAutoScrolling) {
+                        // Perform the scroll.
+                        scrollAsYouSelect()
+                        handler?.postDelayed(
+                            this,
+                            AUTO_SCROLL_DELAY_IN_MILLIS
+                        ) // Adjust delay for smoother/faster scroll
+                    }
+                }
+            }
+        )
+    }
+
+    private fun scrollAsYouSelect() {
+        prevDragEvent?.let { event ->
+            if (event.y > height * SCROLL_SELECTION_TOLERANCE_RATIO) {
+                scrollBy(0, AUTO_SCROLL_BY_VALUE)
+            } else if (event.y < height * (1 - SCROLL_SELECTION_TOLERANCE_RATIO)) {
+                scrollBy(0, -AUTO_SCROLL_BY_VALUE)
+            }
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
@@ -1283,7 +1323,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             maybeUpdatePageVisibility()
         }
         pdfViewAccessibilityManager?.invalidateRoot()
-        updateSelectionActionModeVisibility()
     }
 
     private fun dispatchViewportChanged() {
@@ -1939,6 +1978,18 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         /** The duration of the double tap to zoom animation, in milliseconds */
         private const val DOUBLE_TAP_ANIMATION_DURATION_MS = 200L
+
+        /** The amount of delay between two scroll events */
+        private const val AUTO_SCROLL_DELAY_IN_MILLIS = 5L
+
+        /**
+         * The tolerance in percentage to control how close the touch point needs to be to the
+         * bottom or top of the viewport for scroll-during-selection to start.
+         */
+        private const val SCROLL_SELECTION_TOLERANCE_RATIO = 0.85f
+
+        /** The amount to control how much it scrolls while selection */
+        private const val AUTO_SCROLL_BY_VALUE = 20
 
         private val ZOOM_OR_SCROLL_GESTURES =
             setOf(
