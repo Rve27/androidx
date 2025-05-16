@@ -771,9 +771,6 @@ class FocusViewInteropTest {
 
     @Test
     fun removeFocusedView() {
-        @OptIn(ExperimentalComposeUiApi::class)
-        assumeTrue(ComposeUiFlags.isRemoveFocusedViewFixEnabled)
-
         // Arrange.
         lateinit var buttonView1: Button
         lateinit var buttonView3: Button

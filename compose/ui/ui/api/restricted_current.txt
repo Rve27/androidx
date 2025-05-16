@@ -132,6 +132,8 @@ package androidx.compose.ui {
   }
 
   @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public final class ComposeUiFlags {
+    method @Deprecated public boolean isRemoveFocusedViewFixEnabled();
+    method @Deprecated public void setRemoveFocusedViewFixEnabled(boolean);
     property public boolean areWindowInsetsRulersEnabled;
     property public boolean isAdaptiveRefreshRateEnabled;
     property public boolean isClearFocusOnResetEnabled;
@@ -143,7 +145,7 @@ package androidx.compose.ui {
     property public boolean isOutOfFrameDeactivationEnabled;
     property public boolean isPointerInteropFilterDispatchingFixEnabled;
     property public boolean isRectTrackingEnabled;
-    property public boolean isRemoveFocusedViewFixEnabled;
+    property @Deprecated public boolean isRemoveFocusedViewFixEnabled;
     property public boolean isSemanticAutofillEnabled;
     property public boolean isTrackFocusEnabled;
     property public boolean isViewFocusFixEnabled;
@@ -159,7 +161,7 @@ package androidx.compose.ui {
     field public static boolean isOutOfFrameDeactivationEnabled;
     field public static boolean isPointerInteropFilterDispatchingFixEnabled;
     field public static boolean isRectTrackingEnabled;
-    field public static boolean isRemoveFocusedViewFixEnabled;
+    field @Deprecated public static boolean isRemoveFocusedViewFixEnabled;
     field public static boolean isSemanticAutofillEnabled;
     field public static boolean isTrackFocusEnabled;
     field public static boolean isViewFocusFixEnabled;

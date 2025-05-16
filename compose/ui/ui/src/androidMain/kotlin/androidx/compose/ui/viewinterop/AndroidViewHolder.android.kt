@@ -246,17 +246,6 @@ internal open class AndroidViewHolder(
 
     override fun onDeactivate() {
         reset()
-        if (
-            @OptIn(ExperimentalComposeUiApi::class) ComposeUiFlags.isRemoveFocusedViewFixEnabled &&
-                hasFocus() &&
-                isInTouchMode &&
-                SDK_INT > 28
-        ) {
-            // Removing a view that is focused results in focus being re-assigned to an existing
-            // view on screen. We don't want this behavior in touch mode.
-            // https://developer.android.com/about/versions/pie/android-9.0-changes-28#focus
-            findFocus().clearFocus()
-        }
         removeAllViewsInLayout()
     }
 
