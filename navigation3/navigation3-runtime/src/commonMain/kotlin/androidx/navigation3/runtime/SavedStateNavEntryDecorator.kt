@@ -56,7 +56,7 @@ public fun rememberSavedStateNavEntryDecorator(
 public fun SavedStateNavEntryDecorator(
     saveableStateHolder: SaveableStateHolder
 ): NavEntryDecorator<Any> {
-    val registryMap = mutableMapOf<Int, EntrySavedStateRegistry>()
+    val registryMap = mutableMapOf<String, EntrySavedStateRegistry>()
 
     val onPop: (Any) -> Unit = { key ->
         val id = getIdForKey(key)
@@ -99,7 +99,7 @@ public fun SavedStateNavEntryDecorator(
     }
 }
 
-private fun getIdForKey(key: Any): Int = 31 * key.hashCode()
+private fun getIdForKey(key: Any): String = "${key::class.qualifiedName}:$key"
 
 internal class EntrySavedStateRegistry : SavedStateRegistryOwner {
     override val lifecycle: LifecycleRegistry = LifecycleRegistry(this)
