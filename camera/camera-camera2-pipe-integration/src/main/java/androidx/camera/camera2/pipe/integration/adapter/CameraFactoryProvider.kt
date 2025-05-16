@@ -54,7 +54,7 @@ public class CameraFactoryProvider(
             if (cameraOpenRetryMaxTimeoutInMs != -1L) null
             else DurationNs(cameraOpenRetryMaxTimeoutInMs)
 
-        val lazyCameraPipe = lazy { createCameraPipe(context, openRetryMaxTimeout) }
+        val lazyCameraPipe = lazy { createCameraPipe(context, threadConfig, openRetryMaxTimeout) }
 
         return CameraFactoryAdapter(
             lazyCameraPipe,
@@ -66,7 +66,11 @@ public class CameraFactoryProvider(
         )
     }
 
-    private fun createCameraPipe(context: Context, openRetryMaxTimeout: DurationNs?): CameraPipe {
+    private fun createCameraPipe(
+        context: Context,
+        threadConfig: CameraThreadConfig,
+        openRetryMaxTimeout: DurationNs?,
+    ): CameraPipe {
         Debug.traceStart { "Create CameraPipe" }
         val timeSource = SystemTimeSource()
         val start = Timestamps.now(timeSource)
@@ -75,6 +79,10 @@ public class CameraFactoryProvider(
             CameraPipe(
                 CameraPipe.Config(
                     appContext = context.applicationContext,
+                    threadConfig =
+                        CameraPipe.ThreadConfig(
+                            defaultCameraExecutor = threadConfig.cameraExecutor
+                        ),
                     cameraInteropConfig =
                         CameraPipe.CameraInteropConfig(
                             sharedInteropCallbacks.deviceStateCallback,
