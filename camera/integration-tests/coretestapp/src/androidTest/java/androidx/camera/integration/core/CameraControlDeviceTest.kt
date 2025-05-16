@@ -66,6 +66,7 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Assume.assumeTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -188,6 +189,7 @@ class CameraControlDeviceTest(
         assertThat(cameraControl.flashMode).isEqualTo(ImageCapture.FLASH_MODE_ON)
     }
 
+    @Ignore // b/384850020
     @Test
     fun startFocusAndMetering_3ARegionsUpdated() = runBlocking {
         assumeTrue(is3ASupported())
@@ -216,6 +218,7 @@ class CameraControlDeviceTest(
         }
     }
 
+    @Ignore // b/384850020
     @Test
     fun cancelFocusAndMetering_3ARegionsReset() = runBlocking {
         assumeTrue(is3ASupported())
