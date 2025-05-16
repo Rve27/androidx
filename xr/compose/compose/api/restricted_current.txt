@@ -197,7 +197,7 @@ package androidx.xr.compose.spatial {
   }
 
   public final class SpatialElevationKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable public static void SpatialElevation(optional float elevation, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @androidx.compose.runtime.Composable public static void SpatialElevation(optional float elevation, kotlin.jvm.functions.Function0<kotlin.Unit> content);
   }
 
   public final class SpatialElevationLevel {
