@@ -413,7 +413,23 @@ class RoomAndroidGradlePluginTest {
     }
 
     @Test
-    fun testEmptyDirConfigProject() {
+    fun testNoSchemaDirForAndroidAssetsProject() {
+        setup(
+            projectName = "simple-project",
+            schemaDslLines = listOf("schemaDirectory(\"\$projectDir/schemas\")")
+        )
+
+        // Remove source files but keep plugin configured (no schema exported)
+        projectSetup.rootDir.resolve("src/main/java").deleteRecursively()
+
+        val copyRoomSchemaTaskName = ":copyRoomSchemasToAndroidTestAssetsDebugAndroidTest"
+        val result = runGradleTasks(CLEAN_TASK, copyRoomSchemaTaskName, expectFailure = false)
+        // Validate copy task is skipped due to no schemas
+        result.assertTaskOutcome(copyRoomSchemaTaskName, TaskOutcome.NO_SOURCE)
+    }
+
+    @Test
+    fun testEmptyStringConfigProject() {
         setup(projectName = "simple-project", schemaDslLines = listOf("schemaDirectory(\"\")"))
 
         runGradleTasks(CLEAN_TASK, COMPILE_TASK, expectFailure = true).let { result ->
