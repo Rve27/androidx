@@ -36,7 +36,7 @@ public class OpenXrRuntimeFactory() : RuntimeFactory {
         }
     }
 
-    override val requirements: Set<Feature> = setOf(Feature.FullStack, Feature.OpenXr)
+    override val requirements: Set<Feature> = setOf(Feature.FULLSTACK, Feature.OPEN_XR)
 
     override fun createRuntime(activity: Activity): Runtime {
         val timeSource = OpenXrTimeSource()

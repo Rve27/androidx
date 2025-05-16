@@ -660,15 +660,15 @@ package androidx.xr.runtime.internal {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class Feature {
     field public static final androidx.xr.runtime.internal.Feature.Companion Companion;
-    field public static final androidx.xr.runtime.internal.Feature FullStack;
-    field public static final androidx.xr.runtime.internal.Feature OpenXr;
-    field public static final androidx.xr.runtime.internal.Feature Spatial;
+    field public static final androidx.xr.runtime.internal.Feature FULLSTACK;
+    field public static final androidx.xr.runtime.internal.Feature OPEN_XR;
+    field public static final androidx.xr.runtime.internal.Feature SPATIAL;
   }
 
   public static final class Feature.Companion {
-    property public androidx.xr.runtime.internal.Feature FullStack;
-    property public androidx.xr.runtime.internal.Feature OpenXr;
-    property public androidx.xr.runtime.internal.Feature Spatial;
+    property public androidx.xr.runtime.internal.Feature FULLSTACK;
+    property public androidx.xr.runtime.internal.Feature OPEN_XR;
+    property public androidx.xr.runtime.internal.Feature SPATIAL;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class GeospatialPoseException extends java.lang.Exception {
