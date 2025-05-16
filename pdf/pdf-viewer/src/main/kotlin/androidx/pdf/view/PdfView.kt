@@ -271,7 +271,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     /** The currently selected PDF content, as [Selection] */
     public val currentSelection: Selection?
         get() {
-            return selectionStateManager?.selectionModel?.value?.selection
+            return selectionStateManager?.selectionModel?.value?.documentSelection?.selection
         }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -1036,11 +1036,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 .apply { onViewportChanged() }
         selectionStateManager =
             SelectionStateManager(
-                localPdfDocument,
-                backgroundScope,
-                resources.getDimensionPixelSize(R.dimen.text_select_handle_touch_size),
-                errorFlow,
-                localStateToRestore.selectionModel
+                pdfDocument = localPdfDocument,
+                backgroundScope = backgroundScope,
+                handleTouchTargetSizePx =
+                    resources.getDimensionPixelSize(R.dimen.text_select_handle_touch_size),
+                errorFlow = errorFlow,
+                pageMetadataLoader = pageMetadataLoader,
+                initialSelection = localStateToRestore.selectionModel
             )
 
         val positionToRestore =
@@ -1119,8 +1121,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     var prevSelection = currentSelection
                     launch {
                         manager.selectionModel.collect { newModel ->
-                            dispatchSelectionChanged(prevSelection, newModel?.selection)
-                            prevSelection = newModel?.selection
+                            dispatchSelectionChanged(
+                                prevSelection,
+                                newModel?.documentSelection?.selection
+                            )
+                            prevSelection = newModel?.documentSelection?.selection
                         }
                     }
                 }
@@ -1247,10 +1252,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     .apply { onViewportChanged() }
             selectionStateManager =
                 SelectionStateManager(
-                    localPdfDocument,
-                    backgroundScope,
-                    resources.getDimensionPixelSize(R.dimen.text_select_handle_touch_size),
-                    errorFlow
+                    pdfDocument = localPdfDocument,
+                    backgroundScope = backgroundScope,
+                    handleTouchTargetSizePx =
+                        resources.getDimensionPixelSize(R.dimen.text_select_handle_touch_size),
+                    errorFlow = errorFlow,
+                    pageMetadataLoader = pageMetadataLoader,
                 )
             setAccessibility()
         }
@@ -1564,8 +1571,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 pdfView.pageMetadataLoader ?: return super.onGetContentRect(mode, view, outRect)
             val viewport = pdfView.getVisibleAreaInContentCoords()
             val viewportF = viewport.toRectF()
-            val firstSelection = pdfView.currentSelection?.bounds?.first()
-            val lastSelection = pdfView.currentSelection?.bounds?.last()
+            val firstSelection = pdfView.currentSelection?.bounds?.firstOrNull()
+            val lastSelection = pdfView.currentSelection?.bounds?.lastOrNull()
 
             // Try to position the context menu near the first selection if it's visible
             if (firstSelection != null) {

@@ -68,9 +68,9 @@ internal class SelectionRenderer(
         currentZoom: Float
     ) {
         // Draw the bounds first so the handles appear on top of them
-        model.selection.bounds
-            .filter { it.pageNum == pageNum }
-            .forEach { drawBoundsOnPage(canvas, it, locationInView) }
+        model.documentSelection.selectedContents[pageNum]?.forEach {
+            it.bounds.forEach { drawBoundsOnPage(canvas, it, locationInView) }
+        }
 
         model.startBoundary.let {
             val startLoc = it.location

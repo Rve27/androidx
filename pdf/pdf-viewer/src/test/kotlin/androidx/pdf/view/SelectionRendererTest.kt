@@ -24,8 +24,10 @@ import android.graphics.PointF
 import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
+import android.util.SparseArray
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
+import kotlin.collections.List
 import kotlin.math.roundToInt
 import org.junit.Before
 import org.junit.Test
@@ -69,7 +71,14 @@ class SelectionRendererTest {
             UiSelectionBoundary(PdfPoint(pageNum = 0, PointF(150F, 160F)), isRtl = true)
         val endBoundary =
             UiSelectionBoundary(PdfPoint(pageNum = 0, PointF(50F, 180F)), isRtl = true)
-        val selection = SelectionModel(textSelection, startBoundary, endBoundary)
+        val selection =
+            SelectionModel(
+                DocumentSelection(
+                    SparseArray<List<Selection>>().apply { set(0, listOf(textSelection)) }
+                ),
+                startBoundary,
+                endBoundary
+            )
         val locationInView = Rect(30, 50, 230, 250)
         val currentZoom = 2F
 
@@ -138,7 +147,14 @@ class SelectionRendererTest {
             UiSelectionBoundary(PdfPoint(pageNum = 0, PointF(150F, 160F)), isRtl = false)
         val endBoundary =
             UiSelectionBoundary(PdfPoint(pageNum = 0, PointF(50F, 180F)), isRtl = false)
-        val selection = SelectionModel(textSelection, startBoundary, endBoundary)
+        val selection =
+            SelectionModel(
+                DocumentSelection(
+                    SparseArray<List<Selection>>().apply { set(0, listOf(textSelection)) }
+                ),
+                startBoundary,
+                endBoundary
+            )
         val locationInView = Rect(30, 50, 230, 250)
         val currentZoom = 2F
 
