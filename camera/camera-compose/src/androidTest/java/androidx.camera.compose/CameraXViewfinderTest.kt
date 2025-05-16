@@ -39,6 +39,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.concurrent.futures.await
@@ -175,6 +176,59 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
 
         // Viewfinder should not be displayed since SurfaceRequest was cancelled
         composeTest.onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG).assertIsNotDisplayed()
+    }
+
+    @Test
+    fun removeViewfinder_andAddWithSameSurfaceRequest_invalidatesRequest() = runViewfinderTest {
+        var showContent by mutableStateOf(true)
+        composeTest.setContent {
+            val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
+            if (showContent) {
+                currentSurfaceRequest?.let { surfaceRequest ->
+                    CameraXViewfinder(
+                        surfaceRequest = surfaceRequest,
+                        modifier = Modifier.testTag(CAMERAX_VIEWFINDER_TEST_TAG)
+                    )
+                }
+            }
+        }
+
+        // Start the camera
+        startCamera()
+
+        // Wait for first SurfaceRequest
+        val firstSurfaceRequest = surfaceRequests.filterNotNull().first()
+
+        composeTest.awaitIdle()
+
+        // CameraXViewfinder should now have a child Viewfinder
+        composeTest
+            .onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG)
+            .assertIsDisplayed()
+            .assert(SemanticsMatcher.hasChild())
+
+        // Remove the Viewfinder from the composition
+        showContent = false
+
+        composeTest.waitUntil(timeoutMillis = 5000) {
+            composeTest.onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG).isNotDisplayed()
+        }
+
+        // Add the Viewfinder back to the composition
+        showContent = true
+
+        composeTest.awaitIdle()
+
+        // CameraXViewfinder should now be displayed with a child viewfinder
+        composeTest
+            .onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG)
+            .assertIsDisplayed()
+            .assert(SemanticsMatcher.hasChild())
+
+        val newSurfaceRequest = surfaceRequests.filterNotNull().first()
+
+        // A new surface request should have been created since the old one was invalidated
+        assertThat(newSurfaceRequest).isNotEqualTo(firstSurfaceRequest)
     }
 
     companion object {
