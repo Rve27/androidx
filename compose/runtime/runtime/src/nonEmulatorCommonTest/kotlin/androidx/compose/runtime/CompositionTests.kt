@@ -2641,6 +2641,46 @@ class CompositionTests {
     }
 
     @Test
+    fun testRemember_OrderingWithAlternatingEffects() = compositionTest {
+        val order = mutableListOf<String>()
+        fun RememberObject(name: String) =
+            object : RememberObserver {
+                override fun onRemembered() {
+                    order += "R[$name]"
+                }
+
+                override fun onForgotten() {
+                    order += "F[$name]"
+                }
+
+                override fun onAbandoned() {
+                    order += "A[$name]"
+                }
+
+                override fun toString() = name
+            }
+
+        var showContent by mutableStateOf(true)
+        var runEffects by mutableStateOf(false)
+        compose {
+            if (showContent) {
+                remember { RememberObject("1") }
+                if (runEffects) SideEffect {}
+                remember { RememberObject("2") }
+                if (runEffects) SideEffect {}
+                remember { RememberObject("3") }
+                if (runEffects) SideEffect {}
+                remember { RememberObject("4") }
+                if (runEffects) SideEffect {}
+            }
+        }
+
+        showContent = false
+        advance()
+        assertEquals("R[1], R[2], R[3], R[4], F[4], F[3], F[2], F[1]", order.joinToString())
+    }
+
+    @Test
     fun testCompoundKeyHashCodeStaysTheSameAfterRecompositions() = compositionTest {
         val outerKeys = mutableListOf<CompositeKeyHashCode>()
         val innerKeys = mutableListOf<CompositeKeyHashCode>()

@@ -23,6 +23,7 @@ import androidx.collection.MutableIntObjectMap
 import androidx.collection.MutableIntSet
 import androidx.collection.MutableObjectList
 import androidx.collection.mutableIntListOf
+import androidx.collection.mutableIntSetOf
 import androidx.compose.runtime.collection.fastCopyInto
 import androidx.compose.runtime.platform.makeSynchronizedObject
 import androidx.compose.runtime.platform.synchronized
@@ -1820,20 +1821,14 @@ internal class SlotWriter(
                         .let { anchor ->
                             if (anchor >= 0 && slotsGapOwner < current) {
                                 // This is a special case where the a parent added slots to its
-                                // group
-                                // setting the slotGapOwner back, but no intervening groups contain
-                                // slots
-                                // so the slotCurrent is at the beginning fo the gap but is not
-                                // owned by this
-                                // group. By definition the beginning of the gap is the index but
-                                // there are
-                                // actually two valid anchor values for this location a positive one
-                                // and a
-                                // negative (distance from theend of the slot array). In this case
-                                // moveSlotGapTo() the negative value for all groups after the
-                                // slotGapOwner
-                                // so when the gap moves it can adjust the anchors correctly needs
-                                // the negative
+                                // group setting the slotGapOwner back, but no intervening groups
+                                // contain slots so the slotCurrent is at the beginning fo the gap
+                                // but is not owned by this group. By definition the beginning of
+                                // the gap is the index but there are actually two valid anchor
+                                // values for this location a positive one and a negative (distance
+                                // from the end of the slot array). In this case moveSlotGapTo() the
+                                // negative value for all groups after the slotGapOwner so when the
+                                // gap moves it can adjust the anchors correctly needs the negative
                                 // anchor.
                                 val slotsSize = slots.size - slotsGapLen
                                 -(slotsSize - anchor + 1)
@@ -2058,6 +2053,98 @@ internal class SlotWriter(
         for (slot in start until end) {
             block(slot, slots[dataIndexToDataAddress(slot)])
         }
+    }
+
+    inline fun traverseGroupAndChildren(
+        group: Int,
+        enter: (child: Int) -> Unit,
+        exit: (child: Int) -> Unit
+    ) {
+        var current = group
+        var currentParent = parent(current)
+        val size = size
+        val end = group + groupSize(group)
+        while (current < end) {
+            enter(current)
+            val next = current + 1
+            val nextParent = if (next < size) parent(next) else -1
+            if (nextParent != current) {
+                while (true) {
+                    exit(current)
+                    if (current == group) break
+                    if (currentParent == nextParent) break
+                    current = currentParent
+                    currentParent = parent(current)
+                }
+            }
+            current = next
+            currentParent = nextParent
+        }
+    }
+
+    fun forAllDataInRememberOrder(group: Int, block: (index: Int, data: Any?) -> Unit) {
+        // The list and set implement a multi-map of groups to slots that need to be emitted
+        // after group. The a multi-map itself is not used as a generic multi map would box the
+        // integers and otherwise allocate more memory.
+        var deferredSlotIndexes: MutableIntList? = null
+        var deferredAfters: MutableIntSet? = null
+        traverseGroupAndChildren(
+            group,
+            enter = { child ->
+                for (slotIndex in dataIndex(child) until dataIndex(child + 1)) {
+                    val address = dataIndexToDataAddress(slotIndex)
+                    val value = slots[address]
+                    if (value is RememberObserverHolder) {
+                        val after = value.after
+                        if (after != null && after.valid) {
+                            // If the data is a remember holder that has an anchor, it must be
+                            // emitted
+                            // after the group it is anchored so defer it now.
+                            val index = anchorIndex(after)
+                            val afters =
+                                deferredAfters ?: mutableIntSetOf().also { deferredAfters = it }
+                            val slots =
+                                deferredSlotIndexes
+                                    ?: mutableIntListOf().also { deferredSlotIndexes = it }
+                            afters.add(index)
+                            slots.add(index)
+                            slots.add(slotIndex)
+                            continue
+                        }
+                    }
+                    block(slotIndex, value)
+                }
+            },
+            exit = { child ->
+                val slotIndexes = deferredSlotIndexes
+                val afters = deferredAfters
+                if (slotIndexes != null && afters != null && afters.remove(child)) {
+                    var expected = 0
+                    val size = slotIndexes.size
+                    repeat(size / 2) {
+                        val start = it * 2
+                        val after = slotIndexes[start]
+                        if (after == child) {
+                            val slotIndex = slotIndexes[start + 1]
+                            val data = slots[dataIndexToDataAddress(slotIndex)]
+                            block(slotIndex, data)
+                        } else {
+                            // This pattern removes the group from the list while
+                            // enumerating following a removeIf style pattern. We cannot
+                            // use removeIf directly the int array stores an inline pair of
+                            // the after group index and the slot index.
+                            if (start != expected) {
+                                slotIndexes[expected++] = after
+                                slotIndexes[expected++] = slotIndexes[start + 1]
+                            } else expected += 2
+                        }
+                    }
+                    if (expected != size) {
+                        slotIndexes.removeRange(expected, size)
+                    }
+                }
+            }
+        )
     }
 
     /**

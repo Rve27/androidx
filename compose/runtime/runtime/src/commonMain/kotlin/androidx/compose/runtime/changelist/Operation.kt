@@ -43,7 +43,6 @@ import androidx.compose.runtime.snapshots.fastForEachIndexed
 import androidx.compose.runtime.tooling.ComposeStackTraceFrame
 import androidx.compose.runtime.tooling.attachComposeStackTrace
 import androidx.compose.runtime.tooling.buildTrace
-import androidx.compose.runtime.withAfterAnchorInfo
 import kotlin.jvm.JvmInline
 
 internal typealias IntParameter = Int
@@ -298,21 +297,10 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             errorContext: OperationErrorContext?
         ) {
             val count = getInt(Count)
-            val slotsSize = slots.slotsSize
             slots.forEachTailSlot(slots.parent, count) { slotIndex, value ->
                 when (value) {
                     is RememberObserverHolder -> {
-                        // Values are always updated in the composition order (not slot table order)
-                        // so there is no need to reorder these.
-                        val endRelativeOrder = slotsSize - slotIndex
-                        slots.withAfterAnchorInfo(value.after) { priority, endRelativeAfter ->
-                            rememberManager.forgetting(
-                                instance = value,
-                                endRelativeOrder = endRelativeOrder,
-                                priority = priority,
-                                endRelativeAfter = endRelativeAfter
-                            )
-                        }
+                        rememberManager.forgetting(instance = value)
                     }
                     is RecomposeScopeImpl -> value.release()
                 }
@@ -353,12 +341,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             }
             when (val previous = slots.set(groupSlotIndex, value)) {
                 is RememberObserverHolder -> {
-                    val endRelativeOrder =
-                        slots.slotsSize -
-                            slots.slotIndexOfGroupSlotIndex(slots.currentGroup, groupSlotIndex)
-                    // Values are always updated in the composition order (not slot table order)
-                    // so there is no need to reorder these.
-                    rememberManager.forgetting(previous, endRelativeOrder, -1, -1)
+                    rememberManager.forgetting(previous)
                 }
                 is RecomposeScopeImpl -> previous.release()
             }
@@ -403,17 +386,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             val groupIndex = slots.anchorIndex(anchor)
             when (val previous = slots.set(groupIndex, groupSlotIndex, value)) {
                 is RememberObserverHolder -> {
-                    val endRelativeSlotOrder =
-                        slots.slotsSize -
-                            slots.slotIndexOfGroupSlotIndex(groupIndex, groupSlotIndex)
-                    slots.withAfterAnchorInfo(previous.after) { priority, endRelativeAfter ->
-                        rememberManager.forgetting(
-                            previous,
-                            endRelativeSlotOrder,
-                            priority,
-                            endRelativeAfter
-                        )
-                    }
+                    rememberManager.forgetting(previous)
                 }
                 is RecomposeScopeImpl -> previous.release()
             }

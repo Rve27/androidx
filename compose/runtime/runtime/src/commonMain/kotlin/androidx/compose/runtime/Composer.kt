@@ -90,12 +90,7 @@ internal interface RememberManager {
     fun remembering(instance: RememberObserverHolder)
 
     /** The [RememberObserver] is being forgotten by a slot in the slot table. */
-    fun forgetting(
-        instance: RememberObserverHolder,
-        endRelativeOrder: Int,
-        priority: Int,
-        endRelativeAfter: Int
-    )
+    fun forgetting(instance: RememberObserverHolder)
 
     /**
      * The [effect] should be called when changes are being applied but after the remember/forget
@@ -104,20 +99,10 @@ internal interface RememberManager {
     fun sideEffect(effect: () -> Unit)
 
     /** The [ComposeNodeLifecycleCallback] is being deactivated. */
-    fun deactivating(
-        instance: ComposeNodeLifecycleCallback,
-        endRelativeOrder: Int,
-        priority: Int,
-        endRelativeAfter: Int
-    )
+    fun deactivating(instance: ComposeNodeLifecycleCallback)
 
     /** The [ComposeNodeLifecycleCallback] is being released. */
-    fun releasing(
-        instance: ComposeNodeLifecycleCallback,
-        endRelativeOrder: Int,
-        priority: Int,
-        endRelativeAfter: Int
-    )
+    fun releasing(instance: ComposeNodeLifecycleCallback)
 
     /** The restart scope is pausing */
     fun rememberPausingScope(scope: RecomposeScopeImpl)
@@ -4434,18 +4419,14 @@ internal fun SlotWriter.removeCurrentGroup(rememberManager: RememberManager) {
     // To ensure this order, we call `enters` as a pre-order traversal
     // of the group tree, and then call `leaves` in the inverse order.
 
-    forAllData(currentGroup) { slotIndex, slot ->
+    forAllDataInRememberOrder(currentGroup) { _, slot ->
         // even that in the documentation we claim ComposeNodeLifecycleCallback should be only
         // implemented on the nodes we do not really enforce it here as doing so will be expensive.
         if (slot is ComposeNodeLifecycleCallback) {
-            val endRelativeOrder = slotsSize - slotIndex
-            rememberManager.releasing(slot, endRelativeOrder, -1, -1)
+            rememberManager.releasing(slot)
         }
         if (slot is RememberObserverHolder) {
-            val endRelativeSlotIndex = slotsSize - slotIndex
-            withAfterAnchorInfo(slot.after) { priority, endRelativeAfter ->
-                rememberManager.forgetting(slot, endRelativeSlotIndex, priority, endRelativeAfter)
-            }
+            rememberManager.forgetting(slot)
         }
         if (slot is RecomposeScopeImpl) {
             slot.release()
@@ -4477,11 +4458,10 @@ internal fun SlotWriter.deactivateCurrentGroup(rememberManager: RememberManager)
 
     // To ensure this order, we call `enters` as a pre-order traversal
     // of the group tree, and then call `leaves` in the inverse order.
-    forAllData(currentGroup) { slotIndex, data ->
+    forAllDataInRememberOrder(currentGroup) { slotIndex, data ->
         when (data) {
             is ComposeNodeLifecycleCallback -> {
-                val endRelativeOrder = slotsSize - slotIndex
-                rememberManager.deactivating(data, endRelativeOrder, -1, -1)
+                rememberManager.deactivating(data)
             }
             is RememberObserverHolder -> {
                 val wrapped = data.wrapped
@@ -4489,15 +4469,7 @@ internal fun SlotWriter.deactivateCurrentGroup(rememberManager: RememberManager)
                     // do nothing, the value should be preserved on reuse
                 } else {
                     removeData(slotIndex, data)
-                    val endRelativeOrder = slotsSize - slotIndex
-                    withAfterAnchorInfo(data.after) { priority, endRelativeAfter ->
-                        rememberManager.forgetting(
-                            data,
-                            endRelativeOrder,
-                            priority,
-                            endRelativeAfter
-                        )
-                    }
+                    rememberManager.forgetting(data)
                 }
             }
             is RecomposeScopeImpl -> {
