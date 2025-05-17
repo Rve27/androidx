@@ -1,5 +1,5 @@
 diff --git a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt
-index ea7701cedc3..28ff9c2dc77 100644
+index 7894908dc05..2fa6fc2ed24 100644
 --- a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt
 +++ b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt
 @@ -35,6 +35,7 @@ import org.jetbrains.kotlin.library.abi.AbiTypeArgument.StarProjection
@@ -22,7 +22,7 @@ index ea7701cedc3..28ff9c2dc77 100644
 +private fun AbiFunction.contextReceiverParametersCount(): Int =
 +    valueParameters.count { it.kind == AbiValueParameterKind.CONTEXT }
 diff --git a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KLibDumpParser.kt b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KLibDumpParser.kt
-index 119031841d7..0be0e1566c3 100644
+index a22e4706435..2a4dc8b1af5 100644
 --- a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KLibDumpParser.kt
 +++ b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KLibDumpParser.kt
 @@ -32,9 +32,11 @@ import org.jetbrains.kotlin.library.abi.AbiProperty
@@ -59,8 +59,8 @@ index 119031841d7..0be0e1566c3 100644
          return AbiEnumEntryImpl(
              qualifiedName = qualifiedName,
              signatures = signaturesStub,
--            annotations = emptySet()
-+            annotations = AbiAnnotationListImpl.EMPTY
+-            annotations = emptySet(),
++            annotations = AbiAnnotationListImpl.EMPTY,
          )
      }
  
@@ -87,7 +87,7 @@ index 119031841d7..0be0e1566c3 100644
 +            // hasExtensionReceiverParameter = null != functionReceiver,
 +            // contextReceiverParametersCount = 0, // TODO
              valueParameters = allValueParameters,
-             returnType = returnType
+             returnType = returnType,
          )
 @@ -334,9 +337,9 @@ class KlibDumpParser(klibDump: String, private val fileName: String? = null) {
          return AbiConstructorImpl(
@@ -102,7 +102,7 @@ index 119031841d7..0be0e1566c3 100644
          )
      }
 diff --git a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KlibParsingCursorExtensions.kt b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KlibParsingCursorExtensions.kt
-index 6315014a6ca..5b7b786470e 100644
+index f496938aba4..be3b80b7e19 100644
 --- a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KlibParsingCursorExtensions.kt
 +++ b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/KlibParsingCursorExtensions.kt
 @@ -32,6 +32,7 @@ import org.jetbrains.kotlin.library.abi.AbiTypeArgument
@@ -122,7 +122,7 @@ index 6315014a6ca..5b7b786470e 100644
          isVararg = isVararg,
          hasDefaultArg = hasDefaultArg,
 diff --git a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/test/java/androidx/binarycompatibilityvalidator/KLibDumpParserTest.kt b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/test/java/androidx/binarycompatibilityvalidator/KLibDumpParserTest.kt
-index 4369c0c97bc..505875a9442 100644
+index 5e3d9d1ffef..d4f4b1850fb 100644
 --- a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/test/java/androidx/binarycompatibilityvalidator/KLibDumpParserTest.kt
 +++ b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/test/java/androidx/binarycompatibilityvalidator/KLibDumpParserTest.kt
 @@ -26,6 +26,7 @@ import org.jetbrains.kotlin.library.abi.AbiModality
@@ -133,7 +133,7 @@ index 4369c0c97bc..505875a9442 100644
  import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
  import org.jetbrains.kotlin.library.abi.LibraryAbi
  import org.junit.Test
-@@ -236,7 +237,10 @@ class KlibDumpParserTest {
+@@ -229,7 +230,10 @@ class KlibDumpParserTest {
          val parentQName =
              AbiQualifiedName(AbiCompoundName("androidx.collection"), AbiCompoundName("ObjectList"))
          val parsed = KlibDumpParser(input).parseFunction(parentQName, isGetterOrSetter = true)
@@ -145,7 +145,7 @@ index 4369c0c97bc..505875a9442 100644
      }
  
      @Test
-@@ -245,7 +249,10 @@ class KlibDumpParserTest {
+@@ -238,7 +242,10 @@ class KlibDumpParserTest {
              "final inline fun <#A: androidx.datastore.core/Closeable, #B: kotlin/Any?> " +
                  "(#A).androidx.datastore.core/use(kotlin/Function1<#A, #B>): #B"
          val parsed = KlibDumpParser(input).parseFunction()
@@ -157,7 +157,7 @@ index 4369c0c97bc..505875a9442 100644
          assertThat(parsed.typeParameters).hasSize(2)
      }
  
-@@ -322,7 +329,12 @@ class KlibDumpParserTest {
+@@ -330,7 +337,12 @@ class KlibDumpParserTest {
                  .trimIndent()
          val parsed = KlibDumpParser(input).parseProperty()
          assertThat(parsed.getter).isNotNull()
@@ -172,7 +172,7 @@ index 4369c0c97bc..505875a9442 100644
  
      @Test
 diff --git a/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt b/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt
-index d91099b9a36..28fac953d91 100644
+index 3f6716c183a..87db4f06894 100644
 --- a/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt
 +++ b/buildSrc/private/src/main/kotlin/androidx/build/AndroidXMultiplatformExtension.kt
 @@ -48,7 +48,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -184,7 +184,7 @@ index d91099b9a36..28fac953d91 100644
  import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
  import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmTargetDsl
  import org.jetbrains.kotlin.gradle.targets.js.ir.DefaultIncrementalSyncTask
-@@ -805,15 +805,17 @@ private fun Project.configureNode() {
+@@ -802,15 +802,17 @@ private fun Project.configureNode() {
      }
  }
  
@@ -243,7 +243,7 @@ index 1c18f43889b..ae6b89a8a20 100644
  
  fun shouldValidateTaskOutput(task: Task): Boolean {
 diff --git a/buildSrc/private/src/main/kotlin/androidx/build/clang/KonanBuildService.kt b/buildSrc/private/src/main/kotlin/androidx/build/clang/KonanBuildService.kt
-index 2b60d10983e..f71fd4e4d60 100644
+index ca622cb9784..05010e19cd8 100644
 --- a/buildSrc/private/src/main/kotlin/androidx/build/clang/KonanBuildService.kt
 +++ b/buildSrc/private/src/main/kotlin/androidx/build/clang/KonanBuildService.kt
 @@ -151,7 +151,7 @@ abstract class KonanBuildService @Inject constructor(private val execOperations:
@@ -252,7 +252,7 @@ index 2b60d10983e..f71fd4e4d60 100644
                          outputDsymBundle = "unused",
 -                        mimallocEnabled = false,
 +                        // mimallocEnabled = false,
-                         sanitizer = null
+                         sanitizer = null,
                      )
                      .finalLinkCommands()
 diff --git a/buildSrc/public/src/main/kotlin/androidx/build/AndroidXConfiguration.kt b/buildSrc/public/src/main/kotlin/androidx/build/AndroidXConfiguration.kt
@@ -281,7 +281,7 @@ index 85bb1bfa6ac..7e61af93b12 100644
                  "-Xjdk-release=17",
          )
 diff --git a/compose/runtime/runtime/src/commonMain/kotlin/androidx/compose/runtime/internal/ComposableLambda.kt b/compose/runtime/runtime/src/commonMain/kotlin/androidx/compose/runtime/internal/ComposableLambda.kt
-index 537335b0cf3..26c0dfdf39c 100644
+index 2cef9149acf..5105339a49a 100644
 --- a/compose/runtime/runtime/src/commonMain/kotlin/androidx/compose/runtime/internal/ComposableLambda.kt
 +++ b/compose/runtime/runtime/src/commonMain/kotlin/androidx/compose/runtime/internal/ComposableLambda.kt
 @@ -15,6 +15,7 @@
@@ -392,7 +392,7 @@ index 919bd8ace17..f28cea3ad44 100644
      internal val jvmModuleName = "main"
  }
 diff --git a/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/steps/KaptCompilationStep.kt b/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/steps/KaptCompilationStep.kt
-index 59b0f89630a..68442e04e86 100644
+index 4dfd3279019..d3a3e783d1b 100644
 --- a/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/steps/KaptCompilationStep.kt
 +++ b/room/room-compiler-processing-testing/src/main/java/androidx/room/compiler/processing/util/compiler/steps/KaptCompilationStep.kt
 @@ -26,9 +26,9 @@ import java.util.Base64
@@ -407,7 +407,7 @@ index 59b0f89630a..68442e04e86 100644
  /** Runs KAPT to run Java annotation processors. */
  internal class KaptCompilationStep(
 diff --git a/room/room-compiler/src/main/kotlin/androidx/room/vo/InsertFunction.kt b/room/room-compiler/src/main/kotlin/androidx/room/vo/InsertFunction.kt
-index 3a966ff01e5..dcdd96355ac 100644
+index ed2b8f31a61..97e5d4f89b0 100644
 --- a/room/room-compiler/src/main/kotlin/androidx/room/vo/InsertFunction.kt
 +++ b/room/room-compiler/src/main/kotlin/androidx/room/vo/InsertFunction.kt
 @@ -23,7 +23,7 @@ import androidx.room.solver.shortcut.binder.InsertOrUpsertFunctionBinder
@@ -420,18 +420,18 @@ index 3a966ff01e5..dcdd96355ac 100644
      returnType: XType,
      parameters: List<ShortcutQueryParameter>,
 diff --git a/room/room-compiler/src/main/kotlin/androidx/room/vo/UpdateFunction.kt b/room/room-compiler/src/main/kotlin/androidx/room/vo/UpdateFunction.kt
-index fbf3eaaff43..a6a26252d5b 100644
+index 26448d35f25..c298eeba2b2 100644
 --- a/room/room-compiler/src/main/kotlin/androidx/room/vo/UpdateFunction.kt
 +++ b/room/room-compiler/src/main/kotlin/androidx/room/vo/UpdateFunction.kt
 @@ -25,5 +25,5 @@ class UpdateFunction(
      entities: Map<String, ShortcutEntity>,
      parameters: List<ShortcutQueryParameter>,
      functionBinder: DeleteOrUpdateFunctionBinder?,
--    @OnConflictStrategy val onConflictStrategy: Int
-+    @param:OnConflictStrategy val onConflictStrategy: Int
+-    @OnConflictStrategy val onConflictStrategy: Int,
++    @param:OnConflictStrategy val onConflictStrategy: Int,
  ) : DeleteOrUpdateShortcutFunction(element, entities, parameters, functionBinder)
 diff --git a/room/room-gradle-plugin/src/main/java/androidx/room/gradle/integration/AndroidPluginIntegration.kt b/room/room-gradle-plugin/src/main/java/androidx/room/gradle/integration/AndroidPluginIntegration.kt
-index db96880c27e..b9afb00f120 100644
+index c8ff6f57da6..5f0d8cf8dda 100644
 --- a/room/room-gradle-plugin/src/main/java/androidx/room/gradle/integration/AndroidPluginIntegration.kt
 +++ b/room/room-gradle-plugin/src/main/java/androidx/room/gradle/integration/AndroidPluginIntegration.kt
 @@ -194,10 +194,12 @@ internal class AndroidPluginIntegration(private val common: CommonIntegration) {
@@ -448,7 +448,7 @@ index db96880c27e..b9afb00f120 100644
                      }
                  }
 diff --git a/wear/compose/compose-foundation/src/main/java/androidx/wear/compose/foundation/HierarchicalFocus.kt b/wear/compose/compose-foundation/src/main/java/androidx/wear/compose/foundation/HierarchicalFocus.kt
-index 9b029f92eea..638cf9c62b1 100644
+index 92c895d11de..68610106fdc 100644
 --- a/wear/compose/compose-foundation/src/main/java/androidx/wear/compose/foundation/HierarchicalFocus.kt
 +++ b/wear/compose/compose-foundation/src/main/java/androidx/wear/compose/foundation/HierarchicalFocus.kt
 @@ -98,7 +98,7 @@ public fun Modifier.hierarchicalFocusGroup(active: Boolean): Modifier {
