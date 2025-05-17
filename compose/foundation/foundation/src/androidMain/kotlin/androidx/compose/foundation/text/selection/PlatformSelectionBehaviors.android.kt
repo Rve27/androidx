@@ -77,7 +77,7 @@ internal var PlatformSelectionBehaviorsFactory:
 @Composable
 internal actual fun rememberPlatformSelectionBehaviors(
     selectedTextType: SelectedTextType,
-    localeList: LocaleList?
+    localeList: LocaleList?,
 ): PlatformSelectionBehaviors? {
     if (Build.VERSION.SDK_INT < 28) {
         // Smart selection features are not supported under API 28.
@@ -94,13 +94,13 @@ internal class PlatformSelectionBehaviorsImpl(
     private val coroutineContext: CoroutineContext,
     private val context: Context,
     private val selectedTextType: SelectedTextType,
-    private val localeList: LocaleList?
+    private val localeList: LocaleList?,
 ) : PlatformSelectionBehaviors {
     var textClassifier: TextClassifier? = null
 
     override suspend fun suggestSelectionForLongPressOrDoubleClick(
         text: CharSequence,
-        selection: TextRange
+        selection: TextRange,
     ): TextRange? {
         if (text.isEmpty() || selection.collapsed) {
             return null

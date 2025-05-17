@@ -119,7 +119,7 @@ class ProcessCameraProviderTest {
     private fun createCameraXConfig(
         cameraFactory: CameraFactory = createFakeCameraFactory(),
         surfaceManager: CameraDeviceSurfaceManager? = FakeCameraDeviceSurfaceManager(),
-        useCaseConfigFactory: UseCaseConfigFactory? = FakeUseCaseConfigFactory()
+        useCaseConfigFactory: UseCaseConfigFactory? = FakeUseCaseConfigFactory(),
     ): CameraXConfig {
         val cameraFactoryProvider = Provider { _, _, _, _, _ -> cameraFactory }
         return CameraXConfig.Builder()
@@ -143,7 +143,7 @@ class ProcessCameraProviderTest {
                     FakeCamera(
                         CAMERA_ID_0,
                         null,
-                        FakeCameraInfoInternal(CAMERA_ID_0, 0, CameraSelector.LENS_FACING_BACK)
+                        FakeCameraInfoInternal(CAMERA_ID_0, 0, CameraSelector.LENS_FACING_BACK),
                     )
                 }
             }
@@ -152,7 +152,7 @@ class ProcessCameraProviderTest {
                     FakeCamera(
                         CAMERA_ID_1,
                         null,
-                        FakeCameraInfoInternal(CAMERA_ID_1, 0, CameraSelector.LENS_FACING_FRONT)
+                        FakeCameraInfoInternal(CAMERA_ID_1, 0, CameraSelector.LENS_FACING_FRONT),
                     )
                 }
             }
@@ -166,7 +166,7 @@ class ProcessCameraProviderTest {
             if (SystemClock.elapsedRealtime() < currentTime) {
                 ShadowSystemClock.advanceBy(
                     currentTime - SystemClock.elapsedRealtime(),
-                    TimeUnit.MILLISECONDS
+                    TimeUnit.MILLISECONDS,
                 )
             }
             delay(FAKE_INIT_PROCESS_TIME_MS)

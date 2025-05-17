@@ -244,7 +244,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             firstVisiblePage: Int,
             visiblePagesCount: Int,
             pageLocations: SparseArray<Rect>,
-            zoomLevel: Float
+            zoomLevel: Float,
         )
     }
 
@@ -284,10 +284,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     /** Listener interface to receive updates when the [currentSelection] changes */
     public interface OnSelectionChangedListener {
         /** Called when the [Selection] has changed */
-        public fun onSelectionChanged(
-            previousSelection: Selection?,
-            newSelection: Selection?,
-        )
+        public fun onSelectionChanged(previousSelection: Selection?, newSelection: Selection?)
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -378,7 +375,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 gestureTracker.matches(
                     GestureTracker.Gesture.DRAG,
                     GestureTracker.Gesture.DRAG_X,
-                    GestureTracker.Gesture.DRAG_Y
+                    GestureTracker.Gesture.DRAG_Y,
                 ) ||
                     isFling ||
                     doubleTapAnimator?.isRunning == true ||
@@ -406,7 +403,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                             scrollY = eventY,
                             viewHeight = height,
                             estimatedFullHeight =
-                                toViewCoord(contentHeight.toFloat(), zoom, scroll = 0)
+                                toViewCoord(contentHeight.toFloat(), zoom, scroll = 0),
                         )
                     scrollTo(scrollX, updatedY)
                     invalidate()
@@ -627,7 +624,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         val ret =
             PointF(
                 toViewCoord(pageLocation.left + pdfPoint.pagePoint.x, zoom, scroll = scrollX),
-                toViewCoord(pageLocation.top + pdfPoint.pagePoint.y, zoom, scroll = scrollY)
+                toViewCoord(pageLocation.top + pdfPoint.pagePoint.y, zoom, scroll = scrollY),
             )
         return ret
     }
@@ -647,7 +644,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 viewportWidth.toFloat(),
                 viewportHeight.toFloat(),
                 pageRect.width().toFloat(),
-                1f
+                1f,
             )
         val x = round((pageRect.left + pageRect.width() / 2f) * zoom - (viewportWidth / 2f))
         val y = round((pageRect.top + pageRect.height() / 2f) * zoom - (viewportHeight / 2f))
@@ -674,7 +671,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         val pageRect =
             localPageLayoutManager.getPageLocation(
                 position.pageNum,
-                getVisibleAreaInContentCoords()
+                getVisibleAreaInContentCoords(),
             )
 
         val x = round((pageRect.left + position.pagePoint.x) * zoom - (viewportWidth / 2f))
@@ -716,7 +713,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     pageNum = i,
                     canvas,
                     pageLoc,
-                    zoom
+                    zoom,
                 )
             }
         }
@@ -734,7 +731,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 viewHeight = height,
                 visiblePages = fullyVisiblePages,
                 estimatedFullHeight =
-                    toViewCoord(contentCoord = contentHeight.toFloat(), zoom = zoom, scroll = 0)
+                    toViewCoord(contentCoord = contentHeight.toFloat(), zoom = zoom, scroll = 0),
             )
         }
     }
@@ -785,7 +782,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         val touchPoint =
             pageMetadataLoader?.getPdfPointAt(
                 PointF(toContentX(event.x), toContentY(event.y)),
-                getVisibleAreaInContentCoords()
+                getVisibleAreaInContentCoords(),
             )
 
         if (event.action == MotionEvent.ACTION_UP) {
@@ -815,7 +812,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                         scrollAsYouSelect()
                         handler?.postDelayed(
                             this,
-                            AUTO_SCROLL_DELAY_IN_MILLIS
+                            AUTO_SCROLL_DELAY_IN_MILLIS,
                         ) // Adjust delay for smoother/faster scroll
                     }
                 }
@@ -1071,7 +1068,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     pageSpacingPx = context.getDimensions(R.dimen.page_spacing).roundToInt(),
                     paginationModel = requireNotNull(localStateToRestore.paginationModel),
                     errorFlow = errorFlow,
-                    isFormFillingEnabled = isFormFillingEnabled
+                    isFormFillingEnabled = isFormFillingEnabled,
                 )
                 .apply { onViewportChanged() }
         selectionStateManager =
@@ -1082,7 +1079,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     resources.getDimensionPixelSize(R.dimen.text_select_handle_touch_size),
                 errorFlow = errorFlow,
                 pageMetadataLoader = pageMetadataLoader,
-                initialSelection = localStateToRestore.selectionModel
+                initialSelection = localStateToRestore.selectionModel,
             )
 
         val positionToRestore =
@@ -1163,7 +1160,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                         manager.selectionModel.collect { newModel ->
                             dispatchSelectionChanged(
                                 prevSelection,
-                                newModel?.documentSelection?.selection
+                                newModel?.documentSelection?.selection,
                             )
                             prevSelection = newModel?.documentSelection?.selection
                         }
@@ -1246,7 +1243,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 backgroundScope,
                 Point(maxBitmapDimensionPx, maxBitmapDimensionPx),
                 errorFlow,
-                isAccessibilityEnabled
+                isAccessibilityEnabled,
             )
 
         val fastScrollCalculator = FastScrollCalculator(context)
@@ -1257,7 +1254,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 fastScrollVerticalThumbDrawable,
                 fastScrollPageIndicatorBackgroundDrawable,
                 fastScrollVerticalThumbMarginEnd,
-                fastScrollPageIndicatorMarginEnd
+                fastScrollPageIndicatorMarginEnd,
             )
 
         val localFastScroller = FastScroller(fastScrollDrawer, fastScrollCalculator)
@@ -1287,7 +1284,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                             context.getDimensions(R.dimen.top_page_margin).roundToInt(),
                         pageSpacingPx = context.getDimensions(R.dimen.page_spacing).roundToInt(),
                         errorFlow = errorFlow,
-                        isFormFillingEnabled = isFormFillingEnabled
+                        isFormFillingEnabled = isFormFillingEnabled,
                     )
                     .apply { onViewportChanged() }
             selectionStateManager =
@@ -1345,7 +1342,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 firstVisiblePage,
                 visiblePagesCount,
                 dispatchedLocations,
-                zoom
+                zoom,
             )
         }
 
@@ -1428,7 +1425,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             visiblePageAreas,
             zoom,
             positionIsStable,
-            localPageLayoutManager.layingOutPages
+            localPageLayoutManager.layingOutPages,
         )
     }
 
@@ -1442,7 +1439,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             zoom,
             positionIsStable,
             visiblePageArea,
-            localPageLayoutManager.layingOutPages
+            localPageLayoutManager.layingOutPages,
         )
         // Learning the dimensions of a page can change our understanding of the content that's in
         // the viewport
@@ -1788,7 +1785,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             e1: MotionEvent?,
             e2: MotionEvent,
             velocityX: Float,
-            velocityY: Float
+            velocityY: Float,
         ): Boolean {
             // Assume a fling in a roughly vertical direction was meant to be exactly vertical.
             val myVelocityX =
@@ -1820,7 +1817,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             val touchPoint =
                 pageLayoutManager.getPdfPointAt(
                     PointF(toContentX(e.x), toContentY(e.y)),
-                    getVisibleAreaInContentCoords()
+                    getVisibleAreaInContentCoords(),
                 ) ?: return super.onLongPress(e)
 
             selectionStateManager?.maybeSelectWordAtPoint(touchPoint)
@@ -1867,7 +1864,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                                 newState = GESTURE_STATE_IDLE
                             )
                             maybeUpdatePageVisibility()
-                        }
+                        },
                     )
 
                     start()
@@ -1893,7 +1890,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             val touchPoint =
                 pageLayoutManager.getPdfPointAt(
                     PointF(toContentX(e.x), toContentY(e.y)),
-                    getVisibleAreaInContentCoords()
+                    getVisibleAreaInContentCoords(),
                 ) ?: return super.onSingleTapConfirmed(e)
 
             pageManager?.getLinkAtTapPoint(touchPoint)?.let { links ->
@@ -1905,7 +1902,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         private fun handleGotoLinks(
             links: PdfDocument.PdfPageLinks,
-            pdfCoordinates: PointF
+            pdfCoordinates: PointF,
         ): Boolean {
             links.gotoLinks.forEach { gotoLink ->
                 if (gotoLink.bounds.any { it.contains(pdfCoordinates.x, pdfCoordinates.y) }) {
@@ -1915,8 +1912,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                             pagePoint =
                                 PointF(
                                     gotoLink.destination.xCoordinate,
-                                    gotoLink.destination.yCoordinate
-                                )
+                                    gotoLink.destination.yCoordinate,
+                                ),
                         )
 
                     scrollToPosition(destination)
@@ -1928,7 +1925,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         private fun handleExternalLinks(
             links: PdfDocument.PdfPageLinks,
-            pdfCoordinates: PointF
+            pdfCoordinates: PointF,
         ): Boolean {
             links.externalLinks.forEach { externalLink ->
                 if (externalLink.bounds.any { it.contains(pdfCoordinates.x, pdfCoordinates.y) }) {
@@ -2001,10 +1998,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             )
 
         private val ANIMATED_GESTURES =
-            setOf(
-                GestureTracker.Gesture.FLING,
-                GestureTracker.Gesture.DOUBLE_TAP,
-            )
+            setOf(GestureTracker.Gesture.FLING, GestureTracker.Gesture.DOUBLE_TAP)
 
         private val VALID_GESTURE_STATES =
             setOf(GESTURE_STATE_IDLE, GESTURE_STATE_INTERACTING, GESTURE_STATE_SETTLING)

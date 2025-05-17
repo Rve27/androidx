@@ -64,13 +64,11 @@ class FocusMeteringDeviceTest(
     private val selectorName: String,
     private val cameraSelector: CameraSelector,
     private val implName: String,
-    private val cameraXConfig: CameraXConfig
+    private val cameraXConfig: CameraXConfig,
 ) {
     @get:Rule
     val cameraPipeConfigTestRule =
-        CameraPipeConfigTestRule(
-            active = implName == CameraPipeConfig::class.simpleName,
-        )
+        CameraPipeConfigTestRule(active = implName == CameraPipeConfig::class.simpleName)
 
     @get:Rule
     val cameraRule =
@@ -89,26 +87,26 @@ class FocusMeteringDeviceTest(
                     "front",
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     Camera2Config::class.simpleName,
-                    Camera2Config.defaultConfig()
+                    Camera2Config.defaultConfig(),
                 ),
                 arrayOf(
                     "front",
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     CameraPipeConfig::class.simpleName,
-                    CameraPipeConfig.defaultConfig()
+                    CameraPipeConfig.defaultConfig(),
                 ),
                 arrayOf(
                     "back",
                     CameraSelector.DEFAULT_BACK_CAMERA,
                     Camera2Config::class.simpleName,
-                    Camera2Config.defaultConfig()
+                    Camera2Config.defaultConfig(),
                 ),
                 arrayOf(
                     "back",
                     CameraSelector.DEFAULT_BACK_CAMERA,
                     CameraPipeConfig::class.simpleName,
-                    CameraPipeConfig.defaultConfig()
-                )
+                    CameraPipeConfig.defaultConfig(),
+                ),
             )
     }
 
@@ -134,7 +132,7 @@ class FocusMeteringDeviceTest(
                 cameraProvider.bindToLifecycle(
                     fakeLifecycleOwner,
                     cameraSelector,
-                    ImageCapture.Builder().build()
+                    ImageCapture.Builder().build(),
                 )
         }
     }
@@ -151,7 +149,7 @@ class FocusMeteringDeviceTest(
         assumeThat(
             "No AF/AE/AWB region available on this device!",
             hasMeteringRegion(cameraSelector),
-            equalTo(true)
+            equalTo(true),
         )
 
         val focusMeteringAction = FocusMeteringAction.Builder(validMeteringPoint).build()
@@ -175,7 +173,7 @@ class FocusMeteringDeviceTest(
         assumeThat(
             "No AF/AE/AWB region available on this device!",
             hasMeteringRegion(cameraSelector),
-            equalTo(true)
+            equalTo(true),
         )
 
         val focusMeteringAction = FocusMeteringAction.Builder(validMeteringPoint).build()
@@ -195,7 +193,7 @@ class FocusMeteringDeviceTest(
         assumeThat(
             "No AF/AE/AWB region available on this device!",
             hasMeteringRegion(cameraSelector),
-            equalTo(true)
+            equalTo(true),
         )
 
         val focusMeteringAction = FocusMeteringAction.Builder(validMeteringPoint).build()
@@ -203,7 +201,7 @@ class FocusMeteringDeviceTest(
         assumeThat(
             "FocusMeteringAction not supported!",
             camera.cameraInfo.isFocusMeteringSupported(focusMeteringAction),
-            equalTo(true)
+            equalTo(true),
         )
 
         val resultFuture = camera.cameraControl.startFocusAndMetering(focusMeteringAction)
@@ -218,7 +216,7 @@ class FocusMeteringDeviceTest(
         assumeThat(
             "FocusMeteringAction supported!",
             camera.cameraInfo.isFocusMeteringSupported(focusMeteringAction),
-            equalTo(false)
+            equalTo(false),
         )
 
         val resultFuture = camera.cameraControl.startFocusAndMetering(focusMeteringAction)
@@ -241,7 +239,7 @@ class FocusMeteringDeviceTest(
         assumeThat(
             "No AE region available on this device!",
             hasMeteringRegion(cameraSelector, FLAG_AE),
-            equalTo(true)
+            equalTo(true),
         )
 
         val action = FocusMeteringAction.Builder(validMeteringPoint, FLAG_AE).build()
@@ -255,7 +253,7 @@ class FocusMeteringDeviceTest(
         assumeThat(
             "No AWB region available on this device!",
             hasMeteringRegion(cameraSelector, FLAG_AWB),
-            equalTo(true)
+            equalTo(true),
         )
 
         val action = FocusMeteringAction.Builder(validMeteringPoint, FLAG_AWB).build()
@@ -269,7 +267,7 @@ class FocusMeteringDeviceTest(
         assumeThat(
             "No AE/AWB region available on this device!",
             hasMeteringRegion(cameraSelector, FLAG_AE or FLAG_AWB),
-            equalTo(true)
+            equalTo(true),
         )
 
         val action = FocusMeteringAction.Builder(validMeteringPoint, FLAG_AE or FLAG_AWB).build()
@@ -283,7 +281,7 @@ class FocusMeteringDeviceTest(
         assumeThat(
             "No AF/AE/AWB region available on this device!",
             hasMeteringRegion(cameraSelector),
-            equalTo(true)
+            equalTo(true),
         )
 
         val factory = SurfaceOrientedMeteringPointFactory(1f, 1f)
@@ -312,12 +310,12 @@ class FocusMeteringDeviceTest(
         Assume.assumeTrue(
             "Not CameraX lab environment," +
                 " or lensFacing:${cameraSelector.lensFacing!!} camera is not enabled",
-            isLensFacingEnabledInLabTest(lensFacing = cameraSelector.lensFacing!!)
+            isLensFacingEnabledInLabTest(lensFacing = cameraSelector.lensFacing!!),
         )
 
         Assume.assumeTrue(
             "No AF/AE/AWB region available on this device!",
-            hasMeteringRegion(cameraSelector)
+            hasMeteringRegion(cameraSelector),
         )
 
         val focusMeteringAction =
@@ -335,12 +333,12 @@ class FocusMeteringDeviceTest(
         Assume.assumeTrue(
             "Not CameraX lab environment," +
                 " or lensFacing:${cameraSelector.lensFacing!!} camera is not enabled",
-            isLensFacingEnabledInLabTest(lensFacing = cameraSelector.lensFacing!!)
+            isLensFacingEnabledInLabTest(lensFacing = cameraSelector.lensFacing!!),
         )
 
         Assume.assumeTrue(
             "No AF region available on this device!",
-            hasMeteringRegion(cameraSelector, FLAG_AF)
+            hasMeteringRegion(cameraSelector, FLAG_AF),
         )
 
         val focusMeteringAction =
@@ -358,12 +356,12 @@ class FocusMeteringDeviceTest(
         Assume.assumeTrue(
             "Not CameraX lab environment," +
                 " or lensFacing:${cameraSelector.lensFacing!!} camera is not enabled",
-            isLensFacingEnabledInLabTest(lensFacing = cameraSelector.lensFacing!!)
+            isLensFacingEnabledInLabTest(lensFacing = cameraSelector.lensFacing!!),
         )
 
         Assume.assumeTrue(
             "No AE/AWB region available on this device!",
-            hasMeteringRegion(cameraSelector, FLAG_AE or FLAG_AWB)
+            hasMeteringRegion(cameraSelector, FLAG_AE or FLAG_AWB),
         )
 
         val focusMeteringAction =
@@ -378,7 +376,7 @@ class FocusMeteringDeviceTest(
 
     private fun hasMeteringRegion(
         selector: CameraSelector,
-        @FocusMeteringAction.MeteringMode flags: Int = FLAG_AF or FLAG_AE or FLAG_AWB
+        @FocusMeteringAction.MeteringMode flags: Int = FLAG_AF or FLAG_AE or FLAG_AWB,
     ): Boolean {
         return try {
             val cameraCharacteristics = CameraUtil.getCameraCharacteristics(selector.lensFacing!!)

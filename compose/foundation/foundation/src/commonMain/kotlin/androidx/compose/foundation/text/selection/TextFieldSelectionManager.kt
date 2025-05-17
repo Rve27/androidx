@@ -210,7 +210,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                                 localCoordinates = localCoordinates,
                                 destinationCoordinates = destinationCoordinates,
                             )
-                        }
+                        },
                     )
 
     /** [TextDragObserver] for long press and drag to select in TextField. */
@@ -244,7 +244,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                         val newValue =
                             createTextFieldValue(
                                 annotatedString = value.annotatedString,
-                                selection = TextRange(offset, offset)
+                                selection = TextRange(offset, offset),
                             )
 
                         enterSelectionMode(showFloatingToolbar = false)
@@ -324,12 +324,12 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                             dragBeginOffsetInText
                                 ?: layoutResult.getOffsetForPosition(
                                     position = dragBeginPosition,
-                                    coerceInVisibleBounds = false
+                                    coerceInVisibleBounds = false,
                                 )
                         val endOffset =
                             layoutResult.getOffsetForPosition(
                                 position = currentDragPosition!!,
-                                coerceInVisibleBounds = false
+                                coerceInVisibleBounds = false,
                             )
 
                         if (dragBeginOffsetInText == null && startOffset == endOffset) {
@@ -571,7 +571,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                     onValueChange(
                         createTextFieldValue(
                             annotatedString = value.annotatedString,
-                            selection = newSelection
+                            selection = newSelection,
                         )
                     )
                 }
@@ -702,7 +702,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
             val newValue =
                 createTextFieldValue(
                     annotatedString = value.annotatedString,
-                    selection = TextRange(newCursorOffset, newCursorOffset)
+                    selection = TextRange(newCursorOffset, newCursorOffset),
                 )
             onValueChange(newValue)
             setHandleState(None)
@@ -729,7 +729,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
             val newValue =
                 createTextFieldValue(
                     annotatedString = newText,
-                    selection = TextRange(newCursorOffset, newCursorOffset)
+                    selection = TextRange(newCursorOffset, newCursorOffset),
                 )
             onValueChange(newValue)
             setHandleState(None)
@@ -758,7 +758,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
             val newValue =
                 createTextFieldValue(
                     annotatedString = newText,
-                    selection = TextRange(newCursorOffset, newCursorOffset)
+                    selection = TextRange(newCursorOffset, newCursorOffset),
                 )
             onValueChange(newValue)
             setHandleState(None)
@@ -770,7 +770,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
         val newValue =
             createTextFieldValue(
                 annotatedString = value.annotatedString,
-                selection = TextRange(0, value.text.length)
+                selection = TextRange(0, value.text.length),
             )
         onValueChange(newValue)
         oldValue = oldValue.copy(selection = newValue.selection)
@@ -795,7 +795,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
             textLayoutResult = textLayoutResult,
             offset = offsetMapping.originalToTransformed(offset),
             isStart = isStartHandle,
-            areHandlesCrossed = value.selection.reversed
+            areHandlesCrossed = value.selection.reversed,
         )
     }
 
@@ -891,7 +891,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                     onPasteRequested = paste,
                     onCutRequested = cut,
                     onSelectAllRequested = selectAll,
-                    onAutofillRequested = autofill
+                    onAutofillRequested = autofill,
                 )
             }
         }
@@ -964,7 +964,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                         ?.localToRoot(
                             Offset(
                                 0f,
-                                it.layoutResult?.value?.getCursorRect(transformedStart)?.top ?: 0f
+                                it.layoutResult?.value?.getCursorRect(transformedStart)?.top ?: 0f,
                             )
                         )
                         ?.y ?: 0f
@@ -974,7 +974,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                         ?.localToRoot(
                             Offset(
                                 x = 0f,
-                                y = it.layoutResult?.value?.getCursorRect(transformedEnd)?.top ?: 0f
+                                y = it.layoutResult?.value?.getCursorRect(transformedEnd)?.top ?: 0f,
                             )
                         )
                         ?.y ?: 0f
@@ -1015,13 +1015,13 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
         val previousTransformedSelection =
             TextRange(
                 offsetMapping.originalToTransformed(value.selection.start),
-                offsetMapping.originalToTransformed(value.selection.end)
+                offsetMapping.originalToTransformed(value.selection.end),
             )
 
         val currentOffset =
             layoutResult.getOffsetForPosition(
                 position = currentPosition,
-                coerceInVisibleBounds = false
+                coerceInVisibleBounds = false,
             )
 
         val rawStartHandleOffset =
@@ -1064,7 +1064,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
         val newSelection =
             TextRange(
                 start = offsetMapping.transformedToOriginal(newTransformedSelection.start.offset),
-                end = offsetMapping.transformedToOriginal(newTransformedSelection.end.offset)
+                end = offsetMapping.transformedToOriginal(newTransformedSelection.end.offset),
             )
 
         if (newSelection == value.selection) return value.selection
@@ -1112,7 +1112,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
 
     private fun createTextFieldValue(
         annotatedString: AnnotatedString,
-        selection: TextRange
+        selection: TextRange,
     ): TextFieldValue {
         return TextFieldValue(annotatedString = annotatedString, selection = selection)
     }
@@ -1122,7 +1122,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
 internal fun TextFieldSelectionHandle(
     isStartHandle: Boolean,
     direction: ResolvedTextDirection,
-    manager: TextFieldSelectionManager
+    manager: TextFieldSelectionManager,
 ) {
     val observer = remember(isStartHandle, manager) { manager.handleDragObserver(isStartHandle) }
 
@@ -1161,7 +1161,7 @@ internal expect fun Modifier.textFieldMagnifier(manager: TextFieldSelectionManag
 /** @return the location of the magnifier relative to the inner text field coordinates */
 internal fun calculateSelectionMagnifierCenterAndroid(
     manager: TextFieldSelectionManager,
-    magnifierSize: IntSize
+    magnifierSize: IntSize,
 ): Offset {
     // state read of currentDragPosition so that we always recompose on drag position changes
     val localDragPosition = manager.currentDragPosition ?: return Offset.Unspecified

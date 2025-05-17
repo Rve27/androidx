@@ -114,7 +114,7 @@ class LevelIndicatorTest {
             // Show level = 100 so that the indicator color is shown
             StepperLevelIndicator(
                 value = 100f,
-                colors = LevelIndicatorDefaults.colors(indicatorColor = customColor)
+                colors = LevelIndicatorDefaults.colors(indicatorColor = customColor),
             )
         }
 
@@ -130,7 +130,7 @@ class LevelIndicatorTest {
             LevelIndicator(
                 value = { 1f },
                 colors = LevelIndicatorDefaults.colors(indicatorColor = customColor),
-                modifier = Modifier.testTag(TEST_TAG)
+                modifier = Modifier.testTag(TEST_TAG),
             )
         }
 
@@ -145,7 +145,7 @@ class LevelIndicatorTest {
             // Show level = 0 so that the track color is shown
             StepperLevelIndicator(
                 value = 0f,
-                colors = LevelIndicatorDefaults.colors(trackColor = customColor)
+                colors = LevelIndicatorDefaults.colors(trackColor = customColor),
             )
         }
 
@@ -161,7 +161,7 @@ class LevelIndicatorTest {
             LevelIndicator(
                 value = { 0f },
                 colors = LevelIndicatorDefaults.colors(trackColor = customColor),
-                modifier = Modifier.testTag(TEST_TAG)
+                modifier = Modifier.testTag(TEST_TAG),
             )
         }
 
@@ -182,7 +182,7 @@ class LevelIndicatorTest {
                 valueRange = valueRange,
                 modifier = Modifier.testTag(TEST_TAG).align(Alignment.CenterStart),
                 colors = colors,
-                enabled = enabled
+                enabled = enabled,
             )
         }
     }

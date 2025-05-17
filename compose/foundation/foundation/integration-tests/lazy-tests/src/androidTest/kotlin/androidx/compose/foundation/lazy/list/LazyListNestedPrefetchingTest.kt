@@ -55,14 +55,9 @@ class LazyListNestedPrefetchingTest(val config: Config) :
         @JvmStatic
         @Parameterized.Parameters(name = "{0}")
         fun initParameters(): Array<Any> =
-            arrayOf(
-                Config(Orientation.Vertical),
-                Config(Orientation.Horizontal),
-            )
+            arrayOf(Config(Orientation.Vertical), Config(Orientation.Horizontal))
 
-        class Config(
-            val orientation: Orientation,
-        ) {
+        class Config(val orientation: Orientation) {
             override fun toString() = "orientation=$orientation"
         }
 
@@ -180,7 +175,7 @@ class LazyListNestedPrefetchingTest(val config: Config) :
             state,
             createNestedLazyListState = {
                 LazyListState(prefetchStrategy = LazyListPrefetchStrategy(1))
-            }
+            },
         )
 
         val prefetchIndex = 2
@@ -216,7 +211,7 @@ class LazyListNestedPrefetchingTest(val config: Config) :
                 LazyListState(
                     prefetchStrategy = NestedPrefetchWithConstraintsStrategy(nestedConstraints)
                 )
-            }
+            },
         )
 
         val prefetchIndex = 2
@@ -275,7 +270,7 @@ class LazyListNestedPrefetchingTest(val config: Config) :
             createNestedLazyListState = {
                 LazyListState(
                     prefetchStrategy = LazyListPrefetchStrategy(1),
-                    firstVisibleItemIndex = 5
+                    firstVisibleItemIndex = 5,
                 )
             },
         )
@@ -347,12 +342,12 @@ class LazyListNestedPrefetchingTest(val config: Config) :
 
     private fun composeList(
         lazyListState: LazyListState,
-        createNestedLazyListState: (index: Int) -> LazyListState = { LazyListState() }
+        createNestedLazyListState: (index: Int) -> LazyListState = { LazyListState() },
     ) {
         rule.setContent {
             LazyColumnOrRow(
                 modifier = Modifier.mainAxisSize(itemsSizeDp * 1.5f),
-                state = lazyListState
+                state = lazyListState,
             ) {
                 items(100, contentType = { "NESTED_LIST" }) { index ->
                     TrackActiveNodesEffect(index)
@@ -403,7 +398,7 @@ class LazyListNestedPrefetchingTest(val config: Config) :
     @OptIn(ExperimentalFoundationApi::class)
     private class NestedPrefetchWithConstraintsStrategy(
         private val childConstraints: Constraints,
-        private val initialNestedPrefetchItemCount: Int = 2
+        private val initialNestedPrefetchItemCount: Int = 2,
     ) : LazyListPrefetchStrategy {
         override fun LazyListPrefetchScope.onScroll(delta: Float, layoutInfo: LazyListLayoutInfo) {}
 

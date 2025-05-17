@@ -35,7 +35,7 @@ import androidx.camera.core.internal.CameraUseCaseAdapter.isVideoCapture
  */
 public enum class UseCaseType(
     public val surfaceClass: Class<*>?,
-    public val defaultImageFormat: Int
+    public val defaultImageFormat: Int,
 ) {
     // TODO: b/400852239 - Check if the surface class types are appropriate
 

@@ -287,7 +287,7 @@ class FocusViewInteropTest {
                                 }
                             },
                             onReset = {},
-                            onRelease = {}
+                            onRelease = {},
                         ) { et ->
                             et.setText("$index")
                             if (index == 2) {
@@ -357,7 +357,7 @@ class FocusViewInteropTest {
                             bottomEditText = it
                         }
                     }
-                }
+                },
             )
         }
 
@@ -410,7 +410,7 @@ class FocusViewInteropTest {
                             bottomEditText = it
                         }
                     }
-                }
+                },
             )
         }
 
@@ -464,7 +464,7 @@ class FocusViewInteropTest {
                             bottomEditText = it
                         }
                     }
-                }
+                },
             )
         }
 
@@ -515,7 +515,7 @@ class FocusViewInteropTest {
                             bottomEditText = it
                         }
                     }
-                }
+                },
             )
         }
 
@@ -563,7 +563,7 @@ class FocusViewInteropTest {
                             bottomEditText = it
                         }
                     }
-                }
+                },
             )
         }
 
@@ -628,7 +628,7 @@ class FocusViewInteropTest {
                             linearLayout.addView(it)
                         }
                     }
-                }
+                },
             )
         }
         rule.onNodeWithTag("button1").requestFocus()
@@ -693,7 +693,7 @@ class FocusViewInteropTest {
                             linearLayout.addView(it)
                         }
                     }
-                }
+                },
             )
         }
         rule.onNodeWithTag("button1").requestFocus()
@@ -725,7 +725,7 @@ class FocusViewInteropTest {
                     onClick = {},
                     Modifier.testTag("button")
                         .focusProperties { canFocus = true }
-                        .focusRequester(composeButton)
+                        .focusRequester(composeButton),
                 ) {
                     Text("Compose Button")
                 }
@@ -793,7 +793,7 @@ class FocusViewInteropTest {
                                         2 -> buttonView3 = this
                                     }
                                 }
-                            }
+                            },
                         )
                     }
                 }

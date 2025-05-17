@@ -72,7 +72,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun rememberLazyStaggeredGridState(
     initialFirstVisibleItemIndex: Int = 0,
-    initialFirstVisibleItemScrollOffset: Int = 0
+    initialFirstVisibleItemScrollOffset: Int = 0,
 ): LazyStaggeredGridState =
     rememberSaveable(saver = LazyStaggeredGridState.Saver) {
         LazyStaggeredGridState(initialFirstVisibleItemIndex, initialFirstVisibleItemScrollOffset)
@@ -88,7 +88,7 @@ class LazyStaggeredGridState
 internal constructor(
     initialFirstVisibleItems: IntArray,
     initialFirstVisibleOffsets: IntArray,
-    prefetchScheduler: PrefetchScheduler?
+    prefetchScheduler: PrefetchScheduler?,
 ) : ScrollableState {
     /**
      * @param initialFirstVisibleItemIndex initial value for [firstVisibleItemIndex]
@@ -96,11 +96,11 @@ internal constructor(
      */
     constructor(
         initialFirstVisibleItemIndex: Int = 0,
-        initialFirstVisibleItemOffset: Int = 0
+        initialFirstVisibleItemOffset: Int = 0,
     ) : this(
         intArrayOf(initialFirstVisibleItemIndex),
         intArrayOf(initialFirstVisibleItemOffset),
-        null
+        null,
     )
 
     internal var hasLookaheadOccurred: Boolean = false
@@ -134,7 +134,7 @@ internal constructor(
         LazyStaggeredGridScrollPosition(
             initialFirstVisibleItems,
             initialFirstVisibleOffsets,
-            ::fillNearestIndices
+            ::fillNearestIndices,
         )
 
     /**
@@ -246,7 +246,7 @@ internal constructor(
      */
     override suspend fun scroll(
         scrollPriority: MutatePriority,
-        block: suspend ScrollScope.() -> Unit
+        block: suspend ScrollScope.() -> Unit,
     ) {
         awaitLayoutModifier.waitForFirstLayout()
         scrollableState.scroll(scrollPriority, block)
@@ -278,7 +278,7 @@ internal constructor(
             var scrolledLayoutInfo =
                 layoutInfoState.value.copyWithScrollDeltaWithoutRemeasure(
                     delta = intDelta,
-                    updateAnimations = !hasLookaheadOccurred
+                    updateAnimations = !hasLookaheadOccurred,
                 )
             if (scrolledLayoutInfo != null && this.approachLayoutInfo != null) {
                 // if we were able to scroll the lookahead layout info without remeasure, lets
@@ -286,7 +286,7 @@ internal constructor(
                 val scrolledApproachLayoutInfo =
                     approachLayoutInfo?.copyWithScrollDeltaWithoutRemeasure(
                         delta = intDelta,
-                        updateAnimations = true
+                        updateAnimations = true,
                     )
                 if (scrolledApproachLayoutInfo != null) {
                     // we can apply scroll delta for both phases without remeasure
@@ -300,7 +300,7 @@ internal constructor(
                 applyMeasureResult(
                     result = scrolledLayoutInfo,
                     isLookingAhead = hasLookaheadOccurred,
-                    visibleItemsStayedTheSame = true
+                    visibleItemsStayedTheSame = true,
                 )
                 // we don't need to remeasure, so we only trigger re-placement:
                 placementScopeInvalidator.invalidateScope()
@@ -339,7 +339,7 @@ internal constructor(
     suspend fun scrollToItem(
         /* @IntRange(from = 0) */
         index: Int,
-        scrollOffset: Int = 0
+        scrollOffset: Int = 0,
     ) {
         scroll { snapToItemInternal(index, scrollOffset, forceRemeasure = true) }
     }
@@ -355,7 +355,7 @@ internal constructor(
     suspend fun animateScrollToItem(
         /* @IntRange(from = 0) */
         index: Int,
-        scrollOffset: Int = 0
+        scrollOffset: Int = 0,
     ) {
         val layoutInfo = layoutInfoState.value
         val numOfItemsToTeleport = 100 * layoutInfo.slots.sizes.size
@@ -433,7 +433,7 @@ internal constructor(
     /** Maintain scroll position for item based on custom key if its index has changed. */
     internal fun updateScrollPositionIfTheFirstItemWasMoved(
         itemProvider: LazyLayoutItemProvider,
-        firstItemIndex: IntArray
+        firstItemIndex: IntArray,
     ): IntArray =
         scrollPosition.updateScrollPositionIfTheFirstItemWasMoved(itemProvider, firstItemIndex)
 
@@ -442,7 +442,7 @@ internal constructor(
     /** Start prefetch of the items based on provided delta */
     private fun notifyPrefetch(
         delta: Float,
-        info: LazyStaggeredGridMeasureResult = layoutInfoState.value
+        info: LazyStaggeredGridMeasureResult = layoutInfoState.value,
     ) {
         if (prefetchingEnabled && info.visibleItemsInfo.isNotEmpty()) {
             val scrollingForward = delta < 0
@@ -511,7 +511,7 @@ internal constructor(
                 currentItemPrefetchHandles[targetIndex] =
                     prefetchState.schedulePrecompositionAndPremeasure(
                         index = targetIndex,
-                        constraints = constraints
+                        constraints = constraints,
                     )
             }
 
@@ -545,7 +545,7 @@ internal constructor(
     internal fun applyMeasureResult(
         result: LazyStaggeredGridMeasureResult,
         isLookingAhead: Boolean,
-        visibleItemsStayedTheSame: Boolean = false
+        visibleItemsStayedTheSame: Boolean = false,
     ) {
         if (!isLookingAhead && hasLookaheadOccurred) {
             // If there was already a lookahead pass, record this result as Approach result
@@ -570,7 +570,7 @@ internal constructor(
                 _lazyLayoutScrollDeltaBetweenPasses.updateScrollDeltaForApproach(
                     result.scrollBackAmount,
                     result.density,
-                    result.coroutineScope
+                    result.coroutineScope,
                 )
             }
             measurePassCount++
@@ -635,7 +635,7 @@ internal constructor(
                 save = { state ->
                     listOf(state.scrollPosition.indices, state.scrollPosition.scrollOffsets)
                 },
-                restore = { LazyStaggeredGridState(it[0], it[1], null) }
+                restore = { LazyStaggeredGridState(it[0], it[1], null) },
             )
     }
 }

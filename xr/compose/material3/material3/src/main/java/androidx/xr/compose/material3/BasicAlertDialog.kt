@@ -45,7 +45,7 @@ import androidx.xr.compose.spatial.SpatialDialogProperties
 public fun BasicAlertDialog(
     onDismissRequest: () -> Unit,
     properties: SpatialDialogProperties = SpatialDialogProperties(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     SpatialDialog(onDismissRequest = onDismissRequest, properties = properties, content = content)
 }
@@ -66,9 +66,9 @@ internal object XrBasicAlertDialogOverride : BasicAlertDialogOverride {
                 SpatialDialogProperties(
                     dismissOnBackPress = properties.dismissOnBackPress,
                     dismissOnClickOutside = properties.dismissOnClickOutside,
-                    usePlatformDefaultWidth = properties.usePlatformDefaultWidth
+                    usePlatformDefaultWidth = properties.usePlatformDefaultWidth,
                 ),
-            content = content
+            content = content,
         )
     }
 }

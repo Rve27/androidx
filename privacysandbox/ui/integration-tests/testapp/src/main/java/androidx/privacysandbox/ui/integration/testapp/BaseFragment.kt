@@ -116,7 +116,7 @@ abstract class BaseFragment : Fragment() {
         @AdFormat adFormat: Int,
         @AdType adType: Int,
         @MediationOption mediationOption: Int,
-        drawViewabilityLayer: Boolean
+        drawViewabilityLayer: Boolean,
     ) {}
 
     fun loadAd(
@@ -125,7 +125,7 @@ abstract class BaseFragment : Fragment() {
         @AdType adType: Int,
         @MediationOption mediationOption: Int,
         drawViewabilityLayer: Boolean,
-        waitInsideOnDraw: Boolean = false
+        waitInsideOnDraw: Boolean = false,
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             val sdkBundle =
@@ -134,7 +134,7 @@ abstract class BaseFragment : Fragment() {
                     adType,
                     mediationOption,
                     waitInsideOnDraw,
-                    drawViewabilityLayer
+                    drawViewabilityLayer,
                 )
             adHolder.populateAd(sdkBundle, adFormat)
         }
@@ -146,7 +146,7 @@ abstract class BaseFragment : Fragment() {
         @MediationOption mediationOption: Int,
         sandboxedSdkView: SandboxedSdkView,
         drawViewabilityLayer: Boolean,
-        waitInsideOnDraw: Boolean = false
+        waitInsideOnDraw: Boolean = false,
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             val sdkBundle =
@@ -155,7 +155,7 @@ abstract class BaseFragment : Fragment() {
                     adType,
                     mediationOption,
                     waitInsideOnDraw,
-                    drawViewabilityLayer
+                    drawViewabilityLayer,
                 )
             sandboxedSdkView.setAdapter(SandboxedUiAdapterFactory.createFromCoreLibInfo(sdkBundle))
             sandboxedSdkView.orderProviderUiAboveClientUi(providerUiOnTop)

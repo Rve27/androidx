@@ -73,7 +73,7 @@ internal const val TEST_TAG = "test-item"
 
 fun ComposeContentTestRule.setContentWithTheme(
     modifier: Modifier = Modifier,
-    composable: @Composable BoxScope.() -> Unit
+    composable: @Composable BoxScope.() -> Unit,
 ) {
     setContent { MaterialTheme { Box(modifier = modifier, content = composable) } }
 }
@@ -82,7 +82,7 @@ fun ComposeContentTestRule.setContentWithThemeForSizeAssertions(
     parentMaxWidth: Dp = BigTestMaxWidth,
     parentMaxHeight: Dp = BigTestMaxHeight,
     useUnmergedTree: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ): SemanticsNodeInteraction {
     setContent {
         MaterialTheme {
@@ -126,7 +126,7 @@ fun TestImage(iconLabel: String = "TestIcon", modifier: Modifier = Modifier) {
         iconLabel,
         modifier = modifier.fillMaxSize().testTag(iconLabel),
         contentScale = ContentScale.Fit,
-        alignment = Alignment.Center
+        alignment = Alignment.Center,
     )
 }
 
@@ -136,7 +136,7 @@ fun TestIcon(modifier: Modifier = Modifier, iconLabel: String = "TestIcon") {
     Icon(
         imageVector = testImage,
         contentDescription = iconLabel,
-        modifier = modifier.testTag(iconLabel)
+        modifier = modifier.testTag(iconLabel),
     )
 }
 
@@ -161,7 +161,7 @@ fun ImageBitmap.assertContainsColor(expectedColor: Color, minPercent: Float = 50
 /** Checks that [expectedColor] is in the percentage [range] of an [ImageBitmap] color histogram */
 fun ImageBitmap.assertColorInPercentageRange(
     expectedColor: Color,
-    range: ClosedFloatingPointRange<Float> = 50.0f..100.0f
+    range: ClosedFloatingPointRange<Float> = 50.0f..100.0f,
 ) {
     val histogram = histogram()
     if (!histogram.containsKey(expectedColor)) {
@@ -212,7 +212,7 @@ internal fun ComposeContentTestRule.verifyScreenshot(
     methodName: String,
     testTag: String = TEST_TAG,
     layoutDirection: LayoutDirection = LayoutDirection.Ltr,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     setContentWithTheme {
         CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) { content() }
@@ -228,7 +228,7 @@ internal fun ComposeContentTestRule.verifyScreenshot(
  */
 internal fun SemanticsNodeInteraction.assertHeightIsEqualTo(
     expectedHeight: Dp,
-    tolerance: Dp = Dp(0.5f)
+    tolerance: Dp = Dp(0.5f),
 ): SemanticsNodeInteraction {
     return withUnclippedBoundsInRoot {
         it.height.assertIsEqualTo(expectedHeight, "height", tolerance)

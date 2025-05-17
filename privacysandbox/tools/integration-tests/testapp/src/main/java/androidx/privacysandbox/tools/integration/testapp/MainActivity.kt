@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             try {
                 sandboxManagerCompat.loadSdk(
                     "androidx.privacysandbox.tools.integration.sdk",
-                    Bundle.EMPTY
+                    Bundle.EMPTY,
                 )
             } catch (e: LoadSdkCompatException) {
                 sandboxManagerCompat.getSandboxedSdks().first()

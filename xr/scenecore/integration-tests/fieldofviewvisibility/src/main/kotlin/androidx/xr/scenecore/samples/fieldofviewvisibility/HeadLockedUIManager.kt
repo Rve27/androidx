@@ -117,7 +117,7 @@ class HeadLockedUIManager(session: Session, headLockedPanelView: View) {
                 ) {
                     Text(
                         text = (if (modelIsHidden) "Show Panel" else "Hide Panel"),
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
                     )
                 }
                 // Toggle headlocked UI

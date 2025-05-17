@@ -22,7 +22,7 @@ object SemanticsPropertiesAndroid {
         SemanticsPropertyKey<Boolean>(
             name = "TestTagsAsResourceId",
             isImportantForAccessibility = false,
-            mergePolicy = { parentValue, _ -> parentValue }
+            mergePolicy = { parentValue, _ -> parentValue },
         )
 
     /** @see SemanticsPropertyReceiver.accessibilityClassName */

@@ -64,11 +64,11 @@ class SurfaceScreenshotTest() {
                         border =
                             BorderStroke(
                                 5.dp,
-                                Brush.linearGradient(0f to Color.Blue, 1f to Color.Green)
-                            )
+                                Brush.linearGradient(0f to Color.Blue, 1f to Color.Green),
+                            ),
                     )
                     .padding(horizontal = 24.dp, vertical = 20.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text("!")
             }

@@ -41,7 +41,7 @@ fun calculatePosture(foldingFeatures: List<FoldingFeature>): Posture {
                 isFlat = it.state == FoldingFeature.State.FLAT,
                 isVertical = it.orientation == FoldingFeature.Orientation.VERTICAL,
                 isSeparating = it.isSeparating,
-                isOccluding = it.occlusionType == FoldingFeature.OcclusionType.FULL
+                isOccluding = it.occlusionType == FoldingFeature.OcclusionType.FULL,
             )
         )
     }

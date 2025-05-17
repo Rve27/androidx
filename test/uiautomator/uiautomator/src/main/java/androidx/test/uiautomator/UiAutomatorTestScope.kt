@@ -111,7 +111,7 @@ public open class UiAutomatorTestScope protected constructor() {
      */
     public fun <T> watchFor(
         watcher: ScopedUiWatcher<T>,
-        block: T.() -> (Unit)
+        block: T.() -> (Unit),
     ): WatcherRegistration {
         val id = watcher.toString()
 
@@ -219,10 +219,7 @@ public open class UiAutomatorTestScope protected constructor() {
         appPackageName: String = instrumentation.targetContext.packageName,
         timeoutMs: Long = 10000L,
     ): Boolean =
-        device.waitForAppToBeVisible(
-            appPackageName = appPackageName,
-            timeoutMs = timeoutMs,
-        )
+        device.waitForAppToBeVisible(appPackageName = appPackageName, timeoutMs = timeoutMs)
 
     /**
      * Types the given [text] string simulating key press through [Instrumentation.sendKeySync].
@@ -312,10 +309,8 @@ public open class UiAutomatorTestScope protected constructor() {
      * @param packageName the app package name of the activity to start.
      * @param activityName the name of the activity to start.
      */
-    public fun startActivity(
-        packageName: String,
-        activityName: String,
-    ): Unit = appManager.startActivity(packageName = packageName, activityName = activityName)
+    public fun startActivity(packageName: String, activityName: String): Unit =
+        appManager.startActivity(packageName = packageName, activityName = activityName)
 
     /**
      * Starts an activity with the given class.

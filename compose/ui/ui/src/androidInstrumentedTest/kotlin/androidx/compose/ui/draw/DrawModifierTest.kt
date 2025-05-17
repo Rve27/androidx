@@ -259,7 +259,7 @@ class DrawModifierTest {
                                 } else {
                                     LayoutDirection.Ltr
                                 }
-                        }
+                        },
                     ) {
                         Text(
                             modifier =
@@ -268,7 +268,7 @@ class DrawModifierTest {
                                     drawLatch.countDown()
                                     onDrawBehind { drawLayoutDirection = layoutDirection }
                                 },
-                            text = "Change Layout Direction"
+                            text = "Change Layout Direction",
                         )
                     }
                 }
@@ -307,7 +307,7 @@ class DrawModifierTest {
                                 } else {
                                     Density(2f, 2f)
                                 }
-                        }
+                        },
                     ) {
                         Text(
                             modifier =
@@ -318,7 +318,7 @@ class DrawModifierTest {
                                         drawLatch.countDown()
                                     }
                                 },
-                            text = "Change Layout Direction"
+                            text = "Change Layout Direction",
                         )
                     }
                 }
@@ -423,7 +423,7 @@ class DrawModifierTest {
                                             density = expectedDensity,
                                             layoutDirection = expectedLayoutDirection,
                                             size = expectedDrawSizePx!!,
-                                            block = block
+                                            block = block,
                                         )
                                         layer.colorFilter = ColorFilter.tint(tintColor)
                                         onDrawWithContent { drawLayer(layer) }
@@ -681,7 +681,7 @@ class DrawModifierTest {
                             } else {
                                 rectColor = Color.Blue
                             }
-                        }
+                        },
             ) {}
         }
 
@@ -778,7 +778,7 @@ class DrawModifierTest {
                                 drawPath(path, Color.Blue)
                             }
                         }
-                        .clickable { pathFillBounds = !pathFillBounds }
+                        .clickable { pathFillBounds = !pathFillBounds },
             ) {}
         }
 
@@ -833,7 +833,7 @@ class DrawModifierTest {
 
                 override fun MeasureScope.measure(
                     measurable: Measurable,
-                    constraints: Constraints
+                    constraints: Constraints,
                 ): MeasureResult {
                     val placeable = measurable.measure(Constraints.fixed(10, 10))
                     return layout(20, 20) { placeable.place(0, 0) }
@@ -880,7 +880,7 @@ class DrawModifierTest {
                             } else {
                                 size = startSize
                             }
-                        }
+                        },
             ) {}
         }
 
@@ -924,7 +924,7 @@ class DrawModifierTest {
                             realLayoutDirection = layoutDirection
                             drawLatch.countDown()
                             onDrawBehind {}
-                        }
+                        },
                 ) {}
             }
         }
@@ -960,7 +960,7 @@ class DrawModifierTest {
                         } else {
                             color.value = Color.Red
                         }
-                    }
+                    },
             ) {}
         }
 
@@ -1007,7 +1007,7 @@ class DrawModifierTest {
                             cacheBuildCount++
 
                             onDrawBehind { drawRect(color) }
-                        }
+                        },
                 )
 
                 Box(Modifier.testTag(clickTag).size(20.dp).clickable { flag.value = !flag.value })
@@ -1067,7 +1067,7 @@ class DrawModifierTest {
                                 drawRect(Color.Red, size = Size(size.width / 2, size.height))
                             }
                         }
-                        .background(Color.Blue)
+                        .background(Color.Blue),
             )
         }
 
@@ -1100,7 +1100,7 @@ class DrawModifierTest {
                                 drawRect(Color.Red, size = Size(size.width / 2, size.height))
                             }
                         }
-                        .background(Color.Blue)
+                        .background(Color.Blue),
             )
         }
 
@@ -1137,7 +1137,7 @@ class DrawModifierTest {
                                 drawRect(Color.Green, blendMode = BlendMode.Plus)
                             }
                         }
-                        .background(Color.Blue)
+                        .background(Color.Blue),
             )
         }
 

@@ -67,15 +67,12 @@ class SwipeToRevealScreenshotTest {
                         PrimaryActionButton(
                             onClick = {}, /* Empty for testing */
                             { Icon(Icons.Outlined.Close, contentDescription = "Clear") },
-                            { Text("Clear") }
+                            { Text("Clear") },
                         )
                     },
                     onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
-                    revealState =
-                        rememberRevealState(
-                            initialValue = RevealValue.RightRevealing,
-                        ),
+                    revealState = rememberRevealState(initialValue = RevealValue.RightRevealing),
                 ) {
                     Button({}, Modifier.fillMaxWidth()) {
                         Text("This text should be partially visible.")
@@ -94,7 +91,7 @@ class SwipeToRevealScreenshotTest {
                         PrimaryActionButton(
                             onClick = {}, /* Empty for testing */
                             { Icon(Icons.Outlined.Close, contentDescription = "Clear") },
-                            { Text("Clear") }
+                            { Text("Clear") },
                         )
                     },
                     onSwipePrimaryAction = {}, /* Empty for testing */
@@ -102,13 +99,10 @@ class SwipeToRevealScreenshotTest {
                     secondaryAction = {
                         SecondaryActionButton(
                             {}, /* Empty for testing */
-                            { Icon(Icons.Outlined.MoreVert, contentDescription = "More") }
+                            { Icon(Icons.Outlined.MoreVert, contentDescription = "More") },
                         )
                     },
-                    revealState =
-                        rememberRevealState(
-                            initialValue = RevealValue.RightRevealing,
-                        ),
+                    revealState = rememberRevealState(initialValue = RevealValue.RightRevealing),
                 ) {
                     Button({}, Modifier.fillMaxWidth()) {
                         Text("This text should be partially visible.")
@@ -127,7 +121,7 @@ class SwipeToRevealScreenshotTest {
                         PrimaryActionButton(
                             onClick = {}, /* Empty for testing */
                             {}, /* Empty for testing */
-                            {} /* Empty for testing */
+                            {}, /* Empty for testing */
                         )
                     },
                     onSwipePrimaryAction = {}, /* Empty for testing */
@@ -135,10 +129,7 @@ class SwipeToRevealScreenshotTest {
                     undoPrimaryAction = {
                         UndoActionButton({} /* Empty for testing */, { Text("Undo Primary") })
                     },
-                    revealState =
-                        rememberRevealState(
-                            initialValue = RevealValue.RightRevealed,
-                        ),
+                    revealState = rememberRevealState(initialValue = RevealValue.RightRevealed),
                 ) {
                     Button({}) { Text(/* Empty for testing */ "") }
                 }
@@ -155,7 +146,7 @@ class SwipeToRevealScreenshotTest {
                         PrimaryActionButton(
                             onClick = {}, /* Empty for testing */
                             {}, /* Empty for testing */
-                            {} /* Empty for testing */
+                            {}, /* Empty for testing */
                         )
                     },
                     onSwipePrimaryAction = {}, /* Empty for testing */
@@ -163,10 +154,7 @@ class SwipeToRevealScreenshotTest {
                     undoPrimaryAction = {
                         UndoActionButton({} /* Empty for testing */, { Text("Undo") })
                     },
-                    revealState =
-                        rememberRevealState(
-                            initialValue = RevealValue.RightRevealed,
-                        ),
+                    revealState = rememberRevealState(initialValue = RevealValue.RightRevealed),
                 ) {
                     Button({}) {
                         Text(
@@ -188,7 +176,7 @@ class SwipeToRevealScreenshotTest {
                         PrimaryActionButton(
                             onClick = {}, /* Empty for testing */
                             {}, /* Empty for testing */
-                            {} /* Empty for testing */
+                            {}, /* Empty for testing */
                         )
                     },
                     onSwipePrimaryAction = {}, /* Empty for testing */
@@ -200,13 +188,10 @@ class SwipeToRevealScreenshotTest {
                                 Text(
                                     "Undo Delete action with an extremely long label that should truncate."
                                 )
-                            }
+                            },
                         )
                     },
-                    revealState =
-                        rememberRevealState(
-                            initialValue = RevealValue.RightRevealed,
-                        ),
+                    revealState = rememberRevealState(initialValue = RevealValue.RightRevealed),
                 ) {
                     Button({}) { Text(/* Empty for testing */ "") }
                 }
@@ -223,7 +208,7 @@ class SwipeToRevealScreenshotTest {
                         PrimaryActionButton(
                             onClick = {}, /* Empty for testing */
                             {}, /* Empty for testing */
-                            {} /* Empty for testing */
+                            {}, /* Empty for testing */
                         )
                     },
                     onSwipePrimaryAction = {}, /* Empty for testing */
@@ -231,21 +216,17 @@ class SwipeToRevealScreenshotTest {
                     secondaryAction = {
                         SecondaryActionButton(
                             {}, /* Empty for testing */
-                            {} /* Empty for testing */
+                            {}, /* Empty for testing */
                         )
                     },
                     undoPrimaryAction = {
-                        UndoActionButton(
-                            {}, /* Empty for testing */
-                            {}, /* Empty for testing */
-                        )
+                        UndoActionButton({}, /* Empty for testing */ {} /* Empty for testing */)
                     },
                     undoSecondaryAction = { UndoActionButton({}, { Text("Undo Secondary") }) },
                     revealState =
-                        rememberRevealState(
-                                initialValue = RevealValue.RightRevealed,
-                            )
-                            .apply { lastActionType = RevealActionType.SecondaryAction },
+                        rememberRevealState(initialValue = RevealValue.RightRevealed).apply {
+                            lastActionType = RevealActionType.SecondaryAction
+                        },
                 ) {
                     Button({}) { Text(/* Empty for testing */ "") }
                 }
@@ -262,7 +243,7 @@ class SwipeToRevealScreenshotTest {
                         PrimaryActionButton(
                             onClick = {}, /* Empty for testing */
                             {}, /* Empty for testing */
-                            {} /* Empty for testing */
+                            {}, /* Empty for testing */
                         )
                     },
                     onSwipePrimaryAction = {}, /* Empty for testing */
@@ -270,14 +251,11 @@ class SwipeToRevealScreenshotTest {
                     secondaryAction = {
                         SecondaryActionButton(
                             {}, /* Empty for testing */
-                            {} /* Empty for testing */
+                            {}, /* Empty for testing */
                         )
                     },
                     undoPrimaryAction = {
-                        UndoActionButton(
-                            {}, /* Empty for testing */
-                            {}, /* Empty for testing */
-                        )
+                        UndoActionButton({}, /* Empty for testing */ {} /* Empty for testing */)
                     },
                     undoSecondaryAction = {
                         UndoActionButton(
@@ -286,14 +264,13 @@ class SwipeToRevealScreenshotTest {
                                 Text(
                                     "Undo Delete action with an extremely long label that should truncate."
                                 )
-                            }
+                            },
                         )
                     },
                     revealState =
-                        rememberRevealState(
-                                initialValue = RevealValue.RightRevealed,
-                            )
-                            .apply { lastActionType = RevealActionType.SecondaryAction },
+                        rememberRevealState(initialValue = RevealValue.RightRevealed).apply {
+                            lastActionType = RevealActionType.SecondaryAction
+                        },
                 ) {
                     Button({}) { Text(/* Empty for testing */ "") }
                 }
@@ -310,7 +287,7 @@ class SwipeToRevealScreenshotTest {
                         PrimaryActionButton(
                             onClick = {}, /* Empty for testing */
                             {}, /* Empty for testing */
-                            {} /* Empty for testing */
+                            {}, /* Empty for testing */
                         )
                     },
                     onSwipePrimaryAction = {}, /* Empty for testing */
@@ -339,10 +316,7 @@ class SwipeToRevealScreenshotTest {
                     },
                     onSwipePrimaryAction = {}, /* Empty for testing */
                     modifier = Modifier.testTag(TEST_TAG),
-                    revealState =
-                        rememberRevealState(
-                            initialValue = RevealValue.RightRevealing,
-                        ),
+                    revealState = rememberRevealState(initialValue = RevealValue.RightRevealing),
                 ) {
                     Card({}, Modifier.fillMaxWidth()) {
                         Text("This content should be partially visible.")
@@ -376,10 +350,7 @@ class SwipeToRevealScreenshotTest {
                             Modifier.height(SwipeToRevealDefaults.LargeActionButtonHeight),
                         )
                     },
-                    revealState =
-                        rememberRevealState(
-                            initialValue = RevealValue.RightRevealing,
-                        ),
+                    revealState = rememberRevealState(initialValue = RevealValue.RightRevealing),
                 ) {
                     Card({}, Modifier.fillMaxWidth()) {
                         Text("This content should be partially visible.")
@@ -398,7 +369,7 @@ class SwipeToRevealScreenshotTest {
                         PrimaryActionButton(
                             onClick = {}, /* Empty for testing */
                             { Icon(Icons.Outlined.Close, contentDescription = "Clear") },
-                            { Text("Clear") }
+                            { Text("Clear") },
                         )
                     },
                     onSwipePrimaryAction = {}, /* Empty for testing */
@@ -406,13 +377,10 @@ class SwipeToRevealScreenshotTest {
                     secondaryAction = {
                         SecondaryActionButton(
                             {}, /* Empty for testing */
-                            { Icon(Icons.Outlined.MoreVert, contentDescription = "More") }
+                            { Icon(Icons.Outlined.MoreVert, contentDescription = "More") },
                         )
                     },
-                    revealState =
-                        rememberRevealState(
-                            initialValue = RevealValue.LeftRevealing,
-                        ),
+                    revealState = rememberRevealState(initialValue = RevealValue.LeftRevealing),
                     revealDirection = Bidirectional,
                 ) {
                     Button({}, Modifier.fillMaxWidth()) {
@@ -451,7 +419,7 @@ class SwipeToRevealScreenshotTest {
     private fun verifyScreenshotAfterSwipe(
         screenSize: ScreenSize,
         goldenIdentifier: String,
-        swipeScreenPercent: Float
+        swipeScreenPercent: Float,
     ) {
         var screenWidthPx: Float? = null
         rule.setContentWithTheme {
@@ -464,7 +432,7 @@ class SwipeToRevealScreenshotTest {
                                 PrimaryActionButton(
                                     onClick = {}, /* Empty for testing */
                                     { Icon(Icons.Outlined.Close, contentDescription = "Clear") },
-                                    { Text("Clear") }
+                                    { Text("Clear") },
                                 )
                             },
                             onSwipePrimaryAction = {}, /* Empty for testing */
@@ -472,7 +440,7 @@ class SwipeToRevealScreenshotTest {
                             secondaryAction = {
                                 SecondaryActionButton(
                                     {},
-                                    { Icon(Icons.Outlined.MoreVert, contentDescription = "More") }
+                                    { Icon(Icons.Outlined.MoreVert, contentDescription = "More") },
                                 )
                             },
                         ) {
@@ -497,7 +465,7 @@ class SwipeToRevealScreenshotTest {
     private fun verifyScreenshotForSize(screenSize: ScreenSize, content: @Composable () -> Unit) {
         rule.verifyScreenshot(
             screenshotRule = screenshotRule,
-            methodName = testName.goldenIdentifier()
+            methodName = testName.goldenIdentifier(),
         ) {
             ScreenConfiguration(screenSize.size) { content() }
         }

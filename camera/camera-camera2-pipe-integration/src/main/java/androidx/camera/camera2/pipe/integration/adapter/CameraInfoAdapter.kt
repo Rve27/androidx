@@ -101,7 +101,7 @@ constructor(
     private val encoderProfilesProvider: EncoderProfilesProvider,
     private val streamConfigurationMapCompat: StreamConfigurationMapCompat,
     private val cameraFovInfo: CameraFovInfo,
-    private val streamSpecsCalculator: StreamSpecsCalculator
+    private val streamSpecsCalculator: StreamSpecsCalculator,
 ) : CameraInfoInternal, UnsafeWrapper {
     init {
         DeviceInfoLogger.logDeviceInfo(cameraProperties)
@@ -113,7 +113,7 @@ constructor(
             val cameraProperties =
                 CameraPipeCameraProperties(
                     CameraConfig(physicalCameraId),
-                    cameraProperties.metadata.awaitPhysicalMetadata(physicalCameraId)
+                    cameraProperties.metadata.awaitPhysicalMetadata(physicalCameraId),
                 )
             PhysicalCameraInfoAdapter(cameraProperties)
         }
@@ -179,7 +179,7 @@ constructor(
         return CameraOrientationUtil.getRelativeImageRotation(
             relativeRotationDegrees,
             sensorOrientation,
-            isOppositeFacingScreen
+            isOppositeFacingScreen,
         )
     }
 
@@ -211,7 +211,7 @@ constructor(
 
     override fun addSessionCaptureCallback(
         executor: Executor,
-        callback: CameraCaptureCallback
+        callback: CameraCaptureCallback,
     ): Unit = cameraCallbackMap.addCaptureCallback(callback, executor)
 
     override fun removeSessionCaptureCallback(callback: CameraCaptureCallback): Unit =
@@ -370,7 +370,7 @@ constructor(
                 cameraInfoInternal = this,
                 newUseCases = useCases,
                 cameraConfig = cameraConfig,
-                allowFeatureCombinationResolutions = allowFeatureCombinationResolutions
+                allowFeatureCombinationResolutions = allowFeatureCombinationResolutions,
             )
         } catch (e: IllegalArgumentException) {
             debug(e) {

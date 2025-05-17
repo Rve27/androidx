@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.library.abi.LibraryAbi
 @OptIn(ExperimentalLibraryAbiReader::class)
 class BinaryCompatibilityChecker(
     private val newLibraryAbi: LibraryAbi,
-    private val oldLibraryAbi: LibraryAbi
+    private val oldLibraryAbi: LibraryAbi,
 ) {
     private val newLibraryDeclarations by lazy {
         newLibraryAbi.allDeclarations().associateBy { it.asTypeString() }
@@ -53,13 +53,13 @@ class BinaryCompatibilityChecker(
     private fun checkBinariesAreCompatible(
         errors: CompatibilityErrors,
         validate: Boolean,
-        shouldFreeze: Boolean = false
+        shouldFreeze: Boolean = false,
     ): CompatibilityErrors {
         return newLibraryAbi.checkIsBinaryCompatibleWith(
             oldLibraryAbi,
             errors,
             validate,
-            shouldFreeze
+            shouldFreeze,
         )
     }
 
@@ -67,13 +67,13 @@ class BinaryCompatibilityChecker(
         olderLibraryAbi: LibraryAbi,
         errors: CompatibilityErrors,
         validate: Boolean,
-        shouldFreeze: Boolean
+        shouldFreeze: Boolean,
     ): CompatibilityErrors {
         topLevelDeclarations.isBinaryCompatibleWith(
             olderLibraryAbi.topLevelDeclarations,
             uniqueName,
             errors,
-            shouldFreeze
+            shouldFreeze,
         )
         if (validate && errors.isNotEmpty()) {
             throw ValidationException(errors.toString())
@@ -85,7 +85,7 @@ class BinaryCompatibilityChecker(
         oldContainer: AbiDeclarationContainer,
         parentQualifiedName: String,
         errors: CompatibilityErrors,
-        shouldFreeze: Boolean
+        shouldFreeze: Boolean,
     ) {
         val isBinaryCompatibleWith:
             AbiDeclaration.(AbiDeclaration, String, CompatibilityErrors) -> Unit =
@@ -99,19 +99,19 @@ class BinaryCompatibilityChecker(
             isBinaryCompatibleWith = isBinaryCompatibleWith,
             parentQualifiedName = parentQualifiedName,
             errors = errors,
-            isAllowedAddition = { !shouldFreeze }
+            isAllowedAddition = { !shouldFreeze },
         )
     }
 
     private fun AbiDeclaration.isBinaryCompatibleWith(
         oldDeclaration: AbiDeclaration,
         @Suppress("UNUSED_PARAMETER") parentQualifiedName: String,
-        errors: CompatibilityErrors
+        errors: CompatibilityErrors,
     ) = isBinaryCompatibleWith(oldDeclaration, errors)
 
     private fun AbiDeclaration.isBinaryCompatibleWith(
         oldDeclaration: AbiDeclaration,
-        errors: CompatibilityErrors
+        errors: CompatibilityErrors,
     ) {
         // If we're comparing a class to a function, or any other type, they are not compatible and
         // it's not worth checking anything further. The code that calls this function should
@@ -119,7 +119,7 @@ class BinaryCompatibilityChecker(
         if (this::class.java != oldDeclaration::class.java) {
             errors.add(
                 "type changed from ${this::class.simpleName} to " +
-                    "${oldDeclaration::class.simpleName} for $qualifiedName",
+                    "${oldDeclaration::class.simpleName} for $qualifiedName"
             )
             return
         }
@@ -172,7 +172,7 @@ class BinaryCompatibilityChecker(
                 uniqueId = AbiType::asString,
                 isBinaryCompatibleWith = AbiType::isBinaryCompatibleWith,
                 parentQualifiedName = qualifiedName.toString(),
-                errors = errors
+                errors = errors,
             )
         typeParameters.isBinaryCompatibleWith(
             oldClass.typeParameters,
@@ -181,7 +181,7 @@ class BinaryCompatibilityChecker(
             isBinaryCompatibleWith = AbiTypeParameter::isBinaryCompatibleWith,
             parentQualifiedName = qualifiedName.toString(),
             errors = errors,
-            isAllowedAddition = { false }
+            isAllowedAddition = { false },
         )
         val newDecs = allDeclarationsIncludingInherited(newLibraryDeclarations)
         val oldDecs = oldClass.allDeclarationsIncludingInherited(oldLibraryDeclarations)
@@ -199,7 +199,7 @@ class BinaryCompatibilityChecker(
                 }
             },
             parentQualifiedName = qualifiedName.toString(),
-            errors = errors
+            errors = errors,
         )
     }
 
@@ -245,7 +245,7 @@ class BinaryCompatibilityChecker(
 
     private fun AbiFunction.isBinaryCompatibleWith(
         otherFunction: AbiFunction,
-        errors: CompatibilityErrors
+        errors: CompatibilityErrors,
     ) {
         if (isConstructor != otherFunction.isConstructor) {
             errors.add(
@@ -302,7 +302,7 @@ class BinaryCompatibilityChecker(
             otherFunction.returnType,
             qualifiedName.toString(),
             errors,
-            "Return type"
+            "Return type",
         )
 
         // bake the index into the data type for clearer reporting in error messages
@@ -332,13 +332,13 @@ class BinaryCompatibilityChecker(
             uniqueId = AbiTypeParameter::tag,
             isBinaryCompatibleWith = AbiTypeParameter::isBinaryCompatibleWith,
             parentQualifiedName = qualifiedName.toString(),
-            errors = errors
+            errors = errors,
         )
     }
 
     private fun AbiProperty.isBinaryCompatibleWith(
         oldProperty: AbiProperty,
-        errors: CompatibilityErrors
+        errors: CompatibilityErrors,
     ) {
         if (kind != oldProperty.kind) {
             when {
@@ -380,7 +380,7 @@ class BinaryCompatibilityChecker(
             oldLibraries: Map<String, LibraryAbi>,
             baselines: Set<String> = emptySet(),
             validate: Boolean = true,
-            shouldFreeze: Boolean = false
+            shouldFreeze: Boolean = false,
         ): List<CompatibilityError> {
             val errors = CompatibilityErrors(baselines, "meta")
             val removedTargets = oldLibraries.keys - newLibraries.keys
@@ -423,14 +423,14 @@ class BinaryCompatibilityChecker(
             oldLibraries: Map<String, LibraryAbi>,
             baselineFile: File?,
             validate: Boolean = true,
-            shouldFreeze: Boolean = false
+            shouldFreeze: Boolean = false,
         ) =
             checkAllBinariesAreCompatible(
                 newLibraries,
                 oldLibraries,
                 baselineFile?.asBaselineErrors() ?: emptySet(),
                 validate,
-                shouldFreeze
+                shouldFreeze,
             )
     }
 }
@@ -438,7 +438,7 @@ class BinaryCompatibilityChecker(
 internal fun AbiTypeParameter.isBinaryCompatibleWith(
     otherTypeParam: AbiTypeParameter,
     parentQualifiedName: String,
-    errors: CompatibilityErrors
+    errors: CompatibilityErrors,
 ) {
     if (isReified != otherTypeParam.isReified) {
         when {
@@ -481,7 +481,7 @@ private fun List<AbiType>.isUnbounded(): Boolean =
 private fun DecoratedAbiValueParameter.isBinaryCompatibleWith(
     otherParam: DecoratedAbiValueParameter,
     parentQualifiedName: String,
-    errors: CompatibilityErrors
+    errors: CompatibilityErrors,
 ) {
     type.isBinaryCompatibleWith(otherParam.type, parentQualifiedName, errors)
     if (isVararg != otherParam.isVararg) {
@@ -524,7 +524,7 @@ private fun AbiType?.isBinaryCompatibleWith(
     otherType: AbiType?,
     parentQualifiedName: String,
     errors: CompatibilityErrors,
-    kind: String = "type"
+    kind: String = "type",
 ) {
     if (valueAsString != otherType.valueAsString) {
         errors.add(
@@ -546,7 +546,7 @@ private fun AbiType.Simple.isBinaryCompatible(
     otherType: AbiType.Simple,
     parentQualifiedName: String,
     errors: CompatibilityErrors,
-    kind: String
+    kind: String,
 ) {
     val classifierRef = classifierReference
     val otherClassifierRef = otherType.classifierReference
@@ -574,14 +574,14 @@ private fun AbiType.Simple.isBinaryCompatible(
         uniqueId = AbiTypeArgument::asString,
         isBinaryCompatibleWith = AbiTypeArgument::isBinaryCompatibleWith,
         parentQualifiedName = parentQualifiedName,
-        errors = errors
+        errors = errors,
     )
 }
 
 private fun AbiTypeArgument.isBinaryCompatibleWith(
     otherTypeArgument: AbiTypeArgument,
     parentQualifiedName: String,
-    errors: CompatibilityErrors
+    errors: CompatibilityErrors,
 ) {
     if (this is StarProjection && otherTypeArgument is StarProjection) {
         return
@@ -711,7 +711,7 @@ private fun <T> List<T>.isBinaryCompatibleWith(
     isBinaryCompatibleWith: T.(T, String, CompatibilityErrors) -> Unit,
     isAllowedAddition: T.() -> Boolean = { true },
     parentQualifiedName: String,
-    errors: CompatibilityErrors
+    errors: CompatibilityErrors,
 ) {
     val oldEntities = oldEntitiesList.associateBy { it.uniqueId() }
     val newEntities = associateBy { it.uniqueId() }
@@ -732,7 +732,7 @@ class CompatibilityErrors(private val baselines: Set<String>, val target: String
     MutableList<CompatibilityError> by mutableListOf() {
     fun add(
         message: String,
-        severity: CompatibilityErrorSeverity = CompatibilityErrorSeverity.ERROR
+        severity: CompatibilityErrorSeverity = CompatibilityErrorSeverity.ERROR,
     ) {
         val error = CompatibilityError(message, target, severity)
         if (baselines.contains(error.toString())) {

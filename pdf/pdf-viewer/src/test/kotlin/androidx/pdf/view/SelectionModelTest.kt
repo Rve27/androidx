@@ -54,23 +54,23 @@ class SelectionModelTest {
                     1,
                     selectionBoundary,
                     selectionBoundary,
-                    listOf(PdfPageTextContent(newBounds, "Hello"))
+                    listOf(PdfPageTextContent(newBounds, "Hello")),
                 )
             )
 
         val combinedSelection: SelectionModel? =
             SelectionModel.getCombinedSelectionModel(
                 DocumentSelection(SparseArray()),
-                newPageSelections
+                newPageSelections,
             )
         assertNotNull(combinedSelection?.documentSelection?.selection?.bounds)
         assertEquals(
             combinedSelection?.documentSelection?.selection?.bounds?.map { it.pageRect },
-            newBounds
+            newBounds,
         )
         assertEquals(
             "Hello",
-            (combinedSelection?.documentSelection?.selection as TextSelection).text
+            (combinedSelection?.documentSelection?.selection as TextSelection).text,
         )
     }
 
@@ -86,20 +86,20 @@ class SelectionModelTest {
                     1,
                     selectionBoundary,
                     selectionBoundary,
-                    listOf(PdfPageTextContent(newBoundsPage1, "Hello"))
+                    listOf(PdfPageTextContent(newBoundsPage1, "Hello")),
                 ),
                 PageSelection(
                     2,
                     selectionBoundary,
                     selectionBoundary,
-                    listOf(PdfPageTextContent(newBoundsPage2, "World"))
-                )
+                    listOf(PdfPageTextContent(newBoundsPage2, "World")),
+                ),
             )
 
         val combinedSelection: SelectionModel? =
             SelectionModel.getCombinedSelectionModel(
                 DocumentSelection(SparseArray()),
-                newPageSelections
+                newPageSelections,
             )
 
         assertNotNull(combinedSelection?.documentSelection?.selection?.bounds)
@@ -112,7 +112,7 @@ class SelectionModelTest {
         assertEquals(expectedBounds, resultBounds)
         assertEquals(
             "Hello World",
-            (combinedSelection?.documentSelection?.selection as TextSelection).text
+            (combinedSelection?.documentSelection?.selection as TextSelection).text,
         )
     }
 
@@ -124,7 +124,7 @@ class SelectionModelTest {
                 PdfRect(2, RectF(300f, 300f, 400f, 400f)),
                 PdfRect(2, RectF(400f, 400f, 500f, 500f)),
                 PdfRect(3, RectF(500f, 500f, 600f, 600f)),
-                PdfRect(3, RectF(600f, 600f, 700f, 700f))
+                PdfRect(3, RectF(600f, 600f, 700f, 700f)),
             )
 
         val newBounds = listOf(RectF(150f, 150f, 200f, 200f), RectF(200f, 200f, 250f, 250f))
@@ -146,18 +146,18 @@ class SelectionModelTest {
                         listOf(
                             TextSelection(
                                 "this is page 2",
-                                listOf(currentBounds[1], currentBounds[2])
+                                listOf(currentBounds[1], currentBounds[2]),
                             )
-                        )
+                        ),
                     )
                     set(
                         3,
                         listOf(
                             TextSelection(
                                 "this is page 3",
-                                listOf(currentBounds[3], currentBounds[4])
+                                listOf(currentBounds[3], currentBounds[4]),
                             )
-                        )
+                        ),
                     )
                 }
             )
@@ -170,8 +170,8 @@ class SelectionModelTest {
                     selectionBoundary,
                     listOf(
                         PdfPageTextContent(listOf(newBounds[0]), "New content"),
-                        PdfPageTextContent(listOf(newBounds[1]), "for page 2")
-                    )
+                        PdfPageTextContent(listOf(newBounds[1]), "for page 2"),
+                    ),
                 )
             )
 

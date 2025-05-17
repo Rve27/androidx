@@ -58,7 +58,7 @@ internal class DataStoreImpl<T>(
      * simply throws the exception and does not produce new data.
      */
     private val corruptionHandler: CorruptionHandler<T> = NoOpCorruptionHandler(),
-    private val scope: CoroutineScope = CoroutineScope(ioDispatcher() + SupervisorJob())
+    private val scope: CoroutineScope = CoroutineScope(ioDispatcher() + SupervisorJob()),
 ) : CurrentDataProviderStore<T> {
 
     /**
@@ -206,7 +206,7 @@ internal class DataStoreImpl<T>(
                             "DataStore scope was cancelled before updateData could complete"
                         )
                 )
-            }
+            },
         ) { msg ->
             handleUpdate(msg)
         }
@@ -314,7 +314,7 @@ internal class DataStoreImpl<T>(
                     } catch (ex: Throwable) {
                         ReadException<T>(
                             ex,
-                            if (locked) coordinator.getVersion() else cachedVersion
+                            if (locked) coordinator.getVersion() else cachedVersion,
                         )
                     } to locked
                 }
@@ -333,7 +333,7 @@ internal class DataStoreImpl<T>(
 
     private suspend fun transformAndWrite(
         transform: suspend (t: T) -> T,
-        callerContext: CoroutineContext
+        callerContext: CoroutineContext,
     ): T =
         coordinator.lock {
             val curData = readDataOrHandleCorruption(hasWriteFileLock = true)
@@ -410,11 +410,11 @@ internal class DataStoreImpl<T>(
     @OptIn(ExperimentalContracts::class)
     @Suppress(
         "LEAKED_IN_PLACE_LAMBDA",
-        "WRONG_INVOCATION_KIND"
+        "WRONG_INVOCATION_KIND",
     ) // https://youtrack.jetbrains.com/issue/KT-29963
     private suspend fun <R> doWithWriteFileLock(
         hasWriteFileLock: Boolean,
-        block: suspend () -> R
+        block: suspend () -> R,
     ): R {
         contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
         return if (hasWriteFileLock) {
@@ -472,7 +472,7 @@ internal class DataStoreImpl<T>(
                         Data(
                             value = currentData,
                             hashCode = currentData.hashCode(),
-                            version = coordinator.getVersion()
+                            version = coordinator.getVersion(),
                         )
                     }
                 }
@@ -519,7 +519,7 @@ internal abstract class RunOnce {
  */
 internal class UpdatingDataContextElement(
     private val parent: UpdatingDataContextElement?,
-    private val instance: DataStoreImpl<*>
+    private val instance: DataStoreImpl<*>,
 ) : CoroutineContext.Element {
 
     companion object {

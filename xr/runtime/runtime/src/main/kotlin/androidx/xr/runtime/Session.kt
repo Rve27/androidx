@@ -198,7 +198,7 @@ public constructor(
         private val RUNTIME_FACTORY_PROVIDERS =
             listOf(
                 "androidx.xr.runtime.openxr.OpenXrRuntimeFactory",
-                "androidx.xr.runtime.testing.FakeRuntimeFactory"
+                "androidx.xr.runtime.testing.FakeRuntimeFactory",
             )
         private val JXR_PLATFORM_ADAPTER_FACTORY_PROVIDERS =
             listOf(
@@ -213,7 +213,7 @@ public constructor(
         private val SESSION_CONNECTOR_PROVIDERS =
             listOf(
                 "androidx.xr.scenecore.Scene",
-                "androidx.xr.runtime.testing.FakeSessionConnector"
+                "androidx.xr.runtime.testing.FakeSessionConnector",
             )
     }
 

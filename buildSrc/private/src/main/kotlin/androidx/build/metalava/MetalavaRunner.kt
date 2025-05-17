@@ -155,7 +155,7 @@ fun getApiLintArgs(targetsJavaConsumers: Boolean): List<String> {
                     // We should only treat these as warnings
                     "IntentBuilderName",
                     "OnNameExpected",
-                    "UserHandleName"
+                    "UserHandleName",
                 )
                 .joinToString(),
             "--error",
@@ -184,7 +184,7 @@ fun getApiLintArgs(targetsJavaConsumers: Boolean): List<String> {
                     "KotlinOperator",
                     "DataClassDefinition",
                 )
-                .joinToString()
+                .joinToString(),
         )
     // Acronyms that can be used in their all-caps form. "SQ" is included to allow "SQLite".
     val allowedAcronyms = listOf("SQL", "SQ", "URL", "EGL", "GL", "KHR")
@@ -209,7 +209,7 @@ internal fun getGenerateApiLevelsArgs(
     apiDir: File,
     apiFiles: List<File>,
     currentVersion: Version,
-    outputLocation: File
+    outputLocation: File,
 ): List<String> {
     return buildList {
         add("--generate-api-version-history")
@@ -280,7 +280,7 @@ internal fun generateApi(
             k2UastEnabled,
             kotlinSourceLevel,
             workerExecutor,
-            pathToManifest
+            pathToManifest,
         )
     }
 }
@@ -300,7 +300,7 @@ private fun generateApi(
     k2UastEnabled: Boolean,
     kotlinSourceLevel: KotlinVersion,
     workerExecutor: WorkerExecutor,
-    pathToManifest: String? = null
+    pathToManifest: String? = null,
 ) {
     val args =
         getGenerateApiArgs(
@@ -310,7 +310,7 @@ private fun generateApi(
             generateApiMode,
             apiLintMode,
             apiLevelsArgs,
-            pathToManifest
+            pathToManifest,
         )
     runMetalavaWithArgs(metalavaClasspath, args, k2UastEnabled, kotlinSourceLevel, workerExecutor)
 }
@@ -326,7 +326,7 @@ fun getGenerateApiArgs(
     generateApiMode: GenerateApiMode,
     apiLintMode: ApiLintMode,
     apiLevelsArgs: List<String>,
-    pathToManifest: String? = null
+    pathToManifest: String? = null,
 ): List<String> {
     // generate public API txt
     val args =
@@ -334,7 +334,7 @@ fun getGenerateApiArgs(
             "--source-path",
             sourcePaths.filter { it.exists() }.joinToString(File.pathSeparator),
             "--project",
-            projectXml.path
+            projectXml.path,
         )
 
     args += listOf("--format=v4", "--warnings-as-errors")
@@ -377,21 +377,21 @@ fun getGenerateApiArgs(
                         "LIBRARY_GROUP_PREFIX)",
                     "--show-annotation",
                     "kotlin.PublishedApi",
-                    "--show-unannotated"
+                    "--show-unannotated",
                 )
             if (generateApiMode is GenerateApiMode.AllRestrictedApis) {
                 args +=
                     listOf(
                         "--show-annotation",
                         "androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope." +
-                            "LIBRARY_GROUP)"
+                            "LIBRARY_GROUP)",
                     )
             } else {
                 args +=
                     listOf(
                         "--hide-annotation",
                         "androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope." +
-                            "LIBRARY_GROUP)"
+                            "LIBRARY_GROUP)",
                     )
             }
         }
@@ -416,7 +416,7 @@ fun getGenerateApiArgs(
     https://issuetracker.google.com/issues/new?component=739152&template=1344623
 
     If you are doing a refactoring or suppression above does not work, use ./gradlew updateApiLintBaseline
-"""
+""",
                 )
             )
         }
@@ -428,7 +428,7 @@ fun getGenerateApiArgs(
                     "--hide",
                     "ReferencesHidden",
                     "--hide",
-                    "ReferencesDeprecated"
+                    "ReferencesDeprecated",
                 )
             )
         }

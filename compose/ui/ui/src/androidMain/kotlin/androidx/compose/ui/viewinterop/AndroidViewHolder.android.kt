@@ -115,14 +115,14 @@ internal open class AndroidViewHolder(
             object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
                 override fun onStart(
                     animation: WindowInsetsAnimationCompat,
-                    bounds: WindowInsetsAnimationCompat.BoundsCompat
+                    bounds: WindowInsetsAnimationCompat.BoundsCompat,
                 ): WindowInsetsAnimationCompat.BoundsCompat = insetBounds(bounds)
 
                 override fun onProgress(
                     insets: WindowInsetsCompat,
-                    runningAnimations: MutableList<WindowInsetsAnimationCompat>
+                    runningAnimations: MutableList<WindowInsetsAnimationCompat>,
                 ): WindowInsetsCompat = insetToLayoutPosition(insets)
-            }
+            },
         )
         ViewCompat.setOnApplyWindowInsetsListener(this, this)
     }
@@ -257,7 +257,7 @@ internal open class AndroidViewHolder(
         if (view.parent !== this) {
             setMeasuredDimension(
                 MeasureSpec.getSize(widthMeasureSpec),
-                MeasureSpec.getSize(heightMeasureSpec)
+                MeasureSpec.getSize(heightMeasureSpec),
             )
             return
         }
@@ -355,7 +355,7 @@ internal open class AndroidViewHolder(
             location[1],
             location[0] + width,
             location[1] + height,
-            Region.Op.DIFFERENCE
+            Region.Op.DIFFERENCE,
         )
         return true
     }
@@ -390,7 +390,7 @@ internal open class AndroidViewHolder(
                             isDrawing = true
                             (layoutNode.owner as? AndroidComposeView)?.drawAndroidView(
                                 this@AndroidViewHolder,
-                                canvas.nativeCanvas
+                                canvas.nativeCanvas,
                             )
                             isDrawing = false
                         }
@@ -453,7 +453,7 @@ internal open class AndroidViewHolder(
             object : MeasurePolicy {
                 override fun MeasureScope.measure(
                     measurables: List<Measurable>,
-                    constraints: Constraints
+                    constraints: Constraints,
                 ): MeasureResult {
                     if (childCount == 0) {
                         return layout(constraints.minWidth, constraints.minHeight) {}
@@ -470,49 +470,49 @@ internal open class AndroidViewHolder(
                         obtainMeasureSpec(
                             constraints.minWidth,
                             constraints.maxWidth,
-                            layoutParams!!.width
+                            layoutParams!!.width,
                         ),
                         obtainMeasureSpec(
                             constraints.minHeight,
                             constraints.maxHeight,
-                            layoutParams!!.height
-                        )
+                            layoutParams!!.height,
+                        ),
                     )
                     return layout(measuredWidth, measuredHeight) { layoutAccordingTo(layoutNode) }
                 }
 
                 override fun IntrinsicMeasureScope.minIntrinsicWidth(
                     measurables: List<IntrinsicMeasurable>,
-                    height: Int
+                    height: Int,
                 ) = intrinsicWidth(height)
 
                 override fun IntrinsicMeasureScope.maxIntrinsicWidth(
                     measurables: List<IntrinsicMeasurable>,
-                    height: Int
+                    height: Int,
                 ) = intrinsicWidth(height)
 
                 private fun intrinsicWidth(height: Int): Int {
                     measure(
                         MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                        obtainMeasureSpec(0, height, layoutParams!!.height)
+                        obtainMeasureSpec(0, height, layoutParams!!.height),
                     )
                     return measuredWidth
                 }
 
                 override fun IntrinsicMeasureScope.minIntrinsicHeight(
                     measurables: List<IntrinsicMeasurable>,
-                    width: Int
+                    width: Int,
                 ) = intrinsicHeight(width)
 
                 override fun IntrinsicMeasureScope.maxIntrinsicHeight(
                     measurables: List<IntrinsicMeasurable>,
-                    width: Int
+                    width: Int,
                 ) = intrinsicHeight(width)
 
                 private fun intrinsicHeight(width: Int): Int {
                     measure(
                         obtainMeasureSpec(0, width, layoutParams!!.width),
-                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+                        MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
                     )
                     return measuredHeight
                 }
@@ -575,14 +575,14 @@ internal open class AndroidViewHolder(
         dxUnconsumed: Int,
         dyUnconsumed: Int,
         type: Int,
-        consumed: IntArray
+        consumed: IntArray,
     ) {
         if (!isNestedScrollingEnabled) return
         val consumedByParent =
             dispatcher.dispatchPostScroll(
                 consumed = Offset(dxConsumed.toComposeOffset(), dyConsumed.toComposeOffset()),
                 available = Offset(dxUnconsumed.toComposeOffset(), dyUnconsumed.toComposeOffset()),
-                source = toNestedScrollSource(type)
+                source = toNestedScrollSource(type),
             )
         consumed[0] = composeToViewOffset(consumedByParent.x)
         consumed[1] = composeToViewOffset(consumedByParent.y)
@@ -594,13 +594,13 @@ internal open class AndroidViewHolder(
         dyConsumed: Int,
         dxUnconsumed: Int,
         dyUnconsumed: Int,
-        type: Int
+        type: Int,
     ) {
         if (!isNestedScrollingEnabled) return
         dispatcher.dispatchPostScroll(
             consumed = Offset(dxConsumed.toComposeOffset(), dyConsumed.toComposeOffset()),
             available = Offset(dxUnconsumed.toComposeOffset(), dyUnconsumed.toComposeOffset()),
-            source = toNestedScrollSource(type)
+            source = toNestedScrollSource(type),
         )
     }
 
@@ -609,7 +609,7 @@ internal open class AndroidViewHolder(
         val consumedByParent =
             dispatcher.dispatchPreScroll(
                 available = Offset(dx.toComposeOffset(), dy.toComposeOffset()),
-                source = toNestedScrollSource(type)
+                source = toNestedScrollSource(type),
             )
         consumed[0] = composeToViewOffset(consumedByParent.x)
         consumed[1] = composeToViewOffset(consumedByParent.y)
@@ -619,7 +619,7 @@ internal open class AndroidViewHolder(
         target: View,
         velocityX: Float,
         velocityY: Float,
-        consumed: Boolean
+        consumed: Boolean,
     ): Boolean {
         if (!isNestedScrollingEnabled) return false
         val viewVelocity = Velocity(velocityX.toComposeVelocity(), velocityY.toComposeVelocity())
@@ -688,7 +688,7 @@ internal open class AndroidViewHolder(
             (this.left - left).fastCoerceAtLeast(0),
             (this.top - top).fastCoerceAtLeast(0),
             (this.right - right).fastCoerceAtLeast(0),
-            (this.bottom - bottom).fastCoerceAtLeast(0)
+            (this.bottom - bottom).fastCoerceAtLeast(0),
         )
     }
 

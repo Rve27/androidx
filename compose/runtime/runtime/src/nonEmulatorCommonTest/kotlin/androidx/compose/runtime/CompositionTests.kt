@@ -1819,7 +1819,7 @@ class CompositionTests {
 
         assertTrue(
             objects.mapNotNull { it as? Counted }.map { it.count == 1 }.all { it },
-            "All object should have entered"
+            "All object should have entered",
         )
 
         includeTree = false
@@ -1827,7 +1827,7 @@ class CompositionTests {
 
         assertTrue(
             objects.mapNotNull { it as? Counted }.map { it.count == 0 }.all { it },
-            "All object should have left"
+            "All object should have left",
         )
 
         assertArrayEquals(
@@ -1837,7 +1837,7 @@ class CompositionTests {
                 .mapNotNull { it as? Ordered }
                 .sortedBy { it.rememberOrder }
                 .map { (it as Named).name }
-                .toTypedArray()
+                .toTypedArray(),
         )
 
         assertArrayEquals(
@@ -1847,7 +1847,7 @@ class CompositionTests {
                 .mapNotNull { it as? Ordered }
                 .sortedBy { it.forgetOrder }
                 .map { (it as Named).name }
-                .toTypedArray()
+                .toTypedArray(),
         )
     }
 
@@ -1907,7 +1907,7 @@ class CompositionTests {
 
         assertTrue(
             objects.mapNotNull { it as? Counted }.map { it.count == 1 }.all { it },
-            "All object should have entered"
+            "All object should have entered",
         )
 
         includeTree = false
@@ -1915,7 +1915,7 @@ class CompositionTests {
 
         assertTrue(
             objects.mapNotNull { it as? Counted }.map { it.count == 0 }.all { it },
-            "All object should have left"
+            "All object should have left",
         )
 
         assertArrayEquals(
@@ -1925,7 +1925,7 @@ class CompositionTests {
                 .mapNotNull { it as? Ordered }
                 .sortedBy { it.rememberOrder }
                 .map { (it as Named).name }
-                .toTypedArray()
+                .toTypedArray(),
         )
 
         assertArrayEquals(
@@ -1935,7 +1935,7 @@ class CompositionTests {
                 .mapNotNull { it as? Ordered }
                 .sortedBy { it.forgetOrder }
                 .map { (it as Named).name }
-                .toTypedArray()
+                .toTypedArray(),
         )
     }
 
@@ -2011,7 +2011,7 @@ class CompositionTests {
 
         assertTrue(
             objects.mapNotNull { it as? Counted }.map { it.count == 1 }.all { it },
-            "All object should have entered"
+            "All object should have entered",
         )
 
         includeTree = false
@@ -2019,7 +2019,7 @@ class CompositionTests {
 
         assertTrue(
             objects.mapNotNull { it as? Counted }.map { it.count == 0 }.all { it },
-            "All object should have left"
+            "All object should have left",
         )
 
         assertArrayEquals(
@@ -2029,7 +2029,7 @@ class CompositionTests {
                 .mapNotNull { it as? Ordered }
                 .sortedBy { it.rememberOrder }
                 .map { (it as Named).name }
-                .toTypedArray()
+                .toTypedArray(),
         )
 
         val forgetOrder = objects.mapNotNull { it as? Ordered }.sortedBy { it.forgetOrder }
@@ -2039,7 +2039,7 @@ class CompositionTests {
         assertArrayEquals(
             "Expected exit order",
             arrayOf("L0A", "L1A", "L2A", "L3A", "Leaf", "L3B", "L2B", "L1B", "L0A"),
-            forgetOrder.map { (it as Named).name }.toTypedArray()
+            forgetOrder.map { (it as Named).name }.toTypedArray(),
         )
     }
 
@@ -2130,7 +2130,7 @@ class CompositionTests {
 
         assertTrue(
             objects.mapNotNull { it as? Counted }.map { it.count == 1 }.all { it },
-            "All object should have entered"
+            "All object should have entered",
         )
 
         value = false
@@ -2138,7 +2138,7 @@ class CompositionTests {
 
         assertTrue(
             objects.mapNotNull { it as? Counted }.map { it.count == 0 }.all { it },
-            "All object should have left"
+            "All object should have left",
         )
 
         assertArrayEquals(
@@ -2148,7 +2148,7 @@ class CompositionTests {
                 .mapNotNull { it as? Ordered }
                 .sortedBy { it.rememberOrder }
                 .map { (it as Named).name }
-                .toTypedArray()
+                .toTypedArray(),
         )
 
         assertArrayEquals(
@@ -2158,7 +2158,7 @@ class CompositionTests {
                 .mapNotNull { it as? Ordered }
                 .sortedBy { it.forgetOrder }
                 .map { (it as Named).name }
-                .toTypedArray()
+                .toTypedArray(),
         )
     }
 
@@ -2252,7 +2252,7 @@ class CompositionTests {
 
         assertTrue(
             objects.mapNotNull { it as? Counted }.map { it.count == 1 }.all { it },
-            "All object should have entered"
+            "All object should have entered",
         )
 
         value = false
@@ -2260,7 +2260,7 @@ class CompositionTests {
 
         assertTrue(
             objects.mapNotNull { it as? Counted }.map { it.count == 0 }.all { it },
-            "All object should have left"
+            "All object should have left",
         )
 
         val namesInRememberOrder =
@@ -2280,13 +2280,13 @@ class CompositionTests {
         assertArrayEquals(
             "Expected enter order",
             arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"),
-            namesInRememberOrder
+            namesInRememberOrder,
         )
 
         assertArrayEquals(
             "Expected leave order",
             arrayOf("K", "J", "I", "H", "G", "F", "E", "D", "C", "B", "A"),
-            namesInForgetOrder
+            namesInForgetOrder,
         )
     }
 
@@ -2513,7 +2513,7 @@ class CompositionTests {
 
         assertTrue(
             objects.mapNotNull { it as? Counted }.map { it.count == 0 }.all { it },
-            "All object should have left"
+            "All object should have left",
         )
 
         assertArrayEquals(
@@ -2523,7 +2523,7 @@ class CompositionTests {
                 .mapNotNull { it as? Ordered }
                 .sortedBy { it.rememberOrder }
                 .map { (it as Named).name }
-                .toTypedArray()
+                .toTypedArray(),
         )
 
         val forgetOrder = objects.mapNotNull { it as? Ordered }.sortedBy { it.forgetOrder }
@@ -2533,7 +2533,7 @@ class CompositionTests {
         assertArrayEquals(
             "Expected exit order",
             arrayOf("A0", "B0", "A1", "B1", "A2"),
-            forgetOrder.map { (it as Named).name }.toTypedArray()
+            forgetOrder.map { (it as Named).name }.toTypedArray(),
         )
     }
 
@@ -3297,12 +3297,12 @@ class CompositionTests {
                         assertEquals(
                             1,
                             myApplier.onBeginChangesCalled,
-                            "onBeginChanges during lifecycle observer"
+                            "onBeginChanges during lifecycle observer",
                         )
                         assertEquals(
                             1,
                             myApplier.onEndChangesCalled,
-                            "onEndChanges during lifecycle observer"
+                            "onEndChanges during lifecycle observer",
                         )
                         checks += "RememberObserver"
                     }
@@ -3320,7 +3320,7 @@ class CompositionTests {
         assertEquals(
             listOf("composition", "RememberObserver", "SideEffect"),
             checks,
-            "expected order of calls"
+            "expected order of calls",
         )
     }
 
@@ -3498,7 +3498,7 @@ class CompositionTests {
                 assertEquals(
                     listOf("firstInitial", "secondInitial", "firstSet", "secondSet"),
                     results,
-                    "Expected call ordering during recomposition of subcompositions"
+                    "Expected call ordering during recomposition of subcompositions",
                 )
             } finally {
                 composition.dispose()
@@ -3677,7 +3677,7 @@ class CompositionTests {
                 assertEquals(
                     1,
                     ++rememberInvocations,
-                    "Remember block should be invoked exactly once"
+                    "Remember block should be invoked exactly once",
                 )
             }
         }
@@ -3703,7 +3703,7 @@ class CompositionTests {
                 assertEquals(
                     1,
                     ++rememberInvocations,
-                    "Remember block should be invoked exactly once"
+                    "Remember block should be invoked exactly once",
                 )
             }
         }
@@ -3768,7 +3768,7 @@ class CompositionTests {
 
     enum class MyEnum {
         First,
-        Second
+        Second,
     }
 
     /** set should set the value every time, update should only set after initial composition. */
@@ -3804,11 +3804,11 @@ class CompositionTests {
             composition.setContent {
                 ComposeNode<SetUpdateNode, SetUpdateNodeApplier>(
                     factory = { makeNode(value) },
-                    update = { set(value) { property = value } }
+                    update = { set(value) { property = value } },
                 )
                 ComposeNode<SetUpdateNode, SetUpdateNodeApplier>(
                     factory = { makeNode(value) },
-                    update = { update(value) { property = value } }
+                    update = { update(value) { property = value } },
                 )
             }
 
@@ -4416,7 +4416,7 @@ class CompositionTests {
 
                     launch(
                         coroutineContext + BroadcastFrameClock(),
-                        start = CoroutineStart.UNDISPATCHED
+                        start = CoroutineStart.UNDISPATCHED,
                     ) {
                         recomposer.runRecomposeAndApplyChanges()
                     }
@@ -4424,10 +4424,7 @@ class CompositionTests {
                     val composition = Composition(EmptyApplier(), recomposer)
                     composition.setContent {
                         val innerComposition =
-                            Composition(
-                                EmptyApplier(),
-                                rememberCompositionContext(),
-                            )
+                            Composition(EmptyApplier(), rememberCompositionContext())
 
                         DisposableEffect(composition) { onDispose { innerComposition.dispose() } }
                     }
@@ -4614,7 +4611,7 @@ class CompositionTests {
         val people =
             mutableListOf<MutableStateFlow<Person?>>(
                 MutableStateFlow(Person("Ford", MutableStateFlow(Car("Model T")))),
-                MutableStateFlow(Person("Musk", MutableStateFlow(Car("Model 3"))))
+                MutableStateFlow(Person("Musk", MutableStateFlow(Car("Model 3")))),
             )
         compose {
             people.forEach {
@@ -5130,12 +5127,10 @@ fun ItemRenderer(viewItem: ListViewItem) {
 }
 
 @Composable
-private fun ScrollingList(
-    itemRenderer: @Composable (ListViewItem) -> Unit,
-) {
+private fun ScrollingList(itemRenderer: @Composable (ListViewItem) -> Unit) {
     ListContent(
         viewItems = remember { listOf(ListViewItem(0), ListViewItem(1)) },
-        itemRenderer = itemRenderer
+        itemRenderer = itemRenderer,
     )
 }
 
@@ -5161,7 +5156,7 @@ private fun <T> unused(@Suppress("UNUSED_PARAMETER") value: T) {}
 inline fun explicitStartReplaceGroup(
     key: Int,
     insertGroup: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     if (insertGroup) currentComposer.startReplaceGroup(key)
     content()

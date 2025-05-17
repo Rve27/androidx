@@ -61,7 +61,7 @@ public interface SubspaceLayoutCoordinates {
     /** The position of this layout relative to its parent entity in the Compose hierarchy. */
     @Deprecated(
         "Use poseInParentEntity.position instead",
-        ReplaceWith("poseInParentEntity.position")
+        ReplaceWith("poseInParentEntity.position"),
     )
     public val positionInParentEntity: Vector3
         get() = poseInParentEntity.translation
@@ -83,7 +83,7 @@ public interface SubspaceLayoutCoordinates {
     /** The rotation of this layout relative to its parent entity in the Compose hierarchy. */
     @Deprecated(
         "Use poseInParentEntity.rotation instead",
-        ReplaceWith("poseInParentEntity.rotation")
+        ReplaceWith("poseInParentEntity.rotation"),
     )
     public val rotationInParentEntity: Quaternion
         get() = poseInParentEntity.rotation

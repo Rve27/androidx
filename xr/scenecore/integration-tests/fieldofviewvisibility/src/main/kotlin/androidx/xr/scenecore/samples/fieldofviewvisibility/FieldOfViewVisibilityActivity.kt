@@ -134,7 +134,7 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
         Column(verticalArrangement = Arrangement.Top) {
             Text(
                 modifier = Modifier.padding(15.dp),
-                text = "SpatialVisibility: $mSpatialVisibility"
+                text = "SpatialVisibility: $mSpatialVisibility",
             )
             Text(
                 modifier = Modifier.padding(15.dp),

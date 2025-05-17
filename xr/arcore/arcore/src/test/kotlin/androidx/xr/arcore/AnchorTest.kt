@@ -183,7 +183,7 @@ class AnchorTest {
                 val runtimeAnchor =
                     FakeRuntimeAnchor(
                         Pose(),
-                        session.runtime.perceptionManager as FakePerceptionManager
+                        session.runtime.perceptionManager as FakePerceptionManager,
                     )
                 val underTest = Anchor(runtimeAnchor, xrResourcesManager)
                 var uuid: UUID? = null
@@ -218,7 +218,7 @@ class AnchorTest {
             val runtimeAnchor =
                 FakeRuntimeAnchor(
                     Pose(),
-                    session.runtime.perceptionManager as FakePerceptionManager
+                    session.runtime.perceptionManager as FakePerceptionManager,
                 )
             val underTest = Anchor(runtimeAnchor, xrResourcesManager)
             var uuid: UUID? = null
@@ -277,7 +277,7 @@ class AnchorTest {
             val runtimeAnchor =
                 FakeRuntimeAnchor(
                     Pose(),
-                    session.runtime.perceptionManager as FakePerceptionManager
+                    session.runtime.perceptionManager as FakePerceptionManager,
                 )
             val underTest = Anchor(runtimeAnchor, xrResourcesManager)
             var uuid: UUID? = null

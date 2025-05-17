@@ -51,7 +51,7 @@ class GLRenderer(
             ?: throw IllegalStateException(
                 "Unable to obtain config for 8 bit EGL " + "configuration"
             )
-    }
+    },
 ) {
 
     /**
@@ -96,7 +96,7 @@ class GLRenderer(
     fun detach(
         target: RenderTarget,
         cancelPending: Boolean,
-        @WorkerThread onDetachComplete: ((RenderTarget) -> Unit)? = null
+        @WorkerThread onDetachComplete: ((RenderTarget) -> Unit)? = null,
     ) {
         if (mRenderTargets.contains(target)) {
             detachInternal(target, cancelPending) {
@@ -112,7 +112,7 @@ class GLRenderer(
     internal fun detachInternal(
         target: RenderTarget,
         cancelPending: Boolean,
-        @WorkerThread onDetachComplete: ((RenderTarget) -> Unit)? = null
+        @WorkerThread onDetachComplete: ((RenderTarget) -> Unit)? = null,
     ) {
         val runnable =
             if (onDetachComplete != null) {
@@ -138,9 +138,7 @@ class GLRenderer(
      * @throws IllegalStateException if EGLConfig with desired attributes cannot be created
      */
     @JvmOverloads
-    fun start(
-        name: String = "GLThread",
-    ) {
+    fun start(name: String = "GLThread") {
         if (mGLThread == null) {
             GLThread.log("starting thread...")
             mGLThread =
@@ -203,7 +201,7 @@ class GLRenderer(
         target: RenderTarget,
         width: Int,
         height: Int,
-        onResizeComplete: ((RenderTarget) -> Unit)? = null
+        onResizeComplete: ((RenderTarget) -> Unit)? = null,
     ) {
         val token = target.token
         val callbackRunnable =
@@ -346,7 +344,7 @@ class GLRenderer(
             config: EGLConfig,
             surface: Surface,
             width: Int,
-            height: Int
+            height: Int,
         ): EGLSurface? =
             // Always default to creating an EGL window surface
             // Despite having access to the width and height here, do not explicitly
@@ -511,7 +509,7 @@ class GLRenderer(
 
                     override fun surfaceRedrawNeededAsync(
                         holder: SurfaceHolder,
-                        drawingFinished: Runnable
+                        drawingFinished: Runnable,
                     ) {
                         renderTarget.requestRender { drawingFinished.run() }
                     }
@@ -525,7 +523,7 @@ class GLRenderer(
                         holder: SurfaceHolder,
                         format: Int,
                         width: Int,
-                        height: Int
+                        height: Int,
                     ) {
                         if (!isAttached) {
                             thread.attachSurface(token, holder.surface, width, height, renderer)
@@ -553,7 +551,7 @@ class GLRenderer(
                     holder.surface,
                     surfaceView.width,
                     surfaceView.height,
-                    renderer
+                    renderer,
                 )
             }
             mRenderTargets.add(callback.renderTarget)
@@ -601,14 +599,14 @@ class GLRenderer(
                     override fun onSurfaceTextureAvailable(
                         surfaceTexture: SurfaceTexture,
                         width: Int,
-                        height: Int
+                        height: Int,
                     ) {
                         thread.attachSurface(
                             token,
                             Surface(surfaceTexture),
                             width,
                             height,
-                            renderer
+                            renderer,
                         )
                         renderTarget.requestRender()
                     }
@@ -616,7 +614,7 @@ class GLRenderer(
                     override fun onSurfaceTextureSizeChanged(
                         texture: SurfaceTexture,
                         width: Int,
-                        height: Int
+                        height: Int,
                     ) {
                         renderTarget.resize(width, height)
                         renderTarget.requestRender()
@@ -643,7 +641,7 @@ class GLRenderer(
                     Surface(textureView.surfaceTexture),
                     textureView.width,
                     textureView.height,
-                    renderer
+                    renderer,
                 )
                 renderTarget.requestRender()
             }
@@ -659,7 +657,7 @@ class GLRenderer(
     internal constructor(
         internal val token: Int,
         glManager: GLRenderer,
-        @WorkerThread internal val onDetach: () -> Unit = {}
+        @WorkerThread internal val onDetach: () -> Unit = {},
     ) {
 
         @Volatile private var mManager: GLRenderer? = glManager
@@ -709,7 +707,7 @@ class GLRenderer(
         fun resize(
             width: Int,
             height: Int,
-            @WorkerThread onResizeComplete: ((RenderTarget) -> Unit)? = null
+            @WorkerThread onResizeComplete: ((RenderTarget) -> Unit)? = null,
         ) {
             mManager?.resize(this, width, height, onResizeComplete)
         }
@@ -739,7 +737,7 @@ class GLRenderer(
 
         internal fun detachInternal(
             cancelPending: Boolean,
-            onDetachComplete: ((RenderTarget) -> Unit)? = null
+            onDetachComplete: ((RenderTarget) -> Unit)? = null,
         ) {
             mManager?.detachInternal(this, cancelPending, onDetachComplete)
         }

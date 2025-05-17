@@ -106,7 +106,7 @@ fun HorizontalMultiBrowseCarousel(
     minSmallItemWidth: Dp = CarouselDefaults.MinSmallItemSize,
     maxSmallItemWidth: Dp = CarouselDefaults.MaxSmallItemSize,
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    content: @Composable CarouselItemScope.(itemIndex: Int) -> Unit
+    content: @Composable CarouselItemScope.(itemIndex: Int) -> Unit,
 ) {
     val density = LocalDensity.current
     Carousel(
@@ -132,7 +132,7 @@ fun HorizontalMultiBrowseCarousel(
         modifier = modifier,
         itemSpacing = itemSpacing,
         flingBehavior = flingBehavior,
-        content = content
+        content = content,
     )
 }
 
@@ -171,7 +171,7 @@ fun HorizontalUncontainedCarousel(
     itemSpacing: Dp = 0.dp,
     flingBehavior: TargetedFlingBehavior = CarouselDefaults.noSnapFlingBehavior(),
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    content: @Composable CarouselItemScope.(itemIndex: Int) -> Unit
+    content: @Composable CarouselItemScope.(itemIndex: Int) -> Unit,
 ) {
     val density = LocalDensity.current
     Carousel(
@@ -194,7 +194,7 @@ fun HorizontalUncontainedCarousel(
         modifier = modifier,
         itemSpacing = itemSpacing,
         flingBehavior = flingBehavior,
-        content = content
+        content = content,
     )
 }
 
@@ -233,7 +233,7 @@ internal fun Carousel(
     itemSpacing: Dp = 0.dp,
     flingBehavior: TargetedFlingBehavior =
         CarouselDefaults.singleAdvanceFlingBehavior(state = state),
-    content: @Composable CarouselItemScope.(itemIndex: Int) -> Unit
+    content: @Composable CarouselItemScope.(itemIndex: Int) -> Unit,
 ) {
     val beforeContentPadding = contentPadding.calculateBeforeContentPadding(orientation)
     val afterContentPadding = contentPadding.calculateAfterContentPadding(orientation)
@@ -251,14 +251,14 @@ internal fun Carousel(
             contentPadding =
                 PaddingValues(
                     top = contentPadding.calculateTopPadding(),
-                    bottom = contentPadding.calculateBottomPadding()
+                    bottom = contentPadding.calculateBottomPadding(),
                 ),
             pageSize = pageSize,
             pageSpacing = itemSpacing,
             beyondViewportPageCount = maxNonFocalVisibleItemCount,
             snapPosition = snapPosition,
             flingBehavior = flingBehavior,
-            modifier = modifier
+            modifier = modifier,
         ) { page ->
             val carouselItemInfo = remember { CarouselItemDrawInfoImpl() }
             val scope = remember { CarouselItemScopeImpl(itemInfo = carouselItemInfo) }
@@ -267,7 +267,7 @@ internal fun Carousel(
                     override fun createOutline(
                         size: Size,
                         layoutDirection: LayoutDirection,
-                        density: Density
+                        density: Density,
                     ): Outline {
                         return Outline.Rectangle(carouselItemInfo.maskRect)
                     }
@@ -281,7 +281,7 @@ internal fun Carousel(
                         state = state,
                         strategy = { pageSize.strategy },
                         carouselItemDrawInfo = carouselItemInfo,
-                        clipShape = clipShape
+                        clipShape = clipShape,
                     )
             ) {
                 scope.content(page)
@@ -294,14 +294,14 @@ internal fun Carousel(
             contentPadding =
                 PaddingValues(
                     start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-                    end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
+                    end = contentPadding.calculateEndPadding(LocalLayoutDirection.current),
                 ),
             pageSize = pageSize,
             pageSpacing = itemSpacing,
             beyondViewportPageCount = maxNonFocalVisibleItemCount,
             snapPosition = snapPosition,
             flingBehavior = flingBehavior,
-            modifier = modifier
+            modifier = modifier,
         ) { page ->
             val carouselItemInfo = remember { CarouselItemDrawInfoImpl() }
             val scope = remember { CarouselItemScopeImpl(itemInfo = carouselItemInfo) }
@@ -310,7 +310,7 @@ internal fun Carousel(
                     override fun createOutline(
                         size: Size,
                         layoutDirection: LayoutDirection,
-                        density: Density
+                        density: Density,
                     ): Outline {
                         return Outline.Rectangle(carouselItemInfo.maskRect)
                     }
@@ -324,7 +324,7 @@ internal fun Carousel(
                         state = state,
                         strategy = { pageSize.strategy },
                         carouselItemDrawInfo = carouselItemInfo,
-                        clipShape = clipShape
+                        clipShape = clipShape,
                     )
             ) {
                 scope.content(page)
@@ -368,7 +368,7 @@ private fun PaddingValues.calculateAfterContentPadding(orientation: Orientation)
 internal class CarouselPageSize(
     private val keylineList: (availableSpace: Float, itemSpacing: Float) -> KeylineList,
     private val beforeContentPadding: Float,
-    private val afterContentPadding: Float
+    private val afterContentPadding: Float,
 ) : PageSize {
 
     private var strategyState by mutableStateOf(Strategy.Empty)
@@ -383,7 +383,7 @@ internal class CarouselPageSize(
                 availableSpace.toFloat(),
                 pageSpacing.toFloat(),
                 beforeContentPadding,
-                afterContentPadding
+                afterContentPadding,
             )
 
         // If a valid strategy is available, use the strategy's item size. Otherwise, default to
@@ -450,14 +450,14 @@ internal fun Modifier.carouselItem(
                     minWidth = constraints.minWidth,
                     maxWidth = constraints.maxWidth,
                     minHeight = mainAxisSize.roundToInt(),
-                    maxHeight = mainAxisSize.roundToInt()
+                    maxHeight = mainAxisSize.roundToInt(),
                 )
             } else {
                 constraints.copy(
                     minWidth = mainAxisSize.roundToInt(),
                     maxWidth = mainAxisSize.roundToInt(),
                     minHeight = constraints.minHeight,
-                    maxHeight = constraints.maxHeight
+                    maxHeight = constraints.maxHeight,
                 )
             }
 
@@ -491,7 +491,7 @@ internal fun Modifier.carouselItem(
                         strategyResult.getKeylineListForScrollOffset(
                             scrollOffset = scrollOffset,
                             maxScrollOffset = maxScrollOffset,
-                            roundToNearestStep = true
+                            roundToNearestStep = true,
                         )
 
                     // Find center of the item at this index
@@ -523,7 +523,7 @@ internal fun Modifier.carouselItem(
                             left = centerX - halfMaskWidth,
                             top = centerY - halfMaskHeight,
                             right = centerX + halfMaskWidth,
-                            bottom = centerY + halfMaskHeight
+                            bottom = centerY + halfMaskHeight,
                         )
 
                     // Update carousel item info
@@ -552,7 +552,7 @@ internal fun Modifier.carouselItem(
                     } else {
                         translationX = if (isRtl) -translation else translation
                     }
-                }
+                },
             )
         }
     }
@@ -560,10 +560,7 @@ internal fun Modifier.carouselItem(
 
 /** Calculates the current scroll offset given item count, sizing, spacing, and snap position. */
 @OptIn(ExperimentalMaterial3Api::class)
-internal fun calculateCurrentScrollOffset(
-    state: CarouselState,
-    strategy: Strategy,
-): Float {
+internal fun calculateCurrentScrollOffset(state: CarouselState, strategy: Strategy): Float {
     val itemSizeWithSpacing = strategy.itemMainAxisSize + strategy.itemSpacing
     val currentItemScrollOffset =
         (state.pagerState.currentPage * itemSizeWithSpacing) +
@@ -661,7 +658,7 @@ object CarouselDefaults {
                     suggestedTargetPage: Int,
                     velocity: Float,
                     pageSize: Int,
-                    pageSpacing: Int
+                    pageSpacing: Int,
                 ): Int {
                     return suggestedTargetPage
                 }

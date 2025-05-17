@@ -100,13 +100,13 @@ constructor(
     public constructor(
         useCases: List<UseCase>,
         viewPort: ViewPort? = null,
-        effects: List<CameraEffect> = emptyList()
+        effects: List<CameraEffect> = emptyList(),
     ) : this(
         useCases = useCases,
         viewPort = viewPort,
         effects = effects,
         requiredFeatures = emptySet(),
-        preferredFeatures = emptyList()
+        preferredFeatures = emptyList(),
     ) {
         validateFeatureCombination()
     }
@@ -236,7 +236,7 @@ public class LegacySessionConfig(
     useCases: List<UseCase>,
     viewPort: ViewPort? = null,
     effects: List<CameraEffect> = emptyList(),
-    public override val targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
+    public override val targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
 ) : SessionConfig(useCases, viewPort, effects) {
     public override val isLegacy: Boolean = true
 

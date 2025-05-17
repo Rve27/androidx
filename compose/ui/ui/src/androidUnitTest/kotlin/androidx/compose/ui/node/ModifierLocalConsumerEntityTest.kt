@@ -329,7 +329,7 @@ class ModifierLocalConsumerEntityTest {
             layoutNode: LayoutNode,
             affectsLookahead: Boolean,
             forceRequest: Boolean,
-            scheduleMeasureAndLayout: Boolean
+            scheduleMeasureAndLayout: Boolean,
         ) {}
 
         override fun onPreAttach(node: LayoutNode) =
@@ -396,7 +396,7 @@ class ModifierLocalConsumerEntityTest {
 
         @Deprecated(
             "fontLoader is deprecated, use fontFamilyResolver",
-            replaceWith = ReplaceWith("fontFamilyResolver")
+            replaceWith = ReplaceWith("fontFamilyResolver"),
         )
         @Suppress("DEPRECATION")
         override val fontLoader: Font.ResourceLoader
@@ -427,13 +427,13 @@ class ModifierLocalConsumerEntityTest {
             drawBlock: (Canvas, GraphicsLayer?) -> Unit,
             invalidateParentLayer: () -> Unit,
             explicitLayer: GraphicsLayer?,
-            forceUseOldLayers: Boolean
+            forceUseOldLayers: Boolean,
         ) = TODO("Not yet implemented")
 
         override fun onRequestRelayout(
             layoutNode: LayoutNode,
             affectsLookahead: Boolean,
-            forceRequest: Boolean
+            forceRequest: Boolean,
         ) = TODO("Not yet implemented")
 
         override fun requestOnPositionedCallback(layoutNode: LayoutNode) {

@@ -67,7 +67,7 @@ class SwipeToDismissTest {
         rule.setContent {
             SwipeToDismissBox(
                 state = rememberSwipeToDismissBoxState(SwipeToDismissBoxValue.Settled),
-                backgroundContent = {}
+                backgroundContent = {},
             ) {
                 Box(Modifier.fillMaxSize().testTag(dismissContentTag))
             }
@@ -81,7 +81,7 @@ class SwipeToDismissTest {
         rule.setContent {
             SwipeToDismissBox(
                 state = rememberSwipeToDismissBoxState(SwipeToDismissBoxValue.StartToEnd),
-                backgroundContent = {}
+                backgroundContent = {},
             ) {
                 Box(Modifier.fillMaxSize().testTag(dismissContentTag))
             }
@@ -97,7 +97,7 @@ class SwipeToDismissTest {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 SwipeToDismissBox(
                     state = rememberSwipeToDismissBoxState(SwipeToDismissBoxValue.StartToEnd),
-                    backgroundContent = {}
+                    backgroundContent = {},
                 ) {
                     Box(Modifier.fillMaxSize().testTag(dismissContentTag))
                 }
@@ -145,7 +145,7 @@ class SwipeToDismissTest {
         rule.setContent {
             SwipeToDismissBox(
                 state = rememberSwipeToDismissBoxState(SwipeToDismissBoxValue.Settled),
-                backgroundContent = { Box(Modifier.fillMaxSize().testTag(backgroundTag)) }
+                backgroundContent = { Box(Modifier.fillMaxSize().testTag(backgroundTag)) },
             ) {
                 Box(Modifier.size(100.dp))
             }
@@ -164,7 +164,7 @@ class SwipeToDismissTest {
                 modifier = Modifier.testTag(swipeDismissTag),
                 enableDismissFromStartToEnd = true,
                 enableDismissFromEndToStart = false,
-                backgroundContent = {}
+                backgroundContent = {},
             ) {
                 Box(Modifier.fillMaxSize())
             }
@@ -324,7 +324,7 @@ class SwipeToDismissTest {
                                 modifier = Modifier.height(48.dp).fillMaxWidth(),
                                 state = composedItems[index]!!,
                                 backgroundContent = {},
-                                content = {}
+                                content = {},
                             )
                         }
                     }
@@ -380,7 +380,7 @@ class SwipeToDismissTest {
                 state = swipeToDismissBoxState,
                 modifier = Modifier.testTag(swipeDismissTag),
                 gesturesEnabled = false,
-                backgroundContent = {}
+                backgroundContent = {},
             ) {
                 Box(Modifier.fillMaxSize())
             }

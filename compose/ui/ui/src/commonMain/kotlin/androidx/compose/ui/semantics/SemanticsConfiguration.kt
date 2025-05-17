@@ -132,7 +132,7 @@ class SemanticsConfiguration :
                 props[key] =
                     AccessibilityAction(
                         value.label ?: nextValue.label,
-                        value.action ?: nextValue.action
+                        value.action ?: nextValue.action,
                     )
             }
         }

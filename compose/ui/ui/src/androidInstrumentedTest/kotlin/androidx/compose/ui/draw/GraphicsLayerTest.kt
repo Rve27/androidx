@@ -137,7 +137,7 @@ class GraphicsLayerTest {
         rule.setContent {
             FixedSize(
                 30,
-                Modifier.padding(10).graphicsLayer().onGloballyPositioned { coords = it }
+                Modifier.padding(10).graphicsLayer().onGloballyPositioned { coords = it },
             ) { /* no-op */
             }
         }
@@ -165,7 +165,7 @@ class GraphicsLayerTest {
                     10,
                     Modifier.graphicsLayer(scaleX = 2f, scaleY = 3f).onGloballyPositioned {
                         coords = it
-                    }
+                    },
                 ) {}
             }
         }
@@ -185,7 +185,7 @@ class GraphicsLayerTest {
             Padding(10) {
                 FixedSize(
                     10,
-                    Modifier.scale(scaleX = 2f, scaleY = 3f).onGloballyPositioned { coords = it }
+                    Modifier.scale(scaleX = 2f, scaleY = 3f).onGloballyPositioned { coords = it },
                 ) {}
             }
         }
@@ -224,7 +224,7 @@ class GraphicsLayerTest {
                     10,
                     Modifier.graphicsLayer(scaleY = 3f, rotationZ = 90f).onGloballyPositioned {
                         coords = it
-                    }
+                    },
                 ) {}
             }
         }
@@ -263,9 +263,9 @@ class GraphicsLayerTest {
                     10,
                     Modifier.graphicsLayer(
                             rotationZ = 90f,
-                            transformOrigin = TransformOrigin(1.0f, 1.0f)
+                            transformOrigin = TransformOrigin(1.0f, 1.0f),
                         )
-                        .onGloballyPositioned { coords = it }
+                        .onGloballyPositioned { coords = it },
                 )
             }
         }
@@ -286,7 +286,7 @@ class GraphicsLayerTest {
                 FixedSize(
                     10,
                     Modifier.graphicsLayer(translationX = 5.0f, translationY = 8.0f)
-                        .onGloballyPositioned { coords = it }
+                        .onGloballyPositioned { coords = it },
                 )
             }
         }
@@ -307,7 +307,7 @@ class GraphicsLayerTest {
                 FixedSize(10, Modifier.graphicsLayer(clip = true)) {
                     FixedSize(
                         10,
-                        Modifier.graphicsLayer(scaleX = 2f).onGloballyPositioned { coords = it }
+                        Modifier.graphicsLayer(scaleX = 2f).onGloballyPositioned { coords = it },
                     ) {}
                 }
             }
@@ -333,7 +333,7 @@ class GraphicsLayerTest {
                         Modifier.graphicsLayer(
                                 rotationZ = 90f,
                                 transformOrigin = TransformOrigin(0f, 1f),
-                                clip = true
+                                clip = true,
                             )
                             .requiredSize(20.toDp(), 10.toDp())
                             .align(AbsoluteAlignment.TopLeft)
@@ -343,7 +343,7 @@ class GraphicsLayerTest {
                         Modifier.graphicsLayer(
                                 rotationZ = -90f,
                                 transformOrigin = TransformOrigin(0f, 1f),
-                                clip = true
+                                clip = true,
                             )
                             .requiredSize(10.toDp())
                             .align(AbsoluteAlignment.BottomRight)
@@ -400,7 +400,7 @@ class GraphicsLayerTest {
                 override fun createOutline(
                     size: Size,
                     layoutDirection: LayoutDirection,
-                    density: Density
+                    density: Density,
                 ) = Outline.Rectangle(Rect.Zero)
             }
         val tag = "testTag"
@@ -541,7 +541,7 @@ class GraphicsLayerTest {
         BoxRenderEffect(
             tag,
             (size / LocalDensity.current.density).dp,
-            ({ BlurEffect(blurRadius, blurRadius, TileMode.Decal) })
+            ({ BlurEffect(blurRadius, blurRadius, TileMode.Decal) }),
         ) {
             inset(blurRadius, blurRadius) { drawRect(androidx.compose.ui.graphics.Color.Blue) }
         }
@@ -552,7 +552,7 @@ class GraphicsLayerTest {
         tag: String,
         size: Dp,
         renderEffectCreator: () -> RenderEffect,
-        drawBlock: DrawScope.() -> Unit
+        drawBlock: DrawScope.() -> Unit,
     ) {
         Box(
             Modifier.testTag(tag)
@@ -632,7 +632,7 @@ class GraphicsLayerTest {
             BoxRenderEffect(
                 tag,
                 (size / LocalDensity.current.density).dp,
-                { OffsetEffect(20f, 20f) }
+                { OffsetEffect(20f, 20f) },
             ) {
                 drawRect(Color.Blue, size = Size(this.size.width - 20, this.size.height - 20))
             }
@@ -747,7 +747,7 @@ class GraphicsLayerTest {
                             drawRect(
                                 color = Color.Red,
                                 topLeft = Offset(-width, -height),
-                                size = Size(width * 2, height * 2)
+                                size = Size(width * 2, height * 2),
                             )
                         }
                 )
@@ -822,7 +822,7 @@ class GraphicsLayerTest {
                             drawRect(
                                 color = Color.Red,
                                 topLeft = Offset(-width, -height),
-                                size = Size(width * 2, height * 2)
+                                size = Size(width * 2, height * 2),
                             )
                         }
                 )
@@ -903,7 +903,7 @@ class GraphicsLayerTest {
                             drawRect(
                                 color = Color.Red,
                                 topLeft = Offset(-width, -height),
-                                size = Size(width * 2, height * 2)
+                                size = Size(width * 2, height * 2),
                             )
                         }
                 )
@@ -937,7 +937,7 @@ class GraphicsLayerTest {
                 assertPixelColor(
                     Color.LightGray,
                     (scaledLeft + scaledRight) / 2 + 3,
-                    (scaledTop + scaledBottom) / 2 + 3
+                    (scaledTop + scaledBottom) / 2 + 3,
                 )
             }
         }
@@ -974,7 +974,7 @@ class GraphicsLayerTest {
                                             override fun createOutline(
                                                 size: Size,
                                                 layoutDirection: LayoutDirection,
-                                                density: Density
+                                                density: Density,
                                             ): Outline {
                                                 return Outline.Rectangle(
                                                     Rect(
@@ -1048,7 +1048,7 @@ class GraphicsLayerTest {
                                             override fun createOutline(
                                                 size: Size,
                                                 layoutDirection: LayoutDirection,
-                                                density: Density
+                                                density: Density,
                                             ): Outline {
                                                 return Outline.Rounded(
                                                     RoundRect(
@@ -1059,8 +1059,8 @@ class GraphicsLayerTest {
                                                         cornerRadius =
                                                             CornerRadius(
                                                                 size.width / 2,
-                                                                size.height / 2
-                                                            )
+                                                                size.height / 2,
+                                                            ),
                                                     )
                                                 )
                                             }
@@ -1148,7 +1148,7 @@ class GraphicsLayerTest {
                     Box(Modifier.fillMaxSize().clickable { firstClicked = true })
                     Box(Modifier.fillMaxSize().clickable { secondClicked = true })
                 },
-                modifier = Modifier.testTag("layout")
+                modifier = Modifier.testTag("layout"),
             ) { measurables, _ ->
                 val itemConstraints = Constraints.fixed(100, 100)
                 val first = measurables[0].measure(itemConstraints)
@@ -1211,7 +1211,7 @@ class GraphicsLayerTest {
                         .background(Color.Black)
                         .graphicsLayer(
                             alpha = 0.5f,
-                            compositingStrategy = CompositingStrategy.ModulateAlpha
+                            compositingStrategy = CompositingStrategy.ModulateAlpha,
                         )
             ) {
                 inset(0f, 0f, size.width / 3, size.height / 3) { drawRect(color = Color.Red) }
@@ -1849,7 +1849,7 @@ class GraphicsLayerTest {
                         Modifier.size(10.dp)
                             .graphicsLayer(
                                 rotationZ = 180f,
-                                transformOrigin = TransformOrigin(1f, 1f)
+                                transformOrigin = TransformOrigin(1f, 1f),
                             )
                             .onPlaced { bounds = it.boundsInRoot() }
                 )

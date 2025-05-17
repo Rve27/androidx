@@ -38,7 +38,7 @@ import androidx.camera.core.internal.StreamSpecsCalculator
  */
 public class CameraFactoryProvider(
     private val sharedAppContext: Context? = null,
-    private val sharedThreadConfig: CameraThreadConfig? = null
+    private val sharedThreadConfig: CameraThreadConfig? = null,
 ) : CameraFactory.Provider {
     private val sharedInteropCallbacks = CameraInteropStateCallbackRepository()
 
@@ -47,7 +47,7 @@ public class CameraFactoryProvider(
         threadConfig: CameraThreadConfig,
         availableCamerasLimiter: CameraSelector?,
         cameraOpenRetryMaxTimeoutInMs: Long,
-        streamSpecsCalculator: StreamSpecsCalculator
+        streamSpecsCalculator: StreamSpecsCalculator,
     ): CameraFactory {
 
         val openRetryMaxTimeout =
@@ -62,7 +62,7 @@ public class CameraFactoryProvider(
             sharedThreadConfig ?: threadConfig,
             sharedInteropCallbacks,
             availableCamerasLimiter,
-            streamSpecsCalculator
+            streamSpecsCalculator,
         )
     }
 
@@ -87,7 +87,7 @@ public class CameraFactoryProvider(
                         CameraPipe.CameraInteropConfig(
                             sharedInteropCallbacks.deviceStateCallback,
                             sharedInteropCallbacks.sessionStateCallback,
-                            openRetryMaxTimeout
+                            openRetryMaxTimeout,
                         ),
                 )
             )

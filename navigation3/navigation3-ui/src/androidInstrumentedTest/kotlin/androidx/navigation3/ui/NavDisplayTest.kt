@@ -279,7 +279,7 @@ class NavDisplayTest {
             NavDisplay(
                 backStack = backStack,
                 onBack = { repeat(it) { backStack.removeAt(backStack.lastIndex) } },
-                entryDecorators = listOf(rememberSavedStateNavEntryDecorator())
+                entryDecorators = listOf(rememberSavedStateNavEntryDecorator()),
             ) {
                 when (it) {
                     first ->
@@ -340,7 +340,7 @@ class NavDisplayTest {
                         entry(second) { Text(second) }
                         entry(third) { Text(third) }
                         entry(forth) { Text(forth) }
-                    }
+                    },
             )
         }
 
@@ -388,7 +388,7 @@ class NavDisplayTest {
                             Text("numberOnScreen1: ${numberOnScreen1.value}")
                         }
                         entry(Second) { Text(second) }
-                    }
+                    },
             )
         }
 

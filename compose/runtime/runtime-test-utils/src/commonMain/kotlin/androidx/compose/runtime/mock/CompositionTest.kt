@@ -36,9 +36,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 
 @OptIn(InternalComposeApi::class, ExperimentalCoroutinesApi::class)
-fun compositionTest(
-    block: suspend CompositionTestScope.() -> Unit,
-) = runTest {
+fun compositionTest(block: suspend CompositionTestScope.() -> Unit) = runTest {
     withContext(TestMonotonicFrameClock(this)) {
         // Start the recomposer
         val recomposer = Recomposer(coroutineContext)
@@ -68,7 +66,7 @@ fun compositionTest(
                 @OptIn(ExperimentalComposeRuntimeApi::class)
                 override fun compose(
                     observer: CompositionObserver,
-                    block: @Composable () -> Unit
+                    block: @Composable () -> Unit,
                 ): CompositionObserverHandle? {
                     check(!composed) { "Compose should only be called once" }
                     composed = true
@@ -131,7 +129,7 @@ interface CompositionTestScope : CoroutineScope {
     @OptIn(ExperimentalComposeRuntimeApi::class)
     fun compose(
         observer: CompositionObserver,
-        block: @Composable () -> Unit
+        block: @Composable () -> Unit,
     ): CompositionObserverHandle?
 
     /**

@@ -65,10 +65,7 @@ public fun SpatialElevation(
 }
 
 @Composable
-private fun LayoutSpatialElevation(
-    elevation: Dp,
-    content: @Composable () -> Unit,
-) {
+private fun LayoutSpatialElevation(elevation: Dp, content: @Composable () -> Unit) {
     val bufferPadding = 1.dp
     val bufferPaddingPx = with(LocalDensity.current) { bufferPadding.toPx() }
     var contentSize by remember { mutableStateOf(IntSize.Zero) }

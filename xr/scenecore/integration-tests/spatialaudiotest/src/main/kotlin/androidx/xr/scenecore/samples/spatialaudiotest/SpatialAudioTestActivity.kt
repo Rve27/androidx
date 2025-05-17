@@ -304,7 +304,7 @@ class SpatialAudioTestActivity : AppCompatActivity() {
                 SpatialAudioTrackBuilder.setSoundFieldAttributes(
                     session,
                     builder,
-                    soundFieldAttributes
+                    soundFieldAttributes,
                 )
         }
     }
@@ -372,7 +372,7 @@ class SpatialAudioTestActivity : AppCompatActivity() {
                 SpatializerConstants.SOURCE_TYPE_POINT_SOURCE -> {
                     Log.d(
                         TAG,
-                        "Point Source: ${SpatialAudioTrack.getPointSourceParams(session, audioTrack)}"
+                        "Point Source: ${SpatialAudioTrack.getPointSourceParams(session, audioTrack)}",
                     )
                 }
                 SpatializerConstants.SOURCE_TYPE_SOUND_FIELD -> {

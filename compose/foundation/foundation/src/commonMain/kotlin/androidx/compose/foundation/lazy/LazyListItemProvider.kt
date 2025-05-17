@@ -38,7 +38,7 @@ internal interface LazyListItemProvider : LazyLayoutItemProvider {
 @Composable
 internal fun rememberLazyListItemProviderLambda(
     state: LazyListState,
-    content: LazyListScope.() -> Unit
+    content: LazyListScope.() -> Unit,
 ): () -> LazyListItemProvider {
     val latestContent = rememberUpdatedState(content)
     return remember(state) {
@@ -55,7 +55,7 @@ internal fun rememberLazyListItemProviderLambda(
                     state = state,
                     intervalContent = intervalContent,
                     itemScope = scope,
-                    keyIndexMap = map
+                    keyIndexMap = map,
                 )
             }
         itemProviderState::value

@@ -45,10 +45,7 @@ import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.surface
 
 @Composable
-fun DemoApp(
-    currentDemo: Demo,
-    onNavigateToDemo: (Demo) -> Unit,
-) {
+fun DemoApp(currentDemo: Demo, onNavigateToDemo: (Demo) -> Unit) {
     val overlayOnBackground = OverlayOnBackgroundSetting.asState().value
     GlimmerTheme {
         Column(
@@ -60,11 +57,9 @@ fun DemoApp(
             Spacer(Modifier.weight(1f, fill = true))
             ListItem(
                 onClick = { OverlayOnBackgroundSetting.set(context, !overlayOnBackground) },
-                Modifier.padding(16.dp)
+                Modifier.padding(16.dp),
             ) {
-                Text(
-                    "${if (overlayOnBackground) "Disable" else "Enable"} overlay on background",
-                )
+                Text("${if (overlayOnBackground) "Disable" else "Enable"} overlay on background")
             }
         }
     }
@@ -83,7 +78,7 @@ private fun DisplayDemoCategory(category: DemoCategory, onNavigate: (Demo) -> Un
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(category.demos) { demo ->
             ListItem(onClick = { onNavigate(demo) }) { Text(demo.title) }
@@ -95,14 +90,14 @@ private fun DisplayDemoCategory(category: DemoCategory, onNavigate: (Demo) -> Un
 private fun ListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable (() -> Unit)
+    content: @Composable (() -> Unit),
 ) {
     Box(
         modifier
             .fillMaxWidth()
             .surface()
             .clickable(onClick = onClick)
-            .padding(horizontal = 24.dp, vertical = 20.dp),
+            .padding(horizontal = 24.dp, vertical = 20.dp)
     ) {
         content()
     }

@@ -100,7 +100,7 @@ class OpenXrManagerTest {
             perceptionManager.xrResources.updatables.containsAll(
                 listOf(
                     perceptionManager.xrResources.leftHand,
-                    perceptionManager.xrResources.rightHand
+                    perceptionManager.xrResources.rightHand,
                 )
             )
         )

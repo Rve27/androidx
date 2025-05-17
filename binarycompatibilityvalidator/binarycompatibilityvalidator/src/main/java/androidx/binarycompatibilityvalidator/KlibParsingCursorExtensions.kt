@@ -195,7 +195,7 @@ internal fun Cursor.parseAbiType(peek: Boolean = false): AbiType? {
     return SimpleTypeImpl(
         ClassReferenceImpl(abiQualifiedName),
         arguments = typeArgs,
-        nullability = nullability
+        nullability = nullability,
     )
 }
 
@@ -233,7 +233,7 @@ internal fun Cursor.parseTypeReference(): AbiType? {
     return SimpleTypeImpl(
         TypeParameterReferenceImpl(typeParamReference),
         arguments = typeArgs,
-        nullability = nullability
+        nullability = nullability,
     )
 }
 
@@ -291,7 +291,7 @@ internal fun Cursor.parseTypeParam(peek: Boolean = false): AbiTypeParameter? {
         tag = tag,
         variance = variance,
         isReified = isReified,
-        upperBounds = upperBounds
+        upperBounds = upperBounds,
     )
 }
 
@@ -319,7 +319,7 @@ internal fun Cursor.parseValueParameter(peek: Boolean = false): AbiValueParamete
         isVararg = isVararg,
         hasDefaultArg = hasDefaultArg,
         isNoinline = isNoInline,
-        isCrossinline = isCrossinline
+        isCrossinline = isCrossinline,
     )
 }
 
@@ -462,7 +462,7 @@ private fun Cursor.parseClassKindString(peek: Boolean = false) =
 
 private enum class GetterOrSetter() {
     GETTER,
-    SETTER
+    SETTER,
 }
 
 private val constructorNameRegex = Regex("^constructor\\s<init>")

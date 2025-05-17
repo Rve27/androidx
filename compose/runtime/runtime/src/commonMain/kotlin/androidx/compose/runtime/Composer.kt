@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-@file:OptIn(
-    InternalComposeApi::class,
-)
+@file:OptIn(InternalComposeApi::class)
 @file:Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
 
 package androidx.compose.runtime
@@ -77,7 +75,7 @@ private class GroupInfo(
     var nodeIndex: Int,
 
     /** The current number of nodes the group contains after changes have been applied */
-    var nodeCount: Int
+    var nodeCount: Int,
 )
 
 /**
@@ -247,7 +245,7 @@ private class Invalidation(
      *
      * Can contain a [ScatterSet] of instances, single instance or null.
      */
-    var instances: Any?
+    var instances: Any?,
 ) {
     fun isInvalid(): Boolean = scope.isInvalidFor(instances)
 }
@@ -294,7 +292,7 @@ internal enum class InvalidationResult {
      * has not been composed yet but will be recomposed before the composition completes. A new
      * recomposition was not scheduled for this invalidation.
      */
-    IMMINENT
+    IMMINENT,
 }
 
 /**
@@ -321,7 +319,7 @@ internal constructor(
     internal val mutationPolicy: SnapshotMutationPolicy<T>?,
     internal val state: MutableState<T>?,
     internal val compute: (CompositionLocalAccessorScope.() -> T)?,
-    internal val isDynamic: Boolean
+    internal val isDynamic: Boolean,
 ) {
     private val providedValue: T? = value
 
@@ -389,7 +387,7 @@ internal constructor(
     internal val anchor: Anchor,
     internal var invalidations: List<Pair<RecomposeScopeImpl, Any?>>,
     internal val locals: PersistentCompositionLocalMap,
-    internal val nestedReferences: List<MovableContentStateReference>?
+    internal val nestedReferences: List<MovableContentStateReference>?,
 )
 
 /**
@@ -405,7 +403,7 @@ class MovableContentState internal constructor(internal val slotTable: SlotTable
     /** Extract one or more states for movable content that is nested in the [slotTable]. */
     internal fun extractNestedStates(
         applier: Applier<*>,
-        references: ObjectList<MovableContentStateReference>
+        references: ObjectList<MovableContentStateReference>,
     ): ScatterMap<MovableContentStateReference, MovableContentState> {
         // We can only remove states that are contained in this states slot table so the references
         // with anchors not owned by the slotTable should be removed. We also should traverse the
@@ -536,7 +534,7 @@ sealed interface Composer {
      */
     @Deprecated(
         "Prefer the higher-precision compositeKeyHashCode instead",
-        ReplaceWith("compositeKeyHashCode")
+        ReplaceWith("compositeKeyHashCode"),
     )
     @InternalComposeApi
     val compoundKeyHash: Int
@@ -1341,7 +1339,7 @@ fun isTraceInProgress(): Boolean = compositionTracer.let { it != null && it.isTr
 @Deprecated(
     message = "Use the overload with \$dirty metadata instead",
     ReplaceWith("traceEventStart(key, dirty1, dirty2, info)"),
-    DeprecationLevel.HIDDEN
+    DeprecationLevel.HIDDEN,
 )
 fun traceEventStart(key: Int, info: String): Unit = traceEventStart(key, -1, -1, info)
 
@@ -1407,7 +1405,7 @@ internal class ComposerImpl(
     private var lateChanges: ChangeList,
 
     /** The composition that owns this composer */
-    override val composition: ControlledComposition
+    override val composition: ControlledComposition,
 ) : Composer {
     private val pendingStack = Stack<Pending?>()
     private var pending: Pending? = null
@@ -1692,7 +1690,7 @@ internal class ComposerImpl(
                 @Suppress("UNCHECKED_CAST") // ProvidableCompositionLocal to CompositionLocal
                 parentProvider.putValue(
                     LocalCompositionErrorContext as CompositionLocal<Any?>,
-                    StaticValueHolder(errorContext)
+                    StaticValueHolder(errorContext),
                 )
             } else {
                 parentProvider
@@ -2141,7 +2139,8 @@ internal class ComposerImpl(
             result = value
         }
 
-        @Suppress("UNCHECKED_CAST") return result as T
+        @Suppress("UNCHECKED_CAST")
+        return result as T
     }
 
     private fun updateSlot(value: Any?) {
@@ -2174,7 +2173,7 @@ internal class ComposerImpl(
                     changeListWriter.updateAnchoredValue(
                         value,
                         reader.anchor(reader.parent),
-                        groupSlotIndex
+                        groupSlotIndex,
                     )
                 } else {
                     // No children have been seen yet so we are still in a position where we can
@@ -2306,7 +2305,7 @@ internal class ComposerImpl(
      */
     private fun updateProviderMapGroup(
         parentScope: PersistentCompositionLocalMap,
-        currentProviders: PersistentCompositionLocalMap
+        currentProviders: PersistentCompositionLocalMap,
     ): PersistentCompositionLocalMap {
         val providerScope = parentScope.mutate { it.putAll(currentProviders) }
         startGroup(providerMapsKey, providerMaps)
@@ -2449,7 +2448,7 @@ internal class ComposerImpl(
                         this@ComposerImpl.compositeKeyHashCode,
                         forceRecomposeScopes,
                         sourceMarkersEnabled,
-                        (composition as? CompositionImpl)?.observerHolder
+                        (composition as? CompositionImpl)?.observerHolder,
                     )
                 )
             updateValue(holder)
@@ -2537,7 +2536,7 @@ internal class ComposerImpl(
                         objectKey = -1,
                         location = insertedGroupVirtualIndex(startIndex),
                         nodes = -1,
-                        index = 0
+                        index = 0,
                     )
                 pending.registerInsert(insertKeyInfo, nodeIndex - pending.startIndex)
                 pending.recordUsed(insertKeyInfo)
@@ -2608,7 +2607,7 @@ internal class ComposerImpl(
                         objectKey = -1,
                         location = insertedGroupVirtualIndex(startIndex),
                         nodes = -1,
-                        index = 0
+                        index = 0,
                     )
                 pending.registerInsert(insertKeyInfo, nodeIndex - pending.startIndex)
                 pending.recordUsed(insertKeyInfo)
@@ -2662,7 +2661,7 @@ internal class ComposerImpl(
                 writer.groupKey(parent),
                 rGroupIndex,
                 writer.groupObjectKey(parent),
-                writer.groupAux(parent)
+                writer.groupAux(parent),
             )
         } else {
             val parent = reader.parent
@@ -2670,7 +2669,7 @@ internal class ComposerImpl(
                 reader.groupKey(parent),
                 rGroupIndex,
                 reader.groupObjectKey(parent),
-                reader.groupAux(parent)
+                reader.groupAux(parent),
             )
         }
         var expectedNodeCount = groupNodeCount
@@ -2702,7 +2701,7 @@ internal class ComposerImpl(
                     val deleteOffset = pending.nodePositionOf(previousInfo)
                     changeListWriter.removeNode(
                         nodeIndex = deleteOffset + pending.startIndex,
-                        count = previousInfo.nodes
+                        count = previousInfo.nodes,
                     )
                     pending.updateNodeCount(previousInfo.location, 0)
                     changeListWriter.moveReaderRelativeTo(previousInfo.location)
@@ -2715,7 +2714,7 @@ internal class ComposerImpl(
                     // start of the group.
                     invalidations.removeRange(
                         previousInfo.location,
-                        previousInfo.location + reader.groupSize(previousInfo.location)
+                        previousInfo.location + reader.groupSize(previousInfo.location),
                     )
                     previousIndex++
                     continue
@@ -2739,7 +2738,7 @@ internal class ComposerImpl(
                             changeListWriter.moveNode(
                                 from = nodePosition + pending.startIndex,
                                 to = nodeOffset + pending.startIndex,
-                                count = updatedCount
+                                count = updatedCount,
                             )
                             pending.registerMoveNode(nodePosition, nodeOffset, updatedCount)
                         } // else the nodes are already in the correct position
@@ -2982,7 +2981,7 @@ internal class ComposerImpl(
         groupLocation: Int,
         group: Int,
         recomposeGroup: Int,
-        recomposeIndex: Int
+        recomposeIndex: Int,
     ): Int {
         // Find the anchor group which is either the recomposeGroup or the first parent node
         var anchorGroup = reader.parent(group)
@@ -3099,7 +3098,7 @@ internal class ComposerImpl(
     private fun compositeKeyOf(
         group: Int,
         recomposeGroup: Int,
-        recomposeKey: CompositeKeyHashCode
+        recomposeKey: CompositeKeyHashCode,
     ): CompositeKeyHashCode {
         // The general form of a group's compositeKey can be solved by recursively evaluating:
         // compositeKey(group) = ((compositeKey(parent(group)) rol 3)
@@ -3389,7 +3388,7 @@ internal class ComposerImpl(
             value as MovableContent<Any?>,
             currentCompositionLocalScope(),
             parameter,
-            force = false
+            force = false,
         )
     }
 
@@ -3397,7 +3396,7 @@ internal class ComposerImpl(
         content: MovableContent<Any?>,
         locals: PersistentCompositionLocalMap,
         parameter: Any?,
-        force: Boolean
+        force: Boolean,
     ) {
         // Start the movable content group
         startMovableGroup(movableContentKey, content)
@@ -3438,7 +3437,7 @@ internal class ComposerImpl(
                         anchor,
                         emptyList(),
                         currentCompositionLocalScope(),
-                        null
+                        null,
                     )
                 parentContext.insertMovableContent(reference)
             } else {
@@ -3514,7 +3513,7 @@ internal class ComposerImpl(
                                             to.content,
                                             to.locals,
                                             to.parameter,
-                                            force = true
+                                            force = true,
                                         )
                                     }
                                 }
@@ -3522,7 +3521,7 @@ internal class ComposerImpl(
                         }
                         changeListWriter.includeOperationsIn(
                             other = offsetChanges,
-                            effectiveNodeIndex = effectiveNodeIndex
+                            effectiveNodeIndex = effectiveNodeIndex,
                         )
                     }
                 } else {
@@ -3538,7 +3537,7 @@ internal class ComposerImpl(
                     if (nodesToInsert.isNotEmpty()) {
                         changeListWriter.copyNodesToNewAnchorLocation(
                             nodesToInsert,
-                            effectiveNodeIndex
+                            effectiveNodeIndex,
                         )
                         if (to.slotTable == slotTable) {
                             // Inserting the content into the current slot table then we need to
@@ -3555,7 +3554,7 @@ internal class ComposerImpl(
                         resolvedState = resolvedState,
                         parentContext = parentContext,
                         from = from,
-                        to = to
+                        to = to,
                     )
 
                     fromTable.read { reader ->
@@ -3570,20 +3569,20 @@ internal class ComposerImpl(
                                         from = from.composition,
                                         to = to.composition,
                                         reader.currentGroup,
-                                        invalidations = from.invalidations
+                                        invalidations = from.invalidations,
                                     ) {
                                         invokeMovableContentLambda(
                                             to.content,
                                             to.locals,
                                             to.parameter,
-                                            force = true
+                                            force = true,
                                         )
                                     }
                                 }
                             }
                             changeListWriter.includeOperationsIn(
                                 other = offsetChanges,
-                                effectiveNodeIndex = effectiveNodeIndex
+                                effectiveNodeIndex = effectiveNodeIndex,
                             )
                         }
                     }
@@ -3616,7 +3615,7 @@ internal class ComposerImpl(
         to: ControlledComposition? = null,
         index: Int? = null,
         invalidations: List<Pair<RecomposeScopeImpl, Any?>> = emptyList(),
-        block: () -> R
+        block: () -> R,
     ): R {
         val savedIsComposing = isComposing
         val savedNodeIndex = nodeIndex
@@ -3707,7 +3706,7 @@ internal class ComposerImpl(
     internal fun composeContent(
         invalidationsRequested: ScopeMap<RecomposeScopeImpl, Any>,
         content: @Composable () -> Unit,
-        shouldPause: ShouldPauseCallback?
+        shouldPause: ShouldPauseCallback?,
     ) {
         runtimeCheck(changes.isEmpty()) { "Expected applyChanges() to have been called" }
         this.shouldPauseCallback = shouldPause
@@ -3734,7 +3733,7 @@ internal class ComposerImpl(
      */
     internal fun recompose(
         invalidationsRequested: ScopeMap<RecomposeScopeImpl, Any>,
-        shouldPause: ShouldPauseCallback?
+        shouldPause: ShouldPauseCallback?,
     ): Boolean {
         runtimeCheck(changes.isEmpty()) { "Expected applyChanges() to have been called" }
         // even if invalidationsRequested is empty we still need to recompose if the Composer has
@@ -3766,7 +3765,7 @@ internal class ComposerImpl(
 
     private fun doCompose(
         invalidationsRequested: ScopeMap<RecomposeScopeImpl, Any>,
-        content: (@Composable () -> Unit)?
+        content: (@Composable () -> Unit)?,
     ) {
         runtimeCheck(!isComposing) { "Reentrant composition is not supported" }
         trace("Compose:recompose") {
@@ -3867,7 +3866,7 @@ internal class ComposerImpl(
 
         fun createMovableContentReferenceForGroup(
             group: Int,
-            nestedStates: List<MovableContentStateReference>?
+            nestedStates: List<MovableContentStateReference>?,
         ): MovableContentStateReference {
             @Suppress("UNCHECKED_CAST")
             val movableContent = reader.groupObjectKey(group) as MovableContent<Any?>
@@ -3887,7 +3886,7 @@ internal class ComposerImpl(
                     anchor,
                     invalidations,
                     currentCompositionLocalScope(group),
-                    nestedStates
+                    nestedStates,
                 )
             return reference
         }
@@ -3939,7 +3938,7 @@ internal class ComposerImpl(
                         changeListWriter.releaseMovableGroupAtCurrent(
                             composition,
                             parentContext,
-                            reference
+                            reference,
                         )
                     }
                     if (needsNodeDelete && group != groupBeingRemoved) {
@@ -3992,7 +3991,7 @@ internal class ComposerImpl(
                         reportGroup(
                             group = current,
                             needsNodeDelete = isNode || needsNodeDelete,
-                            nodeIndex = if (isNode) 0 else nodeIndex + runningNodeCount
+                            nodeIndex = if (isNode) 0 else nodeIndex + runningNodeCount,
                         )
                     if (isNode) {
                         changeListWriter.endNodeMovement()
@@ -4080,7 +4079,7 @@ internal class ComposerImpl(
         override val compositeKeyHashCode: CompositeKeyHashCode,
         override val collectingParameterInformation: Boolean,
         override val collectingSourceInformation: Boolean,
-        override val observerHolder: CompositionObserverHolder?
+        override val observerHolder: CompositionObserverHolder?,
     ) : CompositionContext() {
         var inspectionTables: MutableSet<MutableSet<CompositionData>>? = null
         val composers = mutableSetOf<ComposerImpl>()
@@ -4130,7 +4129,7 @@ internal class ComposerImpl(
 
         override fun composeInitial(
             composition: ControlledComposition,
-            content: @Composable () -> Unit
+            content: @Composable () -> Unit,
         ) {
             parentContext.composeInitial(composition, content)
         }
@@ -4138,14 +4137,14 @@ internal class ComposerImpl(
         override fun composeInitialPaused(
             composition: ControlledComposition,
             shouldPause: ShouldPauseCallback,
-            content: @Composable () -> Unit
+            content: @Composable () -> Unit,
         ): ScatterSet<RecomposeScopeImpl> =
             parentContext.composeInitialPaused(composition, shouldPause, content)
 
         override fun recomposePaused(
             composition: ControlledComposition,
             shouldPause: ShouldPauseCallback,
-            invalidScopes: ScatterSet<RecomposeScopeImpl>
+            invalidScopes: ScatterSet<RecomposeScopeImpl>,
         ): ScatterSet<RecomposeScopeImpl> =
             parentContext.recomposePaused(composition, shouldPause, invalidScopes)
 
@@ -4174,7 +4173,7 @@ internal class ComposerImpl(
         private var compositionLocalScope by
             mutableStateOf<PersistentCompositionLocalMap>(
                 persistentCompositionLocalHashMapOf(),
-                referentialEqualityPolicy()
+                referentialEqualityPolicy(),
             )
 
         override fun getCompositionLocalScope(): PersistentCompositionLocalMap =
@@ -4230,7 +4229,7 @@ internal class ComposerImpl(
         groupKey: Int,
         rGroupIndex: Int,
         dataKey: Any?,
-        data: Any?
+        data: Any?,
     ) {
         if (dataKey == null)
             if (data != null && groupKey == reuseKey && data != Composer.Empty)
@@ -4249,7 +4248,7 @@ internal class ComposerImpl(
         groupKey: Int,
         rGroupIndex: Int,
         dataKey: Any?,
-        data: Any?
+        data: Any?,
     ) {
         if (dataKey == null)
             if (data != null && groupKey == reuseKey && data != Composer.Empty)
@@ -4519,7 +4518,7 @@ private fun List<Invalidation>.findInsertLocation(location: Int): Int =
 private fun MutableList<Invalidation>.insertIfMissing(
     location: Int,
     scope: RecomposeScopeImpl,
-    instance: Any?
+    instance: Any?,
 ) {
     val index = findLocation(location)
     if (index < 0) {
@@ -4529,8 +4528,8 @@ private fun MutableList<Invalidation>.insertIfMissing(
                 scope,
                 location,
                 // Only derived state instance is important for composition
-                instance.takeIf { it is DerivedState<*> }
-            )
+                instance.takeIf { it is DerivedState<*> },
+            ),
         )
     } else {
         val invalidation = get(index)
@@ -4578,7 +4577,7 @@ private fun MutableList<Invalidation>.removeRange(start: Int, end: Int) {
 private inline fun List<Invalidation>.forEachInRange(
     start: Int,
     end: Int,
-    block: (Invalidation) -> Unit
+    block: (Invalidation) -> Unit,
 ) {
     var index = findInsertLocation(start)
     while (index < size) {
@@ -4873,7 +4872,7 @@ internal fun extractMovableContentAtCurrent(
             object : RecomposeScopeOwner {
                 override fun invalidate(
                     scope: RecomposeScopeImpl,
-                    instance: Any?
+                    instance: Any?,
                 ): InvalidationResult {
                     // Try sending this to the original owner first.
                     val result =
@@ -4907,7 +4906,7 @@ internal fun extractMovableContentAtCurrent(
             RecomposeScopeImpl.adoptAnchoredScopes(
                 slots = writer,
                 anchors = anchors,
-                newOwner = movableContentRecomposeScopeOwner
+                newOwner = movableContentRecomposeScopeOwner,
             )
         }
     }

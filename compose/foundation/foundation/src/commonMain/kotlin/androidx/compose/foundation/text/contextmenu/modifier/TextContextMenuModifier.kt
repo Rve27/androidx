@@ -42,7 +42,7 @@ import androidx.compose.ui.platform.InspectorInfo
  * @sample androidx.compose.foundation.samples.AddComponentsToTextContextMenu
  */
 fun Modifier.addTextContextMenuComponents(
-    builder: TextContextMenuBuilderScope.() -> Unit,
+    builder: TextContextMenuBuilderScope.() -> Unit
 ): Modifier = this then AddTextContextMenuDataComponentsElement(builder)
 
 /**
@@ -62,11 +62,11 @@ fun Modifier.addTextContextMenuComponents(
  * @sample androidx.compose.foundation.samples.AddFilterToTextContextMenu
  */
 fun Modifier.filterTextContextMenuComponents(
-    filter: (TextContextMenuComponent) -> Boolean,
+    filter: (TextContextMenuComponent) -> Boolean
 ): Modifier = this then FilterTextContextMenuDataComponentsElement(filter)
 
 private class AddTextContextMenuDataComponentsElement(
-    private val builder: TextContextMenuBuilderScope.() -> Unit,
+    private val builder: TextContextMenuBuilderScope.() -> Unit
 ) : ModifierNodeElement<AddTextContextMenuDataComponentsNode>() {
     override fun create(): AddTextContextMenuDataComponentsNode =
         AddTextContextMenuDataComponentsNode(builder)
@@ -93,7 +93,7 @@ private class AddTextContextMenuDataComponentsElement(
 }
 
 private class FilterTextContextMenuDataComponentsElement(
-    private val filter: (TextContextMenuComponent) -> Boolean,
+    private val filter: (TextContextMenuComponent) -> Boolean
 ) : ModifierNodeElement<FilterTextContextMenuDataComponentsNode>() {
     override fun create(): FilterTextContextMenuDataComponentsNode =
         FilterTextContextMenuDataComponentsNode(filter)
@@ -122,14 +122,14 @@ private class FilterTextContextMenuDataComponentsElement(
 private data object TextContextMenuDataTraverseKey
 
 internal class AddTextContextMenuDataComponentsNode(
-    var builder: TextContextMenuBuilderScope.() -> Unit,
+    var builder: TextContextMenuBuilderScope.() -> Unit
 ) : Modifier.Node(), TraversableNode {
     override val traverseKey: Any
         get() = TextContextMenuDataTraverseKey
 }
 
 private class FilterTextContextMenuDataComponentsNode(
-    var filter: (TextContextMenuComponent) -> Boolean,
+    var filter: (TextContextMenuComponent) -> Boolean
 ) : Modifier.Node(), TraversableNode {
     override val traverseKey: Any
         get() = TextContextMenuDataTraverseKey
@@ -166,7 +166,7 @@ internal fun DelegatableNode.collectTextContextMenuData(): TextContextMenuData =
         .apply {
             traverseTextContextMenuDataNodes(
                 filterBlock = ::addFilter,
-                builderBlock = { builder -> this.builder() }
+                builderBlock = { builder -> this.builder() },
             )
         }
         .build()

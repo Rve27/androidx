@@ -48,7 +48,7 @@ enum class SwipeToDismissBoxValue {
     EndToStart,
 
     /** Cannot currently be dismissed. */
-    Settled
+    Settled,
 }
 
 /**
@@ -66,7 +66,7 @@ class SwipeToDismissBoxState(
     initialValue: SwipeToDismissBoxValue,
     internal val density: Density,
     confirmValueChange: (SwipeToDismissBoxValue) -> Boolean = { true },
-    positionalThreshold: (totalDistance: Float) -> Float
+    positionalThreshold: (totalDistance: Float) -> Float,
 ) {
     @Suppress("Deprecation")
     internal val anchoredDraggableState =
@@ -158,13 +158,13 @@ class SwipeToDismissBoxState(
         fun Saver(
             confirmValueChange: (SwipeToDismissBoxValue) -> Boolean,
             positionalThreshold: (totalDistance: Float) -> Float,
-            density: Density
+            density: Density,
         ) =
             Saver<SwipeToDismissBoxState, SwipeToDismissBoxValue>(
                 save = { it.currentValue },
                 restore = {
                     SwipeToDismissBoxState(it, density, confirmValueChange, positionalThreshold)
-                }
+                },
             )
     }
 }
@@ -192,7 +192,7 @@ fun rememberSwipeToDismissBoxState(
             Saver(
                 confirmValueChange = confirmValueChange,
                 density = density,
-                positionalThreshold = positionalThreshold
+                positionalThreshold = positionalThreshold,
             )
     ) {
         SwipeToDismissBoxState(initialValue, density, confirmValueChange, positionalThreshold)
@@ -230,7 +230,7 @@ fun SwipeToDismissBox(
                 orientation = Orientation.Horizontal,
                 enabled = gesturesEnabled && state.currentValue == SwipeToDismissBoxValue.Settled,
             ),
-        propagateMinConstraints = true
+        propagateMinConstraints = true,
     ) {
         Row(content = backgroundContent, modifier = Modifier.matchParentSize())
         Row(
@@ -249,7 +249,7 @@ fun SwipeToDismissBox(
                             SwipeToDismissBoxValue.EndToStart at -width
                         }
                     } to state.targetValue
-                }
+                },
         )
     }
 }

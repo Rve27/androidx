@@ -49,7 +49,7 @@ class GoldenTestActivity : Activity() {
                         applicationContext,
                         mainExecutor,
                         mainExecutor,
-                        "androidx.wear.tiles.extra.CLICKABLE_ID"
+                        "androidx.wear.tiles.extra.CLICKABLE_ID",
                     )
                     .setIsViewFullyVisible(true)
                     .build()
@@ -92,7 +92,7 @@ class GoldenTestActivity : Activity() {
                             ResourceProto.AndroidImageResourceByResId.newBuilder()
                                 .setResourceId(R.drawable.android_24dp)
                         )
-                        .build()
+                        .build(),
                 )
                 .putIdToImage(
                     "android_withbg_120dp",
@@ -101,7 +101,7 @@ class GoldenTestActivity : Activity() {
                             ResourceProto.AndroidImageResourceByResId.newBuilder()
                                 .setResourceId(R.drawable.android_withbg_120dp)
                         )
-                        .build()
+                        .build(),
                 )
                 .putIdToImage(
                     "broken_image",
@@ -110,7 +110,7 @@ class GoldenTestActivity : Activity() {
                             ResourceProto.AndroidImageResourceByResId.newBuilder()
                                 .setResourceId(R.drawable.broken_drawable)
                         )
-                        .build()
+                        .build(),
                 )
                 .putIdToImage(
                     "missing_image",
@@ -118,7 +118,7 @@ class GoldenTestActivity : Activity() {
                         .setAndroidResourceByResId(
                             ResourceProto.AndroidImageResourceByResId.newBuilder().setResourceId(-1)
                         )
-                        .build()
+                        .build(),
                 )
                 .build()
     }

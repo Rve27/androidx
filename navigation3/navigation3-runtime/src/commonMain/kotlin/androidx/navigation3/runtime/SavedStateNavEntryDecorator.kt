@@ -83,8 +83,8 @@ public fun SavedStateNavEntryDecorator(
                 stateSaver =
                     Saver(
                         save = { it.savedState },
-                        restore = { EntrySavedStateRegistry().apply { savedState = it } }
-                    )
+                        restore = { EntrySavedStateRegistry().apply { savedState = it } },
+                    ),
             ) {
                 mutableStateOf(EntrySavedStateRegistry())
             }

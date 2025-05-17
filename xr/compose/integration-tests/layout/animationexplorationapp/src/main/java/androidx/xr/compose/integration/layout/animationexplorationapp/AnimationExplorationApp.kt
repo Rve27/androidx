@@ -105,7 +105,7 @@ class AnimationExplorationApp : ComponentActivity() {
                             "Faded in content",
                             "Show side Panel",
                             !showSidePanel,
-                            toggleSidePanel
+                            toggleSidePanel,
                         )
                     }
 
@@ -133,7 +133,7 @@ class AnimationExplorationApp : ComponentActivity() {
                                 "Grown content",
                                 "Hide side panel",
                                 showSidePanel,
-                                toggleSidePanel
+                                toggleSidePanel,
                             )
                         }
                     }

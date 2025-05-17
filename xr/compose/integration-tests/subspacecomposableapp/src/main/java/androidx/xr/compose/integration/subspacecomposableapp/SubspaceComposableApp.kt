@@ -250,7 +250,7 @@ class SubspaceComposableApp : ComponentActivity() {
                     SpatialLayoutSpacer(modifier = SubspaceModifier.height(20.dp))
                     ViewBasedAppPanel(
                         modifier = sidePanelModifier,
-                        text = "Panel Bottom Left (View)"
+                        text = "Panel Bottom Left (View)",
                     )
                 }
                 SpatialColumn(
@@ -260,7 +260,7 @@ class SubspaceComposableApp : ComponentActivity() {
                     SpatialPanel(modifier = SubspaceModifier.fillMaxSize()) {
                         MainContent(
                             text = "This is a 3D Panel Layout!",
-                            navController = navController
+                            navController = navController,
                         )
                     }
                 }

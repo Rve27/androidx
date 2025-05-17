@@ -396,7 +396,7 @@ constructor(
 
     private fun UseCaseCamera.updateRepeatingRequests(
         isPrimary: Boolean,
-        runningUseCases: Set<UseCase>
+        runningUseCases: Set<UseCase>,
     ) {
         // Note: This may be called with the same set of values that was previously set. This
         // is used as a signal to indicate the properties of the UseCase may have changed.
@@ -422,7 +422,7 @@ constructor(
                 setOf(
                     CameraCallbackMap.createFor(
                         sessionConfig.repeatingCameraCaptureCallbacks,
-                        useCaseThreads.get().backgroundExecutor
+                        useCaseThreads.get().backgroundExecutor,
                     )
                 ),
             template = RequestTemplate(sessionConfig.repeatingCaptureConfig.templateType),
@@ -514,7 +514,7 @@ constructor(
                         cameraMetadata,
                         camera2ExtensionMode = sessionProcessor?.implementationType?.second,
                         isExtensions = true,
-                        enableStreamUseCase = false
+                        enableStreamUseCase = false,
                     )
 
                 sessionProcessor!!.initSession(cameraInfoInternal.get(), null)
@@ -524,7 +524,7 @@ constructor(
                         useCases,
                         sessionConfigAdapter,
                         graphConfig,
-                        streamConfigMap
+                        streamConfigMap,
                     )
                 this.tryResumeUseCaseManager(useCaseManagerConfig)
             }
@@ -595,7 +595,7 @@ constructor(
     @GuardedBy("lock")
     private fun beginComponentCreation(
         useCaseManagerConfig: UseCaseManagerConfig,
-        cameraGraph: CameraGraph
+        cameraGraph: CameraGraph,
     ) {
         val sessionProcessorEnabled =
             useCaseManagerConfig.sessionConfigAdapter.isSessionProcessorEnabled
@@ -643,7 +643,7 @@ constructor(
 
     private fun setCaptureSessionRequestProcessor(
         sessionConfigAdapter: SessionConfigAdapter,
-        cameraGraph: CameraGraph
+        cameraGraph: CameraGraph,
     ) {
         val useCamera2Extension =
             sessionProcessor?.implementationType?.first == SessionProcessor.TYPE_CAMERA2_EXTENSION
@@ -821,7 +821,7 @@ constructor(
                     isPreviewStabilizationOn(),
                     isUltraHdrOn(),
                     // TODO: b/406367951 - Properly pass feature combo info for MeteringRepeating
-                    requiresFeatureComboQuery = false
+                    requiresFeatureComboQuery = false,
                 ),
                 mutableListOf<SurfaceConfig>().apply {
                     addAll(sessionSurfacesConfigs)
@@ -854,7 +854,7 @@ constructor(
                 .resolveAndValidateDynamicRanges(
                     attachedSurfaceInfoList,
                     listOf(meteringRepeating.currentConfig),
-                    listOf(0)
+                    listOf(0),
                 )
                 .forEach { (_, u) ->
                     if (u.bitDepth == DynamicRange.BIT_DEPTH_10_BIT) {
@@ -884,7 +884,7 @@ constructor(
                     supportedSurfaceCombination.transformSurfaceConfig(
                         getCameraMode(),
                         useCase.currentConfig.inputFormat,
-                        surfaceResolution
+                        surfaceResolution,
                     )
                 add(
                     AttachedSurfaceInfo.create(
@@ -928,7 +928,7 @@ constructor(
                         supportedSurfaceCombination.transformSurfaceConfig(
                             getCameraMode(),
                             useCase.currentConfig.inputFormat,
-                            deferrableSurface.prescribedSize
+                            deferrableSurface.prescribedSize,
                         )
                     )
                 }
@@ -939,7 +939,7 @@ constructor(
         supportedSurfaceCombination.transformSurfaceConfig(
             getCameraMode(),
             meteringRepeating.imageFormat,
-            meteringRepeating.attachedSurfaceResolution!!
+            meteringRepeating.attachedSurfaceResolution!!,
         )
 
     private fun Collection<UseCase>.surfaceCount(): Int =
@@ -963,7 +963,7 @@ constructor(
     private fun Collection<UseCase>.checkSurfaces(
         predicate:
             (
-                repeatingSurfaces: List<DeferrableSurface>, sessionSurfaces: List<DeferrableSurface>
+                repeatingSurfaces: List<DeferrableSurface>, sessionSurfaces: List<DeferrableSurface>,
             ) -> Boolean
     ): Boolean =
         ValidatingBuilder().let { validatingBuilder ->
@@ -1031,7 +1031,7 @@ constructor(
             val useCases: List<UseCase>,
             val sessionConfigAdapter: SessionConfigAdapter,
             val cameraGraphConfig: CameraGraph.Config,
-            val streamConfigMap: MutableMap<CameraStream.Config, DeferrableSurface>
+            val streamConfigMap: MutableMap<CameraStream.Config, DeferrableSurface>,
         )
 
         public fun SessionConfig.toCamera2ImplConfig(): Camera2ImplConfig {
@@ -1135,7 +1135,7 @@ constructor(
                                 if (enableStreamUseCase) {
                                     getStreamUseHint(
                                         deferrableSurface,
-                                        sessionConfigAdapter.surfaceToStreamUseHintMap
+                                        sessionConfigAdapter.surfaceToStreamUseHintMap,
                                     )
                                 } else {
                                     null
@@ -1197,7 +1197,7 @@ constructor(
                     }
                     set(
                         CameraPipeKeys.camera2CaptureRequestTag,
-                        "android.hardware.camera2.CaptureRequest.setTag.CX"
+                        "android.hardware.camera2.CaptureRequest.setTag.CX",
                     )
                     targetFpsRange?.let {
                         set(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange)
@@ -1238,7 +1238,7 @@ constructor(
 
         private fun createPostviewStream(
             postviewConfig: SessionConfig.OutputConfig,
-            physicalCameraIdForAllStreams: String?
+            physicalCameraIdForAllStreams: String?,
         ): CameraStream.Config? {
             val deferrableSurface = postviewConfig.surface
             val physicalCameraId = physicalCameraIdForAllStreams ?: postviewConfig.physicalCameraId
@@ -1293,7 +1293,7 @@ constructor(
 
         private fun getStreamUseHint(
             deferrableSurface: DeferrableSurface,
-            mapping: Map<DeferrableSurface, Long>
+            mapping: Map<DeferrableSurface, Long>,
         ): OutputStream.StreamUseHint? {
             return mapping[deferrableSurface]?.let { OutputStream.StreamUseHint(it) }
         }

@@ -47,7 +47,7 @@ internal class PageManager(
     private val maxBitmapSizePx: Point,
     /** Error flow for propagating error occurred while processing to [PdfView]. */
     private val errorFlow: MutableSharedFlow<Throwable>,
-    isAccessibilityEnabled: Boolean
+    isAccessibilityEnabled: Boolean,
 ) {
     /**
      * Replay at least 1 value in case of an invalidation signal issued while [PdfView] is not
@@ -125,7 +125,7 @@ internal class PageManager(
                 maxOf(0, visiblePageAreas.keyAt(0) - PAGE_RETENTION_RADIUS),
                 minOf(
                     visiblePageAreas.keyAt(visiblePageAreas.size() - 1) + PAGE_RETENTION_RADIUS,
-                    pdfDocument.pageCount - 1
+                    pdfDocument.pageCount - 1,
                 ),
             )
         for (pageNum in pages.keyIterator()) {
@@ -160,7 +160,7 @@ internal class PageManager(
                     onPageUpdate = { _invalidationSignalFlow.tryEmit(Unit) },
                     onPageTextReady = { pageNumber -> _pageTextReadyFlow.tryEmit(pageNumber) },
                     errorFlow = errorFlow,
-                    isAccessibilityEnabled = isAccessibilityEnabled
+                    isAccessibilityEnabled = isAccessibilityEnabled,
                 )
                 .apply {
                     // If the page is visible, let it know

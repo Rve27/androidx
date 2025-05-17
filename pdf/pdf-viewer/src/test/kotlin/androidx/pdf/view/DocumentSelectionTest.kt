@@ -36,7 +36,7 @@ class DocumentSelectionTest {
                 PdfRect(1, RectF(1f, 1f, 1f, 1f)),
                 PdfRect(2, RectF(2f, 2f, 2f, 2f)),
                 PdfRect(3, RectF(3f, 3f, 3f, 3f)),
-                PdfRect(4, RectF(4f, 4f, 4f, 4f))
+                PdfRect(4, RectF(4f, 4f, 4f, 4f)),
             )
         val selectedContents =
             SparseArray<List<Selection>>().apply {

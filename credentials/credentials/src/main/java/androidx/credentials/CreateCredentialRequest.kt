@@ -67,7 +67,7 @@ internal constructor(
         credentialData.putBoolean(BUNDLE_KEY_IS_AUTO_SELECT_ALLOWED, isAutoSelectAllowed)
         credentialData.putBoolean(
             BUNDLE_KEY_PREFER_IMMEDIATELY_AVAILABLE_CREDENTIALS,
-            preferImmediatelyAvailableCredentials
+            preferImmediatelyAvailableCredentials,
         )
         candidateQueryData.putBoolean(BUNDLE_KEY_IS_AUTO_SELECT_ALLOWED, isAutoSelectAllowed)
     }
@@ -104,12 +104,7 @@ internal constructor(
         constructor(
             userId: CharSequence,
             userDisplayName: CharSequence? = null,
-        ) : this(
-            userId,
-            userDisplayName,
-            null,
-            null,
-        )
+        ) : this(userId, userDisplayName, null, null)
 
         /**
          * Constructs a [DisplayInfo].
@@ -128,13 +123,8 @@ internal constructor(
         constructor(
             userId: CharSequence,
             userDisplayName: CharSequence?,
-            preferDefaultProvider: String?
-        ) : this(
-            userId,
-            userDisplayName,
-            null,
-            preferDefaultProvider,
-        )
+            preferDefaultProvider: String?,
+        ) : this(userId, userDisplayName, null, preferDefaultProvider)
 
         init {
             require(userId.isNotEmpty()) { "userId should not be empty" }
@@ -232,7 +222,7 @@ internal constructor(
                 request.credentialData,
                 request.candidateQueryData,
                 request.isSystemProviderRequired,
-                request.origin
+                request.origin,
             )
         }
 
@@ -279,7 +269,7 @@ internal constructor(
                                 CreatePublicKeyCredentialRequest.createFrom(
                                     credentialData,
                                     origin,
-                                    candidateQueryData
+                                    candidateQueryData,
                                 )
                             else -> throw FrameworkClassParsingException()
                         }
@@ -298,7 +288,7 @@ internal constructor(
                     origin,
                     credentialData.getBoolean(
                         BUNDLE_KEY_PREFER_IMMEDIATELY_AVAILABLE_CREDENTIALS,
-                        false
+                        false,
                     ),
                 )
             }

@@ -283,7 +283,7 @@ class SliderTest {
                                 rememberScrollableState { delta ->
                                     offset.value += delta
                                     delta
-                                }
+                                },
                         )
             ) {
                 Slider(state = state, modifier = Modifier.testTag(tag))
@@ -403,7 +403,7 @@ class SliderTest {
         rule
             .setMaterialContentForSizeAssertions(
                 parentMaxWidth = 100.dp,
-                parentMaxHeight = 100.dp
+                parentMaxHeight = 100.dp,
             ) {
                 Slider(state)
             }
@@ -454,10 +454,7 @@ class SliderTest {
         state.onValueChange = { callCount.value += 1 }
 
         rule.setMaterialContent(lightColorScheme()) {
-            Slider(
-                state = state,
-                modifier = Modifier.testTag(tag),
-            )
+            Slider(state = state, modifier = Modifier.testTag(tag))
         }
 
         rule.runOnIdle { Truth.assertThat(callCount.value).isEqualTo(0f) }
@@ -516,7 +513,7 @@ class SliderTest {
                     Slider(
                         state = SliderState(0.5f),
                         modifier = Modifier.testTag(tag),
-                        interactionSource = interactionSource
+                        interactionSource = interactionSource,
                     )
                 }
             }
@@ -557,7 +554,7 @@ class SliderTest {
         rule.setContent {
             Slider(
                 state = SliderState(0f, onValueChangeFinished = { changedFlag = true }),
-                modifier = Modifier.testTag(tag)
+                modifier = Modifier.testTag(tag),
             )
         }
 
@@ -587,7 +584,7 @@ class SliderTest {
             Slider(
                 state = state,
                 modifier = Modifier.testTag(tag),
-                thumb = { sliderState -> recompositionCounter.OuterContent(sliderState) }
+                thumb = { sliderState -> recompositionCounter.OuterContent(sliderState) },
             )
         }
 
@@ -613,7 +610,7 @@ class SliderTest {
             Slider(
                 state = state,
                 modifier = Modifier.testTag(tag),
-                track = { sliderState -> recompositionCounter.OuterContent(sliderState) }
+                track = { sliderState -> recompositionCounter.OuterContent(sliderState) },
             )
         }
 
@@ -669,12 +666,12 @@ class SliderTest {
                                 scope.launch {
                                     snackbarHostState.showSnackbar("Snackbar Description")
                                 }
-                            }
+                            },
                         )
                     }
                     slop = LocalViewConfiguration.current.touchSlop
                     Slider(state = state, modifier = Modifier.testTag(tag))
-                }
+                },
             )
         }
 
@@ -729,10 +726,7 @@ class SliderTest {
 
         rule.setMaterialContent(lightColorScheme()) {
             slop = LocalViewConfiguration.current.touchSlop
-            RangeSlider(
-                state = state,
-                modifier = Modifier.testTag(tag),
-            )
+            RangeSlider(state = state, modifier = Modifier.testTag(tag))
         }
 
         rule.runOnUiThread {
@@ -770,7 +764,7 @@ class SliderTest {
                 state = state,
                 modifier = Modifier.testTag(tag),
                 startThumb = { SliderDefaults.Thumb(MutableInteractionSource()) },
-                endThumb = { SliderDefaults.Thumb(MutableInteractionSource()) }
+                endThumb = { SliderDefaults.Thumb(MutableInteractionSource()) },
             )
         }
 
@@ -1005,7 +999,7 @@ class SliderTest {
                         modifier =
                             Modifier.testTag(tag).weight(1f).onGloballyPositioned {
                                 sliderBounds = it.boundsInParent()
-                            }
+                            },
                     )
                     Spacer(Modifier.requiredSize(100.toDp()))
                 }
@@ -1091,13 +1085,7 @@ class SliderTest {
 
         rule
             .onAllNodes(isFocusable(), true)[1]
-            .assertRangeInfoEquals(
-                ProgressBarRangeInfo(
-                    10f,
-                    5f..20f,
-                    2,
-                )
-            )
+            .assertRangeInfoEquals(ProgressBarRangeInfo(10f, 5f..20f, 2))
 
         rule.onAllNodes(isFocusable(), true)[0].performSemanticsAction(
             SemanticsActions.SetProgress
@@ -1138,15 +1126,15 @@ class SliderTest {
                 startThumb = {
                     SliderDefaults.Thumb(
                         interactionSource = MutableInteractionSource(),
-                        modifier = Modifier.testTag(startThumbTag)
+                        modifier = Modifier.testTag(startThumbTag),
                     )
                 },
                 endThumb = {
                     SliderDefaults.Thumb(
                         interactionSource = MutableInteractionSource(),
-                        modifier = Modifier.testTag(endThumbTag)
+                        modifier = Modifier.testTag(endThumbTag),
                     )
-                }
+                },
             )
         }
 
@@ -1178,15 +1166,15 @@ class SliderTest {
                 startThumb = {
                     SliderDefaults.Thumb(
                         interactionSource = MutableInteractionSource(),
-                        modifier = Modifier.testTag(startThumbTag)
+                        modifier = Modifier.testTag(startThumbTag),
                     )
                 },
                 endThumb = {
                     SliderDefaults.Thumb(
                         interactionSource = MutableInteractionSource(),
-                        modifier = Modifier.testTag(endThumbTag)
+                        modifier = Modifier.testTag(endThumbTag),
                     )
-                }
+                },
             )
         }
 
@@ -1242,7 +1230,7 @@ class SliderTest {
                 },
                 endThumb = { rangeSliderState ->
                     endRecompositionCounter.OuterContent(rangeSliderState)
-                }
+                },
             )
         }
 
@@ -1271,7 +1259,7 @@ class SliderTest {
             RangeSlider(
                 state = state,
                 modifier = Modifier.testTag(tag),
-                track = { rangeSliderState -> recompositionCounter.OuterContent(rangeSliderState) }
+                track = { rangeSliderState -> recompositionCounter.OuterContent(rangeSliderState) },
             )
         }
 
@@ -1330,12 +1318,12 @@ class SliderTest {
                                 scope.launch {
                                     snackbarHostState.showSnackbar("Snackbar Description")
                                 }
-                            }
+                            },
                         )
                     }
                     slop = LocalViewConfiguration.current.touchSlop
                     RangeSlider(state = state, modifier = Modifier.testTag(tag))
-                }
+                },
             )
         }
 

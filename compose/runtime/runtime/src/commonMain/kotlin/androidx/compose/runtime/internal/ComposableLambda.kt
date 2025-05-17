@@ -156,7 +156,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p2,
                 p3,
                 c,
-                dirty
+                dirty,
             )
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(p1, p2, p3, nc, updateChangedFlags(changed) or 0b1)
@@ -170,7 +170,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p3: Any?,
         p4: Any?,
         c: Composer,
-        changed: Int
+        changed: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -182,7 +182,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p3,
                 p4,
                 c,
-                dirty
+                dirty,
             )
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(p1, p2, p3, p4, nc, updateChangedFlags(changed) or 0b1)
@@ -197,7 +197,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p4: Any?,
         p5: Any?,
         c: Composer,
-        changed: Int
+        changed: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -206,7 +206,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
             (_block
                 as
                 (
-                    p1: Any?, p2: Any?, p3: Any?, p4: Any?, p5: Any?, c: Composer, changed: Int
+                    p1: Any?, p2: Any?, p3: Any?, p4: Any?, p5: Any?, c: Composer, changed: Int,
                 ) -> Any?)(p1, p2, p3, p4, p5, c, dirty)
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(p1, p2, p3, p4, p5, nc, updateChangedFlags(changed) or 0b1)
@@ -222,7 +222,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p5: Any?,
         p6: Any?,
         c: Composer,
-        changed: Int
+        changed: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -238,7 +238,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p5: Any?,
                     p6: Any?,
                     c: Composer,
-                    changed: Int
+                    changed: Int,
                 ) -> Any?)(p1, p2, p3, p4, p5, p6, c, dirty)
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(p1, p2, p3, p4, p5, p6, nc, updateChangedFlags(changed) or 0b1)
@@ -255,7 +255,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p6: Any?,
         p7: Any?,
         c: Composer,
-        changed: Int
+        changed: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -272,7 +272,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p6: Any?,
                     p7: Any?,
                     c: Composer,
-                    changed: Int
+                    changed: Int,
                 ) -> Any?)(p1, p2, p3, p4, p5, p6, p7, c, dirty)
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(p1, p2, p3, p4, p5, p6, p7, nc, updateChangedFlags(changed) or 0b1)
@@ -290,7 +290,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p7: Any?,
         p8: Any?,
         c: Composer,
-        changed: Int
+        changed: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -308,7 +308,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p7: Any?,
                     p8: Any?,
                     c: Composer,
-                    changed: Int
+                    changed: Int,
                 ) -> Any?)(p1, p2, p3, p4, p5, p6, p7, p8, c, dirty)
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(p1, p2, p3, p4, p5, p6, p7, p8, nc, updateChangedFlags(changed) or 0b1)
@@ -327,7 +327,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p8: Any?,
         p9: Any?,
         c: Composer,
-        changed: Int
+        changed: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -346,7 +346,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p8: Any?,
                     p9: Any?,
                     c: Composer,
-                    changed: Int
+                    changed: Int,
                 ) -> Any?)(p1, p2, p3, p4, p5, p6, p7, p8, p9, c, dirty)
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(p1, p2, p3, p4, p5, p6, p7, p8, p9, nc, updateChangedFlags(changed) or 0b1)
@@ -367,7 +367,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p10: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -388,7 +388,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p10: Any?,
                     c: Composer,
                     changed: Int,
-                    changed1: Int
+                    changed1: Int,
                 ) -> Any?)(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, c, changed, dirty)
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, nc, changed or 0b1, changed)
@@ -410,7 +410,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p11: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -432,7 +432,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p11: Any?,
                     c: Composer,
                     changed: Int,
-                    changed1: Int
+                    changed1: Int,
                 ) -> Any?)(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, c, changed, dirty)
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(
@@ -449,7 +449,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p11,
                 nc,
                 updateChangedFlags(changed) or 0b1,
-                updateChangedFlags(changed1)
+                updateChangedFlags(changed1),
             )
         }
         return result
@@ -470,7 +470,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p12: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -493,7 +493,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p12: Any?,
                     c: Composer,
                     changed: Int,
-                    changed1: Int
+                    changed1: Int,
                 ) -> Any?)(p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, c, changed, dirty)
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(
@@ -511,7 +511,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p12,
                 nc,
                 updateChangedFlags(changed) or 0b1,
-                updateChangedFlags(changed1)
+                updateChangedFlags(changed1),
             )
         }
         return result
@@ -533,7 +533,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p13: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -557,7 +557,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p13: Any?,
                     c: Composer,
                     changed: Int,
-                    changed1: Int
+                    changed1: Int,
                 ) -> Any?)(
                 p1,
                 p2,
@@ -574,7 +574,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p13,
                 c,
                 changed,
-                dirty
+                dirty,
             )
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(
@@ -593,7 +593,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p13,
                 nc,
                 updateChangedFlags(changed) or 0b1,
-                updateChangedFlags(changed1)
+                updateChangedFlags(changed1),
             )
         }
         return result
@@ -616,7 +616,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p14: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -641,7 +641,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p14: Any?,
                     c: Composer,
                     changed: Int,
-                    changed1: Int
+                    changed1: Int,
                 ) -> Any?)(
                 p1,
                 p2,
@@ -659,7 +659,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p14,
                 c,
                 changed,
-                dirty
+                dirty,
             )
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(
@@ -679,7 +679,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p14,
                 nc,
                 updateChangedFlags(changed) or 0b1,
-                updateChangedFlags(changed1)
+                updateChangedFlags(changed1),
             )
         }
         return result
@@ -703,7 +703,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p15: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -729,7 +729,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p15: Any?,
                     c: Composer,
                     changed: Int,
-                    changed1: Int
+                    changed1: Int,
                 ) -> Any?)(
                 p1,
                 p2,
@@ -748,7 +748,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p15,
                 c,
                 changed,
-                dirty
+                dirty,
             )
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(
@@ -769,7 +769,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p15,
                 nc,
                 updateChangedFlags(changed) or 0b1,
-                updateChangedFlags(changed1)
+                updateChangedFlags(changed1),
             )
         }
         return result
@@ -794,7 +794,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p16: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -821,7 +821,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p16: Any?,
                     c: Composer,
                     changed: Int,
-                    changed1: Int
+                    changed1: Int,
                 ) -> Any?)(
                 p1,
                 p2,
@@ -841,7 +841,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p16,
                 c,
                 changed,
-                dirty
+                dirty,
             )
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(
@@ -863,7 +863,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p16,
                 nc,
                 updateChangedFlags(changed) or 0b1,
-                updateChangedFlags(changed1)
+                updateChangedFlags(changed1),
             )
         }
         return result
@@ -889,7 +889,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p17: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -917,7 +917,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p17: Any?,
                     c: Composer,
                     changed: Int,
-                    changed1: Int
+                    changed1: Int,
                 ) -> Any?)(
                 p1,
                 p2,
@@ -938,7 +938,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p17,
                 c,
                 changed,
-                dirty
+                dirty,
             )
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(
@@ -961,7 +961,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p17,
                 nc,
                 updateChangedFlags(changed) or 0b1,
-                updateChangedFlags(changed1)
+                updateChangedFlags(changed1),
             )
         }
         return result
@@ -988,7 +988,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
         p18: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any? {
         val c = c.startRestartGroup(key)
         trackRead(c)
@@ -1017,7 +1017,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                     p18: Any?,
                     c: Composer,
                     changed: Int,
-                    changed1: Int
+                    changed1: Int,
                 ) -> Any?)(
                 p1,
                 p2,
@@ -1039,7 +1039,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p18,
                 c,
                 changed,
-                dirty
+                dirty,
             )
         c.endRestartGroup()?.updateScope { nc, _ ->
             this(
@@ -1063,7 +1063,7 @@ internal class ComposableLambdaImpl(val key: Int, private val tracked: Boolean, 
                 p18,
                 nc,
                 updateChangedFlags(changed) or 0b1,
-                updateChangedFlags(changed1)
+                updateChangedFlags(changed1),
             )
         }
         return result
@@ -1096,7 +1096,7 @@ expect interface ComposableLambda {
         p4: Any?,
         p5: Any?,
         c: Composer,
-        changed: Int
+        changed: Int,
     ): Any?
 
     operator fun invoke(
@@ -1107,7 +1107,7 @@ expect interface ComposableLambda {
         p5: Any?,
         p6: Any?,
         c: Composer,
-        changed: Int
+        changed: Int,
     ): Any?
 
     operator fun invoke(
@@ -1119,7 +1119,7 @@ expect interface ComposableLambda {
         p6: Any?,
         p7: Any?,
         c: Composer,
-        changed: Int
+        changed: Int,
     ): Any?
 
     operator fun invoke(
@@ -1132,7 +1132,7 @@ expect interface ComposableLambda {
         p7: Any?,
         p8: Any?,
         c: Composer,
-        changed: Int
+        changed: Int,
     ): Any?
 
     operator fun invoke(
@@ -1146,7 +1146,7 @@ expect interface ComposableLambda {
         p8: Any?,
         p9: Any?,
         c: Composer,
-        changed: Int
+        changed: Int,
     ): Any?
 
     operator fun invoke(
@@ -1162,7 +1162,7 @@ expect interface ComposableLambda {
         p10: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any?
 
     operator fun invoke(
@@ -1179,7 +1179,7 @@ expect interface ComposableLambda {
         p11: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any?
 
     operator fun invoke(
@@ -1197,7 +1197,7 @@ expect interface ComposableLambda {
         p12: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any?
 
     operator fun invoke(
@@ -1216,7 +1216,7 @@ expect interface ComposableLambda {
         p13: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any?
 
     operator fun invoke(
@@ -1236,7 +1236,7 @@ expect interface ComposableLambda {
         p14: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any?
 
     operator fun invoke(
@@ -1257,7 +1257,7 @@ expect interface ComposableLambda {
         p15: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any?
 
     operator fun invoke(
@@ -1279,7 +1279,7 @@ expect interface ComposableLambda {
         p16: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any?
 
     operator fun invoke(
@@ -1302,7 +1302,7 @@ expect interface ComposableLambda {
         p17: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any?
 
     operator fun invoke(
@@ -1326,7 +1326,7 @@ expect interface ComposableLambda {
         p18: Any?,
         c: Composer,
         changed: Int,
-        changed1: Int
+        changed1: Int,
     ): Any?
 }
 

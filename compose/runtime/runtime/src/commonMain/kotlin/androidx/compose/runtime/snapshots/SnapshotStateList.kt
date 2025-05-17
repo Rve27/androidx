@@ -208,14 +208,14 @@ class SnapshotStateList<T> internal constructor(persistentList: PersistentList<T
 
     private inline fun update(
         structural: Boolean = true,
-        block: (PersistentList<T>) -> PersistentList<T>
+        block: (PersistentList<T>) -> PersistentList<T>,
     ) {
         conditionalUpdate(structural, block)
     }
 
     private inline fun conditionalUpdate(
         structural: Boolean = true,
-        block: (PersistentList<T>) -> PersistentList<T>
+        block: (PersistentList<T>) -> PersistentList<T>,
     ) = run {
         val result: Boolean
         while (true) {
@@ -243,7 +243,7 @@ class SnapshotStateList<T> internal constructor(persistentList: PersistentList<T
     private fun StateListStateRecord<T>.attemptUpdate(
         currentModification: Int,
         newList: PersistentList<T>,
-        structural: Boolean
+        structural: Boolean,
     ): Boolean =
         synchronized(sync) {
             if (modification == currentModification) {

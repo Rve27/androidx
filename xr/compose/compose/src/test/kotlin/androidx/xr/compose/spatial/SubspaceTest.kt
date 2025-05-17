@@ -274,7 +274,7 @@ class SubspaceTest {
                                 minWidth = 0,
                                 maxWidth = 100,
                                 minHeight = 0,
-                                maxHeight = 100
+                                maxHeight = 100,
                             ),
                         constraintsBehavior = ConstraintsBehavior.Specified,
                     ) {
@@ -350,7 +350,7 @@ class SubspaceTest {
                                 minWidth = 0,
                                 maxWidth = 100,
                                 minHeight = 0,
-                                maxHeight = 100
+                                maxHeight = 100,
                             ),
                         constraintsBehavior = ConstraintsBehavior.Specified,
                     ) {
@@ -430,7 +430,7 @@ class SubspaceTest {
                                 minWidth = 0,
                                 maxWidth = 100,
                                 minHeight = 0,
-                                maxHeight = 100
+                                maxHeight = 100,
                             ),
                         constraintsBehavior = ConstraintsBehavior.Specified,
                     ) {
@@ -543,7 +543,7 @@ class SubspaceTest {
                                 minWidth = 0,
                                 maxWidth = 100,
                                 minHeight = 0,
-                                maxHeight = 100
+                                maxHeight = 100,
                             ),
                         constraintsBehavior = ConstraintsBehavior.Specified,
                     ) {
@@ -670,7 +670,7 @@ class SubspaceTest {
                                     minWidth = 0,
                                     maxWidth = 100,
                                     minHeight = 0,
-                                    maxHeight = 100
+                                    maxHeight = 100,
                                 ),
                             constraintsBehavior = ConstraintsBehavior.Specified,
                         ) {
@@ -800,7 +800,7 @@ class SubspaceTest {
                                 minWidth = 0,
                                 maxWidth = 100,
                                 minHeight = 0,
-                                maxHeight = 100
+                                maxHeight = 100,
                             ),
                         constraintsBehavior = ConstraintsBehavior.Specified,
                     ) {
@@ -906,7 +906,7 @@ class SubspaceTest {
                                             minWidth = 0,
                                             maxWidth = 100,
                                             minHeight = 0,
-                                            maxHeight = 100
+                                            maxHeight = 100,
                                         ),
                                     constraintsBehavior = ConstraintsBehavior.Specified,
                                 ) {}
@@ -990,7 +990,7 @@ class SubspaceTest {
                                     minWidth = 0,
                                     maxWidth = 50,
                                     minHeight = 0,
-                                    maxHeight = 50
+                                    maxHeight = 50,
                                 ),
                             constraintsBehavior = ConstraintsBehavior.Specified,
                         ) {
@@ -1001,7 +1001,7 @@ class SubspaceTest {
                                             minWidth = 0,
                                             maxWidth = 100,
                                             minHeight = 0,
-                                            maxHeight = 100
+                                            maxHeight = 100,
                                         ),
                                     constraintsBehavior = ConstraintsBehavior.Specified,
                                 ) {}
@@ -2110,7 +2110,7 @@ class SubspaceTest {
                                 minWidth = 0,
                                 maxWidth = 100,
                                 minHeight = 0,
-                                maxHeight = 100
+                                maxHeight = 100,
                             )
                     ) {
                         SpatialBox(
@@ -2267,7 +2267,7 @@ class SubspaceTest {
                                 minWidth = 0,
                                 maxWidth = 100,
                                 minHeight = 0,
-                                maxHeight = 100
+                                maxHeight = 100,
                             )
                     ) {
                         SpatialBox(
@@ -2426,7 +2426,7 @@ class SubspaceTest {
                                 minWidth = 0,
                                 maxWidth = 100,
                                 minHeight = 0,
-                                maxHeight = 100
+                                maxHeight = 100,
                             )
                     ) {
                         SpatialBox(
@@ -2963,7 +2963,7 @@ class SubspaceTest {
                                     minWidth = 0,
                                     maxWidth = 100,
                                     minHeight = 0,
-                                    maxHeight = 100
+                                    maxHeight = 100,
                                 )
                         ) {
                             SpatialBox(

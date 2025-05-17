@@ -51,9 +51,7 @@ import com.squareup.kotlinpoet.asTypeName
  * }
  * ```
  */
-class AppFunctionIdProcessor(
-    private val codeGenerator: CodeGenerator,
-) : SymbolProcessor {
+class AppFunctionIdProcessor(private val codeGenerator: CodeGenerator) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val appFunctionSymbolResolver = AppFunctionSymbolResolver(resolver)
         val appFunctionClasses = appFunctionSymbolResolver.resolveAnnotatedAppFunctions()
@@ -86,10 +84,10 @@ class AppFunctionIdProcessor(
                     // from a single class containing AppFunction implementations and never from
                     // other or new files.
                     aggregating = false,
-                    checkNotNull(appFunctionClass.classDeclaration.containingFile)
+                    checkNotNull(appFunctionClass.classDeclaration.containingFile),
                 ),
                 originalPackageName,
-                idClassName
+                idClassName,
             )
             .bufferedWriter()
             .use { fileSpec.writeTo(it) }
@@ -111,7 +109,7 @@ class AppFunctionIdProcessor(
                     .addModifiers(KModifier.CONST)
                     .initializer(
                         "%S",
-                        appFunctionClass.getAppFunctionIdentifier(appFunctionDeclaration)
+                        appFunctionClass.getAppFunctionIdentifier(appFunctionDeclaration),
                     )
                     .build()
             this.addProperty(propertySpec)

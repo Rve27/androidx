@@ -44,7 +44,7 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
             SampledAnnotationDetector.OBSOLETE_SAMPLED_ANNOTATION,
             SampledAnnotationDetector.UNRESOLVED_SAMPLE_LINK,
             SampledAnnotationDetector.MULTIPLE_FUNCTIONS_FOUND,
-            SampledAnnotationDetector.INVALID_SAMPLES_LOCATION
+            SampledAnnotationDetector.INVALID_SAMPLES_LOCATION,
         )
 
     private val fooModuleName = "foo"
@@ -84,7 +84,7 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
         4GSpxS3X5Y3jO7dK9mfrb3N6DLF4GGZZWP+ya9jgvYow+I8hWgFJjCCGUfbG
         JMYxgclvGGc4ZeAXZxozmGXVXAWhAuYLWGCLhDHJAhaRYpaPJSxXYPlY8bH6
         CeBn7eLsAgAA
-        """
+        """,
         )
 
     private val emptySampleFile =
@@ -134,7 +134,7 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
         fooFile: TestFile? = null,
         sampleFile: TestFile,
         expectedText: String? = null,
-        requiresPartialAnalysis: Boolean = true
+        requiresPartialAnalysis: Boolean = true,
     ) {
         val projectDescriptions = mutableListOf<ProjectDescription>()
         val fooProject =
@@ -265,7 +265,7 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
             expectedText = expected,
             // Since this particular is all done inside the same module, partial analysis isn't
             // required so it will still work in global analysis
-            requiresPartialAnalysis = false
+            requiresPartialAnalysis = false,
         )
     }
 
@@ -371,7 +371,7 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
             expectedText = expected,
             // Since this particular is all done inside the same module, partial analysis isn't
             // required so it will still work in global analysis
-            requiresPartialAnalysis = false
+            requiresPartialAnalysis = false,
         )
     }
 
@@ -481,7 +481,7 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
             expectedText = expected,
             // Since this particular is all done inside the same module, partial analysis isn't
             // required so it will still work in global analysis
-            requiresPartialAnalysis = false
+            requiresPartialAnalysis = false,
         )
     }
 
@@ -593,7 +593,7 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
             expectedText = expected,
             // Since this particular is all done inside the same module, partial analysis isn't
             // required so it will still work in global analysis
-            requiresPartialAnalysis = false
+            requiresPartialAnalysis = false,
         )
     }
 

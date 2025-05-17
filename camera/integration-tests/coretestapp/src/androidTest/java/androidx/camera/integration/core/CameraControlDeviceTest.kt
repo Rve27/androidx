@@ -79,13 +79,11 @@ import org.junit.runners.Parameterized
 class CameraControlDeviceTest(
     private val cameraSelector: CameraSelector,
     private val implName: String,
-    private val cameraConfig: CameraXConfig
+    private val cameraConfig: CameraXConfig,
 ) {
     @get:Rule
     val cameraPipeConfigTestRule =
-        CameraPipeConfigTestRule(
-            active = implName == CameraPipeConfig::class.simpleName,
-        )
+        CameraPipeConfigTestRule(active = implName == CameraPipeConfig::class.simpleName)
 
     @get:Rule
     val cameraRule =
@@ -99,23 +97,23 @@ class CameraControlDeviceTest(
                 arrayOf(
                     CameraSelector.DEFAULT_BACK_CAMERA,
                     Camera2Config::class.simpleName,
-                    Camera2Config.defaultConfig()
+                    Camera2Config.defaultConfig(),
                 ),
                 arrayOf(
                     CameraSelector.DEFAULT_BACK_CAMERA,
                     CameraPipeConfig::class.simpleName,
-                    CameraPipeConfig.defaultConfig()
+                    CameraPipeConfig.defaultConfig(),
                 ),
                 arrayOf(
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     Camera2Config::class.simpleName,
-                    Camera2Config.defaultConfig()
+                    Camera2Config.defaultConfig(),
                 ),
                 arrayOf(
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     CameraPipeConfig::class.simpleName,
-                    CameraPipeConfig.defaultConfig()
-                )
+                    CameraPipeConfig.defaultConfig(),
+                ),
             )
 
         private val METERING_REGIONS_DEFAULT: Array<MeteringRectangle> =
@@ -365,7 +363,7 @@ class CameraControlDeviceTest(
             mapOf(
                 CaptureResult.CONTROL_AE_MODE to
                     CONTROL_AE_MODE_ON_LOW_LIGHT_BOOST_BRIGHTNESS_PRIORITY,
-                CaptureResult.FLASH_MODE to FLASH_MODE_OFF
+                CaptureResult.FLASH_MODE to FLASH_MODE_OFF,
             )
         )
     }
@@ -379,7 +377,7 @@ class CameraControlDeviceTest(
                             Camera2InteropUtil.setCamera2InteropOptions(
                                 implName = implName,
                                 builder = imageAnalysisBuilder,
-                                captureCallback = captureCallback
+                                captureCallback = captureCallback,
                             )
                         }
                         .build()

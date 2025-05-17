@@ -24,6 +24,4 @@ import androidx.annotation.RestrictTo
  * @property credentialsJson the credentials that are delivered to the provider
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class ExportCredentialsRequest(
-    public val credentialsJson: String,
-)
+public class ExportCredentialsRequest(public val credentialsJson: String)

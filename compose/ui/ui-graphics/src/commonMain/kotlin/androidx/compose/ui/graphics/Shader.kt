@@ -40,7 +40,7 @@ fun LinearGradientShader(
     to: Offset,
     colors: List<Color>,
     colorStops: List<Float>? = null,
-    tileMode: TileMode = TileMode.Clamp
+    tileMode: TileMode = TileMode.Clamp,
 ): Shader = ActualLinearGradientShader(from, to, colors, colorStops, tileMode)
 
 internal expect fun ActualLinearGradientShader(
@@ -48,7 +48,7 @@ internal expect fun ActualLinearGradientShader(
     to: Offset,
     colors: List<Color>,
     colorStops: List<Float>?,
-    tileMode: TileMode
+    tileMode: TileMode,
 ): Shader
 
 /**
@@ -70,7 +70,7 @@ fun RadialGradientShader(
     radius: Float,
     colors: List<Color>,
     colorStops: List<Float>? = null,
-    tileMode: TileMode = TileMode.Clamp
+    tileMode: TileMode = TileMode.Clamp,
 ): Shader = ActualRadialGradientShader(center, radius, colors, colorStops, tileMode)
 
 internal expect fun ActualRadialGradientShader(
@@ -78,7 +78,7 @@ internal expect fun ActualRadialGradientShader(
     radius: Float,
     colors: List<Color>,
     colorStops: List<Float>?,
-    tileMode: TileMode
+    tileMode: TileMode,
 ): Shader
 
 /**
@@ -96,7 +96,7 @@ internal expect fun ActualRadialGradientShader(
 fun SweepGradientShader(
     center: Offset,
     colors: List<Color>,
-    colorStops: List<Float>? = null
+    colorStops: List<Float>? = null,
 ): Shader = ActualSweepGradientShader(center, colors, colorStops)
 
 internal expect fun ActualSweepGradientShader(
@@ -113,11 +113,11 @@ internal expect fun ActualSweepGradientShader(
 fun ImageShader(
     image: ImageBitmap,
     tileModeX: TileMode = TileMode.Clamp,
-    tileModeY: TileMode = TileMode.Clamp
+    tileModeY: TileMode = TileMode.Clamp,
 ): Shader = ActualImageShader(image, tileModeX, tileModeY)
 
 internal expect fun ActualImageShader(
     image: ImageBitmap,
     tileModeX: TileMode,
-    tileModeY: TileMode
+    tileModeY: TileMode,
 ): Shader

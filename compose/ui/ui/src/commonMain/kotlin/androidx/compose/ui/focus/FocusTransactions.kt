@@ -117,7 +117,7 @@ private fun FocusTargetNode.performRequestFocusOptimized(): Boolean {
         }
         it.dispatchFocusCallbacks(
             previousState = if (it === previousActiveNode) Active else Inactive,
-            newState = ActiveParent
+            newState = ActiveParent,
         )
     }
 
@@ -254,7 +254,7 @@ internal fun FocusTargetNode.freeFocus() =
  */
 internal fun FocusTargetNode.clearFocus(
     forced: Boolean = false,
-    refreshFocusEvents: Boolean
+    refreshFocusEvents: Boolean,
 ): Boolean =
     when (focusState) {
         Active -> {
@@ -331,7 +331,7 @@ private fun FocusTargetNode.grantFocus(): Boolean {
 /** This function clears any focus from the focused child. */
 private fun FocusTargetNode.clearChildFocus(
     forced: Boolean = false,
-    refreshFocusEvents: Boolean = true
+    refreshFocusEvents: Boolean = true,
 ): Boolean = activeChild?.clearFocus(forced, refreshFocusEvents) ?: true
 
 /**
@@ -401,7 +401,7 @@ internal enum class CustomDestinationResult {
     None,
     Cancelled,
     Redirected,
-    RedirectCancelled
+    RedirectCancelled,
 }
 
 internal fun FocusTargetNode.performCustomRequestFocus(

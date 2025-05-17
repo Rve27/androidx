@@ -73,7 +73,7 @@ private class OffsetNode(public var x: Dp, public var y: Dp, public var z: Dp) :
                     Vector3(
                         x.roundToPx().toFloat(),
                         y.roundToPx().toFloat(),
-                        z.roundToPx().toFloat()
+                        z.roundToPx().toFloat(),
                     )
                 )
             )

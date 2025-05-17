@@ -86,7 +86,7 @@ class CreateDigitalCredentialControllerTest {
         val DEFAULT_RESPONSE =
             CreateCredentialResponse(
                 DigitalCredential.TYPE_DIGITAL_CREDENTIAL,
-                DEFAULT_RESPONSE_BUNDLE
+                DEFAULT_RESPONSE_BUNDLE,
             )
     }
 }

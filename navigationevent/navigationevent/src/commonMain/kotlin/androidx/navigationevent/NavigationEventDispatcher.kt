@@ -92,7 +92,7 @@ public class NavigationEventDispatcher(
     @MainThread
     public fun addCallback(
         callback: NavigationEventCallback,
-        priority: NavigationEventPriority = NavigationEventPriority.Default
+        priority: NavigationEventPriority = NavigationEventPriority.Default,
     ) {
         when (priority) {
             NavigationEventPriority.Overlay -> overlayCallbacks.addFirst(callback)

@@ -65,7 +65,7 @@ internal data class ViewNode(
                             fromAccessibilityNodeInfo(
                                 node = child,
                                 displayRect = displayRect,
-                                depth = depth + 1
+                                depth = depth + 1,
                             )
                         @Suppress("DEPRECATION") child.recycle()
                         childNode

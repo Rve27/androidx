@@ -74,7 +74,7 @@ class SelectionStateManagerTest {
                 testScope,
                 handleTouchTargetSizePx = HANDLE_TOUCH_TARGET_PX,
                 errorFlow,
-                pageMetadataLoader = null
+                pageMetadataLoader = null,
             )
     }
 
@@ -105,8 +105,8 @@ class SelectionStateManagerTest {
                             selectionPoint.pagePoint.x,
                             selectionPoint.pagePoint.y,
                             selectionPoint.pagePoint.x,
-                            selectionPoint.pagePoint.y
-                        )
+                            selectionPoint.pagePoint.y,
+                        ),
                     )
                 )
             )
@@ -154,8 +154,8 @@ class SelectionStateManagerTest {
                             selectionPoint2.pagePoint.x,
                             selectionPoint2.pagePoint.y,
                             selectionPoint2.pagePoint.x,
-                            selectionPoint2.pagePoint.y
-                        )
+                            selectionPoint2.pagePoint.y,
+                        ),
                     )
                 )
             )
@@ -213,7 +213,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, PointF(0F, 0F)),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isFalse()
@@ -233,7 +233,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideStartHandle),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isTrue()
@@ -253,7 +253,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideEndHandle),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isTrue()
@@ -271,7 +271,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideStartHandle),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isTrue()
@@ -283,7 +283,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_MOVE,
                     PdfPoint(pageNum = 0, newStartPosition),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isTrue()
@@ -313,7 +313,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideStartHandle),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isTrue()
@@ -324,7 +324,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_MOVE,
                     location = null,
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isTrue()
@@ -345,7 +345,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_MOVE,
                     PdfPoint(pageNum = 0, insideStartHandle),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isFalse()
@@ -366,7 +366,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_UP,
                     PdfPoint(pageNum = 0, insideStartHandle),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isFalse()
@@ -386,7 +386,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideStartHandle),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isTrue()
@@ -396,7 +396,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_UP,
                     PdfPoint(pageNum = 0, insideStartHandle),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isTrue()
@@ -406,7 +406,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_MOVE,
                     PdfPoint(pageNum = 0, insideStartHandle),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isFalse()
@@ -425,7 +425,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 0, insideStartHandle),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isTrue()
@@ -434,7 +434,7 @@ class SelectionStateManagerTest {
             selectionStateManager.maybeDragSelectionHandle(
                 MotionEvent.ACTION_MOVE,
                 PdfPoint(pageNum = 2, initialSelectionForDragging.endBoundary.location.pagePoint),
-                currentZoom = 2.0F
+                currentZoom = 2.0F,
             )
         assertThat(value).isTrue()
 
@@ -465,7 +465,7 @@ class SelectionStateManagerTest {
                 selectionStateManager.maybeDragSelectionHandle(
                     MotionEvent.ACTION_DOWN,
                     PdfPoint(pageNum = 1, insideStartHandle),
-                    currentZoom = 2.0F
+                    currentZoom = 2.0F,
                 )
             )
             .isTrue()
@@ -474,7 +474,7 @@ class SelectionStateManagerTest {
             selectionStateManager.maybeDragSelectionHandle(
                 MotionEvent.ACTION_MOVE,
                 PdfPoint(pageNum = 0, initialSelectionForDragging.startBoundary.location.pagePoint),
-                currentZoom = 2.0F
+                currentZoom = 2.0F,
             )
         assertThat(value).isTrue()
 
@@ -504,9 +504,9 @@ class SelectionStateManagerTest {
                                 listOf(
                                     PdfRect(pageNum = pageNumber, RectF(150F, 150F, 190F, 160F)),
                                     PdfRect(pageNum = pageNumber, RectF(10F, 170F, 50F, 180F)),
-                                )
+                                ),
                             )
-                        )
+                        ),
                     )
                 }
             ),
@@ -527,12 +527,12 @@ class SelectionStateManagerTest {
                             minOf(start.x, end.x),
                             minOf(start.y, end.y),
                             maxOf(start.x, end.x),
-                            maxOf(start.y, end.y)
+                            maxOf(start.y, end.y),
                         )
                     ),
-                    text = "This is all the text between $start and $end"
+                    text = "This is all the text between $start and $end",
                 )
-            )
+            ),
         )
     }
 }

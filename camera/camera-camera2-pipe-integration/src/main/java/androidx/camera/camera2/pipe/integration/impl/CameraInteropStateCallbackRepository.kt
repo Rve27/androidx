@@ -150,7 +150,7 @@ public class CameraInteropStateCallbackRepository {
             fun onSurfacePrepared(
                 session: CameraCaptureSession,
                 surface: Surface,
-                callbacks: AtomicRef<List<CameraCaptureSession.StateCallback>>
+                callbacks: AtomicRef<List<CameraCaptureSession.StateCallback>>,
             ) {
                 for (callback in callbacks.value) {
                     callback.onSurfacePrepared(session, surface)
@@ -163,7 +163,7 @@ public class CameraInteropStateCallbackRepository {
             @JvmStatic
             fun onCaptureQueueEmpty(
                 session: CameraCaptureSession,
-                callbacks: AtomicRef<List<CameraCaptureSession.StateCallback>>
+                callbacks: AtomicRef<List<CameraCaptureSession.StateCallback>>,
             ) {
                 for (callback in callbacks.value) {
                     callback.onCaptureQueueEmpty(session)

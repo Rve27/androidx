@@ -118,7 +118,7 @@ class SwipeToRevealTest {
                 SwipeToRevealWithDefaults(
                     modifier = Modifier.testTag(TEST_TAG),
                     revealState = rememberRevealState(initialValue = revealValue),
-                    revealDirection = Bidirectional
+                    revealDirection = Bidirectional,
                 )
             }
         }
@@ -230,7 +230,7 @@ class SwipeToRevealTest {
                 primaryAction = {
                     DefaultPrimaryActionButton(modifier = Modifier.testTag(PRIMARY_ACTION_TAG))
                 },
-                enableTouchSlop = false
+                enableTouchSlop = false,
             )
         }
 
@@ -255,7 +255,7 @@ class SwipeToRevealTest {
                 secondaryAction = {
                     DefaultSecondaryActionButton(modifier = Modifier.testTag(SECONDARY_ACTION_TAG))
                 },
-                enableTouchSlop = false
+                enableTouchSlop = false,
             )
         }
 
@@ -279,7 +279,7 @@ class SwipeToRevealTest {
                     DefaultPrimaryActionButton(modifier = Modifier.testTag(PRIMARY_ACTION_TAG))
                 },
                 revealDirection = Bidirectional,
-                enableTouchSlop = false
+                enableTouchSlop = false,
             )
         }
 
@@ -305,7 +305,7 @@ class SwipeToRevealTest {
                     DefaultSecondaryActionButton(modifier = Modifier.testTag(SECONDARY_ACTION_TAG))
                 },
                 revealDirection = Bidirectional,
-                enableTouchSlop = false
+                enableTouchSlop = false,
             )
         }
 
@@ -328,7 +328,7 @@ class SwipeToRevealTest {
                 undoPrimaryAction = {
                     DefaultUndoActionButton(modifier = Modifier.testTag(UNDO_PRIMARY_ACTION_TAG))
                 },
-                enableTouchSlop = false
+                enableTouchSlop = false,
             )
         }
 
@@ -347,7 +347,7 @@ class SwipeToRevealTest {
                     DefaultUndoActionButton(modifier = Modifier.testTag(UNDO_PRIMARY_ACTION_TAG))
                 },
                 revealDirection = Bidirectional,
-                enableTouchSlop = false
+                enableTouchSlop = false,
             )
         }
 
@@ -364,10 +364,7 @@ class SwipeToRevealTest {
 
     @Test
     fun onFullSwipeRight_bidirectionalGestureInclusion_noSwipe() {
-        verifyGesture(
-            expectedRevealValue = Covered,
-            bidirectionalGestureInclusion = true,
-        ) {
+        verifyGesture(expectedRevealValue = Covered, bidirectionalGestureInclusion = true) {
             swipeRight()
         }
     }
@@ -379,10 +376,7 @@ class SwipeToRevealTest {
 
     @Test
     fun onFullSwipeLeft_bidirectionalGestureInclusion_stateToSwiped() {
-        verifyGesture(
-            expectedRevealValue = RightRevealed,
-            bidirectionalGestureInclusion = true,
-        ) {
+        verifyGesture(expectedRevealValue = RightRevealed, bidirectionalGestureInclusion = true) {
             swipeLeft()
         }
     }
@@ -436,10 +430,7 @@ class SwipeToRevealTest {
 
     @Test
     fun onFullSwipeLeft_bidirectional_stateToSwiped() {
-        verifyGesture(
-            expectedRevealValue = RightRevealed,
-            revealDirection = Bidirectional,
-        ) {
+        verifyGesture(expectedRevealValue = RightRevealed, revealDirection = Bidirectional) {
             swipeLeft()
         }
     }
@@ -489,7 +480,7 @@ class SwipeToRevealTest {
             assertions = { revealStateOne, revealStateTwo ->
                 assertEquals(Covered, revealStateOne.currentValue)
                 assertEquals(RightRevealing, revealStateTwo.currentValue)
-            }
+            },
         )
     }
 
@@ -509,7 +500,7 @@ class SwipeToRevealTest {
                 // assert that state does not reset
                 assertEquals(RightRevealed, revealStateOne.currentValue)
                 assertEquals(RightRevealing, revealStateTwo.currentValue)
-            }
+            },
         )
     }
 
@@ -524,7 +515,7 @@ class SwipeToRevealTest {
             },
             assertions = { revealStateOne, revealStateTwo ->
                 assertEquals(Covered, revealStateOne.currentValue)
-            }
+            },
         )
     }
 
@@ -538,7 +529,7 @@ class SwipeToRevealTest {
             },
             assertions = { revealStateOne, revealStateTwo ->
                 assertEquals(lastValue, revealStateOne.currentValue)
-            }
+            },
         )
     }
 
@@ -618,7 +609,7 @@ class SwipeToRevealTest {
                 object : NestedScrollConnection {
                     override fun onPreScroll(
                         available: Offset,
-                        source: NestedScrollSource
+                        source: NestedScrollSource,
                     ): Offset {
                         onPreScrollDispatch = available.x
                         return available
@@ -643,7 +634,7 @@ class SwipeToRevealTest {
                 object : NestedScrollConnection {
                     override fun onPreScroll(
                         available: Offset,
-                        source: NestedScrollSource
+                        source: NestedScrollSource,
                     ): Offset {
                         onPreScrollDispatch = available.x
                         return available
@@ -663,7 +654,7 @@ class SwipeToRevealTest {
     private fun verifyLastClickAction(
         expectedClickType: RevealActionType,
         initialRevealValue: RevealValue,
-        nodeTagToPerformClick: String = PRIMARY_ACTION_TAG
+        nodeTagToPerformClick: String = PRIMARY_ACTION_TAG,
     ) {
         lateinit var revealState: RevealState
         rule.setContent {
@@ -678,7 +669,7 @@ class SwipeToRevealTest {
                                 revealState.snapTo(Covered)
                                 revealState.lastActionType = PrimaryAction
                             }
-                        }
+                        },
                     )
                 },
                 revealState = revealState,
@@ -690,7 +681,7 @@ class SwipeToRevealTest {
                                 revealState.snapTo(Covered)
                                 revealState.lastActionType = SecondaryAction
                             }
-                        }
+                        },
                     )
                 },
                 undoPrimaryAction = {
@@ -701,9 +692,9 @@ class SwipeToRevealTest {
                                 revealState.animateTo(Covered)
                                 revealState.lastActionType = UndoAction
                             }
-                        }
+                        },
                     )
-                }
+                },
             )
         }
         rule.onNodeWithTag(nodeTagToPerformClick).performClick()
@@ -727,10 +718,7 @@ class SwipeToRevealTest {
         lateinit var revealState: RevealState
 
         rule.setContent {
-            revealState =
-                rememberRevealState(
-                    initialValue = initialRevealValue,
-                )
+            revealState = rememberRevealState(initialValue = initialRevealValue)
 
             val content =
                 @Composable {
@@ -757,9 +745,7 @@ class SwipeToRevealTest {
                     state = rememberSwipeToDismissBoxState(),
                 ) { isBackground ->
                     if (isBackground) {
-                        Box(
-                            modifier = Modifier.fillMaxSize().background(Color.Red),
-                        )
+                        Box(modifier = Modifier.fillMaxSize().background(Color.Red))
                     } else {
                         Box(contentAlignment = Alignment.Center) { content() }
                     }
@@ -781,7 +767,7 @@ class SwipeToRevealTest {
             null,
         actionsSuspended:
             (suspend (
-                revealStateOne: RevealState, revealStateTwo: RevealState, density: Float
+                revealStateOne: RevealState, revealStateTwo: RevealState, density: Float,
             ) -> Unit)? =
             null,
         assertions: (revealStateOne: RevealState, revealStateTwo: RevealState) -> Unit,
@@ -797,11 +783,11 @@ class SwipeToRevealTest {
                 Column {
                     SwipeToRevealWithDefaults(
                         modifier = Modifier.testTag(SWIPE_TO_REVEAL_TAG),
-                        revealState = revealStateOne
+                        revealState = revealStateOne,
                     )
                     SwipeToRevealWithDefaults(
                         modifier = Modifier.testTag(SWIPE_TO_REVEAL_SECOND_TAG),
-                        revealState = revealStateTwo
+                        revealState = revealStateTwo,
                     )
                 }
             }
@@ -836,7 +822,7 @@ class SwipeToRevealTest {
                 gestureInclusion(revealState)
             },
         enableTouchSlop: Boolean = true,
-        content: @Composable () -> Unit = @Composable { DefaultContent() }
+        content: @Composable () -> Unit = @Composable { DefaultContent() },
     ) {
         val swipeToRevealContent =
             @Composable {
@@ -851,7 +837,7 @@ class SwipeToRevealTest {
                     revealDirection = revealDirection,
                     hasPartiallyRevealedState = hasPartiallyRevealedState,
                     gestureInclusion = gestureInclusion,
-                    content = content
+                    content = content,
                 )
             }
         if (enableTouchSlop) {
@@ -891,11 +877,7 @@ class SwipeToRevealTest {
         modifier: Modifier = Modifier,
         onClick: () -> Unit = {},
     ) {
-        UndoActionButton(
-            onClick = onClick,
-            text = { Text("Undo Delete") },
-            modifier = modifier,
-        )
+        UndoActionButton(onClick = onClick, text = { Text("Undo Delete") }, modifier = modifier)
     }
 
     @Composable
@@ -905,10 +887,7 @@ class SwipeToRevealTest {
 
     private fun TouchInjectionScope.swipeLeftToRevealing(density: Float) {
         val singleActionAnchorWidthPx = SingleActionAnchorWidth.value * density
-        swipeLeft(
-            startX = right,
-            endX = right - (singleActionAnchorWidthPx * 0.75f),
-        )
+        swipeLeft(startX = right, endX = right - (singleActionAnchorWidthPx * 0.75f))
     }
 
     companion object {

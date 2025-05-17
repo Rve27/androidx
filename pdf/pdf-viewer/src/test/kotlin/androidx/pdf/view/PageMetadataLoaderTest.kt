@@ -76,7 +76,7 @@ class PageMetadataLoaderTest {
                             pageNum = invocationOnMock.getArgument(0),
                             height = PAGE_HEIGHT,
                             width = PAGE_WIDTH,
-                            formWidgetInfos = FORM_WIDGET_INFOS
+                            formWidgetInfos = FORM_WIDGET_INFOS,
                         )
                     } else {
                         PdfDocument.PageInfo(
@@ -455,7 +455,7 @@ class PageMetadataLoaderTest {
                 pdfDocumentWithForm,
                 testScope,
                 errorFlow = errorFlow,
-                isFormFillingEnabled = true
+                isFormFillingEnabled = true,
             )
         paginationManagerWithForm.increaseReach(20)
         backgroundScope.launch(UnconfinedTestDispatcher(testScope.testScheduler)) {
@@ -479,7 +479,7 @@ class PageMetadataLoaderTest {
                 pdfDocumentWithForm,
                 testScope,
                 errorFlow = errorFlow,
-                isFormFillingEnabled = false
+                isFormFillingEnabled = false,
             )
         paginationManagerLocal.increaseReach(20)
         backgroundScope.launch(UnconfinedTestDispatcher(testScope.testScheduler)) {
@@ -501,7 +501,7 @@ class PageMetadataLoaderTest {
                 pdfDocument,
                 testScope,
                 errorFlow = errorFlow,
-                isFormFillingEnabled = true
+                isFormFillingEnabled = true,
             )
         paginationManagerLocal.increaseReach(20)
         backgroundScope.launch(UnconfinedTestDispatcher(testScope.testScheduler)) {
@@ -547,6 +547,6 @@ private val FORM_WIDGET_INFOS =
             widgetIndex = 0,
             widgetRect = Rect(10, 10, 20, 20),
             textValue = "Hello",
-            accessibilityLabel = "Hello"
+            accessibilityLabel = "Hello",
         )
     )

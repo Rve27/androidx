@@ -103,8 +103,8 @@ class AuthenticationResultTestActivity : FragmentActivity() {
                     "Vertical list description",
                     listOf(
                         PromptContentItemBulletedText("test item1"),
-                        PromptContentItemBulletedText("test item2")
-                    )
+                        PromptContentItemBulletedText("test item2"),
+                    ),
                 )
             } else {
                 null
@@ -113,9 +113,7 @@ class AuthenticationResultTestActivity : FragmentActivity() {
         val authRequest =
             if (binding.credentialButton.isChecked) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    credentialRequest(
-                        title = title,
-                    ) {
+                    credentialRequest(title = title) {
                         setSubtitle(subtitle)
                         setContent(bodyContent)
                         setCryptoObject(createCryptoOrNull())

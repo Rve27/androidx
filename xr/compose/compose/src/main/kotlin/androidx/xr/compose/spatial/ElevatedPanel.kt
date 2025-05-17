@@ -78,7 +78,7 @@ internal fun ElevatedPanel(
     val zDepth by
         updateTransition(targetState = elevation, label = "restingLevelTransition").animateDp(
             transitionSpec = elevationTransitionSpec,
-            label = "zDepth"
+            label = "zDepth",
         ) { state ->
             state
         }

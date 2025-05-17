@@ -278,7 +278,7 @@ internal fun BasicTextField(
                 textFieldState = state,
                 inputTransformation = inputTransformation,
                 codepointTransformation = appliedCodepointTransformation,
-                outputTransformation = outputTransformation
+                outputTransformation = outputTransformation,
             )
         }
 
@@ -324,7 +324,7 @@ internal fun BasicTextField(
             object : TextToolbarHandler {
                 override suspend fun showTextToolbar(
                     selectionState: TextFieldSelectionState,
-                    rect: Rect
+                    rect: Rect,
                 ) =
                     with(selectionState) {
                         selectionState.updateClipboardEntry()
@@ -353,7 +353,7 @@ internal fun BasicTextField(
                                     selectAll()
                                 },
                             onAutofillRequested =
-                                menuItem(canAutofill(), TextToolbarState.None) { autofill() }
+                                menuItem(canAutofill(), TextToolbarState.None) { autofill() },
                         )
                     }
 
@@ -377,7 +377,7 @@ internal fun BasicTextField(
             enabled = enabled,
             readOnly = readOnly,
             isPassword = isPassword,
-            showTextToolbar = textToolbarHandler
+            showTextToolbar = textToolbarHandler,
         )
     }
 
@@ -424,7 +424,7 @@ internal fun BasicTextField(
                     singleLine = singleLine,
                     interactionSource = interactionSource,
                     isPassword = isPassword,
-                    stylusHandwritingTrigger = stylusHandwritingTrigger
+                    stylusHandwritingTrigger = stylusHandwritingTrigger,
                 )
             )
             .scrollable(
@@ -438,7 +438,7 @@ internal fun BasicTextField(
                     ScrollableDefaults.reverseDirection(
                         layoutDirection = layoutDirection,
                         orientation = orientation,
-                        reverseScrolling = false
+                        reverseScrolling = false,
                     ),
                 interactionSource = interactionSource,
             )
@@ -466,7 +466,7 @@ internal fun BasicTextField(
                             .heightInLines(
                                 textStyle = textStyle,
                                 minLines = minLines,
-                                maxLines = maxLines
+                                maxLines = maxLines,
                             )
                             .textFieldMinSize(textStyle)
                             .clipToBounds()
@@ -483,7 +483,7 @@ internal fun BasicTextField(
                                     orientation = orientation,
                                     toolbarRequester = toolbarRequester,
                                 )
-                            )
+                            ),
                 ) {
                     Box(
                         modifier =
@@ -516,7 +516,7 @@ internal fun BasicTextField(
 @OptIn(ExperimentalFoundationApi::class)
 private fun Modifier.addContextMenuComponents(
     textFieldSelectionState: TextFieldSelectionState,
-    coroutineScope: CoroutineScope
+    coroutineScope: CoroutineScope,
 ): Modifier =
     if (ComposeFoundationFlags.isNewContextMenuEnabled)
         addBasicTextFieldTextContextMenuComponents(textFieldSelectionState, coroutineScope)
@@ -551,7 +551,7 @@ internal fun TextFieldSelectionHandles(selectionState: TextFieldSelectionState) 
             derivedStateOf {
                 selectionState.getSelectionHandleState(
                     isStartHandle = true,
-                    includePosition = false
+                    includePosition = false,
                 )
             }
         }
@@ -580,7 +580,7 @@ internal fun TextFieldSelectionHandles(selectionState: TextFieldSelectionState) 
             derivedStateOf {
                 selectionState.getSelectionHandleState(
                     isStartHandle = false,
-                    includePosition = false
+                    includePosition = false,
                 )
             }
         }
@@ -730,7 +730,7 @@ fun BasicTextField(
     interactionSource: MutableInteractionSource? = null,
     cursorBrush: Brush = SolidColor(Color.Black),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit =
-        @Composable { innerTextField -> innerTextField() }
+        @Composable { innerTextField -> innerTextField() },
 ) {
     // Holds the latest internal TextFieldValue state. We need to keep it to have the correct value
     // of the composition.
@@ -778,7 +778,7 @@ fun BasicTextField(
         maxLines = if (singleLine) 1 else maxLines,
         decorationBox = decorationBox,
         enabled = enabled,
-        readOnly = readOnly
+        readOnly = readOnly,
     )
 }
 
@@ -887,7 +887,7 @@ fun BasicTextField(
     interactionSource: MutableInteractionSource? = null,
     cursorBrush: Brush = SolidColor(Color.Black),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit =
-        @Composable { innerTextField -> innerTextField() }
+        @Composable { innerTextField -> innerTextField() },
 ) {
     CoreTextField(
         value = value,
@@ -909,7 +909,7 @@ fun BasicTextField(
         maxLines = if (singleLine) 1 else maxLines,
         decorationBox = decorationBox,
         enabled = enabled,
-        readOnly = readOnly
+        readOnly = readOnly,
     )
 }
 
@@ -931,7 +931,7 @@ fun BasicTextField(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     cursorBrush: Brush = SolidColor(Color.Black),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit =
-        @Composable { innerTextField -> innerTextField() }
+        @Composable { innerTextField -> innerTextField() },
 ) {
     BasicTextField(
         value = value,
@@ -949,7 +949,7 @@ fun BasicTextField(
         onTextLayout = onTextLayout,
         interactionSource = interactionSource,
         cursorBrush = cursorBrush,
-        decorationBox = decorationBox
+        decorationBox = decorationBox,
     )
 }
 
@@ -971,7 +971,7 @@ fun BasicTextField(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     cursorBrush: Brush = SolidColor(Color.Black),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit =
-        @Composable { innerTextField -> innerTextField() }
+        @Composable { innerTextField -> innerTextField() },
 ) {
     BasicTextField(
         value = value,
@@ -989,6 +989,6 @@ fun BasicTextField(
         onTextLayout = onTextLayout,
         interactionSource = interactionSource,
         cursorBrush = cursorBrush,
-        decorationBox = decorationBox
+        decorationBox = decorationBox,
     )
 }

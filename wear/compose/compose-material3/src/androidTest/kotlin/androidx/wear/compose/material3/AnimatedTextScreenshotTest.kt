@@ -66,16 +66,10 @@ class AnimatedTextScreenshotTest {
             rememberAnimatedTextFontRegistry(
                 // Variation axes at the start of the animation, width 10, weight 200
                 startFontVariationSettings =
-                    FontVariation.Settings(
-                        FontVariation.width(10f),
-                        FontVariation.weight(200),
-                    ),
+                    FontVariation.Settings(FontVariation.width(10f), FontVariation.weight(200)),
                 // Variation axes at the end of the animation, width 100, weight 500
                 endFontVariationSettings =
-                    FontVariation.Settings(
-                        FontVariation.width(100f),
-                        FontVariation.weight(500),
-                    ),
+                    FontVariation.Settings(FontVariation.width(100f), FontVariation.weight(500)),
                 startFontSize = 10.sp,
                 endFontSize = 50.sp,
             )

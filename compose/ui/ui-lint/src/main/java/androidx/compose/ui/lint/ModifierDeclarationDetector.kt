@@ -131,8 +131,8 @@ class ModifierDeclarationDetector : Detector(), SourceCodeScanner {
                 Severity.WARNING,
                 Implementation(
                     ModifierDeclarationDetector::class.java,
-                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
-                )
+                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES),
+                ),
             )
 
         val ModifierFactoryExtensionFunction =
@@ -146,8 +146,8 @@ class ModifierDeclarationDetector : Detector(), SourceCodeScanner {
                 Severity.WARNING,
                 Implementation(
                     ModifierDeclarationDetector::class.java,
-                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
-                )
+                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES),
+                ),
             )
 
         val ModifierFactoryUnreferencedReceiver =
@@ -168,8 +168,8 @@ class ModifierDeclarationDetector : Detector(), SourceCodeScanner {
                 Severity.ERROR,
                 Implementation(
                     ModifierDeclarationDetector::class.java,
-                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
-                )
+                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES),
+                ),
             )
     }
 }
@@ -182,7 +182,7 @@ private fun UMethod.checkReceiver(context: JavaContext) {
             this,
             context.getNameLocation(this),
             "Modifier factory functions should be extensions on Modifier",
-            lintFix
+            lintFix,
         )
     }
 
@@ -329,7 +329,7 @@ private fun UMethod.ensureReceiverIsReferenced(context: JavaContext) {
             ModifierDeclarationDetector.ModifierFactoryUnreferencedReceiver,
             this,
             context.getNameLocation(this),
-            "Modifier factory functions must use the receiver Modifier instance"
+            "Modifier factory functions must use the receiver Modifier instance",
         )
     }
 }
@@ -342,7 +342,7 @@ private fun UMethod.checkReturnType(context: JavaContext, returnType: PsiType) {
             this,
             context.getNameLocation(this),
             "Modifier factory functions should have a return type of Modifier",
-            lintFix
+            lintFix,
         )
     }
 

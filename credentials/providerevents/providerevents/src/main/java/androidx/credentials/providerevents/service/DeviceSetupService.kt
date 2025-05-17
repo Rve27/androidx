@@ -103,7 +103,7 @@ public abstract class DeviceSetupService() : Service() {
         request: ImportCredentialsRequest,
         callingAppInfo: CallingAppInfo,
         cancellationSignal: CancellationSignal,
-        callback: OutcomeReceiverCompat<ImportCredentialsResponse, ImportCredentialsException>
+        callback: OutcomeReceiverCompat<ImportCredentialsResponse, ImportCredentialsException>,
     ) {}
 
     /**
@@ -122,7 +122,7 @@ public abstract class DeviceSetupService() : Service() {
         request: ExportCredentialsRequest,
         callingAppInfo: CallingAppInfo,
         cancellationSignal: CancellationSignal,
-        callback: OutcomeReceiverCompat<ExportCredentialsResponse, ExportCredentialsException>
+        callback: OutcomeReceiverCompat<ExportCredentialsResponse, ExportCredentialsException>,
     ) {}
 
     /**
@@ -145,7 +145,7 @@ public abstract class DeviceSetupService() : Service() {
         callback:
             OutcomeReceiverCompat<
                 CredentialTransferCapabilities,
-                GetCredentialTransferCapabilitiesException
-            >
+                GetCredentialTransferCapabilitiesException,
+            >,
     ) {}
 }

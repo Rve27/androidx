@@ -1222,7 +1222,7 @@ class EntityTest {
                     any(),
                     any(),
                     any(),
-                    any()
+                    any(),
                 )
             )
             .thenReturn(mock())

@@ -79,7 +79,7 @@ class SpatialUserActivity : AppCompatActivity() {
             val pos =
                 session.scene.spatialUser.head?.transformPoseTo(
                     poseOffset,
-                    session.scene.activitySpace
+                    session.scene.activitySpace,
                 )
             if (pos != null) {
                 panelEntity.setPose(pos)

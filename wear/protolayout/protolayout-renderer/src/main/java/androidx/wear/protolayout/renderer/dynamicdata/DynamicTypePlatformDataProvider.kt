@@ -94,7 +94,7 @@ private constructor(
         @JvmStatic
         public fun forDynamicBool(
             key: PlatformDataKey<DynamicBool>,
-            initialValue: Boolean
+            initialValue: Boolean,
         ): DynamicTypePlatformDataProvider<Boolean, DynamicBool> =
             DynamicTypePlatformDataProvider(key, initialValue) { DynamicDataValue.fromBool(it) }
 

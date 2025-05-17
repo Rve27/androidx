@@ -284,7 +284,7 @@ class AndroidAccessibilityTest {
                         layoutParams =
                             ViewGroup.LayoutParams(
                                 ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT
+                                ViewGroup.LayoutParams.MATCH_PARENT,
                             )
                     }
 
@@ -332,7 +332,7 @@ class AndroidAccessibilityTest {
                     .containsExactly(
                         AccessibilityActionCompat(ACTION_ACCESSIBILITY_FOCUS, "toggle"),
                         AccessibilityActionCompat(ACTION_FOCUS, "toggle"),
-                        AccessibilityActionCompat(ACTION_CLICK, "toggle")
+                        AccessibilityActionCompat(ACTION_CLICK, "toggle"),
                     )
             }
         }
@@ -347,7 +347,7 @@ class AndroidAccessibilityTest {
                 Modifier.toggleable(
                         value = checked,
                         role = Role.Switch,
-                        onValueChange = { checked = it }
+                        onValueChange = { checked = it },
                     )
                     .testTag(tag)
             ) {
@@ -373,7 +373,7 @@ class AndroidAccessibilityTest {
                     .containsExactly(
                         AccessibilityActionCompat(ACTION_ACCESSIBILITY_FOCUS, null),
                         AccessibilityActionCompat(ACTION_FOCUS, null),
-                        AccessibilityActionCompat(ACTION_CLICK, null)
+                        AccessibilityActionCompat(ACTION_CLICK, null),
                     )
             }
 
@@ -390,7 +390,7 @@ class AndroidAccessibilityTest {
                 // BasicSecureTextField is considered a password field.
                 BasicSecureTextField(
                     state = rememberTextFieldState(),
-                    modifier = Modifier.testTag(tag)
+                    modifier = Modifier.testTag(tag),
                 )
             }
         }
@@ -420,7 +420,7 @@ class AndroidAccessibilityTest {
             var expanded by remember { mutableStateOf(false) }
             IconButton(
                 modifier = Modifier.semantics { role = Role.DropdownList }.testTag(tag),
-                onClick = { expanded = true }
+                onClick = { expanded = true },
             ) {
                 Icon(Icons.Default.MoreVert, null)
             }
@@ -447,7 +447,7 @@ class AndroidAccessibilityTest {
                     .containsExactly(
                         AccessibilityActionCompat(ACTION_ACCESSIBILITY_FOCUS, null),
                         AccessibilityActionCompat(ACTION_FOCUS, null),
-                        AccessibilityActionCompat(ACTION_CLICK, null)
+                        AccessibilityActionCompat(ACTION_CLICK, null),
                     )
             }
         }
@@ -570,10 +570,7 @@ class AndroidAccessibilityTest {
                 // TODO(b/406574577): Remove suppression once 1.17.0 stable is released.
                 @Suppress("DEPRECATION") assertThat(isChecked).isTrue()
                 assertThat(isVisibleToUser).isTrue()
-                assertThat(actionList)
-                    .contains(
-                        AccessibilityActionCompat(ACTION_CLICK, null),
-                    )
+                assertThat(actionList).contains(AccessibilityActionCompat(ACTION_CLICK, null))
             }
         }
     }
@@ -699,7 +696,7 @@ class AndroidAccessibilityTest {
             BasicTextField(
                 modifier = Modifier.testTag(tag),
                 value = value,
-                onValueChange = { value = it }
+                onValueChange = { value = it },
             )
         }
         val virtualId = rule.onNodeWithTag(tag).semanticsId()
@@ -726,7 +723,7 @@ class AndroidAccessibilityTest {
                         AccessibilityActionCompat(ACTION_NEXT_AT_MOVEMENT_GRANULARITY, null),
                         AccessibilityActionCompat(ACTION_PREVIOUS_AT_MOVEMENT_GRANULARITY, null),
                         AccessibilityActionCompat(ACTION_FOCUS, null),
-                        AccessibilityActionCompat(ACTION_ACCESSIBILITY_FOCUS, null)
+                        AccessibilityActionCompat(ACTION_ACCESSIBILITY_FOCUS, null),
                     )
                 if (Build.VERSION.SDK_INT >= 26) {
                     assertThat(availableExtraData)
@@ -735,7 +732,7 @@ class AndroidAccessibilityTest {
                             // TODO(b/272068594): This looks like a bug. This should be
                             //  AccessibilityNodeInfoCompat.EXTRA_DATA_TEXT_CHARACTER_LOCATION_KEY
                             EXTRA_DATA_TEXT_CHARACTER_LOCATION_KEY,
-                            "androidx.compose.ui.semantics.testTag"
+                            "androidx.compose.ui.semantics.testTag",
                         )
                 }
             }
@@ -789,7 +786,7 @@ class AndroidAccessibilityTest {
                         it()
                         BasicText(text = "Label")
                     }
-                }
+                },
             )
         }
 
@@ -815,7 +812,7 @@ class AndroidAccessibilityTest {
                             BasicText(text = "Label")
                         }
                     }
-                }
+                },
             )
         }
 
@@ -854,7 +851,7 @@ class AndroidAccessibilityTest {
                 assertThat(actionList)
                     .containsExactly(
                         AccessibilityActionCompat(ACTION_FOCUS, null),
-                        AccessibilityActionCompat(ACTION_ACCESSIBILITY_FOCUS, null)
+                        AccessibilityActionCompat(ACTION_ACCESSIBILITY_FOCUS, null),
                     )
                 @Suppress("DEPRECATION") recycle()
             }
@@ -882,7 +879,7 @@ class AndroidAccessibilityTest {
                 assertThat(actionList)
                     .containsExactly(
                         AccessibilityActionCompat(ACTION_CLEAR_FOCUS, null),
-                        AccessibilityActionCompat(ACTION_ACCESSIBILITY_FOCUS, null)
+                        AccessibilityActionCompat(ACTION_ACCESSIBILITY_FOCUS, null),
                     )
                 @Suppress("DEPRECATION") recycle()
             }
@@ -953,10 +950,7 @@ class AndroidAccessibilityTest {
     }
 
     @Composable
-    fun LastElementOverLaidColumn(
-        modifier: Modifier = Modifier,
-        content: @Composable () -> Unit,
-    ) {
+    fun LastElementOverLaidColumn(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
         var yPosition = 0
         Layout(modifier = modifier, content = content) { measurables, constraints ->
             val placeables = measurables.map { measurable -> measurable.measure(constraints) }
@@ -1115,7 +1109,7 @@ class AndroidAccessibilityTest {
                 ) {
                     Text(
                         "Testing Box Covering First Elements",
-                        Modifier.align(Alignment.Center).testTag(clickableTitle)
+                        Modifier.align(Alignment.Center).testTag(clickableTitle),
                     )
                 }
             }
@@ -1137,12 +1131,12 @@ class AndroidAccessibilityTest {
         modifier: Modifier,
         columnNumber: Int,
         topSampleText: String,
-        bottomSampleText: String
+        bottomSampleText: String,
     ) {
         Row(
             modifier,
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
         ) {
             Column {
                 Text(topSampleText + columnNumber)
@@ -1167,13 +1161,13 @@ class AndroidAccessibilityTest {
                             .semantics { traversalIndex = 1f },
                         1,
                         topSampleText,
-                        bottomSampleText
+                        bottomSampleText,
                     )
                     CardRow(
                         Modifier.semantics { isTraversalGroup = true },
                         2,
                         topSampleText,
-                        bottomSampleText
+                        bottomSampleText,
                     )
                 }
             }
@@ -1212,13 +1206,13 @@ class AndroidAccessibilityTest {
                         Modifier.semantics { isTraversalGroup = true },
                         1,
                         topSampleText,
-                        bottomSampleText
+                        bottomSampleText,
                     )
                     CardRow(
                         Modifier.semantics { isTraversalGroup = true },
                         2,
                         topSampleText,
-                        bottomSampleText
+                        bottomSampleText,
                     )
                 }
             }
@@ -1260,13 +1254,13 @@ class AndroidAccessibilityTest {
                         Modifier.testTag("Row 1").semantics { isTraversalGroup = false },
                         1,
                         topSampleText,
-                        bottomSampleText
+                        bottomSampleText,
                     )
                     CardRow(
                         Modifier.testTag("Row 2").semantics { isTraversalGroup = false },
                         2,
                         topSampleText,
-                        bottomSampleText
+                        bottomSampleText,
                     )
                 }
             }
@@ -1298,19 +1292,19 @@ class AndroidAccessibilityTest {
                     Modifier.semantics { isTraversalGroup = false },
                     1,
                     topSampleText,
-                    bottomSampleText
+                    bottomSampleText,
                 )
                 CardRow(
                     Modifier.semantics { isTraversalGroup = false },
                     2,
                     topSampleText,
-                    bottomSampleText
+                    bottomSampleText,
                 )
                 CardRow(
                     Modifier.semantics { isTraversalGroup = true },
                     3,
                     topSampleText,
-                    bottomSampleText
+                    bottomSampleText,
                 )
             }
         }
@@ -1355,7 +1349,7 @@ class AndroidAccessibilityTest {
                         .semantics { isTraversalGroup = false },
                     1,
                     topSampleText,
-                    bottomSampleText
+                    bottomSampleText,
                 )
                 CardRow(
                     Modifier
@@ -1366,7 +1360,7 @@ class AndroidAccessibilityTest {
                         .semantics { isTraversalGroup = false },
                     2,
                     topSampleText,
-                    bottomSampleText
+                    bottomSampleText,
                 )
             }
         }
@@ -1405,7 +1399,7 @@ class AndroidAccessibilityTest {
                 Row {
                     Text(
                         text = overlaidText,
-                        modifier = Modifier.semantics { traversalIndex = -1f }
+                        modifier = Modifier.semantics { traversalIndex = -1f },
                     )
                 }
             }
@@ -1452,7 +1446,7 @@ class AndroidAccessibilityTest {
                         Row {
                             Text(
                                 text = text5,
-                                modifier = Modifier.semantics { traversalIndex = 1f }
+                                modifier = Modifier.semantics { traversalIndex = 1f },
                             )
                         }
                         Row { Text(text4) }
@@ -1513,7 +1507,7 @@ class AndroidAccessibilityTest {
                         text = overlaidText,
                         modifier =
                             Modifier.semantics { traversalIndex = 1f }
-                                .semantics { isTraversalGroup = true }
+                                .semantics { isTraversalGroup = true },
                     )
                 }
             }
@@ -1555,7 +1549,7 @@ class AndroidAccessibilityTest {
                         text = overlaidText,
                         modifier =
                             Modifier.semantics { isTraversalGroup = true }
-                                .semantics { traversalIndex = 1f }
+                                .semantics { traversalIndex = 1f },
                     )
                 }
             }
@@ -1640,7 +1634,7 @@ class AndroidAccessibilityTest {
                 },
                 drawerContent = { Text(text = "Drawer Menu 1") },
                 content = { padding -> Text(contentText, modifier = Modifier.padding(padding)) },
-                bottomBar = { BottomAppBar { Text(bottomAppBarText) } }
+                bottomBar = { BottomAppBar { Text(bottomAppBarText) } },
             )
         }
         val topAppBarId = rule.onNodeWithText(topAppBarText).semanticsId()
@@ -1681,7 +1675,7 @@ class AndroidAccessibilityTest {
                         }
                     }
                 },
-                content = { padding -> Text(contentText, modifier = Modifier.padding(padding)) }
+                content = { padding -> Text(contentText, modifier = Modifier.padding(padding)) },
             )
         }
         val face1Id = rule.onNodeWithContentDescription(content1).semanticsId()
@@ -1728,11 +1722,11 @@ class AndroidAccessibilityTest {
                                 // children with smaller [zIndex]. So child 1 covers child 2.
                                 .zIndex(1f)
                                 .testTag(childOneTag)
-                                .requiredSize(50.toDp())
+                                .requiredSize(50.toDp()),
                         )
                         BasicText(
                             "Child Two",
-                            Modifier.testTag(childTwoTag).requiredSize(50.toDp())
+                            Modifier.testTag(childTwoTag).requiredSize(50.toDp()),
                         )
                     }
                 }
@@ -1797,7 +1791,7 @@ class AndroidAccessibilityTest {
                 modifier = Modifier,
                 topBar = { TopAppBar(title = { Text(text = topAppBarText) }) },
                 content = { ScrollColumnNoPadding(firstContentText, lastContentText) },
-                bottomBar = { BottomAppBar { Text(bottomAppBarText) } }
+                bottomBar = { BottomAppBar { Text(bottomAppBarText) } },
             )
         }
 
@@ -2030,7 +2024,7 @@ class AndroidAccessibilityTest {
                     { SimpleTestLayout(Modifier.requiredSize(100.dp).testTag(childTag1)) {} },
                     Offset(0f, size),
                     { SimpleTestLayout(Modifier.requiredSize(100.dp).testTag(childTag2)) {} },
-                    Offset(0f, 0f)
+                    Offset(0f, 0f),
                 )
             }
         }
@@ -2066,7 +2060,7 @@ class AndroidAccessibilityTest {
                     { SimpleTestLayout(Modifier.requiredSize(100.dp).testTag(childTag1)) {} },
                     Offset(size, 0f),
                     { SimpleTestLayout(Modifier.requiredSize(100.dp).testTag(childTag2)) {} },
-                    Offset(0f, 0f)
+                    Offset(0f, 0f),
                 )
             }
         }
@@ -2164,7 +2158,7 @@ class AndroidAccessibilityTest {
         columnTag: String,
         interopText: String,
         firstButtonText: String,
-        lastButtonText: String
+        lastButtonText: String,
     ) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(padding).testTag(columnTag)) {
             Button(onClick = {}) { Text(firstButtonText) }
@@ -2199,7 +2193,7 @@ class AndroidAccessibilityTest {
                 content = { padding ->
                     InteropColumn(padding, columnTag, interopText, firstButtonText, lastButtonText)
                 },
-                bottomBar = { BottomAppBar { Text("Bottom App Bar") } }
+                bottomBar = { BottomAppBar { Text("Bottom App Bar") } },
             )
         }
         val colSemanticsNode =
@@ -2244,7 +2238,7 @@ class AndroidAccessibilityTest {
         interopText: String,
         firstButtonText: String,
         thirdButtonText: String,
-        fourthButtonText: String
+        fourthButtonText: String,
     ) {
         Column(Modifier.verticalScroll(rememberScrollState()).padding(padding).testTag(columnTag)) {
             Button(modifier = Modifier.semantics { traversalIndex = 3f }, onClick = {}) {
@@ -2294,10 +2288,10 @@ class AndroidAccessibilityTest {
                         interopText,
                         firstButtonText,
                         thirdButtonText,
-                        fourthButtonText
+                        fourthButtonText,
                     )
                 },
-                bottomBar = { BottomAppBar { Text("Bottom App Bar") } }
+                bottomBar = { BottomAppBar { Text("Bottom App Bar") } },
             )
         }
         val colSemanticsNode =
@@ -2435,13 +2429,13 @@ class AndroidAccessibilityTest {
                                 item {
                                     BasicText(
                                         "Backward",
-                                        Modifier.testTag(target2Tag).size(150.toDp())
+                                        Modifier.testTag(target2Tag).size(150.toDp()),
                                     )
                                 }
                                 item {
                                     BasicText(
                                         "Forward",
-                                        Modifier.testTag(target1Tag).size(150.toDp())
+                                        Modifier.testTag(target1Tag).size(150.toDp()),
                                     )
                                 }
                             }
@@ -2550,10 +2544,10 @@ class AndroidAccessibilityTest {
                 Modifier.toggleable(
                         value = checked,
                         enabled = false,
-                        onValueChange = { checked = it }
+                        onValueChange = { checked = it },
                     )
                     .testTag(tag),
-                content = { BasicText("ToggleableText") }
+                content = { BasicText("ToggleableText") },
             )
         }
         val toggleableId = rule.onNodeWithTag(tag).assertIsDisplayed().assertIsOn().semanticsId()
@@ -2637,7 +2631,7 @@ class AndroidAccessibilityTest {
                         }
                         .testTag(tag),
                 value = value,
-                onValueChange = { value = it }
+                onValueChange = { value = it },
             )
         }
         val textFieldId = rule.onNodeWithTag(tag).assertIsDisplayed().semanticsId()
@@ -2668,7 +2662,7 @@ class AndroidAccessibilityTest {
                 BasicTextField(
                     modifier = Modifier.testTag(tag),
                     value = "value",
-                    onValueChange = {}
+                    onValueChange = {},
                 )
             }
         }
@@ -2743,7 +2737,7 @@ class AndroidAccessibilityTest {
                 modifier = Modifier.testTag(tag),
                 value = "texy",
                 onValueChange = {},
-                onTextLayout = { textLayoutResult = it }
+                onTextLayout = { textLayoutResult = it },
             )
         }
         val textFieldNode =
@@ -2761,7 +2755,7 @@ class AndroidAccessibilityTest {
             textFieldNode.id,
             info,
             EXTRA_DATA_TEXT_CHARACTER_LOCATION_KEY,
-            argument
+            argument,
         )
 
         // TODO(b/272068594): This looks like a bug. This should be
@@ -2825,7 +2819,7 @@ class AndroidAccessibilityTest {
                             getAccessibilityEventSourceSemanticsNodeId(it) == virtualViewId &&
                                 it.eventType == TYPE_VIEW_CLICKED
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -2854,7 +2848,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_STATE_DESCRIPTION
                         }
-                    )
+                    ),
                 )
             // Temporary(b/192295060) fix, sending CONTENT_CHANGE_TYPE_UNDEFINED to
             // force ViewRootImpl to update its accessibility-focused virtual-node.
@@ -2868,7 +2862,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_UNDEFINED
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -2902,7 +2896,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_STATE_DESCRIPTION
                         }
-                    )
+                    ),
                 )
             // Temporary(b/192295060) fix, sending CONTENT_CHANGE_TYPE_UNDEFINED to
             // force ViewRootImpl to update its accessibility-focused virtual-node.
@@ -2916,7 +2910,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_UNDEFINED
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -2957,7 +2951,7 @@ class AndroidAccessibilityTest {
                             getAccessibilityEventSourceSemanticsNodeId(it) ==
                                 toggleableVirtualViewId && it.eventType == TYPE_VIEW_CLICKED
                         }
-                    )
+                    ),
                 )
         }
 
@@ -2974,7 +2968,7 @@ class AndroidAccessibilityTest {
                             it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_SUBTREE
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -3009,7 +3003,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_STATE_DESCRIPTION
                         }
-                    )
+                    ),
                 )
             // Temporary(b/192295060) fix, sending CONTENT_CHANGE_TYPE_UNDEFINED to
             // force ViewRootImpl to update its accessibility-focused virtual-node.
@@ -3023,7 +3017,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_UNDEFINED
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -3037,7 +3031,7 @@ class AndroidAccessibilityTest {
                 Modifier.selectable(
                         selected = selected,
                         onClick = { selected = true },
-                        role = Role.Tab
+                        role = Role.Tab,
                     )
                     .testTag(tag)
             ) {
@@ -3064,7 +3058,7 @@ class AndroidAccessibilityTest {
                                 it.text.size == 1 &&
                                 it.text[0].toString() == "Text"
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -3091,7 +3085,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_STATE_DESCRIPTION
                         }
-                    )
+                    ),
                 )
             // Temporary(b/192295060) fix, sending CONTENT_CHANGE_TYPE_UNDEFINED to
             // force ViewRootImpl to update its accessibility-focused virtual-node.
@@ -3105,7 +3099,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_UNDEFINED
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -3125,7 +3119,7 @@ class AndroidAccessibilityTest {
                 onValueChange = { value = it },
                 visualTransformation = {
                     TransformedText(it.toUpperCase(locale), OffsetMapping.Identity)
-                }
+                },
             )
         }
         rule
@@ -3172,7 +3166,7 @@ class AndroidAccessibilityTest {
                         toIndex = finalText.length
                         itemCount = finalText.length
                         this.text.add(finalText.toUpperCase(locale))
-                    }
+                    },
                 )
                 .inOrder()
         }
@@ -3190,7 +3184,7 @@ class AndroidAccessibilityTest {
                     BasicTextField(
                         modifier = Modifier.testTag(textFieldTag),
                         value = "text",
-                        onValueChange = {}
+                        onValueChange = {},
                     )
                 }
             }
@@ -3207,7 +3201,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_SUBTREE
                         }
-                    )
+                    ),
                 )
         }
         clearInvocations(container)
@@ -3227,7 +3221,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_SUBTREE
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -3247,7 +3241,7 @@ class AndroidAccessibilityTest {
                 decorationBox = {
                     BasicText("Label")
                     it()
-                }
+                },
             )
         }
         val virtualViewId = rule.onNodeWithTag(tag).assertIsDisplayed().semanticsId()
@@ -3261,7 +3255,7 @@ class AndroidAccessibilityTest {
             provider.performAction(
                 virtualViewId,
                 ACTION_NEXT_AT_MOVEMENT_GRANULARITY,
-                createMovementGranularityCharacterArgs()
+                createMovementGranularityCharacterArgs(),
             )
         }
 
@@ -3291,7 +3285,7 @@ class AndroidAccessibilityTest {
                         fromIndex = 0
                         toIndex = 1
                         this.text.add("•")
-                    }
+                    },
                 )
                 .inOrder()
         }
@@ -3314,7 +3308,7 @@ class AndroidAccessibilityTest {
             provider.performAction(
                 virtualViewId,
                 ACTION_NEXT_AT_MOVEMENT_GRANULARITY,
-                createMovementGranularityCharacterArgs()
+                createMovementGranularityCharacterArgs(),
             )
         }
 
@@ -3342,7 +3336,7 @@ class AndroidAccessibilityTest {
                         fromIndex = 0
                         toIndex = 1
                         this.text.add("h")
-                    }
+                    },
                 )
                 .inOrder()
         }
@@ -3376,7 +3370,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_SUBTREE
                         }
-                    )
+                    ),
                 )
         }
 
@@ -3396,7 +3390,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_SUBTREE
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -3431,7 +3425,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_SUBTREE
                         }
-                    )
+                    ),
                 )
         }
 
@@ -3455,7 +3449,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_CONTENT_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_SUBTREE
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -3498,7 +3492,7 @@ class AndroidAccessibilityTest {
                 with(LocalDensity.current) {
                     BasicText(
                         "Child One",
-                        Modifier.zIndex(1f).testTag(childOneTag).requiredSize(50.toDp())
+                        Modifier.zIndex(1f).testTag(childOneTag).requiredSize(50.toDp()),
                     )
                     BasicText("Child Two", Modifier.testTag(childTwoTag).requiredSize(50.toDp()))
                 }
@@ -3514,7 +3508,7 @@ class AndroidAccessibilityTest {
             rule.runOnIdle {
                 delegate.hitTestSemanticsAt(
                     (overlappedChildNodeBounds.left + overlappedChildNodeBounds.right) / 2,
-                    (overlappedChildNodeBounds.top + overlappedChildNodeBounds.bottom) / 2
+                    (overlappedChildNodeBounds.top + overlappedChildNodeBounds.bottom) / 2,
                 )
             }
 
@@ -3556,7 +3550,7 @@ class AndroidAccessibilityTest {
         val hitTestedId =
             delegate.hitTestSemanticsAt(
                 (childNodeBounds.left + childNodeBounds.right) / 2,
-                (childNodeBounds.top + childNodeBounds.bottom) / 2
+                (childNodeBounds.top + childNodeBounds.bottom) / 2,
             )
         assertThat(vitrualViewId).isEqualTo(hitTestedId)
     }
@@ -3581,7 +3575,7 @@ class AndroidAccessibilityTest {
             rule.runOnIdle {
                 delegate.hitTestSemanticsAt(
                     bounds.left + bounds.width / 2,
-                    bounds.top + bounds.height / 2
+                    bounds.top + bounds.height / 2,
                 )
             }
 
@@ -3633,7 +3627,7 @@ class AndroidAccessibilityTest {
             rule.runOnIdle {
                 delegate.hitTestSemanticsAt(
                     bounds.left + bounds.width / 2,
-                    bounds.top + bounds.height / 2
+                    bounds.top + bounds.height / 2,
                 )
             }
 
@@ -3660,7 +3654,7 @@ class AndroidAccessibilityTest {
             rule.runOnIdle {
                 delegate.hitTestSemanticsAt(
                     bounds.left + bounds.width / 2,
-                    bounds.top + bounds.height / 2
+                    bounds.top + bounds.height / 2,
                 )
             }
 
@@ -3680,7 +3674,7 @@ class AndroidAccessibilityTest {
                             addView(TextView(context).apply { text = "Text2" })
                         }
                     },
-                    Modifier.testTag(tag)
+                    Modifier.testTag(tag),
                 )
                 BasicText("text")
             }
@@ -3701,7 +3695,7 @@ class AndroidAccessibilityTest {
             getDeclaredMethod.invoke(
                 viewRootImplClass,
                 "getAccessibilityInteractionController",
-                arrayOf<Class<*>>()
+                arrayOf<Class<*>>(),
             ) as Method
         getAccessibilityInteractionControllerMethod.isAccessible = true
         val accessibilityInteractionController =
@@ -3713,7 +3707,7 @@ class AndroidAccessibilityTest {
             getDeclaredMethod.invoke(
                 accessibilityInteractionControllerClass,
                 "findViewByAccessibilityId",
-                arrayOf<Class<*>>(Int::class.java)
+                arrayOf<Class<*>>(Int::class.java),
             ) as Method
         findViewByAccessibilityIdMethod.isAccessible = true
 
@@ -3731,7 +3725,7 @@ class AndroidAccessibilityTest {
         val foundView =
             findViewByAccessibilityIdMethod.invoke(
                 accessibilityInteractionController,
-                textViewTwoId
+                textViewTwoId,
             )
         assertThat(foundView).isNotNull()
         assertThat(textTwo).isEqualTo(foundView)
@@ -3795,7 +3789,7 @@ class AndroidAccessibilityTest {
                 createHoverMotionEvent(
                     action = ACTION_HOVER_ENTER,
                     x = (bounds.left + bounds.right) / 2f,
-                    y = (bounds.top + bounds.bottom) / 2f
+                    y = (bounds.top + bounds.bottom) / 2f,
                 )
             assertThat(androidComposeView.dispatchHoverEvent(hoverEnter)).isTrue()
             assertThat(delegate.hoveredVirtualViewId).isEqualTo(InvalidId)
@@ -3805,7 +3799,7 @@ class AndroidAccessibilityTest {
             verify(container, times(1))
                 .requestSendAccessibilityEvent(
                     eq(androidComposeView),
-                    argThat(ArgumentMatcher { it.eventType == TYPE_VIEW_HOVER_ENTER })
+                    argThat(ArgumentMatcher { it.eventType == TYPE_VIEW_HOVER_ENTER }),
                 )
         }
 
@@ -3816,7 +3810,7 @@ class AndroidAccessibilityTest {
                 createHoverMotionEvent(
                     action = ACTION_HOVER_MOVE,
                     x = (bounds.left + bounds.right) / 2,
-                    y = (bounds.top + bounds.bottom) / 2
+                    y = (bounds.top + bounds.bottom) / 2,
                 )
             assertThat(androidComposeView.dispatchHoverEvent(hoverEnter)).isTrue()
             assertThat(delegate.hoveredVirtualViewId).isEqualTo(virtualViewId)
@@ -3827,7 +3821,7 @@ class AndroidAccessibilityTest {
             verify(container, times(1))
                 .requestSendAccessibilityEvent(
                     eq(androidComposeView),
-                    argThat(ArgumentMatcher { it.eventType == TYPE_VIEW_HOVER_EXIT })
+                    argThat(ArgumentMatcher { it.eventType == TYPE_VIEW_HOVER_EXIT }),
                 )
         }
     }
@@ -3866,7 +3860,7 @@ class AndroidAccessibilityTest {
                 createHoverMotionEvent(
                     action = ACTION_HOVER_ENTER,
                     x = (bounds.left + bounds.right) / 2f,
-                    y = (bounds.top + bounds.bottom) / 2f
+                    y = (bounds.top + bounds.bottom) / 2f,
                 )
             assertThat(androidComposeView.dispatchHoverEvent(hoverEnter)).isTrue()
             assertThat(delegate.hoveredVirtualViewId).isEqualTo(InvalidId)
@@ -3881,7 +3875,7 @@ class AndroidAccessibilityTest {
             verify(container, times(1))
                 .requestSendAccessibilityEvent(
                     eq(androidComposeView),
-                    argThat(ArgumentMatcher { it.eventType == TYPE_VIEW_HOVER_ENTER })
+                    argThat(ArgumentMatcher { it.eventType == TYPE_VIEW_HOVER_ENTER }),
                 )
         }
     }
@@ -3889,7 +3883,7 @@ class AndroidAccessibilityTest {
     private fun assertHoverEvent(
         event: PointerEvent,
         isEnter: Boolean = false,
-        isExit: Boolean = false
+        isExit: Boolean = false,
     ) {
         assertThat(event.changes).hasSize(1)
         val change = event.changes[0]
@@ -3926,7 +3920,7 @@ class AndroidAccessibilityTest {
             0 /* deviceId */,
             0 /* edgeFlags */,
             InputDevice.SOURCE_TOUCHSCREEN,
-            0 /* flags */
+            0, /* flags */
         )
     }
 
@@ -3941,7 +3935,7 @@ class AndroidAccessibilityTest {
                 with(LocalDensity.current) {
                     BasicText(
                         "Child One",
-                        Modifier.zIndex(1f).testTag(childOneTag).requiredSize(50.toDp())
+                        Modifier.zIndex(1f).testTag(childOneTag).requiredSize(50.toDp()),
                     )
                     BasicText("Child Two", Modifier.testTag(childTwoTag).requiredSize(50.toDp()))
                 }
@@ -4048,7 +4042,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_STATE_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_PANE_APPEARED
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -4091,7 +4085,7 @@ class AndroidAccessibilityTest {
                                 it.eventType == TYPE_WINDOW_STATE_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_PANE_TITLE
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -4129,7 +4123,7 @@ class AndroidAccessibilityTest {
                             it.eventType == TYPE_WINDOW_STATE_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_PANE_DISAPPEARED
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -4190,7 +4184,7 @@ class AndroidAccessibilityTest {
                             it.eventType == TYPE_WINDOW_STATE_CHANGED &&
                                 it.contentChangeTypes == CONTENT_CHANGE_TYPE_PANE_DISAPPEARED
                         }
-                    )
+                    ),
                 )
         }
     }
@@ -4203,7 +4197,7 @@ class AndroidAccessibilityTest {
                 modifier = Modifier.testTag(tag),
                 value = "value",
                 onValueChange = {},
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
             )
         }
 
@@ -4216,7 +4210,7 @@ class AndroidAccessibilityTest {
             verify(container, atLeastOnce())
                 .requestSendAccessibilityEvent(
                     eq(androidComposeView),
-                    argThat(ArgumentMatcher { it.isPassword })
+                    argThat(ArgumentMatcher { it.isPassword }),
                 )
         }
     }
@@ -4239,7 +4233,7 @@ class AndroidAccessibilityTest {
             verify(container, atLeastOnce())
                 .requestSendAccessibilityEvent(
                     any(),
-                    argThat(ArgumentMatcher { it.isAccessibilityDataSensitive })
+                    argThat(ArgumentMatcher { it.isAccessibilityDataSensitive }),
                 )
         }
     }
@@ -4330,7 +4324,7 @@ class AndroidAccessibilityTest {
             rule.runOnIdle {
                 delegate.hitTestSemanticsAt(
                     bounds.left + bounds.width / 2,
-                    bounds.top + bounds.height / 2
+                    bounds.top + bounds.height / 2,
                 )
             }
 
@@ -4352,7 +4346,7 @@ class AndroidAccessibilityTest {
                         Modifier.zIndex(1f)
                             .testTag(childOneTag)
                             .semantics { hideFromAccessibility() }
-                            .requiredSize(50.toDp())
+                            .requiredSize(50.toDp()),
                     )
                     BasicText("Child Two", Modifier.testTag(childTwoTag).requiredSize(50.toDp()))
                 }
@@ -4383,7 +4377,7 @@ class AndroidAccessibilityTest {
                     Box(Modifier.size(300.toDp())) {
                         BasicText(
                             text = "text",
-                            modifier = Modifier.offset(100.toDp(), 100.toDp()).fillMaxSize()
+                            modifier = Modifier.offset(100.toDp(), 100.toDp()).fillMaxSize(),
                         )
                     }
                 }
@@ -4409,7 +4403,7 @@ class AndroidAccessibilityTest {
                     textPositionOnScreenX,
                     textPositionOnScreenY,
                     textPositionOnScreenX + size,
-                    textPositionOnScreenY + size
+                    textPositionOnScreenY + size,
                 )
             )
     }
@@ -5136,7 +5130,7 @@ class AndroidAccessibilityTest {
                 Image(
                     ImageBitmap(100, 100),
                     "Image",
-                    Modifier.testTag(tag).semantics(true) { /* imitate clickable node */ }
+                    Modifier.testTag(tag).semantics(true) { /* imitate clickable node */ },
                 )
             }
         }
@@ -5203,7 +5197,7 @@ class AndroidAccessibilityTest {
                                     }
                                 )
                             }
-                        },
+                        }
                     )
                 }
             }
@@ -5621,11 +5615,11 @@ class AndroidAccessibilityTest {
         return Bundle().apply {
             this.putInt(
                 AccessibilityNodeInfoCompat.ACTION_ARGUMENT_MOVEMENT_GRANULARITY_INT,
-                MOVEMENT_GRANULARITY_CHARACTER
+                MOVEMENT_GRANULARITY_CHARACTER,
             )
             this.putBoolean(
                 AccessibilityNodeInfoCompat.ACTION_ARGUMENT_EXTEND_SELECTION_BOOLEAN,
-                false
+                false,
             )
         }
     }
@@ -5659,7 +5653,7 @@ private fun SimpleTestLayout(modifier: Modifier = Modifier, content: @Composable
                 with(placeables) {
                     Pair(
                         max(maxByOrNull { it.width }?.width ?: 0, constraints.minWidth),
-                        max(maxByOrNull { it.height }?.height ?: 0, constraints.minHeight)
+                        max(maxByOrNull { it.height }?.height ?: 0, constraints.minHeight),
                     )
                 }
             layout(width, height) {
@@ -5683,7 +5677,7 @@ private fun SimpleSubcomposeLayout(
     contentOne: @Composable () -> Unit,
     positionOne: Offset,
     contentTwo: @Composable () -> Unit,
-    positionTwo: Offset
+    positionTwo: Offset,
 ) {
     SubcomposeLayout(modifier) { constraints ->
         val layoutWidth = constraints.maxWidth
@@ -5714,7 +5708,7 @@ fun ScaffoldedSubcomposeLayout(
     modifier: Modifier = Modifier,
     topBar: @Composable () -> Unit,
     content: @Composable () -> Unit,
-    bottomBar: @Composable () -> Unit
+    bottomBar: @Composable () -> Unit,
 ) {
     var yPosition = 0
     SubcomposeLayout(modifier) { constraints ->
@@ -5753,13 +5747,13 @@ fun ScaffoldedSubcomposeLayout(
 
 private enum class TestSlot {
     First,
-    Second
+    Second,
 }
 
 private enum class ScaffoldedSlots {
     Top,
     Content,
-    Bottom
+    Bottom,
 }
 
 // TODO(b/304359126): Move this to AccessibilityEventCompat and use it wherever we use obtain().

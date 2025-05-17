@@ -78,21 +78,21 @@ class IncomingCallReceiver : BroadcastReceiver() {
         postNotification(
             callNotificationManager,
             notificationId,
-            getCallAttributes(context, incomingNumber, remoteName)
+            getCallAttributes(context, incomingNumber, remoteName),
         )
     }
 
     private fun postNotification(
         callNotificationManager: CallNotificationManager,
         notificationId: Int,
-        attributes: CallAttributesCompat
+        attributes: CallAttributesCompat,
     ) {
         val n = callNotificationManager.buildIncomingCallNotification(notificationId, attributes)
         if (n != null) {
             Log.d(
                 TAG,
                 "Posting incoming call notification ID=[$notificationId]," +
-                    " Number=[${attributes.address}], Name=[${attributes.displayName}]"
+                    " Number=[${attributes.address}], Name=[${attributes.displayName}]",
             )
             callNotificationManager.immediatelyPostNotification(notificationId, notification = n)
         } else {

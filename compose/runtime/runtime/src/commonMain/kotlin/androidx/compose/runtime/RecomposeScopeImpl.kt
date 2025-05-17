@@ -451,7 +451,7 @@ internal class RecomposeScopeImpl(owner: RecomposeScopeOwner?) : ScopeUpdateScop
         internal fun adoptAnchoredScopes(
             slots: SlotWriter,
             anchors: List<Anchor>,
-            newOwner: RecomposeScopeOwner
+            newOwner: RecomposeScopeOwner,
         ) {
             if (anchors.isNotEmpty()) {
                 anchors.fastForEach { anchor ->

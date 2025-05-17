@@ -59,6 +59,6 @@ public fun PdfViewer(
             view.pdfDocument = pdfDocument
             view.minZoom = minZoom
             view.maxZoom = maxZoom
-        }
+        },
     )
 }

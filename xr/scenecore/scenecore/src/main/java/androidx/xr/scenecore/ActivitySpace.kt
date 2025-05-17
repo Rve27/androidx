@@ -40,7 +40,7 @@ private constructor(rtActivitySpace: RtActivitySpace, entityManager: EntityManag
     internal companion object {
         internal fun create(
             adapter: JxrPlatformAdapter,
-            entityManager: EntityManager
+            entityManager: EntityManager,
         ): ActivitySpace = ActivitySpace(adapter.activitySpace, entityManager)
     }
 
@@ -85,7 +85,7 @@ private constructor(rtActivitySpace: RtActivitySpace, entityManager: EntityManag
     // TODO b/370618648: remove suppression after API review is complete.
     public fun addBoundsChangedListener(
         callbackExecutor: Executor,
-        listener: Consumer<Dimensions>
+        listener: Consumer<Dimensions>,
     ) {
         val rtListener: RtActivitySpace.OnBoundsChangedListener =
             RtActivitySpace.OnBoundsChangedListener { rtDimensions ->
@@ -157,7 +157,7 @@ private constructor(rtActivitySpace: RtActivitySpace, entityManager: EntityManag
     ) {
         rtEntity.setOnSpaceUpdatedListener(
             listener?.let { { it.onSpaceUpdated() } } ?: {},
-            executor
+            executor,
         )
     }
 }

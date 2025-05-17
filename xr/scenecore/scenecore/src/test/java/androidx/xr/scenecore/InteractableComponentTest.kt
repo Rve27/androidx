@@ -157,7 +157,7 @@ class InteractableComponentTest {
                 RtInputEvent.Companion.HitInfo(
                     mockContentlessEntity,
                     Vector3.One,
-                    Matrix4.Identity
+                    Matrix4.Identity,
                 ),
                 null,
             )

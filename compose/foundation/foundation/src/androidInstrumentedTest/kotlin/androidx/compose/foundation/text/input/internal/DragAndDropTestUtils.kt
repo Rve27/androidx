@@ -47,7 +47,7 @@ object DragAndDropTestUtils {
         return makeDragEvent(
             action = action,
             clipData = createClipData { addText(text) },
-            offset = offset
+            offset = offset,
         )
     }
 
@@ -68,7 +68,7 @@ object DragAndDropTestUtils {
                     // We're not actually resolving Uris in these tests, so this can be anything:
                     addUri(item, mimeType = "image/png")
                 },
-            offset = offset
+            offset = offset,
         )
     }
 

@@ -50,13 +50,13 @@ public interface AppFunctionSerializableFactory<T : Any> {
         /** The [TypeParameter] for Kotlin primitive types. */
         public data class PrimitiveTypeParameter<T>(
             /** The type class. */
-            val clazz: Class<T>,
+            val clazz: Class<T>
         ) : TypeParameter<T>()
 
         /** The [TypeParameter] for [List] type. */
         public data class ListTypeParameter<I, T : List<*>?>(
             /** The item type class. */
-            val itemClazz: Class<I>,
+            val itemClazz: Class<I>
         ) : TypeParameter<T>()
     }
 }

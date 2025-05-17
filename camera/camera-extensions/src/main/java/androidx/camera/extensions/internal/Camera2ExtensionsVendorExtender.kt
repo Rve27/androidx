@@ -46,7 +46,7 @@ private const val TAG = "Camera2ExtExtender"
 @RequiresApi(31)
 public class Camera2ExtensionsVendorExtender(
     private val mode: Int,
-    private val cameraManager: CameraManager
+    private val cameraManager: CameraManager,
 ) : VendorExtender {
 
     private val camera2ExtensionMode: Int = convertCameraXModeToCamera2Mode(mode)
@@ -62,7 +62,7 @@ public class Camera2ExtensionsVendorExtender(
 
     override fun isExtensionAvailable(
         cameraId: String,
-        characteristicsMap: Map<String, CameraCharacteristics>
+        characteristicsMap: Map<String, CameraCharacteristics>,
     ): Boolean {
         val extensionCharacteristics: CameraExtensionCharacteristics? =
             getCamera2ExtensionsCharacteristics(cameraId)
@@ -90,7 +90,7 @@ public class Camera2ExtensionsVendorExtender(
             } catch (e: CameraAccessException) {
                 Log.e(
                     TAG,
-                    "Failed to retrieve CameraExtensionCharacteristics for camera id $cameraId."
+                    "Failed to retrieve CameraExtensionCharacteristics for camera id $cameraId.",
                 )
             }
 
@@ -135,7 +135,7 @@ public class Camera2ExtensionsVendorExtender(
             cameraExtensionCharacteristics.getEstimatedCaptureLatencyRangeMillis(
                 camera2ExtensionMode,
                 size ?: getCamera2ExtensionsMaximumSupportedSize(),
-                ImageFormat.JPEG
+                ImageFormat.JPEG,
             )
         } else {
             null
@@ -320,7 +320,7 @@ public class Camera2ExtensionsVendorExtender(
         val supportedSizes =
             cameraExtensionCharacteristics.getExtensionSupportedSizes(
                 camera2ExtensionMode,
-                ImageFormat.JPEG
+                ImageFormat.JPEG,
             )
         return if (supportedSizes.isEmpty()) {
             SizeUtil.RESOLUTION_ZERO
@@ -332,7 +332,7 @@ public class Camera2ExtensionsVendorExtender(
     private fun checkInitialized() =
         Preconditions.checkState(
             ::cameraId.isInitialized,
-            "VendorExtender#init() must be called first"
+            "VendorExtender#init() must be called first",
         )
 
     private fun isCamera2ExtensionAvailable(): Boolean =

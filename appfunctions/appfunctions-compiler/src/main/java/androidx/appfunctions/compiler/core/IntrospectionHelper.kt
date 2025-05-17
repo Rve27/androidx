@@ -148,7 +148,7 @@ object IntrospectionHelper {
                 ClassName(
                     APP_FUNCTIONS_INTERNAL_PACKAGE_NAME,
                     "AppFunctionSerializableFactory",
-                    "TypeParameter"
+                    "TypeParameter",
                 )
 
             object PrimitiveTypeParameterClass {
@@ -157,7 +157,7 @@ object IntrospectionHelper {
                         APP_FUNCTIONS_INTERNAL_PACKAGE_NAME,
                         "AppFunctionSerializableFactory",
                         "TypeParameter",
-                        "PrimitiveTypeParameter"
+                        "PrimitiveTypeParameter",
                     )
 
                 val PROPERTY_CLAZZ_NAME = "clazz"
@@ -169,7 +169,7 @@ object IntrospectionHelper {
                         APP_FUNCTIONS_INTERNAL_PACKAGE_NAME,
                         "AppFunctionSerializableFactory",
                         "TypeParameter",
-                        "ListTypeParameter"
+                        "ListTypeParameter",
                     )
 
                 val PROPERTY_ITEM_CLAZZ_NAME = "itemClazz"

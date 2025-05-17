@@ -72,7 +72,7 @@ class TextTest {
             textAlign = TextAlign.End,
             fontSize = 32.sp,
             fontStyle = FontStyle.Italic,
-            letterSpacing = 0.3.em
+            letterSpacing = 0.3.em,
         )
 
     private val testString = "TestText"
@@ -106,7 +106,7 @@ class TextTest {
                         fontSize = it.layoutInput.style.fontSize
                         fontStyle = it.layoutInput.style.fontStyle
                         letterSpacing = it.layoutInput.style.letterSpacing
-                    }
+                    },
                 )
             }
         }
@@ -137,7 +137,7 @@ class TextTest {
                         fontSize = it.layoutInput.style.fontSize
                         fontStyle = it.layoutInput.style.fontStyle
                         letterSpacing = it.layoutInput.style.letterSpacing
-                    }
+                    },
                 )
             }
         }
@@ -162,7 +162,7 @@ class TextTest {
                     testString,
                     modifier =
                         Modifier.modifierLocalProvider(ModifierLocalContentColor) { Color.Blue }
-                            .testTag("test")
+                            .testTag("test"),
                 )
             }
         }
@@ -181,7 +181,7 @@ class TextTest {
                     testAnnotatedString,
                     modifier =
                         Modifier.modifierLocalProvider(ModifierLocalContentColor) { Color.Blue }
-                            .testTag("test")
+                            .testTag("test"),
                 )
             }
         }
@@ -213,7 +213,7 @@ class TextTest {
                     testString,
                     modifier =
                         Modifier.modifierLocalProvider(ModifierLocalContentColor) { color }
-                            .testTag("test")
+                            .testTag("test"),
                 )
             }
         }
@@ -252,7 +252,7 @@ class TextTest {
                     testAnnotatedString,
                     modifier =
                         Modifier.modifierLocalProvider(ModifierLocalContentColor) { color }
-                            .testTag("test")
+                            .testTag("test"),
                 )
             }
         }
@@ -280,7 +280,7 @@ class TextTest {
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
                 fontStyle = FontStyle.Normal,
-                letterSpacing = 0.6.em
+                letterSpacing = 0.6.em,
             )
         rule.setGlimmerThemeContent {
             CompositionLocalProvider(LocalTextStyle provides expectedTextStyle) {
@@ -293,7 +293,7 @@ class TextTest {
                         fontSize = it.layoutInput.style.fontSize
                         fontStyle = it.layoutInput.style.fontStyle
                         letterSpacing = it.layoutInput.style.letterSpacing
-                    }
+                    },
                 )
             }
         }
@@ -320,7 +320,7 @@ class TextTest {
                 textAlign = TextAlign.Center,
                 fontSize = 16.sp,
                 fontStyle = FontStyle.Normal,
-                letterSpacing = 0.6.em
+                letterSpacing = 0.6.em,
             )
         rule.setGlimmerThemeContent {
             CompositionLocalProvider(LocalTextStyle provides expectedTextStyle) {
@@ -333,7 +333,7 @@ class TextTest {
                         fontSize = it.layoutInput.style.fontSize
                         fontStyle = it.layoutInput.style.fontStyle
                         letterSpacing = it.layoutInput.style.letterSpacing
-                    }
+                    },
                 )
             }
         }
@@ -375,7 +375,7 @@ class TextTest {
                         fontSize = it.layoutInput.style.fontSize
                         fontStyle = it.layoutInput.style.fontStyle
                         letterSpacing = it.layoutInput.style.letterSpacing
-                    }
+                    },
                 )
             }
         }
@@ -418,7 +418,7 @@ class TextTest {
                         fontSize = it.layoutInput.style.fontSize
                         fontStyle = it.layoutInput.style.fontStyle
                         letterSpacing = it.layoutInput.style.letterSpacing
-                    }
+                    },
                 )
             }
         }
@@ -462,7 +462,7 @@ class TextTest {
                         fontSize = it.layoutInput.style.fontSize
                         fontStyle = it.layoutInput.style.fontStyle
                         letterSpacing = it.layoutInput.style.letterSpacing
-                    }
+                    },
                 )
             }
         }
@@ -506,7 +506,7 @@ class TextTest {
                         fontSize = it.layoutInput.style.fontSize
                         fontStyle = it.layoutInput.style.fontStyle
                         letterSpacing = it.layoutInput.style.letterSpacing
-                    }
+                    },
                 )
             }
         }
@@ -551,7 +551,7 @@ class TextTest {
                 }
             Text(
                 testString,
-                modifier = Modifier.surface(contentColor = contentColor).testTag("text")
+                modifier = Modifier.surface(contentColor = contentColor).testTag("text"),
             )
         }
 
@@ -577,7 +577,7 @@ class TextTest {
                 }
             Text(
                 testAnnotatedString,
-                modifier = Modifier.surface(contentColor = contentColor).testTag("text")
+                modifier = Modifier.surface(contentColor = contentColor).testTag("text"),
             )
         }
 

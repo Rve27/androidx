@@ -89,7 +89,7 @@ class BaselineProfileRule : TestRule {
         includeInStartupProfile: Boolean = false,
         strictStability: Boolean = false,
         filterPredicate: ((String) -> Boolean) = { true },
-        profileBlock: MacrobenchmarkScope.() -> Unit
+        profileBlock: MacrobenchmarkScope.() -> Unit,
     ) {
         collect(
             uniqueName = outputFilePrefix ?: currentDescription.toUniqueName(),
@@ -99,7 +99,7 @@ class BaselineProfileRule : TestRule {
             includeInStartupProfile = includeInStartupProfile,
             strictStability = strictStability,
             filterPredicate = filterPredicate,
-            profileBlock = profileBlock
+            profileBlock = profileBlock,
         )
     }
 
@@ -137,7 +137,7 @@ class BaselineProfileRule : TestRule {
         includeInStartupProfile: Boolean = false,
         strictStability: Boolean = false,
         filterPredicate: ((String) -> Boolean) = { true },
-        profileBlock: MacrobenchmarkScope.() -> Unit
+        profileBlock: MacrobenchmarkScope.() -> Unit,
     ): BaselineProfileResult {
         return collect(
             uniqueName = outputFilePrefix ?: currentDescription.toUniqueName(),
@@ -147,7 +147,7 @@ class BaselineProfileRule : TestRule {
             includeInStartupProfile = includeInStartupProfile,
             strictStability = strictStability,
             filterPredicate = filterPredicate,
-            profileBlock = profileBlock
+            profileBlock = profileBlock,
         )
     }
 
@@ -169,7 +169,7 @@ class BaselineProfileRule : TestRule {
             includeInStartupProfile = config.isIncludeInStartupProfile(),
             strictStability = config.isStrictStability(),
             filterPredicate = config.getFilterPredicate(),
-            profileBlock = config.getProfileBlock()
+            profileBlock = config.getProfileBlock(),
         )
     }
 

@@ -93,7 +93,7 @@ class AutoboxingStateCreationDetectorTest(typeUnderTest: TypeUnderTest) : LintDe
                         state.value = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expect(
@@ -146,7 +146,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         }
                     }
                 """
-                )
+                ),
             )
             .run()
             .expectClean()
@@ -172,7 +172,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         state.value = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expect(
@@ -213,7 +213,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         state.value = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expect(
@@ -254,7 +254,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         state = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expect(
@@ -295,7 +295,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         state = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expect(
@@ -336,7 +336,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         private set
                 }
             """
-                )
+                ),
             )
             .run()
             .expect(
@@ -377,7 +377,7 @@ Fix for src/androidx/compose/runtime/lint/test/Test.kt line 8: Replace with muta
                         state = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expect(
@@ -418,7 +418,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         state = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expectClean()
@@ -444,7 +444,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         state.value = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expect(
@@ -485,7 +485,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         state.value = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expectClean()
@@ -511,7 +511,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         state.value = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expectClean()
@@ -537,7 +537,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         state.value = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expectClean()
@@ -563,7 +563,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                         state.value = $stateValue
                     }
                 """
-                )
+                ),
             )
             .run()
             .expectClean()
@@ -577,7 +577,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                 testCase("kotlin.Int", "java.lang.Integer", "42"),
                 testCase("kotlin.Long", "java.lang.Long", "0xABCDEF1234"),
                 testCase("kotlin.Float", "java.lang.Float", "1.5f"),
-                testCase("kotlin.Double", "java.lang.Double", "1.024")
+                testCase("kotlin.Double", "java.lang.Double", "1.024"),
             )
 
         private fun testCase(fqName: String, jvmFqName: String, value: String) =
@@ -586,7 +586,7 @@ Fix for src/androidx/compose/runtime/lint/test/test.kt line 8: Replace with muta
                 typeName = fqName.split('.').last(),
                 fqJvmName = jvmFqName,
                 jvmClassName = jvmFqName.split('.').last(),
-                sampleValue = value
+                sampleValue = value,
             )
     }
 

@@ -59,7 +59,7 @@ internal class CallSession(
     private val callChannels: CallChannels,
     private val onStateChangedCallback: MutableSharedFlow<CallStateEvent>,
     private val onEventCallback: suspend (event: String, extras: Bundle) -> Unit,
-    private val blockingSessionExecution: CompletableDeferred<Unit>
+    private val blockingSessionExecution: CompletableDeferred<Unit>,
 ) : android.telecom.CallControlCallback, android.telecom.CallEventCallback, AutoCloseable {
     private val mCallSessionId: Int = CallEndpointUuidTracker.startSession()
     private var mPlatformInterface: CallControl? = null
@@ -125,14 +125,14 @@ internal class CallSession(
             CallEndpointUuidTracker.getUuid(
                 mCallSessionId,
                 platformEndpoint.endpointType,
-                platformEndpoint.endpointName.toString()
+                platformEndpoint.endpointName.toString(),
             )
         mJetpackToPlatformCallEndpoint[jetpackUuid] = platformEndpoint
         val j =
             CallEndpointCompat(
                 platformEndpoint.endpointName,
                 platformEndpoint.endpointType,
-                jetpackUuid
+                jetpackUuid,
             )
         Log.i(TAG, " n=[${platformEndpoint.endpointName}]  plat=[${platformEndpoint}] --> jet=[$j]")
         return j
@@ -219,7 +219,7 @@ internal class CallSession(
                     Log.i(
                         TAG,
                         "maybeSwitchToSpeaker: detected a video call that started" +
-                            " with the earpiece audio route. requesting switch to speaker."
+                            " with the earpiece audio route. requesting switch to speaker.",
                     )
                     maybeDelaySwitchToSpeaker(speakerCompat)
                 }
@@ -288,7 +288,7 @@ internal class CallSession(
     @VisibleForTesting
     fun maybeSwitchToSpeakerOnHeadsetDisconnect(
         newEndpoint: CallEndpointCompat,
-        previousEndpoint: CallEndpointCompat?
+        previousEndpoint: CallEndpointCompat?,
     ) {
         try {
             if (
@@ -305,12 +305,12 @@ internal class CallSession(
                     Log.i(
                         TAG,
                         "maybeSwitchToSpeakerOnHeadsetDisconnect: headset disconnected while" +
-                            " in a video call. requesting switch to speaker."
+                            " in a video call. requesting switch to speaker.",
                     )
                     mPlatformInterface?.requestCallEndpointChange(
                         EndpointUtils.Api34PlusImpl.toCallEndpoint(speakerCompat),
                         Runnable::run,
-                        {}
+                        {},
                     )
                 }
             }
@@ -425,7 +425,7 @@ internal class CallSession(
         mPlatformInterface!!.requestCallEndpointChange(
             potentiallyRemappedEndpoint,
             Runnable::run,
-            CallControlReceiver(job)
+            CallControlReceiver(job),
         )
         val platformResult = job.await()
         if (platformResult != CallControlResult.Success()) {
@@ -513,7 +513,7 @@ internal class CallSession(
         private val session: CallSession,
         callChannels: CallChannels,
         private val blockingSessionExecution: CompletableDeferred<Unit>,
-        override val coroutineContext: CoroutineContext
+        override val coroutineContext: CoroutineContext,
     ) : CallControlScope {
         // handle requests that originate from the client and propagate into platform
         //  return the platforms response which indicates success of the request.

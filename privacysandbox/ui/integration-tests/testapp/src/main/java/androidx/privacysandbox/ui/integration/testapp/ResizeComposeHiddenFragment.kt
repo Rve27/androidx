@@ -58,7 +58,7 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return ComposeView(requireContext()).apply {
             // Dispose of the Composition when the view's LifecycleOwner is destroyed
@@ -70,7 +70,7 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
                     bannerPadding,
                     onSSUPlaced = { width, height ->
                         bannerDimension = BannerDimension(width, height)
-                    }
+                    },
                 )
             }
         }
@@ -81,12 +81,12 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
         adapter: SandboxedUiAdapter?,
         bannerDimension: BannerDimension,
         bannerPadding: BannerPadding,
-        onSSUPlaced: (Dp, Dp) -> Unit
+        onSSUPlaced: (Dp, Dp) -> Unit,
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.Start,
         ) {
             val adHolderModifier =
                 Modifier.fillMaxWidth().weight(1f).padding(top = 16.dp, bottom = 16.dp)
@@ -99,7 +99,7 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
         bannerDimension: BannerDimension,
         bannerPadding: BannerPadding,
         adapter: SandboxedUiAdapter?,
-        modifier: Modifier
+        modifier: Modifier,
     ) {
         val localDensity = LocalDensity.current
         density = localDensity
@@ -112,7 +112,7 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
                     bannerPadding.paddingLeft,
                     bannerPadding.paddingTop,
                     bannerPadding.paddingRight,
-                    bannerPadding.paddingBottom
+                    bannerPadding.paddingBottom,
                 )
 
             ssuModifier =
@@ -127,7 +127,7 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
                 adapter,
                 ssuModifier,
                 providerUiOnTop = providerUiOnTop,
-                sandboxedSdkViewEventListener = eventListener
+                sandboxedSdkViewEventListener = eventListener,
             )
         }
     }
@@ -147,14 +147,14 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
         paddingLeft: Int,
         paddingTop: Int,
         paddingRight: Int,
-        paddingBottom: Int
+        paddingBottom: Int,
     ) {
         bannerPadding =
             BannerPadding(
                 convertPixelsToDpExternal(paddingLeft),
                 convertPixelsToDpExternal(paddingTop),
                 convertPixelsToDpExternal(paddingRight),
-                convertPixelsToDpExternal(paddingBottom)
+                convertPixelsToDpExternal(paddingBottom),
             )
     }
 
@@ -168,6 +168,6 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
         val paddingLeft: Dp = 0.dp,
         val paddingTop: Dp = 0.dp,
         val paddingRight: Dp = 0.dp,
-        val paddingBottom: Dp = 0.dp
+        val paddingBottom: Dp = 0.dp,
     )
 }

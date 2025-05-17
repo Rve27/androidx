@@ -53,7 +53,7 @@ val TransformingLazyColumnNotificationsBenchmark =
                             item {
                                 ListHeader(
                                     transformation = SurfaceTransformation(transformationSpec),
-                                    modifier = Modifier.transformedHeight(this, transformationSpec)
+                                    modifier = Modifier.transformedHeight(this, transformationSpec),
                                 ) {
                                     Text("Notifications")
                                 }
@@ -72,7 +72,7 @@ val TransformingLazyColumnNotificationsBenchmark =
                                     subtitle = { Text(notification.body) },
                                     transformation = SurfaceTransformation(transformationSpec),
                                     modifier =
-                                        Modifier.transformedHeight(this@items, transformationSpec)
+                                        Modifier.transformedHeight(this@items, transformationSpec),
                                 )
                             }
                         }
@@ -99,7 +99,7 @@ private val notificationList =
     listOf(
         NotificationItem(
             "☕ Coffee Break?",
-            "Step away from the screen and grab a pick-me-up. Step away from the screen and grab a pick-me-up."
+            "Step away from the screen and grab a pick-me-up. Step away from the screen and grab a pick-me-up.",
         ),
         NotificationItem("🌟 You're Awesome!", "Just a little reminder in case you forgot 😊"),
         NotificationItem("👀 Did you know?", "Check out [app name]'s latest feature update."),
@@ -108,7 +108,7 @@ private val notificationList =
         NotificationItem("🤔 Trivia Time!", "Test your knowledge with a quick quiz on [app name]."),
         NotificationItem(
             "🌤️ Weather Update",
-            "Don't forget your umbrella - rain is likely this afternoon."
+            "Don't forget your umbrella - rain is likely this afternoon.",
         ),
         NotificationItem("🤝 Connect with [name]", "They sent you a message on [social platform]."),
         NotificationItem("🧘‍♀️ Time to Breathe", "Take a 5-minute mindfulness break."),
@@ -119,7 +119,7 @@ private val notificationList =
         NotificationItem("🎧 Playlist Time", "Your daily mix on [music app] is ready."),
         NotificationItem(
             "🎬 Movie Night?",
-            "New releases are out on your favorite streaming service. New releases are out on your favorite streaming service."
+            "New releases are out on your favorite streaming service. New releases are out on your favorite streaming service.",
         ),
         NotificationItem("📚 Reading Time", "Pick up where you left off in your current book."),
         NotificationItem("🤔 Something to Ponder", "Here's a thought-provoking quote for today..."),
@@ -129,7 +129,7 @@ private val notificationList =
         NotificationItem("🌎 Learn Something New", "Fact of the day: [Insert a fun fact]."),
         NotificationItem(
             "☀️ Step Outside",
-            "Get some fresh air and sunshine for a quick energy boost"
+            "Get some fresh air and sunshine for a quick energy boost",
         ),
         NotificationItem("🎉 It's [friend's name]'s Birthday!", "Don't forget to send a message."),
         NotificationItem("✈️ Travel Inspiration", "Where's your dream travel destination?"),
@@ -147,8 +147,8 @@ private val notificationList =
         NotificationItem("🔍 Search Time", "Research a topic that interests you."),
         NotificationItem(
             "🤝 Help Someone Out",
-            "Is there a small way you can assist someone today?"
+            "Is there a small way you can assist someone today?",
         ),
         NotificationItem("🐾 Pet Appreciation", "Give your furry friend some extra love."),
-        NotificationItem("📝 Journal Time", "Take 5 minutes to jot down your thoughts.")
+        NotificationItem("📝 Journal Time", "Take 5 minutes to jot down your thoughts."),
     )

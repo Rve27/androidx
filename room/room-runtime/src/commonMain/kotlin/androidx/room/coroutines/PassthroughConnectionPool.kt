@@ -48,7 +48,7 @@ internal class PassthroughConnectionPool(
 
     override suspend fun <R> useConnection(
         isReadOnly: Boolean,
-        block: suspend (Transactor) -> R
+        block: suspend (Transactor) -> R,
     ): R {
         val confinedConnection = coroutineContext[ConnectionElement]?.connectionWrapper
         if (confinedConnection != null) {
@@ -76,7 +76,7 @@ internal class PassthroughConnectionPool(
 
 private class PassthroughConnection(
     val transactionWrapper: TransactionWrapper<*>?,
-    val delegate: SQLiteConnection
+    val delegate: SQLiteConnection,
 ) : Transactor, RawConnectionAccessor {
 
     private var nestedTransactionCount = AtomicInt(0)
@@ -96,7 +96,7 @@ private class PassthroughConnection(
 
     override suspend fun <R> withTransaction(
         type: Transactor.SQLiteTransactionType,
-        block: suspend TransactionScope<R>.() -> R
+        block: suspend TransactionScope<R>.() -> R,
     ): R {
         return if (transactionWrapper != null) {
             @Suppress("UNCHECKED_CAST") // Safe to cast since it just pipes the result
@@ -108,7 +108,7 @@ private class PassthroughConnection(
 
     private suspend fun <R> transaction(
         type: Transactor.SQLiteTransactionType,
-        block: suspend TransactionScope<R>.() -> R
+        block: suspend TransactionScope<R>.() -> R,
     ): R {
         when (type) {
             Transactor.SQLiteTransactionType.DEFERRED ->
@@ -128,7 +128,8 @@ private class PassthroughConnection(
         } catch (ex: Throwable) {
             success = false
             if (ex is ConnectionPool.RollbackException) {
-                @Suppress("UNCHECKED_CAST") return (ex.result as R)
+                @Suppress("UNCHECKED_CAST")
+                return (ex.result as R)
             } else {
                 exception = ex
                 throw ex

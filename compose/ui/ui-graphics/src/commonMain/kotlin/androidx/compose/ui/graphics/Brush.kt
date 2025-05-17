@@ -71,14 +71,14 @@ sealed class Brush {
             vararg colorStops: Pair<Float, Color>,
             start: Offset = Offset.Zero,
             end: Offset = Offset.Infinite,
-            tileMode: TileMode = TileMode.Clamp
+            tileMode: TileMode = TileMode.Clamp,
         ): Brush =
             LinearGradient(
                 colors = List<Color>(colorStops.size) { i -> colorStops[i].second },
                 stops = List<Float>(colorStops.size) { i -> colorStops[i].first },
                 start = start,
                 end = end,
-                tileMode = tileMode
+                tileMode = tileMode,
             )
 
         /**
@@ -108,14 +108,14 @@ sealed class Brush {
             colors: List<Color>,
             start: Offset = Offset.Zero,
             end: Offset = Offset.Infinite,
-            tileMode: TileMode = TileMode.Clamp
+            tileMode: TileMode = TileMode.Clamp,
         ): Brush =
             LinearGradient(
                 colors = colors,
                 stops = null,
                 start = start,
                 end = end,
-                tileMode = tileMode
+                tileMode = tileMode,
             )
 
         /**
@@ -145,7 +145,7 @@ sealed class Brush {
             colors: List<Color>,
             startX: Float = 0.0f,
             endX: Float = Float.POSITIVE_INFINITY,
-            tileMode: TileMode = TileMode.Clamp
+            tileMode: TileMode = TileMode.Clamp,
         ): Brush = linearGradient(colors, Offset(startX, 0.0f), Offset(endX, 0.0f), tileMode)
 
         /**
@@ -179,13 +179,13 @@ sealed class Brush {
             vararg colorStops: Pair<Float, Color>,
             startX: Float = 0.0f,
             endX: Float = Float.POSITIVE_INFINITY,
-            tileMode: TileMode = TileMode.Clamp
+            tileMode: TileMode = TileMode.Clamp,
         ): Brush =
             linearGradient(
                 *colorStops,
                 start = Offset(startX, 0.0f),
                 end = Offset(endX, 0.0f),
-                tileMode = tileMode
+                tileMode = tileMode,
             )
 
         /**
@@ -214,7 +214,7 @@ sealed class Brush {
             colors: List<Color>,
             startY: Float = 0.0f,
             endY: Float = Float.POSITIVE_INFINITY,
-            tileMode: TileMode = TileMode.Clamp
+            tileMode: TileMode = TileMode.Clamp,
         ): Brush = linearGradient(colors, Offset(0.0f, startY), Offset(0.0f, endY), tileMode)
 
         /**
@@ -248,13 +248,13 @@ sealed class Brush {
             vararg colorStops: Pair<Float, Color>,
             startY: Float = 0f,
             endY: Float = Float.POSITIVE_INFINITY,
-            tileMode: TileMode = TileMode.Clamp
+            tileMode: TileMode = TileMode.Clamp,
         ): Brush =
             linearGradient(
                 *colorStops,
                 start = Offset(0.0f, startY),
                 end = Offset(0.0f, endY),
-                tileMode = tileMode
+                tileMode = tileMode,
             )
 
         /**
@@ -290,14 +290,14 @@ sealed class Brush {
             vararg colorStops: Pair<Float, Color>,
             center: Offset = Offset.Unspecified,
             radius: Float = Float.POSITIVE_INFINITY,
-            tileMode: TileMode = TileMode.Clamp
+            tileMode: TileMode = TileMode.Clamp,
         ): Brush =
             RadialGradient(
                 colors = List<Color>(colorStops.size) { i -> colorStops[i].second },
                 stops = List<Float>(colorStops.size) { i -> colorStops[i].first },
                 center = center,
                 radius = radius,
-                tileMode = tileMode
+                tileMode = tileMode,
             )
 
         /**
@@ -329,14 +329,14 @@ sealed class Brush {
             colors: List<Color>,
             center: Offset = Offset.Unspecified,
             radius: Float = Float.POSITIVE_INFINITY,
-            tileMode: TileMode = TileMode.Clamp
+            tileMode: TileMode = TileMode.Clamp,
         ): Brush =
             RadialGradient(
                 colors = colors,
                 stops = null,
                 center = center,
                 radius = radius,
-                tileMode = tileMode
+                tileMode = tileMode,
             )
 
         /**
@@ -365,12 +365,12 @@ sealed class Brush {
         @Stable
         fun sweepGradient(
             vararg colorStops: Pair<Float, Color>,
-            center: Offset = Offset.Unspecified
+            center: Offset = Offset.Unspecified,
         ): Brush =
             SweepGradient(
                 colors = List<Color>(colorStops.size) { i -> colorStops[i].second },
                 stops = List<Float>(colorStops.size) { i -> colorStops[i].first },
-                center = center
+                center = center,
             )
 
         /**
@@ -437,14 +437,14 @@ internal constructor(
     private val stops: List<Float>? = null,
     private val start: Offset,
     private val end: Offset,
-    private val tileMode: TileMode = TileMode.Clamp
+    private val tileMode: TileMode = TileMode.Clamp,
 ) : ShaderBrush() {
 
     override val intrinsicSize: Size
         get() =
             Size(
                 if (start.x.isFinite() && end.x.isFinite()) abs(start.x - end.x) else Float.NaN,
-                if (start.y.isFinite() && end.y.isFinite()) abs(start.y - end.y) else Float.NaN
+                if (start.y.isFinite() && end.y.isFinite()) abs(start.y - end.y) else Float.NaN,
             )
 
     override fun createShader(size: Size): Shader {
@@ -457,7 +457,7 @@ internal constructor(
             colorStops = stops,
             from = Offset(startX, startY),
             to = Offset(endX, endY),
-            tileMode = tileMode
+            tileMode = tileMode,
         )
     }
 
@@ -502,7 +502,7 @@ internal constructor(
     private val stops: List<Float>? = null,
     private val center: Offset,
     private val radius: Float,
-    private val tileMode: TileMode = TileMode.Clamp
+    private val tileMode: TileMode = TileMode.Clamp,
 ) : ShaderBrush() {
 
     override val intrinsicSize: Size
@@ -530,7 +530,7 @@ internal constructor(
             colorStops = stops,
             center = Offset(centerX, centerY),
             radius = if (radius == Float.POSITIVE_INFINITY) size.minDimension / 2 else radius,
-            tileMode = tileMode
+            tileMode = tileMode,
         )
     }
 
@@ -574,7 +574,7 @@ class SweepGradient
 internal constructor(
     private val center: Offset,
     private val colors: List<Color>,
-    private val stops: List<Float>? = null
+    private val stops: List<Float>? = null,
 ) : ShaderBrush() {
 
     override fun createShader(size: Size): Shader =
@@ -584,11 +584,11 @@ internal constructor(
             } else {
                 Offset(
                     if (center.x == Float.POSITIVE_INFINITY) size.width else center.x,
-                    if (center.y == Float.POSITIVE_INFINITY) size.height else center.y
+                    if (center.y == Float.POSITIVE_INFINITY) size.height else center.y,
                 )
             },
             colors,
-            stops
+            stops,
         )
 
     override fun equals(other: Any?): Boolean {

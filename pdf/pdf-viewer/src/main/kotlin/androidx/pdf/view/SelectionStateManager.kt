@@ -145,14 +145,14 @@ internal class SelectionStateManager(
                     startPoint.x - touchTargetContentSize,
                     startPoint.y,
                     startPoint.x,
-                    startPoint.y + touchTargetContentSize
+                    startPoint.y + touchTargetContentSize,
                 )
             if (startTarget.contains(location.pagePoint.x, location.pagePoint.y)) {
                 draggingState =
                     DraggingState(
                         currentSelection.endBoundary,
                         currentSelection.startBoundary,
-                        location.pagePoint
+                        location.pagePoint,
                     )
                 // Play haptic feedback when the user starts dragging the handles
                 _selectionUiSignalBus.tryEmit(
@@ -169,14 +169,14 @@ internal class SelectionStateManager(
                     endPoint.x,
                     endPoint.y,
                     endPoint.x + touchTargetContentSize,
-                    endPoint.y + touchTargetContentSize
+                    endPoint.y + touchTargetContentSize,
                 )
             if (endTarget.contains(location.pagePoint.x, location.pagePoint.y)) {
                 draggingState =
                     DraggingState(
                         currentSelection.startBoundary,
                         currentSelection.endBoundary,
-                        location.pagePoint
+                        location.pagePoint,
                     )
                 // Play haptic feedback when the user starts dragging the handles
                 _selectionUiSignalBus.tryEmit(
@@ -208,7 +208,7 @@ internal class SelectionStateManager(
 
         updateRangeSelectionAsync(
             fixedPoint = prevDraggingState.fixed.location,
-            draggedPoint = newEndPoint
+            draggedPoint = newEndPoint,
         )
 
         // Hide the action mode while the user is actively dragging the handles
@@ -237,7 +237,7 @@ internal class SelectionStateManager(
     private fun updateAllSelectionAsync(pageNum: Int) {
         updateSelectionAsync(
             pageNum..pageNum,
-            selectionModel.value?.documentSelection ?: DocumentSelection(SparseArray())
+            selectionModel.value?.documentSelection ?: DocumentSelection(SparseArray()),
         ) {
             listOf(pdfDocument.getSelectAllSelectionBounds(pageNum))
         }
@@ -269,14 +269,14 @@ internal class SelectionStateManager(
                     // Extending selection in the downwards direction
                     getBoundsExtendingDownwards(draggedPoint, prevStart, prevEnd)
                 }
-            }
+            },
         )
     }
 
     private suspend fun getBoundsExtendingUpwards(
         draggedPoint: PdfPoint,
         prevStart: PdfPoint,
-        prevEnd: PdfPoint
+        prevEnd: PdfPoint,
     ): List<PageSelection?> {
 
         val newPageSize = pageMetadataLoader?.getPageSize(draggedPoint.pageNum) ?: Point(0, 0)
@@ -288,18 +288,18 @@ internal class SelectionStateManager(
             pdfDocument.getSelectionBounds(
                 draggedPoint.pageNum,
                 draggedPoint.pagePoint,
-                PointF(newPageSize.x.toFloat(), newPageSize.y.toFloat())
+                PointF(newPageSize.x.toFloat(), newPageSize.y.toFloat()),
             ),
 
             // Find selection bounds of the page where dragged handle stops
-            getBoundsForFirstSelectedPage(prevStart, prevEnd, draggedPoint)
+            getBoundsForFirstSelectedPage(prevStart, prevEnd, draggedPoint),
         ) + intermediateSelection
     }
 
     private suspend fun getBoundsExtendingDownwards(
         draggedPoint: PdfPoint,
         prevStart: PdfPoint,
-        prevEnd: PdfPoint
+        prevEnd: PdfPoint,
     ): List<PageSelection?> {
 
         // Find selection bounds for all the skipped pages
@@ -310,11 +310,11 @@ internal class SelectionStateManager(
             pdfDocument.getSelectionBounds(
                 draggedPoint.pageNum,
                 PointF(0f, 0f),
-                draggedPoint.pagePoint
+                draggedPoint.pagePoint,
             ),
 
             // Find selection bounds of the page where dragged handle starts
-            getBoundsForLastSelectedPage(prevStart, prevEnd, draggedPoint)
+            getBoundsForLastSelectedPage(prevStart, prevEnd, draggedPoint),
         ) + intermediateSelection
     }
 
@@ -346,7 +346,7 @@ internal class SelectionStateManager(
             pdfDocument.getSelectionBounds(
                 prevEnd.pageNum,
                 PointF(prevStart.pagePoint.x, prevStart.pagePoint.y),
-                PointF(prevPageSize.x.toFloat(), prevPageSize.y.toFloat())
+                PointF(prevPageSize.x.toFloat(), prevPageSize.y.toFloat()),
             )
         } else if (prevEnd.pageNum < draggedPoint.pageNum) {
             pdfDocument.getSelectAllSelectionBounds(prevEnd.pageNum)
@@ -357,7 +357,7 @@ internal class SelectionStateManager(
 
     private suspend fun getPageSelectionsForRange(
         startPage: Int,
-        endPage: Int
+        endPage: Int,
     ): List<PageSelection?> {
         val selections = mutableListOf<PageSelection?>()
         for (currentPage in startPage..endPage) {
@@ -369,13 +369,13 @@ internal class SelectionStateManager(
     private fun updateSinglePageSelection(startPoint: PdfPoint, endPoint: PdfPoint) {
         updateSelectionAsync(
             startPoint.pageNum..endPoint.pageNum,
-            DocumentSelection(SparseArray())
+            DocumentSelection(SparseArray()),
         ) {
             listOf(
                 pdfDocument.getSelectionBounds(
                     endPoint.pageNum,
                     startPoint.pagePoint,
-                    endPoint.pagePoint
+                    endPoint.pagePoint,
                 )
             )
         }
@@ -383,7 +383,7 @@ internal class SelectionStateManager(
 
     private fun getOldSelectionBetweenPageRange(
         oldSelectionModel: SelectionModel?,
-        pageRange: IntRange
+        pageRange: IntRange,
     ): DocumentSelection {
 
         val selectedContents =
@@ -400,7 +400,7 @@ internal class SelectionStateManager(
     private fun updateSelectionAsync(
         pageRange: IntRange,
         oldSelection: DocumentSelection,
-        getNewPageSelections: suspend () -> List<PageSelection?>
+        getNewPageSelections: suspend () -> List<PageSelection?>,
     ) {
         val prevJob = setSelectionJob
         setSelectionJob =
@@ -414,7 +414,7 @@ internal class SelectionStateManager(
                             _selectionModel.update {
                                 SelectionModel.getCombinedSelectionModel(
                                     oldSelection,
-                                    newPageSelections
+                                    newPageSelections,
                                 )
                             }
                             _selectionUiSignalBus.tryEmit(SelectionUiSignal.Invalidate)
@@ -431,11 +431,11 @@ internal class SelectionStateManager(
                                 requestMetadata =
                                     RequestMetadata(
                                         requestName = CONTENT_SELECTION_REQUEST_NAME,
-                                        pageRange = pageRange
+                                        pageRange = pageRange,
                                     ),
                                 throwable = e,
                                 // Non-critical failure, user can retry the operation.
-                                showError = false
+                                showError = false,
                             )
                         errorFlow.emit(exception)
                     }
@@ -481,5 +481,5 @@ internal sealed interface SelectionUiSignal {
 private data class DraggingState(
     val fixed: UiSelectionBoundary,
     val dragging: UiSelectionBoundary,
-    val downPoint: PointF
+    val downPoint: PointF,
 )

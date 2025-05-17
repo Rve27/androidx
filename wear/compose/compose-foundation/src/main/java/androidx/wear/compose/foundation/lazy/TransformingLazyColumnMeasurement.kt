@@ -38,7 +38,7 @@ internal fun interface MeasuredItemProvider {
         index: Int,
         offset: Int,
         measurementDirection: MeasurementDirection,
-        progressProvider: (Int) -> TransformingLazyColumnItemScrollProgress
+        progressProvider: (Int) -> TransformingLazyColumnItemScrollProgress,
     ): TransformingLazyColumnMeasuredItem
 }
 
@@ -57,7 +57,7 @@ internal fun rememberTransformingLazyColumnMeasurePolicy(
         coroutineScope,
         horizontalAlignment,
         verticalArrangement,
-        measurementStrategy
+        measurementStrategy,
     ) {
         { containerConstraints ->
             val childConstraints =
@@ -66,7 +66,7 @@ internal fun rememberTransformingLazyColumnMeasurePolicy(
                     maxWidth =
                         containerConstraints.maxWidth -
                             measurementStrategy.leftContentPadding -
-                            measurementStrategy.rightContentPadding
+                            measurementStrategy.rightContentPadding,
                 )
             val itemProvider = itemProviderLambda()
 
@@ -127,9 +127,9 @@ internal fun rememberTransformingLazyColumnMeasurePolicy(
                                     containerConstraints.constrainWidth(width),
                                     containerConstraints.constrainHeight(height),
                                     emptyMap(),
-                                    placement
+                                    placement,
                                 )
-                            }
+                            },
                         )
                     }
                 }
@@ -148,5 +148,5 @@ internal enum class MeasurementDirection {
      * Indicates that the item is being measured upward This corresponds to using
      * [TransformingLazyColumnItemScrollProgress.topItemScrollProgress].
      */
-    UPWARD
+    UPWARD,
 }

@@ -114,7 +114,7 @@ public fun AccessibilityWindowInfo.waitForStable(
         stablePollIntervalMs = stablePollIntervalMs,
         stableIntervalMs = stableIntervalMs,
         bitmapProvider = { if (requireStableScreenshot) takeScreenshot() else null },
-        rootViewNodeProvider = { takeViewNodeTree(root = root, displayRect = displayRect) }
+        rootViewNodeProvider = { takeViewNodeTree(root = root, displayRect = displayRect) },
     )
 }
 

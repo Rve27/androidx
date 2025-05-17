@@ -112,7 +112,7 @@ private const val SECONDARY_CAMERA_ID = "1"
 @DoNotInstrument
 @org.robolectric.annotation.Config(
     minSdk = Build.VERSION_CODES.LOLLIPOP,
-    instrumentedPackages = ["androidx.camera.core"]
+    instrumentedPackages = ["androidx.camera.core"],
 )
 class CameraUseCaseAdapterTest {
     private lateinit var effects: List<CameraEffect>
@@ -246,7 +246,7 @@ class CameraUseCaseAdapterTest {
             PreviewConfig::class.java,
             StreamSpec.builder(Size(1920, 1080))
                 .setImplementationOptions(Camera2ImplConfig(optionsBundle))
-                .build()
+                .build(),
         )
 
         // Act.
@@ -272,8 +272,8 @@ class CameraUseCaseAdapterTest {
             listOf(preview),
             ResolvedFeatureCombination(
                 useCases = emptySet(), // the use cases from feature combination don't matter
-                features = emptySet()
-            )
+                features = emptySet(),
+            ),
         )
 
         // Assert: Features set to Preview as empty.
@@ -293,8 +293,8 @@ class CameraUseCaseAdapterTest {
             listOf(image),
             ResolvedFeatureCombination(
                 useCases = emptySet(), // the use cases from feature combination don't matter
-                features = features
-            )
+                features = features,
+            ),
         )
 
         // Assert: Features set to both Preview and ImageCapture, not only Preview.
@@ -314,8 +314,8 @@ class CameraUseCaseAdapterTest {
                 listOf(image),
                 ResolvedFeatureCombination(
                     useCases = emptySet(), // the use cases from feature combination don't matter
-                    features = features
-                )
+                    features = features,
+                ),
             )
         }
 
@@ -335,8 +335,8 @@ class CameraUseCaseAdapterTest {
             listOf(preview),
             ResolvedFeatureCombination(
                 useCases = emptySet(), // the use cases from feature combination don't matter
-                features = supportedFeatures
-            )
+                features = supportedFeatures,
+            ),
         )
 
         // Act: Add ImageCapture use cases with some unsupported features.
@@ -347,8 +347,8 @@ class CameraUseCaseAdapterTest {
                 listOf(image),
                 ResolvedFeatureCombination(
                     useCases = emptySet(), // the use cases from feature combination don't matter
-                    features = unsupportedFeatures
-                )
+                    features = unsupportedFeatures,
+                ),
             )
         }
 
@@ -366,8 +366,8 @@ class CameraUseCaseAdapterTest {
             listOf(preview),
             ResolvedFeatureCombination(
                 useCases = emptySet(), // the use cases from feature combination don't matter
-                features = features
-            )
+                features = features,
+            ),
         )
 
         // Act.
@@ -387,8 +387,8 @@ class CameraUseCaseAdapterTest {
             listOf(image),
             ResolvedFeatureCombination(
                 useCases = emptySet(), // the use cases from feature combination don't matter
-                features = features
-            )
+                features = features,
+            ),
         )
 
         // Act.
@@ -435,9 +435,7 @@ class CameraUseCaseAdapterTest {
         val hdrUseCase = FakeUseCaseConfig.Builder().setDynamicRange(HDR_UNSPECIFIED_10_BIT).build()
         adapter.addUseCases(setOf(hdrUseCase))
         // Assert: UseCase is added.
-        adapter.cameraUseCases.hasExactTypes(
-            FakeUseCase::class.java,
-        )
+        adapter.cameraUseCases.hasExactTypes(FakeUseCase::class.java)
     }
 
     @SdkSuppress(minSdkVersion = 33) // 10-bit HDR only supported on API 33+
@@ -447,7 +445,7 @@ class CameraUseCaseAdapterTest {
         val adapter =
             createCameraUseCaseAdapter(
                 fakeCamera,
-                createCoexistingRequiredRuleCameraConfig(FakeSessionProcessor())
+                createCoexistingRequiredRuleCameraConfig(FakeSessionProcessor()),
             )
         // Act: add UseCase that uses HDR.
         val hdrUseCase = FakeUseCaseConfig.Builder().setDynamicRange(HDR_UNSPECIFIED_10_BIT).build()
@@ -576,7 +574,7 @@ class CameraUseCaseAdapterTest {
                 CompositionSettings.DEFAULT,
                 CompositionSettings.DEFAULT,
                 setOf(preview, video),
-                useCaseConfigFactory
+                useCaseConfigFactory,
             )
         // Act: add use cases that can only be supported with StreamSharing
         assertThrows<CameraException> { adapter.addUseCases(setOf(streamSharing, video, image)) }
@@ -637,7 +635,7 @@ class CameraUseCaseAdapterTest {
                     /*withStreamSharing=*/ false,
                     preview,
                     video,
-                    image
+                    image,
                 )
             )
             .isFalse()
@@ -648,7 +646,7 @@ class CameraUseCaseAdapterTest {
                     /*withStreamSharing=*/ true,
                     preview,
                     video,
-                    image
+                    image,
                 )
             )
             .isTrue()
@@ -700,7 +698,7 @@ class CameraUseCaseAdapterTest {
         val adapter =
             createCameraUseCaseAdapter(
                 fakeCamera,
-                createCoexistingRequiredRuleCameraConfig(FakeSessionProcessor())
+                createCoexistingRequiredRuleCameraConfig(FakeSessionProcessor()),
             )
         // Act: add UseCases that require StreamSharing.
         adapter.addUseCases(setOf(preview, video, image))
@@ -717,14 +715,14 @@ class CameraUseCaseAdapterTest {
         val adapter =
             createCameraUseCaseAdapter(
                 fakeCamera,
-                createCoexistingRequiredRuleCameraConfig(FakeSessionProcessor())
+                createCoexistingRequiredRuleCameraConfig(FakeSessionProcessor()),
             )
         // Act: add UseCases that require StreamSharing.
         adapter.addUseCases(setOf(video))
         // Assert: StreamSharing exists and bound.
         adapter.cameraUseCases.hasExactTypes(
             StreamSharing::class.java,
-            ImageCapture::class.java // Placeholder
+            ImageCapture::class.java, // Placeholder
         )
         val streamSharing = adapter.getStreamSharing()
         assertThat(streamSharing.camera).isNotNull()
@@ -744,7 +742,7 @@ class CameraUseCaseAdapterTest {
         adapter.cameraUseCases.hasExactTypes(
             StreamSharing::class.java,
             ImageCapture::class.java,
-            ImageAnalysis::class.java
+            ImageAnalysis::class.java,
         )
     }
 
@@ -842,7 +840,7 @@ class CameraUseCaseAdapterTest {
                 any(AdapterCameraInternal::class.java),
                 isNull(),
                 isNull(),
-                any(FakeUseCaseConfig::class.java)
+                any(FakeUseCaseConfig::class.java),
             )
         assertThat((fakeUseCase.camera as AdapterCameraInternal).implementation)
             .isSameInstanceAs(fakeCamera)
@@ -872,7 +870,7 @@ class CameraUseCaseAdapterTest {
         assertThat(
                 Rational(
                     fakeUseCase.viewPortCropRect!!.width(),
-                    fakeUseCase.viewPortCropRect!!.height()
+                    fakeUseCase.viewPortCropRect!!.height(),
                 )
             )
             .isEqualTo(aspectRatio1)
@@ -886,7 +884,7 @@ class CameraUseCaseAdapterTest {
         assertThat(
                 Rational(
                     fakeUseCase.viewPortCropRect!!.width(),
-                    fakeUseCase.viewPortCropRect!!.height()
+                    fakeUseCase.viewPortCropRect!!.height(),
                 )
             )
             .isEqualTo(aspectRatio2)
@@ -901,7 +899,7 @@ class CameraUseCaseAdapterTest {
         fakeCameraDeviceSurfaceManager.setSuggestedStreamSpec(
             CAMERA_ID,
             FakeUseCaseConfig::class.java,
-            StreamSpec.builder(Size(4032, 3022)).build()
+            StreamSpec.builder(Size(4032, 3022)).build(),
         )
         /*         Sensor to Buffer                 Crop on Buffer
          *        0               4032
@@ -929,7 +927,7 @@ class CameraUseCaseAdapterTest {
                             /*translateY=*/ -1f,
                             0f,
                             0f,
-                            1f
+                            1f,
                         )
                     )
                 }
@@ -1106,7 +1104,7 @@ class CameraUseCaseAdapterTest {
         CameraUseCaseAdapter.updateEffects(
             listOf(previewEffect, previewEffect),
             listOf(preview),
-            emptyList()
+            emptyList(),
         )
     }
 
@@ -1267,10 +1265,7 @@ class CameraUseCaseAdapterTest {
         // 1. Arrange
         val cameraUseCaseAdapter =
             createAdapterWithSupportedCameraOperations(
-                supportedOps =
-                    setOf(
-                        AdapterCameraInfo.CAMERA_OPERATION_AE_REGION,
-                    )
+                supportedOps = setOf(AdapterCameraInfo.CAMERA_OPERATION_AE_REGION)
             )
 
         // 2. Act
@@ -1290,10 +1285,7 @@ class CameraUseCaseAdapterTest {
         // 1. Arrange
         val cameraUseCaseAdapter =
             createAdapterWithSupportedCameraOperations(
-                supportedOps =
-                    setOf(
-                        AdapterCameraInfo.CAMERA_OPERATION_AWB_REGION,
-                    )
+                supportedOps = setOf(AdapterCameraInfo.CAMERA_OPERATION_AWB_REGION)
             )
 
         // 2. Act
@@ -1313,10 +1305,7 @@ class CameraUseCaseAdapterTest {
         // 1. Arrange
         val cameraUseCaseAdapter =
             createAdapterWithSupportedCameraOperations(
-                supportedOps =
-                    setOf(
-                        AdapterCameraInfo.CAMERA_OPERATION_AE_REGION,
-                    )
+                supportedOps = setOf(AdapterCameraInfo.CAMERA_OPERATION_AE_REGION)
             )
 
         // 2. Act && Assert
@@ -1427,7 +1416,7 @@ class CameraUseCaseAdapterTest {
                 supportedOps =
                     setOf(
                         AdapterCameraInfo.CAMERA_OPERATION_AUTO_FOCUS,
-                        AdapterCameraInfo.CAMERA_OPERATION_AF_REGION
+                        AdapterCameraInfo.CAMERA_OPERATION_AF_REGION,
                     )
             )
         fakeCameraInfo.setIsFocusMeteringSupported(true)
@@ -1445,10 +1434,7 @@ class CameraUseCaseAdapterTest {
         // 1. Arrange
         val cameraUseCaseAdapter =
             createAdapterWithSupportedCameraOperations(
-                supportedOps =
-                    setOf(
-                        AdapterCameraInfo.CAMERA_OPERATION_EXPOSURE_COMPENSATION,
-                    )
+                supportedOps = setOf(AdapterCameraInfo.CAMERA_OPERATION_EXPOSURE_COMPENSATION)
             )
         fakeCameraInfo.setExposureState(2, Range.create(0, 10), Rational(1, 1), true)
 
@@ -1493,7 +1479,7 @@ class CameraUseCaseAdapterTest {
         val cameraUseCaseAdapter =
             createCameraUseCaseAdapter(
                 fakeCamera,
-                FakeCameraConfig(captureProcessProgressSupported = true)
+                FakeCameraConfig(captureProcessProgressSupported = true),
             )
         val cameraInfoInternal = cameraUseCaseAdapter.cameraInfo as CameraInfoInternal
 
@@ -1620,7 +1606,7 @@ class CameraUseCaseAdapterTest {
     private fun createCameraUseCaseAdapter(
         camera: CameraInternal,
         cameraConfig: CameraConfig = CameraConfigs.defaultConfig(),
-        secondaryCamera: CameraInternal? = null
+        secondaryCamera: CameraInternal? = null,
     ): CameraUseCaseAdapter {
         val adapter =
             CameraUseCaseAdapter(
@@ -1633,7 +1619,7 @@ class CameraUseCaseAdapterTest {
                 CompositionSettings.DEFAULT,
                 cameraCoordinator,
                 streamSpecsCalculator,
-                useCaseConfigFactory
+                useCaseConfigFactory,
             )
         adaptersToDetach.add(adapter)
         return adapter

@@ -94,7 +94,7 @@ class EnvironmentTestActivity : ComponentActivity() {
             onPassthroughOpacityChangedCount++
             Log.i(
                 TAG,
-                "PassthroughOpacity changed to: $it, count: $onPassthroughOpacityChangedCount"
+                "PassthroughOpacity changed to: $it, count: $onPassthroughOpacityChangedCount",
             )
         }
 
@@ -330,7 +330,7 @@ class EnvironmentTestActivity : ComponentActivity() {
                     spatialEnvironmentPreference =
                         SpatialEnvironmentPreference(
                             spatialEnvironmentPreference?.skybox,
-                            groundGeo
+                            groundGeo,
                         )
                     lastApiCall = "setGeometryDeprecated"
                     session.scene.spatialEnvironment.setGeometry(groundGeo)
@@ -355,7 +355,7 @@ class EnvironmentTestActivity : ComponentActivity() {
                     spatialEnvironmentPreference =
                         SpatialEnvironmentPreference(
                             blueSkybox,
-                            spatialEnvironmentPreference?.geometry
+                            spatialEnvironmentPreference?.geometry,
                         )
                     lastApiCall = "setSkyboxDeprecated"
                     session.scene.spatialEnvironment.setSkybox(blueSkybox)

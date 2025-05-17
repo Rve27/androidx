@@ -1642,7 +1642,7 @@ class SlotTableTests {
                 if (reader.isNode(index)) {
                     assertEquals(
                         expected = "node for key ${reader.groupObjectKey(index)}",
-                        actual = reader.node(index)
+                        actual = reader.node(index),
                     )
                 }
                 val size = reader.groupSize(index)
@@ -1666,7 +1666,7 @@ class SlotTableTests {
                 if (node != null) {
                     assertEquals(
                         expected = "node for key ${writer.groupObjectKey(index)}",
-                        actual = node
+                        actual = node,
                     )
                 }
                 val size = writer.groupSize(index)
@@ -5243,7 +5243,7 @@ class SlotTableTests {
                 writer.traverseGroupAndChildren(
                     group = writer.currentGroup,
                     enter = { operations.add("Enter ${writer.groupKey(it)}") },
-                    exit = { operations.add("Exit ${writer.groupKey(it)}") }
+                    exit = { operations.add("Exit ${writer.groupKey(it)}") },
                 )
                 writer.skipToGroupEnd()
             }
@@ -5264,7 +5264,7 @@ class SlotTableTests {
                 "Exit 10",
                 "Exit 100",
             ),
-            operations
+            operations,
         )
     }
 
@@ -5367,7 +5367,7 @@ internal inline fun SlotWriter.group(key: Int, sourceInformation: String, block:
 internal inline fun SlotWriter.grouplessCall(
     key: Int,
     sourceInformation: String,
-    block: () -> Unit
+    block: () -> Unit,
 ) {
     recordGrouplessCallSourceInformationStart(key, sourceInformation)
     block()
@@ -5606,7 +5606,7 @@ private fun SlotReader.expectAux(value: Any) {
 private fun SlotReader.expectGroup(
     key: Int,
     objectKey: Any?,
-    block: () -> Unit = { skipToGroupEnd() }
+    block: () -> Unit = { skipToGroupEnd() },
 ) {
     assertEquals(key, groupKey)
     assertEquals(objectKey, groupObjectKey)
@@ -5631,7 +5631,7 @@ internal fun expectError(message: String, block: () -> Unit) {
         exceptionThrown = true
         assertTrue(
             e.message?.contains(message) == true,
-            "Expected \"${e.message}\" to contain \"$message\""
+            "Expected \"${e.message}\" to contain \"$message\"",
         )
     }
     assertTrue(exceptionThrown, "Expected test to throw an exception containing \"$message\"")
@@ -5641,7 +5641,7 @@ data class SourceGroup(
     val key: Any,
     val source: String?,
     val children: List<SourceGroup>,
-    val data: List<Any?>
+    val data: List<Any?>,
 ) {
     override fun toString(): String = buildString { toStringBuilder(this, 0) }
 
@@ -5670,7 +5670,7 @@ data class SourceGroup(
 
     data class BuilderScope(
         private val children: ArrayList<SourceGroup> = ArrayList(),
-        private val data: ArrayList<Any?> = ArrayList()
+        private val data: ArrayList<Any?> = ArrayList(),
     ) {
         fun group(key: Int, source: String? = null, block: BuilderScope.() -> Unit) {
             val scope = BuilderScope()
@@ -5700,7 +5700,7 @@ data class SourceGroup(
                 group.key,
                 group.sourceInfo,
                 group.compositionGroups.map { groupOf(it, includeData) },
-                if (includeData) group.data.toList() else emptyList()
+                if (includeData) group.data.toList() else emptyList(),
             )
     }
 }

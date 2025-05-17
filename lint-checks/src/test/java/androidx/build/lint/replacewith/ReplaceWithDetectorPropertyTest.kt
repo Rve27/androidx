@@ -28,7 +28,7 @@ class ReplaceWithDetectorPropertyTest {
         val input =
             arrayOf(
                 ktSample("replacewith.ReplaceWithUsageKotlin"),
-                javaSample("replacewith.PropertyJava")
+                javaSample("replacewith.PropertyJava"),
             )
 
         // TODO(b/323214452): This is incomplete, but we have explicitly suppressed replacement of

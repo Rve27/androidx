@@ -28,7 +28,7 @@ class ReplaceWithDetectorKotlinMethodTest {
         val input =
             arrayOf(
                 ktSample("replacewith.ReplaceWithUsageKotlin"),
-                javaSample("replacewith.StaticKotlinMethodExplicitClassJava")
+                javaSample("replacewith.StaticKotlinMethodExplicitClassJava"),
             )
 
         val expected =
@@ -57,7 +57,7 @@ Fix for src/replacewith/StaticKotlinMethodExplicitClassJava.java line 25: Replac
         val input =
             arrayOf(
                 ktSample("replacewith.ReplaceWithUsageKotlin"),
-                ktSample("replacewith.StaticKotlinMethodExplicitClassKotlin")
+                ktSample("replacewith.StaticKotlinMethodExplicitClassKotlin"),
             )
 
         val expected =

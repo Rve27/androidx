@@ -160,7 +160,7 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
 
     private fun checkClientOpenSession(
         isSecondary: Boolean = false,
-        callback: Consumer<Boolean>? = null
+        callback: Consumer<Boolean>? = null,
     ) {
         val adapter = adapter
         if (
@@ -179,7 +179,7 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
                     height,
                     isZOrderOnTop,
                     handler::post,
-                    client!!
+                    client!!,
                 )
             } else if (client != null && isSecondary) {
                 clientSecondary = Client(this)
@@ -191,7 +191,7 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
                     height,
                     isZOrderOnTop,
                     handler::post,
-                    clientSecondary!!
+                    clientSecondary!!,
                 )
             }
         }
@@ -313,7 +313,7 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
                     /* left = */ paddingLeft,
                     /* top = */ paddingTop,
                     /* right = */ paddingLeft + childWidth,
-                    /* bottom = */ paddingTop + childHeight
+                    /* bottom = */ paddingTop + childHeight,
                 )
             }
             previousChildHeight = childHeight
@@ -472,7 +472,7 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
         private var supportedSignalOptions =
             setOf(
                 SandboxedUiAdapterSignalOptions.GEOMETRY,
-                SandboxedUiAdapterSignalOptions.OBSTRUCTIONS
+                SandboxedUiAdapterSignalOptions.OBSTRUCTIONS,
             )
 
         fun notifyConfigurationChanged(configuration: Configuration) {
@@ -618,7 +618,7 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
                 sandboxedSdkView.sessionData =
                     SessionData(
                         windowInputToken = null,
-                        inputTransferToken = sandboxedSdkView.rootSurfaceControl?.inputTransferToken
+                        inputTransferToken = sandboxedSdkView.rootSurfaceControl?.inputTransferToken,
                     )
                 sandboxedSdkView.checkClientOpenSession()
             }
@@ -630,7 +630,7 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
             @JvmStatic
             fun attachTemporarySurfaceViewAndOpenSession(
                 context: Context,
-                sandboxedSdkView: SandboxedSdkView
+                sandboxedSdkView: SandboxedSdkView,
             ) {
                 val surfaceView = SurfaceView(context).apply { visibility = GONE }
                 val onSurfaceViewAttachedListener =

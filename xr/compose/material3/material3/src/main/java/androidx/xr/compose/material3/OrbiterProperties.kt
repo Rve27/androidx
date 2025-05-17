@@ -169,7 +169,7 @@ public class VerticalOrbiterProperties(
 @Composable
 internal fun VerticalOrbiter(
     properties: VerticalOrbiterProperties,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Orbiter(
         position = properties.position,
@@ -185,7 +185,7 @@ internal fun VerticalOrbiter(
 @Composable
 internal fun HorizontalOrbiter(
     properties: HorizontalOrbiterProperties,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Orbiter(
         position = properties.position,

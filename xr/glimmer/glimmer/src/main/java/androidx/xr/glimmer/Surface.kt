@@ -57,7 +57,7 @@ public fun Modifier.surface(
     shape: Shape = SurfaceDefaults.Shape,
     color: Color = GlimmerTheme.colors.surface,
     contentColor: Color = calculateContentColor(color),
-    border: BorderStroke? = SurfaceDefaults.border()
+    border: BorderStroke? = SurfaceDefaults.border(),
 ): Modifier =
     this.clip(shape)
         .then(if (border != null) Modifier.border(border, shape) else Modifier)
@@ -88,7 +88,7 @@ public object SurfaceDefaults {
     @Composable
     public fun border(
         width: Dp = DefaultSurfaceBorderWidth,
-        color: Color = GlimmerTheme.colors.outline
+        color: Color = GlimmerTheme.colors.outline,
     ): BorderStroke {
         return BorderStroke(width, color)
     }

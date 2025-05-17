@@ -244,21 +244,21 @@ private class FillElement(
             FillElement(
                 direction = Direction.X,
                 fraction = fraction,
-                inspectorName = "fillMaxWidth"
+                inspectorName = "fillMaxWidth",
             )
 
         public fun height(fraction: Float) =
             FillElement(
                 direction = Direction.Y,
                 fraction = fraction,
-                inspectorName = "fillMaxHeight"
+                inspectorName = "fillMaxHeight",
             )
 
         public fun depth(fraction: Float) =
             FillElement(
                 direction = Direction.Z,
                 fraction = fraction,
-                inspectorName = "fillMaxDepth"
+                inspectorName = "fillMaxDepth",
             )
 
         public fun size(fraction: Float) =

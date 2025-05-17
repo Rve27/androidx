@@ -114,7 +114,7 @@ fun Modifier.scrollable(
     enabled: Boolean = true,
     reverseDirection: Boolean = false,
     flingBehavior: FlingBehavior? = null,
-    interactionSource: MutableInteractionSource? = null
+    interactionSource: MutableInteractionSource? = null,
 ): Modifier =
     scrollable(
         state = state,
@@ -123,7 +123,7 @@ fun Modifier.scrollable(
         reverseDirection = reverseDirection,
         flingBehavior = flingBehavior,
         interactionSource = interactionSource,
-        overscrollEffect = null
+        overscrollEffect = null,
     )
 
 /**
@@ -168,7 +168,7 @@ fun Modifier.scrollable(
     reverseDirection: Boolean = false,
     flingBehavior: FlingBehavior? = null,
     interactionSource: MutableInteractionSource? = null,
-    bringIntoViewSpec: BringIntoViewSpec? = null
+    bringIntoViewSpec: BringIntoViewSpec? = null,
 ) =
     this then
         ScrollableElement(
@@ -179,7 +179,7 @@ fun Modifier.scrollable(
             reverseDirection,
             flingBehavior,
             interactionSource,
-            bringIntoViewSpec
+            bringIntoViewSpec,
         )
 
 private class ScrollableElement(
@@ -190,7 +190,7 @@ private class ScrollableElement(
     val reverseDirection: Boolean,
     val flingBehavior: FlingBehavior?,
     val interactionSource: MutableInteractionSource?,
-    val bringIntoViewSpec: BringIntoViewSpec?
+    val bringIntoViewSpec: BringIntoViewSpec?,
 ) : ModifierNodeElement<ScrollableNode>() {
     override fun create(): ScrollableNode {
         return ScrollableNode(
@@ -201,7 +201,7 @@ private class ScrollableElement(
             enabled,
             reverseDirection,
             interactionSource,
-            bringIntoViewSpec
+            bringIntoViewSpec,
         )
     }
 
@@ -214,7 +214,7 @@ private class ScrollableElement(
             reverseDirection,
             flingBehavior,
             interactionSource,
-            bringIntoViewSpec
+            bringIntoViewSpec,
         )
     }
 
@@ -268,13 +268,13 @@ internal class ScrollableNode(
     enabled: Boolean,
     reverseDirection: Boolean,
     interactionSource: MutableInteractionSource?,
-    bringIntoViewSpec: BringIntoViewSpec?
+    bringIntoViewSpec: BringIntoViewSpec?,
 ) :
     DragGestureNode(
         canDrag = CanDragCalculation,
         enabled = enabled,
         interactionSource = interactionSource,
-        orientationLock = orientation
+        orientationLock = orientation,
     ),
     KeyInputModifierNode,
     SemanticsModifierNode,
@@ -300,7 +300,7 @@ internal class ScrollableNode(
             flingBehavior = flingBehavior ?: defaultFlingBehavior,
             nestedScrollDispatcher = nestedScrollDispatcher,
             onScrollChangedDispatcher = this,
-            isScrollableNodeAttached = { isAttached }
+            isScrollableNodeAttached = { isAttached },
         )
 
     private val nestedScrollConnection =
@@ -368,7 +368,7 @@ internal class ScrollableNode(
                     scrollingLogic = scrollingLogic,
                     mouseWheelScrollConfig = platformScrollConfig(),
                     onScrollStopped = ::onWheelScrollStopped,
-                    density = requireDensity()
+                    density = requireDensity(),
                 )
         }
 
@@ -383,7 +383,7 @@ internal class ScrollableNode(
         reverseDirection: Boolean,
         flingBehavior: FlingBehavior?,
         interactionSource: MutableInteractionSource?,
-        bringIntoViewSpec: BringIntoViewSpec?
+        bringIntoViewSpec: BringIntoViewSpec?,
     ) {
         var shouldInvalidateSemantics = false
         if (this.enabled != enabled) { // enabled changed
@@ -401,7 +401,7 @@ internal class ScrollableNode(
                 overscrollEffect = overscrollEffect,
                 reverseDirection = reverseDirection,
                 flingBehavior = resolvedFlingBehavior,
-                nestedScrollDispatcher = nestedScrollDispatcher
+                nestedScrollDispatcher = nestedScrollDispatcher,
             )
         contentInViewNode.update(orientation, reverseDirection, bringIntoViewSpec)
 
@@ -414,7 +414,7 @@ internal class ScrollableNode(
             enabled = enabled,
             interactionSource = interactionSource,
             orientationLock = if (scrollingLogic.isVertical()) Vertical else Horizontal,
-            shouldResetPointerInputHandling = resetPointerInputHandling
+            shouldResetPointerInputHandling = resetPointerInputHandling,
         )
 
         if (shouldInvalidateSemantics) {
@@ -499,7 +499,7 @@ internal class ScrollableNode(
     override fun onPointerEvent(
         pointerEvent: PointerEvent,
         pass: PointerEventPass,
-        bounds: IntSize
+        bounds: IntSize,
     ) {
         if (pointerEvent.changes.fastAny { canDrag.invoke(it) }) {
             super.onPointerEvent(pointerEvent, pass, bounds)
@@ -559,8 +559,8 @@ object ScrollableDefaults {
         replaceWith =
             ReplaceWith(
                 "rememberOverscrollEffect()",
-                "androidx.compose.foundation.rememberOverscrollEffect"
-            )
+                "androidx.compose.foundation.rememberOverscrollEffect",
+            ),
     )
     @Composable
     fun overscrollEffect(): OverscrollEffect {
@@ -571,12 +571,12 @@ object ScrollableDefaults {
         override fun applyToScroll(
             delta: Offset,
             source: NestedScrollSource,
-            performScroll: (Offset) -> Offset
+            performScroll: (Offset) -> Offset,
         ): Offset = performScroll(delta)
 
         override suspend fun applyToFling(
             velocity: Velocity,
-            performFling: suspend (Velocity) -> Velocity
+            performFling: suspend (Velocity) -> Velocity,
         ) {
             performFling(velocity)
         }
@@ -600,7 +600,7 @@ object ScrollableDefaults {
     fun reverseDirection(
         layoutDirection: LayoutDirection,
         orientation: Orientation,
-        reverseScrolling: Boolean
+        reverseScrolling: Boolean,
     ): Boolean {
         // A finger moves with the content, not with the viewport. Therefore,
         // always reverse once to have "natural" gesture that goes reversed to layout
@@ -644,7 +644,7 @@ internal class ScrollingLogic(
     private var reverseDirection: Boolean,
     private var nestedScrollDispatcher: NestedScrollDispatcher,
     private var onScrollChangedDispatcher: OnScrollChangedDispatcher,
-    private val isScrollableNodeAttached: () -> Boolean
+    private val isScrollableNodeAttached: () -> Boolean,
 ) : ScrollLogic {
     // specifies if this scrollable node is currently flinging
     override var isFlinging = false
@@ -692,7 +692,7 @@ internal class ScrollingLogic(
 
             override fun scrollByWithOverscroll(
                 offset: Offset,
-                source: NestedScrollSource
+                source: NestedScrollSource,
             ): Offset {
                 latestScrollSource = source
                 val overscroll = overscrollEffect
@@ -731,7 +731,7 @@ internal class ScrollingLogic(
             nestedScrollDispatcher.dispatchPostScroll(
                 consumedBySelfScroll,
                 deltaAvailableAfterScroll,
-                source
+                source,
             )
         return consumedByPreScroll + consumedBySelfScroll + consumedByPostScroll
     }
@@ -817,7 +817,7 @@ internal class ScrollingLogic(
                             return nestedScrollScope
                                 .scrollByWithOverscroll(
                                     offset = pixels.toOffset().reverseIfNeeded(),
-                                    source = SideEffect
+                                    source = SideEffect,
                                 )
                                 .toFloat()
                                 .reverseIfNeeded()
@@ -847,7 +847,7 @@ internal class ScrollingLogic(
     /** Opens a scrolling session with nested scrolling and overscroll support. */
     suspend fun scroll(
         scrollPriority: MutatePriority = MutatePriority.Default,
-        block: suspend NestedScrollScope.() -> Unit
+        block: suspend NestedScrollScope.() -> Unit,
     ) {
         scrollableState.scroll(scrollPriority) {
             outerStateScope = this
@@ -862,7 +862,7 @@ internal class ScrollingLogic(
         overscrollEffect: OverscrollEffect?,
         reverseDirection: Boolean,
         flingBehavior: FlingBehavior,
-        nestedScrollDispatcher: NestedScrollDispatcher
+        nestedScrollDispatcher: NestedScrollDispatcher,
     ): Boolean {
         var resetPointerInputHandling = false
         if (this.scrollableState != scrollableState) {
@@ -893,13 +893,13 @@ private val NoOpScrollScope: ScrollScope =
 
 internal class ScrollableNestedScrollConnection(
     val scrollingLogic: ScrollLogic,
-    var enabled: Boolean
+    var enabled: Boolean,
 ) : NestedScrollConnection {
 
     override fun onPostScroll(
         consumed: Offset,
         available: Offset,
-        source: NestedScrollSource
+        source: NestedScrollSource,
     ): Offset =
         if (enabled) {
             scrollingLogic.performRawScroll(available)
@@ -956,7 +956,7 @@ internal val FlingBehavior.shouldBeTriggeredByMouseWheel
 
 internal class DefaultFlingBehavior(
     private var flingDecay: DecayAnimationSpec<Float>,
-    private val motionDurationScale: MotionDurationScale = DefaultScrollMotionDurationScale
+    private val motionDurationScale: MotionDurationScale = DefaultScrollMotionDurationScale,
 ) : ScrollableDefaultFlingBehavior {
 
     // For Testing
@@ -970,10 +970,7 @@ internal class DefaultFlingBehavior(
                 var velocityLeft = initialVelocity
                 var lastValue = 0f
                 val animationState =
-                    AnimationState(
-                        initialValue = 0f,
-                        initialVelocity = initialVelocity,
-                    )
+                    AnimationState(initialValue = 0f, initialVelocity = initialVelocity)
                 try {
                     animationState.animateDecay(flingDecay) {
                         val delta = value - lastValue

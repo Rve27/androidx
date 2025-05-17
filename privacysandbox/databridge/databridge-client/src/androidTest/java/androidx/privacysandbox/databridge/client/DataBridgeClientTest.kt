@@ -53,7 +53,7 @@ class DataBridgeClientTest {
             booleanKey,
             stringKey,
             stringSetKey,
-            byteArrayKey
+            byteArrayKey,
         )
 
     @Rule @JvmField val expect = Expect.create()
@@ -71,7 +71,7 @@ class DataBridgeClientTest {
         assertSame(
             "Both references should point to the same singleton instance",
             dataBridgeClient,
-            dataBridgeClient2
+            dataBridgeClient2,
         )
     }
 
@@ -331,7 +331,7 @@ class DataBridgeClientTest {
                 intKey to 1,
                 longKey to 1L,
                 booleanKey to true,
-                stringSetKey to setOf("string1", "string2")
+                stringSetKey to setOf("string1", "string2"),
             )
         )
 
@@ -357,7 +357,7 @@ class DataBridgeClientTest {
                         intKey to "1",
                         longKey to 1L,
                         booleanKey to true,
-                        stringSetKey to setOf("string1", "string2")
+                        stringSetKey to setOf("string1", "string2"),
                     )
                 )
             }

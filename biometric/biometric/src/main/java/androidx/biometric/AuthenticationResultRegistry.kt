@@ -29,12 +29,12 @@ import androidx.lifecycle.LifecycleEventObserver
  */
 internal class AuthenticationResultRegistry(
     private var activity: FragmentActivity? = null,
-    private var fragment: Fragment? = null
+    private var fragment: Fragment? = null,
 ) {
 
     fun register(
         onAuthFailedCallback: () -> Unit = {},
-        resultCallback: AuthenticationResultCallback
+        resultCallback: AuthenticationResultCallback,
     ): AuthenticationResultLauncher {
         val callback =
             object : AuthenticationCallback() {
@@ -104,7 +104,7 @@ internal class AuthenticationResultRegistry(
                 isConfirmationRequired = input.isConfirmationRequired,
                 logoBitmap = input.logoBitmap,
                 logoRes = input.logoRes,
-                logoDescription = input.logoDescription
+                logoDescription = input.logoDescription,
             )
         } else if (input is AuthenticationRequest.Credential) {
             biometricPrompt.authInternal(

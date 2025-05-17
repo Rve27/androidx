@@ -436,12 +436,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
             enabled = false
         }
 
-        Button(
-            enabled = enabled,
-            onClick = onClick,
-        ) {
-            Text(text = buttonText, fontSize = 20.sp)
-        }
+        Button(enabled = enabled, onClick = onClick) { Text(text = buttonText, fontSize = 20.sp) }
     }
 
     @Composable
@@ -456,7 +451,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 pose = Pose(Vector3(0.0f, 0.0f, -0.25f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
                 canvasShape = SurfaceEntity.CanvasShape.Quad(1.0f, 1.0f),
                 loop = true,
-                protected = false
+                protected = false,
             )
         }
 
@@ -488,10 +483,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
     }
 
     @Composable
-    fun DrmVideoButton(
-        session: Session,
-        activity: Activity,
-    ) {
+    fun DrmVideoButton(session: Session, activity: Activity) {
         val videoUri =
             Environment.getExternalStorageDirectory().getPath() +
                 "/Download/sdr_singleview_protected.mp4"
@@ -503,7 +495,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 pose = Pose(Vector3(0.0f, 0.0f, -0.25f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
                 canvasShape = SurfaceEntity.CanvasShape.Quad(1.0f, 1.0f),
                 loop = true,
-                protected = true
+                protected = true,
             )
         }
 
@@ -558,12 +550,12 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     Text(text = "Queue with delay:")
                     Switch(
                         checked = queueWithDelay,
-                        onCheckedChange = { newValue -> queueWithDelay = newValue }
+                        onCheckedChange = { newValue -> queueWithDelay = newValue },
                     )
                 }
             }

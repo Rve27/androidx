@@ -26,6 +26,6 @@ val Demos =
         listOf(
             ComposableDemo("Colors") { ColorsSample() },
             ComposableDemo("Typography") { TypographySample() },
-            ComposableDemo("Surface") { SurfaceSampleUsage() }
-        )
+            ComposableDemo("Surface") { SurfaceSampleUsage() },
+        ),
     )

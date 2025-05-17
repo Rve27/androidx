@@ -32,14 +32,14 @@ class TestSharedUiAdapter(private val isFailingSession: Boolean = false) : Share
         get() =
             openSessionLatch.await(
                 SharedSessionIntegrationTests.Companion.TIMEOUT,
-                TimeUnit.MILLISECONDS
+                TimeUnit.MILLISECONDS,
             )
 
     val isCloseSessionCalled: Boolean
         get() =
             closeSessionLatch.await(
                 SharedSessionIntegrationTests.Companion.TIMEOUT,
-                TimeUnit.MILLISECONDS
+                TimeUnit.MILLISECONDS,
             )
 
     lateinit var session: SharedUiAdapter.Session
@@ -62,7 +62,7 @@ class TestSharedUiAdapter(private val isFailingSession: Boolean = false) : Share
 
     inner class FailingTestSession(
         val sessionClient: SharedUiAdapter.SessionClient,
-        clientExecutor: Executor
+        clientExecutor: Executor,
     ) : SharedUiAdapter.Session {
         init {
             clientExecutor.execute {
@@ -86,7 +86,7 @@ class TestSharedUiSessionClient : SharedUiAdapter.SessionClient {
         get() {
             sessionOpenedLatch.await(
                 SharedSessionIntegrationTests.Companion.TIMEOUT,
-                TimeUnit.MILLISECONDS
+                TimeUnit.MILLISECONDS,
             )
             return field
         }
@@ -95,21 +95,21 @@ class TestSharedUiSessionClient : SharedUiAdapter.SessionClient {
         get() =
             sessionOpenedLatch.await(
                 SharedSessionIntegrationTests.Companion.TIMEOUT,
-                TimeUnit.MILLISECONDS
+                TimeUnit.MILLISECONDS,
             )
 
     val isSessionErrorCalled: Boolean
         get() =
             sessionErrorLatch.await(
                 SharedSessionIntegrationTests.Companion.TIMEOUT,
-                TimeUnit.MILLISECONDS
+                TimeUnit.MILLISECONDS,
             )
 
     val isClientClosed: Boolean
         get() =
             closeClientLatch.await(
                 SharedSessionIntegrationTests.Companion.TIMEOUT,
-                TimeUnit.MILLISECONDS
+                TimeUnit.MILLISECONDS,
             )
 
     fun closeClient() {

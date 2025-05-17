@@ -48,7 +48,7 @@ public abstract class BaseRoomConnectionManager {
 
     public abstract suspend fun <R> useConnection(
         isReadOnly: Boolean,
-        block: suspend (Transactor) -> R
+        block: suspend (Transactor) -> R,
     ): R
 
     // Lets impl class resolve driver file name if necessary.
@@ -63,7 +63,7 @@ public abstract class BaseRoomConnectionManager {
         private fun openLocked(filename: String) =
             ExclusiveLock(
                     filename = filename,
-                    useFileLock = !isConfigured && !isInitializing && filename != ":memory:"
+                    useFileLock = !isConfigured && !isInitializing && filename != ":memory:",
                 )
                 .withLock(
                     onLocked = {
@@ -91,9 +91,9 @@ public abstract class BaseRoomConnectionManager {
                         throw IllegalStateException(
                             "Unable to open database '$filename'. Was a proper path / " +
                                 "name used in Room's database builder?",
-                            error
+                            error,
                         )
-                    }
+                    },
                 )
     }
 

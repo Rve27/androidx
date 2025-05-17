@@ -129,7 +129,7 @@ fun NavigateButton(text: String, listener: () -> Unit = {}) {
     Button(
         onClick = listener,
         colors = ButtonDefaults.buttonColors(containerColor = LightGray),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Text(text = "Navigate to $text")
     }
@@ -140,7 +140,7 @@ fun NavigateBackButton(onBack: () -> Unit) {
     Button(
         onClick = onBack,
         colors = ButtonDefaults.buttonColors(containerColor = LightGray),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         Text(text = "Go to Previous screen")
     }
@@ -177,5 +177,5 @@ private val phrases =
         "Fool's Gold",
         "It's Not Brain Surgery",
         "Fight Fire With Fire",
-        "Go For Broke"
+        "Go For Broke",
     )

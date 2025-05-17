@@ -125,9 +125,9 @@ internal data class TransformingLazyColumnMeasuredItem(
                                     space =
                                         containerConstraints.maxWidth - rightPadding - leftPadding,
                                     size = placeable.width,
-                                    layoutDirection = layoutDirection
+                                    layoutDirection = layoutDirection,
                                 ),
-                        y = offset
+                        y = offset,
                     )
                 val currentAnimation = animationProvider()
                 if (currentAnimation == null) {
@@ -146,7 +146,7 @@ internal data class TransformingLazyColumnMeasuredItem(
             bottomItemScrollProgress(
                 containerConstraints.maxHeight / 2 - measuredHeight / 2,
                 measuredHeight,
-                containerConstraints.maxHeight
+                containerConstraints.maxHeight,
             )
         offset = containerConstraints.maxHeight / 2 - transformedHeight / 2
     }

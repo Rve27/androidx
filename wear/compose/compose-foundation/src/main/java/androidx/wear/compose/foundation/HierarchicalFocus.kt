@@ -76,7 +76,7 @@ public fun Modifier.hierarchicalFocusGroup(active: Boolean): Modifier {
         HierarchicalFocusCoordinatorModifierElement(
             active = active,
             activeFocus = false,
-            onFocusChanged = null
+            onFocusChanged = null,
         )
     )
 }
@@ -103,7 +103,7 @@ public fun Modifier.requestFocusOnHierarchyActive() =
         HierarchicalFocusCoordinatorModifierElement(
             active = true,
             activeFocus = true,
-            onFocusChanged = null
+            onFocusChanged = null,
         )
     )
 
@@ -115,7 +115,7 @@ internal fun Modifier.hierarchicalOnFocusChanged(onFocusChanged: (Boolean) -> Un
         HierarchicalFocusCoordinatorModifierElement(
             active = true,
             activeFocus = true,
-            onFocusChanged = onFocusChanged
+            onFocusChanged = onFocusChanged,
         )
     )
 
@@ -150,7 +150,7 @@ private class HierarchicalFocusCoordinatorModifierElement(
 private class HierarchicalFocusCoordinatorModifierNode(
     active: Boolean,
     var activeFocus: Boolean,
-    var onFocusChanged: ((Boolean) -> Unit)?
+    var onFocusChanged: ((Boolean) -> Unit)?,
 ) :
     Modifier.Node(),
     TraversableNode,

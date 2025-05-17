@@ -72,7 +72,7 @@ class FakeStreamSpecsCalculatorTest {
                 dynamicRange = dynamicRange,
                 expectedFrameRateRange = frameRateRange,
                 imageFormat = INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE,
-                previewStabilizationMode = stabilizationMode
+                previewStabilizationMode = stabilizationMode,
             )
 
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(expectedStreamSpec)
@@ -110,7 +110,7 @@ class FakeStreamSpecsCalculatorTest {
                 dynamicRange = previewDynamicRange,
                 expectedFrameRateRange = previewFpsRange,
                 imageFormat = INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE,
-                previewStabilizationMode = previewStabilizationMode
+                previewStabilizationMode = previewStabilizationMode,
             )
 
         val expectedImageCaptureStreamSpec =
@@ -118,12 +118,12 @@ class FakeStreamSpecsCalculatorTest {
                 dynamicRange = DynamicRange.UNSPECIFIED,
                 expectedFrameRateRange = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
                 imageFormat = ImageFormat.JPEG_R,
-                previewStabilizationMode = StabilizationMode.UNSPECIFIED
+                previewStabilizationMode = StabilizationMode.UNSPECIFIED,
             )
 
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             expectedPreviewStreamSpec,
-            expectedImageCaptureStreamSpec
+            expectedImageCaptureStreamSpec,
         )
 
         val streamSpecs =

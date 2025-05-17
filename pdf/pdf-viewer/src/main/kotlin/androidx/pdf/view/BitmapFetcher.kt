@@ -70,7 +70,7 @@ internal class BitmapFetcher(
     private val maxBitmapSizePx: Point,
     private val onPageUpdate: () -> Unit,
     /** Error flow for propagating error occurred while processing to [PdfView]. */
-    private val errorFlow: MutableSharedFlow<Throwable>
+    private val errorFlow: MutableSharedFlow<Throwable>,
 ) : AutoCloseable {
 
     /**
@@ -134,7 +134,7 @@ internal class BitmapFetcher(
                     scaledViewArea.left,
                     scaledViewArea.top,
                     scaledViewArea.right,
-                    scaledViewArea.bottom
+                    scaledViewArea.bottom,
                 )
             ) {
                 // Tile is visible, make sure we have, or have requested, a Bitmap for it
@@ -203,11 +203,11 @@ internal class BitmapFetcher(
                     requestMetadata =
                         RequestMetadata(
                             requestName = PAGE_RELEASE_REQUEST_NAME,
-                            pageRange = pageNum..pageNum
+                            pageRange = pageNum..pageNum,
                         ),
                     throwable = e,
                     // Release page is a fire-and-forget request, no need to show error on UI
-                    showError = false
+                    showError = false,
                 )
             errorFlow.tryEmit(exception)
         }
@@ -250,7 +250,7 @@ internal class BitmapFetcher(
                     tileRect.left,
                     tileRect.top,
                     tileRect.right,
-                    tileRect.bottom
+                    tileRect.bottom,
                 )
             ) {
                 tileJob = fetchBitmap(tile, scale, tileJob)
@@ -274,9 +274,9 @@ internal class BitmapFetcher(
                         requestMetadata =
                             RequestMetadata(
                                 requestName = PAGE_BITMAP_REQUEST_NAME,
-                                pageRange = pageNum..pageNum
+                                pageRange = pageNum..pageNum,
                             ),
-                        throwable = e
+                        throwable = e,
                     )
                 errorFlow.emit(exception)
             }
@@ -301,9 +301,9 @@ internal class BitmapFetcher(
                         bitmapSource.getBitmap(
                             Size(
                                 (pageSize.x * scale).roundToInt(),
-                                (pageSize.y * scale).roundToInt()
+                                (pageSize.y * scale).roundToInt(),
                             ),
-                            tile.rectPx
+                            tile.rectPx,
                         )
                     ensureActive()
                     tile.bitmap = bitmap
@@ -315,7 +315,7 @@ internal class BitmapFetcher(
                             requestMetadata =
                                 RequestMetadata(
                                     requestName = PAGE_BITMAP_TILE_REQUEST_NAME,
-                                    pageRange = pageNum..pageNum
+                                    pageRange = pageNum..pageNum,
                                 ),
                             throwable = e,
                         )
@@ -382,7 +382,7 @@ internal class TileBoardRequestHandle(
      * [SingleBitmapRequestHandle] to fetch a low-res background for this tiling, or null if we
      * re-used the background from a previous tiling
      */
-    val backgroundRequestHandle: SingleBitmapRequestHandle? = null
+    val backgroundRequestHandle: SingleBitmapRequestHandle? = null,
 ) : BitmapRequestHandle {
     override val isActive: Boolean
         get() =
@@ -422,7 +422,7 @@ internal class FullPageBitmap(val bitmap: Bitmap, override val bitmapScale: Floa
 internal class TileBoard(
     val tileSizePx: Point,
     val pageSizePx: Point,
-    override val bitmapScale: Float
+    override val bitmapScale: Float,
 ) : PageContents {
 
     /** The low res background [Bitmap] for this [TileBoard] */

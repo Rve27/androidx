@@ -85,7 +85,7 @@ class HitTestActivity : AppCompatActivity() {
                             session.scene.spatialUser.head!!
                                 .transformPoseTo(
                                     Pose(Vector3(0f, 1f, 0f)),
-                                    session.scene.activitySpace
+                                    session.scene.activitySpace,
                                 )
                                 .translation,
                         )

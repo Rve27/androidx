@@ -63,7 +63,7 @@ internal class Page(
     private val onPageTextReady: ((Int) -> Unit),
     /** Error flow for propagating error occurred while processing to [PdfView]. */
     private val errorFlow: MutableSharedFlow<Throwable>,
-    isAccessibilityEnabled: Boolean
+    isAccessibilityEnabled: Boolean,
 ) {
     init {
         require(pageNum >= 0) { "Invalid negative page" }
@@ -117,7 +117,7 @@ internal class Page(
         zoom: Float,
         viewArea: Rect,
         stablePosition: Boolean = true,
-        pauseBitmapFetch: Boolean = false
+        pauseBitmapFetch: Boolean = false,
     ) {
         if (bitmapFetcher == null) {
             bitmapFetcher =
@@ -128,7 +128,7 @@ internal class Page(
                     backgroundScope,
                     maxBitmapSizePx,
                     onPageUpdate,
-                    errorFlow
+                    errorFlow,
                 )
         }
         if (!pauseBitmapFetch) {
@@ -181,9 +181,9 @@ internal class Page(
                                 requestMetadata =
                                     RequestMetadata(
                                         requestName = PAGE_CONTENTS_REQUEST_NAME,
-                                        pageRange = pageNum..pageNum
+                                        pageRange = pageNum..pageNum,
                                     ),
-                                throwable = e
+                                throwable = e,
                             )
                         errorFlow.emit(exception)
                     }
@@ -225,9 +225,9 @@ internal class Page(
                                 requestMetadata =
                                     RequestMetadata(
                                         requestName = PAGE_LINKS_REQUEST_NAME,
-                                        pageRange = pageNum..pageNum
+                                        pageRange = pageNum..pageNum,
                                     ),
-                                throwable = e
+                                throwable = e,
                             )
                         errorFlow.emit(exception)
                     }
@@ -249,7 +249,7 @@ internal class Page(
                     bitmap, /* src */
                     null,
                     locationForTile(tile, tileBoard.bitmapScale, locationInView),
-                    BMP_PAINT
+                    BMP_PAINT,
                 )
             }
         }
@@ -258,7 +258,7 @@ internal class Page(
     private fun locationForTile(
         tile: TileBoard.Tile,
         renderedScale: Float,
-        locationInView: Rect
+        locationInView: Rect,
     ): RectF {
         val tileOffsetPx = tile.offsetPx
         // The tile describes its own location in pixels, i.e. scaled coordinates, however
@@ -271,7 +271,7 @@ internal class Page(
             left,
             top,
             left + exactSize.x / renderedScale,
-            top + exactSize.y / renderedScale
+            top + exactSize.y / renderedScale,
         )
         return tileLocationRect
     }

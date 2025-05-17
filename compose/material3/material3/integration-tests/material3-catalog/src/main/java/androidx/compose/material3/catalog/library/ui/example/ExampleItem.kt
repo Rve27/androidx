@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 fun ExampleItem(
     example: Example,
     markExpressiveComponents: Boolean,
-    onClick: (example: Example) -> Unit
+    onClick: (example: Example) -> Unit,
 ) {
     OutlinedCard(onClick = { onClick(example) }, modifier = Modifier.fillMaxWidth()) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -52,22 +52,19 @@ fun ExampleItem(
                 Column(modifier = Modifier.weight(1f, fill = true)) {
                     Text(text = example.name, style = MaterialTheme.typography.titleSmall)
                     Spacer(modifier = Modifier.height(ExampleItemTextPadding))
-                    Text(
-                        text = example.description,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
+                    Text(text = example.description, style = MaterialTheme.typography.bodySmall)
                 }
                 Spacer(modifier = Modifier.width(ExampleItemPadding))
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = null,
-                    modifier = Modifier.align(Alignment.CenterVertically)
+                    modifier = Modifier.align(Alignment.CenterVertically),
                 )
             }
             if (markExpressiveComponents && example.isExpressive) {
                 ItemBanner(
                     text = stringResource(R.string.expressive_banner),
-                    bannerSize = ExampleItemBannerSize
+                    bannerSize = ExampleItemBannerSize,
                 )
             }
         }

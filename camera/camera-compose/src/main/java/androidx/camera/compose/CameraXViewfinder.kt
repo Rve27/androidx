@@ -146,8 +146,8 @@ public fun CameraXViewfinder(
                                 cropRectLeft = transformInfo.cropRect.left.toFloat(),
                                 cropRectTop = transformInfo.cropRect.top.toFloat(),
                                 cropRectRight = transformInfo.cropRect.right.toFloat(),
-                                cropRectBottom = transformInfo.cropRect.bottom.toFloat()
-                            )
+                                cropRectBottom = transformInfo.cropRect.bottom.toFloat(),
+                            ),
                         )
                 }
         }
@@ -190,7 +190,7 @@ public fun CameraXViewfinder(
                 modifier = modifier.fillMaxSize(),
                 coordinateTransformer = coordinateTransformer,
                 alignment = alignment,
-                contentScale = contentScale
+                contentScale = contentScale,
             ) {
                 onSurfaceSession {
                     with(scope) {
@@ -260,7 +260,7 @@ private class SurfaceRequestScope(val viewfinderSurfaceRequest: ViewfinderSurfac
                     width = surfaceRequest.resolution.width,
                     height = surfaceRequest.resolution.height,
                     implementationMode = implementationMode,
-                    requestId = "CXSurfaceRequest-${"%x".format(surfaceRequest.hashCode())}"
+                    requestId = "CXSurfaceRequest-${"%x".format(surfaceRequest.hashCode())}",
                 )
             )
     }
@@ -268,12 +268,12 @@ private class SurfaceRequestScope(val viewfinderSurfaceRequest: ViewfinderSurfac
 
 private fun SurfaceRequestScope?.canSupport(
     surfaceRequest: SurfaceRequest,
-    implementationMode: ImplementationMode
+    implementationMode: ImplementationMode,
 ) = this != null && canSupport(surfaceRequest, implementationMode)
 
 @Immutable
 private data class ViewfinderArgs(
     val surfaceRequest: SurfaceRequest,
     val implementationMode: ImplementationMode,
-    val transformationInfo: TransformationInfo
+    val transformationInfo: TransformationInfo,
 )

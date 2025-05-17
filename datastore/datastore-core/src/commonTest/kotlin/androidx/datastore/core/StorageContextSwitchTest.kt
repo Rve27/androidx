@@ -73,7 +73,7 @@ private class TestStorageConnection : StorageConnection<TestData> {
 
                 override fun close() {}
             },
-            true
+            true,
         )
     }
 

@@ -229,7 +229,7 @@ private class ScopedGraphicsContext : GraphicsContext {
 
 private class CacheDrawModifierNodeImpl(
     private val cacheDrawScope: CacheDrawScope,
-    block: CacheDrawScope.() -> DrawResult
+    block: CacheDrawScope.() -> DrawResult,
 ) : Modifier.Node(), CacheDrawModifierNode, ObserverModifierNode, BuildDrawCacheParams {
 
     private var isCacheValid = false
@@ -357,7 +357,7 @@ class CacheDrawScope internal constructor() : Density {
         density: Density = this@CacheDrawScope,
         layoutDirection: LayoutDirection = this@CacheDrawScope.layoutDirection,
         size: IntSize = this@CacheDrawScope.size.toIntSize(),
-        block: ContentDrawScope.() -> Unit
+        block: ContentDrawScope.() -> Unit,
     ) {
         val scope = contentDrawScope!!
         with(scope) {

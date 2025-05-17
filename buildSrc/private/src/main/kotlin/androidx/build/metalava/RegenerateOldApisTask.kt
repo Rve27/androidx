@@ -53,7 +53,7 @@ constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
     @get:Input
     @set:Option(
         option = "compat-version",
-        description = "Regenerate just the signature file needed for compatibility checks"
+        description = "Regenerate just the signature file needed for compatibility checks",
     )
     var compatVersion: Boolean = false
 
@@ -174,7 +174,7 @@ constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
                 sourceSets,
                 project.getAndroidJar().files,
                 compiledSources,
-                projectXml
+                projectXml,
             )
             generateApi(
                 project.getMetalavaClasspath(),
@@ -186,7 +186,7 @@ constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
                 emptyList(),
                 false,
                 kotlinSourceLevel.get(),
-                workerExecutor
+                workerExecutor,
             )
         } else {
             logger.warn("No API file for $mavenId")
@@ -199,7 +199,7 @@ constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
      */
     private fun getFiles(
         runnerProject: Project,
-        mavenId: String
+        mavenId: String,
     ): Pair<File, List<SourceSetInputs>> {
         val jars = getJars(runnerProject, mavenId)
         val sourcesMavenId = "$mavenId:sources"
@@ -266,7 +266,7 @@ constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
     private fun getSources(
         runnerProject: Project,
         mavenId: String,
-        compiledSources: File
+        compiledSources: File,
     ): FileCollection {
         val sanitizedMavenId = mavenId.replace(":", "-")
         @Suppress("DEPRECATION")

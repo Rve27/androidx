@@ -280,7 +280,7 @@ class PausableCompositionInstrumentedTests {
                         outerCompositionHappened = true
                         DisposableEffectWrapper(
                             onComposed = { recompositionTrigger },
-                            onApplied = { applyCalls++ }
+                            onApplied = { applyCalls++ },
                         )
                     }
 
@@ -376,7 +376,7 @@ class PausableCompositionInstrumentedTests {
                         outerCompositionHappened = true
                         RememberWrapper(
                             onComposed = { recompositionTrigger },
-                            onRemembered = { rememberCalls++ }
+                            onRemembered = { rememberCalls++ },
                         )
                     }
 

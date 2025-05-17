@@ -51,11 +51,7 @@ class SharedSessionIntegrationTests(private val invokeBackwardsCompatFlow: Boole
 
         @JvmStatic
         @Parameterized.Parameters(name = "invokeBackwardsCompatFlow={0}")
-        fun data(): Array<Any> =
-            arrayOf(
-                arrayOf(true),
-                arrayOf(false),
-            )
+        fun data(): Array<Any> = arrayOf(arrayOf(true), arrayOf(false))
     }
 
     private val context = InstrumentationRegistry.getInstrumentation().context
@@ -80,7 +76,7 @@ class SharedSessionIntegrationTests(private val invokeBackwardsCompatFlow: Boole
                     layoutParams =
                         LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.MATCH_PARENT
+                            LinearLayout.LayoutParams.MATCH_PARENT,
                         )
                 }
             setContentView(linearLayout)
@@ -133,7 +129,7 @@ class SharedSessionIntegrationTests(private val invokeBackwardsCompatFlow: Boole
 
         sessionManager.createSharedUiAdapterAndEstablishSession(
             testSharedSessionClient = client,
-            isFailingSession = true
+            isFailingSession = true,
         )
 
         assertThat(client.isSessionErrorCalled).isTrue()

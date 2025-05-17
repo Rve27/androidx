@@ -181,7 +181,7 @@ abstract class StudioTask : DefaultTask() {
                 execOperations,
                 studioVersion,
                 studioArchiveName,
-                studioArchivePath
+                studioArchivePath,
             )
             println("Extracting archive...")
             extractStudioArchive()
@@ -196,7 +196,7 @@ abstract class StudioTask : DefaultTask() {
         if (
             File(
                     studioPluginDir,
-                    "ktfmt_idea_plugin/lib/instrumented-ktfmt_idea_plugin-$studioKtfmtPluginVersion.jar"
+                    "ktfmt_idea_plugin/lib/instrumented-ktfmt_idea_plugin-$studioKtfmtPluginVersion.jar",
                 )
                 .exists()
         ) {
@@ -368,7 +368,7 @@ abstract class StudioTask : DefaultTask() {
         execOperations: ExecOperations,
         studioVersion: String,
         filename: String,
-        destinationPath: String
+        destinationPath: String,
     ) {
         val url =
             if (filename.contains("-mac")) {

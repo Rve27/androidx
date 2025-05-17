@@ -120,7 +120,7 @@ interface LazyGridPrefetchScope {
      */
     fun scheduleLinePrefetch(
         lineIndex: Int,
-        onPrefetchFinished: (LazyGridPrefetchResultScope.() -> Unit)?
+        onPrefetchFinished: (LazyGridPrefetchResultScope.() -> Unit)?,
     ): List<LazyLayoutPrefetchState.PrefetchHandle> = scheduleLinePrefetch(lineIndex)
 }
 
@@ -284,7 +284,7 @@ sealed interface LazyGridPrefetchResultScope {
 @Suppress("PrimitiveInCollection")
 internal class LazyGridPrefetchResultScopeImpl(
     override val lineIndex: Int,
-    private val mainAxisSizes: List<Int>
+    private val mainAxisSizes: List<Int>,
 ) : LazyGridPrefetchResultScope {
     override val lineItemCount: Int
         get() = mainAxisSizes.size

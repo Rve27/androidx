@@ -34,7 +34,7 @@ import androidx.xr.glimmer.surface
 fun SurfaceSampleUsage() {
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item { SurfaceSample() }
     }

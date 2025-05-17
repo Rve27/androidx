@@ -144,7 +144,7 @@ class TransformationTestsActivity : AppCompatActivity() {
                     if (panel == anchorDebugPanel) {
                         anchorDebugPanel.view.setLine(
                             "Anchor State",
-                            anchorStateToString(anchorState)
+                            anchorStateToString(anchorState),
                         )
                         if (anchorState != AnchorEntity.State.ANCHORED) {
                             continue
@@ -156,7 +156,7 @@ class TransformationTestsActivity : AppCompatActivity() {
                 updateDebugTextPanel(
                     mainActivityDebugView,
                     session.scene.mainPanelEntity,
-                    anchorState
+                    anchorState,
                 )
             }
         }
@@ -205,7 +205,7 @@ class TransformationTestsActivity : AppCompatActivity() {
                 session,
                 session.scene.activitySpace,
                 name = name,
-                pose = panelPose
+                pose = panelPose,
             )
         debugPanel.trackedEntity = trackedEntity
         debugTextPanelsToUpdate.add(debugPanel)

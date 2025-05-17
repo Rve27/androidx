@@ -50,7 +50,7 @@ class BrushPainterTest {
                     0.0f to Color.Red,
                     0.5f to Color.Red,
                     0.5f to Color.Blue,
-                    1.0f to Color.Blue
+                    1.0f to Color.Blue,
                 )
             )
         val image = createImageBitmap()
@@ -75,7 +75,7 @@ class BrushPainterTest {
                     0.0f to Color.Red,
                     0.5f to Color.Red,
                     0.5f to Color.Blue,
-                    1.0f to Color.Blue
+                    1.0f to Color.Blue,
                 )
             )
         val image = createImageBitmap()
@@ -109,7 +109,7 @@ class BrushPainterTest {
                     0.0f to Color.Red,
                     0.5f to Color.Red,
                     0.5f to Color.Blue,
-                    1.0f to Color.Blue
+                    1.0f to Color.Blue,
                 )
             )
         val image = createImageBitmap()
@@ -117,7 +117,7 @@ class BrushPainterTest {
             brushPainter,
             Canvas(image),
             Size(100f, 100f),
-            colorFilter = ColorFilter.tint(Color.Cyan, BlendMode.SrcIn)
+            colorFilter = ColorFilter.tint(Color.Cyan, BlendMode.SrcIn),
         )
         val pixelMap = image.toPixelMap()
         assertEquals(Color.Cyan, pixelMap[0, 0])

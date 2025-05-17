@@ -65,7 +65,7 @@ class SelectionRendererTest {
                 listOf(
                     PdfRect(pageNum = 0, RectF(150F, 150F, 190F, 160F)),
                     PdfRect(pageNum = 0, RectF(10F, 170F, 50F, 180F)),
-                )
+                ),
             )
         val startBoundary =
             UiSelectionBoundary(PdfPoint(pageNum = 0, PointF(150F, 160F)), isRtl = true)
@@ -77,7 +77,7 @@ class SelectionRendererTest {
                     SparseArray<List<Selection>>().apply { set(0, listOf(textSelection)) }
                 ),
                 startBoundary,
-                endBoundary
+                endBoundary,
             )
         val locationInView = Rect(30, 50, 230, 250)
         val currentZoom = 2F
@@ -100,7 +100,7 @@ class SelectionRendererTest {
                     startLeftAdjusted.roundToInt(),
                     startTopAdjusted.roundToInt(),
                     (startLeftAdjusted + HANDLE_SIZE.x * 1 / currentZoom).roundToInt(),
-                    (startTopAdjusted + HANDLE_SIZE.y * 1 / currentZoom).roundToInt()
+                    (startTopAdjusted + HANDLE_SIZE.y * 1 / currentZoom).roundToInt(),
                 )
             )
 
@@ -120,7 +120,7 @@ class SelectionRendererTest {
                     endLeftAdjusted.roundToInt(),
                     endTopAdjusted.roundToInt(),
                     (endLeftAdjusted + HANDLE_SIZE.x * 1 / currentZoom).roundToInt(),
-                    (endTopAdjusted + HANDLE_SIZE.y * 1 / currentZoom).roundToInt()
+                    (endTopAdjusted + HANDLE_SIZE.y * 1 / currentZoom).roundToInt(),
                 )
             )
 
@@ -141,7 +141,7 @@ class SelectionRendererTest {
                 listOf(
                     PdfRect(pageNum = 0, RectF(150F, 150F, 190F, 160F)),
                     PdfRect(pageNum = 0, RectF(10F, 170F, 50F, 180F)),
-                )
+                ),
             )
         val startBoundary =
             UiSelectionBoundary(PdfPoint(pageNum = 0, PointF(150F, 160F)), isRtl = false)
@@ -153,7 +153,7 @@ class SelectionRendererTest {
                     SparseArray<List<Selection>>().apply { set(0, listOf(textSelection)) }
                 ),
                 startBoundary,
-                endBoundary
+                endBoundary,
             )
         val locationInView = Rect(30, 50, 230, 250)
         val currentZoom = 2F
@@ -176,7 +176,7 @@ class SelectionRendererTest {
                     startLeftAdjusted.roundToInt(),
                     startTopAdjusted.roundToInt(),
                     (startLeftAdjusted + HANDLE_SIZE.x * 1 / currentZoom).roundToInt(),
-                    (startTopAdjusted + HANDLE_SIZE.y * 1 / currentZoom).roundToInt()
+                    (startTopAdjusted + HANDLE_SIZE.y * 1 / currentZoom).roundToInt(),
                 )
             )
 
@@ -196,7 +196,7 @@ class SelectionRendererTest {
                     endLeftAdjusted.roundToInt(),
                     endTopAdjusted.roundToInt(),
                     (endLeftAdjusted + HANDLE_SIZE.x * 1 / currentZoom).roundToInt(),
-                    (endTopAdjusted + HANDLE_SIZE.y * 1 / currentZoom).roundToInt()
+                    (endTopAdjusted + HANDLE_SIZE.y * 1 / currentZoom).roundToInt(),
                 )
             )
 

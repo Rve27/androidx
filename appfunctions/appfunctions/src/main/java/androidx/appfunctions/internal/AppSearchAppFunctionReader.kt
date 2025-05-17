@@ -93,7 +93,7 @@ internal class AppSearchAppFunctionReader(
                 SYSTEM_PACKAGE_NAME,
                 buildObserverSpec(searchFunctionSpec.packageNames ?: emptySet()),
                 Dispatchers.Worker.asExecutor(),
-                appSearchChannelObserver
+                appSearchChannelObserver,
             )
 
             // Coroutine to react to updates from the observer
@@ -181,19 +181,19 @@ internal class AppSearchAppFunctionReader(
         session.search("", topLevelComponentsSearchSpec).readAll { searchResult ->
             extractAppFunctionComponentsMetadataFromSearchResult(
                 searchResult,
-                sharedTopLevelComponentsByPackage
+                sharedTopLevelComponentsByPackage,
             )
         }
 
         return session
             .search(
                 searchFunctionSpec.toStaticMetadataAppSearchQuery(),
-                staticMetadataSearchSpecWithJoin
+                staticMetadataSearchSpecWithJoin,
             )
             .readAll { searchResult ->
                 convertSearchResultToAppFunctionMetadata(
                     searchResult,
-                    sharedTopLevelComponentsByPackage
+                    sharedTopLevelComponentsByPackage,
                 )
             }
             .filterNotNull()
@@ -201,7 +201,7 @@ internal class AppSearchAppFunctionReader(
 
     private fun extractAppFunctionComponentsMetadataFromSearchResult(
         searchResult: SearchResult,
-        sharedTopLevelComponentsByPackage: MutableMap<String, AppFunctionComponentsMetadata>
+        sharedTopLevelComponentsByPackage: MutableMap<String, AppFunctionComponentsMetadata>,
     ) {
         val packageName =
             checkNotNull(searchResult.genericDocument.getPropertyString("packageName"))
@@ -254,7 +254,7 @@ internal class AppSearchAppFunctionReader(
                 packageName,
                 staticMetadataDocument,
                 schemaMetadata,
-                sharedTopLevelComponentsByPackage
+                sharedTopLevelComponentsByPackage,
             ) ?: return null
 
         return AppFunctionMetadata(
@@ -293,7 +293,7 @@ internal class AppSearchAppFunctionReader(
             if (schemaName != null || schemaCategory != null || schemaVersion != 0L) {
                 Log.e(
                     AppFunctionReader::class.simpleName,
-                    "Unexpected state: schemaName=$schemaName, schemaCategory=$schemaCategory, schemaVersion=$schemaVersion"
+                    "Unexpected state: schemaName=$schemaName, schemaCategory=$schemaCategory, schemaVersion=$schemaVersion",
                 )
             }
             return null
@@ -302,7 +302,7 @@ internal class AppSearchAppFunctionReader(
         return AppFunctionSchemaMetadata(
             name = schemaName,
             category = schemaCategory,
-            version = schemaVersion
+            version = schemaVersion,
         )
     }
 
@@ -315,7 +315,7 @@ internal class AppSearchAppFunctionReader(
      */
     override suspend fun getAppFunctionSchemaMetadata(
         functionId: String,
-        packageName: String
+        packageName: String,
     ): AppFunctionSchemaMetadata? {
         val documentId = getAppFunctionId(packageName, functionId)
         val result =
@@ -326,7 +326,7 @@ internal class AppSearchAppFunctionReader(
                         APP_FUNCTIONS_STATIC_DATABASE_NAME,
                         GetByDocumentIdRequest.Builder(APP_FUNCTIONS_NAMESPACE)
                             .addIds(documentId)
-                            .build()
+                            .build(),
                     )
                 }
                 .await()

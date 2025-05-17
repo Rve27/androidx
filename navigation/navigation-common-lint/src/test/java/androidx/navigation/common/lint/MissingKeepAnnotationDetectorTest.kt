@@ -361,7 +361,7 @@ enum class DeepLinkArg
                     )
                     .indented(),
                 *STUBS,
-                NAV_DEEP_LINK
+                NAV_DEEP_LINK,
             )
             .run()
             .expectClean()
@@ -388,7 +388,7 @@ enum class DeepLinkArg
                     )
                     .indented(),
                 *STUBS,
-                NAV_DEEP_LINK
+                NAV_DEEP_LINK,
             )
             .run()
             .expect(
@@ -425,7 +425,7 @@ enum class TestEnum { ONE, TWO }
                     )
                     .indented(),
                 *STUBS,
-                NAV_DEEP_LINK
+                NAV_DEEP_LINK,
             )
             .run()
             .expectClean()
@@ -452,7 +452,7 @@ enum class TestEnum { ONE, TWO }
                     )
                     .indented(),
                 *STUBS,
-                NAV_DEEP_LINK
+                NAV_DEEP_LINK,
             )
             .run()
             .expect(

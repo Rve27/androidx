@@ -89,7 +89,7 @@ internal fun migrateLegacyIdGenerator(context: Context, sqLiteDatabase: SupportS
             sqLiteDatabase.execSQL(INSERT_PREFERENCE, arrayOf(NEXT_JOB_SCHEDULER_ID_KEY, nextJobId))
             sqLiteDatabase.execSQL(
                 INSERT_PREFERENCE,
-                arrayOf(NEXT_ALARM_MANAGER_ID_KEY, nextAlarmId)
+                arrayOf(NEXT_ALARM_MANAGER_ID_KEY, nextAlarmId),
             )
             // Cleanup
             sharedPreferences.edit().clear().apply()

@@ -179,7 +179,7 @@ public interface LifecycleCameraProvider : CameraProvider {
     public fun bindToLifecycle(
         lifecycleOwner: LifecycleOwner,
         cameraSelector: CameraSelector,
-        vararg useCases: UseCase?
+        vararg useCases: UseCase?,
     ): Camera
 
     /**
@@ -197,7 +197,7 @@ public interface LifecycleCameraProvider : CameraProvider {
     public fun bindToLifecycle(
         lifecycleOwner: LifecycleOwner,
         cameraSelector: CameraSelector,
-        useCaseGroup: UseCaseGroup
+        useCaseGroup: UseCaseGroup,
     ): Camera
 
     /**
@@ -254,7 +254,7 @@ public interface LifecycleCameraProvider : CameraProvider {
     public fun bindToLifecycle(
         lifecycleOwner: LifecycleOwner,
         cameraSelector: CameraSelector,
-        sessionConfig: SessionConfig
+        sessionConfig: SessionConfig,
     ): Camera
 
     /**
@@ -356,7 +356,7 @@ public interface LifecycleCameraProvider : CameraProvider {
             return Futures.transform(
                 lifecycleCameraProvider.initAsync(context, cameraXConfig),
                 { lifecycleCameraProvider },
-                CameraXExecutors.directExecutor()
+                CameraXExecutors.directExecutor(),
             )
         }
     }

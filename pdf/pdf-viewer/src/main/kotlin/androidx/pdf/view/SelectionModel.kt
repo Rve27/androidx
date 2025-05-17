@@ -33,7 +33,7 @@ internal class SelectionModel
 internal constructor(
     val documentSelection: DocumentSelection,
     val startBoundary: UiSelectionBoundary,
-    val endBoundary: UiSelectionBoundary
+    val endBoundary: UiSelectionBoundary,
 ) : Parcelable {
     constructor(
         parcel: Parcel
@@ -78,7 +78,7 @@ internal constructor(
          */
         fun getCombinedSelectionModel(
             currentSelection: DocumentSelection,
-            newPageSelections: List<PageSelection?>
+            newPageSelections: List<PageSelection?>,
         ): SelectionModel? {
 
             val selection = mergeSelection(currentSelection, newPageSelections)
@@ -102,7 +102,7 @@ internal constructor(
             return SelectionModel(
                 selection,
                 UiSelectionBoundary(PdfPoint(firstPage, firstBound), isRtl),
-                UiSelectionBoundary(PdfPoint(lastPage, lastBound), isRtl)
+                UiSelectionBoundary(PdfPoint(lastPage, lastBound), isRtl),
             )
         }
 
@@ -112,7 +112,7 @@ internal constructor(
          */
         private fun mergeSelection(
             currentSelection: DocumentSelection,
-            newPageSelections: List<PageSelection?>
+            newPageSelections: List<PageSelection?>,
         ): DocumentSelection {
 
             // Process new selection
@@ -160,10 +160,7 @@ internal constructor(
 internal class UiSelectionBoundary(val location: PdfPoint, val isRtl: Boolean) : Parcelable {
     constructor(
         parcel: Parcel
-    ) : this(
-        pdfPointFromParcel(parcel, PdfPoint::class.java.classLoader),
-        parcel.readBoolean(),
-    )
+    ) : this(pdfPointFromParcel(parcel, PdfPoint::class.java.classLoader), parcel.readBoolean())
 
     override fun describeContents(): Int = 0
 

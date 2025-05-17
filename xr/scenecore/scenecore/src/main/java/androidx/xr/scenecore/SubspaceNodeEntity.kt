@@ -59,7 +59,7 @@ private constructor(rtEntity: RtSubspaceNodeEntity, entityManager: EntityManager
             SubspaceNodeEntity(
                 session.platformAdapter.createSubspaceNodeEntity(
                     subspaceNode,
-                    size.toRtDimensions()
+                    size.toRtDimensions(),
                 ),
                 session.scene.entityManager,
             )

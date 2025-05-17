@@ -127,7 +127,7 @@ internal class PdfViewAccessibilityManager(
 
     public override fun onPopulateNodeForVirtualView(
         virtualViewId: Int,
-        @NonNull node: AccessibilityNodeInfoCompat
+        @NonNull node: AccessibilityNodeInfoCompat,
     ) {
         if (!isLinksLoaded) loadPageLinks()
 
@@ -175,7 +175,7 @@ internal class PdfViewAccessibilityManager(
                 pageMetadataLoader.fullyVisiblePages,
                 totalPages,
                 R.string.desc_page_single,
-                R.string.desc_page_single
+                R.string.desc_page_single,
             )
         node.apply {
             contentDescription = currentLabel
@@ -196,7 +196,7 @@ internal class PdfViewAccessibilityManager(
     override fun onPerformActionForVirtualView(
         virtualViewId: Int,
         action: Int,
-        arguments: Bundle?
+        arguments: Bundle?,
     ): Boolean {
         // This view does not handle any actions.
         return false
@@ -207,7 +207,7 @@ internal class PdfViewAccessibilityManager(
         val pageBounds =
             pageMetadataLoader.getPageLocation(
                 virtualViewId,
-                pdfView.getVisibleAreaInContentCoords()
+                pdfView.getVisibleAreaInContentCoords(),
             )
 
         node.apply {
@@ -217,7 +217,7 @@ internal class PdfViewAccessibilityManager(
 
             setBoundsInScreenFromBoundsInParent(
                 node,
-                scalePageBounds(RectF(pageBounds), pdfView.zoom)
+                scalePageBounds(RectF(pageBounds), pdfView.zoom),
             )
             isFocusable = true
         }
@@ -225,7 +225,7 @@ internal class PdfViewAccessibilityManager(
 
     private fun populateGotoLinkNode(
         linkWrapper: LinkWrapper<PdfPageGotoLinkContent>,
-        node: AccessibilityNodeInfoCompat
+        node: AccessibilityNodeInfoCompat,
     ) {
         val bounds = scalePageBounds(linkWrapper.linkBounds, pdfView.zoom)
 
@@ -233,7 +233,7 @@ internal class PdfViewAccessibilityManager(
             contentDescription =
                 pdfView.context.getString(
                     R.string.desc_goto_link,
-                    linkWrapper.content.destination.pageNumber + 1
+                    linkWrapper.content.destination.pageNumber + 1,
                 )
             setBoundsInScreenFromBoundsInParent(this, bounds)
             isFocusable = true
@@ -242,7 +242,7 @@ internal class PdfViewAccessibilityManager(
 
     private fun populateUrlLinkNode(
         linkWrapper: LinkWrapper<PdfPageLinkContent>,
-        node: AccessibilityNodeInfoCompat
+        node: AccessibilityNodeInfoCompat,
     ) {
         val bounds = scalePageBounds(linkWrapper.linkBounds, pdfView.zoom)
         node.apply {
@@ -267,7 +267,7 @@ internal class PdfViewAccessibilityManager(
             linkBounds.left + pageBounds.left,
             linkBounds.top + pageBounds.top,
             linkBounds.right + pageBounds.left,
-            linkBounds.bottom + pageBounds.top
+            linkBounds.bottom + pageBounds.top,
         )
     }
 
@@ -348,7 +348,7 @@ internal class PdfViewAccessibilityManager(
         private fun getContentDescriptionForPage(
             context: Context,
             pageNum: Int,
-            pageText: String?
+            pageText: String?,
         ): String {
             return when {
                 pageText == null -> getDefaultDesc(context, pageNum)

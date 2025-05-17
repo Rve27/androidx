@@ -81,7 +81,7 @@ public fun ButtonGroup(
     expansionWidth: Dp = ButtonGroupDefaults.ExpansionWidth,
     contentPadding: PaddingValues = ButtonGroupDefaults.fullWidthPaddings(),
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
-    content: @Composable ButtonGroupScope.() -> Unit
+    content: @Composable ButtonGroupScope.() -> Unit,
 ) {
     val expandAmountPx = with(LocalDensity.current) { expansionWidth.toPx() }
 
@@ -107,7 +107,7 @@ public fun ButtonGroup(
                     EnlargeOnPressElement(
                         interactionSource = interactionSource,
                         downAnimSpec,
-                        upAnimSpec
+                        upAnimSpec,
                     )
                 )
         }
@@ -170,7 +170,7 @@ public fun ButtonGroup(
         val height =
             (placeables.fastMap { it.height }.max()).coerceIn(
                 constraints.minHeight,
-                constraints.maxHeight
+                constraints.maxHeight,
             )
 
         layout(width, height) {
@@ -231,7 +231,7 @@ public object ButtonGroupDefaults {
         val screenHeight = screenHeightDp().dp
         return PaddingValues(
             horizontal = screenHeight * FullWidthHorizontalPaddingPercentage / 100,
-            vertical = 0.dp
+            vertical = 0.dp,
         )
     }
 
@@ -305,7 +305,7 @@ internal class ButtonGroupNode(var weight: Float, var minWidth: Dp) :
             ButtonGroupParentData(
                 if (weight.fastIsFinite()) weight else prev.weight,
                 minWidth.takeOrElse { prev.minWidth },
-                prev.pressedState
+                prev.pressedState,
             )
         }
 }
@@ -411,7 +411,7 @@ private data class ComputeHelper(
     var minWidth: Float,
     val weight: Float,
     val originalIndex: Int,
-    var width: Float
+    var width: Float,
 )
 
 /**
@@ -425,7 +425,7 @@ private data class ComputeHelper(
 internal fun computeWidths(
     items: List<Pair<Float, Float>>,
     spacingPx: Int,
-    availableWidth: Int
+    availableWidth: Int,
 ): IntArray {
     val helper =
         Array(items.size) { index ->

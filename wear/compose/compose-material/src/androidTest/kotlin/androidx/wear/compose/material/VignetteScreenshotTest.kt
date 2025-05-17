@@ -58,7 +58,7 @@ class VignetteScreenshotTest {
         DeviceConfigurationOverride(DeviceConfigurationOverride.RoundScreen(isScreenRound = true)) {
             SampleVignette(
                 VignettePosition.Top,
-                modifier = Modifier.size(screenSize).clip(CircleShape)
+                modifier = Modifier.size(screenSize).clip(CircleShape),
             )
         }
     }
@@ -68,7 +68,7 @@ class VignetteScreenshotTest {
         DeviceConfigurationOverride(DeviceConfigurationOverride.RoundScreen(isScreenRound = true)) {
             SampleVignette(
                 VignettePosition.Bottom,
-                modifier = Modifier.size(screenSize).clip(CircleShape)
+                modifier = Modifier.size(screenSize).clip(CircleShape),
             )
         }
     }
@@ -78,7 +78,7 @@ class VignetteScreenshotTest {
         DeviceConfigurationOverride(DeviceConfigurationOverride.RoundScreen(isScreenRound = true)) {
             SampleVignette(
                 VignettePosition.TopAndBottom,
-                modifier = Modifier.size(screenSize).clip(CircleShape)
+                modifier = Modifier.size(screenSize).clip(CircleShape),
             )
         }
     }
@@ -96,11 +96,11 @@ class VignetteScreenshotTest {
     @Composable
     fun SampleVignette(
         vignettePosition: VignettePosition,
-        modifier: Modifier = Modifier.size(screenSize)
+        modifier: Modifier = Modifier.size(screenSize),
     ) {
         Scaffold(
             vignette = { Vignette(vignettePosition = vignettePosition) },
-            modifier = Modifier.testTag(TEST_TAG)
+            modifier = Modifier.testTag(TEST_TAG),
         ) {
             Box(modifier = modifier, contentAlignment = Alignment.Center) {}
         }

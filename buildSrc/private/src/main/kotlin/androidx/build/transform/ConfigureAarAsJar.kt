@@ -34,18 +34,18 @@ fun configureAarAsJarForConfiguration(project: Project, configurationName: Strin
             it.isCanBeResolved = true
             it.attributes.attribute(
                 BuildTypeAttr.ATTRIBUTE,
-                project.objects.named(BuildTypeAttr::class.java, "release")
+                project.objects.named(BuildTypeAttr::class.java, "release"),
             )
             it.attributes.attribute(
                 Usage.USAGE_ATTRIBUTE,
-                project.objects.named(Usage::class.java, Usage.JAVA_API)
+                project.objects.named(Usage::class.java, Usage.JAVA_API),
             )
             it.attributes.attribute(
                 TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
                 project.objects.named(
                     TargetJvmEnvironment::class.java,
-                    TargetJvmEnvironment.ANDROID
-                )
+                    TargetJvmEnvironment.ANDROID,
+                ),
             )
         }
     val artifactType = Attribute.of("artifactType", String::class.java)

@@ -51,7 +51,7 @@ class DragAndDropRequestPermissionTest {
             DragAndDropEvent(
                 DragAndDropTestUtils.makeImageDragEvent(
                     DragEvent.ACTION_DROP,
-                    Uri.parse("content://com.example/content.png")
+                    Uri.parse("content://com.example/content.png"),
                 )
             )
 
@@ -71,7 +71,7 @@ class DragAndDropRequestPermissionTest {
             DragAndDropEvent(
                 DragAndDropTestUtils.makeImageDragEvent(
                     DragEvent.ACTION_DROP,
-                    Uri.parse("file://com.example/content.png")
+                    Uri.parse("file://com.example/content.png"),
                 )
             )
 
@@ -96,7 +96,7 @@ class DragAndDropRequestPermissionTest {
             DragAndDropEvent(
                 DragAndDropTestUtils.makeImageDragEvent(
                     DragEvent.ACTION_DROP,
-                    Uri.parse("file://com.example/content.png")
+                    Uri.parse("file://com.example/content.png"),
                 )
             )
 

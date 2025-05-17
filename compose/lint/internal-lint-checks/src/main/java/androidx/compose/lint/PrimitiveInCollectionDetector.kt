@@ -76,7 +76,7 @@ class PrimitiveInCollectionDetector : Detector(), SourceCodeScanner {
                         node,
                         target,
                         "return type ${node.returnType?.presentableText} of ${node.name}:" +
-                            " replace with $primitiveCollection"
+                            " replace with $primitiveCollection",
                     )
                 }
             }
@@ -173,8 +173,8 @@ class PrimitiveInCollectionDetector : Detector(), SourceCodeScanner {
                 implementation =
                     Implementation(
                         PrimitiveInCollectionDetector::class.java,
-                        EnumSet.of(Scope.JAVA_FILE)
-                    )
+                        EnumSet.of(Scope.JAVA_FILE),
+                    ),
             )
     }
 }

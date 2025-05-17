@@ -52,7 +52,7 @@ internal class PageMetadataLoader(
     internal val paginationModel: PaginationModel =
         PaginationModel(pageSpacingPx, pdfDocument.pageCount, topPageMarginPx),
     private val errorFlow: MutableSharedFlow<Throwable>,
-    private val isFormFillingEnabled: Boolean = false
+    private val isFormFillingEnabled: Boolean = false,
 ) {
     /** The 0-indexed maximum page number whose dimensions are known to this model */
     val reach
@@ -120,7 +120,7 @@ internal class PageMetadataLoader(
                         paginationModel.getPageSize(i).x,
                         paginationModel.getPageSize(i).y,
                         // TODO: b/410009335 Save and Restore formWidgetInfos across config changes
-                        null
+                        null,
                     )
                 )
             }
@@ -154,7 +154,7 @@ internal class PageMetadataLoader(
     fun getPdfPointAt(
         contentCoordinates: PointF,
         viewport: Rect,
-        scanAllPages: Boolean = false
+        scanAllPages: Boolean = false,
     ): PdfPoint? {
         for (pageIndex in visiblePages.lower..visiblePages.upper) {
             findPointOnPage(pageIndex, viewport, contentCoordinates)?.let {
@@ -174,13 +174,13 @@ internal class PageMetadataLoader(
     private fun findPointOnPage(
         pageNum: Int,
         viewport: Rect,
-        contentCoordinates: PointF
+        contentCoordinates: PointF,
     ): PdfPoint? {
         val pageBounds = getPageLocation(pageNum, viewport)
         if (
             pageBounds.contains(
                 contentCoordinates.x.roundToInt(),
-                contentCoordinates.y.roundToInt()
+                contentCoordinates.y.roundToInt(),
             )
         ) {
             return PdfPoint(
@@ -188,7 +188,7 @@ internal class PageMetadataLoader(
                 PointF(
                     contentCoordinates.x - pageBounds.left,
                     contentCoordinates.y - pageBounds.top,
-                )
+                ),
             )
         }
         return null
@@ -332,9 +332,9 @@ internal class PageMetadataLoader(
                             requestMetadata =
                                 RequestMetadata(
                                     requestName = PAGE_INFO_REQUEST_NAME,
-                                    pageRange = pageNum..pageNum
+                                    pageRange = pageNum..pageNum,
                                 ),
-                            throwable = e
+                            throwable = e,
                         )
                     errorFlow.emit(exception)
                 }

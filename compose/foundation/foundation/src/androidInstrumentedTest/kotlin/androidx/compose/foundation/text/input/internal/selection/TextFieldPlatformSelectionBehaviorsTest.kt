@@ -103,7 +103,7 @@ class TextFieldPlatformSelectionBehaviorsTest : FocusedWindowTest {
             BasicTextField(
                 state = state,
                 textStyle = defaultTextStyle,
-                modifier = Modifier.testTag(TAG).width(200.dp)
+                modifier = Modifier.testTag(TAG).width(200.dp),
             )
         }
 
@@ -125,7 +125,7 @@ class TextFieldPlatformSelectionBehaviorsTest : FocusedWindowTest {
             BasicTextField(
                 state = state,
                 textStyle = defaultTextStyle,
-                modifier = Modifier.testTag(TAG).width(100.dp)
+                modifier = Modifier.testTag(TAG).width(100.dp),
             )
         }
 
@@ -147,7 +147,7 @@ class TextFieldPlatformSelectionBehaviorsTest : FocusedWindowTest {
             BasicTextField(
                 state = state,
                 textStyle = defaultTextStyle,
-                modifier = Modifier.testTag(TAG).width(100.dp)
+                modifier = Modifier.testTag(TAG).width(100.dp),
             )
         }
 
@@ -170,7 +170,7 @@ class TextFieldPlatformSelectionBehaviorsTest : FocusedWindowTest {
             BasicTextField(
                 state = state,
                 textStyle = defaultTextStyle,
-                modifier = Modifier.testTag(TAG).width(200.dp)
+                modifier = Modifier.testTag(TAG).width(200.dp),
             )
         }
 
@@ -194,7 +194,7 @@ class TextFieldPlatformSelectionBehaviorsTest : FocusedWindowTest {
             BasicTextField(
                 state = state,
                 textStyle = defaultTextStyle,
-                modifier = Modifier.testTag(TAG).width(200.dp)
+                modifier = Modifier.testTag(TAG).width(200.dp),
             )
         }
 
@@ -221,7 +221,7 @@ class TextFieldPlatformSelectionBehaviorsTest : FocusedWindowTest {
             BasicTextField(
                 state = state,
                 textStyle = defaultTextStyle,
-                modifier = Modifier.testTag(TAG).width(200.dp)
+                modifier = Modifier.testTag(TAG).width(200.dp),
             )
         }
 
@@ -253,7 +253,7 @@ class TextFieldPlatformSelectionBehaviorsTest : FocusedWindowTest {
                             insert(0, "abc ")
                             insert(length, " def")
                         }
-                    }
+                    },
             )
         }
 
@@ -283,7 +283,7 @@ class TextFieldPlatformSelectionBehaviorsTest : FocusedWindowTest {
                     object : CodepointTransformation {
                         override fun transform(codepointIndex: Int, codepoint: Int): Int =
                             if (codepoint == 'x'.code) '*'.code else codepoint
-                    }
+                    },
             )
         }
 
@@ -308,7 +308,7 @@ private class TestPlatformSelectionBehaviors : PlatformSelectionBehaviors {
 
     override suspend fun suggestSelectionForLongPressOrDoubleClick(
         text: CharSequence,
-        selection: TextRange
+        selection: TextRange,
     ): TextRange? {
         this.text = text.toString()
         this.selection = selection

@@ -25,7 +25,7 @@ internal constructor(
     private val stableIterations: Int = 3,
     private val includeInStartupProfile: Boolean = false,
     private val strictStability: Boolean = false,
-    private val filterPredicate: ((String) -> Boolean) = { true }
+    private val filterPredicate: ((String) -> Boolean) = { true },
 ) {
 
     /**
@@ -68,7 +68,7 @@ internal constructor(
     class Builder
     public constructor(
         private val packageName: String,
-        private val profileBlock: MacrobenchmarkScope.() -> Unit
+        private val profileBlock: MacrobenchmarkScope.() -> Unit,
     ) {
         private var outputFilePrefix: String? = null
         private var maxIterations: Int = 15
@@ -162,7 +162,7 @@ internal constructor(
                 stableIterations = stableIterations,
                 includeInStartupProfile = includeInStartupProfile,
                 strictStability = strictStability,
-                filterPredicate = filterPredicate
+                filterPredicate = filterPredicate,
             )
         }
     }

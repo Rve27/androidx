@@ -150,7 +150,7 @@ class VideoPlayerActivity : ComponentActivity() {
                     BackHandler {
                         Log.i(
                             "BackHandler",
-                            "Gnav BACK is being handled by Surface Entity back handler"
+                            "Gnav BACK is being handled by Surface Entity back handler",
                         )
                         releaseMediaPlayer()
                         finish()
@@ -225,7 +225,7 @@ class VideoPlayerActivity : ComponentActivity() {
                                 ) {
                                     Text(
                                         modifier = Modifier.padding(8.dp),
-                                        text = "Spatialize audio with Video"
+                                        text = "Spatialize audio with Video",
                                     )
                                     Switch(
                                         checked = isAudioSpatialized,
@@ -502,7 +502,7 @@ class VideoPlayerActivity : ComponentActivity() {
 
             SpatialBox(
                 modifier = SubspaceModifier.fillMaxSize(),
-                alignment = SpatialAlignment.TopRight
+                alignment = SpatialAlignment.TopRight,
             ) {
                 SpatialPanel(SubspaceModifier.offset(z = 30.dp)) {
                     Button(onClick = { videoPlayingState.value = false }) { Text("Close") }
@@ -543,7 +543,7 @@ class VideoPlayerActivity : ComponentActivity() {
                             session.scene.spatialUser.head?.transformPoseTo(
                                 Pose(
                                     Vector3(0.0f, 0.0f, -1.5f),
-                                    Quaternion(0.0f, 0.0f, 0.0f, 1.0f)
+                                    Quaternion(0.0f, 0.0f, 0.0f, 1.0f),
                                 ),
                                 session.scene.activitySpace,
                             )!!

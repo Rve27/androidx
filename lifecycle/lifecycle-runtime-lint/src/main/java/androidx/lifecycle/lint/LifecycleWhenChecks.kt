@@ -55,7 +55,7 @@ import org.jetbrains.uast.visitor.UastVisitor
 private val CONTINUATION_NAMES =
     setOf(
         "kotlin.coroutines.Continuation<? super kotlin.Unit>",
-        "kotlin.coroutines.experimental.Continuation<? super kotlin.Unit>"
+        "kotlin.coroutines.experimental.Continuation<? super kotlin.Unit>",
     )
 
 internal fun errorMessage(whenMethodName: String) =
@@ -102,19 +102,19 @@ class LifecycleWhenChecks : Detector(), SourceCodeScanner {
                 severity = Severity.ERROR,
                 implementation =
                     Implementation(LifecycleWhenChecks::class.java, Scope.JAVA_FILE_SCOPE),
-                androidSpecific = true
+                androidSpecific = true,
             )
     }
 }
 
 internal class LifecycleWhenVisitor(
     private val context: JavaContext,
-    private val whenMethodName: String
+    private val whenMethodName: String,
 ) : AbstractUastVisitor() {
     enum class SearchState {
         DONT_SEARCH,
         SEARCH,
-        FOUND
+        FOUND,
     }
 
     data class State(val checkUIAccess: Boolean, val suspendCallSearch: SearchState)

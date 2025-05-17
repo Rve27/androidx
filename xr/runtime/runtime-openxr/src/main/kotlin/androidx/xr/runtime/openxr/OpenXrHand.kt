@@ -44,6 +44,6 @@ public class OpenXrHand internal constructor(private val isLeftHand: Boolean) : 
 
     private external fun nativeGetHandDataBuffer(
         isLeftHand: Boolean,
-        timestampNs: Long
+        timestampNs: Long,
     ): ByteBuffer?
 }

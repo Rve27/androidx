@@ -198,7 +198,7 @@ class CompositionObserverTests {
             object : CompositionObserver {
                 override fun onBeginComposition(
                     composition: Composition,
-                    invalidationMap: Map<RecomposeScope, Set<Any>>
+                    invalidationMap: Map<RecomposeScope, Set<Any>>,
                 ) {
                     beginCount++
                 }
@@ -241,7 +241,7 @@ class CompositionObserverTests {
             object : CompositionObserver {
                 override fun onBeginComposition(
                     composition: Composition,
-                    invalidationMap: Map<RecomposeScope, Set<Any>>
+                    invalidationMap: Map<RecomposeScope, Set<Any>>,
                 ) {
                     beginCount++
                 }
@@ -285,7 +285,7 @@ class CompositionObserverTests {
             object : CompositionObserver {
                 override fun onBeginComposition(
                     composition: Composition,
-                    invalidationMap: Map<RecomposeScope, Set<Any>>
+                    invalidationMap: Map<RecomposeScope, Set<Any>>,
                 ) {
                     compositionsSeen.add(composition)
                     beginCount++
@@ -336,7 +336,7 @@ class CompositionObserverTests {
             object : CompositionObserver {
                 override fun onBeginComposition(
                     composition: Composition,
-                    invalidationMap: Map<RecomposeScope, Set<Any>>
+                    invalidationMap: Map<RecomposeScope, Set<Any>>,
                 ) {
                     compositionsSeen.add(composition)
                     beginCount++
@@ -389,7 +389,7 @@ class CompositionObserverTests {
             object : CompositionObserver {
                 override fun onBeginComposition(
                     composition: Composition,
-                    invalidationMap: Map<RecomposeScope, Set<Any>>
+                    invalidationMap: Map<RecomposeScope, Set<Any>>,
                 ) {
                     compositionsSeen.add(composition)
                     beginCountOne++
@@ -403,7 +403,7 @@ class CompositionObserverTests {
             object : CompositionObserver {
                 override fun onBeginComposition(
                     composition: Composition,
-                    invalidationMap: Map<RecomposeScope, Set<Any>>
+                    invalidationMap: Map<RecomposeScope, Set<Any>>,
                 ) {
                     beginCountTwo++
                 }
@@ -525,7 +525,7 @@ class CompositionObserverTests {
                     object : CompositionObserver {
                         override fun onBeginComposition(
                             composition: Composition,
-                            invalidationMap: Map<RecomposeScope, Set<Any>>
+                            invalidationMap: Map<RecomposeScope, Set<Any>>,
                         ) {
                             validatedSomething = true
                             for (index in indexes) {

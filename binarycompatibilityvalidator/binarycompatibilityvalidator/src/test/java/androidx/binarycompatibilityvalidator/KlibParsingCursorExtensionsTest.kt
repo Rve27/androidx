@@ -164,7 +164,7 @@ class KlibParsingCursorExtensionsTest {
         val inputs =
             listOf(
                 "final inline fun <set-indices>(): kotlin.ranges/IntRange",
-                "final inline fun <get-indices>(): kotlin.ranges/IntRange"
+                "final inline fun <get-indices>(): kotlin.ranges/IntRange",
             )
         inputs.forEach { input -> assertThat(Cursor(input).hasGetterOrSetter()).isTrue() }
     }
@@ -226,10 +226,7 @@ class KlibParsingCursorExtensionsTest {
         val cursor = Cursor(input)
         val qName = cursor.parseAbiQualifiedName()
         assertThat(qName.toString()).isEqualTo("kotlin/Function2")
-        assertThat(cursor.currentLine)
-            .isEqualTo(
-                "<#A1, #A, #A1>",
-            )
+        assertThat(cursor.currentLine).isEqualTo("<#A1, #A, #A1>")
     }
 
     @Test

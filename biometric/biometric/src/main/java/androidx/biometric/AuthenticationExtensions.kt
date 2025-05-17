@@ -51,7 +51,7 @@ import java.util.concurrent.Executor
 @JvmOverloads
 public fun FragmentActivity.registerForAuthenticationResult(
     onAuthFailedCallback: () -> Unit = {},
-    resultCallback: AuthenticationResultCallback
+    resultCallback: AuthenticationResultCallback,
 ): AuthenticationResultLauncher {
     return AuthenticationResultRegistry(activity = this)
         .register(onAuthFailedCallback, resultCallback)
@@ -81,7 +81,7 @@ public fun FragmentActivity.registerForAuthenticationResult(
 @JvmOverloads
 public fun Fragment.registerForAuthenticationResult(
     onAuthFailedCallback: () -> Unit = {},
-    resultCallback: AuthenticationResultCallback
+    resultCallback: AuthenticationResultCallback,
 ): AuthenticationResultLauncher {
     return AuthenticationResultRegistry(fragment = this)
         .register(onAuthFailedCallback, resultCallback)

@@ -67,7 +67,7 @@ class LifecycleCameraRepositoryTest {
                 camera,
                 defaultCameraCoordinator,
                 StreamSpecsCalculatorImpl(useCaseConfigFactory, FakeCameraDeviceSurfaceManager()),
-                FakeUseCaseConfigFactory()
+                FakeUseCaseConfigFactory(),
             )
     }
 
@@ -112,7 +112,7 @@ class LifecycleCameraRepositoryTest {
         val secondLifecycleCamera =
             repository.createLifecycleCamera(
                 lifecycleOwner,
-                createCameraUseCaseAdapterWithNewCameraConfig()
+                createCameraUseCaseAdapterWithNewCameraConfig(),
             )
 
         assertThat(firstLifecycleCamera).isNotEqualTo(secondLifecycleCamera)
@@ -410,8 +410,8 @@ class LifecycleCameraRepositoryTest {
                 lifecycleOwner,
                 CameraUseCaseAdapter.CameraId.create(
                     camera.getCameraInfoInternal().getCameraId(),
-                    CameraConfigs.defaultConfig().getCompatibilityId()
-                )
+                    CameraConfigs.defaultConfig().getCompatibilityId(),
+                ),
             )
 
         assertThat(lifecycleCamera).isSameInstanceAs(retrieved)
@@ -457,8 +457,8 @@ class LifecycleCameraRepositoryTest {
                 lifecycleOwner,
                 CameraUseCaseAdapter.CameraId.create(
                     camera.getCameraInfoInternal().getCameraId(),
-                    CameraConfigs.defaultConfig().getCompatibilityId()
-                )
+                    CameraConfigs.defaultConfig().getCompatibilityId(),
+                ),
             )
 
         assertThat(key0).isEqualTo(key1)
@@ -608,7 +608,7 @@ class LifecycleCameraRepositoryTest {
             fakeCamera,
             defaultCameraCoordinator,
             StreamSpecsCalculatorImpl(useCaseConfigFactory, FakeCameraDeviceSurfaceManager()),
-            useCaseConfigFactory
+            useCaseConfigFactory,
         )
     }
 
@@ -624,7 +624,7 @@ class LifecycleCameraRepositoryTest {
             CompositionSettings.DEFAULT,
             defaultCameraCoordinator,
             StreamSpecsCalculatorImpl(useCaseConfigFactory, FakeCameraDeviceSurfaceManager()),
-            useCaseConfigFactory
+            useCaseConfigFactory,
         )
     }
 
@@ -634,12 +634,12 @@ class LifecycleCameraRepositoryTest {
         viewPort: ViewPort? = null,
         effects: List<CameraEffect> = emptyList(),
         targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
-        cameraCoordinator: CameraCoordinator? = defaultCameraCoordinator
+        cameraCoordinator: CameraCoordinator? = defaultCameraCoordinator,
     ) {
         bindToLifecycleCamera(
             lifecycleCamera,
             LegacySessionConfig(useCases, viewPort, effects, targetHighSpeedFrameRate),
-            cameraCoordinator
+            cameraCoordinator,
         )
     }
 }

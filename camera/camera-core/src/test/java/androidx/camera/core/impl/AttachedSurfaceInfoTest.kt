@@ -58,7 +58,7 @@ class AttachedSurfaceInfoTest {
                 captureTypes,
                 config,
                 targetFramerate,
-                FRAME_RATE_RANGE_UNSPECIFIED
+                FRAME_RATE_RANGE_UNSPECIFIED,
             )
     }
 
@@ -68,7 +68,7 @@ class AttachedSurfaceInfoTest {
             .isEqualTo(
                 SurfaceConfig.create(
                     SurfaceConfig.ConfigType.JPEG,
-                    SurfaceConfig.ConfigSize.PREVIEW
+                    SurfaceConfig.ConfigSize.PREVIEW,
                 )
             )
     }
@@ -128,7 +128,7 @@ class AttachedSurfaceInfoTest {
                 listOf(CaptureType.PREVIEW),
                 config,
                 null,
-                FRAME_RATE_RANGE_UNSPECIFIED
+                FRAME_RATE_RANGE_UNSPECIFIED,
             )
         Truth.assertThat(attachedSurfaceInfo2.targetFrameRate).isNull()
     }

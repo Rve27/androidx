@@ -114,7 +114,7 @@ class DialogTest {
         rule.setContent {
             Dialog(
                 onDismissRequest = {},
-                properties = DialogProperties(windowTitle = defaultText)
+                properties = DialogProperties(windowTitle = defaultText),
             ) {
                 var parent = LocalView.current
                 while (parent !is DialogWindowProvider) {
@@ -400,7 +400,7 @@ class DialogTest {
             Dialog(
                 {},
                 properties =
-                    DialogProperties(usePlatformDefaultWidth = true, decorFitsSystemWindows = true)
+                    DialogProperties(usePlatformDefaultWidth = true, decorFitsSystemWindows = true),
             ) {
                 dialogView = LocalView.current
                 Box(Modifier.size(with(LocalDensity.current) { 100.toDp() }))
@@ -423,7 +423,7 @@ class DialogTest {
             Dialog(
                 {},
                 properties =
-                    DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = true)
+                    DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = true),
             ) {
                 dialogView = LocalView.current
                 Box(Modifier.size(with(LocalDensity.current) { 100.toDp() }))
@@ -445,7 +445,7 @@ class DialogTest {
             Dialog(
                 {},
                 properties =
-                    DialogProperties(usePlatformDefaultWidth = true, decorFitsSystemWindows = false)
+                    DialogProperties(usePlatformDefaultWidth = true, decorFitsSystemWindows = false),
             ) {
                 dialogView = LocalView.current
                 Box(Modifier.size(with(LocalDensity.current) { 100.toDp() }))
@@ -475,8 +475,8 @@ class DialogTest {
                 properties =
                     DialogProperties(
                         usePlatformDefaultWidth = false,
-                        decorFitsSystemWindows = false
-                    )
+                        decorFitsSystemWindows = false,
+                    ),
             ) {
                 dialogView = LocalView.current
                 Box(Modifier.size(with(LocalDensity.current) { 100.toDp() }))
@@ -500,7 +500,7 @@ class DialogTest {
             displayMetrics = LocalView.current.context.resources.displayMetrics
             Dialog(
                 onDismissRequest = {},
-                properties = DialogProperties(usePlatformDefaultWidth = false)
+                properties = DialogProperties(usePlatformDefaultWidth = false),
             ) {
                 Box(Modifier.fillMaxSize().onSizeChanged { box1Width = it.width })
             }
@@ -522,7 +522,7 @@ class DialogTest {
         rule.setContent {
             Dialog(
                 onDismissRequest = {},
-                properties = DialogProperties(usePlatformDefaultWidth = usePlatformDefaultWidth)
+                properties = DialogProperties(usePlatformDefaultWidth = usePlatformDefaultWidth),
             ) {
                 Box(Modifier.size(width, 150.dp).onSizeChanged { actualWidth = it.width })
             }
@@ -597,7 +597,7 @@ class DialogTest {
             Dialog(
                 onDismissRequest = { dismissed = true },
                 properties =
-                    DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = true)
+                    DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = true),
             ) {
                 composeView = LocalView.current
                 Box(Modifier.size(10.dp).testTag(clickBoxTag).clickable { clicked = true })
@@ -631,7 +631,7 @@ class DialogTest {
                     actionIndex = 0,
                     pointerProperties = arrayOf(PointerProperties(0)),
                     pointerCoords = arrayOf(PointerCoords(x, y)),
-                    root
+                    root,
                 )
             root.dispatchTouchEvent(down)
             val up =
@@ -642,7 +642,7 @@ class DialogTest {
                     actionIndex = 0,
                     pointerProperties = arrayOf(PointerProperties(0)),
                     pointerCoords = arrayOf(PointerCoords(x, y)),
-                    root
+                    root,
                 )
             root.dispatchTouchEvent(up)
         }
@@ -664,8 +664,8 @@ class DialogTest {
                 properties =
                     DialogProperties(
                         usePlatformDefaultWidth = false,
-                        decorFitsSystemWindows = false
-                    )
+                        decorFitsSystemWindows = false,
+                    ),
             ) {
                 composeView = LocalView.current
                 Box(Modifier.size(10.dp).testTag(clickBoxTag).clickable { clicked = true })
@@ -699,7 +699,7 @@ class DialogTest {
                     actionIndex = 0,
                     pointerProperties = arrayOf(PointerProperties(0)),
                     pointerCoords = arrayOf(PointerCoords(x, y)),
-                    root
+                    root,
                 )
             root.dispatchTouchEvent(down)
             val up =
@@ -710,7 +710,7 @@ class DialogTest {
                     actionIndex = 0,
                     pointerProperties = arrayOf(PointerProperties(0)),
                     pointerCoords = arrayOf(PointerCoords(x, y)),
-                    root
+                    root,
                 )
             root.dispatchTouchEvent(up)
         }
@@ -732,8 +732,8 @@ class DialogTest {
                 properties =
                     DialogProperties(
                         usePlatformDefaultWidth = false,
-                        decorFitsSystemWindows = false
-                    )
+                        decorFitsSystemWindows = false,
+                    ),
             ) {
                 composeView = LocalView.current
                 Box(Modifier.size(10.dp).testTag(clickBoxTag).clickable { clicked = true })
@@ -767,7 +767,7 @@ class DialogTest {
                     actionIndex = 0,
                     pointerProperties = arrayOf(PointerProperties(0)),
                     pointerCoords = arrayOf(PointerCoords(x, y)),
-                    root
+                    root,
                 )
             root.dispatchTouchEvent(down)
             val up =
@@ -778,7 +778,7 @@ class DialogTest {
                     actionIndex = 0,
                     pointerProperties = arrayOf(PointerProperties(0)),
                     pointerCoords = arrayOf(PointerCoords(x, y)),
-                    root
+                    root,
                 )
             root.dispatchTouchEvent(up)
         }
@@ -806,7 +806,7 @@ class DialogTest {
                     TextField(
                         "Hello World",
                         onValueChange = {},
-                        Modifier.align(Alignment.BottomStart).focusRequester(focusRequester)
+                        Modifier.align(Alignment.BottomStart).focusRequester(focusRequester),
                     )
                 }
             }
@@ -854,7 +854,7 @@ class DialogTest {
                     ComposeView(
                             ContextThemeWrapper(
                                 context,
-                                androidx.compose.ui.tests.R.style.CustomDialogTheme
+                                androidx.compose.ui.tests.R.style.CustomDialogTheme,
                             )
                         )
                         .apply {
@@ -864,8 +864,8 @@ class DialogTest {
                                     properties =
                                         DialogProperties(
                                             decorFitsSystemWindows = false,
-                                            usePlatformDefaultWidth = false
-                                        )
+                                            usePlatformDefaultWidth = false,
+                                        ),
                                 ) {
                                     var parent = LocalView.current
                                     while (parent !is DialogWindowProvider) {
@@ -876,7 +876,7 @@ class DialogTest {
                                 }
                             }
                         }
-                }
+                },
             )
         }
         rule.runOnIdle {
@@ -944,7 +944,7 @@ class DialogTest {
                 outsidePosition.y,
                 insidePosition.x,
                 insidePosition.y,
-                10
+                10,
             )
         } else {
             uiDevice.drag(
@@ -952,7 +952,7 @@ class DialogTest {
                 insidePosition.y,
                 outsidePosition.x,
                 outsidePosition.y,
-                10
+                10,
             )
         }
     }
@@ -974,7 +974,7 @@ private fun PopupUsingPosition(parentPositionInRoot: Offset) {
                 anchorBounds: IntRect,
                 windowSize: IntSize,
                 layoutDirection: LayoutDirection,
-                popupContentSize: IntSize
+                popupContentSize: IntSize,
             ): IntOffset = anchorBounds.topLeft + parentPositionInRoot.round()
         }
 

@@ -50,7 +50,7 @@ class PaneScaffoldDirectiveTest {
             calculatePaneScaffoldDirective(
                 WindowAdaptiveInfo(
                     WindowSizeClass(0, WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND),
-                    Posture()
+                    Posture(),
                 )
             )
 
@@ -69,9 +69,9 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture()
+                    Posture(),
                 )
             )
 
@@ -90,9 +90,9 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture()
+                    Posture(),
                 )
             )
 
@@ -110,7 +110,7 @@ class PaneScaffoldDirectiveTest {
             calculatePaneScaffoldDirective(
                 WindowAdaptiveInfo(
                     WindowSizeClass(1600, WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND),
-                    Posture()
+                    Posture(),
                 )
             )
 
@@ -128,9 +128,9 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture(isTabletop = true)
+                    Posture(isTabletop = true),
                 )
             )
 
@@ -148,7 +148,7 @@ class PaneScaffoldDirectiveTest {
             calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(
                 WindowAdaptiveInfo(
                     WindowSizeClass(0, WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND),
-                    Posture()
+                    Posture(),
                 )
             )
 
@@ -166,9 +166,9 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture()
+                    Posture(),
                 )
             )
 
@@ -186,9 +186,9 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture()
+                    Posture(),
                 )
             )
 
@@ -205,7 +205,7 @@ class PaneScaffoldDirectiveTest {
             calculatePaneScaffoldDirectiveWithTwoPanesOnMediumWidth(
                 WindowAdaptiveInfo(
                     WindowSizeClass(1600, WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND),
-                    Posture()
+                    Posture(),
                 )
             )
 
@@ -223,9 +223,9 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture(isTabletop = true)
+                    Posture(isTabletop = true),
                 )
             )
 
@@ -243,11 +243,11 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture(hingeList = hingeList)
+                    Posture(hingeList = hingeList),
                 ),
-                HingePolicy.AlwaysAvoid
+                HingePolicy.AlwaysAvoid,
             )
 
         assertThat(scaffoldDirective.excludedBounds).isEqualTo(hingeList.getBounds())
@@ -260,11 +260,11 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture(hingeList = hingeList)
+                    Posture(hingeList = hingeList),
                 ),
-                HingePolicy.AvoidOccluding
+                HingePolicy.AvoidOccluding,
             )
 
         assertThat(scaffoldDirective.excludedBounds).isEqualTo(hingeList.subList(0, 2).getBounds())
@@ -277,11 +277,11 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture(hingeList = hingeList)
+                    Posture(hingeList = hingeList),
                 ),
-                HingePolicy.AvoidSeparating
+                HingePolicy.AvoidSeparating,
             )
 
         assertThat(scaffoldDirective.excludedBounds).isEqualTo(hingeList.subList(2, 3).getBounds())
@@ -294,11 +294,11 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture(hingeList = hingeList)
+                    Posture(hingeList = hingeList),
                 ),
-                HingePolicy.NeverAvoid
+                HingePolicy.NeverAvoid,
             )
 
         assertThat(scaffoldDirective.excludedBounds).isEmpty()
@@ -311,11 +311,11 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture(hingeList = hingeList)
+                    Posture(hingeList = hingeList),
                 ),
-                HingePolicy.AlwaysAvoid
+                HingePolicy.AlwaysAvoid,
             )
 
         assertThat(scaffoldDirective.excludedBounds).isEqualTo(hingeList.getBounds())
@@ -328,11 +328,11 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture(hingeList = hingeList)
+                    Posture(hingeList = hingeList),
                 ),
-                HingePolicy.AvoidOccluding
+                HingePolicy.AvoidOccluding,
             )
 
         assertThat(scaffoldDirective.excludedBounds).isEqualTo(hingeList.subList(0, 2).getBounds())
@@ -345,11 +345,11 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture(hingeList = hingeList)
+                    Posture(hingeList = hingeList),
                 ),
-                HingePolicy.AvoidSeparating
+                HingePolicy.AvoidSeparating,
             )
 
         assertThat(scaffoldDirective.excludedBounds).isEqualTo(hingeList.subList(2, 3).getBounds())
@@ -362,11 +362,11 @@ class PaneScaffoldDirectiveTest {
                 WindowAdaptiveInfo(
                     WindowSizeClass(
                         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND,
-                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND
+                        WindowSizeClass.HEIGHT_DP_EXPANDED_LOWER_BOUND,
                     ),
-                    Posture(hingeList = hingeList)
+                    Posture(hingeList = hingeList),
                 ),
-                HingePolicy.NeverAvoid
+                HingePolicy.NeverAvoid,
             )
 
         assertThat(scaffoldDirective.excludedBounds).isEmpty()
@@ -381,21 +381,21 @@ private val hingeList =
             isFlat = true,
             isVertical = true,
             isSeparating = false,
-            isOccluding = true
+            isOccluding = true,
         ),
         HingeInfo(
             bounds = Rect(1F, 1F, 2F, 2F),
             isFlat = false,
             isVertical = true,
             isSeparating = false,
-            isOccluding = true
+            isOccluding = true,
         ),
         HingeInfo(
             bounds = Rect(2F, 2F, 3F, 3F),
             isFlat = true,
             isVertical = true,
             isSeparating = true,
-            isOccluding = false
+            isOccluding = false,
         ),
     )
 

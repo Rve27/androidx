@@ -44,7 +44,7 @@ public fun <T : Any> DecoratedNavEntryProvider(
     entryProvider: (key: T) -> NavEntry<out T>,
     entryDecorators: List<@JvmSuppressWildcards NavEntryDecorator<*>> =
         listOf(rememberSavedStateNavEntryDecorator()),
-    content: @Composable (List<NavEntry<T>>) -> Unit
+    content: @Composable (List<NavEntry<T>>) -> Unit,
 ) {
     // Kotlin does not know these things are compatible so we need this explicit cast
     // to ensure our lambda below takes the correct type

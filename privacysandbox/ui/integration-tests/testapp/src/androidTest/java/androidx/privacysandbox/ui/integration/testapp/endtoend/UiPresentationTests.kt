@@ -49,7 +49,7 @@ import org.junit.runners.Parameterized
 class UiPresentationTests(
     @FragmentOption val uiFrameworkOption: String,
     @FragmentOption val mediationOption: String,
-    @FragmentOption val zOrdering: String
+    @FragmentOption val zOrdering: String,
 ) {
     private lateinit var scenario: ActivityScenario<MainActivity>
     private lateinit var sdkToClientCallbackBundle: Bundle
@@ -65,7 +65,7 @@ class UiPresentationTests(
             arrayOf(
                 FragmentOptions.MEDIATION_TYPE_NON_MEDIATED,
                 FragmentOptions.MEDIATION_TYPE_IN_RUNTIME,
-                FragmentOptions.MEDIATION_TYPE_IN_APP
+                FragmentOptions.MEDIATION_TYPE_IN_APP,
             )
         private val zOrderings =
             arrayOf(FragmentOptions.Z_ORDER_BELOW, FragmentOptions.Z_ORDER_ABOVE)
@@ -180,7 +180,7 @@ class UiPresentationTests(
     private fun launchTestAppAndWaitForLoadingSdks(
         @FragmentOption uiFrameworkOption: String,
         @FragmentOption mediationOption: String,
-        @FragmentOption zOrdering: String
+        @FragmentOption zOrdering: String,
     ) {
         val loadSdkCallback =
             object : ILoadSdkCallback.Stub() {

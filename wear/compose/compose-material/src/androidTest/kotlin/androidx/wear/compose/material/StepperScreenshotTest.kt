@@ -62,7 +62,7 @@ public class StepperScreenshotTest {
                 increaseIcon = { Icon(StepperDefaults.Increase, "Increase") },
                 decreaseIcon = { Icon(StepperDefaults.Decrease, "Decrease") },
                 steps = 3,
-                onValueChange = {}
+                onValueChange = {},
             ) {}
         }
 
@@ -81,9 +81,7 @@ public class StepperScreenshotTest {
                 steps = 3,
                 onValueChange = {},
                 decreaseIcon = { Icon(imageVector = Icons.Default.Star, contentDescription = "") },
-                increaseIcon = {
-                    Icon(imageVector = Icons.Filled.ThumbUp, contentDescription = "")
-                },
+                increaseIcon = { Icon(imageVector = Icons.Filled.ThumbUp, contentDescription = "") },
             ) {}
         }
 
@@ -102,13 +100,13 @@ public class StepperScreenshotTest {
                 steps = 3,
                 increaseIcon = { Icon(StepperDefaults.Increase, "Increase") },
                 decreaseIcon = { Icon(StepperDefaults.Decrease, "Decrease") },
-                onValueChange = {}
+                onValueChange = {},
             ) {
                 Chip(
                     onClick = {},
                     modifier = Modifier.width(146.dp),
                     colors = ChipDefaults.secondaryChipColors(),
-                    label = { Text(text = "Demo", modifier = Modifier.fillMaxWidth()) }
+                    label = { Text(text = "Demo", modifier = Modifier.fillMaxWidth()) },
                 )
             }
         }

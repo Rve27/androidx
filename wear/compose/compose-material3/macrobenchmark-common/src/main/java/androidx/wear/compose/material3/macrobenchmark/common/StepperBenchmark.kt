@@ -50,13 +50,13 @@ object StepperBenchmark : MacrobenchmarkScreen {
                     decreaseIcon = {
                         Text(
                             text = "-",
-                            modifier = Modifier.semantics { contentDescription = DECREASE_BUTTON }
+                            modifier = Modifier.semantics { contentDescription = DECREASE_BUTTON },
                         )
                     },
                     increaseIcon = {
                         Text(
                             text = "+",
-                            modifier = Modifier.semantics { contentDescription = INCREASE_BUTTON }
+                            modifier = Modifier.semantics { contentDescription = INCREASE_BUTTON },
                         )
                     },
                 ) {
@@ -65,7 +65,7 @@ object StepperBenchmark : MacrobenchmarkScreen {
                 StepperLevelIndicator(
                     value = { value },
                     valueRange = valueRange,
-                    modifier = Modifier.align(Alignment.CenterStart)
+                    modifier = Modifier.align(Alignment.CenterStart),
                 )
             }
         }

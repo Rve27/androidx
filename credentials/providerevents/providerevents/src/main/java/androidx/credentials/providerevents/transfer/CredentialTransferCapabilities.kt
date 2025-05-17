@@ -32,7 +32,7 @@ public class CredentialTransferCapabilities(
     public val totalNumCredentials: Int,
     public val numPasswords: Int,
     public val numPasskeys: Int,
-    public val totalSizeBytes: Long
+    public val totalSizeBytes: Long,
 ) {
     public companion object {
         private const val TOTAL_NUM_CREDENTIALS_KEY = "TOTAL_NUM_CREDENTIALS"

@@ -43,7 +43,7 @@ fun AddComponentsToTextContextMenu() {
                     close()
                 }
                 separator()
-            }
+            },
     )
 }
 
@@ -56,7 +56,7 @@ fun AddFilterToTextContextMenu() {
         modifier =
             Modifier.filterTextContextMenuComponents(
                 filter = { component -> component.key === ClearKeyDataObject }
-            )
+            ),
     )
 }
 
@@ -73,12 +73,12 @@ fun AddItemToTextContextMenuAndroid() {
                 item(
                     key = ClearKeyDataObject,
                     label = label,
-                    leadingIcon = R.drawable.ic_sample_vector
+                    leadingIcon = R.drawable.ic_sample_vector,
                 ) {
                     textFieldState.clearText()
                     close()
                 }
                 separator()
-            }
+            },
     )
 }

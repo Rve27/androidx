@@ -103,7 +103,7 @@ interface LazyListPrefetchScope {
      */
     fun schedulePrefetch(
         index: Int,
-        onPrefetchFinished: (LazyListPrefetchResultScope.() -> Unit)? = null
+        onPrefetchFinished: (LazyListPrefetchResultScope.() -> Unit)? = null,
     ): LazyLayoutPrefetchState.PrefetchHandle
 }
 
@@ -234,5 +234,5 @@ sealed interface LazyListPrefetchResultScope {
 @OptIn(ExperimentalFoundationApi::class)
 internal class LazyListPrefetchResultScopeImpl(
     override val index: Int,
-    override val mainAxisSize: Int
+    override val mainAxisSize: Int,
 ) : LazyListPrefetchResultScope

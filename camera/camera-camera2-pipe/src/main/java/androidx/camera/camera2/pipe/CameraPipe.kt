@@ -54,7 +54,7 @@ public interface CameraPipe {
 
     @Deprecated(
         "Use createCameraGraph instead.",
-        replaceWith = ReplaceWith("createCameraGraph(config)")
+        replaceWith = ReplaceWith("createCameraGraph(config)"),
     )
     public fun create(config: CameraGraph.Config): CameraGraph
 
@@ -126,7 +126,7 @@ public interface CameraPipe {
     public data class CameraInteropConfig(
         val cameraDeviceStateCallback: CameraDevice.StateCallback? = null,
         val cameraSessionStateCallback: CameraCaptureSession.StateCallback? = null,
-        val cameraOpenRetryMaxTimeoutNs: DurationNs? = null
+        val cameraOpenRetryMaxTimeoutNs: DurationNs? = null,
     )
 
     /**
@@ -150,7 +150,7 @@ public interface CameraPipe {
         val defaultCameraExecutor: Executor? = null,
         val defaultCameraHandler: Handler? = null,
         val testOnlyDispatcher: CoroutineDispatcher? = null,
-        val testOnlyScope: CoroutineScope? = null
+        val testOnlyScope: CoroutineScope? = null,
     )
 
     /**
@@ -164,7 +164,7 @@ public interface CameraPipe {
     public class CameraMetadataConfig(
         public val cacheBlocklist: Set<CameraCharacteristics.Key<*>> = emptySet(),
         public val cameraCacheBlocklist: Map<CameraId, Set<CameraCharacteristics.Key<*>>> =
-            emptyMap()
+            emptyMap(),
     )
 
     /**
@@ -182,7 +182,7 @@ public interface CameraPipe {
     public class CameraBackendConfig(
         public val internalBackend: CameraBackend? = null,
         public val defaultBackend: CameraBackendId? = null,
-        public val cameraBackends: Map<CameraBackendId, CameraBackendFactory> = emptyMap()
+        public val cameraBackends: Map<CameraBackendId, CameraBackendFactory> = emptyMap(),
     ) {
         init {
             check(defaultBackend == null || cameraBackends.containsKey(defaultBackend)) {
@@ -216,7 +216,7 @@ internal class CameraPipeImpl(private val component: CameraPipeComponent) : Came
 
     @Deprecated(
         "Use createCameraGraph instead.",
-        replaceWith = ReplaceWith("createCameraGraph(config)")
+        replaceWith = ReplaceWith("createCameraGraph(config)"),
     )
     override fun create(config: CameraGraph.Config): CameraGraph = createCameraGraph(config)
 

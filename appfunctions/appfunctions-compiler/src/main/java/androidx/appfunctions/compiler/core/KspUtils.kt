@@ -56,7 +56,7 @@ fun KSTypeReference.resolveSelfOrUpperBoundType(): KSTypeReference {
             declaration.bounds.singleOrNull()
                 ?: throw ProcessingException(
                     "AppFunction compiler does not support multi-bounds type parameter",
-                    declaration
+                    declaration,
                 )
         }
         else -> {
@@ -167,7 +167,7 @@ fun KSTypeReference.resolveListParameterizedType(): KSTypeReference {
     if (!isOfType(LIST)) {
         throw ProcessingException(
             "Unable to resolve list parameterized type for non list type",
-            this
+            this,
         )
     }
     return resolve().arguments.firstOrNull()?.type
@@ -211,7 +211,7 @@ fun KSTypeReference.ensureQualifiedTypeName(): KSName =
     resolve().declaration.qualifiedName
         ?: throw ProcessingException(
             "Unable to resolve the qualified type name for this reference",
-            this
+            this,
         )
 
 /** Returns the value of the annotation property if found. */

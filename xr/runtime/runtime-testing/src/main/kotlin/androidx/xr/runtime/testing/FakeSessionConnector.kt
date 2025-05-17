@@ -29,7 +29,7 @@ public class FakeSessionConnector : SessionConnector {
 
     override fun initialize(
         lifecycleManager: LifecycleManager,
-        platformAdapter: JxrPlatformAdapter
+        platformAdapter: JxrPlatformAdapter,
     ) {
         isInitialized = true
     }

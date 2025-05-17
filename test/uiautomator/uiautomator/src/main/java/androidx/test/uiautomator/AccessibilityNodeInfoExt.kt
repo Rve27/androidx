@@ -128,7 +128,7 @@ public fun AccessibilityNodeInfo.waitForStable(
         stablePollIntervalMs = stablePollIntervalMs,
         stableIntervalMs = stableIntervalMs,
         bitmapProvider = { if (requireStableScreenshot) takeScreenshot() else null },
-        rootViewNodeProvider = { takeViewNodeTree(root = this, displayRect = displayRect) }
+        rootViewNodeProvider = { takeViewNodeTree(root = this, displayRect = displayRect) },
     )
 }
 
@@ -184,7 +184,7 @@ public fun AccessibilityNodeInfo.onViewOrNull(
             block = block,
             timeoutMs = timeoutMs,
             pollIntervalMs = pollIntervalMs,
-            rootNodeBlock = { listOf(this) }
+            rootNodeBlock = { listOf(this) },
         )
         .firstOrNull()
         ?.toUiObject2()
@@ -219,7 +219,7 @@ public fun AccessibilityNodeInfo.onViews(
             pollIntervalMs = pollIntervalMs,
             shouldStop = { false },
             block = block,
-            rootNodeBlock = { listOf(this) }
+            rootNodeBlock = { listOf(this) },
         )
         .mapNotNull { it.toUiObject2() }
 

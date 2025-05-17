@@ -114,7 +114,7 @@ public class PdfViewerState() {
             firstVisiblePage: Int,
             visiblePagesCount: Int,
             pageLocations: SparseArray<Rect>,
-            zoomLevel: Float
+            zoomLevel: Float,
         ) {
             this@PdfViewerState.firstVisiblePage = firstVisiblePage
             this@PdfViewerState.visiblePagesCount = visiblePagesCount

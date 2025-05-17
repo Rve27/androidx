@@ -123,7 +123,7 @@ internal class LazyStaggeredGridLaneInfo {
                         lanes,
                         destinationOffset = 0,
                         startIndex = delta,
-                        endIndex = lanes.size
+                        endIndex = lanes.size,
                     )
                 }
                 // fill the rest of the spans with default values
@@ -141,7 +141,7 @@ internal class LazyStaggeredGridLaneInfo {
                             lanes,
                             destinationOffset = delta,
                             startIndex = 0,
-                            endIndex = lanes.size - delta
+                            endIndex = lanes.size - delta,
                         )
                     }
                     // fill the rest of the spans with default values

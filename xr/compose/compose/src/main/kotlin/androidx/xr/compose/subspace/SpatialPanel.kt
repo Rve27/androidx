@@ -155,11 +155,11 @@ public fun SpatialPanel(
         view.measure(
             MeasureSpec.makeMeasureSpec(
                 constraints.maxWidth.coerceAtMost(MAX_MEASURE_SPEC_SIZE),
-                MeasureSpec.AT_MOST
+                MeasureSpec.AT_MOST,
             ),
             MeasureSpec.makeMeasureSpec(
                 constraints.maxHeight.coerceAtMost(MAX_MEASURE_SPEC_SIZE),
-                MeasureSpec.AT_MOST
+                MeasureSpec.AT_MOST,
             ),
         )
         val width = view.measuredWidth.coerceIn(constraints.minWidth, constraints.maxWidth)
@@ -255,11 +255,11 @@ private fun <T : View> AndroidViewPanel(
         view.measure(
             MeasureSpec.makeMeasureSpec(
                 constraints.maxWidth.coerceAtMost(MAX_MEASURE_SPEC_SIZE),
-                MeasureSpec.AT_MOST
+                MeasureSpec.AT_MOST,
             ),
             MeasureSpec.makeMeasureSpec(
                 constraints.maxHeight.coerceAtMost(MAX_MEASURE_SPEC_SIZE),
-                MeasureSpec.AT_MOST
+                MeasureSpec.AT_MOST,
             ),
         )
         val width = view.measuredWidth.coerceIn(constraints.minWidth, constraints.maxWidth)

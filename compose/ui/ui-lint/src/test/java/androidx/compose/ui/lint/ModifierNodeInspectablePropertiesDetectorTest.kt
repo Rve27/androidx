@@ -47,7 +47,7 @@ class ModifierNodeInspectablePropertiesDetectorTest : LintDetectorTest() {
                 ),
                 ModifierStub,
                 InspectableValueStub,
-                ModifierNodeElementStub
+                ModifierNodeElementStub,
             )
             .run()
             .expect(
@@ -104,7 +104,7 @@ src/test/Element.kt:8: Information: Element does not override inspectablePropert
                 ),
                 ModifierStub,
                 InspectableValueStub,
-                ModifierNodeElementStub
+                ModifierNodeElementStub,
             )
             .run()
             .expect(
@@ -146,7 +146,7 @@ src/test/ElementWithoutReceiver.kt:9: Information: ElementWithoutReceiver does n
                 ),
                 ModifierStub,
                 InspectableValueStub,
-                ModifierNodeElementStub
+                ModifierNodeElementStub,
             )
             .run()
             .expectClean()
@@ -182,7 +182,7 @@ src/test/ElementWithoutReceiver.kt:9: Information: ElementWithoutReceiver does n
                 ),
                 ModifierStub,
                 InspectableValueStub,
-                ModifierNodeElementStub
+                ModifierNodeElementStub,
             )
             .run()
             .expectClean()

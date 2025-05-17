@@ -47,7 +47,7 @@ public fun LazyVerticalGrid(
     gridCells: GridCells,
     modifier: GlanceModifier = GlanceModifier,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    content: LazyVerticalGridScope.() -> Unit
+    content: LazyVerticalGridScope.() -> Unit,
 ) {
     GlanceNode(
         factory = ::EmittableLazyVerticalGrid,
@@ -59,8 +59,8 @@ public fun LazyVerticalGrid(
         content =
             applyVerticalGridScope(
                 Alignment(horizontalAlignment, Alignment.Vertical.CenterVertically),
-                content
-            )
+                content,
+            ),
     )
 }
 
@@ -84,7 +84,7 @@ public fun LazyVerticalGrid(
     activityOptions: Bundle,
     modifier: GlanceModifier = GlanceModifier,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    content: LazyVerticalGridScope.() -> Unit
+    content: LazyVerticalGridScope.() -> Unit,
 ) {
     GlanceNode(
         factory = ::EmittableLazyVerticalGrid,
@@ -97,14 +97,14 @@ public fun LazyVerticalGrid(
         content =
             applyVerticalGridScope(
                 Alignment(horizontalAlignment, Alignment.Vertical.CenterVertically),
-                content
-            )
+                content,
+            ),
     )
 }
 
 internal fun applyVerticalGridScope(
     alignment: Alignment,
-    content: LazyVerticalGridScope.() -> Unit
+    content: LazyVerticalGridScope.() -> Unit,
 ): @Composable () -> Unit {
     val itemList = mutableListOf<Pair<Long?, @Composable LazyItemScope.() -> Unit>>()
     val listScopeImpl =
@@ -126,7 +126,7 @@ internal fun applyVerticalGridScope(
             override fun items(
                 count: Int,
                 itemId: ((index: Int) -> Long),
-                itemContent: @Composable LazyItemScope.(index: Int) -> Unit
+                itemContent: @Composable LazyItemScope.(index: Int) -> Unit,
             ) {
                 repeat(count) { index -> item(itemId(index)) { itemContent(index) } }
             }
@@ -149,7 +149,7 @@ internal fun applyVerticalGridScope(
 private fun LazyVerticalGridItem(
     itemId: Long,
     alignment: Alignment,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     // We wrap LazyVerticalGridItem in the key composable to ensure that lambda actions declared
     // within each item's scope will get a unique ID based on the currentCompositeKeyHash.
@@ -160,7 +160,7 @@ private fun LazyVerticalGridItem(
                 this.set(itemId) { this.itemId = it }
                 this.set(alignment) { this.alignment = it }
             },
-            content = content
+            content = content,
         )
     }
 }
@@ -193,7 +193,7 @@ public interface LazyVerticalGridScope {
     public fun items(
         count: Int,
         itemId: ((index: Int) -> Long) = { UnspecifiedItemId },
-        itemContent: @Composable LazyItemScope.(index: Int) -> Unit
+        itemContent: @Composable LazyItemScope.(index: Int) -> Unit,
     )
 
     public companion object {
@@ -214,7 +214,7 @@ public interface LazyVerticalGridScope {
 public inline fun <T> LazyVerticalGridScope.items(
     items: List<T>,
     crossinline itemId: ((item: T) -> Long) = { LazyVerticalGridScope.UnspecifiedItemId },
-    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit
+    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit,
 ) = items(items.size, { index: Int -> itemId(items[index]) }) { itemContent(items[it]) }
 
 /**
@@ -232,7 +232,7 @@ public inline fun <T> LazyVerticalGridScope.itemsIndexed(
     crossinline itemId: ((index: Int, item: T) -> Long) = { _, _ ->
         LazyVerticalGridScope.UnspecifiedItemId
     },
-    crossinline itemContent: @Composable LazyItemScope.(index: Int, item: T) -> Unit
+    crossinline itemContent: @Composable LazyItemScope.(index: Int, item: T) -> Unit,
 ) = items(items.size, { index: Int -> itemId(index, items[index]) }) { itemContent(it, items[it]) }
 
 /**
@@ -248,7 +248,7 @@ public inline fun <T> LazyVerticalGridScope.itemsIndexed(
 public inline fun <T> LazyVerticalGridScope.items(
     items: Array<T>,
     noinline itemId: ((item: T) -> Long) = { LazyVerticalGridScope.UnspecifiedItemId },
-    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit
+    crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit,
 ) = items(items.size, { index: Int -> itemId(items[index]) }) { itemContent(items[it]) }
 
 /**
@@ -266,7 +266,7 @@ public inline fun <T> LazyVerticalGridScope.itemsIndexed(
     noinline itemId: ((index: Int, item: T) -> Long) = { _, _ ->
         LazyVerticalGridScope.UnspecifiedItemId
     },
-    crossinline itemContent: @Composable LazyItemScope.(index: Int, item: T) -> Unit
+    crossinline itemContent: @Composable LazyItemScope.(index: Int, item: T) -> Unit,
 ) = items(items.size, { index: Int -> itemId(index, items[index]) }) { itemContent(it, items[it]) }
 
 internal abstract class EmittableLazyVerticalGridList :

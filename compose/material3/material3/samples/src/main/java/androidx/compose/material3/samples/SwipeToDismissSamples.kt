@@ -51,12 +51,12 @@ fun SwipeToDismissListItems() {
                     }
                 )
             Box(Modifier.fillMaxSize().background(color))
-        }
+        },
     ) {
         OutlinedCard(shape = RectangleShape) {
             ListItem(
                 headlineContent = { Text("Cupcake") },
-                supportingContent = { Text("Swipe me left or right!") }
+                supportingContent = { Text("Swipe me left or right!") },
             )
         }
     }

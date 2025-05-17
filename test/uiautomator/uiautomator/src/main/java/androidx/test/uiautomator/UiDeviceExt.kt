@@ -125,7 +125,7 @@ public fun UiDevice.waitForStableInActiveWindow(
                     @Suppress("DEPRECATION") displayManager.getDisplay(displayId).getRectSize(this)
                 }
             takeViewNodeTree(root = node, displayRect = displayRect)
-        }
+        },
     )
 
 /**
@@ -218,7 +218,7 @@ public fun UiDevice.onViewOrNull(
             block = block,
             timeoutMs = timeoutMs,
             pollIntervalMs = pollIntervalMs,
-            rootNodeBlock = { windowRoots }
+            rootNodeBlock = { windowRoots },
         )
         .firstOrNull()
         ?.toUiObject2()
@@ -253,6 +253,6 @@ public fun UiDevice.onViews(
             block = block,
             timeoutMs = timeoutMs,
             pollIntervalMs = pollIntervalMs,
-            rootNodeBlock = { windowRoots }
+            rootNodeBlock = { windowRoots },
         )
         .mapNotNull { it.toUiObject2() }

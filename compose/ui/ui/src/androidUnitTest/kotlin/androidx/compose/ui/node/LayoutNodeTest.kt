@@ -833,11 +833,11 @@ class LayoutNodeTest {
 
         assertEquals(
             layoutNode2.innerCoordinator,
-            layoutNode.innerCoordinator.parentLayoutCoordinates
+            layoutNode.innerCoordinator.parentLayoutCoordinates,
         )
         assertEquals(
             layoutNode2.innerCoordinator,
-            layoutNode.outerCoordinator.parentLayoutCoordinates
+            layoutNode.outerCoordinator.parentLayoutCoordinates,
         )
     }
 
@@ -849,7 +849,7 @@ class LayoutNodeTest {
             object : LayoutModifier {
                 override fun MeasureScope.measure(
                     measurable: Measurable,
-                    constraints: Constraints
+                    constraints: Constraints,
                 ): MeasureResult {
                     TODO("Not yet implemented")
                 }
@@ -1077,7 +1077,7 @@ class LayoutNodeTest {
                     1,
                     1,
                     PointerInputModifierImpl(pointerInputFilter),
-                    DpSize(48.dp, 48.dp)
+                    DpSize(48.dp, 48.dp),
                 )
                 .apply { attach(MockOwner()) }
         val hit = mutableListOf<Modifier.Node>()
@@ -1097,7 +1097,7 @@ class LayoutNodeTest {
                     1000,
                     1,
                     PointerInputModifierImpl(pointerInputFilter),
-                    DpSize(48.dp, 48.dp)
+                    DpSize(48.dp, 48.dp),
                 )
                 .apply { attach(MockOwner()) }
         val hit = mutableListOf<Modifier.Node>()
@@ -1117,7 +1117,7 @@ class LayoutNodeTest {
                     1,
                     1000,
                     PointerInputModifierImpl(pointerInputFilter),
-                    DpSize(48.dp, 48.dp)
+                    DpSize(48.dp, 48.dp),
                 )
                 .apply { attach(MockOwner()) }
         val hit = mutableListOf<Modifier.Node>()
@@ -1138,7 +1138,7 @@ class LayoutNodeTest {
                 1,
                 1,
                 PointerInputModifierImpl(pointerInputFilter),
-                DpSize(48.dp, 48.dp)
+                DpSize(48.dp, 48.dp),
             )
         outerNode.add(layoutNode)
         layoutNode.onNodePlaced()
@@ -1196,7 +1196,7 @@ class LayoutNodeTest {
                 5,
                 5,
                 PointerInputModifierImpl(pointerInputFilter1),
-                DpSize(48.dp, 48.dp)
+                DpSize(48.dp, 48.dp),
             )
 
         val pointerInputFilter2: PointerInputFilter = mockPointerInputFilter()
@@ -1207,7 +1207,7 @@ class LayoutNodeTest {
                 11,
                 11,
                 PointerInputModifierImpl(pointerInputFilter2),
-                DpSize(48.dp, 48.dp)
+                DpSize(48.dp, 48.dp),
             )
         val outerNode = LayoutNode(0, 0, 11, 11).apply { attach(MockOwner()) }
         outerNode.add(layoutNode1)
@@ -1296,7 +1296,7 @@ class LayoutNodeTest {
                 10,
                 10,
                 PointerInputModifierImpl(pointerInputFilter1),
-                DpSize(48.dp, 48.dp)
+                DpSize(48.dp, 48.dp),
             )
 
         val pointerInputFilter2: PointerInputFilter =
@@ -1308,7 +1308,7 @@ class LayoutNodeTest {
                 10,
                 10,
                 PointerInputModifierImpl(pointerInputFilter2),
-                DpSize(48.dp, 48.dp)
+                DpSize(48.dp, 48.dp),
             )
         layoutNode2.add(layoutNode1)
 
@@ -1320,7 +1320,7 @@ class LayoutNodeTest {
                 17,
                 17,
                 PointerInputModifierImpl(pointerInputFilter3),
-                DpSize(48.dp, 48.dp)
+                DpSize(48.dp, 48.dp),
             )
 
         val outerNode = LayoutNode(0, 0, 20, 20).apply { attach(MockOwner()) }
@@ -1354,7 +1354,7 @@ class LayoutNodeTest {
                 5,
                 5,
                 PointerInputModifierImpl(pointerInputFilter1),
-                DpSize(48.dp, 48.dp)
+                DpSize(48.dp, 48.dp),
             )
 
         val pointerInputFilter2: PointerInputFilter = mockPointerInputFilter()
@@ -1365,7 +1365,7 @@ class LayoutNodeTest {
                 9,
                 9,
                 PointerInputModifierImpl(pointerInputFilter2),
-                DpSize(48.dp, 48.dp)
+                DpSize(48.dp, 48.dp),
             )
         val outerNode = LayoutNode(0, 0, 9, 9).apply { attach(MockOwner()) }
         outerNode.add(layoutNode1)
@@ -1563,7 +1563,7 @@ class LayoutNodeTest {
                     1,
                     1,
                     PointerInputModifierImpl(pointerInputFilter),
-                    minimumTouchTargetSize = DpSize(4.dp, 8.dp)
+                    minimumTouchTargetSize = DpSize(4.dp, 8.dp),
                 )
                 .apply { attach(MockOwner()) }
         val hit = mutableListOf<Modifier.Node>()
@@ -1641,7 +1641,7 @@ class LayoutNodeTest {
                         listOf(
                             parentPointerInputFilter,
                             middlePointerInputFilter,
-                            childPointerInputFilter
+                            childPointerInputFilter,
                         )
                     )
             2 ->
@@ -2006,7 +2006,7 @@ class LayoutNodeTest {
                 500,
                 500,
                 PointerInputModifierImpl(pointerInputFilter1) then
-                    PointerInputModifierImpl(pointerInputFilter2)
+                    PointerInputModifierImpl(pointerInputFilter2),
             )
         val layoutNode2: LayoutNode = LayoutNode(2, 7, 500, 500).apply { insertAt(0, layoutNode1) }
         val layoutNode3 =
@@ -2016,7 +2016,7 @@ class LayoutNodeTest {
                     500,
                     500,
                     PointerInputModifierImpl(pointerInputFilter3) then
-                        PointerInputModifierImpl(pointerInputFilter4)
+                        PointerInputModifierImpl(pointerInputFilter4),
                 )
                 .apply { insertAt(0, layoutNode2) }
 
@@ -2046,7 +2046,7 @@ class LayoutNodeTest {
                     pointerInputFilter3,
                     pointerInputFilter4,
                     pointerInputFilter1,
-                    pointerInputFilter2
+                    pointerInputFilter2,
                 )
             )
     }
@@ -2115,7 +2115,7 @@ class LayoutNodeTest {
             LayoutNode(0, 0, 2, 2).apply { attach(MockOwner().apply { measureIteration = 1L }) }
         parent.insertAt(
             0,
-            LayoutNode(0, 0, 2, 2, PointerInputModifierImpl(pointerInputFilter1).zIndex(1f))
+            LayoutNode(0, 0, 2, 2, PointerInputModifierImpl(pointerInputFilter1).zIndex(1f)),
         )
         parent.insertAt(1, LayoutNode(0, 0, 2, 2, PointerInputModifierImpl(pointerInputFilter2)))
         parent.remeasure()
@@ -2179,13 +2179,13 @@ class LayoutNodeTest {
             measureLambda1,
             ((root.outerCoordinator as LayoutModifierNodeCoordinator).layoutModifierNode
                     as LayoutModifierImpl)
-                .measureBlock
+                .measureBlock,
         )
         assertEquals(
             measureLambda2,
             ((root.outerCoordinator.wrapped as LayoutModifierNodeCoordinator).layoutModifierNode
                     as LayoutModifierImpl)
-                .measureBlock
+                .measureBlock,
         )
 
         root.modifier = modifier2.then(modifier1)
@@ -2194,13 +2194,13 @@ class LayoutNodeTest {
             measureLambda1,
             ((root.outerCoordinator.wrapped as LayoutModifierNodeCoordinator).layoutModifierNode
                     as LayoutModifierImpl)
-                .measureBlock
+                .measureBlock,
         )
         assertEquals(
             measureLambda2,
             ((root.outerCoordinator as LayoutModifierNodeCoordinator).layoutModifierNode
                     as LayoutModifierImpl)
-                .measureBlock
+                .measureBlock,
         )
     }
 
@@ -2243,7 +2243,7 @@ class LayoutNodeTest {
             object : DrawModifier, LayoutModifier {
                 override fun MeasureScope.measure(
                     measurable: Measurable,
-                    constraints: Constraints
+                    constraints: Constraints,
                 ): MeasureResult {
                     val placeable = measurable.measure(constraints)
                     return layout(placeable.width, placeable.height) {
@@ -2308,7 +2308,7 @@ class LayoutNodeTest {
 private class EmptyLayoutModifier : LayoutModifier {
     override fun MeasureScope.measure(
         measurable: Measurable,
-        constraints: Constraints
+        constraints: Constraints,
     ): MeasureResult {
         val placeable = measurable.measure(constraints)
         return layout(placeable.width, placeable.height) { placeable.placeRelative(IntOffset.Zero) }
@@ -2321,7 +2321,7 @@ internal class MockOwner(
     override val semanticsOwner: SemanticsOwner =
         SemanticsOwner(root, EmptySemanticsModifier(), intObjectMapOf()),
     override val coroutineContext: CoroutineContext =
-        Executors.newFixedThreadPool(3).asCoroutineDispatcher()
+        Executors.newFixedThreadPool(3).asCoroutineDispatcher(),
 ) : Owner {
     val onRequestMeasureParams = mutableListOf<LayoutNode>()
     val onAttachParams = mutableListOf<LayoutNode>()
@@ -2386,7 +2386,7 @@ internal class MockOwner(
 
     @Deprecated(
         "fontLoader is deprecated, use fontFamilyResolver",
-        replaceWith = ReplaceWith("fontFamilyResolver")
+        replaceWith = ReplaceWith("fontFamilyResolver"),
     )
     @Suppress("DEPRECATION")
     override val fontLoader: Font.ResourceLoader
@@ -2408,7 +2408,7 @@ internal class MockOwner(
         layoutNode: LayoutNode,
         affectsLookahead: Boolean,
         forceRequest: Boolean,
-        scheduleMeasureAndLayout: Boolean
+        scheduleMeasureAndLayout: Boolean,
     ) {
         onRequestMeasureParams += layoutNode
         if (affectsLookahead) {
@@ -2420,7 +2420,7 @@ internal class MockOwner(
     override fun onRequestRelayout(
         layoutNode: LayoutNode,
         affectsLookahead: Boolean,
-        forceRequest: Boolean
+        forceRequest: Boolean,
     ) {
         if (affectsLookahead) {
             layoutNode.markLookaheadLayoutPending()
@@ -2488,7 +2488,7 @@ internal class MockOwner(
         drawBlock: (Canvas, GraphicsLayer?) -> Unit,
         invalidateParentLayer: () -> Unit,
         explicitLayer: GraphicsLayer?,
-        forceUseOldLayers: Boolean
+        forceUseOldLayers: Boolean,
     ): OwnedLayer {
         val transform = Matrix()
         val inverseTransform = Matrix()
@@ -2524,7 +2524,7 @@ internal class MockOwner(
 
             override fun reuseLayer(
                 drawBlock: (Canvas, GraphicsLayer?) -> Unit,
-                invalidateParentLayer: () -> Unit
+                invalidateParentLayer: () -> Unit,
             ) {}
 
             override fun transform(matrix: Matrix) {
@@ -2574,7 +2574,7 @@ internal class MockOwner(
 private fun LayoutNode.hitTest(
     pointerPosition: Offset,
     hitPointerInputFilters: MutableList<Modifier.Node>,
-    pointerType: PointerType = PointerType.Unknown
+    pointerType: PointerType = PointerType.Unknown,
 ) {
     val hitTestResult = HitTestResult()
     hitTest(pointerPosition, hitTestResult, pointerType)
@@ -2588,7 +2588,7 @@ internal fun LayoutNode(
     y2: Int,
     modifier: Modifier = Modifier,
     minimumTouchTargetSize: DpSize = DpSize.Zero,
-    layoutDirection: LayoutDirection = LayoutDirection.Ltr
+    layoutDirection: LayoutDirection = LayoutDirection.Ltr,
 ) =
     LayoutNode().apply {
         this.viewConfiguration =
@@ -2599,7 +2599,7 @@ internal fun LayoutNode(
             object : LayoutNode.NoIntrinsicsMeasurePolicy("not supported") {
                 override fun MeasureScope.measure(
                     measurables: List<Measurable>,
-                    constraints: Constraints
+                    constraints: Constraints,
                 ): MeasureResult =
                     layout(x2 - x, y2 - y) {
                         measurables.forEach { it.measure(constraints).place(0, 0) }
@@ -2622,7 +2622,7 @@ private fun mockPointerInputFilter(interceptChildEvents: Boolean = false): Point
         override fun onPointerEvent(
             pointerEvent: PointerEvent,
             pass: PointerEventPass,
-            bounds: IntSize
+            bounds: IntSize,
         ) {}
 
         override fun onCancel() {}

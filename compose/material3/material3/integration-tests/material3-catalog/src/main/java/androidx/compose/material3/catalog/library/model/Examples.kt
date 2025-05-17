@@ -284,7 +284,7 @@ data class Example(
     val description: String,
     val sourceUrl: String,
     val isExpressive: Boolean,
-    val content: @Composable () -> Unit
+    val content: @Composable () -> Unit,
 )
 
 private const val AdaptiveExampleDescription = "Adaptive examples"
@@ -314,7 +314,7 @@ val AdaptiveExamples =
             isExpressive = false,
         ) {
             NavigableListDetailPaneScaffoldSample()
-        }
+        },
     )
 
 private const val BadgeExampleDescription = "Badge examples"
@@ -358,7 +358,7 @@ val BottomSheetExamples =
             isExpressive = false,
         ) {
             BottomSheetScaffoldNestedScrollSample()
-        }
+        },
     )
 
 private const val ButtonsExampleDescription = "Button examples"
@@ -592,7 +592,7 @@ val CardExamples =
             isExpressive = false,
         ) {
             ClickableOutlinedCardSample()
-        }
+        },
     )
 
 private const val CarouselExampleDescription = "Carousel examples"
@@ -622,7 +622,7 @@ val CarouselExamples =
             isExpressive = false,
         ) {
             FadingHorizontalMultiBrowseCarouselSample()
-        }
+        },
     )
 
 private const val CheckboxesExampleDescription = "Checkboxes examples"
@@ -762,7 +762,7 @@ val ChipsExamples =
             isExpressive = false,
         ) {
             ChipGroupReflowSample()
-        }
+        },
     )
 
 private const val DatePickerExampleDescription = "Date picker examples"
@@ -916,7 +916,7 @@ val BottomAppBarsExamples =
             isExpressive = true,
         ) {
             ExitAlwaysBottomAppBarFixedVibrant()
-        }
+        },
     )
 
 private const val TopAppBarExampleDescription = "Top app bar examples"
@@ -1262,7 +1262,7 @@ val FloatingActionButtonsExamples =
             isExpressive = false,
         ) {
             SmallFloatingActionButtonSample()
-        }
+        },
     )
 
 private const val FloatingActionButtonMenuExampleDescription = "FAB Menu examples"
@@ -1277,7 +1277,7 @@ val FloatingActionButtonMenuExamples =
             isExpressive = true,
         ) {
             FloatingActionButtonMenuSample()
-        },
+        }
     )
 
 private const val ListsExampleDescription = "List examples"
@@ -1417,7 +1417,7 @@ val IconButtonExamples =
             isExpressive = true,
         ) {
             LargeRoundUniformOutlinedIconButtonSample()
-        }
+        },
     )
 
 private const val LoadingIndicatorsExampleDescription = "Loading indicators examples"
@@ -1656,7 +1656,7 @@ val NavigationDrawerExamples =
             isExpressive = false,
         ) {
             DismissibleNavigationDrawerSample()
-        }
+        },
     )
 
 private const val NavigationSuiteScaffoldExampleDescription = "Navigation suite scaffold examples"
@@ -1750,7 +1750,7 @@ val ProgressIndicatorsExamples =
             isExpressive = true,
         ) {
             IndeterminateCircularWavyProgressIndicatorSample()
-        }
+        },
     )
 
 private const val PullToRefreshExampleDescription = "Pull-to-refresh examples"
@@ -1856,7 +1856,7 @@ val SearchBarExamples =
             isExpressive = false,
         ) {
             DockedSearchBarScaffoldSample()
-        }
+        },
     )
 
 private const val SegmentedButtonExampleDescription = "Segmented Button examples"
@@ -2058,7 +2058,7 @@ val SlidersExamples =
             isExpressive = false,
         ) {
             RangeSliderWithCustomComponents()
-        }
+        },
     )
 
 private const val SnackbarsExampleDescription = "Snackbars examples"
@@ -2104,7 +2104,7 @@ val SnackbarsExamples =
             isExpressive = false,
         ) {
             ScaffoldWithMultilineSnackbar()
-        }
+        },
     )
 
 private const val SplitButtonExampleDescription = "Split Button examples"
@@ -2330,7 +2330,7 @@ val TabsExamples =
             isExpressive = false,
         ) {
             ScrollingFancyIndicatorContainerTabs()
-        }
+        },
     )
 
 private const val TimePickerDescription = "Time Picker examples"
@@ -2478,7 +2478,7 @@ val TextFieldsExamples =
                 isExpressive = false,
             ) {
                 TextArea()
-            }
+            },
         )
         .map {
             // By default text field samples are minimal and don't have a `width` modifier to
@@ -2555,5 +2555,5 @@ val TooltipsExamples =
             isExpressive = false,
         ) {
             RichTooltipWithCustomCaretSample()
-        }
+        },
     )

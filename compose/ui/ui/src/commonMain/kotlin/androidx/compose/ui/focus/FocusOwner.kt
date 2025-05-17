@@ -68,7 +68,7 @@ internal interface FocusOwner : FocusManager {
     fun focusSearch(
         focusDirection: FocusDirection,
         focusedRect: Rect?,
-        onFound: (FocusTargetNode) -> Boolean
+        onFound: (FocusTargetNode) -> Boolean,
     ): Boolean?
 
     /**
@@ -111,7 +111,7 @@ internal interface FocusOwner : FocusManager {
         force: Boolean,
         refreshFocusEvents: Boolean,
         clearOwnerFocus: Boolean,
-        focusDirection: FocusDirection
+        focusDirection: FocusDirection,
     ): Boolean
 
     /** Searches for the currently focused item, and returns its coordinates as a rect. */
@@ -137,14 +137,14 @@ internal interface FocusOwner : FocusManager {
     /** Dispatches a rotary scroll event through the compose hierarchy. */
     fun dispatchRotaryEvent(
         event: RotaryScrollEvent,
-        onFocusedItem: () -> Boolean = { false }
+        onFocusedItem: () -> Boolean = { false },
     ): Boolean
 
     /** Dispatches an indirect touch event through the compose hierarchy. */
     @ExperimentalComposeUiApi
     fun dispatchIndirectTouchEvent(
         event: IndirectTouchEvent,
-        onFocusedItem: () -> Boolean = { false }
+        onFocusedItem: () -> Boolean = { false },
     ): Boolean
 
     /** Schedule a FocusTarget node to be invalidated after onApplyChanges. */

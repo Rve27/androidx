@@ -28,7 +28,7 @@ internal fun waitForStableInternal(
     stableIntervalMs: Long,
     stablePollIntervalMs: Long,
     bitmapProvider: () -> (Bitmap?),
-    rootViewNodeProvider: () -> (ViewNode)
+    rootViewNodeProvider: () -> (ViewNode),
 ): StableResult {
 
     // Setting up states pre-iterations
@@ -77,6 +77,6 @@ internal fun waitForStableInternal(
     return StableResult(
         node = stableRootNode.accessibilityNodeInfo,
         screenshot = stableBitmap,
-        isTimeout = timeoutClock.timeout
+        isTimeout = timeoutClock.timeout,
     )
 }

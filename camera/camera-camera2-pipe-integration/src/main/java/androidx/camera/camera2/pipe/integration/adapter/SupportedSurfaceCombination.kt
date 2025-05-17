@@ -88,7 +88,7 @@ import kotlin.math.min
 public class SupportedSurfaceCombination(
     context: Context,
     private val cameraMetadata: CameraMetadata,
-    private val encoderProfilesProvider: EncoderProfilesProvider
+    private val encoderProfilesProvider: EncoderProfilesProvider,
 ) {
     private val cameraId = cameraMetadata.camera.value
     private val hardwareLevel =
@@ -176,7 +176,7 @@ public class SupportedSurfaceCombination(
 
     private fun getOrderedSupportedStreamUseCaseSurfaceConfigList(
         featureSettings: FeatureSettings,
-        surfaceConfigList: List<SurfaceConfig?>?
+        surfaceConfigList: List<SurfaceConfig?>?,
     ): List<SurfaceConfig>? {
         if (!StreamUseCaseUtil.shouldUseStreamUseCase(featureSettings)) {
             return null
@@ -249,7 +249,7 @@ public class SupportedSurfaceCombination(
     public fun transformSurfaceConfig(
         cameraMode: Int,
         imageFormat: Int,
-        size: Size
+        size: Size,
     ): SurfaceConfig {
         return SurfaceConfig.transformSurfaceConfig(
             cameraMode,
@@ -257,7 +257,7 @@ public class SupportedSurfaceCombination(
             size,
             getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
             // FEATURE_COMBINATION_TABLE N/A for the code flows leading to this call
-            CAPTURE_SESSION_TABLES
+            CAPTURE_SESSION_TABLES,
         )
     }
 
@@ -290,7 +290,7 @@ public class SupportedSurfaceCombination(
         val targetHighSpeedFpsRange =
             HighSpeedResolver.getTargetHighSpeedFrameRate(
                 attachedSurfaces,
-                newUseCaseConfigsSupportedSizeMap.keys
+                newUseCaseConfigsSupportedSizeMap.keys,
             )
 
         val isHighSpeedOn = targetHighSpeedFpsRange != FRAME_RATE_RANGE_UNSPECIFIED
@@ -311,7 +311,7 @@ public class SupportedSurfaceCombination(
             dynamicRangeResolver.resolveAndValidateDynamicRanges(
                 attachedSurfaces,
                 newUseCaseConfigs,
-                useCasesPriorityOrder
+                useCasesPriorityOrder,
             )
         val isUltraHdrOn = isUltraHdrOn(attachedSurfaces, filteredNewUseCaseConfigsSupportedSizeMap)
 
@@ -348,7 +348,7 @@ public class SupportedSurfaceCombination(
             filteredNewUseCaseConfigsSupportedSizeMap,
             newUseCaseConfigs,
             useCasesPriorityOrder,
-            resolvedDynamicRanges
+            resolvedDynamicRanges,
         )
     }
 
@@ -379,7 +379,7 @@ public class SupportedSurfaceCombination(
         filteredNewUseCaseConfigsSupportedSizeMap: Map<UseCaseConfig<*>, List<Size>>,
         newUseCaseConfigs: List<UseCaseConfig<*>>,
         useCasesPriorityOrder: List<Int>,
-        resolvedDynamicRanges: Map<UseCaseConfig<*>, DynamicRange>
+        resolvedDynamicRanges: Map<UseCaseConfig<*>, DynamicRange>,
     ): Pair<Map<UseCaseConfig<*>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>> {
         return when (checkingMethod) {
             WITHOUT_FEATURE_COMBO ->
@@ -453,7 +453,7 @@ public class SupportedSurfaceCombination(
             isUseCasesCombinationSupported(
                 featureSettings,
                 attachedSurfaces,
-                filteredNewUseCaseConfigsSupportedSizeMap
+                filteredNewUseCaseConfigsSupportedSizeMap,
             )
 
         // TODO: b/414489781 - Return early even with feature combo source for possible
@@ -475,7 +475,7 @@ public class SupportedSurfaceCombination(
             getSupportedOutputSizesList(
                 useCaseConfigToFilteredSupportedSizesMap,
                 newUseCaseConfigs,
-                useCasesPriorityOrder
+                useCasesPriorityOrder,
             )
         // The two maps are used to keep track of the attachedSurfaceInfo or useCaseConfigs the
         // surfaceConfigs are made from. They are populated in getSurfaceConfigListAndFpsCeiling().
@@ -504,7 +504,7 @@ public class SupportedSurfaceCombination(
                     featureSettings,
                     isSurfaceCombinationSupported,
                     surfaceConfigIndexAttachedSurfaceInfoMap,
-                    surfaceConfigIndexUseCaseConfigMap
+                    surfaceConfigIndexUseCaseConfigMap,
                 )
         }
 
@@ -537,7 +537,7 @@ public class SupportedSurfaceCombination(
                 useCasesPriorityOrder,
                 resolvedDynamicRanges,
                 featureSettings.hasVideoCapture,
-                featureSettings.isHighSpeedOn
+                featureSettings.isHighSpeedOn,
             )
         val attachedSurfaceStreamSpecMap = mutableMapOf<AttachedSurfaceInfo, StreamSpec>()
 
@@ -548,7 +548,7 @@ public class SupportedSurfaceCombination(
             attachedSurfaceStreamSpecMap,
             suggestedStreamSpecMap,
             surfaceConfigIndexAttachedSurfaceInfoMap,
-            surfaceConfigIndexUseCaseConfigMap
+            surfaceConfigIndexUseCaseConfigMap,
         )
 
         return Pair.create(suggestedStreamSpecMap, attachedSurfaceStreamSpecMap)
@@ -559,7 +559,7 @@ public class SupportedSurfaceCombination(
         fps: Range<Int>?,
         isPreviewStabilizationOn: Boolean,
         isUltraHdrOn: Boolean,
-        allowFeatureCombinationResolutions: Boolean
+        allowFeatureCombinationResolutions: Boolean,
     ): CheckingMethod {
         if (!allowFeatureCombinationResolutions) {
             return WITHOUT_FEATURE_COMBO
@@ -601,7 +601,7 @@ public class SupportedSurfaceCombination(
         isUltraHdrOn: Boolean,
         isHighSpeedOn: Boolean,
         requiresFeatureComboQuery: Boolean,
-        targetFpsRange: Range<Int>?
+        targetFpsRange: Range<Int>?,
     ): FeatureSettings {
         val requiredMaxBitDepth = getRequiredMaxBitDepth(resolvedDynamicRanges)
 
@@ -613,7 +613,7 @@ public class SupportedSurfaceCombination(
                 isUltraHdrOn,
                 isHighSpeedOn,
                 requiresFeatureComboQuery,
-                targetFpsRange
+                targetFpsRange,
             )
             .validateSelf()
     }
@@ -671,7 +671,7 @@ public class SupportedSurfaceCombination(
     private fun isUseCasesCombinationSupported(
         featureSettings: FeatureSettings,
         attachedSurfaces: List<AttachedSurfaceInfo>,
-        newUseCaseConfigsSupportedSizeMap: Map<UseCaseConfig<*>, List<Size>>
+        newUseCaseConfigsSupportedSizeMap: Map<UseCaseConfig<*>, List<Size>>,
     ): Boolean {
         val surfaceConfigs = mutableListOf<SurfaceConfig>()
 
@@ -697,7 +697,7 @@ public class SupportedSurfaceCombination(
                     minSize,
                     getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
                     // FEATURE_COMBINATION_TABLE not needed for the code flows leading to this call
-                    CAPTURE_SESSION_TABLES
+                    CAPTURE_SESSION_TABLES,
                 )
             )
         }
@@ -721,7 +721,7 @@ public class SupportedSurfaceCombination(
         featureSettings: FeatureSettings,
         isSurfaceCombinationSupported: Boolean,
         surfaceConfigIndexAttachedSurfaceInfoMap: MutableMap<Int, AttachedSurfaceInfo>,
-        surfaceConfigIndexUseCaseConfigMap: MutableMap<Int, UseCaseConfig<*>>
+        surfaceConfigIndexUseCaseConfigMap: MutableMap<Int, UseCaseConfig<*>>,
     ): List<SurfaceConfig>? {
         var orderedSurfaceConfigListForStreamUseCase: List<SurfaceConfig>? = null
         // Check if any possible size arrangement is supported for stream use case.
@@ -735,7 +735,7 @@ public class SupportedSurfaceCombination(
                     useCasesPriorityOrder,
                     surfaceConfigIndexAttachedSurfaceInfoMap,
                     surfaceConfigIndexUseCaseConfigMap,
-                    false
+                    false,
                 )
             orderedSurfaceConfigListForStreamUseCase =
                 getOrderedSupportedStreamUseCaseSurfaceConfigList(featureSettings, surfaceConfigs)
@@ -744,7 +744,7 @@ public class SupportedSurfaceCombination(
                     !StreamUseCaseUtil.areCaptureTypesEligible(
                         surfaceConfigIndexAttachedSurfaceInfoMap,
                         surfaceConfigIndexUseCaseConfigMap,
-                        orderedSurfaceConfigListForStreamUseCase
+                        orderedSurfaceConfigListForStreamUseCase,
                     )
             ) {
                 orderedSurfaceConfigListForStreamUseCase = null
@@ -754,7 +754,7 @@ public class SupportedSurfaceCombination(
                     if (
                         StreamUseCaseUtil.areStreamUseCasesAvailableForSurfaceConfigs(
                             cameraMetadata,
-                            orderedSurfaceConfigListForStreamUseCase
+                            orderedSurfaceConfigListForStreamUseCase,
                         )
                     ) {
                         break
@@ -790,7 +790,7 @@ public class SupportedSurfaceCombination(
         attachedSurfaceStreamSpecMap: MutableMap<AttachedSurfaceInfo, StreamSpec>,
         suggestedStreamSpecMap: MutableMap<UseCaseConfig<*>, StreamSpec>,
         surfaceConfigIndexAttachedSurfaceInfoMap: MutableMap<Int, AttachedSurfaceInfo>,
-        surfaceConfigIndexUseCaseConfigMap: MutableMap<Int, UseCaseConfig<*>>
+        surfaceConfigIndexUseCaseConfigMap: MutableMap<Int, UseCaseConfig<*>>,
     ) {
         // Only perform stream use case operations if the saved max FPS and sizes are the same
         if (
@@ -809,7 +809,7 @@ public class SupportedSurfaceCombination(
                         cameraMetadata,
                         attachedSurfaces,
                         suggestedStreamSpecMap,
-                        attachedSurfaceStreamSpecMap
+                        attachedSurfaceStreamSpecMap,
                     )
                 if (!hasStreamUseCaseOverride) {
                     StreamUseCaseUtil
@@ -818,7 +818,7 @@ public class SupportedSurfaceCombination(
                             attachedSurfaceStreamSpecMap,
                             surfaceConfigIndexAttachedSurfaceInfoMap,
                             surfaceConfigIndexUseCaseConfigMap,
-                            orderedSurfaceConfigListForStreamUseCase
+                            orderedSurfaceConfigListForStreamUseCase,
                         )
                 }
             }
@@ -838,7 +838,7 @@ public class SupportedSurfaceCombination(
             supportedOutputSizes =
                 applyResolutionSelectionOrderRelatedWorkarounds(
                     supportedOutputSizes,
-                    newUseCaseConfigs[index].inputFormat
+                    newUseCaseConfigs[index].inputFormat,
                 )
             supportedOutputSizesList.add(supportedOutputSizes)
         }
@@ -848,7 +848,7 @@ public class SupportedSurfaceCombination(
     private fun getTargetFpsRange(
         attachedSurfaces: List<AttachedSurfaceInfo>,
         newUseCaseConfigs: List<UseCaseConfig<*>>,
-        useCasesPriorityOrder: List<Int>
+        useCasesPriorityOrder: List<Int>,
     ): Range<Int>? {
         var targetFrameRateForConfig: Range<Int>? = null
         for (attachedSurfaceInfo in attachedSurfaces) {
@@ -856,7 +856,7 @@ public class SupportedSurfaceCombination(
             targetFrameRateForConfig =
                 getUpdatedTargetFrameRate(
                     attachedSurfaceInfo.targetFrameRate,
-                    targetFrameRateForConfig
+                    targetFrameRateForConfig,
                 )
         }
         // update target fps for new configs using new use cases' priority order
@@ -864,7 +864,7 @@ public class SupportedSurfaceCombination(
             targetFrameRateForConfig =
                 getUpdatedTargetFrameRate(
                     newUseCaseConfigs[index].getTargetFrameRate(null),
-                    targetFrameRateForConfig
+                    targetFrameRateForConfig,
                 )
         }
         return targetFrameRateForConfig
@@ -872,7 +872,7 @@ public class SupportedSurfaceCombination(
 
     private fun getMaxSupportedFpsFromAttachedSurfaces(
         attachedSurfaces: List<AttachedSurfaceInfo>,
-        isHighSpeedOn: Boolean
+        isHighSpeedOn: Boolean,
     ): Int {
         var existingSurfaceFrameRateCeiling = Int.MAX_VALUE
         for (attachedSurfaceInfo in attachedSurfaces) {
@@ -882,7 +882,7 @@ public class SupportedSurfaceCombination(
                     existingSurfaceFrameRateCeiling,
                     attachedSurfaceInfo.imageFormat,
                     attachedSurfaceInfo.size,
-                    isHighSpeedOn
+                    isHighSpeedOn,
                 )
         }
         return existingSurfaceFrameRateCeiling
@@ -911,7 +911,7 @@ public class SupportedSurfaceCombination(
                     size,
                     imageFormat,
                     configSizeUniqueMaxFpsMap,
-                    reducedSizeList
+                    reducedSizeList,
                 )
             }
             filteredUseCaseConfigToSupportedSizesMap[useCaseConfig] = reducedSizeList
@@ -924,7 +924,7 @@ public class SupportedSurfaceCombination(
         size: Size,
         imageFormat: Int,
         configSizeUniqueMaxFpsMap: MutableMap<ConfigSize, MutableSet<Int>>,
-        reducedSizeList: MutableList<Size>
+        reducedSizeList: MutableList<Size>,
     ) {
         val configSize =
             SurfaceConfig.transformSurfaceConfig(
@@ -936,7 +936,7 @@ public class SupportedSurfaceCombination(
                         FEATURE_COMBINATION_TABLE
                     } else {
                         CAPTURE_SESSION_TABLES
-                    }
+                    },
                 )
                 .configSize
 
@@ -1026,7 +1026,7 @@ public class SupportedSurfaceCombination(
                     useCasesPriorityOrder,
                     null,
                     null,
-                    featureSettings.requiresFeatureComboQuery
+                    featureSettings.requiresFeatureComboQuery,
                 )
             val currentConfigFrameRateCeiling =
                 getCurrentConfigFrameRateCeiling(
@@ -1034,7 +1034,7 @@ public class SupportedSurfaceCombination(
                     newUseCaseConfigs,
                     useCasesPriorityOrder,
                     existingSurfaceFrameRateCeiling,
-                    featureSettings.isHighSpeedOn
+                    featureSettings.isHighSpeedOn,
                 )
             var isConfigFrameRateAcceptable = true
             if (featureSettings.targetFpsRange != null) {
@@ -1092,7 +1092,7 @@ public class SupportedSurfaceCombination(
                     !supportedSizesForStreamUseCaseFound &&
                     getOrderedSupportedStreamUseCaseSurfaceConfigList(
                         featureSettings,
-                        surfaceConfigList
+                        surfaceConfigList,
                     ) != null
             ) {
                 if (maxFpsForStreamUseCase == Int.MAX_VALUE) {
@@ -1121,7 +1121,7 @@ public class SupportedSurfaceCombination(
             bestSizes,
             bestSizesForStreamUseCase,
             maxFps,
-            maxFpsForStreamUseCase
+            maxFpsForStreamUseCase,
         )
     }
 
@@ -1132,7 +1132,7 @@ public class SupportedSurfaceCombination(
         useCasesPriorityOrder: List<Int>,
         resolvedDynamicRanges: Map<UseCaseConfig<*>, DynamicRange>,
         hasVideoCapture: Boolean,
-        isHighSpeedOn: Boolean
+        isHighSpeedOn: Boolean,
     ): MutableMap<UseCaseConfig<*>, StreamSpec> {
         val suggestedStreamSpecMap = mutableMapOf<UseCaseConfig<*>, StreamSpec>()
         var targetFrameRateForDevice: Range<Int>? = null
@@ -1148,7 +1148,7 @@ public class SupportedSurfaceCombination(
                 getClosestSupportedDeviceFrameRate(
                     targetFpsRange,
                     bestSizesAndMaxFps.maxFps,
-                    availableFpsRanges
+                    availableFpsRanges,
                 )
         }
         for ((index, useCaseConfig) in newUseCaseConfigs.withIndex()) {
@@ -1218,7 +1218,7 @@ public class SupportedSurfaceCombination(
                         FEATURE_COMBINATION_TABLE
                     } else {
                         CAPTURE_SESSION_TABLES
-                    }
+                    },
                 )
             surfaceConfigList.add(surfaceConfig)
             if (surfaceConfigIndexUseCaseConfigMap != null) {
@@ -1233,7 +1233,7 @@ public class SupportedSurfaceCombination(
         newUseCaseConfigs: List<UseCaseConfig<*>>,
         useCasesPriorityOrder: List<Int>,
         currentConfigFrameRateCeiling: Int,
-        isHighSpeedOn: Boolean
+        isHighSpeedOn: Boolean,
     ): Int {
         var newConfigFrameRateCeiling: Int = currentConfigFrameRateCeiling
         // Attach SurfaceConfig of new use cases
@@ -1246,7 +1246,7 @@ public class SupportedSurfaceCombination(
                     newConfigFrameRateCeiling,
                     newUseCase.inputFormat,
                     size,
-                    isHighSpeedOn
+                    isHighSpeedOn,
                 )
         }
         return newConfigFrameRateCeiling
@@ -1307,7 +1307,7 @@ public class SupportedSurfaceCombination(
     private fun compareIntersectingRanges(
         targetFps: Range<Int>,
         storedRange: Range<Int>,
-        newRange: Range<Int>
+        newRange: Range<Int>,
     ): Range<Int> {
         // TODO(b/272075984): some ranges may may have a larger intersection but may also have an
         //  excessively large portion that is non-intersecting. Will want to do further
@@ -1353,7 +1353,7 @@ public class SupportedSurfaceCombination(
     private fun getClosestSupportedDeviceFrameRate(
         targetFrameRate: Range<Int>,
         maxFps: Int,
-        availableFpsRanges: Array<out Range<Int>>?
+        availableFpsRanges: Array<out Range<Int>>?,
     ): Range<Int> {
         if (targetFrameRate == StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED) {
             return StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
@@ -1438,7 +1438,7 @@ public class SupportedSurfaceCombination(
      */
     private fun getUpdatedTargetFrameRate(
         newTargetFrameRate: Range<Int>?,
-        storedTargetFrameRate: Range<Int>?
+        storedTargetFrameRate: Range<Int>?,
     ): Range<Int>? {
         var updatedTarget = storedTargetFrameRate
         if (storedTargetFrameRate == null) {
@@ -1467,7 +1467,7 @@ public class SupportedSurfaceCombination(
         currentMaxFps: Int,
         imageFormat: Int,
         size: Size,
-        isHighSpeedOn: Boolean
+        isHighSpeedOn: Boolean,
     ): Int {
         return min(currentMaxFps, getMaxFrameRate(imageFormat, size, isHighSpeedOn))
     }
@@ -1487,7 +1487,7 @@ public class SupportedSurfaceCombination(
     @VisibleForTesting
     public fun applyResolutionSelectionOrderRelatedWorkarounds(
         sizeList: List<Size>,
-        imageFormat: Int
+        imageFormat: Int,
     ): List<Size> {
         // Applies TargetAspectRatio workaround
         val ratio: Rational? =
@@ -1519,7 +1519,7 @@ public class SupportedSurfaceCombination(
         // Applies ResolutionCorrector workaround and return the result list.
         return resolutionCorrector.insertOrPrioritize(
             SurfaceConfig.getConfigType(imageFormat),
-            resultList
+            resultList,
         )
     }
 
@@ -1541,7 +1541,7 @@ public class SupportedSurfaceCombination(
                     surfaceSizeDefinition.s1440pSizeMap,
                     surfaceSizeDefinition.recordSize,
                     surfaceSizeDefinition.maximumSizeMap,
-                    surfaceSizeDefinition.ultraMaximumSizeMap
+                    surfaceSizeDefinition.ultraMaximumSizeMap,
                 )
         }
     }
@@ -1582,7 +1582,7 @@ public class SupportedSurfaceCombination(
             GuaranteedConfigurationsUtil.generateSupportedCombinationList(
                 hardwareLevel,
                 isRawSupported,
-                isBurstCaptureSupported
+                isBurstCaptureSupported,
             )
         )
         surfaceCombinations.addAll(extraSupportedSurfaceCombinationsContainer[cameraId])
@@ -1618,7 +1618,7 @@ public class SupportedSurfaceCombination(
                     maxSize,
                     getUpdatedSurfaceSizeDefinitionByFormat(
                         ImageFormatConstants.INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE
-                    )
+                    ),
                 )
             )
         }
@@ -1659,7 +1659,7 @@ public class SupportedSurfaceCombination(
                 mutableMapOf(), // s1440pSizeMap
                 recordSize,
                 mutableMapOf(), // maximumSizeMap
-                mutableMapOf() // ultraMaximumSizeMap
+                mutableMapOf(), // ultraMaximumSizeMap
             )
     }
 
@@ -1670,12 +1670,12 @@ public class SupportedSurfaceCombination(
             updateS720pOrS1440pSizeByFormat(
                 surfaceSizeDefinition.s720pSizeMap,
                 RESOLUTION_720P,
-                format
+                format,
             )
             updateS720pOrS1440pSizeByFormat(
                 surfaceSizeDefinition.s1440pSizeMap,
                 RESOLUTION_1440P,
-                format
+                format,
             )
             updateMaximumSizeByFormat(surfaceSizeDefinition.maximumSizeMap, format)
             updateUltraMaximumSizeByFormat(surfaceSizeDefinition.ultraMaximumSizeMap, format)
@@ -1701,7 +1701,7 @@ public class SupportedSurfaceCombination(
     private fun updateS720pOrS1440pSizeByFormat(
         sizeMap: MutableMap<Int, Size>,
         targetSize: Size,
-        format: Int
+        format: Int,
     ) {
         if (!isConcurrentCameraModeSupported) {
             return
@@ -1808,7 +1808,7 @@ public class SupportedSurfaceCombination(
                 CamcorderProfile.QUALITY_2K,
                 CamcorderProfile.QUALITY_1080P,
                 CamcorderProfile.QUALITY_720P,
-                CamcorderProfile.QUALITY_480P
+                CamcorderProfile.QUALITY_480P,
             )
 
         for (quality in qualities) {
@@ -1862,7 +1862,7 @@ public class SupportedSurfaceCombination(
     internal fun getMaxOutputSizeByFormat(
         map: StreamConfigurationMap?,
         imageFormat: Int,
-        highResolutionIncluded: Boolean
+        highResolutionIncluded: Boolean,
     ): Size? {
         val outputSizes: Array<Size>? =
             runCatching {
@@ -1968,26 +1968,26 @@ public class SupportedSurfaceCombination(
         val isUltraHdrOn: Boolean = false,
         val isHighSpeedOn: Boolean = false,
         val requiresFeatureComboQuery: Boolean = false,
-        val targetFpsRange: Range<Int>? = null
+        val targetFpsRange: Range<Int>? = null,
     )
 
     public data class BestSizesAndMaxFpsForConfigs(
         val bestSizes: List<Size>,
         val bestSizesForStreamUseCase: List<Size>?,
         val maxFps: Int,
-        val maxFpsForStreamUseCase: Int
+        val maxFpsForStreamUseCase: Int,
     )
 
     internal enum class CheckingMethod {
         WITHOUT_FEATURE_COMBO,
         WITH_FEATURE_COMBO,
-        WITHOUT_FEATURE_COMBO_FIRST_AND_THEN_WITH_IT
+        WITHOUT_FEATURE_COMBO_FIRST_AND_THEN_WITH_IT,
     }
 
     public companion object {
         private fun isUltraHdrOn(
             attachedSurfaces: List<AttachedSurfaceInfo>,
-            newUseCaseConfigsSupportedSizeMap: Map<UseCaseConfig<*>, List<Size>>
+            newUseCaseConfigsSupportedSizeMap: Map<UseCaseConfig<*>, List<Size>>,
         ): Boolean {
             for (surfaceInfo in attachedSurfaces) {
                 if (surfaceInfo.imageFormat == ImageFormat.JPEG_R) {

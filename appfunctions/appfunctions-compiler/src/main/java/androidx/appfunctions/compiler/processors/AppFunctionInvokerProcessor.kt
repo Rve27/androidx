@@ -154,7 +154,7 @@ class AppFunctionInvokerProcessor(private val codeGenerator: CodeGenerator) : Sy
                     sources = appFunctionClass.getSourceFiles().toTypedArray(),
                 ),
                 originalPackageName,
-                invokerClassName
+                invokerClassName,
             )
             .bufferedWriter()
             .use { fileSpec.writeTo(it) }
@@ -192,13 +192,13 @@ class AppFunctionInvokerProcessor(private val codeGenerator: CodeGenerator) : Sy
         val contextSpec =
             ParameterSpec.builder(
                     AppFunctionInvokerClass.UnsafeInvokeMethod.APPLICATION_CONTEXT_PARAM_NAME,
-                    AppFunctionContextClass.CLASS_NAME
+                    AppFunctionContextClass.CLASS_NAME,
                 )
                 .build()
         val functionIdentifierSpec =
             ParameterSpec.builder(
                     AppFunctionInvokerClass.UnsafeInvokeMethod.FUNCTION_ID_PARAM_NAME,
-                    String::class
+                    String::class,
                 )
                 .build()
         val functionParametersSpec =
@@ -278,7 +278,7 @@ class AppFunctionInvokerProcessor(private val codeGenerator: CodeGenerator) : Sy
                 "create_method" to
                     ConfigurableAppFunctionFactoryClass.CreateEnclosingClassMethod.METHOD_NAME,
                 "function_name" to appFunction.simpleName.asString(),
-                "parameters" to functionParameterStatement
+                "parameters" to functionParameterStatement,
             )
         addNamed("\"%function_id:L\" -> {\n", formatStringMap)
         indent()

@@ -33,7 +33,7 @@ internal class BackgroundPainter(
     internal val transformState: DrawScope.() -> TransformationState,
     internal val shape: Shape,
     private val border: BorderStroke?,
-    private val backgroundPainter: Painter
+    private val backgroundPainter: Painter,
 ) : Painter() {
     override val intrinsicSize: Size
         get() = Size.Unspecified
@@ -52,7 +52,7 @@ internal class BackgroundPainter(
                     shape.createOutline(
                         Size(contentWidth, placementHeight),
                         layoutDirection,
-                        this@onDraw
+                        this@onDraw,
                     )
 
                 if (shapeOutline != previousOutline) {
@@ -69,7 +69,7 @@ internal class BackgroundPainter(
                             outline = shapeOutline,
                             brush = border.brush,
                             alpha = it.containerAlpha,
-                            style = Stroke((border.width.toPx() * it.scale).coerceAtLeast(1f))
+                            style = Stroke((border.width.toPx() * it.scale).coerceAtLeast(1f)),
                         )
                     }
                     with(backgroundPainter) {

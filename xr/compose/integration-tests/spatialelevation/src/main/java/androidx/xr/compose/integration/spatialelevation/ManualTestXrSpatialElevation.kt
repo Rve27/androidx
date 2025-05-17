@@ -165,7 +165,7 @@ private fun App() {
                     Text(
                         text = contentText,
                         modifier = Modifier.padding(16.dp),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
                 }
             }

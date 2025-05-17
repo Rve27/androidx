@@ -27,10 +27,7 @@ import androidx.credentials.internal.RequestValidationHelper
  *   string representing the request
  */
 @ExperimentalDigitalCredentialApi
-class CreateDigitalCredentialRequest
-constructor(
-    val requestJson: String,
-) :
+class CreateDigitalCredentialRequest constructor(val requestJson: String) :
     CreateCredentialRequest(
         type = DigitalCredential.TYPE_DIGITAL_CREDENTIAL,
         credentialData = toBundle(requestJson),
@@ -39,7 +36,7 @@ constructor(
         isSystemProviderRequired = false,
         isAutoSelectAllowed = false,
         origin = null,
-        preferImmediatelyAvailableCredentials = false
+        preferImmediatelyAvailableCredentials = false,
     ) {
 
     init {

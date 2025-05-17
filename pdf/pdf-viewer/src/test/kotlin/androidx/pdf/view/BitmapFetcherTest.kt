@@ -70,7 +70,7 @@ class BitmapFetcherTest {
                 testScope,
                 maxBitmapSizePx,
                 invalidationTracker,
-                errorFlow
+                errorFlow,
             )
         tileSizePx = BitmapFetcher.tileSizePx
     }
@@ -105,7 +105,7 @@ class BitmapFetcherTest {
         // 1.5 scale, viewing the lower right half of the page
         bitmapFetcher.maybeFetchNewBitmaps(
             1.5f,
-            viewArea = Rect(pageSize.x / 2, pageSize.y / 2, pageSize.x, pageSize.y)
+            viewArea = Rect(pageSize.x / 2, pageSize.y / 2, pageSize.x, pageSize.y),
         )
 
         testDispatcher.scheduler.runCurrent()
@@ -160,7 +160,7 @@ class BitmapFetcherTest {
         // 1.5 scale, viewing the lower right half of the page
         bitmapFetcher.maybeFetchNewBitmaps(
             5.0f,
-            viewArea = Rect(pageSize.x / 2, pageSize.y / 2, pageSize.x, pageSize.y)
+            viewArea = Rect(pageSize.x / 2, pageSize.y / 2, pageSize.x, pageSize.y),
         )
 
         testDispatcher.scheduler.runCurrent()
@@ -253,7 +253,7 @@ class BitmapFetcherTest {
         // 5.0 scale, viewing the lower right half of the page
         bitmapFetcher.maybeFetchNewBitmaps(
             5.0f,
-            Rect(pageSize.x / 2, pageSize.y / 2, pageSize.x, pageSize.y)
+            Rect(pageSize.x / 2, pageSize.y / 2, pageSize.x, pageSize.y),
         )
         testDispatcher.scheduler.runCurrent()
         val originalTileBoard = bitmapFetcher.pageBitmaps
@@ -276,7 +276,7 @@ class BitmapFetcherTest {
         // 5.0 scale, viewing the middle of the page offset by 1/4 of the page's dimensions
         bitmapFetcher.maybeFetchNewBitmaps(
             5.0f,
-            Rect(pageSize.x / 4, pageSize.y / 4, pageSize.x * 3 / 4, pageSize.y * 3 / 4)
+            Rect(pageSize.x / 4, pageSize.y / 4, pageSize.x * 3 / 4, pageSize.y * 3 / 4),
         )
         testDispatcher.scheduler.runCurrent()
         val newTileBoard = bitmapFetcher.pageBitmaps

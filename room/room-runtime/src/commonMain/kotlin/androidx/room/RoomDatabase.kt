@@ -204,7 +204,7 @@ public expect abstract class RoomDatabase() {
         TRUNCATE,
 
         /** Write-Ahead Logging mode. */
-        WRITE_AHEAD_LOGGING
+        WRITE_AHEAD_LOGGING,
     }
 
     /**
@@ -306,7 +306,7 @@ public expect abstract class RoomDatabase() {
          */
         public fun fallbackToDestructiveMigrationFrom(
             dropAllTables: Boolean,
-            vararg startVersions: Int
+            vararg startVersions: Int,
         ): Builder<T>
 
         /**
@@ -522,7 +522,7 @@ internal object RoomExternalOperationElement :
  */
 internal fun validateMigrationsNotRequired(
     migrationStartAndEndVersions: Set<Int>,
-    migrationsNotRequiredFrom: Set<Int>
+    migrationsNotRequiredFrom: Set<Int>,
 ) {
     if (migrationStartAndEndVersions.isNotEmpty()) {
         for (version in migrationStartAndEndVersions) {
@@ -568,7 +568,7 @@ internal fun RoomDatabase.validateAutoMigrations(configuration: DatabaseConfigur
         val migrationExists =
             configuration.migrationContainer.contains(
                 autoMigration.startVersion,
-                autoMigration.endVersion
+                autoMigration.endVersion,
             )
         if (!migrationExists) {
             configuration.migrationContainer.addMigration(autoMigration)

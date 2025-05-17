@@ -69,7 +69,7 @@ internal constructor(private val packedValue: Long) {
      */
     public constructor(
         topOffsetFraction: Float,
-        bottomOffsetFraction: Float
+        bottomOffsetFraction: Float,
     ) : this(packFloats(topOffsetFraction, bottomOffsetFraction))
 
     public companion object {
@@ -83,7 +83,7 @@ internal constructor(private val packedValue: Long) {
         internal fun bottomItemScrollProgress(
             offset: Int,
             height: Int,
-            containerHeight: Int
+            containerHeight: Int,
         ): TransformingLazyColumnItemScrollProgress =
             TransformingLazyColumnItemScrollProgress(
                 topOffsetFraction = offset.toFloat() / containerHeight.toFloat(),
@@ -93,7 +93,7 @@ internal constructor(private val packedValue: Long) {
         internal fun topItemScrollProgress(
             offset: Int,
             height: Int,
-            containerHeight: Int
+            containerHeight: Int,
         ): TransformingLazyColumnItemScrollProgress =
             TransformingLazyColumnItemScrollProgress(
                 topOffsetFraction = (offset - height).toFloat() / containerHeight.toFloat(),

@@ -237,7 +237,7 @@ class SessionConfigTest {
             setOf(
                 FPS_60,
                 FakeDynamicRangeFeature(DynamicRange.SDR),
-                FakeDynamicRangeFeature(DynamicRange.HLG_10_BIT)
+                FakeDynamicRangeFeature(DynamicRange.HLG_10_BIT),
             )
 
         // Act & assert
@@ -282,7 +282,7 @@ class SessionConfigTest {
             SessionConfig(
                 useCases = useCases,
                 requiredFeatures = setOf(FPS_60),
-                preferredFeatures = listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
+                preferredFeatures = listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION),
             )
         }
     }
@@ -296,7 +296,7 @@ class SessionConfigTest {
         assertThrows<IllegalArgumentException> {
             SessionConfig(
                 useCases = listOf(ImageAnalysis.Builder().build()),
-                preferredFeatures = features
+                preferredFeatures = features,
             )
         }
     }
@@ -304,9 +304,7 @@ class SessionConfigTest {
     @Test
     fun sessionConfig_imageAnalysisAddedWithoutFeatureParam_noExceptionThrown() {
         // Act & assert
-        SessionConfig(
-            useCases = listOf(ImageAnalysis.Builder().build()),
-        )
+        SessionConfig(useCases = listOf(ImageAnalysis.Builder().build()))
     }
 
     @Test

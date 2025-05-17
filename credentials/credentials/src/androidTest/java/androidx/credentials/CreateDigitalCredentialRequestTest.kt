@@ -27,7 +27,7 @@ class CreateDigitalCredentialRequestTest {
     fun constructor_emptyJson_throws() {
         Assert.assertThrows(
             "requestJson must not be empty, and must be a valid JSON",
-            IllegalArgumentException::class.java
+            IllegalArgumentException::class.java,
         ) {
             CreateDigitalCredentialRequest(requestJson = "")
         }
@@ -37,7 +37,7 @@ class CreateDigitalCredentialRequestTest {
     fun constructor_invalidJson_throws() {
         Assert.assertThrows(
             "requestJson must not be empty, and must be a valid JSON",
-            IllegalArgumentException::class.java
+            IllegalArgumentException::class.java,
         ) {
             CreateDigitalCredentialRequest(requestJson = "dsfliuh4akdsjhbf")
         }

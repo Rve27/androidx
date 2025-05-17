@@ -117,7 +117,7 @@ public fun Text(
     @IntRange(from = 1) minLines: Int = 1,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     autoSize: TextAutoSize? = null,
-    style: TextStyle = LocalTextStyle.current
+    style: TextStyle = LocalTextStyle.current,
 ) {
     // Color precedence rules:
     // If the explicit color parameter is provided, use it.
@@ -157,7 +157,7 @@ public fun Text(
             fontFamily = fontFamily,
             textDecoration = textDecoration,
             fontStyle = fontStyle,
-            letterSpacing = letterSpacing
+            letterSpacing = letterSpacing,
         ),
         onTextLayout,
         overflow,
@@ -165,7 +165,7 @@ public fun Text(
         maxLines,
         minLines,
         color = textColorState?.let { { it.value } },
-        autoSize = autoSize
+        autoSize = autoSize,
     )
 }
 
@@ -245,7 +245,7 @@ public fun Text(
     inlineContent: Map<String, InlineTextContent> = emptyMap(),
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     autoSize: TextAutoSize? = null,
-    style: TextStyle = LocalTextStyle.current
+    style: TextStyle = LocalTextStyle.current,
 ) {
     // Color precedence rules:
     // If the explicit color parameter is provided, use it.
@@ -285,7 +285,7 @@ public fun Text(
                 fontFamily = fontFamily,
                 textDecoration = textDecoration,
                 fontStyle = fontStyle,
-                letterSpacing = letterSpacing
+                letterSpacing = letterSpacing,
             ),
         onTextLayout = onTextLayout,
         overflow = overflow,
@@ -294,7 +294,7 @@ public fun Text(
         minLines = minLines,
         inlineContent = inlineContent,
         autoSize = autoSize,
-        color = textColorState?.let { { it.value } }
+        color = textColorState?.let { { it.value } },
     )
 }
 

@@ -306,7 +306,7 @@ sealed interface ControlledComposition : Composition {
 /** Utility function to set and restore a should pause callback. */
 internal inline fun <R> ControlledComposition.pausable(
     shouldPause: ShouldPauseCallback,
-    block: () -> R
+    block: () -> R,
 ): R {
     val previous = getAndSetShouldPauseCallback(shouldPause)
     return try {
@@ -397,7 +397,7 @@ fun ControlledComposition(applier: Applier<*>, parent: CompositionContext): Cont
 fun Composition(
     applier: Applier<*>,
     parent: CompositionContext,
-    recomposeCoroutineContext: CoroutineContext
+    recomposeCoroutineContext: CoroutineContext,
 ): Composition = CompositionImpl(parent, applier, recomposeContext = recomposeCoroutineContext)
 
 @TestOnly
@@ -405,7 +405,7 @@ fun Composition(
 fun ControlledComposition(
     applier: Applier<*>,
     parent: CompositionContext,
-    recomposeCoroutineContext: CoroutineContext
+    recomposeCoroutineContext: CoroutineContext,
 ): ControlledComposition =
     CompositionImpl(parent, applier, recomposeContext = recomposeCoroutineContext)
 
@@ -431,7 +431,7 @@ internal class CompositionImpl(
 
     /** The applier to use to update the tree managed by the composition. */
     private val applier: Applier<*>,
-    recomposeContext: CoroutineContext? = null
+    recomposeContext: CoroutineContext? = null,
 ) :
     ControlledComposition,
     ReusableComposition,
@@ -574,7 +574,7 @@ internal class CompositionImpl(
                 abandonSet = abandonSet,
                 changes = changes,
                 lateChanges = lateChanges,
-                composition = this
+                composition = this,
             )
             .also { parent.registerComposer(it) }
 
@@ -787,7 +787,7 @@ internal class CompositionImpl(
                         @Suppress("UNCHECKED_CAST")
                         observer.onBeginComposition(
                             this,
-                            invalidations.asMap() as Map<RecomposeScope, Set<Any>>
+                            invalidations.asMap() as Map<RecomposeScope, Set<Any>>,
                         )
                     }
                     composer.composeContent(invalidations, content, shouldPause)
@@ -1009,7 +1009,7 @@ internal class CompositionImpl(
                     @Suppress("UNCHECKED_CAST")
                     observer?.onBeginComposition(
                         this,
-                        invalidations.asMap() as Map<RecomposeScope, Set<Any>>
+                        invalidations.asMap() as Map<RecomposeScope, Set<Any>>,
                     )
                     composer.recompose(invalidations, shouldPause).also { shouldDrain ->
                         // Apply would normally do this for us; do it now if apply shouldn't happen.
@@ -1050,7 +1050,7 @@ internal class CompositionImpl(
                         applier,
                         slots,
                         rememberManager,
-                        composer.errorContext
+                        composer.errorContext,
                     )
                 }
                 applier.onEndChanges()
@@ -1165,7 +1165,7 @@ internal class CompositionImpl(
     override fun <R> delegateInvalidations(
         to: ControlledComposition?,
         groupIndex: Int,
-        block: () -> R
+        block: () -> R,
     ): R {
         return if (to != null && to != this && groupIndex >= 0) {
             invalidationDelegate = to as CompositionImpl
@@ -1221,7 +1221,7 @@ internal class CompositionImpl(
     private fun invalidateChecked(
         scope: RecomposeScopeImpl,
         anchor: Anchor,
-        instance: Any?
+        instance: Any?,
     ): InvalidationResult {
         val delegate =
             synchronized(lock) {

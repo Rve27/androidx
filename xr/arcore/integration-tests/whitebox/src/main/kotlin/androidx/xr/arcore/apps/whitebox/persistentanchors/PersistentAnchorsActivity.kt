@@ -165,7 +165,7 @@ class PersistentAnchorsActivity : ComponentActivity() {
             topBar = {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     BackToMainActivityButton()
                     Text(
@@ -294,7 +294,7 @@ class PersistentAnchorsActivity : ComponentActivity() {
             }
             Button(
                 modifier = Modifier.padding(top = 10.dp),
-                onClick = { deleteEntity(anchor, entity) }
+                onClick = { deleteEntity(anchor, entity) },
             ) {
                 Text(text = "Delete anchor", fontSize = 32.sp)
             }

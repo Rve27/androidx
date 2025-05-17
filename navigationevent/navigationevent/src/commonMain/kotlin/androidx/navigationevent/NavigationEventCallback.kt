@@ -32,7 +32,7 @@ public abstract class NavigationEventCallback(
      */
     isEnabled: Boolean,
     /** The priority of this callback. */
-    public val priority: NavigationEventPriority = NavigationEventPriority.Default
+    public val priority: NavigationEventPriority = NavigationEventPriority.Default,
 ) {
 
     public var isEnabled: Boolean = isEnabled

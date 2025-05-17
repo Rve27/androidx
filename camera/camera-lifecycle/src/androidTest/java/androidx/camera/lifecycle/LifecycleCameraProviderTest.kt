@@ -61,14 +61,12 @@ import org.junit.runners.Parameterized
 @SdkSuppress(minSdkVersion = 21)
 class LifecycleCameraProviderTest(
     private val implName: String,
-    private val cameraConfig: CameraXConfig
+    private val cameraConfig: CameraXConfig,
 ) {
 
     @get:Rule
     val cameraPipeConfigTestRule =
-        CameraPipeConfigTestRule(
-            active = implName.contains(CameraPipeConfig::class.simpleName!!),
-        )
+        CameraPipeConfigTestRule(active = implName.contains(CameraPipeConfig::class.simpleName!!))
 
     @get:Rule
     val cameraRule =
@@ -82,7 +80,7 @@ class LifecycleCameraProviderTest(
         fun data(): Collection<Array<Any?>> {
             return listOf(
                 arrayOf(Camera2Config::class.simpleName, Camera2Config.defaultConfig()),
-                arrayOf(CameraPipeConfig::class.simpleName, CameraPipeConfig.defaultConfig())
+                arrayOf(CameraPipeConfig::class.simpleName, CameraPipeConfig.defaultConfig()),
             )
         }
     }
@@ -123,12 +121,12 @@ class LifecycleCameraProviderTest(
                 provider1 =
                     LifecycleCameraProvider.createInstance(
                         context,
-                        CameraPipeConfig.defaultConfig()
+                        CameraPipeConfig.defaultConfig(),
                     )
                 provider2 =
                     LifecycleCameraProvider.createInstance(
                         context,
-                        CameraPipeConfig.defaultConfig()
+                        CameraPipeConfig.defaultConfig(),
                     )
             }
         }
@@ -262,10 +260,10 @@ class LifecycleCameraProviderTest(
                     FakeCameraCoordinator(),
                     StreamSpecsCalculatorImpl(
                         FakeUseCaseConfigFactory(),
-                        FakeCameraDeviceSurfaceManager()
+                        FakeCameraDeviceSurfaceManager(),
                     ),
                     FakeUseCaseConfigFactory(),
-                )
+                ),
             )
 
         // Act: Bind to a provider then shut it down.

@@ -59,7 +59,7 @@ internal fun <T : Any> serializableListSaver(
 ) =
     listSaver<List<T>, SavedState>(
         save = { list -> list.map { encodeToSavedState(serializer, it) } },
-        restore = { list -> list.map { decodeFromSavedState(serializer, it) } }
+        restore = { list -> list.map { decodeFromSavedState(serializer, it) } },
     )
 
 @Suppress("UNCHECKED_CAST")
@@ -74,7 +74,7 @@ internal fun <T> snapshotStateListSaver(
                 // that autoSaver() can handle)
                 save(state.toList().toMutableList())
             },
-            restore = { state -> restore(state)?.toMutableStateList() }
+            restore = { state -> restore(state)?.toMutableStateList() },
         )
     }
 

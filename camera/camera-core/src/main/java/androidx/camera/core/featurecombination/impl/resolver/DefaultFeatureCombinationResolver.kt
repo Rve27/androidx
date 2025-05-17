@@ -62,12 +62,12 @@ import androidx.camera.core.internal.CameraUseCaseAdapter.isVideoCapture
  *   supported.
  */
 internal class DefaultFeatureCombinationResolver(
-    private val cameraInfoInternal: CameraInfoInternal,
+    private val cameraInfoInternal: CameraInfoInternal
 ) : FeatureCombinationResolver {
     override fun resolveFeatureCombination(
         useCases: Set<UseCase>,
         requiredFeatures: Set<Feature>,
-        orderedPreferredFeatures: List<Feature>
+        orderedPreferredFeatures: List<Feature>,
     ): FeatureCombinationResolutionResult {
         require(requiredFeatures.isNotEmpty() || orderedPreferredFeatures.isNotEmpty()) {
             "Must have at least one required or preferred feature"
@@ -92,7 +92,7 @@ internal class DefaultFeatureCombinationResolver(
                     if (!supportsImageFeature) {
                         return UseCaseMissing(
                             requiredUseCases = IMAGE_CAPTURE.toString(),
-                            featureRequiring = feature
+                            featureRequiring = feature,
                         )
                     }
                 }
@@ -102,7 +102,7 @@ internal class DefaultFeatureCombinationResolver(
                     if (!supportsStreamFeature) {
                         return UseCaseMissing(
                             requiredUseCases = "$PREVIEW or $VIDEO_CAPTURE",
-                            featureRequiring = feature
+                            featureRequiring = feature,
                         )
                     }
                 }
@@ -151,7 +151,7 @@ internal class DefaultFeatureCombinationResolver(
 
             Logger.d(
                 TAG,
-                "getFeatureListResolvedByPriority: features = $features, useCases = $useCases"
+                "getFeatureListResolvedByPriority: features = $features, useCases = $useCases",
             )
 
             return if (cameraInfoInternal.isFeatureCombinationSupported(useCases, features)) {

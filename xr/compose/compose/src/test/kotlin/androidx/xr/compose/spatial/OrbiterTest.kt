@@ -107,7 +107,7 @@ class OrbiterTest {
                 Parent {
                     Orbiter(
                         OrbiterEdge.Top,
-                        settings = OrbiterSettings(shouldRenderInNonSpatial = false)
+                        settings = OrbiterSettings(shouldRenderInNonSpatial = false),
                     ) {
                         Text("Main Content")
                     }
@@ -155,7 +155,7 @@ class OrbiterTest {
                 Parent {
                     Orbiter(
                         OrbiterEdge.Top,
-                        settings = OrbiterSettings(shouldRenderInNonSpatial = false)
+                        settings = OrbiterSettings(shouldRenderInNonSpatial = false),
                     ) {
                         Text("Main Content")
                     }
@@ -487,7 +487,7 @@ class OrbiterTest {
                             0,
                             0,
                             targetResizeWidth,
-                            targetResizeHeight
+                            targetResizeHeight,
                         )
                     }
                 }

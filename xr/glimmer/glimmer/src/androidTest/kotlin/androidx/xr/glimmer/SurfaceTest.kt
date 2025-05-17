@@ -82,21 +82,21 @@ class SurfaceTest {
                     shape = RectangleShape,
                     color = Color.Blue,
                     contentColor = Color.Magenta,
-                    border = BorderStroke(1.dp, Color.Red)
+                    border = BorderStroke(1.dp, Color.Red),
                 )
             surfaceWithSameParameters =
                 Modifier.surface(
                     shape = RectangleShape,
                     color = Color.Blue,
                     contentColor = Color.Magenta,
-                    border = BorderStroke(1.dp, Color.Red)
+                    border = BorderStroke(1.dp, Color.Red),
                 )
             surfaceWithDifferentParameters =
                 Modifier.surface(
                     shape = CircleShape,
                     color = Color.Blue,
                     contentColor = Color.Magenta,
-                    border = BorderStroke(1.dp, Color.Red)
+                    border = BorderStroke(1.dp, Color.Red),
                 )
         }
 

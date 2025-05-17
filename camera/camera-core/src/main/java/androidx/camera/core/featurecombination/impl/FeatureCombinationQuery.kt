@@ -38,7 +38,7 @@ public interface FeatureCombinationQuery {
     public data class StreamConfig(
         public val surfaceConfig: SurfaceConfig,
         public val useCaseConfig: UseCaseConfig<*>,
-        public val dynamicRange: DynamicRange
+        public val dynamicRange: DynamicRange,
     )
 
     /**

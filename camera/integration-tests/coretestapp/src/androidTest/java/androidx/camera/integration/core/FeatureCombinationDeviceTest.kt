@@ -57,7 +57,7 @@ class FeatureCombinationDeviceTest(
     private val selectorName: String,
     private val cameraSelector: CameraSelector,
     private val implName: String,
-    private val cameraXConfig: CameraXConfig
+    private val cameraXConfig: CameraXConfig,
 ) {
     @get:Rule
     val useCamera =
@@ -73,9 +73,7 @@ class FeatureCombinationDeviceTest(
 
     @get:Rule
     val cameraPipeConfigTestRule =
-        CameraPipeConfigTestRule(
-            active = implName == CameraPipeConfig::class.simpleName,
-        )
+        CameraPipeConfigTestRule(active = implName == CameraPipeConfig::class.simpleName)
 
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private lateinit var cameraProvider: ProcessCameraProvider
@@ -118,8 +116,8 @@ class FeatureCombinationDeviceTest(
                 cameraSelector,
                 SessionConfig(
                     useCases = listOf(preview, videoCapture),
-                    requiredFeatures = setOf(HDR_HLG10)
-                )
+                    requiredFeatures = setOf(HDR_HLG10),
+                ),
             )
         }
 
@@ -143,8 +141,8 @@ class FeatureCombinationDeviceTest(
                 cameraSelector,
                 SessionConfig(
                     useCases = listOf(preview, videoCapture),
-                    requiredFeatures = setOf(FPS_60)
-                )
+                    requiredFeatures = setOf(FPS_60),
+                ),
             )
         }
 
@@ -162,7 +160,7 @@ class FeatureCombinationDeviceTest(
                     .getCameraInfo(cameraSelector)
                     .isFeatureCombinationSupported(
                         setOf(preview, videoCapture),
-                        setOf(PREVIEW_STABILIZATION)
+                        setOf(PREVIEW_STABILIZATION),
                     )
             )
 
@@ -172,8 +170,8 @@ class FeatureCombinationDeviceTest(
                     cameraSelector,
                     SessionConfig(
                         useCases = listOf(preview, videoCapture),
-                        requiredFeatures = setOf(PREVIEW_STABILIZATION)
-                    )
+                        requiredFeatures = setOf(PREVIEW_STABILIZATION),
+                    ),
                 )
             }
 
@@ -197,8 +195,8 @@ class FeatureCombinationDeviceTest(
                 cameraSelector,
                 SessionConfig(
                     useCases = listOf(preview, imageCapture),
-                    requiredFeatures = setOf(IMAGE_ULTRA_HDR)
-                )
+                    requiredFeatures = setOf(IMAGE_ULTRA_HDR),
+                ),
             )
         }
 
@@ -225,8 +223,8 @@ class FeatureCombinationDeviceTest(
                     cameraSelector,
                     SessionConfig(
                         useCases = listOf(preview, videoCapture),
-                        requiredFeatures = features
-                    )
+                        requiredFeatures = features,
+                    ),
                 )
             }
 
@@ -253,8 +251,8 @@ class FeatureCombinationDeviceTest(
                     cameraSelector,
                     SessionConfig(
                         useCases = listOf(preview, videoCapture),
-                        requiredFeatures = features
-                    )
+                        requiredFeatures = features,
+                    ),
                 )
             }
 
@@ -281,8 +279,8 @@ class FeatureCombinationDeviceTest(
                     cameraSelector,
                     SessionConfig(
                         useCases = listOf(preview, videoCapture),
-                        requiredFeatures = features
-                    )
+                        requiredFeatures = features,
+                    ),
                 )
             }
 
@@ -302,8 +300,8 @@ class FeatureCombinationDeviceTest(
                 cameraSelector,
                 SessionConfig(
                     useCases = listOf(preview, videoCapture),
-                    preferredFeatures = orderedFeatures
-                )
+                    preferredFeatures = orderedFeatures,
+                ),
             )
         }
 
@@ -322,25 +320,25 @@ class FeatureCombinationDeviceTest(
                     "back",
                     CameraSelector.DEFAULT_BACK_CAMERA,
                     Camera2Config::class.simpleName,
-                    Camera2Config.defaultConfig()
+                    Camera2Config.defaultConfig(),
                 ),
                 arrayOf(
                     "back",
                     CameraSelector.DEFAULT_BACK_CAMERA,
                     CameraPipeConfig::class.simpleName,
-                    CameraPipeConfig.defaultConfig()
+                    CameraPipeConfig.defaultConfig(),
                 ),
                 arrayOf(
                     "front",
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     Camera2Config::class.simpleName,
-                    Camera2Config.defaultConfig()
+                    Camera2Config.defaultConfig(),
                 ),
                 arrayOf(
                     "front",
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     CameraPipeConfig::class.simpleName,
-                    CameraPipeConfig.defaultConfig()
+                    CameraPipeConfig.defaultConfig(),
                 ),
             )
     }

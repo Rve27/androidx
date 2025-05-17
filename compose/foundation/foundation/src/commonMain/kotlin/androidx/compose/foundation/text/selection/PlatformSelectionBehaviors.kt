@@ -33,7 +33,7 @@ internal interface PlatformSelectionBehaviors {
      */
     suspend fun suggestSelectionForLongPressOrDoubleClick(
         text: CharSequence,
-        selection: TextRange
+        selection: TextRange,
     ): TextRange?
 }
 
@@ -43,7 +43,7 @@ internal interface PlatformSelectionBehaviors {
  */
 internal enum class SelectedTextType {
     EditableText,
-    StaticText
+    StaticText,
 }
 
 @Composable

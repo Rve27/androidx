@@ -24,6 +24,4 @@ import androidx.annotation.RestrictTo
  * @property requestJson the request according to the CXP format
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class ImportCredentialsRequest(
-    public val requestJson: String,
-)
+public class ImportCredentialsRequest(public val requestJson: String)

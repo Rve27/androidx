@@ -77,7 +77,7 @@ class DefaultFeatureCombinationResolverTest {
             expectedFrameRateRange = FpsRangeFeature.DEFAULT_FPS_RANGE,
             imageFormat = INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE,
             previewStabilizationMode =
-                VideoStabilizationFeature.DEFAULT_STABILIZATION_MODE.toPreviewStabilizationMode()
+                VideoStabilizationFeature.DEFAULT_STABILIZATION_MODE.toPreviewStabilizationMode(),
         )
 
     private val defaultJpegStreamSpec =
@@ -86,7 +86,7 @@ class DefaultFeatureCombinationResolverTest {
             expectedFrameRateRange = FpsRangeFeature.DEFAULT_FPS_RANGE,
             imageFormat = ImageFormat.JPEG,
             previewStabilizationMode =
-                VideoStabilizationFeature.DEFAULT_STABILIZATION_MODE.toPreviewStabilizationMode()
+                VideoStabilizationFeature.DEFAULT_STABILIZATION_MODE.toPreviewStabilizationMode(),
         )
 
     @Test
@@ -98,7 +98,7 @@ class DefaultFeatureCombinationResolverTest {
         val result =
             defaultResolver.resolveFeatureCombination(
                 useCases,
-                orderedPreferredFeatures = listOf(HDR_HLG10)
+                orderedPreferredFeatures = listOf(HDR_HLG10),
             )
 
         // Assert: The result should be an instance of UnsupportedUseCase.
@@ -115,7 +115,7 @@ class DefaultFeatureCombinationResolverTest {
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                orderedPreferredFeatures = listOf(HDR_HLG10)
+                orderedPreferredFeatures = listOf(HDR_HLG10),
             )
 
         assertThat(result).isInstanceOf(Unsupported::class.java)
@@ -126,7 +126,7 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act & assert
@@ -140,14 +140,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange: Ultra HDR is required and supported
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R)
+            defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R),
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                requiredFeatures = setOf(IMAGE_ULTRA_HDR)
+                requiredFeatures = setOf(IMAGE_ULTRA_HDR),
             )
 
         // Assert: Ensure result is supported and contains Ultra HDR feature.
@@ -161,7 +161,7 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange: Ultra HDR is required and supported, but no ImageCapture
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R)
+            defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R),
         )
         val useCases = setOf(preview) // No ImageCapture
 
@@ -169,7 +169,7 @@ class DefaultFeatureCombinationResolverTest {
         val result =
             defaultResolver.resolveFeatureCombination(
                 useCases,
-                requiredFeatures = setOf(IMAGE_ULTRA_HDR)
+                requiredFeatures = setOf(IMAGE_ULTRA_HDR),
             )
 
         // Assert: Ensure result is UseCaseMissing and reports ImageCapture as the missing use case
@@ -185,14 +185,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange: Ultra HDR is required, but not supported, only JPEG capture is supported.
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                requiredFeatures = setOf(IMAGE_ULTRA_HDR)
+                requiredFeatures = setOf(IMAGE_ULTRA_HDR),
             )
 
         // Assert
@@ -204,14 +204,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange: Ultra HDR is preferred and supported
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R)
+            defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R),
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                orderedPreferredFeatures = listOf(IMAGE_ULTRA_HDR)
+                orderedPreferredFeatures = listOf(IMAGE_ULTRA_HDR),
             )
 
         // Assert: Ensure result is supported and contains Ultra HDR feature.
@@ -225,7 +225,7 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange: Ultra HDR is preferred and supported, but no ImageCapture
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R)
+            defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R),
         )
         val useCases = setOf(preview) // No ImageCapture
 
@@ -233,7 +233,7 @@ class DefaultFeatureCombinationResolverTest {
         val result =
             defaultResolver.resolveFeatureCombination(
                 useCases,
-                orderedPreferredFeatures = listOf(IMAGE_ULTRA_HDR)
+                orderedPreferredFeatures = listOf(IMAGE_ULTRA_HDR),
             )
 
         // Assert: Ensure result is supported and does not contain Ultra HDR feature.
@@ -247,14 +247,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange: Ultra HDR is preferred, but not supported, only JPEG capture is supported
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                orderedPreferredFeatures = listOf(IMAGE_ULTRA_HDR)
+                orderedPreferredFeatures = listOf(IMAGE_ULTRA_HDR),
             )
 
         // Assert
@@ -269,14 +269,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy(dynamicRange = DynamicRange.HLG_10_BIT),
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                requiredFeatures = setOf(HDR_HLG10)
+                requiredFeatures = setOf(HDR_HLG10),
             )
 
         // Assert: Returns Supported with HDR_HLG10 included as resolved feature.
@@ -290,7 +290,7 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange: Ultra HDR is required and supported, but no ImageCapture
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy(dynamicRange = DynamicRange.HLG_10_BIT),
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
         val useCases = setOf(imageCapture) // Only ImageCapture, no Preview or VideoCapture
 
@@ -311,14 +311,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                requiredFeatures = setOf(HDR_HLG10)
+                requiredFeatures = setOf(HDR_HLG10),
             )
 
         // Assert
@@ -330,14 +330,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy(dynamicRange = DynamicRange.HLG_10_BIT),
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                orderedPreferredFeatures = listOf(HDR_HLG10)
+                orderedPreferredFeatures = listOf(HDR_HLG10),
             )
 
         // Assert: Returns Supported with HDR_HLG10 included as resolved feature.
@@ -351,14 +351,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                orderedPreferredFeatures = listOf(HDR_HLG10)
+                orderedPreferredFeatures = listOf(HDR_HLG10),
             )
 
         // Assert: Returns Supported without HDR_HLG10 included as resolved feature.
@@ -373,14 +373,14 @@ class DefaultFeatureCombinationResolverTest {
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy(previewStabilizationMode = ON), // for Preview
             defaultPrivStreamSpec.copy(previewStabilizationMode = OFF), // for VideoCapture
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                requiredFeatures = setOf(PREVIEW_STABILIZATION)
+                requiredFeatures = setOf(PREVIEW_STABILIZATION),
             )
 
         // Assert: Returns Supported with PREVIEW_STABILIZATION included as resolved feature.
@@ -395,7 +395,7 @@ class DefaultFeatureCombinationResolverTest {
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy(previewStabilizationMode = ON), // for Preview
             defaultPrivStreamSpec.copy(previewStabilizationMode = OFF), // for VideoCapture
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
         val useCases = setOf(imageCapture) // Only ImageCapture, no Preview or VideoCapture
 
@@ -403,7 +403,7 @@ class DefaultFeatureCombinationResolverTest {
         val result =
             defaultResolver.resolveFeatureCombination(
                 useCases,
-                requiredFeatures = setOf(PREVIEW_STABILIZATION)
+                requiredFeatures = setOf(PREVIEW_STABILIZATION),
             )
 
         // Assert: Ensure result is UseCaseMissing and reports ImageCapture as the missing use case
@@ -419,14 +419,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                requiredFeatures = setOf(PREVIEW_STABILIZATION)
+                requiredFeatures = setOf(PREVIEW_STABILIZATION),
             )
 
         // Assert
@@ -439,14 +439,14 @@ class DefaultFeatureCombinationResolverTest {
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy(previewStabilizationMode = ON), // for Preview
             defaultPrivStreamSpec.copy(previewStabilizationMode = OFF), // for VideoCapture
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                orderedPreferredFeatures = listOf(PREVIEW_STABILIZATION)
+                orderedPreferredFeatures = listOf(PREVIEW_STABILIZATION),
             )
 
         // Assert: Returns Supported with PREVIEW_STABILIZATION included as resolved feature.
@@ -460,14 +460,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                orderedPreferredFeatures = listOf(PREVIEW_STABILIZATION)
+                orderedPreferredFeatures = listOf(PREVIEW_STABILIZATION),
             )
 
         // Assert: Returns Supported without PREVIEW_STABILIZATION included as resolved feature.
@@ -481,14 +481,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy(expectedFrameRateRange = Range(60, 60)),
-            defaultJpegStreamSpec.copy(expectedFrameRateRange = Range(60, 60))
+            defaultJpegStreamSpec.copy(expectedFrameRateRange = Range(60, 60)),
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                requiredFeatures = setOf(FPS_60)
+                requiredFeatures = setOf(FPS_60),
             )
 
         // Assert: Returns Supported with FPS_60 included as resolved feature.
@@ -502,7 +502,7 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange: Ultra HDR is required and supported, but no ImageCapture
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy(expectedFrameRateRange = Range(60, 60)),
-            defaultJpegStreamSpec.copy(expectedFrameRateRange = Range(60, 60))
+            defaultJpegStreamSpec.copy(expectedFrameRateRange = Range(60, 60)),
         )
         val useCases = setOf(imageCapture) // Only ImageCapture, no Preview or VideoCapture
 
@@ -523,14 +523,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                requiredFeatures = setOf(FPS_60)
+                requiredFeatures = setOf(FPS_60),
             )
 
         // Assert
@@ -542,14 +542,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy(expectedFrameRateRange = Range(60, 60)),
-            defaultJpegStreamSpec.copy(expectedFrameRateRange = Range(60, 60))
+            defaultJpegStreamSpec.copy(expectedFrameRateRange = Range(60, 60)),
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                orderedPreferredFeatures = listOf(FPS_60)
+                orderedPreferredFeatures = listOf(FPS_60),
             )
 
         // Assert: Returns Supported with FPS_60 included as resolved feature.
@@ -563,14 +563,14 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec,
-            defaultJpegStreamSpec
+            defaultJpegStreamSpec,
         )
 
         // Act
         val result =
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
-                orderedPreferredFeatures = listOf(FPS_60)
+                orderedPreferredFeatures = listOf(FPS_60),
             )
 
         // Assert: Returns Supported without FPS_60 included as resolved feature.
@@ -584,7 +584,7 @@ class DefaultFeatureCombinationResolverTest {
         // Arrange: Support HDR_HLG10 and IMAGE_ULTRA_HDR while not supporting others
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy(dynamicRange = DynamicRange.HLG_10_BIT),
-            defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R)
+            defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R),
         )
 
         // Act
@@ -592,7 +592,7 @@ class DefaultFeatureCombinationResolverTest {
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
                 orderedPreferredFeatures =
-                    listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR)
+                    listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR),
             )
 
         // Assert: Returns Supported with HDR_HLG10, IMAGE_ULTRA_HDR included as resolved features.
@@ -607,25 +607,25 @@ class DefaultFeatureCombinationResolverTest {
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy( // for Preview
                 dynamicRange = DynamicRange.HLG_10_BIT,
-                previewStabilizationMode = ON
+                previewStabilizationMode = ON,
             ),
             defaultPrivStreamSpec.copy( // for VideoCapture
                 dynamicRange = DynamicRange.HLG_10_BIT,
-                previewStabilizationMode = OFF
+                previewStabilizationMode = OFF,
             ),
             defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R),
             defaultPrivStreamSpec.copy( // for Preview
                 expectedFrameRateRange = Range(60, 60),
-                previewStabilizationMode = ON
+                previewStabilizationMode = ON,
             ),
             defaultPrivStreamSpec.copy( // for VideoCapture
                 expectedFrameRateRange = Range(60, 60),
-                previewStabilizationMode = OFF
+                previewStabilizationMode = OFF,
             ),
             defaultJpegStreamSpec.copy(
                 imageFormat = ImageFormat.JPEG_R,
-                expectedFrameRateRange = Range(60, 60)
-            )
+                expectedFrameRateRange = Range(60, 60),
+            ),
         )
 
         // Act
@@ -633,7 +633,7 @@ class DefaultFeatureCombinationResolverTest {
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
                 orderedPreferredFeatures =
-                    listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR)
+                    listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR),
             )
 
         // Assert: Returns Supported with HLG10, PrevStab, UltraHDR included as resolved features.
@@ -649,25 +649,25 @@ class DefaultFeatureCombinationResolverTest {
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(
             defaultPrivStreamSpec.copy( // for Preview
                 dynamicRange = DynamicRange.HLG_10_BIT,
-                previewStabilizationMode = ON
+                previewStabilizationMode = ON,
             ),
             defaultPrivStreamSpec.copy( // for VideoCapture
                 dynamicRange = DynamicRange.HLG_10_BIT,
-                previewStabilizationMode = OFF
+                previewStabilizationMode = OFF,
             ),
             defaultJpegStreamSpec.copy(imageFormat = ImageFormat.JPEG_R),
             defaultPrivStreamSpec.copy( // for Preview
                 expectedFrameRateRange = Range(60, 60),
-                previewStabilizationMode = ON
+                previewStabilizationMode = ON,
             ),
             defaultPrivStreamSpec.copy( // for VideoCapture
                 expectedFrameRateRange = Range(60, 60),
-                previewStabilizationMode = OFF
+                previewStabilizationMode = OFF,
             ),
             defaultJpegStreamSpec.copy(
                 imageFormat = ImageFormat.JPEG_R,
-                expectedFrameRateRange = Range(60, 60)
-            )
+                expectedFrameRateRange = Range(60, 60),
+            ),
         )
 
         // Act
@@ -675,7 +675,7 @@ class DefaultFeatureCombinationResolverTest {
             defaultResolver.resolveFeatureCombination(
                 defaultUseCases,
                 requiredFeatures = setOf(FPS_60),
-                orderedPreferredFeatures = listOf(HDR_HLG10, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR)
+                orderedPreferredFeatures = listOf(HDR_HLG10, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR),
             )
 
         // Assert: Returns Supported with 60FPS, PrevStab, UltraHDR included as resolved features.
@@ -699,7 +699,7 @@ class DefaultFeatureCombinationResolverTest {
                             attachedUseCases: List<UseCase>,
                             cameraConfig: CameraConfig,
                             targetHighSpeedFrameRate: Range<Int>,
-                            allowFeatureCombinationResolutions: Boolean
+                            allowFeatureCombinationResolutions: Boolean,
                         ): Map<UseCase, StreamSpec> {
                             assertThat(allowFeatureCombinationResolutions).isEqualTo(true)
                             return emptyMap()
@@ -710,7 +710,7 @@ class DefaultFeatureCombinationResolverTest {
 
         defaultResolver.resolveFeatureCombination(
             defaultUseCases,
-            requiredFeatures = setOf(HDR_HLG10)
+            requiredFeatures = setOf(HDR_HLG10),
         )
     }
 
@@ -727,7 +727,7 @@ class DefaultFeatureCombinationResolverTest {
                             attachedUseCases: List<UseCase>,
                             cameraConfig: CameraConfig,
                             targetHighSpeedFrameRate: Range<Int>,
-                            allowFeatureCombinationResolutions: Boolean
+                            allowFeatureCombinationResolutions: Boolean,
                         ): Map<UseCase, StreamSpec> {
                             assertThat(allowFeatureCombinationResolutions).isEqualTo(true)
                             return emptyMap()
@@ -738,7 +738,7 @@ class DefaultFeatureCombinationResolverTest {
 
         defaultResolver.resolveFeatureCombination(
             defaultUseCases,
-            orderedPreferredFeatures = listOf(HDR_HLG10)
+            orderedPreferredFeatures = listOf(HDR_HLG10),
         )
     }
 

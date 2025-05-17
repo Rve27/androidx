@@ -66,8 +66,8 @@ public object ComplicationPersistencePolicies {
     value =
         [
             ComplicationPersistencePolicies.CACHING_ALLOWED,
-            ComplicationPersistencePolicies.DO_NOT_PERSIST
-        ]
+            ComplicationPersistencePolicies.DO_NOT_PERSIST,
+        ],
 )
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public annotation class ComplicationPersistencePolicy
@@ -86,8 +86,8 @@ public object ComplicationDisplayPolicies {
     value =
         [
             ComplicationDisplayPolicies.ALWAYS_DISPLAY,
-            ComplicationDisplayPolicies.DO_NOT_SHOW_WHEN_DEVICE_LOCKED
-        ]
+            ComplicationDisplayPolicies.DO_NOT_SHOW_WHEN_DEVICE_LOCKED,
+        ],
 )
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public annotation class ComplicationDisplayPolicy
@@ -154,7 +154,7 @@ constructor(
     @ComplicationPersistencePolicy public val persistencePolicy: Int,
     @ComplicationDisplayPolicy public val displayPolicy: Int,
     public val dynamicValueInvalidationFallback: ComplicationData?,
-    public val extras: PersistableBundle
+    public val extras: PersistableBundle,
 ) {
     /** Throws [IllegalArgumentException] if the [ComplicationData] is invalid. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) open fun validate() {}
@@ -552,7 +552,7 @@ internal constructor(
     public val placeholder: ComplicationData?,
     public val invalidatedData: ComplicationData?,
     cachedWireComplicationData: WireComplicationData?,
-    extras: PersistableBundle
+    extras: PersistableBundle,
 ) :
     ComplicationData(
         TYPE,
@@ -563,7 +563,7 @@ internal constructor(
             placeholder?.persistencePolicy ?: ComplicationPersistencePolicies.CACHING_ALLOWED,
         displayPolicy = placeholder?.displayPolicy ?: ComplicationDisplayPolicies.ALWAYS_DISPLAY,
         dynamicValueInvalidationFallback = placeholder,
-        extras = extras
+        extras = extras,
     ) {
 
     /** Constructs a NoDataComplicationData without a [placeholder]. */
@@ -640,7 +640,7 @@ public class EmptyComplicationData :
         persistencePolicy = ComplicationPersistencePolicies.CACHING_ALLOWED,
         displayPolicy = ComplicationDisplayPolicies.ALWAYS_DISPLAY,
         dynamicValueInvalidationFallback = null,
-        extras = PersistableBundle.EMPTY
+        extras = PersistableBundle.EMPTY,
     ) {
     // Always empty.
     override fun fillWireComplicationDataBuilder(builder: WireComplicationDataBuilder) {}
@@ -673,7 +673,7 @@ public class NotConfiguredComplicationData :
         persistencePolicy = ComplicationPersistencePolicies.CACHING_ALLOWED,
         displayPolicy = ComplicationDisplayPolicies.ALWAYS_DISPLAY,
         dynamicValueInvalidationFallback = null,
-        extras = PersistableBundle.EMPTY
+        extras = PersistableBundle.EMPTY,
     ) {
     // Always empty.
     override fun fillWireComplicationDataBuilder(builder: WireComplicationDataBuilder) {}
@@ -762,7 +762,7 @@ internal constructor(
         persistencePolicy = persistencePolicy,
         displayPolicy = displayPolicy,
         dynamicValueInvalidationFallback = dynamicValueInvalidationFallback,
-        extras = extras
+        extras = extras,
     ) {
     /**
      * Builder for [ShortTextComplicationData].
@@ -778,7 +778,7 @@ internal constructor(
     @SuppressWarnings("HiddenSuperclass")
     public class Builder(
         private val text: ComplicationText,
-        private val contentDescription: ComplicationText
+        private val contentDescription: ComplicationText,
     ) : BaseBuilder<Builder, ShortTextComplicationData>() {
         private var tapAction: PendingIntent? = null
         private var validTimeRange: TimeRange? = null
@@ -967,7 +967,7 @@ internal constructor(
     @SuppressWarnings("HiddenSuperclass")
     public class Builder(
         private val text: ComplicationText,
-        private val contentDescription: ComplicationText
+        private val contentDescription: ComplicationText,
     ) : BaseBuilder<Builder, LongTextComplicationData>() {
         private var tapAction: PendingIntent? = null
         private var validTimeRange: TimeRange? = null
@@ -1096,7 +1096,7 @@ internal constructor(
  */
 public class ColorRamp(
     @ColorInt val colors: IntArray,
-    @get:JvmName("isInterpolated") val interpolated: Boolean
+    @get:JvmName("isInterpolated") val interpolated: Boolean,
 ) {
     /** Throws [IllegalArgumentException] if the [ColorRamp] is invalid. */
     internal fun validate() {
@@ -1219,7 +1219,7 @@ internal constructor(
         persistencePolicy = persistencePolicy,
         displayPolicy = displayPolicy,
         dynamicValueInvalidationFallback = dynamicValueInvalidationFallback,
-        extras = extras
+        extras = extras,
     ) {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -1262,7 +1262,7 @@ internal constructor(
         private val dynamicValue: DynamicFloat?,
         private val min: Float,
         private val max: Float,
-        private val contentDescription: ComplicationText
+        private val contentDescription: ComplicationText,
     ) : BaseBuilder<Builder, RangedValueComplicationData>() {
         /**
          * Creates a [Builder] for a [RangedValueComplicationData] with a [Float] value.
@@ -1281,7 +1281,7 @@ internal constructor(
             value: Float,
             min: Float,
             max: Float,
-            contentDescription: ComplicationText
+            contentDescription: ComplicationText,
         ) : this(value, dynamicValue = null, min, max, contentDescription)
 
         /**
@@ -1315,7 +1315,7 @@ internal constructor(
             fallbackValue: Float,
             min: Float,
             max: Float,
-            contentDescription: ComplicationText
+            contentDescription: ComplicationText,
         ) : this(value = fallbackValue, dynamicValue, min = min, max = max, contentDescription)
 
         /**
@@ -1338,7 +1338,7 @@ internal constructor(
             dynamicValue: DynamicFloat,
             min: Float,
             max: Float,
-            contentDescription: ComplicationText
+            contentDescription: ComplicationText,
         ) : this(value = min, dynamicValue, min = min, max = max, contentDescription)
 
         private var tapAction: PendingIntent? = null
@@ -1621,7 +1621,7 @@ internal constructor(
         persistencePolicy = persistencePolicy,
         displayPolicy = displayPolicy,
         dynamicValueInvalidationFallback = dynamicValueInvalidationFallback,
-        extras = extras
+        extras = extras,
     ) {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -1650,7 +1650,7 @@ internal constructor(
         private val value: Float,
         private val dynamicValue: DynamicFloat?,
         private val targetValue: Float,
-        private val contentDescription: ComplicationText
+        private val contentDescription: ComplicationText,
     ) : BaseBuilder<Builder, GoalProgressComplicationData>() {
         /**
          * Creates a [Builder] for a [GoalProgressComplicationData] with a [Float] value.
@@ -1665,7 +1665,7 @@ internal constructor(
         public constructor(
             value: Float,
             targetValue: Float,
-            contentDescription: ComplicationText
+            contentDescription: ComplicationText,
         ) : this(value, dynamicValue = null, targetValue, contentDescription)
 
         /**
@@ -1694,7 +1694,7 @@ internal constructor(
             dynamicValue: DynamicFloat,
             fallbackValue: Float,
             targetValue: Float,
-            contentDescription: ComplicationText
+            contentDescription: ComplicationText,
         ) : this(value = fallbackValue, dynamicValue, targetValue = targetValue, contentDescription)
 
         /**
@@ -1713,7 +1713,7 @@ internal constructor(
         public constructor(
             dynamicValue: DynamicFloat,
             targetValue: Float,
-            contentDescription: ComplicationText
+            contentDescription: ComplicationText,
         ) : this(value = 0f, dynamicValue, targetValue = targetValue, contentDescription)
 
         private var tapAction: PendingIntent? = null
@@ -1955,7 +1955,7 @@ internal constructor(
         persistencePolicy = persistencePolicy,
         displayPolicy = displayPolicy,
         dynamicValueInvalidationFallback = dynamicValueInvalidationFallback,
-        extras = extras
+        extras = extras,
     ) {
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -1983,7 +1983,7 @@ internal constructor(
      */
     class Element(
         @FloatRange(from = 0.0, fromInclusive = false) val weight: Float,
-        @ColorInt val color: Int
+        @ColorInt val color: Int,
     ) {
         /** Throws [IllegalArgumentException] if the [Element] is invalid. */
         internal fun validate() {
@@ -2032,7 +2032,7 @@ internal constructor(
     @SuppressWarnings("HiddenSuperclass")
     public class Builder(
         elements: List<Element>,
-        private val contentDescription: ComplicationText
+        private val contentDescription: ComplicationText,
     ) : BaseBuilder<Builder, WeightedElementsComplicationData>() {
         @ColorInt private var elementBackgroundColor: Int = Color.TRANSPARENT
         private var tapAction: PendingIntent? = null
@@ -2047,7 +2047,7 @@ internal constructor(
                 Log.w(
                     TAG,
                     "Found ${elements.size} elements but the maximum is ${getMaxElements()}," +
-                        " truncating!"
+                        " truncating!",
                 )
             }
         }
@@ -2236,7 +2236,7 @@ internal constructor(
         persistencePolicy = persistencePolicy,
         displayPolicy = displayPolicy,
         dynamicValueInvalidationFallback = dynamicValueInvalidationFallback,
-        extras = extras
+        extras = extras,
     ) {
     /**
      * Builder for [MonochromaticImageComplicationData].
@@ -2253,7 +2253,7 @@ internal constructor(
     @SuppressWarnings("HiddenSuperclass")
     public class Builder(
         private val monochromaticImage: MonochromaticImage,
-        private val contentDescription: ComplicationText
+        private val contentDescription: ComplicationText,
     ) : BaseBuilder<Builder, MonochromaticImageComplicationData>() {
         private var tapAction: PendingIntent? = null
         private var validTimeRange: TimeRange? = null
@@ -2358,7 +2358,7 @@ internal constructor(
         persistencePolicy = persistencePolicy,
         displayPolicy = displayPolicy,
         dynamicValueInvalidationFallback = dynamicValueInvalidationFallback,
-        extras = extras
+        extras = extras,
     ) {
     /**
      * Builder for [SmallImageComplicationData].
@@ -2375,7 +2375,7 @@ internal constructor(
     @SuppressWarnings("HiddenSuperclass")
     public class Builder(
         private val smallImage: SmallImage,
-        private val contentDescription: ComplicationText
+        private val contentDescription: ComplicationText,
     ) : BaseBuilder<Builder, SmallImageComplicationData>() {
         private var tapAction: PendingIntent? = null
         private var validTimeRange: TimeRange? = null
@@ -2485,7 +2485,7 @@ internal constructor(
         persistencePolicy = persistencePolicy,
         displayPolicy = displayPolicy,
         dynamicValueInvalidationFallback = dynamicValueInvalidationFallback,
-        extras = extras
+        extras = extras,
     ) {
     /**
      * Builder for [PhotoImageComplicationData].
@@ -2502,7 +2502,7 @@ internal constructor(
     @SuppressWarnings("HiddenSuperclass")
     public class Builder(
         private val photoImage: Icon,
-        private val contentDescription: ComplicationText
+        private val contentDescription: ComplicationText,
     ) : BaseBuilder<Builder, PhotoImageComplicationData>() {
         private var tapAction: PendingIntent? = null
         private var validTimeRange: TimeRange? = null
@@ -2626,7 +2626,7 @@ internal constructor(
         persistencePolicy = persistencePolicy,
         displayPolicy = displayPolicy,
         dynamicValueInvalidationFallback = null,
-        extras = extras
+        extras = extras,
     ) {
     /** Builder for [NoPermissionComplicationData]. */
     @SuppressWarnings("HiddenSuperclass")
@@ -2663,7 +2663,7 @@ internal constructor(
                 dataSource,
                 persistencePolicy,
                 displayPolicy,
-                extras
+                extras,
             )
     }
 
@@ -2876,7 +2876,7 @@ private fun WireComplicationData.toApiComplicationData(
                             if (elementWeights.size != elementColors.size) {
                                 Log.e(
                                     TAG,
-                                    "elementWeights and elementColors must have the same size"
+                                    "elementWeights and elementColors must have the same size",
                                 )
                             }
                             elementWeights
@@ -2908,7 +2908,7 @@ private fun WireComplicationData.toApiComplicationData(
         Log.e(
             TAG,
             "WireComplicationData.toApiComplicationData failed for " + toStringNoRedaction(),
-            e
+            e,
         )
         throw e
     }
@@ -2925,7 +2925,7 @@ private fun WireComplicationData.parseTimeRange() =
     } else {
         TimeRange(
             Instant.ofEpochMilli(startDateTimeMillis),
-            Instant.ofEpochMilli(endDateTimeMillis)
+            Instant.ofEpochMilli(endDateTimeMillis),
         )
     }
 
@@ -2984,7 +2984,7 @@ internal fun ComplicationText.emptyToNull(): ComplicationText? = if (isAlwaysEmp
 /** Returns whether either text or title were added. */
 internal fun ComplicationTextTemplate.Builder.addTextAndTitle(
     text: ComplicationText?,
-    title: ComplicationText?
+    title: ComplicationText?,
 ): ComplicationTextTemplate.Builder = also {
     text?.emptyToNull()?.let { addComplicationText(it.toWireComplicationText()) }
     title?.emptyToNull()?.let { addComplicationText(it.toWireComplicationText()) }

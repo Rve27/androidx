@@ -137,7 +137,7 @@ class KlibDumpParserTest {
                 .parseClass(
                     AbiQualifiedName(
                         AbiCompoundName("androidx.room.migration.bundle"),
-                        AbiCompoundName("DatabaseBundle")
+                        AbiCompoundName("DatabaseBundle"),
                     )
                 )
         assertThat(parsed).isNotNull()
@@ -208,14 +208,7 @@ class KlibDumpParserTest {
         assertThat(parsed.contextReceiverParametersCount).isEqualTo(2)
         assertThat(parsed.hasExtensionReceiverParameter).isTrue()
         assertThat(parsed.valueParameters.map { it.type.className.toString() })
-            .isEqualTo(
-                listOf(
-                    "kotlin/Int",
-                    "kotlin/String",
-                    "kotlin/Int",
-                    "kotlin/Double",
-                )
-            )
+            .isEqualTo(listOf("kotlin/Int", "kotlin/String", "kotlin/Int", "kotlin/Double"))
     }
 
     @Test
@@ -302,7 +295,7 @@ class KlibDumpParserTest {
                 .parseProperty(
                     AbiQualifiedName(
                         AbiCompoundName("androidx.collection"),
-                        AbiCompoundName("ScatterMap")
+                        AbiCompoundName("ScatterMap"),
                     )
                 )
         assertThat(parsed.getter).isNotNull()
@@ -320,7 +313,7 @@ class KlibDumpParserTest {
                 .parseProperty(
                     AbiQualifiedName(
                         AbiCompoundName("androidx.collection"),
-                        AbiCompoundName("ScatterMap")
+                        AbiCompoundName("ScatterMap"),
                     )
                 )
         assertThat(parsed.getter).isNotNull()
@@ -348,7 +341,7 @@ class KlibDumpParserTest {
                 .parseEnumEntry(
                     AbiQualifiedName(
                         AbiCompoundName("androidx.annotation"),
-                        AbiCompoundName("RestrictTo.Scope")
+                        AbiCompoundName("RestrictTo.Scope"),
                     )
                 )
         assertThat(parsed.qualifiedName.toString())
@@ -385,7 +378,7 @@ class KlibDumpParserTest {
                     parentQualifiedName =
                         AbiQualifiedName(
                             AbiCompoundName("androidx.collection"),
-                            AbiCompoundName("ObjectList")
+                            AbiCompoundName("ObjectList"),
                         )
                 )
         assertThat(parsed.valueParameters.map { it.type.classNameOrTag })
@@ -402,7 +395,7 @@ class KlibDumpParserTest {
                     parentQualifiedName =
                         AbiQualifiedName(
                             AbiCompoundName("androidx.collection"),
-                            AbiCompoundName("ObjectList")
+                            AbiCompoundName("ObjectList"),
                         )
                 )
         assertThat(parsed.valueParameters.single().type.classNameOrTag).isEqualTo("kotlin/Int")

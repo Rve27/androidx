@@ -43,7 +43,7 @@ abstract class AbstractResizeHiddenFragment : BaseHiddenFragment() {
         paddingLeft: Int,
         paddingTop: Int,
         paddingRight: Int,
-        paddingBottom: Int
+        paddingBottom: Int,
     )
 
     abstract fun loadAd(automatedTestCallbackBundle: Bundle)
@@ -61,7 +61,7 @@ abstract class AbstractResizeHiddenFragment : BaseHiddenFragment() {
                     currentMediationOption,
                     false,
                     shouldDrawViewabilityLayer,
-                    automatedTestCallbackBundle
+                    automatedTestCallbackBundle,
                 )
         )
     }

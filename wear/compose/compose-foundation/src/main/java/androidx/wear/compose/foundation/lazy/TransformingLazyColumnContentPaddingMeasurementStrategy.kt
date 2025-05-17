@@ -43,7 +43,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
     density: Density,
     layoutDirection: LayoutDirection,
     private val graphicsContext: GraphicsContext,
-    private val itemAnimator: LazyLayoutItemAnimator<TransformingLazyColumnMeasuredItem>
+    private val itemAnimator: LazyLayoutItemAnimator<TransformingLazyColumnMeasuredItem>,
 ) : TransformingLazyColumnMeasurementStrategy {
     override val rightContentPadding: Int =
         with(density) { contentPadding.calculateRightPadding(layoutDirection).roundToPx() }
@@ -63,14 +63,14 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
         coroutineScope: CoroutineScope,
         density: Density,
         scrollToBeConsumed: Float,
-        layout: (Int, Int, Placeable.PlacementScope.() -> Unit) -> MeasureResult
+        layout: (Int, Int, Placeable.PlacementScope.() -> Unit) -> MeasureResult,
     ): TransformingLazyColumnMeasureResult {
         if (itemsCount == 0) {
             return emptyMeasureResult(
                 containerConstraints = containerConstraints,
                 beforeContentPadding = beforeContentPadding,
                 afterContentPadding = afterContentPadding,
-                layout = layout
+                layout = layout,
             )
         }
 
@@ -81,14 +81,14 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                     anchorItemIndex,
                     anchorItemScrollOffset - lastMeasuredAnchorItemHeight / 2 +
                         containerConstraints.maxHeight / 2,
-                    maxHeight = containerConstraints.maxHeight
+                    maxHeight = containerConstraints.maxHeight,
                 )
             } else {
                 measuredItemProvider
                     .upwardMeasuredItem(
                         anchorItemIndex,
                         anchorItemScrollOffset + containerConstraints.maxHeight / 2,
-                        maxHeight = containerConstraints.maxHeight
+                        maxHeight = containerConstraints.maxHeight,
                     )
                     .also { it.offset += it.transformedHeight / 2 }
             }
@@ -120,14 +120,14 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 containerConstraints = containerConstraints,
                 itemsCount = itemsCount,
                 measuredItemProvider = measuredItemProvider,
-                visibleItems = visibleItems
+                visibleItems = visibleItems,
             )
 
             addVisibleItemsBefore(
                 itemSpacing = itemSpacing,
                 measuredItemProvider = measuredItemProvider,
                 containerConstraints = containerConstraints,
-                visibleItems = visibleItems
+                visibleItems = visibleItems,
             )
 
             if (visibleItems.isEmpty()) {
@@ -135,7 +135,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                     containerConstraints = containerConstraints,
                     beforeContentPadding = beforeContentPadding,
                     afterContentPadding = afterContentPadding,
-                    layout = layout
+                    layout = layout,
                 )
             }
 
@@ -160,14 +160,14 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                     itemsCount = itemsCount,
                     measuredItemProvider = measuredItemProvider,
                     containerConstraints = containerConstraints,
-                    visibleItems = visibleItems
+                    visibleItems = visibleItems,
                 )
                 canScrollBackward = false
             } else if (
                 overscrolledForward(
                     visibleItems.last(),
                     itemsCount - 1,
-                    containerConstraints.maxHeight
+                    containerConstraints.maxHeight,
                 )
             ) {
                 restoreLayoutBottomToTop(visibleItems, itemSpacing, containerConstraints)
@@ -175,7 +175,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                     itemSpacing = itemSpacing,
                     measuredItemProvider = measuredItemProvider,
                     containerConstraints = containerConstraints,
-                    visibleItems = visibleItems
+                    visibleItems = visibleItems,
                 )
                 canScrollForward = false
             }
@@ -206,7 +206,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 containerConstraints,
                 visibleItemsArr[measurePass],
                 minOffset = Int.MIN_VALUE, // No limit on offset
-                minIndex = absMinIndex
+                minIndex = absMinIndex,
             )
             addVisibleItemsAfter(
                 itemSpacing,
@@ -215,7 +215,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 measuredItemProvider,
                 visibleItemsArr[measurePass],
                 maxOffset = Int.MAX_VALUE, // No limit on offset
-                maxIndex = absMaxIndex
+                maxIndex = absMaxIndex,
             )
         }
 
@@ -234,7 +234,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                     containerConstraints = containerConstraints,
                     beforeContentPadding = beforeContentPadding,
                     afterContentPadding = afterContentPadding,
-                    layout = layout
+                    layout = layout,
                 )
 
         actuallyVisibleItems.fastForEach { item ->
@@ -261,7 +261,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
         val childConstraints =
             Constraints(
                 maxHeight = Constraints.Infinity,
-                maxWidth = containerConstraints.maxWidth - leftContentPadding - rightContentPadding
+                maxWidth = containerConstraints.maxWidth - leftContentPadding - rightContentPadding,
             )
 
         return TransformingLazyColumnMeasureResult(
@@ -284,7 +284,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
             measureResult =
                 layout(containerConstraints.maxWidth, containerConstraints.maxHeight) {
                     actuallyVisibleItems.fastForEach { it.place(this) }
-                }
+                },
         )
     }
 
@@ -297,7 +297,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
         containerConstraints: Constraints,
         visibleItems: ArrayDeque<TransformingLazyColumnMeasuredItem>,
         minOffset: Int = 0,
-        minIndex: Int = 0
+        minIndex: Int = 0,
     ) {
         val item = visibleItems.first()
         var topOffset = item.offset - itemSpacing
@@ -308,7 +308,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 measuredItemProvider.upwardMeasuredItem(
                     topPassIndex,
                     topOffset,
-                    maxHeight = containerConstraints.maxHeight
+                    maxHeight = containerConstraints.maxHeight,
                 )
             visibleItems.addFirst(additionalItem)
             topOffset -= additionalItem.transformedHeight + itemSpacing
@@ -323,7 +323,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
         measuredItemProvider: MeasuredItemProvider,
         visibleItems: ArrayDeque<TransformingLazyColumnMeasuredItem>,
         maxOffset: Int = containerConstraints.maxHeight,
-        maxIndex: Int = itemsCount - 1
+        maxIndex: Int = itemsCount - 1,
     ) {
         val item = visibleItems.last()
         var bottomOffset = item.offset + item.transformedHeight + itemSpacing
@@ -334,7 +334,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 measuredItemProvider.downwardMeasuredItem(
                     bottomPassIndex,
                     bottomOffset,
-                    maxHeight = containerConstraints.maxHeight
+                    maxHeight = containerConstraints.maxHeight,
                 )
             bottomOffset += additionalItem.transformedHeight + itemSpacing
             visibleItems.add(additionalItem)
@@ -365,7 +365,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
     private fun restoreLayoutTopToBottom(
         visibleItems: ArrayDeque<TransformingLazyColumnMeasuredItem>,
         itemSpacing: Int,
-        containerConstraints: Constraints
+        containerConstraints: Constraints,
     ) {
         var previousOffset = beforeContentPadding
         visibleItems.fastForEachIndexed { idx, item ->
@@ -373,7 +373,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 bottomItemScrollProgress(
                     previousOffset,
                     item.measuredHeight,
-                    containerConstraints.maxHeight
+                    containerConstraints.maxHeight,
                 )
             item.offset = previousOffset
             previousOffset += item.transformedHeight + itemSpacing
@@ -383,7 +383,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
     private fun restoreLayoutBottomToTop(
         visibleItems: ArrayDeque<TransformingLazyColumnMeasuredItem>,
         itemSpacing: Int,
-        containerConstraints: Constraints
+        containerConstraints: Constraints,
     ) {
         var bottomLineOffset = containerConstraints.maxHeight - afterContentPadding
         for (idx in visibleItems.indices.reversed()) {
@@ -391,21 +391,20 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 topItemScrollProgress(
                     bottomLineOffset,
                     visibleItems[idx].measuredHeight,
-                    containerConstraints.maxHeight
+                    containerConstraints.maxHeight,
                 )
             visibleItems[idx].offset = bottomLineOffset - visibleItems[idx].transformedHeight
             bottomLineOffset = visibleItems[idx].offset - itemSpacing
         }
     }
 
-    private fun overscrolledBackwards(
-        visibleItem: TransformingLazyColumnMeasuredItem,
-    ): Boolean = visibleItem.let { it.index == 0 && it.offset > beforeContentPadding }
+    private fun overscrolledBackwards(visibleItem: TransformingLazyColumnMeasuredItem): Boolean =
+        visibleItem.let { it.index == 0 && it.offset > beforeContentPadding }
 
     private fun overscrolledForward(
         visibleItem: TransformingLazyColumnMeasuredItem,
         index: Int,
-        maxHeight: Int
+        maxHeight: Int,
     ): Boolean =
         visibleItem.let {
             it.index == index && it.offset + it.transformedHeight < maxHeight - afterContentPadding

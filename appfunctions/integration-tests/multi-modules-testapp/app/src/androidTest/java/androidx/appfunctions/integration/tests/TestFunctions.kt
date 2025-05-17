@@ -50,16 +50,9 @@ data class UpdateNoteParams(
     val nullableContent: SetField<List<String>?>? = null,
 )
 
-@AppFunctionSerializable
-data class Owner(
-    val name: String,
-)
+@AppFunctionSerializable data class Owner(val name: String)
 
-@AppFunctionSerializable
-data class Attachment(
-    val uri: String,
-    val nested: Attachment? = null,
-)
+@AppFunctionSerializable data class Attachment(val uri: String, val nested: Attachment? = null)
 
 @AppFunctionSerializable
 data class Note(
@@ -75,7 +68,7 @@ data class OpenableNote(
     val content: List<String>,
     val owner: Owner,
     val attachments: List<Attachment>,
-    override val intentToOpen: PendingIntent
+    override val intentToOpen: PendingIntent,
 ) : AppFunctionOpenable
 
 @AppFunctionSerializable data class DateTime(val localDateTime: LocalDateTime)
@@ -105,13 +98,13 @@ class TestFunctions {
     @AppFunction
     fun createNote(
         appFunctionContext: AppFunctionContext,
-        createNoteParams: CreateNoteParams
+        createNoteParams: CreateNoteParams,
     ): Note {
         return Note(
             title = createNoteParams.title,
             content = createNoteParams.content,
             owner = createNoteParams.owner,
-            attachments = createNoteParams.attachments
+            attachments = createNoteParams.attachments,
         )
     }
 
@@ -136,7 +129,7 @@ class TestFunctions {
     @AppFunction
     fun getOpenableNote(
         appFunctionContext: AppFunctionContext,
-        createNoteParams: CreateNoteParams
+        createNoteParams: CreateNoteParams,
     ): OpenableNote {
         return OpenableNote(
             title = createNoteParams.title,
@@ -148,8 +141,8 @@ class TestFunctions {
                     appFunctionContext.context,
                     0,
                     Intent(),
-                    PendingIntent.FLAG_IMMUTABLE
-                )
+                    PendingIntent.FLAG_IMMUTABLE,
+                ),
         )
     }
 }
@@ -173,7 +166,7 @@ class NotesFunctions : CreateNoteAppFunction<NotesFunctions.Parameters, NotesFun
     @AppFunction
     override suspend fun createNote(
         appFunctionContext: AppFunctionContext,
-        parameters: Parameters
+        parameters: Parameters,
     ): Response {
         return Response(MyNote(id = "testId", title = parameters.title))
     }

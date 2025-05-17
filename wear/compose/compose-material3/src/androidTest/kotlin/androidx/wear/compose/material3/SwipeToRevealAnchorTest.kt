@@ -129,34 +129,34 @@ class SwipeToRevealAnchorTest(val testParams: TestParams) {
         open val actions: Actions,
         open val swipeDirection: SwipeDirection,
         open val initialRevealValue: RevealValue,
-        open val expectedRevealValue: RevealValue
+        open val expectedRevealValue: RevealValue,
     ) {
         data class RTL(
             override val actions: Actions,
             override val initialRevealValue: RevealValue,
             override val swipeDirection: SwipeDirection,
-            override val expectedRevealValue: RevealValue
+            override val expectedRevealValue: RevealValue,
         ) :
             TestParams(
                 revealDirection = RightToLeft,
                 actions = actions,
                 initialRevealValue = initialRevealValue,
                 swipeDirection = swipeDirection,
-                expectedRevealValue = expectedRevealValue
+                expectedRevealValue = expectedRevealValue,
             )
 
         data class Bidirectional(
             override val actions: Actions,
             override val initialRevealValue: RevealValue,
             override val swipeDirection: SwipeDirection,
-            override val expectedRevealValue: RevealValue
+            override val expectedRevealValue: RevealValue,
         ) :
             TestParams(
                 revealDirection = RevealDirection.Bidirectional,
                 actions = actions,
                 initialRevealValue = initialRevealValue,
                 swipeDirection = swipeDirection,
-                expectedRevealValue = expectedRevealValue
+                expectedRevealValue = expectedRevealValue,
             )
     }
 
@@ -187,309 +187,309 @@ class SwipeToRevealAnchorTest(val testParams: TestParams) {
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.RTL(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.RTL(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = Covered,
                         swipeDirection = SwipeDirection.Left(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.RTL(
                         actions = Actions.One(hasPartiallyRevealedState = false),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.RTL(
                         actions = Actions.One(hasPartiallyRevealedState = false),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.RTL(
                         actions = Actions.One(hasPartiallyRevealedState = false),
                         initialRevealValue = Covered,
                         swipeDirection = SwipeDirection.Left(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.RTL(
                         actions = Actions.Two,
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.RTL(
                         actions = Actions.Two,
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.RTL(
                         actions = Actions.Two,
                         initialRevealValue = Covered,
                         swipeDirection = SwipeDirection.Left(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = Covered,
                         swipeDirection = SwipeDirection.Left(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = false),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = false),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = false),
                         initialRevealValue = Covered,
                         swipeDirection = SwipeDirection.Left(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Left(COVERED_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = Covered,
                         swipeDirection = SwipeDirection.Left(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Right(COVERED_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Right(COVERED_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = LeftRevealing
+                        expectedRevealValue = LeftRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Right(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = false),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Right(COVERED_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = false),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Right(COVERED_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = false),
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Right(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Right(COVERED_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Right(COVERED_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = LeftRevealing
+                        expectedRevealValue = LeftRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Right(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.RTL(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Right(REVEALING_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.RTL(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Right(REVEALING_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.RTL(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Left(REVEALING_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.RTL(
                         actions = Actions.Two,
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Right(REVEALING_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.RTL(
                         actions = Actions.Two,
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Right(REVEALING_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.RTL(
                         actions = Actions.Two,
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Left(REVEALING_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Right(REVEALING_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Right(REVEALING_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Left(REVEALING_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Right(REVEALING_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Right(REVEALING_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = RightRevealing,
                         swipeDirection =
                             SwipeDirection.Left(REVEALING_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = RightRevealing
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = LeftRevealing,
                         swipeDirection =
                             SwipeDirection.Left(REVEALING_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = LeftRevealing,
                         swipeDirection =
                             SwipeDirection.Left(REVEALING_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = LeftRevealing
+                        expectedRevealValue = LeftRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = LeftRevealing,
                         swipeDirection =
                             SwipeDirection.Right(REVEALING_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = LeftRevealing
+                        expectedRevealValue = LeftRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = LeftRevealing,
                         swipeDirection =
                             SwipeDirection.Left(REVEALING_TO_BEFORE_ANCHOR_OUTSIDE_BUFFER),
-                        expectedRevealValue = Covered
+                        expectedRevealValue = Covered,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = LeftRevealing,
                         swipeDirection =
                             SwipeDirection.Left(REVEALING_TO_BEFORE_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = LeftRevealing
+                        expectedRevealValue = LeftRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.Two,
                         initialRevealValue = LeftRevealing,
                         swipeDirection =
                             SwipeDirection.Right(REVEALING_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = LeftRevealing
+                        expectedRevealValue = LeftRevealing,
                     ),
                 )
                 .map { arrayOf(it) }

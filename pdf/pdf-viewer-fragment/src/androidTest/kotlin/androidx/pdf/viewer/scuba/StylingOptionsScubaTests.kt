@@ -71,7 +71,7 @@ class StylingOptionsScubaTests {
                 fragmentArgs = styledFragment.arguments,
                 themeResId =
                     com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar,
-                initialState = Lifecycle.State.INITIALIZED
+                initialState = Lifecycle.State.INITIALIZED,
             ) {
                 styledFragment
             }

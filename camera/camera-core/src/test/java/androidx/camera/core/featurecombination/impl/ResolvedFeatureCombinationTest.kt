@@ -60,7 +60,7 @@ class ResolvedFeatureCombinationTest {
         val sessionConfig =
             SessionConfig(
                 useCases = useCases.toList(),
-                preferredFeatures = listOf(HDR_HLG10, IMAGE_ULTRA_HDR)
+                preferredFeatures = listOf(HDR_HLG10, IMAGE_ULTRA_HDR),
             )
         val expectedResolvedFeatureCombination =
             ResolvedFeatureCombination(useCases, setOf(HDR_HLG10))
@@ -69,7 +69,7 @@ class ResolvedFeatureCombinationTest {
                 override fun resolveFeatureCombination(
                     useCases: Set<UseCase>,
                     requiredFeatures: Set<Feature>,
-                    orderedPreferredFeatures: List<Feature>
+                    orderedPreferredFeatures: List<Feature>,
                 ): FeatureCombinationResolutionResult {
                     return Supported(expectedResolvedFeatureCombination)
                 }
@@ -89,14 +89,14 @@ class ResolvedFeatureCombinationTest {
         val sessionConfig =
             SessionConfig(
                 useCases = listOf(preview, imageCapture),
-                preferredFeatures = listOf(HDR_HLG10, IMAGE_ULTRA_HDR)
+                preferredFeatures = listOf(HDR_HLG10, IMAGE_ULTRA_HDR),
             )
         val resolver =
             object : FeatureCombinationResolver {
                 override fun resolveFeatureCombination(
                     useCases: Set<UseCase>,
                     requiredFeatures: Set<Feature>,
-                    orderedPreferredFeatures: List<Feature>
+                    orderedPreferredFeatures: List<Feature>,
                 ): FeatureCombinationResolutionResult {
                     return Unsupported
                 }
@@ -115,18 +115,18 @@ class ResolvedFeatureCombinationTest {
             SessionConfig(
                 useCases = listOf(preview),
                 requiredFeatures = setOf(IMAGE_ULTRA_HDR), // but no ImageCapture
-                preferredFeatures = listOf(HDR_HLG10, PREVIEW_STABILIZATION)
+                preferredFeatures = listOf(HDR_HLG10, PREVIEW_STABILIZATION),
             )
         val resolver =
             object : FeatureCombinationResolver {
                 override fun resolveFeatureCombination(
                     useCases: Set<UseCase>,
                     requiredFeatures: Set<Feature>,
-                    orderedPreferredFeatures: List<Feature>
+                    orderedPreferredFeatures: List<Feature>,
                 ): FeatureCombinationResolutionResult {
                     return UseCaseMissing(
                         requiredUseCases = IMAGE_CAPTURE.toString(),
-                        featureRequiring = IMAGE_ULTRA_HDR
+                        featureRequiring = IMAGE_ULTRA_HDR,
                     )
                 }
             }

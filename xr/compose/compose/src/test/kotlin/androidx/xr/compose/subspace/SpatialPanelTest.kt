@@ -99,7 +99,7 @@ class SpatialPanelTest {
                         Column {
                             Text(
                                 "Hello World long text",
-                                style = MaterialTheme.typography.headlineLarge
+                                style = MaterialTheme.typography.headlineLarge,
                             )
                         }
                     }
@@ -315,9 +315,7 @@ class SpatialPanelTest {
                         shape = SpatialRoundedCornerShape(CornerSize(50)),
                     )
                     if (showDialog.value) {
-                        SpatialDialog(
-                            onDismissRequest = { showDialog.value = false },
-                        ) {
+                        SpatialDialog(onDismissRequest = { showDialog.value = false }) {
                             Text("Spatial Dialog")
                         }
                     }

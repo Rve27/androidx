@@ -67,7 +67,7 @@ fun LinearGradientColorStopSample() {
         0.3f to Color.Green,
         1.0f to Color.Blue,
         start = Offset(0.0f, 50.0f),
-        end = Offset(0.0f, 100.0f)
+        end = Offset(0.0f, 100.0f),
     )
 }
 
@@ -76,7 +76,7 @@ fun LinearGradientSample() {
     Brush.linearGradient(
         listOf(Color.Red, Color.Green, Color.Blue),
         start = Offset(0.0f, 50.0f),
-        end = Offset(0.0f, 100.0f)
+        end = Offset(0.0f, 100.0f),
     )
 }
 
@@ -85,7 +85,7 @@ fun HorizontalGradientSample() {
     Brush.horizontalGradient(
         listOf(Color.Red, Color.Green, Color.Blue),
         startX = 10.0f,
-        endX = 20.0f
+        endX = 20.0f,
     )
 }
 
@@ -96,7 +96,7 @@ fun HorizontalGradientColorStopSample() {
         0.3f to Color.Green,
         1.0f to Color.Blue,
         startX = 0.0f,
-        endX = 100.0f
+        endX = 100.0f,
     )
 }
 
@@ -107,7 +107,7 @@ fun VerticalGradientColorStopSample() {
         0.3f to Color.Green,
         0.5f to Color.Blue,
         startY = 0.0f,
-        endY = 100.0f
+        endY = 100.0f,
     )
 }
 
@@ -126,7 +126,7 @@ fun RadialBrushColorStopSample() {
         1.0f to Color.Blue,
         center = Offset(side1 / 2.0f, side2 / 2.0f),
         radius = side1 / 2.0f,
-        tileMode = TileMode.Repeated
+        tileMode = TileMode.Repeated,
     )
 }
 
@@ -138,7 +138,7 @@ fun RadialBrushSample() {
         listOf(Color.Red, Color.Green, Color.Blue),
         center = Offset(side1 / 2.0f, side2 / 2.0f),
         radius = side1 / 2.0f,
-        tileMode = TileMode.Repeated
+        tileMode = TileMode.Repeated,
     )
 }
 
@@ -148,7 +148,7 @@ fun SweepGradientColorStopSample() {
         0.0f to Color.Red,
         0.3f to Color.Green,
         1.0f to Color.Blue,
-        center = Offset(0.0f, 100.0f)
+        center = Offset(0.0f, 100.0f),
     )
 }
 

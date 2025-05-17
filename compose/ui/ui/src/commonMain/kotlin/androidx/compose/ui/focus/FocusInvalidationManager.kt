@@ -37,7 +37,7 @@ internal class FocusInvalidationManager(
     private val onRequestApplyChangesListener: (() -> Unit) -> Unit,
     private val invalidateOwnerFocusState: () -> Unit,
     private val rootFocusStateFetcher: () -> FocusState,
-    private val activeFocusTargetNodeFetcher: () -> FocusTargetNode?
+    private val activeFocusTargetNodeFetcher: () -> FocusTargetNode?,
 ) {
     private val focusTargetNodes = mutableScatterSetOf<FocusTargetNode>()
     private val focusEventNodes = mutableScatterSetOf<FocusEventModifierNode>()
@@ -131,7 +131,7 @@ internal class FocusInvalidationManager(
             var traversedFocusTargetCount = 0
             activeFocusTargetNode.visitAncestors(
                 Nodes.FocusTarget or Nodes.FocusEvent,
-                includeSelf = true
+                includeSelf = true,
             ) {
                 // Keep track of whether we traversed past the first target node ancestor of the
                 // active focus target node, so that all the subsequent event nodes are sent the

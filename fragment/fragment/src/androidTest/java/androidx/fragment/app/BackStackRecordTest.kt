@@ -519,7 +519,7 @@ internal class BackStackRecordVerify(private val backStackRecord: BackStackRecor
     fun verify(
         command: Int,
         fragment: Fragment? = null,
-        block: BackStackRecordOpInfo.() -> Unit = {}
+        block: BackStackRecordOpInfo.() -> Unit = {},
     ) {
         assertWithMessage(
                 "Cannot verify op $currentOp as there is only ${backStackRecord.mOps.size} operations"
@@ -544,7 +544,7 @@ private fun FragmentTransaction.Op.verify(
     opIndex: Int,
     command: Int,
     fragment: Fragment? = null,
-    block: BackStackRecordOpInfo.() -> Unit = {}
+    block: BackStackRecordOpInfo.() -> Unit = {},
 ) {
     val (fromExpandedOp) = BackStackRecordOpInfo().apply { block() }
 

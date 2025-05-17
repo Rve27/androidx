@@ -40,7 +40,7 @@ class LayoutStringTest {
         val layoutString: LayoutString =
             DYNAMIC_STRING.asLayoutString(
                 staticValue = STATIC_STRING,
-                layoutConstraint = PATTERN_STRING.asLayoutConstraint(TEXT_ALIGNMENT)
+                layoutConstraint = PATTERN_STRING.asLayoutConstraint(TEXT_ALIGNMENT),
             )
         val prop: StringProp = layoutString.prop
 

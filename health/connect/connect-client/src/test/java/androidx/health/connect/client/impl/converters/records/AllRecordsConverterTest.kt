@@ -114,7 +114,7 @@ class AllRecordsConverterTest {
                 temperature = 1.celsius,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         val dataAllFields =
@@ -124,7 +124,7 @@ class AllRecordsConverterTest {
                     BodyTemperatureMeasurementLocation.MEASUREMENT_LOCATION_ARMPIT,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(dataOnlyRequired)
@@ -139,7 +139,7 @@ class AllRecordsConverterTest {
                 basalMetabolicRate = 1.kilocaloriesPerDay,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -153,7 +153,7 @@ class AllRecordsConverterTest {
                 level = BloodGlucose.millimolesPerLiter(1.0),
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -168,7 +168,7 @@ class AllRecordsConverterTest {
                 diastolic = 10.millimetersOfMercury,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -182,7 +182,7 @@ class AllRecordsConverterTest {
                 percentage = 1.percent,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -196,7 +196,7 @@ class AllRecordsConverterTest {
                 temperature = 1.celsius,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -210,7 +210,7 @@ class AllRecordsConverterTest {
                 mass = 1.kilograms,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -224,7 +224,7 @@ class AllRecordsConverterTest {
                 mass = 1.kilograms,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -239,7 +239,7 @@ class AllRecordsConverterTest {
                 sensation = CervicalMucusRecord.SENSATION_HEAVY,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -282,18 +282,9 @@ class AllRecordsConverterTest {
                 endZoneOffset = END_ZONE_OFFSET,
                 samples =
                     listOf(
-                        HeartRateRecord.Sample(
-                            time = START_TIME,
-                            beatsPerMinute = 100L,
-                        ),
-                        HeartRateRecord.Sample(
-                            time = START_TIME,
-                            beatsPerMinute = 110L,
-                        ),
-                        HeartRateRecord.Sample(
-                            time = START_TIME,
-                            beatsPerMinute = 120L,
-                        ),
+                        HeartRateRecord.Sample(time = START_TIME, beatsPerMinute = 100L),
+                        HeartRateRecord.Sample(time = START_TIME, beatsPerMinute = 110L),
+                        HeartRateRecord.Sample(time = START_TIME, beatsPerMinute = 120L),
                     ),
                 metadata = TEST_METADATA,
             )
@@ -309,7 +300,7 @@ class AllRecordsConverterTest {
                 height = 1.meters,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -323,7 +314,7 @@ class AllRecordsConverterTest {
                 heartRateVariabilityMillis = 5.0,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -337,7 +328,7 @@ class AllRecordsConverterTest {
                 heartRateVariabilityMillis = HeartRateVariabilityRmssdRecord.MIN_HRV_RMSSD,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         val dataProto =
@@ -357,7 +348,7 @@ class AllRecordsConverterTest {
             IntermenstrualBleedingRecord(
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -371,7 +362,7 @@ class AllRecordsConverterTest {
                 mass = 1.kilograms,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -385,7 +376,7 @@ class AllRecordsConverterTest {
                 flow = MenstruationFlowRecord.FLOW_HEAVY,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -400,7 +391,7 @@ class AllRecordsConverterTest {
                 startZoneOffset = START_ZONE_OFFSET,
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -414,7 +405,7 @@ class AllRecordsConverterTest {
                 result = OvulationTestRecord.RESULT_NEGATIVE,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -428,7 +419,7 @@ class AllRecordsConverterTest {
                 percentage = 1.percent,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -445,14 +436,8 @@ class AllRecordsConverterTest {
                 endZoneOffset = END_ZONE_OFFSET,
                 samples =
                     listOf(
-                        PowerRecord.Sample(
-                            time = START_TIME,
-                            power = 1.watts,
-                        ),
-                        PowerRecord.Sample(
-                            time = START_TIME,
-                            power = 2.watts,
-                        ),
+                        PowerRecord.Sample(time = START_TIME, power = 1.watts),
+                        PowerRecord.Sample(time = START_TIME, power = 2.watts),
                     ),
                 metadata = TEST_METADATA,
             )
@@ -468,7 +453,7 @@ class AllRecordsConverterTest {
                 rate = 1.0,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -482,7 +467,7 @@ class AllRecordsConverterTest {
                 beatsPerMinute = 1,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -496,7 +481,7 @@ class AllRecordsConverterTest {
                 protectionUsed = SexualActivityRecord.PROTECTION_USED_PROTECTED,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -513,14 +498,8 @@ class AllRecordsConverterTest {
                 endZoneOffset = END_ZONE_OFFSET,
                 samples =
                     listOf(
-                        SpeedRecord.Sample(
-                            time = START_TIME,
-                            speed = 1.metersPerSecond,
-                        ),
-                        SpeedRecord.Sample(
-                            time = START_TIME,
-                            speed = 2.metersPerSecond,
-                        ),
+                        SpeedRecord.Sample(time = START_TIME, speed = 1.metersPerSecond),
+                        SpeedRecord.Sample(time = START_TIME, speed = 2.metersPerSecond),
                     ),
                 metadata = TEST_METADATA,
             )
@@ -539,14 +518,8 @@ class AllRecordsConverterTest {
                 endZoneOffset = END_ZONE_OFFSET,
                 samples =
                     listOf(
-                        StepsCadenceRecord.Sample(
-                            time = START_TIME,
-                            rate = 1.0,
-                        ),
-                        StepsCadenceRecord.Sample(
-                            time = START_TIME,
-                            rate = 2.0,
-                        ),
+                        StepsCadenceRecord.Sample(time = START_TIME, rate = 1.0),
+                        StepsCadenceRecord.Sample(time = START_TIME, rate = 2.0),
                     ),
                 metadata = TEST_METADATA,
             )
@@ -563,7 +536,7 @@ class AllRecordsConverterTest {
                 measurementMethod = Vo2MaxRecord.MEASUREMENT_METHOD_COOPER_TEST,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -577,7 +550,7 @@ class AllRecordsConverterTest {
                 weight = 1.kilograms,
                 time = START_TIME,
                 zoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -593,7 +566,7 @@ class AllRecordsConverterTest {
                 startZoneOffset = START_ZONE_OFFSET,
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -618,25 +591,25 @@ class AllRecordsConverterTest {
                             startTime = Instant.ofEpochMilli(1234L),
                             endTime = Instant.ofEpochMilli(1235L),
                             segmentType = ExerciseSegment.EXERCISE_SEGMENT_TYPE_CRUNCH,
-                            repetitions = 10
+                            repetitions = 10,
                         ),
                         ExerciseSegment(
                             startTime = Instant.ofEpochMilli(1235L),
                             endTime = Instant.ofEpochMilli(1236L),
                             segmentType = ExerciseSegment.EXERCISE_SEGMENT_TYPE_CRUNCH,
-                        )
+                        ),
                     ),
                 laps =
                     listOf(
                         ExerciseLap(
                             startTime = Instant.ofEpochMilli(1234L),
                             endTime = Instant.ofEpochMilli(1235L),
-                            length = 1.meters
+                            length = 1.meters,
                         ),
                         ExerciseLap(
                             startTime = Instant.ofEpochMilli(1235L),
                             endTime = Instant.ofEpochMilli(1236L),
-                        )
+                        ),
                     ),
                 exerciseRoute =
                     ExerciseRoute(
@@ -648,7 +621,7 @@ class AllRecordsConverterTest {
                                     longitude = -34.5,
                                     horizontalAccuracy = Length.meters(0.4),
                                     verticalAccuracy = Length.meters(1.3),
-                                    altitude = Length.meters(23.4)
+                                    altitude = Length.meters(23.4),
                                 ),
                                 ExerciseRoute.Location(
                                     time = Instant.ofEpochMilli(1235L),
@@ -689,7 +662,7 @@ class AllRecordsConverterTest {
                 startZoneOffset = START_ZONE_OFFSET,
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -705,7 +678,7 @@ class AllRecordsConverterTest {
                 startZoneOffset = START_ZONE_OFFSET,
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -721,7 +694,7 @@ class AllRecordsConverterTest {
                 startZoneOffset = START_ZONE_OFFSET,
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -737,7 +710,7 @@ class AllRecordsConverterTest {
                 startZoneOffset = START_ZONE_OFFSET,
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -796,7 +769,7 @@ class AllRecordsConverterTest {
                 startZoneOffset = START_ZONE_OFFSET,
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -820,7 +793,7 @@ class AllRecordsConverterTest {
                             time = Instant.ofEpochMilli(1234L),
                             delta = TemperatureDelta.celsius(1.2),
                         )
-                    )
+                    ),
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -836,7 +809,7 @@ class AllRecordsConverterTest {
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
                 metadata = TEST_METADATA,
-                deltas = emptyList()
+                deltas = emptyList(),
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -861,7 +834,7 @@ class AllRecordsConverterTest {
                             endTime = Instant.ofEpochMilli(1236L),
                             stage = SleepSessionRecord.STAGE_TYPE_DEEP,
                         )
-                    )
+                    ),
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -876,7 +849,7 @@ class AllRecordsConverterTest {
                 startZoneOffset = START_ZONE_OFFSET,
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -892,7 +865,7 @@ class AllRecordsConverterTest {
                 startZoneOffset = START_ZONE_OFFSET,
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -908,7 +881,7 @@ class AllRecordsConverterTest {
                 startZoneOffset = START_ZONE_OFFSET,
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
@@ -924,7 +897,7 @@ class AllRecordsConverterTest {
                 startZoneOffset = START_ZONE_OFFSET,
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
-                metadata = TEST_METADATA
+                metadata = TEST_METADATA,
             )
 
         checkProtoAndRecordTypeNameMatch(data)

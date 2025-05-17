@@ -96,7 +96,7 @@ fun BasicTextFieldSample() {
             // it is crucial that the update is fed back into BasicTextField in order to
             // see updates on the text
             value = it
-        }
+        },
     )
 }
 
@@ -110,7 +110,7 @@ fun BasicTextFieldWithStringSample() {
             // it is crucial that the update is fed back into BasicTextField in order to
             // see updates on the text
             value = it
-        }
+        },
     )
 }
 
@@ -146,7 +146,7 @@ fun TextFieldWithIconSample() {
                 Spacer(Modifier.width(16.dp))
                 innerTextField()
             }
-        }
+        },
     )
 }
 
@@ -202,7 +202,7 @@ fun CreditCardSample() {
         modifier = Modifier.size(170.dp, 30.dp).background(Color.LightGray).wrapContentSize(),
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        visualTransformation = creditCardTransformation
+        visualTransformation = creditCardTransformation,
     )
 }
 
@@ -348,7 +348,7 @@ fun BasicTextFieldCustomInputTransformationSample() {
 
             // Step four: Ensure the cursor is ready for the next input.
             placeCursorAfterCharAt(0)
-        }
+        },
     )
 }
 
@@ -381,7 +381,7 @@ fun BasicTextFieldOutputTransformationSample() {
                     revertAllChanges()
                 }
             },
-        outputTransformation = PhoneNumberOutputTransformation(false)
+        outputTransformation = PhoneNumberOutputTransformation(false),
     )
 }
 
@@ -395,7 +395,7 @@ fun BasicTextFieldInputTransformationByValueReplaceSample() {
         inputTransformation =
             InputTransformation.byValue { _, proposed ->
                 proposed.replace("""\t""".toRegex(), "  ")
-            }
+            },
     )
 }
 
@@ -409,7 +409,7 @@ fun BasicTextFieldInputTransformationByValueChooseSample() {
         inputTransformation =
             InputTransformation.byValue { current, proposed ->
                 if ("""\s""".toRegex() in proposed) current else proposed
-            }
+            },
     )
 }
 
@@ -443,7 +443,7 @@ fun BasicTextFieldChangeIterationSample() {
                 val newString = asCharSequence().substring(sourceRange)
                 println("""$replacedLength characters were replaced with "$newString"""")
             }
-        }
+        },
     )
 }
 
@@ -460,11 +460,11 @@ fun BasicTextFieldChangeReverseIterationSample() {
                     // New text was inserted, delete the text ahead of it.
                     delete(
                         range.end.coerceAtMost(length),
-                        (range.end + range.length).coerceAtMost(length)
+                        (range.end + range.length).coerceAtMost(length),
                     )
                 }
             }
-        }
+        },
     )
 }
 
@@ -510,21 +510,21 @@ fun BasicTextFieldUndoSample() {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             androidx.compose.material.Button(
                 onClick = { state.undoState.undo() },
-                enabled = state.undoState.canUndo
+                enabled = state.undoState.canUndo,
             ) {
                 Text("Undo")
             }
 
             androidx.compose.material.Button(
                 onClick = { state.undoState.redo() },
-                enabled = state.undoState.canRedo
+                enabled = state.undoState.canRedo,
             ) {
                 Text("Redo")
             }
 
             androidx.compose.material.Button(
                 onClick = { state.undoState.clearHistory() },
-                enabled = state.undoState.canUndo || state.undoState.canRedo
+                enabled = state.undoState.canUndo || state.undoState.canRedo,
             ) {
                 Text("Clear History")
             }
@@ -536,7 +536,7 @@ fun BasicTextFieldUndoSample() {
                 Modifier.fillMaxWidth()
                     .border(1.dp, Color.LightGray, RoundedCornerShape(6.dp))
                     .padding(8.dp),
-            textStyle = TextStyle(fontSize = 16.sp)
+            textStyle = TextStyle(fontSize = 16.sp),
         )
     }
 }
@@ -561,7 +561,7 @@ fun BasicTextFieldDecoratorSample() {
                 Spacer(Modifier.width(16.dp))
                 innerTextField()
             }
-        }
+        },
     )
 }
 

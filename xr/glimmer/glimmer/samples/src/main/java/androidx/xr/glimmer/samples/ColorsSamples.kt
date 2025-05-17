@@ -39,7 +39,7 @@ fun ColorsSample() {
     val colors = GlimmerTheme.colors
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item { ColorItem(colors.primary, colorName = "primary") }
         item { ColorItem(colors.secondary, colorName = "secondary") }
@@ -64,7 +64,7 @@ private fun ColorItem(color: Color, colorName: String, modifier: Modifier = Modi
             .surface(
                 shape = RectangleShape,
                 color = color,
-                border = BorderStroke(1.dp, color = Color.White)
+                border = BorderStroke(1.dp, color = Color.White),
             )
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,

@@ -53,19 +53,19 @@ class ResponsiveTransformationSpecTest {
                 topValue = 0.011f,
                 bottomValue = 0.021f,
                 transformationZoneEnterFraction = 0.031f,
-                transformationZoneExitFraction = 0.041f
+                transformationZoneExitFraction = 0.041f,
             ),
             TransformationVariableSpec(
                 topValue = 0.012f,
                 bottomValue = 0.022f,
                 transformationZoneEnterFraction = 0.032f,
-                transformationZoneExitFraction = 0.042f
+                transformationZoneExitFraction = 0.042f,
             ),
             TransformationVariableSpec(
                 topValue = 0.013f,
                 bottomValue = 0.023f,
                 transformationZoneEnterFraction = 0.033f,
-                transformationZoneExitFraction = 0.043f
+                transformationZoneExitFraction = 0.043f,
             ),
         )
 
@@ -81,19 +81,19 @@ class ResponsiveTransformationSpecTest {
                 topValue = 0.11f,
                 bottomValue = 0.21f,
                 transformationZoneEnterFraction = 0.31f,
-                transformationZoneExitFraction = 0.41f
+                transformationZoneExitFraction = 0.41f,
             ),
             TransformationVariableSpec(
                 topValue = 0.12f,
                 bottomValue = 0.22f,
                 transformationZoneEnterFraction = 0.32f,
-                transformationZoneExitFraction = 0.42f
+                transformationZoneExitFraction = 0.42f,
             ),
             TransformationVariableSpec(
                 topValue = 0.13f,
                 bottomValue = 0.23f,
                 transformationZoneEnterFraction = 0.33f,
-                transformationZoneExitFraction = 0.43f
+                transformationZoneExitFraction = 0.43f,
             ),
         )
 
@@ -160,7 +160,7 @@ class ResponsiveTransformationSpecTest {
             screenSize: Dp,
             minElementHeight: Float,
             maxElementHeight: Float,
-            maxTransitionArea: Float
+            maxTransitionArea: Float,
         ) =
             ResponsiveTransformationSpecImpl(
                 screenSize,
@@ -173,20 +173,20 @@ class ResponsiveTransformationSpecTest {
                     topValue = 0.11f,
                     bottomValue = 0.21f,
                     transformationZoneEnterFraction = 0.31f,
-                    transformationZoneExitFraction = 0.41f
+                    transformationZoneExitFraction = 0.41f,
                 ),
                 TransformationVariableSpec(
                     topValue = 0.12f,
                     bottomValue = 0.22f,
                     transformationZoneEnterFraction = 0.32f,
-                    transformationZoneExitFraction = 0.42f
+                    transformationZoneExitFraction = 0.42f,
                 ),
                 TransformationVariableSpec(
                     topValue = 0.13f,
                     bottomValue = 0.23f,
                     transformationZoneEnterFraction = 0.33f,
-                    transformationZoneExitFraction = 0.43f
-                )
+                    transformationZoneExitFraction = 0.43f,
+                ),
             )
 
         val specs3 =
@@ -200,17 +200,17 @@ class ResponsiveTransformationSpecTest {
         Assert.assertEquals(
             0.11f,
             responsiveTransformationSpec(150.dp, specs3).maxElementHeightFraction,
-            EPSILON
+            EPSILON,
         )
         Assert.assertEquals(
             0.1f,
             responsiveTransformationSpec(200.dp, specs3).minElementHeightFraction,
-            EPSILON
+            EPSILON,
         )
         Assert.assertEquals(
             0.55f,
             responsiveTransformationSpec(250.dp, specs3).maxTransitionAreaHeightFraction,
-            EPSILON
+            EPSILON,
         )
         Assert.assertEquals(specs3.last(), responsiveTransformationSpec(300.dp, specs3))
     }
@@ -219,7 +219,7 @@ class ResponsiveTransformationSpecTest {
 
     private fun check_responsive_spec(
         screenSize: Dp,
-        expectedSpec: ResponsiveTransformationSpecImpl
+        expectedSpec: ResponsiveTransformationSpecImpl,
     ) {
         val spec = responsiveTransformationSpec(screenSize, SPECS)
         Assert.assertEquals(expectedSpec, spec)

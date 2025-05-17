@@ -38,7 +38,7 @@ class MediateeSdkApiImpl() {
             withSlowDraw: Boolean,
             drawViewability: Boolean,
             sdkContext: Context,
-            automatedTestCallbackBundle: Bundle
+            automatedTestCallbackBundle: Bundle,
         ): Bundle =
             when (adFormat) {
                 AdFormat.BANNER_AD ->
@@ -47,7 +47,7 @@ class MediateeSdkApiImpl() {
                         withSlowDraw,
                         drawViewability,
                         sdkContext,
-                        automatedTestCallbackBundle
+                        automatedTestCallbackBundle,
                     )
                 AdFormat.NATIVE_AD -> loadNativeAdUtil(adType, sdkContext)
                 else -> Bundle()
@@ -58,7 +58,7 @@ class MediateeSdkApiImpl() {
             waitInsideOnDraw: Boolean,
             drawViewability: Boolean,
             sdkContext: Context,
-            automatedTestCallbackBundle: Bundle
+            automatedTestCallbackBundle: Bundle,
         ): Bundle {
             val testAdapters = TestAdapters(sdkContext)
             val mediationDescription =
@@ -76,7 +76,7 @@ class MediateeSdkApiImpl() {
                             testAdapters,
                             mediationDescription,
                             waitInsideOnDraw,
-                            automatedTestCallbackBundle
+                            automatedTestCallbackBundle,
                         )
                 }
             ViewabilityHandler.addObserverFactoryToAdapter(adapter, drawViewability)
@@ -88,7 +88,7 @@ class MediateeSdkApiImpl() {
                 NativeAdGenerator(
                     sdkContext,
                     if (CompatImpl.isAppOwnedMediatee()) MediationOption.IN_APP_MEDIATEE
-                    else MediationOption.SDK_RUNTIME_MEDIATEE
+                    else MediationOption.SDK_RUNTIME_MEDIATEE,
                 )
             return nativeAdGenerator.generateAdBundleWithAssets(adType)
         }
@@ -114,7 +114,7 @@ class MediateeSdkApiImpl() {
             testAdapters: TestAdapters,
             text: String,
             waitInsideOnDraw: Boolean,
-            automatedTestCallbackBundle: Bundle
+            automatedTestCallbackBundle: Bundle,
         ): AbstractSandboxedUiAdapter {
             return testAdapters.TestBannerAd(text, waitInsideOnDraw, automatedTestCallbackBundle)
         }

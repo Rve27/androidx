@@ -49,7 +49,7 @@ fun Home(
         theme = theme,
         onThemeChange = onThemeChange,
         favorite = favorite,
-        onFavoriteClick = onFavoriteClick
+        onFavoriteClick = onFavoriteClick,
     ) { paddingValues ->
         LazyVerticalGrid(
             modifier = Modifier.consumeWindowInsets(paddingValues),
@@ -67,7 +67,7 @@ fun Home(
                     ComponentItem(
                         component = component,
                         markExpressiveComponents = theme.markExpressiveComponents,
-                        onClick = onComponentClick
+                        onClick = onComponentClick,
                     )
                 }
             },
@@ -76,8 +76,8 @@ fun Home(
                     start = paddingValues.calculateStartPadding(ltr) + HomePadding,
                     top = paddingValues.calculateTopPadding() + HomePadding,
                     end = paddingValues.calculateEndPadding(ltr) + HomePadding,
-                    bottom = paddingValues.calculateBottomPadding() + HomePadding
-                )
+                    bottom = paddingValues.calculateBottomPadding() + HomePadding,
+                ),
         )
     }
 }

@@ -35,7 +35,7 @@ import kotlin.math.atan2
  */
 suspend fun ScrollableState.animateScrollBy(
     value: Float,
-    animationSpec: AnimationSpec<Float> = spring()
+    animationSpec: AnimationSpec<Float> = spring(),
 ): Float {
     var previousValue = 0f
     scroll {
@@ -57,7 +57,7 @@ suspend fun ScrollableState.animateScrollBy(
  */
 suspend fun Scrollable2DState.animateScrollBy(
     value: Offset,
-    animationSpec: AnimationSpec<Offset> = spring()
+    animationSpec: AnimationSpec<Offset> = spring(),
 ): Offset {
     var previousValue = Offset.Zero
     scroll {

@@ -237,12 +237,7 @@ public fun SwipeToReveal(
         }
 
     val swipeToRevealScope =
-        remember(
-            revealState,
-            secondaryAction,
-            undoPrimaryAction,
-            undoSecondaryAction,
-        ) {
+        remember(revealState, secondaryAction, undoPrimaryAction, undoSecondaryAction) {
             SwipeToRevealScope(
                 revealState = revealState,
                 hasSecondaryAction = secondaryAction != null,
@@ -313,7 +308,7 @@ internal constructor(
         text: @Composable () -> Unit,
         modifier: Modifier = Modifier,
         containerColor: Color = Color.Unspecified,
-        contentColor: Color = Color.Unspecified
+        contentColor: Color = Color.Unspecified,
     ) {
         ActionButton(
             revealState = revealState,
@@ -348,7 +343,7 @@ internal constructor(
         icon: @Composable () -> Unit,
         modifier: Modifier = Modifier,
         containerColor: Color = Color.Unspecified,
-        contentColor: Color = Color.Unspecified
+        contentColor: Color = Color.Unspecified,
     ) {
         ActionButton(
             revealState,
@@ -357,7 +352,7 @@ internal constructor(
             iconStartFadeInFraction = startFadeInFraction(hasSecondaryAction),
             iconEndFadeInFraction = endFadeInFraction(hasSecondaryAction),
             modifier = modifier,
-            hasSecondaryUndo
+            hasSecondaryUndo,
         )
     }
 
@@ -386,7 +381,7 @@ internal constructor(
         modifier: Modifier = Modifier,
         icon: @Composable (() -> Unit)? = null,
         containerColor: Color = Color.Unspecified,
-        contentColor: Color = Color.Unspecified
+        contentColor: Color = Color.Unspecified,
     ) {
         ActionButton(
             revealState,
@@ -424,7 +419,7 @@ public object SwipeToRevealDefaults {
      */
     public fun gestureInclusion(
         state: RevealState,
-        @FloatRange(from = 0.0, to = 1.0) edgeZoneFraction: Float = LeftEdgeZoneFraction
+        @FloatRange(from = 0.0, to = 1.0) edgeZoneFraction: Float = LeftEdgeZoneFraction,
     ): GestureInclusion = DefaultGestureInclusion(state, edgeZoneFraction)
 
     /**
@@ -560,12 +555,12 @@ internal fun ActionButton(
         },
         colors = buttonColors(containerColor = containerColor, contentColor = contentColor),
         contentPadding = PaddingValues(ACTION_BUTTON_CONTENT_PADDING),
-        shape = CircleShape
+        shape = CircleShape,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().fillMaxHeight(),
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             val primaryActionTextRevealed =
                 remember(revealState) {
@@ -610,7 +605,7 @@ private fun ActionText(action: SwipeToRevealAction, contentColor: Color) {
                     textAlign = LocalTextConfiguration.current.textAlign,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
-                )
+                ),
         ) {
             action.text.invoke()
         }
@@ -622,7 +617,7 @@ private fun ActionIconWrapper(
     revealState: RevealState,
     iconStartFadeInFraction: Float,
     iconEndFadeInFraction: Float,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val screenWidthPx = with(LocalDensity.current) { screenWidthDp().dp.toPx() }
     val fadeInStart = screenWidthPx * iconStartFadeInFraction
@@ -770,9 +765,7 @@ public value class RevealDirection private constructor(private val value: Int) {
  * @param initialValue The initial value of this state.
  * @constructor Create a [RevealState].
  */
-public class RevealState(
-    initialValue: RevealValue,
-) {
+public class RevealState(initialValue: RevealValue) {
     /** The current [RevealValue] based on the status of the component. */
     public val currentValue: RevealValue
         get() = swipeableState.currentValue
@@ -897,14 +890,8 @@ public class RevealState(
  * @param initialValue The initial value of the [RevealValue].
  */
 @Composable
-public fun rememberRevealState(
-    initialValue: RevealValue = Covered,
-): RevealState =
-    remember(initialValue) {
-        RevealState(
-            initialValue = initialValue,
-        )
-    }
+public fun rememberRevealState(initialValue: RevealValue = Covered): RevealState =
+    remember(initialValue) { RevealState(initialValue = initialValue) }
 
 @Composable
 private fun SwipeToRevealImpl(
@@ -918,7 +905,7 @@ private fun SwipeToRevealImpl(
     undoAction: (@Composable () -> Unit)? = null,
     hasPartiallyRevealedState: Boolean = true,
     gestureInclusion: GestureInclusion = gestureInclusion(state = state),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     // A no-op NestedScrollConnection which does not consume scroll/fling events
     val noOpNestedScrollConnection = remember { object : NestedScrollConnection {} }
@@ -1040,7 +1027,7 @@ private fun SwipeToRevealImpl(
                     modifier = Modifier.matchParentSize(),
                     contentAlignment =
                         if (swipingRight) AbsoluteAlignment.CenterLeft
-                        else AbsoluteAlignment.CenterRight
+                        else AbsoluteAlignment.CenterRight,
                 ) {
                     AnimatedContent(
                         targetState = swipeCompleted && undoAction != null,
@@ -1051,7 +1038,7 @@ private fun SwipeToRevealImpl(
                                 fadeOutUndo()
                             }
                         },
-                        label = "AnimatedContentS2R"
+                        label = "AnimatedContentS2R",
                     ) { displayUndo ->
                         if (displayUndo && undoAction != null) {
                             val undoActionAlpha =
@@ -1063,13 +1050,13 @@ private fun SwipeToRevealImpl(
                                             delayMillis = FLASH_ANIMATION,
                                             easing = STANDARD_IN_OUT,
                                         ),
-                                    label = "UndoActionAlpha"
+                                    label = "UndoActionAlpha",
                                 )
                             Row(
                                 modifier =
                                     Modifier.graphicsLayer { alpha = undoActionAlpha.value }
                                         .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
+                                horizontalArrangement = Arrangement.Center,
                             ) {
                                 ActionSlot(content = undoAction)
                             }
@@ -1079,7 +1066,7 @@ private fun SwipeToRevealImpl(
                                 animateFloatAsState(
                                     targetValue = if (showSecondaryAction) 1f else 0f,
                                     animationSpec = tween(durationMillis = QUICK_ANIMATION),
-                                    label = "SecondaryActionAnimationSpec"
+                                    label = "SecondaryActionAnimationSpec",
                                 )
                             val secondaryActionAlpha =
                                 animateFloatAsState(
@@ -1088,16 +1075,16 @@ private fun SwipeToRevealImpl(
                                     animationSpec =
                                         tween(
                                             durationMillis = QUICK_ANIMATION,
-                                            easing = LinearEasing
+                                            easing = LinearEasing,
                                         ),
-                                    label = "SecondaryActionAlpha"
+                                    label = "SecondaryActionAlpha",
                                 )
                             val primaryActionAlpha =
                                 animateFloatAsState(
                                     targetValue = if (hideActions) 0f else 1f,
                                     animationSpec =
                                         tween(durationMillis = 100, easing = LinearEasing),
-                                    label = "PrimaryActionAlpha"
+                                    label = "PrimaryActionAlpha",
                                 )
                             val revealedContentAlpha =
                                 animateFloatAsState(
@@ -1105,9 +1092,9 @@ private fun SwipeToRevealImpl(
                                     animationSpec =
                                         tween(
                                             durationMillis = FLASH_ANIMATION,
-                                            easing = LinearEasing
+                                            easing = LinearEasing,
                                         ),
-                                    label = "RevealedContentAlpha"
+                                    label = "RevealedContentAlpha",
                                 )
                             var revealedContentHeight by remember { mutableIntStateOf(0) }
                             Row(
@@ -1132,12 +1119,12 @@ private fun SwipeToRevealImpl(
                                                     0,
                                                     calculateVerticalOffsetBasedOnScreenPosition(
                                                         revealedContentHeight,
-                                                        globalPosition
-                                                    )
+                                                        globalPosition,
+                                                    ),
                                                 )
                                             }
                                         },
-                                horizontalArrangement = Arrangement.Absolute.Right
+                                horizontalArrangement = Arrangement.Absolute.Right,
                             ) {
                                 if (!swipingRight) {
                                     // weight cannot be 0 so remove the composable when weight
@@ -1155,12 +1142,12 @@ private fun SwipeToRevealImpl(
                                     Spacer(Modifier.size(SwipeToRevealDefaults.Padding))
                                     ActionSlot(
                                         content = primaryAction,
-                                        opacity = primaryActionAlpha
+                                        opacity = primaryActionAlpha,
                                     )
                                 } else {
                                     ActionSlot(
                                         content = primaryAction,
-                                        opacity = primaryActionAlpha
+                                        opacity = primaryActionAlpha,
                                     )
                                     Spacer(Modifier.size(SwipeToRevealDefaults.Padding))
                                     // weight cannot be 0 so remove the composable when weight
@@ -1187,7 +1174,7 @@ private fun SwipeToRevealImpl(
                         val xOffset = state.requireOffset().roundToInt()
                         IntOffset(
                             x = if (canSwipeRight) xOffset else xOffset.coerceAtMost(0),
-                            y = 0
+                            y = 0,
                         )
                     }
             ) {
@@ -1242,7 +1229,7 @@ internal value class RevealActionType private constructor(public val value: Int)
 @Stable
 private class DefaultGestureInclusion(
     private val revealState: RevealState,
-    private val edgeZoneFraction: Float
+    private val edgeZoneFraction: Float,
 ) : GestureInclusion {
     override fun ignoreGestureStart(offset: Offset, layoutCoordinates: LayoutCoordinates): Boolean {
         val screenOffset = layoutCoordinates.localToScreen(offset)
@@ -1291,11 +1278,11 @@ private fun RowScope.ActionSlot(
     modifier: Modifier = Modifier,
     weight: Float = 1f,
     opacity: State<Float> = mutableFloatStateOf(1f),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Box(
         modifier = modifier.weight(weight).graphicsLayer { alpha = opacity.value },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         content()
     }
@@ -1319,12 +1306,12 @@ private fun fadeInUndo(): ContentTransform =
                         tween(
                             durationMillis = RAPID_ANIMATION,
                             delayMillis = FLASH_ANIMATION,
-                            easing = STANDARD_IN_OUT
-                        )
+                            easing = STANDARD_IN_OUT,
+                        ),
                 ),
         // animation spec for the fading out content and actions (fadeOut)
         initialContentExit =
-            fadeOut(animationSpec = tween(durationMillis = FLASH_ANIMATION, easing = LinearEasing))
+            fadeOut(animationSpec = tween(durationMillis = FLASH_ANIMATION, easing = LinearEasing)),
     )
 
 private fun fadeOutUndo(): ContentTransform =
@@ -1335,12 +1322,12 @@ private fun fadeOutUndo(): ContentTransform =
 
         // animation spec for the fading out undo action (fadeOut + scaleOut)
         initialContentExit =
-            fadeOut(animationSpec = tween(durationMillis = SHORT_ANIMATION, easing = LinearEasing))
+            fadeOut(animationSpec = tween(durationMillis = SHORT_ANIMATION, easing = LinearEasing)),
     )
 
 private fun calculateVerticalOffsetBasedOnScreenPosition(
     childHeight: Int,
-    globalPosition: LayoutCoordinates?
+    globalPosition: LayoutCoordinates?,
 ): Int {
     if (globalPosition == null || !globalPosition.positionOnScreen().isSpecified) {
         return 0

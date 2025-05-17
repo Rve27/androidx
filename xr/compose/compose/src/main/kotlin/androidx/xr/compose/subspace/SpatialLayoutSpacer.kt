@@ -38,10 +38,7 @@ import androidx.xr.compose.unit.VolumeConstraints
 @SubspaceComposable
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun SpatialLayoutSpacer(modifier: SubspaceModifier = SubspaceModifier) {
-    SubspaceLayout(
-        modifier = modifier,
-        measurePolicy = SpacerMeasurePolicy,
-    )
+    SubspaceLayout(modifier = modifier, measurePolicy = SpacerMeasurePolicy)
 }
 
 private object SpacerMeasurePolicy : MeasurePolicy {

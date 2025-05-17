@@ -309,7 +309,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
                             session.scene.spatialUser.head?.transformPoseTo(
                                 Pose(
                                     Vector3(0.0f, 0.0f, -1.5f),
-                                    Quaternion(0.0f, 0.0f, 0.0f, 1.0f)
+                                    Quaternion(0.0f, 0.0f, 0.0f, 1.0f),
                                 ),
                                 session.scene.activitySpace,
                             )!!
@@ -397,7 +397,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
                             stereoMode,
                             pose,
                             canvasShape,
-                            surfaceContentLevel
+                            surfaceContentLevel,
                         )
                     // Make the video player movable (to make it easier to look at it from different
                     // angles and distances) (only on quad canvas)
@@ -452,7 +452,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
                                 surfaceEntity?.canvasShape =
                                     SurfaceEntity.CanvasShape.Quad(
                                         dimensions.width,
-                                        dimensions.height
+                                        dimensions.height,
                                     )
                                 movableComponent?.size =
                                     surfaceEntity?.dimensions ?: Dimensions(1.0f, 1.0f, 1.0f)

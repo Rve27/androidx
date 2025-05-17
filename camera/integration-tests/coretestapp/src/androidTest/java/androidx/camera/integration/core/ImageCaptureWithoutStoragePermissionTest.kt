@@ -58,14 +58,12 @@ private const val CAPTURE_TIMEOUT = 15_000.toLong() //  15 seconds
 @RunWith(Parameterized::class)
 class ImageCaptureWithoutStoragePermissionTest(
     implName: String,
-    private val cameraXConfig: CameraXConfig
+    private val cameraXConfig: CameraXConfig,
 ) {
 
     @get:Rule
     val cameraPipeConfigTestRule =
-        CameraPipeConfigTestRule(
-            active = implName == CameraPipeConfig::class.simpleName,
-        )
+        CameraPipeConfigTestRule(active = implName == CameraPipeConfig::class.simpleName)
 
     @get:Rule
     val cameraRule =
@@ -79,7 +77,7 @@ class ImageCaptureWithoutStoragePermissionTest(
         fun data() =
             listOf(
                 arrayOf(Camera2Config::class.simpleName, Camera2Config.defaultConfig()),
-                arrayOf(CameraPipeConfig::class.simpleName, CameraPipeConfig.defaultConfig())
+                arrayOf(CameraPipeConfig::class.simpleName, CameraPipeConfig.defaultConfig()),
             )
     }
 
@@ -127,7 +125,7 @@ class ImageCaptureWithoutStoragePermissionTest(
             ImageCapture.OutputFileOptions.Builder(
                     context.contentResolver,
                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    contentValues
+                    contentValues,
                 )
                 .build()
 
@@ -171,7 +169,7 @@ class ImageCaptureWithoutStoragePermissionTest(
         suspend fun awaitCapturesAndAssert(
             timeout: Long = CAPTURE_TIMEOUT,
             savedImagesCount: Int = 0,
-            errorsCount: Int = 0
+            errorsCount: Int = 0,
         ) {
             Truth.assertThat(withTimeoutOrNull(timeout) { latch.await() }).isNotNull()
             Truth.assertThat(results.size).isEqualTo(savedImagesCount)

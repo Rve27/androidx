@@ -28,7 +28,7 @@ class ReplaceWithDetectorKotlinConstructorTest {
         val input =
             arrayOf(
                 ktSample("replacewith.ReplaceWithUsageKotlin"),
-                javaSample("replacewith.ConstructorKotlinStaticClass")
+                javaSample("replacewith.ConstructorKotlinStaticClass"),
             )
 
         val expected =
@@ -60,7 +60,7 @@ Fix for src/replacewith/ConstructorKotlinStaticClass.java line 25: Replace with 
         val input =
             arrayOf(
                 ktSample("replacewith.ReplaceWithUsageKotlin"),
-                javaSample("replacewith.ConstructorKotlinNonStaticClass")
+                javaSample("replacewith.ConstructorKotlinNonStaticClass"),
             )
 
         val expected =
@@ -89,7 +89,7 @@ Fix for src/replacewith/ConstructorKotlinNonStaticClass.java line 25: Replace wi
         val input =
             arrayOf(
                 ktSample("replacewith.ReplaceWithUsageKotlin"),
-                javaSample("replacewith.ConstructorKotlinToStaticMethod")
+                javaSample("replacewith.ConstructorKotlinToStaticMethod"),
             )
 
         val expected =

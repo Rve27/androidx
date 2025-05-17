@@ -87,7 +87,7 @@ abstract class WindowAreaController @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) 
         activity: Activity,
         executor: Executor,
         // TODO(272064992) investigate how to make this safer from leaks
-        windowAreaSessionCallback: WindowAreaSessionCallback
+        windowAreaSessionCallback: WindowAreaSessionCallback,
     )
 
     /**
@@ -122,7 +122,7 @@ abstract class WindowAreaController @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) 
         token: Binder,
         activity: Activity,
         executor: Executor,
-        windowAreaPresentationSessionCallback: WindowAreaPresentationSessionCallback
+        windowAreaPresentationSessionCallback: WindowAreaPresentationSessionCallback,
     )
 
     companion object {
@@ -154,9 +154,7 @@ abstract class WindowAreaController @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) 
 
             val controller =
                 if (deviceSupported) {
-                    WindowAreaControllerImpl(
-                        windowAreaComponent = windowAreaComponentExtensions!!,
-                    )
+                    WindowAreaControllerImpl(windowAreaComponent = windowAreaComponentExtensions!!)
                 } else {
                     EmptyWindowAreaControllerImpl()
                 }

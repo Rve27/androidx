@@ -47,7 +47,7 @@ class AndroidCompositionObserverTests : BaseComposeTest() {
                         object : CompositionObserver {
                             override fun onBeginComposition(
                                 composition: Composition,
-                                invalidationMap: Map<RecomposeScope, Set<Any>>
+                                invalidationMap: Map<RecomposeScope, Set<Any>>,
                             ) {}
 
                             override fun onEndComposition(composition: Composition) {}

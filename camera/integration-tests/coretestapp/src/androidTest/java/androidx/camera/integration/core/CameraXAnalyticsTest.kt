@@ -59,7 +59,7 @@ class CameraXAnalyticsTest(private val implName: String, private val cameraXConf
         fun data() =
             listOf(
                 arrayOf(Camera2Config::class.simpleName, Camera2Config.defaultConfig()),
-                arrayOf(CameraPipeConfig::class.simpleName, CameraPipeConfig.defaultConfig())
+                arrayOf(CameraPipeConfig::class.simpleName, CameraPipeConfig.defaultConfig()),
             )
     }
 
@@ -71,9 +71,7 @@ class CameraXAnalyticsTest(private val implName: String, private val cameraXConf
 
     @get:Rule
     val cameraPipeConfigTestRule =
-        CameraPipeConfigTestRule(
-            active = implName == CameraPipeConfig::class.simpleName,
-        )
+        CameraPipeConfigTestRule(active = implName == CameraPipeConfig::class.simpleName)
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private lateinit var cameraProvider: ProcessCameraProvider
     private var fakeLifecycleOwner = FakeLifecycleOwner()
@@ -109,13 +107,13 @@ class CameraXAnalyticsTest(private val implName: String, private val cameraXConf
                             override fun onCaptureCompleted(
                                 session: CameraCaptureSession,
                                 request: CaptureRequest,
-                                result: TotalCaptureResult
+                                result: TotalCaptureResult,
                             ) {
                                 if (!captureRequestTagDeferred.isCompleted) {
                                     captureRequestTagDeferred.complete(request.tag)
                                 }
                             }
-                        }
+                        },
                     )
                 }
                 .build()
@@ -135,14 +133,14 @@ class CameraXAnalyticsTest(private val implName: String, private val cameraXConf
         assumeTrue(
             extensionsManager.isExtensionAvailable(
                 CameraSelector.DEFAULT_BACK_CAMERA,
-                ExtensionMode.NIGHT
+                ExtensionMode.NIGHT,
             )
         )
 
         val extensionCameraSelector =
             extensionsManager.getExtensionEnabledCameraSelector(
                 CameraSelector.DEFAULT_BACK_CAMERA,
-                ExtensionMode.NIGHT
+                ExtensionMode.NIGHT,
             )
         verifyCaptureRequestTagContainsAnalyticsPrefix(extensionCameraSelector)
     }

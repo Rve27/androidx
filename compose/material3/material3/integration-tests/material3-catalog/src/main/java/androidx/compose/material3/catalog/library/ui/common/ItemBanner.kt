@@ -53,13 +53,10 @@ fun ItemBanner(text: String, bannerSize: Dp, modifier: Modifier = Modifier) {
                     }
                     .size(bannerSize)
                     .background(color = badgeColor),
-            contentAlignment = Alignment.BottomCenter
+            contentAlignment = Alignment.BottomCenter,
         ) {
             ProvideTextStyle(MaterialTheme.typography.labelMedium) {
-                Text(
-                    text = text,
-                    color = contentColorFor(badgeColor),
-                )
+                Text(text = text, color = contentColorFor(badgeColor))
             }
         }
     }

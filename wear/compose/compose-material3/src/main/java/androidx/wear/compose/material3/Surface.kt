@@ -59,7 +59,7 @@ internal fun Modifier.surface(
     transformation: SurfaceTransformation?,
     painter: Painter,
     shape: Shape = RectangleShape,
-    border: BorderStroke? = null
+    border: BorderStroke? = null,
 ): Modifier =
     if (transformation != null && transformation != NoOpSurfaceTransformation) {
         val backgroundPainter =
@@ -152,7 +152,7 @@ private class PainterNode(
             alignment.align(
                 IntSize(scaledSize.width.fastRoundToInt(), scaledSize.height.fastRoundToInt()),
                 IntSize(size.width.fastRoundToInt(), size.height.fastRoundToInt()),
-                layoutDirection
+                layoutDirection,
             )
 
         val dx = alignedPosition.x.toFloat()

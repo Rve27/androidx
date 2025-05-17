@@ -95,7 +95,7 @@ class PdfViewerFragmentV2TestSuite {
             launchFragmentInContainer<TestPdfViewerFragment>(
                 themeResId =
                     com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar,
-                initialState = Lifecycle.State.INITIALIZED
+                initialState = Lifecycle.State.INITIALIZED,
             )
         scenario.onFragment { fragment ->
             // Register idling resource
@@ -140,7 +140,7 @@ class PdfViewerFragmentV2TestSuite {
         scenario.onFragment {
             Preconditions.checkArgument(
                 it.documentLoaded,
-                "Unable to load document due to ${it.documentError?.message}"
+                "Unable to load document due to ${it.documentError?.message}",
             )
         }
 
@@ -202,7 +202,7 @@ class PdfViewerFragmentV2TestSuite {
                     { floatArrayOf(thumbCenterX.toFloat(), thumbCenterY.toFloat()) },
                     Press.THUMB,
                     InputDevice.SOURCE_UNKNOWN,
-                    MotionEvent.BUTTON_PRIMARY
+                    MotionEvent.BUTTON_PRIMARY,
                 )
 
             fastScrollScrubberSwipe =
@@ -214,13 +214,13 @@ class PdfViewerFragmentV2TestSuite {
                         val endX = thumbCenterX.toFloat()
                         floatArrayOf(endX, endY)
                     },
-                    Press.FINGER
+                    Press.FINGER,
                 )
 
             assertPageIndicatorLabel(
                 actualLabel = pdfView.currentPageIndicatorLabel.trim(),
                 expectedPage = 1,
-                expectedTotalPages = 3
+                expectedTotalPages = 3,
             )
         }
 
@@ -231,7 +231,7 @@ class PdfViewerFragmentV2TestSuite {
             assertPageIndicatorLabel(
                 actualLabel = pdfView.currentPageIndicatorLabel.trim(),
                 expectedPage = 3,
-                expectedTotalPages = 3
+                expectedTotalPages = 3,
             )
         }
     }
@@ -254,7 +254,7 @@ class PdfViewerFragmentV2TestSuite {
         scenario.onFragment {
             Preconditions.checkArgument(
                 it.documentLoaded,
-                "Unable to load document due to ${it.documentError?.message}"
+                "Unable to load document due to ${it.documentError?.message}",
             )
         }
 
@@ -304,13 +304,13 @@ class PdfViewerFragmentV2TestSuite {
         scenario.onFragment { fragment ->
             Preconditions.checkArgument(
                 fragment.documentError is RuntimeException,
-                "Exception is of incorrect type ${fragment.documentError}"
+                "Exception is of incorrect type ${fragment.documentError}",
             )
             Preconditions.checkArgument(
                 fragment.documentError
                     ?.message
                     .equals(fragment.resources.getString(R.string.pdf_error)),
-                "Incorrect exception returned ${fragment.documentError?.message}"
+                "Incorrect exception returned ${fragment.documentError?.message}",
             )
         }
     }
@@ -332,7 +332,7 @@ class PdfViewerFragmentV2TestSuite {
         scenario.onFragment {
             Preconditions.checkArgument(
                 it.documentLoaded,
-                "Unable to load document due to ${it.documentError?.message}"
+                "Unable to load document due to ${it.documentError?.message}",
             )
         }
 
@@ -405,7 +405,7 @@ class PdfViewerFragmentV2TestSuite {
             it.setIsAnnotationIntentResolvable(true)
             Preconditions.checkArgument(
                 it.documentLoaded,
-                "Unable to load document due to ${it.documentError?.message}"
+                "Unable to load document due to ${it.documentError?.message}",
             )
         }
 
@@ -495,7 +495,7 @@ class PdfViewerFragmentV2TestSuite {
         scenario.onFragment {
             Preconditions.checkArgument(
                 it.documentLoaded,
-                "Unable to load document due to ${it.documentError?.message}"
+                "Unable to load document due to ${it.documentError?.message}",
             )
         }
 
@@ -538,7 +538,7 @@ class PdfViewerFragmentV2TestSuite {
         scenario.onFragment {
             Preconditions.checkArgument(
                 it.documentLoaded,
-                "Unable to load document due to ${it.documentError?.message}"
+                "Unable to load document due to ${it.documentError?.message}",
             )
         }
 
@@ -572,7 +572,7 @@ class PdfViewerFragmentV2TestSuite {
         scenario.onFragment {
             Preconditions.checkArgument(
                 it.documentLoaded,
-                "Unable to load document due to ${it.documentError?.message}"
+                "Unable to load document due to ${it.documentError?.message}",
             )
         }
 
@@ -588,18 +588,18 @@ class PdfViewerFragmentV2TestSuite {
         val capturedIntent = Intents.getIntents().firstOrNull()
         assertNotNull(
             "Expected an external link intent to be launched, but it was null.",
-            capturedIntent
+            capturedIntent,
         )
     }
 
     private fun withPdfView(
         scenario: FragmentScenario<TestPdfViewerFragment>,
-        callback: (TestPdfViewerFragment, PdfView, Drawable) -> Unit
+        callback: (TestPdfViewerFragment, PdfView, Drawable) -> Unit,
     ) {
         scenario.onFragment { fragment ->
             assertNotNull(
                 "Fast scroll thumb cannot be null",
-                fragment.getPdfViewInstance().fastScrollVerticalThumbDrawable
+                fragment.getPdfViewInstance().fastScrollVerticalThumbDrawable,
             )
             val fastScrollThumb = fragment.getPdfViewInstance().fastScrollVerticalThumbDrawable!!
             assertNotNull("Fast scroll thumbnail cannot be null", fastScrollThumb)
@@ -622,16 +622,16 @@ class PdfViewerFragmentV2TestSuite {
         private fun assertPageIndicatorLabel(
             actualLabel: String,
             expectedPage: Int,
-            expectedTotalPages: Int
+            expectedTotalPages: Int,
         ) {
             TestUtils.extractFromLabel(actualLabel) { currentPage, totalPages ->
                 assertTrue(
                     "Actual page $currentPage does not match expected $expectedPage",
-                    currentPage == expectedPage
+                    currentPage == expectedPage,
                 )
                 assertTrue(
                     "Actual total pages $totalPages does not match expected $expectedTotalPages",
-                    currentPage == expectedPage
+                    currentPage == expectedPage,
                 )
             }
         }

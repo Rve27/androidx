@@ -49,7 +49,7 @@ class PageTest {
     private val pageContent =
         PdfDocument.PdfPageContent(
             listOf(PdfPageTextContent(listOf(RectF(10f, 10f, 50f, 20f)), "SampleText")),
-            emptyList() // No images in this test case
+            emptyList(), // No images in this test case
         )
 
     private val pdfDocument =
@@ -83,7 +83,7 @@ class PageTest {
             invalidationTracker,
             onPageTextReady,
             errorFlow,
-            isAccessibilityEnabled = true
+            isAccessibilityEnabled = true,
         )
     }
 
@@ -125,7 +125,7 @@ class PageTest {
                 },
                 isNull(),
                 eq(locationInView),
-                eq(BMP_PAINT)
+                eq(BMP_PAINT),
             )
     }
 
@@ -140,7 +140,7 @@ class PageTest {
                 leftEdgeInView,
                 topEdgeInView,
                 leftEdgeInView + PAGE_SIZE.x,
-                topEdgeInView + PAGE_SIZE.y
+                topEdgeInView + PAGE_SIZE.y,
             )
         val highlight = Highlight(PdfRect(pageNum = 0, RectF(10F, 0F, 30F, 20F)), Color.YELLOW)
 

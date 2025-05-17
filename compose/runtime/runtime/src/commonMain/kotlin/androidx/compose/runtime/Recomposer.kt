@@ -158,7 +158,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
                     if (_state.value <= State.ShuttingDown)
                         throw CancellationException(
                             "Recomposer shutdown; frame clock awaiter will never resume",
-                            closeCause
+                            closeCause,
                         )
                 }
             }
@@ -207,7 +207,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
          * be presented to known composers to check for invalidated compositions, or coroutines
          * awaiting a frame using the Recomposer's [MonotonicFrameClock].
          */
-        PendingWork
+        PendingWork,
     }
 
     private val stateLock = makeSynchronizedObject()
@@ -435,7 +435,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
 
     private class RecomposerErrorState(
         override val recoverable: Boolean,
-        override val cause: Throwable
+        override val cause: Throwable,
     ) : RecomposerErrorInfo
 
     private val recomposerInfo = RecomposerInfoImpl()
@@ -803,14 +803,14 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
                     null,
                     null,
                     mergeParentObservers = true,
-                    ownsParentSnapshot = false
+                    ownsParentSnapshot = false,
                 )
             } else {
                 TransparentObserverSnapshot(
                     currentSnapshot,
                     null,
                     mergeParentObservers = true,
-                    ownsParentSnapshot = false
+                    ownsParentSnapshot = false,
                 )
             }
         try {
@@ -972,7 +972,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
 
     private suspend fun runFrameLoop(
         parentFrameClock: MonotonicFrameClock,
-        frameSignal: ProduceFrameSignal
+        frameSignal: ProduceFrameSignal,
     ) {
         val toRecompose = mutableListOf<ControlledComposition>()
         val toApply = mutableListOf<ControlledComposition>()
@@ -1163,7 +1163,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
 
     internal override fun composeInitial(
         composition: ControlledComposition,
-        content: @Composable () -> Unit
+        content: @Composable () -> Unit,
     ) {
         val composerWasComposing = composition.isComposing
         try {
@@ -1211,7 +1211,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
     internal override fun composeInitialPaused(
         composition: ControlledComposition,
         shouldPause: ShouldPauseCallback,
-        content: @Composable () -> Unit
+        content: @Composable () -> Unit,
     ): ScatterSet<RecomposeScopeImpl> {
         return try {
             composition.pausable(shouldPause) {
@@ -1226,7 +1226,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
     internal override fun recomposePaused(
         composition: ControlledComposition,
         shouldPause: ShouldPauseCallback,
-        invalidScopes: ScatterSet<RecomposeScopeImpl>
+        invalidScopes: ScatterSet<RecomposeScopeImpl>,
     ): ScatterSet<RecomposeScopeImpl> {
         return try {
             recordComposerModifications()
@@ -1283,7 +1283,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
 
     private fun performRecompose(
         composition: ControlledComposition,
-        modifiedValues: MutableScatterSet<Any>?
+        modifiedValues: MutableScatterSet<Any>?,
     ): ControlledComposition? {
         if (
             composition.isComposing ||
@@ -1311,7 +1311,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
     @OptIn(ExperimentalComposeApi::class)
     private fun performInsertValues(
         references: List<MovableContentStateReference>,
-        modifiedValues: MutableScatterSet<Any>?
+        modifiedValues: MutableScatterSet<Any>?,
     ): List<ControlledComposition> {
         val tasks = references.fastGroupBy { it.composition }
         for ((composition, refs) in tasks) {
@@ -1354,7 +1354,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
                                             val container = nestedContentReference.container
                                             movableContentNestedExtractionsPending.add(
                                                 container,
-                                                content
+                                                content,
                                             )
                                             pair.first to content
                                         } else pair
@@ -1425,7 +1425,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
 
     private fun writeObserverOf(
         composition: ControlledComposition,
-        modifiedValues: MutableScatterSet<Any>?
+        modifiedValues: MutableScatterSet<Any>?,
     ): (Any) -> Unit {
         return { value ->
             composition.recordWriteOf(value)
@@ -1436,12 +1436,12 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
     private inline fun <T> composing(
         composition: ControlledComposition,
         modifiedValues: MutableScatterSet<Any>?,
-        block: () -> T
+        block: () -> T,
     ): T {
         val snapshot =
             Snapshot.takeMutableSnapshot(
                 readObserverOf(composition),
-                writeObserverOf(composition, modifiedValues)
+                writeObserverOf(composition, modifiedValues),
             )
         try {
             return snapshot.enter(block)
@@ -1599,7 +1599,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
                         reference.nestedReferences?.fastForEach { nestedReference ->
                             movableContentNestedStatesAvailable.add(
                                 nestedReference.content,
-                                NestedMovableContent(nestedReference, container)
+                                NestedMovableContent(nestedReference, container),
                             )
                             recordNestedStatesOf(nestedReference)
                         }
@@ -1829,5 +1829,5 @@ private class NestedContentMap {
 @InternalComposeApi
 private class NestedMovableContent(
     val content: MovableContentStateReference,
-    val container: MovableContentStateReference
+    val container: MovableContentStateReference,
 )

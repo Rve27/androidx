@@ -51,7 +51,7 @@ interface NativeAd : SharedUiAdapter
 data class NativeAdData(
     val nativeAd: NativeAd,
     val headerText: String,
-    val remoteUiAdapter: TextViewAd
+    val remoteUiAdapter: TextViewAd,
 ) {
     companion object {
         const val TEXT_VIEW_ASSET_ID = "text-view"
@@ -72,7 +72,7 @@ class MySdkImpl(private val context: Context) : MySdk {
         return NativeAdData(
             nativeAd = NativeAdImpl(),
             headerText = "Text from SDK",
-            remoteUiAdapter = TextViewAdImpl()
+            remoteUiAdapter = TextViewAdImpl(),
         )
     }
 }
@@ -85,7 +85,7 @@ class TextViewAdImpl : TextViewAd {
         initialHeight: Int,
         isZOrderOnTop: Boolean,
         clientExecutor: Executor,
-        client: SandboxedUiAdapter.SessionClient
+        client: SandboxedUiAdapter.SessionClient,
     ) {
         val view = TextView(context)
         view.text = "foo bar baz"

@@ -61,7 +61,7 @@ internal class BasicTextFieldAnnotatedOutputTransformationTest {
                         addAnnotation(boldStyle, 0, 1)
                         addAnnotation(boldStyle, 4, 5)
                     },
-                textStyle = style
+                textStyle = style,
             )
         }
 
@@ -92,7 +92,7 @@ internal class BasicTextFieldAnnotatedOutputTransformationTest {
                             addAnnotation(boldStyle, 0, text.length)
                         }
                     },
-                textStyle = style
+                textStyle = style,
             )
         }
 
@@ -113,7 +113,7 @@ internal class BasicTextFieldAnnotatedOutputTransformationTest {
                 modifier = Modifier.testTag(tag),
                 outputTransformation =
                     AnnotatedOutputTransformation { addAnnotation(spanStyle, 0, text.length) },
-                textStyle = style
+                textStyle = style,
             )
         }
 

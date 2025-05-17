@@ -98,7 +98,7 @@ fun TestPanel(elevationLevel: Dp, levelName: String) {
             SpatialPanel(SubspaceModifier.offset(z = elevation)) {
                 Box(
                     Modifier.size(200.dp).background(Color.White),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text("${elevation.value.roundToInt().dp}", fontSize = 8.em)
                 }

@@ -176,7 +176,7 @@ fun lerp(start: Size, stop: Size, fraction: Float): Size =
     Size(
         packFloats(
             lerp(unpackFloat1(start.packedValue), unpackFloat1(stop.packedValue), fraction),
-            lerp(unpackFloat2(start.packedValue), unpackFloat2(stop.packedValue), fraction)
+            lerp(unpackFloat2(start.packedValue), unpackFloat2(stop.packedValue), fraction),
         )
     )
 

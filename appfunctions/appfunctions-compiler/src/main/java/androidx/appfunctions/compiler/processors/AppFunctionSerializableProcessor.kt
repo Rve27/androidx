@@ -109,7 +109,7 @@ class AppFunctionSerializableProcessor(
             for (entity in entityClasses) {
                 buildAppFunctionSerializableFactoryClass(
                     entity,
-                    globalResolvedAnnotatedSerializableProxies
+                    globalResolvedAnnotatedSerializableProxies,
                 )
             }
             for (entityProxy in
@@ -118,7 +118,7 @@ class AppFunctionSerializableProcessor(
                 // only generated once in the same compilation unit as the prexy definition.
                 buildAppFunctionSerializableProxyFactoryClass(
                     entityProxy,
-                    globalResolvedAnnotatedSerializableProxies
+                    globalResolvedAnnotatedSerializableProxies,
                 )
             }
             return globalResolvedAnnotatedSerializableProxies.resolvedAnnotatedSerializableProxies
@@ -132,7 +132,7 @@ class AppFunctionSerializableProcessor(
 
     private fun buildAppFunctionSerializableFactoryClass(
         annotatedClass: AnnotatedAppFunctionSerializable,
-        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
+        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies,
     ) {
         val superInterfaceClass =
             AppFunctionSerializableFactoryClass.CLASS_NAME.parameterizedBy(
@@ -142,14 +142,14 @@ class AppFunctionSerializableProcessor(
         val factoryCodeBuilder =
             AppFunctionSerializableFactoryCodeBuilder(
                 annotatedClass,
-                resolvedAnnotatedSerializableProxies
+                resolvedAnnotatedSerializableProxies,
             )
 
         val generatedFactoryClassName = "\$${annotatedClass.originalClassName.simpleName}Factory"
         val fileSpec =
             FileSpec.builder(
                     annotatedClass.originalClassName.packageName,
-                    generatedFactoryClassName
+                    generatedFactoryClassName,
                 )
                 .addGeneratedTimeStamp()
                 .addType(
@@ -178,10 +178,10 @@ class AppFunctionSerializableProcessor(
             .createNewFile(
                 Dependencies(
                     aggregating = true,
-                    *annotatedClass.getSerializableSourceFiles().toTypedArray()
+                    *annotatedClass.getSerializableSourceFiles().toTypedArray(),
                 ),
                 annotatedClass.originalClassName.packageName,
-                generatedFactoryClassName
+                generatedFactoryClassName,
             )
             .bufferedWriter()
             .use { fileSpec.writeTo(it) }
@@ -199,10 +199,7 @@ class AppFunctionSerializableProcessor(
                 )
             val typeParameterPropertyName = getTypeParameterPropertyName(typeParameter)
 
-            primaryConstructorBuilder.addParameter(
-                typeParameterPropertyName,
-                typeTokenType,
-            )
+            primaryConstructorBuilder.addParameter(typeParameterPropertyName, typeTokenType)
 
             addProperty(
                 PropertySpec.builder(typeParameterPropertyName, typeTokenType)
@@ -218,7 +215,7 @@ class AppFunctionSerializableProcessor(
 
     private fun buildAppFunctionSerializableProxyFactoryClass(
         annotatedProxyClass: AnnotatedAppFunctionSerializableProxy,
-        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies
+        resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies,
     ) {
         val generatedSerializableProxyFactoryClassName =
             "\$${checkNotNull(
@@ -242,7 +239,7 @@ class AppFunctionSerializableProcessor(
         val factoryCodeBuilder =
             AppFunctionSerializableFactoryCodeBuilder(
                 annotatedProxyClass,
-                resolvedAnnotatedSerializableProxies
+                resolvedAnnotatedSerializableProxies,
             )
         serializableProxyClassBuilder.addAnnotation(AppFunctionCompiler.GENERATED_ANNOTATION)
         serializableProxyClassBuilder.addSuperinterface(proxySuperInterfaceClass)
@@ -255,7 +252,7 @@ class AppFunctionSerializableProcessor(
         val fileSpec =
             FileSpec.builder(
                     annotatedProxyClass.originalClassName.packageName,
-                    generatedSerializableProxyFactoryClassName
+                    generatedSerializableProxyFactoryClassName,
                 )
                 .addType(serializableProxyClassBuilder.build())
                 .build()
@@ -263,10 +260,10 @@ class AppFunctionSerializableProcessor(
             .createNewFile(
                 Dependencies(
                     aggregating = true,
-                    *annotatedProxyClass.getSerializableSourceFiles().toTypedArray()
+                    *annotatedProxyClass.getSerializableSourceFiles().toTypedArray(),
                 ),
                 annotatedProxyClass.originalClassName.packageName,
-                generatedSerializableProxyFactoryClassName
+                generatedSerializableProxyFactoryClassName,
             )
             .bufferedWriter()
             .use { fileSpec.writeTo(it) }
@@ -308,7 +305,7 @@ class AppFunctionSerializableProcessor(
 
     private fun buildToAppFunctionDataFunction(
         annotatedClass: AnnotatedAppFunctionSerializable,
-        factoryCodeBuilder: AppFunctionSerializableFactoryCodeBuilder
+        factoryCodeBuilder: AppFunctionSerializableFactoryCodeBuilder,
     ): FunSpec {
         return FunSpec.builder(
                 AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.METHOD_NAME
@@ -325,7 +322,7 @@ class AppFunctionSerializableProcessor(
 
     private fun buildProxyToAppFunctionDataFunction(
         annotatedProxyClass: AnnotatedAppFunctionSerializableProxy,
-        factoryCodeBuilder: AppFunctionSerializableFactoryCodeBuilder
+        factoryCodeBuilder: AppFunctionSerializableFactoryCodeBuilder,
     ): FunSpec {
         return FunSpec.builder(
                 AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.METHOD_NAME
@@ -334,7 +331,7 @@ class AppFunctionSerializableProcessor(
             .addParameter(
                 ParameterSpec.builder(
                         APP_FUNCTION_SERIALIZABLE_PARAM_NAME,
-                        annotatedProxyClass.targetClassDeclaration.toClassName()
+                        annotatedProxyClass.targetClassDeclaration.toClassName(),
                     )
                     .build()
             )
@@ -346,10 +343,7 @@ class AppFunctionSerializableProcessor(
     @VisibleForTesting
     class Provider : SymbolProcessorProvider {
         override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-            return AppFunctionSerializableProcessor(
-                environment.codeGenerator,
-                environment.logger,
-            )
+            return AppFunctionSerializableProcessor(environment.codeGenerator, environment.logger)
         }
     }
 }

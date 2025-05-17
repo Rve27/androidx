@@ -54,7 +54,7 @@ class CurrentWindowAdaptiveInfoTest {
         composeRule.setContent {
             CompositionLocalProvider(
                 LocalDensity provides MockDensity,
-                LocalWindowInfo provides MockWindowInfo(mockWindowSize)
+                LocalWindowInfo provides MockWindowInfo(mockWindowSize),
             ) {
                 actualAdaptiveInfo = currentWindowAdaptiveInfo()
             }
@@ -87,7 +87,7 @@ class CurrentWindowAdaptiveInfoTest {
             listOf(
                 MockFoldingFeature(orientation = FoldingFeature.Orientation.HORIZONTAL),
                 MockFoldingFeature(orientation = FoldingFeature.Orientation.VERTICAL),
-                MockFoldingFeature(orientation = FoldingFeature.Orientation.HORIZONTAL)
+                MockFoldingFeature(orientation = FoldingFeature.Orientation.HORIZONTAL),
             )
 
         private val MockFoldingFeatures2 =
@@ -95,8 +95,8 @@ class CurrentWindowAdaptiveInfoTest {
                 MockFoldingFeature(
                     isSeparating = false,
                     orientation = FoldingFeature.Orientation.HORIZONTAL,
-                    state = FoldingFeature.State.FLAT
-                ),
+                    state = FoldingFeature.State.FLAT,
+                )
             )
 
         private val MockWindowSize1 = IntSize(400, 800)

@@ -74,7 +74,7 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
         layoutMinOffset: Int,
         layoutMaxOffset: Int,
         coroutineScope: CoroutineScope,
-        graphicsContext: GraphicsContext
+        graphicsContext: GraphicsContext,
     ) {
         val previousKeyToIndexMap = this.keyIndexMap
         this.keyIndexMap = keyIndexMap
@@ -135,7 +135,7 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
                         initializeAnimation(
                             item,
                             item.getOffset(0).let { if (item.isVertical) it.y else it.x },
-                            newItemInfo
+                            newItemInfo,
                         )
                         applyScrollWithoutAnimation(newItemInfo, scrollOffset)
                         if (shouldAnimateAppearance) {
@@ -273,7 +273,7 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
 
     private fun applyScrollWithoutAnimation(
         itemInfo: LazyLayoutItemAnimator<T>.ItemInfo,
-        scrollYOffset: Int
+        scrollYOffset: Int,
     ) {
         itemInfo.animations.forEach { animation ->
             if (
@@ -310,7 +310,7 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
     private fun initializeAnimation(
         item: T,
         mainAxisOffset: Int,
-        itemInfo: ItemInfo = keyToItemInfoMap[item.key]!!
+        itemInfo: ItemInfo = keyToItemInfoMap[item.key]!!,
     ) {
         val firstPlaceableOffset = item.getOffset(0)
 
@@ -385,7 +385,7 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
             graphicsContext: GraphicsContext,
             layoutMinOffset: Int,
             layoutMaxOffset: Int,
-            crossAxisOffset: Int = positionedItem.crossAxisOffset
+            crossAxisOffset: Int = positionedItem.crossAxisOffset,
         ) {
             if (!isRunningPlacement) {
                 this.layoutMinOffset = layoutMinOffset
@@ -417,7 +417,7 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
                                     containerHeight = layoutMaxOffset - layoutMinOffset,
                                     transformedHeight = positionedItem.transformedHeight,
                                     measuredHeight = positionedItem.measuredHeight,
-                                    measurementDirection = positionedItem.measurementDirection
+                                    measurementDirection = positionedItem.measurementDirection,
                                 )
                                 .also { animations[index] = it }
                     animation.fadeInSpec = specs.fadeInSpec

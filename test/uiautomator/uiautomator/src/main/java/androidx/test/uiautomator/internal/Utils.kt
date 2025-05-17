@@ -67,22 +67,9 @@ internal fun takeScreenshotBitmap(bounds: Rect): Bitmap {
         }
     bounds.intersect(actualBounds)
     val cropped =
-        Bitmap.createBitmap(
-            bitmap,
-            bounds.left,
-            bounds.top,
-            bounds.width(),
-            bounds.height(),
-        )
+        Bitmap.createBitmap(bitmap, bounds.left, bounds.top, bounds.width(), bounds.height())
     return cropped
 }
 
-internal fun takeViewNodeTree(
-    root: AccessibilityNodeInfo,
-    displayRect: Rect,
-) =
-    ViewNode.fromAccessibilityNodeInfo(
-        depth = 0,
-        node = root,
-        displayRect = displayRect,
-    )
+internal fun takeViewNodeTree(root: AccessibilityNodeInfo, displayRect: Rect) =
+    ViewNode.fromAccessibilityNodeInfo(depth = 0, node = root, displayRect = displayRect)

@@ -59,7 +59,7 @@ fun StepperSample() {
         StepperLevelIndicator(
             value = { value },
             valueRange = valueRange,
-            modifier = Modifier.align(Alignment.CenterStart)
+            modifier = Modifier.align(Alignment.CenterStart),
         )
     }
 }
@@ -82,7 +82,7 @@ fun StepperWithIntegerSample() {
         StepperLevelIndicator(
             value = { value },
             valueProgression = valueProgression,
-            modifier = Modifier.align(Alignment.CenterStart)
+            modifier = Modifier.align(Alignment.CenterStart),
         )
     }
 }
@@ -109,7 +109,7 @@ fun StepperWithRangeSemanticsSample() {
         StepperLevelIndicator(
             value = { value },
             valueRange = valueRange,
-            modifier = Modifier.align(Alignment.CenterStart)
+            modifier = Modifier.align(Alignment.CenterStart),
         )
     }
 }
@@ -126,7 +126,7 @@ fun StepperWithButtonSample() {
             valueRange = valueRange,
             increaseIcon = { VolumeUpIcon(StepperDefaults.IconSize) },
             decreaseIcon = { VolumeDownIcon(StepperDefaults.IconSize) },
-            steps = 7
+            steps = 7,
         ) {
             Text(String.format("Value: %.1f".format(value)))
             Button(
@@ -140,7 +140,7 @@ fun StepperWithButtonSample() {
         StepperLevelIndicator(
             value = { value },
             valueRange = valueRange,
-            modifier = Modifier.align(Alignment.CenterStart)
+            modifier = Modifier.align(Alignment.CenterStart),
         )
     }
 }

@@ -74,7 +74,7 @@ internal class AndroidExtensionSessionStateCallback(
     lastStateCallback: SessionStateCallback?,
     private val cameraErrorListener: CameraErrorListener,
     private val interopSessionStateCallback: CameraExtensionSession.StateCallback? = null,
-    private val callbackExecutor: Executor
+    private val callbackExecutor: Executor,
 ) : CameraExtensionSession.StateCallback() {
     private val _lastStateCallback = atomic(lastStateCallback)
     private val extensionSession = atomic<CameraExtensionSessionWrapper?>(null)
@@ -142,7 +142,7 @@ internal open class AndroidCameraExtensionSession(
     override val device: CameraDeviceWrapper,
     private val cameraExtensionSession: CameraExtensionSession,
     private val cameraErrorListener: CameraErrorListener,
-    private val callbackExecutor: Executor
+    private val callbackExecutor: Executor,
 ) : CameraExtensionSessionWrapper {
 
     private val frameNumbers: AtomicLong = atomic(0L)
@@ -150,7 +150,7 @@ internal open class AndroidCameraExtensionSession(
 
     override fun capture(
         request: CaptureRequest,
-        listener: CameraCaptureSession.CaptureCallback
+        listener: CameraCaptureSession.CaptureCallback,
     ): Int? =
         catchAndReportCameraExceptions(device.cameraId, cameraErrorListener) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -159,8 +159,8 @@ internal open class AndroidCameraExtensionSession(
                     callbackExecutor,
                     Camera2CaptureSessionCallbackToExtensionCaptureCallback(
                         listener as Camera2CaptureCallback,
-                        LinkedList()
-                    )
+                        LinkedList(),
+                    ),
                 )
             } else {
                 cameraExtensionSession.capture(
@@ -168,8 +168,8 @@ internal open class AndroidCameraExtensionSession(
                     callbackExecutor,
                     Camera2CaptureSessionCallbackToExtensionCaptureCallbackAndroidS(
                         listener as Camera2CaptureCallback,
-                        mutableMapOf()
-                    )
+                        mutableMapOf(),
+                    ),
                 )
             }
         }
@@ -185,8 +185,8 @@ internal open class AndroidCameraExtensionSession(
                     callbackExecutor,
                     Camera2CaptureSessionCallbackToExtensionCaptureCallback(
                         listener as Camera2CaptureCallback,
-                        LinkedList()
-                    )
+                        LinkedList(),
+                    ),
                 )
             } else {
                 cameraExtensionSession.setRepeatingRequest(
@@ -194,8 +194,8 @@ internal open class AndroidCameraExtensionSession(
                     callbackExecutor,
                     Camera2CaptureSessionCallbackToExtensionCaptureCallbackAndroidS(
                         listener as Camera2CaptureCallback,
-                        mutableMapOf()
-                    )
+                        mutableMapOf(),
+                    ),
                 )
             }
         }
@@ -215,7 +215,7 @@ internal open class AndroidCameraExtensionSession(
 
     override fun captureBurst(
         requests: List<CaptureRequest>,
-        listener: CameraCaptureSession.CaptureCallback
+        listener: CameraCaptureSession.CaptureCallback,
     ): Int? {
         requests.forEach { captureRequest -> capture(captureRequest, listener) }
         return null
@@ -223,7 +223,7 @@ internal open class AndroidCameraExtensionSession(
 
     override fun setRepeatingBurst(
         requests: List<CaptureRequest>,
-        listener: CameraCaptureSession.CaptureCallback
+        listener: CameraCaptureSession.CaptureCallback,
     ): Int? {
         check(requests.size == 1) {
             "CameraExtensionSession does not support setRepeatingBurst for more than one" +
@@ -259,13 +259,13 @@ internal open class AndroidCameraExtensionSession(
 
     inner class Camera2CaptureSessionCallbackToExtensionCaptureCallback(
         private val captureCallback: Camera2CaptureCallback,
-        private val frameQueue: Queue<Long>
+        private val frameQueue: Queue<Long>,
     ) : CameraExtensionSession.ExtensionCaptureCallback() {
 
         override fun onCaptureStarted(
             session: CameraExtensionSession,
             request: CaptureRequest,
-            timestamp: Long
+            timestamp: Long,
         ) {
             val frameNumber = frameNumbers.incrementAndGet()
             extensionSessionMap[session] = frameNumber
@@ -275,13 +275,13 @@ internal open class AndroidCameraExtensionSession(
 
         override fun onCaptureProcessStarted(
             session: CameraExtensionSession,
-            request: CaptureRequest
+            request: CaptureRequest,
         ) {}
 
         override fun onCaptureProcessProgressed(
             session: CameraExtensionSession,
             request: CaptureRequest,
-            progress: Int
+            progress: Int,
         ) {
             captureCallback.onCaptureProcessProgressed(request, progress)
         }
@@ -303,7 +303,7 @@ internal open class AndroidCameraExtensionSession(
         override fun onCaptureResultAvailable(
             session: CameraExtensionSession,
             request: CaptureRequest,
-            result: TotalCaptureResult
+            result: TotalCaptureResult,
         ) {
             val frameNumber = frameQueue.remove()
             captureCallback.onCaptureCompleted(request, result, FrameNumber(frameNumber))
@@ -318,13 +318,13 @@ internal open class AndroidCameraExtensionSession(
      */
     inner class Camera2CaptureSessionCallbackToExtensionCaptureCallbackAndroidS(
         private val captureCallback: Camera2CaptureCallback,
-        private val captureRequestMap: MutableMap<CaptureRequest, MutableList<Long>>
+        private val captureRequestMap: MutableMap<CaptureRequest, MutableList<Long>>,
     ) : CameraExtensionSession.ExtensionCaptureCallback() {
 
         override fun onCaptureStarted(
             session: CameraExtensionSession,
             request: CaptureRequest,
-            timestamp: Long
+            timestamp: Long,
         ) {
             val frameNumber = frameNumbers.incrementAndGet()
             extensionSessionMap[session] = frameNumber
@@ -334,7 +334,7 @@ internal open class AndroidCameraExtensionSession(
 
         override fun onCaptureProcessStarted(
             session: CameraExtensionSession,
-            request: CaptureRequest
+            request: CaptureRequest,
         ) {}
 
         override fun onCaptureFailed(session: CameraExtensionSession, request: CaptureRequest) {
@@ -353,7 +353,7 @@ internal open class AndroidCameraExtensionSession(
         override fun onCaptureProcessProgressed(
             session: CameraExtensionSession,
             request: CaptureRequest,
-            progress: Int
+            progress: Int,
         ) {
             captureCallback.onCaptureProcessProgressed(request, progress)
         }

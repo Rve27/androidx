@@ -65,7 +65,7 @@ interface HealthConnectFeatures {
                     FEATURE_PLANNED_EXERCISE,
                     FEATURE_READ_HEALTH_DATA_HISTORY,
                     FEATURE_PERSONAL_HEALTH_RECORD,
-                    FEATURE_MINDFULNESS_SESSION
+                    FEATURE_MINDFULNESS_SESSION,
                 ]
         )
         @RestrictTo(RestrictTo.Scope.LIBRARY)
@@ -100,14 +100,14 @@ interface HealthConnectFeatures {
                 FEATURE_READ_HEALTH_DATA_IN_BACKGROUND to
                     HealthConnectVersionInfo(
                         apkVersionCode = 171302,
-                        platformVersion = SDK_EXT_13_PLATFORM_VERSION
+                        platformVersion = SDK_EXT_13_PLATFORM_VERSION,
                     ),
                 FEATURE_SKIN_TEMPERATURE to
                     HealthConnectVersionInfo(platformVersion = SDK_EXT_13_PLATFORM_VERSION),
                 FEATURE_READ_HEALTH_DATA_HISTORY to
                     HealthConnectVersionInfo(
                         apkVersionCode = 171302,
-                        platformVersion = SDK_EXT_13_PLATFORM_VERSION
+                        platformVersion = SDK_EXT_13_PLATFORM_VERSION,
                     ),
                 FEATURE_PLANNED_EXERCISE to
                     HealthConnectVersionInfo(platformVersion = SDK_EXT_13_PLATFORM_VERSION),

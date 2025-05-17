@@ -59,7 +59,7 @@ class CarouselState(
 
     override suspend fun scroll(
         scrollPriority: MutatePriority,
-        block: suspend ScrollScope.() -> Unit
+        block: suspend ScrollScope.() -> Unit,
     ) {
         pagerState.scroll(scrollPriority, block)
     }
@@ -82,7 +82,7 @@ class CarouselState(
                         currentItemOffsetFraction = it[1] as Float,
                         itemCount = { it[2] as Int },
                     )
-                }
+                },
             )
     }
 }
@@ -95,15 +95,12 @@ class CarouselState(
  */
 @ExperimentalMaterial3Api
 @Composable
-fun rememberCarouselState(
-    initialItem: Int = 0,
-    itemCount: () -> Int,
-): CarouselState {
+fun rememberCarouselState(initialItem: Int = 0, itemCount: () -> Int): CarouselState {
     return rememberSaveable(saver = CarouselState.Saver) {
             CarouselState(
                 currentItem = initialItem,
                 currentItemOffsetFraction = 0F,
-                itemCount = itemCount
+                itemCount = itemCount,
             )
         }
         .apply { pagerState.pageCountState.value = itemCount }
@@ -131,7 +128,7 @@ internal class CarouselPagerState(
                     listOf(
                         it.currentPage,
                         (it.currentPageOffsetFraction).coerceIn(MinPageOffset, MaxPageOffset),
-                        it.pageCountState.value
+                        it.pageCountState.value,
                     )
                 },
                 restore = {
@@ -140,7 +137,7 @@ internal class CarouselPagerState(
                         currentPageOffsetFraction = it[1] as Float,
                         updatedPageCount = { it[2] as Int },
                     )
-                }
+                },
             )
     }
 }

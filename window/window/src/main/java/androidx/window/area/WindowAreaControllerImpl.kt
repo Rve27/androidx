@@ -60,9 +60,8 @@ import kotlinx.coroutines.launch
 @ExperimentalWindowApi
 @RequiresWindowSdkExtension(3)
 @RequiresApi(Build.VERSION_CODES.Q)
-internal class WindowAreaControllerImpl(
-    private val windowAreaComponent: WindowAreaComponent,
-) : WindowAreaController() {
+internal class WindowAreaControllerImpl(private val windowAreaComponent: WindowAreaComponent) :
+    WindowAreaController() {
 
     private lateinit var rearDisplaySessionConsumer: Consumer2<Int>
     private var currentRearDisplayModeStatus: WindowAreaCapability.Status =
@@ -113,7 +112,7 @@ internal class WindowAreaControllerImpl(
         updateRearDisplayWindowArea(
             WindowAreaCapability.Operation.OPERATION_TRANSFER_ACTIVITY_TO_AREA,
             currentRearDisplayModeStatus,
-            windowMetrics
+            windowMetrics,
         )
     }
 
@@ -123,7 +122,7 @@ internal class WindowAreaControllerImpl(
         currentRearDisplayPresentationStatus =
             WindowAreaAdapter.translate(
                 extensionWindowAreaStatus.windowAreaStatus,
-                presentationSessionActive
+                presentationSessionActive,
             )
         val windowMetrics =
             WindowMetricsCalculator.fromDisplayMetrics(
@@ -170,7 +169,7 @@ internal class WindowAreaControllerImpl(
                         type = WindowAreaInfo.Type.TYPE_REAR_FACING,
                         // TODO(b/273807238): Update extensions to send the binder token and type
                         token = Binder(REAR_DISPLAY_BINDER_DESCRIPTOR),
-                        windowAreaComponent = windowAreaComponent
+                        windowAreaComponent = windowAreaComponent,
                     )
             }
             val capability = WindowAreaCapability(operation, status)
@@ -197,7 +196,7 @@ internal class WindowAreaControllerImpl(
         token: Binder,
         activity: Activity,
         executor: Executor,
-        windowAreaSessionCallback: WindowAreaSessionCallback
+        windowAreaSessionCallback: WindowAreaSessionCallback,
     ) {
         if (token.interfaceDescriptor != REAR_DISPLAY_BINDER_DESCRIPTOR) {
             executor.execute {
@@ -226,7 +225,7 @@ internal class WindowAreaControllerImpl(
         token: Binder,
         activity: Activity,
         executor: Executor,
-        windowAreaPresentationSessionCallback: WindowAreaPresentationSessionCallback
+        windowAreaPresentationSessionCallback: WindowAreaPresentationSessionCallback,
     ) {
         if (token.interfaceDescriptor != REAR_DISPLAY_BINDER_DESCRIPTOR) {
             executor.execute {
@@ -247,14 +246,14 @@ internal class WindowAreaControllerImpl(
                 startRearDisplayPresentationMode(
                     activity,
                     executor,
-                    windowAreaPresentationSessionCallback
+                    windowAreaPresentationSessionCallback,
                 )
             }
         } else {
             startRearDisplayPresentationMode(
                 activity,
                 executor,
-                windowAreaPresentationSessionCallback
+                windowAreaPresentationSessionCallback,
             )
         }
     }
@@ -262,7 +261,7 @@ internal class WindowAreaControllerImpl(
     private fun startRearDisplayMode(
         activity: Activity,
         executor: Executor,
-        windowAreaSessionCallback: WindowAreaSessionCallback
+        windowAreaSessionCallback: WindowAreaSessionCallback,
     ) {
         // If the capability is currently active, provide an error pointing the developer on how to
         // get access to the current session
@@ -297,7 +296,7 @@ internal class WindowAreaControllerImpl(
     private fun startRearDisplayPresentationMode(
         activity: Activity,
         executor: Executor,
-        windowAreaPresentationSessionCallback: WindowAreaPresentationSessionCallback
+        windowAreaPresentationSessionCallback: WindowAreaPresentationSessionCallback,
     ) {
         if (currentRearDisplayPresentationStatus != WINDOW_AREA_STATUS_AVAILABLE) {
             windowAreaPresentationSessionCallback.onSessionEnded(
@@ -314,15 +313,15 @@ internal class WindowAreaControllerImpl(
             RearDisplayPresentationSessionConsumer(
                 executor,
                 windowAreaPresentationSessionCallback,
-                windowAreaComponent
-            )
+                windowAreaComponent,
+            ),
         )
     }
 
     internal inner class RearDisplaySessionConsumer(
         private val executor: Executor,
         private val appCallback: WindowAreaSessionCallback,
-        private val extensionsComponent: WindowAreaComponent
+        private val extensionsComponent: WindowAreaComponent,
     ) : Consumer2<Int> {
 
         private var session: WindowAreaSession? = null
@@ -355,7 +354,7 @@ internal class WindowAreaControllerImpl(
     internal inner class RearDisplayPresentationSessionConsumer(
         private val executor: Executor,
         private val windowAreaPresentationSessionCallback: WindowAreaPresentationSessionCallback,
-        private val windowAreaComponent: WindowAreaComponent
+        private val windowAreaComponent: WindowAreaComponent,
     ) : Consumer2<@WindowAreaSessionState Int> {
 
         private var lastReportedSessionStatus: @WindowAreaSessionState Int = SESSION_STATE_INACTIVE
@@ -379,7 +378,7 @@ internal class WindowAreaControllerImpl(
                                 RearDisplayPresentationSessionPresenterImpl(
                                     windowAreaComponent,
                                     windowAreaComponent.rearDisplayPresentation!!,
-                                    ExtensionsUtil.safeVendorApiLevel
+                                    ExtensionsUtil.safeVendorApiLevel,
                                 )
                             )
                         }

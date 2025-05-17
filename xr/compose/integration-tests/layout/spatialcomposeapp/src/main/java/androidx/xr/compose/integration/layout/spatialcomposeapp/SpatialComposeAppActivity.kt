@@ -171,7 +171,7 @@ class SpatialComposeAppActivity : ComponentActivity() {
                         val intent =
                             Intent(
                                 this@SpatialComposeAppActivity,
-                                WindowManagerJxrTestActivity::class.java
+                                WindowManagerJxrTestActivity::class.java,
                             )
                         startActivity(intent)
                     }
@@ -198,7 +198,7 @@ class SpatialComposeAppActivity : ComponentActivity() {
                         Surface {
                             Text(
                                 text = "Subspace Orbiter",
-                                modifier = Modifier.width(80.dp).padding(8.dp)
+                                modifier = Modifier.width(80.dp).padding(8.dp),
                             )
                         }
                     }
@@ -207,7 +207,7 @@ class SpatialComposeAppActivity : ComponentActivity() {
                     SpatialLayoutSpacer(modifier = SubspaceModifier.height(20.dp))
                     ViewBasedAppPanel(
                         modifier = sidePanelModifier,
-                        text = "Panel Bottom Left (View)"
+                        text = "Panel Bottom Left (View)",
                     )
                 }
                 SpatialColumn(
@@ -218,8 +218,7 @@ class SpatialComposeAppActivity : ComponentActivity() {
                     MainPanel(modifier = SubspaceModifier.weight(1f).fillMaxWidth())
                     SpatialPanel(
                         modifier = SubspaceModifier.height(400.dp).fillMaxWidth(),
-                        intent =
-                            Intent(this@SpatialComposeAppActivity, AnotherActivity::class.java),
+                        intent = Intent(this@SpatialComposeAppActivity, AnotherActivity::class.java),
                     )
                 }
                 SpatialColumn(modifier = SubspaceModifier.weight(0.2f).fillMaxHeight()) {
@@ -328,7 +327,7 @@ class SpatialComposeAppActivity : ComponentActivity() {
                 ) {
                     Surface(
                         color = Color.White,
-                        modifier = Modifier.clip(RoundedCornerShape(5.dp))
+                        modifier = Modifier.clip(RoundedCornerShape(5.dp)),
                     ) {
                         Column(
                             modifier = Modifier.padding(20.dp),

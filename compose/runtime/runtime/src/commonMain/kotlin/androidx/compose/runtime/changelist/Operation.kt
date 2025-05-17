@@ -55,7 +55,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         applier: Applier<*>,
         slots: SlotWriter,
         rememberManager: RememberManager,
-        errorContext: OperationErrorContext?
+        errorContext: OperationErrorContext?,
     ) {
         withCurrentStackTrace(errorContext, slots, getGroupAnchor(slots)) {
             execute(applier, slots, rememberManager, errorContext)
@@ -68,7 +68,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
         applier: Applier<*>,
         slots: SlotWriter,
         rememberManager: RememberManager,
-        errorContext: OperationErrorContext?
+        errorContext: OperationErrorContext?,
     )
 
     open fun intParamName(parameter: IntParameter): String = "IntParameter(${parameter})"
@@ -95,7 +95,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             repeat(getInt(Count)) { applier.up() }
         }
@@ -115,7 +115,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             @Suppress("UNCHECKED_CAST") val nodeApplier = applier as Applier<Any?>
             val nodes = getObject(Nodes)
@@ -139,7 +139,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             slots.advanceBy(getInt(Distance))
         }
@@ -162,7 +162,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             rememberManager.sideEffect(getObject(Effect))
         }
@@ -182,7 +182,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             rememberManager.remembering(getObject(Value))
         }
@@ -202,7 +202,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val scope = getObject(Scope)
             rememberManager.rememberPausingScope(scope)
@@ -223,7 +223,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val scope = getObject(Scope)
             rememberManager.startResumingScope(scope)
@@ -244,7 +244,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val scope = getObject(Scope)
             rememberManager.endResumingScope(scope)
@@ -269,7 +269,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val anchor = getObject(Anchor)
             val value = getObject(Value)
@@ -294,7 +294,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val count = getInt(Count)
             slots.forEachTailSlot(slots.parent, count) { slotIndex, value ->
@@ -332,7 +332,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val value = getObject(Value)
             val groupSlotIndex = getInt(GroupSlotIndex)
@@ -375,7 +375,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val value = getObject(Value)
             val anchor = getObject(Anchor)
@@ -410,7 +410,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             slots.updateAux(getObject(Data))
         }
@@ -421,7 +421,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             slots.ensureStarted(0)
         }
@@ -441,7 +441,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             slots.ensureStarted(getObject(Anchor))
         }
@@ -452,7 +452,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             slots.removeCurrentGroup(rememberManager)
         }
@@ -472,7 +472,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             slots.moveGroup(getInt(Offset))
         }
@@ -483,7 +483,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             slots.endGroup()
         }
@@ -494,7 +494,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             slots.skipToGroupEnd()
         }
@@ -518,7 +518,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val action = getObject(Action)
             val composition = getObject(Composition)
@@ -532,7 +532,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             applier.reuse()
         }
@@ -556,7 +556,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val value = getObject(Value)
             val block = getObject(Block)
@@ -582,7 +582,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             applier.remove(index = getInt(RemoveIndex), count = getInt(Count))
         }
@@ -610,7 +610,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             applier.move(from = getInt(From), to = getInt(To), count = getInt(Count))
         }
@@ -634,7 +634,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val insertTable = getObject(FromSlotTable)
             val anchor = getObject(Anchor)
@@ -643,7 +643,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             slots.moveFrom(
                 table = insertTable,
                 index = anchor.toIndexFor(insertTable),
-                removeSourceGroup = false
+                removeSourceGroup = false,
             )
             slots.endInsert()
         }
@@ -671,7 +671,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val insertTable = getObject(FromSlotTable)
             val anchor = getObject(Anchor)
@@ -682,14 +682,14 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
                     applier,
                     writer,
                     rememberManager,
-                    errorContext?.withCurrentStackTrace(slots)
+                    errorContext?.withCurrentStackTrace(slots),
                 )
             }
             slots.beginInsert()
             slots.moveFrom(
                 table = insertTable,
                 index = anchor.toIndexFor(insertTable),
-                removeSourceGroup = false
+                removeSourceGroup = false,
             )
             slots.endInsert()
         }
@@ -725,7 +725,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val node = getObject(Factory).invoke()
             val groupAnchor = getObject(GroupAnchor)
@@ -764,7 +764,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val groupAnchor = getObject(GroupAnchor)
             val insertIndex = getInt(InsertIndex)
@@ -827,7 +827,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
                 positionToInsert(
                     slots = slots,
                     anchor = getObject(Anchor),
-                    applier = @Suppress("UNCHECKED_CAST") (applier as Applier<Any?>)
+                    applier = @Suppress("UNCHECKED_CAST") (applier as Applier<Any?>),
                 )
         }
     }
@@ -915,7 +915,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             RecomposeScopeImpl.adoptAnchoredScopes(
                 slots = slots,
                 anchors = anchors,
-                newOwner = to.composition as RecomposeScopeOwner
+                newOwner = to.composition as RecomposeScopeOwner,
             )
         }
     }
@@ -930,7 +930,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             positionToParentOf(
                 slots = slots,
                 applier = @Suppress("UNCHECKED_CAST") (applier as Applier<Any?>),
-                index = 0
+                index = 0,
             )
             slots.endGroup()
         }
@@ -993,7 +993,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ) {
             val effectiveNodeIndex = getObject(EffectiveNodeIndex)?.element ?: 0
 
@@ -1007,7 +1007,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
                         },
                     slots = slots,
                     rememberManager = rememberManager,
-                    errorContext = errorContext?.withCurrentStackTrace(slots)
+                    errorContext = errorContext?.withCurrentStackTrace(slots),
                 )
         }
     }
@@ -1024,7 +1024,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
     constructor(
         ints: Int = 0,
         objects: Int = 0,
-        val block: (Applier<*>, SlotWriter, RememberManager) -> Unit = { _, _, _ -> }
+        val block: (Applier<*>, SlotWriter, RememberManager) -> Unit = { _, _, _ -> },
     ) : Operation(ints, objects) {
         @Suppress("PrimitiveInCollection") val intParams = List(ints) { it }
         val objParams = List(objects) { index -> ObjectParameter<Any?>(index) }
@@ -1033,7 +1033,7 @@ internal sealed class Operation(val ints: Int = 0, val objects: Int = 0) {
             applier: Applier<*>,
             slots: SlotWriter,
             rememberManager: RememberManager,
-            errorContext: OperationErrorContext?
+            errorContext: OperationErrorContext?,
         ): Unit = block(applier, slots, rememberManager)
 
         override fun toString() =
@@ -1098,7 +1098,7 @@ private inline fun withCurrentStackTrace(
     errorContext: OperationErrorContext?,
     writer: SlotWriter,
     location: Anchor?,
-    block: () -> Unit
+    block: () -> Unit,
 ) {
     try {
         block()
@@ -1110,7 +1110,7 @@ private inline fun withCurrentStackTrace(
 private fun Throwable.attachComposeStackTrace(
     errorContext: OperationErrorContext?,
     writer: SlotWriter,
-    anchor: Anchor?
+    anchor: Anchor?,
 ): Throwable {
     if (errorContext == null) return this
     return attachComposeStackTrace {

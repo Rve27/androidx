@@ -53,8 +53,8 @@ class InvalidPeriodicWorkRequestIntervalDetector : Detector(), SourceCodeScanner
                 implementation =
                     Implementation(
                         InvalidPeriodicWorkRequestIntervalDetector::class.java,
-                        EnumSet.of(Scope.JAVA_FILE)
-                    )
+                        EnumSet.of(Scope.JAVA_FILE),
+                    ),
             )
     }
 
@@ -65,7 +65,7 @@ class InvalidPeriodicWorkRequestIntervalDetector : Detector(), SourceCodeScanner
     override fun visitConstructor(
         context: JavaContext,
         node: UCallExpression,
-        constructor: PsiMethod
+        constructor: PsiMethod,
     ) {
         if (node.valueArgumentCount >= 2) {
             // TestMode.PARENTHESIZED wraps Duration call in parenthesizes
@@ -105,7 +105,7 @@ class InvalidPeriodicWorkRequestIntervalDetector : Detector(), SourceCodeScanner
                                 Interval duration for `PeriodicWorkRequest`s must be at least 15 \
                                 minutes.
                             """
-                                .trimIndent()
+                                .trimIndent(),
                         )
                     }
                 }
@@ -143,7 +143,7 @@ class InvalidPeriodicWorkRequestIntervalDetector : Detector(), SourceCodeScanner
                                 Interval duration for `PeriodicWorkRequest`s must be at least 15 \
                                 minutes.
                             """
-                                .trimIndent()
+                                .trimIndent(),
                         )
                     }
                 }

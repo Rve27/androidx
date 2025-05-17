@@ -208,7 +208,7 @@ private constructor(private val lifecycleCameraProvider: LifecycleCameraProvider
     public fun bindToLifecycle(
         lifecycleOwner: LifecycleOwner,
         cameraSelector: CameraSelector,
-        vararg useCases: UseCase?
+        vararg useCases: UseCase?,
     ): Camera {
         return lifecycleCameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, *useCases)
     }
@@ -229,7 +229,7 @@ private constructor(private val lifecycleCameraProvider: LifecycleCameraProvider
     public fun bindToLifecycle(
         lifecycleOwner: LifecycleOwner,
         cameraSelector: CameraSelector,
-        useCaseGroup: UseCaseGroup
+        useCaseGroup: UseCaseGroup,
     ): Camera {
         return lifecycleCameraProvider.bindToLifecycle(lifecycleOwner, cameraSelector, useCaseGroup)
     }
@@ -287,12 +287,12 @@ private constructor(private val lifecycleCameraProvider: LifecycleCameraProvider
     public fun bindToLifecycle(
         lifecycleOwner: LifecycleOwner,
         cameraSelector: CameraSelector,
-        sessionConfig: SessionConfig
+        sessionConfig: SessionConfig,
     ): Camera {
         return lifecycleCameraProvider.bindToLifecycle(
             lifecycleOwner,
             cameraSelector,
-            sessionConfig
+            sessionConfig,
         )
     }
 
@@ -451,7 +451,7 @@ private constructor(private val lifecycleCameraProvider: LifecycleCameraProvider
             return Futures.transform(
                 sAppInstance.initAsync(context),
                 { sAppInstance },
-                CameraXExecutors.directExecutor()
+                CameraXExecutors.directExecutor(),
             )
         }
 

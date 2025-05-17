@@ -126,7 +126,7 @@ abstract class StableAidlPlugin : Plugin<Project> {
                     packagedDir,
                     importsDir,
                     depImports,
-                    outputDir
+                    outputDir,
                 )
 
             // To avoid using the same output directory as AGP's AidlCompile task, we need to
@@ -145,7 +145,7 @@ abstract class StableAidlPlugin : Plugin<Project> {
                     importsDir,
                     depImports,
                     builtApiDir,
-                    compileAidlApiTask
+                    compileAidlApiTask,
                 )
             val checkAidlApiReleaseTask =
                 registerCheckApiAidlRelease(
@@ -157,7 +157,7 @@ abstract class StableAidlPlugin : Plugin<Project> {
                     importsDir,
                     depImports,
                     frozenApiDir,
-                    generateAidlApiTask
+                    generateAidlApiTask,
                 )
             val checkAidlApiTask =
                 registerCheckAidlApi(
@@ -170,7 +170,7 @@ abstract class StableAidlPlugin : Plugin<Project> {
                     depImports,
                     frozenApiDir,
                     generateAidlApiTask,
-                    checkAidlApiReleaseTask
+                    checkAidlApiReleaseTask,
                 )
             val updateAidlApiTask =
                 registerUpdateAidlApi(
@@ -178,7 +178,7 @@ abstract class StableAidlPlugin : Plugin<Project> {
                     variant,
                     frozenApiDir,
                     generateAidlApiTask,
-                    checkAidlApiReleaseTask
+                    checkAidlApiReleaseTask,
                 )
 
             if (variant.name == DEFAULT_VARIANT_NAME) {
@@ -196,7 +196,7 @@ abstract class StableAidlPlugin : Plugin<Project> {
                     generateAidlApiTask,
                     checkAidlApiReleaseTask,
                     checkAidlApiTask,
-                    updateAidlApiTask
+                    updateAidlApiTask,
                 )
         }
     }

@@ -27,5 +27,5 @@ class InsertFunction(
     entities: Map<String, ShortcutEntity>,
     returnType: XType,
     parameters: List<ShortcutQueryParameter>,
-    functionBinder: InsertOrUpsertFunctionBinder
+    functionBinder: InsertOrUpsertFunctionBinder,
 ) : InsertOrUpsertShortcutFunction(element, entities, returnType, parameters, functionBinder)

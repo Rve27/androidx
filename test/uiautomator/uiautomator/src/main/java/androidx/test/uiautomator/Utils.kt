@@ -32,7 +32,7 @@ import java.io.FileOutputStream
 public fun Bitmap.saveToFile(
     file: File,
     compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
-    quality: Int = 100
+    quality: Int = 100,
 ): Boolean = compress(compressFormat, quality, file.outputStream())
 
 /**
@@ -46,7 +46,7 @@ public fun Bitmap.saveToFile(
 public fun Bitmap.saveToFile(
     parcelFileDescriptor: ParcelFileDescriptor,
     compressFormat: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
-    quality: Int = 100
+    quality: Int = 100,
 ): Boolean =
     compress(compressFormat, quality, FileOutputStream(parcelFileDescriptor.fileDescriptor))
 

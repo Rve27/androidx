@@ -41,7 +41,7 @@ class ServiceLoaderExtTest {
         assertThat(
                 loadProviders(
                         RuntimeFactory::class.java,
-                        listOf(FakeRuntimeFactory::class.java.name)
+                        listOf(FakeRuntimeFactory::class.java.name),
                     )
                     .single()
             )
@@ -120,7 +120,7 @@ class ServiceLoaderExtTest {
         assertThat(
                 selectProvider(
                     listOf(unsupportedProvider, supportedProvider),
-                    setOf(Feature.FULLSTACK)
+                    setOf(Feature.FULLSTACK),
                 )
             )
             .isEqualTo(supportedProvider)

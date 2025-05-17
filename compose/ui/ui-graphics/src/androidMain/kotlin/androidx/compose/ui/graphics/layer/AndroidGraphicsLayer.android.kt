@@ -57,7 +57,7 @@ import org.jetbrains.annotations.TestOnly
 actual class GraphicsLayer
 internal constructor(
     internal val impl: GraphicsLayerImpl,
-    private val layerManager: LayerManager?
+    private val layerManager: LayerManager?,
 ) {
     private var density = DefaultDensity
     private var layoutDirection = LayoutDirection.Ltr
@@ -422,7 +422,7 @@ internal constructor(
         density: Density,
         layoutDirection: LayoutDirection,
         size: IntSize,
-        block: DrawScope.() -> Unit
+        block: DrawScope.() -> Unit,
     ) {
         this.size = size
         this.density = density
@@ -602,7 +602,7 @@ internal constructor(
                         updatePathOutline(tmpPath)?.apply { alpha = this@GraphicsLayer.alpha }
                     impl.setOutline(
                         androidOutline,
-                        IntSize(bounds.width().fastRoundToInt(), bounds.height().fastRoundToInt())
+                        IntSize(bounds.width().fastRoundToInt(), bounds.height().fastRoundToInt()),
                     )
                     if (usePathForClip && clip) {
                         impl.clip = false
@@ -991,7 +991,7 @@ internal interface GraphicsLayerImpl {
         density: Density,
         layoutDirection: LayoutDirection,
         layer: GraphicsLayer,
-        block: DrawScope.() -> Unit
+        block: DrawScope.() -> Unit,
     )
 
     val hasDisplayList: Boolean

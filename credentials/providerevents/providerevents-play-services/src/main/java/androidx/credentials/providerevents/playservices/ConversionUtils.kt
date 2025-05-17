@@ -46,7 +46,7 @@ public class ConversionUtils {
             if (response != null) {
                 return com.google.android.gms.identitycredentials.CreateCredentialResponse(
                     response.type,
-                    response.data
+                    response.data,
                 )
             }
             return response
@@ -66,28 +66,28 @@ public class ConversionUtils {
                     request.type,
                     request.credentialData,
                     request.candidateQueryData,
-                    false
+                    false,
                 ),
-                callingAppInfo = callingAppInfo
+                callingAppInfo = callingAppInfo,
             )
         }
 
         public fun convertToJetpackRequest(
             request: ExportCredentialsToDeviceSetupRequest,
-            context: Context
+            context: Context,
         ): ExportCredentialsRequest {
             val credentialsJson = UriUtils.readFromUri(request.uri, context)
             return ExportCredentialsRequest(credentialsJson)
         }
 
         public fun convertToJetpackRequest(
-            request: ImportCredentialsForDeviceSetupRequest,
+            request: ImportCredentialsForDeviceSetupRequest
         ): ImportCredentialsRequest {
             return ImportCredentialsRequest(request.requestJson)
         }
 
         public fun convertToJetpackRequest(
-            request: GetCredentialTransferCapabilitiesRequest,
+            request: GetCredentialTransferCapabilitiesRequest
         ): CredentialTransferCapabilitiesRequest {
             return CredentialTransferCapabilitiesRequest()
         }

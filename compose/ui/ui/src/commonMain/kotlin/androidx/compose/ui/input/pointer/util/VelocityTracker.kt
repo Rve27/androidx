@@ -315,7 +315,7 @@ internal constructor(
     private fun calculateLeastSquaresVelocity(
         dataPoints: FloatArray,
         time: FloatArray,
-        sampleCount: Int
+        sampleCount: Int,
     ): Float {
         // The 2nd coefficient is the derivative of the quadratic polynomial at
         // x = 0, and that happens to be the last timestamp that we end up
@@ -425,7 +425,7 @@ private fun VelocityTracker.addPointerInputChangeLegacy(event: PointerInputChang
 
 private fun VelocityTracker.addPointerInputChangeWithFix(
     event: PointerInputChange,
-    offset: Offset
+    offset: Offset,
 ) {
     // If this is ACTION_DOWN: Reset the tracking.
     if (event.changedToDownIgnoreConsumed()) {
@@ -482,7 +482,7 @@ internal fun polyFitLeastSquares(
     /** number of items in each array */
     sampleCount: Int,
     degree: Int,
-    coefficients: FloatArray = FloatArray((degree + 1).coerceAtLeast(0))
+    coefficients: FloatArray = FloatArray((degree + 1).coerceAtLeast(0)),
 ): FloatArray {
     if (degree < 1) {
         throwIllegalArgumentException("The degree must be at positive integer")
@@ -637,7 +637,7 @@ private fun calculateImpulseVelocity(
     dataPoints: FloatArray,
     time: FloatArray,
     sampleCount: Int,
-    isDataDifferential: Boolean
+    isDataDifferential: Boolean,
 ): Float {
     var work = 0f
     val start = sampleCount - 1

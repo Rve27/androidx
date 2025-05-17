@@ -86,7 +86,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
         override fun onCreateCredentialRequest(
             request: CreateCredentialRequest,
             callingAppInfo: CallingAppInfoParcelable,
-            callback: ICreateCredentialCallbacks
+            callback: ICreateCredentialCallbacks,
         ) {
             if (!isAuthorizedUid(getCallingUid(), context)) {
                 return
@@ -103,7 +103,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
                 callback.onFailure(
                     com.google.android.gms.identitycredentials.CreateCredentialException
                         .ERROR_TYPE_UNKNOWN,
-                    "Request could not be constructed"
+                    "Request could not be constructed",
                 )
                 return
             }
@@ -129,7 +129,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
                                         context,
                                         0,
                                         Intent(),
-                                        PendingIntent.FLAG_IMMUTABLE
+                                        PendingIntent.FLAG_IMMUTABLE,
                                     )
                                 callback.onSuccessV2(response, placeHolderPendingIntent)
                             } else {
@@ -137,7 +137,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
                                     com.google.android.gms.identitycredentials
                                         .CreateCredentialException
                                         .ERROR_TYPE_UNKNOWN,
-                                    "Response could not be constructed"
+                                    "Response could not be constructed",
                                 )
                             }
                         }
@@ -154,26 +154,26 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
         override fun onExportCredentials(
             request: ExportCredentialsToDeviceSetupRequest,
             callingAppInfo: CallingAppInfoParcelable,
-            callback: IExportCredentialsCallbacks
+            callback: IExportCredentialsCallbacks,
         ) {}
 
         override fun onGetCredentialTransferCapabilities(
             request: GetCredentialTransferCapabilitiesRequest,
             callingAppInfo: CallingAppInfoParcelable,
-            callback: ICredentialTransferCapabilitiesCallbacks
+            callback: ICredentialTransferCapabilitiesCallbacks,
         ) {}
 
         /** Called when the provider needs to return credentials */
         override fun onImportCredentials(
             request: ImportCredentialsForDeviceSetupRequest,
             callingAppInfo: CallingAppInfoParcelable,
-            callback: IImportCredentialsCallbacks
+            callback: IImportCredentialsCallbacks,
         ) {}
 
         override fun onSignalCredentialStateRequest(
             p0: SignalCredentialStateRequest,
             p1: CallingAppInfoParcelable,
-            p2: ISignalCredentialStateCallbacks
+            p2: ISignalCredentialStateCallbacks,
         ) {}
     }
 
@@ -188,19 +188,19 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
         override fun onCreateCredentialRequest(
             request: CreateCredentialRequest,
             callingAppInfo: CallingAppInfoParcelable,
-            callback: ICreateCredentialCallbacks
+            callback: ICreateCredentialCallbacks,
         ) {}
 
         /** Called when the provider needs to ingest credentials */
         override fun onExportCredentials(
             request: ExportCredentialsToDeviceSetupRequest,
             callingAppInfo: CallingAppInfoParcelable,
-            callback: IExportCredentialsCallbacks
+            callback: IExportCredentialsCallbacks,
         ) {
             if (!isAuthorizedUid(getCallingUid(), context)) {
                 callback.onFailure(
                     ExportCredentialsException.SYSTEM_ERROR_TYPE,
-                    "Not authorized to invoke this API"
+                    "Not authorized to invoke this API",
                 )
                 return
                 // TODO(b/416798373): revisit the error types
@@ -214,7 +214,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
                 Log.e(TAG, "Exception thrown while reading the response from the file", e)
                 callback.onFailure(
                     ExportCredentialsException.SYSTEM_ERROR_TYPE,
-                    "Error while reading the response from the file"
+                    "Error while reading the response from the file",
                 )
                 return
             }
@@ -224,7 +224,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
             if (constructedCallingAppInfo == null) {
                 callback.onFailure(
                     ExportCredentialsException.UNKNOWN_ERROR_TYPE,
-                    "The request did not contain the calling app info."
+                    "The request did not contain the calling app info.",
                 )
                 return
             }
@@ -242,7 +242,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
                     object :
                         OutcomeReceiverCompat<
                             ExportCredentialsResponse,
-                            ExportCredentialsException
+                            ExportCredentialsException,
                         > {
                         override fun onResult(result: ExportCredentialsResponse) {
                             callback.onSuccess(
@@ -263,12 +263,12 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
         override fun onGetCredentialTransferCapabilities(
             request: GetCredentialTransferCapabilitiesRequest,
             callingAppInfo: CallingAppInfoParcelable,
-            callback: ICredentialTransferCapabilitiesCallbacks
+            callback: ICredentialTransferCapabilitiesCallbacks,
         ) {
             if (!isAuthorizedUid(getCallingUid(), context)) {
                 callback.onFailure(
                     GetCredentialTransferCapabilitiesException.SYSTEM_ERROR_TYPE,
-                    "Not authorized to invoke this API"
+                    "Not authorized to invoke this API",
                 )
                 return
             }
@@ -278,7 +278,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
             if (constructedCallingAppInfo == null) {
                 callback.onFailure(
                     GetCredentialTransferCapabilitiesException.UNKNOWN_ERROR_TYPE,
-                    "The request did not contain the calling app info."
+                    "The request did not contain the calling app info.",
                 )
                 return
             }
@@ -298,7 +298,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
                     object :
                         OutcomeReceiverCompat<
                             CredentialTransferCapabilities,
-                            GetCredentialTransferCapabilitiesException
+                            GetCredentialTransferCapabilitiesException,
                         > {
                         override fun onResult(result: CredentialTransferCapabilities) {
                             callback.onSuccess(
@@ -321,12 +321,12 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
         override fun onImportCredentials(
             request: ImportCredentialsForDeviceSetupRequest,
             callingAppInfo: CallingAppInfoParcelable,
-            callback: IImportCredentialsCallbacks
+            callback: IImportCredentialsCallbacks,
         ) {
             if (!isAuthorizedUid(getCallingUid(), context)) {
                 callback.onFailure(
                     ImportCredentialsException.SYSTEM_ERROR_TYPE,
-                    "Not authorized to invoke this API"
+                    "Not authorized to invoke this API",
                 )
                 return
             }
@@ -336,7 +336,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
             if (constructedCallingAppInfo == null) {
                 callback.onFailure(
                     GetCredentialTransferCapabilitiesException.UNKNOWN_ERROR_TYPE,
-                    "The request did not contain the calling app info."
+                    "The request did not contain the calling app info.",
                 )
                 return
             }
@@ -356,7 +356,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
                     object :
                         OutcomeReceiverCompat<
                             ImportCredentialsResponse,
-                            ImportCredentialsException
+                            ImportCredentialsException,
                         > {
                         override fun onResult(result: ImportCredentialsResponse) {
                             try {
@@ -370,11 +370,11 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
                                 Log.e(
                                     TAG,
                                     "Exception thrown while writing the response to the file",
-                                    e
+                                    e,
                                 )
                                 callback.onFailure(
                                     ImportCredentialsException.SYSTEM_ERROR_TYPE,
-                                    "Error while writing the response to file"
+                                    "Error while writing the response to file",
                                 )
                             }
                         }
@@ -390,7 +390,7 @@ public class CredentialEventsProviderPlayServices() : CredentialEventsProvider {
         override fun onSignalCredentialStateRequest(
             p0: SignalCredentialStateRequest,
             p1: CallingAppInfoParcelable,
-            p2: ISignalCredentialStateCallbacks
+            p2: ISignalCredentialStateCallbacks,
         ) {}
     }
 

@@ -123,7 +123,7 @@ class ColorsDetector : Detector(), SourceCodeScanner {
                                         ConflictingOnColor,
                                         argument,
                                         context.getNameLocation(argument),
-                                        "Conflicting 'on' color for a given background"
+                                        "Conflicting 'on' color for a given background",
                                     )
                                 }
                             }
@@ -150,8 +150,8 @@ class ColorsDetector : Detector(), SourceCodeScanner {
                 Severity.ERROR,
                 Implementation(
                     ColorsDetector::class.java,
-                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
-                )
+                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES),
+                ),
             )
     }
 }
@@ -230,7 +230,7 @@ private val OnColorMap =
         "secondaryVariant" to "onSecondary",
         "background" to "onBackground",
         "surface" to "onSurface",
-        "error" to "onError"
+        "error" to "onError",
     )
 
 private val LightColors = Name(Material.PackageName, "lightColors")

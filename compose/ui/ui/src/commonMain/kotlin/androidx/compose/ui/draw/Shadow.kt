@@ -54,23 +54,16 @@ import androidx.compose.ui.unit.dp
     "Replace with shadow which accepts ambientColor and spotColor parameters",
     ReplaceWith(
         "Modifier.shadow(elevation, shape, clip, DefaultShadowColor, DefaultShadowColor)",
-        "androidx.compose.ui.draw"
+        "androidx.compose.ui.draw",
     ),
-    DeprecationLevel.HIDDEN
+    DeprecationLevel.HIDDEN,
 )
 @Stable
 fun Modifier.shadow(
     elevation: Dp,
     shape: Shape = RectangleShape,
-    clip: Boolean = elevation > 0.dp
-) =
-    shadow(
-        elevation,
-        shape,
-        clip,
-        DefaultShadowColor,
-        DefaultShadowColor,
-    )
+    clip: Boolean = elevation > 0.dp,
+) = shadow(elevation, shape, clip, DefaultShadowColor, DefaultShadowColor)
 
 /**
  * Creates a [graphicsLayer] that draws a shadow. The [elevation] defines the visual depth of the

@@ -28,14 +28,11 @@ internal fun findViews(
     pollIntervalMs: Long,
     shouldStop: (MutableList<AccessibilityNodeInfo>) -> (Boolean),
     block: AccessibilityNodeInfo.() -> (Boolean),
-    rootNodeBlock: () -> (List<AccessibilityNodeInfo>)
+    rootNodeBlock: () -> (List<AccessibilityNodeInfo>),
 ): List<AccessibilityNodeInfo> {
 
     // DFS to find a view matching the given filter
-    fun dfs(
-        node: AccessibilityNodeInfo,
-        collected: MutableList<AccessibilityNodeInfo>,
-    ) {
+    fun dfs(node: AccessibilityNodeInfo, collected: MutableList<AccessibilityNodeInfo>) {
 
         // Check if this is the node we're looking for
         if (block(node)) {

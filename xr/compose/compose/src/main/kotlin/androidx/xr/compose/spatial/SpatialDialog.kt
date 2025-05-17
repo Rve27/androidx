@@ -194,7 +194,7 @@ private fun LayoutSpatialDialog(
         updateTransition(targetState = spatialElevationLevel, label = "restingLevelTransition")
             .animateFloat(
                 transitionSpec = { properties.restingLevelAnimationSpec },
-                label = "zDepth"
+                label = "zDepth",
             ) { state ->
                 state.toMeter().toM()
             }

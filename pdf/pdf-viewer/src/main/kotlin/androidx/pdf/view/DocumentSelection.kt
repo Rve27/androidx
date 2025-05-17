@@ -38,7 +38,7 @@ internal class DocumentSelection(val selectedContents: SparseArray<List<Selectio
 
             return TextSelection(
                 flattenedSelection.filterIsInstance<TextSelection>().joinToString(" ") { it.text },
-                flattenedSelection.flatMap { it.bounds }
+                flattenedSelection.flatMap { it.bounds },
             )
         }
 

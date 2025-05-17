@@ -80,7 +80,7 @@ class PausableCompositionTests {
             recording,
             "+A, ^z, ^Y, *B, +B, *Linear, +A:1, *C, +C, ^x, *Text, -C, *D, +D, +D:1, *C, +C, " +
                 "^x, *Text, -C, *C, +C, ^x, *Text, -C, *C, +C, ^x, *Text, -C, -D:1, -D, -A:1, " +
-                "-B, -A"
+                "-B, -A",
         )
     }
 
@@ -113,7 +113,7 @@ class PausableCompositionTests {
             recording,
             "+A, ^z, ^Y, *B, -A, +B, *Linear, -B, +A:1, *C, *D, -A:1, +C, " +
                 "^x, *Text, -C, +D, -D, +D:1, *C, *C, *C, -D:1, +C, ^x, *Text, -C, +C, ^x, *Text, " +
-                "-C, +C, ^x, *Text, -C"
+                "-C, +C, ^x, *Text, -C",
         )
     }
 
@@ -144,7 +144,7 @@ class PausableCompositionTests {
             "+A, ^z, ^Y, *B, -A, +B, *Linear, -B, +A:1, *C, *D, -A:1, +C, " +
                 "^x, *Text, -C, +D, -D, +D:1, *C, *C, *C, -D:1, +C, ^x, *Text, -C, +C, ^x, *Text, " +
                 "-C, +C, ^x, *Text, -C",
-            recording
+            recording,
         )
     }
 
@@ -178,7 +178,7 @@ class PausableCompositionTests {
                     "^x, *Text, -C, +D, -D, +D:1, *C, *C, *C, -D:1, +C, ^x, *Text, -C, +C, ^x, *Text, " +
                     "-C, +C, ^x, *Text, -C")
                 .splitRecording(),
-            recording.splitRecording()
+            recording.splitRecording(),
         )
     }
 
@@ -279,7 +279,7 @@ class PausableCompositionTests {
             "C(a), +B, *Linear, -B, C(b), +B, *Linear, -B, C(c), C(d), +C, ^x, *Text, -C, +D, " +
                 "-D, +D:1, *C, *C, *C, -D:1, +C, ^x, *Text, -C, +C, ^x, *Text, -C, +C, ^x, *Text, " +
                 "-C, +a, +b, +c, +d",
-            recording
+            recording,
         )
     }
 
@@ -629,7 +629,7 @@ class PausableContentWorkflowDriver(
     private val composition: PausableComposition,
     private val content: @Composable () -> Unit,
     private var host: View?,
-    private var contentView: View?
+    private var contentView: View?,
 ) : PausableContentWorkflowScope {
     private var pausedComposition: PausedComposition? = null
     override var iteration = 0
@@ -674,7 +674,7 @@ class PausableContentWorkflowDriver(
 private fun PausableContent(
     workflow: suspend PausableContentWorkflowScope.() -> Unit = { run() },
     createApplier: (view: View) -> Applier<View> = { ViewApplier(it) },
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val host = View().also { it.name = "PausableContentHost" }
     val pausableContent = View().also { it.name = "PausableContent" }

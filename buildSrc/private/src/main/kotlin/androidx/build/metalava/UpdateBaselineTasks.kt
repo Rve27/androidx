@@ -62,7 +62,7 @@ constructor(workerExecutor: WorkerExecutor) : SourceMetalavaTask(workerExecutor)
                 ApiLintMode.CheckBaseline(baselineFile, targetsJavaConsumers.get()),
                 // API version history doesn't need to be generated
                 emptyList(),
-                manifestPath.orNull?.asFile?.absolutePath
+                manifestPath.orNull?.asFile?.absolutePath,
             )
         val args = checkArgs + getCommonBaselineUpdateArgs(baselineFile)
 
@@ -115,7 +115,7 @@ abstract class IgnoreApiChangesTask @Inject constructor(workerExecutor: WorkerEx
             referenceApiLocation.publicApiFile,
             baselines.get().publicApiFile,
             false,
-            freezeApis
+            freezeApis,
         )
         if (referenceApiLocation.restrictedApiFile.exists()) {
             updateBaseline(
@@ -123,7 +123,7 @@ abstract class IgnoreApiChangesTask @Inject constructor(workerExecutor: WorkerEx
                 referenceApiLocation.restrictedApiFile,
                 baselines.get().restrictedApiFile,
                 true,
-                freezeApis
+                freezeApis,
             )
         }
     }
@@ -146,7 +146,7 @@ abstract class IgnoreApiChangesTask @Inject constructor(workerExecutor: WorkerEx
                 "--check-compatibility:api:released",
                 prevApi.toString(),
                 "--source-files",
-                api.toString()
+                api.toString(),
             )
         if (freezeApis) {
             args += listOf("--error-category", "Compatibility")
@@ -160,7 +160,7 @@ abstract class IgnoreApiChangesTask @Inject constructor(workerExecutor: WorkerEx
                     "--show-annotation",
                     "androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope." +
                         "LIBRARY_GROUP_PREFIX)",
-                    "--show-unannotated"
+                    "--show-unannotated",
                 )
         }
         runWithArgs(args)
@@ -170,12 +170,12 @@ abstract class IgnoreApiChangesTask @Inject constructor(workerExecutor: WorkerEx
 private fun getCommonBaselineUpdateArgs(
     bootClasspath: FileCollection,
     dependencyClasspath: FileCollection,
-    baselineFile: File
+    baselineFile: File,
 ): MutableList<String> {
     val args =
         mutableListOf(
             "--classpath",
-            (bootClasspath.files + dependencyClasspath.files).joinToString(File.pathSeparator)
+            (bootClasspath.files + dependencyClasspath.files).joinToString(File.pathSeparator),
         )
     args += getCommonBaselineUpdateArgs(baselineFile)
     return args
@@ -189,6 +189,6 @@ private fun getCommonBaselineUpdateArgs(baselineFile: File): List<String> {
         baselineFile.toString(),
         "--pass-baseline-updates",
         "--delete-empty-baselines",
-        "--format=v4"
+        "--format=v4",
     )
 }

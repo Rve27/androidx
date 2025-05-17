@@ -23,7 +23,7 @@ import androidx.compose.runtime.Immutable
 actual class TextMotion
 internal constructor(
     internal val linearity: Linearity,
-    internal val subpixelTextPositioning: Boolean
+    internal val subpixelTextPositioning: Boolean,
 ) {
     actual companion object {
         actual val Static: TextMotion = TextMotion(Linearity.FontHinting, false)
@@ -32,7 +32,7 @@ internal constructor(
 
     internal fun copy(
         linearity: Linearity = this.linearity,
-        subpixelTextPositioning: Boolean = this.subpixelTextPositioning
+        subpixelTextPositioning: Boolean = this.subpixelTextPositioning,
     ): TextMotion =
         TextMotion(linearity = linearity, subpixelTextPositioning = subpixelTextPositioning)
 

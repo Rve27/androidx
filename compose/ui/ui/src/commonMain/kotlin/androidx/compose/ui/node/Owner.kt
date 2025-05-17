@@ -150,7 +150,7 @@ internal interface Owner : PositionCalculator {
 
     @Deprecated(
         "fontLoader is deprecated, use fontFamilyResolver",
-        replaceWith = ReplaceWith("fontFamilyResolver")
+        replaceWith = ReplaceWith("fontFamilyResolver"),
     )
     @Suppress("DEPRECATION")
     val fontLoader: Font.ResourceLoader
@@ -174,7 +174,7 @@ internal interface Owner : PositionCalculator {
         layoutNode: LayoutNode,
         affectsLookahead: Boolean = false,
         forceRequest: Boolean = false,
-        scheduleMeasureAndLayout: Boolean = true
+        scheduleMeasureAndLayout: Boolean = true,
     )
 
     /**
@@ -187,7 +187,7 @@ internal interface Owner : PositionCalculator {
     fun onRequestRelayout(
         layoutNode: LayoutNode,
         affectsLookahead: Boolean = false,
-        forceRequest: Boolean = false
+        forceRequest: Boolean = false,
     )
 
     /**
@@ -269,7 +269,7 @@ internal interface Owner : PositionCalculator {
         drawBlock: (canvas: Canvas, parentLayer: GraphicsLayer?) -> Unit,
         invalidateParentLayer: () -> Unit,
         explicitLayer: GraphicsLayer? = null,
-        forceUseOldLayers: Boolean = false
+        forceUseOldLayers: Boolean = false,
     ): OwnedLayer
 
     /**

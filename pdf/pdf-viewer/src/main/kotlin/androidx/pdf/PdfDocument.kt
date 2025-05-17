@@ -73,7 +73,7 @@ public interface PdfDocument : Closeable {
     @Throws(DocumentClosedException::class)
     public suspend fun getPageInfo(
         pageNumber: Int,
-        pageInfoFlags: PageInfoFlags = PageInfoFlags.of(0)
+        pageInfoFlags: PageInfoFlags = PageInfoFlags.of(0),
     ): PageInfo
 
     /**
@@ -97,7 +97,7 @@ public interface PdfDocument : Closeable {
     @Throws(DocumentClosedException::class)
     public suspend fun getPageInfos(
         pageRange: IntRange,
-        pageInfoFlags: PageInfoFlags
+        pageInfoFlags: PageInfoFlags,
     ): List<PageInfo>
 
     /**
@@ -112,7 +112,7 @@ public interface PdfDocument : Closeable {
     @Throws(DocumentClosedException::class)
     public suspend fun searchDocument(
         query: String,
-        pageRange: IntRange
+        pageRange: IntRange,
     ): SparseArray<List<PageMatchBounds>>
 
     /**
@@ -128,7 +128,7 @@ public interface PdfDocument : Closeable {
     public suspend fun getSelectionBounds(
         pageNumber: Int,
         start: PointF,
-        stop: PointF
+        stop: PointF,
     ): PageSelection?
 
     /**
@@ -141,9 +141,7 @@ public interface PdfDocument : Closeable {
      */
     @Throws(DocumentClosedException::class)
     @RestrictTo(RestrictTo.Scope.LIBRARY)
-    public suspend fun getSelectAllSelectionBounds(
-        pageNumber: Int,
-    ): PageSelection?
+    public suspend fun getSelectAllSelectionBounds(pageNumber: Int): PageSelection?
 
     /**
      * Asynchronously retrieves the content (text and images) of the specified page.
@@ -178,23 +176,23 @@ public interface PdfDocument : Closeable {
     /**
      * Returns the list of [FormWidgetInfo] on [pageNum]
      *
-     * @return A list of [FormWidgetInfo] objects representing the form widgets on the given page.
      * @property pageNum The page number (0-based).
+     * @return A list of [FormWidgetInfo] objects representing the form widgets on the given page.
      */
     public suspend fun getFormWidgetInfos(pageNum: Int): List<FormWidgetInfo>
 
     /**
      * Returns the list of [FormWidgetInfo] on [pageNum], optionally filtered by widget type.
      *
-     * @return A list of [FormWidgetInfo] objects representing the form widgets of the specified
-     *   types on the specified page.
      * @property pageNum The page number (0-based).
      * @property types The [FormWidgetInfo.WidgetType] of form widgets to return, or an empty array
      *   to return all widgets.
+     * @return A list of [FormWidgetInfo] objects representing the form widgets of the specified
+     *   types on the specified page.
      */
     public suspend fun getFormWidgetInfos(
         pageNum: Int,
-        types: IntArray = intArrayOf()
+        types: IntArray = intArrayOf(),
     ): List<FormWidgetInfo>
 
     /**
@@ -206,10 +204,10 @@ public interface PdfDocument : Closeable {
      * document so they can be saved and restored across destructive events like low memory kills or
      * configuration changes.
      *
-     * @return A list of [Rect] indicating regions of the PDF content that were affected by the
-     *   mutation.
      * @property pageNum The page number (0-based).
      * @property record The [FormEditRecord] to apply to the form.
+     * @return A list of [Rect] indicating regions of the PDF content that were affected by the
+     *   mutation.
      * @throws IllegalArgumentException if the provided [record] cannot be applied to the widget
      *   indicated by the index, or if the index does not correspond to a widget on the page.
      */
@@ -231,7 +229,7 @@ public interface PdfDocument : Closeable {
         public val pageNum: Int,
         public val height: Int,
         public val width: Int,
-        public val formWidgetInfos: List<FormWidgetInfo>? = null
+        public val formWidgetInfos: List<FormWidgetInfo>? = null,
     )
 
     /** A source for retrieving bitmap representations of PDF pages. */
@@ -264,7 +262,7 @@ public interface PdfDocument : Closeable {
      */
     public class PdfPageContent(
         public val textContents: List<PdfPageTextContent>,
-        public val imageContents: List<PdfPageImageContent>
+        public val imageContents: List<PdfPageImageContent>,
     )
 
     /**
@@ -277,7 +275,7 @@ public interface PdfDocument : Closeable {
      */
     public class PdfPageLinks(
         public val gotoLinks: List<PdfPageGotoLinkContent>,
-        public val externalLinks: List<PdfPageLinkContent>
+        public val externalLinks: List<PdfPageLinkContent>,
     )
 
     /**
@@ -297,7 +295,7 @@ public interface PdfDocument : Closeable {
      */
     public class DocumentClosedException(
         public override val message: String = "Document already closed",
-        public override val cause: Throwable? = null
+        public override val cause: Throwable? = null,
     ) : CancellationException()
 
     /** Specifies the flags for loading pageInfo. */
@@ -312,7 +310,7 @@ public interface PdfDocument : Closeable {
         PDF_FORM_TYPE_NONE,
         PDF_FORM_TYPE_ACRO_FORM,
         PDF_FORM_TYPE_XFA_FULL,
-        PDF_FORM_TYPE_XFA_FOREGROUND
+        PDF_FORM_TYPE_XFA_FOREGROUND,
     )
     public annotation class FormType
 

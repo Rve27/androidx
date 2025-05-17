@@ -92,7 +92,7 @@ fun LazyLayoutScrollableSample() {
 
     LazyLayout(
         modifier = Modifier.size(500.dp).scrollable(scrollableState, Orientation.Horizontal),
-        itemProvider = itemProvider
+        itemProvider = itemProvider,
     ) { constraints ->
         // plug the measure policy, this is how we create and layout items.
         val placeablesCache = mutableIntObjectMapOf<Placeable>()
@@ -102,7 +102,7 @@ fun LazyLayoutScrollableSample() {
             firstVisibleItemOffset,
             Items.size,
             placeablesCache,
-            constraints
+            constraints,
         ) { newFirstVisibleItemIndex, newFirstVisibleItemOffset ->
             // update the information about the anchor item.
             firstVisibleItemIndex = newFirstVisibleItemIndex
@@ -134,7 +134,7 @@ private fun LazyLayoutMeasureScope.measureLayout(
     itemCount: Int,
     placeablesCache: MutableIntObjectMap<Placeable>,
     containerConstraints: Constraints,
-    updatePositions: (Int, Int) -> Unit
+    updatePositions: (Int, Int) -> Unit,
 ): MeasureResult {
     /** 1) Resolve layout information and constraints. */
     val viewportSize = containerConstraints.maxWidth
@@ -240,7 +240,7 @@ private fun LazyLayoutMeasureScope.measureLayout(
 private fun LazyLayoutMeasureScope.createItem(
     index: Int,
     constraints: Constraints,
-    placeablesCache: IntObjectMap<Placeable>
+    placeablesCache: IntObjectMap<Placeable>,
 ): Placeable {
 
     val cachedPlaceable = placeablesCache[index]
@@ -272,7 +272,7 @@ private class BasicLazyLayoutState : ScrollableState {
 
     override suspend fun scroll(
         scrollPriority: MutatePriority,
-        block: suspend ScrollScope.() -> Unit
+        block: suspend ScrollScope.() -> Unit,
     ) = backingState.scroll(scrollPriority, block)
 
     override fun dispatchRawDelta(delta: Float): Float = backingState.dispatchRawDelta(delta)
@@ -289,7 +289,7 @@ private class BasicLazyLayoutState : ScrollableState {
 
 private class BasicLazyLayoutItemProvider(
     private val items: List<String>,
-    private val content: @Composable (item: String, index: Int) -> Unit
+    private val content: @Composable (item: String, index: Int) -> Unit,
 ) : LazyLayoutItemProvider {
     override val itemCount: Int = items.size
 

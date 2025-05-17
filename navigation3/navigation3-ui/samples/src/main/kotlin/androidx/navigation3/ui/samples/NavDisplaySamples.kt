@@ -75,7 +75,7 @@ fun SceneNav() {
             listOf(
                 rememberSceneSetupNavEntryDecorator(),
                 rememberSavedStateNavEntryDecorator(),
-                rememberViewModelStoreNavEntryDecorator()
+                rememberViewModelStoreNavEntryDecorator(),
             ),
         onBack = { backStack.removeAt(backStack.lastIndex) },
         entryProvider =
@@ -104,7 +104,7 @@ fun SceneNav() {
                     val userId = dashboardArgs.userId
                     Dashboard(userId, onBack = { backStack.removeAt(backStack.lastIndex) })
                 }
-            }
+            },
     )
     if (showDialog.value) {
         DialogContent(onDismissRequest = { showDialog.value = false })
@@ -136,7 +136,7 @@ fun SceneNavSharedEntrySample() {
                 Modifier.sharedElement(
                     rememberSharedContentState(entry.key),
                     animatedVisibilityScope = LocalNavAnimatedContentScope.current,
-                ),
+                )
             ) {
                 entry.content(entry.key)
             }
@@ -153,7 +153,7 @@ fun SceneNavSharedEntrySample() {
                     listOf(
                         sharedEntryInSceneNavEntryDecorator,
                         rememberSceneSetupNavEntryDecorator(),
-                        rememberSavedStateNavEntryDecorator()
+                        rememberSavedStateNavEntryDecorator(),
                     ),
                 entryProvider =
                     entryProvider {
@@ -167,7 +167,7 @@ fun SceneNavSharedEntrySample() {
                                 backStack.removeAt(backStack.lastIndex)
                             }
                         }
-                    }
+                    },
             )
         }
     }
@@ -194,7 +194,7 @@ fun SceneNavSharedElementSample() {
                             backStack.removeAt(backStack.lastIndex)
                         }
                     }
-                }
+                },
         )
     }
 }
@@ -224,7 +224,7 @@ fun CatList(sharedScope: SharedTransitionScope, onClick: (cat: Cat) -> Unit) {
                         Modifier.size(100.dp)
                             .sharedElement(
                                 sharedScope.rememberSharedContentState(key = cat.imageId),
-                                animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                                animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                             )
                     Image(painterResource(cat.imageId), cat.description, imageModifier)
                     Text(cat.name)
@@ -244,7 +244,7 @@ fun CatDetail(cat: Cat, sharedScope: SharedTransitionScope, onBack: () -> Unit) 
                     Modifier.size(300.dp)
                         .sharedElement(
                             sharedScope.rememberSharedContentState(key = cat.imageId),
-                            animatedVisibilityScope = LocalNavAnimatedContentScope.current
+                            animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                         )
                 Image(painterResource(cat.imageId), cat.description, imageModifier)
             }

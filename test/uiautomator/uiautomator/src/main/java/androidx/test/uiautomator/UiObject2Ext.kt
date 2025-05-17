@@ -47,7 +47,7 @@ public fun UiObject2.onView(
     accessibilityNodeInfo.onView(
         timeoutMs = timeoutMs,
         pollIntervalMs = pollIntervalMs,
-        block = block
+        block = block,
     )
 
 /**
@@ -75,7 +75,7 @@ public fun UiObject2.onViewOrNull(
     accessibilityNodeInfo.onViewOrNull(
         timeoutMs = timeoutMs,
         pollIntervalMs = pollIntervalMs,
-        block = block
+        block = block,
     )
 
 /**
@@ -106,7 +106,7 @@ public fun UiObject2.onViews(
     accessibilityNodeInfo.onViews(
         timeoutMs = timeoutMs,
         pollIntervalMs = pollIntervalMs,
-        block = block
+        block = block,
     )
 
 /**
@@ -135,7 +135,7 @@ public fun UiObject2.scrollToView(
             direction = direction,
             timeoutMs = timeoutMs,
             pollIntervalMs = pollIntervalMs,
-            block = block
+            block = block,
         )
         .notNull(ViewNotFoundException())
 

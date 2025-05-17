@@ -64,7 +64,7 @@ class MultiProcessDataStoreIpcTest {
                     filePath = file.canonicalPath,
                     storageVariant = storageVariant,
                     hostDatastoreScope = multiProcessRule.datastoreScope,
-                    subjects = arrayOf(subject)
+                    subjects = arrayOf(subject),
                 )
             subject.invokeInRemoteProcess(SetTextAction("abc"))
             assertThat(datastore.data.first().text).isEqualTo("abc")
@@ -89,7 +89,7 @@ class MultiProcessDataStoreIpcTest {
                     filePath = file.canonicalPath,
                     storageVariant = storageVariant,
                     hostDatastoreScope = multiProcessRule.datastoreScope,
-                    subjects = arrayOf(subject1, subject2)
+                    subjects = arrayOf(subject1, subject2),
                 )
             // start with data
             dataStore.updateData { it.toBuilder().setText("hostData").build() }
@@ -100,7 +100,7 @@ class MultiProcessDataStoreIpcTest {
                     SetTextAction(
                         value = "remoteValue",
                         commitTransactionLatch = commitWriteLatch,
-                        transactionStartedLatch = writeStartedLatch
+                        transactionStartedLatch = writeStartedLatch,
                     )
                 )
             }
@@ -135,7 +135,7 @@ class MultiProcessDataStoreIpcTest {
                     filePath = file.canonicalPath,
                     storageVariant = storageVariant,
                     hostDatastoreScope = multiProcessRule.datastoreScope,
-                    subjects = arrayOf(subject)
+                    subjects = arrayOf(subject),
                 )
             val remoteWriteStarted = InterProcessCompletable<IpcUnit>()
             val allowRemoteCommit = InterProcessCompletable<IpcUnit>()
@@ -145,7 +145,7 @@ class MultiProcessDataStoreIpcTest {
                     SetTextAction(
                         value = "remoteValue",
                         transactionStartedLatch = remoteWriteStarted,
-                        commitTransactionLatch = allowRemoteCommit
+                        commitTransactionLatch = allowRemoteCommit,
                     )
                 )
             }
@@ -208,7 +208,7 @@ class MultiProcessDataStoreIpcTest {
                     filePath = file.canonicalPath,
                     storageVariant = storageVariant,
                     hostDatastoreScope = multiProcessRule.datastoreScope,
-                    subjects = arrayOf(subject)
+                    subjects = arrayOf(subject),
                 )
             // invalidate local cache
             assertThat(dataStore.data.first()).isEqualTo(FooProto.getDefaultInstance())
@@ -274,7 +274,7 @@ class MultiProcessDataStoreIpcTest {
                     filePath = file.canonicalPath,
                     storageVariant = storageVariant,
                     hostDatastoreScope = multiProcessRule.datastoreScope,
-                    subjects = arrayOf(subject)
+                    subjects = arrayOf(subject),
                 )
             val blockWrite = CompletableDeferred<Unit>()
             val localWriteStarted = CompletableDeferred<Unit>()
@@ -321,7 +321,7 @@ class MultiProcessDataStoreIpcTest {
                     filePath = file.canonicalPath,
                     storageVariant = storageVariant,
                     hostDatastoreScope = multiProcessRule.datastoreScope,
-                    subjects = arrayOf(subject)
+                    subjects = arrayOf(subject),
                 )
             val blockWrite = CompletableDeferred<Unit>()
             val startedWrite = CompletableDeferred<Unit>()
@@ -384,7 +384,7 @@ class MultiProcessDataStoreIpcTest {
                     storageVariant = storageVariant,
                     hostDatastoreScope = multiProcessRule.datastoreScope,
                     corruptionHandler = TestCorruptionHandler::class.java,
-                    subjects = arrayOf(subject)
+                    subjects = arrayOf(subject),
                 )
             val blockSetText = InterProcessCompletable<IpcUnit>()
             val writeStarted = InterProcessCompletable<IpcUnit>()
@@ -393,7 +393,7 @@ class MultiProcessDataStoreIpcTest {
                     SetTextAction(
                         value = "remoteValue",
                         commitTransactionLatch = blockSetText,
-                        transactionStartedLatch = writeStarted
+                        transactionStartedLatch = writeStarted,
                     )
                 )
             }
@@ -444,14 +444,14 @@ class MultiProcessDataStoreIpcTest {
                     filePath = file1.canonicalPath,
                     storageVariant = storageVariant,
                     hostDatastoreScope = multiProcessRule.datastoreScope,
-                    subjects = arrayOf(subject1)
+                    subjects = arrayOf(subject1),
                 )
             val datastore2 =
                 createMultiProcessTestDatastore(
                     filePath = file2.canonicalPath,
                     storageVariant = storageVariant,
                     hostDatastoreScope = multiProcessRule.datastoreScope,
-                    subjects = arrayOf(subject2)
+                    subjects = arrayOf(subject2),
                 )
 
             // setup real data and lock file
@@ -479,7 +479,7 @@ class MultiProcessDataStoreIpcTest {
                     SetTextAction(
                         value = "remoteValue",
                         commitTransactionLatch = commitWriteLatch1,
-                        transactionStartedLatch = writeStartedLatch1
+                        transactionStartedLatch = writeStartedLatch1,
                     )
                 )
             }
@@ -493,7 +493,7 @@ class MultiProcessDataStoreIpcTest {
                     SetTextAction(
                         value = "remoteValue",
                         commitTransactionLatch = commitWriteLatch2,
-                        actionStartedLatch = actionStartedLatch
+                        actionStartedLatch = actionStartedLatch,
                     )
                 )
             }

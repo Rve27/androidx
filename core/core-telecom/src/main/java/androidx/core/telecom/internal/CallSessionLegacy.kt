@@ -71,7 +71,7 @@ internal class CallSessionLegacy(
     val onEventCallback: suspend (event: String, extras: Bundle) -> Unit,
     val onStateChangedCallback: MutableSharedFlow<CallStateEvent>,
     private val preferredStartingCallEndpoint: CallEndpointCompat? = null,
-    private val blockingSessionExecution: CompletableDeferred<Unit>
+    private val blockingSessionExecution: CompletableDeferred<Unit>,
 ) : android.telecom.Connection(), AutoCloseable {
     // instance vars
     private val TAG: String = CallSessionLegacy::class.java.simpleName
@@ -91,7 +91,7 @@ internal class CallSessionLegacy(
             mGlobalMuteStateReceiver = MuteStateReceiver(::onGlobalMuteStateChanged)
             mContext.registerReceiver(
                 mGlobalMuteStateReceiver,
-                IntentFilter(AudioManager.ACTION_MICROPHONE_MUTE_CHANGED)
+                IntentFilter(AudioManager.ACTION_MICROPHONE_MUTE_CHANGED),
             )
         }
         CoroutineScope(coroutineContext).launch {
@@ -173,7 +173,7 @@ internal class CallSessionLegacy(
             CallEndpointUuidTracker.getUuid(
                 mCallSessionLegacyId,
                 endpoint.type,
-                endpoint.name.toString()
+                endpoint.name.toString(),
             )
         val jetpackEndpoint = CallEndpointCompat(endpoint.name, endpoint.type, jetpackUuid)
         Log.d(TAG, " n=[${endpoint.name}]  plat=[${endpoint}] --> jet=[$jetpackEndpoint]")
@@ -257,7 +257,7 @@ internal class CallSessionLegacy(
      */
     private fun maybeSwitchToSpeakerOnCallStart(
         currentEndpoint: CallEndpointCompat,
-        availableEndpoints: List<CallEndpointCompat>
+        availableEndpoints: List<CallEndpointCompat>,
     ) {
         if (!mAlreadyRequestedSpeaker && attributes.isVideoCall()) {
             try {
@@ -266,7 +266,7 @@ internal class CallSessionLegacy(
                     Log.i(
                         TAG,
                         "maybeSwitchToSpeaker: detected a video call that started" +
-                            " with the earpiece audio route. requesting switch to speaker."
+                            " with the earpiece audio route. requesting switch to speaker.",
                     )
                     CoroutineScope(coroutineContext).launch {
                         // Users reported in b/345309071 that the call started on speakerphone
@@ -281,7 +281,7 @@ internal class CallSessionLegacy(
                             } else {
                                 Log.i(
                                     TAG,
-                                    "maybeSwitchToSpeaker: BT connected! void speaker switch"
+                                    "maybeSwitchToSpeaker: BT connected! void speaker switch",
                                 )
                             }
                         } else {
@@ -313,7 +313,7 @@ internal class CallSessionLegacy(
     fun maybeSwitchToSpeakerOnHeadsetDisconnect(
         newEndpoint: CallEndpointCompat,
         previousEndpoint: CallEndpointCompat?,
-        availableEndpoints: List<CallEndpointCompat>
+        availableEndpoints: List<CallEndpointCompat>,
     ) {
         try {
             if (
@@ -330,7 +330,7 @@ internal class CallSessionLegacy(
                     Log.i(
                         TAG,
                         "maybeSwitchToSpeakerOnHeadsetDisconnect: headset disconnected while" +
-                            " in a video call. requesting switch to speaker."
+                            " in a video call. requesting switch to speaker.",
                     )
                     requestEndpointChange(speakerCompat)
                 }
@@ -447,7 +447,7 @@ internal class CallSessionLegacy(
         fun setAudio(
             callEndpoint: CallEndpointCompat,
             connection: CallSessionLegacy,
-            btCache: ArrayList<BluetoothDevice>
+            btCache: ArrayList<BluetoothDevice>,
         ): CallControlResult {
             if (callEndpoint.type == CallEndpointCompat.TYPE_BLUETOOTH) {
                 val btDevice = getBluetoothDeviceFromEndpoint(btCache, callEndpoint)
@@ -465,7 +465,7 @@ internal class CallSessionLegacy(
         @JvmStatic
         fun refreshBluetoothDeviceCache(
             btCacheList: ArrayList<BluetoothDevice>,
-            state: CallAudioState
+            state: CallAudioState,
         ) {
             btCacheList.clear()
             btCacheList.addAll(state.supportedBluetoothDevices)
@@ -474,7 +474,7 @@ internal class CallSessionLegacy(
         @JvmStatic
         fun getBluetoothDeviceFromEndpoint(
             btCacheList: ArrayList<BluetoothDevice>,
-            endpoint: CallEndpointCompat
+            endpoint: CallEndpointCompat,
         ): BluetoothDevice? {
             for (btDevice in btCacheList) {
                 var btName = ""
@@ -494,12 +494,12 @@ internal class CallSessionLegacy(
         internal fun bluetoothDeviceMatchesEndpoint(
             btName: String?,
             btAddress: String?,
-            endpoint: CallEndpointCompat
+            endpoint: CallEndpointCompat,
         ): Boolean {
             Log.i(
                 "bDME",
                 "{btName=[$btName], btAddress=${getMaskedMacAddress(btAddress)}}," +
-                    "{eName=[${endpoint.name}], eAddress=${getMaskedMacAddress(endpoint.mMackAddress)}}"
+                    "{eName=[${endpoint.name}], eAddress=${getMaskedMacAddress(endpoint.mMackAddress)}}",
             )
             // If both endpoints have a populated mac address, we should match on that
             return if (
@@ -630,7 +630,7 @@ internal class CallSessionLegacy(
         private val session: CallSessionLegacy,
         callChannels: CallChannels,
         private val blockingSessionExecution: CompletableDeferred<Unit>,
-        override val coroutineContext: CoroutineContext
+        override val coroutineContext: CoroutineContext,
     ) : CallControlScope {
         // handle requests that originate from the client and propagate into platform
         //  return the platforms response which indicates success of the request.

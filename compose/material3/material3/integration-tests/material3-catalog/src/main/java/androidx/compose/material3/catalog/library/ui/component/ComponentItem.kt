@@ -42,11 +42,11 @@ import androidx.compose.ui.unit.dp
 fun ComponentItem(
     component: Component,
     markExpressiveComponents: Boolean,
-    onClick: (component: Component) -> Unit
+    onClick: (component: Component) -> Unit,
 ) {
     OutlinedCard(
         onClick = { onClick(component) },
-        modifier = Modifier.height(ComponentItemHeight).padding(ComponentItemOuterPadding)
+        modifier = Modifier.height(ComponentItemHeight).padding(ComponentItemOuterPadding),
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Box(modifier = Modifier.fillMaxSize().padding(ComponentItemInnerPadding)) {
@@ -60,18 +60,18 @@ fun ComponentItem(
                         } else {
                             null
                         },
-                    contentScale = ContentScale.Inside
+                    contentScale = ContentScale.Inside,
                 )
                 Text(
                     text = component.name,
                     modifier = Modifier.align(Alignment.BottomStart),
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
             if (markExpressiveComponents && component.hasExpressiveExamples) {
                 ItemBanner(
                     text = stringResource(R.string.expressive_banner),
-                    bannerSize = ComponentItemBannerSize
+                    bannerSize = ComponentItemBannerSize,
                 )
             }
         }

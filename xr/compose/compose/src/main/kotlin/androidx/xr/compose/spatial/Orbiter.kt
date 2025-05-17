@@ -363,7 +363,7 @@ internal fun PositionedOrbiter(data: OrbiterData) {
                     data.calculateOffset(
                         panelSize.run { PixelDimensions(width, height) },
                         it,
-                        density
+                        density,
                     ),
                     panelSize.run { IntSize(width, height) },
                     it,

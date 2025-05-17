@@ -72,7 +72,7 @@ class MutableCollectionMutableStateDetector : Detector(), SourceCodeScanner {
                     MutableCollectionMutableState,
                     node,
                     context.getNameLocation(node),
-                    "Creating a MutableState object with a mutable collection type"
+                    "Creating a MutableState object with a mutable collection type",
                 )
             }
         }
@@ -94,8 +94,8 @@ class MutableCollectionMutableStateDetector : Detector(), SourceCodeScanner {
                 Severity.WARNING,
                 Implementation(
                     MutableCollectionMutableStateDetector::class.java,
-                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
-                )
+                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES),
+                ),
             )
     }
 }
@@ -117,11 +117,7 @@ class MutableCollectionMutableStateDetector : Detector(), SourceCodeScanner {
 private fun KaSession.isMutableCollection(kaType: KaType): Boolean {
     // MutableCollection::class.qualifiedName == Collection::class.qualifiedName, so using hardcoded
     // strings instead
-    val kotlinImmutableTypes =
-        listOf(
-            "kotlin.collections.Collection",
-            "kotlin.collections.Map",
-        )
+    val kotlinImmutableTypes = listOf("kotlin.collections.Collection", "kotlin.collections.Map")
 
     val guavaImmutableTypePrefix = "com.google.common.collect.Immutable"
 

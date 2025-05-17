@@ -48,7 +48,7 @@ fun activitySample() {
                     is AuthenticationResult.Error -> {
                         Log.i(
                             TAG,
-                            "onAuthenticationError " + result.errorCode + " " + result.errString
+                            "onAuthenticationError " + result.errorCode + " " + result.errString,
                         )
                     }
                 }
@@ -67,8 +67,8 @@ fun activitySample() {
                             "Vertical list description",
                             listOf(
                                 PromptContentItemBulletedText("test item1"),
-                                PromptContentItemBulletedText("test item2")
-                            )
+                                PromptContentItemBulletedText("test item2"),
+                            ),
                         )
                     )
                     setMinStrength(Biometric.Strength.Class3(/*optional: cryptoObject*/ ))
@@ -98,7 +98,7 @@ fun fragmentSample() {
                     is AuthenticationResult.Error -> {
                         Log.i(
                             TAG,
-                            "onAuthenticationError " + result.errorCode + " " + result.errString
+                            "onAuthenticationError " + result.errorCode + " " + result.errString,
                         )
                     }
                 }
@@ -117,8 +117,8 @@ fun fragmentSample() {
                             "Vertical list description",
                             listOf(
                                 PromptContentItemBulletedText("test item1"),
-                                PromptContentItemBulletedText("test item2")
-                            )
+                                PromptContentItemBulletedText("test item2"),
+                            ),
                         )
                     )
                     setMinStrength(Biometric.Strength.Class3(/*optional: cryptoObject*/ ))

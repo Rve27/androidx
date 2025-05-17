@@ -1039,7 +1039,7 @@ class NavHostTest {
                 composable(first) { BasicText(first) }
                 composable(
                     second,
-                    deepLinks = listOf(navDeepLink { action = Intent.ACTION_MAIN })
+                    deepLinks = listOf(navDeepLink { action = Intent.ACTION_MAIN }),
                 ) {
                     BasicText(second)
                 }

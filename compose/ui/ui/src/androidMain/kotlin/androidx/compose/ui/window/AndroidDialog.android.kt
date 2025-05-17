@@ -118,7 +118,7 @@ actual class DialogProperties(
         dismissOnClickOutside = dismissOnClickOutside,
         securePolicy = SecureFlagPolicy.Inherit,
         usePlatformDefaultWidth = usePlatformDefaultWidth,
-        decorFitsSystemWindows = true
+        decorFitsSystemWindows = true,
     )
 
     @Deprecated("Maintained for binary compatibility", level = DeprecationLevel.HIDDEN)
@@ -134,7 +134,7 @@ actual class DialogProperties(
         securePolicy = SecureFlagPolicy.Inherit,
         usePlatformDefaultWidth = usePlatformDefaultWidth,
         decorFitsSystemWindows = true,
-        windowTitle = ""
+        windowTitle = "",
     )
 
     @Deprecated("Maintained for binary compatibility", level = DeprecationLevel.HIDDEN)
@@ -147,7 +147,7 @@ actual class DialogProperties(
         dismissOnClickOutside = dismissOnClickOutside,
         securePolicy = securePolicy,
         usePlatformDefaultWidth = true,
-        decorFitsSystemWindows = true
+        decorFitsSystemWindows = true,
     )
 
     override fun equals(other: Any?): Boolean {
@@ -195,7 +195,7 @@ actual class DialogProperties(
 actual fun Dialog(
     onDismissRequest: () -> Unit,
     properties: DialogProperties,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val view = LocalView.current
     val density = LocalDensity.current
@@ -226,7 +226,7 @@ actual fun Dialog(
         dialog.updateParameters(
             onDismissRequest = onDismissRequest,
             properties = properties,
-            layoutDirection = layoutDirection
+            layoutDirection = layoutDirection,
         )
     }
 }
@@ -260,16 +260,16 @@ private class DialogLayout(context: Context, override val window: Window) :
             object : WindowInsetsAnimationCompat.Callback(DISPATCH_MODE_CONTINUE_ON_SUBTREE) {
                 override fun onStart(
                     animation: WindowInsetsAnimationCompat,
-                    bounds: WindowInsetsAnimationCompat.BoundsCompat
+                    bounds: WindowInsetsAnimationCompat.BoundsCompat,
                 ): WindowInsetsAnimationCompat.BoundsCompat =
                     insetValue(bounds) { l, t, r, b -> bounds.inset(Insets.of(l, t, r, b)) }
 
                 override fun onProgress(
                     insets: WindowInsetsCompat,
-                    runningAnimations: MutableList<WindowInsetsAnimationCompat>
+                    runningAnimations: MutableList<WindowInsetsAnimationCompat>,
                 ): WindowInsetsCompat =
                     insetValue(insets) { l, t, r, b -> insets.inset(l, t, r, b) }
-            }
+            },
         )
     }
 
@@ -401,7 +401,7 @@ private class DialogLayout(context: Context, override val window: Window) :
 
     private inline fun <T> insetValue(
         unchangedValue: T,
-        block: (left: Int, top: Int, right: Int, bottom: Int) -> T
+        block: (left: Int, top: Int, right: Int, bottom: Int) -> T,
     ): T {
         if (decorFitsSystemWindows) {
             return unchangedValue
@@ -440,7 +440,7 @@ private class DialogWrapper(
     private val composeView: View,
     layoutDirection: LayoutDirection,
     density: Density,
-    dialogId: UUID
+    dialogId: UUID,
 ) :
     ComponentDialog(
         /**
@@ -453,7 +453,7 @@ private class DialogWrapper(
                 R.style.DialogWindowTheme
             } else {
                 R.style.FloatingDialogWindowTheme
-            }
+            },
         )
     ),
     ViewRootForInspector {
@@ -588,14 +588,14 @@ private class DialogWrapper(
             } else {
                 WindowManager.LayoutParams.FLAG_SECURE.inv()
             },
-            WindowManager.LayoutParams.FLAG_SECURE
+            WindowManager.LayoutParams.FLAG_SECURE,
         )
     }
 
     fun updateParameters(
         onDismissRequest: () -> Unit,
         properties: DialogProperties,
-        layoutDirection: LayoutDirection
+        layoutDirection: LayoutDirection,
     ) {
         this.onDismissRequest = onDismissRequest
         this.properties = properties
@@ -604,7 +604,7 @@ private class DialogWrapper(
         val decorFitsSystemWindows = properties.decorFitsSystemWindows
         dialogLayout.updateProperties(
             usePlatformDefaultWidth = properties.usePlatformDefaultWidth,
-            decorFitsSystemWindows = decorFitsSystemWindows
+            decorFitsSystemWindows = decorFitsSystemWindows,
         )
         setCanceledOnTouchOutside(properties.dismissOnClickOutside)
         val window = window

@@ -204,7 +204,7 @@ class SurfaceConfigTest {
                 imageFormat,
                 s240p_4_3,
                 surfaceSizeDefinition,
-                configSource
+                configSource,
             )
 
         // Assert
@@ -226,7 +226,7 @@ class SurfaceConfigTest {
                 imageFormat,
                 s720p_16_9,
                 surfaceSizeDefinition,
-                configSource
+                configSource,
             )
 
         // Assert
@@ -248,7 +248,7 @@ class SurfaceConfigTest {
                 imageFormat,
                 Size(1980, 1080),
                 surfaceSizeDefinition,
-                configSource
+                configSource,
             )
 
         // Assert
@@ -270,7 +270,7 @@ class SurfaceConfigTest {
                 imageFormat,
                 s720p_16_9,
                 surfaceSizeDefinition,
-                configSource
+                configSource,
             )
 
         // Assert
@@ -293,7 +293,7 @@ class SurfaceConfigTest {
                 // creating new size instance to ensure different size instance than max supported
                 Size(maxSize.width, maxSize.height),
                 surfaceSizeDefinition,
-                configSource
+                configSource,
             )
 
         // Assert
@@ -315,7 +315,7 @@ class SurfaceConfigTest {
                 imageFormat,
                 s240p_4_3,
                 surfaceSizeDefinition,
-                configSource
+                configSource,
             )
 
         // Assert
@@ -337,7 +337,7 @@ class SurfaceConfigTest {
                 imageFormat,
                 s240p_4_3,
                 surfaceSizeDefinition,
-                configSource
+                configSource,
             )
 
         // Assert
@@ -359,7 +359,7 @@ class SurfaceConfigTest {
                 imageFormat,
                 s720p_16_9,
                 surfaceSizeDefinition,
-                configSource
+                configSource,
             )
 
         // Assert
@@ -381,7 +381,7 @@ class SurfaceConfigTest {
                 imageFormat,
                 s1440p_4_3,
                 surfaceSizeDefinition,
-                configSource
+                configSource,
             )
 
         // Assert
@@ -403,7 +403,7 @@ class SurfaceConfigTest {
                 imageFormat,
                 Size(3900, 2800),
                 surfaceSizeDefinition,
-                configSource
+                configSource,
             )
 
         // Assert
@@ -425,7 +425,7 @@ class SurfaceConfigTest {
                 imageFormat,
                 Size(6000, 3000),
                 surfaceSizeDefinition,
-                configSource
+                configSource,
             )
 
         // Assert

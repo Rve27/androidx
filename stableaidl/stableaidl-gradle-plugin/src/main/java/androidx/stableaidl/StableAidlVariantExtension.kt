@@ -30,10 +30,7 @@ import org.gradle.api.provider.Property
 @Suppress("UnstableApiUsage") // for VariantExtensionConfig
 abstract class StableAidlVariantExtension
 @Inject
-constructor(
-    config: VariantExtensionConfig<*>,
-    project: Project,
-) : VariantExtension, Serializable {
+constructor(config: VariantExtensionConfig<*>, project: Project) : VariantExtension, Serializable {
     abstract val version: Property<Int>
 
     init {

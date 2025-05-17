@@ -151,7 +151,7 @@ public abstract class BaseActivityPose<out RtActivityPoseType : RtActivityPose>(
 
     override fun hitTestAsync(
         origin: Vector3,
-        direction: Vector3
+        direction: Vector3,
     ): ListenableFuture<HitTestResult> {
         return hitTestAsync(
             origin,

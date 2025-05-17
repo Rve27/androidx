@@ -317,7 +317,7 @@ private fun NestedSubspace(
                 contentOffset,
                 viewSize,
                 measuredSize.run { IntSize(width, height) },
-                density
+                density,
             )
         )
         // We need to wait for a single frame to ensure that the pose changes are batched to the

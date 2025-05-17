@@ -44,6 +44,6 @@ public interface FeatureCombinationResolver {
     public fun resolveFeatureCombination(
         useCases: Set<UseCase>,
         requiredFeatures: Set<Feature> = emptySet(),
-        orderedPreferredFeatures: List<Feature> = emptyList()
+        orderedPreferredFeatures: List<Feature> = emptyList(),
     ): FeatureCombinationResolutionResult
 }

@@ -54,7 +54,7 @@ class PdfViewerFragmentExtended : PdfViewerFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
         val pdfContainer =
             super.onCreateView(inflater, container, savedInstanceState) as ConstraintLayout

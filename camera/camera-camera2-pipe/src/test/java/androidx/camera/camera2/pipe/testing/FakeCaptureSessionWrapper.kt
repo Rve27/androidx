@@ -49,7 +49,7 @@ internal class FakeCaptureSessionWrapper(
 
     override fun capture(
         request: CaptureRequest,
-        listener: CameraCaptureSession.CaptureCallback
+        listener: CameraCaptureSession.CaptureCallback,
     ): Int {
         lastCapture = listOf(request)
         lastCaptureCallback = listener
@@ -60,7 +60,7 @@ internal class FakeCaptureSessionWrapper(
 
     override fun captureBurst(
         requests: List<CaptureRequest>,
-        listener: CameraCaptureSession.CaptureCallback
+        listener: CameraCaptureSession.CaptureCallback,
     ): Int {
         lastCapture = requests.toList()
         lastCaptureCallback = listener
@@ -71,7 +71,7 @@ internal class FakeCaptureSessionWrapper(
 
     override fun setRepeatingBurst(
         requests: List<CaptureRequest>,
-        listener: CameraCaptureSession.CaptureCallback
+        listener: CameraCaptureSession.CaptureCallback,
     ): Int {
         lastRepeating = requests.toList()
         lastRepeatingCallback = listener
@@ -82,7 +82,7 @@ internal class FakeCaptureSessionWrapper(
 
     override fun setRepeatingRequest(
         request: CaptureRequest,
-        listener: CameraCaptureSession.CaptureCallback
+        listener: CameraCaptureSession.CaptureCallback,
     ): Int {
         lastRepeating = listOf(request)
         lastRepeatingCallback = listener

@@ -52,7 +52,7 @@ internal fun rememberLazyGridItemProviderLambda(
                 LazyGridItemProviderImpl(
                     state = state,
                     intervalContent = intervalContent,
-                    keyIndexMap = map
+                    keyIndexMap = map,
                 )
             }
         itemProviderState::value

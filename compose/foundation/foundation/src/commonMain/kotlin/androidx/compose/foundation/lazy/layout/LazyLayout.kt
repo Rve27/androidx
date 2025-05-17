@@ -50,7 +50,7 @@ fun LazyLayout(
     itemProvider: () -> LazyLayoutItemProvider,
     modifier: Modifier = Modifier,
     prefetchState: LazyLayoutPrefetchState? = null,
-    measurePolicy: LazyLayoutMeasureScope.(Constraints) -> MeasureResult
+    measurePolicy: LazyLayoutMeasureScope.(Constraints) -> MeasureResult,
 ) = LazyLayout(itemProvider, modifier, prefetchState, LazyLayoutMeasurePolicy(measurePolicy))
 
 /**
@@ -73,7 +73,7 @@ fun LazyLayout(
     itemProvider: () -> LazyLayoutItemProvider,
     modifier: Modifier = Modifier,
     prefetchState: LazyLayoutPrefetchState? = null,
-    measurePolicy: LazyLayoutMeasurePolicy
+    measurePolicy: LazyLayoutMeasurePolicy,
 ) {
     val currentItemProvider = rememberUpdatedState(itemProvider)
 
@@ -105,7 +105,7 @@ fun LazyLayout(
                     val scope = LazyLayoutMeasureScopeImpl(itemContentFactory, this)
                     with(measurePolicy) { scope.measure(constraints) }
                 }
-            }
+            },
         )
     }
 }

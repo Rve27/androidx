@@ -37,7 +37,7 @@ actual fun currentWindowAdaptiveInfo(): WindowAdaptiveInfo {
     val windowSize = currentWindowDpSize()
     return WindowAdaptiveInfo(
         WindowSizeClass.computeFromDpSize(windowSize),
-        calculatePosture(collectFoldingFeaturesAsState().value)
+        calculatePosture(collectFoldingFeaturesAsState().value),
     )
 }
 
@@ -48,7 +48,7 @@ actual fun currentWindowAdaptiveInfo(): WindowAdaptiveInfo {
  */
 @Deprecated(
     level = DeprecationLevel.HIDDEN,
-    message = "Moved to common source set, maintained for binary compatibility."
+    message = "Moved to common source set, maintained for binary compatibility.",
 )
 @JvmName("currentWindowDpSize")
 @ExperimentalMaterial3AdaptiveApi
@@ -64,7 +64,7 @@ fun currentWindowDpSizeDeprecated(): DpSize =
  */
 @Deprecated(
     level = DeprecationLevel.HIDDEN,
-    message = "Moved to common source set, maintained for binary compatibility."
+    message = "Moved to common source set, maintained for binary compatibility.",
 )
 @JvmName("currentWindowSize")
 @Composable

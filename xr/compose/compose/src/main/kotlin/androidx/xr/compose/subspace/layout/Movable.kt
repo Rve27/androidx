@@ -347,7 +347,7 @@ internal class MovableNode(
             initialPose,
             initialScale,
             IntVolumeSize.Zero,
-            ::MoveStartEvent
+            ::MoveStartEvent,
         )
     }
 

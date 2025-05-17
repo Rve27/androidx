@@ -120,7 +120,7 @@ data class AndroidXDependency(
     val group: String,
     val name: String,
     val version: String,
-    val configurationName: String
+    val configurationName: String,
 ) : java.io.Serializable {
     companion object {
         private const val serialVersionUID = 344435634564L
@@ -146,7 +146,7 @@ internal fun Project.createVerifyDependencyVersionsTask():
                                     dependency.group!!,
                                     dependency.name,
                                     dependency.version!!,
-                                    configuration.name
+                                    configuration.name,
                                 )
                             )
                         }

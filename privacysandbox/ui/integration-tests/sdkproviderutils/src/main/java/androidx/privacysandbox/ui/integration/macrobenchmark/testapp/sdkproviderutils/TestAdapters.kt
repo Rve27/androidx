@@ -128,7 +128,7 @@ class TestAdapters(private val sdkContext: Context) {
             context: Context,
             initialWidth: Int,
             initialHeight: Int,
-            adView: View
+            adView: View,
         ) : FrameLayout(context) {
             private val consumeScrollOverlay: ViewGroup
             private var allowAppToScroll = true
@@ -157,7 +157,7 @@ class TestAdapters(private val sdkContext: Context) {
                     LayoutParams(
                         LayoutParams.WRAP_CONTENT,
                         LayoutParams.WRAP_CONTENT,
-                        Gravity.BOTTOM or Gravity.RIGHT
+                        Gravity.BOTTOM or Gravity.RIGHT,
                     )
                 linearLayout.orientation = LinearLayout.HORIZONTAL
                 linearLayout.setPadding(10, 10, 10, 10)
@@ -195,7 +195,7 @@ class TestAdapters(private val sdkContext: Context) {
     inner class TestBannerAd(
         private val text: String,
         private val withSlowDraw: Boolean,
-        automatedTestCallbackBundle: Bundle = Bundle()
+        automatedTestCallbackBundle: Bundle = Bundle(),
     ) : BannerAd(automatedTestCallbackBundle) {
         override fun buildAdView(sessionContext: Context, width: Int, height: Int): View? {
             return TestView(sessionContext, withSlowDraw, text, automatedTestCallback)
@@ -207,7 +207,7 @@ class TestAdapters(private val sdkContext: Context) {
             return Settings.Global.getInt(
                 sdkContext.contentResolver,
                 Settings.Global.AIRPLANE_MODE_ON,
-                0
+                0,
             ) != 0
         }
 
@@ -230,7 +230,7 @@ class TestAdapters(private val sdkContext: Context) {
         override fun buildAdView(sessionContext: Context, width: Int, height: Int): View? {
             return playerViewProvider.createPlayerView(
                 sessionContext,
-                "https://html5demos.com/assets/dizzy.mp4"
+                "https://html5demos.com/assets/dizzy.mp4",
             )
         }
     }
@@ -283,7 +283,7 @@ class TestAdapters(private val sdkContext: Context) {
         context: Context,
         private val withSlowDraw: Boolean,
         private val text: String,
-        private val automatedTestCallback: IAutomatedTestCallback? = null
+        private val automatedTestCallback: IAutomatedTestCallback? = null,
     ) : View(context) {
 
         init {
@@ -327,7 +327,7 @@ class TestAdapters(private val sdkContext: Context) {
         WebViewClientCompat() {
         override fun shouldInterceptRequest(
             view: WebView,
-            request: WebResourceRequest
+            request: WebResourceRequest,
         ): WebResourceResponse? {
             return assetLoader.shouldInterceptRequest(request.url)
         }

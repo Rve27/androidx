@@ -56,7 +56,7 @@ fun SelectionContainer(modifier: Modifier = Modifier, content: @Composable () ->
         modifier = modifier,
         selection = selection,
         onSelectionChange = { selection = it },
-        children = content
+        children = content,
     )
 }
 
@@ -86,7 +86,7 @@ internal fun SelectionContainer(
     selection: Selection?,
     /** A function containing customized behaviour when selection changes. */
     onSelectionChange: (Selection?) -> Unit,
-    children: @Composable () -> Unit
+    children: @Composable () -> Unit,
 ) {
     val registrarImpl =
         rememberSaveable(saver = SelectionRegistrarImpl.Saver) { SelectionRegistrarImpl() }

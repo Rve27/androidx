@@ -36,7 +36,7 @@ import androidx.camera.core.impl.CameraInfoInternal
  */
 public class ResolvedFeatureCombination(
     public val useCases: Set<UseCase>,
-    public val features: Set<Feature>
+    public val features: Set<Feature>,
 ) {
     override fun toString(): String {
         return "ResolvedFeatureCombination(features=$features, useCases=$useCases)"
@@ -68,12 +68,12 @@ public class ResolvedFeatureCombination(
         public fun SessionConfig.resolveFeatureCombination(
             cameraInfoInternal: CameraInfoInternal,
             resolver: FeatureCombinationResolver =
-                DefaultFeatureCombinationResolver(cameraInfoInternal)
+                DefaultFeatureCombinationResolver(cameraInfoInternal),
         ): ResolvedFeatureCombination? {
             Logger.d(
                 TAG,
                 "resolveFeatureCombination: sessionConfig = $this," +
-                    " lensFacing = ${cameraInfoInternal.lensFacing}"
+                    " lensFacing = ${cameraInfoInternal.lensFacing}",
             )
 
             if (requiredFeatures.isEmpty() && preferredFeatures.isEmpty()) {

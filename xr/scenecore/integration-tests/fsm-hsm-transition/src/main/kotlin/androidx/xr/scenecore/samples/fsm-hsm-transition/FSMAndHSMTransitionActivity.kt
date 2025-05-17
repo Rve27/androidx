@@ -163,7 +163,7 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
                 resizeLandscapeFsm.visibility = visibility
                 Log.i(
                     TAG,
-                    "OnBoundsChanged called on Activity Space with dimensions: $dimensionsString"
+                    "OnBoundsChanged called on Activity Space with dimensions: $dimensionsString",
                 )
             }
         session.scene.activitySpace.addBoundsChangedListener(boundsListener)

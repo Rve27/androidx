@@ -78,7 +78,7 @@ public fun PickerGroup(
     selectedPickerState: PickerState? = null,
     autoCenter: Boolean = true,
     propagateMinConstraints: Boolean = false,
-    content: @Composable PickerGroupScope.() -> Unit
+    content: @Composable PickerGroupScope.() -> Unit,
 ) {
     val touchExplorationServicesEnabled by
         LocalTouchExplorationStateProvider.current.touchExplorationState()
@@ -94,13 +94,13 @@ public fun PickerGroup(
                     Modifier.scrollable(
                         state = selectedPickerState,
                         orientation = Orientation.Vertical,
-                        reverseDirection = true
+                        reverseDirection = true,
                     )
                 } else {
                     Modifier
                 }
             ),
-        propagateMinConstraints = propagateMinConstraints
+        propagateMinConstraints = propagateMinConstraints,
     ) {
         with(scope) {
             autoCenteringEnabled = autoCenter
@@ -142,7 +142,7 @@ public class PickerGroupScope {
         focusRequester: FocusRequester? = null,
         readOnlyLabel: @Composable (BoxScope.() -> Unit)? = null,
         verticalSpacing: Dp = 0.dp,
-        option: @Composable PickerScope.(optionIndex: Int, pickerSelected: Boolean) -> Unit
+        option: @Composable PickerScope.(optionIndex: Int, pickerSelected: Boolean) -> Unit,
     ) {
         val touchExplorationServicesEnabled by
             LocalTouchExplorationStateProvider.current.touchExplorationState()
@@ -187,7 +187,7 @@ public class PickerGroupScope {
             onSelected = latestOnSelected,
             verticalSpacing = verticalSpacing,
             userScrollEnabled = !touchExplorationServicesEnabled || selected,
-            option = { optionIndex -> option(optionIndex, selected) }
+            option = { optionIndex -> option(optionIndex, selected) },
         )
     }
 
@@ -204,7 +204,7 @@ public class PickerGroupScope {
 private fun AutoCenteringRow(
     modifier: Modifier = Modifier,
     propagateMinConstraints: Boolean,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Layout(modifier = modifier, content = content) { measurables, parentConstraints ->
         // Reset the min width and height of the constraints used to measure child composables

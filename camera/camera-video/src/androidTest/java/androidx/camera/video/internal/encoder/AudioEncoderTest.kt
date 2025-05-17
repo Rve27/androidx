@@ -80,7 +80,7 @@ class AudioEncoderTest {
         // Skip for b/264902324
         assumeFalse(
             "Emulator API 30 crashes running this test.",
-            Build.VERSION.SDK_INT == 30 && isEmulator()
+            Build.VERSION.SDK_INT == 30 && isEmulator(),
         )
 
         encoderCallback = Mockito.mock(EncoderCallback::class.java)
@@ -104,7 +104,7 @@ class AudioEncoderTest {
                     .setEncodeSampleRate(SAMPLE_RATE)
                     .setChannelCount(CHANNEL_COUNT)
                     .build(),
-                SESSION_TYPE_REGULAR
+                SESSION_TYPE_REGULAR,
             )
         encoder.setEncoderCallback(encoderCallback, CameraXExecutors.directExecutor())
 
@@ -146,7 +146,7 @@ class AudioEncoderTest {
         // Skip for b/269129619
         assumeFalse(
             "Skip test for Cuttlefish API 30 flaky native crash",
-            Build.MODEL.contains("Cuttlefish") && Build.VERSION.SDK_INT == 30
+            Build.MODEL.contains("Cuttlefish") && Build.VERSION.SDK_INT == 30,
         )
 
         // Arrange.
@@ -395,7 +395,7 @@ class AudioEncoderTest {
                     stateRef.set(null)
                     lock.release()
                 }
-            }
+            },
         )
 
         // Assert.

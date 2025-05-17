@@ -32,7 +32,7 @@ internal actual fun ActualLinearGradientShader(
     to: Offset,
     colors: List<Color>,
     colorStops: List<Float>?,
-    tileMode: TileMode
+    tileMode: TileMode,
 ): Shader {
     validateColorStops(colors, colorStops)
     val numTransparentColors = countTransparentColors(colors)
@@ -43,7 +43,7 @@ internal actual fun ActualLinearGradientShader(
         to.y,
         makeTransparentColors(colors, numTransparentColors),
         makeTransparentStops(colorStops, colors, numTransparentColors),
-        tileMode.toAndroidTileMode()
+        tileMode.toAndroidTileMode(),
     )
 }
 
@@ -52,7 +52,7 @@ internal actual fun ActualRadialGradientShader(
     radius: Float,
     colors: List<Color>,
     colorStops: List<Float>?,
-    tileMode: TileMode
+    tileMode: TileMode,
 ): Shader {
     validateColorStops(colors, colorStops)
     val numTransparentColors = countTransparentColors(colors)
@@ -62,14 +62,14 @@ internal actual fun ActualRadialGradientShader(
         radius,
         makeTransparentColors(colors, numTransparentColors),
         makeTransparentStops(colorStops, colors, numTransparentColors),
-        tileMode.toAndroidTileMode()
+        tileMode.toAndroidTileMode(),
     )
 }
 
 internal actual fun ActualSweepGradientShader(
     center: Offset,
     colors: List<Color>,
-    colorStops: List<Float>?
+    colorStops: List<Float>?,
 ): Shader {
     validateColorStops(colors, colorStops)
     val numTransparentColors = countTransparentColors(colors)
@@ -84,12 +84,12 @@ internal actual fun ActualSweepGradientShader(
 internal actual fun ActualImageShader(
     image: ImageBitmap,
     tileModeX: TileMode,
-    tileModeY: TileMode
+    tileModeY: TileMode,
 ): Shader {
     return BitmapShader(
         image.asAndroidBitmap(),
         tileModeX.toAndroidTileMode(),
-        tileModeY.toAndroidTileMode()
+        tileModeY.toAndroidTileMode(),
     )
 }
 
@@ -163,7 +163,7 @@ internal fun makeTransparentColors(colors: List<Color>, numTransparentColors: In
 internal fun makeTransparentStops(
     stops: List<Float>?,
     colors: List<Color>,
-    numTransparentColors: Int
+    numTransparentColors: Int,
 ): FloatArray? {
     if (numTransparentColors == 0) {
         return stops?.toFloatArray()

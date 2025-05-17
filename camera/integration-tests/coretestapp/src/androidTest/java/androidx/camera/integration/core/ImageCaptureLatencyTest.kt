@@ -62,14 +62,12 @@ private const val NUM_IMAGES = 10
 @RunWith(Parameterized::class)
 class ImageCaptureLatencyTest(
     private val implName: String,
-    private val cameraXConfig: CameraXConfig
+    private val cameraXConfig: CameraXConfig,
 ) {
 
     @get:Rule
     val cameraPipeConfigTestRule =
-        CameraPipeConfigTestRule(
-            active = implName == CameraPipeConfig::class.simpleName,
-        )
+        CameraPipeConfigTestRule(active = implName == CameraPipeConfig::class.simpleName)
 
     @get:Rule
     val useCamera =
@@ -94,7 +92,7 @@ class ImageCaptureLatencyTest(
         fun data() =
             listOf(
                 arrayOf(Camera2Config::class.simpleName, Camera2Config.defaultConfig()),
-                arrayOf(CameraPipeConfig::class.simpleName, CameraPipeConfig.defaultConfig())
+                arrayOf(CameraPipeConfig::class.simpleName, CameraPipeConfig.defaultConfig()),
             )
     }
 
@@ -140,7 +138,7 @@ class ImageCaptureLatencyTest(
             CameraUtil.createCameraAndAttachUseCase(
                 context,
                 CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build(),
-                imageCapture
+                imageCapture,
             )
 
         // Skip if capture mode is ZSL and the device doesn't support ZSL
@@ -164,7 +162,7 @@ class ImageCaptureLatencyTest(
                         image.close()
                         countDownLatch.countDown()
                     }
-                }
+                },
             )
         }
 
@@ -177,7 +175,7 @@ class ImageCaptureLatencyTest(
         // pattern "Image capture performance profiling" in the device output log.
         Logger.d(
             TAG,
-            "Image capture performance profiling, duration: [$duration] capture mode: $captureMode"
+            "Image capture performance profiling, duration: [$duration] capture mode: $captureMode",
         )
     }
 }

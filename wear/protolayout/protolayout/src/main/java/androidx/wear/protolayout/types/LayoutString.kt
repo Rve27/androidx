@@ -39,7 +39,7 @@ private constructor(
      * fixed size during the layout pass, independently of the actual [dynamicValue] String. If not
      * set, the text element will size itself to the content of the [dynamicValue].
      */
-    val layoutConstraint: StringLayoutConstraint? = null
+    val layoutConstraint: StringLayoutConstraint? = null,
 ) {
     /**
      * The static value. If [dynamicValue] is not null this will be used as the default value for
@@ -68,10 +68,10 @@ private constructor(
     constructor(
         staticValue: String,
         dynamicValue: DynamicString,
-        layoutConstraint: StringLayoutConstraint
+        layoutConstraint: StringLayoutConstraint,
     ) : this(
         StringProp.Builder(staticValue).setDynamicValue(dynamicValue).build(),
-        layoutConstraint
+        layoutConstraint,
     )
 
     /**
@@ -138,7 +138,7 @@ fun DynamicString.asLayoutString(staticValue: String) = LayoutString(staticValue
 @RequiresSchemaVersion(major = 1, minor = 200)
 fun stringLayoutConstraint(
     longestPattern: String,
-    @TextAlignment alignment: Int = TEXT_ALIGN_CENTER
+    @TextAlignment alignment: Int = TEXT_ALIGN_CENTER,
 ) = StringLayoutConstraint.Builder(longestPattern).setAlignment(alignment).build()
 
 /**

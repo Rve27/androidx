@@ -63,7 +63,7 @@ class ResizeComposeFragment : BaseFragment() {
         adFormat: Int,
         adType: Int,
         mediationOption: Int,
-        drawViewabilityLayer: Boolean
+        drawViewabilityLayer: Boolean,
     ) {
         currentAdFormat = adFormat
         currentAdType = adType
@@ -75,7 +75,7 @@ class ResizeComposeFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         setAdAdapter()
         return ComposeView(requireContext()).apply {
@@ -115,7 +115,7 @@ class ResizeComposeFragment : BaseFragment() {
                     onAdHolderPlaced = { width, height ->
                         maxWidth = width
                         maxHeight = height
-                    }
+                    },
                 )
             }
         }
@@ -134,7 +134,7 @@ class ResizeComposeFragment : BaseFragment() {
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.Start,
         ) {
             var adEventText by remember { mutableStateOf("") }
             Text("Ad state: $adEventText")
@@ -148,19 +148,19 @@ class ResizeComposeFragment : BaseFragment() {
                 adHolderModifier,
                 onSSUPlaced,
                 onAdHolderPlaced,
-                { adEventText = it }
+                { adEventText = it },
             )
             // TODO(b/399399902): Add Alpha CUJ once fixed
             Row {
                 Button(
                     onClick = { onResizeClicked(bannerDimension) },
-                    modifier = Modifier.padding(end = 16.dp)
+                    modifier = Modifier.padding(end = 16.dp),
                 ) {
                     Text("Resize")
                 }
                 Button(
                     onClick = { onChangePaddingClicked(bannerDimension) },
-                    modifier = Modifier.padding(end = 16.dp)
+                    modifier = Modifier.padding(end = 16.dp),
                 ) {
                     Text("Change padding")
                 }
@@ -176,7 +176,7 @@ class ResizeComposeFragment : BaseFragment() {
         modifier: Modifier,
         onSSUPlaced: (Dp, Dp) -> Unit,
         onAdHolderPlaced: (Dp, Dp) -> Unit,
-        onAdEvent: (String) -> Unit
+        onAdEvent: (String) -> Unit,
     ) {
         val localDensity = LocalDensity.current
         val boxModifier =
@@ -192,14 +192,14 @@ class ResizeComposeFragment : BaseFragment() {
                             with(localDensity) {
                                 onSSUPlaced(
                                     coordinates.size.width.toDp(),
-                                    coordinates.size.height.toDp()
+                                    coordinates.size.height.toDp(),
                                 )
                             }
                         }
                         .background(colorResource(R.color.ad_view_background_color))
                         .padding(
                             horizontal = bannerPadding.horizontalPadding,
-                            vertical = bannerPadding.verticalPadding
+                            vertical = bannerPadding.verticalPadding,
                         )
 
                 ssuModifier =

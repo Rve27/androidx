@@ -66,7 +66,7 @@ class SavedStateNavEntryDecoratorTest {
                             }
                         else -> error("Unknown key")
                     }
-                }
+                },
             ) { entries ->
                 entries.lastOrNull()?.let { it.content.invoke(it.key) }
             }

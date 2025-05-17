@@ -99,7 +99,7 @@ open class BasePagerTest(private val config: ParamConfig) :
 
     fun TouchInjectionScope.swipeWithVelocityAcrossCrossAxis(
         velocity: Float,
-        delta: Float? = null
+        delta: Float? = null,
     ) {
         val end =
             if (delta == null) {
@@ -144,7 +144,7 @@ open class BasePagerTest(private val config: ParamConfig) :
         prefetchScheduler: PrefetchScheduler? = null,
         userLookahead: Boolean = config.useLookahead,
         bringIntoViewSpec: BringIntoViewSpec = DefaultBringIntoViewSpec,
-        pageContent: @Composable PagerScope.(page: Int) -> Unit = { Page(index = it) }
+        pageContent: @Composable PagerScope.(page: Int) -> Unit = { Page(index = it) },
     ) {
 
         rule.setContent {
@@ -158,7 +158,7 @@ open class BasePagerTest(private val config: ParamConfig) :
                                 PagerState(
                                     initialPage,
                                     initialPageOffsetFraction,
-                                    prefetchScheduler
+                                    prefetchScheduler,
                                 ) {
                                 override val pageCount: Int
                                     get() = pageCount()
@@ -170,14 +170,14 @@ open class BasePagerTest(private val config: ParamConfig) :
                 focusManager = LocalFocusManager.current
                 CompositionLocalProvider(
                     LocalLayoutDirection provides config.layoutDirection,
-                    LocalBringIntoViewSpec provides bringIntoViewSpec
+                    LocalBringIntoViewSpec provides bringIntoViewSpec,
                 ) {
                     val resolvedFlingBehavior =
                         flingBehavior
                             ?: PagerDefaults.flingBehavior(
                                 state = state,
                                 pagerSnapDistance = snappingPage,
-                                snapPositionalThreshold = snapPositionalThreshold
+                                snapPositionalThreshold = snapPositionalThreshold,
                             )
 
                     scope = rememberCoroutineScope()
@@ -198,7 +198,7 @@ open class BasePagerTest(private val config: ParamConfig) :
                             contentPadding = contentPadding,
                             pageContent = pageContent,
                             snapPosition = snapPosition,
-                            key = key
+                            key = key,
                         )
                     }
                 }
@@ -234,7 +234,7 @@ open class BasePagerTest(private val config: ParamConfig) :
                         }
                     }
                     .focusable(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             BasicText(text = index.toString())
         }
@@ -330,7 +330,7 @@ open class BasePagerTest(private val config: ParamConfig) :
         pageSpacing: Dp = 0.dp,
         key: ((index: Int) -> Any)? = null,
         snapPosition: SnapPosition = config.snapPosition.first,
-        pageContent: @Composable PagerScope.(pager: Int) -> Unit
+        pageContent: @Composable PagerScope.(pager: Int) -> Unit,
     ) {
         ConfigurableLookaheadScope(useLookahead = config.useLookahead) {
             if (vertical) {
@@ -347,7 +347,7 @@ open class BasePagerTest(private val config: ParamConfig) :
                     pageSpacing = pageSpacing,
                     key = key,
                     snapPosition = snapPosition,
-                    pageContent = pageContent
+                    pageContent = pageContent,
                 )
             } else {
                 HorizontalPager(
@@ -363,7 +363,7 @@ open class BasePagerTest(private val config: ParamConfig) :
                     pageSpacing = pageSpacing,
                     key = key,
                     snapPosition = snapPosition,
-                    pageContent = pageContent
+                    pageContent = pageContent,
                 )
             }
         }
@@ -372,7 +372,7 @@ open class BasePagerTest(private val config: ParamConfig) :
     internal fun confirmPageIsInCorrectPosition(
         currentPageIndex: Int,
         pageToVerifyPosition: Int = currentPageIndex,
-        pageOffset: Float = 0f
+        pageOffset: Float = 0f,
     ) {
         val leftContentPadding =
             config.mainAxisContentPadding.calculateLeftPadding(config.layoutDirection)
@@ -429,7 +429,7 @@ class ParamConfig(
     val mainAxisContentPadding: PaddingValues = PaddingValues(0.dp),
     val beyondViewportPageCount: Int = 0,
     val snapPosition: Pair<SnapPosition, String> = SnapPosition.Start to "Start",
-    val useLookahead: Boolean = false
+    val useLookahead: Boolean = false,
 ) {
     override fun toString(): String {
         return "orientation=$orientation " +
@@ -462,7 +462,7 @@ internal val TestSnapPosition =
     listOf(
         SnapPosition.Start to "Start",
         SnapPosition.Center to "Center",
-        SnapPosition.End to "End"
+        SnapPosition.End to "End",
     )
 
 internal fun testContentPaddings(orientation: Orientation) =
@@ -471,5 +471,5 @@ internal fun testContentPaddings(orientation: Orientation) =
         if (orientation == Orientation.Vertical) PaddingValues(vertical = 16.dp)
         else PaddingValues(horizontal = 16.dp),
         PaddingValues(start = 16.dp),
-        PaddingValues(end = 16.dp)
+        PaddingValues(end = 16.dp),
     )

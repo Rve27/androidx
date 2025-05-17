@@ -118,7 +118,7 @@ fun PlaceholderComplexSample() {
     val slcState = rememberScalingLazyListState(initialCenterItemIndex = 0)
     ScalingLazyColumn(
         state = slcState,
-        contentPadding = PaddingValues(horizontal = 5.dp, vertical = 35.dp)
+        contentPadding = PaddingValues(horizontal = 5.dp, vertical = 35.dp),
     ) {
         item {
             Centralize {
@@ -148,7 +148,7 @@ fun PlaceholderComplexSample() {
                         .placeholderShimmer(
                             state,
                             color = shimmerColors[shimmerColor],
-                            shape = CardDefaults.shape
+                            shape = CardDefaults.shape,
                         ),
             ) {
                 // Simulated loading of content.
@@ -190,7 +190,7 @@ fun PlaceholderButtonList() {
                 ButtonWithPlaceholder(
                     label = labelText,
                     textAlignment = TextAlign.Center,
-                    colors = ButtonDefaults.buttonColors()
+                    colors = ButtonDefaults.buttonColors(),
                 )
                 LaunchedEffect(resetCount) {
                     labelText = ""
@@ -214,9 +214,7 @@ fun PlaceholderButtonList() {
             }
             item {
                 var label by remember { mutableStateOf("") }
-                ButtonWithPlaceholder(
-                    label = label,
-                )
+                ButtonWithPlaceholder(label = label)
                 LaunchedEffect(resetCount) {
                     label = ""
                     delay(3000)
@@ -225,9 +223,7 @@ fun PlaceholderButtonList() {
             }
             item {
                 var label by remember { mutableStateOf("") }
-                ButtonWithPlaceholder(
-                    label = label,
-                )
+                ButtonWithPlaceholder(label = label)
                 LaunchedEffect(resetCount) {
                     label = ""
                     delay(3000)
@@ -238,10 +234,7 @@ fun PlaceholderButtonList() {
             }
             item {
                 var label by remember { mutableStateOf("") }
-                ButtonWithPlaceholder(
-                    label = label,
-                    icon = Icons.Filled.Home,
-                )
+                ButtonWithPlaceholder(label = label, icon = Icons.Filled.Home)
                 LaunchedEffect(resetCount) {
                     label = ""
                     delay(3000)
@@ -250,10 +243,7 @@ fun PlaceholderButtonList() {
             }
             item {
                 var label by remember { mutableStateOf("") }
-                ButtonWithPlaceholder(
-                    label = label,
-                    icon = Icons.Filled.Home,
-                )
+                ButtonWithPlaceholder(label = label, icon = Icons.Filled.Home)
                 LaunchedEffect(resetCount) {
                     label = ""
                     delay(3000)
@@ -270,10 +260,7 @@ fun PlaceholderButtonList() {
             item {
                 var label by remember { mutableStateOf("") }
                 var secondaryLabel by remember { mutableStateOf("") }
-                ButtonWithPlaceholder(
-                    label = label,
-                    secondaryLabel = secondaryLabel,
-                )
+                ButtonWithPlaceholder(label = label, secondaryLabel = secondaryLabel)
                 LaunchedEffect(resetCount) {
                     label = ""
                     secondaryLabel = ""
@@ -285,10 +272,7 @@ fun PlaceholderButtonList() {
             item {
                 var label by remember { mutableStateOf("") }
                 var secondaryLabel by remember { mutableStateOf("") }
-                ButtonWithPlaceholder(
-                    label = label,
-                    secondaryLabel = secondaryLabel,
-                )
+                ButtonWithPlaceholder(label = label, secondaryLabel = secondaryLabel)
                 LaunchedEffect(resetCount) {
                     label = ""
                     secondaryLabel = ""
@@ -380,7 +364,7 @@ fun FloatingResetButton(onClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         CompactButton(label = { Text("Reset") }, onClick = onClick)
     }
@@ -423,7 +407,7 @@ fun PlaceholderCardList() {
                         content = {
                             Text("Some content $refreshCount")
                             Text("Some more content")
-                        }
+                        },
                     )
                 }
             }
@@ -465,7 +449,7 @@ fun ButtonWithPlaceholder(
                 modifier =
                     Modifier.fillMaxWidth()
                         .wrapContentHeight(align = Alignment.CenterVertically)
-                        .placeholder(buttonPlaceholderState)
+                        .placeholder(buttonPlaceholderState),
             )
         },
         secondaryLabel =
@@ -476,7 +460,7 @@ fun ButtonWithPlaceholder(
                         textAlign = textAlignment,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.fillMaxWidth().placeholder(buttonPlaceholderState)
+                        modifier = Modifier.fillMaxWidth().placeholder(buttonPlaceholderState),
                     )
                 }
             } else {
@@ -488,7 +472,7 @@ fun ButtonWithPlaceholder(
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        Modifier.placeholder(buttonPlaceholderState)
+                        Modifier.placeholder(buttonPlaceholderState),
                     )
                     if (!iconReady) {
                         LaunchedEffect(Unit) {
@@ -501,7 +485,7 @@ fun ButtonWithPlaceholder(
                 null
             },
         enabled = true,
-        colors = colors
+        colors = colors,
     )
 }
 
@@ -526,7 +510,7 @@ fun CardWithPlaceholder(
             appName = {
                 Text(
                     appName,
-                    modifier = Modifier.weight(1f, true).placeholder(cardPlaceholderState)
+                    modifier = Modifier.weight(1f, true).placeholder(cardPlaceholderState),
                 )
             },
             title = {
@@ -537,7 +521,7 @@ fun CardWithPlaceholder(
                 Text(
                     time,
                     modifier = Modifier.weight(0.5f, true).placeholder(cardPlaceholderState),
-                    textAlign = TextAlign.Right
+                    textAlign = TextAlign.Right,
                 )
             },
         ) {
@@ -547,7 +531,7 @@ fun CardWithPlaceholder(
                     modifier =
                         Modifier.fillMaxSize()
                             .placeholder(cardPlaceholderState, MaterialTheme.shapes.small),
-                    content = it
+                    content = it,
                 )
             }
         }

@@ -61,7 +61,7 @@ class RememberInCompositionDetector : Detector(), SourceCodeScanner {
                     methodOrSuperMethodsHaveAnnotation(
                         context,
                         node,
-                        Names.Runtime.Annotation.RememberInComposition
+                        Names.Runtime.Annotation.RememberInComposition,
                     )
                 if (rememberInComposition && node.isNotRemembered()) {
                     report(node, context)
@@ -73,7 +73,7 @@ class RememberInCompositionDetector : Detector(), SourceCodeScanner {
                 val rememberInComposition =
                     getterOrSuperDeclarationsHaveAnnotation(
                         node,
-                        Names.Runtime.Annotation.RememberInComposition
+                        Names.Runtime.Annotation.RememberInComposition,
                     )
                 if (rememberInComposition && node.isNotRemembered()) {
                     report(node, context)
@@ -104,7 +104,7 @@ class RememberInCompositionDetector : Detector(), SourceCodeScanner {
             RememberInComposition,
             node,
             context.getNameLocation(node),
-            "Calling a @RememberInComposition annotated declaration inside composition without using `remember`"
+            "Calling a @RememberInComposition annotated declaration inside composition without using `remember`",
         )
     }
 
@@ -119,8 +119,8 @@ class RememberInCompositionDetector : Detector(), SourceCodeScanner {
                 Severity.ERROR,
                 Implementation(
                     RememberInCompositionDetector::class.java,
-                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES)
-                )
+                    EnumSet.of(Scope.JAVA_FILE, Scope.TEST_SOURCES),
+                ),
             )
 
         // Removed issues so we can still check suppressions against the old issue
@@ -157,7 +157,7 @@ class RememberInCompositionDetector : Detector(), SourceCodeScanner {
 internal fun methodOrSuperMethodsHaveAnnotation(
     context: JavaContext,
     node: UCallExpression,
-    annotationName: Name
+    annotationName: Name,
 ): Boolean {
     val resolved = node.resolve() ?: return false
     // If this is an overridden method, check if any of the super methods are annotated
@@ -178,7 +178,7 @@ internal fun methodOrSuperMethodsHaveAnnotation(
  */
 internal fun getterOrSuperDeclarationsHaveAnnotation(
     node: USimpleNameReferenceExpression,
-    annotationName: Name
+    annotationName: Name,
 ): Boolean {
     val source = node.sourcePsi as? KtElement ?: return false
     var annotated = false

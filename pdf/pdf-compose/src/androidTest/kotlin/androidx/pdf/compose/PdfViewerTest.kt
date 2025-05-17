@@ -55,10 +55,7 @@ class PdfViewerTest {
         lateinit var pdfViewerState: PdfViewerState
         rule.setContent {
             pdfViewerState = rememberPdfViewerState()
-            PdfViewer(
-                state = pdfViewerState,
-                pdfDocument = null,
-            )
+            PdfViewer(state = pdfViewerState, pdfDocument = null)
         }
 
         assertThat(pdfViewerState.firstVisiblePage).isEqualTo(0)

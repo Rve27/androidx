@@ -112,7 +112,7 @@ internal class LayerManager(val canvasHolder: CanvasHolder) {
                             // possible
                             setOnImageAvailableListener(
                                 { it?.acquireLatestImage()?.close() },
-                                handler
+                                handler,
                             )
                         }
                         .also { imageReader = it }

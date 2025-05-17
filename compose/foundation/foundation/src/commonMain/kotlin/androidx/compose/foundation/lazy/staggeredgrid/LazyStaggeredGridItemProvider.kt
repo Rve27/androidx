@@ -49,7 +49,7 @@ internal fun rememberStaggeredGridItemProviderLambda(
                 LazyStaggeredGridItemProviderImpl(
                     state = state,
                     intervalContent = intervalContent,
-                    keyIndexMap = map
+                    keyIndexMap = map,
                 )
             }
         itemProviderState::value

@@ -66,7 +66,7 @@ private val items =
         "Marshmallow",
         "Nougat",
         "Oreo",
-        "Pie"
+        "Pie",
     )
 
 @Composable
@@ -88,7 +88,7 @@ fun SwipeToDismissDemo() {
                         if (it == SwipeToDismissBoxValue.StartToEnd) unread = !unread
                         it != SwipeToDismissBoxValue.StartToEnd
                     },
-                    positionalThreshold = { distance -> distance * .25f }
+                    positionalThreshold = { distance -> distance * .25f },
                 )
             SwipeToDismissBox(
                 state = dismissState,
@@ -122,15 +122,15 @@ fun SwipeToDismissDemo() {
                         )
                     Box(
                         Modifier.fillMaxSize().background(color).padding(horizontal = 20.dp),
-                        contentAlignment = alignment
+                        contentAlignment = alignment,
                     ) {
                         Icon(
                             icon,
                             contentDescription = "Localized description",
-                            modifier = Modifier.scale(scale)
+                            modifier = Modifier.scale(scale),
                         )
                     }
-                }
+                },
             ) {
                 Card {
                     ListItem(
@@ -154,7 +154,7 @@ fun SwipeToDismissDemo() {
                                                 )
                                             }
                                             true
-                                        }
+                                        },
                                     )
                             },
                         supportingContent = { Text("Swipe me left or right!") },

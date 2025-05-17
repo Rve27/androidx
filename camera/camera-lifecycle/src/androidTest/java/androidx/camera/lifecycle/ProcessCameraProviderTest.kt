@@ -115,9 +115,7 @@ class ProcessCameraProviderTest(
 
     @get:Rule
     val cameraPipeConfigTestRule =
-        CameraPipeConfigTestRule(
-            active = implName.contains(CameraPipeConfig::class.simpleName!!),
-        )
+        CameraPipeConfigTestRule(active = implName.contains(CameraPipeConfig::class.simpleName!!))
 
     @get:Rule
     val cameraRule =
@@ -131,7 +129,7 @@ class ProcessCameraProviderTest(
         fun data() =
             listOf(
                 arrayOf(Camera2Config::class.simpleName, Camera2Config.defaultConfig()),
-                arrayOf(CameraPipeConfig::class.simpleName, CameraPipeConfig.defaultConfig())
+                arrayOf(CameraPipeConfig::class.simpleName, CameraPipeConfig.defaultConfig()),
             )
     }
 
@@ -393,7 +391,7 @@ class ProcessCameraProviderTest(
             provider.bindToLifecycle(
                 lifecycleOwner0,
                 CameraSelector.DEFAULT_BACK_CAMERA,
-                sessionConfig1
+                sessionConfig1,
             )
         }
         previewSurfaceProvider1.assertFramesReceivedAfterSurfaceRequested()
@@ -409,7 +407,7 @@ class ProcessCameraProviderTest(
             provider.bindToLifecycle(
                 lifecycleOwner0,
                 CameraSelector.DEFAULT_FRONT_CAMERA,
-                sessionConfig2
+                sessionConfig2,
             )
         }
         previewSurfaceProvider2.assertFramesReceivedAfterSurfaceRequested()
@@ -445,7 +443,7 @@ class ProcessCameraProviderTest(
             provider.bindToLifecycle(
                 lifecycleOwner0,
                 CameraSelector.DEFAULT_BACK_CAMERA,
-                sessionConfig
+                sessionConfig,
             )
         }
         previewSurfaceProvider.assertFramesReceivedAfterSurfaceRequested()
@@ -455,7 +453,7 @@ class ProcessCameraProviderTest(
             provider.bindToLifecycle(
                 lifecycleOwner0,
                 CameraSelector.DEFAULT_FRONT_CAMERA,
-                sessionConfig
+                sessionConfig,
             )
         }
         previewSurfaceProvider.assertFramesReceivedAfterSurfaceRequested()
@@ -497,7 +495,7 @@ class ProcessCameraProviderTest(
                 ExtensionsUtil.getCameraSelectorWithSessionProcessor(
                     provider,
                     cameraSelector,
-                    sessionProcessor
+                    sessionProcessor,
                 )
             provider.bindToLifecycle(lifecycleOwner0, extensionsSelector, sessionConfig1)
         }
@@ -533,7 +531,7 @@ class ProcessCameraProviderTest(
                 ExtensionsUtil.getCameraSelectorWithSessionProcessor(
                     provider,
                     cameraSelector,
-                    sessionProcessor
+                    sessionProcessor,
                 )
             provider.bindToLifecycle(lifecycleOwner0, extensionsSelector, sessionConfig)
         }
@@ -904,7 +902,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner0,
                     CameraSelector.DEFAULT_FRONT_CAMERA,
-                    useCase1
+                    useCase1,
                 )
             }
             assertThat(provider.isConcurrentCameraModeOn).isFalse()
@@ -928,7 +926,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner1,
                     CameraSelector.DEFAULT_FRONT_CAMERA,
-                    useCase1
+                    useCase1,
                 )
 
             assertThat(camera0).isNotEqualTo(camera1)
@@ -957,7 +955,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner1,
                     CameraSelector.DEFAULT_FRONT_CAMERA,
-                    sessionConfig1
+                    sessionConfig1,
                 )
 
             assertThat(camera0).isNotEqualTo(camera1)
@@ -982,7 +980,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner1,
                     CameraSelector.DEFAULT_FRONT_CAMERA,
-                    useCase
+                    useCase,
                 )
             }
         }
@@ -1006,7 +1004,7 @@ class ProcessCameraProviderTest(
                     provider.bindToLifecycle(
                         lifecycleOwner1,
                         CameraSelector.DEFAULT_FRONT_CAMERA,
-                        sessionConfig1
+                        sessionConfig1,
                     )
                 }
             }
@@ -1044,7 +1042,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner0,
                     CameraSelector.DEFAULT_FRONT_CAMERA,
-                    useCase
+                    useCase,
                 )
             }
 
@@ -1053,7 +1051,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner0,
                     CameraSelector.DEFAULT_FRONT_CAMERA,
-                    sessionConfig
+                    sessionConfig,
                 )
             }
 
@@ -1123,7 +1121,7 @@ class ProcessCameraProviderTest(
                     .addUseCase(imageCapture)
                     .addUseCase(imageAnalysis)
                     .addUseCase(videoCapture)
-                    .build()
+                    .build(),
             )
 
             // Assert: The aspect ratio of the use cases should be close to the aspect ratio of the
@@ -1162,8 +1160,8 @@ class ProcessCameraProviderTest(
                 cameraSelector,
                 SessionConfig(
                     useCases = listOf(preview, imageCapture, imageAnalysis, videoCapture),
-                    viewPort = viewPort
-                )
+                    viewPort = viewPort,
+                ),
             )
 
             // Assert: The aspect ratio of the use cases should be close to the aspect ratio of the
@@ -1235,7 +1233,7 @@ class ProcessCameraProviderTest(
                     // Put only Preview / ImageCapture to avoid stream sharing
                     useCases = listOf(preview, imageCapture),
                     viewPort = viewPort,
-                    effects = listOf(effect)
+                    effects = listOf(effect),
                 )
 
             // Act.
@@ -1358,7 +1356,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner0,
                     CameraSelector.DEFAULT_BACK_CAMERA,
-                    useCase
+                    useCase,
                 ) as LifecycleCamera
             assertThat(camera.isActive).isFalse()
         }
@@ -1375,7 +1373,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner0,
                     CameraSelector.DEFAULT_BACK_CAMERA,
-                    sessionConfig
+                    sessionConfig,
                 ) as LifecycleCamera
             assertThat(camera.isActive).isFalse()
         }
@@ -1392,7 +1390,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner0,
                     CameraSelector.DEFAULT_BACK_CAMERA,
-                    useCase
+                    useCase,
                 ) as LifecycleCamera
             assertThat(camera.isActive).isTrue()
             provider.unbind(useCase)
@@ -1412,7 +1410,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner0,
                     CameraSelector.DEFAULT_BACK_CAMERA,
-                    sessionConfig
+                    sessionConfig,
                 ) as LifecycleCamera
             assertThat(camera.isActive).isTrue()
             provider.unbind(sessionConfig)
@@ -1432,7 +1430,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner0,
                     CameraSelector.DEFAULT_BACK_CAMERA,
-                    useCase
+                    useCase,
                 ) as LifecycleCamera
             assertThat(camera.isActive).isTrue()
             provider.unbindAll()
@@ -1452,7 +1450,7 @@ class ProcessCameraProviderTest(
                 provider.bindToLifecycle(
                     lifecycleOwner0,
                     CameraSelector.DEFAULT_BACK_CAMERA,
-                    sessionConfig
+                    sessionConfig,
                 ) as LifecycleCamera
             assertThat(camera.isActive).isTrue()
             provider.unbindAll()
@@ -1472,11 +1470,11 @@ class ProcessCameraProviderTest(
                     context,
                     CameraThreadConfig.create(
                         mainThreadExecutor(),
-                        Handler(Looper.getMainLooper())
+                        Handler(Looper.getMainLooper()),
                     ),
                     null,
                     -1L,
-                    NO_OP_STREAM_SPECS_CALCULATOR
+                    NO_OP_STREAM_SPECS_CALCULATOR,
                 )
                 .availableCameraIds
                 .size
@@ -1614,13 +1612,13 @@ class ProcessCameraProviderTest(
                 SingleCameraConfig(
                     CameraSelector.DEFAULT_BACK_CAMERA,
                     UseCaseGroup.Builder().addUseCase(useCase0).build(),
-                    lifecycleOwner0
+                    lifecycleOwner0,
                 )
             val singleCameraConfig1 =
                 SingleCameraConfig(
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     UseCaseGroup.Builder().addUseCase(useCase1).build(),
-                    lifecycleOwner1
+                    lifecycleOwner1,
                 )
 
             if (context.packageManager.hasSystemFeature(FEATURE_CAMERA_CONCURRENT)) {
@@ -1656,7 +1654,7 @@ class ProcessCameraProviderTest(
                         .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
                         .build(),
                     UseCaseGroup.Builder().addUseCase(useCase0).build(),
-                    lifecycleOwner0
+                    lifecycleOwner0,
                 )
             val singleCameraConfig1 =
                 SingleCameraConfig(
@@ -1664,7 +1662,7 @@ class ProcessCameraProviderTest(
                         .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
                         .build(),
                     UseCaseGroup.Builder().addUseCase(useCase1).build(),
-                    lifecycleOwner0
+                    lifecycleOwner0,
                 )
 
             val concurrentCamera =
@@ -1693,19 +1691,19 @@ class ProcessCameraProviderTest(
                 SingleCameraConfig(
                     CameraSelector.DEFAULT_BACK_CAMERA,
                     UseCaseGroup.Builder().addUseCase(useCase0).build(),
-                    lifecycleOwner0
+                    lifecycleOwner0,
                 )
             val singleCameraConfig1 =
                 SingleCameraConfig(
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     UseCaseGroup.Builder().addUseCase(useCase1).build(),
-                    lifecycleOwner1
+                    lifecycleOwner1,
                 )
             val singleCameraConfig2 =
                 SingleCameraConfig(
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     UseCaseGroup.Builder().addUseCase(useCase2).build(),
-                    lifecycleOwner1
+                    lifecycleOwner1,
                 )
 
             if (context.packageManager.hasSystemFeature(FEATURE_CAMERA_CONCURRENT)) {
@@ -1752,7 +1750,7 @@ class ProcessCameraProviderTest(
                 SingleCameraConfig(
                     CameraSelector.DEFAULT_BACK_CAMERA,
                     UseCaseGroup.Builder().addUseCase(useCase0).build(),
-                    lifecycleOwner0
+                    lifecycleOwner0,
                 )
 
             assertThrows<IllegalArgumentException> {
@@ -1775,19 +1773,19 @@ class ProcessCameraProviderTest(
                 SingleCameraConfig(
                     CameraSelector.DEFAULT_BACK_CAMERA,
                     UseCaseGroup.Builder().addUseCase(useCase0).build(),
-                    lifecycleOwner0
+                    lifecycleOwner0,
                 )
             val singleCameraConfig1 =
                 SingleCameraConfig(
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     UseCaseGroup.Builder().addUseCase(useCase1).build(),
-                    lifecycleOwner1
+                    lifecycleOwner1,
                 )
             val singleCameraConfig2 =
                 SingleCameraConfig(
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     UseCaseGroup.Builder().addUseCase(useCase0).build(),
-                    lifecycleOwner1
+                    lifecycleOwner1,
                 )
 
             assertThrows<java.lang.IllegalArgumentException> {
@@ -1809,20 +1807,20 @@ class ProcessCameraProviderTest(
             val useCase1 =
                 FakeUseCase(
                     FakeUseCaseConfig.Builder(CaptureType.VIDEO_CAPTURE).useCaseConfig,
-                    CaptureType.VIDEO_CAPTURE
+                    CaptureType.VIDEO_CAPTURE,
                 )
 
             val singleCameraConfig0 =
                 SingleCameraConfig(
                     CameraSelector.DEFAULT_BACK_CAMERA,
                     UseCaseGroup.Builder().addUseCase(useCase0).addUseCase(useCase1).build(),
-                    lifecycleOwner0
+                    lifecycleOwner0,
                 )
             val singleCameraConfig1 =
                 SingleCameraConfig(
                     CameraSelector.DEFAULT_FRONT_CAMERA,
                     UseCaseGroup.Builder().addUseCase(useCase0).addUseCase(useCase1).build(),
-                    lifecycleOwner1
+                    lifecycleOwner1,
                 )
 
             if (context.packageManager.hasSystemFeature(FEATURE_CAMERA_CONCURRENT)) {
@@ -1851,7 +1849,7 @@ class ProcessCameraProviderTest(
             val cameraSelectorWithExtensions =
                 getCameraSelectorWithLimitedCapabilities(
                     cameraSelector,
-                    emptySet() // All capabilities are not supported.
+                    emptySet(), // All capabilities are not supported.
                 )
             ProcessCameraProvider.configureInstance(cameraConfig)
             provider = ProcessCameraProvider.getInstance(context).await()
@@ -1882,7 +1880,7 @@ class ProcessCameraProviderTest(
     @RequiresApi(23)
     private fun getCameraSelectorWithLimitedCapabilities(
         cameraSelector: CameraSelector,
-        supportedCapabilities: Set<Int>
+        supportedCapabilities: Set<Int>,
     ): CameraSelector {
         val identifier = Identifier.create("idStr")
         val sessionProcessor =
@@ -1926,12 +1924,12 @@ class ProcessCameraProviderTest(
         val combination0 =
             mapOf(
                 "0" to CameraSelector.Builder().requireLensFacing(LENS_FACING_BACK).build(),
-                "1" to CameraSelector.Builder().requireLensFacing(LENS_FACING_FRONT).build()
+                "1" to CameraSelector.Builder().requireLensFacing(LENS_FACING_FRONT).build(),
             )
         val combination1 =
             mapOf(
                 "0" to CameraSelector.Builder().requireLensFacing(LENS_FACING_BACK).build(),
-                "2" to CameraSelector.Builder().requireLensFacing(LENS_FACING_FRONT).build()
+                "2" to CameraSelector.Builder().requireLensFacing(LENS_FACING_FRONT).build(),
             )
 
         cameraCoordinator.addConcurrentCameraIdsAndCameraSelectors(combination0)

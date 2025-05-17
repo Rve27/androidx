@@ -88,11 +88,7 @@ public fun NavigationRail(
 ) {
     val orbiterProperties = LocalNavigationRailOrbiterProperties.current
     VerticalOrbiter(orbiterProperties) {
-        Surface(
-            color = containerColor,
-            contentColor = contentColor,
-            modifier = modifier,
-        ) {
+        Surface(color = containerColor, contentColor = contentColor, modifier = modifier) {
             Column(
                 // XR-changed: Original NavigationRail uses fillMaxHeight() and windowInsets,
                 // which do not produce the desired result in XR.

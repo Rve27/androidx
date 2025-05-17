@@ -67,7 +67,7 @@ class AppFunctionSchemaInventoryProcessor(
             )
         generateSchemaAppFunctionInventoryClass(
             schemaDefinitions,
-            resolvedAnnotatedSerializableProxies
+            resolvedAnnotatedSerializableProxies,
         )
 
         hasProcessed = true
@@ -102,10 +102,10 @@ class AppFunctionSchemaInventoryProcessor(
                     aggregating = true,
                     *schemaDefinitions
                         .flatMap(AnnotatedAppFunctionSchemaDefinition::getSourceFiles)
-                        .toTypedArray()
+                        .toTypedArray(),
                 ),
                 packageName,
-                inventoryClassName
+                inventoryClassName,
             )
             .bufferedWriter()
             .use { fileSpec.writeTo(it) }

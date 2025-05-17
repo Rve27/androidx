@@ -123,7 +123,7 @@ internal class MainActivityV2 : AppCompatActivity(), ConfigurationProvider {
             transaction.replace(
                 R.id.fragment_container_view,
                 pdfViewerFragment,
-                PDF_VIEWER_FRAGMENT_TAG
+                PDF_VIEWER_FRAGMENT_TAG,
             )
             transaction.commitAllowingStateLoss()
             supportFragmentManager.executePendingTransactions()
@@ -158,7 +158,7 @@ internal class MainActivityV2 : AppCompatActivity(), ConfigurationProvider {
                 view.paddingLeft,
                 systemBarsInsets.top,
                 view.paddingRight,
-                systemBarsInsets.bottom
+                systemBarsInsets.bottom,
             )
 
             insets
@@ -172,7 +172,7 @@ internal class MainActivityV2 : AppCompatActivity(), ConfigurationProvider {
 
         internal enum class FragmentType {
             BASIC_FRAGMENT,
-            STYLED_FRAGMENT
+            STYLED_FRAGMENT,
         }
     }
 }

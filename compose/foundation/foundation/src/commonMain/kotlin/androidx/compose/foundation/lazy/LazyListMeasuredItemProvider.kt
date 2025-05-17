@@ -28,13 +28,13 @@ internal abstract class LazyListMeasuredItemProvider(
     constraints: Constraints,
     isVertical: Boolean,
     private val itemProvider: LazyListItemProvider,
-    private val measureScope: LazyLayoutMeasureScope
+    private val measureScope: LazyLayoutMeasureScope,
 ) : LazyLayoutMeasuredItemProvider<LazyListMeasuredItem>() {
     // the constraints we will measure child with. the main axis is not restricted
     val childConstraints =
         Constraints(
             maxWidth = if (isVertical) constraints.maxWidth else Constraints.Infinity,
-            maxHeight = if (!isVertical) constraints.maxHeight else Constraints.Infinity
+            maxHeight = if (!isVertical) constraints.maxHeight else Constraints.Infinity,
         )
 
     override fun getAndMeasure(index: Int, lane: Int, span: Int, constraints: Constraints) =
@@ -46,7 +46,7 @@ internal abstract class LazyListMeasuredItemProvider(
      */
     fun getAndMeasure(
         index: Int,
-        constraints: Constraints = childConstraints
+        constraints: Constraints = childConstraints,
     ): LazyListMeasuredItem {
         val key = itemProvider.getKey(index)
         val contentType = itemProvider.getContentType(index)
@@ -73,6 +73,6 @@ internal abstract class LazyListMeasuredItemProvider(
         key: Any,
         contentType: Any?,
         placeables: List<Placeable>,
-        constraints: Constraints
+        constraints: Constraints,
     ): LazyListMeasuredItem
 }

@@ -184,7 +184,7 @@ class SnapshotStateSet<T> : StateObject, MutableSet<T>, RandomAccess {
     // NOTE: do not inline this method to avoid class verification failures, see b/369909868
     private fun StateSetStateRecord<T>.attemptUpdate(
         currentModification: Int,
-        newSet: PersistentSet<T>
+        newSet: PersistentSet<T>,
     ): Boolean =
         synchronized(sync) {
             if (modification == currentModification) {

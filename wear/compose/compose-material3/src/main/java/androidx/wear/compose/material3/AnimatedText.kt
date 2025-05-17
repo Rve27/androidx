@@ -236,7 +236,7 @@ public class AnimatedTextFontRegistry(
                                 lerpFontVariationSettings(
                                     startFontVariationSettings,
                                     endFontVariationSettings,
-                                    snappedFraction
+                                    snappedFraction,
                                 )
                             )
                             .build()
@@ -315,7 +315,7 @@ public class AnimatedTextFontRegistry(
     private fun lerpFontVariationSettings(
         startFontVariationSettings: FontVariation.Settings,
         endFontVariationSettings: FontVariation.Settings,
-        fraction: Float
+        fraction: Float,
     ): Array<FontVariationAxis> {
         startFontVariationSettings.settings.indices.forEach { startIndex ->
             // Find the corresponding FontVariation.Setting in endFontVariationSettings
@@ -335,8 +335,8 @@ public class AnimatedTextFontRegistry(
                     lerp(
                         startFontVariationSettings.settings[startIndex].toVariationValue(density),
                         endSetting.toVariationValue(density),
-                        fraction
-                    )
+                        fraction,
+                    ),
                 )
         }
         return currentAxes
@@ -352,7 +352,7 @@ public class AnimatedTextFontRegistry(
                     lerpFontVariationSettings(
                         startFontVariationSettings,
                         endFontVariationSettings,
-                        1f
+                        1f,
                     )
                 )
                 .build()
@@ -375,7 +375,7 @@ public class AnimatedTextFontRegistry(
                 0f,
                 0f,
                 false, // Correct layout direction isn't needed for generating the font
-                startWorkingPaint
+                startWorkingPaint,
             )
         startFont =
             Font.Builder(glyphs.getFont(0))
@@ -383,7 +383,7 @@ public class AnimatedTextFontRegistry(
                     lerpFontVariationSettings(
                         startFontVariationSettings,
                         endFontVariationSettings,
-                        0f
+                        0f,
                     )
                 )
                 .build()
@@ -449,14 +449,14 @@ internal constructor(
             contentAlignment.align(
                 IntSize(widthPx.roundToInt(), heightPx.roundToInt()),
                 intSize,
-                layoutDirection
+                layoutDirection,
             )
         canvas.translate(
             offset.x.toFloat(),
             offset.y.toFloat() +
                 heightPx / 2 +
                 lerp(startBaselineOffset, endBaselineOffset, fraction) / 2 +
-                lerp(startAscentPx, endAscentPx, fraction) / 4
+                lerp(startAscentPx, endAscentPx, fraction) / 4,
         )
         val currentFont = animatedFontRegistry.getFont(currentText, fraction)
         animatedFontRegistry.startWorkingPaint.textSize = animatedFontRegistry.getFontSize(fraction)
@@ -469,7 +469,7 @@ internal constructor(
                 0,
                 floatArrayOf(
                     lerp(startGlyphs.getGlyphX(i), endGlyphs.getGlyphX(i), fraction),
-                    lerp(startGlyphs.getGlyphY(i), endGlyphs.getGlyphY(i), fraction)
+                    lerp(startGlyphs.getGlyphY(i), endGlyphs.getGlyphY(i), fraction),
                 ),
                 0,
                 1,
@@ -553,7 +553,7 @@ internal constructor(
                 0f,
                 0f,
                 layoutDirection == LayoutDirection.Rtl,
-                animatedFontRegistry.startWorkingPaint
+                animatedFontRegistry.startWorkingPaint,
             )
         startWidthPx = startPositionedGlyphs!!.advance
         endPositionedGlyphs =
@@ -566,7 +566,7 @@ internal constructor(
                 0f,
                 0f,
                 layoutDirection == LayoutDirection.Rtl,
-                animatedFontRegistry.endWorkingPaint
+                animatedFontRegistry.endWorkingPaint,
             )
         endWidthPx = endPositionedGlyphs!!.advance
         return max(startWidthPx, endWidthPx)

@@ -71,10 +71,7 @@ internal class RememberEventDispatcher() : RememberManager {
         null
     private var nestedRemembersLists: Stack<MutableVector<RememberObserverHolder>>? = null
 
-    fun prepare(
-        abandoning: MutableSet<RememberObserver>,
-        traceContext: CompositionErrorContext?,
-    ) {
+    fun prepare(abandoning: MutableSet<RememberObserver>, traceContext: CompositionErrorContext?) {
         clear()
         this.abandoning = abandoning
         this.traceContext = traceContext
@@ -83,7 +80,7 @@ internal class RememberEventDispatcher() : RememberManager {
     inline fun use(
         abandoning: MutableSet<RememberObserver>,
         traceContext: CompositionErrorContext?,
-        block: RememberEventDispatcher.() -> Unit
+        block: RememberEventDispatcher.() -> Unit,
     ) {
         try {
             prepare(abandoning, traceContext)

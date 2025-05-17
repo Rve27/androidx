@@ -147,7 +147,7 @@ class RecomposerTestsJvm {
                     withTimeoutOrNull(3_000) { recompositionThread.receive() }
                         ?.name
                         ?.contains("specialThreadPool") == true,
-                    "recomposition did not occur on expected thread"
+                    "recomposition did not occur on expected thread",
                 )
 
                 recomposer.close()
@@ -173,7 +173,7 @@ class RecomposerTestsJvm {
             val state = recomposer.currentState.value
             assertTrue(
                 state <= Recomposer.State.ShuttingDown,
-                "recomposer state $state but expected <= ShuttingDown"
+                "recomposer state $state but expected <= ShuttingDown",
             )
         }
 
@@ -188,7 +188,7 @@ class RecomposerTestsJvm {
         // invalidations unhandled. Launch undispatched to get things moving before we proceed.
         launch(
             BroadcastFrameClock { frameRequestCh.trySend(Unit) },
-            start = CoroutineStart.UNDISPATCHED
+            start = CoroutineStart.UNDISPATCHED,
         ) {
             recomposer.runRecomposeAndApplyChanges()
         }

@@ -39,7 +39,7 @@ class CredentialEventsProviderFactoryTest {
             Intent().apply {
                 putExtra(
                     CredentialEventsProvider.EVENTS_SERVICE_PROVIDER_KEY,
-                    DummyCredentialEventsProvider::class.java.name
+                    DummyCredentialEventsProvider::class.java.name,
                 )
             }
 
@@ -55,7 +55,7 @@ class CredentialEventsProviderFactoryTest {
             Intent().apply {
                 putExtra(
                     CredentialEventsProvider.EVENTS_SERVICE_PROVIDER_KEY,
-                    "com.example.InvalidProvider"
+                    "com.example.InvalidProvider",
                 )
             }
 

@@ -74,7 +74,7 @@ internal constructor(
     @get:VisibleForTesting
     @get:RestrictTo(LIBRARY_GROUP)
     public val genericDocument: GenericDocument,
-    internal val extras: Bundle
+    internal val extras: Bundle,
 ) {
 
     // TODO: Remove this constructor
@@ -152,11 +152,7 @@ internal constructor(
             } else {
                 array[0]
             }
-        spec?.validateReadRequest(
-            key,
-            Boolean::class.java,
-            isCollection = false,
-        )
+        spec?.validateReadRequest(key, Boolean::class.java, isCollection = false)
         return booleanValue
     }
 
@@ -205,11 +201,7 @@ internal constructor(
             } else {
                 array[0]
             }
-        spec?.validateReadRequest(
-            key,
-            Float::class.java,
-            isCollection = false,
-        )
+        spec?.validateReadRequest(key, Float::class.java, isCollection = false)
         if (doubleValue != null && !isDoubleWithinFloatRange(doubleValue)) {
             // This should never happen because the setters forbid such value to exist in the
             // first place.
@@ -265,11 +257,7 @@ internal constructor(
             } else {
                 array[0]
             }
-        spec?.validateReadRequest(
-            key,
-            Double::class.java,
-            isCollection = false,
-        )
+        spec?.validateReadRequest(key, Double::class.java, isCollection = false)
         return doubleValue
     }
 
@@ -318,11 +306,7 @@ internal constructor(
             } else {
                 array[0]
             }
-        spec?.validateReadRequest(
-            key,
-            Int::class.java,
-            isCollection = false,
-        )
+        spec?.validateReadRequest(key, Int::class.java, isCollection = false)
         if (longValue != null && !isLongWithinLongRange(longValue)) {
             // This should never happen because the setters forbid such value to exist in the
             // first place.
@@ -378,11 +362,7 @@ internal constructor(
             } else {
                 array[0]
             }
-        spec?.validateReadRequest(
-            key,
-            Long::class.java,
-            isCollection = false,
-        )
+        spec?.validateReadRequest(key, Long::class.java, isCollection = false)
         return longValue
     }
 
@@ -420,11 +400,7 @@ internal constructor(
                 else -> array[0]
             }
 
-        spec?.validateReadRequest(
-            key,
-            String::class.java,
-            isCollection = false,
-        )
+        spec?.validateReadRequest(key, String::class.java, isCollection = false)
         return stringValue
     }
 
@@ -436,9 +412,7 @@ internal constructor(
      * @throws IllegalArgumentException if the [key] is not allowed or the value type is incorrect
      *   according to the metadata specification.
      */
-    public fun getAppFunctionData(
-        key: String,
-    ): AppFunctionData? {
+    public fun getAppFunctionData(key: String): AppFunctionData? {
         val array = unsafeGetProperty(key, Array<GenericDocument>::class.java)
         val dataValue =
             if (array == null || array.isEmpty()) {
@@ -447,14 +421,10 @@ internal constructor(
                 AppFunctionData(
                     spec?.getPropertyObjectSpec(key),
                     array[0],
-                    extras.getBundle(extrasKey(key)) ?: Bundle.EMPTY
+                    extras.getBundle(extrasKey(key)) ?: Bundle.EMPTY,
                 )
             }
-        spec?.validateReadRequest(
-            key,
-            AppFunctionData::class.java,
-            isCollection = false,
-        )
+        spec?.validateReadRequest(key, AppFunctionData::class.java, isCollection = false)
         return dataValue
     }
 
@@ -498,11 +468,7 @@ internal constructor(
      */
     public fun getBooleanArray(key: String): BooleanArray? {
         val booleanArrayValue = unsafeGetProperty(key, BooleanArray::class.java)
-        spec?.validateReadRequest(
-            key,
-            Boolean::class.java,
-            isCollection = true,
-        )
+        spec?.validateReadRequest(key, Boolean::class.java, isCollection = true)
         return booleanArrayValue
     }
 
@@ -516,11 +482,7 @@ internal constructor(
      */
     public fun getFloatArray(key: String): FloatArray? {
         val doubleArrayValue = unsafeGetProperty(key, DoubleArray::class.java)
-        spec?.validateReadRequest(
-            key,
-            Float::class.java,
-            isCollection = true,
-        )
+        spec?.validateReadRequest(key, Float::class.java, isCollection = true)
         return doubleArrayValue
             ?.map { doubleValue ->
                 if (!isDoubleWithinFloatRange(doubleValue)) {
@@ -545,11 +507,7 @@ internal constructor(
      */
     public fun getDoubleArray(key: String): DoubleArray? {
         val doubleArrayValue = unsafeGetProperty(key, DoubleArray::class.java)
-        spec?.validateReadRequest(
-            key,
-            Double::class.java,
-            isCollection = true,
-        )
+        spec?.validateReadRequest(key, Double::class.java, isCollection = true)
         return doubleArrayValue
     }
 
@@ -563,11 +521,7 @@ internal constructor(
      */
     public fun getIntArray(key: String): IntArray? {
         val longArrayValue = unsafeGetProperty(key, LongArray::class.java)
-        spec?.validateReadRequest(
-            key,
-            Int::class.java,
-            isCollection = true,
-        )
+        spec?.validateReadRequest(key, Int::class.java, isCollection = true)
         return longArrayValue
             ?.map { longValue ->
                 if (!isLongWithinLongRange(longValue)) {
@@ -592,11 +546,7 @@ internal constructor(
      */
     public fun getLongArray(key: String): LongArray? {
         val longArrayValue = unsafeGetProperty(key, LongArray::class.java)
-        spec?.validateReadRequest(
-            key,
-            Long::class.java,
-            isCollection = true,
-        )
+        spec?.validateReadRequest(key, Long::class.java, isCollection = true)
         return longArrayValue
     }
 
@@ -610,11 +560,7 @@ internal constructor(
      */
     public fun getByteArray(key: String): ByteArray? {
         val byteArrayValue = unsafeGetProperty(key, Array<ByteArray>::class.java)
-        spec?.validateReadRequest(
-            key,
-            Byte::class.java,
-            isCollection = true,
-        )
+        spec?.validateReadRequest(key, Byte::class.java, isCollection = true)
         return if (byteArrayValue == null || byteArrayValue.isEmpty()) {
             null
         } else {
@@ -633,11 +579,7 @@ internal constructor(
     @Suppress("NullableCollection")
     public fun getStringList(key: String): List<String>? {
         val stringArrayValue = unsafeGetProperty(key, Array<String>::class.java)
-        spec?.validateReadRequest(
-            key,
-            String::class.java,
-            isCollection = true,
-        )
+        spec?.validateReadRequest(key, String::class.java, isCollection = true)
         return stringArrayValue?.asList()
     }
 
@@ -650,9 +592,7 @@ internal constructor(
      *   according to the metadata specification.
      */
     @Suppress("NullableCollection")
-    public fun getAppFunctionDataList(
-        key: String,
-    ): List<AppFunctionData>? {
+    public fun getAppFunctionDataList(key: String): List<AppFunctionData>? {
         val propertySpec = spec?.getPropertyObjectSpec(key)
         val dataArrayValue =
             unsafeGetProperty(key, Array<GenericDocument>::class.java)?.mapIndexed { index, element
@@ -660,14 +600,10 @@ internal constructor(
                 AppFunctionData(
                     propertySpec,
                     element,
-                    extras.getBundle(extrasKey(key, index)) ?: Bundle.EMPTY
+                    extras.getBundle(extrasKey(key, index)) ?: Bundle.EMPTY,
                 )
             }
-        spec?.validateReadRequest(
-            key,
-            AppFunctionData::class.java,
-            isCollection = true,
-        )
+        spec?.validateReadRequest(key, AppFunctionData::class.java, isCollection = true)
         return dataArrayValue
     }
 
@@ -780,7 +716,7 @@ internal constructor(
             Log.d(
                 APP_FUNCTIONS_TAG,
                 "Something went wrong while deserialize $this to $serializableClass",
-                e
+                e,
             )
             throw IllegalArgumentException(
                 "Unable to deserialize $serializableClass. Is the class annotated with @AppFunctionSerializable?"
@@ -906,7 +842,7 @@ internal constructor(
                 GenericDocument.Builder<GenericDocument.Builder<*>>(
                     "",
                     "",
-                    spec.objectQualifiedName
+                    spec.objectQualifiedName,
                 )
         }
 
@@ -1064,7 +1000,7 @@ internal constructor(
             spec?.validateWriteRequest(key, Float::class.java, isCollection = true)
             genericDocumentBuilder.setPropertyDouble(
                 key,
-                *(value.asList().map { it.toDouble() }.toDoubleArray())
+                *(value.asList().map { it.toDouble() }.toDoubleArray()),
             )
             return this
         }
@@ -1095,7 +1031,7 @@ internal constructor(
             spec?.validateWriteRequest(key, Int::class.java, isCollection = true)
             genericDocumentBuilder.setPropertyLong(
                 key,
-                *(value.asList().map { it.toLong() }.toLongArray())
+                *(value.asList().map { it.toLong() }.toLongArray()),
             )
             return this
         }
@@ -1193,7 +1129,7 @@ internal constructor(
         public fun <T : Any?> setGenericField(
             key: String,
             value: T,
-            valueClass: Class<T>
+            valueClass: Class<T>,
         ): Builder {
             if (value == null) {
                 return this
@@ -1233,7 +1169,7 @@ internal constructor(
         public fun <I, T : List<*>?> setGenericListField(
             key: String,
             value: T,
-            itemValueClass: Class<I>
+            itemValueClass: Class<I>,
         ): Builder {
             if (value == null) {
                 return this
@@ -1246,7 +1182,7 @@ internal constructor(
                 else ->
                     setAppFunctionDataList(
                         key,
-                        value.map { serialize(it as Any, itemValueClass as Class<Any>) }
+                        value.map { serialize(it as Any, itemValueClass as Class<Any>) },
                     )
             }
         }
@@ -1301,7 +1237,7 @@ internal constructor(
                 Log.d(
                     APP_FUNCTIONS_TAG,
                     "Unable to create AppFunctionSerializableFactory for $serializableClass",
-                    e
+                    e,
                 )
                 throw IllegalArgumentException(
                     "Unable to create AppFunctionSerializableFactory for $serializableClass"
@@ -1332,7 +1268,7 @@ internal constructor(
         @JvmStatic
         public fun <T : Any> serialize(
             serializable: T,
-            serializableClass: Class<T>
+            serializableClass: Class<T>,
         ): AppFunctionData {
             return try {
                 val factory = getSerializableFactory(serializableClass)
@@ -1341,7 +1277,7 @@ internal constructor(
                 Log.d(
                     APP_FUNCTIONS_TAG,
                     "Something went wrong while serialize $serializable of class $serializableClass",
-                    e
+                    e,
                 )
                 throw IllegalArgumentException(
                     "Unable to serialize $serializableClass. Is the class annotated with @AppFunctionSerializable?"

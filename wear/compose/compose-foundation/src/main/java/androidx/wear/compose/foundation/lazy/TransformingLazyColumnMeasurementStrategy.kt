@@ -56,7 +56,7 @@ internal interface TransformingLazyColumnMeasurementStrategy {
         coroutineScope: CoroutineScope,
         density: Density,
         scrollToBeConsumed: Float,
-        layout: (Int, Int, Placeable.PlacementScope.() -> Unit) -> MeasureResult
+        layout: (Int, Int, Placeable.PlacementScope.() -> Unit) -> MeasureResult,
     ): TransformingLazyColumnMeasureResult
 
     val leftContentPadding: Int
@@ -78,7 +78,7 @@ internal fun emptyMeasureResult(
     containerConstraints: Constraints,
     beforeContentPadding: Int,
     afterContentPadding: Int,
-    layout: (Int, Int, Placeable.PlacementScope.() -> Unit) -> MeasureResult
+    layout: (Int, Int, Placeable.PlacementScope.() -> Unit) -> MeasureResult,
 ): TransformingLazyColumnMeasureResult =
     TransformingLazyColumnMeasureResult(
         anchorItemIndex = 0,
@@ -94,5 +94,5 @@ internal fun emptyMeasureResult(
         afterContentPadding = afterContentPadding,
         itemSpacing = 0,
         childConstraints = Constraints(),
-        measureResult = layout(containerConstraints.maxWidth, containerConstraints.maxHeight) {}
+        measureResult = layout(containerConstraints.maxWidth, containerConstraints.maxHeight) {},
     )

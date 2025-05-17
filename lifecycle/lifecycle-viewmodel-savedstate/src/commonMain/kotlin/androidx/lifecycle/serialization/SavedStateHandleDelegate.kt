@@ -78,7 +78,7 @@ private class SavedStateHandleDelegate<T : Any>(
             decodeFromSavedState(
                 deserializer = serializer,
                 savedState = it,
-                configuration = configuration
+                configuration = configuration,
             )
         }
     }
