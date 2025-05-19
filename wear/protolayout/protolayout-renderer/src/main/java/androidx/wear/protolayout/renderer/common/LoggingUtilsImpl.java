@@ -26,6 +26,7 @@ import com.google.errorprone.annotations.FormatMethod;
 import com.google.errorprone.annotations.FormatString;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Logger used for extensive logging. Note that all logs will contain the component name. To enable
@@ -47,7 +48,7 @@ public class LoggingUtilsImpl implements LoggingUtils {
     @Override
     public void logD(@NonNull String tag, @NonNull String message) {
         if (canLogD(tag)) {
-            logInternal(tag, message);
+            logDInternal(tag, message);
         }
     }
 
@@ -56,10 +57,6 @@ public class LoggingUtilsImpl implements LoggingUtils {
     public void logD(
             @NonNull String tag, @FormatString @NonNull String format, Object @NonNull ... args) {
         logD(tag, String.format(format, args));
-    }
-
-    private void logInternal(@NonNull String tag, @NonNull String message) {
-        Log.d(tag, mComponent + "\n" + message);
     }
 
     @Override
@@ -71,7 +68,7 @@ public class LoggingUtilsImpl implements LoggingUtils {
     @Override
     public void logDOrNotUser(@NonNull String tag, @NonNull String message) {
         if (canLogD(tag) || !isUserBuild()) {
-            logInternal(tag, message);
+            logDInternal(tag, message);
         }
     }
 
@@ -79,10 +76,26 @@ public class LoggingUtilsImpl implements LoggingUtils {
     @Override
     @FormatMethod
     public void logDOrNotUser(
-            @NonNull String tag, @FormatString @NonNull String format, @NonNull Object... args) {
+            @NonNull String tag,
+            @FormatString @NonNull String format,
+            @Nullable Object @NonNull ... args) {
         if (canLogD(tag) || !isUserBuild()) {
-            logInternal(tag, String.format(format, args));
+            logDInternal(tag, String.format(format, args));
         }
+    }
+
+    @Override
+    public void logW(@NonNull String tag, @NonNull String message) {
+        Log.w(tag, message + " " + mComponent);
+    }
+
+    @Override
+    public void logE(@NonNull String tag, @NonNull String message, @Nullable Throwable tr) {
+        Log.e(tag, message + " " + mComponent, tr);
+    }
+
+    private void logDInternal(@NonNull String tag, @NonNull String message) {
+        Log.d(tag, message + " " + mComponent);
     }
 
     private static boolean isUserBuild() {

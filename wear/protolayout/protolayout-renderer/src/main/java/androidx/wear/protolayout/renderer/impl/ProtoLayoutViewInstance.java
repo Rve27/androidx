@@ -375,7 +375,6 @@ public class ProtoLayoutViewInstance implements AutoCloseable {
 
         private final boolean mUpdatesEnabled;
         private final boolean mAdaptiveUpdateRatesEnabled;
-        private final boolean mIsViewFullyVisible;
 
         Config(
                 @NonNull Context uiContext,
@@ -394,8 +393,7 @@ public class ProtoLayoutViewInstance implements AutoCloseable {
                 boolean animationEnabled,
                 int runningAnimationsLimit,
                 boolean updatesEnabled,
-                boolean adaptiveUpdateRatesEnabled,
-                boolean isViewFullyVisible) {
+                boolean adaptiveUpdateRatesEnabled) {
             this.mUiContext = uiContext;
             this.mRendererResources = rendererResources;
             this.mResourceResolversProvider = resourceResolversProvider;
@@ -413,7 +411,6 @@ public class ProtoLayoutViewInstance implements AutoCloseable {
             this.mRunningAnimationsLimit = runningAnimationsLimit;
             this.mUpdatesEnabled = updatesEnabled;
             this.mAdaptiveUpdateRatesEnabled = adaptiveUpdateRatesEnabled;
-            this.mIsViewFullyVisible = isViewFullyVisible;
         }
 
         /** Returns UI Context used for interacting with the UI. */
@@ -511,12 +508,6 @@ public class ProtoLayoutViewInstance implements AutoCloseable {
             return mAdaptiveUpdateRatesEnabled;
         }
 
-        /** Returns whether view is fully visible. */
-        @RestrictTo(Scope.LIBRARY)
-        public boolean getIsViewFullyVisible() {
-            return mIsViewFullyVisible;
-        }
-
         /** Builder for {@link Config}. */
         @RestrictTo(Scope.LIBRARY_GROUP_PREFIX)
         public static final class Builder {
@@ -541,7 +532,6 @@ public class ProtoLayoutViewInstance implements AutoCloseable {
 
             private boolean mUpdatesEnabled = true;
             private boolean mAdaptiveUpdateRatesEnabled = true;
-            private boolean mIsViewFullyVisible = true;
 
             /**
              * Builder for the {@link Config} class.
@@ -672,13 +662,6 @@ public class ProtoLayoutViewInstance implements AutoCloseable {
                 return this;
             }
 
-            /** Sets whether the view is fully visible. */
-            @RestrictTo(Scope.LIBRARY)
-            public @NonNull Builder setIsViewFullyVisible(boolean isViewFullyVisible) {
-                this.mIsViewFullyVisible = isViewFullyVisible;
-                return this;
-            }
-
             /** Builds {@link Config} object. */
             public @NonNull Config build() {
                 LoadActionListener loadActionListener = mLoadActionListener;
@@ -724,8 +707,7 @@ public class ProtoLayoutViewInstance implements AutoCloseable {
                         mAnimationEnabled,
                         mRunningAnimationsLimit,
                         mUpdatesEnabled,
-                        mAdaptiveUpdateRatesEnabled,
-                        mIsViewFullyVisible);
+                        mAdaptiveUpdateRatesEnabled);
             }
         }
     }
@@ -787,8 +769,6 @@ public class ProtoLayoutViewInstance implements AutoCloseable {
                     new ProtoLayoutDynamicDataPipeline(
                             config.getPlatformDataProviders(), stateStore);
         }
-
-        mDataPipeline.setFullyVisible(config.getIsViewFullyVisible());
     }
 
     @WorkerThread
@@ -1292,7 +1272,6 @@ public class ProtoLayoutViewInstance implements AutoCloseable {
     }
 
     /** Sets the visibility state for this layout. */
-    @RestrictTo(Scope.LIBRARY)
     @UiThread
     public void setLayoutVisibility(@ProtoLayoutVisibilityState int visibility) {
 

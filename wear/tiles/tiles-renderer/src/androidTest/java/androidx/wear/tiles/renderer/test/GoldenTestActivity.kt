@@ -27,6 +27,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.wear.protolayout.proto.LayoutElementProto
 import androidx.wear.protolayout.proto.ResourceProto
+import androidx.wear.protolayout.renderer.ProtoLayoutVisibilityState
 import androidx.wear.protolayout.renderer.impl.ProtoLayoutViewInstance
 import com.google.common.util.concurrent.MoreExecutors
 import java.util.concurrent.ExecutionException
@@ -51,9 +52,9 @@ class GoldenTestActivity : Activity() {
                         mainExecutor,
                         "androidx.wear.tiles.extra.CLICKABLE_ID",
                     )
-                    .setIsViewFullyVisible(true)
                     .build()
             )
+        instance.setLayoutVisibility(ProtoLayoutVisibilityState.VISIBILITY_STATE_FULLY_VISIBLE)
 
         try {
             instance.renderAndAttach(layoutProto, generateResourcesProto(), root).get()
