@@ -964,6 +964,7 @@ class AppFunctionDataTest {
 
         val data = AppFunctionData(gd, extras)
 
+        assertThat(data.containsKey("id")).isTrue()
         assertThat(data.getString("id")).isEqualTo("123456")
     }
 

@@ -104,7 +104,9 @@ internal constructor(
         if (spec != null && !spec.containsMetadata(key)) {
             throw IllegalArgumentException("There is no metadata associated with $key")
         }
-        return genericDocument.getProperty(key) != null || extras.containsKey(key)
+        return key == LEGACY_ID_FIELD_KEY ||
+            genericDocument.getProperty(key) != null ||
+            extras.containsKey(key)
     }
 
     /**
