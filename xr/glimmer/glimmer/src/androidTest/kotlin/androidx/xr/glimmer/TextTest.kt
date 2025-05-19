@@ -29,9 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.testutils.assertIsEqualTo
 import androidx.compose.testutils.assertPixels
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalProvider
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.getOrNull
@@ -161,7 +159,11 @@ class TextTest {
                 Text(
                     testString,
                     modifier =
-                        Modifier.modifierLocalProvider(ModifierLocalContentColor) { Color.Blue }
+                        Modifier.surface(
+                                color = Color.Blue,
+                                contentColor = Color.Blue,
+                                border = null,
+                            )
                             .testTag("test"),
                 )
             }
@@ -180,91 +182,17 @@ class TextTest {
                 Text(
                     testAnnotatedString,
                     modifier =
-                        Modifier.modifierLocalProvider(ModifierLocalContentColor) { Color.Blue }
+                        Modifier.surface(
+                                color = Color.Blue,
+                                contentColor = Color.Blue,
+                                border = null,
+                            )
                             .testTag("test"),
                 )
             }
         }
 
         rule.onNodeWithTag("test").captureToImage().assertPixels { Color.Blue }
-    }
-
-    @Test
-    fun contentColorUpdate_noRecomposition() {
-        // Updates to content color should only cause a re-draw, not a recomposition
-        var compositions = 0
-        // The way we set text color when using content color (using color producer) is not
-        // applied to onTextLayout, so we test it by drawing a background behind the text, with
-        // expected content color that matches the background - so when we take a screenshot it
-        // should be the same color.
-        var color by mutableStateOf(Color.Blue)
-
-        rule.setGlimmerThemeContent {
-            compositions++
-            Box(
-                Modifier.fillMaxSize()
-                    .drawBehind {
-                        // lambda to avoid recomposition since we want to test observability
-                        drawRect(color)
-                    }
-                    .padding(20.dp)
-            ) {
-                Text(
-                    testString,
-                    modifier =
-                        Modifier.modifierLocalProvider(ModifierLocalContentColor) { color }
-                            .testTag("test"),
-                )
-            }
-        }
-
-        rule.runOnIdle { assertThat(compositions).isEqualTo(1) }
-        rule.onNodeWithTag("test").captureToImage().assertPixels { Color.Blue }
-
-        rule.runOnIdle { color = Color.Green }
-
-        // This should not cause a recomposition
-        rule.runOnIdle { assertThat(compositions).isEqualTo(1) }
-        rule.onNodeWithTag("test").captureToImage().assertPixels { Color.Green }
-    }
-
-    @Test
-    fun contentColorUpdate__noRecomposition_annotatedString() {
-        // Updates to content color should only cause a re-draw, not a recomposition
-        var compositions = 0
-        // The way we set text color when using content color (using color producer) is not
-        // applied to onTextLayout, so we test it by drawing a background behind the text, with
-        // expected content color that matches the background - so when we take a screenshot it
-        // should be the same color.
-        var color by mutableStateOf(Color.Blue)
-
-        rule.setGlimmerThemeContent {
-            compositions++
-            Box(
-                Modifier.fillMaxSize()
-                    .drawBehind {
-                        // lambda to avoid recomposition since we want to test observability
-                        drawRect(color)
-                    }
-                    .padding(20.dp)
-            ) {
-                Text(
-                    testAnnotatedString,
-                    modifier =
-                        Modifier.modifierLocalProvider(ModifierLocalContentColor) { color }
-                            .testTag("test"),
-                )
-            }
-        }
-
-        rule.runOnIdle { assertThat(compositions).isEqualTo(1) }
-        rule.onNodeWithTag("test").captureToImage().assertPixels { Color.Blue }
-
-        rule.runOnIdle { color = Color.Green }
-
-        // This should not cause a recomposition
-        rule.runOnIdle { assertThat(compositions).isEqualTo(1) }
-        rule.onNodeWithTag("test").captureToImage().assertPixels { Color.Green }
     }
 
     @Test

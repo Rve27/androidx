@@ -17,6 +17,7 @@
 package androidx.xr.glimmer
 
 import androidx.annotation.IntRange
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.TextAutoSize
@@ -29,9 +30,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorProducer
 import androidx.compose.ui.graphics.isUnspecified
 import androidx.compose.ui.graphics.takeOrElse
-import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.node.DelegatableNode
+import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.Paragraph
 import androidx.compose.ui.text.TextLayoutResult
@@ -59,13 +62,13 @@ import androidx.compose.ui.unit.TextUnit
  * - If a parameter is _not_ set, (`null` or unspecified), then the corresponding value from [style]
  *   will be used instead.
  *
- * Additionally, for [color], if [color] is not set, and [style] does not have a color, then
- * [ModifierLocalContentColor] will be used.
+ * Additionally, for [color], if [color] is not set, and [style] does not have a color, then the
+ * content color provided by the nearest [surface] will be used.
  *
  * @param text the text to be displayed
  * @param modifier the [Modifier] to be applied to this layout node
  * @param color [Color] to apply to the text. If [Color.Unspecified], and [style] has no color set,
- *   this will be [ModifierLocalContentColor].
+ *   this will be the content color provided by the nearest [surface].
  * @param fontSize the size of glyphs to use when painting the text. See [TextStyle.fontSize].
  * @param fontStyle the typeface variant to use when drawing the letters (e.g., italic). See
  *   [TextStyle.fontStyle].
@@ -122,31 +125,41 @@ public fun Text(
     // Color precedence rules:
     // If the explicit color parameter is provided, use it.
     // Otherwise, if the style contains a color, use it.
-    // Otherwise, we use the value from ModifierLocalContentColor.
+    // Otherwise, we use the content color.
 
     val userProvidedColor = color.takeOrElse { style.color }
     // Use content color if a color was not provided explicitly, or in the style
     val usingContentColor = userProvidedColor.isUnspecified
 
-    // Avoid creating a state if the color is set explicitly. We need to use one for content color
-    // since we can only retrieve the color from inside a modifier. The color will be retrieved
-    // and set during the apply phase, which is before drawing, so this will still have the correct
-    // color for the first frame (the default value here should never be used).
-    val textColorState: MutableState<Color>? =
-        if (usingContentColor) remember { mutableStateOf(Color.White) } else null
+    // Workaround to access content color from outside of a node. This is needed since BasicText
+    // does not expose a node, or any other way for us to provide color from a node.
+    val nodeState: MutableState<DelegatableNode?>? =
+        if (usingContentColor) remember { mutableStateOf(null) } else null
 
-    val contentColorConsumer =
-        if (textColorState != null) {
-            Modifier.modifierLocalConsumer {
-                textColorState.value = ModifierLocalContentColor.current
-            }
+    val nodeProvider =
+        if (nodeState != null) {
+            DelegatableNodeProviderElement { nodeState.value = it }
         } else {
             Modifier
         }
 
+    val colorProducer =
+        if (usingContentColor) {
+            ColorProducer {
+                val node = nodeState?.value
+                if (node?.node?.isAttached == true) {
+                    node.currentContentColor()
+                } else {
+                    Color.White
+                }
+            }
+        } else {
+            null
+        }
+
     BasicText(
         text,
-        modifier.then(contentColorConsumer),
+        modifier.then(nodeProvider),
         style.merge(
             // If using content color, this will be unspecified so will no-op
             color = userProvidedColor,
@@ -164,7 +177,7 @@ public fun Text(
         softWrap,
         maxLines,
         minLines,
-        color = textColorState?.let { { it.value } },
+        color = colorProducer,
         autoSize = autoSize,
     )
 }
@@ -184,13 +197,13 @@ public fun Text(
  * - If a parameter is _not_ set, (`null` or [TextUnit.Unspecified]), then the corresponding value
  *   from [style] will be used instead.
  *
- * Additionally, for [color], if [color] is not set, and [style] does not have a color, then
- * [ModifierLocalContentColor] will be used.
+ * Additionally, for [color], if [color] is not set, and [style] does not have a color, then the
+ * content color provided by the nearest [surface] will be used.
  *
  * @param text the text to be displayed
  * @param modifier the [Modifier] to be applied to this layout node
  * @param color [Color] to apply to the text. If [Color.Unspecified], and [style] has no color set,
- *   this will be [ModifierLocalContentColor].
+ *   this will be the content color provided by the nearest [surface].
  * @param fontSize the size of glyphs to use when painting the text. See [TextStyle.fontSize].
  * @param fontStyle the typeface variant to use when drawing the letters (e.g., italic). See
  *   [TextStyle.fontStyle].
@@ -250,31 +263,41 @@ public fun Text(
     // Color precedence rules:
     // If the explicit color parameter is provided, use it.
     // Otherwise, if the style contains a color, use it.
-    // Otherwise, we use the value from ModifierLocalContentColor.
+    // Otherwise, we use the content color.
 
     val userProvidedColor = color.takeOrElse { style.color }
     // Use content color if a color was not provided explicitly, or in the style
     val usingContentColor = userProvidedColor.isUnspecified
 
-    // Avoid creating a state if the color is set explicitly. We need to use one for content color
-    // since we can only retrieve the color from inside a modifier. The color will be retrieved
-    // and set during the apply phase, which is before drawing, so this will still have the correct
-    // color for the first frame (the default value here should never be used).
-    val textColorState: MutableState<Color>? =
-        if (usingContentColor) remember { mutableStateOf(Color.White) } else null
+    // Workaround to access content color from outside of a node. This is needed since BasicText
+    // does not expose a node, or any other way for us to provide color from a node.
+    val nodeState: MutableState<DelegatableNode?>? =
+        if (usingContentColor) remember { mutableStateOf(null) } else null
 
-    val contentColorConsumer =
-        if (textColorState != null) {
-            Modifier.modifierLocalConsumer {
-                textColorState.value = ModifierLocalContentColor.current
-            }
+    val nodeProvider =
+        if (nodeState != null) {
+            DelegatableNodeProviderElement { nodeState.value = it }
         } else {
             Modifier
         }
 
+    val colorProducer =
+        if (usingContentColor) {
+            ColorProducer {
+                val node = nodeState?.value
+                if (node?.node?.isAttached == true) {
+                    node.currentContentColor()
+                } else {
+                    Color.White
+                }
+            }
+        } else {
+            null
+        }
+
     BasicText(
         text = text,
-        modifier = modifier.then(contentColorConsumer),
+        modifier = modifier.then(nodeProvider),
         style =
             style.merge(
                 color = userProvidedColor,
@@ -294,7 +317,7 @@ public fun Text(
         minLines = minLines,
         inlineContent = inlineContent,
         autoSize = autoSize,
-        color = textColorState?.let { { it.value } },
+        color = colorProducer,
     )
 }
 
@@ -304,3 +327,51 @@ public fun Text(
  */
 public val LocalTextStyle: ProvidableCompositionLocal<TextStyle> =
     compositionLocalOf(structuralEqualityPolicy()) { TextStyle.Default }
+
+/**
+ * Exposes a [DelegatableNode] so we can query [currentContentColor] from outside of a node. This is
+ * not a recommended path, but given the current Text APIs there is no other way to set color -
+ * future changes to text should let us remove this workaround.
+ */
+@VisibleForTesting
+@Suppress("ModifierNodeInspectableProperties")
+internal class DelegatableNodeProviderElement(
+    private val onDelegatableNodeChange: (DelegatableNode?) -> Unit
+) : ModifierNodeElement<DelegatableNodeProviderNode>() {
+    override fun create(): DelegatableNodeProviderNode =
+        DelegatableNodeProviderNode(onDelegatableNodeChange)
+
+    override fun update(node: DelegatableNodeProviderNode) {
+        node.update(onDelegatableNodeChange)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is DelegatableNodeProviderElement) return false
+
+        if (onDelegatableNodeChange !== other.onDelegatableNodeChange) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return onDelegatableNodeChange.hashCode()
+    }
+}
+
+internal class DelegatableNodeProviderNode(
+    private var onDelegatableNodeChange: (DelegatableNode?) -> Unit
+) : Modifier.Node() {
+    override fun onAttach() {
+        onDelegatableNodeChange(this)
+    }
+
+    override fun onDetach() {
+        onDelegatableNodeChange(null)
+    }
+
+    fun update(onDelegatableNodeChange: (DelegatableNode?) -> Unit) {
+        this.onDelegatableNodeChange = onDelegatableNodeChange
+        onDelegatableNodeChange(this)
+    }
+}

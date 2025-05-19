@@ -23,8 +23,6 @@ package androidx.xr.glimmer {
 
   public final class ContentColorKt {
     method public static long calculateContentColor(long backgroundColor);
-    method public static androidx.compose.ui.modifier.ProvidableModifierLocal<androidx.compose.ui.graphics.Color> getModifierLocalContentColor();
-    property public static androidx.compose.ui.modifier.ProvidableModifierLocal<androidx.compose.ui.graphics.Color> ModifierLocalContentColor;
   }
 
   @androidx.compose.runtime.Immutable public final class GlimmerTheme {
