@@ -188,6 +188,9 @@ internal fun Project.shouldVerifyConfiguration(configuration: Configuration): Bo
     if (name.startsWith("androidDebug")) return false
     if (name.startsWith("releaseAndroidTest")) return false
     if (name.startsWith("releaseAnnotationProcessor")) return false
+    // releaseApi, and releaseImplementation are for declaring dependencies
+    // for the release variant. They extend the releaseCompileClasspath and
+    // releaseRuntimeClasspath (both resolvable configurations) respectively.
     if (name.startsWith("releaseApi")) return false
     if (name.startsWith("releaseImplementation")) return false
     if (name.startsWith("releaseTest")) return false
