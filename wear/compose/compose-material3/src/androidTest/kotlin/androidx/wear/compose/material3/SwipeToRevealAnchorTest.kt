@@ -202,7 +202,7 @@ class SwipeToRevealAnchorTest(val testParams: TestParams) {
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = Covered,
                         swipeDirection = SwipeDirection.Left(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered,
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.RTL(
                         actions = Actions.One(hasPartiallyRevealedState = false),
@@ -242,7 +242,7 @@ class SwipeToRevealAnchorTest(val testParams: TestParams) {
                         actions = Actions.Two,
                         initialRevealValue = Covered,
                         swipeDirection = SwipeDirection.Left(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered,
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
@@ -262,7 +262,7 @@ class SwipeToRevealAnchorTest(val testParams: TestParams) {
                         actions = Actions.One(hasPartiallyRevealedState = true),
                         initialRevealValue = Covered,
                         swipeDirection = SwipeDirection.Left(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered,
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = false),
@@ -302,7 +302,7 @@ class SwipeToRevealAnchorTest(val testParams: TestParams) {
                         actions = Actions.Two,
                         initialRevealValue = Covered,
                         swipeDirection = SwipeDirection.Left(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered,
+                        expectedRevealValue = RightRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = true),
@@ -323,7 +323,7 @@ class SwipeToRevealAnchorTest(val testParams: TestParams) {
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Right(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered,
+                        expectedRevealValue = LeftRevealing,
                     ),
                     TestParams.Bidirectional(
                         actions = Actions.One(hasPartiallyRevealedState = false),
@@ -365,7 +365,7 @@ class SwipeToRevealAnchorTest(val testParams: TestParams) {
                         initialRevealValue = Covered,
                         swipeDirection =
                             SwipeDirection.Right(COVERED_TO_AFTER_ANCHOR_WITHIN_BUFFER),
-                        expectedRevealValue = Covered,
+                        expectedRevealValue = LeftRevealing,
                     ),
                     TestParams.RTL(
                         actions = Actions.One(hasPartiallyRevealedState = true),

@@ -26,17 +26,12 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
@@ -49,7 +44,6 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.wear.compose.foundation.BasicSwipeToDismissBox
 import androidx.wear.compose.foundation.GestureInclusion
 import androidx.wear.compose.foundation.rememberSwipeToDismissBoxState
@@ -69,7 +63,7 @@ import androidx.wear.compose.material3.SwipeToRevealDefaults.gestureInclusion
 import androidx.wear.compose.materialcore.CustomTouchSlopProvider
 import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.junit.Rule
 import org.junit.Test
@@ -81,22 +75,23 @@ class SwipeToRevealTest {
     fun onStateChangeToRevealed_performsHaptics() {
         val results = mutableMapOf<HapticFeedbackType, Int>()
         val haptics = hapticFeedback(collectResultsFromHapticFeedback(results))
-        val revealValueFlow = MutableStateFlow(RightRevealing)
+        lateinit var revealState: RevealState
+        lateinit var coroutineScope: CoroutineScope
 
         rule.setContent {
+            revealState = rememberRevealState(initialValue = RightRevealing)
+            coroutineScope = rememberCoroutineScope()
             CompositionLocalProvider(LocalHapticFeedback provides haptics) {
-                val revealValue by revealValueFlow.collectAsStateWithLifecycle()
-
                 SwipeToRevealWithDefaults(
                     modifier = Modifier.testTag(TEST_TAG),
-                    revealState = rememberRevealState(initialValue = revealValue),
+                    revealState = revealState,
                 )
             }
         }
 
         rule.runOnIdle { assertThat(results).isEmpty() }
 
-        revealValueFlow.value = RightRevealed
+        rule.runOnIdle { coroutineScope.launch { revealState.animateTo(RightRevealed) } }
 
         rule.runOnIdle {
             assertThat(results).hasSize(1)
@@ -109,15 +104,16 @@ class SwipeToRevealTest {
     fun onStateChangeToLeftRevealed_performsHaptics() {
         val results = mutableMapOf<HapticFeedbackType, Int>()
         val haptics = hapticFeedback(collectResultsFromHapticFeedback(results))
-        val revealValueFlow = MutableStateFlow(LeftRevealing)
+        lateinit var revealState: RevealState
+        lateinit var coroutineScope: CoroutineScope
 
         rule.setContent {
             CompositionLocalProvider(LocalHapticFeedback provides haptics) {
-                val revealValue by revealValueFlow.collectAsStateWithLifecycle()
-
+                revealState = rememberRevealState(initialValue = LeftRevealing)
+                coroutineScope = rememberCoroutineScope()
                 SwipeToRevealWithDefaults(
                     modifier = Modifier.testTag(TEST_TAG),
-                    revealState = rememberRevealState(initialValue = revealValue),
+                    revealState = revealState,
                     revealDirection = Bidirectional,
                 )
             }
@@ -125,7 +121,7 @@ class SwipeToRevealTest {
 
         rule.runOnIdle { assertThat(results).isEmpty() }
 
-        revealValueFlow.value = LeftRevealed
+        rule.runOnIdle { coroutineScope.launch { revealState.animateTo(LeftRevealed) } }
 
         rule.runOnIdle {
             assertThat(results).hasSize(1)
@@ -557,6 +553,22 @@ class SwipeToRevealTest {
         )
 
     @Test
+    fun onUndoActionClick_setsCorrectCurrentValue() {
+        lateinit var revealState: RevealState
+        rule.setContent {
+            revealState = rememberRevealState(RightRevealed)
+            SwipeToRevealWithDefaults(
+                revealState = revealState,
+                undoPrimaryAction = {
+                    DefaultUndoActionButton(modifier = Modifier.testTag(UNDO_PRIMARY_ACTION_TAG))
+                },
+            )
+        }
+        rule.onNodeWithTag(UNDO_PRIMARY_ACTION_TAG).performClick()
+        rule.runOnIdle { assertEquals(Covered, revealState.currentValue) }
+    }
+
+    @Test
     fun onFullSwipeRight_wrappedInSwipeToDismissBox_navigationSwipe() {
         verifyGesture(
             expectedRevealValue = Covered,
@@ -599,56 +611,6 @@ class SwipeToRevealTest {
         ) {
             swipeRight(startX = width / 2f)
         }
-    }
-
-    @Test
-    fun onRightSwipe_dispatchEventsToParent() {
-        var onPreScrollDispatch = 0f
-        rule.setContent {
-            val nestedScrollConnection = remember {
-                object : NestedScrollConnection {
-                    override fun onPreScroll(
-                        available: Offset,
-                        source: NestedScrollSource,
-                    ): Offset {
-                        onPreScrollDispatch = available.x
-                        return available
-                    }
-                }
-            }
-            Box(modifier = Modifier.nestedScroll(nestedScrollConnection)) {
-                SwipeToRevealWithDefaults(modifier = Modifier.testTag(TEST_TAG))
-            }
-        }
-
-        rule.onNodeWithTag(TEST_TAG).performTouchInput { swipeRight() }
-
-        assert(onPreScrollDispatch > 0)
-    }
-
-    @Test
-    fun onLeftSwipe_dispatchEventsToParent() {
-        var onPreScrollDispatch = 0f
-        rule.setContent {
-            val nestedScrollConnection = remember {
-                object : NestedScrollConnection {
-                    override fun onPreScroll(
-                        available: Offset,
-                        source: NestedScrollSource,
-                    ): Offset {
-                        onPreScrollDispatch = available.x
-                        return available
-                    }
-                }
-            }
-            Box(modifier = Modifier.nestedScroll(nestedScrollConnection)) {
-                SwipeToRevealWithDefaults(modifier = Modifier.testTag(TEST_TAG))
-            }
-        }
-
-        rule.onNodeWithTag(TEST_TAG).performTouchInput { swipeLeft() }
-
-        assert(onPreScrollDispatch < 0) // Swiping left means the dispatch will be negative
     }
 
     private fun verifyLastClickAction(

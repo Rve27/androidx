@@ -411,7 +411,7 @@ class SwipeToRevealScreenshotTest {
 
     @Test
     fun swipeToReveal_showsPrimaryActionWithLabel(@TestParameter screenSize: ScreenSize) {
-        val swipeScreenPercent = 0.8f
+        val swipeScreenPercent = 0.85f
 
         verifyScreenshotAfterSwipe(screenSize, testName.goldenIdentifier(), swipeScreenPercent)
     }
