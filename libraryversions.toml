@@ -186,12 +186,12 @@ WINDOW_EXTENSIONS = "1.5.0-beta01"
 WINDOW_EXTENSIONS_CORE = "1.1.0-alpha01"
 WINDOW_SIDECAR = "1.0.0-rc01"
 WORK = "2.11.0-alpha01"
-XR = "1.0.0-alpha04"
-XR_ARCORE = "1.0.0-alpha04"
-XR_COMPOSE = "1.0.0-alpha04"
+XR = "1.0.0-alpha05"
+XR_ARCORE = "1.0.0-alpha05"
+XR_COMPOSE = "1.0.0-alpha05"
 XR_GLIMMER = "0.1.0-dev01"
-XR_RUNTIME = "1.0.0-alpha04"
-XR_SCENECORE = "1.0.0-alpha04"
+XR_RUNTIME = "1.0.0-alpha05"
+XR_SCENECORE = "1.0.0-alpha05"
 
 [groups]
 ACTIVITY = { group = "androidx.activity", atomicGroupVersion = "versions.ACTIVITY" }
