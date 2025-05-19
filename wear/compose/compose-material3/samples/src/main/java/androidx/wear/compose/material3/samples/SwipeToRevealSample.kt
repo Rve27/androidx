@@ -28,6 +28,7 @@ import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
@@ -43,6 +44,7 @@ import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.Card
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.RevealValue
+import androidx.wear.compose.material3.RevealValue.Companion.Covered
 import androidx.wear.compose.material3.SwipeToReveal
 import androidx.wear.compose.material3.SwipeToRevealDefaults
 import androidx.wear.compose.material3.Text
@@ -50,6 +52,7 @@ import androidx.wear.compose.material3.TitleCard
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
 import androidx.wear.compose.material3.rememberRevealState
+import kotlinx.coroutines.launch
 
 @Composable
 @Sampled
@@ -190,7 +193,7 @@ fun SwipeToRevealNoPartiallyRevealedStateSample() {
 fun SwipeToRevealWithTransformingLazyColumnSample() {
     val transformationSpec = rememberTransformationSpec()
     val tlcState = rememberTransformingLazyColumnState()
-
+    val coroutineScope = rememberCoroutineScope()
     TransformingLazyColumn(
         state = tlcState,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 20.dp),
@@ -204,7 +207,9 @@ fun SwipeToRevealWithTransformingLazyColumnSample() {
                 if (
                     tlcState.isScrollInProgress && revealState.currentValue != RevealValue.Covered
                 ) {
-                    revealState.animateTo(targetValue = RevealValue.Covered)
+                    coroutineScope.launch {
+                        revealState.animateTo(targetValue = RevealValue.Covered)
+                    }
                 }
             }
 

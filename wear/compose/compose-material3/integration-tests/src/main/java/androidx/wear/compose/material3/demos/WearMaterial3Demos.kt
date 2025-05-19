@@ -192,6 +192,9 @@ val WearMaterial3Demos =
                         ComposableDemo("In TransformingLazyColumn") {
                             SwipeToRevealWithTransformingLazyColumnSample()
                         },
+                        ComposableDemo("In TLC + Saver") {
+                            SwipeToRevealWithTransformingLazyColumnAndSaverDemo()
+                        },
                         ComposableDemo("No Partial Reveal") {
                             ScalingLazyDemo {
                                 item { SwipeToRevealNoPartiallyRevealedStateSample() }
