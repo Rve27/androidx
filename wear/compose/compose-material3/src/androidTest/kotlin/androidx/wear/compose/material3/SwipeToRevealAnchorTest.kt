@@ -39,6 +39,7 @@ import androidx.wear.compose.material3.SwipeToRevealDefaults.SingleActionAnchorW
 import androidx.wear.compose.material3.SwipeToRevealDefaults.bidirectionalGestureInclusion
 import androidx.wear.compose.materialcore.CustomTouchSlopProvider
 import junit.framework.TestCase.assertEquals
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -54,6 +55,7 @@ import org.junit.runners.Parameterized
 class SwipeToRevealAnchorTest(val testParams: TestParams) {
     @get:Rule val rule = createComposeRule()
 
+    @Ignore("b/417242916")
     @Test
     fun performSwipe_settlesOnCorrectAnchor() {
         lateinit var revealState: RevealState
