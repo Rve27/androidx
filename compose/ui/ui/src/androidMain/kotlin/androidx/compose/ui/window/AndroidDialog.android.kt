@@ -30,7 +30,6 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.ViewOutlineProvider
 import android.view.Window
 import android.view.WindowManager
-import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
 import androidx.activity.ComponentDialog
 import androidx.activity.addCallback
 import androidx.annotation.DoNotInline
@@ -483,9 +482,6 @@ private class DialogWrapper(
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
             )
             val attrs = window.attributes
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                Api28Impl.setLayoutInDisplayCutout(attrs)
-            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 Api30Impl.setFitInsetsSides(attrs, 0)
                 Api30Impl.setFitInsetsTypes(attrs, 0)
@@ -679,14 +675,6 @@ private fun DialogLayout(modifier: Modifier = Modifier, content: @Composable () 
             maxHeight = constraints.minHeight
         }
         layout(maxWidth, maxHeight) { placeables.fastForEach { it.placeRelative(0, 0) } }
-    }
-}
-
-@RequiresApi(28)
-private object Api28Impl {
-    @DoNotInline
-    fun setLayoutInDisplayCutout(attrs: WindowManager.LayoutParams) {
-        attrs.layoutInDisplayCutoutMode = LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
     }
 }
 
