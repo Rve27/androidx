@@ -30,6 +30,7 @@ import androidx.camera.camera2.pipe.integration.compat.quirk.CameraQuirks
 import androidx.camera.camera2.pipe.integration.compat.workaround.OutputSizesCorrector
 import androidx.camera.camera2.pipe.integration.config.CameraAppComponent
 import androidx.camera.camera2.pipe.integration.config.CameraModule
+import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery
 import androidx.camera.core.impl.AttachedSurfaceInfo
 import androidx.camera.core.impl.CameraDeviceSurfaceManager
 import androidx.camera.core.impl.StreamSpec
@@ -81,6 +82,8 @@ public class CameraSurfaceAdapter(
                         context,
                         cameraMetadata,
                         CameraModule.provideEncoderProfilesProvider(cameraId, cameraQuirks),
+                        // TODO: Create and use a proper impl. of FeatureCombinationQuery
+                        FeatureCombinationQuery.NO_OP_FEATURE_COMBINATION_QUERY,
                     )
             } catch (exception: DoNotDisturbException) {
                 Log.error {

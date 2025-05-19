@@ -77,6 +77,7 @@ import androidx.camera.core.MirrorMode
 import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
 import androidx.camera.core.concurrent.CameraCoordinator
+import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery
 import androidx.camera.core.impl.AttachedSurfaceInfo
 import androidx.camera.core.impl.CameraInfoInternal
 import androidx.camera.core.impl.CameraInternal
@@ -189,7 +190,14 @@ constructor(
     }
 
     private val supportedSurfaceCombination by lazy {
-        SupportedSurfaceCombination(context, cameraProperties.metadata, encoderProfilesProvider)
+        SupportedSurfaceCombination(
+            context,
+            cameraProperties.metadata,
+            encoderProfilesProvider,
+            // TODO: b/406367951 - Create and use a proper impl. of FeatureCombinationQuery in
+            //   order to handle MeteringRepeating scenarios
+            FeatureCombinationQuery.NO_OP_FEATURE_COMBINATION_QUERY,
+        )
     }
 
     private val dynamicRangeResolver = DynamicRangeResolver(cameraProperties.metadata)

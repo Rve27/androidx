@@ -46,6 +46,10 @@ import androidx.camera.camera2.pipe.integration.internal.DynamicRangeResolver
 import androidx.camera.camera2.pipe.integration.internal.HighSpeedResolver
 import androidx.camera.camera2.pipe.integration.internal.StreamUseCaseUtil
 import androidx.camera.core.DynamicRange
+import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery
+import androidx.camera.core.featurecombination.impl.feature.FpsRangeFeature
+import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature.StabilizationMode.OFF
+import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature.StabilizationMode.PREVIEW
 import androidx.camera.core.impl.AttachedSurfaceInfo
 import androidx.camera.core.impl.CameraMode
 import androidx.camera.core.impl.EncoderProfilesProvider
@@ -89,6 +93,7 @@ public class SupportedSurfaceCombination(
     context: Context,
     private val cameraMetadata: CameraMetadata,
     private val encoderProfilesProvider: EncoderProfilesProvider,
+    private val featureCombinationQuery: FeatureCombinationQuery,
 ) {
     private val cameraId = cameraMetadata.camera.value
     private val hardwareLevel =
@@ -165,13 +170,54 @@ public class SupportedSurfaceCombination(
     public fun checkSupported(
         featureSettings: FeatureSettings,
         surfaceConfigList: List<SurfaceConfig>,
+        dynamicRangesBySurfaceConfig: Map<SurfaceConfig, DynamicRange> = emptyMap(),
+        newUseCaseConfigs: List<UseCaseConfig<*>> = emptyList(),
+        useCasesPriorityOrder: List<Int> = emptyList(),
     ): Boolean {
-        // TODO: Use feature combination query API when featureSettings.requiresFeatureComboQuery
-        //  is true
+        val isSupported =
+            getSurfaceCombinationsByFeatureSettings(featureSettings).any {
+                it.getOrderedSupportedSurfaceConfigList(surfaceConfigList) != null
+            }
 
-        return getSurfaceCombinationsByFeatureSettings(featureSettings).any {
-            it.getOrderedSupportedSurfaceConfigList(surfaceConfigList) != null
+        if (featureSettings.requiresFeatureComboQuery) {
+            // TODO: Pass features as well, maybe we need to pass the UseCaseConfigs or UseCases
+            //  themselves and these API needs to be called from an upper layer.
+            return featureCombinationQuery.isSupported(
+                createFeatureCombinationConfig(
+                    featureSettings,
+                    surfaceConfigList,
+                    dynamicRangesBySurfaceConfig,
+                    newUseCaseConfigs,
+                    useCasesPriorityOrder,
+                )
+            )
         }
+
+        return isSupported
+    }
+
+    private fun createFeatureCombinationConfig(
+        featureSettings: FeatureSettings,
+        surfaceConfigList: List<SurfaceConfig>,
+        dynamicRangesBySurfaceConfig: Map<SurfaceConfig, DynamicRange>,
+        newUseCaseConfigs: List<UseCaseConfig<*>>,
+        useCasePriorityOrder: List<Int>,
+    ): FeatureCombinationQuery.Config {
+        return FeatureCombinationQuery.Config(
+            surfaceConfigList.mapIndexed { index, surfaceConfig ->
+                // Since the high-level API for feature combination always unbinds implicitly, there
+                // will only be new use cases
+                val useCaseConfig: UseCaseConfig<*> = newUseCaseConfigs[useCasePriorityOrder[index]]
+
+                FeatureCombinationQuery.StreamConfig(
+                    surfaceConfig,
+                    useCaseConfig,
+                    requireNotNull(dynamicRangesBySurfaceConfig[surfaceConfig]),
+                )
+            },
+            featureSettings.targetFpsRange ?: FpsRangeFeature.DEFAULT_FPS_RANGE,
+            if (featureSettings.isPreviewStabilizationOn) PREVIEW else OFF,
+        )
     }
 
     private fun getOrderedSupportedStreamUseCaseSurfaceConfigList(
@@ -199,7 +245,11 @@ public class SupportedSurfaceCombination(
             return featureSettingsToSupportedCombinationsMap[featureSettings]!!
         }
         var supportedSurfaceCombinations: MutableList<SurfaceCombination> = mutableListOf()
-        if (featureSettings.isUltraHdrOn) {
+        if (featureSettings.requiresFeatureComboQuery) {
+            supportedSurfaceCombinations.addAll(
+                GuaranteedConfigurationsUtil.QUERYABLE_FCQ_COMBINATIONS
+            )
+        } else if (featureSettings.isUltraHdrOn) {
             if (surfaceCombinationsUltraHdr.isEmpty()) {
                 generateUltraHdrSupportedCombinationList()
             }
@@ -381,6 +431,8 @@ public class SupportedSurfaceCombination(
         useCasesPriorityOrder: List<Int>,
         resolvedDynamicRanges: Map<UseCaseConfig<*>, DynamicRange>,
     ): Pair<Map<UseCaseConfig<*>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>> {
+        debug { "resolveSpecsByCheckingMethod: checkingMethod = $checkingMethod" }
+
         return when (checkingMethod) {
             WITHOUT_FEATURE_COMBO ->
                 resolveSpecsBySettings(
@@ -447,19 +499,18 @@ public class SupportedSurfaceCombination(
         useCasesPriorityOrder: List<Int>,
         resolvedDynamicRanges: Map<UseCaseConfig<*>, DynamicRange>,
     ): Pair<Map<UseCaseConfig<*>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>> {
-        debug { "resolveSpecsBySource: featureSettings = $featureSettings" }
-
-        val isSurfaceCombinationSupported =
-            isUseCasesCombinationSupported(
-                featureSettings,
-                attachedSurfaces,
-                filteredNewUseCaseConfigsSupportedSizeMap,
-            )
+        debug { "resolveSpecsBySettings: featureSettings = $featureSettings" }
 
         // TODO: b/414489781 - Return early even with feature combo source for possible
         //  cases (e.g. the number of streams is higher than what FCQ can ever support)
         if (!featureSettings.requiresFeatureComboQuery) {
-            require(isSurfaceCombinationSupported) {
+            require(
+                isUseCasesCombinationSupported(
+                    featureSettings,
+                    attachedSurfaces,
+                    filteredNewUseCaseConfigsSupportedSizeMap,
+                )
+            ) {
                 "No supported surface combination is found for camera device - Id : $cameraId. " +
                     "May be attempting to bind too many use cases. Existing surfaces: " +
                     "$attachedSurfaces. New configs: $newUseCaseConfigs. Feature settings: " +
@@ -502,7 +553,6 @@ public class SupportedSurfaceCombination(
                     newUseCaseConfigs,
                     useCasesPriorityOrder,
                     featureSettings,
-                    isSurfaceCombinationSupported,
                     surfaceConfigIndexAttachedSurfaceInfoMap,
                     surfaceConfigIndexUseCaseConfigMap,
                 )
@@ -520,6 +570,7 @@ public class SupportedSurfaceCombination(
                 useCasesPriorityOrder,
                 featureSettings,
                 orderedSurfaceConfigListForStreamUseCase,
+                resolvedDynamicRanges,
             )
 
         require(bestSizesAndFps != null) {
@@ -573,6 +624,12 @@ public class SupportedSurfaceCombination(
             count++
         }
         if (fps?.getUpper() == 60) {
+            count++
+        }
+        if (isPreviewStabilizationOn) {
+            count++
+        }
+        if (isUltraHdrOn) {
             count++
         }
 
@@ -719,7 +776,6 @@ public class SupportedSurfaceCombination(
         newUseCaseConfigs: List<UseCaseConfig<*>>,
         useCasesPriorityOrder: List<Int>,
         featureSettings: FeatureSettings,
-        isSurfaceCombinationSupported: Boolean,
         surfaceConfigIndexAttachedSurfaceInfoMap: MutableMap<Int, AttachedSurfaceInfo>,
         surfaceConfigIndexUseCaseConfigMap: MutableMap<Int, UseCaseConfig<*>>,
     ): List<SurfaceConfig>? {
@@ -766,15 +822,6 @@ public class SupportedSurfaceCombination(
             surfaceConfigIndexUseCaseConfigMap.clear()
         }
 
-        // We can terminate early if surface combination is not supported and none of the
-        // possible size arrangement supports stream use case either.
-        require(
-            !(orderedSurfaceConfigListForStreamUseCase == null && !isSurfaceCombinationSupported)
-        ) {
-            "No supported surface combination is found for camera device - Id : $cameraId. " +
-                "May be attempting to bind too many use cases. Existing surfaces: " +
-                "$attachedSurfaces. New configs: $newUseCaseConfigs."
-        }
         return orderedSurfaceConfigListForStreamUseCase
     }
 
@@ -1006,6 +1053,7 @@ public class SupportedSurfaceCombination(
         useCasesPriorityOrder: List<Int>,
         featureSettings: FeatureSettings,
         orderedSurfaceConfigListForStreamUseCase: List<SurfaceConfig>?,
+        resolvedDynamicRanges: Map<UseCaseConfig<*>, DynamicRange>,
     ): BestSizesAndMaxFpsForConfigs? {
         var bestSizes: List<Size>? = null
         var maxFps = Int.MAX_VALUE
@@ -1016,6 +1064,10 @@ public class SupportedSurfaceCombination(
 
         // Transform use cases to SurfaceConfig list and find the first (best) workable combination
         for (possibleSizeList in allPossibleSizeArrangements) {
+            val surfaceConfigIndexToAttachedSurfaceInfoMap =
+                mutableMapOf<Int, AttachedSurfaceInfo>()
+            val surfaceConfigIndexToUseCaseConfigMap = mutableMapOf<Int, UseCaseConfig<*>>()
+
             // Attach SurfaceConfig of original use cases since it will impact the new use cases
             val surfaceConfigList =
                 getSurfaceConfigList(
@@ -1024,8 +1076,8 @@ public class SupportedSurfaceCombination(
                     possibleSizeList,
                     newUseCaseConfigs,
                     useCasesPriorityOrder,
-                    null,
-                    null,
+                    surfaceConfigIndexToAttachedSurfaceInfoMap,
+                    surfaceConfigIndexToUseCaseConfigMap,
                     featureSettings.requiresFeatureComboQuery,
                 )
             val currentConfigFrameRateCeiling =
@@ -1057,11 +1109,30 @@ public class SupportedSurfaceCombination(
                 }
             }
 
+            val dynamicRangesBySurfaceConfig = mutableMapOf<SurfaceConfig, DynamicRange>()
+            surfaceConfigList.forEachIndexed { index, surfaceConfig ->
+                val dynamicRange =
+                    surfaceConfigIndexToAttachedSurfaceInfoMap[index]?.dynamicRange
+                        ?: requireNotNull(
+                            resolvedDynamicRanges[surfaceConfigIndexToUseCaseConfigMap[index]]
+                        )
+                dynamicRangesBySurfaceConfig[surfaceConfig] = dynamicRange
+            }
+
             // Find the same possible size arrangement that is supported by stream use case again
             // if we found one earlier.
 
             // only change the saved config if you get another that has a better max fps
-            if (!supportedSizesFound && checkSupported(featureSettings, surfaceConfigList)) {
+            if (
+                !supportedSizesFound &&
+                    checkSupported(
+                        featureSettings,
+                        surfaceConfigList,
+                        dynamicRangesBySurfaceConfig,
+                        newUseCaseConfigs,
+                        useCasesPriorityOrder,
+                    )
+            ) {
                 // if the config is supported by the device but doesn't meet the target frame rate,
                 // save the config
                 if (maxFps == Int.MAX_VALUE) {
