@@ -16,6 +16,8 @@
 
 package androidx.camera.lifecycle;
 
+import static androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination.resolveFeatureCombination;
+
 import android.annotation.SuppressLint;
 import android.os.Build;
 
@@ -280,13 +282,17 @@ public final class LifecycleCamera implements LifecycleObserver, Camera {
             mCameraUseCaseAdapter.setTargetHighSpeedFrameRate(
                     sessionConfig.getTargetHighSpeedFrameRate());
 
-            mCameraUseCaseAdapter.addUseCases(
-                    sessionConfig.getUseCases(),
-                    ResolvedFeatureCombination.Companion.resolveFeatureCombination(
-                            sessionConfig,
-                            (CameraInfoInternal) getCameraInfo()
-                    )
-            );
+            ResolvedFeatureCombination resolvedFeatureCombination = resolveFeatureCombination(
+                    sessionConfig, (CameraInfoInternal) getCameraInfo());
+
+            if (resolvedFeatureCombination != null) {
+                sessionConfig.getFeatureSelectionListenerExecutor().execute(
+                        () -> sessionConfig.getFeatureSelectionListener().accept(
+                                resolvedFeatureCombination.getFeatures()));
+            }
+
+            mCameraUseCaseAdapter.addUseCases(sessionConfig.getUseCases(),
+                    resolvedFeatureCombination);
         }
     }
 

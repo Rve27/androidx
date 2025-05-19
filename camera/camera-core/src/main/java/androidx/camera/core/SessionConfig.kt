@@ -22,6 +22,9 @@ import androidx.camera.core.featurecombination.Feature
 import androidx.camera.core.featurecombination.impl.UseCaseType
 import androidx.camera.core.featurecombination.impl.UseCaseType.Companion.getFeatureComboUseCaseType
 import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
+import androidx.camera.core.impl.utils.executor.CameraXExecutors
+import androidx.core.util.Consumer
+import java.util.concurrent.Executor
 
 /**
  * Represents a session configuration to start a camera session. When used with `camera-lifecycle`,
@@ -50,8 +53,9 @@ import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
  * @property preferredFeatures A list of preferred [Feature] that should be ordered according to
  *   priority in descending order, i.e. a `Feature` with a lower index in the list will be
  *   considered to have a higher priority. These features will be selected on a best-effort basis
- *   according to the priority. Note that [CameraEffect] or [ImageAnalysis] use case is currently
- *   not supported if this parameter is used.
+ *   according to the priority. The final set of selected features will be notified to the listener
+ *   set by [setFeatureSelectionListener]. Note that [CameraEffect] or [ImageAnalysis] use case is
+ *   currently not supported if this parameter is used.
  * @throws IllegalArgumentException If the combination of config options are conflicting or
  *   unsupported, e.g.
  *     - if any of the required features is not supported on the device
@@ -84,6 +88,14 @@ constructor(
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public open val isLegacy: Boolean = false
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public open val targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
+
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public var featureSelectionListener: Consumer<Set<Feature>> = Consumer<Set<Feature>> {}
+        private set
+
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public var featureSelectionListenerExecutor: Executor = CameraXExecutors.mainThreadExecutor()
+        private set
 
     init {
         validateFeatureCombination()
@@ -156,6 +168,33 @@ constructor(
                 "requiredFeatures has conflicting feature values: $distinctFeaturesPerType"
             }
         }
+    }
+
+    /**
+     * Sets a listener to know which features are finally selected when a session config is bound,
+     * based on the user-defined priorities/ordering for [preferredFeatures] and device
+     * capabilities.
+     *
+     * Both the required and the selected preferred features are notified to the listener. The
+     * listener is invoked when this session config is bound to camera (e.g. when the
+     * `androidx.camera.lifecycle.ProcessCameraProvider.bindToLifecycle` API is invoked).
+     *
+     * Alternatively, the [CameraInfo.isFeatureCombinationSupported] API can be used to query if a
+     * set of features is supported before binding.
+     *
+     * @param executor The executor in which the listener will be invoked, main thread by default.
+     * @param listener The consumer to accept the final set of features when they are selected.
+     */
+    // TODO: b/384404392 - Remove when feature combo impl. is ready. The feature combo params should
+    //   be kept restricted until then.
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @JvmOverloads
+    public fun setFeatureSelectionListener(
+        executor: Executor = CameraXExecutors.mainThreadExecutor(),
+        listener: Consumer<Set<Feature>>,
+    ) {
+        featureSelectionListener = listener
+        featureSelectionListenerExecutor = executor
     }
 
     /** Builder for [SessionConfig] */

@@ -18,6 +18,7 @@ package androidx.camera.lifecycle;
 
 import static androidx.camera.core.featurecombination.Feature.FPS_60;
 import static androidx.camera.core.featurecombination.Feature.HDR_HLG10;
+import static androidx.camera.core.featurecombination.Feature.IMAGE_ULTRA_HDR;
 import static androidx.camera.core.featurecombination.Feature.PREVIEW_STABILIZATION;
 import static androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED;
 import static androidx.camera.core.impl.utils.executor.CameraXExecutors.directExecutor;
@@ -39,9 +40,11 @@ import androidx.camera.core.SessionConfig;
 import androidx.camera.core.UseCase;
 import androidx.camera.core.ViewPort;
 import androidx.camera.core.concurrent.CameraCoordinator;
+import androidx.camera.core.featurecombination.Feature;
 import androidx.camera.core.impl.Config;
 import androidx.camera.core.impl.MutableOptionsBundle;
 import androidx.camera.core.impl.utils.Threads;
+import androidx.camera.core.impl.utils.executor.CameraXExecutors;
 import androidx.camera.core.internal.CameraUseCaseAdapter;
 import androidx.camera.core.internal.StreamSpecsCalculatorImpl;
 import androidx.camera.testing.fakes.FakeCamera;
@@ -62,6 +65,8 @@ import org.junit.runner.RunWith;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @SmallTest
 @RunWith(AndroidJUnit4.class)
@@ -291,6 +296,66 @@ public class LifecycleCameraTest {
         // All features are added since the fake surface manager supports all combinations.
         assertThat(preview.getFeatureCombination()).containsExactly(HDR_HLG10, FPS_60,
                 PREVIEW_STABILIZATION);
+    }
+
+    @Test
+    public void bindSessionConfig_withUnsupportedPreferredFeatures_correctFeaturesAttached() {
+        // Arrange: Set up resources; HLG10, FPS_60, and PREVIEW_STABILIZATION are supported
+        //   features while Ultra HDR is unsupported by the default behavior of fake surface manager
+        mLifecycleCamera = new LifecycleCamera(mLifecycleOwner, mCameraUseCaseAdapter);
+        mLifecycleOwner.start();
+        Preview preview = new Preview.Builder().build();
+
+        SessionConfig sessionConfig =
+                new SessionConfig.Builder(Collections.singletonList(preview))
+                        .addRequiredFeatures(HDR_HLG10)
+                        .setPreferredFeatures(FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR)
+                        .build();
+
+        // Act
+        Threads.runOnMainSync(() -> {
+            try {
+                mLifecycleCamera.bind(sessionConfig);
+            } catch (CameraUseCaseAdapter.CameraException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // Assert: Ultra HDR is not added while the other features are added.
+        assertThat(preview.getFeatureCombination()).containsExactly(HDR_HLG10, FPS_60,
+                PREVIEW_STABILIZATION);
+    }
+
+    @Test
+    public void bindSessionConfig_withUnsupportedPreferredFeatures_correctFeaturesNotified() {
+        // Arrange: Set up resources; HLG10, FPS_60, and PREVIEW_STABILIZATION are supported
+        //   features while Ultra HDR is unsupported by the default behavior of fake surface manager
+        mLifecycleCamera = new LifecycleCamera(mLifecycleOwner, mCameraUseCaseAdapter);
+        mLifecycleOwner.start();
+        Preview preview = new Preview.Builder().build();
+
+        SessionConfig sessionConfig =
+                new SessionConfig.Builder(Collections.singletonList(preview))
+                        .addRequiredFeatures(HDR_HLG10)
+                        .setPreferredFeatures(FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR)
+                        .build();
+
+        Set<Feature> selectedFeatures = new HashSet<>();
+
+        sessionConfig.setFeatureSelectionListener(CameraXExecutors.mainThreadExecutor(),
+                selectedFeatures::addAll);
+
+        // Act
+        Threads.runOnMainSync(() -> {
+            try {
+                mLifecycleCamera.bind(sessionConfig);
+            } catch (CameraUseCaseAdapter.CameraException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // Assert: All the features except Ultra HDR are selected.
+        assertThat(selectedFeatures).containsExactly(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION);
     }
 
     @Test

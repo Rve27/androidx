@@ -65,6 +65,7 @@ public class ResolvedFeatureCombination(
          */
         @OptIn(ExperimentalSessionConfig::class)
         @JvmOverloads
+        @JvmStatic
         public fun SessionConfig.resolveFeatureCombination(
             cameraInfoInternal: CameraInfoInternal,
             resolver: FeatureCombinationResolver =
