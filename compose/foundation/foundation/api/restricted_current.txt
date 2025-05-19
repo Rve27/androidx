@@ -1294,26 +1294,24 @@ package androidx.compose.foundation.lazy.layout {
     property public abstract Object? key;
   }
 
-  @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi @androidx.compose.runtime.Stable public final class LazyLayoutPrefetchState {
+  @androidx.compose.runtime.Stable public final class LazyLayoutPrefetchState {
     ctor public LazyLayoutPrefetchState();
-    ctor public LazyLayoutPrefetchState(optional androidx.compose.foundation.lazy.layout.PrefetchScheduler? prefetchScheduler, optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.lazy.layout.NestedPrefetchScope,kotlin.Unit>? onNestedPrefetch);
-    method public androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle schedulePrecomposition(int index);
-    method public androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle schedulePrecompositionAndPremeasure(int index, long constraints, optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.LazyLayoutPrefetchResultScope,kotlin.Unit>? onItemPremeasured);
-    method @Deprecated public androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle schedulePrefetch(int index);
-    method @Deprecated public androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle schedulePrefetch(int index, long constraints);
-  }
-
-  public static sealed interface LazyLayoutPrefetchState.LazyLayoutPrefetchResultScope {
-    method public int getIndex();
-    method public int getPlaceablesCount();
-    method public long getSize(int placeableIndex);
-    property public abstract int index;
-    property public abstract int placeablesCount;
+    ctor @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public LazyLayoutPrefetchState(optional androidx.compose.foundation.lazy.layout.PrefetchScheduler? prefetchScheduler, optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.lazy.layout.NestedPrefetchScope,kotlin.Unit>? onNestedPrefetch);
+    method public androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle schedulePrecomposition(@IntRange(from=0L) int index);
+    method public androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle schedulePrecompositionAndPremeasure(@IntRange(from=0L) int index, long constraints, optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchResultScope,kotlin.Unit>? onItemPremeasured);
   }
 
   public static sealed interface LazyLayoutPrefetchState.PrefetchHandle {
     method public void cancel();
     method public void markAsUrgent();
+  }
+
+  public static sealed interface LazyLayoutPrefetchState.PrefetchResultScope {
+    method public int getIndex();
+    method public int getPlaceablesCount();
+    method public long getSize(@IntRange(from=0L) int placeableIndex);
+    property public abstract int index;
+    property public abstract int placeablesCount;
   }
 
   public interface LazyLayoutScrollScope extends androidx.compose.foundation.gestures.ScrollScope {

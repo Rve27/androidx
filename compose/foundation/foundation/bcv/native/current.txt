@@ -968,6 +968,27 @@ final class androidx.compose.foundation.lazy.layout/LazyLayoutPinnedItemList : k
     }
 }
 
+final class androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState { // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState|null[0]
+    constructor <init>() // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.<init>|<init>(){}[0]
+
+    final fun schedulePrecomposition(kotlin/Int): androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchHandle // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.schedulePrecomposition|schedulePrecomposition(kotlin.Int){}[0]
+    final fun schedulePrecompositionAndPremeasure(kotlin/Int, androidx.compose.ui.unit/Constraints, kotlin/Function1<androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchResultScope, kotlin/Unit>? = ...): androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchHandle // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.schedulePrecompositionAndPremeasure|schedulePrecompositionAndPremeasure(kotlin.Int;androidx.compose.ui.unit.Constraints;kotlin.Function1<androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchResultScope,kotlin.Unit>?){}[0]
+
+    sealed interface PrefetchHandle { // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchHandle|null[0]
+        abstract fun cancel() // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchHandle.cancel|cancel(){}[0]
+        abstract fun markAsUrgent() // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchHandle.markAsUrgent|markAsUrgent(){}[0]
+    }
+
+    sealed interface PrefetchResultScope { // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchResultScope|null[0]
+        abstract val index // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchResultScope.index|{}index[0]
+            abstract fun <get-index>(): kotlin/Int // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchResultScope.index.<get-index>|<get-index>(){}[0]
+        abstract val placeablesCount // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchResultScope.placeablesCount|{}placeablesCount[0]
+            abstract fun <get-placeablesCount>(): kotlin/Int // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchResultScope.placeablesCount.<get-placeablesCount>|<get-placeablesCount>(){}[0]
+
+        abstract fun getSize(kotlin/Int): androidx.compose.ui.unit/IntSize // androidx.compose.foundation.lazy.layout/LazyLayoutPrefetchState.PrefetchResultScope.getSize|getSize(kotlin.Int){}[0]
+    }
+}
+
 final class androidx.compose.foundation.lazy.staggeredgrid/LazyStaggeredGridState : androidx.compose.foundation.gestures/ScrollableState { // androidx.compose.foundation.lazy.staggeredgrid/LazyStaggeredGridState|null[0]
     constructor <init>(kotlin/Int = ..., kotlin/Int = ...) // androidx.compose.foundation.lazy.staggeredgrid/LazyStaggeredGridState.<init>|<init>(kotlin.Int;kotlin.Int){}[0]
 
