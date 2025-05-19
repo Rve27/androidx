@@ -126,7 +126,7 @@ internal object ApiStubParser {
             AnnotatedEnumClass(
                 type,
                 constants = classAndConstants.constants,
-                variants = value.enumEntries.toList(),
+                variants = @Suppress("deprecation") value.enumEntries.toList(),
             )
         }
     }

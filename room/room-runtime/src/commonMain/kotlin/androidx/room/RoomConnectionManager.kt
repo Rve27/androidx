@@ -326,7 +326,7 @@ public abstract class BaseRoomConnectionManager {
             .use { it.step() && it.getLong(0) != 0L }
 
     @Suppress("REDUNDANT_ELSE_IN_WHEN") // Redundant in common but not in Android
-    protected fun RoomDatabase.JournalMode.getMaxNumberOfReaders() =
+    protected fun RoomDatabase.JournalMode.getMaxNumberOfReaders(): Int =
         when (this) {
             TRUNCATE -> 1
             WRITE_AHEAD_LOGGING -> 4
@@ -334,7 +334,7 @@ public abstract class BaseRoomConnectionManager {
         }
 
     @Suppress("REDUNDANT_ELSE_IN_WHEN") // Redundant in common but not in Android
-    protected fun RoomDatabase.JournalMode.getMaxNumberOfWriters() =
+    protected fun RoomDatabase.JournalMode.getMaxNumberOfWriters(): Int =
         when (this) {
             TRUNCATE -> 1
             WRITE_AHEAD_LOGGING -> 1

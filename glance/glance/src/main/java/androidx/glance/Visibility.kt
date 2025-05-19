@@ -36,5 +36,5 @@ public data class VisibilityModifier(public val visibility: Visibility) : Glance
  *
  * @param visibility New visibility of the node.
  */
-public fun GlanceModifier.visibility(visibility: Visibility) =
+public fun GlanceModifier.visibility(visibility: Visibility): GlanceModifier =
     this.then(VisibilityModifier(visibility))

@@ -610,7 +610,7 @@ class SubcomposeLayoutTest {
 
         lateinit var container1: FrameLayout
         lateinit var container2: ComposeView
-        lateinit var remeasurement: Remeasurement
+        lateinit var remeasurer: Remeasurement
         var emitChild = true
         var composed = false
 
@@ -627,8 +627,8 @@ class SubcomposeLayoutTest {
                 SubcomposeLayout(
                     state,
                     object : RemeasurementModifier {
-                        override fun onRemeasurementAvailable(param: Remeasurement) {
-                            remeasurement = param
+                        override fun onRemeasurementAvailable(remeasurement: Remeasurement) {
+                            remeasurer = remeasurement
                         }
                     },
                 ) { constraints ->
@@ -651,7 +651,7 @@ class SubcomposeLayoutTest {
             assertThat(composed).isTrue()
 
             emitChild = false
-            remeasurement.forceRemeasure()
+            remeasurer.forceRemeasure()
         }
 
         rule.runOnIdle { assertThat(composed).isFalse() }

@@ -23,7 +23,7 @@ import androidx.room.solver.shortcut.binder.InsertOrUpsertFunctionBinder
 
 class InsertFunction(
     element: XMethodElement,
-    @OnConflictStrategy val onConflict: Int,
+    @param:OnConflictStrategy val onConflict: Int,
     entities: Map<String, ShortcutEntity>,
     returnType: XType,
     parameters: List<ShortcutQueryParameter>,

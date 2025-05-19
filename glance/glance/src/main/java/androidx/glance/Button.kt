@@ -150,7 +150,7 @@ public class EmittableButton : EmittableWithText() {
 }
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun EmittableButton.toEmittableText() =
+public fun EmittableButton.toEmittableText(): EmittableText =
     EmittableText().also {
         it.modifier = modifier
         it.text = text

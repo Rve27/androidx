@@ -176,7 +176,7 @@ public fun GlanceModifier.collectPadding(): PaddingModifier? =
     }
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun GlanceModifier.collectPaddingInDp(resources: Resources) =
+public fun GlanceModifier.collectPaddingInDp(resources: Resources): PaddingInDp? =
     collectPadding()?.toDp(resources)
 
 private fun List<Int>.toDp(resources: Resources) =

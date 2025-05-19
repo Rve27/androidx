@@ -212,7 +212,7 @@ public inline fun <T> LazyListScope.items(
     items: List<T>,
     crossinline itemId: ((item: T) -> Long) = { LazyListScope.UnspecifiedItemId },
     crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit,
-) = items(items.size, { index: Int -> itemId(items[index]) }) { itemContent(items[it]) }
+): Unit = items(items.size, { index: Int -> itemId(items[index]) }) { itemContent(items[it]) }
 
 /**
  * Adds a list of items where the content of an item is aware of its index.
@@ -230,7 +230,8 @@ public inline fun <T> LazyListScope.itemsIndexed(
         LazyListScope.UnspecifiedItemId
     },
     crossinline itemContent: @Composable LazyItemScope.(index: Int, item: T) -> Unit,
-) = items(items.size, { index: Int -> itemId(index, items[index]) }) { itemContent(it, items[it]) }
+): Unit =
+    items(items.size, { index: Int -> itemId(index, items[index]) }) { itemContent(it, items[it]) }
 
 /**
  * Adds an array of items.
@@ -246,7 +247,7 @@ public inline fun <T> LazyListScope.items(
     items: Array<T>,
     noinline itemId: ((item: T) -> Long) = { LazyListScope.UnspecifiedItemId },
     crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit,
-) = items(items.size, { index: Int -> itemId(items[index]) }) { itemContent(items[it]) }
+): Unit = items(items.size, { index: Int -> itemId(items[index]) }) { itemContent(items[it]) }
 
 /**
  * Adds a array of items where the content of an item is aware of its index.
@@ -262,7 +263,8 @@ public inline fun <T> LazyListScope.itemsIndexed(
     items: Array<T>,
     noinline itemId: ((index: Int, item: T) -> Long) = { _, _ -> LazyListScope.UnspecifiedItemId },
     crossinline itemContent: @Composable LazyItemScope.(index: Int, item: T) -> Unit,
-) = items(items.size, { index: Int -> itemId(index, items[index]) }) { itemContent(it, items[it]) }
+): Unit =
+    items(items.size, { index: Int -> itemId(index, items[index]) }) { itemContent(it, items[it]) }
 
 internal abstract class EmittableLazyList : EmittableWithChildren(resetsDepthForChildren = true) {
     override var modifier: GlanceModifier = GlanceModifier

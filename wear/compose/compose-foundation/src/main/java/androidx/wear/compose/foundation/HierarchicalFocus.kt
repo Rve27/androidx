@@ -98,7 +98,7 @@ public fun Modifier.hierarchicalFocusGroup(active: Boolean): Modifier {
  *
  * @sample androidx.wear.compose.foundation.samples.HierarchicalFocusSample
  */
-public fun Modifier.requestFocusOnHierarchyActive() =
+public fun Modifier.requestFocusOnHierarchyActive(): Modifier =
     this.then(
         HierarchicalFocusCoordinatorModifierElement(
             active = true,

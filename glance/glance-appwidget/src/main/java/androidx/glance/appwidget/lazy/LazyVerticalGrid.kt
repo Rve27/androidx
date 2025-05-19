@@ -215,7 +215,7 @@ public inline fun <T> LazyVerticalGridScope.items(
     items: List<T>,
     crossinline itemId: ((item: T) -> Long) = { LazyVerticalGridScope.UnspecifiedItemId },
     crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit,
-) = items(items.size, { index: Int -> itemId(items[index]) }) { itemContent(items[it]) }
+): Unit = items(items.size, { index: Int -> itemId(items[index]) }) { itemContent(items[it]) }
 
 /**
  * Adds a list of items where the content of an item is aware of its index.
@@ -233,7 +233,8 @@ public inline fun <T> LazyVerticalGridScope.itemsIndexed(
         LazyVerticalGridScope.UnspecifiedItemId
     },
     crossinline itemContent: @Composable LazyItemScope.(index: Int, item: T) -> Unit,
-) = items(items.size, { index: Int -> itemId(index, items[index]) }) { itemContent(it, items[it]) }
+): Unit =
+    items(items.size, { index: Int -> itemId(index, items[index]) }) { itemContent(it, items[it]) }
 
 /**
  * Adds an array of items.
@@ -249,7 +250,7 @@ public inline fun <T> LazyVerticalGridScope.items(
     items: Array<T>,
     noinline itemId: ((item: T) -> Long) = { LazyVerticalGridScope.UnspecifiedItemId },
     crossinline itemContent: @Composable LazyItemScope.(item: T) -> Unit,
-) = items(items.size, { index: Int -> itemId(items[index]) }) { itemContent(items[it]) }
+): Unit = items(items.size, { index: Int -> itemId(items[index]) }) { itemContent(items[it]) }
 
 /**
  * Adds a array of items where the content of an item is aware of its index.
@@ -267,7 +268,8 @@ public inline fun <T> LazyVerticalGridScope.itemsIndexed(
         LazyVerticalGridScope.UnspecifiedItemId
     },
     crossinline itemContent: @Composable LazyItemScope.(index: Int, item: T) -> Unit,
-) = items(items.size, { index: Int -> itemId(index, items[index]) }) { itemContent(it, items[it]) }
+): Unit =
+    items(items.size, { index: Int -> itemId(index, items[index]) }) { itemContent(it, items[it]) }
 
 internal abstract class EmittableLazyVerticalGridList :
     EmittableWithChildren(resetsDepthForChildren = true) {
