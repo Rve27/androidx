@@ -16,7 +16,6 @@
 
 package androidx.wear.compose.material3.macrobenchmark.common
 
-import android.os.SystemClock
 import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
@@ -88,7 +87,6 @@ val TransformingLazyColumnNotificationsBenchmark =
                 repeat(20) {
                     device.swipe(midX, swipeStartY, midX, swipeEndY, 2)
                     device.waitForIdle()
-                    SystemClock.sleep(30)
                 }
             }
     }
