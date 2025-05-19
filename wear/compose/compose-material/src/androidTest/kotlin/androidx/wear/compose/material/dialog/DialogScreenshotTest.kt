@@ -162,7 +162,7 @@ class DialogScreenshotTest {
     }
 
     private fun verifyScreenshot(content: @Composable () -> Unit) {
-        rule.setContentWithTheme { content() }
+        rule.setContentWithTheme { ScreenConfiguration(SCREEN_SIZE_LARGE) { content() } }
 
         rule
             .onNodeWithTag(TEST_TAG)

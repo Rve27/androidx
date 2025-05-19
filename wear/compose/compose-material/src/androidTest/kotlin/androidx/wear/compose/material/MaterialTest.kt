@@ -15,19 +15,23 @@
  */
 package androidx.wear.compose.material
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.testutils.assertAgainstGolden
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +41,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsActions
@@ -68,6 +74,8 @@ import org.junit.Assert
 /** Constant to emulate very big but finite constraints */
 val BigTestMaxWidth = 5000.dp
 val BigTestMaxHeight = 5000.dp
+
+val SCREEN_SIZE_LARGE = 228
 
 internal const val TEST_TAG = "test-item"
 
@@ -116,6 +124,51 @@ fun assertTextTypographyEquals(expectedStyle: TextStyle, actualStyle: TextStyle)
     Assert.assertEquals(expectedStyle.letterSpacing, actualStyle.letterSpacing)
     Assert.assertEquals(expectedStyle.fontWeight, actualStyle.fontWeight)
     Assert.assertEquals(expectedStyle.lineHeight, actualStyle.lineHeight)
+}
+
+/**
+ * Provides a composable function that allows you to place your content in different screen
+ * configurations within your UI tests. This is useful for testing how your composables behave on
+ * different screen sizes and form factors (e.g. round or square screens).
+ *
+ * @param screenSizeDp The desired screen size in dp. The composable will be placed into a square
+ *   box with this side length.
+ * @param isRound An optional boolean value to specify if the simulated screen should be round. If
+ *   `true`, the screen is considered round. If `false`, it is considered rectangular. If `null`,
+ *   the original device's roundness setting is used.
+ * @param content The composable content to be tested within the modified screen configuration.
+ */
+@Composable
+fun ScreenConfiguration(
+    screenSizeDp: Int,
+    isRound: Boolean? = null,
+    content: @Composable () -> Unit,
+) {
+    val originalConfiguration = LocalConfiguration.current
+    val originalContext = LocalContext.current
+
+    val fixedScreenSizeConfiguration =
+        remember(originalConfiguration) {
+            Configuration(originalConfiguration).apply {
+                screenWidthDp = screenSizeDp
+                screenHeightDp = screenSizeDp
+                if (isRound != null) {
+                    screenLayout =
+                        if (isRound) Configuration.SCREENLAYOUT_ROUND_YES
+                        else Configuration.SCREENLAYOUT_ROUND_NO
+                }
+            }
+        }
+    originalContext.apply { resources.configuration.updateFrom(fixedScreenSizeConfiguration) }
+
+    CompositionLocalProvider(
+        LocalContext provides originalContext,
+        LocalConfiguration provides fixedScreenSizeConfiguration,
+    ) {
+        Box(modifier = Modifier.size(screenSizeDp.dp).background(MaterialTheme.colors.background)) {
+            content()
+        }
+    }
 }
 
 @Composable
