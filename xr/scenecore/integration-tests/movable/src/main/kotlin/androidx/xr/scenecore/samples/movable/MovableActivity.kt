@@ -23,6 +23,8 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.Switch
 import androidx.appcompat.app.AppCompatActivity
+import androidx.xr.runtime.Config
+import androidx.xr.runtime.Config.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.Pose
@@ -69,6 +71,8 @@ class MovableActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.movable_activity)
+
+        session.configure(Config(planeTracking = PlaneTrackingMode.HORIZONTAL_AND_VERTICAL))
 
         @SuppressLint("InflateParams")
         val stationaryPanelContentView = layoutInflater.inflate(R.layout.stationary_panel, null)
