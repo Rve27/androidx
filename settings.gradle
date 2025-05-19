@@ -973,6 +973,7 @@ includeProject(":privacysandbox:ui:integration-tests:macrobenchmark:testapp:sdkp
 includeProject(":privacysandbox:ui:integration-tests:macrobenchmark:testapp:macrobenchmark-target", [BuildType.MAIN])
 includeProject(":privacysandbox:ui:integration-tests:macrobenchmark:testapp:testsdkprovider", [BuildType.MAIN])
 includeProject(":privacysandbox:ui:integration-tests:macrobenchmark:testapp:testsdkproviderwrapper", [BuildType.MAIN])
+includeProject(":privacysandbox:ui:integration-tests:macrobenchmark:tests", [BuildType.MAIN])
 includeProject(":privacysandbox:ui:ui-client", [BuildType.MAIN])
 includeProject(":privacysandbox:ui:ui-client-compose", [BuildType.COMPOSE])
 includeProject(":privacysandbox:ui:ui-core", [BuildType.MAIN])
