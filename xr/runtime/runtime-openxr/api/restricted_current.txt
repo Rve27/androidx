@@ -54,6 +54,14 @@ package androidx.xr.runtime.openxr {
     property public java.util.UUID? uuid;
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class OpenXrDevice implements androidx.xr.runtime.internal.ArDevice {
+    method public androidx.xr.runtime.math.Pose getDevicePose();
+    method public java.util.List<androidx.xr.runtime.ViewCamera> getViewCameras();
+    method public void update(long xrTime);
+    property public androidx.xr.runtime.math.Pose devicePose;
+    property public java.util.List<androidx.xr.runtime.ViewCamera> viewCameras;
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class OpenXrEarth implements androidx.xr.runtime.internal.Earth {
     method public androidx.xr.runtime.internal.Anchor createAnchor(double latitude, double longitude, double altitude, androidx.xr.runtime.math.Quaternion eastUpSouthQuaternion);
     method public suspend Object? createAnchorOnSurface(double latitude, double longitude, double altitudeAboveSurface, androidx.xr.runtime.math.Quaternion eastUpSouthQuaternion, androidx.xr.runtime.internal.Earth.Surface surface, kotlin.coroutines.Continuation<? super androidx.xr.runtime.internal.Anchor>);
@@ -86,6 +94,7 @@ package androidx.xr.runtime.openxr {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class OpenXrPerceptionManager implements androidx.xr.runtime.internal.PerceptionManager {
     method public androidx.xr.runtime.internal.Anchor createAnchor(androidx.xr.runtime.math.Pose pose);
+    method public androidx.xr.runtime.openxr.OpenXrDevice getArDevice();
     method public androidx.xr.runtime.openxr.OpenXrEarth getEarth();
     method public androidx.xr.runtime.internal.Hand getLeftHand();
     method public java.util.List<java.util.UUID> getPersistedAnchorUuids();
@@ -96,6 +105,7 @@ package androidx.xr.runtime.openxr {
     method public androidx.xr.runtime.internal.Anchor loadAnchorFromNativePointer(long nativePointer);
     method public void unpersistAnchor(java.util.UUID uuid);
     method public void update(long xrTime);
+    property public androidx.xr.runtime.openxr.OpenXrDevice arDevice;
     property public androidx.xr.runtime.openxr.OpenXrEarth earth;
     property public androidx.xr.runtime.internal.Hand leftHand;
     property public androidx.xr.runtime.internal.Hand rightHand;

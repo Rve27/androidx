@@ -281,6 +281,7 @@ package androidx.xr.runtime.testing {
     method public androidx.xr.runtime.internal.Anchor createAnchor(androidx.xr.runtime.math.Pose pose);
     method public void detachAnchor(androidx.xr.runtime.internal.Anchor anchor);
     method public java.util.List<androidx.xr.runtime.internal.Anchor> getAnchors();
+    method public androidx.xr.runtime.testing.FakeRuntimeArDevice getArDevice();
     method public androidx.xr.runtime.internal.Earth getEarth();
     method public androidx.xr.runtime.internal.Hand? getLeftHand();
     method public java.util.List<java.util.UUID> getPersistedAnchorUuids();
@@ -294,6 +295,7 @@ package androidx.xr.runtime.testing {
     method public void setTrackingAvailable(boolean);
     method public void unpersistAnchor(java.util.UUID uuid);
     property public java.util.List<androidx.xr.runtime.internal.Anchor> anchors;
+    property public androidx.xr.runtime.testing.FakeRuntimeArDevice arDevice;
     property public androidx.xr.runtime.internal.Earth earth;
     property public boolean isTrackingAvailable;
     property public androidx.xr.runtime.internal.Hand? leftHand;
@@ -372,6 +374,21 @@ package androidx.xr.runtime.testing {
     method public void setAnchorsCreated(int);
     property public static int ANCHOR_RESOURCE_LIMIT;
     property public static int anchorsCreated;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRuntimeArDevice implements androidx.xr.runtime.internal.ArDevice {
+    ctor public FakeRuntimeArDevice();
+    ctor public FakeRuntimeArDevice(optional androidx.xr.runtime.math.Pose devicePose, optional java.util.List<androidx.xr.runtime.ViewCamera> viewCameras);
+    method public androidx.xr.runtime.math.Pose getDevicePose();
+    method public java.util.List<androidx.xr.runtime.ViewCamera> getViewCameras();
+    method public void setDevicePose(androidx.xr.runtime.math.Pose);
+    method public void setViewCameras(java.util.List<androidx.xr.runtime.ViewCamera>);
+    property public androidx.xr.runtime.math.Pose devicePose;
+    property public java.util.List<androidx.xr.runtime.ViewCamera> viewCameras;
+    field public static final androidx.xr.runtime.testing.FakeRuntimeArDevice.Companion Companion;
+  }
+
+  public static final class FakeRuntimeArDevice.Companion {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRuntimeEarth implements androidx.xr.runtime.internal.Earth {

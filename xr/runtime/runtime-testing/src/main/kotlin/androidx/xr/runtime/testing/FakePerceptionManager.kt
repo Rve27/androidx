@@ -38,6 +38,8 @@ public class FakePerceptionManager : PerceptionManager, AnchorHolder {
     override val leftHand: Hand? = FakeRuntimeHand()
     override val rightHand: Hand? = FakeRuntimeHand()
 
+    override val arDevice: FakeRuntimeArDevice = FakeRuntimeArDevice()
+
     override val earth: Earth = FakeRuntimeEarth()
 
     private val hitResults = mutableListOf<HitResult>()
