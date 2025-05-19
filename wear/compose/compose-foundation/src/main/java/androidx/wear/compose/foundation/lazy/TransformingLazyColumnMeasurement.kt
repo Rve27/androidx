@@ -89,7 +89,7 @@ internal fun rememberTransformingLazyColumnMeasurePolicy(
                         spacing = verticalArrangement.spacing.roundToPx(),
                         leftPadding = measurementStrategy.leftContentPadding,
                         rightPadding = measurementStrategy.rightContentPadding,
-                        animationProvider = { state.animator.getAnimation(key, 0) },
+                        animationProvider = { state.animator.getAnimation(key) },
                         contentType = itemProvider.getContentType(index),
                     )
                 }

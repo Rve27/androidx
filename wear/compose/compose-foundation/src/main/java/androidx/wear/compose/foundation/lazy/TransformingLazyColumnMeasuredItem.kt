@@ -77,24 +77,26 @@ internal data class TransformingLazyColumnMeasuredItem(
                 else it
             } ?: measureScrollProgress
 
-    override val isVertical: Boolean = true
     override val mainAxisSizeWithSpacings: Int
         get() = transformedHeight + spacing
 
-    override val placeablesCount = 1
-    override var nonScrollableItem: Boolean = false
     override val constraints = containerConstraints
 
-    override fun getOffset(index: Int): IntOffset = IntOffset(leftPadding, offset)
+    override val mainAxisOffset: Int
+        get() = offset
 
-    override fun getParentData(index: Int): Any? =
-        placeable?.parentData?.let {
-            if (it is TransformingLazyColumnParentData) {
-                it.animationSpecs
-            } else {
-                it
+    override val crossAxisOffset: Int
+        get() = leftPadding
+
+    override val parentData: Any?
+        get() =
+            placeable?.parentData?.let {
+                if (it is TransformingLazyColumnParentData) {
+                    it.animationSpecs
+                } else {
+                    it
+                }
             }
-        }
 
     private var lastMeasuredTransformedHeight = placeable?.height ?: 0
 

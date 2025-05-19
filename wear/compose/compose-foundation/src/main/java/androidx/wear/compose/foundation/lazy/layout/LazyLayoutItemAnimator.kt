@@ -132,14 +132,10 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
                             movingInFromEndBound.add(item)
                         }
                     } else {
-                        initializeAnimation(
-                            item,
-                            item.getOffset(0).let { if (item.isVertical) it.y else it.x },
-                            newItemInfo,
-                        )
+                        initializeAnimation(item, item.mainAxisOffset, newItemInfo)
                         applyScrollWithoutAnimation(newItemInfo, scrollOffset)
                         if (shouldAnimateAppearance) {
-                            newItemInfo.animations.forEach { it?.animateAppearance() }
+                            newItemInfo.animation?.animateAppearance()
                         }
                     }
                 } else {
@@ -153,14 +149,13 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
                         )
                         applyScrollWithoutAnimation(itemInfo, scrollOffset)
                         if (shouldAnimateAppearance) {
-                            itemInfo.animations.forEach {
-                                if (it != null) {
-                                    if (it.isDisappearanceAnimationInProgress) {
-                                        disappearingItems.remove(it)
-                                        displayingNode?.invalidateDraw()
-                                    }
-                                    it.animateAppearance()
+
+                            itemInfo.animation?.let {
+                                if (it.isDisappearanceAnimationInProgress) {
+                                    disappearingItems.remove(it)
+                                    displayingNode?.invalidateDraw()
                                 }
+                                it.animateAppearance()
                             }
                         }
                         startPlacementAnimationsIfNeeded(item)
@@ -183,11 +178,7 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
                             previousKeyToIndexMap.getIndex(it.key) ==
                                 previousKeyToIndexMap.getIndex(movingInFromStartBound[0].key) + 1
                         }
-                        ?.let {
-                            getAnimation(it.key, 0)?.finalOffset?.run {
-                                if (it.isVertical) y else x
-                            }
-                        }
+                        ?.let { getAnimation(it.key)?.finalOffset?.y }
                         // If the anchor item is removed, fallback to the layoutMinOffset.
                         ?: layoutMinOffset
                 movingInFromStartBound.fastForEach { item ->
@@ -209,8 +200,8 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
                                 previousKeyToIndexMap.getIndex(movingInFromEndBound[0].key) - 1
                         }
                         ?.let {
-                            getAnimation(it.key, 0)?.finalOffset?.run {
-                                it.mainAxisSizeWithSpacings + if (it.isVertical) y else x
+                            getAnimation(it.key)?.finalOffset?.run {
+                                it.mainAxisSizeWithSpacings + y
                             }
                         }
                         // If the anchor item is removed, fallback to the layoutMaxOffset.
@@ -236,31 +227,27 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
             if (keyIndexMap.getIndex(key) != -1) return@forEach
 
             var isProgress = false
-            for (index in info.animations.indices) {
-                val animation = info.animations[index]
-                if (animation != null) {
-                    if (animation.isDisappearanceAnimationInProgress) {
-                        isProgress = true
-                    } else if (animation.isDisappearanceAnimationFinished) {
-                        animation.release()
-                        info.animations[index] = null
-                        disappearingItems.remove(animation)
+            info.animation?.let {
+                if (it.isDisappearanceAnimationInProgress) {
+                    isProgress = true
+                } else if (it.isDisappearanceAnimationFinished) {
+                    it.release()
+                    disappearingItems.remove(it)
+                    displayingNode?.invalidateDraw()
+                } else {
+                    if (it.layer != null) {
+                        it.animateDisappearance()
+                    }
+                    if (it.isDisappearanceAnimationInProgress) {
+                        disappearingItems.add(it)
                         displayingNode?.invalidateDraw()
+                        isProgress = true
                     } else {
-                        if (animation.layer != null) {
-                            animation.animateDisappearance()
-                        }
-                        if (animation.isDisappearanceAnimationInProgress) {
-                            disappearingItems.add(animation)
-                            displayingNode?.invalidateDraw()
-                            isProgress = true
-                        } else {
-                            animation.release()
-                            info.animations[index] = null
-                        }
+                        it.release()
                     }
                 }
             }
+
             if (!isProgress) {
                 removeInfoForKey(key)
             }
@@ -274,18 +261,15 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
     private fun applyScrollWithoutAnimation(
         itemInfo: LazyLayoutItemAnimator<T>.ItemInfo,
         scrollYOffset: Int,
-    ) {
-        itemInfo.animations.forEach { animation ->
-            if (
-                animation != null && animation.rawOffset != LazyLayoutItemAnimation.NotInitialized
-            ) {
-                animation.rawOffset += IntOffset(0, scrollYOffset)
+    ) =
+        itemInfo.animation?.let {
+            if (it.rawOffset != LazyLayoutItemAnimation.NotInitialized) {
+                it.rawOffset += IntOffset(0, scrollYOffset)
             }
         }
-    }
 
     private fun removeInfoForKey(key: Any) {
-        keyToItemInfoMap.remove(key)?.animations?.forEach { it?.release() }
+        keyToItemInfoMap.remove(key)?.animation?.release()
     }
 
     /**
@@ -300,9 +284,7 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
 
     fun releaseAnimations() {
         if (keyToItemInfoMap.isNotEmpty()) {
-            keyToItemInfoMap.forEachValue {
-                it.animations.forEach { animation -> animation?.release() }
-            }
+            keyToItemInfoMap.forEachValue { it.animation?.release() }
             keyToItemInfoMap.clear()
         }
     }
@@ -312,66 +294,45 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
         mainAxisOffset: Int,
         itemInfo: ItemInfo = keyToItemInfoMap[item.key]!!,
     ) {
-        val firstPlaceableOffset = item.getOffset(0)
+        val firstPlaceableOffset = item.getOffset()
 
-        val targetFirstPlaceableOffset =
-            if (item.isVertical) {
-                firstPlaceableOffset.copy(y = mainAxisOffset)
-            } else {
-                firstPlaceableOffset.copy(x = mainAxisOffset)
-            }
+        val targetFirstPlaceableOffset = firstPlaceableOffset.copy(y = mainAxisOffset)
 
         // initialize offsets
-        itemInfo.animations.forEachIndexed { placeableIndex, animation ->
-            if (animation != null) {
-                val diffToFirstPlaceableOffset =
-                    item.getOffset(placeableIndex) - firstPlaceableOffset
-                animation.rawOffset = targetFirstPlaceableOffset + diffToFirstPlaceableOffset
-            }
+        itemInfo.animation?.let { animation ->
+            val diffToFirstPlaceableOffset = item.getOffset() - firstPlaceableOffset
+            animation.rawOffset = targetFirstPlaceableOffset + diffToFirstPlaceableOffset
         }
     }
 
     private fun startPlacementAnimationsIfNeeded(item: T, isMovingAway: Boolean = false) {
         val itemInfo = keyToItemInfoMap[item.key]!!
-        itemInfo.animations.forEachIndexed { placeableIndex, animation ->
-            if (animation != null) {
-                val newTarget = item.getOffset(placeableIndex)
-                val currentTarget = animation.rawOffset
-                if (
-                    currentTarget != LazyLayoutItemAnimation.NotInitialized &&
-                        currentTarget != newTarget
-                ) {
-                    animation.animatePlacementDelta(newTarget - currentTarget, isMovingAway)
-                }
-                animation.rawOffset = newTarget
+        itemInfo.animation?.let { animation ->
+            val newTarget = item.getOffset()
+            val currentTarget = animation.rawOffset
+            if (
+                currentTarget != LazyLayoutItemAnimation.NotInitialized &&
+                    currentTarget != newTarget
+            ) {
+                animation.animatePlacementDelta(newTarget - currentTarget, isMovingAway)
             }
+            animation.rawOffset = newTarget
         }
     }
 
-    fun getAnimation(key: Any, placeableIndex: Int): LazyLayoutItemAnimation? =
-        keyToItemInfoMap[key]?.animations?.getOrNull(placeableIndex)
+    fun getAnimation(key: Any): LazyLayoutItemAnimation? = keyToItemInfoMap[key]?.animation
 
     val modifier: Modifier = DisplayingDisappearingItemsElement(this)
 
-    private val LazyLayoutMeasuredItem.mainAxisOffset
-        get() = getOffset(0).let { if (isVertical) it.y else it.x }
-
-    private val LazyLayoutMeasuredItem.crossAxisOffset
-        get() = getOffset(0).let { if (!isVertical) it.y else it.x }
-
     private inner class ItemInfo {
-        /**
-         * This array will have the same amount of elements as there are placeables on the item. If
-         * the element is not null this means there are specs associated with the given placeable.
-         */
-        var animations = EmptyArray
+        var animation: LazyLayoutItemAnimation? = null
             private set
 
         var constraints: Constraints? = null
         var crossAxisOffset: Int = 0
 
         private val isRunningPlacement
-            get() = animations.any { it?.isRunningMovingAwayAnimation == true }
+            get() = animation?.isRunningMovingAwayAnimation == true
 
         var layoutMinOffset = 0
             private set
@@ -391,39 +352,31 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
                 this.layoutMinOffset = layoutMinOffset
                 this.layoutMaxOffset = layoutMaxOffset
             }
-            for (i in positionedItem.placeablesCount until animations.size) {
-                animations[i]?.release()
-            }
-            if (animations.size != positionedItem.placeablesCount) {
-                animations = animations.copyOf(positionedItem.placeablesCount)
-            }
             constraints = positionedItem.constraints
             this.crossAxisOffset = crossAxisOffset
-            repeat(positionedItem.placeablesCount) { index ->
-                val specs = positionedItem.getParentData(index).specs
-                if (specs == null) {
-                    animations[index]?.release()
-                    animations[index] = null
-                } else {
-                    val animation =
-                        animations[index]
-                            ?: LazyLayoutItemAnimation(
-                                    coroutineScope = coroutineScope,
-                                    graphicsContext = graphicsContext,
-                                    // until b/329417380 is fixed we have to trigger any
-                                    // invalidation in
-                                    // order for the layer properties change to be applied:
-                                    onLayerPropertyChanged = { displayingNode?.invalidateDraw() },
-                                    containerHeight = layoutMaxOffset - layoutMinOffset,
-                                    transformedHeight = positionedItem.transformedHeight,
-                                    measuredHeight = positionedItem.measuredHeight,
-                                    measurementDirection = positionedItem.measurementDirection,
-                                )
-                                .also { animations[index] = it }
-                    animation.fadeInSpec = specs.fadeInSpec
-                    animation.placementSpec = specs.placementSpec
-                    animation.fadeOutSpec = specs.fadeOutSpec
-                }
+            val specs = positionedItem.parentData.specs
+            if (specs == null) {
+                animation?.release()
+                animation = null
+            } else {
+                val animation =
+                    animation
+                        ?: LazyLayoutItemAnimation(
+                                coroutineScope = coroutineScope,
+                                graphicsContext = graphicsContext,
+                                // until b/329417380 is fixed we have to trigger any
+                                // invalidation in
+                                // order for the layer properties change to be applied:
+                                onLayerPropertyChanged = { displayingNode?.invalidateDraw() },
+                                containerHeight = layoutMaxOffset - layoutMinOffset,
+                                transformedHeight = positionedItem.transformedHeight,
+                                measuredHeight = positionedItem.measuredHeight,
+                                measurementDirection = positionedItem.measurementDirection,
+                            )
+                            .also { animation = it }
+                animation.fadeInSpec = specs.fadeInSpec
+                animation.placementSpec = specs.placementSpec
+                animation.fadeOutSpec = specs.fadeOutSpec
             }
         }
     }
@@ -476,5 +429,3 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
         }
     }
 }
-
-private val EmptyArray = emptyArray<LazyLayoutItemAnimation?>()
