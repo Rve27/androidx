@@ -3524,7 +3524,6 @@ private class MockOwner(
         drawBlock: (Canvas, GraphicsLayer?) -> Unit,
         invalidateParentLayer: () -> Unit,
         explicitLayer: GraphicsLayer?,
-        forceUseOldLayers: Boolean,
     ): OwnedLayer {
         return object : OwnedLayer {
             override fun updateLayerProperties(scope: ReusableGraphicsLayerScope) {}

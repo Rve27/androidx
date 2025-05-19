@@ -268,7 +268,6 @@ private class FakeOwner(
         drawBlock: (canvas: Canvas, parentLayer: GraphicsLayer?) -> Unit,
         invalidateParentLayer: () -> Unit,
         explicitLayer: GraphicsLayer?,
-        forceUseOldLayers: Boolean,
     ): OwnedLayer = createLayer()
 
     override fun requestOnPositionedCallback(layoutNode: LayoutNode) {

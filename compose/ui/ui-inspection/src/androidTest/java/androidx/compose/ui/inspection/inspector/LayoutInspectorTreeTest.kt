@@ -689,7 +689,6 @@ class LayoutInspectorTreeTest {
                 name = "ComposeNode",
                 fileName = "AndroidView.android.kt",
                 hasViewIdUnder = composeView,
-                isRenderNode = true,
                 inlined = true,
             )
         }
@@ -731,7 +730,6 @@ class LayoutInspectorTreeTest {
                 name = "ReusableComposeNode",
                 fileName = "AndroidView.android.kt",
                 hasViewIdUnder = composeView,
-                isRenderNode = true,
                 inlined = true,
             )
         }

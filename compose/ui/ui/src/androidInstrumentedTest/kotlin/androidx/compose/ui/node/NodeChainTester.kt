@@ -561,7 +561,6 @@ private class MockOwner(
         drawBlock: (Canvas, GraphicsLayer?) -> Unit,
         invalidateParentLayer: () -> Unit,
         explicitLayer: GraphicsLayer?,
-        forceUseOldLayers: Boolean,
     ): OwnedLayer {
         val transform = Matrix()
         val inverseTransform = Matrix()

@@ -1800,7 +1800,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         drawBlock: (canvas: Canvas, parentLayer: GraphicsLayer?) -> Unit,
         invalidateParentLayer: () -> Unit,
         explicitLayer: GraphicsLayer?,
-        forceUseOldLayers: Boolean,
     ): OwnedLayer {
         if (explicitLayer != null) {
             return GraphicsLayerOwnerLayer(
@@ -1811,26 +1810,24 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                 invalidateParentLayer = invalidateParentLayer,
             )
         }
-        if (!forceUseOldLayers) {
-            // First try the layer cache
-            val layer = layerCache.pop()
-            if (layer !== null) {
-                layer.reuseLayer(drawBlock, invalidateParentLayer)
-                return layer
-            }
+        // First try the layer cache
+        val layer = layerCache.pop()
+        if (layer !== null) {
+            layer.reuseLayer(drawBlock, invalidateParentLayer)
+            return layer
+        }
 
-            // Prior to M ViewLayer implementation might be doing extra drawing in order
-            // to support the software rendering. This extra drawing is breaking some of tests
-            // and we can't fully migrate to it until we figure out how to solve it.
-            if (SDK_INT >= M) {
-                return GraphicsLayerOwnerLayer(
-                    graphicsLayer = graphicsContext.createGraphicsLayer(),
-                    context = graphicsContext,
-                    ownerView = this,
-                    drawBlock = drawBlock,
-                    invalidateParentLayer = invalidateParentLayer,
-                )
-            }
+        // Prior to M ViewLayer implementation might be doing extra drawing in order
+        // to support the software rendering. This extra drawing is breaking some of tests
+        // and we can't fully migrate to it until we figure out how to solve it.
+        if (SDK_INT >= M) {
+            return GraphicsLayerOwnerLayer(
+                graphicsLayer = graphicsContext.createGraphicsLayer(),
+                context = graphicsContext,
+                ownerView = this,
+                drawBlock = drawBlock,
+                invalidateParentLayer = invalidateParentLayer,
+            )
         }
 
         // RenderNode is supported on Q+ for certain, but may also be supported on M-O.

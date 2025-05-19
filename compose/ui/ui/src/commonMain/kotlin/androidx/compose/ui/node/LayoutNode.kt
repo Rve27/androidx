@@ -103,8 +103,6 @@ internal class LayoutNode(
     internal var outerToInnerOffset: IntOffset = IntOffset.Max
     internal var outerToInnerOffsetDirty: Boolean = true
 
-    var forceUseOldLayers: Boolean = false
-
     override var compositeKeyHash: Int = 0
 
     internal var isVirtualLookaheadRoot: Boolean = false

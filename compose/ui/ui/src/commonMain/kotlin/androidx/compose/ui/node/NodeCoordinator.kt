@@ -517,17 +517,10 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
             this.layerBlock = layerBlock
             if (layer == null) {
                 layer =
-                    layoutNode
-                        .requireOwner()
-                        .createLayer(
-                            drawBlock,
-                            invalidateParentLayer,
-                            forceUseOldLayers = layoutNode.forceUseOldLayers,
-                        )
-                        .apply {
-                            resize(measuredSize)
-                            move(position)
-                        }
+                    layoutNode.requireOwner().createLayer(drawBlock, invalidateParentLayer).apply {
+                        resize(measuredSize)
+                        move(position)
+                    }
                 updateLayerParameters()
                 layoutNode.innerLayerCoordinatorIsDirty = true
                 invalidateParentLayer()

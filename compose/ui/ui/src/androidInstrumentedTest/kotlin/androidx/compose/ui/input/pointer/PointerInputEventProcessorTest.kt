@@ -3001,7 +3001,6 @@ private class TestOwner : Owner {
         drawBlock: (Canvas, GraphicsLayer?) -> Unit,
         invalidateParentLayer: () -> Unit,
         explicitLayer: GraphicsLayer?,
-        forceUseOldLayers: Boolean,
     ): OwnedLayer {
         TODO("Not yet implemented")
     }

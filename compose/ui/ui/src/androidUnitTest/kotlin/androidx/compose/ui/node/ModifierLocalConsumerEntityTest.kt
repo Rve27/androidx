@@ -427,7 +427,6 @@ class ModifierLocalConsumerEntityTest {
             drawBlock: (Canvas, GraphicsLayer?) -> Unit,
             invalidateParentLayer: () -> Unit,
             explicitLayer: GraphicsLayer?,
-            forceUseOldLayers: Boolean,
         ) = TODO("Not yet implemented")
 
         override fun onRequestRelayout(

@@ -269,7 +269,6 @@ internal interface Owner : PositionCalculator {
         drawBlock: (canvas: Canvas, parentLayer: GraphicsLayer?) -> Unit,
         invalidateParentLayer: () -> Unit,
         explicitLayer: GraphicsLayer? = null,
-        forceUseOldLayers: Boolean = false,
     ): OwnedLayer
 
     /**
