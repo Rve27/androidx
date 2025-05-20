@@ -116,11 +116,11 @@ internal class PageMetadataLoader(
             for (i in 0..paginationModel.reach) {
                 _pageInfos.tryEmit(
                     PdfDocument.PageInfo(
-                        i,
-                        paginationModel.getPageSize(i).x,
-                        paginationModel.getPageSize(i).y,
+                        pageNum = i,
+                        height = paginationModel.getPageSize(i).y,
+                        width = paginationModel.getPageSize(i).x,
                         // TODO: b/410009335 Save and Restore formWidgetInfos across config changes
-                        null,
+                        formWidgetInfos = null,
                     )
                 )
             }
