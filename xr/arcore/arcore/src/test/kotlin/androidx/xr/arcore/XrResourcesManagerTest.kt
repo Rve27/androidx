@@ -153,11 +153,11 @@ class XrResourcesManagerTest {
         val runtimeEarth = FakeRuntimeEarth()
         underTest.initiateEarth(runtimeEarth)
         underTest.update()
-        check(underTest.earth.state.value == Earth.State.Stopped)
+        check(underTest.earth.state.value == Earth.State.STOPPED)
         runtimeEarth.state = RuntimeEarth.State.RUNNING
 
         underTest.update()
 
-        assertThat(underTest.earth.state.value).isEqualTo(Earth.State.Running)
+        assertThat(underTest.earth.state.value).isEqualTo(Earth.State.RUNNING)
     }
 }
