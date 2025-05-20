@@ -52,6 +52,7 @@ import androidx.wear.compose.material3.RevealActionType.Companion.SecondaryActio
 import androidx.wear.compose.material3.RevealActionType.Companion.UndoAction
 import androidx.wear.compose.material3.RevealDirection.Companion.Bidirectional
 import androidx.wear.compose.material3.RevealDirection.Companion.RightToLeft
+import androidx.wear.compose.material3.RevealState.SingleSwipeCoordinator
 import androidx.wear.compose.material3.RevealValue.Companion.Covered
 import androidx.wear.compose.material3.RevealValue.Companion.LeftRevealed
 import androidx.wear.compose.material3.RevealValue.Companion.LeftRevealing
@@ -65,11 +66,17 @@ import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class SwipeToRevealTest {
     @get:Rule val rule = createComposeRule()
+
+    @Before
+    fun setUp() {
+        SingleSwipeCoordinator.lastUpdatedState.set(null)
+    }
 
     @Test
     fun onStateChangeToRevealed_performsHaptics() {

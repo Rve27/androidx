@@ -861,7 +861,7 @@ public class RevealState(initialValue: RevealValue) {
     }
 
     /** A singleton instance to keep track of the [RevealState] which was modified the last time. */
-    private object SingleSwipeCoordinator {
+    internal object SingleSwipeCoordinator {
         var lastUpdatedState: AtomicReference<RevealState?> = AtomicReference(null)
     }
 }

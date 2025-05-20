@@ -39,10 +39,12 @@ import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.AndroidXScreenshotTestRule
 import androidx.wear.compose.material3.RevealDirection.Companion.Bidirectional
+import androidx.wear.compose.material3.RevealState.SingleSwipeCoordinator
 import androidx.wear.compose.materialcore.CustomTouchSlopProvider
 import androidx.wear.compose.materialcore.screenWidthDp
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestName
@@ -57,6 +59,11 @@ class SwipeToRevealScreenshotTest {
     @get:Rule val screenshotRule = AndroidXScreenshotTestRule(SCREENSHOT_GOLDEN_PATH)
 
     @get:Rule val testName = TestName()
+
+    @Before
+    fun setUp() {
+        SingleSwipeCoordinator.lastUpdatedState.set(null)
+    }
 
     @Test
     fun swipeToReveal_showsPrimaryAction(@TestParameter screenSize: ScreenSize) {

@@ -31,6 +31,7 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeLeft
 import androidx.compose.ui.test.swipeRight
 import androidx.wear.compose.material3.RevealDirection.Companion.RightToLeft
+import androidx.wear.compose.material3.RevealState.SingleSwipeCoordinator
 import androidx.wear.compose.material3.RevealValue.Companion.Covered
 import androidx.wear.compose.material3.RevealValue.Companion.LeftRevealing
 import androidx.wear.compose.material3.RevealValue.Companion.RightRevealing
@@ -39,6 +40,7 @@ import androidx.wear.compose.material3.SwipeToRevealDefaults.SingleActionAnchorW
 import androidx.wear.compose.material3.SwipeToRevealDefaults.bidirectionalGestureInclusion
 import androidx.wear.compose.materialcore.CustomTouchSlopProvider
 import junit.framework.TestCase.assertEquals
+import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -54,6 +56,11 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 class SwipeToRevealAnchorTest(val testParams: TestParams) {
     @get:Rule val rule = createComposeRule()
+
+    @Before
+    fun setUp() {
+        SingleSwipeCoordinator.lastUpdatedState.set(null)
+    }
 
     @Ignore("b/417242916")
     @Test
