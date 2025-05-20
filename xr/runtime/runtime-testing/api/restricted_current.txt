@@ -147,6 +147,7 @@ package androidx.xr.runtime.testing {
     method public androidx.xr.runtime.internal.SoundPoolExtensionsWrapper getSoundPoolExtensionsWrapper();
     method public androidx.xr.runtime.internal.SpatialCapabilities getSpatialCapabilities();
     method public androidx.xr.runtime.internal.SpatialEnvironment getSpatialEnvironment();
+    method public androidx.xr.runtime.internal.SpatialModeChangeListener getSpatialModeChangeListener();
     method public Enum<androidx.xr.runtime.testing.FakeJxrPlatformAdapter.State> getState();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.ExrImageResource> loadExrImageByAssetName(String assetName);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.ExrImageResource> loadExrImageByByteArray(byte[] assetData, String assetKey);
@@ -167,9 +168,11 @@ package androidx.xr.runtime.testing {
     method public void setNormalZ(androidx.xr.runtime.internal.MaterialResource material, float normalZ);
     method public void setPreferredAspectRatio(android.app.Activity activity, float preferredRatio);
     method public void setReflectionMap(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.internal.TextureResource reflectionMap);
+    method public void setSpatialModeChangeListener(androidx.xr.runtime.internal.SpatialModeChangeListener);
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.runtime.internal.SpatialVisibility> listener);
     method public void startRenderer();
     method public void stopRenderer();
+    property public androidx.xr.runtime.internal.SpatialModeChangeListener SpatialModeChangeListener;
     property public androidx.xr.runtime.internal.ActivitySpace activitySpace;
     property public androidx.xr.runtime.internal.Entity activitySpaceRootImpl;
     property public androidx.xr.runtime.internal.AudioTrackExtensionsWrapper audioTrackExtensionsWrapper;
@@ -510,6 +513,21 @@ package androidx.xr.runtime.testing {
     property public float currentPassthroughOpacity;
     property public Float? passthroughOpacityPreference;
     property public androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? spatialEnvironmentPreference;
+  }
+
+  public final class FakeSpatialModeChangeListener implements androidx.xr.runtime.internal.SpatialModeChangeListener {
+    ctor public FakeSpatialModeChangeListener();
+    method public androidx.xr.runtime.math.Pose? getLastRecommendedPose();
+    method public androidx.xr.runtime.math.Vector3? getLastRecommendedScale();
+    method public int getUpdateCount();
+    method public void onSpatialModeChanged(androidx.xr.runtime.math.Pose recommendedPose, androidx.xr.runtime.math.Vector3 recommendedScale);
+    method public void reset();
+    method public void setLastRecommendedPose(androidx.xr.runtime.math.Pose?);
+    method public void setLastRecommendedScale(androidx.xr.runtime.math.Vector3?);
+    method public void setUpdateCount(int);
+    property public androidx.xr.runtime.math.Pose? lastRecommendedPose;
+    property public androidx.xr.runtime.math.Vector3? lastRecommendedScale;
+    property public int updateCount;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSpatialPointerComponent extends androidx.xr.runtime.testing.FakeComponent implements androidx.xr.runtime.internal.SpatialPointerComponent {

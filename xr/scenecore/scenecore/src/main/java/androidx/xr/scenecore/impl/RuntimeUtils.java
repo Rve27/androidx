@@ -263,6 +263,10 @@ final class RuntimeUtils {
         return new Vector3(vec3.x, vec3.y, vec3.z);
     }
 
+    static Quaternion getQuaternion(Quatf quatf) {
+        return new Quaternion(quatf.x, quatf.y, quatf.z, quatf.w);
+    }
+
     /**
      * Converts from a perception pose type.
      *
@@ -330,7 +334,7 @@ final class RuntimeUtils {
      */
     static SpatialCapabilities convertSpatialCapabilities(
             com.android.extensions.xr.space.SpatialCapabilities extCapabilities) {
-        @SpatialCapabilities.SpatialCapability int capabilities = 0;
+        int capabilities = 0;
         if (extCapabilities.get(
                 com.android.extensions.xr.space.SpatialCapabilities.SPATIAL_UI_CAPABLE)) {
             capabilities |= SpatialCapabilities.SPATIAL_CAPABILITY_UI;

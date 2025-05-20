@@ -33,6 +33,7 @@ import androidx.xr.runtime.internal.PixelDimensions as RtPixelDimensions
 import androidx.xr.runtime.internal.SpatialCapabilities as RtSpatialCapabilities
 import androidx.xr.runtime.internal.SpatialVisibility as RtSpatialVisibility
 import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
 import androidx.xr.runtime.testing.FakeRuntimeFactory
 import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.MoreExecutors.directExecutor
@@ -265,5 +266,24 @@ class SceneTest {
     fun clearSpatialVisibilityChangedListener_callsRuntimeClearSpatialVisibilityChangedListener() {
         session.scene.clearSpatialVisibilityChangedListener()
         verify(mockPlatformAdapter).clearSpatialVisibilityChangedListener()
+    }
+
+    @Test
+    fun sceneInit_setsDefaultSpatialStateChangeHandler() {
+        // Verify that default handler is always set.
+        verify(mockPlatformAdapter).SpatialModeChangeListener = any()
+    }
+
+    @Test
+    fun setSpatialStateChangeHandler_callsRuntimeSetSpatialStateChangeHandler() {
+        val mockSpatialModeChangeListener = mock<SpatialModeChangeListener>()
+        session.scene.SpatialModeChangeListener = mockSpatialModeChangeListener
+        val captor = argumentCaptor<androidx.xr.runtime.internal.SpatialModeChangeListener>()
+        verify(mockPlatformAdapter).SpatialModeChangeListener = captor.capture()
+        val rtSpatialStateChangeHandler = captor.firstValue
+        val pose = Pose.Identity
+        val scale = Vector3(2f, 2f, 2f)
+        rtSpatialStateChangeHandler.onSpatialModeChanged(pose, scale)
+        verify(mockSpatialModeChangeListener).onSpatialModeChanged(pose, scale.x)
     }
 }

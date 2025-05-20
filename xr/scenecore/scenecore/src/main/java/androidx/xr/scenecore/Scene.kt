@@ -26,7 +26,10 @@ import androidx.xr.runtime.internal.Entity as RtEntity
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.internal.SpatialCapabilities as RtSpatialCapabilities
+import androidx.xr.runtime.internal.SpatialModeChangeListener as RtSpatialModeChangeListener
 import androidx.xr.runtime.internal.SpatialVisibility as RtSpatialVisibility
+import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.Executor
@@ -94,6 +97,35 @@ public class Scene : SessionConnector {
     public lateinit var spatialCapabilities: SpatialCapabilities
         private set
 
+    /**
+     * When the scene encounters spatial mode change, this [Entity] will be placed at the
+     * recommended location provided by the system. This ensures continuity of the center of
+     * attention between sequential full space mode sessions.
+     *
+     * Unmovable entities are not allowed to be the center of attention, for example,
+     * [AnchorEntity].
+     */
+    public var centerOfAttention: Entity? = null
+        private set
+
+    /**
+     * The [SpatialModeChangeListener] is used to receive handle scenegraph updates when the spatial
+     * mode for the scene changes.
+     */
+    public var SpatialModeChangeListener: SpatialModeChangeListener =
+        /**
+         * The default [SpatialModeChangeListener], which translates the center of attention entity
+         * to the recommended pose when the scene encounters spatial mode change, and applies the
+         * recommended scale. This default handler can be replaced with the client's own
+         * [SpatialModeChangeListener] by updating the [Scene.SpatialModeChangeListener] property.
+         */
+        object : SpatialModeChangeListener {
+            override fun onSpatialModeChanged(recommendedPose: Pose, recommendedScale: Float) {
+                centerOfAttention?.setPose(recommendedPose, Space.ACTIVITY)
+                centerOfAttention?.setScale(recommendedScale, Space.ACTIVITY)
+            }
+        }
+
     private val spatialCapabilitiesListeners:
         ConcurrentMap<Consumer<SpatialCapabilities>, Consumer<RtSpatialCapabilities>> =
         ConcurrentHashMap()
@@ -111,6 +143,18 @@ public class Scene : SessionConnector {
         activitySpaceRoot =
             entityManager.getEntityForRtEntity(platformAdapter.activitySpaceRootImpl)!!
         spatialCapabilities = platformAdapter.spatialCapabilities.toSpatialCapabilities()
+        platformAdapter.SpatialModeChangeListener =
+            object : RtSpatialModeChangeListener {
+                override fun onSpatialModeChanged(
+                    recommendedPose: Pose,
+                    recommendedScale: Vector3,
+                ) {
+                    SpatialModeChangeListener.onSpatialModeChanged(
+                        recommendedPose,
+                        recommendedScale.x,
+                    )
+                }
+            }
     }
 
     override fun close(): Unit {
@@ -342,4 +386,28 @@ public class Scene : SessionConnector {
     /** Releases the listener previously added by [setSpatialVisibilityChangedListener]. */
     public fun clearSpatialVisibilityChangedListener(): Unit =
         platformAdapter.clearSpatialVisibilityChangedListener()
+
+    /**
+     * When the scene encounters spatial mode changes, this [Entity] will be placed at a location
+     * provided by the system. This ensures continuity of the center of attention between sequential
+     * full space mode sessions.
+     *
+     * Setting null as center of attention is allowed - in which case the default spatial mode
+     * change handler will be no-op.
+     *
+     * Unmovable entities are not allowed to be the center of attention, for example,
+     * [AnchorEntity].
+     *
+     * @param entity the entity to set as the center of attention.
+     * @return true if the entity was successfully set as the center of attention, false otherwise.
+     */
+    public fun setCenterOfAttention(entity: Entity?): Boolean {
+        when (entity) {
+            is AnchorEntity -> return false
+            else -> {
+                centerOfAttention = entity
+                return true
+            }
+        }
+    }
 }

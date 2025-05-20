@@ -81,9 +81,7 @@ abstract class BasePanelEntity extends AndroidXrEntity implements PanelEntity {
 
         // Convert the updated corner radius to pixels.
         float radiusPixels =
-                TypedValueCompat.dpToPx(
-                        radiusDp,
-                        Resources.getSystem().getDisplayMetrics());
+                TypedValueCompat.dpToPx(radiusDp, Resources.getSystem().getDisplayMetrics());
 
         // Convert the pixel radius to meters.
         return radiusPixels / getDefaultPixelDensity();

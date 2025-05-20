@@ -73,6 +73,13 @@ public interface JxrPlatformAdapter {
     public val mediaPlayerExtensionsWrapper: MediaPlayerExtensionsWrapper
 
     /**
+     * Returns a [SpatialModeChangeListener] instance.
+     *
+     * Setting this property will update the handler that is used to process spatial mode changes.
+     */
+    public var SpatialModeChangeListener: SpatialModeChangeListener
+
+    /**
      * Returns the CameraViewActivityPose for the specified camera type or null if it is not
      * ready/available.
      */

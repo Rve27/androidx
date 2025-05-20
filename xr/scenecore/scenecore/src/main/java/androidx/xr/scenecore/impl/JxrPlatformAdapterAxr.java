@@ -62,6 +62,7 @@ import androidx.xr.runtime.internal.SoundPoolExtensionsWrapper;
 import androidx.xr.runtime.internal.Space;
 import androidx.xr.runtime.internal.SpatialCapabilities;
 import androidx.xr.runtime.internal.SpatialEnvironment;
+import androidx.xr.runtime.internal.SpatialModeChangeListener;
 import androidx.xr.runtime.internal.SpatialPointerComponent;
 import androidx.xr.runtime.internal.SpatialVisibility;
 import androidx.xr.runtime.internal.SurfaceEntity;
@@ -150,6 +151,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
     private ImpSplitEngineRenderer mSplitEngineRenderer;
     private boolean mFrameLoopStarted;
     private boolean mIsDisposed;
+    private SpatialModeChangeListener mSpatialModeChangeListener;
 
     private JxrPlatformAdapterAxr(
             Activity activity,
@@ -480,6 +482,12 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
             mEnvironment.firePassthroughOpacityChangedEvent();
         }
 
+        // Get the scene parent transform and update the activity space.
+        if (newSpatialState.getSceneParentTransform() != null) {
+            mActivitySpace.handleOriginUpdate(
+                    RuntimeUtils.getMatrix(newSpatialState.getSceneParentTransform()));
+        }
+
         if (spatialCapabilitiesChanged) {
             SpatialCapabilities spatialCapabilities =
                     RuntimeUtils.convertSpatialCapabilities(
@@ -492,16 +500,6 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
 
         if (hasBoundsChanged) {
             mActivitySpace.onBoundsChanged(newSpatialState.getBounds());
-        }
-
-        // Get the scene parent transform and update the activity space.
-        Log.i(
-                TAG,
-                "newSpatialState.getSceneParentTransform: "
-                        + newSpatialState.getSceneParentTransform());
-        if (newSpatialState.getSceneParentTransform() != null) {
-            mActivitySpace.handleOriginUpdate(
-                    RuntimeUtils.getMatrix(newSpatialState.getSceneParentTransform()));
         }
     }
 
@@ -1574,5 +1572,18 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
                         size);
         subspaceNodeEntity.setParent(mActivitySpace);
         return subspaceNodeEntity;
+    }
+
+    @Override
+    public void setSpatialModeChangeListener(
+            @NonNull SpatialModeChangeListener SpatialModeChangeListener) {
+        mSpatialModeChangeListener = SpatialModeChangeListener;
+        mActivitySpace.setSpatialModeChangeListener(SpatialModeChangeListener);
+    }
+
+    @Override
+    @NonNull
+    public SpatialModeChangeListener getSpatialModeChangeListener() {
+        return mSpatialModeChangeListener;
     }
 }

@@ -900,6 +900,7 @@ package androidx.xr.runtime.internal {
     method public androidx.xr.runtime.internal.SoundPoolExtensionsWrapper getSoundPoolExtensionsWrapper();
     method public androidx.xr.runtime.internal.SpatialCapabilities getSpatialCapabilities();
     method public androidx.xr.runtime.internal.SpatialEnvironment getSpatialEnvironment();
+    method public androidx.xr.runtime.internal.SpatialModeChangeListener getSpatialModeChangeListener();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.ExrImageResource> loadExrImageByAssetName(String assetName);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.ExrImageResource> loadExrImageByByteArray(byte[] assetData, String assetKey);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.GltfModelResource> loadGltfByAssetName(String assetName);
@@ -919,9 +920,11 @@ package androidx.xr.runtime.internal {
     method public void setNormalZ(androidx.xr.runtime.internal.MaterialResource material, float normalZ);
     method public void setPreferredAspectRatio(android.app.Activity activity, float preferredRatio);
     method public void setReflectionMap(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.internal.TextureResource reflectionMap);
+    method public void setSpatialModeChangeListener(androidx.xr.runtime.internal.SpatialModeChangeListener);
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.runtime.internal.SpatialVisibility> listener);
     method public void startRenderer();
     method public void stopRenderer();
+    property public abstract androidx.xr.runtime.internal.SpatialModeChangeListener SpatialModeChangeListener;
     property public abstract androidx.xr.runtime.internal.ActivitySpace activitySpace;
     property public abstract androidx.xr.runtime.internal.Entity activitySpaceRootImpl;
     property public abstract androidx.xr.runtime.internal.AudioTrackExtensionsWrapper audioTrackExtensionsWrapper;
@@ -1249,7 +1252,7 @@ package androidx.xr.runtime.internal {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialCapabilities {
     ctor public SpatialCapabilities(int capabilities);
     method public int getCapabilities();
-    method public boolean hasCapability(@androidx.xr.runtime.internal.SpatialCapabilities.SpatialCapability int capability);
+    method public boolean hasCapability(int capability);
     property public int capabilities;
     field public static final androidx.xr.runtime.internal.SpatialCapabilities.Companion Companion;
     field public static final int SPATIAL_CAPABILITY_3D_CONTENT = 2; // 0x2
@@ -1267,31 +1270,6 @@ package androidx.xr.runtime.internal {
     property public static int SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL;
     property public static int SPATIAL_CAPABILITY_SPATIAL_AUDIO;
     property public static int SPATIAL_CAPABILITY_UI;
-  }
-
-  @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.SOURCE) public static @interface SpatialCapabilities.SpatialCapability {
-    field public static final androidx.xr.runtime.internal.SpatialCapabilities.SpatialCapability.Companion Companion;
-    field public static final int SPATIAL_CAPABILITY_3D_CONTENT = 2; // 0x2
-    field public static final int SPATIAL_CAPABILITY_APP_ENVIRONMENT = 8; // 0x8
-    field public static final int SPATIAL_CAPABILITY_EMBED_ACTIVITY = 32; // 0x20
-    field public static final int SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL = 4; // 0x4
-    field public static final int SPATIAL_CAPABILITY_SPATIAL_AUDIO = 16; // 0x10
-    field public static final int SPATIAL_CAPABILITY_UI = 1; // 0x1
-  }
-
-  public static final class SpatialCapabilities.SpatialCapability.Companion {
-    property public static int SPATIAL_CAPABILITY_3D_CONTENT;
-    property public static int SPATIAL_CAPABILITY_APP_ENVIRONMENT;
-    property public static int SPATIAL_CAPABILITY_EMBED_ACTIVITY;
-    property public static int SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL;
-    property public static int SPATIAL_CAPABILITY_SPATIAL_AUDIO;
-    property public static int SPATIAL_CAPABILITY_UI;
-    field public static final int SPATIAL_CAPABILITY_3D_CONTENT = 2; // 0x2
-    field public static final int SPATIAL_CAPABILITY_APP_ENVIRONMENT = 8; // 0x8
-    field public static final int SPATIAL_CAPABILITY_EMBED_ACTIVITY = 32; // 0x20
-    field public static final int SPATIAL_CAPABILITY_PASSTHROUGH_CONTROL = 4; // 0x4
-    field public static final int SPATIAL_CAPABILITY_SPATIAL_AUDIO = 16; // 0x10
-    field public static final int SPATIAL_CAPABILITY_UI = 1; // 0x1
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialEnvironment {
@@ -1351,6 +1329,10 @@ package androidx.xr.runtime.internal {
     property public androidx.xr.runtime.internal.MaterialResource? geometryMaterial;
     property public String? geometryMeshName;
     property public androidx.xr.runtime.internal.ExrImageResource? skybox;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public fun interface SpatialModeChangeListener {
+    method public void onSpatialModeChanged(androidx.xr.runtime.math.Pose recommendedPose, androidx.xr.runtime.math.Vector3 recommendedScale);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialPointerComponent extends androidx.xr.runtime.internal.Component {

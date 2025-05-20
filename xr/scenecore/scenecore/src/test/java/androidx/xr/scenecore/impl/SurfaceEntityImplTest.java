@@ -66,13 +66,14 @@ public final class SurfaceEntityImplTest {
         FakeImpressApi impressApi = new FakeImpressApi();
         int subspaceImpressNode = impressApi.createImpressNode();
         String subspaceName = "stereo_surface_panel_entity_subspace_" + subspaceImpressNode;
-        SubspaceNode subspaceNode = splitEngineSubspaceManager
-                .createSubspace(subspaceName, subspaceImpressNode);
+        SubspaceNode subspaceNode =
+                splitEngineSubspaceManager.createSubspace(subspaceName, subspaceImpressNode);
 
         EntityManager entityManager = new EntityManager();
         FakeScheduledExecutorService executor = new FakeScheduledExecutorService();
-        Entity parentEntity = new AndroidXrEntity(subspaceNode.getSubspaceNode(), xrExtensions,
-                entityManager, executor) {};
+        Entity parentEntity =
+                new AndroidXrEntity(
+                        subspaceNode.getSubspaceNode(), xrExtensions, entityManager, executor) {};
 
         int stereoMode = SurfaceEntity.StereoMode.MONO;
         SurfaceEntity.CanvasShape canvasShape = new SurfaceEntity.CanvasShape.Quad(1f, 1f);
