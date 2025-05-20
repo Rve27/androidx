@@ -105,6 +105,13 @@ package androidx.xr.compose.subspace {
 
 package androidx.xr.compose.subspace.layout {
 
+  public interface ParentLayoutParamsAdjustable {
+  }
+
+  public interface ParentLayoutParamsModifier {
+    method public void adjustParams(androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable params);
+  }
+
   public final class SpatialRoundedCornerShape extends androidx.xr.compose.subspace.layout.SpatialShape {
     ctor public SpatialRoundedCornerShape(androidx.compose.foundation.shape.CornerSize size);
   }

@@ -463,10 +463,10 @@ package androidx.xr.compose.subspace.layout {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SubspaceModifier padding(androidx.xr.compose.subspace.layout.SubspaceModifier, optional float left, optional float top, optional float right, optional float bottom, optional float front, optional float back);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface ParentLayoutParamsAdjustable {
+  public interface ParentLayoutParamsAdjustable {
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface ParentLayoutParamsModifier {
+  public interface ParentLayoutParamsModifier {
     method public void adjustParams(androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable params);
   }
 
