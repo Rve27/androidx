@@ -74,10 +74,12 @@ class CameraXAnalyticsTest(private val implName: String, private val cameraXConf
         CameraPipeConfigTestRule(active = implName == CameraPipeConfig::class.simpleName)
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private lateinit var cameraProvider: ProcessCameraProvider
+    private lateinit var cameraSelector: CameraSelector
     private var fakeLifecycleOwner = FakeLifecycleOwner()
 
     @Before
     fun setUp() = runBlocking {
+        cameraSelector = CameraUtil.assumeFirstAvailableCameraSelector()
         ProcessCameraProvider.configureInstance(cameraXConfig)
         cameraProvider = ProcessCameraProvider.awaitInstance(context)
         fakeLifecycleOwner.startAndResume()
@@ -92,7 +94,7 @@ class CameraXAnalyticsTest(private val implName: String, private val cameraXConf
 
     @Test
     fun captureRequestTagContainsAnalyticsPrefix(): Unit = runBlocking {
-        verifyCaptureRequestTagContainsAnalyticsPrefix(CameraSelector.DEFAULT_BACK_CAMERA)
+        verifyCaptureRequestTagContainsAnalyticsPrefix(cameraSelector)
     }
 
     suspend fun verifyCaptureRequestTagContainsAnalyticsPrefix(cameraSelector: CameraSelector) {
@@ -130,18 +132,10 @@ class CameraXAnalyticsTest(private val implName: String, private val cameraXConf
     @Test
     fun extensionsCaptureRequestTagContainsAnalyticsPrefix(): Unit = runBlocking {
         val extensionsManager = ExtensionsManager.getInstanceAsync(context, cameraProvider).await()
-        assumeTrue(
-            extensionsManager.isExtensionAvailable(
-                CameraSelector.DEFAULT_BACK_CAMERA,
-                ExtensionMode.NIGHT,
-            )
-        )
+        assumeTrue(extensionsManager.isExtensionAvailable(cameraSelector, ExtensionMode.NIGHT))
 
         val extensionCameraSelector =
-            extensionsManager.getExtensionEnabledCameraSelector(
-                CameraSelector.DEFAULT_BACK_CAMERA,
-                ExtensionMode.NIGHT,
-            )
+            extensionsManager.getExtensionEnabledCameraSelector(cameraSelector, ExtensionMode.NIGHT)
         verifyCaptureRequestTagContainsAnalyticsPrefix(extensionCameraSelector)
     }
 }

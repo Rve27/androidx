@@ -86,7 +86,7 @@ class Camera2InteropIntegrationTest(val implName: String, val cameraConfig: Came
         CameraUtil.grantCameraPermissionAndPreTestAndPostTest(PreTestCameraIdList(cameraConfig))
 
     private var processCameraProvider: ProcessCameraProvider? = null
-    private val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private lateinit var cameraSelector: CameraSelector
     lateinit var captureCallback: Camera2InteropUtil.CaptureCallback
 
     companion object {
@@ -102,6 +102,9 @@ class Camera2InteropIntegrationTest(val implName: String, val cameraConfig: Came
     @Before
     fun setUp() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
+
+        cameraSelector = CameraUtil.assumeFirstAvailableCameraSelector()
+
         // Configures the test target config
         ProcessCameraProvider.configureInstance(cameraConfig)
         processCameraProvider = ProcessCameraProvider.awaitInstance(context)

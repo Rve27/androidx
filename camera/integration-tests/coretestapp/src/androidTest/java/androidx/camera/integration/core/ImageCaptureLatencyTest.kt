@@ -41,7 +41,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Assert.assertTrue
-import org.junit.Assume
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -83,6 +82,7 @@ class ImageCaptureLatencyTest(
     private lateinit var camera: CameraUseCaseAdapter
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var fakeLifecycleOwner: FakeLifecycleOwner
+    private lateinit var defaultCameraSelector: CameraSelector
 
     companion object {
         private const val TAG = "ImageCaptureLatencyTest"
@@ -98,7 +98,7 @@ class ImageCaptureLatencyTest(
 
     @Before
     fun setUp() = runBlocking {
-        Assume.assumeTrue(CameraUtil.hasCameraWithLensFacing(CameraSelector.LENS_FACING_BACK))
+        defaultCameraSelector = CameraUtil.assumeFirstAvailableCameraSelector()
         ProcessCameraProvider.configureInstance(cameraXConfig)
         cameraProvider = ProcessCameraProvider.getInstance(context).get(10, TimeUnit.SECONDS)
 
@@ -135,11 +135,7 @@ class ImageCaptureLatencyTest(
         val imageCapture = ImageCapture.Builder().setCaptureMode(captureMode).build()
 
         camera =
-            CameraUtil.createCameraAndAttachUseCase(
-                context,
-                CameraSelector.Builder().requireLensFacing(CameraSelector.LENS_FACING_BACK).build(),
-                imageCapture,
-            )
+            CameraUtil.createCameraAndAttachUseCase(context, defaultCameraSelector, imageCapture)
 
         // Skip if capture mode is ZSL and the device doesn't support ZSL
         if (

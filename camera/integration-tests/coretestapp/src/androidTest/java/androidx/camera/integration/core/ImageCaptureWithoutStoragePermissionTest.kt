@@ -50,8 +50,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
-private val BACK_SELECTOR = CameraSelector.DEFAULT_BACK_CAMERA
-private const val BACK_LENS_FACING = CameraSelector.LENS_FACING_BACK
 private const val CAPTURE_TIMEOUT = 15_000.toLong() //  15 seconds
 
 @LargeTest
@@ -86,10 +84,11 @@ class ImageCaptureWithoutStoragePermissionTest(
     private val defaultBuilder = ImageCapture.Builder()
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var fakeLifecycleOwner: FakeLifecycleOwner
+    private lateinit var defaultCameraSelector: CameraSelector
 
     @Before
     fun setUp(): Unit = runBlocking {
-        Assume.assumeTrue(CameraUtil.hasCameraWithLensFacing(BACK_LENS_FACING))
+        defaultCameraSelector = CameraUtil.assumeFirstAvailableCameraSelector()
         createDefaultPictureFolderIfNotExist()
         ProcessCameraProvider.configureInstance(cameraXConfig)
         cameraProvider = ProcessCameraProvider.getInstance(context)[10, TimeUnit.SECONDS]
@@ -116,7 +115,7 @@ class ImageCaptureWithoutStoragePermissionTest(
         // Arrange.
         val useCase = defaultBuilder.build()
         withContext(Dispatchers.Main) {
-            cameraProvider.bindToLifecycle(fakeLifecycleOwner, BACK_SELECTOR, useCase)
+            cameraProvider.bindToLifecycle(fakeLifecycleOwner, defaultCameraSelector, useCase)
         }
 
         val contentValues = ContentValues()
