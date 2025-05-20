@@ -67,6 +67,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @SmallTest
 @RunWith(AndroidJUnit4.class)
@@ -327,7 +329,8 @@ public class LifecycleCameraTest {
     }
 
     @Test
-    public void bindSessionConfig_withUnsupportedPreferredFeatures_correctFeaturesNotified() {
+    public void bindSessionConfig_withUnsupportedPreferredFeatures_correctFeaturesNotified()
+            throws InterruptedException {
         // Arrange: Set up resources; HLG10, FPS_60, and PREVIEW_STABILIZATION are supported
         //   features while Ultra HDR is unsupported by the default behavior of fake surface manager
         mLifecycleCamera = new LifecycleCamera(mLifecycleOwner, mCameraUseCaseAdapter);
@@ -340,10 +343,14 @@ public class LifecycleCameraTest {
                         .setPreferredFeatures(FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR)
                         .build();
 
+        CountDownLatch latch = new CountDownLatch(1);
         Set<Feature> selectedFeatures = new HashSet<>();
 
         sessionConfig.setFeatureSelectionListener(CameraXExecutors.mainThreadExecutor(),
-                selectedFeatures::addAll);
+                features -> {
+                    selectedFeatures.addAll(features);
+                    latch.countDown();
+                });
 
         // Act
         Threads.runOnMainSync(() -> {
@@ -355,6 +362,7 @@ public class LifecycleCameraTest {
         });
 
         // Assert: All the features except Ultra HDR are selected.
+        assertThat(latch.await(2, TimeUnit.SECONDS)).isTrue();
         assertThat(selectedFeatures).containsExactly(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION);
     }
 
