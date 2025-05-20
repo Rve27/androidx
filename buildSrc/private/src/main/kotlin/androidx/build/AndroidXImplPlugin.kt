@@ -120,6 +120,7 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.gradle.plugin.devel.tasks.ValidatePlugins
 import org.gradle.process.CommandLineArgumentProvider
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -128,6 +129,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -665,7 +668,34 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
         project.disableStrictVersionConstraints()
         project.configureJavaCompilationWarnings(androidXExtension)
         project.setUpCheckDocsTask(androidXExtension)
+        project.enforceDeviceTestsForMultiplatform()
     }
+
+    // Sets up android instrumented tests and includes common tests regardless of if they have
+    // been explicitly configured.
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    private fun Project.enforceDeviceTestsForMultiplatform() {
+        project.multiplatformExtension?.let {
+            it.targets.withType(KotlinAndroidTarget::class.java).configureEach { androidTarget ->
+                androidTarget.instrumentedTestVariant {
+                    sourceSetTree.set(KotlinSourceSetTree.test)
+                }
+            }
+            val commonTestSourceSet = it.sourceSets.getByName("commonTest")
+            val androidInstrumentedTestSourceSet =
+                it.sourceSets.getByName("androidInstrumentedTest")
+            val commonTestFilesExist = commonTestSourceSet.kotlin.files.isNotEmpty()
+            if (commonTestFilesExist) {
+                androidInstrumentedTestSourceSet.dependsOn(commonTestSourceSet)
+                androidInstrumentedTestSourceSet.dependencies {
+                    implementation(getLibraryByName("testRunner"))
+                }
+            }
+        }
+    }
+
+    private fun KotlinSourceSet.includesSourceSet(otherName: String): Boolean =
+        name == otherName || dependsOn.any { it.includesSourceSet(otherName) }
 
     private fun AarMetadata.configure(compileSdk: Int?) {
         // Taken from
