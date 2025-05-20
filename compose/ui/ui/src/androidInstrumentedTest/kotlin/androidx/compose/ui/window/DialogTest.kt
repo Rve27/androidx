@@ -20,11 +20,11 @@ import android.os.Build
 import android.util.DisplayMetrics
 import android.view.Gravity
 import android.view.KeyEvent
-import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import android.view.Window
+import android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
@@ -881,6 +881,34 @@ class DialogTest {
         }
         rule.runOnIdle {
             @Suppress("DEPRECATION") assertThat(window.statusBarColor).isEqualTo(Color.Red.toArgb())
+        }
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = 28)
+    fun fullScreenDialogDrawsBehindDisplayCutout() {
+        lateinit var window: Window
+        rule.setContent {
+            Dialog(
+                properties =
+                    DialogProperties(
+                        decorFitsSystemWindows = false,
+                        usePlatformDefaultWidth = false,
+                    ),
+                onDismissRequest = {},
+            ) {
+                var parent = LocalView.current
+                while (parent !is DialogWindowProvider) {
+                    parent = parent.parent as View
+                }
+                window = (parent as DialogWindowProvider).window
+                Box(Modifier.fillMaxSize())
+            }
+        }
+
+        rule.runOnIdle {
+            assertThat(window.attributes.layoutInDisplayCutoutMode)
+                .isEqualTo(LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS)
         }
     }
 
