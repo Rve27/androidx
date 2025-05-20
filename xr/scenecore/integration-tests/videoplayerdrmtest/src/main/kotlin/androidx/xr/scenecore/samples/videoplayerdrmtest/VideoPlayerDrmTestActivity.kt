@@ -83,6 +83,8 @@ import kotlinx.coroutines.launch
 
 /** Test app for integrated Drm functionality. */
 class VideoPlayerDrmTestActivity : ComponentActivity() {
+    private val TAG = "VideoPlayerDrmTestActivity"
+
     private var exoPlayer: ExoPlayer? = null
     private val activity = this
 
@@ -100,11 +102,12 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
 
     private val pickMedia =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            Log.i("VideoPlayerDrmTestActivity", "Media Selected")
+            Log.i(TAG, "Media Selected")
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i(TAG, "onCreate")
 
         val session = (Session.create(this) as SessionCreateSuccess).session
         session.resume()
@@ -140,7 +143,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
     private fun togglePassthrough(session: Session) {
         val passthroughOpacity: Float =
             session.scene.spatialEnvironment.getCurrentPassthroughOpacity()
-        Log.i("TogglePassthrough", "TogglePassthrough!")
+        Log.i(TAG, "TogglePassthrough!")
         when (passthroughOpacity) {
             0.0f -> session.scene.spatialEnvironment.setPassthroughOpacityPreference(1.0f)
             1.0f -> session.scene.spatialEnvironment.setPassthroughOpacityPreference(0.0f)
@@ -216,6 +219,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
     }
 
     fun destroySurfaceEntity() {
+        Log.i(TAG, "destroySurfaceEntity")
         videoPlaying = false
         exoPlayer?.release()
         exoPlayer = null
@@ -248,6 +252,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
         loop: Boolean = true,
         protected: Boolean = false,
     ) {
+        Log.i(TAG, "playVideo: $videoUri $protected")
         if (surfaceEntity == null) {
             val surfaceContentLevel =
                 if (protected) {
@@ -316,16 +321,16 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 }
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
+                    Log.i(TAG, "onPlaybackStateChanged: $playbackState")
                     // Update videoPlaying based on ExoPlayer's isPlaying property.
                     videoPlaying = exoPlayer?.isPlaying ?: false // Use safe call and elvis operator
-
                     if (playbackState == Player.STATE_ENDED) {
                         destroySurfaceEntity()
                     }
                 }
 
                 override fun onPlayerError(error: PlaybackException) {
-                    Log.e("VideoPlayerDrmTestActivity", "Player error: $error")
+                    Log.e(TAG, "Player error: $error")
                 }
             }
         )
@@ -397,6 +402,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
     ) {
         val file = File(videoUri)
         if (!file.exists()) {
+            Log.e(TAG, "File ($videoUri) does not exist. Did you download all the assets?")
             Toast.makeText(
                     activity,
                     "File ($videoUri) does not exist. Did you download all the assets?",
@@ -427,6 +433,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
         val file = File(videoUri)
         var enabled = true
         if (!file.exists()) {
+            Log.e(TAG, "File ($videoUri) does not exist. Did you download all the assets?")
             Toast.makeText(
                     activity,
                     "File ($videoUri) does not exist. Did you download all the assets?",
@@ -466,15 +473,18 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 },
             onClick = {
                 if (!videoPlaying) {
+                    Log.i(TAG, "(No Video Playing) Play Non-Drm Video")
                     playVideoAction()
                 } else {
                     destroySurfaceEntity()
                     if (queueWithDelay) {
+                        Log.i(TAG, "(Video Playing) Queue Non-Drm Video")
                         lifecycleScope.launch {
                             delay(300)
                             playVideoAction()
                         }
                     } else {
+                        Log.i(TAG, "Immediate Queue Non-Drm Video")
                         playVideoAction()
                     }
                 }
@@ -510,15 +520,18 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 },
             onClick = {
                 if (!videoPlaying) {
+                    Log.i(TAG, "(No Video Playing) Play Drm Video")
                     playVideoAction()
                 } else {
                     destroySurfaceEntity()
                     if (queueWithDelay) {
+                        Log.i(TAG, "Queue Drm Video")
                         lifecycleScope.launch {
                             delay(300)
                             playVideoAction()
                         }
                     } else {
+                        Log.i(TAG, "Immediate Queue Drm Video")
                         playVideoAction()
                     }
                 }
