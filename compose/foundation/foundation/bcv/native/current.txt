@@ -184,7 +184,7 @@ abstract interface androidx.compose.foundation.gestures/Scrollable2DState { // a
     abstract val isScrollInProgress // androidx.compose.foundation.gestures/Scrollable2DState.isScrollInProgress|{}isScrollInProgress[0]
         abstract fun <get-isScrollInProgress>(): kotlin/Boolean // androidx.compose.foundation.gestures/Scrollable2DState.isScrollInProgress.<get-isScrollInProgress>|<get-isScrollInProgress>(){}[0]
 
-    abstract fun canScroll(kotlin/Float): kotlin/Boolean // androidx.compose.foundation.gestures/Scrollable2DState.canScroll|canScroll(kotlin.Float){}[0]
+    abstract fun canScroll(androidx.compose.ui.geometry/Offset): kotlin/Boolean // androidx.compose.foundation.gestures/Scrollable2DState.canScroll|canScroll(androidx.compose.ui.geometry.Offset){}[0]
     abstract fun dispatchRawDelta(androidx.compose.ui.geometry/Offset): androidx.compose.ui.geometry/Offset // androidx.compose.foundation.gestures/Scrollable2DState.dispatchRawDelta|dispatchRawDelta(androidx.compose.ui.geometry.Offset){}[0]
     abstract suspend fun scroll(androidx.compose.foundation/MutatePriority = ..., kotlin.coroutines/SuspendFunction1<androidx.compose.foundation.gestures/Scroll2DScope, kotlin/Unit>) // androidx.compose.foundation.gestures/Scrollable2DState.scroll|scroll(androidx.compose.foundation.MutatePriority;kotlin.coroutines.SuspendFunction1<androidx.compose.foundation.gestures.Scroll2DScope,kotlin.Unit>){}[0]
 }
@@ -1465,7 +1465,6 @@ final val androidx.compose.foundation/LocalIndication // androidx.compose.founda
 final val androidx.compose.foundation/LocalOverscrollFactory // androidx.compose.foundation/LocalOverscrollFactory|{}LocalOverscrollFactory[0]
     final fun <get-LocalOverscrollFactory>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.foundation/OverscrollFactory?> // androidx.compose.foundation/LocalOverscrollFactory.<get-LocalOverscrollFactory>|<get-LocalOverscrollFactory>(){}[0]
 
-final fun (androidx.compose.foundation.gestures/Scrollable2DState).androidx.compose.foundation.gestures/canScroll(androidx.compose.ui.geometry/Offset): kotlin/Boolean // androidx.compose.foundation.gestures/canScroll|canScroll@androidx.compose.foundation.gestures.Scrollable2DState(androidx.compose.ui.geometry.Offset){}[0]
 final fun (androidx.compose.foundation.interaction/InteractionSource).androidx.compose.foundation.interaction/collectIsDraggedAsState(): androidx.compose.runtime/State<kotlin/Boolean> // androidx.compose.foundation.interaction/collectIsDraggedAsState|collectIsDraggedAsState@androidx.compose.foundation.interaction.InteractionSource(){}[0]
 final fun (androidx.compose.foundation.interaction/InteractionSource).androidx.compose.foundation.interaction/collectIsFocusedAsState(): androidx.compose.runtime/State<kotlin/Boolean> // androidx.compose.foundation.interaction/collectIsFocusedAsState|collectIsFocusedAsState@androidx.compose.foundation.interaction.InteractionSource(){}[0]
 final fun (androidx.compose.foundation.interaction/InteractionSource).androidx.compose.foundation.interaction/collectIsHoveredAsState(): androidx.compose.runtime/State<kotlin/Boolean> // androidx.compose.foundation.interaction/collectIsHoveredAsState|collectIsHoveredAsState@androidx.compose.foundation.interaction.InteractionSource(){}[0]

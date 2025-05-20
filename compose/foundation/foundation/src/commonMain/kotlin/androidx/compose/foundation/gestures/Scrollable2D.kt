@@ -356,7 +356,8 @@ private class ScrollingLogic2D(
 
     fun shouldDispatchOverscroll(offset: Offset) = scrollableState.canScroll(offset)
 
-    fun shouldDispatchOverscroll(velocity: Velocity) = scrollableState.canScroll(velocity.angle)
+    fun shouldDispatchOverscroll(velocity: Velocity) =
+        scrollableState.canScroll(Offset(velocity.x, velocity.y))
 
     override fun performRawScroll(scroll: Offset): Offset {
         return if (scrollableState.isScrollInProgress) {

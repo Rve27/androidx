@@ -623,7 +623,6 @@ package androidx.compose.foundation.gestures {
   public final class ScrollExtensionsKt {
     method public static suspend Object? animateScrollBy(androidx.compose.foundation.gestures.Scrollable2DState, long value, optional androidx.compose.animation.core.AnimationSpec<androidx.compose.ui.geometry.Offset> animationSpec, kotlin.coroutines.Continuation<? super androidx.compose.ui.geometry.Offset>);
     method public static suspend Object? animateScrollBy(androidx.compose.foundation.gestures.ScrollableState, float value, optional androidx.compose.animation.core.AnimationSpec<java.lang.Float> animationSpec, kotlin.coroutines.Continuation<? super java.lang.Float>);
-    method public static boolean canScroll(androidx.compose.foundation.gestures.Scrollable2DState, long offset);
     method public static suspend Object? scrollBy(androidx.compose.foundation.gestures.Scrollable2DState, long value, kotlin.coroutines.Continuation<? super androidx.compose.ui.geometry.Offset>);
     method public static suspend Object? scrollBy(androidx.compose.foundation.gestures.ScrollableState, float value, kotlin.coroutines.Continuation<? super java.lang.Float>);
     method public static suspend Object? stopScroll(androidx.compose.foundation.gestures.Scrollable2DState, optional androidx.compose.foundation.MutatePriority scrollPriority, kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -639,7 +638,7 @@ package androidx.compose.foundation.gestures {
   }
 
   public interface Scrollable2DState {
-    method public boolean canScroll(float angle);
+    method public boolean canScroll(long offset);
     method public long dispatchRawDelta(long delta);
     method public boolean isScrollInProgress();
     method public suspend Object? scroll(optional androidx.compose.foundation.MutatePriority scrollPriority, kotlin.jvm.functions.Function2<? super androidx.compose.foundation.gestures.Scroll2DScope,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super kotlin.Unit>);
