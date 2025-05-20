@@ -501,6 +501,93 @@ class SwipeToRevealTest {
     }
 
     @Test
+    fun onPartialSwipeRight_lastStateRevealing_resetsLastState() {
+        verifyStateMultipleSwipeToReveal(
+            actions = { revealStateOne, revealStateTwo, density ->
+                // swipe the first S2R to Revealing state
+                rule.onNodeWithTag(SWIPE_TO_REVEAL_TAG).performTouchInput {
+                    swipeRightToRevealing(density)
+                }
+
+                // swipe the second S2R to Revealing state
+                rule.onNodeWithTag(SWIPE_TO_REVEAL_SECOND_TAG).performTouchInput {
+                    swipeRightToRevealing(density)
+                }
+            },
+            revealDirection = Bidirectional,
+            assertions = { revealStateOne, revealStateTwo ->
+                assertEquals(Covered, revealStateOne.currentValue)
+                assertEquals(LeftRevealing, revealStateTwo.currentValue)
+            },
+        )
+    }
+
+    @Test
+    fun onPartialSwipeRight_whenLastStateRevealed_doesNotReset() {
+        verifyStateMultipleSwipeToReveal(
+            actions = { revealStateOne, revealStateTwo, density ->
+                // swipe the first S2R to Revealed (full screen swipe)
+                rule.onNodeWithTag(SWIPE_TO_REVEAL_TAG).performTouchInput { swipeRight() }
+
+                // swipe the second S2R to Revealing state
+                rule.onNodeWithTag(SWIPE_TO_REVEAL_SECOND_TAG).performTouchInput {
+                    swipeRightToRevealing(density)
+                }
+            },
+            revealDirection = Bidirectional,
+            assertions = { revealStateOne, revealStateTwo ->
+                // assert that state does not reset
+                assertEquals(LeftRevealed, revealStateOne.currentValue)
+                assertEquals(LeftRevealing, revealStateTwo.currentValue)
+            },
+        )
+    }
+
+    @Test
+    fun onPartialSwipeRightAndLeft_differentComponents_lastOneGetsReset() {
+        verifyStateMultipleSwipeToReveal(
+            actions = { revealStateOne, revealStateTwo, density ->
+                // swipe the first S2R to Revealing state
+                rule.onNodeWithTag(SWIPE_TO_REVEAL_TAG).performTouchInput {
+                    swipeRightToRevealing(density)
+                }
+
+                // swipe the second S2R to Revealing state
+                rule.onNodeWithTag(SWIPE_TO_REVEAL_SECOND_TAG).performTouchInput {
+                    swipeLeftToRevealing(density)
+                }
+            },
+            revealDirection = Bidirectional,
+            assertions = { revealStateOne, revealStateTwo ->
+                assertEquals(Covered, revealStateOne.currentValue)
+                assertEquals(RightRevealing, revealStateTwo.currentValue)
+            },
+        )
+    }
+
+    @Test
+    fun onPartialSwipeLeftAndRight_differentComponents_lastOneGetsReset() {
+        verifyStateMultipleSwipeToReveal(
+            actions = { revealStateOne, revealStateTwo, density ->
+                // swipe the first S2R to Revealing state
+                rule.onNodeWithTag(SWIPE_TO_REVEAL_TAG).performTouchInput {
+                    swipeLeftToRevealing(density)
+                }
+
+                // swipe the second S2R to Revealing state
+                rule.onNodeWithTag(SWIPE_TO_REVEAL_SECOND_TAG).performTouchInput {
+                    swipeRightToRevealing(density)
+                }
+            },
+            revealDirection = Bidirectional,
+            assertions = { revealStateOne, revealStateTwo ->
+                assertEquals(Covered, revealStateOne.currentValue)
+                assertEquals(LeftRevealing, revealStateTwo.currentValue)
+            },
+        )
+    }
+
+    @Test
     fun onMultiSnap_differentComponents_lastOneGetsReset() {
         verifyStateMultipleSwipeToReveal(
             actionsSuspended = { revealStateOne, revealStateTwo, density ->
@@ -511,6 +598,7 @@ class SwipeToRevealTest {
             },
             assertions = { revealStateOne, revealStateTwo ->
                 assertEquals(Covered, revealStateOne.currentValue)
+                assertEquals(RightRevealing, revealStateTwo.currentValue)
             },
         )
     }
@@ -525,6 +613,72 @@ class SwipeToRevealTest {
             },
             assertions = { revealStateOne, revealStateTwo ->
                 assertEquals(lastValue, revealStateOne.currentValue)
+            },
+        )
+    }
+
+    @Test
+    fun onMultiSnapRight_differentComponents_lastOneGetsReset() {
+        verifyStateMultipleSwipeToReveal(
+            actionsSuspended = { revealStateOne, revealStateTwo, density ->
+                // First change
+                revealStateOne.snapTo(LeftRevealing)
+                // Second change, in a different component
+                revealStateTwo.snapTo(LeftRevealing)
+            },
+            revealDirection = Bidirectional,
+            assertions = { revealStateOne, revealStateTwo ->
+                assertEquals(Covered, revealStateOne.currentValue)
+                assertEquals(LeftRevealing, revealStateTwo.currentValue)
+            },
+        )
+    }
+
+    @Test
+    fun onMultiSnapRight_sameComponents_doesNotReset() {
+        val lastValue = LeftRevealed
+        verifyStateMultipleSwipeToReveal(
+            actionsSuspended = { revealStateOne, revealStateTwo, density ->
+                revealStateOne.snapTo(LeftRevealing) // First change
+                revealStateOne.snapTo(lastValue) // Second change, same component
+            },
+            revealDirection = Bidirectional,
+            assertions = { revealStateOne, revealStateTwo ->
+                assertEquals(lastValue, revealStateOne.currentValue)
+            },
+        )
+    }
+
+    @Test
+    fun onMultiSnapRightAndLeft_differentComponents_lastOneGetsReset() {
+        verifyStateMultipleSwipeToReveal(
+            actionsSuspended = { revealStateOne, revealStateTwo, density ->
+                // First change
+                revealStateOne.snapTo(RightRevealing)
+                // Second change, in a different component
+                revealStateTwo.snapTo(LeftRevealing)
+            },
+            revealDirection = Bidirectional,
+            assertions = { revealStateOne, revealStateTwo ->
+                assertEquals(Covered, revealStateOne.currentValue)
+                assertEquals(LeftRevealing, revealStateTwo.currentValue)
+            },
+        )
+    }
+
+    @Test
+    fun onMultiSnapLeftAndRight_differentComponents_lastOneGetsReset() {
+        verifyStateMultipleSwipeToReveal(
+            actionsSuspended = { revealStateOne, revealStateTwo, density ->
+                // First change
+                revealStateOne.snapTo(LeftRevealing)
+                // Second change, in a different component
+                revealStateTwo.snapTo(RightRevealing)
+            },
+            revealDirection = Bidirectional,
+            assertions = { revealStateOne, revealStateTwo ->
+                assertEquals(Covered, revealStateOne.currentValue)
+                assertEquals(RightRevealing, revealStateTwo.currentValue)
             },
         )
     }
@@ -732,6 +886,7 @@ class SwipeToRevealTest {
                 revealStateOne: RevealState, revealStateTwo: RevealState, density: Float,
             ) -> Unit)? =
             null,
+        revealDirection: RevealDirection = RightToLeft,
         assertions: (revealStateOne: RevealState, revealStateTwo: RevealState) -> Unit,
     ) {
         lateinit var revealStateOne: RevealState
@@ -746,10 +901,12 @@ class SwipeToRevealTest {
                     SwipeToRevealWithDefaults(
                         modifier = Modifier.testTag(SWIPE_TO_REVEAL_TAG),
                         revealState = revealStateOne,
+                        revealDirection = revealDirection,
                     )
                     SwipeToRevealWithDefaults(
                         modifier = Modifier.testTag(SWIPE_TO_REVEAL_SECOND_TAG),
                         revealState = revealStateTwo,
+                        revealDirection = revealDirection,
                     )
                 }
             }
@@ -850,6 +1007,11 @@ class SwipeToRevealTest {
     private fun TouchInjectionScope.swipeLeftToRevealing(density: Float) {
         val singleActionAnchorWidthPx = SingleActionAnchorWidth.value * density
         swipeLeft(startX = right, endX = right - (singleActionAnchorWidthPx * 0.75f))
+    }
+
+    private fun TouchInjectionScope.swipeRightToRevealing(density: Float) {
+        val singleActionAnchorWidthPx = SingleActionAnchorWidth.value * density
+        swipeRight(startX = left, endX = left + (singleActionAnchorWidthPx * 0.75f))
     }
 
     companion object {

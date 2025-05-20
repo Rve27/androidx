@@ -850,7 +850,11 @@ public class RevealState(initialValue: RevealValue) {
      */
     internal suspend fun resetLastState(currentState: RevealState) {
         val oldState = SingleSwipeCoordinator.lastUpdatedState.getAndSet(currentState)
-        if (currentState != oldState && oldState?.currentValue == RightRevealing) {
+        if (
+            currentState != oldState &&
+                (oldState?.currentValue == RightRevealing ||
+                    oldState?.currentValue == LeftRevealing)
+        ) {
             oldState.animateTo(Covered)
         }
     }
