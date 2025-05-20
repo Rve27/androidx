@@ -63,6 +63,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -223,10 +224,13 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
             .assertIsDisplayed()
             .assert(SemanticsMatcher.hasChild())
 
-        val newSurfaceRequest = surfaceRequests.filterNotNull().first()
+        val newSurfaceRequest =
+            withTimeoutOrNull(timeout = 5.seconds) {
+                surfaceRequests.filterNotNull().first { it != firstSurfaceRequest }
+            }
 
         // A new surface request should have been created since the old one was invalidated
-        assertThat(newSurfaceRequest).isNotEqualTo(firstSurfaceRequest)
+        assertThat(newSurfaceRequest).isNotNull()
     }
 
     companion object {
