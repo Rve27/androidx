@@ -20,6 +20,7 @@ package androidx.health.connect.client.impl.converters.records
 import androidx.annotation.RestrictTo
 import androidx.health.connect.client.feature.ExperimentalMindfulnessSessionApi
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
+import androidx.health.connect.client.records.ActivityIntensityRecord
 import androidx.health.connect.client.records.BasalBodyTemperatureRecord
 import androidx.health.connect.client.records.BasalMetabolicRateRecord
 import androidx.health.connect.client.records.BloodGlucoseRecord
@@ -86,6 +87,20 @@ import java.time.Instant
 fun toRecord(proto: DataProto.DataPoint): Record =
     with(proto) {
         when (dataType.name) {
+            "ActivityIntensity" ->
+                ActivityIntensityRecord(
+                    activityIntensityType =
+                        mapEnum(
+                            "activityIntensityType",
+                            ActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_STRING_TO_INT_MAP,
+                            ActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_MODERATE,
+                        ),
+                    startTime = startTime,
+                    startZoneOffset = startZoneOffset,
+                    endTime = endTime,
+                    endZoneOffset = endZoneOffset,
+                    metadata = metadata,
+                )
             "BasalBodyTemperature" ->
                 BasalBodyTemperatureRecord(
                     temperature = getDouble("temperature").celsius,

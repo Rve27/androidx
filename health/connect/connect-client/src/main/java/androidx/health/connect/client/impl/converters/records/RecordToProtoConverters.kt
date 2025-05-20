@@ -20,6 +20,7 @@ package androidx.health.connect.client.impl.converters.records
 import androidx.annotation.RestrictTo
 import androidx.health.connect.client.feature.ExperimentalMindfulnessSessionApi
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
+import androidx.health.connect.client.records.ActivityIntensityRecord
 import androidx.health.connect.client.records.BasalBodyTemperatureRecord
 import androidx.health.connect.client.records.BasalMetabolicRateRecord
 import androidx.health.connect.client.records.BloodGlucoseRecord
@@ -72,6 +73,18 @@ import androidx.health.platform.client.proto.DataProto
 @OptIn(ExperimentalMindfulnessSessionApi::class)
 fun Record.toProto(): DataProto.DataPoint =
     when (this) {
+        is ActivityIntensityRecord ->
+            intervalProto()
+                .setDataType(protoDataType("ActivityIntensity"))
+                .apply {
+                    val activityIntensityType =
+                        enumValFromInt(
+                            activityIntensityType,
+                            ActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_INT_TO_STRING_MAP,
+                        ) ?: enumVal("moderate")
+                    putValues("activityIntensityType", activityIntensityType)
+                }
+                .build()
         is BasalBodyTemperatureRecord ->
             instantaneousProto()
                 .setDataType(protoDataType("BasalBodyTemperature"))

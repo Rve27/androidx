@@ -22,6 +22,7 @@ import android.os.Build
 import androidx.health.connect.client.RECORD_CLASSES
 import androidx.health.connect.client.feature.ExperimentalMindfulnessSessionApi
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
+import androidx.health.connect.client.records.ActivityIntensityRecord
 import androidx.health.connect.client.records.BasalBodyTemperatureRecord
 import androidx.health.connect.client.records.BasalMetabolicRateRecord
 import androidx.health.connect.client.records.BloodGlucoseRecord
@@ -78,6 +79,7 @@ import androidx.health.connect.client.records.WeightRecord
 import androidx.health.connect.client.records.WheelchairPushesRecord
 import androidx.health.connect.client.records.isAtLeastSdkExtension13
 import androidx.health.connect.client.records.isAtLeastSdkExtension15
+import androidx.health.connect.client.records.isAtLeastSdkExtension16
 import androidx.health.connect.client.records.metadata.DataOrigin
 import androidx.health.connect.client.records.metadata.Device
 import androidx.health.connect.client.records.metadata.Metadata
@@ -686,6 +688,50 @@ class RecordConvertersTest {
         assertPlatformRecord(platformMindfulnessSessionRecord) {
             assertThat(mindfulnessSessionType)
                 .isEqualTo(PlatformMindfulnessSessionRecord.MINDFULNESS_SESSION_TYPE_UNKNOWN)
+        }
+    }
+
+    @SuppressLint("NewApi") // Using assumeTrue to only run on the new API version
+    @Test
+    fun activityIntensityRecord_vigorousType_convertToPlatform() {
+        assumeTrue(isAtLeastSdkExtension16())
+        val platformActivityIntensityRecord =
+            ActivityIntensityRecord(
+                    startTime = START_TIME,
+                    startZoneOffset = START_ZONE_OFFSET,
+                    endTime = END_TIME,
+                    endZoneOffset = END_ZONE_OFFSET,
+                    metadata = METADATA,
+                    activityIntensityType =
+                        ActivityIntensityRecord.Companion.ACTIVITY_INTENSITY_TYPE_VIGOROUS,
+                )
+                .toPlatformRecord() as PlatformActivityIntensityRecord
+
+        assertPlatformRecord(platformActivityIntensityRecord) {
+            assertThat(activityIntensityType)
+                .isEqualTo(PlatformActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_VIGOROUS)
+        }
+    }
+
+    @SuppressLint("NewApi") // Using assumeTrue to only run on the new API version
+    @Test
+    fun activityIntensityRecord_moderateType_convertToPlatform() {
+        assumeTrue(isAtLeastSdkExtension16())
+        val platformActivityIntensityRecord =
+            ActivityIntensityRecord(
+                    startTime = START_TIME,
+                    startZoneOffset = START_ZONE_OFFSET,
+                    endTime = END_TIME,
+                    endZoneOffset = END_ZONE_OFFSET,
+                    metadata = METADATA,
+                    activityIntensityType =
+                        ActivityIntensityRecord.Companion.ACTIVITY_INTENSITY_TYPE_MODERATE,
+                )
+                .toPlatformRecord() as PlatformActivityIntensityRecord
+
+        assertPlatformRecord(platformActivityIntensityRecord) {
+            assertThat(activityIntensityType)
+                .isEqualTo(PlatformActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_MODERATE)
         }
     }
 
@@ -2042,6 +2088,52 @@ class RecordConvertersTest {
             assertThat(notes).isEqualTo("Improve breathing")
             assertThat(mindfulnessSessionType)
                 .isEqualTo(MindfulnessSessionRecord.MINDFULNESS_SESSION_TYPE_UNKNOWN)
+        }
+    }
+
+    @SuppressLint("NewApi") // Using assumeTrue to only run on the new API version
+    @Test
+    fun activityIntensityRecord_vigorousType_convertToSdk() {
+        assumeTrue(isAtLeastSdkExtension16())
+        val platformActivityIntensityRecordBuilder =
+            PlatformActivityIntensityRecordBuilder(
+                    PLATFORM_METADATA,
+                    START_TIME,
+                    END_TIME,
+                    PlatformActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_VIGOROUS,
+                )
+                .setStartZoneOffset(START_ZONE_OFFSET)
+                .setEndZoneOffset(END_ZONE_OFFSET)
+
+        var sdkActivityIntensityRecord =
+            platformActivityIntensityRecordBuilder.build().toSdkRecord() as ActivityIntensityRecord
+
+        assertSdkRecord(sdkActivityIntensityRecord) {
+            assertThat(activityIntensityType)
+                .isEqualTo(ActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_VIGOROUS)
+        }
+    }
+
+    @SuppressLint("NewApi") // Using assumeTrue to only run on the new API version
+    @Test
+    fun activityIntensityRecord_moderateType_convertToSdk() {
+        assumeTrue(isAtLeastSdkExtension16())
+        val platformActivityIntensityRecordBuilder =
+            PlatformActivityIntensityRecordBuilder(
+                    PLATFORM_METADATA,
+                    START_TIME,
+                    END_TIME,
+                    PlatformActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_MODERATE,
+                )
+                .setStartZoneOffset(START_ZONE_OFFSET)
+                .setEndZoneOffset(END_ZONE_OFFSET)
+
+        var sdkActivityIntensityRecord =
+            platformActivityIntensityRecordBuilder.build().toSdkRecord() as ActivityIntensityRecord
+
+        assertSdkRecord(sdkActivityIntensityRecord) {
+            assertThat(activityIntensityType)
+                .isEqualTo(ActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_MODERATE)
         }
     }
 

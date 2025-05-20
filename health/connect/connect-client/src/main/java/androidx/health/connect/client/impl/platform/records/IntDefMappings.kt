@@ -23,6 +23,7 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.health.connect.client.feature.ExperimentalMindfulnessSessionApi
 import androidx.health.connect.client.feature.ExperimentalPersonalHealthRecordApi
+import androidx.health.connect.client.records.ActivityIntensityRecord
 import androidx.health.connect.client.records.BloodGlucoseRecord
 import androidx.health.connect.client.records.BloodPressureRecord
 import androidx.health.connect.client.records.BodyTemperatureMeasurementLocation
@@ -560,6 +561,22 @@ internal val SDK_TO_PLATFORM_EXERCISE_SEGMENT_TYPE: Map<Int, Int> =
 internal val PLATFORM_TO_SDK_EXERCISE_SEGMENT_TYPE =
     SDK_TO_PLATFORM_EXERCISE_SEGMENT_TYPE.reversed()
 
+internal val SDK_TO_PLATFORM_ACTIVITY_INTENSITY_TYPE: Map<Int, Int> =
+    mapOf(
+        ActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_MODERATE to
+            PlatformActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_MODERATE,
+        ActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_VIGOROUS to
+            PlatformActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_VIGOROUS,
+    )
+
+internal fun Int.toPlatformActivityIntensityType(): Int {
+    return SDK_TO_PLATFORM_ACTIVITY_INTENSITY_TYPE[this]
+        ?: PlatformActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_MODERATE
+}
+
+internal val PLATFORM_TO_SDK_ACTIVITY_INTENSITY_TYPE: Map<Int, Int> =
+    SDK_TO_PLATFORM_ACTIVITY_INTENSITY_TYPE.reversed()
+
 @OptIn(ExperimentalMindfulnessSessionApi::class)
 internal val SDK_TO_PLATFORM_MINDFULNESS_SESSION_TYPE: Map<Int, Int> =
     mapOf(
@@ -794,6 +811,11 @@ internal fun Int.toSdkVo2MaxMeasurementMethod(): Int {
 
 internal fun Int.toSdkMenstruationFlow(): Int {
     return PLATFORM_TO_SDK_MENSTRUATION_FLOW_TYPE[this] ?: MenstruationFlowRecord.FLOW_UNKNOWN
+}
+
+internal fun Int.toSdkActivityIntensityType(): Int {
+    return PLATFORM_TO_SDK_ACTIVITY_INTENSITY_TYPE[this]
+        ?: ActivityIntensityRecord.ACTIVITY_INTENSITY_TYPE_MODERATE
 }
 
 @OptIn(ExperimentalMindfulnessSessionApi::class)

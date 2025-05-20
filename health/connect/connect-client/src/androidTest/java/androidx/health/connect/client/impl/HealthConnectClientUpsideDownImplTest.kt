@@ -35,6 +35,7 @@ import androidx.health.connect.client.impl.platform.phr.VaccinesMedicalResourceF
 import androidx.health.connect.client.impl.platform.records.SDK_TO_PLATFORM_RECORD_CLASS
 import androidx.health.connect.client.impl.platform.records.SDK_TO_PLATFORM_RECORD_CLASS_EXT_13
 import androidx.health.connect.client.impl.platform.records.SDK_TO_PLATFORM_RECORD_CLASS_EXT_15
+import androidx.health.connect.client.impl.platform.records.SDK_TO_PLATFORM_RECORD_CLASS_EXT_16
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.readRecord
 import androidx.health.connect.client.records.FhirResource.Companion.FHIR_RESOURCE_TYPE_IMMUNIZATION
@@ -134,6 +135,12 @@ class HealthConnectClientUpsideDownImplTest {
                     permissions.add(HealthPermission.getWritePermission(recordType))
                 }
             }
+            if (SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) >= 16) {
+                for (recordType in SDK_TO_PLATFORM_RECORD_CLASS_EXT_16.keys) {
+                    permissions.add(HealthPermission.getReadPermission(recordType))
+                    permissions.add(HealthPermission.getWritePermission(recordType))
+                }
+            }
 
             if (isPersonalHealthRecordFeatureAvailableInPlatform()) {
                 permissions.addAll(HealthPermission.ALL_PERSONAL_HEALTH_RECORD_PERMISSIONS)
@@ -195,6 +202,7 @@ class HealthConnectClientUpsideDownImplTest {
                 HealthConnectFeatures.FEATURE_SKIN_TEMPERATURE,
                 HealthConnectFeatures.FEATURE_PLANNED_EXERCISE,
                 HealthConnectFeatures.FEATURE_MINDFULNESS_SESSION,
+                HealthConnectFeatures.FEATURE_ACTIVITY_INTENSITY,
             )
 
         for (feature in features) {
@@ -208,7 +216,11 @@ class HealthConnectClientUpsideDownImplTest {
     fun getFeatureStatus_featuresAddedInExt15_areAvailableInExt15() {
         assumeTrue(SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) >= 15)
 
-        for (feature in setOf(HealthConnectFeatures.FEATURE_MINDFULNESS_SESSION)) {
+        for (feature in
+            setOf(
+                HealthConnectFeatures.FEATURE_MINDFULNESS_SESSION,
+                HealthConnectFeatures.FEATURE_ACTIVITY_INTENSITY,
+            )) {
             assertThat(healthConnectClient.features.getFeatureStatus(feature))
                 .isEqualTo(HealthConnectFeatures.FEATURE_STATUS_AVAILABLE)
         }
@@ -220,6 +232,30 @@ class HealthConnectClientUpsideDownImplTest {
         assumeTrue(SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) < 15)
 
         val features = listOf(HealthConnectFeatures.FEATURE_MINDFULNESS_SESSION)
+
+        for (feature in features) {
+            assertThat(healthConnectClient.features.getFeatureStatus(feature))
+                .isEqualTo(HealthConnectFeatures.FEATURE_STATUS_UNAVAILABLE)
+        }
+    }
+
+    @Test
+    fun getFeatureStatus_featuresAddedInExt16_areAvailableInExt16() {
+        assumeTrue(SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) >= 16)
+
+        assertThat(
+                healthConnectClient.features.getFeatureStatus(
+                    HealthConnectFeatures.FEATURE_ACTIVITY_INTENSITY
+                )
+            )
+            .isEqualTo(HealthConnectFeatures.FEATURE_STATUS_AVAILABLE)
+    }
+
+    @Test
+    fun getFeatureStatus_belowUExt16_noneIsAvailable() {
+        assumeTrue(SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) < 16)
+
+        val features = listOf(HealthConnectFeatures.FEATURE_ACTIVITY_INTENSITY)
 
         for (feature in features) {
             assertThat(healthConnectClient.features.getFeatureStatus(feature))

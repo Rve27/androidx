@@ -15,8 +15,11 @@
  */
 package androidx.health.connect.client.impl.converters.records
 
+import android.os.Build
+import android.os.ext.SdkExtensions
 import androidx.health.connect.client.impl.converters.datatype.toDataTypeName
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
+import androidx.health.connect.client.records.ActivityIntensityRecord
 import androidx.health.connect.client.records.BasalBodyTemperatureRecord
 import androidx.health.connect.client.records.BasalMetabolicRateRecord
 import androidx.health.connect.client.records.BloodGlucoseRecord
@@ -80,9 +83,11 @@ import androidx.health.connect.client.units.millimetersOfMercury
 import androidx.health.connect.client.units.percent
 import androidx.health.connect.client.units.watts
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
 import java.time.Instant
 import java.time.ZoneOffset
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -898,6 +903,25 @@ class AllRecordsConverterTest {
                 endTime = END_TIME,
                 endZoneOffset = END_ZONE_OFFSET,
                 metadata = TEST_METADATA,
+            )
+
+        checkProtoAndRecordTypeNameMatch(data)
+        assertThat(toRecord(data.toProto())).isEqualTo(data)
+    }
+
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+    @Test
+    fun testActivityIntensity() {
+        assumeTrue(SdkExtensions.getExtensionVersion(Build.VERSION_CODES.UPSIDE_DOWN_CAKE) >= 16)
+        val data =
+            ActivityIntensityRecord(
+                startTime = START_TIME,
+                startZoneOffset = START_ZONE_OFFSET,
+                endTime = END_TIME,
+                endZoneOffset = END_ZONE_OFFSET,
+                metadata = TEST_METADATA,
+                activityIntensityType =
+                    ActivityIntensityRecord.Companion.ACTIVITY_INTENSITY_TYPE_MODERATE,
             )
 
         checkProtoAndRecordTypeNameMatch(data)
