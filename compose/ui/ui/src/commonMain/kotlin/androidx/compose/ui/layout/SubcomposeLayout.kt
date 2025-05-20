@@ -237,6 +237,9 @@ class SubcomposeLayoutState(private val slotReusePolicy: SubcomposeSlotReusePoli
         state.precompose(slotId, content)
 
     /**
+     * Creates [PausedPrecomposition], which allows to perform the composition in an incremental
+     * manner.
+     *
      * @param slotId unique id which represents the slot to compose into.
      * @param content the composable content which defines the slot.]
      * @return [PausedPrecomposition] for the given [slotId]. It allows to perform the composition
