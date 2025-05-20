@@ -18,6 +18,7 @@ package androidx.privacysandbox.tools.core.generator
 
 import androidx.privacysandbox.tools.core.generator.SpecNames.bundleClass
 import androidx.privacysandbox.tools.core.generator.SpecNames.contextPropertyName
+import androidx.privacysandbox.tools.core.generator.SpecNames.toCoreLibInfoMethod
 import androidx.privacysandbox.tools.core.model.AnnotatedInterface
 import androidx.privacysandbox.tools.core.model.AnnotatedValue
 import androidx.privacysandbox.tools.core.model.ParsedApi
@@ -83,8 +84,15 @@ abstract class BinderCodeConverter(private val api: ParsedApi) {
                 else CodeBlock.of(".map { %L }", convertToModelCodeBlock),
             )
         }
+
         if (type.qualifiedName == Types.sdkActivityLauncher.qualifiedName) {
             return convertToActivityLauncherModelCode(expression)
+        }
+
+        if (type.qualifiedName == Types.sandboxedUiAdapter.qualifiedName) {
+            val adapterFactoryClass: ClassName =
+                ClassName("androidx.privacysandbox.ui.client", "SandboxedUiAdapterFactory")
+            return CodeBlock.of("%T.createFromCoreLibInfo(%L)", adapterFactoryClass, expression)
         }
         if (type == Types.short) {
             return CodeBlock.of("%L.toShort()", expression)
@@ -147,6 +155,10 @@ abstract class BinderCodeConverter(private val api: ParsedApi) {
                 else CodeBlock.of(".map { %L }", convertToBinderCodeBlock),
                 toBinderList(type.typeParameters[0]),
             )
+        }
+
+        if (type.qualifiedName == Types.sandboxedUiAdapter.qualifiedName) {
+            return CodeBlock.of("%L.%M(%L)", expression, toCoreLibInfoMethod, "context")
         }
         if (type.qualifiedName == Types.sdkActivityLauncher.qualifiedName) {
             return convertToActivityLauncherBinderCode(expression)
@@ -229,6 +241,9 @@ abstract class BinderCodeConverter(private val api: ParsedApi) {
         val sandboxInterface = api.interfaceMap[type]
         if (sandboxInterface != null) {
             return convertToInterfaceBinderType(sandboxInterface)
+        }
+        if (type.qualifiedName == Types.sandboxedUiAdapter.qualifiedName) {
+            return ClassName("android.os", "Bundle") // The binder type is Bundle
         }
         if (type.qualifiedName == List::class.qualifiedName)
             return convertToBinderListType(type.typeParameters[0])

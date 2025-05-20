@@ -336,11 +336,12 @@ class ModelValidatorTest {
             .containsExactly(
                 "Error in com.mysdk.MySdk.returnFoo: only primitives, lists, data/enum classes " +
                     "annotated with @PrivacySandboxValue, interfaces annotated with " +
-                    "@PrivacySandboxInterface, and SdkActivityLaunchers are supported as return types.",
+                    "@PrivacySandboxInterface, SandboxedUiAdapters and SdkActivityLaunchers are " +
+                    "supported as return types.",
                 "Error in com.mysdk.MySdk.receiveFoo: only primitives, lists, data/enum classes " +
                     "annotated with @PrivacySandboxValue, interfaces annotated with " +
-                    "@PrivacySandboxCallback or @PrivacySandboxInterface, and SdkActivityLaunchers " +
-                    "are supported as parameter types.",
+                    "@PrivacySandboxCallback or @PrivacySandboxInterface, SandboxedUiAdapters " +
+                    "and SdkActivityLaunchers are supported as parameter types.",
             )
     }
 
@@ -434,7 +435,7 @@ class ModelValidatorTest {
             .containsExactly(
                 "Error in com.mysdk.Foo.bar: only primitives, lists, data/enum classes annotated " +
                     "with @PrivacySandboxValue, interfaces annotated with @PrivacySandboxInterface, " +
-                    "and SdkActivityLaunchers are supported as properties."
+                    "SandboxedUiAdapters and SdkActivityLaunchers are supported as properties."
             )
     }
 
@@ -476,8 +477,8 @@ class ModelValidatorTest {
             .containsExactly(
                 "Error in com.mysdk.MySdkCallback.foo: only primitives, lists, data/enum classes " +
                     "annotated with @PrivacySandboxValue, interfaces annotated with " +
-                    "@PrivacySandboxInterface, and SdkActivityLaunchers are supported as callback " +
-                    "parameter types."
+                    "@PrivacySandboxInterface, SandboxedUiAdapters and SdkActivityLaunchers " +
+                    "are supported as callback parameter types."
             )
     }
 

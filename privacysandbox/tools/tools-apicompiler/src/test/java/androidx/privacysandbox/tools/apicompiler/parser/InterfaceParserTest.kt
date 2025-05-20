@@ -517,7 +517,7 @@ class InterfaceParserTest {
             .containsExactlyErrors(
                 "Error in com.mysdk.MySdk.foo: only primitives, lists, data/enum classes " +
                     "annotated with @PrivacySandboxValue, interfaces annotated with " +
-                    "@PrivacySandboxCallback or @PrivacySandboxInterface, and " +
+                    "@PrivacySandboxCallback or @PrivacySandboxInterface, SandboxedUiAdapters and " +
                     "SdkActivityLaunchers are supported as parameter types."
             )
     }
@@ -537,7 +537,7 @@ class InterfaceParserTest {
                 "Error in com.mysdk.MySdk.foo: only primitives, lists, data/enum classes " +
                     "annotated with @PrivacySandboxValue, interfaces annotated with " +
                     "@PrivacySandboxCallback " +
-                    "or @PrivacySandboxInterface, and " +
+                    "or @PrivacySandboxInterface, SandboxedUiAdapters and " +
                     "SdkActivityLaunchers are supported as parameter types."
             )
     }
@@ -561,7 +561,7 @@ class InterfaceParserTest {
         checkSourceFails(source)
             .containsExactlyErrors(
                 "Error in com.mysdk.MySdk.foo: only primitives, lists, data/enum classes annotated " +
-                    "with @PrivacySandboxValue, interfaces annotated with @PrivacySandboxInterface, " +
+                    "with @PrivacySandboxValue, interfaces annotated with @PrivacySandboxInterface, SandboxedUiAdapters " +
                     "and SdkActivityLaunchers are supported as return types."
             )
     }

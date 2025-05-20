@@ -305,7 +305,7 @@ class ValueParserTest {
             .containsExactlyErrors(
                 "Error in com.mysdk.MySdkRequest.foo: only primitives, lists, data/enum classes " +
                     "annotated with @PrivacySandboxValue, interfaces annotated with " +
-                    "@PrivacySandboxInterface, and SdkActivityLaunchers are supported as " +
+                    "@PrivacySandboxInterface, SandboxedUiAdapters and SdkActivityLaunchers are supported as " +
                     "properties."
             )
     }

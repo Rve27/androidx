@@ -37,6 +37,8 @@ interface MySdk {
 
     suspend fun getTextViewAd(): TextViewAd
 
+    suspend fun getAdapterForTextViewAd(): SandboxedUiAdapter
+
     suspend fun getNativeAdData(): NativeAdData
 }
 
@@ -65,6 +67,10 @@ class MySdkImpl(private val context: Context) : MySdk {
     }
 
     override suspend fun getTextViewAd(): TextViewAd {
+        return TextViewAdImpl()
+    }
+
+    override suspend fun getAdapterForTextViewAd(): SandboxedUiAdapter {
         return TextViewAdImpl()
     }
 
