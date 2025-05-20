@@ -16,11 +16,15 @@
 
 package androidx.camera.core.featurecombination.impl
 
-import android.util.Range
+import android.util.Size
+import android.view.Surface
 import androidx.camera.core.DynamicRange
-import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature
-import androidx.camera.core.impl.SurfaceConfig
+import androidx.camera.core.featurecombination.impl.UseCaseType.Companion.getFeatureComboUseCaseType
+import androidx.camera.core.impl.DeferrableSurface
+import androidx.camera.core.impl.SessionConfig
 import androidx.camera.core.impl.UseCaseConfig
+import androidx.camera.core.impl.utils.futures.Futures
+import com.google.common.util.concurrent.ListenableFuture
 
 /**
  * Queries whether a combination of features is supported by utilizing the
@@ -28,48 +32,55 @@ import androidx.camera.core.impl.UseCaseConfig
  */
 public interface FeatureCombinationQuery {
     /**
-     * Represents the configuration parameters per stream, e.g. surface configuration, dynamic range
-     * etc.
-     *
-     * @param surfaceConfig The surface configuration for the stream.
-     * @param useCaseConfig The use case config for the stream.
-     * @param dynamicRange The dynamic range for the stream.
-     */
-    public data class StreamConfig(
-        public val surfaceConfig: SurfaceConfig,
-        public val useCaseConfig: UseCaseConfig<*>,
-        public val dynamicRange: DynamicRange,
-    )
-
-    /**
-     * Represents the configuration parameters for querying feature combinations.
-     *
-     * @param streamConfigs A list of [StreamConfig].
-     * @param fpsRange The requested FPS range.
-     * @param stabilizationMode The requested video stabilization mode.
-     */
-    public data class Config(
-        public val streamConfigs: List<StreamConfig>,
-        public val fpsRange: Range<Int>,
-        public val stabilizationMode: VideoStabilizationFeature.StabilizationMode,
-    )
-
-    /**
      * Queries whether a combination of features is supported.
      *
-     * @param config The [Config] containing the configuration parameters denoting a feature
-     *   combination.
+     * @param sessionConfig The [SessionConfig] containing all the configuration parameters.
      * @return `true` if the feature combination is supported, `false` otherwise.
      */
-    public fun isSupported(config: Config): Boolean
+    public fun isSupported(sessionConfig: SessionConfig): Boolean
 
     public companion object {
         @JvmField
         public val NO_OP_FEATURE_COMBINATION_QUERY: FeatureCombinationQuery =
             object : FeatureCombinationQuery {
-                override fun isSupported(config: Config): Boolean {
+                override fun isSupported(sessionConfig: SessionConfig): Boolean {
                     return false
                 }
             }
+
+        /**
+         * Creates a [SessionConfig.Builder] from a [UseCaseConfig] to query feature combinations.
+         *
+         * This method creates a [SessionConfig.Builder] that contains a placeholder
+         * [DeferrableSurface] with the given resolution and dynamic range. This builder can then be
+         * used to create a [SessionConfig] for querying the camera capabilities without needing to
+         * provide actual output surfaces.
+         *
+         * It is the responsibility of the caller to close the placeholder [DeferrableSurface]s once
+         * the [SessionConfig] is no longer required.
+         *
+         * @param resolution The resolution of the surface.
+         * @param dynamicRange The dynamic range of the surface.
+         * @return A [SessionConfig.Builder] configured for feature combination queries.
+         */
+        @JvmStatic
+        public fun UseCaseConfig<*>.createSessionConfigBuilder(
+            resolution: Size,
+            dynamicRange: DynamicRange,
+        ): SessionConfig.Builder {
+            val deferrableSurface: DeferrableSurface =
+                object : DeferrableSurface(resolution, inputFormat) {
+                    override fun provideSurface(): ListenableFuture<Surface?> {
+                        return Futures.immediateFuture<Surface?>(null)
+                    }
+                }
+
+            getFeatureComboUseCaseType().surfaceClass?.let {
+                deferrableSurface.setContainerClass(it)
+            }
+
+            return SessionConfig.Builder.createFrom(this, resolution)
+                .addSurface(deferrableSurface, dynamicRange)
+        }
     }
 }

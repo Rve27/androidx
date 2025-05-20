@@ -23,8 +23,6 @@ import static androidx.camera.camera2.internal.GuaranteedConfigurationsUtil.gene
 import static androidx.camera.camera2.internal.SupportedSurfaceCombination.CheckingMethod.WITHOUT_FEATURE_COMBO;
 import static androidx.camera.camera2.internal.SupportedSurfaceCombination.CheckingMethod.WITHOUT_FEATURE_COMBO_FIRST_AND_THEN_WITH_IT;
 import static androidx.camera.camera2.internal.SupportedSurfaceCombination.CheckingMethod.WITH_FEATURE_COMBO;
-import static androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature.StabilizationMode.OFF;
-import static androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature.StabilizationMode.PREVIEW;
 import static androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED;
 import static androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR;
 import static androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED;
@@ -33,6 +31,7 @@ import static androidx.camera.core.impl.SurfaceConfig.ConfigSource.FEATURE_COMBI
 import static androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_1080P;
 import static androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_480P;
 import static androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_VGA;
+import static androidx.core.util.Preconditions.checkState;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -70,7 +69,9 @@ import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery;
 import androidx.camera.core.featurecombination.impl.feature.FpsRangeFeature;
 import androidx.camera.core.impl.AttachedSurfaceInfo;
 import androidx.camera.core.impl.CameraMode;
+import androidx.camera.core.impl.DeferrableSurface;
 import androidx.camera.core.impl.ImageFormatConstants;
+import androidx.camera.core.impl.SessionConfig;
 import androidx.camera.core.impl.StreamSpec;
 import androidx.camera.core.impl.SurfaceCombination;
 import androidx.camera.core.impl.SurfaceConfig;
@@ -78,6 +79,7 @@ import androidx.camera.core.impl.SurfaceConfig.ConfigSize;
 import androidx.camera.core.impl.SurfaceConfig.ConfigSource;
 import androidx.camera.core.impl.SurfaceSizeDefinition;
 import androidx.camera.core.impl.UseCaseConfig;
+import androidx.camera.core.impl.stabilization.StabilizationMode;
 import androidx.camera.core.impl.utils.AspectRatioUtil;
 import androidx.camera.core.impl.utils.CompareSizesByArea;
 import androidx.camera.core.internal.utils.SizeUtil;
@@ -274,10 +276,16 @@ final class SupportedSurfaceCombination {
             }
         }
 
-        if (featureSettings.requiresFeatureComboQuery()) {
-            return mFeatureCombinationQuery.isSupported(
-                    createFeatureCombinationConfig(featureSettings, surfaceConfigList,
-                            dynamicRangesBySurfaceConfig, newUseCaseConfigs, useCasePriorityOrder));
+        if (isSupported && featureSettings.requiresFeatureComboQuery()) {
+            SessionConfig sessionConfig = createFeatureComboSessionConfig(featureSettings,
+                    surfaceConfigList, dynamicRangesBySurfaceConfig, newUseCaseConfigs,
+                    useCasePriorityOrder);
+            isSupported = mFeatureCombinationQuery.isSupported(sessionConfig);
+
+            // Clean up all the surfaces created for this query.
+            for (DeferrableSurface surface : sessionConfig.getSurfaces()) {
+                surface.close();
+            }
         }
 
         return isSupported;
@@ -285,7 +293,7 @@ final class SupportedSurfaceCombination {
 
     @SuppressLint("NullAnnotationGroup")
     @OptIn(markerClass = ExperimentalFeatureCombination.class)
-    private FeatureCombinationQuery.Config createFeatureCombinationConfig(
+    private SessionConfig createFeatureComboSessionConfig(
             FeatureSettings featureSettings,
             List<SurfaceConfig> surfaceConfigList,
             @NonNull Map<@NonNull SurfaceConfig, @NonNull DynamicRange>
@@ -294,29 +302,40 @@ final class SupportedSurfaceCombination {
             @NonNull List<@NonNull Integer> useCasePriorityOrder) {
         Range<Integer> fpsRange = featureSettings.getTargetFpsRange();
 
-        List<FeatureCombinationQuery.StreamConfig> streamConfigs = new ArrayList<>();
+        SessionConfig.ValidatingBuilder validatingBuilder = new SessionConfig.ValidatingBuilder();
 
         for (int i = 0; i < surfaceConfigList.size(); i++) {
             SurfaceConfig surfaceConfig = surfaceConfigList.get(i);
+            Size resolution = surfaceConfig.getResolution(
+                    getUpdatedSurfaceSizeDefinitionByFormat(surfaceConfig.getImageFormat()));
 
             // Since the high-level API for feature combination always unbinds implicitly, there
             // will only be new use cases
             UseCaseConfig<?> useCaseConfig = newUseCaseConfigs.get(useCasePriorityOrder.get(i));
 
-            streamConfigs.add(
-                    new FeatureCombinationQuery.StreamConfig(
-                            surfaceConfig,
-                            useCaseConfig,
-                            Objects.requireNonNull(dynamicRangesBySurfaceConfig.get(surfaceConfig))
-                    )
-            );
+            SessionConfig.Builder sessionConfigBuilder =
+                    FeatureCombinationQuery.createSessionConfigBuilder(useCaseConfig, resolution,
+                            Objects.requireNonNull(
+                                    dynamicRangesBySurfaceConfig.get(surfaceConfig)));
+
+            sessionConfigBuilder.setExpectedFrameRateRange(
+                            fpsRange != null ? fpsRange : FpsRangeFeature.DEFAULT_FPS_RANGE);
+
+            if (featureSettings.isPreviewStabilizationOn()) {
+                sessionConfigBuilder.setPreviewStabilization(StabilizationMode.ON);
+            }
+
+            validatingBuilder.add(sessionConfigBuilder.build());
+
+            checkState(validatingBuilder.isValid(),
+                    "Cannot create a combined SessionConfig for feature combo after adding "
+                            + useCaseConfig + " with " + surfaceConfig + " due to ["
+                            + validatingBuilder.getInvalidReason() + "]; surfaceConfigList = "
+                            + surfaceConfigList + ", featureSettings = " + featureSettings
+                            + ", newUseCaseConfigs = " + newUseCaseConfigs);
         }
 
-        return new FeatureCombinationQuery.Config(
-                streamConfigs,
-                fpsRange != null ? fpsRange : FpsRangeFeature.DEFAULT_FPS_RANGE,
-                featureSettings.isPreviewStabilizationOn() ? PREVIEW : OFF
-        );
+        return validatingBuilder.build();
     }
 
     @Nullable List<SurfaceConfig> getOrderedSupportedStreamUseCaseSurfaceConfigList(
@@ -416,7 +435,7 @@ final class SupportedSurfaceCombination {
     }
 
     private int getMaxFrameRate(int imageFormat, @NonNull Size size, boolean isHighSpeedOn) {
-        Preconditions.checkState(!isHighSpeedOn
+        checkState(!isHighSpeedOn
                 || imageFormat == ImageFormatConstants.INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE);
         return isHighSpeedOn ? mHighSpeedResolver.getMaxFrameRate(size)
                 : getMaxFrameRate(mCharacteristics, imageFormat, size);
@@ -451,7 +470,7 @@ final class SupportedSurfaceCombination {
      * @return the distance between the nearest limits of two non-intersecting ranges
      */
     private static int getRangeDistance(Range<Integer> firstRange, Range<Integer> secondRange) {
-        Preconditions.checkState(
+        checkState(
                 !firstRange.contains(secondRange.getUpper())
                         && !firstRange.contains(secondRange.getLower()),
                 "Ranges must not intersect");
@@ -1621,7 +1640,7 @@ final class SupportedSurfaceCombination {
      * @return the max supported output size for the image format
      */
     private Size getMaxOutputSizeByFormat(StreamConfigurationMap map, int imageFormat,
-            boolean highResolutionIncluded) {
+            boolean highResolutionIncluded, @Nullable Rational aspectRatio) {
         Size[] outputSizes = null;
         try {
             // b/378508360: try-catch to workaround the exception when using
@@ -1642,6 +1661,21 @@ final class SupportedSurfaceCombination {
 
         if (outputSizes == null || outputSizes.length == 0) {
             return null;
+        }
+
+        if (aspectRatio != null) {
+            List<Size> filteredSizes = new ArrayList<>();
+            for (Size size : outputSizes) {
+                if (AspectRatioUtil.hasMatchingAspectRatio(size, aspectRatio)) {
+                    filteredSizes.add(size);
+                }
+            }
+
+            if (filteredSizes.isEmpty()) {
+                return null;
+            }
+
+            outputSizes = filteredSizes.toArray(new Size[0]);
         }
 
         CompareSizesByArea compareSizesByArea = new CompareSizesByArea();
@@ -1739,6 +1773,8 @@ final class SupportedSurfaceCombination {
                 new HashMap<>(),
                 recordSize, // s1440pSizeMap
                 new HashMap<>(), // maximumSizeMap
+                new HashMap<>(), // maximum4x3SizeMap
+                new HashMap<>(), // maximum16x9SizeMap
                 new HashMap<>()); // ultraMaximumSizeMap
     }
 
@@ -1752,7 +1788,11 @@ final class SupportedSurfaceCombination {
                     SizeUtil.RESOLUTION_720P, format);
             updateS720pOrS1440pSizeByFormat(mSurfaceSizeDefinition.getS1440pSizeMap(),
                     SizeUtil.RESOLUTION_1440P, format);
-            updateMaximumSizeByFormat(mSurfaceSizeDefinition.getMaximumSizeMap(), format);
+            updateMaximumSizeByFormat(mSurfaceSizeDefinition.getMaximumSizeMap(), format, null);
+            updateMaximumSizeByFormat(mSurfaceSizeDefinition.getMaximum4x3SizeMap(), format,
+                    AspectRatioUtil.ASPECT_RATIO_4_3);
+            updateMaximumSizeByFormat(mSurfaceSizeDefinition.getMaximum16x9SizeMap(), format,
+                    AspectRatioUtil.ASPECT_RATIO_16_9);
             updateUltraMaximumSizeByFormat(mSurfaceSizeDefinition.getUltraMaximumSizeMap(), format);
             mSurfaceSizeDefinitionFormats.add(format);
         }
@@ -1781,7 +1821,7 @@ final class SupportedSurfaceCombination {
 
         StreamConfigurationMap originalMap =
                 mCharacteristics.getStreamConfigurationMapCompat().toStreamConfigurationMap();
-        Size maxOutputSize = getMaxOutputSizeByFormat(originalMap, format, false);
+        Size maxOutputSize = getMaxOutputSizeByFormat(originalMap, format, false, null);
         sizeMap.put(format, maxOutputSize == null ? targetSize
                 : Collections.min(Arrays.asList(targetSize, maxOutputSize),
                         new CompareSizesByArea()));
@@ -1790,10 +1830,11 @@ final class SupportedSurfaceCombination {
     /**
      * Updates the maximum size to the map for the specified format.
      */
-    private void updateMaximumSizeByFormat(@NonNull Map<Integer, Size> sizeMap, int format) {
+    private void updateMaximumSizeByFormat(@NonNull Map<Integer, Size> sizeMap, int format,
+            @Nullable Rational aspectRatio) {
         StreamConfigurationMap originalMap =
                 mCharacteristics.getStreamConfigurationMapCompat().toStreamConfigurationMap();
-        Size maxOutputSize = getMaxOutputSizeByFormat(originalMap, format, true);
+        Size maxOutputSize = getMaxOutputSizeByFormat(originalMap, format, true, aspectRatio);
         if (maxOutputSize != null) {
             sizeMap.put(format, maxOutputSize);
         }
@@ -1815,7 +1856,7 @@ final class SupportedSurfaceCombination {
             return;
         }
 
-        sizeMap.put(format, getMaxOutputSizeByFormat(maximumResolutionMap, format, true));
+        sizeMap.put(format, getMaxOutputSizeByFormat(maximumResolutionMap, format, true, null));
     }
 
     private void refreshPreviewSize() {
@@ -1831,6 +1872,8 @@ final class SupportedSurfaceCombination {
                     mSurfaceSizeDefinition.getS1440pSizeMap(),
                     mSurfaceSizeDefinition.getRecordSize(),
                     mSurfaceSizeDefinition.getMaximumSizeMap(),
+                    mSurfaceSizeDefinition.getMaximum4x3SizeMap(),
+                    mSurfaceSizeDefinition.getMaximum16x9SizeMap(),
                     mSurfaceSizeDefinition.getUltraMaximumSizeMap());
         }
     }

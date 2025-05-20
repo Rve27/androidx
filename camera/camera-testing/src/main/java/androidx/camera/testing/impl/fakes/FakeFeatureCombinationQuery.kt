@@ -17,14 +17,15 @@
 package androidx.camera.testing.impl.fakes
 
 import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery
+import androidx.camera.core.impl.SessionConfig
 
 public class FakeFeatureCombinationQuery : FeatureCombinationQuery {
     public var isSupported: Boolean = false
 
-    public val queriedConfigs: MutableList<FeatureCombinationQuery.Config> = mutableListOf()
+    public val queriedConfigs: MutableList<SessionConfig> = mutableListOf()
 
-    override fun isSupported(config: FeatureCombinationQuery.Config): Boolean {
-        queriedConfigs.add(config)
+    override fun isSupported(sessionConfig: SessionConfig): Boolean {
+        queriedConfigs.add(sessionConfig)
         return isSupported
     }
 }

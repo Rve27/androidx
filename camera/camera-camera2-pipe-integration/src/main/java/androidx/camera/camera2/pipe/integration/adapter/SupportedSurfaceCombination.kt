@@ -47,13 +47,13 @@ import androidx.camera.camera2.pipe.integration.internal.HighSpeedResolver
 import androidx.camera.camera2.pipe.integration.internal.StreamUseCaseUtil
 import androidx.camera.core.DynamicRange
 import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery
+import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery.Companion.createSessionConfigBuilder
 import androidx.camera.core.featurecombination.impl.feature.FpsRangeFeature
-import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature.StabilizationMode.OFF
-import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature.StabilizationMode.PREVIEW
 import androidx.camera.core.impl.AttachedSurfaceInfo
 import androidx.camera.core.impl.CameraMode
 import androidx.camera.core.impl.EncoderProfilesProvider
 import androidx.camera.core.impl.ImageFormatConstants
+import androidx.camera.core.impl.SessionConfig
 import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED
 import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR
 import androidx.camera.core.impl.StreamSpec
@@ -65,6 +65,7 @@ import androidx.camera.core.impl.SurfaceConfig.ConfigSource.CAPTURE_SESSION_TABL
 import androidx.camera.core.impl.SurfaceConfig.ConfigSource.FEATURE_COMBINATION_TABLE
 import androidx.camera.core.impl.SurfaceSizeDefinition
 import androidx.camera.core.impl.UseCaseConfig
+import androidx.camera.core.impl.stabilization.StabilizationMode
 import androidx.camera.core.impl.utils.AspectRatioUtil
 import androidx.camera.core.impl.utils.CompareSizesByArea
 import androidx.camera.core.internal.utils.SizeUtil
@@ -73,6 +74,7 @@ import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_1440P
 import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_480P
 import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_720P
 import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_VGA
+import androidx.core.util.Preconditions
 import java.util.Arrays
 import java.util.Collections
 import kotlin.math.floor
@@ -179,45 +181,75 @@ public class SupportedSurfaceCombination(
                 it.getOrderedSupportedSurfaceConfigList(surfaceConfigList) != null
             }
 
-        if (featureSettings.requiresFeatureComboQuery) {
+        if (isSupported && featureSettings.requiresFeatureComboQuery) {
             // TODO: Pass features as well, maybe we need to pass the UseCaseConfigs or UseCases
             //  themselves and these API needs to be called from an upper layer.
-            return featureCombinationQuery.isSupported(
-                createFeatureCombinationConfig(
+            val sessionConfig =
+                createFeatureComboSessionConfig(
                     featureSettings,
                     surfaceConfigList,
                     dynamicRangesBySurfaceConfig,
                     newUseCaseConfigs,
                     useCasesPriorityOrder,
                 )
-            )
+
+            return featureCombinationQuery.isSupported(sessionConfig).also {
+                // Clean up all the surfaces created for this query.
+                sessionConfig.surfaces.forEach { it.close() }
+            }
         }
 
         return isSupported
     }
 
-    private fun createFeatureCombinationConfig(
+    private fun createFeatureComboSessionConfig(
         featureSettings: FeatureSettings,
         surfaceConfigList: List<SurfaceConfig>,
         dynamicRangesBySurfaceConfig: Map<SurfaceConfig, DynamicRange>,
         newUseCaseConfigs: List<UseCaseConfig<*>>,
         useCasePriorityOrder: List<Int>,
-    ): FeatureCombinationQuery.Config {
-        return FeatureCombinationQuery.Config(
-            surfaceConfigList.mapIndexed { index, surfaceConfig ->
-                // Since the high-level API for feature combination always unbinds implicitly, there
-                // will only be new use cases
-                val useCaseConfig: UseCaseConfig<*> = newUseCaseConfigs[useCasePriorityOrder[index]]
+    ): SessionConfig {
+        val validatingBuilder = SessionConfig.ValidatingBuilder()
 
-                FeatureCombinationQuery.StreamConfig(
-                    surfaceConfig,
-                    useCaseConfig,
-                    requireNotNull(dynamicRangesBySurfaceConfig[surfaceConfig]),
+        surfaceConfigList.forEachIndexed { i, surfaceConfig ->
+            val resolution =
+                surfaceConfig.getResolution(
+                    getUpdatedSurfaceSizeDefinitionByFormat(surfaceConfig.imageFormat)
                 )
-            },
-            featureSettings.targetFpsRange ?: FpsRangeFeature.DEFAULT_FPS_RANGE,
-            if (featureSettings.isPreviewStabilizationOn) PREVIEW else OFF,
-        )
+
+            // Since the high-level API for feature combination always unbinds implicitly, there
+            // will only be new use cases
+            val useCaseConfig = newUseCaseConfigs[useCasePriorityOrder[i]]
+
+            val sessionConfigBuilder =
+                useCaseConfig
+                    .createSessionConfigBuilder(
+                        resolution,
+                        requireNotNull(dynamicRangesBySurfaceConfig[surfaceConfig]),
+                    )
+                    .apply {
+                        setExpectedFrameRateRange(
+                            featureSettings.targetFpsRange ?: FpsRangeFeature.DEFAULT_FPS_RANGE
+                        )
+
+                        if (featureSettings.isPreviewStabilizationOn) {
+                            setPreviewStabilization(StabilizationMode.ON)
+                        }
+                    }
+
+            validatingBuilder.add(sessionConfigBuilder.build())
+
+            Preconditions.checkState(
+                validatingBuilder.isValid,
+                "Cannot create a combined SessionConfig for feature combo after adding " +
+                    "$useCaseConfig with $surfaceConfig" +
+                    " due to [${validatingBuilder.invalidReason}]" +
+                    "; surfaceConfigList = $surfaceConfigList, featureSettings = $featureSettings" +
+                    ", newUseCaseConfigs = $newUseCaseConfigs",
+            )
+        }
+
+        return validatingBuilder.build()
     }
 
     private fun getOrderedSupportedStreamUseCaseSurfaceConfigList(
@@ -1612,6 +1644,8 @@ public class SupportedSurfaceCombination(
                     surfaceSizeDefinition.s1440pSizeMap,
                     surfaceSizeDefinition.recordSize,
                     surfaceSizeDefinition.maximumSizeMap,
+                    surfaceSizeDefinition.maximum4x3SizeMap,
+                    surfaceSizeDefinition.maximum16x9SizeMap,
                     surfaceSizeDefinition.ultraMaximumSizeMap,
                 )
         }
@@ -1730,6 +1764,8 @@ public class SupportedSurfaceCombination(
                 mutableMapOf(), // s1440pSizeMap
                 recordSize,
                 mutableMapOf(), // maximumSizeMap
+                mutableMapOf(), // maximum4x3SizeMap
+                mutableMapOf(), // maximum16x9SizeMap
                 mutableMapOf(), // ultraMaximumSizeMap
             )
     }
@@ -1749,6 +1785,16 @@ public class SupportedSurfaceCombination(
                 format,
             )
             updateMaximumSizeByFormat(surfaceSizeDefinition.maximumSizeMap, format)
+            updateMaximumSizeByFormat(
+                surfaceSizeDefinition.maximum4x3SizeMap,
+                format,
+                AspectRatioUtil.ASPECT_RATIO_4_3,
+            )
+            updateMaximumSizeByFormat(
+                surfaceSizeDefinition.maximum16x9SizeMap,
+                format,
+                AspectRatioUtil.ASPECT_RATIO_16_9,
+            )
             updateUltraMaximumSizeByFormat(surfaceSizeDefinition.ultraMaximumSizeMap, format)
             surfaceSizeDefinitionFormats.add(format)
         }
@@ -1789,9 +1835,15 @@ public class SupportedSurfaceCombination(
     }
 
     /** Updates the maximum size to the map for the specified format. */
-    private fun updateMaximumSizeByFormat(sizeMap: MutableMap<Int, Size>, format: Int) {
+    private fun updateMaximumSizeByFormat(
+        sizeMap: MutableMap<Int, Size>,
+        format: Int,
+        aspectRatio: Rational? = null,
+    ) {
         val originalMap = streamConfigurationMapCompat.toStreamConfigurationMap()
-        getMaxOutputSizeByFormat(originalMap, format, true)?.let { sizeMap[format] = it }
+        getMaxOutputSizeByFormat(originalMap, format, true, aspectRatio)?.let {
+            sizeMap[format] = it
+        }
     }
 
     /** Updates the ultra maximum size to the map for the specified format. */
@@ -1934,6 +1986,7 @@ public class SupportedSurfaceCombination(
         map: StreamConfigurationMap?,
         imageFormat: Int,
         highResolutionIncluded: Boolean,
+        aspectRatio: Rational? = null,
     ): Size? {
         val outputSizes: Array<Size>? =
             runCatching {
@@ -1954,6 +2007,14 @@ public class SupportedSurfaceCombination(
                     }
                 }
                 .getOrNull()
+                ?.run {
+                    if (aspectRatio != null) {
+                        filter { AspectRatioUtil.hasMatchingAspectRatio(it, aspectRatio) }
+                            .toTypedArray()
+                    } else {
+                        this
+                    }
+                }
         if (outputSizes.isNullOrEmpty()) {
             return null
         }

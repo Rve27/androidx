@@ -19,6 +19,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.ImageFormat
 import android.graphics.ImageFormat.JPEG_R
+import android.graphics.ImageFormat.PRIVATE
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraCharacteristics.REQUEST_AVAILABLE_DYNAMIC_RANGE_PROFILES
@@ -72,11 +73,13 @@ import androidx.camera.core.CameraXConfig
 import androidx.camera.core.DynamicRange
 import androidx.camera.core.DynamicRange.BIT_DEPTH_10_BIT
 import androidx.camera.core.DynamicRange.HLG_10_BIT
+import androidx.camera.core.DynamicRange.SDR
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.UseCase
 import androidx.camera.core.concurrent.CameraCoordinator
 import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery
 import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery.Companion.NO_OP_FEATURE_COMBINATION_QUERY
-import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature
+import androidx.camera.core.featurecombination.impl.UseCaseType
 import androidx.camera.core.impl.AttachedSurfaceInfo
 import androidx.camera.core.impl.CameraMode
 import androidx.camera.core.impl.CameraThreadConfig
@@ -84,6 +87,7 @@ import androidx.camera.core.impl.EncoderProfilesProxy
 import androidx.camera.core.impl.EncoderProfilesProxy.VideoProfileProxy
 import androidx.camera.core.impl.ImageFormatConstants
 import androidx.camera.core.impl.ImageInputConfig
+import androidx.camera.core.impl.SessionConfig
 import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED
 import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR
 import androidx.camera.core.impl.StreamSpec
@@ -91,15 +95,14 @@ import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.SurfaceCombination
 import androidx.camera.core.impl.SurfaceConfig
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize
-import androidx.camera.core.impl.SurfaceConfig.ConfigSize.S1080P_16_9
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize.S1440P_16_9
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize.S1440P_4_3
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize.S720P_16_9
-import androidx.camera.core.impl.SurfaceConfig.ConfigSize.UHD
 import androidx.camera.core.impl.SurfaceConfig.ConfigType
 import androidx.camera.core.impl.UseCaseConfig
 import androidx.camera.core.impl.UseCaseConfigFactory
 import androidx.camera.core.impl.UseCaseConfigFactory.CaptureType
+import androidx.camera.core.impl.stabilization.StabilizationMode
 import androidx.camera.core.impl.utils.CompareSizesByArea
 import androidx.camera.core.internal.StreamSpecsCalculator
 import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_1080P
@@ -118,6 +121,7 @@ import androidx.camera.testing.impl.fakes.FakeCameraFactory
 import androidx.camera.testing.impl.fakes.FakeEncoderProfilesProvider
 import androidx.camera.testing.impl.fakes.FakeFeatureCombinationQuery
 import androidx.camera.testing.impl.fakes.FakeUseCaseConfig
+import androidx.camera.testing.impl.fakes.FakeUseCaseConfigFactory
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.testutils.assertThrows
@@ -3721,7 +3725,7 @@ class SupportedSurfaceCombinationTest {
                 fakeCameraMetadata,
                 mockEncoderProfilesAdapter,
                 object : FeatureCombinationQuery {
-                    override fun isSupported(config: FeatureCombinationQuery.Config): Boolean {
+                    override fun isSupported(sessionConfig: SessionConfig): Boolean {
                         latch.countDown()
                         return false
                     }
@@ -3761,7 +3765,7 @@ class SupportedSurfaceCombinationTest {
                     createFeatureSettings(requiresFeatureComboQuery = true),
                     surfaceConfigList,
                     surfaceConfigList.associateWith { DynamicRange.UNSPECIFIED },
-                    surfaceConfigList.map { FakeUseCaseConfig.Builder().useCaseConfig },
+                    surfaceConfigList.toUseCaseConfigs(),
                     (0 until surfaceConfigList.size).toList(),
                 )
             )
@@ -3788,7 +3792,7 @@ class SupportedSurfaceCombinationTest {
                     createFeatureSettings(requiresFeatureComboQuery = true),
                     surfaceConfigList,
                     surfaceConfigList.associateWith { DynamicRange.UNSPECIFIED },
-                    surfaceConfigList.map { FakeUseCaseConfig.Builder().useCaseConfig },
+                    surfaceConfigList.toUseCaseConfigs(),
                     (0 until surfaceConfigList.size).toList(),
                 )
             )
@@ -3796,14 +3800,51 @@ class SupportedSurfaceCombinationTest {
     }
 
     @Test
-    fun getSuggestedStreamSpecs_allFeatures_fcqInvokedWithCorrectParameters() {
-        // Arrange: All 3 FCQ-supported use cases with all FCQ features - HLG10, 60 FPS, Preview
+    fun checkSupported_nonQueryableSurfaceConfig_featureCombinationQueryNotInvoked() {
+        // Arrange: Setup resources with a FeatureCombinationQuery impl. tracking isSupported calls
+        setupCamera()
+        val latch = CountDownLatch(1)
+        val supportedSurfaceCombination =
+            SupportedSurfaceCombination(
+                context,
+                fakeCameraMetadata,
+                mockEncoderProfilesAdapter,
+                object : FeatureCombinationQuery {
+                    override fun isSupported(sessionConfig: SessionConfig): Boolean {
+                        latch.countDown()
+                        return false
+                    }
+                },
+            )
+
+        val surfaceConfigList =
+            listOf(
+                SurfaceConfig.create(ConfigType.YUV, ConfigSize.UHD),
+                SurfaceConfig.create(ConfigType.YUV, ConfigSize.UHD),
+                SurfaceConfig.create(ConfigType.YUV, ConfigSize.UHD),
+            )
+
+        // Act: Check for a FCQ SurfaceConfig combination
+        supportedSurfaceCombination.checkSupported(
+            createFeatureSettings(requiresFeatureComboQuery = true),
+            surfaceConfigList,
+            surfaceConfigList.associateWith { DynamicRange.UNSPECIFIED },
+            surfaceConfigList.toUseCaseConfigs(),
+            (0 until surfaceConfigList.size).toList(),
+        )
+
+        // Assert: Waits a small time for latch update in isSupported call just in case any code
+        // flow happens asynchronously in future
+        assertThat(latch.await(100, TimeUnit.MILLISECONDS)).isFalse()
+    }
+
+    @Test
+    fun getSuggestedStreamSpecs_allFeaturesSupported_fcqInvokedWithCorrectParameters() {
+        // Arrange: Preview + ImageCapture use cases with all FCQ features - HLG10, 60 FPS, Preview
         // Stabilization, and Ultra HDR
-        val previewUseCase = createUseCase(CaptureType.PREVIEW)
-        val imageCaptureUseCase = createUseCase(CaptureType.IMAGE_CAPTURE, imageFormat = JPEG_R)
-        val videoCaptureUseCase =
+        val previewUseCase =
             createUseCase(
-                CaptureType.VIDEO_CAPTURE,
+                CaptureType.PREVIEW,
                 dynamicRange =
                     if (Build.VERSION.SDK_INT >= 33) {
                         HLG_10_BIT
@@ -3812,21 +3853,17 @@ class SupportedSurfaceCombinationTest {
                     },
                 targetFrameRate = Range(60, 60),
             )
+        val imageCaptureUseCase = createUseCase(CaptureType.IMAGE_CAPTURE, imageFormat = JPEG_R)
 
         val useCasesOutputSizesMap =
             mapOf(
                 previewUseCase to listOf(RESOLUTION_1080P),
                 imageCaptureUseCase to listOf(RESOLUTION_1440P_16_9),
-                videoCaptureUseCase to listOf(RESOLUTION_UHD),
             )
         val useCaseExpectedResultMap =
-            mapOf(
-                previewUseCase to RESOLUTION_1080P,
-                imageCaptureUseCase to RESOLUTION_1440P_16_9,
-                videoCaptureUseCase to RESOLUTION_UHD,
-            )
+            mapOf(previewUseCase to RESOLUTION_1080P, imageCaptureUseCase to RESOLUTION_1440P_16_9)
 
-        // Act
+        // Act & assert that all features are supported
         getSuggestedSpecsAndVerify(
             useCaseExpectedResultMap,
             useCasesOutputSizesMap = useCasesOutputSizesMap,
@@ -3839,50 +3876,46 @@ class SupportedSurfaceCombinationTest {
                 mapOf(RESOLUTION_1080P to 60, RESOLUTION_1440P_16_9 to 60, RESOLUTION_UHD to 60),
         )
 
-        // Assert: Correct params were passed every time FeatureCombinationQuery API was queried
-        fakeFeatureCombinationQuery.queriedConfigs.forEach { config ->
-            // Verify surface configs
+        // Assert: Correct params were passed every time FeatureCombinationQuery API was invoked
+
+        // Same dynamic range should be resolved to all use cases, HLG_10 is not supported before
+        // API 33
+        val expectedDynamicRange = if (Build.VERSION.SDK_INT >= 33) HLG_10_BIT else SDR
+
+        fakeFeatureCombinationQuery.queriedConfigs.forEach { sessionConfig ->
+            // Verify surface parameters of each output config, each config dynamic range should be
+            // resolved to the same HLG10
             assertThat(
-                    config.streamConfigs.map {
-                        Pair(it.surfaceConfig.configType, it.surfaceConfig.configSize)
+                    sessionConfig.outputConfigs.map {
+                        listOf(
+                            it.surface.prescribedStreamFormat,
+                            it.surface.prescribedSize,
+                            it.surface.containerClass,
+                            it.dynamicRange,
+                        )
                     }
                 )
                 .containsExactly(
-                    Pair(ConfigType.PRIV, S1080P_16_9), // Preview
-                    // JPEG_R verifies Ultra HDR
-                    Pair(ConfigType.JPEG_R, S1440P_16_9), // ImageCapture
-                    Pair(ConfigType.PRIV, UHD), // VideoCapture
+                    listOf( // Preview
+                        PRIVATE,
+                        RESOLUTION_1080P,
+                        UseCaseType.PREVIEW.surfaceClass,
+                        expectedDynamicRange,
+                    ),
+                    listOf( // ImageCapture
+                        JPEG_R, // Verify Ultra HDR
+                        RESOLUTION_1440P_16_9,
+                        UseCaseType.IMAGE_CAPTURE.surfaceClass,
+                        expectedDynamicRange,
+                    ),
                 )
-
-            // Verify UseCaseConfig capture types
-            assertThat(config.streamConfigs.map { it.useCaseConfig.captureType })
-                .containsExactly(
-                    CaptureType.PREVIEW,
-                    CaptureType.IMAGE_CAPTURE,
-                    CaptureType.VIDEO_CAPTURE,
-                )
-
-            // Verify correct dynamic range for all surfaces
-            if (Build.VERSION.SDK_INT >= 33) {
-                assertThat(
-                        config.streamConfigs.map {
-                            Pair(it.surfaceConfig.configType, it.dynamicRange)
-                        }
-                    )
-                    .containsExactly(
-                        Pair(ConfigType.PRIV, HLG_10_BIT),
-                        Pair(ConfigType.PRIV, HLG_10_BIT),
-                        // ImageCapture original dynamic range is UNSPECIFIED, resolved to HLG_10
-                        Pair(ConfigType.JPEG_R, HLG_10_BIT),
-                    )
-            }
 
             // Verify 60 FPS
-            assertThat(config.fpsRange).isEqualTo(Range(60, 60))
+            assertThat(sessionConfig.expectedFrameRateRange).isEqualTo(Range(60, 60))
 
             // Verify Preview Stabilization
-            assertThat(config.stabilizationMode)
-                .isEqualTo(VideoStabilizationFeature.StabilizationMode.PREVIEW)
+            assertThat(sessionConfig.repeatingCaptureConfig.previewStabilizationMode)
+                .isEqualTo(StabilizationMode.ON)
         }
     }
 
@@ -4279,6 +4312,8 @@ class SupportedSurfaceCombinationTest {
     ): UseCase {
         val builder =
             FakeUseCaseConfig.Builder(
+                FakeUseCaseConfigFactory()
+                    .getConfig(captureType, ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY),
                 captureType,
                 imageFormat
                     ?: when (captureType) {
@@ -4316,5 +4351,20 @@ class SupportedSurfaceCombinationTest {
             ImageFormat.RAW_SENSOR,
         )
         return builder.build()
+    }
+
+    private fun List<SurfaceConfig>.toUseCaseConfigs(): List<UseCaseConfig<*>> {
+        return map {
+            createUseCase(
+                    when (it.configType) {
+                        ConfigType.PRIV -> CaptureType.PREVIEW
+                        ConfigType.YUV -> CaptureType.IMAGE_ANALYSIS
+                        ConfigType.JPEG -> CaptureType.IMAGE_CAPTURE
+                        ConfigType.JPEG_R -> CaptureType.IMAGE_CAPTURE
+                        ConfigType.RAW -> CaptureType.IMAGE_CAPTURE
+                    }
+                )
+                .currentConfig
+        }
     }
 }

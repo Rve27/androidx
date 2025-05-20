@@ -465,6 +465,7 @@ class SurfaceConfigTest {
         private val previewSize = Size(1920, 1080)
         private val recordSize = Size(3840, 2160)
         private val maxSize = Size(4000, 3000)
+        private val maxSize16x9 = Size(4800, 2700)
         private val ultraMaxSize = Size(9000, 4500)
         private val surfaceSizeDefinition =
             SurfaceSizeDefinition.create(
@@ -485,6 +486,16 @@ class SurfaceConfigTest {
                     ImageFormat.YUV_420_888 to maxSize,
                     ImageFormat.PRIVATE to maxSize,
                     ImageFormat.JPEG to maxSize,
+                ),
+                mapOf(
+                    ImageFormat.YUV_420_888 to maxSize,
+                    ImageFormat.PRIVATE to maxSize,
+                    ImageFormat.JPEG to maxSize,
+                ),
+                mapOf(
+                    ImageFormat.YUV_420_888 to maxSize16x9,
+                    ImageFormat.PRIVATE to maxSize16x9,
+                    ImageFormat.JPEG to maxSize16x9,
                 ),
                 mapOf(
                     ImageFormat.YUV_420_888 to ultraMaxSize,
