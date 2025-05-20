@@ -41,7 +41,11 @@ import androidx.compose.ui.util.trace
 import androidx.compose.ui.util.traceValue
 import kotlin.time.TimeSource.Monotonic.markNow
 
-/** State for lazy items prefetching, used by lazy layouts to instruct the prefetcher. */
+/**
+ * State for lazy items prefetching, used by lazy layouts to instruct the prefetcher.
+ *
+ * @sample androidx.compose.foundation.samples.LazyLayoutPrefetchStateSample
+ */
 @Stable
 class LazyLayoutPrefetchState() {
 

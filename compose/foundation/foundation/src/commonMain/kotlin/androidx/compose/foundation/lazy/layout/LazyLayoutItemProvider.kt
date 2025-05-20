@@ -25,7 +25,7 @@ import androidx.compose.runtime.Stable
  * children or [LazyLayout]. The number of virtual items is limited by
  * [LazyLayoutItemProvider.itemCount].
  *
- * @sample androidx.compose.foundation.samples.LazyLayoutScrollableSample
+ * @sample androidx.compose.foundation.samples.LazyLayoutSample
  */
 @Stable
 interface LazyLayoutItemProvider {
