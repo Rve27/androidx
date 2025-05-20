@@ -727,6 +727,16 @@ public class WebViewFeature {
     public static final String WEBVIEW_BUILDER = "WEBVIEW_BUILDER";
 
     /**
+     * Feature for {@link #isFeatureSupported(String)}.
+     * This feature covers
+     * {@link WebResourceResponseCompat#setCookies(List)}, as well as
+     * {@link WebSettingsCompat#setIncludeCookiesOnShouldInterceptRequest(WebSettings, boolean)} and
+     * {@link ServiceWorkerWebSettingsCompat#setIncludeCookiesOnShouldInterceptRequest(boolean)}.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public static final String COOKIE_INTERCEPT = "COOKIE_INTERCEPT";
+
+    /**
      * Return whether a feature is supported at run-time. This will check whether a feature is
      * supported, depending on the combination of the desired feature, the Android version of
      * device, and the WebView APK on the device.
