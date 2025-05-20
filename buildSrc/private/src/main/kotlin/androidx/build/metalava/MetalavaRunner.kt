@@ -249,6 +249,7 @@ internal fun generateApi(
     metalavaClasspath: FileCollection,
     projectXml: File,
     sourcePaths: Collection<File>,
+    compiledSources: File?,
     apiLocation: ApiLocation,
     apiLintMode: ApiLintMode,
     includeRestrictToLibraryGroupApis: Boolean,
@@ -273,6 +274,7 @@ internal fun generateApi(
             metalavaClasspath,
             projectXml,
             sourcePaths,
+            compiledSources,
             apiLocation,
             generateApiMode,
             apiLintMode,
@@ -293,6 +295,7 @@ private fun generateApi(
     metalavaClasspath: FileCollection,
     projectXml: File,
     sourcePaths: Collection<File>,
+    compiledSources: File?,
     outputLocation: ApiLocation,
     generateApiMode: GenerateApiMode,
     apiLintMode: ApiLintMode,
@@ -306,6 +309,7 @@ private fun generateApi(
         getGenerateApiArgs(
             projectXml,
             sourcePaths,
+            compiledSources,
             outputLocation,
             generateApiMode,
             apiLintMode,
@@ -322,6 +326,7 @@ private fun generateApi(
 fun getGenerateApiArgs(
     projectXml: File,
     sourcePaths: Collection<File>,
+    compiledSources: File?,
     outputLocation: ApiLocation?,
     generateApiMode: GenerateApiMode,
     apiLintMode: ApiLintMode,
@@ -336,6 +341,11 @@ fun getGenerateApiArgs(
             "--project",
             projectXml.path,
         )
+
+    // Include the jar file to generate bytecode-only APIs if this project has any Kotlin source.
+    if (compiledSources != null && sourcePaths.any { containsKotlinFiles(it) }) {
+        args += listOf("--compiled-sources", compiledSources.absolutePath)
+    }
 
     args += listOf("--format=v4", "--warnings-as-errors")
 
@@ -435,4 +445,13 @@ fun getGenerateApiArgs(
     }
 
     return args
+}
+
+/** Whether the [file] is a kotlin file or is a directory containing one (recursively). */
+private fun containsKotlinFiles(file: File): Boolean {
+    return if (file.isDirectory) {
+        file.listFiles().any { containsKotlinFiles(it) }
+    } else {
+        file.extension == "kt"
+    }
 }

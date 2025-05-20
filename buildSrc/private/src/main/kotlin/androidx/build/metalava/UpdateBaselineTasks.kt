@@ -57,6 +57,9 @@ constructor(workerExecutor: WorkerExecutor) : SourceMetalavaTask(workerExecutor)
             getGenerateApiArgs(
                 createProjectXmlFile(),
                 sourcePaths.files.filter { it.exists() },
+                // API lint is not run on bytecode-only APIs, so don't bother processing the jar
+                // when generating a baseline.
+                compiledSources = null,
                 null,
                 GenerateApiMode.PublicApi,
                 ApiLintMode.CheckBaseline(baselineFile, targetsJavaConsumers.get()),

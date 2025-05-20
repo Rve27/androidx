@@ -180,6 +180,7 @@ constructor(private val workerExecutor: WorkerExecutor) : DefaultTask() {
                 project.getMetalavaClasspath(),
                 projectXml,
                 sourceSets.flatMap { it.sourcePaths.files },
+                compiledSources = null,
                 outputApiLocation,
                 ApiLintMode.Skip,
                 generateRestrictToLibraryGroupAPIs,
