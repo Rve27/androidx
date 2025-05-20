@@ -441,6 +441,7 @@ package androidx.xr.scenecore {
     method public static final androidx.xr.scenecore.PanelEntity create(androidx.xr.runtime.Session session, android.view.View view, androidx.xr.scenecore.Dimensions dimensions, String name, optional androidx.xr.runtime.math.Pose pose);
     method public static final androidx.xr.scenecore.PanelEntity create(androidx.xr.runtime.Session session, android.view.View view, androidx.xr.scenecore.PixelDimensions pixelDimensions, String name);
     method public static final androidx.xr.scenecore.PanelEntity create(androidx.xr.runtime.Session session, android.view.View view, androidx.xr.scenecore.PixelDimensions pixelDimensions, String name, optional androidx.xr.runtime.math.Pose pose);
+    method public final androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution();
     method public final boolean isMainPanelEntity();
     property public final boolean isMainPanelEntity;
     field public static final androidx.xr.scenecore.PanelEntity.Companion Companion;
@@ -451,6 +452,23 @@ package androidx.xr.scenecore {
     method public androidx.xr.scenecore.PanelEntity create(androidx.xr.runtime.Session session, android.view.View view, androidx.xr.scenecore.Dimensions dimensions, String name, optional androidx.xr.runtime.math.Pose pose);
     method public androidx.xr.scenecore.PanelEntity create(androidx.xr.runtime.Session session, android.view.View view, androidx.xr.scenecore.PixelDimensions pixelDimensions, String name);
     method public androidx.xr.scenecore.PanelEntity create(androidx.xr.runtime.Session session, android.view.View view, androidx.xr.scenecore.PixelDimensions pixelDimensions, String name, optional androidx.xr.runtime.math.Pose pose);
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract sealed class PerceivedResolutionResult {
+  }
+
+  public static final class PerceivedResolutionResult.EntityTooClose extends androidx.xr.scenecore.PerceivedResolutionResult {
+    ctor public PerceivedResolutionResult.EntityTooClose();
+  }
+
+  public static final class PerceivedResolutionResult.InvalidCameraView extends androidx.xr.scenecore.PerceivedResolutionResult {
+    ctor public PerceivedResolutionResult.InvalidCameraView();
+  }
+
+  public static final class PerceivedResolutionResult.Success extends androidx.xr.scenecore.PerceivedResolutionResult {
+    ctor public PerceivedResolutionResult.Success(androidx.xr.scenecore.PixelDimensions perceivedResolution);
+    method public androidx.xr.scenecore.PixelDimensions getPerceivedResolution();
+    property public androidx.xr.scenecore.PixelDimensions perceivedResolution;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class PerceptionSpace extends androidx.xr.scenecore.BaseActivityPose<androidx.xr.runtime.internal.PerceptionSpaceActivityPose> {
@@ -868,6 +886,7 @@ package androidx.xr.scenecore {
     method public androidx.xr.scenecore.Dimensions getDimensions();
     method public float getFeatherRadiusX();
     method public float getFeatherRadiusY();
+    method public androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution();
     method public androidx.xr.scenecore.Texture? getPrimaryAlphaMaskTexture();
     method public int getStereoMode();
     method @MainThread public android.view.Surface getSurface();

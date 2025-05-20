@@ -263,6 +263,7 @@ package androidx.xr.runtime.testing {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakePanelEntity extends androidx.xr.runtime.testing.FakeEntity implements androidx.xr.runtime.internal.PanelEntity {
     ctor public FakePanelEntity();
     method public float getCornerRadius();
+    method public androidx.xr.runtime.internal.PerceivedResolutionResult getPerceivedResolution();
     method public androidx.xr.runtime.math.Vector3 getPixelDensity();
     method public androidx.xr.runtime.internal.Dimensions getSize();
     method public androidx.xr.runtime.internal.PixelDimensions getSizeInPixels();
@@ -560,6 +561,7 @@ package androidx.xr.runtime.testing {
     method public androidx.xr.runtime.internal.Dimensions getDimensions();
     method public float getFeatherRadiusX();
     method public float getFeatherRadiusY();
+    method public androidx.xr.runtime.internal.PerceivedResolutionResult getPerceivedResolution();
     method public int getStereoMode();
     method public android.view.Surface getSurface();
     method public void setAuxiliaryAlphaMaskTexture(androidx.xr.runtime.internal.TextureResource? alphaMask);

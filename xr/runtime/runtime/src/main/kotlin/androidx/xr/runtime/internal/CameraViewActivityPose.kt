@@ -31,6 +31,9 @@ public interface CameraViewActivityPose : ActivityPose {
     /** Returns the field of view for this camera. */
     public val fov: Fov
 
+    /** Returns the resolution of this camera view in pixels. */
+    public val displayResolutionInPixels: PixelDimensions
+
     /**
      * The angles (in radians) representing the sides of the view frustum. These are not expected to
      * change over the lifetime of the session but in rare cases may change due to updated camera

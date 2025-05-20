@@ -37,6 +37,7 @@ import androidx.xr.runtime.internal.HeadActivityPose
 import androidx.xr.runtime.internal.HitTestResult
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.PanelEntity
+import androidx.xr.runtime.internal.PixelDimensions
 import androidx.xr.runtime.internal.SystemSpaceEntity.OnSpaceUpdatedListener
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
@@ -145,6 +146,7 @@ public class TestHeadActivityPose(
  * @param activitySpacePose The pose of the camera in ActivitySpace.
  * @param activitySpaceScale The scale of the camera in ActivitySpace.
  * @param worldSpaceScale The scale of the camera in WorldSpace.
+ * @param displayResolutionInPixels The pixel dimensions of the camera view.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class TestCameraViewActivityPose(
@@ -154,6 +156,7 @@ public class TestCameraViewActivityPose(
     override var activitySpacePose: Pose = Pose.Identity,
     override var activitySpaceScale: Vector3 = Vector3(1f, 1f, 1f),
     override val worldSpaceScale: Vector3 = Vector3(1f, 1f, 1f),
+    override val displayResolutionInPixels: PixelDimensions = PixelDimensions(0, 0),
 ) : CameraViewActivityPose {
     override fun transformPoseTo(pose: Pose, destination: ActivityPose): Pose {
         throw NotImplementedError("Intentionally left unimplemented for these test scenarios")

@@ -71,6 +71,28 @@ public interface SurfaceEntity : Entity {
     public fun setAuxiliaryAlphaMaskTexture(alphaMask: TextureResource?)
 
     /**
+     * Gets the perceived resolution of the entity in the camera view.
+     *
+     * This API is only intended for use in Full Space Mode and will return
+     * [PerceivedResolutionResult.InvalidCameraView] in Home Space Mode.
+     *
+     * The entity's own rotation and the camera's viewing direction are disregarded; this value
+     * represents the dimensions of the entity on the camera view if its largest surface was facing
+     * the camera without changing the distance of the entity to the camera.
+     *
+     * @return A [PerceivedResolutionResult] which encapsulates the outcome:
+     *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
+     *       is successful.
+     *     - [PerceivedResolutionResult.EntityTooClose] if the entity is too close to the camera.
+     *     - [PerceivedResolutionResult.InvalidCameraView] if the camera information required for
+     *       the calculation is invalid or unavailable.
+     *
+     * @throws IllegalStateException if HEAD_TRACKING permission is not configured.
+     * @see PerceivedResolutionResult
+     */
+    public fun getPerceivedResolution(): PerceivedResolutionResult
+
+    /**
      * Selects the view configuration for the surface. MONO creates a surface contains a single
      * view. SIDE_BY_SIDE means the surface is split in half with two views. The first half of the
      * surface maps to the left eye and the second half mapping to the right eye.

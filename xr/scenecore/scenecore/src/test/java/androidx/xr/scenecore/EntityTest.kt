@@ -39,6 +39,7 @@ import androidx.xr.runtime.internal.HitTestResult as RtHitTestResult
 import androidx.xr.runtime.internal.InputEventListener as RtInputEventListener
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.PanelEntity as RtPanelEntity
+import androidx.xr.runtime.internal.PerceivedResolutionResult as RtPerceivedResolutionResult
 import androidx.xr.runtime.internal.PixelDimensions as RtPixelDimensions
 import androidx.xr.runtime.internal.Space as RtSpace
 import androidx.xr.runtime.internal.SpatialCapabilities as RtSpatialCapabilities
@@ -662,6 +663,46 @@ class EntityTest {
     }
 
     @Test
+    fun panelEntityGetPerceivedResolution_callsRuntimeAndConverts() {
+        // Arrange
+        val runtimePixelDimensions = RtPixelDimensions(100, 200)
+        val runtimeResult = RtPerceivedResolutionResult.Success(runtimePixelDimensions)
+        whenever(mockPanelEntityImpl.getPerceivedResolution()).thenReturn(runtimeResult)
+
+        val result = panelEntity.getPerceivedResolution()
+        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success::class.java)
+        val successResult = result as PerceivedResolutionResult.Success
+        assertThat(successResult.perceivedResolution.width).isEqualTo(100)
+        assertThat(successResult.perceivedResolution.height).isEqualTo(200)
+        verify(mockPanelEntityImpl).getPerceivedResolution()
+
+        val runtimeResult2 = RtPerceivedResolutionResult.InvalidCameraView()
+        whenever(mockPanelEntityImpl.getPerceivedResolution()).thenReturn(runtimeResult2)
+        assertThat(panelEntity.getPerceivedResolution())
+            .isInstanceOf(PerceivedResolutionResult.InvalidCameraView::class.java)
+
+        val runtimeResult3 = RtPerceivedResolutionResult.EntityTooClose()
+        whenever(mockPanelEntityImpl.getPerceivedResolution()).thenReturn(runtimeResult3)
+        assertThat(panelEntity.getPerceivedResolution())
+            .isInstanceOf(PerceivedResolutionResult.EntityTooClose::class.java)
+    }
+
+    @Test
+    fun activityPanelEntityGetPerceivedResolution_callsRuntimeAndConverts() {
+        // Arrange
+        val runtimePixelDimensions = RtPixelDimensions(100, 200)
+        val runtimeResult = RtPerceivedResolutionResult.Success(runtimePixelDimensions)
+        whenever(mockActivityPanelEntity.getPerceivedResolution()).thenReturn(runtimeResult)
+
+        val result = activityPanelEntity.getPerceivedResolution()
+        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success::class.java)
+        val successResult = result as PerceivedResolutionResult.Success
+        assertThat(successResult.perceivedResolution.width).isEqualTo(100)
+        assertThat(successResult.perceivedResolution.height).isEqualTo(200)
+        verify(mockActivityPanelEntity).getPerceivedResolution()
+    }
+
+    @Test
     fun allEntityDispose_callsRuntimeEntityImplDispose() {
         gltfModelEntity.dispose()
         panelEntity.dispose()
@@ -1143,6 +1184,21 @@ class EntityTest {
         verify(mockSurfaceEntity).canvasShape = any()
 
         // no equivalent test for getter - that just returns the Kotlin object for now.
+    }
+
+    @Test
+    fun surfaceEntity_getPerceivedResolution_callsRuntimeAndConverts() {
+        // Arrange
+        val runtimePixelDimensions = RtPixelDimensions(100, 200)
+        val runtimeResult = RtPerceivedResolutionResult.Success(runtimePixelDimensions)
+        whenever(mockSurfaceEntity.getPerceivedResolution()).thenReturn(runtimeResult)
+
+        val scenecoreResult = surfaceEntity.getPerceivedResolution()
+        verify(mockSurfaceEntity).getPerceivedResolution()
+        assertThat(scenecoreResult).isInstanceOf(PerceivedResolutionResult.Success::class.java)
+        val successResult = scenecoreResult as PerceivedResolutionResult.Success
+        assertThat(successResult.perceivedResolution.width).isEqualTo(100)
+        assertThat(successResult.perceivedResolution.height).isEqualTo(200)
     }
 
     @Test

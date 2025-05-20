@@ -21,6 +21,8 @@ import android.media.ImageReader
 import android.view.Surface
 import androidx.annotation.RestrictTo
 import androidx.xr.runtime.internal.Dimensions
+import androidx.xr.runtime.internal.PerceivedResolutionResult
+import androidx.xr.runtime.internal.PixelDimensions
 import androidx.xr.runtime.internal.SurfaceEntity
 import androidx.xr.runtime.internal.TextureResource
 
@@ -44,4 +46,8 @@ public class FakeSurfaceEntity : SurfaceEntity, FakeEntity() {
     override var featherRadiusX: Float = 0.0f
 
     override var featherRadiusY: Float = 0.0f
+
+    override fun getPerceivedResolution(): PerceivedResolutionResult {
+        return PerceivedResolutionResult.Success(PixelDimensions(0, 0))
+    }
 }

@@ -16,13 +16,18 @@
 
 package androidx.xr.scenecore.impl;
 
+import android.app.Activity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue;
 import androidx.xr.runtime.internal.CameraViewActivityPose;
 import androidx.xr.runtime.internal.HitTestResult;
+import androidx.xr.runtime.internal.PixelDimensions;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.common.BaseActivityPose;
@@ -130,5 +135,34 @@ final class CameraViewActivityPoseImpl extends BaseActivityPose implements Camer
             return new Fov(0, 0, 0, 0);
         }
         return RuntimeUtils.fovFromPerceptionFov(viewProjection.getFov());
+    }
+
+    @NonNull
+    @Override
+    public PixelDimensions getDisplayResolutionInPixels() {
+        Activity activity = mPerceptionLibrary.getActivity();
+        WindowManager windowManager = activity.getSystemService(WindowManager.class);
+        if (windowManager == null) {
+            Log.w(
+                    TAG,
+                    "WindowManager not available, cannot get display resolution. Returning (0,"
+                            + "0).");
+            return new PixelDimensions(0, 0); // Fallback if WindowManager is not available
+        }
+
+        Display display = windowManager.getDefaultDisplay();
+        if (display == null) {
+            Log.w(
+                    TAG,
+                    "Default display not available, cannot get display resolution. Returning "
+                            + "(0,0).");
+            return new PixelDimensions(0, 0); // Fallback if display is not available
+        }
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        display.getRealMetrics(displayMetrics);
+
+        // Divide the width by 2 because we want single eye resolution, not full display resolution
+        return new PixelDimensions(displayMetrics.widthPixels / 2, displayMetrics.heightPixels);
     }
 }

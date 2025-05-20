@@ -66,7 +66,10 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
     private lateinit var mSurfaceEntityManager: SurfaceEntityManager
     private lateinit var mSpatialEnvironmentManager: SpatialEnvironmentManager
     private lateinit var mHeadLockedUIManager: HeadLockedUIManager
-    private lateinit var mHeadLockedPanelView: View
+
+    private lateinit var mPanelEntityManager: PanelEntityManager
+    private lateinit var mPerceivedResolutionManager: PerceivedResolutionManager
+    private lateinit var mHeadLockedPanelView: DebugTextLinearView
     private var mSpatialVisibility by mutableStateOf(SpatialVisibility(SpatialVisibility.UNKNOWN))
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,17 +88,20 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
         mSpatialEnvironmentManager = SpatialEnvironmentManager(mSession)
         mSurfaceEntityManager = SurfaceEntityManager(mSession)
         mGltfManager = GltfManager(mSession)
+        mPanelEntityManager = PanelEntityManager(mSession)
+        mPerceivedResolutionManager =
+            PerceivedResolutionManager(mSession, mSurfaceEntityManager, mPanelEntityManager)
 
         // Create the headlocked panel
-        val debugPanelView = DebugTextLinearView(context = this)
-        debugPanelView.setName("Spatial Visibility")
-        debugPanelView.setLine("State", "UNKNOWN")
-        this.mHeadLockedUIManager = HeadLockedUIManager(mSession, debugPanelView)
+        mHeadLockedPanelView = DebugTextLinearView(context = this)
+        mHeadLockedPanelView.setName("Spatial Visibility")
+        mHeadLockedPanelView.setLine("State", "UNKNOWN")
+        this.mHeadLockedUIManager = HeadLockedUIManager(mSession, mHeadLockedPanelView)
 
         mSession.scene.setSpatialVisibilityChangedListener { visibility: SpatialVisibility ->
             mSpatialVisibility = visibility
             Log.i(TAG, "Spatial visibility changed listener called $visibility")
-            debugPanelView.setLine("State", "$visibility")
+            mHeadLockedPanelView.setLine("State", "$visibility")
         }
 
         setContent { MainPanelContent(mSession, mActivity) }
@@ -136,6 +142,7 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
                 modifier = Modifier.padding(15.dp),
                 text = "SpatialVisibility: $mSpatialVisibility",
             )
+
             Text(
                 modifier = Modifier.padding(15.dp),
                 text =
@@ -156,6 +163,12 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
             HorizontalDivider(Modifier.padding(15.dp), 1.dp, Color.Black)
 
             mGltfManager.GltfEntitySettings()
+            HorizontalDivider(Modifier.padding(15.dp), 1.dp, Color.Black)
+
+            mPanelEntityManager.PanelEntitySettings()
+            HorizontalDivider(Modifier.padding(15.dp), 1.dp, Color.Black)
+
+            mPerceivedResolutionManager.PerceivedResolutionSettings()
             HorizontalDivider(Modifier.padding(15.dp), 1.dp, Color.Black)
 
             Row(verticalAlignment = Alignment.CenterVertically) {

@@ -540,8 +540,10 @@ package androidx.xr.runtime.internal {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface CameraViewActivityPose extends androidx.xr.runtime.internal.ActivityPose {
     method public int getCameraType();
+    method public androidx.xr.runtime.internal.PixelDimensions getDisplayResolutionInPixels();
     method public androidx.xr.runtime.internal.CameraViewActivityPose.Fov getFov();
     property @androidx.xr.runtime.internal.CameraViewActivityPose.CameraType public abstract int cameraType;
+    property public abstract androidx.xr.runtime.internal.PixelDimensions displayResolutionInPixels;
     property public abstract androidx.xr.runtime.internal.CameraViewActivityPose.Fov fov;
   }
 
@@ -1018,6 +1020,7 @@ package androidx.xr.runtime.internal {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface PanelEntity extends androidx.xr.runtime.internal.Entity {
     method public float getCornerRadius();
+    method public androidx.xr.runtime.internal.PerceivedResolutionResult getPerceivedResolution();
     method public androidx.xr.runtime.math.Vector3 getPixelDensity();
     method public androidx.xr.runtime.internal.Dimensions getSize();
     method public androidx.xr.runtime.internal.PixelDimensions getSizeInPixels();
@@ -1028,6 +1031,23 @@ package androidx.xr.runtime.internal {
     property public abstract androidx.xr.runtime.math.Vector3 pixelDensity;
     property public abstract androidx.xr.runtime.internal.Dimensions size;
     property public abstract androidx.xr.runtime.internal.PixelDimensions sizeInPixels;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract sealed class PerceivedResolutionResult {
+  }
+
+  public static final class PerceivedResolutionResult.EntityTooClose extends androidx.xr.runtime.internal.PerceivedResolutionResult {
+    ctor public PerceivedResolutionResult.EntityTooClose();
+  }
+
+  public static final class PerceivedResolutionResult.InvalidCameraView extends androidx.xr.runtime.internal.PerceivedResolutionResult {
+    ctor public PerceivedResolutionResult.InvalidCameraView();
+  }
+
+  public static final class PerceivedResolutionResult.Success extends androidx.xr.runtime.internal.PerceivedResolutionResult {
+    ctor public PerceivedResolutionResult.Success(androidx.xr.runtime.internal.PixelDimensions perceivedResolution);
+    method public androidx.xr.runtime.internal.PixelDimensions getPerceivedResolution();
+    property public androidx.xr.runtime.internal.PixelDimensions perceivedResolution;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface PerceptionManager {
@@ -1434,6 +1454,7 @@ package androidx.xr.runtime.internal {
     method public androidx.xr.runtime.internal.Dimensions getDimensions();
     method public float getFeatherRadiusX();
     method public float getFeatherRadiusY();
+    method public androidx.xr.runtime.internal.PerceivedResolutionResult getPerceivedResolution();
     method public int getStereoMode();
     method public android.view.Surface getSurface();
     method public void setAuxiliaryAlphaMaskTexture(androidx.xr.runtime.internal.TextureResource? alphaMask);

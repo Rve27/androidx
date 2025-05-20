@@ -26,6 +26,7 @@ import androidx.xr.runtime.internal.InputEvent as RuntimeInputEvent
 import androidx.xr.runtime.internal.InputEvent.Companion.HitInfo as RuntimeHitInfo
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.MoveEvent as RuntimeMoveEvent
+import androidx.xr.runtime.internal.PerceivedResolutionResult as RuntimePerceivedResolutionResult
 import androidx.xr.runtime.internal.PixelDimensions as RuntimePixelDimensions
 import androidx.xr.runtime.internal.PlaneSemantic as RtPlaneSemantic
 import androidx.xr.runtime.internal.PlaneType as RtPlaneType
@@ -733,5 +734,33 @@ class UtilsTest {
             )
             .containsExactly(null, SpatialPointerIconNone, SpatialPointerIconCircle)
             .inOrder()
+    }
+
+    @Test
+    fun rtPerceivedResolutionResultSuccess_convertsCorrectly() {
+        val runtimeSuccess =
+            RuntimePerceivedResolutionResult.Success(RuntimePixelDimensions(100, 200))
+        val result = runtimeSuccess.toPerceivedResolutionResult()
+
+        assertThat(result).isInstanceOf(PerceivedResolutionResult.Success::class.java)
+        val success = result as PerceivedResolutionResult.Success
+        assertThat(success.perceivedResolution.width).isEqualTo(100)
+        assertThat(success.perceivedResolution.height).isEqualTo(200)
+    }
+
+    @Test
+    fun rtPerceivedResolutionResultEntityTooClose_convertsCorrectly() {
+        val runtimeEntityTooClose = RuntimePerceivedResolutionResult.EntityTooClose()
+        val result = runtimeEntityTooClose.toPerceivedResolutionResult()
+
+        assertThat(result).isInstanceOf(PerceivedResolutionResult.EntityTooClose::class.java)
+    }
+
+    @Test
+    fun rtPerceivedResolutionResultInvalidCameraView_convertsCorrectly() {
+        val runtimeInvalidCamera = RuntimePerceivedResolutionResult.InvalidCameraView()
+        val result = runtimeInvalidCamera.toPerceivedResolutionResult()
+
+        assertThat(result).isInstanceOf(PerceivedResolutionResult.InvalidCameraView::class.java)
     }
 }

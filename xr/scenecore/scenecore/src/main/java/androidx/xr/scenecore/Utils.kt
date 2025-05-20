@@ -28,6 +28,7 @@ import androidx.xr.runtime.internal.InputEvent as RtInputEvent
 import androidx.xr.runtime.internal.InputEvent.Companion.HitInfo as RtHitInfo
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.MoveEvent as RtMoveEvent
+import androidx.xr.runtime.internal.PerceivedResolutionResult as RtPerceivedResolutionResult
 import androidx.xr.runtime.internal.PixelDimensions as RtPixelDimensions
 import androidx.xr.runtime.internal.PlaneSemantic as RtPlaneSemantic
 import androidx.xr.runtime.internal.PlaneType as RtPlaneType
@@ -322,5 +323,18 @@ internal fun Int.toSpatialPointerIcon(): SpatialPointerIcon? {
         RtSpatialPointerIcon.TYPE_CIRCLE -> SpatialPointerIconCircle
         RtSpatialPointerIcon.TYPE_DEFAULT -> null
         else -> error("Unknown spatial pointer icon type: $this")
+    }
+}
+
+/**
+ * Extension function that converts a [RtPerceivedResolutionResult] to [PerceivedResolutionResult].
+ */
+internal fun RtPerceivedResolutionResult.toPerceivedResolutionResult(): PerceivedResolutionResult {
+    return when (this) {
+        is RtPerceivedResolutionResult.Success ->
+            PerceivedResolutionResult.Success(this.perceivedResolution.toPixelDimensions())
+        is RtPerceivedResolutionResult.EntityTooClose -> PerceivedResolutionResult.EntityTooClose()
+        is RtPerceivedResolutionResult.InvalidCameraView ->
+            PerceivedResolutionResult.InvalidCameraView()
     }
 }

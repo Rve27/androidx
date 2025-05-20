@@ -67,7 +67,7 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
     Optional<Executor> mPointerCaptureExecutor = Optional.empty();
     final ConcurrentHashMap<Consumer<ReformEvent>, Executor> mReformEventConsumerMap =
             new ConcurrentHashMap<>();
-    private final EntityManager mEntityManager;
+    protected final EntityManager mEntityManager;
     private ReformOptions mReformOptions;
 
     AndroidXrEntity(
