@@ -29,7 +29,6 @@ import android.hardware.camera2.CameraMetadata.FLASH_MODE_OFF
 import android.hardware.camera2.CameraMetadata.FLASH_MODE_TORCH
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.CaptureResult
-import android.hardware.camera2.CaptureResult.CONTROL_AE_EXPOSURE_COMPENSATION
 import android.hardware.camera2.params.MeteringRectangle
 import android.os.Build
 import androidx.camera.camera2.Camera2Config
@@ -247,9 +246,14 @@ class CameraControlDeviceTest(
         val upper = exposureState.exposureCompensationRange.upper
         bindUseCases()
 
-        cameraControl.setExposureCompensationIndex(upper).get(3000, TimeUnit.MILLISECONDS)
+        // If the device is facing a scene that the exposure can't converge, the future may not be
+        // completed and the capture result may not change accordingly. So here doesn't wait for the
+        // future and check the capture request instead.
+        cameraControl.setExposureCompensationIndex(upper)
 
-        captureCallback.verifyLastCaptureResult(mapOf(CONTROL_AE_EXPOSURE_COMPENSATION to upper))
+        captureCallback.verifyLastCaptureRequest(
+            mapOf(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION to upper)
+        )
     }
 
     @Test
