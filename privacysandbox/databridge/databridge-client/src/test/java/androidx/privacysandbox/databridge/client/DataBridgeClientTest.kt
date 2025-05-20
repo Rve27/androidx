@@ -18,9 +18,8 @@ package androidx.privacysandbox.databridge.client
 
 import android.content.Context
 import androidx.privacysandbox.databridge.core.Key
+import androidx.privacysandbox.sdkruntime.client.SdkSandboxManagerCompat
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.SmallTest
 import com.google.common.truth.Expect
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -29,12 +28,14 @@ import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-@SmallTest
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
+@Config(manifest = Config.NONE)
 class DataBridgeClientTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
-    val dataBridgeClient = DataBridgeClient.getInstance(context)
+    private var dataBridgeClient = DataBridgeClient.getInstance(context)
 
     private val intKey = Key.createIntKey("intKey")
     private val doubleKey = Key.createDoubleKey("doubleKey")
@@ -61,6 +62,18 @@ class DataBridgeClientTest {
     @After
     fun tearDown() {
         runBlocking { dataBridgeClient.removeValues(setOfKeys) }
+        DataBridgeClient.resetInstanceForTesting()
+    }
+
+    @Test
+    fun testDatBridgeProxyRegisteredToAppOwnedSdkSandboxInterfaceCompat() {
+        val sdkSandboxManagerCompat = SdkSandboxManagerCompat.from(context)
+        val appOwnedSdkSandboxInterfaces = sdkSandboxManagerCompat.getAppOwnedSdkSandboxInterfaces()
+        expect.that(appOwnedSdkSandboxInterfaces.size).isEqualTo(1)
+        expect
+            .that(appOwnedSdkSandboxInterfaces[0].getName())
+            .isEqualTo("androidx.privacysandbox.databridge")
+        expect.that(appOwnedSdkSandboxInterfaces[0].getVersion()).isEqualTo(1)
     }
 
     @Test
