@@ -932,7 +932,7 @@ class SupportedSurfaceCombinationTest {
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
                 CameraMode.CONCURRENT_CAMERA,
-                ImageFormat.PRIVATE,
+                PRIVATE,
                 RESOLUTION_720P,
             )
         val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.PRIV, S720P_16_9)
@@ -998,7 +998,7 @@ class SupportedSurfaceCombinationTest {
         val surfaceConfig =
             supportedSurfaceCombination.transformSurfaceConfig(
                 CameraMode.CONCURRENT_CAMERA,
-                ImageFormat.PRIVATE,
+                PRIVATE,
                 RESOLUTION_1440P,
             )
         val expectedSurfaceConfig = SurfaceConfig.create(ConfigType.PRIV, S1440P_4_3)
@@ -1071,7 +1071,7 @@ class SupportedSurfaceCombinationTest {
         assertThat(
                 supportedSurfaceCombination.transformSurfaceConfig(
                     CameraMode.DEFAULT,
-                    ImageFormat.PRIVATE,
+                    PRIVATE,
                     ultraHighMaximumSize,
                 )
             )
@@ -1098,8 +1098,7 @@ class SupportedSurfaceCombinationTest {
     fun transformSurfaceConfigWithUnsupportedFormatRecordSize() {
         setupCamera(
             CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY,
-            supportedFormats =
-                intArrayOf(ImageFormat.YUV_420_888, ImageFormat.JPEG, ImageFormat.PRIVATE),
+            supportedFormats = intArrayOf(ImageFormat.YUV_420_888, ImageFormat.JPEG, PRIVATE),
         )
         val supportedSurfaceCombination =
             SupportedSurfaceCombination(
@@ -1122,8 +1121,7 @@ class SupportedSurfaceCombinationTest {
     fun transformSurfaceConfigWithUnsupportedFormatMaximumSize() {
         setupCamera(
             CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY,
-            supportedFormats =
-                intArrayOf(ImageFormat.YUV_420_888, ImageFormat.JPEG, ImageFormat.PRIVATE),
+            supportedFormats = intArrayOf(ImageFormat.YUV_420_888, ImageFormat.JPEG, PRIVATE),
         )
         val supportedSurfaceCombination =
             SupportedSurfaceCombination(
@@ -2420,7 +2418,7 @@ class SupportedSurfaceCombinationTest {
         val useCase = createUseCase(CaptureType.PREVIEW)
 
         val useCaseExpectedSizeMap = mutableMapOf(useCase to maximumSize)
-        val useCaseExpectedDynamicRangeMap = mapOf(useCase to DynamicRange.SDR)
+        val useCaseExpectedDynamicRangeMap = mapOf(useCase to SDR)
 
         getSuggestedSpecsAndVerify(
             useCaseExpectedSizeMap,
@@ -2436,7 +2434,7 @@ class SupportedSurfaceCombinationTest {
         val useCase = createUseCase(CaptureType.PREVIEW)
 
         val useCaseExpectedSizeMap = mutableMapOf(useCase to maximumSize)
-        val useCaseExpectedDynamicRangeMap = mapOf(useCase to DynamicRange.SDR)
+        val useCaseExpectedDynamicRangeMap = mapOf(useCase to SDR)
 
         getSuggestedSpecsAndVerify(
             useCaseExpectedSizeMap,
@@ -2455,7 +2453,7 @@ class SupportedSurfaceCombinationTest {
             )
 
         val useCaseExpectedSizeMap = mutableMapOf(useCase to maximumSize)
-        val useCaseExpectedDynamicRangeMap = mapOf(useCase to DynamicRange.SDR)
+        val useCaseExpectedDynamicRangeMap = mapOf(useCase to SDR)
 
         getSuggestedSpecsAndVerify(
             useCaseExpectedSizeMap,
@@ -2509,7 +2507,7 @@ class SupportedSurfaceCombinationTest {
 
         val useCaseExpectedSizeMap = mutableMapOf(useCase to maximumSize)
 
-        val useCaseExpectedDynamicRangeMap = mapOf(useCase to DynamicRange.SDR)
+        val useCaseExpectedDynamicRangeMap = mapOf(useCase to SDR)
 
         getSuggestedSpecsAndVerify(
             useCaseExpectedSizeMap,
@@ -2561,12 +2559,12 @@ class SupportedSurfaceCombinationTest {
         val attachedPreview =
             AttachedSurfaceInfo.create(
                 SurfaceConfig.create(ConfigType.PRIV, ConfigSize.PREVIEW),
-                ImageFormat.PRIVATE,
+                PRIVATE,
                 previewSize,
-                DynamicRange.SDR,
+                SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
         val attachedAnalysis =
@@ -2574,10 +2572,10 @@ class SupportedSurfaceCombinationTest {
                 SurfaceConfig.create(ConfigType.YUV, ConfigSize.RECORD),
                 ImageFormat.YUV_420_888,
                 recordSize,
-                DynamicRange.SDR,
+                SDR,
                 listOf(CaptureType.IMAGE_ANALYSIS),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
 
@@ -2606,12 +2604,12 @@ class SupportedSurfaceCombinationTest {
         val attachedPriv1 =
             AttachedSurfaceInfo.create(
                 SurfaceConfig.create(ConfigType.PRIV, ConfigSize.PREVIEW),
-                ImageFormat.PRIVATE,
+                PRIVATE,
                 previewSize,
                 DynamicRange.HDR10_10_BIT,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
         val attachedPriv2 =
@@ -2622,7 +2620,7 @@ class SupportedSurfaceCombinationTest {
                 DynamicRange.HDR10_PLUS_10_BIT,
                 listOf(CaptureType.VIDEO_CAPTURE),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
 
@@ -2666,12 +2664,12 @@ class SupportedSurfaceCombinationTest {
         val attachedPriv1 =
             AttachedSurfaceInfo.create(
                 SurfaceConfig.create(ConfigType.PRIV, ConfigSize.PREVIEW),
-                ImageFormat.PRIVATE,
+                PRIVATE,
                 previewSize,
-                DynamicRange.SDR,
+                SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
         val attachedPriv2 =
@@ -2679,10 +2677,10 @@ class SupportedSurfaceCombinationTest {
                 SurfaceConfig.create(ConfigType.PRIV, ConfigSize.RECORD),
                 ImageFormat.YUV_420_888,
                 recordSize,
-                DynamicRange.SDR,
+                SDR,
                 listOf(CaptureType.IMAGE_ANALYSIS),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
 
@@ -2700,7 +2698,7 @@ class SupportedSurfaceCombinationTest {
         // VideoCapture HLG dynamic range
         val videoUseCase = createUseCase(CaptureType.VIDEO_CAPTURE, dynamicRange = HLG_10_BIT)
         // Preview SDR dynamic range
-        val previewUseCase = createUseCase(CaptureType.PREVIEW, dynamicRange = DynamicRange.SDR)
+        val previewUseCase = createUseCase(CaptureType.PREVIEW, dynamicRange = SDR)
 
         val useCaseExpectedSizeMap =
             mutableMapOf(videoUseCase to recordSize, previewUseCase to previewSize)
@@ -2721,7 +2719,7 @@ class SupportedSurfaceCombinationTest {
         // VideoCapture HLG dynamic range
         val videoUseCase = createUseCase(CaptureType.VIDEO_CAPTURE, dynamicRange = HLG_10_BIT)
         // Preview SDR dynamic range
-        val previewUseCase = createUseCase(CaptureType.PREVIEW, dynamicRange = DynamicRange.SDR)
+        val previewUseCase = createUseCase(CaptureType.PREVIEW, dynamicRange = SDR)
 
         val useCaseExpectedSizeMap =
             mutableMapOf(videoUseCase to recordSize, previewUseCase to previewSize)
@@ -2891,7 +2889,7 @@ class SupportedSurfaceCombinationTest {
                 SurfaceConfig.create(ConfigType.JPEG, ConfigSize.PREVIEW),
                 ImageFormat.JPEG,
                 Size(1280, 720),
-                DynamicRange.SDR,
+                SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
                 Range(40, 50),
@@ -2920,7 +2918,7 @@ class SupportedSurfaceCombinationTest {
                 SurfaceConfig.create(ConfigType.JPEG, ConfigSize.PREVIEW),
                 ImageFormat.JPEG,
                 Size(1280, 720),
-                DynamicRange.SDR,
+                SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
                 Range(40, 50),
@@ -2949,7 +2947,7 @@ class SupportedSurfaceCombinationTest {
                 SurfaceConfig.create(ConfigType.JPEG, ConfigSize.PREVIEW),
                 ImageFormat.JPEG,
                 Size(1280, 720),
-                DynamicRange.SDR,
+                SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
                 Range(40, 50),
@@ -3078,7 +3076,7 @@ class SupportedSurfaceCombinationTest {
         getSuggestedSpecsAndVerify(
             useCaseExpectedResultMap,
             hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
-            compareExpectedFps = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
+            compareExpectedFps = FRAME_RATE_RANGE_UNSPECIFIED,
         )
         // since no target fps present, no specific device fps will be selected, and is set to
         // unspecified: (0,0)
@@ -3090,17 +3088,14 @@ class SupportedSurfaceCombinationTest {
 
         // use case with no target fps
         val useCase1 =
-            createUseCase(
-                CaptureType.PREVIEW,
-                targetFrameRate = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
-            )
+            createUseCase(CaptureType.PREVIEW, targetFrameRate = FRAME_RATE_RANGE_UNSPECIFIED)
 
         val useCaseExpectedResultMap =
             mutableMapOf<UseCase, Size>().apply { put(useCase1, Size(4032, 3024)) }
         getSuggestedSpecsAndVerify(
             useCaseExpectedResultMap,
             hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
-            compareExpectedFps = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
+            compareExpectedFps = FRAME_RATE_RANGE_UNSPECIFIED,
         )
         // since target fps is unspecified, no specific device fps will be selected, and is set to
         // unspecified: (0,0)
@@ -3933,7 +3928,7 @@ class SupportedSurfaceCombinationTest {
 
     private fun createFeatureSettings(
         requiresFeatureComboQuery: Boolean = false,
-        targetFpsRange: Range<Int>? = null,
+        targetFpsRange: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
     ) =
         SupportedSurfaceCombination.FeatureSettings(
             CameraMode.DEFAULT,
@@ -4068,7 +4063,7 @@ class SupportedSurfaceCombinationTest {
                 )
             )
             .thenReturn(supportedSizes)
-        // ImageFormat.PRIVATE was supported since API level 23. Before that, the supported
+        // PRIVATE was supported since API level 23. Before that, the supported
         // output sizes need to be retrieved via SurfaceTexture.class.
         whenever(mockMap.getOutputSizes(SurfaceTexture::class.java)).thenReturn(supportedSizes)
         // This is setup for the test to determine RECORD size from StreamConfigurationMap

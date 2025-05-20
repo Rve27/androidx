@@ -28,6 +28,7 @@ import androidx.camera.core.impl.CameraDeviceSurfaceManager
 import androidx.camera.core.impl.CameraInfoInternal
 import androidx.camera.core.impl.CameraMode
 import androidx.camera.core.impl.StreamSpec
+import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.SurfaceConfig
 import androidx.camera.core.impl.UseCaseConfig
 import androidx.camera.core.impl.UseCaseConfigFactory
@@ -58,7 +59,7 @@ public interface StreamSpecsCalculator {
         newUseCases: List<UseCase>,
         attachedUseCases: List<UseCase> = emptyList(),
         cameraConfig: CameraConfig = CameraConfigs.defaultConfig(),
-        targetHighSpeedFrameRate: Range<Int> = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
+        targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
         allowFeatureCombinationResolutions: Boolean = false,
     ): Map<UseCase, StreamSpec>
 
@@ -97,7 +98,7 @@ public interface StreamSpecsCalculator {
             cameraConfig: CameraConfig = CameraConfigs.defaultConfig(),
             allowFeatureCombinationResolutions: Boolean = false,
             attachedUseCases: List<UseCase> = emptyList(),
-            targetHighSpeedFrameRate: Range<Int> = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
+            targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
         ): Map<UseCase, StreamSpec> {
             return calculateSuggestedStreamSpecs(
                 cameraMode = cameraMode,
@@ -161,7 +162,7 @@ public class StreamSpecsCalculatorImpl(
         cameraInfoInternal: CameraInfoInternal,
         attachedUseCases: List<UseCase>,
     ): Pair<Map<UseCase, StreamSpec>, Map<AttachedSurfaceInfo, UseCase>> {
-        val existingSurfaces: MutableList<AttachedSurfaceInfo?> = ArrayList<AttachedSurfaceInfo?>()
+        val existingSurfaces = mutableListOf<AttachedSurfaceInfo>()
         val cameraId = cameraInfoInternal.getCameraId()
         val suggestedStreamSpecs = mutableMapOf<UseCase, StreamSpec>()
         val surfaceInfoUseCaseMap = mutableMapOf<AttachedSurfaceInfo, UseCase>()
@@ -192,10 +193,12 @@ public class StreamSpecsCalculatorImpl(
                     attachedStreamSpec.dynamicRange,
                     StreamSharing.getCaptureTypes(useCase),
                     attachedStreamSpec.getImplementationOptions(),
-                    useCase.currentConfig.getTargetFrameRate(null),
+                    requireNotNull(
+                        useCase.currentConfig.getTargetFrameRate(FRAME_RATE_RANGE_UNSPECIFIED)
+                    ),
                     requireNotNull(
                         useCase.currentConfig.getTargetHighSpeedFrameRate(
-                            StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
+                            FRAME_RATE_RANGE_UNSPECIFIED
                         )
                     ),
                 )
@@ -221,8 +224,7 @@ public class StreamSpecsCalculatorImpl(
         // Calculate resolution for new use cases.
         if (!newUseCases.isEmpty()) {
             val configToUseCaseMap = mutableMapOf<UseCaseConfig<*>, UseCase>()
-            val configToSupportedSizesMap: MutableMap<UseCaseConfig<*>?, MutableList<Size?>?> =
-                HashMap<UseCaseConfig<*>?, MutableList<Size?>?>()
+            val configToSupportedSizesMap = mutableMapOf<UseCaseConfig<*>, MutableList<Size>>()
             val sensorRect =
                 try {
                     cameraInfoInternal.getSensorRect()

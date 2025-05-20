@@ -2502,7 +2502,7 @@ class SupportedSurfaceCombinationTest {
                 SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
         val attachedAnalysis =
@@ -2513,7 +2513,7 @@ class SupportedSurfaceCombinationTest {
                 SDR,
                 listOf(CaptureType.IMAGE_ANALYSIS),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
 
@@ -2547,7 +2547,7 @@ class SupportedSurfaceCombinationTest {
                 DynamicRange.HDR10_10_BIT,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
         val attachedPriv2 =
@@ -2558,7 +2558,7 @@ class SupportedSurfaceCombinationTest {
                 DynamicRange.HDR10_PLUS_10_BIT,
                 listOf(CaptureType.VIDEO_CAPTURE),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
 
@@ -2607,7 +2607,7 @@ class SupportedSurfaceCombinationTest {
                 SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
         val attachedPriv2 =
@@ -2618,7 +2618,7 @@ class SupportedSurfaceCombinationTest {
                 SDR,
                 listOf(CaptureType.IMAGE_ANALYSIS),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ null,
+                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
 
@@ -3014,7 +3014,7 @@ class SupportedSurfaceCombinationTest {
         getSuggestedSpecsAndVerify(
             useCaseExpectedResultMap,
             hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
-            compareExpectedFps = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
+            compareExpectedFps = FRAME_RATE_RANGE_UNSPECIFIED,
         )
         // since no target fps present, no specific device fps will be selected, and is set to
         // unspecified: (0,0)
@@ -4517,7 +4517,7 @@ class SupportedSurfaceCombinationTest {
         isUltraHdrOn: Boolean = false,
         isHighSpeedOn: Boolean = false,
         requiresFeatureComboQuery: Boolean = false,
-        targetFpsRange: Range<Int>? = null,
+        targetFpsRange: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
     ): FeatureSettings {
         return FeatureSettings.of(
             cameraMode,

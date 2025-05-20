@@ -902,7 +902,9 @@ constructor(
                         streamSpec.dynamicRange,
                         useCase.getCaptureTypes(),
                         streamSpec.implementationOptions ?: MutableOptionsBundle.create(),
-                        useCase.currentConfig.getTargetFrameRate(null),
+                        checkNotNull(
+                            useCase.currentConfig.getTargetFrameRate(FRAME_RATE_RANGE_UNSPECIFIED)
+                        ),
                         checkNotNull(
                             useCase.currentConfig.getTargetHighSpeedFrameRate(
                                 FRAME_RATE_RANGE_UNSPECIFIED

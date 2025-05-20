@@ -692,7 +692,7 @@ class StreamUseCaseTest() {
                 DynamicRange.SDR,
                 captureTypes,
                 /*implementationOptions=*/ null,
-                /*targetFrameRate=*/ null,
+                FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
         TestCase.assertTrue(
@@ -730,7 +730,7 @@ class StreamUseCaseTest() {
                 DynamicRange.SDR,
                 captureTypes,
                 /*implementationOptions=*/ null,
-                /*targetFrameRate=*/ null,
+                FRAME_RATE_RANGE_UNSPECIFIED,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
         TestCase.assertFalse(
@@ -889,7 +889,7 @@ class StreamUseCaseTest() {
             DynamicRange.SDR,
             captureTypes,
             StreamUseCaseUtil.getStreamSpecImplementationOptions(useCaseConfig),
-            /* targetFrameRate= */ null,
+            FRAME_RATE_RANGE_UNSPECIFIED,
             FRAME_RATE_RANGE_UNSPECIFIED,
         )
     }

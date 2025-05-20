@@ -96,9 +96,7 @@ class HighSpeedResolverTest {
     @Test
     fun getTargetHighSpeedFrameRate_configsHaveSameFrameRate_returnsCorrectFrameRate() {
         val attachedSurfaceInfos =
-            listOf<AttachedSurfaceInfo>(
-                createAttachedSurfaceInfo(targetHighSpeedFrameRate = RANGE_120_120)
-            )
+            listOf(createAttachedSurfaceInfo(targetHighSpeedFrameRate = RANGE_120_120))
         val useCaseConfigs =
             listOf<UseCaseConfig<*>>(
                 createFakeUseCaseConfig(targetHighSpeedFrameRate = RANGE_120_120),
@@ -115,7 +113,7 @@ class HighSpeedResolverTest {
     fun getTargetHighSpeedFrameRate_configsHaveDifferentFrameRates_throwsException() {
         // Differ in AttachedSurfaceInfo list
         val attachedSurfaceInfos120And240 =
-            listOf<AttachedSurfaceInfo>(
+            listOf(
                 createAttachedSurfaceInfo(targetHighSpeedFrameRate = RANGE_120_120),
                 createAttachedSurfaceInfo(targetHighSpeedFrameRate = RANGE_240_240),
             )
@@ -360,7 +358,7 @@ class HighSpeedResolverTest {
         dynamicRange: DynamicRange = SDR,
         captureTypes: List<CaptureType> = listOf(CaptureType.PREVIEW),
         implementationOptions: androidx.camera.core.impl.Config? = null,
-        targetFrameRate: Range<Int>? = null,
+        targetFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
         targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
     ): AttachedSurfaceInfo =
         AttachedSurfaceInfo.create(

@@ -101,9 +101,6 @@ public class SupportedSurfaceCombination(
     private val hardwareLevel =
         cameraMetadata[CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL]
             ?: CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY
-    private val availableStabilizationMode =
-        cameraMetadata[CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES]
-            ?: CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES
     private val concurrentSurfaceCombinations: MutableList<SurfaceCombination> = mutableListOf()
     private val surfaceCombinations: MutableList<SurfaceCombination> = mutableListOf()
     private val surfaceCombinationsStreamUseCase: MutableList<SurfaceCombination> = mutableListOf()
@@ -118,8 +115,8 @@ public class SupportedSurfaceCombination(
     private val surfaceCombinationsUltraHdr: MutableList<SurfaceCombination> = mutableListOf()
     private var isRawSupported = false
     private var isBurstCaptureSupported = false
-    private var isConcurrentCameraModeSupported = false
-    private var isStreamUseCaseSupported = false
+    private val isConcurrentCameraModeSupported: Boolean
+    private val isStreamUseCaseSupported: Boolean
     private var isUltraHighResolutionSensorSupported = false
     private var isPreviewStabilizationSupported = false
     internal lateinit var surfaceSizeDefinition: SurfaceSizeDefinition
@@ -229,7 +226,9 @@ public class SupportedSurfaceCombination(
                     )
                     .apply {
                         setExpectedFrameRateRange(
-                            featureSettings.targetFpsRange ?: FpsRangeFeature.DEFAULT_FPS_RANGE
+                            featureSettings.targetFpsRange.takeIf {
+                                it != FRAME_RATE_RANGE_UNSPECIFIED
+                            } ?: FpsRangeFeature.DEFAULT_FPS_RANGE
                         )
 
                         if (featureSettings.isPreviewStabilizationOn) {
@@ -690,7 +689,7 @@ public class SupportedSurfaceCombination(
         isUltraHdrOn: Boolean,
         isHighSpeedOn: Boolean,
         requiresFeatureComboQuery: Boolean,
-        targetFpsRange: Range<Int>?,
+        targetFpsRange: Range<Int>,
     ): FeatureSettings {
         val requiredMaxBitDepth = getRequiredMaxBitDepth(resolvedDynamicRanges)
 
@@ -878,7 +877,7 @@ public class SupportedSurfaceCombination(
                 bestSizesAndMaxFps.bestSizes.size ==
                     bestSizesAndMaxFps.bestSizesForStreamUseCase!!.size
         ) {
-            var hasDifferentSavedSizes =
+            val hasDifferentSavedSizes =
                 bestSizesAndMaxFps.bestSizes.zip(bestSizesAndMaxFps.bestSizesForStreamUseCase).any {
                     it.first != it.second
                 }
@@ -928,8 +927,8 @@ public class SupportedSurfaceCombination(
         attachedSurfaces: List<AttachedSurfaceInfo>,
         newUseCaseConfigs: List<UseCaseConfig<*>>,
         useCasesPriorityOrder: List<Int>,
-    ): Range<Int>? {
-        var targetFrameRateForConfig: Range<Int>? = null
+    ): Range<Int> {
+        var targetFrameRateForConfig: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
         for (attachedSurfaceInfo in attachedSurfaces) {
             // init target fps range for new configs from existing surfaces
             targetFrameRateForConfig =
@@ -942,7 +941,7 @@ public class SupportedSurfaceCombination(
         for (index in useCasesPriorityOrder) {
             targetFrameRateForConfig =
                 getUpdatedTargetFrameRate(
-                    newUseCaseConfigs[index].getTargetFrameRate(null),
+                    newUseCaseConfigs[index].getTargetFrameRate(FRAME_RATE_RANGE_UNSPECIFIED)!!,
                     targetFrameRateForConfig,
                 )
         }
@@ -1021,7 +1020,7 @@ public class SupportedSurfaceCombination(
 
         // Filters the sizes with frame rate only if there is target FPS setting
         val maxFrameRate =
-            if (featureSettings.targetFpsRange != null) {
+            if (featureSettings.targetFpsRange != FRAME_RATE_RANGE_UNSPECIFIED) {
                 getMaxFrameRate(imageFormat, size, featureSettings.isHighSpeedOn)
             } else {
                 Int.MAX_VALUE
@@ -1033,7 +1032,7 @@ public class SupportedSurfaceCombination(
         if (
             featureSettings.requiresFeatureComboQuery &&
                 (configSize == ConfigSize.NOT_SUPPORT ||
-                    (featureSettings.targetFpsRange != null &&
+                    (featureSettings.targetFpsRange != FRAME_RATE_RANGE_UNSPECIFIED &&
                         maxFrameRate < featureSettings.targetFpsRange.getUpper()))
         ) {
             return
@@ -1120,26 +1119,12 @@ public class SupportedSurfaceCombination(
                     existingSurfaceFrameRateCeiling,
                     featureSettings.isHighSpeedOn,
                 )
-            var isConfigFrameRateAcceptable = true
-            if (featureSettings.targetFpsRange != null) {
-                // TODO: b/402372530 - currentConfigFramerateCeiling < targetFpsRange.getLower()
-                //  means that 'targetFpsRange.getLower() < currentConfigFramerateCeiling  < upper'
-                //  is also acceptable i.e. partially supporting a target FPS range is acceptable.
-                //  However, for feature combo cases, we should strictly maintain the target FPS
-                //  range being fully supported. It doesn't need to be handled right now though
-                //  since feature combo API supports lower == upper case (i.e. FPS_60) only right
-                //  now.
-                if (
-                    existingSurfaceFrameRateCeiling > currentConfigFrameRateCeiling &&
-                        currentConfigFrameRateCeiling < featureSettings.targetFpsRange.lower
-                ) {
-                    // if the max fps before adding new use cases supports our target fps range
-                    // BUT the max fps of the new configuration is below
-                    // our target fps range, we'll want to check the next configuration until we
-                    // get one that supports our target FPS
-                    isConfigFrameRateAcceptable = false
-                }
-            }
+            val isConfigFrameRateAcceptable =
+                isConfigFrameRateAcceptable(
+                    existingSurfaceFrameRateCeiling,
+                    featureSettings.targetFpsRange,
+                    currentConfigFrameRateCeiling,
+                )
 
             val dynamicRangesBySurfaceConfig = mutableMapOf<SurfaceConfig, DynamicRange>()
             surfaceConfigList.forEachIndexed { index, surfaceConfig ->
@@ -1228,9 +1213,38 @@ public class SupportedSurfaceCombination(
         )
     }
 
+    private fun isConfigFrameRateAcceptable(
+        existingSurfaceFrameRateCeiling: Int,
+        targetFpsRange: Range<Int>,
+        currentConfigFrameRateCeiling: Int,
+    ): Boolean {
+        var isConfigFrameRateAcceptable = true
+        if (targetFpsRange != FRAME_RATE_RANGE_UNSPECIFIED) {
+            // TODO: b/402372530 - currentConfigFrameRateCeiling < targetFpsRange.getLower()
+            //  means that 'targetFpsRange.getLower() < currentConfigFrameRateCeiling  < upper'
+            //  is also acceptable i.e. partially supporting a target FPS range is acceptable.
+            //  However, for feature combo cases, we should strictly maintain the target FPS
+            //  range being fully supported. It doesn't need to be handled right now though
+            //  since feature combo API supports lower == upper case (i.e. FPS_60) only right
+            //  now.
+            if (
+                existingSurfaceFrameRateCeiling > currentConfigFrameRateCeiling &&
+                    currentConfigFrameRateCeiling < targetFpsRange.lower
+            ) {
+                // if the max fps before adding new use cases supports our target fps range
+                // BUT the max fps of the new configuration is below
+                // our target fps range, we'll want to check the next configuration until we
+                // get one that supports our target FPS
+                isConfigFrameRateAcceptable = false
+            }
+        }
+
+        return isConfigFrameRateAcceptable
+    }
+
     private fun generateSuggestedStreamSpecMap(
         bestSizesAndMaxFps: BestSizesAndMaxFpsForConfigs,
-        targetFpsRange: Range<Int>?,
+        targetFpsRange: Range<Int>,
         newUseCaseConfigs: List<UseCaseConfig<*>>,
         useCasesPriorityOrder: List<Int>,
         resolvedDynamicRanges: Map<UseCaseConfig<*>, DynamicRange>,
@@ -1238,8 +1252,8 @@ public class SupportedSurfaceCombination(
         isHighSpeedOn: Boolean,
     ): MutableMap<UseCaseConfig<*>, StreamSpec> {
         val suggestedStreamSpecMap = mutableMapOf<UseCaseConfig<*>, StreamSpec>()
-        var targetFrameRateForDevice: Range<Int>? = null
-        if (targetFpsRange != null) {
+        var targetFrameRateForDevice = FRAME_RATE_RANGE_UNSPECIFIED
+        if (targetFpsRange != FRAME_RATE_RANGE_UNSPECIFIED) {
             // get all fps ranges supported by device
             val availableFpsRanges =
                 if (isHighSpeedOn) {
@@ -1268,7 +1282,7 @@ public class SupportedSurfaceCombination(
                     )
                     .setZslDisabled(hasVideoCapture)
 
-            if (targetFrameRateForDevice != null) {
+            if (targetFrameRateForDevice != FRAME_RATE_RANGE_UNSPECIFIED) {
                 streamSpecBuilder.setExpectedFrameRateRange(targetFrameRateForDevice)
             }
             suggestedStreamSpecMap[useCaseConfig] = streamSpecBuilder.build()
@@ -1364,14 +1378,14 @@ public class SupportedSurfaceCombination(
         }
     }
 
-    private fun getMaxFrameRate(imageFormat: Int, size: Size?): Int {
+    private fun getMaxFrameRate(imageFormat: Int, size: Size): Int {
         var maxFrameRate = 0
         try {
             val minFrameDuration =
                 getStreamConfigurationMapCompat().getOutputMinFrameDuration(imageFormat, size)
                     ?: return 0
             maxFrameRate = floor(1_000_000_000.0 / minFrameDuration + 0.05).toInt()
-        } catch (e1: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             // TODO: this try catch is in place for the rare that a surface config has a size
             //  incompatible for getOutputMinFrameDuration...  put into a Quirk
         }
@@ -1416,17 +1430,17 @@ public class SupportedSurfaceCombination(
         //  excessively large portion that is non-intersecting. Will want to do further
         //  investigation to find a more optimized way to decide when a potential range has too
         //  much non-intersecting value and discard it
-        val storedIntersectionsize = getRangeLength(storedRange.intersect(targetFps)).toDouble()
+        val storedIntersectionSize = getRangeLength(storedRange.intersect(targetFps)).toDouble()
         val newIntersectionSize = getRangeLength(newRange.intersect(targetFps)).toDouble()
         val newRangeRatio = newIntersectionSize / getRangeLength(newRange)
-        val storedRangeRatio = storedIntersectionsize / getRangeLength(storedRange)
-        if (newIntersectionSize > storedIntersectionsize) {
+        val storedRangeRatio = storedIntersectionSize / getRangeLength(storedRange)
+        if (newIntersectionSize > storedIntersectionSize) {
             // if new, the new range must have at least 50% of its range intersecting, OR has a
             // larger percentage of intersection than the previous stored range
             if (newRangeRatio >= .5 || newRangeRatio >= storedRangeRatio) {
                 return newRange
             }
-        } else if (newIntersectionSize == storedIntersectionsize) {
+        } else if (newIntersectionSize == storedIntersectionSize) {
             // if intersecting ranges have same length... pick the one that has the higher
             // intersection ratio
             if (newRangeRatio > storedRangeRatio) {
@@ -1458,11 +1472,11 @@ public class SupportedSurfaceCombination(
         maxFps: Int,
         availableFpsRanges: Array<out Range<Int>>?,
     ): Range<Int> {
-        if (targetFrameRate == StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED) {
-            return StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
+        if (targetFrameRate == FRAME_RATE_RANGE_UNSPECIFIED) {
+            return FRAME_RATE_RANGE_UNSPECIFIED
         }
 
-        availableFpsRanges ?: return StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
+        availableFpsRanges ?: return FRAME_RATE_RANGE_UNSPECIFIED
 
         var newTargetFrameRate = targetFrameRate
         // if  whole target frame rate range > maxFps of configuration, the target for this
@@ -1472,14 +1486,14 @@ public class SupportedSurfaceCombination(
         // [target.lower, max] for the sake of this calculation
         newTargetFrameRate =
             Range(min(newTargetFrameRate.lower, maxFps), min(newTargetFrameRate.upper, maxFps))
-        var bestRange = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
+        var bestRange = FRAME_RATE_RANGE_UNSPECIFIED
         var currentIntersectSize = 0
         for (potentialRange in availableFpsRanges) {
             // ignore ranges completely larger than configuration's maximum fps
             if (maxFps < potentialRange.lower) {
                 continue
             }
-            if (bestRange == StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED) {
+            if (bestRange == FRAME_RATE_RANGE_UNSPECIFIED) {
                 bestRange = potentialRange
             }
             // take if range is a perfect match
@@ -1502,7 +1516,7 @@ public class SupportedSurfaceCombination(
                         compareIntersectingRanges(newTargetFrameRate, bestRange, potentialRange)
                     currentIntersectSize = getRangeLength(newTargetFrameRate.intersect(bestRange))
                 }
-            } catch (e: IllegalArgumentException) {
+            } catch (_: IllegalArgumentException) {
                 if (currentIntersectSize != 0) {
                     continue
                 }
@@ -1532,32 +1546,35 @@ public class SupportedSurfaceCombination(
     }
 
     /**
+     * Calculates the updated target frame rate based on a new target frame rate and a previously
+     * stored target frame rate.
+     *
+     * <p>If the two ranges are both nonnull and disjoint of each other, then the range that was
+     * already stored will be used
+     *
      * @param newTargetFrameRate an incoming frame rate range
      * @param storedTargetFrameRate a stored frame rate range to be modified
      * @return adjusted target frame rate
-     *
-     * If the two ranges are both nonnull and disjoint of each other, then the range that was
-     * already stored will be used
      */
     private fun getUpdatedTargetFrameRate(
-        newTargetFrameRate: Range<Int>?,
-        storedTargetFrameRate: Range<Int>?,
-    ): Range<Int>? {
-        var updatedTarget = storedTargetFrameRate
-        if (storedTargetFrameRate == null) {
+        newTargetFrameRate: Range<Int>,
+        storedTargetFrameRate: Range<Int>,
+    ): Range<Int> {
+        var updatedTargetFrameRate = storedTargetFrameRate
+        if (storedTargetFrameRate == FRAME_RATE_RANGE_UNSPECIFIED) {
             // if stored value was null before, set it to the new value
-            updatedTarget = newTargetFrameRate
-        } else if (newTargetFrameRate != null) {
-            updatedTarget =
+            updatedTargetFrameRate = newTargetFrameRate
+        } else if (newTargetFrameRate != FRAME_RATE_RANGE_UNSPECIFIED) {
+            updatedTargetFrameRate =
                 try {
                     // get intersection of existing target fps
                     storedTargetFrameRate.intersect(newTargetFrameRate)
-                } catch (e: java.lang.IllegalArgumentException) {
+                } catch (_: java.lang.IllegalArgumentException) {
                     // no intersection, keep the previously stored value
                     storedTargetFrameRate
                 }
         }
-        return updatedTarget
+        return updatedTargetFrameRate
     }
 
     /**
@@ -1601,7 +1618,8 @@ public class SupportedSurfaceCombination(
                     getUpdatedSurfaceSizeDefinitionByFormat(ImageFormat.JPEG)
                         .getMaximumSize(ImageFormat.JPEG)
                         ?.let { maxJpegSize -> Rational(maxJpegSize.width, maxJpegSize.height) }
-                else -> null
+                TargetAspectRatio.RATIO_ORIGINAL -> null
+                else -> throw AssertionError("Undefined targetAspectRatio: $targetAspectRatio")
             }
         val resultList: MutableList<Size>
         if (ratio == null) {
@@ -1872,7 +1890,7 @@ public class SupportedSurfaceCombination(
             if (recordSize != null) {
                 return recordSize
             }
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             // The camera Id is not an integer. The camera may be a removable device.
         }
         // Use StreamConfigurationMap to determine the RECORD size.
@@ -1988,33 +2006,7 @@ public class SupportedSurfaceCombination(
         highResolutionIncluded: Boolean,
         aspectRatio: Rational? = null,
     ): Size? {
-        val outputSizes: Array<Size>? =
-            runCatching {
-                    // b/378508360: try-catch to workaround the exception when using
-                    // StreamConfigurationMap provided by Robolectric.
-                    if (imageFormat == ImageFormatConstants.INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE) {
-                        // This is a little tricky that 0x22 that is internal defined in
-                        // StreamConfigurationMap.java to be equal to ImageFormat.PRIVATE that is
-                        // public
-                        // after Android level 23 but not public in Android L. Use {@link
-                        // SurfaceTexture}
-                        // or {@link MediaCodec} will finally mapped to 0x22 in
-                        // StreamConfigurationMap to
-                        // retrieve the output sizes information.
-                        map?.getOutputSizes(SurfaceTexture::class.java)
-                    } else {
-                        map?.getOutputSizes(imageFormat)
-                    }
-                }
-                .getOrNull()
-                ?.run {
-                    if (aspectRatio != null) {
-                        filter { AspectRatioUtil.hasMatchingAspectRatio(it, aspectRatio) }
-                            .toTypedArray()
-                    } else {
-                        this
-                    }
-                }
+        val outputSizes: Array<Size>? = getOutputSizes(map, imageFormat, aspectRatio)
         if (outputSizes.isNullOrEmpty()) {
             return null
         }
@@ -2033,6 +2025,39 @@ public class SupportedSurfaceCombination(
         return Collections.max(listOf(maxSize, maxHighResolutionSize), compareSizesByArea)
     }
 
+    private fun getOutputSizes(
+        map: StreamConfigurationMap?,
+        imageFormat: Int,
+        aspectRatio: Rational? = null,
+    ): Array<Size>? {
+        return runCatching {
+                // b/378508360: try-catch to workaround the exception when using
+                // StreamConfigurationMap provided by Robolectric.
+                if (imageFormat == ImageFormatConstants.INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE) {
+                    // This is a little tricky that 0x22 that is internal defined in
+                    // StreamConfigurationMap.java to be equal to ImageFormat.PRIVATE that is
+                    // public
+                    // after Android level 23 but not public in Android L. Use {@link
+                    // SurfaceTexture}
+                    // or {@link MediaCodec} will finally mapped to 0x22 in
+                    // StreamConfigurationMap to
+                    // retrieve the output sizes information.
+                    map?.getOutputSizes(SurfaceTexture::class.java)
+                } else {
+                    map?.getOutputSizes(imageFormat)
+                }
+            }
+            .getOrNull()
+            ?.run {
+                if (aspectRatio != null) {
+                    filter { AspectRatioUtil.hasMatchingAspectRatio(it, aspectRatio) }
+                        .toTypedArray()
+                } else {
+                    this
+                }
+            }
+    }
+
     /** Given all supported output sizes, lists out all possible size arrangements. */
     private fun getAllPossibleSizeArrangements(
         supportedOutputSizesList: List<List<Size>>
@@ -2049,7 +2074,7 @@ public class SupportedSurfaceCombination(
         val allPossibleSizeArrangements: MutableList<MutableList<Size>> = mutableListOf()
 
         // Initialize allPossibleSizeArrangements for the following operations
-        for (i in 0 until totalArrangementsCount) {
+        repeat(totalArrangementsCount) {
             val sizeList: MutableList<Size> = mutableListOf()
             allPossibleSizeArrangements.add(sizeList)
         }
@@ -2100,7 +2125,7 @@ public class SupportedSurfaceCombination(
         val isUltraHdrOn: Boolean = false,
         val isHighSpeedOn: Boolean = false,
         val requiresFeatureComboQuery: Boolean = false,
-        val targetFpsRange: Range<Int>? = null,
+        val targetFpsRange: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
     )
 
     public data class BestSizesAndMaxFpsForConfigs(

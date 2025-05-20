@@ -1296,7 +1296,8 @@ final class Camera2CameraImpl implements CameraInternal {
                         useCaseInfo.getStreamSpec().getDynamicRange(),
                         useCaseInfo.getCaptureTypes(),
                         useCaseInfo.getStreamSpec().getImplementationOptions(),
-                        useCaseConfig.getTargetFrameRate(null),
+                        Preconditions.checkNotNull(
+                                useCaseConfig.getTargetFrameRate(FRAME_RATE_RANGE_UNSPECIFIED)),
                         Preconditions.checkNotNull(useCaseConfig.getTargetHighSpeedFrameRate(
                                 FRAME_RATE_RANGE_UNSPECIFIED)));
 
