@@ -208,9 +208,7 @@ constructor(
                 threads,
                 audioRestrictionController,
                 cameraInteropConfig?.cameraDeviceStateCallback,
-                cameraInteropConfig?.cameraSessionStateCallback,
-                /** interopExtensionSessionStateCallback= */
-                null,
+                cameraInteropConfig?.cameraCaptureSessionListener,
             )
 
         try {

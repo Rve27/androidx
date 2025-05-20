@@ -19,6 +19,7 @@ package androidx.camera.camera2.pipe.testing
 import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CaptureRequest
 import android.view.Surface
+import androidx.camera.camera2.pipe.CameraInterop
 import androidx.camera.camera2.pipe.compat.CameraCaptureSessionWrapper
 import androidx.camera.camera2.pipe.compat.CameraDeviceWrapper
 import androidx.camera.camera2.pipe.compat.OutputConfigurationWrapper
@@ -41,6 +42,9 @@ internal class FakeCaptureSessionWrapper(
     var abortCapturesInvoked = false
 
     val unwrappedClasses = arrayListOf<Any>()
+
+    override val id: CameraInterop.CameraCaptureSessionId =
+        CameraInterop.nextCameraCaptureSessionId()
 
     override fun abortCaptures(): Boolean {
         abortCapturesInvoked = true

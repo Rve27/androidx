@@ -18,12 +18,11 @@
 
 package androidx.camera.camera2.pipe.compat
 
-import android.hardware.camera2.CameraCaptureSession.StateCallback
 import android.hardware.camera2.CameraDevice
-import android.hardware.camera2.CameraExtensionSession
 import androidx.annotation.GuardedBy
 import androidx.camera.camera2.pipe.CameraError
 import androidx.camera.camera2.pipe.CameraId
+import androidx.camera.camera2.pipe.CameraInterop
 import androidx.camera.camera2.pipe.CameraMetadata
 import androidx.camera.camera2.pipe.core.Debug
 import androidx.camera.camera2.pipe.core.DurationNs
@@ -251,9 +250,8 @@ internal class AndroidCameraState(
     private val camera2Quirks: Camera2Quirks,
     private val threads: Threads,
     private val audioRestrictionController: AudioRestrictionController,
-    private val interopDeviceStateCallback: CameraDevice.StateCallback? = null,
-    private val interopSessionStateCallback: StateCallback? = null,
-    private val interopExtensionSessionStateCallback: CameraExtensionSession.StateCallback? = null,
+    private val interopCameraDeviceStateCallback: CameraDevice.StateCallback? = null,
+    private val interopCaptureSessionListener: CameraInterop.CaptureSessionListener? = null,
 ) : CameraDevice.StateCallback() {
     private val debugId = androidCameraDebugIds.incrementAndGet()
     private val lock = Any()
@@ -328,7 +326,7 @@ internal class AndroidCameraState(
                 }
                 pendingClose
             }
-        interopDeviceStateCallback?.onOpened(cameraDevice)
+        interopCameraDeviceStateCallback?.onOpened(cameraDevice)
         if (currentCloseInfo != null) {
             camera2DeviceCloser.closeCamera(
                 cameraDevice = cameraDevice,
@@ -356,8 +354,7 @@ internal class AndroidCameraState(
                 cameraDevice,
                 cameraId,
                 cameraErrorListener,
-                interopSessionStateCallback,
-                interopExtensionSessionStateCallback,
+                interopCaptureSessionListener,
                 threads,
             )
         audioRestrictionController.addListener(androidCameraDevice)
@@ -402,7 +399,7 @@ internal class AndroidCameraState(
                 errorCode = CameraError.ERROR_CAMERA_DISCONNECTED,
             ),
         )
-        interopDeviceStateCallback?.onDisconnected(cameraDevice)
+        interopCameraDeviceStateCallback?.onDisconnected(cameraDevice)
         Debug.traceStop()
     }
 
@@ -416,7 +413,7 @@ internal class AndroidCameraState(
             cameraDevice,
             ClosingInfo(ClosedReason.CAMERA2_ERROR, errorCode = CameraError.from(errorCode)),
         )
-        interopDeviceStateCallback?.onError(cameraDevice, errorCode)
+        interopCameraDeviceStateCallback?.onError(cameraDevice, errorCode)
         Debug.traceStop()
     }
 
@@ -439,7 +436,7 @@ internal class AndroidCameraState(
         Log.debug { "$this: onFinalized" }
 
         closeWith(cameraDevice, ClosingInfo(ClosedReason.CAMERA2_CLOSED))
-        interopDeviceStateCallback?.onClosed(cameraDevice)
+        interopCameraDeviceStateCallback?.onClosed(cameraDevice)
         Debug.traceStop()
     }
 

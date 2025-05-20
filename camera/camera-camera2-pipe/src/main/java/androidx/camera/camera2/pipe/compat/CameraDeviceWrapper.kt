@@ -18,7 +18,6 @@ package androidx.camera.camera2.pipe.compat
 
 import android.hardware.camera2.CameraCaptureSession.StateCallback
 import android.hardware.camera2.CameraDevice
-import android.hardware.camera2.CameraExtensionSession
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.TotalCaptureResult
 import android.hardware.camera2.params.InputConfiguration
@@ -29,6 +28,7 @@ import androidx.annotation.GuardedBy
 import androidx.annotation.RequiresApi
 import androidx.camera.camera2.pipe.AudioRestrictionMode
 import androidx.camera.camera2.pipe.CameraId
+import androidx.camera.camera2.pipe.CameraInterop
 import androidx.camera.camera2.pipe.CameraMetadata
 import androidx.camera.camera2.pipe.RequestTemplate
 import androidx.camera.camera2.pipe.UnsafeWrapper
@@ -118,8 +118,7 @@ internal class AndroidCameraDevice(
     private val cameraDevice: CameraDevice,
     override val cameraId: CameraId,
     private val cameraErrorListener: CameraErrorListener,
-    private val interopSessionStateCallback: StateCallback? = null,
-    private val interopExtensionSessionStateCallback: CameraExtensionSession.StateCallback? = null,
+    private val interopCaptureSessionListener: CameraInterop.CaptureSessionListener? = null,
     private val threads: Threads,
 ) : CameraDeviceWrapper {
     private val closed = atomic(false)
@@ -144,7 +143,7 @@ internal class AndroidCameraDevice(
                         stateCallback,
                         previousStateCallback,
                         cameraErrorListener,
-                        interopSessionStateCallback,
+                        interopCaptureSessionListener,
                         threads.camera2Handler,
                     ),
                     threads.camera2Handler,
@@ -186,7 +185,7 @@ internal class AndroidCameraDevice(
                             stateCallback,
                             previousStateCallback,
                             cameraErrorListener,
-                            interopExtensionSessionStateCallback,
+                            interopCaptureSessionListener,
                             config.executor,
                         ),
                     )
@@ -237,7 +236,7 @@ internal class AndroidCameraDevice(
                         stateCallback,
                         previousStateCallback,
                         cameraErrorListener,
-                        interopSessionStateCallback,
+                        interopCaptureSessionListener,
                         threads.camera2Handler,
                     ),
                     threads.camera2Handler,
@@ -276,7 +275,7 @@ internal class AndroidCameraDevice(
                         stateCallback,
                         previousStateCallback,
                         cameraErrorListener,
-                        interopSessionStateCallback,
+                        interopCaptureSessionListener,
                         threads.camera2Handler,
                     ),
                     threads.camera2Handler,
@@ -315,7 +314,7 @@ internal class AndroidCameraDevice(
                         stateCallback,
                         previousStateCallback,
                         cameraErrorListener,
-                        interopSessionStateCallback,
+                        interopCaptureSessionListener,
                         threads.camera2Handler,
                     ),
                     threads.camera2Handler,
@@ -359,7 +358,7 @@ internal class AndroidCameraDevice(
                         stateCallback,
                         previousStateCallback,
                         cameraErrorListener,
-                        interopSessionStateCallback,
+                        interopCaptureSessionListener,
                         threads.camera2Handler,
                     ),
                     threads.camera2Handler,
@@ -394,7 +393,7 @@ internal class AndroidCameraDevice(
                             config.stateCallback,
                             previousStateCallback,
                             cameraErrorListener,
-                            interopSessionStateCallback,
+                            interopCaptureSessionListener,
                             threads.camera2Handler,
                         ),
                     )

@@ -17,7 +17,6 @@
 package androidx.camera.camera2.pipe
 
 import android.content.Context
-import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraCharacteristics
 import android.hardware.camera2.CameraDevice
 import android.os.Handler
@@ -125,7 +124,7 @@ public interface CameraPipe {
      */
     public data class CameraInteropConfig(
         val cameraDeviceStateCallback: CameraDevice.StateCallback? = null,
-        val cameraSessionStateCallback: CameraCaptureSession.StateCallback? = null,
+        val cameraCaptureSessionListener: CameraInterop.CaptureSessionListener? = null,
         val cameraOpenRetryMaxTimeoutNs: DurationNs? = null,
     )
 

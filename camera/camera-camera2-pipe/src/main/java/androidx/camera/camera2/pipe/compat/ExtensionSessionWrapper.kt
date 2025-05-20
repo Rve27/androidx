@@ -23,6 +23,7 @@ import android.hardware.camera2.TotalCaptureResult
 import android.os.Build
 import android.view.Surface
 import androidx.annotation.RequiresApi
+import androidx.camera.camera2.pipe.CameraInterop
 import androidx.camera.camera2.pipe.FrameNumber
 import androidx.camera.camera2.pipe.UnsafeWrapper
 import androidx.camera.camera2.pipe.core.Log
@@ -73,33 +74,36 @@ internal class AndroidExtensionSessionStateCallback(
     private val stateCallback: CameraExtensionSessionWrapper.StateCallback,
     lastStateCallback: SessionStateCallback?,
     private val cameraErrorListener: CameraErrorListener,
-    private val interopSessionStateCallback: CameraExtensionSession.StateCallback? = null,
+    private val interopCaptureSessionListener: CameraInterop.CaptureSessionListener? = null,
     private val callbackExecutor: Executor,
 ) : CameraExtensionSession.StateCallback() {
     private val _lastStateCallback = atomic(lastStateCallback)
     private val extensionSession = atomic<CameraExtensionSessionWrapper?>(null)
 
     override fun onConfigured(session: CameraExtensionSession) {
-        stateCallback.onConfigured(getWrapped(session, cameraErrorListener))
+        val sessionWrapper = getWrapped(session, cameraErrorListener)
+        stateCallback.onConfigured(sessionWrapper)
 
         // b/249258992 - This is a workaround to ensure previous
         // CameraExtensionSession.StateCallback instances receive some kind of "finalization"
         // signal if onClosed is not fired by the framework after a subsequent session
         // has been configured.
         finalizeLastSession()
-        interopSessionStateCallback?.onConfigured(session)
+        interopCaptureSessionListener?.onConfigured(device.cameraId, sessionWrapper.id)
     }
 
     override fun onConfigureFailed(session: CameraExtensionSession) {
-        stateCallback.onConfigureFailed(getWrapped(session, cameraErrorListener))
+        val sessionWrapper = getWrapped(session, cameraErrorListener)
+        stateCallback.onConfigureFailed(sessionWrapper)
         finalizeSession()
-        interopSessionStateCallback?.onConfigureFailed(session)
+        interopCaptureSessionListener?.onConfigureFailed(device.cameraId, sessionWrapper.id)
     }
 
     override fun onClosed(session: CameraExtensionSession) {
+        val sessionWrapper = getWrapped(session, cameraErrorListener)
         stateCallback.onClosed(getWrapped(session, cameraErrorListener))
         finalizeSession()
-        interopSessionStateCallback?.onClosed(session)
+        interopCaptureSessionListener?.onClosed(device.cameraId, sessionWrapper.id)
     }
 
     private fun getWrapped(
@@ -144,7 +148,8 @@ internal open class AndroidCameraExtensionSession(
     private val cameraErrorListener: CameraErrorListener,
     private val callbackExecutor: Executor,
 ) : CameraExtensionSessionWrapper {
-
+    override val id: CameraInterop.CameraCaptureSessionId =
+        CameraInterop.nextCameraCaptureSessionId()
     private val frameNumbers: AtomicLong = atomic(0L)
     private val extensionSessionMap: MutableMap<CameraExtensionSession, Long> = HashMap()
 
