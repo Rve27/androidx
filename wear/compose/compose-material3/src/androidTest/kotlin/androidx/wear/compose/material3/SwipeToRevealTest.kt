@@ -36,7 +36,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.TouchInjectionScope
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertLeftPositionInRootIsEqualTo
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -46,6 +48,9 @@ import androidx.compose.ui.test.swipeRight
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.BasicSwipeToDismissBox
 import androidx.wear.compose.foundation.GestureInclusion
+import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
+import androidx.wear.compose.foundation.lazy.TransformingLazyColumnState
+import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.foundation.rememberSwipeToDismissBoxState
 import androidx.wear.compose.material3.RevealActionType.Companion.PrimaryAction
 import androidx.wear.compose.material3.RevealActionType.Companion.SecondaryAction
@@ -66,6 +71,7 @@ import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -771,6 +777,180 @@ class SwipeToRevealTest {
             enableTouchSlop = false,
         ) {
             swipeRight(startX = width / 2f)
+        }
+    }
+
+    @Test
+    fun onRecreation_withInitialState_stateIsRestored() {
+        // Given a SwipeToReveal with an initial state.
+        val restorationTester = StateRestorationTester(rule)
+
+        lateinit var state: RevealState
+
+        restorationTester.setContent {
+            state = rememberRevealState(initialValue = Covered)
+
+            SwipeToRevealWithDefaults(revealState = state)
+        }
+
+        val stateBeforeSavedInstanceStateRestore = state
+
+        // When the state is restored.
+        restorationTester.emulateSavedInstanceStateRestore()
+
+        // Then the state is restored correctly.
+        assertRevealStateIsRestored(stateBeforeSavedInstanceStateRestore, state)
+    }
+
+    @Test
+    fun onRecreation_afterSnapTo_stateIsRestored() {
+        // Given a SwipeToReveal in Covered state.
+        val restorationTester = StateRestorationTester(rule)
+
+        lateinit var state: RevealState
+        lateinit var scope: CoroutineScope
+
+        restorationTester.setContent {
+            state = rememberRevealState(initialValue = Covered)
+
+            SwipeToRevealWithDefaults(revealState = state)
+
+            scope = rememberCoroutineScope()
+        }
+
+        // And the component is snapped to the RightRevealing state.
+        scope.launch { state.snapTo(RightRevealing) }
+        rule.waitForIdle()
+
+        val stateBeforeSavedInstanceStateRestore = state
+
+        // When the state is restored
+        restorationTester.emulateSavedInstanceStateRestore()
+
+        // Then the state is restored correctly
+        assertRevealStateIsRestored(stateBeforeSavedInstanceStateRestore, state)
+    }
+
+    @Test
+    fun onRecreationInLazyList_afterScroll_showsAction() {
+        // Given a SwipeToReveal in Covered state, in a lazy list.
+        lateinit var stateOne: RevealState
+        lateinit var tlcState: TransformingLazyColumnState
+        lateinit var scope: CoroutineScope
+        val tlcTestTag = "TLC"
+        val tlcTotalItems = 100
+
+        rule.setContent {
+            stateOne = rememberRevealState(initialValue = Covered)
+            tlcState = rememberTransformingLazyColumnState()
+
+            TransformingLazyColumn(modifier = Modifier.testTag(tlcTestTag), state = tlcState) {
+                item {
+                    SwipeToRevealWithDefaults(
+                        modifier = Modifier.testTag(SWIPE_TO_REVEAL_TAG),
+                        primaryAction =
+                            @Composable {
+                                DefaultPrimaryActionButton(
+                                    modifier = Modifier.testTag(PRIMARY_ACTION_TAG)
+                                )
+                            },
+                        revealState = stateOne,
+                    )
+                }
+                items(tlcTotalItems - 1) { SwipeToRevealWithDefaults() }
+            }
+
+            scope = rememberCoroutineScope()
+        }
+
+        // When the component is snapped to the RightRevealing state to show the primary action.
+        scope.launch { stateOne.snapTo(RightRevealing) }
+        rule.waitForIdle()
+
+        // And the list is scrolled to the bottom so that the component is not visible on the
+        // screen.
+        rule.runOnIdle { runBlocking { tlcState.scrollToItem(tlcTotalItems - 1) } }
+        rule.onNodeWithTag(SWIPE_TO_REVEAL_TAG).assertDoesNotExist()
+
+        // And the list is scrolled to the top so that the component is visible on the screen again.
+        rule.runOnIdle { runBlocking { tlcState.scrollToItem(0) } }
+        rule.onNodeWithTag(SWIPE_TO_REVEAL_TAG).assertIsDisplayed()
+
+        // Then the SwipeToReveal should still be displaying the primary action.
+        rule.onNodeWithTag(PRIMARY_ACTION_TAG).assertIsDisplayed()
+    }
+
+    @Test
+    fun onRecreationInLazyList_afterScrollAndDifferentComponentSnapped_stateIsReset() {
+        // Given a SwipeToReveal in Covered state, in a lazy list.
+        lateinit var stateOne: RevealState
+        lateinit var stateTwo: RevealState
+        lateinit var tlcState: TransformingLazyColumnState
+        lateinit var scope: CoroutineScope
+        val tlcTestTag = "TLC"
+        val tlcTotalItems = 100
+
+        rule.setContent {
+            stateOne = rememberRevealState(initialValue = Covered)
+            stateTwo = rememberRevealState(initialValue = Covered)
+            tlcState = rememberTransformingLazyColumnState()
+
+            TransformingLazyColumn(modifier = Modifier.testTag(tlcTestTag), state = tlcState) {
+                item {
+                    SwipeToRevealWithDefaults(
+                        modifier = Modifier.testTag(SWIPE_TO_REVEAL_TAG),
+                        primaryAction =
+                            @Composable {
+                                DefaultPrimaryActionButton(
+                                    modifier = Modifier.testTag(PRIMARY_ACTION_TAG)
+                                )
+                            },
+                        revealState = stateOne,
+                    )
+                }
+                item {
+                    SwipeToRevealWithDefaults(
+                        modifier = Modifier.testTag(SWIPE_TO_REVEAL_SECOND_TAG),
+                        revealState = stateTwo,
+                    )
+                }
+                items(tlcTotalItems - 2) { SwipeToRevealWithDefaults() }
+            }
+
+            scope = rememberCoroutineScope()
+        }
+
+        // When the component is snapped to the RightRevealing state to show the primary action.
+        scope.launch { stateOne.snapTo(RightRevealing) }
+        rule.waitForIdle()
+
+        // And the list is scrolled to the bottom so that the component is not visible on the
+        // screen.
+        rule.runOnIdle { runBlocking { tlcState.scrollToItem(tlcTotalItems - 1) } }
+        rule.onNodeWithTag(SWIPE_TO_REVEAL_TAG).assertDoesNotExist()
+
+        // And the list is scrolled to the top so that the component is visible on the screen again.
+        rule.runOnIdle { runBlocking { tlcState.scrollToItem(0) } }
+        rule.onNodeWithTag(SWIPE_TO_REVEAL_TAG).assertIsDisplayed()
+        rule.onNodeWithTag(PRIMARY_ACTION_TAG).assertIsDisplayed()
+
+        // And a different component is snapped to the RightRevealing state to show the primary
+        // action.
+        scope.launch { stateTwo.snapTo(RightRevealing) }
+        rule.waitForIdle()
+
+        // Then the first component should not display the action anymore.
+        rule.onNodeWithTag(PRIMARY_ACTION_TAG).assertDoesNotExist()
+    }
+
+    private fun assertRevealStateIsRestored(previousState: RevealState, currentState: RevealState) {
+        rule.runOnIdle {
+            assertThat(previousState).isNotSameInstanceAs(currentState)
+            assertThat(previousState.currentValue).isEqualTo(currentState.currentValue)
+            assertThat(previousState.lastActionType).isEqualTo(currentState.lastActionType)
+            assertThat(previousState.offset).isEqualTo(currentState.offset)
+            assertThat(previousState.revealThreshold).isEqualTo(currentState.revealThreshold)
+            assertThat(previousState.width).isEqualTo(currentState.width)
         }
     }
 

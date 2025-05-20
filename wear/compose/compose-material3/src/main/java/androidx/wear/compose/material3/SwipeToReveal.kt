@@ -73,6 +73,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
@@ -684,7 +686,11 @@ internal data class SwipeToRevealAction(
  * @see [RevealDirection]
  */
 @JvmInline
-public value class RevealValue private constructor(private val value: Int) {
+public value class RevealValue internal constructor(internal val value: Int) {
+    init {
+        require(value in 0..15) { "Invalid RevealValue value: $value" }
+    }
+
     public companion object {
         /**
          * The value which represents the state in which the whole revealable content is fully
@@ -694,7 +700,7 @@ public value class RevealValue private constructor(private val value: Int) {
          * This is only used when the swipe direction is set to [RevealDirection.Bidirectional], and
          * the user swipes from the left side of the screen.
          */
-        public val LeftRevealed: RevealValue = RevealValue(-2)
+        public val LeftRevealed: RevealValue = RevealValue(0)
 
         /**
          * The value which represents the state in which all the actions are revealed and the top
@@ -704,28 +710,28 @@ public value class RevealValue private constructor(private val value: Int) {
          * This is only used when the swipe direction is set to [RevealDirection.Bidirectional], and
          * the user swipes from the left side of the screen.
          */
-        public val LeftRevealing: RevealValue = RevealValue(-1)
+        public val LeftRevealing: RevealValue = RevealValue(1)
 
         /**
          * The default first value which generally represents the state where the revealable actions
          * have not been revealed yet. In this state, none of the actions have been triggered or
          * performed yet.
          */
-        public val Covered: RevealValue = RevealValue(0)
+        public val Covered: RevealValue = RevealValue(2)
 
         /**
          * The value which represents the state in which all the actions are revealed and the top
          * content is not being swiped. In this state, none of the actions have been triggered or
          * performed yet, and they are displayed on the right side of the screen.
          */
-        public val RightRevealing: RevealValue = RevealValue(1)
+        public val RightRevealing: RevealValue = RevealValue(3)
 
         /**
          * The value which represents the state in which the whole revealable content is fully
          * revealed, and the actions are revealed on the right side of the screen. This also
          * represents the state in which one of the actions has been triggered/performed.
          */
-        public val RightRevealed: RevealValue = RevealValue(2)
+        public val RightRevealed: RevealValue = RevealValue(4)
     }
 }
 
@@ -837,6 +843,8 @@ public class RevealState(initialValue: RevealValue) {
      */
     internal var width: Float by mutableFloatStateOf(0.0f)
 
+    internal var isLastStateEngaged = false
+
     /**
      * Require the current offset.
      *
@@ -850,6 +858,8 @@ public class RevealState(initialValue: RevealValue) {
      * [RightRevealed], the action has been performed and it will not be reset.
      */
     internal suspend fun resetLastState(currentState: RevealState) {
+        currentState.isLastStateEngaged = true
+        SingleSwipeCoordinator.lastUpdatedState.get()?.isLastStateEngaged = false
         val oldState = SingleSwipeCoordinator.lastUpdatedState.getAndSet(currentState)
         if (
             currentState != oldState &&
@@ -864,6 +874,71 @@ public class RevealState(initialValue: RevealValue) {
     internal object SingleSwipeCoordinator {
         var lastUpdatedState: AtomicReference<RevealState?> = AtomicReference(null)
     }
+
+    internal companion object {
+        /**
+         * The default [Saver] implementation for [RevealState].
+         *
+         * It stores the [currentValue] and [lastActionType]. Other values like [offset] are
+         * re-calculated.
+         */
+        public val Saver: Saver<RevealState, Int> =
+            Saver(
+                save = { value ->
+                    buildSingleIntFrom(
+                        value.currentValue,
+                        value.lastActionType,
+                        value.isLastStateEngaged,
+                    )
+                },
+                restore = { value ->
+                    RevealState(
+                            initialValue =
+                                RevealValue(
+                                    getValue(value, CURRENT_VALUE_OFFSET, CURRENT_VALUE_MASK)
+                                )
+                        )
+                        .also {
+                            it.lastActionType =
+                                RevealActionType(
+                                    getValue(
+                                        value,
+                                        REVEAL_ACTION_TYPE_OFFSET,
+                                        REVEAL_ACTION_TYPE_MASK,
+                                    )
+                                )
+                            if (
+                                getValue(
+                                    value,
+                                    IS_LAST_STATE_ENGAGED_OFFSET,
+                                    IS_LAST_STATE_ENGAGED_MASK,
+                                ) == 1
+                            ) {
+                                it.isLastStateEngaged = true
+                                SingleSwipeCoordinator.lastUpdatedState.set(it)
+                            }
+                        }
+                },
+            )
+
+        private fun buildSingleIntFrom(
+            revealValue: RevealValue,
+            revealActionType: RevealActionType,
+            isLastStateEngaged: Boolean,
+        ): Int =
+            (revealValue.value shl CURRENT_VALUE_OFFSET) or
+                (revealActionType.value shl REVEAL_ACTION_TYPE_OFFSET) or
+                ((if (isLastStateEngaged) 1 else 0) shl IS_LAST_STATE_ENGAGED_OFFSET)
+
+        private fun getValue(value: Int, offset: Int, mask: Int) = ((value and mask) shr offset)
+
+        private const val CURRENT_VALUE_OFFSET = 0
+        private const val CURRENT_VALUE_MASK = 0x000F
+        private const val REVEAL_ACTION_TYPE_OFFSET = 4
+        private const val REVEAL_ACTION_TYPE_MASK = 0x00F0
+        private const val IS_LAST_STATE_ENGAGED_OFFSET = 8
+        private const val IS_LAST_STATE_ENGAGED_MASK = 0x0100
+    }
 }
 
 /**
@@ -873,7 +948,7 @@ public class RevealState(initialValue: RevealValue) {
  */
 @Composable
 public fun rememberRevealState(initialValue: RevealValue = Covered): RevealState =
-    remember(initialValue) { RevealState(initialValue = initialValue) }
+    rememberSaveable(saver = RevealState.Saver) { RevealState(initialValue = initialValue) }
 
 @Composable
 private fun SwipeToRevealImpl(
@@ -1189,7 +1264,11 @@ private fun SwipeToRevealImpl(
  * [RevealState.animateTo].
  */
 @JvmInline
-internal value class RevealActionType private constructor(public val value: Int) {
+internal value class RevealActionType internal constructor(internal val value: Int) {
+    init {
+        require(value in 0..15) { "Invalid RevealActionType value: $value" }
+    }
+
     public companion object {
         /**
          * Represents the primary action composable of [SwipeToReveal]. This corresponds to the
@@ -1210,7 +1289,7 @@ internal value class RevealActionType private constructor(public val value: Int)
         public val UndoAction: RevealActionType = RevealActionType(2)
 
         /** Default value when none of the above are applicable. */
-        public val None: RevealActionType = RevealActionType(-1)
+        public val None: RevealActionType = RevealActionType(3)
     }
 }
 
