@@ -177,22 +177,22 @@ package androidx.xr.compose.spatial {
   }
 
   public final class SpatialDialogKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable public static void SpatialDialog(kotlin.jvm.functions.Function0<kotlin.Unit> onDismissRequest, optional androidx.xr.compose.spatial.SpatialDialogProperties properties, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @androidx.compose.runtime.Composable public static void SpatialDialog(kotlin.jvm.functions.Function0<kotlin.Unit> onDismissRequest, optional androidx.xr.compose.spatial.SpatialDialogProperties properties, kotlin.jvm.functions.Function0<kotlin.Unit> content);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialDialogProperties {
+  public final class SpatialDialogProperties {
     ctor public SpatialDialogProperties();
-    ctor public SpatialDialogProperties(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> restingLevelAnimationSpec, optional float elevation);
+    ctor public SpatialDialogProperties(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> backgroundContentAnimationSpec, optional float elevation);
     method public androidx.xr.compose.spatial.SpatialDialogProperties copy(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> restingLevelAnimationSpec, optional float elevation);
+    method public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> getBackgroundContentAnimationSpec();
     method public boolean getDismissOnBackPress();
     method public boolean getDismissOnClickOutside();
     method public float getElevation();
-    method public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> getRestingLevelAnimationSpec();
     method public boolean getUsePlatformDefaultWidth();
+    property public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> backgroundContentAnimationSpec;
     property public boolean dismissOnBackPress;
     property public boolean dismissOnClickOutside;
     property public float elevation;
-    property public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> restingLevelAnimationSpec;
     property public boolean usePlatformDefaultWidth;
   }
 
