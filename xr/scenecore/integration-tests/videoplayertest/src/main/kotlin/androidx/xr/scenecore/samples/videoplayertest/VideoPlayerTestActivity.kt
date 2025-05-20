@@ -26,12 +26,18 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,8 +49,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
@@ -94,6 +102,8 @@ class VideoPlayerTestActivity : ComponentActivity() {
     private var videoPlaying by mutableStateOf<Boolean>(false)
     private var controlPanelEntity: PanelEntity? = null
     private var alphaMaskTexture: Texture? = null
+
+    private var subtitles: VideoPlayerSubtitles? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -218,6 +228,20 @@ class VideoPlayerTestActivity : ComponentActivity() {
         if (surfaceEntity != null) {
             surfaceEntity!!.dispose()
             surfaceEntity = null
+        }
+        destroySubtitles()
+    }
+
+    fun createSubtitles(session: Session) {
+        if (subtitles == null && exoPlayer != null) {
+            subtitles = VideoPlayerSubtitles(activity, session, exoPlayer!!)
+        }
+    }
+
+    fun destroySubtitles() {
+        if (subtitles != null) {
+            subtitles!!.destroy()
+            subtitles = null
         }
     }
 
@@ -697,7 +721,15 @@ class VideoPlayerTestActivity : ComponentActivity() {
         val movableComponentMP = remember { mutableStateOf<MovableComponent?>(null) }
         val videoPaused = remember { mutableStateOf(false) }
         val alphaMaskEnabled = remember { mutableStateOf(false) }
-
+        val subtitleCheckedState = remember { mutableStateOf(false) }
+        fun handleSubtitleStateChange(session: Session, newValue: Boolean) {
+            subtitleCheckedState.value = newValue
+            if (newValue) {
+                createSubtitles(session)
+            } else {
+                destroySubtitles()
+            }
+        }
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Column(
                 verticalArrangement = Arrangement.Center,
@@ -739,6 +771,9 @@ class VideoPlayerTestActivity : ComponentActivity() {
             ) {
                 Text(text = "(Stereo) SurfaceEntity", fontSize = 50.sp)
                 if (videoPlaying == false) {
+                    if (subtitleCheckedState.value) {
+                        handleSubtitleStateChange(session, false)
+                    }
                     // High level testcases
                     BigBuckBunnyButton(session, activity)
                     MVHEVCLeftPrimaryButton(session, activity)
@@ -760,8 +795,10 @@ class VideoPlayerTestActivity : ComponentActivity() {
                                 videoPaused.value = !videoPaused.value
                                 if (videoPaused.value) {
                                     exoPlayer?.pause()
+                                    subtitles?.pause()
                                 } else {
                                     exoPlayer?.play()
+                                    subtitles?.resume()
                                 }
                             }
                         ) {
@@ -779,6 +816,33 @@ class VideoPlayerTestActivity : ComponentActivity() {
                             }
                         ) {
                             Text(text = "Toggle Alpha Mask", fontSize = 30.sp)
+                        }
+                        Row(
+                            Modifier.height(50.dp)
+                                .background(
+                                    MaterialTheme.colorScheme.primary,
+                                    shape = RoundedCornerShape(25.dp),
+                                )
+                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Checkbox(
+                                checked = subtitleCheckedState.value,
+                                onCheckedChange = { newValue ->
+                                    handleSubtitleStateChange(session, newValue)
+                                },
+                                colors =
+                                    CheckboxDefaults.colors(
+                                        uncheckedColor = Color.White,
+                                        checkedColor = Color.White,
+                                    ),
+                            )
+                            Text(
+                                text = "Toggle Subtitle",
+                                fontSize = 30.sp,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold,
+                            )
                         }
                     }
                 }
