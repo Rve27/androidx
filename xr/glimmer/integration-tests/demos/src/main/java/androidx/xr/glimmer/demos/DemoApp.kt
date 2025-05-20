@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -38,7 +37,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.xr.glimmer.GlimmerTheme
 import androidx.xr.glimmer.Text
@@ -53,14 +51,6 @@ fun DemoApp(currentDemo: Demo, onNavigateToDemo: (Demo) -> Unit) {
                 .windowInsetsPadding(WindowInsets.systemBars)
         ) {
             DisplayDemo(currentDemo, onNavigateToDemo)
-            val context = LocalContext.current
-            Spacer(Modifier.weight(1f, fill = true))
-            ListItem(
-                onClick = { OverlayOnBackgroundSetting.set(context, !overlayOnBackground) },
-                Modifier.padding(16.dp),
-            ) {
-                Text("${if (overlayOnBackground) "Disable" else "Enable"} overlay on background")
-            }
         }
     }
 }
@@ -87,7 +77,7 @@ private fun DisplayDemoCategory(category: DemoCategory, onNavigate: (Demo) -> Un
 }
 
 @Composable
-private fun ListItem(
+internal fun ListItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable (() -> Unit),
