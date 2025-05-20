@@ -713,8 +713,60 @@ class ColorScheme(
     internal var defaultFloatingToolbarVibrantColorsCached: FloatingToolbarColors? = null
 
     @Deprecated(
-        level = DeprecationLevel.HIDDEN,
+        level = DeprecationLevel.WARNING,
         message = "Use constructor with additional 'surfaceContainer' roles.",
+        replaceWith =
+            ReplaceWith(
+                "ColorScheme(primary,\n" +
+                    "onPrimary,\n" +
+                    "primaryContainer,\n" +
+                    "onPrimaryContainer,\n" +
+                    "inversePrimary,\n" +
+                    "secondary,\n" +
+                    "onSecondary,\n" +
+                    "secondaryContainer,\n" +
+                    "onSecondaryContainer,\n" +
+                    "tertiary,\n" +
+                    "onTertiary,\n" +
+                    "tertiaryContainer,\n" +
+                    "onTertiaryContainer,\n" +
+                    "background,\n" +
+                    "onBackground,\n" +
+                    "surface,\n" +
+                    "onSurface,\n" +
+                    "surfaceVariant,\n" +
+                    "onSurfaceVariant,\n" +
+                    "surfaceTint,\n" +
+                    "inverseSurface,\n" +
+                    "inverseOnSurface,\n" +
+                    "error,\n" +
+                    "onError,\n" +
+                    "errorContainer,\n" +
+                    "onErrorContainer,\n" +
+                    "outline,\n" +
+                    "outlineVariant,\n" +
+                    "scrim,\n" +
+                    "surfaceBright,\n" +
+                    "surfaceDim,\n" +
+                    "surfaceContainer,\n" +
+                    "surfaceContainerHigh,\n" +
+                    "surfaceContainerHighest,\n" +
+                    "surfaceContainerLow,\n" +
+                    "surfaceContainerLowest,\n" +
+                    "primaryFixed,\n" +
+                    "primaryFixedDim,\n" +
+                    "onPrimaryFixed,\n" +
+                    "onPrimaryFixedVariant,\n" +
+                    "secondaryFixed,\n" +
+                    "secondaryFixedDim,\n" +
+                    "onSecondaryFixed,\n" +
+                    "onSecondaryFixedVariant,\n" +
+                    "tertiaryFixed,\n" +
+                    "tertiaryFixedDim,\n" +
+                    "onTertiaryFixed,\n" +
+                    "onTertiaryFixedVariant" +
+                    ")"
+            ),
     )
     constructor(
         primary: Color,
