@@ -26,6 +26,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Parcelable
 import android.os.SystemClock
 import android.text.SpannableString
 import android.util.Log
@@ -126,6 +127,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.FOCUS_ACCESS
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.FOCUS_INPUT
 import androidx.core.view.accessibility.AccessibilityNodeProviderCompat
 import androidx.lifecycle.Lifecycle
+import java.io.Serializable
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -872,6 +874,10 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
                 extraDataKeys.add(ExtraDataShapeRectKey)
                 extraDataKeys.add(ExtraDataShapeRectCornersKey)
                 extraDataKeys.add(ExtraDataShapeRegionKey)
+            }
+
+            semanticsNode.unmergedConfig.accessibilityExtraKeys?.forEach { key ->
+                key.accessibilityExtraKey?.let { extraDataKeys.add(it) }
             }
 
             info.availableExtraData = extraDataKeys
@@ -1809,6 +1815,23 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
             node.unmergedConfig.getOrNull(SemanticsProperties.Shape)?.let { shape ->
                 shape.createOutline(node).toRegion()?.let { region ->
                     info.extras.putParcelable(ExtraDataShapeRegionKey, region)
+                }
+            }
+        } else {
+            node.unmergedConfig.accessibilityExtraKeys?.forEach { key ->
+                val extraKey = key.accessibilityExtraKey
+                if (extraKey == extraDataKey) {
+                    val value = node.unmergedConfig.getOrNull(key)
+                    when (value) {
+                        is Serializable -> info.extras.putSerializable(extraKey, value)
+                        is Parcelable -> info.extras.putParcelable(extraKey, value)
+                        else ->
+                            throw IllegalStateException(
+                                "Accessibility extra values must be " +
+                                    "either Serializable or Parcelable."
+                            )
+                    }
+                    return@forEach
                 }
             }
         }

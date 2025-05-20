@@ -4380,6 +4380,7 @@ package androidx.compose.ui.semantics {
   }
 
   public final class SemanticsProperties_androidKt {
+    method public static <T> androidx.compose.ui.semantics.SemanticsPropertyKey<T> SemanticsPropertyKey(String name, String accessibilityExtraKey, optional kotlin.jvm.functions.Function2<? super T?,? super T,? extends T?> mergePolicy);
     method public static String getAccessibilityClassName(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static boolean getTestTagsAsResourceId(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public static void setAccessibilityClassName(androidx.compose.ui.semantics.SemanticsPropertyReceiver, String);

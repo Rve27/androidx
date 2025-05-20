@@ -406,6 +406,12 @@ class SemanticsPropertyKey<T>(
     internal var isImportantForAccessibility = false
         private set
 
+    /**
+     * If this value is non-null, this semantics property will be exposed as an accessibility extra
+     * via AccessibilityNodeInfo.getExtras with this value used as the key for the extra.
+     */
+    internal var accessibilityExtraKey: String? = null
+
     internal constructor(name: String, isImportantForAccessibility: Boolean) : this(name) {
         this.isImportantForAccessibility = isImportantForAccessibility
     }
@@ -414,8 +420,10 @@ class SemanticsPropertyKey<T>(
         name: String,
         isImportantForAccessibility: Boolean,
         mergePolicy: (T?, T) -> T?,
+        accessibilityExtraKey: String? = null,
     ) : this(name, mergePolicy) {
         this.isImportantForAccessibility = isImportantForAccessibility
+        this.accessibilityExtraKey = accessibilityExtraKey
     }
 
     /**

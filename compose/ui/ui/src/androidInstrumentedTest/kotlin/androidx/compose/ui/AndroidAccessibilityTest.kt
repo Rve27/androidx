@@ -20,8 +20,10 @@ import android.content.Context.ACCESSIBILITY_SERVICE
 import android.content.res.Resources
 import android.graphics.Rect
 import android.graphics.RectF
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_HOVER_ENTER
@@ -107,6 +109,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.testutils.expectError
 import androidx.compose.ui.AndroidComposeViewAccessibilityDelegateCompatTest.Companion.AccessibilityEventComparator
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
@@ -140,6 +143,8 @@ import androidx.compose.ui.semantics.SemanticsProperties.ContentDescription
 import androidx.compose.ui.semantics.SemanticsProperties.EditableText
 import androidx.compose.ui.semantics.SemanticsProperties.Focused
 import androidx.compose.ui.semantics.SemanticsProperties.TextSelectionRange
+import androidx.compose.ui.semantics.SemanticsPropertyKey
+import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.getOrNull
@@ -224,7 +229,9 @@ import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import java.io.Serializable
 import java.lang.reflect.Method
+import java.util.Date
 import kotlin.math.max
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -2795,6 +2802,204 @@ class AndroidAccessibilityTest {
 
         // Assert.
         rule.runOnIdle { assertThat(info.extras.getInt(idKey)).isEqualTo(textId) }
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
+    fun getCustomExtrasFromExtraData() {
+        // Arrange.
+        val date = Date()
+        setContent {
+            Box(
+                Modifier.size(10.dp).testTag(tag).semantics {
+                    customIntAccessibilityExtra = 123
+                    customStringAccessibilityExtra = "test"
+                    customParcelableAccessibilityExtra = Uri.parse("http://www.google.com")
+                    customSerializableAccessibilityExtra = date
+                }
+            )
+        }
+        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val info = provider.createAccessibilityNodeInfo(virtualViewId)!!
+        rule.runOnIdle {
+            assertThat(info.availableExtraData)
+                .containsAtLeast(
+                    CustomIntAccessibilityExtraKey,
+                    CustomStringAccessibilityExtraKey,
+                    CustomParcelableAccessibilityExtraKey,
+                    CustomSerializableAccessibilityExtraKey,
+                )
+        }
+
+        fun populateExtra(extraKey: String) {
+            provider.addExtraDataToAccessibilityNodeInfo(virtualViewId, info, extraKey, Bundle())
+        }
+
+        // Act.
+        rule.runOnIdle {
+            populateExtra(CustomIntAccessibilityExtraKey)
+            populateExtra(CustomStringAccessibilityExtraKey)
+            populateExtra(CustomParcelableAccessibilityExtraKey)
+            populateExtra(CustomSerializableAccessibilityExtraKey)
+        }
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(info.extras.getInt(CustomIntAccessibilityExtraKey)).isEqualTo(123)
+            assertThat(info.extras.getString(CustomStringAccessibilityExtraKey)).isEqualTo("test")
+            @Suppress("DEPRECATION")
+            assertThat(info.extras.getParcelable<Uri>(CustomParcelableAccessibilityExtraKey))
+                .isEqualTo(Uri.parse("http://www.google.com"))
+            @Suppress("DEPRECATION")
+            assertThat(info.extras.getSerializable(CustomSerializableAccessibilityExtraKey))
+                .isEqualTo(date)
+        }
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
+    fun getCustomExtrasFromExtraData_sameExtraSetMultipleTimes_sameModifier_lastOneWins() {
+        // Arrange.
+        setContent {
+            Box(
+                Modifier.size(10.dp).testTag(tag).semantics {
+                    customIntAccessibilityExtra = 1
+                    customIntAccessibilityExtra = 2
+                }
+            )
+        }
+        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val info = provider.createAccessibilityNodeInfo(virtualViewId)!!
+
+        // Act.
+        rule.runOnIdle {
+            provider.addExtraDataToAccessibilityNodeInfo(
+                virtualViewId,
+                info,
+                CustomIntAccessibilityExtraKey,
+                Bundle(),
+            )
+        }
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(info.extras.getInt(CustomIntAccessibilityExtraKey)).isEqualTo(2)
+        }
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
+    fun getCustomExtrasFromExtraData_sameExtraSetMultipleTimes_twoModifiers_outerOneWins() {
+        // Arrange.
+        setContent {
+            Box(
+                Modifier.size(10.dp)
+                    .testTag(tag)
+                    .semantics { customIntAccessibilityExtra = 1 }
+                    .semantics { customIntAccessibilityExtra = 2 }
+            )
+        }
+        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val info = provider.createAccessibilityNodeInfo(virtualViewId)!!
+
+        // Act.
+        rule.runOnIdle {
+            provider.addExtraDataToAccessibilityNodeInfo(
+                virtualViewId,
+                info,
+                CustomIntAccessibilityExtraKey,
+                Bundle(),
+            )
+        }
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(info.extras.getInt(CustomIntAccessibilityExtraKey)).isEqualTo(1)
+        }
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
+    fun getCustomExtrasFromExtraData_multipleSemanticsModifiers_mergesExtras() {
+        // Arrange.
+        val date = Date()
+        setContent {
+            Box(
+                Modifier.size(10.dp)
+                    .testTag(tag)
+                    .semantics {
+                        customIntAccessibilityExtra = 123
+                        customStringAccessibilityExtra = "test"
+                        customParcelableAccessibilityExtra = Uri.parse("http://www.google.com")
+                    }
+                    .semantics { customSerializableAccessibilityExtra = date }
+            )
+        }
+        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val info = provider.createAccessibilityNodeInfo(virtualViewId)!!
+        rule.runOnIdle {
+            assertThat(info.availableExtraData)
+                .containsAtLeast(
+                    CustomIntAccessibilityExtraKey,
+                    CustomStringAccessibilityExtraKey,
+                    CustomParcelableAccessibilityExtraKey,
+                    CustomSerializableAccessibilityExtraKey,
+                )
+        }
+
+        fun populateExtra(extraKey: String) {
+            provider.addExtraDataToAccessibilityNodeInfo(virtualViewId, info, extraKey, Bundle())
+        }
+
+        // Act.
+        rule.runOnIdle {
+            populateExtra(CustomIntAccessibilityExtraKey)
+            populateExtra(CustomStringAccessibilityExtraKey)
+            populateExtra(CustomParcelableAccessibilityExtraKey)
+            populateExtra(CustomSerializableAccessibilityExtraKey)
+        }
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(info.extras.getInt(CustomIntAccessibilityExtraKey)).isEqualTo(123)
+            assertThat(info.extras.getString(CustomStringAccessibilityExtraKey)).isEqualTo("test")
+            @Suppress("DEPRECATION")
+            assertThat(info.extras.getParcelable<Uri>(CustomParcelableAccessibilityExtraKey))
+                .isEqualTo(Uri.parse("http://www.google.com"))
+            @Suppress("DEPRECATION")
+            assertThat(info.extras.getSerializable(CustomSerializableAccessibilityExtraKey))
+                .isEqualTo(date)
+        }
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
+    fun getInvalidExtraFromExtraData_throws() {
+        // Arrange.
+        setContent {
+            Box(
+                Modifier.size(10.dp).testTag(tag).semantics {
+                    invalidAccessibilityExtra = InvalidAccessibilityExtraValue(123)
+                }
+            )
+        }
+        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val info = provider.createAccessibilityNodeInfo(virtualViewId)!!
+
+        // Act/Assert.
+        expectError<IllegalStateException>(
+            expectedMessage =
+                "Accessibility extra values must be either Serializable or Parcelable."
+        ) {
+            rule.runOnIdle {
+                provider.addExtraDataToAccessibilityNodeInfo(
+                    virtualViewId,
+                    info,
+                    InvalidAccessibilityExtraKey,
+                    Bundle(),
+                )
+            }
+        }
     }
 
     @Test
@@ -5769,3 +5974,48 @@ private fun AccessibilityEvent(): android.view.accessibility.AccessibilityEvent 
             isEnabled = true
         }
 }
+
+const val CustomIntAccessibilityExtraKey =
+    "androidx.compose.ui.semantics.customIntAccessibilityExtra"
+val CustomIntAccessibilityExtra =
+    SemanticsPropertyKey<Int>("CustomIntAccessibilityExtra", CustomIntAccessibilityExtraKey)
+var SemanticsPropertyReceiver.customIntAccessibilityExtra by CustomIntAccessibilityExtra
+
+const val CustomStringAccessibilityExtraKey =
+    "androidx.compose.ui.semantics.customStringAccessibilityExtra"
+val CustomStringAccessibilityExtra =
+    SemanticsPropertyKey<String>(
+        "CustomStringAccessibilityExtra",
+        CustomStringAccessibilityExtraKey,
+    )
+var SemanticsPropertyReceiver.customStringAccessibilityExtra by CustomStringAccessibilityExtra
+
+const val CustomParcelableAccessibilityExtraKey =
+    "androidx.compose.ui.semantics.customParcelableAccessibilityExtra"
+val CustomParcelableAccessibilityExtra =
+    SemanticsPropertyKey<Parcelable>(
+        "CustomParcelableAccessibilityExtra",
+        CustomParcelableAccessibilityExtraKey,
+    )
+var SemanticsPropertyReceiver.customParcelableAccessibilityExtra by
+    CustomParcelableAccessibilityExtra
+
+const val CustomSerializableAccessibilityExtraKey =
+    "androidx.compose.ui.semantics.customSerializableAccessibilityExtra"
+val CustomSerializableAccessibilityExtra =
+    SemanticsPropertyKey<Serializable>(
+        "CustomSerializableAccessibilityExtra",
+        CustomSerializableAccessibilityExtraKey,
+    )
+var SemanticsPropertyReceiver.customSerializableAccessibilityExtra by
+    CustomSerializableAccessibilityExtra
+
+data class InvalidAccessibilityExtraValue(val value: Int)
+
+const val InvalidAccessibilityExtraKey = "androidx.compose.ui.semantics.invalidAccessibilityExtra"
+val InvalidAccessibilityExtra =
+    SemanticsPropertyKey<InvalidAccessibilityExtraValue>(
+        "InvalidAccessibilityExtra",
+        InvalidAccessibilityExtraKey,
+    )
+var SemanticsPropertyReceiver.invalidAccessibilityExtra by InvalidAccessibilityExtra
