@@ -277,11 +277,7 @@ class BinaryCompatibilityCheckerTest {
             constructor <init>() // my.lib/MyClass.<init>|<init>(){}[0]
         }
         """
-        val expectedErrorMessages =
-            listOf(
-                "Removed typeArgument kotlin/Int from my.lib/MySubClass",
-                "Added typeArgument kotlin/String to my.lib/MySubClass",
-            )
+        val expectedErrorMessages = listOf("Removed superType my.lib/MyClass<kotlin/Int>")
         testBeforeAndAfterIsIncompatible(beforeText, afterText, expectedErrorMessages)
     }
 
@@ -340,7 +336,7 @@ class BinaryCompatibilityCheckerTest {
         """
         val expectedErrorMessages =
             listOf(
-                "isNoinline changed from false to true for parameter 0: kotlin/Function0 of my.lib/myFun"
+                "isNoinline changed from false to true for parameter 0: kotlin/Function0<kotlin/Unit> of my.lib/myFun"
             )
         testBeforeAndAfterIsIncompatible(beforeText, afterText, expectedErrorMessages)
     }
@@ -571,7 +567,9 @@ class BinaryCompatibilityCheckerTest {
         }
         """
         val expectedErrorMessages =
-            listOf("Return type nullability did not match for my.lib/MyClass.myFun")
+            listOf(
+                "Return type changed from kotlin/String? to kotlin/String for my.lib/MyClass.myFun"
+            )
         testBeforeAndAfterIsIncompatible(beforeText, afterText, expectedErrorMessages)
     }
 
@@ -703,10 +701,8 @@ class BinaryCompatibilityCheckerTest {
         """
         val expectedErrorMessages =
             listOf(
-                "isNoinline changed from true to false for parameter 0: kotlin/Function0" +
-                    " of my.lib/myFun",
-                "isCrossinline changed from false to true for parameter 0: kotlin/Function0 of " +
-                    "my.lib/myFun",
+                "isNoinline changed from true to false for parameter 0: kotlin/Function0<kotlin/Unit> of my.lib/myFun",
+                "isCrossinline changed from false to true for parameter 0: kotlin/Function0<kotlin/Unit> of my.lib/myFun",
             )
         testBeforeAndAfterIsIncompatible(beforeText, afterText, expectedErrorMessages)
     }
@@ -939,10 +935,8 @@ class BinaryCompatibilityCheckerTest {
         """
         val expectedErrorMessages =
             listOf(
-                "isNoinline changed from false to true for parameter 0: kotlin/Function0" +
-                    " of my.lib/myFun",
-                "isCrossinline changed from true to false for parameter 0: kotlin/Function0 of " +
-                    "my.lib/myFun",
+                "isNoinline changed from false to true for parameter 0: kotlin/Function0<kotlin/Unit> of my.lib/myFun",
+                "isCrossinline changed from true to false for parameter 0: kotlin/Function0<kotlin/Unit> of my.lib/myFun",
             )
         testBeforeAndAfterIsIncompatible(beforeText, afterText, expectedErrorMessages)
     }
@@ -1367,6 +1361,26 @@ class BinaryCompatibilityCheckerTest {
         final inline fun <#A: kotlin/Any?> my.lib/myFun(#A): #A // my.lib/myFun|myFun(0:0){0§<kotlin.Any?>}[0]
         """
         testBeforeAndAfterIsCompatible(beforeText, afterText)
+    }
+
+    @Test
+    fun typeParamTagChange() {
+        val beforeText =
+            """
+        final fun <#A: kotlin/Int, #B: kotlin/String> my.lib/foo(): kotlin/Int // my.lib/foo|foo(){0§<kotlin.Int>;1§<kotlin.String>}[0]    
+        """
+                .trimIndent()
+        val afterText =
+            """
+        final fun <#A: kotlin/String, #B: kotlin/Int> my.lib/foo(): kotlin/Int // my.lib/foo|foo(){0§<kotlin.String>;1§<kotlin.Int>}[0]    
+        """
+                .trimIndent()
+        val expectedErrors =
+            listOf(
+                "upper bounds changed from kotlin/Int to kotlin/String type param A on my.lib/foo",
+                "upper bounds changed from kotlin/String to kotlin/Int type param B on my.lib/foo",
+            )
+        testBeforeAndAfterIsIncompatible(beforeText, afterText, expectedErrors)
     }
 
     @Test

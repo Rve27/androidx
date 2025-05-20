@@ -18,7 +18,6 @@
 package androidx.binarycompatibilityvalidator
 
 import java.io.File
-import kotlin.collections.removeFirst
 import org.jetbrains.kotlin.library.abi.AbiClass
 import org.jetbrains.kotlin.library.abi.AbiClassifierReference.ClassReference
 import org.jetbrains.kotlin.library.abi.AbiClassifierReference.TypeParameterReference
@@ -33,8 +32,10 @@ import org.jetbrains.kotlin.library.abi.AbiType
 import org.jetbrains.kotlin.library.abi.AbiTypeArgument
 import org.jetbrains.kotlin.library.abi.AbiTypeArgument.StarProjection
 import org.jetbrains.kotlin.library.abi.AbiTypeArgument.TypeProjection
+import org.jetbrains.kotlin.library.abi.AbiTypeNullability
 import org.jetbrains.kotlin.library.abi.AbiTypeParameter
 import org.jetbrains.kotlin.library.abi.AbiValueParameter
+import org.jetbrains.kotlin.library.abi.AbiVariance
 import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
 import org.jetbrains.kotlin.library.abi.LibraryAbi
 
@@ -464,16 +465,16 @@ internal fun AbiTypeParameter.isBinaryCompatibleWith(
     if (upperBounds.isUnbounded() && otherTypeParam.upperBounds.isUnbounded()) {
         return
     }
-    if (upperBound.valueAsString != otherUpperBound.valueAsString) {
+    if (upperBound.asStringOrUnit != otherUpperBound.asStringOrUnit) {
         errors.add(
-            "upper bounds changed from ${otherUpperBound.valueAsString} to " +
-                "${upperBound.valueAsString} type param $tag on $parentQualifiedName"
+            "upper bounds changed from ${otherUpperBound.asStringOrUnit} to " +
+                "${upperBound.asStringOrUnit} type param $tag on $parentQualifiedName"
         )
     }
 }
 
-private val AbiType?.valueAsString: String
-    get() = this?.classNameOrTag ?: "Unit / null"
+private val AbiType?.asStringOrUnit: String
+    get() = this?.asString() ?: "Unit / null"
 
 private fun List<AbiType>.isUnbounded(): Boolean =
     isEmpty() || single().className?.toString() == "kotlin/Any"
@@ -526,74 +527,12 @@ private fun AbiType?.isBinaryCompatibleWith(
     errors: CompatibilityErrors,
     kind: String = "type",
 ) {
-    if (valueAsString != otherType.valueAsString) {
+    if (asStringOrUnit != otherType.asStringOrUnit) {
         errors.add(
-            "$kind changed from ${otherType.valueAsString} to " +
-                "$valueAsString for $parentQualifiedName"
+            "$kind changed from ${otherType.asStringOrUnit} to " +
+                "$asStringOrUnit for $parentQualifiedName"
         )
-        return
     }
-    if ((this == null) && otherType == null) {
-        return
-    }
-    when {
-        this is AbiType.Simple ->
-            isBinaryCompatible(otherType as AbiType.Simple, parentQualifiedName, errors, kind)
-    }
-}
-
-private fun AbiType.Simple.isBinaryCompatible(
-    otherType: AbiType.Simple,
-    parentQualifiedName: String,
-    errors: CompatibilityErrors,
-    kind: String,
-) {
-    val classifierRef = classifierReference
-    val otherClassifierRef = otherType.classifierReference
-    val typeMatches =
-        when (classifierReference) {
-            is ClassReference -> {
-                classifierRef.className == otherClassifierRef.className
-            }
-            is TypeParameterReference -> {
-                classifierRef.tag == otherClassifierRef.tag
-            }
-        }
-    if (!typeMatches) {
-        errors.add("$kind did not match for $parentQualifiedName")
-        return
-    }
-    if (nullability != otherType.nullability) {
-        errors.add("$kind nullability did not match for $parentQualifiedName")
-        return
-    }
-    arguments.isBinaryCompatibleWith(
-        otherType.arguments,
-        entityName = "typeArgument",
-        isAllowedAddition = { false },
-        uniqueId = AbiTypeArgument::asString,
-        isBinaryCompatibleWith = AbiTypeArgument::isBinaryCompatibleWith,
-        parentQualifiedName = parentQualifiedName,
-        errors = errors,
-    )
-}
-
-private fun AbiTypeArgument.isBinaryCompatibleWith(
-    otherTypeArgument: AbiTypeArgument,
-    parentQualifiedName: String,
-    errors: CompatibilityErrors,
-) {
-    if (this is StarProjection && otherTypeArgument is StarProjection) {
-        return
-    }
-    if (this !is TypeProjection || otherTypeArgument !is TypeProjection) {
-        errors.add("Star projection and type projection don't match")
-        return
-    }
-    if (variance != otherTypeArgument.variance) {
-        errors.add("variance changed for type arg ${type.asString()}")
-    }
-    type.isBinaryCompatibleWith(otherTypeArgument.type, parentQualifiedName, errors)
 }
 
 private fun AbiDeclaration.asTypeString() =
@@ -661,23 +600,62 @@ private fun AbiDeclaration.asUnqualifiedTypeString(): String {
     }
 }
 
-private fun AbiType.asString() =
+// Based on implementation from AbiRendererImpl
+// https://github.com/JetBrains/kotlin/blob/e7edef36c6110276cb076d4bda3a780b49742022/compiler/util-klib-abi/src/org/jetbrains/kotlin/library/abi/impl/LibraryAbiRendererImpl.kt#L195
+fun AbiType.asString(): String =
     when (this) {
         is AbiType.Dynamic -> "dynamic"
         is AbiType.Error -> "error"
-        is AbiType.Simple ->
-            when (classifierReference) {
-                is ClassReference -> (classifierReference as ClassReference).className.toString()
-                is TypeParameterReference -> (classifierReference as TypeParameterReference).tag
+        is AbiType.Simple -> {
+            val builder = StringBuilder()
+            when (val classifier = classifierReference) {
+                is ClassReference -> {
+                    builder.append(classifier.className)
+                    if (arguments.isNotEmpty()) {
+                        builder.append("<")
+                        builder.append(
+                            arguments.joinToString(separator = ", ") { typeArgument ->
+                                typeArgument.asString()
+                            }
+                        )
+                        builder.append(">")
+                    }
+                    // We only care about marked nullable and not here, since unspecified
+                    // only applies to type parameters
+                    // https://github.com/JetBrains/kotlin/blob/e7edef36c6110276cb076d4bda3a780b49742022/compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/types/IrType.kt#L63
+                    if (nullability == AbiTypeNullability.MARKED_NULLABLE) {
+                        builder.append('?')
+                    }
+                }
+                is TypeParameterReference -> {
+                    builder.append('#').append(classifier.tag)
+                    builder.append(nullability.asString())
+                }
             }
+            builder.toString()
+        }
+    }
+
+private fun AbiVariance.asString(): String =
+    when (this) {
+        AbiVariance.INVARIANT -> ""
+        AbiVariance.IN -> "in "
+        AbiVariance.OUT -> "out "
+    }
+
+private fun AbiTypeNullability.asString() =
+    when (this) {
+        AbiTypeNullability.MARKED_NULLABLE -> "?"
+        AbiTypeNullability.NOT_SPECIFIED -> ""
+        AbiTypeNullability.DEFINITELY_NOT_NULL -> "!!"
     }
 
 private fun DecoratedAbiValueParameter.asString() = "$index: ${type.asString()}"
 
-private fun AbiTypeArgument.asString() =
+private fun AbiTypeArgument.asString(): String =
     when (this) {
         is StarProjection -> "*"
-        is TypeProjection -> type.asString()
+        is TypeProjection -> variance.asString() + type.asString()
     }
 
 class ValidationException(errorMessage: String) : RuntimeException(errorMessage)
@@ -763,7 +741,7 @@ private fun File.asBaselineErrors(): Set<String> =
         val formatVersion =
             try {
                 it.removeFirst().split(":").last().trim()
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 throw RuntimeException("Failed to parse baseline version from '${this.path}'")
             }
         return when (formatVersion) {
