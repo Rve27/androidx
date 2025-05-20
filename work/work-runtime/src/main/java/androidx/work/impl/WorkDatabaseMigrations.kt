@@ -231,7 +231,7 @@ class RescheduleMigration(val mContext: Context, startVersion: Int, endVersion: 
         if (endVersion >= VERSION_10) {
             db.execSQL(
                 PreferenceUtils.INSERT_PREFERENCE,
-                arrayOf(PreferenceUtils.KEY_RESCHEDULE_NEEDED, 1),
+                arrayOf<Any>(PreferenceUtils.KEY_RESCHEDULE_NEEDED, 1),
             )
         } else {
             val preferences =
