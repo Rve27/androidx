@@ -303,9 +303,9 @@ internal constructor(
      * Provides a button for the primary action of a [SwipeToReveal].
      *
      * When first revealed the primary action displays an icon and then, if fully swiped, it
-     * additionally shows text. It is recommended to set the button height to
-     * [SwipeToRevealDefaults.LargeActionButtonHeight] for large content items like [Card]s, using
-     * [Modifier.height].
+     * additionally shows text. By default the button height is [ButtonDefaults.Height] - it is
+     * recommended to set the button height to [SwipeToRevealDefaults.LargeActionButtonHeight] for
+     * large content items like [Card]s, using [Modifier.height].
      *
      * @param onClick Callback to be executed when the action is performed via a button click.
      * @param icon Icon composable to be displayed for this action.
@@ -333,7 +333,7 @@ internal constructor(
             iconStartFadeInFraction = startFadeInFraction(hasSecondaryAction),
             iconEndFadeInFraction = endFadeInFraction(hasSecondaryAction),
             coroutineScope = coroutineScope,
-            modifier = modifier,
+            modifier = modifier.height(ButtonDefaults.Height),
             hasUndo = hasPrimaryUndo,
         )
     }
@@ -342,9 +342,10 @@ internal constructor(
      * Provides a button for the optional secondary action of a [SwipeToReveal].
      *
      * Secondary action only displays an icon, because, unlike the primary action, it is never
-     * extended to full width so does not have room to display text. It is recommended to set the
-     * button height to [SwipeToRevealDefaults.LargeActionButtonHeight] for large content items like
-     * [Card]s, using [Modifier.height].
+     * extended to full width so does not have room to display text. By default, the button height
+     * is [ButtonDefaults.Height] - it is recommended to set the button height to
+     * [SwipeToRevealDefaults.LargeActionButtonHeight] for large content items like [Card]s, using
+     * [Modifier.height].
      *
      * @param onClick Callback to be executed when the action is performed via a button click.
      * @param icon Icon composable to be displayed for this action.
@@ -369,7 +370,7 @@ internal constructor(
             iconStartFadeInFraction = startFadeInFraction(hasSecondaryAction),
             iconEndFadeInFraction = endFadeInFraction(hasSecondaryAction),
             coroutineScope = coroutineScope,
-            modifier = modifier,
+            modifier = modifier.height(ButtonDefaults.Height),
             hasSecondaryUndo,
         )
     }

@@ -168,6 +168,39 @@ class SwipeToRevealScreenshotTest {
     }
 
     @Test
+    fun swipeToReveal_hasDefaultHeightForLongLabels(@TestParameter screenSize: ScreenSize) {
+        verifyScreenshotForSize(screenSize) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                SwipeToReveal(
+                    primaryAction = {
+                        PrimaryActionButton(
+                            onClick = {}, /* Empty for testing */
+                            {}, /* Empty for testing */
+                            {}, /* Empty for testing */
+                        )
+                    },
+                    secondaryAction = {
+                        SecondaryActionButton(
+                            onClick = {}, /* Empty for testing */
+                            {}, /* Empty for testing */
+                        )
+                    },
+                    onSwipePrimaryAction = {}, /* Empty for testing */
+                    modifier = Modifier.testTag(TEST_TAG),
+                    revealState = rememberRevealState(initialValue = RevealValue.RightRevealing),
+                ) {
+                    Button({}) {
+                        Text(
+                            "This Button has an extremely long label, but the primary " +
+                                "and secondary actions should still have default button height"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
     fun swipeToReveal_showsUndoPrimaryAction_singleLineTruncated() {
         verifyScreenshotForSize(ScreenSize.SMALL) {
             Box(modifier = Modifier.fillMaxSize()) {
