@@ -58,13 +58,13 @@ import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.compose.unit.Meter
 import androidx.xr.compose.unit.VolumeConstraints
 import androidx.xr.runtime.Config.HeadTrackingMode
+import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.ActivitySpace
 import androidx.xr.scenecore.CameraView
 import androidx.xr.scenecore.CameraView.CameraType
 import androidx.xr.scenecore.ContentlessEntity
-import androidx.xr.scenecore.Fov
 import androidx.xr.scenecore.Head
 import androidx.xr.scenecore.Space
 import androidx.xr.scenecore.scene
@@ -577,19 +577,20 @@ private fun getDistanceBetweenUserAndActivitySpaceOrigin(
 /**
  * Returns the combined field of view of the SpatialUser.
  *
- * Returns a [Fov] representing the maximum extent of the left and right cameras' fields of view.
+ * Returns a [FieldOfView] representing the maximum extent of the left and right cameras' fields of
+ * view.
  *
  * @param leftFov The field of view of the left camera.
  * @param rightFov The field of view of the right camera.
- * @return The combined field of view [Fov].
+ * @return The combined field of view [FieldOfView].
  */
-private fun getSpatialUserFov(leftFov: Fov, rightFov: Fov): Fov {
+private fun getSpatialUserFov(leftFov: FieldOfView, rightFov: FieldOfView): FieldOfView {
     val combinedLeft: Float = min(leftFov.angleLeft, rightFov.angleLeft)
     val combinedRight: Float = max(leftFov.angleRight, rightFov.angleRight)
     val combinedUp: Float = max(leftFov.angleUp, rightFov.angleUp)
     val combinedDown: Float = min(leftFov.angleDown, rightFov.angleDown)
 
-    return Fov(combinedLeft, combinedRight, combinedUp, combinedDown)
+    return FieldOfView(combinedLeft, combinedRight, combinedUp, combinedDown)
 }
 
 /**
@@ -598,11 +599,11 @@ private fun getSpatialUserFov(leftFov: Fov, rightFov: Fov): Fov {
  * Takes into account the density to convert the width from meters to pixels.
  *
  * @param distance The distance to the object in [Meter].
- * @param fov The field of view [Fov].
+ * @param fov The field of view [FieldOfView].
  * @param density The current [Density].
  * @return The width in pixels.
  */
-private fun getFovWidthAtDistance(distance: Meter, fov: Fov, density: Density): Int {
+private fun getFovWidthAtDistance(distance: Meter, fov: FieldOfView, density: Density): Int {
     val width: Meter = distance * (tan(fov.angleRight) - tan(fov.angleLeft))
 
     return width.roundToPx(density)
@@ -614,11 +615,11 @@ private fun getFovWidthAtDistance(distance: Meter, fov: Fov, density: Density): 
  * Takes into account the density to convert the height from meters to pixels.
  *
  * @param distance The distance to the object in [Meter].
- * @param fov The field of view [Fov].
+ * @param fov The field of view [FieldOfView].
  * @param density The current [Density].
  * @return The height in pixels.
  */
-private fun getFovHeightAtDistance(distance: Meter, fov: Fov, density: Density): Int {
+private fun getFovHeightAtDistance(distance: Meter, fov: FieldOfView, density: Density): Int {
     val height: Meter = distance * (tan(fov.angleUp) - tan(fov.angleDown))
 
     return height.roundToPx(density)

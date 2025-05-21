@@ -16,6 +16,7 @@
 
 package androidx.xr.scenecore
 
+import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.internal.ActivityPose.HitTestFilter as RtHitTestFilter
 import androidx.xr.runtime.internal.ActivitySpace as RtActivitySpace
 import androidx.xr.runtime.internal.CameraViewActivityPose as RtCameraViewActivityPose
@@ -310,7 +311,7 @@ class ActivityPoseTest {
         val rtFov = RtCameraViewActivityPose.Fov(1f, 2f, 3f, 4f)
         whenever(mockCameraViewActivityPose.fov).thenReturn(rtFov)
 
-        assertThat(camera!!.fov).isEqualTo(Fov(1f, 2f, 3f, 4f))
+        assertThat(camera!!.fov).isEqualTo(FieldOfView(1f, 2f, 3f, 4f))
 
         verify(mockCameraViewActivityPose).fov
     }
@@ -322,8 +323,8 @@ class ActivityPoseTest {
             .thenReturn(rtFov)
             .thenReturn(RtCameraViewActivityPose.Fov(5f, 6f, 7f, 8f))
 
-        assertThat(camera!!.fov).isEqualTo(Fov(1f, 2f, 3f, 4f))
-        assertThat(camera!!.fov).isEqualTo(Fov(5f, 6f, 7f, 8f))
+        assertThat(camera!!.fov).isEqualTo(FieldOfView(1f, 2f, 3f, 4f))
+        assertThat(camera!!.fov).isEqualTo(FieldOfView(5f, 6f, 7f, 8f))
 
         verify(mockCameraViewActivityPose, times(2)).fov
     }

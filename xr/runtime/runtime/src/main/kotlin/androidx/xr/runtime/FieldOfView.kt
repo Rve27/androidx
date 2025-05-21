@@ -56,4 +56,14 @@ constructor(
 
     override fun toString(): String =
         "Fov{\n\tangleLeft=$angleLeft\n\tangleRight=$angleRight\n\tangleUp=$angleUp\n\tangleDown=$angleDown\n}"
+
+    @JvmOverloads
+    public fun copy(
+        angleLeft: Float = this.angleLeft,
+        angleRight: Float = this.angleRight,
+        angleUp: Float = this.angleUp,
+        angleDown: Float = this.angleDown,
+    ): FieldOfView {
+        return FieldOfView(angleLeft, angleRight, angleUp, angleDown)
+    }
 }

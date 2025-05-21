@@ -20,6 +20,7 @@ import android.util.Log
 import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
 import androidx.concurrent.futures.ResolvableFuture
+import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.internal.ActivityPose as RtActivityPose
 import androidx.xr.runtime.internal.CameraViewActivityPose as RtCameraViewActivityPose
 import androidx.xr.runtime.internal.HeadActivityPose as RtHeadActivityPose
@@ -243,11 +244,11 @@ private constructor(private val rtCameraViewActivityPose: RtCameraViewActivityPo
 
     public val cameraType: CameraType = CameraType.UNKNOWN
 
-    /** Gets the FOV for the camera */
-    public val fov: Fov
+    /** Gets the FOV for the camera. */
+    public val fov: FieldOfView
         get() {
             val rtFov = rtCameraViewActivityPose.fov
-            return Fov(rtFov.angleLeft, rtFov.angleRight, rtFov.angleUp, rtFov.angleDown)
+            return FieldOfView(rtFov.angleLeft, rtFov.angleRight, rtFov.angleUp, rtFov.angleDown)
         }
 }
 
