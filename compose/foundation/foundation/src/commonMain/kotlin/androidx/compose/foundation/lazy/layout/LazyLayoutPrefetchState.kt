@@ -555,14 +555,12 @@ internal class PrefetchHandleProvider(
             return (precomposeHandle?.getSize(placeableIndex) ?: IntSize.Zero)
         }
 
-        private fun PrefetchRequestScope.shouldExecute(available: Long, average: Long): Boolean {
+        private fun shouldExecute(available: Long, average: Long): Boolean {
             // Each step execution is prioritized as follows:
             // 1) If it is urgent, we always execute if we have time in the frame.
-            // 2) If we're in idle mode, we always execute if we have time in the frame.
-            // 3) In regular circumstances, we look at the average time this step took and execute
+            // 2) In regular circumstances, we look at the average time this step took and execute
             // only if we have time.
-            val required =
-                if (isUrgent || (priorityPrefetchScheduler?.isFrameIdle ?: false)) 0 else average
+            val required = if (isUrgent) 0 else average
             return available > required
         }
 
