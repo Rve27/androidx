@@ -57,8 +57,11 @@ import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.first
@@ -508,8 +511,8 @@ class Camera2InteropIntegrationTest(val implName: String, val cameraConfig: Came
     /**
      * Returns a [StateFlow] which will signal the states of the camera defined in [SessionState].
      */
-    private fun <T> ExtendableBuilder<T>.createSessionStateFlow(): StateFlow<SessionState> =
-        MutableStateFlow<SessionState>(SessionState.Unknown)
+    private fun <T> ExtendableBuilder<T>.createSessionStateFlow(): SharedFlow<SessionState> =
+        MutableSharedFlow<SessionState>(extraBufferCapacity = 10)
             .apply {
                 val stateCallback =
                     object : CameraCaptureSession.StateCallback() {
@@ -535,7 +538,7 @@ class Camera2InteropIntegrationTest(val implName: String, val cameraConfig: Came
                     stateCallback,
                 )
             }
-            .asStateFlow()
+            .asSharedFlow()
 
     private fun isBackwardCompatible(cameraManager: CameraManager, cameraId: String): Boolean {
         val cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId)
