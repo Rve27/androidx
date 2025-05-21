@@ -400,11 +400,11 @@ and API versions until the new compiler has been in use in AndroidX for at least
 three months.
 
 Library owners *may* in limited cases update their Kotlin language version early
-by specifying the `kotlinVersion` DSL property:
+by specifying the `kotlinTarget` DSL property:
 
 ```
 androidx {
-    kotlinVersion KOTLIN_1_9
+        kotlinTarget = KotlinTarget.LATEST
 }
 ```
 
