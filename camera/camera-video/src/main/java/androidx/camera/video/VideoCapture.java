@@ -583,6 +583,7 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
             UseCaseConfig.@NonNull Builder<?, ?, ?> builder) {
 
         updateCustomOrderedResolutionsByQuality(cameraInfo, builder);
+        updateDefaultTargetFrameRate(builder);
 
         return builder.getUseCaseConfig();
     }
@@ -1530,6 +1531,23 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
 
         // set to custom ordered resolutions
         setCustomOrderedResolutions(builder, supportedQualityToSizeMap);
+    }
+
+    /**
+     * Sets the {@link UseCaseConfig#OPTION_TARGET_FRAME_RATE} as [30, 30] when it is unspecified
+     * and the session type is SESSION_TYPE_REGULAR.
+     */
+    @SuppressWarnings("unchecked") // Cast to VideoCaptureConfig<T>
+    private void updateDefaultTargetFrameRate(UseCaseConfig.@NonNull Builder<?, ?, ?> builder) {
+        VideoCaptureConfig<T> config = (VideoCaptureConfig<T>) builder.getUseCaseConfig();
+        int sessionType = getSessionType(config);
+        boolean shouldSetDefaultFps =
+                sessionType == SESSION_TYPE_REGULAR && config.getTargetFrameRate(
+                        FRAME_RATE_RANGE_UNSPECIFIED) == FRAME_RATE_RANGE_UNSPECIFIED;
+        if (shouldSetDefaultFps) {
+            builder.getMutableConfig().insertOption(OPTION_TARGET_FRAME_RATE,
+                    Defaults.DEFAULT_FPS_RANGE);
+        }
     }
 
     @NonNull

@@ -2032,6 +2032,27 @@ class VideoCaptureTest {
         }
     }
 
+    @Test
+    fun targetFrameRateIsCorrectlyMerged_whenSetExplicitly() {
+        // Arrange: create videoCapture with processing.
+        setupCamera()
+        createCameraUseCaseAdapter()
+        val videoCapture =
+            createVideoCapture(createVideoOutput(), targetFrameRate = FRAME_RATE_RANGE_FIXED_24)
+        addAndAttachUseCases(videoCapture)
+        assertThat(videoCapture.targetFrameRate).isEqualTo(FRAME_RATE_RANGE_FIXED_24)
+    }
+
+    @Test
+    fun targetFrameRateHasCorrectDefaultValue_whenIsUnspecified() {
+        // Arrange: create videoCapture with processing.
+        setupCamera()
+        createCameraUseCaseAdapter()
+        val videoCapture = createVideoCapture(createVideoOutput())
+        addAndAttachUseCases(videoCapture)
+        assertThat(videoCapture.targetFrameRate).isEqualTo(FRAME_RATE_RANGE_FIXED_30)
+    }
+
     private fun testSelectedQualityIsExpected(
         streamSpecConfiguredResolution: Size,
         streamSpecResolution: Size = streamSpecConfiguredResolution,
