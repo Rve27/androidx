@@ -41,6 +41,7 @@ import androidx.core.telecom.internal.utils.EndpointUtils.Companion.getMaskedMac
 import androidx.core.telecom.internal.utils.EndpointUtils.Companion.getSpeakerEndpoint
 import androidx.core.telecom.internal.utils.EndpointUtils.Companion.isBluetoothAvailable
 import androidx.core.telecom.internal.utils.EndpointUtils.Companion.isEarpieceEndpoint
+import androidx.core.telecom.internal.utils.EndpointUtils.Companion.isSpeakerEndpoint
 import androidx.core.telecom.internal.utils.EndpointUtils.Companion.isWiredHeadsetOrBtEndpoint
 import androidx.core.telecom.internal.utils.EndpointUtils.Companion.maybeRemoveEarpieceIfWiredEndpointPresent
 import androidx.core.telecom.internal.utils.EndpointUtils.Companion.toCallEndpointCompat
@@ -85,6 +86,15 @@ internal class CallSessionLegacy(
     private val mCallSessionLegacyId: Int = CallEndpointUuidTracker.startSession()
     private var mGlobalMuteStateReceiver: MuteStateReceiver? = null
     private val mDialingOrRingingStateReached = CompletableDeferred<Unit>()
+    /**
+     * Flag to ensure that the logic to {@link #avoidSpeakerOverrideOnCallStart} is only attempted
+     * once after the initial conditions are met (i.e., a previous endpoint is known). This prevents
+     * repeated attempts to correct the endpoint if other changes occur. It is set to `true` within
+     * {@link #avoidSpeakerOverrideOnCallStart} after the first invocation where `prevEndpoint` is
+     * not null, indicating the initial audio route stabilization phase (for this specific check)
+     * has been processed.
+     */
+    private var mWasPreferredOverrideChecked: Boolean = false
 
     init {
         if (isBuildAtLeastP()) {
@@ -211,6 +221,10 @@ internal class CallSessionLegacy(
             // On the first call audio state change, determine if the platform started on the
             // correct audio route.  Otherwise, request an endpoint switch.
             switchStartingCallEndpointOnCallStart(mAvailableCallEndpoints)
+            // On initial call start, if the user selected a preferred endpoint, do not override
+            // with speaker!
+            avoidSpeakerOverrideOnCallStart(mPreviousCallEndpoint, mCurrentCallEndpoint)
+
             // In the event the users headset disconnects, they will likely want to continue the
             // call via the speakerphone
             if (mCurrentCallEndpoint != null) {
@@ -248,6 +262,99 @@ internal class CallSessionLegacy(
             maybeSwitchToSpeakerOnCallStart(mCurrentCallEndpoint!!, endpoints)
         }
         mAlreadyRequestedStartingEndpointSwitch = true
+    }
+
+    /**
+     * Addresses a specific issue where the Telecom platform might erroneously switch the audio
+     * route to SPEAKER immediately after the call starts, even if the user specified a
+     * {@link #mPreferredStartingCallEndpoint}.
+     *
+     * If conditions are met, this method attempts to switch the audio route back to the preferred
+     * audio endpoint. This logic is guarded by {@link #mWasPreferredOverrideChecked} to ensure it
+     * only runs once when the `prevEndpoint` first becomes available, targeting an early call setup
+     * phase.
+     *
+     * @param prevEndpoint The audio endpoint active before the current change.
+     * @param nextEndpoint The new audio endpoint that has just become active.
+     */
+    fun avoidSpeakerOverrideOnCallStart(
+        prevEndpoint: CallEndpointCompat?,
+        nextEndpoint: CallEndpointCompat?,
+    ) {
+        if (mWasPreferredOverrideChecked) {
+            Log.d(TAG, "avoidSpeakerOverrideOnCallStart: Already checked." + "Skipping.")
+            return
+        }
+
+        // We need a prevEndpoint to reliably determine the transition.
+        // If prevEndpoint is null, it means this is likely the very first endpoint update,
+        // or the state is not yet stable enough for this specific check.
+        // Wait for a subsequent onCallEndpointChanged callback where prevEndpoint is available.
+        if (prevEndpoint == null) {
+            Log.d(
+                TAG,
+                "avoidSpeakerOverrideOnCallStart: prevEndpoint is null, waiting for" +
+                    " more context before checking.",
+            )
+            return
+        }
+
+        // Since prevEndpoint is now non-null, we are proceeding with the one-time check.
+        // Set the flag to true immediately to ensure this block of logic runs at most once
+        // under these stable conditions (prevEndpoint is known).
+        mWasPreferredOverrideChecked = true
+        Log.i(
+            TAG,
+            "avoidSpeakerOverrideOnCallStart: Evaluating. " +
+                "mPreferredStartingCallEndpoint=[$preferredStartingCallEndpoint], " +
+                "mLastClientRequestedEndpoint=[$mLastClientRequestedEndpoint], " +
+                "prevEndpoint=[$prevEndpoint], " +
+                "nextEndpoint=[$nextEndpoint]",
+        )
+
+        // Check 1: Did the user explicitly request the current 'nextEndpoint' if it's SPEAKER?
+        // `mLastClientRequestedEndpoint` would have been set by your app calling
+        // `requestEndpointChange`. This value is cleared after the platform confirms the change
+        // in `onCallEndpointChanged`, so it correctly reflects the *intent leading to the
+        // current `nextEndpoint`*.
+        if (
+            mLastClientRequestedEndpoint != null &&
+                isSpeakerEndpoint(
+                    mLastClientRequestedEndpoint
+                ) && // User explicitly asked for SPEAKER
+                isSpeakerEndpoint(nextEndpoint) // And the current endpoint IS SPEAKER
+        ) {
+            Log.i(
+                TAG,
+                "avoidSpeakerOverrideOnCallStart: User explicitly requested SPEAKER " +
+                    "($mLastClientRequestedEndpoint). Current endpoint is $nextEndpoint. " +
+                    "Assuming intentional. No override.",
+            )
+            return // Do not proceed with automatic override
+        }
+
+        // Check 2: bug fix logic - an unexpected switch from PreferredStartingCallEndpoint
+        // to SPEAKER. This runs if the change to SPEAKER was not an explicit user request
+        // for SPEAKER.
+        if (
+            preferredStartingCallEndpoint != null &&
+                preferredStartingCallEndpoint == prevEndpoint &&
+                preferredStartingCallEndpoint != nextEndpoint &&
+                isSpeakerEndpoint(nextEndpoint) // Current endpoint is SPEAKER
+        ) {
+            CoroutineScope(coroutineContext).launch {
+                Log.i(
+                    TAG,
+                    "avoidSpeakerOverrideOnCallStart: Unwanted switch from preferred" +
+                        "starting endpoint to SPEAKER detected. " +
+                        "Requesting switch back to preferred: $preferredStartingCallEndpoint",
+                )
+                // Request change back to the originally preferred endpoint
+                requestEndpointChange(preferredStartingCallEndpoint)
+            }
+        } else {
+            Log.d(TAG, "avoidSpeakerOverrideOnCallStart: Conditions for override not met.")
+        }
     }
 
     /**

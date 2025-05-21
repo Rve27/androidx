@@ -172,6 +172,13 @@ internal class EndpointUtils {
             return endpoint.type == CallEndpointCompat.TYPE_EARPIECE
         }
 
+        fun isSpeakerEndpoint(endpoint: CallEndpointCompat?): Boolean {
+            if (endpoint == null) {
+                return false
+            }
+            return endpoint.type == CallEndpointCompat.TYPE_SPEAKER
+        }
+
         fun isWiredHeadsetOrBtEndpoint(endpoint: CallEndpointCompat?): Boolean {
             if (endpoint == null) {
                 return false
