@@ -104,6 +104,5 @@ androidx {
     description = "Provides the building blocks for a Compose first Navigation solution that " +
             "easily supports extensions."
     samples(project(":navigation3:navigation3-runtime:navigation3-runtime-samples"))
-    doNotDocumentReason = "Not published to maven"
     addGoldenImageAssets()
 }

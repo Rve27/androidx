@@ -122,6 +122,5 @@ androidx {
     description = "Provides a Navigation3 display that uses the building blocks from runtime to " +
             "create a higher level solution."
     samples(project(":navigation3:navigation3-ui:navigation3-ui-samples"))
-    doNotDocumentReason = "Not published to maven"
     addGoldenImageAssets()
 }
