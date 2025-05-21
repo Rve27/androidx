@@ -58,6 +58,8 @@ dependencies {
     androidTestImplementation(libs.testRunner)
     androidTestImplementation(libs.truth)
     androidTestImplementation(project(":wear:compose:compose-material3-samples"))
+    androidTestImplementation(libs.leakcanary)
+    androidTestImplementation(libs.leakcanaryInstrumentation)
 
     testImplementation(libs.testRules)
     testImplementation(libs.testRunner)
