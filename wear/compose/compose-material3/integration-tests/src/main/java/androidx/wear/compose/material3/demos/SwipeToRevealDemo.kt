@@ -30,14 +30,10 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.SaverScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
@@ -58,13 +54,7 @@ import androidx.wear.compose.material3.Card
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.RevealDirection.Companion.Bidirectional
-import androidx.wear.compose.material3.RevealState
-import androidx.wear.compose.material3.RevealValue
 import androidx.wear.compose.material3.RevealValue.Companion.Covered
-import androidx.wear.compose.material3.RevealValue.Companion.LeftRevealed
-import androidx.wear.compose.material3.RevealValue.Companion.LeftRevealing
-import androidx.wear.compose.material3.RevealValue.Companion.RightRevealed
-import androidx.wear.compose.material3.RevealValue.Companion.RightRevealing
 import androidx.wear.compose.material3.SplitSwitchButton
 import androidx.wear.compose.material3.SwipeToReveal
 import androidx.wear.compose.material3.SwipeToRevealDefaults
@@ -72,6 +62,7 @@ import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TitleCard
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
+import androidx.wear.compose.material3.rememberRevealState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -640,55 +631,17 @@ fun SwipeToRevealWithEdgeSwipeToDismiss(swipeToDismissBoxState: SwipeToDismissBo
 }
 
 @Composable
-fun SwipeToRevealWithTransformingLazyColumnAndSaverDemo() {
+fun SwipeToRevealWithTransformingLazyColumnNoResetOnScrollDemo() {
     val transformationSpec = rememberTransformationSpec()
     val tlcState = rememberTransformingLazyColumnState()
-    val saver =
-        object : Saver<RevealState, Int> {
-            override fun SaverScope.save(value: RevealState): Int? =
-                when (value.currentValue) {
-                    LeftRevealed -> 1
-                    LeftRevealing -> 2
-                    Covered -> 3
-                    RightRevealed -> 4
-                    RightRevealing -> 5
-                    else -> throw IllegalArgumentException()
-                }
 
-            override fun restore(value: Int): RevealState? =
-                RevealState(
-                    initialValue =
-                        when (value) {
-                            1 -> LeftRevealed
-                            2 -> LeftRevealing
-                            3 -> Covered
-                            4 -> RightRevealed
-                            5 -> RightRevealing
-                            else -> throw IllegalArgumentException()
-                        }
-                )
-        }
-
-    val coroutineScope = rememberCoroutineScope()
     TransformingLazyColumn(
         state = tlcState,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 20.dp),
         modifier = Modifier.background(Color.Black),
     ) {
         items(count = 100) { index ->
-            val revealState =
-                rememberSaveable(saver = saver) { RevealState(initialValue = Covered) }
-
-            // SwipeToReveal is covered on scroll.
-            LaunchedEffect(tlcState.isScrollInProgress) {
-                if (
-                    tlcState.isScrollInProgress && revealState.currentValue != RevealValue.Covered
-                ) {
-                    coroutineScope.launch {
-                        revealState.animateTo(targetValue = RevealValue.Covered)
-                    }
-                }
-            }
+            val revealState = rememberRevealState(initialValue = Covered)
 
             SwipeToReveal(
                 primaryAction = {
@@ -698,7 +651,6 @@ fun SwipeToRevealWithTransformingLazyColumnAndSaverDemo() {
                         text = { Text("Delete") },
                     )
                 },
-                revealState = revealState,
                 onSwipePrimaryAction = { /* This block is called when the full swipe gesture is performed. */
                 },
                 modifier =
@@ -708,6 +660,8 @@ fun SwipeToRevealWithTransformingLazyColumnAndSaverDemo() {
                         compositingStrategy = CompositingStrategy.ModulateAlpha
                         clip = false
                     },
+                revealState = revealState,
+                revealDirection = Bidirectional,
             ) {
                 TitleCard(
                     onClick = {},

@@ -190,10 +190,10 @@ val WearMaterial3Demos =
                             SwipeToRevealInScalingLazyColumn()
                         },
                         ComposableDemo("In TransformingLazyColumn") {
-                            SwipeToRevealWithTransformingLazyColumnSample()
+                            SwipeToRevealWithTransformingLazyColumnNoResetOnScrollDemo()
                         },
-                        ComposableDemo("In TLC + Saver") {
-                            SwipeToRevealWithTransformingLazyColumnAndSaverDemo()
+                        ComposableDemo("In TLC, with reset on scroll") {
+                            SwipeToRevealWithTransformingLazyColumnSample()
                         },
                         ComposableDemo("No Partial Reveal") {
                             ScalingLazyDemo {
