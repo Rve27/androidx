@@ -105,6 +105,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.AbstractTestTask
+import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.build.event.BuildEventsListenerRegistry
@@ -237,6 +238,7 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
             }
             project.registerValidateMultiplatformSourceSetNamingTask()
             project.validateLintVersionTestExists(androidXExtension)
+            project.addTestLintK1Task(androidXExtension)
         }
         project.disallowAccidentalAndroidDependenciesInKmpProject(androidXKmpExtension)
         TaskUpToDateValidator.setup(project, registry)
@@ -1488,6 +1490,34 @@ internal fun getDefaultTargetJavaVersion(
         softwareType.compilationTarget == CompilationTarget.HOST -> VERSION_17
         else -> VERSION_1_8
     }
+}
+
+/** Must be called from a `project.afterEvaluate` block. */
+private fun Project.addTestLintK1Task(androidXExt: AndroidXExtension) {
+    if (!androidXExt.type.isLint()) {
+        return
+    }
+
+    // Make the default ":test" task use lint.use.fir.uast=true, which forces Lint tests to run
+    // using K2.
+    project.tasks.withType<Test>().named("test") { task ->
+        task.systemProperty("lint.use.fir.uast", "true")
+    }
+
+    // Add an additional test task, ":testLintK1", to run Lint tests using K1.
+    //
+    // This task is automatically included in allHostTests and configured (by JavaBasePlugin to run
+    // the Kotlin/Java tests) just by being of type `Test`; no additional code is needed, and the
+    // order (of when we register this task vs., say, allHostTests) does not matter.
+    //
+    // All AndroidX libraries target the Kotlin 2.0 language version, so AndroidX lint checks
+    // invoked via AGP will use K2. However, K1 may still be used: (a) When Lint runs in Android
+    // Studio and IntelliJ, the user can choose K1/K2 mode. (b) The developer can force AGP Lint to
+    // run via K1 for specific modules, which they might do if there are problems with K2.
+    project.tasks.register("testLintK1", Test::class.java).configure { task ->
+        task.systemProperty("lint.use.fir.uast", "false")
+    }
+    project.tasks.named("check") { task -> task.dependsOn("testLintK1") }
 }
 
 private fun Project.validateLintVersionTestExists(androidXExtension: AndroidXExtension) {

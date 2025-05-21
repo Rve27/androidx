@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package androidx.lint.gradle
 
+import com.android.tools.lint.useFirUast
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -228,6 +232,7 @@ class EagerConfigurationIssueTest :
 
     @Test
     fun `Test usage of TaskContainer with kotlin extension functions`() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             kotlin(
                 """

@@ -21,6 +21,8 @@ import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.checks.infrastructure.TestFile
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
+import com.android.tools.lint.useFirUast
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -35,6 +37,7 @@ class AutoboxingStateValuePropertyDetectorTest : LintDetectorTest() {
 
     @Test
     fun testReadAutoboxingPropertyAsVariableAssignment() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 kotlin(

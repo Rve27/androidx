@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package androidx.build.lint.replacewith
 
+import com.android.tools.lint.useFirUast
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -25,6 +29,7 @@ class ReplaceWithDetectorKotlinConstructorTest {
 
     @Test
     fun constructorStaticClass() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             arrayOf(
                 ktSample("replacewith.ReplaceWithUsageKotlin"),
@@ -57,6 +62,7 @@ Fix for src/replacewith/ConstructorKotlinStaticClass.java line 25: Replace with 
 
     @Test
     fun constructorNonStaticClass() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             arrayOf(
                 ktSample("replacewith.ReplaceWithUsageKotlin"),
@@ -86,6 +92,7 @@ Fix for src/replacewith/ConstructorKotlinNonStaticClass.java line 25: Replace wi
 
     @Test
     fun constructorToStaticMethod() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             arrayOf(
                 ktSample("replacewith.ReplaceWithUsageKotlin"),

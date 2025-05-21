@@ -22,6 +22,8 @@ import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.checks.infrastructure.ProjectDescription
 import com.android.tools.lint.checks.infrastructure.TestFile
 import com.android.tools.lint.checks.infrastructure.TestMode
+import com.android.tools.lint.useFirUast
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -620,6 +622,7 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
 
     @Test
     fun obsoleteSampledFunction() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val sampleFile = correctlyAnnotatedSampleFile
 
         val expected =
@@ -635,6 +638,7 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
 
     @Test
     fun invalidSampleLocation() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val sampleFile =
             kotlin(
                 """

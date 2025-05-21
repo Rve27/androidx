@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package androidx.navigation.common.lint
 
 import androidx.navigation.lint.test.KEEP_ANNOTATION
@@ -21,8 +23,13 @@ import androidx.navigation.lint.test.NAVIGATION_STUBS
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
+import com.android.tools.lint.useFirUast
+import org.junit.Assume.assumeFalse
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
+@RunWith(JUnit4::class)
 class MissingKeepAnnotationDetectorTest : LintDetectorTest() {
     override fun getDetector(): Detector = TypeSafeDestinationMissingAnnotationDetector()
 
@@ -404,6 +411,7 @@ enum class TestEnum { ONE, TWO }
 
     @Test
     fun testNavDeepLink_noError() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 kotlin(

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package androidx.navigation.common.lint
 
 import androidx.navigation.lint.test.NAVIGATION_STUBS
@@ -22,6 +24,8 @@ import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
+import com.android.tools.lint.useFirUast
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -135,6 +139,7 @@ class WrongStartDestinationTypeDetectorTest : LintDetectorTest() {
 
     @Test
     fun testNavGraphBuilder_classHasError() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 kotlin(

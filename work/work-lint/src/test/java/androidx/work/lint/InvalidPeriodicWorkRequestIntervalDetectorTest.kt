@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package androidx.work.lint
 
 import androidx.work.lint.Stubs.LISTENABLE_WORKER
 import androidx.work.lint.Stubs.PERIODIC_WORK_REQUEST
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest.kotlin
 import com.android.tools.lint.checks.infrastructure.TestLintTask.lint
+import com.android.tools.lint.useFirUast
+import org.junit.Assume.assumeFalse
 import org.junit.Test
 
 class InvalidPeriodicWorkRequestIntervalDetectorTest {
     @Test
     fun testWithInvalidDurationTimeUnits() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val worker =
             kotlin(
                     "com/example/TestWorker.kt",
