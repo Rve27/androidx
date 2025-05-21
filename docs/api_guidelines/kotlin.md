@@ -28,7 +28,7 @@ use an older Kotlin compiler when building their own projects.
 
 ```
 androidx {
-    kotlinTarget = KotlinVersion.KOTLIN_2_0
+    kotlinTarget = KotlinVersion.KOTLIN_1_7
 }
 ```
 
