@@ -37,7 +37,6 @@ import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerial
 import androidx.appfunctions.compiler.core.ProcessingException
 import androidx.appfunctions.compiler.core.ensureQualifiedTypeName
 import androidx.appfunctions.compiler.core.ignoreNullable
-import androidx.appfunctions.compiler.core.isOfType
 import androidx.appfunctions.compiler.core.toPascalCase
 import androidx.appfunctions.compiler.core.toTypeName
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -45,7 +44,7 @@ import com.google.devtools.ksp.symbol.KSTypeParameter
 import com.google.devtools.ksp.symbol.KSTypeReference
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.LIST
+import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.buildCodeBlock
 
 /**
@@ -395,45 +394,11 @@ class AppFunctionSerializableFactoryCodeBuilder(
                 "param_name" to paramName,
                 "app_function_data_param_name" to APP_FUNCTION_DATA_PARAM_NAME,
                 "type_parameter_property_name" to getTypeParameterPropertyName(paramTypeParameter),
-                "property_item_clazz_name" to
-                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
-                        .ListTypeParameterClass
-                        .PROPERTY_ITEM_CLAZZ_NAME,
-                "property_clazz_name" to
-                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
-                        .PrimitiveTypeParameterClass
-                        .PROPERTY_CLAZZ_NAME,
             )
-        addNamed("val %param_name:L = when (%type_parameter_property_name:L) {\n", formatStringMap)
-        indent()
-        add(
-            "is %T<*, *> -> {\n",
-            IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
-                .ListTypeParameterClass
-                .CLASS_NAME,
-        )
-        indent()
         addNamed(
-            "%app_function_data_param_name:L.getGenericListField(\"%param_name:L\", %type_parameter_property_name:L.%property_item_clazz_name:L)\n",
+            "val %param_name:L = %type_parameter_property_name:L.getFromAppFunctionData(%app_function_data_param_name:L,\"%param_name:L\")\n",
             formatStringMap,
         )
-        unindent()
-        add("}\n")
-        add(
-            "is %T -> {\n",
-            IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
-                .PrimitiveTypeParameterClass
-                .CLASS_NAME,
-        )
-        indent()
-        addNamed(
-            "%app_function_data_param_name:L.getGenericField(\"%param_name:L\", %type_parameter_property_name:L.%property_clazz_name:L)\n",
-            formatStringMap,
-        )
-        unindent()
-        add("}\n")
-        unindent()
-        add("}\n")
         return this
     }
 
@@ -618,45 +583,11 @@ class AppFunctionSerializableFactoryCodeBuilder(
             mapOf<String, Any>(
                 "param_name" to paramName,
                 "type_parameter_property_name" to getTypeParameterPropertyName(paramTypeParameter),
-                "property_item_clazz_name" to
-                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
-                        .ListTypeParameterClass
-                        .PROPERTY_ITEM_CLAZZ_NAME,
-                "property_clazz_name" to
-                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
-                        .PrimitiveTypeParameterClass
-                        .PROPERTY_CLAZZ_NAME,
             )
-        addNamed("when (%type_parameter_property_name:L) {\n", formatStringMap)
-        indent()
-        add(
-            "is %T<*, *> -> {\n",
-            IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
-                .ListTypeParameterClass
-                .CLASS_NAME,
-        )
-        indent()
         addNamed(
-            "builder.setGenericListField(\"%param_name:L\", %param_name:L as List<*>?, %type_parameter_property_name:L.%property_item_clazz_name:L)\n",
+            "%type_parameter_property_name:L.setValueInAppFunctionData(builder, \"%param_name:L\", %param_name:L)\n",
             formatStringMap,
         )
-        unindent()
-        add("}\n")
-        add(
-            "is %T -> {\n",
-            IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
-                .PrimitiveTypeParameterClass
-                .CLASS_NAME,
-        )
-        indent()
-        addNamed(
-            "builder.setGenericField(\"%param_name:L\", %param_name:L, %type_parameter_property_name:L.%property_clazz_name:L)\n",
-            formatStringMap,
-        )
-        unindent()
-        add("}\n")
-        unindent()
-        add("}\n")
         return this
     }
 
@@ -934,39 +865,150 @@ class AppFunctionSerializableFactoryCodeBuilder(
         }
         addStatement(">(")
         indent()
-        for (typeArgumentReference in annotatedSerializable.typeParameterMap.values) {
-            val typeArgument = typeArgumentReference.resolve()
-            val typeParameterTypeName =
-                if (typeArgumentReference.isOfType(LIST)) {
-                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
-                        .ListTypeParameterClass
-                        .CLASS_NAME
-                } else {
-                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
-                        .PrimitiveTypeParameterClass
-                        .CLASS_NAME
-                }
-            val typeParameterArg =
-                if (typeArgumentReference.isOfType(LIST)) {
-                    checkNotNull(typeArgument.arguments.first().type).toTypeName().ignoreNullable()
-                } else {
-                    typeArgumentReference.toTypeName().ignoreNullable()
-                }
-
-            if (typeArgument.isMarkedNullable) {
-                addStatement("@Suppress(\"UNCHECKED_CAST\")")
-                addStatement(
-                    "%1T(%2T::class.java as Class<%3T>),",
-                    typeParameterTypeName,
-                    typeParameterArg,
-                    typeArgumentReference.toTypeName(),
-                )
-            } else {
-                addStatement("%1T(%2T::class.java),", typeParameterTypeName, typeParameterArg)
+        for ((index, typeArgumentReference) in
+            annotatedSerializable.typeParameterMap.values.withIndex()) {
+            appendTypeParameterInstanceCreation(typeArgumentReference)
+            if (index != annotatedSerializable.typeParameterMap.size - 1) {
+                add(",")
             }
         }
         unindent()
         addStatement(")")
+    }
+
+    private fun CodeBlock.Builder.appendTypeParameterInstanceCreation(
+        typeReference: KSTypeReference
+    ) {
+        val afType = AppFunctionTypeReference(typeReference)
+
+        when (afType.typeCategory) {
+            PRIMITIVE_SINGULAR -> {
+                appendTypeParameterInstanceCreation(
+                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                        .PrimitiveTypeParameterClass
+                        .CLASS_NAME,
+                    afType.selfTypeReference.toTypeName(),
+                )
+            }
+            PRIMITIVE_ARRAY ->
+                appendTypeParameterInstanceCreation(
+                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                        .PrimitiveTypeParameterClass
+                        .CLASS_NAME,
+                    afType.selfTypeReference.toTypeName(),
+                )
+            PRIMITIVE_LIST ->
+                appendTypeParameterInstanceCreation(
+                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                        .PrimitiveListTypeParameter
+                        .CLASS_NAME,
+                    afType.itemTypeReference.toTypeName(),
+                )
+            SERIALIZABLE_SINGULAR -> {
+                val typeParameterAnnotatedSerializableClassName =
+                    getAnnotatedSerializable(afType).originalClassName
+                appendTypeParameterInstanceCreation(
+                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                        .SerializableTypeParameter
+                        .CLASS_NAME,
+                    afType.selfTypeReference.toTypeName(),
+                    ClassName(
+                        typeParameterAnnotatedSerializableClassName.packageName,
+                        "$${typeParameterAnnotatedSerializableClassName.simpleName}Factory",
+                    ),
+                )
+            }
+            SERIALIZABLE_LIST -> {
+                val typeParameterAnnotatedSerializableClassName =
+                    getAnnotatedSerializable(afType).originalClassName
+                appendTypeParameterInstanceCreation(
+                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                        .SerializableListTypeParameter
+                        .CLASS_NAME,
+                    afType.itemTypeReference.toTypeName(),
+                    ClassName(
+                        typeParameterAnnotatedSerializableClassName.packageName,
+                        "$${typeParameterAnnotatedSerializableClassName.simpleName}Factory",
+                    ),
+                )
+            }
+            SERIALIZABLE_PROXY_SINGULAR -> {
+                val typeParameterAnnotatedSerializableProxy =
+                    resolvedAnnotatedSerializableProxies.getSerializableProxyForTypeReference(
+                        afType
+                    )
+
+                appendTypeParameterInstanceCreation(
+                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                        .SerializableTypeParameter
+                        .CLASS_NAME,
+                    afType.selfTypeReference.toTypeName(),
+                    ClassName(
+                        typeParameterAnnotatedSerializableProxy.originalClassName.packageName,
+                        "$${typeParameterAnnotatedSerializableProxy.targetClassDeclaration.simpleName.asString()}Factory",
+                    ),
+                )
+            }
+            SERIALIZABLE_PROXY_LIST -> {
+                val typeParameterAnnotatedSerializableProxy =
+                    resolvedAnnotatedSerializableProxies.getSerializableProxyForTypeReference(
+                        afType
+                    )
+                appendTypeParameterInstanceCreation(
+                    IntrospectionHelper.AppFunctionSerializableFactoryClass.TypeParameterClass
+                        .SerializableListTypeParameter
+                        .CLASS_NAME,
+                    afType.itemTypeReference.toTypeName(),
+                    ClassName(
+                        typeParameterAnnotatedSerializableProxy.originalClassName.packageName,
+                        "$${typeParameterAnnotatedSerializableProxy.targetClassDeclaration.simpleName.asString()}Factory",
+                    ),
+                )
+            }
+            else -> {
+                throw ProcessingException(
+                    "Unsupported type to use with a parameterized AppFunctionSerializable: " +
+                        afType.typeCategory,
+                    afType.selfTypeReference,
+                )
+            }
+        }
+    }
+
+    private fun CodeBlock.Builder.appendTypeParameterInstanceCreation(
+        typeParameterClassName: ClassName,
+        typeName: TypeName,
+    ) {
+        if (typeName.isNullable) {
+            add("@Suppress(\"UNCHECKED_CAST\") ")
+            add(
+                "%1T(%2T::class.java as Class<%3T>)",
+                typeParameterClassName,
+                typeName.ignoreNullable(),
+                typeName,
+            )
+        } else {
+            add("%1T(%2T::class.java)", typeParameterClassName, typeName)
+        }
+    }
+
+    private fun CodeBlock.Builder.appendTypeParameterInstanceCreation(
+        typeParameterClassName: ClassName,
+        typeName: TypeName,
+        factoryName: ClassName,
+    ) {
+        if (typeName.isNullable) {
+            add("@Suppress(\"UNCHECKED_CAST\") ")
+            add(
+                "%1T(%2T::class.java as Class<%3T>, %4T())",
+                typeParameterClassName,
+                typeName.ignoreNullable(),
+                typeName,
+                factoryName,
+            )
+        } else {
+            add("%1T(%2T::class.java, %3T())", typeParameterClassName, typeName, factoryName)
+        }
     }
 
     private fun KSTypeReference.getTypeShortName(): String {

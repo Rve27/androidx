@@ -159,20 +159,36 @@ object IntrospectionHelper {
                         "TypeParameter",
                         "PrimitiveTypeParameter",
                     )
-
-                val PROPERTY_CLAZZ_NAME = "clazz"
             }
 
-            object ListTypeParameterClass {
+            object PrimitiveListTypeParameter {
                 val CLASS_NAME =
                     ClassName(
                         APP_FUNCTIONS_INTERNAL_PACKAGE_NAME,
                         "AppFunctionSerializableFactory",
                         "TypeParameter",
-                        "ListTypeParameter",
+                        "PrimitiveListTypeParameter",
                     )
+            }
 
-                val PROPERTY_ITEM_CLAZZ_NAME = "itemClazz"
+            object SerializableTypeParameter {
+                val CLASS_NAME =
+                    ClassName(
+                        APP_FUNCTIONS_INTERNAL_PACKAGE_NAME,
+                        "AppFunctionSerializableFactory",
+                        "TypeParameter",
+                        "SerializableTypeParameter",
+                    )
+            }
+
+            object SerializableListTypeParameter {
+                val CLASS_NAME =
+                    ClassName(
+                        APP_FUNCTIONS_INTERNAL_PACKAGE_NAME,
+                        "AppFunctionSerializableFactory",
+                        "TypeParameter",
+                        "SerializableListTypeParameter",
+                    )
             }
         }
     }

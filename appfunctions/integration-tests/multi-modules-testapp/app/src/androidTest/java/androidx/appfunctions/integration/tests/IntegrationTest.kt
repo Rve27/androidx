@@ -446,6 +446,8 @@ class IntegrationTest {
 
     @Test
     fun executeAppFunction_updateNote_success() = doBlocking {
+        val attachment = Attachment(uri = "uri", nested = null)
+        val dateTime = LocalDateTime.of(1, 1, 1, 1, 1)
         val response =
             appFunctionManager.executeAppFunction(
                 request =
@@ -461,6 +463,8 @@ class IntegrationTest {
                                         nullableTitle = SetField("NewTitle2"),
                                         content = SetField(listOf("NewContent1")),
                                         nullableContent = SetField(listOf("NewContent2")),
+                                        attachments = SetField(listOf(attachment)),
+                                        modifiedTime = SetField(dateTime),
                                     ),
                                     UpdateNoteParams::class.java,
                                 ),
@@ -475,7 +479,8 @@ class IntegrationTest {
                 title = "NewTitle1_NewTitle2",
                 content = listOf("NewContent1", "NewContent2"),
                 owner = Owner("test"),
-                attachments = listOf(),
+                attachments = listOf(attachment),
+                modifiedTime = dateTime,
             )
         assertThat(
                 successResponse.returnValue

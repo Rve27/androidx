@@ -48,6 +48,8 @@ data class UpdateNoteParams(
     val nullableTitle: SetField<String?>? = null,
     val content: SetField<List<String>>? = null,
     val nullableContent: SetField<List<String>?>? = null,
+    val attachments: SetField<List<Attachment>>? = null,
+    val modifiedTime: SetField<LocalDateTime>? = null,
 )
 
 @AppFunctionSerializable data class Owner(val name: String)
@@ -60,6 +62,7 @@ data class Note(
     val content: List<String>,
     val owner: Owner,
     val attachments: List<Attachment>,
+    val modifiedTime: LocalDateTime? = null,
 )
 
 @AppFunctionSerializable
@@ -122,7 +125,8 @@ class TestFunctions {
                 (updateNoteParams.content?.value ?: listOf("DefaultContent")) +
                     (updateNoteParams.nullableContent?.value ?: listOf("DefaultContent")),
             owner = Owner("test"),
-            attachments = listOf(),
+            attachments = updateNoteParams.attachments?.value ?: emptyList(),
+            modifiedTime = updateNoteParams.modifiedTime?.value,
         )
     }
 
