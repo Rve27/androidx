@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage")
-
 package androidx.compose.lint
 
 import androidx.compose.lint.test.kotlinAndBytecodeStub
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
-import com.android.tools.lint.useFirUast
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -428,7 +424,6 @@ src/androidx/compose/lint/test.kt:5: Error: variable s with type HashMap<$longTy
 
     @Test
     fun dataClassConstructor() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 ContainsIntClass,

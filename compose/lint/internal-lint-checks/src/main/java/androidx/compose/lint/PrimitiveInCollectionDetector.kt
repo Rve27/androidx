@@ -120,7 +120,7 @@ class PrimitiveInCollectionDetector : Detector(), SourceCodeScanner {
                         // easy to do and still catch all uses.
                         if (
                             context.evaluator.isOverride(parent) ||
-                                (context.evaluator.isData(parent) && parent.name.startsWith("copy"))
+                                parent.isDataClassGeneratedMethod(context)
                         ) {
                             return
                         }
