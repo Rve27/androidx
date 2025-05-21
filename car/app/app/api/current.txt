@@ -2345,6 +2345,7 @@ package androidx.car.app.notification {
 
   public static final class CarAppExtender.Builder {
     ctor public CarAppExtender.Builder();
+    method public androidx.car.app.notification.CarAppExtender.Builder addAction(android.app.Notification.Action);
     method public androidx.car.app.notification.CarAppExtender.Builder addAction(@DrawableRes int, CharSequence, android.app.PendingIntent);
     method public androidx.car.app.notification.CarAppExtender build();
     method public androidx.car.app.notification.CarAppExtender.Builder setChannelId(String);
