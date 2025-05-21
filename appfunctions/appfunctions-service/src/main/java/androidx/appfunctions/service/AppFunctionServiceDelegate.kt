@@ -60,7 +60,6 @@ internal class AppFunctionServiceDelegate(
 
     internal fun onExecuteFunction(
         executeAppFunctionRequest: ExecuteAppFunctionRequest,
-        callingPackageName: String,
         callback: OutcomeReceiver<ExecuteAppFunctionResponse, AppFunctionException>,
     ): Job =
         workerCoroutineScope.launch {
@@ -88,7 +87,6 @@ internal class AppFunctionServiceDelegate(
                 callback.onResult(
                     unsafeInvokeFunction(
                         executeAppFunctionRequest,
-                        callingPackageName,
                         appFunctionMetadata,
                         parameters,
                         translator,
@@ -151,7 +149,6 @@ internal class AppFunctionServiceDelegate(
 
     private suspend fun unsafeInvokeFunction(
         request: ExecuteAppFunctionRequest,
-        callingPackageName: String,
         appFunctionMetadata: CompileTimeAppFunctionMetadata,
         parameters: Map<String, Any?>,
         translator: Translator?,
@@ -159,7 +156,7 @@ internal class AppFunctionServiceDelegate(
         val result =
             withContext(mainCoroutineContext) {
                 aggregatedInvoker.unsafeInvoke(
-                    buildAppFunctionContext(callingPackageName),
+                    buildAppFunctionContext(),
                     request.functionIdentifier,
                     parameters,
                 )
@@ -170,13 +167,10 @@ internal class AppFunctionServiceDelegate(
         return ExecuteAppFunctionResponse.Success(translatedReturnValue)
     }
 
-    private fun buildAppFunctionContext(callingPackageName: String): AppFunctionContext {
+    private fun buildAppFunctionContext(): AppFunctionContext {
         return object : AppFunctionContext {
             override val context: Context
                 get() = appContext
-
-            override val callingPackageName: String
-                get() = callingPackageName
         }
     }
 }

@@ -135,8 +135,5 @@ class AggregatedAppFunctionInvokerTest {
     private object FakeAppFunctionContext : AppFunctionContext {
         override val context: Context
             get() = throw RuntimeException("Stub!")
-
-        override val callingPackageName: String
-            get() = throw RuntimeException("Stub!")
     }
 }

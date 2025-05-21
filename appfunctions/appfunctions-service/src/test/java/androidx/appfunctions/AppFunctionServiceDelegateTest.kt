@@ -288,7 +288,6 @@ class AppFunctionServiceDelegateTest {
     ): ExecuteAppFunctionResponse = suspendCancellableCoroutine { cont ->
         delegate.onExecuteFunction(
             request,
-            "test",
             object : OutcomeReceiver<ExecuteAppFunctionResponse, AppFunctionException> {
                 override fun onResult(result: ExecuteAppFunctionResponse) {
                     cont.resume(result)
