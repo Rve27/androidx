@@ -43,7 +43,6 @@ import androidx.camera.core.UseCaseGroup
 import androidx.camera.core.ViewPort
 import androidx.camera.core.impl.AdapterCameraInfo
 import androidx.camera.core.impl.CameraConfig
-import androidx.camera.core.impl.CameraFactory
 import androidx.camera.core.impl.CameraInfoInternal
 import androidx.camera.core.impl.CameraThreadConfig
 import androidx.camera.core.impl.Config
@@ -55,24 +54,17 @@ import androidx.camera.core.impl.utils.executor.CameraXExecutors
 import androidx.camera.core.impl.utils.executor.CameraXExecutors.mainThreadExecutor
 import androidx.camera.core.internal.StreamSpecsCalculator.Companion.NO_OP_STREAM_SPECS_CALCULATOR
 import androidx.camera.core.internal.utils.ImageUtil
-import androidx.camera.testing.fakes.FakeAppConfig
-import androidx.camera.testing.fakes.FakeCamera
-import androidx.camera.testing.fakes.FakeCameraInfoInternal
 import androidx.camera.testing.impl.CameraPipeConfigTestRule
 import androidx.camera.testing.impl.CameraUtil
 import androidx.camera.testing.impl.ExtensionsUtil
 import androidx.camera.testing.impl.GarbageCollectionUtil
 import androidx.camera.testing.impl.SurfaceTextureProvider
 import androidx.camera.testing.impl.fakes.FakeCameraConfig
-import androidx.camera.testing.impl.fakes.FakeCameraCoordinator
-import androidx.camera.testing.impl.fakes.FakeCameraDeviceSurfaceManager
-import androidx.camera.testing.impl.fakes.FakeCameraFactory
 import androidx.camera.testing.impl.fakes.FakeCameraFilter
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
 import androidx.camera.testing.impl.fakes.FakeSessionProcessor
 import androidx.camera.testing.impl.fakes.FakeSurfaceEffect
 import androidx.camera.testing.impl.fakes.FakeSurfaceProcessor
-import androidx.camera.testing.impl.fakes.FakeUseCaseConfigFactory
 import androidx.camera.video.Recorder
 import androidx.camera.video.VideoCapture
 import androidx.concurrent.futures.await
@@ -1004,55 +996,6 @@ class ProcessCameraProviderTest(
         }
 
     @Test
-    fun bindUseCasesOrSessionConfig_withNotExistedLensFacingCamera() = runBlocking {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(LENS_FACING_FRONT))
-        val cameraFactoryProvider =
-            CameraFactory.Provider { _, _, _, _, _ ->
-                val cameraFactory = FakeCameraFactory()
-                cameraFactory.insertCamera(LENS_FACING_BACK, "0") {
-                    FakeCamera("0", null, FakeCameraInfoInternal("0", 0, LENS_FACING_BACK))
-                }
-                cameraFactory.cameraCoordinator = FakeCameraCoordinator()
-                cameraFactory
-            }
-
-        val appConfigBuilder =
-            CameraXConfig.Builder()
-                .setCameraFactoryProvider(cameraFactoryProvider)
-                .setDeviceSurfaceManagerProvider { _, _, _ -> FakeCameraDeviceSurfaceManager() }
-                .setUseCaseConfigFactoryProvider { FakeUseCaseConfigFactory() }
-
-        ProcessCameraProvider.configureInstance(appConfigBuilder.build())
-
-        withContext(Dispatchers.Main) {
-            provider = ProcessCameraProvider.getInstance(context).await()
-
-            val useCase = Preview.Builder().build()
-
-            // The front camera is not defined, we should get the IllegalArgumentException when it
-            // tries to get the camera.
-            assertThrows<IllegalArgumentException> {
-                provider.bindToLifecycle(
-                    lifecycleOwner0,
-                    CameraSelector.DEFAULT_FRONT_CAMERA,
-                    useCase,
-                )
-            }
-
-            val sessionConfig = SessionConfig(useCases = listOf(useCase))
-            assertThrows<IllegalArgumentException> {
-                provider.bindToLifecycle(
-                    lifecycleOwner0,
-                    CameraSelector.DEFAULT_FRONT_CAMERA,
-                    sessionConfig,
-                )
-            }
-
-            assertThat(provider.isConcurrentCameraModeOn).isFalse()
-        }
-    }
-
-    @Test
     fun bindUseCaseGroupWithEffect_effectIsSetOnUseCase() = runBlocking {
         // Arrange.
         ProcessCameraProvider.configureInstance(cameraConfig)
@@ -1473,20 +1416,6 @@ class ProcessCameraProviderTest(
                 .size
 
         assertThat(provider.availableCameraInfos.size).isEqualTo(cameraCount)
-    }
-
-    @Test
-    fun getAvailableCameraInfos_usesFilteredCameras() = runBlocking {
-        ProcessCameraProvider.configureInstance(
-            FakeAppConfig.create(CameraSelector.DEFAULT_BACK_CAMERA)
-        )
-        provider = ProcessCameraProvider.getInstance(context).await()
-
-        val cameraInfos = provider.availableCameraInfos
-        assertThat(cameraInfos.size).isEqualTo(1)
-
-        val cameraInfo = cameraInfos.first() as FakeCameraInfoInternal
-        assertThat(cameraInfo.lensFacing).isEqualTo(LENS_FACING_BACK)
     }
 
     @Test

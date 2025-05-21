@@ -23,27 +23,35 @@ import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.CameraSelector.LENS_FACING_BACK
 import androidx.camera.core.CameraXConfig
+import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.InitializationException
+import androidx.camera.core.Preview
+import androidx.camera.core.SessionConfig
 import androidx.camera.core.impl.CameraDeviceSurfaceManager
 import androidx.camera.core.impl.CameraFactory
 import androidx.camera.core.impl.CameraFactory.Provider
 import androidx.camera.core.impl.UseCaseConfigFactory
+import androidx.camera.testing.fakes.FakeAppConfig
 import androidx.camera.testing.fakes.FakeCamera
 import androidx.camera.testing.fakes.FakeCameraInfoInternal
 import androidx.camera.testing.impl.fakes.FakeCameraCoordinator
 import androidx.camera.testing.impl.fakes.FakeCameraDeviceSurfaceManager
 import androidx.camera.testing.impl.fakes.FakeCameraFactory
+import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
 import androidx.camera.testing.impl.fakes.FakeUseCaseConfigFactory
 import androidx.concurrent.futures.await
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.internal.os.HandlerExecutor
 import androidx.testutils.assertThrows
+import com.google.common.truth.Truth.assertThat
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
@@ -69,6 +77,8 @@ class ProcessCameraProviderTest {
     private val handlerExecutor = HandlerExecutor(handler)
     private lateinit var shadowPackageManager: ShadowPackageManager
     private var repeatingJob: Deferred<Unit>? = null
+    private lateinit var provider: ProcessCameraProvider
+    private val lifecycleOwner0 = FakeLifecycleOwner()
 
     @Before
     fun setUp() {
@@ -83,8 +93,13 @@ class ProcessCameraProviderTest {
     }
 
     @After
-    fun tearDown() {
+    fun tearDown() = runTest {
         repeatingJob?.cancel()
+        try {
+            ProcessCameraProvider.shutdown().await()
+        } catch (_: IllegalStateException) {
+            // ProcessCameraProvider may not be configured. Ignore.
+        }
     }
 
     @Test
@@ -114,6 +129,65 @@ class ProcessCameraProviderTest {
         // When retrying ProcessCameraProvider#getInstance, it should be able to try without calling
         // configureInstance again.
         assertThrows<InitializationException> { ProcessCameraProvider.getInstance(context).await() }
+    }
+
+    @Test
+    @OptIn(ExperimentalSessionConfig::class)
+    fun bindUseCasesOrSessionConfig_withNotExistedLensFacingCamera() = runTest {
+        shadowPackageManager.setSystemFeature(PackageManager.FEATURE_CAMERA, true)
+        shadowPackageManager.setSystemFeature(PackageManager.FEATURE_CAMERA_FRONT, false)
+
+        val cameraFactoryProvider = Provider { _, _, _, _, _ ->
+            val cameraFactory = FakeCameraFactory()
+            cameraFactory.insertCamera(LENS_FACING_BACK, "0") {
+                FakeCamera("0", null, FakeCameraInfoInternal("0", 0, LENS_FACING_BACK))
+            }
+            cameraFactory.cameraCoordinator = FakeCameraCoordinator()
+            cameraFactory
+        }
+
+        val appConfigBuilder =
+            CameraXConfig.Builder()
+                .setCameraFactoryProvider(cameraFactoryProvider)
+                .setDeviceSurfaceManagerProvider { _, _, _ -> FakeCameraDeviceSurfaceManager() }
+                .setUseCaseConfigFactoryProvider { FakeUseCaseConfigFactory() }
+
+        ProcessCameraProvider.configureInstance(appConfigBuilder.build())
+
+        provider = ProcessCameraProvider.getInstance(context).await()
+
+        val useCase = Preview.Builder().build()
+
+        // The front camera is not defined, we should get the IllegalArgumentException when it
+        // tries to get the camera.
+        assertThrows<IllegalArgumentException> {
+            provider.bindToLifecycle(lifecycleOwner0, CameraSelector.DEFAULT_FRONT_CAMERA, useCase)
+        }
+
+        val sessionConfig = SessionConfig(useCases = listOf(useCase))
+        assertThrows<IllegalArgumentException> {
+            provider.bindToLifecycle(
+                lifecycleOwner0,
+                CameraSelector.DEFAULT_FRONT_CAMERA,
+                sessionConfig,
+            )
+        }
+
+        assertThat(provider.isConcurrentCameraModeOn).isFalse()
+    }
+
+    @Test
+    fun getAvailableCameraInfos_usesFilteredCameras() = runBlocking {
+        ProcessCameraProvider.configureInstance(
+            FakeAppConfig.create(CameraSelector.DEFAULT_BACK_CAMERA)
+        )
+        provider = ProcessCameraProvider.getInstance(context).await()
+
+        val cameraInfos = provider.availableCameraInfos
+        assertThat(cameraInfos.size).isEqualTo(1)
+
+        val cameraInfo = cameraInfos.first() as FakeCameraInfoInternal
+        assertThat(cameraInfo.lensFacing).isEqualTo(LENS_FACING_BACK)
     }
 
     private fun createCameraXConfig(
