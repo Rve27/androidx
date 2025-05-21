@@ -190,9 +190,9 @@ class SurfaceTest {
 
         rule.runOnIdle {
             assertThat((defaultBorder.brush as SolidColor).value).isEqualTo(outline)
-            assertThat(defaultBorder.width).isEqualTo(3.dp)
+            assertThat(defaultBorder.width).isEqualTo(2.dp)
             assertThat((customBorder.brush as SolidColor).value).isEqualTo(Color.Red)
-            assertThat(customBorder.width).isEqualTo(3.dp)
+            assertThat(customBorder.width).isEqualTo(2.dp)
         }
     }
 
