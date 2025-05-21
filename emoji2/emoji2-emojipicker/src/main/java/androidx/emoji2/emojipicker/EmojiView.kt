@@ -100,7 +100,7 @@ internal class EmojiView @JvmOverloads constructor(context: Context, attrs: Attr
                                     BundledEmojiListLoader.getEmojiVariantsLookup()
                                         .containsKey(value),
                         )
-                        contentDescription = value
+                        contentDescription = context.getString(R.string.emoji_content_desc, emoji)
                     }
                     invalidate()
                 } else {

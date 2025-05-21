@@ -72,4 +72,7 @@
 
     <!-- The accessibility content description of the dark skintone in emoji variant selector. [CHAR_LIMIT=100]-->
     <string name="emoji_skin_tone_dark_content_desc">dark skin tone</string>
+
+    <!-- The accessibility content description of the emoji. [CHAR_LIMIT=50]-->
+    <string name="emoji_content_desc">%1$s emoji</string>
 </resources>
