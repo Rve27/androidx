@@ -212,6 +212,13 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
 
     override fun clearSpatialVisibilityChangedListener() {}
 
+    override fun addPerceivedResolutionChangedListener(
+        callbackExecutor: Executor,
+        listener: Consumer<PixelDimensions>,
+    ) {}
+
+    override fun removePerceivedResolutionChangedListener(listener: Consumer<PixelDimensions>) {}
+
     override fun createLoggingEntity(pose: Pose): LoggingEntity =
         object : LoggingEntity, FakeEntity() {}
 

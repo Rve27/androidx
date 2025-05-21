@@ -45,6 +45,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -266,6 +267,92 @@ class SceneTest {
     fun clearSpatialVisibilityChangedListener_callsRuntimeClearSpatialVisibilityChangedListener() {
         session.scene.clearSpatialVisibilityChangedListener()
         verify(mockPlatformAdapter).clearSpatialVisibilityChangedListener()
+    }
+
+    @Test
+    fun addPerceivedResolutionChangedListener_callsRuntimeAddPerceivedResolutionChangedListener() {
+        val listener = Consumer<PixelDimensions> {}
+        val executor = directExecutor()
+        session.scene.addPerceivedResolutionChangedListener(executor, listener)
+        verify(mockPlatformAdapter).addPerceivedResolutionChangedListener(eq(executor), any())
+    }
+
+    @Test
+    fun addPerceivedResolutionChangedListener_withNoExecutor_callsRuntimeWithMainThreadExecutor() {
+        val listener = Consumer<PixelDimensions> {}
+        session.scene.addPerceivedResolutionChangedListener(listener)
+        verify(mockPlatformAdapter)
+            .addPerceivedResolutionChangedListener(eq(HandlerExecutor.mainThreadExecutor), any())
+    }
+
+    @Test
+    fun removePerceivedResolutionChangedListener_callsRuntimeRemovePerceivedResolutionChangedListener() {
+        val listener = Consumer<PixelDimensions> {}
+        // Add the listener first so there's something to remove
+        session.scene.addPerceivedResolutionChangedListener(directExecutor(), listener)
+        val rtListenerCaptor = argumentCaptor<Consumer<RtPixelDimensions>>()
+        verify(mockPlatformAdapter)
+            .addPerceivedResolutionChangedListener(any(), rtListenerCaptor.capture())
+
+        session.scene.removePerceivedResolutionChangedListener(listener)
+        verify(mockPlatformAdapter)
+            .removePerceivedResolutionChangedListener(eq(rtListenerCaptor.firstValue))
+    }
+
+    @Test
+    fun perceivedResolutionChangedListener_isCalledWithConvertedValues() {
+        var receivedDimensions: PixelDimensions? = null
+        val listener = Consumer<PixelDimensions> { dims -> receivedDimensions = dims }
+        val rtListenerCaptor = argumentCaptor<Consumer<RtPixelDimensions>>()
+        val executor = directExecutor()
+
+        session.scene.addPerceivedResolutionChangedListener(executor, listener)
+        verify(mockPlatformAdapter)
+            .addPerceivedResolutionChangedListener(eq(executor), rtListenerCaptor.capture())
+
+        val rtListener = rtListenerCaptor.firstValue
+
+        val testRtDimensions = RtPixelDimensions(100, 200)
+        rtListener.accept(testRtDimensions)
+
+        assertThat(receivedDimensions).isNotNull()
+        assertThat(receivedDimensions!!.width).isEqualTo(100)
+        assertThat(receivedDimensions.height).isEqualTo(200)
+
+        // Simulate another callback
+        val anotherRtDimensions = RtPixelDimensions(300, 400)
+        rtListener.accept(anotherRtDimensions)
+        assertThat(receivedDimensions.width).isEqualTo(300)
+        assertThat(receivedDimensions.height).isEqualTo(400)
+    }
+
+    @Test
+    fun addMultiplePerceivedResolutionListeners_allAreRegisteredAndCalled() {
+        val listener1 = mock<Consumer<PixelDimensions>>()
+        val listener2 = mock<Consumer<PixelDimensions>>()
+        val rtListenerCaptor = argumentCaptor<Consumer<RtPixelDimensions>>()
+        val executor = directExecutor()
+
+        session.scene.addPerceivedResolutionChangedListener(executor, listener1)
+        session.scene.addPerceivedResolutionChangedListener(executor, listener2)
+
+        verify(mockPlatformAdapter, times(2))
+            .addPerceivedResolutionChangedListener(eq(executor), rtListenerCaptor.capture())
+
+        val rtListeners = rtListenerCaptor.allValues
+        assertThat(rtListeners).hasSize(2)
+
+        // Simulate callback for the first registered listener only
+        val testRtDimensions1 = RtPixelDimensions(10, 20)
+        rtListeners[0].accept(testRtDimensions1)
+        verify(listener1).accept(PixelDimensions(10, 20))
+        verify(listener2, never()).accept(any())
+
+        // Simulate callback for the second registered listener
+        val testRtDimensions2 = RtPixelDimensions(30, 40)
+        rtListeners[1].accept(testRtDimensions2)
+        verify(listener1).accept(PixelDimensions(10, 20)) // Still called once
+        verify(listener2).accept(PixelDimensions(30, 40))
     }
 
     @Test

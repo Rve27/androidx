@@ -36,6 +36,7 @@ import androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue;
 import androidx.xr.runtime.internal.Entity;
 import androidx.xr.runtime.internal.HitTestResult;
 import androidx.xr.runtime.internal.InputEvent;
+import androidx.xr.runtime.internal.PixelDimensions;
 import androidx.xr.runtime.internal.PlaneSemantic;
 import androidx.xr.runtime.internal.PlaneType;
 import androidx.xr.runtime.internal.ResizeEvent;
@@ -61,6 +62,7 @@ import com.android.extensions.xr.node.Mat4f;
 import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.NodeTransaction;
 import com.android.extensions.xr.node.Vec3;
+import com.android.extensions.xr.space.PerceivedResolution;
 import com.android.extensions.xr.space.ShadowSpatialCapabilities;
 import com.android.extensions.xr.space.VisibilityState;
 
@@ -749,32 +751,31 @@ public final class RuntimeUtilsTest {
 
     @Test
     public void convertSpatialVisibility_convertsFromExtensionVisibility() {
-        assertThat(
-                        RuntimeUtils.convertSpatialVisibility(
-                                new VisibilityState(VisibilityState.FULLY_VISIBLE)))
+        com.android.extensions.xr.space.PerceivedResolution perceivedResolution =
+                new com.android.extensions.xr.space.PerceivedResolution(0, 0);
+        assertThat(RuntimeUtils.convertSpatialVisibility(VisibilityState.FULLY_VISIBLE))
                 .isEqualTo(new SpatialVisibility(SpatialVisibility.WITHIN_FOV));
 
-        assertThat(
-                        RuntimeUtils.convertSpatialVisibility(
-                                new VisibilityState(VisibilityState.PARTIALLY_VISIBLE)))
+        assertThat(RuntimeUtils.convertSpatialVisibility(VisibilityState.PARTIALLY_VISIBLE))
                 .isEqualTo(new SpatialVisibility(SpatialVisibility.PARTIALLY_WITHIN_FOV));
 
-        assertThat(
-                        RuntimeUtils.convertSpatialVisibility(
-                                new VisibilityState(VisibilityState.NOT_VISIBLE)))
+        assertThat(RuntimeUtils.convertSpatialVisibility(VisibilityState.NOT_VISIBLE))
                 .isEqualTo(new SpatialVisibility(SpatialVisibility.OUTSIDE_FOV));
 
-        assertThat(
-                        RuntimeUtils.convertSpatialVisibility(
-                                new VisibilityState(VisibilityState.UNKNOWN)))
+        assertThat(RuntimeUtils.convertSpatialVisibility(VisibilityState.UNKNOWN))
                 .isEqualTo(new SpatialVisibility(SpatialVisibility.UNKNOWN));
     }
 
     @Test
     public void convertSpatialVisibility_throwsExceptionForInvalidValue() {
         assertThrows(
-                IllegalArgumentException.class,
-                () -> RuntimeUtils.convertSpatialVisibility(new VisibilityState(100)));
+                IllegalArgumentException.class, () -> RuntimeUtils.convertSpatialVisibility(100));
+    }
+
+    @Test
+    public void convertPerceivedResolution_convertsFromExtension() {
+        assertThat(RuntimeUtils.convertPerceivedResolution(new PerceivedResolution(100, 200)))
+                .isEqualTo(new PixelDimensions(100, 200));
     }
 
     @Test

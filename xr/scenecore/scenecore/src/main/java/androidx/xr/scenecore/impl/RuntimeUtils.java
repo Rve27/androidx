@@ -28,6 +28,7 @@ import androidx.xr.runtime.internal.Entity;
 import androidx.xr.runtime.internal.HitTestResult;
 import androidx.xr.runtime.internal.InputEvent;
 import androidx.xr.runtime.internal.InputEvent.Companion.HitInfo;
+import androidx.xr.runtime.internal.PixelDimensions;
 import androidx.xr.runtime.internal.PlaneSemantic;
 import androidx.xr.runtime.internal.PlaneType;
 import androidx.xr.runtime.internal.ResizeEvent;
@@ -365,14 +366,25 @@ final class RuntimeUtils {
     }
 
     /**
+     * Converts from the Extensions perceived resolution to the runtime perceived resolution.
+     *
+     * @param extResolution a {@link com.android.extensions.xr.space.PerceivedResolution} instance
+     *     to be converted.
+     */
+    static PixelDimensions convertPerceivedResolution(
+            com.android.extensions.xr.space.PerceivedResolution extResolution) {
+        return new PixelDimensions(extResolution.getWidth(), extResolution.getHeight());
+    }
+
+    /**
      * Converts from the Extensions spatial visibility to the runtime spatial visibility.
      *
-     * @param extVisibility a {@link com.android.extensions.xr.space.VisibilityState} instance to be
-     *     converted.
+     * @param extVisibility a {@link com.android.extensions.xr.space.VisibilityState.S} instance to
+     *     be converted.
      */
-    static SpatialVisibility convertSpatialVisibility(VisibilityState extVisibility) {
+    static SpatialVisibility convertSpatialVisibility(int extVisibility) {
         int visibility;
-        switch (extVisibility.getVisibility()) {
+        switch (extVisibility) {
             case VisibilityState.UNKNOWN:
                 visibility = SpatialVisibility.UNKNOWN;
                 break;
@@ -386,8 +398,7 @@ final class RuntimeUtils {
                 visibility = SpatialVisibility.WITHIN_FOV;
                 break;
             default:
-                throw new IllegalArgumentException(
-                        "Unknown Spatial Visibility: " + extVisibility.getVisibility());
+                throw new IllegalArgumentException("Unknown Spatial Visibility: " + extVisibility);
         }
         return new SpatialVisibility(visibility);
     }

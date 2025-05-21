@@ -56,6 +56,7 @@ import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.SpatialVisibility
 import androidx.xr.scenecore.samples.commontestview.DebugTextLinearView
 import androidx.xr.scenecore.scene
+import java.util.function.Consumer
 
 class FieldOfViewVisibilityActivity : AppCompatActivity() {
 
@@ -71,6 +72,11 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
     private lateinit var mPerceivedResolutionManager: PerceivedResolutionManager
     private lateinit var mHeadLockedPanelView: DebugTextLinearView
     private var mSpatialVisibility by mutableStateOf(SpatialVisibility(SpatialVisibility.UNKNOWN))
+    private var mPerceivedResolution by mutableStateOf(PixelDimensions(0, 0))
+    private val mPerceivedResolutionListener: Consumer<PixelDimensions> = Consumer {
+        mPerceivedResolution = it
+        Log.i(TAG, "Perceived Resolution listener called $mPerceivedResolution")
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,6 +109,7 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
             Log.i(TAG, "Spatial visibility changed listener called $visibility")
             mHeadLockedPanelView.setLine("State", "$visibility")
         }
+        mSession.scene.addPerceivedResolutionChangedListener(mPerceivedResolutionListener)
 
         setContent { MainPanelContent(mSession, mActivity) }
     }
@@ -110,6 +117,7 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mSession.scene.clearSpatialVisibilityChangedListener()
+        mSession.scene.removePerceivedResolutionChangedListener(mPerceivedResolutionListener)
     }
 
     @Composable
@@ -141,6 +149,10 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
             Text(
                 modifier = Modifier.padding(15.dp),
                 text = "SpatialVisibility: $mSpatialVisibility",
+            )
+            Text(
+                modifier = Modifier.padding(15.dp),
+                text = "Perceived Resolution (HSM): $mPerceivedResolution",
             )
 
             Text(
