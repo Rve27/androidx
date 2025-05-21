@@ -177,6 +177,6 @@ private class SurfaceNode(contentColor: Color) :
 }
 
 /** Default border width for a [surface]. */
-private val DefaultSurfaceBorderWidth = 3.dp
+private val DefaultSurfaceBorderWidth = 2.dp
 
 private const val SurfaceNodeTraverseKey = "androidx.xr.glimmer.SurfaceNode"
