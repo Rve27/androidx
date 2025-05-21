@@ -15,6 +15,7 @@
  */
 package androidx.camera.lifecycle
 
+import android.os.Build
 import android.util.Range
 import androidx.camera.core.CameraEffect
 import androidx.camera.core.CompositionSettings
@@ -38,15 +39,18 @@ import androidx.camera.testing.impl.fakes.FakeCameraDeviceSurfaceManager
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
 import androidx.camera.testing.impl.fakes.FakeUseCase
 import androidx.camera.testing.impl.fakes.FakeUseCaseConfigFactory
-import androidx.test.filters.SdkSuppress
-import androidx.test.filters.SmallTest
 import androidx.testutils.assertThrows
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.internal.DoNotInstrument
 
-@SmallTest
-@SdkSuppress(minSdkVersion = 21)
+@RunWith(RobolectricTestRunner::class)
+@DoNotInstrument
+@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 @OptIn(ExperimentalSessionConfig::class)
 class LifecycleCameraRepositoryTest {
     private lateinit var lifecycleOwner: FakeLifecycleOwner

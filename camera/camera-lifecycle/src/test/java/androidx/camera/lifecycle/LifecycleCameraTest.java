@@ -27,13 +27,12 @@ import static com.google.common.truth.Truth.assertThat;
 
 import static org.junit.Assert.assertThrows;
 
+import android.os.Build;
 import android.util.Range;
 import android.util.Rational;
 import android.view.Surface;
 
-import androidx.annotation.OptIn;
 import androidx.camera.core.CameraEffect;
-import androidx.camera.core.ExperimentalSessionConfig;
 import androidx.camera.core.LegacySessionConfig;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SessionConfig;
@@ -44,7 +43,6 @@ import androidx.camera.core.featurecombination.Feature;
 import androidx.camera.core.impl.Config;
 import androidx.camera.core.impl.MutableOptionsBundle;
 import androidx.camera.core.impl.utils.Threads;
-import androidx.camera.core.impl.utils.executor.CameraXExecutors;
 import androidx.camera.core.internal.CameraUseCaseAdapter;
 import androidx.camera.core.internal.StreamSpecsCalculatorImpl;
 import androidx.camera.testing.fakes.FakeCamera;
@@ -55,13 +53,12 @@ import androidx.camera.testing.impl.fakes.FakeSurfaceEffect;
 import androidx.camera.testing.impl.fakes.FakeSurfaceProcessor;
 import androidx.camera.testing.impl.fakes.FakeUseCase;
 import androidx.camera.testing.impl.fakes.FakeUseCaseConfigFactory;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.filters.SdkSuppress;
-import androidx.test.filters.SmallTest;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.internal.DoNotInstrument;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,10 +67,9 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-@SmallTest
-@RunWith(AndroidJUnit4.class)
-@SdkSuppress(minSdkVersion = 21)
-@OptIn(markerClass = ExperimentalSessionConfig.class)
+@RunWith(RobolectricTestRunner.class)
+@DoNotInstrument
+@org.robolectric.annotation.Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 public class LifecycleCameraTest {
     private LifecycleCamera mLifecycleCamera;
     private FakeLifecycleOwner mLifecycleOwner;
@@ -346,20 +342,18 @@ public class LifecycleCameraTest {
         CountDownLatch latch = new CountDownLatch(1);
         Set<Feature> selectedFeatures = new HashSet<>();
 
-        sessionConfig.setFeatureSelectionListener(CameraXExecutors.mainThreadExecutor(),
+        sessionConfig.setFeatureSelectionListener(directExecutor(),
                 features -> {
                     selectedFeatures.addAll(features);
                     latch.countDown();
                 });
 
         // Act
-        Threads.runOnMainSync(() -> {
-            try {
-                mLifecycleCamera.bind(sessionConfig);
-            } catch (CameraUseCaseAdapter.CameraException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        try {
+            mLifecycleCamera.bind(sessionConfig);
+        } catch (CameraUseCaseAdapter.CameraException e) {
+            throw new RuntimeException(e);
+        }
 
         // Assert: All the features except Ultra HDR are selected.
         assertThat(latch.await(2, TimeUnit.SECONDS)).isTrue();
