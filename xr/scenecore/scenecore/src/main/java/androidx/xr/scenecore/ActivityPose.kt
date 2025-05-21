@@ -23,6 +23,7 @@ import androidx.concurrent.futures.ResolvableFuture
 import androidx.xr.runtime.internal.ActivityPose as RtActivityPose
 import androidx.xr.runtime.internal.CameraViewActivityPose as RtCameraViewActivityPose
 import androidx.xr.runtime.internal.HeadActivityPose as RtHeadActivityPose
+import androidx.xr.runtime.internal.HitTestResult as RtHitTestResult
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.PerceptionSpaceActivityPose as RtPerceptionSpaceActivityPose
 import androidx.xr.runtime.math.Pose
@@ -76,11 +77,39 @@ public interface ActivityPose {
      *
      * @param origin The translation of the origin of the hit test relative to this ActivityPose.
      * @param direction The direction for the hit test ray from the origin.
+     * @return a HitResult. The HitResult describes if it hit something and where relative to this
+     *   [ActivityPose]. Listeners will be called on the main thread if Runnable::run is supplied.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    public suspend fun hitTest(origin: Vector3, direction: Vector3): HitTestResult
+
+    /**
+     * Creates a hit test from the specified origin in the specified direction into the scene.
+     *
+     * @param origin The translation of the origin of the hit test relative to this ActivityPose.
+     * @param direction The direction for the hit test ray from the origin.
      * @return a ListenableFuture<HitResult>. The HitResult describes if it hit something and where
      *   relative to this [ActivityPose]. Listeners will be called on the main thread if
      *   Runnable::run is supplied.
      */
     public fun hitTestAsync(origin: Vector3, direction: Vector3): ListenableFuture<HitTestResult>
+
+    /**
+     * Creates a hit test from the specified origin in the specified direction into the scene.
+     *
+     * @param origin The translation of the origin of the hit test relative to this ActivityPose.
+     * @param direction The direction for the hit test ray from the origin
+     * @param hitTestFilter Filter for which scenes to hit test. Hitting other scenes is only
+     *   allowed for apps with the `com.android.extensions.xr.ACCESS_XR_OVERLAY_SPACE` permission.
+     * @return a HitResult. The HitResult describes if it hit something and where relative to this
+     *   [ActivityPose]. Listeners will be called on the main thread if Runnable::run is supplied.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    public suspend fun hitTest(
+        origin: Vector3,
+        direction: Vector3,
+        @HitTestFilterValue hitTestFilter: Int,
+    ): HitTestResult
 
     /**
      * Creates a hit test from the specified origin in the specified direction into the scene.
@@ -124,6 +153,17 @@ public abstract class BaseActivityPose<out RtActivityPoseType : RtActivityPose>(
         return rtActivityPose.transformPoseTo(pose, destination.rtActivityPose)
     }
 
+    override suspend fun hitTest(
+        origin: Vector3,
+        direction: Vector3,
+        @ActivityPose.HitTestFilterValue hitTestFilter: Int,
+    ): HitTestResult {
+        val hitTestRtFuture =
+            this.rtActivityPose.hitTest(origin, direction, hitTestFilter.toRtHitTestFilter())
+        val deferredHitTestResult: RtHitTestResult = hitTestRtFuture.awaitSuspending()
+        return deferredHitTestResult.toHitTestResult()
+    }
+
     override fun hitTestAsync(
         origin: Vector3,
         direction: Vector3,
@@ -147,6 +187,10 @@ public abstract class BaseActivityPose<out RtActivityPoseType : RtActivityPose>(
             Runnable::run,
         )
         return resultFuture
+    }
+
+    override suspend fun hitTest(origin: Vector3, direction: Vector3): HitTestResult {
+        return hitTest(origin, direction, ActivityPose.HitTestFilter.SELF_SCENE.toRtHitTestFilter())
     }
 
     override fun hitTestAsync(

@@ -18,6 +18,7 @@ package androidx.xr.scenecore
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.xr.runtime.internal.ActivityPose.HitTestFilter as RtHitTestFilter
 import androidx.xr.runtime.internal.AnchorEntity as RtAnchorEntity
 import androidx.xr.runtime.internal.AnchorPlacement as RtAnchorPlacement
@@ -43,7 +44,11 @@ import androidx.xr.runtime.math.Ray
 import androidx.xr.scenecore.ActivityPose.HitTestFilter
 import androidx.xr.scenecore.HitTestResult.SurfaceType
 import androidx.xr.scenecore.InputEvent.HitInfo
+import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.Executor
+import kotlin.coroutines.coroutineContext
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Job
 
 internal class HandlerExecutor(val handler: Handler) : Executor {
     override fun execute(command: Runnable) {
@@ -336,5 +341,30 @@ internal fun RtPerceivedResolutionResult.toPerceivedResolutionResult(): Perceive
         is RtPerceivedResolutionResult.EntityTooClose -> PerceivedResolutionResult.EntityTooClose()
         is RtPerceivedResolutionResult.InvalidCameraView ->
             PerceivedResolutionResult.InvalidCameraView()
+    }
+}
+
+internal suspend fun <T> ListenableFuture<T>.awaitSuspending(): T {
+    val deferred = CompletableDeferred<T>(coroutineContext[Job])
+    val futureBeingAwaited = this
+
+    this.addListener(
+        Runnable {
+            try {
+                deferred.complete(this.get())
+            } catch (e: Throwable) {
+                Log.e("AwaitSuspending", "ListenableFuture failed: $futureBeingAwaited", e)
+                deferred.completeExceptionally(e)
+            }
+        },
+        DirectExecutor,
+    )
+
+    return deferred.await()
+}
+
+private object DirectExecutor : Executor {
+    override fun execute(command: Runnable) {
+        command.run()
     }
 }

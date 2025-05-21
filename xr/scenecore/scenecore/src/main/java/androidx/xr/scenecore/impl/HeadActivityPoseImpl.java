@@ -18,7 +18,6 @@ package androidx.xr.scenecore.impl;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue;
 import androidx.xr.runtime.internal.HeadActivityPose;
 import androidx.xr.runtime.internal.HitTestResult;
 import androidx.xr.runtime.math.Pose;
