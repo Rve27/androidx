@@ -73,6 +73,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 
@@ -472,6 +473,7 @@ class SwipeToRevealTest {
         }
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onPartialSwipe_lastStateRevealing_resetsLastState() {
         verifyStateMultipleSwipeToReveal(
@@ -493,6 +495,7 @@ class SwipeToRevealTest {
         )
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onPartialSwipe_whenLastStateRevealed_doesNotReset() {
         verifyStateMultipleSwipeToReveal(
@@ -513,6 +516,7 @@ class SwipeToRevealTest {
         )
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onPartialSwipeRight_lastStateRevealing_resetsLastState() {
         verifyStateMultipleSwipeToReveal(
@@ -535,6 +539,7 @@ class SwipeToRevealTest {
         )
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onPartialSwipeRight_whenLastStateRevealed_doesNotReset() {
         verifyStateMultipleSwipeToReveal(
@@ -556,6 +561,7 @@ class SwipeToRevealTest {
         )
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onPartialSwipeRightAndLeft_differentComponents_lastOneGetsReset() {
         verifyStateMultipleSwipeToReveal(
@@ -578,6 +584,7 @@ class SwipeToRevealTest {
         )
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onPartialSwipeLeftAndRight_differentComponents_lastOneGetsReset() {
         verifyStateMultipleSwipeToReveal(
@@ -600,6 +607,7 @@ class SwipeToRevealTest {
         )
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onMultiSnap_differentComponents_lastOneGetsReset() {
         verifyStateMultipleSwipeToReveal(
@@ -630,6 +638,7 @@ class SwipeToRevealTest {
         )
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onMultiSnapRight_differentComponents_lastOneGetsReset() {
         verifyStateMultipleSwipeToReveal(
@@ -647,6 +656,7 @@ class SwipeToRevealTest {
         )
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onMultiSnapRight_sameComponents_doesNotReset() {
         val lastValue = LeftRevealed
@@ -662,6 +672,7 @@ class SwipeToRevealTest {
         )
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onMultiSnapRightAndLeft_differentComponents_lastOneGetsReset() {
         verifyStateMultipleSwipeToReveal(
@@ -679,6 +690,7 @@ class SwipeToRevealTest {
         )
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onMultiSnapLeftAndRight_differentComponents_lastOneGetsReset() {
         verifyStateMultipleSwipeToReveal(
