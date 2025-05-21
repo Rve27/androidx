@@ -133,33 +133,20 @@ public fun Text(
 
     // Workaround to access content color from outside of a node. This is needed since BasicText
     // does not expose a node, or any other way for us to provide color from a node.
-    val nodeState: MutableState<DelegatableNode?>? =
-        if (usingContentColor) remember { mutableStateOf(null) } else null
-
-    val nodeProvider =
-        if (nodeState != null) {
-            DelegatableNodeProviderElement { nodeState.value = it }
-        } else {
-            Modifier
-        }
-
-    val colorProducer =
-        if (usingContentColor) {
-            ColorProducer {
-                val node = nodeState?.value
-                if (node?.node?.isAttached == true) {
-                    node.currentContentColor()
-                } else {
-                    Color.White
-                }
+    val contentColorProducer: ContentColorProducer? =
+        remember(usingContentColor) {
+            // `if` inside the remember block to avoid creating a group for if/else control flow
+            // inside composition.
+            if (usingContentColor) {
+                ContentColorProducer()
+            } else {
+                null
             }
-        } else {
-            null
         }
 
     BasicText(
         text,
-        modifier.then(nodeProvider),
+        modifier.then(contentColorProducer?.modifier ?: Modifier),
         style.merge(
             // If using content color, this will be unspecified so will no-op
             color = userProvidedColor,
@@ -177,7 +164,7 @@ public fun Text(
         softWrap,
         maxLines,
         minLines,
-        color = colorProducer,
+        color = contentColorProducer,
         autoSize = autoSize,
     )
 }
@@ -271,33 +258,20 @@ public fun Text(
 
     // Workaround to access content color from outside of a node. This is needed since BasicText
     // does not expose a node, or any other way for us to provide color from a node.
-    val nodeState: MutableState<DelegatableNode?>? =
-        if (usingContentColor) remember { mutableStateOf(null) } else null
-
-    val nodeProvider =
-        if (nodeState != null) {
-            DelegatableNodeProviderElement { nodeState.value = it }
-        } else {
-            Modifier
-        }
-
-    val colorProducer =
-        if (usingContentColor) {
-            ColorProducer {
-                val node = nodeState?.value
-                if (node?.node?.isAttached == true) {
-                    node.currentContentColor()
-                } else {
-                    Color.White
-                }
+    val contentColorProducer: ContentColorProducer? =
+        remember(usingContentColor) {
+            // `if` inside the remember block to avoid creating a group for if/else control flow
+            // inside composition.
+            if (usingContentColor) {
+                ContentColorProducer()
+            } else {
+                null
             }
-        } else {
-            null
         }
 
     BasicText(
         text = text,
-        modifier = modifier.then(nodeProvider),
+        modifier = modifier.then(contentColorProducer?.modifier ?: Modifier),
         style =
             style.merge(
                 color = userProvidedColor,
@@ -317,7 +291,7 @@ public fun Text(
         minLines = minLines,
         inlineContent = inlineContent,
         autoSize = autoSize,
-        color = colorProducer,
+        color = contentColorProducer,
     )
 }
 
@@ -373,5 +347,24 @@ internal class DelegatableNodeProviderNode(
     fun update(onDelegatableNodeChange: (DelegatableNode?) -> Unit) {
         this.onDelegatableNodeChange = onDelegatableNodeChange
         onDelegatableNodeChange(this)
+    }
+}
+
+/**
+ * [ColorProducer] that reads content color from the nearest surface using [currentContentColor].
+ * Requires [modifier] to be attached to the hierarchy.
+ */
+private class ContentColorProducer : ColorProducer {
+    private val nodeState: MutableState<DelegatableNode?> = mutableStateOf(null)
+
+    val modifier = DelegatableNodeProviderElement { nodeState.value = it }
+
+    override fun invoke(): Color {
+        val node = nodeState.value
+        return if (node?.node?.isAttached == true) {
+            node.currentContentColor()
+        } else {
+            Color.White
+        }
     }
 }
