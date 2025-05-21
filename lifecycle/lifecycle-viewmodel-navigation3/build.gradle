@@ -41,14 +41,13 @@ androidXMultiplatform {
             dependencies {
                 api("androidx.lifecycle:lifecycle-viewmodel:2.8.7")
                 api("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-
+                api("androidx.compose.runtime:runtime:1.7.5")
+                api("androidx.compose.runtime:runtime-saveable:1.7.5")
+                api(project(":navigation3:navigation3-runtime"))
+                api(project(":savedstate:savedstate"))
+                api(project(":savedstate:savedstate-compose"))
                 implementation(libs.kotlinStdlib)
                 implementation("androidx.collection:collection-ktx:1.4.5")
-                implementation("androidx.compose.runtime:runtime:1.7.5")
-                implementation("androidx.compose.runtime:runtime-saveable:1.7.5")
-                implementation(project(":navigation3:navigation3-runtime"))
-                implementation(project(":savedstate:savedstate"))
-                implementation(project(":savedstate:savedstate-compose"))
             }
         }
 
@@ -69,7 +68,7 @@ androidXMultiplatform {
         androidMain {
             dependsOn(jvmMain)
             dependencies {
-                implementation(project(":activity:activity-compose"))
+                api(project(":activity:activity-compose"))
             }
         }
 
