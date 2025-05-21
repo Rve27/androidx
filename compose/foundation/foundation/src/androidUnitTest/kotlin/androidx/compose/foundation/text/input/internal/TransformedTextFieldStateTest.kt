@@ -86,7 +86,7 @@ class TransformedTextFieldStateTest {
     fun annotatedOutputTransformation_addingAnnotation_showsOutputAnnotations() {
         val state = TextFieldState("Hello")
         val outputTransformation = AnnotatedOutputTransformation {
-            addAnnotation(SpanStyle(Color.Red), 0, 3)
+            addStyle(SpanStyle(Color.Red), 0, 3)
         }
         val transformedState =
             TransformedTextFieldState(

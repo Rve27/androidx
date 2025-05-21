@@ -710,7 +710,8 @@ sealed interface androidx.compose.foundation.text.input/OutputTransformationAnno
     abstract val text // androidx.compose.foundation.text.input/OutputTransformationAnnotationScope.text|{}text[0]
         abstract fun <get-text>(): kotlin/CharSequence // androidx.compose.foundation.text.input/OutputTransformationAnnotationScope.text.<get-text>|<get-text>(){}[0]
 
-    abstract fun addAnnotation(androidx.compose.ui.text/AnnotatedString.Annotation, kotlin/Int, kotlin/Int) // androidx.compose.foundation.text.input/OutputTransformationAnnotationScope.addAnnotation|addAnnotation(androidx.compose.ui.text.AnnotatedString.Annotation;kotlin.Int;kotlin.Int){}[0]
+    abstract fun addStyle(androidx.compose.ui.text/ParagraphStyle, kotlin/Int, kotlin/Int) // androidx.compose.foundation.text.input/OutputTransformationAnnotationScope.addStyle|addStyle(androidx.compose.ui.text.ParagraphStyle;kotlin.Int;kotlin.Int){}[0]
+    abstract fun addStyle(androidx.compose.ui.text/SpanStyle, kotlin/Int, kotlin/Int) // androidx.compose.foundation.text.input/OutputTransformationAnnotationScope.addStyle|addStyle(androidx.compose.ui.text.SpanStyle;kotlin.Int;kotlin.Int){}[0]
 }
 
 sealed interface androidx.compose.foundation.text.input/TextFieldLineLimits { // androidx.compose.foundation.text.input/TextFieldLineLimits|null[0]

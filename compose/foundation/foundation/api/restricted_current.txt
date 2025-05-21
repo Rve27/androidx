@@ -2052,7 +2052,8 @@ package androidx.compose.foundation.text.input {
   }
 
   public sealed interface OutputTransformationAnnotationScope {
-    method public void addAnnotation(androidx.compose.ui.text.AnnotatedString.Annotation annotation, int start, int end);
+    method public void addStyle(androidx.compose.ui.text.ParagraphStyle paragraphStyle, int start, int end);
+    method public void addStyle(androidx.compose.ui.text.SpanStyle spanStyle, int start, int end);
     method public CharSequence getText();
     property public abstract CharSequence text;
   }

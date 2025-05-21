@@ -263,7 +263,7 @@ private fun BoldItalicEveryOtherChar() {
                     val italic = SpanStyle(fontStyle = FontStyle.Italic)
                     var toggle = true
                     repeat(text.length / 2 + 1) {
-                        addAnnotation(if (toggle) bold else italic, i, i + 1)
+                        addStyle(if (toggle) bold else italic, i, i + 1)
                         toggle = !toggle
                         i += 2
                     }
@@ -282,9 +282,7 @@ private fun ColorAnimationDemo() {
         state = rememberTextFieldState(),
         modifier = demoTextFieldModifiers,
         outputTransformation =
-            AnnotatedOutputTransformation {
-                addAnnotation(SpanStyle(color = color), 0, text.length)
-            },
+            AnnotatedOutputTransformation { addStyle(SpanStyle(color = color), 0, text.length) },
         decorator = demoDecorationBox,
     )
 }

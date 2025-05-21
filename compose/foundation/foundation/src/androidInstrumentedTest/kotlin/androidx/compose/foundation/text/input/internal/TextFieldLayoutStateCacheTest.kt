@@ -128,7 +128,7 @@ class TextFieldLayoutStateCacheTest {
                 textFieldState = textFieldState,
                 outputTransformation =
                     AnnotatedOutputTransformation {
-                        addAnnotation(SpanStyle(color = color), 0, text.length)
+                        addStyle(SpanStyle(color = color), 0, text.length)
                     },
             )
         assertInvalidationsOnChange(1) { color = Color.Blue }

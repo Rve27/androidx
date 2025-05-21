@@ -39,6 +39,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.AnnotatedOutputTransformation
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.OutputTransformation
 import androidx.compose.foundation.text.input.TextFieldBuffer
@@ -71,6 +72,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
@@ -382,6 +384,32 @@ fun BasicTextFieldOutputTransformationSample() {
                 }
             },
         outputTransformation = PhoneNumberOutputTransformation(false),
+    )
+}
+
+@Sampled
+@Composable
+fun BasicTextFieldAnnotatedOutputTransformationSample() {
+    val state = rememberTextFieldState()
+    BasicTextField(
+        state,
+        inputTransformation =
+            InputTransformation.maxLength(10).then {
+                if (!TextUtils.isDigitsOnly(asCharSequence())) {
+                    revertAllChanges()
+                }
+            },
+        outputTransformation =
+            AnnotatedOutputTransformation {
+                // Find hashtags
+                val regex = Regex("#\\w+")
+                regex
+                    .findAll(text)
+                    .map { it.range }
+                    .forEach {
+                        addStyle(SpanStyle(color = Color.Blue), it.start, it.endInclusive + 1)
+                    }
+            },
     )
 }
 
