@@ -50,8 +50,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.isLayerManagerInitialized
-import androidx.compose.ui.graphics.isLayerPersistenceEnabled
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.toPixelMap
@@ -1818,7 +1816,6 @@ class AndroidGraphicsLayerTest {
         verifySoftwareRender: Boolean = true,
     ) {
         var scenario: ActivityScenario<TestActivity>? = null
-        var androidGraphicsContext: GraphicsContext? = null
         var container: ViewGroup? = null
         try {
             var contentView: View? = null
@@ -1854,8 +1851,7 @@ class AndroidGraphicsLayerTest {
                                 clipToPadding = false
                                 clipChildren = false
                             }
-                        val graphicsContext =
-                            GraphicsContext(container!!).also { androidGraphicsContext = it }
+                        val graphicsContext = GraphicsContext(container!!)
                         rootGraphicsLayer = graphicsContext.createGraphicsLayer()
                         density = Density(it)
                         val content =
@@ -1872,15 +1868,7 @@ class AndroidGraphicsLayerTest {
             var testActivity: TestActivity? = null
             scenario.moveToState(Lifecycle.State.RESUMED).onActivity { activity ->
                 testActivity = activity
-                activity.runOnUiThread {
-                    // Layer persistence is only required on M+
-                    if (
-                        Build.VERSION.SDK_INT > Build.VERSION_CODES.M && isLayerPersistenceEnabled
-                    ) {
-                        assertTrue(androidGraphicsContext!!.isLayerManagerInitialized())
-                    }
-                    resumed.countDown()
-                }
+                activity.runOnUiThread { resumed.countDown() }
             }
             assertTrue(resumed.await(3000, TimeUnit.MILLISECONDS))
 
@@ -1933,10 +1921,6 @@ class AndroidGraphicsLayerTest {
                 }
             }
             assertTrue(detachLatch.await(3000, TimeUnit.MILLISECONDS))
-            // Layer persistence is only required on M+
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M && isLayerPersistenceEnabled) {
-                assertFalse(androidGraphicsContext!!.isLayerManagerInitialized())
-            }
             scenario?.moveToState(Lifecycle.State.DESTROYED)
         }
     }

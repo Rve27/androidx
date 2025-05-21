@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.DefaultCameraDistance
 import androidx.compose.ui.graphics.DefaultShadowColor
+import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.SolidColor
@@ -240,6 +241,12 @@ class ParameterFactoryTest {
                 }
                 parameter("tileMode", ParameterType.String, "Clamp", index = 5)
                 parameter("createdSize", ParameterType.String, "Unspecified", index = 6)
+                parameter(
+                    "transformMatrix",
+                    ParameterType.String,
+                    Matrix::class.java.simpleName,
+                    index = 8,
+                )
             }
         }
         // TODO: add tests for RadialGradient & ShaderBrush

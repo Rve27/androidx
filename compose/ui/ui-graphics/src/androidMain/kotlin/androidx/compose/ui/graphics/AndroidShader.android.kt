@@ -17,6 +17,7 @@
 package androidx.compose.ui.graphics
 
 import android.graphics.BitmapShader
+import android.graphics.ComposeShader
 import android.graphics.LinearGradient
 import android.graphics.RadialGradient
 import android.graphics.SweepGradient
@@ -196,3 +197,34 @@ private fun validateColorStops(colors: List<Color>, colorStops: List<Float>?) {
         )
     }
 }
+
+internal actual class TransformShader {
+    private var aMatrix: android.graphics.Matrix? = null
+
+    private fun obtainMatrix(): android.graphics.Matrix =
+        aMatrix ?: android.graphics.Matrix().also { aMatrix = it }
+
+    actual fun transform(matrix: Matrix?) {
+        val tmp: android.graphics.Matrix?
+        if (matrix == null) {
+            tmp = null
+            aMatrix = null
+        } else {
+            tmp = obtainMatrix().apply { setFrom(matrix) }
+        }
+        shader?.setLocalMatrix(tmp)
+    }
+
+    actual var shader: Shader? = null
+        set(value) {
+            value?.setLocalMatrix(aMatrix)
+            field = value
+        }
+}
+
+internal actual fun ActualCompositeShader(dst: Shader, src: Shader, blendMode: BlendMode): Shader =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        ComposeShader(dst, src, blendMode.toAndroidBlendMode())
+    } else {
+        ComposeShader(dst, src, blendMode.toPorterDuffMode())
+    }
