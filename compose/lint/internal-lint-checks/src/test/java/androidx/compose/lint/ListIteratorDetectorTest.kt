@@ -21,8 +21,6 @@ package androidx.compose.lint
 import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
-import com.android.tools.lint.useFirUast
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -37,7 +35,6 @@ class ListIteratorDetectorTest : LintDetectorTest() {
     // in terms of our parsing.
     @Test
     fun stdlibIterableExtensions_calledOnList() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 kotlin(
@@ -77,7 +74,6 @@ src/test/test.kt:10: Error: Creating an unnecessary Iterator to iterate through 
 
     @Test
     fun userDefinedExtensions_calledOnList() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 kotlin(
