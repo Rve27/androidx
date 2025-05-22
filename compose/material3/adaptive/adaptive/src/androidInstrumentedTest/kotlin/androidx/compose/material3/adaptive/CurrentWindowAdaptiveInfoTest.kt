@@ -82,6 +82,42 @@ class CurrentWindowAdaptiveInfoTest {
         }
     }
 
+    @Test
+    fun test_currentWindowAdaptiveInfo_withLargeAndXLargeWidthSupport() {
+        lateinit var actualAdaptiveInfo: WindowAdaptiveInfo
+        val mockWindowSize = mutableStateOf(MockWindowSizeXL)
+
+        composeRule.setContent {
+            CompositionLocalProvider(
+                LocalDensity provides MockDensity,
+                LocalWindowInfo provides MockWindowInfo(mockWindowSize),
+            ) {
+                actualAdaptiveInfo = currentWindowAdaptiveInfo(supportLargeAndXLargeWidth = true)
+            }
+        }
+
+        layoutInfoRule.overrideWindowLayoutInfo(WindowLayoutInfo(MockFoldingFeatures1))
+
+        composeRule.runOnIdle {
+            val mockSize = with(MockDensity) { MockWindowSizeXL.toSize().toDpSize() }
+            assertThat(actualAdaptiveInfo.windowSizeClass)
+                .isEqualTo(WindowSizeClass.computeFromDpSizeV2(mockSize))
+            assertThat(actualAdaptiveInfo.windowPosture)
+                .isEqualTo(calculatePosture(MockFoldingFeatures1))
+        }
+
+        layoutInfoRule.overrideWindowLayoutInfo(WindowLayoutInfo(MockFoldingFeatures2))
+        mockWindowSize.value = MockWindowSizeL
+
+        composeRule.runOnIdle {
+            val mockSize = with(MockDensity) { MockWindowSizeL.toSize().toDpSize() }
+            assertThat(actualAdaptiveInfo.windowSizeClass)
+                .isEqualTo(WindowSizeClass.computeFromDpSizeV2(mockSize))
+            assertThat(actualAdaptiveInfo.windowPosture)
+                .isEqualTo(calculatePosture(MockFoldingFeatures2))
+        }
+    }
+
     companion object {
         private val MockFoldingFeatures1 =
             listOf(
@@ -101,6 +137,9 @@ class CurrentWindowAdaptiveInfoTest {
 
         private val MockWindowSize1 = IntSize(400, 800)
         private val MockWindowSize2 = IntSize(800, 400)
+
+        private val MockWindowSizeL = IntSize(1300, 800)
+        private val MockWindowSizeXL = IntSize(1800, 400)
 
         private val MockDensity = Density(1f, 1f)
     }
