@@ -256,9 +256,8 @@ private fun RowItem(modifier: Modifier = Modifier, content: @Composable () -> Un
     Surface(
         color = Color.Gray,
         modifier = modifier.padding(20.dp).fillMaxWidth().clip(RoundedCornerShape(20.dp)),
-    ) {
-        content()
-    }
+        content = content,
+    )
 }
 
 @Composable

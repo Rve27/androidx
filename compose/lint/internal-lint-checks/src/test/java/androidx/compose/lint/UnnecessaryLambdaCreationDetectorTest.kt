@@ -26,9 +26,7 @@ import com.android.tools.lint.checks.infrastructure.TestLintResult
 import com.android.tools.lint.checks.infrastructure.TestMode
 import com.android.tools.lint.detector.api.Detector
 import com.android.tools.lint.detector.api.Issue
-import com.android.tools.lint.useFirUast
 import org.intellij.lang.annotations.Language
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -115,10 +113,6 @@ class UnnecessaryLambdaCreationDetectorTest(
 
     @Test
     fun warnsForSingleExpressions() {
-        assumeFalse(
-            "Test fails under K2: b/353980920",
-            useFirUast() && parameterizedDebugString == "Compiled stubs",
-        )
         check(
                 """
             package test
@@ -377,10 +371,6 @@ src/test/SomeScope.kt:24: Error: Creating an unnecessary lambda to emit a captur
 
     @Test
     fun warnsForFunctionsReturningALambda() {
-        assumeFalse(
-            "Test fails under K2: b/353980920",
-            useFirUast() && parameterizedDebugString == "Compiled stubs",
-        )
         check(
                 """
             package test

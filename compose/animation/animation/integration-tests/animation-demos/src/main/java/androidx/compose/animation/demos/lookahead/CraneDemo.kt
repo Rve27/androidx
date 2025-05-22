@@ -91,9 +91,8 @@ fun CraneDemo() {
                         .background(Color(0xfffdedac)),
                 color = Color(0xfffdedac),
                 shape = RoundedCornerShape(10.dp),
-            ) {
-                child()
-            }
+                content = child,
+            )
         }
     }
 
