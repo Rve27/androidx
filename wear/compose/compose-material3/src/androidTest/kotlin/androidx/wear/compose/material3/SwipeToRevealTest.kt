@@ -52,9 +52,9 @@ import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumnState
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.foundation.rememberSwipeToDismissBoxState
+import androidx.wear.compose.material3.RevealActionType.Companion.None
 import androidx.wear.compose.material3.RevealActionType.Companion.PrimaryAction
 import androidx.wear.compose.material3.RevealActionType.Companion.SecondaryAction
-import androidx.wear.compose.material3.RevealActionType.Companion.UndoAction
 import androidx.wear.compose.material3.RevealDirection.Companion.Bidirectional
 import androidx.wear.compose.material3.RevealDirection.Companion.RightToLeft
 import androidx.wear.compose.material3.RevealState.SingleSwipeCoordinator
@@ -726,7 +726,7 @@ class SwipeToRevealTest {
     @Test
     fun onUndoActionClick_setsLastClickAction() =
         verifyLastClickAction(
-            expectedClickType = UndoAction,
+            expectedClickType = None,
             initialRevealValue = RightRevealed,
             nodeTagToPerformClick = UNDO_PRIMARY_ACTION_TAG,
         )
@@ -975,40 +975,30 @@ class SwipeToRevealTest {
         lateinit var revealState: RevealState
         rule.setContent {
             revealState = rememberRevealState(initialRevealValue)
-            val coroutineScope = rememberCoroutineScope()
             SwipeToRevealWithDefaults(
                 primaryAction = {
                     DefaultPrimaryActionButton(
                         modifier = Modifier.testTag(PRIMARY_ACTION_TAG),
-                        onClick = {
-                            coroutineScope.launch {
-                                revealState.snapTo(Covered)
-                                revealState.lastActionType = PrimaryAction
-                            }
-                        },
+                        onClick = {},
                     )
                 },
                 revealState = revealState,
                 secondaryAction = {
                     DefaultSecondaryActionButton(
                         modifier = Modifier.testTag(SECONDARY_ACTION_TAG),
-                        onClick = {
-                            coroutineScope.launch {
-                                revealState.snapTo(Covered)
-                                revealState.lastActionType = SecondaryAction
-                            }
-                        },
+                        onClick = {},
                     )
                 },
                 undoPrimaryAction = {
                     DefaultUndoActionButton(
                         modifier = Modifier.testTag(UNDO_PRIMARY_ACTION_TAG),
-                        onClick = {
-                            coroutineScope.launch {
-                                revealState.animateTo(Covered)
-                                revealState.lastActionType = UndoAction
-                            }
-                        },
+                        onClick = {},
+                    )
+                },
+                undoSecondaryAction = {
+                    DefaultUndoActionButton(
+                        modifier = Modifier.testTag(UNDO_SECONDARY_ACTION_TAG),
+                        onClick = {},
                     )
                 },
             )
@@ -1220,5 +1210,6 @@ class SwipeToRevealTest {
         private const val PRIMARY_ACTION_TAG = "PRIMARY_ACTION_TAG"
         private const val SECONDARY_ACTION_TAG = "SECONDARY_ACTION_TAG"
         private const val UNDO_PRIMARY_ACTION_TAG = "UNDO_PRIMARY_ACTION_TAG"
+        private const val UNDO_SECONDARY_ACTION_TAG = "UNDO_SECONDARY_ACTION_TAG"
     }
 }
