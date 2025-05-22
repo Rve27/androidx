@@ -41,7 +41,6 @@ import androidx.wear.compose.material3.SwipeToRevealDefaults.bidirectionalGestur
 import androidx.wear.compose.materialcore.CustomTouchSlopProvider
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -62,16 +61,17 @@ class SwipeToRevealAnchorTest(val testParams: TestParams) {
         SingleSwipeCoordinator.lastUpdatedState.set(null)
     }
 
-    @Ignore("b/417242916")
     @Test
     fun performSwipe_settlesOnCorrectAnchor() {
         lateinit var revealState: RevealState
         var density = 0f
 
         rule.setContent {
-            revealState = rememberRevealState(initialValue = testParams.initialRevealValue)
-            with(LocalDensity.current) { density = this.density }
-            Content(revealState)
+            ScreenConfiguration(screenSizeDp = SCREEN_SIZE_LARGE) {
+                revealState = rememberRevealState(initialValue = testParams.initialRevealValue)
+                with(LocalDensity.current) { density = this.density }
+                Content(revealState)
+            }
         }
 
         rule.onNodeWithTag(TEST_TAG).performTouchInput(block = gesture(testParams, density))
