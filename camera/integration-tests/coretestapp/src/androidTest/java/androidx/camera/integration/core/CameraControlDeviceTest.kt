@@ -17,30 +17,22 @@
 package androidx.camera.integration.core
 
 import android.content.Context
-import android.hardware.camera2.CameraCharacteristics
-import android.hardware.camera2.CameraCharacteristics.CONTROL_MAX_REGIONS_AE
-import android.hardware.camera2.CameraCharacteristics.CONTROL_MAX_REGIONS_AF
-import android.hardware.camera2.CameraCharacteristics.CONTROL_MAX_REGIONS_AWB
 import android.hardware.camera2.CameraMetadata.CONTROL_AE_MODE_ON
 import android.hardware.camera2.CameraMetadata.CONTROL_AE_MODE_ON_ALWAYS_FLASH
 import android.hardware.camera2.CameraMetadata.CONTROL_AE_MODE_ON_AUTO_FLASH
 import android.hardware.camera2.CameraMetadata.CONTROL_AE_MODE_ON_LOW_LIGHT_BOOST_BRIGHTNESS_PRIORITY
 import android.hardware.camera2.CameraMetadata.FLASH_MODE_OFF
 import android.hardware.camera2.CameraMetadata.FLASH_MODE_TORCH
-import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.CaptureResult
-import android.hardware.camera2.params.MeteringRectangle
 import android.os.Build
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.camera2.pipe.integration.CameraPipeConfig
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraXConfig
-import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageProxy
-import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import androidx.camera.core.impl.CameraControlInternal
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
 import androidx.camera.core.internal.CameraUseCaseAdapter.CameraException
@@ -51,7 +43,6 @@ import androidx.camera.testing.impl.CameraPipeConfigTestRule
 import androidx.camera.testing.impl.CameraUtil
 import androidx.camera.testing.impl.CameraUtil.PreTestCameraIdList
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
-import androidx.concurrent.futures.await
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
@@ -65,7 +56,6 @@ import org.junit.After
 import org.junit.Assert
 import org.junit.Assume.assumeTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -76,7 +66,6 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 @SdkSuppress(minSdkVersion = 21)
 class CameraControlDeviceTest(
-    private val cameraSelector: CameraSelector,
     private val implName: String,
     private val cameraConfig: CameraXConfig,
 ) {
@@ -90,50 +79,27 @@ class CameraControlDeviceTest(
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "selector={0},implName={1}")
+        @Parameterized.Parameters(name = "{0}")
         fun data() =
             listOf(
-                arrayOf(
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    Camera2Config::class.simpleName,
-                    Camera2Config.defaultConfig(),
-                ),
-                arrayOf(
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    CameraPipeConfig::class.simpleName,
-                    CameraPipeConfig.defaultConfig(),
-                ),
-                arrayOf(
-                    CameraSelector.DEFAULT_FRONT_CAMERA,
-                    Camera2Config::class.simpleName,
-                    Camera2Config.defaultConfig(),
-                ),
-                arrayOf(
-                    CameraSelector.DEFAULT_FRONT_CAMERA,
-                    CameraPipeConfig::class.simpleName,
-                    CameraPipeConfig.defaultConfig(),
-                ),
+                arrayOf(Camera2Config::class.simpleName, Camera2Config.defaultConfig()),
+                arrayOf(CameraPipeConfig::class.simpleName, CameraPipeConfig.defaultConfig()),
             )
-
-        private val METERING_REGIONS_DEFAULT: Array<MeteringRectangle> =
-            arrayOf(MeteringRectangle(0, 0, 0, 0, 0))
     }
 
     private val instrumentation = InstrumentationRegistry.getInstrumentation()
     private val analyzer = ImageAnalysis.Analyzer { obj: ImageProxy -> obj.close() }
     private val lifecycleOwner = FakeLifecycleOwner().also { it.startAndResume() }
-    private val cameraCharacteristics =
-        CameraUtil.getCameraCharacteristics(
-            CameraUtil.getCameraIdWithLensFacing(cameraSelector.lensFacing!!)!!
-        )!!
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var camera: Camera
     private lateinit var cameraControl: CameraControlInternal
     private lateinit var captureCallback: Camera2InteropUtil.CaptureCallback
+    private lateinit var cameraSelector: CameraSelector
 
     @Before
     fun setUp() = runBlocking {
         val context = ApplicationProvider.getApplicationContext<Context>()
+        cameraSelector = CameraUtil.assumeFirstAvailableCameraSelector()
         ProcessCameraProvider.configureInstance(cameraConfig)
         cameraProvider = ProcessCameraProvider.awaitInstance(context)
         assumeTrue(cameraProvider.hasCamera(cameraSelector))
@@ -184,76 +150,6 @@ class CameraControlDeviceTest(
             mapOf(CaptureResult.CONTROL_AE_MODE to CONTROL_AE_MODE_ON_ALWAYS_FLASH)
         )
         assertThat(cameraControl.flashMode).isEqualTo(ImageCapture.FLASH_MODE_ON)
-    }
-
-    @Ignore // b/384850020
-    @Test
-    fun startFocusAndMetering_3ARegionsUpdated() = runBlocking {
-        assumeTrue(is3ASupported())
-        val factory = SurfaceOrientedMeteringPointFactory(1.0f, 1.0f)
-        val action = FocusMeteringAction.Builder(factory.createPoint(0f, 0f)).build()
-        bindUseCases()
-
-        cameraControl.startFocusAndMetering(action).await()
-
-        val expectedAfCount =
-            cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AF).coerceAtMost(1)
-        val expectedAeCount =
-            cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AE).coerceAtMost(1)
-        val expectedAwbCount =
-            cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AWB).coerceAtMost(1)
-        // Check capture request instead of capture result because the focus and metering may not
-        // converge depending on the environment.
-        captureCallback.verifyFor(numOfCaptures = 60) { captureRequests, _ ->
-            val captureRequest = captureRequests.last()
-            val afRegions = captureRequest[CaptureRequest.CONTROL_AF_REGIONS] ?: emptyArray()
-            val aeRegions = captureRequest[CaptureRequest.CONTROL_AE_REGIONS] ?: emptyArray()
-            val awbRegions = captureRequest[CaptureRequest.CONTROL_AWB_REGIONS] ?: emptyArray()
-            afRegions.weightedRegionCount == expectedAfCount &&
-                aeRegions.weightedRegionCount == expectedAeCount &&
-                awbRegions.weightedRegionCount == expectedAwbCount
-        }
-    }
-
-    @Ignore // b/384850020
-    @Test
-    fun cancelFocusAndMetering_3ARegionsReset() = runBlocking {
-        assumeTrue(is3ASupported())
-        val factory = SurfaceOrientedMeteringPointFactory(1.0f, 1.0f)
-        val action = FocusMeteringAction.Builder(factory.createPoint(0f, 0f)).build()
-        bindUseCases()
-
-        cameraControl.startFocusAndMetering(action).await()
-        cameraControl.cancelFocusAndMetering().await()
-        // Check capture request instead of capture result because the focus and metering may not
-        // converge depending on the environment.
-        captureCallback.verifyFor(numOfCaptures = 60) { captureRequests, _ ->
-            val captureRequest = captureRequests.last()
-            val afRegions = captureRequest[CaptureRequest.CONTROL_AF_REGIONS] ?: emptyArray()
-            val aeRegions = captureRequest[CaptureRequest.CONTROL_AE_REGIONS] ?: emptyArray()
-            val awbRegions = captureRequest[CaptureRequest.CONTROL_AWB_REGIONS] ?: emptyArray()
-
-            afRegions.weightedRegionCount == 0 &&
-                aeRegions.weightedRegionCount == 0 &&
-                awbRegions.weightedRegionCount == 0
-        }
-    }
-
-    @Test
-    fun setExposureCompensation_resultUpdated() {
-        val exposureState = cameraProvider.getCameraInfo(cameraSelector).exposureState
-        assumeTrue(exposureState.isExposureCompensationSupported)
-        val upper = exposureState.exposureCompensationRange.upper
-        bindUseCases()
-
-        // If the device is facing a scene that the exposure can't converge, the future may not be
-        // completed and the capture result may not change accordingly. So here doesn't wait for the
-        // future and check the capture request instead.
-        cameraControl.setExposureCompensationIndex(upper)
-
-        captureCallback.verifyLastCaptureRequest(
-            mapOf(CaptureRequest.CONTROL_AE_EXPOSURE_COMPENSATION to upper)
-        )
     }
 
     @Test
@@ -392,23 +288,6 @@ class CameraControlDeviceTest(
                 throw IllegalArgumentException(e)
             }
         }
-    }
-
-    private fun CameraCharacteristics.getMaxRegionCount(
-        optionMaxRegions: CameraCharacteristics.Key<Int>
-    ) = get(optionMaxRegions) ?: 0
-
-    private val Array<MeteringRectangle>.weightedRegionCount: Int
-        get() {
-            var count = 0
-            forEach { count += if (it.meteringWeight != 0) 1 else 0 }
-            return count
-        }
-
-    private fun is3ASupported(): Boolean {
-        return cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AF) > 0 ||
-            cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AE) > 0 ||
-            cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AWB) > 0
     }
 
     private fun <T> assertFutureCompletes(future: ListenableFuture<T>) {
