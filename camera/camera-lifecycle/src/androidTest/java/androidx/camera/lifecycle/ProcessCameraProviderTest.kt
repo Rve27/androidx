@@ -29,8 +29,6 @@ import androidx.camera.camera2.pipe.integration.CameraPipeConfig
 import androidx.camera.core.CameraFilter
 import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.CameraSelector.LENS_FACING_BACK
-import androidx.camera.core.CameraSelector.LENS_FACING_FRONT
 import androidx.camera.core.CameraXConfig
 import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.ImageAnalysis
@@ -123,13 +121,13 @@ class ProcessCameraProviderTest(
     private val context = ApplicationProvider.getApplicationContext() as Context
     private val lifecycleOwner0 = FakeLifecycleOwner()
     private val lifecycleOwner1 = FakeLifecycleOwner()
-    private val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private lateinit var cameraSelector: CameraSelector
 
     private lateinit var provider: ProcessCameraProvider
 
     @Before
     fun setUp() {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(cameraSelector.lensFacing!!))
+        cameraSelector = CameraUtil.assumeFirstAvailableCameraSelector()
     }
 
     @After
@@ -353,7 +351,9 @@ class ProcessCameraProviderTest(
 
     @Test
     fun canRebindSessionConfig_sameLifecycleOwnerWithDifferentCamera() = runBlocking {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(CameraSelector.LENS_FACING_FRONT))
+        val cameraSelectors = CameraUtil.getAvailableCameraSelectors()
+        assumeTrue("No enough cameras to test.", cameraSelectors.size >= 2)
+
         ProcessCameraProvider.configureInstance(cameraConfig)
         provider = ProcessCameraProvider.getInstance(context).await()
         val preview1 = Preview.Builder().build()
@@ -373,11 +373,7 @@ class ProcessCameraProviderTest(
                 analyisLatch1.countDown()
                 it.close()
             }
-            provider.bindToLifecycle(
-                lifecycleOwner0,
-                CameraSelector.DEFAULT_BACK_CAMERA,
-                sessionConfig1,
-            )
+            provider.bindToLifecycle(lifecycleOwner0, cameraSelectors[0], sessionConfig1)
         }
         previewSurfaceProvider1.assertFramesReceivedAfterSurfaceRequested()
         assertThat(analyisLatch1.await(5, TimeUnit.SECONDS)).isTrue()
@@ -389,11 +385,7 @@ class ProcessCameraProviderTest(
                 analyisLatch2.countDown()
                 it.close()
             }
-            provider.bindToLifecycle(
-                lifecycleOwner0,
-                CameraSelector.DEFAULT_FRONT_CAMERA,
-                sessionConfig2,
-            )
+            provider.bindToLifecycle(lifecycleOwner0, cameraSelectors[1], sessionConfig2)
         }
         previewSurfaceProvider2.assertFramesReceivedAfterSurfaceRequested()
         assertThat(analyisLatch2.await(5, TimeUnit.SECONDS)).isTrue()
@@ -409,7 +401,9 @@ class ProcessCameraProviderTest(
 
     @Test
     fun canRebindSameSessionConfig_sameLifecycleOwnerWithDifferentCamera() = runBlocking {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(CameraSelector.LENS_FACING_FRONT))
+        val cameraSelectors = CameraUtil.getAvailableCameraSelectors()
+        assumeTrue("No enough cameras to test.", cameraSelectors.size >= 2)
+
         ProcessCameraProvider.configureInstance(cameraConfig)
         provider = ProcessCameraProvider.getInstance(context).await()
         val preview = Preview.Builder().build()
@@ -425,21 +419,13 @@ class ProcessCameraProviderTest(
                 analyisLatch1.countDown()
                 it.close()
             }
-            provider.bindToLifecycle(
-                lifecycleOwner0,
-                CameraSelector.DEFAULT_BACK_CAMERA,
-                sessionConfig,
-            )
+            provider.bindToLifecycle(lifecycleOwner0, cameraSelectors[0], sessionConfig)
         }
         previewSurfaceProvider.assertFramesReceivedAfterSurfaceRequested()
         assertThat(analyisLatch1.await(5, TimeUnit.SECONDS)).isTrue()
 
         withContext(Dispatchers.Main) {
-            provider.bindToLifecycle(
-                lifecycleOwner0,
-                CameraSelector.DEFAULT_FRONT_CAMERA,
-                sessionConfig,
-            )
+            provider.bindToLifecycle(lifecycleOwner0, cameraSelectors[1], sessionConfig)
         }
         previewSurfaceProvider.assertFramesReceivedAfterSurfaceRequested()
         analyisLatch1 = CountDownLatch(1)
@@ -454,7 +440,6 @@ class ProcessCameraProviderTest(
     @Test
     @SdkSuppress(minSdkVersion = 23)
     fun canRebindSessionConfigToSameLifecycleOwner_withExtensionsEnabled() = runBlocking {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(LENS_FACING_BACK))
         ProcessCameraProvider.configureInstance(cameraConfig)
 
         val previewSurfaceProvider0 = PreviewSurfaceProvider()
@@ -495,7 +480,6 @@ class ProcessCameraProviderTest(
     @Test
     @SdkSuppress(minSdkVersion = 23)
     fun canRebindSameSessionConfigToSameLifecycleOwner_withExtensionsEnabled() = runBlocking {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(LENS_FACING_BACK))
         ProcessCameraProvider.configureInstance(cameraConfig)
 
         val previewSurfaceProvider = PreviewSurfaceProvider()
@@ -872,7 +856,9 @@ class ProcessCameraProviderTest(
 
     @Test
     fun bindUseCases_withDifferentLensFacingButSameLifecycleOwner_throwExceptions() = runBlocking {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(LENS_FACING_FRONT))
+        val cameraSelectors = CameraUtil.getAvailableCameraSelectors()
+        assumeTrue("No enough cameras to test.", cameraSelectors.size >= 2)
+
         ProcessCameraProvider.configureInstance(cameraConfig)
 
         withContext(Dispatchers.Main) {
@@ -881,14 +867,10 @@ class ProcessCameraProviderTest(
             val useCase0 = Preview.Builder().build()
             val useCase1 = Preview.Builder().build()
 
-            provider.bindToLifecycle(lifecycleOwner0, cameraSelector, useCase0)
+            provider.bindToLifecycle(lifecycleOwner0, cameraSelectors[0], useCase0)
 
             assertThrows<IllegalArgumentException> {
-                provider.bindToLifecycle(
-                    lifecycleOwner0,
-                    CameraSelector.DEFAULT_FRONT_CAMERA,
-                    useCase1,
-                )
+                provider.bindToLifecycle(lifecycleOwner0, cameraSelectors[1], useCase1)
             }
             assertThat(provider.isConcurrentCameraModeOn).isFalse()
         }
@@ -896,7 +878,9 @@ class ProcessCameraProviderTest(
 
     @Test
     fun bindUseCases_withDifferentLensFacingAndLifecycle() = runBlocking {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(LENS_FACING_FRONT))
+        val cameraSelectors = CameraUtil.getAvailableCameraSelectors()
+        assumeTrue("No enough cameras to test.", cameraSelectors.size >= 2)
+
         ProcessCameraProvider.configureInstance(cameraConfig)
 
         withContext(Dispatchers.Main) {
@@ -905,14 +889,9 @@ class ProcessCameraProviderTest(
             val useCase0 = Preview.Builder().build()
             val useCase1 = Preview.Builder().build()
 
-            val camera0 = provider.bindToLifecycle(lifecycleOwner0, cameraSelector, useCase0)
+            val camera0 = provider.bindToLifecycle(lifecycleOwner0, cameraSelectors[0], useCase0)
 
-            val camera1 =
-                provider.bindToLifecycle(
-                    lifecycleOwner1,
-                    CameraSelector.DEFAULT_FRONT_CAMERA,
-                    useCase1,
-                )
+            val camera1 = provider.bindToLifecycle(lifecycleOwner1, cameraSelectors[1], useCase1)
 
             assertThat(camera0).isNotEqualTo(camera1)
             assertThat(provider.isBound(useCase0)).isTrue()
@@ -923,7 +902,9 @@ class ProcessCameraProviderTest(
 
     @Test
     fun bindSessionConfig_withDifferentLensFacingAndLifecycle() = runBlocking {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(LENS_FACING_FRONT))
+        val cameraSelectors = CameraUtil.getAvailableCameraSelectors()
+        assumeTrue("No enough cameras to test.", cameraSelectors.size >= 2)
+
         ProcessCameraProvider.configureInstance(cameraConfig)
 
         withContext(Dispatchers.Main) {
@@ -934,14 +915,11 @@ class ProcessCameraProviderTest(
             val sessionConfig0 = SessionConfig(useCases = listOf(useCase0))
             val sessionConfig1 = SessionConfig(useCases = listOf(useCase1))
 
-            val camera0 = provider.bindToLifecycle(lifecycleOwner0, cameraSelector, sessionConfig0)
+            val camera0 =
+                provider.bindToLifecycle(lifecycleOwner0, cameraSelectors[0], sessionConfig0)
 
             val camera1 =
-                provider.bindToLifecycle(
-                    lifecycleOwner1,
-                    CameraSelector.DEFAULT_FRONT_CAMERA,
-                    sessionConfig1,
-                )
+                provider.bindToLifecycle(lifecycleOwner1, cameraSelectors[1], sessionConfig1)
 
             assertThat(camera0).isNotEqualTo(camera1)
             assertThat(provider.isBound(sessionConfig0)).isTrue()
@@ -952,21 +930,19 @@ class ProcessCameraProviderTest(
 
     @Test
     fun bindSameUseCase_toDifferentLifecycle_throwsExceptions(): Unit = runBlocking {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(LENS_FACING_FRONT))
+        val cameraSelectors = CameraUtil.getAvailableCameraSelectors()
+        assumeTrue("No enough cameras to test.", cameraSelectors.size >= 2)
+
         ProcessCameraProvider.configureInstance(cameraConfig)
 
         withContext(Dispatchers.Main) {
             provider = ProcessCameraProvider.getInstance(context).await()
 
             val useCase = Preview.Builder().build()
-            provider.bindToLifecycle(lifecycleOwner0, cameraSelector, useCase)
+            provider.bindToLifecycle(lifecycleOwner0, cameraSelectors[0], useCase)
 
             assertThrows<IllegalStateException> {
-                provider.bindToLifecycle(
-                    lifecycleOwner1,
-                    CameraSelector.DEFAULT_FRONT_CAMERA,
-                    useCase,
-                )
+                provider.bindToLifecycle(lifecycleOwner1, cameraSelectors[1], useCase)
             }
         }
     }
@@ -974,7 +950,9 @@ class ProcessCameraProviderTest(
     @Test
     fun bindSessionConfigsWithSameUseCase_toDifferentLifecycle_throwsExceptions(): Unit =
         runBlocking {
-            assumeTrue(CameraUtil.hasCameraWithLensFacing(LENS_FACING_FRONT))
+            val cameraSelectors = CameraUtil.getAvailableCameraSelectors()
+            assumeTrue("No enough cameras to test.", cameraSelectors.size >= 2)
+
             ProcessCameraProvider.configureInstance(cameraConfig)
 
             withContext(Dispatchers.Main) {
@@ -983,14 +961,10 @@ class ProcessCameraProviderTest(
                 val useCase = Preview.Builder().build()
                 val sessionConfig0 = SessionConfig(useCases = listOf(useCase))
                 val sessionConfig1 = SessionConfig(useCases = listOf(useCase))
-                provider.bindToLifecycle(lifecycleOwner0, cameraSelector, sessionConfig0)
+                provider.bindToLifecycle(lifecycleOwner0, cameraSelectors[0], sessionConfig0)
 
                 assertThrows<IllegalStateException> {
-                    provider.bindToLifecycle(
-                        lifecycleOwner1,
-                        CameraSelector.DEFAULT_FRONT_CAMERA,
-                        sessionConfig1,
-                    )
+                    provider.bindToLifecycle(lifecycleOwner1, cameraSelectors[1], sessionConfig1)
                 }
             }
         }
@@ -1323,11 +1297,8 @@ class ProcessCameraProviderTest(
             val useCase = Preview.Builder().build()
             lifecycleOwner0.startAndResume()
             val camera: LifecycleCamera =
-                provider.bindToLifecycle(
-                    lifecycleOwner0,
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    useCase,
-                ) as LifecycleCamera
+                provider.bindToLifecycle(lifecycleOwner0, cameraSelector, useCase)
+                    as LifecycleCamera
             assertThat(camera.isActive).isTrue()
             provider.unbind(useCase)
             assertThat(camera.isActive).isFalse()
@@ -1343,11 +1314,8 @@ class ProcessCameraProviderTest(
             val sessionConfig = SessionConfig(useCases = listOf(Preview.Builder().build()))
             lifecycleOwner0.startAndResume()
             val camera: LifecycleCamera =
-                provider.bindToLifecycle(
-                    lifecycleOwner0,
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    sessionConfig,
-                ) as LifecycleCamera
+                provider.bindToLifecycle(lifecycleOwner0, cameraSelector, sessionConfig)
+                    as LifecycleCamera
             assertThat(camera.isActive).isTrue()
             provider.unbind(sessionConfig)
             assertThat(camera.isActive).isFalse()
@@ -1363,11 +1331,8 @@ class ProcessCameraProviderTest(
             val useCase = Preview.Builder().build()
             lifecycleOwner0.startAndResume()
             val camera: LifecycleCamera =
-                provider.bindToLifecycle(
-                    lifecycleOwner0,
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    useCase,
-                ) as LifecycleCamera
+                provider.bindToLifecycle(lifecycleOwner0, cameraSelector, useCase)
+                    as LifecycleCamera
             assertThat(camera.isActive).isTrue()
             provider.unbindAll()
             assertThat(camera.isActive).isFalse()
@@ -1383,11 +1348,8 @@ class ProcessCameraProviderTest(
             val sessionConfig = SessionConfig(useCases = listOf(Preview.Builder().build()))
             lifecycleOwner0.startAndResume()
             val camera: LifecycleCamera =
-                provider.bindToLifecycle(
-                    lifecycleOwner0,
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    sessionConfig,
-                ) as LifecycleCamera
+                provider.bindToLifecycle(lifecycleOwner0, cameraSelector, sessionConfig)
+                    as LifecycleCamera
             assertThat(camera.isActive).isTrue()
             provider.unbindAll()
             assertThat(camera.isActive).isFalse()
@@ -1425,7 +1387,6 @@ class ProcessCameraProviderTest(
 
         withContext(Dispatchers.Main) {
             provider = ProcessCameraProvider.getInstance(context).await()
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             // Act: getting the camera info after bindToLifecycle.
             val camera = provider.bindToLifecycle(lifecycleOwner0, cameraSelector)
@@ -1444,7 +1405,6 @@ class ProcessCameraProviderTest(
         ProcessCameraProvider.configureInstance(cameraConfig)
         withContext(Dispatchers.Main) {
             provider = ProcessCameraProvider.getInstance(context).await()
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
             // Act: getting the camera info before bindToLifecycle.
             val cameraInfoInternal1: CameraInfoInternal =
@@ -1499,7 +1459,6 @@ class ProcessCameraProviderTest(
     fun bindWithExtensions_doesNotImpactPreviousCamera(): Unit =
         runBlocking(Dispatchers.Main) {
             // 1. Arrange.
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             val cameraSelectorWithExtensions =
                 getCameraSelectorWithLimitedCapabilities(
                     cameraSelector,
