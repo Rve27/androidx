@@ -181,7 +181,6 @@ internal fun getterOrSuperDeclarationsHaveAnnotation(
     annotationName: Name,
 ): Boolean {
     val source = node.sourcePsi as? KtElement ?: return false
-    var annotated = false
     // Need to use analysis APIs because of b/381898394
     analyze(source) {
         (source.resolveToCall()?.singleVariableAccessCall() as? KaSimpleVariableAccessCall)?.let {
@@ -195,17 +194,22 @@ internal fun getterOrSuperDeclarationsHaveAnnotation(
                 }
 
             // Check if any super symbol is annotated as well
-            val symbolsToCheck = getter.allOverriddenSymbols + getter
+            // TODO: go back to just `getter.allOverriddenSymbols`
+            //   if https://youtrack.jetbrains.com/issue/KT-77735 is fixed / available.
+            val symbolsToCheck =
+                propertySymbol.allOverriddenSymbols.mapNotNull {
+                    (it as? KaPropertySymbol)?.getter
+                } + getter
             symbolsToCheck.forEach { symbol ->
                 if (
                     symbol.annotations.any {
                         it.classId?.asFqNameString() == annotationName.javaFqn
                     }
                 ) {
-                    annotated = true
+                    return true
                 }
             }
         }
     }
-    return annotated
+    return false
 }
