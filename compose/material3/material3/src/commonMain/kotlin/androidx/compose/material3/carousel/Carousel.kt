@@ -83,6 +83,8 @@ import kotlin.math.roundToInt
  * @param modifier A modifier instance to be applied to this carousel container
  * @param itemSpacing The amount of space used to separate items in the carousel
  * @param flingBehavior The [TargetedFlingBehavior] to be used for post scroll gestures
+ * @param userScrollEnabled whether the scrolling via the user gestures or accessibility actions is
+ *   allowed.
  * @param minSmallItemWidth The minimum allowable width of small items in dp. Depending on the
  *   [preferredItemWidth] and the width of the carousel, the small item width will be chosen from a
  *   range of [minSmallItemWidth] and [maxSmallItemWidth]
@@ -103,6 +105,7 @@ fun HorizontalMultiBrowseCarousel(
     itemSpacing: Dp = 0.dp,
     flingBehavior: TargetedFlingBehavior =
         CarouselDefaults.singleAdvanceFlingBehavior(state = state),
+    userScrollEnabled: Boolean = true,
     minSmallItemWidth: Dp = CarouselDefaults.MinSmallItemSize,
     maxSmallItemWidth: Dp = CarouselDefaults.MaxSmallItemSize,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -132,9 +135,38 @@ fun HorizontalMultiBrowseCarousel(
         modifier = modifier,
         itemSpacing = itemSpacing,
         flingBehavior = flingBehavior,
+        userScrollEnabled = userScrollEnabled,
         content = content,
     )
 }
+
+@ExperimentalMaterial3Api
+@Deprecated(message = "Kept for binary compatibility", level = DeprecationLevel.HIDDEN)
+@Composable
+fun HorizontalMultiBrowseCarousel(
+    state: CarouselState,
+    preferredItemWidth: Dp,
+    modifier: Modifier = Modifier,
+    itemSpacing: Dp = 0.dp,
+    flingBehavior: TargetedFlingBehavior =
+        CarouselDefaults.singleAdvanceFlingBehavior(state = state),
+    minSmallItemWidth: Dp = CarouselDefaults.MinSmallItemSize,
+    maxSmallItemWidth: Dp = CarouselDefaults.MaxSmallItemSize,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    content: @Composable CarouselItemScope.(itemIndex: Int) -> Unit,
+) =
+    HorizontalMultiBrowseCarousel(
+        state = state,
+        preferredItemWidth = preferredItemWidth,
+        modifier = modifier,
+        itemSpacing = itemSpacing,
+        flingBehavior = flingBehavior,
+        userScrollEnabled = true,
+        minSmallItemWidth = minSmallItemWidth,
+        maxSmallItemWidth = maxSmallItemWidth,
+        contentPadding = contentPadding,
+        content = content,
+    )
 
 /**
  * [Material Design Carousel](https://m3.material.io/components/carousel/overview)
@@ -157,6 +189,8 @@ fun HorizontalMultiBrowseCarousel(
  * @param modifier A modifier instance to be applied to this carousel container
  * @param itemSpacing The amount of space used to separate items in the carousel
  * @param flingBehavior The [TargetedFlingBehavior] to be used for post scroll gestures
+ * @param userScrollEnabled whether the scrolling via the user gestures or accessibility actions is
+ *   allowed.
  * @param contentPadding a padding around the whole content. This will add padding for the content
  *   after it has been clipped. You can use it to add a padding before the first item or after the
  *   last one. Use [itemSpacing] to add spacing between the items.
@@ -170,6 +204,7 @@ fun HorizontalUncontainedCarousel(
     modifier: Modifier = Modifier,
     itemSpacing: Dp = 0.dp,
     flingBehavior: TargetedFlingBehavior = CarouselDefaults.noSnapFlingBehavior(),
+    userScrollEnabled: Boolean = true,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     content: @Composable CarouselItemScope.(itemIndex: Int) -> Unit,
 ) {
@@ -194,9 +229,33 @@ fun HorizontalUncontainedCarousel(
         modifier = modifier,
         itemSpacing = itemSpacing,
         flingBehavior = flingBehavior,
+        userScrollEnabled = userScrollEnabled,
         content = content,
     )
 }
+
+@ExperimentalMaterial3Api
+@Deprecated(message = "Kept for binary compatibility", level = DeprecationLevel.HIDDEN)
+@Composable
+fun HorizontalUncontainedCarousel(
+    state: CarouselState,
+    itemWidth: Dp,
+    modifier: Modifier = Modifier,
+    itemSpacing: Dp = 0.dp,
+    flingBehavior: TargetedFlingBehavior = CarouselDefaults.noSnapFlingBehavior(),
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    content: @Composable CarouselItemScope.(itemIndex: Int) -> Unit,
+) =
+    HorizontalUncontainedCarousel(
+        state = state,
+        itemWidth = itemWidth,
+        modifier = modifier,
+        itemSpacing = itemSpacing,
+        flingBehavior = flingBehavior,
+        userScrollEnabled = true,
+        contentPadding = contentPadding,
+        content = content,
+    )
 
 /**
  * [Material Design Carousel](https://m3.material.io/components/carousel/overview)
@@ -218,6 +277,8 @@ fun HorizontalUncontainedCarousel(
  *   Use [itemSpacing] to add spacing between the items.
  * @param itemSpacing The amount of space used to separate items in the carousel
  * @param flingBehavior The [TargetedFlingBehavior] to be used for post scroll gestures
+ * @param userScrollEnabled whether the scrolling via the user gestures or accessibility actions is
+ *   allowed.
  * @param content The carousel's content Composable where each call is passed the index, from the
  *   total item count, of the item being composed
  */
@@ -233,6 +294,7 @@ internal fun Carousel(
     itemSpacing: Dp = 0.dp,
     flingBehavior: TargetedFlingBehavior =
         CarouselDefaults.singleAdvanceFlingBehavior(state = state),
+    userScrollEnabled: Boolean = true,
     content: @Composable CarouselItemScope.(itemIndex: Int) -> Unit,
 ) {
     val beforeContentPadding = contentPadding.calculateBeforeContentPadding(orientation)
@@ -258,6 +320,7 @@ internal fun Carousel(
             beyondViewportPageCount = maxNonFocalVisibleItemCount,
             snapPosition = snapPosition,
             flingBehavior = flingBehavior,
+            userScrollEnabled = userScrollEnabled,
             modifier = modifier,
         ) { page ->
             val carouselItemInfo = remember { CarouselItemDrawInfoImpl() }

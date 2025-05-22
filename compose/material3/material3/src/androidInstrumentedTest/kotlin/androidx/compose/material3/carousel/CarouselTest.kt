@@ -133,6 +133,18 @@ class CarouselTest {
     }
 
     @Test
+    fun uncontainedCarousel_userScrollDisabled_doesNotScroll() {
+        createCarousel(userScrollEnabled = false)
+        assertThat(carouselState.pagerState.currentPage).isEqualTo(0)
+
+        rule.onNodeWithTag(CarouselTestTag).performTouchInput {
+            swipeWithVelocity(centerRight, centerLeft, 1000f)
+        }
+
+        rule.runOnIdle { assertThat(carouselState.pagerState.currentPage).isEqualTo(0) }
+    }
+
+    @Test
     fun carouselSingleAdvanceFling_capsScroll() {
         // Arrange
         createCarousel()
@@ -248,6 +260,7 @@ class CarouselTest {
         orientation: Orientation = Orientation.Horizontal,
         flingBehavior: @Composable (CarouselState) -> TargetedFlingBehavior =
             @Composable { CarouselDefaults.singleAdvanceFlingBehavior(state = it) },
+        userScrollEnabled: Boolean = true,
         content: @Composable CarouselItemScope.(item: Int) -> Unit = { Item(index = it) },
     ) {
         rule.setMaterialContent(lightColorScheme()) {
@@ -266,6 +279,7 @@ class CarouselTest {
                     )
                 },
                 flingBehavior = flingBehavior(state),
+                userScrollEnabled = userScrollEnabled,
                 maxNonFocalVisibleItemCount = 2,
                 modifier = modifier.testTag(CarouselTestTag),
                 itemSpacing = 0.dp,
