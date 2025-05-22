@@ -110,7 +110,7 @@ class MultiProcessDataStoreTest {
             val store =
                 MultiProcessDataStoreFactory.create(
                     serializer = TestingSerializer(),
-                    scope = TestScope(UnconfinedTestDispatcher()),
+                    scope = this,
                 ) {
                     testFile
                 }
@@ -135,7 +135,7 @@ class MultiProcessDataStoreTest {
             val store =
                 MultiProcessDataStoreFactory.create(
                     serializer = TestingSerializer(),
-                    scope = TestScope(UnconfinedTestDispatcher()),
+                    scope = this,
                 ) {
                     testFile
                 }
@@ -160,7 +160,7 @@ class MultiProcessDataStoreTest {
             val store =
                 MultiProcessDataStoreFactory.create(
                     serializer = TestingSerializer(),
-                    scope = TestScope(UnconfinedTestDispatcher()),
+                    scope = this,
                 ) {
                     testFile
                 }
