@@ -138,7 +138,9 @@ private fun KaSession.isMutableCollection(kaType: KaType): Boolean {
     // Since MutableCollection and Collection (in Kotlin) are both Collection in Java, we need to
     // check Guava before either of them, since when using Kotlin analysis APIs the Guava
     // collections will appear to implement the Kotlin mutable types.
-    val supertypes = kaType.allSupertypes(false)
+    // TODO: go back to just sequence
+    //  if https://youtrack.jetbrains.com/issue/KT-77738 is fixed / available
+    val supertypes = kaType.allSupertypes(false).toList()
     if (supertypes.any { type -> fqn(type)?.startsWith(guavaImmutableTypePrefix) == true })
         return false
     if (supertypes.any { type -> kotlinMutableTypes.any { it == fqn(type) } }) return true
