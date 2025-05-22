@@ -150,3 +150,9 @@ private class DraggableAnchorsNodeV2<T>(
         }
     }
 }
+
+internal const val ConfirmValueChangeDeprecated =
+    "confirmValueChange is deprecated without replacement. Rather than relying on a callback to " +
+        "veto state changes, the anchor set should not include disallowed anchors. See " +
+        "androidx.compose.foundation.samples.AnchoredDraggableDynamicAnchorsSample for an " +
+        "example of using dynamic anchors over confirmValueChange."

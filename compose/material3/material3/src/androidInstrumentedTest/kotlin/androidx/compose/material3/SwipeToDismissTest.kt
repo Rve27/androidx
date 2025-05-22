@@ -32,6 +32,7 @@ import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertLeftPositionInRootIsEqualTo
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
@@ -58,8 +59,26 @@ class SwipeToDismissTest {
     private val dismissContentTag = "dismissContent"
     private val swipeDismissTag = "swipeDismiss"
 
+    private val restorationTester = StateRestorationTester(rule)
+
     private fun advanceClock() {
         rule.mainClock.advanceTimeBy(100_000L)
+    }
+
+    @Test
+    fun test_stateSavedAndRestored() {
+        val initialValue = SwipeToDismissBoxValue.Settled
+        val expectedValue = SwipeToDismissBoxValue.StartToEnd
+        lateinit var scope: CoroutineScope
+        lateinit var state: SwipeToDismissBoxState
+        restorationTester.setContent {
+            scope = rememberCoroutineScope()
+            state = rememberSwipeToDismissBoxState(initialValue)
+        }
+        scope.launch { state.snapTo(expectedValue) }
+        assertThat(state.settledValue).isEqualTo(expectedValue)
+        restorationTester.emulateSavedInstanceStateRestore()
+        assertThat(state.settledValue).isEqualTo(expectedValue)
     }
 
     @Test

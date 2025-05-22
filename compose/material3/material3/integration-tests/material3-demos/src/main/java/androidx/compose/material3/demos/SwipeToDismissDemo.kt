@@ -35,6 +35,7 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -84,11 +85,7 @@ fun SwipeToDismissDemo() {
 
             val dismissState =
                 rememberSwipeToDismissBoxState(
-                    confirmValueChange = {
-                        if (it == SwipeToDismissBoxValue.StartToEnd) unread = !unread
-                        it != SwipeToDismissBoxValue.StartToEnd
-                    },
-                    positionalThreshold = { distance -> distance * .25f },
+                    positionalThreshold = { distance -> distance * .25f }
                 )
             SwipeToDismissBox(
                 state = dismissState,
@@ -131,6 +128,12 @@ fun SwipeToDismissDemo() {
                         )
                     }
                 },
+                onDismiss = { dismissDirection ->
+                    if (dismissDirection == SwipeToDismissBoxValue.StartToEnd) {
+                        unread = !unread
+                        dismissState.reset()
+                    }
+                },
             ) {
                 Card {
                     ListItem(
@@ -161,6 +164,7 @@ fun SwipeToDismissDemo() {
                     )
                 }
             }
+            LaunchedEffect(dismissState.settledValue) {}
         }
     }
 }

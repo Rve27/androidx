@@ -2743,16 +2743,20 @@ package androidx.compose.material3 {
   }
 
   public final class SwipeToDismissBoxKt {
-    method @androidx.compose.runtime.Composable public static void SwipeToDismissBox(androidx.compose.material3.SwipeToDismissBoxState state, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.RowScope,kotlin.Unit> backgroundContent, optional androidx.compose.ui.Modifier modifier, optional boolean enableDismissFromStartToEnd, optional boolean enableDismissFromEndToStart, optional boolean gesturesEnabled, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.RowScope,kotlin.Unit> content);
-    method @androidx.compose.runtime.Composable public static androidx.compose.material3.SwipeToDismissBoxState rememberSwipeToDismissBoxState(optional androidx.compose.material3.SwipeToDismissBoxValue initialValue, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.SwipeToDismissBoxValue,java.lang.Boolean> confirmValueChange, optional kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold);
+    method @Deprecated @androidx.compose.runtime.Composable public static void SwipeToDismissBox(androidx.compose.material3.SwipeToDismissBoxState state, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.RowScope,kotlin.Unit> backgroundContent, optional androidx.compose.ui.Modifier modifier, optional boolean enableDismissFromStartToEnd, optional boolean enableDismissFromEndToStart, optional boolean gesturesEnabled, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.RowScope,kotlin.Unit> content);
+    method @androidx.compose.runtime.Composable public static void SwipeToDismissBox(androidx.compose.material3.SwipeToDismissBoxState state, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.RowScope,kotlin.Unit> backgroundContent, optional androidx.compose.ui.Modifier modifier, optional boolean enableDismissFromStartToEnd, optional boolean enableDismissFromEndToStart, optional boolean gesturesEnabled, optional kotlin.jvm.functions.Function2<? super androidx.compose.material3.SwipeToDismissBoxValue,? super kotlin.coroutines.Continuation<? super kotlin.Unit>,? extends java.lang.Object?> onDismiss, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.RowScope,kotlin.Unit> content);
+    method @Deprecated @androidx.compose.runtime.Composable public static androidx.compose.material3.SwipeToDismissBoxState rememberSwipeToDismissBoxState(optional androidx.compose.material3.SwipeToDismissBoxValue initialValue, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.SwipeToDismissBoxValue,java.lang.Boolean> confirmValueChange, optional kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold);
+    method @androidx.compose.runtime.Composable public static androidx.compose.material3.SwipeToDismissBoxState rememberSwipeToDismissBoxState(optional androidx.compose.material3.SwipeToDismissBoxValue initialValue, optional kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold);
   }
 
   public final class SwipeToDismissBoxState {
-    ctor public SwipeToDismissBoxState(androidx.compose.material3.SwipeToDismissBoxValue initialValue, androidx.compose.ui.unit.Density density, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.SwipeToDismissBoxValue,java.lang.Boolean> confirmValueChange, kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold);
+    ctor @Deprecated public SwipeToDismissBoxState(androidx.compose.material3.SwipeToDismissBoxValue initialValue, androidx.compose.ui.unit.Density density, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.SwipeToDismissBoxValue,java.lang.Boolean> confirmValueChange, kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold);
+    ctor public SwipeToDismissBoxState(androidx.compose.material3.SwipeToDismissBoxValue initialValue, kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold);
     method public suspend Object? dismiss(androidx.compose.material3.SwipeToDismissBoxValue direction, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public androidx.compose.material3.SwipeToDismissBoxValue getCurrentValue();
     method public androidx.compose.material3.SwipeToDismissBoxValue getDismissDirection();
     method @FloatRange(from=0.0, to=1.0) public float getProgress();
+    method public androidx.compose.material3.SwipeToDismissBoxValue getSettledValue();
     method public androidx.compose.material3.SwipeToDismissBoxValue getTargetValue();
     method public float requireOffset();
     method public suspend Object? reset(kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -2760,12 +2764,14 @@ package androidx.compose.material3 {
     property public androidx.compose.material3.SwipeToDismissBoxValue currentValue;
     property public androidx.compose.material3.SwipeToDismissBoxValue dismissDirection;
     property @FloatRange(from=0.0, to=1.0) public float progress;
+    property public androidx.compose.material3.SwipeToDismissBoxValue settledValue;
     property public androidx.compose.material3.SwipeToDismissBoxValue targetValue;
     field public static final androidx.compose.material3.SwipeToDismissBoxState.Companion Companion;
   }
 
   public static final class SwipeToDismissBoxState.Companion {
-    method public androidx.compose.runtime.saveable.Saver<androidx.compose.material3.SwipeToDismissBoxState,androidx.compose.material3.SwipeToDismissBoxValue> Saver(kotlin.jvm.functions.Function1<? super androidx.compose.material3.SwipeToDismissBoxValue,java.lang.Boolean> confirmValueChange, kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold, androidx.compose.ui.unit.Density density);
+    method @Deprecated public androidx.compose.runtime.saveable.Saver<androidx.compose.material3.SwipeToDismissBoxState,androidx.compose.material3.SwipeToDismissBoxValue> Saver(kotlin.jvm.functions.Function1<? super androidx.compose.material3.SwipeToDismissBoxValue,java.lang.Boolean> confirmValueChange, kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold, androidx.compose.ui.unit.Density density);
+    method public androidx.compose.runtime.saveable.Saver<androidx.compose.material3.SwipeToDismissBoxState,androidx.compose.material3.SwipeToDismissBoxValue> Saver(kotlin.jvm.functions.Function1<? super java.lang.Float,java.lang.Float> positionalThreshold);
   }
 
   public enum SwipeToDismissBoxValue {
