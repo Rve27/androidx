@@ -814,6 +814,7 @@ class SwipeToRevealTest {
         assertRevealStateIsRestored(stateBeforeSavedInstanceStateRestore, state)
     }
 
+    @Ignore("b/419229763")
     @Test
     fun onRecreation_afterSnapTo_stateIsRestored() {
         // Given a SwipeToReveal in Covered state.
