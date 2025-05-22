@@ -20,8 +20,8 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
-import androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress.Companion.bottomItemScrollProgress
-import androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress.Companion.topItemScrollProgress
+import androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress.Companion.downwardMeasuredItemScrollProgress
+import androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress.Companion.upwardMeasuredItemScrollProgress
 import androidx.wear.compose.foundation.lazy.layout.LazyLayoutKeyIndexMap
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
@@ -65,12 +65,20 @@ internal interface TransformingLazyColumnMeasurementStrategy {
 
 internal fun MeasuredItemProvider.downwardMeasuredItem(index: Int, offset: Int, maxHeight: Int) =
     measuredItem(index, offset, MeasurementDirection.DOWNWARD) { height ->
-        bottomItemScrollProgress(offset = offset, height = height, containerHeight = maxHeight)
+        downwardMeasuredItemScrollProgress(
+            offset = offset,
+            height = height,
+            containerHeight = maxHeight,
+        )
     }
 
 internal fun MeasuredItemProvider.upwardMeasuredItem(index: Int, offset: Int, maxHeight: Int) =
     measuredItem(index, offset, MeasurementDirection.UPWARD) { height ->
-            topItemScrollProgress(offset = offset, height = height, containerHeight = maxHeight)
+            upwardMeasuredItemScrollProgress(
+                offset = offset,
+                height = height,
+                containerHeight = maxHeight,
+            )
         }
         .also { it.offset -= it.transformedHeight }
 

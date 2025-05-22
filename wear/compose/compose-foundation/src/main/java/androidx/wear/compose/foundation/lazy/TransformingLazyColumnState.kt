@@ -424,7 +424,6 @@ internal constructor(
         scrollToBeConsumed += distance
         if (abs(scrollToBeConsumed) > 0.5f) {
             val preScrollToBeConsumed = scrollToBeConsumed
-            animator.releaseAnimations()
             remeasurement?.forceRemeasure()
 
             notifyPrefetchOnScroll(

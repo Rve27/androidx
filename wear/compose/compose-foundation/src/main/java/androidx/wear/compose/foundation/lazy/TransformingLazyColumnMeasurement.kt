@@ -140,13 +140,13 @@ internal fun rememberTransformingLazyColumnMeasurePolicy(
 internal enum class MeasurementDirection {
     /**
      * Indicates that the item is being measured downward. This corresponds to using
-     * [TransformingLazyColumnItemScrollProgress.bottomItemScrollProgress].
+     * [TransformingLazyColumnItemScrollProgress.downwardMeasuredItemScrollProgress].
      */
     DOWNWARD,
 
     /**
      * Indicates that the item is being measured upward This corresponds to using
-     * [TransformingLazyColumnItemScrollProgress.topItemScrollProgress].
+     * [TransformingLazyColumnItemScrollProgress.upwardMeasuredItemScrollProgress].
      */
     UPWARD,
 }

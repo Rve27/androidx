@@ -21,7 +21,8 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress.Companion.bottomItemScrollProgress
+import androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress.Companion.downwardMeasuredItemScrollProgress
+import androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress.Companion.upwardMeasuredItemScrollProgress
 import androidx.wear.compose.foundation.lazy.layout.LazyLayoutItemAnimation
 import androidx.wear.compose.foundation.lazy.layout.LazyLayoutMeasuredItem
 
@@ -49,7 +50,7 @@ internal data class TransformingLazyColumnMeasuredItem(
     val rightPadding: Int,
 
     /** The scroll progress computed a the end of the measure pass. */
-    var measureScrollProgress: TransformingLazyColumnItemScrollProgress,
+    private var measureScrollProgress: TransformingLazyColumnItemScrollProgress,
     override var measurementDirection: MeasurementDirection,
     /** The horizontal alignment to apply during placement. */
     val horizontalAlignment: Alignment.Horizontal,
@@ -58,24 +59,25 @@ internal data class TransformingLazyColumnMeasuredItem(
     val animationProvider: () -> LazyLayoutItemAnimation? = { null },
     override val key: Any,
     override val contentType: Any?,
-    /**
-     * Whether the item is currently being measured. Must be set to false before returning as a
-     * measured result.
-     */
-    var isInMeasure: Boolean = true,
 ) : TransformingLazyColumnVisibleItemInfo, LazyLayoutMeasuredItem {
 
-    private val initialAnimation = animationProvider()
+    internal val initialAnimation = animationProvider()
+
     // This is the value of the ScrollProgress, either the one set at the end of the measure pass
     // if there are no animations configured or the one computed by the animation, updated each
     // frame.
-    override val scrollProgress
+    override val scrollProgress: TransformingLazyColumnItemScrollProgress
         get() =
-            initialAnimation?.animatedScrollProgress.let {
-                if (it == TransformingLazyColumnItemScrollProgress.Unspecified)
-                    measureScrollProgress
-                else it
-            } ?: measureScrollProgress
+            // Ignore the animations during measure pass.
+            if (isInMeasure) {
+                measureScrollProgress
+            } else {
+                initialAnimation?.animatedScrollProgress.let {
+                    if (it == TransformingLazyColumnItemScrollProgress.Unspecified)
+                        measureScrollProgress
+                    else it
+                } ?: measureScrollProgress
+            }
 
     override val mainAxisSizeWithSpacings: Int
         get() = transformedHeight + spacing
@@ -88,15 +90,14 @@ internal data class TransformingLazyColumnMeasuredItem(
     override val crossAxisOffset: Int
         get() = leftPadding
 
-    override val parentData: Any?
-        get() =
-            placeable?.parentData?.let {
-                if (it is TransformingLazyColumnParentData) {
-                    it.animationSpecs
-                } else {
-                    it
-                }
+    override val parentData: Any? =
+        placeable?.parentData?.let {
+            if (it is TransformingLazyColumnParentData) {
+                it.animationSpecs
+            } else {
+                it
             }
+        }
 
     private var lastMeasuredTransformedHeight = placeable?.height ?: 0
 
@@ -105,6 +106,7 @@ internal data class TransformingLazyColumnMeasuredItem(
         get() {
             if (isInMeasure) {
                 lastMeasuredTransformedHeight =
+                    // TODO: Save transformedHeight provider.
                     placeable?.let { p ->
                         (p.parentData as? TransformingLazyColumnParentData)?.let {
                             it.heightProvider?.invoke(p.height, measureScrollProgress)
@@ -113,6 +115,40 @@ internal data class TransformingLazyColumnMeasuredItem(
             }
             return lastMeasuredTransformedHeight
         }
+
+    fun markMeasured() {
+        // Force read the transformed height to update the lastMeasuredTransformedHeight.
+        transformedHeight
+        isInMeasure = false
+    }
+
+    fun moveAbove(offset: Int) {
+        measureScrollProgress =
+            upwardMeasuredItemScrollProgress(
+                offset = offset,
+                height = measuredHeight,
+                containerHeight = containerConstraints.maxHeight,
+            )
+
+        this.offset = offset - transformedHeight
+    }
+
+    fun moveBelow(offset: Int) {
+        this.offset = offset
+        measureScrollProgress =
+            downwardMeasuredItemScrollProgress(
+                offset = offset,
+                height = measuredHeight,
+                containerHeight = containerConstraints.maxHeight,
+            )
+    }
+
+    /**
+     * Whether the item is currently being measured. Must be set to false before returning as a
+     * measured result.
+     */
+    var isInMeasure: Boolean = true
+        private set
 
     override val measuredHeight = placeable?.height ?: 0
 
@@ -145,7 +181,7 @@ internal data class TransformingLazyColumnMeasuredItem(
 
     fun pinToCenter() {
         measureScrollProgress =
-            bottomItemScrollProgress(
+            downwardMeasuredItemScrollProgress(
                 containerConstraints.maxHeight / 2 - measuredHeight / 2,
                 measuredHeight,
                 containerConstraints.maxHeight,

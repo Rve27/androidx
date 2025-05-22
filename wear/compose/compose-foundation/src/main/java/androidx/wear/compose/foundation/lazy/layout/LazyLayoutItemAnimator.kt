@@ -16,7 +16,6 @@
 
 package androidx.wear.compose.foundation.lazy.layout
 
-import androidx.collection.ObjectIntMap
 import androidx.collection.mutableScatterMapOf
 import androidx.collection.mutableScatterSetOf
 import androidx.compose.ui.Modifier
@@ -29,7 +28,6 @@ import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.invalidateDraw
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.util.fastAny
 import androidx.compose.ui.util.fastForEach
 import kotlinx.coroutines.CoroutineScope
@@ -66,16 +64,27 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
      * Note that this method can compose new item and add it into the [positionedItems] list.
      */
     fun onMeasured(
+        shouldAnimate: Boolean,
         positionedItems: List<T>,
-        firstPassOffsetsPerItemKey: ObjectIntMap<Any>,
         keyIndexMap: LazyLayoutKeyIndexMap,
-        isLookingAhead: Boolean,
-        hasLookaheadOccurred: Boolean,
         layoutMinOffset: Int,
         layoutMaxOffset: Int,
         coroutineScope: CoroutineScope,
         graphicsContext: GraphicsContext,
     ) {
+        if (!shouldAnimate) {
+            releaseAnimations()
+            return
+        }
+
+        positionedItems.fastForEach { item ->
+            getAnimation(item.key)?.let {
+                it.transformedHeight = item.transformedHeight
+                it.measuredHeight = item.measuredHeight
+                it.measurementDirection = item.measurementDirection
+            }
+        }
+
         val previousKeyToIndexMap = this.keyIndexMap
         this.keyIndexMap = keyIndexMap
 
@@ -89,10 +98,6 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
         val previousFirstVisibleIndex = firstVisibleIndex
         firstVisibleIndex = positionedItems.firstOrNull()?.index ?: 0
 
-        // Only setup animations when we have access to target value in the current pass, which
-        // means lookahead pass, or regular pass when not in a lookahead scope.
-        val shouldSetupAnimation = isLookingAhead || !hasLookaheadOccurred
-
         // first add all items we had in the previous run
         keyToItemInfoMap.forEachKey { movingAwayKeys.add(it) }
 
@@ -102,12 +107,6 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
             movingAwayKeys.remove(item.key)
             if (item.hasAnimations()) {
                 val itemInfo = keyToItemInfoMap[item.key]
-
-                // We check how much the item moved between before and after applying
-                // the scroll, since we don't want to animate that movement.
-                val scrollOffset =
-                    item.mainAxisOffset -
-                        firstPassOffsetsPerItemKey.getOrDefault(item.key, item.mainAxisOffset)
 
                 val previousIndex = previousKeyToIndexMap?.getIndex(item.key) ?: -1
                 val shouldAnimateAppearance = previousIndex == -1 && previousKeyToIndexMap != null
@@ -132,41 +131,36 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
                             movingInFromEndBound.add(item)
                         }
                     } else {
-                        initializeAnimation(item, item.mainAxisOffset, newItemInfo)
-                        applyScrollWithoutAnimation(newItemInfo, scrollOffset)
+                        initializeAnimation(item, item.getOffset().y, newItemInfo)
                         if (shouldAnimateAppearance) {
                             newItemInfo.animation?.animateAppearance()
                         }
                     }
                 } else {
-                    if (shouldSetupAnimation) {
-                        itemInfo.updateAnimation(
-                            item,
-                            coroutineScope,
-                            graphicsContext,
-                            layoutMinOffset,
-                            layoutMaxOffset,
-                        )
-                        applyScrollWithoutAnimation(itemInfo, scrollOffset)
-                        if (shouldAnimateAppearance) {
-
-                            itemInfo.animation?.let {
-                                if (it.isDisappearanceAnimationInProgress) {
-                                    disappearingItems.remove(it)
-                                    displayingNode?.invalidateDraw()
-                                }
-                                it.animateAppearance()
+                    itemInfo.updateAnimation(
+                        item,
+                        coroutineScope,
+                        graphicsContext,
+                        layoutMinOffset,
+                        layoutMaxOffset,
+                    )
+                    if (shouldAnimateAppearance) {
+                        itemInfo.animation?.let {
+                            if (it.isDisappearanceAnimationInProgress) {
+                                disappearingItems.remove(it)
+                                displayingNode?.invalidateDraw()
                             }
+                            it.animateAppearance()
                         }
-                        startPlacementAnimationsIfNeeded(item)
                     }
+                    startPlacementAnimationsIfNeeded(item)
                 }
             } else {
                 removeInfoForKey(item.key)
             }
         }
 
-        if (shouldSetupAnimation && previousKeyToIndexMap != null) {
+        if (previousKeyToIndexMap != null) {
             if (movingInFromStartBound.isNotEmpty()) {
                 var accumulatedOffset = 0
                 movingInFromStartBound.sortByDescending { previousKeyToIndexMap.getIndex(it.key) }
@@ -227,27 +221,28 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
             if (keyIndexMap.getIndex(key) != -1) return@forEach
 
             var isProgress = false
-            info.animation?.let {
-                if (it.isDisappearanceAnimationInProgress) {
+            info.animation?.let { animation ->
+                if (animation.isDisappearanceAnimationInProgress) {
                     isProgress = true
-                } else if (it.isDisappearanceAnimationFinished) {
-                    it.release()
-                    disappearingItems.remove(it)
+                } else if (animation.isDisappearanceAnimationFinished) {
+                    animation.release()
+                    info.animation = null
+                    disappearingItems.remove(animation)
                     displayingNode?.invalidateDraw()
                 } else {
-                    if (it.layer != null) {
-                        it.animateDisappearance()
+                    if (animation.layer != null) {
+                        animation.animateDisappearance()
                     }
-                    if (it.isDisappearanceAnimationInProgress) {
-                        disappearingItems.add(it)
+                    if (animation.isDisappearanceAnimationInProgress) {
+                        disappearingItems.add(animation)
                         displayingNode?.invalidateDraw()
                         isProgress = true
                     } else {
-                        it.release()
+                        animation.release()
+                        info.animation = null
                     }
                 }
             }
-
             if (!isProgress) {
                 removeInfoForKey(key)
             }
@@ -257,16 +252,6 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
         movingInFromEndBound.clear()
         movingAwayKeys.clear()
     }
-
-    private fun applyScrollWithoutAnimation(
-        itemInfo: LazyLayoutItemAnimator<T>.ItemInfo,
-        scrollYOffset: Int,
-    ) =
-        itemInfo.animation?.let {
-            if (it.rawOffset != LazyLayoutItemAnimation.NotInitialized) {
-                it.rawOffset += IntOffset(0, scrollYOffset)
-            }
-        }
 
     private fun removeInfoForKey(key: Any) {
         keyToItemInfoMap.remove(key)?.animation?.release()
@@ -325,8 +310,8 @@ internal class LazyLayoutItemAnimator<T : LazyLayoutMeasuredItem> {
     val modifier: Modifier = DisplayingDisappearingItemsElement(this)
 
     private inner class ItemInfo {
+        /** Animation associated with an item. */
         var animation: LazyLayoutItemAnimation? = null
-            private set
 
         var constraints: Constraints? = null
         var crossAxisOffset: Int = 0

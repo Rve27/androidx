@@ -116,13 +116,13 @@ internal class LazyLayoutItemAnimation(
             if (rawOffset != NotInitialized) {
                 when (measurementDirection) {
                     MeasurementDirection.UPWARD ->
-                        TransformingLazyColumnItemScrollProgress.topItemScrollProgress(
+                        TransformingLazyColumnItemScrollProgress.upwardMeasuredItemScrollProgress(
                             rawOffset.y + placementDelta.y + transformedHeight,
                             measuredHeight,
                             containerHeight,
                         )
                     MeasurementDirection.DOWNWARD ->
-                        TransformingLazyColumnItemScrollProgress.bottomItemScrollProgress(
+                        TransformingLazyColumnItemScrollProgress.downwardMeasuredItemScrollProgress(
                             rawOffset.y + placementDelta.y,
                             measuredHeight,
                             containerHeight,

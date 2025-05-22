@@ -36,7 +36,7 @@ internal interface LazyLayoutMeasuredItem {
 }
 
 internal fun LazyLayoutMeasuredItem.getOffset(): IntOffset =
-    IntOffset(crossAxisOffset, mainAxisOffset)
+    IntOffset(x = crossAxisOffset, y = mainAxisOffset)
 
 internal fun LazyLayoutMeasuredItem.hasAnimations(): Boolean = parentData.specs != null
 
