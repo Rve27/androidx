@@ -27,9 +27,10 @@ import androidx.annotation.RestrictTo
 public class Config
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 constructor(
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    public val deviceTracking: DeviceTrackingMode = DeviceTrackingMode.DISABLED,
     public val planeTracking: PlaneTrackingMode = PlaneTrackingMode.DISABLED,
     public val handTracking: HandTrackingMode = HandTrackingMode.DISABLED,
-    public val headTracking: HeadTrackingMode = HeadTrackingMode.DISABLED,
     public val depthEstimation: DepthEstimationMode = DepthEstimationMode.DISABLED,
     public val anchorPersistence: AnchorPersistenceMode = AnchorPersistenceMode.DISABLED,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -44,13 +45,15 @@ constructor(
         depthEstimation: DepthEstimationMode = DepthEstimationMode.DISABLED,
         anchorPersistence: AnchorPersistenceMode = AnchorPersistenceMode.DISABLED,
     ) : this(
+        headTracking.toDeviceTrackingMode(),
         planeTracking,
         handTracking,
-        headTracking,
         depthEstimation,
         anchorPersistence,
         GeospatialMode.DISABLED,
     )
+
+    public val headTracking: HeadTrackingMode = deviceTracking.toHeadTrackingMode()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -58,7 +61,7 @@ constructor(
 
         if (planeTracking != other.planeTracking) return false
         if (handTracking != other.handTracking) return false
-        if (headTracking != other.headTracking) return false
+        if (deviceTracking != other.deviceTracking) return false
         if (depthEstimation != other.depthEstimation) return false
         if (anchorPersistence != other.anchorPersistence) return false
         if (geospatial != other.geospatial) return false
@@ -71,7 +74,7 @@ constructor(
         result = 31 * result + handTracking.hashCode()
         result = 31 * result + depthEstimation.hashCode()
         result = 31 * result + anchorPersistence.hashCode()
-        result = 31 * result + headTracking.hashCode()
+        result = 31 * result + deviceTracking.hashCode()
         result = 31 * result + geospatial.hashCode()
         return result
     }
@@ -85,9 +88,9 @@ constructor(
         anchorPersistence: AnchorPersistenceMode = this.anchorPersistence,
     ): Config {
         return Config(
+            deviceTracking = headTracking.toDeviceTrackingMode(),
             planeTracking = planeTracking,
             handTracking = handTracking,
-            headTracking = headTracking,
             depthEstimation = depthEstimation,
             anchorPersistence = anchorPersistence,
             geospatial = this.geospatial,
@@ -97,17 +100,17 @@ constructor(
     @Suppress("MissingJvmstatic")
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public fun copy(
+        deviceTracking: DeviceTrackingMode,
         planeTracking: PlaneTrackingMode = this.planeTracking,
         handTracking: HandTrackingMode = this.handTracking,
-        headTracking: HeadTrackingMode = this.headTracking,
         depthEstimation: DepthEstimationMode = this.depthEstimation,
         anchorPersistence: AnchorPersistenceMode = this.anchorPersistence,
         geospatial: GeospatialMode = this.geospatial,
     ): Config {
         return Config(
+            deviceTracking = deviceTracking,
             planeTracking = planeTracking,
             handTracking = handTracking,
-            headTracking = headTracking,
             depthEstimation = depthEstimation,
             anchorPersistence = anchorPersistence,
             geospatial = geospatial,
@@ -165,6 +168,36 @@ constructor(
     }
 
     /**
+     * Feature that allows tracking of the device.
+     *
+     * This feature does not require any additional application permissions.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    public class DeviceTrackingMode
+    private constructor(
+        @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
+    ) {
+        public companion object {
+            /** Device pose will not be tracked. */
+            @JvmField public val DISABLED: DeviceTrackingMode = DeviceTrackingMode(0)
+            /**
+             * Device pose will be tracked and the last known pose from the system at the time of
+             * runtime update will be provided. Note that there is generally a delay between the
+             * actual device pose and the pose provided by the system by the time of the update.
+             */
+            @JvmField public val LAST_KNOWN: DeviceTrackingMode = DeviceTrackingMode(1)
+        }
+
+        public fun toHeadTrackingMode(): HeadTrackingMode {
+            return if (mode == 0) HeadTrackingMode.DISABLED else HeadTrackingMode.LAST_KNOWN
+        }
+
+        override fun toString(): String {
+            return "DeviceTracking_" + if (mode == 0) "DISABLED" else "LAST_KNOWN"
+        }
+    }
+
+    /**
      * Feature that allows tracking of the user's head pose.
      *
      * Setting this feature to [HeadTrackingMode.LAST_KNOWN] requires that the `HEAD_TRACKING`
@@ -183,6 +216,11 @@ constructor(
              * actual head pose and the pose provided by the system by the time of the update.
              */
             @JvmField public val LAST_KNOWN: HeadTrackingMode = HeadTrackingMode(1)
+        }
+
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        public fun toDeviceTrackingMode(): DeviceTrackingMode {
+            return if (mode == 0) DeviceTrackingMode.DISABLED else DeviceTrackingMode.LAST_KNOWN
         }
 
         override fun toString(): String {

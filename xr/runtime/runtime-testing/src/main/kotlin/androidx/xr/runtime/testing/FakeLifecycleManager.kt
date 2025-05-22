@@ -78,9 +78,9 @@ public class FakeLifecycleManager(
 
     override var config: Config =
         Config(
+            Config.DeviceTrackingMode.LAST_KNOWN,
             Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
             Config.HandTrackingMode.BOTH,
-            Config.HeadTrackingMode.LAST_KNOWN,
             Config.DepthEstimationMode.SMOOTH_AND_RAW,
             Config.AnchorPersistenceMode.LOCAL,
         )

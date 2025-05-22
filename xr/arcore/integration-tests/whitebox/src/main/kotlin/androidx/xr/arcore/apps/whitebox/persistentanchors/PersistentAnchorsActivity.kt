@@ -62,7 +62,7 @@ import androidx.xr.arcore.apps.whitebox.common.BackToMainActivityButton
 import androidx.xr.arcore.apps.whitebox.common.SessionLifecycleHelper
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.AnchorPersistenceMode
-import androidx.xr.runtime.Config.HeadTrackingMode
+import androidx.xr.runtime.Config.DeviceTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.TrackingState
 import androidx.xr.runtime.math.Pose
@@ -98,7 +98,7 @@ class PersistentAnchorsActivity : ComponentActivity() {
                 this,
                 Config(
                     anchorPersistence = AnchorPersistenceMode.LOCAL,
-                    headTracking = HeadTrackingMode.LAST_KNOWN,
+                    deviceTracking = DeviceTrackingMode.LAST_KNOWN,
                 ),
                 onSessionAvailable = { session ->
                     this.session = session

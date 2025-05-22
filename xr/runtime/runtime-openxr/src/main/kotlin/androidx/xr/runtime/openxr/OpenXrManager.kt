@@ -52,9 +52,9 @@ internal constructor(
     // TODO(b/392660855): Disable all features by default once this API is fully implemented.
     override var config: Config =
         Config(
+            Config.DeviceTrackingMode.DISABLED,
             Config.PlaneTrackingMode.DISABLED,
             Config.HandTrackingMode.DISABLED,
-            Config.HeadTrackingMode.DISABLED,
             Config.DepthEstimationMode.DISABLED,
             Config.AnchorPersistenceMode.LOCAL,
         )
@@ -68,7 +68,7 @@ internal constructor(
                 config.handTracking.mode,
                 config.depthEstimation.mode,
                 config.anchorPersistence.mode,
-                config.headTracking.mode,
+                config.deviceTracking.mode,
             )
         ) {
             -2L ->
