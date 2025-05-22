@@ -33,6 +33,7 @@ import androidx.compose.runtime.collection.mutableVectorOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
@@ -181,6 +182,27 @@ class LazyGridPrefetchStrategyTest(val config: Config) :
         waitForPrefetch()
         rule.onNodeWithTag("4").assertExists()
         rule.onNodeWithTag("5").assertExists()
+    }
+
+    @Test
+    fun datasetChanged_shouldScheduleNewPrefetching() {
+        val numItems = mutableStateOf(100)
+        val strategy = LazyGridPrefetchStrategy()
+
+        composeGrid(firstItem = 94, numItems = numItems, prefetchStrategy = strategy)
+
+        rule.runOnIdle { runBlocking { state.scrollBy(itemsSizePx.toFloat()) } }
+
+        waitForPrefetch()
+
+        rule.onNodeWithTag("100").assertDoesNotExist()
+
+        rule.runOnIdle { numItems.value = 200 }
+        rule.waitForIdle()
+        waitForPrefetch()
+
+        rule.onNodeWithTag("100").assertExists()
+        rule.onNodeWithTag("100").assertIsNotDisplayed()
     }
 
     private fun waitForPrefetch() {
