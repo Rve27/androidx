@@ -45,6 +45,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.annotation.WorkerThread;
 import androidx.collection.ArrayMap;
 import androidx.wear.protolayout.expression.PlatformDataKey;
+import androidx.wear.protolayout.expression.PlatformEventSources;
 import androidx.wear.protolayout.expression.pipeline.DynamicTypeAnimator;
 import androidx.wear.protolayout.expression.pipeline.FixedQuotaManagerImpl;
 import androidx.wear.protolayout.expression.pipeline.PlatformDataProvider;
@@ -1291,12 +1292,18 @@ public class ProtoLayoutViewInstance implements AutoCloseable {
         }
     }
 
-    /** Sets whether a new layout is pending. This is used to update the data pipeline. */
+    /**
+     * Sets the layout's update status.
+     *
+     * <p>This is used to update {@link PlatformEventSources#layoutUpdateStatus()} platform data
+     * binding.
+     */
     @RestrictTo(Scope.LIBRARY)
     @UiThread
-    public void setLayoutUpdatePending(boolean isLayoutUpdatePending) {
+    public void setLayoutUpdateStatus(
+            @PlatformEventSources.LayoutUpdateStatus int layoutUpdateStatus) {
         if (mDataPipeline != null) {
-            mDataPipeline.setLayoutUpdatePending(isLayoutUpdatePending);
+            mDataPipeline.setLayoutUpdateStatus(layoutUpdateStatus);
         }
     }
 
