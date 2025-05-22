@@ -162,11 +162,12 @@ package androidx.xr.compose.testing {
   }
 
   public static final class TestJxrPlatformAdapter.Companion {
+    method public androidx.xr.compose.testing.TestJxrPlatformAdapter create(android.app.Activity activity);
     method public androidx.xr.compose.testing.TestJxrPlatformAdapter create(androidx.xr.runtime.internal.JxrPlatformAdapter fakeRuntimeBase);
   }
 
   public final class TestSetupKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable public static void TestSetup(optional boolean isXrEnabled, optional boolean isFullSpace, optional androidx.xr.runtime.internal.JxrPlatformAdapter? runtime, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable public static void TestSetup(optional boolean isXrEnabled, optional androidx.xr.runtime.internal.JxrPlatformAdapter? runtime, optional kotlin.jvm.functions.Function1<? super androidx.xr.runtime.Session,kotlin.Unit> onSessionCreated, kotlin.jvm.functions.Function0<kotlin.Unit> content);
   }
 
 }

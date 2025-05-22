@@ -28,6 +28,7 @@ import androidx.compose.runtime.ComposableOpenTarget
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -325,18 +326,23 @@ public fun Orbiter(
 
 @Composable
 private fun Orbiter(data: OrbiterData) {
+    // We use movableContentOf here to avoid recreating this content when the spatial capabilities
+    // changes. This allows us to use the same orbiter content both in an orbiter when spatial
+    // capabilities are granted and inline in a non-spatial environment in a way that retains the
+    // orbiter content's internal state.
+    val content = remember(data.content) { movableContentOf(data.content) }
     if (
         LocalSpatialCapabilities.current.isSpatialUiEnabled ||
             currentComposer.applier is SubspaceNodeApplier
     ) {
-        PositionedOrbiter(data)
+        PositionedOrbiter(data, content)
     } else if (data.settings.shouldRenderInNonSpatial) {
-        data.content()
+        content()
     }
 }
 
 @Composable
-internal fun PositionedOrbiter(data: OrbiterData) {
+internal fun PositionedOrbiter(data: OrbiterData, content: @Composable @UiComposable () -> Unit) {
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val density = LocalDensity.current
     val dialogManager = LocalDialogManager.current
@@ -373,7 +379,7 @@ internal fun PositionedOrbiter(data: OrbiterData) {
                 Modifier.constrainTo(Constraints(0, panelSize.width, 0, panelSize.height))
                     .onSizeChanged { contentSize = it }
         ) {
-            data.content()
+            content()
         }
         if (dialogManager.isSpatialDialogActive.value) {
             Box(

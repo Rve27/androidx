@@ -130,25 +130,6 @@ public fun createFakeSession(
     )
 
 /**
- * Create a fake [Session] for testing using configs from [TestJxrPlatformAdapter].
- *
- * A convenience method that creates a fake [Session] for testing. If runtime is not provided, a
- * fake [JxrPlatformAdapter] using [TestJxrPlatformAdapter] will be created by default.
- *
- * @param activity The [Activity] to use for the [Session].
- * @param runtime The [JxrPlatformAdapter] to use for the [Session].
- */
-internal fun createFakeSessionWithTestConfigs(
-    activity: Activity,
-    runtime: JxrPlatformAdapter = createFakeRuntime(activity),
-): Session =
-    Session(
-        activity,
-        FakeRuntimeFactory().createRuntime(activity).apply { lifecycleManager.create() },
-        runtime,
-    )
-
-/**
  * Create a fake [JxrPlatformAdapter] for testing.
  *
  * A convenience method that creates a fake [JxrPlatformAdapter] for testing.

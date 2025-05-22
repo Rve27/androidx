@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.xr.compose.platform.LocalCoreEntity
 import androidx.xr.compose.platform.LocalSession
-import androidx.xr.compose.platform.LocalSpatialCapabilities
+import androidx.xr.compose.platform.LocalSpatialConfiguration
 import androidx.xr.compose.platform.SpatialComposeScene
 import androidx.xr.compose.platform.disposableValueOf
 import androidx.xr.compose.platform.getActivity
@@ -105,13 +105,21 @@ public object SubspaceDefaults {
  * If this is the topmost [Subspace] in the compose hierarchy then this will expand to fill all of
  * the available space bounded by the SpatialUser's field of view in width and height and will not
  * be bound by its containing window. In case the field of view width and height cannot be
- * determined, the default field of view width and height values will be used.
+ * determined, the default field of view width and height values will be used. See
+ * [ApplicationSubspace] for more detailed information about top-level [Subspace] behavior.
  *
  * If this is nested within another [Subspace] then it will lay out its content in the X and Y
  * directions according to the layout logic of its parent in 2D space. It will be constrained in the
  * Z direction according to the constraints imposed by its containing [Subspace].
  *
  * This is a no-op and does not render anything in non-XR environments (i.e. Phone and Tablet).
+ *
+ * On XR devices that cannot currently render spatial UI, the [Subspace] will still create its scene
+ * and all of its internal state, even though nothing may be rendered. This is to ensure that the
+ * state is maintained consistently in the spatial scene and to allow preparation for the support of
+ * rendering spatial UI. State should be maintained by the compose runtime and events that cause the
+ * compose runtime to lose state (app process killed or configuration change) will also cause the
+ * ApplicationSubspace to lose its state.
  *
  * [Subspace] attempts to use the SpatialUser's field of view as width/height constraints for the
  * subspace being created. If the calculation fails or if the `HEAD_TRACKING` Android permission is
@@ -124,11 +132,10 @@ public object SubspaceDefaults {
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun Subspace(content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit) {
-    val activity = LocalContext.current.getActivity()
+    val activity = LocalContext.current.getActivity() as? ComponentActivity ?: return
 
-    // If spatial UI capabilities are not enabled, do nothing
-    if (!LocalSpatialCapabilities.current.isSpatialUiEnabled || activity !is ComponentActivity)
-        return
+    // If not in XR, do nothing
+    if (!LocalSpatialConfiguration.current.hasXrSpatialFeature) return
 
     if (currentComposer.applier is SubspaceNodeApplier) {
         // We are already in a Subspace, so we can just render the content directly
@@ -177,6 +184,13 @@ public value class ConstraintsBehavior private constructor(private val value: In
  * This composable is a no-op and does not render anything in non-XR environments (i.e., Phone and
  * Tablet).
  *
+ * On XR devices that cannot currently render spatial UI, the [ApplicationSubspace] will still
+ * create its scene and all of its internal state, even though nothing may be rendered. This is to
+ * ensure that the state is maintained consistently in the spatial scene and to allow preparation
+ * for the support of rendering spatial UI. State should be maintained by the compose runtime and
+ * events that cause the compose runtime to lose state (app process killed or configuration change)
+ * will also cause the ApplicationSubspace to lose its state.
+ *
  * @param constraints The volume constraints to apply to this [ApplicationSubspace]. The behavior of
  *   these constraints depends on the [constraintsBehavior]. By default, this is set to the default
  *   field of view constraints.
@@ -196,11 +210,10 @@ public fun ApplicationSubspace(
     constraintsBehavior: ConstraintsBehavior = ConstraintsBehavior.FieldOfView,
     content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit,
 ) {
-    val activity = LocalContext.current.getActivity()
+    val activity = LocalContext.current.getActivity() as? ComponentActivity ?: return
 
-    // If spatial UI capabilities are not enabled, do nothing
-    if (!LocalSpatialCapabilities.current.isSpatialUiEnabled || activity !is ComponentActivity)
-        return
+    // If we are not in XR, do nothing
+    if (!LocalSpatialConfiguration.current.hasXrSpatialFeature) return
 
     if (currentComposer.applier is SubspaceNodeApplier) {
         // We are already in a Subspace, so we can just render the content directly
@@ -226,6 +239,8 @@ public fun ApplicationSubspace(
  *
  * In the near future when HSM is spatialized, the Subspace should consider the app bounds when
  * determining its top-level constraints.
+ *
+ * TODO(b/419369273) Add test cases for activity to activity transitions and switching applications.
  */
 @Composable
 private fun ApplicationSubspace(
@@ -234,32 +249,27 @@ private fun ApplicationSubspace(
     constraintsBehavior: ConstraintsBehavior,
     content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit,
 ) {
-
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val compositionContext = rememberCompositionContext()
-    val rootConstraints =
+    val scene by remember {
+        session.scene.mainPanelEntity.setHidden(true)
+        disposableValueOf(
+            SpatialComposeScene(
+                ownerActivity = activity,
+                jxrSession = session,
+                parentCompositionContext = compositionContext,
+            )
+        ) {
+            it.dispose()
+            session.scene.mainPanelEntity.setHidden(false)
+        }
+    }
+
+    scene.rootVolumeConstraints =
         when (constraintsBehavior) {
             ConstraintsBehavior.Specified -> constraints
             else -> rememberCalculatedFovConstraints(constraints) ?: return
         }
-
-    // TODO(b/406288019): Update the root constraints while maintaining the existing scene.
-    val scene by
-        remember(rootConstraints) {
-            session.scene.mainPanelEntity.setHidden(true)
-            disposableValueOf(
-                SpatialComposeScene(
-                    ownerActivity = activity,
-                    jxrSession = session,
-                    parentCompositionContext = compositionContext,
-                    rootVolumeConstraints = rootConstraints,
-                )
-            ) {
-                it.dispose()
-                session.scene.mainPanelEntity.setHidden(false)
-            }
-        }
-
     scene.setContent {
         CompositionLocalProvider(LocalIsInApplicationSubspace provides true) {
             SpatialBox(content = content)
@@ -277,8 +287,7 @@ private fun NestedSubspace(
     val coreEntity = checkNotNull(LocalCoreEntity.current) { "CoreEntity unavailable for subspace" }
     // The subspace root node will be owned and manipulated by the containing composition, we need a
     // container that we can manipulate at the Subspace level in order to position the entire
-    // subspace
-    // properly.
+    // subspace properly.
     val subspaceRootContainer by remember {
         disposableValueOf(
             ContentlessEntity.create(session, "SubspaceRootContainer").apply {
@@ -321,8 +330,7 @@ private fun NestedSubspace(
             )
         )
         // We need to wait for a single frame to ensure that the pose changes are batched to the
-        // root
-        // container before we show it.
+        // root container before we show it.
         if (subspaceRootContainer.isHidden(false) && awaitFrame() > 0) {
             subspaceRootContainer.setHidden(false)
         }

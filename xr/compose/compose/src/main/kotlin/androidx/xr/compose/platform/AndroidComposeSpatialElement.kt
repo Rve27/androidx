@@ -77,6 +77,14 @@ internal class AndroidComposeSpatialElement :
     private var isLayoutInProgress = false
 
     internal var rootVolumeConstraints: VolumeConstraints = VolumeConstraints()
+        set(value) {
+            if (field != value) {
+                field = value
+                if (isAttachedToSpatialComposeScene) {
+                    requestRelayout()
+                }
+            }
+        }
 
     init {
         root.attach(this)

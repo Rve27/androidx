@@ -157,29 +157,21 @@ class SpatialComposeAppActivity : ComponentActivity() {
                 ) {
                     Text("Switch Space Mode")
                 }
-                Button(
-                    onClick = {
-                        val intent =
-                            Intent(this@SpatialComposeAppActivity, VideoPlayerActivity::class.java)
-                        startActivity(intent)
-                    }
-                ) {
+                Button(onClick = { startActivity<VideoPlayerActivity>() }) {
                     Text("Launch Video Player")
                 }
-                Button(
-                    onClick = {
-                        val intent =
-                            Intent(
-                                this@SpatialComposeAppActivity,
-                                WindowManagerJxrTestActivity::class.java,
-                            )
-                        startActivity(intent)
-                    }
-                ) {
+                Button(onClick = { startActivity<WindowManagerJxrTestActivity>() }) {
                     Text("Launch Window Manager JXR Test")
+                }
+                Button(onClick = { startActivity<StateTestAppActivity>() }) {
+                    Text("Launch Application State Test")
                 }
             }
         }
+    }
+
+    private inline fun <reified T : ComponentActivity> startActivity() {
+        startActivity(Intent(this, T::class.java))
     }
 
     @Composable
