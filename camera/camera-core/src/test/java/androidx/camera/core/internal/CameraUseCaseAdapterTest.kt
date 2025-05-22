@@ -652,6 +652,30 @@ class CameraUseCaseAdapterTest {
             .isTrue()
     }
 
+    @Test
+    fun isUseCasesCombinationSupported_withUseCaseFailingConfigMerge_shouldReturnFalse() {
+        val useCaseFailedOnMergeConfig =
+            FakeUseCase().apply { setMergedConfigException(IllegalArgumentException()) }
+
+        assertThat(
+                adapter.isUseCasesCombinationSupported(
+                    /*withStreamSharing=*/ false,
+                    preview,
+                    useCaseFailedOnMergeConfig,
+                )
+            )
+            .isFalse()
+
+        assertThat(
+                adapter.isUseCasesCombinationSupported(
+                    /*withStreamSharing=*/ true,
+                    preview,
+                    useCaseFailedOnMergeConfig,
+                )
+            )
+            .isFalse()
+    }
+
     @Test(expected = CameraException::class)
     fun invalidUseCaseComboCantBeFixedByStreamSharing_throwsException() {
         // Arrange: create a camera that only support one JPEG stream.

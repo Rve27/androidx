@@ -1194,8 +1194,13 @@ public final class CameraUseCaseAdapter implements Camera {
             UseCase @NonNull ... useCases) {
         Collection<UseCase> useCasesToVerify = Arrays.asList(useCases);
         if (withStreamSharing) {
-            StreamSharing streamSharing = createOrReuseStreamSharing(useCasesToVerify, true);
-            useCasesToVerify = calculateCameraUseCases(useCasesToVerify, null, streamSharing);
+            try {
+                StreamSharing streamSharing = createOrReuseStreamSharing(useCasesToVerify, true);
+                useCasesToVerify = calculateCameraUseCases(useCasesToVerify, null, streamSharing);
+            } catch (IllegalArgumentException e) {
+                Logger.d(TAG, "Unable to apply StreamSharing", e);
+                return false;
+            }
         }
         return mCameraInternal.getCameraInfoInternal().isUseCaseCombinationSupported(
                 new ArrayList<>(useCasesToVerify), getCameraMode(), false, mCameraConfig);
