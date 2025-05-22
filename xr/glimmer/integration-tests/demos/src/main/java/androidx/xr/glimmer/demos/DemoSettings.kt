@@ -50,8 +50,8 @@ internal fun DemoSettings() {
             val overlayOnBackground = OverlayOnBackgroundSetting.asState().value
             val context = LocalContext.current
             ListItem(
+                modifier = Modifier.padding(16.dp),
                 onClick = { OverlayOnBackgroundSetting.set(context, !overlayOnBackground) },
-                Modifier.padding(16.dp),
             ) {
                 Text("${if (overlayOnBackground) "Disable" else "Enable"} overlay on background")
             }

@@ -84,8 +84,8 @@ private fun DisplayDemoCategory(category: DemoCategory, onNavigate: (Demo) -> Un
 
 @Composable
 internal fun ListItem(
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
     content: @Composable (() -> Unit),
 ) {
     var isFocused by remember { mutableStateOf(false) }
