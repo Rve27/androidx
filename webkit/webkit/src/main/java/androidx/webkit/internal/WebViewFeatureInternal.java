@@ -773,6 +773,15 @@ public class WebViewFeatureInternal {
     public static final ApiFeature.NoFramework COOKIE_INTERCEPT = new ApiFeature.NoFramework(
             WebViewFeature.COOKIE_INTERCEPT, Features.COOKIE_INTERCEPT);
 
+    /**
+     * Feature for {@link WebViewFeature#isFeatureSupported(String)}.
+     * This feature covers {@link WebViewCompat#setShouldCacheProvider(boolean)}.
+     */
+    @Profile.ExperimentalWarmUpRendererProcess
+    public static final ApiFeature.NoFramework WARM_UP_RENDERER_PROCESS =
+            new ApiFeature.NoFramework(WebViewFeature.WARM_UP_RENDERER_PROCESS,
+                    Features.WARM_UP_RENDERER_PROCESS);
+
     // --- Add new feature constants above this line ---
 
     private WebViewFeatureInternal() {
