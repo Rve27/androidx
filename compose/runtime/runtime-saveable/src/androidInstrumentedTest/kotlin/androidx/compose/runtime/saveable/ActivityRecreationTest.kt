@@ -23,10 +23,16 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.test.R
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.Popup
@@ -264,6 +270,28 @@ class ActivityRecreationTest {
         }
     }
 
+    @Test
+    fun movableContentInAdaptiveLayoutUseCaseIsRestored() {
+        val activityScenario: ActivityScenario<MovableContentRecreationActivity> =
+            ActivityScenario.launch(MovableContentRecreationActivity::class.java)
+
+        activityScenario.moveToState(Lifecycle.State.RESUMED)
+
+        activityScenario.onActivity {
+            assertThat(it.composedAsTabletUi).isFalse()
+            assertThat(it.array).isEqualTo(intArrayOf(0))
+            // change the value
+            it.array[0] = 1
+        }
+
+        activityScenario.recreate()
+
+        activityScenario.onActivity {
+            assertThat(it.composedAsTabletUi).isTrue()
+            assertThat(it.array).isEqualTo(intArrayOf(1))
+        }
+    }
+
     private fun FragmentActivity.findFragment(id: Int) =
         supportFragmentManager.findFragmentById(id) as TestFragment
 }
@@ -448,6 +476,42 @@ class DialogsRecreationTestActivity : BaseRestorableActivity() {
             Dialog(onDismissRequest = {}) { valueInDialog1 = rememberSaveable { Random.nextInt() } }
             Dialog(onDismissRequest = {}) { valueInDialog2 = rememberSaveable { Random.nextInt() } }
         }
+    }
+}
+
+class MovableContentRecreationActivity : BaseRestorableActivity() {
+    lateinit var array: IntArray
+    var composedAsTabletUi = false
+        private set
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val isTablet = savedInstanceState?.getBoolean("isTablet", false) ?: false
+        setContent {
+            val listContent = remember {
+                movableContentOf {
+                    array = rememberSaveable { intArrayOf(0) }
+                    BasicText("List screen")
+                }
+            }
+
+            if (!isTablet) {
+                composedAsTabletUi = false
+                listContent()
+            } else {
+                composedAsTabletUi = true
+                Row {
+                    Box(Modifier.weight(1f).fillMaxHeight()) { listContent() }
+                    Box(Modifier.weight(1f).fillMaxHeight()) { BasicText("Details screen") }
+                }
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // set this flag so we compose a tablet ui when the activity is recreated
+        outState.putBoolean("isTablet", true)
     }
 }
 
