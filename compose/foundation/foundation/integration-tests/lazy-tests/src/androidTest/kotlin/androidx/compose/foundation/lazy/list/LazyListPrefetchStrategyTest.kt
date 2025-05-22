@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
@@ -178,6 +179,27 @@ class LazyListPrefetchStrategyTest(val config: Config) :
         waitForPrefetch()
         rule.onNodeWithTag("2").assertExists()
         assertThat(prefetchCount).isEqualTo(1)
+    }
+
+    @Test
+    fun datasetChanged_shouldScheduleNewPrefetching() {
+        val numItems = mutableStateOf(100)
+        val strategy = LazyListPrefetchStrategy()
+
+        composeList(firstItem = 97, numItems = numItems, prefetchStrategy = strategy)
+
+        rule.runOnIdle { runBlocking { state.scrollBy(itemsSizePx.toFloat()) } }
+
+        waitForPrefetch()
+
+        rule.onNodeWithTag("100").assertDoesNotExist()
+
+        rule.runOnIdle { numItems.value = 200 }
+        rule.waitForIdle()
+        waitForPrefetch()
+
+        rule.onNodeWithTag("100").assertExists()
+        rule.onNodeWithTag("100").assertIsNotDisplayed()
     }
 
     private fun waitForPrefetch() {
