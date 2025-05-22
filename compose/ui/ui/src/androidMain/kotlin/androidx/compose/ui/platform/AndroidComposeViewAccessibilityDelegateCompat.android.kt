@@ -257,6 +257,7 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
     internal var SendRecurringAccessibilityEventsIntervalMillis = 100L
 
     private val enabledStateListener = AccessibilityStateChangeListener { enabled ->
+        // `getEnabledAccessibilityServiceList` returns an empty list if there are no services
         enabledServices =
             if (enabled) {
                 accessibilityManager.getEnabledAccessibilityServiceList(FEEDBACK_ALL_MASK)
@@ -266,6 +267,7 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
     }
 
     private val touchExplorationStateListener = TouchExplorationStateChangeListener {
+        // `getEnabledAccessibilityServiceList` returns an empty list if there are no services
         enabledServices = accessibilityManager.getEnabledAccessibilityServiceList(FEEDBACK_ALL_MASK)
     }
 
@@ -382,7 +384,14 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
         view.addOnAttachStateChangeListener(
             object : View.OnAttachStateChangeListener {
                 override fun onViewAttachedToWindow(view: View) {
+                    // Whenever the window is reattached, update the `enabledServices` value in case
+                    // there have been changes while the window was detached that the listeners
+                    // might not catch.
                     with(accessibilityManager) {
+                        enabledServices =
+                            accessibilityManager.getEnabledAccessibilityServiceList(
+                                FEEDBACK_ALL_MASK
+                            )
                         addAccessibilityStateChangeListener(enabledStateListener)
                         addTouchExplorationStateChangeListener(touchExplorationStateListener)
                     }
