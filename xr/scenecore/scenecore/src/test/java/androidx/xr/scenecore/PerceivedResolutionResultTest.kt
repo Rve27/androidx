@@ -16,6 +16,7 @@
 
 package androidx.xr.scenecore
 
+import androidx.xr.runtime.math.IntSize2d
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,17 +29,17 @@ class PerceivedResolutionResultTest {
 
     @Test
     fun success_equals_sameObject_returnsTrue() {
-        val dimensions = PixelDimensions(100, 200)
+        val dimensions = IntSize2d(100, 200)
         val underTest = PerceivedResolutionResult.Success(dimensions)
         assertThat(underTest.equals(underTest)).isTrue()
     }
 
     @Test
     fun success_equals_differentObjectsSameValues_returnsTrue() {
-        val dimensions1 = PixelDimensions(100, 200)
+        val dimensions1 = IntSize2d(100, 200)
         val underTest1 = PerceivedResolutionResult.Success(dimensions1)
 
-        val dimensions2 = PixelDimensions(100, 200)
+        val dimensions2 = IntSize2d(100, 200)
         val underTest2 = PerceivedResolutionResult.Success(dimensions2)
 
         assertThat(underTest1.equals(underTest2)).isTrue()
@@ -46,10 +47,10 @@ class PerceivedResolutionResultTest {
 
     @Test
     fun success_equals_differentObjectsDifferentValues_returnsFalse() {
-        val dimensions1 = PixelDimensions(100, 200)
+        val dimensions1 = IntSize2d(100, 200)
         val underTest1 = PerceivedResolutionResult.Success(dimensions1)
 
-        val dimensions2 = PixelDimensions(300, 400)
+        val dimensions2 = IntSize2d(300, 400)
         val underTest2 = PerceivedResolutionResult.Success(dimensions2)
 
         assertThat(underTest1.equals(underTest2)).isFalse()
@@ -57,23 +58,23 @@ class PerceivedResolutionResultTest {
 
     @Test
     fun success_equals_null_returnsFalse() {
-        val underTest = PerceivedResolutionResult.Success(PixelDimensions(100, 200))
+        val underTest = PerceivedResolutionResult.Success(IntSize2d(100, 200))
         assertThat(underTest.equals(null)).isFalse()
     }
 
     @Test
     fun success_equals_differentType_returnsFalse() {
-        val underTest = PerceivedResolutionResult.Success(PixelDimensions(100, 200))
+        val underTest = PerceivedResolutionResult.Success(IntSize2d(100, 200))
         val otherObject = "Not a Success object"
         assertThat(underTest.equals(otherObject)).isFalse()
     }
 
     @Test
     fun success_hashCode_differentObjectsSameValues_returnsSameHashCode() {
-        val dimensions1 = PixelDimensions(100, 200)
+        val dimensions1 = IntSize2d(100, 200)
         val underTest1 = PerceivedResolutionResult.Success(dimensions1)
 
-        val dimensions2 = PixelDimensions(100, 200)
+        val dimensions2 = IntSize2d(100, 200)
         val underTest2 = PerceivedResolutionResult.Success(dimensions2)
 
         assertThat(underTest1.hashCode()).isEqualTo(underTest2.hashCode())
@@ -81,15 +82,15 @@ class PerceivedResolutionResultTest {
 
     @Test
     fun success_hashCode_differentObjectsDifferentValues_returnsDifferentHashCodes() {
-        val underTest1 = PerceivedResolutionResult.Success(PixelDimensions(100, 200))
-        val underTest2 = PerceivedResolutionResult.Success(PixelDimensions(300, 400))
+        val underTest1 = PerceivedResolutionResult.Success(IntSize2d(100, 200))
+        val underTest2 = PerceivedResolutionResult.Success(IntSize2d(300, 400))
 
         assertThat(underTest1.hashCode()).isNotEqualTo(underTest2.hashCode())
     }
 
     @Test
     fun success_toString() {
-        val success = PerceivedResolutionResult.Success(PixelDimensions(10, 20))
+        val success = PerceivedResolutionResult.Success(IntSize2d(10, 20))
         val expectedString = "PerceivedResolutionResult.Success(PerceivedResolution(10x20))"
         assertThat(success.toString()).isEqualTo(expectedString)
     }
@@ -172,7 +173,7 @@ class PerceivedResolutionResultTest {
 
     @Test
     fun success_notEquals_entityTooClose() {
-        val success = PerceivedResolutionResult.Success(PixelDimensions(10, 20))
+        val success = PerceivedResolutionResult.Success(IntSize2d(10, 20))
         val entityTooClose = PerceivedResolutionResult.EntityTooClose()
         assertThat(success.equals(entityTooClose)).isFalse()
         assertThat(entityTooClose.equals(success)).isFalse() // Check commutativity
@@ -180,7 +181,7 @@ class PerceivedResolutionResultTest {
 
     @Test
     fun success_notEquals_invalidCameraView() {
-        val success = PerceivedResolutionResult.Success(PixelDimensions(10, 20))
+        val success = PerceivedResolutionResult.Success(IntSize2d(10, 20))
         val invalidCameraView = PerceivedResolutionResult.InvalidCameraView()
         assertThat(success.equals(invalidCameraView)).isFalse()
         assertThat(invalidCameraView.equals(success)).isFalse() // Check commutativity

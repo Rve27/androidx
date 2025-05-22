@@ -22,13 +22,13 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.PlaneTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
+import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.AnchorEntity
-import androidx.xr.scenecore.Dimensions
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
-import androidx.xr.scenecore.PlaneSemantic
-import androidx.xr.scenecore.PlaneType
+import androidx.xr.scenecore.PlaneOrientation
+import androidx.xr.scenecore.PlaneSemanticType
 
 class AnchorTestActivity : AppCompatActivity() {
     private val session by lazy { (Session.create(this) as SessionCreateSuccess).session }
@@ -55,7 +55,12 @@ class AnchorTestActivity : AppCompatActivity() {
         val anchoredTransformWidgetEntity =
             GltfModelEntity.create(session, transformWidgetModel, Pose.Identity)
         val anchor =
-            AnchorEntity.create(session, Dimensions(0.1f, 0.1f), PlaneType.ANY, PlaneSemantic.ANY)
+            AnchorEntity.create(
+                session,
+                FloatSize3d(0.1f, 0.1f),
+                PlaneOrientation.ANY,
+                PlaneSemanticType.ANY,
+            )
         anchor.addChild(anchoredTransformWidgetEntity)
         anchoredTransformWidgetEntity.setPose(Pose.Identity)
     }

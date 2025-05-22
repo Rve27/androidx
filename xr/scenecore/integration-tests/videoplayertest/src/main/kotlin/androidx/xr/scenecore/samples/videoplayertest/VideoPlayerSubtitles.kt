@@ -29,11 +29,11 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.PanelEntity
-import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.scene
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -211,7 +211,7 @@ class VideoPlayerSubtitles(activity: Activity, session: Session, exoPlayer: ExoP
             PanelEntity.create(
                 session,
                 subtitleTextView,
-                PixelDimensions(1000, 40),
+                IntSize2d(1000, 40),
                 "subtitlePanel",
                 Pose.Identity,
             )

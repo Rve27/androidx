@@ -26,12 +26,12 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.xr.arcore.Plane
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.TrackingState
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector2
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.PanelEntity
-import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.scene
 import kotlinx.coroutines.CompletableJob
 import kotlinx.coroutines.CoroutineScope
@@ -111,7 +111,7 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
                             if (counter > PANEL_RESIZE_UPDATE_COUNT) {
                                 val panelExtentsInPixels = convertMetersToPixels(state.extents)
                                 entity.setSizeInPixels(
-                                    PixelDimensions(
+                                    IntSize2d(
                                         width = panelExtentsInPixels.x.toInt(),
                                         height = panelExtentsInPixels.y.toInt(),
                                     )
@@ -132,7 +132,7 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
         return PanelEntity.create(
             session,
             view,
-            PixelDimensions(320, 320),
+            IntSize2d(320, 320),
             plane.hashCode().toString(),
             plane.state.value.centerPose,
         )

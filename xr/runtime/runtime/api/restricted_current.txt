@@ -1762,6 +1762,17 @@ package androidx.xr.runtime.java {
 
 package androidx.xr.runtime.math {
 
+  public final class FloatSize3d {
+    ctor public FloatSize3d();
+    ctor public FloatSize3d(optional float width, optional float height, optional float depth);
+    method public float getDepth();
+    method public float getHeight();
+    method public float getWidth();
+    property public float depth;
+    property public float height;
+    property public float width;
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class GeospatialPose {
     ctor public GeospatialPose();
     ctor public GeospatialPose(optional double latitude, optional double longitude, optional double altitude, optional androidx.xr.runtime.math.Quaternion eastUpSouthQuaternion);
@@ -1773,6 +1784,15 @@ package androidx.xr.runtime.math {
     property public androidx.xr.runtime.math.Quaternion eastUpSouthQuaternion;
     property public double latitude;
     property public double longitude;
+  }
+
+  public final class IntSize2d {
+    ctor public IntSize2d();
+    ctor public IntSize2d(optional int width, optional int height);
+    method public int getHeight();
+    method public int getWidth();
+    property public int height;
+    property public int width;
   }
 
   public final class MathHelper {

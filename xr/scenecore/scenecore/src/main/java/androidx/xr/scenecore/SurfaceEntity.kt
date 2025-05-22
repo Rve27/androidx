@@ -23,6 +23,7 @@ import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.SurfaceEntity as RtSurfaceEntity
+import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 
 /**
@@ -60,13 +61,13 @@ private constructor(
 
     /** Represents the shape of the Canvas that backs a SurfaceEntity. */
     public abstract class CanvasShape private constructor() {
-        public open val dimensions: Dimensions = Dimensions(0.0f, 0.0f, 0.0f)
+        public open val dimensions: FloatSize3d = FloatSize3d(0.0f, 0.0f, 0.0f)
 
         // A Quad-shaped canvas. Width and height are represented in the local spatial coordinate
         // system of the entity. (0,0,0) is the center of the canvas.
         public class Quad(public val width: Float, public val height: Float) : CanvasShape() {
-            override val dimensions: Dimensions
-                get() = Dimensions(width, height, 0.0f)
+            override val dimensions: FloatSize3d
+                get() = FloatSize3d(width, height, 0.0f)
         }
 
         // An inwards-facing sphere-shaped canvas, centered at (0,0,0) in the local coordinate
@@ -77,8 +78,8 @@ private constructor(
         // space,
         // and UV's are applied from positive X to negative X in an equirectangular projection.
         public class Vr360Sphere(public val radius: Float) : CanvasShape() {
-            override val dimensions: Dimensions
-                get() = Dimensions(radius * 2, radius * 2, radius * 2)
+            override val dimensions: FloatSize3d
+                get() = FloatSize3d(radius * 2, radius * 2, radius * 2)
         }
 
         // An inwards-facing hemisphere-shaped canvas, where (0,0,0) is the center of the base of
@@ -89,8 +90,8 @@ private constructor(
         // space,
         // and UV's are applied from positive X to negative X in an equirectangular projection.
         public class Vr180Hemisphere(public val radius: Float) : CanvasShape() {
-            override val dimensions: Dimensions
-                get() = Dimensions(radius * 2, radius * 2, radius)
+            override val dimensions: FloatSize3d
+                get() = FloatSize3d(radius * 2, radius * 2, radius)
         }
     }
 
@@ -264,8 +265,8 @@ private constructor(
      * field cannot be directly set - to update the dimensions of the canvas, update the value of
      * [canvasShape].
      */
-    public val dimensions: Dimensions
-        get() = rtEntity.dimensions.toDimensions()
+    public val dimensions: FloatSize3d
+        get() = rtEntity.dimensions.toFloatSize3d()
 
     /**
      * The shape of the canvas that backs the Entity.

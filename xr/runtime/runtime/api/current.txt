@@ -286,6 +286,26 @@ package androidx.xr.runtime.java {
 
 package androidx.xr.runtime.math {
 
+  public final class FloatSize3d {
+    ctor public FloatSize3d();
+    ctor public FloatSize3d(optional float width, optional float height, optional float depth);
+    method public float getDepth();
+    method public float getHeight();
+    method public float getWidth();
+    property public float depth;
+    property public float height;
+    property public float width;
+  }
+
+  public final class IntSize2d {
+    ctor public IntSize2d();
+    ctor public IntSize2d(optional int width, optional int height);
+    method public int getHeight();
+    method public int getWidth();
+    property public int height;
+    property public int width;
+  }
+
   public final class MathHelper {
     method public static float clamp(float x, float min, float max);
     method public static float lerp(float a, float b, float t);

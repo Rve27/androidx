@@ -29,13 +29,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.sp
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.math.FloatSize3d
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.Dimensions
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
-import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.ResizableComponent
 import androidx.xr.scenecore.ResizeListener
 
@@ -78,7 +78,7 @@ class PanelEntityManager(private val session: Session) {
                             PanelEntity.create(
                                 session = mSession,
                                 view = mTextView,
-                                pixelDimensions = PixelDimensions(800, 360),
+                                pixelDimensions = IntSize2d(800, 360),
                                 name = "samplePanelEntity",
                                 pose = Pose(Vector3(0f, 0f, 0f)),
                             )
@@ -87,11 +87,11 @@ class PanelEntityManager(private val session: Session) {
                         mResizableComponent = ResizableComponent.create(mSession)
                         val simpleResizeListener =
                             object : ResizeListener {
-                                override fun onResizeStart(entity: Entity, newSize: Dimensions) {}
+                                override fun onResizeStart(entity: Entity, newSize: FloatSize3d) {}
 
-                                override fun onResizeUpdate(entity: Entity, newSize: Dimensions) {}
+                                override fun onResizeUpdate(entity: Entity, newSize: FloatSize3d) {}
 
-                                override fun onResizeEnd(entity: Entity, newSize: Dimensions) {
+                                override fun onResizeEnd(entity: Entity, newSize: FloatSize3d) {
                                     panelEntity?.setSize(newSize)
                                     mTextView.text = "This Panel's dimensions are $newSize"
                                 }

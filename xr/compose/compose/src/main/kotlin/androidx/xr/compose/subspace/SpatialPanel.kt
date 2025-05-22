@@ -68,10 +68,10 @@ import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetMeasur
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetModifier
 import androidx.xr.compose.unit.Meter.Companion.millimeters
 import androidx.xr.compose.unit.toMeter
+import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.ActivityPanelEntity
-import androidx.xr.scenecore.Dimensions
 import androidx.xr.scenecore.PanelEntity
 
 private const val DEFAULT_SIZE_PX = 400
@@ -90,7 +90,7 @@ public object SpatialPanelDefaults {
     public val shape: SpatialShape = SpatialRoundedCornerShape(CornerSize(32.dp))
 
     /** Default minimum dimensions for a Spatial Panel in Meters. */
-    public val minimumPanelDimension: Dimensions = Dimensions(0.1f, 0.1f, 0.1f)
+    public val minimumPanelDimension: FloatSize3d = FloatSize3d(0.1f, 0.1f, 0.1f)
 }
 
 /**
@@ -458,7 +458,7 @@ public fun SpatialPanel(
                     PanelEntity.create(
                             session = session,
                             view = scrimView,
-                            dimensions = Dimensions(scrimWidth.toM(), scrimHeight.toM()),
+                            dimensions = FloatSize3d(scrimWidth.toM(), scrimHeight.toM()),
                             name = entityName("ScrimPanel"),
                             pose = Pose.Identity,
                         )

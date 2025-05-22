@@ -31,8 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
-import androidx.xr.scenecore.Dimensions
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.SurfaceEntity
 
@@ -95,7 +95,7 @@ class SurfaceEntityManager(private val session: Session) {
                         // angles and distances)
                         mMovableComponent = MovableComponent.create(mSession)
                         // The quad has a radius of 1.0 meters
-                        mMovableComponent!!.size = Dimensions(1.0f, 1.0f, 1.0f)
+                        mMovableComponent!!.size = FloatSize3d(1.0f, 1.0f, 1.0f)
                         val unused = surfaceEntity!!.addComponent(mMovableComponent!!)
                     }
                 },

@@ -28,14 +28,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.sp
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.math.FloatSize3d
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.ActivityPose
 import androidx.xr.scenecore.CameraView
-import androidx.xr.scenecore.Dimensions
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
-import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.Space
 import androidx.xr.scenecore.samples.commontestview.DebugTextLinearView
 import androidx.xr.scenecore.scene
@@ -119,12 +119,12 @@ class PerceivedResolutionManager(
                     distanceToCamera(leftEye, surfaceEntityManager.surfaceEntity),
                 )
                 if (surfaceEntityManager.surfaceEntity != null) {
-                    val dimensionsInLocalUnits: Dimensions =
+                    val dimensionsInLocalUnits: FloatSize3d =
                         surfaceEntityManager.surfaceEntity!!.dimensions
                     val activitySpaceScale: Float =
                         surfaceEntityManager.surfaceEntity!!.getScale(Space.ACTIVITY)
-                    val dimensionsInActivitySpace: Dimensions =
-                        Dimensions(
+                    val dimensionsInActivitySpace: FloatSize3d =
+                        FloatSize3d(
                             dimensionsInLocalUnits.width * activitySpaceScale,
                             dimensionsInLocalUnits.height * activitySpaceScale,
                             dimensionsInLocalUnits.depth * activitySpaceScale,
@@ -181,7 +181,7 @@ class PerceivedResolutionManager(
                             PanelEntity.create(
                                 session = session,
                                 view = mTextView!!,
-                                pixelDimensions = PixelDimensions(1000, 500),
+                                pixelDimensions = IntSize2d(1000, 500),
                                 name = "perceivedResolutionPanel",
                                 pose = Pose(Vector3(0.5f, 0f, 0.1f)),
                             )

@@ -55,7 +55,7 @@ import androidx.xr.compose.subspace.layout.SpatialShape
 import androidx.xr.compose.subspace.node.SubspaceNodeApplier
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.runtime.Session
-import androidx.xr.scenecore.PixelDimensions
+import androidx.xr.runtime.math.IntSize2d
 
 /** Set the scrim alpha to 32% opacity across orbiters. */
 private const val DEFAULT_SCRIM_ALPHA = 0x52000000
@@ -360,11 +360,7 @@ internal fun PositionedOrbiter(data: OrbiterData) {
         pose =
             contentSize?.let {
                 rememberCalculatePose(
-                    data.calculateOffset(
-                        panelSize.run { PixelDimensions(width, height) },
-                        it,
-                        density,
-                    ),
+                    data.calculateOffset(panelSize.run { IntSize2d(width, height) }, it, density),
                     panelSize.run { IntSize(width, height) },
                     it,
                     data.elevation,
@@ -392,8 +388,8 @@ internal fun PositionedOrbiter(data: OrbiterData) {
     }
 }
 
-private fun getWindowBoundsInPixels(session: Session): PixelDimensions =
-    session.activity.window.decorView.run { PixelDimensions(width, height) }
+private fun getWindowBoundsInPixels(session: Session): IntSize2d =
+    session.activity.window.decorView.run { IntSize2d(width, height) }
 
 /**
  * Provides the dimensions of the Android main window.
@@ -567,7 +563,7 @@ internal data class OrbiterData(
  * and the size of the orbiter content, using the specified density to convert Dp to pixels.
  */
 private fun OrbiterData.calculateOffset(
-    viewSize: PixelDimensions,
+    viewSize: IntSize2d,
     contentSize: IntSize,
     density: Density,
 ): Offset {

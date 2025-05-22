@@ -32,6 +32,8 @@ import androidx.xr.runtime.internal.PanelEntity as RtPanelEntity
 import androidx.xr.runtime.internal.PixelDimensions as RtPixelDimensions
 import androidx.xr.runtime.internal.SpatialCapabilities as RtSpatialCapabilities
 import androidx.xr.runtime.internal.SpatialVisibility as RtSpatialVisibility
+import androidx.xr.runtime.math.FloatSize3d
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.runtime.testing.FakeRuntimeFactory
@@ -181,7 +183,7 @@ class SceneTest {
         whenever(mockPlatformAdapter.createActivityPanelEntity(any(), any(), any(), any(), any()))
             .thenReturn(mockActivityPanelEntity)
         val panelEntity =
-            PanelEntity.create(session, TextView(activity), PixelDimensions(720, 480), "test1")
+            PanelEntity.create(session, TextView(activity), IntSize2d(720, 480), "test1")
         val activityPanelEntity = ActivityPanelEntity.create(session, Rect(0, 0, 640, 480), "test2")
 
         assertThat(session.scene.getEntitiesOfType(PanelEntity::class.java))
@@ -205,9 +207,9 @@ class SceneTest {
         whenever(mockPlatformAdapter.createAnchorEntity(any(), any(), any(), any()))
             .thenReturn(mockAnchorEntity)
         val panelEntity =
-            PanelEntity.create(session, TextView(activity), PixelDimensions(720, 480), "test1")
+            PanelEntity.create(session, TextView(activity), IntSize2d(720, 480), "test1")
         val anchorEntity =
-            AnchorEntity.create(session, Dimensions(), PlaneType.ANY, PlaneSemantic.ANY)
+            AnchorEntity.create(session, FloatSize3d(), PlaneOrientation.ANY, PlaneSemanticType.ANY)
 
         assertThat(session.scene.getEntitiesOfType(Entity::class.java))
             .containsAtLeast(panelEntity, anchorEntity)
@@ -271,7 +273,7 @@ class SceneTest {
 
     @Test
     fun addPerceivedResolutionChangedListener_callsRuntimeAddPerceivedResolutionChangedListener() {
-        val listener = Consumer<PixelDimensions> {}
+        val listener = Consumer<IntSize2d> {}
         val executor = directExecutor()
         session.scene.addPerceivedResolutionChangedListener(executor, listener)
         verify(mockPlatformAdapter).addPerceivedResolutionChangedListener(eq(executor), any())
@@ -279,7 +281,7 @@ class SceneTest {
 
     @Test
     fun addPerceivedResolutionChangedListener_withNoExecutor_callsRuntimeWithMainThreadExecutor() {
-        val listener = Consumer<PixelDimensions> {}
+        val listener = Consumer<IntSize2d> {}
         session.scene.addPerceivedResolutionChangedListener(listener)
         verify(mockPlatformAdapter)
             .addPerceivedResolutionChangedListener(eq(HandlerExecutor.mainThreadExecutor), any())
@@ -287,7 +289,7 @@ class SceneTest {
 
     @Test
     fun removePerceivedResolutionChangedListener_callsRuntimeRemovePerceivedResolutionChangedListener() {
-        val listener = Consumer<PixelDimensions> {}
+        val listener = Consumer<IntSize2d> {}
         // Add the listener first so there's something to remove
         session.scene.addPerceivedResolutionChangedListener(directExecutor(), listener)
         val rtListenerCaptor = argumentCaptor<Consumer<RtPixelDimensions>>()
@@ -301,8 +303,8 @@ class SceneTest {
 
     @Test
     fun perceivedResolutionChangedListener_isCalledWithConvertedValues() {
-        var receivedDimensions: PixelDimensions? = null
-        val listener = Consumer<PixelDimensions> { dims -> receivedDimensions = dims }
+        var receivedDimensions: IntSize2d? = null
+        val listener = Consumer<IntSize2d> { dims -> receivedDimensions = dims }
         val rtListenerCaptor = argumentCaptor<Consumer<RtPixelDimensions>>()
         val executor = directExecutor()
 
@@ -328,8 +330,8 @@ class SceneTest {
 
     @Test
     fun addMultiplePerceivedResolutionListeners_allAreRegisteredAndCalled() {
-        val listener1 = mock<Consumer<PixelDimensions>>()
-        val listener2 = mock<Consumer<PixelDimensions>>()
+        val listener1 = mock<Consumer<IntSize2d>>()
+        val listener2 = mock<Consumer<IntSize2d>>()
         val rtListenerCaptor = argumentCaptor<Consumer<RtPixelDimensions>>()
         val executor = directExecutor()
 
@@ -345,14 +347,14 @@ class SceneTest {
         // Simulate callback for the first registered listener only
         val testRtDimensions1 = RtPixelDimensions(10, 20)
         rtListeners[0].accept(testRtDimensions1)
-        verify(listener1).accept(PixelDimensions(10, 20))
+        verify(listener1).accept(IntSize2d(10, 20))
         verify(listener2, never()).accept(any())
 
         // Simulate callback for the second registered listener
         val testRtDimensions2 = RtPixelDimensions(30, 40)
         rtListeners[1].accept(testRtDimensions2)
-        verify(listener1).accept(PixelDimensions(10, 20)) // Still called once
-        verify(listener2).accept(PixelDimensions(30, 40))
+        verify(listener1).accept(IntSize2d(10, 20)) // Still called once
+        verify(listener2).accept(IntSize2d(30, 40))
     }
 
     @Test

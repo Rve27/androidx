@@ -311,9 +311,9 @@ package androidx.xr.compose.subspace {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialPanelDefaults {
-    method public androidx.xr.scenecore.Dimensions getMinimumPanelDimension();
+    method public androidx.xr.runtime.math.FloatSize3d getMinimumPanelDimension();
     method public androidx.xr.compose.subspace.layout.SpatialShape getShape();
-    property public androidx.xr.scenecore.Dimensions minimumPanelDimension;
+    property public androidx.xr.runtime.math.FloatSize3d minimumPanelDimension;
     property public androidx.xr.compose.subspace.layout.SpatialShape shape;
     field public static final androidx.xr.compose.subspace.SpatialPanelDefaults INSTANCE;
   }

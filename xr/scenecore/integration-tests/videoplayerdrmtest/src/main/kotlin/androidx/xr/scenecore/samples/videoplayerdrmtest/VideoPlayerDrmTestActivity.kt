@@ -68,13 +68,13 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.HeadTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
+import androidx.xr.runtime.math.FloatSize3d
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.Dimensions
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
-import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.scene
 import java.io.File
@@ -182,7 +182,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 panelContentView,
                 // These are about the right size to fit the buttons without a lot of invisible
                 // panel edges
-                PixelDimensions(640, 480),
+                IntSize2d(640, 480),
                 "playerControls",
                 Pose(Vector3(0.0f, -0.25f, 0.25f)), // below and slightly in front of the canvas
             )
@@ -229,16 +229,16 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
         }
     }
 
-    fun getCanvasAspectRatio(stereoMode: Int, videoWidth: Int, videoHeight: Int): Dimensions {
+    fun getCanvasAspectRatio(stereoMode: Int, videoWidth: Int, videoHeight: Int): FloatSize3d {
         when (stereoMode) {
             SurfaceEntity.StereoMode.MONO,
             SurfaceEntity.StereoMode.MULTIVIEW_LEFT_PRIMARY,
             SurfaceEntity.StereoMode.MULTIVIEW_RIGHT_PRIMARY ->
-                return Dimensions(1.0f, videoHeight.toFloat() / videoWidth, 0.0f)
+                return FloatSize3d(1.0f, videoHeight.toFloat() / videoWidth, 0.0f)
             SurfaceEntity.StereoMode.TOP_BOTTOM ->
-                return Dimensions(1.0f, 0.5f * videoHeight.toFloat() / videoWidth, 0.0f)
+                return FloatSize3d(1.0f, 0.5f * videoHeight.toFloat() / videoWidth, 0.0f)
             SurfaceEntity.StereoMode.SIDE_BY_SIDE ->
-                return Dimensions(1.0f, 2.0f * videoHeight.toFloat() / videoWidth, 0.0f)
+                return FloatSize3d(1.0f, 2.0f * videoHeight.toFloat() / videoWidth, 0.0f)
             else -> throw IllegalArgumentException("Unsupported stereo mode: $stereoMode")
         }
     }
@@ -267,7 +267,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
             // angles and distances) (only on quad canvas)
             movableComponent = MovableComponent.create(session)
             // The quad has a radius of 1.0 meters
-            movableComponent!!.size = Dimensions(1.0f, 1.0f, 1.0f)
+            movableComponent!!.size = FloatSize3d(1.0f, 1.0f, 1.0f)
 
             if (canvasShape is SurfaceEntity.CanvasShape.Quad) {
                 val unused = surfaceEntity!!.addComponent(movableComponent!!)
@@ -316,7 +316,7 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                         surfaceEntity?.canvasShape =
                             SurfaceEntity.CanvasShape.Quad(dimensions.width, dimensions.height)
                         movableComponent?.size =
-                            surfaceEntity?.dimensions ?: Dimensions(1.0f, 1.0f, 1.0f)
+                            surfaceEntity?.dimensions ?: FloatSize3d(1.0f, 1.0f, 1.0f)
                     }
                 }
 

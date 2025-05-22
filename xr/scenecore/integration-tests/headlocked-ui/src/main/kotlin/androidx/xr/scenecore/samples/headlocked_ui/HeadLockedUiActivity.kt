@@ -53,12 +53,12 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.HeadTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.ActivityPose
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
-import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.Space
 import androidx.xr.scenecore.samples.commontestview.DebugTextPanel
 import androidx.xr.scenecore.scene
@@ -85,7 +85,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
         mSession.configure(Config(headTracking = HeadTrackingMode.LAST_KNOWN))
 
         // Set the main panel size and make the main panel movable.
-        mSession.scene.mainPanelEntity.setSizeInPixels(PixelDimensions(width = 1500, height = 1100))
+        mSession.scene.mainPanelEntity.setSizeInPixels(IntSize2d(width = 1500, height = 1100))
         val movableComponent =
             MovableComponent.create(mSession, systemMovable = true, scaleInZ = false)
         val unused = mSession.scene.mainPanelEntity.addComponent(movableComponent)
@@ -96,7 +96,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
                 context = this,
                 session = mSession,
                 parent = mSession.scene.activitySpace,
-                pixelDimensions = PixelDimensions(1500, 1000),
+                pixelDimensions = IntSize2d(1500, 1000),
                 name = "DebugPanel",
                 pose = Pose(Vector3(0f, -0.6f, -0.05f)),
             )
@@ -109,7 +109,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
             PanelEntity.create(
                 session = mSession,
                 view = mHeadLockedPanelView,
-                pixelDimensions = PixelDimensions(360, 180),
+                pixelDimensions = IntSize2d(360, 180),
                 name = "headLockedPanel",
                 pose = Pose(Vector3(0f, 0f, 0f)),
             )

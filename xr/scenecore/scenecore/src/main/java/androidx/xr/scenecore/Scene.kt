@@ -29,6 +29,7 @@ import androidx.xr.runtime.internal.PixelDimensions as RtPixelDimensions
 import androidx.xr.runtime.internal.SpatialCapabilities as RtSpatialCapabilities
 import androidx.xr.runtime.internal.SpatialModeChangeListener as RtSpatialModeChangeListener
 import androidx.xr.runtime.internal.SpatialVisibility as RtSpatialVisibility
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import java.util.concurrent.ConcurrentHashMap
@@ -132,7 +133,7 @@ public class Scene : SessionConnector {
         ConcurrentHashMap()
 
     private val perceivedResolutionListeners:
-        ConcurrentMap<Consumer<PixelDimensions>, Consumer<RtPixelDimensions>> =
+        ConcurrentMap<Consumer<IntSize2d>, Consumer<RtPixelDimensions>> =
         ConcurrentHashMap()
 
     override fun initialize(
@@ -439,16 +440,16 @@ public class Scene : SessionConnector {
      * @param callbackExecutor The executor to run the listener on.
      * @param listener The [Consumer] to be invoked asynchronously on the given callbackExecutor
      *   whenever the maximum perceived resolution of the main panel changes. The parameter passed
-     *   to the Consumer’s accept method is the new value for [PixelDimensions] value for perceived
+     *   to the Consumer’s accept method is the new value for [IntSize2d] value for perceived
      *   resolution.
      */
     public fun addPerceivedResolutionChangedListener(
         callbackExecutor: Executor,
-        listener: Consumer<PixelDimensions>,
+        listener: Consumer<IntSize2d>,
     ): Unit {
         val rtListener =
             Consumer<RtPixelDimensions> { rtDimensions: RtPixelDimensions ->
-                listener.accept(rtDimensions.toPixelDimensions())
+                listener.accept(rtDimensions.toIntSize2d())
             }
         perceivedResolutionListeners.compute(
             listener,
@@ -477,10 +478,10 @@ public class Scene : SessionConnector {
      *
      * @param listener The [Consumer] to be invoked asynchronously on the given callbackExecutor
      *   whenever the maximum perceived resolution of the main panel changes. The parameter passed
-     *   to the Consumer’s accept method is the new value for [PixelDimensions] value for perceived
+     *   to the Consumer’s accept method is the new value for [IntSize2d] value for perceived
      *   resolution.
      */
-    public fun addPerceivedResolutionChangedListener(listener: Consumer<PixelDimensions>): Unit =
+    public fun addPerceivedResolutionChangedListener(listener: Consumer<IntSize2d>): Unit =
         addPerceivedResolutionChangedListener(HandlerExecutor.mainThreadExecutor, listener)
 
     /**
@@ -488,7 +489,7 @@ public class Scene : SessionConnector {
      *
      * @param listener The [Consumer] to be removed. It will no longer receive change events.
      */
-    public fun removePerceivedResolutionChangedListener(listener: Consumer<PixelDimensions>): Unit {
+    public fun removePerceivedResolutionChangedListener(listener: Consumer<IntSize2d>): Unit {
         perceivedResolutionListeners.computeIfPresent(
             listener,
             { _, rtListener ->

@@ -51,8 +51,8 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.HeadTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.scenecore.MovableComponent
-import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.SpatialVisibility
 import androidx.xr.scenecore.samples.commontestview.DebugTextLinearView
 import androidx.xr.scenecore.scene
@@ -72,8 +72,8 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
     private lateinit var mPerceivedResolutionManager: PerceivedResolutionManager
     private lateinit var mHeadLockedPanelView: DebugTextLinearView
     private var mSpatialVisibility by mutableStateOf(SpatialVisibility(SpatialVisibility.UNKNOWN))
-    private var mPerceivedResolution by mutableStateOf(PixelDimensions(0, 0))
-    private val mPerceivedResolutionListener: Consumer<PixelDimensions> = Consumer {
+    private var mPerceivedResolution by mutableStateOf(IntSize2d(0, 0))
+    private val mPerceivedResolutionListener: Consumer<IntSize2d> = Consumer {
         mPerceivedResolution = it
         Log.i(TAG, "Perceived Resolution listener called $mPerceivedResolution")
     }
@@ -85,7 +85,7 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
         mSession.configure(Config(headTracking = HeadTrackingMode.LAST_KNOWN))
 
         // Set the main panel size and make the main panel movable.
-        mSession.scene.mainPanelEntity.setSizeInPixels(PixelDimensions(width = 1500, height = 1400))
+        mSession.scene.mainPanelEntity.setSizeInPixels(IntSize2d(width = 1500, height = 1400))
         val movableComponent =
             MovableComponent.create(mSession, systemMovable = true, scaleInZ = false)
         val unused = mSession.scene.mainPanelEntity.addComponent(movableComponent)

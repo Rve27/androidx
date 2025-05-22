@@ -17,6 +17,7 @@
 package androidx.xr.scenecore
 
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.math.IntSize2d
 
 // TODO(b/418014995): Move this and PixelDimensions as top-level Runtime classes
 /**
@@ -33,8 +34,7 @@ public sealed class PerceivedResolutionResult {
      * @property perceivedResolution The calculated pixel dimensions (width and height) that the
      *   entity is perceived to occupy on the display.
      */
-    public class Success(public val perceivedResolution: PixelDimensions) :
-        PerceivedResolutionResult() {
+    public class Success(public val perceivedResolution: IntSize2d) : PerceivedResolutionResult() {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (other !is Success) return false

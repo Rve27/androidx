@@ -49,9 +49,9 @@ import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.scenecore.ExrImage
 import androidx.xr.scenecore.GltfModel
-import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.SpatialCapabilities
 import androidx.xr.scenecore.SpatialEnvironment
 import androidx.xr.scenecore.SpatialEnvironment.SpatialEnvironmentPreference
@@ -77,7 +77,7 @@ class EnvironmentTestActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val mActivity = this
 
-        session.scene.mainPanelEntity.setSizeInPixels(PixelDimensions(width = 1500, height = 2000))
+        session.scene.mainPanelEntity.setSizeInPixels(IntSize2d(width = 1500, height = 2000))
 
         session.scene.spatialEnvironment.setPassthroughOpacityPreference(0.0f)
         session.scene.spatialEnvironment.addOnPassthroughOpacityChangedListener { newOpacity ->

@@ -25,6 +25,7 @@ import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.HeadTrackingMode
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
+import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
@@ -33,7 +34,6 @@ import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.InteractableComponent
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
-import androidx.xr.scenecore.PixelDimensions
 import androidx.xr.scenecore.scene
 
 class HitTestActivity : AppCompatActivity() {
@@ -54,7 +54,7 @@ class HitTestActivity : AppCompatActivity() {
             PanelEntity.create(
                 session,
                 panelContentView,
-                PixelDimensions(640, 480),
+                IntSize2d(640, 480),
                 "panel",
                 Pose(Vector3(0f, -0.5f, 0.5f)),
             )
