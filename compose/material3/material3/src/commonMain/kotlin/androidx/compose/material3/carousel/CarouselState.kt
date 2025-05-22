@@ -53,6 +53,15 @@ class CarouselState(
     override val isScrollInProgress: Boolean
         get() = pagerState.isScrollInProgress
 
+    /**
+     * The item that sits closest to the snapped position. This is an observable value and will
+     * change as the carousel scrolls either by gesture or animation.
+     *
+     * Please refer to [PagerState.currentPage] for more information.
+     */
+    val currentItem: Int
+        get() = pagerState.currentPage
+
     override fun dispatchRawDelta(delta: Float): Float {
         return pagerState.dispatchRawDelta(delta)
     }

@@ -448,6 +448,8 @@ abstract class androidx.compose.material3/TextFieldLabelPosition { // androidx.c
 final class androidx.compose.material3.carousel/CarouselState : androidx.compose.foundation.gestures/ScrollableState { // androidx.compose.material3.carousel/CarouselState|null[0]
     constructor <init>(kotlin/Int = ..., kotlin/Float = ..., kotlin/Function0<kotlin/Int>) // androidx.compose.material3.carousel/CarouselState.<init>|<init>(kotlin.Int;kotlin.Float;kotlin.Function0<kotlin.Int>){}[0]
 
+    final val currentItem // androidx.compose.material3.carousel/CarouselState.currentItem|{}currentItem[0]
+        final fun <get-currentItem>(): kotlin/Int // androidx.compose.material3.carousel/CarouselState.currentItem.<get-currentItem>|<get-currentItem>(){}[0]
     final val isScrollInProgress // androidx.compose.material3.carousel/CarouselState.isScrollInProgress|{}isScrollInProgress[0]
         final fun <get-isScrollInProgress>(): kotlin/Boolean // androidx.compose.material3.carousel/CarouselState.isScrollInProgress.<get-isScrollInProgress>|<get-isScrollInProgress>(){}[0]
 
