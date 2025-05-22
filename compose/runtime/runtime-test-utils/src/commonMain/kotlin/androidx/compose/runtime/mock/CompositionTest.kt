@@ -25,7 +25,7 @@ import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.runtime.tooling.CompositionObserver
 import androidx.compose.runtime.tooling.CompositionObserverHandle
-import androidx.compose.runtime.tooling.observe
+import androidx.compose.runtime.tooling.setObserver
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlinx.coroutines.CoroutineScope
@@ -72,7 +72,7 @@ fun compositionTest(block: suspend CompositionTestScope.() -> Unit) = runTest {
                     composed = true
                     root = View().apply { name = "root" }
                     val composition = Composition(ViewApplier(root), recomposer)
-                    val result = composition.observe(observer)
+                    val result = composition.setObserver(observer)
                     this.composition = composition
                     composition.setContent(block)
                     return result

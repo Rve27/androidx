@@ -1403,9 +1403,10 @@ internal class ComposerImpl(
     private val abandonSet: MutableSet<RememberObserver>,
     private var changes: ChangeList,
     private var lateChanges: ChangeList,
+    private val observerHolder: CompositionObserverHolder,
 
     /** The composition that owns this composer */
-    override val composition: ControlledComposition,
+    override val composition: CompositionImpl,
 ) : Composer {
     private val pendingStack = Stack<Pending?>()
     private var pending: Pending? = null
@@ -2848,6 +2849,7 @@ internal class ComposerImpl(
         var firstInRange = invalidations.firstInRange(reader.currentGroup, end)
         while (firstInRange != null) {
             val location = firstInRange.location
+            val scope = firstInRange.scope
 
             invalidations.removeLocation(location)
 
@@ -2879,7 +2881,7 @@ internal class ComposerImpl(
 
                 // Invoke the function with the same parameters as the last composition (which
                 // were captured in the lambda set into the scope).
-                firstInRange.scope.compose(this)
+                scope.compose(this)
 
                 // We could have moved out of a provider so the provider cache is invalid.
                 providerCache = null
@@ -2890,8 +2892,18 @@ internal class ComposerImpl(
                 // If the invalidation is not used restore the reads that were removed when the
                 // the invalidation was recorded. This happens, for example, when on of a derived
                 // state's dependencies changed but the derived state itself was not changed.
-                invalidateStack.push(firstInRange.scope)
-                firstInRange.scope.rereadTrackedInstances()
+                invalidateStack.push(scope)
+                val observer = observerHolder.current()
+                if (observer != null) {
+                    try {
+                        observer.onScopeEnter(scope)
+                        scope.rereadTrackedInstances()
+                    } finally {
+                        observer.onScopeExit(scope)
+                    }
+                } else {
+                    scope.rereadTrackedInstances()
+                }
                 invalidateStack.pop()
             }
 
@@ -3304,7 +3316,7 @@ internal class ComposerImpl(
             val scope = RecomposeScopeImpl(composition as CompositionImpl)
             invalidateStack.push(scope)
             updateValue(scope)
-            scope.start(compositionToken)
+            enterRecomposeScope(scope)
         } else {
             val invalidation = invalidations.removeLocation(reader.parent)
             val slot = reader.next()
@@ -3322,7 +3334,8 @@ internal class ComposerImpl(
                         if (forced) scope.forcedRecompose = false
                     }
             invalidateStack.push(scope)
-            scope.start(compositionToken)
+            enterRecomposeScope(scope)
+
             if (scope.paused) {
                 scope.paused = false
                 scope.resuming = true
@@ -3333,6 +3346,11 @@ internal class ComposerImpl(
                 }
             }
         }
+    }
+
+    private fun enterRecomposeScope(scope: RecomposeScopeImpl) {
+        scope.start(compositionToken)
+        observerHolder.current()?.onScopeEnter(scope)
     }
 
     /**
@@ -3349,9 +3367,7 @@ internal class ComposerImpl(
         val scope = if (invalidateStack.isNotEmpty()) invalidateStack.pop() else null
         if (scope != null) {
             scope.requiresRecompose = false
-            scope.end(compositionToken)?.let {
-                changeListWriter.endCompositionScope(it, composition)
-            }
+            exitRecomposeScope(scope)?.let { changeListWriter.endCompositionScope(it, composition) }
             if (scope.resuming) {
                 scope.resuming = false
                 changeListWriter.endResumingScope(scope)
@@ -3379,6 +3395,11 @@ internal class ComposerImpl(
             }
         end(isNode = false)
         return result
+    }
+
+    private fun exitRecomposeScope(scope: RecomposeScopeImpl): ((Composition) -> Unit)? {
+        observerHolder.current()?.onScopeExit(scope)
+        return scope.end(compositionToken)
     }
 
     @InternalComposeApi
@@ -3768,6 +3789,7 @@ internal class ComposerImpl(
         content: (@Composable () -> Unit)?,
     ) {
         runtimeCheck(!isComposing) { "Reentrant composition is not supported" }
+        val observer = observerHolder.current()
         trace("Compose:recompose") {
             compositionToken = currentSnapshot().snapshotId.hashCode()
             providerUpdates = null
@@ -3775,6 +3797,7 @@ internal class ComposerImpl(
             nodeIndex = 0
             var complete = false
             isComposing = true
+            observer?.onBeginComposition(composition)
             try {
                 startRoot()
 
@@ -3809,6 +3832,7 @@ internal class ComposerImpl(
             } catch (e: Throwable) {
                 throw e.attachComposeStackTrace { currentStackTrace() }
             } finally {
+                observer?.onEndComposition(composition)
                 isComposing = false
                 invalidations.clear()
                 if (!complete) abortRoot()
@@ -4536,7 +4560,9 @@ private fun MutableList<Invalidation>.insertIfMissing(
         // Only derived state instance is important for composition
         if (instance is DerivedState<*>) {
             when (val oldInstance = invalidation.instances) {
-                null -> invalidation.instances = instance
+                null -> {
+                    invalidation.instances = instance
+                }
                 is MutableScatterSet<*> -> {
                     @Suppress("UNCHECKED_CAST")
                     oldInstance as MutableScatterSet<Any?>

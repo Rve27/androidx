@@ -34,6 +34,7 @@ import androidx.compose.runtime.snapshots.fastAny
 import androidx.compose.runtime.snapshots.fastForEach
 import androidx.compose.runtime.tooling.CompositionObserver
 import androidx.compose.runtime.tooling.CompositionObserverHandle
+import androidx.compose.runtime.tooling.ObservableComposition
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -411,7 +412,9 @@ fun ControlledComposition(
 
 private val PendingApplyNoModifications = Any()
 
-internal val CompositionImplServiceKey = object : CompositionServiceKey<CompositionImpl> {}
+@OptIn(ExperimentalComposeRuntimeApi::class)
+internal val ObservableCompositionServiceKey =
+    object : CompositionServiceKey<ObservableComposition> {}
 
 /**
  * The implementation of the [Composition] interface.
@@ -437,7 +440,8 @@ internal class CompositionImpl(
     ReusableComposition,
     RecomposeScopeOwner,
     CompositionServices,
-    PausableComposition {
+    PausableComposition,
+    ObservableComposition {
 
     /**
      * `null` if a composition isn't pending to apply. `Set<Any>` or `Array<Set<Any>>` if there are
@@ -561,7 +565,7 @@ internal class CompositionImpl(
 
     private var invalidationDelegateGroup: Int = 0
 
-    internal val observerHolder = CompositionObserverHolder()
+    internal val observerHolder = CompositionObserverHolder(parent = parent)
 
     private val rememberManager = RememberEventDispatcher()
 
@@ -575,6 +579,7 @@ internal class CompositionImpl(
                 changes = changes,
                 lateChanges = lateChanges,
                 composition = this,
+                observerHolder = observerHolder,
             )
             .also { parent.registerComposer(it) }
 
@@ -679,7 +684,7 @@ internal class CompositionImpl(
     }
 
     @OptIn(ExperimentalComposeRuntimeApi::class)
-    internal fun observe(observer: CompositionObserver): CompositionObserverHandle {
+    override fun setObserver(observer: CompositionObserver): CompositionObserverHandle {
         synchronized(lock) {
             observerHolder.observer = observer
             observerHolder.root = true
@@ -782,16 +787,7 @@ internal class CompositionImpl(
             synchronized(lock) {
                 drainPendingModificationsForCompositionLocked()
                 guardInvalidationsLocked { invalidations ->
-                    val observer = observer()
-                    if (observer != null) {
-                        @Suppress("UNCHECKED_CAST")
-                        observer.onBeginComposition(
-                            this,
-                            invalidations.asMap() as Map<RecomposeScope, Set<Any>>,
-                        )
-                    }
                     composer.composeContent(invalidations, content, shouldPause)
-                    observer?.onEndComposition(this)
                 }
             }
         }
@@ -944,15 +940,19 @@ internal class CompositionImpl(
     override fun recordReadOf(value: Any) {
         // Not acquiring lock since this happens during composition with it already held
         if (!areChildrenComposing) {
-            composer.currentRecomposeScope?.let {
-                it.used = true
-                val alreadyRead = it.recordRead(value)
+            composer.currentRecomposeScope?.let { scope ->
+                scope.used = true
+
+                val alreadyRead = scope.recordRead(value)
+
+                observer()?.onReadInScope(scope, value)
+
                 if (!alreadyRead) {
                     if (value is StateObjectImpl) {
                         value.recordReadIn(ReaderKind.Composition)
                     }
 
-                    observations.add(value, it)
+                    observations.add(value, scope)
 
                     // Record derived state dependency mapping
                     if (value is DerivedState<*>) {
@@ -964,7 +964,7 @@ internal class CompositionImpl(
                             }
                             derivedStates.add(dependency, value)
                         }
-                        it.recordDerivedStateValue(value, record.currentValue)
+                        scope.recordDerivedStateValue(value, record.currentValue)
                     }
                 }
             }
@@ -1005,16 +1005,9 @@ internal class CompositionImpl(
             drainPendingModificationsForCompositionLocked()
             guardChanges {
                 guardInvalidationsLocked { invalidations ->
-                    val observer = observer()
-                    @Suppress("UNCHECKED_CAST")
-                    observer?.onBeginComposition(
-                        this,
-                        invalidations.asMap() as Map<RecomposeScope, Set<Any>>,
-                    )
                     composer.recompose(invalidations, shouldPause).also { shouldDrain ->
                         // Apply would normally do this for us; do it now if apply shouldn't happen.
                         if (!shouldDrain) drainPendingModificationsLocked()
-                        observer?.onEndComposition(this)
                     }
                 }
             }
@@ -1204,16 +1197,22 @@ internal class CompositionImpl(
         }
         if (!scope.canRecompose)
             return InvalidationResult.IGNORED // The scope isn't able to be recomposed/invalidated
-        return invalidateChecked(scope, anchor, instance)
+        return invalidateChecked(scope, anchor, instance).also {
+            if (it != InvalidationResult.IGNORED) {
+                observer()?.onScopeInvalidated(scope, instance)
+            }
+        }
     }
 
     override fun recomposeScopeReleased(scope: RecomposeScopeImpl) {
         pendingInvalidScopes = true
+
+        observer()?.onScopeDisposed(scope)
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getCompositionService(key: CompositionServiceKey<T>): T? =
-        if (key == CompositionImplServiceKey) this as T else null
+        if (key == ObservableCompositionServiceKey) this as T else null
 
     private fun tryImminentInvalidation(scope: RecomposeScopeImpl, instance: Any?): Boolean =
         isComposing && composer.tryImminentInvalidation(scope, instance)
@@ -1249,12 +1248,11 @@ internal class CompositionImpl(
 
                     // Observer requires a map of scope -> states, so we have to fill it if observer
                     // is set.
-                    val observer = observer()
                     if (instance == null) {
                         // invalidations[scope] containing ScopeInvalidated means it was invalidated
                         // unconditionally.
                         invalidations.set(scope, ScopeInvalidated)
-                    } else if (observer == null && instance !is DerivedState<*>) {
+                    } else if (instance !is DerivedState<*>) {
                         // If observer is not set, we only need to add derived states to
                         // invalidation,
                         // as regular states are always going to invalidate.
@@ -1325,20 +1323,7 @@ internal class CompositionImpl(
         }
     }
 
-    private fun observer(): CompositionObserver? {
-        val holder = observerHolder
-
-        return if (holder.root) {
-            holder.observer
-        } else {
-            val parentHolder = parent.observerHolder
-            val parentObserver = parentHolder?.observer
-            if (parentObserver != holder.observer) {
-                holder.observer = parentObserver
-            }
-            parentObserver
-        }
-    }
+    private fun observer(): CompositionObserver? = observerHolder.current()
 
     override fun deactivate() {
         synchronized(lock) {
@@ -1373,8 +1358,22 @@ internal class CompositionImpl(
 
 internal object ScopeInvalidated
 
-@ExperimentalComposeRuntimeApi
+@OptIn(ExperimentalComposeRuntimeApi::class)
 internal class CompositionObserverHolder(
     var observer: CompositionObserver? = null,
     var root: Boolean = false,
-)
+    private val parent: CompositionContext,
+) {
+    fun current(): CompositionObserver? {
+        return if (root) {
+            observer
+        } else {
+            val parentHolder = parent.observerHolder
+            val parentObserver = parentHolder?.observer
+            if (parentObserver != observer) {
+                observer = parentObserver
+            }
+            parentObserver
+        }
+    }
+}

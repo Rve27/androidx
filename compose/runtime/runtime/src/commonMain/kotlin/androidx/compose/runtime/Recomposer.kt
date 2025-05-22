@@ -53,6 +53,8 @@ import androidx.compose.runtime.snapshots.fastMapNotNull
 import androidx.compose.runtime.tooling.CompositionData
 import androidx.compose.runtime.tooling.CompositionObserverHandle
 import androidx.compose.runtime.tooling.CompositionRegistrationObserver
+import androidx.compose.runtime.tooling.ObservableComposition
+import androidx.compose.runtime.tooling.observe
 import kotlin.collections.removeLast as removeLastKt
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
@@ -120,6 +122,15 @@ interface RecomposerInfo {
      * composition did not produce changes to apply.
      */
     val changeCount: Long
+
+    /**
+     * Register an observer to be notified when a composition is added to or removed from the given
+     * [Recomposer]. When this method is called, the observer will be notified of all currently
+     * registered compositions per the documentation in
+     * [CompositionRegistrationObserver.onCompositionRegistered].
+     */
+    @ExperimentalComposeRuntimeApi
+    fun observe(observer: CompositionRegistrationObserver): CompositionObserverHandle? = null
 }
 
 /** Read only information about [Recomposer] error state. */
@@ -316,7 +327,7 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
     private val hasBroadcastFrameClockAwaiters: Boolean
         get() = synchronized(stateLock) { hasBroadcastFrameClockAwaitersLocked }
 
-    @ExperimentalComposeRuntimeApi
+    @OptIn(ExperimentalComposeRuntimeApi::class)
     private var registrationObservers: MutableObjectList<CompositionRegistrationObserver>? = null
 
     /**
@@ -391,6 +402,10 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
 
         val currentError: RecomposerErrorInfo?
             get() = synchronized(stateLock) { this@Recomposer.errorState }
+
+        @OptIn(ExperimentalComposeRuntimeApi::class)
+        override fun observe(observer: CompositionRegistrationObserver): CompositionObserverHandle =
+            this@Recomposer.observe(observer)
 
         fun invalidateGroupsWithKey(key: Int) {
             val compositions: List<ControlledComposition> =
@@ -824,7 +839,9 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
     private fun clearKnownCompositionsLocked() {
         registrationObservers?.forEach { observer ->
             knownCompositions.forEach { composition ->
-                observer.onCompositionUnregistered(this, composition)
+                if (composition is ObservableComposition) {
+                    observer.onCompositionUnregistered(composition)
+                }
             }
         }
         _knownCompositions.clear()
@@ -835,7 +852,11 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
     private fun removeKnownCompositionLocked(composition: ControlledComposition) {
         if (_knownCompositions.remove(composition)) {
             _knownCompositionsCache = null
-            registrationObservers?.forEach { it.onCompositionUnregistered(this, composition) }
+            registrationObservers?.forEach {
+                if (composition is ObservableComposition) {
+                    it.onCompositionUnregistered(composition)
+                }
+            }
         }
     }
 
@@ -843,10 +864,14 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
     private fun addKnownCompositionLocked(composition: ControlledComposition) {
         _knownCompositions += composition
         _knownCompositionsCache = null
-        registrationObservers?.forEach { it.onCompositionRegistered(this, composition) }
+        registrationObservers?.forEach {
+            if (composition is ObservableComposition) {
+                it.onCompositionRegistered(composition)
+            }
+        }
     }
 
-    @ExperimentalComposeRuntimeApi
+    @OptIn(ExperimentalComposeRuntimeApi::class)
     internal fun addCompositionRegistrationObserver(
         observer: CompositionRegistrationObserver
     ): CompositionObserverHandle {
@@ -859,7 +884,9 @@ class Recomposer(effectCoroutineContext: CoroutineContext) : CompositionContext(
 
             observers += observer
             _knownCompositions.fastForEach { composition ->
-                observer.onCompositionRegistered(this@Recomposer, composition)
+                if (composition is ObservableComposition) {
+                    observer.onCompositionRegistered(composition)
+                }
             }
         }
 

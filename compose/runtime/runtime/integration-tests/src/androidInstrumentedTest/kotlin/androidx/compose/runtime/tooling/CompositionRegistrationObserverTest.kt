@@ -41,7 +41,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -93,26 +92,18 @@ class CompositionRegistrationObserverTest {
         val handle =
             rootRecomposer.observe(
                 object : CompositionRegistrationObserver {
-                    override fun onCompositionRegistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionRegistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.add(composition),
+                            receivedCompositions.add(composition as Composition),
                             "Attempted to register a duplicate composition",
                         )
                     }
 
-                    override fun onCompositionUnregistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionUnregistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.remove(composition),
+                            receivedCompositions.remove(composition as Composition),
                             "Attempted to unregister an unknown composition",
                         )
                     }
@@ -164,26 +155,18 @@ class CompositionRegistrationObserverTest {
         val handle =
             rootRecomposer.observe(
                 object : CompositionRegistrationObserver {
-                    override fun onCompositionRegistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionRegistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.add(composition),
+                            receivedCompositions.add(composition as Composition),
                             "Attempted to register a duplicate composition",
                         )
                     }
 
-                    override fun onCompositionUnregistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionUnregistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.remove(composition),
+                            receivedCompositions.remove(composition as Composition),
                             "Attempted to unregister an unknown composition",
                         )
                     }
@@ -241,26 +224,18 @@ class CompositionRegistrationObserverTest {
         val handle =
             rootRecomposer.observe(
                 object : CompositionRegistrationObserver {
-                    override fun onCompositionRegistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionRegistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.add(composition),
+                            receivedCompositions.add(composition as Composition),
                             "Attempted to register a duplicate composition",
                         )
                     }
 
-                    override fun onCompositionUnregistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionUnregistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.remove(composition),
+                            receivedCompositions.remove(composition as Composition),
                             "Attempted to unregister an unknown composition",
                         )
                     }
@@ -322,26 +297,18 @@ class CompositionRegistrationObserverTest {
         val handle =
             rootRecomposer.observe(
                 object : CompositionRegistrationObserver {
-                    override fun onCompositionRegistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionRegistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.add(composition),
+                            receivedCompositions.add(composition as Composition),
                             "Attempted to register a duplicate composition",
                         )
                     }
 
-                    override fun onCompositionUnregistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionUnregistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.remove(composition),
+                            receivedCompositions.remove(composition as Composition),
                             "Attempted to unregister an unknown composition",
                         )
                     }
@@ -403,26 +370,18 @@ class CompositionRegistrationObserverTest {
         val handle =
             rootRecomposer.observe(
                 object : CompositionRegistrationObserver {
-                    override fun onCompositionRegistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionRegistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.add(composition),
+                            receivedCompositions.add(composition as Composition),
                             "Attempted to register a duplicate composition",
                         )
                     }
 
-                    override fun onCompositionUnregistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionUnregistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.remove(composition),
+                            receivedCompositions.remove(composition as Composition),
                             "Attempted to unregister an unknown composition",
                         )
                     }
@@ -471,26 +430,19 @@ class CompositionRegistrationObserverTest {
         val handle =
             rootRecomposer.observe(
                 object : CompositionRegistrationObserver {
-                    override fun onCompositionRegistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionRegistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.add(composition),
+                            receivedCompositions.add(composition as Composition),
                             "Attempted to register a duplicate composition",
                         )
                     }
 
-                    override fun onCompositionUnregistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionUnregistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
+
                         assertTrue(
-                            receivedCompositions.remove(composition),
+                            receivedCompositions.remove(composition as Composition),
                             "Attempted to unregister an unknown composition",
                         )
                     }
@@ -539,26 +491,18 @@ class CompositionRegistrationObserverTest {
         val handle =
             rootRecomposer.observe(
                 object : CompositionRegistrationObserver {
-                    override fun onCompositionRegistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionRegistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.add(composition),
+                            receivedCompositions.add(composition as Composition),
                             "Attempted to register a duplicate composition",
                         )
                     }
 
-                    override fun onCompositionUnregistered(
-                        recomposer: Recomposer,
-                        composition: Composition,
-                    ) {
+                    override fun onCompositionUnregistered(composition: ObservableComposition) {
                         assertFalse(disposed, "Callback invoked after being disposed")
-                        assertSame(rootRecomposer, recomposer, "Unexpected Recomposer")
                         assertTrue(
-                            receivedCompositions.remove(composition),
+                            receivedCompositions.remove(composition as Composition),
                             "Attempted to unregister an unknown composition",
                         )
                     }
