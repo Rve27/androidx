@@ -21,9 +21,10 @@ import androidx.test.uiautomator.children
 
 /**
  * Internal core function that performs a DFS for all the publicly exposed api. This is called by
- * all the [androidx.test.uiautomator.onView] and [androidx.test.uiautomator.onViews] functions.
+ * all the [androidx.test.uiautomator.onElement] and [androidx.test.uiautomator.onElements]
+ * functions.
  */
-internal fun findViews(
+internal fun findElements(
     timeoutMs: Long,
     pollIntervalMs: Long,
     shouldStop: (MutableList<AccessibilityNodeInfo>) -> (Boolean),
@@ -31,7 +32,7 @@ internal fun findViews(
     rootNodeBlock: () -> (List<AccessibilityNodeInfo>),
 ): List<AccessibilityNodeInfo> {
 
-    // DFS to find a view matching the given filter
+    // DFS to find a element matching the given filter
     fun dfs(node: AccessibilityNodeInfo, collected: MutableList<AccessibilityNodeInfo>) {
 
         // Check if this is the node we're looking for

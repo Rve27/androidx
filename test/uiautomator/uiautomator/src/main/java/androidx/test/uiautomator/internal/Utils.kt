@@ -72,4 +72,4 @@ internal fun takeScreenshotBitmap(bounds: Rect): Bitmap {
 }
 
 internal fun takeViewNodeTree(root: AccessibilityNodeInfo, displayRect: Rect) =
-    ViewNode.fromAccessibilityNodeInfo(depth = 0, node = root, displayRect = displayRect)
+    ElementNode.fromAccessibilityNodeInfo(depth = 0, node = root, displayRect = displayRect)

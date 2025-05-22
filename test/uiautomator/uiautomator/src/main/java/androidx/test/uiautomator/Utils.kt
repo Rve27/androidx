@@ -51,7 +51,7 @@ public fun Bitmap.saveToFile(
     compress(compressFormat, quality, FileOutputStream(parcelFileDescriptor.fileDescriptor))
 
 /**
- * Thrown when a view is not found after invoking [androidx.test.uiautomator.onView] or
- * [androidx.test.uiautomator.onViews].
+ * Thrown when an element is not found after invoking [androidx.test.uiautomator.onElement] or
+ * [androidx.test.uiautomator.onElements].
  */
-public class ViewNotFoundException(msg: String? = null) : Exception(msg)
+public class ElementNotFoundException(msg: String? = null) : Exception(msg)
