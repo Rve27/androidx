@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage")
-
 package androidx.lifecycle.runtime.lint
 
 import androidx.lifecycle.lint.LifecycleWhenChecks
@@ -26,8 +24,6 @@ import androidx.lifecycle.runtime.lint.stubs.VIEW_STUB
 import com.android.tools.lint.checks.infrastructure.TestFiles
 import com.android.tools.lint.checks.infrastructure.TestLintResult
 import com.android.tools.lint.checks.infrastructure.TestLintTask
-import com.android.tools.lint.useFirUast
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -93,7 +89,6 @@ class WhenMethodsTest(val config: TestConfig) {
 
     @Test
     fun basicTryCatch() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             ${config.receiver}.${config.methodName} {

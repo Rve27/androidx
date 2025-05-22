@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage")
-
 package androidx.lifecycle.runtime.lint
 
 import androidx.lifecycle.lint.LifecycleWhenChecks.Companion.ISSUE
@@ -26,8 +24,6 @@ import androidx.lifecycle.runtime.lint.stubs.VIEW_STUB
 import com.android.tools.lint.checks.infrastructure.TestFiles.kt
 import com.android.tools.lint.checks.infrastructure.TestLintResult
 import com.android.tools.lint.checks.infrastructure.TestLintTask
-import com.android.tools.lint.useFirUast
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -134,7 +130,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun accessViewInFinally() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -166,7 +161,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun accessViewInFinallyAfterLifecycleCheck() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -203,7 +197,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun tryInLifecycleCheck() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -225,7 +218,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun tryWithNonSuspendLambda() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -276,7 +268,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun nonSuspendLambdaWithTry() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         // some weird stuff is going, but it is not our business
         val input =
             """
@@ -294,14 +285,12 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun visitResolvedMethod() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input = "suspendWithTryCatch()"
         check(input).expect(error(12, "    FooView().foo()"))
     }
 
     @Test
     fun visitResolvedMethodWithCycle() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input = "suspendingWithCycle()"
         check(input).expect(error(30, "    FooView().foo()"))
     }
@@ -324,7 +313,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun tryInTrySuspendAfter() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -340,7 +328,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun tryInTrySuspendBefore() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -356,7 +343,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun tryInTrySuspendInInnerSuspend() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -374,7 +360,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun tryInTrySuspendInInnerFinally() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -392,7 +377,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun failingTryOkTry() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -412,7 +396,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun tryInFinallySuspendInOuterTry() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -430,7 +413,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun accessViewInTryInFinallySuspendInOuter() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -448,7 +430,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun failingTrySuspendFunOkTry() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
@@ -503,7 +484,6 @@ class LifecycleWhenChecksTest {
 
     @Test
     fun viewAccessInFunction() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val input =
             """
             try {
