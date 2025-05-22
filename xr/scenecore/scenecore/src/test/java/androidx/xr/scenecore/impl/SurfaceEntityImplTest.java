@@ -36,7 +36,7 @@ import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
-import androidx.xr.scenecore.testing.FakeImpressApi;
+import com.google.ar.imp.apibindings.FakeImpressApiImpl;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.XrExtensions;
@@ -97,7 +97,7 @@ public final class SurfaceEntityImplTest {
         when(splitEngineSubspaceManager.createSubspace(anyString(), anyInt()))
                 .thenReturn(expectedSubspaceNode);
 
-        FakeImpressApi impressApi = new FakeImpressApi();
+        FakeImpressApiImpl impressApi = new FakeImpressApiImpl();
         int subspaceImpressNode = impressApi.createImpressNode();
         String subspaceName = "stereo_surface_panel_entity_subspace_" + subspaceImpressNode;
         SubspaceNode subspaceNode =

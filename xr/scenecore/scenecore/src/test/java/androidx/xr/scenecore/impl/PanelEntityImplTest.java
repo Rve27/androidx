@@ -41,7 +41,6 @@ import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
-import androidx.xr.scenecore.testing.FakeImpressApi;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.XrExtensions;
@@ -49,6 +48,7 @@ import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.NodeRepository;
 
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
+import com.google.ar.imp.apibindings.FakeImpressApiImpl;
 import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
 import com.google.common.truth.Truth;
 
@@ -66,7 +66,7 @@ public class PanelEntityImplTest {
     private static final Dimensions kVgaResolutionPx = new Dimensions(640f, 480f, 0f);
     private static final Dimensions kHdResolutionPx = new Dimensions(1280f, 720f, 0f);
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    FakeImpressApi mFakeImpressApi = new FakeImpressApi();
+    FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
     private final ActivityController<Activity> mActivityController =
             Robolectric.buildActivity(Activity.class);
     private final Activity mActivity = mActivityController.create().start().get();

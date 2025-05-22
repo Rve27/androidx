@@ -32,10 +32,10 @@ import androidx.xr.runtime.testing.FakeRuntimeFactory
 import androidx.xr.scenecore.impl.JxrPlatformAdapterAxr
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary
-import androidx.xr.scenecore.testing.FakeImpressApi
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService
 import com.android.extensions.xr.XrExtensions
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager
+import com.google.ar.imp.apibindings.FakeImpressApiImpl
 import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer
 import org.mockito.Mockito.mock
 import org.robolectric.shadows.ShadowDisplay
@@ -143,7 +143,7 @@ public fun createFakeRuntime(activity: Activity): JxrPlatformAdapter =
         /* activity = */ activity,
         /* executor = */ FakeScheduledExecutorService(),
         /* extensions = */ (activity as SubspaceTestingActivity).extensions,
-        /* impressApi = */ FakeImpressApi(),
+        /* impressApi = */ FakeImpressApiImpl(),
         /* perceptionLibrary = */ PerceptionLibrary(),
         /* splitEngineSubspaceManager = */ mock(SplitEngineSubspaceManager::class.java),
         /* splitEngineRenderer = */ mock(ImpSplitEngineRenderer::class.java),

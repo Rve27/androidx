@@ -51,7 +51,7 @@ import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Plane;
 import androidx.xr.scenecore.impl.perception.Session;
-import androidx.xr.scenecore.testing.FakeImpressApi;
+import com.google.ar.imp.apibindings.FakeImpressApiImpl;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.XrExtensions;
@@ -99,7 +99,7 @@ public final class RuntimeUtilsTest {
 
         FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
         XrExtensions xrExtensions = XrExtensionsProvider.getXrExtensions();
-        FakeImpressApi mFakeImpressApi = new FakeImpressApi();
+        FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
         PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
         Session mSession = mock(Session.class);
         when(mPerceptionLibrary.initSession(eq(mActivity), anyInt(), eq(mFakeExecutor)))

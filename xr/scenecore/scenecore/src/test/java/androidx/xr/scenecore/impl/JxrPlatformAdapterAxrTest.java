@@ -94,7 +94,6 @@ import androidx.xr.scenecore.impl.perception.Session;
 import androidx.xr.scenecore.impl.perception.ViewProjection;
 import androidx.xr.scenecore.impl.perception.ViewProjections;
 import androidx.xr.scenecore.impl.perception.exceptions.FailedToInitializeException;
-import androidx.xr.scenecore.testing.FakeImpressApi;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.ShadowXrExtensions;
@@ -120,6 +119,7 @@ import com.android.extensions.xr.space.VisibilityState;
 
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
 import com.google.androidxr.splitengine.SubspaceNode;
+import com.google.ar.imp.apibindings.FakeImpressApiImpl;
 import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -154,7 +154,7 @@ public final class JxrPlatformAdapterAxrTest {
 
     private static final int SUBSPACE_ID = 5;
     private final XrExtensions mXrExtensions = XrExtensionsProvider.getXrExtensions();
-    private final FakeImpressApi mFakeImpressApi = new FakeImpressApi();
+    private final FakeImpressApiImpl mFakeImpressApi = new FakeImpressApiImpl();
     private final Node mSubspaceNode = mXrExtensions.createNode();
     private final SubspaceNode mExpectedSubspace = new SubspaceNode(SUBSPACE_ID, mSubspaceNode);
     private final FakeScheduledExecutorService mFakeExecutor = new FakeScheduledExecutorService();
@@ -2333,7 +2333,7 @@ public final class JxrPlatformAdapterAxrTest {
 
         assertThat(surfaceEntityQuad).isNotNull();
         assertThat(surfaceEntityQuad).isInstanceOf(SurfaceEntityImpl.class);
-        FakeImpressApi.StereoSurfaceEntityData quadData =
+        FakeImpressApiImpl.StereoSurfaceEntityData quadData =
                 mFakeImpressApi
                         .getStereoSurfaceEntities()
                         .get(((SurfaceEntityImpl) surfaceEntityQuad).getEntityImpressNode());
@@ -2348,7 +2348,7 @@ public final class JxrPlatformAdapterAxrTest {
 
         assertThat(surfaceEntitySphere).isNotNull();
         assertThat(surfaceEntitySphere).isInstanceOf(SurfaceEntityImpl.class);
-        FakeImpressApi.StereoSurfaceEntityData sphereData =
+        FakeImpressApiImpl.StereoSurfaceEntityData sphereData =
                 mFakeImpressApi
                         .getStereoSurfaceEntities()
                         .get(((SurfaceEntityImpl) surfaceEntitySphere).getEntityImpressNode());
@@ -2363,7 +2363,7 @@ public final class JxrPlatformAdapterAxrTest {
 
         assertThat(surfaceEntityHemisphere).isNotNull();
         assertThat(surfaceEntityHemisphere).isInstanceOf(SurfaceEntityImpl.class);
-        FakeImpressApi.StereoSurfaceEntityData hemisphereData =
+        FakeImpressApiImpl.StereoSurfaceEntityData hemisphereData =
                 mFakeImpressApi
                         .getStereoSurfaceEntities()
                         .get(((SurfaceEntityImpl) surfaceEntityHemisphere).getEntityImpressNode());
@@ -2373,13 +2373,14 @@ public final class JxrPlatformAdapterAxrTest {
         // TODO: b/366588688 - Move these into tests for SurfaceEntityImpl
         assertThat(quadData.getStereoMode()).isEqualTo(SurfaceEntity.StereoMode.SIDE_BY_SIDE);
         assertThat(quadData.getCanvasShape())
-                .isEqualTo(FakeImpressApi.StereoSurfaceEntityData.CanvasShape.QUAD);
+                .isEqualTo(FakeImpressApiImpl.StereoSurfaceEntityData.CanvasShape.QUAD);
         assertThat(sphereData.getStereoMode()).isEqualTo(SurfaceEntity.StereoMode.TOP_BOTTOM);
         assertThat(sphereData.getCanvasShape())
-                .isEqualTo(FakeImpressApi.StereoSurfaceEntityData.CanvasShape.VR_360_SPHERE);
+                .isEqualTo(FakeImpressApiImpl.StereoSurfaceEntityData.CanvasShape.VR_360_SPHERE);
         assertThat(hemisphereData.getStereoMode()).isEqualTo(SurfaceEntity.StereoMode.MONO);
         assertThat(hemisphereData.getCanvasShape())
-                .isEqualTo(FakeImpressApi.StereoSurfaceEntityData.CanvasShape.VR_180_HEMISPHERE);
+                .isEqualTo(
+                        FakeImpressApiImpl.StereoSurfaceEntityData.CanvasShape.VR_180_HEMISPHERE);
 
         assertThat(quadData.getWidth()).isEqualTo(kTestWidth);
         assertThat(quadData.getHeight()).isEqualTo(kTestHeight);
@@ -2415,7 +2416,7 @@ public final class JxrPlatformAdapterAxrTest {
                         .getStereoSurfaceEntities()
                         .get(((SurfaceEntityImpl) surfaceEntityQuad).getEntityImpressNode());
         assertThat(quadData.getCanvasShape())
-                .isEqualTo(FakeImpressApi.StereoSurfaceEntityData.CanvasShape.VR_360_SPHERE);
+                .isEqualTo(FakeImpressApiImpl.StereoSurfaceEntityData.CanvasShape.VR_360_SPHERE);
         assertThat(quadData.getStereoMode()).isEqualTo(SurfaceEntity.StereoMode.TOP_BOTTOM);
 
         Surface surface = surfaceEntityQuad.getSurface();
@@ -2520,8 +2521,8 @@ public final class JxrPlatformAdapterAxrTest {
                                         node ->
                                                 node.getMaterialOverride() != null
                                                         && node.getMaterialOverride().getType()
-                                                                == FakeImpressApi.MaterialData.Type
-                                                                        .WATER)
+                                                                == FakeImpressApiImpl.MaterialData
+                                                                        .Type.WATER)
                                 .toArray())
                 .hasLength(1);
     }

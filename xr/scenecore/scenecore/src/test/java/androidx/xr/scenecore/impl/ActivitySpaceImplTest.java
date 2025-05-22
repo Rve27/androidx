@@ -44,7 +44,6 @@ import androidx.xr.runtime.testing.FakeSpatialModeChangeListener;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Session;
-import androidx.xr.scenecore.testing.FakeImpressApi;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.ShadowXrExtensions;
@@ -62,6 +61,7 @@ import com.android.extensions.xr.space.SpatialCapabilities;
 import com.android.extensions.xr.space.SpatialState;
 
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
+import com.google.ar.imp.apibindings.FakeImpressApiImpl;
 import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -89,7 +89,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
             Mockito.mock(ImpSplitEngineRenderer.class);
 
     private XrExtensions mXrExtensions;
-    private FakeImpressApi mFakeImpressApi;
+    private FakeImpressApiImpl mFakeImpressApi;
     private JxrPlatformAdapter mTestRuntime;
     private ActivitySpaceImpl mActivitySpace;
     private NodeRepository mNodeRepository = NodeRepository.getInstance();
@@ -112,7 +112,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
     @Before
     public void setUp() {
         mXrExtensions = XrExtensionsProvider.getXrExtensions();
-        mFakeImpressApi = new FakeImpressApi();
+        mFakeImpressApi = new FakeImpressApiImpl();
         when(mPerceptionLibrary.initSession(eq(mActivity), anyInt(), eq(mFakeExecutor)))
                 .thenReturn(immediateFuture(Mockito.mock(Session.class)));
 
