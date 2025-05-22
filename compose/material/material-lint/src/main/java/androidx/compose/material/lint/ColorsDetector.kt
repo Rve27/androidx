@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage")
+@file:Suppress("UnstableApiUsage", "UastImplementation")
 
 package androidx.compose.material.lint
 
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.toUElement
 import org.jetbrains.uast.tryResolve
 import org.jetbrains.uast.util.isConstructorCall
@@ -191,6 +192,12 @@ class ParameterWithArgument(val parameter: PsiParameter, val argument: UExpressi
                 // to a class, so we get an IncompatibleClassChangeError.
                 parameter is KtLightParameter -> {
                     parameter.kotlinOrigin!!.defaultValue.toUElement()
+                }
+                // Any declarations whose signature includes Color, a value class, will not be
+                // visible to Java, hence not modeled in SLC (K2).
+                // For source analysis purpose, UAST creates a "fake" PSI.
+                parameter is UastKotlinPsiParameter -> {
+                    parameter.ktOrigin.defaultValue.toUElement()
                 }
                 // A default value exists, but it is in a class file so we can't access it anymore
                 else -> null
