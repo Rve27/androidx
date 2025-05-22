@@ -530,7 +530,7 @@ package androidx.xr.compose.subspace.layout {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SubspaceModifier width(androidx.xr.compose.subspace.layout.SubspaceModifier, float width);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialAlignment {
+  public interface SpatialAlignment {
     method public int depthOffset(int depth, int space);
     method public static androidx.xr.compose.subspace.layout.SpatialAlignment.Depth getBack();
     method public static androidx.xr.compose.subspace.layout.SpatialAlignment.Vertical getBottom();
@@ -607,7 +607,7 @@ package androidx.xr.compose.subspace.layout {
     method public int offset(int height, int space);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialBiasAlignment implements androidx.xr.compose.subspace.layout.SpatialAlignment {
+  public final class SpatialBiasAlignment implements androidx.xr.compose.subspace.layout.SpatialAlignment {
     ctor public SpatialBiasAlignment(float horizontalBias, float verticalBias, float depthBias);
     method public androidx.xr.compose.subspace.layout.SpatialBiasAlignment copy(optional float horizontalBias, optional float verticalBias, optional float depthBias);
     method public int depthOffset(int depth, int space);
