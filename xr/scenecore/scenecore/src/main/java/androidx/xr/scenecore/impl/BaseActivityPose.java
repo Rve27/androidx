@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.common;
+package androidx.xr.scenecore.impl;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RestrictTo;
 import androidx.xr.runtime.internal.ActivityPose;
-import androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue;
 import androidx.xr.runtime.internal.HitTestResult;
 import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Vector3;
@@ -31,8 +29,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  *
  * <p>A ActivityPose is an object that has a pose in the world space.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public abstract class BaseActivityPose implements ActivityPose {
+abstract class BaseActivityPose implements ActivityPose {
     @Override
     @NonNull
     public Pose getActivitySpacePose() {

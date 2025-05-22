@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.common;
+package androidx.xr.scenecore.impl;
 
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RestrictTo;
 import androidx.xr.runtime.internal.Component;
 import androidx.xr.runtime.internal.Entity;
 import androidx.xr.runtime.internal.Space;
@@ -32,8 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** Implementation of a subset of core RealityCore Entity functionality. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public abstract class BaseEntity extends BaseActivityPose implements Entity {
+abstract class BaseEntity extends BaseActivityPose implements Entity {
     private final List<Entity> mChildren = new ArrayList<>();
     private final List<Component> mComponentList = new ArrayList<>();
     private BaseEntity mParent;

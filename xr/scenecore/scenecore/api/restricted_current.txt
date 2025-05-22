@@ -1060,48 +1060,6 @@ package androidx.xr.scenecore {
 
 }
 
-package androidx.xr.scenecore.common {
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class BaseActivityPose implements androidx.xr.runtime.internal.ActivityPose {
-    ctor public BaseActivityPose();
-    method public androidx.xr.runtime.math.Pose getActivitySpacePose();
-    method public androidx.xr.runtime.math.Vector3 getActivitySpaceScale();
-    method public androidx.xr.runtime.math.Pose getPoseInActivitySpace();
-    method public androidx.xr.runtime.math.Vector3 getWorldSpaceScale();
-    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.HitTestResult!> hitTest(androidx.xr.runtime.math.Vector3, androidx.xr.runtime.math.Vector3, @androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue int);
-    method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose, androidx.xr.runtime.internal.ActivityPose);
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class BaseEntity extends androidx.xr.scenecore.common.BaseActivityPose implements androidx.xr.runtime.internal.Entity {
-    ctor public BaseEntity();
-    method public void addChild(androidx.xr.runtime.internal.Entity);
-    method protected void addChildInternal(androidx.xr.runtime.internal.Entity);
-    method public void addChildren(java.util.List<? extends androidx.xr.runtime.internal.Entity!>);
-    method public boolean addComponent(androidx.xr.runtime.internal.Component);
-    method public void dispose();
-    method public float getAlpha(@androidx.xr.runtime.internal.SpaceValue int);
-    method public java.util.List<androidx.xr.runtime.internal.Entity!> getChildren();
-    method public java.util.List<androidx.xr.runtime.internal.Component!> getComponents();
-    method public <T extends androidx.xr.runtime.internal.Component> java.util.List<T!> getComponentsOfType(Class<? extends T!>);
-    method public String getContentDescription();
-    method public androidx.xr.runtime.internal.Entity? getParent();
-    method public androidx.xr.runtime.math.Pose getPose(@androidx.xr.runtime.internal.SpaceValue int);
-    method public androidx.xr.runtime.math.Vector3 getScale(@androidx.xr.runtime.internal.SpaceValue int);
-    method public boolean isHidden(boolean);
-    method public void removeAllComponents();
-    method protected void removeChildInternal(androidx.xr.runtime.internal.Entity);
-    method public void removeComponent(androidx.xr.runtime.internal.Component);
-    method public void setAlpha(float, @androidx.xr.runtime.internal.SpaceValue int);
-    method public void setContentDescription(String);
-    method public void setHidden(boolean);
-    method public void setParent(androidx.xr.runtime.internal.Entity?);
-    method public void setPose(androidx.xr.runtime.math.Pose, @androidx.xr.runtime.internal.SpaceValue int);
-    method public void setScale(androidx.xr.runtime.math.Vector3, @androidx.xr.runtime.internal.SpaceValue int);
-    method protected final void setScaleInternal(androidx.xr.runtime.math.Vector3);
-  }
-
-}
-
 package androidx.xr.scenecore.impl {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class JxrPlatformAdapterAxr implements androidx.xr.runtime.internal.JxrPlatformAdapter {
@@ -1193,17 +1151,44 @@ package androidx.xr.scenecore.impl {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class MediaUtils {
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SubspaceNodeEntityImpl extends androidx.xr.scenecore.common.BaseEntity implements androidx.xr.runtime.internal.Entity androidx.xr.runtime.internal.SubspaceNodeEntity {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SubspaceNodeEntityImpl implements androidx.xr.runtime.internal.ActivityPose androidx.xr.runtime.internal.Entity androidx.xr.runtime.internal.SubspaceNodeEntity {
+    method public void addChild(androidx.xr.runtime.internal.Entity);
+    method public void addChildren(java.util.List<? extends androidx.xr.runtime.internal.Entity!>);
+    method public boolean addComponent(androidx.xr.runtime.internal.Component);
     method public void addInputEventListener(java.util.concurrent.Executor, androidx.xr.runtime.internal.InputEventListener);
     method public void addReformEventConsumer(com.android.extensions.xr.function.Consumer<com.android.extensions.xr.node.ReformEvent!>!, java.util.concurrent.Executor!);
+    method public void dispose();
+    method public androidx.xr.runtime.math.Pose getActivitySpacePose();
+    method public androidx.xr.runtime.math.Vector3 getActivitySpaceScale();
+    method public float getAlpha(@androidx.xr.runtime.internal.SpaceValue int);
+    method public java.util.List<androidx.xr.runtime.internal.Entity!> getChildren();
+    method public java.util.List<androidx.xr.runtime.internal.Component!> getComponents();
+    method public <T extends androidx.xr.runtime.internal.Component> java.util.List<T!> getComponentsOfType(Class<? extends T!>);
+    method public String getContentDescription();
     method public com.android.extensions.xr.node.Node! getNode();
+    method public androidx.xr.runtime.internal.Entity? getParent();
+    method public androidx.xr.runtime.math.Pose getPose(@androidx.xr.runtime.internal.SpaceValue int);
+    method public androidx.xr.runtime.math.Pose! getPoseInActivitySpace();
     method public com.android.extensions.xr.node.ReformOptions! getReformOptions();
+    method public androidx.xr.runtime.math.Vector3 getScale(@androidx.xr.runtime.internal.SpaceValue int);
     method public androidx.xr.runtime.internal.Dimensions getSize();
+    method public androidx.xr.runtime.math.Vector3 getWorldSpaceScale();
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.HitTestResult!> hitTest(androidx.xr.runtime.math.Vector3, androidx.xr.runtime.math.Vector3, @androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue int);
+    method public boolean isHidden(boolean);
+    method public void removeAllComponents();
+    method public void removeComponent(androidx.xr.runtime.internal.Component);
     method public void removeInputEventListener(androidx.xr.runtime.internal.InputEventListener);
     method public void removeReformEventConsumer(com.android.extensions.xr.function.Consumer<com.android.extensions.xr.node.ReformEvent!>!);
     method public boolean requestPointerCapture(java.util.concurrent.Executor!, androidx.xr.runtime.internal.InputEventListener!, androidx.xr.runtime.internal.PointerCaptureComponent.StateListener!);
+    method public void setAlpha(float, @androidx.xr.runtime.internal.SpaceValue int);
+    method public void setContentDescription(String);
+    method public void setHidden(boolean);
+    method public void setParent(androidx.xr.runtime.internal.Entity!);
+    method public void setPose(androidx.xr.runtime.math.Pose, @androidx.xr.runtime.internal.SpaceValue int);
+    method public void setScale(androidx.xr.runtime.math.Vector3, @androidx.xr.runtime.internal.SpaceValue int);
     method public void setSize(androidx.xr.runtime.internal.Dimensions);
     method public void stopPointerCapture();
+    method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose, androidx.xr.runtime.internal.ActivityPose);
     method public void updateReformOptions();
   }
 
