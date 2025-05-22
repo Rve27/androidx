@@ -43,9 +43,9 @@ androidXMultiplatform {
                 api("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
                 api("androidx.compose.runtime:runtime:1.7.5")
                 api("androidx.compose.runtime:runtime-saveable:1.7.5")
-                api(project(":navigation3:navigation3-runtime"))
-                api(project(":savedstate:savedstate"))
-                api(project(":savedstate:savedstate-compose"))
+                api("androidx.navigation3:navigation3-runtime:1.0.0-alpha01")
+                api("androidx.savedstate:savedstate:1.3.0")
+                api("androidx.savedstate:savedstate-compose:1.3.0")
                 implementation(libs.kotlinStdlib)
                 implementation("androidx.collection:collection-ktx:1.4.5")
             }
