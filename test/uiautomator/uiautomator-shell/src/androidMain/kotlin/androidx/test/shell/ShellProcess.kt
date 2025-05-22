@@ -96,6 +96,7 @@ internal constructor(
          * @param nativeLogs whether the native cli process should print Android logs. The tag used
          *   on logcat is `NativeShellProcess`.
          * @return a running shell process, ready to accept commands.
+         * @throws IOException if the underlying native utility does not start.
          */
         @JvmStatic
         @JvmOverloads
