@@ -367,10 +367,6 @@ package androidx.xr.compose.subspace.layout {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SubspaceModifier alpha(androidx.xr.compose.subspace.layout.SubspaceModifier, @FloatRange(from=0.0, to=1.0) float alpha);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class CombinedSubspaceModifier implements androidx.xr.compose.subspace.layout.SubspaceModifier {
-    ctor public CombinedSubspaceModifier(androidx.xr.compose.subspace.layout.SubspaceModifier outer, androidx.xr.compose.subspace.layout.SubspaceModifier inner);
-  }
-
   @kotlin.PublishedApi internal final class CoreContentlessEntity extends androidx.xr.compose.subspace.layout.CoreEntity {
     ctor public CoreContentlessEntity(androidx.xr.scenecore.Entity entity);
   }
@@ -715,7 +711,7 @@ package androidx.xr.compose.subspace.layout {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static inline void SubspaceLayout(kotlin.jvm.functions.Function0<kotlin.Unit> content, optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, androidx.xr.compose.subspace.layout.MeasurePolicy measurePolicy);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SubspaceModifier {
+  public interface SubspaceModifier {
     method public default boolean all(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);
     method public default boolean any(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);
     method public default <R> R foldIn(R initial, kotlin.jvm.functions.Function2<? super R,? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,? extends R> operation);
@@ -734,13 +730,6 @@ package androidx.xr.compose.subspace.layout {
     method public void onAttach();
     method public void onDetach();
     property public final boolean isAttached;
-  }
-
-  public final class SubspaceModifierKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static kotlin.sequences.Sequence<androidx.xr.compose.subspace.layout.SubspaceModifier.Node> traverseAncestors(androidx.xr.compose.subspace.layout.SubspaceModifier.Node);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static kotlin.sequences.Sequence<androidx.xr.compose.subspace.layout.SubspaceModifier.Node> traverseDescendants(androidx.xr.compose.subspace.layout.SubspaceModifier.Node);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static kotlin.sequences.Sequence<androidx.xr.compose.subspace.layout.SubspaceModifier.Node> traverseSelfThenAncestors(androidx.xr.compose.subspace.layout.SubspaceModifier.Node);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static kotlin.sequences.Sequence<androidx.xr.compose.subspace.layout.SubspaceModifier.Node> traverseSelfThenDescendants(androidx.xr.compose.subspace.layout.SubspaceModifier.Node);
   }
 
   public final class TestTagKt {
@@ -788,11 +777,11 @@ package androidx.xr.compose.subspace.node {
     property public kotlin.jvm.functions.Function2<androidx.xr.compose.subspace.node.ComposeSubspaceNode,androidx.xr.compose.subspace.layout.SubspaceModifier,kotlin.Unit> SetModifier;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface CompositionLocalConsumerSubspaceModifierNode {
+  public interface CompositionLocalConsumerSubspaceModifierNode {
   }
 
   public final class CompositionLocalConsumerSubspaceModifierNodeKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static <T> T currentValueOf(androidx.xr.compose.subspace.node.CompositionLocalConsumerSubspaceModifierNode, androidx.compose.runtime.CompositionLocal<T> local);
+    method public static <T> T currentValueOf(androidx.xr.compose.subspace.node.CompositionLocalConsumerSubspaceModifierNode, androidx.compose.runtime.CompositionLocal<T> local);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface LayoutCoordinatesAwareModifierNode {
@@ -807,7 +796,7 @@ package androidx.xr.compose.subspace.node {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static void requestRelayout(androidx.xr.compose.subspace.node.SubspaceLayoutModifierNode);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class SubspaceModifierNodeElement<N extends androidx.xr.compose.subspace.layout.SubspaceModifier.Node> implements androidx.xr.compose.subspace.layout.SubspaceModifier {
+  public abstract class SubspaceModifierNodeElement<N extends androidx.xr.compose.subspace.layout.SubspaceModifier.Node> implements androidx.xr.compose.subspace.layout.SubspaceModifier {
     ctor public SubspaceModifierNodeElement();
     method public abstract N create();
     method public abstract boolean equals(Object? other);

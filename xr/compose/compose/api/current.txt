@@ -239,9 +239,45 @@ package androidx.xr.compose.subspace.layout {
   public abstract class SpatialShape {
   }
 
+  public interface SubspaceModifier {
+    method public default boolean all(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);
+    method public default boolean any(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);
+    method public default <R> R foldIn(R initial, kotlin.jvm.functions.Function2<? super R,? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,? extends R> operation);
+    method public default <R> R foldOut(R initial, kotlin.jvm.functions.Function2<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,? super R,? extends R> operation);
+    method public default infix androidx.xr.compose.subspace.layout.SubspaceModifier then(androidx.xr.compose.subspace.layout.SubspaceModifier other);
+    field public static final androidx.xr.compose.subspace.layout.SubspaceModifier.Companion Companion;
+  }
+
+  public static final class SubspaceModifier.Companion implements androidx.xr.compose.subspace.layout.SubspaceModifier {
+    method public infix androidx.xr.compose.subspace.layout.SubspaceModifier then(androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node> other);
+  }
+
+  public abstract static class SubspaceModifier.Node {
+    ctor public SubspaceModifier.Node();
+    method public final boolean isAttached();
+    method public void onAttach();
+    method public void onDetach();
+    property public final boolean isAttached;
+  }
+
 }
 
 package androidx.xr.compose.subspace.node {
+
+  public interface CompositionLocalConsumerSubspaceModifierNode {
+  }
+
+  public final class CompositionLocalConsumerSubspaceModifierNodeKt {
+    method public static <T> T currentValueOf(androidx.xr.compose.subspace.node.CompositionLocalConsumerSubspaceModifierNode, androidx.compose.runtime.CompositionLocal<T> local);
+  }
+
+  public abstract class SubspaceModifierNodeElement<N extends androidx.xr.compose.subspace.layout.SubspaceModifier.Node> implements androidx.xr.compose.subspace.layout.SubspaceModifier {
+    ctor public SubspaceModifierNodeElement();
+    method public abstract N create();
+    method public abstract boolean equals(Object? other);
+    method public abstract int hashCode();
+    method public abstract void update(N node);
+  }
 
   public interface SubspaceSemanticsModifierNode {
     method public void applySemantics(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
