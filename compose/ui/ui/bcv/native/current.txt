@@ -855,6 +855,8 @@ abstract interface androidx.compose.ui.node/RootForTest { // androidx.compose.ui
 }
 
 abstract interface androidx.compose.ui.node/SemanticsModifierNode : androidx.compose.ui.node/DelegatableNode { // androidx.compose.ui.node/SemanticsModifierNode|null[0]
+    open val isImportantForBounds // androidx.compose.ui.node/SemanticsModifierNode.isImportantForBounds|{}isImportantForBounds[0]
+        open fun <get-isImportantForBounds>(): kotlin/Boolean // androidx.compose.ui.node/SemanticsModifierNode.isImportantForBounds.<get-isImportantForBounds>|<get-isImportantForBounds>(){}[0]
     open val shouldClearDescendantSemantics // androidx.compose.ui.node/SemanticsModifierNode.shouldClearDescendantSemantics|{}shouldClearDescendantSemantics[0]
         open fun <get-shouldClearDescendantSemantics>(): kotlin/Boolean // androidx.compose.ui.node/SemanticsModifierNode.shouldClearDescendantSemantics.<get-shouldClearDescendantSemantics>|<get-shouldClearDescendantSemantics>(){}[0]
     open val shouldMergeDescendantSemantics // androidx.compose.ui.node/SemanticsModifierNode.shouldMergeDescendantSemantics|{}shouldMergeDescendantSemantics[0]

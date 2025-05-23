@@ -398,12 +398,24 @@ internal constructor(
      * If the node is merging the descendants, we'll use the outermost semantics modifier that has
      * mergeDescendants == true to report the bounds, size and position of the node. For majority of
      * use cases it means that accessibility bounds will be equal to the clickable area. Otherwise
-     * the outermost semantics will be used to report bounds, size and position.
+     * the outermost semantics will be used to report bounds, size and position. In both cases, only
+     * nodes that have isImportantForBounds == true are taken into account.
      */
     internal fun findCoordinatorToGetBounds(): NodeCoordinator? {
         if (isFake) return parent?.findCoordinatorToGetBounds()
-        val semanticsModifierNode = layoutNode.outerMergingSemantics ?: outerSemanticsNode
-        return semanticsModifierNode.requireCoordinator(Nodes.Semantics)
+        return findSemanticsModifierNodeToGetBounds()?.requireCoordinator(Nodes.Semantics)
+            ?: layoutNode.innerCoordinator
+    }
+
+    private fun findSemanticsModifierNodeToGetBounds(): SemanticsModifierNode? {
+        var nodeForBounds: SemanticsModifierNode? = null
+        layoutNode.nodes.headToTail(Nodes.Semantics) {
+            if (it.isImportantForBounds) {
+                if (it.shouldMergeDescendantSemantics) return it
+                if (nodeForBounds == null) nodeForBounds = it
+            }
+        }
+        return nodeForBounds
     }
 
     // Fake nodes

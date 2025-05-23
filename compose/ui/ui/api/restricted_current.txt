@@ -3359,6 +3359,8 @@ package androidx.compose.ui.node {
     method public void applySemantics(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
     method public default boolean getShouldClearDescendantSemantics();
     method public default boolean getShouldMergeDescendantSemantics();
+    method public default boolean isImportantForBounds();
+    property public default boolean isImportantForBounds;
     property public default boolean shouldClearDescendantSemantics;
     property public default boolean shouldMergeDescendantSemantics;
   }
