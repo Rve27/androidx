@@ -60,6 +60,7 @@ class OpaqueUnitKeyDetectorTest : LintDetectorTest() {
 
     @Test
     fun remember_withUnitPropertyRead_reportsError() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 Stubs.Remember,
@@ -101,6 +102,7 @@ Fix for src/test/test.kt line 10: Move expression outside of `remember`'s argume
 
     @Test
     fun remember_withUnitFunctionCall_reportsError() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 Stubs.Remember,
@@ -142,6 +144,7 @@ Fix for src/test/test.kt line 8: Move expression outside of `remember`'s argumen
 
     @Test
     fun remember_withUnitComposableInvocation_reportsError() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 Stubs.Remember,
@@ -184,6 +187,7 @@ Fix for src/test/test.kt line 8: Move expression outside of `remember`'s argumen
 
     @Test
     fun remember_withUnitComposableInvocation_reportsError_withFixInSingleExpressionFun() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 Stubs.Remember,
@@ -225,6 +229,7 @@ Fix for src/test/test.kt line 7: Move expression outside of `remember`'s argumen
 
     @Test
     fun remember_withIfStatementThatReturnsUnit_reportsError() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 Stubs.Remember,
@@ -307,6 +312,7 @@ Fix for src/test/test.kt line 9: Move expression outside of `remember`'s argumen
 
     @Test
     fun remember_twoKeys_withUnitFunctionCall_reportsError() {
+        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         lint()
             .files(
                 Stubs.Remember,

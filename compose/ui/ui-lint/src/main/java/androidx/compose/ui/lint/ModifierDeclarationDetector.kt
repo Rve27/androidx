@@ -404,13 +404,14 @@ private fun UMethod.checkReturnType(context: JavaContext, returnType: PsiType) {
         // Declaration without an explicit return type, such as `fun foo() = Bar`
         // or val foo get() = Bar
         // Replace the `=` with `: Modifier =`
+        val equalsToken = source.equalsToken ?: return
         report(
             LintFix.create()
                 .replace()
                 .name("Add explicit Modifier return type")
-                .range(context.getLocation(this))
-                .pattern("[ \\t\\n]+=")
-                .with(": ${Names.Ui.Modifier.shortName} =")
+                .range(context.getLocation(equalsToken))
+                .beginning()
+                .with(": ${Names.Ui.Modifier.shortName} ")
                 .autoFix()
                 .build()
         )

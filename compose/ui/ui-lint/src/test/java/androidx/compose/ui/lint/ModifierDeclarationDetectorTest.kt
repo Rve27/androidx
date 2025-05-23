@@ -275,10 +275,10 @@ src/androidx/compose/ui/foo/TestModifier.kt:8: Error: Modifier factory functions
             )
             .expectFixDiffs(
                 """
-Fix for src/androidx/compose/ui/foo/TestModifier.kt line 8: Add explicit Modifier return type:
+Autofix for src/androidx/compose/ui/foo/TestModifier.kt line 8: Add explicit Modifier return type:
 @@ -8 +8
 -                 fun Modifier.fooModifier() = TestModifier
-+                 fun Modifier.fooModifier(): Modifier = TestModifier
++                 fun Modifier.fooModifier() : Modifier = TestModifier
             """
             )
     }
@@ -314,10 +314,10 @@ src/androidx/compose/ui/foo/TestModifier.kt:8: Error: Modifier factory functions
             )
             .expectFixDiffs(
                 """
-Fix for src/androidx/compose/ui/foo/TestModifier.kt line 8: Add explicit Modifier return type:
+Autofix for src/androidx/compose/ui/foo/TestModifier.kt line 8: Add explicit Modifier return type:
 @@ -8 +8
 -                 val Modifier.fooModifier get() = TestModifier
-+                 val Modifier.fooModifier get(): Modifier = TestModifier
++                 val Modifier.fooModifier get() : Modifier = TestModifier
             """
             )
     }
