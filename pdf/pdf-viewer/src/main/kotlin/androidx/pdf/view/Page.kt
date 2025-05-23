@@ -100,8 +100,9 @@ internal class Page(
             }
         }
 
-    internal fun isFullyRendered(): Boolean {
-        return bitmapFetcher?.pageBitmaps?.isFullyRendered ?: false
+    //  Checks if the content of this page within the specified visible area is fully rendered.
+    internal fun isFullyRendered(zoom: Float, viewArea: Rect?): Boolean {
+        return bitmapFetcher?.isFullyRendered(zoom, viewArea) ?: false
     }
 
     /**

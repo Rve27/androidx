@@ -101,11 +101,7 @@ internal class BitmapFetcher(
 
     /** Update the view area and scale for which we should be fetching bitmaps */
     fun maybeFetchNewBitmaps(scale: Float, viewArea: Rect) {
-        // Scale the provided viewArea, and clip it to the scaled bounds of the page
-        // Carefully avoid mutating the provided Rect
-        val scaledViewArea = Rect(viewArea)
-        RectUtils.scale(scaledViewArea, scale)
-        scaledViewArea.intersect(0, 0, (pageSize.x * scale).toInt(), (pageSize.y * scale).toInt())
+        val scaledViewArea = scaleViewArea(scale, viewArea)
         if (shouldFetchNewContents(scale)) {
             // Scale has changed, fetch entirely new PageContents
             fetchNewContents(scale, scaledViewArea)
@@ -346,6 +342,43 @@ internal class BitmapFetcher(
         return Size(finalSize.x.roundToInt(), finalSize.y.roundToInt())
     }
 
+    private fun scaleViewArea(scale: Float, viewArea: Rect): Rect {
+        // Scale the provided viewArea, and clip it to the scaled bounds of the page
+        // Carefully avoid mutating the provided Rect
+        val scaledViewArea = Rect(viewArea)
+        RectUtils.scale(scaledViewArea, scale)
+        scaledViewArea.intersect(0, 0, (pageSize.x * scale).toInt(), (pageSize.y * scale).toInt())
+        return scaledViewArea
+    }
+
+    internal fun isFullyRendered(zoom: Float, viewArea: Rect?): Boolean {
+        val pageBitmaps = this.pageBitmaps
+        if (viewArea == null || viewArea.isEmpty) {
+            return false
+        }
+
+        return when (pageBitmaps) {
+            is FullPageBitmap -> true
+            is TileBoard -> {
+                val scaledViewArea = scaleViewArea(zoom, viewArea)
+
+                // Checks if all tiles intersecting the scaledViewArea are loaded.
+                pageBitmaps.tiles
+                    .filter { tile ->
+                        tile.rectPx.intersects(
+                            scaledViewArea.left,
+                            scaledViewArea.top,
+                            scaledViewArea.right,
+                            scaledViewArea.bottom,
+                        )
+                    }
+                    .all { tile -> tile.bitmap != null }
+            }
+
+            else -> false
+        }
+    }
+
     companion object {
         /** The size of a single tile in pixels, when tiling is used */
         @VisibleForTesting internal val tileSizePx = Point(800, 800)
@@ -400,8 +433,6 @@ internal sealed interface PageContents {
     val bitmapScale: Float
 
     val needsWhiteBackground: Boolean
-
-    val isFullyRendered: Boolean
 }
 
 /** A singular [Bitmap] depicting the full page, when full page rendering is used */
@@ -411,8 +442,6 @@ internal class FullPageBitmap(val bitmap: Bitmap, override val bitmapScale: Floa
      * [Bitmap] covering the whole page
      */
     override val needsWhiteBackground: Boolean = false
-
-    override val isFullyRendered: Boolean = true
 }
 
 /**
@@ -445,9 +474,6 @@ internal class TileBoard(
      */
     override val needsWhiteBackground: Boolean
         get() = fullPageBitmap == null
-
-    override val isFullyRendered: Boolean
-        get() = tiles.all { it.bitmap != null }
 
     /** An individual [Tile] in this [TileBoard] */
     inner class Tile(val index: Int) {

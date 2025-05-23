@@ -79,9 +79,13 @@ internal class PageManager(
             }
         }
 
-    internal fun areAllVisiblePagesFullyRendered(visiblePageRange: Range<Int>): Boolean =
+    internal fun areAllVisiblePagesFullyRendered(
+        visiblePageRange: Range<Int>,
+        zoom: Float,
+        visiblePageAreas: SparseArray<Rect>?,
+    ): Boolean =
         (visiblePageRange.lower..visiblePageRange.upper).all { pageNum ->
-            pages[pageNum]?.isFullyRendered() ?: false
+            pages[pageNum]?.isFullyRendered(zoom, visiblePageAreas?.get(pageNum)) ?: false
         }
 
     /**

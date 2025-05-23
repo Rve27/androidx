@@ -418,7 +418,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         // the document is loaded during test setup. Consequently, this method may be called
         // before the document is ready, and it must return true to avoid a timeout;
         // otherwise, the idling resource might never become idle.
-        return pageManager?.areAllVisiblePagesFullyRendered(visiblePages) ?: true
+
+        return pageManager?.areAllVisiblePagesFullyRendered(
+            visiblePages,
+            zoom,
+            pageMetadataLoader?.visiblePageAreas,
+        ) ?: true
     }
 
     @VisibleForTesting internal var pdfViewAccessibilityManager: PdfViewAccessibilityManager? = null
