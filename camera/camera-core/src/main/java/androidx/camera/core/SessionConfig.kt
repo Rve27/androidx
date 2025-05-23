@@ -43,19 +43,6 @@ import java.util.concurrent.Executor
  *   no viewport.
  * @property effects The list of [CameraEffect] to be applied on the camera session. If not set, the
  *   default is no effects.
- * @property requiredFeatures A set of `Feature` that are mandatory for the camera configuration. An
- *   [IllegalStateException] is thrown during camera configuration if adding all of the required
- *   features is not supported on a device. The [CameraInfo.isFeatureCombinationSupported] API can
- *   be used to check if the required features are supported. Alternatively, the features can be
- *   provided through the `preferredFeatures` property so that some features can be discarded
- *   according to priority if all of them are not supported. Note that [CameraEffect] or
- *   [ImageAnalysis] use case is currently not supported if this parameter is used.
- * @property preferredFeatures A list of preferred [Feature] that should be ordered according to
- *   priority in descending order, i.e. a `Feature` with a lower index in the list will be
- *   considered to have a higher priority. These features will be selected on a best-effort basis
- *   according to the priority. The final set of selected features will be notified to the listener
- *   set by [setFeatureSelectionListener]. Note that [CameraEffect] or [ImageAnalysis] use case is
- *   currently not supported if this parameter is used.
  * @throws IllegalArgumentException If the combination of config options are conflicting or
  *   unsupported, e.g.
  *     - if any of the required features is not supported on the device
@@ -66,9 +53,6 @@ import java.util.concurrent.Executor
  *
  * @See androidx.camera.lifecycle.ProcessCameraProvider.bindToLifecycle
  */
-// TODO: b/414298514 - The class-wide restriction to remove when making SessionConfig API public.
-//  Removing only this restriction won't make the feature combo params public.
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @ExperimentalSessionConfig
 public open class SessionConfig
 // TODO: b/384404392 - Remove when feature combo impl. is ready. The feature combo params should be
@@ -198,6 +182,7 @@ constructor(
     }
 
     /** Builder for [SessionConfig] */
+    @ExperimentalSessionConfig
     public class Builder(private val useCases: List<UseCase>) {
         private var viewPort: ViewPort? = null
         private var effects: MutableList<CameraEffect> = mutableListOf()
