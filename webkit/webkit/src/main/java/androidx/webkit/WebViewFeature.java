@@ -639,7 +639,7 @@ public class WebViewFeature {
      * {@link Profile#clearPrefetchAsync(String, Executor, OutcomeReceiverCompat)}
      */
     @Profile.ExperimentalUrlPrefetch
-    public static final String PROFILE_URL_PREFETCH = "PREFETCH_URL_V4";
+    public static final String PROFILE_URL_PREFETCH = "PREFETCH_URL_V5";
 
     /**
      * Feature for {@link #isFeatureSupported(String)}.
