@@ -108,13 +108,28 @@ sealed interface PausedComposition {
     val isComplete: Boolean
 
     /**
+     * Returns `true` when the [PausedComposition] is applied. [isApplied] becomes `true` after
+     * calling [apply]. Calling any method on the [PausedComposition] when [isApplied] is `true`
+     * will throw an exception.
+     */
+    val isApplied: Boolean
+
+    /**
+     * Returns `true` when the [PausedComposition] is cancelled. [isCancelled] becomes `true` after
+     * calling [cancel]. Calling any method on the [PausedComposition] when [isCancelled] is `true`
+     * will throw an exception. If [isCancelled] is `true` then the [Composition] that was used to
+     * create [PausedComposition] is in an uncertain state and must be discarded.
+     */
+    @get:Suppress("GetterSetterNames") val isCancelled: Boolean
+
+    /**
      * Resume the composition that has been paused. This method should be called until [resume]
      * returns `true` or [isComplete] is `true` which has the same result as the last result of
      * calling [resume]. The [shouldPause] parameter is a lambda that returns whether the
      * composition should be paused. For example, in lazy lists this returns `false` until just
      * prior to the next frame starting in which it returns `true`
      *
-     * Calling [resume] after it returns `true` or when `isComplete` is true will throw an
+     * Calling [resume] after it returns `true` or when [isComplete] is `true` will throw an
      * exception.
      *
      * @param shouldPause A lambda that is used to determine if the composition should be paused.
@@ -189,6 +204,12 @@ internal class PausedCompositionImpl(
 
     override val isComplete: Boolean
         get() = state >= PausedCompositionState.ApplyPending
+
+    override val isApplied: Boolean
+        get() = state == PausedCompositionState.Applied
+
+    override val isCancelled: Boolean
+        get() = state == PausedCompositionState.Cancelled
 
     override fun resume(shouldPause: ShouldPauseCallback): Boolean {
         try {

@@ -504,8 +504,12 @@ package androidx.compose.runtime {
   public sealed interface PausedComposition {
     method public void apply();
     method public void cancel();
+    method public boolean isApplied();
+    method public boolean isCancelled();
     method public boolean isComplete();
     method public boolean resume(androidx.compose.runtime.ShouldPauseCallback shouldPause);
+    property public abstract boolean isApplied;
+    property public abstract boolean isCancelled;
     property public abstract boolean isComplete;
   }
 

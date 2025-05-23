@@ -461,6 +461,44 @@ class PausableCompositionTests {
             }
         }
     }
+
+    @Test
+    fun pausableComposition_isAppliedReturnsCorrectValue() = runTest {
+        val recomposer = Recomposer(coroutineContext)
+        val pausableComposition = PausableComposition(EmptyApplier(), recomposer)
+
+        try {
+            val handle =
+                pausableComposition.setPausableContent { DisposableEffect(Unit) { onDispose {} } }
+            assertFalse(handle.isApplied)
+            handle.resume { false }
+            assertFalse(handle.isApplied)
+            handle.apply()
+            assertTrue(handle.isApplied)
+        } finally {
+            recomposer.cancel()
+            recomposer.close()
+        }
+    }
+
+    @Test
+    fun pausableComposition_isCancelledReturnsCorrectValue() = runTest {
+        val recomposer = Recomposer(coroutineContext)
+        val pausableComposition = PausableComposition(EmptyApplier(), recomposer)
+
+        try {
+            val handle =
+                pausableComposition.setPausableContent { DisposableEffect(Unit) { onDispose {} } }
+            assertFalse(handle.isCancelled)
+            handle.resume { false }
+            assertFalse(handle.isCancelled)
+            handle.cancel()
+            assertTrue(handle.isCancelled)
+        } finally {
+            recomposer.cancel()
+            recomposer.close()
+        }
+    }
 }
 
 fun String.splitRecording() = split(", ")
