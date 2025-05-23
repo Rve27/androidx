@@ -239,6 +239,17 @@ package androidx.xr.compose.subspace.layout {
   public abstract class SpatialShape {
   }
 
+  public interface SubspaceLayoutCoordinates {
+    method public androidx.xr.runtime.math.Pose getPose();
+    method public androidx.xr.runtime.math.Pose getPoseInParentEntity();
+    method public androidx.xr.runtime.math.Pose getPoseInRoot();
+    method public androidx.xr.compose.unit.IntVolumeSize getSize();
+    property public abstract androidx.xr.runtime.math.Pose pose;
+    property public abstract androidx.xr.runtime.math.Pose poseInParentEntity;
+    property public abstract androidx.xr.runtime.math.Pose poseInRoot;
+    property public abstract androidx.xr.compose.unit.IntVolumeSize size;
+  }
+
   public interface SubspaceModifier {
     method public default boolean all(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);
     method public default boolean any(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);

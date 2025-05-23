@@ -679,31 +679,15 @@ package androidx.xr.compose.subspace.layout {
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SpatialSmoothFeatheringSize ZeroFeatheringSize;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SubspaceLayoutCoordinates {
+  public interface SubspaceLayoutCoordinates {
     method public androidx.xr.runtime.math.Pose getPose();
     method public androidx.xr.runtime.math.Pose getPoseInParentEntity();
     method public androidx.xr.runtime.math.Pose getPoseInRoot();
-    method @Deprecated public default androidx.xr.runtime.math.Vector3 getPosition();
-    method @Deprecated public default androidx.xr.runtime.math.Vector3 getPositionInParentEntity();
-    method @Deprecated public default androidx.xr.runtime.math.Vector3 getPositionInRoot();
-    method @Deprecated public default androidx.xr.runtime.math.Quaternion getRotation();
-    method @Deprecated public default androidx.xr.runtime.math.Quaternion getRotationInParentEntity();
-    method @Deprecated public default androidx.xr.runtime.math.Quaternion getRotationInRoot();
     method public androidx.xr.compose.unit.IntVolumeSize getSize();
     property public abstract androidx.xr.runtime.math.Pose pose;
     property public abstract androidx.xr.runtime.math.Pose poseInParentEntity;
     property public abstract androidx.xr.runtime.math.Pose poseInRoot;
-    property @Deprecated public default androidx.xr.runtime.math.Vector3 position;
-    property @Deprecated public default androidx.xr.runtime.math.Vector3 positionInParentEntity;
-    property @Deprecated public default androidx.xr.runtime.math.Vector3 positionInRoot;
-    property @Deprecated public default androidx.xr.runtime.math.Quaternion rotation;
-    property @Deprecated public default androidx.xr.runtime.math.Quaternion rotationInParentEntity;
-    property @Deprecated public default androidx.xr.runtime.math.Quaternion rotationInRoot;
     property public abstract androidx.xr.compose.unit.IntVolumeSize size;
-  }
-
-  public final class SubspaceLayoutCoordinatesKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static String toDebugString(androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates);
   }
 
   public final class SubspaceLayoutKt {
