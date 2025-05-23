@@ -18,73 +18,76 @@ package androidx.biometric
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import androidx.annotation.RestrictTo
 import androidx.biometric.AuthenticationRequest.Biometric
 import androidx.biometric.BiometricPrompt.AuthenticationCallback
 import androidx.biometric.BiometricPrompt.CryptoObject
+import androidx.biometric.BiometricPrompt.LifecycleContainer
 import androidx.biometric.BiometricPrompt.PromptInfo
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.Lifecycle
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle.Event.*
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.ViewModelStoreOwner
 import java.util.concurrent.Executor
 
 /**
  * A registry that stores [auth result callbacks][AuthenticationCallback] for
  * [registered calls][registerForAuthenticationResult].
  */
-internal class AuthenticationResultRegistry(
-    private var activity: FragmentActivity? = null,
-    private var fragment: Fragment? = null,
-) {
-    fun register(
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+public class AuthenticationResultRegistry {
+    /**
+     * Register a new callback with this registry. This is normally called by a higher level
+     * convenience methods like [registerForAuthenticationResult].
+     *
+     * If [lifecycleContainer] is null,you must call [AuthenticationResultLauncher.unregister] on
+     * the returned [AuthenticationResultLauncher] when the launcher is no longer needed to release
+     * any values that might be captured in the registered callback.
+     */
+    public fun register(
+        viewModelStoreOwner: ViewModelStoreOwner,
+        fragmentManager: FragmentManager, // TODO(b/178855209): Remove fragmentManager
         resultCallback: AuthenticationResultCallback,
+        lifecycleContainer: LifecycleContainer? = null,
         callbackExecutor: Executor? = null,
     ): AuthenticationResultLauncher {
-        val callback =
-            object : AuthenticationCallback() {
-                override fun onAuthenticationFailed() {
-                    resultCallback.onAuthFailure()
-                }
-
-                override fun onAuthenticationSucceeded(
-                    result: BiometricPrompt.AuthenticationResult
-                ) {
-                    resultCallback.onAuthResult(
-                        AuthenticationResult.Success(result.cryptoObject, result.authenticationType)
-                    )
-                }
-
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    resultCallback.onAuthResult(AuthenticationResult.Error(errorCode, errString))
-                }
-            }
-
+        val callback = createAuthenticationCallback(resultCallback)
         var biometricPrompt: BiometricPrompt? = null
 
-        val lifecycleContainer =
-            LifecycleContainer(if (activity != null) activity!!.lifecycle else fragment!!.lifecycle)
-        val observer = LifecycleEventObserver { _, event ->
-            when (event) {
-                ON_START -> {
-                    biometricPrompt =
-                        if (activity != null) {
-                            activity!!.createBiometricPrompt(callbackExecutor, callback)
-                        } else {
-                            fragment!!.createBiometricPrompt(callbackExecutor, callback)
-                        }
-                }
-                ON_STOP -> {
-                    // TODO(b/349213716): remove callback from BiometricViewModel
-                }
-                ON_DESTROY -> {
-                    // TODO(b/349213716): remove callback from BiometricViewModel
-                    lifecycleContainer.clearObservers()
-                }
-                else -> {}
-            }
+        fun unregister() {
+            lifecycleContainer?.clearObservers()
+            biometricPrompt?.destroy()
+            biometricPrompt = null
         }
-        lifecycleContainer.addObserver(observer)
+
+        if (lifecycleContainer != null) {
+            val lifecycleObserver = LifecycleEventObserver { _, event ->
+                when (event) {
+                    ON_START -> {
+                        biometricPrompt =
+                            BiometricPrompt(
+                                viewModelStoreOwner,
+                                fragmentManager,
+                                callback,
+                                callbackExecutor,
+                            )
+                    }
+                    ON_STOP -> {}
+                    ON_DESTROY -> {
+                        // The authentication should not be canceled here using
+                        // cancelAuthentication().
+                        // Instead, rely on the app to manage cancellation through cancel() calls,
+                        // ensuring the authentication survives configuration changes.
+                        unregister()
+                    }
+                    else -> {}
+                }
+            }
+            lifecycleContainer.addObserver(lifecycleObserver)
+        } else {
+            biometricPrompt =
+                BiometricPrompt(viewModelStoreOwner, fragmentManager, callback, callbackExecutor)
+        }
 
         return object : AuthenticationResultLauncher {
             override fun launch(input: AuthenticationRequest) {
@@ -93,22 +96,12 @@ internal class AuthenticationResultRegistry(
 
             override fun cancel() {
                 biometricPrompt?.cancelAuthentication()
-                lifecycleContainer.clearObservers()
+                unregister()
             }
-        }
-    }
 
-    private class LifecycleContainer(val lifecycle: Lifecycle) {
-        private val observers = mutableListOf<LifecycleEventObserver>()
-
-        fun addObserver(observer: LifecycleEventObserver) {
-            lifecycle.addObserver(observer)
-            observers.add(observer)
-        }
-
-        fun clearObservers() {
-            observers.forEach { observer -> lifecycle.removeObserver(observer) }
-            observers.clear()
+            override fun unregister() {
+                unregister()
+            }
         }
     }
 }
@@ -137,33 +130,29 @@ private fun onLaunch(input: AuthenticationRequest, biometricPrompt: BiometricPro
     }
 }
 
-/** Creates a [BiometricPrompt] with given [AuthenticationCallback] */
-internal fun FragmentActivity.createBiometricPrompt(
-    executor: Executor?,
-    callback: AuthenticationCallback,
-): BiometricPrompt {
-    return if (executor == null) {
-        BiometricPrompt(this, callback)
-    } else {
-        BiometricPrompt(this, executor, callback)
-    }
-}
+private fun createAuthenticationCallback(
+    resultCallback: AuthenticationResultCallback
+): AuthenticationCallback {
+    return object : AuthenticationCallback() {
+        override fun onAuthenticationFailed() {
+            resultCallback.onAuthFailure()
+        }
 
-/** Creates a [BiometricPrompt] with given [AuthenticationCallback] */
-internal fun Fragment.createBiometricPrompt(
-    executor: Executor?,
-    callback: AuthenticationCallback,
-): BiometricPrompt {
-    return if (executor == null) {
-        BiometricPrompt(this, callback)
-    } else {
-        BiometricPrompt(this, executor, callback)
+        override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+            resultCallback.onAuthResult(
+                AuthenticationResult.Success(result.cryptoObject, result.authenticationType)
+            )
+        }
+
+        override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+            resultCallback.onAuthResult(AuthenticationResult.Error(errorCode, errString))
+        }
     }
 }
 
 /** Shows the authentication prompt to the user with biometric and/or device credential. */
 @SuppressLint("MissingPermission")
-internal fun BiometricPrompt.authInternal(
+private fun BiometricPrompt.authInternal(
     title: String,
     subtitle: String? = null,
     content: AuthenticationRequest.BodyContent? = null,

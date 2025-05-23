@@ -1,0 +1,10 @@
+// Signature format: 4.0
+package androidx.biometric.compose {
+
+  public final class AuthenticationResultRegistryKt {
+    method @androidx.compose.runtime.Composable public static androidx.biometric.AuthenticationResultLauncher rememberAuthenticationLauncher(androidx.biometric.AuthenticationResultCallback resultCallback);
+    method @androidx.compose.runtime.Composable public static androidx.biometric.AuthenticationResultLauncher rememberAuthenticationLauncher(java.util.concurrent.Executor callbackExecutor, androidx.biometric.AuthenticationResultCallback resultCallback);
+  }
+
+}
+
