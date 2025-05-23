@@ -26,10 +26,10 @@ import androidx.xr.compose.subspace.layout.MeasureResult
 import androidx.xr.compose.subspace.layout.MeasureScope
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsModifier
-import androidx.xr.compose.subspace.layout.Placeable
 import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SubspaceLayout
 import androidx.xr.compose.subspace.layout.SubspaceModifier
+import androidx.xr.compose.subspace.layout.SubspacePlaceable
 import androidx.xr.compose.subspace.node.SubspaceModifierNodeElement
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.compose.unit.VolumeConstraints
@@ -90,7 +90,7 @@ internal class SpatialBoxMeasurePolicy(
                 constraints.copy(minWidth = 0, minHeight = 0, minDepth = 0)
             }
 
-        val placeables = arrayOfNulls<Placeable>(measurables.size)
+        val placeables = arrayOfNulls<SubspacePlaceable>(measurables.size)
         var boxWidth = constraints.minWidth
         var boxHeight = constraints.minHeight
         var boxDepth = constraints.minDepth
@@ -105,7 +105,7 @@ internal class SpatialBoxMeasurePolicy(
         return layout(boxWidth, boxHeight, boxDepth) {
             val space = IntVolumeSize(boxWidth, boxHeight, boxDepth)
             placeables.forEachIndexed { index, placeable ->
-                placeable as Placeable
+                placeable as SubspacePlaceable
                 val measurable = measurables[index]
                 val childSpatialAlignment =
                     SpatialBoxParentData(alignment).also { measurable.adjustParams(it) }.alignment
@@ -114,7 +114,8 @@ internal class SpatialBoxMeasurePolicy(
         }
     }
 
-    private fun Placeable.size() = IntVolumeSize(measuredWidth, measuredHeight, measuredDepth)
+    private fun SubspacePlaceable.size() =
+        IntVolumeSize(measuredWidth, measuredHeight, measuredDepth)
 }
 
 /** Scope for the children of [SpatialBox]. */

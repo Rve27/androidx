@@ -27,10 +27,10 @@ import androidx.xr.compose.unit.VolumeConstraints
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public interface Measurable {
     /**
-     * Measures the layout with [VolumeConstraints], returning a [Placeable] layout that has its new
-     * size.
+     * Measures the layout with [VolumeConstraints], returning a [SubspacePlaceable] layout that has
+     * its new size.
      */
-    public fun measure(constraints: VolumeConstraints): Placeable
+    public fun measure(constraints: VolumeConstraints): SubspacePlaceable
 
     /** Adjusts layout with a new [ParentLayoutParamsAdjustable]. */
     public fun adjustParams(params: ParentLayoutParamsAdjustable)

@@ -20,16 +20,16 @@ import androidx.xr.compose.subspace.layout.LayoutMeasureScope
 import androidx.xr.compose.subspace.layout.Measurable
 import androidx.xr.compose.subspace.layout.MeasureResult
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable
-import androidx.xr.compose.subspace.layout.Placeable
 import androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates
 import androidx.xr.compose.subspace.layout.SubspaceModifier
+import androidx.xr.compose.subspace.layout.SubspacePlaceable
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.compose.unit.VolumeConstraints
 import androidx.xr.runtime.math.Pose
 
 /**
- * A [Measurable] and [Placeable] object that is used to measure and lay out the children of a
- * [SubspaceLayoutModifierNode].
+ * A [Measurable] and [SubspacePlaceable] object that is used to measure and lay out the children of
+ * a [SubspaceLayoutModifierNode].
  *
  * See [androidx.compose.ui.node.NodeCoordinator]
  *
@@ -39,7 +39,7 @@ import androidx.xr.runtime.math.Pose
  */
 internal class SubspaceLayoutModifierNodeCoordinator(
     private val layoutModifierNode: SubspaceLayoutModifierNode
-) : SubspaceLayoutCoordinates, Measurable, Placeable() {
+) : SubspaceLayoutCoordinates, Measurable, SubspacePlaceable() {
 
     private val baseNode: SubspaceModifier.Node
         get() = layoutModifierNode as SubspaceModifier.Node
@@ -109,7 +109,7 @@ internal class SubspaceLayoutModifierNodeCoordinator(
     public override fun placeAt(pose: Pose) {
         layoutPose = pose
         measureResult?.placeChildren(
-            object : PlacementScope() {
+            object : SubspacePlacementScope() {
                 public override val coordinates = this@SubspaceLayoutModifierNodeCoordinator
             }
         )
@@ -119,10 +119,10 @@ internal class SubspaceLayoutModifierNodeCoordinator(
      * Measures the wrapped content within the given [constraints].
      *
      * @param constraints the constraints to apply during measurement.
-     * @return the [Placeable] representing the measured child layout that can be positioned by its
-     *   parent layout.
+     * @return the [SubspacePlaceable] representing the measured child layout that can be positioned
+     *   by its parent layout.
      */
-    override fun measure(constraints: VolumeConstraints): Placeable {
+    override fun measure(constraints: VolumeConstraints): SubspacePlaceable {
         with(layoutModifierNode) {
             val measurable: Measurable = child ?: layoutNode!!.measurableLayout
             val measureResult: MeasureResult =

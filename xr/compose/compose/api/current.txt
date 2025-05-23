@@ -286,6 +286,27 @@ package androidx.xr.compose.subspace.layout {
     property public final boolean isAttached;
   }
 
+  public abstract class SubspacePlaceable {
+    ctor public SubspacePlaceable();
+    method public final int getMeasuredDepth();
+    method public final int getMeasuredHeight();
+    method public final int getMeasuredWidth();
+    method protected abstract void placeAt(androidx.xr.runtime.math.Pose pose);
+    method protected final void setMeasuredDepth(int);
+    method protected final void setMeasuredHeight(int);
+    method protected final void setMeasuredWidth(int);
+    property public final int measuredDepth;
+    property public final int measuredHeight;
+    property public final int measuredWidth;
+  }
+
+  public abstract static class SubspacePlaceable.SubspacePlacementScope {
+    ctor public SubspacePlaceable.SubspacePlacementScope();
+    method public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? getCoordinates();
+    method public final void place(androidx.xr.compose.subspace.layout.SubspacePlaceable, androidx.xr.runtime.math.Pose pose);
+    property public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? coordinates;
+  }
+
 }
 
 package androidx.xr.compose.subspace.node {

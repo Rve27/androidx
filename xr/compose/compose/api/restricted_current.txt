@@ -389,7 +389,7 @@ package androidx.xr.compose.subspace.layout {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Measurable {
     method public void adjustParams(androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable params);
-    method public androidx.xr.compose.subspace.layout.Placeable measure(androidx.xr.compose.unit.VolumeConstraints constraints);
+    method public androidx.xr.compose.subspace.layout.SubspacePlaceable measure(androidx.xr.compose.unit.VolumeConstraints constraints);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public fun interface MeasurePolicy {
@@ -400,14 +400,14 @@ package androidx.xr.compose.subspace.layout {
     method public int getDepth();
     method public int getHeight();
     method public int getWidth();
-    method public void placeChildren(androidx.xr.compose.subspace.layout.Placeable.PlacementScope placementScope);
+    method public void placeChildren(androidx.xr.compose.subspace.layout.SubspacePlaceable.SubspacePlacementScope placementScope);
     property public abstract int depth;
     property public abstract int height;
     property public abstract int width;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface MeasureScope extends androidx.compose.ui.unit.Density {
-    method public default androidx.xr.compose.subspace.layout.MeasureResult layout(int width, int height, int depth, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.Placeable.PlacementScope,kotlin.Unit> placementBlock);
+    method public default androidx.xr.compose.subspace.layout.MeasureResult layout(int width, int height, int depth, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SubspacePlaceable.SubspacePlacementScope,kotlin.Unit> placementBlock);
   }
 
   public final class MovableKt {
@@ -464,27 +464,6 @@ package androidx.xr.compose.subspace.layout {
 
   public interface ParentLayoutParamsModifier {
     method public void adjustParams(androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable params);
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class Placeable {
-    ctor public Placeable();
-    method public final int getMeasuredDepth();
-    method public final int getMeasuredHeight();
-    method public final int getMeasuredWidth();
-    method protected abstract void placeAt(androidx.xr.runtime.math.Pose pose);
-    method protected final void setMeasuredDepth(int);
-    method protected final void setMeasuredHeight(int);
-    method protected final void setMeasuredWidth(int);
-    property public final int measuredDepth;
-    property public final int measuredHeight;
-    property public final int measuredWidth;
-  }
-
-  public abstract static class Placeable.PlacementScope {
-    ctor public Placeable.PlacementScope();
-    method public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? getCoordinates();
-    method public final void place(androidx.xr.compose.subspace.layout.Placeable, androidx.xr.runtime.math.Pose pose);
-    property public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? coordinates;
   }
 
   public final class PointerHoverIconKt {
@@ -699,6 +678,27 @@ package androidx.xr.compose.subspace.layout {
     method public void onAttach();
     method public void onDetach();
     property public final boolean isAttached;
+  }
+
+  public abstract class SubspacePlaceable {
+    ctor public SubspacePlaceable();
+    method public final int getMeasuredDepth();
+    method public final int getMeasuredHeight();
+    method public final int getMeasuredWidth();
+    method protected abstract void placeAt(androidx.xr.runtime.math.Pose pose);
+    method protected final void setMeasuredDepth(int);
+    method protected final void setMeasuredHeight(int);
+    method protected final void setMeasuredWidth(int);
+    property public final int measuredDepth;
+    property public final int measuredHeight;
+    property public final int measuredWidth;
+  }
+
+  public abstract static class SubspacePlaceable.SubspacePlacementScope {
+    ctor public SubspacePlaceable.SubspacePlacementScope();
+    method public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? getCoordinates();
+    method public final void place(androidx.xr.compose.subspace.layout.SubspacePlaceable, androidx.xr.runtime.math.Pose pose);
+    property public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? coordinates;
   }
 
   public final class TestTagKt {

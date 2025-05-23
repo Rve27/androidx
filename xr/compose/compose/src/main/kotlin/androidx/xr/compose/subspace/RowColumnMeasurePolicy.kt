@@ -23,8 +23,8 @@ import androidx.xr.compose.subspace.layout.Measurable
 import androidx.xr.compose.subspace.layout.MeasurePolicy
 import androidx.xr.compose.subspace.layout.MeasureResult
 import androidx.xr.compose.subspace.layout.MeasureScope
-import androidx.xr.compose.subspace.layout.Placeable
 import androidx.xr.compose.subspace.layout.SpatialAlignment
+import androidx.xr.compose.subspace.layout.SubspacePlaceable
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.compose.unit.VolumeConstraints
 import androidx.xr.compose.unit.constrainDepth
@@ -167,10 +167,10 @@ internal class RowColumnMeasurePolicy(
 
     private val isHorizontal = orientation == LayoutOrientation.Horizontal
 
-    private val Placeable.mainAxisSize
+    private val SubspacePlaceable.mainAxisSize
         get() = if (isHorizontal) measuredWidth else measuredHeight
 
-    private val Placeable.crossAxisSize
+    private val SubspacePlaceable.crossAxisSize
         get() = if (isHorizontal) measuredHeight else measuredWidth
 
     private fun VolumeConstraints.plusMainAxis(addToMainAxis: Int): VolumeConstraints {
@@ -345,7 +345,7 @@ private class ResolvedMeasurable(val measurable: Measurable) {
         RowColumnSpatialAlignmentParentData().also { measurable.adjustParams(it) }
 
     /** A measured placeable, only present once [Measurable.measure] is called on [measurable]. */
-    var placeable: Placeable? = null
+    var placeable: SubspacePlaceable? = null
 
     /** The main-axis position of this child in its parent; set after all children are measured. */
     var mainAxisPosition: Int? = null

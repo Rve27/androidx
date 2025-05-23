@@ -16,17 +16,15 @@
 
 package androidx.xr.compose.subspace.layout
 
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.math.Pose
 
 /**
- * A [Placeable] corresponds to a child layout that can be positioned by its parent layout. Most
- * [Placeable]s are the result of a [Measurable.measure] call.
+ * A [SubspacePlaceable] corresponds to a child layout that can be positioned by its parent layout.
+ * Most [SubspacePlaceables][SubspacePlaceable] are the result of a [Measurable.measure] call.
  *
  * Based on [androidx.compose.ui.layout.Placeable].
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public abstract class Placeable {
+public abstract class SubspacePlaceable {
     /** The measured width of the layout, in pixels. */
     public var measuredWidth: Int = 0
         protected set
@@ -39,11 +37,11 @@ public abstract class Placeable {
     public var measuredDepth: Int = 0
         protected set
 
-    /** Positions the [Placeable] at [position] in its parent's coordinate system. */
+    /** Positions the [SubspacePlaceable] at [pose] in its parent's coordinate system. */
     protected abstract fun placeAt(pose: Pose)
 
-    /** Receiver scope that permits explicit placement of a [Placeable]. */
-    public abstract class PlacementScope {
+    /** Receiver scope that permits explicit placement of a [SubspacePlaceable]. */
+    public abstract class SubspacePlacementScope {
         /**
          * The [SubspaceLayoutCoordinates] of this layout, if known or `null` if the layout hasn't
          * been placed yet.
@@ -51,8 +49,8 @@ public abstract class Placeable {
         public open val coordinates: SubspaceLayoutCoordinates?
             get() = null
 
-        /** Place a [Placeable] at the [Pose] in its parent's coordinate system. */
-        public fun Placeable.place(pose: Pose) {
+        /** Place a [SubspacePlaceable] at the [Pose] in its parent's coordinate system. */
+        public fun SubspacePlaceable.place(pose: Pose) {
             placeAt(pose)
         }
     }
