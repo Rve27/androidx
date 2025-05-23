@@ -26,10 +26,10 @@ import com.android.tools.lint.detector.api.JavaContext
 import com.android.tools.lint.detector.api.Scope
 import com.android.tools.lint.detector.api.Severity
 import com.android.tools.lint.detector.api.SourceCodeScanner
+import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import java.util.EnumSet
 import java.util.concurrent.TimeUnit
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.uast.UCallExpression
 import org.jetbrains.uast.UQualifiedReferenceExpression
@@ -83,11 +83,19 @@ class InvalidPeriodicWorkRequestIntervalDetector : Detector(), SourceCodeScanner
             if ("long" == type) {
                 val value = repeatInterval.evaluate() as? Long
                 // TimeUnit
-                val units = timeUnit?.evaluate() as? Pair<ClassId, Name>
-                if (value != null && units != null) {
-                    val (_, timeUnitType) = units
+                val timeUnitType =
+                    when (val e = timeUnit?.evaluate()) {
+                        // For evaluation of enum, the returned value is either
+                        // 1) `ClsEnumConstantImpl`, a subtype of `PsiField`, from Java;
+                        // 2) `PsiField` from K2 UAST; or
+                        // 3) `Pair<ClassId,Name>` from K1 UAST
+                        is PsiField -> e.name
+                        is Pair<*, *> -> (e.second as? Name)?.identifier
+                        else -> null
+                    }
+                if (value != null && timeUnitType != null) {
                     val interval: Long? =
-                        when (timeUnitType.identifier) {
+                        when (timeUnitType) {
                             "NANOSECONDS" -> TimeUnit.MINUTES.convert(value, TimeUnit.NANOSECONDS)
                             "MICROSECONDS" -> TimeUnit.MINUTES.convert(value, TimeUnit.MICROSECONDS)
                             "MILLISECONDS" -> TimeUnit.MINUTES.convert(value, TimeUnit.MILLISECONDS)
