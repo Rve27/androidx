@@ -646,13 +646,15 @@ package androidx.xr.compose.subspace.layout {
     property public float bias;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class SpatialFeatheringEffect {
+  public abstract class SpatialFeatheringEffect {
   }
 
   public final class SpatialFeatheringEffectKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SpatialSmoothFeatheringEffect SpatialSmoothFeatheringEffect(float horizontal, float vertical);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SpatialSmoothFeatheringEffect SpatialSmoothFeatheringEffect(float horizontal, float vertical);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SpatialSmoothFeatheringEffect SpatialSmoothFeatheringEffect(@IntRange(from=0L, to=50L) int percentHorizontal, @IntRange(from=0L, to=50L) int percentVertical);
+    method public static androidx.xr.compose.subspace.layout.SpatialFeatheringEffect SpatialSmoothFeatheringEffect(float horizontal, float vertical);
+    method public static androidx.xr.compose.subspace.layout.SpatialFeatheringEffect SpatialSmoothFeatheringEffect(float horizontal, float vertical);
+    method public static androidx.xr.compose.subspace.layout.SpatialFeatheringEffect SpatialSmoothFeatheringEffect(@IntRange(from=0L, to=50L) int percentHorizontal, @IntRange(from=0L, to=50L) int percentVertical);
+    method public static androidx.xr.compose.subspace.layout.SpatialFeatheringEffect getZeroFeatheringEffect();
+    property public static androidx.xr.compose.subspace.layout.SpatialFeatheringEffect ZeroFeatheringEffect;
   }
 
   public final class SpatialRoundedCornerShape extends androidx.xr.compose.subspace.layout.SpatialShape {
@@ -660,23 +662,6 @@ package androidx.xr.compose.subspace.layout {
   }
 
   public abstract class SpatialShape {
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialSmoothFeatheringEffect extends androidx.xr.compose.subspace.layout.SpatialFeatheringEffect {
-    ctor public SpatialSmoothFeatheringEffect(androidx.xr.compose.subspace.layout.SpatialSmoothFeatheringSize size);
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialSmoothFeatheringSize {
-    method public float toHeightPercent(float pixels, androidx.compose.ui.unit.Density density);
-    method public float toWidthPercent(float pixels, androidx.compose.ui.unit.Density density);
-  }
-
-  public final class SpatialSmoothFeatheringSizeKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SpatialSmoothFeatheringSize getZeroFeatheringSize();
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SpatialSmoothFeatheringSize spatialSmoothFeatheringSize(float horizontal, float vertical);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SpatialSmoothFeatheringSize spatialSmoothFeatheringSize(float horizontal, float vertical);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SpatialSmoothFeatheringSize spatialSmoothFeatheringSize(@IntRange(from=0L, to=50L) int percentHorizontal, @IntRange(from=0L, to=50L) int percentVertical);
-    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SpatialSmoothFeatheringSize ZeroFeatheringSize;
   }
 
   public interface SubspaceLayoutCoordinates {

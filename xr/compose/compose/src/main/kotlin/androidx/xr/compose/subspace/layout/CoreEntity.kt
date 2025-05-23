@@ -265,8 +265,7 @@ internal class CoreSurfaceEntity(
             }
         }
 
-    private var currentFeatheringEffect: SpatialFeatheringEffect =
-        SpatialSmoothFeatheringEffect(ZeroFeatheringSize)
+    private var currentFeatheringEffect: SpatialFeatheringEffect = ZeroFeatheringEffect
 
     override var size: IntVolumeSize
         get() = super.size
