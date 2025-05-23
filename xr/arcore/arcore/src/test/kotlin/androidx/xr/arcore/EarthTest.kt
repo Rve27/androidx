@@ -30,7 +30,7 @@ import androidx.xr.runtime.math.GeospatialPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.runtime.testing.FakeRuntimeAnchor
+import androidx.xr.runtime.testing.FakePerceptionManager
 import androidx.xr.runtime.testing.FakeRuntimeEarth
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertFailsWith
@@ -201,9 +201,10 @@ class EarthTest {
     }
 
     @Test
-    fun createAnchor_success_returnsSuccessResultWithAnchor() {
+    fun createAnchor_success_returnsSuccessResultWithAnchor() = createTestSessionAndRunTest {
         val underTest = Earth(runtimeEarth, xrResourcesManager)
-        val fakeAnchor = FakeRuntimeAnchor(Pose.Identity)
+        val fakePerceptionManager = session.runtime.perceptionManager as FakePerceptionManager
+        val fakeAnchor = fakePerceptionManager.createAnchor(Pose.Identity)
         runtimeEarth.nextAnchor = fakeAnchor
 
         val result = underTest.createAnchor(LATITUDE, LONGITUDE, ALTITUDE, EUS_QUATERNION)
@@ -246,26 +247,31 @@ class EarthTest {
     }
 
     @Test
-    fun createAnchorOnSurface_success_returnsSuccessResultWithAnchor() = doBlocking {
-        val underTest = Earth(runtimeEarth, xrResourcesManager)
-        val fakeAnchor = FakeRuntimeAnchor(Pose.Identity)
-        runtimeEarth.nextAnchor = fakeAnchor
+    fun createAnchorOnSurface_success_returnsSuccessResultWithAnchor() =
+        createTestSessionAndRunTest {
+            doBlocking {
+                val underTest = Earth(runtimeEarth, xrResourcesManager)
+                val fakePerceptionManager =
+                    session.runtime.perceptionManager as FakePerceptionManager
+                val fakeAnchor = fakePerceptionManager.createAnchor(Pose.Identity)
+                runtimeEarth.nextAnchor = fakeAnchor
 
-        val result =
-            underTest.createAnchorOnSurface(
-                LATITUDE,
-                LONGITUDE,
-                ALTITUDE_ABOVE_SURFACE,
-                EUS_QUATERNION,
-                Earth.Surface.TERRAIN,
-            )
+                val result =
+                    underTest.createAnchorOnSurface(
+                        LATITUDE,
+                        LONGITUDE,
+                        ALTITUDE_ABOVE_SURFACE,
+                        EUS_QUATERNION,
+                        Earth.Surface.TERRAIN,
+                    )
 
-        assertThat(result).isInstanceOf(AnchorCreateSuccess::class.java)
-        val successResult = result as AnchorCreateSuccess
-        assertThat(successResult.anchor.runtimeAnchor).isEqualTo(fakeAnchor)
-        assertThat((xrResourcesManager.updatables.firstOrNull() as Anchor).runtimeAnchor)
-            .isEqualTo(fakeAnchor)
-    }
+                assertThat(result).isInstanceOf(AnchorCreateSuccess::class.java)
+                val successResult = result as AnchorCreateSuccess
+                assertThat(successResult.anchor.runtimeAnchor).isEqualTo(fakeAnchor)
+                assertThat((xrResourcesManager.updatables.firstOrNull() as Anchor).runtimeAnchor)
+                    .isEqualTo(fakeAnchor)
+            }
+        }
 
     @Test
     fun createAnchorOnSurface_illegalState_returnsIllegalStateResult() = doBlocking {
