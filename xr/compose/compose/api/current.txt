@@ -105,6 +105,10 @@ package androidx.xr.compose.subspace {
 
 package androidx.xr.compose.subspace.layout {
 
+  public final class AlphaKt {
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier alpha(androidx.xr.compose.subspace.layout.SubspaceModifier, @FloatRange(from=0.0, to=1.0) float alpha);
+  }
+
   public interface ParentLayoutParamsAdjustable {
   }
 

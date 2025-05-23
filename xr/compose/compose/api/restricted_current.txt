@@ -364,7 +364,7 @@ package androidx.xr.compose.subspace {
 package androidx.xr.compose.subspace.layout {
 
   public final class AlphaKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SubspaceModifier alpha(androidx.xr.compose.subspace.layout.SubspaceModifier, @FloatRange(from=0.0, to=1.0) float alpha);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier alpha(androidx.xr.compose.subspace.layout.SubspaceModifier, @FloatRange(from=0.0, to=1.0) float alpha);
   }
 
   @kotlin.PublishedApi internal final class CoreContentlessEntity extends androidx.xr.compose.subspace.layout.CoreEntity {
