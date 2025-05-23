@@ -878,7 +878,7 @@ class TextFieldCursorTest : FocusedWindowTest {
             val moveEvent =
                 makeTextDragEvent(
                     action = DragEvent.ACTION_DRAG_LOCATION,
-                    offset = Offset(with(rule.density) { fontSize.toPx() * 3 }, 5f),
+                    position = Offset(with(rule.density) { fontSize.toPx() * 3 }, 5f),
                 )
 
             view?.dispatchDragEvent(startEvent)
@@ -915,7 +915,7 @@ class TextFieldCursorTest : FocusedWindowTest {
             val moveEvent =
                 makeTextDragEvent(
                     action = DragEvent.ACTION_DRAG_LOCATION,
-                    offset = Offset(with(rule.density) { fontSize.toPx() * 3 }, 5f),
+                    position = Offset(with(rule.density) { fontSize.toPx() * 3 }, 5f),
                 )
 
             view?.dispatchDragEvent(startEvent)
@@ -961,7 +961,7 @@ class TextFieldCursorTest : FocusedWindowTest {
             val moveEvent =
                 makeTextDragEvent(
                     action = DragEvent.ACTION_DRAG_LOCATION,
-                    offset = Offset(with(rule.density) { fontSize.toPx() * 3 }, 5f),
+                    position = Offset(with(rule.density) { fontSize.toPx() * 3 }, 5f),
                 )
 
             view?.dispatchDragEvent(startEvent)
@@ -976,7 +976,7 @@ class TextFieldCursorTest : FocusedWindowTest {
         val moveEvent2 =
             makeTextDragEvent(
                 action = DragEvent.ACTION_DRAG_LOCATION,
-                offset = Offset(with(rule.density) { fontSize.toPx() * 4 }, 5f),
+                position = Offset(with(rule.density) { fontSize.toPx() * 4 }, 5f),
             )
         view?.dispatchDragEvent(moveEvent2)
         rule.mainClock.advanceTimeBy(400)
@@ -1010,7 +1010,7 @@ class TextFieldCursorTest : FocusedWindowTest {
             val moveEvent =
                 makeTextDragEvent(
                     action = DragEvent.ACTION_DRAG_LOCATION,
-                    offset = Offset(with(rule.density) { fontSize.toPx() * 3 }, 5f),
+                    position = Offset(with(rule.density) { fontSize.toPx() * 3 }, 5f),
                 )
 
             view?.dispatchDragEvent(startEvent)
