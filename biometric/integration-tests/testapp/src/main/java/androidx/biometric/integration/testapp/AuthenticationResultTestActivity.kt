@@ -23,6 +23,7 @@ import androidx.biometric.AuthenticationRequest.Biometric
 import androidx.biometric.AuthenticationRequest.Companion.biometricRequest
 import androidx.biometric.AuthenticationRequest.Companion.credentialRequest
 import androidx.biometric.AuthenticationResult
+import androidx.biometric.AuthenticationResultCallback
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.biometric.PromptContentItemBulletedText
@@ -50,13 +51,20 @@ class AuthenticationResultTestActivity : FragmentActivity() {
         }
 
     private val authResultLauncher =
-        registerForAuthenticationResult(onAuthFailedCallback = { onAuthenticationFailed() }) {
-            result: AuthenticationResult ->
-            when (result) {
-                is AuthenticationResult.Success -> onAuthenticationSucceeded(result)
-                is AuthenticationResult.Error -> onAuthenticationError(result)
+        registerForAuthenticationResult(
+            object : AuthenticationResultCallback {
+                override fun onAuthResult(result: AuthenticationResult) {
+                    when (result) {
+                        is AuthenticationResult.Success -> onAuthenticationSucceeded(result)
+                        is AuthenticationResult.Error -> onAuthenticationError(result)
+                    }
+                }
+
+                override fun onAuthFailure() {
+                    onAuthenticationFailed()
+                }
             }
-        }
+        )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
