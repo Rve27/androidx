@@ -23,7 +23,6 @@ import androidx.appfunctions.compiler.core.AnnotatedAppFunctionSerializableProxy
 import androidx.appfunctions.compiler.core.AppFunctionInventoryCodeBuilder
 import androidx.appfunctions.compiler.core.AppFunctionSymbolResolver
 import androidx.appfunctions.compiler.core.IntrospectionHelper
-import androidx.appfunctions.compiler.core.addGeneratedTimeStamp
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.Resolver
@@ -93,7 +92,6 @@ class AppFunctionSchemaInventoryProcessor(
 
         val fileSpec =
             FileSpec.builder(packageName, inventoryClassName)
-                .addGeneratedTimeStamp()
                 .addType(inventoryClassBuilder.build())
                 .build()
         codeGenerator

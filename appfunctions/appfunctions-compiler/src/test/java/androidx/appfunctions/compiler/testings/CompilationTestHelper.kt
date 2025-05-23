@@ -160,8 +160,6 @@ class CompilationTestHelper(
         expectGeneratedSourceFileName: String,
         goldenFileName: String,
     ) {
-        val lineToRemoveRegex =
-            Regex("""// Last generated time \(Workaround for now, will be reverted\): \d+\n?""")
         assertSuccessWithGeneratedContent(
             report,
             expectGeneratedSourceFileName,
@@ -171,8 +169,7 @@ class CompilationTestHelper(
                     sourceFile.source.relativePath.contains(expectGeneratedSourceFileName)
                 }
                 ?.source
-                ?.contents
-                ?.replace(lineToRemoveRegex, ""),
+                ?.contents,
         )
     }
 

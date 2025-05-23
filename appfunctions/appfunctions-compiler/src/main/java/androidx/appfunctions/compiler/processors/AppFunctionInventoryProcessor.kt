@@ -25,7 +25,6 @@ import androidx.appfunctions.compiler.core.AppFunctionInventoryCodeBuilder
 import androidx.appfunctions.compiler.core.AppFunctionSymbolResolver
 import androidx.appfunctions.compiler.core.IntrospectionHelper
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionComponentRegistryAnnotation
-import androidx.appfunctions.compiler.core.addGeneratedTimeStamp
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
@@ -114,7 +113,6 @@ class AppFunctionInventoryProcessor(private val codeGenerator: CodeGenerator) : 
 
         val fileSpec =
             FileSpec.builder(originalPackageName, inventoryClassName)
-                .addGeneratedTimeStamp()
                 .addType(inventoryClassBuilder.build())
                 .build()
         codeGenerator

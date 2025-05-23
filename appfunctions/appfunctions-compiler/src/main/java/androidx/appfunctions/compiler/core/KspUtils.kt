@@ -30,7 +30,6 @@ import com.google.devtools.ksp.symbol.Variance.CONTRAVARIANT
 import com.google.devtools.ksp.symbol.Variance.COVARIANT
 import com.google.devtools.ksp.symbol.Variance.INVARIANT
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.LIST
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STAR
@@ -266,11 +265,3 @@ private fun ClassName.withTypeArguments(arguments: List<TypeName>): TypeName {
 }
 
 fun KClass<*>.ensureQualifiedName(): String = checkNotNull(qualifiedName)
-
-fun FileSpec.Builder.addGeneratedTimeStamp(): FileSpec.Builder {
-    this.addFileComment(
-        "Last generated time (Workaround for now, will be reverted): " +
-            "${System.currentTimeMillis()}"
-    )
-    return this
-}

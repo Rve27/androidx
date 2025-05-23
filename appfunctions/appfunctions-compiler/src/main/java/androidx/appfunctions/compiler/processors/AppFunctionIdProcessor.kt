@@ -19,7 +19,6 @@ package androidx.appfunctions.compiler.processors
 import androidx.appfunctions.compiler.AppFunctionCompiler
 import androidx.appfunctions.compiler.core.AnnotatedAppFunctions
 import androidx.appfunctions.compiler.core.AppFunctionSymbolResolver
-import androidx.appfunctions.compiler.core.addGeneratedTimeStamp
 import androidx.appfunctions.compiler.core.fromCamelCaseToScreamingSnakeCase
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.Dependencies
@@ -73,10 +72,7 @@ class AppFunctionIdProcessor(private val codeGenerator: CodeGenerator) : SymbolP
             }
 
         val fileSpec =
-            FileSpec.builder(originalPackageName, idClassName)
-                .addType(classBuilder.build())
-                .addGeneratedTimeStamp()
-                .build()
+            FileSpec.builder(originalPackageName, idClassName).addType(classBuilder.build()).build()
         codeGenerator
             .createNewFile(
                 Dependencies(

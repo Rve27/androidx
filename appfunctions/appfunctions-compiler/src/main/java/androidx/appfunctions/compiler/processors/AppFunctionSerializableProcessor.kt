@@ -27,7 +27,6 @@ import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerial
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.FromAppFunctionDataMethod.APP_FUNCTION_DATA_PARAM_NAME
 import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSerializableFactoryClass.ToAppFunctionDataMethod.APP_FUNCTION_SERIALIZABLE_PARAM_NAME
 import androidx.appfunctions.compiler.core.ProcessingException
-import androidx.appfunctions.compiler.core.addGeneratedTimeStamp
 import androidx.appfunctions.compiler.core.logException
 import androidx.appfunctions.compiler.core.toClassName
 import androidx.appfunctions.compiler.processors.AppFunctionSerializableFactoryCodeBuilder.Companion.getTypeParameterPropertyName
@@ -151,7 +150,6 @@ class AppFunctionSerializableProcessor(
                     annotatedClass.originalClassName.packageName,
                     generatedFactoryClassName,
                 )
-                .addGeneratedTimeStamp()
                 .addType(
                     TypeSpec.classBuilder(generatedFactoryClassName)
                         .addAnnotation(AppFunctionCompiler.GENERATED_ANNOTATION)
