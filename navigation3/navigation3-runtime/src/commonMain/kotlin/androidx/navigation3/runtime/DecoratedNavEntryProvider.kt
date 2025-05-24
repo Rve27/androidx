@@ -160,8 +160,6 @@ internal fun PrepareBackStack(
 ) {
     val localInfo = remember { NavEntryDecoratorLocalInfo() }
 
-    DisposableEffect(key1 = backStack) { onDispose { localInfo.keyIds.clear() } }
-
     backStack.forEachIndexed { index, key ->
         val id = getIdForEntry(key, index)
         localInfo.keyIds.getOrPut(key) { LinkedHashSet() }.add(id)
