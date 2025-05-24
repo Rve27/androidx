@@ -207,12 +207,6 @@ private class NavEntryDecoratorLocalInfo {
     @Suppress("PrimitiveInCollection") // The order of the element matters
     val idsInComposition: LinkedHashSet<Int> = LinkedHashSet<Int>()
     val popCallbacks: LinkedHashMap<Int, (key: Any) -> Unit> = LinkedHashMap()
-
-    fun populatePopMap(decorators: List<NavEntryDecorator<*>>) {
-        decorators.reversed().forEach { decorator ->
-            popCallbacks.getOrPut(decorator.hashCode(), decorator::onPop)
-        }
-    }
 }
 
 private val LocalNavEntryDecoratorLocalInfo =
