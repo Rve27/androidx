@@ -2462,6 +2462,7 @@ class PointerInputEventProcessorTest {
                 ProcessResult(
                     dispatchedToAPointerInputModifier = false,
                     anyMovementConsumed = false,
+                    anyChangeConsumed = false,
                 )
             )
     }
@@ -2495,6 +2496,7 @@ class PointerInputEventProcessorTest {
                 ProcessResult(
                     dispatchedToAPointerInputModifier = false,
                     anyMovementConsumed = false,
+                    anyChangeConsumed = false,
                 )
             )
     }
@@ -2517,7 +2519,11 @@ class PointerInputEventProcessorTest {
 
         assertThat(result)
             .isEqualTo(
-                ProcessResult(dispatchedToAPointerInputModifier = true, anyMovementConsumed = false)
+                ProcessResult(
+                    dispatchedToAPointerInputModifier = true,
+                    anyMovementConsumed = false,
+                    anyChangeConsumed = false,
+                )
             )
     }
 
@@ -2545,6 +2551,7 @@ class PointerInputEventProcessorTest {
                 ProcessResult(
                     dispatchedToAPointerInputModifier = false,
                     anyMovementConsumed = false,
+                    anyChangeConsumed = false,
                 )
             )
     }
@@ -2569,7 +2576,11 @@ class PointerInputEventProcessorTest {
 
         assertThat(result)
             .isEqualTo(
-                ProcessResult(dispatchedToAPointerInputModifier = true, anyMovementConsumed = false)
+                ProcessResult(
+                    dispatchedToAPointerInputModifier = true,
+                    anyMovementConsumed = false,
+                    anyChangeConsumed = false,
+                )
             )
     }
 
@@ -2603,40 +2614,117 @@ class PointerInputEventProcessorTest {
 
         assertThat(result)
             .isEqualTo(
-                ProcessResult(dispatchedToAPointerInputModifier = true, anyMovementConsumed = true)
+                ProcessResult(
+                    dispatchedToAPointerInputModifier = true,
+                    anyMovementConsumed = true,
+                    anyChangeConsumed = true,
+                )
             )
     }
 
     @Test
-    fun processResult_trueTrue_propValuesAreCorrect() {
+    fun process_noMovementWithScrollDelta_somethingInteractedWithAnyChangeConsumed() {
+        val pointerInputFilter: PointerInputFilter =
+            PointerInputFilterMock(
+                pointerEventHandler = { pointerEvent, pass, _ ->
+                    if (pass == PointerEventPass.Main) {
+                        pointerEvent.changes.forEach {
+                            if (it.scrollDelta != Offset.Zero) it.consume()
+                        }
+                    }
+                }
+            )
+
+        val layoutNode = LayoutNode(0, 0, 1, 1, PointerInputModifierImpl2(pointerInputFilter))
+        addToRoot(layoutNode)
+
+        val scrollDeltaEvent =
+            PointerInputEventData(
+                    id = PointerId(1L),
+                    uptime = 11,
+                    positionOnScreen = Offset(0f, 0f),
+                    position = Offset(0f, 0f),
+                    down = false,
+                    type = PointerType.Mouse,
+                    pressure = 0f,
+                    scrollDelta = Offset(0f, 100f),
+                )
+                .let { PointerInputEvent(uptime = 11, pointers = listOf(it)) }
+
+        val result = pointerInputEventProcessor.process(scrollDeltaEvent)
+        assertThat(result)
+            .isEqualTo(
+                ProcessResult(
+                    dispatchedToAPointerInputModifier = true,
+                    anyMovementConsumed = false,
+                    anyChangeConsumed = true,
+                )
+            )
+    }
+
+    @Test
+    fun processResult_trueTrueTrue_propValuesAreCorrect() {
         val processResult1 =
-            ProcessResult(dispatchedToAPointerInputModifier = true, anyMovementConsumed = true)
+            ProcessResult(
+                dispatchedToAPointerInputModifier = true,
+                anyMovementConsumed = true,
+                anyChangeConsumed = true,
+            )
         assertThat(processResult1.dispatchedToAPointerInputModifier).isTrue()
         assertThat(processResult1.anyMovementConsumed).isTrue()
+        assertThat(processResult1.anyChangeConsumed).isTrue()
     }
 
     @Test
-    fun processResult_trueFalse_propValuesAreCorrect() {
+    fun processResult_trueFalseTrue_propValuesAreCorrect() {
         val processResult1 =
-            ProcessResult(dispatchedToAPointerInputModifier = true, anyMovementConsumed = false)
+            ProcessResult(
+                dispatchedToAPointerInputModifier = true,
+                anyMovementConsumed = false,
+                anyChangeConsumed = true,
+            )
         assertThat(processResult1.dispatchedToAPointerInputModifier).isTrue()
         assertThat(processResult1.anyMovementConsumed).isFalse()
+        assertThat(processResult1.anyChangeConsumed).isTrue()
     }
 
     @Test
-    fun processResult_falseTrue_propValuesAreCorrect() {
+    fun processResult_falseTrueTrue_propValuesAreCorrect() {
         val processResult1 =
-            ProcessResult(dispatchedToAPointerInputModifier = false, anyMovementConsumed = true)
+            ProcessResult(
+                dispatchedToAPointerInputModifier = false,
+                anyMovementConsumed = true,
+                anyChangeConsumed = true,
+            )
         assertThat(processResult1.dispatchedToAPointerInputModifier).isFalse()
         assertThat(processResult1.anyMovementConsumed).isTrue()
+        assertThat(processResult1.anyChangeConsumed).isTrue()
     }
 
     @Test
-    fun processResult_falseFalse_propValuesAreCorrect() {
+    fun processResult_falseFalseFalse_propValuesAreCorrect() {
         val processResult1 =
-            ProcessResult(dispatchedToAPointerInputModifier = false, anyMovementConsumed = false)
+            ProcessResult(
+                dispatchedToAPointerInputModifier = false,
+                anyMovementConsumed = false,
+                anyChangeConsumed = false,
+            )
         assertThat(processResult1.dispatchedToAPointerInputModifier).isFalse()
         assertThat(processResult1.anyMovementConsumed).isFalse()
+        assertThat(processResult1.anyChangeConsumed).isFalse()
+    }
+
+    @Test
+    fun processResult_falseFalseTrue_propValuesAreCorrect() {
+        val processResult1 =
+            ProcessResult(
+                dispatchedToAPointerInputModifier = false,
+                anyMovementConsumed = false,
+                anyChangeConsumed = true,
+            )
+        assertThat(processResult1.dispatchedToAPointerInputModifier).isFalse()
+        assertThat(processResult1.anyMovementConsumed).isFalse()
+        assertThat(processResult1.anyChangeConsumed).isTrue()
     }
 
     @Test

@@ -72,6 +72,7 @@ internal class PointerInputEventProcessor(val root: LayoutNode) {
             return ProcessResult(
                 dispatchedToAPointerInputModifier = false,
                 anyMovementConsumed = false,
+                anyChangeConsumed = false,
             )
         }
         try {
@@ -131,7 +132,20 @@ internal class PointerInputEventProcessor(val root: LayoutNode) {
                     result
                 }
 
-            return ProcessResult(dispatchedToSomething, anyMovementConsumed)
+            var anyChangeConsumed = false
+            for (i in 0 until internalPointerEvent.changes.size()) {
+                val change = internalPointerEvent.changes.valueAt(i)
+                if (change.isConsumed) {
+                    anyChangeConsumed = true
+                    break
+                }
+            }
+
+            return ProcessResult(
+                dispatchedToAPointerInputModifier = dispatchedToSomething,
+                anyMovementConsumed = anyMovementConsumed,
+                anyChangeConsumed = anyChangeConsumed,
+            )
         } finally {
             isProcessing = false
         }
@@ -237,11 +251,17 @@ private class PointerInputChangeEventProducer {
 /** The result of a call to [PointerInputEventProcessor.process]. */
 @kotlin.jvm.JvmInline
 internal value class ProcessResult(val value: Int) {
+    /** It's true when any [PointerInputFilter] has processed a [PointerInputChange] */
     val dispatchedToAPointerInputModifier
         inline get() = (value and 0x1) != 0
 
+    /** It's true when [PointerInputChange] was consumed and Pointer's position was changed */
     val anyMovementConsumed
         inline get() = (value and 0x2) != 0
+
+    /** It's true when any [PointerInputChange] was consumed. */
+    val anyChangeConsumed
+        inline get() = (value and 0x4) != 0
 }
 
 /**
@@ -254,9 +274,13 @@ internal value class ProcessResult(val value: Int) {
 internal fun ProcessResult(
     dispatchedToAPointerInputModifier: Boolean,
     anyMovementConsumed: Boolean,
+    anyChangeConsumed: Boolean,
 ): ProcessResult {
     return ProcessResult(
-        dispatchedToAPointerInputModifier.toInt() or (anyMovementConsumed.toInt() shl 1)
+        value =
+            dispatchedToAPointerInputModifier.toInt() or
+                (anyMovementConsumed.toInt() shl 1) or
+                (anyChangeConsumed.toInt() shl 2)
     )
 }
 

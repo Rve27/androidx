@@ -2509,7 +2509,11 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             result
         } else {
             pointerInputEventProcessor.processCancel()
-            ProcessResult(dispatchedToAPointerInputModifier = false, anyMovementConsumed = false)
+            ProcessResult(
+                dispatchedToAPointerInputModifier = false,
+                anyMovementConsumed = false,
+                anyChangeConsumed = false,
+            )
         }
     }
 
