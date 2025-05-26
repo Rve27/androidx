@@ -50,7 +50,10 @@ class Camera2ExtensionsVendorExtenderTest(
     private val cameraId2ExtensionCharacteristicsMap =
         Camera2ExtensionsUtil.createCameraId2CameraExtensionCharacteristicsMap(context)
     private val camera2ExtensionsVendorExtender =
-        Camera2ExtensionsVendorExtender(mode, context.getSystemService(CameraManager::class.java))
+        Camera2ExtensionsVendorExtender(
+            mode,
+            Camera2ExtensionsInfo(context.getSystemService(CameraManager::class.java)),
+        )
     private val cameraId = CameraUtil.getCameraIdWithLensFacing(lensFacing)!!
     private val camera2ExtensionMode = Camera2ExtensionsUtil.convertCameraXModeToCamera2Mode(mode)
     private val cameraExtensionsCharacteristics = cameraId2ExtensionCharacteristicsMap[cameraId]!!
