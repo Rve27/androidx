@@ -32,6 +32,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.pdf.PdfDocument
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.exceptions.RequestMetadata
+import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.util.PAGE_CONTENTS_REQUEST_NAME
 import androidx.pdf.util.PAGE_LINKS_REQUEST_NAME
 import kotlinx.coroutines.CoroutineScope
@@ -64,6 +65,8 @@ internal class Page(
     /** Error flow for propagating error occurred while processing to [PdfView]. */
     private val errorFlow: MutableSharedFlow<Throwable>,
     isAccessibilityEnabled: Boolean,
+    /** A list represent the [FormWidgetInfo] present on the page. */
+    internal val formWidgetInfos: List<FormWidgetInfo>? = null,
 ) {
     init {
         require(pageNum >= 0) { "Invalid negative page" }

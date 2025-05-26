@@ -59,6 +59,7 @@ import androidx.pdf.content.ExternalLink
 import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.exceptions.RequestFailedException
+import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.util.Accessibility
 import androidx.pdf.util.MathUtils
 import androidx.pdf.util.ZoomUtils
@@ -1127,11 +1128,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 mainScope.launch(start = CoroutineStart.UNDISPATCHED) {
                     // Prevent 2 copies from running concurrently
                     layoutInfoToJoin?.join()
-                    launch {
-                        manager.pageInfos.collect {
-                            onPageDimensionsReceived(it.pageNum, Point(it.width, it.height))
-                        }
-                    }
+                    launch { manager.pageInfos.collect { onPageMetaDataReceived(it) } }
                 }
         }
         pageManager?.let { manager ->
@@ -1434,8 +1431,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         )
     }
 
-    /** React to a page's dimensions being made available */
-    private fun onPageDimensionsReceived(pageNum: Int, size: Point) {
+    /** React to a page's metadata being made available */
+    private fun onPageMetaDataReceived(pageInfo: PdfDocument.PageInfo) {
+        val pageNum = pageInfo.pageNum
+        val size = Point(pageInfo.width, pageInfo.height)
+        val formWidgetInfos = pageInfo.formWidgetInfos
+
         val localPageLayoutManager = pageMetadataLoader ?: return
         val visiblePageArea = localPageLayoutManager.visiblePageAreas.get(pageNum)
         pageManager?.addPage(
@@ -1445,6 +1446,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             positionIsStable,
             visiblePageArea,
             localPageLayoutManager.layingOutPages,
+            formWidgetInfos,
         )
         // Learning the dimensions of a page can change our understanding of the content that's in
         // the viewport
@@ -1902,6 +1904,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 if (handleGotoLinks(links, touchPoint.pagePoint)) return true
                 if (handleExternalLinks(links, touchPoint.pagePoint)) return true
             }
+
+            pageManager?.getWidgetAtTapPoint(touchPoint)?.let { widgets ->
+                if (handleTapOnFormWidget(widgets, touchPoint.pagePoint)) return true
+            }
+
             return super.onSingleTapConfirmed(e)
         }
 
@@ -1946,6 +1953,25 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                         }
                     }
                     return true
+                }
+            }
+            return false
+        }
+
+        private fun handleTapOnFormWidget(
+            formWidgetInfos: List<FormWidgetInfo>,
+            pdfCoordinates: PointF,
+        ): Boolean {
+            formWidgetInfos.forEach { formWidgetInfo ->
+                // TODO: b/410008790 Implement business logic to perform action on form widget
+                if (
+                    formWidgetInfo.widgetRect.contains(
+                        pdfCoordinates.x.roundToInt(),
+                        pdfCoordinates.y.roundToInt(),
+                    )
+                ) {
+                    // TODO: Return true after handling logic is implemented
+                    return false
                 }
             }
             return false

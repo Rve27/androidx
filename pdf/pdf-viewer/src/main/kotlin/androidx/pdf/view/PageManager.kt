@@ -25,6 +25,7 @@ import androidx.core.util.isEmpty
 import androidx.core.util.keyIterator
 import androidx.core.util.valueIterator
 import androidx.pdf.PdfDocument
+import androidx.pdf.models.FormWidgetInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -152,6 +153,7 @@ internal class PageManager(
         stablePosition: Boolean,
         viewArea: Rect? = null,
         pauseBitmapFetch: Boolean,
+        formWidgetInfos: List<FormWidgetInfo>? = null,
     ) {
         if (pages.contains(pageNum)) return
         val page =
@@ -165,6 +167,7 @@ internal class PageManager(
                     onPageTextReady = { pageNumber -> _pageTextReadyFlow.tryEmit(pageNumber) },
                     errorFlow = errorFlow,
                     isAccessibilityEnabled = isAccessibilityEnabled,
+                    formWidgetInfos = formWidgetInfos,
                 )
                 .apply {
                     // If the page is visible, let it know
@@ -202,6 +205,10 @@ internal class PageManager(
 
     fun getLinkAtTapPoint(pdfPoint: PdfPoint): PdfDocument.PdfPageLinks? {
         return pages[pdfPoint.pageNum]?.links
+    }
+
+    fun getWidgetAtTapPoint(pdfPoint: PdfPoint): List<FormWidgetInfo>? {
+        return pages[pdfPoint.pageNum]?.formWidgetInfos
     }
 }
 
