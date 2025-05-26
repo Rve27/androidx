@@ -20,12 +20,14 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.hardware.camera2.CameraDevice;
 import android.media.CamcorderProfile;
+import android.os.Build;
 import android.util.Pair;
 import android.util.Size;
 
 import androidx.annotation.OptIn;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.RestrictTo.Scope;
+import androidx.camera.camera2.impl.FeatureCombinationQueryImpl;
 import androidx.camera.camera2.internal.compat.CameraManagerCompat;
 import androidx.camera.core.CameraUnavailableException;
 import androidx.camera.core.featurecombination.ExperimentalFeatureCombination;
@@ -110,13 +112,21 @@ public final class Camera2DeviceSurfaceManager implements CameraDeviceSurfaceMan
             throws CameraUnavailableException {
         Preconditions.checkNotNull(context);
 
+        FeatureCombinationQuery featureCombinationQuery =
+                FeatureCombinationQuery.NO_OP_FEATURE_COMBINATION_QUERY;
+
         for (String cameraId : availableCameraIds) {
+            // TODO: b/417839748 - Decide on the appropriate API level for CameraX feature combo API
+            if (Build.VERSION.SDK_INT >= 35) {
+                featureCombinationQuery = new FeatureCombinationQueryImpl(context, cameraId,
+                        cameraManager);
+            }
+
             mCameraSupportedSurfaceCombinationMap.put(
                     cameraId,
                     new SupportedSurfaceCombination(
                             context, cameraId, cameraManager, mCamcorderProfileHelper,
-                            // TODO: Create and use a proper impl. of FeatureCombinationQuery
-                            FeatureCombinationQuery.NO_OP_FEATURE_COMBINATION_QUERY));
+                            featureCombinationQuery));
         }
     }
 
