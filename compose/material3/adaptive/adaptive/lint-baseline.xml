@@ -13,7 +13,7 @@
     <issue
         id="ListIterator"
         message="Creating an unnecessary Iterator to iterate through a List"
-        errorLine1="        supportedHeightSizeClasses.filter { windowSize.height >= it }.maxOf { it.value }"
+        errorLine1="        supportedHeightSizeClasses.filter { windowSize.height >= it }.maxOf { it.value },"
         errorLine2="                                                                      ~~~~~">
         <location
             file="src/commonMain/kotlin/androidx/compose/material3/adaptive/WindowSizeClassHelper.kt"/>

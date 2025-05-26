@@ -85,7 +85,7 @@
     <issue
         id="ModifierNodeElementDataClassWithLambda"
         message="ModifierNodeElement implementations using a data class with lambda properties will result in incorrect equals implementations"
-        errorLine1="    val block: (TraversableBackgroundModifierNode.() -> Unit)?"
+        errorLine1="    val block: (TraversableBackgroundModifierNode.() -> Unit)?,"
         errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/androidx/compose/ui/samples/TraverseModifierDemo.kt"/>

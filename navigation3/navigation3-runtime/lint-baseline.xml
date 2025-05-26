@@ -13,7 +13,7 @@
     <issue
         id="ListIterator"
         message="Creating an unnecessary Iterator to iterate through a List"
-        errorLine1="        restore = { list -> list.map { decodeFromSavedState(serializer, it) } }"
+        errorLine1="        restore = { list -> list.map { decodeFromSavedState(serializer, it) } },"
         errorLine2="                                 ~~~">
         <location
             file="src/androidMain/kotlin/androidx/navigation3/runtime/NavBackStack.android.kt"/>

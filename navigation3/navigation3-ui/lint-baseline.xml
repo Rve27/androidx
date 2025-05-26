@@ -67,8 +67,8 @@
     <issue
         id="ListIterator"
         message="Creating an unnecessary Iterator to iterate through a List"
-        errorLine1="                transitionCurrentStateEntries.map { it.key },"
-        errorLine2="                                              ~~~">
+        errorLine1="        val isPop = isPop(transitionCurrentStateEntries.map { it.key }, entries.map { it.key })"
+        errorLine2="                                                        ~~~">
         <location
             file="src/commonMain/kotlin/androidx/navigation3/ui/NavDisplay.kt"/>
     </issue>
@@ -76,8 +76,8 @@
     <issue
         id="ListIterator"
         message="Creating an unnecessary Iterator to iterate through a List"
-        errorLine1="                entries.map { it.key },"
-        errorLine2="                        ~~~">
+        errorLine1="        val isPop = isPop(transitionCurrentStateEntries.map { it.key }, entries.map { it.key })"
+        errorLine2="                                                                                ~~~">
         <location
             file="src/commonMain/kotlin/androidx/navigation3/ui/NavDisplay.kt"/>
     </issue>

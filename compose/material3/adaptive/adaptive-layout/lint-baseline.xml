@@ -13,7 +13,7 @@
     <issue
         id="ListIterator"
         message="Creating an unnecessary Iterator to iterate through a List"
-        errorLine1="            rulers.maxOfOrNull { it.left.current(0f).roundToInt() } ?: 0"
+        errorLine1="            rulers.maxOfOrNull { it.left.current(0f).roundToInt() } ?: 0,"
         errorLine2="                   ~~~~~~~~~~~">
         <location
             file="src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/PaneMargins.kt"/>
@@ -22,7 +22,7 @@
     <issue
         id="ListIterator"
         message="Creating an unnecessary Iterator to iterate through a List"
-        errorLine1="            rulers.maxOfOrNull { it.top.current(0f).roundToInt() } ?: 0"
+        errorLine1="            rulers.maxOfOrNull { it.top.current(0f).roundToInt() } ?: 0,"
         errorLine2="                   ~~~~~~~~~~~">
         <location
             file="src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/PaneMargins.kt"/>
@@ -31,7 +31,7 @@
     <issue
         id="ListIterator"
         message="Creating an unnecessary Iterator to iterate through a List"
-        errorLine1="            rulers.minOfOrNull { it.right.current(Float.MAX_VALUE).roundToInt() } ?: parentRight"
+        errorLine1="            rulers.minOfOrNull { it.right.current(Float.MAX_VALUE).roundToInt() } ?: parentRight,"
         errorLine2="                   ~~~~~~~~~~~">
         <location
             file="src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/PaneMargins.kt"/>
@@ -40,7 +40,7 @@
     <issue
         id="ListIterator"
         message="Creating an unnecessary Iterator to iterate through a List"
-        errorLine1="            rulers.minOfOrNull { it.bottom.current(Float.MAX_VALUE).roundToInt() } ?: parentBottom"
+        errorLine1="            rulers.minOfOrNull { it.bottom.current(Float.MAX_VALUE).roundToInt() } ?: parentBottom,"
         errorLine2="                   ~~~~~~~~~~~">
         <location
             file="src/commonMain/kotlin/androidx/compose/material3/adaptive/layout/PaneMargins.kt"/>
@@ -49,7 +49,7 @@
     <issue
         id="AutoboxingStateValueProperty"
         message="Assigning `value` will cause an autoboxing operation. Use `intValue` to avoid unnecessary allocations."
-        errorLine1="                    initialAnchoredIndex = initialAnchoredIndexState.value"
+        errorLine1="                    initialAnchoredIndex = initialAnchoredIndexState.value,"
         errorLine2="                                                                     ~~~~~">
         <location
             file="src/androidInstrumentedTest/kotlin/androidx/compose/material3/adaptive/layout/PaneExpansionStateTest.kt"/>
@@ -67,7 +67,7 @@
     <issue
         id="AutoboxingStateValueProperty"
         message="Assigning `value` will cause an autoboxing operation. Use `intValue` to avoid unnecessary allocations."
-        errorLine1="                    initialAnchoredIndex = initialAnchoredIndexState.value"
+        errorLine1="                    initialAnchoredIndex = initialAnchoredIndexState.value,"
         errorLine2="                                                                     ~~~~~">
         <location
             file="src/androidInstrumentedTest/kotlin/androidx/compose/material3/adaptive/layout/PaneExpansionStateTest.kt"/>
@@ -76,7 +76,7 @@
     <issue
         id="AutoboxingStateValueProperty"
         message="Assigning `value` will cause an autoboxing operation. Use `intValue` to avoid unnecessary allocations."
-        errorLine1="                    initialAnchoredIndex = initialAnchoredIndexState.value"
+        errorLine1="                    initialAnchoredIndex = initialAnchoredIndexState.value,"
         errorLine2="                                                                     ~~~~~">
         <location
             file="src/androidInstrumentedTest/kotlin/androidx/compose/material3/adaptive/layout/PaneExpansionStateTest.kt"/>
@@ -94,7 +94,7 @@
     <issue
         id="AutoboxingStateValueProperty"
         message="Assigning `value` will cause an autoboxing operation. Use `intValue` to avoid unnecessary allocations."
-        errorLine1="                    initialAnchoredIndex = initialAnchoredIndexState.value"
+        errorLine1="                    initialAnchoredIndex = initialAnchoredIndexState.value,"
         errorLine2="                                                                     ~~~~~">
         <location
             file="src/androidInstrumentedTest/kotlin/androidx/compose/material3/adaptive/layout/PaneExpansionStateTest.kt"/>
@@ -112,7 +112,7 @@
     <issue
         id="AutoboxingStateValueProperty"
         message="Assigning `value` will cause an autoboxing operation. Use `intValue` to avoid unnecessary allocations."
-        errorLine1="                    initialAnchoredIndex = initialAnchoredIndexState.value"
+        errorLine1="                    initialAnchoredIndex = initialAnchoredIndexState.value,"
         errorLine2="                                                                     ~~~~~">
         <location
             file="src/androidInstrumentedTest/kotlin/androidx/compose/material3/adaptive/layout/PaneExpansionStateTest.kt"/>

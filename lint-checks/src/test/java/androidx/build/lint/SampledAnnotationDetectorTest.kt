@@ -22,8 +22,6 @@ import com.android.tools.lint.checks.infrastructure.LintDetectorTest
 import com.android.tools.lint.checks.infrastructure.ProjectDescription
 import com.android.tools.lint.checks.infrastructure.TestFile
 import com.android.tools.lint.checks.infrastructure.TestMode
-import com.android.tools.lint.useFirUast
-import org.junit.Assume.assumeFalse
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
@@ -133,7 +131,7 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
         )
 
     private fun checkKotlin(
-        fooFile: TestFile? = null,
+        fooFile: TestFile,
         sampleFile: TestFile,
         expectedText: String? = null,
         requiresPartialAnalysis: Boolean = true,
@@ -143,7 +141,7 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
             ProjectDescription().apply {
                 name = fooModuleName
                 type = ProjectDescription.Type.LIBRARY
-                fooFile?.let { addFile(fooFile) }
+                addFile(fooFile)
             }
         projectDescriptions += fooProject
 
@@ -622,7 +620,17 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
 
     @Test
     fun obsoleteSampledFunction() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
+        val fooFile =
+            kotlin(
+                """
+            package foo
+
+            class Bar {
+              fun bar() {}
+            }
+        """
+            )
+
         val sampleFile = correctlyAnnotatedSampleFile
 
         val expected =
@@ -633,12 +641,11 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
 
         """
 
-        checkKotlin(sampleFile = sampleFile, expectedText = expected)
+        checkKotlin(fooFile = fooFile, sampleFile = sampleFile, expectedText = expected)
     }
 
     @Test
     fun invalidSampleLocation() {
-        assumeFalse("Test fails under K2: b/353980920", useFirUast())
         val sampleFile =
             kotlin(
                 """
@@ -651,14 +658,21 @@ class SampledAnnotationDetectorTest : LintDetectorTest() {
         """
             )
 
+        val sampleProject =
+            ProjectDescription().apply {
+                name = "wrongmodulenaming"
+                type = ProjectDescription.Type.LIBRARY
+                files = arrayOf(sampleFile, sampledStub)
+            }
+
         val expected =
-            """samples/src/foo/wrong/location/test.kt:7: Error: foo.wrong.location.sampleBar is annotated with @Sampled, but is not linked to from a @sample tag. [ObsoleteSampledAnnotation]
+            """src/foo/wrong/location/test.kt:7: Error: sampleBar is annotated with @Sampled, but is not inside a project/directory named samples. [InvalidSamplesLocation]
             fun sampleBar() {}
                 ~~~~~~~~~
-1 errors, 0 warnings
+1 error
 
         """
 
-        checkKotlin(sampleFile = sampleFile, expectedText = expected)
+        lint().projects(sampleProject).run().expect(expected)
     }
 }

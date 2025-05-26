@@ -13,7 +13,7 @@
     <issue
         id="ListIterator"
         message="Creating an unnecessary Iterator to iterate through a List"
-        errorLine1="                    previousEntries = allEntries.subList(0, index + 1).toList()"
+        errorLine1="                    previousEntries = allEntries.subList(0, index + 1).toList(),"
         errorLine2="                                                                       ~~~~~~">
         <location
             file="src/androidMain/kotlin/androidx/compose/material3/adaptive/navigation3/ListDetailScene.android.kt"/>
@@ -22,7 +22,7 @@
     <issue
         id="ListIterator"
         message="Creating an unnecessary Iterator to iterate through a List"
-        errorLine1="                    previousEntries = allEntries.subList(0, index + 1).toList()"
+        errorLine1="                    previousEntries = allEntries.subList(0, index + 1).toList(),"
         errorLine2="                                                                       ~~~~~~">
         <location
             file="src/androidMain/kotlin/androidx/compose/material3/adaptive/navigation3/ListDetailScene.android.kt"/>

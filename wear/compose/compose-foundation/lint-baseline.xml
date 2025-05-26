@@ -256,7 +256,7 @@
     <issue
         id="PrimitiveInCollection"
         message="method onAnchorsChanged has parameter newAnchors with type Map&lt;T, Float>: replace with ObjectFloatMap"
-        errorLine1="        newAnchors: Map&lt;T, Float>"
+        errorLine1="        newAnchors: Map&lt;T, Float>,"
         errorLine2="                    ~~~~~~~~~~~~~">
         <location
             file="src/main/java/androidx/wear/compose/foundation/SwipeableV2.kt"/>
