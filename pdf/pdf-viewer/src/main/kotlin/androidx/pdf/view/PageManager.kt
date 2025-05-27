@@ -143,6 +143,26 @@ internal class PageManager(
     }
 
     /**
+     * Invalidates the given [areasToUpdate] for the [Page] at [pageNum].
+     *
+     * This function checks if the union of [areasToUpdate] intersects with the [visibleArea]. If
+     * there's an intersection, it updates the specific page to invalidate the intersecting area.
+     */
+    fun maybeInvalidateAreas(
+        pageNum: Int,
+        visibleArea: Rect,
+        currentZoom: Float,
+        areasToUpdate: List<Rect>,
+    ) {
+        val invalidatedArea = areasToUpdate.union()
+        if (invalidatedArea.intersect(visibleArea)) {
+            // If there is some intersection in the visible area and the invalidated area,
+            // invalidatedArea is updated to hold the intersection.
+            pages[pageNum]?.maybeInvalidateAreas(currentZoom, invalidatedArea)
+        }
+    }
+
+    /**
      * Updates the set of [Page]s owned by this manager when a new Page's dimensions are loaded.
      * Dimensions are the minimum data required to instantiate a page.
      */
@@ -209,6 +229,15 @@ internal class PageManager(
 
     fun getWidgetAtTapPoint(pdfPoint: PdfPoint): List<FormWidgetInfo>? {
         return pages[pdfPoint.pageNum]?.formWidgetInfos
+    }
+
+    private fun List<Rect>.union(): Rect {
+        if (isEmpty()) return Rect()
+        val unionRect = Rect()
+        for (rect in this) {
+            unionRect.union(rect)
+        }
+        return unionRect
     }
 }
 

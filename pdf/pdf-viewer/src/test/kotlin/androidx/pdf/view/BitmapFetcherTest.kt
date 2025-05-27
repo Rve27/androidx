@@ -101,6 +101,16 @@ class BitmapFetcherTest {
     }
 
     @Test
+    fun fetchesFullPageBitmap_whenNoScaleChange_formStateChanged_noTilingNeeded() {
+        bitmapFetcher.maybeFetchNewBitmaps(1f, fullPageViewArea, true)
+        testDispatcher.scheduler.runCurrent()
+        val pageBitmaps = bitmapFetcher.pageBitmaps
+        assertThat(pageBitmaps).isInstanceOf(FullPageBitmap::class.java)
+        assertThat(pageBitmaps?.bitmapScale).isEqualTo(1f)
+        assertThat(invalidationCounter).isEqualTo(1)
+    }
+
+    @Test
     fun lowScale_partialPageViewArea_fetchesFullPageBitmap() {
         // 1.5 scale, viewing the lower right half of the page
         bitmapFetcher.maybeFetchNewBitmaps(
@@ -153,6 +163,63 @@ class BitmapFetcherTest {
 
         // 1 for each tile * 16 tiles
         assertThat(invalidationCounter).isEqualTo(16)
+    }
+
+    @Test
+    fun updateInvalidatedArea_whenFormStateChanged() {
+        // View area is lower right half of the page.
+        bitmapFetcher.maybeFetchNewBitmaps(
+            5.0f,
+            viewArea = Rect(pageSize.x / 2, pageSize.y / 2, pageSize.x, pageSize.y),
+        )
+        testDispatcher.scheduler.runCurrent()
+
+        // Tiles in the viewArea from the first maybeFetchNewBitmaps call.
+        val visibleTilesIndices = setOf(5, 6, 7, 9, 10, 11, 13, 14, 15)
+        var pageBitmaps = bitmapFetcher.pageBitmaps
+        assertThat(pageBitmaps).isInstanceOf(TileBoard::class.java)
+        pageBitmaps as TileBoard
+        for (tile in pageBitmaps.tiles) {
+            if (tile.index in visibleTilesIndices) {
+                assertThat(tile.bitmap).isNotNull()
+            } else {
+                assertThat(tile.bitmap).isNull()
+            }
+        }
+
+        // No scale change, form state change invalidated top left half of the page.
+        bitmapFetcher.maybeFetchNewBitmaps(
+            5.0f,
+            viewArea = Rect(0, 0, pageSize.x / 2, pageSize.y / 2),
+            hasFormStateChanged = true,
+        )
+        testDispatcher.scheduler.runCurrent()
+
+        pageBitmaps = bitmapFetcher.pageBitmaps
+        assertThat(pageBitmaps).isInstanceOf(TileBoard::class.java)
+        assertThat(pageBitmaps?.bitmapScale).isEqualTo(5.0f)
+        pageBitmaps as TileBoard // Make smartcast work nicely below
+
+        // Tiles which lie in the invalidated area due to form state change.
+        val expectedFetchedIndices = setOf(0, 1, 4, 5)
+
+        for (tile in pageBitmaps.tiles) {
+            if (tile.index in expectedFetchedIndices) {
+                assertThat(tile.bitmap).isNotNull()
+            } else if (tile.index in visibleTilesIndices) {
+                assertThat(tile.bitmap).isNotNull()
+            } else {
+                assertThat(tile.bitmap).isNull()
+            }
+        }
+
+        val tileBoardRequestHandle: TileBoardRequestHandle =
+            bitmapFetcher.fetchingWorkHandle as TileBoardRequestHandle
+        assertThat(tileBoardRequestHandle.tileRequestHandles).hasSize(4)
+
+        // 9 tiles in the first call, 4 tiles in the second call
+        // Tile 5 is common, but needs to be updated again due to form state change.
+        assertThat(invalidationCounter).isEqualTo(13)
     }
 
     @Test

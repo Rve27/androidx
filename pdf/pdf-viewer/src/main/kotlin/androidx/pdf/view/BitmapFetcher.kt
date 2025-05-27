@@ -99,12 +99,22 @@ internal class BitmapFetcher(
     /** The [BitmapRequestHandle] for any ongoing fetch */
     @VisibleForTesting var fetchingWorkHandle: BitmapRequestHandle? = null
 
-    /** Update the view area and scale for which we should be fetching bitmaps */
-    fun maybeFetchNewBitmaps(scale: Float, viewArea: Rect) {
+    /**
+     * Update the view area and scale for which we should be fetching bitmaps
+     *
+     * @param scale the current scale
+     * @param viewArea represents the portion of the page that's invalidated when
+     *   hasFormStateChanged is true, otherwise it represents the portion of the page that's
+     *   visible, in content coordinates
+     * @param hasFormStateChanged denotes whether the form state has changed.
+     */
+    fun maybeFetchNewBitmaps(scale: Float, viewArea: Rect, hasFormStateChanged: Boolean = false) {
         val scaledViewArea = scaleViewArea(scale, viewArea)
-        if (shouldFetchNewContents(scale)) {
+        if (shouldFetchNewContents(scale) || (hasFormStateChanged && !needsTiling(scale))) {
             // Scale has changed, fetch entirely new PageContents
             fetchNewContents(scale, scaledViewArea)
+        } else if (hasFormStateChanged) {
+            invalidateTiles(scale, scaledViewArea)
         } else {
             // View area has changed, fetch new tiles and discard obsolete ones IFF we're tiling
             maybeUpdateTiling(scale, scaledViewArea)
@@ -151,6 +161,49 @@ internal class BitmapFetcher(
         if (tileRequests.isNotEmpty()) {
             fetchingWorkHandle =
                 TileBoardRequestHandle(tileRequests, currentTilingWork?.backgroundRequestHandle)
+            currentFetchingScale = scale
+        }
+    }
+
+    private fun invalidateTiles(scale: Float, invalidatedArea: Rect) {
+        val currentTileBoard = pageBitmaps as? TileBoard ?: return
+        val currentTilingWork = fetchingWorkHandle as? TileBoardRequestHandle
+        val tileRequests = mutableMapOf<Int, SingleBitmapRequestHandle>()
+        var tileJob: Job? = null
+
+        for (tile in currentTileBoard.tiles) {
+            val ongoingRequest = currentTilingWork?.tileRequestHandles?.get(tile.index)
+            if (
+                tile.rectPx.intersects(
+                    invalidatedArea.left,
+                    invalidatedArea.top,
+                    invalidatedArea.right,
+                    invalidatedArea.bottom,
+                )
+            ) {
+                // Tile intersects the scaled area, request the latest bitmap for the tile.
+                if (ongoingRequest?.isActive == true) {
+                    // Cancel any ongoing request for this tile
+                    ongoingRequest.cancel()
+                }
+                // Make a new request for this tile.
+                tileJob = fetchBitmap(tile, scale, tileJob)
+                tileRequests[tile.index] = SingleBitmapRequestHandle(tileJob)
+            }
+        }
+
+        // Reload the background as well.
+        // Before creating a new request, cancel any ongoing request.
+        currentTilingWork?.backgroundRequestHandle?.cancel()
+        val backgroundRequest =
+            SingleBitmapRequestHandle(
+                fetchFullPageBitmap(limitBitmapSize(scale, maxTileBackgroundSizePx)) {
+                    currentTileBoard.fullPageBitmap = it
+                }
+            )
+
+        if (tileRequests.isNotEmpty()) {
+            fetchingWorkHandle = TileBoardRequestHandle(tileRequests, backgroundRequest)
             currentFetchingScale = scale
         }
     }

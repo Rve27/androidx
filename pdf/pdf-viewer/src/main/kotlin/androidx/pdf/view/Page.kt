@@ -147,6 +147,16 @@ internal class Page(
     }
 
     /**
+     * Invalidates and fetches new bitmaps for the [invalidatedArea] of the page.
+     *
+     * @param zoom the current scale
+     * @param invalidatedArea visible portion of the page which has been invalidated
+     */
+    fun maybeInvalidateAreas(zoom: Float, invalidatedArea: Rect) {
+        bitmapFetcher?.maybeFetchNewBitmaps(zoom, invalidatedArea, hasFormStateChanged = true)
+    }
+
+    /**
      * Puts this page into a "nearly visible" state, discarding only high res bitmaps and retaining
      * lighter weight data in case the page becomes visible again
      */

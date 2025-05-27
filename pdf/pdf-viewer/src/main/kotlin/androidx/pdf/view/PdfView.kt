@@ -1179,8 +1179,13 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     formEditActionToJoin?.join()
                     launch {
                         handler.invalidatedAreas.collect {
-                            val pageNum = it.first
-                            val areasToRender: List<Rect> = it.second
+                            val localPageLayoutManager = pageMetadataLoader ?: return@collect
+                            pageManager?.maybeInvalidateAreas(
+                                pageNum = it.first,
+                                visibleArea = localPageLayoutManager.visiblePageAreas[it.first],
+                                currentZoom = zoom,
+                                areasToUpdate = it.second,
+                            )
                         }
                     }
                 }
