@@ -43,9 +43,9 @@ import androidx.xr.runtime.internal.TextureSampler as RtTextureSampler
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Ray
-import androidx.xr.scenecore.ActivityPose.HitTestFilter
 import androidx.xr.scenecore.HitTestResult.SurfaceType
 import androidx.xr.scenecore.InputEvent.HitInfo
+import androidx.xr.scenecore.ScenePose.HitTestFilter
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.Executor
 import kotlin.coroutines.coroutineContext

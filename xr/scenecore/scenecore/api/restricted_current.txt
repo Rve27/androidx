@@ -15,26 +15,6 @@ package androidx.xr.scenecore {
     method public androidx.xr.scenecore.ActivityPanelEntity create(androidx.xr.runtime.Session session, android.graphics.Rect windowBoundsPx, String name, optional androidx.xr.runtime.math.Pose pose);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface ActivityPose {
-    method public androidx.xr.runtime.math.Pose getActivitySpacePose();
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, @androidx.xr.scenecore.ActivityPose.HitTestFilterValue int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
-    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction);
-    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, @androidx.xr.scenecore.ActivityPose.HitTestFilterValue int hitTestFilter);
-    method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.ActivityPose destination);
-  }
-
-  public static final class ActivityPose.HitTestFilter {
-    property public static int OTHER_SCENES;
-    property public static int SELF_SCENE;
-    field public static final androidx.xr.scenecore.ActivityPose.HitTestFilter INSTANCE;
-    field public static final int OTHER_SCENES = 2; // 0x2
-    field public static final int SELF_SCENE = 1; // 0x1
-  }
-
-  @IntDef(flag=true, value={androidx.xr.scenecore.ActivityPose.HitTestFilter.SELF_SCENE, androidx.xr.scenecore.ActivityPose.HitTestFilter.OTHER_SCENES}) @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.SOURCE) public static @interface ActivityPose.HitTestFilterValue {
-  }
-
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ActivitySpace extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.ActivitySpace> {
     method public void addBoundsChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.runtime.math.FloatSize3d> listener);
     method public void addBoundsChangedListener(java.util.function.Consumer<androidx.xr.runtime.math.FloatSize3d> listener);
@@ -96,17 +76,7 @@ package androidx.xr.scenecore {
     method public androidx.xr.scenecore.AnchorPlacement createForPlanes(optional java.util.Set<java.lang.Integer> planeTypeFilter, optional java.util.Set<java.lang.Integer> planeSemanticFilter);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class BaseActivityPose<RtActivityPoseType extends androidx.xr.runtime.internal.ActivityPose> implements androidx.xr.scenecore.ActivityPose {
-    ctor public BaseActivityPose(RtActivityPoseType rtActivityPose);
-    method public androidx.xr.runtime.math.Pose getActivitySpacePose();
-    method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, @androidx.xr.scenecore.ActivityPose.HitTestFilterValue int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
-    method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
-    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction);
-    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, @androidx.xr.scenecore.ActivityPose.HitTestFilterValue int hitTestFilter);
-    method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.ActivityPose destination);
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class BaseEntity<RtEntityType extends androidx.xr.runtime.internal.Entity> extends androidx.xr.scenecore.BaseActivityPose<androidx.xr.runtime.internal.ActivityPose> implements androidx.xr.scenecore.Entity {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class BaseEntity<RtEntityType extends androidx.xr.runtime.internal.Entity> extends androidx.xr.scenecore.BaseScenePose<androidx.xr.runtime.internal.ActivityPose> implements androidx.xr.scenecore.Entity {
     method public void addChild(androidx.xr.scenecore.Entity child);
     method public boolean addComponent(androidx.xr.scenecore.Component component);
     method public void dispose();
@@ -137,7 +107,18 @@ package androidx.xr.scenecore {
     method public final void setSizeInPixels(androidx.xr.runtime.math.IntSize2d pixelDimensions);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class CameraView extends androidx.xr.scenecore.BaseActivityPose<androidx.xr.runtime.internal.CameraViewActivityPose> {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract class BaseScenePose<RtActivityPoseType extends androidx.xr.runtime.internal.ActivityPose> implements androidx.xr.scenecore.ScenePose {
+    ctor public BaseScenePose(RtActivityPoseType rtActivityPose);
+    method public androidx.xr.runtime.math.Pose getActivitySpacePose();
+    method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
+    method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter);
+    method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.ScenePose destination);
+    property public androidx.xr.runtime.math.Pose activitySpacePose;
+  }
+
+  public final class CameraView extends androidx.xr.scenecore.BaseScenePose<androidx.xr.runtime.internal.CameraViewActivityPose> {
     method public androidx.xr.scenecore.CameraView.CameraType getCameraType();
     method public androidx.xr.runtime.FieldOfView getFov();
     property public androidx.xr.scenecore.CameraView.CameraType cameraType;
@@ -175,7 +156,7 @@ package androidx.xr.scenecore {
     method @MainThread public androidx.xr.scenecore.CubeMapTexture borrowReflectionTexture(androidx.xr.runtime.Session session);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Entity extends androidx.xr.scenecore.ActivityPose {
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Entity extends androidx.xr.scenecore.ScenePose {
     method public void addChild(androidx.xr.scenecore.Entity child);
     method public boolean addComponent(androidx.xr.scenecore.Component component);
     method public void dispose();
@@ -249,10 +230,10 @@ package androidx.xr.scenecore {
     method @MainThread public androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model, optional androidx.xr.runtime.math.Pose pose);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class Head extends androidx.xr.scenecore.BaseActivityPose<androidx.xr.runtime.internal.HeadActivityPose> {
+  public final class Head extends androidx.xr.scenecore.BaseScenePose<androidx.xr.runtime.internal.HeadActivityPose> {
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class HitTestResult {
+  public final class HitTestResult {
     ctor public HitTestResult(androidx.xr.runtime.math.Vector3? hitPosition, androidx.xr.runtime.math.Vector3? surfaceNormal, int surfaceType, float distance);
     method public float getDistance();
     method public androidx.xr.runtime.math.Vector3? getHitPosition();
@@ -439,7 +420,7 @@ package androidx.xr.scenecore {
     property public androidx.xr.runtime.math.IntSize2d perceivedResolution;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class PerceptionSpace extends androidx.xr.scenecore.BaseActivityPose<androidx.xr.runtime.internal.PerceptionSpaceActivityPose> {
+  public final class PerceptionSpace extends androidx.xr.scenecore.BaseScenePose<androidx.xr.runtime.internal.PerceptionSpaceActivityPose> {
   }
 
   public final class PlaneOrientation {
@@ -574,6 +555,24 @@ package androidx.xr.scenecore {
     property public androidx.xr.scenecore.SpatialCapabilities spatialCapabilities;
     property public androidx.xr.scenecore.SpatialEnvironment spatialEnvironment;
     property public androidx.xr.scenecore.SpatialUser spatialUser;
+  }
+
+  public interface ScenePose {
+    method public androidx.xr.runtime.math.Pose getActivitySpacePose();
+    method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
+    method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter);
+    method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.ScenePose destination);
+    property public abstract androidx.xr.runtime.math.Pose activitySpacePose;
+  }
+
+  public static final class ScenePose.HitTestFilter {
+    property public static int OTHER_SCENES;
+    property public static int SELF_SCENE;
+    field public static final androidx.xr.scenecore.ScenePose.HitTestFilter INSTANCE;
+    field public static final int OTHER_SCENES = 2; // 0x2
+    field public static final int SELF_SCENE = 1; // 0x1
   }
 
   public final class SessionExt {

@@ -541,8 +541,8 @@ private fun calculateFovConstraints(
 ): VolumeConstraints {
     val distance: Meter =
         getDistanceBetweenUserAndActivitySpaceOrigin(
-            head.getActivitySpacePose(),
-            activitySpace.getActivitySpacePose(),
+            head.activitySpacePose,
+            activitySpace.activitySpacePose,
             scale,
         )
     val fov = getSpatialUserFov(leftCamera.fov, rightCamera.fov)

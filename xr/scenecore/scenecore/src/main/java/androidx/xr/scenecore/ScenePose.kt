@@ -32,80 +32,63 @@ import androidx.xr.runtime.math.Vector3
 import com.google.common.util.concurrent.ListenableFuture
 
 /**
- * Interface for a ActivityPose.
- *
- * A ActivityPose contains a pose in activity space and it's pose can be transformed into a pose
- * relative to another ActivityPose.
+ * A [Pose] in the Scene graph, which can be transformed into a Pose relative to another ScenePose.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface ActivityPose {
+public interface ScenePose {
+
+    /** The current [Pose] relative to the activity space root. */
+    public val activitySpacePose: Pose
 
     /**
-     * Returns the activity space pose for this ActivityPose.
-     *
-     * @return Current [Pose] relative to the activity space root.
-     */
-    public fun getActivitySpacePose(): Pose
-
-    /**
-     * Returns a pose relative to this ActivityPose transformed into a pose relative to the
+     * Returns a [Pose] relative to this ScenePose, transformed into a Pose relative to the
      * destination.
      *
-     * @param pose A pose in this ActivityPose's local coordinate space.
-     * @param destination The ActivityPose which the returned pose will be relative to.
-     * @return The pose relative to the destination ActivityPose.
+     * @param pose A Pose in this ScenePose's local coordinate space.
+     * @param destination The ScenePose which the returned Pose will be relative to.
+     * @return The Pose relative to the destination ScenePose.
      */
-    public fun transformPoseTo(pose: Pose, destination: ActivityPose): Pose
+    public fun transformPoseTo(pose: Pose, destination: ScenePose): Pose
 
-    /** A filter for which Scenes to hit test with ActivityPose.hitTest */
+    /**
+     * A filter for which Scenes to hit test with [ScenePose.hitTest] and [ScenePose.hitTestAsync]
+     */
     public object HitTestFilter {
-        /** Register hit tests for the scene which this Activity pose belongs to. */
+
+        /** Register hit tests for the scene which this ScenePose belongs. */
         public const val SELF_SCENE: Int = 1 shl 0
+
         /**
-         * Register hit tests only for other scenes. An Application will only have access to other
-         * scenes if it has the com.android.extensions.xr.ACCESS_XR_OVERLAY_SPACE permission.
+         * Register hit tests only for other scenes. A process will only have access to other scenes
+         * if it has the `com.android.extensions.xr.ACCESS_XR_OVERLAY_SPACE` permission.
          */
         public const val OTHER_SCENES: Int = 1 shl 1
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
     @Retention(AnnotationRetention.SOURCE)
-    @Suppress("PublicTypedef")
     @IntDef(flag = true, value = [HitTestFilter.SELF_SCENE, HitTestFilter.OTHER_SCENES])
     public annotation class HitTestFilterValue
 
     /**
-     * Creates a hit test from the specified origin in the specified direction into the scene.
+     * Creates a hit test from the specified origin in the specified direction into the Scene.
      *
-     * @param origin The translation of the origin of the hit test relative to this ActivityPose.
+     * @param origin The translation of the origin of the hit test relative to this ScenePose.
      * @param direction The direction for the hit test ray from the origin.
      * @return a HitResult. The HitResult describes if it hit something and where relative to this
-     *   [ActivityPose]. Listeners will be called on the main thread if Runnable::run is supplied.
+     *   ScenePose.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public suspend fun hitTest(origin: Vector3, direction: Vector3): HitTestResult
 
     /**
      * Creates a hit test from the specified origin in the specified direction into the scene.
      *
-     * @param origin The translation of the origin of the hit test relative to this ActivityPose.
-     * @param direction The direction for the hit test ray from the origin.
-     * @return a ListenableFuture<HitResult>. The HitResult describes if it hit something and where
-     *   relative to this [ActivityPose]. Listeners will be called on the main thread if
-     *   Runnable::run is supplied.
-     */
-    public fun hitTestAsync(origin: Vector3, direction: Vector3): ListenableFuture<HitTestResult>
-
-    /**
-     * Creates a hit test from the specified origin in the specified direction into the scene.
-     *
-     * @param origin The translation of the origin of the hit test relative to this ActivityPose.
+     * @param origin The translation of the origin of the hit test relative to this ScenePose.
      * @param direction The direction for the hit test ray from the origin
      * @param hitTestFilter Filter for which scenes to hit test. Hitting other scenes is only
      *   allowed for apps with the `com.android.extensions.xr.ACCESS_XR_OVERLAY_SPACE` permission.
      * @return a HitResult. The HitResult describes if it hit something and where relative to this
-     *   [ActivityPose]. Listeners will be called on the main thread if Runnable::run is supplied.
+     *   ScenePose.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public suspend fun hitTest(
         origin: Vector3,
         direction: Vector3,
@@ -116,12 +99,23 @@ public interface ActivityPose {
      * Creates a hit test from the specified origin in the specified direction into the scene.
      *
      * @param origin The translation of the origin of the hit test relative to this ActivityPose.
+     * @param direction The direction for the hit test ray from the origin.
+     * @return a [ListenableFuture]<HitResult>. The HitTestResult describes if it hit something and
+     *   where relative to this ActivityPose. Listeners will be called on the main thread if
+     *   Runnable::run is supplied when adding a listener to the [ListenableFuture].
+     */
+    public fun hitTestAsync(origin: Vector3, direction: Vector3): ListenableFuture<HitTestResult>
+
+    /**
+     * Creates a hit test from the specified origin in the specified direction into the scene.
+     *
+     * @param origin The translation of the origin of the hit test relative to this ActivityPose.
      * @param direction The direction for the hit test ray from the origin
      * @param hitTestFilter Filter for which scenes to hit test. Hitting other scenes is only
      *   allowed for apps with the `com.android.extensions.xr.ACCESS_XR_OVERLAY_SPACE` permission.
      * @return a ListenableFuture<HitResult>. The HitResult describes if it hit something and where
-     *   relative to this [ActivityPose]. Listeners will be called on the main thread if
-     *   Runnable::run is supplied.
+     *   relative to this [ScenePose]. Listeners will be called on the main thread if Runnable::run
+     *   is supplied when adding a listener to the [ListenableFuture].
      */
     public fun hitTestAsync(
         origin: Vector3,
@@ -130,24 +124,20 @@ public interface ActivityPose {
     ): ListenableFuture<HitTestResult>
 }
 
-/**
- * The BaseActivityPose is an implementation of ActivityPose interface that wraps a platformAdapter
- * ActivityPose.
- */
+/** The BaseScenePose implements the [ScenePose] interface. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public abstract class BaseActivityPose<out RtActivityPoseType : RtActivityPose>(
+public abstract class BaseScenePose<out RtActivityPoseType : RtActivityPose>(
     internal val rtActivityPose: RtActivityPoseType
-) : ActivityPose {
+) : ScenePose {
     private companion object {
-        private const val TAG = "BaseRtActivityPose"
+        private const val TAG = "BaseScenePose"
     }
 
-    override fun getActivitySpacePose(): Pose {
-        return rtActivityPose.activitySpacePose
-    }
+    override val activitySpacePose: Pose
+        get() = rtActivityPose.activitySpacePose
 
-    override fun transformPoseTo(pose: Pose, destination: ActivityPose): Pose {
-        if (destination !is BaseActivityPose<RtActivityPose>) {
+    override fun transformPoseTo(pose: Pose, destination: ScenePose): Pose {
+        if (destination !is BaseScenePose<RtActivityPose>) {
             Log.e(TAG, "Destination must be a subclass of BaseActivityPose!")
             return Pose.Identity
         }
@@ -157,7 +147,7 @@ public abstract class BaseActivityPose<out RtActivityPoseType : RtActivityPose>(
     override suspend fun hitTest(
         origin: Vector3,
         direction: Vector3,
-        @ActivityPose.HitTestFilterValue hitTestFilter: Int,
+        @ScenePose.HitTestFilterValue hitTestFilter: Int,
     ): HitTestResult {
         val hitTestRtFuture =
             this.rtActivityPose.hitTest(origin, direction, hitTestFilter.toRtHitTestFilter())
@@ -165,10 +155,14 @@ public abstract class BaseActivityPose<out RtActivityPoseType : RtActivityPose>(
         return deferredHitTestResult.toHitTestResult()
     }
 
+    override suspend fun hitTest(origin: Vector3, direction: Vector3): HitTestResult {
+        return hitTest(origin, direction, ScenePose.HitTestFilter.SELF_SCENE.toRtHitTestFilter())
+    }
+
     override fun hitTestAsync(
         origin: Vector3,
         direction: Vector3,
-        @ActivityPose.HitTestFilterValue hitTestFilter: Int,
+        @ScenePose.HitTestFilterValue hitTestFilter: Int,
     ): ListenableFuture<HitTestResult> {
         val hitTestRtFuture =
             this.rtActivityPose.hitTest(origin, direction, hitTestFilter.toRtHitTestFilter())
@@ -190,10 +184,6 @@ public abstract class BaseActivityPose<out RtActivityPoseType : RtActivityPose>(
         return resultFuture
     }
 
-    override suspend fun hitTest(origin: Vector3, direction: Vector3): HitTestResult {
-        return hitTest(origin, direction, ActivityPose.HitTestFilter.SELF_SCENE.toRtHitTestFilter())
-    }
-
     override fun hitTestAsync(
         origin: Vector3,
         direction: Vector3,
@@ -201,16 +191,16 @@ public abstract class BaseActivityPose<out RtActivityPoseType : RtActivityPose>(
         return hitTestAsync(
             origin,
             direction,
-            ActivityPose.HitTestFilter.SELF_SCENE.toRtHitTestFilter(),
+            ScenePose.HitTestFilter.SELF_SCENE.toRtHitTestFilter(),
         )
     }
 }
 
-/** A ActivityPose which tracks a camera's position and view into physical space. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+/** An [ScenePose] which tracks a camera view's position and view into physical space. */
+@Suppress("HiddenSuperclass")
 public class CameraView
 private constructor(private val rtCameraViewActivityPose: RtCameraViewActivityPose) :
-    BaseActivityPose<RtCameraViewActivityPose>(rtCameraViewActivityPose) {
+    BaseScenePose<RtCameraViewActivityPose>(rtCameraViewActivityPose) {
 
     internal companion object {
         internal fun createLeft(platformAdapter: JxrPlatformAdapter): CameraView? {
@@ -253,12 +243,12 @@ private constructor(private val rtCameraViewActivityPose: RtCameraViewActivityPo
 }
 
 /**
- * Head is a ActivityPose used to track the position of the user's head. If there is a left and
+ * Head is an [ScenePose] used to track the position of the user's head. If there is a left and
  * right camera it is calculated as the position between the two.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+@Suppress("HiddenSuperclass")
 public class Head private constructor(rtActivityPose: RtHeadActivityPose) :
-    BaseActivityPose<RtHeadActivityPose>(rtActivityPose) {
+    BaseScenePose<RtHeadActivityPose>(rtActivityPose) {
 
     internal companion object {
 
@@ -270,12 +260,12 @@ public class Head private constructor(rtActivityPose: RtHeadActivityPose) :
 }
 
 /**
- * PerceptionSpace is ActivityPose used to track the origin of the space used by ARCore for XR APIs.
+ * PerceptionSpace is an [ScenePose] used to track the origin of the space used by ARCore for
+ * Jetpack XR APIs.
  */
-// TODO: b/360870690 - Remove suppression annotation when API council review is complete.
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+@Suppress("HiddenSuperclass")
 public class PerceptionSpace private constructor(rtActivityPose: RtPerceptionSpaceActivityPose) :
-    BaseActivityPose<RtPerceptionSpaceActivityPose>(rtActivityPose) {
+    BaseScenePose<RtPerceptionSpaceActivityPose>(rtActivityPose) {
 
     internal companion object {
 

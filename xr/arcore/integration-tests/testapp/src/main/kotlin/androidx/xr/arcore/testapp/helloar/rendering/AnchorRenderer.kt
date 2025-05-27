@@ -85,8 +85,7 @@ internal class AnchorRenderer(
                     InteractableComponent.create(session, activity.mainExecutor) { event ->
                         if (event.action.equals(InputEvent.ACTION_DOWN)) {
                             val up =
-                                session.scene.spatialUser.head?.getActivitySpacePose()?.up
-                                    ?: Vector3.Up
+                                session.scene.spatialUser.head?.activitySpacePose?.up ?: Vector3.Up
                             val perceptionRayPose =
                                 session.scene.activitySpace.transformPoseTo(
                                     Pose(

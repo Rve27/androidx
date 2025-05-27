@@ -26,7 +26,7 @@ import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.PerceptionSpaceActivityPose as RtPerceptionSpaceActivityPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.ActivityPose.HitTestFilter
+import androidx.xr.scenecore.ScenePose.HitTestFilter
 import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.Futures
 import kotlinx.coroutines.runBlocking
@@ -42,7 +42,7 @@ import org.mockito.kotlin.whenever
 import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
-class ActivityPoseTest {
+class ScenePoseTest {
     private val entityManager = EntityManager()
     private val mockRuntime = mock<JxrPlatformAdapter>()
     private val mockActivitySpace = mock<RtActivitySpace>()
@@ -71,7 +71,7 @@ class ActivityPoseTest {
     }
 
     @Test
-    fun allActivityPoseTransformPoseTo_callsRuntimeActivityPoseImplTransformPoseTo() {
+    fun allScenePoseTransformPoseTo_callsRuntimeActivityPoseImplTransformPoseTo() {
         whenever(mockHeadActivityPose.transformPoseTo(any(), any())).thenReturn(Pose())
         whenever(mockCameraViewActivityPose.transformPoseTo(any(), any())).thenReturn(Pose())
         whenever(mockPerceptionSpaceActivityPose.transformPoseTo(any(), any())).thenReturn(Pose())
@@ -86,7 +86,7 @@ class ActivityPoseTest {
     }
 
     @Test
-    fun allActivityPoseTransformPoseToEntity_callsRuntimeActivityPoseImplTransformPoseTo() {
+    fun allScenePoseTransformPoseToEntity_callsRuntimeActivityPoseImplTransformPoseTo() {
         whenever(mockHeadActivityPose.transformPoseTo(any(), any())).thenReturn(Pose())
         whenever(mockCameraViewActivityPose.transformPoseTo(any(), any())).thenReturn(Pose())
         whenever(mockPerceptionSpaceActivityPose.transformPoseTo(any(), any())).thenReturn(Pose())
@@ -102,7 +102,7 @@ class ActivityPoseTest {
     }
 
     @Test
-    fun allActivityPoseTransformPoseFromEntity_callsRuntimeActivityPoseImplTransformPoseTo() {
+    fun allScenePoseTransformPoseFromEntity_callsRuntimeActivityPoseImplTransformPoseTo() {
         whenever(mockActivitySpace.transformPoseTo(any(), any())).thenReturn(Pose())
         val pose = Pose.Identity
 
@@ -114,15 +114,15 @@ class ActivityPoseTest {
     }
 
     @Test
-    fun allActivityPoseGetActivitySpacePose_callsRuntimeActivityPoseImplGetActivitySpacePose() {
+    fun allScenePoseGetActivitySpacePose_callsRuntimeActivityPoseImplGetActivitySpacePose() {
         whenever(mockHeadActivityPose.activitySpacePose).thenReturn(Pose())
         whenever(mockCameraViewActivityPose.activitySpacePose).thenReturn(Pose())
         whenever(mockPerceptionSpaceActivityPose.activitySpacePose).thenReturn(Pose())
         val pose = Pose.Identity
 
-        assertThat(head!!.getActivitySpacePose()).isEqualTo(pose)
-        assertThat(camera!!.getActivitySpacePose()).isEqualTo(pose)
-        assertThat(perceptionSpace.getActivitySpacePose()).isEqualTo(pose)
+        assertThat(head!!.activitySpacePose).isEqualTo(pose)
+        assertThat(camera!!.activitySpacePose).isEqualTo(pose)
+        assertThat(perceptionSpace.activitySpacePose).isEqualTo(pose)
 
         verify(mockHeadActivityPose).activitySpacePose
         verify(mockCameraViewActivityPose).activitySpacePose

@@ -33,8 +33,8 @@ import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.ActivityPose
 import androidx.xr.scenecore.PanelEntity
+import androidx.xr.scenecore.ScenePose
 import androidx.xr.scenecore.scene
 import androidx.xr.scenecore.testapp.R
 import androidx.xr.scenecore.testapp.common.DebugTextPanel
@@ -52,7 +52,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
     private lateinit var mHeadLockedPanel: PanelEntity
     private lateinit var mHeadLockedPanelView: View
     private lateinit var mDebugPanel: DebugTextPanel
-    private var mProjectionSource: ActivityPose? = null
+    private var mProjectionSource: ScenePose? = null
     private var mIsDebugPanelEnabled: Boolean = true
 
     private var sliderPositionZ: Float = -1.0f
@@ -224,7 +224,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
     private fun updateDebugPanel(projectedPose: Pose) {
         mDebugPanel.view.setLine(
             "ActivitySpace ActivityPose",
-            session!!.scene.activitySpace.getActivitySpacePose().toFormattedString(),
+            session!!.scene.activitySpace.activitySpacePose.toFormattedString(),
         )
         mDebugPanel.view.setLine(
             "ActivitySpace WorldScale",
@@ -234,29 +234,19 @@ class HeadLockedUiActivity : AppCompatActivity() {
         mDebugPanel.view.setLine("Head Locked Panel WorldScale", worldScaleValue)
         mDebugPanel.view.setLine(
             "Head ActivityPose",
-            session!!.scene.spatialUser.head?.getActivitySpacePose()!!.toFormattedString(),
+            session!!.scene.spatialUser.head?.activitySpacePose!!.toFormattedString(),
         )
         mDebugPanel.view.setLine(
             "Left Eye ActivityPose",
-            session!!
-                .scene
-                .spatialUser
-                .getCameraViews()[0]
-                .getActivitySpacePose()
-                .toFormattedString(),
+            session!!.scene.spatialUser.getCameraViews()[0].activitySpacePose.toFormattedString(),
         )
         mDebugPanel.view.setLine(
             "Right Eye ActivityPose",
-            session!!
-                .scene
-                .spatialUser
-                .getCameraViews()[1]
-                .getActivitySpacePose()
-                .toFormattedString(),
+            session!!.scene.spatialUser.getCameraViews()[1].activitySpacePose.toFormattedString(),
         )
         mDebugPanel.view.setLine(
             "Projection Source ActivityPose",
-            this.mProjectionSource?.getActivitySpacePose()!!.toFormattedString(),
+            this.mProjectionSource?.activitySpacePose!!.toFormattedString(),
         )
         mDebugPanel.view.setLine(
             "Head locked Pose ActivitySpace",

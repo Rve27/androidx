@@ -247,7 +247,7 @@ class TransformationTestsActivity : AppCompatActivity() {
             }
         view.setLine("localPose", localPose)
 
-        view.setLine("worldSpacePose", trackedEntity.getActivitySpacePose().toFormattedString())
+        view.setLine("worldSpacePose", trackedEntity.activitySpacePose.toFormattedString())
         view.setLine("worldSpaceScale", trackedEntity.getScale(Space.REAL_WORLD).toString())
 
         val activitySpacePose =

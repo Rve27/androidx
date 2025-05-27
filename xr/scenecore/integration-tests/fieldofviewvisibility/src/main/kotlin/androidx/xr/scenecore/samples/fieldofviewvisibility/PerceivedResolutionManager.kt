@@ -32,10 +32,10 @@ import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.ActivityPose
 import androidx.xr.scenecore.CameraView
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
+import androidx.xr.scenecore.ScenePose
 import androidx.xr.scenecore.Space
 import androidx.xr.scenecore.samples.commontestview.DebugTextLinearView
 import androidx.xr.scenecore.scene
@@ -149,12 +149,12 @@ class PerceivedResolutionManager(
             }
         }
 
-    private fun distanceToCamera(cameraView: CameraView?, pose: ActivityPose?): String {
+    private fun distanceToCamera(cameraView: CameraView?, pose: ScenePose?): String {
         val distance =
             if (cameraView != null && pose != null)
                 Vector3.distance(
-                        cameraView.getActivitySpacePose().translation,
-                        pose.getActivitySpacePose().translation,
+                        cameraView.activitySpacePose.translation,
+                        pose.activitySpacePose.translation,
                     )
                     .toString()
             else "Can't retrieve distance to Camera"

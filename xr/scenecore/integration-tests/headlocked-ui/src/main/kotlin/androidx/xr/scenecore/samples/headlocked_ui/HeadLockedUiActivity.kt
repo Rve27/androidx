@@ -56,9 +56,9 @@ import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
-import androidx.xr.scenecore.ActivityPose
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
+import androidx.xr.scenecore.ScenePose
 import androidx.xr.scenecore.Space
 import androidx.xr.scenecore.samples.commontestview.DebugTextPanel
 import androidx.xr.scenecore.scene
@@ -74,7 +74,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
     private lateinit var mHeadLockedPanel: PanelEntity
     private lateinit var mHeadLockedPanelView: View
     private lateinit var mDebugPanel: DebugTextPanel
-    private var mProjectionSource: ActivityPose? = null
+    private var mProjectionSource: ScenePose? = null
     private var mIsDebugPanelEnabled: Boolean = false
 
     @Suppress("UNUSED_VARIABLE")
@@ -138,7 +138,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
     private fun updateDebugPanel(projectedPose: Pose) {
         mDebugPanel.view.setLine(
             "ActivitySpace ActivityPose",
-            mSession.scene.activitySpace.getActivitySpacePose().toString(),
+            mSession.scene.activitySpace.activitySpacePose.toString(),
         )
         mDebugPanel.view.setLine(
             "ActivitySpace WorldScale",
@@ -150,19 +150,19 @@ class HeadLockedUiActivity : AppCompatActivity() {
         )
         mDebugPanel.view.setLine(
             "Head ActivityPose",
-            mSession.scene.spatialUser.head?.getActivitySpacePose().toString(),
+            mSession.scene.spatialUser.head?.activitySpacePose.toString(),
         )
         mDebugPanel.view.setLine(
             "Left Eye ActivityPose",
-            mSession.scene.spatialUser.getCameraViews()[0].getActivitySpacePose().toString(),
+            mSession.scene.spatialUser.getCameraViews()[0].activitySpacePose.toString(),
         )
         mDebugPanel.view.setLine(
             "Right Eye ActivityPose",
-            mSession.scene.spatialUser.getCameraViews()[1].getActivitySpacePose().toString(),
+            mSession.scene.spatialUser.getCameraViews()[1].activitySpacePose.toString(),
         )
         mDebugPanel.view.setLine(
             "Projection Source ActivityPose",
-            this.mProjectionSource?.getActivitySpacePose().toString(),
+            this.mProjectionSource?.activitySpacePose.toString(),
         )
         mDebugPanel.view.setLine("Head locked Pose ActivitySpace", projectedPose.toString())
         mDebugPanel.view.setLine(

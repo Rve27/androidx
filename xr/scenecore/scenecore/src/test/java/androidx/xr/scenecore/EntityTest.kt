@@ -478,10 +478,10 @@ class EntityTest {
         whenever(mockActivityPanelEntity.activitySpacePose).thenReturn(Pose())
         val pose = Pose.Identity
 
-        assertThat(panelEntity.getActivitySpacePose()).isEqualTo(pose)
-        assertThat(gltfModelEntity.getActivitySpacePose()).isEqualTo(pose)
-        assertThat(anchorEntity.getActivitySpacePose()).isEqualTo(pose)
-        assertThat(activityPanelEntity.getActivitySpacePose()).isEqualTo(pose)
+        assertThat(panelEntity.activitySpacePose).isEqualTo(pose)
+        assertThat(gltfModelEntity.activitySpacePose).isEqualTo(pose)
+        assertThat(anchorEntity.activitySpacePose).isEqualTo(pose)
+        assertThat(activityPanelEntity.activitySpacePose).isEqualTo(pose)
 
         verify(mockPanelEntityImpl).activitySpacePose
         verify(mockGltfModelEntityImpl).activitySpacePose
@@ -854,7 +854,7 @@ class EntityTest {
         val entity = ContentlessEntity.create(session, "test")
         val pose = Pose.Identity
 
-        assertThat(entity.getActivitySpacePose()).isEqualTo(pose)
+        assertThat(entity.activitySpacePose).isEqualTo(pose)
         verify(mockContentlessEntity).activitySpacePose
     }
 
