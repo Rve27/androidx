@@ -93,7 +93,7 @@ package androidx.xr.compose.testing {
     method public androidx.xr.runtime.math.Vector3 getScale(int relativeTo);
     method public void setActivitySpacePose(androidx.xr.runtime.math.Pose);
     method public void setActivitySpaceScale(androidx.xr.runtime.math.Vector3);
-    method public void setOnSpaceUpdatedListener(androidx.xr.runtime.internal.SystemSpaceEntity.OnSpaceUpdatedListener? listener, java.util.concurrent.Executor? executor);
+    method public void setOnSpaceUpdatedListener(Runnable? listener, java.util.concurrent.Executor? executor);
     method public void triggerOnSpaceUpdatedListener();
     property public androidx.xr.runtime.math.Pose activitySpacePose;
     property public androidx.xr.runtime.math.Vector3 activitySpaceScale;

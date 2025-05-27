@@ -565,7 +565,7 @@ package androidx.xr.runtime.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeSystemSpaceEntity extends androidx.xr.runtime.testing.FakeEntity implements androidx.xr.runtime.internal.SystemSpaceEntity {
     ctor public FakeSystemSpaceEntity();
-    method public void setOnSpaceUpdatedListener(androidx.xr.runtime.internal.SystemSpaceEntity.OnSpaceUpdatedListener? listener, java.util.concurrent.Executor? executor);
+    method public void setOnSpaceUpdatedListener(Runnable? listener, java.util.concurrent.Executor? executor);
   }
 
 }

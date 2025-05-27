@@ -41,8 +41,8 @@ package androidx.xr.scenecore {
     method public androidx.xr.runtime.math.FloatSize3d getBounds();
     method @Deprecated public void registerOnBoundsChangedListener(androidx.xr.scenecore.OnBoundsChangeListener listener);
     method public void removeBoundsChangedListener(java.util.function.Consumer<androidx.xr.runtime.math.FloatSize3d> listener);
-    method public void setOnSpaceUpdatedListener(androidx.xr.scenecore.OnSpaceUpdatedListener? listener);
-    method public void setOnSpaceUpdatedListener(androidx.xr.scenecore.OnSpaceUpdatedListener? listener, optional java.util.concurrent.Executor? executor);
+    method public void setOnSpaceUpdatedListener(Runnable? listener);
+    method public void setOnSpaceUpdatedListener(Runnable? listener, optional java.util.concurrent.Executor? executor);
     method @Deprecated public void unregisterOnBoundsChangedListener();
   }
 
@@ -52,8 +52,8 @@ package androidx.xr.scenecore {
     method public static androidx.xr.scenecore.AnchorEntity create(androidx.xr.runtime.Session session, androidx.xr.runtime.math.FloatSize3d bounds, int planeType, int planeSemantic, optional java.time.Duration timeout);
     method public androidx.xr.arcore.Anchor getAnchor(androidx.xr.runtime.Session session);
     method public int getState();
-    method public void setOnSpaceUpdatedListener(androidx.xr.scenecore.OnSpaceUpdatedListener? listener);
-    method public void setOnSpaceUpdatedListener(androidx.xr.scenecore.OnSpaceUpdatedListener? listener, optional java.util.concurrent.Executor? executor);
+    method public void setOnSpaceUpdatedListener(Runnable? listener);
+    method public void setOnSpaceUpdatedListener(Runnable? listener, optional java.util.concurrent.Executor? executor);
     method public void setOnStateChangedListener(androidx.xr.scenecore.OnStateChangedListener? onStateChangedListener);
     field public static final androidx.xr.scenecore.AnchorEntity.Companion Companion;
   }
@@ -398,10 +398,6 @@ package androidx.xr.scenecore {
 
   @Deprecated @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public fun interface OnBoundsChangeListener {
     method @Deprecated public void onBoundsChanged(androidx.xr.runtime.math.FloatSize3d bounds);
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public fun interface OnSpaceUpdatedListener {
-    method public void onSpaceUpdated();
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public fun interface OnStateChangedListener {

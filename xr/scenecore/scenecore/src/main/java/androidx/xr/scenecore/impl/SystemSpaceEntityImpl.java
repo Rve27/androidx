@@ -47,7 +47,7 @@ abstract class SystemSpaceEntityImpl extends AndroidXrEntity implements SystemSp
     protected Vector3 mWorldSpaceScale = new Vector3(1f, 1f, 1f);
     // Visible for testing.
     Closeable mNodeTransformCloseable;
-    private OnSpaceUpdatedListener mSpaceUpdatedListener;
+    private Runnable mSpaceUpdatedListener;
     private Executor mSpaceUpdatedExecutor;
 
     SystemSpaceEntityImpl(
@@ -66,14 +66,14 @@ abstract class SystemSpaceEntityImpl extends AndroidXrEntity implements SystemSp
     /** Called when the underlying space has changed. */
     public void onSpaceUpdated() {
         if (mSpaceUpdatedListener != null) {
-            mSpaceUpdatedExecutor.execute(() -> mSpaceUpdatedListener.onSpaceUpdated());
+            mSpaceUpdatedExecutor.execute(() -> mSpaceUpdatedListener.run());
         }
     }
 
     /** Registers the SDK layer / application's listener for space updates. */
     @Override
     public void setOnSpaceUpdatedListener(
-            @Nullable OnSpaceUpdatedListener listener, @Nullable Executor executor) {
+            @Nullable Runnable listener, @Nullable Executor executor) {
         mSpaceUpdatedListener = listener;
         mSpaceUpdatedExecutor = executor == null ? mExecutor : executor;
     }

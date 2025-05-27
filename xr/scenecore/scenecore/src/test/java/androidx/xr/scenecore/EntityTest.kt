@@ -44,7 +44,6 @@ import androidx.xr.runtime.internal.PixelDimensions as RtPixelDimensions
 import androidx.xr.runtime.internal.Space as RtSpace
 import androidx.xr.runtime.internal.SpatialCapabilities as RtSpatialCapabilities
 import androidx.xr.runtime.internal.SurfaceEntity as RtSurfaceEntity
-import androidx.xr.runtime.internal.SystemSpaceEntity as RtSystemSpaceEntity
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
@@ -236,10 +235,7 @@ class EntityTest {
         override fun <T : RtComponent> getComponentsOfType(type: Class<out T>): List<T> =
             emptyList()
 
-        override fun setOnSpaceUpdatedListener(
-            listener: RtSystemSpaceEntity.OnSpaceUpdatedListener?,
-            executor: Executor?,
-        ) {}
+        override fun setOnSpaceUpdatedListener(listener: Runnable?, executor: Executor?) {}
     }
 
     private val testActivitySpace = TestRtActivitySpace()
@@ -769,7 +765,7 @@ class EntityTest {
         val activitySpace = ActivitySpace.create(mockPlatformAdapter, entityManager)
 
         activitySpace.setOnSpaceUpdatedListener(null)
-        verify(mockRtActivitySpace).setOnSpaceUpdatedListener(any(), eq(null))
+        verify(mockRtActivitySpace).setOnSpaceUpdatedListener(eq(null), eq(null))
     }
 
     @Test
@@ -779,10 +775,10 @@ class EntityTest {
         val activitySpace = ActivitySpace.create(mockPlatformAdapter, entityManager)
 
         var listenerCalled = false
-        val captor = argumentCaptor<RtSystemSpaceEntity.OnSpaceUpdatedListener>()
+        val captor = argumentCaptor<Runnable>()
         activitySpace.setOnSpaceUpdatedListener({ listenerCalled = true }, directExecutor())
         verify(mockRtActivitySpace).setOnSpaceUpdatedListener(captor.capture(), any())
-        captor.firstValue.onSpaceUpdated()
+        captor.firstValue.run()
         assertThat(listenerCalled).isTrue()
     }
 
@@ -795,12 +791,12 @@ class EntityTest {
     @Test
     fun setOnSpaceUpdatedListener_anchorEntity_receivesRuntimeSetOnSpaceUpdatedListenerCallbacks() {
         var listenerCalled = false
-        val captor = argumentCaptor<RtSystemSpaceEntity.OnSpaceUpdatedListener>()
+        val captor = argumentCaptor<Runnable>()
         anchorEntity.setOnSpaceUpdatedListener({ listenerCalled = true }, directExecutor())
 
         verify(mockAnchorEntityImpl).setOnSpaceUpdatedListener(captor.capture(), any())
         assertThat(listenerCalled).isFalse()
-        captor.firstValue.onSpaceUpdated()
+        captor.firstValue.run()
         assertThat(listenerCalled).isTrue()
     }
 

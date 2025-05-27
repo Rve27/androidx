@@ -332,8 +332,3 @@ internal constructor(
 
     override fun setContentDescription(text: String) {}
 }
-
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public fun interface OnSpaceUpdatedListener {
-    public fun onSpaceUpdated()
-}

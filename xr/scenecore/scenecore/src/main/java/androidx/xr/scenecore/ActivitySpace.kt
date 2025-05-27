@@ -152,14 +152,8 @@ private constructor(rtActivitySpace: RtActivitySpace, entityManager: EntityManag
      */
     @JvmOverloads
     @Suppress("ExecutorRegistration")
-    public fun setOnSpaceUpdatedListener(
-        listener: OnSpaceUpdatedListener?,
-        executor: Executor? = null,
-    ) {
-        rtEntity.setOnSpaceUpdatedListener(
-            listener?.let { { it.onSpaceUpdated() } } ?: {},
-            executor,
-        )
+    public fun setOnSpaceUpdatedListener(listener: Runnable?, executor: Executor? = null) {
+        rtEntity.setOnSpaceUpdatedListener(listener, executor)
     }
 }
 

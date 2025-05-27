@@ -1562,11 +1562,7 @@ package androidx.xr.runtime.internal {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SystemSpaceEntity extends androidx.xr.runtime.internal.Entity {
-    method public void setOnSpaceUpdatedListener(androidx.xr.runtime.internal.SystemSpaceEntity.OnSpaceUpdatedListener? listener, java.util.concurrent.Executor? executor);
-  }
-
-  public static fun interface SystemSpaceEntity.OnSpaceUpdatedListener {
-    method public void onSpaceUpdated();
+    method public void setOnSpaceUpdatedListener(Runnable? listener, java.util.concurrent.Executor? executor);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface TextureResource extends androidx.xr.runtime.internal.Resource {

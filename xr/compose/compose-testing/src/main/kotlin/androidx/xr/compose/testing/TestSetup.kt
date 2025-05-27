@@ -39,7 +39,6 @@ import androidx.xr.runtime.internal.HitTestResult
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.PanelEntity
 import androidx.xr.runtime.internal.PixelDimensions
-import androidx.xr.runtime.internal.SystemSpaceEntity.OnSpaceUpdatedListener
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import com.google.common.util.concurrent.ListenableFuture
@@ -186,15 +185,15 @@ public class TestActivitySpace(
         return activitySpaceScale
     }
 
-    private var spaceUpdateListener: OnSpaceUpdatedListener? = null
+    private var spaceUpdateListener: Runnable? = null
 
     @Suppress("ExecutorRegistration")
-    override fun setOnSpaceUpdatedListener(listener: OnSpaceUpdatedListener?, executor: Executor?) {
+    override fun setOnSpaceUpdatedListener(listener: Runnable?, executor: Executor?) {
         this.spaceUpdateListener = listener
     }
 
     /**
-     * Manually triggers [OnSpaceUpdatedListener] that was captured via [setOnSpaceUpdatedListener].
+     * Manually triggers the listener that was captured via [setOnSpaceUpdatedListener].
      *
      * This method is primarily intended for use in unit tests. It simulates the runtime invoking
      * the listener, which is necessary for testing code that uses suspending functions like
@@ -207,7 +206,7 @@ public class TestActivitySpace(
      * The listener's `onSpaceUpdated()` method is invoked directly on the calling thread.
      */
     public fun triggerOnSpaceUpdatedListener() {
-        spaceUpdateListener?.onSpaceUpdated()
+        spaceUpdateListener?.run()
     }
 }
 
