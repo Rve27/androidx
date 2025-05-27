@@ -136,6 +136,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -235,16 +237,14 @@ class SupportedSurfaceCombinationTest {
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         Shadows.shadowOf(windowManager.defaultDisplay).setRealWidth(displaySize.width)
         Shadows.shadowOf(windowManager.defaultDisplay).setRealHeight(displaySize.height)
-        whenever(mockEncoderProfilesAdapter.hasProfile(ArgumentMatchers.anyInt())).thenReturn(true)
+        whenever(mockEncoderProfilesAdapter.hasProfile(anyInt())).thenReturn(true)
         whenever(mockVideoProfileProxy.width).thenReturn(3840)
         whenever(mockVideoProfileProxy.height).thenReturn(2160)
         whenever(mockVideoProfileProxy.resolution).thenReturn(Size(3840, 2160))
         whenever(mockEncoderProfilesProxy.videoProfiles).thenReturn(listOf(mockVideoProfileProxy))
-        whenever(mockEncoderProfilesAdapter.getAll(ArgumentMatchers.anyInt()))
-            .thenReturn(mockEncoderProfilesProxy)
-        whenever(mockEmptyEncoderProfilesAdapter.hasProfile(ArgumentMatchers.anyInt()))
-            .thenReturn(false)
-        whenever(mockEmptyEncoderProfilesAdapter.getAll(ArgumentMatchers.anyInt())).thenReturn(null)
+        whenever(mockEncoderProfilesAdapter.getAll(anyInt())).thenReturn(mockEncoderProfilesProxy)
+        whenever(mockEmptyEncoderProfilesAdapter.hasProfile(anyInt())).thenReturn(false)
+        whenever(mockEmptyEncoderProfilesAdapter.getAll(anyInt())).thenReturn(null)
         cameraCoordinator = FakeCameraCoordinator()
     }
 
@@ -4073,8 +4073,7 @@ class SupportedSurfaceCombinationTest {
         // This is setup for high resolution output sizes
         highResolutionSupportedSizes?.let {
             if (Build.VERSION.SDK_INT >= 23) {
-                whenever(mockMap.getHighResolutionOutputSizes(ArgumentMatchers.anyInt()))
-                    .thenReturn(it)
+                whenever(mockMap.getHighResolutionOutputSizes(anyInt())).thenReturn(it)
             }
         }
 
@@ -4110,109 +4109,49 @@ class SupportedSurfaceCombinationTest {
 
         // setup to return different minimum frame durations depending on resolution
         // minimum frame durations were designated only for the purpose of testing
-        Mockito.`when`(
-                mockMap.getOutputMinFrameDuration(
-                    ArgumentMatchers.anyInt(),
-                    ArgumentMatchers.eq(Size(4032, 3024)),
-                )
-            )
-            .thenReturn(50000000L) // 20 fps, size maximum
+        // 20fps, size maximum
+        mockMap.mockOutputMinFrameDuration(Size(4032, 3024), 50000000L)
 
-        Mockito.`when`(
-                mockMap.getOutputMinFrameDuration(
-                    ArgumentMatchers.anyInt(),
-                    ArgumentMatchers.eq(Size(3840, 2160)),
-                )
-            )
-            .thenReturn(40000000L) // 25, size record
+        // 25fps, size record
+        mockMap.mockOutputMinFrameDuration(Size(3840, 2160), 40000000L)
 
-        Mockito.`when`(
-                mockMap.getOutputMinFrameDuration(
-                    ArgumentMatchers.anyInt(),
-                    ArgumentMatchers.eq(Size(1920, 1440)),
-                )
-            )
-            .thenReturn(33333333L) // 30
+        // 30fps
+        mockMap.mockOutputMinFrameDuration(Size(1920, 1440), 33333333L)
 
-        Mockito.`when`(
-                mockMap.getOutputMinFrameDuration(
-                    ArgumentMatchers.anyInt(),
-                    ArgumentMatchers.eq(Size(2560, 1440)),
-                )
-            )
-            .thenReturn(33333333L) // 30
+        // 30fps
+        mockMap.mockOutputMinFrameDuration(Size(2560, 1440), 33333333L)
 
-        Mockito.`when`(
-                mockMap.getOutputMinFrameDuration(
-                    ArgumentMatchers.anyInt(),
-                    ArgumentMatchers.eq(Size(1920, 1080)),
-                )
-            )
-            .thenReturn(28571428L) // 35
+        // 35fps
+        mockMap.mockOutputMinFrameDuration(Size(1920, 1080), 28571428L)
 
-        Mockito.`when`(
-                mockMap.getOutputMinFrameDuration(
-                    ArgumentMatchers.anyInt(),
-                    ArgumentMatchers.eq(Size(1280, 960)),
-                )
-            )
-            .thenReturn(25000000L) // 40
+        // 40fps
+        mockMap.mockOutputMinFrameDuration(Size(1280, 960), 25000000L)
 
-        Mockito.`when`(
-                mockMap.getOutputMinFrameDuration(
-                    ArgumentMatchers.anyInt(),
-                    ArgumentMatchers.eq(Size(1280, 720)),
-                )
-            )
-            .thenReturn(22222222L) // 45, size preview/display
+        // 45fps, size preview/display
+        mockMap.mockOutputMinFrameDuration(Size(1280, 720), 22222222L)
 
-        Mockito.`when`(
-                mockMap.getOutputMinFrameDuration(
-                    ArgumentMatchers.anyInt(),
-                    ArgumentMatchers.eq(Size(960, 544)),
-                )
-            )
-            .thenReturn(20000000L) // 50
+        // 50fps
+        mockMap.mockOutputMinFrameDuration(Size(960, 544), 20000000L)
 
-        Mockito.`when`(
-                mockMap.getOutputMinFrameDuration(
-                    ArgumentMatchers.anyInt(),
-                    ArgumentMatchers.eq(Size(800, 450)),
-                )
-            )
-            .thenReturn(16666666L) // 60fps
+        // 60fps
+        mockMap.mockOutputMinFrameDuration(Size(800, 450), 16666666L)
 
-        Mockito.`when`(
-                mockMap.getOutputMinFrameDuration(
-                    ArgumentMatchers.anyInt(),
-                    ArgumentMatchers.eq(Size(640, 480)),
-                )
-            )
-            .thenReturn(16666666L) // 60fps
+        // 60fps
+        mockMap.mockOutputMinFrameDuration(Size(640, 480), 16666666L)
 
         maxFpsBySizeMap.forEach { (size, maxFps) ->
-            Mockito.`when`(
-                    mockMap.getOutputMinFrameDuration(
-                        ArgumentMatchers.anyInt(),
-                        ArgumentMatchers.eq(size),
-                    )
-                )
-                // x FPS means 1 second for x frames, so min frame duration is (1e9 / x) ns
-                .thenReturn(floor(1e9 / maxFps.toDouble()).toLong())
+            // x FPS means 1 second for x frames, so min frame duration is (1e9 / x) ns
+            mockMap.mockOutputMinFrameDuration(size, floor(1e9 / maxFps.toDouble()).toLong())
         }
 
         shadowCharacteristics.set(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP, mockMap)
         mockMaximumResolutionMap?.let {
-            whenever(mockMaximumResolutionMap.getOutputSizes(ArgumentMatchers.anyInt()))
+            whenever(mockMaximumResolutionMap.getOutputSizes(anyInt()))
                 .thenReturn(maximumResolutionSupportedSizes)
             whenever(mockMaximumResolutionMap.getOutputSizes(SurfaceTexture::class.java))
                 .thenReturn(maximumResolutionSupportedSizes)
             if (Build.VERSION.SDK_INT >= 23) {
-                whenever(
-                        mockMaximumResolutionMap.getHighResolutionOutputSizes(
-                            ArgumentMatchers.anyInt()
-                        )
-                    )
+                whenever(mockMaximumResolutionMap.getHighResolutionOutputSizes(anyInt()))
                     .thenReturn(maximumResolutionHighResolutionSupportedSizes)
             }
             if (Build.VERSION.SDK_INT >= 31) {
@@ -4294,6 +4233,13 @@ class SupportedSurfaceCombinationTest {
             streamUseCaseOverride = false,
             surfaceOccupancyPriority = surfaceOccupancyPriority,
         )
+    }
+
+    private fun StreamConfigurationMap.mockOutputMinFrameDuration(size: Size, duration: Long) {
+        Mockito.`when`(getOutputMinFrameDuration(anyInt(), ArgumentMatchers.eq(size)))
+            .thenReturn(duration)
+        Mockito.`when`(getOutputMinFrameDuration(any<Class<*>>(), ArgumentMatchers.eq(size)))
+            .thenReturn(duration)
     }
 
     private fun createUseCase(

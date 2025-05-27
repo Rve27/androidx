@@ -33,6 +33,7 @@ import android.util.Size
 import androidx.annotation.VisibleForTesting
 import androidx.camera.camera2.pipe.CameraMetadata
 import androidx.camera.camera2.pipe.core.Log.debug
+import androidx.camera.camera2.pipe.core.Log.warn
 import androidx.camera.camera2.pipe.integration.adapter.SupportedSurfaceCombination.CheckingMethod.WITHOUT_FEATURE_COMBO
 import androidx.camera.camera2.pipe.integration.adapter.SupportedSurfaceCombination.CheckingMethod.WITHOUT_FEATURE_COMBO_FIRST_AND_THEN_WITH_IT
 import androidx.camera.camera2.pipe.integration.adapter.SupportedSurfaceCombination.CheckingMethod.WITH_FEATURE_COMBO
@@ -77,7 +78,6 @@ import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_VGA
 import androidx.core.util.Preconditions
 import java.util.Arrays
 import java.util.Collections
-import kotlin.math.floor
 import kotlin.math.min
 
 /**
@@ -1379,17 +1379,15 @@ public class SupportedSurfaceCombination(
     }
 
     private fun getMaxFrameRate(imageFormat: Int, size: Size): Int {
-        var maxFrameRate = 0
-        try {
-            val minFrameDuration =
-                getStreamConfigurationMapCompat().getOutputMinFrameDuration(imageFormat, size)
-                    ?: return 0
-            maxFrameRate = floor(1_000_000_000.0 / minFrameDuration + 0.05).toInt()
-        } catch (_: IllegalArgumentException) {
-            // TODO: this try catch is in place for the rare that a surface config has a size
-            //  incompatible for getOutputMinFrameDuration...  put into a Quirk
+        val minFrameDuration =
+            getStreamConfigurationMapCompat().getOutputMinFrameDuration(imageFormat, size)
+        if (minFrameDuration <= 0L) {
+            warn {
+                "minFrameDuration: $minFrameDuration is invalid for imageFormat = $imageFormat, size = $size"
+            }
+            return 0
         }
-        return maxFrameRate
+        return (1_000_000_000.0 / minFrameDuration).toInt()
     }
 
     /**

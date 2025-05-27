@@ -120,6 +120,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.Mockito
 import org.robolectric.RobolectricTestRunner
@@ -4186,83 +4187,39 @@ class SupportedSurfaceCombinationTest {
 
                 // setup to return different minimum frame durations depending on resolution
                 // minimum frame durations were designated only for the purpose of testing
-                Mockito.`when`(
-                        map.getOutputMinFrameDuration(
-                            anyInt(),
-                            ArgumentMatchers.eq(Size(4032, 3024)),
-                        )
-                    )
-                    .thenReturn(50000000L) // 20 fps, size maximum
+                // 20fps, size maximum
+                map.mockOutputMinFrameDuration(Size(4032, 3024), 50000000L)
 
-                Mockito.`when`(
-                        map.getOutputMinFrameDuration(
-                            anyInt(),
-                            ArgumentMatchers.eq(Size(3840, 2160)),
-                        )
-                    )
-                    .thenReturn(40000000L) // 25, size record
+                // 25fps, size record
+                map.mockOutputMinFrameDuration(Size(3840, 2160), 40000000L)
 
-                Mockito.`when`(
-                        map.getOutputMinFrameDuration(
-                            anyInt(),
-                            ArgumentMatchers.eq(Size(1920, 1440)),
-                        )
-                    )
-                    .thenReturn(33333333L) // 30
+                // 30fps
+                map.mockOutputMinFrameDuration(Size(1920, 1440), 33333333L)
 
-                Mockito.`when`(
-                        map.getOutputMinFrameDuration(
-                            anyInt(),
-                            ArgumentMatchers.eq(Size(2560, 1440)),
-                        )
-                    )
-                    .thenReturn(33333333L) // 30
+                // 30fps
+                map.mockOutputMinFrameDuration(Size(2560, 1440), 33333333L)
 
-                Mockito.`when`(
-                        map.getOutputMinFrameDuration(
-                            anyInt(),
-                            ArgumentMatchers.eq(Size(1920, 1080)),
-                        )
-                    )
-                    .thenReturn(28571428L) // 35
+                // 35fps
+                map.mockOutputMinFrameDuration(Size(1920, 1080), 28571428L)
 
-                Mockito.`when`(
-                        map.getOutputMinFrameDuration(
-                            anyInt(),
-                            ArgumentMatchers.eq(Size(1280, 960)),
-                        )
-                    )
-                    .thenReturn(25000000L) // 40
+                // 40fps
+                map.mockOutputMinFrameDuration(Size(1280, 960), 25000000L)
 
-                Mockito.`when`(
-                        map.getOutputMinFrameDuration(
-                            anyInt(),
-                            ArgumentMatchers.eq(Size(1280, 720)),
-                        )
-                    )
-                    .thenReturn(22222222L) // 45, size preview/display
+                // 45fps, size preview/display
+                map.mockOutputMinFrameDuration(Size(1280, 720), 22222222L)
 
-                Mockito.`when`(
-                        map.getOutputMinFrameDuration(anyInt(), ArgumentMatchers.eq(Size(960, 544)))
-                    )
-                    .thenReturn(20000000L) // 50
+                // 50fps
+                map.mockOutputMinFrameDuration(Size(960, 544), 20000000L)
 
-                Mockito.`when`(
-                        map.getOutputMinFrameDuration(anyInt(), ArgumentMatchers.eq(Size(800, 450)))
-                    )
-                    .thenReturn(16666666L) // 60fps
+                // 60fps
+                map.mockOutputMinFrameDuration(Size(800, 450), 16666666L)
 
-                Mockito.`when`(
-                        map.getOutputMinFrameDuration(anyInt(), ArgumentMatchers.eq(Size(640, 480)))
-                    )
-                    .thenReturn(16666666L) // 60fps
+                // 60fps
+                map.mockOutputMinFrameDuration(Size(640, 480), 16666666L)
 
                 maxFpsBySizeMap.forEach { (size, maxFps) ->
-                    Mockito.`when`(
-                            map.getOutputMinFrameDuration(anyInt(), ArgumentMatchers.eq(size))
-                        )
-                        // x FPS means 1 second for x frames, so min frame duration is (1e9 / x) ns
-                        .thenReturn(floor(1e9 / maxFps.toDouble()).toLong())
+                    // x FPS means 1 second for x frames, so min frame duration is (1e9 / x) ns
+                    map.mockOutputMinFrameDuration(size, floor(1e9 / maxFps.toDouble()).toLong())
                 }
 
                 // Sets up the supported high resolution sizes
@@ -4431,6 +4388,13 @@ class SupportedSurfaceCombinationTest {
                 throw IllegalStateException("Unable to initialize CameraX for test.")
             }
         useCaseConfigFactory = cameraX.defaultConfigFactory
+    }
+
+    private fun StreamConfigurationMap.mockOutputMinFrameDuration(size: Size, duration: Long) {
+        Mockito.`when`(getOutputMinFrameDuration(anyInt(), ArgumentMatchers.eq(size)))
+            .thenReturn(duration)
+        Mockito.`when`(getOutputMinFrameDuration(any<Class<*>>(), ArgumentMatchers.eq(size)))
+            .thenReturn(duration)
     }
 
     private fun createUseCase(

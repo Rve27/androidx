@@ -429,20 +429,17 @@ final class SupportedSurfaceCombination {
                 : getMaxFrameRate(mCharacteristics, imageFormat, size);
     }
 
-    static int getMaxFrameRate(CameraCharacteristicsCompat characteristics, int imageFormat,
-            Size size) {
-        int maxFrameRate = 0;
-        try {
-            maxFrameRate = (int) (1000000000.0
-                    / requireNonNull(
-                    characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP))
-                    .getOutputMinFrameDuration(imageFormat, size));
-        } catch (Exception e) {
-            //TODO
-            //this try catch is in place for the rare that a surface config has a size
-            // incompatible for getOutputMinFrameDuration...  put into a Quirk
+    static int getMaxFrameRate(@NonNull CameraCharacteristicsCompat characteristics,
+            int imageFormat, Size size) {
+        long minFrameDuration = requireNonNull(
+                characteristics.getStreamConfigurationMapCompat())
+                .getOutputMinFrameDuration(imageFormat, size);
+        if (minFrameDuration <= 0L) {
+            Logger.w(TAG, "minFrameDuration: " + minFrameDuration + " is invalid for "
+                    + "imageFormat = " + imageFormat + ", size = " + size);
+            return 0;
         }
-        return maxFrameRate;
+        return (int) (1000000000.0 / minFrameDuration);
     }
 
     private static int getRangeLength(@NonNull Range<Integer> range) {
