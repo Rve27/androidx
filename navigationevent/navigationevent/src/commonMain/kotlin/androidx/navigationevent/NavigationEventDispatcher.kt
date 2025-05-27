@@ -23,15 +23,9 @@ import androidx.annotation.MainThread
  * in-app callbacks via composition.
  */
 public class NavigationEventDispatcher(
-    private val fallbackOnBackPressed: (() -> Unit)?,
-    private val onHasEnabledCallbacksChanged: ((Boolean) -> Unit)?,
+    internal val fallbackOnBackPressed: (() -> Unit)? = null,
+    internal val onHasEnabledCallbacksChanged: ((Boolean) -> Unit)? = null,
 ) {
-    /**
-     * Dispatcher that can be used to register [NavigationEventCallback] instances for handling the
-     * in-app callbacks via composition.
-     */
-    public constructor(fallbackOnBackPressed: (() -> Unit)?) : this(fallbackOnBackPressed, null)
-
     internal val inProgressCallbacks: MutableList<NavigationEventCallback> = mutableListOf()
     /** Callbacks that should be processed with higher priority, before [normalCallbacks]. */
     internal val overlayCallbacks = ArrayDeque<NavigationEventCallback>()
@@ -72,7 +66,7 @@ public class NavigationEventDispatcher(
     }
 
     /**
-     * Returns `true` if there is at least one [NavigationEventDispatcher.isEnabled] callback
+     * Returns `true` if there is at least one [NavigationEventCallback.isEnabled] callback
      * registered with this dispatcher.
      *
      * @return True if there is at least one enabled callback.

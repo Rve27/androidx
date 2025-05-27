@@ -41,8 +41,8 @@ package androidx.navigationevent {
   }
 
   public final class NavigationEventDispatcher {
-    ctor public NavigationEventDispatcher(kotlin.jvm.functions.Function0<kotlin.Unit>? fallbackOnBackPressed);
-    ctor public NavigationEventDispatcher(kotlin.jvm.functions.Function0<kotlin.Unit>? fallbackOnBackPressed, kotlin.jvm.functions.Function1<? super java.lang.Boolean,kotlin.Unit>? onHasEnabledCallbacksChanged);
+    ctor public NavigationEventDispatcher();
+    ctor public NavigationEventDispatcher(optional kotlin.jvm.functions.Function0<kotlin.Unit>? fallbackOnBackPressed, optional kotlin.jvm.functions.Function1<? super java.lang.Boolean,kotlin.Unit>? onHasEnabledCallbacksChanged);
     method @MainThread public void addCallback(androidx.navigationevent.NavigationEventCallback callback, optional int priority);
     method @BytecodeOnly @MainThread public void addCallback-3owFMvg(androidx.navigationevent.NavigationEventCallback, int);
     method @MainThread public void dispatchOnCancelled();
