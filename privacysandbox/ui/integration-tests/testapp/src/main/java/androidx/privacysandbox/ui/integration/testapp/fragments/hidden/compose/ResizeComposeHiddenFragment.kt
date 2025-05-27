@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments.hidden.compose
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.privacysandbox.ui.client.compose.SandboxedSdkUi
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
+import androidx.privacysandbox.ui.integration.testapp.fragments.hidden.AbstractResizeHiddenFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -84,12 +85,12 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
         onSSUPlaced: (Dp, Dp) -> Unit,
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier.Companion.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start,
         ) {
             val adHolderModifier =
-                Modifier.fillMaxWidth().weight(1f).padding(top = 16.dp, bottom = 16.dp)
+                Modifier.Companion.fillMaxWidth().weight(1f).padding(top = 16.dp, bottom = 16.dp)
             AdHolder(bannerDimension, bannerPadding, adapter, adHolderModifier)
         }
     }
@@ -108,7 +109,7 @@ class ResizeComposeHiddenFragment : AbstractResizeHiddenFragment() {
                 return
             }
             var ssuModifier =
-                Modifier.absolutePadding(
+                Modifier.Companion.absolutePadding(
                     bannerPadding.paddingLeft,
                     bannerPadding.paddingTop,
                     bannerPadding.paddingRight,

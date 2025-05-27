@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -25,6 +25,8 @@ import androidx.privacysandbox.ui.client.view.SandboxedSdkView
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AdFormat
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AdType
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.MediationOption
+import androidx.privacysandbox.ui.integration.testapp.R
+import androidx.privacysandbox.ui.integration.testapp.fragments.BaseFragment
 
 class ScrollFragment : BaseFragment() {
 
@@ -59,7 +61,7 @@ class ScrollFragment : BaseFragment() {
         currentAdType = adType
         currentMediationOption = mediationOption
         shouldDrawViewabilityLayer = drawViewabilityLayer
-        if (adFormat == AdFormat.BANNER_AD) {
+        if (adFormat == AdFormat.Companion.BANNER_AD) {
             loadBannerAd(adType, mediationOption, clippingBoundBannerView, drawViewabilityLayer)
             loadBannerAd(adType, mediationOption, bottomBannerView, drawViewabilityLayer)
         }
@@ -73,7 +75,7 @@ class ScrollFragment : BaseFragment() {
                 .findViewById<LinearLayout>(R.id.bottom_banner_container)
                 .addView(bottomBannerView)
         }
-        if (currentAdFormat == AdFormat.BANNER_AD) {
+        if (currentAdFormat == AdFormat.Companion.BANNER_AD) {
             loadBannerAd(
                 currentAdType,
                 currentMediationOption,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments.hidden.views
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,6 +22,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
+import androidx.privacysandbox.ui.integration.testapp.R
+import androidx.privacysandbox.ui.integration.testapp.fragments.hidden.AbstractResizeHiddenFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

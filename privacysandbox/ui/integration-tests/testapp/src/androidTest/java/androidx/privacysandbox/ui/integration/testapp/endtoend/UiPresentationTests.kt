@@ -26,6 +26,8 @@ import androidx.privacysandbox.ui.integration.sdkproviderutils.IAutomatedTestCal
 import androidx.privacysandbox.ui.integration.sdkproviderutils.ILoadSdkCallback
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AUTOMATED_TEST_CALLBACK
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.FragmentOption
+import androidx.privacysandbox.ui.integration.testapp.fragments.FragmentOptions
+import androidx.privacysandbox.ui.integration.testapp.fragments.hidden.AbstractResizeHiddenFragment
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso

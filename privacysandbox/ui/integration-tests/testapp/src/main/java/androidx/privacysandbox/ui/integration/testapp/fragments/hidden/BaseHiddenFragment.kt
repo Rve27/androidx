@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments.hidden
 
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AdFormat
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AdType
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.MediationOption
+import androidx.privacysandbox.ui.integration.testapp.fragments.BaseFragment
 
 /** Base hidden fragment to be used for testing different automation and benchmarking flows. */
 abstract class BaseHiddenFragment : BaseFragment() {

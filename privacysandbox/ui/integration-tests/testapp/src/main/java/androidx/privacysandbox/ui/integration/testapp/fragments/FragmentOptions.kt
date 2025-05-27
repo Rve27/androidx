@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments
 
 import android.os.Bundle
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AdType
@@ -23,6 +23,15 @@ import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.C
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.UiFrameworkOption
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.ViewabilityOption
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.ZOrderOption
+import androidx.privacysandbox.ui.integration.testapp.fragments.compose.LazyListFragment
+import androidx.privacysandbox.ui.integration.testapp.fragments.compose.ResizeComposeFragment
+import androidx.privacysandbox.ui.integration.testapp.fragments.compose.ScrollComposeFragment
+import androidx.privacysandbox.ui.integration.testapp.fragments.hidden.OcclusionFragment
+import androidx.privacysandbox.ui.integration.testapp.fragments.hidden.compose.ResizeComposeHiddenFragment
+import androidx.privacysandbox.ui.integration.testapp.fragments.hidden.views.ResizeViewHiddenFragment
+import androidx.privacysandbox.ui.integration.testapp.fragments.views.PoolingContainerFragment
+import androidx.privacysandbox.ui.integration.testapp.fragments.views.ResizeFragment
+import androidx.privacysandbox.ui.integration.testapp.fragments.views.ScrollFragment
 
 data class FragmentOptions(
     @FragmentOption val cujType: Int,

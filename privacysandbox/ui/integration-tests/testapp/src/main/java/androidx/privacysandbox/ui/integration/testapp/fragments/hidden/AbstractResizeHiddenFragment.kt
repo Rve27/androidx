@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments.hidden
 
 import android.os.Bundle
 import androidx.privacysandbox.ui.client.SandboxedUiAdapterFactory

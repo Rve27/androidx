@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.privacysandbox.ui.integration.testapp
+
+package androidx.privacysandbox.ui.integration.testapp.fragments.hidden
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,6 +22,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
+import androidx.privacysandbox.ui.integration.testapp.R
 
 class OcclusionFragment : BaseHiddenFragment() {
     override fun onCreateView(

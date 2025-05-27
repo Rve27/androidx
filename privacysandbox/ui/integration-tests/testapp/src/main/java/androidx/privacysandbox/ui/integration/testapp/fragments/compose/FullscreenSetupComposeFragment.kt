@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments.compose
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -43,8 +43,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.privacysandbox.activity.client.createManagedSdkActivityLauncher
 import androidx.privacysandbox.activity.client.toLauncherInfo
-import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.BackNavigation
-import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.ScreenOrientation
+import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants
+import androidx.privacysandbox.ui.integration.testapp.R
+import androidx.privacysandbox.ui.integration.testapp.fragments.BaseFragment
 
 class FullscreenSetupComposeFragment : BaseFragment() {
 
@@ -98,7 +99,7 @@ class FullscreenSetupComposeFragment : BaseFragment() {
         selectedScreenOrientationOption: String,
         onScreenOrientationOptionSelected: (String) -> Unit,
     ) {
-        Column(modifier = Modifier.padding(top = 16.dp)) {
+        Column(modifier = Modifier.Companion.padding(top = 16.dp)) {
             Text(
                 modifier = Modifier.padding(start = 16.dp),
                 text = stringResource(R.string.label_screen_orientation),
@@ -117,7 +118,7 @@ class FullscreenSetupComposeFragment : BaseFragment() {
         selectedBackNavOption: String,
         onBackNavOptionSelected: (String) -> Unit,
     ) {
-        Column(modifier = Modifier.padding(top = 16.dp)) {
+        Column(modifier = Modifier.Companion.padding(top = 16.dp)) {
             Text(
                 modifier = Modifier.padding(start = 16.dp),
                 text = stringResource(R.string.label_back_navigation),
@@ -132,10 +133,10 @@ class FullscreenSetupComposeFragment : BaseFragment() {
         selectedOption: String,
         onOptionSelected: (String) -> Unit,
     ) {
-        Column(Modifier.selectableGroup()) {
+        Column(Modifier.Companion.selectableGroup()) {
             radioOptions.forEach { text ->
                 Row(
-                    Modifier.fillMaxWidth()
+                    Modifier.Companion.fillMaxWidth()
                         .height(48.dp)
                         .selectable(
                             selected = (text == selectedOption),
@@ -162,17 +163,18 @@ class FullscreenSetupComposeFragment : BaseFragment() {
     ) {
         val screenOrientation =
             when (screenOrientationSelected) {
-                OPTION_LANDSCAPE -> ScreenOrientation.LANDSCAPE
-                OPTION_PORTRAIT -> ScreenOrientation.PORTRAIT
-                OPTION_NON_BLOCKING -> ScreenOrientation.USER
-                else -> ScreenOrientation.USER
+                OPTION_LANDSCAPE -> SdkApiConstants.Companion.ScreenOrientation.Companion.LANDSCAPE
+                OPTION_PORTRAIT -> SdkApiConstants.Companion.ScreenOrientation.Companion.PORTRAIT
+                OPTION_NON_BLOCKING -> SdkApiConstants.Companion.ScreenOrientation.Companion.USER
+                else -> SdkApiConstants.Companion.ScreenOrientation.Companion.USER
             }
 
         val backNavigation =
             when (backNavOptionSelected) {
-                OPTION_BACK_NAV_ENABLE -> BackNavigation.ENABLED
-                OPTION_BACK_NAV_ENABLE_AFTER_5S -> BackNavigation.ENABLED_AFTER_5_SECONDS
-                else -> BackNavigation.ENABLED
+                OPTION_BACK_NAV_ENABLE -> SdkApiConstants.Companion.BackNavigation.Companion.ENABLED
+                OPTION_BACK_NAV_ENABLE_AFTER_5S ->
+                    SdkApiConstants.Companion.BackNavigation.Companion.ENABLED_AFTER_5_SECONDS
+                else -> SdkApiConstants.Companion.BackNavigation.Companion.ENABLED
             }
 
         val activityLauncher = requireActivity().createManagedSdkActivityLauncher({ true })

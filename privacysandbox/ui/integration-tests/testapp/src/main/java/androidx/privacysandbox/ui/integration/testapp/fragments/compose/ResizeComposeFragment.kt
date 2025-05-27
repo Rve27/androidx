@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments.compose
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -52,6 +52,8 @@ import androidx.privacysandbox.ui.client.compose.SandboxedSdkUi
 import androidx.privacysandbox.ui.client.view.SandboxedSdkViewEventListener
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AdFormat
+import androidx.privacysandbox.ui.integration.testapp.R
+import androidx.privacysandbox.ui.integration.testapp.fragments.BaseFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 

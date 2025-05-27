@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments.views
 
 import android.os.Bundle
 import android.util.Log
@@ -25,6 +25,8 @@ import androidx.privacysandbox.ui.client.view.SandboxedSdkView
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AdFormat
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AdType
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.MediationOption
+import androidx.privacysandbox.ui.integration.testapp.R
+import androidx.privacysandbox.ui.integration.testapp.fragments.BaseFragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -52,7 +54,7 @@ class PoolingContainerFragment : BaseFragment() {
         currentAdType = adType
         currentMediationOption = mediationOption
         shouldDrawViewabilityLayer = drawViewabilityLayer
-        if (adFormat == AdFormat.BANNER_AD) {
+        if (adFormat == AdFormat.Companion.BANNER_AD) {
             val recyclerViewAdapter = CustomAdapter(adType, mediationOption, zOrderOnTop = false)
             recyclerView.adapter = recyclerViewAdapter
         }
@@ -65,7 +67,7 @@ class PoolingContainerFragment : BaseFragment() {
     ): View {
         inflatedView = inflater.inflate(R.layout.fragment_poolingcontainer, container, false)
         recyclerView = inflatedView.findViewById(R.id.recycler_view)
-        if (currentAdFormat == AdFormat.BANNER_AD) {
+        if (currentAdFormat == AdFormat.Companion.BANNER_AD) {
             setRecyclerViewAdapter()
         }
         return inflatedView

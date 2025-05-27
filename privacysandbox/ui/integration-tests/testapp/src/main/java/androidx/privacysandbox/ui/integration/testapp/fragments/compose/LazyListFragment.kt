@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments.compose
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -36,7 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.privacysandbox.ui.client.SandboxedUiAdapterFactory
 import androidx.privacysandbox.ui.client.compose.SandboxedSdkUi
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
-import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AdFormat
+import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants
+import androidx.privacysandbox.ui.integration.testapp.fragments.BaseFragment
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -73,7 +74,7 @@ class LazyListFragment : BaseFragment() {
     @Composable
     private fun AdsList(adAdapters: List<AdAdapterItem>) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(16.dp),
+            modifier = Modifier.Companion.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             items(
@@ -102,7 +103,7 @@ class LazyListFragment : BaseFragment() {
                             SandboxedUiAdapterFactory.createFromCoreLibInfo(
                                 getSdkApi()
                                     .loadAd(
-                                        AdFormat.BANNER_AD,
+                                        SdkApiConstants.Companion.AdFormat.Companion.BANNER_AD,
                                         currentAdType,
                                         currentMediationOption,
                                         false,
@@ -128,7 +129,7 @@ class LazyListFragment : BaseFragment() {
                             SandboxedUiAdapterFactory.createFromCoreLibInfo(
                                 getSdkApi()
                                     .loadAd(
-                                        AdFormat.BANNER_AD,
+                                        SdkApiConstants.Companion.AdFormat.Companion.BANNER_AD,
                                         currentAdType,
                                         currentMediationOption,
                                         false,

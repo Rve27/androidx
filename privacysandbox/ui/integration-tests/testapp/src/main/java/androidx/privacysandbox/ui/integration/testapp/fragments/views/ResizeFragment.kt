@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments.views
 
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewGroup.MarginLayoutParams
 import android.widget.Button
 import androidx.core.content.ContextCompat
 import androidx.core.view.setMargins
@@ -29,6 +28,8 @@ import androidx.privacysandbox.ui.client.view.SandboxedSdkView
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AdFormat
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.AdType
 import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.MediationOption
+import androidx.privacysandbox.ui.integration.testapp.R
+import androidx.privacysandbox.ui.integration.testapp.fragments.BaseFragment
 import androidx.privacysandbox.ui.integration.testapp.util.AdHolder
 import kotlin.math.max
 
@@ -75,7 +76,7 @@ class ResizeFragment : BaseFragment() {
         resizableAdHolder =
             inflatedView.findViewById<AdHolder>(R.id.resizable_ad_view).apply {
                 adViewLayoutParams =
-                    MarginLayoutParams(adViewLayoutParams).apply {
+                    ViewGroup.MarginLayoutParams(adViewLayoutParams).apply {
                         setMargins(convertFromDpToPixels(MARGIN_DP))
                     }
                 adViewBackgroundColor =

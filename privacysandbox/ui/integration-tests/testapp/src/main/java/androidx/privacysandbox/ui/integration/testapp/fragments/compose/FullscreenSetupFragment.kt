@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.ui.integration.testapp
+package androidx.privacysandbox.ui.integration.testapp.fragments.compose
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,8 +24,9 @@ import android.widget.Button
 import android.widget.RadioButton
 import androidx.privacysandbox.activity.client.createManagedSdkActivityLauncher
 import androidx.privacysandbox.activity.client.toLauncherInfo
-import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.BackNavigation
-import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants.Companion.ScreenOrientation
+import androidx.privacysandbox.ui.integration.sdkproviderutils.SdkApiConstants
+import androidx.privacysandbox.ui.integration.testapp.R
+import androidx.privacysandbox.ui.integration.testapp.fragments.BaseFragment
 
 // TODO(b/399092069): add non-LifecycleOwner activity CUJ to the fragment.
 class FullscreenSetupFragment : BaseFragment() {
@@ -48,18 +49,22 @@ class FullscreenSetupFragment : BaseFragment() {
         launchButton.setOnClickListener {
             val screenOrientation =
                 when {
-                    radioLandscape.isChecked -> ScreenOrientation.LANDSCAPE
-                    radioPortrait.isChecked -> ScreenOrientation.PORTRAIT
-                    radioNonBlocking.isChecked -> ScreenOrientation.USER
-                    else -> ScreenOrientation.USER
+                    radioLandscape.isChecked ->
+                        SdkApiConstants.Companion.ScreenOrientation.Companion.LANDSCAPE
+                    radioPortrait.isChecked ->
+                        SdkApiConstants.Companion.ScreenOrientation.Companion.PORTRAIT
+                    radioNonBlocking.isChecked ->
+                        SdkApiConstants.Companion.ScreenOrientation.Companion.USER
+                    else -> SdkApiConstants.Companion.ScreenOrientation.Companion.USER
                 }
 
             val backNavigation =
                 when {
-                    radioEnableBackNav.isChecked -> BackNavigation.ENABLED
+                    radioEnableBackNav.isChecked ->
+                        SdkApiConstants.Companion.BackNavigation.Companion.ENABLED
                     radioEnableBackNavAfter5Seconds.isChecked ->
-                        BackNavigation.ENABLED_AFTER_5_SECONDS
-                    else -> BackNavigation.ENABLED
+                        SdkApiConstants.Companion.BackNavigation.Companion.ENABLED_AFTER_5_SECONDS
+                    else -> SdkApiConstants.Companion.BackNavigation.Companion.ENABLED
                 }
 
             val activityLauncher = requireActivity().createManagedSdkActivityLauncher({ true })
