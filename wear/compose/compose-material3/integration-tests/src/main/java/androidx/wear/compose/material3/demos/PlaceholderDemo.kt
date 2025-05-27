@@ -42,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,10 +58,13 @@ import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.CardDefaults
 import androidx.wear.compose.material3.CompactButton
 import androidx.wear.compose.material3.FadingExpandingLabel
+import androidx.wear.compose.material3.FilledTonalButton
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.OutlinedButton
 import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.SurfaceTransformation
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.lazy.rememberTransformationSpec
 import androidx.wear.compose.material3.lazy.transformedHeight
@@ -88,7 +90,7 @@ val PlaceholderDemos =
             Centralize(Modifier.padding(horizontal = 10.dp)) { TextPlaceholder() }
         },
         ComposableDemo("Button List") { PlaceholderButtonList() },
-        ComposableDemo("Card List") { PlaceholderCardList() },
+        ComposableDemo("Card and Button List") { PlaceholderCardAndButton() },
         ComposableDemo("Shimmer Color") {
             Centralize(Modifier.padding(horizontal = 10.dp)) { PlaceholderComplexSample() }
         },
@@ -371,10 +373,12 @@ fun FloatingResetButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun PlaceholderCardList() {
+fun PlaceholderCardAndButton() {
     var resetCount by remember { mutableIntStateOf(0) }
     var refreshCount by remember { mutableIntStateOf(0) }
-    val showContent = remember { Array(4) { mutableStateOf(false) } }
+    val numCards = 4
+    val numButtons = 10
+    val showContent = remember { Array(numCards + 2 * numButtons) { mutableStateOf(false) } }
 
     // Use the spec derived from default small and large screen specs.
     val transformationSpec = rememberTransformationSpec()
@@ -396,19 +400,46 @@ fun PlaceholderCardList() {
                 item {
                     CardWithPlaceholder(
                         modifier =
-                            Modifier.fillMaxWidth()
-                                .graphicsLayer {
-                                    with(transformationSpec) {
-                                        applyContainerTransformation(scrollProgress)
-                                    }
-                                }
-                                .transformedHeight(this, transformationSpec),
+                            Modifier.fillMaxWidth().transformedHeight(this, transformationSpec),
+                        transformation = SurfaceTransformation(transformationSpec),
                         placeholderVisible = { !showContent[itemIndex].value },
                         content = {
                             Text("Some content $refreshCount")
                             Text("Some more content")
                         },
                     )
+                }
+            }
+            repeat(10) { itemIndex ->
+                item {
+                    val placeholderState =
+                        rememberPlaceholderState(
+                            isVisible = !showContent[itemIndex + numCards].value
+                        )
+                    FilledTonalButton(
+                        onClick = {},
+                        transformation = SurfaceTransformation(transformationSpec),
+                        modifier =
+                            Modifier.placeholderShimmer(placeholderState)
+                                .transformedHeight(this, transformationSpec),
+                    ) {
+                        Text("Filled Tonal Button")
+                    }
+                }
+                item {
+                    val placeholderState =
+                        rememberPlaceholderState(
+                            isVisible = !showContent[itemIndex + numCards + numButtons].value
+                        )
+                    OutlinedButton(
+                        onClick = {},
+                        transformation = SurfaceTransformation(transformationSpec),
+                        modifier =
+                            Modifier.placeholderShimmer(placeholderState)
+                                .transformedHeight(this, transformationSpec),
+                    ) {
+                        Text("Outline Button")
+                    }
                 }
             }
         }
@@ -493,6 +524,7 @@ fun ButtonWithPlaceholder(
 fun CardWithPlaceholder(
     placeholderVisible: () -> Boolean,
     modifier: Modifier = Modifier,
+    transformation: SurfaceTransformation? = null,
     content: @Composable (ColumnScope.() -> Unit)?,
 ) {
     val cardPlaceholderState = rememberPlaceholderState(isVisible = placeholderVisible())
@@ -524,6 +556,7 @@ fun CardWithPlaceholder(
                     textAlign = TextAlign.Right,
                 )
             },
+            transformation = transformation,
         ) {
             Spacer(modifier = Modifier.height(4.dp))
             content?.let {

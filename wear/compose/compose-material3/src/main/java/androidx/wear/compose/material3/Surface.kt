@@ -67,14 +67,16 @@ internal fun Modifier.surface(
                 transformation.createContainerPainter(painter, shape, border)
             }
 
-        paintBackground(painter = backgroundPainter).graphicsLayer {
-            this.shape = shape
-            with(transformation) {
-                applyContainerTransformation()
-                applyContentTransformation()
+        // We first apply the container transformation, then the Modifier `surface` is applied to,
+        // then the painter and finally the content transformation.
+        Modifier.graphicsLayer { with(transformation) { applyContainerTransformation() } }
+            .then(this)
+            .paintBackground(painter = backgroundPainter)
+            .graphicsLayer {
+                this.shape = shape
+                with(transformation) { applyContentTransformation() }
+                clip = true
             }
-            clip = true
-        }
     } else {
         val borderModifier = if (border != null) border(border = border, shape = shape) else this
         borderModifier

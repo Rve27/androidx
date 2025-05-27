@@ -419,11 +419,9 @@ internal class ResponsiveTransformationSpecImpl(
         border: BorderStroke?,
     ): Painter =
         BackgroundPainter(
-            transformState = {
-                val scrollProgress = scrollProgress
-                trace("wear-compose:tlc:backgroundPainterStateResolution") {
-                    TransformationState(TransitionAreaProgress(scrollProgress))
-                }
+            scale = {
+                val progress = TransitionAreaProgress(scrollProgress)
+                progress.compute(scale, easing)
             },
             shape = shape,
             border = border,
