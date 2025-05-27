@@ -304,10 +304,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
     private var pageMetadataLoader: PageMetadataLoader? = null
     private var pageManager: PageManager? = null
+    private var formWidgetInteractionHandler: FormWidgetInteractionHandler? = null
     private var layoutInfoCollector: Job? = null
     private var pageSignalCollector: Job? = null
     private var selectionStateCollector: Job? = null
     private var errorStateCollector: Job? = null
+    private var formEditInfoCollector: Job? = null
 
     private var deferredScrollPage: Int? = null
     private var deferredScrollPosition: PdfPoint? = null
@@ -1170,6 +1172,20 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 }
         }
 
+        formWidgetInteractionHandler?.let { handler ->
+            val formEditActionToJoin = formEditInfoCollector?.apply { cancel() }
+            formEditInfoCollector =
+                mainScope.launch(start = CoroutineStart.UNDISPATCHED) {
+                    formEditActionToJoin?.join()
+                    launch {
+                        handler.invalidatedAreas.collect {
+                            val pageNum = it.first
+                            val areasToRender: List<Rect> = it.second
+                        }
+                    }
+                }
+        }
+
         val errorsToJoin = errorStateCollector?.apply { cancel() }
         errorStateCollector =
             mainScope.launch(start = CoroutineStart.UNDISPATCHED) {
@@ -1195,6 +1211,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         layoutInfoCollector?.cancel()
         pageSignalCollector?.cancel()
         selectionStateCollector?.cancel()
+        formEditInfoCollector?.cancel()
         errorStateCollector?.cancel()
     }
 
@@ -1247,6 +1264,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 errorFlow,
                 isAccessibilityEnabled,
             )
+
+        formWidgetInteractionHandler =
+            FormWidgetInteractionHandler(localPdfDocument, backgroundScope, errorFlow)
 
         val fastScrollCalculator = FastScrollCalculator(context)
         val fastScrollDrawer =
@@ -1906,7 +1926,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             }
 
             pageManager?.getWidgetAtTapPoint(touchPoint)?.let { widgets ->
-                if (handleTapOnFormWidget(widgets, touchPoint.pagePoint)) return true
+                if (handleTapOnFormWidget(widgets, touchPoint)) return true
             }
 
             return super.onSingleTapConfirmed(e)
@@ -1960,8 +1980,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
         private fun handleTapOnFormWidget(
             formWidgetInfos: List<FormWidgetInfo>,
-            pdfCoordinates: PointF,
+            touchPoint: PdfPoint,
         ): Boolean {
+            val pdfCoordinates = touchPoint.pagePoint
             formWidgetInfos.forEach { formWidgetInfo ->
                 // TODO: b/410008790 Implement business logic to perform action on form widget
                 if (
@@ -1970,8 +1991,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                         pdfCoordinates.y.roundToInt(),
                     )
                 ) {
-                    // TODO: Return true after handling logic is implemented
-                    return false
+                    formWidgetInteractionHandler?.handleInteraction(touchPoint, formWidgetInfo)
+                    return true
                 }
             }
             return false
