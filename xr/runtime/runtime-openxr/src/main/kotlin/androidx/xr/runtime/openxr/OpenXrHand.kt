@@ -34,9 +34,12 @@ public class OpenXrHand internal constructor(private val isLeftHand: Boolean) : 
         private set
 
     override fun update(xrTime: Long) {
-        val handDataBuffer =
-            nativeGetHandDataBuffer(isLeftHand, xrTime)
-                ?: throw IllegalStateException("Could not get hand data buffer.")
+        val handDataBuffer = nativeGetHandDataBuffer(isLeftHand, xrTime)
+        if (handDataBuffer == null) {
+            trackingState = TrackingState.PAUSED
+            return
+        }
+
         trackingState =
             if (handDataBuffer.int != 0) TrackingState.TRACKING else TrackingState.PAUSED
         handJointsBuffer = handDataBuffer.slice().order(ByteOrder.nativeOrder()).asFloatBuffer()

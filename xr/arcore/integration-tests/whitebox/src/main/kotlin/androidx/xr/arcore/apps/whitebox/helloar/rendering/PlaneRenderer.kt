@@ -92,35 +92,40 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
         val renderJob =
             coroutineScope.launch(updateJob) {
                 plane.state.collect { state ->
-                    if (state.trackingState == TrackingState.TRACKING) {
-                        if (state.label == Plane.Label.UNKNOWN) {
-                            entity.setHidden(true)
-                        } else {
-                            entity.setHidden(false)
-                            counter++
-                            entity.setPose(
-                                session.scene.perceptionSpace
-                                    .transformPoseTo(state.centerPose, session.scene.activitySpace)
-                                    // Planes are X-Y while Panels are X-Z, so we need to rotate the
-                                    // X-axis by -90
-                                    // degrees to align them.
-                                    .compose(PANEL_TO_PLANE_ROTATION)
-                            )
-
-                            updateViewText(view, plane, state)
-                            if (counter > PANEL_RESIZE_UPDATE_COUNT) {
-                                val panelExtentsInPixels = convertMetersToPixels(state.extents)
-                                entity.setSizeInPixels(
-                                    IntSize2d(
-                                        width = panelExtentsInPixels.x.toInt(),
-                                        height = panelExtentsInPixels.y.toInt(),
-                                    )
+                    when (state.trackingState) {
+                        TrackingState.TRACKING -> {
+                            if (state.label == Plane.Label.UNKNOWN) {
+                                entity.setHidden(true)
+                            } else {
+                                entity.setHidden(false)
+                                entity.setAlpha(1.0f)
+                                counter++
+                                entity.setPose(
+                                    session.scene.perceptionSpace
+                                        .transformPoseTo(
+                                            state.centerPose,
+                                            session.scene.activitySpace,
+                                        )
+                                        // Planes are X-Y while Panels are X-Z, so we need to rotate
+                                        // the X-axis by -90 degrees to align them.
+                                        .compose(PANEL_TO_PLANE_ROTATION)
                                 )
-                                counter = 0
+
+                                updateViewText(view, plane, state)
+                                if (counter > PANEL_RESIZE_UPDATE_COUNT) {
+                                    val panelExtentsInPixels = convertMetersToPixels(state.extents)
+                                    entity.setSizeInPixels(
+                                        IntSize2d(
+                                            width = panelExtentsInPixels.x.toInt(),
+                                            height = panelExtentsInPixels.y.toInt(),
+                                        )
+                                    )
+                                    counter = 0
+                                }
                             }
                         }
-                    } else if (state.trackingState == TrackingState.STOPPED) {
-                        entity.setHidden(true)
+                        TrackingState.PAUSED -> entity.setAlpha(0.5f)
+                        TrackingState.STOPPED -> entity.setHidden(true)
                     }
                 }
             }

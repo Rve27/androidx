@@ -153,15 +153,19 @@ internal class AnchorRenderer(
         val renderJob =
             coroutineScope.launch(updateJob) {
                 anchor.state.collect { state ->
-                    if (state.trackingState == TrackingState.TRACKING) {
-                        entity.setPose(
-                            session.scene.perceptionSpace.transformPoseTo(
-                                state.pose,
-                                session.scene.activitySpace,
+                    when (state.trackingState) {
+                        TrackingState.TRACKING -> {
+                            entity.setHidden(false)
+                            entity.setAlpha(1.0f)
+                            entity.setPose(
+                                session.scene.perceptionSpace.transformPoseTo(
+                                    state.pose,
+                                    session.scene.activitySpace,
+                                )
                             )
-                        )
-                    } else if (state.trackingState == TrackingState.STOPPED) {
-                        entity.setHidden(true)
+                        }
+                        TrackingState.PAUSED -> entity.setAlpha(0.5f)
+                        TrackingState.STOPPED -> entity.setHidden(true)
                     }
                 }
             }
