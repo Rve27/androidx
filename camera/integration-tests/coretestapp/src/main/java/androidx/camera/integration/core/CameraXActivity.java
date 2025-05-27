@@ -115,6 +115,7 @@ import androidx.camera.core.CameraSelector;
 import androidx.camera.core.DisplayOrientedMeteringPointFactory;
 import androidx.camera.core.DynamicRange;
 import androidx.camera.core.ExperimentalLensFacing;
+import androidx.camera.core.ExperimentalSessionConfig;
 import androidx.camera.core.ExposureState;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.FocusMeteringResult;
@@ -126,9 +127,9 @@ import androidx.camera.core.ImageProxy;
 import androidx.camera.core.LowLightBoostState;
 import androidx.camera.core.MeteringPointFactory;
 import androidx.camera.core.Preview;
+import androidx.camera.core.SessionConfig;
 import androidx.camera.core.TorchState;
 import androidx.camera.core.UseCase;
-import androidx.camera.core.UseCaseGroup;
 import androidx.camera.core.ViewPort;
 import androidx.camera.core.impl.CameraInfoInternal;
 import androidx.camera.core.impl.Quirks;
@@ -1890,7 +1891,6 @@ public class CameraXActivity extends AppCompatActivity {
             mRecordUi.setState(RecordUi.State.STOPPING);
         }
 
-        mCameraProvider.unbindAll();
         try {
             // Binds to lifecycle without use cases to make sure mCamera can be retrieved for
             // tests to do necessary checks.
@@ -2182,32 +2182,30 @@ public class CameraXActivity extends AppCompatActivity {
     /**
      * Binds use cases to the current lifecycle.
      */
+    @OptIn(markerClass = ExperimentalSessionConfig.class)
     private Camera bindToLifecycleSafely(List<UseCase> useCases) {
         Log.d(TAG, "bindToLifecycleSafely: mDisableViewPort = " + mDisableViewPort
                 + ", mForceEnableStreamSharing = " + mForceEnableStreamSharing);
 
-        UseCaseGroup.Builder useCaseGroupBuilder = new UseCaseGroup.Builder();
-        for (UseCase useCase : useCases) {
-            useCaseGroupBuilder.addUseCase(useCase);
-        }
+        SessionConfig.Builder sessionConfigBuilder = new SessionConfig.Builder(useCases);
 
         if (!mDisableViewPort) {
-            ViewPort viewPort = new ViewPort.Builder(new Rational(mViewFinder.getWidth(),
-                    mViewFinder.getHeight()),
-                    mViewFinder.getDisplay().getRotation())
-                    .setScaleType(ViewPort.FILL_CENTER).build();
-            useCaseGroupBuilder.setViewPort(viewPort);
+            ViewPort viewPort = new ViewPort.Builder(
+                    new Rational(mViewFinder.getWidth(), mViewFinder.getHeight()),
+                    mViewFinder.getDisplay().getRotation()
+            ).setScaleType(ViewPort.FILL_CENTER).build();
+            sessionConfigBuilder.setViewPort(viewPort);
         }
 
         // Force-enable stream sharing
         if (mForceEnableStreamSharing) {
             @SuppressLint("RestrictedApiAndroidX")
             StreamSharingForceEnabledEffect effect = new StreamSharingForceEnabledEffect();
-            useCaseGroupBuilder.addEffect(effect);
+            sessionConfigBuilder.addEffect(effect);
         }
 
         mCamera = mCameraProvider.bindToLifecycle(this, mCurrentCameraSelector,
-                useCaseGroupBuilder.build());
+                sessionConfigBuilder.build());
         setupZoomSeeker();
         setupTorchStrengthSeeker();
         setUpLowLightBoostButton();
