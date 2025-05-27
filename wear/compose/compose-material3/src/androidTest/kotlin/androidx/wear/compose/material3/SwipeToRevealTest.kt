@@ -72,6 +72,8 @@ import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -954,6 +956,60 @@ class SwipeToRevealTest {
 
         // Then the first component should not display the action anymore.
         rule.onNodeWithTag(PRIMARY_ACTION_TAG).assertDoesNotExist()
+    }
+
+    @Test
+    fun onPrimaryActionClick_doesNotTriggerOnSwipePrimaryAction() {
+        var onPrimaryActionClick = false
+        var onSwipePrimaryAction = false
+        lateinit var revealState: RevealState
+        var density = 0f
+        rule.setContent {
+            with(LocalDensity.current) { density = this.density }
+            revealState = rememberRevealState(Covered)
+            SwipeToRevealWithDefaults(
+                modifier = Modifier.testTag(TEST_TAG),
+                onSwipePrimaryAction = { onSwipePrimaryAction = true },
+                primaryAction = {
+                    DefaultPrimaryActionButton(
+                        modifier = Modifier.testTag(PRIMARY_ACTION_TAG),
+                        onClick = { onPrimaryActionClick = true },
+                    )
+                },
+                revealState = revealState,
+            )
+        }
+        rule.onNodeWithTag(TEST_TAG).performTouchInput { swipeLeftToRevealing(density) }
+        rule.onNodeWithTag(PRIMARY_ACTION_TAG).performClick()
+
+        rule.runOnIdle {
+            assertTrue(onPrimaryActionClick)
+            assertFalse(onSwipePrimaryAction)
+        }
+    }
+
+    @Test
+    fun onFullSwipe_doesNotTriggerPrimaryActionClick() {
+        var onPrimaryActionClick = false
+        var onSwipePrimaryAction = false
+        lateinit var revealState: RevealState
+        rule.setContent {
+            revealState = rememberRevealState(Covered)
+            SwipeToRevealWithDefaults(
+                modifier = Modifier.testTag(TEST_TAG),
+                onSwipePrimaryAction = { onSwipePrimaryAction = true },
+                primaryAction = {
+                    DefaultPrimaryActionButton(onClick = { onPrimaryActionClick = true })
+                },
+                revealState = revealState,
+            )
+        }
+        rule.onNodeWithTag(TEST_TAG).performTouchInput { swipeLeft() }
+
+        rule.runOnIdle {
+            assertTrue(onSwipePrimaryAction)
+            assertFalse(onPrimaryActionClick)
+        }
     }
 
     private fun assertRevealStateIsRestored(previousState: RevealState, currentState: RevealState) {
