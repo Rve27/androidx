@@ -16,6 +16,7 @@
 
 package androidx.pdf.view
 
+import android.content.Context
 import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Rect
@@ -24,6 +25,7 @@ import androidx.pdf.PdfDocument
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
+import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -70,7 +72,9 @@ class FormWidgetInteractionHandlerTest {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        handler = FormWidgetInteractionHandler(pdfDocument, testScope, errorFlow)
+        val applicationContext = ApplicationProvider.getApplicationContext<Context>()
+        handler =
+            FormWidgetInteractionHandler(applicationContext, pdfDocument, testScope, errorFlow)
     }
 
     @Test

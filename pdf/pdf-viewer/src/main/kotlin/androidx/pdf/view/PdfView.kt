@@ -1271,7 +1271,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             )
 
         formWidgetInteractionHandler =
-            FormWidgetInteractionHandler(localPdfDocument, backgroundScope, errorFlow)
+            FormWidgetInteractionHandler(context, localPdfDocument, backgroundScope, errorFlow)
 
         val fastScrollCalculator = FastScrollCalculator(context)
         val fastScrollDrawer =

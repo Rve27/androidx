@@ -16,16 +16,19 @@
 
 package androidx.pdf.view
 
+import android.content.Context
 import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.Rect
 import android.os.DeadObjectException
 import androidx.pdf.PdfDocument
+import androidx.pdf.R
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.exceptions.RequestMetadata
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.util.FORM_APPLY_EDIT_REQUEST_NAME
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -38,6 +41,7 @@ import kotlinx.coroutines.launch
  * drop-down menus or creating text fields for user input.
  */
 internal class FormWidgetInteractionHandler(
+    private val context: Context,
     private val pdfDocument: PdfDocument,
     private val backgroundScope: CoroutineScope,
     private val errorFlow: MutableSharedFlow<Throwable>,
@@ -67,8 +71,9 @@ internal class FormWidgetInteractionHandler(
             FormWidgetInfo.WIDGET_TYPE_TEXTFIELD -> {
                 handleInteractionWithTextWidget(pageNum, formWidgetInfo)
             }
-            FormWidgetInfo.WIDGET_TYPE_LISTBOX -> {
-                handleInteractionWithListBoxWidget(pageNum, formWidgetInfo)
+            FormWidgetInfo.WIDGET_TYPE_LISTBOX,
+            FormWidgetInfo.WIDGET_TYPE_COMBOBOX -> {
+                handleInteractionWithChoiceSelectionWidget(pageNum, formWidgetInfo)
             }
         }
     }
@@ -95,7 +100,46 @@ internal class FormWidgetInteractionHandler(
      * Creates a drop-down menu with a list of options. Once option is selected by the user,
      * assembles a FormEditRecord
      */
-    fun handleInteractionWithListBoxWidget(pageNum: Int, formWidgetInfo: FormWidgetInfo) {}
+    fun handleInteractionWithChoiceSelectionWidget(pageNum: Int, formWidgetInfo: FormWidgetInfo) {
+        if (formWidgetInfo.multiSelect) {
+            showMultiChoiceSelectMenu(formWidgetInfo)
+        } else {
+            showSingleChoiceSelectMenu(formWidgetInfo)
+        }
+    }
+
+    private fun showSingleChoiceSelectMenu(formWidgetInfo: FormWidgetInfo) {
+        var selectedItemIndex = 0
+        val listItemValues: List<String> = formWidgetInfo.listItems.map { it.label }
+
+        MaterialAlertDialogBuilder(context)
+            .setSingleChoiceItems(listItemValues.toTypedArray(), selectedItemIndex) { dialog, which
+                ->
+                selectedItemIndex = which
+            }
+            .setPositiveButton(context.getString(R.string.confirm_selection)) { dialog, which ->
+                // TODO(b/410008872): Function to assemble FormEditRecord based on user selection.
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showMultiChoiceSelectMenu(formWidgetInfo: FormWidgetInfo) {
+        val selectedItems = BooleanArray(formWidgetInfo.listItems.size)
+        val listItemValues: List<String> = formWidgetInfo.listItems.map { it.label }
+        MaterialAlertDialogBuilder(context)
+            .setMultiChoiceItems(listItemValues.toTypedArray(), selectedItems) {
+                dialog,
+                which,
+                isChecked ->
+                selectedItems[which] = isChecked
+            }
+            .setPositiveButton(context.getString(R.string.confirm_selection)) { dialog, which ->
+                // TODO(b/410008872): Function to assemble FormEditRecord based on user selection.
+                dialog.dismiss()
+            }
+            .show()
+    }
 
     /** Calls pdfDocument.applyEdit inside a CoroutineScope */
     fun applyEditRecord(pageNum: Int, formEditRecord: FormEditRecord) {
