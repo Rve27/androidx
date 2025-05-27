@@ -52,9 +52,9 @@ internal constructor(
     // TODO(b/392660855): Disable all features by default once this API is fully implemented.
     override var config: Config =
         Config(
-            Config.DeviceTrackingMode.DISABLED,
             Config.PlaneTrackingMode.DISABLED,
             Config.HandTrackingMode.DISABLED,
+            Config.DeviceTrackingMode.DISABLED,
             Config.DepthEstimationMode.DISABLED,
             Config.AnchorPersistenceMode.LOCAL,
         )
@@ -64,11 +64,11 @@ internal constructor(
         when (
             // TODO(b/414648065): Reorder the parameters in nativeConfigureSession.
             nativeConfigureSession(
-                config.planeTracking.mode,
-                config.handTracking.mode,
-                config.depthEstimation.mode,
-                config.anchorPersistence.mode,
-                config.deviceTracking.mode,
+                planeTracking = config.planeTracking.mode,
+                handTracking = config.handTracking.mode,
+                deviceTracking = config.deviceTracking.mode,
+                depthEstimation = config.depthEstimation.mode,
+                anchorPersistence = config.anchorPersistence.mode,
             )
         ) {
             -2L ->
@@ -148,8 +148,9 @@ internal constructor(
     private external fun nativeConfigureSession(
         planeTracking: Int,
         handTracking: Int,
+        deviceTracking: Int,
         depthEstimation: Int,
         anchorPersistence: Int,
-        headTracking: Int,
+        faceTracking: Int = 0,
     ): Long
 }

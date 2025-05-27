@@ -27,10 +27,10 @@ import androidx.annotation.RestrictTo
 public class Config
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 constructor(
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    public val deviceTracking: DeviceTrackingMode = DeviceTrackingMode.DISABLED,
     public val planeTracking: PlaneTrackingMode = PlaneTrackingMode.DISABLED,
     public val handTracking: HandTrackingMode = HandTrackingMode.DISABLED,
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    public val deviceTracking: DeviceTrackingMode = DeviceTrackingMode.DISABLED,
     public val depthEstimation: DepthEstimationMode = DepthEstimationMode.DISABLED,
     public val anchorPersistence: AnchorPersistenceMode = AnchorPersistenceMode.DISABLED,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -45,9 +45,9 @@ constructor(
         depthEstimation: DepthEstimationMode = DepthEstimationMode.DISABLED,
         anchorPersistence: AnchorPersistenceMode = AnchorPersistenceMode.DISABLED,
     ) : this(
-        headTracking.toDeviceTrackingMode(),
         planeTracking,
         handTracking,
+        headTracking.toDeviceTrackingMode(),
         depthEstimation,
         anchorPersistence,
         GeospatialMode.DISABLED,
@@ -72,9 +72,9 @@ constructor(
     override fun hashCode(): Int {
         var result = planeTracking.hashCode()
         result = 31 * result + handTracking.hashCode()
+        result = 31 * result + deviceTracking.hashCode()
         result = 31 * result + depthEstimation.hashCode()
         result = 31 * result + anchorPersistence.hashCode()
-        result = 31 * result + deviceTracking.hashCode()
         result = 31 * result + geospatial.hashCode()
         return result
     }
@@ -88,9 +88,9 @@ constructor(
         anchorPersistence: AnchorPersistenceMode = this.anchorPersistence,
     ): Config {
         return Config(
-            deviceTracking = headTracking.toDeviceTrackingMode(),
             planeTracking = planeTracking,
             handTracking = handTracking,
+            deviceTracking = headTracking.toDeviceTrackingMode(),
             depthEstimation = depthEstimation,
             anchorPersistence = anchorPersistence,
             geospatial = this.geospatial,
@@ -100,17 +100,17 @@ constructor(
     @Suppress("MissingJvmstatic")
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public fun copy(
-        deviceTracking: DeviceTrackingMode,
         planeTracking: PlaneTrackingMode = this.planeTracking,
         handTracking: HandTrackingMode = this.handTracking,
+        deviceTracking: DeviceTrackingMode = this.deviceTracking,
         depthEstimation: DepthEstimationMode = this.depthEstimation,
         anchorPersistence: AnchorPersistenceMode = this.anchorPersistence,
         geospatial: GeospatialMode = this.geospatial,
     ): Config {
         return Config(
-            deviceTracking = deviceTracking,
             planeTracking = planeTracking,
             handTracking = handTracking,
+            deviceTracking = deviceTracking,
             depthEstimation = depthEstimation,
             anchorPersistence = anchorPersistence,
             geospatial = geospatial,
