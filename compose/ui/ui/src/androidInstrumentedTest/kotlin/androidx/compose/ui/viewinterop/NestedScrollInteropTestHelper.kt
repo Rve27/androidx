@@ -128,6 +128,8 @@ internal open class InspectableNestedScrollConnection() : NestedScrollConnection
 
 internal class TestNestedScrollParentView(context: Context, attrs: AttributeSet) :
     CoordinatorLayout(context, attrs) {
+    var reportConsumedOnPreFling = false
+    var reportConsumedOnFling = false
     var nestedPreFlingCalled = false
     var nestedFlingCalled = false
     private val unconsumed = IntArray(2)
@@ -138,13 +140,13 @@ internal class TestNestedScrollParentView(context: Context, attrs: AttributeSet)
     val offeredToParentOffset: Offset
         get() = offeredToParent.toReversedOffset()
 
-    private val velocityOfferedToParent = FloatArray(2)
-    val velocityOfferedToParentOffset: Velocity
-        get() = velocityOfferedToParent.toReversedVelocity()
+    private val velocityDuringPreFlingPass = FloatArray(2)
+    val velocityDuringPreFlingPassOffset: Velocity
+        get() = velocityDuringPreFlingPass.toReversedVelocity()
 
-    private val velocityUnconsumed = FloatArray(2)
-    val velocityUnconsumedOffset: Velocity
-        get() = velocityUnconsumed.toReversedVelocity()
+    private val velocityDuringFlingPass = FloatArray(2)
+    val velocityDuringFlingPassOffset: Velocity
+        get() = velocityDuringFlingPass.toReversedVelocity()
 
     override fun onNestedPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray, type: Int) {
         super.onNestedPreScroll(target, dx, dy, consumed, type)
@@ -183,10 +185,10 @@ internal class TestNestedScrollParentView(context: Context, attrs: AttributeSet)
     }
 
     override fun onNestedPreFling(target: View, velocityX: Float, velocityY: Float): Boolean {
-        velocityOfferedToParent[0] += velocityX
-        velocityOfferedToParent[1] += velocityY
+        velocityDuringPreFlingPass[0] += velocityX
+        velocityDuringPreFlingPass[1] += velocityY
         nestedPreFlingCalled = true
-        return super.onNestedPreFling(target, velocityX, velocityY)
+        return super.onNestedPreFling(target, velocityX, velocityY) || reportConsumedOnPreFling
     }
 
     override fun onNestedFling(
@@ -195,10 +197,10 @@ internal class TestNestedScrollParentView(context: Context, attrs: AttributeSet)
         velocityY: Float,
         consumed: Boolean,
     ): Boolean {
-        velocityUnconsumed[0] += velocityX
-        velocityUnconsumed[1] += velocityY
+        velocityDuringFlingPass[0] += velocityX
+        velocityDuringFlingPass[1] += velocityY
         nestedFlingCalled = true
-        return super.onNestedFling(target, velocityX, velocityY, consumed)
+        return super.onNestedFling(target, velocityX, velocityY, consumed) || reportConsumedOnFling
     }
 }
 
