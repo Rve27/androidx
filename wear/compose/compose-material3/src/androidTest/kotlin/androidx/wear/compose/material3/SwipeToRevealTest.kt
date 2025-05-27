@@ -68,6 +68,7 @@ import androidx.wear.compose.material3.SwipeToRevealDefaults.SingleActionAnchorW
 import androidx.wear.compose.material3.SwipeToRevealDefaults.bidirectionalGestureInclusion
 import androidx.wear.compose.material3.SwipeToRevealDefaults.gestureInclusion
 import androidx.wear.compose.materialcore.CustomTouchSlopProvider
+import androidx.wear.compose.materialcore.LARGE_SCREEN_WIDTH_DP
 import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.CoroutineScope
@@ -418,15 +419,16 @@ class SwipeToRevealTest {
             expectedRevealValue = LeftRevealed,
             revealDirection = Bidirectional,
             bidirectionalGestureInclusion = false,
-        ) {
-            swipeRight(startX = width / 2f)
+        ) { density ->
+            swipeRight(startX = LARGE_SCREEN_WIDTH_DP * density / 4f)
         }
     }
 
     @Test
     fun onPartialSwipeRight_bidirectional_stateToSwiped() {
-        verifyGesture(expectedRevealValue = LeftRevealed, revealDirection = Bidirectional) {
-            swipeRight(startX = width / 2f)
+        verifyGesture(expectedRevealValue = LeftRevealed, revealDirection = Bidirectional) { density
+            ->
+            swipeRight(startX = LARGE_SCREEN_WIDTH_DP * density / 4f)
         }
     }
 
@@ -450,33 +452,32 @@ class SwipeToRevealTest {
 
     @Test
     fun onAboveVelocityThresholdSmallDistanceSwipe_stateToRevealing() {
-        verifyGesture(expectedRevealValue = RightRevealing, enableTouchSlop = false) {
-            swipeLeft(endX = right - 65, durationMillis = 30L)
+        verifyGesture(expectedRevealValue = RightRevealing, enableTouchSlop = false) { density ->
+            swipeLeft(endX = (LARGE_SCREEN_WIDTH_DP - 32) * density, durationMillis = 30L)
         }
     }
 
     @Test
     fun onBelowVelocityThresholdSmallDistanceSwipe_noSwipe() {
-        verifyGesture(expectedRevealValue = Covered, enableTouchSlop = false) {
-            swipeLeft(endX = right - 65, durationMillis = 1000L)
+        verifyGesture(expectedRevealValue = Covered, enableTouchSlop = false) { density ->
+            swipeLeft(endX = (LARGE_SCREEN_WIDTH_DP - 32) * density, durationMillis = 1000L)
         }
     }
 
     @Test
     fun onAboveVelocityThresholdLongDistanceSwipe_stateToRevealing() {
-        verifyGesture(expectedRevealValue = RightRevealing, enableTouchSlop = false) {
-            swipeLeft(endX = right - 150, durationMillis = 30L)
+        verifyGesture(expectedRevealValue = RightRevealing, enableTouchSlop = false) { density ->
+            swipeLeft(endX = (LARGE_SCREEN_WIDTH_DP - 64) * density, durationMillis = 30L)
         }
     }
 
     @Test
     fun onBelowVelocityThresholdLongDistanceSwipe_stateToRevealing() {
-        verifyGesture(expectedRevealValue = RightRevealing, enableTouchSlop = false) {
-            swipeLeft(endX = right - 150, durationMillis = 1000L)
+        verifyGesture(expectedRevealValue = RightRevealing, enableTouchSlop = false) { density ->
+            swipeLeft(endX = (LARGE_SCREEN_WIDTH_DP - 64) * density, durationMillis = 1000L)
         }
     }
 
-    @Ignore("b/419229763")
     @Test
     fun onPartialSwipe_lastStateRevealing_resetsLastState() {
         verifyStateMultipleSwipeToReveal(
@@ -498,7 +499,6 @@ class SwipeToRevealTest {
         )
     }
 
-    @Ignore("b/419229763")
     @Test
     fun onPartialSwipe_whenLastStateRevealed_doesNotReset() {
         verifyStateMultipleSwipeToReveal(
@@ -519,7 +519,6 @@ class SwipeToRevealTest {
         )
     }
 
-    @Ignore("b/419229763")
     @Test
     fun onPartialSwipeRight_lastStateRevealing_resetsLastState() {
         verifyStateMultipleSwipeToReveal(
@@ -542,7 +541,6 @@ class SwipeToRevealTest {
         )
     }
 
-    @Ignore("b/419229763")
     @Test
     fun onPartialSwipeRight_whenLastStateRevealed_doesNotReset() {
         verifyStateMultipleSwipeToReveal(
@@ -564,7 +562,6 @@ class SwipeToRevealTest {
         )
     }
 
-    @Ignore("b/419229763")
     @Test
     fun onPartialSwipeRightAndLeft_differentComponents_lastOneGetsReset() {
         verifyStateMultipleSwipeToReveal(
@@ -587,7 +584,6 @@ class SwipeToRevealTest {
         )
     }
 
-    @Ignore("b/419229763")
     @Test
     fun onPartialSwipeLeftAndRight_differentComponents_lastOneGetsReset() {
         verifyStateMultipleSwipeToReveal(
@@ -1069,30 +1065,35 @@ class SwipeToRevealTest {
         enableTouchSlop: Boolean = true,
         wrappedInSwipeToDismissBox: Boolean = false,
         expectedSwipeToDismissBoxDismissed: Boolean = false,
-        gesture: TouchInjectionScope.() -> Unit,
+        gesture: TouchInjectionScope.(density: Float) -> Unit,
     ) {
         var onFullSwipeTriggerCounter = 0
         var onSwipeToDismissBoxDismissed = false
         lateinit var revealState: RevealState
+        var density = 0f
 
         rule.setContent {
             revealState = rememberRevealState(initialValue = initialRevealValue)
 
             val content =
                 @Composable {
-                    SwipeToRevealWithDefaults(
-                        modifier = Modifier.testTag(TEST_TAG),
-                        onSwipePrimaryAction = { onFullSwipeTriggerCounter++ },
-                        revealState = revealState,
-                        revealDirection = revealDirection,
-                        gestureInclusion =
-                            if (bidirectionalGestureInclusion) {
-                                SwipeToRevealDefaults.bidirectionalGestureInclusion
-                            } else {
-                                gestureInclusion(revealState)
-                            },
-                        enableTouchSlop = enableTouchSlop,
-                    )
+                    with(LocalDensity.current) { density = this.density }
+
+                    ScreenConfiguration(screenSizeDp = LARGE_SCREEN_WIDTH_DP) {
+                        SwipeToRevealWithDefaults(
+                            modifier = Modifier.testTag(TEST_TAG),
+                            onSwipePrimaryAction = { onFullSwipeTriggerCounter++ },
+                            revealState = revealState,
+                            revealDirection = revealDirection,
+                            gestureInclusion =
+                                if (bidirectionalGestureInclusion) {
+                                    SwipeToRevealDefaults.bidirectionalGestureInclusion
+                                } else {
+                                    gestureInclusion(revealState)
+                                },
+                            enableTouchSlop = enableTouchSlop,
+                        )
+                    }
                 }
 
             if (!wrappedInSwipeToDismissBox) {
@@ -1111,7 +1112,7 @@ class SwipeToRevealTest {
             }
         }
 
-        rule.onNodeWithTag(TEST_TAG).performTouchInput(block = gesture)
+        rule.onNodeWithTag(TEST_TAG).performTouchInput(block = { gesture(density) })
 
         rule.runOnIdle { assertEquals(expectedRevealValue, revealState.currentValue) }
 
@@ -1138,18 +1139,20 @@ class SwipeToRevealTest {
             with(LocalDensity.current) { density = this.density }
             revealStateOne = rememberRevealState()
             revealStateTwo = rememberRevealState()
-            CustomTouchSlopProvider(newTouchSlop = 0f) {
-                Column {
-                    SwipeToRevealWithDefaults(
-                        modifier = Modifier.testTag(SWIPE_TO_REVEAL_TAG),
-                        revealState = revealStateOne,
-                        revealDirection = revealDirection,
-                    )
-                    SwipeToRevealWithDefaults(
-                        modifier = Modifier.testTag(SWIPE_TO_REVEAL_SECOND_TAG),
-                        revealState = revealStateTwo,
-                        revealDirection = revealDirection,
-                    )
+            ScreenConfiguration(screenSizeDp = LARGE_SCREEN_WIDTH_DP) {
+                CustomTouchSlopProvider(newTouchSlop = 0f) {
+                    Column {
+                        SwipeToRevealWithDefaults(
+                            modifier = Modifier.testTag(SWIPE_TO_REVEAL_TAG),
+                            revealState = revealStateOne,
+                            revealDirection = revealDirection,
+                        )
+                        SwipeToRevealWithDefaults(
+                            modifier = Modifier.testTag(SWIPE_TO_REVEAL_SECOND_TAG),
+                            revealState = revealStateTwo,
+                            revealDirection = revealDirection,
+                        )
+                    }
                 }
             }
 
