@@ -1267,6 +1267,7 @@ includeProject(":xr:scenecore:integration-tests:transformationtests", [BuildType
 includeProject(":xr:scenecore:integration-tests:videoplayertest", [BuildType.XR])
 includeProject(":xr:scenecore:integration-tests:videoplayerdrmtest", [BuildType.XR])
 includeProject(":xr:scenecore:integration-tests:visibilitytest", [BuildType.XR])
+includeProject(":xr:scenecore:integration-tests:testapp", [BuildType.XR])
 
 /////////////////////////////
 //
