@@ -91,6 +91,10 @@ abstract class PointerInputFilter {
      * then get a chance to respond as well. This trigger acts at the Layout level, so if any
      * [PointerInputFilter]s on a Layout has [shareWithSiblings] set to `true` then the Layout will
      * share with siblings.
+     *
+     * Setting this true everywhere or high in the UI tree can negatively impact performance.
+     * Therefore, use it sparingly and only at the nearest shared parent of the two target UI
+     * elements.
      */
     open val shareWithSiblings: Boolean
         get() = false
