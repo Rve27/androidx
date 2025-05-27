@@ -315,7 +315,11 @@ suspend fun PointerInputScope.detectDragGestures(
                         onDrag(it, it.positionChange())
                         it.consume()
                     },
-                    orientation = orientationLock,
+                    // once drag starts we want to capture drags in any direction, though
+                    // they will be propagated on the correct direction above we want to
+                    // consume any new drag to avoid the cases where we start dragging
+                    // on a given direction and then change directions.
+                    orientation = if (DragGesturePickUpEnabled) null else orientationLock,
                     motionConsumed = { it.isConsumed },
                 )
             if (upEvent == null) {

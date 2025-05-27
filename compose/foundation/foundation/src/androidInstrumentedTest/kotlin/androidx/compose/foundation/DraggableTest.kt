@@ -1234,6 +1234,55 @@ class DraggableTest {
         }
     }
 
+    @Test
+    fun gesturePickUp_doesNotStealFromOngoingGesture() {
+        var innerDeltas = 0f
+        rule.setContent {
+            Box(
+                Modifier.size(400.dp)
+                    .draggable(
+                        rememberDraggableState {},
+                        onDragStarted = {
+                            throw AssertionError(
+                                "Outer Draggable onDragStarted shouldn't be called"
+                            )
+                        },
+                        orientation = Orientation.Horizontal,
+                    )
+            ) {
+                Box(
+                    Modifier.size(400.dp)
+                        .draggable(
+                            rememberDraggableState { innerDeltas += it },
+                            orientation = Orientation.Vertical,
+                        )
+                )
+            }
+        }
+
+        rule.onRoot().performTouchInput {
+            down(center)
+            moveBy(Offset(0f, 100f)) // start moving inner draggable
+        }
+
+        rule.runOnIdle { assertThat(innerDeltas).isNonZero() }
+        val previousInnerDeltas = innerDeltas
+
+        rule.onRoot().performTouchInput {
+            moveBy(Offset(100f, 0f)) // moving completely on the cross axis
+            moveBy(Offset(100f, 0f))
+        }
+
+        rule.runOnIdle { assertThat(innerDeltas).isEqualTo(previousInnerDeltas) }
+
+        rule.onRoot().performTouchInput {
+            moveBy(Offset(0f, 100f)) // moving again on the correct axis
+            up()
+        }
+
+        rule.runOnIdle { assertThat(innerDeltas).isGreaterThan(previousInnerDeltas) }
+    }
+
     private fun setDraggableContent(draggableFactory: @Composable () -> Modifier) {
         rule.setContent {
             Box {
