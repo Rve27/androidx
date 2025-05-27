@@ -26,20 +26,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.center
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.ImageShader
-import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.draw
 import androidx.compose.ui.unit.dp
 
 @Sampled
@@ -165,24 +155,4 @@ fun SweepGradientColorStopSample() {
 @Sampled
 fun SweepGradientSample() {
     Brush.sweepGradient(listOf(Color.Red, Color.Green, Color.Blue), center = Offset(10.0f, 20.0f))
-}
-
-@Sampled
-@Composable
-fun CompositeShaderSample() {
-    Box(
-        modifier =
-            Modifier.size(120.dp).drawWithCache {
-                val bitmap = ImageBitmap(size.width.toInt(), size.height.toInt())
-                CanvasDrawScope().draw(this, layoutDirection, Canvas(bitmap), size) {
-                    drawRect(Color.Black, style = Stroke(20.dp.toPx()))
-                }
-                val bitmapBrush = ShaderBrush(ImageShader(bitmap))
-                val sweepBrush =
-                    Brush.sweepGradient(listOf(Color.Red, Color.Blue, Color.Cyan, Color.Green))
-                val compositeBrush =
-                    Brush.compositeShaderBrush(bitmapBrush, sweepBrush, BlendMode.SrcIn)
-                onDrawBehind { drawRect(brush = compositeBrush) }
-            }
-    )
 }

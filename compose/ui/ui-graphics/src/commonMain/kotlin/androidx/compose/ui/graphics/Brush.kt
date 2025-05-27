@@ -24,7 +24,6 @@ import androidx.compose.ui.geometry.center
 import androidx.compose.ui.geometry.isFinite
 import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.isUnspecified
-import androidx.compose.ui.graphics.Brush.Companion.verticalGradient
 import androidx.compose.ui.util.fastIsFinite
 import kotlin.math.abs
 
@@ -397,29 +396,8 @@ sealed class Brush {
         @Stable
         fun sweepGradient(colors: List<Color>, center: Offset = Offset.Unspecified): Brush =
             SweepGradient(colors = colors, stops = null, center = center)
-
-        /**
-         * Creates a composited result between 2 [Brush] instances and the specified BlendMode. The
-         * specified destination and source [Brush] inputs will be consumed as the source and
-         * destination images for the corresponding blending algorithm.
-         *
-         * @sample androidx.compose.ui.graphics.samples.CompositeShaderSample
-         * @param dstBrush ShaderBrush used as the destination content
-         * @param srcBrush ShaderBrush used as the source content
-         * @param blendMode BlendMode used to composite the source against the destination shader
-         * @see BlendMode
-         */
-        @Stable
-        fun compositeShaderBrush(dstBrush: Brush, srcBrush: Brush, blendMode: BlendMode): Brush =
-            CompositeShaderBrush(dstBrush.toShaderBrush(), srcBrush.toShaderBrush(), blendMode)
     }
 }
-
-private fun Brush.toShaderBrush(): ShaderBrush =
-    when (this) {
-        is ShaderBrush -> this
-        is SolidColor -> verticalGradient(listOf(value, value)) as ShaderBrush
-    }
 
 @Immutable
 class SolidColor(val value: Color) : Brush() {
@@ -590,49 +568,6 @@ internal constructor(
     }
 }
 
-/**
- * Creates a composited result between 2 ShaderBrushes and the specified BlendMode. The specified
- * destination and source Shader inputs will be consumed as the source and destination images for
- * the corresponding blending algorithm.
- *
- * @param dstBrush ShaderBrush used as the destination content
- * @param srcBrush ShaderBrush used as the source content
- * @param blendMode BlendMode used to composite the source against the destination shader
- * @see BlendMode
- */
-@Immutable
-internal class CompositeShaderBrush(
-    val dstBrush: ShaderBrush,
-    val srcBrush: ShaderBrush,
-    val blendMode: BlendMode,
-) : ShaderBrush() {
-
-    override fun createShader(size: Size): Shader =
-        CompositeShader(dstBrush.createShader(size), srcBrush.createShader(size), blendMode)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is CompositeShaderBrush) return false
-
-        if (dstBrush != other.dstBrush) return false
-        if (srcBrush != other.srcBrush) return false
-        if (blendMode != other.blendMode) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = dstBrush.hashCode()
-        result = 31 * result + srcBrush.hashCode()
-        result = 31 * result + blendMode.hashCode()
-        return result
-    }
-
-    override fun toString(): String {
-        return "CompositeShaderBrush(dstBrush=$dstBrush, srcBrush=$srcBrush, blendMode=$blendMode)"
-    }
-}
-
 /** Brush implementation used to apply a sweep gradient on a given [Paint] */
 @Immutable
 class SweepGradient
@@ -698,40 +633,25 @@ fun ShaderBrush(shader: Shader) =
 @Immutable
 abstract class ShaderBrush() : Brush() {
 
-    private var internalTransformShader: TransformShader? = null
+    private var internalShader: Shader? = null
     private var createdSize = Size.Unspecified
-    private var transformMatrix: Matrix? = null
-
-    /** Sets a transformation matrix for the shader. */
-    fun transform(matrix: Matrix?) {
-        transformMatrix = matrix
-        internalTransformShader?.transform(matrix)
-    }
 
     abstract fun createShader(size: Size): Shader
 
-    private fun obtainTransformShader(): TransformShader =
-        internalTransformShader ?: TransformShader().also { internalTransformShader = it }
-
     final override fun applyTo(size: Size, p: Paint, alpha: Float) {
-        var transformShader = internalTransformShader
-        if (transformShader == null || createdSize != size) {
+        var shader = internalShader
+        if (shader == null || createdSize != size) {
             if (size.isEmpty()) {
-                transformShader = null
-                internalTransformShader = null
+                shader = null
+                internalShader = null
                 createdSize = Size.Unspecified
             } else {
-                transformShader =
-                    obtainTransformShader().apply {
-                        transform(transformMatrix)
-                        shader = createShader(size)
-                    }
-                internalTransformShader = transformShader
+                shader = createShader(size).also { internalShader = it }
                 createdSize = size
             }
         }
         if (p.color != Color.Black) p.color = Color.Black
-        if (p.shader != transformShader?.shader) p.shader = transformShader?.shader
+        if (p.shader != shader) p.shader = shader
         if (p.alpha != alpha) p.alpha = alpha
     }
 }

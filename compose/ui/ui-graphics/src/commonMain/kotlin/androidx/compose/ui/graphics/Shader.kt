@@ -25,18 +25,6 @@ import androidx.compose.ui.geometry.Offset
 expect class Shader
 
 /**
- * Class that applies the transform matrix to the corresponding Shader. This is useful for
- * encapsulating platform dependencies to convert between the Compose and platform specific Matrix
- * classes in a manner that can be cached and reused for efficiency
- */
-internal expect class TransformShader() {
-
-    var shader: Shader?
-
-    fun transform(matrix: Matrix?)
-}
-
-/**
  * Creates a linear gradient from `from` to `to`.
  *
  * If `colorStops` is provided, each value is a number from 0.0 to 1.0 that specifies where the
@@ -133,18 +121,3 @@ internal expect fun ActualImageShader(
     tileModeX: TileMode,
     tileModeY: TileMode,
 ): Shader
-
-/**
- * Creates a composited result between 2 shaders and the specified BlendMode. The specified
- * destination and source Shader inputs will be consumed as the source and destination images for
- * the corresponding blending algorithm.
- *
- * @param dst Shader used as the destination content
- * @param src Shader used as the source content
- * @param blendMode BlendMode used to composite the source against the destination shader
- * @see BlendMode
- */
-fun CompositeShader(dst: Shader, src: Shader, blendMode: BlendMode): Shader =
-    ActualCompositeShader(dst, src, blendMode)
-
-internal expect fun ActualCompositeShader(dst: Shader, src: Shader, blendMode: BlendMode): Shader
