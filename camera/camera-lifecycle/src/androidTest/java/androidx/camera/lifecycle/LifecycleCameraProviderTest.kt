@@ -21,7 +21,6 @@ import androidx.camera.camera2.Camera2Config
 import androidx.camera.camera2.pipe.integration.CameraPipeConfig
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.CameraSelector.LENS_FACING_BACK
 import androidx.camera.core.CameraXConfig
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -49,7 +48,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.runBlocking
 import org.junit.After
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -103,14 +101,14 @@ class LifecycleCameraProviderTest(
             setAnalyzer(Dispatchers.Default.asExecutor()) { it.close() }
         }
     private var frameAvailableSemaphore = Semaphore(0)
-    private val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private lateinit var cameraSelector: CameraSelector
 
     private lateinit var provider1: LifecycleCameraProvider
     private lateinit var provider2: LifecycleCameraProvider
 
     @Before
     fun setUp() {
-        assumeTrue(CameraUtil.hasCameraWithLensFacing(cameraSelector.lensFacing!!))
+        cameraSelector = CameraUtil.assumeFirstAvailableCameraSelector()
         runBlocking(MainScope().coroutineContext) {
             if (implName == Camera2Config::class.simpleName) {
                 provider1 =
@@ -245,7 +243,7 @@ class LifecycleCameraProviderTest(
         instrumentation.waitForIdleSync()
 
         // Assert: The CameraInfo of the first camera should continue providing the information.
-        assertThat(camera1.cameraInfo.lensFacing).isEqualTo(LENS_FACING_BACK)
+        assertThat(camera1.cameraInfo.lensFacing).isEqualTo(cameraSelector.lensFacing)
     }
 
     @Test
@@ -280,10 +278,9 @@ class LifecycleCameraProviderTest(
     @Test
     fun bindWithoutUseCases_returnCameraCorrectly() =
         runBlocking(Dispatchers.Main) {
-            val cameraInfo = provider1.getCameraInfo(CameraSelector.DEFAULT_BACK_CAMERA)
-            val camera =
-                provider1.bindToLifecycle(lifecycleOwner1, CameraSelector.DEFAULT_BACK_CAMERA)
+            val cameraInfo = provider1.getCameraInfo(cameraSelector)
+            val camera = provider1.bindToLifecycle(lifecycleOwner1, cameraSelector)
             assertThat(camera.cameraInfo).isEqualTo(cameraInfo)
-            assertThat(camera.cameraInfo.lensFacing).isEqualTo(LENS_FACING_BACK)
+            assertThat(camera.cameraInfo.lensFacing).isEqualTo(cameraSelector.lensFacing)
         }
 }
