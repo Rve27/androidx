@@ -317,6 +317,59 @@ class RippleModifierNodeTest {
     }
 
     @Test
+    fun focusedHoveredThenUnhovered() {
+        val interactionSource = MutableInteractionSource()
+
+        var scope: CoroutineScope? = null
+
+        rule.setContent {
+            scope = rememberCoroutineScope()
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                RippleBoxWithBackground(interactionSource, TestRipple, bounded = true)
+            }
+        }
+
+        scope!!
+
+        // Focus
+        assertRippleMatches(
+            scope,
+            interactionSource = interactionSource,
+            interaction = FocusInteraction.Focus(),
+            expectedCenterPixelColor =
+                calculateResultingRippleColor(
+                    TestRippleColor,
+                    rippleOpacity = TestRippleAlpha.focusedAlpha,
+                ),
+        )
+
+        // Hover
+        val enter = HoverInteraction.Enter()
+        assertRippleMatches(
+            scope,
+            interactionSource = interactionSource,
+            interaction = enter,
+            expectedCenterPixelColor =
+                calculateResultingRippleColor(
+                    TestRippleColor,
+                    rippleOpacity = TestRippleAlpha.hoveredAlpha,
+                ),
+        )
+
+        // Unhover
+        assertRippleMatches(
+            scope,
+            interactionSource = interactionSource,
+            interaction = HoverInteraction.Exit(enter),
+            expectedCenterPixelColor =
+                calculateResultingRippleColor(
+                    TestRippleColor,
+                    rippleOpacity = TestRippleAlpha.focusedAlpha,
+                ),
+        )
+    }
+
+    @Test
     fun dragged() {
         val interactionSource = MutableInteractionSource()
 

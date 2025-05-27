@@ -469,7 +469,7 @@ private class StateLayer(private val bounded: Boolean, private val rippleAlpha: 
             if (newInteraction != null) {
                 val rippleAlpha = rippleAlpha()
                 val targetAlpha =
-                    when (interaction) {
+                    when (newInteraction) {
                         is HoverInteraction.Enter -> rippleAlpha.hoveredAlpha
                         is FocusInteraction.Focus -> rippleAlpha.focusedAlpha
                         is DragInteraction.Start -> rippleAlpha.draggedAlpha
