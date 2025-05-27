@@ -27,7 +27,6 @@ import androidx.compose.ui.autofill.Autofill
 import androidx.compose.ui.autofill.AutofillManager
 import androidx.compose.ui.autofill.AutofillTree
 import androidx.compose.ui.draganddrop.DragAndDropManager
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusOwner
 import androidx.compose.ui.geometry.MutableRect
 import androidx.compose.ui.geometry.Offset
@@ -39,7 +38,6 @@ import androidx.compose.ui.graphics.ReusableGraphicsLayerScope
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.input.InputModeManager
-import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.internal.checkPrecondition
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -3508,8 +3506,6 @@ private class MockOwner(
     override fun calculateLocalPosition(positionInWindow: Offset): Offset =
         positionInWindow - position.toOffset()
 
-    override fun requestFocus(): Boolean = false
-
     override fun requestAutofill(node: LayoutNode) {
         TODO("Not yet implemented")
     }
@@ -3576,11 +3572,8 @@ private class MockOwner(
 
     override fun onInteropViewLayoutChange(view: InteropView) {}
 
-    override fun getFocusDirection(keyEvent: KeyEvent): FocusDirection? {
-        TODO("Not yet implemented")
-    }
-
     override var measureIteration: Long = 0
+
     override val viewConfiguration: ViewConfiguration
         get() = TODO("Not yet implemented")
 

@@ -48,13 +48,13 @@ import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.NodeKind
 import androidx.compose.ui.node.Nodes
+import androidx.compose.ui.node.Owner
 import androidx.compose.ui.node.ancestors
 import androidx.compose.ui.node.dispatchForKind
 import androidx.compose.ui.node.nearestAncestor
 import androidx.compose.ui.node.visitAncestors
 import androidx.compose.ui.node.visitLocalDescendants
 import androidx.compose.ui.platform.InspectorInfo
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachReversed
 import androidx.compose.ui.util.trace
@@ -64,25 +64,14 @@ import androidx.compose.ui.util.trace
  * control focus.
  */
 internal class FocusOwnerImpl(
-    onRequestApplyChangesListener: (() -> Unit) -> Unit,
-    private val onRequestFocusForOwner:
-        (focusDirection: FocusDirection?, previouslyFocusedRect: Rect?) -> Boolean,
-    private val onMoveFocusInterop: (focusDirection: FocusDirection) -> Boolean,
-    private val onClearFocusForOwner: () -> Unit,
-    private val onFocusRectInterop: () -> Rect?,
-    private val onLayoutDirection: (() -> LayoutDirection),
+    private val platformFocusOwner: PlatformFocusOwner,
+    private val owner: Owner,
 ) : FocusOwner {
 
     // The root focus target is not focusable, and acts like a focus group.
     internal var rootFocusNode = FocusTargetNode(focusability = Focusability.Never)
 
-    private val focusInvalidationManager =
-        FocusInvalidationManager(
-            onRequestApplyChangesListener,
-            ::invalidateOwnerFocusState,
-            ::rootState,
-            ::activeFocusTargetNode,
-        )
+    private val focusInvalidationManager = FocusInvalidationManager(this, owner)
 
     override val focusTransactionManager: FocusTransactionManager = FocusTransactionManager()
 
@@ -116,10 +105,8 @@ internal class FocusOwnerImpl(
      * @param previouslyFocusedRect The bounds of the currently focused item.
      * @return true if the owner successfully requested focus from the framework. False otherwise.
      */
-    override fun requestFocusForOwner(
-        focusDirection: FocusDirection?,
-        previouslyFocusedRect: Rect?,
-    ): Boolean = onRequestFocusForOwner(focusDirection, previouslyFocusedRect)
+    override fun requestOwnerFocus(focusDirection: FocusDirection?, previouslyFocusedRect: Rect?) =
+        platformFocusOwner.requestOwnerFocus(focusDirection, previouslyFocusedRect)
 
     /**
      * Keeps track of which keys have received DOWN events without UP events – i.e. which keys are
@@ -161,6 +148,10 @@ internal class FocusOwnerImpl(
                 rootFocusNode.clearFocus(forced = true, refreshFocusEvents = true)
             }
         }
+    }
+
+    override fun clearOwnerFocus() {
+        platformFocusOwner.clearOwnerFocus()
     }
 
     /**
@@ -218,7 +209,7 @@ internal class FocusOwnerImpl(
             }
 
         if (clearedFocusSuccessfully && clearOwnerFocus) {
-            onClearFocusForOwner.invoke()
+            clearOwnerFocus()
         }
         return clearedFocusSuccessfully
     }
@@ -250,16 +241,19 @@ internal class FocusOwnerImpl(
     override fun moveFocus(focusDirection: FocusDirection): Boolean {
         // First check to see if the focus should move within child Views
         @OptIn(ExperimentalComposeUiApi::class)
-        if (ComposeUiFlags.isViewFocusFixEnabled && onMoveFocusInterop(focusDirection)) {
+        if (
+            ComposeUiFlags.isViewFocusFixEnabled &&
+                platformFocusOwner.moveFocusInChildren(focusDirection)
+        ) {
             return true
         }
         var requestFocusSuccess: Boolean? = false
         val generationBefore = focusTransactionManager.generation
         val activeNodeBefore = activeFocusTargetNode
         val focusSearchSuccess =
-            focusSearch(focusDirection, onFocusRectInterop()) {
+            focusSearch(focusDirection, platformFocusOwner.getEmbeddedViewFocusRect()) {
                 requestFocusSuccess = it.requestFocus(focusDirection)
-                requestFocusSuccess ?: false
+                requestFocusSuccess
             }
         val generationAfter = focusTransactionManager.generation
         if (
@@ -277,7 +271,7 @@ internal class FocusOwnerImpl(
         if (focusSearchSuccess == null || requestFocusSuccess == null) return false
 
         // If focus search and request focus succeeded, move focus succeeded.
-        if (focusSearchSuccess == true && requestFocusSuccess == true) return true
+        if (focusSearchSuccess && requestFocusSuccess) return true
 
         // To wrap focus around, we clear focus and request initial focus.
         if (focusDirection.is1dFocusSearch()) {
@@ -295,7 +289,8 @@ internal class FocusOwnerImpl(
         // We don't need this for 1D focus search because the wrap-around logic triggers a
         // focus exit which will perform a focus search among the subviews.
         @OptIn(ExperimentalComposeUiApi::class)
-        return !ComposeUiFlags.isViewFocusFixEnabled && onMoveFocusInterop(focusDirection)
+        return !ComposeUiFlags.isViewFocusFixEnabled &&
+            platformFocusOwner.moveFocusInChildren(focusDirection)
     }
 
     override fun focusSearch(
@@ -306,7 +301,9 @@ internal class FocusOwnerImpl(
         val source =
             findFocusTargetNode()?.also {
                 // Check if a custom focus traversal order is specified.
-                when (val customDest = it.customFocusSearch(focusDirection, onLayoutDirection())) {
+                when (
+                    val customDest = it.customFocusSearch(focusDirection, owner.layoutDirection)
+                ) {
                     Cancel -> return null
                     Redirect -> return findFocusTargetNode()?.let(onFound)
                     Default -> {
@@ -316,7 +313,7 @@ internal class FocusOwnerImpl(
                 }
             }
 
-        return rootFocusNode.focusSearch(focusDirection, onLayoutDirection(), focusedRect) {
+        return rootFocusNode.focusSearch(focusDirection, owner.layoutDirection, focusedRect) {
             when (it) {
                 source -> false
                 rootFocusNode -> error("Focus search landed at the root.")
@@ -439,22 +436,7 @@ internal class FocusOwnerImpl(
     }
 
     override fun scheduleInvalidationForOwner() {
-        focusInvalidationManager.scheduleInvalidationForOwner()
-    }
-
-    /**
-     * At the end of the invalidations, we need to ensure that the focus system is in a valid state.
-     */
-    private fun invalidateOwnerFocusState() {
-        // If an active item is removed, we currently clear focus from the hierarchy. We don't
-        // clear focus from the root because that could cause initial focus logic to be re-run.
-        // Now that all the invalidations are complete, we run owner.clearFocus() if needed.
-        if (
-            (@OptIn(ExperimentalComposeUiApi::class) ComposeUiFlags.isTrackFocusEnabled &&
-                activeFocusTargetNode == null) || rootFocusNode.focusState == Inactive
-        ) {
-            onClearFocusForOwner()
-        }
+        focusInvalidationManager.scheduleInvalidation()
     }
 
     private inline fun <reified T : DelegatableNode> DelegatableNode.traverseAncestorsIncludingSelf(

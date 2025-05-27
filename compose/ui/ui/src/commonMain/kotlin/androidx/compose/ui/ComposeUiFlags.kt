@@ -82,7 +82,7 @@ object ComposeUiFlags {
      * This flag enables a fix for this issue.
      */
     @Deprecated("This flag is no longer needed.")
-    @Suppress("MutableBareField")
+    @Suppress("MutableBareField", "unused")
     @JvmField
     var isRemoveFocusedViewFixEnabled: Boolean = false
 

@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.ReusableGraphicsLayerScope
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.input.InputModeManager
-import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.pointer.PointerIconService
 import androidx.compose.ui.modifier.ModifierLocalManager
 import androidx.compose.ui.node.InternalCoreApi
@@ -278,15 +277,11 @@ private class FakeOwner(
 
     override fun calculateLocalPosition(positionInWindow: Offset) = TODO("Not yet implemented")
 
-    override fun requestFocus() = TODO("Not yet implemented")
-
     override fun requestAutofill(node: LayoutNode) {
         TODO("Not yet implemented")
     }
 
     override fun onSemanticsChange() {}
-
-    override fun getFocusDirection(keyEvent: KeyEvent) = TODO("Not yet implemented")
 }
 
 internal fun defaultRootConstraints() = Constraints(maxWidth = 100, maxHeight = 100)

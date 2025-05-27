@@ -38,7 +38,6 @@ import androidx.compose.ui.graphics.GraphicsContext
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedback
 import androidx.compose.ui.input.InputModeManager
-import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.pointer.PointerIconService
 import androidx.compose.ui.modifier.ModifierLocalManager
 import androidx.compose.ui.modifier.modifierLocalConsumer
@@ -443,8 +442,6 @@ class ModifierLocalConsumerEntityTest {
 
         override fun calculateLocalPosition(positionInWindow: Offset) = TODO("Not yet implemented")
 
-        override fun requestFocus() = TODO("Not yet implemented")
-
         override fun requestAutofill(node: LayoutNode) {
             TODO("Not yet implemented")
         }
@@ -465,8 +462,6 @@ class ModifierLocalConsumerEntityTest {
         override fun onLayoutNodeDeactivated(layoutNode: LayoutNode) {}
 
         override fun onInteropViewLayoutChange(view: InteropView) = TODO("Not yet implemented")
-
-        override fun getFocusDirection(keyEvent: KeyEvent) = TODO("Not yet implemented")
 
         override suspend fun textInputSession(
             session: suspend PlatformTextInputSessionScope.() -> Nothing
