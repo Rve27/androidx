@@ -360,7 +360,7 @@ class SceneTest {
     @Test
     fun sceneInit_setsDefaultSpatialStateChangeHandler() {
         // Verify that default handler is always set.
-        verify(mockPlatformAdapter).SpatialModeChangeListener = any()
+        verify(mockPlatformAdapter).spatialModeChangeListener = any()
     }
 
     @Test
@@ -368,7 +368,7 @@ class SceneTest {
         val mockSpatialModeChangeListener = mock<SpatialModeChangeListener>()
         session.scene.SpatialModeChangeListener = mockSpatialModeChangeListener
         val captor = argumentCaptor<androidx.xr.runtime.internal.SpatialModeChangeListener>()
-        verify(mockPlatformAdapter).SpatialModeChangeListener = captor.capture()
+        verify(mockPlatformAdapter).spatialModeChangeListener = captor.capture()
         val rtSpatialStateChangeHandler = captor.firstValue
         val pose = Pose.Identity
         val scale = Vector3(2f, 2f, 2f)

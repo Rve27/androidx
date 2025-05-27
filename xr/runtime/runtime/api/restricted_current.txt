@@ -950,7 +950,6 @@ package androidx.xr.runtime.internal {
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.runtime.internal.SpatialVisibility> listener);
     method public void startRenderer();
     method public void stopRenderer();
-    property public abstract androidx.xr.runtime.internal.SpatialModeChangeListener SpatialModeChangeListener;
     property public abstract androidx.xr.runtime.internal.ActivitySpace activitySpace;
     property public abstract androidx.xr.runtime.internal.Entity activitySpaceRootImpl;
     property public abstract androidx.xr.runtime.internal.AudioTrackExtensionsWrapper audioTrackExtensionsWrapper;
@@ -961,6 +960,7 @@ package androidx.xr.runtime.internal {
     property public abstract androidx.xr.runtime.internal.SoundPoolExtensionsWrapper soundPoolExtensionsWrapper;
     property public abstract androidx.xr.runtime.internal.SpatialCapabilities spatialCapabilities;
     property public abstract androidx.xr.runtime.internal.SpatialEnvironment spatialEnvironment;
+    property public abstract androidx.xr.runtime.internal.SpatialModeChangeListener spatialModeChangeListener;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface JxrPlatformAdapterFactory extends androidx.xr.runtime.internal.Service {

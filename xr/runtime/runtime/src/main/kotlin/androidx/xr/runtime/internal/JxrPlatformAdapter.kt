@@ -77,7 +77,7 @@ public interface JxrPlatformAdapter {
      *
      * Setting this property will update the handler that is used to process spatial mode changes.
      */
-    public var SpatialModeChangeListener: SpatialModeChangeListener
+    public var spatialModeChangeListener: SpatialModeChangeListener
 
     /**
      * Returns the CameraViewActivityPose for the specified camera type or null if it is not

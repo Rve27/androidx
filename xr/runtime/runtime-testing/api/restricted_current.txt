@@ -169,7 +169,6 @@ package androidx.xr.runtime.testing {
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.runtime.internal.SpatialVisibility> listener);
     method public void startRenderer();
     method public void stopRenderer();
-    property public androidx.xr.runtime.internal.SpatialModeChangeListener SpatialModeChangeListener;
     property public androidx.xr.runtime.internal.ActivitySpace activitySpace;
     property public androidx.xr.runtime.internal.Entity activitySpaceRootImpl;
     property public androidx.xr.runtime.internal.AudioTrackExtensionsWrapper audioTrackExtensionsWrapper;
@@ -180,6 +179,7 @@ package androidx.xr.runtime.testing {
     property public androidx.xr.runtime.internal.SoundPoolExtensionsWrapper soundPoolExtensionsWrapper;
     property public androidx.xr.runtime.internal.SpatialCapabilities spatialCapabilities;
     property public androidx.xr.runtime.internal.SpatialEnvironment spatialEnvironment;
+    property public androidx.xr.runtime.internal.SpatialModeChangeListener spatialModeChangeListener;
     property public Enum<androidx.xr.runtime.testing.FakeJxrPlatformAdapter.State> state;
   }
 

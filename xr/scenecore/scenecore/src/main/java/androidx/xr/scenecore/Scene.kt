@@ -149,7 +149,7 @@ public class Scene : SessionConnector {
         activitySpaceRoot =
             entityManager.getEntityForRtEntity(platformAdapter.activitySpaceRootImpl)!!
         spatialCapabilities = platformAdapter.spatialCapabilities.toSpatialCapabilities()
-        platformAdapter.SpatialModeChangeListener =
+        platformAdapter.spatialModeChangeListener =
             object : RtSpatialModeChangeListener {
                 override fun onSpatialModeChanged(
                     recommendedPose: Pose,

@@ -114,7 +114,7 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
     override val mediaPlayerExtensionsWrapper: MediaPlayerExtensionsWrapper =
         FakeMediaPlayerExtensionsWrapper()
 
-    override var SpatialModeChangeListener: SpatialModeChangeListener =
+    override var spatialModeChangeListener: SpatialModeChangeListener =
         FakeSpatialModeChangeListener()
 
     override fun getCameraViewActivityPose(
