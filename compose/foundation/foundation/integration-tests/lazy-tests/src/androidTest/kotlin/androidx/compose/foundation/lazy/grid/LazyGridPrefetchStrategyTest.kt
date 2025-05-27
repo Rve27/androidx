@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") // b/407927787
+@file:Suppress(
+    "INVISIBLE_MEMBER",
+    "INVISIBLE_REFERENCE",
+    "DEPRECATION",
+) // b/407927787 // b/420551535
 
 package androidx.compose.foundation.lazy.grid
 
@@ -245,6 +249,10 @@ class LazyGridPrefetchStrategyTest(val config: Config) :
 
     /** LazyGridPrefetchStrategy that just records callbacks without scheduling prefetches. */
     private class RecordingLazyGridPrefetchStrategy(
+        @Deprecated(
+            "Customization of PrefetchScheduler is no longer supported. " +
+                "LazyLayout will attach an appropriate scheduler internally."
+        )
         override val prefetchScheduler: PrefetchScheduler?
     ) : LazyGridPrefetchStrategy {
 
@@ -277,6 +285,10 @@ class LazyGridPrefetchStrategyTest(val config: Config) :
      * the scroll direction.
      */
     private class PrefetchNextLargestLineIndexStrategy(
+        @Deprecated(
+            "Customization of PrefetchScheduler is no longer supported. LazyLayout will " +
+                "attach an appropriate scheduler internally."
+        )
         override val prefetchScheduler: PrefetchScheduler?
     ) : LazyGridPrefetchStrategy {
 

@@ -310,6 +310,7 @@ constructor(
 
     internal val beyondBoundsInfo = LazyLayoutBeyondBoundsInfo()
 
+    @Suppress("DEPRECATION") // b/420551535
     internal val prefetchState =
         LazyLayoutPrefetchState(prefetchStrategy.prefetchScheduler) {
             with(prefetchStrategy) {

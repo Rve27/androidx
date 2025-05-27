@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION") // b/420551535
+
 package androidx.compose.foundation.lazy
 
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -40,6 +42,10 @@ interface LazyListPrefetchStrategy {
      * strategy implementation. If null, the default [PrefetchScheduler] for the platform will be
      * used.
      */
+    @Deprecated(
+        "Customization of PrefetchScheduler is no longer supported. LazyLayout will attach " +
+            "an appropriate scheduler internally."
+    )
     val prefetchScheduler: PrefetchScheduler?
         get() = null
 

@@ -959,11 +959,11 @@ package androidx.compose.foundation.lazy {
   }
 
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface LazyListPrefetchStrategy {
-    method public default androidx.compose.foundation.lazy.layout.PrefetchScheduler? getPrefetchScheduler();
+    method @Deprecated public default androidx.compose.foundation.lazy.layout.PrefetchScheduler? getPrefetchScheduler();
     method public void onNestedPrefetch(androidx.compose.foundation.lazy.layout.NestedPrefetchScope, int firstVisibleItemIndex);
     method public void onScroll(androidx.compose.foundation.lazy.LazyListPrefetchScope, float delta, androidx.compose.foundation.lazy.LazyListLayoutInfo layoutInfo);
     method public void onVisibleItemsUpdated(androidx.compose.foundation.lazy.LazyListPrefetchScope, androidx.compose.foundation.lazy.LazyListLayoutInfo layoutInfo);
-    property public default androidx.compose.foundation.lazy.layout.PrefetchScheduler? prefetchScheduler;
+    property @Deprecated public default androidx.compose.foundation.lazy.layout.PrefetchScheduler? prefetchScheduler;
   }
 
   public final class LazyListPrefetchStrategyKt {
@@ -1141,11 +1141,11 @@ package androidx.compose.foundation.lazy.grid {
   }
 
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface LazyGridPrefetchStrategy {
-    method public default androidx.compose.foundation.lazy.layout.PrefetchScheduler? getPrefetchScheduler();
+    method @Deprecated public default androidx.compose.foundation.lazy.layout.PrefetchScheduler? getPrefetchScheduler();
     method public void onNestedPrefetch(androidx.compose.foundation.lazy.layout.NestedPrefetchScope, int firstVisibleItemIndex);
     method public void onScroll(androidx.compose.foundation.lazy.grid.LazyGridPrefetchScope, float delta, androidx.compose.foundation.lazy.grid.LazyGridLayoutInfo layoutInfo);
     method public void onVisibleItemsUpdated(androidx.compose.foundation.lazy.grid.LazyGridPrefetchScope, androidx.compose.foundation.lazy.grid.LazyGridLayoutInfo layoutInfo);
-    property public default androidx.compose.foundation.lazy.layout.PrefetchScheduler? prefetchScheduler;
+    property @Deprecated public default androidx.compose.foundation.lazy.layout.PrefetchScheduler? prefetchScheduler;
   }
 
   public final class LazyGridPrefetchStrategyKt {
@@ -1295,7 +1295,8 @@ package androidx.compose.foundation.lazy.layout {
 
   @androidx.compose.runtime.Stable public final class LazyLayoutPrefetchState {
     ctor public LazyLayoutPrefetchState();
-    ctor @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public LazyLayoutPrefetchState(optional androidx.compose.foundation.lazy.layout.PrefetchScheduler? prefetchScheduler, optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.lazy.layout.NestedPrefetchScope,kotlin.Unit>? onNestedPrefetch);
+    ctor @Deprecated @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public LazyLayoutPrefetchState(optional androidx.compose.foundation.lazy.layout.PrefetchScheduler? prefetchScheduler, optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.lazy.layout.NestedPrefetchScope,kotlin.Unit>? onNestedPrefetch);
+    ctor @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public LazyLayoutPrefetchState(optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.lazy.layout.NestedPrefetchScope,kotlin.Unit>? onNestedPrefetch);
     method public androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle schedulePrecomposition(@IntRange(from=0L) int index);
     method public androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchHandle schedulePrecompositionAndPremeasure(@IntRange(from=0L) int index, long constraints, optional kotlin.jvm.functions.Function1<? super androidx.compose.foundation.lazy.layout.LazyLayoutPrefetchState.PrefetchResultScope,kotlin.Unit>? onItemPremeasured);
   }
@@ -1348,16 +1349,16 @@ package androidx.compose.foundation.lazy.layout {
     property public default int nestedPrefetchItemCount;
   }
 
-  @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public sealed interface PrefetchRequest {
-    method public boolean execute(androidx.compose.foundation.lazy.layout.PrefetchRequestScope);
+  @Deprecated @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public sealed interface PrefetchRequest {
+    method @Deprecated public boolean execute(androidx.compose.foundation.lazy.layout.PrefetchRequestScope);
   }
 
-  @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface PrefetchRequestScope {
-    method public long availableTimeNanos();
+  @Deprecated @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface PrefetchRequestScope {
+    method @Deprecated public long availableTimeNanos();
   }
 
-  @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface PrefetchScheduler {
-    method public void schedulePrefetch(androidx.compose.foundation.lazy.layout.PrefetchRequest prefetchRequest);
+  @Deprecated @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public interface PrefetchScheduler {
+    method @Deprecated public void schedulePrefetch(androidx.compose.foundation.lazy.layout.PrefetchRequest prefetchRequest);
   }
 
 }

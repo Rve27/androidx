@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") // b/407927787
+@file:Suppress(
+    "INVISIBLE_MEMBER",
+    "INVISIBLE_REFERENCE",
+    "DEPRECATION",
+) // b/407927787 // b/420551535
 
 package androidx.compose.foundation.lazy.list
 
@@ -238,6 +242,9 @@ class LazyListPrefetchStrategyTest(val config: Config) :
 
     /** LazyListPrefetchStrategy that just records callbacks without scheduling prefetches. */
     private class RecordingLazyListPrefetchStrategy(
+        @Deprecated(
+            "Customization of PrefetchScheduler is no longer supported. LazyLayout will attach an appropriate scheduler internally."
+        )
         override val prefetchScheduler: PrefetchScheduler?
     ) : LazyListPrefetchStrategy {
 
@@ -270,6 +277,10 @@ class LazyListPrefetchStrategyTest(val config: Config) :
      * the scroll direction.
      */
     private class PrefetchNextLargestIndexStrategy(
+        @Deprecated(
+            "Customization of PrefetchScheduler is no longer supported. " +
+                "LazyLayout will attach an appropriate scheduler internally."
+        )
         override val prefetchScheduler: PrefetchScheduler?,
         val onItemPrefetched: (Int, Int) -> Unit = { _, _ -> },
     ) : LazyListPrefetchStrategy {

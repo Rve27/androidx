@@ -31,6 +31,7 @@ import java.util.PriorityQueue
 import java.util.concurrent.TimeUnit
 import kotlin.math.max
 
+@Suppress("DEPRECATION") // b/420551535
 @ExperimentalFoundationApi
 @Composable
 internal actual fun rememberDefaultPrefetchScheduler(): PrefetchScheduler {
@@ -89,6 +90,7 @@ internal actual fun rememberDefaultPrefetchScheduler(): PrefetchScheduler {
  *    precompose on the different thread this issue is also not so critical given that we don't need
  *    to calculate the deadline. Tracking bug: 187393922
  */
+@Suppress("DEPRECATION") // b/420551535
 @ExperimentalFoundationApi
 internal class AndroidPrefetchScheduler(private val view: View) :
     PrefetchScheduler,
@@ -275,6 +277,7 @@ internal class AndroidPrefetchScheduler(private val view: View) :
     }
 }
 
+@Suppress("DEPRECATION") // b/420551535
 @ExperimentalFoundationApi
 private val RobolectricImpl =
     if (Build.FINGERPRINT.lowercase() == "robolectric") {
@@ -288,6 +291,7 @@ private val RobolectricImpl =
         null
     }
 
+@Suppress("DEPRECATION") // b/420551535
 @ExperimentalFoundationApi
 internal class PriorityTask(val priority: Int, val request: PrefetchRequest) {
     companion object {

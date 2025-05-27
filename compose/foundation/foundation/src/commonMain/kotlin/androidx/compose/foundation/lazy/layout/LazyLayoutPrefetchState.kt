@@ -46,6 +46,7 @@ import kotlin.time.TimeSource.Monotonic.markNow
  *
  * @sample androidx.compose.foundation.samples.LazyLayoutPrefetchStateSample
  */
+@Suppress("DEPRECATION") // b/420551535
 @Stable
 class LazyLayoutPrefetchState() {
 
@@ -59,12 +60,25 @@ class LazyLayoutPrefetchState() {
      *   in context of a parent LazyLayout, giving a chance to recursively prefetch its own
      *   children. See [NestedPrefetchScope].
      */
+    @Deprecated("Please use overload without Prefetch Scheduler.")
     @ExperimentalFoundationApi
     constructor(
         prefetchScheduler: PrefetchScheduler? = null,
         onNestedPrefetch: (NestedPrefetchScope.() -> Unit)? = null,
     ) : this() {
         this.prefetchScheduler = prefetchScheduler
+        this.onNestedPrefetch = onNestedPrefetch
+    }
+
+    /**
+     * State for lazy items prefetching, used by lazy layouts to instruct the prefetcher.
+     *
+     * @param onNestedPrefetch a callback which will be invoked when this LazyLayout is prefetched
+     *   in context of a parent LazyLayout, giving a chance to recursively prefetch its own
+     *   children. See [NestedPrefetchScope].
+     */
+    @ExperimentalFoundationApi
+    constructor(onNestedPrefetch: (NestedPrefetchScope.() -> Unit)? = null) : this() {
         this.onNestedPrefetch = onNestedPrefetch
     }
 
@@ -429,6 +443,7 @@ private object DummyHandle : PrefetchHandle {
  * an index, [SubcomposeLayoutState] which knows how to precompose/premeasure, and a specific
  * [PrefetchScheduler] used to execute a request.
  */
+@Suppress("DEPRECATION") // b/420551535
 @ExperimentalFoundationApi
 internal class PrefetchHandleProvider(
     private val itemContentFactory: LazyLayoutItemContentFactory,
