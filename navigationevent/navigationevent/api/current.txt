@@ -26,9 +26,7 @@ package androidx.navigationevent {
   }
 
   public abstract class NavigationEventCallback {
-    ctor public NavigationEventCallback(boolean isEnabled, optional int priority);
-    method public final int getPriority();
-    method @BytecodeOnly public final int getPriority-b1THaJE();
+    ctor public NavigationEventCallback(boolean isEnabled);
     method public final boolean isEnabled();
     method public final boolean isPassThrough();
     method public void onEventCancelled();
@@ -40,7 +38,6 @@ package androidx.navigationevent {
     method public final void setPassThrough(boolean);
     property public final boolean isEnabled;
     property public final boolean isPassThrough;
-    property public final int priority;
   }
 
   public final class NavigationEventDispatcher {

@@ -22,7 +22,6 @@ package androidx.navigationevent
  * This class maintains its own [isEnabled] state and will only receive callbacks when enabled.
  *
  * @param isEnabled The default enabled state for this callback.
- * @param priority The priority this callback should be registered with.
  * @see NavigationEventDispatcher
  */
 public abstract class NavigationEventCallback(
@@ -30,9 +29,7 @@ public abstract class NavigationEventCallback(
      * The enabled state of the callback. Only when this callback is enabled will it receive
      * callbacks to [onEventCompleted].
      */
-    isEnabled: Boolean,
-    /** The priority of this callback. */
-    public val priority: NavigationEventPriority = NavigationEventPriority.Default,
+    isEnabled: Boolean
 ) {
 
     public var isEnabled: Boolean = isEnabled

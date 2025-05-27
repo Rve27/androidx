@@ -42,7 +42,7 @@ androidXMultiplatform {
         commonMain {
             dependencies {
                 api(project(":navigation3:navigation3-runtime"))
-                api("androidx.navigationevent:navigationevent:1.0.0-alpha01")
+                api(project(":navigationevent:navigationevent"))
                 api("androidx.compose.animation:animation:1.9.0-alpha03")
                 api("androidx.compose.runtime:runtime:1.9.0-alpha03")
                 api("androidx.compose.runtime:runtime-saveable:1.9.0-alpha03")
@@ -74,7 +74,7 @@ androidXMultiplatform {
         androidMain {
             dependsOn(jvmMain)
             dependencies {
-                api("androidx.activity:activity-compose:1.12.0-alpha01")
+                api(project(":activity:activity-compose"))
             }
         }
 
@@ -87,7 +87,7 @@ androidXMultiplatform {
         androidInstrumentedTest {
             dependsOn(jvmTest)
             dependencies {
-                implementation("androidx.activity:activity-compose:1.12.0-alpha01")
+                implementation(project(":activity:activity-compose"))
                 implementation(libs.testRules)
                 implementation(libs.testRunner)
                 implementation(libs.junit)

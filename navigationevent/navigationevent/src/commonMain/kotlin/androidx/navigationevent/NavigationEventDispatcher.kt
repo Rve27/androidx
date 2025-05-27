@@ -165,14 +165,16 @@ public class NavigationEventDispatcher(
         val callbacks = inProgressCallbacks.toList().ifEmpty { getEnabledCallbacks() }
         inProgressCallbacks.clear() // Clear in-progress, as 'completed' is a terminal event.
 
-        for (callback in callbacks) {
-            callback.onEventCompleted()
+        if (callbacks.isEmpty()) {
+            fallbackOnBackPressed?.invoke()
+        } else {
+            for (callback in callbacks) {
+                callback.onEventCompleted()
 
-            // If callback does not allow the event to pass through to other callbacks, stop.
-            if (!callback.isPassThrough) return
+                // If callback does not allow the event to pass through to other callbacks, stop.
+                if (!callback.isPassThrough) break
+            }
         }
-
-        fallbackOnBackPressed?.invoke()
     }
 
     /**
