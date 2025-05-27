@@ -735,7 +735,45 @@ class BinaryCompatibilityCheckerTest {
         """
         val expectedErrorMessages =
             listOf(
-                "upper bounds changed from my.lib/Foo to my.lib/Bar type param A on my.lib/MyClass"
+                "upper bounds changed from my.lib/Foo to my.lib/Bar for type param A on my.lib/MyClass"
+            )
+        testBeforeAndAfterIsIncompatible(beforeText, afterText, expectedErrorMessages)
+    }
+
+    @Test
+    fun changeOrderOfBounds() {
+        val beforeText =
+            """
+        abstract interface my.lib/A // my.lib/A|null[0]
+        abstract interface my.lib/B // my.lib/B|null[0]
+        final fun <#A: my.lib/A & my.lib/B> my.lib/foo(#A) // my.lib/foo|foo(0:0){0§<my.lib.A&my.lib.B>}[0]
+        """
+        val afterText =
+            """
+        abstract interface my.lib/A // my.lib/A|null[0]
+        abstract interface my.lib/B // my.lib/B|null[0]
+        final fun <#A: my.lib/B & my.lib/A> my.lib/foo(#A) // my.lib/foo|foo(0:0){0§<my.lib.B&my.lib.A>}[0]
+        """
+        val expectedErrorMessages =
+            listOf(
+                "upper bounds changed from my.lib/A,my.lib/B to my.lib/B,my.lib/A for type param A on my.lib/foo"
+            )
+        testBeforeAndAfterIsIncompatible(beforeText, afterText, expectedErrorMessages)
+    }
+
+    @Test
+    fun changeNullabilityOfAnyUpperBound() {
+        val beforeText =
+            """
+        final fun <#A: kotlin/Any?> my.lib/foo(): kotlin/Int // my.lib/foo|foo(){0§<kotlin.Any?>}[0]
+        """
+        val afterText =
+            """
+        final fun <#A: kotlin/Any> my.lib/foo(): kotlin/Int // my.lib/foo|foo(){0§<kotlin.Any>}[0]
+        """
+        val expectedErrorMessages =
+            listOf(
+                "upper bounds changed from kotlin/Any? to kotlin/Any for type param A on my.lib/foo"
             )
         testBeforeAndAfterIsIncompatible(beforeText, afterText, expectedErrorMessages)
     }
@@ -1377,8 +1415,8 @@ class BinaryCompatibilityCheckerTest {
                 .trimIndent()
         val expectedErrors =
             listOf(
-                "upper bounds changed from kotlin/Int to kotlin/String type param A on my.lib/foo",
-                "upper bounds changed from kotlin/String to kotlin/Int type param B on my.lib/foo",
+                "upper bounds changed from kotlin/Int to kotlin/String for type param A on my.lib/foo",
+                "upper bounds changed from kotlin/String to kotlin/Int for type param B on my.lib/foo",
             )
         testBeforeAndAfterIsIncompatible(beforeText, afterText, expectedErrors)
     }

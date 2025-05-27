@@ -457,18 +457,13 @@ internal fun AbiTypeParameter.isBinaryCompatibleWith(
                 "for type param $tag on $parentQualifiedName"
         )
     }
-    val upperBound = upperBounds.singleOrNull()
-    val otherUpperBound = otherTypeParam.upperBounds.singleOrNull()
-    if (upperBound == null && otherUpperBound == null) {
+    if (isUnbounded() && otherTypeParam.isUnbounded()) {
         return
     }
-    if (upperBounds.isUnbounded() && otherTypeParam.upperBounds.isUnbounded()) {
-        return
-    }
-    if (upperBound.asStringOrUnit != otherUpperBound.asStringOrUnit) {
+    if (upperBounds.asStrings() != otherTypeParam.upperBounds.asStrings()) {
         errors.add(
-            "upper bounds changed from ${otherUpperBound.asStringOrUnit} to " +
-                "${upperBound.asStringOrUnit} type param $tag on $parentQualifiedName"
+            "upper bounds changed from ${otherTypeParam.upperBounds.asString()} to " +
+                "${upperBounds.asString()} for type param $tag on $parentQualifiedName"
         )
     }
 }
@@ -476,8 +471,16 @@ internal fun AbiTypeParameter.isBinaryCompatibleWith(
 private val AbiType?.asStringOrUnit: String
     get() = this?.asString() ?: "Unit / null"
 
-private fun List<AbiType>.isUnbounded(): Boolean =
-    isEmpty() || single().className?.toString() == "kotlin/Any"
+private fun List<AbiType>.asStrings(): List<String> = map { it.asString() }
+
+private fun List<AbiType>.asString(): String = joinToString(",") { it.asString() }
+
+private fun AbiTypeParameter.isUnbounded(): Boolean =
+    (upperBounds.isEmpty() ||
+        (upperBounds.singleOrNull()?.let {
+            it.className.toString() == "kotlin/Any" &&
+                it.nullability == AbiTypeNullability.MARKED_NULLABLE
+        } ?: false))
 
 private fun DecoratedAbiValueParameter.isBinaryCompatibleWith(
     otherParam: DecoratedAbiValueParameter,

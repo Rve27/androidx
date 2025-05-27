@@ -81,7 +81,7 @@ private constructor(private val lines: List<String>, rowIndex: Int = 0, columnIn
 private val validIdentifierRegex =
     Regex(
         """
-    ^((=(?!\s?\.\.\.)|[^.;\[\]/<>:\\(){}?=,])+)
+    ^((=(?!\s?\.\.\.)|[^.;\[\]/<>:\\(){}?=,&])+)
     """
             .trimIndent()
     )

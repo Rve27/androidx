@@ -282,8 +282,9 @@ internal fun Cursor.parseTypeParam(peek: Boolean = false): AbiTypeParameter? {
     val variance = cursor.parseAbiVariance()
     val isReified = cursor.parseSymbol(reifiedRegex) != null
     val upperBounds = mutableListOf<AbiType>()
-    if (null != cursor.parseAbiType(peek = true)) {
+    while (null != cursor.parseAbiType(peek = true)) {
         upperBounds.add(cursor.parseAbiType()!!)
+        cursor.parseSymbol(ampersandRegex)
     }
 
     return AbiTypeParameterImpl(
@@ -506,4 +507,5 @@ private val signatureMarkerRegex = Regex("-\\sSignature\\sversion:")
 private val digitRegex = Regex("^\\d+")
 private val dotRegex = Regex("^\\.")
 private val slashRegex = Regex("^/")
-private val symbolsFollowingIdentifiersWithSpaces = Regex("^[:|/={]")
+private val symbolsFollowingIdentifiersWithSpaces = Regex("^[:|/={&]")
+private val ampersandRegex = Regex("^&")

@@ -546,6 +546,18 @@ class KlibParsingCursorExtensionsTest {
     }
 
     @Test
+    fun parseTypeParamsWithMultipleUpperBounds() {
+        val input = "<#A: my.lib/A & my.lib/B>"
+        val cursor = Cursor(input)
+        val typeParams = cursor.parseTypeParams()
+        assertThat(typeParams).hasSize(1)
+        val upperBounds = typeParams?.single()!!.upperBounds
+        assertThat(upperBounds).hasSize(2)
+        assertThat(upperBounds.first().className.toString()).isEqualTo("my.lib/A")
+        assertThat(upperBounds.last().className.toString()).isEqualTo("my.lib/B")
+    }
+
+    @Test
     fun parseTypeParamsReifed() {
         val input = "<#A1: reified kotlin/Any?>"
         val cursor = Cursor(input)
