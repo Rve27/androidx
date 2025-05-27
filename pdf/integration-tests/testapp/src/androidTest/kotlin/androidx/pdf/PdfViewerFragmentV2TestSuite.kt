@@ -20,6 +20,7 @@ import android.app.Activity
 import android.app.Instrumentation
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Point
 import android.graphics.PointF
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
@@ -72,6 +73,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
@@ -590,6 +592,160 @@ class PdfViewerFragmentV2TestSuite {
             "Expected an external link intent to be launched, but it was null.",
             capturedIntent,
         )
+    }
+
+    @Test
+    fun testPdfViewerFragment_multiPageSelect_dragDownwards() {
+        // Load the document and assert loading view is displayed
+        scenarioLoadDocument(
+            scenario = scenario,
+            filename = TEST_DOCUMENT_FILE,
+            nextState = Lifecycle.State.STARTED,
+            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+        ) {
+            onView(withId(PdfR.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
+        }
+
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        var pdfView: PdfView? = null
+        var zoom = 1f
+        val rootViewLocation = IntArray(2)
+        val startPdfPoint = PdfPoint(0, PointF(120f, 175f))
+
+        // Assert loading progress bar is gone and document is loaded
+        onView(withId(PdfR.id.pdfLoadingProgressBar))
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+        scenario.onFragment {
+            Preconditions.checkArgument(
+                it.documentLoaded,
+                "Unable to load document due to ${it.documentError?.message}",
+            )
+            pdfView = it.getPdfViewInstance()
+            pdfView.isAutoScrollingEnabled = false
+            zoom = pdfView.zoom
+            pdfView.getLocationOnScreen(rootViewLocation)
+        }
+
+        assert(pdfView != null)
+        if (pdfView == null) return
+
+        // Get the PdfView's top Y-coordinate on the screen for different status bars
+        val yScreenOffset = (rootViewLocation[1] / zoom).toInt()
+
+        // create a selection by long press at a word
+        onView(isRoot()).perform(waitFor(50))
+        longPressSelection(device, pdfView, startPdfPoint, Point(0, yScreenOffset))
+
+        // drag the selection to second page
+        dragSelection(
+            device,
+            pdfView,
+            startPdfPoint,
+            PdfPoint(1, PointF(120f, 50f)),
+            Point(100, 50),
+            Point(0, yScreenOffset),
+        )
+
+        val expectedSelectionBoundsRange = 33..35
+        assertNotNull(pdfView)
+
+        assertTrue(pdfView.currentSelection?.bounds?.size in expectedSelectionBoundsRange)
+        assertEquals(pdfView.currentSelection?.bounds?.firstOrNull()?.pageNum, 0)
+        assertEquals(pdfView.currentSelection?.bounds?.lastOrNull()?.pageNum, 1)
+    }
+
+    @Test
+    fun testPdfViewerFragment_multiPageSelect_dragUpwards() {
+        // Load the document and assert loading view is displayed
+        scenarioLoadDocument(
+            scenario = scenario,
+            filename = TEST_DOCUMENT_FILE,
+            nextState = Lifecycle.State.STARTED,
+            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+        ) {
+            onView(withId(PdfR.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
+        }
+
+        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
+        var pdfView: PdfView? = null
+        var zoom = 1f
+        val rootViewLocation = IntArray(2)
+        val startPdfPoint = PdfPoint(1, PointF(170f, 220f))
+
+        // Assert loading progress bar is gone and document is loaded
+        onView(withId(PdfR.id.pdfLoadingProgressBar))
+            .check(matches(withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
+        scenario.onFragment {
+            Preconditions.checkArgument(
+                it.documentLoaded,
+                "Unable to load document due to ${it.documentError?.message}",
+            )
+
+            pdfView = it.getPdfViewInstance()
+            zoom = pdfView.zoom
+            pdfView.scrollToPosition(startPdfPoint)
+            pdfView.getLocationOnScreen(rootViewLocation)
+        }
+
+        assert(pdfView != null)
+        if (pdfView == null) return
+
+        // Get the PdfView's top Y-coordinate on the screen for different status bars
+        val yScreenOffset = (rootViewLocation[1] / zoom).toInt()
+
+        // create a selection by long press at a word
+        onView(isRoot()).perform(waitFor(50))
+        longPressSelection(device, pdfView, startPdfPoint, Point(0, yScreenOffset))
+
+        // drag the selection to second page
+        dragSelection(
+            device,
+            pdfView,
+            startPdfPoint,
+            PdfPoint(0, PointF(170f, 650f)),
+            Point(60, 60),
+            Point(0, yScreenOffset),
+        )
+
+        val expectedSelectionBoundsSizeRange = 13..15
+        assertNotNull(pdfView)
+
+        assertTrue(pdfView.currentSelection?.bounds?.size in expectedSelectionBoundsSizeRange)
+        assertEquals(pdfView.currentSelection?.bounds?.firstOrNull()?.pageNum, 0)
+        assertEquals(pdfView.currentSelection?.bounds?.lastOrNull()?.pageNum, 1)
+    }
+
+    private fun longPressSelection(
+        device: UiDevice,
+        pdfView: PdfView,
+        startPdfPoint: PdfPoint,
+        screenOffset: Point,
+    ) {
+        val start = pdfView.pdfToViewPoint(startPdfPoint) ?: PointF(0f, 0f)
+        val startX = start.x.toInt()
+        val startY = start.y.toInt() + screenOffset.y
+
+        // create a selection by long press at a word
+        device.swipe(startX, startY, startX, startY, 100)
+    }
+
+    private fun dragSelection(
+        device: UiDevice,
+        pdfView: PdfView,
+        startPdfPoint: PdfPoint,
+        stopPdfPoint: PdfPoint,
+        cursorOffset: Point,
+        screenOffset: Point,
+    ) {
+        val start = pdfView.pdfToViewPoint(startPdfPoint) ?: PointF(0f, 0f)
+        val startX = start.x.toInt() + cursorOffset.x
+        val startY = start.y.toInt() + +cursorOffset.y + screenOffset.y
+
+        val stop = pdfView.pdfToViewPoint(stopPdfPoint) ?: PointF(0f, 0f)
+        val dragEndX = stop.x.toInt() + cursorOffset.x
+        val dragEndY = stop.y.toInt() + +cursorOffset.y + screenOffset.y
+
+        device.drag(startX, startY, dragEndX, dragEndY, 100)
     }
 
     private fun withPdfView(

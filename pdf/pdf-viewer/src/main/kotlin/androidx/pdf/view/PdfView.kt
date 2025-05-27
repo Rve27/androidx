@@ -364,6 +364,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private var doubleTapAnimator: ValueAnimator? = null
     internal var lastFastScrollerVisibility: Boolean = false
 
+    @VisibleForTesting
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public var isAutoScrollingEnabled: Boolean = true
+
     private var isAutoScrolling = false
     private var prevDragEvent: MotionEvent? = null
 
@@ -802,7 +806,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         if (
             selectionStateManager?.maybeDragSelectionHandle(event.action, touchPoint, zoom) == true
         ) {
-            if (event.action == MotionEvent.ACTION_DOWN) {
+            if (event.action == MotionEvent.ACTION_DOWN && isAutoScrollingEnabled) {
                 startAutoScrolling()
             }
             return true
