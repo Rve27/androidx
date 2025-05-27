@@ -21,6 +21,7 @@ package androidx.compose.runtime
 import androidx.collection.emptyScatterSet
 import androidx.collection.mutableIntListOf
 import androidx.collection.mutableObjectListOf
+import androidx.compose.runtime.internal.AtomicReference
 import androidx.compose.runtime.internal.RememberEventDispatcher
 import androidx.compose.runtime.platform.SynchronizedObject
 import androidx.compose.runtime.platform.synchronized
@@ -194,26 +195,26 @@ internal class PausedCompositionImpl(
     val applier: Applier<*>,
     val lock: SynchronizedObject,
 ) : PausedComposition {
-    private var state = PausedCompositionState.InitialPending
+    private var state = AtomicReference(PausedCompositionState.InitialPending)
     private var invalidScopes = emptyScatterSet<RecomposeScopeImpl>()
     internal val rememberManager =
         RememberEventDispatcher().apply { prepare(abandonSet, composer.errorContext) }
     internal val pausableApplier = RecordingApplier(applier.current)
     internal val isRecomposing
-        get() = state == PausedCompositionState.Recomposing
+        get() = state.get() == PausedCompositionState.Recomposing
 
     override val isComplete: Boolean
-        get() = state >= PausedCompositionState.ApplyPending
+        get() = state.get() >= PausedCompositionState.ApplyPending
 
     override val isApplied: Boolean
-        get() = state == PausedCompositionState.Applied
+        get() = state.get() == PausedCompositionState.Applied
 
     override val isCancelled: Boolean
-        get() = state == PausedCompositionState.Cancelled
+        get() = state.get() == PausedCompositionState.Cancelled
 
     override fun resume(shouldPause: ShouldPauseCallback): Boolean {
         try {
-            when (state) {
+            when (state.get()) {
                 PausedCompositionState.InitialPending -> {
                     if (reusable) composer.startReuseFromRoot()
                     try {
@@ -222,16 +223,25 @@ internal class PausedCompositionImpl(
                     } finally {
                         if (reusable) composer.endReuseFromRoot()
                     }
-                    state = PausedCompositionState.RecomposePending
+                    updateState(
+                        PausedCompositionState.InitialPending,
+                        PausedCompositionState.RecomposePending,
+                    )
                     if (invalidScopes.isEmpty()) markComplete()
                 }
                 PausedCompositionState.RecomposePending -> {
-                    state = PausedCompositionState.Recomposing
+                    updateState(
+                        PausedCompositionState.RecomposePending,
+                        PausedCompositionState.Recomposing,
+                    )
                     try {
                         invalidScopes =
                             context.recomposePaused(composition, shouldPause, invalidScopes)
                     } finally {
-                        state = PausedCompositionState.RecomposePending
+                        updateState(
+                            PausedCompositionState.Recomposing,
+                            PausedCompositionState.RecomposePending,
+                        )
                     }
                     if (invalidScopes.isEmpty()) markComplete()
                 }
@@ -247,7 +257,7 @@ internal class PausedCompositionImpl(
                     error("The paused composition is invalid because of a previous exception")
             }
         } catch (e: Exception) {
-            state = PausedCompositionState.Invalid
+            state.set(PausedCompositionState.Invalid)
             throw e
         }
         return isComplete
@@ -255,14 +265,14 @@ internal class PausedCompositionImpl(
 
     override fun apply() {
         try {
-            when (state) {
+            when (state.get()) {
                 PausedCompositionState.InitialPending,
                 PausedCompositionState.RecomposePending,
                 PausedCompositionState.Recomposing ->
                     error("The paused composition has not completed yet")
                 PausedCompositionState.ApplyPending -> {
                     applyChanges()
-                    state = PausedCompositionState.Applied
+                    updateState(PausedCompositionState.ApplyPending, PausedCompositionState.Applied)
                 }
                 PausedCompositionState.Applied ->
                     error("The paused composition has already been applied")
@@ -272,24 +282,26 @@ internal class PausedCompositionImpl(
                     error("The paused composition is invalid because of a previous exception")
             }
         } catch (e: Exception) {
-            state = PausedCompositionState.Invalid
+            state.set(PausedCompositionState.Invalid)
             throw e
         }
     }
 
     override fun cancel() {
-        state = PausedCompositionState.Cancelled
+        state.set(PausedCompositionState.Cancelled)
         rememberManager.dispatchAbandons()
         composition.pausedCompositionFinished()
     }
 
     internal fun markIncomplete() {
-        if (state == PausedCompositionState.ApplyPending)
-            state = PausedCompositionState.RecomposePending
+        if (state.get() == PausedCompositionState.RecomposePending) {
+            return
+        }
+        updateState(PausedCompositionState.ApplyPending, PausedCompositionState.RecomposePending)
     }
 
     private fun markComplete() {
-        state = PausedCompositionState.ApplyPending
+        updateState(PausedCompositionState.RecomposePending, PausedCompositionState.ApplyPending)
     }
 
     private fun applyChanges() {
@@ -303,6 +315,13 @@ internal class PausedCompositionImpl(
                 rememberManager.dispatchAbandons()
                 composition.pausedCompositionFinished()
             }
+        }
+    }
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun updateState(from: PausedCompositionState, to: PausedCompositionState) {
+        checkPrecondition(state.compareAndSet(from, to)) {
+            "Unexpected state change from: $from to: $to."
         }
     }
 }
