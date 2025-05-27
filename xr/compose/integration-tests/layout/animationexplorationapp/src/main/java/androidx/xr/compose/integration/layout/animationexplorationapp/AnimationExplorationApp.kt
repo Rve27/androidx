@@ -38,8 +38,8 @@ import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.xr.compose.spatial.ContentEdge
 import androidx.xr.compose.spatial.Orbiter
-import androidx.xr.compose.spatial.OrbiterEdge
 import androidx.xr.compose.spatial.SpatialElevation
 import androidx.xr.compose.spatial.SpatialElevationLevel
 import androidx.xr.compose.spatial.Subspace
@@ -158,7 +158,7 @@ class AnimationExplorationApp : ComponentActivity() {
             contentAlignment = Alignment.Center,
         ) {
             Column {
-                Orbiter(position = OrbiterEdge.Top, offset = 5.dp) {
+                Orbiter(position = ContentEdge.Top, offset = 5.dp) {
                     Text(
                         text = text,
                         fontSize = 20.sp,

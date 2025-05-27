@@ -88,92 +88,67 @@ package androidx.xr.compose.spatial {
     property public int Specified;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class EdgeOffset {
-    method public androidx.xr.compose.spatial.EdgeOffset copy(optional float amount, optional int type);
-    method public float getAmount();
-    method public int getType();
-    property public float amount;
-    property public int type;
-    field public static final androidx.xr.compose.spatial.EdgeOffset.Companion Companion;
+  public sealed interface ContentEdge {
+    field public static final androidx.xr.compose.spatial.ContentEdge.Companion Companion;
   }
 
-  public static final class EdgeOffset.Companion {
-    method public androidx.xr.compose.spatial.EdgeOffset inner(float offset);
-    method public androidx.xr.compose.spatial.EdgeOffset outer(float offset);
-    method public androidx.xr.compose.spatial.EdgeOffset overlap(float offset);
+  public static final class ContentEdge.Companion {
+    method public androidx.xr.compose.spatial.ContentEdge.Horizontal getBottom();
+    method public androidx.xr.compose.spatial.ContentEdge.Vertical getEnd();
+    method public androidx.xr.compose.spatial.ContentEdge.Vertical getStart();
+    method public androidx.xr.compose.spatial.ContentEdge.Horizontal getTop();
+    property public androidx.xr.compose.spatial.ContentEdge.Horizontal Bottom;
+    property public androidx.xr.compose.spatial.ContentEdge.Vertical End;
+    property public androidx.xr.compose.spatial.ContentEdge.Vertical Start;
+    property public androidx.xr.compose.spatial.ContentEdge.Horizontal Top;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class OrbiterDefaults {
+  public static final class ContentEdge.Horizontal implements androidx.xr.compose.spatial.ContentEdge {
+    field public static final androidx.xr.compose.spatial.ContentEdge.Horizontal.Companion Companion;
+  }
+
+  public static final class ContentEdge.Horizontal.Companion {
+    method public androidx.xr.compose.spatial.ContentEdge.Horizontal getBottom();
+    method public androidx.xr.compose.spatial.ContentEdge.Horizontal getTop();
+    property public androidx.xr.compose.spatial.ContentEdge.Horizontal Bottom;
+    property public androidx.xr.compose.spatial.ContentEdge.Horizontal Top;
+  }
+
+  public static final class ContentEdge.Vertical implements androidx.xr.compose.spatial.ContentEdge {
+    field public static final androidx.xr.compose.spatial.ContentEdge.Vertical.Companion Companion;
+  }
+
+  public static final class ContentEdge.Vertical.Companion {
+    method public androidx.xr.compose.spatial.ContentEdge.Vertical getEnd();
+    method public androidx.xr.compose.spatial.ContentEdge.Vertical getStart();
+    property public androidx.xr.compose.spatial.ContentEdge.Vertical End;
+    property public androidx.xr.compose.spatial.ContentEdge.Vertical Start;
+  }
+
+  public final class OrbiterDefaults {
     method public float getElevation();
-    method public androidx.xr.compose.spatial.OrbiterSettings getSettings();
     method public androidx.xr.compose.subspace.layout.SpatialShape getShape();
     property public float Elevation;
-    property public androidx.xr.compose.spatial.OrbiterSettings Settings;
     property public androidx.xr.compose.subspace.layout.SpatialShape Shape;
     field public static final androidx.xr.compose.spatial.OrbiterDefaults INSTANCE;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public sealed interface OrbiterEdge {
-    field public static final androidx.xr.compose.spatial.OrbiterEdge.Companion Companion;
-  }
-
-  public static final class OrbiterEdge.Companion {
-    method public int getBottom();
-    method public int getEnd();
-    method public int getStart();
-    method public int getTop();
-    property public int Bottom;
-    property public int End;
-    property public int Start;
-    property public int Top;
-  }
-
-  @kotlin.jvm.JvmInline public static final value class OrbiterEdge.Horizontal implements androidx.xr.compose.spatial.OrbiterEdge {
-    field public static final androidx.xr.compose.spatial.OrbiterEdge.Horizontal.Companion Companion;
-  }
-
-  public static final class OrbiterEdge.Horizontal.Companion {
-    method public int getBottom();
-    method public int getTop();
-    property public int Bottom;
-    property public int Top;
-  }
-
-  @kotlin.jvm.JvmInline public static final value class OrbiterEdge.Vertical implements androidx.xr.compose.spatial.OrbiterEdge {
-    field public static final androidx.xr.compose.spatial.OrbiterEdge.Vertical.Companion Companion;
-  }
-
-  public static final class OrbiterEdge.Vertical.Companion {
-    method public int getEnd();
-    method public int getStart();
-    property public int End;
-    property public int Start;
-  }
-
   public final class OrbiterKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableOpenTarget(index=0xffffffff) public static void Orbiter(int position, androidx.xr.compose.spatial.EdgeOffset offset, optional androidx.compose.ui.Alignment.Horizontal alignment, optional androidx.xr.compose.spatial.OrbiterSettings settings, optional androidx.xr.compose.subspace.layout.SpatialShape shape, optional float elevation, kotlin.jvm.functions.Function0<kotlin.Unit> content);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableOpenTarget(index=0xffffffff) public static void Orbiter(int position, androidx.xr.compose.spatial.EdgeOffset offset, optional androidx.compose.ui.Alignment.Vertical alignment, optional androidx.xr.compose.spatial.OrbiterSettings settings, optional androidx.xr.compose.subspace.layout.SpatialShape shape, optional float elevation, kotlin.jvm.functions.Function0<kotlin.Unit> content);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableOpenTarget(index=0xffffffff) public static void Orbiter(int position, optional float offset, optional androidx.compose.ui.Alignment.Horizontal alignment, optional androidx.xr.compose.spatial.OrbiterSettings settings, optional androidx.xr.compose.subspace.layout.SpatialShape shape, optional float elevation, kotlin.jvm.functions.Function0<kotlin.Unit> content);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableOpenTarget(index=0xffffffff) public static void Orbiter(int position, optional float offset, optional androidx.compose.ui.Alignment.Vertical alignment, optional androidx.xr.compose.spatial.OrbiterSettings settings, optional androidx.xr.compose.subspace.layout.SpatialShape shape, optional float elevation, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableOpenTarget(index=0xffffffff) public static void Orbiter(androidx.xr.compose.spatial.ContentEdge.Horizontal position, optional float offset, optional int offsetType, optional androidx.compose.ui.Alignment.Horizontal alignment, optional androidx.xr.compose.subspace.layout.SpatialShape shape, optional float elevation, optional boolean shouldRenderInNonSpatial, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableOpenTarget(index=0xffffffff) public static void Orbiter(androidx.xr.compose.spatial.ContentEdge.Vertical position, optional float offset, optional int offsetType, optional androidx.compose.ui.Alignment.Vertical alignment, optional androidx.xr.compose.subspace.layout.SpatialShape shape, optional float elevation, optional boolean shouldRenderInNonSpatial, kotlin.jvm.functions.Function0<kotlin.Unit> content);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @kotlin.jvm.JvmInline public final value class OrbiterOffsetType {
+  @kotlin.jvm.JvmInline public final value class OrbiterOffsetType {
     field public static final androidx.xr.compose.spatial.OrbiterOffsetType.Companion Companion;
   }
 
   public static final class OrbiterOffsetType.Companion {
     method public int getInnerEdge();
     method public int getOuterEdge();
+    method public int getOverlap();
     property public int InnerEdge;
     property public int OuterEdge;
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class OrbiterSettings {
-    ctor public OrbiterSettings();
-    ctor public OrbiterSettings(optional boolean shouldRenderInNonSpatial);
-    method public androidx.xr.compose.spatial.OrbiterSettings copy(optional boolean shouldRenderInNonSpatial);
-    method public boolean getShouldRenderInNonSpatial();
-    property public boolean shouldRenderInNonSpatial;
+    property public int Overlap;
   }
 
   public final class SpatialDialogKt {

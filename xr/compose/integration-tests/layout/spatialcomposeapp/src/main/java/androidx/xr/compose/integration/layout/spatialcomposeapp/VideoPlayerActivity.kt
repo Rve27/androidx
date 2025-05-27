@@ -54,8 +54,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.compose.platform.LocalSession
+import androidx.xr.compose.spatial.ContentEdge
 import androidx.xr.compose.spatial.Orbiter
-import androidx.xr.compose.spatial.OrbiterEdge
 import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.SpatialBox
 import androidx.xr.compose.subspace.SpatialColumn
@@ -510,7 +510,7 @@ class VideoPlayerActivity : ComponentActivity() {
             }
 
             // Offset avoids depth perception issues when playing stereoscopic video.
-            Orbiter(position = OrbiterEdge.Bottom, offset = 48.dp) {
+            Orbiter(position = ContentEdge.Bottom, offset = 48.dp) {
                 Button(
                     onClick = {
                         if (isPaused) mediaPlayer.start() else mediaPlayer.pause()

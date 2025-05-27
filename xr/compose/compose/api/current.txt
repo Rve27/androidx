@@ -50,6 +50,69 @@ package androidx.xr.compose.platform {
 
 package androidx.xr.compose.spatial {
 
+  public sealed interface ContentEdge {
+    field public static final androidx.xr.compose.spatial.ContentEdge.Companion Companion;
+  }
+
+  public static final class ContentEdge.Companion {
+    method public androidx.xr.compose.spatial.ContentEdge.Horizontal getBottom();
+    method public androidx.xr.compose.spatial.ContentEdge.Vertical getEnd();
+    method public androidx.xr.compose.spatial.ContentEdge.Vertical getStart();
+    method public androidx.xr.compose.spatial.ContentEdge.Horizontal getTop();
+    property public androidx.xr.compose.spatial.ContentEdge.Horizontal Bottom;
+    property public androidx.xr.compose.spatial.ContentEdge.Vertical End;
+    property public androidx.xr.compose.spatial.ContentEdge.Vertical Start;
+    property public androidx.xr.compose.spatial.ContentEdge.Horizontal Top;
+  }
+
+  public static final class ContentEdge.Horizontal implements androidx.xr.compose.spatial.ContentEdge {
+    field public static final androidx.xr.compose.spatial.ContentEdge.Horizontal.Companion Companion;
+  }
+
+  public static final class ContentEdge.Horizontal.Companion {
+    method public androidx.xr.compose.spatial.ContentEdge.Horizontal getBottom();
+    method public androidx.xr.compose.spatial.ContentEdge.Horizontal getTop();
+    property public androidx.xr.compose.spatial.ContentEdge.Horizontal Bottom;
+    property public androidx.xr.compose.spatial.ContentEdge.Horizontal Top;
+  }
+
+  public static final class ContentEdge.Vertical implements androidx.xr.compose.spatial.ContentEdge {
+    field public static final androidx.xr.compose.spatial.ContentEdge.Vertical.Companion Companion;
+  }
+
+  public static final class ContentEdge.Vertical.Companion {
+    method public androidx.xr.compose.spatial.ContentEdge.Vertical getEnd();
+    method public androidx.xr.compose.spatial.ContentEdge.Vertical getStart();
+    property public androidx.xr.compose.spatial.ContentEdge.Vertical End;
+    property public androidx.xr.compose.spatial.ContentEdge.Vertical Start;
+  }
+
+  public final class OrbiterDefaults {
+    method public float getElevation();
+    method public androidx.xr.compose.subspace.layout.SpatialShape getShape();
+    property public float Elevation;
+    property public androidx.xr.compose.subspace.layout.SpatialShape Shape;
+    field public static final androidx.xr.compose.spatial.OrbiterDefaults INSTANCE;
+  }
+
+  public final class OrbiterKt {
+    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableOpenTarget(index=0xffffffff) public static void Orbiter(androidx.xr.compose.spatial.ContentEdge.Horizontal position, optional float offset, optional int offsetType, optional androidx.compose.ui.Alignment.Horizontal alignment, optional androidx.xr.compose.subspace.layout.SpatialShape shape, optional float elevation, optional boolean shouldRenderInNonSpatial, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableOpenTarget(index=0xffffffff) public static void Orbiter(androidx.xr.compose.spatial.ContentEdge.Vertical position, optional float offset, optional int offsetType, optional androidx.compose.ui.Alignment.Vertical alignment, optional androidx.xr.compose.subspace.layout.SpatialShape shape, optional float elevation, optional boolean shouldRenderInNonSpatial, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+  }
+
+  @kotlin.jvm.JvmInline public final value class OrbiterOffsetType {
+    field public static final androidx.xr.compose.spatial.OrbiterOffsetType.Companion Companion;
+  }
+
+  public static final class OrbiterOffsetType.Companion {
+    method public int getInnerEdge();
+    method public int getOuterEdge();
+    method public int getOverlap();
+    property public int InnerEdge;
+    property public int OuterEdge;
+    property public int Overlap;
+  }
+
   public final class SpatialDialogKt {
     method @androidx.compose.runtime.Composable public static void SpatialDialog(kotlin.jvm.functions.Function0<kotlin.Unit> onDismissRequest, optional androidx.xr.compose.spatial.SpatialDialogProperties properties, kotlin.jvm.functions.Function0<kotlin.Unit> content);
   }

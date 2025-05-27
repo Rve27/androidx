@@ -65,10 +65,9 @@ import androidx.xr.compose.integration.common.AnotherActivity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.LocalSpatialCapabilities
 import androidx.xr.compose.platform.LocalSpatialConfiguration
-import androidx.xr.compose.spatial.EdgeOffset.Companion.inner
+import androidx.xr.compose.spatial.ContentEdge
 import androidx.xr.compose.spatial.Orbiter
-import androidx.xr.compose.spatial.OrbiterEdge
-import androidx.xr.compose.spatial.OrbiterSettings
+import androidx.xr.compose.spatial.OrbiterOffsetType
 import androidx.xr.compose.spatial.SpatialDialog
 import androidx.xr.compose.spatial.SpatialDialogProperties
 import androidx.xr.compose.spatial.SpatialElevationLevel
@@ -183,9 +182,10 @@ class SpatialComposeAppActivity : ComponentActivity() {
             SpatialCurvedRow(alignment = SpatialAlignment.BottomCenter, curveRadius = curveRadius) {
                 SpatialColumn(modifier = SubspaceModifier.weight(0.2f).fillMaxHeight()) {
                     Orbiter(
-                        position = OrbiterEdge.Start,
-                        offset = inner(8.dp),
+                        position = ContentEdge.Start,
+                        offset = 8.dp,
                         shape = SpatialRoundedCornerShape(CornerSize(16.dp)),
+                        offsetType = OrbiterOffsetType.InnerEdge,
                     ) {
                         Surface {
                             Text(
@@ -251,11 +251,11 @@ class SpatialComposeAppActivity : ComponentActivity() {
             }
 
             Orbiter(
-                position = OrbiterEdge.End,
+                position = ContentEdge.End,
                 offset = 24.dp,
                 shape = SpatialRoundedCornerShape(size = CornerSize(50)),
-                settings = OrbiterSettings(shouldRenderInNonSpatial = false),
                 elevation = SpatialElevationLevel.Level2,
+                shouldRenderInNonSpatial = false,
             ) {
                 IconButton(
                     onClick = { showArrows = !showArrows },
@@ -266,10 +266,10 @@ class SpatialComposeAppActivity : ComponentActivity() {
             }
 
             Orbiter(
-                position = OrbiterEdge.Bottom,
+                position = ContentEdge.Bottom,
                 offset = 24.dp,
                 shape = SpatialRoundedCornerShape(size = CornerSize(50)),
-                settings = OrbiterSettings(shouldRenderInNonSpatial = false),
+                shouldRenderInNonSpatial = false,
             ) {
                 ToggleButton(
                     checked = moveResizeLocked,
@@ -298,11 +298,11 @@ class SpatialComposeAppActivity : ComponentActivity() {
             content()
 
             Orbiter(
-                position = OrbiterEdge.End,
+                position = ContentEdge.End,
                 offset = 24.dp,
                 shape = SpatialRoundedCornerShape(size = CornerSize(50)),
-                settings = OrbiterSettings(shouldRenderInNonSpatial = false),
                 elevation = SpatialElevationLevel.Level2,
+                shouldRenderInNonSpatial = false,
             ) {
                 IconButton(onClick = {}, modifier = Modifier.background(Color.Gray)) {
                     Icon(imageVector = Icons.Filled.Check, contentDescription = "Add highlight")

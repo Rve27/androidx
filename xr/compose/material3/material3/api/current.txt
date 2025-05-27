@@ -24,17 +24,17 @@ package androidx.xr.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.runtime.Immutable @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public final class HorizontalOrbiterProperties {
-    ctor public HorizontalOrbiterProperties(androidx.xr.compose.spatial.EdgeOffset offset, int position, androidx.compose.ui.Alignment.Horizontal alignment, androidx.xr.compose.spatial.OrbiterSettings settings, androidx.xr.compose.subspace.layout.SpatialShape shape);
-    method public androidx.xr.compose.material3.HorizontalOrbiterProperties copy(optional androidx.xr.compose.spatial.EdgeOffset? offset, optional androidx.xr.compose.spatial.OrbiterEdge.Horizontal? position, optional androidx.compose.ui.Alignment.Horizontal? alignment, optional androidx.xr.compose.spatial.OrbiterSettings? settings, optional androidx.xr.compose.subspace.layout.SpatialShape? shape);
+    ctor public HorizontalOrbiterProperties(float offset, int offsetType, androidx.xr.compose.spatial.ContentEdge.Horizontal position, androidx.compose.ui.Alignment.Horizontal alignment, androidx.xr.compose.subspace.layout.SpatialShape shape);
+    method public androidx.xr.compose.material3.HorizontalOrbiterProperties copy(optional androidx.compose.ui.unit.Dp? offset, optional androidx.xr.compose.spatial.OrbiterOffsetType? offsetType, optional androidx.xr.compose.spatial.ContentEdge.Horizontal? position, optional androidx.compose.ui.Alignment.Horizontal? alignment, optional androidx.xr.compose.subspace.layout.SpatialShape? shape);
     method public androidx.compose.ui.Alignment.Horizontal getAlignment();
-    method public androidx.xr.compose.spatial.EdgeOffset getOffset();
-    method public int getPosition();
-    method public androidx.xr.compose.spatial.OrbiterSettings getSettings();
+    method public float getOffset();
+    method public int getOffsetType();
+    method public androidx.xr.compose.spatial.ContentEdge.Horizontal getPosition();
     method public androidx.xr.compose.subspace.layout.SpatialShape getShape();
     property public androidx.compose.ui.Alignment.Horizontal alignment;
-    property public androidx.xr.compose.spatial.EdgeOffset offset;
-    property public int position;
-    property public androidx.xr.compose.spatial.OrbiterSettings settings;
+    property public float offset;
+    property public int offsetType;
+    property public androidx.xr.compose.spatial.ContentEdge.Horizontal position;
     property public androidx.xr.compose.subspace.layout.SpatialShape shape;
   }
 
@@ -63,17 +63,17 @@ package androidx.xr.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.runtime.Immutable @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public final class VerticalOrbiterProperties {
-    ctor public VerticalOrbiterProperties(androidx.xr.compose.spatial.EdgeOffset offset, int position, androidx.compose.ui.Alignment.Vertical alignment, androidx.xr.compose.spatial.OrbiterSettings settings, androidx.xr.compose.subspace.layout.SpatialShape shape);
-    method public androidx.xr.compose.material3.VerticalOrbiterProperties copy(optional androidx.xr.compose.spatial.EdgeOffset? offset, optional androidx.xr.compose.spatial.OrbiterEdge.Vertical? position, optional androidx.compose.ui.Alignment.Vertical? alignment, optional androidx.xr.compose.spatial.OrbiterSettings? settings, optional androidx.xr.compose.subspace.layout.SpatialShape? shape);
+    ctor public VerticalOrbiterProperties(float offset, int offsetType, androidx.xr.compose.spatial.ContentEdge.Vertical position, androidx.compose.ui.Alignment.Vertical alignment, androidx.xr.compose.subspace.layout.SpatialShape shape);
+    method public androidx.xr.compose.material3.VerticalOrbiterProperties copy(optional androidx.compose.ui.unit.Dp? offset, optional androidx.xr.compose.spatial.OrbiterOffsetType? offsetType, optional androidx.xr.compose.spatial.ContentEdge.Vertical? position, optional androidx.compose.ui.Alignment.Vertical? alignment, optional androidx.xr.compose.subspace.layout.SpatialShape? shape);
     method public androidx.compose.ui.Alignment.Vertical getAlignment();
-    method public androidx.xr.compose.spatial.EdgeOffset getOffset();
-    method public int getPosition();
-    method public androidx.xr.compose.spatial.OrbiterSettings getSettings();
+    method public float getOffset();
+    method public int getOffsetType();
+    method public androidx.xr.compose.spatial.ContentEdge.Vertical getPosition();
     method public androidx.xr.compose.subspace.layout.SpatialShape getShape();
     property public androidx.compose.ui.Alignment.Vertical alignment;
-    property public androidx.xr.compose.spatial.EdgeOffset offset;
-    property public int position;
-    property public androidx.xr.compose.spatial.OrbiterSettings settings;
+    property public float offset;
+    property public int offsetType;
+    property public androidx.xr.compose.spatial.ContentEdge.Vertical position;
     property public androidx.xr.compose.subspace.layout.SpatialShape shape;
   }
 
