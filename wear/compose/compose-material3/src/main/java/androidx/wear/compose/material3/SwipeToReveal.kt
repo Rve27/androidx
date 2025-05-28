@@ -263,28 +263,330 @@ public fun SwipeToReveal(
             )
         }
 
-    SwipeToRevealImpl(
-        primaryAction = { primaryAction(swipeToRevealScope) },
-        onFullSwipe = onSwipePrimaryAction,
-        anchors = anchors,
-        modifier = modifier.fillMaxWidth(),
-        state = revealState,
-        revealDirection = revealDirection,
-        secondaryAction = secondaryAction?.let { { secondaryAction(swipeToRevealScope) } },
-        undoAction =
-            when (revealState.lastActionType) {
-                RevealActionType.SecondaryAction ->
-                    undoSecondaryAction?.let { { undoSecondaryAction(swipeToRevealScope) } }
-                else -> undoPrimaryAction?.let { { undoPrimaryAction(swipeToRevealScope) } }
-            },
-        hasPartiallyRevealedState = hasPartiallyRevealedState,
-        gestureInclusion = gestureInclusion,
-        content = content,
-    )
+    var globalPosition by remember { mutableStateOf<LayoutCoordinates?>(null) }
 
-    LaunchedEffect(revealState.targetValue) {
-        if ((revealState.targetValue == LeftRevealed || revealState.targetValue == RightRevealed)) {
-            hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+    var allowSwipe by remember { mutableStateOf(true) }
+
+    val screenWidthPx =
+        with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() }
+    val anchorWidthPx =
+        with(LocalDensity.current) {
+            if (secondaryAction == null) {
+                SingleActionAnchorWidth.toPx()
+            } else {
+                DoubleActionAnchorWidth.toPx()
+            }
+        }
+
+    CustomTouchSlopProvider(
+        newTouchSlop = LocalViewConfiguration.current.touchSlop * CustomTouchSlopMultiplier
+    ) {
+        Box(
+            modifier =
+                modifier
+                    .fillMaxWidth()
+                    .onGloballyPositioned { layoutCoordinates ->
+                        globalPosition = layoutCoordinates
+                    }
+                    .pointerInput(gestureInclusion) {
+                        globalPosition?.let { layoutCoordinates ->
+                            awaitEachGesture {
+                                allowSwipe = true
+                                val firstDown = awaitFirstDown(false, PointerEventPass.Initial)
+                                allowSwipe =
+                                    !gestureInclusion.ignoreGestureStart(
+                                        firstDown.position,
+                                        layoutCoordinates,
+                                    )
+                            }
+                        }
+                    }
+                    .anchoredDraggable(
+                        state = revealState.anchoredDraggableState,
+                        orientation = Orientation.Horizontal,
+                        enabled =
+                            allowSwipe &&
+                                revealState.currentValue != LeftRevealed &&
+                                revealState.currentValue != RightRevealed,
+                        flingBehavior =
+                            anchoredDraggableFlingBehavior(
+                                state = revealState.anchoredDraggableState,
+                                snapAnimationSpec = AnchoredDraggableDefaults.SnapAnimationSpec,
+                                positionalThreshold = AnchoredDraggableDefaults.PositionalThreshold,
+                                density = LocalDensity.current,
+                            ),
+                    )
+                    .onSizeChanged { size ->
+                        // Update the total width which will be used to calculate the anchors
+                        val width = size.width.toFloat()
+                        val draggableAnchors = DraggableAnchors {
+                            for (anchor in anchors) {
+                                when (anchor) {
+                                    Covered -> 0f
+                                    LeftRevealing,
+                                    RightRevealing -> {
+                                        if (secondaryAction == null && !hasPartiallyRevealedState) {
+                                            null
+                                        } else {
+                                            val anchorSideMultiplier =
+                                                if (anchor == RightRevealing) -1 else 1
+
+                                            val result =
+                                                (anchorWidthPx / screenWidthPx) *
+                                                    width *
+                                                    anchorSideMultiplier
+
+                                            if (anchor == RightRevealing) {
+                                                revealState.revealThreshold = abs(result)
+                                            }
+
+                                            result
+                                        }
+                                    }
+                                    LeftRevealed,
+                                    RightRevealed -> {
+                                        val anchorSideMultiplier =
+                                            if (anchor == RightRevealed) -1 else 1
+                                        width * anchorSideMultiplier
+                                    }
+                                    else -> null
+                                }?.let { anchor at it }
+                            }
+                        }
+                        revealState.anchoredDraggableState.updateAnchors(draggableAnchors)
+                    }
+        ) {
+            val canSwipeRight = revealDirection == Bidirectional
+
+            val swipingRight by remember { derivedStateOf { revealState.offset > 0 } }
+
+            // Don't draw actions on the left side if the user cannot swipe right, and they are
+            // currently swiping right
+            val shouldDrawActions by remember {
+                derivedStateOf { abs(revealState.offset) > 0 && (canSwipeRight || !swipingRight) }
+            }
+
+            // Draw the buttons only when offset is greater than zero.
+            if (shouldDrawActions) {
+                Box(
+                    modifier = Modifier.matchParentSize(),
+                    contentAlignment =
+                        if (swipingRight) AbsoluteAlignment.CenterLeft
+                        else AbsoluteAlignment.CenterRight,
+                ) {
+                    val swipeCompleted =
+                        revealState.currentValue == RightRevealed ||
+                            revealState.currentValue == LeftRevealed
+
+                    val hasUndoAction =
+                        when (revealState.lastActionType) {
+                            RevealActionType.SecondaryAction -> undoSecondaryAction != null
+                            else -> undoPrimaryAction != null
+                        }
+
+                    AnimatedContent(
+                        targetState = swipeCompleted && hasUndoAction,
+                        transitionSpec = {
+                            if (targetState) { // Fade in the Undo composable and fade out actions
+                                fadeInUndo()
+                            } else { // Fade in the actions and fade out the undo composable
+                                fadeOutUndo()
+                            }
+                        },
+                        label = "AnimatedContentS2R",
+                    ) { displayUndo ->
+                        if (displayUndo && hasUndoAction) {
+                            val undoActionAlpha =
+                                animateFloatAsState(
+                                    targetValue = if (swipeCompleted) 1f else 0f,
+                                    animationSpec =
+                                        tween(
+                                            durationMillis = RAPID_ANIMATION,
+                                            delayMillis = FLASH_ANIMATION,
+                                            easing = STANDARD_IN_OUT,
+                                        ),
+                                    label = "UndoActionAlpha",
+                                )
+                            Row(
+                                modifier =
+                                    Modifier.graphicsLayer { alpha = undoActionAlpha.value }
+                                        .fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                            ) {
+                                ActionSlot {
+                                    when (revealState.lastActionType) {
+                                        RevealActionType.SecondaryAction ->
+                                            undoSecondaryAction?.let {
+                                                undoSecondaryAction(swipeToRevealScope)
+                                            }
+                                        else ->
+                                            undoPrimaryAction?.let {
+                                                undoPrimaryAction(swipeToRevealScope)
+                                            }
+                                    }
+                                }
+                            }
+                        } else {
+                            val lastActionIsSecondary =
+                                revealState.lastActionType == RevealActionType.SecondaryAction
+                            val isWithinRevealOffset by remember {
+                                derivedStateOf {
+                                    abs(revealState.offset) <= revealState.revealThreshold
+                                }
+                            }
+
+                            // Determines whether both primary and secondary action should be
+                            // hidden, usually the case when secondary action is clicked
+                            val hideActions = !isWithinRevealOffset && lastActionIsSecondary
+
+                            // Determines whether the secondary action will be visible based on
+                            // the current reveal offset
+                            val showSecondaryAction = isWithinRevealOffset || lastActionIsSecondary
+
+                            // Animate weight for secondary action slot.
+                            val secondaryActionWeight =
+                                animateFloatAsState(
+                                    targetValue = if (showSecondaryAction) 1f else 0f,
+                                    animationSpec = tween(durationMillis = QUICK_ANIMATION),
+                                    label = "SecondaryActionAnimationSpec",
+                                )
+                            val secondaryActionAlpha =
+                                animateFloatAsState(
+                                    targetValue =
+                                        if (!showSecondaryAction || hideActions) 0f else 1f,
+                                    animationSpec =
+                                        tween(
+                                            durationMillis = QUICK_ANIMATION,
+                                            easing = LinearEasing,
+                                        ),
+                                    label = "SecondaryActionAlpha",
+                                )
+                            val primaryActionAlpha =
+                                animateFloatAsState(
+                                    targetValue = if (hideActions) 0f else 1f,
+                                    animationSpec =
+                                        tween(durationMillis = 100, easing = LinearEasing),
+                                    label = "PrimaryActionAlpha",
+                                )
+                            val revealedContentAlpha =
+                                animateFloatAsState(
+                                    targetValue = if (swipeCompleted) 0f else 1f,
+                                    animationSpec =
+                                        tween(
+                                            durationMillis = FLASH_ANIMATION,
+                                            easing = LinearEasing,
+                                        ),
+                                    label = "RevealedContentAlpha",
+                                )
+                            var revealedContentHeight by remember { mutableIntStateOf(0) }
+                            Row(
+                                modifier =
+                                    Modifier.graphicsLayer { alpha = revealedContentAlpha.value }
+                                        .onSizeChanged { revealedContentHeight = it.height }
+                                        .layout { measurable, constraints ->
+                                            val placeable =
+                                                measurable.measure(
+                                                    constraints.copy(
+                                                        maxWidth =
+                                                            if (hideActions) {
+                                                                    revealState.revealThreshold
+                                                                } else {
+                                                                    abs(revealState.offset)
+                                                                }
+                                                                .roundToInt()
+                                                    )
+                                                )
+                                            layout(placeable.width, placeable.height) {
+                                                placeable.placeRelative(
+                                                    0,
+                                                    calculateVerticalOffsetBasedOnScreenPosition(
+                                                        revealedContentHeight,
+                                                        globalPosition,
+                                                    ),
+                                                )
+                                            }
+                                        },
+                                horizontalArrangement = Arrangement.Absolute.Right,
+                            ) {
+                                if (!swipingRight) {
+                                    // weight cannot be 0 so remove the composable when weight
+                                    // becomes 0
+                                    if (
+                                        secondaryAction != null && secondaryActionWeight.value > 0
+                                    ) {
+                                        Spacer(Modifier.size(SwipeToRevealDefaults.Padding))
+                                        ActionSlot(
+                                            weight = secondaryActionWeight.value,
+                                            opacity = secondaryActionAlpha,
+                                        ) {
+                                            secondaryAction(swipeToRevealScope)
+                                        }
+                                    }
+                                    Spacer(Modifier.size(SwipeToRevealDefaults.Padding))
+                                    ActionSlot(opacity = primaryActionAlpha) {
+                                        primaryAction(swipeToRevealScope)
+                                    }
+                                } else {
+                                    ActionSlot(opacity = primaryActionAlpha) {
+                                        primaryAction(swipeToRevealScope)
+                                    }
+                                    Spacer(Modifier.size(SwipeToRevealDefaults.Padding))
+                                    // weight cannot be 0 so remove the composable when weight
+                                    // becomes 0
+                                    if (
+                                        secondaryAction != null && secondaryActionWeight.value > 0
+                                    ) {
+                                        ActionSlot(
+                                            weight = secondaryActionWeight.value,
+                                            opacity = secondaryActionAlpha,
+                                        ) {
+                                            secondaryAction(swipeToRevealScope)
+                                        }
+                                        Spacer(Modifier.size(SwipeToRevealDefaults.Padding))
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            Row(
+                modifier =
+                    Modifier.absoluteOffset {
+                        val xOffset = revealState.requireOffset().roundToInt()
+                        IntOffset(
+                            x = if (canSwipeRight) xOffset else xOffset.coerceAtMost(0),
+                            y = 0,
+                        )
+                    }
+            ) {
+                content()
+            }
+            LaunchedEffect(revealState.currentValue, revealState.lastActionType) {
+                if (revealState.currentValue != Covered) {
+                    revealState.resetLastState(revealState)
+                }
+                if (
+                    (revealState.currentValue == LeftRevealed ||
+                        revealState.currentValue == RightRevealed) &&
+                        revealState.lastActionType == RevealActionType.None
+                ) {
+                    // Full swipe triggers the main action, but does not set the click type.
+                    // Explicitly set the click type as main action when full swipe occurs.
+                    revealState.lastActionType = RevealActionType.PrimaryAction
+                    onSwipePrimaryAction()
+                }
+            }
+            LaunchedEffect(revealState.targetValue) {
+                if (
+                    (revealState.targetValue == LeftRevealed ||
+                        revealState.targetValue == RightRevealed)
+                ) {
+                    hapticFeedback.performHapticFeedback(
+                        HapticFeedbackType.GestureThresholdActivate
+                    )
+                }
+            }
         }
     }
 }
@@ -837,12 +1139,6 @@ public class RevealState(initialValue: RevealValue) {
     /* @FloatRange(from = 0.0) */
     internal var revealThreshold: Float by mutableFloatStateOf(0.0f)
 
-    /**
-     * The total width of the component in pixels. Initialise to zero, updated when the width
-     * changes.
-     */
-    internal var width: Float by mutableFloatStateOf(0.0f)
-
     internal var isLastStateEngaged = false
 
     /**
@@ -949,314 +1245,6 @@ public class RevealState(initialValue: RevealValue) {
 @Composable
 public fun rememberRevealState(initialValue: RevealValue = Covered): RevealState =
     rememberSaveable(saver = RevealState.Saver) { RevealState(initialValue = initialValue) }
-
-@Composable
-private fun SwipeToRevealImpl(
-    primaryAction: @Composable () -> Unit,
-    onFullSwipe: () -> Unit,
-    @SuppressLint("PrimitiveInCollection") anchors: Set<RevealValue>,
-    modifier: Modifier = Modifier,
-    state: RevealState = rememberRevealState(),
-    revealDirection: RevealDirection = RightToLeft,
-    secondaryAction: (@Composable () -> Unit)? = null,
-    undoAction: (@Composable () -> Unit)? = null,
-    hasPartiallyRevealedState: Boolean = true,
-    gestureInclusion: GestureInclusion = gestureInclusion(state = state),
-    content: @Composable () -> Unit,
-) {
-    var globalPosition by remember { mutableStateOf<LayoutCoordinates?>(null) }
-
-    var allowSwipe by remember { mutableStateOf(true) }
-
-    val screenWidthPx =
-        with(LocalDensity.current) { LocalConfiguration.current.screenWidthDp.dp.toPx() }
-    val anchorWidthPx =
-        with(LocalDensity.current) {
-            if (secondaryAction == null) {
-                SingleActionAnchorWidth.toPx()
-            } else {
-                DoubleActionAnchorWidth.toPx()
-            }
-        }
-
-    CustomTouchSlopProvider(
-        newTouchSlop = LocalViewConfiguration.current.touchSlop * CustomTouchSlopMultiplier
-    ) {
-        Box(
-            modifier =
-                modifier
-                    .onGloballyPositioned { layoutCoordinates ->
-                        globalPosition = layoutCoordinates
-                    }
-                    .pointerInput(gestureInclusion) {
-                        globalPosition?.let { layoutCoordinates ->
-                            awaitEachGesture {
-                                allowSwipe = true
-                                val firstDown = awaitFirstDown(false, PointerEventPass.Initial)
-                                allowSwipe =
-                                    !gestureInclusion.ignoreGestureStart(
-                                        firstDown.position,
-                                        layoutCoordinates,
-                                    )
-                            }
-                        }
-                    }
-                    .anchoredDraggable(
-                        state = state.anchoredDraggableState,
-                        orientation = Orientation.Horizontal,
-                        enabled =
-                            allowSwipe &&
-                                state.currentValue != LeftRevealed &&
-                                state.currentValue != RightRevealed,
-                        flingBehavior =
-                            anchoredDraggableFlingBehavior(
-                                state = state.anchoredDraggableState,
-                                snapAnimationSpec = AnchoredDraggableDefaults.SnapAnimationSpec,
-                                positionalThreshold = AnchoredDraggableDefaults.PositionalThreshold,
-                                density = LocalDensity.current,
-                            ),
-                    )
-                    .onSizeChanged { size ->
-                        // Update the total width which will be used to calculate the anchors
-                        state.width = size.width.toFloat()
-                        val draggableAnchors = DraggableAnchors {
-                            for (anchor in anchors) {
-                                when (anchor) {
-                                    Covered -> 0f
-                                    LeftRevealing,
-                                    RightRevealing -> {
-                                        if (secondaryAction == null && !hasPartiallyRevealedState) {
-                                            null
-                                        } else {
-                                            val anchorSideMultiplier =
-                                                if (anchor == RightRevealing) -1 else 1
-
-                                            val result =
-                                                (anchorWidthPx / screenWidthPx) *
-                                                    state.width *
-                                                    anchorSideMultiplier
-
-                                            if (anchor == RightRevealing) {
-                                                state.revealThreshold = abs(result)
-                                            }
-
-                                            result
-                                        }
-                                    }
-                                    LeftRevealed,
-                                    RightRevealed -> {
-                                        val anchorSideMultiplier =
-                                            if (anchor == RightRevealed) -1 else 1
-                                        state.width * anchorSideMultiplier
-                                    }
-                                    else -> null
-                                }?.let { anchor at it }
-                            }
-                        }
-                        state.anchoredDraggableState.updateAnchors(draggableAnchors)
-                    }
-        ) {
-            val swipeCompleted =
-                state.currentValue == RightRevealed || state.currentValue == LeftRevealed
-            val lastActionIsSecondary = state.lastActionType == RevealActionType.SecondaryAction
-            val isWithinRevealOffset by remember {
-                derivedStateOf { abs(state.offset) <= state.revealThreshold }
-            }
-            val canSwipeRight = revealDirection == Bidirectional
-
-            // Determines whether the secondary action will be visible based on the current
-            // reveal offset
-            val showSecondaryAction = isWithinRevealOffset || lastActionIsSecondary
-
-            // Determines whether both primary and secondary action should be hidden, usually the
-            // case
-            // when secondary action is clicked
-            val hideActions = !isWithinRevealOffset && lastActionIsSecondary
-
-            val swipingRight by remember { derivedStateOf { state.offset > 0 } }
-
-            // Don't draw actions on the left side if the user cannot swipe right, and they are
-            // currently swiping right
-            val shouldDrawActions by remember {
-                derivedStateOf { abs(state.offset) > 0 && (canSwipeRight || !swipingRight) }
-            }
-
-            // Draw the buttons only when offset is greater than zero.
-            if (shouldDrawActions) {
-                Box(
-                    modifier = Modifier.matchParentSize(),
-                    contentAlignment =
-                        if (swipingRight) AbsoluteAlignment.CenterLeft
-                        else AbsoluteAlignment.CenterRight,
-                ) {
-                    AnimatedContent(
-                        targetState = swipeCompleted && undoAction != null,
-                        transitionSpec = {
-                            if (targetState) { // Fade in the Undo composable and fade out actions
-                                fadeInUndo()
-                            } else { // Fade in the actions and fade out the undo composable
-                                fadeOutUndo()
-                            }
-                        },
-                        label = "AnimatedContentS2R",
-                    ) { displayUndo ->
-                        if (displayUndo && undoAction != null) {
-                            val undoActionAlpha =
-                                animateFloatAsState(
-                                    targetValue = if (swipeCompleted) 1f else 0f,
-                                    animationSpec =
-                                        tween(
-                                            durationMillis = RAPID_ANIMATION,
-                                            delayMillis = FLASH_ANIMATION,
-                                            easing = STANDARD_IN_OUT,
-                                        ),
-                                    label = "UndoActionAlpha",
-                                )
-                            Row(
-                                modifier =
-                                    Modifier.graphicsLayer { alpha = undoActionAlpha.value }
-                                        .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center,
-                            ) {
-                                ActionSlot(content = undoAction)
-                            }
-                        } else {
-                            // Animate weight for secondary action slot.
-                            val secondaryActionWeight =
-                                animateFloatAsState(
-                                    targetValue = if (showSecondaryAction) 1f else 0f,
-                                    animationSpec = tween(durationMillis = QUICK_ANIMATION),
-                                    label = "SecondaryActionAnimationSpec",
-                                )
-                            val secondaryActionAlpha =
-                                animateFloatAsState(
-                                    targetValue =
-                                        if (!showSecondaryAction || hideActions) 0f else 1f,
-                                    animationSpec =
-                                        tween(
-                                            durationMillis = QUICK_ANIMATION,
-                                            easing = LinearEasing,
-                                        ),
-                                    label = "SecondaryActionAlpha",
-                                )
-                            val primaryActionAlpha =
-                                animateFloatAsState(
-                                    targetValue = if (hideActions) 0f else 1f,
-                                    animationSpec =
-                                        tween(durationMillis = 100, easing = LinearEasing),
-                                    label = "PrimaryActionAlpha",
-                                )
-                            val revealedContentAlpha =
-                                animateFloatAsState(
-                                    targetValue = if (swipeCompleted) 0f else 1f,
-                                    animationSpec =
-                                        tween(
-                                            durationMillis = FLASH_ANIMATION,
-                                            easing = LinearEasing,
-                                        ),
-                                    label = "RevealedContentAlpha",
-                                )
-                            var revealedContentHeight by remember { mutableIntStateOf(0) }
-                            Row(
-                                modifier =
-                                    Modifier.graphicsLayer { alpha = revealedContentAlpha.value }
-                                        .onSizeChanged { revealedContentHeight = it.height }
-                                        .layout { measurable, constraints ->
-                                            val placeable =
-                                                measurable.measure(
-                                                    constraints.copy(
-                                                        maxWidth =
-                                                            if (hideActions) {
-                                                                    state.revealThreshold
-                                                                } else {
-                                                                    abs(state.offset)
-                                                                }
-                                                                .roundToInt()
-                                                    )
-                                                )
-                                            layout(placeable.width, placeable.height) {
-                                                placeable.placeRelative(
-                                                    0,
-                                                    calculateVerticalOffsetBasedOnScreenPosition(
-                                                        revealedContentHeight,
-                                                        globalPosition,
-                                                    ),
-                                                )
-                                            }
-                                        },
-                                horizontalArrangement = Arrangement.Absolute.Right,
-                            ) {
-                                if (!swipingRight) {
-                                    // weight cannot be 0 so remove the composable when weight
-                                    // becomes 0
-                                    if (
-                                        secondaryAction != null && secondaryActionWeight.value > 0
-                                    ) {
-                                        Spacer(Modifier.size(SwipeToRevealDefaults.Padding))
-                                        ActionSlot(
-                                            weight = secondaryActionWeight.value,
-                                            opacity = secondaryActionAlpha,
-                                            content = secondaryAction,
-                                        )
-                                    }
-                                    Spacer(Modifier.size(SwipeToRevealDefaults.Padding))
-                                    ActionSlot(
-                                        content = primaryAction,
-                                        opacity = primaryActionAlpha,
-                                    )
-                                } else {
-                                    ActionSlot(
-                                        content = primaryAction,
-                                        opacity = primaryActionAlpha,
-                                    )
-                                    Spacer(Modifier.size(SwipeToRevealDefaults.Padding))
-                                    // weight cannot be 0 so remove the composable when weight
-                                    // becomes 0
-                                    if (
-                                        secondaryAction != null && secondaryActionWeight.value > 0
-                                    ) {
-                                        ActionSlot(
-                                            weight = secondaryActionWeight.value,
-                                            opacity = secondaryActionAlpha,
-                                            content = secondaryAction,
-                                        )
-                                        Spacer(Modifier.size(SwipeToRevealDefaults.Padding))
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            Row(
-                modifier =
-                    Modifier.absoluteOffset {
-                        val xOffset = state.requireOffset().roundToInt()
-                        IntOffset(
-                            x = if (canSwipeRight) xOffset else xOffset.coerceAtMost(0),
-                            y = 0,
-                        )
-                    }
-            ) {
-                content()
-            }
-            LaunchedEffect(state.currentValue, state.lastActionType) {
-                if (state.currentValue != Covered) {
-                    state.resetLastState(state)
-                }
-                if (
-                    (state.currentValue == LeftRevealed || state.currentValue == RightRevealed) &&
-                        state.lastActionType == RevealActionType.None
-                ) {
-                    // Full swipe triggers the main action, but does not set the click type.
-                    // Explicitly set the click type as main action when full swipe occurs.
-                    state.lastActionType = RevealActionType.PrimaryAction
-                    onFullSwipe()
-                }
-            }
-        }
-    }
-}
 
 /**
  * Different values which can trigger the state change from one [RevealValue] to another. These are

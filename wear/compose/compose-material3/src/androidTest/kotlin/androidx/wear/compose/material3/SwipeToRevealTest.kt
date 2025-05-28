@@ -1009,7 +1009,6 @@ class SwipeToRevealTest {
             assertThat(previousState.lastActionType).isEqualTo(currentState.lastActionType)
             assertThat(previousState.offset).isEqualTo(currentState.offset)
             assertThat(previousState.revealThreshold).isEqualTo(currentState.revealThreshold)
-            assertThat(previousState.width).isEqualTo(currentState.width)
         }
     }
 
