@@ -235,6 +235,14 @@ public fun SwipeToReveal(
         },
     content: @Composable () -> Unit,
 ) {
+    if (revealDirection == RightToLeft) {
+        require(
+            revealState.currentValue != LeftRevealing && revealState.currentValue != LeftRevealed
+        ) {
+            "RevealState value can't be LeftRevealing or LeftRevealed if reveal direction is RightToLeft."
+        }
+    }
+
     val hapticFeedback = LocalHapticFeedback.current
 
     @SuppressLint("PrimitiveInCollection")

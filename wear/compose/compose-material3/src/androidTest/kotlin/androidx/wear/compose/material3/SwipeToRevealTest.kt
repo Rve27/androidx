@@ -69,12 +69,14 @@ import androidx.wear.compose.material3.SwipeToRevealDefaults.bidirectionalGestur
 import androidx.wear.compose.material3.SwipeToRevealDefaults.gestureInclusion
 import androidx.wear.compose.materialcore.CustomTouchSlopProvider
 import androidx.wear.compose.materialcore.LARGE_SCREEN_WIDTH_DP
+import com.google.common.truth.StringSubject
 import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -1000,6 +1002,33 @@ class SwipeToRevealTest {
             assertTrue(onSwipePrimaryAction)
             assertFalse(onPrimaryActionClick)
         }
+    }
+
+    @Test
+    fun onCreation_rtlWithLeftRevealing_throwsHelpfulMessage() {
+        assertThrowsHelpfulMessage(initialValue = LeftRevealing)
+    }
+
+    @Test
+    fun onCreation_rtlWithLeftRevealed_throwsHelpfulMessage() {
+        assertThrowsHelpfulMessage(initialValue = LeftRevealed)
+    }
+
+    private fun assertThrowsHelpfulMessage(initialValue: RevealValue) {
+        val assertionError =
+            assertThrows(IllegalArgumentException::class.java) {
+                rule.setContent {
+                    SwipeToRevealWithDefaults(
+                        revealState = rememberRevealState(initialValue = initialValue)
+                    )
+                }
+            }
+
+        fun StringSubject.containsAll(vararg strings: CharSequence) = strings.forEach(::contains)
+
+        assertThat(assertionError)
+            .hasMessageThat()
+            .containsAll("LeftRevealing", "LeftRevealed", "RightToLeft")
     }
 
     private fun assertRevealStateIsRestored(previousState: RevealState, currentState: RevealState) {
