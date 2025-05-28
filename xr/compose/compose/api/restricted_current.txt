@@ -508,7 +508,7 @@ package androidx.xr.compose.subspace.layout {
   }
 
   public final class ScaleKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SubspaceModifier scale(androidx.xr.compose.subspace.layout.SubspaceModifier, float scale);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier scale(androidx.xr.compose.subspace.layout.SubspaceModifier, float scale);
   }
 
   public final class SemanticsModifierKt {

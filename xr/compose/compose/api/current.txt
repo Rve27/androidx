@@ -200,6 +200,10 @@ package androidx.xr.compose.subspace.layout {
     method public void adjustParams(androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable params);
   }
 
+  public final class ScaleKt {
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier scale(androidx.xr.compose.subspace.layout.SubspaceModifier, float scale);
+  }
+
   public final class SemanticsModifierKt {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier semantics(androidx.xr.compose.subspace.layout.SubspaceModifier, kotlin.jvm.functions.Function1<? super androidx.compose.ui.semantics.SemanticsPropertyReceiver,kotlin.Unit> properties);
   }
