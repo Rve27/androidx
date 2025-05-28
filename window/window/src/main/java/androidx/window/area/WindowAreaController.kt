@@ -130,11 +130,7 @@ abstract class WindowAreaController @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) 
         private val TAG = WindowAreaController::class.simpleName
 
         private var decorator: WindowAreaControllerDecorator = EmptyDecorator
-
-        /** Provides an instance of [WindowAreaController]. */
-        @JvmName("getOrCreate")
-        @JvmStatic
-        fun getOrCreate(): WindowAreaController {
+        private val windowAreaController: WindowAreaController by lazy {
             val windowAreaComponentExtensions =
                 try {
                     this::class.java.classLoader?.let {
@@ -158,7 +154,14 @@ abstract class WindowAreaController @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) 
                 } else {
                     EmptyWindowAreaControllerImpl()
                 }
-            return decorator.decorate(controller)
+            decorator.decorate(controller)
+        }
+
+        /** Provides an instance of [WindowAreaController]. */
+        @JvmName("getOrCreate")
+        @JvmStatic
+        fun getOrCreate(): WindowAreaController {
+            return windowAreaController
         }
 
         @JvmStatic
