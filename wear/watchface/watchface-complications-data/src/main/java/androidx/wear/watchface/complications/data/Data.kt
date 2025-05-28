@@ -281,6 +281,7 @@ constructor(
                             }
                             setRangedMinValue(input.min)
                             setRangedMaxValue(input.max)
+                            setRangedValueType(input.valueType)
                             setIcon(input.monochromaticImage?.image)
                             setBurnInProtectionIcon(input.monochromaticImage?.ambientImage)
                             setSmallImage(input.smallImage?.image)
