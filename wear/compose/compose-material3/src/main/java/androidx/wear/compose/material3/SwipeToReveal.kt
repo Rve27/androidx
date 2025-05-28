@@ -859,14 +859,14 @@ public class RevealState(initialValue: RevealValue) {
      */
     internal suspend fun resetLastState(currentState: RevealState) {
         currentState.isLastStateEngaged = true
-        SingleSwipeCoordinator.lastUpdatedState.get()?.isLastStateEngaged = false
         val oldState = SingleSwipeCoordinator.lastUpdatedState.getAndSet(currentState)
-        if (
-            currentState != oldState &&
-                (oldState?.currentValue == RightRevealing ||
-                    oldState?.currentValue == LeftRevealing)
-        ) {
-            oldState.animateTo(Covered)
+        if (currentState != oldState) {
+            oldState?.let {
+                it.isLastStateEngaged = false
+                if (it.currentValue == RightRevealing || it.currentValue == LeftRevealing) {
+                    it.animateTo(Covered)
+                }
+            }
         }
     }
 
