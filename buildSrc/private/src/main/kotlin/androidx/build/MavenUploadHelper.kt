@@ -144,14 +144,17 @@ private fun Project.configureComponentPublishing(
         // Check every project is the project map to see if they are an Android Library
         val projectModules = extension.mavenCoordinatesToProjectPathMap
         for ((mavenCoordinates, projectPath) in projectModules) {
-            project.findProject(projectPath)?.plugins?.let { plugins ->
-                if (plugins.hasPlugin(LibraryPlugin::class.java)) {
-                    if (plugins.hasPlugin(KotlinMultiplatformPluginWrapper::class.java)) {
+            project.findProject(projectPath)?.let { project ->
+                if (project.plugins.hasPlugin(LibraryPlugin::class.java)) {
+                    if (project.plugins.hasPlugin(KotlinMultiplatformPluginWrapper::class.java)) {
                         // For KMP projects, android AAR is published under -android
                         androidxAndroidProjects.add("$mavenCoordinates-android")
                     } else {
                         androidxAndroidProjects.add(mavenCoordinates)
                     }
+                }
+                if (project.hasAndroidMultiplatformPlugin()) {
+                    androidxAndroidProjects.add("$mavenCoordinates-android")
                 }
             }
         }
