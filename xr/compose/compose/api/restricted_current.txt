@@ -677,15 +677,7 @@ package androidx.xr.compose.subspace.layout {
   }
 
   public final class TestTagKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SubspaceModifier testTag(androidx.xr.compose.subspace.layout.SubspaceModifier, String tag);
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class TestTagNode extends androidx.xr.compose.subspace.layout.SubspaceModifier.Node implements androidx.xr.compose.subspace.node.SubspaceSemanticsModifierNode {
-    ctor public TestTagNode(String tag);
-    method public void applySemantics(androidx.compose.ui.semantics.SemanticsPropertyReceiver);
-    method public String getTag();
-    method public void setTag(String);
-    property public String tag;
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier testTag(androidx.xr.compose.subspace.layout.SubspaceModifier, String tag);
   }
 
 }

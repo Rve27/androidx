@@ -379,6 +379,10 @@ package androidx.xr.compose.subspace.layout {
     property public androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates? coordinates;
   }
 
+  public final class TestTagKt {
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier testTag(androidx.xr.compose.subspace.layout.SubspaceModifier, String tag);
+  }
+
 }
 
 package androidx.xr.compose.subspace.node {
