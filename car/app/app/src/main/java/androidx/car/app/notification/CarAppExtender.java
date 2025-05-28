@@ -574,7 +574,7 @@ public final class CarAppExtender implements NotificationCompat.Extender {
          *
          * <p>If actions are added to a CarAppExtender, any actions directly added the notification
          * being extended, for example via
-         * {@link NotificationCompat.Builder#addAction(int, CharSequence, PendingIntent)}, are
+         * {@link NotificationCompat.Builder#addAction(NotificationCompat.Action)}, are
          * ignored when the notification is shown in a car. Effectively, these actions override the
          * notification's actions in the car environment. For example:
          *
