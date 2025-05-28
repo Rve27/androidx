@@ -90,7 +90,7 @@ public fun AccessibilityNodeInfo.siblings(
  * @return a bitmap containing the image of this node.
  */
 public fun AccessibilityNodeInfo.takeScreenshot(): Bitmap =
-    takeScreenshotBitmap(bounds = Rect().apply { getBoundsInScreen(this) })
+    takeScreenshotBitmap(nodeBounds = Rect().apply { getBoundsInScreen(this) })
 
 /**
  * Waits for the node to become stable. A node is considered stable when it and its descendants have

@@ -37,7 +37,7 @@ import androidx.test.uiautomator.internal.waitForStableInternal
  * @return a bitmap containing the image of this node.
  */
 public fun AccessibilityWindowInfo.takeScreenshot(): Bitmap =
-    takeScreenshotBitmap(bounds = Rect().apply { getBoundsInScreen(this) })
+    takeScreenshotBitmap(nodeBounds = Rect().apply { getBoundsInScreen(this) })
 
 /**
  * Waits for the root node to become available in this window.
