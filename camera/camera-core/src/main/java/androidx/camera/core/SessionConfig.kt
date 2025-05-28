@@ -57,19 +57,21 @@ import java.util.concurrent.Executor
  */
 @ExperimentalSessionConfig
 public open class SessionConfig
-// TODO: b/384404392 - Remove when feature combo impl. is ready. The feature combo params should be
-//  kept restricted until then.
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+@JvmOverloads
 constructor(
     useCases: List<UseCase>,
     public val viewPort: ViewPort? = null,
     public val effects: List<CameraEffect> = emptyList(),
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public val requiredFeatures: Set<Feature> = emptySet(),
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public val preferredFeatures: List<Feature> = emptyList(),
 ) {
     public val useCases: List<UseCase> = useCases.distinct()
+
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public var requiredFeatures: Set<Feature> = emptySet()
+        private set
+
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public var preferredFeatures: List<Feature> = emptyList()
+        private set
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public open val isLegacy: Boolean = false
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -88,29 +90,16 @@ constructor(
     public var featureSelectionListenerExecutor: Executor = CameraXExecutors.mainThreadExecutor()
         private set
 
-    init {
-        validateFeatureCombination()
-    }
-
-    // TODO: b/384404392 - Remove this extra constructor when feature combo impl. is ready. The
-    //  feature combo params should be kept restricted until the impl. is ready. In order to unblock
-    //  the release of SessionConfig, we are splitting the constructor with and without the feature
-    //  params so that the one with feature params can be marked restricted. When feature combo
-    //  impl. is completed, we can just remove this constructor while removing the restricted
-    //  annotation for the primary constructor. Due to @JvmOverloads, only two new constructors will
-    //  be added without changing any previous one, so it won't be an API breaking change.
-    @JvmOverloads
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public constructor(
         useCases: List<UseCase>,
         viewPort: ViewPort? = null,
         effects: List<CameraEffect> = emptyList(),
-    ) : this(
-        useCases = useCases,
-        viewPort = viewPort,
-        effects = effects,
-        requiredFeatures = emptySet(),
-        preferredFeatures = emptyList(),
-    ) {
+        requiredFeatures: Set<Feature> = emptySet(),
+        preferredFeatures: List<Feature> = emptyList(),
+    ) : this(useCases = useCases, viewPort = viewPort, effects = effects) {
+        this.requiredFeatures = requiredFeatures
+        this.preferredFeatures = preferredFeatures
         validateFeatureCombination()
     }
 
