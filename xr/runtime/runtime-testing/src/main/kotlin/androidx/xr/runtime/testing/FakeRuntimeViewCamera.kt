@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime.internal
+package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.FieldOfView
+import androidx.xr.runtime.internal.ViewCamera as RuntimeViewCamera
 import androidx.xr.runtime.math.Pose
 
-/** Describes the AR device tracking data */
+// TODO: b/326481788 - Add more functionality to FakeRuntimeArDevice
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface ArDevice {
+public class FakeRuntimeViewCamera(
+    override var pose: Pose = Pose(),
+    override var fieldOfView: FieldOfView = FieldOfView(0f, 0f, 0f, 0f),
+) : RuntimeViewCamera {
 
-    /** The current pose of the device. */
-    public val devicePose: Pose
+    public companion object {}
 }

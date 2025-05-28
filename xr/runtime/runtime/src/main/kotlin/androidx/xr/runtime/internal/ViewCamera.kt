@@ -17,12 +17,16 @@
 package androidx.xr.runtime.internal
 
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.math.Pose
 
-/** Describes the AR device tracking data */
+/** Describes the View Camera data. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface ArDevice {
+public interface ViewCamera {
 
-    /** The current pose of the device. */
-    public val devicePose: Pose
+    /** The pose of the view camera. */
+    public val pose: Pose
+
+    /** The field of view of the view camera. */
+    public val fieldOfView: FieldOfView
 }

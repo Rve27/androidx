@@ -17,16 +17,12 @@
 package androidx.xr.runtime.testing
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.ViewCamera
 import androidx.xr.runtime.internal.ArDevice as RuntimeArDevice
 import androidx.xr.runtime.math.Pose
 
 // TODO: b/326481788 - Add more functionality to FakeRuntimeArDevice
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakeRuntimeArDevice(
-    override var devicePose: Pose = Pose(),
-    override var viewCameras: List<ViewCamera> = emptyList(),
-) : RuntimeArDevice {
+public class FakeRuntimeArDevice(override var devicePose: Pose = Pose()) : RuntimeArDevice {
 
     public companion object {}
 }

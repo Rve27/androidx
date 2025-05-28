@@ -14,15 +14,24 @@
  * limitations under the License.
  */
 
-package androidx.xr.runtime.internal
+package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.FieldOfView
+import androidx.xr.runtime.internal.ViewCamera
 import androidx.xr.runtime.math.Pose
 
-/** Describes the AR device tracking data */
+/** Wraps the device tracking data. */
+// TODO("b/416275880")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface ArDevice {
+public class OpenXrViewCamera internal constructor() : ViewCamera, Updatable {
 
-    /** The current pose of the device. */
-    public val devicePose: Pose
+    // TODO("b/416275880")
+    override val pose: Pose = Pose()
+
+    // TODO("b/416275880")
+    override val fieldOfView: FieldOfView = FieldOfView(0f, 0f, 0f, 0f)
+
+    // TODO("b/416275880")
+    override fun update(xrTime: Long) {}
 }

@@ -17,21 +17,15 @@
 package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.ViewCamera
 import androidx.xr.runtime.internal.ArDevice
 import androidx.xr.runtime.math.Pose
 
 /** Wraps the device tracking data. */
-// TODO("b/416275880")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class OpenXrDevice internal constructor() : ArDevice, Updatable {
 
     // TODO("b/416275880")
     override val devicePose: Pose = Pose() // Return a default Pose if buffer is null
-
-    // TODO("b/416275880")
-    override val viewCameras: List<ViewCamera> =
-        emptyList() // Return an empty list if buffer is null
 
     // TODO("b/416275880")
     override fun update(xrTime: Long) {}
