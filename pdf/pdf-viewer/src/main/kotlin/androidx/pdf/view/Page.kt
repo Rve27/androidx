@@ -33,10 +33,12 @@ import androidx.pdf.PdfDocument
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.exceptions.RequestMetadata
 import androidx.pdf.models.FormWidgetInfo
+import androidx.pdf.util.FORM_WIDGET_INFO_REQUEST_NAME
 import androidx.pdf.util.PAGE_CONTENTS_REQUEST_NAME
 import androidx.pdf.util.PAGE_LINKS_REQUEST_NAME
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -66,7 +68,7 @@ internal class Page(
     private val errorFlow: MutableSharedFlow<Throwable>,
     isAccessibilityEnabled: Boolean,
     /** A list represent the [FormWidgetInfo] present on the page. */
-    internal val formWidgetInfos: List<FormWidgetInfo>? = null,
+    formWidgetInfos: List<FormWidgetInfo>? = null,
 ) {
     init {
         require(pageNum >= 0) { "Invalid negative page" }
@@ -95,6 +97,8 @@ internal class Page(
     internal var links: PdfDocument.PdfPageLinks? = null
         private set
 
+    private var fetchFormWidgetInfoJob: Job? = null
+
     internal var isAccessibilityEnabled: Boolean = isAccessibilityEnabled
         set(value) {
             field = value
@@ -102,6 +106,9 @@ internal class Page(
                 maybeFetchPageText()
             }
         }
+
+    internal var formWidgetInfos: List<FormWidgetInfo>? = formWidgetInfos
+        private set
 
     //  Checks if the content of this page within the specified visible area is fully rendered.
     internal fun isFullyRendered(zoom: Float, viewArea: Rect?): Boolean {
@@ -203,6 +210,32 @@ internal class Page(
                     }
                 }
                 .also { it.invokeOnCompletion { fetchPageTextJob = null } }
+    }
+
+    /** Updates the [formWidgetInfos] associated with the page. */
+    internal fun maybeUpdateFormWidgetInfos() {
+        val previousJob = fetchFormWidgetInfoJob
+
+        fetchFormWidgetInfoJob =
+            backgroundScope.launch {
+                // Cancel the previous job, since we want to fetch the latest set of widgets
+                previousJob?.cancelAndJoin()
+                ensureActive()
+                try {
+                    formWidgetInfos = pdfDocument.getFormWidgetInfos(pageNum)
+                } catch (e: DeadObjectException) {
+                    val exception =
+                        RequestFailedException(
+                            requestMetadata =
+                                RequestMetadata(
+                                    requestName = FORM_WIDGET_INFO_REQUEST_NAME,
+                                    pageRange = pageNum..pageNum,
+                                ),
+                            throwable = e,
+                        )
+                    errorFlow.emit(exception)
+                }
+            }
     }
 
     fun draw(canvas: Canvas, locationInView: Rect, highlights: List<Highlight>) {

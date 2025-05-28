@@ -198,6 +198,11 @@ internal class PageManager(
         pages.put(pageNum, page)
     }
 
+    /** Updates the form widget information in the given [pageNum] when a edit is applied. */
+    fun maybeUpdateFormWidgetMetadata(pageNum: Int) {
+        pages[pageNum]?.maybeUpdateFormWidgetInfos()
+    }
+
     /** Adds [newHighlights]s to this manager to be drawn along with the pages they belong to */
     fun setHighlights(newHighlights: List<Highlight>) {
         highlights.clear()

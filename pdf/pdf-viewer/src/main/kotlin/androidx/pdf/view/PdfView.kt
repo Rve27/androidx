@@ -1190,6 +1190,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                                 currentZoom = zoom,
                                 areasToUpdate = it.second,
                             )
+                            pageManager?.maybeUpdateFormWidgetMetadata(it.first)
                         }
                     }
                 }
