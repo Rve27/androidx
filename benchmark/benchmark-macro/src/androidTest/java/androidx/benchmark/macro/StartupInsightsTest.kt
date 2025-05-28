@@ -116,15 +116,14 @@ class StartupInsightsTest {
     fun queryInsights() {
         TraceProcessor.runSingleSessionServer(api35ColdStart) {
             assertThat(
-                insights
-                    .queryInsights(
+                    insights.queryInsights(
                         session = this,
                         packageName = Packages.MISSING,
                         traceLinkTitle = "6",
                         traceLinkPath = "/fake/output/relative/path.perfetto-trace",
                     )
-                    .isEmpty()
-            )
+                )
+                .isEmpty()
 
             assertThat(
                     insights.queryInsights(

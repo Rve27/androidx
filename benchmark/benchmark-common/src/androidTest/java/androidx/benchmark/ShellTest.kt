@@ -563,6 +563,16 @@ class ShellTest {
         )
     }
 
+    @Test
+    fun enablePackages() {
+        Shell.enablePackages(listOf(Packages.FAKE, Packages.FAKE + "1"))
+    }
+
+    @Test
+    fun disablePackages() {
+        Shell.disablePackages(listOf(Packages.FAKE, Packages.FAKE + "1"))
+    }
+
     private fun pidof(packageName: String): Int? {
         return Shell.getPidsForProcess(packageName).firstOrNull()
     }

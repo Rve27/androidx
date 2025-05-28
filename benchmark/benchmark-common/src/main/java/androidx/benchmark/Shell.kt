@@ -647,13 +647,21 @@ object Shell {
             """
                     .trimIndent()
             }
-        executeScriptCaptureStdoutStderr(command)
+
+        val output = executeScriptCaptureStdoutStderr(command)
+        if (output.stderr.isNotBlank()) {
+            Log.d(BenchmarkState.TAG, "disabling packages failed, stderr: ${output.stderr}")
+        }
     }
 
     fun enablePackages(appPackages: List<String>) {
         val command =
             appPackages.joinToString(separator = "\n") { appPackage -> "pm enable $appPackage" }
-        executeScriptCaptureStdoutStderr(command)
+
+        val output = executeScriptCaptureStdoutStderr(command)
+        if (output.stderr.isNotBlank()) {
+            Log.d(BenchmarkState.TAG, "enabling packages failed, stderr: ${output.stderr}")
+        }
     }
 
     @RequiresApi(24)
