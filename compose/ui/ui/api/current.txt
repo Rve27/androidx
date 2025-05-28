@@ -545,6 +545,7 @@ package androidx.compose.ui.draw {
     method public androidx.compose.ui.unit.LayoutDirection getLayoutDirection();
     method public long getSize();
     method public androidx.compose.ui.graphics.layer.GraphicsLayer obtainGraphicsLayer();
+    method public androidx.compose.ui.graphics.shadow.ShadowContext obtainShadowContext();
     method public androidx.compose.ui.draw.DrawResult onDrawBehind(kotlin.jvm.functions.Function1<? super androidx.compose.ui.graphics.drawscope.DrawScope,kotlin.Unit> block);
     method public androidx.compose.ui.draw.DrawResult onDrawWithContent(kotlin.jvm.functions.Function1<? super androidx.compose.ui.graphics.drawscope.ContentDrawScope,kotlin.Unit> block);
     method public void record(androidx.compose.ui.graphics.layer.GraphicsLayer, optional androidx.compose.ui.unit.Density density, optional androidx.compose.ui.unit.LayoutDirection layoutDirection, optional long size, kotlin.jvm.functions.Function1<? super androidx.compose.ui.graphics.drawscope.ContentDrawScope,kotlin.Unit> block);
@@ -577,6 +578,12 @@ package androidx.compose.ui.draw {
   public final class DrawResult {
   }
 
+  @kotlin.jvm.JvmDefaultWithCompatibility public interface DropShadowScope extends androidx.compose.ui.draw.ShadowScope {
+  }
+
+  @kotlin.jvm.JvmDefaultWithCompatibility public interface InnerShadowScope extends androidx.compose.ui.draw.ShadowScope {
+  }
+
   public final class PainterModifierKt {
     method public static androidx.compose.ui.Modifier paint(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.painter.Painter painter, optional boolean sizeToIntrinsics, optional androidx.compose.ui.Alignment alignment, optional androidx.compose.ui.layout.ContentScale contentScale, optional float alpha, optional androidx.compose.ui.graphics.ColorFilter? colorFilter);
   }
@@ -591,8 +598,36 @@ package androidx.compose.ui.draw {
   }
 
   public final class ShadowKt {
+    method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier dropShadow(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.DropShadow dropShadow, optional long offset);
+    method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier dropShadow(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape shape, kotlin.jvm.functions.Function1<? super androidx.compose.ui.draw.DropShadowScope,kotlin.Unit> block);
+    method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier innerShadow(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.InnerShadow innerShadow);
+    method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier innerShadow(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape shape, kotlin.jvm.functions.Function1<? super androidx.compose.ui.draw.InnerShadowScope,kotlin.Unit> block);
     method @Deprecated @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier shadow(androidx.compose.ui.Modifier, float elevation, optional androidx.compose.ui.graphics.Shape shape, optional boolean clip);
     method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier shadow(androidx.compose.ui.Modifier, float elevation, optional androidx.compose.ui.graphics.Shape shape, optional boolean clip, optional long ambientColor, optional long spotColor);
+  }
+
+  @kotlin.jvm.JvmDefaultWithCompatibility public interface ShadowScope extends androidx.compose.ui.unit.Density {
+    method public float getAlpha();
+    method public int getBlendMode();
+    method public androidx.compose.ui.graphics.Brush? getBrush();
+    method public long getColor();
+    method public long getOffset();
+    method public float getRadius();
+    method public float getSpread();
+    method public void setAlpha(float);
+    method public void setBlendMode(int);
+    method public void setBrush(androidx.compose.ui.graphics.Brush?);
+    method public void setColor(long);
+    method public void setOffset(long);
+    method public void setRadius(float);
+    method public void setSpread(float);
+    property public abstract float alpha;
+    property public abstract int blendMode;
+    property public abstract androidx.compose.ui.graphics.Brush? brush;
+    property public abstract long color;
+    property public abstract long offset;
+    property public abstract float radius;
+    property public abstract float spread;
   }
 
 }

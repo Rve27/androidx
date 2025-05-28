@@ -47,3 +47,12 @@ internal actual fun ActualImageShader(
     tileModeX: TileMode,
     tileModeY: TileMode,
 ): Shader = implementedInJetBrainsFork()
+
+internal actual fun ActualCompositeShader(dst: Shader, src: Shader, blendMode: BlendMode): Shader =
+    implementedInJetBrainsFork()
+
+internal actual class TransformShader {
+    actual var shader: Shader? = implementedInJetBrainsFork()
+
+    actual fun transform(matrix: Matrix?): Unit = implementedInJetBrainsFork()
+}

@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.layer.GraphicsLayerV29
 import androidx.compose.ui.graphics.layer.GraphicsViewLayer
 import androidx.compose.ui.graphics.layer.view.DrawChildContainer
 import androidx.compose.ui.graphics.layer.view.ViewLayerContainer
+import androidx.compose.ui.graphics.shadow.ShadowContext
 
 /**
  * Create a new [GraphicsContext] with the provided [ViewGroup] to contain [View] based layers.
@@ -45,8 +46,9 @@ private class AndroidGraphicsContext(private val ownerView: ViewGroup) : Graphic
     private val lock = Any()
     private var viewLayerContainer: DrawChildContainer? = null
     private var componentCallbackRegistered = false
+    private var shadowCache: ShadowContext? = null
 
-    private val componentCallback: ComponentCallbacks2?
+    private val componentCallback: ComponentCallbacks2
 
     init {
         componentCallback =
@@ -65,7 +67,7 @@ private class AndroidGraphicsContext(private val ownerView: ViewGroup) : Graphic
                     // memory callback exceed the level of TRIM_MEMORY_BACKGROUND so do the same
                     // here to release shadow dependencies
                     if (level >= ComponentCallbacks2.TRIM_MEMORY_BACKGROUND) {
-                        // TODO(b/160665122): Clear shadow cache.
+                        clearShadowCache()
                     }
                 }
             }
@@ -84,9 +86,15 @@ private class AndroidGraphicsContext(private val ownerView: ViewGroup) : Graphic
                     // When the View is detached from the window, remove the component callbacks
                     // used to listen to trim memory signals
                     unregisterComponentCallback(v.context)
+                    clearShadowCache()
                 }
             }
         )
+    }
+
+    private fun clearShadowCache() {
+        shadowCache?.clearCache()
+        shadowCache = null
     }
 
     private fun registerComponentCallback(context: Context) {
@@ -132,6 +140,9 @@ private class AndroidGraphicsContext(private val ownerView: ViewGroup) : Graphic
             return layer
         }
     }
+
+    override val shadowContext: ShadowContext
+        get() = shadowCache ?: ShadowContext().also { shadowCache = it }
 
     override fun releaseGraphicsLayer(layer: GraphicsLayer) {
         synchronized(lock) { layer.release() }
