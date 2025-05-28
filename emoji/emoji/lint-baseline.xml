@@ -2,6 +2,114 @@
 <issues format="6" by="lint 8.11.0-alpha10" type="baseline" client="gradle" dependencies="false" name="AGP (8.11.0-alpha10)" variant="all" version="8.11.0-alpha10">
 
     <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="        EmojiCompat.get().process(editable, start, end);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidTest/java/androidx/emoji/text/EmojiCompatTest.java"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="        EmojiCompat.get().process(processed, original.length() - EMOJI_SINGLE_CODEPOINT.charCount(),"
+        errorLine2="        ^">
+        <location
+            file="src/androidTest/java/androidx/emoji/text/EmojiCompatTest.java"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="        EmojiCompat.get().process(mEditable);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidTest/java/androidx/emoji/widget/EmojiInputConnectionTest.java"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="        EmojiCompat.get().process(mEditable);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidTest/java/androidx/emoji/widget/EmojiKeyListenerTest.java"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="                EmojiCompat.get().process(text);"
+        errorLine2="                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/emoji/widget/EmojiTextWatcher.java"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="        EmojiCompat.get().process(mEditable);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidTest/java/androidx/emoji/text/HardDeleteTest.java"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="        EmojiCompat.get().process(mEditable);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidTest/java/androidx/emoji/text/HardDeleteTest.java"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="        EmojiCompat.get().process(mEditable);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidTest/java/androidx/emoji/text/SoftDeleteTest.java"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="        EmojiCompat.get().process(mEditable);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidTest/java/androidx/emoji/text/SoftDeleteTest.java"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="        EmojiCompat.get().process(mEditable);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidTest/java/androidx/emoji/text/SoftDeleteTest.java"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="        EmojiCompat.get().process(mEditable);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidTest/java/androidx/emoji/text/SoftDeleteTest.java"/>
+    </issue>
+
+    <issue
+        id="CheckResult"
+        message="The result of `process` is not used"
+        errorLine1="        EmojiCompat.get().process(mEditable);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/androidTest/java/androidx/emoji/text/SoftDeleteTest.java"/>
+    </issue>
+
+    <issue
         id="ObsoleteSdkInt"
         message="Unnecessary; `SDK_INT` is always >= 21"
         errorLine1="    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)"

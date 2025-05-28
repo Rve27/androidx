@@ -334,6 +334,8 @@ private fun Project.configureLint(lint: Lint, isLibrary: Boolean) {
             disable.add("MissingServiceExportedEqualsTrue")
         }
 
+        fatal.add("CheckResult")
+
         val lintXmlPath =
             if (extension.type == SoftwareType.SAMPLES) {
                 "buildSrc/lint/lint_samples.xml"

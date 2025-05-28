@@ -11,6 +11,15 @@
     </issue>
 
     <issue
+        id="CheckResult"
+        message="The result of `assertThat` is not used"
+        errorLine1="        assertThat(signIn.getPinCode().toString().length() == 12);"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/test/java/androidx/car/app/model/signin/PinSignInMethodTest.java"/>
+    </issue>
+
+    <issue
         id="NewApi"
         message="Call requires API level 24 (current min is 21): `android.content.res.Configuration#getLocales`"
         errorLine1="        assertThat(mCarContext.getResources().getConfiguration().getLocales().get(0)).isEqualTo("
