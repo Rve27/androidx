@@ -40,8 +40,8 @@ import androidx.compose.foundation.lazy.layout.LazyLayoutScrollDeltaBetweenPasse
 import androidx.compose.foundation.lazy.layout.ObservableScopeInvalidator
 import androidx.compose.foundation.lazy.layout.PrefetchScheduler
 import androidx.compose.foundation.lazy.layout.animateScrollToItem
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridLaneInfo.Companion.FullSpan
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridLaneInfo.Companion.Unset
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridLaneInfo.Companion.LaneFullSpan
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridLaneInfo.Companion.LaneUnset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -596,8 +596,8 @@ internal constructor(
         val targetLaneIndex =
             when (val previousLane = laneInfo.getLane(itemIndex)) {
                 // lane was never set or contains obsolete full span (the check for full span above)
-                Unset,
-                FullSpan -> 0
+                LaneUnset,
+                LaneFullSpan -> 0
                 // lane was previously set, keep item to the same lane
                 else -> {
                     requirePrecondition(previousLane >= 0) {
@@ -611,7 +611,7 @@ internal constructor(
         var currentItemIndex = itemIndex
         for (lane in (targetLaneIndex - 1) downTo 0) {
             indices[lane] = laneInfo.findPreviousItemIndex(currentItemIndex, lane)
-            if (indices[lane] == Unset) {
+            if (indices[lane] == LaneUnset) {
                 indices.fill(-1, toIndex = lane)
                 break
             }

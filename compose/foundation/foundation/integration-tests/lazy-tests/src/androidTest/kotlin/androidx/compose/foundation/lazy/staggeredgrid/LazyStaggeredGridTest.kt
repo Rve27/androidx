@@ -2085,4 +2085,24 @@ class LazyStaggeredGridTest(
             }
         }
     }
+
+    @Test
+    fun mainSize_minusOne() {
+        // Forces the main axis size to be calculated to exactly -1
+        val mainAxisSize = with(rule.density) { (itemSizePx * 2f - 1f).toDp() }
+        rule.setContentWithConfigurableLookahead {
+            LazyStaggeredGrid(
+                lanes = 2,
+                modifier =
+                    Modifier.mainAxisSize(mainAxisSize)
+                        .crossAxisSize(itemSizeDp * 2)
+                        .testTag(LazyStaggeredGridTag),
+                contentPadding = PaddingValues(beforeContent = itemSizeDp),
+            ) {
+                items(2) { index -> Spacer(Modifier.mainAxisSize(itemSizeDp)) }
+            }
+        }
+
+        rule.onNodeWithTag(LazyStaggeredGridTag).assertIsDisplayed()
+    }
 }

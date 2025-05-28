@@ -24,8 +24,8 @@ import androidx.compose.foundation.lazy.layout.LazyLayoutKeyIndexMap
 import androidx.compose.foundation.lazy.layout.LazyLayoutMeasureScope
 import androidx.compose.foundation.lazy.layout.LazyLayoutMeasuredItem
 import androidx.compose.foundation.lazy.layout.LazyLayoutMeasuredItemProvider
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridLaneInfo.Companion.FullSpan
-import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridLaneInfo.Companion.Unset
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridLaneInfo.Companion.LaneFullSpan
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridLaneInfo.Companion.LaneUnset
 import androidx.compose.ui.graphics.GraphicsContext
 import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.layout.Placeable
@@ -147,7 +147,10 @@ internal fun LazyLayoutMeasureScope.measureStaggeredGrid(
                 // Try to adjust indices in case grid got resized
                 for (lane in indices) {
                     this[lane] =
-                        if (lane < firstVisibleIndices.size && firstVisibleIndices[lane] != Unset) {
+                        if (
+                            lane < firstVisibleIndices.size &&
+                                firstVisibleIndices[lane] != LaneUnset
+                        ) {
                             firstVisibleIndices[lane]
                         } else {
                             if (lane == 0) {
@@ -261,7 +264,7 @@ internal class LazyStaggeredGridMeasureContext(
         get() = size != 1
 
     inline val SpanRange.laneInfo: Int
-        get() = if (isFullSpan) FullSpan else start
+        get() = if (isFullSpan) LaneFullSpan else start
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -427,7 +430,7 @@ private fun LazyStaggeredGridMeasureContext.measure(
             // Case 1: Each lane has laid out all items, but offsets do no match
             for (lane in firstItemIndices.indices) {
                 val misalignedOffsets =
-                    findPreviousItemIndex(firstItemIndices[lane], lane) == Unset &&
+                    findPreviousItemIndex(firstItemIndices[lane], lane) == LaneUnset &&
                         firstItemOffsets[lane] != firstItemOffsets[referenceLane]
 
                 if (misalignedOffsets) {
@@ -437,7 +440,7 @@ private fun LazyStaggeredGridMeasureContext.measure(
             // Case 2: Some lanes are still missing items, and there's no space left to place them
             for (lane in firstItemIndices.indices) {
                 val moreItemsInOtherLanes =
-                    findPreviousItemIndex(firstItemIndices[lane], lane) != Unset &&
+                    findPreviousItemIndex(firstItemIndices[lane], lane) != LaneUnset &&
                         firstItemOffsets[lane] >= firstItemOffsets[referenceLane]
 
                 if (moreItemsInOtherLanes) {
@@ -447,7 +450,7 @@ private fun LazyStaggeredGridMeasureContext.measure(
             // Case 3: the first item is in the wrong lane (it should always be in
             // the first one)
             val firstItemLane = laneInfo.getLane(0)
-            return firstItemLane != 0 && firstItemLane != Unset && firstItemLane != FullSpan
+            return firstItemLane != 0 && firstItemLane != LaneUnset && firstItemLane != LaneFullSpan
         }
 
         // define min offset (currently includes beforeContentPadding)
@@ -610,7 +613,7 @@ private fun LazyStaggeredGridMeasureContext.measure(
                     item.mainAxisSizeWithSpacings + if (gaps == null) 0 else gaps[laneIndex]
             }
 
-            firstItemIndices[laneIndex] = laneItems.firstOrNull()?.index ?: Unset
+            firstItemIndices[laneIndex] = laneItems.firstOrNull()?.index ?: LaneUnset
         }
 
         // ensure no spacing for the last item
@@ -826,8 +829,8 @@ private fun LazyStaggeredGridMeasureContext.measure(
                 filter = { itemIndex ->
                     val lane = laneInfo.getLane(itemIndex)
                     when (lane) {
-                        Unset,
-                        FullSpan -> {
+                        LaneUnset,
+                        LaneFullSpan -> {
                             measuredItems.all {
                                 val firstIndex = it.firstOrNull()?.index ?: -1
                                 firstIndex > itemIndex
@@ -891,8 +894,8 @@ private fun LazyStaggeredGridMeasureContext.measure(
                     }
                     val lane = laneInfo.getLane(itemIndex)
                     when (lane) {
-                        Unset,
-                        FullSpan -> {
+                        LaneUnset,
+                        LaneFullSpan -> {
                             currentItemIndices.all { it < itemIndex }
                         }
                         else -> {
