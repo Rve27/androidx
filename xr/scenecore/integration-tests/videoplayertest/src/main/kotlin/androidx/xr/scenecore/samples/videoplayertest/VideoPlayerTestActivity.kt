@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/*
+ * For the proper playback of MV-HEVC videos, this sample requires ExoPlayer
+ * 1.6.0 or higher and a multiview hardware decoder on the device.
+ */
+
 package androidx.xr.scenecore.samples.videoplayertest
 
 import android.app.Activity
@@ -61,6 +66,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.media3.common.C
+import androidx.media3.common.ColorInfo
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaItem.DrmConfiguration
 import androidx.media3.common.PlaybackException
@@ -88,6 +94,10 @@ import com.google.common.util.concurrent.FutureCallback
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import java.io.File
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+
+private const val TAG = "JXR-SurfaceEntity-VideoPlayerTestActivity"
 
 class VideoPlayerTestActivity : ComponentActivity() {
     private var exoPlayer: ExoPlayer? = null
@@ -105,6 +115,24 @@ class VideoPlayerTestActivity : ComponentActivity() {
 
     private var subtitles: VideoPlayerSubtitles? = null
 
+    enum class ColorCorrectionMode {
+        BEST_EFFORT,
+        USER_MANAGED,
+    }
+
+    var colorCorrectionMode by mutableStateOf(ColorCorrectionMode.BEST_EFFORT)
+        private set
+
+    fun toggleColorCorrectionMode() {
+        colorCorrectionMode =
+            if (colorCorrectionMode == ColorCorrectionMode.BEST_EFFORT) {
+                ColorCorrectionMode.USER_MANAGED
+            } else {
+                ColorCorrectionMode.BEST_EFFORT
+            }
+        Log.d(TAG, "ColorCorrectionMode toggled to: $colorCorrectionMode")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -119,12 +147,12 @@ class VideoPlayerTestActivity : ComponentActivity() {
             alphaMaskTextureFuture,
             object : FutureCallback<Texture> {
                 override fun onSuccess(texture: Texture) {
-                    Log.i("VideoPlayerTestActivity", "Alpha mask texture created")
+                    Log.i(TAG, "Alpha mask texture created")
                     alphaMaskTexture = texture
                 }
 
                 override fun onFailure(t: Throwable) {
-                    Log.e("VideoPlayerTestActivity", "Failed to create alpha mask texture", t)
+                    Log.e(TAG, "Failed to create alpha mask texture", t)
                 }
             },
             Runnable::run,
@@ -146,7 +174,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
     private fun togglePassthrough(session: Session) {
         val passthroughOpacity: Float =
             session.scene.spatialEnvironment.getCurrentPassthroughOpacity()
-        Log.i("TogglePassthrough", "TogglePassthrough!")
+        Log.i(TAG, "TogglePassthrough!")
         when (passthroughOpacity) {
             0.0f -> session.scene.spatialEnvironment.setPassthroughOpacityPreference(1.0f)
             1.0f -> session.scene.spatialEnvironment.setPassthroughOpacityPreference(0.0f)
@@ -259,11 +287,28 @@ class VideoPlayerTestActivity : ComponentActivity() {
         }
     }
 
+    @Suppress("UnsafeOptInUsageError")
+    fun parseMaxCLLFromHdrStaticInfo(hdrStaticInfoByteArray: ByteArray?): Int {
+        // HdrStaticInfo follows CTA-861.3 standard, in which maxCLL, if available, is encoded
+        // as a 16 bit unsigned integer starting from byte 23.
+        if (hdrStaticInfoByteArray == null || hdrStaticInfoByteArray.size < 25) {
+            return 0
+        }
+        return try {
+            val buffer = ByteBuffer.wrap(hdrStaticInfoByteArray).order(ByteOrder.LITTLE_ENDIAN)
+            buffer.position(23)
+            buffer.getShort().toInt() and 0xFFFF
+        } catch (e: Exception) {
+            Log.e(TAG, "Error parsing MaxCLL from HDR static info", e)
+            0
+        }
+    }
+
     /** A simple composable that toggles the passthrough on and off to test environment changes. */
     // TODO: b/324947709 - Refactor common @Composable code into a utility library for common usage
     // across sample apps.
     @Composable
-    fun HelloWorld(session: Session, activity: Activity) {
+    fun HelloWorld(session: Session, activity: VideoPlayerTestActivity) {
         // Add a panel to the main activity with a button to toggle passthrough
         LaunchedEffect(Unit) {
             activity.setContentView(
@@ -272,7 +317,10 @@ class VideoPlayerTestActivity : ComponentActivity() {
         }
     }
 
-    private fun createButtonViewUsingCompose(activity: Activity, session: Session): View {
+    private fun createButtonViewUsingCompose(
+        activity: VideoPlayerTestActivity,
+        session: Session,
+    ): View {
         val view =
             ComposeView(activity.applicationContext).apply {
                 setViewCompositionStrategy(
@@ -376,6 +424,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
         } // end column
     }
 
+    @Suppress("UnsafeOptInUsageError")
     @Composable
     fun PlayVideoButton(
         session: Session,
@@ -422,6 +471,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
                             pose,
                             canvasShape,
                             surfaceContentLevel,
+                            null,
                         )
                     // Make the video player movable (to make it easier to look at it from different
                     // angles and distances) (only on quad canvas)
@@ -483,6 +533,67 @@ class VideoPlayerTestActivity : ComponentActivity() {
                             }
                         }
 
+                        override fun onTracksChanged(tracks: androidx.media3.common.Tracks) {
+                            super.onTracksChanged(tracks)
+
+                            if (
+                                this@VideoPlayerTestActivity.colorCorrectionMode ==
+                                    ColorCorrectionMode.BEST_EFFORT
+                            ) {
+                                if (surfaceEntity != null) {
+                                    surfaceEntity?.contentColorMetadata = null
+                                    Log.d(
+                                        TAG,
+                                        "ColorCorrectionMode is BEST_EFFORT. Setting contentColorMetadata to null.",
+                                    )
+                                }
+                                return
+                            }
+
+                            // Iterate through track groups to find the selected video track
+                            for (trackGroup in tracks.groups) {
+                                if (
+                                    trackGroup.isSelected && trackGroup.type == C.TRACK_TYPE_VIDEO
+                                ) {
+                                    if (trackGroup.length > 0) {
+                                        val videoFormat = trackGroup.getTrackFormat(0)
+                                        val colorInfo: ColorInfo? = videoFormat.colorInfo
+                                        if (colorInfo != null && surfaceEntity != null) {
+                                            val colorSpace = colorInfo.colorSpace
+                                            Log.d(TAG, "colorSpace: $colorSpace")
+                                            val colorTransfer = colorInfo.colorTransfer
+                                            Log.d(TAG, "colorTransfer: $colorTransfer")
+                                            val colorRange = colorInfo.colorRange
+                                            Log.d(TAG, "colorRange: $colorRange")
+                                            val maxContentLightLevel =
+                                                parseMaxCLLFromHdrStaticInfo(
+                                                    colorInfo.hdrStaticInfo
+                                                )
+                                            Log.d(
+                                                TAG,
+                                                "maxContentLightLevel: $maxContentLightLevel",
+                                            )
+
+                                            val contentColorMetadata =
+                                                SurfaceEntity.ContentColorMetadata(
+                                                    colorSpace = colorSpace,
+                                                    colorTransfer = colorTransfer,
+                                                    colorRange = colorRange,
+                                                    maxCLL = maxContentLightLevel,
+                                                )
+                                            surfaceEntity?.contentColorMetadata =
+                                                contentColorMetadata
+                                            Log.d(
+                                                TAG,
+                                                "SurfaceEntity contentColorMetadata updated: $contentColorMetadata",
+                                            )
+                                        }
+                                        break
+                                    }
+                                }
+                            }
+                        }
+
                         override fun onPlaybackStateChanged(playbackState: Int) {
                             // Update videoPlaying based on ExoPlayer's isPlaying property.
                             videoPlaying =
@@ -494,7 +605,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
                         }
 
                         override fun onPlayerError(error: PlaybackException) {
-                            Log.e("VideoPlayerTestActivity", "Player error: $error")
+                            Log.e(TAG, "Player error: $error")
                         }
                     }
                 )
@@ -667,7 +778,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
     }
 
     @Composable
-    fun ForBiggerBlazesProtectedButton(
+    fun SideBySideProtectedButton(
         session: Session,
         activity: Activity,
         enabled: Boolean = true,
@@ -684,7 +795,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
             stereoMode = SurfaceEntity.StereoMode.SIDE_BY_SIDE,
             pose = Pose(Vector3(0.0f, 0.0f, -1.5f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
             canvasShape = SurfaceEntity.CanvasShape.Quad(1.0f, 1.0f),
-            buttonText = "Play DRM Protected For Bigger Blazes",
+            buttonText = "[DRM] Play Side-by-Side",
             enabled = enabled,
             loop = loop,
             protected = true,
@@ -709,7 +820,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
             stereoMode = SurfaceEntity.StereoMode.MULTIVIEW_LEFT_PRIMARY,
             pose = Pose(Vector3(0.0f, 0.0f, -1.5f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
             canvasShape = SurfaceEntity.CanvasShape.Quad(1.0f, 1.0f),
-            buttonText = "Play DRM Protected MVHEVC Left Primary",
+            buttonText = "[DRM] Play MVHEVC Left Primary",
             enabled = enabled,
             loop = loop,
             protected = true,
@@ -717,7 +828,32 @@ class VideoPlayerTestActivity : ComponentActivity() {
     }
 
     @Composable
-    fun VideoPlayerTestActivityUI(session: Session, activity: Activity) {
+    fun HDRVideoPlaybackButton(
+        session: Session,
+        activity: Activity,
+        enabled: Boolean = true,
+        loop: Boolean = false,
+    ) {
+        PlayVideoButton(
+            session = session,
+            activity = activity,
+            // For Testers: Note that this translates to
+            // "/sdcard/Download/hdr_pq_1000nits_1080p.mp4"
+            videoUri =
+                Environment.getExternalStorageDirectory().getPath() +
+                    "/Download/hdr_pq_1000nits_1080p.mp4",
+            stereoMode = SurfaceEntity.StereoMode.MONO,
+            pose = Pose(Vector3(0.0f, 0.0f, -1.5f), Quaternion(0.0f, 0.0f, 0.0f, 1.0f)),
+            canvasShape = SurfaceEntity.CanvasShape.Quad(1.0f, 1.0f),
+            buttonText = "[HDR] Play HDR PQ Video",
+            enabled = enabled,
+            loop = loop,
+            protected = false,
+        )
+    }
+
+    @Composable
+    fun VideoPlayerTestActivityUI(session: Session, activity: VideoPlayerTestActivity) {
         val movableComponentMP = remember { mutableStateOf<MovableComponent?>(null) }
         val videoPaused = remember { mutableStateOf(false) }
         val alphaMaskEnabled = remember { mutableStateOf(false) }
@@ -735,9 +871,9 @@ class VideoPlayerTestActivity : ComponentActivity() {
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.weight(1f).padding(8.dp),
             ) {
-                Text(text = "System APIs", fontSize = 50.sp)
+                Text(text = "System APIs", fontSize = 30.sp)
                 Button(onClick = { togglePassthrough(session) }) {
-                    Text(text = "Toggle Passthrough", fontSize = 30.sp)
+                    Text(text = "Toggle Passthrough", fontSize = 20.sp)
                 }
                 Button(
                     onClick = {
@@ -756,20 +892,32 @@ class VideoPlayerTestActivity : ComponentActivity() {
                         checkExternalStoragePermission()
                     }
                 ) {
-                    Text(text = "Request FSM", fontSize = 30.sp)
+                    Text(text = "Request FSM", fontSize = 20.sp)
                 }
                 Button(onClick = { session.scene.spatialEnvironment.requestHomeSpaceMode() }) {
-                    Text(text = "Request HSM", fontSize = 30.sp)
+                    Text(text = "Request HSM", fontSize = 20.sp)
                 }
                 Button(onClick = { ActivityCompat.recreate(activity) }) {
-                    Text(text = "Recreate Activity", fontSize = 30.sp)
+                    Text(text = "Recreate Activity", fontSize = 20.sp)
+                }
+                Button(onClick = { activity.toggleColorCorrectionMode() }) {
+                    val buttonTextToDisplay =
+                        if (
+                            activity.colorCorrectionMode ==
+                                VideoPlayerTestActivity.ColorCorrectionMode.BEST_EFFORT
+                        ) {
+                            "CC: Best Effort (Tap to User Managed)"
+                        } else {
+                            "CC: User Managed (Tap to Best Effort)"
+                        }
+                    Text(text = buttonTextToDisplay, fontSize = 20.sp)
                 }
             }
             Column(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.weight(1f).padding(8.dp),
             ) {
-                Text(text = "(Stereo) SurfaceEntity", fontSize = 50.sp)
+                Text(text = "SurfaceEntity", fontSize = 30.sp)
                 if (videoPlaying == false) {
                     if (subtitleCheckedState.value) {
                         handleSubtitleStateChange(session, false)
@@ -782,8 +930,9 @@ class VideoPlayerTestActivity : ComponentActivity() {
                     Naver180MVHEVCButton(session, activity)
                     Galaxy360Button(session, activity)
                     Galaxy360MVHEVCButton(session, activity)
-                    ForBiggerBlazesProtectedButton(session, activity)
+                    SideBySideProtectedButton(session, activity)
                     MVHEVCLeftPrimaryProtectedButton(session, activity)
+                    HDRVideoPlaybackButton(session, activity)
                 } else {
                     Column(
                         verticalArrangement = Arrangement.Center,
@@ -802,7 +951,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
                                 }
                             }
                         ) {
-                            Text(text = "Toggle Pause Stereo video", fontSize = 30.sp)
+                            Text(text = "Toggle Pause Stereo video", fontSize = 20.sp)
                         }
                         Button(
                             onClick = {
@@ -815,7 +964,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
                                 }
                             }
                         ) {
-                            Text(text = "Toggle Alpha Mask", fontSize = 30.sp)
+                            Text(text = "Toggle Alpha Mask", fontSize = 20.sp)
                         }
                         Row(
                             Modifier.height(50.dp)

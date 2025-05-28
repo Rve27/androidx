@@ -839,8 +839,10 @@ package androidx.xr.scenecore {
     method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose);
     method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.CanvasShape canvasShape);
     method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.CanvasShape canvasShape, optional int contentSecurityLevel);
+    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.CanvasShape canvasShape, optional int contentSecurityLevel, optional androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata? contentColorMetadata);
     method public androidx.xr.scenecore.Texture? getAuxiliaryAlphaMaskTexture();
     method public androidx.xr.scenecore.SurfaceEntity.CanvasShape getCanvasShape();
+    method public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata? getContentColorMetadata();
     method public androidx.xr.runtime.math.FloatSize3d getDimensions();
     method public float getFeatherRadiusX();
     method public float getFeatherRadiusY();
@@ -850,12 +852,14 @@ package androidx.xr.scenecore {
     method @MainThread public android.view.Surface getSurface();
     method @MainThread public void setAuxiliaryAlphaMaskTexture(androidx.xr.scenecore.Texture?);
     method @MainThread public void setCanvasShape(androidx.xr.scenecore.SurfaceEntity.CanvasShape);
+    method @MainThread public void setContentColorMetadata(androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata?);
     method @MainThread public void setFeatherRadiusX(float);
     method @MainThread public void setFeatherRadiusY(float);
     method @MainThread public void setPrimaryAlphaMaskTexture(androidx.xr.scenecore.Texture?);
     method @MainThread public void setStereoMode(int);
     property public androidx.xr.scenecore.Texture? auxiliaryAlphaMaskTexture;
     property public androidx.xr.scenecore.SurfaceEntity.CanvasShape canvasShape;
+    property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata? contentColorMetadata;
     property public androidx.xr.runtime.math.FloatSize3d dimensions;
     property public float featherRadiusX;
     property public float featherRadiusY;
@@ -898,6 +902,68 @@ package androidx.xr.scenecore {
     method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose);
     method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.CanvasShape canvasShape);
     method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.CanvasShape canvasShape, optional int contentSecurityLevel);
+    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.CanvasShape canvasShape, optional int contentSecurityLevel, optional androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata? contentColorMetadata);
+  }
+
+  public static final class SurfaceEntity.ContentColorMetadata {
+    ctor public SurfaceEntity.ContentColorMetadata();
+    ctor public SurfaceEntity.ContentColorMetadata(optional int colorSpace, optional int colorTransfer, optional int colorRange, optional int maxCLL);
+    method public int getColorRange();
+    method public int getColorSpace();
+    method public int getColorTransfer();
+    method public int getMaxCLL();
+    property public int colorRange;
+    property public int colorSpace;
+    property public int colorTransfer;
+    property public int maxCLL;
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.Companion Companion;
+    field public static final int maxCLLUnknown = 0; // 0x0
+  }
+
+  public static final class SurfaceEntity.ContentColorMetadata.ColorRange {
+    property public static int FULL;
+    property public static int LIMITED;
+    field public static final int FULL = 1; // 0x1
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorRange INSTANCE;
+    field public static final int LIMITED = 2; // 0x2
+  }
+
+  public static final class SurfaceEntity.ContentColorMetadata.ColorSpace {
+    property public static int ADOBE_RGB;
+    property public static int BT2020;
+    property public static int BT601_525;
+    property public static int BT601_PAL;
+    property public static int BT709;
+    property public static int DCI_P3;
+    property public static int DISPLAY_P3;
+    field public static final int ADOBE_RGB = 243; // 0xf3
+    field public static final int BT2020 = 6; // 0x6
+    field public static final int BT601_525 = 240; // 0xf0
+    field public static final int BT601_PAL = 2; // 0x2
+    field public static final int BT709 = 1; // 0x1
+    field public static final int DCI_P3 = 242; // 0xf2
+    field public static final int DISPLAY_P3 = 241; // 0xf1
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorSpace INSTANCE;
+  }
+
+  public static final class SurfaceEntity.ContentColorMetadata.ColorTransfer {
+    property public static int GAMMA_2_2;
+    property public static int HLG;
+    property public static int LINEAR;
+    property public static int SDR;
+    property public static int SRGB;
+    property public static int ST2084;
+    field public static final int GAMMA_2_2 = 10; // 0xa
+    field public static final int HLG = 7; // 0x7
+    field public static final androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata.ColorTransfer INSTANCE;
+    field public static final int LINEAR = 1; // 0x1
+    field public static final int SDR = 3; // 0x3
+    field public static final int SRGB = 2; // 0x2
+    field public static final int ST2084 = 6; // 0x6
+  }
+
+  public static final class SurfaceEntity.ContentColorMetadata.Companion {
+    property public static int maxCLLUnknown;
   }
 
   public static final class SurfaceEntity.ContentSecurityLevel {

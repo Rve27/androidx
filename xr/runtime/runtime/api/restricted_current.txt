@@ -1475,22 +1475,34 @@ package androidx.xr.runtime.internal {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SurfaceEntity extends androidx.xr.runtime.internal.Entity {
     method public androidx.xr.runtime.internal.SurfaceEntity.CanvasShape getCanvasShape();
+    method public int getColorRange();
+    method public int getColorSpace();
+    method public int getColorTransfer();
+    method public boolean getContentColorMetadataSet();
     method public androidx.xr.runtime.internal.Dimensions getDimensions();
     method public float getFeatherRadiusX();
     method public float getFeatherRadiusY();
+    method public int getMaxCLL();
     method public androidx.xr.runtime.internal.PerceivedResolutionResult getPerceivedResolution();
     method public int getStereoMode();
     method public android.view.Surface getSurface();
+    method public void resetContentColorMetadata();
     method public void setAuxiliaryAlphaMaskTexture(androidx.xr.runtime.internal.TextureResource? alphaMask);
     method public void setCanvasShape(androidx.xr.runtime.internal.SurfaceEntity.CanvasShape);
+    method public void setContentColorMetadata(int colorSpace, int colorTransfer, int colorRange, int maxCLL);
     method public void setFeatherRadiusX(float);
     method public void setFeatherRadiusY(float);
     method public void setPrimaryAlphaMaskTexture(androidx.xr.runtime.internal.TextureResource? alphaMask);
     method public void setStereoMode(int);
     property public abstract androidx.xr.runtime.internal.SurfaceEntity.CanvasShape canvasShape;
+    property public abstract int colorRange;
+    property public abstract int colorSpace;
+    property public abstract int colorTransfer;
+    property public abstract boolean contentColorMetadataSet;
     property public abstract androidx.xr.runtime.internal.Dimensions dimensions;
     property public abstract float featherRadiusX;
     property public abstract float featherRadiusY;
+    property public abstract int maxCLL;
     property public abstract int stereoMode;
     property public abstract android.view.Surface surface;
   }
@@ -1524,6 +1536,72 @@ package androidx.xr.runtime.internal {
     method public float getRadius();
     property public androidx.xr.runtime.internal.Dimensions dimensions;
     property public float radius;
+  }
+
+  @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) public static @interface SurfaceEntity.ColorRange {
+    field public static final androidx.xr.runtime.internal.SurfaceEntity.ColorRange.Companion Companion;
+    field public static final int FULL = 1; // 0x1
+    field public static final int LIMITED = 2; // 0x2
+  }
+
+  public static final class SurfaceEntity.ColorRange.Companion {
+    property public static int FULL;
+    property public static int LIMITED;
+    field public static final int FULL = 1; // 0x1
+    field public static final int LIMITED = 2; // 0x2
+  }
+
+  @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) public static @interface SurfaceEntity.ColorSpace {
+    field public static final int ADOBE_RGB = 243; // 0xf3
+    field public static final int BT2020 = 6; // 0x6
+    field public static final int BT601_525 = 240; // 0xf0
+    field public static final int BT601_PAL = 2; // 0x2
+    field public static final int BT709 = 1; // 0x1
+    field public static final androidx.xr.runtime.internal.SurfaceEntity.ColorSpace.Companion Companion;
+    field public static final int DCI_P3 = 242; // 0xf2
+    field public static final int DISPLAY_P3 = 241; // 0xf1
+  }
+
+  public static final class SurfaceEntity.ColorSpace.Companion {
+    property public static int ADOBE_RGB;
+    property public static int BT2020;
+    property public static int BT601_525;
+    property public static int BT601_PAL;
+    property public static int BT709;
+    property public static int DCI_P3;
+    property public static int DISPLAY_P3;
+    field public static final int ADOBE_RGB = 243; // 0xf3
+    field public static final int BT2020 = 6; // 0x6
+    field public static final int BT601_525 = 240; // 0xf0
+    field public static final int BT601_PAL = 2; // 0x2
+    field public static final int BT709 = 1; // 0x1
+    field public static final int DCI_P3 = 242; // 0xf2
+    field public static final int DISPLAY_P3 = 241; // 0xf1
+  }
+
+  @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) public static @interface SurfaceEntity.ColorTransfer {
+    field public static final androidx.xr.runtime.internal.SurfaceEntity.ColorTransfer.Companion Companion;
+    field public static final int GAMMA_2_2 = 10; // 0xa
+    field public static final int HLG = 7; // 0x7
+    field public static final int LINEAR = 1; // 0x1
+    field public static final int SDR = 3; // 0x3
+    field public static final int SRGB = 2; // 0x2
+    field public static final int ST2084 = 6; // 0x6
+  }
+
+  public static final class SurfaceEntity.ColorTransfer.Companion {
+    property public static int GAMMA_2_2;
+    property public static int HLG;
+    property public static int LINEAR;
+    property public static int SDR;
+    property public static int SRGB;
+    property public static int ST2084;
+    field public static final int GAMMA_2_2 = 10; // 0xa
+    field public static final int HLG = 7; // 0x7
+    field public static final int LINEAR = 1; // 0x1
+    field public static final int SDR = 3; // 0x3
+    field public static final int SRGB = 2; // 0x2
+    field public static final int ST2084 = 6; // 0x6
   }
 
   @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) public static @interface SurfaceEntity.ContentSecurityLevel {

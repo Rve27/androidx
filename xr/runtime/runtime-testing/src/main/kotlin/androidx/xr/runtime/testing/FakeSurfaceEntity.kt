@@ -50,4 +50,23 @@ public class FakeSurfaceEntity : SurfaceEntity, FakeEntity() {
     override fun getPerceivedResolution(): PerceivedResolutionResult {
         return PerceivedResolutionResult.Success(PixelDimensions(0, 0))
     }
+
+    override val contentColorMetadataSet: Boolean = false
+
+    override var colorSpace: Int = 0
+
+    override var colorTransfer: Int = 0
+
+    override var colorRange: Int = 0
+
+    override var maxCLL: Int = 0
+
+    override fun setContentColorMetadata(
+        colorSpace: Int,
+        colorTransfer: Int,
+        colorRange: Int,
+        maxCLL: Int,
+    ) {}
+
+    override fun resetContentColorMetadata() {}
 }

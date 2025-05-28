@@ -93,6 +93,67 @@ public interface SurfaceEntity : Entity {
     public fun getPerceivedResolution(): PerceivedResolutionResult
 
     /**
+     * Indicates whether explicit color information has been set for the surface content. If
+     * `false`, the runtime should signal the backend to use its best effort color correction and
+     * tonemapping. If `true`, the runtime should inform the backend to use the values specified in
+     * [colorSpace], [colorTransfer], [colorRange], and [maxCLL] for color correction and
+     * tonemapping of the surface content.
+     *
+     * This property is typically managed by the `setContentColorMetadata` and
+     * `resetContentColorMetadata` methods.
+     */
+    public val contentColorMetadataSet: Boolean
+
+    /**
+     * The active color space of the media asset drawn on the surface. Use constants from
+     * [SurfaceEntity.ColorSpace]. This value is used if [contentColorMetadataSet] is `true`.
+     */
+    public val colorSpace: Int
+
+    /**
+     * The active color transfer function of the media asset drawn on the surface. Use constants
+     * from [SurfaceEntity.ColorTransfer]. This value is used if [contentColorMetadataSet] is
+     * `true`.
+     */
+    public val colorTransfer: Int
+
+    /**
+     * The active color range of the media asset drawn on the surface. Use constants from
+     * [SurfaceEntity.ColorRange]. This value is used if [contentColorMetadataSet] is `true`.
+     */
+    public val colorRange: Int
+
+    /**
+     * The active maximum content light level (MaxCLL) in nits. A value of 0 indicates that MaxCLL
+     * is not set or is unknown. This value is used if [contentColorMetadataSet] is `true`.
+     */
+    public val maxCLL: Int
+
+    /**
+     * Sets the explicit color information for the surface content. This will also set
+     * [contentColorMetadataSet] to `true`.
+     *
+     * @param colorSpace The runtime color space value (e.g., [SurfaceEntity.ColorSpace.BT709]).
+     * @param colorTransfer The runtime color transfer value (e.g.,
+     *   [SurfaceEntity.ColorTransfer.SRGB]).
+     * @param colorRange The runtime color range value (e.g., [SurfaceEntity.ColorRange.FULL]).
+     * @param maxCLL The maximum content light level in nits.
+     */
+    public fun setContentColorMetadata(
+        colorSpace: Int,
+        colorTransfer: Int,
+        colorRange: Int,
+        maxCLL: Int,
+    )
+
+    /**
+     * Resets the color information to the runtime's default handling. This will set
+     * [contentColorMetadataSet] to `false` and typically involves reverting [colorSpace],
+     * [colorTransfer], [colorRange], and [maxCLL] to their default runtime values.
+     */
+    public fun resetContentColorMetadata()
+
+    /**
      * Selects the view configuration for the surface. MONO creates a surface contains a single
      * view. SIDE_BY_SIDE means the surface is split in half with two views. The first half of the
      * surface maps to the left eye and the second half mapping to the right eye.
@@ -129,6 +190,54 @@ public interface SurfaceEntity : Entity {
             // Surface
             // is visible.
             public const val PROTECTED: Int = 1
+        }
+    }
+
+    /**
+     * Specifies the color space of the media asset drawn on the surface.
+     *
+     * Enum members cover the color spaces available in android::ADataSpace.
+     */
+    public annotation class ColorSpace {
+        public companion object {
+            public const val BT709: Int = 1
+            public const val BT601_PAL: Int = 2
+            public const val BT2020: Int = 6
+            public const val BT601_525: Int = 0xf0
+            public const val DISPLAY_P3: Int = 0xf1
+            public const val DCI_P3: Int = 0xf2
+            public const val ADOBE_RGB: Int = 0xf3
+        }
+    }
+
+    /**
+     * Specifies the color transfer function of the media asset drawn on the surface.
+     *
+     * Enum members cover the transfer functions available in android::ADataSpace. Enum values match
+     * values from androidx.media3.common.C.ColorTransfer in
+     * //third_party/java/android_libs/media:common
+     */
+    public annotation class ColorTransfer {
+        public companion object {
+            public const val LINEAR: Int = 1
+            public const val SRGB: Int = 2
+            public const val SDR: Int = 3 // SMPTE170M
+            public const val GAMMA_2_2: Int = 10
+            public const val ST2084: Int = 6
+            public const val HLG: Int = 7
+        }
+    }
+
+    /**
+     * Specifies the color range of the media asset drawn on the surface.
+     *
+     * Enum values match values from androidx.media3.common.C.ColorRange in
+     * //third_party/java/android_libs/media:common
+     */
+    public annotation class ColorRange {
+        public companion object {
+            public const val FULL: Int = 1
+            public const val LIMITED: Int = 2
         }
     }
 

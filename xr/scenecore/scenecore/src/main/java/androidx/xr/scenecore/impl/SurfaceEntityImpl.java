@@ -61,6 +61,11 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     private CanvasShape mCanvasShape;
     private float mFeatherRadiusX = 0.0f;
     private float mFeatherRadiusY = 0.0f;
+    private boolean mContentColorMetadataSet = false;
+    @ColorSpace private int mColorSpace = SurfaceEntity.ColorSpace.BT709;
+    @ColorTransfer private int mColorTransfer = SurfaceEntity.ColorTransfer.SRGB;
+    @ColorRange private int mColorRange = SurfaceEntity.ColorRange.FULL;
+    private int mMaxContentLightLevel = 0;
 
     // Converts SurfaceEntity's ContentSecurityLevel to an Impress ContentSecurityLevel.
     private static int toImpressContentSecurityLevel(
@@ -234,6 +239,59 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     @Override
     public float getFeatherRadiusY() {
         return mFeatherRadiusY;
+    }
+
+    @Override
+    @ColorSpace
+    public int getColorSpace() {
+        return mColorSpace;
+    }
+
+    @Override
+    @ColorTransfer
+    public int getColorTransfer() {
+        return mColorTransfer;
+    }
+
+    @Override
+    @ColorRange
+    public int getColorRange() {
+        return mColorRange;
+    }
+
+    @Override
+    public int getMaxCLL() {
+        return mMaxContentLightLevel;
+    }
+
+    @Override
+    public boolean getContentColorMetadataSet() {
+        return mContentColorMetadataSet;
+    }
+
+    @Override
+    public void setContentColorMetadata(
+            @ColorSpace int colorSpace,
+            @ColorTransfer int colorTransfer,
+            @ColorRange int colorRange,
+            int maxCLL) {
+        mColorSpace = colorSpace;
+        mColorTransfer = colorTransfer;
+        mColorRange = colorRange;
+        mMaxContentLightLevel = maxCLL;
+        mContentColorMetadataSet = true;
+        mImpressApi.setContentColorMetadataForStereoSurface(
+                mEntityImpressNode, colorSpace, colorTransfer, colorRange, maxCLL);
+    }
+
+    @Override
+    public void resetContentColorMetadata() {
+        mColorSpace = SurfaceEntity.ColorSpace.BT709;
+        mColorTransfer = SurfaceEntity.ColorTransfer.SRGB;
+        mColorRange = SurfaceEntity.ColorRange.FULL;
+        mMaxContentLightLevel = 0;
+        mContentColorMetadataSet = false;
+        mImpressApi.resetContentColorMetadataForStereoSurface(mEntityImpressNode);
     }
 
     // Note this returns the Impress node for the entity, not the subspace. The subspace Impress
