@@ -248,6 +248,7 @@ internal constructor(
          * @param origin the origin of a different application if the request is being made on
          *   behalf of that application
          */
+        @OptIn(ExperimentalDigitalCredentialApi::class)
         @JvmStatic
         @JvmOverloads
         @RequiresApi(23)
@@ -273,6 +274,12 @@ internal constructor(
                                 )
                             else -> throw FrameworkClassParsingException()
                         }
+                    DigitalCredential.TYPE_DIGITAL_CREDENTIAL ->
+                        CreateDigitalCredentialRequest.createFrom(
+                            credentialData,
+                            origin,
+                            candidateQueryData,
+                        )
                     else -> throw FrameworkClassParsingException()
                 }
             } catch (e: FrameworkClassParsingException) {
