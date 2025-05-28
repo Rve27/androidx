@@ -550,7 +550,6 @@ internal class LayoutNode(
         invalidateMeasurements()
         parent?.invalidateMeasurements()
 
-        forEachCoordinatorIncludingInner { it.onLayoutNodeAttach() }
         onAttach?.invoke(owner)
 
         layoutDelegate.updateParentData()
@@ -582,6 +581,8 @@ internal class LayoutNode(
             lookaheadPassDelegate?.let { it.measuredByParent = UsageByParent.NotUsed }
         }
         layoutDelegate.resetAlignmentLines()
+
+        forEachCoordinatorIncludingInner { it.onLayoutNodeDetach() }
         onDetach?.invoke(owner)
 
         @OptIn(ExperimentalComposeUiApi::class)

@@ -279,15 +279,6 @@ internal class NodeChain(val layoutNode: LayoutNode) {
      * invalidations as a result of the attach, if needed.
      */
     fun runAttachLifecycle() {
-        // Assign layers that have been recycled in onDetach() in case the node has been reused
-        var coordinator: NodeCoordinator = outerCoordinator
-        val innerCoordinator = innerCoordinator
-        while (coordinator !== innerCoordinator) {
-            coordinator.onAttach()
-            coordinator = coordinator.wrapped!!
-        }
-        innerCoordinator.onAttach()
-
         headToTail {
             it.runAttachLifecycle()
             if (it.insertedNodeAwaitingAttachForInvalidation) {
@@ -357,15 +348,6 @@ internal class NodeChain(val layoutNode: LayoutNode) {
 
     internal fun runDetachLifecycle() {
         tailToHead { if (it.isAttached) it.runDetachLifecycle() }
-
-        // Recycle layers
-        var coordinator: NodeCoordinator = innerCoordinator
-        val outerCoordinator = outerCoordinator
-        while (coordinator !== outerCoordinator) {
-            coordinator.onDetach()
-            coordinator = coordinator.wrappedBy!!
-        }
-        outerCoordinator.onDetach()
     }
 
     private fun getDiffer(

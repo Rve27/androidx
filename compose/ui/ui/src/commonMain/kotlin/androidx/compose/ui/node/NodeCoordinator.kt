@@ -611,30 +611,6 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
     val minimumTouchTargetSize: Size
         get() = with(layerDensity) { layoutNode.viewConfiguration.minimumTouchTargetSize.toSize() }
 
-    fun onAttach() {
-        if (layer == null && layerBlock != null) {
-            // This has been detached and is now being reattached. It previously had a layer, so
-            // reconstitute one.
-            layer =
-                layoutNode
-                    .requireOwner()
-                    .createLayer(drawBlock, invalidateParentLayer, explicitLayer)
-                    .apply {
-                        resize(measuredSize)
-                        move(position)
-                        invalidate()
-                    }
-        }
-    }
-
-    fun onDetach() {
-        layer?.let {
-            it.destroy()
-            invalidateParentLayer()
-            layer = null
-        }
-    }
-
     /**
      * Executes a hit test for this [NodeCoordinator].
      *
@@ -1187,14 +1163,12 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
     }
 
     /**
-     * This will be called when the [LayoutNode] associated with this [NodeCoordinator] is attached
-     * to the [Owner].
+     * This will be called when the [LayoutNode] associated with this [NodeCoordinator] is detached
+     * from the [Owner].
      */
-    fun onLayoutNodeAttach() {
-        // this call will update the parameters of the layer (alpha, scale, etc)
-        updateLayerBlock(layerBlock, forceUpdateLayerParameters = true)
-        // this call will invalidate the content of the layer
-        layer?.invalidate()
+    fun onLayoutNodeDetach() {
+        // we release the layer as the node might be moved to another owner
+        releaseLayer()
     }
 
     /**

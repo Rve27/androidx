@@ -22,6 +22,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -1890,5 +1891,78 @@ class GraphicsLayerTest {
             assertThat(height).isEqualTo(30)
             assertThat(getPixel(15, 15)).isEqualTo(Color.Blue.toArgb())
         }
+    }
+
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
+    @Test
+    fun layerIsCorrectlyRecreatedWithClipAppliedAfterReuse() {
+        var switch by mutableStateOf(true)
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides Density(1f)) {
+                Box(Modifier.testTag("tag").background(Color.Blue)) {
+                    ReusableContent(switch) {
+                        Canvas(
+                            modifier = Modifier.padding(5.dp).size(5.dp).graphicsLayer(clip = true)
+                        ) {
+                            drawRect(Color.Red, Offset(-5f, -5f), Size(15f, 15f))
+                        }
+                    }
+                }
+            }
+        }
+
+        fun assertPixels() {
+            rule.onNodeWithTag("tag").captureToImage().assertPixels(IntSize(15, 15)) {
+                if (it.x in 5 until 10 && it.y in 5 until 10) {
+                    Color.Red
+                } else {
+                    Color.Blue
+                }
+            }
+        }
+
+        assertPixels()
+
+        rule.runOnIdle { switch = !switch }
+
+        assertPixels()
+    }
+
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
+    @Test
+    fun layerIsCorrectlyRecreatedWithClipAppliedWhenMoved() {
+        var switch by mutableStateOf(true)
+        val moveable = movableContentOf {
+            Canvas(modifier = Modifier.padding(5.dp).size(5.dp).graphicsLayer(clip = true)) {
+                drawRect(Color.Red, Offset(-5f, -5f), Size(15f, 15f))
+            }
+        }
+        rule.setContent {
+            CompositionLocalProvider(LocalDensity provides Density(1f)) {
+                Box(Modifier.testTag("tag").background(Color.Blue)) {
+                    if (switch) {
+                        moveable()
+                    } else {
+                        moveable()
+                    }
+                }
+            }
+        }
+
+        fun assertPixels() {
+            rule.onNodeWithTag("tag").captureToImage().assertPixels(IntSize(15, 15)) {
+                if (it.x in 5 until 10 && it.y in 5 until 10) {
+                    Color.Red
+                } else {
+                    Color.Blue
+                }
+            }
+        }
+
+        assertPixels()
+
+        rule.runOnIdle { switch = !switch }
+
+        assertPixels()
     }
 }
