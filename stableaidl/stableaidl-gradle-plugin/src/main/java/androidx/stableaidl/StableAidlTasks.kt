@@ -21,6 +21,7 @@ import androidx.stableaidl.tasks.StableAidlCompile
 import androidx.stableaidl.tasks.StableAidlPackageApi
 import androidx.stableaidl.tasks.UpdateStableAidlApiTask
 import com.android.build.api.artifact.SingleArtifact
+import com.android.build.api.variant.KotlinMultiplatformAndroidVariant
 import com.android.build.api.variant.SourceDirectories
 import com.android.build.api.variant.Variant
 import com.android.utils.usLocaleCapitalize
@@ -96,13 +97,20 @@ fun registerCompileAidlApi(
             task.extraArgs.set(listOf("--structured"))
         }
         .also { taskProvider ->
-            variant.sources.java?.addGeneratedSourceDirectory(
-                taskProvider,
-                StableAidlCompile::sourceOutputDir,
-            )
+            val sources =
+                variant.sources.java
+                    ?: throw RuntimeException(
+                        "Failed to obtain Java source directory, did you specify " +
+                            "`androidLibrary { withJava() }`?"
+                    )
+            sources.addGeneratedSourceDirectory(taskProvider, StableAidlCompile::sourceOutputDir)
 
             // The API elements config is used by the compile classpath.
-            val targetConfig = "${variant.name}ApiElements"
+            val targetConfig =
+                when (variant) {
+                    is KotlinMultiplatformAndroidVariant -> "${variant.name}Api"
+                    else -> "${variant.name}ApiElements"
+                }
 
             // Register packaged output for use by Stable AIDL in other projects.
             project.artifacts.add(targetConfig, packagedDir) { artifact ->
