@@ -54,7 +54,7 @@ abstract class BaseFragment : Fragment() {
 
     private lateinit var sdkSandboxManager: SdkSandboxManagerCompat
     private lateinit var activity: Activity
-    protected var providerUiOnTop by mutableStateOf(true)
+    protected var providerUiOnTop by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
