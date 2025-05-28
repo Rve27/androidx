@@ -227,7 +227,7 @@ class NestedScrollInteropThreeFoldTest {
 
         // assert
         rule.runOnIdle {
-            assertThat(abs(nestedScrollParentView.velocityDuringPreFlingPassOffset))
+            assertThat(abs(nestedScrollParentView.velocityOfferedToParentOffset))
                 .isEqualTo(abs(connection.velocityConsumedDownChain))
         }
     }
