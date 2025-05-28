@@ -38,7 +38,6 @@ import android.media.CamcorderProfile.QUALITY_480P
 import android.media.CamcorderProfile.QUALITY_720P
 import android.media.MediaRecorder
 import android.os.Build
-import android.util.Pair
 import android.util.Range
 import android.util.Size
 import android.view.WindowManager
@@ -91,7 +90,6 @@ import androidx.camera.core.impl.ImageInputConfig
 import androidx.camera.core.impl.SessionConfig
 import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED
 import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR
-import androidx.camera.core.impl.StreamSpec
 import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.SurfaceCombination
 import androidx.camera.core.impl.SurfaceConfig
@@ -100,6 +98,7 @@ import androidx.camera.core.impl.SurfaceConfig.ConfigSize.S1440P_16_9
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize.S1440P_4_3
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize.S720P_16_9
 import androidx.camera.core.impl.SurfaceConfig.ConfigType
+import androidx.camera.core.impl.SurfaceStreamSpecQueryResult
 import androidx.camera.core.impl.UseCaseConfig
 import androidx.camera.core.impl.UseCaseConfigFactory
 import androidx.camera.core.impl.UseCaseConfigFactory.CaptureType
@@ -1838,11 +1837,12 @@ class SupportedSurfaceCombinationTest {
         default10BitProfile: Long? = null,
         isPreviewStabilizationOn: Boolean = false,
         hasVideoCapture: Boolean = false,
+        findMaxSupportedFrameRate: Boolean = false,
         expectedSessionType: Int = SESSION_TYPE_REGULAR,
         maxFpsBySizeMap: Map<Size, Int> = emptyMap(),
         allowFeatureComboResolutions: Boolean = false,
         featureCombinationQuery: FeatureCombinationQuery = NO_OP_FEATURE_COMBINATION_QUERY,
-    ): Pair<Map<UseCaseConfig<*>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>> {
+    ): SurfaceStreamSpecQueryResult {
         setupCamera(
             hardwareLevel = hardwareLevel,
             capabilities = capabilities,
@@ -1865,7 +1865,7 @@ class SupportedSurfaceCombinationTest {
             useCaseConfigMap.entries.associate { (useCase, config) ->
                 config to (useCasesOutputSizesMap?.get(useCase) ?: supportedSizes.toList())
             }
-        val resultPair =
+        val result =
             supportedSurfaceCombination.getSuggestedStreamSpecifications(
                 cameraMode,
                 attachedSurfaceInfoList,
@@ -1873,9 +1873,10 @@ class SupportedSurfaceCombinationTest {
                 isPreviewStabilizationOn,
                 hasVideoCapture,
                 allowFeatureComboResolutions,
+                findMaxSupportedFrameRate,
             )
-        val suggestedStreamSpecsForNewUseCases = resultPair.first
-        val suggestedStreamSpecsForOldSurfaces = resultPair.second
+        val suggestedStreamSpecsForNewUseCases = result.useCaseStreamSpecs
+        val suggestedStreamSpecsForOldSurfaces = result.attachedSurfaceStreamSpecs
 
         useCasesExpectedResultMap.keys.forEach {
             val resultSize = suggestedStreamSpecsForNewUseCases[useCaseConfigMap[it]]!!.resolution
@@ -1938,7 +1939,7 @@ class SupportedSurfaceCombinationTest {
                 )
                 .isEqualTo(hasStreamUseCaseStreamSpecOption)
         }
-        return resultPair
+        return result
     }
 
     private fun getUseCaseToConfigMap(useCases: List<UseCase>): Map<UseCase, UseCaseConfig<*>> {
@@ -3102,6 +3103,148 @@ class SupportedSurfaceCombinationTest {
         // unspecified: (0,0)
     }
 
+    @Test
+    fun getSuggestedStreamSpec_singleUseCase_returnMaxSupportedFrameRate() {
+        // Arrange.
+        val useCase = createUseCase(CaptureType.PREVIEW)
+
+        val useCasesOutputSizesMap =
+            mapOf(
+                useCase to
+                    listOf(
+                        Size(3840, 2160), // MaxFps = 25
+                        Size(1920, 1080), // MaxFps = 35
+                    )
+            )
+
+        // 3840x2160 is the first acceptable combination.
+        val useCaseExpectedResultMap = mapOf(useCase to Size(3840, 2160))
+
+        // Act.
+        val result =
+            getSuggestedSpecsAndVerify(
+                useCaseExpectedResultMap,
+                hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
+                useCasesOutputSizesMap = useCasesOutputSizesMap,
+                findMaxSupportedFrameRate = true,
+            )
+
+        // Verify.
+        assertThat(result.maxSupportedFrameRate).isEqualTo(35)
+    }
+
+    @Test
+    fun getSuggestedStreamSpec_singleUseCaseWithTargetFpsSet_returnMaxSupportedFrameRate() {
+        // Arrange.
+        val useCase = createUseCase(CaptureType.PREVIEW, targetFrameRate = Range(30, 30))
+
+        val useCasesOutputSizesMap =
+            mapOf(
+                useCase to
+                    listOf(
+                        Size(3840, 2160), // MaxFps = 25
+                        Size(1920, 1080), // MaxFps = 35
+                    )
+            )
+
+        // Only 1920x1080 with MaxFps 35 can fulfill targetFps [30, 30]. This is used to ensure the
+        // spec calculation is not impacted by finding max supported frame rate.
+        val useCaseExpectedResultMap = mapOf(useCase to Size(1920, 1080))
+
+        // Act.
+        val result =
+            getSuggestedSpecsAndVerify(
+                useCaseExpectedResultMap,
+                hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
+                useCasesOutputSizesMap = useCasesOutputSizesMap,
+                findMaxSupportedFrameRate = true,
+                compareExpectedFps = Range(30, 30),
+            )
+
+        // Verify.
+        assertThat(result.maxSupportedFrameRate).isEqualTo(35)
+    }
+
+    @Test
+    fun getSuggestedStreamSpec_multipleUseCases_returnMaxSupportedFrameRate() {
+        // Arrange.
+        val useCase1 = createUseCase(CaptureType.PREVIEW)
+        val useCase2 = createUseCase(CaptureType.VIDEO_CAPTURE)
+
+        // Output size combinations:
+        // * 3840x2160 + 1280x720 : MaxFps = 25
+        // * 1920x1080 + 1280x720 : MaxFps = 35, the MaxFps of all combination.
+        val useCasesOutputSizesMap =
+            mapOf(
+                useCase1 to
+                    listOf(
+                        Size(3840, 2160), // MaxFps = 25
+                        Size(1920, 1080), // MaxFps = 35
+                    ),
+                useCase2 to
+                    listOf(
+                        Size(1280, 720) // MaxFps = 45
+                    ),
+            )
+
+        // 3840x2160 + 1280x720 is the first acceptable combination.
+        val useCaseExpectedResultMap =
+            mapOf(useCase1 to Size(3840, 2160), useCase2 to Size(1280, 720))
+
+        // Act.
+        val result =
+            getSuggestedSpecsAndVerify(
+                useCaseExpectedResultMap,
+                hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
+                useCasesOutputSizesMap = useCasesOutputSizesMap,
+                findMaxSupportedFrameRate = true,
+            )
+
+        // Verify.
+        assertThat(result.maxSupportedFrameRate).isEqualTo(35)
+    }
+
+    @Test
+    fun getSuggestedStreamSpec_multipleUseCasesWithTargetFpsSet_returnMaxSupportedFrameRate() {
+        // Arrange.
+        val useCase1 = createUseCase(CaptureType.PREVIEW, targetFrameRate = Range(30, 30))
+        val useCase2 = createUseCase(CaptureType.VIDEO_CAPTURE, targetFrameRate = Range(30, 30))
+
+        // Output size combinations:
+        // * 3840x2160 + 1280x720 : MaxFps = 25
+        // * 1920x1080 + 1280x720 : MaxFps = 35, the MaxFps of all combination.
+        val useCasesOutputSizesMap =
+            mapOf(
+                useCase1 to
+                    listOf(
+                        Size(3840, 2160), // MaxFps = 25
+                        Size(1920, 1080), // MaxFps = 35
+                    ),
+                useCase2 to
+                    listOf(
+                        Size(1280, 720) // MaxFps = 45
+                    ),
+            )
+
+        // Only 1920x1080 + 1280x720 with MaxFps 35 can fulfill targetFps [30, 30]. This is used to
+        // ensure the  spec calculation is not impacted by finding max supported frame rate.
+        val useCaseExpectedResultMap =
+            mapOf(useCase1 to Size(1920, 1080), useCase2 to Size(1280, 720))
+
+        // Act.
+        val result =
+            getSuggestedSpecsAndVerify(
+                useCaseExpectedResultMap,
+                hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
+                useCasesOutputSizesMap = useCasesOutputSizesMap,
+                findMaxSupportedFrameRate = true,
+                compareExpectedFps = Range(30, 30),
+            )
+
+        // Verify.
+        assertThat(result.maxSupportedFrameRate).isEqualTo(35)
+    }
+
     // //////////////////////////////////////////////////////////////////////////////////////////
     //
     // Other tests
@@ -3346,10 +3489,10 @@ class SupportedSurfaceCombinationTest {
             createUseCase(CaptureType.IMAGE_CAPTURE, streamUseCaseOverride = true) // JPEG
         val useCaseExpectedResultMap =
             mutableMapOf<UseCase, Size>().apply { put(jpegUseCase, landscapePixelArraySize) }
-        val resultPair = getSuggestedSpecsAndVerify(useCaseExpectedResultMap)
-        assertThat(resultPair.first.size).isEqualTo(1)
+        val result = getSuggestedSpecsAndVerify(useCaseExpectedResultMap)
+        assertThat(result.useCaseStreamSpecs.size).isEqualTo(1)
         assertThat(
-                resultPair.first[jpegUseCase.currentConfig]!!
+                result.useCaseStreamSpecs[jpegUseCase.currentConfig]!!
                     .implementationOptions!!
                     .retrieveOption(StreamUseCaseUtil.STREAM_USE_CASE_STREAM_SPEC_OPTION)
             )
@@ -3384,20 +3527,20 @@ class SupportedSurfaceCombinationTest {
                 put(useCase2, previewSize)
             }
         // PRIV + PRIV is supported by the Ultra-high table but not Stream use case
-        val resultPair =
+        val result =
             getSuggestedSpecsAndVerify(
                 useCaseExpectedResultMap,
                 cameraMode = CameraMode.ULTRA_HIGH_RESOLUTION_CAMERA,
             )
-        assertThat(resultPair.first.size).isEqualTo(2)
+        assertThat(result.useCaseStreamSpecs.size).isEqualTo(2)
         assertThat(
-                resultPair.first[useCase1.currentConfig]!!
+                result.useCaseStreamSpecs[useCase1.currentConfig]!!
                     .implementationOptions!!
                     .containsOption(StreamUseCaseUtil.STREAM_USE_CASE_STREAM_SPEC_OPTION)
             )
             .isFalse()
         assertThat(
-                resultPair.first[useCase2.currentConfig]!!
+                result.useCaseStreamSpecs[useCase2.currentConfig]!!
                     .implementationOptions!!
                     .containsOption(StreamUseCaseUtil.STREAM_USE_CASE_STREAM_SPEC_OPTION)
             )
@@ -3411,10 +3554,10 @@ class SupportedSurfaceCombinationTest {
             createUseCase(CaptureType.IMAGE_CAPTURE, streamUseCaseOverride = true) // JPEG
         val useCaseExpectedResultMap =
             mutableMapOf<UseCase, Size>().apply { put(jpegUseCase, landscapePixelArraySize) }
-        val resultPair = getSuggestedSpecsAndVerify(useCaseExpectedResultMap)
-        assertThat(resultPair.first.size).isEqualTo(1)
+        val result = getSuggestedSpecsAndVerify(useCaseExpectedResultMap)
+        assertThat(result.useCaseStreamSpecs.size).isEqualTo(1)
         assertThat(
-                resultPair.first[jpegUseCase.currentConfig]!!
+                result.useCaseStreamSpecs[jpegUseCase.currentConfig]!!
                     .implementationOptions!!
                     .containsOption(StreamUseCaseUtil.STREAM_USE_CASE_STREAM_SPEC_OPTION)
             )

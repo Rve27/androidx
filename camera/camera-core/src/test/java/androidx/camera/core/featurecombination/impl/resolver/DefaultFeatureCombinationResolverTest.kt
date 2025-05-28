@@ -37,9 +37,9 @@ import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationR
 import androidx.camera.core.impl.CameraConfig
 import androidx.camera.core.impl.CameraInfoInternal
 import androidx.camera.core.impl.ImageFormatConstants.INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE
-import androidx.camera.core.impl.StreamSpec
 import androidx.camera.core.impl.stabilization.StabilizationMode.OFF
 import androidx.camera.core.impl.stabilization.StabilizationMode.ON
+import androidx.camera.core.internal.StreamSpecQueryResult
 import androidx.camera.core.internal.StreamSpecsCalculator
 import androidx.camera.testing.fakes.FakeCameraInfoInternal
 import androidx.camera.testing.impl.FakeStreamSpecsCalculator
@@ -700,9 +700,10 @@ class DefaultFeatureCombinationResolverTest {
                             cameraConfig: CameraConfig,
                             targetHighSpeedFrameRate: Range<Int>,
                             allowFeatureCombinationResolutions: Boolean,
-                        ): Map<UseCase, StreamSpec> {
+                            findMaxSupportedFrameRate: Boolean,
+                        ): StreamSpecQueryResult {
                             assertThat(allowFeatureCombinationResolutions).isEqualTo(true)
-                            return emptyMap()
+                            return StreamSpecQueryResult()
                         }
                     }
                 )
@@ -728,9 +729,10 @@ class DefaultFeatureCombinationResolverTest {
                             cameraConfig: CameraConfig,
                             targetHighSpeedFrameRate: Range<Int>,
                             allowFeatureCombinationResolutions: Boolean,
-                        ): Map<UseCase, StreamSpec> {
+                            findMaxSupportedFrameRate: Boolean,
+                        ): StreamSpecQueryResult {
                             assertThat(allowFeatureCombinationResolutions).isEqualTo(true)
-                            return emptyMap()
+                            return StreamSpecQueryResult()
                         }
                     }
                 )

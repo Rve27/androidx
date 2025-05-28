@@ -329,6 +329,39 @@ public interface CameraInfo {
     }
 
     /**
+     * Returns an unordered set of the frame rate ranges, in frames per second, supported by this
+     * device's AE algorithm for a specific {@link SessionConfig}.
+     *
+     * <p>These are the frame rate ranges that the AE algorithm on the device can support when a
+     * particular {@link SessionConfig} is applied. This allows for querying supported frame rates
+     * based on the specific configuration of {@link UseCase}s, which might influence the
+     * available ranges.
+     *
+     * <p>When CameraX is configured to run with the camera2 implementation, this list will be
+     * derived from
+     * {@link android.hardware.camera2.CameraCharacteristics#CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES}
+     * , though ranges may be added or removed for compatibility reasons or due to constraints
+     * imposed by the {@link SessionConfig}.
+     *
+     * <p>The returned set of frame rate ranges is guaranteed to be supported with the given
+     * {@link SessionConfig}. An empty set will be returned if the provided {@link SessionConfig}
+     * is invalid.
+     *
+     * <p>The returned set does not have any ordering guarantees and frame rate ranges may overlap.
+     *
+     * @param sessionConfig The [SessionConfig] to query supported frame rate ranges for.
+     * @return The set of FPS ranges supported by the device's AE algorithm for the given session
+     * config.
+     * @see androidx.camera.video.VideoCapture.Builder#setTargetFrameRate(Range)
+     */
+    @RestrictTo(Scope.LIBRARY_GROUP)
+    @ExperimentalSessionConfig
+    default @NonNull Set<Range<Integer>> getSupportedFrameRateRanges(
+            @NonNull SessionConfig sessionConfig) {
+        return Collections.emptySet();
+    }
+
+    /**
      * Returns if logical multi camera is supported on the device.
      *
      * <p>A logical camera is a grouping of two or more of those physical cameras.

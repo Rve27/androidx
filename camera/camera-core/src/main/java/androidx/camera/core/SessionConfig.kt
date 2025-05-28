@@ -21,6 +21,8 @@ import androidx.annotation.RestrictTo
 import androidx.camera.core.featurecombination.Feature
 import androidx.camera.core.featurecombination.impl.UseCaseType
 import androidx.camera.core.featurecombination.impl.UseCaseType.Companion.getFeatureComboUseCaseType
+import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED
+import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR
 import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
 import androidx.core.util.Consumer
@@ -72,6 +74,11 @@ constructor(
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public open val isLegacy: Boolean = false
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public open val targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
+    // TODO(b/419462894): Refactor targetHighSpeedFrameRate into sessionType and targetFrameRate
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public open val sessionType: Int =
+        if (targetHighSpeedFrameRate != FRAME_RATE_RANGE_UNSPECIFIED) SESSION_TYPE_HIGH_SPEED
+        else SESSION_TYPE_REGULAR
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var featureSelectionListener: Consumer<Set<Feature>> = Consumer<Set<Feature>> {}

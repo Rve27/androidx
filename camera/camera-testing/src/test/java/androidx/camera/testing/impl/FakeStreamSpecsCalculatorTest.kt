@@ -77,14 +77,14 @@ class FakeStreamSpecsCalculatorTest {
 
         fakeStreamSpecsCalculator.addSupportedStreamSpecs(expectedStreamSpec)
 
-        val streamSpecs =
+        val result =
             fakeStreamSpecsCalculator.calculateSuggestedStreamSpecs(
                 cameraMode = CameraMode.DEFAULT,
                 cameraInfoInternal = fakeCameraInfo,
                 newUseCases = listOf(useCase),
             )
 
-        assertThat(streamSpecs[useCase]).isEqualTo(expectedStreamSpec)
+        assertThat(result.streamSpecs[useCase]).isEqualTo(expectedStreamSpec)
     }
 
     @Test
@@ -126,14 +126,14 @@ class FakeStreamSpecsCalculatorTest {
             expectedImageCaptureStreamSpec,
         )
 
-        val streamSpecs =
+        val result =
             fakeStreamSpecsCalculator.calculateSuggestedStreamSpecs(
                 cameraMode = CameraMode.DEFAULT,
                 cameraInfoInternal = fakeCameraInfo,
                 newUseCases = listOf(preview, imageCapture),
             )
 
-        assertThat(streamSpecs[preview]).isEqualTo(expectedPreviewStreamSpec)
-        assertThat(streamSpecs[imageCapture]).isEqualTo(expectedImageCaptureStreamSpec)
+        assertThat(result.streamSpecs[preview]).isEqualTo(expectedPreviewStreamSpec)
+        assertThat(result.streamSpecs[imageCapture]).isEqualTo(expectedImageCaptureStreamSpec)
     }
 }

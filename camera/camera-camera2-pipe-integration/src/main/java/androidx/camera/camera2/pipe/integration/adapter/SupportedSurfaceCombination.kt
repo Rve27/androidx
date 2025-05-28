@@ -26,7 +26,6 @@ import android.hardware.camera2.params.StreamConfigurationMap
 import android.media.CamcorderProfile
 import android.media.MediaRecorder
 import android.os.Build
-import android.util.Pair
 import android.util.Range
 import android.util.Rational
 import android.util.Size
@@ -65,6 +64,7 @@ import androidx.camera.core.impl.SurfaceConfig.ConfigSize
 import androidx.camera.core.impl.SurfaceConfig.ConfigSource.CAPTURE_SESSION_TABLES
 import androidx.camera.core.impl.SurfaceConfig.ConfigSource.FEATURE_COMBINATION_TABLE
 import androidx.camera.core.impl.SurfaceSizeDefinition
+import androidx.camera.core.impl.SurfaceStreamSpecQueryResult
 import androidx.camera.core.impl.UseCaseConfig
 import androidx.camera.core.impl.stabilization.StabilizationMode
 import androidx.camera.core.impl.utils.AspectRatioUtil
@@ -353,8 +353,8 @@ public class SupportedSurfaceCombination(
      * @param isPreviewStabilizationOn whether the preview stabilization is enabled.
      * @param hasVideoCapture whether the use cases has video capture.
      * @param allowFeatureCombinationResolutions whether to allow feature combination resolutions.
-     * @return the suggested stream specs, which is a mapping from UseCaseConfig to the suggested
-     *   stream specification.
+     * @param findMaxSupportedFrameRate whether to find the max supported frame rate.
+     * @return a [SurfaceStreamSpecQueryResult].
      * @throws IllegalArgumentException if the suggested solution for newUseCaseConfigs cannot be
      *   found. This may be due to no available output size or no available surface combination.
      */
@@ -365,7 +365,8 @@ public class SupportedSurfaceCombination(
         isPreviewStabilizationOn: Boolean = false,
         hasVideoCapture: Boolean = false,
         allowFeatureCombinationResolutions: Boolean,
-    ): Pair<Map<UseCaseConfig<*>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>> {
+        findMaxSupportedFrameRate: Boolean,
+    ): SurfaceStreamSpecQueryResult {
         // Refresh Preview Size based on current display configurations.
         refreshPreviewSize()
 
@@ -431,6 +432,7 @@ public class SupportedSurfaceCombination(
             newUseCaseConfigs,
             useCasesPriorityOrder,
             resolvedDynamicRanges,
+            findMaxSupportedFrameRate,
         )
     }
 
@@ -462,7 +464,8 @@ public class SupportedSurfaceCombination(
         newUseCaseConfigs: List<UseCaseConfig<*>>,
         useCasesPriorityOrder: List<Int>,
         resolvedDynamicRanges: Map<UseCaseConfig<*>, DynamicRange>,
-    ): Pair<Map<UseCaseConfig<*>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>> {
+        findMaxSupportedFrameRate: Boolean,
+    ): SurfaceStreamSpecQueryResult {
         debug { "resolveSpecsByCheckingMethod: checkingMethod = $checkingMethod" }
 
         return when (checkingMethod) {
@@ -474,6 +477,7 @@ public class SupportedSurfaceCombination(
                     newUseCaseConfigs,
                     useCasesPriorityOrder,
                     resolvedDynamicRanges,
+                    findMaxSupportedFrameRate,
                 )
             WITH_FEATURE_COMBO -> {
                 resolveSpecsBySettings(
@@ -483,6 +487,7 @@ public class SupportedSurfaceCombination(
                     newUseCaseConfigs,
                     useCasesPriorityOrder,
                     resolvedDynamicRanges,
+                    findMaxSupportedFrameRate,
                 )
             }
             WITHOUT_FEATURE_COMBO_FIRST_AND_THEN_WITH_IT -> {
@@ -494,6 +499,7 @@ public class SupportedSurfaceCombination(
                         newUseCaseConfigs,
                         useCasesPriorityOrder,
                         resolvedDynamicRanges,
+                        findMaxSupportedFrameRate,
                     )
                 } catch (e: IllegalArgumentException) {
                     debug(e) {
@@ -508,6 +514,7 @@ public class SupportedSurfaceCombination(
                         newUseCaseConfigs,
                         useCasesPriorityOrder,
                         resolvedDynamicRanges,
+                        findMaxSupportedFrameRate,
                     )
                 }
             }
@@ -530,7 +537,8 @@ public class SupportedSurfaceCombination(
         newUseCaseConfigs: List<UseCaseConfig<*>>,
         useCasesPriorityOrder: List<Int>,
         resolvedDynamicRanges: Map<UseCaseConfig<*>, DynamicRange>,
-    ): Pair<Map<UseCaseConfig<*>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>> {
+        findMaxSupportedFrameRate: Boolean,
+    ): SurfaceStreamSpecQueryResult {
         debug { "resolveSpecsBySettings: featureSettings = $featureSettings" }
 
         // TODO: b/414489781 - Return early even with feature combo source for possible
@@ -553,7 +561,11 @@ public class SupportedSurfaceCombination(
         // Filters the unnecessary output sizes for performance improvement. This will
         // significantly reduce the number of all possible size arrangements below.
         val useCaseConfigToFilteredSupportedSizesMap =
-            filterSupportedSizes(filteredNewUseCaseConfigsSupportedSizeMap, featureSettings)
+            filterSupportedSizes(
+                filteredNewUseCaseConfigsSupportedSizeMap,
+                featureSettings,
+                /*forceUniqueMaxFpsFiltering=*/ findMaxSupportedFrameRate,
+            )
         val supportedOutputSizesList =
             getSupportedOutputSizesList(
                 useCaseConfigToFilteredSupportedSizesMap,
@@ -603,6 +615,7 @@ public class SupportedSurfaceCombination(
                 featureSettings,
                 orderedSurfaceConfigListForStreamUseCase,
                 resolvedDynamicRanges,
+                findMaxSupportedFrameRate,
             )
 
         require(bestSizesAndFps != null) {
@@ -634,7 +647,11 @@ public class SupportedSurfaceCombination(
             surfaceConfigIndexUseCaseConfigMap,
         )
 
-        return Pair.create(suggestedStreamSpecMap, attachedSurfaceStreamSpecMap)
+        return SurfaceStreamSpecQueryResult(
+            useCaseStreamSpecs = suggestedStreamSpecMap,
+            attachedSurfaceStreamSpecs = attachedSurfaceStreamSpecMap,
+            maxSupportedFrameRate = bestSizesAndFps.maxFpsForAllSizes,
+        )
     }
 
     private fun getCheckingMethod(
@@ -874,7 +891,8 @@ public class SupportedSurfaceCombination(
         // Only perform stream use case operations if the saved max FPS and sizes are the same
         if (
             orderedSurfaceConfigListForStreamUseCase != null &&
-                bestSizesAndMaxFps.maxFps == bestSizesAndMaxFps.maxFpsForStreamUseCase &&
+                bestSizesAndMaxFps.maxFpsForBestSizes ==
+                    bestSizesAndMaxFps.maxFpsForStreamUseCase &&
                 bestSizesAndMaxFps.bestSizes.size ==
                     bestSizesAndMaxFps.bestSizesForStreamUseCase!!.size
         ) {
@@ -978,6 +996,7 @@ public class SupportedSurfaceCombination(
     internal fun filterSupportedSizes(
         newUseCaseConfigsSupportedSizeMap: Map<UseCaseConfig<*>, List<Size>>,
         featureSettings: FeatureSettings,
+        forceUniqueMaxFpsFiltering: Boolean = false,
     ): Map<UseCaseConfig<*>, List<Size>> {
         val filteredUseCaseConfigToSupportedSizesMap = mutableMapOf<UseCaseConfig<*>, List<Size>>()
         for (useCaseConfig in newUseCaseConfigsSupportedSizeMap.keys) {
@@ -989,6 +1008,7 @@ public class SupportedSurfaceCombination(
                     featureSettings,
                     size,
                     imageFormat,
+                    forceUniqueMaxFpsFiltering,
                     configSizeUniqueMaxFpsMap,
                     reducedSizeList,
                 )
@@ -1002,6 +1022,7 @@ public class SupportedSurfaceCombination(
         featureSettings: FeatureSettings,
         size: Size,
         imageFormat: Int,
+        forceUniqueMaxFpsFiltering: Boolean,
         configSizeUniqueMaxFpsMap: MutableMap<ConfigSize, MutableSet<Int>>,
         reducedSizeList: MutableList<Size>,
     ) {
@@ -1019,9 +1040,12 @@ public class SupportedSurfaceCombination(
                 )
                 .configSize
 
-        // Filters the sizes with frame rate only if there is target FPS setting
+        // Filters the sizes with frame rate only if there is target FPS setting or force enabled.
         val maxFrameRate =
-            if (featureSettings.targetFpsRange != FRAME_RATE_RANGE_UNSPECIFIED) {
+            if (
+                featureSettings.targetFpsRange != FRAME_RATE_RANGE_UNSPECIFIED ||
+                    forceUniqueMaxFpsFiltering
+            ) {
                 getMaxFrameRate(imageFormat, size, featureSettings.isHighSpeedOn)
             } else {
                 FRAME_RATE_UNLIMITED
@@ -1086,13 +1110,15 @@ public class SupportedSurfaceCombination(
         featureSettings: FeatureSettings,
         orderedSurfaceConfigListForStreamUseCase: List<SurfaceConfig>?,
         resolvedDynamicRanges: Map<UseCaseConfig<*>, DynamicRange>,
+        findMaxFpsForAllSizes: Boolean,
     ): BestSizesAndMaxFpsForConfigs? {
         var bestSizes: List<Size>? = null
-        var maxFps = FRAME_RATE_UNLIMITED
+        var maxFpsForBestSizes = FRAME_RATE_UNLIMITED
         var bestSizesForStreamUseCase: List<Size>? = null
         var maxFpsForStreamUseCase = FRAME_RATE_UNLIMITED
         var supportedSizesFound = false
         var supportedSizesForStreamUseCaseFound = false
+        var maxFpsForAllSizes = Int.MAX_VALUE
 
         // Transform use cases to SurfaceConfig list and find the first (best) workable combination
         for (possibleSizeList in allPossibleSizeArrangements) {
@@ -1137,12 +1163,8 @@ public class SupportedSurfaceCombination(
                 dynamicRangesBySurfaceConfig[surfaceConfig] = dynamicRange
             }
 
-            // Find the same possible size arrangement that is supported by stream use case again
-            // if we found one earlier.
-
-            // only change the saved config if you get another that has a better max fps
-            if (
-                !supportedSizesFound &&
+            val isSupported by
+                lazy(mode = LazyThreadSafetyMode.NONE) {
                     checkSupported(
                         featureSettings,
                         surfaceConfigList,
@@ -1150,24 +1172,40 @@ public class SupportedSurfaceCombination(
                         newUseCaseConfigs,
                         useCasesPriorityOrder,
                     )
-            ) {
+                }
+
+            if (findMaxFpsForAllSizes && isSupported) {
+                if (maxFpsForAllSizes == Int.MAX_VALUE) {
+                    maxFpsForAllSizes = currentConfigFrameRateCeiling
+                } else if (maxFpsForAllSizes < currentConfigFrameRateCeiling) {
+                    maxFpsForAllSizes = currentConfigFrameRateCeiling
+                }
+            }
+
+            // Find the same possible size arrangement that is supported by stream use case again
+            // if we found one earlier.
+
+            // only change the saved config if you get another that has a better max fps
+            if (!supportedSizesFound && isSupported) {
                 // if the config is supported by the device but doesn't meet the target frame rate,
                 // save the config
-                if (maxFps == FRAME_RATE_UNLIMITED) {
-                    maxFps = currentConfigFrameRateCeiling
+                if (maxFpsForBestSizes == FRAME_RATE_UNLIMITED) {
+                    maxFpsForBestSizes = currentConfigFrameRateCeiling
                     bestSizes = possibleSizeList
-                } else if (maxFps < currentConfigFrameRateCeiling) {
+                } else if (maxFpsForBestSizes < currentConfigFrameRateCeiling) {
                     // only change the saved config if the max fps is better
-                    maxFps = currentConfigFrameRateCeiling
+                    maxFpsForBestSizes = currentConfigFrameRateCeiling
                     bestSizes = possibleSizeList
                 }
 
-                // if we have a configuration where the max fps is acceptable for our target, break
                 if (isConfigFrameRateAcceptable) {
-                    maxFps = currentConfigFrameRateCeiling
+                    maxFpsForBestSizes = currentConfigFrameRateCeiling
                     bestSizes = possibleSizeList
                     supportedSizesFound = true
-                    if (supportedSizesForStreamUseCaseFound) {
+
+                    // if we have a configuration where the max fps is acceptable for our target,
+                    // break. But never break when findMaxFpsForAllSizes flag is set.
+                    if (supportedSizesForStreamUseCaseFound && !findMaxFpsForAllSizes) {
                         break
                     }
                 }
@@ -1195,7 +1233,8 @@ public class SupportedSurfaceCombination(
                     maxFpsForStreamUseCase = currentConfigFrameRateCeiling
                     bestSizesForStreamUseCase = possibleSizeList
                     supportedSizesForStreamUseCaseFound = true
-                    if (supportedSizesFound) {
+                    // Never break when findMaxFpsForAllSizes flag is set.
+                    if (supportedSizesFound && !findMaxFpsForAllSizes) {
                         break
                     }
                 }
@@ -1209,8 +1248,9 @@ public class SupportedSurfaceCombination(
         return BestSizesAndMaxFpsForConfigs(
             bestSizes,
             bestSizesForStreamUseCase,
-            maxFps,
+            maxFpsForBestSizes,
             maxFpsForStreamUseCase,
+            maxFpsForAllSizes,
         )
     }
 
@@ -1265,7 +1305,7 @@ public class SupportedSurfaceCombination(
             targetFrameRateForDevice =
                 getClosestSupportedDeviceFrameRate(
                     targetFpsRange,
-                    bestSizesAndMaxFps.maxFps,
+                    bestSizesAndMaxFps.maxFpsForBestSizes,
                     availableFpsRanges,
                 )
         }
@@ -2138,8 +2178,9 @@ public class SupportedSurfaceCombination(
     public data class BestSizesAndMaxFpsForConfigs(
         val bestSizes: List<Size>,
         val bestSizesForStreamUseCase: List<Size>?,
-        val maxFps: Int,
+        val maxFpsForBestSizes: Int,
         val maxFpsForStreamUseCase: Int,
+        val maxFpsForAllSizes: Int,
     )
 
     internal enum class CheckingMethod {

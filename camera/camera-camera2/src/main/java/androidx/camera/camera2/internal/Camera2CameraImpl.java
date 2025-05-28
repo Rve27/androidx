@@ -1315,7 +1315,7 @@ final class Camera2CameraImpl implements CameraInternal {
             // TODO: b/406367951 - Pass true for allowFeatureCombinationResolutions param when
             //   MeteringRepeating scenarios with feature combination are handled
             mSupportedSurfaceCombination.getSuggestedStreamSpecifications(cameraMode,
-                    attachedSurfaces, useCaseConfigToSizeMap, false, false, false);
+                    attachedSurfaces, useCaseConfigToSizeMap, false, false, false, false);
         } catch (IllegalArgumentException e) {
             debugLog("Surface combination with metering repeating  not supported!", e);
             return false;

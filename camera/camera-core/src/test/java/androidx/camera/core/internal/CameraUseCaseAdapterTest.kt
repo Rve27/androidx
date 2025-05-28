@@ -163,7 +163,7 @@ class CameraUseCaseAdapterTest {
         surfaceProcessorInternal.cleanUp()
         executor.shutdown()
         for (adapter in adaptersToDetach) {
-            adapter.updateUseCases(emptySet())
+            adapter.removeAllUseCases()
         }
     }
 
@@ -379,6 +379,24 @@ class CameraUseCaseAdapterTest {
     }
 
     @Test
+    fun simulateAddUseCases_notApplyChanges() {
+        // Act.
+        val supportedFeatures = setOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
+        adapter.simulateAddUseCases(
+            setOf(preview),
+            ResolvedFeatureCombination(
+                useCases = emptySet(), // the use cases from feature combination don't matter
+                features = supportedFeatures,
+            ),
+            /*findMaxSupportedFrameRate=*/ false,
+        )
+
+        // Assert.
+        assertThat(fakeCamera.attachedUseCases).isEmpty()
+        assertThat(preview.featureCombination).isNull()
+    }
+
+    @Test
     fun removeUseCases_addedBeforeWithFeatureCombination_featuresRemovedFromOnlyRemovedUseCases() {
         // Arrange.
         val features = setOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
@@ -531,7 +549,7 @@ class CameraUseCaseAdapterTest {
                 StreamSpecsCalculatorImpl(useCaseConfigFactory, fakeManager),
                 useCaseConfigFactory,
             )
-        adapter.setEffects(listOf(imageEffect))
+        adapter.effects = listOf(imageEffect)
 
         // Act: add ImageCapture that sets Ultra HDR.
         val imageCapture =
@@ -557,7 +575,7 @@ class CameraUseCaseAdapterTest {
                 StreamSpecsCalculatorImpl(useCaseConfigFactory, fakeManager),
                 useCaseConfigFactory,
             )
-        adapter.setEffects(listOf(imageEffect))
+        adapter.effects = listOf(imageEffect)
 
         // Act: add ImageCapture that sets Ultra HDR.
         val imageCapture =
@@ -771,7 +789,7 @@ class CameraUseCaseAdapterTest {
     }
 
     private fun CameraUseCaseAdapter.getStreamSharing(): StreamSharing {
-        return this.cameraUseCases.filterIsInstance(StreamSharing::class.java).single()
+        return this.cameraUseCases.filterIsInstance<StreamSharing>().single()
     }
 
     private fun Collection<UseCase>.hasExactTypes(vararg classTypes: Any) {
@@ -886,7 +904,7 @@ class CameraUseCaseAdapterTest {
         val aspectRatio2 = Rational(2, 1)
 
         // Arrange: set up adapter with aspect ratio 1.
-        adapter.setViewPort(ViewPort.Builder(aspectRatio1, Surface.ROTATION_0).build())
+        adapter.viewPort = ViewPort.Builder(aspectRatio1, Surface.ROTATION_0).build()
         val fakeUseCase = spy(FakeUseCase())
         adapter.addUseCases(listOf(fakeUseCase))
         // Use case gets aspect ratio 1
@@ -900,7 +918,7 @@ class CameraUseCaseAdapterTest {
             .isEqualTo(aspectRatio1)
 
         // Act: set aspect ratio 2 and attach the same use case.
-        adapter.setViewPort(ViewPort.Builder(aspectRatio2, Surface.ROTATION_0).build())
+        adapter.viewPort = ViewPort.Builder(aspectRatio2, Surface.ROTATION_0).build()
         adapter.addUseCases(listOf(fakeUseCase))
 
         // Assert: the viewport has aspect ratio 2.
@@ -933,7 +951,7 @@ class CameraUseCaseAdapterTest {
          *   3023 |-----------------|       3022 |-----------------|
          *   3024 |-----------------|
          */
-        adapter.setViewPort(ViewPort.Builder(aspectRatio, Surface.ROTATION_0).build())
+        adapter.viewPort = ViewPort.Builder(aspectRatio, Surface.ROTATION_0).build()
         val fakeUseCase = FakeUseCase()
         adapter.addUseCases(listOf(fakeUseCase))
         assertThat(fakeUseCase.viewPortCropRect).isEqualTo(Rect(505, 0, 3527, 3022))
@@ -1135,10 +1153,10 @@ class CameraUseCaseAdapterTest {
     @Test
     fun hasSharedEffect_enableStreamSharing() {
         // Arrange: add a shared effect and an image effect
-        adapter.setEffects(listOf(sharedEffect, imageEffect))
+        adapter.effects = listOf(sharedEffect, imageEffect)
 
-        // Act: update use cases.
-        adapter.updateUseCases(listOf(preview, video, image, analysis))
+        // Act: add use cases.
+        adapter.addUseCases(listOf(preview, video, image, analysis))
 
         // Assert: StreamSharing wraps preview and video with the shared effect.
         val streamSharing = adapter.getStreamSharing()
@@ -1153,13 +1171,13 @@ class CameraUseCaseAdapterTest {
     @Test
     fun hasSharedEffectButOnlyOneChild_theEffectIsEnabledOnTheChild() {
         // Arrange: add a shared effect.
-        adapter.setEffects(listOf(sharedEffect))
+        adapter.effects = listOf(sharedEffect)
 
-        // Act: update use cases.
-        adapter.updateUseCases(listOf(preview))
+        // Act: add use cases.
+        adapter.addUseCases(listOf(preview))
 
         // Assert: no StreamSharing and preview gets the shared effect.
-        assertThat(adapter.cameraUseCases.filterIsInstance(StreamSharing::class.java)).isEmpty()
+        assertThat(adapter.cameraUseCases.filterIsInstance<StreamSharing>()).isEmpty()
         assertThat(preview.effect).isEqualTo(sharedEffect)
     }
 

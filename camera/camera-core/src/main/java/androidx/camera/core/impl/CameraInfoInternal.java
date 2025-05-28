@@ -25,6 +25,7 @@ import android.util.Size;
 
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.CameraUseCaseAdapterProvider;
 import androidx.camera.core.DynamicRange;
 import androidx.camera.core.UseCase;
 import androidx.camera.core.featurecombination.ExperimentalFeatureCombination;
@@ -282,5 +283,12 @@ public interface CameraInfoInternal extends CameraInfo {
         }
 
         return isSupported;
+    }
+
+    /**
+     * Sets the {@link CameraUseCaseAdapterProvider}.
+     */
+    default void setCameraUseCaseAdapterProvider(
+            @NonNull CameraUseCaseAdapterProvider cameraUseCaseAdapterProvider) {
     }
 }

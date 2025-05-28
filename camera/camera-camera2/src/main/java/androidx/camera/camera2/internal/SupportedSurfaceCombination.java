@@ -80,6 +80,7 @@ import androidx.camera.core.impl.SurfaceConfig;
 import androidx.camera.core.impl.SurfaceConfig.ConfigSize;
 import androidx.camera.core.impl.SurfaceConfig.ConfigSource;
 import androidx.camera.core.impl.SurfaceSizeDefinition;
+import androidx.camera.core.impl.SurfaceStreamSpecQueryResult;
 import androidx.camera.core.impl.UseCaseConfig;
 import androidx.camera.core.impl.stabilization.StabilizationMode;
 import androidx.camera.core.impl.utils.AspectRatioUtil;
@@ -88,6 +89,9 @@ import androidx.camera.core.internal.utils.SizeUtil;
 import androidx.core.util.Preconditions;
 
 import com.google.auto.value.AutoValue;
+
+import kotlin.Lazy;
+import kotlin.UnsafeLazyImpl;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -654,24 +658,23 @@ final class SupportedSurfaceCombination {
      * @param isPreviewStabilizationOn           whether the preview stabilization is enabled.
      * @param hasVideoCapture                    whether the use cases has video capture.
      * @param allowFeatureCombinationResolutions whether to allow feature combination resolutions.
-     * @return the suggested stream specifications, which is a pair of mappings. The first
-     * mapping is from UseCaseConfig to the suggested stream specification representing new
-     * UseCases. The second mapping is from attachedSurfaceInfo to the suggested stream
-     * specifications representing existing UseCases.
+     * @param findMaxSupportedFrameRate          whether to find the max supported frame rate.
+     * @return a {@link SurfaceStreamSpecQueryResult}.
      * @throws IllegalArgumentException if the suggested solution for newUseCaseConfigs cannot be
      *                                  found. This may be due to no available output size, no
      *                                  available surface combination, unsupported combinations
      *                                  of {@link DynamicRange}, or requiring an
      *                                  unsupported combination of camera features.
      */
-    @NonNull Pair<Map<UseCaseConfig<?>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>>
-            getSuggestedStreamSpecifications(
+    @NonNull
+    SurfaceStreamSpecQueryResult getSuggestedStreamSpecifications(
             @CameraMode.Mode int cameraMode,
             @NonNull List<AttachedSurfaceInfo> attachedSurfaces,
             @NonNull Map<UseCaseConfig<?>, List<Size>> newUseCaseConfigsSupportedSizeMap,
             boolean isPreviewStabilizationOn,
             boolean hasVideoCapture,
-            boolean allowFeatureCombinationResolutions) {
+            boolean allowFeatureCombinationResolutions,
+            boolean findMaxSupportedFrameRate) {
         // Refresh Preview Size based on current display configurations.
         refreshPreviewSize();
 
@@ -711,7 +714,7 @@ final class SupportedSurfaceCombination {
 
         return resolveSpecsByCheckingMethod(checkingMethod, featureSettings,
                 attachedSurfaces, newUseCaseConfigsSupportedSizeMap, newUseCaseConfigs,
-                useCasesPriorityOrder, resolvedDynamicRanges);
+                useCasesPriorityOrder, resolvedDynamicRanges, findMaxSupportedFrameRate);
     }
 
     /**
@@ -745,15 +748,15 @@ final class SupportedSurfaceCombination {
      *                                  unsupported combination of camera features.
      */
     @NonNull
-    private Pair<Map<UseCaseConfig<?>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>>
-            resolveSpecsByCheckingMethod(
+    private SurfaceStreamSpecQueryResult resolveSpecsByCheckingMethod(
             @NonNull CheckingMethod checkingMethod,
             @NonNull FeatureSettings featureSettings,
             @NonNull List<AttachedSurfaceInfo> attachedSurfaces,
             @NonNull Map<UseCaseConfig<?>, List<Size>> newUseCaseConfigsSupportedSizeMap,
             List<UseCaseConfig<?>> newUseCaseConfigs,
             List<Integer> useCasesPriorityOrder,
-            Map<UseCaseConfig<?>, DynamicRange> resolvedDynamicRanges) {
+            Map<UseCaseConfig<?>, DynamicRange> resolvedDynamicRanges,
+            boolean findMaxSupportedFrameRate) {
         Logger.d(TAG, "resolveSpecsByCheckingMethod: checkingMethod = " + checkingMethod);
 
         switch (checkingMethod) {
@@ -768,14 +771,14 @@ final class SupportedSurfaceCombination {
                 return resolveSpecsBySettings(fcqFeatureSettings,
                         attachedSurfaces, newUseCaseConfigsSupportedSizeMap,
                         newUseCaseConfigs, useCasesPriorityOrder,
-                        resolvedDynamicRanges);
+                        resolvedDynamicRanges, findMaxSupportedFrameRate);
             }
             case WITHOUT_FEATURE_COMBO_FIRST_AND_THEN_WITH_IT: {
                 try {
                     return resolveSpecsBySettings(featureSettings,
                             attachedSurfaces, newUseCaseConfigsSupportedSizeMap,
                             newUseCaseConfigs, useCasesPriorityOrder,
-                            resolvedDynamicRanges);
+                            resolvedDynamicRanges, findMaxSupportedFrameRate);
                 } catch (IllegalArgumentException e) {
                     Logger.d(TAG, "Failed to find a supported combination without feature"
                             + " combo, trying again with feature combo", e);
@@ -790,14 +793,14 @@ final class SupportedSurfaceCombination {
                     return resolveSpecsBySettings(fcqFeatureSettings,
                             attachedSurfaces, newUseCaseConfigsSupportedSizeMap,
                             newUseCaseConfigs, useCasesPriorityOrder,
-                            resolvedDynamicRanges);
+                            resolvedDynamicRanges, findMaxSupportedFrameRate);
                 }
             }
             default:
                 return resolveSpecsBySettings(featureSettings,
                         attachedSurfaces, newUseCaseConfigsSupportedSizeMap,
                         newUseCaseConfigs, useCasesPriorityOrder,
-                        resolvedDynamicRanges);
+                        resolvedDynamicRanges, findMaxSupportedFrameRate);
         }
     }
 
@@ -811,14 +814,14 @@ final class SupportedSurfaceCombination {
      *                                  of {@link DynamicRange}, or requiring an
      *                                  unsupported combination of camera features.
      */
-    private @NonNull Pair<Map<UseCaseConfig<?>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>>
-            resolveSpecsBySettings(
+    private @NonNull SurfaceStreamSpecQueryResult resolveSpecsBySettings(
             FeatureSettings featureSettings,
             @NonNull List<AttachedSurfaceInfo> attachedSurfaces,
             @NonNull Map<UseCaseConfig<?>, List<Size>> newUseCaseConfigsSupportedSizeMap,
             List<UseCaseConfig<?>> newUseCaseConfigs,
             List<Integer> useCasesPriorityOrder,
-            Map<UseCaseConfig<?>, DynamicRange> resolvedDynamicRanges) {
+            Map<UseCaseConfig<?>, DynamicRange> resolvedDynamicRanges,
+            boolean findMaxSupportedFrameRate) {
         Logger.d(TAG, "resolveSpecsBySettings: featureSettings = " + featureSettings);
 
         // TODO: b/414489781 - Return early even with feature combo source for possible cases
@@ -836,7 +839,8 @@ final class SupportedSurfaceCombination {
         // Filters the unnecessary output sizes for performance improvement. This will
         // significantly reduce the number of all possible size arrangements below.
         Map<UseCaseConfig<?>, List<Size>> useCaseConfigToFilteredSupportedSizesMap =
-                filterSupportedSizes(newUseCaseConfigsSupportedSizeMap, featureSettings);
+                filterSupportedSizes(newUseCaseConfigsSupportedSizeMap, featureSettings,
+                        /*forceUniqueMaxFpsFiltering=*/findMaxSupportedFrameRate);
 
         List<List<Size>> supportedOutputSizesList = new ArrayList<>();
 
@@ -910,15 +914,17 @@ final class SupportedSurfaceCombination {
             }
         }
 
-        BestSizesAndMaxFpsForConfigs result = findBestSizesAndFps(
+        BestSizesAndMaxFpsForConfigs bestSizesAndFps = findBestSizesAndFps(
                 featureSettings, attachedSurfaces, newUseCaseConfigs, useCasesPriorityOrder,
                 allPossibleSizeArrangements, orderedSurfaceConfigListForStreamUseCase,
-                resolvedDynamicRanges, maxSupportedFps);
+                resolvedDynamicRanges, maxSupportedFps,
+                findMaxSupportedFrameRate);
 
-        List<Size> savedSizes = result.getBestSizes();
-        int savedConfigMaxFps = result.getMaxFps();
-        List<Size> savedSizesForStreamUseCase = result.getBestSizesForStreamUseCase();
-        int savedConfigMaxFpsForStreamUseCase = result.getMaxFpsForStreamUseCase();
+        List<Size> savedSizes = bestSizesAndFps.getBestSizes();
+        int savedConfigMaxFps = bestSizesAndFps.getMaxFpsForBestSizes();
+        List<Size> savedSizesForStreamUseCase = bestSizesAndFps.getBestSizesForStreamUseCase();
+        int savedConfigMaxFpsForStreamUseCase = bestSizesAndFps.getMaxFpsForStreamUseCase();
+        int savedMaxFpsForAllSizes = bestSizesAndFps.getMaxFpsForAllSizes();
 
         // Map the saved supported SurfaceConfig combination
         if (savedSizes != null) {
@@ -928,7 +934,8 @@ final class SupportedSurfaceCombination {
                         ? mHighSpeedResolver.getFrameRateRangesFor(savedSizes)
                         : mCharacteristics.get(CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES);
                 targetFrameRateForDevice = getClosestSupportedDeviceFrameRate(
-                        featureSettings.getTargetFpsRange(), savedConfigMaxFps, availableFpsRanges);
+                        featureSettings.getTargetFpsRange(), savedConfigMaxFps,
+                        availableFpsRanges);
             }
             for (UseCaseConfig<?> useCaseConfig : newUseCaseConfigs) {
                 Size resolutionForUseCase = savedSizes.get(
@@ -983,7 +990,8 @@ final class SupportedSurfaceCombination {
                 }
             }
         }
-        return new Pair<>(suggestedStreamSpecMap, attachedSurfaceStreamSpecMap);
+        return new SurfaceStreamSpecQueryResult(suggestedStreamSpecMap,
+                attachedSurfaceStreamSpecMap, savedMaxFpsForAllSizes);
     }
 
     private CheckingMethod getCheckingMethod(
@@ -1027,13 +1035,16 @@ final class SupportedSurfaceCombination {
             List<Integer> useCasesPriorityOrder,
             List<List<Size>> allPossibleSizeArrangements,
             List<SurfaceConfig> orderedSurfaceConfigListForStreamUseCase,
-            Map<UseCaseConfig<?>, DynamicRange> resolvedDynamicRanges, int maxSupportedFps) {
+            Map<UseCaseConfig<?>, DynamicRange> resolvedDynamicRanges,
+            int maxSupportedFps,
+            boolean findMaxFpsForAllSizes) {
         Range<Integer> targetFpsRange = featureSettings.getTargetFpsRange();
 
         List<Size> savedSizes = null;
         int savedConfigMaxFps = FRAME_RATE_UNLIMITED;
         List<Size> savedSizesForStreamUseCase = null;
         int savedConfigMaxFpsForStreamUseCase = FRAME_RATE_UNLIMITED;
+        int maxFpsForAllSizes = Integer.MAX_VALUE;
 
         boolean supportedSizesFound = false;
         boolean supportedSizesForStreamUseCaseFound = false;
@@ -1074,12 +1085,24 @@ final class SupportedSurfaceCombination {
                 dynamicRangesBySurfaceConfig.put(surfaceConfig, dynamicRange);
             }
 
+            Lazy<Boolean> isSupported = new UnsafeLazyImpl<>(
+                    () -> checkSupported(featureSettings, surfaceConfigList,
+                            dynamicRangesBySurfaceConfig, newUseCaseConfigs,
+                            useCasesPriorityOrder));
+
+            if (findMaxFpsForAllSizes && isSupported.getValue()) {
+                if (maxFpsForAllSizes == Integer.MAX_VALUE) {
+                    maxFpsForAllSizes = currentConfigFrameRateCeiling;
+                } else if (maxFpsForAllSizes < currentConfigFrameRateCeiling) {
+                    maxFpsForAllSizes = currentConfigFrameRateCeiling;
+                }
+            }
+
             // Find the same possible size arrangement that is supported by stream use case again
             // if we found one earlier.
 
             // only change the saved config if you get another that has a better max fps
-            if (!supportedSizesFound && checkSupported(featureSettings, surfaceConfigList,
-                    dynamicRangesBySurfaceConfig, newUseCaseConfigs, useCasesPriorityOrder)) {
+            if (!supportedSizesFound && isSupported.getValue()) {
                 // if the config is supported by the device but doesn't meet the target frame rate,
                 // save the config
                 if (savedConfigMaxFps == FRAME_RATE_UNLIMITED) {
@@ -1091,12 +1114,13 @@ final class SupportedSurfaceCombination {
                     savedSizes = possibleSizeList;
                 }
 
-                // if we have a configuration where the max fps is acceptable for our target, break
                 if (isConfigFrameRateAcceptable) {
                     savedConfigMaxFps = currentConfigFrameRateCeiling;
                     savedSizes = possibleSizeList;
                     supportedSizesFound = true;
-                    if (supportedSizesForStreamUseCaseFound) {
+                    // if we have a configuration where the max fps is acceptable for our target,
+                    // break. But never break when findMaxFpsForAllSizes flag is set.
+                    if (supportedSizesForStreamUseCaseFound && !findMaxFpsForAllSizes) {
                         break;
                     }
                 }
@@ -1122,7 +1146,8 @@ final class SupportedSurfaceCombination {
                     savedConfigMaxFpsForStreamUseCase = currentConfigFrameRateCeiling;
                     savedSizesForStreamUseCase = possibleSizeList;
                     supportedSizesForStreamUseCaseFound = true;
-                    if (supportedSizesFound) {
+                    // Never break when findMaxFpsForAllSizes flag is set.
+                    if (supportedSizesFound && !findMaxFpsForAllSizes) {
                         break;
                     }
                 }
@@ -1135,11 +1160,11 @@ final class SupportedSurfaceCombination {
                 && !FRAME_RATE_RANGE_UNSPECIFIED.equals(targetFpsRange)
                 && savedConfigMaxFps < targetFpsRange.getUpper()) {
             return new BestSizesAndMaxFpsForConfigs(null, null, FRAME_RATE_UNLIMITED,
-                    FRAME_RATE_UNLIMITED);
+                    FRAME_RATE_UNLIMITED, FRAME_RATE_UNLIMITED);
         }
 
         return new BestSizesAndMaxFpsForConfigs(savedSizes, savedSizesForStreamUseCase,
-                savedConfigMaxFps, savedConfigMaxFpsForStreamUseCase);
+                savedConfigMaxFps, savedConfigMaxFpsForStreamUseCase, maxFpsForAllSizes);
     }
 
     private static boolean isConfigFrameRateAcceptable(int maxSupportedFps,
@@ -1343,7 +1368,8 @@ final class SupportedSurfaceCombination {
     @VisibleForTesting
     @NonNull Map<UseCaseConfig<?>, List<Size>> filterSupportedSizes(
             @NonNull Map<UseCaseConfig<?>, List<Size>> newUseCaseConfigsSupportedSizeMap,
-            @NonNull FeatureSettings featureSettings) {
+            @NonNull FeatureSettings featureSettings,
+            boolean forceUniqueMaxFpsFiltering) {
         Map<UseCaseConfig<?>, List<Size>> filteredUseCaseConfigToSupportedSizesMap =
                 new HashMap<>();
         for (UseCaseConfig<?> useCaseConfig : newUseCaseConfigsSupportedSizeMap.keySet()) {
@@ -1355,7 +1381,7 @@ final class SupportedSurfaceCombination {
                 int imageFormat = useCaseConfig.getInputFormat();
                 populateReducedSizeListAndUniqueMaxFpsMap(featureSettings,
                         featureSettings.getTargetFpsRange(), size, imageFormat,
-                        configSizeUniqueMaxFpsMap, reducedSizeList);
+                        forceUniqueMaxFpsFiltering, configSizeUniqueMaxFpsMap, reducedSizeList);
             }
             filteredUseCaseConfigToSupportedSizesMap.put(useCaseConfig, reducedSizeList);
         }
@@ -1364,6 +1390,7 @@ final class SupportedSurfaceCombination {
 
     private void populateReducedSizeListAndUniqueMaxFpsMap(@NonNull FeatureSettings featureSettings,
             @NonNull Range<Integer> targetFpsRange, @NonNull Size size, int imageFormat,
+            boolean forceUniqueMaxFpsFiltering,
             @NonNull Map<ConfigSize, Set<Integer>> configSizeToUniqueMaxFpsMap,
             @NonNull List<Size> reducedSizeList) {
         ConfigSize configSize = SurfaceConfig.transformSurfaceConfig(
@@ -1373,16 +1400,9 @@ final class SupportedSurfaceCombination {
                         : CAPTURE_SESSION_TABLES).getConfigSize();
 
         int maxFrameRate = FRAME_RATE_UNLIMITED;
-        // Filters the sizes with frame rate only if there is target FPS setting
-        if (!FRAME_RATE_RANGE_UNSPECIFIED.equals(targetFpsRange)) {
-            maxFrameRate = getMaxFrameRate(imageFormat, size,
-                    featureSettings.isHighSpeedOn());
-        }
-        Set<Integer> uniqueMaxFrameRates = configSizeToUniqueMaxFpsMap.get(configSize);
-        // Creates an empty FPS list for the config size when it doesn't exist.
-        if (uniqueMaxFrameRates == null) {
-            uniqueMaxFrameRates = new HashSet<>();
-            configSizeToUniqueMaxFpsMap.put(configSize, uniqueMaxFrameRates);
+        // Filters the sizes with frame rate only if there is target FPS setting or force enabled.
+        if (!FRAME_RATE_RANGE_UNSPECIFIED.equals(targetFpsRange) || forceUniqueMaxFpsFiltering) {
+            maxFrameRate = getMaxFrameRate(imageFormat, size, featureSettings.isHighSpeedOn());
         }
 
         // For feature combination, target FPS range must be strictly supported, so we can filter
@@ -1394,6 +1414,13 @@ final class SupportedSurfaceCombination {
                 && maxFrameRate < targetFpsRange.getUpper()))
         ) {
             return;
+        }
+
+        Set<Integer> uniqueMaxFrameRates = configSizeToUniqueMaxFpsMap.get(configSize);
+        // Creates an empty FPS list for the config size when it doesn't exist.
+        if (uniqueMaxFrameRates == null) {
+            uniqueMaxFrameRates = new HashSet<>();
+            configSizeToUniqueMaxFpsMap.put(configSize, uniqueMaxFrameRates);
         }
 
         // Adds the size to the result list when there is still no entry for the config
@@ -1999,24 +2026,26 @@ final class SupportedSurfaceCombination {
 
     static class BestSizesAndMaxFpsForConfigs {
         private final List<Size> mBestSizes;
-        private final int mMaxFps;
+        private final int mMaxFpsForBestSizes;
         private final List<Size> mBestSizesForStreamUseCase;
         private final int mMaxFpsForStreamUseCase;
+        private final int mMaxFpsForAllSizes;
 
         BestSizesAndMaxFpsForConfigs(List<Size> bestSizes, List<Size> bestSizesForStreamUseCase,
-                int maxFps, int maxFpsForStreamUseCase) {
+                int maxFpsForBestSizes, int maxFpsForStreamUseCase, int maxFpsForAllSizes) {
             mBestSizes = bestSizes;
             mBestSizesForStreamUseCase = bestSizesForStreamUseCase;
-            mMaxFps = maxFps;
+            mMaxFpsForBestSizes = maxFpsForBestSizes;
             mMaxFpsForStreamUseCase = maxFpsForStreamUseCase;
+            mMaxFpsForAllSizes = maxFpsForAllSizes;
         }
 
         public List<Size> getBestSizes() {
             return mBestSizes;
         }
 
-        public int getMaxFps() {
-            return mMaxFps;
+        public int getMaxFpsForBestSizes() {
+            return mMaxFpsForBestSizes;
         }
 
         public List<Size> getBestSizesForStreamUseCase() {
@@ -2025,6 +2054,10 @@ final class SupportedSurfaceCombination {
 
         public int getMaxFpsForStreamUseCase() {
             return mMaxFpsForStreamUseCase;
+        }
+
+        public int getMaxFpsForAllSizes() {
+            return mMaxFpsForAllSizes;
         }
     }
 

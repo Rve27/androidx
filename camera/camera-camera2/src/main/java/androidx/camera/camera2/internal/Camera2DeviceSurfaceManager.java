@@ -21,7 +21,6 @@ import android.content.Context;
 import android.hardware.camera2.CameraDevice;
 import android.media.CamcorderProfile;
 import android.os.Build;
-import android.util.Pair;
 import android.util.Size;
 
 import androidx.annotation.OptIn;
@@ -35,8 +34,8 @@ import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery;
 import androidx.camera.core.impl.AttachedSurfaceInfo;
 import androidx.camera.core.impl.CameraDeviceSurfaceManager;
 import androidx.camera.core.impl.CameraMode;
-import androidx.camera.core.impl.StreamSpec;
 import androidx.camera.core.impl.SurfaceConfig;
+import androidx.camera.core.impl.SurfaceStreamSpecQueryResult;
 import androidx.camera.core.impl.UseCaseConfig;
 import androidx.core.util.Preconditions;
 
@@ -162,15 +161,15 @@ public final class Camera2DeviceSurfaceManager implements CameraDeviceSurfaceMan
     }
 
     @Override
-    public @NonNull Pair<Map<UseCaseConfig<?>, StreamSpec>, Map<AttachedSurfaceInfo, StreamSpec>>
-            getSuggestedStreamSpecs(
+    public @NonNull SurfaceStreamSpecQueryResult getSuggestedStreamSpecs(
             @CameraMode.Mode int cameraMode,
             @NonNull String cameraId,
             @NonNull List<AttachedSurfaceInfo> existingSurfaces,
             @NonNull Map<UseCaseConfig<?>, List<Size>> newUseCaseConfigsSupportedSizeMap,
             boolean isPreviewStabilizationOn,
             boolean hasVideoCapture,
-            boolean allowFeatureCombinationResolutions) {
+            boolean allowFeatureCombinationResolutions,
+            boolean findMaxSupportedFrameRate) {
         Preconditions.checkArgument(!newUseCaseConfigsSupportedSizeMap.isEmpty(),
                 "No new use cases to be bound.");
 
@@ -188,6 +187,7 @@ public final class Camera2DeviceSurfaceManager implements CameraDeviceSurfaceMan
                 newUseCaseConfigsSupportedSizeMap,
                 isPreviewStabilizationOn,
                 hasVideoCapture,
-                allowFeatureCombinationResolutions);
+                allowFeatureCombinationResolutions,
+                findMaxSupportedFrameRate);
     }
 }

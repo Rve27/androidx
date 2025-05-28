@@ -628,17 +628,16 @@ internal class LifecycleCameraProviderImpl : LifecycleCameraProvider {
                 lifecycleCameraToBind =
                     lifecycleCameraRepository.createLifecycleCamera(
                         lifecycleOwner,
-                        CameraUseCaseAdapter(
-                            primaryCameraInternal,
-                            secondaryCameraInternal,
-                            primaryAdapterCameraInfo,
-                            secondaryAdapterCameraInfo,
-                            primaryCompositionSettings,
-                            secondaryCompositionSettings,
-                            cameraX!!.cameraFactory.cameraCoordinator,
-                            cameraX!!.streamSpecsCalculator,
-                            cameraX!!.defaultConfigFactory,
-                        ),
+                        cameraX!!
+                            .cameraUseCaseAdapterProvider
+                            .provide(
+                                primaryCameraInternal,
+                                secondaryCameraInternal,
+                                primaryAdapterCameraInfo,
+                                secondaryAdapterCameraInfo,
+                                primaryCompositionSettings,
+                                secondaryCompositionSettings,
+                            ),
                     )
             }
 
