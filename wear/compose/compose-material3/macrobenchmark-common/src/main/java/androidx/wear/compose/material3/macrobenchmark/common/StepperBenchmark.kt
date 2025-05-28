@@ -40,7 +40,7 @@ object StepperBenchmark : MacrobenchmarkScreen {
     override val content: @Composable (BoxScope.() -> Unit)
         get() = {
             var value by remember { mutableFloatStateOf(2f) }
-            val valueRange = 0f..4f
+            val valueRange = remember { 0f..4f }
             Box(modifier = Modifier.fillMaxSize()) {
                 Stepper(
                     value = value,

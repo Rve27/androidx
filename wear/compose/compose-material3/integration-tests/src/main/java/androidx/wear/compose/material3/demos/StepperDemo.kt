@@ -59,7 +59,7 @@ val StepperDemos =
 @Composable
 fun DisabledStepperDemo() {
     var value by remember { mutableFloatStateOf(2f) }
-    val valueRange = 0f..4f
+    val valueRange = remember { 0f..4f }
     Box(modifier = Modifier.fillMaxSize()) {
         Stepper(
             value = value,
@@ -84,7 +84,7 @@ fun DisabledStepperDemo() {
 @Composable
 fun CustomColorsStepperDemo() {
     var value by remember { mutableFloatStateOf(2f) }
-    val valueRange = 0f..4f
+    val valueRange = remember { 0f..4f }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Stepper(

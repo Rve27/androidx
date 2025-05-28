@@ -44,7 +44,7 @@ import androidx.wear.compose.material3.samples.icons.VolumeUpIcon
 @Composable
 fun StepperSample() {
     var value by remember { mutableFloatStateOf(2f) }
-    val valueRange = 0f..4f
+    val valueRange = remember { 0f..4f }
     Box(modifier = Modifier.fillMaxSize()) {
         Stepper(
             value = value,
@@ -68,7 +68,7 @@ fun StepperSample() {
 @Composable
 fun StepperWithIntegerSample() {
     var value by remember { mutableIntStateOf(3) }
-    val valueProgression = 0..10
+    val valueProgression = remember { 0..10 }
     Box(modifier = Modifier.fillMaxSize()) {
         Stepper(
             value = value,
@@ -91,7 +91,7 @@ fun StepperWithIntegerSample() {
 @Composable
 fun StepperWithRangeSemanticsSample() {
     var value by remember { mutableFloatStateOf(2f) }
-    val valueRange = 0f..4f
+    val valueRange = remember { 0f..4f }
     val onValueChange = { i: Float -> value = i }
     val steps = 7
     Box(modifier = Modifier.fillMaxSize()) {
@@ -118,7 +118,7 @@ fun StepperWithRangeSemanticsSample() {
 @Composable
 fun StepperWithButtonSample() {
     var value by remember { mutableFloatStateOf(2f) }
-    val valueRange = 0f..4f
+    val valueRange = remember { 0f..4f }
     Box(modifier = Modifier.fillMaxSize()) {
         Stepper(
             value = value,
