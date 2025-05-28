@@ -214,3 +214,53 @@ fun MultiSelectConnectedButtonGroupSample() {
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Sampled
+@Composable
+fun MultiSelectConnectedButtonGroupWithFlowLayoutSample() {
+    val options = listOf("Work", "Restaurant", "Coffee", "Search", "Home")
+    val unCheckedIcons =
+        listOf(
+            Icons.Outlined.Work,
+            Icons.Outlined.Restaurant,
+            Icons.Outlined.Coffee,
+            Icons.Outlined.Search,
+            Icons.Outlined.Home,
+        )
+    val checkedIcons =
+        listOf(
+            Icons.Filled.Work,
+            Icons.Filled.Restaurant,
+            Icons.Filled.Coffee,
+            Icons.Filled.Search,
+            Icons.Filled.Home,
+        )
+    val checked = remember { mutableStateListOf(false, false, false, false, false) }
+
+    FlowRow(
+        Modifier.padding(horizontal = 8.dp).fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        options.forEachIndexed { index, label ->
+            ToggleButton(
+                checked = checked[index],
+                onCheckedChange = { checked[index] = it },
+                shapes =
+                    when (index) {
+                        0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+                        options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+                        else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+                    },
+            ) {
+                Icon(
+                    if (checked[index]) checkedIcons[index] else unCheckedIcons[index],
+                    contentDescription = "Localized description",
+                )
+                Spacer(Modifier.size(ToggleButtonDefaults.IconSpacing))
+                Text(label)
+            }
+        }
+    }
+}
