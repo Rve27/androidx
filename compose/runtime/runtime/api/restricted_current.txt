@@ -1158,13 +1158,14 @@ package androidx.compose.runtime.snapshots {
     method @Deprecated public void withNoObservations(kotlin.jvm.functions.Function0<kotlin.Unit> block);
   }
 
-  @androidx.compose.runtime.Stable public final class SnapshotStateSet<T> implements kotlin.jvm.internal.markers.KMutableSet java.util.RandomAccess java.util.Set<T> androidx.compose.runtime.snapshots.StateObject {
+  @androidx.compose.runtime.Stable public final class SnapshotStateSet<T> implements kotlin.jvm.internal.markers.KMutableSet android.os.Parcelable java.util.RandomAccess java.util.Set<T> androidx.compose.runtime.snapshots.StateObject {
     ctor public SnapshotStateSet();
     method public boolean add(T element);
     method public boolean addAll(java.util.Collection<? extends T> elements);
     method public void clear();
     method public boolean contains(T element);
     method public boolean containsAll(java.util.Collection<? extends T> elements);
+    method public int describeContents();
     method public androidx.compose.runtime.snapshots.StateRecord getFirstStateRecord();
     method public int getSize();
     method public boolean isEmpty();
@@ -1174,8 +1175,10 @@ package androidx.compose.runtime.snapshots {
     method public boolean removeAll(java.util.Collection<? extends T> elements);
     method public boolean retainAll(java.util.Collection<? extends T> elements);
     method public java.util.Set<T> toSet();
+    method public void writeToParcel(android.os.Parcel parcel, int flags);
     property public androidx.compose.runtime.snapshots.StateRecord firstStateRecord;
     property public int size;
+    field public static final android.os.Parcelable.Creator<androidx.compose.runtime.snapshots.SnapshotStateSet<java.lang.Object?>> CREATOR;
   }
 
   @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets=kotlin.annotation.AnnotationTarget.FUNCTION) public @interface StateFactoryMarker {
