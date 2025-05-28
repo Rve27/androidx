@@ -406,6 +406,8 @@ private fun sourceInformationContextOf(
                 return SourceLocationInfo(lineNumber, offset, length)
         } catch (_: ParseError) {
             return null
+        } catch (_: NumberFormatException) {
+            return null
         }
         return null
     }
@@ -455,6 +457,8 @@ private fun sourceInformationContextOf(
                     packageHash =
                         try {
                             hashText.parseToInt(36)
+                        } catch (_: ParseError) {
+                            -1
                         } catch (_: NumberFormatException) {
                             -1
                         }
