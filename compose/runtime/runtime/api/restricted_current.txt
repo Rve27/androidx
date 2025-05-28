@@ -1084,7 +1084,7 @@ package androidx.compose.runtime.snapshots {
     property public abstract androidx.compose.runtime.SnapshotMutationPolicy<T> policy;
   }
 
-  @androidx.compose.runtime.Stable public final class SnapshotStateList<T> implements kotlin.jvm.internal.markers.KMutableList java.util.List<T> java.util.RandomAccess androidx.compose.runtime.snapshots.StateObject {
+  @androidx.compose.runtime.Stable public final class SnapshotStateList<T> implements kotlin.jvm.internal.markers.KMutableList java.util.List<T> android.os.Parcelable java.util.RandomAccess androidx.compose.runtime.snapshots.StateObject {
     ctor public SnapshotStateList();
     method public void add(int index, T element);
     method public boolean add(T element);
@@ -1093,6 +1093,7 @@ package androidx.compose.runtime.snapshots {
     method public void clear();
     method public boolean contains(T element);
     method public boolean containsAll(java.util.Collection<? extends T> elements);
+    method public int describeContents();
     method public T get(int index);
     method public androidx.compose.runtime.snapshots.StateRecord getFirstStateRecord();
     method public int getSize();
@@ -1111,8 +1112,10 @@ package androidx.compose.runtime.snapshots {
     method public T set(int index, T element);
     method public java.util.List<T> subList(int fromIndex, int toIndex);
     method public java.util.List<T> toList();
+    method public void writeToParcel(android.os.Parcel parcel, int flags);
     property public androidx.compose.runtime.snapshots.StateRecord firstStateRecord;
     property public int size;
+    field public static final android.os.Parcelable.Creator<androidx.compose.runtime.snapshots.SnapshotStateList<java.lang.Object?>> CREATOR;
   }
 
   public final class SnapshotStateListKt {

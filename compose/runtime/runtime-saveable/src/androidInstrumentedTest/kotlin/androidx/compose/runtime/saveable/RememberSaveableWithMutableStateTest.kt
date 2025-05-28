@@ -17,7 +17,9 @@
 package androidx.compose.runtime.saveable
 
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -51,6 +53,24 @@ class RememberSaveableWithMutableStateTest {
         restorationTester.emulateSavedInstanceStateRestore()
 
         rule.runOnUiThread { assertThat(state!!.value).isEqualTo(1) }
+    }
+
+    @Test
+    fun simpleRestoreList() {
+        var state: SnapshotStateList<Int>? = null
+        restorationTester.setContent { state = rememberSaveable { mutableStateListOf(0) } }
+
+        rule.runOnUiThread {
+            assertThat(state!![0]).isEqualTo(0)
+
+            state!![0] = 1
+            // we null it to ensure recomposition happened
+            state = null
+        }
+
+        restorationTester.emulateSavedInstanceStateRestore()
+
+        rule.runOnUiThread { assertThat(state!![0]).isEqualTo(1) }
     }
 
     @Test
