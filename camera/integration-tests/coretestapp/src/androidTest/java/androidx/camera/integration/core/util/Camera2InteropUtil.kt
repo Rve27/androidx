@@ -288,7 +288,7 @@ object Camera2InteropUtil {
 
     class CaptureCallback(
         val _timeout: Long = TimeUnit.SECONDS.toMillis(5),
-        val _numOfCaptures: Int = 1,
+        val _numOfCaptures: Int = 30,
     ) : CameraCaptureSession.CaptureCallback() {
 
         val waitingList = mutableListOf<CaptureContainer>()
