@@ -179,6 +179,10 @@ package androidx.xr.compose.subspace.layout {
     method public void adjustParams(androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable params);
   }
 
+  public final class SemanticsModifierKt {
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier semantics(androidx.xr.compose.subspace.layout.SubspaceModifier, kotlin.jvm.functions.Function1<? super androidx.compose.ui.semantics.SemanticsPropertyReceiver,kotlin.Unit> properties);
+  }
+
   public interface SpatialAlignment {
     method public int depthOffset(int depth, int space);
     method public static androidx.xr.compose.subspace.layout.SpatialAlignment.Depth getBack();
