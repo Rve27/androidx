@@ -52,7 +52,9 @@ val TransformingLazyColumnNotificationsBenchmark =
                             item {
                                 ListHeader(
                                     transformation = SurfaceTransformation(transformationSpec),
-                                    modifier = Modifier.transformedHeight(this, transformationSpec),
+                                    modifier =
+                                        Modifier.transformedHeight(this, transformationSpec)
+                                            .animateItem(),
                                 ) {
                                     Text("Notifications")
                                 }
@@ -71,7 +73,8 @@ val TransformingLazyColumnNotificationsBenchmark =
                                     subtitle = { Text(notification.body) },
                                     transformation = SurfaceTransformation(transformationSpec),
                                     modifier =
-                                        Modifier.transformedHeight(this@items, transformationSpec),
+                                        Modifier.transformedHeight(this@items, transformationSpec)
+                                            .animateItem(),
                                 )
                             }
                         }
@@ -82,7 +85,7 @@ val TransformingLazyColumnNotificationsBenchmark =
         override val exercise: MacrobenchmarkScope.() -> Unit
             get() = {
                 val swipeStartY = device.displayHeight * 9 / 10 // scroll up
-                val swipeEndY = device.displayHeight / 10
+                val swipeEndY = device.displayHeight * 1 / 10
                 val midX = device.displayWidth / 2
                 repeat(20) {
                     device.swipe(midX, swipeStartY, midX, swipeEndY, 2)
