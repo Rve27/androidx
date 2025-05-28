@@ -169,7 +169,7 @@ internal class AndroidComposeSpatialElement :
 
         snapshotStateObserver.observeReads(this, onLayoutStateValueChanged) {
             val measureResults = root.measurableLayout.measure(rootVolumeConstraints)
-            (measureResults as SubspaceLayoutNode.MeasurableLayout).placeAt(Pose.Identity)
+            (measureResults as SubspaceLayoutNode.SubspaceMeasurableLayout).placeAt(Pose.Identity)
         }
 
         Logger.log("AndroidComposeSpatialElement") { root.debugTreeToString() }

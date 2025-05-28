@@ -273,7 +273,7 @@ private class FillElement(
 private class FillNode(public var direction: Direction, public var fraction: Float) :
     SubspaceLayoutModifierNode, SubspaceModifier.Node() {
     override fun MeasureScope.measure(
-        measurable: Measurable,
+        measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
     ): MeasureResult {
         val minWidth: Int
@@ -457,7 +457,7 @@ private class SizeNode(
         }
 
     override fun MeasureScope.measure(
-        measurable: Measurable,
+        measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
     ): MeasureResult {
         val wrappedConstraints =

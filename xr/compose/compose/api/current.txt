@@ -328,6 +328,11 @@ package androidx.xr.compose.subspace.layout {
     property public abstract androidx.xr.compose.unit.IntVolumeSize size;
   }
 
+  public interface SubspaceMeasurable {
+    method public void adjustParams(androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable params);
+    method public androidx.xr.compose.subspace.layout.SubspacePlaceable measure(androidx.xr.compose.unit.VolumeConstraints constraints);
+  }
+
   public interface SubspaceModifier {
     method public default boolean all(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);
     method public default boolean any(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);

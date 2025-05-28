@@ -18,11 +18,11 @@ package androidx.xr.compose.subspace
 
 import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
-import androidx.xr.compose.subspace.layout.Measurable
 import androidx.xr.compose.subspace.layout.MeasurePolicy
 import androidx.xr.compose.subspace.layout.MeasureResult
 import androidx.xr.compose.subspace.layout.MeasureScope
 import androidx.xr.compose.subspace.layout.SubspaceLayout
+import androidx.xr.compose.subspace.layout.SubspaceMeasurable
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.width
@@ -43,7 +43,7 @@ public fun SpatialLayoutSpacer(modifier: SubspaceModifier = SubspaceModifier) {
 
 private object SpacerMeasurePolicy : MeasurePolicy {
     override fun MeasureScope.measure(
-        measurables: List<Measurable>,
+        measurables: List<SubspaceMeasurable>,
         constraints: VolumeConstraints,
     ): MeasureResult {
         return with(constraints) {

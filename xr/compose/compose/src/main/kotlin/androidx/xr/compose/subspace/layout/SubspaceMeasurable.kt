@@ -16,7 +16,6 @@
 
 package androidx.xr.compose.subspace.layout
 
-import androidx.annotation.RestrictTo
 import androidx.xr.compose.unit.VolumeConstraints
 
 /**
@@ -24,14 +23,24 @@ import androidx.xr.compose.unit.VolumeConstraints
  *
  * Based on [androidx.compose.ui.layout.Measurable].
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public interface Measurable {
+public interface SubspaceMeasurable {
     /**
      * Measures the layout with [VolumeConstraints], returning a [SubspacePlaceable] layout that has
      * its new size.
      */
     public fun measure(constraints: VolumeConstraints): SubspacePlaceable
 
-    /** Adjusts layout with a new [ParentLayoutParamsAdjustable]. */
+    /**
+     * Adjusts layout with a new [ParentLayoutParamsAdjustable].
+     *
+     * This is useful in implementations of [MeasurePolicy.measure] to provide child measurables
+     * with the context objects they need to inform their parent of their layout preferences using
+     * [ParentLayoutParamsModifier.adjustParams].
+     *
+     * ```kotlin
+     * // Child composable modifiers can modify MyParams which can be read by the parent.
+     * var myParams = MyParams().also { measurable.adjustParams(it) }
+     * ```
+     */
     public fun adjustParams(params: ParentLayoutParamsAdjustable)
 }

@@ -17,10 +17,10 @@
 package androidx.xr.compose.subspace.node
 
 import androidx.xr.compose.subspace.layout.LayoutMeasureScope
-import androidx.xr.compose.subspace.layout.Measurable
 import androidx.xr.compose.subspace.layout.MeasureResult
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable
 import androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates
+import androidx.xr.compose.subspace.layout.SubspaceMeasurable
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.SubspacePlaceable
 import androidx.xr.compose.unit.IntVolumeSize
@@ -28,8 +28,8 @@ import androidx.xr.compose.unit.VolumeConstraints
 import androidx.xr.runtime.math.Pose
 
 /**
- * A [Measurable] and [SubspacePlaceable] object that is used to measure and lay out the children of
- * a [SubspaceLayoutModifierNode].
+ * A [SubspaceMeasurable] and [SubspacePlaceable] object that is used to measure and lay out the
+ * children of a [SubspaceLayoutModifierNode].
  *
  * See [androidx.compose.ui.node.NodeCoordinator]
  *
@@ -39,7 +39,7 @@ import androidx.xr.runtime.math.Pose
  */
 internal class SubspaceLayoutModifierNodeCoordinator(
     private val layoutModifierNode: SubspaceLayoutModifierNode
-) : SubspaceLayoutCoordinates, Measurable, SubspacePlaceable() {
+) : SubspaceLayoutCoordinates, SubspaceMeasurable, SubspacePlaceable() {
 
     private val baseNode: SubspaceModifier.Node
         get() = layoutModifierNode as SubspaceModifier.Node
@@ -124,7 +124,7 @@ internal class SubspaceLayoutModifierNodeCoordinator(
      */
     override fun measure(constraints: VolumeConstraints): SubspacePlaceable {
         with(layoutModifierNode) {
-            val measurable: Measurable = child ?: layoutNode!!.measurableLayout
+            val measurable: SubspaceMeasurable = child ?: layoutNode!!.measurableLayout
             val measureResult: MeasureResult =
                 LayoutMeasureScope(layoutNode!!).measure(measurable, constraints).also {
                     this@SubspaceLayoutModifierNodeCoordinator.measureResult = it

@@ -279,7 +279,7 @@ internal class MovableNode(
     }
 
     override fun MeasureScope.measure(
-        measurable: Measurable,
+        measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
     ): MeasureResult {
         // modifyCoreEntity happens during placement, so we need to update the component state here

@@ -19,11 +19,11 @@ package androidx.xr.compose.subspace
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.util.fastRoundToInt
-import androidx.xr.compose.subspace.layout.Measurable
 import androidx.xr.compose.subspace.layout.MeasurePolicy
 import androidx.xr.compose.subspace.layout.MeasureResult
 import androidx.xr.compose.subspace.layout.MeasureScope
 import androidx.xr.compose.subspace.layout.SpatialAlignment
+import androidx.xr.compose.subspace.layout.SubspaceMeasurable
 import androidx.xr.compose.subspace.layout.SubspacePlaceable
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.compose.unit.VolumeConstraints
@@ -44,7 +44,7 @@ internal class RowColumnMeasurePolicy(
     private val curveRadius: Dp,
 ) : MeasurePolicy {
     override fun MeasureScope.measure(
-        measurables: List<Measurable>,
+        measurables: List<SubspaceMeasurable>,
         constraints: VolumeConstraints,
     ): MeasureResult {
         val resolvedMeasurables = measurables.map { ResolvedMeasurable(it) }
@@ -335,8 +335,11 @@ private fun getOrientationTangentToCircle(position: Vector3, radius: Float): Qua
     return Quaternion(qX, qY, qZ, qW)
 }
 
-/** A [Measurable] and all associated information computed in [RowColumnMeasurePolicy.measure]. */
-private class ResolvedMeasurable(val measurable: Measurable) {
+/**
+ * A [SubspaceMeasurable] and all associated information computed in
+ * [RowColumnMeasurePolicy.measure].
+ */
+private class ResolvedMeasurable(val measurable: SubspaceMeasurable) {
     /** Parameters set by the [RowScope.weight] and [ColumnScope.weight] modifiers. */
     val weightInfo: RowColumnParentData = RowColumnParentData().also { measurable.adjustParams(it) }
 
@@ -344,7 +347,10 @@ private class ResolvedMeasurable(val measurable: Measurable) {
     val alignment: RowColumnSpatialAlignmentParentData =
         RowColumnSpatialAlignmentParentData().also { measurable.adjustParams(it) }
 
-    /** A measured placeable, only present once [Measurable.measure] is called on [measurable]. */
+    /**
+     * A measured placeable, only present once [SubspaceMeasurable.measure] is called on
+     * [measurable].
+     */
     var placeable: SubspacePlaceable? = null
 
     /** The main-axis position of this child in its parent; set after all children are measured. */

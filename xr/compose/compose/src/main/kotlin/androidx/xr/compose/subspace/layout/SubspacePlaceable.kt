@@ -20,7 +20,8 @@ import androidx.xr.runtime.math.Pose
 
 /**
  * A [SubspacePlaceable] corresponds to a child layout that can be positioned by its parent layout.
- * Most [SubspacePlaceables][SubspacePlaceable] are the result of a [Measurable.measure] call.
+ * Most [SubspacePlaceables][SubspacePlaceable] are the result of a [SubspaceMeasurable.measure]
+ * call.
  *
  * Based on [androidx.compose.ui.layout.Placeable].
  */
