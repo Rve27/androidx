@@ -49,6 +49,7 @@ import androidx.xr.compose.subspace.SpatialRow
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.alpha
 import androidx.xr.compose.subspace.layout.height
+import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.scale
 import androidx.xr.compose.subspace.layout.testTag
 import androidx.xr.compose.subspace.layout.width
@@ -64,6 +65,7 @@ class AnimationExplorationApp : ComponentActivity() {
             val toggleSidePanel: () -> Unit = { updateShowSidePanel(!showSidePanel) }
             val desiredWidth = 300.dp
             val desiredHeight = 150.dp
+            val zOffset = -30.dp
 
             // Main Panel content.
             Box(
@@ -98,6 +100,8 @@ class AnimationExplorationApp : ComponentActivity() {
                         modifier =
                             SubspaceModifier.width(desiredWidth)
                                 .height(desiredHeight)
+                                // Middle panel is also the far back panel.
+                                .offset(z = zOffset * 2)
                                 .alpha(animatedAlpha.value)
                                 .testTag("FadeInPanel")
                     ) {
@@ -127,6 +131,8 @@ class AnimationExplorationApp : ComponentActivity() {
                             modifier =
                                 SubspaceModifier.width(desiredWidth)
                                     .height(desiredHeight)
+                                    // Right panel is in the middle along z.
+                                    .offset(z = zOffset)
                                     .scale(sidePanelAnimatedScale.value)
                         ) {
                             PanelContent(
