@@ -65,6 +65,7 @@ private fun MaterialAlertDialog() {
     DialogWithShowButton("Material Alert Dialog") { showDialog ->
         AlertDialog(
             onDismissRequest = { showDialog.value = false },
+            title = { Text("AlertDialog") },
             text = { Text("This is a Material AlertDialog") },
             confirmButton = {
                 Button(

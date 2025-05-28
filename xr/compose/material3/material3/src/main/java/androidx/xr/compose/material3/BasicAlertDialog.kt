@@ -16,10 +16,14 @@
 
 package androidx.xr.compose.material3
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.BasicAlertDialogOverride
 import androidx.compose.material3.BasicAlertDialogOverrideScope
 import androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.xr.compose.spatial.SpatialDialog
 import androidx.xr.compose.spatial.SpatialDialogProperties
 
@@ -47,7 +51,9 @@ public fun BasicAlertDialog(
     properties: SpatialDialogProperties = SpatialDialogProperties(),
     content: @Composable () -> Unit,
 ) {
-    SpatialDialog(onDismissRequest = onDismissRequest, properties = properties, content = content)
+    SpatialDialog(onDismissRequest = onDismissRequest, properties = properties) {
+        Box(modifier = Modifier.height(IntrinsicSize.Min)) { content() }
+    }
 }
 
 /**
