@@ -119,6 +119,7 @@ public class SupportedSurfaceCombination(
     private val isStreamUseCaseSupported: Boolean
     private var isUltraHighResolutionSensorSupported = false
     private var isPreviewStabilizationSupported = false
+    private var isManualSensorSupported = false
     internal lateinit var surfaceSizeDefinition: SurfaceSizeDefinition
     private val surfaceSizeDefinitionFormats = mutableListOf<Int>()
     private val streamConfigurationMapCompat = getStreamConfigurationMapCompat()
@@ -952,7 +953,7 @@ public class SupportedSurfaceCombination(
         attachedSurfaces: List<AttachedSurfaceInfo>,
         isHighSpeedOn: Boolean,
     ): Int {
-        var existingSurfaceFrameRateCeiling = Int.MAX_VALUE
+        var existingSurfaceFrameRateCeiling = FRAME_RATE_UNLIMITED
         for (attachedSurfaceInfo in attachedSurfaces) {
             // get the fps ceiling for existing surfaces
             existingSurfaceFrameRateCeiling =
@@ -1023,7 +1024,7 @@ public class SupportedSurfaceCombination(
             if (featureSettings.targetFpsRange != FRAME_RATE_RANGE_UNSPECIFIED) {
                 getMaxFrameRate(imageFormat, size, featureSettings.isHighSpeedOn)
             } else {
-                Int.MAX_VALUE
+                FRAME_RATE_UNLIMITED
             }
 
         // For feature combination, target FPS range must be strictly supported, so we can filter
@@ -1087,9 +1088,9 @@ public class SupportedSurfaceCombination(
         resolvedDynamicRanges: Map<UseCaseConfig<*>, DynamicRange>,
     ): BestSizesAndMaxFpsForConfigs? {
         var bestSizes: List<Size>? = null
-        var maxFps = Int.MAX_VALUE
+        var maxFps = FRAME_RATE_UNLIMITED
         var bestSizesForStreamUseCase: List<Size>? = null
-        var maxFpsForStreamUseCase = Int.MAX_VALUE
+        var maxFpsForStreamUseCase = FRAME_RATE_UNLIMITED
         var supportedSizesFound = false
         var supportedSizesForStreamUseCaseFound = false
 
@@ -1152,7 +1153,7 @@ public class SupportedSurfaceCombination(
             ) {
                 // if the config is supported by the device but doesn't meet the target frame rate,
                 // save the config
-                if (maxFps == Int.MAX_VALUE) {
+                if (maxFps == FRAME_RATE_UNLIMITED) {
                     maxFps = currentConfigFrameRateCeiling
                     bestSizes = possibleSizeList
                 } else if (maxFps < currentConfigFrameRateCeiling) {
@@ -1183,7 +1184,7 @@ public class SupportedSurfaceCombination(
                         surfaceConfigList,
                     ) != null
             ) {
-                if (maxFpsForStreamUseCase == Int.MAX_VALUE) {
+                if (maxFpsForStreamUseCase == FRAME_RATE_UNLIMITED) {
                     maxFpsForStreamUseCase = currentConfigFrameRateCeiling
                     bestSizesForStreamUseCase = possibleSizeList
                 } else if (maxFpsForStreamUseCase < currentConfigFrameRateCeiling) {
@@ -1382,10 +1383,16 @@ public class SupportedSurfaceCombination(
         val minFrameDuration =
             getStreamConfigurationMapCompat().getOutputMinFrameDuration(imageFormat, size)
         if (minFrameDuration <= 0L) {
-            warn {
-                "minFrameDuration: $minFrameDuration is invalid for imageFormat = $imageFormat, size = $size"
+            if (isManualSensorSupported) {
+                warn {
+                    "minFrameDuration: $minFrameDuration is invalid for imageFormat = $imageFormat, size = $size"
+                }
+                return 0
+            } else {
+                // According to the doc, getOutputMinFrameDuration may return 0 if device doesn't
+                // support manual sensor. Return MAX_VALUE indicates no limit.
+                return FRAME_RATE_UNLIMITED
             }
-            return 0
         }
         return (1_000_000_000.0 / minFrameDuration).toInt()
     }
@@ -1681,6 +1688,8 @@ public class SupportedSurfaceCombination(
                     CameraCharacteristics
                         .REQUEST_AVAILABLE_CAPABILITIES_ULTRA_HIGH_RESOLUTION_SENSOR
                 )
+            isManualSensorSupported =
+                contains(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR)
         }
 
         // Preview Stabilization
@@ -2140,6 +2149,8 @@ public class SupportedSurfaceCombination(
     }
 
     public companion object {
+        private const val FRAME_RATE_UNLIMITED = Int.MAX_VALUE
+
         private fun isUltraHdrOn(
             attachedSurfaces: List<AttachedSurfaceInfo>,
             newUseCaseConfigsSupportedSizeMap: Map<UseCaseConfig<*>, List<Size>>,

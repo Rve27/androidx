@@ -28,6 +28,7 @@ import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED
 import android.hardware.camera2.CameraMetadata.REQUEST_AVAILABLE_CAPABILITIES_CONSTRAINED_HIGH_SPEED_VIDEO
 import android.hardware.camera2.CameraMetadata.REQUEST_AVAILABLE_CAPABILITIES_DYNAMIC_RANGE_TEN_BIT
+import android.hardware.camera2.CameraMetadata.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR
 import android.hardware.camera2.params.DynamicRangeProfiles
 import android.hardware.camera2.params.DynamicRangeProfiles.DOLBY_VISION_10B_HDR_OEM
 import android.hardware.camera2.params.DynamicRangeProfiles.HDR10
@@ -4026,6 +4027,49 @@ class SupportedSurfaceCombinationTest {
         }
     }
 
+    @Test
+    fun getSuggestedStreamSpecs_hasManualSensor_skipsZeroMinFrameDurationStream() {
+        val useCase = createUseCase(CaptureType.PREVIEW, targetFrameRate = Range<Int>(30, 30))
+        val useCasesOutputSizesMap =
+            mapOf(
+                useCase to
+                    listOf(
+                        Size(1000, 1000), // MaxFps = 0
+                        Size(1920, 1080), // MaxFps = 35
+                    )
+            )
+        val useCaseExpectedResultMap = mutableMapOf(useCase to Size(1920, 1080))
+
+        getSuggestedSpecsAndVerify(
+            useCaseExpectedResultMap,
+            useCasesOutputSizesMap = useCasesOutputSizesMap,
+            capabilities = intArrayOf(REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR),
+            hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
+            compareExpectedFps = Range(30, 30),
+        )
+    }
+
+    @Test
+    fun getSuggestedStreamSpecs_noManualSensor_zeroMinFrameDurationIndicatesUnlimitedFps() {
+        val useCase = createUseCase(CaptureType.PREVIEW, targetFrameRate = Range<Int>(30, 30))
+        val useCasesOutputSizesMap =
+            mapOf(
+                useCase to
+                    listOf(
+                        Size(1000, 1000), // MaxFps = no limit
+                        Size(1920, 1080), // MaxFps = 35
+                    )
+            )
+        val useCaseExpectedResultMap = mutableMapOf(useCase to Size(1000, 1000))
+
+        getSuggestedSpecsAndVerify(
+            useCaseExpectedResultMap,
+            useCasesOutputSizesMap = useCasesOutputSizesMap,
+            hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
+            compareExpectedFps = Range(30, 30),
+        )
+    }
+
     private fun createSupportedSurfaceCombination(): SupportedSurfaceCombination {
         setupCameraAndInitCameraX()
         return SupportedSurfaceCombination(
@@ -4216,6 +4260,9 @@ class SupportedSurfaceCombinationTest {
 
                 // 60fps
                 map.mockOutputMinFrameDuration(Size(640, 480), 16666666L)
+
+                // 0fps, special cases that return 0.
+                map.mockOutputMinFrameDuration(Size(1000, 1000), 0L)
 
                 maxFpsBySizeMap.forEach { (size, maxFps) ->
                     // x FPS means 1 second for x frames, so min frame duration is (1e9 / x) ns

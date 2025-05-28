@@ -116,6 +116,7 @@ import java.util.Set;
 @OptIn(markerClass = ExperimentalCamera2Interop.class)
 final class SupportedSurfaceCombination {
     private static final String TAG = "SupportedSurfaceCombination";
+    private static final int FRAME_RATE_UNLIMITED = Integer.MAX_VALUE;
     private final List<SurfaceCombination> mSurfaceCombinations = new ArrayList<>();
     private final List<SurfaceCombination> mUltraHighSurfaceCombinations = new ArrayList<>();
     private final List<SurfaceCombination> mConcurrentSurfaceCombinations = new ArrayList<>();
@@ -139,6 +140,7 @@ final class SupportedSurfaceCombination {
     private final boolean mIsConcurrentCameraModeSupported;
     private final boolean mIsStreamUseCaseSupported;
     private boolean mIsUltraHighResolutionSensorSupported = false;
+    private boolean mIsManualSensorSupported = false;
     @VisibleForTesting
     SurfaceSizeDefinition mSurfaceSizeDefinition;
     List<Integer> mSurfaceSizeDefinitionFormats = new ArrayList<>();
@@ -194,6 +196,9 @@ final class SupportedSurfaceCombination {
                         == CameraCharacteristics
                         .REQUEST_AVAILABLE_CAPABILITIES_ULTRA_HIGH_RESOLUTION_SENSOR) {
                     mIsUltraHighResolutionSensorSupported = true;
+                } else if (capability
+                        == CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR) {
+                    mIsManualSensorSupported = true;
                 }
             }
         }
@@ -429,15 +434,21 @@ final class SupportedSurfaceCombination {
                 : getMaxFrameRate(mCharacteristics, imageFormat, size);
     }
 
-    static int getMaxFrameRate(@NonNull CameraCharacteristicsCompat characteristics,
+    private int getMaxFrameRate(@NonNull CameraCharacteristicsCompat characteristics,
             int imageFormat, Size size) {
         long minFrameDuration = requireNonNull(
                 characteristics.getStreamConfigurationMapCompat())
                 .getOutputMinFrameDuration(imageFormat, size);
         if (minFrameDuration <= 0L) {
-            Logger.w(TAG, "minFrameDuration: " + minFrameDuration + " is invalid for "
-                    + "imageFormat = " + imageFormat + ", size = " + size);
-            return 0;
+            if (mIsManualSensorSupported) {
+                Logger.w(TAG, "minFrameDuration: " + minFrameDuration + " is invalid for "
+                        + "imageFormat = " + imageFormat + ", size = " + size);
+                return 0;
+            } else {
+                // According to the doc, getOutputMinFrameDuration may return 0 if device doesn't
+                // support manual sensor. Return MAX_VALUE indicates no limit.
+                return FRAME_RATE_UNLIMITED;
+            }
         }
         return (int) (1000000000.0 / minFrameDuration);
     }
@@ -1020,9 +1031,9 @@ final class SupportedSurfaceCombination {
         Range<Integer> targetFpsRange = featureSettings.getTargetFpsRange();
 
         List<Size> savedSizes = null;
-        int savedConfigMaxFps = Integer.MAX_VALUE;
+        int savedConfigMaxFps = FRAME_RATE_UNLIMITED;
         List<Size> savedSizesForStreamUseCase = null;
-        int savedConfigMaxFpsForStreamUseCase = Integer.MAX_VALUE;
+        int savedConfigMaxFpsForStreamUseCase = FRAME_RATE_UNLIMITED;
 
         boolean supportedSizesFound = false;
         boolean supportedSizesForStreamUseCaseFound = false;
@@ -1071,7 +1082,7 @@ final class SupportedSurfaceCombination {
                     dynamicRangesBySurfaceConfig, newUseCaseConfigs, useCasesPriorityOrder)) {
                 // if the config is supported by the device but doesn't meet the target frame rate,
                 // save the config
-                if (savedConfigMaxFps == Integer.MAX_VALUE) {
+                if (savedConfigMaxFps == FRAME_RATE_UNLIMITED) {
                     savedConfigMaxFps = currentConfigFrameRateCeiling;
                     savedSizes = possibleSizeList;
                 } else if (savedConfigMaxFps < currentConfigFrameRateCeiling) {
@@ -1099,7 +1110,7 @@ final class SupportedSurfaceCombination {
                     && !supportedSizesForStreamUseCaseFound
                     && getOrderedSupportedStreamUseCaseSurfaceConfigList(
                     featureSettings, surfaceConfigList) != null) {
-                if (savedConfigMaxFpsForStreamUseCase == Integer.MAX_VALUE) {
+                if (savedConfigMaxFpsForStreamUseCase == FRAME_RATE_UNLIMITED) {
                     savedConfigMaxFpsForStreamUseCase = currentConfigFrameRateCeiling;
                     savedSizesForStreamUseCase = possibleSizeList;
                 } else if (savedConfigMaxFpsForStreamUseCase < currentConfigFrameRateCeiling) {
@@ -1123,8 +1134,8 @@ final class SupportedSurfaceCombination {
         if (featureSettings.requiresFeatureComboQuery()
                 && !FRAME_RATE_RANGE_UNSPECIFIED.equals(targetFpsRange)
                 && savedConfigMaxFps < targetFpsRange.getUpper()) {
-            return new BestSizesAndMaxFpsForConfigs(null, null, Integer.MAX_VALUE,
-                    Integer.MAX_VALUE);
+            return new BestSizesAndMaxFpsForConfigs(null, null, FRAME_RATE_UNLIMITED,
+                    FRAME_RATE_UNLIMITED);
         }
 
         return new BestSizesAndMaxFpsForConfigs(savedSizes, savedSizesForStreamUseCase,
@@ -1309,7 +1320,7 @@ final class SupportedSurfaceCombination {
 
     private int getMaxSupportedFpsFromAttachedSurfaces(
             @NonNull List<AttachedSurfaceInfo> attachedSurfaces, boolean isHighSpeedOn) {
-        int existingSurfaceFrameRateCeiling = Integer.MAX_VALUE;
+        int existingSurfaceFrameRateCeiling = FRAME_RATE_UNLIMITED;
 
         for (AttachedSurfaceInfo attachedSurfaceInfo : attachedSurfaces) {
             //get the fps ceiling for existing surfaces
@@ -1361,7 +1372,7 @@ final class SupportedSurfaceCombination {
                 featureSettings.requiresFeatureComboQuery() ? FEATURE_COMBINATION_TABLE
                         : CAPTURE_SESSION_TABLES).getConfigSize();
 
-        int maxFrameRate = Integer.MAX_VALUE;
+        int maxFrameRate = FRAME_RATE_UNLIMITED;
         // Filters the sizes with frame rate only if there is target FPS setting
         if (!FRAME_RATE_RANGE_UNSPECIFIED.equals(targetFpsRange)) {
             maxFrameRate = getMaxFrameRate(imageFormat, size,
