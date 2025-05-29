@@ -80,6 +80,17 @@ fun helloWorldTextDefault(context: Context, deviceConfiguration: DeviceParameter
         text(text = "Hello Material3".layoutString, typography = Typography.DISPLAY_LARGE)
     }
 
+/** Builds Material3 text element with default options. */
+@Sampled
+fun helloWorldTextAutosize(context: Context, deviceConfiguration: DeviceParameters): LayoutElement =
+    materialScope(context, deviceConfiguration) {
+        text(
+            text = "Hello Material3".layoutString,
+            typography = Typography.DISPLAY_LARGE,
+            incrementsForTypographySize = listOf(-4f, -2f, 2f),
+        )
+    }
+
 /** Builds Material3 text element with some of the overridden defaults. */
 @Sampled
 fun helloWorldTextDynamicCustom(
