@@ -194,7 +194,11 @@ internal abstract class CacheWindowLogic(private val cacheWindow: LazyLayoutCach
                 prefetchWindowEndExtraSpace += scrollDelta.absoluteValue.roundToInt()
             }
 
-            while (prefetchWindowEndExtraSpace > 0 && prefetchWindowEndLine < itemsCount) {
+            while (
+                prefetchWindowEndExtraSpace > 0 &&
+                    getLastIndexInLine(prefetchWindowEndLine) != InvalidItemIndex &&
+                    getLastIndexInLine(prefetchWindowEndLine) < itemsCount - 1
+            ) {
                 // If we get the same delta in the next frame, would we cover the extra space needed
                 // to actually need this item? If so, mark it as urgent
                 val isUrgent: Boolean =
@@ -361,18 +365,23 @@ internal abstract class CacheWindowLogic(private val cacheWindow: LazyLayoutCach
     }
 
     private fun CacheWindowScope.scheduleNextItemIfNeeded() {
-        var nextPrefetchableIndex: Int = -1
+        var nextPrefetchableLineIndex: Int = -1
         // if was scrolling forward
         if (previousPassDelta.sign <= 0) {
-            if (prefetchWindowEndExtraSpace > 0) nextPrefetchableIndex = prefetchWindowEndLine + 1
+            if (prefetchWindowEndExtraSpace > 0)
+                nextPrefetchableLineIndex = prefetchWindowEndLine + 1
         } else if (previousPassDelta.sign > 0) {
             if (prefetchWindowStartExtraSpace > 0)
-                nextPrefetchableIndex = prefetchWindowStartLine - 1
+                nextPrefetchableLineIndex = prefetchWindowStartLine - 1
         }
 
-        if (nextPrefetchableIndex in 0..itemsCount) {
-            prefetchWindowHandles[nextPrefetchableIndex] =
-                schedulePrefetch(nextPrefetchableIndex) { index, mainAxisSize ->
+        if (
+            nextPrefetchableLineIndex > 0 &&
+                getLastIndexInLine(nextPrefetchableLineIndex) != InvalidItemIndex &&
+                getLastIndexInLine(nextPrefetchableLineIndex) < itemsCount
+        ) {
+            prefetchWindowHandles[nextPrefetchableLineIndex] =
+                schedulePrefetch(nextPrefetchableLineIndex) { index, mainAxisSize ->
                     onItemPrefetched(index, mainAxisSize)
                 }
         }
@@ -397,6 +406,8 @@ internal interface CacheWindowScope {
     fun getVisibleItemSize(indexInVisibleLines: Int): Int
 
     fun getVisibleItemLine(indexInVisibleLines: Int): Int
+
+    fun getLastIndexInLine(lineIndex: Int): Int
 }
 
 internal inline fun CacheWindowScope.forEachVisibleItem(
@@ -406,3 +417,4 @@ internal inline fun CacheWindowScope.forEachVisibleItem(
 }
 
 private const val InvalidItemSize = -1
+internal const val InvalidItemIndex = -1
