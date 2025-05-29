@@ -28,8 +28,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.xr.compose.unit.DpVolumeSize
 import androidx.xr.compose.unit.toDpVolumeSize
-import androidx.xr.runtime.FEATURE_XR_API_SPATIAL
 import androidx.xr.runtime.Session
+import androidx.xr.runtime.manifest.FEATURE_XR_API_SPATIAL
 import androidx.xr.scenecore.scene
 
 /** CompositionLocal indicating whether the system XR Spatial feature is enabled. */
