@@ -17,20 +17,18 @@
 package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
-import androidx.xr.runtime.internal.ArDevice
+import androidx.xr.runtime.FieldOfView
 import androidx.xr.runtime.math.Pose
 
-/** Wraps the device tracking data. */
+/**
+ * Represents the current state of a [ViewCamera].
+ *
+ * @property pose the pose of the view camera.
+ * @property fieldOfView the field of view of the view camera.
+ */
+@Suppress("DataClassDefinition")
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class OpenXrDevice internal constructor() : ArDevice, Updatable {
-
-    override var devicePose: Pose = Pose()
-        private set // Return a default Pose if buffer is null
-
-    override fun update(xrTime: Long) {
-        // Keep the device pose as the previous one if native returns null.
-        devicePose = nativeGetHeadPose(xrTime) ?: devicePose
-    }
-
-    private external fun nativeGetHeadPose(timestampNs: Long): Pose?
-}
+internal data class ViewCameraState(
+    val pose: Pose = Pose(),
+    val fieldOfView: FieldOfView = FieldOfView(0f, 0f, 0f, 0f),
+)
