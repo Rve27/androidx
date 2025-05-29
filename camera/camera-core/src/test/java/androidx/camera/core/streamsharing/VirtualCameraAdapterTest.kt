@@ -234,7 +234,7 @@ class VirtualCameraAdapterTest {
         verifyEdge(child1, OPEN, HAS_PROVIDER)
         // Set UseCase to inactive, verify it's closed.
         child1.notifyInactiveForTesting()
-        verifyEdge(child1, CLOSED, HAS_PROVIDER)
+        verifyEdge(child1, CLOSED, NO_PROVIDER)
         // Set UseCase to active, verify it becomes open again.
         child1.notifyActiveForTesting()
         verifyEdge(child1, OPEN, HAS_PROVIDER)
@@ -292,7 +292,7 @@ class VirtualCameraAdapterTest {
         child1.updateSessionConfigForTesting(defaultEmptySessionConfig())
         child1.notifyUpdatedForTesting()
         // Assert: edge is disconnected.
-        verifyEdge(child1, CLOSED, HAS_PROVIDER)
+        verifyEdge(child1, CLOSED, NO_PROVIDER)
         // Act: set Surface and update.
         child1.updateSessionConfigForTesting(SESSION_CONFIG_WITH_SURFACE)
         child1.notifyUpdatedForTesting()
