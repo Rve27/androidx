@@ -710,7 +710,7 @@ private class RulerProviderModifierNode(insetsListener: InsetsListener) :
             val values = insetsValues[rulers]!!
             provideInsetsValues(rulers, values.insets, width, height)
         }
-        AnimatableNonImeWindowInsetsRulers.forEach { rulers ->
+        AnimatableWindowInsetsRulers.forEach { rulers ->
             val values = insetsValues[rulers]!!
             if (values.isAnimating) {
                 provideInsetsValues(rulers.source, values.source, width, height)
@@ -1054,7 +1054,7 @@ private val AllWindowInsetsRulers =
     )
 
 /** Rulers that can animate, but don't always animate with the IME */
-private val AnimatableNonImeWindowInsetsRulers =
+private val AnimatableWindowInsetsRulers =
     arrayOf(
         StatusBars,
         NavigationBars,
