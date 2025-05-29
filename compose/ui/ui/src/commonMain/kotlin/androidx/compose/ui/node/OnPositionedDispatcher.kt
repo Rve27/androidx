@@ -66,6 +66,7 @@ internal class OnPositionedDispatcher {
             if (layoutNode.needsOnPositionedDispatch) {
                 dispatchHierarchy(layoutNode)
             }
+            cache[i] = null
         }
         this.cachedNodes = cache
     }
