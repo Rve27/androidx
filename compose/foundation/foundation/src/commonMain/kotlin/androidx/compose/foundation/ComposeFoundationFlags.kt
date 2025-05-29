@@ -137,4 +137,11 @@ object ComposeFoundationFlags {
     @Suppress("MutableBareField")
     @JvmField
     var isAdjustPointerInputChangeOffsetForVelocityTrackerEnabled: Boolean = true
+
+    /**
+     * With this flag on a new fling cancellation behavior will be implemented. Previously, when the
+     * list hit the bounds we would cancel the fling since the list couldn't consume anything
+     * anymore. Now we only cancel the fling if the scrollable node is detatched.
+     */
+    @Suppress("MutableBareField") @JvmField var isFlingContinuationAtBoundsEnabled = true
 }
