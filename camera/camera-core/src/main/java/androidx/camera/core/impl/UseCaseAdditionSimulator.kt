@@ -19,6 +19,7 @@ package androidx.camera.core.impl
 import androidx.camera.core.CameraUseCaseAdapterProvider
 import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.SessionConfig
+import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination
 import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination.Companion.resolveFeatureCombination
 import androidx.camera.core.impl.UseCaseAdditionSimulator.cameraUseCaseAdapterProvider
 import androidx.camera.core.impl.UseCaseAdditionSimulator.simulateAddUseCases
@@ -65,11 +66,11 @@ public object UseCaseAdditionSimulator {
      *   [CalculatedUseCaseInfo].
      * @return A [CalculatedUseCaseInfo] object containing the simulated configuration result.
      * @throws IllegalStateException If a [CameraUseCaseAdapterProvider] has not been set yet.
+     * @throws IllegalArgumentException If the underlying camera capabilities don't support the
+     *   combination of features defined by [sessionConfig].
      * @throws CameraUseCaseAdapter.CameraException If the underlying camera capabilities don't
      *   support adding use cases with the provided [sessionConfig].
      */
-    // TODO: b/402297808 - Create an overload of simulateAddUseCases API that can work with a
-    //  ResolvedFeatureCombination, rather than sessionConfig.
     @OptIn(ExperimentalSessionConfig::class)
     @Throws(IllegalStateException::class, CameraUseCaseAdapter.CameraException::class)
     @JvmOverloads
@@ -78,6 +79,7 @@ public object UseCaseAdditionSimulator {
         cameraInfoInternal: CameraInfoInternal,
         sessionConfig: SessionConfig,
         findMaxSupportedFrameRate: Boolean = false,
+        resolvedFeatureCombination: ResolvedFeatureCombination? = null,
     ): CalculatedUseCaseInfo {
         check(::cameraUseCaseAdapterProvider.isInitialized) {
             "mCameraUseCaseAdapterProvider must be initialized first!"
@@ -88,11 +90,10 @@ public object UseCaseAdditionSimulator {
         cameraUseCaseAdapter.effects = sessionConfig.effects
         cameraUseCaseAdapter.setTargetHighSpeedFrameRate(sessionConfig.targetHighSpeedFrameRate)
 
-        val resolvedFeatureCombination = sessionConfig.resolveFeatureCombination(cameraInfoInternal)
-
         return cameraUseCaseAdapter.simulateAddUseCases(
             sessionConfig.useCases,
-            resolvedFeatureCombination,
+            resolvedFeatureCombination
+                ?: sessionConfig.resolveFeatureCombination(cameraInfoInternal),
             /*findMaxSupportedFrameRate=*/ findMaxSupportedFrameRate,
         )
     }

@@ -26,18 +26,8 @@ import androidx.camera.core.impl.UseCaseConfigFactory
 import androidx.camera.core.internal.CameraUseCaseAdapter
 import androidx.camera.core.internal.StreamSpecsCalculator
 
-/**
- * Provides instances of [CameraUseCaseAdapter].
- *
- * This class is responsible for creating [CameraUseCaseAdapter] objects.
- */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class CameraUseCaseAdapterProvider(
-    private val cameraRepository: CameraRepository,
-    private val cameraCoordinator: CameraCoordinator,
-    private val useCaseConfigFactory: UseCaseConfigFactory,
-    private val streamSpecsCalculator: StreamSpecsCalculator,
-) {
+public interface CameraUseCaseAdapterProvider {
     /**
      * Provides a [CameraUseCaseAdapter] for a single camera.
      *
@@ -46,15 +36,7 @@ public class CameraUseCaseAdapterProvider(
      * @throws IllegalArgumentException If the specified camera id is unavailable.
      */
     @Throws(IllegalArgumentException::class)
-    public fun provide(cameraId: String): CameraUseCaseAdapter {
-        val camera = cameraRepository.getCamera(cameraId)
-        return provideInternal(
-            camera = camera,
-            // TODO: Support extensions camera config.
-            adapterCameraInfo =
-                AdapterCameraInfo(camera.cameraInfoInternal, CameraConfigs.defaultConfig()),
-        )
-    }
+    public fun provide(cameraId: String): CameraUseCaseAdapter
 
     /**
      * Provides a [CameraUseCaseAdapter] for one or two cameras, allowing for advanced multi-camera
@@ -70,6 +52,39 @@ public class CameraUseCaseAdapterProvider(
      * @return A [CameraUseCaseAdapter] instance.
      */
     public fun provide(
+        camera: CameraInternal,
+        secondaryCamera: CameraInternal?,
+        adapterCameraInfo: AdapterCameraInfo,
+        secondaryAdapterCameraInfo: AdapterCameraInfo?,
+        compositionSettings: CompositionSettings,
+        secondaryCompositionSettings: CompositionSettings,
+    ): CameraUseCaseAdapter
+}
+
+/**
+ * Provides instances of [CameraUseCaseAdapter].
+ *
+ * This class is responsible for creating [CameraUseCaseAdapter] objects.
+ */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public class CameraUseCaseAdapterProviderImpl(
+    private val cameraRepository: CameraRepository,
+    private val cameraCoordinator: CameraCoordinator,
+    private val useCaseConfigFactory: UseCaseConfigFactory,
+    private val streamSpecsCalculator: StreamSpecsCalculator,
+) : CameraUseCaseAdapterProvider {
+    @Throws(IllegalArgumentException::class)
+    public override fun provide(cameraId: String): CameraUseCaseAdapter {
+        val camera = cameraRepository.getCamera(cameraId)
+        return provideInternal(
+            camera = camera,
+            // TODO: Support extensions camera config.
+            adapterCameraInfo =
+                AdapterCameraInfo(camera.cameraInfoInternal, CameraConfigs.defaultConfig()),
+        )
+    }
+
+    public override fun provide(
         camera: CameraInternal,
         secondaryCamera: CameraInternal?,
         adapterCameraInfo: AdapterCameraInfo,

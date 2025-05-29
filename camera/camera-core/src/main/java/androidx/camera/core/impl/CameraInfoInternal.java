@@ -29,6 +29,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.util.Range;
 import android.util.Size;
 
+import androidx.annotation.OptIn;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraUseCaseAdapterProvider;
@@ -38,13 +39,13 @@ import androidx.camera.core.Logger;
 import androidx.camera.core.SessionConfig;
 import androidx.camera.core.UseCase;
 import androidx.camera.core.featurecombination.ExperimentalFeatureCombination;
-import androidx.camera.core.featurecombination.Feature;
+import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination;
 import androidx.camera.core.internal.CalculatedUseCaseInfo;
+import androidx.camera.core.internal.CameraUseCaseAdapter;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -309,22 +310,53 @@ public interface CameraInfoInternal extends CameraInfo {
         return false;
     }
 
+    /** {@inheritDoc} */
+    @OptIn(markerClass = ExperimentalSessionConfig.class)
     @ExperimentalFeatureCombination
     @Override
-    default boolean isFeatureCombinationSupported(@NonNull Set<@NonNull UseCase> useCases,
-            @NonNull Set<@NonNull Feature> features) {
-        for (UseCase useCase : useCases) {
-            useCase.setFeatureCombination(features);
+    default boolean isFeatureCombinationSupported(@NonNull SessionConfig sessionConfig) {
+        try {
+            UseCaseAdditionSimulator.simulateAddUseCases(this,
+                    sessionConfig, /*findMaxSupportedFrameRate=*/ false);
+            return true;
+        } catch (IllegalArgumentException | CameraUseCaseAdapter.CameraException e) {
+            Logger.d("CameraInfoInternal",
+                    "CameraInfoInternal.isFeatureCombinationSupported failed", e);
         }
 
-        boolean isSupported = isUseCaseCombinationSupported(new ArrayList<>(useCases),
-                CameraMode.DEFAULT, true);
+        return false;
+    }
 
-        for (UseCase useCase : useCases) {
-            useCase.setFeatureCombination(Collections.emptySet());
+    /**
+     * Checks if a combination of the provided {@link ResolvedFeatureCombination} and
+     * {@link SessionConfig} is supported.
+     *
+     * <p> This API works by using a simulation of how {@link UseCase}s are added to the camera
+     * and seeing if the proposed combination can be successfully added to the camera.
+     *
+     * @param resolvedFeatureCombination The {@link ResolvedFeatureCombination} to check.
+     * @param sessionConfig The {@link SessionConfig} to check.
+     * @return {@code true} if the feature combination is supported, {@code false} otherwise.
+     * @throws IllegalStateException If
+     * {@link CameraInfoInternal#setCameraUseCaseAdapterProvider(CameraUseCaseAdapterProvider)} has
+     * not been called yet.
+     */
+    @OptIn(markerClass = ExperimentalSessionConfig.class)
+    @ExperimentalFeatureCombination
+    default boolean isResolvedFeatureCombinationSupported(
+            @NonNull ResolvedFeatureCombination resolvedFeatureCombination,
+            @NonNull SessionConfig sessionConfig) {
+        try {
+            UseCaseAdditionSimulator.simulateAddUseCases(this,
+                    sessionConfig, /*findMaxSupportedFrameRate=*/ false,
+                    resolvedFeatureCombination);
+            return true;
+        } catch (IllegalArgumentException | CameraUseCaseAdapter.CameraException e) {
+            Logger.d("CameraInfoInternal",
+                    "CameraInfoInternal.isFeatureCombinationSupported failed", e);
         }
 
-        return isSupported;
+        return false;
     }
 
     /**

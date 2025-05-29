@@ -53,7 +53,7 @@ class CameraUseCaseAdapterProviderTest {
             FakeCameraFactory().apply { insertDefaultBackCamera(cameraId) { camera } }
         val cameraRepository = CameraRepository().apply { init(cameraFactory) }
         val cameraUseCaseAdapterProvider =
-            CameraUseCaseAdapterProvider(
+            CameraUseCaseAdapterProviderImpl(
                 cameraRepository,
                 cameraCoordinator,
                 useCaseConfigFactory,
@@ -75,7 +75,7 @@ class CameraUseCaseAdapterProviderTest {
             FakeCameraFactory().apply { insertDefaultBackCamera(cameraId) { camera } }
         val cameraRepository = CameraRepository().apply { init(cameraFactory) }
         val cameraUseCaseAdapterProvider =
-            CameraUseCaseAdapterProvider(
+            CameraUseCaseAdapterProviderImpl(
                 cameraRepository,
                 cameraCoordinator,
                 useCaseConfigFactory,
@@ -105,7 +105,7 @@ class CameraUseCaseAdapterProviderTest {
             }
         val cameraRepository = CameraRepository().apply { init(cameraFactory) }
         val cameraUseCaseAdapterProvider =
-            CameraUseCaseAdapterProvider(
+            CameraUseCaseAdapterProviderImpl(
                 cameraRepository,
                 cameraCoordinator,
                 useCaseConfigFactory,

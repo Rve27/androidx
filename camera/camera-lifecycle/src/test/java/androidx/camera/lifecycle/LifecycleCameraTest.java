@@ -33,6 +33,8 @@ import android.util.Rational;
 import android.view.Surface;
 
 import androidx.camera.core.CameraEffect;
+import androidx.camera.core.CameraUseCaseAdapterProvider;
+import androidx.camera.core.CompositionSettings;
 import androidx.camera.core.LegacySessionConfig;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SessionConfig;
@@ -40,12 +42,15 @@ import androidx.camera.core.UseCase;
 import androidx.camera.core.ViewPort;
 import androidx.camera.core.concurrent.CameraCoordinator;
 import androidx.camera.core.featurecombination.Feature;
+import androidx.camera.core.impl.AdapterCameraInfo;
+import androidx.camera.core.impl.CameraInternal;
 import androidx.camera.core.impl.Config;
 import androidx.camera.core.impl.MutableOptionsBundle;
 import androidx.camera.core.impl.utils.Threads;
 import androidx.camera.core.internal.CameraUseCaseAdapter;
 import androidx.camera.core.internal.StreamSpecsCalculatorImpl;
 import androidx.camera.testing.fakes.FakeCamera;
+import androidx.camera.testing.fakes.FakeCameraInfoInternal;
 import androidx.camera.testing.impl.fakes.FakeCameraCoordinator;
 import androidx.camera.testing.impl.fakes.FakeCameraDeviceSurfaceManager;
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner;
@@ -54,6 +59,8 @@ import androidx.camera.testing.impl.fakes.FakeSurfaceProcessor;
 import androidx.camera.testing.impl.fakes.FakeUseCase;
 import androidx.camera.testing.impl.fakes.FakeUseCaseConfigFactory;
 
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -93,6 +100,28 @@ public class LifecycleCameraTest {
                 new StreamSpecsCalculatorImpl(new FakeUseCaseConfigFactory(),
                         new FakeCameraDeviceSurfaceManager()),
                 new FakeUseCaseConfigFactory());
+
+        ((FakeCameraInfoInternal) mFakeCamera.getCameraInfo()).setCameraUseCaseAdapterProvider(
+                new CameraUseCaseAdapterProvider() {
+                    @Override
+                    public @NonNull CameraUseCaseAdapter provide(@NonNull String cameraId)
+                            throws IllegalArgumentException {
+                        return mCameraUseCaseAdapter;
+                    }
+
+                    @Override
+                    public @NonNull CameraUseCaseAdapter provide(@NonNull CameraInternal camera,
+                            @Nullable CameraInternal secondaryCamera,
+                            @NonNull AdapterCameraInfo adapterCameraInfo,
+                            @Nullable AdapterCameraInfo secondaryAdapterCameraInfo,
+                            @NonNull CompositionSettings compositionSettings,
+                            @NonNull CompositionSettings secondaryCompositionSettings) {
+                        return mCameraUseCaseAdapter;
+                    }
+                }
+        );
+
+
         mFakeUseCase = new FakeUseCase();
         mFakeUseCase2 = new FakeUseCase();
         mViewPort = new ViewPort.Builder(

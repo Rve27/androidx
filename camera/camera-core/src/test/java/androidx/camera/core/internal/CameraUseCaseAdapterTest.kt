@@ -268,13 +268,7 @@ class CameraUseCaseAdapterTest {
     @Test
     fun addUseCases_withEmptyFeatures_nonNullEmptyFeaturesSet() {
         // Arrange & Act.
-        adapter.addUseCases(
-            listOf(preview),
-            ResolvedFeatureCombination(
-                useCases = emptySet(), // the use cases from feature combination don't matter
-                features = emptySet(),
-            ),
-        )
+        adapter.addUseCases(listOf(preview), ResolvedFeatureCombination(features = emptySet()))
 
         // Assert: Features set to Preview as empty.
         assertThat(preview.featureCombination).isEmpty()
@@ -289,13 +283,7 @@ class CameraUseCaseAdapterTest {
         adapter.addUseCases(listOf(preview))
 
         // Act.
-        adapter.addUseCases(
-            listOf(image),
-            ResolvedFeatureCombination(
-                useCases = emptySet(), // the use cases from feature combination don't matter
-                features = features,
-            ),
-        )
+        adapter.addUseCases(listOf(image), ResolvedFeatureCombination(features = features))
 
         // Assert: Features set to both Preview and ImageCapture, not only Preview.
         assertThat(preview.featureCombination).containsExactlyElementsIn(features)
@@ -310,13 +298,7 @@ class CameraUseCaseAdapterTest {
 
         // Act: Exception expected as UltraHDR is not supported in the used fakes by default.
         assertThrows<CameraException> {
-            adapter.addUseCases(
-                listOf(image),
-                ResolvedFeatureCombination(
-                    useCases = emptySet(), // the use cases from feature combination don't matter
-                    features = features,
-                ),
-            )
+            adapter.addUseCases(listOf(image), ResolvedFeatureCombination(features = features))
         }
 
         // Assert: Features set to both Preview and ImageCapture, not only Preview.
@@ -333,10 +315,7 @@ class CameraUseCaseAdapterTest {
         // Add Preview use case with supported features first
         adapter.addUseCases(
             listOf(preview),
-            ResolvedFeatureCombination(
-                useCases = emptySet(), // the use cases from feature combination don't matter
-                features = supportedFeatures,
-            ),
+            ResolvedFeatureCombination(features = supportedFeatures),
         )
 
         // Act: Add ImageCapture use cases with some unsupported features.
@@ -345,10 +324,7 @@ class CameraUseCaseAdapterTest {
         assertThrows<CameraException> {
             adapter.addUseCases(
                 listOf(image),
-                ResolvedFeatureCombination(
-                    useCases = emptySet(), // the use cases from feature combination don't matter
-                    features = unsupportedFeatures,
-                ),
+                ResolvedFeatureCombination(features = unsupportedFeatures),
             )
         }
 
@@ -362,13 +338,7 @@ class CameraUseCaseAdapterTest {
     fun addUseCases_withoutFeaturesAfterAddingWithFeatures_allUseCasesHaveNullFeatureCombo() {
         // Arrange.
         val features = setOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
-        adapter.addUseCases(
-            listOf(preview),
-            ResolvedFeatureCombination(
-                useCases = emptySet(), // the use cases from feature combination don't matter
-                features = features,
-            ),
-        )
+        adapter.addUseCases(listOf(preview), ResolvedFeatureCombination(features = features))
 
         // Act.
         adapter.addUseCases(listOf(image))
@@ -384,10 +354,7 @@ class CameraUseCaseAdapterTest {
         val supportedFeatures = setOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
         adapter.simulateAddUseCases(
             setOf(preview),
-            ResolvedFeatureCombination(
-                useCases = emptySet(), // the use cases from feature combination don't matter
-                features = supportedFeatures,
-            ),
+            ResolvedFeatureCombination(features = supportedFeatures),
             /*findMaxSupportedFrameRate=*/ false,
         )
 
@@ -401,13 +368,7 @@ class CameraUseCaseAdapterTest {
         // Arrange.
         val features = setOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
         adapter.addUseCases(listOf(preview))
-        adapter.addUseCases(
-            listOf(image),
-            ResolvedFeatureCombination(
-                useCases = emptySet(), // the use cases from feature combination don't matter
-                features = features,
-            ),
-        )
+        adapter.addUseCases(listOf(image), ResolvedFeatureCombination(features = features))
 
         // Act.
         adapter.removeUseCases(listOf(image))

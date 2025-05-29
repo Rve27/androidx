@@ -431,7 +431,7 @@ public final class CameraX {
                 mCameraRepository.init(mCameraFactory);
 
                 // Prepare CameraUseCaseAdapterProvider
-                mCameraUseCaseAdapterProvider = new CameraUseCaseAdapterProvider(
+                mCameraUseCaseAdapterProvider = new CameraUseCaseAdapterProviderImpl(
                         mCameraRepository,
                         mCameraFactory.getCameraCoordinator(),
                         mDefaultConfigFactory,

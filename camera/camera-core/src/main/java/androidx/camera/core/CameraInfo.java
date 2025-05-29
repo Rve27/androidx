@@ -24,11 +24,11 @@ import android.view.Surface;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
+import androidx.annotation.OptIn;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.RestrictTo.Scope;
 import androidx.annotation.StringDef;
 import androidx.camera.core.featurecombination.ExperimentalFeatureCombination;
-import androidx.camera.core.featurecombination.Feature;
 import androidx.camera.core.impl.DynamicRanges;
 import androidx.camera.core.impl.ImageOutputConfig;
 import androidx.camera.core.internal.compat.MediaActionSoundCompat;
@@ -349,7 +349,7 @@ public interface CameraInfo {
      *
      * <p>The returned set does not have any ordering guarantees and frame rate ranges may overlap.
      *
-     * @param sessionConfig The [SessionConfig] to query supported frame rate ranges for.
+     * @param sessionConfig The {@link SessionConfig} to query supported frame rate ranges for.
      * @return The set of FPS ranges supported by the device's AE algorithm for the given session
      * config.
      * @see androidx.camera.video.VideoCapture.Builder#setTargetFrameRate(Range)
@@ -550,24 +550,19 @@ public interface CameraInfo {
     }
 
     /**
-     * Returns if the combination of provided {@link UseCase} lists and {@link Feature} lists is
+     * Returns if the combination of features set to the provided {@link SessionConfig} is
      * supported.
      *
-     * @param useCases The set of use cases.
-     * @param features The set of features.
+     * @param sessionConfig The {@link SessionConfig} containing some required or preferred
+     *   features.
      * @return Whether a feature combination is supported or not.
      * @throws IllegalArgumentException If some features conflict with each other by having
      *   different values for the same feature type and can thus never be supported together.
      */
+    @OptIn(markerClass = ExperimentalSessionConfig.class)
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // TODO: Expose the API for public release.
     @ExperimentalFeatureCombination
-    default boolean isFeatureCombinationSupported(@NonNull Set<@NonNull UseCase> useCases,
-            @NonNull Set<@NonNull Feature> features) {
-        // TODO: Consider taking something like a UseCaseGroup or SessionConfig of
-        //  FeatureCombination that may accept functionalities like ViewPort, CameraEffect etc too.
-        //  We can just take the whole FeatureCombination as parameter then and add extra listener
-        //  function to know the exact features selected. But this is still TBD.
-
+    default boolean isFeatureCombinationSupported(@NonNull SessionConfig sessionConfig) {
         return false;
     }
 }

@@ -178,32 +178,32 @@ class FeatureCombinationDeviceTest(
 
     @Test
     fun bindToLifecycle_hlg10_bindResultMatchesQueryResult(): Unit = runBlocking {
-        testIfBindAndQueryApiResultsMatch(setOf(preview, videoCapture), setOf(HDR_HLG10))
+        testIfBindAndQueryApiResultsMatch(listOf(preview, videoCapture), setOf(HDR_HLG10))
     }
 
     // TODO: b/419804637 - Add @Test after fixing FPS checking issue for feature combo APIs
     fun bindToLifecycle_fps60_bindResultMatchesQueryResult(): Unit = runBlocking {
-        testIfBindAndQueryApiResultsMatch(setOf(preview, videoCapture), setOf(FPS_60))
+        testIfBindAndQueryApiResultsMatch(listOf(preview, videoCapture), setOf(FPS_60))
     }
 
     // TODO: b/419804400 - Add @Test after fixing Preview Stabilization setting issue for feature
     //  combo APIs
     fun bindToLifecycle_previewStabilization_bindResultMatchesQueryResult(): Unit = runBlocking {
         testIfBindAndQueryApiResultsMatch(
-            setOf(preview, videoCapture),
+            listOf(preview, videoCapture),
             setOf(PREVIEW_STABILIZATION),
         )
     }
 
     // TODO: b/420254152 - Add @Test after fixing Ultra HDR capture test issues
     fun bindToLifecycle_jpegUltraHdr_bindResultMatchesQueryResult(): Unit = runBlocking {
-        testIfBindAndQueryApiResultsMatch(setOf(preview, imageCapture), setOf(IMAGE_ULTRA_HDR))
+        testIfBindAndQueryApiResultsMatch(listOf(preview, imageCapture), setOf(IMAGE_ULTRA_HDR))
     }
 
     // TODO: b/420371641 - Add @Test after passing feature combo code flow param to
     //  SupportedSurfaceCombination during bind
     fun bindToLifecycle_bothHdrAndFps60Required_bindResultMatchesQueryResult(): Unit = runBlocking {
-        testIfBindAndQueryApiResultsMatch(setOf(preview, videoCapture), setOf(HDR_HLG10, FPS_60))
+        testIfBindAndQueryApiResultsMatch(listOf(preview, videoCapture), setOf(HDR_HLG10, FPS_60))
     }
 
     // TODO: b/420371641 - Add @Test after passing feature combo code flow param to
@@ -211,7 +211,7 @@ class FeatureCombinationDeviceTest(
     fun bindToLifecycle_bothHdrAndPrvwStabilizationRequired_bindResultMatchesQueryResult(): Unit =
         runBlocking {
             testIfBindAndQueryApiResultsMatch(
-                setOf(preview, videoCapture),
+                listOf(preview, videoCapture),
                 setOf(HDR_HLG10, PREVIEW_STABILIZATION),
             )
         }
@@ -221,7 +221,7 @@ class FeatureCombinationDeviceTest(
     fun bindToLifecycle_moreThanTwoFeaturesRequired_bindResultMatchesQueryResult(): Unit =
         runBlocking {
             testIfBindAndQueryApiResultsMatch(
-                setOf(preview, videoCapture),
+                listOf(preview, videoCapture),
                 setOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION),
             )
         }
@@ -229,7 +229,7 @@ class FeatureCombinationDeviceTest(
     // TODO: b/420227836 - Add @Test after fixing unsupported exception for no preferred features
     // TODO: b/419804637 - Add @Test after fixing FPS checking issue for feature combo APIs
     fun bindToLifecycle_multiplePreferredFeatures_canBindSuccessfully(): Unit = runBlocking {
-        val useCases = setOf(preview, videoCapture)
+        val useCases = listOf(preview, videoCapture)
         val orderedFeatures = listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
         val selectedFeatures = mutableSetOf<Feature>()
 
@@ -237,12 +237,9 @@ class FeatureCombinationDeviceTest(
             cameraProvider.bindToLifecycle(
                 fakeLifecycleOwner,
                 cameraSelector,
-                SessionConfig(useCases = useCases.toList(), preferredFeatures = orderedFeatures)
-                    .apply {
-                        setFeatureSelectionListener { features ->
-                            selectedFeatures.addAll(features)
-                        }
-                    },
+                SessionConfig(useCases = useCases, preferredFeatures = orderedFeatures).apply {
+                    setFeatureSelectionListener { features -> selectedFeatures.addAll(features) }
+                },
             )
         }
 
@@ -256,18 +253,17 @@ class FeatureCombinationDeviceTest(
     //  support UHD PRIV for FCQ.
 
     private suspend fun testIfBindAndQueryApiResultsMatch(
-        useCases: Set<UseCase>,
+        useCases: List<UseCase>,
         features: Set<Feature>,
     ) {
+        val sessionConfig = SessionConfig(useCases = useCases, requiredFeatures = features)
+
         val isSupported =
             cameraProvider
                 .getCameraInfo(cameraSelector)
-                .isFeatureCombinationSupported(useCases, features)
+                .isFeatureCombinationSupported(sessionConfig)
 
-        bindAndVerify(
-            SessionConfig(useCases = useCases.toList(), requiredFeatures = features),
-            isSupported,
-        )
+        bindAndVerify(sessionConfig, isSupported)
 
         if (isSupported) {
             features.verifyFeatures(useCases)
@@ -292,7 +288,7 @@ class FeatureCombinationDeviceTest(
     }
 
     @SuppressLint("NewApi")
-    private suspend fun Set<Feature>.verifyFeatures(useCases: Set<UseCase>) {
+    private suspend fun Set<Feature>.verifyFeatures(useCases: List<UseCase>) {
         forEach {
             when (it) {
                 HDR_HLG10 -> {
@@ -312,7 +308,7 @@ class FeatureCombinationDeviceTest(
     }
 
     @RequiresApi(33)
-    private suspend fun verifyHlg10Hdr(useCases: Set<UseCase>) {
+    private suspend fun verifyHlg10Hdr(useCases: List<UseCase>) {
         useCases.forEach {
             when (it) {
                 is Preview -> {
@@ -357,7 +353,7 @@ class FeatureCombinationDeviceTest(
     }
 
     @RequiresApi(34)
-    private suspend fun verifyUltraHdr(useCases: Set<UseCase>) {
+    private suspend fun verifyUltraHdr(useCases: List<UseCase>) {
         val imageCapture = useCases.filterIsInstance<ImageCapture>().first()
 
         val saveLocation = temporaryFolder.newFile("test.jpg")

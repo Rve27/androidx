@@ -20,9 +20,7 @@ import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.core.SessionConfig
-import androidx.camera.core.UseCase
 import androidx.camera.core.featurecombination.ExperimentalFeatureCombination
-import androidx.camera.core.featurecombination.Feature
 import androidx.camera.core.featurecombination.Feature.Companion.HDR_HLG10
 import androidx.camera.core.featurecombination.Feature.Companion.IMAGE_ULTRA_HDR
 import androidx.camera.core.featurecombination.Feature.Companion.PREVIEW_STABILIZATION
@@ -62,14 +60,11 @@ class ResolvedFeatureCombinationTest {
                 useCases = useCases.toList(),
                 preferredFeatures = listOf(HDR_HLG10, IMAGE_ULTRA_HDR),
             )
-        val expectedResolvedFeatureCombination =
-            ResolvedFeatureCombination(useCases, setOf(HDR_HLG10))
+        val expectedResolvedFeatureCombination = ResolvedFeatureCombination(setOf(HDR_HLG10))
         val resolver =
             object : FeatureCombinationResolver {
                 override fun resolveFeatureCombination(
-                    useCases: Set<UseCase>,
-                    requiredFeatures: Set<Feature>,
-                    orderedPreferredFeatures: List<Feature>,
+                    sessionConfig: SessionConfig
                 ): FeatureCombinationResolutionResult {
                     return Supported(expectedResolvedFeatureCombination)
                 }
@@ -94,9 +89,7 @@ class ResolvedFeatureCombinationTest {
         val resolver =
             object : FeatureCombinationResolver {
                 override fun resolveFeatureCombination(
-                    useCases: Set<UseCase>,
-                    requiredFeatures: Set<Feature>,
-                    orderedPreferredFeatures: List<Feature>,
+                    sessionConfig: SessionConfig
                 ): FeatureCombinationResolutionResult {
                     return Unsupported
                 }
@@ -120,9 +113,7 @@ class ResolvedFeatureCombinationTest {
         val resolver =
             object : FeatureCombinationResolver {
                 override fun resolveFeatureCombination(
-                    useCases: Set<UseCase>,
-                    requiredFeatures: Set<Feature>,
-                    orderedPreferredFeatures: List<Feature>,
+                    sessionConfig: SessionConfig
                 ): FeatureCombinationResolutionResult {
                     return UseCaseMissing(
                         requiredUseCases = IMAGE_CAPTURE.toString(),

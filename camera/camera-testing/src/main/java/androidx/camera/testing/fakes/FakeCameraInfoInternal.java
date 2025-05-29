@@ -565,6 +565,7 @@ public final class FakeCameraInfoInternal implements CameraInfoInternal {
     @Override
     public void setCameraUseCaseAdapterProvider(
             @NonNull CameraUseCaseAdapterProvider cameraUseCaseAdapterProvider) {
+        CameraInfoInternal.super.setCameraUseCaseAdapterProvider(cameraUseCaseAdapterProvider);
         mCameraUseCaseAdapterProvider = cameraUseCaseAdapterProvider;
     }
 
