@@ -66,7 +66,7 @@ class ValueInternalParametrizedTest(
                 arrayOf("BOOLEAN", false, true),
                 arrayOf("BOOLEAN", false, false),
                 arrayOf("STRING", false, "stringValue"),
-                arrayOf("STRING_SET", false, listOf("string1", "string2", "string3")),
+                arrayOf("STRING_SET", false, setOf("string1", "string2", "string3")),
                 arrayOf("BYTE_ARRAY", false, byteArrayOf(1, 2, 3)),
                 arrayOf("STRING", true, null),
                 arrayOf("INT", true, null),
