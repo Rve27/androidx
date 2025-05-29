@@ -42,7 +42,6 @@ import androidx.camera.core.UseCaseGroup
 import androidx.camera.core.ViewPort
 import androidx.camera.core.imagecapture.RgbaImageProxy
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
-import androidx.camera.integration.core.util.Camera2InteropUtil.setCameraCaptureSessionCallback
 import androidx.camera.integration.core.util.SensorPatternUtil.ColorChannel
 import androidx.camera.integration.core.util.SensorPatternUtil.assumeSolidColorPatternSupported
 import androidx.camera.integration.core.util.SensorPatternUtil.getPrimaryColor
@@ -57,6 +56,7 @@ import androidx.camera.testing.impl.CountdownDeferred
 import androidx.camera.testing.impl.SurfaceTextureProvider.createAutoDrainingSurfaceTextureProvider
 import androidx.camera.testing.impl.WakelockEmptyActivityRule
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
+import androidx.camera.testing.impl.util.Camera2InteropUtil.setCameraCaptureSessionCallback
 import androidx.concurrent.futures.await
 import androidx.core.content.ContextCompat
 import androidx.test.core.app.ApplicationProvider

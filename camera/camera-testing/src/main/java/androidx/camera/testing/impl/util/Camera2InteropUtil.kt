@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.camera.integration.core.util
+package androidx.camera.testing.impl.util
 
 import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraCharacteristics
@@ -48,10 +48,10 @@ import kotlinx.coroutines.withTimeout
 
 @kotlin.OptIn(CPExperimentalCamera2Interop::class)
 @OptIn(markerClass = [ExperimentalCamera2Interop::class])
-object Camera2InteropUtil {
+public object Camera2InteropUtil {
 
     @JvmStatic
-    fun <T> setCamera2InteropOptions(
+    public fun <T> setCamera2InteropOptions(
         implName: String,
         builder: ExtendableBuilder<T>,
         captureCallback: CameraCaptureSession.CaptureCallback? = null,
@@ -79,7 +79,7 @@ object Camera2InteropUtil {
     }
 
     @JvmStatic
-    fun <T> setCameraCaptureSessionCallback(
+    public fun <T> setCameraCaptureSessionCallback(
         implName: String,
         builder: ExtendableBuilder<T>,
         captureCallback: CameraCaptureSession.CaptureCallback,
@@ -92,7 +92,7 @@ object Camera2InteropUtil {
     }
 
     @JvmStatic
-    fun <T> setDeviceStateCallback(
+    public fun <T> setDeviceStateCallback(
         implName: String,
         builder: ExtendableBuilder<T>,
         stateCallback: CameraDevice.StateCallback,
@@ -105,7 +105,7 @@ object Camera2InteropUtil {
     }
 
     @JvmStatic
-    fun <T> setSessionStateCallback(
+    public fun <T> setSessionStateCallback(
         implName: String,
         builder: ExtendableBuilder<T>,
         stateCallback: CameraCaptureSession.StateCallback,
@@ -118,7 +118,7 @@ object Camera2InteropUtil {
     }
 
     @JvmStatic
-    fun getCameraId(implName: String, cameraInfo: CameraInfo): String =
+    public fun getCameraId(implName: String, cameraInfo: CameraInfo): String =
         if (implName == CameraPipeConfig::class.simpleName) {
             CPCamera2CameraInfo.from(cameraInfo).getCameraId()
         } else {
@@ -126,7 +126,7 @@ object Camera2InteropUtil {
         }
 
     @JvmStatic
-    fun <T> getCamera2CameraInfoCharacteristics(
+    public fun <T> getCamera2CameraInfoCharacteristics(
         implName: String,
         cameraInfo: CameraInfo,
         key: CameraCharacteristics.Key<T>,
@@ -137,22 +137,24 @@ object Camera2InteropUtil {
             CPCamera2CameraInfo.from(cameraInfo).getCameraCharacteristic(key)
         }
 
-    interface Camera2CameraInfoWrapper {
-        fun <T> getCameraCharacteristic(key: CameraCharacteristics.Key<T>): T?
+    public interface Camera2CameraInfoWrapper {
+        public fun <T> getCameraCharacteristic(key: CameraCharacteristics.Key<T>): T?
 
-        companion object
+        public companion object
     }
 
-    interface Camera2CameraControlWrapper {
-        fun setCaptureRequestOptions(bundle: CaptureRequestOptionsWrapper): ListenableFuture<Void?>
+    public interface Camera2CameraControlWrapper {
+        public fun setCaptureRequestOptions(
+            bundle: CaptureRequestOptionsWrapper
+        ): ListenableFuture<Void?>
 
-        fun clearCaptureRequestOptions(): ListenableFuture<Void?>
+        public fun clearCaptureRequestOptions(): ListenableFuture<Void?>
 
-        companion object
+        public companion object
     }
 
     @JvmStatic
-    fun Camera2CameraInfoWrapper.Companion.from(
+    public fun Camera2CameraInfoWrapper.Companion.from(
         implName: String,
         cameraInfo: CameraInfo,
     ): Camera2CameraInfoWrapper {
@@ -181,24 +183,24 @@ object Camera2InteropUtil {
         }
     }
 
-    interface CaptureRequestOptionsWrapper {
+    public interface CaptureRequestOptionsWrapper {
 
-        fun unwrap(): Any
+        public fun unwrap(): Any
 
-        interface Builder {
-            fun <ValueT : Any> setCaptureRequestOption(
+        public interface Builder {
+            public fun <ValueT : Any> setCaptureRequestOption(
                 key: CaptureRequest.Key<ValueT>,
                 value: ValueT,
             ): Builder
 
-            fun build(): CaptureRequestOptionsWrapper
+            public fun build(): CaptureRequestOptionsWrapper
         }
 
-        companion object
+        public companion object
     }
 
     @JvmStatic
-    fun CaptureRequestOptionsWrapper.Companion.builder(
+    public fun CaptureRequestOptionsWrapper.Companion.builder(
         implName: String
     ): CaptureRequestOptionsWrapper.Builder {
         return when (implName) {
@@ -217,7 +219,7 @@ object Camera2InteropUtil {
                     override fun build(): CaptureRequestOptionsWrapper {
                         val wrappedOptions = wrappedBuilder.build()
                         return object : CaptureRequestOptionsWrapper {
-                            override fun unwrap() = wrappedOptions
+                            override public fun unwrap() = wrappedOptions
                         }
                     }
                 }
@@ -245,7 +247,7 @@ object Camera2InteropUtil {
     }
 
     @JvmStatic
-    fun Camera2CameraControlWrapper.Companion.from(
+    public fun Camera2CameraControlWrapper.Companion.from(
         implName: String,
         cameraControl: CameraControl,
     ): Camera2CameraControlWrapper {
@@ -286,15 +288,15 @@ object Camera2InteropUtil {
         }
     }
 
-    class CaptureCallback(
-        val _timeout: Long = TimeUnit.SECONDS.toMillis(5),
-        val _numOfCaptures: Int = 30,
+    public class CaptureCallback(
+        private val _timeout: Long = TimeUnit.SECONDS.toMillis(5),
+        private val _numOfCaptures: Int = 30,
     ) : CameraCaptureSession.CaptureCallback() {
 
-        val waitingList = mutableListOf<CaptureContainer>()
+        private val waitingList: MutableList<CaptureContainer> = mutableListOf()
 
         /** Wait for the specified number of captures, then verify the results. */
-        suspend fun waitFor(timeout: Long = _timeout, numOfCaptures: Int = _numOfCaptures) {
+        public suspend fun waitFor(timeout: Long = _timeout, numOfCaptures: Int = _numOfCaptures) {
             verifyFor(timeout = timeout, numOfCaptures = numOfCaptures, breakWhenSuccess = false)
         }
 
@@ -306,7 +308,7 @@ object Camera2InteropUtil {
          * @param verifyBlock the block for verifying the capture requests and results. It should
          *   return `true` if the requests and results is expected, otherwise `false`.
          */
-        suspend fun verifyFor(
+        public suspend fun verifyFor(
             timeout: Long = _timeout,
             numOfCaptures: Int = _numOfCaptures,
             breakWhenSuccess: Boolean = true,
@@ -329,10 +331,10 @@ object Camera2InteropUtil {
             waitingList.remove(resultContainer)
         }
 
-        fun <T> verifyLastCaptureRequest(
+        public fun <T> verifyLastCaptureRequest(
             keyValueMap: Map<CaptureRequest.Key<T>, T>,
             numOfCaptures: Int = 30,
-        ) = runBlocking {
+        ): Unit = runBlocking {
             verifyFor(numOfCaptures = numOfCaptures) { captureRequests, _ ->
                 keyValueMap.forEach {
                     if (captureRequests.last()[it.key] != it.value) return@verifyFor false
@@ -341,10 +343,10 @@ object Camera2InteropUtil {
             }
         }
 
-        fun <T> verifyLastCaptureResult(
+        public fun <T> verifyLastCaptureResult(
             keyValueMap: Map<CaptureResult.Key<T>, T>,
             numOfCaptures: Int = 30,
-        ) = runBlocking {
+        ): Unit = runBlocking {
             verifyFor(numOfCaptures = numOfCaptures) { _, captureResults ->
                 keyValueMap.forEach {
                     if (captureResults.last()[it.key] != it.value) return@verifyFor false
@@ -384,7 +386,7 @@ object Camera2InteropUtil {
         }
     }
 
-    data class CaptureContainer(
+    public data class CaptureContainer(
         var count: Int,
         val breakWhenSuccess: Boolean = true,
         val signal: CompletableDeferred<Unit> = CompletableDeferred(),

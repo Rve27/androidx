@@ -37,7 +37,6 @@ import androidx.camera.core.DynamicRange
 import androidx.camera.core.Preview
 import androidx.camera.core.UseCaseGroup
 import androidx.camera.core.ViewPort
-import androidx.camera.integration.core.util.Camera2InteropUtil.setCameraCaptureSessionCallback
 import androidx.camera.integration.core.util.SensorPatternUtil.ColorChannel
 import androidx.camera.integration.core.util.SensorPatternUtil.assumeSolidColorPatternSupported
 import androidx.camera.integration.core.util.SensorPatternUtil.setSolidColorPatternToCamera
@@ -50,6 +49,7 @@ import androidx.camera.testing.impl.CameraUtil
 import androidx.camera.testing.impl.SurfaceTextureProvider
 import androidx.camera.testing.impl.WakelockEmptyActivityRule
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
+import androidx.camera.testing.impl.util.Camera2InteropUtil.setCameraCaptureSessionCallback
 import androidx.camera.video.Recorder
 import androidx.camera.video.VideoCapture
 import androidx.concurrent.futures.await

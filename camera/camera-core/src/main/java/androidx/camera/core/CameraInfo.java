@@ -24,7 +24,6 @@ import android.view.Surface;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
-import androidx.annotation.OptIn;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.RestrictTo.Scope;
 import androidx.annotation.StringDef;
@@ -559,9 +558,9 @@ public interface CameraInfo {
      * @throws IllegalArgumentException If some features conflict with each other by having
      *   different values for the same feature type and can thus never be supported together.
      */
-    @OptIn(markerClass = ExperimentalSessionConfig.class)
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // TODO: Expose the API for public release.
     @ExperimentalFeatureCombination
+    @ExperimentalSessionConfig
     default boolean isFeatureCombinationSupported(@NonNull SessionConfig sessionConfig) {
         return false;
     }

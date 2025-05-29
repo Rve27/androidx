@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.camera.integration.core
+package androidx.camera.integration.featurecombo
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -48,9 +48,8 @@ import androidx.camera.core.featurecombination.Feature.Companion.HDR_HLG10
 import androidx.camera.core.featurecombination.Feature.Companion.IMAGE_ULTRA_HDR
 import androidx.camera.core.featurecombination.Feature.Companion.PREVIEW_STABILIZATION
 import androidx.camera.core.takePicture
-import androidx.camera.integration.core.CaptureOptionSubmissionTest.CaptureCallback
-import androidx.camera.integration.core.util.Camera2InteropUtil
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.testing.impl.Camera2CaptureCallbackImpl
 import androidx.camera.testing.impl.CameraPipeConfigTestRule
 import androidx.camera.testing.impl.CameraUtil
 import androidx.camera.testing.impl.GLUtil
@@ -58,6 +57,7 @@ import androidx.camera.testing.impl.SurfaceTextureProvider
 import androidx.camera.testing.impl.SurfaceTextureProvider.createSurfaceTextureProvider
 import androidx.camera.testing.impl.WakelockEmptyActivityRule
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
+import androidx.camera.testing.impl.util.Camera2InteropUtil
 import androidx.camera.video.Recorder
 import androidx.camera.video.VideoCapture
 import androidx.test.core.app.ApplicationProvider
@@ -119,7 +119,7 @@ class FeatureCombinationDeviceTest(
     private lateinit var cameraProvider: ProcessCameraProvider
     private lateinit var fakeLifecycleOwner: FakeLifecycleOwner
 
-    private val sessionCaptureCallback = CaptureCallback()
+    private val sessionCaptureCallback = Camera2CaptureCallbackImpl()
 
     private val surfaceTextureDeferred = CompletableDeferred<SurfaceTexture>()
 
