@@ -60,22 +60,10 @@ class PanelRoundedCornerActivity : AppCompatActivity() {
         session = createSession(this)
         if (session == null) this.finish()
         session!!.resume()
-
-        if (
-            session!!
-                .scene
-                .spatialCapabilities
-                .hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY) &&
-                !activityPanelCreated
-        ) {
-            activityPanelEntity =
-                ActivityPanelEntity.create(session!!, Rect(0, 0, 640, 480), "activity_panel")
-            val intent = Intent(this, ActivityPanel::class.java)
-            intent.putExtra("NAV_ICON", false)
-            activityPanelEntity!!.launchActivity(intent)
-            activityPanelEntity!!.setPose(Pose(Vector3(0.75f, 0.0f, 0.0f)))
-            activityPanelCreated = true
+        session!!.scene.addSpatialCapabilitiesChangedListener { capabilities ->
+            tryToCreateActivityPanel(capabilities)
         }
+        tryToCreateActivityPanel(session!!.scene.spatialCapabilities)
 
         @SuppressLint("InflateParams")
         val panelEntityView = layoutInflater.inflate(R.layout.rounded_corner_panel_entity, null)
@@ -178,6 +166,21 @@ class PanelRoundedCornerActivity : AppCompatActivity() {
         activityPanelEntity?.dispose()
         panelEntity?.setParent(null)
         panelEntity?.dispose()
+    }
+
+    fun tryToCreateActivityPanel(capabilities: SpatialCapabilities) {
+        if (
+            capabilities.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY) &&
+                !activityPanelCreated
+        ) {
+            activityPanelEntity =
+                ActivityPanelEntity.create(session!!, Rect(0, 0, 640, 480), "activity_panel")
+            val intent = Intent(this, ActivityPanel::class.java)
+            intent.putExtra("NAV_ICON", false)
+            activityPanelEntity!!.launchActivity(intent)
+            activityPanelEntity!!.setPose(Pose(Vector3(0.75f, 0.0f, 0.0f)))
+            activityPanelCreated = true
+        }
     }
 
     companion object {

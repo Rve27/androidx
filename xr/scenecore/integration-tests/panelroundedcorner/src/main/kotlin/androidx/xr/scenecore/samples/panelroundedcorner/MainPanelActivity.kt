@@ -45,22 +45,10 @@ class MainPanelActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         session.scene.addSpatialCapabilitiesChangedListener() { capabilities ->
-            if (
-                capabilities.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY) &&
-                    !activityPanelCreated
-            ) {
-                activityPanelEntity =
-                    ActivityPanelEntity.create(session, Rect(0, 0, 1280, 800), "activity_panel")
-
-                val intent = Intent(this, ActivityPanelActivity::class.java)
-                activityPanelEntity?.launchActivity(intent)
-                activityPanelEntity?.setPose(Pose(Vector3(0.75f, 0.0f, 0.0f)))
-                activityPanelCreated = true
-            }
+            tryToCreateActivityPanel(capabilities)
         }
-
+        tryToCreateActivityPanel(session.scene.spatialCapabilities)
         @SuppressLint("InflateParams")
         val panelEntityView = layoutInflater.inflate(R.layout.panel_entity, null)
         panelEntity =
@@ -125,5 +113,20 @@ class MainPanelActivity : AppCompatActivity() {
         super.onDestroy()
         activityPanelEntity?.setParent(null)
         activityPanelEntity?.dispose()
+    }
+
+    fun tryToCreateActivityPanel(capabilities: SpatialCapabilities) {
+        if (
+            capabilities.hasCapability(SpatialCapabilities.SPATIAL_CAPABILITY_EMBED_ACTIVITY) &&
+                !activityPanelCreated
+        ) {
+            activityPanelEntity =
+                ActivityPanelEntity.create(session, Rect(0, 0, 1280, 800), "activity_panel")
+
+            val intent = Intent(this, ActivityPanelActivity::class.java)
+            activityPanelEntity?.launchActivity(intent)
+            activityPanelEntity?.setPose(Pose(Vector3(0.75f, 0.0f, 0.0f)))
+            activityPanelCreated = true
+        }
     }
 }
