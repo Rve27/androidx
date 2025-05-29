@@ -390,6 +390,39 @@ public class LifecycleCameraTest {
     }
 
     @Test
+    public void bindSessionConfig_featureSelectionListenerSetButNoFeatureSet_emptySetNotified()
+            throws InterruptedException {
+        // Arrange: Set up resources; feature selection listener is set, but no required or
+        // preferred feature is added.
+        mLifecycleCamera = new LifecycleCamera(mLifecycleOwner, mCameraUseCaseAdapter);
+        mLifecycleOwner.start();
+        Preview preview = new Preview.Builder().build();
+
+        SessionConfig sessionConfig =
+                new SessionConfig.Builder(Collections.singletonList(preview)).build();
+
+        CountDownLatch latch = new CountDownLatch(1);
+        Set<Feature> selectedFeatures = new HashSet<>();
+
+        sessionConfig.setFeatureSelectionListener(directExecutor(),
+                features -> {
+                    selectedFeatures.addAll(features);
+                    latch.countDown();
+                });
+
+        // Act
+        try {
+            mLifecycleCamera.bind(sessionConfig);
+        } catch (CameraUseCaseAdapter.CameraException e) {
+            throw new RuntimeException(e);
+        }
+
+        // Assert: Feature selection listener is invoked with an empty set.
+        assertThat(latch.await(2, TimeUnit.SECONDS)).isTrue();
+        assertThat(selectedFeatures).isEmpty();
+    }
+
+    @Test
     public void bindSessionConfig_isBoundIsCorrect() throws CameraUseCaseAdapter.CameraException {
         mLifecycleCamera = new LifecycleCamera(mLifecycleOwner, mCameraUseCaseAdapter);
         mLifecycleOwner.start();

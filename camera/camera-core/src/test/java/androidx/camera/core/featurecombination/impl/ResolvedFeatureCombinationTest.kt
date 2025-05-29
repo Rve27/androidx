@@ -127,4 +127,17 @@ class ResolvedFeatureCombinationTest {
             sessionConfig.resolveFeatureCombination(fakeCameraInfo, resolver = resolver)
         }
     }
+
+    @Test
+    fun resolveFeatureCombination_sessionConfigWithoutAnyFeature_returnsNull() {
+        // Arrange: Create a resolver returning a ResolvedFeatureCombination without any feature
+        val useCases = setOf(preview, imageCapture)
+        val sessionConfig = SessionConfig(useCases = useCases.toList())
+
+        // Act
+        val resolvedCombination = sessionConfig.resolveFeatureCombination(fakeCameraInfo)
+
+        // Assert
+        assertThat(resolvedCombination).isNull()
+    }
 }

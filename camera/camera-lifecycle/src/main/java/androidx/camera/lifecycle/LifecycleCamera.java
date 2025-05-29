@@ -33,6 +33,7 @@ import androidx.camera.core.LegacySessionConfig;
 import androidx.camera.core.SessionConfig;
 import androidx.camera.core.UseCase;
 import androidx.camera.core.featurecombination.ExperimentalFeatureCombination;
+import androidx.camera.core.featurecombination.Feature;
 import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination;
 import androidx.camera.core.impl.CameraConfig;
 import androidx.camera.core.impl.CameraInfoInternal;
@@ -49,7 +50,9 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A {@link CameraUseCaseAdapter} whose starting and stopping is controlled by a
@@ -285,11 +288,16 @@ public final class LifecycleCamera implements LifecycleObserver, Camera {
             ResolvedFeatureCombination resolvedFeatureCombination = resolveFeatureCombination(
                     sessionConfig, (CameraInfoInternal) getCameraInfo());
 
-            if (resolvedFeatureCombination != null) {
-                sessionConfig.getFeatureSelectionListenerExecutor().execute(
-                        () -> sessionConfig.getFeatureSelectionListener().accept(
-                                resolvedFeatureCombination.getFeatures()));
-            }
+            sessionConfig.getFeatureSelectionListenerExecutor().execute(
+                    () -> {
+                        Set<Feature> features = new HashSet<>();
+
+                        if (resolvedFeatureCombination != null) {
+                            features.addAll(resolvedFeatureCombination.getFeatures());
+                        }
+
+                        sessionConfig.getFeatureSelectionListener().accept(features);
+                    });
 
             mCameraUseCaseAdapter.addUseCases(sessionConfig.getUseCases(),
                     resolvedFeatureCombination);
