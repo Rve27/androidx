@@ -38,7 +38,7 @@ internal fun transitionAwareLifecycleNavEntryDecorator(backStack: List<Any>, isS
                 isInBackStack && !isSettled -> Lifecycle.State.STARTED
                 else /* !isInBackStack */ -> Lifecycle.State.CREATED
             }
-        LifecycleOwner(maxLifecycle = maxLifecycle) { entry.content.invoke(entry.key) }
+        LifecycleOwner(maxLifecycle = maxLifecycle) { entry.Content() }
     }
 
 @Composable

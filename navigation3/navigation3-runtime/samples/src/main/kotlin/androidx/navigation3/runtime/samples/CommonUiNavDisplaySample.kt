@@ -140,7 +140,7 @@ fun <T : Any> CommonUiNavDisplay(
                     }
                 },
             ) {
-                entries.findLast { entry -> entry.key == lastKey }?.content?.invoke(lastKey)
+                entries.findLast { entry -> entry.key == lastKey }?.Content()
             }
         }
     }

@@ -92,7 +92,7 @@ public fun SavedStateNavEntryDecorator(
 
         saveableStateHolder.SaveableStateProvider(id) {
             CompositionLocalProvider(LocalSavedStateRegistryOwner provides childRegistry) {
-                entry.content(key)
+                entry.Content()
             }
         }
         childRegistry.lifecycle.currentState = Lifecycle.State.RESUMED

@@ -29,5 +29,15 @@ import androidx.compose.runtime.Composable
 public open class NavEntry<T : Any>(
     public open val key: T,
     public open val metadata: Map<String, Any> = emptyMap(),
-    public open val content: @Composable (T) -> Unit,
-)
+    private val content: @Composable (T) -> Unit,
+) {
+    /** Allows creating a NavEntry from another NavEntry while keeping [content] field private */
+    internal constructor(
+        navEntry: NavEntry<T>
+    ) : this(navEntry.key, navEntry.metadata, navEntry.content)
+
+    @Composable
+    public open fun Content() {
+        this.content(key)
+    }
+}

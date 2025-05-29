@@ -34,9 +34,7 @@ internal class DialogScene<T : Any>(
     override val entries: List<NavEntry<T>> = listOf(entry)
 
     override val content: @Composable (() -> Unit) = {
-        Dialog(onDismissRequest = { onBack(1) }, properties = dialogProperties) {
-            entry.content.invoke(entry.key)
-        }
+        Dialog(onDismissRequest = { onBack(1) }, properties = dialogProperties) { entry.Content() }
     }
 }
 

@@ -68,7 +68,7 @@ class SavedStateNavEntryDecoratorTest {
                     }
                 },
             ) { entries ->
-                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+                entries.lastOrNull()?.Content()
             }
         }
 

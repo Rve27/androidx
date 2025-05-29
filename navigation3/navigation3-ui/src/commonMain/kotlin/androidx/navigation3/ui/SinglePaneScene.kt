@@ -26,7 +26,7 @@ internal data class SinglePaneScene<T : Any>(
 ) : Scene<T> {
     override val entries: List<NavEntry<T>> = listOf(entry)
 
-    override val content: @Composable () -> Unit = { entry.content.invoke(entry.key) }
+    override val content: @Composable () -> Unit = { entry.Content() }
 }
 
 /**

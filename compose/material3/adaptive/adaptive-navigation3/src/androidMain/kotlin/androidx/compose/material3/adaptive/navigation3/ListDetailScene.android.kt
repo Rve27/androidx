@@ -214,12 +214,9 @@ internal class ListDetailScene<T : Any>(
         ListDetailPaneScaffold(
             directive = directive,
             scaffoldState = scaffoldState,
-            listPane =
-                lastList?.content?.let { { AnimatedPane { it.invoke(lastList.key) } } } ?: {},
-            detailPane =
-                lastDetail?.content?.let { { AnimatedPane { it.invoke(lastDetail.key) } } }
-                    ?: detailPlaceholder,
-            extraPane = lastExtra?.content?.let { { AnimatedPane { it.invoke(lastExtra.key) } } },
+            listPane = lastList?.let { { AnimatedPane { it.Content() } } } ?: {},
+            detailPane = lastDetail?.let { { AnimatedPane { it.Content() } } } ?: detailPlaceholder,
+            extraPane = lastExtra?.let { { AnimatedPane { it.Content() } } },
         )
     }
 }

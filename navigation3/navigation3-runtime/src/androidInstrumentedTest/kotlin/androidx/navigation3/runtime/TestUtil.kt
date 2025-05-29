@@ -21,7 +21,7 @@ import androidx.compose.runtime.Composable
 @Suppress("UNCHECKED_CAST")
 internal fun <K : Any> createTestNavEntryDecorator(
     onPop: (key: Any) -> Unit = {},
-    decorateEntry: @Composable (NavEntry<K>) -> Unit = { entry -> entry.content(entry.key) },
+    decorateEntry: @Composable (NavEntry<K>) -> Unit = { entry -> entry.Content() },
 ): NavEntryDecorator<K> {
     return navEntryDecorator(onPop = onPop) { entry -> decorateEntry(entry) }
 }

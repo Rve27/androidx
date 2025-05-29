@@ -118,7 +118,7 @@ public fun ViewModelStoreNavEntryDecorator(
             }
         }
         CompositionLocalProvider(LocalViewModelStoreOwner provides childViewModelStoreOwner) {
-            entry.content.invoke(entry.key)
+            entry.Content()
         }
     }
 }

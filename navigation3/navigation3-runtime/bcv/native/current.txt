@@ -63,12 +63,12 @@ final class <#A: kotlin/Any> androidx.navigation3.runtime/NavEntryDecorator // a
 open class <#A: kotlin/Any> androidx.navigation3.runtime/NavEntry { // androidx.navigation3.runtime/NavEntry|null[0]
     constructor <init>(#A, kotlin.collections/Map<kotlin/String, kotlin/Any> = ..., kotlin/Function1<#A, kotlin/Unit>) // androidx.navigation3.runtime/NavEntry.<init>|<init>(1:0;kotlin.collections.Map<kotlin.String,kotlin.Any>;kotlin.Function1<1:0,kotlin.Unit>){}[0]
 
-    open val content // androidx.navigation3.runtime/NavEntry.content|{}content[0]
-        open fun <get-content>(): kotlin/Function1<#A, kotlin/Unit> // androidx.navigation3.runtime/NavEntry.content.<get-content>|<get-content>(){}[0]
     open val key // androidx.navigation3.runtime/NavEntry.key|{}key[0]
         open fun <get-key>(): #A // androidx.navigation3.runtime/NavEntry.key.<get-key>|<get-key>(){}[0]
     open val metadata // androidx.navigation3.runtime/NavEntry.metadata|{}metadata[0]
         open fun <get-metadata>(): kotlin.collections/Map<kotlin/String, kotlin/Any> // androidx.navigation3.runtime/NavEntry.metadata.<get-metadata>|<get-metadata>(){}[0]
+
+    open fun Content() // androidx.navigation3.runtime/NavEntry.Content|Content(){}[0]
 }
 
 open class <#A: kotlin/Any> androidx.navigation3.runtime/NavEntryWrapper : androidx.navigation3.runtime/NavEntry<#A> { // androidx.navigation3.runtime/NavEntryWrapper|null[0]
@@ -76,12 +76,12 @@ open class <#A: kotlin/Any> androidx.navigation3.runtime/NavEntryWrapper : andro
 
     final val navEntry // androidx.navigation3.runtime/NavEntryWrapper.navEntry|{}navEntry[0]
         final fun <get-navEntry>(): androidx.navigation3.runtime/NavEntry<#A> // androidx.navigation3.runtime/NavEntryWrapper.navEntry.<get-navEntry>|<get-navEntry>(){}[0]
-    open val content // androidx.navigation3.runtime/NavEntryWrapper.content|{}content[0]
-        open fun <get-content>(): kotlin/Function1<#A, kotlin/Unit> // androidx.navigation3.runtime/NavEntryWrapper.content.<get-content>|<get-content>(){}[0]
     open val key // androidx.navigation3.runtime/NavEntryWrapper.key|{}key[0]
         open fun <get-key>(): #A // androidx.navigation3.runtime/NavEntryWrapper.key.<get-key>|<get-key>(){}[0]
     open val metadata // androidx.navigation3.runtime/NavEntryWrapper.metadata|{}metadata[0]
         open fun <get-metadata>(): kotlin.collections/Map<kotlin/String, kotlin/Any> // androidx.navigation3.runtime/NavEntryWrapper.metadata.<get-metadata>|<get-metadata>(){}[0]
+
+    open fun Content() // androidx.navigation3.runtime/NavEntryWrapper.Content|Content(){}[0]
 }
 
 final fun <#A: kotlin/Any> (androidx.navigation3.runtime/EntryProviderBuilder<#A>).androidx.navigation3.runtime/entry(#A, kotlin.collections/Map<kotlin/String, kotlin/Any> = ..., kotlin/Function1<#A, kotlin/Unit>) // androidx.navigation3.runtime/entry|entry@androidx.navigation3.runtime.EntryProviderBuilder<0:0>(0:0;kotlin.collections.Map<kotlin.String,kotlin.Any>;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any>}[0]

@@ -35,7 +35,7 @@ internal constructor(
  *   states that were used to decorate the NavEntry3
  * @param decorator the composable function to provide information to a [NavEntry] [decorator]. Note
  *   that this function only gets invoked for NavEntries that are actually getting rendered (i.e. by
- *   invoking the [NavEntry.content].)
+ *   invoking the [NavEntry.Content].)
  */
 public fun <T : Any> navEntryDecorator(
     onPop: (key: Any) -> Unit = {},
@@ -56,11 +56,11 @@ public fun <T : Any> DecorateNavEntry(
         .distinct()
         .foldRight(initial = entry) { decorator, wrappedEntry ->
             object : NavEntryWrapper<T>(wrappedEntry) {
-                override val content: @Composable ((T) -> Unit) = {
+                @Composable
+                override fun Content() {
                     decorator.navEntryDecorator(wrappedEntry)
                 }
             }
         }
-        .content
-        .invoke(entry.key)
+        .Content()
 }

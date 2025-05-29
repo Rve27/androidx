@@ -60,7 +60,7 @@ private class HierarchicalScene<T : Any>(
             navEntries.forEach { navEntry ->
                 Box(Modifier.weight(1f)) {
                     if (navEntry != null) {
-                        key(navEntry.key) { navEntry.content.invoke(navEntry.key) }
+                        key(navEntry.key) { navEntry.Content() }
                     }
                 }
             }

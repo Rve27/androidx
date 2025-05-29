@@ -66,10 +66,10 @@ package androidx.navigation3.runtime {
   public class NavEntry<T> {
     ctor public NavEntry(T key, optional java.util.Map<java.lang.String,?> metadata, kotlin.jvm.functions.Function1<? super T,kotlin.Unit> content);
     ctor @BytecodeOnly public NavEntry(T, java.util.Map<java.lang.String!,? extends java.lang.Object!>, kotlin.jvm.functions.Function3<? super T!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>);
-    method public kotlin.jvm.functions.Function1<T,kotlin.Unit> getContent();
+    method @androidx.compose.runtime.Composable public void Content();
+    method @BytecodeOnly @androidx.compose.runtime.Composable public void Content(androidx.compose.runtime.Composer?, int);
     method public T getKey();
     method public java.util.Map<java.lang.String,java.lang.Object> getMetadata();
-    property public kotlin.jvm.functions.Function1<T,kotlin.Unit> content;
     property public T key;
     property public java.util.Map<java.lang.String,java.lang.Object> metadata;
   }
@@ -87,7 +87,6 @@ package androidx.navigation3.runtime {
   public class NavEntryWrapper<T> extends androidx.navigation3.runtime.NavEntry<T> {
     ctor public NavEntryWrapper(androidx.navigation3.runtime.NavEntry<T> navEntry);
     method public final androidx.navigation3.runtime.NavEntry<T> getNavEntry();
-    property public kotlin.jvm.functions.Function1<T,kotlin.Unit> content;
     property public T key;
     property public java.util.Map<java.lang.String,java.lang.Object> metadata;
     property public final androidx.navigation3.runtime.NavEntry<T> navEntry;

@@ -138,7 +138,7 @@ fun SceneNavSharedEntrySample() {
                     animatedVisibilityScope = LocalNavAnimatedContentScope.current,
                 )
             ) {
-                entry.content(entry.key)
+                entry.Content()
             }
         }
     }

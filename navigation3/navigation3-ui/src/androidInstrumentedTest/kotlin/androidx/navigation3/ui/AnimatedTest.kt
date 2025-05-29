@@ -668,9 +668,7 @@ class AnimatedTest {
         val LocalHasProvidedToEntry = compositionLocalOf { false }
         val provider =
             navEntryDecorator<Any> { entry ->
-                CompositionLocalProvider(LocalHasProvidedToEntry provides true) {
-                    entry.content.invoke(entry.key)
-                }
+                CompositionLocalProvider(LocalHasProvidedToEntry provides true) { entry.Content() }
             }
         var secondEntryIsWrapped = false
         composeTestRule.setContent {

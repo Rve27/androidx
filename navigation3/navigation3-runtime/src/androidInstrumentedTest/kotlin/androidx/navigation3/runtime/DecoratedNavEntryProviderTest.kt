@@ -43,7 +43,7 @@ class DecoratedNavEntryProviderTest {
                 entryDecorators = listOf(decorator),
                 entryProvider = { NavEntry("something") {} },
             ) { records ->
-                records.last().content.invoke("something")
+                records.last().Content()
             }
         }
 
@@ -62,7 +62,7 @@ class DecoratedNavEntryProviderTest {
                 entryDecorators = listOf(decorator, decorator),
                 entryProvider = { NavEntry("something") {} },
             ) { records ->
-                records.last().content.invoke("something")
+                records.last().Content()
             }
         }
 
@@ -77,13 +77,13 @@ class DecoratedNavEntryProviderTest {
         val innerDecorator =
             createTestNavEntryDecorator<Any> { entry ->
                 innerEntryDecorator = ++callOrder
-                entry.content.invoke(entry.key)
+                entry.Content()
             }
 
         val outerDecorator =
             createTestNavEntryDecorator<Any> { entry ->
                 outerEntryDecorator = ++callOrder
-                entry.content.invoke(entry.key)
+                entry.Content()
             }
 
         composeTestRule.setContent {
@@ -92,7 +92,7 @@ class DecoratedNavEntryProviderTest {
                 entryDecorators = listOf(outerDecorator, innerDecorator),
                 entryProvider = { NavEntry("something") {} },
             ) { entries ->
-                entries.lastOrNull()?.content?.invoke("something")
+                entries.lastOrNull()?.Content()
             }
         }
 
@@ -108,7 +108,7 @@ class DecoratedNavEntryProviderTest {
         val decorator =
             createTestNavEntryDecorator<Any>(onPop = { key -> poppedEntries.add(key as Int) }) {
                 entry ->
-                entry.content.invoke(entry.key)
+                entry.Content()
             }
         lateinit var backStack: SnapshotStateList<Int>
         composeTestRule.setContent {
@@ -125,7 +125,7 @@ class DecoratedNavEntryProviderTest {
                     }
                 },
             ) { entries ->
-                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+                entries.lastOrNull()?.let { it.Content() }
             }
         }
         composeTestRule.runOnIdle { backStack.removeAt(backStack.lastIndex) }
@@ -152,11 +152,11 @@ class DecoratedNavEntryProviderTest {
         var innerPop = -1
         val innerDecorator =
             createTestNavEntryDecorator<Any>(onPop = { _ -> innerPop = ++count }) { entry ->
-                entry.content.invoke(entry.key)
+                entry.Content()
             }
         val outerDecorator =
             createTestNavEntryDecorator<Any>(onPop = { _ -> outerPop = ++count }) { entry ->
-                entry.content.invoke(entry.key)
+                entry.Content()
             }
         lateinit var backStack: SnapshotStateList<Int>
         composeTestRule.setContent {
@@ -172,7 +172,7 @@ class DecoratedNavEntryProviderTest {
                     }
                 },
             ) { entries ->
-                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+                entries.lastOrNull()?.let { it.Content() }
             }
         }
         composeTestRule.runOnIdle { backStack.removeAt(1) }
@@ -190,7 +190,7 @@ class DecoratedNavEntryProviderTest {
         val decorator =
             createTestNavEntryDecorator<Any>(onPop = { key -> entriesOnPop.add(key as String) }) {
                 entry ->
-                entry.content.invoke(entry.key)
+                entry.Content()
             }
         lateinit var backStack: SnapshotStateList<String>
         composeTestRule.setContent {
@@ -207,7 +207,7 @@ class DecoratedNavEntryProviderTest {
                     }
                 },
             ) { entries ->
-                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+                entries.lastOrNull()?.let { it.Content() }
             }
         }
 
@@ -231,13 +231,13 @@ class DecoratedNavEntryProviderTest {
             createTestNavEntryDecorator<Any>(
                 onPop = { key -> decoratorPopCallback.add("decorator1") }
             ) { entry ->
-                entry.content.invoke(entry.key)
+                entry.Content()
             }
         val decorator2 =
             createTestNavEntryDecorator<Any>(
                 onPop = { key -> decoratorPopCallback.add("decorator2") }
             ) { entry ->
-                entry.content.invoke(entry.key)
+                entry.Content()
             }
         val backStack = mutableStateListOf(1, 2)
         val decorators = mutableStateListOf(decorator1)
@@ -253,7 +253,7 @@ class DecoratedNavEntryProviderTest {
                     }
                 },
             ) { entries ->
-                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+                entries.lastOrNull()?.let { it.Content() }
             }
         }
 
@@ -280,13 +280,13 @@ class DecoratedNavEntryProviderTest {
             createTestNavEntryDecorator<Any>(
                 onPop = { key -> decoratorPopCallback.add("decorator1") }
             ) { entry ->
-                entry.content.invoke(entry.key)
+                entry.Content()
             }
         val decorator2 =
             createTestNavEntryDecorator<Any>(
                 onPop = { key -> decoratorPopCallback.add("decorator2") }
             ) { entry ->
-                entry.content.invoke(entry.key)
+                entry.Content()
             }
         val backStack = mutableStateListOf(1, 2)
         val decorators = mutableStateListOf(decorator1, decorator2)
@@ -302,7 +302,7 @@ class DecoratedNavEntryProviderTest {
                     }
                 },
             ) { entries ->
-                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+                entries.lastOrNull()?.let { it.Content() }
             }
         }
 
@@ -329,12 +329,12 @@ class DecoratedNavEntryProviderTest {
         val decorator1 =
             createTestNavEntryDecorator<Any> {
                 dec1Wrapped++
-                it.content.invoke(it.key)
+                it.Content()
             }
         val decorator2 =
             createTestNavEntryDecorator<Any> {
                 dec2Wrapped++
-                it.content.invoke(it.key)
+                it.Content()
             }
         val decorators = mutableStateListOf(decorator1)
         composeTestRule.setContent {
@@ -343,7 +343,7 @@ class DecoratedNavEntryProviderTest {
                 entryDecorators = decorators,
                 entryProvider = { NavEntry("something") {} },
             ) { entries ->
-                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+                entries.lastOrNull()?.let { it.Content() }
             }
         }
         composeTestRule.waitForIdle()
@@ -364,12 +364,12 @@ class DecoratedNavEntryProviderTest {
         val decorator1 =
             createTestNavEntryDecorator<Any> {
                 dec1Wrapped++
-                it.content.invoke(it.key)
+                it.Content()
             }
         val decorator2 =
             createTestNavEntryDecorator<Any> {
                 dec2Wrapped++
-                it.content.invoke(it.key)
+                it.Content()
             }
         val decorators = mutableStateListOf(decorator1, decorator2)
         composeTestRule.setContent {
@@ -378,7 +378,7 @@ class DecoratedNavEntryProviderTest {
                 entryDecorators = decorators,
                 entryProvider = { NavEntry("something") {} },
             ) { entries ->
-                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+                entries.lastOrNull()?.let { it.Content() }
             }
         }
         composeTestRule.waitForIdle()
@@ -397,7 +397,7 @@ class DecoratedNavEntryProviderTest {
         val wrappedEntries = mutableListOf<String>()
         val decorator = createTestNavEntryDecorator {
             wrappedEntries.add(it.key)
-            it.content.invoke(it.key)
+            it.Content()
         }
         val backStack = mutableStateListOf("first")
         composeTestRule.setContent {
@@ -412,7 +412,7 @@ class DecoratedNavEntryProviderTest {
                     }
                 },
             ) { entries ->
-                entries.lastOrNull()?.let { it.content.invoke(it.key) }
+                entries.lastOrNull()?.let { it.Content() }
             }
         }
 
