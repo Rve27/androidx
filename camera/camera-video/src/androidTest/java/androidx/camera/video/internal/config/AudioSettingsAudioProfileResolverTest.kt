@@ -147,12 +147,13 @@ class AudioSettingsAudioProfileResolverTest(
 
         resolvedSettings.forEach {
             assertThat(
-                AudioSource.isSettingsSupported(
-                    it.captureSampleRate,
-                    it.channelCount,
-                    it.audioFormat,
+                    AudioSource.isSettingsSupported(
+                        it.captureSampleRate,
+                        it.channelCount,
+                        it.audioFormat,
+                    )
                 )
-            )
+                .isTrue()
         }
     }
 
@@ -180,12 +181,13 @@ class AudioSettingsAudioProfileResolverTest(
 
         resolvedSettings.forEach {
             assertThat(
-                AudioSource.isSettingsSupported(
-                    it.captureSampleRate,
-                    it.channelCount,
-                    it.audioFormat,
+                    AudioSource.isSettingsSupported(
+                        it.captureSampleRate,
+                        it.channelCount,
+                        it.audioFormat,
+                    )
                 )
-            )
+                .isTrue()
         }
     }
 

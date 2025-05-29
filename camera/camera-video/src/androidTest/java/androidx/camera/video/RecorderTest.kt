@@ -720,6 +720,7 @@ class RecorderTest(private val implName: String, private val cameraConfig: Camer
         recording.verifyFinalize(error = ERROR_SOURCE_INACTIVE)
     }
 
+    @SuppressLint("CheckResult") // Intended to be garbage collected
     @Test
     fun stop_whenRecordingIsGarbageCollected() {
         // Arrange.

@@ -30,6 +30,7 @@ import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
 import java.nio.ByteBuffer
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Semaphore
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
@@ -279,9 +280,11 @@ class AudioEncoderTest {
 
         val presentationTimeUs = AtomicLong()
         val encoderCallback = Mockito.mock(EncoderCallback::class.java)
+        var presentationTimeLatch = CountDownLatch(1)
         Mockito.doAnswer { args: InvocationOnMock ->
                 val encodedData: EncodedData = args.getArgument(0)
                 presentationTimeUs.set(encodedData.presentationTimeUs)
+                presentationTimeLatch.countDown()
                 encodedData.close()
                 null
             }
@@ -294,24 +297,25 @@ class AudioEncoderTest {
         encoder.start()
 
         // Get presentation time of encoded data before pause.
-        verify(encoderCallback, timeout(timeoutWaitDataMs).atLeastOnce()).onEncodedData(any())
+        assertThat(presentationTimeLatch.await(timeoutWaitDataMs, TimeUnit.MILLISECONDS)).isTrue()
         val presentationTimeBeforePause = presentationTimeUs.get()
 
         encoder.pause()
         Thread.sleep(pauseDurationMs)
+        presentationTimeLatch = CountDownLatch(1)
         encoder.start()
 
         // Get presentation time of encoded data after resume.
-        verify(encoderCallback, timeout(timeoutWaitDataMs).atLeastOnce()).onEncodedData(any())
+        assertThat(presentationTimeLatch.await(timeoutWaitDataMs, TimeUnit.MILLISECONDS)).isTrue()
         val presentationTimeAfterResume = presentationTimeUs.get()
 
         // Assert.
-        assertThat(presentationTimeAfterResume > presentationTimeBeforePause)
+        assertThat(presentationTimeAfterResume).isGreaterThan(presentationTimeBeforePause)
         val timeDiffMs =
             TimeUnit.MICROSECONDS.toMillis(
                 presentationTimeAfterResume - presentationTimeBeforePause
             )
-        assertThat(timeDiffMs < pauseDurationMs)
+        assertThat(timeDiffMs).isAtMost(pauseDurationMs)
     }
 
     @Test
