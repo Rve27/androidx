@@ -1,17 +1,6 @@
 // Signature format: 4.0
 package androidx.xr.runtime.testing {
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class AnotherFakeStateExtender implements androidx.xr.runtime.StateExtender {
-    ctor public AnotherFakeStateExtender();
-    method public suspend Object? extend(androidx.xr.runtime.CoreState coreState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public java.util.List<androidx.xr.runtime.CoreState> getExtended();
-    method public void initialize(androidx.xr.runtime.internal.Runtime runtime);
-    method public boolean isInitialized();
-    method public void setInitialized(boolean);
-    property public java.util.List<androidx.xr.runtime.CoreState> extended;
-    property public boolean isInitialized;
-  }
-
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeActivityPanelEntity extends androidx.xr.runtime.testing.FakePanelEntity implements androidx.xr.runtime.internal.ActivityPanelEntity {
     ctor public FakeActivityPanelEntity();
     method public void launchActivity(android.content.Intent intent, android.os.Bundle? bundle);
@@ -532,17 +521,6 @@ package androidx.xr.runtime.testing {
     ctor public FakeSpatialPointerComponent();
     method @androidx.xr.runtime.internal.SpatialPointerIconType public int getSpatialPointerIcon();
     method public void setSpatialPointerIcon(@androidx.xr.runtime.internal.SpatialPointerIconType int iconType);
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeStateExtender implements androidx.xr.runtime.StateExtender {
-    ctor public FakeStateExtender();
-    method public suspend Object? extend(androidx.xr.runtime.CoreState coreState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
-    method public java.util.List<androidx.xr.runtime.CoreState> getExtended();
-    method public void initialize(androidx.xr.runtime.internal.Runtime runtime);
-    method public boolean isInitialized();
-    method public void setInitialized(boolean);
-    property public java.util.List<androidx.xr.runtime.CoreState> extended;
-    property public boolean isInitialized;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSubspaceNodeEntity extends androidx.xr.runtime.testing.FakeEntity implements androidx.xr.runtime.internal.SubspaceNodeEntity {
