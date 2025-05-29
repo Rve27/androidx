@@ -26,6 +26,8 @@ import androidx.camera.core.featurecombination.Feature.Companion.HDR_HLG10
 import androidx.camera.core.featurecombination.Feature.Companion.IMAGE_ULTRA_HDR
 import androidx.camera.core.featurecombination.Feature.Companion.PREVIEW_STABILIZATION
 import androidx.camera.core.featurecombination.impl.feature.FeatureTypeInternal
+import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED
+import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR
 import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.utils.executor.CameraXExecutors.directExecutor
 import androidx.camera.testing.impl.fakes.FakeSurfaceEffect
@@ -56,7 +58,30 @@ class SessionConfigTest {
         assertThat(sessionConfig.useCases).isEqualTo(useCases)
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(sessionConfig.effects).isEqualTo(effects)
-        assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
+        assertThat(sessionConfig.targetFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.requiredFeatures).isEmpty()
+        assertThat(sessionConfig.preferredFeatures).isEmpty()
+        assertThat(sessionConfig.isLegacy).isFalse()
+    }
+
+    @Test
+    fun sessionConfig_constructorOverrideFields() {
+        class ExtendedSessionConfig(
+            useCases: List<UseCase>,
+            viewPort: ViewPort,
+            effects: List<CameraEffect> = emptyList(),
+        ) : SessionConfig(useCases, viewPort, effects) {
+            override val sessionType: Int = SESSION_TYPE_HIGH_SPEED
+            override val targetFrameRate: Range<Int> = Range(100, 100)
+        }
+        val sessionConfig = ExtendedSessionConfig(useCases, viewPort, effects)
+
+        assertThat(sessionConfig.useCases).isEqualTo(useCases)
+        assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
+        assertThat(sessionConfig.effects).isEqualTo(effects)
+        assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_HIGH_SPEED)
+        assertThat(sessionConfig.targetFrameRate).isEqualTo(Range(100, 100))
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isLegacy).isFalse()
@@ -69,7 +94,8 @@ class SessionConfigTest {
         assertThat(sessionConfig.useCases).isEqualTo(useCases)
         assertThat(sessionConfig.viewPort).isNull()
         assertThat(sessionConfig.effects).isEmpty()
-        assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
+        assertThat(sessionConfig.targetFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isLegacy).isFalse()
@@ -125,7 +151,8 @@ class SessionConfigTest {
         assertThat(sessionConfig.useCases).isEqualTo(useCases)
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(sessionConfig.effects).containsExactly(effect)
-        assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
+        assertThat(sessionConfig.targetFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isLegacy).isFalse()
@@ -146,7 +173,8 @@ class SessionConfigTest {
         assertThat(sessionConfig.useCases).containsExactly(preview, imageCapture, imageAnalysis)
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(sessionConfig.effects).containsExactly(effect)
-        assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
+        assertThat(sessionConfig.targetFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isLegacy).isFalse()
@@ -224,7 +252,8 @@ class SessionConfigTest {
         assertThat(sessionConfig.useCases).containsExactly(preview, imageCapture, imageAnalysis)
         assertThat(sessionConfig.viewPort).isEqualTo(null)
         assertThat(sessionConfig.effects).isEmpty()
-        assertThat(sessionConfig.targetHighSpeedFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
+        assertThat(sessionConfig.targetFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isLegacy).isFalse()
@@ -326,14 +355,13 @@ class SessionConfigTest {
 
     @Test
     fun legacySessionConfig_constructorInitializesFields() {
-        val frameRateRange = Range(30, 60)
-
-        val legacySessionConfig = LegacySessionConfig(useCases, viewPort, effects, frameRateRange)
+        val legacySessionConfig = LegacySessionConfig(useCases, viewPort, effects)
 
         assertThat(legacySessionConfig.useCases).isEqualTo(useCases)
         assertThat(legacySessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(legacySessionConfig.effects).isEqualTo(effects)
-        assertThat(legacySessionConfig.targetHighSpeedFrameRate).isEqualTo(frameRateRange)
+        assertThat(legacySessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
+        assertThat(legacySessionConfig.targetFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(legacySessionConfig.isLegacy).isTrue()
     }
 
@@ -344,8 +372,8 @@ class SessionConfigTest {
         assertThat(legacySessionConfig.useCases).isEqualTo(useCases)
         assertThat(legacySessionConfig.viewPort).isNull()
         assertThat(legacySessionConfig.effects).isEmpty()
-        assertThat(legacySessionConfig.targetHighSpeedFrameRate)
-            .isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(legacySessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
+        assertThat(legacySessionConfig.targetFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(legacySessionConfig.isLegacy).isTrue()
     }
 
@@ -365,8 +393,8 @@ class SessionConfigTest {
         assertThat(legacySessionConfig.useCases).isEqualTo(useCases)
         assertThat(legacySessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(legacySessionConfig.effects).isEqualTo(effects)
-        assertThat(legacySessionConfig.targetHighSpeedFrameRate)
-            .isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(legacySessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
+        assertThat(legacySessionConfig.targetFrameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(legacySessionConfig.isLegacy).isTrue()
     }
 

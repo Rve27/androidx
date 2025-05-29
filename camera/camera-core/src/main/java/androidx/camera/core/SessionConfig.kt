@@ -21,7 +21,6 @@ import androidx.annotation.RestrictTo
 import androidx.camera.core.featurecombination.Feature
 import androidx.camera.core.featurecombination.impl.UseCaseType
 import androidx.camera.core.featurecombination.impl.UseCaseType.Companion.getFeatureComboUseCaseType
-import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED
 import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR
 import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
@@ -75,12 +74,9 @@ constructor(
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public open val isLegacy: Boolean = false
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public open val targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
-    // TODO(b/419462894): Refactor targetHighSpeedFrameRate into sessionType and targetFrameRate
+    public open val sessionType: Int = SESSION_TYPE_REGULAR
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public open val sessionType: Int =
-        if (targetHighSpeedFrameRate != FRAME_RATE_RANGE_UNSPECIFIED) SESSION_TYPE_HIGH_SPEED
-        else SESSION_TYPE_REGULAR
+    public open val targetFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var featureSelectionListener: Consumer<Set<Feature>> = Consumer<Set<Feature>> {}
@@ -256,9 +252,14 @@ public class LegacySessionConfig(
     useCases: List<UseCase>,
     viewPort: ViewPort? = null,
     effects: List<CameraEffect> = emptyList(),
-    public override val targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
 ) : SessionConfig(useCases, viewPort, effects) {
     public override val isLegacy: Boolean = true
+
+    /** Legacy SessionConfig only supports regular session. */
+    public override val sessionType: Int = SESSION_TYPE_REGULAR
+
+    /** Legacy SessionConfig doesn't support targetFrameRate settings. */
+    public override val targetFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
 
     public constructor(
         useCaseGroup: UseCaseGroup
