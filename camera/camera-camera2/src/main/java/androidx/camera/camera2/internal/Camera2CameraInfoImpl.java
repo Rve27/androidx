@@ -26,11 +26,8 @@ import static android.hardware.camera2.CameraMetadata.SENSOR_INFO_TIMESTAMP_SOUR
 import static android.hardware.camera2.CameraMetadata.SENSOR_INFO_TIMESTAMP_SOURCE_UNKNOWN;
 
 import static androidx.camera.camera2.internal.ZslUtil.isCapabilitySupported;
-import static androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED;
 import static androidx.camera.core.internal.StreamSpecsCalculator.NO_OP_STREAM_SPECS_CALCULATOR;
 import static androidx.core.util.Preconditions.checkArgument;
-
-import static java.util.Collections.emptySet;
 
 import android.annotation.SuppressLint;
 import android.graphics.Rect;
@@ -60,17 +57,12 @@ import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraState;
-import androidx.camera.core.CameraUseCaseAdapterProvider;
 import androidx.camera.core.DynamicRange;
-import androidx.camera.core.ExperimentalSessionConfig;
 import androidx.camera.core.ExposureState;
 import androidx.camera.core.FocusMeteringAction;
 import androidx.camera.core.Logger;
-import androidx.camera.core.SessionConfig;
 import androidx.camera.core.UseCase;
 import androidx.camera.core.ZoomState;
-import androidx.camera.core.featurecombination.ExperimentalFeatureCombination;
-import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination;
 import androidx.camera.core.impl.CameraCaptureCallback;
 import androidx.camera.core.impl.CameraConfig;
 import androidx.camera.core.impl.CameraInfoInternal;
@@ -81,8 +73,6 @@ import androidx.camera.core.impl.Quirks;
 import androidx.camera.core.impl.Timebase;
 import androidx.camera.core.impl.utils.CameraOrientationUtil;
 import androidx.camera.core.impl.utils.RedirectableLiveData;
-import androidx.camera.core.internal.CalculatedUseCaseInfo;
-import androidx.camera.core.internal.CameraUseCaseAdapter;
 import androidx.camera.core.internal.StreamSpecsCalculator;
 import androidx.core.util.Preconditions;
 import androidx.lifecycle.LiveData;
@@ -96,7 +86,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -142,9 +131,6 @@ public final class Camera2CameraInfoImpl implements CameraInfoInternal {
     private final @NonNull CameraManagerCompat mCameraManager;
 
     private @Nullable Set<CameraInfo> mPhysicalCameraInfos;
-    /** mCameraUseCaseAdapterProvider should be assigned during CameraX init. */
-    @Nullable
-    private CameraUseCaseAdapterProvider mCameraUseCaseAdapterProvider;
 
     private final StreamSpecsCalculator mStreamSpecsCalculator;
 
@@ -652,38 +638,6 @@ public final class Camera2CameraInfoImpl implements CameraInfoInternal {
         }
     }
 
-    @ExperimentalSessionConfig
-    @Override
-    public @NonNull Set<Range<Integer>> getSupportedFrameRateRanges(
-            @NonNull SessionConfig sessionConfig) {
-        int maxSupportedFrameRate;
-        try {
-            CalculatedUseCaseInfo info = simulateAddUseCases(sessionConfig);
-            maxSupportedFrameRate = info.getPrimaryStreamSpecResult().getMaxSupportedFrameRate();
-        } catch (Throwable t) {
-            Logger.w(TAG,
-                    "Failed to get max supported frameRate by SessionConfig: " + sessionConfig, t);
-            return emptySet();
-        }
-
-        Set<Range<Integer>> allSupportedFrameRates =
-                sessionConfig.getSessionType() == SESSION_TYPE_HIGH_SPEED
-                        ? getSupportedHighSpeedFrameRateRanges()
-                        : getSupportedFrameRateRanges();
-
-        if (allSupportedFrameRates.isEmpty()) {
-            return emptySet();
-        }
-
-        LinkedHashSet<Range<Integer>> filteredFrameRates = new LinkedHashSet<>();
-        for (Range<Integer> frameRate : allSupportedFrameRates) {
-            if (frameRate.getUpper() <= maxSupportedFrameRate) {
-                filteredFrameRates.add(frameRate);
-            }
-        }
-        return filteredFrameRates;
-    }
-
     @Override
     public boolean isVideoStabilizationSupported() {
         int[] availableVideoStabilizationModes =
@@ -845,32 +799,5 @@ public final class Camera2CameraInfoImpl implements CameraInfoInternal {
         }
 
         return true;
-    }
-
-    @Override
-    public void setCameraUseCaseAdapterProvider(
-            @NonNull CameraUseCaseAdapterProvider cameraUseCaseAdapterProvider) {
-        mCameraUseCaseAdapterProvider = cameraUseCaseAdapterProvider;
-    }
-
-    @OptIn(markerClass = {ExperimentalFeatureCombination.class, ExperimentalSessionConfig.class})
-    @NonNull
-    private CalculatedUseCaseInfo simulateAddUseCases(@NonNull SessionConfig sessionConfig) throws
-            IllegalArgumentException, CameraUseCaseAdapter.CameraException {
-        checkArgument(mCameraUseCaseAdapterProvider != null,
-                "mCameraUseCaseAdapterProvider should not be null");
-        CameraUseCaseAdapter cameraUseCaseAdapter = mCameraUseCaseAdapterProvider.provide(
-                mCameraId);
-        cameraUseCaseAdapter.setViewPort(sessionConfig.getViewPort());
-        cameraUseCaseAdapter.setEffects(sessionConfig.getEffects());
-        cameraUseCaseAdapter.setTargetHighSpeedFrameRate(
-                sessionConfig.getTargetHighSpeedFrameRate());
-        ResolvedFeatureCombination resolvedFeatureCombination =
-                ResolvedFeatureCombination.Companion.resolveFeatureCombination(
-                        sessionConfig,
-                        this
-                );
-        return cameraUseCaseAdapter.simulateAddUseCases(sessionConfig.getUseCases(),
-                resolvedFeatureCombination, /*findMaxSupportedFrameRate=*/true);
     }
 }

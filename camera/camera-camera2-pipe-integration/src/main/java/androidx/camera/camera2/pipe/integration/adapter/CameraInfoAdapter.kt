@@ -57,25 +57,18 @@ import androidx.camera.camera2.pipe.integration.interop.ExperimentalCamera2Inter
 import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.CameraState
-import androidx.camera.core.CameraUseCaseAdapterProvider
 import androidx.camera.core.DynamicRange
-import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.ExposureState
 import androidx.camera.core.FocusMeteringAction
-import androidx.camera.core.SessionConfig
 import androidx.camera.core.UseCase
 import androidx.camera.core.ZoomState
-import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination.Companion.resolveFeatureCombination
 import androidx.camera.core.impl.CameraCaptureCallback
 import androidx.camera.core.impl.CameraInfoInternal
 import androidx.camera.core.impl.DynamicRanges
 import androidx.camera.core.impl.EncoderProfilesProvider
 import androidx.camera.core.impl.Quirks
-import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED
 import androidx.camera.core.impl.Timebase
 import androidx.camera.core.impl.utils.CameraOrientationUtil
-import androidx.camera.core.internal.CalculatedUseCaseInfo
-import androidx.camera.core.internal.CameraUseCaseAdapter
 import androidx.camera.core.internal.StreamSpecsCalculator
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -120,9 +113,6 @@ constructor(
     }
 
     private val isLegacyDevice by lazy { cameraProperties.metadata.isHardwareLevelLegacy }
-
-    /** cameraUseCaseAdapterProvider should be assigned during CameraX init. */
-    private var cameraUseCaseAdapterProvider: CameraUseCaseAdapterProvider? = null
 
     @OptIn(ExperimentalCamera2Interop::class)
     internal val camera2CameraInfo: Camera2CameraInfo by lazy {
@@ -274,31 +264,6 @@ constructor(
         cameraProperties.metadata[CameraCharacteristics.CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES]
             ?.toSet() ?: emptySet()
 
-    @ExperimentalSessionConfig
-    override fun getSupportedFrameRateRanges(sessionConfig: SessionConfig): Set<Range<Int>> {
-        val maxSupportedFrameRate: Int
-        try {
-            val info: CalculatedUseCaseInfo = simulateAddUseCases(sessionConfig)
-            maxSupportedFrameRate = info.primaryStreamSpecResult.maxSupportedFrameRate
-        } catch (t: Throwable) {
-            Log.warn(t) { "Failed to get max supported frameRate by SessionConfig: $sessionConfig" }
-            return emptySet()
-        }
-
-        val allSupportedFrameRates =
-            if (sessionConfig.sessionType == SESSION_TYPE_HIGH_SPEED)
-                supportedHighSpeedFrameRateRanges
-            else getSupportedFrameRateRanges()
-
-        if (allSupportedFrameRates.isEmpty()) {
-            return emptySet()
-        }
-
-        return allSupportedFrameRates.filterTo(LinkedHashSet()) { frameRate ->
-            frameRate.upper <= maxSupportedFrameRate
-        }
-    }
-
     override fun isZslSupported(): Boolean {
         return Build.VERSION.SDK_INT >= 23 &&
             isPrivateReprocessingSupported &&
@@ -408,31 +373,6 @@ constructor(
             return false
         }
         return true
-    }
-
-    override fun setCameraUseCaseAdapterProvider(
-        cameraUseCaseAdapterProvider: CameraUseCaseAdapterProvider
-    ) {
-        this.cameraUseCaseAdapterProvider = cameraUseCaseAdapterProvider
-    }
-
-    @OptIn(ExperimentalSessionConfig::class)
-    @Throws(IllegalArgumentException::class, CameraUseCaseAdapter.CameraException::class)
-    private fun simulateAddUseCases(sessionConfig: SessionConfig): CalculatedUseCaseInfo {
-        require(cameraUseCaseAdapterProvider != null) {
-            "cameraUseCaseAdapterProvider should not be null"
-        }
-        val cameraUseCaseAdapter: CameraUseCaseAdapter =
-            cameraUseCaseAdapterProvider!!.provide(cameraId)
-        cameraUseCaseAdapter.viewPort = sessionConfig.viewPort
-        cameraUseCaseAdapter.effects = sessionConfig.effects
-        cameraUseCaseAdapter.setTargetHighSpeedFrameRate(sessionConfig.targetHighSpeedFrameRate)
-        val resolvedFeatureCombination = sessionConfig.resolveFeatureCombination(this)
-        return cameraUseCaseAdapter.simulateAddUseCases(
-            sessionConfig.useCases,
-            resolvedFeatureCombination,
-            /*findMaxSupportedFrameRate=*/ true,
-        )
     }
 
     public companion object {

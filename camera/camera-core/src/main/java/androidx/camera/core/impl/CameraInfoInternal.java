@@ -16,9 +16,15 @@
 
 package androidx.camera.core.impl;
 
+import static androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED;
+import static androidx.core.util.Preconditions.checkArgument;
+
+import static java.util.Collections.emptySet;
+
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CaptureRequest;
 import android.util.Range;
 import android.util.Size;
@@ -27,16 +33,20 @@ import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraUseCaseAdapterProvider;
 import androidx.camera.core.DynamicRange;
+import androidx.camera.core.ExperimentalSessionConfig;
+import androidx.camera.core.Logger;
+import androidx.camera.core.SessionConfig;
 import androidx.camera.core.UseCase;
 import androidx.camera.core.featurecombination.ExperimentalFeatureCombination;
 import androidx.camera.core.featurecombination.Feature;
-import androidx.core.util.Preconditions;
+import androidx.camera.core.internal.CalculatedUseCaseInfo;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -51,7 +61,6 @@ import java.util.concurrent.Executor;
  * If the instance itself is the implementation instance, then it should return <code>this</code>.
  */
 public interface CameraInfoInternal extends CameraInfo {
-
     /**
      * Returns the camera id of this camera.
      *
@@ -62,7 +71,7 @@ public interface CameraInfoInternal extends CameraInfo {
     /**
      * Returns the camera characteristics of this camera. The actual type is determined by the
      * underlying camera implementation. For camera2 implementation, the actual type of the
-     * returned object is {@link android.hardware.camera2.CameraCharacteristics}.
+     * returned object is {@link CameraCharacteristics}.
      */
     @NonNull Object getCameraCharacteristics();
 
@@ -73,7 +82,7 @@ public interface CameraInfoInternal extends CameraInfo {
      * <p>It returns {@code null} if the physical camera id does not belong to
      * the current logical camera. The actual type is determined by the underlying camera
      * implementation. For camera2 implementation, the actual type of the returned object is
-     * {@link android.hardware.camera2.CameraCharacteristics}.
+     * {@link CameraCharacteristics}.
      */
     @Nullable Object getPhysicalCameraCharacteristics(@NonNull String physicalCameraId);
 
@@ -169,6 +178,39 @@ public interface CameraInfoInternal extends CameraInfo {
     @NonNull
     Rect getSensorRect();
 
+    @ExperimentalSessionConfig
+    @Override
+    default @NonNull Set<Range<Integer>> getSupportedFrameRateRanges(
+            @NonNull SessionConfig sessionConfig) {
+        int maxSupportedFrameRate;
+        try {
+            CalculatedUseCaseInfo info = UseCaseAdditionSimulator.simulateAddUseCases(this,
+                    sessionConfig, /*findMaxSupportedFrameRate=*/ true);
+            maxSupportedFrameRate = info.getPrimaryStreamSpecResult().getMaxSupportedFrameRate();
+        } catch (Throwable t) {
+            Logger.w("CameraInfoInternal",
+                    "Failed to get max supported frameRate by SessionConfig: " + sessionConfig, t);
+            return emptySet();
+        }
+
+        Set<Range<Integer>> allSupportedFrameRates =
+                sessionConfig.getSessionType() == SESSION_TYPE_HIGH_SPEED
+                        ? getSupportedHighSpeedFrameRateRanges()
+                        : getSupportedFrameRateRanges();
+
+        if (allSupportedFrameRates.isEmpty()) {
+            return emptySet();
+        }
+
+        LinkedHashSet<Range<Integer>> filteredFrameRates = new LinkedHashSet<>();
+        for (Range<Integer> frameRate : allSupportedFrameRates) {
+            if (frameRate.getUpper() <= maxSupportedFrameRate) {
+                filteredFrameRates.add(frameRate);
+            }
+        }
+        return filteredFrameRates;
+    }
+
     /**
      * Returns if preview stabilization is supported on the device.
      *
@@ -220,7 +262,7 @@ public interface CameraInfoInternal extends CameraInfo {
                 .addCameraFilter(cameraInfos -> {
                     final String cameraId = getCameraId();
                     for (CameraInfo cameraInfo : cameraInfos) {
-                        Preconditions.checkArgument(cameraInfo instanceof CameraInfoInternal);
+                        checkArgument(cameraInfo instanceof CameraInfoInternal);
                         final CameraInfoInternal cameraInfoInternal =
                                 (CameraInfoInternal) cameraInfo;
                         if (cameraInfoInternal.getCameraId().equals(cameraId)) {
@@ -290,5 +332,6 @@ public interface CameraInfoInternal extends CameraInfo {
      */
     default void setCameraUseCaseAdapterProvider(
             @NonNull CameraUseCaseAdapterProvider cameraUseCaseAdapterProvider) {
+        UseCaseAdditionSimulator.setCameraUseCaseAdapterProvider(cameraUseCaseAdapterProvider);
     }
 }
