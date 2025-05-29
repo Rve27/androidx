@@ -20,7 +20,7 @@ sindhujasubr@google.com
 
 # docs
 per-file docs-tip-of-tree/build.gradle = set noparent
-per-file docs-tip-of-tree/build.gradle = asfalcone@google.com, juliamcclellan@google.com, aurimas@google.com, alanv@google.com, natnaelbelay@google.com, tiem@google.com
+per-file docs-tip-of-tree/build.gradle = asfalcone@google.com, juliamcclellan@google.com, aurimas@google.com, alanv@google.com, natnaelbelay@google.com, tiem@google.com, omarismail@google.com
 
 # settings.gradle
 per-file *settings.gradle = set noparent
