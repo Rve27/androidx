@@ -788,7 +788,7 @@ package androidx.xr.compose.subspace.node {
     method public static <T> T currentValueOf(androidx.xr.compose.subspace.node.CompositionLocalConsumerSubspaceModifierNode, androidx.compose.runtime.CompositionLocal<T> local);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface LayoutCoordinatesAwareModifierNode {
+  public interface LayoutCoordinatesAwareModifierNode {
     method public void onLayoutCoordinates(androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates coordinates);
   }
 

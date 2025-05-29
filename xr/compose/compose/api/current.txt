@@ -456,6 +456,10 @@ package androidx.xr.compose.subspace.node {
     method public static <T> T currentValueOf(androidx.xr.compose.subspace.node.CompositionLocalConsumerSubspaceModifierNode, androidx.compose.runtime.CompositionLocal<T> local);
   }
 
+  public interface LayoutCoordinatesAwareModifierNode {
+    method public void onLayoutCoordinates(androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates coordinates);
+  }
+
   public abstract class SubspaceModifierNodeElement<N extends androidx.xr.compose.subspace.layout.SubspaceModifier.Node> implements androidx.xr.compose.subspace.layout.SubspaceModifier {
     ctor public SubspaceModifierNodeElement();
     method public abstract N create();
