@@ -47,6 +47,8 @@ class ValueInternalParametrizedTest(
         expect.that(restored.type).isEqualTo(original.type)
         expect.that(restored.isValueNull).isEqualTo(original.isValueNull)
         expect.that(restored.value).isEqualTo(original.value)
+        // This verifies there are no bytes left to be read on the Parcel.
+        parcel.enforceNoDataAvail()
         parcel.recycle()
     }
 

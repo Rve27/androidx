@@ -76,7 +76,7 @@ public data class ValueInternal(
                         else -> throw IllegalArgumentException("Unsupported type: $type")
                     }
                 } else {
-                    null
+                    parcel.readString()
                 }
             return ValueInternal(type, isValueNull, value)
         }
