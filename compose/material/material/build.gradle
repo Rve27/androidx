@@ -28,12 +28,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("AndroidXPlugin")
-    id("com.android.library")
     id("AndroidXComposePlugin")
 }
 
 androidXMultiplatform {
-    androidTarget()
+    androidLibrary {
+        compileSdk = 35
+        namespace = "androidx.compose.material"
+        androidResources.enable = true
+    }
     jvmStubs()
     linuxX64Stubs()
 
@@ -141,9 +144,4 @@ androidx {
     metalavaK2UastEnabled = false
     samples(project(":compose:material:material:material-samples"))
     addGoldenImageAssets()
-}
-
-android {
-    compileSdk = 35
-    namespace = "androidx.compose.material"
 }

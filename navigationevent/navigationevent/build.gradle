@@ -27,11 +27,14 @@ import androidx.build.SoftwareType
 
 plugins {
     id("AndroidXPlugin")
-    id("com.android.library")
 }
 
 androidXMultiplatform {
-    androidTarget()
+    androidLibrary {
+        compileSdk = 36
+        namespace = "androidx.navigationevent"
+        androidResources.enable = true
+    }
     desktop()
     mac()
     linux()
@@ -105,11 +108,6 @@ androidXMultiplatform {
             }
         }
     }
-}
-
-android {
-    compileSdk = 36
-    namespace = "androidx.navigationevent"
 }
 
 androidx {

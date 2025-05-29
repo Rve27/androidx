@@ -27,12 +27,18 @@ import androidx.build.PlatformIdentifier
 
 plugins {
     id("AndroidXPlugin")
-    id("com.android.library")
     id("AndroidXComposePlugin")
 }
 
 androidXMultiplatform {
-    androidTarget()
+    androidLibrary {
+        compileSdk = 35
+        namespace = "androidx.compose.foundation.layout"
+        optimization {
+            it.consumerKeepRules.publish = true
+            it.consumerKeepRules.files.add(new File("proguard-rules.pro"))
+        }
+    }
     jvmStubs()
     linuxX64Stubs()
 
@@ -118,12 +124,4 @@ androidx {
     description = "Compose layout implementations"
     legacyDisableKotlinStrictApiMode = true
     samples(project(":compose:foundation:foundation-layout:foundation-layout-samples"))
-}
-
-android {
-    compileSdk = 35
-    namespace = "androidx.compose.foundation.layout"
-    buildTypes.configureEach {
-        consumerProguardFiles("proguard-rules.pro")
-    }
 }

@@ -28,12 +28,14 @@ import androidx.build.PlatformIdentifier
 
 plugins {
     id("AndroidXPlugin")
-    id("com.android.library")
     id("AndroidXComposePlugin")
 }
 
 androidXMultiplatform {
-    androidTarget()
+    androidLibrary {
+        compileSdk = 35
+        namespace = "androidx.compose.material3.adaptive.navigation"
+    }
     jvmStubs()
     linuxX64Stubs()
 
@@ -109,9 +111,4 @@ androidx {
     inceptionYear = "2023"
     description = "Compose Material Design Adaptive Library"
     legacyDisableKotlinStrictApiMode = true
-}
-
-android {
-    compileSdk = 35
-    namespace = "androidx.compose.material3.adaptive.navigation"
 }
