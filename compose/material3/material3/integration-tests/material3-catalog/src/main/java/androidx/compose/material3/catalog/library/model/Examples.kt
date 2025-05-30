@@ -41,6 +41,7 @@ import androidx.compose.material3.samples.ButtonSample
 import androidx.compose.material3.samples.ButtonWithAnimatedShapeSample
 import androidx.compose.material3.samples.ButtonWithIconSample
 import androidx.compose.material3.samples.CardSample
+import androidx.compose.material3.samples.CarouselWithShowAllButtonSample
 import androidx.compose.material3.samples.CenteredHorizontalFloatingToolbarWithFabSample
 import androidx.compose.material3.samples.CenteredSliderSample
 import androidx.compose.material3.samples.CenteredVerticalFloatingToolbarWithFabSample
@@ -613,6 +614,14 @@ val CarouselExamples =
             isExpressive = false,
         ) {
             FadingHorizontalMultiBrowseCarouselSample()
+        },
+        Example(
+            name = "CarouselWithShowAllButtonSample",
+            description = CarouselExampleDescription,
+            sourceUrl = CarouselExampleSourceUrl,
+            isExpressive = false,
+        ) {
+            CarouselWithShowAllButtonSample()
         },
     )
 
