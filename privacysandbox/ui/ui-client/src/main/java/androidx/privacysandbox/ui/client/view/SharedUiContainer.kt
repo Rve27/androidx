@@ -55,7 +55,6 @@ import kotlin.math.max
  * __Asset registration__: Client-owned views and [SandboxedSdkView]s can be registered as assets
  * using [registerSharedUiAsset] and unregistered using [unregisterSharedUiAsset].
  */
-@OptIn(ExperimentalFeatures.SharedUiPresentationApi::class)
 @SuppressLint("NullAnnotationGroup")
 @ExperimentalFeatures.SharedUiPresentationApi
 class SharedUiContainer @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
