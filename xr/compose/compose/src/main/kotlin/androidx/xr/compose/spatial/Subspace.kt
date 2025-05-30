@@ -16,6 +16,7 @@
 
 package androidx.xr.compose.spatial
 
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
@@ -41,6 +42,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
+import androidx.core.viewtree.getParentOrViewTreeDisjointParent
+import androidx.xr.compose.R
 import androidx.xr.compose.platform.LocalCoreEntity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.LocalSpatialConfiguration
@@ -65,6 +68,7 @@ import androidx.xr.scenecore.ActivitySpace
 import androidx.xr.scenecore.CameraView
 import androidx.xr.scenecore.CameraView.CameraType
 import androidx.xr.scenecore.ContentlessEntity
+import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.Head
 import androidx.xr.scenecore.Space
 import androidx.xr.scenecore.scene
@@ -179,7 +183,8 @@ public value class ConstraintsBehavior private constructor(private val value: In
  * [ApplicationSubspace] should be used to create the topmost [Subspace] in your application's
  * spatial UI hierarchy. This composable will throw an [IllegalStateException] if it is used to
  * create a Subspace that is nested within another [Subspace] or [ApplicationSubspace]. For nested
- * 3D content areas, use the [Subspace] composable.
+ * 3D content areas, use the [Subspace] composable. The [ApplicationSubspace] will inherit its
+ * position and scale from the system's recommended position and scale.
  *
  * This composable is a no-op and does not render anything in non-XR environments (i.e., Phone and
  * Tablet).
@@ -249,18 +254,25 @@ private fun ApplicationSubspace(
     constraintsBehavior: ConstraintsBehavior,
     content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit,
 ) {
+    val view = LocalView.current
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val compositionContext = rememberCompositionContext()
     val scene by remember {
         session.scene.mainPanelEntity.setHidden(true)
+        val subspaceRoot = ContentlessEntity.create(session, "SubspaceRoot")
+        view.findOrCreateViewTreeApplicationSubspaceRootNode(session)?.let {
+            subspaceRoot.setParent(it)
+        }
         disposableValueOf(
             SpatialComposeScene(
                 ownerActivity = activity,
                 jxrSession = session,
                 parentCompositionContext = compositionContext,
+                rootEntity = CoreContentlessEntity(subspaceRoot),
             )
         ) {
             it.dispose()
+            subspaceRoot.dispose()
             session.scene.mainPanelEntity.setHidden(false)
         }
     }
@@ -631,4 +643,31 @@ private fun getFovHeightAtDistance(distance: Meter, fov: FieldOfView, density: D
     val height: Meter = distance * (tan(fov.angleUp) - tan(fov.angleDown))
 
     return height.roundToPx(density)
+}
+
+private fun View.findOrCreateViewTreeApplicationSubspaceRootNode(session: Session?): Entity? {
+    var currentView: View? = this
+    var topView: View = this
+    while (currentView != null) {
+        val subspaceRoot =
+            currentView.getTag(R.id.view_tree_application_subspace_root_node) as? Entity
+        if (subspaceRoot != null) {
+            return subspaceRoot
+        }
+        topView = currentView
+        currentView = currentView.getParentOrViewTreeDisjointParent() as? View
+    }
+
+    if (session != null) {
+        return ContentlessEntity.create(session = session, name = "ApplicationSubspaceRoot").also {
+            topView.setViewTreeApplicationSubspaceRootNode(it)
+            session.scene.setCenterOfAttention(it)
+        }
+    }
+
+    return null
+}
+
+private fun View.setViewTreeApplicationSubspaceRootNode(entity: Entity) {
+    setTag(R.id.view_tree_application_subspace_root_node, entity)
 }
