@@ -38,6 +38,7 @@ import androidx.privacysandbox.ui.integration.macrobenchmark.testapp.sdkprovider
 import androidx.privacysandbox.ui.integration.macrobenchmark.testapp.sdkproviderutils.fullscreen.FullscreenAd
 import androidx.privacysandbox.ui.provider.AbstractSandboxedUiAdapter
 import androidx.privacysandbox.ui.provider.toCoreLibInfo
+import androidx.tracing.trace
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -85,6 +86,8 @@ class SdkApi(private val sdkContext: Context) : ISdkApi {
                         waitInsideOnDraw = false,
                         drawViewability,
                     )
+                // PLEASE ASK BEFORE MOVING. Moving this may affect benchmark metrics.
+                trace("UiLib#adapterUpdateDelegate", {})
                 adapter.updateDelegate(adapterBundle)
                 mediationOption =
                     if (mediationOption == MediationOption.IN_APP_MEDIATEE) {
@@ -145,16 +148,8 @@ class SdkApi(private val sdkContext: Context) : ISdkApi {
     ) {
         // This task will recursively post itself to the handler [numberOfRefreshes] times to allow
         // us to test several ad refreshes.
-        handler.postDelayed(
-            UpdateDelegateTask(
-                adapter,
-                MediationOption.SDK_RUNTIME_MEDIATEE,
-                drawViewability,
-                numberOfRefreshes = 5,
-            ),
-            UPDATE_DELEGATE_INTERVAL,
-        )
-        // post two tasks to the handler to simulate race conditions
+        // For benchmark tests, we'll keep the number of refreshes to 0.
+        // 1 Ad (from Runtime mediatee) is already shown followed by 1 refresh only.
         handler.postDelayed(
             UpdateDelegateTask(
                 adapter,

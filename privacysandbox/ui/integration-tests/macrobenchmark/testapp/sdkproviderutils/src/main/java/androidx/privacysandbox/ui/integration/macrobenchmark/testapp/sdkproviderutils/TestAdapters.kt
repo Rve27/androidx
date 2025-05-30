@@ -48,6 +48,7 @@ import androidx.privacysandbox.ui.client.view.SandboxedSdkView
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
 import androidx.privacysandbox.ui.core.SessionData
 import androidx.privacysandbox.ui.provider.AbstractSandboxedUiAdapter
+import androidx.tracing.trace
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
 import java.util.concurrent.Executor
@@ -113,6 +114,8 @@ class TestAdapters(private val sdkContext: Context) {
             }
 
             override fun close() {
+                // PLEASE ASK BEFORE MOVING. Moving this may affect benchmark metrics.
+                trace("UiLib#adapterSessionClose", {})
                 Log.i(TAG, "Closing session")
             }
         }

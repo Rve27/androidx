@@ -19,9 +19,7 @@ package androidx.privacysandbox.ui.integration.macrobenchmark.testapp.target
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.Typeface
-import android.os.Build
 import android.os.Bundle
-import android.os.Trace
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -39,6 +37,7 @@ import androidx.privacysandbox.ui.integration.macrobenchmark.testapp.sdkprovider
 import androidx.privacysandbox.ui.integration.macrobenchmark.testapp.target.util.AdHolder
 import androidx.privacysandbox.ui.integration.macrobenchmark.testapp.testsdkprovider.ISdkApi
 import androidx.privacysandbox.ui.integration.macrobenchmark.testapp.testsdkprovider.ISdkApiFactory
+import androidx.tracing.trace
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -173,12 +172,7 @@ abstract class BaseFragment : Fragment() {
         SandboxedSdkViewEventListener {
         override fun onUiDisplayed() {
             // PLEASE ASK BEFORE MOVING. Moving this may affect benchmark metrics.
-            // TODO(b/418155054): Create helper function in SdkSandboxCrossProcessLatencyMetric.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                Trace.beginAsyncSection("onUiDisplayed", 0)
-                // To avoid misusing API, end the section. See b/412962485.
-                Trace.endAsyncSection("onUiDisplayed", 0)
-            }
+            trace("UiLib#ssvOnUiDisplayed", {})
         }
 
         override fun onUiError(error: Throwable) {

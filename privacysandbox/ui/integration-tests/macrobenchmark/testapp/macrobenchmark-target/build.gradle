@@ -73,6 +73,7 @@ dependencies {
     implementation(project(":privacysandbox:ui:ui-client"))
     implementation(project(":privacysandbox:ui:ui-client-compose"))
     implementation(project(":privacysandbox:ui:ui-provider"))
+    implementation(project(":tracing:tracing"))
     implementation(libs.media3Ui)
     implementation(libs.media3Common)
     implementation(libs.media3Exoplayer)
@@ -83,4 +84,5 @@ dependencies {
     androidTestImplementation(libs.truth)
     androidTestImplementation(libs.testExtJunit)
     androidTestImplementation(libs.espressoCore)
+    androidTestImplementation(project(":tracing:tracing"))
 }

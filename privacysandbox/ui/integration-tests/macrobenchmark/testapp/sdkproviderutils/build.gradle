@@ -37,6 +37,7 @@ dependencies {
     implementation project(":privacysandbox:activity:activity-core")
     implementation project(":privacysandbox:activity:activity-provider")
     implementation project(":webkit:webkit")
+    implementation(project(":tracing:tracing"))
     implementation(libs.media3Ui)
     implementation(libs.media3Common)
     implementation(libs.media3Exoplayer)

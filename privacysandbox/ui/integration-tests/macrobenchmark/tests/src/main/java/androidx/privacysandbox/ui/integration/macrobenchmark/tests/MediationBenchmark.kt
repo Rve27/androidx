@@ -47,13 +47,13 @@ class MediationBenchmark(@Suppress("unused") private val ciTestConfigType: Strin
                 listOf(
                     FrameTimingMetric(),
                     SdkSandboxCrossProcessLatencyMetric(
-                        "checkClientOpenSession",
-                        "onSessionOpened",
+                        "UiLib#checkClientOpenSession",
+                        "UiLib#ssvOnSessionOpened",
                         "sessionOpened",
                     ),
                     SdkSandboxCrossProcessLatencyMetric(
-                        "checkClientOpenSession",
-                        "onUiDisplayed",
+                        "UiLib#checkClientOpenSession",
+                        "UiLib#ssvOnUiDisplayed",
                         "uiDisplay",
                     ),
                 ),
@@ -75,22 +75,20 @@ class MediationBenchmark(@Suppress("unused") private val ciTestConfigType: Strin
                 listOf(
                     FrameTimingMetric(),
                     SdkSandboxCrossProcessLatencyMetric(
-                        "checkClientOpenSession",
-                        "onSessionOpened",
+                        "UiLib#checkClientOpenSession",
+                        "UiLib#ssvOnSessionOpened",
                         "mediatorSessionOpened",
                     ),
+                    // Since mediator SSV is created in Sandbox process, tracepoint names will be
+                    // "checkClientOpenSessionSandbox" and "onSessionOpenedSandbox".
                     SdkSandboxCrossProcessLatencyMetric(
-                        "checkClientOpenSession",
-                        "onSessionOpened",
+                        "UiLib#checkClientOpenSessionSandbox",
+                        "UiLib#ssvOnSessionOpenedSandbox",
                         "mediateeSessionOpened",
-                        occurrenceOfBeginTrace =
-                            SdkSandboxCrossProcessLatencyMetric.TraceOccurrence.LAST,
-                        occurrenceOfEndTrace =
-                            SdkSandboxCrossProcessLatencyMetric.TraceOccurrence.LAST,
                     ),
                     SdkSandboxCrossProcessLatencyMetric(
-                        "checkClientOpenSession",
-                        "onUiDisplayed",
+                        "UiLib#checkClientOpenSession",
+                        "UiLib#ssvOnUiDisplayed",
                         "uiDisplay",
                     ),
                 ),
@@ -112,13 +110,13 @@ class MediationBenchmark(@Suppress("unused") private val ciTestConfigType: Strin
                 listOf(
                     FrameTimingMetric(),
                     SdkSandboxCrossProcessLatencyMetric(
-                        "checkClientOpenSession",
-                        "onSessionOpened",
+                        "UiLib#checkClientOpenSession",
+                        "UiLib#ssvOnSessionOpened",
                         "sessionOpened",
                     ),
                     SdkSandboxCrossProcessLatencyMetric(
-                        "checkClientOpenSession",
-                        "onUiDisplayed",
+                        "UiLib#checkClientOpenSession",
+                        "UiLib#ssvOnUiDisplayed",
                         "uiDisplay",
                     ),
                 ),
@@ -131,22 +129,60 @@ class MediationBenchmark(@Suppress("unused") private val ciTestConfigType: Strin
             device.wait(Until.findObject(By.clazz(WEBVIEW_CLASS_NAME)), NON_REFRESHADS_TIMEOUT_MS)
         }
 
-    private fun getIntentForTestAppLaunch(mediationOption: String): Intent {
+    @OptIn(ExperimentalMetricApi::class)
+    @Test
+    fun refreshAds() =
+        benchmarkRule.measureRepeated(
+            packageName = APP_PKG_NAME,
+            metrics =
+                listOf(
+                    FrameTimingMetric(),
+                    SdkSandboxCrossProcessLatencyMetric(
+                        "UiLib#adapterUpdateDelegate",
+                        "UiLib#onSessionRefreshRequested",
+                        "refreshRequested",
+                    ),
+                    // First onSessionOpened after updateDelegate will be chosen.
+                    SdkSandboxCrossProcessLatencyMetric(
+                        "UiLib#adapterUpdateDelegate",
+                        "UiLib#ssvOnSessionOpened",
+                        "sessionOpened",
+                    ),
+                    SdkSandboxCrossProcessLatencyMetric(
+                        "UiLib#adapterUpdateDelegate",
+                        "UiLib#adapterSessionClose",
+                        "sessionClosed",
+                    ),
+                ),
+            iterations = 5,
+            startupMode = StartupMode.COLD,
+            setupBlock = { pressHome() },
+        ) {
+            startActivityAndWait(
+                getIntentForTestAppLaunch(
+                    REFRESHADS_INTENT_EXTRA_VALUE,
+                    NON_WEBVIEW_AD_TYPE_INTENT_EXTRA_VALUE,
+                )
+            )
+
+            device.wait(Until.findObject(By.clazz(WEBVIEW_CLASS_NAME)), REFRESHADS_TIMEOUT_MS)
+        }
+
+    private fun getIntentForTestAppLaunch(
+        mediationOption: String,
+        adType: String = WEBVIEW_AD_TYPE_INTENT_EXTRA_VALUE,
+    ): Intent {
         val intent =
             InstrumentationRegistry.getInstrumentation()
                 .context
                 .packageManager
                 .getLaunchIntentForPackage(APP_PKG_NAME)
         val configBundle = Bundle()
-        addAdTypeAndFragmentIntentValues(configBundle)
+        configBundle.putString(AD_TYPE_INTENT_EXTRA_KEY, adType)
+        configBundle.putString(FRAGMENT_INTENT_EXTRA_KEY, RESIZE_FRAGMENT_INTENT_EXTRA_VALUE)
         configBundle.putString(MEDIATION_INTENT_EXTRA_KEY, mediationOption)
         intent?.putExtras(configBundle)
         return intent!!
-    }
-
-    private fun addAdTypeAndFragmentIntentValues(configBundle: Bundle) {
-        configBundle.putString(AD_TYPE_INTENT_EXTRA_KEY, WEBVIEW_AD_TYPE_INTENT_EXTRA_VALUE)
-        configBundle.putString(FRAGMENT_INTENT_EXTRA_KEY, RESIZE_FRAGMENT_INTENT_EXTRA_VALUE)
     }
 
     companion object {
@@ -160,11 +196,14 @@ class MediationBenchmark(@Suppress("unused") private val ciTestConfigType: Strin
         const val NO_MEDIATION_INTENT_EXTRA_VALUE = "non-mediated"
         const val RE_MEDIATION_INTENT_EXTRA_VALUE = "in-runtime-with-overlay"
         const val INAPP_MEDIATION_INTENT_EXTRA_VALUE = "in-app"
+        const val REFRESHADS_INTENT_EXTRA_VALUE = "refreshable"
 
         const val WEBVIEW_AD_TYPE_INTENT_EXTRA_VALUE = "basic-webview"
+        const val NON_WEBVIEW_AD_TYPE_INTENT_EXTRA_VALUE = "non-webview"
         const val RESIZE_FRAGMENT_INTENT_EXTRA_VALUE = "resize"
 
         const val NON_REFRESHADS_TIMEOUT_MS = 3000L
+        const val REFRESHADS_TIMEOUT_MS = 15000L
 
         const val WEBVIEW_CLASS_NAME = "android.webkit.Webview"
 
