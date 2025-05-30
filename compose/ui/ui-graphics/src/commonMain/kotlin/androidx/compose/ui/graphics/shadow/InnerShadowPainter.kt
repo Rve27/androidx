@@ -57,6 +57,9 @@ internal constructor(
      * as the underlying shadow dependencies can be shared across multiple [InnerShadowPainter]
      * instances. However, creating an instance through this constructor will not share resources
      * with any other [InnerShadowPainter].
+     *
+     * @param shape Shape of the shadow
+     * @param innerShadow Parameters used to render the shadow
      */
     constructor(
         shape: Shape,

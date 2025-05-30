@@ -16,6 +16,8 @@
 
 package androidx.compose.ui.graphics.shadow
 
+import androidx.annotation.FloatRange
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -29,14 +31,12 @@ import androidx.compose.ui.unit.dp
 /**
  * Group of parameters that represent how an inner shadow should be rendered.
  *
- * @param radius The blur radius of the shadow
- * @param spread Spread parameter that adds to the size of the shadow
- * @param offset The internal offset of the shadow within the geometry provided
- * @param color The color of the shadow, only consumed if the Brush is not provided
- * @param brush The brush to use for the shadow. If null, the color parameter is consumed instead
- * @param alpha Opacity of the shadow
- * @param blendMode Blending algorithm used by the shadow
+ * @property radius The blur radius of the shadow
+ * @property spread Spread parameter that adds to the size of the shadow
+ * @property offset The internal offset of the shadow within the geometry provided
+ * @property blendMode Blending algorithm used by the shadow
  */
+@Immutable
 class InnerShadow
 private constructor(
     val radius: Dp,
@@ -44,13 +44,13 @@ private constructor(
     val offset: DpOffset,
     color: Color,
     brush: Brush?,
-    alpha: Float,
+    @FloatRange(from = 0.0, to = 1.0) alpha: Float,
     val blendMode: BlendMode,
 ) {
 
     /**
-     * Color of the shadow. If Color.Unspecified is provided, Color.Black will be used as a default
-     * This color is only used if [brush] is null
+     * Color of the shadow. If [Color.Unspecified] is provided, [Color.Black] will be used as a
+     * default. This color is only used if [brush] is null.
      */
     val color: Color
 
@@ -76,7 +76,7 @@ private constructor(
     }
 
     /**
-     * Create an [InnerShadow] with the corresponding parameters
+     * Creates a group of parameters that represent how a inner shadow should be rendered.
      *
      * @param radius The blur radius of the shadow
      * @param brush Brush used to blend against a mask defined by the shadow geometry
@@ -90,7 +90,7 @@ private constructor(
         brush: Brush,
         spread: Dp = 0.dp,
         offset: DpOffset = DpOffset.Zero,
-        alpha: Float = 1f,
+        @FloatRange(from = 0.0, to = 1.0) alpha: Float = 1f,
         blendMode: BlendMode = DefaultBlendMode,
     ) : this(
         radius = radius,
@@ -103,11 +103,11 @@ private constructor(
     )
 
     /**
-     * Create an [InnerShadow] with the corresponding parameters
+     * Creates a group of parameters that represent how a inner shadow should be rendered.
      *
      * @param radius The blur radius of the shadow
-     * @param color The color of the shadow. If Color.Unspecified is provided, Color.Black will be
-     *   used as a default
+     * @param color The color of the shadow. If [Color.Unspecified] is provided, [Color.Black] will
+     *   be used as a default.
      * @param spread Optional parameter to grow the shadow geometry by
      * @param offset Optional parameter to offset the shadow within the geometry bounds
      * @param alpha Optional opacity of the shadow
@@ -118,7 +118,7 @@ private constructor(
         color: Color = Color.Black,
         spread: Dp = 0.dp,
         offset: DpOffset = DpOffset.Zero,
-        alpha: Float = 1f,
+        @FloatRange(from = 0.0, to = 1.0) alpha: Float = 1f,
         blendMode: BlendMode = DefaultBlendMode,
     ) : this(
         radius = radius,

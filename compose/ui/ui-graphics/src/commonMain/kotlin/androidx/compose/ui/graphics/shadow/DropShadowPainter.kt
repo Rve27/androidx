@@ -42,9 +42,6 @@ import kotlin.math.ceil
 /**
  * [Painter] implementation that draws a drop shadow with the geometry defined by the specified
  * shape and [DropShadow] parameters.
- *
- * @param shape Shape of the shadow
- * @param dropShadow Parameters used to render the shadow
  */
 class DropShadowPainter
 internal constructor(
@@ -59,6 +56,9 @@ internal constructor(
      * the underlying shadow dependencies can be shared across multiple [DropShadowPainter]
      * instances. However, creating an instance through this constructor will not share resources
      * with any other [DropShadowPainter].
+     *
+     * @param shape Shape of the shadow
+     * @param dropShadow Parameters used to render the shadow
      */
     constructor(
         shape: Shape,

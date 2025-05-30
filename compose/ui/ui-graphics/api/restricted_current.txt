@@ -2089,9 +2089,9 @@ package androidx.compose.ui.graphics.shadow {
     method public static androidx.compose.ui.graphics.shadow.ShadowContext ShadowContext();
   }
 
-  @androidx.compose.runtime.Stable public final class DropShadow {
-    ctor public DropShadow(float radius, androidx.compose.ui.graphics.Brush brush, optional float spread, optional float alpha, optional int blendMode);
-    ctor public DropShadow(float radius, optional long color, optional float spread, optional float alpha, optional int blendMode);
+  @androidx.compose.runtime.Immutable public final class DropShadow {
+    ctor public DropShadow(float radius, androidx.compose.ui.graphics.Brush brush, optional float spread, optional @FloatRange(from=0.0, to=1.0) float alpha, optional int blendMode);
+    ctor public DropShadow(float radius, optional long color, optional float spread, optional @FloatRange(from=0.0, to=1.0) float alpha, optional int blendMode);
     method public float getAlpha();
     method public int getBlendMode();
     method @BytecodeOnly public int getBlendMode-0nO6VwU();
@@ -2118,9 +2118,9 @@ package androidx.compose.ui.graphics.shadow {
     property public long intrinsicSize;
   }
 
-  public final class InnerShadow {
-    ctor public InnerShadow(float radius, androidx.compose.ui.graphics.Brush brush, optional float spread, optional long offset, optional float alpha, optional int blendMode);
-    ctor public InnerShadow(float radius, optional long color, optional float spread, optional long offset, optional float alpha, optional int blendMode);
+  @androidx.compose.runtime.Immutable public final class InnerShadow {
+    ctor public InnerShadow(float radius, androidx.compose.ui.graphics.Brush brush, optional float spread, optional long offset, optional @FloatRange(from=0.0, to=1.0) float alpha, optional int blendMode);
+    ctor public InnerShadow(float radius, optional long color, optional float spread, optional long offset, optional @FloatRange(from=0.0, to=1.0) float alpha, optional int blendMode);
     method public float getAlpha();
     method public int getBlendMode();
     method @BytecodeOnly public int getBlendMode-0nO6VwU();

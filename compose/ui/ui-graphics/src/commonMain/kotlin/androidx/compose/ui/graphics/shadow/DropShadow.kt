@@ -16,7 +16,8 @@
 
 package androidx.compose.ui.graphics.shadow
 
-import androidx.compose.runtime.Stable
+import androidx.annotation.FloatRange
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -29,27 +30,24 @@ import androidx.compose.ui.unit.dp
 /**
  * Group of parameters that represent how a drop shadow should be rendered.
  *
- * @param radius The blur radius of the shadow
- * @param spread Spread parameter that adds to the size of the shadow
- * @param color The color of the shadow, only consumed if the Brush is not provided
- * @param brush The brush to use for the shadow. If null, the color parameter is consumed instead
- * @param alpha Opacity of the shadow
- * @param blendMode Blending algorithm used by the shadow
+ * @property radius The blur radius of the shadow
+ * @property spread Spread parameter that adds to the size of the shadow
+ * @property blendMode Blending algorithm used by the shadow
  */
-@Stable
+@Immutable
 class DropShadow
 private constructor(
     val radius: Dp,
     val spread: Dp,
     color: Color,
     brush: Brush?,
-    alpha: Float,
+    @FloatRange(from = 0.0, to = 1.0) alpha: Float,
     val blendMode: BlendMode,
 ) {
 
     /**
-     * Color of the shadow. If Color.Unspecified is provided, Color.Black will be used as a default
-     * This color is only used if [brush] is null
+     * Color of the shadow. If [Color.Unspecified] is provided, [Color.Black] will be used as a
+     * default. This color is only used if [brush] is null.
      */
     val color: Color
 
@@ -75,14 +73,19 @@ private constructor(
     }
 
     /**
-     * Create a [DropShadow] parameter that is to be rendered with the corresponding [Brush]
-     * parameter. This brush will be masked against the geometry of the shadow.
+     * Creates a group of parameters that represent how a drop shadow should be rendered.
+     *
+     * @param radius The blur radius of the shadow
+     * @param brush Brush used to blend against a mask defined by the shadow geometry
+     * @param spread Spread parameter that adds to the size of the shadow
+     * @param alpha Opacity of the shadow
+     * @param blendMode Blending algorithm used by the shadow
      */
     constructor(
         radius: Dp,
         brush: Brush,
         spread: Dp = 0.dp,
-        alpha: Float = 1f,
+        @FloatRange(from = 0.0, to = 1.0) alpha: Float = 1f,
         blendMode: BlendMode = DefaultBlendMode,
     ) : this(
         radius = radius,
@@ -94,14 +97,20 @@ private constructor(
     )
 
     /**
-     * Create a [DropShadow] parameter that is to be rendered with the corresponding [Brush]
-     * parameter. The shadow will be tinted with the provided color.
+     * Creates a group of parameters that represent how a drop shadow should be rendered.
+     *
+     * @param radius The blur radius of the shadow
+     * @param color The color of the shadow. If [Color.Unspecified] is provided, [Color.Black] will
+     *   be used as a default.
+     * @param spread Spread parameter that adds to the size of the shadow
+     * @param alpha Opacity of the shadow
+     * @param blendMode Blending algorithm used by the shadow
      */
     constructor(
         radius: Dp,
         color: Color = Color.Black,
         spread: Dp = 0.dp,
-        alpha: Float = 1f,
+        @FloatRange(from = 0.0, to = 1.0) alpha: Float = 1f,
         blendMode: BlendMode = DefaultBlendMode,
     ) : this(
         radius = radius,
