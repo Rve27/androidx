@@ -280,8 +280,6 @@ internal class FullBitmap(scaledPageSizePx: Size) : SizeParams(scaledPageSizePx)
 /** Represents a set of tile region [Bitmap] requested from [PdfDocument.BitmapSource] */
 internal class Tiles(scaledPageSizePx: Size) : SizeParams(scaledPageSizePx) {
     private val _tiles = mutableListOf<Rect>()
-    val tiles: List<Rect>
-        get() = _tiles
 
     fun withTile(region: Rect) = _tiles.add(region)
 }
