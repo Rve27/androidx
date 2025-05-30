@@ -306,7 +306,7 @@ class HandTrackingActivity : ComponentActivity() {
             if (leftHand == null || rightHand == null) {
                 Text("Hand module is not supported.")
             } else {
-                val handedness = Hand.getHandedness(contentResolver)
+                val handedness = Hand.getPrimaryHandSide(contentResolver)
                 Text("Handedness: ${handedness}")
                 val leftHandState = leftHand.state.collectAsState().value
                 val rightHandState = rightHand.state.collectAsState().value
