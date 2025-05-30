@@ -36,7 +36,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Lock
@@ -56,20 +55,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import androidx.xr.compose.integration.common.AnotherActivity
+import androidx.xr.compose.integration.layout.spatialcomposeapp.components.TestDialog
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.LocalSpatialCapabilities
 import androidx.xr.compose.platform.LocalSpatialConfiguration
 import androidx.xr.compose.spatial.ContentEdge
 import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.OrbiterOffsetType
-import androidx.xr.compose.spatial.SpatialDialog
-import androidx.xr.compose.spatial.SpatialDialogProperties
 import androidx.xr.compose.spatial.SpatialElevationLevel
 import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.MainPanel
@@ -288,8 +285,6 @@ class SpatialComposeAppActivity : ComponentActivity() {
     @UiComposable
     @Composable
     fun PanelContent(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-        var showDialog by remember { mutableStateOf(false) }
-
         Column(
             modifier = modifier.fillMaxSize().background(Color.LightGray).padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -311,26 +306,7 @@ class SpatialComposeAppActivity : ComponentActivity() {
 
             Spacer(modifier = Modifier.size(20.dp))
 
-            Button(onClick = { showDialog = true }) { Text("show dialog") }
-            if (showDialog) {
-                SpatialDialog(
-                    onDismissRequest = { showDialog = false },
-                    properties = SpatialDialogProperties(elevation = 128.dp),
-                ) {
-                    Surface(
-                        color = Color.White,
-                        modifier = Modifier.clip(RoundedCornerShape(5.dp)),
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(20.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            Text("This is a SpatialDialog", modifier = Modifier.padding(10.dp))
-                            Button(onClick = { showDialog = false }) { Text("Dismiss") }
-                        }
-                    }
-                }
-            }
+            TestDialog { Text("This is a SpatialDialog", modifier = Modifier.padding(10.dp)) }
         }
     }
 
