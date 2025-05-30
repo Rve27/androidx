@@ -17,8 +17,6 @@ package androidx.compose.ui.layout
 
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.Interpolator
-import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.collection.mutableObjectListOf
 import androidx.compose.foundation.layout.Box
@@ -30,19 +28,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.InsetsRulers.CaptionBar
-import androidx.compose.ui.layout.InsetsRulers.DisplayCutout
-import androidx.compose.ui.layout.InsetsRulers.Ime
-import androidx.compose.ui.layout.InsetsRulers.MandatorySystemGestures
-import androidx.compose.ui.layout.InsetsRulers.NavigationBars
-import androidx.compose.ui.layout.InsetsRulers.SafeContent
-import androidx.compose.ui.layout.InsetsRulers.SafeDrawing
-import androidx.compose.ui.layout.InsetsRulers.SafeGestures
-import androidx.compose.ui.layout.InsetsRulers.StatusBars
-import androidx.compose.ui.layout.InsetsRulers.SystemGestures
-import androidx.compose.ui.layout.InsetsRulers.TappableElement
-import androidx.compose.ui.layout.InsetsRulers.Waterfall
 import androidx.compose.ui.layout.Placeable.PlacementScope
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.CaptionBar
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.DisplayCutout
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.Ime
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.MandatorySystemGestures
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.NavigationBars
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.SafeContent
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.SafeDrawing
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.SafeGestures
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.StatusBars
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.SystemGestures
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.TappableElement
+import androidx.compose.ui.layout.WindowInsetsRulers.Companion.Waterfall
 import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.node.LayoutModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
@@ -54,6 +52,8 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntRect
+import androidx.compose.ui.util.lerp
+import androidx.compose.ui.window.ActivityWithInsets
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.graphics.Insets
@@ -71,14 +71,13 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
-import org.junit.runners.Parameterized.Parameters
+import org.junit.runners.JUnit4
 
 @OptIn(ExperimentalComposeUiApi::class)
 @SdkSuppress(minSdkVersion = 30)
-@RunWith(Parameterized::class)
-class InsetsRulersTest(val useDelegatableNode: Boolean) {
-    @get:Rule val rule = createAndroidComposeRule<ComponentActivity>()
+@RunWith(JUnit4::class)
+class WindowInsetsRulersTest {
+    @get:Rule val rule = createAndroidComposeRule<ActivityWithInsets>()
 
     private lateinit var composeView: AndroidComposeView
     private var insetsRect: IntRect? = null
@@ -87,8 +86,6 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
     private var isVisible = false
     private var isAnimating = false
     private var fraction = 0f
-    private var interpolatedFraction = 0f
-    private var interpolator: Interpolator? = null
     private var durationMillis = 0L
     private var alpha = 0f
     private var ignoringVisibilityRect: IntRect? = null
@@ -108,7 +105,7 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
         }
     }
 
-    private fun setSimpleRulerContent(rulerState: State<RectRulers>) {
+    private fun setSimpleRulerContent(rulerState: State<WindowInsetsRulers>) {
         setContent {
             Box(
                 Modifier.fillMaxSize()
@@ -116,7 +113,7 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
                         contentWidth = it.size.width
                         contentHeight = it.size.height
                     }
-                    .rulerToRectDelegatableNode(rulerState.value) { node, rect ->
+                    .rulerToRect(rulerState.value) { rect ->
                         insetsRect = rect
 
                         sourceRect = null
@@ -125,52 +122,27 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
 
                         isVisible = false
                         fraction = 0f
-                        interpolatedFraction = 0f
-                        interpolator = null
                         alpha = 1f
                         durationMillis = 0L
                         ignoringVisibilityRect = null
                         displayCutoutRects.clear()
 
                         val rulers = rulerState.value
-                        if (rulers is BasicAnimatableInsetsRulers) {
-                            sourceRect = readRulers(rulers.source)
-                            targetRect = readRulers(rulers.target)
-                            isAnimating =
-                                if (useDelegatableNode) {
-                                    rulers.isAnimating(node)
-                                } else {
-                                    rulers.isAnimating(this)
-                                }
-                            if (rulers is AnimatableInsetsRulers) {
-                                if (useDelegatableNode) {
-                                    isVisible = rulers.isVisible(node)
-                                    fraction = rulers.fraction(node)
-                                    interpolatedFraction = rulers.interpolatedFraction(node)
-                                    interpolator = rulers.interpolator(node)
-                                    alpha = rulers.alpha(node)
-                                    durationMillis = rulers.durationMillis(node)
-                                } else {
-                                    isVisible = rulers.isVisible(this)
-                                    fraction = rulers.fraction(this)
-                                    interpolatedFraction = rulers.interpolatedFraction(this)
-                                    interpolator = rulers.interpolator(this)
-                                    alpha = rulers.alpha(this)
-                                    durationMillis = rulers.durationMillis(this)
-                                }
-                                ignoringVisibilityRect = readRulers(rulers.rulersIgnoringVisibility)
-                            }
-                        } else if (rulers is DisplayCutoutInsetsRulers) {
-                            val cutouts =
-                                if (useDelegatableNode) {
-                                    rulers.cutoutInsets(node)
-                                } else {
-                                    rulers.cutoutInsets(this)
-                                }
+                        if (rulers == DisplayCutout) {
+                            val cutouts = WindowInsetsRulers.getDisplayCutoutBounds(this)
                             cutouts.forEach { cutoutRulers ->
                                 displayCutoutRects.add(readRulers(cutoutRulers))
                             }
                         }
+                        val animationProperties = rulers.getAnimationProperties(this)
+                        sourceRect = readRulers(animationProperties.source)
+                        targetRect = readRulers(animationProperties.target)
+                        isAnimating = animationProperties.isAnimating
+                        isVisible = animationProperties.isVisible
+                        fraction = animationProperties.fraction
+                        alpha = animationProperties.alpha
+                        durationMillis = animationProperties.durationMillis
+                        ignoringVisibilityRect = readRulers(rulers.rulersIgnoringVisibility)
                     }
             )
         }
@@ -218,21 +190,19 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
         }
     }
 
-    private fun assertNotAnimating(rulers: RectRulers, updatedRulers: RectRulers = rulers) {
+    private fun assertNotAnimating(rulers: Any, updatedRulers: Any = rulers) {
         val message = "$rulers / $updatedRulers"
         assertWithMessage(message).that(sourceRect).isNull()
         assertWithMessage(message).that(targetRect).isNull()
         assertWithMessage(message).that(isAnimating).isFalse()
         assertWithMessage(message).that(fraction).isEqualTo(0f)
-        assertWithMessage(message).that(interpolatedFraction).isEqualTo(0f)
-        assertWithMessage(message).that(interpolator).isNull()
         assertWithMessage(message).that(durationMillis).isEqualTo(0L)
     }
 
     @Test
     fun normalRulers() {
         Assume.assumeTrue(ComposeUiFlags.areWindowInsetsRulersEnabled)
-        val rulerState = mutableStateOf<RectRulers>(CaptionBar)
+        val rulerState = mutableStateOf(CaptionBar)
         setSimpleRulerContent(rulerState)
         val normalRulersList =
             listOf(
@@ -276,7 +246,7 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
     @Test
     fun ignoringVisibility() {
         Assume.assumeTrue(ComposeUiFlags.areWindowInsetsRulersEnabled)
-        val rulerState = mutableStateOf<RectRulers>(CaptionBar)
+        val rulerState = mutableStateOf(CaptionBar)
         setSimpleRulerContent(rulerState)
         val ignoringVisibilityRulersList =
             listOf(
@@ -309,12 +279,12 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
     @Test
     fun displayRulers() {
         Assume.assumeTrue(ComposeUiFlags.areWindowInsetsRulersEnabled)
-        val gestureRulerList = listOf(DisplayCutout, Waterfall)
-        val rulerState = mutableStateOf<RectRulers>(CaptionBar)
+        val displayRulersList = listOf(DisplayCutout, Waterfall)
+        val rulerState = mutableStateOf(CaptionBar)
         setSimpleRulerContent(rulerState)
 
-        gestureRulerList.forEach { gestureRulers ->
-            rulerState.value = gestureRulers
+        displayRulersList.forEach { displayRulers ->
+            rulerState.value = displayRulers
             rule.waitForIdle()
             InsetsRulerTypes.forEach { (rulers, type) ->
                 val insets = createInsets(type to Insets.of(1, 2, 3, 5))
@@ -322,18 +292,17 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
                 rule.runOnIdle {
                     val expectedRect =
                         if (
-                            rulers === gestureRulers ||
-                                (gestureRulers === DisplayCutout && rulers === Waterfall)
+                            rulers === displayRulers ||
+                                (displayRulers === DisplayCutout && rulers === Waterfall)
                         ) {
                             IntRect(1, 2, contentWidth - 3, contentHeight - 5)
                         } else {
                             IntRect(0, 0, contentWidth, contentHeight)
                         }
-                    val message = "$gestureRulers / $rulers"
+                    val message = "$displayRulers / $rulers"
                     assertWithMessage(message).that(insetsRect).isEqualTo(expectedRect)
                     assertNotAnimating(rulers)
-                    // display rulers are only RectRulers and has no visibility information
-                    assertWithMessage(message).that(isVisible).isFalse()
+                    assertWithMessage(message).that(isVisible).isTrue()
                 }
             }
         }
@@ -396,7 +365,7 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
                     ),
             )
 
-        val rulerState = mutableStateOf<RectRulers>(SafeGestures)
+        val rulerState = mutableStateOf(SafeGestures)
         setSimpleRulerContent(rulerState)
 
         mergedRulersMap.forEach { gestureRulers, includedTypes ->
@@ -415,7 +384,7 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
                     val message = "$gestureRulers / $rulers}"
                     assertWithMessage(message).that(insetsRect).isEqualTo(expectedRect)
                     assertNotAnimating(rulers)
-                    assertWithMessage(message).that(isVisible).isFalse()
+                    assertWithMessage(message).that(isVisible).isTrue()
                 }
             }
         }
@@ -424,7 +393,7 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
     @Test
     fun animatingRulers() {
         Assume.assumeTrue(ComposeUiFlags.areWindowInsetsRulersEnabled)
-        val rulerState = mutableStateOf<RectRulers>(Ime)
+        val rulerState = mutableStateOf(Ime)
         setSimpleRulerContent(rulerState)
 
         val animatableRulersList =
@@ -448,19 +417,27 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
             rule.runOnIdle { assertAnimating(animatableRulers, sourceInsets, 0f) }
 
             animation.fraction = 0.25f
-            animation.alpha = 0.75f
+            animation.alpha = lerp(1f, 0f, animation.interpolatedFraction)
             progressAnimation(
                 animation,
-                createInsets(type to lerp(sourceInsets, targetInsets, 0.25f)),
+                createInsets(
+                    type to lerp(sourceInsets, targetInsets, animation.interpolatedFraction)
+                ),
             )
-            rule.runOnIdle { assertAnimating(animatableRulers, sourceInsets, 0.25f) }
+            rule.runOnIdle {
+                assertAnimating(animatableRulers, sourceInsets, animation.interpolatedFraction)
+            }
             animation.fraction = 0.75f
-            animation.alpha = 0.25f
+            animation.alpha = lerp(1f, 0f, animation.interpolatedFraction)
             progressAnimation(
                 animation,
-                createInsets(type to lerp(sourceInsets, targetInsets, 0.75f)),
+                createInsets(
+                    type to lerp(sourceInsets, targetInsets, animation.interpolatedFraction)
+                ),
             )
-            rule.runOnIdle { assertAnimating(animatableRulers, sourceInsets, 0.75f) }
+            rule.runOnIdle {
+                assertAnimating(animatableRulers, sourceInsets, animation.interpolatedFraction)
+            }
 
             animation.fraction = 1f
             animation.alpha = 0f
@@ -485,7 +462,7 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
     }
 
     private fun assertAnimating(
-        animatableRulers: AnimatableInsetsRulers,
+        animatableRulers: WindowInsetsRulers,
         source: Insets,
         expectedFraction: Float,
     ) {
@@ -520,21 +497,14 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
         assertWithMessage(rulerName).that(targetRect).isEqualTo(expectedTargetRect)
         assertWithMessage(rulerName).that(isAnimating).isTrue()
         assertWithMessage(rulerName).that(fraction).isWithin(0.01f).of(expectedFraction)
-        assertWithMessage(rulerName).that(interpolator).isNotNull()
-        val expectedInterpolatedFraction = interpolator!!.getInterpolation(expectedFraction)
-        assertWithMessage(rulerName)
-            .that(interpolatedFraction)
-            .isWithin(0.01f)
-            .of(expectedInterpolatedFraction)
         assertWithMessage(rulerName).that(durationMillis).isEqualTo(1000L)
         assertWithMessage(rulerName).that(alpha).isWithin(0.01f).of(expectedAlpha)
 
         assertWithMessage(rulerName).that(isVisible).isTrue()
     }
 
-    private fun assertAnimating(
-        animatableRulers: BasicAnimatableInsetsRulers,
-        animatingRulers: AnimatableInsetsRulers,
+    private fun assertAnimatingMerged(
+        animatableRulers: WindowInsetsRulers,
         source: Insets,
         expectedFraction: Float,
     ) {
@@ -548,34 +518,23 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
                 contentHeight - insets.bottom,
             )
         val rulerName = animatableRulers.toString()
-        val modRulerName = animatingRulers.toString()
-        val message = "$rulerName / $modRulerName"
-        assertWithMessage(message).that(insetsRect).isEqualTo(expectedRect)
-
-        val expectedSourceRect =
+        assertWithMessage(rulerName).that(insetsRect).isEqualTo(expectedRect)
+        val ignoringVisibilityRect =
             IntRect(
                 source.left,
                 source.top,
                 contentWidth - source.right,
                 contentHeight - source.bottom,
             )
-        assertWithMessage(message).that(sourceRect).isEqualTo(expectedSourceRect)
-        val expectedTargetRect =
-            IntRect(
-                target.left,
-                target.top,
-                contentWidth - target.right,
-                contentHeight - target.bottom,
-            )
-        assertWithMessage(message).that(targetRect).isEqualTo(expectedTargetRect)
-        assertWithMessage(message).that(isAnimating).isTrue()
+        assertWithMessage(rulerName).that(ignoringVisibilityRect).isEqualTo(ignoringVisibilityRect)
 
-        // None of these should be set
-        assertWithMessage(message).that(fraction).isEqualTo(0f)
-        assertWithMessage(message).that(interpolator).isNull()
-        assertWithMessage(message).that(interpolatedFraction).isEqualTo(0f)
-        assertWithMessage(message).that(durationMillis).isEqualTo(0L)
-        assertWithMessage(message).that(alpha).isEqualTo(1f)
+        assertWithMessage(rulerName).that(sourceRect).isNull()
+        assertWithMessage(rulerName).that(targetRect).isNull()
+        assertWithMessage(rulerName).that(isAnimating).isTrue()
+        assertWithMessage(rulerName).that(fraction).isWithin(0.0001f).of(0f)
+        assertWithMessage(rulerName).that(durationMillis).isEqualTo(0L)
+        assertWithMessage(rulerName).that(alpha).isEqualTo(1f)
+        assertWithMessage(rulerName).that(isVisible).isTrue()
     }
 
     @Test
@@ -610,14 +569,14 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
                     ),
             )
 
-        val rulerState = mutableStateOf<RectRulers>(SafeGestures)
+        val rulerState = mutableStateOf(SafeGestures)
         setSimpleRulerContent(rulerState)
 
         mergedRulersMap.forEach { mergedRulers, includedTypes ->
             rulerState.value = mergedRulers
             rule.waitForIdle()
             InsetsRulerTypes.forEach { (rulers, type) ->
-                if (rulers is AnimatableInsetsRulers) {
+                if (rulers !== Waterfall) {
                     // set the initial insets
                     val insets = createInsets(type to Insets.of(10, 20, 30, 50))
                     sendOnApplyWindowInsets(insets)
@@ -633,12 +592,12 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
                     startAnimation(animation, type, targetInsets, sourceInsets, targetInsets)
                     rule.waitForIdle()
                     rule.runOnIdle {
-                        if (shouldBeAnimating) {
-                            assertAnimating(mergedRulers, rulers, sourceInsets, 0f)
-                        } else {
-                            assertNotAnimating(mergedRulers, rulers)
-                            assertWithMessage(mergedRulers.toString()).that(isVisible).isFalse()
-                        }
+                        assertWithMessage("$mergedRulers / $rulers").that(isVisible).isTrue()
+                        assertWithMessage("$mergedRulers / $rulers")
+                            .that(isAnimating)
+                            .isEqualTo(shouldBeAnimating)
+                        assertWithMessage("$mergedRulers / $rulers").that(sourceRect).isNull()
+                        assertWithMessage("$mergedRulers / $rulers").that(targetRect).isNull()
                     }
                     animation.fraction = 0.25f
                     animation.alpha = 0.75f
@@ -647,12 +606,12 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
                         createInsets(type to lerp(sourceInsets, targetInsets, 0.25f)),
                     )
                     rule.runOnIdle {
-                        if (shouldBeAnimating) {
-                            assertAnimating(mergedRulers, rulers, sourceInsets, 0.25f)
-                        } else {
-                            assertNotAnimating(mergedRulers, rulers)
-                            assertWithMessage(mergedRulers.toString()).that(isVisible).isFalse()
-                        }
+                        assertWithMessage("$mergedRulers / $rulers").that(isVisible).isTrue()
+                        assertWithMessage("$mergedRulers / $rulers")
+                            .that(isAnimating)
+                            .isEqualTo(shouldBeAnimating)
+                        assertWithMessage("$mergedRulers / $rulers").that(sourceRect).isNull()
+                        assertWithMessage("$mergedRulers / $rulers").that(targetRect).isNull()
                     }
                     animation.fraction = 0.75f
                     animation.alpha = 0.25f
@@ -661,12 +620,12 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
                         createInsets(type to lerp(sourceInsets, targetInsets, 0.75f)),
                     )
                     rule.runOnIdle {
-                        if (shouldBeAnimating) {
-                            assertAnimating(mergedRulers, rulers, sourceInsets, 0.75f)
-                        } else {
-                            assertNotAnimating(mergedRulers, rulers)
-                            assertWithMessage(mergedRulers.toString()).that(isVisible).isFalse()
-                        }
+                        assertWithMessage("$mergedRulers / $rulers").that(isVisible).isTrue()
+                        assertWithMessage("$mergedRulers / $rulers")
+                            .that(isAnimating)
+                            .isEqualTo(shouldBeAnimating)
+                        assertWithMessage("$mergedRulers / $rulers").that(sourceRect).isNull()
+                        assertWithMessage("$mergedRulers / $rulers").that(targetRect).isNull()
                     }
 
                     animation.fraction = 1f
@@ -674,11 +633,11 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
                     endAnimation(animation, createInsets(type to Insets.of(0, 0, 0, 0)))
                     rule.runOnIdle {
                         val expectedRect = IntRect(0, 0, contentWidth, contentHeight)
-                        assertWithMessage(mergedRulers.toString())
+                        assertWithMessage("$mergedRulers / $rulers")
                             .that(insetsRect)
                             .isEqualTo(expectedRect)
                         assertNotAnimating(mergedRulers, rulers)
-                        assertWithMessage(mergedRulers.toString()).that(isVisible).isFalse()
+                        assertWithMessage(mergedRulers.toString()).that(isVisible).isTrue()
                     }
                 }
             }
@@ -869,6 +828,58 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
         return windowInsets
     }
 
+    @Test
+    fun innermostOf() {
+        Assume.assumeTrue(ComposeUiFlags.areWindowInsetsRulersEnabled)
+        val rulerState = mutableStateOf(WindowInsetsRulers.innermostOf(CaptionBar, NavigationBars))
+        setSimpleRulerContent(rulerState)
+        rule.waitForIdle()
+
+        val type = Type.navigationBars()
+        val insets = createInsets(type to Insets.of(10, 20, 30, 50))
+        // set the initial insets
+        sendOnApplyWindowInsets(insets)
+
+        rule.runOnIdle {
+            assertThat(sourceRect).isNull()
+            assertThat(targetRect).isNull()
+            assertThat(insetsRect).isEqualTo(IntRect(10, 20, contentWidth - 30, contentHeight - 50))
+            assertThat(ignoringVisibilityRect)
+                .isEqualTo(IntRect(10, 20, contentWidth - 30, contentHeight - 50))
+            assertThat(isVisible).isTrue()
+            assertThat(isAnimating).isFalse()
+        }
+
+        val animationInterpolator = AccelerateDecelerateInterpolator()
+        val animation = WindowInsetsAnimationCompat(type, animationInterpolator, 1000L)
+        animation.alpha = 1f
+        val targetInsets = Insets.of(0, 0, 0, 0)
+        val sourceInsets = Insets.of(10, 20, 30, 50)
+
+        startAnimation(animation, type, targetInsets, sourceInsets, targetInsets)
+
+        rule.runOnIdle { assertAnimatingMerged(rulerState.value, sourceInsets, 0f) }
+
+        animation.fraction = 0.25f
+        animation.alpha = 0.75f
+        progressAnimation(animation, createInsets(type to lerp(sourceInsets, targetInsets, 0.25f)))
+        rule.runOnIdle { assertAnimatingMerged(rulerState.value, sourceInsets, 0.25f) }
+        animation.fraction = 0.75f
+        animation.alpha = 0.25f
+        progressAnimation(animation, createInsets(type to lerp(sourceInsets, targetInsets, 0.75f)))
+        rule.runOnIdle { assertAnimatingMerged(rulerState.value, sourceInsets, 0.75f) }
+
+        animation.fraction = 1f
+        animation.alpha = 0f
+        endAnimation(animation, createInsets(type to Insets.of(0, 0, 0, 0)))
+        rule.runOnIdle {
+            val expectedRect = IntRect(0, 0, contentWidth, contentHeight)
+            assertWithMessage(rulerState.value.toString()).that(insetsRect).isEqualTo(expectedRect)
+            assertNotAnimating(rulerState.value)
+            assertWithMessage(rulerState.value.toString()).that(isVisible).isFalse()
+        }
+    }
+
     private fun createInsetsIgnoringVisibility(
         vararg insetValues: Pair<Int, Insets>
     ): WindowInsetsCompat {
@@ -909,30 +920,15 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
     }
 
     private fun Modifier.rulerToRect(
-        ruler: RectRulers,
+        ruler: WindowInsetsRulers,
         block: PlacementScope.(IntRect?) -> Unit,
     ): Modifier = layout { m, c ->
         val p = m.measure(c)
         layout(p.width, p.height) {
             p.place(0, 0)
-            block(readRulers(ruler))
+            block(readRulers(ruler.current))
         }
     }
-
-    private fun Modifier.rulerToRectDelegatableNode(
-        ruler: RectRulers,
-        block: PlacementScope.(DelegatableNode, IntRect?) -> Unit,
-    ): Modifier = layoutWithDelegatableNode { m, c, d ->
-        val p = m.measure(c)
-        layout(p.width, p.height) {
-            p.place(0, 0)
-            block(d, readRulers(ruler))
-        }
-    }
-
-    private fun Modifier.layoutWithDelegatableNode(
-        measurePolicy: MeasureScope.(Measurable, Constraints, DelegatableNode) -> MeasureResult
-    ): Modifier = this.then(MyLayoutModifierElement(measurePolicy))
 
     private class MyLayoutModifierElement(
         val measurePolicy: MeasureScope.(Measurable, Constraints, DelegatableNode) -> MeasureResult
@@ -1000,9 +996,5 @@ class InsetsRulersTest(val useDelegatableNode: Boolean) {
                 Type.navigationBars(),
                 Type.captionBar(),
             )
-
-        @Parameters(name = "Use DelegatableNode = {0}")
-        @JvmStatic
-        fun parameters() = listOf(false, true)
     }
 }
