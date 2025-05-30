@@ -106,5 +106,13 @@ package androidx.xr.scenecore {
     method public void onSpatialModeChanged(androidx.xr.runtime.math.Pose recommendedPose, float recommendedScale);
   }
 
+  public final class SpatialUser {
+    ctor public SpatialUser(androidx.xr.runtime.internal.LifecycleManager lifecycleManager, androidx.xr.runtime.internal.JxrPlatformAdapter runtime);
+    method public java.util.Map<androidx.xr.scenecore.CameraView.CameraType,androidx.xr.scenecore.CameraView> getCameraViews();
+    method public androidx.xr.scenecore.Head? getHead();
+    property public java.util.Map<androidx.xr.scenecore.CameraView.CameraType,androidx.xr.scenecore.CameraView> cameraViews;
+    property public androidx.xr.scenecore.Head? head;
+  }
+
 }
 

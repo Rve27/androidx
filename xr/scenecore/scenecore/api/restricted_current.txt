@@ -769,12 +769,11 @@ package androidx.xr.scenecore {
     method public int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.SoundFieldAttributes attributes, float volume, int priority, int loop, float rate);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialUser {
+  public final class SpatialUser {
     ctor public SpatialUser(androidx.xr.runtime.internal.LifecycleManager lifecycleManager, androidx.xr.runtime.internal.JxrPlatformAdapter runtime);
-    method public androidx.xr.scenecore.CameraView? getCameraView(androidx.xr.scenecore.CameraView.CameraType cameraType);
-    method public java.util.List<androidx.xr.scenecore.CameraView> getCameraViews();
+    method public java.util.Map<androidx.xr.scenecore.CameraView.CameraType,androidx.xr.scenecore.CameraView> getCameraViews();
     method public androidx.xr.scenecore.Head? getHead();
-    method public void setHead(androidx.xr.scenecore.Head?);
+    property public java.util.Map<androidx.xr.scenecore.CameraView.CameraType,androidx.xr.scenecore.CameraView> cameraViews;
     property public androidx.xr.scenecore.Head? head;
   }
 

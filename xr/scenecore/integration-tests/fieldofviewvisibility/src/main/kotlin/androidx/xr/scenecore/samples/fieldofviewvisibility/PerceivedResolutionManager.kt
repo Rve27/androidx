@@ -61,8 +61,7 @@ class PerceivedResolutionManager(
             override fun run() {
 
                 // Update the Text
-                val leftEye =
-                    session.scene.spatialUser.getCameraView(CameraView.CameraType.LEFT_EYE)
+                val leftEye = session.scene.spatialUser.cameraViews[CameraView.CameraType.LEFT_EYE]
                 val leftEyeFov = leftEye?.fov
                 val fovString =
                     if (leftEyeFov != null) {

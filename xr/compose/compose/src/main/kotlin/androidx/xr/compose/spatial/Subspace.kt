@@ -443,9 +443,9 @@ private fun rememberCalculatedFovConstraints(
             } else {
                 val head: Head? = session.scene.spatialUser.head
                 val leftCamera: CameraView? =
-                    session.scene.spatialUser.getCameraView(CameraType.LEFT_EYE)
+                    session.scene.spatialUser.cameraViews[CameraType.LEFT_EYE]
                 val rightCamera: CameraView? =
-                    session.scene.spatialUser.getCameraView(CameraType.RIGHT_EYE)
+                    session.scene.spatialUser.cameraViews[CameraType.RIGHT_EYE]
                 val scale = activitySpace.getScale(Space.REAL_WORLD)
 
                 if (head == null || leftCamera == null || rightCamera == null || scale == 0f) {
@@ -503,8 +503,8 @@ private suspend fun pollUntilReadyAndCalculateFovConstraints(
 ): VolumeConstraints {
     while (true) {
         val head: Head? = session.scene.spatialUser.head
-        val leftCamera: CameraView? = session.scene.spatialUser.getCameraView(CameraType.LEFT_EYE)
-        val rightCamera: CameraView? = session.scene.spatialUser.getCameraView(CameraType.RIGHT_EYE)
+        val leftCamera: CameraView? = session.scene.spatialUser.cameraViews[CameraType.LEFT_EYE]
+        val rightCamera: CameraView? = session.scene.spatialUser.cameraViews[CameraType.RIGHT_EYE]
 
         if (head == null || leftCamera == null || rightCamera == null) {
             delay(PerceptionStackRetrySettings.RETRY_INTERVAL_MILLIS)

@@ -33,6 +33,7 @@ import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.CameraView
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.ScenePose
 import androidx.xr.scenecore.scene
@@ -238,11 +239,21 @@ class HeadLockedUiActivity : AppCompatActivity() {
         )
         mDebugPanel.view.setLine(
             "Left Eye ActivityPose",
-            session!!.scene.spatialUser.getCameraViews()[0].activitySpacePose.toFormattedString(),
+            session!!
+                .scene
+                .spatialUser
+                .cameraViews[CameraView.CameraType.LEFT_EYE]!!
+                .activitySpacePose
+                .toFormattedString(),
         )
         mDebugPanel.view.setLine(
             "Right Eye ActivityPose",
-            session!!.scene.spatialUser.getCameraViews()[1].activitySpacePose.toFormattedString(),
+            session!!
+                .scene
+                .spatialUser
+                .cameraViews[CameraView.CameraType.RIGHT_EYE]!!
+                .activitySpacePose
+                .toFormattedString(),
         )
         mDebugPanel.view.setLine(
             "Projection Source ActivityPose",
@@ -264,8 +275,12 @@ class HeadLockedUiActivity : AppCompatActivity() {
 
     private fun setProjectionSource(source: String) {
         when (source) {
-            "LeftEye" -> mProjectionSource = session!!.scene.spatialUser.getCameraViews()[0]
-            "RightEye" -> mProjectionSource = session!!.scene.spatialUser.getCameraViews()[1]
+            "LeftEye" ->
+                mProjectionSource =
+                    session!!.scene.spatialUser.cameraViews[CameraView.CameraType.LEFT_EYE]
+            "RightEye" ->
+                mProjectionSource =
+                    session!!.scene.spatialUser.cameraViews[CameraView.CameraType.RIGHT_EYE]
             "Head" -> mProjectionSource = session!!.scene.spatialUser.head!!
             else -> Log.e(TAG, "Unknown projection source: $source")
         }
