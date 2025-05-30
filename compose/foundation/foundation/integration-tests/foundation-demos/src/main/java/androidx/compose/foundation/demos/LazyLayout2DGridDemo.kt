@@ -17,6 +17,7 @@
 package androidx.compose.foundation.demos
 
 import android.annotation.SuppressLint
+import androidx.collection.mutableIntObjectMapOf
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.background
@@ -181,6 +182,7 @@ private fun measure2dGrid(
 
     // this will contain all the MeasuredItems representing the visible items
     val measuredRows = ArrayDeque<MeasuredRow>()
+    val measuredItemProvider = LazyLayout2DGridMeasuredItemProvider()
 
     val maxOffset = constraints.maxHeight
 
@@ -203,6 +205,7 @@ private fun measure2dGrid(
                 childConstraints = Constraints(),
                 layoutMaxWidth = constraints.maxWidth,
                 scrollToBeConsumed = state.scrollToBeConsumed.x,
+                measuredItemProvider = measuredItemProvider,
             )
         measuredRows.add(0, measuredRow)
         maxWidthSize = maxOf(maxWidthSize, measuredRow.width)
@@ -254,6 +257,7 @@ private fun measure2dGrid(
                 childConstraints = Constraints(),
                 layoutMaxWidth = constraints.maxWidth,
                 scrollToBeConsumed = state.scrollToBeConsumed.x,
+                measuredItemProvider = measuredItemProvider,
             )
         currentLayoutHeightOffset += measuredRow.height
 
@@ -285,6 +289,7 @@ private fun measure2dGrid(
                     columns = columns,
                     childConstraints = Constraints(),
                     layoutMaxWidth = constraints.maxWidth,
+                    measuredItemProvider = measuredItemProvider,
                 )
             measuredRows.add(0, measuredRow)
             maxWidthSize = maxOf(maxWidthSize, measuredRow.width)
@@ -348,6 +353,7 @@ private fun LazyLayoutMeasureScope.applyScrollToRow(
     columns: Int,
     childConstraints: Constraints,
     layoutMaxWidth: Int,
+    measuredItemProvider: LazyLayout2DGridMeasuredItemProvider,
 ): MeasuredRow {
     val measuredItems = mutableListOf<MeasuredItem>()
 
@@ -391,6 +397,7 @@ private fun LazyLayoutMeasureScope.applyScrollToRow(
                 childConstraints,
                 currentFirstVisibleColumnScrollOffset,
                 rowOffset,
+                measuredItemProvider,
             )
 
         measuredItems.add(0, measuredItem)
@@ -438,6 +445,7 @@ private fun LazyLayoutMeasureScope.applyScrollToRow(
                 childConstraints,
                 currentLayoutWidthOffset,
                 rowOffset,
+                measuredItemProvider,
             )
         currentLayoutWidthOffset += measuredItem.width
 
@@ -468,6 +476,7 @@ private fun LazyLayoutMeasureScope.applyScrollToRow(
                     childConstraints,
                     currentLayoutWidthOffset,
                     rowOffset,
+                    measuredItemProvider,
                 )
             measuredItems.add(0, measuredItem)
             maxHeightSize = maxOf(maxHeightSize, measuredItem.height)
@@ -514,11 +523,16 @@ private fun LazyLayoutMeasureScope.measureItem(
     childConstraints: Constraints,
     currentFirstColumnScrollOffset: Int,
     rowOffset: Int,
+    measuredItemProvider: LazyLayout2DGridMeasuredItemProvider,
 ): MeasuredItem {
     val index = indexGenerator(rowIndex, index, columns)
 
-    val measurables = compose(index)
-    val itemPlaceables = measurables.map { it.measure(childConstraints) }
+    val itemPlaceables =
+        measuredItemProvider.getPlaceables(
+            scope = this,
+            index = index,
+            itemConstraints = childConstraints,
+        )
 
     check(itemPlaceables.size == 1) { "Multi-item is not supported" }
     val item = itemPlaceables.first()
@@ -530,6 +544,26 @@ private fun LazyLayoutMeasureScope.measureItem(
             IntOffset(currentFirstColumnScrollOffset, rowOffset),
         )
     return measuredItem
+}
+
+/** Class that caches [Placeable] to avoid repeatedly calling `measure()` on the same item. */
+private class LazyLayout2DGridMeasuredItemProvider {
+    private val placeablesCache = mutableIntObjectMapOf<List<Placeable>>()
+
+    fun getPlaceables(
+        scope: LazyLayoutMeasureScope,
+        index: Int,
+        itemConstraints: Constraints,
+    ): List<Placeable> {
+        val cachedPlaceable = placeablesCache[index]
+        return if (cachedPlaceable != null) {
+            cachedPlaceable
+        } else {
+            val placeables = scope.compose(index).map { it.measure(itemConstraints) }
+            placeablesCache[index] = placeables
+            placeables
+        }
+    }
 }
 
 class IntPosition(row: Int, column: Int) {
