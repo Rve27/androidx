@@ -170,7 +170,7 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
                 is LibraryPlugin -> configureWithLibraryPlugin(project, androidXExtension)
                 is AppPlugin -> configureWithAppPlugin(project, androidXExtension)
                 is TestPlugin -> configureWithTestPlugin(project, androidXExtension)
-                is KspGradleSubplugin -> configureWithKspPlugin(project, androidXExtension)
+                is KspGradleSubplugin -> configureWithKspPlugin(project)
                 is KotlinMultiplatformAndroidPlugin ->
                     configureWithKotlinMultiplatformAndroidPlugin(
                         project,
@@ -641,15 +641,8 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
         project.configureJavaCompilationWarnings(androidXExtension)
     }
 
-    private fun configureWithKspPlugin(project: Project, androidXExtension: AndroidXExtension) =
-        project.extensions.getByType<KspExtension>().apply {
-            useKsp2.set(
-                androidXExtension.kotlinTarget.map {
-                    it.apiVersion == KotlinVersion.KOTLIN_2_0 ||
-                        it.apiVersion == KotlinVersion.KOTLIN_2_1
-                }
-            )
-        }
+    private fun configureWithKspPlugin(project: Project) =
+        project.extensions.getByType<KspExtension>().useKsp2.set(true)
 
     private fun configureCommonAndroidLibrary(
         project: Project,
