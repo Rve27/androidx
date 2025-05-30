@@ -141,7 +141,6 @@ package androidx.compose.ui {
     property public boolean isAdaptiveRefreshRateEnabled;
     property public boolean isClearFocusOnResetEnabled;
     property public boolean isFocusActionExitsTouchModeEnabled;
-    property public boolean isGetFocusedRectReturnEmptyEnabled;
     property public boolean isNestedScrollDispatcherNodeFixEnabled;
     property public boolean isNestedScrollInteropPostFlingFixEnabled;
     property public boolean isNoPinningInFocusRestorationEnabled;
@@ -157,7 +156,6 @@ package androidx.compose.ui {
     field public static boolean isAdaptiveRefreshRateEnabled;
     field public static boolean isClearFocusOnResetEnabled;
     field public static boolean isFocusActionExitsTouchModeEnabled;
-    field public static boolean isGetFocusedRectReturnEmptyEnabled;
     field public static boolean isNestedScrollDispatcherNodeFixEnabled;
     field public static boolean isNestedScrollInteropPostFlingFixEnabled;
     field public static boolean isNoPinningInFocusRestorationEnabled;
