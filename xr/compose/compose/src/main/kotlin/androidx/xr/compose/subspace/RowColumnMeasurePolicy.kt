@@ -20,10 +20,10 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.util.fastRoundToInt
 import androidx.xr.compose.subspace.layout.MeasurePolicy
-import androidx.xr.compose.subspace.layout.MeasureResult
 import androidx.xr.compose.subspace.layout.MeasureScope
 import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SubspaceMeasurable
+import androidx.xr.compose.subspace.layout.SubspaceMeasureResult
 import androidx.xr.compose.subspace.layout.SubspacePlaceable
 import androidx.xr.compose.unit.IntVolumeSize
 import androidx.xr.compose.unit.VolumeConstraints
@@ -46,7 +46,7 @@ internal class RowColumnMeasurePolicy(
     override fun MeasureScope.measure(
         measurables: List<SubspaceMeasurable>,
         constraints: VolumeConstraints,
-    ): MeasureResult {
+    ): SubspaceMeasureResult {
         val resolvedMeasurables = measurables.map { ResolvedMeasurable(it) }
 
         measureRowColumnChildren(resolvedMeasurables, constraints)

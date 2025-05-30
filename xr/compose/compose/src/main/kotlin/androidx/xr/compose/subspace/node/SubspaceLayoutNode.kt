@@ -26,11 +26,11 @@ import androidx.xr.compose.subspace.layout.CoreEntity
 import androidx.xr.compose.subspace.layout.CoreEntityNode
 import androidx.xr.compose.subspace.layout.LayoutMeasureScope
 import androidx.xr.compose.subspace.layout.MeasurePolicy
-import androidx.xr.compose.subspace.layout.MeasureResult
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsModifier
 import androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates
 import androidx.xr.compose.subspace.layout.SubspaceMeasurable
+import androidx.xr.compose.subspace.layout.SubspaceMeasureResult
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.SubspacePlaceable
 import androidx.xr.compose.subspace.layout.SubspaceRootMeasurePolicy
@@ -305,7 +305,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
     public inner class SubspaceMeasurableLayout :
         SubspaceMeasurable, SubspaceLayoutCoordinates, SubspaceSemanticsInfo, SubspacePlaceable() {
         private var layoutPose: Pose? = null
-        private var measureResult: MeasureResult? = null
+        private var subspaceMeasureResult: SubspaceMeasureResult? = null
 
         /** Unique ID used by semantics libraries. */
         public override val semanticsId: Int = generateSemanticsId()
@@ -325,7 +325,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         }
 
         private fun measureJustThis(constraints: VolumeConstraints): SubspacePlaceable {
-            measureResult =
+            subspaceMeasureResult =
                 with(measurePolicy) {
                     LayoutMeasureScope(this@SubspaceLayoutNode)
                         .measure(
@@ -334,9 +334,9 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
                         )
                 }
 
-            measuredWidth = measureResult!!.width
-            measuredHeight = measureResult!!.height
-            measuredDepth = measureResult!!.depth
+            measuredWidth = subspaceMeasureResult!!.width
+            measuredHeight = subspaceMeasureResult!!.height
+            measuredDepth = subspaceMeasureResult!!.depth
 
             return this
         }
@@ -353,7 +353,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
             coreEntity?.updateEntityPose()
             coreEntity?.size = IntVolumeSize(measuredWidth, measuredHeight, measuredDepth)
 
-            measureResult?.placeChildren(
+            subspaceMeasureResult?.placeChildren(
                 object : SubspacePlacementScope() {
                     override val coordinates = this@SubspaceMeasurableLayout
                 }

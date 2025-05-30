@@ -399,6 +399,16 @@ package androidx.xr.compose.subspace.layout {
     method public androidx.xr.compose.subspace.layout.SubspacePlaceable measure(androidx.xr.compose.unit.VolumeConstraints constraints);
   }
 
+  public interface SubspaceMeasureResult {
+    method public int getDepth();
+    method public int getHeight();
+    method public int getWidth();
+    method public void placeChildren(androidx.xr.compose.subspace.layout.SubspacePlaceable.SubspacePlacementScope placementScope);
+    property public abstract int depth;
+    property public abstract int height;
+    property public abstract int width;
+  }
+
   public interface SubspaceModifier {
     method public default boolean all(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);
     method public default boolean any(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);

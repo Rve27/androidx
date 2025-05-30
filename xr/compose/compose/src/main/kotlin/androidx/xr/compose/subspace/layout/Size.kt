@@ -275,7 +275,7 @@ private class FillNode(public var direction: Direction, public var fraction: Flo
     override fun MeasureScope.measure(
         measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
-    ): MeasureResult {
+    ): SubspaceMeasureResult {
         val minWidth: Int
         val maxWidth: Int
         if (
@@ -459,7 +459,7 @@ private class SizeNode(
     override fun MeasureScope.measure(
         measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
-    ): MeasureResult {
+    ): SubspaceMeasureResult {
         val wrappedConstraints =
             targetConstraints.let {
                 if (enforceIncoming) {

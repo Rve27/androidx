@@ -416,21 +416,11 @@ package androidx.xr.compose.subspace.layout {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public fun interface MeasurePolicy {
-    method public androidx.xr.compose.subspace.layout.MeasureResult measure(androidx.xr.compose.subspace.layout.MeasureScope, java.util.List<? extends androidx.xr.compose.subspace.layout.SubspaceMeasurable> measurables, androidx.xr.compose.unit.VolumeConstraints constraints);
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface MeasureResult {
-    method public int getDepth();
-    method public int getHeight();
-    method public int getWidth();
-    method public void placeChildren(androidx.xr.compose.subspace.layout.SubspacePlaceable.SubspacePlacementScope placementScope);
-    property public abstract int depth;
-    property public abstract int height;
-    property public abstract int width;
+    method public androidx.xr.compose.subspace.layout.SubspaceMeasureResult measure(androidx.xr.compose.subspace.layout.MeasureScope, java.util.List<? extends androidx.xr.compose.subspace.layout.SubspaceMeasurable> measurables, androidx.xr.compose.unit.VolumeConstraints constraints);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface MeasureScope extends androidx.compose.ui.unit.Density {
-    method public default androidx.xr.compose.subspace.layout.MeasureResult layout(int width, int height, int depth, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SubspacePlaceable.SubspacePlacementScope,kotlin.Unit> placementBlock);
+    method public default androidx.xr.compose.subspace.layout.SubspaceMeasureResult layout(int width, int height, int depth, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SubspacePlaceable.SubspacePlacementScope,kotlin.Unit> placementBlock);
   }
 
   public final class MovableKt {
@@ -702,6 +692,16 @@ package androidx.xr.compose.subspace.layout {
     method public androidx.xr.compose.subspace.layout.SubspacePlaceable measure(androidx.xr.compose.unit.VolumeConstraints constraints);
   }
 
+  public interface SubspaceMeasureResult {
+    method public int getDepth();
+    method public int getHeight();
+    method public int getWidth();
+    method public void placeChildren(androidx.xr.compose.subspace.layout.SubspacePlaceable.SubspacePlacementScope placementScope);
+    property public abstract int depth;
+    property public abstract int height;
+    property public abstract int width;
+  }
+
   public interface SubspaceModifier {
     method public default boolean all(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);
     method public default boolean any(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);
@@ -793,7 +793,7 @@ package androidx.xr.compose.subspace.node {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SubspaceLayoutModifierNode {
-    method public androidx.xr.compose.subspace.layout.MeasureResult measure(androidx.xr.compose.subspace.layout.MeasureScope, androidx.xr.compose.subspace.layout.SubspaceMeasurable measurable, androidx.xr.compose.unit.VolumeConstraints constraints);
+    method public androidx.xr.compose.subspace.layout.SubspaceMeasureResult measure(androidx.xr.compose.subspace.layout.MeasureScope, androidx.xr.compose.subspace.layout.SubspaceMeasurable measurable, androidx.xr.compose.unit.VolumeConstraints constraints);
   }
 
   public final class SubspaceLayoutModifierNodeKt {

@@ -22,7 +22,7 @@ import androidx.xr.compose.subspace.node.SubspaceLayoutNode
 
 /**
  * The receiver scope of a layout's measure lambda. The return value of the measure lambda is
- * [MeasureResult], which should be returned by [layout]
+ * [SubspaceMeasureResult], which should be returned by [layout]
  *
  * Based on [androidx.compose.ui.layout.MeasureScope].
  */
@@ -45,8 +45,8 @@ public interface MeasureScope : Density {
         height: Int,
         depth: Int,
         placementBlock: SubspacePlaceable.SubspacePlacementScope.() -> Unit,
-    ): MeasureResult {
-        return object : MeasureResult {
+    ): SubspaceMeasureResult {
+        return object : SubspaceMeasureResult {
             override val width = width
             override val height = height
             override val depth = depth

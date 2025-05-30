@@ -94,7 +94,7 @@ internal class RotationNode(public var quaternion: Quaternion) :
     override fun MeasureScope.measure(
         measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
-    ): MeasureResult {
+    ): SubspaceMeasureResult {
         val placeable = measurable.measure(constraints)
         return layout(placeable.measuredWidth, placeable.measuredHeight, placeable.measuredDepth) {
             placeable.place(Pose(translation = Vector3.Zero, rotation = quaternion))

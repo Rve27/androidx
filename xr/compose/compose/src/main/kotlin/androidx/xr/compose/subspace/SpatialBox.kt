@@ -21,13 +21,13 @@ import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.xr.compose.subspace.layout.MeasurePolicy
-import androidx.xr.compose.subspace.layout.MeasureResult
 import androidx.xr.compose.subspace.layout.MeasureScope
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsModifier
 import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SubspaceLayout
 import androidx.xr.compose.subspace.layout.SubspaceMeasurable
+import androidx.xr.compose.subspace.layout.SubspaceMeasureResult
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.SubspacePlaceable
 import androidx.xr.compose.subspace.node.SubspaceModifierNodeElement
@@ -78,7 +78,7 @@ internal class SpatialBoxMeasurePolicy(
     override fun MeasureScope.measure(
         measurables: List<SubspaceMeasurable>,
         constraints: VolumeConstraints,
-    ): MeasureResult {
+    ): SubspaceMeasureResult {
         if (measurables.isEmpty()) {
             return layout(constraints.minWidth, constraints.minHeight, constraints.minDepth) {}
         }

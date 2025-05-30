@@ -65,7 +65,7 @@ private class OffsetNode(public var x: Dp, public var y: Dp, public var z: Dp) :
     override fun MeasureScope.measure(
         measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
-    ): MeasureResult {
+    ): SubspaceMeasureResult {
         val placeable = measurable.measure(constraints)
         return layout(placeable.measuredWidth, placeable.measuredHeight, placeable.measuredDepth) {
             placeable.place(

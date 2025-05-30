@@ -167,7 +167,7 @@ private class PaddingNode(
     override fun MeasureScope.measure(
         measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
-    ): MeasureResult {
+    ): SubspaceMeasureResult {
         val horizontal = left.roundToPx() + right.roundToPx()
         val vertical = top.roundToPx() + bottom.roundToPx()
         val frontAndBack = front.roundToPx() + back.roundToPx()
