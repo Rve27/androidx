@@ -190,9 +190,10 @@ public interface JxrPlatformAdapter {
      *
      * @param stereoMode Stereo mode for the surface.
      * @param pose Pose of this entity relative to its parent, default value is Identity.
-     * @param canvasShape The [CanvasShape] which describes the spatialized shape of the canvas.
-     * @param contentSecurityLevel The [ContentSecurityLevel] which describes whether DRM is
-     *   enabled.
+     * @param canvasShape The [SurfaceEntity.CanvasShape] which describes the spatialized shape of
+     *   the canvas.
+     * @param contentSecurityLevel The [SurfaceEntity.ContentSecurityLevel] which describes whether
+     *   DRM is enabled.
      * @param parentEntity The parent entity of this entity.
      * @return A [SurfaceEntity] which is a child of the parent entity.
      */
