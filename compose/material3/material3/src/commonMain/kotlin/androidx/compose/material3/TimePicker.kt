@@ -2083,7 +2083,7 @@ private val PeriodToggleMargin = 12.dp
 private val TimePickerMaxHeight = 384.dp
 private val TimePickerMidHeight = 330.dp
 private val ClockDialMidContainerSize = 238.dp
-private val ClockDialMinContainerSize = 200.dp
+internal val ClockDialMinContainerSize = 200.dp
 
 /**
  * Measure the composable with 0,0 so that it stays on the screen. Necessary to correctly handle
