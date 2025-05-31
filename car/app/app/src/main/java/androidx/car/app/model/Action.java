@@ -17,6 +17,7 @@
 package androidx.car.app.model;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY;
+import static androidx.car.app.CarAppPermission.MEDIA_TEMPLATES;
 import static androidx.car.app.model.CarColor.DEFAULT;
 import static androidx.car.app.model.constraints.CarColorConstraints.UNCONSTRAINED;
 
@@ -30,12 +31,15 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.IntDef;
 import androidx.annotation.OptIn;
+import androidx.annotation.RequiresPermission;
 import androidx.annotation.RestrictTo;
 import androidx.car.app.CarContext;
+import androidx.car.app.Screen;
 import androidx.car.app.annotations.CarProtocol;
 import androidx.car.app.annotations.ExperimentalCarApi;
 import androidx.car.app.annotations.KeepFields;
 import androidx.car.app.annotations.RequiresCarApi;
+import androidx.car.app.media.model.MediaPlaybackTemplate;
 import androidx.car.app.model.constraints.CarIconConstraints;
 import androidx.lifecycle.LifecycleOwner;
 
@@ -79,6 +83,7 @@ public final class Action {
                     TYPE_BACK,
                     TYPE_PAN,
                     TYPE_COMPOSE_MESSAGE,
+                    TYPE_MEDIA_PLAYBACK,
             })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionType {
@@ -131,6 +136,22 @@ public final class Action {
     @ExperimentalCarApi
     @RequiresCarApi(7)
     public static final int TYPE_COMPOSE_MESSAGE = 5 | TYPE_STANDARD;
+
+    /**
+     * A standard action to show the media playback button.
+     *
+     * <p>Note: ONLY apps with {@link androidx.car.app.MEDIA_TEMPLATES} can use this action. Media
+     * apps MUST set this action as a FAB in their browse views with  an {@link OnClickDelegate}
+     * must be set and it must push a {@link Screen} with a {@link MediaPlaybackTemplate} to the top
+     * of the screen stack.
+     *
+     * <p>To use this action, create an Action.Builder using
+     *  {@link Action#createMediaPlaybackActionBuilder()}
+     */
+    @ExperimentalCarApi
+    @RequiresCarApi(8)
+    @RequiresPermission(MEDIA_TEMPLATES)
+    public static final int TYPE_MEDIA_PLAYBACK = 6 | TYPE_STANDARD;
 
     /**
      * Indicates that this action is the most important one, out of a set of other actions.
@@ -296,6 +317,8 @@ public final class Action {
                 return "PAN";
             case TYPE_COMPOSE_MESSAGE:
                 return "COMPOSE_MESSAGE";
+            case TYPE_MEDIA_PLAYBACK:
+                return "MEDIA_PLAYBACK";
             default:
                 return "<unknown>";
         }
@@ -361,6 +384,23 @@ public final class Action {
                 && Objects.equals(mOnClickDelegate == null, otherAction.mOnClickDelegate == null)
                 && Objects.equals(mFlags, otherAction.mFlags)
                 && mIsEnabled == otherAction.mIsEnabled;
+    }
+
+    /**
+     * A standard action to show the media playback button.
+     *
+     * <p>Note: ONLY apps with {@link androidx.car.app.MEDIA_TEMPLATES} can use this action. Media
+     * apps MUST set this action as a FAB in their browse views with  an {@link OnClickDelegate}
+     * must be set and it must push a {@link Screen} with a {@link MediaPlaybackTemplate} to the top
+     * of the screen stack.
+     *
+     * <p>This action is interactive.
+     */
+    @ExperimentalCarApi
+    @RequiresCarApi(8)
+    @RequiresPermission(MEDIA_TEMPLATES)
+    public static Action.@NonNull Builder createMediaPlaybackActionBuilder() {
+        return new Builder(new Action(TYPE_MEDIA_PLAYBACK));
     }
 
     static boolean isStandardActionType(@ActionType int type) {
@@ -529,6 +569,19 @@ public final class Action {
                 if (mTitle != null && !TextUtils.isEmpty(mTitle.toString())) {
                     throw new IllegalStateException(
                             "A title can't be set on the standard compose action");
+                }
+            }
+
+            if (mType == TYPE_MEDIA_PLAYBACK) {
+                if (mOnClickDelegate == null) {
+                    throw new IllegalStateException(
+                            "An on-click listener has to be set on the media playback action and it"
+                                    + " must route to the MediaPlaybackTemplate");
+                }
+
+                if (mIcon != null || (mTitle != null && !TextUtils.isEmpty(mTitle.toString()))) {
+                    throw new IllegalStateException(
+                            "An icon or title can't be set on the media playback action");
                 }
             }
 

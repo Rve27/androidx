@@ -1102,6 +1102,7 @@ package androidx.car.app.messaging.model {
 package androidx.car.app.model {
 
   @SuppressCompatibility @androidx.car.app.annotations.CarProtocol public final class Action {
+    method @SuppressCompatibility @RequiresPermission(androidx.car.app.CarAppPermission.MEDIA_TEMPLATES) @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public static androidx.car.app.model.Action.Builder createMediaPlaybackActionBuilder();
     method public androidx.car.app.model.CarColor? getBackgroundColor();
     method @androidx.car.app.annotations.RequiresCarApi(4) public int getFlags();
     method public androidx.car.app.model.CarIcon? getIcon();
@@ -1122,6 +1123,7 @@ package androidx.car.app.model {
     field public static final int TYPE_BACK = 65539; // 0x10003
     field @SuppressCompatibility @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(7) public static final int TYPE_COMPOSE_MESSAGE = 65541; // 0x10005
     field public static final int TYPE_CUSTOM = 1; // 0x1
+    field @SuppressCompatibility @RequiresPermission(androidx.car.app.CarAppPermission.MEDIA_TEMPLATES) @androidx.car.app.annotations.ExperimentalCarApi @androidx.car.app.annotations.RequiresCarApi(8) public static final int TYPE_MEDIA_PLAYBACK = 65542; // 0x10006
     field public static final int TYPE_PAN = 65540; // 0x10004
   }
 

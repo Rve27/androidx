@@ -19,6 +19,8 @@ package androidx.car.app.model;
 import static androidx.car.app.model.Action.FLAG_DEFAULT;
 import static androidx.car.app.model.Action.FLAG_IS_PERSISTENT;
 import static androidx.car.app.model.Action.FLAG_PRIMARY;
+import static androidx.car.app.model.Action.createMediaPlaybackActionBuilder;
+import static androidx.car.app.model.Action.TYPE_MEDIA_PLAYBACK;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -81,10 +83,25 @@ public class ActionTest {
     }
 
     @Test
-    public void createComposeMessage_throws_hasTitle() {
+    public void createAnimatingMedia_throws_hasTitle() {
         assertThrows(
                 IllegalStateException.class,
-                () -> new Action.Builder(Action.COMPOSE_MESSAGE).setTitle("foo").build());
+                () -> createMediaPlaybackActionBuilder().setTitle("foo").build());
+    }
+
+    @Test
+    public void createMediaPlayback_throws_hasIcon() {
+        assertThrows(
+                IllegalStateException.class,
+                () -> createMediaPlaybackActionBuilder().setIcon(CarIcon.ALERT).build());
+    }
+
+    @Test
+    public void createMediaPlayback_setCustomOnClickDelegate() {
+        Action action = createMediaPlaybackActionBuilder()
+                .setOnClickListener(() -> {})
+                .build();
+        assertThat(action.getType()).isEqualTo(TYPE_MEDIA_PLAYBACK);
     }
 
     @Test
