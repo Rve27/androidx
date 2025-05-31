@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.compose.ui.ui
+package androidx.compose.ui
 
+import androidx.annotation.FloatRange
 import androidx.compose.ui.ComposeUiFlags.isAdaptiveRefreshRateEnabled
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.node.DrawModifierNode
@@ -33,8 +32,12 @@ import androidx.compose.ui.util.fastForEach
 /**
  * Set a requested frame rate on Composable
  *
- * You can set the preferred frame rate (frames per second) for a Composable using a positive
+ * You can set the preferred frame rate (frames per second) for a Composable using a non-negative
  * number. This API should only be used when a specific frame rate is needed for your Composable.
+ * For example, 24 or 30 for video play.
+ *
+ * If multiple frame rates are requested, they will be aggregated to determine a feasible frame
+ * rate.
  *
  * Keep in mind that the preferred frame rate affects the frame rate for the next frame, so use this
  * method carefully. It's important to note that the preference is valid as long as the Composable
@@ -44,7 +47,7 @@ import androidx.compose.ui.util.fastForEach
  * @sample androidx.compose.ui.samples.SetFrameRateSample
  * @see graphicsLayer
  */
-fun Modifier.requestedFrameRate(frameRate: Float) =
+fun Modifier.requestedFrameRate(@FloatRange(from = 0.0, to = 360.0) frameRate: Float) =
     if (@OptIn(ExperimentalComposeUiApi::class) isAdaptiveRefreshRateEnabled) {
         this.graphicsLayer().frameRate(frameRate)
     } else {

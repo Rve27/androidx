@@ -183,6 +183,33 @@ package androidx.compose.ui {
     method public static androidx.compose.ui.Modifier materializeModifier(androidx.compose.runtime.Composer, androidx.compose.ui.Modifier modifier);
   }
 
+  @kotlin.jvm.JvmInline public final value class FrameRateCategory {
+    method @BytecodeOnly public static androidx.compose.ui.FrameRateCategory! box-impl(float);
+    method @BytecodeOnly public float unbox-impl();
+    field public static final androidx.compose.ui.FrameRateCategory.Companion Companion;
+  }
+
+  public static final class FrameRateCategory.Companion {
+    method public float getDefault();
+    method @BytecodeOnly public float getDefault-NSsRyOo();
+    method public float getHigh();
+    method @BytecodeOnly public float getHigh-NSsRyOo();
+    method public float getNoPreference();
+    method @BytecodeOnly public float getNoPreference-NSsRyOo();
+    method public float getNormal();
+    method @BytecodeOnly public float getNormal-NSsRyOo();
+    property public float Default;
+    property public float High;
+    property public float NoPreference;
+    property public float Normal;
+  }
+
+  public final class FrameRateKt {
+    method public static androidx.compose.ui.Modifier requestedFrameRate(androidx.compose.ui.Modifier, @FloatRange(from=0.0, to=360.0) float frameRate);
+    method public static androidx.compose.ui.Modifier requestedFrameRate(androidx.compose.ui.Modifier, float frameRateCategory);
+    method @BytecodeOnly public static androidx.compose.ui.Modifier requestedFrameRate-kI47g10(androidx.compose.ui.Modifier, float);
+  }
+
   public final class KeepScreenOnKt {
     method public static androidx.compose.ui.Modifier keepScreenOn(androidx.compose.ui.Modifier);
   }
@@ -5123,39 +5150,6 @@ package androidx.compose.ui.text {
   public final class TextMeasurerHelperKt {
     method @androidx.compose.runtime.Composable public static androidx.compose.ui.text.TextMeasurer rememberTextMeasurer(optional int cacheSize);
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.compose.ui.text.TextMeasurer rememberTextMeasurer(int, androidx.compose.runtime.Composer?, int, int);
-  }
-
-}
-
-package androidx.compose.ui.ui {
-
-  @kotlin.jvm.JvmInline public final value class FrameRateCategory {
-    method @BytecodeOnly public static androidx.compose.ui.ui.FrameRateCategory! box-impl(float);
-    method public float getValue();
-    method @BytecodeOnly public float unbox-impl();
-    property public float value;
-    field public static final androidx.compose.ui.ui.FrameRateCategory.Companion Companion;
-  }
-
-  public static final class FrameRateCategory.Companion {
-    method public float getDefault();
-    method @BytecodeOnly public float getDefault-EPUNCpU();
-    method public float getHigh();
-    method @BytecodeOnly public float getHigh-EPUNCpU();
-    method public float getNoPreference();
-    method @BytecodeOnly public float getNoPreference-EPUNCpU();
-    method public float getNormal();
-    method @BytecodeOnly public float getNormal-EPUNCpU();
-    property public float Default;
-    property public float High;
-    property public float NoPreference;
-    property public float Normal;
-  }
-
-  public final class FrameRateKt {
-    method public static androidx.compose.ui.Modifier requestedFrameRate(androidx.compose.ui.Modifier, float frameRate);
-    method public static androidx.compose.ui.Modifier requestedFrameRate(androidx.compose.ui.Modifier, float frameRateCategory);
-    method @BytecodeOnly public static androidx.compose.ui.Modifier requestedFrameRate-HuZ4eWk(androidx.compose.ui.Modifier, float);
   }
 
 }

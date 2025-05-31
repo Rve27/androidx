@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.compose.ui.ui
+package androidx.compose.ui
 
 import android.os.Build
 import androidx.compose.animation.core.animateDpAsState
@@ -46,11 +46,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.ComposeUiFlags.isAdaptiveRefreshRateEnabled
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.background
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.AndroidComposeView
 import androidx.compose.ui.platform.LocalView
@@ -73,6 +68,7 @@ import kotlinx.coroutines.launch
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -80,6 +76,7 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
+@OptIn(ExperimentalComposeUiApi::class)
 class FrameRateTest {
     @get:Rule val rule = createAndroidComposeRule<TestActivity>()
 
@@ -105,9 +102,7 @@ class FrameRateTest {
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
     @Test
     fun testSetFrameRateDefault() {
-        if (@OptIn(ExperimentalComposeUiApi::class) !isAdaptiveRefreshRateEnabled) {
-            return
-        }
+        assumeTrue(ComposeUiFlags.isAdaptiveRefreshRateEnabled)
 
         lateinit var composeView: AndroidComposeView
         rule.setContent {
@@ -124,9 +119,7 @@ class FrameRateTest {
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
     @Test
     fun testSetFrameRate120() {
-        if (@OptIn(ExperimentalComposeUiApi::class) !isAdaptiveRefreshRateEnabled) {
-            return
-        }
+        assumeTrue(ComposeUiFlags.isAdaptiveRefreshRateEnabled)
 
         lateinit var composeView: AndroidComposeView
         rule.setContent {
@@ -141,9 +134,7 @@ class FrameRateTest {
     @Test
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
     fun testFrameRateHigh() {
-        if (@OptIn(ExperimentalComposeUiApi::class) !isAdaptiveRefreshRateEnabled) {
-            return
-        }
+        assumeTrue(ComposeUiFlags.isAdaptiveRefreshRateEnabled)
 
         lateinit var composeView: AndroidComposeView
         rule.setContent {
@@ -159,9 +150,7 @@ class FrameRateTest {
     @Test
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
     fun testFrameRateCombined() {
-        if (@OptIn(ExperimentalComposeUiApi::class) !isAdaptiveRefreshRateEnabled) {
-            return
-        }
+        assumeTrue(ComposeUiFlags.isAdaptiveRefreshRateEnabled)
 
         lateinit var composeView: AndroidComposeView
         rule.setContent {
@@ -180,9 +169,7 @@ class FrameRateTest {
     @Test
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
     fun testFrameRateContentMoving() {
-        if (@OptIn(ExperimentalComposeUiApi::class) !isAdaptiveRefreshRateEnabled) {
-            return
-        }
+        assumeTrue(ComposeUiFlags.isAdaptiveRefreshRateEnabled)
 
         lateinit var composeView: AndroidComposeView
         rule.setContent {
@@ -199,9 +186,7 @@ class FrameRateTest {
     @Test
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
     fun testFrameRateContentResizing() {
-        if (@OptIn(ExperimentalComposeUiApi::class) !isAdaptiveRefreshRateEnabled) {
-            return
-        }
+        assumeTrue(ComposeUiFlags.isAdaptiveRefreshRateEnabled)
 
         lateinit var composeView: AndroidComposeView
         val frameRate = 30f
@@ -220,9 +205,7 @@ class FrameRateTest {
     @Test
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
     fun testLazyColumnDemo() {
-        if (@OptIn(ExperimentalComposeUiApi::class) !isAdaptiveRefreshRateEnabled) {
-            return
-        }
+        assumeTrue(ComposeUiFlags.isAdaptiveRefreshRateEnabled)
 
         lateinit var composeView: AndroidComposeView
         val frameRates = listOf(30f, 60f, 80f, 120f)
@@ -242,9 +225,7 @@ class FrameRateTest {
     @Test
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.VANILLA_ICE_CREAM)
     fun testMovableContent() {
-        if (@OptIn(ExperimentalComposeUiApi::class) !isAdaptiveRefreshRateEnabled) {
-            return
-        }
+        assumeTrue(ComposeUiFlags.isAdaptiveRefreshRateEnabled)
 
         lateinit var composeView: AndroidComposeView
         val frameRates = listOf(30f, 60f)

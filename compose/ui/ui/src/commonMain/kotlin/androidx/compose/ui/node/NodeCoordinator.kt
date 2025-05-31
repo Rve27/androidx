@@ -19,6 +19,7 @@ package androidx.compose.ui.node
 import androidx.collection.MutableObjectIntMap
 import androidx.collection.mutableObjectIntMapOf
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.FrameRateCategory
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.MutableRect
 import androidx.compose.ui.geometry.Offset
@@ -49,7 +50,6 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.layout.positionOnScreen
-import androidx.compose.ui.ui.FrameRateCategory
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
