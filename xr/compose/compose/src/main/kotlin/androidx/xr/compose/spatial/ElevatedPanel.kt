@@ -144,7 +144,7 @@ internal fun ElevatedPanel(
         panelEntity.size = IntVolumeSize(width = width, height = height, depth = 0)
     }
 
-    LaunchedEffect(parentEntity) { panelEntity.entity.setParent(parentEntity.entity) }
+    LaunchedEffect(parentEntity) { panelEntity.entity.parent = parentEntity.entity }
 }
 
 /** A 3D vector where each coordinate is [Meter]s. */

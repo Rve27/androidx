@@ -93,9 +93,9 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
                 plane.state.collect { state ->
                     if (state.trackingState == TrackingState.TRACKING) {
                         if (state.label == Plane.Label.UNKNOWN) {
-                            entity.setHidden(true)
+                            entity.setEnabled(false)
                         } else {
-                            entity.setHidden(false)
+                            entity.setEnabled(true)
                             counter++
                             entity.setPose(
                                 session.scene.perceptionSpace
@@ -119,7 +119,7 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
                             }
                         }
                     } else if (state.trackingState == TrackingState.STOPPED) {
-                        entity.setHidden(true)
+                        entity.setEnabled(false)
                     }
                 }
             }

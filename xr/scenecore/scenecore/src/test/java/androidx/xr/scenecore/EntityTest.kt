@@ -75,6 +75,8 @@ import org.mockito.kotlin.whenever
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 
+@Suppress("Deprecation")
+// TODO - b/421386891: is/setHidden is deprecated; tests need to be updated with is/setEnabled
 // TODO: b/329902726 - Add a fake runtime and verify CPM integration.
 // TODO: b/369199417 - Update EntityTest once createGltfResourceAsync is default.
 @RunWith(RobolectricTestRunner::class)
@@ -358,10 +360,10 @@ class EntityTest {
 
     @Test
     fun allEntitySetParent_callsRuntimeEntityImplSetParent() {
-        panelEntity.setParent(activitySpace)
-        gltfModelEntity.setParent(activitySpace)
-        anchorEntity.setParent(activitySpace)
-        activityPanelEntity.setParent(activitySpace)
+        panelEntity.parent = activitySpace
+        gltfModelEntity.parent = activitySpace
+        anchorEntity.parent = activitySpace
+        activityPanelEntity.parent = activitySpace
 
         verify(mockPanelEntityImpl).parent = session.platformAdapter.activitySpace
         verify(mockGltfModelEntityImpl).parent = session.platformAdapter.activitySpace
@@ -371,10 +373,10 @@ class EntityTest {
 
     @Test
     fun allEntitySetParentNull_SetsNullParent() {
-        panelEntity.setParent(null)
-        gltfModelEntity.setParent(null)
-        anchorEntity.setParent(null)
-        activityPanelEntity.setParent(null)
+        panelEntity.parent = null
+        gltfModelEntity.parent = null
+        anchorEntity.parent = null
+        activityPanelEntity.parent = null
 
         verify(mockPanelEntityImpl).parent = null
         verify(mockGltfModelEntityImpl).parent = null
@@ -391,11 +393,11 @@ class EntityTest {
         whenever(mockContentlessEntity.parent).thenReturn(mockGltfModelEntityImpl)
         whenever(mockAnchorEntityImpl.parent).thenReturn(mockContentlessEntity)
 
-        assertThat(activityPanelEntity.getParent()).isEqualTo(activitySpace)
-        assertThat(panelEntity.getParent()).isEqualTo(activityPanelEntity)
-        assertThat(gltfModelEntity.getParent()).isEqualTo(panelEntity)
-        assertThat(contentlessEntity.getParent()).isEqualTo(gltfModelEntity)
-        assertThat(anchorEntity.getParent()).isEqualTo(contentlessEntity)
+        assertThat(activityPanelEntity.parent).isEqualTo(activitySpace)
+        assertThat(panelEntity.parent).isEqualTo(activityPanelEntity)
+        assertThat(gltfModelEntity.parent).isEqualTo(panelEntity)
+        assertThat(contentlessEntity.parent).isEqualTo(gltfModelEntity)
+        assertThat(anchorEntity.parent).isEqualTo(contentlessEntity)
 
         verify(mockActivityPanelEntity).parent
         verify(mockPanelEntityImpl).parent
@@ -412,11 +414,11 @@ class EntityTest {
         whenever(mockContentlessEntity.parent).thenReturn(null)
         whenever(mockAnchorEntityImpl.parent).thenReturn(null)
 
-        assertThat(activityPanelEntity.getParent()).isEqualTo(null)
-        assertThat(panelEntity.getParent()).isEqualTo(null)
-        assertThat(gltfModelEntity.getParent()).isEqualTo(null)
-        assertThat(contentlessEntity.getParent()).isEqualTo(null)
-        assertThat(anchorEntity.getParent()).isEqualTo(null)
+        assertThat(activityPanelEntity.parent).isEqualTo(null)
+        assertThat(panelEntity.parent).isEqualTo(null)
+        assertThat(gltfModelEntity.parent).isEqualTo(null)
+        assertThat(contentlessEntity.parent).isEqualTo(null)
+        assertThat(anchorEntity.parent).isEqualTo(null)
 
         verify(mockActivityPanelEntity).parent
         verify(mockPanelEntityImpl).parent

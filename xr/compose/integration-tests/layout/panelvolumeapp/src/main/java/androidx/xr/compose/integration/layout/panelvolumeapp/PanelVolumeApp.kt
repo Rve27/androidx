@@ -105,7 +105,7 @@ class PanelVolumeApp : ComponentActivity() {
                                     SubspaceModifier.scale(.3f)
                                         .offset(x = 1.meters.toDp(), z = -0.5.meters.toDp())
                             ) {
-                                gltfEntity.setParent(it)
+                                gltfEntity.parent = it
                             }
                         }
                     }

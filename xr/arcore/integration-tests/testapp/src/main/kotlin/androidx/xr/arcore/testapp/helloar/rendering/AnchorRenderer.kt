@@ -159,7 +159,7 @@ internal class AnchorRenderer(
                             )
                         )
                     } else if (state.trackingState == TrackingState.STOPPED) {
-                        entity.setHidden(true)
+                        entity.setEnabled(false)
                     }
                 }
             }

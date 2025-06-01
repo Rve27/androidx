@@ -114,7 +114,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
                 name = "headLockedPanel",
                 pose = Pose(Vector3(0f, 0f, 0f)),
             )
-        this.mHeadLockedPanel.setParent(mSession.scene.activitySpace)
+        this.mHeadLockedPanel.parent = mSession.scene.activitySpace
 
         setContent { HeadLockParameterOptions(mSession, mActivity) }
     }

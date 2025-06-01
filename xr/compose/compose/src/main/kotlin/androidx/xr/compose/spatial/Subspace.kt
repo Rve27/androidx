@@ -258,10 +258,10 @@ private fun ApplicationSubspace(
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val compositionContext = rememberCompositionContext()
     val scene by remember {
-        session.scene.mainPanelEntity.setHidden(true)
+        session.scene.mainPanelEntity.setEnabled(false)
         val subspaceRoot = ContentlessEntity.create(session, "SubspaceRoot")
         view.findOrCreateViewTreeApplicationSubspaceRootNode(session)?.let {
-            subspaceRoot.setParent(it)
+            subspaceRoot.parent = it
         }
         disposableValueOf(
             SpatialComposeScene(
@@ -273,7 +273,7 @@ private fun ApplicationSubspace(
         ) {
             it.dispose()
             subspaceRoot.dispose()
-            session.scene.mainPanelEntity.setHidden(false)
+            session.scene.mainPanelEntity.setEnabled(true)
         }
     }
 
@@ -303,8 +303,8 @@ private fun NestedSubspace(
     val subspaceRootContainer by remember {
         disposableValueOf(
             ContentlessEntity.create(session, "SubspaceRootContainer").apply {
-                setParent(coreEntity.entity)
-                setHidden(true)
+                parent = coreEntity.entity
+                setEnabled(false)
             }
         ) {
             it.dispose()
@@ -313,7 +313,7 @@ private fun NestedSubspace(
     val scene by remember {
         val subspaceRoot =
             ContentlessEntity.create(session, "SubspaceRoot").apply {
-                setParent(subspaceRootContainer)
+                parent = subspaceRootContainer
             }
         disposableValueOf(
             SpatialComposeScene(
@@ -343,8 +343,8 @@ private fun NestedSubspace(
         )
         // We need to wait for a single frame to ensure that the pose changes are batched to the
         // root container before we show it.
-        if (subspaceRootContainer.isHidden(false) && awaitFrame() > 0) {
-            subspaceRootContainer.setHidden(false)
+        if (!subspaceRootContainer.isEnabled(false) && awaitFrame() > 0) {
+            subspaceRootContainer.setEnabled(true)
         }
     }
 

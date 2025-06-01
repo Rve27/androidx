@@ -125,7 +125,7 @@ internal sealed class CoreEntity(public val entity: Entity) : OpaqueEntity {
             // TODO(b/356952297): Remove this hack once we can save and restore the original parent.
             if (value == null) return
 
-            entity.setParent(value.entity)
+            entity.parent = value.entity
         }
 
     /**
@@ -208,9 +208,10 @@ internal sealed class CoreBasePanelEntity(
      * Note that a non-hidden entity may still not be visible if its alpha is 0.
      */
     var hidden: Boolean
-        get() = entity.isHidden(includeParents = true)
+        // TODO - b/421386891: Consider renaming this field to align with Entity.is/setEnabled
+        get() = !entity.isEnabled(includeParents = true)
         set(value) {
-            entity.setHidden(value)
+            entity.setEnabled(!value)
         }
 
     /** The [SpatialShape] of this [CoreBasePanelEntity]. */

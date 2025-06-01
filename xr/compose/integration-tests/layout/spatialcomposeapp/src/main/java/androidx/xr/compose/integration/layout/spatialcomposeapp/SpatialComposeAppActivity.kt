@@ -342,7 +342,7 @@ class SpatialComposeAppActivity : ComponentActivity() {
 
         if (gltfEntity != null) {
             Volume(modifier) {
-                gltfEntity.setParent(it)
+                gltfEntity.parent = it
 
                 lifecycleScope.launch {
                     val pi = 3.14159F

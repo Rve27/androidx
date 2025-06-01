@@ -166,7 +166,7 @@ class SpatialPanelTest {
     }
 
     @Test
-    fun mainPanel_disposes_mainPanelGetsHidden() {
+    fun mainPanel_disposes_mainPanelGetsDisabled() {
         val showMainPanel = mutableStateOf(true)
 
         composeTestRule.setContent {
@@ -184,13 +184,13 @@ class SpatialPanelTest {
 
         val mainPanelNode = composeTestRule.onSubspaceNodeWithTag("mainPanel").fetchSemanticsNode()
         val mainPanelSceneCoreEntity = mainPanelNode.semanticsEntity as? PanelEntity
-        assertThat(checkNotNull(mainPanelSceneCoreEntity).isHidden()).isFalse()
+        assertThat(checkNotNull(mainPanelSceneCoreEntity).isEnabled()).isTrue()
 
         showMainPanel.value = false
         composeTestRule.waitForIdle()
 
         val mainPanelSceneCoreEntityAfter = mainPanelNode.semanticsEntity as? PanelEntity
-        assertThat(checkNotNull(mainPanelSceneCoreEntityAfter).isHidden()).isTrue()
+        assertThat(checkNotNull(mainPanelSceneCoreEntityAfter).isEnabled()).isFalse()
     }
 
     @Test

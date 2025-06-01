@@ -154,17 +154,17 @@ class PanelRoundedCornerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        activityPanelEntity?.setParent(null)
+        activityPanelEntity?.parent = null
         activityPanelEntity?.dispose()
-        panelEntity?.setParent(null)
+        panelEntity?.parent = null
         panelEntity?.dispose()
     }
 
     override fun onStop() {
         super.onStop()
-        activityPanelEntity?.setParent(null)
+        activityPanelEntity?.parent = null
         activityPanelEntity?.dispose()
-        panelEntity?.setParent(null)
+        panelEntity?.parent = null
         panelEntity?.dispose()
     }
 

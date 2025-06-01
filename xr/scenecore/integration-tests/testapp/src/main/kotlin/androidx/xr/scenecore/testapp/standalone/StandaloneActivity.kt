@@ -82,7 +82,7 @@ class StandaloneActivity : AppCompatActivity() {
                 "panel_entity",
                 Pose(Vector3(0f, -0.25f, 0.5f)),
             )
-        panelEntity.setParent(session!!.scene.activitySpace)
+        panelEntity.parent = session!!.scene.activitySpace
 
         lifecycleScope.launch {
             // load 3D Model
@@ -97,11 +97,11 @@ class StandaloneActivity : AppCompatActivity() {
 
     private fun createModelSolarSystem(session: Session, model: GltfModel) {
         val sunEntity = GltfModelEntity.create(session, model, Pose(Vector3(-0.5f, 2f, -9f)))
-        sunEntity.setParent(session.scene.activitySpace)
+        sunEntity.parent = session.scene.activitySpace
         val planetEntity = GltfModelEntity.create(session, model, Pose(Vector3(-1f, 2f, -9f)))
-        planetEntity.setParent(sunEntity)
+        planetEntity.parent = sunEntity
         val moonEntity = GltfModelEntity.create(session, model, Pose(Vector3(-1.5f, 2f, -9f)))
-        moonEntity.setParent(planetEntity)
+        moonEntity.parent = planetEntity
 
         orbitModelAroundParent(planetEntity, 4f, 0f, 20000f)
         orbitModelAroundParent(moonEntity, 2f, 1.67f, 5000f)

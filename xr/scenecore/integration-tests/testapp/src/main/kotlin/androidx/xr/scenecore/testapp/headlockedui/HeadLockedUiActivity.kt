@@ -96,7 +96,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
 
         // Hide debug panel
         findViewById<MaterialButton>(R.id.toggle_debug_panel).setOnClickListener() {
-            mDebugPanel.panelEntity.let { it.setHidden(!it.isHidden()) }
+            mDebugPanel.panelEntity.let { it.setEnabled(!it.isEnabled()) }
         }
 
         // X Slider Setup
@@ -178,7 +178,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mHeadLockedPanel.setParent(null)
+        mHeadLockedPanel.parent = null
         mHeadLockedPanel.dispose()
     }
 
@@ -193,8 +193,8 @@ class HeadLockedUiActivity : AppCompatActivity() {
                 name = "headLockedPanel",
             )
         this.mHeadLockedPanel.setPose(Pose(Vector3(0f, 0f, 0f)))
-        this.mHeadLockedPanel.setParent(session!!.scene.activitySpace)
-        this.mHeadLockedPanel.isHidden(false)
+        this.mHeadLockedPanel.parent = session!!.scene.activitySpace
+        this.mHeadLockedPanel.isEnabled(false)
         this.mHeadLockedPanel.setPose(Pose.Identity)
         session!!.scene.mainPanelEntity.setPose(Pose(Vector3(0.1f, 0f, 0f)))
     }

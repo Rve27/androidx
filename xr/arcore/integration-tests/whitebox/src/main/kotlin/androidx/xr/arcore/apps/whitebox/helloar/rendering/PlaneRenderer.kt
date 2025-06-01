@@ -95,9 +95,9 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
                     when (state.trackingState) {
                         TrackingState.TRACKING -> {
                             if (state.label == Plane.Label.UNKNOWN) {
-                                entity.setHidden(true)
+                                entity.setEnabled(false)
                             } else {
-                                entity.setHidden(false)
+                                entity.setEnabled(true)
                                 entity.setAlpha(1.0f)
                                 counter++
                                 entity.setPose(
@@ -125,7 +125,7 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
                             }
                         }
                         TrackingState.PAUSED -> entity.setAlpha(0.5f)
-                        TrackingState.STOPPED -> entity.setHidden(true)
+                        TrackingState.STOPPED -> entity.setEnabled(false)
                     }
                 }
             }

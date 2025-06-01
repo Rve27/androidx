@@ -72,7 +72,7 @@ class SpatialUserActivity : AppCompatActivity() {
                 "panel",
                 Pose(Vector3(0f, 0f, 0.5f)),
             )
-        panelEntity.setParent(session.scene.activitySpace)
+        panelEntity.parent = session.scene.activitySpace
 
         val buttonRecenter: Button = panelContentView.findViewById(R.id.buttonRecenter)
         buttonRecenter.setOnClickListener {

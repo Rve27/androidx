@@ -668,7 +668,7 @@ class VideoPlayerActivity : ComponentActivity() {
                 "VideoControls",
                 Pose(Vector3(0.0f, -0.6f, -0.85f)),
             )
-        controlPanelEntity!!.setParent(surfaceEntity!!)
+        controlPanelEntity!!.parent = surfaceEntity!!
 
         val parentView: View =
             if (panelContentView.parent != null && panelContentView.parent is View)

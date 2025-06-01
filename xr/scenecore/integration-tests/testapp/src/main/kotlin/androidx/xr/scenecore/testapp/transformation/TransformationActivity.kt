@@ -272,19 +272,19 @@ class TransformationActivity : AppCompatActivity() {
             GltfModelEntity.create(session!!, solarSystemEntityModel, Pose.Identity).also {
                 it.setScale(3f)
                 it.setPose(Pose(Vector3(-0.5f, 3f, -9f)))
-                it.setParent(session!!.scene.activitySpace)
+                it.parent = session!!.scene.activitySpace
             }
         planetEntity =
             GltfModelEntity.create(session!!, solarSystemEntityModel, Pose.Identity).also {
                 it.setScale(0.5f)
                 it.setPose(Pose(Vector3(-1f, 3f, -9f)))
-                it.setParent(sunEntity)
+                it.parent = sunEntity
             }
         moonEntity =
             GltfModelEntity.create(session!!, solarSystemEntityModel, Pose.Identity).also {
                 it.setScale(0.5f)
                 it.setPose(Pose(Vector3(-1.5f, 3f, -9f)))
-                it.setParent(planetEntity)
+                it.parent = planetEntity
             }
         orbitModelAroundParent(planetEntity, 4f, 0f, 20000f)
         orbitModelAroundParent(moonEntity, 2f, 1.67f, 5000f)

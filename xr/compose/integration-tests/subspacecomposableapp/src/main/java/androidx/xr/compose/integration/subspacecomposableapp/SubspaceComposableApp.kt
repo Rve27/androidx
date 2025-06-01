@@ -147,7 +147,7 @@ class SubspaceComposableApp : ComponentActivity() {
                         .scene
                         .spatialEnvironment
                         .requestHomeSpaceMode()
-                    session.scene.mainPanelEntity.setHidden(false)
+                    session.scene.mainPanelEntity.setEnabled(true)
                 }
 
                 MainContent(text = "Home Page in Home Space Mode", navController = navController)
@@ -160,7 +160,7 @@ class SubspaceComposableApp : ComponentActivity() {
                         .scene
                         .spatialEnvironment
                         .requestFullSpaceMode()
-                    session.scene.mainPanelEntity.setHidden(true)
+                    session.scene.mainPanelEntity.setEnabled(false)
                 }
 
                 Subspace { PanelGrid(navController = navController) }
@@ -172,7 +172,7 @@ class SubspaceComposableApp : ComponentActivity() {
                         .scene
                         .spatialEnvironment
                         .requestFullSpaceMode()
-                    session.scene.mainPanelEntity.setHidden(false)
+                    session.scene.mainPanelEntity.setEnabled(true)
                 }
 
                 MainContent(text = "Now some arrows are shown!", navController = navController)
@@ -359,7 +359,7 @@ class SubspaceComposableApp : ComponentActivity() {
                 gltfEntity.setPose(Pose(rotation = q))
             }
 
-            Volume(modifier) { gltfEntity.setParent(it) }
+            Volume(modifier) { gltfEntity.parent = it }
         }
     }
 }

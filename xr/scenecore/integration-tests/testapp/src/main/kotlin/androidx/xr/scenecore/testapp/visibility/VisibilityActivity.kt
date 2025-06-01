@@ -48,6 +48,9 @@ import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 
 @SuppressLint("SetTextI18n", "RestrictedApi")
+@Suppress("Deprecation")
+// TODO - b/421386891: is/setHidden is deprecated; this activity needs to be updated to use
+// is/setEnabled.
 class VisibilityActivity : AppCompatActivity() {
     private var session: Session? = null
 
@@ -211,7 +214,7 @@ class VisibilityActivity : AppCompatActivity() {
         }
         val panelEntity =
             PanelEntity.create(session!!, panelContentView, IntSize2d(640, 480), panelName, pose)
-        panelEntity.setParent(parent)
+        panelEntity.parent = parent
 
         val movableComponent = MovableComponent.create(session!!)
         panelEntity.addComponent(movableComponent)
@@ -225,19 +228,19 @@ class VisibilityActivity : AppCompatActivity() {
         parentGltfEntity =
             GltfModelEntity.create(session!!, model, Pose(Vector3(0.7f, 0f, 0f))).also {
                 it.setScale(0.5f)
-                it.setParent(session!!.scene.activitySpace)
+                it.parent = session!!.scene.activitySpace
             }
 
         childGltfEntity1 =
             GltfModelEntity.create(session!!, model, Pose(Vector3(0.7f, -0.3f, 0f))).also {
                 it.setScale(0.5f)
-                it.setParent(parentGltfEntity)
+                it.parent = parentGltfEntity
             }
 
         childGltfEntity2 =
             GltfModelEntity.create(session!!, model, Pose(Vector3(0.7f, -0.6f, 0f))).also {
                 it.setScale(0.5f)
-                it.setParent(childGltfEntity1)
+                it.parent = childGltfEntity1
             }
     }
 

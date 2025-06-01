@@ -463,7 +463,7 @@ public fun SpatialPanel(
                             pose = Pose.Identity,
                         )
                         .apply {
-                            setParent(activityPanelEntity.entity)
+                            parent = activityPanelEntity.entity
                             setPose(Pose(translation = Vector3(0f, 0f, 3.millimeters.toM())))
                         }
                 }

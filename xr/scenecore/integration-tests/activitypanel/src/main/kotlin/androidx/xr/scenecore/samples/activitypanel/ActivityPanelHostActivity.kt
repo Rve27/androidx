@@ -58,7 +58,7 @@ class ActivityPanelHostActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        activityPanelEntity.setParent(null)
+        activityPanelEntity.parent = null
         activityPanelEntity.dispose()
     }
 }

@@ -58,7 +58,7 @@ class HitTestActivity : AppCompatActivity() {
                 "panel",
                 Pose(Vector3(0f, -0.5f, 0.5f)),
             )
-        panelEntity.setParent(session.scene.activitySpace)
+        panelEntity.parent = session.scene.activitySpace
         val movableComponent = MovableComponent.create(session)
         if (!panelEntity.addComponent(movableComponent)) {
             Log.e("HitTestActivity", "Error adding MovableComponent to panelEntity")
@@ -96,7 +96,7 @@ class HitTestActivity : AppCompatActivity() {
                         )
                     transformWidgetModel?.let {
                         val gltfEntity = GltfModelEntity.create(session, it, hitTestPose)
-                        gltfEntity.setParent(session.scene.activitySpace)
+                        gltfEntity.parent = session.scene.activitySpace
                     }
                 }
             }
@@ -108,7 +108,7 @@ class HitTestActivity : AppCompatActivity() {
                 val dragonModel = dragonModelFuture.get()
                 val gltfEntity =
                     GltfModelEntity.create(session, dragonModel, Pose(Vector3(1f, 0f, 0f)))
-                gltfEntity.setParent(session.scene.activitySpace)
+                gltfEntity.parent = session.scene.activitySpace
                 val interactableComponent = InteractableComponent.create(session, mainExecutor) {}
                 if (!gltfEntity.addComponent(interactableComponent)) {
                     Log.e("HitTestActivity", "Error adding InteractableComponent to gltfEntity")

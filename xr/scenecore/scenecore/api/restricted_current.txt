@@ -80,21 +80,24 @@ package androidx.xr.scenecore {
     method public void addChild(androidx.xr.scenecore.Entity child);
     method public boolean addComponent(androidx.xr.scenecore.Component component);
     method public void dispose();
-    method public float getAlpha(int relativeTo);
+    method public float getAlpha(@androidx.xr.scenecore.SpaceValue int relativeTo);
     method public java.util.List<androidx.xr.scenecore.Component> getComponents();
     method public <T extends androidx.xr.scenecore.Component> java.util.List<T> getComponentsOfType(Class<? extends T> type);
+    method public String getContentDescription();
     method public androidx.xr.scenecore.Entity? getParent();
-    method public androidx.xr.runtime.math.Pose getPose(int relativeTo);
-    method public float getScale(int relativeTo);
-    method public boolean isHidden(boolean includeParents);
+    method public androidx.xr.runtime.math.Pose getPose(@androidx.xr.scenecore.SpaceValue int relativeTo);
+    method public float getScale(@androidx.xr.scenecore.SpaceValue int relativeTo);
+    method @Deprecated public boolean isHidden(boolean includeParents);
     method public void removeAllComponents();
     method public void removeComponent(androidx.xr.scenecore.Component component);
-    method public void setAlpha(float alpha, int relativeTo);
-    method public void setContentDescription(String text);
-    method public void setHidden(boolean hidden);
-    method public void setParent(androidx.xr.scenecore.Entity? parent);
-    method public void setPose(androidx.xr.runtime.math.Pose pose, int relativeTo);
+    method public void setAlpha(float alpha, @androidx.xr.scenecore.SpaceValue int relativeTo);
+    method public void setContentDescription(String);
+    method @Deprecated public void setHidden(boolean hidden);
+    method public void setParent(androidx.xr.scenecore.Entity?);
+    method public void setPose(androidx.xr.runtime.math.Pose pose, @androidx.xr.scenecore.SpaceValue int relativeTo);
     method public void setScale(float scale, int relativeTo);
+    property public String contentDescription;
+    property public androidx.xr.scenecore.Entity? parent;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract sealed class BasePanelEntity<RtPanelEntityType extends androidx.xr.runtime.internal.PanelEntity> extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.PanelEntity> {
@@ -131,9 +134,9 @@ package androidx.xr.scenecore {
     enum_constant public static final androidx.xr.scenecore.CameraView.CameraType UNKNOWN;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Component {
-    method public boolean onAttach(androidx.xr.scenecore.Entity entity);
-    method public void onDetach(androidx.xr.scenecore.Entity entity);
+  public interface Component {
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public boolean onAttach(androidx.xr.scenecore.Entity entity);
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void onDetach(androidx.xr.scenecore.Entity entity);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ContentlessEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.Entity> {
@@ -156,31 +159,36 @@ package androidx.xr.scenecore {
     method @MainThread public androidx.xr.scenecore.CubeMapTexture borrowReflectionTexture(androidx.xr.runtime.Session session);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Entity extends androidx.xr.scenecore.ScenePose {
+  public interface Entity extends androidx.xr.scenecore.ScenePose {
     method public void addChild(androidx.xr.scenecore.Entity child);
     method public boolean addComponent(androidx.xr.scenecore.Component component);
     method public void dispose();
-    method public default float getAlpha();
-    method public float getAlpha(optional int relativeTo);
+    method @FloatRange(from=0.0, to=1.0) public default float getAlpha();
+    method @FloatRange(from=0.0, to=1.0) public float getAlpha(optional @androidx.xr.scenecore.SpaceValue int relativeTo);
     method public java.util.List<androidx.xr.scenecore.Component> getComponents();
     method public <T extends androidx.xr.scenecore.Component> java.util.List<T> getComponentsOfType(Class<? extends T> type);
+    method public String getContentDescription();
     method public androidx.xr.scenecore.Entity? getParent();
     method public default androidx.xr.runtime.math.Pose getPose();
-    method public androidx.xr.runtime.math.Pose getPose(optional int relativeTo);
-    method public default float getScale();
-    method public float getScale(optional int relativeTo);
-    method public boolean isHidden(optional boolean includeParents);
+    method public androidx.xr.runtime.math.Pose getPose(optional @androidx.xr.scenecore.SpaceValue int relativeTo);
+    method @FloatRange(from=0.0) public default float getScale();
+    method @FloatRange(from=0.0) public float getScale(optional @androidx.xr.scenecore.SpaceValue int relativeTo);
+    method public default boolean isEnabled(optional boolean includeParents);
+    method @Deprecated public boolean isHidden(optional boolean includeParents);
     method public void removeAllComponents();
     method public void removeComponent(androidx.xr.scenecore.Component component);
-    method public default void setAlpha(float alpha);
-    method public void setAlpha(float alpha, optional int relativeTo);
-    method public void setContentDescription(String text);
-    method public void setHidden(boolean hidden);
-    method public void setParent(androidx.xr.scenecore.Entity? parent);
+    method public default void setAlpha(@FloatRange(from=0.0, to=1.0) float alpha);
+    method public void setAlpha(@FloatRange(from=0.0, to=1.0) float alpha, optional @androidx.xr.scenecore.SpaceValue int relativeTo);
+    method public void setContentDescription(String);
+    method public default void setEnabled(boolean enabled);
+    method @Deprecated public void setHidden(boolean hidden);
+    method public void setParent(androidx.xr.scenecore.Entity?);
     method public default void setPose(androidx.xr.runtime.math.Pose pose);
-    method public void setPose(androidx.xr.runtime.math.Pose pose, optional int relativeTo);
-    method public default void setScale(float scale);
-    method public void setScale(float scale, optional int relativeTo);
+    method public void setPose(androidx.xr.runtime.math.Pose pose, optional @androidx.xr.scenecore.SpaceValue int relativeTo);
+    method public default void setScale(@FloatRange(from=0.0) float scale);
+    method public void setScale(@FloatRange(from=0.0) float scale, optional @androidx.xr.scenecore.SpaceValue int relativeTo);
+    property public abstract String contentDescription;
+    property public abstract androidx.xr.scenecore.Entity? parent;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ExrImage implements androidx.xr.scenecore.Image {
@@ -587,14 +595,17 @@ package androidx.xr.scenecore {
     field public static final String TAG = "SoundFieldAttributes";
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class Space {
+  public final class Space {
     property public static int ACTIVITY;
     property public static int PARENT;
-    property public static int REAL_WORLD;
+    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static int REAL_WORLD;
     field public static final int ACTIVITY = 1; // 0x1
     field public static final androidx.xr.scenecore.Space INSTANCE;
     field public static final int PARENT = 0; // 0x0
-    field public static final int REAL_WORLD = 2; // 0x2
+    field @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static final int REAL_WORLD = 2; // 0x2
+  }
+
+  @IntDef({androidx.xr.scenecore.Space.PARENT, androidx.xr.scenecore.Space.ACTIVITY, androidx.xr.scenecore.Space.REAL_WORLD}) @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.SOURCE) internal @interface SpaceValue {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialAudioTrack {

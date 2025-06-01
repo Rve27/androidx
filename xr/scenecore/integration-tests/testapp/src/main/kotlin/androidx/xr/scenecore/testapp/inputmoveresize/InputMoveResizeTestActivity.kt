@@ -133,7 +133,7 @@ class InputMoveResizeTestActivity : AppCompatActivity() {
 
         val panelEntity = PanelEntity.create(session!!, panel, IntSize2d(640, 480), "panel")
         panelEntity.setPose(Pose(Vector3(0f, -0.5f, 0.5f)))
-        panelEntity.setParent(session!!.scene.activitySpace)
+        panelEntity.parent = session!!.scene.activitySpace
         return panelEntity
     }
 
@@ -271,7 +271,7 @@ class InputMoveResizeTestActivity : AppCompatActivity() {
         val movablePanelView = layoutInflater.inflate(R.layout.input_move_resize_panel, null)
         val movablePanelEntity = createPanelEntityWithText("Movable", movablePanelView)
         movablePanelEntity.setPose(Pose(Vector3(-0.8f, 0.2f, 0.1f)))
-        movablePanelEntity.setParent(session!!.scene.mainPanelEntity)
+        movablePanelEntity.parent = session!!.scene.mainPanelEntity
         // Set the movable panel corner radius to 0.
         movablePanelEntity.setCornerRadius(0.0f)
 
@@ -331,7 +331,7 @@ class InputMoveResizeTestActivity : AppCompatActivity() {
         // Create a spatial panel with all components.
         val everythingPanelView = layoutInflater.inflate(R.layout.input_move_resize_panel, null)
         val everythingPanelEntity = createPanelEntityWithText("Everything", everythingPanelView)
-        everythingPanelEntity.setParent(movablePanelEntity)
+        everythingPanelEntity.parent = movablePanelEntity
         everythingPanelEntity.setPose(Pose(Vector3(0.0f, -0.5f, 0.0f)))
         // Set the everything panel corner radius to 0.
         everythingPanelEntity.setCornerRadius(0.0f)
@@ -380,7 +380,7 @@ class InputMoveResizeTestActivity : AppCompatActivity() {
         val resizablePanelView = layoutInflater.inflate(R.layout.input_move_resize_panel, null)
         val resizablePanelEntity = createPanelEntityWithText("Resizable", resizablePanelView)
         resizablePanelEntity.setPose(Pose(Vector3(0.9f, 0.2f, -0.1f)))
-        resizablePanelEntity.setParent(session!!.scene.mainPanelEntity)
+        resizablePanelEntity.parent = session!!.scene.mainPanelEntity
         // Set the resizable panel corner radius to 0.
         resizablePanelEntity.setCornerRadius(0.0f)
 
@@ -427,7 +427,7 @@ class InputMoveResizeTestActivity : AppCompatActivity() {
         val interactablePanelView = layoutInflater.inflate(R.layout.input_move_resize_panel, null)
         val interactablePanelEntity =
             createPanelEntityWithText("Interactable", interactablePanelView)
-        interactablePanelEntity.setParent(resizablePanelEntity)
+        interactablePanelEntity.parent = resizablePanelEntity
         interactablePanelEntity.setPose(Pose(Vector3(0f, -0.5f, 0.0f)))
         // Set the interactable panel corner radius to 0.
         interactablePanelEntity.setCornerRadius(0.0f)

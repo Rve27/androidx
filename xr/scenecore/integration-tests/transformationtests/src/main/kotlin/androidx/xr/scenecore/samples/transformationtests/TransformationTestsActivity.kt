@@ -281,15 +281,15 @@ class TransformationTestsActivity : AppCompatActivity() {
     private fun createModelSolarSystem(session: Session, model: GltfModel) {
         val sunDragon = GltfModelEntity.create(session, model, Pose(Vector3(-0.5f, 3f, -9f)))
         sunDragon.setScale(3f)
-        sunDragon.setParent(session.scene.activitySpace)
+        sunDragon.parent = session.scene.activitySpace
 
         val planetDragon = GltfModelEntity.create(session, model, Pose(Vector3(-1f, 3f, -9f)))
         planetDragon.setScale(0.5f)
-        planetDragon.setParent(sunDragon)
+        planetDragon.parent = sunDragon
 
         val moonDragon = GltfModelEntity.create(session, model, Pose(Vector3(-1.5f, 3f, -9f)))
         moonDragon.setScale(0.5f)
-        moonDragon.setParent(planetDragon)
+        moonDragon.parent = planetDragon
 
         // Create debug panels for the sun, planet, and moon
         val largeLabelDimensions = FloatSize3d(700f, 200f)

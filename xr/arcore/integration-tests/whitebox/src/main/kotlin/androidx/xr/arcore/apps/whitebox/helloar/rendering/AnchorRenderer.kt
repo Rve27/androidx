@@ -154,7 +154,7 @@ internal class AnchorRenderer(
                 anchor.state.collect { state ->
                     when (state.trackingState) {
                         TrackingState.TRACKING -> {
-                            entity.setHidden(false)
+                            entity.setEnabled(true)
                             entity.setAlpha(1.0f)
                             entity.setPose(
                                 session.scene.perceptionSpace.transformPoseTo(
@@ -164,7 +164,7 @@ internal class AnchorRenderer(
                             )
                         }
                         TrackingState.PAUSED -> entity.setAlpha(0.5f)
-                        TrackingState.STOPPED -> entity.setHidden(true)
+                        TrackingState.STOPPED -> entity.setEnabled(false)
                     }
                 }
             }

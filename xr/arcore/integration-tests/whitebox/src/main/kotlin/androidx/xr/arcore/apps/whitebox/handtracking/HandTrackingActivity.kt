@@ -156,7 +156,7 @@ class HandTrackingActivity : ComponentActivity() {
                                 HandJointType.entries.associateWith {
                                     GltfModelEntity.create(session, xyzModel).also {
                                         it.setScale(0.015f)
-                                        it.setHidden(true)
+                                        it.setEnabled(false)
                                     }
                                 }
 
@@ -164,7 +164,7 @@ class HandTrackingActivity : ComponentActivity() {
                                 HandJointType.entries.associateWith {
                                     GltfModelEntity.create(session, xyzModel).also {
                                         it.setScale(0.015f)
-                                        it.setHidden(true)
+                                        it.setEnabled(false)
                                     }
                                 }
 
@@ -192,11 +192,11 @@ class HandTrackingActivity : ComponentActivity() {
     ) {
         for ((jointType, gltfModelEntity) in jointEntityMap) {
             if (handState.trackingState == TrackingState.TRACKING) {
-                // According to the experiment, calling setHidden will significantly
-                // increase the latency. Thus, check the hidden state before calling
-                // setHidden.
-                if (gltfModelEntity.isHidden(false)) {
-                    gltfModelEntity.setHidden(false)
+                // According to the experiment, calling setEnabled will significantly
+                // increase the latency. Thus, check the enabled state before calling
+                // setEnabled.
+                if (!gltfModelEntity.isEnabled(false)) {
+                    gltfModelEntity.setEnabled(true)
                 }
                 val transformedPose =
                     session.scene.perceptionSpace.transformPoseTo(
@@ -205,13 +205,13 @@ class HandTrackingActivity : ComponentActivity() {
                     )
                 gltfModelEntity.setPose(transformedPose)
             } else {
-                // According to the experiment, calling setHidden will significantly
-                // increase the latency. Thus, check the hidden state before calling
-                // setHidden.
-                if (gltfModelEntity.isHidden(false)) {
+                // According to the experiment, calling setEnabled will significantly
+                // increase the latency. Thus, check the enabled state before calling
+                // setEnabbled.
+                if (!gltfModelEntity.isEnabled(false)) {
                     return
                 }
-                gltfModelEntity.setHidden(true)
+                gltfModelEntity.setEnabled(false)
             }
         }
     }

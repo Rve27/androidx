@@ -34,6 +34,8 @@ import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 
 /** Manages the UI for the GLTF entity. */
+@Suppress("Deprecation")
+// TODO - b/421386891: is/setHidden is deprecated; this activity needs to be updated to use
 class GltfManager(private val session: Session) {
     private val mSession: Session
     private var mGltfModel: GltfModel? by mutableStateOf(null)
