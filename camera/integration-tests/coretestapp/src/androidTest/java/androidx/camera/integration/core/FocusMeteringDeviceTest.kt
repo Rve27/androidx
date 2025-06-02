@@ -22,7 +22,6 @@ import android.hardware.camera2.CameraCharacteristics.CONTROL_MAX_REGIONS_AE
 import android.hardware.camera2.CameraCharacteristics.CONTROL_MAX_REGIONS_AF
 import android.hardware.camera2.CameraCharacteristics.CONTROL_MAX_REGIONS_AWB
 import android.hardware.camera2.CaptureRequest
-import android.hardware.camera2.CaptureResult
 import android.hardware.camera2.params.MeteringRectangle
 import androidx.camera.camera2.Camera2Config
 import androidx.camera.camera2.pipe.integration.CameraPipeConfig
@@ -43,7 +42,6 @@ import androidx.camera.testing.impl.LabTestRule.Companion.isLensFacingEnabledInL
 import androidx.camera.testing.impl.WakelockEmptyActivityRule
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
 import androidx.camera.testing.impl.util.Camera2InteropUtil
-import androidx.concurrent.futures.await
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
@@ -333,7 +331,7 @@ class FocusMeteringDeviceTest(
         val factory = SurfaceOrientedMeteringPointFactory(1.0f, 1.0f)
         val action = FocusMeteringAction.Builder(factory.createPoint(0f, 0f)).build()
 
-        camera.cameraControl.startFocusAndMetering(action).await()
+        camera.cameraControl.startFocusAndMetering(action)
 
         val cameraCharacteristics =
             CameraUtil.getCameraCharacteristics(cameraSelector.lensFacing!!)!!
@@ -343,11 +341,11 @@ class FocusMeteringDeviceTest(
             cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AE).coerceAtMost(1)
         val expectedAwbCount =
             cameraCharacteristics.getMaxRegionCount(CONTROL_MAX_REGIONS_AWB).coerceAtMost(1)
-        captureCallback.verifyFor(numOfCaptures = 60) { _, captureResults ->
-            val captureResult = captureResults.last()
-            val afRegions = captureResult[CaptureResult.CONTROL_AF_REGIONS] ?: emptyArray()
-            val aeRegions = captureResult[CaptureResult.CONTROL_AE_REGIONS] ?: emptyArray()
-            val awbRegions = captureResult[CaptureResult.CONTROL_AWB_REGIONS] ?: emptyArray()
+        captureCallback.verifyFor(numOfCaptures = 60) { captureRequests, _ ->
+            val captureRequest = captureRequests.last()
+            val afRegions = captureRequest[CaptureRequest.CONTROL_AF_REGIONS] ?: emptyArray()
+            val aeRegions = captureRequest[CaptureRequest.CONTROL_AE_REGIONS] ?: emptyArray()
+            val awbRegions = captureRequest[CaptureRequest.CONTROL_AWB_REGIONS] ?: emptyArray()
             afRegions.weightedRegionCount == expectedAfCount &&
                 aeRegions.weightedRegionCount == expectedAeCount &&
                 awbRegions.weightedRegionCount == expectedAwbCount
@@ -368,11 +366,11 @@ class FocusMeteringDeviceTest(
 
         camera.cameraControl.startFocusAndMetering(action)
         camera.cameraControl.cancelFocusAndMetering()
-        captureCallback.verifyFor(numOfCaptures = 60) { _, captureResults ->
-            val captureResult = captureResults.last()
-            val afRegions = captureResult[CaptureResult.CONTROL_AF_REGIONS] ?: emptyArray()
-            val aeRegions = captureResult[CaptureResult.CONTROL_AE_REGIONS] ?: emptyArray()
-            val awbRegions = captureResult[CaptureResult.CONTROL_AWB_REGIONS] ?: emptyArray()
+        captureCallback.verifyFor(numOfCaptures = 60) { captureRequests, _ ->
+            val captureRequest = captureRequests.last()
+            val afRegions = captureRequest[CaptureRequest.CONTROL_AF_REGIONS] ?: emptyArray()
+            val aeRegions = captureRequest[CaptureRequest.CONTROL_AE_REGIONS] ?: emptyArray()
+            val awbRegions = captureRequest[CaptureRequest.CONTROL_AWB_REGIONS] ?: emptyArray()
 
             afRegions.weightedRegionCount == 0 &&
                 aeRegions.weightedRegionCount == 0 &&
