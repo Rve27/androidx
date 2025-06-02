@@ -146,7 +146,8 @@ public class Scene : SessionConnector {
         perceptionSpace = PerceptionSpace.create(platformAdapter)
         activitySpace = ActivitySpace.create(platformAdapter, entityManager)
         spatialUser = SpatialUser.create(lifecycleManager, platformAdapter)
-        mainPanelEntity = PanelEntity.createMainPanelEntity(platformAdapter, entityManager)
+        mainPanelEntity =
+            PanelEntity.createMainPanelEntity(lifecycleManager, platformAdapter, entityManager)
         activitySpaceRoot =
             entityManager.getEntityForRtEntity(platformAdapter.activitySpaceRootImpl)!!
         platformAdapter.spatialModeChangeListener =

@@ -102,6 +102,7 @@ package androidx.xr.scenecore {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract sealed class BasePanelEntity<RtPanelEntityType extends androidx.xr.runtime.internal.PanelEntity> extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.PanelEntity> {
     method public final float getCornerRadius();
+    method public final androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution();
     method @Deprecated public final androidx.xr.runtime.math.Vector3 getPixelDensity();
     method public final androidx.xr.runtime.math.FloatSize3d getSize();
     method public final androidx.xr.runtime.math.IntSize2d getSizeInPixels();
@@ -398,7 +399,6 @@ package androidx.xr.scenecore {
     method public static final androidx.xr.scenecore.PanelEntity create(androidx.xr.runtime.Session session, android.view.View view, androidx.xr.runtime.math.FloatSize3d dimensions, String name, optional androidx.xr.runtime.math.Pose pose);
     method public static final androidx.xr.scenecore.PanelEntity create(androidx.xr.runtime.Session session, android.view.View view, androidx.xr.runtime.math.IntSize2d pixelDimensions, String name);
     method public static final androidx.xr.scenecore.PanelEntity create(androidx.xr.runtime.Session session, android.view.View view, androidx.xr.runtime.math.IntSize2d pixelDimensions, String name, optional androidx.xr.runtime.math.Pose pose);
-    method public final androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution();
     method public final boolean isMainPanelEntity();
     property public final boolean isMainPanelEntity;
     field public static final androidx.xr.scenecore.PanelEntity.Companion Companion;

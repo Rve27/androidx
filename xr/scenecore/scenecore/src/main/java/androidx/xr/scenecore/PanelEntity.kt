@@ -19,8 +19,10 @@ package androidx.xr.scenecore
 import android.content.Context
 import android.view.View
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.Config
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.JxrPlatformAdapter
+import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.internal.PanelEntity as RtPanelEntity
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
@@ -30,6 +32,7 @@ import androidx.xr.runtime.math.Vector3
 /** Provides implementations for common Panel functionality. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public sealed class BasePanelEntity<out RtPanelEntityType : RtPanelEntity>(
+    private val lifecycleManager: LifecycleManager,
     private val rtPanelEntity: RtPanelEntityType,
     entityManager: EntityManager,
 ) : BaseEntity<RtPanelEntity>(rtPanelEntity, entityManager) {
@@ -108,20 +111,50 @@ public sealed class BasePanelEntity<out RtPanelEntityType : RtPanelEntity>(
     public fun setSizeInPixels(pixelDimensions: IntSize2d) {
         rtPanelEntity.sizeInPixels = pixelDimensions.toRtPixelDimensions()
     }
+
+    /**
+     * Gets the perceived resolution of the entity in the camera view.
+     *
+     * This API is only intended for use in Full Space Mode and will return
+     * [PerceivedResolutionResult.InvalidCameraView] in Home Space Mode.
+     *
+     * The entity's own rotation and the camera's viewing direction are disregarded; this value
+     * represents the dimensions of the entity on the camera view if its largest surface was facing
+     * the camera without changing the distance of the entity to the camera.
+     *
+     * @return A [PerceivedResolutionResult] which encapsulates the outcome:
+     *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
+     *       is successful.
+     *     - [PerceivedResolutionResult.EntityTooClose] if the entity is too close to the camera.
+     *     - [PerceivedResolutionResult.InvalidCameraView] if the camera information required for
+     *       the calculation is invalid or unavailable.
+     *
+     * @throws [IllegalStateException] if [Session.config.headTracking] is set to
+     *   [Config.HeadTrackingMode.DISABLED].
+     * @see PerceivedResolutionResult
+     */
+    public fun getPerceivedResolution(): PerceivedResolutionResult {
+        check(lifecycleManager.config.headTracking != Config.HeadTrackingMode.DISABLED) {
+            "Config.HeadTrackingMode is set to Disabled."
+        }
+        return rtEntity.getPerceivedResolution().toPerceivedResolutionResult()
+    }
 }
 
 /** PanelEntity creates a spatial panel in Android XR. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public open class PanelEntity
 internal constructor(
+    lifecycleManager: LifecycleManager,
     rtEntity: RtPanelEntity,
     entityManager: EntityManager,
     // TODO(ricknels): move isMainPanelEntity check to JxrPlatformAdapter.
     public val isMainPanelEntity: Boolean = false,
-) : BasePanelEntity<RtPanelEntity>(rtEntity, entityManager) {
+) : BasePanelEntity<RtPanelEntity>(lifecycleManager, rtEntity, entityManager) {
 
     public companion object {
         internal fun create(
+            lifecycleManager: LifecycleManager,
             context: Context,
             adapter: JxrPlatformAdapter,
             entityManager: EntityManager,
@@ -131,6 +164,7 @@ internal constructor(
             pose: Pose = Pose.Identity,
         ): PanelEntity =
             PanelEntity(
+                lifecycleManager,
                 adapter.createPanelEntity(
                     context,
                     pose,
@@ -143,6 +177,7 @@ internal constructor(
             )
 
         internal fun create(
+            lifecycleManager: LifecycleManager,
             context: Context,
             adapter: JxrPlatformAdapter,
             entityManager: EntityManager,
@@ -152,6 +187,7 @@ internal constructor(
             pose: Pose = Pose.Identity,
         ): PanelEntity =
             PanelEntity(
+                lifecycleManager,
                 adapter.createPanelEntity(
                     context,
                     pose,
@@ -183,6 +219,7 @@ internal constructor(
             pose: Pose = Pose.Identity,
         ): PanelEntity =
             PanelEntity.create(
+                session.runtime.lifecycleManager,
                 session.activity,
                 session.platformAdapter,
                 session.scene.entityManager,
@@ -213,6 +250,7 @@ internal constructor(
             pose: Pose = Pose.Identity,
         ): PanelEntity =
             PanelEntity.create(
+                session.runtime.lifecycleManager,
                 session.activity,
                 session.platformAdapter,
                 session.scene.entityManager,
@@ -224,33 +262,15 @@ internal constructor(
 
         /** Returns the PanelEntity backed by the main window for the Activity. */
         internal fun createMainPanelEntity(
+            lifecycleManager: LifecycleManager,
             adapter: JxrPlatformAdapter,
             entityManager: EntityManager,
         ): PanelEntity =
-            PanelEntity(adapter.mainPanelEntity, entityManager, isMainPanelEntity = true)
-    }
-
-    /**
-     * Gets the perceived resolution of the entity in the camera view.
-     *
-     * This API is only intended for use in Full Space Mode and will return
-     * [PerceivedResolutionResult.InvalidCameraView] in Home Space Mode.
-     *
-     * The entity's own rotation and the camera's viewing direction are disregarded; this value
-     * represents the dimensions of the entity on the camera view if its largest surface was facing
-     * the camera without changing the distance of the entity to the camera.
-     *
-     * @return A [PerceivedResolutionResult] which encapsulates the outcome:
-     *     - [PerceivedResolutionResult.Success] containing the [PixelDimensions] if the calculation
-     *       is successful.
-     *     - [PerceivedResolutionResult.EntityTooClose] if the entity is too close to the camera.
-     *     - [PerceivedResolutionResult.InvalidCameraView] if the camera information required for
-     *       the calculation is invalid or unavailable.
-     *
-     * @throws IllegalStateException if HEAD_TRACKING permission is not configured.
-     * @see PerceivedResolutionResult
-     */
-    public fun getPerceivedResolution(): PerceivedResolutionResult {
-        return rtEntity.getPerceivedResolution().toPerceivedResolutionResult()
+            PanelEntity(
+                lifecycleManager,
+                adapter.mainPanelEntity,
+                entityManager,
+                isMainPanelEntity = true,
+            )
     }
 }

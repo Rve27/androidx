@@ -247,6 +247,7 @@ class EntityManagerTest {
     private fun createPanelEntity() {
         panelEntity =
             PanelEntity.create(
+                session.runtime.lifecycleManager,
                 activity,
                 mockPlatformAdapter,
                 entityManager,
@@ -276,6 +277,7 @@ class EntityManagerTest {
     private fun createActivityPanelEntity() {
         activityPanelEntity =
             ActivityPanelEntity.create(
+                session.runtime.lifecycleManager,
                 mockPlatformAdapter,
                 entityManager,
                 IntSize2d(640, 480),

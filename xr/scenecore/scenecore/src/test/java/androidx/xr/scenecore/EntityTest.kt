@@ -38,6 +38,7 @@ import androidx.xr.runtime.internal.GltfModelResource as RtGltfModelResource
 import androidx.xr.runtime.internal.HitTestResult as RtHitTestResult
 import androidx.xr.runtime.internal.InputEventListener as RtInputEventListener
 import androidx.xr.runtime.internal.JxrPlatformAdapter
+import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.internal.PanelEntity as RtPanelEntity
 import androidx.xr.runtime.internal.PerceivedResolutionResult as RtPerceivedResolutionResult
 import androidx.xr.runtime.internal.PixelDimensions as RtPixelDimensions
@@ -92,6 +93,8 @@ class EntityTest {
     private val mockSurfaceEntity = mock<RtSurfaceEntity>()
     private val entityManager = EntityManager()
     private lateinit var session: Session
+
+    private lateinit var lifecycleManager: LifecycleManager
     private lateinit var activitySpace: ActivitySpace
     private lateinit var gltfModel: GltfModel
     private lateinit var gltfModelEntity: GltfModelEntity
@@ -293,11 +296,14 @@ class EntityTest {
             .thenReturn(mockSurfaceEntity)
         whenever(mockPlatformAdapter.mainPanelEntity).thenReturn(mockPanelEntityImpl)
         session = Session(activity, fakeRuntimeFactory.createRuntime(activity), mockPlatformAdapter)
+        lifecycleManager = session.runtime.lifecycleManager
+        session.configure(Config(headTracking = Config.HeadTrackingMode.LAST_KNOWN))
         activitySpace = ActivitySpace.create(mockPlatformAdapter, entityManager)
         gltfModel = GltfModel.create(session, "test.glb").get()
         gltfModelEntity = GltfModelEntity.create(mockPlatformAdapter, entityManager, gltfModel)
         panelEntity =
             PanelEntity.create(
+                lifecycleManager = lifecycleManager,
                 context = activity,
                 adapter = mockPlatformAdapter,
                 entityManager = entityManager,
@@ -316,6 +322,7 @@ class EntityTest {
             )
         activityPanelEntity =
             ActivityPanelEntity.create(
+                lifecycleManager = lifecycleManager,
                 mockPlatformAdapter,
                 entityManager = entityManager,
                 IntSize2d(640, 480),
@@ -325,6 +332,7 @@ class EntityTest {
         contentlessEntity = ContentlessEntity.create(mockPlatformAdapter, entityManager, "test")
         surfaceEntity =
             SurfaceEntity.create(
+                lifecycleManager = lifecycleManager,
                 mockPlatformAdapter,
                 entityManager,
                 SurfaceEntity.StereoMode.SIDE_BY_SIDE,
@@ -700,6 +708,33 @@ class EntityTest {
         assertThat(successResult.perceivedResolution.width).isEqualTo(100)
         assertThat(successResult.perceivedResolution.height).isEqualTo(200)
         verify(mockActivityPanelEntity).getPerceivedResolution()
+    }
+
+    @Test
+    fun panelEntity_getPerceivedResolution_headTrackingDisabled_throwsIllegalStateException() {
+        session.configure(Config(headTracking = Config.HeadTrackingMode.DISABLED))
+
+        val exception =
+            assertFailsWith<IllegalStateException> { panelEntity.getPerceivedResolution() }
+        assertThat(exception.message).isEqualTo("Config.HeadTrackingMode is set to Disabled.")
+    }
+
+    @Test
+    fun surfaceEntity_getPerceivedResolution_headTrackingDisabled_throwsIllegalStateException() {
+        session.configure(Config(headTracking = Config.HeadTrackingMode.DISABLED))
+
+        val exception =
+            assertFailsWith<IllegalStateException> { surfaceEntity.getPerceivedResolution() }
+        assertThat(exception.message).isEqualTo("Config.HeadTrackingMode is set to Disabled.")
+    }
+
+    @Test
+    fun activityPanelEntity_getPerceivedResolution_headTrackingDisabled_throwsIllegalStateException() {
+        session.configure(Config(headTracking = Config.HeadTrackingMode.DISABLED))
+
+        val exception =
+            assertFailsWith<IllegalStateException> { activityPanelEntity.getPerceivedResolution() }
+        assertThat(exception.message).isEqualTo("Config.HeadTrackingMode is set to Disabled.")
     }
 
     @Test
