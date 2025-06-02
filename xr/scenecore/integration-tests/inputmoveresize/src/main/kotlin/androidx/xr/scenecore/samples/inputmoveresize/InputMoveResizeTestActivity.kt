@@ -152,7 +152,6 @@ class InputMoveResizeTestActivity : AppCompatActivity() {
         val mainPanelScaleInZ = findViewById<CheckBox>(R.id.scaleInZ)
         mainPanelScaleInZ.isChecked = true
         var mainPanelMovableComponent = MovableComponent.create(session)
-        mainPanelMovableComponent.size = session.scene.mainPanelEntity.getSize()
 
         fun updateMainPanelMovableComponent() {
             if (mainPanelMovableActive) {
@@ -165,11 +164,11 @@ class InputMoveResizeTestActivity : AppCompatActivity() {
                     mainPanelScaleInZ.isChecked,
                     emptySet(),
                 )
-
             when (mainPanelSystemMovable.isChecked) {
                 true -> mainPanelMovableComponent.removeMoveListener(moveListener)
                 false -> mainPanelMovableComponent.addMoveListener(executor, moveListener)
             }
+            mainPanelMovableComponent.size = session.scene.mainPanelEntity.getSize()
         }
 
         val mainPanelCheckBoxListener =
