@@ -743,10 +743,16 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
             }
         }
 
-        project.configureProjectForApiTasks(AndroidMultiplatformApiTaskConfig, androidXExtension)
-        project.configureProjectForKzipTasks(AndroidMultiplatformApiTaskConfig, androidXExtension)
-
         kotlinMultiplatformAndroidComponentsExtension.onVariants { variant ->
+            project.configureProjectForApiTasks(
+                AndroidMultiplatformApiTaskConfig(variant),
+                androidXExtension,
+            )
+            project.configureProjectForKzipTasks(
+                AndroidMultiplatformApiTaskConfig(variant),
+                androidXExtension,
+            )
+
             project.configureMultiplatformSourcesForAndroid(
                 variant.name,
                 kotlinMultiplatformAndroidTarget,

@@ -29,6 +29,7 @@ import androidx.build.stableaidl.setupWithStableAidlPlugin
 import androidx.build.version
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.attributes.BuildTypeAttr
+import com.android.build.api.variant.KotlinMultiplatformAndroidVariant
 import com.android.build.api.variant.LibraryVariant
 import java.io.File
 import org.gradle.api.GradleException
@@ -51,7 +52,8 @@ object JavaApiTaskConfig : ApiTaskConfig()
 
 object KmpApiTaskConfig : ApiTaskConfig()
 
-object AndroidMultiplatformApiTaskConfig : ApiTaskConfig()
+data class AndroidMultiplatformApiTaskConfig(val variant: KotlinMultiplatformAndroidVariant) :
+    ApiTaskConfig()
 
 fun AndroidXExtension.shouldConfigureApiTasks(): Boolean {
     if (!project.state.executed) {
@@ -174,7 +176,7 @@ internal fun Project.configureCompilationInputsAndManifest(
                 config.variant.artifacts.get(SingleArtifact.MERGED_MANIFEST)
         }
         is AndroidMultiplatformApiTaskConfig -> {
-            CompilationInputs.fromKmpAndroidTarget(project) to null
+            CompilationInputs.fromKmpAndroidTarget(config.variant, project) to null
         }
         is KmpApiTaskConfig -> {
             CompilationInputs.fromKmpJvmTarget(project) to null

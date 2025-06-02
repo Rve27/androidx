@@ -1,5 +1,5 @@
 // Baseline format: 1.0
 AddedFinal: androidx.room.RoomDatabase#getMDatabase():
-    Binary breaking change: Method androidx.room.RoomDatabase.getMDatabase has added 'final' qualifier
+    Method androidx.room.RoomDatabase.getMDatabase has added 'final' qualifier
 AddedFinal: androidx.room.RoomDatabase#setMDatabase(androidx.sqlite.db.SupportSQLiteDatabase):
-    Binary breaking change: Method androidx.room.RoomDatabase.setMDatabase has added 'final' qualifier
+    Method androidx.room.RoomDatabase.setMDatabase has added 'final' qualifier
