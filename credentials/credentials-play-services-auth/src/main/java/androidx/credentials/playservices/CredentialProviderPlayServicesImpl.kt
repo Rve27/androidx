@@ -52,6 +52,7 @@ import androidx.credentials.playservices.controllers.identityauth.createpassword
 import androidx.credentials.playservices.controllers.identityauth.createpublickeycredential.CredentialProviderCreatePublicKeyCredentialController
 import androidx.credentials.playservices.controllers.identityauth.getsigninintent.CredentialProviderGetSignInIntentController
 import androidx.credentials.playservices.controllers.identitycredentials.createdigitalcredential.CreateDigitalCredentialController
+import androidx.credentials.playservices.controllers.identitycredentials.createpasswordcredential.CreatePasswordCredentialController
 import androidx.credentials.playservices.controllers.identitycredentials.createpublickeycredential.CreatePublicKeyCredentialController
 import androidx.credentials.playservices.controllers.identitycredentials.getcredential.GetCredentialController
 import androidx.credentials.playservices.controllers.identitycredentials.getdigitalcredential.CredentialProviderGetDigitalCredentialController
@@ -127,6 +128,7 @@ class CredentialProviderPlayServicesImpl(private val context: Context) : Credent
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     @SuppressWarnings("deprecated")
     override fun onCreateCredential(
         context: Context,
@@ -140,11 +142,16 @@ class CredentialProviderPlayServicesImpl(private val context: Context) : Credent
         }
         when (request) {
             is CreatePasswordRequest -> {
-                CredentialProviderCreatePasswordController.getInstance(context)
-                    .invokePlayServices(request, callback, executor, cancellationSignal)
+                if (isAvailableOnDevice(PRE_U_MIN_GMS_APK_VERSION)) {
+                    CreatePasswordCredentialController.getInstance(context)
+                        .invokePlayServices(request, callback, executor, cancellationSignal)
+                } else {
+                    CredentialProviderCreatePasswordController.getInstance(context)
+                        .invokePlayServices(request, callback, executor, cancellationSignal)
+                }
             }
             is CreatePublicKeyCredentialRequest -> {
-                if (request.isConditional) {
+                if (isAvailableOnDevice(PRE_U_MIN_GMS_APK_VERSION) || request.isConditional) {
                     CreatePublicKeyCredentialController.getInstance(context)
                         .invokePlayServices(request, callback, executor, cancellationSignal)
                 } else {
@@ -152,6 +159,7 @@ class CredentialProviderPlayServicesImpl(private val context: Context) : Credent
                         .invokePlayServices(request, callback, executor, cancellationSignal)
                 }
             }
+
             is CreateRestoreCredentialRequest -> {
                 if (!isAvailableOnDevice(MIN_GMS_APK_VERSION_RESTORE_CRED)) {
                     cancellationReviewerWithCallback(cancellationSignal) {
@@ -170,21 +178,8 @@ class CredentialProviderPlayServicesImpl(private val context: Context) : Credent
                     .invokePlayServices(request, callback, executor, cancellationSignal)
             }
             is CreateDigitalCredentialRequest -> {
-                if (Build.VERSION.SDK_INT >= 23) {
-                    CreateDigitalCredentialController(context)
-                        .invokePlayServices(request, callback, executor, cancellationSignal)
-                } else {
-                    cancellationReviewerWithCallback(cancellationSignal) {
-                        executor.execute {
-                            callback.onError(
-                                CreateCredentialProviderConfigurationException(
-                                    "this feature requires the minimum API level to be 23"
-                                )
-                            )
-                        }
-                    }
-                    return
-                }
+                CreateDigitalCredentialController(context)
+                    .invokePlayServices(request, callback, executor, cancellationSignal)
             }
             else -> {
                 throw UnsupportedOperationException(
