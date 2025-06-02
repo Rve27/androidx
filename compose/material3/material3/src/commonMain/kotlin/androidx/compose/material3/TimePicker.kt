@@ -980,8 +980,7 @@ internal fun HorizontalTimePicker(
     autoSwitchToMinute: Boolean,
 ) {
     Row(
-        modifier =
-            modifier.semantics { isTraversalGroup = true }.padding(bottom = ClockFaceBottomMargin),
+        modifier = modifier.semantics { isTraversalGroup = true },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         HorizontalClockDisplay(state, colors)
@@ -1768,12 +1767,12 @@ private fun ClockText(
                     onClick {
                         scope.launch {
                             state.onTap(
-                                center.x,
-                                center.y,
-                                maxDist,
-                                autoSwitchToMinute,
-                                parentCenter,
-                                SnapSpec(),
+                                x = center.x,
+                                y = center.y,
+                                maxDist = maxDist,
+                                autoSwitchToMinute = autoSwitchToMinute,
+                                center = parentCenter,
+                                animationSpec = SnapSpec(),
                             )
                         }
                         true

@@ -111,7 +111,7 @@ internal fun TimePickerDialogLayout(
         TimePickerCustomLayout(
             title = title,
             actions = {
-                Row(modifier = Modifier.fillMaxWidth().height(TimePickerActionsHeight)) {
+                Row(modifier = Modifier.fillMaxWidth()) {
                     modeToggleButton?.invoke()
                     Spacer(modifier = Modifier.weight(1f))
                     dismissButton?.invoke()
@@ -333,6 +333,3 @@ value class TimePickerDisplayMode internal constructor(internal val value: Int) 
             else -> "Unknown"
         }
 }
-
-internal val TimePickerDialogPadding = 24.dp
-internal val TimePickerActionsHeight = 40.dp
