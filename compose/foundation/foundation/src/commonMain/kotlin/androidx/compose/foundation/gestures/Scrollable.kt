@@ -957,9 +957,8 @@ internal interface ScrollableDefaultFlingBehavior : FlingBehavior {
  *   [androidx.compose.foundation.pager.Pager] or
  *   [androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior].
  */
-internal val FlingBehavior.shouldBeTriggeredByMouseWheel
-    // TODO: Figure out more precise condition to trigger fling by mouse wheel.
-    get() = false // this !is ScrollableDefaultFlingBehavior
+private val FlingBehavior.shouldBeTriggeredByMouseWheel
+    get() = this !is ScrollableDefaultFlingBehavior
 
 internal class DefaultFlingBehavior(
     private var flingDecay: DecayAnimationSpec<Float>,
