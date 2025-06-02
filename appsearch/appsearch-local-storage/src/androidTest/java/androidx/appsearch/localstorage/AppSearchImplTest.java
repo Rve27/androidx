@@ -76,6 +76,7 @@ import androidx.appsearch.localstorage.visibilitystore.VisibilityToDocumentConve
 import androidx.appsearch.observer.DocumentChangeInfo;
 import androidx.appsearch.observer.ObserverSpec;
 import androidx.appsearch.observer.SchemaChangeInfo;
+import androidx.appsearch.testutil.AppSearchEmail;
 import androidx.appsearch.testutil.AppSearchTestUtils;
 import androidx.appsearch.testutil.TestObserverCallback;
 import androidx.appsearch.testutil.flags.RequiresFlagsDisabled;
@@ -776,6 +777,74 @@ public class AppSearchImplTest {
         SearchResultPage searchResultPage = mAppSearchImpl.query("package", "EmptyDatabase", "",
                 searchSpec, /*logger=*/ null);
         assertThat(searchResultPage.getResults()).isEmpty();
+    }
+
+    @Test
+    public void testQueryWithPageSizeLimit() throws Exception {
+        IcingSearchEngineOptions icingOptions =
+                IcingSearchEngineOptions.newBuilder(mUnlimitedConfig.toIcingSearchEngineOptions(
+                                mAppSearchDir.getAbsolutePath(),  /* isVMEnabled= */ false))
+                        .setEnableStrictPageByteSizeLimit(true)
+                        .build();
+        IcingSearchEngine icingSearchEngine = new IcingSearchEngine(icingOptions);
+        AppSearchConfig appSearchConfig = new AppSearchConfigImpl(
+                new UnlimitedLimitConfig(),
+                new LocalStorageIcingOptionsConfig()
+        ) {
+            @Override
+            // Set a very small page byte size limit -- this means that each search result page
+            // would normally be able to fit one result only.
+            public int getMaxPageBytesLimit() {
+                return 1;
+            }
+        };
+        mAppSearchImpl = AppSearchImpl.create(
+                mAppSearchDir,
+                appSearchConfig,
+                /*initStatsBuilder=*/ null,
+                /*visibilityChecker=*/ null,
+                /*revocableFileDescriptorStore=*/ null,
+                icingSearchEngine,
+                ALWAYS_OPTIMIZE);
+
+        // Insert schema
+        List<AppSearchSchema> schema = ImmutableList.of(AppSearchEmail.SCHEMA);
+        InternalSetSchemaResponse internalSetSchemaResponse = mAppSearchImpl.setSchema(
+                "package1",
+                "database1",
+                schema,
+                /*visibilityConfigs=*/ Collections.emptyList(),
+                /*forceOverride=*/ false,
+                /*version=*/ 0,
+                /*setSchemaStatsBuilder=*/ null);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+
+        // Insert 5 documents
+        for (int i = 0; i < 5; i++) {
+            AppSearchEmail email =
+                    new AppSearchEmail.Builder("namespace", "id" + i)
+                            .setFrom("from@example.com")
+                            .setTo("to1@example.com", "to2@example.com")
+                            .setSubject("testPut example")
+                            .setBody("This is the body of the testPut email")
+                            .build();
+            mAppSearchImpl.putDocument(
+                    "package1",
+                    "database1",
+                    email,
+                    /*sendChangeNotifications=*/ false,
+                    /*logger=*/ null);
+        }
+
+        // Search for the documents, all 5 documents should be returned despite the page size limit
+        SearchSpec searchSpec =
+                new SearchSpec.Builder().setTermMatch(
+                        TermMatchType.Code.PREFIX_VALUE).setResultCountPerPage(5).build();
+        SearchResultPage searchResultPage = mAppSearchImpl.query("package1", "database1", "",
+                searchSpec, /*logger=*/ null);
+        assertThat(searchResultPage.getResults()).hasSize(5);
+        assertThat(searchResultPage.getNextPageToken()).isEqualTo(
+                SearchResultPage.EMPTY_PAGE_TOKEN);
     }
 
     @Test

@@ -102,6 +102,7 @@ import com.google.android.icing.proto.DeleteResultProto;
 import com.google.android.icing.proto.DocumentProto;
 import com.google.android.icing.proto.DocumentStorageInfoProto;
 import com.google.android.icing.proto.GetAllNamespacesResultProto;
+import com.google.android.icing.proto.GetNextPageRequestProto;
 import com.google.android.icing.proto.GetOptimizeInfoResultProto;
 import com.google.android.icing.proto.GetResultProto;
 import com.google.android.icing.proto.GetResultSpecProto;
@@ -2617,16 +2618,82 @@ public final class AppSearchImpl implements Closeable {
                 searchSpec, scoringSpec, resultSpec);
         LogUtil.piiTrace(
                 TAG, "search, response", searchResultProto.getResultsCount(), searchResultProto);
+
+        long nextPageToken = searchResultProto.getNextPageToken();
+        int additionalPagesRetrievalLatency = 0;
+        int numAdditionalPages = 0;
+        int totalAdditionalResults = 0;
+        if (nextPageToken != SearchResultPage.EMPTY_PAGE_TOKEN
+                && searchResultProto.getResultsCount() > 0
+                && searchResultProto.getResultsCount() < resultSpec.getNumPerPage()) {
+            long additionalPageRetrievalLatencyStartMillis = SystemClock.elapsedRealtime();
+            // Did not get a full page of results in the initial search. Do getNextPage until we
+            // get a full result page or we run out of results.
+            SearchResultProto.Builder finalSearchResultProtoBuilder = SearchResultProto.newBuilder(
+                    searchResultProto);
+
+            int remainingResultCount =
+                    resultSpec.getNumPerPage() - searchResultProto.getResultsCount();
+            while (nextPageToken != SearchResultPage.EMPTY_PAGE_TOKEN && remainingResultCount > 0) {
+                GetNextPageRequestProto getNextPageRequest = GetNextPageRequestProto.newBuilder()
+                        .setNextPageToken(nextPageToken)
+                        .setMaxResultsToRetrieveFromPage(remainingResultCount)
+                        .build();
+                LogUtil.piiTrace(TAG, "getNextPage, request", getNextPageRequest);
+                SearchResultProto nextResultPageProto = mIcingSearchEngineLocked.getNextPage(
+                        getNextPageRequest);
+                LogUtil.piiTrace(
+                        TAG,
+                        "getNextPage, response",
+                        nextResultPageProto.getResultsCount(),
+                        nextResultPageProto);
+                checkSuccess(nextResultPageProto.getStatus());
+
+                ++numAdditionalPages;
+                nextPageToken = nextResultPageProto.getNextPageToken();
+                mergeSearchResultProtos(nextResultPageProto, finalSearchResultProtoBuilder);
+                if (nextResultPageProto.getResultsCount() == 0) {
+                    Log.e(TAG, "Got additional page with 0 results during search. This should"
+                            + " never happen normally. GetNextPage status code: "
+                            + nextResultPageProto.getStatus().getCode());
+                    break;
+                }
+                totalAdditionalResults += nextResultPageProto.getResultsCount();
+                remainingResultCount -= nextResultPageProto.getResultsCount();
+            }
+            searchResultProto = finalSearchResultProtoBuilder.build();
+            additionalPagesRetrievalLatency = (int)
+                    (SystemClock.elapsedRealtime() - additionalPageRetrievalLatencyStartMillis);
+        }
+
         if (sStatsBuilder != null) {
             sStatsBuilder.setStatusCode(statusProtoToResultCode(searchResultProto.getStatus()));
             if (searchSpec.hasJoinSpec()) {
                 sStatsBuilder.setJoinType(AppSearchSchema.StringPropertyConfig
                         .JOINABLE_VALUE_TYPE_QUALIFIED_ID);
             }
+            // TODO(b/421230879): Restructure QueryStats to record full stats for GetNextPage calls.
+            sStatsBuilder.setAdditionalPageCount(numAdditionalPages);
+            sStatsBuilder.setAdditionalPagesReturnedResultCount(totalAdditionalResults);
+            sStatsBuilder.setAdditionalPageRetrievalLatencyMillis(additionalPagesRetrievalLatency);
             AppSearchLoggerHelper.copyNativeStats(searchResultProto.getQueryStats(), sStatsBuilder);
         }
         checkSuccess(searchResultProto.getStatus());
         return searchResultProto;
+    }
+
+    /**
+     * Merges the results from {@code searchResultProto} into the
+     * {@code finalSearchResultProtoBuilder}.
+     */
+    private void mergeSearchResultProtos(
+            @NonNull SearchResultProto searchResultProto,
+            SearchResultProto.@NonNull Builder finalSearchResultProtoBuilder) {
+        finalSearchResultProtoBuilder
+                .setStatus(searchResultProto.getStatus())
+                .addAllResults(searchResultProto.getResultsList())
+                .setNextPageToken(searchResultProto.getNextPageToken())
+                .setPageTokenNotFound(searchResultProto.getPageTokenNotFound());
     }
 
     /**
