@@ -224,6 +224,34 @@ package androidx.xr.compose.subspace.layout {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier alpha(androidx.xr.compose.subspace.layout.SubspaceModifier, @FloatRange(from=0.0, to=1.0) float alpha);
   }
 
+  public final class MovableKt {
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier movable(androidx.xr.compose.subspace.layout.SubspaceModifier, optional boolean enabled, optional boolean stickyPose, optional boolean scaleWithDistance, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.MoveStartEvent,kotlin.Unit>? onMoveStart, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.MoveEndEvent,kotlin.Unit>? onMoveEnd, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.MoveEvent,java.lang.Boolean>? onMove);
+  }
+
+  public final class MoveEndEvent extends androidx.xr.compose.subspace.layout.MoveEvent {
+    ctor public MoveEndEvent();
+    ctor public MoveEndEvent(optional androidx.xr.runtime.math.Pose pose, optional float scale, optional androidx.xr.compose.unit.IntVolumeSize size);
+  }
+
+  public class MoveEvent {
+    ctor public MoveEvent();
+    ctor public MoveEvent(optional androidx.xr.runtime.math.Pose pose, optional float scale, optional androidx.xr.compose.unit.IntVolumeSize size);
+    method public final androidx.xr.runtime.math.Pose getPose();
+    method public final float getScale();
+    method public final androidx.xr.compose.unit.IntVolumeSize getSize();
+    method public final void setPose(androidx.xr.runtime.math.Pose);
+    method public final void setScale(float);
+    method public final void setSize(androidx.xr.compose.unit.IntVolumeSize);
+    property public final androidx.xr.runtime.math.Pose pose;
+    property public final float scale;
+    property public final androidx.xr.compose.unit.IntVolumeSize size;
+  }
+
+  public final class MoveStartEvent extends androidx.xr.compose.subspace.layout.MoveEvent {
+    ctor public MoveStartEvent();
+    ctor public MoveStartEvent(optional androidx.xr.runtime.math.Pose pose, optional float scale, optional androidx.xr.compose.unit.IntVolumeSize size);
+  }
+
   public interface ParentLayoutParamsAdjustable {
   }
 
