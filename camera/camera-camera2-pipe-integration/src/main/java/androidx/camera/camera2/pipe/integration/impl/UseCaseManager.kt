@@ -821,6 +821,7 @@ constructor(
 
         val sessionSurfacesConfigs = getSessionSurfacesConfigs()
 
+        // TODO: b/406367951 - Properly pass feature combo info for MeteringRepeating
         return supportedSurfaceCombination
             .checkSupported(
                 SupportedSurfaceCombination.FeatureSettings(
@@ -828,8 +829,6 @@ constructor(
                     getRequiredMaxBitDepth(attachedSurfaceInfoList),
                     isPreviewStabilizationOn(),
                     isUltraHdrOn(),
-                    // TODO: b/406367951 - Properly pass feature combo info for MeteringRepeating
-                    requiresFeatureComboQuery = false,
                 ),
                 mutableListOf<SurfaceConfig>().apply {
                     addAll(sessionSurfacesConfigs)

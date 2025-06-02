@@ -276,7 +276,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -301,7 +300,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -326,7 +324,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -351,7 +348,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -376,7 +372,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -401,7 +396,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -426,7 +420,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -451,7 +444,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -476,7 +468,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -504,7 +495,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -532,7 +522,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -560,7 +549,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -588,7 +576,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -613,7 +600,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.DEFAULT,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -640,7 +626,6 @@ class SupportedSurfaceCombinationTest {
                     SupportedSurfaceCombination.FeatureSettings(
                         CameraMode.CONCURRENT_CAMERA,
                         DynamicRange.BIT_DEPTH_8_BIT,
-                        requiresFeatureComboQuery = false,
                     ),
                     combination.surfaceConfigList,
                 )
@@ -673,7 +658,6 @@ class SupportedSurfaceCombinationTest {
                         SupportedSurfaceCombination.FeatureSettings(
                             CameraMode.ULTRA_HIGH_RESOLUTION_CAMERA,
                             DynamicRange.BIT_DEPTH_8_BIT,
-                            requiresFeatureComboQuery = false,
                         ),
                         it.surfaceConfigList,
                     )
@@ -701,7 +685,6 @@ class SupportedSurfaceCombinationTest {
                 CameraMode.DEFAULT,
                 DynamicRange.BIT_DEPTH_8_BIT,
                 isHighSpeedOn = true,
-                requiresFeatureComboQuery = false,
             )
 
         // The expected SurfaceConfig is PRIV + RECORD because the max high speed size 1920x1080 is
@@ -1983,7 +1966,6 @@ class SupportedSurfaceCombinationTest {
                             CameraMode.DEFAULT,
                             requiredMaxBitDepth = BIT_DEPTH_10_BIT,
                             isUltraHdrOn = true,
-                            requiresFeatureComboQuery = false,
                         ),
                         it.surfaceConfigList,
                     )
@@ -2012,7 +1994,6 @@ class SupportedSurfaceCombinationTest {
                             CameraMode.DEFAULT,
                             requiredMaxBitDepth = DynamicRange.BIT_DEPTH_8_BIT,
                             isUltraHdrOn = true,
-                            requiresFeatureComboQuery = false,
                         ),
                         it.surfaceConfigList,
                     )
@@ -2119,7 +2100,6 @@ class SupportedSurfaceCombinationTest {
                         SupportedSurfaceCombination.FeatureSettings(
                             CameraMode.DEFAULT,
                             BIT_DEPTH_10_BIT,
-                            requiresFeatureComboQuery = false,
                         ),
                         it.surfaceConfigList,
                     )
@@ -3727,7 +3707,7 @@ class SupportedSurfaceCombinationTest {
     }
 
     @Test
-    fun filterSupportedSizes_featureComboNotRequired_withoutTargetFpsRange_filtersCorrectly() {
+    fun filterSupportedSizes_notFeatureComboInvocation_withoutTargetFpsRange_filtersCorrectly() {
         // Arrange
         val useCaseConfig = createUseCase(CaptureType.IMAGE_CAPTURE).currentConfig
         val supportedSurfaceCombination = createSupportedSurfaceCombinationWithSetup()
@@ -3758,7 +3738,7 @@ class SupportedSurfaceCombinationTest {
     }
 
     @Test
-    fun filterSupportedSizes_featureComboNotRequired_withTargetFpsRange_filtersCorrectly() {
+    fun filterSupportedSizes_notFeatureComboInvocation_withTargetFpsRange_filtersCorrectly() {
         // Arrange
         val useCaseConfig = createUseCase(CaptureType.IMAGE_CAPTURE).currentConfig
         val supportedSurfaceCombination = createSupportedSurfaceCombinationWithSetup()
@@ -3789,7 +3769,7 @@ class SupportedSurfaceCombinationTest {
     }
 
     @Test
-    fun filterSupportedSizes_featureComboRequired_withoutTargetFpsRange_filtersCorrectly() {
+    fun filterSupportedSizes_featureComboInvocationButFcqNotRequired_filtersCorrectly() {
         // Arrange
         val useCaseConfig = createUseCase(CaptureType.IMAGE_CAPTURE).currentConfig
         val supportedSurfaceCombination = createSupportedSurfaceCombinationWithSetup()
@@ -3810,10 +3790,51 @@ class SupportedSurfaceCombinationTest {
         val filteredSizes =
             supportedSurfaceCombination.filterSupportedSizes(
                 useCaseConfigToSizesMap,
-                createFeatureSettings(requiresFeatureComboQuery = true),
+                createFeatureSettings(
+                    isFeatureComboInvocation = true,
+                    requiresFeatureComboQuery = false,
+                ),
             )
 
-        // Assert: Unsupported sizes are filtered out
+        // Assert: Unsupported sizes are filtered out. Since the capture session tables are used in
+        // this test, not FCQ table, S1440P_16_9 is transformed to ConfigSize#RECORD and thus
+        // filtered out.
+        assertThat(filteredSizes.getValue(useCaseConfig))
+            .containsExactly(maximumSize, recordSize, previewSize)
+            .inOrder()
+    }
+
+    @Test
+    fun filterSupportedSizes_featureComboInvocationAndFcqRequired_filtersCorrectly() {
+        // Arrange
+        val useCaseConfig = createUseCase(CaptureType.IMAGE_CAPTURE).currentConfig
+        val supportedSurfaceCombination = createSupportedSurfaceCombinationWithSetup()
+        val useCaseConfigToSizesMap =
+            mapOf(
+                useCaseConfig to
+                    listOf(
+                        maximumSize, // maps to MAX size with max FPS of 20
+                        recordSize, // maps to UHD size with max FPS of 25
+                        S1440P_16_9.relatedFixedSize!!, // maps to 1440P_16_9 size with 30 max FPS
+                        S1440P_4_3.relatedFixedSize!!, // ConfigSize.NOT_SUPPORT, not in src table
+                        previewSize, // maps to 720P_16_9 size with max FPS of 45
+                        S720P_16_9.relatedFixedSize!!, // maps to 720P_16_9 size with 45 max FPS
+                    )
+            )
+
+        // Act
+        val filteredSizes =
+            supportedSurfaceCombination.filterSupportedSizes(
+                useCaseConfigToSizesMap,
+                createFeatureSettings(
+                    isFeatureComboInvocation = true,
+                    requiresFeatureComboQuery = true,
+                ),
+            )
+
+        // Assert: Unsupported sizes are filtered out. Since the FCQ table is used in this test, not
+        // the capture session tables, S1440P_16_9 is transformed to a distinct ConfigSize and thus
+        // not filtered out.
         assertThat(filteredSizes.getValue(useCaseConfig))
             .containsExactly(maximumSize, recordSize, S1440P_16_9.relatedFixedSize, previewSize)
             .inOrder()
@@ -3842,12 +3863,14 @@ class SupportedSurfaceCombinationTest {
             supportedSurfaceCombination.filterSupportedSizes(
                 useCaseConfigToSizesMap,
                 createFeatureSettings(
+                    isFeatureComboInvocation = true,
                     requiresFeatureComboQuery = true,
                     targetFpsRange = Range(22, 30),
                 ),
             )
 
-        // Assert: Unsupported sizes are filtered out
+        // Assert: Unsupported sizes are filtered out, e.g. recordSize is filtered out since it
+        // doesn't have a high enough max FPS.
         assertThat(filteredSizes.getValue(useCaseConfig))
             .containsExactly(S1440P_16_9.relatedFixedSize, S720P_16_9.relatedFixedSize)
             .inOrder()
@@ -4114,12 +4137,14 @@ class SupportedSurfaceCombinationTest {
     }
 
     private fun createFeatureSettings(
+        isFeatureComboInvocation: Boolean = false,
         requiresFeatureComboQuery: Boolean = false,
         targetFpsRange: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
     ) =
         SupportedSurfaceCombination.FeatureSettings(
             CameraMode.DEFAULT,
             DynamicRange.BIT_DEPTH_8_BIT,
+            isFeatureComboInvocation = isFeatureComboInvocation,
             requiresFeatureComboQuery = requiresFeatureComboQuery,
             targetFpsRange = targetFpsRange,
         )

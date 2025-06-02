@@ -3803,8 +3803,14 @@ class SupportedSurfaceCombinationTest {
         }
     }
 
+    // //////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // filterSupportedSizes tests
+    //
+    // //////////////////////////////////////////////////////////////////////////////////////////
+
     @Test
-    fun filterSupportedSizes_configSrcCaptureSessionTables_withoutTargetFpsRange_filtersCorrectly() {
+    fun filterSupportedSizes_notFeatureComboInvocation_withoutTargetFpsRange_filtersCorrectly() {
         // Arrange
         val useCaseConfig = createUseCase(CaptureType.IMAGE_CAPTURE).currentConfig
         val supportedSurfaceCombination = createSupportedSurfaceCombination()
@@ -3836,7 +3842,7 @@ class SupportedSurfaceCombinationTest {
     }
 
     @Test
-    fun filterSupportedSizes_configSrcCaptureSessionTables_withTargetFpsRange_filtersCorrectly() {
+    fun filterSupportedSizes_notFeatureComboInvocation_withTargetFpsRange_filtersCorrectly() {
         // Arrange
         val useCaseConfig = createUseCase(CaptureType.IMAGE_CAPTURE).currentConfig
         val supportedSurfaceCombination = createSupportedSurfaceCombination()
@@ -3867,40 +3873,14 @@ class SupportedSurfaceCombinationTest {
             .inOrder()
     }
 
-    @Test
-    fun filterSupportedSizes_configSrcFeatureComboTable_withoutTargetFpsRange_filtersCorrectly() {
-        // Arrange
-        val useCaseConfig = createUseCase(CaptureType.IMAGE_CAPTURE).currentConfig
-        val supportedSurfaceCombination = createSupportedSurfaceCombination()
-        val useCaseConfigToSizesMap =
-            mapOf(
-                useCaseConfig to
-                    listOf(
-                        MAXIMUM_SIZE, // maps to MAX size with max FPS of 20
-                        RECORD_SIZE, // maps to UHD size with max FPS of 25
-                        S1440P_16_9.relatedFixedSize, // maps to 1440P_16_9 size with max FPS of 30
-                        S1440P_4_3.relatedFixedSize, // ConfigSize.NOT_SUPPORT, not in FCombo table
-                        PREVIEW_SIZE, // maps to 720P_16_9 size with max FPS of 45
-                        S720P_16_9.relatedFixedSize, // maps to 720P_16_9 size with max FPS of 45
-                    )
-            )
-
-        // Act
-        val filteredSizes =
-            supportedSurfaceCombination.filterSupportedSizes(
-                useCaseConfigToSizesMap,
-                createFeatureSettings(requiresFeatureComboQuery = true),
-                false,
-            )
-
-        // Assert: Unsupported sizes are filtered out
-        assertThat(filteredSizes.getValue(useCaseConfig))
-            .containsExactly(MAXIMUM_SIZE, RECORD_SIZE, S1440P_16_9.relatedFixedSize, PREVIEW_SIZE)
-            .inOrder()
-    }
+    // //////////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Feature combination tests
+    //
+    // //////////////////////////////////////////////////////////////////////////////////////////
 
     @Test
-    fun filterSupportedSizes_configSrcFeatureComboTable_withTargetFpsRange_filtersCorrectly() {
+    fun filterSupportedSizes_featureComboInvocationButFcqNotRequired_filtersCorrectly() {
         // Arrange
         val useCaseConfig = createUseCase(CaptureType.IMAGE_CAPTURE).currentConfig
         val supportedSurfaceCombination = createSupportedSurfaceCombination()
@@ -3922,7 +3902,81 @@ class SupportedSurfaceCombinationTest {
             supportedSurfaceCombination.filterSupportedSizes(
                 useCaseConfigToSizesMap,
                 createFeatureSettings(
+                    isFeatureComboInvocation = true,
+                    requiresFeatureComboQuery = false,
+                ),
+                false,
+            )
+
+        // Assert: Unsupported sizes are filtered out. Since the capture session tables are used in
+        // this test, not FCQ table, S1440P_16_9 is transformed to ConfigSize#RECORD and thus
+        // filtered out.
+        assertThat(filteredSizes.getValue(useCaseConfig))
+            .containsExactly(MAXIMUM_SIZE, RECORD_SIZE, PREVIEW_SIZE)
+            .inOrder()
+    }
+
+    @Test
+    fun filterSupportedSizes_featureComboInvocationAndFcqRequired_filtersCorrectly() {
+        // Arrange
+        val useCaseConfig = createUseCase(CaptureType.IMAGE_CAPTURE).currentConfig
+        val supportedSurfaceCombination = createSupportedSurfaceCombination()
+        val useCaseConfigToSizesMap =
+            mapOf(
+                useCaseConfig to
+                    listOf(
+                        MAXIMUM_SIZE, // maps to MAX size with max FPS of 20
+                        RECORD_SIZE, // maps to UHD size with max FPS of 25
+                        S1440P_16_9.relatedFixedSize, // maps to 1440P_16_9 size with max FPS of 30
+                        S1440P_4_3.relatedFixedSize, // ConfigSize.NOT_SUPPORT, not in FCombo table
+                        PREVIEW_SIZE, // maps to 720P_16_9 size with max FPS of 45
+                        S720P_16_9.relatedFixedSize, // maps to 720P_16_9 size with max FPS of 45
+                    )
+            )
+
+        // Act
+        val filteredSizes =
+            supportedSurfaceCombination.filterSupportedSizes(
+                useCaseConfigToSizesMap,
+                createFeatureSettings(
+                    isFeatureComboInvocation = true,
                     requiresFeatureComboQuery = true,
+                ),
+                false,
+            )
+
+        // Assert: Unsupported sizes are filtered out. Since the FCQ table is used in this test, not
+        // the capture session tables, S1440P_16_9 is transformed to a distinct ConfigSize and thus
+        // not filtered out.
+        assertThat(filteredSizes.getValue(useCaseConfig))
+            .containsExactly(MAXIMUM_SIZE, RECORD_SIZE, S1440P_16_9.relatedFixedSize, PREVIEW_SIZE)
+            .inOrder()
+    }
+
+    @Test
+    fun filterSupportedSizes_featureComboQueryRequired_withTargetFpsRange_filtersCorrectly() {
+        // Arrange
+        val useCaseConfig = createUseCase(CaptureType.IMAGE_CAPTURE).currentConfig
+        val supportedSurfaceCombination = createSupportedSurfaceCombination()
+        val useCaseConfigToSizesMap =
+            mapOf(
+                useCaseConfig to
+                    listOf(
+                        MAXIMUM_SIZE, // maps to MAX size with max FPS of 20
+                        RECORD_SIZE, // maps to UHD size with max FPS of 25
+                        S1440P_16_9.relatedFixedSize, // maps to 1440P_16_9 size with max FPS of 30
+                        S1440P_4_3.relatedFixedSize, // ConfigSize.NOT_SUPPORT, not in FCombo table
+                        PREVIEW_SIZE, // maps to 720P_16_9 size with max FPS of 45
+                        S720P_16_9.relatedFixedSize, // maps to 720P_16_9 size with max FPS of 45
+                    )
+            )
+
+        // Act
+        val filteredSizes =
+            supportedSurfaceCombination.filterSupportedSizes(
+                useCaseConfigToSizesMap,
+                createFeatureSettings(
+                    isFeatureComboInvocation = true,
                     targetFpsRange = Range(22, 30),
                 ),
                 false,
@@ -3933,12 +3987,6 @@ class SupportedSurfaceCombinationTest {
             .containsExactly(S1440P_16_9.relatedFixedSize, S720P_16_9.relatedFixedSize)
             .inOrder()
     }
-
-    // //////////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Feature combination tests
-    //
-    // //////////////////////////////////////////////////////////////////////////////////////////
 
     @Test
     fun checkSupported_featureComboQueryNotRequiredInSettings_featureCombinationQueryNotInvoked() {
@@ -4674,6 +4722,7 @@ class SupportedSurfaceCombinationTest {
         isPreviewStabilizationOn: Boolean = false,
         isUltraHdrOn: Boolean = false,
         isHighSpeedOn: Boolean = false,
+        isFeatureComboInvocation: Boolean = false,
         requiresFeatureComboQuery: Boolean = false,
         targetFpsRange: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
     ): FeatureSettings {
@@ -4684,6 +4733,7 @@ class SupportedSurfaceCombinationTest {
             isPreviewStabilizationOn,
             isUltraHdrOn,
             isHighSpeedOn,
+            isFeatureComboInvocation,
             requiresFeatureComboQuery,
             targetFpsRange,
         )

@@ -266,7 +266,6 @@ class StreamUseCaseTest() {
                 SupportedSurfaceCombination.FeatureSettings(
                     CameraMode.CONCURRENT_CAMERA,
                     DynamicRange.BIT_DEPTH_8_BIT,
-                    requiresFeatureComboQuery = false,
                 )
             )
         )
@@ -279,7 +278,6 @@ class StreamUseCaseTest() {
                 SupportedSurfaceCombination.FeatureSettings(
                     CameraMode.DEFAULT,
                     DynamicRange.BIT_DEPTH_10_BIT,
-                    requiresFeatureComboQuery = false,
                 )
             )
         )

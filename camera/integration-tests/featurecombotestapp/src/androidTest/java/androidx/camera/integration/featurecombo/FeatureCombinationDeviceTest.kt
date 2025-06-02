@@ -181,7 +181,7 @@ class FeatureCombinationDeviceTest(
         testIfBindAndQueryApiResultsMatch(listOf(preview, videoCapture), setOf(HDR_HLG10))
     }
 
-    // TODO: b/419804637 - Add @Test after fixing FPS checking issue for feature combo APIs
+    @Test
     fun bindToLifecycle_fps60_bindResultMatchesQueryResult(): Unit = runBlocking {
         testIfBindAndQueryApiResultsMatch(listOf(preview, videoCapture), setOf(FPS_60))
     }
@@ -223,7 +223,6 @@ class FeatureCombinationDeviceTest(
         }
 
     // TODO: b/420227836 - Add @Test after fixing unsupported exception for no preferred features
-    // TODO: b/419804637 - Add @Test after fixing FPS checking issue for feature combo APIs
     fun bindToLifecycle_multiplePreferredFeatures_canBindSuccessfully(): Unit = runBlocking {
         val useCases = listOf(preview, videoCapture)
         val orderedFeatures = listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)

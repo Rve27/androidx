@@ -244,6 +244,7 @@ public class StreamUseCaseTest {
                 /*isPreviewStabilizationOn=*/false,
                 /*isUltraHdrOn=*/ false,
                 /*isHighSpeedOn=*/ false,
+                /*isFeatureComboInvocation=*/ false,
                 /*requiresFeatureComboQuery=*/ false,
                 /*targetFpsRange=*/ FRAME_RATE_RANGE_UNSPECIFIED);
         assertFalse(shouldUseStreamUseCase(featureSettings));
@@ -258,6 +259,7 @@ public class StreamUseCaseTest {
                 /*isPreviewStabilizationOn=*/false,
                 /*isUltraHdrOn=*/ false,
                 /*isHighSpeedOn=*/ false,
+                /*isFeatureComboInvocation=*/ false,
                 /*requiresFeatureComboQuery=*/ false,
                 /*targetFpsRange=*/ FRAME_RATE_RANGE_UNSPECIFIED);
         assertFalse(shouldUseStreamUseCase(featureSettings));
