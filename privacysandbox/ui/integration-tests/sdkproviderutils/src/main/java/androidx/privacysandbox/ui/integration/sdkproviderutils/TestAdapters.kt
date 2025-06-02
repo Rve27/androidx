@@ -41,6 +41,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.ToggleButton
 import androidx.privacysandbox.ui.client.SandboxedUiAdapterFactory
@@ -52,6 +53,7 @@ import androidx.privacysandbox.ui.provider.AbstractSandboxedUiAdapter
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewClientCompat
 import java.util.concurrent.Executor
+import kotlin.random.Random
 
 class TestAdapters(private val sdkContext: Context) {
     abstract class BannerAd(automatedTestCallbackBundle: Bundle = Bundle()) :
@@ -64,6 +66,7 @@ class TestAdapters(private val sdkContext: Context) {
             automatedTestCallbackBundle.getBinder(AUTOMATED_TEST_CALLBACK)
         val automatedTestCallback: IAutomatedTestCallback? =
             automatedTestCallbackBinder?.let { IAutomatedTestCallback.Stub.asInterface(it) }
+        var shouldAddAllowAppToScrollOverlay = true
 
         abstract fun buildAdView(sessionContext: Context, width: Int, height: Int): View?
 
@@ -81,16 +84,23 @@ class TestAdapters(private val sdkContext: Context) {
             mainLooperHandler.post(
                 Runnable lambda@{
                     Log.d(TAG, "Session requested")
-                    val adView: View =
+                    var adView: View =
                         buildAdView(context, initialWidth, initialHeight) ?: return@lambda
-                    adViewWithConsumeScrollOverlay =
-                        AdViewWithConsumeScrollOverlay(context, initialWidth, initialHeight, adView)
-                    if (isZOrderOnTop) {
-                        adViewWithConsumeScrollOverlay.hideOverlay()
+                    adView.layoutParams = ViewGroup.LayoutParams(initialWidth, initialHeight)
+                    if (shouldAddAllowAppToScrollOverlay) {
+                        adViewWithConsumeScrollOverlay =
+                            AdViewWithConsumeScrollOverlay(
+                                context,
+                                initialWidth,
+                                initialHeight,
+                                adView,
+                            )
+                        if (isZOrderOnTop) {
+                            adViewWithConsumeScrollOverlay.hideOverlay()
+                        }
+                        adView = adViewWithConsumeScrollOverlay
                     }
-                    clientExecutor.execute {
-                        client.onSessionOpened(BannerAdSession(adViewWithConsumeScrollOverlay))
-                    }
+                    clientExecutor.execute { client.onSessionOpened(BannerAdSession(adView)) }
                 }
             )
         }
@@ -276,6 +286,66 @@ class TestAdapters(private val sdkContext: Context) {
                 }
             linearLayout.addView(textView)
             return linearLayout
+        }
+    }
+
+    inner class ScrollViewAd(
+        automatedTestCallbackBundle: Bundle = Bundle(),
+        private val appCanScroll: Boolean = true,
+    ) : BannerAd(automatedTestCallbackBundle) {
+        override fun buildAdView(sessionContext: Context, width: Int, height: Int): View? {
+            shouldAddAllowAppToScrollOverlay = false
+            val scrollView =
+                ScrollView(sessionContext).apply {
+                    layoutParams =
+                        ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                }
+
+            scrollView.setOnTouchListener { _, motionEvent ->
+                if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                    scrollView.requestDisallowInterceptTouchEvent(!appCanScroll)
+                }
+                false
+            }
+
+            val linearLayout =
+                LinearLayout(sessionContext).apply {
+                    orientation = LinearLayout.VERTICAL
+                    layoutParams =
+                        ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                        )
+                }
+
+            for (i in 1..20) {
+                val randomColor =
+                    Color.rgb(Random.nextInt(256), Random.nextInt(256), Random.nextInt(256))
+
+                val textView =
+                    TextView(sessionContext).apply {
+                        text = "RemoteItem $i"
+                        setBackgroundColor(randomColor)
+                        setTextColor(WHITE)
+                        textSize = 18f
+                        setPadding(50, 50, 50, 50)
+
+                        layoutParams =
+                            LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                )
+                                .apply { setMargins(20, 20, 20, 20) }
+                    }
+
+                linearLayout.addView(textView)
+            }
+            scrollView.addView(linearLayout)
+
+            return scrollView
         }
     }
 

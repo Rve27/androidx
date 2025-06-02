@@ -47,4 +47,8 @@ class OcclusionFragment : BaseHiddenFragment() {
         }
         return inflatedView
     }
+
+    override fun loadAd(automatedTestCallbackBundle: Bundle) {
+        TODO("Not yet implemented")
+    }
 }

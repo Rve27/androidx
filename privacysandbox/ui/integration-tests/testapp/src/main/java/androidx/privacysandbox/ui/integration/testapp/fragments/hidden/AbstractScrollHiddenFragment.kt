@@ -16,13 +16,4 @@
 
 package androidx.privacysandbox.ui.integration.testapp.fragments.hidden
 
-abstract class AbstractResizeHiddenFragment : BaseHiddenFragment() {
-    abstract fun performResize(width: Int, height: Int)
-
-    abstract fun applyPadding(
-        paddingLeft: Int,
-        paddingTop: Int,
-        paddingRight: Int,
-        paddingBottom: Int,
-    )
-}
+abstract class AbstractScrollHiddenFragment : BaseHiddenFragment()
