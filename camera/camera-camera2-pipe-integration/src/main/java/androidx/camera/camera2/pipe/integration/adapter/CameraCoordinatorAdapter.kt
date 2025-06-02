@@ -58,6 +58,7 @@ public class CameraCoordinatorAdapter(
     @GuardedBy("lock")
     @VisibleForTesting
     public var activeConcurrentCameraInfosList: List<CameraInfo> = emptyList()
+    @GuardedBy("lock") public var pendingCameraIds: MutableList<String> = mutableListOf()
 
     @GuardedBy("lock")
     @VisibleForTesting
@@ -146,7 +147,46 @@ public class CameraCoordinatorAdapter(
             return ArrayList(activeConcurrentCameraInfosList)
         }
 
+    override fun addPendingCameraInfo(cameraInfo: CameraInfo): Unit {
+        synchronized(lock) {
+            if (concurrentModeOn) {
+                pendingCameraIds.add(checkNotNull(cameraInfo.cameraId).value)
+                tryStartConcurrentGraph()
+            }
+        }
+    }
+
+    override fun removePendingCameraInfo(cameraInfo: CameraInfo) {
+        synchronized(lock) {
+            if (concurrentModeOn) {
+                pendingCameraIds.remove(checkNotNull(cameraInfo.cameraId).value)
+            }
+        }
+    }
+
     override fun setActiveConcurrentCameraInfos(cameraInfos: List<CameraInfo>) {
+        synchronized(lock) {
+            activeConcurrentCameraInfosList = cameraInfos
+            tryStartConcurrentGraph()
+        }
+    }
+
+    private fun tryStartConcurrentGraph() {
+        val concurrentCameraInfoList =
+            synchronized(lock) {
+                if (activeConcurrentCameraInfosList.isEmpty() || pendingCameraIds.isEmpty()) {
+                    return
+                }
+                val activeConcurrentCameraIdsList =
+                    activeConcurrentCameraInfosList.map { checkNotNull(it.cameraId).value }
+                if (activeConcurrentCameraIdsList.toSet() != pendingCameraIds.toSet()) {
+                    return
+                }
+                pendingCameraIds.clear()
+                activeConcurrentCameraInfosList
+            }
+
+        // start the concurrent camera graph.
         val camerasToUpdate =
             synchronized(lock) {
                 val repo = cameraRepository
@@ -154,8 +194,7 @@ public class CameraCoordinatorAdapter(
                     Log.error { "Coordinator has not been initialized with a CameraRepository." }
                     return
                 }
-                activeConcurrentCameraInfosList = cameraInfos
-                cameraInfos.mapNotNull { cameraInfo ->
+                concurrentCameraInfoList.mapNotNull { cameraInfo ->
                     try {
                         repo.getCamera(cameraInfo.cameraId!!.value) as? CameraInternalAdapter
                     } catch (_: IllegalArgumentException) {
@@ -210,6 +249,9 @@ public class CameraCoordinatorAdapter(
         if (repo == null) return
 
         concurrentModeOn = cameraOperatingMode == CAMERA_OPERATING_MODE_CONCURRENT
+        if (!concurrentModeOn) {
+            activeConcurrentCameraInfosList = emptyList()
+        }
 
         // Update all cameras known by the repository
         for (camera in repo.cameras) {
@@ -236,6 +278,7 @@ public class CameraCoordinatorAdapter(
             concurrentCameraIdMap = emptyMap()
             activeConcurrentCameraInfosList = emptyList()
             concurrentMode = CAMERA_OPERATING_MODE_UNSPECIFIED
+            pendingCameraIds.clear()
         }
     }
 }

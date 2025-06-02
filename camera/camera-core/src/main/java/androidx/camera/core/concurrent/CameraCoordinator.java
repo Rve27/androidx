@@ -96,6 +96,22 @@ public interface CameraCoordinator extends InternalCameraPresenceListener {
     void setActiveConcurrentCameraInfos(@NonNull List<CameraInfo> cameraInfos);
 
     /**
+     * Notifies the camera represented by the cameraInfo is ready and pending for opening the
+     * camera and create capture session for concurrent camera mode. Once paired cameraInfo is
+     * also ready and it will start to open the camera and create the capture session. Currently
+     * this method is used in cameraPipe config only.
+     */
+    default void addPendingCameraInfo(@NonNull CameraInfo cameraInfo) {
+    }
+
+    /**
+     * Notifies the camera represented by the cameraInfo is no longer pending for opening the camera
+     * and create capture sessions.
+     */
+    default void removePendingCameraInfo(@NonNull CameraInfo cameraInfo) {
+    }
+
+    /**
      * Returns paired camera id in concurrent mode.
      *
      * <p>The paired camera id dictionary is constructed when constructor is called. This
