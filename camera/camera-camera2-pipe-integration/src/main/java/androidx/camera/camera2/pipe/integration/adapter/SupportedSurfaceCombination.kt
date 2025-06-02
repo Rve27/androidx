@@ -352,7 +352,8 @@ public class SupportedSurfaceCombination(
      * @param hasVideoCapture whether the use cases has video capture.
      * @param isFeatureComboInvocation whether the code flow involves CameraX feature combo API
      *   (e.g. [androidx.camera.core.SessionConfig.requiredFeatures]).
-     * @param findMaxSupportedFrameRate whether to find the max supported frame rate.
+     * @param findMaxSupportedFrameRate whether to find the max supported frame rate. If this is
+     *   true, the target frame rate settings will be ignored.
      * @return a [SurfaceStreamSpecQueryResult].
      * @throws IllegalArgumentException if the suggested solution for newUseCaseConfigs cannot be
      *   found. This may be due to no available output size or no available surface combination.
@@ -397,7 +398,13 @@ public class SupportedSurfaceCombination(
 
         // Calculates the target FPS range
         val targetFpsRange =
-            getTargetFpsRange(attachedSurfaces, newUseCaseConfigs, useCasesPriorityOrder)
+            if (findMaxSupportedFrameRate) {
+                // In finding for maxFps mode, ignore the targetFrameRate setting so that it doesn't
+                // break calculations by any frame rate checks.
+                FRAME_RATE_RANGE_UNSPECIFIED
+            } else {
+                getTargetFpsRange(attachedSurfaces, newUseCaseConfigs, useCasesPriorityOrder)
+            }
 
         val featureSettings =
             createFeatureSettings(

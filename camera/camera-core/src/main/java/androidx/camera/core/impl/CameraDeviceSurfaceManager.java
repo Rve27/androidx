@@ -86,7 +86,9 @@ public interface CameraDeviceSurfaceManager {
      *                                           APIs (e.g. {@link SessionConfig#requiredFeatures}).
      * @param findMaxSupportedFrameRate          if {@code true}, the maximum supported frame
      *                                           rate will be calculated and returned in
-     *                              {@link SurfaceStreamSpecQueryResult#getMaxSupportedFrameRate()}.
+     *                              {@link SurfaceStreamSpecQueryResult#getMaxSupportedFrameRate()}
+     *                                           and the target frame rate settings in use cases
+     *                                           will be ignored while calculating the stream spec.
      *                                           If {@code false}, the value of
      *                                @link SurfaceStreamSpecQueryResult#getMaxSupportedFrameRate()}
      *                                           is undetermined.

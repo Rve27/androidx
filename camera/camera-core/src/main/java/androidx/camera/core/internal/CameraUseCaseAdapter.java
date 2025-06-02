@@ -419,7 +419,13 @@ public final class CameraUseCaseAdapter implements Camera {
      * @param featureCombination A {@link ResolvedFeatureCombination} to use for all the use cases
      *                           after adding these use cases. A null value represents that the
      *                           feature combination API is not being used.
-     * @param findMaxSupportedFrameRate whether to find the maximum supported frame rates.
+     * @param findMaxSupportedFrameRate whether to find the maximum supported frame rates. If true,
+     *                                  the {@link StreamSpecQueryResult#maxSupportedFrameRate} in
+     *                                  returned {@link CalculatedUseCaseInfo} will contain the
+     *                                  maximum supported frame rate. However, the calculation of
+     *                                  {@link StreamSpecQueryResult} will ignore the target
+     *                                  frame rate settings in UseCases. So the flag shouldn't be
+     *                                  set for normal flow of adding UseCases.
      * @return the CalculatedUseCaseInfo
      * @throws CameraException Thrown if the combination of newly added UseCases and the
      *                         currently added UseCases exceed the capability of the camera.

@@ -336,6 +336,12 @@ public interface CameraInfo {
      * based on the specific configuration of {@link UseCase}s, which might influence the
      * available ranges.
      *
+     * <p>If the provided {@link SessionConfig} has a target frame rate range already set (e.g.,
+     * set via {@link androidx.camera.video.VideoCapture.Builder#setTargetFrameRate(Range)}),
+     * this method will ignore that specific setting. The returned set represents all ranges the
+     * device can support under the given {@link SessionConfig}, irrespective of any pre-defined
+     * target frame rate within the config itself.
+     *
      * <p>When CameraX is configured to run with the camera2 implementation, this list will be
      * derived from
      * {@link android.hardware.camera2.CameraCharacteristics#CONTROL_AE_AVAILABLE_TARGET_FPS_RANGES}

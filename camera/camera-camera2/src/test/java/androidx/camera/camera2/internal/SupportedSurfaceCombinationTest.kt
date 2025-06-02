@@ -3072,9 +3072,8 @@ class SupportedSurfaceCombinationTest {
                     )
             )
 
-        // Only 1920x1080 with MaxFps 35 can fulfill targetFps [30, 30]. This is used to ensure the
-        // spec calculation is not impacted by finding max supported frame rate.
-        val useCaseExpectedResultMap = mapOf(useCase to Size(1920, 1080))
+        // targetFps will be ignored, so the first combination will be adopted.
+        val useCaseExpectedResultMap = mapOf(useCase to Size(3840, 2160))
 
         // Act.
         val result =
@@ -3083,7 +3082,6 @@ class SupportedSurfaceCombinationTest {
                 hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
                 useCasesOutputSizesMap = useCasesOutputSizesMap,
                 findMaxSupportedFrameRate = true,
-                compareExpectedFps = Range(30, 30),
             )
 
         // Verify.
@@ -3151,10 +3149,9 @@ class SupportedSurfaceCombinationTest {
                     ),
             )
 
-        // Only 1920x1080 + 1280x720 with MaxFps 35 can fulfill targetFps [30, 30]. This is used to
-        // ensure the  spec calculation is not impacted by finding max supported frame rate.
+        // targetFps will be ignored, so the first combination will be adopted.
         val useCaseExpectedResultMap =
-            mapOf(useCase1 to Size(1920, 1080), useCase2 to Size(1280, 720))
+            mapOf(useCase1 to Size(3840, 2160), useCase2 to Size(1280, 720))
 
         // Act.
         val result =
@@ -3163,7 +3160,6 @@ class SupportedSurfaceCombinationTest {
                 hardwareLevel = CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
                 useCasesOutputSizesMap = useCasesOutputSizesMap,
                 findMaxSupportedFrameRate = true,
-                compareExpectedFps = Range(30, 30),
             )
 
         // Verify.

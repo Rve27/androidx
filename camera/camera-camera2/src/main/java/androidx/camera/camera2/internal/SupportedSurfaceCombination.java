@@ -689,7 +689,9 @@ final class SupportedSurfaceCombination {
      *                                          API (e.g. {@link
      *                                          androidx.camera.core.SessionConfig#requiredFeatures}
      *                                          ).
-     * @param findMaxSupportedFrameRate          whether to find the max supported frame rate.
+     * @param findMaxSupportedFrameRate          whether to find the max supported frame rate. If
+     *                                           this is true, the target frame rate settings
+     *                                           will be ignored when calculating the stream spec.
      * @return a {@link SurfaceStreamSpecQueryResult}.
      * @throws IllegalArgumentException if the suggested solution for newUseCaseConfigs cannot be
      *                                  found. This may be due to no available output size, no
@@ -730,8 +732,15 @@ final class SupportedSurfaceCombination {
         boolean isUltraHdrOn = isUltraHdrOn(attachedSurfaces, newUseCaseConfigsSupportedSizeMap);
 
         // Calculates the target FPS range
-        Range<Integer> targetFpsRange = getTargetFpsRange(attachedSurfaces, newUseCaseConfigs,
-                useCasesPriorityOrder);
+        Range<Integer> targetFpsRange;
+        if (findMaxSupportedFrameRate) {
+            // In finding for maxFps mode, ignore the targetFrameRate setting so that it doesn't
+            // break calculations by any frame rate checks.
+            targetFpsRange = FRAME_RATE_RANGE_UNSPECIFIED;
+        } else {
+            targetFpsRange = getTargetFpsRange(attachedSurfaces, newUseCaseConfigs,
+                    useCasesPriorityOrder);
+        }
 
         FeatureSettings featureSettings = createFeatureSettings(cameraMode, hasVideoCapture,
                 resolvedDynamicRanges, isPreviewStabilizationOn, isUltraHdrOn, isHighSpeedOn,
