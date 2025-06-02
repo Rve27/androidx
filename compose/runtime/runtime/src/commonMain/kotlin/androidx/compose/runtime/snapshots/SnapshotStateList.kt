@@ -323,7 +323,7 @@ internal class StateListIterator<T>(val list: SnapshotStateList<T>, offset: Int)
 
     override fun remove() {
         validateModification()
-        list.removeAt(lastRequested)
+        list.removeAt(index)
         index--
         lastRequested = -1
         structure = list.structure
