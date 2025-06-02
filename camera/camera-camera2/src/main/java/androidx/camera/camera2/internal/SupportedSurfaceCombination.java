@@ -709,10 +709,8 @@ final class SupportedSurfaceCombination {
         // Refresh Preview Size based on current display configurations.
         refreshPreviewSize();
 
-        Range<Integer> targetHighSpeedFpsRange = HighSpeedResolver.getTargetHighSpeedFrameRate(
-                attachedSurfaces, newUseCaseConfigsSupportedSizeMap.keySet());
-
-        boolean isHighSpeedOn = !targetHighSpeedFpsRange.equals(FRAME_RATE_RANGE_UNSPECIFIED);
+        boolean isHighSpeedOn = HighSpeedResolver.isHighSpeedOn(attachedSurfaces,
+                newUseCaseConfigsSupportedSizeMap.keySet());
         // Filter out unsupported sizes for high-speed at the beginning to ensure correct
         // resolution selection later. High-speed session requires all surface sizes to be the same.
         if (isHighSpeedOn) {
@@ -732,8 +730,8 @@ final class SupportedSurfaceCombination {
         boolean isUltraHdrOn = isUltraHdrOn(attachedSurfaces, newUseCaseConfigsSupportedSizeMap);
 
         // Calculates the target FPS range
-        Range<Integer> targetFpsRange = isHighSpeedOn ? targetHighSpeedFpsRange
-                : getTargetFpsRange(attachedSurfaces, newUseCaseConfigs, useCasesPriorityOrder);
+        Range<Integer> targetFpsRange = getTargetFpsRange(attachedSurfaces, newUseCaseConfigs,
+                useCasesPriorityOrder);
 
         FeatureSettings featureSettings = createFeatureSettings(cameraMode, hasVideoCapture,
                 resolvedDynamicRanges, isPreviewStabilizationOn, isUltraHdrOn, isHighSpeedOn,

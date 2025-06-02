@@ -21,7 +21,6 @@ import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.SessionConfig
 import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination
 import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination.Companion.resolveFeatureCombination
-import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED
 import androidx.camera.core.impl.UseCaseAdditionSimulator.cameraUseCaseAdapterProvider
 import androidx.camera.core.impl.UseCaseAdditionSimulator.simulateAddUseCases
 import androidx.camera.core.internal.CalculatedUseCaseInfo
@@ -89,10 +88,8 @@ public object UseCaseAdditionSimulator {
         val cameraUseCaseAdapter = cameraUseCaseAdapterProvider.provide(cameraInfoInternal.cameraId)
         cameraUseCaseAdapter.viewPort = sessionConfig.viewPort
         cameraUseCaseAdapter.effects = sessionConfig.effects
-        cameraUseCaseAdapter.setTargetHighSpeedFrameRate(
-            if (sessionConfig.sessionType == SESSION_TYPE_HIGH_SPEED) sessionConfig.targetFrameRate
-            else StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
-        )
+        cameraUseCaseAdapter.sessionType = sessionConfig.sessionType
+        cameraUseCaseAdapter.targetFrameRate = sessionConfig.targetFrameRate
 
         return cameraUseCaseAdapter.simulateAddUseCases(
             sessionConfig.useCases,

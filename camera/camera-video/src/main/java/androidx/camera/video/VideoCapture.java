@@ -883,6 +883,7 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
                 DEFAULT_VIDEO_ENCODER_INFO_FINDER = VideoEncoderInfoImpl.FINDER;
 
         static final Range<Integer> DEFAULT_FPS_RANGE = new Range<>(30, 30);
+        static final Range<Integer> DEFAULT_HIGH_SPEED_FPS_RANGE = new Range<>(120, 120);
 
         /**
          * Explicitly setting the default dynamic range to SDR (rather than UNSPECIFIED) means
@@ -1359,7 +1360,8 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
         // the camera.
         Range<Integer> frameRate = streamSpec.getExpectedFrameRateRange();
         if (Objects.equals(frameRate, FRAME_RATE_RANGE_UNSPECIFIED)) {
-            frameRate = Defaults.DEFAULT_FPS_RANGE;
+            frameRate = streamSpec.getSessionType() == SESSION_TYPE_HIGH_SPEED
+                    ? Defaults.DEFAULT_HIGH_SPEED_FPS_RANGE : Defaults.DEFAULT_FPS_RANGE;
         }
         return frameRate;
     }
@@ -1494,7 +1496,7 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
 
         DynamicRange requestedDynamicRange = getDynamicRange();
         int sessionType = getSessionType(config);
-        Range<Integer> targetFrameRate = getTargetFrameRateOrThrow(config);
+        Range<Integer> targetFrameRate = getTargetFrameRate(config);
         VideoCapabilities videoCapabilities = getVideoCapabilities(cameraInfo, sessionType);
         Logger.d(TAG, "Update custom order resolutions: "
                 + "requestedDynamicRange = " + requestedDynamicRange
@@ -1626,25 +1628,12 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
     }
 
     private int getSessionType(@NonNull VideoCaptureConfig<T> useCaseConfig) {
-        return FRAME_RATE_RANGE_UNSPECIFIED.equals(
-                useCaseConfig.getTargetHighSpeedFrameRate(FRAME_RATE_RANGE_UNSPECIFIED))
-                ? SESSION_TYPE_REGULAR : SESSION_TYPE_HIGH_SPEED;
+        return useCaseConfig.getSessionType(SESSION_TYPE_REGULAR);
     }
 
     @NonNull
-    private Range<Integer> getTargetFrameRateOrThrow(@NonNull VideoCaptureConfig<T> useCaseConfig)
-            throws IllegalArgumentException {
-        Range<Integer> targetFrameRate = requireNonNull(
-                useCaseConfig.getTargetFrameRate(FRAME_RATE_RANGE_UNSPECIFIED));
-        Range<Integer> targetHighSpeedFrameRate = requireNonNull(
-                useCaseConfig.getTargetHighSpeedFrameRate(FRAME_RATE_RANGE_UNSPECIFIED));
-        if (!FRAME_RATE_RANGE_UNSPECIFIED.equals(targetFrameRate)
-                && !FRAME_RATE_RANGE_UNSPECIFIED.equals(targetHighSpeedFrameRate)) {
-            throw new IllegalArgumentException(
-                    "Can't set both targetFrameRate and targetHighSpeedFrameRate");
-        }
-        return FRAME_RATE_RANGE_UNSPECIFIED.equals(targetHighSpeedFrameRate) ? targetFrameRate
-                : targetHighSpeedFrameRate;
+    private Range<Integer> getTargetFrameRate(@NonNull VideoCaptureConfig<T> useCaseConfig) {
+        return requireNonNull(useCaseConfig.getTargetFrameRate(FRAME_RATE_RANGE_UNSPECIFIED));
     }
 
     @NonNull

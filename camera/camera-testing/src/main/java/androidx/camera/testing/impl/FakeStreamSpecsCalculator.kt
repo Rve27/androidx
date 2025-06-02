@@ -50,7 +50,8 @@ public class FakeStreamSpecsCalculator : StreamSpecsCalculator {
         newUseCases: List<UseCase>,
         attachedUseCases: List<UseCase>,
         cameraConfig: CameraConfig,
-        targetHighSpeedFrameRate: Range<Int>,
+        sessionType: Int,
+        targetFrameRate: Range<Int>,
         isFeatureComboInvocation: Boolean,
         findMaxSupportedFrameRate: Boolean,
     ): StreamSpecQueryResult {

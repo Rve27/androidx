@@ -24,6 +24,7 @@ import static androidx.camera.core.DynamicRange.BIT_DEPTH_10_BIT;
 import static androidx.camera.core.DynamicRange.BIT_DEPTH_8_BIT;
 import static androidx.camera.core.ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY;
 import static androidx.camera.core.ImageCapture.CAPTURE_MODE_ZERO_SHUTTER_LAG;
+import static androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR;
 import static androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -526,7 +527,7 @@ public class StreamUseCaseTest {
                         DynamicRange.SDR,
                         captureTypes,
                         /*implementationOptions=*/null,
-                        FRAME_RATE_RANGE_UNSPECIFIED,
+                        SESSION_TYPE_REGULAR,
                         FRAME_RATE_RANGE_UNSPECIFIED));
 
         assertTrue(StreamUseCaseUtil.areCaptureTypesEligible(surfaceConfigAttachedSurfaceInfoMap,
@@ -557,7 +558,7 @@ public class StreamUseCaseTest {
                         DynamicRange.SDR,
                         captureTypes,
                         /*implementationOptions=*/null,
-                        FRAME_RATE_RANGE_UNSPECIFIED,
+                        SESSION_TYPE_REGULAR,
                         FRAME_RATE_RANGE_UNSPECIFIED));
 
         assertFalse(StreamUseCaseUtil.areCaptureTypesEligible(surfaceConfigAttachedSurfaceInfoMap,
@@ -676,7 +677,7 @@ public class StreamUseCaseTest {
                 DynamicRange.SDR,
                 captureTypes,
                 StreamUseCaseUtil.getStreamSpecImplementationOptions(useCaseConfig),
-                FRAME_RATE_RANGE_UNSPECIFIED,
+                SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED);
     }
 

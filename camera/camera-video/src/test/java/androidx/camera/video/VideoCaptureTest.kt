@@ -70,7 +70,7 @@ import androidx.camera.core.impl.SessionConfig.DEFAULT_SESSION_TYPE
 import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED
 import androidx.camera.core.impl.StreamSpec
 import androidx.camera.core.impl.Timebase
-import androidx.camera.core.impl.UseCaseConfig.OPTION_TARGET_HIGH_SPEED_FRAME_RATE
+import androidx.camera.core.impl.UseCaseConfig.OPTION_SESSION_TYPE
 import androidx.camera.core.impl.utils.CameraOrientationUtil.surfaceRotationToDegrees
 import androidx.camera.core.impl.utils.CompareSizesByArea
 import androidx.camera.core.impl.utils.TransformUtils.rectToSize
@@ -1914,7 +1914,7 @@ class VideoCaptureTest {
                 QUALITY_1080P to PROFILES_HIGH_SPEED_1080P,
                 QUALITY_LOW to PROFILES_HIGH_SPEED_1080P,
             )
-        val targetHighSpeedFrameRate = FPS_240_240
+        val targetFrameRate = FPS_240_240
         // Arrange: FPS_240_240 is not supported.
         val frameRatesMap = mapOf(FHD to setOf(FPS_120_120))
         setupCamera(profiles = profileMap)
@@ -1930,7 +1930,8 @@ class VideoCaptureTest {
         val videoCapture =
             createVideoCapture(
                 videoOutput = videoOutput,
-                targetHighSpeedFrameRate = targetHighSpeedFrameRate,
+                sessionType = SESSION_TYPE_HIGH_SPEED,
+                targetFrameRate = targetFrameRate,
             )
 
         // Act & Assert.
@@ -1940,7 +1941,7 @@ class VideoCaptureTest {
     }
 
     @Test
-    fun bind_withSupportedTargetHighSpeedFrameRate_keepResolutions() {
+    fun bind_withSupportedHighSpeedTargetFrameRate_keepResolutions() {
         // Arrange.
         val profileMap =
             mapOf(
@@ -1950,7 +1951,8 @@ class VideoCaptureTest {
                 QUALITY_480P to PROFILES_HIGH_SPEED_480P, // SD
                 QUALITY_LOW to PROFILES_HIGH_SPEED_480P,
             )
-        val targetHighSpeedFrameRate = FPS_120_120
+        val sessionType = SESSION_TYPE_HIGH_SPEED
+        val targetFrameRate = FPS_120_120
         // Arrange: FHD, HD contain target high-speed frame rate.
         val frameRatesMap =
             mapOf(
@@ -1976,7 +1978,8 @@ class VideoCaptureTest {
         val videoCapture =
             createVideoCapture(
                 videoOutput = videoOutput,
-                targetHighSpeedFrameRate = targetHighSpeedFrameRate,
+                sessionType = sessionType,
+                targetFrameRate = targetFrameRate,
             )
 
         // Act.
@@ -2289,8 +2292,8 @@ class VideoCaptureTest {
         targetRotation: Int? = null,
         mirrorMode: Int? = null,
         targetResolution: Size? = null,
+        sessionType: Int? = null,
         targetFrameRate: Range<Int>? = null,
-        targetHighSpeedFrameRate: Range<Int>? = null,
         dynamicRange: DynamicRange? = null,
         videoEncoderInfoFinder: VideoEncoderInfo.Finder? = null,
         customOrderedResolutions: List<Size>? = null,
@@ -2301,10 +2304,8 @@ class VideoCaptureTest {
                 targetRotation?.let { setTargetRotation(it) }
                 mirrorMode?.let { setMirrorMode(it) }
                 targetResolution?.let { setTargetResolution(it) }
+                sessionType?.let { mutableConfig.insertOption(OPTION_SESSION_TYPE, it) }
                 targetFrameRate?.let { setTargetFrameRate(it) }
-                targetHighSpeedFrameRate?.let {
-                    mutableConfig.insertOption(OPTION_TARGET_HIGH_SPEED_FRAME_RATE, it)
-                }
                 dynamicRange?.let { setDynamicRange(it) }
                 setVideoEncoderInfoFinder(
                     videoEncoderInfoFinder

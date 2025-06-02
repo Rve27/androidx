@@ -90,7 +90,6 @@ import androidx.camera.core.impl.SessionConfig
 import androidx.camera.core.impl.SessionConfig.OutputConfig.SURFACE_GROUP_ID_NONE
 import androidx.camera.core.impl.SessionConfig.ValidatingBuilder
 import androidx.camera.core.impl.SessionProcessor
-import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.SurfaceConfig
 import androidx.camera.core.impl.stabilization.StabilizationMode
 import androidx.camera.core.streamsharing.StreamSharing
@@ -901,14 +900,8 @@ constructor(
                         streamSpec.dynamicRange,
                         useCase.getCaptureTypes(),
                         streamSpec.implementationOptions ?: MutableOptionsBundle.create(),
-                        checkNotNull(
-                            useCase.currentConfig.getTargetFrameRate(FRAME_RATE_RANGE_UNSPECIFIED)
-                        ),
-                        checkNotNull(
-                            useCase.currentConfig.getTargetHighSpeedFrameRate(
-                                FRAME_RATE_RANGE_UNSPECIFIED
-                            )
-                        ),
+                        streamSpec.sessionType,
+                        streamSpec.expectedFrameRateRange,
                     )
                 )
             }

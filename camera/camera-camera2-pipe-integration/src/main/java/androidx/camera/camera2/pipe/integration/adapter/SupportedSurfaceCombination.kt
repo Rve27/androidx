@@ -369,13 +369,11 @@ public class SupportedSurfaceCombination(
         // Refresh Preview Size based on current display configurations.
         refreshPreviewSize()
 
-        val targetHighSpeedFpsRange =
-            HighSpeedResolver.getTargetHighSpeedFrameRate(
+        val isHighSpeedOn =
+            HighSpeedResolver.isHighSpeedOn(
                 attachedSurfaces,
                 newUseCaseConfigsSupportedSizeMap.keys,
             )
-
-        val isHighSpeedOn = targetHighSpeedFpsRange != FRAME_RATE_RANGE_UNSPECIFIED
         // Filter out unsupported sizes for high-speed at the beginning to ensure correct
         // resolution selection later. High-speed session requires all surface sizes to be the same.
         val filteredNewUseCaseConfigsSupportedSizeMap =
@@ -399,8 +397,7 @@ public class SupportedSurfaceCombination(
 
         // Calculates the target FPS range
         val targetFpsRange =
-            if (isHighSpeedOn) targetHighSpeedFpsRange
-            else getTargetFpsRange(attachedSurfaces, newUseCaseConfigs, useCasesPriorityOrder)
+            getTargetFpsRange(attachedSurfaces, newUseCaseConfigs, useCasesPriorityOrder)
 
         val featureSettings =
             createFeatureSettings(

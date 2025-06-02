@@ -2505,7 +2505,7 @@ class SupportedSurfaceCombinationTest {
                 SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
+                SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
         val attachedAnalysis =
@@ -2516,7 +2516,7 @@ class SupportedSurfaceCombinationTest {
                 SDR,
                 listOf(CaptureType.IMAGE_ANALYSIS),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
+                SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
 
@@ -2550,7 +2550,7 @@ class SupportedSurfaceCombinationTest {
                 DynamicRange.HDR10_10_BIT,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
+                SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
         val attachedPriv2 =
@@ -2561,7 +2561,7 @@ class SupportedSurfaceCombinationTest {
                 DynamicRange.HDR10_PLUS_10_BIT,
                 listOf(CaptureType.VIDEO_CAPTURE),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
+                SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
 
@@ -2610,7 +2610,7 @@ class SupportedSurfaceCombinationTest {
                 SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
+                SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
         val attachedPriv2 =
@@ -2621,7 +2621,7 @@ class SupportedSurfaceCombinationTest {
                 SDR,
                 listOf(CaptureType.IMAGE_ANALYSIS),
                 useCase.currentConfig,
-                /*targetFrameRate=*/ FRAME_RATE_RANGE_UNSPECIFIED,
+                SESSION_TYPE_REGULAR,
                 FRAME_RATE_RANGE_UNSPECIFIED,
             )
 
@@ -2833,8 +2833,8 @@ class SupportedSurfaceCombinationTest {
                 SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
+                SESSION_TYPE_REGULAR,
                 Range(40, 50),
-                FRAME_RATE_RANGE_UNSPECIFIED,
             )
         getSuggestedSpecsAndVerify(
             useCaseExpectedResultMap,
@@ -2862,8 +2862,8 @@ class SupportedSurfaceCombinationTest {
                 SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
+                SESSION_TYPE_REGULAR,
                 Range(40, 50),
-                FRAME_RATE_RANGE_UNSPECIFIED,
             )
         getSuggestedSpecsAndVerify(
             useCaseExpectedResultMap,
@@ -2891,8 +2891,8 @@ class SupportedSurfaceCombinationTest {
                 SDR,
                 listOf(CaptureType.PREVIEW),
                 useCase.currentConfig,
+                SESSION_TYPE_REGULAR,
                 Range(40, 50),
-                FRAME_RATE_RANGE_UNSPECIFIED,
             )
         getSuggestedSpecsAndVerify(
             useCaseExpectedResultMap,
@@ -3644,18 +3644,21 @@ class SupportedSurfaceCombinationTest {
     @Config(minSdk = Build.VERSION_CODES.M)
     @Test
     fun getSuggestedStreamSpec_highSpeed_returnsCorrectSizeAndFpsRange() {
-        val targetHighSpeedFrameRate = Range.create(240, 240)
+        val sessionType = SESSION_TYPE_HIGH_SPEED
+        val targetFrameRate = Range.create(240, 240)
         val previewUseCase =
             createUseCase(
                 CaptureType.PREVIEW,
                 surfaceOccupancyPriority = 2,
-                targetHighSpeedFrameRate = targetHighSpeedFrameRate,
+                sessionType = sessionType,
+                targetFrameRate = targetFrameRate,
             )
         val videoUseCase =
             createUseCase(
                 CaptureType.VIDEO_CAPTURE,
                 surfaceOccupancyPriority = 5,
-                targetHighSpeedFrameRate = targetHighSpeedFrameRate,
+                sessionType = sessionType,
+                targetFrameRate = targetFrameRate,
             )
         val useCasesOutputSizesMap =
             mapOf(
@@ -3677,7 +3680,11 @@ class SupportedSurfaceCombinationTest {
     @Test
     fun getSuggestedStreamSpec_highSpeed_singleSurface_returnsCorrectSizeAndClosestFps() {
         val previewUseCase =
-            createUseCase(CaptureType.PREVIEW, targetHighSpeedFrameRate = Range.create(30, 480))
+            createUseCase(
+                CaptureType.PREVIEW,
+                sessionType = SESSION_TYPE_HIGH_SPEED,
+                targetFrameRate = Range.create(30, 480),
+            )
         val useCasesOutputSizesMap = mapOf(previewUseCase to listOf(RESOLUTION_1080P))
         val useCaseExpectedResultMap = mapOf(previewUseCase to RESOLUTION_1080P)
         getSuggestedSpecsAndVerifyForHighSpeed(
@@ -3690,13 +3697,18 @@ class SupportedSurfaceCombinationTest {
     @Config(minSdk = Build.VERSION_CODES.M)
     @Test
     fun getSuggestedStreamSpec_highSpeed_multipleSurfaces_returnsCorrectSizeAndClosetMaxFps() {
-        val targetHighSpeedFrameRate = Range.create(30, 480)
+        val targetFrameRate = Range.create(30, 480)
         val previewUseCase =
-            createUseCase(CaptureType.PREVIEW, targetHighSpeedFrameRate = targetHighSpeedFrameRate)
+            createUseCase(
+                CaptureType.PREVIEW,
+                sessionType = SESSION_TYPE_HIGH_SPEED,
+                targetFrameRate = targetFrameRate,
+            )
         val videoUseCase =
             createUseCase(
                 CaptureType.VIDEO_CAPTURE,
-                targetHighSpeedFrameRate = targetHighSpeedFrameRate,
+                sessionType = SESSION_TYPE_HIGH_SPEED,
+                targetFrameRate = targetFrameRate,
             )
         val useCasesOutputSizesMap =
             mapOf(
@@ -3716,7 +3728,11 @@ class SupportedSurfaceCombinationTest {
     @Test
     fun getSuggestedStreamSpec_highSpeed_unsupportedSdkVersion_throwException() {
         val useCase =
-            createUseCase(CaptureType.PREVIEW, targetHighSpeedFrameRate = Range.create(240, 240))
+            createUseCase(
+                CaptureType.PREVIEW,
+                sessionType = SESSION_TYPE_HIGH_SPEED,
+                targetFrameRate = Range.create(240, 240),
+            )
         val useCaseExpectedResultMap = mapOf(useCase to RESOLUTION_1080P)
         assertThrows(IllegalArgumentException::class.java) {
             getSuggestedSpecsAndVerifyForHighSpeed(useCaseExpectedResultMap)
@@ -3725,39 +3741,19 @@ class SupportedSurfaceCombinationTest {
 
     @Config(minSdk = Build.VERSION_CODES.M)
     @Test
-    fun getSuggestedStreamSpec_highSpeed_useCasesWithDifferentFrameRate_throwException() {
-        val previewUseCase =
-            createUseCase(CaptureType.PREVIEW, targetHighSpeedFrameRate = Range.create(30, 120))
-        val videoUseCase =
-            createUseCase(
-                CaptureType.VIDEO_CAPTURE,
-                targetHighSpeedFrameRate = Range.create(120, 120),
-            )
-        val useCasesOutputSizesMap =
-            mapOf(
-                previewUseCase to listOf(RESOLUTION_1080P),
-                videoUseCase to listOf(RESOLUTION_1080P),
-            )
-        val useCaseExpectedResultMap =
-            mapOf(previewUseCase to RESOLUTION_1080P, videoUseCase to RESOLUTION_1080P)
-        assertThrows(IllegalArgumentException::class.java) {
-            getSuggestedSpecsAndVerifyForHighSpeed(
-                useCaseExpectedResultMap,
-                useCasesOutputSizesMap = useCasesOutputSizesMap,
-            )
-        }
-    }
-
-    @Config(minSdk = Build.VERSION_CODES.M)
-    @Test
     fun getSuggestedStreamSpec_highSpeed_noCommonSize_throwException() {
-        val targetHighSpeedFrameRate = Range.create(240, 240)
+        val targetFrameRate = Range.create(240, 240)
         val previewUseCase =
-            createUseCase(CaptureType.PREVIEW, targetHighSpeedFrameRate = targetHighSpeedFrameRate)
+            createUseCase(
+                CaptureType.PREVIEW,
+                sessionType = SESSION_TYPE_HIGH_SPEED,
+                targetFrameRate = targetFrameRate,
+            )
         val videoUseCase =
             createUseCase(
                 CaptureType.VIDEO_CAPTURE,
-                targetHighSpeedFrameRate = targetHighSpeedFrameRate,
+                sessionType = SESSION_TYPE_HIGH_SPEED,
+                targetFrameRate = targetFrameRate,
             )
         val useCasesOutputSizesMap =
             mapOf(
@@ -3777,12 +3773,25 @@ class SupportedSurfaceCombinationTest {
     @Config(minSdk = Build.VERSION_CODES.M)
     @Test
     fun getSuggestedStreamSpec_highSpeed_tooManyUseCases_throwException() {
-        val targetHighSpeedFrameRate = Range.create(240, 240)
+        val targetFrameRate = Range.create(240, 240)
         val previewUseCase1 =
-            createUseCase(CaptureType.PREVIEW, targetHighSpeedFrameRate = targetHighSpeedFrameRate)
+            createUseCase(
+                CaptureType.PREVIEW,
+                sessionType = SESSION_TYPE_HIGH_SPEED,
+                targetFrameRate = targetFrameRate,
+            )
         val previewUseCase2 =
-            createUseCase(CaptureType.PREVIEW, targetHighSpeedFrameRate = targetHighSpeedFrameRate)
-        val videoUseCase = createUseCase(CaptureType.VIDEO_CAPTURE)
+            createUseCase(
+                CaptureType.PREVIEW,
+                sessionType = SESSION_TYPE_HIGH_SPEED,
+                targetFrameRate = targetFrameRate,
+            )
+        val videoUseCase =
+            createUseCase(
+                CaptureType.VIDEO_CAPTURE,
+                sessionType = SESSION_TYPE_HIGH_SPEED,
+                targetFrameRate = targetFrameRate,
+            )
         val useCasesOutputSizesMap =
             mapOf(
                 previewUseCase1 to listOf(RESOLUTION_1080P),
@@ -4641,15 +4650,15 @@ class SupportedSurfaceCombinationTest {
 
     private fun createUseCase(
         captureType: CaptureType,
+        sessionType: Int? = null,
         targetFrameRate: Range<Int>? = null,
-        targetHighSpeedFrameRate: Range<Int>? = null,
         dynamicRange: DynamicRange = DynamicRange.UNSPECIFIED,
         surfaceOccupancyPriority: Int? = null,
     ): UseCase {
         return createUseCase(
             captureType,
+            sessionType,
             targetFrameRate,
-            targetHighSpeedFrameRate,
             dynamicRange,
             streamUseCaseOverride = false,
             surfaceOccupancyPriority = surfaceOccupancyPriority,
@@ -4658,8 +4667,8 @@ class SupportedSurfaceCombinationTest {
 
     private fun createUseCase(
         captureType: CaptureType,
+        sessionType: Int? = null,
         targetFrameRate: Range<Int>? = null,
-        targetHighSpeedFrameRate: Range<Int>? = null,
         dynamicRange: DynamicRange = DynamicRange.UNSPECIFIED,
         streamUseCaseOverride: Boolean = false,
         imageFormat: Int? = null,
@@ -4679,15 +4688,12 @@ class SupportedSurfaceCombinationTest {
                         else -> INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE
                     },
             )
-        targetFrameRate?.let {
-            builder.mutableConfig.insertOption(UseCaseConfig.OPTION_TARGET_FRAME_RATE, it)
+        sessionType?.let {
+            builder.mutableConfig.insertOption(UseCaseConfig.OPTION_SESSION_TYPE, it)
         }
 
-        targetHighSpeedFrameRate?.let {
-            builder.mutableConfig.insertOption(
-                UseCaseConfig.OPTION_TARGET_HIGH_SPEED_FRAME_RATE,
-                it,
-            )
+        targetFrameRate?.let {
+            builder.mutableConfig.insertOption(UseCaseConfig.OPTION_TARGET_FRAME_RATE, it)
         }
 
         builder.mutableConfig.insertOption(

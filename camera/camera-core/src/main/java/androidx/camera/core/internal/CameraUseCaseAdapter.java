@@ -25,9 +25,12 @@ import static androidx.camera.core.DynamicRange.ENCODING_UNSPECIFIED;
 import static androidx.camera.core.ImageCapture.OUTPUT_FORMAT_JPEG_ULTRA_HDR;
 import static androidx.camera.core.ImageCapture.OUTPUT_FORMAT_RAW;
 import static androidx.camera.core.impl.ImageCaptureConfig.OPTION_OUTPUT_FORMAT;
+import static androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED;
+import static androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR;
 import static androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED;
 import static androidx.camera.core.impl.UseCaseConfig.OPTION_CAPTURE_TYPE;
-import static androidx.camera.core.impl.UseCaseConfig.OPTION_TARGET_HIGH_SPEED_FRAME_RATE;
+import static androidx.camera.core.impl.UseCaseConfig.OPTION_SESSION_TYPE;
+import static androidx.camera.core.impl.UseCaseConfig.OPTION_TARGET_FRAME_RATE;
 import static androidx.camera.core.processing.TargetUtils.getNumberOfTargets;
 import static androidx.camera.core.streamsharing.StreamSharing.isStreamSharing;
 import static androidx.core.util.Preconditions.checkArgument;
@@ -132,7 +135,10 @@ public final class CameraUseCaseAdapter implements Camera {
     private @NonNull List<CameraEffect> mEffects = emptyList();
 
     @GuardedBy("mLock")
-    private @NonNull Range<Integer> mTargetHighSpeedFps = FRAME_RATE_RANGE_UNSPECIFIED;
+    private int mSessionType = SESSION_TYPE_REGULAR;
+
+    @GuardedBy("mLock")
+    private @NonNull Range<Integer> mTargetFrameRate = FRAME_RATE_RANGE_UNSPECIFIED;
 
     // Additional configs to apply onto the UseCases when added to this Camera
     @GuardedBy("mLock")
@@ -299,23 +305,41 @@ public final class CameraUseCaseAdapter implements Camera {
     }
 
     /**
-     * Sets the target high speed frame rate that will be used for the {@link UseCase} attached to
-     * the camera.
+     * Sets the session type.
      */
-    public void setTargetHighSpeedFrameRate(@NonNull Range<Integer> frameRate) {
+    public void setSessionType(int sessionType) {
         synchronized (mLock) {
-            mTargetHighSpeedFps = frameRate;
+            mSessionType = sessionType;
         }
     }
 
 
     /**
-     * Gets the target high speed frame rate.
+     * Gets the session type.
+     */
+    public int getSessionType() {
+        synchronized (mLock) {
+            return mSessionType;
+        }
+    }
+
+    /**
+     * Sets the target frame rate that will be used for the {@link UseCase} attached to the camera.
+     */
+    public void setTargetFrameRate(@NonNull Range<Integer> frameRate) {
+        synchronized (mLock) {
+            mTargetFrameRate = frameRate;
+        }
+    }
+
+
+    /**
+     * Gets the target frame rate.
      */
     @NonNull
-    public Range<Integer> getTargetHighSpeedFps() {
+    public Range<Integer> getTargetFrameRate() {
         synchronized (mLock) {
-            return mTargetHighSpeedFps;
+            return mTargetFrameRate;
         }
     }
 
@@ -494,7 +518,7 @@ public final class CameraUseCaseAdapter implements Camera {
         // fails the supported stream combination rules.
         Map<UseCase, ConfigPair> configs = getConfigs(cameraUseCasesToAttach,
                 mCameraConfig.getUseCaseConfigFactory(), mUseCaseConfigFactory,
-                mTargetHighSpeedFps);
+                mSessionType, mTargetFrameRate);
         StreamSpecQueryResult primaryStreamSpecResult;
         StreamSpecQueryResult secondaryStreamSpecResult = null;
 
@@ -508,7 +532,8 @@ public final class CameraUseCaseAdapter implements Camera {
                     /* newUseCases = */ cameraUseCasesToAttach,
                     /* attachedUseCases = */ cameraUseCasesToKeep,
                     mCameraConfig,
-                    mTargetHighSpeedFps,
+                    mSessionType,
+                    mTargetFrameRate,
                     isFeatureComboInvocation,
                     findMaxSupportedFrameRate);
             if (mSecondaryCameraInternal != null) {
@@ -518,7 +543,8 @@ public final class CameraUseCaseAdapter implements Camera {
                         /* newUseCases = */ cameraUseCasesToAttach,
                         /* attachedUseCases = */ cameraUseCasesToKeep,
                         mCameraConfig,
-                        mTargetHighSpeedFps,
+                        mSessionType,
+                        mTargetFrameRate,
                         isFeatureComboInvocation,
                         findMaxSupportedFrameRate);
             }
@@ -722,7 +748,7 @@ public final class CameraUseCaseAdapter implements Camera {
         return !hasExtension()
                 && mCameraCoordinator.getCameraOperatingMode()
                 != CameraCoordinator.CAMERA_OPERATING_MODE_CONCURRENT
-                && mTargetHighSpeedFps.equals(FRAME_RATE_RANGE_UNSPECIFIED);
+                && mSessionType != SESSION_TYPE_HIGH_SPEED;
     }
 
     private boolean shouldForceEnableStreamSharing(@NonNull Collection<UseCase> appUseCases) {
@@ -1107,7 +1133,8 @@ public final class CameraUseCaseAdapter implements Camera {
     static Map<UseCase, ConfigPair> getConfigs(@NonNull Collection<UseCase> useCases,
             @NonNull UseCaseConfigFactory extendedFactory,
             @NonNull UseCaseConfigFactory cameraFactory,
-            @NonNull Range<Integer> targetHighSpeedFps) {
+            int sessionType,
+            @NonNull Range<Integer> targetFrameRate) {
         Map<UseCase, ConfigPair> configs = new HashMap<>();
         for (UseCase useCase : useCases) {
             UseCaseConfig<?> extendedConfig;
@@ -1118,7 +1145,8 @@ public final class CameraUseCaseAdapter implements Camera {
                 extendedConfig = useCase.getDefaultConfig(false, extendedFactory);
             }
             UseCaseConfig<?> cameraConfig = useCase.getDefaultConfig(true, cameraFactory);
-            cameraConfig = attachUseCaseSharedConfigs(useCase, cameraConfig, targetHighSpeedFps);
+            cameraConfig = attachUseCaseSharedConfigs(useCase, cameraConfig, sessionType,
+                    targetFrameRate);
             configs.put(useCase, new ConfigPair(extendedConfig, cameraConfig));
         }
         return configs;
@@ -1128,11 +1156,22 @@ public final class CameraUseCaseAdapter implements Camera {
     private static UseCaseConfig<?> attachUseCaseSharedConfigs(
             @NonNull UseCase useCase,
             @Nullable UseCaseConfig<?> useCaseConfig,
-            @NonNull Range<Integer> targetHighSpeedFps) {
+            int sessionType,
+            @NonNull Range<Integer> targetFrameRate) {
         MutableOptionsBundle mutableConfig = useCaseConfig != null
                 ? MutableOptionsBundle.from(useCaseConfig) : MutableOptionsBundle.create();
 
-        mutableConfig.insertOption(OPTION_TARGET_HIGH_SPEED_FRAME_RATE, targetHighSpeedFps);
+        mutableConfig.insertOption(OPTION_SESSION_TYPE, sessionType);
+        // In case useCase already contains target frame rate, only set target frame rate when it
+        // is not the default value, i.e. FRAME_RATE_RANGE_UNSPECIFIED.
+        if (!FRAME_RATE_RANGE_UNSPECIFIED.equals(targetFrameRate)) {
+            if (mutableConfig.containsOption(OPTION_TARGET_FRAME_RATE)) {
+                Logger.w(TAG, "Override UseCase's target frame rate: "
+                        + mutableConfig.removeOption(OPTION_TARGET_FRAME_RATE)
+                        + " by " + targetFrameRate);
+            }
+            mutableConfig.insertOption(OPTION_TARGET_FRAME_RATE, targetFrameRate);
+        }
 
         return useCase.getUseCaseConfigBuilder(mutableConfig).getUseCaseConfig();
     }
