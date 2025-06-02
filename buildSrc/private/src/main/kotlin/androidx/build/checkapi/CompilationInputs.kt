@@ -19,7 +19,6 @@ package androidx.build.checkapi
 import androidx.build.getAndroidJar
 import androidx.build.multiplatformExtension
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
-import com.android.build.api.variant.KotlinMultiplatformAndroidVariant
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.api.variant.LibraryVariant
 import org.gradle.api.Project
@@ -120,10 +119,7 @@ internal sealed interface CompilationInputs {
          *
          * @param project The project whose main android target inputs will be returned.
          */
-        fun fromKmpAndroidTarget(
-            variant: KotlinMultiplatformAndroidVariant,
-            project: Project,
-        ): CompilationInputs {
+        fun fromKmpAndroidTarget(project: Project): CompilationInputs {
             val kmpExtension =
                 checkNotNull(project.multiplatformExtension) {
                     """
@@ -139,14 +135,10 @@ internal sealed interface CompilationInputs {
             val compilation = target.findCompilation(KotlinCompilation.MAIN_COMPILATION_NAME)
 
             return MultiplatformCompilationInputs.fromCompilation(
-                    project = project,
-                    compilationProvider = compilation,
-                    bootClasspath = project.getAndroidJar(),
-                )
-                .apply {
-                    // include Java sources when withJava() is used
-                    sourcePaths.from(variant.sources.java?.all)
-                }
+                project = project,
+                compilationProvider = compilation,
+                bootClasspath = project.getAndroidJar(),
+            )
         }
 
         /** Constructs a [CompilationInputs] from a sourceset */

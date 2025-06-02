@@ -560,7 +560,7 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
             // Disable any source JAR task(s) added by KotlinMultiplatformPlugin.
             // https://youtrack.jetbrains.com/issue/KT-55881
             project.tasks.withType(Jar::class.java).configureEach { jarTask ->
-                if (jarTask.name == "jvmSourcesJar") {
+                if (jarTask.name == "androidSourcesJar" || jarTask.name == "jvmSourcesJar") {
                     // We can't set duplicatesStrategy directly on the Jar task since it will get
                     // overridden when the KotlinMultiplatformPlugin creates child specs, but we
                     // can set it on a per-file basis.
@@ -743,16 +743,9 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
             }
         }
 
+        project.configureProjectForApiTasks(AndroidMultiplatformApiTaskConfig, androidXExtension)
+        project.configureProjectForKzipTasks(AndroidMultiplatformApiTaskConfig, androidXExtension)
         kotlinMultiplatformAndroidComponentsExtension.onVariants { variant ->
-            project.configureProjectForApiTasks(
-                AndroidMultiplatformApiTaskConfig(variant),
-                androidXExtension,
-            )
-            project.configureProjectForKzipTasks(
-                AndroidMultiplatformApiTaskConfig(variant),
-                androidXExtension,
-            )
-
             project.configureMultiplatformSourcesForAndroid(
                 variant.name,
                 kotlinMultiplatformAndroidTarget,
