@@ -81,6 +81,7 @@ import androidx.wear.protolayout.types.LayoutString
  * @sample androidx.wear.protolayout.material3.samples.helloWorldTextDefault
  * @sample androidx.wear.protolayout.material3.samples.helloWorldTextDynamicCustom
  * @sample androidx.wear.protolayout.material3.samples.helloWorldTextAutosize
+ * @sample androidx.wear.protolayout.material3.samples.primaryLayoutWithTextNotImportantForAccessibility
  */
 @Suppress("DEPRECATION") // Intentionally using deprecated fallback for old renderer
 public fun MaterialScope.text(

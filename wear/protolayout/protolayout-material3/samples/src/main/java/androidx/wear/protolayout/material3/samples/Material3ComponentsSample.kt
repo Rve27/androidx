@@ -67,6 +67,7 @@ import androidx.wear.protolayout.material3.textEdgeButton
 import androidx.wear.protolayout.material3.titleCard
 import androidx.wear.protolayout.modifiers.LayoutModifier
 import androidx.wear.protolayout.modifiers.background
+import androidx.wear.protolayout.modifiers.clearSemantics
 import androidx.wear.protolayout.modifiers.clickable
 import androidx.wear.protolayout.modifiers.contentDescription
 import androidx.wear.protolayout.types.LayoutString
@@ -528,5 +529,25 @@ fun multipleSegmentsCircularProgressIndicator(
             endAngleDegrees = 520F,
             colors = filledVariantProgressIndicatorColors(),
             size = dp(85F),
+        )
+    }
+
+@Sampled
+fun primaryLayoutWithTextNotImportantForAccessibility(
+    context: Context,
+    deviceConfiguration: DeviceParameters,
+): LayoutElement =
+    materialScope(context, deviceConfiguration) {
+        primaryLayout(
+            titleSlot = {
+                text("App title".layoutString, modifier = LayoutModifier.clearSemantics())
+            },
+            mainSlot = { text("Main content".layoutString) },
+            bottomSlot = {
+                text("Bottom slot".layoutString, modifier = LayoutModifier.clearSemantics())
+            },
+            labelForBottomSlot = {
+                text("Bottom label".layoutString, modifier = LayoutModifier.clearSemantics())
+            },
         )
     }
