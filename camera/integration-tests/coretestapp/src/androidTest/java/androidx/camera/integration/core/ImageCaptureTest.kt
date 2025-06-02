@@ -486,7 +486,7 @@ class ImageCaptureTest(private val implName: String, private val cameraXConfig: 
         if (saveLocation.exists()) {
             saveLocation.delete()
         }
-        assertThat(!saveLocation.exists())
+        assertThat(!saveLocation.exists()).isTrue()
 
         canSaveToFile(saveLocation)
     }
@@ -494,7 +494,7 @@ class ImageCaptureTest(private val implName: String, private val cameraXConfig: 
     @Test
     fun saveCanSucceed_withExistingFile() {
         val saveLocation = temporaryFolder.newFile("test.jpg")
-        assertThat(saveLocation.exists())
+        assertThat(saveLocation.exists()).isTrue()
 
         canSaveToFile(saveLocation)
     }
@@ -988,7 +988,7 @@ class ImageCaptureTest(private val implName: String, private val cameraXConfig: 
                 override fun onError(exception: ImageCaptureException) {}
             }
         val saveLocation = temporaryFolder.newFile("test.jpg")
-        assertThat(saveLocation.exists())
+        assertThat(saveLocation.exists()).isTrue()
         useCase.takePicture(
             ImageCapture.OutputFileOptions.Builder(saveLocation).build(),
             mainExecutor,
