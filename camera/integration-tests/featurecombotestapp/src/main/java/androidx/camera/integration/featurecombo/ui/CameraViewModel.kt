@@ -20,6 +20,8 @@ import android.content.ContentValues
 import android.content.Context
 import android.provider.MediaStore
 import android.util.Log
+import androidx.camera.camera2.Camera2Config
+import androidx.camera.camera2.pipe.integration.CameraPipeConfig
 import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalSessionConfig
@@ -35,7 +37,9 @@ import androidx.camera.integration.featurecombo.AppFeatures
 import androidx.camera.integration.featurecombo.DynamicRange
 import androidx.camera.integration.featurecombo.Fps
 import androidx.camera.integration.featurecombo.ImageFormat
+import androidx.camera.integration.featurecombo.MainActivity
 import androidx.camera.integration.featurecombo.StabilizationMode
+import androidx.camera.lifecycle.ExperimentalCameraProviderConfiguration
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
 import androidx.camera.video.MediaStoreOutputOptions
@@ -44,6 +48,7 @@ import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.camera.video.VideoRecordEvent.Finalize.ERROR_DURATION_LIMIT_REACHED
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import java.text.SimpleDateFormat
@@ -58,8 +63,13 @@ import kotlinx.coroutines.launch
 
 @SuppressLint("NullAnnotationGroup")
 @OptIn(ExperimentalFeatureCombination::class) // TODO: b/385816441 - Remove experimental annotation
-class CameraViewModel : ViewModel() {
+class CameraViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
     private lateinit var appContext: Context
+
+    private val isCameraPipe: Boolean by lazy {
+        savedStateHandle.get<String>(MainActivity.INTENT_EXTRA_CAMERA_IMPLEMENTATION) ==
+            CAMERA_PIPE_IMPLEMENTATION_OPTION
+    }
 
     private val cameraProviderDeferred = CompletableDeferred<ProcessCameraProvider>()
 
@@ -110,8 +120,17 @@ class CameraViewModel : ViewModel() {
 
     private var bindStartTime: Long = Long.MIN_VALUE
 
+    @androidx.annotation.OptIn(ExperimentalCameraProviderConfiguration::class)
     fun init(applicationContext: Context, lifecycleOwner: LifecycleOwner) {
         appContext = applicationContext
+
+        ProcessCameraProvider.configureInstance(
+            if (isCameraPipe) {
+                CameraPipeConfig.defaultConfig()
+            } else {
+                Camera2Config.defaultConfig()
+            }
+        )
 
         viewModelScope.launch {
             with(ProcessCameraProvider.awaitInstance(applicationContext)) {
@@ -541,5 +560,7 @@ class CameraViewModel : ViewModel() {
     companion object {
         private const val TAG = "CamXFcqViewModel"
         private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
+
+        const val CAMERA_PIPE_IMPLEMENTATION_OPTION: String = "camera_pipe"
     }
 }
