@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.layout.AlignmentLine
+import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.LayoutInfo
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.boundsInWindow
@@ -182,14 +183,29 @@ internal constructor(
      */
     internal val boundsInParent: Rect
         get() {
-            val parent = this.parent ?: return Rect.Zero
             val currentCoordinates =
                 findCoordinatorToGetBounds()?.takeIf { it.isAttached }?.coordinates
                     ?: return Rect.Zero
-            return parent.outerSemanticsNode
-                .requireCoordinator(Nodes.Semantics)
-                .localBoundingBoxOf(currentCoordinates)
+            return boundsInImportantForBoundsAncestor(currentCoordinates)
         }
+
+    /**
+     * Calculates the bounds relative to the nearest ancestor that has any semantics modifier nodes
+     * with isImportantForBounds == true. If no such ancestor is found, returns [Rect.Zero].
+     */
+    private fun boundsInImportantForBoundsAncestor(nodeCoordinates: LayoutCoordinates): Rect {
+        val parent = this.parent ?: return Rect.Zero
+        val parentCoordinatorForBounds =
+            parent.layoutNode.nodes
+                .firstFromHead(Nodes.Semantics) { it.isImportantForBounds }
+                ?.requireCoordinator(Nodes.Semantics)
+        if (parentCoordinatorForBounds == null) {
+            // If the parent has no semantics modifier nodes that are important for bounds, continue
+            // searching upwards in the tree until we find the nearest ancestor that does.
+            return parent.boundsInImportantForBoundsAncestor(nodeCoordinates)
+        }
+        return parentCoordinatorForBounds.localBoundingBoxOf(nodeCoordinates)
+    }
 
     /** Whether this node is transparent. */
     internal val isTransparent: Boolean
