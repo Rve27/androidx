@@ -15,5 +15,5 @@
   -->
 
 <resources>
-    <item name="view_tree_application_subspace_root_node" type="id" />
+    <item name="compose_xr_owner_locals" type="id" />
 </resources>

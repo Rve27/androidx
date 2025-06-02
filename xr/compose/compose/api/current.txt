@@ -21,9 +21,16 @@ package androidx.xr.compose.platform {
   }
 
   public static final class SpatialCapabilities.Companion {
+    method public androidx.xr.compose.platform.SpatialCapabilities getNoCapabilities();
+    property public androidx.xr.compose.platform.SpatialCapabilities NoCapabilities;
   }
 
-  public sealed interface SpatialConfiguration {
+  public final class SpatialCapabilitiesKt {
+    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.platform.SpatialCapabilities> getLocalSpatialCapabilities();
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.platform.SpatialCapabilities> LocalSpatialCapabilities;
+  }
+
+  public interface SpatialConfiguration {
     method public default androidx.xr.compose.unit.DpVolumeSize getBounds();
     method public default boolean hasXrSpatialFeature();
     method public default void requestFullSpaceMode();
@@ -38,8 +45,8 @@ package androidx.xr.compose.platform {
   }
 
   public final class SpatialConfigurationKt {
-    method public static androidx.compose.runtime.CompositionLocal<androidx.xr.compose.platform.SpatialConfiguration> getLocalSpatialConfiguration();
-    property public static androidx.compose.runtime.CompositionLocal<androidx.xr.compose.platform.SpatialConfiguration> LocalSpatialConfiguration;
+    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.platform.SpatialConfiguration> getLocalSpatialConfiguration();
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.platform.SpatialConfiguration> LocalSpatialConfiguration;
   }
 
 }

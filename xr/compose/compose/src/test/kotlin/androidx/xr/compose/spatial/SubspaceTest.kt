@@ -62,6 +62,8 @@ import androidx.xr.runtime.Config.HeadTrackingMode
 import androidx.xr.runtime.internal.CameraViewActivityPose
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
+import androidx.xr.scenecore.ContentlessEntity
+import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.scene
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertFailsWith
@@ -379,7 +381,7 @@ class SubspaceTest {
         val session = assertNotNull(composeTestRule.activity.session)
         val subspaceRootEntity = assertNotNull(subspaceBox?.parent)
         val subspaceRootContainerEntity = assertNotNull(subspaceRootEntity.parent)
-        assertThat(subspaceRootContainerEntity.parent).isEqualTo(session.scene.activitySpace)
+        assertThat(subspaceRootContainerEntity).isEqualTo(session.scene.activitySpace)
     }
 
     @Test
@@ -401,7 +403,7 @@ class SubspaceTest {
         val session = assertNotNull(composeTestRule.activity.session)
         val subspaceRootEntity = assertNotNull(subspaceBox?.parent)
         val subspaceRootContainerEntity = assertNotNull(subspaceRootEntity.parent)
-        assertThat(subspaceRootContainerEntity.parent).isEqualTo(session.scene.activitySpace)
+        assertThat(subspaceRootContainerEntity).isEqualTo(session.scene.activitySpace)
     }
 
     @Test
@@ -429,7 +431,7 @@ class SubspaceTest {
         val session = assertNotNull(composeTestRule.activity.session)
         val subspaceRootEntity = assertNotNull(subspaceBox?.parent)
         val subspaceRootContainerEntity = assertNotNull(subspaceRootEntity.parent)
-        assertThat(subspaceRootContainerEntity.parent).isEqualTo(session.scene.activitySpace)
+        assertThat(subspaceRootContainerEntity).isEqualTo(session.scene.activitySpace)
     }
 
     @Test
@@ -447,7 +449,7 @@ class SubspaceTest {
         val session = assertNotNull(composeTestRule.activity.session)
         val subspaceRootEntity = assertNotNull(subspaceBoxEntity.parent)
         val subspaceRootContainerEntity = assertNotNull(subspaceRootEntity.parent)
-        assertThat(subspaceRootContainerEntity.parent).isEqualTo(session.scene.activitySpace)
+        assertThat(subspaceRootContainerEntity).isEqualTo(session.scene.activitySpace)
     }
 
     @Test
@@ -3226,22 +3228,28 @@ class SubspaceTest {
     }
 
     @Test
-    fun applicationSubspace_setsApplicationSubspaceRootContainerAsCenterOfAttention() {
+    fun applicationSubspace_usesProvidedRootContainer() {
+        var testNode: Entity? = null
+
         composeTestRule.setContent {
             TestSetup {
-                assertThat(LocalSession.current!!.scene.centerOfAttention).isNull()
-                ApplicationSubspace { SpatialBox(modifier = SubspaceModifier.testTag("Box")) {} }
+                testNode = ContentlessEntity.create(LocalSession.current!!, "TestRoot")
+                CompositionLocalProvider(LocalSubspaceRootNode provides testNode) {
+                    assertThat(LocalSession.current!!.scene.centerOfAttention).isNull()
+                    ApplicationSubspace {
+                        SpatialBox(modifier = SubspaceModifier.testTag("Box")) {}
+                    }
+                }
             }
         }
 
-        val session = assertNotNull(composeTestRule.activity.session)
         val boxNode = composeTestRule.onSubspaceNodeWithTag("Box").fetchSemanticsNode()
         val boxEntity = assertNotNull(boxNode.semanticsEntity)
         val layoutRootEntity = assertNotNull(boxEntity.parent)
         val subspaceRootEntity = assertNotNull(layoutRootEntity.parent)
         val subspaceRootContainer = assertNotNull(subspaceRootEntity.parent)
 
-        assertThat(session.scene.centerOfAttention).isEqualTo(subspaceRootContainer)
+        assertThat(testNode).isEqualTo(subspaceRootContainer)
     }
 
     @Test

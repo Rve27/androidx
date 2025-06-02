@@ -51,10 +51,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastMaxOfOrNull
 import androidx.core.graphics.drawable.toDrawable
+import androidx.xr.compose.platform.LocalCoreMainPanelEntity
 import androidx.xr.compose.platform.LocalDialogManager
 import androidx.xr.compose.platform.LocalOpaqueEntity
 import androidx.xr.compose.platform.LocalSession
-import androidx.xr.compose.platform.coreMainPanelEntity
 import androidx.xr.compose.platform.getActivity
 import androidx.xr.compose.subspace.layout.MeasurePolicy
 import androidx.xr.compose.subspace.layout.SpatialRoundedCornerShape
@@ -387,8 +387,7 @@ public fun MainPanel(
     modifier: SubspaceModifier = SubspaceModifier,
     shape: SpatialShape = SpatialPanelDefaults.shape,
 ) {
-    val session = checkNotNull(LocalSession.current) { "session must be initialized" }
-    val mainPanel = session.coreMainPanelEntity
+    val mainPanel = LocalCoreMainPanelEntity.current ?: return
     LaunchedEffect(shape) { mainPanel.shape = shape }
 
     val view = LocalContext.current.getActivity().window?.decorView ?: LocalView.current

@@ -251,6 +251,17 @@ internal class CoreMainPanelEntity(session: Session, density: Density) :
     override fun dispose() {
         // Do not call super.dispose() because we don't want to dispose the main panel entity.
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (entity != (other as CoreMainPanelEntity).entity) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return entity.hashCode()
+    }
 }
 
 /** Wrapper class for surface entities from SceneCore. */

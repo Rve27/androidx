@@ -39,9 +39,9 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.xr.compose.platform.LocalCoreEntity
+import androidx.xr.compose.platform.LocalCoreMainPanelEntity
 import androidx.xr.compose.platform.LocalOpaqueEntity
 import androidx.xr.compose.platform.LocalSession
-import androidx.xr.compose.platform.coreMainPanelEntity
 import androidx.xr.compose.subspace.layout.SpatialRoundedCornerShape
 import androidx.xr.compose.subspace.layout.SpatialShape
 import androidx.xr.compose.subspace.rememberComposeView
@@ -113,7 +113,7 @@ internal fun ElevatedPanel(
     content: @Composable () -> Unit,
 ) {
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
-    val parentEntity = LocalCoreEntity.current ?: session.coreMainPanelEntity
+    val parentEntity = LocalCoreEntity.current ?: LocalCoreMainPanelEntity.current ?: return
     val view = rememberComposeView()
     val panelEntity =
         rememberCorePanelEntity(shape = shape) {

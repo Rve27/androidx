@@ -16,7 +16,6 @@
 
 package androidx.xr.compose.spatial
 
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
@@ -42,8 +41,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
-import androidx.core.viewtree.getParentOrViewTreeDisjointParent
-import androidx.xr.compose.R
+import androidx.xr.compose.platform.LocalComposeXrOwners
 import androidx.xr.compose.platform.LocalCoreEntity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.LocalSpatialConfiguration
@@ -88,6 +86,11 @@ import org.jetbrains.annotations.TestOnly
 private val LocalIsInApplicationSubspace: ProvidableCompositionLocal<Boolean> =
     compositionLocalWithComputedDefaultOf {
         LocalCoreEntity.currentValue != null
+    }
+
+internal val LocalSubspaceRootNode: ProvidableCompositionLocal<Entity?> =
+    compositionLocalWithComputedDefaultOf {
+        LocalComposeXrOwners.currentValue?.subspaceRootNode
     }
 
 /** Defines default values used by the Subspace composables, primarily [ApplicationSubspace]. */
@@ -254,15 +257,13 @@ private fun ApplicationSubspace(
     constraintsBehavior: ConstraintsBehavior,
     content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit,
 ) {
-    val view = LocalView.current
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val compositionContext = rememberCompositionContext()
+    val subspaceRootNode = LocalSubspaceRootNode.current
     val scene by remember {
         session.scene.mainPanelEntity.setEnabled(false)
         val subspaceRoot = ContentlessEntity.create(session, "SubspaceRoot")
-        view.findOrCreateViewTreeApplicationSubspaceRootNode(session)?.let {
-            subspaceRoot.parent = it
-        }
+        subspaceRootNode?.let { subspaceRoot.parent = it }
         disposableValueOf(
             SpatialComposeScene(
                 ownerActivity = activity,
@@ -643,31 +644,4 @@ private fun getFovHeightAtDistance(distance: Meter, fov: FieldOfView, density: D
     val height: Meter = distance * (tan(fov.angleUp) - tan(fov.angleDown))
 
     return height.roundToPx(density)
-}
-
-private fun View.findOrCreateViewTreeApplicationSubspaceRootNode(session: Session?): Entity? {
-    var currentView: View? = this
-    var topView: View = this
-    while (currentView != null) {
-        val subspaceRoot =
-            currentView.getTag(R.id.view_tree_application_subspace_root_node) as? Entity
-        if (subspaceRoot != null) {
-            return subspaceRoot
-        }
-        topView = currentView
-        currentView = currentView.getParentOrViewTreeDisjointParent() as? View
-    }
-
-    if (session != null) {
-        return ContentlessEntity.create(session = session, name = "ApplicationSubspaceRoot").also {
-            topView.setViewTreeApplicationSubspaceRootNode(it)
-            session.scene.setCenterOfAttention(it)
-        }
-    }
-
-    return null
-}
-
-private fun View.setViewTreeApplicationSubspaceRootNode(entity: Entity) {
-    setTag(R.id.view_tree_application_subspace_root_node, entity)
 }
