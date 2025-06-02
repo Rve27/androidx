@@ -186,8 +186,7 @@ class FeatureCombinationDeviceTest(
         testIfBindAndQueryApiResultsMatch(listOf(preview, videoCapture), setOf(FPS_60))
     }
 
-    // TODO: b/419804400 - Add @Test after fixing Preview Stabilization setting issue for feature
-    //  combo APIs
+    @Test
     fun bindToLifecycle_previewStabilization_bindResultMatchesQueryResult(): Unit = runBlocking {
         testIfBindAndQueryApiResultsMatch(
             listOf(preview, videoCapture),
@@ -200,14 +199,12 @@ class FeatureCombinationDeviceTest(
         testIfBindAndQueryApiResultsMatch(listOf(preview, imageCapture), setOf(IMAGE_ULTRA_HDR))
     }
 
-    // TODO: b/420371641 - Add @Test after passing feature combo code flow param to
-    //  SupportedSurfaceCombination during bind
+    @Test
     fun bindToLifecycle_bothHdrAndFps60Required_bindResultMatchesQueryResult(): Unit = runBlocking {
         testIfBindAndQueryApiResultsMatch(listOf(preview, videoCapture), setOf(HDR_HLG10, FPS_60))
     }
 
-    // TODO: b/420371641 - Add @Test after passing feature combo code flow param to
-    //  SupportedSurfaceCombination during bind
+    @Test
     fun bindToLifecycle_bothHdrAndPrvwStabilizationRequired_bindResultMatchesQueryResult(): Unit =
         runBlocking {
             testIfBindAndQueryApiResultsMatch(
@@ -216,8 +213,7 @@ class FeatureCombinationDeviceTest(
             )
         }
 
-    // TODO: b/420371641 - Add @Test after passing feature combo code flow param to
-    //  SupportedSurfaceCombination during bind
+    @Test
     fun bindToLifecycle_moreThanTwoFeaturesRequired_bindResultMatchesQueryResult(): Unit =
         runBlocking {
             testIfBindAndQueryApiResultsMatch(

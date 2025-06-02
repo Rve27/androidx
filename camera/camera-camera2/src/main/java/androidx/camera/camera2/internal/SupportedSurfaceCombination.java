@@ -657,7 +657,10 @@ final class SupportedSurfaceCombination {
      *                                           sizes map.
      * @param isPreviewStabilizationOn           whether the preview stabilization is enabled.
      * @param hasVideoCapture                    whether the use cases has video capture.
-     * @param allowFeatureCombinationResolutions whether to allow feature combination resolutions.
+     * @param isFeatureComboInvocation          whether the code flow involves CameraX feature combo
+     *                                          API (e.g. {@link
+     *                                          androidx.camera.core.SessionConfig#requiredFeatures}
+     *                                          ).
      * @param findMaxSupportedFrameRate          whether to find the max supported frame rate.
      * @return a {@link SurfaceStreamSpecQueryResult}.
      * @throws IllegalArgumentException if the suggested solution for newUseCaseConfigs cannot be
@@ -673,7 +676,7 @@ final class SupportedSurfaceCombination {
             @NonNull Map<UseCaseConfig<?>, List<Size>> newUseCaseConfigsSupportedSizeMap,
             boolean isPreviewStabilizationOn,
             boolean hasVideoCapture,
-            boolean allowFeatureCombinationResolutions,
+            boolean isFeatureComboInvocation,
             boolean findMaxSupportedFrameRate) {
         // Refresh Preview Size based on current display configurations.
         refreshPreviewSize();
@@ -710,7 +713,7 @@ final class SupportedSurfaceCombination {
 
         CheckingMethod checkingMethod = getCheckingMethod(
                 resolvedDynamicRanges.values(), targetFpsRange, isPreviewStabilizationOn,
-                isUltraHdrOn, allowFeatureCombinationResolutions);
+                isUltraHdrOn, isFeatureComboInvocation);
 
         return resolveSpecsByCheckingMethod(checkingMethod, featureSettings,
                 attachedSurfaces, newUseCaseConfigsSupportedSizeMap, newUseCaseConfigs,
@@ -997,8 +1000,8 @@ final class SupportedSurfaceCombination {
     private CheckingMethod getCheckingMethod(
             @NonNull Collection<DynamicRange> dynamicRanges, @Nullable Range<Integer> fps,
             boolean isPreviewStabilizationOn, boolean isUltraHdrOn,
-            boolean allowFeatureCombinationResolutions) {
-        if (!allowFeatureCombinationResolutions) {
+            boolean isFeatureComboInvocation) {
+        if (!isFeatureComboInvocation) {
             return WITHOUT_FEATURE_COMBO;
         }
 

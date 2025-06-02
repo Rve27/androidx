@@ -352,7 +352,8 @@ public class SupportedSurfaceCombination(
      *   map.
      * @param isPreviewStabilizationOn whether the preview stabilization is enabled.
      * @param hasVideoCapture whether the use cases has video capture.
-     * @param allowFeatureCombinationResolutions whether to allow feature combination resolutions.
+     * @param isFeatureComboInvocation whether the code flow involves CameraX feature combo API
+     *   (e.g. [androidx.camera.core.SessionConfig.requiredFeatures]).
      * @param findMaxSupportedFrameRate whether to find the max supported frame rate.
      * @return a [SurfaceStreamSpecQueryResult].
      * @throws IllegalArgumentException if the suggested solution for newUseCaseConfigs cannot be
@@ -364,7 +365,7 @@ public class SupportedSurfaceCombination(
         newUseCaseConfigsSupportedSizeMap: Map<UseCaseConfig<*>, List<Size>>,
         isPreviewStabilizationOn: Boolean = false,
         hasVideoCapture: Boolean = false,
-        allowFeatureCombinationResolutions: Boolean,
+        isFeatureComboInvocation: Boolean,
         findMaxSupportedFrameRate: Boolean,
     ): SurfaceStreamSpecQueryResult {
         // Refresh Preview Size based on current display configurations.
@@ -421,7 +422,7 @@ public class SupportedSurfaceCombination(
                 targetFpsRange,
                 isPreviewStabilizationOn,
                 isUltraHdrOn,
-                allowFeatureCombinationResolutions,
+                isFeatureComboInvocation,
             )
 
         return resolveSpecsByCheckingMethod(
@@ -659,9 +660,9 @@ public class SupportedSurfaceCombination(
         fps: Range<Int>?,
         isPreviewStabilizationOn: Boolean,
         isUltraHdrOn: Boolean,
-        allowFeatureCombinationResolutions: Boolean,
+        isFeatureComboInvocation: Boolean,
     ): CheckingMethod {
-        if (!allowFeatureCombinationResolutions) {
+        if (!isFeatureComboInvocation) {
             return WITHOUT_FEATURE_COMBO
         }
 

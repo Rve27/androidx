@@ -1312,7 +1312,7 @@ final class Camera2CameraImpl implements CameraInternal {
                 Collections.singletonList(mMeteringRepeatingSession.getMeteringRepeatingSize()));
 
         try {
-            // TODO: b/406367951 - Pass true for allowFeatureCombinationResolutions param when
+            // TODO: b/406367951 - Pass true for isFeatureComboInvocation param when
             //   MeteringRepeating scenarios with feature combination are handled
             mSupportedSurfaceCombination.getSuggestedStreamSpecifications(cameraMode,
                     attachedSurfaces, useCaseConfigToSizeMap, false, false, false, false);

@@ -59,6 +59,7 @@ import androidx.camera.testing.impl.fakes.FakeUseCaseConfigFactory;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,6 +86,8 @@ public class LifecycleCameraTest {
     private FakeUseCase mFakeUseCase2;
     private ViewPort mViewPort;
     private CameraEffect mEffect;
+    private final FakeSurfaceProcessor mFakeSurfaceProcessor = new FakeSurfaceProcessor(
+            directExecutor());
 
     @Before
     public void setUp() {
@@ -123,8 +126,12 @@ public class LifecycleCameraTest {
         mFakeUseCase2 = new FakeUseCase();
         mViewPort = new ViewPort.Builder(
                 new Rational(4, 3), Surface.ROTATION_0).build();
-        mEffect = new FakeSurfaceEffect(directExecutor(),
-                new FakeSurfaceProcessor(directExecutor()));
+        mEffect = new FakeSurfaceEffect(directExecutor(), mFakeSurfaceProcessor);
+    }
+
+    @After
+    public void tearDown() {
+        mFakeSurfaceProcessor.cleanUp();
     }
 
     @Test

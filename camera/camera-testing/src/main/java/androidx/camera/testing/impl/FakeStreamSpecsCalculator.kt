@@ -51,7 +51,7 @@ public class FakeStreamSpecsCalculator : StreamSpecsCalculator {
         attachedUseCases: List<UseCase>,
         cameraConfig: CameraConfig,
         targetHighSpeedFrameRate: Range<Int>,
-        allowFeatureCombinationResolutions: Boolean,
+        isFeatureComboInvocation: Boolean,
         findMaxSupportedFrameRate: Boolean,
     ): StreamSpecQueryResult {
         Logger.d(TAG, "calculateSuggestedStreamSpecs: supportedStreamSpecs = $supportedStreamSpecs")

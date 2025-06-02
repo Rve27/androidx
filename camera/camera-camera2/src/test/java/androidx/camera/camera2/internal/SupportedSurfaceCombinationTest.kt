@@ -1806,7 +1806,7 @@ class SupportedSurfaceCombinationTest {
         findMaxSupportedFrameRate: Boolean = false,
         expectedSessionType: Int = SESSION_TYPE_REGULAR,
         maxFpsBySizeMap: Map<Size, Int> = emptyMap(),
-        allowFeatureComboResolutions: Boolean = false,
+        isFeatureComboInvocation: Boolean = false,
         featureCombinationQuery: FeatureCombinationQuery = NO_OP_FEATURE_COMBINATION_QUERY,
     ): SurfaceStreamSpecQueryResult {
         setupCameraAndInitCameraX(
@@ -1838,7 +1838,7 @@ class SupportedSurfaceCombinationTest {
                 useCaseConfigToOutputSizesMap,
                 isPreviewStabilizationOn,
                 hasVideoCapture,
-                allowFeatureComboResolutions,
+                isFeatureComboInvocation,
                 findMaxSupportedFrameRate,
             )
         val suggestedStreamSpecsForNewUseCases = result.useCaseStreamSpecs
@@ -4126,7 +4126,7 @@ class SupportedSurfaceCombinationTest {
             dynamicRangeProfiles = if (Build.VERSION.SDK_INT >= 33) HLG10_CONSTRAINED else null,
             capabilities = intArrayOf(REQUEST_AVAILABLE_CAPABILITIES_DYNAMIC_RANGE_TEN_BIT),
             isPreviewStabilizationOn = true,
-            allowFeatureComboResolutions = true,
+            isFeatureComboInvocation = true,
             featureCombinationQuery = fakeFeatureCombinationQuery.apply { isSupported = true },
             maxFpsBySizeMap = mapOf(RESOLUTION_1080P to 60, RESOLUTION_1440P_16_9 to 60),
         )

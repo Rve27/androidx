@@ -60,7 +60,7 @@ public interface StreamSpecsCalculator {
         attachedUseCases: List<UseCase> = emptyList(),
         cameraConfig: CameraConfig = CameraConfigs.defaultConfig(),
         targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
-        allowFeatureCombinationResolutions: Boolean = false,
+        isFeatureComboInvocation: Boolean = false,
         findMaxSupportedFrameRate: Boolean = false,
     ): StreamSpecQueryResult
 
@@ -75,7 +75,7 @@ public interface StreamSpecsCalculator {
                     attachedUseCases: List<UseCase>,
                     cameraConfig: CameraConfig,
                     targetHighSpeedFrameRate: Range<Int>,
-                    allowFeatureCombinationResolutions: Boolean,
+                    isFeatureComboInvocation: Boolean,
                     findMaxSupportedFrameRate: Boolean,
                 ): StreamSpecQueryResult {
                     return StreamSpecQueryResult()
@@ -98,7 +98,7 @@ public interface StreamSpecsCalculator {
             cameraInfoInternal: CameraInfoInternal,
             newUseCases: List<UseCase>,
             cameraConfig: CameraConfig = CameraConfigs.defaultConfig(),
-            allowFeatureCombinationResolutions: Boolean = false,
+            isFeatureComboInvocation: Boolean = false,
             attachedUseCases: List<UseCase> = emptyList(),
             targetHighSpeedFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
             findMaxSupportedFrameRate: Boolean = false,
@@ -110,7 +110,7 @@ public interface StreamSpecsCalculator {
                 attachedUseCases = attachedUseCases,
                 cameraConfig = cameraConfig,
                 targetHighSpeedFrameRate = targetHighSpeedFrameRate,
-                allowFeatureCombinationResolutions = allowFeatureCombinationResolutions,
+                isFeatureComboInvocation = isFeatureComboInvocation,
                 findMaxSupportedFrameRate = findMaxSupportedFrameRate,
             )
         }
@@ -134,7 +134,7 @@ public class StreamSpecsCalculatorImpl(
         attachedUseCases: List<UseCase>,
         cameraConfig: CameraConfig,
         targetHighSpeedFrameRate: Range<Int>,
-        allowFeatureCombinationResolutions: Boolean,
+        isFeatureComboInvocation: Boolean,
         findMaxSupportedFrameRate: Boolean,
     ): StreamSpecQueryResult {
         // Calculate stream specs for use cases already attached.
@@ -158,7 +158,7 @@ public class StreamSpecsCalculatorImpl(
                     useCaseConfigFactory,
                     targetHighSpeedFrameRate,
                 ),
-                allowFeatureCombinationResolutions,
+                isFeatureComboInvocation,
                 findMaxSupportedFrameRate,
             )
 
@@ -227,7 +227,7 @@ public class StreamSpecsCalculatorImpl(
         newUseCases: List<UseCase>,
         attachedSurfaceInfoToUseCaseMap: Map<AttachedSurfaceInfo, UseCase>,
         configPairMap: Map<UseCase, CameraUseCaseAdapter.ConfigPair>,
-        allowFeatureCombinationResolutions: Boolean,
+        isFeatureComboInvocation: Boolean,
         findMaxSupportedFrameRate: Boolean,
     ): StreamSpecQueryResult {
         val cameraId = cameraInfoInternal.getCameraId()
@@ -287,7 +287,7 @@ public class StreamSpecsCalculatorImpl(
                         configToSupportedSizesMap,
                         isPreviewStabilizationOn,
                         CameraUseCaseAdapter.hasVideoCapture(newUseCases),
-                        allowFeatureCombinationResolutions,
+                        isFeatureComboInvocation,
                         findMaxSupportedFrameRate,
                     )
 

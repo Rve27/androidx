@@ -497,6 +497,10 @@ public final class CameraUseCaseAdapter implements Camera {
                 mTargetHighSpeedFps);
         StreamSpecQueryResult primaryStreamSpecResult;
         StreamSpecQueryResult secondaryStreamSpecResult = null;
+
+        boolean isFeatureComboInvocation = isFeatureComboInvocation(cameraUseCasesToAttach,
+                cameraUseCasesToKeep);
+
         try {
             primaryStreamSpecResult = mStreamSpecsCalculator.calculateSuggestedStreamSpecs(
                     getCameraMode(),
@@ -505,8 +509,7 @@ public final class CameraUseCaseAdapter implements Camera {
                     /* attachedUseCases = */ cameraUseCasesToKeep,
                     mCameraConfig,
                     mTargetHighSpeedFps,
-                    // TODO: b/404131863 - Pass true when feature combination is bound
-                    /* allowFeatureCombinationResolutions = */ false,
+                    isFeatureComboInvocation,
                     findMaxSupportedFrameRate);
             if (mSecondaryCameraInternal != null) {
                 secondaryStreamSpecResult = mStreamSpecsCalculator.calculateSuggestedStreamSpecs(
@@ -516,14 +519,18 @@ public final class CameraUseCaseAdapter implements Camera {
                         /* attachedUseCases = */ cameraUseCasesToKeep,
                         mCameraConfig,
                         mTargetHighSpeedFps,
-                        // TODO: b/404131863 - Pass true when feature combination is bound
-                        /* allowFeatureCombinationResolutions = */ false,
+                        isFeatureComboInvocation,
                         findMaxSupportedFrameRate);
             }
             // TODO(b/265704882): enable stream sharing for LEVEL_3 and high preview
             //  resolution. Throw exception here if (applyStreamSharing == false), both video
             //  and preview are used and preview resolution is lower than user configuration.
         } catch (IllegalArgumentException exception) {
+            if (isFeatureComboInvocation) {
+                // TODO: b/402297808 - Add StreamSharing support properly for feature combination.
+                throw exception;
+            }
+
             // TODO(b/270187871): instead of catch and retry, we can check UseCase
             //  combination directly with #isUseCasesCombinationSupported(). However
             //  calculateSuggestedStreamSpecs() is currently slow. We will do it after it's
@@ -678,6 +685,27 @@ public final class CameraUseCaseAdapter implements Camera {
         for (UseCase useCase : useCases) {
             useCase.setFeatureCombination(null);
         }
+    }
+
+    @SafeVarargs
+    private static boolean isFeatureComboInvocation(
+            @NonNull List<@NonNull UseCase>... useCaseLists) {
+        boolean isFeatureComboInvocation = false;
+
+        for (List<UseCase> useCases : useCaseLists) {
+            for (UseCase useCase : useCases) {
+                if (useCase.getFeatureCombination() != null) {
+                    isFeatureComboInvocation = true;
+                    break;
+                }
+            }
+
+            if (isFeatureComboInvocation) {
+                break;
+            }
+        }
+
+        return isFeatureComboInvocation;
     }
 
     /**
