@@ -91,7 +91,7 @@ private class RotationElement(private val quaternion: Quaternion) :
 
 internal class RotationNode(public var quaternion: Quaternion) :
     SubspaceLayoutModifierNode, SubspaceModifier.Node() {
-    override fun MeasureScope.measure(
+    override fun SubspaceMeasureScope.measure(
         measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
     ): SubspaceMeasureResult {

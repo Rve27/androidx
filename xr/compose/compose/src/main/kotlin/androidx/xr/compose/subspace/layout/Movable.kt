@@ -264,7 +264,7 @@ internal class MovableNode(
         }
     }
 
-    override fun MeasureScope.measure(
+    override fun SubspaceMeasureScope.measure(
         measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
     ): SubspaceMeasureResult {

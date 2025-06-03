@@ -164,7 +164,7 @@ private class PaddingNode(
     public var front: Dp,
     public var back: Dp,
 ) : SubspaceLayoutModifierNode, SubspaceModifier.Node() {
-    override fun MeasureScope.measure(
+    override fun SubspaceMeasureScope.measure(
         measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
     ): SubspaceMeasureResult {

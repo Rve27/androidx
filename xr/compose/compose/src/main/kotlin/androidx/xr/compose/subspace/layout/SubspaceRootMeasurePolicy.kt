@@ -29,7 +29,7 @@ import androidx.xr.runtime.math.Vector3
  * Based on [androidx.compose.ui.layout.RootMeasurePolicy].
  */
 internal class SubspaceRootMeasurePolicy() : MeasurePolicy {
-    override fun MeasureScope.measure(
+    override fun SubspaceMeasureScope.measure(
         measurables: List<SubspaceMeasurable>,
         constraints: VolumeConstraints,
     ): SubspaceMeasureResult {

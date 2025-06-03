@@ -458,6 +458,10 @@ package androidx.xr.compose.subspace.layout {
     property public abstract int width;
   }
 
+  public interface SubspaceMeasureScope extends androidx.compose.ui.unit.Density {
+    method public default androidx.xr.compose.subspace.layout.SubspaceMeasureResult layout(int width, int height, int depth, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SubspacePlaceable.SubspacePlacementScope,kotlin.Unit> placementBlock);
+  }
+
   public interface SubspaceModifier {
     method public default boolean all(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);
     method public default boolean any(kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.node.SubspaceModifierNodeElement<androidx.xr.compose.subspace.layout.SubspaceModifier.Node>,java.lang.Boolean> predicate);

@@ -33,11 +33,11 @@ public fun interface MeasurePolicy {
      * which the child should respect; different children can be measured with different
      * constraints.
      *
-     * [SubspaceMeasureResult] objects are usually created using the [MeasureScope.layout] factory,
-     * which takes the calculated size of this layout, its alignment lines, and a block defining the
-     * positioning of the children layouts.
+     * [SubspaceMeasureResult] objects are usually created using the [SubspaceMeasureScope.layout]
+     * factory, which takes the calculated size of this layout, its alignment lines, and a block
+     * defining the positioning of the children layouts.
      */
-    public fun MeasureScope.measure(
+    public fun SubspaceMeasureScope.measure(
         measurables: List<SubspaceMeasurable>,
         constraints: VolumeConstraints,
     ): SubspaceMeasureResult

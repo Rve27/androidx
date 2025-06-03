@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.util.fastForEach
 import androidx.xr.compose.subspace.layout.CoreEntity
 import androidx.xr.compose.subspace.layout.CoreEntityNode
-import androidx.xr.compose.subspace.layout.LayoutMeasureScope
+import androidx.xr.compose.subspace.layout.LayoutSubspaceMeasureScope
 import androidx.xr.compose.subspace.layout.MeasurePolicy
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsModifier
@@ -327,7 +327,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         private fun measureJustThis(constraints: VolumeConstraints): SubspacePlaceable {
             subspaceMeasureResult =
                 with(measurePolicy) {
-                    LayoutMeasureScope(this@SubspaceLayoutNode)
+                    LayoutSubspaceMeasureScope(this@SubspaceLayoutNode)
                         .measure(
                             this@SubspaceLayoutNode.children.map { it.measurableLayout }.toList(),
                             constraints,

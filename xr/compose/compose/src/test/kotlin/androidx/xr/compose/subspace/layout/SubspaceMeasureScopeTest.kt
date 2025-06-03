@@ -23,7 +23,7 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 import org.junit.runner.RunWith
 
-class TestMeasureScope : MeasureScope {
+class TestSubspaceMeasureScope : SubspaceMeasureScope {
     override val density: Float
         get() = 2f
 
@@ -31,12 +31,12 @@ class TestMeasureScope : MeasureScope {
         get() = 1f
 }
 
-/** Tests for [MeasureScope]. */
+/** Tests for [SubspaceMeasureScope]. */
 @RunWith(AndroidJUnit4::class)
-class MeasureScopeTest {
+class SubspaceMeasureScopeTest {
     @Test
     fun toPx_convertsCorrectly() {
-        with(TestMeasureScope()) {
+        with(TestSubspaceMeasureScope()) {
             assertThat(Dp(0f).toPx()).isEqualTo(0f)
             assertThat(Dp(10.3f).toPx()).isEqualTo(20.6f)
             assertThat(Dp(-10.3f).toPx()).isEqualTo(-20.6f)
@@ -47,7 +47,7 @@ class MeasureScopeTest {
 
     @Test
     fun roundToPx_convertsCorrectly() {
-        with(TestMeasureScope()) {
+        with(TestSubspaceMeasureScope()) {
             assertThat(Dp(0f).roundToPx()).isEqualTo(0)
             assertThat(Dp(10.3f).roundToPx()).isEqualTo(21)
             assertThat(Dp(-10.3f).roundToPx()).isEqualTo(-21)

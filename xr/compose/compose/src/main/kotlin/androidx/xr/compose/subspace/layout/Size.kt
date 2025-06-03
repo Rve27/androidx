@@ -272,7 +272,7 @@ private class FillElement(
 
 private class FillNode(public var direction: Direction, public var fraction: Float) :
     SubspaceLayoutModifierNode, SubspaceModifier.Node() {
-    override fun MeasureScope.measure(
+    override fun SubspaceMeasureScope.measure(
         measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
     ): SubspaceMeasureResult {
@@ -402,7 +402,7 @@ private class SizeNode(
     public var enforceIncoming: Boolean,
 ) : SubspaceLayoutModifierNode, SubspaceModifier.Node() {
 
-    private val MeasureScope.targetConstraints: VolumeConstraints
+    private val SubspaceMeasureScope.targetConstraints: VolumeConstraints
         get() {
             val maxWidth =
                 if (maxWidth != Dp.Unspecified) {
@@ -456,7 +456,7 @@ private class SizeNode(
             )
         }
 
-    override fun MeasureScope.measure(
+    override fun SubspaceMeasureScope.measure(
         measurable: SubspaceMeasurable,
         constraints: VolumeConstraints,
     ): SubspaceMeasureResult {

@@ -16,7 +16,7 @@
 
 package androidx.xr.compose.subspace.node
 
-import androidx.xr.compose.subspace.layout.LayoutMeasureScope
+import androidx.xr.compose.subspace.layout.LayoutSubspaceMeasureScope
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable
 import androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates
 import androidx.xr.compose.subspace.layout.SubspaceMeasurable
@@ -126,7 +126,7 @@ internal class SubspaceLayoutModifierNodeCoordinator(
         with(layoutModifierNode) {
             val measurable: SubspaceMeasurable = child ?: layoutNode!!.measurableLayout
             val subspaceMeasureResult: SubspaceMeasureResult =
-                LayoutMeasureScope(layoutNode!!).measure(measurable, constraints).also {
+                LayoutSubspaceMeasureScope(layoutNode!!).measure(measurable, constraints).also {
                     this@SubspaceLayoutModifierNodeCoordinator.subspaceMeasureResult = it
                 }
 
