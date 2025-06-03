@@ -1096,7 +1096,10 @@ internal constructor(
             serializableClass: Class<T>
         ): AppFunctionSerializableFactory<T> {
             val packageName = getPackageName(serializableClass)
-            val serializableSimpleName = serializableClass.simpleName
+            // Using `serializableClass.name` and not `serializableClass.simpleName` to be able to
+            // reference nested classes (e.g. OuterClass$InnerClass), to avoid ambiguity between
+            // inner classes of the same name.
+            val serializableSimpleName = serializableClass.name.substringAfterLast('.')
 
             val factorySimpleName = "${'$'}${serializableSimpleName}Factory"
             val factoryClassName = "${packageName}.${factorySimpleName}"
