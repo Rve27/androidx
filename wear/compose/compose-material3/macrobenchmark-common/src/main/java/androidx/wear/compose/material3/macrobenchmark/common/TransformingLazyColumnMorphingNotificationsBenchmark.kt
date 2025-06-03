@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.wear.compose.material3.demos.NotificationItem
-import androidx.wear.compose.material3.demos.TransformingLazyColumnNotificationsDemo
+import androidx.wear.compose.material3.demos.TransformingLazyColumnMorphingNotificationsDemo
 
-val TransformingLazyColumnNotificationsBenchmark =
+val TransformingLazyColumnMorphingNotificationsBenchmark =
     object : MacrobenchmarkScreen {
         override val content: @Composable (BoxScope.() -> Unit)
             get() = {
-                TransformingLazyColumnNotificationsDemo(
+                TransformingLazyColumnMorphingNotificationsDemo(
                     notifications = (0..100).flatMap { NotificationItem.all },
                     modifier = Modifier.semantics { contentDescription = CONTENT_DESCRIPTION },
                 )

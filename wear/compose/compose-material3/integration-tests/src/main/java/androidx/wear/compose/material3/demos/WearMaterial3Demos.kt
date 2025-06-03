@@ -232,6 +232,9 @@ val WearMaterial3Demos =
                         ComposableDemo("Notifications") {
                             TransformingLazyColumnNotificationsDemo()
                         },
+                        ComposableDemo("Morphing Notifications") {
+                            TransformingLazyColumnMorphingNotificationsDemo()
+                        },
                         ComposableDemo("Expandable Cards") {
                             TransformingLazyColumnExpandableCardSample()
                         },
