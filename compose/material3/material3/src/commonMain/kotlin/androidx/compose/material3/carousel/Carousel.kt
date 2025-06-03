@@ -368,6 +368,7 @@ internal fun Carousel(
             beyondViewportPageCount = maxNonFocalVisibleItemCount,
             snapPosition = snapPosition,
             flingBehavior = flingBehavior,
+            userScrollEnabled = userScrollEnabled,
             modifier = modifier.semantics { role = Role.Carousel },
         ) { page ->
             val carouselItemInfo = remember { CarouselItemDrawInfoImpl() }
