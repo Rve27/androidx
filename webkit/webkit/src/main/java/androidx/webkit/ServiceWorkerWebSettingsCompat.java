@@ -245,7 +245,6 @@ public abstract class ServiceWorkerWebSettingsCompat {
      *
      * @param enabled Whether cookie access during request intercept should be enabled.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @RequiresFeature(name = WebViewFeature.COOKIE_INTERCEPT,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     public abstract void setIncludeCookiesOnShouldInterceptRequestEnabled(boolean enabled);
@@ -259,7 +258,6 @@ public abstract class ServiceWorkerWebSettingsCompat {
      *
      * @see #setIncludeCookiesOnShouldInterceptRequestEnabled(boolean)
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @RequiresFeature(name = WebViewFeature.COOKIE_INTERCEPT,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     public abstract boolean isIncludeCookiesOnShouldInterceptRequestEnabled();

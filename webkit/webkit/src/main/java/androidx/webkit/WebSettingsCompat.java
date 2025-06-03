@@ -1341,7 +1341,6 @@ public class WebSettingsCompat {
      * @param settings Settings retrieved from {@link WebView#getSettings()}.
      * @param enabled  Whether cookie access during request intercept should be enabled.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @RequiresFeature(name = WebViewFeature.COOKIE_INTERCEPT,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     public static void setIncludeCookiesOnShouldInterceptRequestEnabled(
@@ -1364,7 +1363,6 @@ public class WebSettingsCompat {
      * @param settings Settings retrieved from {@link WebView#getSettings()}.
      * @see #setIncludeCookiesOnShouldInterceptRequestEnabled(WebSettings, boolean)
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @RequiresFeature(name = WebViewFeature.COOKIE_INTERCEPT,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     public static boolean isIncludeCookiesOnShouldInterceptRequestEnabled(

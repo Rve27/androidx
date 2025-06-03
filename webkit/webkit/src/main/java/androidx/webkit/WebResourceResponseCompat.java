@@ -22,7 +22,6 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import androidx.annotation.RequiresFeature;
-import androidx.annotation.RestrictTo;
 import androidx.webkit.internal.ApiFeature;
 import androidx.webkit.internal.WebViewFeatureInternal;
 
@@ -42,7 +41,6 @@ import java.util.Map;
  *
  * @see WebResourceResponse
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class WebResourceResponseCompat {
     private final @NonNull WebResourceResponse mWrapped;
     private @NonNull List<String> mCookies = Collections.emptyList();
@@ -73,6 +71,7 @@ public class WebResourceResponseCompat {
     public WebResourceResponseCompat(@NonNull String mimeType, @Nullable String encoding,
             @Nullable InputStream data) {
         mWrapped = new WebResourceResponse(mimeType, encoding, data);
+        mWrapped.setResponseHeaders(Map.of());
     }
 
     /**
@@ -83,7 +82,7 @@ public class WebResourceResponseCompat {
             int statusCode, @NonNull String reasonPhrase,
             @Nullable Map<String, String> responseHeaders, @Nullable InputStream data) {
         mWrapped = new WebResourceResponse(mimeType, encoding, statusCode, reasonPhrase,
-                responseHeaders, data);
+                responseHeaders != null ? responseHeaders : Map.of(), data);
     }
 
     /**
@@ -139,7 +138,7 @@ public class WebResourceResponseCompat {
     /**
      * @see WebResourceResponse#setEncoding(String)
      */
-    public void setEncoding(@NonNull String encoding) {
+    public void setEncoding(@Nullable String encoding) {
         mWrapped.setEncoding(encoding);
     }
 
@@ -176,14 +175,14 @@ public class WebResourceResponseCompat {
     /**
      * @see WebResourceResponse#setResponseHeaders(Map)
      */
-    public void setResponseHeaders(@NonNull Map<String, String> headers) {
+    public void setResponseHeaders(@NonNull Map<String,  String> headers) {
         mWrapped.setResponseHeaders(headers);
     }
 
     /**
      * @see WebResourceResponse#getResponseHeaders()
      */
-    @Nullable
+    @NonNull
     public Map<String, String> getResponseHeaders() {
         return mWrapped.getResponseHeaders();
     }
@@ -191,7 +190,7 @@ public class WebResourceResponseCompat {
     /**
      * @see WebResourceResponse#setData(InputStream)
      */
-    public void setData(@NonNull InputStream data) {
+    public void setData(@Nullable InputStream data) {
         mWrapped.setData(data);
     }
 
@@ -226,8 +225,8 @@ public class WebResourceResponseCompat {
      *
      * @param cookies List of valid {@code Set-Cookie} header values
      */
-    @RequiresFeature(name = WebViewFeature.COOKIE_INTERCEPT, enforcement = "androidx.webkit"
-            + ".WebViewFeature#isFeatureSupported")
+    @RequiresFeature(name = WebViewFeature.COOKIE_INTERCEPT,
+            enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
     public void setCookies(@NonNull List<String> cookies) {
         final ApiFeature.NoFramework feature = WebViewFeatureInternal.COOKIE_INTERCEPT;
         if (!feature.isSupportedByWebView()) {

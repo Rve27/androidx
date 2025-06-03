@@ -735,7 +735,6 @@ public class WebViewFeature {
      * {@link WebSettingsCompat#setIncludeCookiesOnShouldInterceptRequestEnabled(WebSettings, boolean)} and
      * {@link ServiceWorkerWebSettingsCompat#setIncludeCookiesOnShouldInterceptRequestEnabled(boolean)}.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public static final String COOKIE_INTERCEPT = "COOKIE_INTERCEPT";
 
     /**
