@@ -55,18 +55,16 @@ abstract class AutomatedEndToEndTest(
         const val CALLBACK_WAIT_MS = 2000L
         const val UI_CHANGE_WAIT_MS = 2000L
 
-        private val uiFrameworkOptions =
-            arrayOf(FragmentOptions.UI_FRAMEWORK_VIEW, FragmentOptions.UI_FRAMEWORK_COMPOSE)
-        private val mediationOptions =
-            arrayOf(
-                FragmentOptions.MEDIATION_TYPE_NON_MEDIATED,
-                FragmentOptions.MEDIATION_TYPE_IN_RUNTIME,
-                FragmentOptions.MEDIATION_TYPE_IN_APP,
-            )
-        private val zOrderings =
-            arrayOf(FragmentOptions.Z_ORDER_BELOW, FragmentOptions.Z_ORDER_ABOVE)
-
         fun baseParameters(): Collection<Array<String>> {
+            val uiFrameworkOptions =
+                arrayOf(FragmentOptions.UI_FRAMEWORK_VIEW, FragmentOptions.UI_FRAMEWORK_COMPOSE)
+            val mediationOptions =
+                arrayOf(
+                    FragmentOptions.MEDIATION_TYPE_NON_MEDIATED,
+                    FragmentOptions.MEDIATION_TYPE_IN_RUNTIME,
+                    FragmentOptions.MEDIATION_TYPE_IN_APP,
+                )
+            val zOrderings = arrayOf(FragmentOptions.Z_ORDER_BELOW, FragmentOptions.Z_ORDER_ABOVE)
             val testData = mutableListOf<Array<String>>()
             for (uiFrameworkOption in uiFrameworkOptions) {
                 for (mediation in mediationOptions) {
@@ -82,6 +80,28 @@ abstract class AutomatedEndToEndTest(
                     }
                 }
             }
+            return testData
+        }
+
+        fun customParams(vararg params: Array<String>): Collection<Array<String>> {
+            if (params.isEmpty()) {
+                return emptyList()
+            }
+
+            var testData = params[0].map { arrayOf(it) }
+
+            for (i in 1 until params.size) {
+                val nextParam = params[i]
+                val newResult = mutableListOf<Array<String>>()
+
+                for (existingCombination in testData) {
+                    for (element in nextParam) {
+                        newResult.add(existingCombination + element)
+                    }
+                }
+                testData = newResult
+            }
+
             return testData
         }
     }
@@ -152,8 +172,12 @@ abstract class AutomatedEndToEndTest(
         var remoteViewWidth: Int? = null
         var remoteViewHeight: Int? = null
         var remoteViewConfiguration: Configuration? = null
+        var dragX: Float? = null
+        var dragY: Float? = null
         val resizeLatch = CountDownLatch(1)
         val configLatch = CountDownLatch(1)
+        val dragLatch = CountDownLatch(1)
+        var isRemoteSession = false
 
         override fun onResizeOccurred(width: Int, height: Int) {
             remoteViewWidth = width
@@ -164,6 +188,16 @@ abstract class AutomatedEndToEndTest(
         override fun onConfigurationChanged(configuration: Configuration) {
             remoteViewConfiguration = configuration
             configLatch.countDown()
+        }
+
+        override fun onGestureFinished(totalChangeInX: Float, totalChangeInY: Float) {
+            dragX = totalChangeInX
+            dragY = totalChangeInY
+            dragLatch.countDown()
+        }
+
+        override fun onRemoteSession() {
+            isRemoteSession = true
         }
     }
 }

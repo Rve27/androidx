@@ -26,9 +26,11 @@ import android.graphics.Color.BLACK
 import android.graphics.Color.WHITE
 import android.graphics.Paint
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.Process
 import android.provider.Settings
 import android.util.Log
 import android.view.Gravity
@@ -100,7 +102,15 @@ class TestAdapters(private val sdkContext: Context) {
                         }
                         adView = adViewWithConsumeScrollOverlay
                     }
-                    clientExecutor.execute { client.onSessionOpened(BannerAdSession(adView)) }
+                    clientExecutor.execute {
+                        if (
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                                Process.isSdkSandbox()
+                        ) {
+                            automatedTestCallback?.onRemoteSession()
+                        }
+                        client.onSessionOpened(BannerAdSession(adView))
+                    }
                 }
             )
         }
@@ -303,10 +313,19 @@ class TestAdapters(private val sdkContext: Context) {
                             ViewGroup.LayoutParams.WRAP_CONTENT,
                         )
                 }
+            var initialScrollPositionX = 0f
+            var initialScrollPositionY = 0f
 
             scrollView.setOnTouchListener { _, motionEvent ->
                 if (motionEvent.action == MotionEvent.ACTION_DOWN) {
+                    initialScrollPositionX = scrollView.scrollX.toFloat()
+                    initialScrollPositionY = scrollView.scrollY.toFloat()
                     scrollView.requestDisallowInterceptTouchEvent(!appCanScroll)
+                }
+                if (motionEvent.action == MotionEvent.ACTION_UP) {
+                    val scrollX = scrollView.scrollX.toFloat() - initialScrollPositionX
+                    val scrollY = scrollView.scrollY.toFloat() - initialScrollPositionY
+                    automatedTestCallback?.onGestureFinished(scrollX, scrollY)
                 }
                 false
             }
