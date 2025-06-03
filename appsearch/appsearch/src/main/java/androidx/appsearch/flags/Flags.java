@@ -269,6 +269,9 @@ public final class Flags {
     public static final String FLAG_ENABLE_DATABASE_SCOPED_SCHEMA_OPERATIONS =
             FLAG_PREFIX + "enable_database_scoped_schema_operations";
 
+    /** Enables the Eigen library for embedding scoring, if Eigen is compiled in. */
+    public static final String FLAG_ENABLE_EIGEN_EMBEDDING_SCORING =
+            FLAG_PREFIX + "enable_eigen_embedding_scoring";
 
     // Whether the features should be enabled.
     //
@@ -575,5 +578,12 @@ public final class Flags {
      */
     public static boolean enableSmallerDecompressionBufferSize() {
         return true;
+    }
+
+    /** Whether to enable the Eigen library for embedding scoring */
+    public static boolean enableEigenEmbeddingScoring() {
+        // The return value does not matter, since Jetpack does not have Eigen compiled in.
+        // Set it to false for clarity.
+        return false;
     }
 }
