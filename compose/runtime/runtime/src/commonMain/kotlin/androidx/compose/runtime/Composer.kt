@@ -388,7 +388,13 @@ internal constructor(
     internal var invalidations: List<Pair<RecomposeScopeImpl, Any?>>,
     internal val locals: PersistentCompositionLocalMap,
     internal val nestedReferences: List<MovableContentStateReference>?,
-)
+) {
+    /** Transfer any invalidations that may have accumulated since this reference was created. */
+    internal fun transferPendingInvalidations() {
+        invalidations =
+            invalidations + (composition as CompositionImpl).extractInvalidationsOf(anchor)
+    }
+}
 
 /**
  * A Compose compiler plugin API. DO NOT call directly.
@@ -3586,6 +3592,7 @@ internal class ComposerImpl(
                             val offsetChanges = ChangeList()
                             changeListWriter.withChangeList(offsetChanges) {
                                 changeListWriter.withoutImplicitRootStart {
+                                    from.transferPendingInvalidations()
                                     recomposeMovableContent(
                                         from = from.composition,
                                         to = to.composition,
@@ -4046,7 +4053,7 @@ internal class ComposerImpl(
      */
     private fun reportAllMovableContent() {
         if (slotTable.containsMark()) {
-            (composition as CompositionImpl).updateMovingInvalidations()
+            composition.updateMovingInvalidations()
             val changes = ChangeList()
             deferredChanges = changes
             slotTable.read { reader ->
@@ -4805,8 +4812,8 @@ private val InvalidationLocationAscending =
  * Extract the state of movable content from the given writer. A new slot table is created and the
  * content is removed from [slots] (leaving a movable content group that, if composed over, will
  * create new content) and added to this new slot table. The invalidations that occur to recompose
- * scopes in the movable content state will be collected and forwarded to the new if the state is
- * used.
+ * scopes in the movable content state will be collected and forwarded to the new composition if the
+ * state is used.
  */
 internal fun extractMovableContentAtCurrent(
     composition: ControlledComposition,
