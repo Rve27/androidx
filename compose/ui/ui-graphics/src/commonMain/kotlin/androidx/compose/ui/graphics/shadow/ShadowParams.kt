@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
 /**
- * Group of parameters that represent how an inner shadow should be rendered.
+ * Group of parameters that represent how a drop shadow or inner shadow should be rendered.
  *
  * @property radius The blur radius of the shadow
  * @property spread Spread parameter that adds to the size of the shadow
@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
  * @property blendMode Blending algorithm used by the shadow
  */
 @Immutable
-class InnerShadow
+class ShadowParams
 private constructor(
     val radius: Dp,
     val spread: Dp,
@@ -76,7 +76,8 @@ private constructor(
     }
 
     /**
-     * Creates a group of parameters that represent how a inner shadow should be rendered.
+     * Creates a group of parameters that represent how a drop shadow or inner shadow should be
+     * rendered.
      *
      * @param radius The blur radius of the shadow
      * @param brush Brush used to blend against a mask defined by the shadow geometry
@@ -103,7 +104,8 @@ private constructor(
     )
 
     /**
-     * Creates a group of parameters that represent how a inner shadow should be rendered.
+     * Creates a group of parameters that represent how a drop shadow or inner shadow should be
+     * rendered.
      *
      * @param radius The blur radius of the shadow
      * @param color The color of the shadow. If [Color.Unspecified] is provided, [Color.Black] will
@@ -132,7 +134,7 @@ private constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is InnerShadow) return false
+        if (other !is ShadowParams) return false
 
         if (radius != other.radius) return false
         if (spread != other.spread) return false
@@ -157,7 +159,10 @@ private constructor(
     }
 
     override fun toString(): String {
-        return "InnerShadow(radius=$radius, spread=$spread, offset=$offset, alpha=$alpha, " +
+        return "ShadowParams(radius=$radius, spread=$spread, offset=$offset, alpha=$alpha, " +
             "blendMode=$blendMode, color=$color, brush=$brush)"
     }
+
+    internal fun copyWithoutOffset() =
+        ShadowParams(radius, spread, DpOffset.Zero, color, brush, alpha, blendMode)
 }

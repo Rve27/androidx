@@ -1975,38 +1975,31 @@ package androidx.compose.ui.graphics.shadow {
     method public static androidx.compose.ui.graphics.shadow.ShadowContext ShadowContext();
   }
 
-  @androidx.compose.runtime.Immutable public final class DropShadow {
-    ctor public DropShadow(float radius, androidx.compose.ui.graphics.Brush brush, optional float spread, optional @FloatRange(from=0.0, to=1.0) float alpha, optional int blendMode);
-    ctor public DropShadow(float radius, optional long color, optional float spread, optional @FloatRange(from=0.0, to=1.0) float alpha, optional int blendMode);
-    method public float getAlpha();
-    method public int getBlendMode();
-    method @BytecodeOnly public int getBlendMode-0nO6VwU();
-    method public androidx.compose.ui.graphics.Brush? getBrush();
-    method public long getColor();
-    method @BytecodeOnly public long getColor-0d7_KjU();
-    method public float getRadius();
-    method @BytecodeOnly public float getRadius-D9Ej5fM();
-    method public float getSpread();
-    method @BytecodeOnly public float getSpread-D9Ej5fM();
-    property public float alpha;
-    property public int blendMode;
-    property public androidx.compose.ui.graphics.Brush? brush;
-    property public long color;
-    property public float radius;
-    property public float spread;
-  }
-
   public final class DropShadowPainter extends androidx.compose.ui.graphics.painter.Painter {
-    ctor public DropShadowPainter(androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.DropShadow dropShadow);
+    ctor public DropShadowPainter(androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.ShadowParams shadowParams);
     method public long getIntrinsicSize();
     method @BytecodeOnly public long getIntrinsicSize-NH-jbRc();
     method protected void onDraw(androidx.compose.ui.graphics.drawscope.DrawScope);
     property public long intrinsicSize;
   }
 
-  @androidx.compose.runtime.Immutable public final class InnerShadow {
-    ctor public InnerShadow(float radius, androidx.compose.ui.graphics.Brush brush, optional float spread, optional long offset, optional @FloatRange(from=0.0, to=1.0) float alpha, optional int blendMode);
-    ctor public InnerShadow(float radius, optional long color, optional float spread, optional long offset, optional @FloatRange(from=0.0, to=1.0) float alpha, optional int blendMode);
+  public final class InnerShadowPainter extends androidx.compose.ui.graphics.painter.Painter {
+    ctor public InnerShadowPainter(androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.ShadowParams shadowParams);
+    method public long getIntrinsicSize();
+    method @BytecodeOnly public long getIntrinsicSize-NH-jbRc();
+    method protected void onDraw(androidx.compose.ui.graphics.drawscope.DrawScope);
+    property public long intrinsicSize;
+  }
+
+  public interface ShadowContext {
+    method public default void clearCache();
+    method public default androidx.compose.ui.graphics.shadow.DropShadowPainter createDropShadowPainter(androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.ShadowParams shadowParams);
+    method public default androidx.compose.ui.graphics.shadow.InnerShadowPainter createInnerShadowPainter(androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.ShadowParams shadowParams);
+  }
+
+  @androidx.compose.runtime.Immutable public final class ShadowParams {
+    ctor public ShadowParams(float radius, androidx.compose.ui.graphics.Brush brush, optional float spread, optional long offset, optional @FloatRange(from=0.0, to=1.0) float alpha, optional int blendMode);
+    ctor public ShadowParams(float radius, optional long color, optional float spread, optional long offset, optional @FloatRange(from=0.0, to=1.0) float alpha, optional int blendMode);
     method public float getAlpha();
     method public int getBlendMode();
     method @BytecodeOnly public int getBlendMode-0nO6VwU();
@@ -2026,20 +2019,6 @@ package androidx.compose.ui.graphics.shadow {
     property public long offset;
     property public float radius;
     property public float spread;
-  }
-
-  public final class InnerShadowPainter extends androidx.compose.ui.graphics.painter.Painter {
-    ctor public InnerShadowPainter(androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.InnerShadow innerShadow);
-    method public long getIntrinsicSize();
-    method @BytecodeOnly public long getIntrinsicSize-NH-jbRc();
-    method protected void onDraw(androidx.compose.ui.graphics.drawscope.DrawScope);
-    property public long intrinsicSize;
-  }
-
-  public interface ShadowContext {
-    method public default void clearCache();
-    method public default androidx.compose.ui.graphics.shadow.DropShadowPainter createDropShadowPainter(androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.DropShadow dropShadow);
-    method public default androidx.compose.ui.graphics.shadow.InnerShadowPainter createInnerShadowPainter(androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.InnerShadow innerShadow);
   }
 
 }

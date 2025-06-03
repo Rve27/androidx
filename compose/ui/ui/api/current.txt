@@ -644,10 +644,9 @@ package androidx.compose.ui.draw {
   }
 
   public final class ShadowKt {
-    method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier dropShadow(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.DropShadow dropShadow, optional long offset);
+    method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier dropShadow(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.ShadowParams shadowParams);
     method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier dropShadow(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape shape, kotlin.jvm.functions.Function1<? super androidx.compose.ui.draw.DropShadowScope,kotlin.Unit> block);
-    method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier dropShadow-hLWuAgI(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape, androidx.compose.ui.graphics.shadow.DropShadow, long);
-    method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier innerShadow(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.InnerShadow innerShadow);
+    method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier innerShadow(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.ShadowParams shadowParams);
     method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier innerShadow(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape shape, kotlin.jvm.functions.Function1<? super androidx.compose.ui.draw.InnerShadowScope,kotlin.Unit> block);
     method @Deprecated @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier shadow(androidx.compose.ui.Modifier, float elevation, optional androidx.compose.ui.graphics.Shape shape, optional boolean clip);
     method @androidx.compose.runtime.Stable public static androidx.compose.ui.Modifier shadow(androidx.compose.ui.Modifier, float elevation, optional androidx.compose.ui.graphics.Shape shape, optional boolean clip, optional long ambientColor, optional long spotColor);
