@@ -64,11 +64,10 @@ class MainPanelActivity : AppCompatActivity() {
         val mainPanelSwitch = panelEntityView.findViewById<Switch>(R.id.main_panel_switch)
         mainPanelSwitch.setOnCheckedChangeListener { _, isChecked: Boolean ->
             if (isChecked) {
-                session.scene.mainPanelEntity.setCornerRadius(0.0f)
+                session.scene.mainPanelEntity.cornerRadius = 0.0f
             } else {
-                session.scene.mainPanelEntity.setCornerRadius(
+                session.scene.mainPanelEntity.cornerRadius =
                     calculateCornerRadiusInMeters(session.scene.mainPanelEntity, 32f)
-                )
             }
             session.scene.mainPanelEntity.setPose(session.scene.mainPanelEntity.getPose())
         }
@@ -78,20 +77,19 @@ class MainPanelActivity : AppCompatActivity() {
                 return@setOnCheckedChangeListener
             }
             if (isChecked) {
-                activityPanelEntity?.setCornerRadius(0.0f)
+                activityPanelEntity?.cornerRadius = 0.0f
             } else {
-                activityPanelEntity?.setCornerRadius(
+                activityPanelEntity?.cornerRadius =
                     calculateCornerRadiusInMeters(activityPanelEntity!!, 32f)
-                )
             }
             activityPanelEntity?.setPose(activityPanelEntity!!.getPose())
         }
         val panelEntitySwitch = panelEntityView.findViewById<Switch>(R.id.panel_entity_switch)
         panelEntitySwitch.setOnCheckedChangeListener { _, isChecked: Boolean ->
             if (isChecked) {
-                panelEntity.setCornerRadius(0.0f)
+                panelEntity.cornerRadius = 0.0f
             } else {
-                panelEntity.setCornerRadius(calculateCornerRadiusInMeters(panelEntity, 32f))
+                panelEntity.cornerRadius = calculateCornerRadiusInMeters(panelEntity, 32f)
             }
             panelEntity.setPose(panelEntity.getPose())
         }
@@ -99,7 +97,7 @@ class MainPanelActivity : AppCompatActivity() {
     }
 
     fun calculateCornerRadiusInMeters(entity: PanelEntity, cornerRadiusDp: Float): Float {
-        val pixelDensity = entity.getSizeInPixels().width.toFloat() / entity.getSize().width
+        val pixelDensity = entity.sizeInPixels.width.toFloat() / entity.size.width
         val radiusPixels =
             TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,

@@ -1777,12 +1777,23 @@ package androidx.xr.runtime.java {
 
 package androidx.xr.runtime.math {
 
+  public final class FloatSize2d {
+    ctor public FloatSize2d();
+    ctor public FloatSize2d(optional float width, optional float height);
+    method public float getHeight();
+    method public float getWidth();
+    method public androidx.xr.runtime.math.FloatSize3d to3d(optional float depth);
+    property public float height;
+    property public float width;
+  }
+
   public final class FloatSize3d {
     ctor public FloatSize3d();
     ctor public FloatSize3d(optional float width, optional float height, optional float depth);
     method public float getDepth();
     method public float getHeight();
     method public float getWidth();
+    method public androidx.xr.runtime.math.FloatSize2d to2d();
     property public float depth;
     property public float height;
     property public float width;

@@ -40,6 +40,7 @@ import androidx.xr.runtime.internal.SpatialPointerIcon as RtSpatialPointerIcon
 import androidx.xr.runtime.internal.SpatialPointerIconType as RtSpatialPointerIconType
 import androidx.xr.runtime.internal.SpatialVisibility as RtSpatialVisibility
 import androidx.xr.runtime.internal.TextureSampler as RtTextureSampler
+import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Ray
@@ -67,9 +68,22 @@ internal fun FloatSize3d.toRtDimensions(): RtDimensions {
     return RtDimensions(width, height, depth)
 }
 
+/**
+ * Extension function that converts a [androidx.xr.runtime.math.FloatSize2d] to [RtDimensions],
+ * setting the `depth` field to 0.
+ */
+internal fun FloatSize2d.toRtDimensions(): RtDimensions {
+    return RtDimensions(width, height, 0f)
+}
+
 /** Extension function that converts a [RtDimensions] to [FloatSize3d]. */
 internal fun RtDimensions.toFloatSize3d(): FloatSize3d {
     return FloatSize3d(width, height, depth)
+}
+
+/** Extension function that converts a [RtDimensions] to [FloatSize3d]. */
+internal fun RtDimensions.toFloatSize2d(): FloatSize2d {
+    return FloatSize2d(width, height)
 }
 
 /**

@@ -50,7 +50,6 @@ import androidx.xr.compose.testing.SubspaceTestingActivity
 import androidx.xr.compose.testing.TestSetup
 import androidx.xr.compose.testing.onSubspaceNodeWithTag
 import androidx.xr.compose.unit.Meter.Companion.meters
-import androidx.xr.scenecore.BasePanelEntity
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.scene
 import com.android.extensions.xr.ShadowXrExtensions
@@ -239,7 +238,7 @@ class SpatialPanelTest {
                 }
             }
         }
-        assertThat(getBasePanelEntity("panel")?.getCornerRadius()?.meters?.toDp()).isEqualTo(32.dp)
+        assertThat(getPanelEntity("panel")?.cornerRadius?.meters?.toDp()).isEqualTo(32.dp)
     }
 
     @Test
@@ -255,8 +254,7 @@ class SpatialPanelTest {
                 }
             }
         }
-        assertThat(getBasePanelEntity("mainPanel")?.getCornerRadius()?.meters?.toDp())
-            .isEqualTo(16.dp)
+        assertThat(getPanelEntity("mainPanel")?.cornerRadius?.meters?.toDp()).isEqualTo(16.dp)
     }
 
     @Test
@@ -272,7 +270,7 @@ class SpatialPanelTest {
             }
         }
 
-        assertThat(getBasePanelEntity("panel")?.getCornerRadius()?.meters?.toDp()).isEqualTo(100.dp)
+        assertThat(getPanelEntity("panel")?.cornerRadius?.meters?.toDp()).isEqualTo(100.dp)
     }
 
     @Test
@@ -378,9 +376,9 @@ class SpatialPanelTest {
         assertThat(session?.scene?.getEntitiesOfType(PanelEntity::class.java)?.size).isEqualTo(2)
     }
 
-    private fun getBasePanelEntity(tag: String): BasePanelEntity<*>? {
+    private fun getPanelEntity(tag: String): PanelEntity? {
         return composeTestRule.onSubspaceNodeWithTag(tag).fetchSemanticsNode().semanticsEntity
-            as BasePanelEntity<*>
+            as PanelEntity
     }
 
     private class SpatialPanelActivity : ComponentActivity() {}

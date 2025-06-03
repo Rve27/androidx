@@ -34,11 +34,11 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.AnchorEntity
-import androidx.xr.scenecore.BasePanelEntity
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.MovableComponent
+import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.PlaneOrientation
 import androidx.xr.scenecore.PlaneSemanticType
 import androidx.xr.scenecore.Space
@@ -240,8 +240,8 @@ class TransformationActivity : AppCompatActivity() {
         view.setLine("Distance to ActivitySpace", length(activitySpacePose.translation).toString())
         view.setLine("Distance to Main Panel", length(mainPanelSpacePose.translation).toString())
         when (trackedEntity) {
-            is BasePanelEntity<*> -> {
-                view.setLine("Panel size", trackedEntity.getSize().toString())
+            is PanelEntity -> {
+                view.setLine("Panel size", trackedEntity.size.toString())
                 view.setLine("Panel scale", trackedEntity.getScale().toString())
             }
         }

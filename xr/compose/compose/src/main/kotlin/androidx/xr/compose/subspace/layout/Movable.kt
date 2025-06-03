@@ -32,10 +32,10 @@ import androidx.xr.compose.unit.toIntVolumeSize
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Ray
-import androidx.xr.scenecore.BasePanelEntity
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.MoveListener
+import androidx.xr.scenecore.PanelEntity
 import java.util.concurrent.Executor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
@@ -346,7 +346,7 @@ internal class MovableNode(
             currentPose,
             currentScale,
             when (entity) {
-                is BasePanelEntity<*> -> entity.getSize().toIntVolumeSize(density)
+                is PanelEntity -> entity.size.to3d().toIntVolumeSize(density)
                 else -> IntVolumeSize.Zero
             },
             ::MoveEvent,
@@ -363,7 +363,7 @@ internal class MovableNode(
     ) {
         val finalSize: IntVolumeSize =
             when (entity) {
-                is BasePanelEntity<*> -> entity.getSize().toIntVolumeSize(density)
+                is PanelEntity -> entity.size.to3d().toIntVolumeSize(density)
                 else -> IntVolumeSize.Zero
             }
         updatePoseOnMove(previousPose, finalPose, finalScale, finalSize) { pose, scale, size ->

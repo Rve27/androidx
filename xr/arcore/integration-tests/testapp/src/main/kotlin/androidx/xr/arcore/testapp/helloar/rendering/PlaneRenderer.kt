@@ -109,12 +109,11 @@ internal class PlaneRenderer(val session: Session, val coroutineScope: Coroutine
                             updateViewText(view, plane, state)
                             if (counter > PANEL_RESIZE_UPDATE_COUNT) {
                                 val panelExtentsInPixels = convertMetersToPixels(state.extents)
-                                entity.setSizeInPixels(
+                                entity.sizeInPixels =
                                     IntSize2d(
                                         width = panelExtentsInPixels.x.toInt(),
                                         height = panelExtentsInPixels.y.toInt(),
                                     )
-                                )
                                 counter = 0
                             }
                         }

@@ -29,7 +29,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.math.FloatSize3d
+import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
@@ -218,7 +218,7 @@ class VisibilityActivity : AppCompatActivity() {
 
         val movableComponent = MovableComponent.create(session!!)
         panelEntity.addComponent(movableComponent)
-        movableComponent.size = getSizeInLocalSpace(panelEntity)
+        movableComponent.size = getSizeInLocalSpace(panelEntity).to3d()
 
         panelContentView.findViewById<Toolbar>(R.id.activity_panel_tool_bar).setTitle(panelName)
         return panelEntity
@@ -244,14 +244,10 @@ class VisibilityActivity : AppCompatActivity() {
             }
     }
 
-    private fun getSizeInLocalSpace(panel: PanelEntity): FloatSize3d {
-        val scaledSize = panel.getSize()
+    private fun getSizeInLocalSpace(panel: PanelEntity): FloatSize2d {
+        val scaledSize = panel.size
         val spaceScale = panel.getScale()
-        return FloatSize3d(
-            scaledSize.width / spaceScale,
-            scaledSize.height / spaceScale,
-            scaledSize.depth / spaceScale,
-        )
+        return FloatSize2d(scaledSize.width / spaceScale, scaledSize.height / spaceScale)
     }
 
     private fun setHiddenForAllEntities(hidden: Boolean) {

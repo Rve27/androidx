@@ -78,7 +78,7 @@ class EnvironmentTestActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         val mActivity = this
 
-        session.scene.mainPanelEntity.setSizeInPixels(IntSize2d(width = 1500, height = 2000))
+        session.scene.mainPanelEntity.sizeInPixels = IntSize2d(width = 1500, height = 2000)
 
         session.scene.spatialEnvironment.setPassthroughOpacityPreference(0.0f)
         session.scene.spatialEnvironment.addOnPassthroughOpacityChangedListener { newOpacity ->

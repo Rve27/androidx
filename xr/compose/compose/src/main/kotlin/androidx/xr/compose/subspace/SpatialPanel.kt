@@ -68,6 +68,7 @@ import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetMeasur
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetModifier
 import androidx.xr.compose.unit.Meter.Companion.millimeters
 import androidx.xr.compose.unit.toMeter
+import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
@@ -90,6 +91,7 @@ public object SpatialPanelDefaults {
     public val shape: SpatialShape = SpatialRoundedCornerShape(CornerSize(32.dp))
 
     /** Default minimum dimensions for a Spatial Panel in Meters. */
+    // TODO: When unrestricting this API, change this type to FloatSize2d
     public val minimumPanelDimension: FloatSize3d = FloatSize3d(0.1f, 0.1f, 0.1f)
 }
 
@@ -126,7 +128,7 @@ public fun SpatialPanel(
             PanelEntity.create(
                 session = this,
                 view = frameLayout,
-                dimensions = SpatialPanelDefaults.minimumPanelDimension,
+                dimensions = SpatialPanelDefaults.minimumPanelDimension.to2d(),
                 name = entityName("SpatialPanel"),
                 pose = Pose.Identity,
             )
@@ -245,7 +247,7 @@ private fun <T : View> AndroidViewPanel(
             PanelEntity.create(
                 session = this,
                 view = view,
-                dimensions = SpatialPanelDefaults.minimumPanelDimension,
+                dimensions = SpatialPanelDefaults.minimumPanelDimension.to2d(),
                 name = "ViewPanel",
                 pose = Pose.Identity,
             )
@@ -306,7 +308,7 @@ public fun SpatialPanel(
             PanelEntity.create(
                 session = this,
                 view = view,
-                dimensions = SpatialPanelDefaults.minimumPanelDimension,
+                dimensions = SpatialPanelDefaults.minimumPanelDimension.to2d(),
                 name = entityName("SpatialPanel"),
                 pose = Pose.Identity,
             )
@@ -457,7 +459,7 @@ public fun SpatialPanel(
                     PanelEntity.create(
                             session = session,
                             view = scrimView,
-                            dimensions = FloatSize3d(scrimWidth.toM(), scrimHeight.toM()),
+                            dimensions = FloatSize2d(scrimWidth.toM(), scrimHeight.toM()),
                             name = entityName("ScrimPanel"),
                             pose = Pose.Identity,
                         )

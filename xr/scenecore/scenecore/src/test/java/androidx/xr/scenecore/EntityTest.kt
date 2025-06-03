@@ -648,8 +648,8 @@ class EntityTest {
     @Test
     fun allPanelEntitySetSizeInPixels_callsRuntimeEntityImplsetSizeInPixels() {
         val dimensions = IntSize2d(320, 240)
-        panelEntity.setSizeInPixels(dimensions)
-        activityPanelEntity.setSizeInPixels(dimensions)
+        panelEntity.sizeInPixels = dimensions
+        activityPanelEntity.sizeInPixels = dimensions
 
         verify(mockPanelEntityImpl).sizeInPixels = any()
         verify(mockActivityPanelEntity).sizeInPixels = any()
@@ -663,8 +663,8 @@ class EntityTest {
         whenever(mockPanelEntityImpl.sizeInPixels).thenReturn(pixelDimensions)
         whenever(mockActivityPanelEntity.sizeInPixels).thenReturn(pixelDimensions)
 
-        assertThat(panelEntity.getSizeInPixels()).isEqualTo(expectedPixelDimensions)
-        assertThat(activityPanelEntity.getSizeInPixels()).isEqualTo(expectedPixelDimensions)
+        assertThat(panelEntity.sizeInPixels).isEqualTo(expectedPixelDimensions)
+        assertThat(activityPanelEntity.sizeInPixels).isEqualTo(expectedPixelDimensions)
 
         verify(mockPanelEntityImpl).sizeInPixels
         verify(mockActivityPanelEntity).sizeInPixels
@@ -1239,7 +1239,8 @@ class EntityTest {
     @Test
     fun setCornerRadius() {
         val radius = 2.0f
-        panelEntity.setCornerRadius(radius)
+        panelEntity.cornerRadius = radius
+
         verify(mockPanelEntityImpl).cornerRadius = radius
     }
 

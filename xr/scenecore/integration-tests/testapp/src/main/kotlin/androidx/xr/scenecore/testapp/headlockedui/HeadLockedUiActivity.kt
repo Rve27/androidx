@@ -166,7 +166,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
                 name = "DebugPanel",
                 pose = Pose(Vector3(0f, -0.8f, -0.05f)),
             )
-        mDebugPanel.panelEntity.setSizeInPixels(IntSize2d(1500, 1000))
+        mDebugPanel.panelEntity.sizeInPixels = IntSize2d(1500, 1000)
     }
 
     override fun onResume() {

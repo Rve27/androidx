@@ -92,10 +92,10 @@ class PerceivedResolutionManager(
                 )
                 if (panelEntityManager.panelEntity != null) {
                     val panelWidthInActivitySpace: Float =
-                        panelEntityManager.panelEntity!!.getSize().width *
+                        panelEntityManager.panelEntity!!.size.width *
                             panelEntityManager.panelEntity!!.getScale(Space.ACTIVITY)
                     val panelHeightInActivitySpace: Float =
-                        panelEntityManager.panelEntity!!.getSize().height *
+                        panelEntityManager.panelEntity!!.size.height *
                             panelEntityManager.panelEntity!!.getScale(Space.ACTIVITY)
                     mTextView?.setLine(
                         "Panel Entity dimensions",
