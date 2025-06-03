@@ -279,11 +279,11 @@ package androidx.xr.compose.subspace {
   }
 
   public final class SpatialBoxKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialBox(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialAlignment alignment, optional boolean propagateMinConstraints, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.SpatialBoxScope,kotlin.Unit> content);
-    method @BytecodeOnly @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialBox(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialAlignment?, boolean, kotlin.jvm.functions.Function3<? super androidx.xr.compose.subspace.SpatialBoxScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialBox(optional androidx.xr.compose.subspace.layout.SubspaceModifier modifier, optional androidx.xr.compose.subspace.layout.SpatialAlignment alignment, optional boolean propagateMinConstraints, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.SpatialBoxScope,kotlin.Unit> content);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.xr.compose.subspace.SubspaceComposable public static void SpatialBox(androidx.xr.compose.subspace.layout.SubspaceModifier?, androidx.xr.compose.subspace.layout.SpatialAlignment?, boolean, kotlin.jvm.functions.Function3<? super androidx.xr.compose.subspace.SpatialBoxScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @androidx.compose.foundation.layout.LayoutScopeMarker public interface SpatialBoxScope {
+  @androidx.compose.foundation.layout.LayoutScopeMarker public interface SpatialBoxScope {
     method public androidx.xr.compose.subspace.layout.SubspaceModifier align(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.compose.subspace.layout.SpatialAlignment alignment);
   }
 
