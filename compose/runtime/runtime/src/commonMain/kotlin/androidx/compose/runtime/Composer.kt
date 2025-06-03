@@ -235,7 +235,7 @@ private class Invalidation(
     val scope: RecomposeScopeImpl,
 
     /** The index of the group in the slot table being invalidated. */
-    val location: Int,
+    var location: Int,
 
     /**
      * The instances invalidating the scope. If this is `null` or empty then the scope is
@@ -3784,6 +3784,20 @@ internal class ComposerImpl(
     }
 
     fun updateComposerInvalidations(invalidationsRequested: ScopeMap<RecomposeScopeImpl, Any>) {
+        // Update any invalidations that have may have moved since they were added, removing any
+        // that are no longer in the slot table.
+        for (i in invalidations.lastIndex downTo 0) {
+            val invalidation = invalidations[i]
+            val anchor = invalidation.scope.anchor
+            if (anchor != null && anchor.valid) {
+                if (invalidation.location != anchor.location)
+                    invalidation.location = anchor.location
+            } else {
+                invalidations.removeAt(i)
+            }
+        }
+
+        // Add the requested invalidations
         invalidationsRequested.map.forEach { scope, instances ->
             scope as RecomposeScopeImpl
             val location = scope.anchor?.location ?: return@forEach
@@ -3791,6 +3805,8 @@ internal class ComposerImpl(
                 Invalidation(scope, location, instances.takeUnless { it === ScopeInvalidated })
             )
         }
+
+        // Ensure the invalidations are in sorted order.
         invalidations.sortWith(InvalidationLocationAscending)
     }
 

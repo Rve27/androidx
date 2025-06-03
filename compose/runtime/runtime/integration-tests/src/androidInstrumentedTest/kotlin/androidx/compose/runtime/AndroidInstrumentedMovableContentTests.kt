@@ -16,7 +16,9 @@
 
 package androidx.compose.runtime
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -27,7 +29,7 @@ import org.junit.runner.RunWith
 
 @MediumTest
 @RunWith(AndroidJUnit4::class)
-class AndroidIntrumentedMovableContentTests {
+class AndroidInstrumentedMovableContentTests {
     @get:Rule val rule = createComposeRule()
 
     @Test
@@ -54,5 +56,57 @@ class AndroidIntrumentedMovableContentTests {
         rule.runOnIdle { extractContent = false }
 
         rule.runOnIdle { extractContent = true }
+    }
+
+    @Test
+    fun correctInvalidationLocation() {
+        rule.setContent { InvalidationLocation.Test() }
+
+        rule.runOnIdle { InvalidationLocation.togglePage() }
+
+        rule.runOnIdle { InvalidationLocation.togglePage() }
+
+        rule.runOnIdle { InvalidationLocation.togglePage() }
+    }
+}
+
+object InvalidationLocation {
+    val wrapped = movableContentOf { num2: Int ->
+        val num = 1
+        Entry {
+            if (num == 0) {
+                BasicText("Some text")
+            }
+        }
+        BasicText(num2.toString())
+    }
+
+    var page by mutableStateOf(0)
+
+    val entries = mutableStateListOf<@Composable () -> Unit>()
+
+    fun togglePage() {
+        page = (page + 1) % 2
+    }
+
+    @Composable
+    fun Entry(content: @Composable () -> Unit) {
+        DisposableEffect(content) {
+            entries += content
+            onDispose { entries -= content }
+        }
+    }
+
+    @Composable
+    fun Test() {
+
+        Column {
+            when (page) {
+                0 -> wrapped(0)
+                1 -> Box { wrapped(1) }
+            }
+            Column { BasicText("Page: $page") }
+        }
+        entries.forEach { entry -> entry.invoke() }
     }
 }
