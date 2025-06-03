@@ -155,8 +155,11 @@ class TestSessionManager(
         sharedUiContainer: SharedUiContainer? = null,
         testSharedSessionClient: TestSharedUiSessionClient = TestSharedUiSessionClient(),
         isFailingSession: Boolean = false,
+        globalOpenSessionLatch: CountDownLatch? = null,
+        globalCloseSessionLatch: CountDownLatch? = null,
     ): TestSharedUiAdapter {
-        val adapter = TestSharedUiAdapter(isFailingSession)
+        val adapter =
+            TestSharedUiAdapter(isFailingSession, globalOpenSessionLatch, globalCloseSessionLatch)
         val adapterFromCoreLibInfo =
             SharedUiAdapterFactory.createFromCoreLibInfo(getCoreLibInfoFromSharedUiAdapter(adapter))
         if (sharedUiContainer == null) {
@@ -164,7 +167,6 @@ class TestSessionManager(
         } else {
             sharedUiContainer.setAdapter(adapterFromCoreLibInfo)
         }
-
         assertWithMessage("openSession is called on adapter")
             .that(adapter.isOpenSessionCalled)
             .isTrue()

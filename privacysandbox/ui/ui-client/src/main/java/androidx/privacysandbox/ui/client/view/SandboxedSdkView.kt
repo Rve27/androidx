@@ -27,11 +27,7 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.annotation.RequiresApi
 import androidx.core.util.Consumer
-import androidx.customview.poolingcontainer.PoolingContainerListener
-import androidx.customview.poolingcontainer.addPoolingContainerListener
-import androidx.customview.poolingcontainer.isPoolingContainer
 import androidx.customview.poolingcontainer.isWithinPoolingContainer
-import androidx.customview.poolingcontainer.removePoolingContainerListener
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter.SessionClient
 import androidx.privacysandbox.ui.core.SandboxedUiAdapterSignalOptions
@@ -89,11 +85,10 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
     private var previousChildWidth = -1
     private var previousChildHeight = -1
     private var sessionData: SessionData? = null
-    private var viewContainingPoolingContainerListener: View? = null
-    private var poolingContainerListener = PoolingContainerListener {}
     private var eventListener: SandboxedSdkViewEventListener? = null
     private val frameCommitCallback = Runnable { sendUiDisplayedEvents() }
     private var closeSessionOnWindowDetachment = true
+    private val poolingContainerListenerDelegate = PoolingContainerListenerDelegate(this)
     internal var signalMeasurer: SandboxedSdkViewSignalMeasurer? = null
 
     // ONLY USE FOR TESTING.
@@ -303,9 +298,8 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        if (this.isWithinPoolingContainer) {
-            attachPoolingContainerListener()
-        }
+        maybeAttachPoolingContainerListener()
+
         val childView = getChildAt(0)
         if (childView != null) {
             val childWidth = Math.max(0, width - paddingLeft - paddingRight)
@@ -359,41 +353,14 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
         sessionData = null
     }
 
-    private fun attachPoolingContainerListener() {
-        val newPoolingContainerListener = PoolingContainerListener {
-            closeClient()
-            viewContainingPoolingContainerListener?.removePoolingContainerListener(
-                poolingContainerListener
-            )
-            viewContainingPoolingContainerListener = null
-        }
-
-        var currentView = this as View
-        var parentView = parent
-
-        while (parentView != null && !(parentView as View).isPoolingContainer) {
-            currentView = parentView
-            parentView = currentView.parent
-        }
-
-        if (currentView == viewContainingPoolingContainerListener) {
-            return
-        }
-
-        viewContainingPoolingContainerListener?.removePoolingContainerListener(
-            poolingContainerListener
-        )
-        currentView.addPoolingContainerListener(newPoolingContainerListener)
-        viewContainingPoolingContainerListener = currentView
-        poolingContainerListener = newPoolingContainerListener
+    private fun maybeAttachPoolingContainerListener() {
+        poolingContainerListenerDelegate.maybeAttachListener { closeClient() }
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         addCallbacksOnWindowAttachment()
-        if (viewContainingPoolingContainerListener == null && this.isWithinPoolingContainer) {
-            attachPoolingContainerListener()
-        }
+        maybeAttachPoolingContainerListener()
         if (client == null) {
             CompatImpl.deriveInputTokenAndOpenSession(context, this)
         }
