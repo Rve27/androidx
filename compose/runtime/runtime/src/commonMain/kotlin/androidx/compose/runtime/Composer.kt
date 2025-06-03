@@ -360,7 +360,10 @@ internal constructor(
 }
 
 /**
- * A Compose compiler plugin API. DO NOT call directly. Use [movableContentOf] instead.
+ * This class is used internally by [movableContentOf]. Please see [movableContentOf] which has
+ * documentation and example for how to use movable content. This class cannot be used directly.
+ *
+ * A Compose compiler plugin API. DO NOT call directly.
  *
  * An instance used to track the identity of the movable content. Using a holder object allows
  * creating unique movable content instances from the same instance of a lambda. This avoids using
