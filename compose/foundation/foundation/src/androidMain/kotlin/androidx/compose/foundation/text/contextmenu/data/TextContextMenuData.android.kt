@@ -46,6 +46,8 @@ class TextContextMenuItem(
  * Key for context menu items added for the Android PROCESS_TEXT intent actions. You can use this
  * key to filter the PROCESS_TEXT components by calling
  * [Modifier.filterTextContextMenuComponents][filterTextContextMenuComponents].
+ *
+ * @sample androidx.compose.foundation.samples.FilterProcessTextItemsInTextContextMenu
  */
 class ProcessTextKey
 internal constructor(
