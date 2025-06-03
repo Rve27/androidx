@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.internal;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -39,6 +39,8 @@ import androidx.annotation.IntDef;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.RestrictTo;
 import androidx.appcompat.app.AlertDialog;
+import androidx.biometric.BiometricPrompt;
+import androidx.biometric.R;
 import androidx.biometric.utils.AuthenticatorUtils;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
@@ -236,6 +238,7 @@ public class FingerprintDialogFragment extends DialogFragment {
                 getString(R.string.fingerprint_dialog_touch_sensor));
     }
 
+    // TODO(b/178855209): Move to AuthenticationInternalHelper
     @Override
     public void onPause() {
         super.onPause();

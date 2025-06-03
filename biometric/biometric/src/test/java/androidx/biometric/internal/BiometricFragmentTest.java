@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.internal;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -33,6 +33,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 
+import androidx.biometric.BiometricPrompt;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.testing.FragmentScenario;

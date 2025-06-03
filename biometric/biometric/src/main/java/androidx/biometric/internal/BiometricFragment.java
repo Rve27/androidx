@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.internal;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -35,7 +35,10 @@ import androidx.annotation.IntDef;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
+import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricManager.Authenticators;
+import androidx.biometric.BiometricPrompt;
+import androidx.biometric.R;
 import androidx.biometric.utils.AuthenticatorUtils;
 import androidx.biometric.utils.CryptoObjectUtils;
 import androidx.biometric.utils.DeviceUtils;
@@ -72,29 +75,34 @@ public class BiometricFragment extends Fragment {
     /**
      * Authentication was canceled by the library or framework.
      */
-    static final int CANCELED_FROM_INTERNAL = 0;
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public static final int CANCELED_FROM_INTERNAL = 0;
 
     /**
      * Authentication was canceled by the user (e.g. by pressing the system back button).
      */
-    static final int CANCELED_FROM_USER = 1;
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public static final int CANCELED_FROM_USER = 1;
 
     /**
      * Authentication was canceled by the user by pressing the negative button on the prompt.
      */
-    static final int CANCELED_FROM_NEGATIVE_BUTTON = 2;
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public static final int CANCELED_FROM_NEGATIVE_BUTTON = 2;
 
     /**
      * Authentication was canceled by the client application via
      * {@link BiometricPrompt#cancelAuthentication()}.
      */
-    static final int CANCELED_FROM_CLIENT = 3;
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public static final int CANCELED_FROM_CLIENT = 3;
 
     /**
      * Authentication was canceled by the user by pressing the more options button on the prompt
      * content.
      */
-    static final int CANCELED_FROM_MORE_OPTIONS_BUTTON = 4;
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public static final int CANCELED_FROM_MORE_OPTIONS_BUTTON = 4;
 
     /**
      * Where authentication was canceled from.
@@ -107,14 +115,15 @@ public class BiometricFragment extends Fragment {
         CANCELED_FROM_MORE_OPTIONS_BUTTON
     })
     @Retention(RetentionPolicy.SOURCE)
-    @interface CanceledFrom {}
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public @interface CanceledFrom {}
 
     /**
      * Tag used to identify the {@link FingerprintDialogFragment} attached to the client
      * activity/fragment.
      */
     private static final String FINGERPRINT_DIALOG_FRAGMENT_TAG =
-            "androidx.biometric.FingerprintDialogFragment";
+            "androidx.biometric.internal.FingerprintDialogFragment";
 
     /**
      * The amount of time (in milliseconds) before the flag indicating whether to dismiss the
@@ -225,7 +234,9 @@ public class BiometricFragment extends Fragment {
      *
      * @return A {@link BiometricFragment}.
      */
-    static BiometricFragment newInstance(boolean hostedInActivity) {
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    @NonNull
+    public static BiometricFragment newInstance(boolean hostedInActivity) {
         final BiometricFragment fragment = new BiometricFragment();
         final Bundle args = new Bundle();
         args.putBoolean(ARG_HOST_ACTIVITY, hostedInActivity);
@@ -305,6 +316,7 @@ public class BiometricFragment extends Fragment {
     }
 
     @Override
+    // TODO(b/178855209): Move to AuthenticationInternalHelper
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CONFIRM_CREDENTIAL) {
@@ -389,7 +401,8 @@ public class BiometricFragment extends Fragment {
      * @param info   An object describing the appearance and behavior of the prompt.
      * @param crypto A crypto object to be associated with this authentication.
      */
-    void authenticate(
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public void authenticate(
             BiometricPrompt.@NonNull PromptInfo info,
             BiometricPrompt.@Nullable CryptoObject crypto) {
         // PromptInfo has to be set prior to others.
@@ -626,7 +639,8 @@ public class BiometricFragment extends Fragment {
      *
      * @param canceledFrom Where authentication was canceled from.
      */
-    void cancelAuthentication(@CanceledFrom int canceledFrom) {
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    public void cancelAuthentication(@CanceledFrom int canceledFrom) {
         if (canceledFrom != CANCELED_FROM_CLIENT && mViewModel.isIgnoringCancel()) {
             return;
         }
@@ -866,6 +880,7 @@ public class BiometricFragment extends Fragment {
      *
      * @param resultCode The result code from the Settings activity.
      */
+    // TODO(b/178855209): Move to AuthenticationInternalHelper
     private void handleConfirmCredentialResult(int resultCode) {
         if (resultCode == Activity.RESULT_OK) {
             @BiometricPrompt.AuthenticationResultType final int authenticationType;
@@ -1119,6 +1134,7 @@ public class BiometricFragment extends Fragment {
      *
      * @return {@code true} if the activity is being permanently destroyed; {@code false} otherwise.
      */
+    // TODO(b/178855209): Check this in helper, which uses ProcessLifecycleOwner instead
     private boolean isPermanentRemoving() {
         final FragmentActivity activity = getActivity();
         return isRemoving() && (activity == null || !activity.isChangingConfigurations());

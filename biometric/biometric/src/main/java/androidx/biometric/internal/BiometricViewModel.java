@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.biometric;
+package androidx.biometric.internal;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -24,6 +24,9 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.RestrictTo;
+import androidx.biometric.BiometricManager;
+import androidx.biometric.BiometricPrompt;
+import androidx.biometric.PromptContentView;
 import androidx.biometric.utils.AuthenticationCallbackProvider;
 import androidx.biometric.utils.AuthenticatorUtils;
 import androidx.biometric.utils.BiometricErrorData;
@@ -329,29 +332,36 @@ public class BiometricViewModel extends ViewModel {
      */
     private @Nullable MutableLiveData<CharSequence> mFingerprintDialogHelpMessage;
 
-    @NonNull Executor getClientExecutor() {
+    @NonNull
+    // Public for kotlin access
+    public Executor getClientExecutor() {
         return mClientExecutor != null ? mClientExecutor : new DefaultExecutor();
     }
 
-    void setClientExecutor(@NonNull Executor clientExecutor) {
+    public void setClientExecutor(@NonNull Executor clientExecutor) {
         mClientExecutor = clientExecutor;
     }
 
-    BiometricPrompt.@NonNull AuthenticationCallback getClientCallback() {
+    /**
+     * The client callback.
+     */
+    // TODO(b/178855209): Remove this once the de-fragment is done
+    public BiometricPrompt.@NonNull AuthenticationCallback getClientCallback() {
         if (mClientCallback == null) {
-            mClientCallback = new BiometricPrompt.AuthenticationCallback() {};
+            mClientCallback = new BiometricPrompt.AuthenticationCallback() {
+            };
         }
         return mClientCallback;
     }
 
-    void setClientCallback(BiometricPrompt.@NonNull AuthenticationCallback clientCallback) {
+    public void setClientCallback(BiometricPrompt.@NonNull AuthenticationCallback clientCallback) {
         mClientCallback = clientCallback;
     }
 
     /**
      * Clears the client callback reference held by this view model.
      */
-    void resetClientCallback() {
+    public void resetClientCallback() {
         mClientCallback = null;
     }
 
@@ -443,7 +453,8 @@ public class BiometricViewModel extends ViewModel {
      *
      * @return The prompt content view for the prompt, or {@code null} if not set.
      */
-    @Nullable PromptContentView getContentView() {
+    @Nullable
+    PromptContentView getContentView() {
         return mPromptInfo != null ? mPromptInfo.getContentView() : null;
     }
 
