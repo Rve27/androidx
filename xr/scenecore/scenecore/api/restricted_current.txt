@@ -192,16 +192,18 @@ package androidx.xr.scenecore {
     property public abstract androidx.xr.scenecore.Entity? parent;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ExrImage implements androidx.xr.scenecore.Image {
-    method @MainThread public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> create(androidx.xr.runtime.Session session, byte[] assetData, String assetKey);
-    method @MainThread public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> create(androidx.xr.runtime.Session session, String name);
-    method @MainThread public androidx.xr.scenecore.CubeMapTexture getReflectionTexture();
+  public final class ExrImage {
+    method @MainThread public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, android.net.Uri uri);
+    method @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, byte[] assetData, String assetKey);
+    method @MainThread public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, java.nio.file.Path path);
+    method @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.scenecore.CubeMapTexture getReflectionTexture();
     field public static final androidx.xr.scenecore.ExrImage.Companion Companion;
   }
 
   public static final class ExrImage.Companion {
-    method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> create(androidx.xr.runtime.Session session, byte[] assetData, String assetKey);
-    method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> create(androidx.xr.runtime.Session session, String name);
+    method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, android.net.Uri uri);
+    method @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, byte[] assetData, String assetKey);
+    method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, java.nio.file.Path path);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class GltfModel implements androidx.xr.scenecore.Model {
@@ -262,9 +264,6 @@ package androidx.xr.scenecore {
     field public static final int OBJECT = 2; // 0x2
     field public static final int PLANE = 1; // 0x1
     field public static final int UNKNOWN = 0; // 0x0
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Image {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class InputEvent {

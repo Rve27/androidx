@@ -72,6 +72,7 @@ import androidx.xr.scenecore.InteractableComponent
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.SpatialEnvironment.SpatialEnvironmentPreference
 import androidx.xr.scenecore.scene
+import java.nio.file.Paths
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 
@@ -222,7 +223,11 @@ class SplitEngine : ComponentActivity() {
                     ApiButton("Load Skybox Blue", modifier) {
                         coroutineScope.launch {
                             blueSkybox.value =
-                                ExrImage.create(session, "skyboxes/BlueSkybox.zip").await()
+                                ExrImage.createFromZipAsync(
+                                        session,
+                                        Paths.get("skyboxes", "BlueSkybox.zip"),
+                                    )
+                                    .await()
                         }
                     }
                     if (blueSkybox.value != null) {

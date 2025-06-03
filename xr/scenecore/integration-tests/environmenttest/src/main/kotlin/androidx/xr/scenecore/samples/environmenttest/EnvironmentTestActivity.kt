@@ -56,6 +56,7 @@ import androidx.xr.scenecore.SpatialCapabilities
 import androidx.xr.scenecore.SpatialEnvironment
 import androidx.xr.scenecore.SpatialEnvironment.SpatialEnvironmentPreference
 import androidx.xr.scenecore.scene
+import java.nio.file.Paths
 import kotlin.math.roundToInt
 import kotlinx.coroutines.guava.await
 
@@ -272,10 +273,14 @@ class EnvironmentTestActivity : ComponentActivity() {
             rocksGeo = GltfModel.create(session, "models/RocksGeometry.glb").await()
         }
         LaunchedEffect(Unit) {
-            greySkybox = ExrImage.create(session, "skyboxes/GreySkybox.zip").await()
+            greySkybox =
+                ExrImage.createFromZipAsync(session, Paths.get("skyboxes", "GreySkybox.zip"))
+                    .await()
         }
         LaunchedEffect(Unit) {
-            blueSkybox = ExrImage.create(session, "skyboxes/BlueSkybox.zip").await()
+            blueSkybox =
+                ExrImage.createFromZipAsync(session, Paths.get("skyboxes", "BlueSkybox.zip"))
+                    .await()
         }
 
         Row(modifier = Modifier.fillMaxWidth()) {

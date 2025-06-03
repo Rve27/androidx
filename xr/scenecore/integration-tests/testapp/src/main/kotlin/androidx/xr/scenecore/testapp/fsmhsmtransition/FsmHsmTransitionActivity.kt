@@ -47,6 +47,7 @@ import androidx.xr.scenecore.testapp.R
 import androidx.xr.scenecore.testapp.common.createSession
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
+import java.nio.file.Paths
 import java.util.concurrent.Executors
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
@@ -250,7 +251,9 @@ class FsmHsmTransitionActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            skybox = ExrImage.create(session!!, "skyboxes/BlueSkybox.zip").await()
+            skybox =
+                ExrImage.createFromZipAsync(session!!, Paths.get("skyboxes", "BlueSkybox.zip"))
+                    .await()
         }
     }
 

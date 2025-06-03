@@ -63,6 +63,7 @@ import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.SpatialEnvironment.SpatialEnvironmentPreference
 import androidx.xr.scenecore.scene
 import com.google.common.util.concurrent.ListenableFuture
+import java.nio.file.Paths
 import kotlinx.coroutines.delay
 
 class SplitEngineTestActivity : ComponentActivity() {
@@ -187,7 +188,10 @@ class SplitEngineTestActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         val skyboxTokenFuture: ListenableFuture<ExrImage> =
-                            ExrImage.create(session, "skyboxes/BlueSkybox.zip")
+                            ExrImage.createFromZipAsync(
+                                session,
+                                Paths.get("skyboxes", "BlueSkybox.zip"),
+                            )
                         skyboxTokenFuture.addListener(
                             {
                                 try {

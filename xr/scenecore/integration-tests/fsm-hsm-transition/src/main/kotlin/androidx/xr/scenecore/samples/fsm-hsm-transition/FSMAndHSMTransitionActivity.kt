@@ -41,6 +41,7 @@ import androidx.xr.scenecore.ResizeListener
 import androidx.xr.scenecore.SpatialEnvironment
 import androidx.xr.scenecore.scene
 import com.google.common.util.concurrent.ListenableFuture
+import java.nio.file.Paths
 import java.util.concurrent.Executors
 import java.util.function.Consumer
 
@@ -52,7 +53,7 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
     private var movableActive: Boolean = false
     private var skyboxActive: Boolean = false
     private val skyboxFuture: ListenableFuture<ExrImage> by lazy {
-        ExrImage.create(session, "skyboxes/BlueSkybox.zip")
+        ExrImage.createFromZipAsync(session, Paths.get("skyboxes", "BlueSkybox.zip"))
     }
     private var boundsListener = Consumer<FloatSize3d> {}
 
