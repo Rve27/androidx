@@ -145,11 +145,6 @@ public final class Camera2CameraFactory implements CameraFactory {
         return mCameraManager;
     }
 
-    @Override
-    public @NonNull StreamSpecsCalculator getStreamSpecsCalculator() {
-        return mStreamSpecsCalculator;
-    }
-
     private List<String> getBackwardCompatibleCameraIds(
             @NonNull List<String> availableCameraIds) throws InitializationException {
         List<String> backwardCompatibleCameraIds = new ArrayList<>();
