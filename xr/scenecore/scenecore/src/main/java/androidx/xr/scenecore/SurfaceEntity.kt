@@ -140,7 +140,7 @@ private constructor(
     public object StereoMode {
         // Each eye will see the entire surface (no separation)
         public const val MONO: Int = 0
-        // The [bottom, top] halves of the surface will map to [left, right] eyes
+        // The [top, bottom] halves of the surface will map to [left, right] eyes
         public const val TOP_BOTTOM: Int = 1
         // The [left, right] halves of the surface will map to [left, right] eyes
         public const val SIDE_BY_SIDE: Int = 2
