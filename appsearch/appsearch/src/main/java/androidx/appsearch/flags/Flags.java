@@ -254,6 +254,10 @@ public final class Flags {
     public static final String FLAG_ENABLE_RESULT_ABORTED =
             FLAG_PREFIX + "enable_result_aborted";
 
+    /** Enables {@link androidx.appsearch.app.AppSearchResult#RESULT_UNAVAILABLE}. */
+    public static final String FLAG_ENABLE_RESULT_UNAVAILABLE =
+            FLAG_PREFIX + "enable_result_unavailable";
+
     /**
      * Enables throwing {@link androidx.appsearch.exceptions.AppSearchException} with code
      * {@link androidx.appsearch.app.AppSearchResult#RESULT_ABORTED} if the search result page token
@@ -272,6 +276,12 @@ public final class Flags {
     /** Enables the Eigen library for embedding scoring, if Eigen is compiled in. */
     public static final String FLAG_ENABLE_EIGEN_EMBEDDING_SCORING =
             FLAG_PREFIX + "enable_eigen_embedding_scoring";
+
+    /**
+     * Enable retrying the critical section of initialization before resetting as a last resort.
+     */
+    public static final String FLAG_ENABLE_INITIALIZATION_RETRIES_BEFORE_RESET =
+            FLAG_PREFIX + "enable_initialization_retries_before_reset";
 
     // Whether the features should be enabled.
     //
@@ -550,6 +560,14 @@ public final class Flags {
     }
 
     /**
+     * Whether {@link androidx.appsearch.app.AppSearchResult#RESULT_UNAVAILABLE} should be
+     * enabled.
+     */
+    public static boolean enableResultUnavailable() {
+        return true;
+    }
+
+    /**
      * Whether {@link androidx.appsearch.exceptions.AppSearchException} with code
      * {@link androidx.appsearch.app.AppSearchResult#RESULT_ABORTED} should be thrown if the search
      * result page token is not found in native.
@@ -585,5 +603,13 @@ public final class Flags {
         // The return value does not matter, since Jetpack does not have Eigen compiled in.
         // Set it to false for clarity.
         return false;
+    }
+
+    /**
+     * Whether to enable retrying the critical section of initialization before resetting as a
+     * last resort.
+     */
+    public static boolean enableInitializationRetriesBeforeReset() {
+        return true;
     }
 }
