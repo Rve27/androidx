@@ -28,6 +28,7 @@ import androidx.xr.runtime.internal.HitTestResult.HitTestSurfaceType as RtHitTes
 import androidx.xr.runtime.internal.InputEvent as RtInputEvent
 import androidx.xr.runtime.internal.InputEvent.Companion.HitInfo as RtHitInfo
 import androidx.xr.runtime.internal.JxrPlatformAdapter
+import androidx.xr.runtime.internal.KhronosPbrMaterialSpec as RtKhronosPbrMaterialSpec
 import androidx.xr.runtime.internal.MoveEvent as RtMoveEvent
 import androidx.xr.runtime.internal.PerceivedResolutionResult as RtPerceivedResolutionResult
 import androidx.xr.runtime.internal.PixelDimensions as RtPixelDimensions
@@ -347,6 +348,11 @@ internal fun Int.toSpatialPointerIcon(): SpatialPointerIcon? {
         RtSpatialPointerIcon.TYPE_DEFAULT -> null
         else -> error("Unknown spatial pointer icon type: $this")
     }
+}
+
+/** Extension function that converts a [KhronosPbrMaterialSpec] to [RtKhronosPbrMaterialSpec]. */
+internal fun KhronosPbrMaterialSpec.toRtKhronosPbrMaterialSpec(): RtKhronosPbrMaterialSpec {
+    return RtKhronosPbrMaterialSpec(lightingModel, blendMode, doubleSidedMode)
 }
 
 /**
