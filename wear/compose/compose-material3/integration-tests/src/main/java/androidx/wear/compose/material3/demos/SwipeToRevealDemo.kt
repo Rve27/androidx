@@ -356,7 +356,7 @@ fun SwipeToRevealInScalingLazyColumn() {
                             )
                     },
                 ) {
-                    Text(item.name)
+                    Text("Name:\n${item.name}\n\nMessage:\nMessage body.")
                 }
             }
         }
@@ -672,7 +672,11 @@ fun SwipeToRevealWithTransformingLazyColumnNoResetOnScrollDemo() {
                 TitleCard(
                     onClick = {},
                     title = { Text("Message #$index") },
-                    subtitle = { Text("Body of the message") },
+                    subtitle = {
+                        Text(
+                            "Body of the message that should be long enough to take at least two lines."
+                        )
+                    },
                     modifier =
                         Modifier.semantics {
                             // Use custom actions to make the primary action accessible

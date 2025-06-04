@@ -69,7 +69,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -80,7 +79,6 @@ import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.takeOrElse
@@ -88,12 +86,10 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -486,11 +482,9 @@ public fun SwipeToReveal(
                                         ),
                                     label = "RevealedContentAlpha",
                                 )
-                            var revealedContentHeight by remember { mutableIntStateOf(0) }
                             Row(
                                 modifier =
                                     Modifier.graphicsLayer { alpha = revealedContentAlpha.value }
-                                        .onSizeChanged { revealedContentHeight = it.height }
                                         .layout { measurable, constraints ->
                                             val placeable =
                                                 measurable.measure(
@@ -505,13 +499,7 @@ public fun SwipeToReveal(
                                                     )
                                                 )
                                             layout(placeable.width, placeable.height) {
-                                                placeable.placeRelative(
-                                                    0,
-                                                    calculateVerticalOffsetBasedOnScreenPosition(
-                                                        revealedContentHeight,
-                                                        globalPosition,
-                                                    ),
-                                                )
+                                                placeable.placeRelative(0, 0)
                                             }
                                         },
                                 horizontalArrangement = Arrangement.Absolute.Right,
@@ -1387,31 +1375,6 @@ private fun fadeOutUndo(): ContentTransform =
         initialContentExit =
             fadeOut(animationSpec = tween(durationMillis = SHORT_ANIMATION, easing = LinearEasing)),
     )
-
-private fun calculateVerticalOffsetBasedOnScreenPosition(
-    childHeight: Int,
-    globalPosition: LayoutCoordinates?,
-): Int {
-    if (globalPosition == null || !globalPosition.positionOnScreen().isSpecified) {
-        return 0
-    }
-    val positionOnScreen = globalPosition.positionOnScreen()
-    val boundsInWindow = globalPosition.boundsInWindow()
-    val parentTop = positionOnScreen.y.toInt()
-    val parentHeight = globalPosition.size.height
-    val parentBottom = parentTop + parentHeight
-    if (parentTop >= boundsInWindow.top && parentBottom <= boundsInWindow.bottom) {
-        // Don't offset if the item is fully on screen
-        return 0
-    }
-
-    // Avoid going outside parent bounds
-    val minCenter = parentTop + childHeight / 2
-    val maxCenter = parentTop + parentHeight - childHeight / 2
-    val desiredCenter = boundsInWindow.center.y.toInt().coerceIn(minCenter, maxCenter)
-    val actualCenter = parentTop + parentHeight / 2
-    return desiredCenter - actualCenter
-}
 
 private fun startFadeInFraction(hasSecondaryAction: Boolean) =
     if (hasSecondaryAction) {
