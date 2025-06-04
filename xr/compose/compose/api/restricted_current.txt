@@ -430,7 +430,7 @@ package androidx.xr.compose.subspace.layout {
   }
 
   public final class OnGloballyPositionedModifierKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SubspaceModifier onGloballyPositioned(androidx.xr.compose.subspace.layout.SubspaceModifier, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates,kotlin.Unit> onGloballyPositioned);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier onGloballyPositioned(androidx.xr.compose.subspace.layout.SubspaceModifier, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates,kotlin.Unit> onGloballyPositioned);
   }
 
   public final class OnPointSourceParamsKt {

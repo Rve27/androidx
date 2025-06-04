@@ -278,6 +278,10 @@ package androidx.xr.compose.subspace.layout {
     method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier offset-qQh39rQ(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float, float);
   }
 
+  public final class OnGloballyPositionedModifierKt {
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier onGloballyPositioned(androidx.xr.compose.subspace.layout.SubspaceModifier, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates,kotlin.Unit> onGloballyPositioned);
+  }
+
   public interface ParentLayoutParamsAdjustable {
   }
 
