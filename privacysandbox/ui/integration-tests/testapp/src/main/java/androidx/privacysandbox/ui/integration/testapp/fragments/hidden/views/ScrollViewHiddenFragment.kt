@@ -25,12 +25,15 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.privacysandbox.ui.client.view.SandboxedSdkView
+import androidx.privacysandbox.ui.core.ExperimentalFeatures
 import androidx.privacysandbox.ui.integration.testapp.R
 import androidx.privacysandbox.ui.integration.testapp.fragments.hidden.AbstractScrollHiddenFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+// OptIn calling the experimental API SandboxedSdkView#orderProviderUiAboveClientUi
+@OptIn(ExperimentalFeatures.ChangingContentUiZOrderApi::class)
 class ScrollViewHiddenFragment : AbstractScrollHiddenFragment() {
     private lateinit var sandboxedSdkView: SandboxedSdkView
     private lateinit var inflatedView: View
@@ -52,10 +55,9 @@ class ScrollViewHiddenFragment : AbstractScrollHiddenFragment() {
         val scrollViewContent: LinearLayout = inflatedView.findViewById(R.id.scrollViewContent)
         for (i in 0..19) {
             val textView = TextView(requireActivity())
-            textView.setLayoutParams(
+            textView.layoutParams =
                 LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 200)
-            )
-            textView.setText("ClientItem " + (i + 1))
+            textView.text = "ClientItem " + (i + 1)
             textView.setBackgroundColor(
                 Color.rgb(
                     (Math.random() * 256).toInt(),
@@ -63,7 +65,7 @@ class ScrollViewHiddenFragment : AbstractScrollHiddenFragment() {
                     (Math.random() * 256).toInt(),
                 )
             )
-            textView.setGravity(Gravity.CENTER)
+            textView.gravity = Gravity.CENTER
             scrollViewContent.addView(textView)
         }
     }

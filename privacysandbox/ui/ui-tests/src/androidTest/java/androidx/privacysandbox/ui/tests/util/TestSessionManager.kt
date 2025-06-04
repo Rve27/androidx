@@ -50,6 +50,8 @@ import java.util.concurrent.Executor
 import java.util.concurrent.TimeUnit
 
 /** A utility class for performing session-related operations for integration testing. */
+// OptIn calling the experimental API SandboxedSdkView#orderProviderUiAboveClientUi
+@OptIn(ExperimentalFeatures.ChangingContentUiZOrderApi::class)
 class TestSessionManager(
     private val context: Context,
     private val invokeBackwardsCompatFlow: Boolean,

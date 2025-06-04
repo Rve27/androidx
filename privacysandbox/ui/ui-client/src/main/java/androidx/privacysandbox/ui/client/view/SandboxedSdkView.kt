@@ -28,6 +28,7 @@ import android.view.ViewTreeObserver
 import androidx.annotation.RequiresApi
 import androidx.core.util.Consumer
 import androidx.customview.poolingcontainer.isWithinPoolingContainer
+import androidx.privacysandbox.ui.core.ExperimentalFeatures
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter
 import androidx.privacysandbox.ui.core.SandboxedUiAdapter.SessionClient
 import androidx.privacysandbox.ui.core.SandboxedUiAdapterSignalOptions
@@ -134,6 +135,7 @@ class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: Attrib
      * window. In this case, none of the contents of the client's window beneath the provider's
      * surface will be visible.
      */
+    @ExperimentalFeatures.ChangingContentUiZOrderApi
     fun orderProviderUiAboveClientUi(providerUiOnTop: Boolean) {
         if (providerUiOnTop == isZOrderOnTop) return
         client?.notifyZOrderChanged(providerUiOnTop)
