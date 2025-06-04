@@ -1,3 +1,21 @@
+diff --git a/benchmark/benchmark-darwin-core/build.gradle b/benchmark/benchmark-darwin-core/build.gradle
+index 557a7d86351..5e32bdedc5f 100644
+--- a/benchmark/benchmark-darwin-core/build.gradle
++++ b/benchmark/benchmark-darwin-core/build.gradle
+@@ -5,6 +5,7 @@
+  * Please use that script when creating a new project, rather than copying an existing project and
+  * modifying its settings.
+  */
++import androidx.build.KotlinTarget
+ import androidx.build.PlatformIdentifier
+ import androidx.build.SoftwareType
+ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+@@ -57,4 +58,5 @@ androidx {
+     type = SoftwareType.SNAPSHOT_ONLY_LIBRARY
+     inceptionYear = "2022"
+     description = "AndroidX Benchmarks - Darwin Core"
++    kotlinTarget = KotlinTarget.KOTLIN_2_2
+ }
 diff --git a/benchmark/benchmark-darwin/build.gradle b/benchmark/benchmark-darwin/build.gradle
 index df41397197c..b3e51525fbf 100644
 --- a/benchmark/benchmark-darwin/build.gradle
@@ -302,6 +320,42 @@ index e4fc41c8f5f..7f47c625aa9 100644
                  "-Xskip-metadata-version-check",
                  "-Xjdk-release=17",
          )
+diff --git a/collection/collection-ktx/build.gradle b/collection/collection-ktx/build.gradle
+index 784c4a88435..9add531894c 100644
+--- a/collection/collection-ktx/build.gradle
++++ b/collection/collection-ktx/build.gradle
+@@ -21,6 +21,7 @@
+  * Please use that script when creating a new project, rather than copying an existing project and
+  * modifying its settings.
+  */
++import androidx.build.KotlinTarget
+ import androidx.build.SoftwareType
+ 
+ plugins {
+@@ -37,4 +38,5 @@ androidx {
+     type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
+     inceptionYear = "2018"
+     description = "Kotlin extensions for 'collection' artifact"
++    kotlinTarget = KotlinTarget.KOTLIN_2_2
+ }
+diff --git a/collection/collection/build.gradle b/collection/collection/build.gradle
+index 2ab99afd991..9efa72619e4 100644
+--- a/collection/collection/build.gradle
++++ b/collection/collection/build.gradle
+@@ -22,6 +22,7 @@
+  * modifying its settings.
+  */
+ 
++import androidx.build.KotlinTarget
+ import androidx.build.SoftwareType
+ import androidx.build.PlatformIdentifier
+ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+@@ -178,4 +179,5 @@ androidx {
+     description = "Standalone efficient collections."
+     // TODO: b/326456246
+     optOutJSpecify = true
++    kotlinTarget = KotlinTarget.KOTLIN_2_2
+ }
 diff --git a/compose/runtime/runtime/src/commonMain/kotlin/androidx/compose/runtime/internal/ComposableLambda.kt b/compose/runtime/runtime/src/commonMain/kotlin/androidx/compose/runtime/internal/ComposableLambda.kt
 index 4a1bc0f1812..25646accd8d 100644
 --- a/compose/runtime/runtime/src/commonMain/kotlin/androidx/compose/runtime/internal/ComposableLambda.kt
@@ -315,7 +369,7 @@ index 4a1bc0f1812..25646accd8d 100644
  package androidx.compose.runtime.internal
  
 diff --git a/gradle/libs.versions.toml b/gradle/libs.versions.toml
-index 36768d4a2e3..c4154a79cfc 100644
+index 4da80d4cc2d..c0c33defb6a 100644
 --- a/gradle/libs.versions.toml
 +++ b/gradle/libs.versions.toml
 @@ -52,6 +52,7 @@ kotlin19 = "1.9.24"
