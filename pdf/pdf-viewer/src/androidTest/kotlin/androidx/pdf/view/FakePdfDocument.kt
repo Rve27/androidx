@@ -38,6 +38,7 @@ import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
 import kotlin.random.Random
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -57,7 +58,8 @@ import kotlinx.coroutines.withTimeout
  *   corresponding [PdfDocument.BitmapSource]
  * - Using [bitmapRequests] to examine the type of bitmaps that have been requested for any page
  *
- * @param pages a list of [Point] defining the number of pages in the fake PDF and their dimensions
+ * @param pages a list of [Point] defining the number of pages in the fake PDF and their dimensions.
+ *   If a value is null, the document will throw CancellationException for getPageInfo call.
  * @param formType one of [PDF_FORM_TYPE_ACRO_FORM], [PDF_FORM_TYPE_XFA_FULL],
  *   [PDF_FORM_TYPE_XFA_FOREGROUND], or [PDF_FORM_TYPE_NONE] depending on the type of PDF form this
  *   fake PDF should represent
@@ -66,7 +68,7 @@ import kotlinx.coroutines.withTimeout
 @OpenForTesting
 internal open class FakePdfDocument(
     /** A list of (x, y) page dimensions in content coordinates */
-    private val pages: List<Point> = listOf(),
+    private val pages: List<Point?> = listOf(),
     override val formType: Int = PDF_FORM_TYPE_NONE,
     override val isLinearized: Boolean = false,
     private val searchResults: SparseArray<List<PageMatchBounds>> = SparseArray(),
@@ -172,6 +174,9 @@ internal open class FakePdfDocument(
     ): PdfDocument.PageInfo {
         layoutReach = maxOf(pageNumber, layoutReach)
         val size = pages[pageNumber]
+        if (size == null) {
+            throw CancellationException()
+        }
         if (pageInfoFlags.value and PdfDocument.INCLUDE_FORM_WIDGET_INFO != 0L) {
             return PdfDocument.PageInfo(
                 pageNum = pageNumber,
