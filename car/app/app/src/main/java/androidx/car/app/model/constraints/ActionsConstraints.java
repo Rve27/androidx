@@ -131,12 +131,14 @@ public final class ActionsConstraints {
      * Constraints for additional row actions. Only allows custom actions.
      * Note: From Car API 8 onwards, Rows are allowed to have 2 max actions to be set.
      */
+    @SuppressWarnings("UnsafeOptInUsageError")
     public static final @NonNull ActionsConstraints ACTIONS_CONSTRAINTS_ROW =
             new ActionsConstraints.Builder()
                     .setMaxActions(2)
                     .setMaxCustomTitles(2)
                     .setMaxPrimaryActions(1)
                     .addAllowedActionType(Action.TYPE_CUSTOM)
+                    .addAllowedActionType(Action.TYPE_MEDIA_PLAYBACK)
                     .setOnClickListenerAllowed(true)
                     .build();
 

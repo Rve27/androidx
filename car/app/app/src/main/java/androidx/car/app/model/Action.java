@@ -140,13 +140,17 @@ public final class Action {
     /**
      * A standard action to show the media playback button.
      *
-     * <p>Note: ONLY apps with {@link androidx.car.app.MEDIA_TEMPLATES} can use this action. Media
-     * apps MUST set this action as a FAB in their browse views with  an {@link OnClickDelegate}
-     * must be set and it must push a {@link Screen} with a {@link MediaPlaybackTemplate} to the top
-     * of the screen stack.
+     * <p>Note: ONLY apps with {@link androidx.car.app.MEDIA_TEMPLATES} can use this action. There
+     * are 2 ways to use this action.
      *
-     * <p>To use this action, create an Action.Builder using
-     *  {@link Action#createMediaPlaybackActionBuilder()}
+     * <ol>
+     * <li>Used as a floating action button in a browse view, the action must provide an
+     * {@link OnClickListener} which pushes a {@link Screen} that provides a
+     * {@link MediaPlaybackTemplate}.
+     *
+     * <li>Used as a {@link Row#mActions} to indicate the currently playing song. An optional
+     * {@link OnClickListener} can be added.
+     * </ol>
      */
     @ExperimentalCarApi
     @RequiresCarApi(8)
@@ -222,6 +226,27 @@ public final class Action {
      * }</pre>
      */
     public static final @NonNull Action PAN = new Action(TYPE_PAN);
+
+    /**
+     * A standard action to show the media playback button.
+     *
+     * <p>Note: ONLY apps with {@link androidx.car.app.MEDIA_TEMPLATES} can use this action. There
+     * are 2 ways to use this action.
+     *
+     * <ol>
+     * <li>Used as a floating action button in a browse view, the action must provide an
+     * {@link OnClickListener} which pushes a {@link Screen} that provides a
+     * {@link MediaPlaybackTemplate}.
+     *
+     * <li>Used as a {@link Row#mActions} to indicate the currently playing song. An optional
+     * {@link OnClickListener} can be added.
+     * </ol>
+     */
+    @ExperimentalCarApi
+    @RequiresCarApi(8)
+    @RequiresPermission(MEDIA_TEMPLATES)
+    // TODO: b/421995167 - Add FAB constraints to have an onClick vs Row actions not requiring it
+    public static final @NonNull Action MEDIA_PLAYBACK = new Action(TYPE_MEDIA_PLAYBACK);
 
     private final boolean mIsEnabled;
     private final @Nullable CarText mTitle;
@@ -384,23 +409,6 @@ public final class Action {
                 && Objects.equals(mOnClickDelegate == null, otherAction.mOnClickDelegate == null)
                 && Objects.equals(mFlags, otherAction.mFlags)
                 && mIsEnabled == otherAction.mIsEnabled;
-    }
-
-    /**
-     * A standard action to show the media playback button.
-     *
-     * <p>Note: ONLY apps with {@link androidx.car.app.MEDIA_TEMPLATES} can use this action. Media
-     * apps MUST set this action as a FAB in their browse views with  an {@link OnClickDelegate}
-     * must be set and it must push a {@link Screen} with a {@link MediaPlaybackTemplate} to the top
-     * of the screen stack.
-     *
-     * <p>This action is interactive.
-     */
-    @ExperimentalCarApi
-    @RequiresCarApi(8)
-    @RequiresPermission(MEDIA_TEMPLATES)
-    public static Action.@NonNull Builder createMediaPlaybackActionBuilder() {
-        return new Builder(new Action(TYPE_MEDIA_PLAYBACK));
     }
 
     static boolean isStandardActionType(@ActionType int type) {
@@ -573,15 +581,9 @@ public final class Action {
             }
 
             if (mType == TYPE_MEDIA_PLAYBACK) {
-                if (mOnClickDelegate == null) {
-                    throw new IllegalStateException(
-                            "An on-click listener has to be set on the media playback action and it"
-                                    + " must route to the MediaPlaybackTemplate");
-                }
-
                 if (mIcon != null || (mTitle != null && !TextUtils.isEmpty(mTitle.toString()))) {
                     throw new IllegalStateException(
-                            "An icon or title can't be set on the media playback action");
+                            "MEDIA_PLAYBACK actions cannot have icons or titles");
                 }
             }
 
