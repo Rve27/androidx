@@ -56,17 +56,16 @@ public fun rememberSavedStateNavEntryDecorator(
 public fun SavedStateNavEntryDecorator(
     saveableStateHolder: SaveableStateHolder
 ): NavEntryDecorator<Any> {
-    val registryMap = mutableMapOf<String, EntrySavedStateRegistry>()
+    val registryMap = mutableMapOf<Any, EntrySavedStateRegistry>()
 
-    val onPop: (Any) -> Unit = { key ->
-        val id = getIdForKey(key)
-        if (registryMap.contains(id)) {
+    val onPop: (Any) -> Unit = { contentKey ->
+        if (registryMap.contains(contentKey)) {
             // saveableStateHolder onPop
-            saveableStateHolder.removeState(id)
+            saveableStateHolder.removeState(contentKey)
 
             // saved state onPop
             val savedState = savedState()
-            val childRegistry = registryMap.getValue(id)
+            val childRegistry = registryMap.getValue(contentKey)
             childRegistry.savedStateRegistryController.performSave(savedState)
             childRegistry.savedState = savedState
             childRegistry.lifecycle.currentState = Lifecycle.State.DESTROYED
@@ -74,12 +73,9 @@ public fun SavedStateNavEntryDecorator(
     }
 
     return navEntryDecorator(onPop = onPop) { entry ->
-        val key = entry.key
-        val id = getIdForKey(key)
-
         val childRegistry by
             rememberSaveable(
-                key,
+                entry.contentKey,
                 stateSaver =
                     Saver(
                         save = { it.savedState },
@@ -88,9 +84,9 @@ public fun SavedStateNavEntryDecorator(
             ) {
                 mutableStateOf(EntrySavedStateRegistry())
             }
-        registryMap.put(id, childRegistry)
+        registryMap.put(entry.contentKey, childRegistry)
 
-        saveableStateHolder.SaveableStateProvider(id) {
+        saveableStateHolder.SaveableStateProvider(entry.contentKey) {
             CompositionLocalProvider(LocalSavedStateRegistryOwner provides childRegistry) {
                 entry.Content()
             }
@@ -98,8 +94,6 @@ public fun SavedStateNavEntryDecorator(
         childRegistry.lifecycle.currentState = Lifecycle.State.RESUMED
     }
 }
-
-private fun getIdForKey(key: Any): String = "${key::class.qualifiedName}:$key"
 
 internal class EntrySavedStateRegistry : SavedStateRegistryOwner {
     override val lifecycle: LifecycleRegistry = LifecycleRegistry(this)

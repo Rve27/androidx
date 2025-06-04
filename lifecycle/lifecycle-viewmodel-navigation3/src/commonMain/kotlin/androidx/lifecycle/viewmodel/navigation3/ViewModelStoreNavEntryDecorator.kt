@@ -85,7 +85,7 @@ public fun ViewModelStoreNavEntryDecorator(
         }
     }
     return navEntryDecorator(onPop) { entry ->
-        val viewModelStore = storeOwnerProvider.viewModelStoreForKey(entry.key)
+        val viewModelStore = storeOwnerProvider.viewModelStoreForKey(entry.contentKey)
 
         val savedStateRegistryOwner = LocalSavedStateRegistryOwner.current
         val childViewModelStoreOwner = remember {

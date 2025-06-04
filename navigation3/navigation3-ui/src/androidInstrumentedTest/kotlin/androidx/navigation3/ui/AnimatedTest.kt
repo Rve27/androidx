@@ -407,6 +407,7 @@ class AnimatedTest {
                     third ->
                         NavEntry(
                             third,
+                            third,
                             NavDisplay.transitionSpec {
                                 fadeIn(tween(testDuration)) togetherWith
                                     fadeOut(tween(testDuration))
@@ -552,6 +553,7 @@ class AnimatedTest {
                     fourth ->
                         NavEntry(
                             fourth,
+                            fourth,
                             NavDisplay.transitionSpec {
                                 fadeIn(tween(testDuration)) togetherWith
                                     fadeOut(tween(testDuration))
@@ -597,6 +599,7 @@ class AnimatedTest {
                     first -> NavEntry(first) { Text(first) }
                     second ->
                         NavEntry(
+                            second,
                             second,
                             NavDisplay.transitionSpec {
                                 fadeIn(tween(testDuration)) togetherWith

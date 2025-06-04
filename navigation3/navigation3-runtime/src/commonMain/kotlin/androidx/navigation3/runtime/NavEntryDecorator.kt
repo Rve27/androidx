@@ -38,7 +38,7 @@ internal constructor(
  *   invoking the [NavEntry.Content].)
  */
 public fun <T : Any> navEntryDecorator(
-    onPop: (key: Any) -> Unit = {},
+    onPop: (contentKey: Any) -> Unit = {},
     decorator: @Composable (entry: NavEntry<T>) -> Unit,
 ): NavEntryDecorator<T> = NavEntryDecorator(onPop, decorator)
 

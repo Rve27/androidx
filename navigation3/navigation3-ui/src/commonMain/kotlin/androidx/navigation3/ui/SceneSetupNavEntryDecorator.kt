@@ -46,7 +46,7 @@ public fun SceneSetupNavEntryDecorator(): NavEntryDecorator<Any> {
         mutableMapOf()
     val movableContentHolderMap: MutableMap<Any, @Composable () -> Unit> = mutableMapOf()
     return navEntryDecorator { entry ->
-        val key = entry.key
+        val key = entry.contentKey
         movableContentContentHolderMap.getOrPut(key) {
             key(key) {
                 remember {
@@ -74,7 +74,7 @@ public fun SceneSetupNavEntryDecorator(): NavEntryDecorator<Any> {
             }
         }
 
-        if (LocalEntriesToRenderInCurrentScene.current.contains(entry.key)) {
+        if (LocalEntriesToRenderInCurrentScene.current.contains(key)) {
             key(key) {
                 // In case the key is removed from the backstack while this is still
                 // being rendered, we remember the MutableState directly to allow

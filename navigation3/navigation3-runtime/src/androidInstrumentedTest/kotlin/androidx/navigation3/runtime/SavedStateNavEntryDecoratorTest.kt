@@ -45,7 +45,7 @@ class SavedStateNavEntryDecoratorTest {
     @Test
     fun testDataClassSamePropertyNotDuplicates() {
         val data1 = Data1(1)
-        val data2 = Data2(1)
+        val data2 = Data2(2)
 
         lateinit var numberOnScreen1: MutableState<Int>
         val backStack = mutableStateListOf<Any>(data1)
@@ -55,12 +55,12 @@ class SavedStateNavEntryDecoratorTest {
                 entryProvider = {
                     when (it) {
                         is Data1 ->
-                            NavEntry(data1) {
+                            NavEntry(data1, data1.arg) {
                                 numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                                 Text("numberOnScreen1: ${numberOnScreen1.value}")
                             }
                         is Data2 ->
-                            NavEntry(data2) {
+                            NavEntry(data2, data2.arg) {
                                 numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                                 Text("numberOnScreen1: ${numberOnScreen1.value}")
                             }

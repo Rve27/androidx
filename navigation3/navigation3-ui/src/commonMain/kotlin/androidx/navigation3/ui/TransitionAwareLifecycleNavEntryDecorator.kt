@@ -30,8 +30,8 @@ import androidx.navigation3.runtime.navEntryDecorator
 
 @Composable
 internal fun transitionAwareLifecycleNavEntryDecorator(backStack: List<Any>, isSettled: Boolean) =
-    navEntryDecorator { entry ->
-        val isInBackStack = entry.key in backStack
+    navEntryDecorator<Any> { entry ->
+        val isInBackStack = entry.isInBackStack(backStack)
         val maxLifecycle =
             when {
                 isInBackStack && isSettled -> Lifecycle.State.RESUMED

@@ -16,8 +16,6 @@
 
 package androidx.navigation3.runtime
 
-import androidx.compose.runtime.Composable
-
 /**
  * Class that wraps a [NavEntry] within another [NavEntry].
  *
@@ -26,15 +24,4 @@ import androidx.compose.runtime.Composable
  * @param navEntry the [NavEntry] to wrap
  */
 public open class NavEntryWrapper<T : Any>(public val navEntry: NavEntry<T>) :
-    NavEntry<T>(navEntry) {
-    override val key: T
-        get() = navEntry.key
-
-    override val metadata: Map<String, Any>
-        get() = navEntry.metadata
-
-    @Composable
-    override fun Content() {
-        navEntry.Content()
-    }
-}
+    NavEntry<T>(navEntry)
