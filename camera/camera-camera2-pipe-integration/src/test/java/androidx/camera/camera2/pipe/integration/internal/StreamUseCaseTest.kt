@@ -285,6 +285,19 @@ class StreamUseCaseTest() {
     }
 
     @Test
+    fun shouldUseStreamUseCase_highSpeedNotSupported() {
+        TestCase.assertFalse(
+            StreamUseCaseUtil.shouldUseStreamUseCase(
+                SupportedSurfaceCombination.FeatureSettings(
+                    CameraMode.DEFAULT,
+                    DynamicRange.BIT_DEPTH_8_BIT,
+                    isHighSpeedOn = true,
+                )
+            )
+        )
+    }
+
+    @Test
     fun containsZslUseCase_isZslUseCase() {
         val useCaseConfig =
             getFakeUseCaseConfigWithOptions(

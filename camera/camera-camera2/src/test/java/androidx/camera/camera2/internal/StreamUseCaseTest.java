@@ -267,6 +267,21 @@ public class StreamUseCaseTest {
     }
 
     @Test
+    public void shouldUseStreamUseCase_highSpeedNotSupported() {
+        FeatureSettings featureSettings = FeatureSettings.of(
+                CameraMode.DEFAULT,
+                /*hasVideoCapture=*/ false,
+                BIT_DEPTH_8_BIT,
+                /*isPreviewStabilizationOn=*/false,
+                /*isUltraHdrOn=*/ false,
+                /*isHighSpeedOn=*/ true,
+                /*isFeatureComboInvocation=*/ false,
+                /*requiresFeatureComboQuery=*/ false,
+                /*targetFpsRange=*/ FRAME_RATE_RANGE_UNSPECIFIED);
+        assertFalse(shouldUseStreamUseCase(featureSettings));
+    }
+
+    @Test
     public void containsZslUseCase_isZslUseCase() {
         UseCaseConfig<?> useCaseConfig = getFakeUseCaseConfigWithOptions(true, false, true,
                 UseCaseConfigFactory.CaptureType.IMAGE_CAPTURE, ImageFormat.JPEG);
