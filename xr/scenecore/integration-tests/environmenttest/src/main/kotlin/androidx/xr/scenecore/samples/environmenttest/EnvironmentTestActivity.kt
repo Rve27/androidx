@@ -267,10 +267,12 @@ class EnvironmentTestActivity : ComponentActivity() {
         var blueSkybox by remember { mutableStateOf<ExrImage?>(null) }
 
         LaunchedEffect(Unit) {
-            groundGeo = GltfModel.create(session, "models/GroundGeometry.glb").await()
+            groundGeo =
+                GltfModel.createAsync(session, Paths.get("models", "GroundGeometry.glb")).await()
         }
         LaunchedEffect(Unit) {
-            rocksGeo = GltfModel.create(session, "models/RocksGeometry.glb").await()
+            rocksGeo =
+                GltfModel.createAsync(session, Paths.get("models", "RocksGeometry.glb")).await()
         }
         LaunchedEffect(Unit) {
             greySkybox =

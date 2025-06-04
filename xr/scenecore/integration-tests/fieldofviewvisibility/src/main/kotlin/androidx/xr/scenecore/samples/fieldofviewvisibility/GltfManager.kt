@@ -32,6 +32,7 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
+import java.nio.file.Paths
 
 /** Manages the UI for the GLTF entity. */
 @Suppress("Deprecation")
@@ -73,7 +74,10 @@ class GltfManager(private val session: Session) {
                     enabled = (mGltfModel == null),
                     onClick = {
                         val dragonModelFuture =
-                            GltfModel.create(session, "models/Dragon_Evolved.gltf")
+                            GltfModel.createAsync(
+                                session,
+                                Paths.get("models", "Dragon_Evolved.gltf"),
+                            )
                         dragonModelFuture.addListener(
                             { mGltfModel = dragonModelFuture.get() },
                             // This will cause the listener to be run on the UI thread

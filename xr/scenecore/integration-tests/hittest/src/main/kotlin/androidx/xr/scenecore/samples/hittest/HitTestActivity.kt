@@ -35,6 +35,7 @@ import androidx.xr.scenecore.InteractableComponent
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.scene
+import java.nio.file.Paths
 
 class HitTestActivity : AppCompatActivity() {
 
@@ -64,7 +65,8 @@ class HitTestActivity : AppCompatActivity() {
             Log.e("HitTestActivity", "Error adding MovableComponent to panelEntity")
         }
 
-        val transformWidgetModelFuture = GltfModel.create(session, "models/xyzArrows.glb")
+        val transformWidgetModelFuture =
+            GltfModel.createAsync(session, Paths.get("models", "xyzArrows.glb"))
         transformWidgetModelFuture.addListener(
             { transformWidgetModel = transformWidgetModelFuture.get() },
             Runnable::run,
@@ -102,7 +104,8 @@ class HitTestActivity : AppCompatActivity() {
             }
         }
 
-        val dragonModelFuture = GltfModel.create(session, "models/Dragon_Evolved.gltf")
+        val dragonModelFuture =
+            GltfModel.createAsync(session, Paths.get("models", "Dragon_Evolved.gltf"))
         dragonModelFuture.addListener(
             {
                 val dragonModel = dragonModelFuture.get()

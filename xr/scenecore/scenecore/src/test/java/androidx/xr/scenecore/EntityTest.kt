@@ -20,8 +20,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
+import android.os.Build
 import android.view.View
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Config.PlaneTrackingMode
 import androidx.xr.runtime.Session
@@ -54,6 +56,7 @@ import com.google.common.truth.Truth.assertThat
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors.directExecutor
+import java.nio.file.Paths
 import java.util.UUID
 import java.util.concurrent.Executor
 import java.util.function.Consumer
@@ -246,6 +249,7 @@ class EntityTest {
     private val testActivitySpace = TestRtActivitySpace()
     private val mockAnchorEntity = mock<RtAnchorEntity>()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @Before
     fun setUp() {
         whenever(mockEntityPlatformAdapter.spatialEnvironment).thenReturn(mock())
@@ -299,7 +303,7 @@ class EntityTest {
         lifecycleManager = session.runtime.lifecycleManager
         session.configure(Config(headTracking = Config.HeadTrackingMode.LAST_KNOWN))
         activitySpace = ActivitySpace.create(mockPlatformAdapter, entityManager)
-        gltfModel = GltfModel.create(session, "test.glb").get()
+        gltfModel = GltfModel.createAsync(session, Paths.get("test.glb")).get()
         gltfModelEntity = GltfModelEntity.create(mockPlatformAdapter, entityManager, gltfModel)
         panelEntity =
             PanelEntity.create(
@@ -1249,7 +1253,8 @@ class EntityTest {
         val mockGltfModelResource = mock<RtGltfModelResource>()
         whenever(mockEntityPlatformAdapter.loadGltfByAssetName(anyString()))
             .thenReturn(Futures.immediateFuture(mockGltfModelResource))
-        @Suppress("UNUSED_VARIABLE") val unused = GltfModel.create(entitySession, "test.glb")
+        @Suppress("UNUSED_VARIABLE", "NewApi")
+        val unused = GltfModel.createAsync(entitySession, Paths.get("test.glb"))
 
         verify(mockEntityPlatformAdapter).loadGltfByAssetName("test.glb")
     }
@@ -1259,7 +1264,8 @@ class EntityTest {
         whenever(mockEntityPlatformAdapter.loadGltfByAssetName(anyString()))
             .thenReturn(Futures.immediateFuture(mock()))
         whenever(mockEntityPlatformAdapter.createGltfEntity(any(), any(), any())).thenReturn(mock())
-        val gltfModelFuture = GltfModel.create(entitySession, "test.glb")
+        @Suppress("NewApi")
+        val gltfModelFuture = GltfModel.createAsync(entitySession, Paths.get("test.glb"))
         @Suppress("UNUSED_VARIABLE")
         val unused = GltfModelEntity.create(entitySession, gltfModelFuture.get())
 

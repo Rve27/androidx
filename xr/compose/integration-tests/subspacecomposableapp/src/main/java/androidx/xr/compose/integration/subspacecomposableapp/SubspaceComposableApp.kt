@@ -100,6 +100,7 @@ import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.scene
+import java.nio.file.Paths
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlinx.coroutines.guava.await
@@ -334,7 +335,9 @@ class SubspaceComposableApp : ComponentActivity() {
         var arrows by remember { mutableStateOf<GltfModel?>(null) }
         val gltfEntity = arrows?.let { remember { GltfModelEntity.create(session, it) } }
 
-        LaunchedEffect(Unit) { arrows = GltfModel.create(session, "models/xyzArrows.glb").await() }
+        LaunchedEffect(Unit) {
+            arrows = GltfModel.createAsync(session, Paths.get("models", "xyzArrows.glb")).await()
+        }
 
         if (gltfEntity != null) {
             val angle by

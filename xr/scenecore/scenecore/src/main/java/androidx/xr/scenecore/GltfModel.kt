@@ -16,6 +16,8 @@
 
 package androidx.xr.scenecore
 
+import android.annotation.SuppressLint
+import android.net.Uri
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.concurrent.futures.ResolvableFuture
@@ -23,13 +25,11 @@ import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.GltfModelResource as RtGltfModel
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import com.google.common.util.concurrent.ListenableFuture
-
-/** Represents a 3D model in SceneCore. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Model
+import java.nio.file.Path
 
 /**
- * [GltfModel] represents a glTF resource in SceneCore. These can be used as part of the
- * [Environment] or to display 3D models with [GltfModelEntity]. These are created by the [Session].
+ * GltfModel represents a [glTF](https://www.khronos.org/Gltf) resource in SceneCore. These can be
+ * used as part of the [SpatialEnvironment] or to display 3D models with [GltfModelEntity].
  */
 // TODO: b/319269278 - Make this and ExrImage derive from a common Resource base class which has
 //                     async helpers.
@@ -37,24 +37,18 @@ import com.google.common.util.concurrent.ListenableFuture
 //                     animation name for a loaded glTF, as well as an interface for selecting the
 //                     playback animation from the integer index.
 // TODO: b/362368652 - Add an interface which returns a list of available animation names
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class GltfModel internal constructor(internal val model: RtGltfModel) : Model {
+public class GltfModel internal constructor(internal val model: RtGltfModel) {
 
     public companion object {
-        // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for
-        // classes
-        // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
-        // warning, however, we get a build error - go/bugpattern/RestrictTo.
-        @SuppressWarnings("RestrictTo")
-        internal fun createAsync(
+
+        private fun createAsync(
             platformAdapter: JxrPlatformAdapter,
             name: String,
         ): ListenableFuture<GltfModel> {
             return createModelFuture(platformAdapter.loadGltfByAssetName(name))
         }
 
-        @SuppressWarnings("RestrictTo")
-        internal fun createAsync(
+        private fun createAsync(
             platformAdapter: JxrPlatformAdapter,
             assetData: ByteArray,
             assetKey: String,
@@ -63,50 +57,66 @@ public class GltfModel internal constructor(internal val model: RtGltfModel) : M
         }
 
         /**
-         * Public factory function for a [GltfModel], where the glTF is asynchronously loaded.
+         * Public factory for a GltfModel, where the glTF is asynchronously loaded from a [Path]
+         * relative to the application's `assets/` folder.
          *
-         * This method must be called from the main thread.
-         * https://developer.android.com/guide/components/processes-and-threads
-         *
-         * Currently, only URLs and relative paths from the android_assets/ directory are supported.
          * Currently, only binary glTF (.glb) files are supported.
          *
          * @param session The [Session] to use for loading the model.
-         * @param name The URL or asset-relative path of a binary glTF (.glb) model to be loaded
+         * @param path The Path of the binary glTF (.glb) model to be loaded, relative to the
+         *   application's `assets/` folder.
          * @return a ListenableFuture<GltfModel>. Listeners will be called on the main thread if
-         *   Runnable::run is supplied.
+         *   Runnable::run is supplied when adding a listener to the [ListenableFuture].
+         * @throws IllegalArgumentException if [path.isAbsolute] is true, as this method requires a
+         *   relative path.
          */
         @MainThread
         @JvmStatic
-        @Suppress("AsyncSuffixFuture")
-        public fun create(session: Session, name: String): ListenableFuture<GltfModel> {
-            return GltfModel.createAsync(session.platformAdapter, name)
+        // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
+        @SuppressLint("NewApi")
+        public fun createAsync(session: Session, path: Path): ListenableFuture<GltfModel> {
+            require(!path.isAbsolute) {
+                "GltfModel.createAsync() expects a path relative to `assets/`, received absolute path $path."
+            }
+            return createAsync(session.platformAdapter, path.toString())
         }
 
         /**
-         * Public factory function for a [GltfModel], where the glTF is asynchronously loaded.
-         *
-         * This method must be called from the main thread.
-         * https://developer.android.com/guide/components/processes-and-threads
+         * Public factory for a GltfModel, where the glTF is asynchronously loaded from a [Uri].
          *
          * Currently, only binary glTF (.glb) files are supported.
          *
          * @param session The [Session] to use for loading the model.
-         * @param assetData The byte array data of a binary glTF (.glb) model to be loaded.
-         * @param assetKey The key to use for the model. This is used to identify the model in the
-         *   [SceneCore] cache.
+         * @param uri The Uri for a binary glTF (.glb) model to be loaded.
          * @return a ListenableFuture<GltfModel>. Listeners will be called on the main thread if
-         *   Runnable::run is supplied.
+         *   Runnable::run is supplied when adding a listener to the [ListenableFuture].
          */
         @MainThread
         @JvmStatic
-        @Suppress("AsyncSuffixFuture")
-        public fun create(
+        public fun createAsync(session: Session, uri: Uri): ListenableFuture<GltfModel> =
+            createAsync(session.platformAdapter, uri.toString())
+
+        /**
+         * Public factory for a GltfModel, where the glTF is asynchronously loaded.
+         *
+         * Currently, only binary glTF files are supported.
+         *
+         * @param session The [Session] to use for loading the model.
+         * @param assetData The byte array data of a binary glTF (`.glb`) model to be loaded.
+         * @param assetKey The key to use for the model. This is used to identify the model in the
+         *   SceneCore cache.
+         * @return a ListenableFuture<GltfModel>. Listeners will be called on the main thread if
+         *   Runnable::run is supplied when adding a listener to the [ListenableFuture].
+         */
+        @MainThread
+        @JvmStatic
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        public fun createAsync(
             session: Session,
             assetData: ByteArray,
             assetKey: String,
         ): ListenableFuture<GltfModel> {
-            return GltfModel.createAsync(session.platformAdapter, assetData, assetKey)
+            return createAsync(session.platformAdapter, assetData, assetKey)
         }
 
         private fun createModelFuture(

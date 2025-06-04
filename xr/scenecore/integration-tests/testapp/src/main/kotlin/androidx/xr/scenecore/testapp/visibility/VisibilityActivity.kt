@@ -44,6 +44,8 @@ import androidx.xr.scenecore.testapp.common.SpatialMode
 import androidx.xr.scenecore.testapp.common.createSession
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
+import java.nio.file.Path
+import java.nio.file.Paths
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 
@@ -170,7 +172,7 @@ class VisibilityActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             // Async get gltf model
-            model = GltfModel.create(session!!, MODEL).await()
+            model = GltfModel.createAsync(session!!, MODEL_PATH).await()
 
             // create gltf entities
             createGltfEntities()
@@ -279,6 +281,6 @@ class VisibilityActivity : AppCompatActivity() {
     companion object {
         const val DELAY_FOR_3_SEC: Long = 3000
         const val ACTIVITY_NAME: String = "visibilityActivity"
-        const val MODEL: String = "models/Dragon_Evolved.gltf"
+        val MODEL_PATH: Path = Paths.get("models", "Dragon_Evolved.gltf")
     }
 }

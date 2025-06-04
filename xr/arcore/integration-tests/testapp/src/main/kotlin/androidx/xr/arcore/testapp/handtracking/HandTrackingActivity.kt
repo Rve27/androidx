@@ -55,6 +55,7 @@ import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.scene
+import java.nio.file.Paths
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 
@@ -157,7 +158,9 @@ class HandTrackingActivity : ComponentActivity() {
                     lifecycleScope.launch {
                         session.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                             setContent { MainPanel(session) }
-                            val xyzModel = GltfModel.create(session, "models/xyzArrows.glb").await()
+                            val xyzModel =
+                                GltfModel.createAsync(session, Paths.get("models", "xyzArrows.glb"))
+                                    .await()
 
                             val leftHandJointEntityMap =
                                 HandJointType.entries.associateWith {

@@ -66,6 +66,17 @@ package androidx.xr.scenecore {
     method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, java.nio.file.Path path);
   }
 
+  public final class GltfModel {
+    method @MainThread public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.GltfModel> createAsync(androidx.xr.runtime.Session session, android.net.Uri uri);
+    method @MainThread public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.GltfModel> createAsync(androidx.xr.runtime.Session session, java.nio.file.Path path);
+    field public static final androidx.xr.scenecore.GltfModel.Companion Companion;
+  }
+
+  public static final class GltfModel.Companion {
+    method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.GltfModel> createAsync(androidx.xr.runtime.Session session, android.net.Uri uri);
+    method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.GltfModel> createAsync(androidx.xr.runtime.Session session, java.nio.file.Path path);
+  }
+
   public final class Head implements androidx.xr.scenecore.ScenePose {
     method public androidx.xr.runtime.math.Pose getActivitySpacePose();
     method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);

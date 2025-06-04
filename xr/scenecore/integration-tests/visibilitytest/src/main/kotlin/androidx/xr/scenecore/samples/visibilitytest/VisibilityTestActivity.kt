@@ -37,6 +37,7 @@ import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.SpatialPointerComponent
 import androidx.xr.scenecore.SpatialPointerIconNone
 import androidx.xr.scenecore.scene
+import java.nio.file.Paths
 
 @Suppress("Deprecation")
 // TODO - b/421386891: is/setHidden is deprecated; this activity needs to be updated to use
@@ -69,7 +70,8 @@ class VisibilityTestActivity : AppCompatActivity() {
         }
 
         childPanelEntity2 = createPanelEntity(session, "Child Panel 2", childPanelEntity1)
-        val dragonModelFuture = GltfModel.create(session, "models/Dragon_Evolved.gltf")
+        val dragonModelFuture =
+            GltfModel.createAsync(session, Paths.get("models", "Dragon_Evolved.gltf"))
         dragonModelFuture.addListener(
             {
                 val dragonModel = dragonModelFuture.get()

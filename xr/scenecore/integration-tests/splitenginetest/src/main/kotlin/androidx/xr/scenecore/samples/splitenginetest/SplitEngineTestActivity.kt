@@ -227,7 +227,10 @@ class SplitEngineTestActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         val gltfTokenFuture: ListenableFuture<GltfModel> =
-                            GltfModel.create(session, "models/GroundGeometry.glb")
+                            GltfModel.createAsync(
+                                session,
+                                Paths.get("models", "GroundGeometry.glb"),
+                            )
                         gltfTokenFuture.addListener(
                             {
                                 try {
@@ -263,7 +266,7 @@ class SplitEngineTestActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         val gltfToken: ListenableFuture<GltfModel> =
-                            GltfModel.create(session, "models/l2a_pulse.glb")
+                            GltfModel.createAsync(session, Paths.get("models", "l2a_pulse.glb"))
                         gltfToken.addListener(
                             {
                                 try {
@@ -284,7 +287,10 @@ class SplitEngineTestActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         val gltfTokenFuture: ListenableFuture<GltfModel> =
-                            GltfModel.create(session, "models/Dragon_Evolved.gltf")
+                            GltfModel.createAsync(
+                                session,
+                                Paths.get("models", "Dragon_Evolved.gltf"),
+                            )
                         gltfTokenFuture.addListener(
                             {
                                 try {

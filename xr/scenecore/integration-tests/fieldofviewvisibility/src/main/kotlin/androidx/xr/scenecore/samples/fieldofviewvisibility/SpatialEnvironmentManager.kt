@@ -61,7 +61,8 @@ class SpatialEnvironmentManager(private val session: Session) {
         var blueSkybox by remember { mutableStateOf<ExrImage?>(null) }
 
         LaunchedEffect(Unit) {
-            groundGeo = GltfModel.create(session, "models/GroundGeometry.glb").await()
+            groundGeo =
+                GltfModel.createAsync(session, Paths.get("models", "GroundGeometry.glb")).await()
         }
         LaunchedEffect(Unit) {
             blueSkybox =

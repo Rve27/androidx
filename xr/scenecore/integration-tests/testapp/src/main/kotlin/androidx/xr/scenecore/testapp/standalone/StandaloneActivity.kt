@@ -36,6 +36,7 @@ import androidx.xr.scenecore.scene
 import androidx.xr.scenecore.testapp.R
 import androidx.xr.scenecore.testapp.common.createSession
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.nio.file.Paths
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.time.TimeSource
@@ -92,7 +93,7 @@ class StandaloneActivity : AppCompatActivity() {
     }
 
     private suspend fun load3DModel(): GltfModel {
-        return GltfModel.create(session!!, "models/Dragon_Evolved.gltf").await()
+        return GltfModel.createAsync(session!!, Paths.get("models", "Dragon_Evolved.gltf")).await()
     }
 
     private fun createModelSolarSystem(session: Session, model: GltfModel) {

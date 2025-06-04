@@ -43,6 +43,7 @@ import androidx.xr.scenecore.samples.commontestview.DebugTextPanel
 import androidx.xr.scenecore.scene
 import com.google.errorprone.annotations.CanIgnoreReturnValue
 import java.lang.UnsupportedOperationException
+import java.nio.file.Paths
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -70,7 +71,7 @@ class TransformationTestsActivity : AppCompatActivity() {
         setupMovableMainPanel()
 
         // Create a transform widget model and assign it to an Anchor
-        val axesModelFuture = GltfModel.create(session, "models/xyzArrows.glb")
+        val axesModelFuture = GltfModel.createAsync(session, Paths.get("models", "xyzArrows.glb"))
         axesModelFuture.addListener(
             {
                 val transformWidgetModel = axesModelFuture.get()
@@ -81,7 +82,8 @@ class TransformationTestsActivity : AppCompatActivity() {
         )
 
         // Create multiple orbiting dragon models
-        val dragonModelFuture = GltfModel.create(session, "models/Dragon_Evolved.gltf")
+        val dragonModelFuture =
+            GltfModel.createAsync(session, Paths.get("models", "Dragon_Evolved.gltf"))
         dragonModelFuture.addListener(
             {
                 val dragonModel = dragonModelFuture.get()

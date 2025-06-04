@@ -56,6 +56,7 @@ import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.unit.Meter.Companion.meters
 import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
+import java.nio.file.Paths
 import kotlinx.coroutines.guava.await
 
 class PanelVolumeApp : ComponentActivity() {
@@ -73,7 +74,9 @@ class PanelVolumeApp : ComponentActivity() {
         var arrows by remember { mutableStateOf<GltfModel?>(null) }
         val gltfEntity = arrows?.let { remember { GltfModelEntity.create(session, it) } }
 
-        LaunchedEffect(Unit) { arrows = GltfModel.create(session, "models/xyzArrows.glb").await() }
+        LaunchedEffect(Unit) {
+            arrows = GltfModel.createAsync(session, Paths.get("models", "xyzArrows.glb")).await()
+        }
 
         val infiniteTransition = rememberInfiniteTransition()
         val panelYOffset by

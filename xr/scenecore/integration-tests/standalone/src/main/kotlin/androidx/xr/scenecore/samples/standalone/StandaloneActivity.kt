@@ -30,6 +30,7 @@ import androidx.xr.scenecore.GltfModel
 import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.scene
+import java.nio.file.Paths
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.time.TimeSource
@@ -58,7 +59,8 @@ class StandaloneActivity : AppCompatActivity() {
         panelEntity.parent = session.scene.activitySpace
 
         // Create multiple orbiting dragon models
-        val dragonModelFuture = GltfModel.create(session, "models/Dragon_Evolved.gltf")
+        val dragonModelFuture =
+            GltfModel.createAsync(session, Paths.get("models", "Dragon_Evolved.gltf"))
         dragonModelFuture.addListener(
             {
                 val dragonModel = dragonModelFuture.get()

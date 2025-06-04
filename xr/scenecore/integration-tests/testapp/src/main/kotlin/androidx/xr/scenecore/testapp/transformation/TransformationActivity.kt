@@ -48,6 +48,7 @@ import androidx.xr.scenecore.testapp.common.DebugTextLinearView
 import androidx.xr.scenecore.testapp.common.DebugTextPanel
 import androidx.xr.scenecore.testapp.common.createSession
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.nio.file.Paths
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -263,8 +264,10 @@ class TransformationActivity : AppCompatActivity() {
     }
 
     private suspend fun loadModels() {
-        solarSystemEntityModel = GltfModel.create(session!!, "models/Dragon_Evolved.gltf").await()
-        staticEntityModel = GltfModel.create(session!!, "models/xyzArrows.glb").await()
+        solarSystemEntityModel =
+            GltfModel.createAsync(session!!, Paths.get("models", "Dragon_Evolved.gltf")).await()
+        staticEntityModel =
+            GltfModel.createAsync(session!!, Paths.get("models", "xyzArrows.glb")).await()
     }
 
     private fun entitySolarSystem() {
