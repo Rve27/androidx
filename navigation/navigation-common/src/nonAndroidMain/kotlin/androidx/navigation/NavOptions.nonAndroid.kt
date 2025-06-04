@@ -56,7 +56,7 @@ public actual class NavOptions {
         implementedInJetBrainsFork()
     }
 
-    public actual class Builder {
+    public actual class Builder actual constructor() {
 
         public actual fun setLaunchSingleTop(singleTop: Boolean): Builder {
             implementedInJetBrainsFork()
