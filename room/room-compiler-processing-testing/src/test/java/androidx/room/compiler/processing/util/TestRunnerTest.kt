@@ -626,4 +626,56 @@ class TestRunnerTest {
         assertThat(javacStep.rounds).isEqualTo(3) // 2 rounds + final
         assertThat(kspStep.rounds).isEqualTo(3) // 2 rounds + final
     }
+
+    @Test
+    fun kspOnlyProcessor() {
+        val src =
+            Source.kotlin(
+                "Foo.kt",
+                """
+            annotation class Annotated
+
+            @Annotated
+            class Foo
+            """
+                    .trimIndent(),
+            )
+        var processingRounds = 0
+        val testKspProcessorProvider = SymbolProcessorProvider { environment ->
+            object : KspBasicAnnotationProcessor(environment) {
+                override fun processingSteps() =
+                    listOf(
+                        object : XProcessingStep {
+                            override fun annotations() = setOf("Annotated")
+
+                            override fun process(
+                                env: XProcessingEnv,
+                                elementsByAnnotation: Map<String, Set<XElement>>,
+                                isLastRound: Boolean,
+                            ): Set<XElement> {
+                                if (env.findTypeElement("GenClass") == null) {
+                                    val typeSpec =
+                                        TypeSpec.classBuilder("GenClass")
+                                            .addAnnotation(ClassName.get("", "Annotated"))
+                                            .build()
+                                    env.filer.write(JavaFile.builder("", typeSpec).build())
+                                }
+                                processingRounds++
+                                return emptySet()
+                            }
+                        }
+                    )
+            }
+        }
+        var onCompilationResultInvoked = 0
+        runKspProcessorTest(
+            sources = listOf(src),
+            symbolProcessorProviders = listOf(testKspProcessorProvider),
+        ) {
+            onCompilationResultInvoked++
+            it.hasErrorCount(0)
+        }
+        assertThat(onCompilationResultInvoked).isEqualTo(1) // 1 backend
+        assertThat(processingRounds).isEqualTo(3) // 2 rounds + final
+    }
 }

@@ -240,6 +240,40 @@ fun runProcessorTest(
     )
 }
 
+/**
+ * Runs the [symbolProcessorProviders] with ksp and skips javac/kapt processing.
+ *
+ * [onCompilationResult] will be called with a [CompilationResultSubject] after compilation
+ * finishes.
+ *
+ * By default, the compilation is expected to succeed. If it should fail, there must be an assertion
+ * on [onCompilationResult] which expects a failure (e.g. checking errors).
+ */
+@ExperimentalProcessingApi
+fun runKspProcessorTest(
+    sources: List<Source> = emptyList(),
+    classpath: List<File> = emptyList(),
+    options: Map<String, String> = emptyMap(),
+    kotlincArguments: List<String> = emptyList(),
+    config: XProcessingEnvConfig = defaultTestConfig(options),
+    symbolProcessorProviders: List<SymbolProcessorProvider>,
+    onCompilationResult: (CompilationResultSubject) -> Unit,
+) {
+    val handler: (XTestInvocation) -> Unit = { it.assertCompilationResult(onCompilationResult) }
+    runTests(
+        params =
+            TestCompilationParameters(
+                sources = sources,
+                classpath = classpath.distinct(),
+                options = options,
+                handlers = listOf(handler),
+                kotlincArguments = kotlincArguments,
+                config = config,
+            ),
+        KspCompilationTestRunner(symbolProcessorProviders),
+    )
+}
+
 /** @see runProcessorTest */
 @ExperimentalProcessingApi
 fun runProcessorTest(
