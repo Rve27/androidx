@@ -73,6 +73,7 @@ internal open class FakePdfDocument(
     override val uri: Uri = Uri.parse("content://test.app/document.pdf"),
     private val pageLinks: Map<Int, PdfDocument.PdfPageLinks> = mapOf(),
     private val textContents: List<PdfPageTextContent> = emptyList(),
+    private val pageFormWidgetInfos: Map<Int, List<FormWidgetInfo>> = mapOf(),
 ) : PdfDocument {
     override val pageCount: Int = pages.size
 
@@ -87,19 +88,22 @@ internal open class FakePdfDocument(
         _bitmapRequests.clear()
     }
 
+    internal var editHistory: MutableList<FormEditRecord> = mutableListOf()
+
     override fun getPageBitmapSource(pageNumber: Int): PdfDocument.BitmapSource {
         return FakeBitmapSource(pageNumber)
     }
 
     override suspend fun getFormWidgetInfos(pageNum: Int): List<FormWidgetInfo> {
-        return listOf()
+        return pageFormWidgetInfos[pageNum] ?: emptyList()
     }
 
     override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
-        return listOf()
+        return pageFormWidgetInfos[pageNum]?.filter { it.widgetType in types } ?: emptyList()
     }
 
     override suspend fun applyEdit(pageNum: Int, record: FormEditRecord): List<Rect> {
+        editHistory.add(record)
         return listOf()
     }
 
@@ -168,6 +172,14 @@ internal open class FakePdfDocument(
     ): PdfDocument.PageInfo {
         layoutReach = maxOf(pageNumber, layoutReach)
         val size = pages[pageNumber]
+        if (pageInfoFlags.value and PdfDocument.INCLUDE_FORM_WIDGET_INFO != 0L) {
+            return PdfDocument.PageInfo(
+                pageNum = pageNumber,
+                height = size.y,
+                width = size.x,
+                formWidgetInfos = pageFormWidgetInfos[pageNumber],
+            )
+        }
         return PdfDocument.PageInfo(pageNumber, size.y, size.x)
     }
 
