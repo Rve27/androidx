@@ -111,6 +111,7 @@ import androidx.compose.material3.samples.FilterChipWithLeadingIconSample
 import androidx.compose.material3.samples.FloatingActionButtonMenuSample
 import androidx.compose.material3.samples.FloatingActionButtonSample
 import androidx.compose.material3.samples.FullScreenSearchBarScaffoldSample
+import androidx.compose.material3.samples.HorizontalCenteredHeroCarouselSample
 import androidx.compose.material3.samples.HorizontalFloatingToolbarAsScaffoldFabSample
 import androidx.compose.material3.samples.HorizontalFloatingToolbarWithFabSample
 import androidx.compose.material3.samples.HorizontalMultiBrowseCarouselSample
@@ -606,6 +607,14 @@ val CarouselExamples =
             isExpressive = false,
         ) {
             HorizontalUncontainedCarouselSample()
+        },
+        Example(
+            name = "HorizontalCenteredHeroCarouselSample",
+            description = CarouselExampleDescription,
+            sourceUrl = CarouselExampleSourceUrl,
+            isExpressive = false,
+        ) {
+            HorizontalCenteredHeroCarouselSample()
         },
         Example(
             name = "FadingHorizontalMultiBrowseCarouselSample",
