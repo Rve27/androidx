@@ -1098,6 +1098,8 @@ sealed interface androidx.compose.ui.autofill/ContentDataType { // androidx.comp
 }
 
 sealed interface androidx.compose.ui.autofill/ContentType { // androidx.compose.ui.autofill/ContentType|null[0]
+    abstract fun plus(androidx.compose.ui.autofill/ContentType): androidx.compose.ui.autofill/ContentType // androidx.compose.ui.autofill/ContentType.plus|plus(androidx.compose.ui.autofill.ContentType){}[0]
+
     final object Companion { // androidx.compose.ui.autofill/ContentType.Companion|null[0]
         final val AddressAuxiliaryDetails // androidx.compose.ui.autofill/ContentType.Companion.AddressAuxiliaryDetails|{}AddressAuxiliaryDetails[0]
             final fun <get-AddressAuxiliaryDetails>(): androidx.compose.ui.autofill/ContentType // androidx.compose.ui.autofill/ContentType.Companion.AddressAuxiliaryDetails.<get-AddressAuxiliaryDetails>|<get-AddressAuxiliaryDetails>(){}[0]
