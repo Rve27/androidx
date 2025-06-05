@@ -19,7 +19,7 @@ package androidx.camera.camera2.pipe.framegraph
 import android.hardware.camera2.CaptureRequest
 import androidx.annotation.GuardedBy
 import androidx.camera.camera2.pipe.CameraGraph
-import androidx.camera.camera2.pipe.FrameGraph.FrameBuffer
+import androidx.camera.camera2.pipe.FrameBuffer
 import androidx.camera.camera2.pipe.FrameReference
 import androidx.camera.camera2.pipe.Metadata
 import androidx.camera.camera2.pipe.Request
@@ -33,23 +33,8 @@ import androidx.camera.camera2.pipe.internal.FrameDistributor
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 
-internal class FrameBufferImpl(
-    private val frameBuffers: FrameBuffers,
-    override val streams: Set<StreamId>,
-    override val parameters: Map<Any, Any?>,
-    override val capacity: Int,
-) : FrameBuffer, FrameDistributor.FrameStartedListener {
-    override fun close() {
-        frameBuffers.detach(this)
-    }
-
-    override fun onFrameStarted(frameReference: FrameReference) {
-        // TODO: This must hold and cycle FrameReferences that are attached to this FrameBuffer.
-    }
-}
-
 @FrameGraphScope
-internal class FrameBuffers
+internal class FrameGraphBuffers
 @Inject
 internal constructor(
     private val cameraGraph: CameraGraph,

@@ -61,7 +61,7 @@ import org.junit.runner.RunWith
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricCameraPipeTestRunner::class)
-class FrameBuffersTest {
+class FrameGraphBuffersTest {
     private val testScope = TestScope()
     private val context = ApplicationProvider.getApplicationContext() as Context
     private val metadata =
@@ -123,14 +123,14 @@ class FrameBuffersTest {
             cameraGraphParameters,
             sessionLock,
         )
-    private val frameBuffers = FrameBuffers(cameraGraph, testScope)
+    private val frameGraphBuffers = FrameGraphBuffers(cameraGraph, testScope)
     private val streamId1: StreamId = StreamId(1)
     private val streamId2: StreamId = StreamId(2)
 
     @Test
     fun attachActualChange_repeatingRequestUpdated() =
         testScope.runTest {
-            frameBuffers.attach(
+            frameGraphBuffers.attach(
                 setOf(streamId1, streamId2),
                 mapOf(CAPTURE_REQUEST_KEY to 2, TEST_KEY to 5),
                 1,
@@ -148,13 +148,13 @@ class FrameBuffersTest {
     fun detachActualChange_repeatingRequestUpdated() =
         testScope.runTest {
             val frameBuffer =
-                frameBuffers.attach(
+                frameGraphBuffers.attach(
                     setOf(streamId1),
                     mapOf(CAPTURE_REQUEST_KEY to 2, TEST_KEY to 5),
                     1,
                 )
             val frameBuffer2 =
-                frameBuffers.attach(setOf(streamId2), mapOf(TEST_NULLABLE_KEY to 42), 1)
+                frameGraphBuffers.attach(setOf(streamId2), mapOf(TEST_NULLABLE_KEY to 42), 1)
             var parameters: Map<CaptureRequest.Key<*>, Any> =
                 mapOf(CAPTURE_REQUEST_KEY to 2, TEST_NULLABLE_KEY to 42)
             val extras: Map<Metadata.Key<*>, Any> = mapOf(TEST_KEY to 5)
