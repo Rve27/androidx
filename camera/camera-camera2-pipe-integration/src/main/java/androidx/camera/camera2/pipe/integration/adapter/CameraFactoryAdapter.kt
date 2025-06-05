@@ -118,6 +118,7 @@ internal class CameraFactoryAdapter(
     override fun getCameraManager(): Any = appComponent
 
     override fun shutdown() {
+        cameraCoordinator.shutdown()
         if (lazyCameraPipe.isInitialized()) {
             lazyCameraPipe.value.shutdown()
         }

@@ -145,6 +145,11 @@ public final class Camera2CameraFactory implements CameraFactory {
         return mCameraManager;
     }
 
+    @Override
+    public void shutdown() {
+        mCameraCoordinator.shutdown();
+    }
+
     private List<String> getBackwardCompatibleCameraIds(
             @NonNull List<String> availableCameraIds) throws InitializationException {
         List<String> backwardCompatibleCameraIds = new ArrayList<>();
