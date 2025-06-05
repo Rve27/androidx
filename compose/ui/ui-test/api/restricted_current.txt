@@ -160,7 +160,7 @@ package androidx.compose.ui.test {
 
   public final class DeviceConfigurationOverrideKt {
     method @androidx.compose.runtime.Composable public static void DeviceConfigurationOverride(androidx.compose.ui.test.DeviceConfigurationOverride override, kotlin.jvm.functions.Function0<kotlin.Unit> content);
-    method @BytecodeOnly @SuppressCompatibility @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableInferredTarget(scheme="[0[0][_]]") public static void DeviceConfigurationOverride(androidx.compose.ui.test.DeviceConfigurationOverride, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static void DeviceConfigurationOverride(androidx.compose.ui.test.DeviceConfigurationOverride, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
     method public static infix androidx.compose.ui.test.DeviceConfigurationOverride then(androidx.compose.ui.test.DeviceConfigurationOverride, androidx.compose.ui.test.DeviceConfigurationOverride other);
   }
 
@@ -535,7 +535,7 @@ package androidx.compose.ui.test {
 
   public final class PlatformTextInputMethodOverrideKt {
     method @Deprecated @SuppressCompatibility @androidx.compose.runtime.Composable @androidx.compose.ui.test.ExperimentalTestApi public static void PlatformTextInputMethodTestOverride(androidx.compose.ui.platform.PlatformTextInputSession sessionHandler, kotlin.jvm.functions.Function0<kotlin.Unit> content);
-    method @BytecodeOnly @Deprecated @SuppressCompatibility @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableInferredTarget(scheme="[0[0]]") @androidx.compose.ui.test.ExperimentalTestApi public static void PlatformTextInputMethodTestOverride(androidx.compose.ui.platform.PlatformTextInputSession, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
+    method @BytecodeOnly @Deprecated @SuppressCompatibility @androidx.compose.runtime.Composable @androidx.compose.ui.test.ExperimentalTestApi public static void PlatformTextInputMethodTestOverride(androidx.compose.ui.platform.PlatformTextInputSession, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
   }
 
   @SuppressCompatibility @androidx.compose.ui.test.ExperimentalTestApi public interface RotaryInjectionScope extends androidx.compose.ui.test.InjectionScope {
@@ -632,7 +632,7 @@ package androidx.compose.ui.test {
     ctor public StateRestorationTester(androidx.compose.ui.test.ComposeUiTest composeTest);
     method public void emulateSaveAndRestore();
     method public void setContent(kotlin.jvm.functions.Function0<kotlin.Unit> composable);
-    method @BytecodeOnly @SuppressCompatibility @androidx.compose.runtime.ComposableInferredTarget(scheme="[0[0]]") public void setContent(kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>);
+    method @BytecodeOnly public void setContent(kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>);
   }
 
   public final class TestContext {
