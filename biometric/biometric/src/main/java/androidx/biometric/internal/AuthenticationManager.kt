@@ -33,7 +33,6 @@ import androidx.biometric.utils.DeviceUtils
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ProcessLifecycleOwner
 import java.lang.ref.WeakReference
 import java.util.concurrent.Executor
 
@@ -72,12 +71,6 @@ internal class AuthenticationManager(
      * for callbacks or other operations.
      */
     val mainHandler = Handler(Looper.getMainLooper())
-
-    private val processObserver = AppLifecycleListener {
-        if (viewModel.isPromptShowing && !viewModel.isConfirmingDeviceCredential) {
-            cancelAuthentication(CanceledFrom.INTERNAL)
-        }
-    }
 
     private val authenticationResultObserver =
         Observer { authenticationResult: BiometricPrompt.AuthenticationResult? ->
@@ -149,8 +142,10 @@ internal class AuthenticationManager(
             mainHandler.postDelayed(StopIgnoringCancelRunnable(viewModel), 250L)
         }
 
-        // Cancel authentication when the app enters the background.
-        ProcessLifecycleOwner.get().lifecycle.addObserver(processObserver)
+        // TODO(b/263800618): Add lifecycle observer to cancel authentication when the app enters
+        // the background. ProcessLifecycleOwner.get().lifecycle.addObserver(processObserver), or
+        // find a better alternative to handle backgrounded cancelling authentication, e.g. combine
+        // LifecycleEventObserver and fragment.isRemoving()/!activity.isChangingConfigurations().
     }
 
     /**
@@ -159,7 +154,8 @@ internal class AuthenticationManager(
      */
     fun destroy() {
         disconnectViewModelForAuthCallback()
-        ProcessLifecycleOwner.get().lifecycle.removeObserver(processObserver)
+        // TODO(b/263800618): Remove lifecycle observer
+        // ProcessLifecycleOwner.get().lifecycle.removeObserver(processObserver)
     }
 
     /**
