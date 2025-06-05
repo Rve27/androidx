@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.spatial.Subspace
+import androidx.xr.compose.subspace.ExperimentalSubspaceVolumeApi
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.Volume
 import androidx.xr.compose.subspace.layout.SubspaceModifier
@@ -65,6 +66,7 @@ class PanelVolumeApp : ComponentActivity() {
         setContent { Subspace { SpatialContent() } }
     }
 
+    @OptIn(ExperimentalSubspaceVolumeApi::class)
     @Composable
     private fun SpatialContent() {
         val session =

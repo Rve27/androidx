@@ -74,6 +74,7 @@ import androidx.xr.compose.platform.LocalSpatialCapabilities
 import androidx.xr.compose.spatial.ContentEdge
 import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.Subspace
+import androidx.xr.compose.subspace.ExperimentalSubspaceVolumeApi
 import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialCurvedRow
 import androidx.xr.compose.subspace.SpatialLayoutSpacer
@@ -325,6 +326,7 @@ class SubspaceComposableApp : ComponentActivity() {
         )
     }
 
+    @OptIn(ExperimentalSubspaceVolumeApi::class)
     @Composable
     @SubspaceComposable
     fun XyzArrows(modifier: SubspaceModifier = SubspaceModifier) {

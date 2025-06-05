@@ -68,6 +68,7 @@ import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.OrbiterOffsetType
 import androidx.xr.compose.spatial.SpatialDialog
 import androidx.xr.compose.spatial.Subspace
+import androidx.xr.compose.subspace.ExperimentalSubspaceVolumeApi
 import androidx.xr.compose.subspace.MainPanel
 import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialCurvedRow
@@ -343,6 +344,7 @@ class SpatialCompose : ComponentActivity() {
         SpatialPanel(factory = { textView }, modifier = modifier)
     }
 
+    @OptIn(ExperimentalSubspaceVolumeApi::class)
     @Composable
     fun XyzArrows(modifier: SubspaceModifier = SubspaceModifier) {
         val session =
