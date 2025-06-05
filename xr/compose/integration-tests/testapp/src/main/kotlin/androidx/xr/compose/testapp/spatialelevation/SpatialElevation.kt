@@ -262,6 +262,7 @@ class SpatialElevation : ComponentActivity() {
                         "This is a popup: click anywhere to exit",
                         modifier = Modifier.padding(10.dp),
                     )
+                    Button(onClick = { showPopup = false }) { Text("Close") }
                 }
             }
         }

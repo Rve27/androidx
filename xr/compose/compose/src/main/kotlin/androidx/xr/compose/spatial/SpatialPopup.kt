@@ -181,11 +181,12 @@ private fun LayoutSpatialPopup(
         contentSize = contentSize,
         contentOffset = Offset(popupOffset.x.toFloat(), popupOffset.y.toFloat()),
     ) {
-        OutsideInputHandler(enabled = properties.dismissOnClickOutside) {
-            onDismissRequest?.invoke()
-        }
         Box(
-            Modifier.constrainTo(
+            Modifier.onClickOutside(
+                    enabled = properties.dismissOnClickOutside,
+                    onClickOutside = { onDismissRequest?.invoke() },
+                )
+                .constrainTo(
                     Constraints(
                         minWidth = 0,
                         maxWidth = Constraints.Infinity,
