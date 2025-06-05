@@ -282,7 +282,7 @@ public final class LifecycleCamera implements LifecycleObserver, Camera {
             mCameraUseCaseAdapter.setViewPort(sessionConfig.getViewPort());
             mCameraUseCaseAdapter.setEffects(sessionConfig.getEffects());
             mCameraUseCaseAdapter.setSessionType(sessionConfig.getSessionType());
-            mCameraUseCaseAdapter.setTargetFrameRate(sessionConfig.getTargetFrameRate());
+            mCameraUseCaseAdapter.setFrameRate(sessionConfig.getFrameRate());
 
             ResolvedFeatureCombination resolvedFeatureCombination = resolveFeatureCombination(
                     sessionConfig, (CameraInfoInternal) getCameraInfo());

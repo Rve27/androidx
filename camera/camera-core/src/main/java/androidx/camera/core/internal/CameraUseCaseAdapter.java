@@ -73,6 +73,7 @@ import androidx.camera.core.impl.AdapterCameraInternal;
 import androidx.camera.core.impl.CameraConfig;
 import androidx.camera.core.impl.CameraConfigs;
 import androidx.camera.core.impl.CameraControlInternal;
+import androidx.camera.core.impl.CameraInfoInternal;
 import androidx.camera.core.impl.CameraInternal;
 import androidx.camera.core.impl.CameraMode;
 import androidx.camera.core.impl.Config;
@@ -138,7 +139,7 @@ public final class CameraUseCaseAdapter implements Camera {
     private int mSessionType = SESSION_TYPE_REGULAR;
 
     @GuardedBy("mLock")
-    private @NonNull Range<Integer> mTargetFrameRate = FRAME_RATE_RANGE_UNSPECIFIED;
+    private @NonNull Range<Integer> mFrameRate = FRAME_RATE_RANGE_UNSPECIFIED;
 
     // Additional configs to apply onto the UseCases when added to this Camera
     @GuardedBy("mLock")
@@ -324,22 +325,22 @@ public final class CameraUseCaseAdapter implements Camera {
     }
 
     /**
-     * Sets the target frame rate that will be used for the {@link UseCase} attached to the camera.
+     * Sets the frame rate that will be used for the {@link UseCase} attached to the camera.
      */
-    public void setTargetFrameRate(@NonNull Range<Integer> frameRate) {
+    public void setFrameRate(@NonNull Range<Integer> frameRate) {
         synchronized (mLock) {
-            mTargetFrameRate = frameRate;
+            mFrameRate = frameRate;
         }
     }
 
 
     /**
-     * Gets the target frame rate.
+     * Gets the frame rate.
      */
     @NonNull
-    public Range<Integer> getTargetFrameRate() {
+    public Range<Integer> getFrameRate() {
         synchronized (mLock) {
-            return mTargetFrameRate;
+            return mFrameRate;
         }
     }
 
@@ -377,7 +378,8 @@ public final class CameraUseCaseAdapter implements Camera {
      *                           after adding these use cases. A null value represents that the
      *                           feature combination API is not being used.
      * @throws CameraException Thrown if the combination of newly added UseCases and the
-     *                         currently added UseCases exceed the capability of the camera.
+     *                         currently added UseCases exceed the capability of the camera, or
+     *                         if the frame rate is not supported by the camera.
      */
     @OptIn(markerClass = ExperimentalFeatureCombination.class)
     public void addUseCases(@NonNull Collection<UseCase> appUseCasesToAdd,
@@ -386,6 +388,9 @@ public final class CameraUseCaseAdapter implements Camera {
                 + ", featureCombination = " + featureCombination);
 
         synchronized (mLock) {
+            // TODO(b/421838573): Check supported frame rate in the binding flow.
+            checkFrameRateOrThrow();
+
             applyCameraConfig();
             Set<UseCase> appUseCases = new LinkedHashSet<>(mAppUseCases);
             appUseCases.addAll(appUseCasesToAdd);
@@ -424,8 +429,8 @@ public final class CameraUseCaseAdapter implements Camera {
      *                                  returned {@link CalculatedUseCaseInfo} will contain the
      *                                  maximum supported frame rate. However, the calculation of
      *                                  {@link StreamSpecQueryResult} will ignore the target
-     *                                  frame rate settings in UseCases. So the flag shouldn't be
-     *                                  set for normal flow of adding UseCases.
+     *                                  frame rate settings in SessionConfig and UseCases. So the
+     *                                  flag shouldn't be set for normal flow of adding UseCases.
      * @return the CalculatedUseCaseInfo
      * @throws CameraException Thrown if the combination of newly added UseCases and the
      *                         currently added UseCases exceed the capability of the camera.
@@ -441,6 +446,11 @@ public final class CameraUseCaseAdapter implements Camera {
                 + ", featureCombination = " + featureCombination);
 
         synchronized (mLock) {
+            // TODO(b/421838573): Check supported frame rate in the binding flow.
+            if (!findMaxSupportedFrameRate) {
+                checkFrameRateOrThrow();
+            }
+
             applyCameraConfig();
             Set<UseCase> appUseCases = new LinkedHashSet<>(mAppUseCases);
             appUseCases.addAll(appUseCasesToAdd);
@@ -524,7 +534,7 @@ public final class CameraUseCaseAdapter implements Camera {
         // fails the supported stream combination rules.
         Map<UseCase, ConfigPair> configs = getConfigs(cameraUseCasesToAttach,
                 mCameraConfig.getUseCaseConfigFactory(), mUseCaseConfigFactory,
-                mSessionType, mTargetFrameRate);
+                mSessionType, mFrameRate);
         StreamSpecQueryResult primaryStreamSpecResult;
         StreamSpecQueryResult secondaryStreamSpecResult = null;
 
@@ -539,7 +549,7 @@ public final class CameraUseCaseAdapter implements Camera {
                     /* attachedUseCases = */ cameraUseCasesToKeep,
                     mCameraConfig,
                     mSessionType,
-                    mTargetFrameRate,
+                    mFrameRate,
                     isFeatureComboInvocation,
                     findMaxSupportedFrameRate);
             if (mSecondaryCameraInternal != null) {
@@ -550,7 +560,7 @@ public final class CameraUseCaseAdapter implements Camera {
                         /* attachedUseCases = */ cameraUseCasesToKeep,
                         mCameraConfig,
                         mSessionType,
-                        mTargetFrameRate,
+                        mFrameRate,
                         isFeatureComboInvocation,
                         findMaxSupportedFrameRate);
             }
@@ -682,6 +692,23 @@ public final class CameraUseCaseAdapter implements Camera {
         mCameraUseCases.addAll(info.getCameraUseCases());
         mPlaceholderForExtensions = info.getPlaceholderForExtensions();
         mStreamSharing = info.getStreamSharing();
+    }
+
+    private void checkFrameRateOrThrow() throws CameraException {
+        if (FRAME_RATE_RANGE_UNSPECIFIED.equals(mFrameRate)) {
+            return;
+        }
+
+        CameraInfoInternal cameraInfo = mCameraInternal.getCameraInfoInternal();
+        Set<Range<Integer>> supportedFrameRates =
+                mSessionType == SESSION_TYPE_HIGH_SPEED
+                        ? cameraInfo.getSupportedHighSpeedFrameRateRanges()
+                        : cameraInfo.getSupportedFrameRateRanges();
+
+        if (!supportedFrameRates.contains(mFrameRate)) {
+            throw new CameraException("Frame rate is not supported: " + mFrameRate + " by "
+                    + supportedFrameRates);
+        }
     }
 
     private void applyCameraConfig() {

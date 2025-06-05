@@ -65,6 +65,10 @@ constructor(
     public val useCases: List<UseCase> = useCases.distinct()
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public var frameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
+        private set
+
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var requiredFeatures: Set<Feature> = emptySet()
         private set
 
@@ -75,8 +79,6 @@ constructor(
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public open val isLegacy: Boolean = false
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public open val sessionType: Int = SESSION_TYPE_REGULAR
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public open val targetFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var featureSelectionListener: Consumer<Set<Feature>> = Consumer<Set<Feature>> {}
@@ -91,9 +93,11 @@ constructor(
         useCases: List<UseCase>,
         viewPort: ViewPort? = null,
         effects: List<CameraEffect> = emptyList(),
+        frameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
         requiredFeatures: Set<Feature> = emptySet(),
         preferredFeatures: List<Feature> = emptyList(),
     ) : this(useCases = useCases, viewPort = viewPort, effects = effects) {
+        this.frameRate = frameRate
         this.requiredFeatures = requiredFeatures
         this.preferredFeatures = preferredFeatures
         validateFeatureCombination()
@@ -178,6 +182,7 @@ constructor(
     public class Builder(private val useCases: List<UseCase>) {
         private var viewPort: ViewPort? = null
         private var effects: MutableList<CameraEffect> = mutableListOf()
+        private var frameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
         private val requiredFeatures = mutableListOf<Feature>()
         private val preferredFeatures = mutableListOf<Feature>()
 
@@ -192,6 +197,13 @@ constructor(
         /** Adds a [CameraEffect] to be applied on the camera session. */
         public fun addEffect(effect: CameraEffect): Builder {
             this.effects.add(effect)
+            return this
+        }
+
+        /** Sets the frame rate to be applied on the camera session. */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun setFrameRate(frameRate: Range<Int>): Builder {
+            this.frameRate = frameRate
             return this
         }
 
@@ -238,6 +250,7 @@ constructor(
                 useCases = useCases,
                 viewPort = viewPort,
                 effects = effects.toList(),
+                frameRate = frameRate,
                 requiredFeatures = requiredFeatures.toSet(),
                 preferredFeatures = preferredFeatures.toList(),
             )
@@ -254,12 +267,6 @@ public class LegacySessionConfig(
     effects: List<CameraEffect> = emptyList(),
 ) : SessionConfig(useCases, viewPort, effects) {
     public override val isLegacy: Boolean = true
-
-    /** Legacy SessionConfig only supports regular session. */
-    public override val sessionType: Int = SESSION_TYPE_REGULAR
-
-    /** Legacy SessionConfig doesn't support targetFrameRate settings. */
-    public override val targetFrameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
 
     public constructor(
         useCaseGroup: UseCaseGroup

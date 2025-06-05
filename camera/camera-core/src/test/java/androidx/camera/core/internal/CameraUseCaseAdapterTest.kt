@@ -73,11 +73,13 @@ import androidx.camera.core.impl.UseCaseConfigFactory.CaptureType
 import androidx.camera.core.impl.utils.executor.CameraXExecutors.mainThreadExecutor
 import androidx.camera.core.internal.CameraUseCaseAdapter.CameraException
 import androidx.camera.core.internal.TargetConfig.OPTION_TARGET_NAME
+import androidx.camera.core.internal.utils.SizeUtil.RESOLUTION_1080P
 import androidx.camera.core.processing.DefaultSurfaceProcessor
 import androidx.camera.core.streamsharing.StreamSharing
 import androidx.camera.testing.fakes.FakeCamera
 import androidx.camera.testing.fakes.FakeCameraControl
 import androidx.camera.testing.fakes.FakeCameraInfoInternal
+import androidx.camera.testing.impl.FrameRateUtil.FPS_120_120
 import androidx.camera.testing.impl.fakes.FakeCameraConfig
 import androidx.camera.testing.impl.fakes.FakeCameraCoordinator
 import androidx.camera.testing.impl.fakes.FakeCameraDeviceSurfaceManager
@@ -259,6 +261,15 @@ class CameraUseCaseAdapterTest {
     }
 
     @Test
+    fun addUseCases_withUnsupportedFrameRate_throwsException() {
+        // Arrange.
+        adapter.frameRate = Range(1, 100)
+
+        // Act.
+        assertThrows(CameraException::class.java) { adapter.addUseCases(setOf(preview)) }
+    }
+
+    @Test
     fun addUseCases_withoutResolvedFeatureCombination_useCaseFeatureCombinationIsNull() {
         // Arrange & Act.
         adapter.addUseCases(listOf(preview))
@@ -363,6 +374,26 @@ class CameraUseCaseAdapterTest {
         // Assert.
         assertThat(fakeCamera.attachedUseCases).isEmpty()
         assertThat(preview.featureCombination).isNull()
+    }
+
+    @Test
+    fun simulateAddUseCases_withUnsupportedFrameRate_throwsException() {
+        // Arrange.
+        adapter.frameRate = Range(1, 100)
+
+        // Act & Assert.
+        assertThrows(CameraException::class.java) {
+            adapter.simulateAddUseCases(setOf(preview), null, false)
+        }
+    }
+
+    @Test
+    fun simulateAddUseCases_withUnsupportedFrameRateAndFindMaxSupportedFrameRate_noException() {
+        // Arrange.
+        adapter.frameRate = Range(1, 100)
+
+        // Act & Assert: no exception
+        adapter.simulateAddUseCases(setOf(preview), null, true)
     }
 
     @Test
@@ -1525,12 +1556,13 @@ class CameraUseCaseAdapterTest {
         // Arrange: create use cases.
         val fakeUseCase1 = FakeUseCase()
         val fakeUseCase2 = FakeUseCase()
+        fakeCameraInfo.setSupportedHighSpeedResolutions(FPS_120_120, listOf(RESOLUTION_1080P))
 
         // Act: set session config, target frame rate and add use cases.
         val sessionType = SESSION_TYPE_HIGH_SPEED
-        val frameRate = Range(120, 120)
+        val frameRate = FPS_120_120
         adapter.sessionType = sessionType
-        adapter.targetFrameRate = frameRate
+        adapter.frameRate = frameRate
         adapter.addUseCases(listOf(fakeUseCase1, fakeUseCase2))
 
         // Assert: use case configs are updated.

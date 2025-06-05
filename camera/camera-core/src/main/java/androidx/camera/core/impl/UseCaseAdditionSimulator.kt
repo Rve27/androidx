@@ -89,7 +89,7 @@ public object UseCaseAdditionSimulator {
         cameraUseCaseAdapter.viewPort = sessionConfig.viewPort
         cameraUseCaseAdapter.effects = sessionConfig.effects
         cameraUseCaseAdapter.sessionType = sessionConfig.sessionType
-        cameraUseCaseAdapter.targetFrameRate = sessionConfig.targetFrameRate
+        cameraUseCaseAdapter.frameRate = sessionConfig.frameRate
 
         return cameraUseCaseAdapter.simulateAddUseCases(
             sessionConfig.useCases,
