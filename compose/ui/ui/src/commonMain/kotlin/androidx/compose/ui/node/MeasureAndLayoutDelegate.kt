@@ -742,7 +742,9 @@ internal class MeasureAndLayoutDelegate(private val root: LayoutNode) {
         if (forceDispatch) {
             onPositionedDispatcher.onRootNodePositioned(root)
         }
-        onPositionedDispatcher.dispatch()
+        if (onPositionedDispatcher.isNotEmpty()) {
+            onPositionedDispatcher.dispatch()
+        }
     }
 
     /**

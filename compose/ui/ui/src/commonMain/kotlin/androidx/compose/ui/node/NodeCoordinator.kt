@@ -1444,7 +1444,9 @@ internal abstract class NodeCoordinator(override val layoutNode: LayoutNode) :
                     }
                     val owner = layoutNode.requireOwner()
                     owner.rectManager.onLayoutLayerPositionalPropertiesChanged(layoutNode)
-                    owner.requestOnPositionedCallback(layoutNode)
+                    if (layoutNode.globallyPositionedObservers > 0) {
+                        owner.requestOnPositionedCallback(layoutNode)
+                    }
                 }
             }
         }
