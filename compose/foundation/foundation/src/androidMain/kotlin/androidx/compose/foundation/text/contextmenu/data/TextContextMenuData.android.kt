@@ -56,4 +56,14 @@ internal constructor(
      * id.
      */
     val id: Int
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (other !is ProcessTextKey) return false
+
+        return id == other.id
+    }
+
+    override fun hashCode(): Int {
+        return id
+    }
+}
