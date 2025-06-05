@@ -85,9 +85,9 @@ private val CAPTURE_TIMEOUT = 15.seconds
 @LargeTest
 @RunWith(Parameterized::class)
 class ImageCaptureEffectTest(
-    private val implName: String,
-    val selectorName: String,
+    private val testName: String,
     private val cameraSelector: CameraSelector,
+    private val implName: String,
     private val cameraConfig: CameraXConfig,
 ) {
 
@@ -110,35 +110,29 @@ class ImageCaptureEffectTest(
     companion object {
 
         @JvmStatic
-        @Parameterized.Parameters(name = "{1}+{0}")
-        fun data(): List<Array<Any?>> {
-            return listOf(
-                arrayOf(
-                    Camera2Config::class.simpleName,
-                    "back",
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    Camera2Config.defaultConfig(),
-                ),
-                arrayOf(
-                    Camera2Config::class.simpleName,
-                    "front",
-                    CameraSelector.DEFAULT_FRONT_CAMERA,
-                    Camera2Config.defaultConfig(),
-                ),
-                arrayOf(
-                    CameraPipeConfig::class.simpleName,
-                    "back",
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    CameraPipeConfig.defaultConfig(),
-                ),
-                arrayOf(
-                    CameraPipeConfig::class.simpleName,
-                    "front",
-                    CameraSelector.DEFAULT_FRONT_CAMERA,
-                    CameraPipeConfig.defaultConfig(),
-                ),
-            )
-        }
+        @Parameterized.Parameters(name = "{0}")
+        fun data() =
+            mutableListOf<Array<Any?>>().apply {
+                CameraUtil.getAvailableCameraSelectors().forEach { selector ->
+                    val lens = selector.lensFacing
+                    add(
+                        arrayOf(
+                            "config=${Camera2Config::class.simpleName} lensFacing={$lens}",
+                            selector,
+                            Camera2Config::class.simpleName,
+                            Camera2Config.defaultConfig(),
+                        )
+                    )
+                    add(
+                        arrayOf(
+                            "config=${CameraPipeConfig::class.simpleName} lensFacing={$lens}",
+                            selector,
+                            CameraPipeConfig::class.simpleName,
+                            CameraPipeConfig.defaultConfig(),
+                        )
+                    )
+                }
+            }
     }
 
     private val context = ApplicationProvider.getApplicationContext<Context>()

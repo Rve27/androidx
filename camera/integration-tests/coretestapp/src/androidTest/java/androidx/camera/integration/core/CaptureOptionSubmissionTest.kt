@@ -86,7 +86,7 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 @SdkSuppress(minSdkVersion = 21)
 class CaptureOptionSubmissionTest(
-    private val selectorName: String,
+    private val testName: String,
     private val cameraSelector: CameraSelector,
     private val implName: String,
     private val cameraConfig: CameraXConfig,
@@ -611,23 +611,32 @@ class CaptureOptionSubmissionTest(
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "selector={0},config={2}")
+        @Parameterized.Parameters(name = "{0}")
         fun data() =
-            listOf(
-                arrayOf(
-                    "back",
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    Camera2Config::class.simpleName,
-                    Camera2Config.defaultConfig(),
-                ),
-                arrayOf(
-                    "back",
-                    CameraSelector.DEFAULT_BACK_CAMERA,
-                    CameraPipeConfig::class.simpleName,
-                    CameraPipeConfig.defaultConfig(),
-                ),
-                // front camera is not important with the current test, but may be required in
-                // future
-            )
+            mutableListOf<Array<Any?>>().apply {
+                CameraUtil.getAvailableCameraSelectors()
+                    .getOrElse(0, { CameraSelector.DEFAULT_BACK_CAMERA })
+                    .let { selector ->
+                        val lens = selector.lensFacing
+                        add(
+                            arrayOf(
+                                "config=${Camera2Config::class.simpleName} lensFacing={$lens}",
+                                selector,
+                                Camera2Config::class.simpleName,
+                                Camera2Config.defaultConfig(),
+                            )
+                        )
+                        add(
+                            arrayOf(
+                                "config=${CameraPipeConfig::class.simpleName} lensFacing={$lens}",
+                                selector,
+                                CameraPipeConfig::class.simpleName,
+                                CameraPipeConfig.defaultConfig(),
+                            )
+                        )
+                    }
+            }
+        // Test on multiple cameras is not important with the current test, but may be required in
+        // future
     }
 }
