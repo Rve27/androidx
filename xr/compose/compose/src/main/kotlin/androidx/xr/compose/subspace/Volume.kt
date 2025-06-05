@@ -26,9 +26,9 @@ import androidx.xr.scenecore.Entity
 /**
  * Marks Subspace APIs that are experimental and likely to change or be removed in the future.
  *
- * Any usage of a declaration annotated with `@ExperimentalSubspaceApi` must be accepted either by
- * annotating that usage with `@OptIn(ExperimentalSubspaceApi::class)` or by propagating the
- * annotation to the containing declaration.
+ * Any usage of a declaration annotated with `@ExperimentalSubspaceVolumeApi` must be accepted
+ * either by annotating that usage with `@OptIn(ExperimentalSubspaceVolumeApi::class)` or by
+ * propagating the annotation to the containing declaration.
  */
 @RequiresOptIn(
     level = RequiresOptIn.Level.WARNING,
