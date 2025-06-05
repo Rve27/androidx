@@ -86,8 +86,8 @@ package androidx.xr.glimmer {
   }
 
   public final class SurfaceKt {
-    method @androidx.compose.runtime.Composable public static androidx.compose.ui.Modifier surface(androidx.compose.ui.Modifier, optional androidx.compose.ui.graphics.Shape shape, optional long color, optional long contentColor, optional androidx.compose.foundation.BorderStroke? border);
-    method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.compose.ui.Modifier surface-t6yy7ic(androidx.compose.ui.Modifier, androidx.compose.ui.graphics.Shape?, long, long, androidx.compose.foundation.BorderStroke?, androidx.compose.runtime.Composer?, int, int);
+    method @androidx.compose.runtime.Composable public static androidx.compose.ui.Modifier surface(androidx.compose.ui.Modifier, optional boolean focusable, optional androidx.compose.ui.graphics.Shape shape, optional long color, optional long contentColor, optional androidx.compose.foundation.BorderStroke? border, optional androidx.compose.foundation.interaction.MutableInteractionSource? interactionSource);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.compose.ui.Modifier surface-vRFhKjU(androidx.compose.ui.Modifier, boolean, androidx.compose.ui.graphics.Shape?, long, long, androidx.compose.foundation.BorderStroke?, androidx.compose.foundation.interaction.MutableInteractionSource?, androidx.compose.runtime.Composer?, int, int);
   }
 
   public final class TextKt {
