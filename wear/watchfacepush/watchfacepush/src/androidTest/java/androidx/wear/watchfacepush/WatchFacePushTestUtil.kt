@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.wear.watchface.push.tests
+package androidx.wear.watchfacepush.test
 
 import android.app.Instrumentation
 import android.content.Context
@@ -24,7 +24,7 @@ import android.os.ParcelFileDescriptor
 import androidx.test.filters.AbstractFilter
 import androidx.test.filters.CustomFilter
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.wear.watchface.push.*
+import androidx.wear.watchfacepush.*
 import java.io.FileOutputStream
 import java.util.concurrent.TimeoutException
 import kotlinx.coroutines.CoroutineScope
@@ -34,8 +34,8 @@ import kotlinx.coroutines.runBlocking
 import org.junit.runner.Description
 
 internal const val SAMPLE_WATCHFACE =
-    "androidx.wear.watchface.push.test.watchfacepush.androidxsample"
-internal const val VALID_TOKEN = "aw83YwJ2kmKf6Gk1YpY43TeWm92/y6pB6ywa8xufxVw=:MS4wLjA="
+    "androidx.wear.watchfacepush.test.watchfacepush.androidxsample"
+internal const val VALID_TOKEN = "scJKaTdgBqPDNC8fM5psMZk9+jVV/DiYQDQ9APZwuHY=:MS4wLjA="
 internal const val INVALID_TOKEN = "an invalid token"
 internal const val VALID_APK = "androidxsample.apk"
 internal const val MALFORMED_APK = "androidxample_notanapk.apk"
@@ -67,8 +67,8 @@ internal data class FdPipe(
 }
 
 internal suspend fun waitUntil(
-    timeout: Long = 5000,
-    interval: Long = 500,
+    timeout: Long = 10000,
+    interval: Long = 2000,
     condition: suspend () -> Boolean,
 ) {
     delay(interval)

@@ -2,6 +2,6 @@
 
 :wear:watchfacepush:watchfacepush
 
-# Package androidx.wear.watchface.push
+# Package androidx.wear.watchfacepush
 
 Provides access to the Watch Face Push APIs

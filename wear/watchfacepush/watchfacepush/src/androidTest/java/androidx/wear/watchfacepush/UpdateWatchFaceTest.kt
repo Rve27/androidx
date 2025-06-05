@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package androidx.wear.watchface.push.tests
+package androidx.wear.watchfacepush.test
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.wear.watchface.push.*
-import androidx.wear.watchface.push.WatchFacePushManager.UpdateWatchFaceException
-import androidx.wear.watchface.push.WatchFacePushManager.WatchFaceDetails
+import androidx.wear.watchfacepush.*
+import androidx.wear.watchfacepush.WatchFacePushManager.UpdateWatchFaceException
+import androidx.wear.watchfacepush.WatchFacePushManager.WatchFaceDetails
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertThrows
@@ -41,7 +41,7 @@ class UpdateWatchFaceTest {
             context,
             listOf(
                 SAMPLE_WATCHFACE,
-                "androidx.wear.watchface.push.test.watchfacepush.androidxsample2",
+                "androidx.wear.watchfacepush.test.watchfacepush.androidxsample2",
             ),
         )
         details = runBlocking {
@@ -60,7 +60,7 @@ class UpdateWatchFaceTest {
                     wfp.updateWatchFace(
                         details.slotId,
                         pipe.readFd,
-                        "nBUctGetKYcewjHzkFrrjO1uN63VyaUJyOKsXKiQm8U=:MS4wLjA=",
+                        "iWKGYzsvwzRh9dHnFoO1l7Dx3182x+yJjHZ5+mlbSjI=:MS4wLjA=",
                     )
 
                 assertThat(wfp.listWatchFaces().installedWatchFaceDetails).isNotEmpty()

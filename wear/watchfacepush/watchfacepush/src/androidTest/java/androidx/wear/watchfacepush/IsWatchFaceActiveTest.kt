@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package androidx.wear.watchface.push.tests
+package androidx.wear.watchfacepush.test
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import androidx.wear.watchface.push.*
-import androidx.wear.watchface.push.WatchFacePushManager.IsWatchFaceActiveException
-import androidx.wear.watchface.push.WatchFacePushManager.SetWatchFaceAsActiveException
-import androidx.wear.watchface.push.WatchFacePushManager.WatchFaceDetails
+import androidx.wear.watchfacepush.*
+import androidx.wear.watchfacepush.WatchFacePushManager.IsWatchFaceActiveException
+import androidx.wear.watchfacepush.WatchFacePushManager.SetWatchFaceAsActiveException
+import androidx.wear.watchfacepush.WatchFacePushManager.WatchFaceDetails
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertThrows

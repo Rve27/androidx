@@ -395,7 +395,6 @@ dependencies {
     docs(project(":wear:watchface:watchface-editor"))
     docs(project(":wear:watchface:watchface-editor-guava"))
     docs(project(":wear:watchface:watchface-guava"))
-    docs(project(":wear:watchface:watchface-push"))
     docs(project(":wear:watchface:watchface-style"))
     docs(project(":wear:watchfacepush:watchfacepush"))
     docs(project(":wear:wear"))
