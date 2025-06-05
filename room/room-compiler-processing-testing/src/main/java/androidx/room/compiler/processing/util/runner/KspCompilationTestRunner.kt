@@ -32,10 +32,6 @@ internal class KspCompilationTestRunner(
 ) : CompilationTestRunner {
     override val name: String = "ksp"
 
-    override fun canRun(params: TestCompilationParameters): Boolean {
-        return true
-    }
-
     override fun compile(workingDir: File, params: TestCompilationParameters): CompilationResult {
         val processorProvider = SyntheticKspProcessor.Provider(params.config, params.handlers)
         val args =
