@@ -158,7 +158,9 @@ class PreviewTest(private val implName: String, private val cameraConfig: Camera
     @After
     @Throws(ExecutionException::class, InterruptedException::class, TimeoutException::class)
     fun tearDown() {
-        cameraProvider.shutdownAsync()[10000, TimeUnit.MILLISECONDS]
+        if (::cameraProvider.isInitialized) {
+            cameraProvider.shutdownAsync()[10000, TimeUnit.MILLISECONDS]
+        }
     }
 
     // ======================================================
