@@ -21,7 +21,6 @@ import androidx.room.compiler.processing.SyntheticJavacProcessor
 import androidx.room.compiler.processing.SyntheticKspProcessor
 import androidx.room.compiler.processing.XElement
 import androidx.room.compiler.processing.XProcessingEnv
-import androidx.room.compiler.processing.XProcessingEnvConfig
 import androidx.room.compiler.processing.XProcessingStep
 import androidx.room.compiler.processing.javac.JavacBasicAnnotationProcessor
 import androidx.room.compiler.processing.ksp.KspBasicAnnotationProcessor
@@ -29,8 +28,6 @@ import androidx.room.compiler.processing.util.compiler.KotlinCliRunner
 import androidx.room.compiler.processing.util.compiler.TestCompilationArguments
 import androidx.room.compiler.processing.util.compiler.compile
 import com.google.common.truth.Truth.assertThat
-import com.google.devtools.ksp.processing.SymbolProcessor
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.squareup.javapoet.ClassName
 import com.squareup.javapoet.CodeBlock
@@ -69,44 +66,27 @@ class TestRunnerTest {
             )
 
         val kspProcessorProvider =
-            object : SymbolProcessorProvider {
-                override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
-                    return SyntheticKspProcessor(
-                        environment,
-                        XProcessingEnvConfig.DEFAULT,
-                        listOf { invocation ->
-                            if (
-                                invocation.processingEnv.findTypeElement("gen.GeneratedKotlin") ==
-                                    null
-                            ) {
-                                invocation.processingEnv.filer.write(
-                                    FileSpec.builder("gen", "KotlinGen")
-                                        .addType(
-                                            com.squareup.kotlinpoet.TypeSpec.classBuilder(
-                                                    "GeneratedKotlin"
-                                                )
-                                                .build()
-                                        )
-                                        .build()
-                                )
-                            }
-                        },
+            SyntheticKspProcessor.Provider { invocation ->
+                if (invocation.processingEnv.findTypeElement("gen.GeneratedKotlin") == null) {
+                    invocation.processingEnv.filer.write(
+                        FileSpec.builder("gen", "KotlinGen")
+                            .addType(
+                                com.squareup.kotlinpoet.TypeSpec.classBuilder("GeneratedKotlin")
+                                    .build()
+                            )
+                            .build()
                     )
                 }
             }
 
-        val javaProcessor =
-            SyntheticJavacProcessor(
-                XProcessingEnvConfig.DEFAULT,
-                listOf { invocation ->
-                    if (invocation.processingEnv.findTypeElement("gen.GeneratedJava") == null) {
-                        invocation.processingEnv.filer.write(
-                            JavaFile.builder("gen", TypeSpec.classBuilder("GeneratedJava").build())
-                                .build()
-                        )
-                    }
-                },
-            )
+        val javaProcessor = SyntheticJavacProcessor { invocation ->
+            if (invocation.processingEnv.findTypeElement("gen.GeneratedJava") == null) {
+                invocation.processingEnv.filer.write(
+                    JavaFile.builder("gen", TypeSpec.classBuilder("GeneratedJava").build()).build()
+                )
+            }
+        }
+
         val classpaths =
             compile(
                     workingDir = Files.createTempDirectory("test-runner").toFile(),
