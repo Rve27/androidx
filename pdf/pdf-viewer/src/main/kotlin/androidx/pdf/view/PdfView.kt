@@ -1491,6 +1491,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             positionIsStable,
             visiblePageArea,
             localPageLayoutManager.layingOutPages,
+            PdfFormFillingConfig(
+                { isFormFillingEnabled },
+                context.getColor(R.color.form_fields_highlight_color),
+            ),
             formWidgetInfos,
         )
         // Learning the dimensions of a page can change our understanding of the content that's in
