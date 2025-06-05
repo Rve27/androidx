@@ -52,6 +52,10 @@ public fun rememberSavedStateNavEntryDecorator(
  *
  * This [NavEntryDecorator] is the only one that is **required** as saving state is considered a
  * non-optional feature.
+ *
+ * @param saveableStateHolder the [SaveableStateHolder] that holds the state defined with
+ *   [rememberSaveable]. A saved state can only be restored from the [SaveableStateHolder] that it
+ *   was saved with.
  */
 public fun SavedStateNavEntryDecorator(
     saveableStateHolder: SaveableStateHolder

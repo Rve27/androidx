@@ -21,6 +21,7 @@ package androidx.navigation3.runtime
  *
  * This provides a nesting mechanism for [NavEntry]s that allows properly nested content.
  *
+ * @param T the type of the backStack key
  * @param navEntry the [NavEntry] to wrap
  */
 public open class NavEntryWrapper<T : Any>(public val navEntry: NavEntry<T>) :

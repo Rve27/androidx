@@ -35,6 +35,7 @@ import kotlin.jvm.JvmSuppressWildcards
  * Note: the order in which the [NavEntryDecorator]s are added to the list determines their scope,
  * i.e. a [NavEntryDecorator] added earlier in a list has its data available to those added later.
  *
+ * @param T the type of the backStack key
  * @param backStack the list of keys that represent the backstack
  * @param entryDecorators the [NavEntryDecorator]s that are providing data to the content
  * @param entryProvider a function that returns the [NavEntry] for a given key

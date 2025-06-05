@@ -25,10 +25,10 @@ import androidx.compose.runtime.Composable
  *
  * @param T the type of the key for this NavEntry
  * @param key key for this entry
- * @param metadata provides information to the display
  * @param contentKey A unique, stable id that uniquely identifies the content of this NavEntry. To
  *   maximize stability, it should ge derived from the [key]. The contentKey type must be saveable
  *   (i.e. on Android, it should be saveable via Android). Defaults to [key].
+ * @param metadata provides information to the display
  * @param content content for this entry to be displayed when this entry is active
  */
 public open class NavEntry<T : Any>(
