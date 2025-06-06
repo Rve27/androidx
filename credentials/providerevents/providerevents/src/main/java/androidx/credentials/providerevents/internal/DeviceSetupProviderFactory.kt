@@ -17,14 +17,11 @@
 package androidx.credentials.providerevents.internal
 
 import android.content.Intent
-import androidx.credentials.providerevents.CredentialEventsProvider
+import androidx.credentials.providerevents.DeviceSetupProvider
 
-internal class CredentialEventsProviderFactory() : ProviderFactory {
-    fun getBestAvailableProvider(intent: Intent): CredentialEventsProvider? {
-        return getBestAvailableProvider(
-            intent,
-            CredentialEventsProvider.EVENTS_SERVICE_PROVIDER_KEY,
-        )
-            as CredentialEventsProvider?
+internal class DeviceSetupProviderFactory : ProviderFactory {
+    fun getBestAvailableProvider(intent: Intent): DeviceSetupProvider? {
+        return getBestAvailableProvider(intent, DeviceSetupProvider.DEVICE_SETUP_PROVIDER_KEY)
+            as DeviceSetupProvider?
     }
 }

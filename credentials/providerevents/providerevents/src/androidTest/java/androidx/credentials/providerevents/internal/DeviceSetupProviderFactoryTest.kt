@@ -19,8 +19,8 @@ package androidx.credentials.providerevents.internal
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import androidx.credentials.providerevents.CredentialEventsProvider
-import androidx.credentials.providerevents.service.CredentialProviderEventsService
+import androidx.credentials.providerevents.DeviceSetupProvider
+import androidx.credentials.providerevents.service.DeviceSetupService
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
@@ -29,31 +29,31 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
-class CredentialEventsProviderFactoryTest {
+class DeviceSetupProviderFactoryTest {
 
     @Test
     fun getBestAvailableProvider_validClassName_returnsProvider() {
-        val factory = CredentialEventsProviderFactory()
+        val factory = DeviceSetupProviderFactory()
         val intent =
             Intent().apply {
                 putExtra(
-                    CredentialEventsProvider.EVENTS_SERVICE_PROVIDER_KEY,
-                    DummyCredentialEventsProvider::class.java.name,
+                    DeviceSetupProvider.DEVICE_SETUP_PROVIDER_KEY,
+                    DummyDeviceSetupProvider::class.java.name,
                 )
             }
 
         val provider = factory.getBestAvailableProvider(intent)
 
-        assertThat(provider).isInstanceOf(DummyCredentialEventsProvider::class.java)
+        assertThat(provider).isInstanceOf(DummyDeviceSetupProvider::class.java)
     }
 
     @Test
     fun getBestAvailableProvider_invalidClassName_returnsNull() {
-        val factory = CredentialEventsProviderFactory()
+        val factory = DeviceSetupProviderFactory()
         val intent =
             Intent().apply {
                 putExtra(
-                    CredentialEventsProvider.EVENTS_SERVICE_PROVIDER_KEY,
+                    DeviceSetupProvider.DEVICE_SETUP_PROVIDER_KEY,
                     "com.example.InvalidProvider",
                 )
             }
@@ -65,7 +65,7 @@ class CredentialEventsProviderFactoryTest {
 
     @Test
     fun getBestAvailableProvider_noClassName_returnsNull() {
-        val factory = CredentialEventsProviderFactory()
+        val factory = DeviceSetupProviderFactory()
         val intent = Intent()
 
         val provider = factory.getBestAvailableProvider(intent)
@@ -74,9 +74,9 @@ class CredentialEventsProviderFactoryTest {
     }
 }
 
-// Dummy implementation of CredentialEventsProvider for testing
-class DummyCredentialEventsProvider : CredentialEventsProvider {
-    override fun getStubImplementation(service: CredentialProviderEventsService): IBinder? {
+// Dummy implementation of DeviceSetupProvider for testing
+class DummyDeviceSetupProvider : DeviceSetupProvider {
+    override fun getStubImplementation(service: DeviceSetupService): IBinder? {
         return Binder()
     }
 }
