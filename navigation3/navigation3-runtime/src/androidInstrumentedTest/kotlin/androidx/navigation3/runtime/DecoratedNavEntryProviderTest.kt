@@ -121,9 +121,9 @@ class DecoratedNavEntryProviderTest {
                 entryDecorators = listOf(decorator),
                 entryProvider = { key ->
                     when (key) {
-                        1 -> NavEntry(1) {}
-                        2 -> NavEntry(2) {}
-                        3 -> NavEntry(3) {}
+                        1 -> NavEntry(1, 1) {}
+                        2 -> NavEntry(2, 2) {}
+                        3 -> NavEntry(3, 3) {}
                         else -> error("Invalid Key")
                     }
                 },
@@ -203,9 +203,9 @@ class DecoratedNavEntryProviderTest {
                 entryDecorators = listOf(decorator),
                 entryProvider = { key ->
                     when (key) {
-                        "first" -> NavEntry("first") { entriesRendered.add(it) }
-                        "second" -> NavEntry("second") { entriesRendered.add(it) }
-                        "third" -> NavEntry("third") { entriesRendered.add(it) }
+                        "first" -> NavEntry("first", "first") { entriesRendered.add(it) }
+                        "second" -> NavEntry("second", "second") { entriesRendered.add(it) }
+                        "third" -> NavEntry("third", "third") { entriesRendered.add(it) }
                         else -> error("Invalid Key")
                     }
                 },
@@ -410,8 +410,8 @@ class DecoratedNavEntryProviderTest {
                 entryDecorators = listOf(decorator),
                 entryProvider = {
                     when (it) {
-                        "first" -> NavEntry("first") {}
-                        "second" -> NavEntry("second") {}
+                        "first" -> NavEntry("first", "first") {}
+                        "second" -> NavEntry("second", "second") {}
                         else -> error("Unknown key")
                     }
                 },
@@ -447,7 +447,7 @@ class DecoratedNavEntryProviderTest {
             DecoratedNavEntryProvider(
                 backStack = backStack,
                 entryDecorators = listOf(decorator),
-                entryProvider = entryProvider { entry<DataClass>({ key -> key.arg }) {} },
+                entryProvider = entryProvider { entry<DataClass>({ it.arg }) {} },
             ) { entries ->
                 entries.lastOrNull()?.Content()
             }
@@ -519,7 +519,7 @@ class DecoratedNavEntryProviderTest {
             DecoratedNavEntryProvider(
                 backStack = backStack,
                 entryDecorators = listOf(decorator),
-                entryProvider = entryProvider { entry<DataClass>({ key -> key.arg }) {} },
+                entryProvider = entryProvider { entry<DataClass>({ it.arg }) {} },
             ) { entries ->
                 entries.lastOrNull()?.Content()
             }

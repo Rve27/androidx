@@ -55,12 +55,12 @@ class SavedStateNavEntryDecoratorTest {
                 entryProvider = {
                     when (it) {
                         is Data1 ->
-                            NavEntry(data1, data1.arg) {
+                            NavEntry(data1) {
                                 numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                                 Text("numberOnScreen1: ${numberOnScreen1.value}")
                             }
                         is Data2 ->
-                            NavEntry(data2, data2.arg) {
+                            NavEntry(data2) {
                                 numberOnScreen1 = rememberSaveable { mutableStateOf(0) }
                                 Text("numberOnScreen1: ${numberOnScreen1.value}")
                             }

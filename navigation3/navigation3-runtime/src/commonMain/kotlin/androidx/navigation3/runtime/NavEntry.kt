@@ -27,13 +27,13 @@ import androidx.compose.runtime.Composable
  * @param key key for this entry
  * @param contentKey A unique, stable id that uniquely identifies the content of this NavEntry. To
  *   maximize stability, it should ge derived from the [key]. The contentKey type must be saveable
- *   (i.e. on Android, it should be saveable via Android). Defaults to [key].
+ *   (i.e. on Android, it should be saveable via Android). Defaults to [key].toString().
  * @param metadata provides information to the display
  * @param content content for this entry to be displayed when this entry is active
  */
 public open class NavEntry<T : Any>(
     private val key: T,
-    public val contentKey: Any = key,
+    public val contentKey: Any = defaultContentKey(key),
     public open val metadata: Map<String, Any> = emptyMap(),
     private val content: @Composable (T) -> Unit,
 ) {
@@ -59,3 +59,5 @@ public open class NavEntry<T : Any>(
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public fun isInBackStack(backStack: List<Any>): Boolean = backStack.contains(this.key)
 }
+
+@PublishedApi internal fun defaultContentKey(key: Any): Any = key.toString()

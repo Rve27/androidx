@@ -59,14 +59,15 @@ public class EntryProviderBuilder<T : Any>(
      * @param key key for this entry
      * @param contentKey A unique, stable id that uniquely identifies the content of this NavEntry.
      *   To maximize stability, it should ge derived from the [key]. The contentKey type must be
-     *   saveable (i.e. on Android, it should be saveable via Android). Defaults to [key].
+     *   saveable (i.e. on Android, it should be saveable via Android). Defaults to
+     *   [key].toString().
      * @param metadata provides information to the display
      * @param content content for this entry to be displayed when this entry is active
      */
     @Suppress("SetterReturnsThis", "MissingGetterMatchingBuilder")
     public fun <T : Any> addEntryProvider(
         key: T,
-        contentKey: Any = key,
+        contentKey: Any = defaultContentKey(key),
         metadata: Map<String, Any> = emptyMap(),
         content: @Composable (T) -> Unit,
     ) {
@@ -91,7 +92,7 @@ public class EntryProviderBuilder<T : Any>(
     @Suppress("SetterReturnsThis", "MissingGetterMatchingBuilder")
     public fun <T : Any> addEntryProvider(
         clazz: KClass<T>,
-        clazzContentKey: (key: @JvmSuppressWildcards T) -> Any = { it },
+        clazzContentKey: (key: @JvmSuppressWildcards T) -> Any = { defaultContentKey(it) },
         metadata: Map<String, Any> = emptyMap(),
         content: @Composable (T) -> Unit,
     ) {
@@ -121,13 +122,13 @@ public class EntryProviderBuilder<T : Any>(
  * @param key key for this entry
  * @param contentKey A unique, stable id that uniquely identifies the content of this NavEntry. To
  *   maximize stability, it should ge derived from the [key]. The contentKey type must be saveable
- *   (i.e. on Android, it should be saveable via Android). Defaults to [key].
+ *   (i.e. on Android, it should be saveable via Android). Defaults to [key].toString().
  * @param metadata provides information to the display
  * @param content content for this entry to be displayed when this entry is active
  */
 public fun <T : Any> EntryProviderBuilder<T>.entry(
     key: T,
-    contentKey: Any = key,
+    contentKey: Any = defaultContentKey(key),
     metadata: Map<String, Any> = emptyMap(),
     content: @Composable (T) -> Unit,
 ) {
@@ -146,7 +147,7 @@ public fun <T : Any> EntryProviderBuilder<T>.entry(
  * @param content content for this entry to be displayed when this entry is active
  */
 public inline fun <reified T : Any> EntryProviderBuilder<*>.entry(
-    noinline clazzContentKey: (key: @JvmSuppressWildcards T) -> Any = { it },
+    noinline clazzContentKey: (key: @JvmSuppressWildcards T) -> Any = { defaultContentKey(it) },
     metadata: Map<String, Any> = emptyMap(),
     noinline content: @Composable (T) -> Unit,
 ) {
@@ -180,7 +181,7 @@ public data class EntryClassProvider<T : Any>(
  * @param key key for this entry
  * @param contentKey A unique, stable id that uniquely identifies the content of this NavEntry. To
  *   maximize stability, it should ge derived from the [key]. The contentKey type must be saveable
- *   (i.e. on Android, it should be saveable via Android). Defaults to [key].
+ *   (i.e. on Android, it should be saveable via Android). Defaults to [key].toString().
  * @param metadata provides information to the display
  * @param content content for this entry to be displayed when this entry is active
  */
