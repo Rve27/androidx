@@ -19,9 +19,9 @@ package androidx.xr.compose.subspace
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.util.fastRoundToInt
-import androidx.xr.compose.subspace.layout.MeasurePolicy
 import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SubspaceMeasurable
+import androidx.xr.compose.subspace.layout.SubspaceMeasurePolicy
 import androidx.xr.compose.subspace.layout.SubspaceMeasureResult
 import androidx.xr.compose.subspace.layout.SubspaceMeasureScope
 import androidx.xr.compose.subspace.layout.SubspacePlaceable
@@ -37,12 +37,12 @@ import kotlin.math.cos
 import kotlin.math.sign
 import kotlin.math.sin
 
-/** Shared [MeasurePolicy] between [Row] and [Column]. */
+/** Shared [SubspaceMeasurePolicy] between [Row] and [Column]. */
 internal class RowColumnMeasurePolicy(
     private val orientation: LayoutOrientation,
     private val alignment: SpatialAlignment,
     private val curveRadius: Dp,
-) : MeasurePolicy {
+) : SubspaceMeasurePolicy {
     override fun SubspaceMeasureScope.measure(
         measurables: List<SubspaceMeasurable>,
         constraints: VolumeConstraints,

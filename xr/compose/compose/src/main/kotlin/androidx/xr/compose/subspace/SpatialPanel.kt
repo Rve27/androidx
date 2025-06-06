@@ -56,10 +56,10 @@ import androidx.xr.compose.platform.LocalDialogManager
 import androidx.xr.compose.platform.LocalOpaqueEntity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.getActivity
-import androidx.xr.compose.subspace.layout.MeasurePolicy
 import androidx.xr.compose.subspace.layout.SpatialRoundedCornerShape
 import androidx.xr.compose.subspace.layout.SpatialShape
 import androidx.xr.compose.subspace.layout.SubspaceLayout
+import androidx.xr.compose.subspace.layout.SubspaceMeasurePolicy
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetCompositionLocalMap
@@ -253,7 +253,7 @@ private fun <T : View> AndroidViewPanel(
             )
         }
 
-    val measurePolicy = MeasurePolicy { _, constraints ->
+    val measurePolicy = SubspaceMeasurePolicy { _, constraints ->
         view.measure(
             MeasureSpec.makeMeasureSpec(
                 constraints.maxWidth.coerceAtMost(MAX_MEASURE_SPEC_SIZE),

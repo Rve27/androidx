@@ -16,16 +16,17 @@
 
 package androidx.xr.compose.subspace.layout
 
-import androidx.annotation.RestrictTo
 import androidx.xr.compose.unit.VolumeConstraints
 
 /**
- * Defines the measure and layout behavior of a layout.
+ * Defines the measure and layout behavior of a [SubspaceLayout].
+ *
+ * [SubspaceLayout] and [SubspaceMeasurePolicy] are the way Compose XR layouts (such as SpatialBox,
+ * SpatialColumn, etc.) are built, and they can also be used to achieve custom layouts.
  *
  * Based on [androidx.compose.ui.layout.MeasurePolicy].
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public fun interface MeasurePolicy {
+public fun interface SubspaceMeasurePolicy {
     /**
      * The function that defines the measurement and layout. Each [SubspaceMeasurable] in the
      * [measurables] list corresponds to a layout child of the layout, and children can be measured

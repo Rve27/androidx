@@ -25,11 +25,11 @@ import androidx.compose.ui.util.fastForEach
 import androidx.xr.compose.subspace.layout.CoreEntity
 import androidx.xr.compose.subspace.layout.CoreEntityNode
 import androidx.xr.compose.subspace.layout.LayoutSubspaceMeasureScope
-import androidx.xr.compose.subspace.layout.MeasurePolicy
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsModifier
 import androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates
 import androidx.xr.compose.subspace.layout.SubspaceMeasurable
+import androidx.xr.compose.subspace.layout.SubspaceMeasurePolicy
 import androidx.xr.compose.subspace.layout.SubspaceMeasureResult
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.SubspacePlaceable
@@ -73,7 +73,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
 
     internal val nodes: SubspaceModifierNodeChain = SubspaceModifierNodeChain(this)
 
-    override var measurePolicy: MeasurePolicy = ErrorMeasurePolicy
+    override var measurePolicy: SubspaceMeasurePolicy = ErrorMeasurePolicy
 
     override var modifier: SubspaceModifier = SubspaceModifier
         set(value) {
@@ -480,16 +480,17 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
 
     /** Companion object for [SubspaceLayoutNode]. */
     public companion object {
-        private val ErrorMeasurePolicy: MeasurePolicy = MeasurePolicy { _, _ ->
+        private val ErrorMeasurePolicy: SubspaceMeasurePolicy = SubspaceMeasurePolicy { _, _ ->
             error("Undefined measure and it is required")
         }
 
         /**
-         * A [MeasurePolicy] that is used for the root node of the Subspace layout hierarchy.
+         * A [SubspaceMeasurePolicy] that is used for the root node of the Subspace layout
+         * hierarchy.
          *
          * Note: Root node itself has no size outside its children.
          */
-        public val RootMeasurePolicy: MeasurePolicy = SubspaceRootMeasurePolicy()
+        public val RootMeasurePolicy: SubspaceMeasurePolicy = SubspaceRootMeasurePolicy()
 
         /** A constructor that creates a new [SubspaceLayoutNode]. */
         public val Constructor: () -> SubspaceLayoutNode = { SubspaceLayoutNode() }

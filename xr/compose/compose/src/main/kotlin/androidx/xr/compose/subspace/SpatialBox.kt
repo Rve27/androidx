@@ -19,12 +19,12 @@ package androidx.xr.compose.subspace
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.util.fastForEachIndexed
-import androidx.xr.compose.subspace.layout.MeasurePolicy
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable
 import androidx.xr.compose.subspace.layout.ParentLayoutParamsModifier
 import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SubspaceLayout
 import androidx.xr.compose.subspace.layout.SubspaceMeasurable
+import androidx.xr.compose.subspace.layout.SubspaceMeasurePolicy
 import androidx.xr.compose.subspace.layout.SubspaceMeasureResult
 import androidx.xr.compose.subspace.layout.SubspaceMeasureScope
 import androidx.xr.compose.subspace.layout.SubspaceModifier
@@ -68,11 +68,11 @@ public fun SpatialBox(
     )
 }
 
-/** [MeasurePolicy] for [SpatialBox]. */
+/** [SubspaceMeasurePolicy] for [SpatialBox]. */
 internal class SpatialBoxMeasurePolicy(
     private val alignment: SpatialAlignment,
     private val propagateMinConstraints: Boolean,
-) : MeasurePolicy {
+) : SubspaceMeasurePolicy {
     override fun SubspaceMeasureScope.measure(
         measurables: List<SubspaceMeasurable>,
         constraints: VolumeConstraints,
