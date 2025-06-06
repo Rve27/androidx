@@ -144,4 +144,10 @@ object ComposeFoundationFlags {
      * anymore. Now we only cancel the fling if the scrollable node is detatched.
      */
     @Suppress("MutableBareField") @JvmField var isFlingContinuationAtBoundsEnabled = true
+
+    /**
+     * With this flag on we don't use suspend pointer input as part of Modifier.clickable
+     * implementation as an optimization.
+     */
+    @Suppress("MutableBareField") @JvmField var isNonSuspendingPointerInputInClickableEnabled = true
 }

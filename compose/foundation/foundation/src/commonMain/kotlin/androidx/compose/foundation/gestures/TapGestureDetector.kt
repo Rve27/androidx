@@ -313,7 +313,7 @@ internal suspend fun AwaitPointerEventScope.awaitPrimaryFirstDown(
  */
 internal expect fun firstDownRefersToPrimaryMouseButtonOnly(): Boolean
 
-private fun PointerEvent.isChangedToDown(
+internal fun PointerEvent.isChangedToDown(
     requireUnconsumed: Boolean,
     onlyPrimaryMouseButton: Boolean = firstDownRefersToPrimaryMouseButtonOnly(),
 ): Boolean {
