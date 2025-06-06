@@ -301,7 +301,7 @@ public class LifecycleCameraTest {
         assertThat(mLifecycleCamera.getCameraUseCaseAdapter().getSessionType()).isEqualTo(
                 sessionConfig.getSessionType());
         assertThat(mLifecycleCamera.getCameraUseCaseAdapter().getFrameRate())
-                .isEqualTo(sessionConfig.getFrameRate());
+                .isEqualTo(sessionConfig.getFrameRateRange());
     }
 
     @Test
@@ -463,7 +463,7 @@ public class LifecycleCameraTest {
         assertThat(mLifecycleCamera.getCameraUseCaseAdapter().getSessionType()).isEqualTo(
                 legacySessionConfig.getSessionType());
         assertThat(mLifecycleCamera.getCameraUseCaseAdapter().getFrameRate())
-                .isEqualTo(legacySessionConfig.getFrameRate());
+                .isEqualTo(legacySessionConfig.getFrameRateRange());
     }
 
     @Test
@@ -570,7 +570,7 @@ public class LifecycleCameraTest {
         assertThat(mLifecycleCamera.getCameraUseCaseAdapter().getSessionType())
                 .isEqualTo(legacySessionConfig2.getSessionType());
         assertThat(mLifecycleCamera.getCameraUseCaseAdapter().getFrameRate())
-                .isEqualTo(legacySessionConfig2.getFrameRate());
+                .isEqualTo(legacySessionConfig2.getFrameRateRange());
     }
 
     @Test

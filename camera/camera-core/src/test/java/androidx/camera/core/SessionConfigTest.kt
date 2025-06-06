@@ -50,17 +50,17 @@ class SessionConfigTest {
     val viewPort = ViewPort.Builder(Rational(4, 3), Surface.ROTATION_0).build()
     val effects =
         listOf(FakeSurfaceEffect(directExecutor(), FakeSurfaceProcessor(directExecutor())))
-    val frameRate = Range(30, 30)
+    val frameRateRange = Range(30, 30)
 
     @Test
     fun sessionConfig_constructorInitializesFields() {
-        val sessionConfig = SessionConfig(useCases, viewPort, effects, frameRate)
+        val sessionConfig = SessionConfig(useCases, viewPort, effects, frameRateRange)
 
         assertThat(sessionConfig.useCases).isEqualTo(useCases)
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(sessionConfig.effects).isEqualTo(effects)
         assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
-        assertThat(sessionConfig.frameRate).isEqualTo(frameRate)
+        assertThat(sessionConfig.frameRateRange).isEqualTo(frameRateRange)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isLegacy).isFalse()
@@ -72,16 +72,16 @@ class SessionConfigTest {
             useCases: List<UseCase>,
             viewPort: ViewPort,
             effects: List<CameraEffect> = emptyList(),
-            frameRate: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
-        ) : SessionConfig(useCases, viewPort, effects, frameRate) {
+            frameRateRange: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
+        ) : SessionConfig(useCases, viewPort, effects, frameRateRange) {
             override val sessionType: Int = SESSION_TYPE_HIGH_SPEED
         }
-        val sessionConfig = ExtendedSessionConfig(useCases, viewPort, effects, frameRate)
+        val sessionConfig = ExtendedSessionConfig(useCases, viewPort, effects, frameRateRange)
 
         assertThat(sessionConfig.useCases).isEqualTo(useCases)
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(sessionConfig.effects).isEqualTo(effects)
-        assertThat(sessionConfig.frameRate).isEqualTo(frameRate)
+        assertThat(sessionConfig.frameRateRange).isEqualTo(frameRateRange)
         assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_HIGH_SPEED)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
@@ -96,7 +96,7 @@ class SessionConfigTest {
         assertThat(sessionConfig.viewPort).isNull()
         assertThat(sessionConfig.effects).isEmpty()
         assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
-        assertThat(sessionConfig.frameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.frameRateRange).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isLegacy).isFalse()
@@ -120,10 +120,11 @@ class SessionConfigTest {
     }
 
     @Test
-    fun sessionConfig_builderSetsFrameRate() {
-        val sessionConfig = SessionConfig.Builder(useCases).setFrameRate(frameRate).build()
+    fun sessionConfig_builderSetsFrameRateRange() {
+        val sessionConfig =
+            SessionConfig.Builder(useCases).setFrameRateRange(frameRateRange).build()
 
-        assertThat(sessionConfig.frameRate).isEqualTo(frameRate)
+        assertThat(sessionConfig.frameRateRange).isEqualTo(frameRateRange)
     }
 
     @Test
@@ -157,13 +158,13 @@ class SessionConfigTest {
             SessionConfig.Builder(useCases)
                 .setViewPort(viewPort)
                 .addEffect(effect)
-                .setFrameRate(frameRate)
+                .setFrameRateRange(frameRateRange)
                 .build()
 
         assertThat(sessionConfig.useCases).isEqualTo(useCases)
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(sessionConfig.effects).containsExactly(effect)
-        assertThat(sessionConfig.frameRate).isEqualTo(frameRate)
+        assertThat(sessionConfig.frameRateRange).isEqualTo(frameRateRange)
         assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
@@ -180,13 +181,13 @@ class SessionConfigTest {
             SessionConfig.Builder(preview, imageCapture, imageAnalysis)
                 .setViewPort(viewPort)
                 .addEffect(effect)
-                .setFrameRate(frameRate)
+                .setFrameRateRange(frameRateRange)
                 .build()
 
         assertThat(sessionConfig.useCases).containsExactly(preview, imageCapture, imageAnalysis)
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(sessionConfig.effects).containsExactly(effect)
-        assertThat(sessionConfig.frameRate).isEqualTo(frameRate)
+        assertThat(sessionConfig.frameRateRange).isEqualTo(frameRateRange)
         assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
@@ -222,20 +223,20 @@ class SessionConfigTest {
         val builder =
             SessionConfig.Builder(mutableUseCasesList)
                 .setViewPort(viewPort)
-                .setFrameRate(frameRate)
+                .setFrameRateRange(frameRateRange)
                 .addRequiredFeatures(FPS_60)
                 .setPreferredFeatures(IMAGE_ULTRA_HDR, PREVIEW_STABILIZATION)
 
         val sessionConfig = builder.build()
         builder.setViewPort(viewPort2)
-        builder.setFrameRate(Range(60, 60))
+        builder.setFrameRateRange(Range(60, 60))
         builder.addRequiredFeatures(HDR_HLG10)
         builder.setPreferredFeatures(PREVIEW_STABILIZATION)
         mutableUseCasesList.add(ImageAnalysis.Builder().build())
 
         assertThat(sessionConfig.useCases).isEqualTo(useCases)
         assertThat(sessionConfig.viewPort).isEqualTo(viewPort)
-        assertThat(sessionConfig.frameRate).isEqualTo(frameRate)
+        assertThat(sessionConfig.frameRateRange).isEqualTo(frameRateRange)
         assertThat(sessionConfig.requiredFeatures).containsExactly(FPS_60)
         assertThat(sessionConfig.preferredFeatures)
             .containsExactly(IMAGE_ULTRA_HDR, PREVIEW_STABILIZATION)
@@ -269,7 +270,7 @@ class SessionConfigTest {
         assertThat(sessionConfig.viewPort).isEqualTo(null)
         assertThat(sessionConfig.effects).isEmpty()
         assertThat(sessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
-        assertThat(sessionConfig.frameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(sessionConfig.frameRateRange).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(sessionConfig.requiredFeatures).isEmpty()
         assertThat(sessionConfig.preferredFeatures).isEmpty()
         assertThat(sessionConfig.isLegacy).isFalse()
@@ -377,7 +378,7 @@ class SessionConfigTest {
         assertThat(legacySessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(legacySessionConfig.effects).isEqualTo(effects)
         assertThat(legacySessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
-        assertThat(legacySessionConfig.frameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(legacySessionConfig.frameRateRange).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(legacySessionConfig.isLegacy).isTrue()
     }
 
@@ -389,7 +390,7 @@ class SessionConfigTest {
         assertThat(legacySessionConfig.viewPort).isNull()
         assertThat(legacySessionConfig.effects).isEmpty()
         assertThat(legacySessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
-        assertThat(legacySessionConfig.frameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(legacySessionConfig.frameRateRange).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(legacySessionConfig.isLegacy).isTrue()
     }
 
@@ -410,7 +411,7 @@ class SessionConfigTest {
         assertThat(legacySessionConfig.viewPort).isEqualTo(viewPort)
         assertThat(legacySessionConfig.effects).isEqualTo(effects)
         assertThat(legacySessionConfig.sessionType).isEqualTo(SESSION_TYPE_REGULAR)
-        assertThat(legacySessionConfig.frameRate).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
+        assertThat(legacySessionConfig.frameRateRange).isEqualTo(FRAME_RATE_RANGE_UNSPECIFIED)
         assertThat(legacySessionConfig.isLegacy).isTrue()
     }
 

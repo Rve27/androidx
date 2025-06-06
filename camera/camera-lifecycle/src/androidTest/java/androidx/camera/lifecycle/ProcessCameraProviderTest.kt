@@ -1018,19 +1018,21 @@ class ProcessCameraProviderTest(
         val provider = ProcessCameraProvider.getInstance(context).await()
         val preview = Preview.Builder().build()
         val cameraInfo = provider.getCameraInfo(cameraSelector)
-        val availableFrameRates =
+        val availableFrameRateRanges =
             cameraInfo.getSupportedFrameRateRanges(SessionConfig(useCases = listOf(preview)))
-        val expectedFrameRate =
-            availableFrameRates.firstOrNull()
+        val expectedFrameRateRange =
+            availableFrameRateRanges.firstOrNull()
                 ?: throw AssumptionViolatedException("No supported frame rate")
-        val sessionConfig = SessionConfig(useCases = listOf(preview), frameRate = expectedFrameRate)
+        val sessionConfig =
+            SessionConfig(useCases = listOf(preview), frameRateRange = expectedFrameRateRange)
 
         withContext(Dispatchers.Main) {
             // Act.
             provider.bindToLifecycle(lifecycleOwner0, cameraSelector, sessionConfig)
         }
 
-        assertThat(preview.attachedStreamSpec!!.expectedFrameRateRange).isEqualTo(expectedFrameRate)
+        assertThat(preview.attachedStreamSpec!!.expectedFrameRateRange)
+            .isEqualTo(expectedFrameRateRange)
     }
 
     @Test
@@ -1039,7 +1041,8 @@ class ProcessCameraProviderTest(
         ProcessCameraProvider.configureInstance(cameraConfig)
         val provider = ProcessCameraProvider.getInstance(context).await()
         val preview = Preview.Builder().build()
-        val sessionConfig = SessionConfig(useCases = listOf(preview), frameRate = Range(1, 100))
+        val sessionConfig =
+            SessionConfig(useCases = listOf(preview), frameRateRange = Range(1, 100))
 
         withContext(Dispatchers.Main) {
             // Act & Assert.

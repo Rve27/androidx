@@ -317,8 +317,9 @@ public interface CameraInfo {
      * <p>There is no guarantee that these ranges can be used for every size surface or
      * combination of use cases. If attempting to run the device using an unsupported range, there
      * may be stability issues or the device may quietly choose another frame rate operating range.
-     *
-     * <p>The returned set does not have any ordering guarantees and frame rate ranges may overlap.
+     * The returned set does not have any ordering guarantees. To get the guaranteed supported
+     * frame rate ranges under UseCase combination constraints, use
+     * {@link #getSupportedFrameRateRanges(SessionConfig)}.
      *
      * @return The set of FPS ranges supported by the device's AE algorithm
      * @see androidx.camera.video.VideoCapture.Builder#setTargetFrameRate(Range)
@@ -350,16 +351,13 @@ public interface CameraInfo {
      *
      * <p>The returned set of frame rate ranges is guaranteed to be supported with the given
      * {@link SessionConfig}. An empty set will be returned if the provided {@link SessionConfig}
-     * is invalid.
-     *
-     * <p>The returned set does not have any ordering guarantees and frame rate ranges may overlap.
+     * is invalid. The returned set does not have any ordering guarantees.
      *
      * @param sessionConfig The {@link SessionConfig} to query supported frame rate ranges for.
      * @return The set of FPS ranges supported by the device's AE algorithm for the given session
      * config.
-     * @see androidx.camera.video.VideoCapture.Builder#setTargetFrameRate(Range)
+     * @see SessionConfig.Builder#setFrameRate(Range)
      */
-    @RestrictTo(Scope.LIBRARY_GROUP)
     @ExperimentalSessionConfig
     default @NonNull Set<Range<Integer>> getSupportedFrameRateRanges(
             @NonNull SessionConfig sessionConfig) {
