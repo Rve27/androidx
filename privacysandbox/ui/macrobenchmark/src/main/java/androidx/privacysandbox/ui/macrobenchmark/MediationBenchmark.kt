@@ -17,6 +17,7 @@
 package androidx.privacysandbox.ui.macrobenchmark
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.benchmark.macro.ExperimentalMetricApi
 import androidx.benchmark.macro.FrameTimingMetric
@@ -27,6 +28,8 @@ import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
 import androidx.testutils.SdkSandboxCrossProcessLatencyMetric
+import org.junit.Assume.assumeFalse
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -37,6 +40,12 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 class MediationBenchmark(@Suppress("unused") private val ciTestConfigType: String) {
     @get:Rule val benchmarkRule = MacrobenchmarkRule()
+
+    // TODO(b/422477689): Remove after bug is fixed.
+    @Before
+    fun before() {
+        assumeFalse(Build.VERSION.SDK_INT == 31)
+    }
 
     @OptIn(ExperimentalMetricApi::class)
     @Test
