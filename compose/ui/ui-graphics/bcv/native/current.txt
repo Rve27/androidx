@@ -368,9 +368,12 @@ abstract class androidx.compose.ui.graphics.painter/Painter { // androidx.compos
 abstract class androidx.compose.ui.graphics/ShaderBrush : androidx.compose.ui.graphics/Brush { // androidx.compose.ui.graphics/ShaderBrush|null[0]
     constructor <init>() // androidx.compose.ui.graphics/ShaderBrush.<init>|<init>(){}[0]
 
+    final var transform // androidx.compose.ui.graphics/ShaderBrush.transform|{}transform[0]
+        final fun <get-transform>(): androidx.compose.ui.graphics/Matrix? // androidx.compose.ui.graphics/ShaderBrush.transform.<get-transform>|<get-transform>(){}[0]
+        final fun <set-transform>(androidx.compose.ui.graphics/Matrix?) // androidx.compose.ui.graphics/ShaderBrush.transform.<set-transform>|<set-transform>(androidx.compose.ui.graphics.Matrix?){}[0]
+
     abstract fun createShader(androidx.compose.ui.geometry/Size): androidx.compose.ui.graphics/Shader // androidx.compose.ui.graphics/ShaderBrush.createShader|createShader(androidx.compose.ui.geometry.Size){}[0]
     final fun applyTo(androidx.compose.ui.geometry/Size, androidx.compose.ui.graphics/Paint, kotlin/Float) // androidx.compose.ui.graphics/ShaderBrush.applyTo|applyTo(androidx.compose.ui.geometry.Size;androidx.compose.ui.graphics.Paint;kotlin.Float){}[0]
-    final fun transform(androidx.compose.ui.graphics/Matrix?) // androidx.compose.ui.graphics/ShaderBrush.transform|transform(androidx.compose.ui.graphics.Matrix?){}[0]
 }
 
 final class <#A: kotlin/Any?> androidx.compose.ui.graphics/IntervalTree { // androidx.compose.ui.graphics/IntervalTree|null[0]
@@ -1800,7 +1803,7 @@ sealed class androidx.compose.ui.graphics/Brush { // androidx.compose.ui.graphic
     abstract fun applyTo(androidx.compose.ui.geometry/Size, androidx.compose.ui.graphics/Paint, kotlin/Float) // androidx.compose.ui.graphics/Brush.applyTo|applyTo(androidx.compose.ui.geometry.Size;androidx.compose.ui.graphics.Paint;kotlin.Float){}[0]
 
     final object Companion { // androidx.compose.ui.graphics/Brush.Companion|null[0]
-        final fun compositeShaderBrush(androidx.compose.ui.graphics/Brush, androidx.compose.ui.graphics/Brush, androidx.compose.ui.graphics/BlendMode): androidx.compose.ui.graphics/Brush // androidx.compose.ui.graphics/Brush.Companion.compositeShaderBrush|compositeShaderBrush(androidx.compose.ui.graphics.Brush;androidx.compose.ui.graphics.Brush;androidx.compose.ui.graphics.BlendMode){}[0]
+        final fun composite(androidx.compose.ui.graphics/Brush, androidx.compose.ui.graphics/Brush, androidx.compose.ui.graphics/BlendMode): androidx.compose.ui.graphics/Brush // androidx.compose.ui.graphics/Brush.Companion.composite|composite(androidx.compose.ui.graphics.Brush;androidx.compose.ui.graphics.Brush;androidx.compose.ui.graphics.BlendMode){}[0]
         final fun horizontalGradient(kotlin.collections/List<androidx.compose.ui.graphics/Color>, kotlin/Float = ..., kotlin/Float = ..., androidx.compose.ui.graphics/TileMode = ...): androidx.compose.ui.graphics/Brush // androidx.compose.ui.graphics/Brush.Companion.horizontalGradient|horizontalGradient(kotlin.collections.List<androidx.compose.ui.graphics.Color>;kotlin.Float;kotlin.Float;androidx.compose.ui.graphics.TileMode){}[0]
         final fun horizontalGradient(kotlin/Array<out kotlin/Pair<kotlin/Float, androidx.compose.ui.graphics/Color>>..., kotlin/Float = ..., kotlin/Float = ..., androidx.compose.ui.graphics/TileMode = ...): androidx.compose.ui.graphics/Brush // androidx.compose.ui.graphics/Brush.Companion.horizontalGradient|horizontalGradient(kotlin.Array<out|kotlin.Pair<kotlin.Float,androidx.compose.ui.graphics.Color>>...;kotlin.Float;kotlin.Float;androidx.compose.ui.graphics.TileMode){}[0]
         final fun linearGradient(kotlin.collections/List<androidx.compose.ui.graphics/Color>, androidx.compose.ui.geometry/Offset = ..., androidx.compose.ui.geometry/Offset = ..., androidx.compose.ui.graphics/TileMode = ...): androidx.compose.ui.graphics/Brush // androidx.compose.ui.graphics/Brush.Companion.linearGradient|linearGradient(kotlin.collections.List<androidx.compose.ui.graphics.Color>;androidx.compose.ui.geometry.Offset;androidx.compose.ui.geometry.Offset;androidx.compose.ui.graphics.TileMode){}[0]

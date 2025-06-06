@@ -367,8 +367,8 @@ package androidx.compose.ui.graphics {
   }
 
   public static final class Brush.Companion {
-    method @androidx.compose.runtime.Stable public androidx.compose.ui.graphics.Brush compositeShaderBrush(androidx.compose.ui.graphics.Brush dstBrush, androidx.compose.ui.graphics.Brush srcBrush, int blendMode);
-    method @BytecodeOnly @androidx.compose.runtime.Stable public androidx.compose.ui.graphics.Brush compositeShaderBrush-7EN7VTw(androidx.compose.ui.graphics.Brush, androidx.compose.ui.graphics.Brush, int);
+    method @androidx.compose.runtime.Stable public androidx.compose.ui.graphics.Brush composite(androidx.compose.ui.graphics.Brush dstBrush, androidx.compose.ui.graphics.Brush srcBrush, int blendMode);
+    method @BytecodeOnly @androidx.compose.runtime.Stable public androidx.compose.ui.graphics.Brush composite-7EN7VTw(androidx.compose.ui.graphics.Brush, androidx.compose.ui.graphics.Brush, int);
     method @androidx.compose.runtime.Stable public androidx.compose.ui.graphics.Brush horizontalGradient(java.util.List<androidx.compose.ui.graphics.Color> colors, optional float startX, optional float endX, optional int tileMode);
     method @androidx.compose.runtime.Stable public androidx.compose.ui.graphics.Brush horizontalGradient(kotlin.Pair<java.lang.Float,androidx.compose.ui.graphics.Color>[] colorStops, optional float startX, optional float endX, optional int tileMode);
     method @BytecodeOnly @androidx.compose.runtime.Stable public androidx.compose.ui.graphics.Brush horizontalGradient-8A-3gB4(java.util.List<androidx.compose.ui.graphics.Color!>, float, float, int);
@@ -1232,8 +1232,11 @@ package androidx.compose.ui.graphics {
     method @BytecodeOnly public final void applyTo-Pq9zytI(long, androidx.compose.ui.graphics.Paint, float);
     method public abstract android.graphics.Shader createShader(long size);
     method @BytecodeOnly public abstract android.graphics.Shader createShader-uvyYCjk(long);
-    method public final void transform(float[]? matrix);
-    method @BytecodeOnly public final void transform-Q8lPUPs(float[]?);
+    method public final float[]? getTransform();
+    method @BytecodeOnly public final float[]? getTransform-3i98HWw();
+    method public final void setTransform(float[]?);
+    method @BytecodeOnly public final void setTransform-Q8lPUPs(float[]?);
+    property public final float[]? transform;
   }
 
   public final class ShaderKt {

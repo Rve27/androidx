@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.toShaderBrush
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import kotlin.math.ceil
@@ -168,8 +169,11 @@ internal class InnerShadowRenderer(private val shadowParams: ShadowParams, outli
         var shader = compositeShader
         if (shader == null || shader.srcBrush != brush) {
             shader =
-                (Brush.compositeShaderBrush(shadowMask, brush, BlendMode.SrcIn)
-                        as CompositeShaderBrush)
+                CompositeShaderBrush(
+                        dstBrush = shadowMask.toShaderBrush(),
+                        srcBrush = brush.toShaderBrush(),
+                        blendMode = BlendMode.SrcIn,
+                    )
                     .also { compositeShader = it }
         }
         return shader
@@ -309,12 +313,11 @@ internal class InnerShadowRenderer(private val shadowParams: ShadowParams, outli
                 restore()
 
                 return ShaderBrush(ImageShader(shadowBitmap)).apply {
-                    transform(
+                    transform =
                         obtainMatrix().apply {
                             reset()
                             translate(offsetX - radius, offsetY - radius)
                         }
-                    )
                 }
             } else {
                 save()
@@ -390,7 +393,7 @@ internal class InnerShadowRenderer(private val shadowParams: ShadowParams, outli
         }
 
         return ShaderBrush(ImageShader(shadowBitmap)).apply {
-            transform(obtainMatrix().apply { translate(offsetX, offsetY) })
+            transform = obtainMatrix().apply { translate(offsetX, offsetY) }
         }
     }
 }

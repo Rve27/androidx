@@ -156,7 +156,7 @@ internal class DropShadowRenderer(val shadowParams: ShadowParams, outline: Outli
         // TODO(b/418840915): Reduce unnecessary shader recreation.
         if (shader == null || shader.srcBrush != brush) {
             shader =
-                (Brush.compositeShaderBrush(
+                (Brush.composite(
                         ShaderBrush(ImageShader(shadowBitmap)),
                         // Ensure that the shader we are blending against is the same dimensions
                         // as the shadow bitmap
