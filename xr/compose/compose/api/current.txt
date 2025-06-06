@@ -290,6 +290,15 @@ package androidx.xr.compose.subspace.layout {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier onGloballyPositioned(androidx.xr.compose.subspace.layout.SubspaceModifier, kotlin.jvm.functions.Function1<? super androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates,kotlin.Unit> onGloballyPositioned);
   }
 
+  public final class PaddingKt {
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier padding(androidx.xr.compose.subspace.layout.SubspaceModifier, float all);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier padding(androidx.xr.compose.subspace.layout.SubspaceModifier, optional float horizontal, optional float vertical, optional float depth);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier padding(androidx.xr.compose.subspace.layout.SubspaceModifier, optional float left, optional float top, optional float right, optional float bottom, optional float front, optional float back);
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier padding-0tawpAo(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float, float, float, float, float);
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier padding-3ABfNKs(androidx.xr.compose.subspace.layout.SubspaceModifier, float);
+    method @BytecodeOnly public static androidx.xr.compose.subspace.layout.SubspaceModifier padding-qQh39rQ(androidx.xr.compose.subspace.layout.SubspaceModifier, float, float, float);
+  }
+
   public interface ParentLayoutParamsAdjustable {
   }
 
