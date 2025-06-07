@@ -1517,11 +1517,9 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
             return;
         }
 
-        // Get selected qualities, include:
-        // * Filter by high-speed frame rate
+        // Get selected qualities
         List<Quality> selectedQualities = getSelectedQualityOrThrow(supportedQualities,
-                videoCapabilities, qualitySelector,
-                requestedDynamicRange, sessionType, targetFrameRate);
+                qualitySelector);
 
         // Map qualities to resolutions, include:
         // * Filter by encoder supported size
@@ -1556,22 +1554,10 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
     @NonNull
     private List<Quality> getSelectedQualityOrThrow(
             @NonNull List<Quality> supportedQualities,
-            @NonNull VideoCapabilities videoCapabilities,
-            @NonNull QualitySelector qualitySelector,
-            @NonNull DynamicRange requestedDynamicRange,
-            int sessionType,
-            @NonNull Range<Integer> targetFrameRate) throws IllegalArgumentException {
+            @NonNull QualitySelector qualitySelector) throws IllegalArgumentException {
         List<Quality> selectedQualities = qualitySelector.getPrioritizedQualities(
                 supportedQualities);
         Logger.d(TAG, "Found selectedQualities " + selectedQualities + " by " + qualitySelector);
-
-        // Filter out Quality that do not support the target frame rate for high-speed sessions.
-        if (sessionType == SESSION_TYPE_HIGH_SPEED) {
-            selectedQualities = filterOutUnsupportedHighSpeedQualities(selectedQualities,
-                    videoCapabilities, requestedDynamicRange, targetFrameRate);
-            Logger.d(TAG, "selectedQualities " + selectedQualities
-                    + " after filtering by supported high-speed frame rates");
-        }
 
         if (selectedQualities.isEmpty()) {
             throw new IllegalArgumentException("Unable to find selected quality");
@@ -1634,35 +1620,6 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
     @NonNull
     private Range<Integer> getTargetFrameRate(@NonNull VideoCaptureConfig<T> useCaseConfig) {
         return requireNonNull(useCaseConfig.getTargetFrameRate(FRAME_RATE_RANGE_UNSPECIFIED));
-    }
-
-    @NonNull
-    private List<Quality> filterOutUnsupportedHighSpeedQualities(
-            @NonNull List<Quality> selectedQualities,
-            @NonNull VideoCapabilities videoCapabilities,
-            @NonNull DynamicRange targetDynamicRange,
-            @NonNull Range<Integer> targetFrameRate) {
-        checkArgument(!targetFrameRate.equals(FRAME_RATE_RANGE_UNSPECIFIED),
-                "Frame rate is not specified for high-speed recording");
-        List<Quality> filteredQualities = new ArrayList<>();
-        for (Quality quality : selectedQualities) {
-            Set<Range<Integer>> supportedFrameRates =
-                    videoCapabilities.getSupportedFrameRateRanges(quality, targetDynamicRange);
-            boolean isSupported = false;
-            for (Range<Integer> supportedFrameRate : supportedFrameRates) {
-                if (supportedFrameRate.equals(targetFrameRate)) {
-                    isSupported = true;
-                    break;
-                }
-            }
-            if (isSupported) {
-                filteredQualities.add(quality);
-            } else {
-                Logger.d(TAG, "Quality " + quality + " with frame rate: " + targetFrameRate
-                        + " is not supported for high-speed session");
-            }
-        }
-        return filteredQualities;
     }
 
     private static @NonNull LinkedHashMap<Quality, List<Size>>
