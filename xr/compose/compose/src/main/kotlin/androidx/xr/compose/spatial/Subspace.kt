@@ -17,7 +17,6 @@
 package androidx.xr.compose.spatial
 
 import androidx.activity.ComponentActivity
-import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableOpenTarget
@@ -94,7 +93,6 @@ internal val LocalSubspaceRootNode: ProvidableCompositionLocal<Entity?> =
     }
 
 /** Defines default values used by the Subspace composables, primarily [ApplicationSubspace]. */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public object SubspaceDefaults {
     /**
      * Default [VolumeConstraints] used as a fallback value.
@@ -137,7 +135,6 @@ public object SubspaceDefaults {
 @Composable
 @ComposableOpenTarget(index = -1)
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun Subspace(content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit) {
     val activity = LocalContext.current.getActivity() as? ComponentActivity ?: return
 
@@ -161,7 +158,6 @@ public fun Subspace(content: @Composable @SubspaceComposable SpatialBoxScope.() 
 
 /** Defines the behavior for applying [VolumeConstraints] to an ApplicationSubspace. */
 @JvmInline
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public value class ConstraintsBehavior private constructor(private val value: Int) {
     public companion object {
         /**
@@ -212,7 +208,6 @@ public value class ConstraintsBehavior private constructor(private val value: In
 @Composable
 @ComposableOpenTarget(index = -1)
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun ApplicationSubspace(
     constraints: VolumeConstraints = SubspaceDefaults.fallbackFieldOfViewConstraints,
     constraintsBehavior: ConstraintsBehavior = ConstraintsBehavior.FieldOfView,
