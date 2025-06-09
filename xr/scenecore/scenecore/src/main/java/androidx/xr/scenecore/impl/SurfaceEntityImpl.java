@@ -103,9 +103,6 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
         mCanvasShape = canvasShape;
         setParent(parentEntity);
 
-        // TODO(b/377906324): - Punt this logic to the UI thread, so that applications can create
-        // StereoSurface entities from any thread.
-
         // System will only render Impress nodes that are parented by this subspace node.
         mSubspaceImpressNode = impressApi.createImpressNode();
         String subspaceName = "stereo_surface_panel_entity_subspace_" + mSubspaceImpressNode;
@@ -136,8 +133,6 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
 
     @Override
     public void setCanvasShape(CanvasShape canvasShape) {
-        // TODO(b/377906324): - Punt this logic to the UI thread, so that applications can call this
-        // method from any thread.
         mCanvasShape = canvasShape;
 
         if (mCanvasShape instanceof CanvasShape.Quad) {
@@ -159,8 +154,6 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     @SuppressWarnings("ObjectToString")
     @Override
     public void dispose() {
-        // TODO(b/377906324): - Punt this logic to the UI thread, so that applications can destroy
-        // StereoSurface entities from any thread.
         // The subspace impress node will be destroyed when the subspace is deleted.
         mSplitEngineSubspaceManager.deleteSubspace(mSubspace.subspaceId);
         super.dispose();
@@ -209,7 +202,7 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
 
     @Override
     public Surface getSurface() {
-        // TODO(b/377906324) - Either cache the surface in the constructor, or change this interface
+        // TODO Either cache the surface in the constructor, or change this interface
         // to
         // return a Future.
         return mImpressApi.getSurfaceFromStereoSurface(mEntityImpressNode);

@@ -113,7 +113,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /** Implementation of JxrPlatformAdapter for AndroidXR. */
-// TODO: b/322550407 - Use the Android Fluent Logger
 // TODO(b/373435470): Remove "deprecation" and "UnnecessarilyFullyQualified"
 @SuppressLint("NewApi") // TODO: b/413661481 - Remove this suppression prior to JXR stable release.
 @SuppressWarnings({"UnnecessarilyFullyQualified", "BanSynchronizedMethods", "BanConcurrentHashMap"})
