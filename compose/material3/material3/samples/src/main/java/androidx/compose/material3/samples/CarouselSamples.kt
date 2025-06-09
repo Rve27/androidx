@@ -102,7 +102,7 @@ fun HorizontalMultiBrowseCarouselSample() {
 
     HorizontalMultiBrowseCarousel(
         state = rememberCarouselState { items.count() },
-        modifier = Modifier.width(412.dp).height(221.dp),
+        modifier = Modifier.fillMaxWidth().height(221.dp),
         preferredItemWidth = 186.dp,
         itemSpacing = 8.dp,
         contentPadding = PaddingValues(horizontal = 16.dp),
