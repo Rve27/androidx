@@ -366,7 +366,7 @@ class SceneTest {
     @Test
     fun setSpatialStateChangeHandler_callsRuntimeSetSpatialStateChangeHandler() {
         val mockSpatialModeChangeListener = mock<SpatialModeChangeListener>()
-        session.scene.SpatialModeChangeListener = mockSpatialModeChangeListener
+        session.scene.spatialModeChangeListener = mockSpatialModeChangeListener
         val captor = argumentCaptor<androidx.xr.runtime.internal.SpatialModeChangeListener>()
         verify(mockPlatformAdapter).spatialModeChangeListener = captor.capture()
         val rtSpatialStateChangeHandler = captor.firstValue

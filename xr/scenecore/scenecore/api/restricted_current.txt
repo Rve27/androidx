@@ -627,8 +627,8 @@ package androidx.xr.scenecore {
     method public void enablePanelDepthTest(boolean enabled);
     method public androidx.xr.scenecore.ActivitySpace getActivitySpace();
     method public androidx.xr.scenecore.Entity getActivitySpaceRoot();
-    method public androidx.xr.scenecore.Entity? getCenterOfAttention();
     method public <T extends androidx.xr.scenecore.Entity> java.util.List<T> getEntitiesOfType(Class<? extends T> type);
+    method public androidx.xr.scenecore.Entity? getKeyEntity();
     method public androidx.xr.scenecore.PanelEntity getMainPanelEntity();
     method public androidx.xr.scenecore.PerceptionSpace getPerceptionSpace();
     method public androidx.xr.scenecore.SpatialCapabilities getSpatialCapabilities();
@@ -638,21 +638,21 @@ package androidx.xr.scenecore {
     method public void initialize(androidx.xr.runtime.internal.LifecycleManager lifecycleManager, androidx.xr.runtime.internal.JxrPlatformAdapter platformAdapter);
     method public void removePerceivedResolutionChangedListener(java.util.function.Consumer<androidx.xr.runtime.math.IntSize2d> listener);
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
-    method public boolean setCenterOfAttention(androidx.xr.scenecore.Entity? entity);
     method public android.os.Bundle setFullSpaceMode(android.os.Bundle bundle);
     method public android.os.Bundle setFullSpaceModeWithEnvironmentInherited(android.os.Bundle bundle);
+    method public boolean setKeyEntity(androidx.xr.scenecore.Entity? entity);
     method public void setPreferredAspectRatio(android.app.Activity activity, float preferredRatio);
     method public void setSpatialModeChangeListener(androidx.xr.scenecore.SpatialModeChangeListener);
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.SpatialVisibility> listener);
     method public void setSpatialVisibilityChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialVisibility> listener);
-    property public androidx.xr.scenecore.SpatialModeChangeListener SpatialModeChangeListener;
     property public androidx.xr.scenecore.ActivitySpace activitySpace;
     property public androidx.xr.scenecore.Entity activitySpaceRoot;
-    property public androidx.xr.scenecore.Entity? centerOfAttention;
+    property public androidx.xr.scenecore.Entity? keyEntity;
     property public androidx.xr.scenecore.PanelEntity mainPanelEntity;
     property public androidx.xr.scenecore.PerceptionSpace perceptionSpace;
     property public androidx.xr.scenecore.SpatialCapabilities spatialCapabilities;
     property public androidx.xr.scenecore.SpatialEnvironment spatialEnvironment;
+    property public androidx.xr.scenecore.SpatialModeChangeListener spatialModeChangeListener;
     property public androidx.xr.scenecore.SpatialUser spatialUser;
   }
 

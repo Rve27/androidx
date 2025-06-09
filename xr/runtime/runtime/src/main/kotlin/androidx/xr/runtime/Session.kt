@@ -120,7 +120,7 @@ public constructor(
          * @param unscaledGravityAlignedActivitySpace whether to use the unscaled gravity aligned
          *   activity space for the session. When true, causes ActivitySpace for this Session to
          *   always be gravity aligned and to have a scale of [1 unit = 1 Meter]. Note that this
-         *   might result in visual inconsistencies between Homespace Mode and Fullspace Mode.
+         *   might result in visual inconsistencies between HOME_SPACE and FULL_SPACE_MANAGED modes.
          *   Defaults to False.
          * @return the result of the operation. Can be [SessionCreateSuccess], which contains the
          *   newly created session, or [SessionCreatePermissionsNotGranted] if the required
