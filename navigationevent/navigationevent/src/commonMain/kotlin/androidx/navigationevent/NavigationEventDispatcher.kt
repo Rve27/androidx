@@ -88,18 +88,34 @@ public class NavigationEventDispatcher(
         callback: NavigationEventCallback,
         priority: NavigationEventPriority = NavigationEventPriority.Default,
     ) {
+        check(callback.dispatcher == null) {
+            "Callback '$callback' is already registered with a dispatcher"
+        }
         when (priority) {
             NavigationEventPriority.Overlay -> overlayCallbacks.addFirst(callback)
             NavigationEventPriority.Default -> normalCallbacks.addFirst(callback)
         }
 
-        // Register a closeable link between this dispatcher and the callback.
-        // This allows callback.remove() to later remove this dispatcher registration.
-        val closeable = NavigationEventCallbackCloseable(dispatcher = this, callback)
-        callback.addCloseable(closeable)
+        updateEnabledCallbacks()
+        callback.dispatcher = this
+    }
+
+    internal fun removeCallback(callback: NavigationEventCallback) {
+        // If the callback is currently being processed (i.e., it's in `inProgressCallbacks`),
+        // it needs to be notified of cancellation and then removed from the in-progress tracking.
+        if (callback in inProgressCallbacks) {
+            callback.onEventCancelled()
+            inProgressCallbacks -= callback
+        }
+
+        // Attempt to remove the callback from both overlay and normal callback lists.
+        // It's okay if the callback is not present.
+        overlayCallbacks.remove(callback)
+        normalCallbacks.remove(callback)
+
+        callback.dispatcher = null
 
         updateEnabledCallbacks()
-        callback.enabledChangedCallback = ::updateEnabledCallbacks
     }
 
     /**

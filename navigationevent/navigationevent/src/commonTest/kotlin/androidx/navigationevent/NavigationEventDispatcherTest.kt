@@ -17,6 +17,7 @@
 package androidx.navigationevent
 
 import androidx.kruth.assertThat
+import androidx.kruth.assertThrows
 import androidx.navigationevent.NavigationEvent.Companion.EDGE_LEFT
 import kotlin.test.Test
 
@@ -385,5 +386,43 @@ class NavigationEventDispatcherTest {
 
         assertThat(history)
             .containsExactly("overlayCallback onEventCompleted", "normalCallback onEventCompleted")
+    }
+
+    @Test
+    fun adding_a_callback_to_more_dispatchers_throws_exception() {
+        val history = mutableListOf<String>()
+
+        val callback =
+            object : NavigationEventCallback(true) {
+                override fun onEventCompleted() {
+                    history += "onEventCompleted"
+                }
+            }
+
+        val dispatcher1 = NavigationEventDispatcher {}
+        dispatcher1.addCallback(callback)
+
+        val dispatcher2 = NavigationEventDispatcher {}
+        assertThrows(IllegalStateException::class) { dispatcher2.addCallback(callback) }
+            .hasMessageThat()
+            .contains("is already registered with a dispatcher")
+    }
+
+    @Test
+    fun adding_a_callback_to_the_same_dispatcher_twice_throws_exception() {
+        val history = mutableListOf<String>()
+
+        val callback =
+            object : NavigationEventCallback(true) {
+                override fun onEventCompleted() {
+                    history += "onEventCompleted"
+                }
+            }
+
+        val dispatcher = NavigationEventDispatcher {}
+        dispatcher.addCallback(callback)
+        assertThrows(IllegalStateException::class) { dispatcher.addCallback(callback) }
+            .hasMessageThat()
+            .contains("is already registered with a dispatcher")
     }
 }
