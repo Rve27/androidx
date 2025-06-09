@@ -66,6 +66,13 @@ package androidx.xr.compose.material3 {
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.runtime.Composable @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public static void NavigationSuiteScaffold-K6DM4qE(kotlin.jvm.functions.Function1<? super androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope!,kotlin.Unit!>, androidx.xr.compose.subspace.layout.SubspaceModifier, String, androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors?, androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState?, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>?, androidx.compose.runtime.Composer?, int, int);
   }
 
+  public final class ShortNavigationBarKt {
+    method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public static void ShortNavigationBar(optional androidx.compose.ui.Modifier modifier, optional long containerColor, optional long contentColor, optional int arrangement, kotlin.jvm.functions.Function0<kotlin.Unit> content);
+    method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public static void ShortNavigationBar-ruETff8(androidx.compose.ui.Modifier?, long, long, int, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
+    method @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.material3.HorizontalOrbiterProperties> getLocalShortNavigationBarOrbiterProperties();
+    property @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.xr.compose.material3.HorizontalOrbiterProperties> LocalShortNavigationBarOrbiterProperties;
+  }
+
   public final class ThreePaneScaffoldKt {
     method @SuppressCompatibility @androidx.compose.runtime.Composable @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public static void ThreePaneScaffold(androidx.xr.compose.subspace.layout.SubspaceModifier modifier, androidx.compose.material3.adaptive.layout.PaneScaffoldDirective scaffoldDirective, androidx.compose.material3.adaptive.layout.ThreePaneScaffoldHorizontalOrder paneOrder, kotlin.jvm.functions.Function0<kotlin.Unit> secondaryPane, optional kotlin.jvm.functions.Function0<kotlin.Unit>? tertiaryPane, kotlin.jvm.functions.Function0<kotlin.Unit> primaryPane);
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.runtime.Composable @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public static void ThreePaneScaffold(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.compose.material3.adaptive.layout.PaneScaffoldDirective, androidx.compose.material3.adaptive.layout.ThreePaneScaffoldHorizontalOrder, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>?, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
@@ -104,6 +111,8 @@ package androidx.xr.compose.material3 {
     method @BytecodeOnly public String getNavigationRail-sKf2Msg();
     method @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public String getNavigationSuiteScaffold();
     method @BytecodeOnly public String getNavigationSuiteScaffold-sKf2Msg();
+    method @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public String getShortNavigationBar();
+    method @BytecodeOnly public String getShortNavigationBar-sKf2Msg();
     method @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public String getSingleRowTopAppBar();
     method @BytecodeOnly public String getSingleRowTopAppBar-sKf2Msg();
     method @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public String getThreePaneScaffold();
@@ -114,6 +123,7 @@ package androidx.xr.compose.material3 {
     property @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public String NavigationBar;
     property @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public String NavigationRail;
     property @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public String NavigationSuiteScaffold;
+    property @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public String ShortNavigationBar;
     property @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public String SingleRowTopAppBar;
     property @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public String ThreePaneScaffold;
     property @SuppressCompatibility @androidx.xr.compose.material3.ExperimentalMaterial3XrApi public String TwoRowsTopAppBar;

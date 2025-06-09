@@ -1198,6 +1198,12 @@ package androidx.compose.material3 {
     field public static final androidx.compose.material3.DefaultNavigationRailOverride INSTANCE;
   }
 
+  @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public final class DefaultShortNavigationBarOverride implements androidx.compose.material3.ShortNavigationBarOverride {
+    method @androidx.compose.runtime.Composable public void ShortNavigationBar(androidx.compose.material3.ShortNavigationBarOverrideScope);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public void ShortNavigationBar(androidx.compose.material3.ShortNavigationBarOverrideScope, androidx.compose.runtime.Composer?, int);
+    field public static final androidx.compose.material3.DefaultShortNavigationBarOverride INSTANCE;
+  }
+
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public final class DefaultSingleRowTopAppBarOverride implements androidx.compose.material3.SingleRowTopAppBarOverride {
     method @androidx.compose.runtime.Composable public void SingleRowTopAppBar(androidx.compose.material3.SingleRowTopAppBarOverrideScope);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public void SingleRowTopAppBar(androidx.compose.material3.SingleRowTopAppBarOverrideScope, androidx.compose.runtime.Composer?, int);
@@ -3256,6 +3262,31 @@ package androidx.compose.material3 {
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public static void ShortNavigationBar-kQ6Tpik(androidx.compose.ui.Modifier?, long, long, androidx.compose.foundation.layout.WindowInsets?, int, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
     method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public static void ShortNavigationBarItem(boolean selected, kotlin.jvm.functions.Function0<kotlin.Unit> onClick, kotlin.jvm.functions.Function0<kotlin.Unit> icon, kotlin.jvm.functions.Function0<kotlin.Unit>? label, optional androidx.compose.ui.Modifier modifier, optional boolean enabled, optional int iconPosition, optional androidx.compose.material3.NavigationItemColors colors, optional androidx.compose.foundation.interaction.MutableInteractionSource? interactionSource);
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public static void ShortNavigationBarItem-6ZDA4I0(boolean, kotlin.jvm.functions.Function0<kotlin.Unit!>, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>?, androidx.compose.ui.Modifier?, boolean, int, androidx.compose.material3.NavigationItemColors?, androidx.compose.foundation.interaction.MutableInteractionSource?, androidx.compose.runtime.Composer?, int, int);
+    method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material3.ShortNavigationBarOverride> getLocalShortNavigationBarOverride();
+    property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material3.ShortNavigationBarOverride> LocalShortNavigationBarOverride;
+  }
+
+  @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public interface ShortNavigationBarOverride {
+    method @androidx.compose.runtime.Composable public void ShortNavigationBar(androidx.compose.material3.ShortNavigationBarOverrideScope);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public void ShortNavigationBar(androidx.compose.material3.ShortNavigationBarOverrideScope, androidx.compose.runtime.Composer?, int);
+  }
+
+  @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public final class ShortNavigationBarOverrideScope {
+    method public int getArrangement();
+    method @BytecodeOnly public int getArrangement-LnnQw40();
+    method public long getContainerColor();
+    method @BytecodeOnly public long getContainerColor-0d7_KjU();
+    method public kotlin.jvm.functions.Function0<kotlin.Unit> getContent();
+    method public long getContentColor();
+    method @BytecodeOnly public long getContentColor-0d7_KjU();
+    method public androidx.compose.ui.Modifier getModifier();
+    method public androidx.compose.foundation.layout.WindowInsets getWindowInsets();
+    property public int arrangement;
+    property public long containerColor;
+    property public kotlin.jvm.functions.Function0<kotlin.Unit> content;
+    property public long contentColor;
+    property public androidx.compose.ui.Modifier modifier;
+    property public androidx.compose.foundation.layout.WindowInsets windowInsets;
   }
 
   public interface SingleChoiceSegmentedButtonRowScope extends androidx.compose.foundation.layout.RowScope {

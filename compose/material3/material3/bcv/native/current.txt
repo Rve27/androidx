@@ -274,6 +274,10 @@ abstract interface androidx.compose.material3/SelectableDates { // androidx.comp
     open fun isSelectableYear(kotlin/Int): kotlin/Boolean // androidx.compose.material3/SelectableDates.isSelectableYear|isSelectableYear(kotlin.Int){}[0]
 }
 
+abstract interface androidx.compose.material3/ShortNavigationBarOverride { // androidx.compose.material3/ShortNavigationBarOverride|null[0]
+    abstract fun (androidx.compose.material3/ShortNavigationBarOverrideScope).ShortNavigationBar() // androidx.compose.material3/ShortNavigationBarOverride.ShortNavigationBar|ShortNavigationBar@androidx.compose.material3.ShortNavigationBarOverrideScope(){}[0]
+}
+
 abstract interface androidx.compose.material3/SingleChoiceSegmentedButtonRowScope : androidx.compose.foundation.layout/RowScope // androidx.compose.material3/SingleChoiceSegmentedButtonRowScope|null[0]
 
 abstract interface androidx.compose.material3/SingleRowTopAppBarOverride { // androidx.compose.material3/SingleRowTopAppBarOverride|null[0]
@@ -1371,6 +1375,21 @@ final class androidx.compose.material3/SheetState { // androidx.compose.material
         final fun Saver(kotlin/Boolean, kotlin/Function0<kotlin/Float>, kotlin/Function0<kotlin/Float>, kotlin/Function1<androidx.compose.material3/SheetValue, kotlin/Boolean>, kotlin/Boolean): androidx.compose.runtime.saveable/Saver<androidx.compose.material3/SheetState, androidx.compose.material3/SheetValue> // androidx.compose.material3/SheetState.Companion.Saver|Saver(kotlin.Boolean;kotlin.Function0<kotlin.Float>;kotlin.Function0<kotlin.Float>;kotlin.Function1<androidx.compose.material3.SheetValue,kotlin.Boolean>;kotlin.Boolean){}[0]
         final fun Saver(kotlin/Boolean, kotlin/Function1<androidx.compose.material3/SheetValue, kotlin/Boolean>, androidx.compose.ui.unit/Density, kotlin/Boolean): androidx.compose.runtime.saveable/Saver<androidx.compose.material3/SheetState, androidx.compose.material3/SheetValue> // androidx.compose.material3/SheetState.Companion.Saver|Saver(kotlin.Boolean;kotlin.Function1<androidx.compose.material3.SheetValue,kotlin.Boolean>;androidx.compose.ui.unit.Density;kotlin.Boolean){}[0]
     }
+}
+
+final class androidx.compose.material3/ShortNavigationBarOverrideScope { // androidx.compose.material3/ShortNavigationBarOverrideScope|null[0]
+    final val arrangement // androidx.compose.material3/ShortNavigationBarOverrideScope.arrangement|{}arrangement[0]
+        final fun <get-arrangement>(): androidx.compose.material3/ShortNavigationBarArrangement // androidx.compose.material3/ShortNavigationBarOverrideScope.arrangement.<get-arrangement>|<get-arrangement>(){}[0]
+    final val containerColor // androidx.compose.material3/ShortNavigationBarOverrideScope.containerColor|{}containerColor[0]
+        final fun <get-containerColor>(): androidx.compose.ui.graphics/Color // androidx.compose.material3/ShortNavigationBarOverrideScope.containerColor.<get-containerColor>|<get-containerColor>(){}[0]
+    final val content // androidx.compose.material3/ShortNavigationBarOverrideScope.content|{}content[0]
+        final fun <get-content>(): kotlin/Function0<kotlin/Unit> // androidx.compose.material3/ShortNavigationBarOverrideScope.content.<get-content>|<get-content>(){}[0]
+    final val contentColor // androidx.compose.material3/ShortNavigationBarOverrideScope.contentColor|{}contentColor[0]
+        final fun <get-contentColor>(): androidx.compose.ui.graphics/Color // androidx.compose.material3/ShortNavigationBarOverrideScope.contentColor.<get-contentColor>|<get-contentColor>(){}[0]
+    final val modifier // androidx.compose.material3/ShortNavigationBarOverrideScope.modifier|{}modifier[0]
+        final fun <get-modifier>(): androidx.compose.ui/Modifier // androidx.compose.material3/ShortNavigationBarOverrideScope.modifier.<get-modifier>|<get-modifier>(){}[0]
+    final val windowInsets // androidx.compose.material3/ShortNavigationBarOverrideScope.windowInsets|{}windowInsets[0]
+        final fun <get-windowInsets>(): androidx.compose.foundation.layout/WindowInsets // androidx.compose.material3/ShortNavigationBarOverrideScope.windowInsets.<get-windowInsets>|<get-windowInsets>(){}[0]
 }
 
 final class androidx.compose.material3/SingleRowTopAppBarOverrideScope { // androidx.compose.material3/SingleRowTopAppBarOverrideScope|null[0]
@@ -2484,6 +2503,10 @@ final object androidx.compose.material3/DefaultNavigationRailOverride : androidx
     final fun (androidx.compose.material3/NavigationRailOverrideScope).NavigationRail() // androidx.compose.material3/DefaultNavigationRailOverride.NavigationRail|NavigationRail@androidx.compose.material3.NavigationRailOverrideScope(){}[0]
 }
 
+final object androidx.compose.material3/DefaultShortNavigationBarOverride : androidx.compose.material3/ShortNavigationBarOverride { // androidx.compose.material3/DefaultShortNavigationBarOverride|null[0]
+    final fun (androidx.compose.material3/ShortNavigationBarOverrideScope).ShortNavigationBar() // androidx.compose.material3/DefaultShortNavigationBarOverride.ShortNavigationBar|ShortNavigationBar@androidx.compose.material3.ShortNavigationBarOverrideScope(){}[0]
+}
+
 final object androidx.compose.material3/DefaultSingleRowTopAppBarOverride : androidx.compose.material3/SingleRowTopAppBarOverride { // androidx.compose.material3/DefaultSingleRowTopAppBarOverride|null[0]
     final fun (androidx.compose.material3/SingleRowTopAppBarOverrideScope).SingleRowTopAppBar() // androidx.compose.material3/DefaultSingleRowTopAppBarOverride.SingleRowTopAppBar|SingleRowTopAppBar@androidx.compose.material3.SingleRowTopAppBarOverrideScope(){}[0]
 }
@@ -3472,6 +3495,8 @@ final val androidx.compose.material3/LocalNavigationRailOverride // androidx.com
     final fun <get-LocalNavigationRailOverride>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/NavigationRailOverride> // androidx.compose.material3/LocalNavigationRailOverride.<get-LocalNavigationRailOverride>|<get-LocalNavigationRailOverride>(){}[0]
 final val androidx.compose.material3/LocalRippleConfiguration // androidx.compose.material3/LocalRippleConfiguration|{}LocalRippleConfiguration[0]
     final fun <get-LocalRippleConfiguration>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/RippleConfiguration?> // androidx.compose.material3/LocalRippleConfiguration.<get-LocalRippleConfiguration>|<get-LocalRippleConfiguration>(){}[0]
+final val androidx.compose.material3/LocalShortNavigationBarOverride // androidx.compose.material3/LocalShortNavigationBarOverride|{}LocalShortNavigationBarOverride[0]
+    final fun <get-LocalShortNavigationBarOverride>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/ShortNavigationBarOverride> // androidx.compose.material3/LocalShortNavigationBarOverride.<get-LocalShortNavigationBarOverride>|<get-LocalShortNavigationBarOverride>(){}[0]
 final val androidx.compose.material3/LocalSingleRowTopAppBarOverride // androidx.compose.material3/LocalSingleRowTopAppBarOverride|{}LocalSingleRowTopAppBarOverride[0]
     final fun <get-LocalSingleRowTopAppBarOverride>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/SingleRowTopAppBarOverride> // androidx.compose.material3/LocalSingleRowTopAppBarOverride.<get-LocalSingleRowTopAppBarOverride>|<get-LocalSingleRowTopAppBarOverride>(){}[0]
 final val androidx.compose.material3/LocalTextStyle // androidx.compose.material3/LocalTextStyle|{}LocalTextStyle[0]

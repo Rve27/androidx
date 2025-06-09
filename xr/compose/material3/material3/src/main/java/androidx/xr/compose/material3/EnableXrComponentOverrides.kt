@@ -22,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi
 import androidx.compose.material3.LocalBasicAlertDialogOverride
 import androidx.compose.material3.LocalNavigationBarOverride
 import androidx.compose.material3.LocalNavigationRailOverride
+import androidx.compose.material3.LocalShortNavigationBarOverride
 import androidx.compose.material3.LocalSingleRowTopAppBarOverride
 import androidx.compose.material3.LocalTwoRowsTopAppBarOverride
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi
@@ -81,6 +82,12 @@ public fun EnableXrComponentOverrides(
                 ) {
                     add(LocalNavigationBarOverride provides XrNavigationBarOverride)
                 }
+                if (
+                    shouldOverrideNavigationSuiteScaffold ||
+                        context.shouldOverrideComponent(XrComponentOverride.ShortNavigationBar)
+                ) {
+                    add(LocalShortNavigationBarOverride provides XrShortNavigationBarOverride)
+                }
                 if (context.shouldOverrideComponent(XrComponentOverride.ThreePaneScaffold)) {
                     add(LocalThreePaneScaffoldOverride provides XrThreePaneScaffoldOverride)
                     add(LocalAnimatedPaneOverride provides XrAnimatedPaneOverride)
@@ -136,6 +143,11 @@ public value class XrComponentOverride private constructor(private val name: Str
         /** Material3 NavigationBar. */
         @ExperimentalMaterial3XrApi
         public val NavigationBar: XrComponentOverride = XrComponentOverride("NavigationBar")
+
+        /** Material3 Expressive ShortNavigationBar. */
+        @ExperimentalMaterial3XrApi
+        public val ShortNavigationBar: XrComponentOverride =
+            XrComponentOverride("ShortNavigationBar")
 
         /** Material3 Adaptive NavigationSuiteScaffold. */
         @ExperimentalMaterial3XrApi
