@@ -33,11 +33,11 @@ import androidx.compose.ui.unit.dp
  *
  * @property radius The blur radius of the shadow
  * @property spread Spread parameter that adds to the size of the shadow
- * @property offset The internal offset of the shadow within the geometry provided
+ * @property offset The internal offset of the shadow within the geometry provided.
  * @property blendMode Blending algorithm used by the shadow
  */
 @Immutable
-class ShadowParams
+class Shadow
 private constructor(
     val radius: Dp,
     val spread: Dp,
@@ -134,7 +134,7 @@ private constructor(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is ShadowParams) return false
+        if (other !is Shadow) return false
 
         if (radius != other.radius) return false
         if (spread != other.spread) return false
@@ -164,5 +164,5 @@ private constructor(
     }
 
     internal fun copyWithoutOffset() =
-        ShadowParams(radius, spread, DpOffset.Zero, color, brush, alpha, blendMode)
+        Shadow(radius, spread, DpOffset.Zero, color, brush, alpha, blendMode)
 }
