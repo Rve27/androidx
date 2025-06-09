@@ -1083,14 +1083,12 @@ package androidx.xr.runtime.internal {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface PanelEntity extends androidx.xr.runtime.internal.Entity {
     method public float getCornerRadius();
     method public androidx.xr.runtime.internal.PerceivedResolutionResult getPerceivedResolution();
-    method public androidx.xr.runtime.math.Vector3 getPixelDensity();
     method public androidx.xr.runtime.internal.Dimensions getSize();
     method public androidx.xr.runtime.internal.PixelDimensions getSizeInPixels();
     method public void setCornerRadius(float);
     method public void setSize(androidx.xr.runtime.internal.Dimensions);
     method public void setSizeInPixels(androidx.xr.runtime.internal.PixelDimensions);
     property public abstract float cornerRadius;
-    property public abstract androidx.xr.runtime.math.Vector3 pixelDensity;
     property public abstract androidx.xr.runtime.internal.Dimensions size;
     property public abstract androidx.xr.runtime.internal.PixelDimensions sizeInPixels;
   }
