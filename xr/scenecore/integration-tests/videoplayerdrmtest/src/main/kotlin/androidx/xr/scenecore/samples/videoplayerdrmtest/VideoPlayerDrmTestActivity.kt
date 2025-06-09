@@ -552,10 +552,10 @@ class VideoPlayerDrmTestActivity : ComponentActivity() {
                 Button(onClick = { togglePassthrough(session) }) {
                     Text(text = "Toggle Passthrough", fontSize = 30.sp)
                 }
-                Button(onClick = { session.scene.spatialEnvironment.requestFullSpaceMode() }) {
+                Button(onClick = { session.scene.requestFullSpaceMode() }) {
                     Text(text = "Request FSM", fontSize = 30.sp)
                 }
-                Button(onClick = { session.scene.spatialEnvironment.requestHomeSpaceMode() }) {
+                Button(onClick = { session.scene.requestHomeSpaceMode() }) {
                     Text(text = "Request HSM", fontSize = 30.sp)
                 }
                 Button(onClick = { ActivityCompat.recreate(activity) }) {

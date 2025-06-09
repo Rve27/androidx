@@ -1081,7 +1081,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
                 }
                 Button(
                     onClick = {
-                        session.scene.spatialEnvironment.requestFullSpaceMode()
+                        session.scene.requestFullSpaceMode()
                         // Set up the MoveableComponent on the first jump into FSM so the user can
                         // move the Main Panel out of the way.
                         if (movableComponentMP.value == null) {
@@ -1097,7 +1097,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
                 ) {
                     Text(text = "Request FSM", fontSize = 18.sp)
                 }
-                Button(onClick = { session.scene.spatialEnvironment.requestHomeSpaceMode() }) {
+                Button(onClick = { session.scene.requestHomeSpaceMode() }) {
                     Text(text = "Request HSM", fontSize = 18.sp)
                 }
                 Button(onClick = { ActivityCompat.recreate(activity) }) {

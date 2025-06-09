@@ -384,4 +384,16 @@ class SceneTest {
         verify(mockPlatformAdapter).spatialCapabilities
         assertThat(actualCapabilities).isEqualTo(expectedCapabilities)
     }
+
+    @Test
+    fun requestFullSpaceMode_callsThrough() {
+        session.scene.requestFullSpaceMode()
+        verify(mockPlatformAdapter).requestFullSpaceMode()
+    }
+
+    @Test
+    fun requestHomeSpaceMode_callsThrough() {
+        session.scene.requestHomeSpaceMode()
+        verify(mockPlatformAdapter).requestHomeSpaceMode()
+    }
 }
