@@ -1228,28 +1228,30 @@ sealed interface androidx.compose.ui.layout/ApproachIntrinsicMeasureScope : andr
 
 sealed interface androidx.compose.ui.layout/ApproachMeasureScope : androidx.compose.ui.layout/ApproachIntrinsicMeasureScope, androidx.compose.ui.layout/MeasureScope // androidx.compose.ui.layout/ApproachMeasureScope|null[0]
 
-sealed interface androidx.compose.ui.layout/WindowInsetsAnimationProperties { // androidx.compose.ui.layout/WindowInsetsAnimationProperties|null[0]
-    abstract val durationMillis // androidx.compose.ui.layout/WindowInsetsAnimationProperties.durationMillis|{}durationMillis[0]
-        abstract fun <get-durationMillis>(): kotlin/Long // androidx.compose.ui.layout/WindowInsetsAnimationProperties.durationMillis.<get-durationMillis>|<get-durationMillis>(){}[0]
-    abstract val fraction // androidx.compose.ui.layout/WindowInsetsAnimationProperties.fraction|{}fraction[0]
-        abstract fun <get-fraction>(): kotlin/Float // androidx.compose.ui.layout/WindowInsetsAnimationProperties.fraction.<get-fraction>|<get-fraction>(){}[0]
-    abstract val isAnimating // androidx.compose.ui.layout/WindowInsetsAnimationProperties.isAnimating|{}isAnimating[0]
-        abstract fun <get-isAnimating>(): kotlin/Boolean // androidx.compose.ui.layout/WindowInsetsAnimationProperties.isAnimating.<get-isAnimating>|<get-isAnimating>(){}[0]
-    abstract val isVisible // androidx.compose.ui.layout/WindowInsetsAnimationProperties.isVisible|{}isVisible[0]
-        abstract fun <get-isVisible>(): kotlin/Boolean // androidx.compose.ui.layout/WindowInsetsAnimationProperties.isVisible.<get-isVisible>|<get-isVisible>(){}[0]
-    abstract val source // androidx.compose.ui.layout/WindowInsetsAnimationProperties.source|{}source[0]
-        abstract fun <get-source>(): androidx.compose.ui.layout/RectRulers // androidx.compose.ui.layout/WindowInsetsAnimationProperties.source.<get-source>|<get-source>(){}[0]
-    abstract val target // androidx.compose.ui.layout/WindowInsetsAnimationProperties.target|{}target[0]
-        abstract fun <get-target>(): androidx.compose.ui.layout/RectRulers // androidx.compose.ui.layout/WindowInsetsAnimationProperties.target.<get-target>|<get-target>(){}[0]
+sealed interface androidx.compose.ui.layout/WindowInsetsAnimation { // androidx.compose.ui.layout/WindowInsetsAnimation|null[0]
+    abstract val alpha // androidx.compose.ui.layout/WindowInsetsAnimation.alpha|{}alpha[0]
+        abstract fun <get-alpha>(): kotlin/Float // androidx.compose.ui.layout/WindowInsetsAnimation.alpha.<get-alpha>|<get-alpha>(){}[0]
+    abstract val durationMillis // androidx.compose.ui.layout/WindowInsetsAnimation.durationMillis|{}durationMillis[0]
+        abstract fun <get-durationMillis>(): kotlin/Long // androidx.compose.ui.layout/WindowInsetsAnimation.durationMillis.<get-durationMillis>|<get-durationMillis>(){}[0]
+    abstract val fraction // androidx.compose.ui.layout/WindowInsetsAnimation.fraction|{}fraction[0]
+        abstract fun <get-fraction>(): kotlin/Float // androidx.compose.ui.layout/WindowInsetsAnimation.fraction.<get-fraction>|<get-fraction>(){}[0]
+    abstract val isAnimating // androidx.compose.ui.layout/WindowInsetsAnimation.isAnimating|{}isAnimating[0]
+        abstract fun <get-isAnimating>(): kotlin/Boolean // androidx.compose.ui.layout/WindowInsetsAnimation.isAnimating.<get-isAnimating>|<get-isAnimating>(){}[0]
+    abstract val isVisible // androidx.compose.ui.layout/WindowInsetsAnimation.isVisible|{}isVisible[0]
+        abstract fun <get-isVisible>(): kotlin/Boolean // androidx.compose.ui.layout/WindowInsetsAnimation.isVisible.<get-isVisible>|<get-isVisible>(){}[0]
+    abstract val source // androidx.compose.ui.layout/WindowInsetsAnimation.source|{}source[0]
+        abstract fun <get-source>(): androidx.compose.ui.layout/RectRulers // androidx.compose.ui.layout/WindowInsetsAnimation.source.<get-source>|<get-source>(){}[0]
+    abstract val target // androidx.compose.ui.layout/WindowInsetsAnimation.target|{}target[0]
+        abstract fun <get-target>(): androidx.compose.ui.layout/RectRulers // androidx.compose.ui.layout/WindowInsetsAnimation.target.<get-target>|<get-target>(){}[0]
 }
 
 sealed interface androidx.compose.ui.layout/WindowInsetsRulers { // androidx.compose.ui.layout/WindowInsetsRulers|null[0]
     abstract val current // androidx.compose.ui.layout/WindowInsetsRulers.current|{}current[0]
         abstract fun <get-current>(): androidx.compose.ui.layout/RectRulers // androidx.compose.ui.layout/WindowInsetsRulers.current.<get-current>|<get-current>(){}[0]
-    abstract val rulersIgnoringVisibility // androidx.compose.ui.layout/WindowInsetsRulers.rulersIgnoringVisibility|{}rulersIgnoringVisibility[0]
-        abstract fun <get-rulersIgnoringVisibility>(): androidx.compose.ui.layout/RectRulers // androidx.compose.ui.layout/WindowInsetsRulers.rulersIgnoringVisibility.<get-rulersIgnoringVisibility>|<get-rulersIgnoringVisibility>(){}[0]
+    abstract val maximum // androidx.compose.ui.layout/WindowInsetsRulers.maximum|{}maximum[0]
+        abstract fun <get-maximum>(): androidx.compose.ui.layout/RectRulers // androidx.compose.ui.layout/WindowInsetsRulers.maximum.<get-maximum>|<get-maximum>(){}[0]
 
-    abstract fun getAnimationProperties(androidx.compose.ui.layout/Placeable.PlacementScope): androidx.compose.ui.layout/WindowInsetsAnimationProperties // androidx.compose.ui.layout/WindowInsetsRulers.getAnimationProperties|getAnimationProperties(androidx.compose.ui.layout.Placeable.PlacementScope){}[0]
+    abstract fun getAnimation(androidx.compose.ui.layout/Placeable.PlacementScope): androidx.compose.ui.layout/WindowInsetsAnimation // androidx.compose.ui.layout/WindowInsetsRulers.getAnimation|getAnimation(androidx.compose.ui.layout.Placeable.PlacementScope){}[0]
 
     final object Companion { // androidx.compose.ui.layout/WindowInsetsRulers.Companion|null[0]
         final val CaptionBar // androidx.compose.ui.layout/WindowInsetsRulers.Companion.CaptionBar|{}CaptionBar[0]
@@ -1279,7 +1281,6 @@ sealed interface androidx.compose.ui.layout/WindowInsetsRulers { // androidx.com
         final val Waterfall // androidx.compose.ui.layout/WindowInsetsRulers.Companion.Waterfall|{}Waterfall[0]
             final fun <get-Waterfall>(): androidx.compose.ui.layout/WindowInsetsRulers // androidx.compose.ui.layout/WindowInsetsRulers.Companion.Waterfall.<get-Waterfall>|<get-Waterfall>(){}[0]
 
-        final fun getDisplayCutoutBounds(androidx.compose.ui.layout/Placeable.PlacementScope): kotlin.collections/List<androidx.compose.ui.layout/RectRulers> // androidx.compose.ui.layout/WindowInsetsRulers.Companion.getDisplayCutoutBounds|getDisplayCutoutBounds(androidx.compose.ui.layout.Placeable.PlacementScope){}[0]
         final fun innermostOf(kotlin/Array<out androidx.compose.ui.layout/WindowInsetsRulers>...): androidx.compose.ui.layout/WindowInsetsRulers // androidx.compose.ui.layout/WindowInsetsRulers.Companion.innermostOf|innermostOf(kotlin.Array<out|androidx.compose.ui.layout.WindowInsetsRulers>...){}[0]
     }
 }
@@ -3728,6 +3729,7 @@ final fun (androidx.compose.ui.layout/LayoutCoordinates).androidx.compose.ui.lay
 final fun (androidx.compose.ui.layout/LayoutCoordinates).androidx.compose.ui.layout/positionInRoot(): androidx.compose.ui.geometry/Offset // androidx.compose.ui.layout/positionInRoot|positionInRoot@androidx.compose.ui.layout.LayoutCoordinates(){}[0]
 final fun (androidx.compose.ui.layout/LayoutCoordinates).androidx.compose.ui.layout/positionInWindow(): androidx.compose.ui.geometry/Offset // androidx.compose.ui.layout/positionInWindow|positionInWindow@androidx.compose.ui.layout.LayoutCoordinates(){}[0]
 final fun (androidx.compose.ui.layout/LayoutCoordinates).androidx.compose.ui.layout/positionOnScreen(): androidx.compose.ui.geometry/Offset // androidx.compose.ui.layout/positionOnScreen|positionOnScreen@androidx.compose.ui.layout.LayoutCoordinates(){}[0]
+final fun (androidx.compose.ui.layout/Placeable.PlacementScope).androidx.compose.ui.layout/getDisplayCutoutBounds(): kotlin.collections/List<androidx.compose.ui.layout/RectRulers> // androidx.compose.ui.layout/getDisplayCutoutBounds|getDisplayCutoutBounds@androidx.compose.ui.layout.Placeable.PlacementScope(){}[0]
 final fun (androidx.compose.ui.layout/RectRulers.Companion).androidx.compose.ui.layout/innermostOf(kotlin/Array<out androidx.compose.ui.layout/RectRulers>...): androidx.compose.ui.layout/RectRulers // androidx.compose.ui.layout/innermostOf|innermostOf@androidx.compose.ui.layout.RectRulers.Companion(kotlin.Array<out|androidx.compose.ui.layout.RectRulers>...){}[0]
 final fun (androidx.compose.ui.layout/RectRulers.Companion).androidx.compose.ui.layout/outermostOf(kotlin/Array<out androidx.compose.ui.layout/RectRulers>...): androidx.compose.ui.layout/RectRulers // androidx.compose.ui.layout/outermostOf|outermostOf@androidx.compose.ui.layout.RectRulers.Companion(kotlin.Array<out|androidx.compose.ui.layout.RectRulers>...){}[0]
 final fun (androidx.compose.ui.layout/ScaleFactor).androidx.compose.ui.layout/times(androidx.compose.ui.geometry/Size): androidx.compose.ui.geometry/Size // androidx.compose.ui.layout/times|times@androidx.compose.ui.layout.ScaleFactor(androidx.compose.ui.geometry.Size){}[0]

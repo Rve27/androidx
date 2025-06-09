@@ -3637,15 +3637,15 @@ package androidx.compose.ui.layout {
     method public androidx.compose.ui.layout.VerticalRuler minOf(androidx.compose.ui.layout.VerticalRuler... rulers);
   }
 
-  public sealed interface WindowInsetsAnimationProperties {
-    method @FloatRange(from=0.0, to=1.0) public default float getAlpha();
+  public sealed interface WindowInsetsAnimation {
+    method @FloatRange(from=0.0, to=1.0) public float getAlpha();
     method @IntRange(from=0L) public long getDurationMillis();
     method public float getFraction();
     method public androidx.compose.ui.layout.RectRulers getSource();
     method public androidx.compose.ui.layout.RectRulers getTarget();
     method public boolean isAnimating();
     method public boolean isVisible();
-    property @FloatRange(from=0.0, to=1.0) public default float alpha;
+    property @FloatRange(from=0.0, to=1.0) public abstract float alpha;
     property @IntRange(from=0L) public abstract long durationMillis;
     property public abstract float fraction;
     property public abstract boolean isAnimating;
@@ -3655,18 +3655,17 @@ package androidx.compose.ui.layout {
   }
 
   public sealed interface WindowInsetsRulers {
-    method public androidx.compose.ui.layout.WindowInsetsAnimationProperties getAnimationProperties(androidx.compose.ui.layout.Placeable.PlacementScope scope);
+    method public androidx.compose.ui.layout.WindowInsetsAnimation getAnimation(androidx.compose.ui.layout.Placeable.PlacementScope scope);
     method public androidx.compose.ui.layout.RectRulers getCurrent();
-    method public androidx.compose.ui.layout.RectRulers getRulersIgnoringVisibility();
+    method public androidx.compose.ui.layout.RectRulers getMaximum();
     property public abstract androidx.compose.ui.layout.RectRulers current;
-    property public abstract androidx.compose.ui.layout.RectRulers rulersIgnoringVisibility;
+    property public abstract androidx.compose.ui.layout.RectRulers maximum;
     field public static final androidx.compose.ui.layout.WindowInsetsRulers.Companion Companion;
   }
 
   public static final class WindowInsetsRulers.Companion {
     method public androidx.compose.ui.layout.WindowInsetsRulers getCaptionBar();
     method public androidx.compose.ui.layout.WindowInsetsRulers getDisplayCutout();
-    method public java.util.List<androidx.compose.ui.layout.RectRulers> getDisplayCutoutBounds(androidx.compose.ui.layout.Placeable.PlacementScope scope);
     method public androidx.compose.ui.layout.WindowInsetsRulers getIme();
     method public androidx.compose.ui.layout.WindowInsetsRulers getMandatorySystemGestures();
     method public androidx.compose.ui.layout.WindowInsetsRulers getNavigationBars();
@@ -3692,6 +3691,10 @@ package androidx.compose.ui.layout {
     property public androidx.compose.ui.layout.WindowInsetsRulers SystemGestures;
     property public androidx.compose.ui.layout.WindowInsetsRulers TappableElement;
     property public androidx.compose.ui.layout.WindowInsetsRulers Waterfall;
+  }
+
+  public final class WindowInsetsRulersKt {
+    method public static java.util.List<androidx.compose.ui.layout.RectRulers> getDisplayCutoutBounds(androidx.compose.ui.layout.Placeable.PlacementScope);
   }
 
 }
