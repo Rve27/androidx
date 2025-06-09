@@ -35,7 +35,7 @@ index df41397197c..b3e51525fbf 100644
 +    kotlinTarget = KotlinTarget.KOTLIN_2_2
  }
 diff --git a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt
-index 4814e86b29f..1380774a52b 100644
+index 64ca70606b5..c948188bbf1 100644
 --- a/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt
 +++ b/binarycompatibilityvalidator/binarycompatibilityvalidator/src/main/java/androidx/binarycompatibilityvalidator/BinaryCompatibilityChecker.kt
 @@ -36,6 +36,7 @@ import org.jetbrains.kotlin.library.abi.AbiTypeNullability
@@ -46,7 +46,7 @@ index 4814e86b29f..1380774a52b 100644
  import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
  import org.jetbrains.kotlin.library.abi.LibraryAbi
  
-@@ -756,6 +757,8 @@ private fun File.asBaselineErrors(): Set<String> =
+@@ -759,6 +760,8 @@ private fun File.asBaselineErrors(): Set<String> =
  private class DecoratedAbiValueParameter(val index: Int, param: AbiValueParameter) :
      AbiValueParameter by param
  
@@ -243,10 +243,10 @@ index 3f6716c183a..87db4f06894 100644
  
  private fun Project.configureKotlinJsTests() {
 diff --git a/buildSrc/private/src/main/kotlin/androidx/build/ListTaskOutputsTask.kt b/buildSrc/private/src/main/kotlin/androidx/build/ListTaskOutputsTask.kt
-index 1c18f43889b..ae6b89a8a20 100644
+index 625b034dc52..a60edaad68f 100644
 --- a/buildSrc/private/src/main/kotlin/androidx/build/ListTaskOutputsTask.kt
 +++ b/buildSrc/private/src/main/kotlin/androidx/build/ListTaskOutputsTask.kt
-@@ -136,6 +136,15 @@ val taskNamesKnownToDuplicateOutputs =
+@@ -139,6 +139,15 @@ val taskNamesKnownToDuplicateOutputs =
          "kotlinStorePackageLock",
          "kotlinStoreYarnLock",
  
@@ -262,7 +262,7 @@ index 1c18f43889b..ae6b89a8a20 100644
          // The following tasks have the same output configFile file:
          // projectBuildDir/js/packages/projectName-wasm-js/webpack.config.js
          // Remove when https://youtrack.jetbrains.com/issue/KT-70029 / b/361319689 is resolved
-@@ -147,7 +156,15 @@ val taskNamesKnownToDuplicateOutputs =
+@@ -150,7 +159,15 @@ val taskNamesKnownToDuplicateOutputs =
          "jsTestTestDevelopmentExecutableCompileSync",
  
          // TODO file a bug
@@ -279,10 +279,10 @@ index 1c18f43889b..ae6b89a8a20 100644
  
  fun shouldValidateTaskOutput(task: Task): Boolean {
 diff --git a/buildSrc/private/src/main/kotlin/androidx/build/clang/KonanBuildService.kt b/buildSrc/private/src/main/kotlin/androidx/build/clang/KonanBuildService.kt
-index ca622cb9784..05010e19cd8 100644
+index 2fee9360105..3b062eef551 100644
 --- a/buildSrc/private/src/main/kotlin/androidx/build/clang/KonanBuildService.kt
 +++ b/buildSrc/private/src/main/kotlin/androidx/build/clang/KonanBuildService.kt
-@@ -151,7 +151,7 @@ abstract class KonanBuildService @Inject constructor(private val execOperations:
+@@ -152,7 +152,7 @@ abstract class KonanBuildService @Inject constructor(private val execOperations:
                          debug = false,
                          kind = parameters.linkerOutputKind.get(),
                          outputDsymBundle = "unused",
@@ -369,7 +369,7 @@ index 4a1bc0f1812..25646accd8d 100644
  package androidx.compose.runtime.internal
  
 diff --git a/gradle/libs.versions.toml b/gradle/libs.versions.toml
-index 4da80d4cc2d..c0c33defb6a 100644
+index 715f5f44888..f02fd029366 100644
 --- a/gradle/libs.versions.toml
 +++ b/gradle/libs.versions.toml
 @@ -52,6 +52,7 @@ kotlin19 = "1.9.24"
@@ -494,3 +494,22 @@ index 4dfd3279019..d3a3e783d1b 100644
  
  /** Runs KAPT to run Java annotation processors. */
  internal class KaptCompilationStep(
+diff --git a/tracing/tracing/build.gradle b/tracing/tracing/build.gradle
+index 16e9a18d6a6..34205a72f01 100644
+--- a/tracing/tracing/build.gradle
++++ b/tracing/tracing/build.gradle
+@@ -21,6 +21,8 @@
+  * Please use that script when creating a new project, rather than copying an existing project and
+  * modifying its settings.
+  */
++
++import androidx.build.KotlinTarget
+ import androidx.build.SoftwareType
+ import androidx.build.PlatformIdentifier
+ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+@@ -105,4 +107,5 @@ androidx {
+     deviceTests {
+         enableAlsoRunningOnPhysicalDevices = true
+     }
++    kotlinTarget = KotlinTarget.KOTLIN_2_2
+ }
