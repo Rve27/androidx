@@ -145,10 +145,10 @@ internal class SessionSpatialConfiguration(private val session: Session) : Spati
         get() = boundsState.toDpVolumeSize()
 
     override fun requestHomeSpaceMode() {
-        session.scene.requestHomeSpaceMode()
+        session.scene.spatialEnvironment.requestHomeSpaceMode()
     }
 
     override fun requestFullSpaceMode() {
-        session.scene.requestFullSpaceMode()
+        session.scene.spatialEnvironment.requestFullSpaceMode()
     }
 }

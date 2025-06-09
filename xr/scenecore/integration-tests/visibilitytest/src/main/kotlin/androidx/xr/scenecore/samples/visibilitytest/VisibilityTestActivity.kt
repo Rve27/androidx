@@ -87,10 +87,10 @@ class VisibilityTestActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.toggle_fsm_hsm).setOnClickListener { _ ->
             if (isFsm) {
-                session.scene.requestHomeSpaceMode()
+                session.scene.spatialEnvironment.requestHomeSpaceMode()
                 isFsm = false
             } else {
-                session.scene.requestFullSpaceMode()
+                session.scene.spatialEnvironment.requestFullSpaceMode()
                 isFsm = true
             }
         }

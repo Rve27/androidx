@@ -67,13 +67,13 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
 
         val buttonRequestFSM: Button = findViewById(R.id.buttonFsm)
         buttonRequestFSM.setOnClickListener {
-            session.scene.requestFullSpaceMode()
+            session.scene.spatialEnvironment.requestFullSpaceMode()
             Log.i(TAG, "Requesting Full Space Mode.")
         }
 
         val buttonRequestHSM: Button = findViewById(R.id.buttonHsm)
         buttonRequestHSM.setOnClickListener {
-            session.scene.requestHomeSpaceMode()
+            session.scene.spatialEnvironment.requestHomeSpaceMode()
             Log.i(TAG, "Requesting Home Space Mode.")
         }
 

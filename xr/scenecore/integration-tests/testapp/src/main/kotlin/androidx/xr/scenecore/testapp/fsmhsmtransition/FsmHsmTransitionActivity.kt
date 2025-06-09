@@ -104,7 +104,7 @@ class FsmHsmTransitionActivity : AppCompatActivity() {
         // Request FSM
         findViewById<Button>(R.id.button_request_fsm).also {
             it.setOnClickListener {
-                session!!.scene.requestFullSpaceMode()
+                session!!.scene.spatialEnvironment.requestFullSpaceMode()
                 inFsm = true
                 componentVisibility()
             }
@@ -113,7 +113,7 @@ class FsmHsmTransitionActivity : AppCompatActivity() {
         // Request HSM
         findViewById<Button>(R.id.button_request_hsm).also {
             it.setOnClickListener {
-                session!!.scene.requestHomeSpaceMode()
+                session!!.scene.spatialEnvironment.requestHomeSpaceMode()
                 inFsm = false
                 componentVisibility()
             }

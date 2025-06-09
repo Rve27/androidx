@@ -187,7 +187,7 @@ class EnvironmentTestActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         lastApiCall = "requestFullSpaceMode"
-                        session.scene.requestFullSpaceMode()
+                        session.scene.spatialEnvironment.requestFullSpaceMode()
                     }
                 ) {
                     Text(text = "Request FSM", fontSize = 30.sp)
@@ -195,7 +195,7 @@ class EnvironmentTestActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         lastApiCall = "requestHomeSpaceMode"
-                        session.scene.requestHomeSpaceMode()
+                        session.scene.spatialEnvironment.requestHomeSpaceMode()
                     }
                 ) {
                     Text(text = "Request HSM", fontSize = 30.sp)

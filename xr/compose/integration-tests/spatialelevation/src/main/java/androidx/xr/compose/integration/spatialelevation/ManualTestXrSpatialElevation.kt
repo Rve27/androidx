@@ -196,11 +196,15 @@ private fun App() {
                     }
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
-                        Button(onClick = { session.scene.requestHomeSpaceMode() }) {
+                        Button(
+                            onClick = { session.scene.spatialEnvironment.requestHomeSpaceMode() }
+                        ) {
                             Text("Enter Home Space Mode")
                         }
                     } else {
-                        Button(onClick = { session.scene.requestFullSpaceMode() }) {
+                        Button(
+                            onClick = { session.scene.spatialEnvironment.requestFullSpaceMode() }
+                        ) {
                             Text("Enter Full Space Mode")
                         }
                     }

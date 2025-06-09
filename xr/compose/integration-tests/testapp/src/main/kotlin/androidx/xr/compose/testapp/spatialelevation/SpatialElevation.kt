@@ -223,11 +223,11 @@ class SpatialElevation : ComponentActivity() {
                         Box(modifier = Modifier.align(Alignment.Center)) {
                             if (LocalSpatialCapabilities.current.isSpatialUiEnabled) {
                                 CUJButton("Enter Home Space Mode") {
-                                    session.scene.requestHomeSpaceMode()
+                                    session.scene.spatialEnvironment.requestHomeSpaceMode()
                                 }
                             } else {
                                 CUJButton("Enter Full Space Mode") {
-                                    session.scene.requestFullSpaceMode()
+                                    session.scene.spatialEnvironment.requestFullSpaceMode()
                                 }
                             }
                         }

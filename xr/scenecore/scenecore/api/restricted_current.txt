@@ -632,8 +632,6 @@ package androidx.xr.scenecore {
     method public void initialize(androidx.xr.runtime.internal.LifecycleManager lifecycleManager, androidx.xr.runtime.internal.JxrPlatformAdapter platformAdapter);
     method public void removePerceivedResolutionChangedListener(java.util.function.Consumer<androidx.xr.runtime.math.IntSize2d> listener);
     method public void removeSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
-    method public void requestFullSpaceMode();
-    method public void requestHomeSpaceMode();
     method public boolean setCenterOfAttention(androidx.xr.scenecore.Entity? entity);
     method public android.os.Bundle setFullSpaceMode(android.os.Bundle bundle);
     method public android.os.Bundle setFullSpaceModeWithEnvironmentInherited(android.os.Bundle bundle);
@@ -755,6 +753,8 @@ package androidx.xr.scenecore {
     method public boolean isSpatialEnvironmentPreferenceActive();
     method public void removeOnPassthroughOpacityChangedListener(java.util.function.Consumer<java.lang.Float> listener);
     method public void removeOnSpatialEnvironmentChangedListener(java.util.function.Consumer<java.lang.Boolean> listener);
+    method public void requestFullSpaceMode();
+    method public void requestHomeSpaceMode();
     method @Deprecated public void setGeometry(androidx.xr.scenecore.GltfModel? gltfModel);
     method @Deprecated public void setPassthrough(androidx.xr.scenecore.SpatialEnvironment.PassthroughMode passthroughMode);
     method @Deprecated public void setPassthroughOpacity(float passthroughOpacity);

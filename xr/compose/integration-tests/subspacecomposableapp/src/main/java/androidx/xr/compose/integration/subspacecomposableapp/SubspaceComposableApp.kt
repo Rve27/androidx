@@ -147,6 +147,7 @@ class SubspaceComposableApp : ComponentActivity() {
                     (Session.create(this@SubspaceComposableApp) as SessionCreateSuccess)
                         .session
                         .scene
+                        .spatialEnvironment
                         .requestHomeSpaceMode()
                     session.scene.mainPanelEntity.setEnabled(true)
                 }
@@ -159,6 +160,7 @@ class SubspaceComposableApp : ComponentActivity() {
                     (Session.create(this@SubspaceComposableApp) as SessionCreateSuccess)
                         .session
                         .scene
+                        .spatialEnvironment
                         .requestFullSpaceMode()
                     session.scene.mainPanelEntity.setEnabled(false)
                 }
@@ -170,6 +172,7 @@ class SubspaceComposableApp : ComponentActivity() {
                     (Session.create(this@SubspaceComposableApp) as SessionCreateSuccess)
                         .session
                         .scene
+                        .spatialEnvironment
                         .requestFullSpaceMode()
                     session.scene.mainPanelEntity.setEnabled(true)
                 }

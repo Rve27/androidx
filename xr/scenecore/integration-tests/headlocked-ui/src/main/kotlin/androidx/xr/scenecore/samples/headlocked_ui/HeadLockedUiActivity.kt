@@ -274,10 +274,10 @@ class HeadLockedUiActivity : AppCompatActivity() {
                 Text(text = text, modifier = Modifier.padding(start = 8.dp))
             }
 
-            Button(onClick = { session.scene.requestFullSpaceMode() }) {
+            Button(onClick = { session.scene.spatialEnvironment.requestFullSpaceMode() }) {
                 Text(text = "Request FSM", fontSize = 30.sp)
             }
-            Button(onClick = { session.scene.requestHomeSpaceMode() }) {
+            Button(onClick = { session.scene.spatialEnvironment.requestHomeSpaceMode() }) {
                 Text(text = "Request HSM", fontSize = 30.sp)
             }
             Button(onClick = { mIsDebugPanelEnabled = !mIsDebugPanelEnabled }) {

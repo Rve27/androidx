@@ -188,7 +188,7 @@ class SplitEngineTestActivity : ComponentActivity() {
                 Button(onClick = { togglePassthrough(session) }) {
                     Text(text = "Toggle Passthrough", fontSize = 20.sp)
                 }
-                Button(onClick = { session.scene.requestFullSpaceMode() }) {
+                Button(onClick = { session.scene.spatialEnvironment.requestFullSpaceMode() }) {
                     // Set up the MoveableComponent on the first jump into FSM to allow the user to
                     // move the
                     // main panel around.
@@ -199,7 +199,7 @@ class SplitEngineTestActivity : ComponentActivity() {
                     }
                     Text(text = "Request FSM", fontSize = 20.sp)
                 }
-                Button(onClick = { session.scene.requestHomeSpaceMode() }) {
+                Button(onClick = { session.scene.spatialEnvironment.requestHomeSpaceMode() }) {
                     Text(text = "Request HSM", fontSize = 20.sp)
                 }
                 Button(onClick = { ActivityCompat.recreate(activity) }) {

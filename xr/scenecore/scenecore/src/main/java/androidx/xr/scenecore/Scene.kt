@@ -499,16 +499,4 @@ public class Scene : SessionConnector {
             },
         )
     }
-
-    /**
-     * If the primary Activity in a [Session] has focus, causes the Session to be placed in
-     * FullSpace Mode. Otherwise, this call does nothing.
-     */
-    public fun requestFullSpaceMode(): Unit = platformAdapter.requestFullSpaceMode()
-
-    /**
-     * If the primary Activity in a [Session] has focus, causes the Session to be placed in
-     * HomeSpace Mode. Otherwise, this call does nothing.
-     */
-    public fun requestHomeSpaceMode(): Unit = platformAdapter.requestHomeSpaceMode()
 }

@@ -239,13 +239,13 @@ class EnvironmentActivity : AppCompatActivity() {
     private fun toggleMode(): String {
         when (spatialMode) {
             SpatialMode.FSM -> {
-                session!!.scene.requestHomeSpaceMode()
+                session!!.scene.spatialEnvironment.requestHomeSpaceMode()
                 spatialMode = SpatialMode.HSM
                 addEvent(EventType.MODE_CHANGED_TO_HSM, "")
                 return getString(R.string.switch_to_fsm_button_text)
             }
             SpatialMode.HSM -> {
-                session!!.scene.requestFullSpaceMode()
+                session!!.scene.spatialEnvironment.requestFullSpaceMode()
                 spatialMode = SpatialMode.FSM
                 addEvent(EventType.MODE_CHANGED_TO_FSM, "")
                 return getString(R.string.switch_to_hsm_button_text)

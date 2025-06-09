@@ -305,10 +305,12 @@ class VideoPlayerActivity : ComponentActivity() {
                     val modifier = Modifier.weight(1F)
                     ApiButton("Toggle Passthrough", modifier) { togglePassthrough(session) }
                     ApiButton("Switch to FSM", modifier) {
-                        session.scene.requestFullSpaceMode()
+                        session.scene.spatialEnvironment.requestFullSpaceMode()
                         checkExternalStoragePermission()
                     }
-                    ApiButton("Switch to HSM", modifier) { session.scene.requestHomeSpaceMode() }
+                    ApiButton("Switch to HSM", modifier) {
+                        session.scene.spatialEnvironment.requestHomeSpaceMode()
+                    }
                 }
             }
         }

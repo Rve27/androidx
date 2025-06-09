@@ -342,11 +342,11 @@ private class TestSessionSpatialConfiguration(private val session: Session) : Sp
         }
 
     override fun requestHomeSpaceMode() {
-        session.scene.requestHomeSpaceMode()
+        session.scene.spatialEnvironment.requestHomeSpaceMode()
     }
 
     override fun requestFullSpaceMode() {
-        session.scene.requestFullSpaceMode()
+        session.scene.spatialEnvironment.requestFullSpaceMode()
     }
 }
 
