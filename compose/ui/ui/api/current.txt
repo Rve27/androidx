@@ -194,20 +194,17 @@ package androidx.compose.ui {
     method @BytecodeOnly public float getDefault-NSsRyOo();
     method public float getHigh();
     method @BytecodeOnly public float getHigh-NSsRyOo();
-    method public float getNoPreference();
-    method @BytecodeOnly public float getNoPreference-NSsRyOo();
     method public float getNormal();
     method @BytecodeOnly public float getNormal-NSsRyOo();
     property public float Default;
     property public float High;
-    property public float NoPreference;
     property public float Normal;
   }
 
   public final class FrameRateKt {
-    method public static androidx.compose.ui.Modifier requestedFrameRate(androidx.compose.ui.Modifier, @FloatRange(from=0.0, to=360.0) float frameRate);
-    method public static androidx.compose.ui.Modifier requestedFrameRate(androidx.compose.ui.Modifier, float frameRateCategory);
-    method @BytecodeOnly public static androidx.compose.ui.Modifier requestedFrameRate-kI47g10(androidx.compose.ui.Modifier, float);
+    method public static androidx.compose.ui.Modifier preferredFrameRate(androidx.compose.ui.Modifier, @FloatRange(from=0.0, to=360.0) float frameRate);
+    method public static androidx.compose.ui.Modifier preferredFrameRate(androidx.compose.ui.Modifier, float frameRateCategory);
+    method @BytecodeOnly public static androidx.compose.ui.Modifier preferredFrameRate-kI47g10(androidx.compose.ui.Modifier, float);
   }
 
   public final class KeepScreenOnKt {

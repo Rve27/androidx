@@ -135,7 +135,7 @@ object ComposeUiFlags {
 
     /**
      * With this flag on, the adaptive refresh rate (ARR) feature will be enabled. A preferred frame
-     * rate can be set on a Composable through frame rate modifier: [Modifier.requestedFrameRate]
+     * rate can be set on a Composable through frame rate modifier: [Modifier.preferredFrameRate]
      */
     @Suppress("MutableBareField") @JvmField var isAdaptiveRefreshRateEnabled: Boolean = true
 
