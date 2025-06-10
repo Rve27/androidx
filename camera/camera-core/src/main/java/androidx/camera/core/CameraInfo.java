@@ -355,7 +355,7 @@ public interface CameraInfo {
      * @param sessionConfig The {@link SessionConfig} to query supported frame rate ranges for.
      * @return The set of FPS ranges supported by the device's AE algorithm for the given session
      * config.
-     * @see SessionConfig.Builder#setFrameRate(Range)
+     * @see SessionConfig.Builder#setFrameRateRange(Range)
      */
     @ExperimentalSessionConfig
     default @NonNull Set<Range<Integer>> getSupportedFrameRateRanges(
