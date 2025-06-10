@@ -12,3 +12,5 @@ final object androidx.navigationevent.compose/LocalNavigationEventDispatcherOwne
 
     final fun provides(androidx.navigationevent/NavigationEventDispatcherOwner): androidx.compose.runtime/ProvidedValue<androidx.navigationevent/NavigationEventDispatcherOwner?> // androidx.navigationevent.compose/LocalNavigationEventDispatcherOwner.provides|provides(androidx.navigationevent.NavigationEventDispatcherOwner){}[0]
 }
+
+final fun androidx.navigationevent.compose/NavigationEventHandler(kotlin/Function0<kotlin/Boolean> = ..., kotlin.coroutines/SuspendFunction1<kotlinx.coroutines.flow/Flow<androidx.navigationevent/NavigationEvent>, kotlin/Unit>) // androidx.navigationevent.compose/NavigationEventHandler|NavigationEventHandler(kotlin.Function0<kotlin.Boolean>;kotlin.coroutines.SuspendFunction1<kotlinx.coroutines.flow.Flow<androidx.navigationevent.NavigationEvent>,kotlin.Unit>){}[0]
