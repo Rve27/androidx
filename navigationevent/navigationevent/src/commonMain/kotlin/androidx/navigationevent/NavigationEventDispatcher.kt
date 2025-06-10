@@ -23,15 +23,15 @@ import androidx.annotation.MainThread
  * in-app callbacks via composition.
  */
 public class NavigationEventDispatcher(
-    internal val fallbackOnBackPressed: (() -> Unit)? = null,
-    internal val onHasEnabledCallbacksChanged: ((Boolean) -> Unit)? = null,
+    private val fallbackOnBackPressed: (() -> Unit)? = null,
+    private val onHasEnabledCallbacksChanged: ((Boolean) -> Unit)? = null,
 ) {
-    internal val inProgressCallbacks: MutableList<NavigationEventCallback> = mutableListOf()
+    private val inProgressCallbacks: MutableList<NavigationEventCallback> = mutableListOf()
     /** Callbacks that should be processed with higher priority, before [normalCallbacks]. */
-    internal val overlayCallbacks = ArrayDeque<NavigationEventCallback>()
+    private val overlayCallbacks = ArrayDeque<NavigationEventCallback>()
 
     /** Standard or default callbacks for navigation events. */
-    internal val normalCallbacks = ArrayDeque<NavigationEventCallback>()
+    private val normalCallbacks = ArrayDeque<NavigationEventCallback>()
 
     private var hasEnabledCallbacks: Boolean = false
 
@@ -46,16 +46,12 @@ public class NavigationEventDispatcher(
      * navigation handling.
      */
     internal fun updateEnabledCallbacks() {
-        val hadEnabledCallbacks = this.hasEnabledCallbacks
         val hasEnabledCallbacks = (overlayCallbacks + normalCallbacks).any { it.isEnabled }
+        if (hasEnabledCallbacks != this.hasEnabledCallbacks) {
+            // Update `hasEnabledCallbacks` before notifying, since callbacks may access it directly
+            // and would otherwise see a stale value.
+            this.hasEnabledCallbacks = hasEnabledCallbacks
 
-        // Update `hasEnabledCallbacks` before notifying, since callbacks may access it directly
-        // and would otherwise see a stale value.
-        this.hasEnabledCallbacks = hasEnabledCallbacks
-
-        if (hasEnabledCallbacks != hadEnabledCallbacks) {
-            // onHasEnabledCallbacksChanged is for Android N (API 24+) specific notifications.
-            // It's null on older versions, and will not be called.
             onHasEnabledCallbacksChanged?.invoke(hasEnabledCallbacks)
             updateInputHandler.invoke()
         }
@@ -96,8 +92,9 @@ public class NavigationEventDispatcher(
             NavigationEventPriority.Default -> normalCallbacks.addFirst(callback)
         }
 
-        updateEnabledCallbacks()
         callback.dispatcher = this
+
+        updateEnabledCallbacks()
     }
 
     internal fun removeCallback(callback: NavigationEventCallback) {
