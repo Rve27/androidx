@@ -31,6 +31,7 @@ import android.util.Rational
 import android.util.Size
 import androidx.annotation.VisibleForTesting
 import androidx.camera.camera2.pipe.CameraMetadata
+import androidx.camera.camera2.pipe.CameraMetadata.Companion.supportsPreviewStabilization
 import androidx.camera.camera2.pipe.core.Log.debug
 import androidx.camera.camera2.pipe.core.Log.warn
 import androidx.camera.camera2.pipe.integration.adapter.SupportedSurfaceCombination.CheckingMethod.WITHOUT_FEATURE_COMBO
@@ -118,7 +119,7 @@ public class SupportedSurfaceCombination(
     private val isConcurrentCameraModeSupported: Boolean
     private val isStreamUseCaseSupported: Boolean
     private var isUltraHighResolutionSensorSupported = false
-    private var isPreviewStabilizationSupported = false
+    private var isPreviewStabilizationSupported = cameraMetadata.supportsPreviewStabilization
     private var isManualSensorSupported = false
     internal lateinit var surfaceSizeDefinition: SurfaceSizeDefinition
     private val surfaceSizeDefinitionFormats = mutableListOf<Int>()
@@ -394,6 +395,9 @@ public class SupportedSurfaceCombination(
                 newUseCaseConfigs,
                 useCasesPriorityOrder,
             )
+
+        debug { "resolvedDynamicRanges = $resolvedDynamicRanges" }
+
         val isUltraHdrOn = isUltraHdrOn(attachedSurfaces, filteredNewUseCaseConfigsSupportedSizeMap)
 
         // Calculates the target FPS range
@@ -405,6 +409,15 @@ public class SupportedSurfaceCombination(
             } else {
                 getTargetFpsRange(attachedSurfaces, newUseCaseConfigs, useCasesPriorityOrder)
             }
+
+        // Ensure preview stabilization is supported by the camera.
+        if (isPreviewStabilizationOn && !isPreviewStabilizationSupported) {
+            // TODO: b/422055796 - Handle this for non-feature-combo code flows, probably better to
+            //  silently fall back to non-preview-stabilization mode in such case.
+            require(!isFeatureComboInvocation) {
+                "Preview stabilization is not supported by the camera."
+            }
+        }
 
         val featureSettings =
             createFeatureSettings(
@@ -1774,19 +1787,6 @@ public class SupportedSurfaceCombination(
                 )
             isManualSensorSupported =
                 contains(CameraCharacteristics.REQUEST_AVAILABLE_CAPABILITIES_MANUAL_SENSOR)
-        }
-
-        // Preview Stabilization
-        val availablePreviewStabilizationModes: IntArray? =
-            cameraMetadata.get<IntArray>(
-                CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES
-            )
-
-        availablePreviewStabilizationModes?.apply {
-            isPreviewStabilizationSupported =
-                contains(
-                    CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_PREVIEW_STABILIZATION
-                )
         }
     }
 

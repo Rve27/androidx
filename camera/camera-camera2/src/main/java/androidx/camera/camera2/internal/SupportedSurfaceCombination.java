@@ -143,6 +143,7 @@ final class SupportedSurfaceCombination {
     private final boolean mIsStreamUseCaseSupported;
     private boolean mIsUltraHighResolutionSensorSupported = false;
     private boolean mIsManualSensorSupported = false;
+    private final boolean mIsPreviewStabilizationSupported;
     @VisibleForTesting
     SurfaceSizeDefinition mSurfaceSizeDefinition;
     List<Integer> mSurfaceSizeDefinitionFormats = new ArrayList<>();
@@ -224,9 +225,9 @@ final class SupportedSurfaceCombination {
             generateStreamUseCaseSupportedCombinationList();
         }
 
-        boolean isPreviewStabilizationSupported =
-                VideoStabilizationUtil.isPreviewStabilizationSupported(mCharacteristics);
-        if (isPreviewStabilizationSupported) {
+        mIsPreviewStabilizationSupported = VideoStabilizationUtil.isPreviewStabilizationSupported(
+                mCharacteristics);
+        if (mIsPreviewStabilizationSupported) {
             generatePreviewStabilizationSupportedCombinationList();
         }
 
@@ -719,6 +720,8 @@ final class SupportedSurfaceCombination {
                 mDynamicRangeResolver.resolveAndValidateDynamicRanges(attachedSurfaces,
                         newUseCaseConfigs, useCasesPriorityOrder);
 
+        Logger.d(TAG, "resolvedDynamicRanges = " + resolvedDynamicRanges);
+
         boolean isUltraHdrOn = isUltraHdrOn(attachedSurfaces, newUseCaseConfigsSupportedSizeMap);
 
         // Calculates the target FPS range
@@ -730,6 +733,17 @@ final class SupportedSurfaceCombination {
         } else {
             targetFpsRange = getTargetFpsRange(attachedSurfaces, newUseCaseConfigs,
                     useCasesPriorityOrder);
+        }
+
+        // Ensure preview stabilization is supported by the camera.
+        if (isPreviewStabilizationOn && !mIsPreviewStabilizationSupported) {
+            // TODO: b/422055796 - Handle this for non-feature-combo code flows, probably better to
+            //  silently fall back to non-preview-stabilization mode in such case.
+
+            if (isFeatureComboInvocation) {
+                throw new IllegalArgumentException(
+                        "Preview stabilization is not supported by the camera.");
+            }
         }
 
         FeatureSettings featureSettings = createFeatureSettings(cameraMode, hasVideoCapture,

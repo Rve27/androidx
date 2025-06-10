@@ -4178,7 +4178,7 @@ class SupportedSurfaceCombinationTest {
             useCasesOutputSizesMap = useCasesOutputSizesMap,
             dynamicRangeProfiles = if (Build.VERSION.SDK_INT >= 33) HLG10_CONSTRAINED else null,
             capabilities = intArrayOf(REQUEST_AVAILABLE_CAPABILITIES_DYNAMIC_RANGE_TEN_BIT),
-            isPreviewStabilizationOn = true,
+            isPreviewStabilizationOn = Build.VERSION.SDK_INT >= 33,
             isFeatureComboInvocation = true,
             featureCombinationQuery = fakeFeatureCombinationQuery.apply { isSupported = true },
             maxFpsBySizeMap = mapOf(RESOLUTION_1080P to 60, RESOLUTION_1440P_16_9 to 60),
@@ -4189,6 +4189,9 @@ class SupportedSurfaceCombinationTest {
         // Same dynamic range should be resolved to all use cases, HLG_10 is not supported before
         // API 33
         val expectedDynamicRange = if (Build.VERSION.SDK_INT >= 33) HLG_10_BIT else SDR
+
+        val expectedPreviewStabilization =
+            if (Build.VERSION.SDK_INT >= 33) StabilizationMode.ON else StabilizationMode.UNSPECIFIED
 
         fakeFeatureCombinationQuery.queriedConfigs.forEach { sessionConfig ->
             // Verify surface parameters of each output config, each config dynamic range should be
@@ -4223,7 +4226,7 @@ class SupportedSurfaceCombinationTest {
 
             // Verify Preview Stabilization
             assertThat(sessionConfig.repeatingCaptureConfig.previewStabilizationMode)
-                .isEqualTo(StabilizationMode.ON)
+                .isEqualTo(expectedPreviewStabilization)
         }
     }
 

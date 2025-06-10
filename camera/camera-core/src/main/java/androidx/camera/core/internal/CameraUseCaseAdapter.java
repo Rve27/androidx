@@ -567,11 +567,6 @@ public final class CameraUseCaseAdapter implements Camera {
             //  resolution. Throw exception here if (applyStreamSharing == false), both video
             //  and preview are used and preview resolution is lower than user configuration.
         } catch (IllegalArgumentException exception) {
-            if (isFeatureComboInvocation) {
-                // TODO: b/402297808 - Add StreamSharing support properly for feature combination.
-                throw exception;
-            }
-
             // TODO(b/270187871): instead of catch and retry, we can check UseCase
             //  combination directly with #isUseCasesCombinationSupported(). However
             //  calculateSuggestedStreamSpecs() is currently slow. We will do it after it's
@@ -895,6 +890,7 @@ public final class CameraUseCaseAdapter implements Camera {
             }
             if (mStreamSharing != null && mStreamSharing.getChildren().equals(newChildren)) {
                 // Returns the current instance if the new children equals the old.
+                mStreamSharing.updateFeatureCombination(newChildren);
                 return requireNonNull(mStreamSharing);
             }
 

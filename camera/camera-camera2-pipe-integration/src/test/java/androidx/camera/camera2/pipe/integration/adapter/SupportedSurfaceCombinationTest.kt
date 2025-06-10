@@ -4035,7 +4035,7 @@ class SupportedSurfaceCombinationTest {
             useCasesOutputSizesMap = useCasesOutputSizesMap,
             dynamicRangeProfiles = if (Build.VERSION.SDK_INT >= 33) HLG10_CONSTRAINED else null,
             capabilities = intArrayOf(REQUEST_AVAILABLE_CAPABILITIES_DYNAMIC_RANGE_TEN_BIT),
-            isPreviewStabilizationOn = true,
+            isPreviewStabilizationOn = Build.VERSION.SDK_INT >= 33,
             isFeatureComboInvocation = true,
             featureCombinationQuery = fakeFeatureCombinationQuery.apply { isSupported = true },
             maxFpsBySizeMap =
@@ -4047,6 +4047,9 @@ class SupportedSurfaceCombinationTest {
         // Same dynamic range should be resolved to all use cases, HLG_10 is not supported before
         // API 33
         val expectedDynamicRange = if (Build.VERSION.SDK_INT >= 33) HLG_10_BIT else SDR
+
+        val expectedPreviewStabilization =
+            if (Build.VERSION.SDK_INT >= 33) StabilizationMode.ON else StabilizationMode.UNSPECIFIED
 
         fakeFeatureCombinationQuery.queriedConfigs.forEach { sessionConfig ->
             // Verify surface parameters of each output config, each config dynamic range should be
@@ -4081,7 +4084,7 @@ class SupportedSurfaceCombinationTest {
 
             // Verify Preview Stabilization
             assertThat(sessionConfig.repeatingCaptureConfig.previewStabilizationMode)
-                .isEqualTo(StabilizationMode.ON)
+                .isEqualTo(expectedPreviewStabilization)
         }
     }
 
@@ -4258,6 +4261,21 @@ class SupportedSurfaceCombinationTest {
                 )
             characteristicsMap[CameraCharacteristics.SCALER_AVAILABLE_STREAM_USE_CASES] = uc
         }
+
+        val vs: IntArray =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intArrayOf(
+                    CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_OFF,
+                    CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_ON,
+                    CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_PREVIEW_STABILIZATION,
+                )
+            } else {
+                intArrayOf(
+                    CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_OFF,
+                    CameraCharacteristics.CONTROL_VIDEO_STABILIZATION_MODE_ON,
+                )
+            }
+        characteristicsMap[CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES] = vs
 
         // set up FakeCafakeCameraMetadatameraMetadata
         fakeCameraMetadata =
