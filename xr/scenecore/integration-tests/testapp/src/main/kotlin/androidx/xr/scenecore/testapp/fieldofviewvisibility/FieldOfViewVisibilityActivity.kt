@@ -73,7 +73,6 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
 
         session = createSession(this)
         if (session == null) this.finish()
-        session!!.resume()
         session!!.configure(Config(headTracking = HeadTrackingMode.LAST_KNOWN))
 
         // toolbar

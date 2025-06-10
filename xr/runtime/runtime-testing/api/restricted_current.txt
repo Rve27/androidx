@@ -205,9 +205,9 @@ package androidx.xr.runtime.testing {
 
   public enum FakeJxrPlatformAdapter.State {
     enum_constant public static final androidx.xr.runtime.testing.FakeJxrPlatformAdapter.State CREATED;
+    enum_constant public static final androidx.xr.runtime.testing.FakeJxrPlatformAdapter.State DESTROYED;
     enum_constant public static final androidx.xr.runtime.testing.FakeJxrPlatformAdapter.State PAUSED;
     enum_constant public static final androidx.xr.runtime.testing.FakeJxrPlatformAdapter.State STARTED;
-    enum_constant public static final androidx.xr.runtime.testing.FakeJxrPlatformAdapter.State STOPPED;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeJxrPlatformAdapterFactory implements androidx.xr.runtime.internal.JxrPlatformAdapterFactory {
@@ -252,11 +252,11 @@ package androidx.xr.runtime.testing {
   }
 
   public enum FakeLifecycleManager.State {
+    enum_constant public static final androidx.xr.runtime.testing.FakeLifecycleManager.State DESTROYED;
     enum_constant public static final androidx.xr.runtime.testing.FakeLifecycleManager.State INITIALIZED;
     enum_constant public static final androidx.xr.runtime.testing.FakeLifecycleManager.State NOT_INITIALIZED;
     enum_constant public static final androidx.xr.runtime.testing.FakeLifecycleManager.State PAUSED;
     enum_constant public static final androidx.xr.runtime.testing.FakeLifecycleManager.State RESUMED;
-    enum_constant public static final androidx.xr.runtime.testing.FakeLifecycleManager.State STOPPED;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeMediaPlayerExtensionsWrapper implements androidx.xr.runtime.internal.MediaPlayerExtensionsWrapper {

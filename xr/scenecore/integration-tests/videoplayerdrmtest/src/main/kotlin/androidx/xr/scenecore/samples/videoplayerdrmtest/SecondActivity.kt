@@ -36,7 +36,6 @@ class SecondActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val session = (Session.create(this) as SessionCreateSuccess).session
-        session.resume()
 
         setContent { ActivityContent(session) }
     }
