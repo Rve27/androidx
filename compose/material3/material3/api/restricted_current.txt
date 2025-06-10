@@ -1186,6 +1186,18 @@ package androidx.compose.material3 {
     field public static final androidx.compose.material3.DefaultBasicAlertDialogOverride INSTANCE;
   }
 
+  @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public final class DefaultHorizontalFloatingToolbarOverride implements androidx.compose.material3.HorizontalFloatingToolbarOverride {
+    method @androidx.compose.runtime.Composable public void HorizontalFloatingToolbar(androidx.compose.material3.HorizontalFloatingToolbarOverrideScope);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public void HorizontalFloatingToolbar(androidx.compose.material3.HorizontalFloatingToolbarOverrideScope, androidx.compose.runtime.Composer?, int);
+    field public static final androidx.compose.material3.DefaultHorizontalFloatingToolbarOverride INSTANCE;
+  }
+
+  @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public final class DefaultHorizontalFloatingToolbarWithFabOverride implements androidx.compose.material3.HorizontalFloatingToolbarWithFabOverride {
+    method @androidx.compose.runtime.Composable public void HorizontalFloatingToolbarWithFab(androidx.compose.material3.HorizontalFloatingToolbarWithFabOverrideScope);
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public void HorizontalFloatingToolbarWithFab(androidx.compose.material3.HorizontalFloatingToolbarWithFabOverrideScope, androidx.compose.runtime.Composer?, int);
+    field public static final androidx.compose.material3.DefaultHorizontalFloatingToolbarWithFabOverride INSTANCE;
+  }
+
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public final class DefaultNavigationBarOverride implements androidx.compose.material3.NavigationBarOverride {
     method @androidx.compose.runtime.Composable public void NavigationBar(androidx.compose.material3.NavigationBarOverrideScope);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public void NavigationBar(androidx.compose.material3.NavigationBarOverrideScope, androidx.compose.runtime.Composer?, int);
@@ -1701,8 +1713,12 @@ package androidx.compose.material3 {
     method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public static void VerticalFloatingToolbar(boolean expanded, kotlin.jvm.functions.Function0<kotlin.Unit> floatingActionButton, optional androidx.compose.ui.Modifier modifier, optional androidx.compose.material3.FloatingToolbarColors colors, optional androidx.compose.foundation.layout.PaddingValues contentPadding, optional androidx.compose.material3.FloatingToolbarScrollBehavior? scrollBehavior, optional androidx.compose.ui.graphics.Shape shape, optional int floatingActionButtonPosition, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> animationSpec, optional float expandedShadowElevation, optional float collapsedShadowElevation, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.layout.ColumnScope,kotlin.Unit> content);
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public static void VerticalFloatingToolbar-LJWHXA8(boolean, androidx.compose.ui.Modifier?, androidx.compose.material3.FloatingToolbarColors?, androidx.compose.foundation.layout.PaddingValues?, androidx.compose.material3.FloatingToolbarScrollBehavior?, androidx.compose.ui.graphics.Shape?, kotlin.jvm.functions.Function3<? super androidx.compose.foundation.layout.ColumnScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>?, kotlin.jvm.functions.Function3<? super androidx.compose.foundation.layout.ColumnScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>?, float, float, kotlin.jvm.functions.Function3<? super androidx.compose.foundation.layout.ColumnScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int, int);
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public static void VerticalFloatingToolbar-NTTHHFE(boolean, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.ui.Modifier?, androidx.compose.material3.FloatingToolbarColors?, androidx.compose.foundation.layout.PaddingValues?, androidx.compose.material3.FloatingToolbarScrollBehavior?, androidx.compose.ui.graphics.Shape?, int, androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float!>?, float, float, kotlin.jvm.functions.Function3<? super androidx.compose.foundation.layout.ColumnScope!,? super androidx.compose.runtime.Composer!,? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int, int);
+    method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material3.HorizontalFloatingToolbarOverride> getLocalHorizontalFloatingToolbarOverride();
+    method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material3.HorizontalFloatingToolbarWithFabOverride> getLocalHorizontalFloatingToolbarWithFabOverride();
     method @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public static androidx.compose.material3.FloatingToolbarState rememberFloatingToolbarState(optional float initialOffsetLimit, optional float initialOffset, optional float initialContentOffset);
     method @BytecodeOnly @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public static androidx.compose.material3.FloatingToolbarState rememberFloatingToolbarState(float, float, float, androidx.compose.runtime.Composer?, int, int);
+    property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material3.HorizontalFloatingToolbarOverride> LocalHorizontalFloatingToolbarOverride;
+    property @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.material3.HorizontalFloatingToolbarWithFabOverride> LocalHorizontalFloatingToolbarWithFabOverride;
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Stable public sealed interface FloatingToolbarScrollBehavior extends androidx.compose.ui.input.nestedscroll.NestedScrollConnection {
@@ -1747,6 +1763,73 @@ package androidx.compose.material3 {
     method @BytecodeOnly public int getTop-dDJPGzU();
     property public int Bottom;
     property public int Top;
+  }
+
+  @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public interface HorizontalFloatingToolbarOverride {
+    method @androidx.compose.runtime.Composable public void HorizontalFloatingToolbar(androidx.compose.material3.HorizontalFloatingToolbarOverrideScope);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public void HorizontalFloatingToolbar(androidx.compose.material3.HorizontalFloatingToolbarOverrideScope, androidx.compose.runtime.Composer?, int);
+  }
+
+  @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public final class HorizontalFloatingToolbarOverrideScope {
+    method public float getCollapsedShadowElevation();
+    method @BytecodeOnly public float getCollapsedShadowElevation-D9Ej5fM();
+    method public androidx.compose.material3.FloatingToolbarColors getColors();
+    method public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> getContent();
+    method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method public float getExpandedShadowElevation();
+    method @BytecodeOnly public float getExpandedShadowElevation-D9Ej5fM();
+    method public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit>? getLeadingContent();
+    method public androidx.compose.ui.Modifier getModifier();
+    method public androidx.compose.material3.FloatingToolbarScrollBehavior? getScrollBehavior();
+    method public androidx.compose.ui.graphics.Shape getShape();
+    method public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit>? getTrailingContent();
+    method public boolean isExpanded();
+    property public float collapsedShadowElevation;
+    property public androidx.compose.material3.FloatingToolbarColors colors;
+    property public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> content;
+    property public androidx.compose.foundation.layout.PaddingValues contentPadding;
+    property public float expandedShadowElevation;
+    property public boolean isExpanded;
+    property public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit>? leadingContent;
+    property public androidx.compose.ui.Modifier modifier;
+    property public androidx.compose.material3.FloatingToolbarScrollBehavior? scrollBehavior;
+    property public androidx.compose.ui.graphics.Shape shape;
+    property public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit>? trailingContent;
+  }
+
+  @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public interface HorizontalFloatingToolbarWithFabOverride {
+    method @androidx.compose.runtime.Composable public void HorizontalFloatingToolbarWithFab(androidx.compose.material3.HorizontalFloatingToolbarWithFabOverrideScope);
+    method @BytecodeOnly @androidx.compose.runtime.Composable public void HorizontalFloatingToolbarWithFab(androidx.compose.material3.HorizontalFloatingToolbarWithFabOverrideScope, androidx.compose.runtime.Composer?, int);
+  }
+
+  @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public final class HorizontalFloatingToolbarWithFabOverrideScope {
+    method public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> getAnimationSpec();
+    method public float getCollapsedShadowElevation();
+    method @BytecodeOnly public float getCollapsedShadowElevation-D9Ej5fM();
+    method public androidx.compose.material3.FloatingToolbarColors getColors();
+    method public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> getContent();
+    method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
+    method public float getExpandedShadowElevation();
+    method @BytecodeOnly public float getExpandedShadowElevation-D9Ej5fM();
+    method public kotlin.jvm.functions.Function0<kotlin.Unit> getFloatingActionButton();
+    method public int getFloatingActionButtonPosition();
+    method @BytecodeOnly public int getFloatingActionButtonPosition-EdPuMIg();
+    method public androidx.compose.ui.Modifier getModifier();
+    method public androidx.compose.material3.FloatingToolbarScrollBehavior? getScrollBehavior();
+    method public androidx.compose.ui.graphics.Shape getShape();
+    method public boolean isExpanded();
+    property public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> animationSpec;
+    property public float collapsedShadowElevation;
+    property public androidx.compose.material3.FloatingToolbarColors colors;
+    property public kotlin.jvm.functions.Function1<androidx.compose.foundation.layout.RowScope,kotlin.Unit> content;
+    property public androidx.compose.foundation.layout.PaddingValues contentPadding;
+    property public float expandedShadowElevation;
+    property public kotlin.jvm.functions.Function0<kotlin.Unit> floatingActionButton;
+    property public int floatingActionButtonPosition;
+    property public boolean isExpanded;
+    property public androidx.compose.ui.Modifier modifier;
+    property public androidx.compose.material3.FloatingToolbarScrollBehavior? scrollBehavior;
+    property public androidx.compose.ui.graphics.Shape shape;
   }
 
   @androidx.compose.runtime.Immutable public final class IconButtonColors {

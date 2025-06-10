@@ -224,6 +224,14 @@ abstract interface androidx.compose.material3/FloatingToolbarState { // androidx
     final object Companion // androidx.compose.material3/FloatingToolbarState.Companion|null[0]
 }
 
+abstract interface androidx.compose.material3/HorizontalFloatingToolbarOverride { // androidx.compose.material3/HorizontalFloatingToolbarOverride|null[0]
+    abstract fun (androidx.compose.material3/HorizontalFloatingToolbarOverrideScope).HorizontalFloatingToolbar() // androidx.compose.material3/HorizontalFloatingToolbarOverride.HorizontalFloatingToolbar|HorizontalFloatingToolbar@androidx.compose.material3.HorizontalFloatingToolbarOverrideScope(){}[0]
+}
+
+abstract interface androidx.compose.material3/HorizontalFloatingToolbarWithFabOverride { // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverride|null[0]
+    abstract fun (androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope).HorizontalFloatingToolbarWithFab() // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverride.HorizontalFloatingToolbarWithFab|HorizontalFloatingToolbarWithFab@androidx.compose.material3.HorizontalFloatingToolbarWithFabOverrideScope(){}[0]
+}
+
 abstract interface androidx.compose.material3/MotionScheme { // androidx.compose.material3/MotionScheme|null[0]
     abstract fun <#A1: kotlin/Any?> defaultEffectsSpec(): androidx.compose.animation.core/FiniteAnimationSpec<#A1> // androidx.compose.material3/MotionScheme.defaultEffectsSpec|defaultEffectsSpec(){0§<kotlin.Any?>}[0]
     abstract fun <#A1: kotlin/Any?> defaultSpatialSpec(): androidx.compose.animation.core/FiniteAnimationSpec<#A1> // androidx.compose.material3/MotionScheme.defaultSpatialSpec|defaultSpatialSpec(){0§<kotlin.Any?>}[0]
@@ -919,6 +927,58 @@ final class androidx.compose.material3/FloatingToolbarColors { // androidx.compo
     final fun copy(androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.graphics/Color = ..., androidx.compose.ui.graphics/Color = ...): androidx.compose.material3/FloatingToolbarColors // androidx.compose.material3/FloatingToolbarColors.copy|copy(androidx.compose.ui.graphics.Color;androidx.compose.ui.graphics.Color;androidx.compose.ui.graphics.Color;androidx.compose.ui.graphics.Color){}[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.material3/FloatingToolbarColors.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // androidx.compose.material3/FloatingToolbarColors.hashCode|hashCode(){}[0]
+}
+
+final class androidx.compose.material3/HorizontalFloatingToolbarOverrideScope { // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope|null[0]
+    final val collapsedShadowElevation // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.collapsedShadowElevation|{}collapsedShadowElevation[0]
+        final fun <get-collapsedShadowElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.collapsedShadowElevation.<get-collapsedShadowElevation>|<get-collapsedShadowElevation>(){}[0]
+    final val colors // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.colors|{}colors[0]
+        final fun <get-colors>(): androidx.compose.material3/FloatingToolbarColors // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.colors.<get-colors>|<get-colors>(){}[0]
+    final val content // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.content|{}content[0]
+        final fun <get-content>(): kotlin/Function1<androidx.compose.foundation.layout/RowScope, kotlin/Unit> // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.content.<get-content>|<get-content>(){}[0]
+    final val contentPadding // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.contentPadding|{}contentPadding[0]
+        final fun <get-contentPadding>(): androidx.compose.foundation.layout/PaddingValues // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.contentPadding.<get-contentPadding>|<get-contentPadding>(){}[0]
+    final val expandedShadowElevation // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.expandedShadowElevation|{}expandedShadowElevation[0]
+        final fun <get-expandedShadowElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.expandedShadowElevation.<get-expandedShadowElevation>|<get-expandedShadowElevation>(){}[0]
+    final val isExpanded // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.isExpanded|{}isExpanded[0]
+        final fun <get-isExpanded>(): kotlin/Boolean // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.isExpanded.<get-isExpanded>|<get-isExpanded>(){}[0]
+    final val leadingContent // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.leadingContent|{}leadingContent[0]
+        final fun <get-leadingContent>(): kotlin/Function1<androidx.compose.foundation.layout/RowScope, kotlin/Unit>? // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.leadingContent.<get-leadingContent>|<get-leadingContent>(){}[0]
+    final val modifier // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.modifier|{}modifier[0]
+        final fun <get-modifier>(): androidx.compose.ui/Modifier // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.modifier.<get-modifier>|<get-modifier>(){}[0]
+    final val scrollBehavior // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.scrollBehavior|{}scrollBehavior[0]
+        final fun <get-scrollBehavior>(): androidx.compose.material3/FloatingToolbarScrollBehavior? // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.scrollBehavior.<get-scrollBehavior>|<get-scrollBehavior>(){}[0]
+    final val shape // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.shape|{}shape[0]
+        final fun <get-shape>(): androidx.compose.ui.graphics/Shape // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.shape.<get-shape>|<get-shape>(){}[0]
+    final val trailingContent // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.trailingContent|{}trailingContent[0]
+        final fun <get-trailingContent>(): kotlin/Function1<androidx.compose.foundation.layout/RowScope, kotlin/Unit>? // androidx.compose.material3/HorizontalFloatingToolbarOverrideScope.trailingContent.<get-trailingContent>|<get-trailingContent>(){}[0]
+}
+
+final class androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope { // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope|null[0]
+    final val animationSpec // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.animationSpec|{}animationSpec[0]
+        final fun <get-animationSpec>(): androidx.compose.animation.core/FiniteAnimationSpec<kotlin/Float> // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.animationSpec.<get-animationSpec>|<get-animationSpec>(){}[0]
+    final val collapsedShadowElevation // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.collapsedShadowElevation|{}collapsedShadowElevation[0]
+        final fun <get-collapsedShadowElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.collapsedShadowElevation.<get-collapsedShadowElevation>|<get-collapsedShadowElevation>(){}[0]
+    final val colors // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.colors|{}colors[0]
+        final fun <get-colors>(): androidx.compose.material3/FloatingToolbarColors // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.colors.<get-colors>|<get-colors>(){}[0]
+    final val content // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.content|{}content[0]
+        final fun <get-content>(): kotlin/Function1<androidx.compose.foundation.layout/RowScope, kotlin/Unit> // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.content.<get-content>|<get-content>(){}[0]
+    final val contentPadding // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.contentPadding|{}contentPadding[0]
+        final fun <get-contentPadding>(): androidx.compose.foundation.layout/PaddingValues // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.contentPadding.<get-contentPadding>|<get-contentPadding>(){}[0]
+    final val expandedShadowElevation // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.expandedShadowElevation|{}expandedShadowElevation[0]
+        final fun <get-expandedShadowElevation>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.expandedShadowElevation.<get-expandedShadowElevation>|<get-expandedShadowElevation>(){}[0]
+    final val floatingActionButton // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.floatingActionButton|{}floatingActionButton[0]
+        final fun <get-floatingActionButton>(): kotlin/Function0<kotlin/Unit> // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.floatingActionButton.<get-floatingActionButton>|<get-floatingActionButton>(){}[0]
+    final val floatingActionButtonPosition // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.floatingActionButtonPosition|{}floatingActionButtonPosition[0]
+        final fun <get-floatingActionButtonPosition>(): androidx.compose.material3/FloatingToolbarHorizontalFabPosition // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.floatingActionButtonPosition.<get-floatingActionButtonPosition>|<get-floatingActionButtonPosition>(){}[0]
+    final val isExpanded // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.isExpanded|{}isExpanded[0]
+        final fun <get-isExpanded>(): kotlin/Boolean // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.isExpanded.<get-isExpanded>|<get-isExpanded>(){}[0]
+    final val modifier // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.modifier|{}modifier[0]
+        final fun <get-modifier>(): androidx.compose.ui/Modifier // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.modifier.<get-modifier>|<get-modifier>(){}[0]
+    final val scrollBehavior // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.scrollBehavior|{}scrollBehavior[0]
+        final fun <get-scrollBehavior>(): androidx.compose.material3/FloatingToolbarScrollBehavior? // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.scrollBehavior.<get-scrollBehavior>|<get-scrollBehavior>(){}[0]
+    final val shape // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.shape|{}shape[0]
+        final fun <get-shape>(): androidx.compose.ui.graphics/Shape // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope.shape.<get-shape>|<get-shape>(){}[0]
 }
 
 final class androidx.compose.material3/IconButtonColors { // androidx.compose.material3/IconButtonColors|null[0]
@@ -2495,6 +2555,14 @@ final object androidx.compose.material3/DefaultBasicAlertDialogOverride : androi
     final fun (androidx.compose.material3/BasicAlertDialogOverrideScope).BasicAlertDialog() // androidx.compose.material3/DefaultBasicAlertDialogOverride.BasicAlertDialog|BasicAlertDialog@androidx.compose.material3.BasicAlertDialogOverrideScope(){}[0]
 }
 
+final object androidx.compose.material3/DefaultHorizontalFloatingToolbarOverride : androidx.compose.material3/HorizontalFloatingToolbarOverride { // androidx.compose.material3/DefaultHorizontalFloatingToolbarOverride|null[0]
+    final fun (androidx.compose.material3/HorizontalFloatingToolbarOverrideScope).HorizontalFloatingToolbar() // androidx.compose.material3/DefaultHorizontalFloatingToolbarOverride.HorizontalFloatingToolbar|HorizontalFloatingToolbar@androidx.compose.material3.HorizontalFloatingToolbarOverrideScope(){}[0]
+}
+
+final object androidx.compose.material3/DefaultHorizontalFloatingToolbarWithFabOverride : androidx.compose.material3/HorizontalFloatingToolbarWithFabOverride { // androidx.compose.material3/DefaultHorizontalFloatingToolbarWithFabOverride|null[0]
+    final fun (androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope).HorizontalFloatingToolbarWithFab() // androidx.compose.material3/DefaultHorizontalFloatingToolbarWithFabOverride.HorizontalFloatingToolbarWithFab|HorizontalFloatingToolbarWithFab@androidx.compose.material3.HorizontalFloatingToolbarWithFabOverrideScope(){}[0]
+}
+
 final object androidx.compose.material3/DefaultNavigationBarOverride : androidx.compose.material3/NavigationBarOverride { // androidx.compose.material3/DefaultNavigationBarOverride|null[0]
     final fun (androidx.compose.material3/NavigationBarOverrideScope).NavigationBar() // androidx.compose.material3/DefaultNavigationBarOverride.NavigationBar|NavigationBar@androidx.compose.material3.NavigationBarOverrideScope(){}[0]
 }
@@ -3485,6 +3553,10 @@ final val androidx.compose.material3/LocalBasicAlertDialogOverride // androidx.c
     final fun <get-LocalBasicAlertDialogOverride>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/BasicAlertDialogOverride> // androidx.compose.material3/LocalBasicAlertDialogOverride.<get-LocalBasicAlertDialogOverride>|<get-LocalBasicAlertDialogOverride>(){}[0]
 final val androidx.compose.material3/LocalContentColor // androidx.compose.material3/LocalContentColor|{}LocalContentColor[0]
     final fun <get-LocalContentColor>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.ui.graphics/Color> // androidx.compose.material3/LocalContentColor.<get-LocalContentColor>|<get-LocalContentColor>(){}[0]
+final val androidx.compose.material3/LocalHorizontalFloatingToolbarOverride // androidx.compose.material3/LocalHorizontalFloatingToolbarOverride|{}LocalHorizontalFloatingToolbarOverride[0]
+    final fun <get-LocalHorizontalFloatingToolbarOverride>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/HorizontalFloatingToolbarOverride> // androidx.compose.material3/LocalHorizontalFloatingToolbarOverride.<get-LocalHorizontalFloatingToolbarOverride>|<get-LocalHorizontalFloatingToolbarOverride>(){}[0]
+final val androidx.compose.material3/LocalHorizontalFloatingToolbarWithFabOverride // androidx.compose.material3/LocalHorizontalFloatingToolbarWithFabOverride|{}LocalHorizontalFloatingToolbarWithFabOverride[0]
+    final fun <get-LocalHorizontalFloatingToolbarWithFabOverride>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/HorizontalFloatingToolbarWithFabOverride> // androidx.compose.material3/LocalHorizontalFloatingToolbarWithFabOverride.<get-LocalHorizontalFloatingToolbarWithFabOverride>|<get-LocalHorizontalFloatingToolbarWithFabOverride>(){}[0]
 final val androidx.compose.material3/LocalMinimumInteractiveComponentEnforcement // androidx.compose.material3/LocalMinimumInteractiveComponentEnforcement|{}LocalMinimumInteractiveComponentEnforcement[0]
     final fun <get-LocalMinimumInteractiveComponentEnforcement>(): androidx.compose.runtime/ProvidableCompositionLocal<kotlin/Boolean> // androidx.compose.material3/LocalMinimumInteractiveComponentEnforcement.<get-LocalMinimumInteractiveComponentEnforcement>|<get-LocalMinimumInteractiveComponentEnforcement>(){}[0]
 final val androidx.compose.material3/LocalMinimumInteractiveComponentSize // androidx.compose.material3/LocalMinimumInteractiveComponentSize|{}LocalMinimumInteractiveComponentSize[0]
