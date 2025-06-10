@@ -49,8 +49,18 @@ internal class SaveableStateRegistryWrapper(base: SaveableStateRegistry) :
     /** Controls save/restore operations for the child [SavedStateRegistry]. */
     val controller = SavedStateRegistryController.create(owner = this)
 
-    /** Provides a child lifecycle associated with the [SavedStateRegistry]. */
-    override val lifecycle = LifecycleRegistry(provider = this)
+    /**
+     * Provides a child lifecycle associated with the [SavedStateRegistry].
+     *
+     * [LifecycleRegistry] enforces main-thread access only. While this is safe for most Compose
+     * Android, it causes test failures in Compose Multiplatform, where work can occur on different
+     * threads.
+     *
+     * To unblock those tests, this implementation uses [LifecycleRegistry], which bypasses the
+     * main-thread check. This is a temporary workaround.
+     */
+    @Suppress("VisibleForTests") // TODO(mgalhardo): Fix when Lifecycle supports multi-threading.
+    override val lifecycle = LifecycleRegistry.createUnsafe(owner = this)
 
     override val savedStateRegistry = controller.savedStateRegistry
 

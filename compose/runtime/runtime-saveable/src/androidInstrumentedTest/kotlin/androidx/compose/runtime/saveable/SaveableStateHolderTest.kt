@@ -18,13 +18,19 @@ package androidx.compose.runtime.saveable
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.layout.SubcomposeLayoutState
+import androidx.compose.ui.layout.SubcomposeSlotReusePolicy
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.savedstate.SavedStateRegistryOwner
@@ -46,6 +52,45 @@ class SaveableStateHolderTest {
     @get:Rule val rule = createAndroidComposeRule<Activity>()
 
     private val restorationTester = StateRestorationTester(rule)
+
+    @Test
+    fun childStateProviderWorksInAnotherThread() {
+        val owners = mutableSetOf<SavedStateRegistryOwner>()
+
+        val state = SubcomposeLayoutState(SubcomposeSlotReusePolicy(1))
+        val content =
+            @Composable {
+                Box {
+                    val holder = rememberSaveableStateHolder()
+                    holder.SaveableStateProvider(key = Screens.Screen1) {
+                        val localOwner = LocalSavedStateRegistryOwner.current
+                        LaunchedEffect(localOwner) { owners += localOwner }
+                    }
+                }
+            }
+
+        rule.setContent {
+            SubcomposeLayout(state) {
+                subcompose("for-reuse", content)
+                layout(10, 10) {}
+            }
+        }
+
+        val precomposition = rule.runOnIdle { state.createPausedPrecomposition(Unit, content) }
+
+        // Create a precomposition (without executing it) on the UI thread
+        while (!precomposition.isComplete) {
+            // Run composables outside of the main thread.
+            precomposition.resume { false }
+        }
+
+        // Apply the precomposition on the main thread to execute effects like LaunchedEffect
+        rule.runOnIdle { precomposition.apply() }
+
+        // If no IllegalStateException (like "addObserver must be called on the main thread") is
+        // thrown, it means SaveableStateRegistryWrapper works correctly even when part of the state
+        // was built off the main thread.
+    }
 
     @Test
     fun stateIsRestoredWhenGoBackToScreen1() {
