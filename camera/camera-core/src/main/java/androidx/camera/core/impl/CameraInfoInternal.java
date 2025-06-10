@@ -17,6 +17,7 @@
 package androidx.camera.core.impl;
 
 import static androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED;
+import static androidx.camera.core.impl.utils.RangeUtil.filterFixedRanges;
 import static androidx.core.util.Preconditions.checkArgument;
 
 import static java.util.Collections.emptySet;
@@ -195,7 +196,7 @@ public interface CameraInfoInternal extends CameraInfo {
 
         Set<Range<Integer>> allSupportedFrameRates =
                 sessionConfig.getSessionType() == SESSION_TYPE_HIGH_SPEED
-                        ? getSupportedHighSpeedFrameRateRanges()
+                        ? filterFixedRanges(getSupportedHighSpeedFrameRateRanges())
                         : getSupportedFrameRateRanges();
 
         if (allSupportedFrameRates.isEmpty()) {
