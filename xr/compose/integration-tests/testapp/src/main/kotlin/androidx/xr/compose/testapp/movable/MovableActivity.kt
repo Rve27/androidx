@@ -59,7 +59,7 @@ import androidx.xr.compose.testapp.ui.components.CommonTestPanel
 import androidx.xr.compose.unit.DpVolumeSize
 import androidx.xr.runtime.math.Quaternion
 
-class Movable : ComponentActivity() {
+class MovableActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { Subspace { SpatialContent() } }
@@ -181,8 +181,8 @@ class Movable : ComponentActivity() {
                         size = DpVolumeSize(640.dp, 480.dp, 0.dp),
                         title = getString(R.string.movable_panels_test),
                         showBottomBar = true,
-                        onClickBackArrow = { this@Movable.finish() },
-                        onClickRecreate = { this@Movable.recreate() },
+                        onClickBackArrow = { this@MovableActivity.finish() },
+                        onClickRecreate = { this@MovableActivity.recreate() },
                     ) { padding ->
                         ColumnWithCenterText(padding, "Main Panel Content")
                     }
@@ -201,7 +201,7 @@ class Movable : ComponentActivity() {
                     }
                     SpatialLayoutSpacer(modifier = SubspaceModifier.height(20.dp))
                     SpatialPanel(
-                        intent = Intent(this@Movable, AnotherActivity::class.java),
+                        intent = Intent(this@MovableActivity, AnotherActivity::class.java),
                         modifier =
                             SubspaceModifier.offset(x = 120.dp)
                                 .width(250.dp)
