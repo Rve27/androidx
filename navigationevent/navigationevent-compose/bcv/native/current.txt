@@ -6,3 +6,9 @@
 // - Show declarations: true
 
 // Library unique name: <androidx.navigationevent:navigationevent-compose>
+final object androidx.navigationevent.compose/LocalNavigationEventDispatcherOwner { // androidx.navigationevent.compose/LocalNavigationEventDispatcherOwner|null[0]
+    final val current // androidx.navigationevent.compose/LocalNavigationEventDispatcherOwner.current|{}current[0]
+        final fun <get-current>(): androidx.navigationevent/NavigationEventDispatcherOwner? // androidx.navigationevent.compose/LocalNavigationEventDispatcherOwner.current.<get-current>|<get-current>(){}[0]
+
+    final fun provides(androidx.navigationevent/NavigationEventDispatcherOwner): androidx.compose.runtime/ProvidedValue<androidx.navigationevent/NavigationEventDispatcherOwner?> // androidx.navigationevent.compose/LocalNavigationEventDispatcherOwner.provides|provides(androidx.navigationevent.NavigationEventDispatcherOwner){}[0]
+}

@@ -16,4 +16,11 @@
 
 package androidx.navigationevent.compose
 
-// TODO(mgalhardo): Placeholder to prevent post-submit failures when a KMP project has no files.
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalView
+import androidx.navigationevent.NavigationEventDispatcherOwner
+import androidx.navigationevent.findViewTreeNavigationEventDispatcherOwner
+
+@Composable
+internal actual fun findViewTreeNavigationEventDispatcherOwner(): NavigationEventDispatcherOwner? =
+    LocalView.current.findViewTreeNavigationEventDispatcherOwner()
