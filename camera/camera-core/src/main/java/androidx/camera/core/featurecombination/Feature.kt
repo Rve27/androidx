@@ -37,7 +37,11 @@ import androidx.camera.core.featurecombination.impl.feature.ImageFormatFeature
 import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature
 import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature.StabilizationMode
 
-/** Base [Feature] class for all feature combination features. */
+/**
+ * Base [Feature] class for all feature combination features.
+ *
+ * @sample androidx.camera.core.samples.startCameraWithSomeHighQualityFeatures
+ */
 @ExperimentalSessionConfig
 public abstract class Feature @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) internal constructor() {
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
