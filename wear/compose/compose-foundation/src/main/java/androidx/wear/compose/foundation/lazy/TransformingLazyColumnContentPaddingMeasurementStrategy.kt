@@ -67,7 +67,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                             containerConstraints.maxHeight - afterContentPadding
                 }
 
-        fun addVisibleItemsBefore(measuredItemProvider: MeasuredItemProvider) =
+        fun addVisibleItemsBefore(measuredItemProvider: MeasuredItemProvider): Unit =
             with(visibleItems) {
                 val minOffset = 0
                 val minIndex = 0
@@ -88,7 +88,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 }
             }
 
-        fun addVisibleItemsAfter(measuredItemProvider: MeasuredItemProvider) =
+        fun addVisibleItemsAfter(measuredItemProvider: MeasuredItemProvider): Unit =
             with(visibleItems) {
                 val maxOffset: Int = maxHeight
                 val maxIndex: Int = itemsCount - 1
@@ -109,7 +109,7 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 }
             }
 
-        fun correctLayout(anchorItem: TransformingLazyColumnMeasuredItem) =
+        fun correctLayout(anchorItem: TransformingLazyColumnMeasuredItem): Unit =
             with(visibleItems) {
                 // Correct items below the new anchor item.
                 var itemIndex = anchorItem.index - first().index + 1
@@ -148,34 +148,39 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 return minBy { abs(it.offset + it.transformedHeight / 2 - maxHeight / 2) }
             }
 
-        fun restoreLayoutTopToBottom() =
+        /**
+         * Try to approach both ends of the list with the help of gradient descent. Use overscrolled
+         * delta as a weight function, move anchor item by that amount, see how much overscroll
+         * happened and repeat.
+         *
+         * Since there is no control of client's transformedHeight function, this algorithm might
+         * not settle and the max repetition count is used.
+         */
+        private fun gradientDescent(
+            delta: List<TransformingLazyColumnMeasuredItem>.() -> Int
+        ): Unit =
             with(visibleItems) {
                 if (isEmpty()) {
                     return
                 }
-                var delta = first().offset - beforeContentPadding
+                var delta = delta(this)
                 var repetitions = 0
-                while (abs(delta) > 1 && repetitions < 3) {
+                while (abs(delta) > 1 && repetitions < GRADIENT_DESCENT_REPETITIONS) {
                     val anchorItem = anchorItem() ?: return
-                    anchorItem.offset -= delta
+                    anchorItem.moveBy(-delta, MeasurementDirection.DOWNWARD)
                     correctLayout(anchorItem)
-                    delta = first().offset - beforeContentPadding
+                    delta = delta(this)
                     repetitions += 1
                 }
             }
 
-        fun restoreLayoutBottomToTop() =
-            with(visibleItems) {
-                if (isEmpty()) {
-                    return
-                }
-                repeat(2) {
-                    val anchorItem = anchorItem() ?: return
-                    anchorItem.offset -=
-                        last().offset + last().transformedHeight - maxHeight + afterContentPadding
-                    correctLayout(anchorItem)
-                }
-            }
+        fun restoreLayoutTopToBottom(): Unit = gradientDescent {
+            first().offset - beforeContentPadding
+        }
+
+        fun restoreLayoutBottomToTop(): Unit = gradientDescent {
+            last().offset + last().transformedHeight - maxHeight + afterContentPadding
+        }
     }
 
     private var measurementScope = MeasurementScope(ArrayDeque(), 0, 0, 0, 0, 0)
@@ -369,4 +374,8 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
 
     private val afterContentPadding: Int =
         with(density) { contentPadding.calculateBottomPadding().roundToPx() }
+
+    private companion object {
+        const val GRADIENT_DESCENT_REPETITIONS = 4
+    }
 }
