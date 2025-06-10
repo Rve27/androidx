@@ -106,6 +106,7 @@ import androidx.wear.compose.foundation.GestureInclusion
 import androidx.wear.compose.material3.ButtonDefaults.buttonColors
 import androidx.wear.compose.material3.RevealDirection.Companion.Bidirectional
 import androidx.wear.compose.material3.RevealDirection.Companion.RightToLeft
+import androidx.wear.compose.material3.RevealState.Companion.Saver
 import androidx.wear.compose.material3.RevealValue.Companion.Covered
 import androidx.wear.compose.material3.RevealValue.Companion.LeftRevealed
 import androidx.wear.compose.material3.RevealValue.Companion.LeftRevealing
@@ -837,7 +838,7 @@ internal fun ActionButton(
                 else -> Color.Unspecified
             }
         }
-    val fullScreenPaddingDp = (screenWidthDp() * FULL_SCREEN_PADDING_FRACTION).dp
+    val fullScreenPaddingDp = screenWidthFraction(FULL_SCREEN_PADDING_FRACTION)
     val startPadding =
         when (revealActionType) {
             RevealActionType.UndoAction -> fullScreenPaddingDp
@@ -1563,7 +1564,7 @@ private const val SINGLE_ICON_FADE_IN_END_THRESHOLD_AS_SCREEN_WIDTH_PERCENTAGE =
 // End threshold for the fade in progression of the icon for two action buttons.
 private const val DOUBLE_ICON_FADE_IN_END_THRESHOLD_AS_SCREEN_WIDTH_PERCENTAGE = 0.36f
 
-private val FULL_SCREEN_PADDING_FRACTION = 0.0625f
+private const val FULL_SCREEN_PADDING_FRACTION = 0.0625f
 
 @SuppressLint("PrimitiveInCollection")
 private val BidirectionalAnchors: Set<RevealValue> =
