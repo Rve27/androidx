@@ -34,6 +34,7 @@ androidXMultiplatform {
     androidLibrary {
         compileSdk = 36
         namespace = "androidx.navigation3.ui"
+        androidResources.enable = true
     }
     jvmStubs()
     linuxX64Stubs()
