@@ -137,12 +137,12 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
 
         // Request FSM
         findViewById<Button>(R.id.button_request_fsm).also {
-            it.setOnClickListener { session!!.scene.spatialEnvironment.requestFullSpaceMode() }
+            it.setOnClickListener { session!!.scene.requestFullSpaceMode() }
         }
 
         // Request HSM
         findViewById<Button>(R.id.button_request_hsm).also {
-            it.setOnClickListener { session!!.scene.spatialEnvironment.requestHomeSpaceMode() }
+            it.setOnClickListener { session!!.scene.requestHomeSpaceMode() }
         }
 
         // Set the main panel size and make the main panel movable.

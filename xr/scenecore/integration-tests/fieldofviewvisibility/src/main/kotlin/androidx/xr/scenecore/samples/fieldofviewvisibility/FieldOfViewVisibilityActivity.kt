@@ -184,10 +184,10 @@ class FieldOfViewVisibilityActivity : AppCompatActivity() {
             HorizontalDivider(Modifier.padding(15.dp), 1.dp, Color.Black)
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Button(onClick = { session.scene.spatialEnvironment.requestFullSpaceMode() }) {
+                Button(onClick = { session.scene.requestFullSpaceMode() }) {
                     Text(text = "Request FSM", fontSize = 15.sp)
                 }
-                Button(onClick = { session.scene.spatialEnvironment.requestHomeSpaceMode() }) {
+                Button(onClick = { session.scene.requestHomeSpaceMode() }) {
                     Text(text = "Request HSM", fontSize = 15.sp)
                 }
             }
