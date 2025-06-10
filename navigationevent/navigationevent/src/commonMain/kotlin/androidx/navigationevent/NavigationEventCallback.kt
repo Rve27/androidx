@@ -17,19 +17,22 @@
 package androidx.navigationevent
 
 /**
- * Call for handling [NavigationEventDispatcher] callbacks.
+ * Callback for handling [NavigationEvent]s.
  *
  * This class maintains its own [isEnabled] state and will only receive callbacks when enabled.
  *
- * @param isEnabled The default enabled state for this callback.
+ * @param isEnabled The enabled state for this callback.
+ * @param isPassThrough Whether this callback should consume the events from
+ *   [NavigationEventDispatcher] or allow it to continue.
  * @see NavigationEventDispatcher
  */
 public abstract class NavigationEventCallback(
+    isEnabled: Boolean,
     /**
-     * The enabled state of the callback. Only when this callback is enabled will it receive
-     * callbacks to [onEventCompleted].
+     * Whether this callback should consume the events from [NavigationEventDispatcher] or allow it
+     * to continue.
      */
-    isEnabled: Boolean
+    public val isPassThrough: Boolean = false,
 ) {
 
     public var isEnabled: Boolean = isEnabled
@@ -38,27 +41,21 @@ public abstract class NavigationEventCallback(
             dispatcher?.updateEnabledCallbacks()
         }
 
-    /**
-     * Whether this callback should consume the callback from the [NavigationEventDispatcher] or
-     * allow it to continue.
-     */
-    public var isPassThrough: Boolean = false
-
     internal var dispatcher: NavigationEventDispatcher? = null
 
     public fun remove() {
         dispatcher?.removeCallback(this)
     }
 
-    /** Callback for handling the [NavigationEventDispatcher.dispatchOnStarted] callback. */
+    /** Callback for handling [NavigationEventDispatcher.dispatchOnStarted]. */
     public open fun onEventStarted(event: NavigationEvent) {}
 
-    /** Callback for handling the [NavigationEventDispatcher.dispatchOnProgressed] callback. */
+    /** Callback for handling [NavigationEventDispatcher.dispatchOnProgressed]. */
     public open fun onEventProgressed(event: NavigationEvent) {}
 
-    /** Callback for handling the [NavigationEventDispatcher.dispatchOnCompleted] callback. */
+    /** Callback for handling [NavigationEventDispatcher.dispatchOnCompleted]. */
     public open fun onEventCompleted() {}
 
-    /** Callback for handling the [NavigationEventDispatcher.dispatchOnCancelled] callback. */
+    /** Callback for handling [NavigationEventDispatcher.dispatchOnCancelled]. */
     public open fun onEventCancelled() {}
 }

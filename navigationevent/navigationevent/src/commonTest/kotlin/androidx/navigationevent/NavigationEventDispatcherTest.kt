@@ -301,7 +301,7 @@ class NavigationEventDispatcherTest {
             NavigationEventDispatcher(fallbackOnBackPressed = { history += "fallback called" })
 
         val callback1 =
-            object : NavigationEventCallback(isEnabled = true) {
+            object : NavigationEventCallback(isEnabled = true, isPassThrough = true) {
                 override fun onEventStarted(event: NavigationEvent) {
                     history += "callback1 onEventStarted"
                 }
@@ -310,12 +310,11 @@ class NavigationEventDispatcherTest {
                     history += "callback1 onEventCompleted"
                 }
             }
-        callback1.isPassThrough = true
 
         dispatcher.addCallback(callback1)
 
         val callback2 =
-            object : NavigationEventCallback(isEnabled = true) {
+            object : NavigationEventCallback(isEnabled = true, isPassThrough = true) {
                 override fun onEventStarted(event: NavigationEvent) {
                     history += "callback2 onEventStarted"
                 }
@@ -324,7 +323,6 @@ class NavigationEventDispatcherTest {
                     history += "callback2 onEventCompleted"
                 }
             }
-        callback2.isPassThrough = true
 
         dispatcher.addCallback(callback2)
 
@@ -374,12 +372,11 @@ class NavigationEventDispatcherTest {
         dispatcher.addCallback(normalCallback, NavigationEventPriority.Default)
 
         val overlayCallback =
-            object : NavigationEventCallback(isEnabled = true) {
+            object : NavigationEventCallback(isEnabled = true, isPassThrough = true) {
                 override fun onEventCompleted() {
                     history += "overlayCallback onEventCompleted"
                 }
             }
-        overlayCallback.isPassThrough = true
         dispatcher.addCallback(overlayCallback, NavigationEventPriority.Overlay)
 
         dispatcher.dispatchOnCompleted()
