@@ -14,19 +14,6 @@
  * limitations under the License.
  */
 
-package androidx.ink.geometry.internal.testutil
+package androidx.ink.authoring.compose
 
-import androidx.ink.geometry.MeshFormat
-import androidx.ink.nativeloader.UsedByNative
-
-internal fun BuildTestMeshFormatA(): MeshFormat {
-    return MeshFormat(nativeBuildMeshFormatA())
-}
-
-internal fun BuildTestMeshFormatB(): MeshFormat {
-    return MeshFormat(nativeBuildMeshFormatB())
-}
-
-@UsedByNative private external fun nativeBuildMeshFormatA(): Long
-
-@UsedByNative private external fun nativeBuildMeshFormatB(): Long
+internal const val SCREENSHOT_GOLDEN_DIRECTORY = "ink/ink-authoring-compose"
