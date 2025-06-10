@@ -35,7 +35,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -168,17 +168,14 @@ class SpatialElevation : ComponentActivity() {
                 horizontalArrangement = Arrangement.End,
             ) {
                 if (shouldExpand) {
-                    Card(
-                        modifier =
-                            Modifier.size(width = 360.dp, height = 100.dp)
-                                .wrapContentSize(Alignment.Center)
-                    ) {
+                    Card(Modifier.widthIn(max = 320.dp)) {
                         Text(
                             text = contentText,
                             modifier = Modifier.padding(16.dp),
                             textAlign = TextAlign.Center,
                         )
                     }
+                    Spacer(Modifier.size(16.dp))
                 }
                 IconMenuOrnament(
                     onClick = {
