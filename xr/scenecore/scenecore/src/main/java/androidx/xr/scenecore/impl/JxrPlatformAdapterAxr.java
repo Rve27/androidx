@@ -1593,13 +1593,19 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
             @NonNull Pose pose,
             @NonNull SurfaceEntity.CanvasShape canvasShape,
             @SurfaceEntity.ContentSecurityLevel int contentSecurityLevel,
+            @SurfaceEntity.SuperSampling int superSampling,
             @NonNull Entity parentEntity) {
         if (!mUseSplitEngine) {
             throw new UnsupportedOperationException(
                     "SurfaceEntity is not supported without SplitEngine.");
         } else {
             return createSurfaceEntitySplitEngine(
-                    stereoMode, canvasShape, contentSecurityLevel, pose, parentEntity);
+                    stereoMode,
+                    canvasShape,
+                    contentSecurityLevel,
+                    superSampling,
+                    pose,
+                    parentEntity);
         }
     }
 
@@ -1969,6 +1975,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
             @SurfaceEntity.StereoMode int stereoMode,
             SurfaceEntity.CanvasShape canvasShape,
             @SurfaceEntity.ContentSecurityLevel int contentSecurityLevel,
+            @SurfaceEntity.SuperSampling int superSampling,
             Pose pose,
             @NonNull Entity parentEntity) {
 
@@ -1986,7 +1993,8 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
                         mExecutor,
                         stereoMode,
                         canvasShape,
-                        contentSecurityLevel);
+                        contentSecurityLevel,
+                        superSampling);
         entity.setPose(pose, Space.PARENT);
         return entity;
     }

@@ -359,6 +359,7 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
         pose: Pose,
         canvasShape: SurfaceEntity.CanvasShape,
         contentSecurityLevel: Int,
+        superSampling: Int,
         parentEntity: Entity,
     ): SurfaceEntity = FakeSurfaceEntity()
 

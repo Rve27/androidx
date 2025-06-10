@@ -58,6 +58,9 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     @ContentSecurityLevel
     private int mContentSecurityLevel = SurfaceEntity.ContentSecurityLevel.NONE;
 
+    @SuperSampling
+    private int mSuperSampling = SurfaceEntity.SuperSampling.DEFAULT;
+
     private CanvasShape mCanvasShape;
     private float mFeatherRadiusX = 0.0f;
     private float mFeatherRadiusY = 0.0f;
@@ -85,6 +88,24 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
         }
     }
 
+    // Converts SurfaceEntity's SuperSampling to a boolean for Impress.
+    private static boolean toImpressSuperSampling(
+            @SuperSampling int superSampling) {
+        switch (superSampling) {
+            case SuperSampling.NONE:
+                return false;
+            case SuperSampling.DEFAULT:
+                return true;
+            default:
+                Log.e(
+                        "SurfaceEntityImpl",
+                        "Unsupported super sampling value: "
+                                + superSampling
+                                + ". Defaulting to true (DEFAULT).");
+                return true;
+        }
+    }
+
     SurfaceEntityImpl(
             Entity parentEntity,
             ImpressApi impressApi,
@@ -94,12 +115,14 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
             ScheduledExecutorService executor,
             @StereoMode int stereoMode,
             CanvasShape canvasShape,
-            @ContentSecurityLevel int contentSecurityLevel) {
+            @ContentSecurityLevel int contentSecurityLevel,
+            @SuperSampling int superSampling) {
         super(extensions.createNode(), extensions, entityManager, executor);
         mImpressApi = impressApi;
         mSplitEngineSubspaceManager = splitEngineSubspaceManager;
         mStereoMode = stereoMode;
         mContentSecurityLevel = contentSecurityLevel;
+        mSuperSampling = superSampling;
         mCanvasShape = canvasShape;
         setParent(parentEntity);
 
@@ -117,7 +140,9 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
         // This is broken up into two steps to limit the size of the Impress Surface
         mEntityImpressNode =
                 mImpressApi.createStereoSurface(
-                        stereoMode, toImpressContentSecurityLevel(mContentSecurityLevel));
+                        stereoMode,
+                        toImpressContentSecurityLevel(mContentSecurityLevel),
+                        toImpressSuperSampling(mSuperSampling));
         setCanvasShape(mCanvasShape);
 
         // The CPM node hierarchy is: Entity CPM node --- parent of ---> Subspace CPM node.
