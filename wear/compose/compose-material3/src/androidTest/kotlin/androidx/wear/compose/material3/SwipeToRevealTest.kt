@@ -22,6 +22,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -46,6 +48,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.test.TouchInjectionScope
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertLeftPositionInRootIsEqualTo
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -93,6 +96,7 @@ import androidx.wear.widget.SwipeDismissFrameLayout
 import com.google.common.truth.StringSubject
 import com.google.common.truth.Truth.assertThat
 import junit.framework.TestCase.assertEquals
+import kotlin.math.abs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -1024,6 +1028,57 @@ class SwipeToRevealTest {
             assertTrue(onSwipePrimaryAction)
             assertFalse(onPrimaryActionClick)
         }
+    }
+
+    @Test
+    fun onPartiallySwipe_primaryActionIsBigger_actionsCenteredVerticallyAligned() {
+        verifyActionCenterVerticalAligned(70.dp, 60.dp)
+    }
+
+    @Test
+    fun onPartiallySwipe_secondaryActionIsBigger_actionsCenteredVerticallyAligned() {
+        verifyActionCenterVerticalAligned(60.dp, 70.dp)
+    }
+
+    private fun verifyActionCenterVerticalAligned(
+        primaryActionHeight: Dp,
+        secondaryActionHeight: Dp,
+    ) {
+        rule.setContent {
+            SwipeToRevealWithDefaults(
+                primaryAction = {
+                    DefaultPrimaryActionButton(
+                        modifier =
+                            Modifier.heightIn(primaryActionHeight).testTag(PRIMARY_ACTION_TAG)
+                    )
+                },
+                secondaryAction = {
+                    DefaultSecondaryActionButton(
+                        modifier =
+                            Modifier.heightIn(secondaryActionHeight).testTag(SECONDARY_ACTION_TAG)
+                    )
+                },
+                revealState = rememberRevealState(initialValue = RightRevealing),
+            ) {
+                DefaultContent(modifier = Modifier.height(100.dp))
+            }
+        }
+
+        rule.waitForIdle()
+        // get centerY of actions
+        val primaryActionCenterY =
+            with(rule.onNodeWithTag(PRIMARY_ACTION_TAG).getUnclippedBoundsInRoot()) {
+                    top + (bottom - top) / 2f
+                }
+                .value
+        val secondaryActionCenterY =
+            with(rule.onNodeWithTag(SECONDARY_ACTION_TAG).getUnclippedBoundsInRoot()) {
+                    top + (bottom - top) / 2f
+                }
+                .value
+
+        // actions are center vertical aligned when their centerY
+        assertEquals(0f, abs(primaryActionCenterY - secondaryActionCenterY), 0.1f)
     }
 
     @Test

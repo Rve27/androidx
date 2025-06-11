@@ -535,6 +535,7 @@ public fun SwipeToReveal(
                                             }
                                         },
                                 horizontalArrangement = Arrangement.Absolute.Right,
+                                verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 if (!swipingRight) {
                                     // weight cannot be 0 so remove the composable when weight
