@@ -56,7 +56,9 @@ import androidx.compose.material3.tokens.ScrimTokens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
@@ -155,6 +157,7 @@ import kotlinx.coroutines.launch
  *   except for the center arrangement which considers the entire height of the container
  * @param content the content of this wide navigation rail, typically [WideNavigationRailItem]s
  */
+@OptIn(ExperimentalMaterial3ComponentOverrideApi::class)
 @ExperimentalMaterial3ExpressiveApi
 @Composable
 fun WideNavigationRail(
@@ -167,17 +170,43 @@ fun WideNavigationRail(
     arrangement: Arrangement.Vertical = WideNavigationRailDefaults.arrangement,
     content: @Composable () -> Unit,
 ) {
-    WideNavigationRailLayout(
-        modifier = modifier,
-        isModal = false,
-        expanded = state.targetValue.isExpanded,
-        colors = colors,
-        shape = shape,
-        header = header,
-        windowInsets = windowInsets,
-        arrangement = arrangement,
-        content = content,
-    )
+    with(LocalWideNavigationRailOverride.current) {
+        WideNavigationRailOverrideScope(
+                modifier = modifier,
+                state = state,
+                shape = shape,
+                colors = colors,
+                header = header,
+                windowInsets = windowInsets,
+                arrangement = arrangement,
+                content = content,
+            )
+            .WideNavigationRail()
+    }
+}
+
+/*
+ * This override provides the default behavior of the [WideNavigationRail] component.
+ *
+ * [WideNavigationRailOverride] used when no override is specified.
+ */
+@ExperimentalMaterial3ComponentOverrideApi
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+object DefaultWideNavigationRailOverride : WideNavigationRailOverride {
+    @Composable
+    override fun WideNavigationRailOverrideScope.WideNavigationRail() {
+        WideNavigationRailLayout(
+            modifier = modifier,
+            isModal = false,
+            expanded = state.targetValue.isExpanded,
+            colors = colors,
+            shape = shape,
+            header = header,
+            windowInsets = windowInsets,
+            arrangement = arrangement,
+            content = content,
+        )
+    }
 }
 
 @Composable
@@ -1090,3 +1119,51 @@ private val PredictiveBackMaxScaleYDistance = 48.dp
 
 private const val PredictiveBackPivotFractionY = 0.5f
 private const val HeaderLayoutIdTag: String = "header"
+
+/**
+ * Interface that allows libraries to override the behavior of the [WideNavigationRail] component.
+ *
+ * To override this component, implement the member function of this interface, then provide the
+ * implementation to [LocalWideNavigationRailOverride] in the Compose hierarchy.
+ */
+@ExperimentalMaterial3ComponentOverrideApi
+interface WideNavigationRailOverride {
+    /** Behavior function that is called by the [WideNavigationRail] component. */
+    @Composable fun WideNavigationRailOverrideScope.WideNavigationRail()
+}
+
+/**
+ * Parameters available to [WideNavigationRail].
+ *
+ * @param modifier the [Modifier] to be applied to this wide navigation rail
+ * @param state the [WideNavigationRailState] of this wide navigation rail
+ * @param shape defines the shape of this wide navigation rail's container.
+ * @param colors [WideNavigationRailColors] that will be used to resolve the colors used for this
+ *   wide navigation rail. See [WideNavigationRailDefaults.colors]
+ * @param header optional header that may hold a [FloatingActionButton] or a logo
+ * @param windowInsets a window insets of the wide navigation rail
+ * @param arrangement the [Arrangement.Vertical] of this wide navigation rail for its content. Note
+ *   that if there's a header present, the items will be arranged on the remaining space below it,
+ *   except for the center arrangement which considers the entire height of the container
+ * @param content the content of this wide navigation rail, typically [WideNavigationRailItem]s
+ */
+@ExperimentalMaterial3ComponentOverrideApi
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+class WideNavigationRailOverrideScope
+internal constructor(
+    val modifier: Modifier,
+    val state: WideNavigationRailState,
+    val shape: Shape,
+    val colors: WideNavigationRailColors,
+    val header: @Composable (() -> Unit)?,
+    val windowInsets: WindowInsets,
+    val arrangement: Arrangement.Vertical,
+    val content: @Composable () -> Unit,
+)
+
+/** CompositionLocal containing the currently-selected [WideNavigationRailOverride]. */
+@ExperimentalMaterial3ComponentOverrideApi
+val LocalWideNavigationRailOverride: ProvidableCompositionLocal<WideNavigationRailOverride> =
+    compositionLocalOf {
+        DefaultWideNavigationRailOverride
+    }

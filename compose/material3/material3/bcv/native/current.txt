@@ -371,6 +371,10 @@ abstract interface androidx.compose.material3/TwoRowsTopAppBarOverride { // andr
     abstract fun (androidx.compose.material3/TwoRowsTopAppBarOverrideScope).TwoRowsTopAppBar() // androidx.compose.material3/TwoRowsTopAppBarOverride.TwoRowsTopAppBar|TwoRowsTopAppBar@androidx.compose.material3.TwoRowsTopAppBarOverrideScope(){}[0]
 }
 
+abstract interface androidx.compose.material3/WideNavigationRailOverride { // androidx.compose.material3/WideNavigationRailOverride|null[0]
+    abstract fun (androidx.compose.material3/WideNavigationRailOverrideScope).WideNavigationRail() // androidx.compose.material3/WideNavigationRailOverride.WideNavigationRail|WideNavigationRail@androidx.compose.material3.WideNavigationRailOverrideScope(){}[0]
+}
+
 abstract interface androidx.compose.material3/WideNavigationRailState { // androidx.compose.material3/WideNavigationRailState|null[0]
     abstract val currentValue // androidx.compose.material3/WideNavigationRailState.currentValue|{}currentValue[0]
         abstract fun <get-currentValue>(): androidx.compose.material3/WideNavigationRailValue // androidx.compose.material3/WideNavigationRailState.currentValue.<get-currentValue>|<get-currentValue>(){}[0]
@@ -2001,6 +2005,25 @@ final class androidx.compose.material3/WideNavigationRailColors { // androidx.co
     final fun hashCode(): kotlin/Int // androidx.compose.material3/WideNavigationRailColors.hashCode|hashCode(){}[0]
 }
 
+final class androidx.compose.material3/WideNavigationRailOverrideScope { // androidx.compose.material3/WideNavigationRailOverrideScope|null[0]
+    final val arrangement // androidx.compose.material3/WideNavigationRailOverrideScope.arrangement|{}arrangement[0]
+        final fun <get-arrangement>(): androidx.compose.foundation.layout/Arrangement.Vertical // androidx.compose.material3/WideNavigationRailOverrideScope.arrangement.<get-arrangement>|<get-arrangement>(){}[0]
+    final val colors // androidx.compose.material3/WideNavigationRailOverrideScope.colors|{}colors[0]
+        final fun <get-colors>(): androidx.compose.material3/WideNavigationRailColors // androidx.compose.material3/WideNavigationRailOverrideScope.colors.<get-colors>|<get-colors>(){}[0]
+    final val content // androidx.compose.material3/WideNavigationRailOverrideScope.content|{}content[0]
+        final fun <get-content>(): kotlin/Function0<kotlin/Unit> // androidx.compose.material3/WideNavigationRailOverrideScope.content.<get-content>|<get-content>(){}[0]
+    final val header // androidx.compose.material3/WideNavigationRailOverrideScope.header|{}header[0]
+        final fun <get-header>(): kotlin/Function0<kotlin/Unit>? // androidx.compose.material3/WideNavigationRailOverrideScope.header.<get-header>|<get-header>(){}[0]
+    final val modifier // androidx.compose.material3/WideNavigationRailOverrideScope.modifier|{}modifier[0]
+        final fun <get-modifier>(): androidx.compose.ui/Modifier // androidx.compose.material3/WideNavigationRailOverrideScope.modifier.<get-modifier>|<get-modifier>(){}[0]
+    final val shape // androidx.compose.material3/WideNavigationRailOverrideScope.shape|{}shape[0]
+        final fun <get-shape>(): androidx.compose.ui.graphics/Shape // androidx.compose.material3/WideNavigationRailOverrideScope.shape.<get-shape>|<get-shape>(){}[0]
+    final val state // androidx.compose.material3/WideNavigationRailOverrideScope.state|{}state[0]
+        final fun <get-state>(): androidx.compose.material3/WideNavigationRailState // androidx.compose.material3/WideNavigationRailOverrideScope.state.<get-state>|<get-state>(){}[0]
+    final val windowInsets // androidx.compose.material3/WideNavigationRailOverrideScope.windowInsets|{}windowInsets[0]
+        final fun <get-windowInsets>(): androidx.compose.foundation.layout/WindowInsets // androidx.compose.material3/WideNavigationRailOverrideScope.windowInsets.<get-windowInsets>|<get-windowInsets>(){}[0]
+}
+
 final value class androidx.compose.material3/DisplayMode { // androidx.compose.material3/DisplayMode|null[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // androidx.compose.material3/DisplayMode.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // androidx.compose.material3/DisplayMode.hashCode|hashCode(){}[0]
@@ -2581,6 +2604,10 @@ final object androidx.compose.material3/DefaultSingleRowTopAppBarOverride : andr
 
 final object androidx.compose.material3/DefaultTwoRowsTopAppBarOverride : androidx.compose.material3/TwoRowsTopAppBarOverride { // androidx.compose.material3/DefaultTwoRowsTopAppBarOverride|null[0]
     final fun (androidx.compose.material3/TwoRowsTopAppBarOverrideScope).TwoRowsTopAppBar() // androidx.compose.material3/DefaultTwoRowsTopAppBarOverride.TwoRowsTopAppBar|TwoRowsTopAppBar@androidx.compose.material3.TwoRowsTopAppBarOverrideScope(){}[0]
+}
+
+final object androidx.compose.material3/DefaultWideNavigationRailOverride : androidx.compose.material3/WideNavigationRailOverride { // androidx.compose.material3/DefaultWideNavigationRailOverride|null[0]
+    final fun (androidx.compose.material3/WideNavigationRailOverrideScope).WideNavigationRail() // androidx.compose.material3/DefaultWideNavigationRailOverride.WideNavigationRail|WideNavigationRail@androidx.compose.material3.WideNavigationRailOverrideScope(){}[0]
 }
 
 final object androidx.compose.material3/DividerDefaults { // androidx.compose.material3/DividerDefaults|null[0]
@@ -3577,6 +3604,8 @@ final val androidx.compose.material3/LocalTonalElevationEnabled // androidx.comp
     final fun <get-LocalTonalElevationEnabled>(): androidx.compose.runtime/ProvidableCompositionLocal<kotlin/Boolean> // androidx.compose.material3/LocalTonalElevationEnabled.<get-LocalTonalElevationEnabled>|<get-LocalTonalElevationEnabled>(){}[0]
 final val androidx.compose.material3/LocalTwoRowsTopAppBarOverride // androidx.compose.material3/LocalTwoRowsTopAppBarOverride|{}LocalTwoRowsTopAppBarOverride[0]
     final fun <get-LocalTwoRowsTopAppBarOverride>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/TwoRowsTopAppBarOverride> // androidx.compose.material3/LocalTwoRowsTopAppBarOverride.<get-LocalTwoRowsTopAppBarOverride>|<get-LocalTwoRowsTopAppBarOverride>(){}[0]
+final val androidx.compose.material3/LocalWideNavigationRailOverride // androidx.compose.material3/LocalWideNavigationRailOverride|{}LocalWideNavigationRailOverride[0]
+    final fun <get-LocalWideNavigationRailOverride>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/WideNavigationRailOverride> // androidx.compose.material3/LocalWideNavigationRailOverride.<get-LocalWideNavigationRailOverride>|<get-LocalWideNavigationRailOverride>(){}[0]
 final val androidx.compose.material3/isPm // androidx.compose.material3/isPm|@androidx.compose.material3.TimePickerState{}isPm[0]
     final fun (androidx.compose.material3/TimePickerState).<get-isPm>(): kotlin/Boolean // androidx.compose.material3/isPm.<get-isPm>|<get-isPm>@androidx.compose.material3.TimePickerState(){}[0]
 
