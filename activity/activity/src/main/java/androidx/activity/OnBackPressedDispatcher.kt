@@ -71,13 +71,14 @@ class OnBackPressedDispatcher(
      *
      * @see [OnBackPressedCallback.eventCallback]
      */
-    internal var eventDispatcher: NavigationEventDispatcher =
+    internal val eventDispatcher: NavigationEventDispatcher by lazy {
         NavigationEventDispatcher(
             fallbackOnBackPressed = { fallbackOnBackPressed?.run() },
             onHasEnabledCallbacksChanged = { enabled ->
                 onHasEnabledCallbacksChanged?.accept(enabled)
             },
         )
+    }
 
     @JvmOverloads
     constructor(fallbackOnBackPressed: Runnable? = null) : this(fallbackOnBackPressed, null)
