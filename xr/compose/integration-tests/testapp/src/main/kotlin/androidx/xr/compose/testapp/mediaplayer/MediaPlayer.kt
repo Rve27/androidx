@@ -39,7 +39,7 @@ import androidx.xr.compose.testapp.ui.components.CommonTestPanel
 import androidx.xr.compose.testapp.ui.theme.IntegrationTestsAppTheme
 import androidx.xr.compose.unit.DpVolumeSize
 
-class MediaPlayerActivity : ComponentActivity() {
+class MediaPlayer : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -54,8 +54,8 @@ class MediaPlayerActivity : ComponentActivity() {
                     size = DpVolumeSize(640.dp, 480.dp, 0.dp),
                     showBottomBar = true,
                     title = "Media Player Test",
-                    onClickBackArrow = { this@MediaPlayerActivity.finish() },
-                    onClickRecreate = { this@MediaPlayerActivity.recreate() },
+                    onClickBackArrow = { this@MediaPlayer.finish() },
+                    onClickRecreate = { this@MediaPlayer.recreate() },
                 ) { padding ->
                     Column(modifier = Modifier.padding(padding)) { VideoPlayerXR() }
                 }

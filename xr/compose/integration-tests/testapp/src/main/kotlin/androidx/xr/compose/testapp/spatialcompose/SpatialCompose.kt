@@ -66,6 +66,7 @@ import androidx.xr.compose.platform.LocalSpatialConfiguration
 import androidx.xr.compose.spatial.ContentEdge
 import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.OrbiterOffsetType
+import androidx.xr.compose.spatial.SpatialDialog
 import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.ExperimentalSubspaceVolumeApi
 import androidx.xr.compose.subspace.MainPanel
@@ -89,8 +90,8 @@ import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.testTag
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.testapp.common.AnotherActivity
+import androidx.xr.compose.testapp.mediaplayer.MediaPlayer
 import androidx.xr.compose.testapp.ui.components.CommonTestScaffold
-import androidx.xr.compose.testapp.ui.components.TestDialog
 import androidx.xr.compose.unit.Meter.Companion.meters
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
@@ -147,7 +148,6 @@ class SpatialCompose : ComponentActivity() {
                     Text("Panel Center - main task window")
                     val isSpatialUiEnabled = LocalSpatialCapabilities.current.isSpatialUiEnabled
                     val config = LocalSpatialConfiguration.current
-
                     Button(
                         onClick = {
                             if (isSpatialUiEnabled) {
@@ -159,35 +159,13 @@ class SpatialCompose : ComponentActivity() {
                     ) {
                         Text("Switch Space Mode")
                     }
-
                     Button(
                         onClick = {
-                            val intent =
-                                Intent(this@SpatialCompose, SpatialComposeVideoPlayer::class.java)
+                            val intent = Intent(this@SpatialCompose, MediaPlayer::class.java)
                             startActivity(intent)
                         }
                     ) {
                         Text("Launch Video Player")
-                    }
-
-                    Button(
-                        onClick = {
-                            val intent =
-                                Intent(this@SpatialCompose, SpatialComposeWindowManager::class.java)
-                            startActivity(intent)
-                        }
-                    ) {
-                        Text("Launch Window Manager JXR Test")
-                    }
-
-                    Button(
-                        onClick = {
-                            val intent =
-                                Intent(this@SpatialCompose, SpatialComposeStateTest::class.java)
-                            startActivity(intent)
-                        }
-                    ) {
-                        Text("Launch Application State Test")
                     }
                 }
             }
@@ -300,6 +278,7 @@ class SpatialCompose : ComponentActivity() {
         var showArrows by remember { mutableStateOf(false) }
         var addHighlight by remember { mutableStateOf(false) }
         val borderWidth by remember { derivedStateOf { if (addHighlight) 3.dp else 0.dp } }
+        var showDialog by remember { mutableStateOf(false) }
         Column(
             modifier =
                 Modifier.background(Color.LightGray)
@@ -329,13 +308,20 @@ class SpatialCompose : ComponentActivity() {
                 }
             }
             Spacer(modifier = Modifier.size(20.dp))
-            TestDialog {
-                Surface(color = Color.White, modifier = Modifier.clip(RoundedCornerShape(5.dp))) {
-                    Column(
-                        modifier = Modifier.padding(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
+            Button(onClick = { showDialog = true }) { Text("show dialog") }
+            if (showDialog) {
+                SpatialDialog(onDismissRequest = { showDialog = false }) {
+                    Surface(
+                        color = Color.White,
+                        modifier = Modifier.clip(RoundedCornerShape(5.dp)),
                     ) {
-                        Text("This is a SpatialDialog", modifier = Modifier.padding(10.dp))
+                        Column(
+                            modifier = Modifier.padding(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text("This is a SpatialDialog", modifier = Modifier.padding(10.dp))
+                            Button(onClick = { showDialog = false }) { Text("Dismiss") }
+                        }
                     }
                 }
             }
