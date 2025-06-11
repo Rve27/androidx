@@ -482,7 +482,9 @@ final class androidx.compose.material3.carousel/CarouselState : androidx.compose
         final fun <get-isScrollInProgress>(): kotlin/Boolean // androidx.compose.material3.carousel/CarouselState.isScrollInProgress.<get-isScrollInProgress>|<get-isScrollInProgress>(){}[0]
 
     final fun dispatchRawDelta(kotlin/Float): kotlin/Float // androidx.compose.material3.carousel/CarouselState.dispatchRawDelta|dispatchRawDelta(kotlin.Float){}[0]
+    final suspend fun animateScrollToItem(kotlin/Int, androidx.compose.animation.core/AnimationSpec<kotlin/Float> = ...) // androidx.compose.material3.carousel/CarouselState.animateScrollToItem|animateScrollToItem(kotlin.Int;androidx.compose.animation.core.AnimationSpec<kotlin.Float>){}[0]
     final suspend fun scroll(androidx.compose.foundation/MutatePriority, kotlin.coroutines/SuspendFunction1<androidx.compose.foundation.gestures/ScrollScope, kotlin/Unit>) // androidx.compose.material3.carousel/CarouselState.scroll|scroll(androidx.compose.foundation.MutatePriority;kotlin.coroutines.SuspendFunction1<androidx.compose.foundation.gestures.ScrollScope,kotlin.Unit>){}[0]
+    final suspend fun scrollToItem(kotlin/Int) // androidx.compose.material3.carousel/CarouselState.scrollToItem|scrollToItem(kotlin.Int){}[0]
 
     final object Companion { // androidx.compose.material3.carousel/CarouselState.Companion|null[0]
         final val Saver // androidx.compose.material3.carousel/CarouselState.Companion.Saver|{}Saver[0]
