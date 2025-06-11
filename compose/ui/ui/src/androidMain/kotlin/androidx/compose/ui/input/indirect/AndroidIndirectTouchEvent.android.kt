@@ -29,6 +29,6 @@ constructor(
     internal val nativeEvent: MotionEvent,
 ) : PlatformIndirectTouchEvent
 
-@OptIn(ExperimentalIndirectTouchTypeApi::class)
+@ExperimentalIndirectTouchTypeApi
 val IndirectTouchEvent.nativeEvent: MotionEvent
     get() = (this as AndroidIndirectTouchEvent).nativeEvent
