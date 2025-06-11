@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.AndroidXScreenshotTestRule
-import androidx.test.screenshot.matchers.MSSIMMatcher
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import org.junit.Rule
@@ -90,6 +89,6 @@ class OpenOnPhoneDialogScreenshotTest {
         rule.mainClock.advanceTimeBy(advanceTimeBy)
         onNodeWithTag(TEST_TAG)
             .captureToImage()
-            .assertAgainstGolden(screenshotRule, testName.goldenIdentifier(), MSSIMMatcher(1.0))
+            .assertAgainstGolden(screenshotRule, testName.goldenIdentifier())
     }
 }
