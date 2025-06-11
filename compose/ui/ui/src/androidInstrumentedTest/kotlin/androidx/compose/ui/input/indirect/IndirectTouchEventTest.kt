@@ -24,7 +24,7 @@ import android.view.View
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -45,7 +45,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-@OptIn(ExperimentalComposeUiApi::class)
+@ExperimentalIndirectTouchTypeApi
 @MediumTest
 @RunWith(AndroidJUnit4::class)
 class IndirectTouchEventTest {
@@ -220,7 +220,7 @@ class IndirectTouchEventTest {
 
     @Test
     fun indirectTouchEventContainsEventTime() {
-        val eventTimeMs = 123L
+        val uptimeMs = 123L
         ContentWithInitialFocus {
             Box(
                 modifier =
@@ -236,12 +236,12 @@ class IndirectTouchEventTest {
             rootView.dispatchGenericMotionEvent(
                 MotionEventBuilder.newBuilder()
                     .setSource(SOURCE_TOUCH_NAVIGATION)
-                    .setEventTime(eventTimeMs)
+                    .setEventTime(uptimeMs)
                     .build()
             )
         }
 
-        rule.runOnIdle { assertThat(receivedEvent?.eventTimeMillis).isEqualTo(eventTimeMs) }
+        rule.runOnIdle { assertThat(receivedEvent?.uptimeMillis).isEqualTo(uptimeMs) }
     }
 
     @Test

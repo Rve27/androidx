@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.compose.ui.test
+package androidx.compose.ui.input.indirect
 
+import android.view.MotionEvent
 import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
-import androidx.compose.ui.input.indirect.IndirectTouchEvent
+import androidx.compose.ui.geometry.Offset
 
-/**
- * Send the specified [IndirectTouchEvent] to the focused component.
- *
- * @return true if the event was consumed. False otherwise.
- */
-@ExperimentalIndirectTouchTypeApi
-fun SemanticsNodeInteraction.performIndirectTouchEvent(
-    indirectTouchEvent: IndirectTouchEvent
-): Boolean {
-    val semanticsNode =
-        fetchSemanticsNode("Failed to send indirect touch event ($indirectTouchEvent)")
-    val root = semanticsNode.root
-    requireNotNull(root) { "Failed to find owner" }
-    return testContext.testOwner.runOnUiThread { root.sendIndirectTouchEvent(indirectTouchEvent) }
-}
+internal class AndroidIndirectTouchEvent
+@OptIn(ExperimentalIndirectTouchTypeApi::class)
+constructor(
+    override val position: Offset,
+    override val uptimeMillis: Long,
+    override val type: IndirectTouchEventType,
+    internal val nativeEvent: MotionEvent,
+) : PlatformIndirectTouchEvent
+
+@OptIn(ExperimentalIndirectTouchTypeApi::class)
+val IndirectTouchEvent.nativeEvent: MotionEvent
+    get() = (this as AndroidIndirectTouchEvent).nativeEvent
