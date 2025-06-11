@@ -76,6 +76,9 @@ import androidx.core.util.Preconditions.checkArgument
  * If [isSlowMotionEnabled] is `false`, the video will be saved at the actual recording frame rate
  * specified by the [frameRate] parameter, e.g. 120 FPS, without slow-motion effect.
  *
+ * See the sample code below for recording a slow-motion video:
+ *
+ * @sample androidx.camera.video.samples.slowMotionVideoSample
  * @property videoCapture The [VideoCapture] use case for video recording.
  * @property preview Optional [Preview] use case for displaying a preview during recording.
  * @property frameRate The desired frame rate range for high-speed video recording. The value must
