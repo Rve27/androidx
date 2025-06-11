@@ -223,6 +223,14 @@ package androidx.xr.runtime.java {
 
 package androidx.xr.runtime.math {
 
+  public final class BoundingBox {
+    ctor public BoundingBox(androidx.xr.runtime.math.Vector3 min, androidx.xr.runtime.math.Vector3 max);
+    method public androidx.xr.runtime.math.Vector3 getMax();
+    method public androidx.xr.runtime.math.Vector3 getMin();
+    property public androidx.xr.runtime.math.Vector3 max;
+    property public androidx.xr.runtime.math.Vector3 min;
+  }
+
   public final class FloatSize2d {
     ctor public FloatSize2d();
     ctor public FloatSize2d(optional float width, optional float height);
