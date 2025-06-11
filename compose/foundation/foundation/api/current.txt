@@ -2240,7 +2240,7 @@ package androidx.compose.foundation.text.contextmenu.data {
 package androidx.compose.foundation.text.contextmenu.modifier {
 
   public final class TextContextMenuModifierKt {
-    method public static androidx.compose.ui.Modifier addTextContextMenuComponents(androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.text.contextmenu.builder.TextContextMenuBuilderScope,kotlin.Unit> builder);
+    method public static androidx.compose.ui.Modifier appendTextContextMenuComponents(androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.text.contextmenu.builder.TextContextMenuBuilderScope,kotlin.Unit> builder);
     method public static androidx.compose.ui.Modifier filterTextContextMenuComponents(androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super androidx.compose.foundation.text.contextmenu.data.TextContextMenuComponent,java.lang.Boolean> filter);
   }
 
