@@ -25,6 +25,8 @@ import androidx.compose.material3.LocalNavigationRailOverride
 import androidx.compose.material3.LocalShortNavigationBarOverride
 import androidx.compose.material3.LocalSingleRowTopAppBarOverride
 import androidx.compose.material3.LocalTwoRowsTopAppBarOverride
+import androidx.compose.material3.LocalVerticalToolbarOverride
+import androidx.compose.material3.LocalVerticalToolbarWithFabOverride
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveComponentOverrideApi
 import androidx.compose.material3.adaptive.layout.LocalAnimatedPaneOverride
 import androidx.compose.material3.adaptive.layout.LocalThreePaneScaffoldOverride
@@ -103,6 +105,14 @@ public fun EnableXrComponentOverrides(
                 if (context.shouldOverrideComponent(XrComponentOverride.BasicAlertDialog)) {
                     add(LocalBasicAlertDialogOverride provides XrBasicAlertDialogOverride)
                 }
+
+                if (context.shouldOverrideComponent(XrComponentOverride.VerticalFloatingToolbar)) {
+                    add(LocalVerticalToolbarOverride provides XrVerticalFloatingToolbarOverride)
+                    add(
+                        LocalVerticalToolbarWithFabOverride provides
+                            XrVerticalFloatingToolbarWithFabOverride
+                    )
+                }
             }
         }
     CompositionLocalProvider(values = componentOverrides.toTypedArray(), content = content)
@@ -170,6 +180,11 @@ public value class XrComponentOverride private constructor(private val name: Str
         /** Material3 BasicAlertDialog. */
         @ExperimentalMaterial3XrApi
         public val BasicAlertDialog: XrComponentOverride = XrComponentOverride("BasicAlertDialog")
+
+        /** Material Expressive VerticalFloatingToolbar. */
+        @ExperimentalMaterial3XrApi
+        public val VerticalFloatingToolbar: XrComponentOverride =
+            XrComponentOverride("VerticalFloatingToolbar")
     }
 }
 
