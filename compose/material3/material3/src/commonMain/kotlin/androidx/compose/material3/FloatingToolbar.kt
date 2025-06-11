@@ -677,14 +677,20 @@ object FloatingToolbarDefaults {
     /**
      * Default expanded elevation used for [HorizontalFloatingToolbar] and [VerticalFloatingToolbar]
      * with FAB.
+     *
+     * This elevation will only affect the toolbar part of the component. The FAB that is provided
+     * in a slot will have its own elevation and can be controlled independently.
      */
     val ContainerExpandedElevationWithFab: Dp = ElevationTokens.Level1 // TODO read from token
 
     /**
      * Default collapsed elevation used for [HorizontalFloatingToolbar] and
      * [VerticalFloatingToolbar] with FAB.
+     *
+     * This elevation will only affect the toolbar part of the component. The FAB that is provided
+     * in a slot will have its own elevation and can be controlled independently.
      */
-    val ContainerCollapsedElevationWithFab: Dp = ElevationTokens.Level2 // TODO read from token
+    val ContainerCollapsedElevationWithFab: Dp = ElevationTokens.Level0 // TODO read from token
 
     /** Default shape used for [HorizontalFloatingToolbar] and [VerticalFloatingToolbar] */
     val ContainerShape: Shape
@@ -875,6 +881,13 @@ object FloatingToolbarDefaults {
             shape = shape,
             containerColor = containerColor,
             contentColor = contentColor,
+            elevation =
+                FloatingActionButtonDefaults.elevation(
+                    defaultElevation = ElevationTokens.Level2,
+                    pressedElevation = ElevationTokens.Level2,
+                    focusedElevation = ElevationTokens.Level2,
+                    hoveredElevation = ElevationTokens.Level3,
+                ),
             interactionSource = interactionSource,
             content = content,
         )
@@ -915,6 +928,13 @@ object FloatingToolbarDefaults {
             shape = shape,
             containerColor = containerColor,
             contentColor = contentColor,
+            elevation =
+                FloatingActionButtonDefaults.elevation(
+                    defaultElevation = ElevationTokens.Level2,
+                    pressedElevation = ElevationTokens.Level2,
+                    focusedElevation = ElevationTokens.Level2,
+                    hoveredElevation = ElevationTokens.Level3,
+                ),
             interactionSource = interactionSource,
             content = content,
         )
@@ -1593,7 +1613,6 @@ private fun HorizontalFloatingToolbarWithFabLayout(
     collapsedShadowElevation: Dp,
     toolbar: @Composable RowScope.() -> Unit,
 ) {
-    val fabShape = FloatingActionButtonDefaults.shape
     val expandTransition = updateTransition(if (expanded) 1f else 0f, label = "expanded state")
     val expandedProgress = expandTransition.animateFloat(transitionSpec = { animationSpec }) { it }
     val expandToolbarActionLabel = getString(Strings.FloatingToolbarExpand)
@@ -1699,23 +1718,18 @@ private fun HorizontalFloatingToolbarWithFabLayout(
             }
 
         layout(width, height) {
+            val toolbarElevation =
+                lerp(
+                    start = collapsedShadowElevation,
+                    stop = expandedShadowElevation,
+                    fraction = expandedProgress.value.coerceAtMost(1f),
+                )
             toolbarPlaceable.placeRelativeWithLayer(x = toolbarX, y = toolbarTopOffset) {
-                shadowElevation = expandedShadowElevation.toPx()
+                shadowElevation = toolbarElevation.toPx()
                 shape = toolbarShape
                 clip = true
             }
-            val fabElevation =
-                lerp(
-                    expandedShadowElevation,
-                    collapsedShadowElevation,
-                    1f - expandedProgress.value.coerceAtMost(1f),
-                )
-
-            fabPlaceable.placeRelativeWithLayer(x = fabX, y = fapTopOffset) {
-                shape = fabShape
-                shadowElevation = fabElevation.toPx()
-                clip = true
-            }
+            fabPlaceable.placeRelative(x = fabX, y = fapTopOffset)
         }
     }
 }
@@ -1832,7 +1846,6 @@ private fun VerticalFloatingToolbarWithFabLayout(
     collapsedShadowElevation: Dp,
     toolbar: @Composable ColumnScope.() -> Unit,
 ) {
-    val fabShape = FloatingActionButtonDefaults.shape
     val expandTransition = updateTransition(if (expanded) 1f else 0f, label = "expanded state")
     val expandedProgress = expandTransition.animateFloat(transitionSpec = { animationSpec }) { it }
     val expandToolbarActionLabel = getString(Strings.FloatingToolbarExpand)
@@ -1937,22 +1950,18 @@ private fun VerticalFloatingToolbarWithFabLayout(
             }
 
         layout(width, height) {
+            val toolbarElevation =
+                lerp(
+                    start = collapsedShadowElevation,
+                    stop = expandedShadowElevation,
+                    fraction = expandedProgress.value.coerceAtMost(1f),
+                )
             toolbarPlaceable.placeRelativeWithLayer(x = toolbarEdgeOffset, y = toolbarY) {
-                shadowElevation = expandedShadowElevation.toPx()
+                shadowElevation = toolbarElevation.toPx()
                 shape = toolbarShape
                 clip = true
             }
-            val fabElevation =
-                lerp(
-                    expandedShadowElevation,
-                    collapsedShadowElevation,
-                    1f - expandedProgress.value.coerceAtMost(1f),
-                )
-            fabPlaceable.placeRelativeWithLayer(x = fapEdgeOffset, y = fabY) {
-                shape = fabShape
-                shadowElevation = fabElevation.toPx()
-                clip = true
-            }
+            fabPlaceable.placeRelative(x = fapEdgeOffset, y = fabY)
         }
     }
 }
