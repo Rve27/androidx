@@ -181,6 +181,18 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
         fun restoreLayoutBottomToTop(): Unit = gradientDescent {
             last().offset + last().transformedHeight - maxHeight + afterContentPadding
         }
+
+        fun fitsScreen(): Boolean =
+            with(visibleItems) {
+                val totalHeight =
+                    fastSumBy { it.transformedHeight } +
+                        itemSpacing * (itemsCount - 1) +
+                        beforeContentPadding +
+                        afterContentPadding
+                return totalHeight < maxHeight &&
+                    first().index == 0 &&
+                    last().index == itemsCount - 1
+            }
     }
 
     private var measurementScope = MeasurementScope(ArrayDeque(), 0, 0, 0, 0, 0)
@@ -260,18 +272,8 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
             addVisibleItemsAfter(measuredItemProvider)
             addVisibleItemsBefore(measuredItemProvider)
 
-            val totalHeight =
-                visibleItems.fastSumBy { it.transformedHeight } +
-                    itemSpacing * (itemsCount - 1) +
-                    beforeContentPadding +
-                    afterContentPadding
-
             // List is shorter than container.
-            if (
-                totalHeight < containerConstraints.maxHeight &&
-                    visibleItems.first().index == 0 &&
-                    visibleItems.last().index == itemsCount - 1
-            ) {
+            if (fitsScreen()) {
                 // Pinning top item to the top most position.
                 restoreLayoutTopToBottom()
                 canScrollBackward = false
@@ -308,12 +310,13 @@ internal class TransformingLazyColumnContentPaddingMeasurementStrategy(
                 addVisibleItemsAfter(measuredItemProvider)
                 addVisibleItemsBefore(measuredItemProvider)
 
-                if (overscrolledBackwards) {
+                if (fitsScreen()) {
+                    canScrollBackward = false
+                    canScrollForward = false
+                } else if (overscrolledBackwards) {
                     restoreLayoutTopToBottom()
                     canScrollBackward = false
-                }
-
-                if (overscrolledForward) {
+                } else if (overscrolledForward) {
                     restoreLayoutBottomToTop()
                     canScrollForward = false
                 }
