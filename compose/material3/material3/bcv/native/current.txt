@@ -232,6 +232,10 @@ abstract interface androidx.compose.material3/HorizontalFloatingToolbarWithFabOv
     abstract fun (androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope).HorizontalFloatingToolbarWithFab() // androidx.compose.material3/HorizontalFloatingToolbarWithFabOverride.HorizontalFloatingToolbarWithFab|HorizontalFloatingToolbarWithFab@androidx.compose.material3.HorizontalFloatingToolbarWithFabOverrideScope(){}[0]
 }
 
+abstract interface androidx.compose.material3/ModalWideNavigationRailOverride { // androidx.compose.material3/ModalWideNavigationRailOverride|null[0]
+    abstract fun (androidx.compose.material3/ModalWideNavigationRailOverrideScope).ModalWideNavigationRail() // androidx.compose.material3/ModalWideNavigationRailOverride.ModalWideNavigationRail|ModalWideNavigationRail@androidx.compose.material3.ModalWideNavigationRailOverrideScope(){}[0]
+}
+
 abstract interface androidx.compose.material3/MotionScheme { // androidx.compose.material3/MotionScheme|null[0]
     abstract fun <#A1: kotlin/Any?> defaultEffectsSpec(): androidx.compose.animation.core/FiniteAnimationSpec<#A1> // androidx.compose.material3/MotionScheme.defaultEffectsSpec|defaultEffectsSpec(){0§<kotlin.Any?>}[0]
     abstract fun <#A1: kotlin/Any?> defaultSpatialSpec(): androidx.compose.animation.core/FiniteAnimationSpec<#A1> // androidx.compose.material3/MotionScheme.defaultSpatialSpec|defaultSpatialSpec(){0§<kotlin.Any?>}[0]
@@ -1111,6 +1115,33 @@ final class androidx.compose.material3/ModalBottomSheetProperties { // androidx.
 
     final val shouldDismissOnBackPress // androidx.compose.material3/ModalBottomSheetProperties.shouldDismissOnBackPress|{}shouldDismissOnBackPress[0]
         final fun <get-shouldDismissOnBackPress>(): kotlin/Boolean // androidx.compose.material3/ModalBottomSheetProperties.shouldDismissOnBackPress.<get-shouldDismissOnBackPress>|<get-shouldDismissOnBackPress>(){}[0]
+}
+
+final class androidx.compose.material3/ModalWideNavigationRailOverrideScope { // androidx.compose.material3/ModalWideNavigationRailOverrideScope|null[0]
+    final val arrangement // androidx.compose.material3/ModalWideNavigationRailOverrideScope.arrangement|{}arrangement[0]
+        final fun <get-arrangement>(): androidx.compose.foundation.layout/Arrangement.Vertical // androidx.compose.material3/ModalWideNavigationRailOverrideScope.arrangement.<get-arrangement>|<get-arrangement>(){}[0]
+    final val collapsedShape // androidx.compose.material3/ModalWideNavigationRailOverrideScope.collapsedShape|{}collapsedShape[0]
+        final fun <get-collapsedShape>(): androidx.compose.ui.graphics/Shape // androidx.compose.material3/ModalWideNavigationRailOverrideScope.collapsedShape.<get-collapsedShape>|<get-collapsedShape>(){}[0]
+    final val colors // androidx.compose.material3/ModalWideNavigationRailOverrideScope.colors|{}colors[0]
+        final fun <get-colors>(): androidx.compose.material3/WideNavigationRailColors // androidx.compose.material3/ModalWideNavigationRailOverrideScope.colors.<get-colors>|<get-colors>(){}[0]
+    final val content // androidx.compose.material3/ModalWideNavigationRailOverrideScope.content|{}content[0]
+        final fun <get-content>(): kotlin/Function0<kotlin/Unit> // androidx.compose.material3/ModalWideNavigationRailOverrideScope.content.<get-content>|<get-content>(){}[0]
+    final val expandedHeaderTopPadding // androidx.compose.material3/ModalWideNavigationRailOverrideScope.expandedHeaderTopPadding|{}expandedHeaderTopPadding[0]
+        final fun <get-expandedHeaderTopPadding>(): androidx.compose.ui.unit/Dp // androidx.compose.material3/ModalWideNavigationRailOverrideScope.expandedHeaderTopPadding.<get-expandedHeaderTopPadding>|<get-expandedHeaderTopPadding>(){}[0]
+    final val expandedProperties // androidx.compose.material3/ModalWideNavigationRailOverrideScope.expandedProperties|{}expandedProperties[0]
+        final fun <get-expandedProperties>(): androidx.compose.material3/ModalWideNavigationRailProperties // androidx.compose.material3/ModalWideNavigationRailOverrideScope.expandedProperties.<get-expandedProperties>|<get-expandedProperties>(){}[0]
+    final val expandedShape // androidx.compose.material3/ModalWideNavigationRailOverrideScope.expandedShape|{}expandedShape[0]
+        final fun <get-expandedShape>(): androidx.compose.ui.graphics/Shape // androidx.compose.material3/ModalWideNavigationRailOverrideScope.expandedShape.<get-expandedShape>|<get-expandedShape>(){}[0]
+    final val header // androidx.compose.material3/ModalWideNavigationRailOverrideScope.header|{}header[0]
+        final fun <get-header>(): kotlin/Function0<kotlin/Unit>? // androidx.compose.material3/ModalWideNavigationRailOverrideScope.header.<get-header>|<get-header>(){}[0]
+    final val modifier // androidx.compose.material3/ModalWideNavigationRailOverrideScope.modifier|{}modifier[0]
+        final fun <get-modifier>(): androidx.compose.ui/Modifier // androidx.compose.material3/ModalWideNavigationRailOverrideScope.modifier.<get-modifier>|<get-modifier>(){}[0]
+    final val shouldHideOnCollapse // androidx.compose.material3/ModalWideNavigationRailOverrideScope.shouldHideOnCollapse|{}shouldHideOnCollapse[0]
+        final fun <get-shouldHideOnCollapse>(): kotlin/Boolean // androidx.compose.material3/ModalWideNavigationRailOverrideScope.shouldHideOnCollapse.<get-shouldHideOnCollapse>|<get-shouldHideOnCollapse>(){}[0]
+    final val state // androidx.compose.material3/ModalWideNavigationRailOverrideScope.state|{}state[0]
+        final fun <get-state>(): androidx.compose.material3/WideNavigationRailState // androidx.compose.material3/ModalWideNavigationRailOverrideScope.state.<get-state>|<get-state>(){}[0]
+    final val windowInsets // androidx.compose.material3/ModalWideNavigationRailOverrideScope.windowInsets|{}windowInsets[0]
+        final fun <get-windowInsets>(): androidx.compose.foundation.layout/WindowInsets // androidx.compose.material3/ModalWideNavigationRailOverrideScope.windowInsets.<get-windowInsets>|<get-windowInsets>(){}[0]
 }
 
 final class androidx.compose.material3/ModalWideNavigationRailProperties { // androidx.compose.material3/ModalWideNavigationRailProperties|null[0]
@@ -2646,6 +2677,10 @@ final object androidx.compose.material3/DefaultHorizontalFloatingToolbarWithFabO
     final fun (androidx.compose.material3/HorizontalFloatingToolbarWithFabOverrideScope).HorizontalFloatingToolbarWithFab() // androidx.compose.material3/DefaultHorizontalFloatingToolbarWithFabOverride.HorizontalFloatingToolbarWithFab|HorizontalFloatingToolbarWithFab@androidx.compose.material3.HorizontalFloatingToolbarWithFabOverrideScope(){}[0]
 }
 
+final object androidx.compose.material3/DefaultModalWideNavigationRailOverride : androidx.compose.material3/ModalWideNavigationRailOverride { // androidx.compose.material3/DefaultModalWideNavigationRailOverride|null[0]
+    final fun (androidx.compose.material3/ModalWideNavigationRailOverrideScope).ModalWideNavigationRail() // androidx.compose.material3/DefaultModalWideNavigationRailOverride.ModalWideNavigationRail|ModalWideNavigationRail@androidx.compose.material3.ModalWideNavigationRailOverrideScope(){}[0]
+}
+
 final object androidx.compose.material3/DefaultNavigationBarOverride : androidx.compose.material3/NavigationBarOverride { // androidx.compose.material3/DefaultNavigationBarOverride|null[0]
     final fun (androidx.compose.material3/NavigationBarOverrideScope).NavigationBar() // androidx.compose.material3/DefaultNavigationBarOverride.NavigationBar|NavigationBar@androidx.compose.material3.NavigationBarOverrideScope(){}[0]
 }
@@ -3656,6 +3691,8 @@ final val androidx.compose.material3/LocalMinimumInteractiveComponentEnforcement
     final fun <get-LocalMinimumInteractiveComponentEnforcement>(): androidx.compose.runtime/ProvidableCompositionLocal<kotlin/Boolean> // androidx.compose.material3/LocalMinimumInteractiveComponentEnforcement.<get-LocalMinimumInteractiveComponentEnforcement>|<get-LocalMinimumInteractiveComponentEnforcement>(){}[0]
 final val androidx.compose.material3/LocalMinimumInteractiveComponentSize // androidx.compose.material3/LocalMinimumInteractiveComponentSize|{}LocalMinimumInteractiveComponentSize[0]
     final fun <get-LocalMinimumInteractiveComponentSize>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.ui.unit/Dp> // androidx.compose.material3/LocalMinimumInteractiveComponentSize.<get-LocalMinimumInteractiveComponentSize>|<get-LocalMinimumInteractiveComponentSize>(){}[0]
+final val androidx.compose.material3/LocalModalWideNavigationRailOverride // androidx.compose.material3/LocalModalWideNavigationRailOverride|{}LocalModalWideNavigationRailOverride[0]
+    final fun <get-LocalModalWideNavigationRailOverride>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/ModalWideNavigationRailOverride> // androidx.compose.material3/LocalModalWideNavigationRailOverride.<get-LocalModalWideNavigationRailOverride>|<get-LocalModalWideNavigationRailOverride>(){}[0]
 final val androidx.compose.material3/LocalNavigationBarOverride // androidx.compose.material3/LocalNavigationBarOverride|{}LocalNavigationBarOverride[0]
     final fun <get-LocalNavigationBarOverride>(): androidx.compose.runtime/ProvidableCompositionLocal<androidx.compose.material3/NavigationBarOverride> // androidx.compose.material3/LocalNavigationBarOverride.<get-LocalNavigationBarOverride>|<get-LocalNavigationBarOverride>(){}[0]
 final val androidx.compose.material3/LocalNavigationRailOverride // androidx.compose.material3/LocalNavigationRailOverride|{}LocalNavigationRailOverride[0]
