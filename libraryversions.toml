@@ -191,6 +191,7 @@ XR = "1.0.0-alpha05"
 XR_ARCORE = "1.0.0-alpha05"
 XR_COMPOSE = "1.0.0-alpha05"
 XR_GLIMMER = "0.1.0-dev01"
+XR_PROJECTED = "1.0.0-alpha01"
 XR_RUNTIME = "1.0.0-alpha05"
 XR_SCENECORE = "1.0.0-alpha05"
 
@@ -337,5 +338,6 @@ XR = { group = "androidx.xr", atomicGroupVersion = "versions.XR" }
 XR_ARCORE = { group = "androidx.xr.arcore", atomicGroupVersion = "versions.XR_ARCORE" }
 XR_COMPOSE = { group = "androidx.xr.compose", atomicGroupVersion = "versions.XR_COMPOSE" }
 XR_GLIMMER = { group = "androidx.xr.glimmer", atomicGroupVersion = "versions.XR_GLIMMER" }
+XR_PROJECTED = { group = "androidx.xr.projected", atomicGroupVersion = "versions.XR_PROJECTED" }
 XR_RUNTIME = { group = "androidx.xr.runtime", atomicGroupVersion = "versions.XR_RUNTIME" }
 XR_SCENECORE = { group = "androidx.xr.scenecore", atomicGroupVersion = "versions.XR_SCENECORE" }
