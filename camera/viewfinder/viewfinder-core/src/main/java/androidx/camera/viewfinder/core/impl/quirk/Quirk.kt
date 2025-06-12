@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package androidx.camera.viewfinder.view.internal.quirk;
+package androidx.camera.viewfinder.core.impl.quirk
 
 /**
  * Defines an inconsistency, a limitation, or any behavior that deviates from the standard behavior.
  *
- * <p> This class is used to define both device specific quirks. Device specific quirks depend on
- * device related information, such as the device's brand, model and OS level.
+ * This class is used to define both device specific quirks. Device specific quirks depend on device
+ * related information, such as the device's brand, model and OS level.
  *
  * @see Quirks
  */
-public interface Quirk {
-}
+internal interface Quirk

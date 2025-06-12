@@ -25,6 +25,7 @@ import androidx.camera.viewfinder.core.TransformationInfo
 import androidx.camera.viewfinder.core.TransformationInfo.Companion.DEFAULT
 import androidx.camera.viewfinder.core.ViewfinderSurfaceRequest
 import androidx.camera.viewfinder.core.ViewfinderSurfaceSessionScope
+import androidx.camera.viewfinder.core.impl.ImplementationModeCompat
 import androidx.camera.viewfinder.core.impl.OffsetF
 import androidx.camera.viewfinder.core.impl.RefCounted
 import androidx.camera.viewfinder.core.impl.ScaleFactorF
@@ -63,12 +64,14 @@ import kotlinx.coroutines.coroutineScope
  *
  * This has two underlying implementations either using an [AndroidEmbeddedExternalSurface] for
  * [ImplementationMode.EMBEDDED] or an [AndroidExternalSurface] for [ImplementationMode.EXTERNAL].
- * These can be set by the [ImplementationMode] argument in the [surfaceRequest] constructor. If the
- * implementation mode is `null`, then [ImplementationMode.EXTERNAL] will be used.
+ * These can be set by the [ImplementationMode] argument in the [surfaceRequest] constructor. If
+ * `implementationMode` is `null`, [ImplementationMode.EXTERNAL] is chosen by default, switching to
+ * [ImplementationMode.EMBEDDED] on API levels 24 and below, or on devices with known compatibility
+ * issues with the `EXTERNAL` mode.
  *
  * The [onInit] lambda, and the callback registered with [ViewfinderInitScope.onSurfaceSession], are
  * always called from the main thread. [onInit] will be called every time a new [surfaceRequest] is
- * provided.
+ * provided, or if the [ImplementationMode] changes.
  *
  * @param surfaceRequest Details about the surface being requested
  * @param transformationInfo Specifies the required transformations for the media being displayed.
@@ -104,7 +107,8 @@ fun Viewfinder(
                 surfaceHeight = surfaceRequest.height,
                 transformationInfo = transformationInfo,
                 implementationMode =
-                    surfaceRequest.implementationMode ?: ImplementationMode.EXTERNAL,
+                    surfaceRequest.implementationMode
+                        ?: ImplementationModeCompat.chooseCompatibleMode(),
                 coordinateTransformer = coordinateTransformer,
                 alignment = alignment,
                 contentScale = contentScale,
