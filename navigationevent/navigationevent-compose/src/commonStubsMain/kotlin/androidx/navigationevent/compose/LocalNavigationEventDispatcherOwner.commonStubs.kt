@@ -21,4 +21,4 @@ import androidx.navigationevent.NavigationEventDispatcherOwner
 
 @Composable
 internal actual fun findViewTreeNavigationEventDispatcherOwner(): NavigationEventDispatcherOwner? =
-    null
+    implementedInJetBrainsFork()
