@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.camera.core.featurecombination.impl.feature
+package androidx.camera.core.featuregroup.impl.feature
 
 import android.util.Range
 import androidx.camera.core.ExperimentalSessionConfig
-import androidx.camera.core.featurecombination.Feature
+import androidx.camera.core.featuregroup.GroupableFeature
 
 /**
  * Denotes the FPS range that is applied to the camera.
  *
- * This feature can not be instantiated directly for usage, instead use the [Feature.FPS_60] object.
+ * This feature can not be instantiated directly for usage, instead use the
+ * [GroupableFeature.FPS_60] object.
  */
 @OptIn(ExperimentalSessionConfig::class)
-public class FpsRangeFeature(public val minFps: Int, public val maxFps: Int) : Feature() {
+public class FpsRangeFeature(public val minFps: Int, public val maxFps: Int) : GroupableFeature() {
     override val featureTypeInternal: FeatureTypeInternal = FeatureTypeInternal.FPS_RANGE
 
     override fun toString(): String {

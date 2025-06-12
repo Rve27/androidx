@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // TODO: Expose the features
-package androidx.camera.core.featurecombination;
+package androidx.camera.core.featuregroup.impl.feature
 
-import androidx.annotation.RestrictTo;
+import androidx.annotation.RestrictTo
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+internal enum class FeatureTypeInternal {
+    DYNAMIC_RANGE,
+    FPS_RANGE,
+    VIDEO_STABILIZATION,
+    IMAGE_FORMAT,
+}

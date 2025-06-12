@@ -16,34 +16,34 @@
 
 @file:OptIn(ExperimentalSessionConfig::class)
 
-package androidx.camera.core.featurecombination.impl.resolver
+package androidx.camera.core.featuregroup.impl.resolver
 
 import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Logger
 import androidx.camera.core.Preview
 import androidx.camera.core.SessionConfig
-import androidx.camera.core.featurecombination.Feature
-import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination
-import androidx.camera.core.featurecombination.impl.UseCaseType
-import androidx.camera.core.featurecombination.impl.UseCaseType.Companion.getFeatureComboUseCaseType
-import androidx.camera.core.featurecombination.impl.UseCaseType.IMAGE_CAPTURE
-import androidx.camera.core.featurecombination.impl.UseCaseType.PREVIEW
-import androidx.camera.core.featurecombination.impl.UseCaseType.VIDEO_CAPTURE
-import androidx.camera.core.featurecombination.impl.feature.DynamicRangeFeature
-import androidx.camera.core.featurecombination.impl.feature.FpsRangeFeature
-import androidx.camera.core.featurecombination.impl.feature.ImageFormatFeature
-import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.Supported
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.Unsupported
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.UnsupportedUseCase
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.UseCaseMissing
+import androidx.camera.core.featuregroup.GroupableFeature
+import androidx.camera.core.featuregroup.impl.ResolvedFeatureGroup
+import androidx.camera.core.featuregroup.impl.UseCaseType
+import androidx.camera.core.featuregroup.impl.UseCaseType.Companion.getFeatureGroupUseCaseType
+import androidx.camera.core.featuregroup.impl.UseCaseType.IMAGE_CAPTURE
+import androidx.camera.core.featuregroup.impl.UseCaseType.PREVIEW
+import androidx.camera.core.featuregroup.impl.UseCaseType.VIDEO_CAPTURE
+import androidx.camera.core.featuregroup.impl.feature.DynamicRangeFeature
+import androidx.camera.core.featuregroup.impl.feature.FpsRangeFeature
+import androidx.camera.core.featuregroup.impl.feature.ImageFormatFeature
+import androidx.camera.core.featuregroup.impl.feature.VideoStabilizationFeature
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolutionResult.Supported
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolutionResult.Unsupported
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolutionResult.UnsupportedUseCase
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolutionResult.UseCaseMissing
 import androidx.camera.core.impl.CameraInfoInternal
 import androidx.camera.core.internal.CameraUseCaseAdapter.isVideoCapture
 
 /**
- * A [FeatureCombinationResolver] that recursively tries out all combinations of features (according
- * to the preference order) until a supported combination is found.
+ * A [FeatureGroupResolver] that recursively tries out all combinations of features (according to
+ * the preference order) until a supported combination is found.
  *
  * If there are three features {A, B, C} which are ordered with descending priority (i.e. A has
  * highest priority and C has lowest), this class will try out the following combinations in the
@@ -57,21 +57,18 @@ import androidx.camera.core.internal.CameraUseCaseAdapter.isVideoCapture
  * 7. C
  *
  * If the first two feature combinations (#1 and #2) are not supported while third combination is
- * supported (with any resolution), the [resolveFeatureCombination] method in this class will return
- * a result using the third feature combination i.e. {A, C}.
+ * supported (with any resolution), the [resolveFeatureGroup] method in this class will return a
+ * result using the third feature combination i.e. {A, C}.
  *
  * @property cameraInfoInternal A [CameraInfoInternal] instance to query if a feature combination is
  *   supported.
  */
-internal class DefaultFeatureCombinationResolver(
-    private val cameraInfoInternal: CameraInfoInternal
-) : FeatureCombinationResolver {
-    override fun resolveFeatureCombination(
-        sessionConfig: SessionConfig
-    ): FeatureCombinationResolutionResult {
+internal class DefaultFeatureGroupResolver(private val cameraInfoInternal: CameraInfoInternal) :
+    FeatureGroupResolver {
+    override fun resolveFeatureGroup(sessionConfig: SessionConfig): FeatureGroupResolutionResult {
         val useCases = sessionConfig.useCases
-        val requiredFeatures = sessionConfig.requiredFeatures
-        val orderedPreferredFeatures = sessionConfig.preferredFeatures
+        val requiredFeatures = sessionConfig.requiredFeatureGroup
+        val orderedPreferredFeatures = sessionConfig.preferredFeatureGroup
 
         require(requiredFeatures.isNotEmpty() || orderedPreferredFeatures.isNotEmpty()) {
             "Must have at least one required or preferred feature"
@@ -82,7 +79,7 @@ internal class DefaultFeatureCombinationResolver(
 
         // Return early if given use case combination is known to be unsupported
         useCases.forEach {
-            val useCaseType = it.getFeatureComboUseCaseType()
+            val useCaseType = it.getFeatureGroupUseCaseType()
             if (useCaseType == UseCaseType.UNDEFINED) {
                 return UnsupportedUseCase(it)
             }
@@ -139,14 +136,14 @@ internal class DefaultFeatureCombinationResolver(
      */
     private fun getFeatureListResolvedByPriority(
         sessionConfig: SessionConfig,
-        orderedPreferredFeatures: List<Feature>,
+        orderedPreferredFeatures: List<GroupableFeature>,
         index: Int = 0,
-        currentOptionalFeatures: List<Feature> = emptyList(),
-    ): FeatureCombinationResolutionResult {
+        currentOptionalFeatures: List<GroupableFeature> = emptyList(),
+    ): FeatureGroupResolutionResult {
         // TODO: Use bitmap iteration instead of recursion to optimize this further.
         if (index >= orderedPreferredFeatures.size) {
             // End of recursion, need to test the feature combination now
-            val features = sessionConfig.requiredFeatures + currentOptionalFeatures
+            val features = sessionConfig.requiredFeatureGroup + currentOptionalFeatures
 
             Logger.d(
                 TAG,
@@ -155,14 +152,14 @@ internal class DefaultFeatureCombinationResolver(
             )
 
             return if (
-                cameraInfoInternal.isResolvedFeatureCombinationSupported(
-                    ResolvedFeatureCombination(features),
+                cameraInfoInternal.isResolvedFeatureGroupSupported(
+                    ResolvedFeatureGroup(features),
                     sessionConfig,
                 )
             ) {
-                // TODO: Store the whole UseCase to StreamSpecs map in ResolvedFeatureCombination so
+                // TODO: Store the whole UseCase to StreamSpecs map in ResolvedFeatureGroup so
                 //  that we can skip this step while binding with a resolved feature combination.
-                Supported(ResolvedFeatureCombination(features))
+                Supported(ResolvedFeatureGroup(features))
             } else {
                 Unsupported
             }
@@ -189,6 +186,6 @@ internal class DefaultFeatureCombinationResolver(
     }
 
     private companion object {
-        private const val TAG = "DefaultFeatureCombinationResolver"
+        private const val TAG = "DefaultFeatureGroupResolver"
     }
 }

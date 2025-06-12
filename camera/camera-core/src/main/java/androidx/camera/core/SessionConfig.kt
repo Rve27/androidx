@@ -18,9 +18,9 @@ package androidx.camera.core
 
 import android.util.Range
 import androidx.annotation.RestrictTo
-import androidx.camera.core.featurecombination.Feature
-import androidx.camera.core.featurecombination.impl.UseCaseType
-import androidx.camera.core.featurecombination.impl.UseCaseType.Companion.getFeatureComboUseCaseType
+import androidx.camera.core.featuregroup.GroupableFeature
+import androidx.camera.core.featuregroup.impl.UseCaseType
+import androidx.camera.core.featuregroup.impl.UseCaseType.Companion.getFeatureGroupUseCaseType
 import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR
 import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
@@ -36,7 +36,7 @@ import java.util.concurrent.Executor
  *
  * It consists of a collection of [UseCase], session parameters to be applied on the camera session,
  * and common properties like the field-of-view defined by [ViewPort], the [CameraEffect], frame
- * rate, required or preferred [Feature]s etc.
+ * rate, required or preferred [GroupableFeature] groups etc.
  *
  * @property useCases The list of [UseCase] to be attached to the camera and receive camera data.
  *   This can't be empty.
@@ -81,11 +81,11 @@ constructor(
     public val useCases: List<UseCase> = useCases.distinct()
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public var requiredFeatures: Set<Feature> = emptySet()
+    public var requiredFeatureGroup: Set<GroupableFeature> = emptySet()
         private set
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public var preferredFeatures: List<Feature> = emptyList()
+    public var preferredFeatureGroup: List<GroupableFeature> = emptyList()
         private set
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public open val isLegacy: Boolean = false
@@ -93,7 +93,8 @@ constructor(
     public open val sessionType: Int = SESSION_TYPE_REGULAR
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public var featureSelectionListener: Consumer<Set<Feature>> = Consumer<Set<Feature>> {}
+    public var featureSelectionListener: Consumer<Set<GroupableFeature>> =
+        Consumer<Set<GroupableFeature>> {}
         private set
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -106,16 +107,16 @@ constructor(
         viewPort: ViewPort? = null,
         effects: List<CameraEffect> = emptyList(),
         frameRateRange: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED,
-        requiredFeatures: Set<Feature> = emptySet(),
-        preferredFeatures: List<Feature> = emptyList(),
+        requiredFeatureGroup: Set<GroupableFeature> = emptySet(),
+        preferredFeatureGroup: List<GroupableFeature> = emptyList(),
     ) : this(
         useCases = useCases,
         viewPort = viewPort,
         effects = effects,
         frameRateRange = frameRateRange,
     ) {
-        this.requiredFeatures = requiredFeatures
-        this.preferredFeatures = preferredFeatures
+        this.requiredFeatureGroup = requiredFeatureGroup
+        this.preferredFeatureGroup = preferredFeatureGroup
         validateFeatureCombination()
     }
 
@@ -123,7 +124,7 @@ constructor(
     public constructor(vararg useCases: UseCase) : this(useCases.toList())
 
     private fun validateFeatureCombination() {
-        if (requiredFeatures.isEmpty() && preferredFeatures.isEmpty()) {
+        if (requiredFeatureGroup.isEmpty() && preferredFeatureGroup.isEmpty()) {
             return
         }
 
@@ -131,34 +132,35 @@ constructor(
         // future, e.g. a VIDEO_STABILIZATION feature object may need to be added in future.
         validateRequiredFeatures()
 
-        require(preferredFeatures.distinct().size == preferredFeatures.size) {
-            "Duplicate values in preferredFeatures($preferredFeatures)"
+        require(preferredFeatureGroup.distinct().size == preferredFeatureGroup.size) {
+            "Duplicate values in preferredFeatures($preferredFeatureGroup)"
         }
 
-        val duplicateFeatures = requiredFeatures.intersect(preferredFeatures)
+        val duplicateFeatures = requiredFeatureGroup.intersect(preferredFeatureGroup)
         require(duplicateFeatures.isEmpty()) {
             "requiredFeatures and preferredFeatures have duplicate values: $duplicateFeatures"
         }
 
         useCases.forEach {
-            require(it.getFeatureComboUseCaseType() != UseCaseType.UNDEFINED) {
-                "$it is not supported with feature combination"
+            require(it.getFeatureGroupUseCaseType() != UseCaseType.UNDEFINED) {
+                "$it is not supported with feature group"
             }
         }
 
-        require(effects.isEmpty()) { "Effects aren't supported with feature combination yet" }
+        require(effects.isEmpty()) { "Effects aren't supported with feature group yet" }
     }
 
     /**
-     * Validates that there are no conflicting values for the same feature in [requiredFeatures].
+     * Validates that there are no conflicting values for the same feature in
+     * [requiredFeatureGroup].
      *
      * @throws IllegalArgumentException If there are conflicting values for the same feature.
      */
     private fun validateRequiredFeatures() {
-        val requiredFeatureTypes = requiredFeatures.map { it.featureTypeInternal }.distinct()
+        val requiredFeatureTypes = requiredFeatureGroup.map { it.featureTypeInternal }.distinct()
         requiredFeatureTypes.forEach { featureType ->
             val distinctFeaturesPerType =
-                requiredFeatures.filter { it.featureTypeInternal == featureType }
+                requiredFeatureGroup.filter { it.featureTypeInternal == featureType }
 
             require(distinctFeaturesPerType.size <= 1) {
                 "requiredFeatures has conflicting feature values: $distinctFeaturesPerType"
@@ -168,15 +170,15 @@ constructor(
 
     /**
      * Sets a listener to know which features are finally selected when a session config is bound,
-     * based on the user-defined priorities/ordering for [preferredFeatures] and device
+     * based on the user-defined priorities/ordering for [preferredFeatureGroup] and device
      * capabilities.
      *
      * Both the required and the selected preferred features are notified to the listener. The
      * listener is invoked when this session config is bound to camera (e.g. when the
      * `androidx.camera.lifecycle.ProcessCameraProvider.bindToLifecycle` API is invoked).
      *
-     * Alternatively, the [CameraInfo.isFeatureCombinationSupported] API can be used to query if a
-     * set of features is supported before binding.
+     * Alternatively, the [CameraInfo.isFeatureGroupSupported] API can be used to query if a set of
+     * features is supported before binding.
      *
      * @param executor The executor in which the listener will be invoked, main thread by default.
      * @param listener The consumer to accept the final set of features when they are selected.
@@ -187,7 +189,7 @@ constructor(
     @JvmOverloads
     public fun setFeatureSelectionListener(
         executor: Executor = CameraXExecutors.mainThreadExecutor(),
-        listener: Consumer<Set<Feature>>,
+        listener: Consumer<Set<GroupableFeature>>,
     ) {
         featureSelectionListener = listener
         featureSelectionListenerExecutor = executor
@@ -199,8 +201,8 @@ constructor(
         private var viewPort: ViewPort? = null
         private var effects: MutableList<CameraEffect> = mutableListOf()
         private var frameRateRange: Range<Int> = FRAME_RATE_RANGE_UNSPECIFIED
-        private val requiredFeatures = mutableListOf<Feature>()
-        private val preferredFeatures = mutableListOf<Feature>()
+        private val requiredFeatureGroup = mutableListOf<GroupableFeature>()
+        private val preferredFeatureGroup = mutableListOf<GroupableFeature>()
 
         public constructor(vararg useCases: UseCase) : this(useCases.toList())
 
@@ -229,25 +231,25 @@ constructor(
         }
 
         /**
-         * Adds a list of features that are mandatory for the camera configuration.
+         * Sets the list of [GroupableFeature] that are mandatory for the camera configuration.
          *
          * If all the features are not supported, an [IllegalStateException] will be thrown during
          * camera configuration.
          *
-         * @param features The vararg of `Feature` objects to add to the required features.
+         * @param features The vararg of `GroupableFeature` objects to add to the required features.
          * @return The [Builder] instance, allowing for method chaining.
-         * @see androidx.camera.core.SessionConfig.requiredFeatures
+         * @see androidx.camera.core.SessionConfig.requiredFeatureGroup
          */
         // TODO: b/384404392 - Remove when feature combo impl. is ready.
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun addRequiredFeatures(vararg features: Feature): Builder {
-            requiredFeatures.addAll(features)
+        public fun setRequiredFeatureGroup(vararg features: GroupableFeature): Builder {
+            requiredFeatureGroup.addAll(features)
             return this
         }
 
         /**
-         * Sets the list of preferred features that is ordered according to priority in descending
-         * order.
+         * Sets the list of preferred [GroupableFeature] that is ordered according to priority in
+         * descending order.
          *
          * These features will be selected on a best-effort basis according to the priority. The
          * feature that is ordered first in the list (i.e. has a lower index) will be prioritized
@@ -255,13 +257,13 @@ constructor(
          *
          * @param features The list of preferred features, ordered by preference.
          * @return The [Builder] instance, allowing for method chaining.
-         * @see androidx.camera.core.SessionConfig.preferredFeatures
+         * @see androidx.camera.core.SessionConfig.preferredFeatureGroup
          */
         // TODO: b/384404392 - Remove when feature combo impl. is ready.
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun setPreferredFeatures(vararg features: Feature): Builder {
-            preferredFeatures.clear()
-            preferredFeatures.addAll(features)
+        public fun setPreferredFeatureGroup(vararg features: GroupableFeature): Builder {
+            preferredFeatureGroup.clear()
+            preferredFeatureGroup.addAll(features)
             return this
         }
 
@@ -272,8 +274,8 @@ constructor(
                 viewPort = viewPort,
                 effects = effects.toList(),
                 frameRateRange = frameRateRange,
-                requiredFeatures = requiredFeatures.toSet(),
-                preferredFeatures = preferredFeatures.toList(),
+                requiredFeatureGroup = requiredFeatureGroup.toSet(),
+                preferredFeatureGroup = preferredFeatureGroup.toList(),
             )
         }
     }

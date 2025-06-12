@@ -160,20 +160,20 @@ public class StreamSharing extends UseCase {
                     }
                 });
 
-        updateFeatureCombination(children);
+        updateFeatureGroup(children);
     }
 
     /**
-     * Updates the feature combination of the StreamSharing based on its children.
+     * Updates the feature group of the StreamSharing based on its children.
      *
-     * <p>The feature combination is used to determine which features are available for this
+     * <p>The feature group is used to determine which features are available for this
      * UseCase. By design, it should be consistent across all children already.
      *
-     * @param children The set of child UseCases from which to derive the feature combination.
+     * @param children The set of child UseCases from which to derive the feature group.
      */
-    public void updateFeatureCombination(@NonNull Set<UseCase> children) {
-        // All use cases should have same FeatureCombination, so using only the first child
-        setFeatureCombination(children.iterator().next().getFeatureCombination());
+    public void updateFeatureGroup(@NonNull Set<UseCase> children) {
+        // All use cases should have same feature group, so using only the first child
+        setFeatureGroup(children.iterator().next().getFeatureGroup());
     }
 
     @Override

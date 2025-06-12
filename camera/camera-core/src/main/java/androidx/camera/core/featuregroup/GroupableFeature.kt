@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.camera.core.featurecombination
+package androidx.camera.core.featuregroup
 
 import androidx.annotation.IntDef
 import androidx.annotation.RestrictTo
@@ -22,28 +22,31 @@ import androidx.camera.core.DynamicRange
 import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
-import androidx.camera.core.featurecombination.Feature.Companion.FEATURE_TYPE_DYNAMIC_RANGE
-import androidx.camera.core.featurecombination.Feature.Companion.FEATURE_TYPE_FPS_RANGE
-import androidx.camera.core.featurecombination.Feature.Companion.FEATURE_TYPE_IMAGE_FORMAT
-import androidx.camera.core.featurecombination.Feature.Companion.FEATURE_TYPE_VIDEO_STABILIZATION
-import androidx.camera.core.featurecombination.Feature.Companion.FPS_60
-import androidx.camera.core.featurecombination.Feature.Companion.HDR_HLG10
-import androidx.camera.core.featurecombination.Feature.Companion.IMAGE_ULTRA_HDR
-import androidx.camera.core.featurecombination.Feature.Companion.PREVIEW_STABILIZATION
-import androidx.camera.core.featurecombination.impl.feature.DynamicRangeFeature
-import androidx.camera.core.featurecombination.impl.feature.FeatureTypeInternal
-import androidx.camera.core.featurecombination.impl.feature.FpsRangeFeature
-import androidx.camera.core.featurecombination.impl.feature.ImageFormatFeature
-import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature
-import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature.StabilizationMode
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.FEATURE_TYPE_DYNAMIC_RANGE
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.FEATURE_TYPE_FPS_RANGE
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.FEATURE_TYPE_IMAGE_FORMAT
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.FEATURE_TYPE_VIDEO_STABILIZATION
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.FPS_60
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.HDR_HLG10
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.IMAGE_ULTRA_HDR
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.PREVIEW_STABILIZATION
+import androidx.camera.core.featuregroup.impl.feature.DynamicRangeFeature
+import androidx.camera.core.featuregroup.impl.feature.FeatureTypeInternal
+import androidx.camera.core.featuregroup.impl.feature.FpsRangeFeature
+import androidx.camera.core.featuregroup.impl.feature.ImageFormatFeature
+import androidx.camera.core.featuregroup.impl.feature.VideoStabilizationFeature
+import androidx.camera.core.featuregroup.impl.feature.VideoStabilizationFeature.StabilizationMode
 
 /**
- * Base [Feature] class for all feature combination features.
+ * Base [GroupableFeature] class for all features that can be grouped together for configuring a
+ * camera session.
  *
  * @sample androidx.camera.core.samples.startCameraWithSomeHighQualityFeatures
  */
 @ExperimentalSessionConfig
-public abstract class Feature @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) internal constructor() {
+public abstract class GroupableFeature
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+internal constructor() {
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     internal abstract val featureTypeInternal: FeatureTypeInternal
 
@@ -80,7 +83,8 @@ public abstract class Feature @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) intern
          *
          * @see DynamicRange.HLG_10_BIT
          */
-        @JvmField public val HDR_HLG10: Feature = DynamicRangeFeature(DynamicRange.HLG_10_BIT)
+        @JvmField
+        public val HDR_HLG10: GroupableFeature = DynamicRangeFeature(DynamicRange.HLG_10_BIT)
 
         /**
          * A feature object of type [FEATURE_TYPE_FPS_RANGE] representing 60 FPS (i.e. both the
@@ -88,7 +92,7 @@ public abstract class Feature @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) intern
          *
          * When used, this feature ensures the camera always operates at a constant 60 FPS.
          */
-        @JvmField public val FPS_60: Feature = FpsRangeFeature(60, 60)
+        @JvmField public val FPS_60: GroupableFeature = FpsRangeFeature(60, 60)
 
         /**
          * A feature object of type [FEATURE_TYPE_VIDEO_STABILIZATION] representing a video
@@ -97,7 +101,7 @@ public abstract class Feature @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) intern
          * @see Preview.Builder.setPreviewStabilizationEnabled
          */
         @JvmField
-        public val PREVIEW_STABILIZATION: Feature =
+        public val PREVIEW_STABILIZATION: GroupableFeature =
             VideoStabilizationFeature(StabilizationMode.PREVIEW)
 
         /**
@@ -107,7 +111,7 @@ public abstract class Feature @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) intern
          * @see ImageCapture.OUTPUT_FORMAT_JPEG_ULTRA_HDR
          */
         @JvmField
-        public val IMAGE_ULTRA_HDR: Feature =
+        public val IMAGE_ULTRA_HDR: GroupableFeature =
             ImageFormatFeature(ImageCapture.OUTPUT_FORMAT_JPEG_ULTRA_HDR)
 
         /**

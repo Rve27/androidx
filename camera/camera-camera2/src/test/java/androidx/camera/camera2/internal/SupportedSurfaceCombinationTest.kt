@@ -66,9 +66,9 @@ import androidx.camera.core.DynamicRange.HLG_10_BIT
 import androidx.camera.core.DynamicRange.SDR
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.UseCase
-import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery
-import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery.Companion.NO_OP_FEATURE_COMBINATION_QUERY
-import androidx.camera.core.featurecombination.impl.UseCaseType
+import androidx.camera.core.featuregroup.impl.FeatureCombinationQuery
+import androidx.camera.core.featuregroup.impl.FeatureCombinationQuery.Companion.NO_OP_FEATURE_COMBINATION_QUERY
+import androidx.camera.core.featuregroup.impl.UseCaseType
 import androidx.camera.core.impl.AttachedSurfaceInfo
 import androidx.camera.core.impl.CameraDeviceSurfaceManager
 import androidx.camera.core.impl.CameraMode

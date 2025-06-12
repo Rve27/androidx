@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.camera.core.featurecombination.impl
+package androidx.camera.core.featuregroup.impl
 
 import android.graphics.ImageFormat
 import android.graphics.SurfaceTexture
@@ -93,7 +93,7 @@ public enum class UseCaseType(
          *   combination, [UseCaseType.UNDEFINED] is returned.
          */
         @JvmStatic
-        public fun UseCase.getFeatureComboUseCaseType(): UseCaseType {
+        public fun UseCase.getFeatureGroupUseCaseType(): UseCaseType {
             return if (this is Preview) {
                 PREVIEW
             } else if (this is ImageCapture) {
@@ -118,7 +118,7 @@ public enum class UseCaseType(
          *   feature combination, [UseCaseType.UNDEFINED] is returned.
          */
         @JvmStatic
-        public fun UseCaseConfig<*>.getFeatureComboUseCaseType(): UseCaseType {
+        public fun UseCaseConfig<*>.getFeatureGroupUseCaseType(): UseCaseType {
             return when (captureType) {
                 CaptureType.IMAGE_CAPTURE -> IMAGE_CAPTURE
                 CaptureType.PREVIEW -> PREVIEW

@@ -14,34 +14,32 @@
  * limitations under the License.
  */
 
-package androidx.camera.core.featurecombination.impl.resolver
+package androidx.camera.core.featuregroup.impl.resolver
 
 import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.SessionConfig
-import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination
+import androidx.camera.core.featuregroup.impl.ResolvedFeatureGroup
 
 /**
- * Defines how feature combination options (i.e. preferred features) are resolved based on whether a
- * feature combination is supported or not.
+ * Defines how feature group options (i.e. preferred features) are resolved based on whether a
+ * feature group is supported or not.
  *
- * @see resolveFeatureCombination
+ * @see resolveFeatureGroup
  */
-public interface FeatureCombinationResolver {
+public interface FeatureGroupResolver {
     /**
-     * Returns a [FeatureCombinationResolutionResult] which is either a supported
-     * [ResolvedFeatureCombination] instance or some error.
+     * Returns a [FeatureGroupResolutionResult] which is either a supported [ResolvedFeatureGroup]
+     * instance or some error.
      *
      * @param sessionConfig The [SessionConfig] containing the use cases, required features, and
      *   preferred features to be used for resolving the feature combination.
-     * @return A [FeatureCombinationResolutionResult] indicating the result. In case of success, it
-     *   will contain a supported [ResolvedFeatureCombination]. If no suitable combination is found,
-     *   it will contain an error detailing the reason.
+     * @return A [FeatureGroupResolutionResult] indicating the result. In case of success, it will
+     *   contain a supported [ResolvedFeatureGroup]. If no suitable combination is found, it will
+     *   contain an error detailing the reason.
      * @throws IllegalStateException If the underlying feature combination resolution logic
      *   encounters an unexpected state.
      */
     @OptIn(ExperimentalSessionConfig::class)
     @Throws(IllegalStateException::class)
-    public fun resolveFeatureCombination(
-        sessionConfig: SessionConfig
-    ): FeatureCombinationResolutionResult
+    public fun resolveFeatureGroup(sessionConfig: SessionConfig): FeatureGroupResolutionResult
 }

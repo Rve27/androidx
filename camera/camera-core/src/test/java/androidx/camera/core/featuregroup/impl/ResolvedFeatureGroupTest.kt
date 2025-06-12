@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package androidx.camera.core.featurecombination.impl
+package androidx.camera.core.featuregroup.impl
 
 import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.core.SessionConfig
-import androidx.camera.core.featurecombination.Feature.Companion.HDR_HLG10
-import androidx.camera.core.featurecombination.Feature.Companion.IMAGE_ULTRA_HDR
-import androidx.camera.core.featurecombination.Feature.Companion.PREVIEW_STABILIZATION
-import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination.Companion.resolveFeatureCombination
-import androidx.camera.core.featurecombination.impl.UseCaseType.IMAGE_CAPTURE
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.Supported
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.Unsupported
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.UseCaseMissing
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolver
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.HDR_HLG10
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.IMAGE_ULTRA_HDR
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.PREVIEW_STABILIZATION
+import androidx.camera.core.featuregroup.impl.ResolvedFeatureGroup.Companion.resolveFeatureGroup
+import androidx.camera.core.featuregroup.impl.UseCaseType.IMAGE_CAPTURE
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolutionResult
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolutionResult.Supported
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolutionResult.Unsupported
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolutionResult.UseCaseMissing
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolver
 import androidx.camera.testing.fakes.FakeCameraInfoInternal
 import androidx.testutils.assertThrows
 import com.google.common.truth.Truth.assertThat
@@ -43,7 +43,7 @@ import org.robolectric.annotation.internal.DoNotInstrument
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
 @Config(minSdk = 21)
-class ResolvedFeatureCombinationTest {
+class ResolvedFeatureGroupTest {
     private val fakeCameraInfo = FakeCameraInfoInternal()
 
     private val preview = Preview.Builder().build()
@@ -51,30 +51,30 @@ class ResolvedFeatureCombinationTest {
 
     @Test
     fun resolveFeatureCombination_resultIsSupported_returnsResolvedFeatureCombination() {
-        // Arrange: Create a resolver returning a ResolvedFeatureCombination without all the
+        // Arrange: Create a resolver returning a ResolvedFeatureGroup without all the
         // preferred features
         val useCases = setOf(preview, imageCapture)
         val sessionConfig =
             SessionConfig(
                 useCases = useCases.toList(),
-                preferredFeatures = listOf(HDR_HLG10, IMAGE_ULTRA_HDR),
+                preferredFeatureGroup = listOf(HDR_HLG10, IMAGE_ULTRA_HDR),
             )
-        val expectedResolvedFeatureCombination = ResolvedFeatureCombination(setOf(HDR_HLG10))
+        val expectedResolvedFeatureGroup = ResolvedFeatureGroup(setOf(HDR_HLG10))
         val resolver =
-            object : FeatureCombinationResolver {
-                override fun resolveFeatureCombination(
+            object : FeatureGroupResolver {
+                override fun resolveFeatureGroup(
                     sessionConfig: SessionConfig
-                ): FeatureCombinationResolutionResult {
-                    return Supported(expectedResolvedFeatureCombination)
+                ): FeatureGroupResolutionResult {
+                    return Supported(expectedResolvedFeatureGroup)
                 }
             }
 
         // Act
         val resolvedCombination =
-            sessionConfig.resolveFeatureCombination(fakeCameraInfo, resolver = resolver)
+            sessionConfig.resolveFeatureGroup(fakeCameraInfo, resolver = resolver)
 
         // Assert
-        assertThat(resolvedCombination).isEqualTo(expectedResolvedFeatureCombination)
+        assertThat(resolvedCombination).isEqualTo(expectedResolvedFeatureGroup)
     }
 
     @Test
@@ -83,20 +83,20 @@ class ResolvedFeatureCombinationTest {
         val sessionConfig =
             SessionConfig(
                 useCases = listOf(preview, imageCapture),
-                preferredFeatures = listOf(HDR_HLG10, IMAGE_ULTRA_HDR),
+                preferredFeatureGroup = listOf(HDR_HLG10, IMAGE_ULTRA_HDR),
             )
         val resolver =
-            object : FeatureCombinationResolver {
-                override fun resolveFeatureCombination(
+            object : FeatureGroupResolver {
+                override fun resolveFeatureGroup(
                     sessionConfig: SessionConfig
-                ): FeatureCombinationResolutionResult {
+                ): FeatureGroupResolutionResult {
                     return Unsupported
                 }
             }
 
         // Act & assert
         assertThrows<IllegalArgumentException> {
-            sessionConfig.resolveFeatureCombination(fakeCameraInfo, resolver = resolver)
+            sessionConfig.resolveFeatureGroup(fakeCameraInfo, resolver = resolver)
         }
     }
 
@@ -106,14 +106,14 @@ class ResolvedFeatureCombinationTest {
         val sessionConfig =
             SessionConfig(
                 useCases = listOf(preview),
-                requiredFeatures = setOf(IMAGE_ULTRA_HDR), // but no ImageCapture
-                preferredFeatures = listOf(HDR_HLG10, PREVIEW_STABILIZATION),
+                requiredFeatureGroup = setOf(IMAGE_ULTRA_HDR), // but no ImageCapture
+                preferredFeatureGroup = listOf(HDR_HLG10, PREVIEW_STABILIZATION),
             )
         val resolver =
-            object : FeatureCombinationResolver {
-                override fun resolveFeatureCombination(
+            object : FeatureGroupResolver {
+                override fun resolveFeatureGroup(
                     sessionConfig: SessionConfig
-                ): FeatureCombinationResolutionResult {
+                ): FeatureGroupResolutionResult {
                     return UseCaseMissing(
                         requiredUseCases = IMAGE_CAPTURE.toString(),
                         featureRequiring = IMAGE_ULTRA_HDR,
@@ -123,18 +123,18 @@ class ResolvedFeatureCombinationTest {
 
         // Act & assert
         assertThrows<IllegalArgumentException> {
-            sessionConfig.resolveFeatureCombination(fakeCameraInfo, resolver = resolver)
+            sessionConfig.resolveFeatureGroup(fakeCameraInfo, resolver = resolver)
         }
     }
 
     @Test
     fun resolveFeatureCombination_sessionConfigWithoutAnyFeature_returnsNull() {
-        // Arrange: Create a resolver returning a ResolvedFeatureCombination without any feature
+        // Arrange: Create a resolver returning a ResolvedFeatureGroup without any feature
         val useCases = setOf(preview, imageCapture)
         val sessionConfig = SessionConfig(useCases = useCases.toList())
 
         // Act
-        val resolvedCombination = sessionConfig.resolveFeatureCombination(fakeCameraInfo)
+        val resolvedCombination = sessionConfig.resolveFeatureGroup(fakeCameraInfo)
 
         // Assert
         assertThat(resolvedCombination).isNull()

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-package androidx.camera.core.featurecombination.impl;
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // TODO: Expose the features
+package androidx.camera.core.featuregroup;
 
 import androidx.annotation.RestrictTo;

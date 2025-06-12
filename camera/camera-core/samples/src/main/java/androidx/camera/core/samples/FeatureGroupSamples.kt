@@ -23,10 +23,10 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.SessionConfig
 import androidx.camera.core.UseCase
-import androidx.camera.core.featurecombination.Feature
-import androidx.camera.core.featurecombination.Feature.Companion.FPS_60
-import androidx.camera.core.featurecombination.Feature.Companion.HDR_HLG10
-import androidx.camera.core.featurecombination.Feature.Companion.PREVIEW_STABILIZATION
+import androidx.camera.core.featuregroup.GroupableFeature
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.FPS_60
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.HDR_HLG10
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.PREVIEW_STABILIZATION
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.lifecycle.LifecycleOwner
 
@@ -43,8 +43,8 @@ fun startCameraWithSomeHighQualityFeatures(
         CameraSelector.DEFAULT_BACK_CAMERA,
         SessionConfig(
                 useCases = useCases,
-                requiredFeatures = setOf(HDR_HLG10),
-                preferredFeatures = listOf(FPS_60, PREVIEW_STABILIZATION),
+                requiredFeatureGroup = setOf(HDR_HLG10),
+                preferredFeatureGroup = listOf(FPS_60, PREVIEW_STABILIZATION),
                 // The preferred features will be set according to device capabilities and priority,
                 // FPS_60 will be prioritized higher than PREVIEW_STABILIZATION here as FPS_60 is
                 // placed earlier in the list.
@@ -60,4 +60,4 @@ fun startCameraWithSomeHighQualityFeatures(
     )
 }
 
-private fun updateFeatureMenuUi(selectedFeatures: Set<Feature>) {}
+private fun updateFeatureMenuUi(selectedFeatures: Set<GroupableFeature>) {}

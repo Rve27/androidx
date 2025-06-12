@@ -67,8 +67,8 @@ import androidx.camera.core.CameraUnavailableException;
 import androidx.camera.core.DynamicRange;
 import androidx.camera.core.ExperimentalSessionConfig;
 import androidx.camera.core.Logger;
-import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery;
-import androidx.camera.core.featurecombination.impl.feature.FpsRangeFeature;
+import androidx.camera.core.featuregroup.impl.FeatureCombinationQuery;
+import androidx.camera.core.featuregroup.impl.feature.FpsRangeFeature;
 import androidx.camera.core.impl.AttachedSurfaceInfo;
 import androidx.camera.core.impl.CameraMode;
 import androidx.camera.core.impl.DeferrableSurface;
@@ -708,10 +708,9 @@ final class SupportedSurfaceCombination {
      *                                          sizes map.
      * @param isPreviewStabilizationOn          whether the preview stabilization is enabled.
      * @param hasVideoCapture                   whether the use cases has video capture.
-     * @param isFeatureComboInvocation          whether the code flow involves CameraX feature combo
-     *                                          API (e.g. {@link
-     *                                          androidx.camera.core.SessionConfig#requiredFeatures}
-     *                                          ).
+     * @param isFeatureComboInvocation whether the code flow involves CameraX feature combo
+     *                                 API (e.g. {@link
+     *                                 androidx.camera.core.SessionConfig#requiredFeatureGroup}).
      * @param findMaxSupportedFrameRate          whether to find the max supported frame rate. If
      *                                           this is true, the target frame rate settings
      *                                           will be ignored when calculating the stream spec.
@@ -919,7 +918,7 @@ final class SupportedSurfaceCombination {
                     "No supported surface combination is found for camera device - Id : "
                             + mCameraId + ".  May be attempting to bind too many use cases. "
                             + "Existing surfaces: " + attachedSurfaces + ". New configs: "
-                            + newUseCaseConfigs + ". Feature settings: "
+                            + newUseCaseConfigs + ". GroupableFeature settings: "
                             + featureSettings);
         }
 
@@ -2244,9 +2243,9 @@ final class SupportedSurfaceCombination {
         /**
          * Whether the code invocation is started through CameraX feature combination APIs.
          *
-         * @see androidx.camera.core.CameraInfo#isFeatureCombinationSupported
-         * @see androidx.camera.core.SessionConfig#requiredFeatures
-         * @see androidx.camera.core.SessionConfig#preferredFeatures
+         * @see androidx.camera.core.CameraInfo#isFeatureGroupSupported
+         * @see androidx.camera.core.SessionConfig#requiredFeatureGroup
+         * @see androidx.camera.core.SessionConfig#preferredFeatureGroup
          */
         abstract boolean isFeatureComboInvocation();
 

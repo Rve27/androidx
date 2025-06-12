@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.camera.core.featurecombination.impl.resolver
+package androidx.camera.core.featuregroup.impl.resolver
 
 import android.graphics.ImageFormat
 import android.util.Range
@@ -26,15 +26,15 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.core.SessionConfig
 import androidx.camera.core.UseCase
-import androidx.camera.core.featurecombination.Feature.Companion.FPS_60
-import androidx.camera.core.featurecombination.Feature.Companion.HDR_HLG10
-import androidx.camera.core.featurecombination.Feature.Companion.IMAGE_ULTRA_HDR
-import androidx.camera.core.featurecombination.Feature.Companion.PREVIEW_STABILIZATION
-import androidx.camera.core.featurecombination.impl.feature.DynamicRangeFeature
-import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.Supported
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.Unsupported
-import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.UseCaseMissing
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.FPS_60
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.HDR_HLG10
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.IMAGE_ULTRA_HDR
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.PREVIEW_STABILIZATION
+import androidx.camera.core.featuregroup.impl.feature.DynamicRangeFeature
+import androidx.camera.core.featuregroup.impl.feature.VideoStabilizationFeature
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolutionResult.Supported
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolutionResult.Unsupported
+import androidx.camera.core.featuregroup.impl.resolver.FeatureGroupResolutionResult.UseCaseMissing
 import androidx.camera.core.impl.AdapterCameraInfo
 import androidx.camera.core.impl.CameraConfig
 import androidx.camera.core.impl.CameraInfoInternal
@@ -66,7 +66,7 @@ import org.robolectric.annotation.internal.DoNotInstrument
 @RunWith(RobolectricTestRunner::class)
 @DoNotInstrument
 @Config(minSdk = 21)
-class DefaultFeatureCombinationResolverTest {
+class DefaultFeatureGroupResolverTest {
     private val fakeStreamSpecsCalculator = FakeStreamSpecsCalculator()
 
     private val cameraUseCaseAdapter =
@@ -99,7 +99,7 @@ class DefaultFeatureCombinationResolverTest {
             )
         }
 
-    private val defaultResolver = DefaultFeatureCombinationResolver(fakeCameraInfo)
+    private val defaultResolver = DefaultFeatureGroupResolver(fakeCameraInfo)
 
     private val preview = Preview.Builder().build()
     private val imageCapture = ImageCapture.Builder().build()
@@ -133,8 +133,8 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, preferredFeatures = listOf(HDR_HLG10))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, preferredFeatureGroup = listOf(HDR_HLG10))
             )
 
         assertThat(result).isInstanceOf(Unsupported::class.java)
@@ -150,7 +150,7 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act & assert
         assertThrows<IllegalArgumentException> {
-            defaultResolver.resolveFeatureCombination(SessionConfig(defaultUseCases))
+            defaultResolver.resolveFeatureGroup(SessionConfig(defaultUseCases))
         }
     }
 
@@ -164,13 +164,13 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, requiredFeatures = setOf(IMAGE_ULTRA_HDR))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, requiredFeatureGroup = setOf(IMAGE_ULTRA_HDR))
             )
 
         // Assert: Ensure result is supported and contains Ultra HDR feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).contains(IMAGE_ULTRA_HDR)
     }
 
@@ -185,8 +185,8 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(useCases, requiredFeatures = setOf(IMAGE_ULTRA_HDR))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(useCases, requiredFeatureGroup = setOf(IMAGE_ULTRA_HDR))
             )
 
         // Assert: Ensure result is UseCaseMissing and reports ImageCapture as the missing use case
@@ -207,8 +207,8 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, requiredFeatures = setOf(IMAGE_ULTRA_HDR))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, requiredFeatureGroup = setOf(IMAGE_ULTRA_HDR))
             )
 
         // Assert
@@ -225,13 +225,13 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, preferredFeatures = listOf(IMAGE_ULTRA_HDR))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, preferredFeatureGroup = listOf(IMAGE_ULTRA_HDR))
             )
 
         // Assert: Ensure result is supported and contains Ultra HDR feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).contains(IMAGE_ULTRA_HDR)
     }
 
@@ -246,13 +246,13 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(useCases, preferredFeatures = listOf(IMAGE_ULTRA_HDR))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(useCases, preferredFeatureGroup = listOf(IMAGE_ULTRA_HDR))
             )
 
         // Assert: Ensure result is supported and does not contain Ultra HDR feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).doesNotContain(IMAGE_ULTRA_HDR)
     }
 
@@ -266,14 +266,14 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, preferredFeatures = listOf(IMAGE_ULTRA_HDR))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, preferredFeatureGroup = listOf(IMAGE_ULTRA_HDR))
             )
 
         // Assert
         // Assert: Ensure result is supported and does not contain Ultra HDR feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).doesNotContain(IMAGE_ULTRA_HDR)
     }
 
@@ -287,13 +287,13 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, requiredFeatures = setOf(HDR_HLG10))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, requiredFeatureGroup = setOf(HDR_HLG10))
             )
 
         // Assert: Returns Supported with HDR_HLG10 included as resolved feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).contains(HDR_HLG10)
     }
 
@@ -308,8 +308,8 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(useCases, requiredFeatures = setOf(HDR_HLG10))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(useCases, requiredFeatureGroup = setOf(HDR_HLG10))
             )
 
         // Assert: Ensure result is UseCaseMissing and reports ImageCapture as the missing use case
@@ -330,8 +330,8 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, requiredFeatures = setOf(HDR_HLG10))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, requiredFeatureGroup = setOf(HDR_HLG10))
             )
 
         // Assert
@@ -348,13 +348,13 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, preferredFeatures = listOf(HDR_HLG10))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, preferredFeatureGroup = listOf(HDR_HLG10))
             )
 
         // Assert: Returns Supported with HDR_HLG10 included as resolved feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).contains(HDR_HLG10)
     }
 
@@ -368,13 +368,13 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, preferredFeatures = listOf(HDR_HLG10))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, preferredFeatureGroup = listOf(HDR_HLG10))
             )
 
         // Assert: Returns Supported without HDR_HLG10 included as resolved feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).doesNotContain(HDR_HLG10)
     }
 
@@ -388,13 +388,13 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, requiredFeatures = setOf(PREVIEW_STABILIZATION))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, requiredFeatureGroup = setOf(PREVIEW_STABILIZATION))
             )
 
         // Assert: Returns Supported with PREVIEW_STABILIZATION included as resolved feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).contains(PREVIEW_STABILIZATION)
     }
 
@@ -409,8 +409,8 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(useCases, requiredFeatures = setOf(PREVIEW_STABILIZATION))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(useCases, requiredFeatureGroup = setOf(PREVIEW_STABILIZATION))
             )
 
         // Assert: Ensure result is UseCaseMissing and reports ImageCapture as the missing use case
@@ -431,8 +431,8 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, requiredFeatures = setOf(PREVIEW_STABILIZATION))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, requiredFeatureGroup = setOf(PREVIEW_STABILIZATION))
             )
 
         // Assert
@@ -450,13 +450,16 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, preferredFeatures = listOf(PREVIEW_STABILIZATION))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(
+                    defaultUseCases,
+                    preferredFeatureGroup = listOf(PREVIEW_STABILIZATION),
+                )
             )
 
         // Assert: Returns Supported with PREVIEW_STABILIZATION included as resolved feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).contains(PREVIEW_STABILIZATION)
     }
 
@@ -470,13 +473,16 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, preferredFeatures = listOf(PREVIEW_STABILIZATION))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(
+                    defaultUseCases,
+                    preferredFeatureGroup = listOf(PREVIEW_STABILIZATION),
+                )
             )
 
         // Assert: Returns Supported without PREVIEW_STABILIZATION included as resolved feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).doesNotContain(PREVIEW_STABILIZATION)
     }
 
@@ -490,13 +496,13 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, requiredFeatures = setOf(FPS_60))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, requiredFeatureGroup = setOf(FPS_60))
             )
 
         // Assert: Returns Supported with FPS_60 included as resolved feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).contains(FPS_60)
     }
 
@@ -511,8 +517,8 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(useCases, requiredFeatures = setOf(FPS_60))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(useCases, requiredFeatureGroup = setOf(FPS_60))
             )
 
         // Assert: Ensure result is UseCaseMissing and reports ImageCapture as the missing use case
@@ -533,8 +539,8 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, requiredFeatures = setOf(FPS_60))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, requiredFeatureGroup = setOf(FPS_60))
             )
 
         // Assert
@@ -551,13 +557,13 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, preferredFeatures = listOf(FPS_60))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, preferredFeatureGroup = listOf(FPS_60))
             )
 
         // Assert: Returns Supported with FPS_60 included as resolved feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).contains(FPS_60)
     }
 
@@ -571,13 +577,13 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
-                SessionConfig(defaultUseCases, preferredFeatures = listOf(FPS_60))
+            defaultResolver.resolveFeatureGroup(
+                SessionConfig(defaultUseCases, preferredFeatureGroup = listOf(FPS_60))
             )
 
         // Assert: Returns Supported without FPS_60 included as resolved feature.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).doesNotContain(FPS_60)
     }
 
@@ -591,17 +597,17 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
+            defaultResolver.resolveFeatureGroup(
                 SessionConfig(
                     defaultUseCases,
-                    preferredFeatures =
+                    preferredFeatureGroup =
                         listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR),
                 )
             )
 
         // Assert: Returns Supported with HDR_HLG10, IMAGE_ULTRA_HDR included as resolved features.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features).containsExactly(HDR_HLG10, IMAGE_ULTRA_HDR)
     }
 
@@ -630,17 +636,17 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
+            defaultResolver.resolveFeatureGroup(
                 SessionConfig(
                     defaultUseCases,
-                    preferredFeatures =
+                    preferredFeatureGroup =
                         listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR),
                 )
             )
 
         // Assert: Returns Supported with HLG10, PrevStab, UltraHDR included as resolved features.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features)
             .containsExactly(HDR_HLG10, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR)
     }
@@ -670,18 +676,19 @@ class DefaultFeatureCombinationResolverTest {
 
         // Act
         val result =
-            defaultResolver.resolveFeatureCombination(
+            defaultResolver.resolveFeatureGroup(
                 SessionConfig(
                     defaultUseCases,
-                    requiredFeatures = setOf(FPS_60),
-                    preferredFeatures = listOf(HDR_HLG10, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR),
+                    requiredFeatureGroup = setOf(FPS_60),
+                    preferredFeatureGroup =
+                        listOf(HDR_HLG10, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR),
                 )
             )
 
         // Assert: Returns Supported with 60FPS, PrevStab, UltraHDR included as resolved features.
         // Although HLG10 is prioritized higher, it's not supported with 60FPS which is required.
         assertThat(result).isInstanceOf(Supported::class.java)
-        val resolvedFeatureCombination = (result as Supported).resolvedFeatureCombination
+        val resolvedFeatureCombination = (result as Supported).resolvedFeatureGroup
         assertThat(resolvedFeatureCombination.features)
             .containsExactly(FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR)
     }
@@ -689,7 +696,7 @@ class DefaultFeatureCombinationResolverTest {
     @Test
     fun resolveFeatureCombination_containsRequiredFeature_passesTrueForIsFeatureComboInvocation() {
         val defaultResolver =
-            DefaultFeatureCombinationResolver(
+            DefaultFeatureGroupResolver(
                 FakeCameraInfoInternal(
                     object : StreamSpecsCalculator {
                         override fun calculateSuggestedStreamSpecs(
@@ -710,15 +717,15 @@ class DefaultFeatureCombinationResolverTest {
                 )
             )
 
-        defaultResolver.resolveFeatureCombination(
-            SessionConfig(defaultUseCases, requiredFeatures = setOf(HDR_HLG10))
+        defaultResolver.resolveFeatureGroup(
+            SessionConfig(defaultUseCases, requiredFeatureGroup = setOf(HDR_HLG10))
         )
     }
 
     @Test
     fun resolveFeatureCombination_containsPreferredFeature_passesTrueForIsFeatureComboInvocation() {
         val defaultResolver =
-            DefaultFeatureCombinationResolver(
+            DefaultFeatureGroupResolver(
                 FakeCameraInfoInternal(
                     object : StreamSpecsCalculator {
                         override fun calculateSuggestedStreamSpecs(
@@ -739,8 +746,8 @@ class DefaultFeatureCombinationResolverTest {
                 )
             )
 
-        defaultResolver.resolveFeatureCombination(
-            SessionConfig(defaultUseCases, preferredFeatures = listOf(HDR_HLG10))
+        defaultResolver.resolveFeatureGroup(
+            SessionConfig(defaultUseCases, preferredFeatureGroup = listOf(HDR_HLG10))
         )
     }
 

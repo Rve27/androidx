@@ -14,28 +14,30 @@
  * limitations under the License.
  */
 
-package androidx.camera.core.featurecombination.impl.resolver
+package androidx.camera.core.featuregroup.impl.resolver
 
 import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.UseCase
-import androidx.camera.core.featurecombination.Feature
-import androidx.camera.core.featurecombination.impl.ResolvedFeatureCombination
+import androidx.camera.core.featuregroup.GroupableFeature
+import androidx.camera.core.featuregroup.impl.ResolvedFeatureGroup
 
 /**
- * Represents the result of resolving to a [ResolvedFeatureCombination].
+ * Represents the result of resolving to a [ResolvedFeatureGroup].
  *
- * @see FeatureCombinationResolver
+ * @see FeatureGroupResolver
  */
-public sealed interface FeatureCombinationResolutionResult {
-    public data class Supported(val resolvedFeatureCombination: ResolvedFeatureCombination) :
-        FeatureCombinationResolutionResult
+public sealed interface FeatureGroupResolutionResult {
+    public data class Supported(val resolvedFeatureGroup: ResolvedFeatureGroup) :
+        FeatureGroupResolutionResult
 
     @OptIn(ExperimentalSessionConfig::class)
-    public data class UseCaseMissing(val requiredUseCases: String, val featureRequiring: Feature) :
-        FeatureCombinationResolutionResult
+    public data class UseCaseMissing(
+        val requiredUseCases: String,
+        val featureRequiring: GroupableFeature,
+    ) : FeatureGroupResolutionResult
 
     public data class UnsupportedUseCase(val unsupportedUseCase: UseCase) :
-        FeatureCombinationResolutionResult
+        FeatureGroupResolutionResult
 
-    public object Unsupported : FeatureCombinationResolutionResult
+    public object Unsupported : FeatureGroupResolutionResult
 }

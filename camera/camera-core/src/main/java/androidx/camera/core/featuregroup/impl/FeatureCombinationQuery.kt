@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package androidx.camera.core.featurecombination.impl
+package androidx.camera.core.featuregroup.impl
 
 import android.util.Size
 import android.view.Surface
 import androidx.camera.core.DynamicRange
-import androidx.camera.core.featurecombination.impl.UseCaseType.Companion.getFeatureComboUseCaseType
+import androidx.camera.core.featuregroup.impl.UseCaseType.Companion.getFeatureGroupUseCaseType
 import androidx.camera.core.impl.DeferrableSurface
 import androidx.camera.core.impl.SessionConfig
 import androidx.camera.core.impl.UseCaseConfig
@@ -75,7 +75,7 @@ public interface FeatureCombinationQuery {
                     }
                 }
 
-            getFeatureComboUseCaseType().surfaceClass?.let {
+            getFeatureGroupUseCaseType().surfaceClass?.let {
                 deferrableSurface.setContainerClass(it)
             }
 

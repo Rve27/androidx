@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package androidx.camera.core.featurecombination.impl.feature
+package androidx.camera.core.featuregroup.impl.feature
 
 import androidx.camera.core.DynamicRange
 import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
-import androidx.camera.core.featurecombination.Feature
+import androidx.camera.core.featuregroup.GroupableFeature
 
 /**
  * Denotes the dynamic range applied to all [UseCase]s which are not of image capture type in a
  * feature combination, i.e. [Preview] and `VideoCapture` use cases currently.
  *
- * This feature can not be instantiated directly, instead use the [Feature.HDR_HLG10] object.
+ * This feature can not be instantiated directly, instead use the [GroupableFeature.HDR_HLG10]
+ * object.
  */
 @OptIn(ExperimentalSessionConfig::class)
-internal class DynamicRangeFeature(val dynamicRange: DynamicRange) : Feature() {
+internal class DynamicRangeFeature(val dynamicRange: DynamicRange) : GroupableFeature() {
     override val featureTypeInternal: FeatureTypeInternal = FeatureTypeInternal.DYNAMIC_RANGE
 
     override fun toString(): String {

@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.camera.core.featurecombination.impl.feature
-
-import androidx.annotation.RestrictTo
-
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-internal enum class FeatureTypeInternal {
-    DYNAMIC_RANGE,
-    FPS_RANGE,
-    VIDEO_STABILIZATION,
-    IMAGE_FORMAT,
-}
+package androidx.camera.core.featuregroup.impl;
+
+import androidx.annotation.RestrictTo;

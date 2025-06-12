@@ -45,11 +45,11 @@ import androidx.camera.core.Preview
 import androidx.camera.core.Preview.getPreviewCapabilities
 import androidx.camera.core.SessionConfig
 import androidx.camera.core.UseCase
-import androidx.camera.core.featurecombination.Feature
-import androidx.camera.core.featurecombination.Feature.Companion.FPS_60
-import androidx.camera.core.featurecombination.Feature.Companion.HDR_HLG10
-import androidx.camera.core.featurecombination.Feature.Companion.IMAGE_ULTRA_HDR
-import androidx.camera.core.featurecombination.Feature.Companion.PREVIEW_STABILIZATION
+import androidx.camera.core.featuregroup.GroupableFeature
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.FPS_60
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.HDR_HLG10
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.IMAGE_ULTRA_HDR
+import androidx.camera.core.featuregroup.GroupableFeature.Companion.PREVIEW_STABILIZATION
 import androidx.camera.core.impl.CameraInfoInternal
 import androidx.camera.core.takePicture
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -248,18 +248,19 @@ class FeatureCombinationDeviceTest(
     fun bindToLifecycle_allPreferredFeatures_canBindSuccessfully(): Unit = runBlocking {
         val useCases = listOf(preview, videoCapture, imageCapture)
         val orderedFeatures = listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR)
-        val selectedFeatures = mutableSetOf<Feature>()
+        val selectedFeatures = mutableSetOf<GroupableFeature>()
 
         val camera =
             withContext(Dispatchers.Main) {
                 cameraProvider.bindToLifecycle(
                     fakeLifecycleOwner,
                     cameraSelector,
-                    SessionConfig(useCases = useCases, preferredFeatures = orderedFeatures).apply {
-                        setFeatureSelectionListener { features ->
-                            selectedFeatures.addAll(features)
-                        }
-                    },
+                    SessionConfig(useCases = useCases, preferredFeatureGroup = orderedFeatures)
+                        .apply {
+                            setFeatureSelectionListener { features ->
+                                selectedFeatures.addAll(features)
+                            }
+                        },
                 )
             }
 
@@ -274,14 +275,12 @@ class FeatureCombinationDeviceTest(
 
     private suspend fun testIfBindAndQueryApiResultsMatch(
         useCases: List<UseCase>,
-        features: Set<Feature>,
+        features: Set<GroupableFeature>,
     ) {
-        val sessionConfig = SessionConfig(useCases = useCases, requiredFeatures = features)
+        val sessionConfig = SessionConfig(useCases = useCases, requiredFeatureGroup = features)
 
         val isSupported =
-            cameraProvider
-                .getCameraInfo(cameraSelector)
-                .isFeatureCombinationSupported(sessionConfig)
+            cameraProvider.getCameraInfo(cameraSelector).isFeatureGroupSupported(sessionConfig)
 
         val camera = bindAndVerify(sessionConfig, isSupported)
 
@@ -316,7 +315,7 @@ class FeatureCombinationDeviceTest(
     }
 
     @SuppressLint("NewApi")
-    private suspend fun Set<Feature>.verifyFeatures(
+    private suspend fun Set<GroupableFeature>.verifyFeatures(
         useCases: List<UseCase>,
         cameraInfo: CameraInfo,
     ) {
