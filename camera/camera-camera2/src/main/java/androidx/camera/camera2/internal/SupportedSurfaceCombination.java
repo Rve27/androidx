@@ -65,6 +65,7 @@ import androidx.camera.camera2.internal.compat.workaround.TargetAspectRatio;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.CameraUnavailableException;
 import androidx.camera.core.DynamicRange;
+import androidx.camera.core.ExperimentalSessionConfig;
 import androidx.camera.core.Logger;
 import androidx.camera.core.featurecombination.impl.FeatureCombinationQuery;
 import androidx.camera.core.featurecombination.impl.feature.FpsRangeFeature;
@@ -828,6 +829,7 @@ final class SupportedSurfaceCombination {
      *                                  of {@link DynamicRange}, or requiring an
      *                                  unsupported combination of camera features.
      */
+    @OptIn(markerClass = ExperimentalSessionConfig.class)
     @NonNull
     private SurfaceStreamSpecQueryResult resolveSpecsByCheckingMethod(
             @NonNull CheckingMethod checkingMethod,
@@ -1354,6 +1356,13 @@ final class SupportedSurfaceCombination {
         if (isHighSpeedOn && !mHighSpeedResolver.isHighSpeedSupported()) {
             throw new IllegalArgumentException(
                     "High-speed session is not supported on this device.");
+        }
+
+        // Use FpsRangeFeature.DEFAULT_FPS_RANGE when Camera2 FCQ checking is required
+        if (isFeatureComboInvocation && targetFpsRange == FRAME_RATE_RANGE_UNSPECIFIED) {
+            if (requiresFeatureComboQuery) {
+                targetFpsRange = FpsRangeFeature.DEFAULT_FPS_RANGE;
+            }
         }
 
         return FeatureSettings.of(cameraMode, hasVideoCapture, requiredMaxBitDepth,

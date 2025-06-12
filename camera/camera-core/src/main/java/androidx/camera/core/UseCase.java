@@ -1195,9 +1195,21 @@ public abstract class UseCase {
         }
 
         DynamicRange dynamicRange = DynamicRangeFeature.DEFAULT_DYNAMIC_RANGE;
-        Range<Integer> fpsRange = FpsRangeFeature.DEFAULT_FPS_RANGE;
+
+        // FpsRangeFeature.DEFAULT_FPS_RANGE is used only when using Camera2 FCQ API since max FPS
+        // is not always available and thus not always possible to be certain that a certain FPS is
+        // supported
+        Range<Integer> fpsRange = FRAME_RATE_RANGE_UNSPECIFIED;
+
         VideoStabilizationFeature.StabilizationMode stabilizationMode =
                 VideoStabilizationFeature.DEFAULT_STABILIZATION_MODE;
+
+        // TODO: Use UNSPECIFIED default values for all features by default and switch to
+        //  FCQ-specific default values only when the Camera2 FCQ API is required. However,
+        //  this probably requires a good amount of refactoring (e.g. the values should be set in
+        //  SupportedSurfaceCombination based on CheckingMethod instead of here and stabilization
+        //  mode should become a part of StreamSpec so that the config doesn't have to be directly
+        //  overwritten, ImageFormat might have similar difficulties too)
 
         for (Feature feature : mFeatureCombination) {
             if (feature instanceof DynamicRangeFeature) {

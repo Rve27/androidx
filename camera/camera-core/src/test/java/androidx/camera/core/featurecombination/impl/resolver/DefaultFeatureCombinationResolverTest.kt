@@ -31,7 +31,6 @@ import androidx.camera.core.featurecombination.Feature.Companion.HDR_HLG10
 import androidx.camera.core.featurecombination.Feature.Companion.IMAGE_ULTRA_HDR
 import androidx.camera.core.featurecombination.Feature.Companion.PREVIEW_STABILIZATION
 import androidx.camera.core.featurecombination.impl.feature.DynamicRangeFeature
-import androidx.camera.core.featurecombination.impl.feature.FpsRangeFeature
 import androidx.camera.core.featurecombination.impl.feature.VideoStabilizationFeature
 import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.Supported
 import androidx.camera.core.featurecombination.impl.resolver.FeatureCombinationResolutionResult.Unsupported
@@ -41,6 +40,7 @@ import androidx.camera.core.impl.CameraConfig
 import androidx.camera.core.impl.CameraInfoInternal
 import androidx.camera.core.impl.CameraInternal
 import androidx.camera.core.impl.ImageFormatConstants.INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE
+import androidx.camera.core.impl.StreamSpec
 import androidx.camera.core.impl.stabilization.StabilizationMode.OFF
 import androidx.camera.core.impl.stabilization.StabilizationMode.ON
 import androidx.camera.core.internal.CameraUseCaseAdapter
@@ -111,7 +111,7 @@ class DefaultFeatureCombinationResolverTest {
     private val defaultPrivStreamSpec =
         FakeStreamSpecsCalculator.ExtendedStreamSpec(
             dynamicRange = DynamicRangeFeature.DEFAULT_DYNAMIC_RANGE,
-            expectedFrameRateRange = FpsRangeFeature.DEFAULT_FPS_RANGE,
+            expectedFrameRateRange = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
             imageFormat = INTERNAL_DEFINED_IMAGE_FORMAT_PRIVATE,
             previewStabilizationMode =
                 VideoStabilizationFeature.DEFAULT_STABILIZATION_MODE.toPreviewStabilizationMode(),
@@ -120,7 +120,7 @@ class DefaultFeatureCombinationResolverTest {
     private val defaultJpegStreamSpec =
         FakeStreamSpecsCalculator.ExtendedStreamSpec(
             dynamicRange = DynamicRange.UNSPECIFIED,
-            expectedFrameRateRange = FpsRangeFeature.DEFAULT_FPS_RANGE,
+            expectedFrameRateRange = StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED,
             imageFormat = ImageFormat.JPEG,
             previewStabilizationMode =
                 VideoStabilizationFeature.DEFAULT_STABILIZATION_MODE.toPreviewStabilizationMode(),

@@ -391,13 +391,13 @@ class UseCaseTest {
     }
 
     @Test
-    fun bindToCamera_whenOtherFeatureIsSet_getTargetFrameRateReturns30() {
+    fun bindToCamera_whenOtherFeatureIsSet_getTargetFrameRateReturnsUnspecified() {
         val preview = Preview.Builder().build()
 
         preview.setFeatureCombination(setOf(HDR_HLG10))
         preview.bindToCamera(fakeCamera, null, null, null)
 
-        assertThat(preview.targetFrameRate).isEqualTo(Range(30, 30))
+        assertThat(preview.targetFrameRate).isEqualTo(StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED)
     }
 
     @Test
@@ -410,13 +410,13 @@ class UseCaseTest {
     }
 
     @Test
-    fun bindToCamera_whenEmptyFeatureCombinationIsSet_getTargetFrameRateReturns30() {
+    fun bindToCamera_whenEmptyFeatureCombinationIsSet_getTargetFrameRateReturnsUnspecified() {
         val preview = Preview.Builder().build()
 
         preview.setFeatureCombination(emptySet())
         preview.bindToCamera(fakeCamera, null, null, null)
 
-        assertThat(preview.targetFrameRate).isEqualTo(Range(30, 30))
+        assertThat(preview.targetFrameRate).isEqualTo(StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED)
     }
 
     @Test

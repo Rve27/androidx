@@ -244,10 +244,10 @@ class FeatureCombinationDeviceTest(
             )
         }
 
-    // TODO: b/420227836 - Add @Test after fixing unsupported exception for no preferred features
-    fun bindToLifecycle_multiplePreferredFeatures_canBindSuccessfully(): Unit = runBlocking {
-        val useCases = listOf(preview, videoCapture)
-        val orderedFeatures = listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION)
+    @Test
+    fun bindToLifecycle_allPreferredFeatures_canBindSuccessfully(): Unit = runBlocking {
+        val useCases = listOf(preview, videoCapture, imageCapture)
+        val orderedFeatures = listOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION, IMAGE_ULTRA_HDR)
         val selectedFeatures = mutableSetOf<Feature>()
 
         val camera =

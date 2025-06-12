@@ -507,8 +507,25 @@ public class SupportedSurfaceCombination(
                     findMaxSupportedFrameRate,
                 )
             WITH_FEATURE_COMBO -> {
+                // Use FpsRangeFeature.DEFAULT_FPS_RANGE when Camera2 FCQ checking is required
+                val targetFpsRange =
+                    if (
+                        featureSettings.isFeatureComboInvocation &&
+                            featureSettings.targetFpsRange === FRAME_RATE_RANGE_UNSPECIFIED
+                    ) {
+                        if (featureSettings.requiresFeatureComboQuery) {
+                            FpsRangeFeature.DEFAULT_FPS_RANGE
+                        } else {
+                            featureSettings.targetFpsRange
+                        }
+                    } else {
+                        featureSettings.targetFpsRange
+                    }
+
                 resolveSpecsBySettings(
-                    featureSettings.copy(requiresFeatureComboQuery = true).validateSelf(),
+                    featureSettings
+                        .copy(requiresFeatureComboQuery = true, targetFpsRange = targetFpsRange)
+                        .validateSelf(),
                     attachedSurfaces,
                     filteredNewUseCaseConfigsSupportedSizeMap,
                     newUseCaseConfigs,
