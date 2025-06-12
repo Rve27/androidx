@@ -1294,7 +1294,8 @@ final class Camera2CameraImpl implements CameraInternal {
                         useCaseInfo.getCaptureTypes(),
                         useCaseInfo.getStreamSpec().getImplementationOptions(),
                         useCaseInfo.getStreamSpec().getSessionType(),
-                        useCaseInfo.getStreamSpec().getExpectedFrameRateRange());
+                        useCaseInfo.getStreamSpec().getExpectedFrameRateRange(),
+                        useCaseConfig.isStrictFrameRateRequired());
 
                 attachedSurfaces.add(attachedSurfaceInfo);
             }

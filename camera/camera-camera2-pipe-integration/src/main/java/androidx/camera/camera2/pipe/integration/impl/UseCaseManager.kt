@@ -902,6 +902,7 @@ constructor(
                         streamSpec.implementationOptions ?: MutableOptionsBundle.create(),
                         streamSpec.sessionType,
                         streamSpec.expectedFrameRateRange,
+                        useCase.currentConfig.isStrictFrameRateRequired,
                     )
                 )
             }
