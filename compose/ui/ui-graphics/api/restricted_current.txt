@@ -2132,7 +2132,7 @@ package androidx.compose.ui.graphics.shadow {
     property public float spread;
   }
 
-  public interface ShadowContext {
+  public sealed interface ShadowContext {
     method public default void clearCache();
     method public default androidx.compose.ui.graphics.shadow.DropShadowPainter createDropShadowPainter(androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.Shadow shadow);
     method public default androidx.compose.ui.graphics.shadow.InnerShadowPainter createInnerShadowPainter(androidx.compose.ui.graphics.Shape shape, androidx.compose.ui.graphics.shadow.Shadow shadow);
