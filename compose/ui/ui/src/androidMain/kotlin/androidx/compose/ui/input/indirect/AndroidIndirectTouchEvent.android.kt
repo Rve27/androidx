@@ -17,6 +17,9 @@
 package androidx.compose.ui.input.indirect
 
 import android.view.MotionEvent
+import android.view.MotionEvent.ACTION_DOWN
+import android.view.MotionEvent.ACTION_MOVE
+import android.view.MotionEvent.ACTION_UP
 import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.geometry.Offset
 
@@ -32,3 +35,23 @@ constructor(
 @ExperimentalIndirectTouchTypeApi
 val IndirectTouchEvent.nativeEvent: MotionEvent
     get() = (this as AndroidIndirectTouchEvent).nativeEvent
+
+/** Allows creation of a [IndirectTouchEvent] from a [MotionEvent] for cross module testing. */
+@ExperimentalIndirectTouchTypeApi
+fun IndirectTouchEvent(motionEvent: MotionEvent): IndirectTouchEvent =
+    AndroidIndirectTouchEvent(
+        position = Offset(motionEvent.x, motionEvent.y),
+        uptimeMillis = motionEvent.eventTime,
+        type = convertActionToIndirectTouchEventType(motionEvent.actionMasked),
+        nativeEvent = motionEvent,
+    )
+
+@OptIn(ExperimentalIndirectTouchTypeApi::class)
+internal fun convertActionToIndirectTouchEventType(actionMasked: Int): IndirectTouchEventType {
+    return when (actionMasked) {
+        ACTION_UP -> IndirectTouchEventType.Release
+        ACTION_DOWN -> IndirectTouchEventType.Press
+        ACTION_MOVE -> IndirectTouchEventType.Move
+        else -> IndirectTouchEventType.Unknown
+    }
+}

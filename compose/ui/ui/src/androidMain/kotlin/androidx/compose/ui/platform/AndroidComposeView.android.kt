@@ -131,7 +131,7 @@ import androidx.compose.ui.input.InputModeManager
 import androidx.compose.ui.input.InputModeManagerImpl
 import androidx.compose.ui.input.indirect.AndroidIndirectTouchEvent
 import androidx.compose.ui.input.indirect.IndirectTouchEvent
-import androidx.compose.ui.input.indirect.IndirectTouchEventType
+import androidx.compose.ui.input.indirect.convertActionToIndirectTouchEventType
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType.Companion.KeyDown
 import androidx.compose.ui.input.key.onKeyEvent
@@ -2225,16 +2225,6 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                 // If focus owner did not handle, rely on ViewGroup to handle.
                 super.dispatchGenericMotionEvent(motionEvent)
             }
-        }
-    }
-
-    @OptIn(ExperimentalIndirectTouchTypeApi::class)
-    private fun convertActionToIndirectTouchEventType(actionMasked: Int): IndirectTouchEventType {
-        return when (actionMasked) {
-            ACTION_UP -> IndirectTouchEventType.Release
-            ACTION_DOWN -> IndirectTouchEventType.Press
-            ACTION_MOVE -> IndirectTouchEventType.Move
-            else -> IndirectTouchEventType.Unknown
         }
     }
 

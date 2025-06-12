@@ -16,6 +16,8 @@
 
 package androidx.compose.ui.input.indirect
 
+import android.os.SystemClock
+import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_HOVER_ENTER
 import android.view.MotionEvent.ACTION_MOVE
@@ -58,6 +60,31 @@ class IndirectTouchEventTest {
     @Before
     fun before() {
         receivedEvent = null
+    }
+
+    @Test
+    fun convertMotionEventToIndirectTouchEvent_validMotionEvent() {
+
+        val offset = Offset(4f, 6f)
+
+        val motionEvent =
+            MotionEvent.obtain(
+                SystemClock.uptimeMillis(), // downTime,
+                SystemClock.uptimeMillis(), // eventTime,
+                MotionEvent.ACTION_DOWN,
+                offset.x,
+                offset.y,
+                0, // metaState
+            )
+
+        val indirectTouchEvent = IndirectTouchEvent(motionEvent)
+
+        assertThat(indirectTouchEvent).isNotNull()
+        assertThat(indirectTouchEvent.position).isEqualTo(offset)
+        assertThat(indirectTouchEvent.uptimeMillis).isEqualTo(motionEvent.eventTime)
+        assertThat(indirectTouchEvent.type)
+            .isEqualTo(convertActionToIndirectTouchEventType(motionEvent.actionMasked))
+        assertThat(indirectTouchEvent.nativeEvent).isEqualTo(motionEvent)
     }
 
     @Test

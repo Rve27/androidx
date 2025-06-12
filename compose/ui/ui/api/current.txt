@@ -1465,6 +1465,7 @@ package androidx.compose.ui.input {
 package androidx.compose.ui.input.indirect {
 
   public final class AndroidIndirectTouchEvent_androidKt {
+    method @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi public static androidx.compose.ui.input.indirect.IndirectTouchEvent IndirectTouchEvent(android.view.MotionEvent motionEvent);
     method @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi public static android.view.MotionEvent getNativeEvent(androidx.compose.ui.input.indirect.IndirectTouchEvent);
     property @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi public static android.view.MotionEvent androidx.compose.ui.input.indirect.IndirectTouchEvent.nativeEvent;
   }
