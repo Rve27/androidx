@@ -2649,9 +2649,10 @@ public final class AppSearchImpl implements Closeable {
         // Rewrite the given SearchSpec into SearchSpecProto, ResultSpecProto and ScoringSpecProto.
         // All processes are counted in rewriteSearchSpecLatencyMillis
         long rewriteSearchSpecLatencyStartMillis = SystemClock.elapsedRealtime();
-        SearchSpecProto finalSearchSpec = searchSpecToProtoConverter.toSearchSpecProto();
+        SearchSpecProto finalSearchSpec = searchSpecToProtoConverter.toSearchSpecProto(
+                mIsVMEnabled);
         ResultSpecProto finalResultSpec = searchSpecToProtoConverter.toResultSpecProto(
-                mNamespaceCacheLocked, mSchemaCacheLocked);
+                mNamespaceCacheLocked, mSchemaCacheLocked, mIsVMEnabled);
         ScoringSpecProto scoringSpec = searchSpecToProtoConverter.toScoringSpecProto();
         if (sStatsBuilder != null) {
             sStatsBuilder.setRewriteSearchSpecLatencyMillis((int)
@@ -3231,7 +3232,8 @@ public final class AppSearchImpl implements Closeable {
                 return;
             }
 
-            SearchSpecProto finalSearchSpec = searchSpecToProtoConverter.toSearchSpecProto();
+            SearchSpecProto finalSearchSpec = searchSpecToProtoConverter.toSearchSpecProto(
+                    mIsVMEnabled);
 
             Set<String> prefixedObservedSchemas = null;
             if (mObserverManager.isPackageObserved(packageName)) {
@@ -4401,6 +4403,38 @@ public final class AppSearchImpl implements Closeable {
                     "Blob database doesn't match calling database, calling database: "
                             + callingDatabaseName + ", blob database: "
                             + blobHandle.getDatabaseName());
+        }
+    }
+
+    /** Calls getSchema in a thread safe manner. */
+    public @NonNull SchemaProto rawGetSchema() {
+        mReadWriteLock.readLock().lock();
+        try {
+            return mIcingSearchEngineLocked.getSchema().getSchema();
+        } finally {
+            mReadWriteLock.readLock().unlock();
+        }
+    }
+
+    /** Calls search in a thread safe manner. */
+    public @NonNull SearchResultProto rawSearch(
+            @NonNull SearchSpecProto spec, @NonNull ScoringSpecProto scoringSpec,
+            @NonNull ResultSpecProto resultSpec) {
+        mReadWriteLock.readLock().lock();
+        try {
+            return mIcingSearchEngineLocked.search(spec, scoringSpec, resultSpec);
+        } finally {
+            mReadWriteLock.readLock().unlock();
+        }
+    }
+
+    /** Calls getSchema in a thread safe manner. */
+    public @NonNull SearchResultProto rawGetNextPage(long nextPageToken) {
+        mReadWriteLock.readLock().lock();
+        try {
+            return mIcingSearchEngineLocked.getNextPage(nextPageToken);
+        } finally {
+            mReadWriteLock.readLock().unlock();
         }
     }
 }
