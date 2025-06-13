@@ -57,6 +57,11 @@ public inline fun SubspaceLayout(
     modifier: SubspaceModifier = SubspaceModifier,
     measurePolicy: SubspaceMeasurePolicy,
 ) {
+    check(currentComposer.applier.current is ComposeSubspaceNode) {
+        "SubspaceComposable functions are expected to be used within the context of a " +
+            "Subspace composition. Please ensure that this component is in a Subspace or " +
+            " is a child of another SubspaceComposable."
+    }
     val compositionLocalMap = currentComposer.currentCompositionLocalMap
     ComposeNode<ComposeSubspaceNode, Applier<Any>>(
         factory = ComposeSubspaceNode.Constructor,
@@ -102,6 +107,11 @@ public inline fun SubspaceLayout(
     modifier: SubspaceModifier = SubspaceModifier,
     measurePolicy: SubspaceMeasurePolicy,
 ) {
+    check(currentComposer.applier.current is ComposeSubspaceNode) {
+        "SubspaceComposable functions are expected to be used within the context of a " +
+            "Subspace composition. Please ensure that this component is in a Subspace or " +
+            " is a child of another SubspaceComposable."
+    }
     val coreEntity = rememberCoreContentlessEntity {
         ContentlessEntity.create(session = this, name = entityName("Entity"))
     }
@@ -142,6 +152,11 @@ internal inline fun SubspaceLayout(
     coreEntity: CoreEntity? = null,
     measurePolicy: SubspaceMeasurePolicy,
 ) {
+    check(currentComposer.applier.current is ComposeSubspaceNode) {
+        "SubspaceComposable functions are expected to be used within the context of a " +
+            "Subspace composition. Please ensure that this component is in a Subspace or " +
+            " is a child of another SubspaceComposable."
+    }
     val compositionLocalMap = currentComposer.currentCompositionLocalMap
     ComposeNode<ComposeSubspaceNode, Applier<Any>>(
         factory = ComposeSubspaceNode.Constructor,
@@ -182,6 +197,12 @@ internal inline fun SubspaceLayout(
     },
     measurePolicy: SubspaceMeasurePolicy,
 ) {
+    check(currentComposer.applier.current is ComposeSubspaceNode) {
+        "SubspaceComposable functions are expected to be used within the context of a " +
+            "Subspace composition. Please ensure that this component is in a Subspace or " +
+            " is a child of another SubspaceComposable."
+    }
+
     val compositionLocalMap = currentComposer.currentCompositionLocalMap
     ComposeNode<ComposeSubspaceNode, Applier<Any>>(
         factory = ComposeSubspaceNode.Constructor,
