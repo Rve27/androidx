@@ -58,7 +58,6 @@ import androidx.compose.ui.UiComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
 import androidx.xr.compose.integration.common.AnotherActivity
 import androidx.xr.compose.integration.layout.spatialcomposeapp.components.TestDialog
 import androidx.xr.compose.platform.LocalSession
@@ -69,14 +68,13 @@ import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.OrbiterOffsetType
 import androidx.xr.compose.spatial.SpatialElevationLevel
 import androidx.xr.compose.spatial.Subspace
-import androidx.xr.compose.subspace.ExperimentalSubspaceVolumeApi
 import androidx.xr.compose.subspace.MainPanel
+import androidx.xr.compose.subspace.SceneCoreEntity
 import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialCurvedRow
 import androidx.xr.compose.subspace.SpatialLayoutSpacer
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.SubspaceComposable
-import androidx.xr.compose.subspace.Volume
 import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SpatialRoundedCornerShape
 import androidx.xr.compose.subspace.layout.SubspaceModifier
@@ -88,10 +86,10 @@ import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.padding
 import androidx.xr.compose.subspace.layout.resizable
+import androidx.xr.compose.subspace.layout.rotate
 import androidx.xr.compose.subspace.layout.size
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.unit.Meter.Companion.meters
-import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.GltfModel
@@ -102,7 +100,6 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.guava.await
-import kotlinx.coroutines.launch
 
 /**
  * Main activity for the Spatial Compose App.
@@ -330,49 +327,42 @@ class SpatialComposeAppActivity : ComponentActivity() {
         )
     }
 
-    @OptIn(ExperimentalSubspaceVolumeApi::class)
     @SubspaceComposable
     @Composable
     fun XyzArrows(modifier: SubspaceModifier = SubspaceModifier) {
-        val session =
-            checkNotNull(LocalSession.current) {
-                "LocalSession.current was null. Session must be available."
-            }
-        var arrows by remember { mutableStateOf<GltfModel?>(null) }
-        val gltfEntity = arrows?.let { remember { GltfModelEntity.create(session, it) } }
+        val session = LocalSession.current ?: return
+        var rotation by remember { mutableStateOf(Quaternion.Identity) }
+        var gltfModel by remember { mutableStateOf<GltfModel?>(null) }
 
         LaunchedEffect(Unit) {
-            arrows = GltfModel.createAsync(session, Paths.get("models", "xyzArrows.glb")).await()
+            gltfModel = GltfModel.createAsync(session, Paths.get("models", "xyzArrows.glb")).await()
+
+            val pi = 3.14159F
+            val timeSource = Clock.systemUTC()
+            val startTime = timeSource.millis()
+            val rotateTimeMs = 10000F
+
+            while (true) {
+                delay(16L)
+                val elapsedMs = timeSource.millis() - startTime
+                val angle = (2 * pi) * (elapsedMs / rotateTimeMs)
+
+                val normalized = Vector3(1.0f, 1.0f, 1.0f).toNormalized()
+
+                val qX = normalized.x * sin(angle / 2)
+                val qY = normalized.y * sin(angle / 2)
+                val qZ = normalized.z * sin(angle / 2)
+                val qW = cos(angle / 2)
+
+                rotation = Quaternion(qX, qY, qZ, qW)
+            }
         }
 
-        if (gltfEntity != null) {
-            Volume(modifier) {
-                gltfEntity.parent = it
-
-                lifecycleScope.launch {
-                    val pi = 3.14159F
-                    val timeSource = Clock.systemUTC()
-                    val startTime = timeSource.millis()
-                    val rotateTimeMs = 10000F
-
-                    while (true) {
-                        delay(16L)
-                        val elapsedMs = timeSource.millis() - startTime
-                        val angle = (2 * pi) * (elapsedMs / rotateTimeMs)
-
-                        val normalized = Vector3(1.0f, 1.0f, 1.0f).toNormalized()
-
-                        val qX = normalized.x * sin(angle / 2)
-                        val qY = normalized.y * sin(angle / 2)
-                        val qZ = normalized.z * sin(angle / 2)
-                        val qW = cos(angle / 2)
-
-                        val q = Quaternion(qX, qY, qZ, qW)
-
-                        gltfEntity.setPose(Pose(rotation = q))
-                    }
-                }
-            }
+        if (gltfModel != null) {
+            SceneCoreEntity(
+                factory = { GltfModelEntity.create(session, gltfModel!!) },
+                modifier = modifier.rotate(rotation),
+            )
         }
     }
 }
