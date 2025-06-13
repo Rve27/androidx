@@ -23,6 +23,7 @@ dependencies {
     docs(project(":appcompat:appcompat-resources"))
     docs(project(":appfunctions:appfunctions"))
     docs(project(":appfunctions:appfunctions-service"))
+    docs(project(":appfunctions:appfunctions-testing"))
     docs(project(":appsearch:appsearch"))
     docs(project(":appsearch:appsearch-builtin-types"))
     docs(project(":appsearch:appsearch-ktx"))
