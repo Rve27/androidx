@@ -170,11 +170,11 @@ val WearMaterial3Demos =
                 Material3DemoCategory(
                     title = "Swipe to Reveal",
                     listOf(
-                        ComposableDemo("Single Action with Anchoring") {
-                            SwipeToRevealSingleButtonWithAnchoring()
+                        ComposableDemo("Single Action with partial reveal") {
+                            SwipeToRevealSingleButtonWithPartialReveal()
                         },
-                        ComposableDemo("Bi-directional / Non-anchoring") {
-                            SwipeToRevealBothDirectionsNonAnchoring()
+                        ComposableDemo("Bi-directional / No partial reveal") {
+                            SwipeToRevealBothDirectionsNoPartialReveal()
                         },
                         ComposableDemo("Bi-directional Two Actions") {
                             SwipeToRevealBothDirections()
