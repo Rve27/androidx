@@ -1347,6 +1347,9 @@ internal class CompositionImpl(
 
     override fun deactivate() {
         synchronized(lock) {
+            checkPrecondition(pendingPausedComposition == null) {
+                "Deactivate is not supported while pausable composition is in progress"
+            }
             val nonEmptySlotTable = slotTable.groupsSize > 0
             if (nonEmptySlotTable || abandonSet.isNotEmpty()) {
                 trace("Compose:deactivate") {
