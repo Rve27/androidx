@@ -21,6 +21,10 @@ import static com.android.extensions.xr.node.InputEvent.DISPATCH_FLAG_NONE;
 import static com.android.extensions.xr.node.InputEvent.POINTER_TYPE_DEFAULT;
 import static com.android.extensions.xr.node.InputEvent.SOURCE_UNKNOWN;
 
+import static com.android.extensions.xr.node.Node.POINTER_CAPTURE_STATE_ACTIVE;
+import static com.android.extensions.xr.node.Node.POINTER_CAPTURE_STATE_PAUSED;
+import static com.android.extensions.xr.node.Node.POINTER_CAPTURE_STATE_STOPPED;
+
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 
@@ -45,10 +49,6 @@ import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class PointerCaptureComponentImplTest {
-    // TODO(b/402408284): Remove once host version of Node is updated.
-    private static final int POINTER_CAPTURE_STATE_PAUSED = 0;
-    private static final int POINTER_CAPTURE_STATE_ACTIVE = 1;
-    private static final int POINTER_CAPTURE_STATE_STOPPED = 2;
 
     // Static private implementation of fakes so that the last received state can be grabbed.
     private static class FakeStateListener implements StateListener {
