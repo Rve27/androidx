@@ -27,6 +27,7 @@ import androidx.compose.runtime.snapshots.Snapshot.Companion.openSnapshotCount
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlinx.test.IgnoreJsTarget
@@ -318,7 +319,7 @@ class SnapshotObserverTests {
                 } finally {
                     ms1.dispose()
                 }
-                assertEquals(
+                assertContentEquals(
                     listOf(
                         null to "Outer: creating, readonly = true",
                         null to "Inner: creating, readonly = true",

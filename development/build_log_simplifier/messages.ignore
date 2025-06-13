@@ -367,6 +367,7 @@ For more details, see: https://kotl\.in/gradle/internal\-compiler\-symbols
 \[log\].*
 # b/382336155 Capture more logging for Kotlin JS Tests
 .*STANDARD_OUT
+Completed
 # Warning emitted on empty Java files generated from AIDL:
 # https://github.com/kythe/kythe/issues/6145
 .*com.google\.devtools\.kythe\.extractors\.java\.JavaCompilationUnitExtractor.*

@@ -29,13 +29,13 @@ import kotlin.coroutines.resume
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlinx.coroutines.CancellableContinuation
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.test.runTest
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Stable
 class PausableCompositionTests {
     @Test
@@ -426,8 +426,8 @@ class PausableCompositionTests {
     }
 
     @Test
-    fun pausableComposition_throwInResume() = runTest {
-        assertFailsWith<IllegalStateException> {
+    fun pausableComposition_throwInResume() =
+        runTest(expected = IllegalStateException::class) {
             val recomposer = Recomposer(coroutineContext)
             val pausableComposition = PausableComposition(EmptyApplier(), recomposer)
 
@@ -440,11 +440,10 @@ class PausableCompositionTests {
                 recomposer.close()
             }
         }
-    }
 
     @Test
-    fun pausableComposition_throwInApply() = runTest {
-        assertFailsWith<IllegalStateException> {
+    fun pausableComposition_throwInApply() =
+        runTest(expected = IllegalStateException::class) {
             val recomposer = Recomposer(coroutineContext)
             val pausableComposition = PausableComposition(EmptyApplier(), recomposer)
 
@@ -460,7 +459,6 @@ class PausableCompositionTests {
                 recomposer.close()
             }
         }
-    }
 
     @Test
     fun pausableComposition_isAppliedReturnsCorrectValue() = runTest {

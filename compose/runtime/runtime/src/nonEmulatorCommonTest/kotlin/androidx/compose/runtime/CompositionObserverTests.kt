@@ -28,6 +28,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlinx.test.IgnoreJsTarget
+import kotlinx.test.IgnoreWasmTarget
 
 @Stable
 @OptIn(ExperimentalComposeRuntimeApi::class)
@@ -66,7 +67,10 @@ class CompositionObserverTests {
     }
 
     @Test
-    @IgnoreJsTarget // b/409727436
+    // TODO: b/409727436
+    // TODO: https://youtrack.jetbrains.com/issue/CMP-797
+    @IgnoreJsTarget
+    @IgnoreWasmTarget
     fun observeScope() {
         val observer = SingleScopeObserver()
         compositionTest {
@@ -94,7 +98,10 @@ class CompositionObserverTests {
     }
 
     @Test
-    @IgnoreJsTarget // b/409727436
+    // TODO: b/409727436
+    // TODO: https://youtrack.jetbrains.com/issue/CMP-797
+    @IgnoreJsTarget
+    @IgnoreWasmTarget
     fun observeScope_dispose() {
         val observer = SingleScopeObserver()
         compositionTest {
@@ -129,7 +136,10 @@ class CompositionObserverTests {
     }
 
     @Test
-    @IgnoreJsTarget // b/409727436
+    // TODO: b/409727436
+    // TODO: https://youtrack.jetbrains.com/issue/CMP-797
+    @IgnoreJsTarget
+    @IgnoreWasmTarget
     fun observeScope_scopeRemoved() {
         val observer = SingleScopeObserver()
         compositionTest {

@@ -73,6 +73,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.withContext
 import kotlinx.test.IgnoreJsTarget
+import kotlinx.test.IgnoreWasmTarget
 
 @Composable fun Container(content: @Composable () -> Unit) = content()
 
@@ -2566,7 +2567,9 @@ class CompositionTests {
     }
 
     @Test
-    @IgnoreJsTarget // b/409728274
+    // The test for web is properly implemented in CompositionTests.web.kt
+    @IgnoreJsTarget
+    @IgnoreWasmTarget
     fun testRememberObserver_Abandon_Recompose() {
         val abandonedObjects = mutableListOf<RememberObserver>()
         val observed =
@@ -4390,6 +4393,12 @@ class CompositionTests {
         revalidate()
     }
 
+    /* TODO: Restore after updating to Kotlin 2.2
+        Due to a bug in Kotlin 2.1.2x https://youtrack.jetbrains.com/issue/KT-77508, compilation of
+        the tests for K/JS and K/Native fails with
+        "Wrong number of parameters in wrapper: expected: 0 bound and 2 unbound, but 0 found".
+        So ignoring doesn't really work for this case. For now the test is moved to CompositionJvmTests
+
     @Test
     fun composableDelegates() = compositionTest {
         val local = compositionLocalOf { "Default" }
@@ -4404,6 +4413,7 @@ class CompositionTests {
             Text("Scoped")
         }
     }
+    */
 
     @Test
     fun testCompositionAndRecomposerDeadlock() {
@@ -5104,7 +5114,8 @@ private inline fun InlineSubcomposition(crossinline content: @Composable () -> U
     }
 
 @Composable
-operator fun <T> CompositionLocal<T>.getValue(thisRef: Any?, property: KProperty<*>) = current
+private operator fun <T> CompositionLocal<T>.getValue(thisRef: Any?, property: KProperty<*>) =
+    current
 
 // for 274185312
 
