@@ -20,7 +20,9 @@ package androidx.camera.core.samples
 
 import androidx.annotation.Sampled
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.DynamicRange
 import androidx.camera.core.ExperimentalSessionConfig
+import androidx.camera.core.Preview
 import androidx.camera.core.SessionConfig
 import androidx.camera.core.UseCase
 import androidx.camera.core.featuregroup.GroupableFeature
@@ -29,6 +31,36 @@ import androidx.camera.core.featuregroup.GroupableFeature.Companion.HDR_HLG10
 import androidx.camera.core.featuregroup.GroupableFeature.Companion.PREVIEW_STABILIZATION
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.lifecycle.LifecycleOwner
+
+@Sampled
+fun configureSessionConfigWithFeatureGroups() {
+    // Create a session config where HDR is mandatory while 60 FPS (higher priority) and preview
+    // stabilization are optional
+    SessionConfig(
+        useCases = listOf(Preview.Builder().build()),
+        requiredFeatureGroup = setOf(HDR_HLG10),
+        preferredFeatureGroup = listOf(FPS_60, PREVIEW_STABILIZATION),
+    )
+
+    // Creating the following SessionConfig will throw an exception as there are conflicting
+    // information. HDR is mentioned once as required and then again as preferred, it can't be both!
+    SessionConfig(
+        useCases = listOf(Preview.Builder().build()),
+        requiredFeatureGroup = setOf(HDR_HLG10),
+        preferredFeatureGroup = listOf(FPS_60, HDR_HLG10),
+    )
+
+    // Creating the following SessionConfig will throw an exception as a groupable feature (HDR) is
+    // configured with non-grouping API while using grouping API as well. HDR is configured to the
+    // with a non-grouping API through the Preview use case, so it can't be grouped together
+    // properly with the other groupable features. Instead, it should be configured like the first
+    // SessionConfig construction in this code snippet.
+    SessionConfig(
+        useCases =
+            listOf(Preview.Builder().apply { setDynamicRange(DynamicRange.HLG_10_BIT) }.build()),
+        preferredFeatureGroup = listOf(FPS_60, PREVIEW_STABILIZATION),
+    )
+}
 
 @Sampled
 fun startCameraWithSomeHighQualityFeatures(

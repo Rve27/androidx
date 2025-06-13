@@ -38,10 +38,18 @@ import androidx.camera.core.featuregroup.impl.feature.VideoStabilizationFeature
 import androidx.camera.core.featuregroup.impl.feature.VideoStabilizationFeature.StabilizationMode
 
 /**
- * Base [GroupableFeature] class for all features that can be grouped together for configuring a
- * camera session.
+ * Represents distinct, groupable camera functionalities that can be requested for a camera session.
+ *
+ * CameraX provides various implementations of this class as objects to denote various groupable
+ * features, i.e. [HDR_HLG10], [FPS_60] [PREVIEW_STABILIZATION], [IMAGE_ULTRA_HDR]. These features
+ * can be configured as a group in a [androidx.camera.core.SessionConfig] to ensure compatibility
+ * when they are used together. Additionally, the
+ * [androidx.camera.core.CameraInfo.isFeatureGroupSupported] API can be used to check if a group of
+ * features is supported together on a device.
  *
  * @sample androidx.camera.core.samples.startCameraWithSomeHighQualityFeatures
+ * @see androidx.camera.core.SessionConfig.Builder.setRequiredFeatureGroup
+ * @see androidx.camera.core.SessionConfig.Builder.setPreferredFeatureGroup
  */
 @ExperimentalSessionConfig
 public abstract class GroupableFeature

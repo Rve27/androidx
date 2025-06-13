@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) // TODO: Expose the features
+@ExperimentalSessionConfig
 package androidx.camera.core.featuregroup;
 
-import androidx.annotation.RestrictTo;
+import androidx.camera.core.ExperimentalSessionConfig;
