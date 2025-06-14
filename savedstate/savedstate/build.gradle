@@ -37,7 +37,7 @@ androidXMultiplatform {
             dependencies {
                 api(libs.kotlinStdlib)
                 api("androidx.annotation:annotation:1.9.1")
-                implementation(project(":lifecycle:lifecycle-common"))
+                implementation("androidx.lifecycle:lifecycle-common:2.9.2")
                 api(libs.kotlinCoroutinesCore)
                 api(libs.kotlinSerializationCore)
             }
@@ -45,7 +45,7 @@ androidXMultiplatform {
 
         commonTest {
             dependencies {
-                implementation(project(":lifecycle:lifecycle-runtime"))
+                implementation("androidx.lifecycle:lifecycle-runtime:2.9.2")
                 implementation(project(":kruth:kruth"))
                 implementation(libs.kotlinTest)
                 implementation(libs.kotlinTestCommon)
@@ -81,7 +81,7 @@ androidXMultiplatform {
         androidInstrumentedTest {
             dependsOn(jvmTest)
             dependencies {
-                implementation("androidx.lifecycle:lifecycle-runtime:2.9.1")
+                implementation("androidx.lifecycle:lifecycle-runtime:2.9.2")
                 implementation(libs.testExtJunit)
                 implementation(libs.testCore)
                 implementation(libs.testRunner)
