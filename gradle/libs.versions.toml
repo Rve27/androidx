@@ -223,7 +223,6 @@ kotlinSerializationProtobuf = { module = "org.jetbrains.kotlinx:kotlinx-serializ
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinStdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
 kotlinStdlibCommon = { module = "org.jetbrains.kotlin:kotlin-stdlib-common" }
-kotlinStdlibJdk8 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8" }
 # The Kotlin/JS and Kotlin/Wasm standard library must match the compiler
 kotlinStdlibJs = { module = "org.jetbrains.kotlin:kotlin-stdlib-js", version.ref = "kotlin" }
 kotlinStdlibWasm = { module = "org.jetbrains.kotlin:kotlin-stdlib-wasm-js", version.ref = "kotlin" }
