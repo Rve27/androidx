@@ -627,6 +627,14 @@ package androidx.xr.compose.subspace.node {
     method public void onLayoutCoordinates(androidx.xr.compose.subspace.layout.SubspaceLayoutCoordinates coordinates);
   }
 
+  public interface SubspaceLayoutModifierNode {
+    method public androidx.xr.compose.subspace.layout.SubspaceMeasureResult measure(androidx.xr.compose.subspace.layout.SubspaceMeasureScope, androidx.xr.compose.subspace.layout.SubspaceMeasurable measurable, androidx.xr.compose.unit.VolumeConstraints constraints);
+  }
+
+  public final class SubspaceLayoutModifierNodeKt {
+    method public static void requestRelayout(androidx.xr.compose.subspace.node.SubspaceLayoutModifierNode);
+  }
+
   public abstract class SubspaceModifierNodeElement<N extends androidx.xr.compose.subspace.layout.SubspaceModifier.Node> implements androidx.xr.compose.subspace.layout.SubspaceModifier {
     ctor public SubspaceModifierNodeElement();
     method public abstract N create();
