@@ -22,6 +22,7 @@ import androidx.camera.core.DynamicRange
 import androidx.camera.core.ExperimentalSessionConfig
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
+import androidx.camera.core.SessionConfig
 import androidx.camera.core.featuregroup.GroupableFeature.Companion.FEATURE_TYPE_DYNAMIC_RANGE
 import androidx.camera.core.featuregroup.GroupableFeature.Companion.FEATURE_TYPE_FPS_RANGE
 import androidx.camera.core.featuregroup.GroupableFeature.Companion.FEATURE_TYPE_IMAGE_FORMAT
@@ -41,11 +42,18 @@ import androidx.camera.core.featuregroup.impl.feature.VideoStabilizationFeature.
  * Represents distinct, groupable camera functionalities that can be requested for a camera session.
  *
  * CameraX provides various implementations of this class as objects to denote various groupable
- * features, i.e. [HDR_HLG10], [FPS_60] [PREVIEW_STABILIZATION], [IMAGE_ULTRA_HDR]. These features
- * can be configured as a group in a [androidx.camera.core.SessionConfig] to ensure compatibility
- * when they are used together. Additionally, the
- * [androidx.camera.core.CameraInfo.isFeatureGroupSupported] API can be used to check if a group of
- * features is supported together on a device.
+ * features, i.e. [HDR_HLG10], [FPS_60] [PREVIEW_STABILIZATION], [IMAGE_ULTRA_HDR]. Since features
+ * may not be supported together as a combination even if each of them are supported individually,
+ * these groupable features can be configured as a group in a [androidx.camera.core.SessionConfig]
+ * to ensure compatibility when they are used together. When configuring the camera with a session
+ * config containing groups of features, their impact on the camera session as a combination will
+ * also be considered and compatibility issue will be reported or handled properly based on the
+ * exact API used (i.e. exception will be thrown if [SessionConfig.requiredFeatureGroup] is not
+ * supported, or some/all features from [SessionConfig.preferredFeatureGroup] will be dropped based
+ * on priority).
+ *
+ * Additionally, the [androidx.camera.core.CameraInfo.isFeatureGroupSupported] API can be used to
+ * check if a group of features is supported together on a device.
  *
  * @sample androidx.camera.core.samples.startCameraWithSomeHighQualityFeatures
  * @see androidx.camera.core.SessionConfig.Builder.setRequiredFeatureGroup

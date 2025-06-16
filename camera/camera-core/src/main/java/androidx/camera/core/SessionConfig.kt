@@ -227,7 +227,7 @@ constructor(
         /**
          * Sets the list of [GroupableFeature] that are mandatory for the camera configuration.
          *
-         * If any of the features are not supported or if the features are not supported together as
+         * If any of the features is not supported or if the features are not supported together as
          * a combination, an [IllegalArgumentException] will be thrown when the [SessionConfig] is
          * bound to a lifecycle (e.g. when the
          * `androidx.camera.lifecycle.ProcessCameraProvider.bindToLifecycle` API is invoked).
@@ -239,10 +239,13 @@ constructor(
          * check if the features are supported or not.
          *
          * Note that [CameraEffect] or [ImageAnalysis] use case is currently not supported when a
-         * feature is set to a session config.
+         * feature is set to a session config. Furthermore, unlike the [setPreferredFeatureGroup]
+         * API, the order of the features doesn't matter for this API since each and every one of
+         * these features must be configured.
          *
          * @param features The vararg of `GroupableFeature` objects to add to the required features.
          * @return The [Builder] instance, allowing for method chaining.
+         * @see GroupableFeature
          */
         public fun setRequiredFeatureGroup(vararg features: GroupableFeature): Builder {
             requiredFeatureGroup.clear()
@@ -280,6 +283,7 @@ constructor(
          *
          * @param features The list of preferred features, ordered by preference.
          * @return The [Builder] instance, allowing for method chaining.
+         * @see GroupableFeature
          */
         public fun setPreferredFeatureGroup(vararg features: GroupableFeature): Builder {
             preferredFeatureGroup.clear()
