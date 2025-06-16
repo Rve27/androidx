@@ -16,8 +16,6 @@
 
 package androidx.test.uiautomator.testapp;
 
-import static android.content.pm.PackageManager.FEATURE_FREEFORM_WINDOW_MANAGEMENT;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -27,7 +25,6 @@ import static org.junit.Assume.assumeFalse;
 
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.os.Build;
 import android.view.KeyEvent;
 import android.view.Surface;
 import android.widget.TextView;
@@ -271,12 +268,6 @@ public class UiDeviceTest extends BaseTest {
                         "keycode shift left pressed; with meta shift left on; keycode Z pressed;"
                                 + " with meta shift left on; "),
                 TIMEOUT_MS));
-    }
-
-    boolean isDesktopWindowing() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-                && InstrumentationRegistry.getInstrumentation().getContext().getPackageManager()
-                .hasSystemFeature(FEATURE_FREEFORM_WINDOW_MANAGEMENT);
     }
 
     @Test
