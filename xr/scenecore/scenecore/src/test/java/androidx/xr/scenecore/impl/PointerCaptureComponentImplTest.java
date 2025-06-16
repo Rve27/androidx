@@ -20,7 +20,6 @@ import static com.android.extensions.xr.node.InputEvent.ACTION_MOVE;
 import static com.android.extensions.xr.node.InputEvent.DISPATCH_FLAG_NONE;
 import static com.android.extensions.xr.node.InputEvent.POINTER_TYPE_DEFAULT;
 import static com.android.extensions.xr.node.InputEvent.SOURCE_UNKNOWN;
-
 import static com.android.extensions.xr.node.Node.POINTER_CAPTURE_STATE_ACTIVE;
 import static com.android.extensions.xr.node.Node.POINTER_CAPTURE_STATE_PAUSED;
 import static com.android.extensions.xr.node.Node.POINTER_CAPTURE_STATE_STOPPED;
@@ -28,7 +27,6 @@ import static com.android.extensions.xr.node.Node.POINTER_CAPTURE_STATE_STOPPED;
 import static com.google.common.truth.Truth.assertThat;
 import static com.google.common.util.concurrent.MoreExecutors.directExecutor;
 
-import androidx.annotation.NonNull;
 import androidx.xr.runtime.internal.Entity;
 import androidx.xr.runtime.internal.InputEvent;
 import androidx.xr.runtime.internal.InputEventListener;
@@ -43,6 +41,7 @@ import com.android.extensions.xr.node.ShadowInputEvent;
 import com.android.extensions.xr.node.ShadowNode;
 import com.android.extensions.xr.node.Vec3;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;

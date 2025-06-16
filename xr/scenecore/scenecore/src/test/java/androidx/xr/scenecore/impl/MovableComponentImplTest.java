@@ -47,7 +47,6 @@ import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
-import androidx.annotation.NonNull;
 import androidx.test.rule.GrantPermissionRule;
 import androidx.xr.runtime.internal.AnchorEntity;
 import androidx.xr.runtime.internal.AnchorPlacement;
@@ -93,6 +92,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.truth.Expect;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
