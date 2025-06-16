@@ -28,7 +28,6 @@ import androidx.camera.core.ViewPort
 import androidx.camera.core.impl.ImageOutputConfig
 import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED
 import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
-import androidx.core.util.Preconditions.checkArgument
 
 /**
  * A [SessionConfig] for high-speed video recording sessions.
@@ -156,29 +155,29 @@ constructor(
     }
 
     private fun validateSettingsOrThrow(videoCapture: VideoCapture<*>, preview: Preview?) {
-        checkArgument(videoCapture.mirrorMode == MIRROR_MODE_OFF) {
+        require(videoCapture.mirrorMode == MIRROR_MODE_OFF) {
             "VideoCapture.Builder.setMirrorMode() is not allowed for high-speed video."
         }
 
-        checkArgument(videoCapture.targetFrameRate == FRAME_RATE_RANGE_UNSPECIFIED) {
+        require(videoCapture.targetFrameRate == FRAME_RATE_RANGE_UNSPECIFIED) {
             "VideoCapture.Builder.setTargetFrameRate() is not allowed for high-speed video."
         }
 
         if (preview != null) {
-            checkArgument(preview.targetFrameRate == FRAME_RATE_RANGE_UNSPECIFIED) {
+            require(preview.targetFrameRate == FRAME_RATE_RANGE_UNSPECIFIED) {
                 "Preview.Builder.setTargetFrameRate() is not allowed for high-speed video."
             }
 
             (preview.currentConfig as ImageOutputConfig).let { previewOutputConfig ->
-                checkArgument(previewOutputConfig.getResolutionSelector(null) == null) {
+                require(previewOutputConfig.getResolutionSelector(null) == null) {
                     "Preview.Builder.setResolutionSelector() is not allowed for high-speed video."
                 }
 
-                checkArgument(previewOutputConfig.getTargetResolution(null) == null) {
+                require(previewOutputConfig.getTargetResolution(null) == null) {
                     "Preview.Builder.setTargetResolution() is not allowed for high-speed video."
                 }
 
-                checkArgument(!previewOutputConfig.hasTargetAspectRatio()) {
+                require(!previewOutputConfig.hasTargetAspectRatio()) {
                     "Preview.Builder.setTargetAspectRatio() is not allowed for high-speed video."
                 }
             }
