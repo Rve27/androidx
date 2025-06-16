@@ -1272,14 +1272,14 @@ final class SupportedSurfaceCombination {
             @NonNull Range<Integer> targetFpsRange, int currentConfigFrameRateCeiling) {
         boolean isConfigFrameRateAcceptable = true;
         if (!FRAME_RATE_RANGE_UNSPECIFIED.equals(targetFpsRange)) {
-            // currentConfigFrameRateCeiling < targetFpsRange.getLower() means that
-            // 'targetFpsRange.getLower() < currentConfigFrameRateCeiling  < upper' is also
-            // acceptable i.e. partially supporting a target FPS range is acceptable.
+            // currentConfigFrameRateCeiling < targetFpsRange.getUpper() to return false means that
+            // there should still be other better choice because currentConfigFrameRateCeiling is
+            // still smaller than both maxSupportedFps and targetFpsRange.getUpper().
             // For feature combo cases, fps ranges need to be fully supported, but sizes not
             // supporting target FPS range fully are already filtered out in
             // filterSupportedSizes API.
-            if (maxSupportedFps > currentConfigFrameRateCeiling
-                    && currentConfigFrameRateCeiling < targetFpsRange.getLower()) {
+            if (currentConfigFrameRateCeiling < maxSupportedFps
+                    && currentConfigFrameRateCeiling < targetFpsRange.getUpper()) {
                 // if the max fps before adding new use cases supports our target fps range
                 // BUT the max fps of the new configuration is below
                 // our target fps range, we'll want to check the next configuration until we

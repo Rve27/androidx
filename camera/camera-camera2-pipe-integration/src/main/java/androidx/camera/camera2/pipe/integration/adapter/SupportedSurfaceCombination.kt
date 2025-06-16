@@ -1347,16 +1347,16 @@ public class SupportedSurfaceCombination(
     ): Boolean {
         var isConfigFrameRateAcceptable = true
         if (targetFpsRange != FRAME_RATE_RANGE_UNSPECIFIED) {
-            // TODO: b/402372530 - currentConfigFrameRateCeiling < targetFpsRange.getLower()
-            //  means that 'targetFpsRange.getLower() < currentConfigFrameRateCeiling  < upper'
-            //  is also acceptable i.e. partially supporting a target FPS range is acceptable.
-            //  However, for feature combo cases, we should strictly maintain the target FPS
-            //  range being fully supported. It doesn't need to be handled right now though
-            //  since feature combo API supports lower == upper case (i.e. FPS_60) only right
-            //  now.
+            // TODO: b/402372530 - currentConfigFrameRateCeiling < targetFpsRange.getUpper() to
+            //  return false means that there should still be other better choice because
+            //  currentConfigFrameRateCeiling is still smaller than both maxSupportedFps and
+            //  targetFpsRange.getUpper(). However, for feature combo cases, we should strictly
+            //  maintain the target FPS range being fully supported. It doesn't need to be handled
+            //  right now though since feature combo API supports lower == upper case (i.e. FPS_60)
+            //  only right now.
             if (
-                existingSurfaceFrameRateCeiling > currentConfigFrameRateCeiling &&
-                    currentConfigFrameRateCeiling < targetFpsRange.lower
+                currentConfigFrameRateCeiling < existingSurfaceFrameRateCeiling &&
+                    currentConfigFrameRateCeiling < targetFpsRange.upper
             ) {
                 // if the max fps before adding new use cases supports our target fps range
                 // BUT the max fps of the new configuration is below
