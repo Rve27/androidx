@@ -1016,8 +1016,8 @@ class CameraControllerTest {
         shadowOf(getMainLooper()).idle()
         assumeTrue(controller.tapToFocusInfoState.value?.focusState == TAP_TO_FOCUS_STARTED)
 
-        // Advance to end of time
-        ShadowSystemClock.advanceBy(Long.MAX_VALUE, TimeUnit.SECONDS)
+        // Advance to 1 hour of time
+        ShadowSystemClock.advanceBy(1, TimeUnit.HOURS)
 
         // State is still the previous STARTED state
         shadowOf(getMainLooper()).idle()
