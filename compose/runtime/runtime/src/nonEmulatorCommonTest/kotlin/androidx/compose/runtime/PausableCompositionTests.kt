@@ -461,6 +461,25 @@ class PausableCompositionTests {
         }
 
     @Test
+    fun pausableComposition_throwIfReusedAfterCancel() =
+        runTest(expected = IllegalStateException::class) {
+            val recomposer = Recomposer(coroutineContext)
+            val pausableComposition = PausableComposition(EmptyApplier(), recomposer)
+
+            try {
+                val handle = pausableComposition.setPausableContent { Text("Some text") }
+                handle.cancel()
+                val handle2 = pausableComposition.setPausableContent { Text("Some other text") }
+                handle2.resume { false }
+                handle2.apply()
+            } finally {
+                pausableComposition.dispose()
+                recomposer.cancel()
+                recomposer.close()
+            }
+        }
+
+    @Test
     fun pausableComposition_isAppliedReturnsCorrectValue() = runTest {
         val recomposer = Recomposer(coroutineContext)
         val pausableComposition = PausableComposition(EmptyApplier(), recomposer)
