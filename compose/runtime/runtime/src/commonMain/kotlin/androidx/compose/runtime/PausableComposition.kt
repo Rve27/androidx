@@ -301,8 +301,9 @@ internal class PausedCompositionImpl(
 
     override fun cancel() {
         state.set(PausedCompositionState.Cancelled)
+        val ignoreSet = rememberManager.extractRememberSet()
         rememberManager.dispatchAbandons()
-        composition.pausedCompositionFinished()
+        composition.pausedCompositionFinished(ignoreSet)
     }
 
     internal fun markIncomplete() {
@@ -325,7 +326,7 @@ internal class PausedCompositionImpl(
                 rememberManager.dispatchSideEffects()
             } finally {
                 rememberManager.dispatchAbandons()
-                composition.pausedCompositionFinished()
+                composition.pausedCompositionFinished(null)
             }
         }
     }

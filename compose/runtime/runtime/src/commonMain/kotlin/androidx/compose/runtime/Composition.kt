@@ -19,6 +19,7 @@
 package androidx.compose.runtime
 
 import androidx.collection.MutableScatterSet
+import androidx.collection.ScatterSet
 import androidx.compose.runtime.changelist.ChangeList
 import androidx.compose.runtime.collection.ScopeMap
 import androidx.compose.runtime.collection.fastForEach
@@ -673,8 +674,11 @@ internal class CompositionImpl(
         return pausedComposition
     }
 
-    internal fun pausedCompositionFinished() {
+    internal fun pausedCompositionFinished(ignoreSet: ScatterSet<RememberObserverHolder>?) {
         pendingPausedComposition = null
+        if (ignoreSet != null) {
+            rememberManager.ignoreForgotten(ignoreSet)
+        }
     }
 
     private fun composeInitial(content: @Composable () -> Unit) {
