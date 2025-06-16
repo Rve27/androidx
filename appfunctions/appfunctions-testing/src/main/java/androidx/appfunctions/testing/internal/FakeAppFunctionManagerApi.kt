@@ -16,23 +16,91 @@
 
 package androidx.appfunctions.testing.internal
 
+import android.content.Context
+import android.os.Build
+import android.os.OutcomeReceiver
+import androidx.annotation.RequiresApi
+import androidx.appfunctions.AppFunctionAppUnknownException
+import androidx.appfunctions.AppFunctionException
+import androidx.appfunctions.AppFunctionFunctionNotFoundException
 import androidx.appfunctions.ExecuteAppFunctionRequest
 import androidx.appfunctions.ExecuteAppFunctionResponse
 import androidx.appfunctions.internal.AppFunctionManagerApi
+import androidx.appfunctions.internal.NullTranslatorSelector
+import androidx.appfunctions.internal.findImpl
+import androidx.appfunctions.service.AppFunctionServiceDelegate
+import androidx.appfunctions.service.internal.AggregatedAppFunctionInventory
+import androidx.appfunctions.service.internal.AggregatedAppFunctionInvoker
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.suspendCancellableCoroutine
 
 // TODO: b/418017070 - Implement
-internal class FakeAppFunctionManagerApi : AppFunctionManagerApi {
+internal class FakeAppFunctionManagerApi(
+    private val context: Context,
+    private val appFunctionReader: FakeAppFunctionReader,
+) : AppFunctionManagerApi {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override suspend fun executeAppFunction(
         request: ExecuteAppFunctionRequest
-    ): ExecuteAppFunctionResponse {
-        TODO("Not yet implemented")
+    ): ExecuteAppFunctionResponse = suspendCancellableCoroutine { continuation ->
+        AppFunctionServiceDelegate(
+                context,
+                Dispatchers.Default,
+                Dispatchers.Default,
+                AggregatedAppFunctionInventory::class.java.findImpl(prefix = "$", suffix = "_Impl"),
+                AggregatedAppFunctionInvoker::class.java.findImpl(prefix = "$", suffix = "_Impl"),
+                NullTranslatorSelector(),
+            )
+            .onExecuteFunction(
+                request,
+                object : OutcomeReceiver<ExecuteAppFunctionResponse, AppFunctionException> {
+                    override fun onResult(response: ExecuteAppFunctionResponse?) {
+                        if (response != null) {
+                            continuation.resume(response)
+                        } else {
+                            continuation.resumeWithException(
+                                AppFunctionAppUnknownException("Failed to execute appfunction.")
+                            )
+                        }
+                    }
+
+                    override fun onError(error: AppFunctionException) {
+                        continuation.resumeWithException(error)
+                    }
+                },
+            )
     }
 
-    override suspend fun isAppFunctionEnabled(packageName: String, functionId: String): Boolean {
-        TODO("Not yet implemented")
-    }
+    @RequiresApi(Build.VERSION_CODES.S)
+    override suspend fun isAppFunctionEnabled(packageName: String, functionId: String): Boolean =
+        appFunctionReader.getAppFunctionMetadata(packageName, functionId)?.isEnabled
+            ?: throw AppFunctionFunctionNotFoundException(
+                "No function found with id: $functionId under package: $packageName"
+            )
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override suspend fun setAppFunctionEnabled(functionId: String, newEnabledState: Int) {
-        TODO("Not yet implemented")
+        val appFunctionStaticAndRuntimeMetadata =
+            appFunctionReader.getAppFunctionStaticAndRuntimeMetadata(
+                context.packageName,
+                functionId,
+            )
+                ?: throw AppFunctionFunctionNotFoundException(
+                    "No function found with id: $functionId"
+                )
+
+        appFunctionReader.setAppFunctionStaticAndRuntimeMetadata(
+            context.packageName,
+            appFunctionStaticAndRuntimeMetadata.copy(
+                runtimeMetadata =
+                    appFunctionStaticAndRuntimeMetadata.runtimeMetadata.copy(
+                        enabled = newEnabledState
+                    )
+            ),
+        )
     }
 }

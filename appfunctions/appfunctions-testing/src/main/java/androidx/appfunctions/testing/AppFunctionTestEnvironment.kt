@@ -39,7 +39,7 @@ internal class AppFunctionTestEnvironment(private val context: Context) {
     // TODO: b/418017070 - Support function execution.
 
     private val appFunctionReader = FakeAppFunctionReader(context)
-    private val appFunctionManagerApi = FakeAppFunctionManagerApi()
+    private val appFunctionManagerApi = FakeAppFunctionManagerApi(context, appFunctionReader)
 
     /**
      * Returns an [AppFunctionManagerCompat] instance that can be used to interact with AppFunctions

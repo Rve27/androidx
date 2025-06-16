@@ -48,4 +48,8 @@ class TestFunctions {
     }
 
     @AppFunction fun voidFunction(appFunctionContext: AppFunctionContext) {}
+
+    @AppFunction fun enabledByDefault(appFunctionContext: AppFunctionContext) {}
+
+    @AppFunction(isEnabled = false) fun disabledByDefault(appFunctionContext: AppFunctionContext) {}
 }

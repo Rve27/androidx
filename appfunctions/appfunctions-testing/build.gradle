@@ -46,6 +46,7 @@ dependencies {
     testImplementation(libs.testRunner)
     testImplementation(libs.guavaAndroid)
     testImplementation(libs.testMonitor)
+    testImplementation(libs.kotlinTest)
     kspTest(project(":appfunctions:appfunctions-compiler"))
 }
 
