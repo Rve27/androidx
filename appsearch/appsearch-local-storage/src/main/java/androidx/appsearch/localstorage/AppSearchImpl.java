@@ -338,6 +338,7 @@ public final class AppSearchImpl implements Closeable {
 
         // By default, we don't perform any retries.
         int maxInitRetries = 0;
+        Map<String, VisibilityStore> visibilityStoreMap = new ArrayMap<>();
         mReadWriteLock.writeLock().lock();
         try {
             // We synchronize here because we don't want to call IcingSearchEngine.initialize() more
@@ -512,6 +513,11 @@ public final class AppSearchImpl implements Closeable {
 
                 LogUtil.piiTrace(TAG, "Init completed successfully");
 
+                if (Flags.enableResetVisibilityStore()) {
+                    visibilityStoreMap = initializeVisibilityStore(mRevocableFileDescriptorStore,
+                            initStatsBuilder);
+                }
+
             } catch (AppSearchException e) {
                 // Some error. Reset and see if it fixes it.
                 Log.e(TAG, "Error initializing, attempting to reset IcingSearchEngine.", e);
@@ -519,27 +525,40 @@ public final class AppSearchImpl implements Closeable {
                     initStatsBuilder.setStatusCode(e.getResultCode());
                 }
                 resetLocked(initStatsBuilder);
+                if (Flags.enableResetVisibilityStore()) {
+                    visibilityStoreMap = initializeVisibilityStore(mRevocableFileDescriptorStore,
+                            initStatsBuilder);
+                }
             }
-
-            // AppSearchImpl core parameters are initialized and we should be able to build
-            // VisibilityStores based on that. We shouldn't wipe out everything if we only failed to
-            // build VisibilityStores.
-            long prepareVisibilityStoreLatencyStartMillis = SystemClock.elapsedRealtime();
-            mDocumentVisibilityStoreLocked = VisibilityStore.createDocumentVisibilityStore(this);
-            if (mRevocableFileDescriptorStore != null) {
-                mBlobVisibilityStoreLocked = VisibilityStore.createBlobVisibilityStore(this);
-            } else {
-                mBlobVisibilityStoreLocked = null;
-            }
-            long prepareVisibilityStoreLatencyEndMillis = SystemClock.elapsedRealtime();
-            if (initStatsBuilder != null) {
-                initStatsBuilder.setPrepareVisibilityStoreLatencyMillis((int)
-                        (prepareVisibilityStoreLatencyEndMillis
-                                - prepareVisibilityStoreLatencyStartMillis));
-            }
+            mDocumentVisibilityStoreLocked = visibilityStoreMap.get(
+                    VisibilityStore.DOCUMENT_VISIBILITY_DATABASE_NAME);
+            mBlobVisibilityStoreLocked = visibilityStoreMap.get(
+                    VisibilityStore.BLOB_VISIBILITY_DATABASE_NAME);
         } finally {
             mReadWriteLock.writeLock().unlock();
         }
+    }
+
+    @OptIn(markerClass = ExperimentalAppSearchApi.class)
+    private Map<String, VisibilityStore> initializeVisibilityStore(
+            @Nullable RevocableFileDescriptorStore revocableFileDescriptorStore,
+            InitializeStats.@Nullable Builder initStatsBuilder) throws AppSearchException {
+        long prepareVisibilityStoreLatencyStartMillis = SystemClock.elapsedRealtime();
+        Map<String, VisibilityStore> visibilityStoreMap = new ArrayMap<>();
+        visibilityStoreMap.put(VisibilityStore.DOCUMENT_VISIBILITY_DATABASE_NAME,
+                VisibilityStore.createDocumentVisibilityStore(this));
+        VisibilityStore blobVisibilityStore = null;
+        if (revocableFileDescriptorStore != null) {
+            blobVisibilityStore = VisibilityStore.createBlobVisibilityStore(this);
+        }
+        visibilityStoreMap.put(VisibilityStore.BLOB_VISIBILITY_DATABASE_NAME, blobVisibilityStore);
+        long prepareVisibilityStoreLatencyEndMillis = SystemClock.elapsedRealtime();
+        if (initStatsBuilder != null) {
+            initStatsBuilder.setPrepareVisibilityStoreLatencyMillis((int)
+                    (prepareVisibilityStoreLatencyEndMillis
+                            - prepareVisibilityStoreLatencyStartMillis));
+        }
+        return visibilityStoreMap;
     }
 
     @GuardedBy("mReadWriteLock")
