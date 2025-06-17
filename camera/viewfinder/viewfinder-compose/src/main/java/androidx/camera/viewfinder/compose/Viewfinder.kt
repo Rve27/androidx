@@ -37,8 +37,11 @@ import androidx.camera.viewfinder.core.impl.ViewfinderSurfaceSessionImpl
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -103,16 +106,79 @@ fun Viewfinder(
 ) {
     Box(modifier = modifier.clipToBounds().fillMaxSize()) {
         key(surfaceRequest) {
-            TransformedSurface(
-                surfaceWidth = surfaceRequest.width,
-                surfaceHeight = surfaceRequest.height,
-                transformationInfo = transformationInfo,
-                implementationMode =
+            val layoutDirection = LocalConfiguration.current.layoutDirection
+            val surfaceWidth = surfaceRequest.width
+            val surfaceHeight = surfaceRequest.height
+            val implementationMode =
+                remember(surfaceRequest.implementationMode) {
                     surfaceRequest.implementationMode
-                        ?: ImplementationModeCompat.chooseCompatibleMode(),
-                coordinateTransformer = coordinateTransformer,
-                alignment = alignment,
-                contentScale = contentScale,
+                        ?: ImplementationModeCompat.chooseCompatibleMode()
+                }
+
+            // Due to https://issuetracker.google.com/183864890, we should only perform
+            // transformations (scale/translate) on SurfaceView when the Surface has been created.
+            // This does not affect TextureView, so default to true for that implementation mode.
+            var canTransformSurface by
+                remember(implementationMode) {
+                    mutableStateOf(implementationMode == ImplementationMode.EMBEDDED)
+                }
+
+            TransformedSurface(
+                surfaceWidth = surfaceWidth,
+                surfaceHeight = surfaceHeight,
+                transformationInfo = transformationInfo,
+                implementationMode = implementationMode,
+                modifier =
+                    Modifier.layout { measurable, constraints ->
+                        val placeable =
+                            measurable.measure(Constraints.fixed(surfaceWidth, surfaceHeight))
+
+                        // When the child placeable is larger than the parent's constraints, rather
+                        // than the child overflowing through the right or bottom of the parent, it
+                        // overflows evenly on all sides, as if it's placed exactly in the center of
+                        // the parent.
+                        // To compensate for this, we must offset the child by the amount it
+                        // overflows so it is consistently placed in the top left corner of the
+                        // parent before we apply scaling and translation in the graphics layer.
+                        val widthOffset =
+                            0.coerceAtLeast((placeable.width - constraints.maxWidth) / 2)
+                        val heightOffset =
+                            0.coerceAtLeast((placeable.height - constraints.maxHeight) / 2)
+                        layout(placeable.width, placeable.height) {
+                            placeable.placeWithLayer(widthOffset, heightOffset) {
+                                // Do not perform transformations on the surface until ready
+                                if (!canTransformSurface) return@placeWithLayer
+
+                                val surfaceToViewFinderMatrix =
+                                    Transformations.getSurfaceToViewfinderMatrix(
+                                        viewfinderSize =
+                                            Size(constraints.maxWidth, constraints.maxHeight),
+                                        surfaceResolution = Size(surfaceWidth, surfaceHeight),
+                                        transformationInfo = transformationInfo,
+                                        layoutDirection = layoutDirection,
+                                        contentScale = contentScale.toInternalContentScale(),
+                                        alignment = alignment.toInternalAlignment(),
+                                    )
+
+                                coordinateTransformer?.transformMatrix =
+                                    Matrix().apply {
+                                        setFrom(surfaceToViewFinderMatrix)
+                                        invert()
+                                    }
+
+                                val surfaceRectInViewfinder =
+                                    RectF(0f, 0f, surfaceWidth.toFloat(), surfaceHeight.toFloat())
+                                        .also(surfaceToViewFinderMatrix::mapRect)
+
+                                transformOrigin = TransformOrigin(0f, 0f)
+                                scaleX = surfaceRectInViewfinder.width() / surfaceWidth
+                                scaleY = surfaceRectInViewfinder.height() / surfaceHeight
+
+                                translationX = surfaceRectInViewfinder.left
+                                translationY = surfaceRectInViewfinder.top
+                            }
+                        }
+                    },
             ) {
                 val viewfinderInitScope =
                     ViewfinderInitScopeImpl(viewfinderSurfaceRequest = surfaceRequest)
@@ -121,6 +187,9 @@ fun Viewfinder(
                 onInit.invoke(viewfinderInitScope)
 
                 onSurface { viewfinderSurfaceHolder ->
+                    // At this point, the initial Surface has been created. We can now transform
+                    // the surface in layout
+                    canTransformSurface = true
                     // Dispatch surface to registered onSurfaceSession callback
                     viewfinderInitScope.dispatchOnSurfaceSession(
                         viewfinderSurfaceHolder.refCountedSurface
@@ -137,59 +206,12 @@ private fun TransformedSurface(
     surfaceHeight: Int,
     transformationInfo: TransformationInfo,
     implementationMode: ImplementationMode,
-    coordinateTransformer: MutableCoordinateTransformer?,
-    alignment: Alignment,
-    contentScale: ContentScale,
+    modifier: Modifier = Modifier,
     onInit: ViewfinderExternalSurfaceScope.() -> Unit,
 ) {
-    val layoutDirection = LocalConfiguration.current.layoutDirection
-    val surfaceModifier =
-        Modifier.layout { measurable, constraints ->
-            val placeable = measurable.measure(Constraints.fixed(surfaceWidth, surfaceHeight))
-
-            // When the child placeable is larger than the parent's constraints, rather
-            // than the child overflowing through the right or bottom of the parent, it overflows
-            // evenly on all sides, as if it's placed exactly in the center of the parent.
-            // To compensate for this, we must offset the child by the amount it overflows
-            // so it is consistently placed in the top left corner of the parent before
-            // we apply scaling and translation in the graphics layer.
-            val widthOffset = 0.coerceAtLeast((placeable.width - constraints.maxWidth) / 2)
-            val heightOffset = 0.coerceAtLeast((placeable.height - constraints.maxHeight) / 2)
-            layout(placeable.width, placeable.height) {
-                placeable.placeWithLayer(widthOffset, heightOffset) {
-                    val surfaceToViewFinderMatrix =
-                        Transformations.getSurfaceToViewfinderMatrix(
-                            viewfinderSize = Size(constraints.maxWidth, constraints.maxHeight),
-                            surfaceResolution = Size(surfaceWidth, surfaceHeight),
-                            transformationInfo = transformationInfo,
-                            layoutDirection = layoutDirection,
-                            contentScale = contentScale.toInternalContentScale(),
-                            alignment = alignment.toInternalAlignment(),
-                        )
-
-                    coordinateTransformer?.transformMatrix =
-                        Matrix().apply {
-                            setFrom(surfaceToViewFinderMatrix)
-                            invert()
-                        }
-
-                    val surfaceRectInViewfinder =
-                        RectF(0f, 0f, surfaceWidth.toFloat(), surfaceHeight.toFloat())
-                            .also(surfaceToViewFinderMatrix::mapRect)
-
-                    transformOrigin = TransformOrigin(0f, 0f)
-                    scaleX = surfaceRectInViewfinder.width() / surfaceWidth
-                    scaleY = surfaceRectInViewfinder.height() / surfaceHeight
-
-                    translationX = surfaceRectInViewfinder.left
-                    translationY = surfaceRectInViewfinder.top
-                }
-            }
-        }
-
     when (implementationMode) {
         ImplementationMode.EXTERNAL -> {
-            ViewfinderExternalSurface(modifier = surfaceModifier, onInit = onInit)
+            ViewfinderExternalSurface(modifier = modifier, onInit = onInit)
         }
         ImplementationMode.EMBEDDED -> {
             val displayRotationDegrees =
@@ -213,7 +235,7 @@ private fun TransformedSurface(
             }
 
             ViewfinderEmbeddedExternalSurface(
-                modifier = surfaceModifier,
+                modifier = modifier,
                 transform = correctionMatrix,
                 onInit = onInit,
             )
