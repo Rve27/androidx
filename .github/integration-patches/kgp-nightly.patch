@@ -594,9 +594,9 @@ index 81c257c6b5c..6085ce6d9c9 100644
  
  plugins {
 @@ -39,6 +41,7 @@ androidx {
+     type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
      inceptionYear = "2020"
      description = "Android Tracing"
-     legacyDisableKotlinStrictApiMode = true
 +    kotlinTarget = KotlinTarget.KOTLIN_2_2
  }
  
