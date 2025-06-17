@@ -11,11 +11,14 @@ package androidx.xr.runtime.testing {
     ctor public FakeActivityPose();
     method public androidx.xr.runtime.math.Pose getActivitySpacePose();
     method public androidx.xr.runtime.math.Vector3 getActivitySpaceScale();
+    method public final androidx.xr.runtime.internal.HitTestResult getHitTestResult();
     method public androidx.xr.runtime.math.Vector3 getWorldSpaceScale();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.HitTestResult> hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, @androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue int hitTestFilter);
+    method public final void setHitTestResult(androidx.xr.runtime.internal.HitTestResult);
     method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose pose, androidx.xr.runtime.internal.ActivityPose destination);
     property public androidx.xr.runtime.math.Pose activitySpacePose;
     property public androidx.xr.runtime.math.Vector3 activitySpaceScale;
+    property public final androidx.xr.runtime.internal.HitTestResult hitTestResult;
     property public androidx.xr.runtime.math.Vector3 worldSpaceScale;
   }
 
