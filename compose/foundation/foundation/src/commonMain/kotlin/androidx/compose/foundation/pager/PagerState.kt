@@ -587,9 +587,9 @@ internal constructor(
     }
 
     /**
-     * Scroll animate to a given [page]. If the [page] is too far away from [currentPage] we will
-     * not compose all pages in the way. We will pre-jump to a nearer page, compose and animate the
-     * rest of the pages until [page].
+     * Scroll animate to a given [page]'s closest snap position. If the [page] is too far away from
+     * [currentPage] we will not compose all pages in the way. We will pre-jump to a nearer page,
+     * compose and animate the rest of the pages until [page].
      *
      * Please refer to the sample to learn how to use this API.
      *
