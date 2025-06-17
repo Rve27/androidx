@@ -27,17 +27,28 @@ import androidx.build.SoftwareType
 plugins {
     id("AndroidXPlugin")
     id("com.android.library")
+    id("org.jetbrains.kotlin.android")
 }
 
 dependencies {
+    api(libs.kotlinStdlib)
+    api(libs.guavaListenableFuture)
+    api(project(":xr:runtime:runtime"))
+    api(project(":xr:scenecore:scenecore"))
 
+    testImplementation(libs.kotlinCoroutinesTest)
+    testImplementation(project(":xr:runtime:runtime-testing"))
+    testImplementation(libs.junit)
+    testImplementation(libs.testExtJunit)
+    testImplementation(libs.testExtTruth)
+    testImplementation("androidx.appcompat:appcompat:1.2.0")
 }
 
 android {
     compileSdk 35
 
     defaultConfig {
-        minSdkVersion 26
+        minSdkVersion 24
     }
 
     namespace = "androidx.xr.scenecore.guava"

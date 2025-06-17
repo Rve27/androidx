@@ -50,6 +50,16 @@ package androidx.xr.runtime.testing {
     method public android.media.AudioTrack.Builder setSoundFieldAttributes(android.media.AudioTrack.Builder builder, androidx.xr.runtime.internal.SoundFieldAttributes attributes);
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeCameraViewActivityPose extends androidx.xr.runtime.testing.FakeActivityPose implements androidx.xr.runtime.internal.CameraViewActivityPose {
+    ctor public FakeCameraViewActivityPose();
+    method public int getCameraType();
+    method public androidx.xr.runtime.internal.PixelDimensions getDisplayResolutionInPixels();
+    method public androidx.xr.runtime.internal.CameraViewActivityPose.Fov getFov();
+    property public int cameraType;
+    property public androidx.xr.runtime.internal.PixelDimensions displayResolutionInPixels;
+    property public androidx.xr.runtime.internal.CameraViewActivityPose.Fov fov;
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeComponent implements androidx.xr.runtime.internal.Component {
     ctor public FakeComponent();
     method public final boolean getCanBeAttached();

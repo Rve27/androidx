@@ -1,1 +1,10 @@
 // Signature format: 4.0
+package androidx.xr.scenecore.guava {
+
+  public final class ScenePoseGuava {
+    method public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.scenecore.ScenePose, androidx.xr.runtime.Session session, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction);
+    method public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.scenecore.ScenePose, androidx.xr.runtime.Session session, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter);
+  }
+
+}
+

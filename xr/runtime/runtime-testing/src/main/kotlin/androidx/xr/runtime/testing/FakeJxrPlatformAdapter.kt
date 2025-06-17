@@ -100,9 +100,10 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
 
     override val activitySpace: ActivitySpace = FakeActivitySpace()
 
-    override val headActivityPose: HeadActivityPose? = null
+    override val headActivityPose: HeadActivityPose? =
+        object : HeadActivityPose, FakeActivityPose() {}
 
-    override val activitySpaceRootImpl: Entity = FakeEntity()
+    override val activitySpaceRootImpl: Entity = activitySpace
 
     override val spatialCapabilities: SpatialCapabilities = SpatialCapabilities(0)
 
@@ -123,7 +124,7 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
 
     override fun getCameraViewActivityPose(
         @CameraViewActivityPose.CameraType cameraType: Int
-    ): CameraViewActivityPose? = null
+    ): CameraViewActivityPose? = FakeCameraViewActivityPose()
 
     @Suppress("AsyncSuffixFuture")
     override fun loadGltfByAssetName(assetName: String): ListenableFuture<GltfModelResource> =
