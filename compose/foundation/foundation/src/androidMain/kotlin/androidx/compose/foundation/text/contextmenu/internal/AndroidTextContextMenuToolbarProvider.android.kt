@@ -150,17 +150,38 @@ internal class AndroidTextContextMenuToolbarProvider(
 
     private var actionMode: ActionMode? = null
 
+    private var startActionModeRunnable: Runnable? = null
+
     override suspend fun showTextContextMenu(dataProvider: TextContextMenuDataProvider) {
         mutatorMutex.mutate {
             val session = TextContextMenuSessionImpl()
             val callback = createActionModeCallback(session, dataProvider)
-            actionMode = TextToolbarHelper.startActionMode(view, callback) ?: return@mutate
+
+            if (Looper.myLooper() !== view.handler?.looper) {
+                val startActionModeRunnable =
+                    this.startActionModeRunnable
+                        ?: Runnable {
+                                val actionMode =
+                                    TextToolbarHelper.startActionMode(view, callback).also {
+                                        this.actionMode == it
+                                    }
+                                // Failed to start action mode, close session by us.
+                                if (actionMode == null) {
+                                    session.close()
+                                }
+                            }
+                            .also { this.startActionModeRunnable = it }
+                view.post(startActionModeRunnable)
+            } else {
+                actionMode = TextToolbarHelper.startActionMode(view, callback) ?: return@mutate
+            }
 
             try {
                 session.awaitClose()
             } finally {
                 snapshotStateObserver.clear()
                 actionMode?.finish()
+                startActionModeRunnable?.let { view.removeCallbacks(it) }
                 actionMode = null
             }
         }
