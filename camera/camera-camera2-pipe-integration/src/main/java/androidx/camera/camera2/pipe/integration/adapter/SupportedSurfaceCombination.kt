@@ -333,12 +333,12 @@ public class SupportedSurfaceCombination(
         size: Size,
     ): SurfaceConfig {
         return SurfaceConfig.transformSurfaceConfig(
-            cameraMode,
-            imageFormat,
-            size,
-            getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+            imageFormat = imageFormat,
+            size = size,
+            surfaceSizeDefinition = getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+            cameraMode = cameraMode,
             // FEATURE_COMBINATION_TABLE N/A for the code flows leading to this call
-            CAPTURE_SESSION_TABLES,
+            configSource = CAPTURE_SESSION_TABLES,
         )
     }
 
@@ -846,12 +846,12 @@ public class SupportedSurfaceCombination(
             val imageFormat = useCaseConfig.inputFormat
             surfaceConfigs.add(
                 SurfaceConfig.transformSurfaceConfig(
-                    featureSettings.cameraMode,
-                    imageFormat,
-                    minSize,
-                    getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                    imageFormat = imageFormat,
+                    size = minSize,
+                    surfaceSizeDefinition = getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                    cameraMode = featureSettings.cameraMode,
                     // FEATURE_COMBINATION_TABLE not needed for the code flows leading to this call
-                    CAPTURE_SESSION_TABLES,
+                    configSource = CAPTURE_SESSION_TABLES,
                 )
             )
         }
@@ -1102,15 +1102,16 @@ public class SupportedSurfaceCombination(
     ) {
         val configSize =
             SurfaceConfig.transformSurfaceConfig(
-                    featureSettings.cameraMode,
-                    imageFormat,
-                    size,
-                    getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
-                    if (featureSettings.requiresFeatureComboQuery) {
-                        FEATURE_COMBINATION_TABLE
-                    } else {
-                        CAPTURE_SESSION_TABLES
-                    },
+                    imageFormat = imageFormat,
+                    size = size,
+                    surfaceSizeDefinition = getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                    cameraMode = featureSettings.cameraMode,
+                    configSource =
+                        if (featureSettings.requiresFeatureComboQuery) {
+                            FEATURE_COMBINATION_TABLE
+                        } else {
+                            CAPTURE_SESSION_TABLES
+                        },
                 )
                 .configSize
 
@@ -1463,15 +1464,16 @@ public class SupportedSurfaceCombination(
             // add new use case/size config to list of surfaces
             val surfaceConfig =
                 SurfaceConfig.transformSurfaceConfig(
-                    cameraMode,
-                    imageFormat,
-                    size,
-                    getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
-                    if (checkViaFeatureComboQuery) {
-                        FEATURE_COMBINATION_TABLE
-                    } else {
-                        CAPTURE_SESSION_TABLES
-                    },
+                    imageFormat = imageFormat,
+                    size = size,
+                    surfaceSizeDefinition = getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                    cameraMode = cameraMode,
+                    configSource =
+                        if (checkViaFeatureComboQuery) {
+                            FEATURE_COMBINATION_TABLE
+                        } else {
+                            CAPTURE_SESSION_TABLES
+                        },
                 )
             surfaceConfigList.add(surfaceConfig)
             if (surfaceConfigIndexUseCaseConfigMap != null) {

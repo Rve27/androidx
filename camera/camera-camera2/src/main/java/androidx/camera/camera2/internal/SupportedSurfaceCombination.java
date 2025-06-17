@@ -118,7 +118,7 @@ import java.util.Set;
  * support for this camera device.
  */
 @OptIn(markerClass = ExperimentalCamera2Interop.class)
-final class SupportedSurfaceCombination {
+public final class SupportedSurfaceCombination {
     private static final String TAG = "SupportedSurfaceCombination";
     private static final int FRAME_RATE_UNLIMITED = Integer.MAX_VALUE;
     private final List<SurfaceCombination> mSurfaceCombinations = new ArrayList<>();
@@ -416,10 +416,10 @@ final class SupportedSurfaceCombination {
             int imageFormat,
             Size size) {
         return SurfaceConfig.transformSurfaceConfig(
-                cameraMode,
                 imageFormat,
                 size,
                 getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                cameraMode,
                 // FEATURE_COMBINATION_TABLE N/A for the code flows leading to this call
                 CAPTURE_SESSION_TABLES);
     }
@@ -1413,10 +1413,10 @@ final class SupportedSurfaceCombination {
             int imageFormat = useCaseConfig.getInputFormat();
             surfaceConfigs.add(
                     SurfaceConfig.transformSurfaceConfig(
-                            featureSettings.getCameraMode(),
                             imageFormat,
                             minSize,
                             getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                            featureSettings.getCameraMode(),
                             // Feature combo src not needed for the code flows leading to this call
                             CAPTURE_SESSION_TABLES));
         }
@@ -1519,8 +1519,8 @@ final class SupportedSurfaceCombination {
             @NonNull Map<ConfigSize, Set<Integer>> configSizeToUniqueMaxFpsMap,
             @NonNull List<Size> reducedSizeList) {
         ConfigSize configSize = SurfaceConfig.transformSurfaceConfig(
-                featureSettings.getCameraMode(), imageFormat, size,
-                getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                imageFormat, size, getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                featureSettings.getCameraMode(),
                 featureSettings.requiresFeatureComboQuery() ? FEATURE_COMBINATION_TABLE
                         : CAPTURE_SESSION_TABLES).getConfigSize();
 
@@ -1609,10 +1609,10 @@ final class SupportedSurfaceCombination {
                     featureSettings.requiresFeatureComboQuery() ? FEATURE_COMBINATION_TABLE
                             : CAPTURE_SESSION_TABLES;
             SurfaceConfig surfaceConfig = SurfaceConfig.transformSurfaceConfig(
-                    featureSettings.getCameraMode(),
                     imageFormat,
                     size,
                     getUpdatedSurfaceSizeDefinitionByFormat(imageFormat),
+                    featureSettings.getCameraMode(),
                     configSource);
             surfaceConfigList.add(surfaceConfig);
             if (surfaceConfigIndexUseCaseConfigMap != null) {
@@ -2182,7 +2182,7 @@ final class SupportedSurfaceCombination {
      * by {@link PackageManager#hasSystemFeature(String)}.
      */
     @AutoValue
-    abstract static class FeatureSettings {
+    public abstract static class FeatureSettings {
         static @NonNull FeatureSettings of(@CameraMode.Mode int cameraMode,
                 boolean hasVideoCapture, @RequiredMaxBitDepth int requiredMaxBitDepth,
                 boolean isPreviewStabilizationOn, boolean isUltraHdrOn, boolean isHighSpeedOn,
