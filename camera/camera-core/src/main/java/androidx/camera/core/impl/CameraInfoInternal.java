@@ -39,6 +39,7 @@ import androidx.camera.core.ExperimentalSessionConfig;
 import androidx.camera.core.Logger;
 import androidx.camera.core.SessionConfig;
 import androidx.camera.core.UseCase;
+import androidx.camera.core.featuregroup.GroupableFeature;
 import androidx.camera.core.featuregroup.impl.ResolvedFeatureGroup;
 import androidx.camera.core.internal.CalculatedUseCaseInfo;
 import androidx.camera.core.internal.CameraUseCaseAdapter;
@@ -343,6 +344,13 @@ public interface CameraInfoInternal extends CameraInfo {
     default boolean isResolvedFeatureGroupSupported(
             @NonNull ResolvedFeatureGroup resolvedFeatureGroup,
             @NonNull SessionConfig sessionConfig) {
+        for (GroupableFeature feature : resolvedFeatureGroup.getFeatures()) {
+            if (!feature.isSupportedIndividually(this, sessionConfig)) {
+                Logger.d("CameraInfoInternal", feature + " is not supported.");
+                return false;
+            }
+        }
+
         try {
             UseCaseAdditionSimulator.simulateAddUseCases(this,
                     sessionConfig, /*findMaxSupportedFrameRate=*/ false,

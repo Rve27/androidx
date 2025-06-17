@@ -33,6 +33,7 @@ import android.view.Surface;
 import androidx.camera.core.CameraEffect;
 import androidx.camera.core.CameraUseCaseAdapterProvider;
 import androidx.camera.core.CompositionSettings;
+import androidx.camera.core.DynamicRange;
 import androidx.camera.core.LegacySessionConfig;
 import androidx.camera.core.Preview;
 import androidx.camera.core.SessionConfig;
@@ -308,6 +309,8 @@ public class LifecycleCameraTest {
     public void bindSessionConfig_withFeatures_featuresSetToAttachedUseCases() {
         mLifecycleCamera = new LifecycleCamera(mLifecycleOwner, mCameraUseCaseAdapter);
         mLifecycleOwner.start();
+        ((FakeCameraInfoInternal) mFakeCamera.getCameraInfo()).setSupportedDynamicRanges(
+                Collections.singleton(DynamicRange.HLG_10_BIT));
         Preview preview = new Preview.Builder().build();
 
         SessionConfig sessionConfig =
@@ -334,6 +337,8 @@ public class LifecycleCameraTest {
         //   features while Ultra HDR is unsupported by the default behavior of fake surface manager
         mLifecycleCamera = new LifecycleCamera(mLifecycleOwner, mCameraUseCaseAdapter);
         mLifecycleOwner.start();
+        ((FakeCameraInfoInternal) mFakeCamera.getCameraInfo()).setSupportedDynamicRanges(
+                Collections.singleton(DynamicRange.HLG_10_BIT));
         Preview preview = new Preview.Builder().build();
 
         SessionConfig sessionConfig =
@@ -363,6 +368,8 @@ public class LifecycleCameraTest {
         //   features while Ultra HDR is unsupported by the default behavior of fake surface manager
         mLifecycleCamera = new LifecycleCamera(mLifecycleOwner, mCameraUseCaseAdapter);
         mLifecycleOwner.start();
+        ((FakeCameraInfoInternal) mFakeCamera.getCameraInfo()).setSupportedDynamicRanges(
+                Collections.singleton(DynamicRange.HLG_10_BIT));
         Preview preview = new Preview.Builder().build();
 
         SessionConfig sessionConfig =

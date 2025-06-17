@@ -43,6 +43,7 @@ import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.camera.core.CameraEffect;
 import androidx.camera.core.CompositionSettings;
+import androidx.camera.core.DynamicRange;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.Logger;
 import androidx.camera.core.MirrorMode;
@@ -706,5 +707,36 @@ public class StreamSharing extends UseCase {
     @VisibleForTesting
     public @Nullable SurfaceEdge getSharingInputEdge() {
         return mSharingInputEdge;
+    }
+
+    @Override
+    public @Nullable Set<@NonNull DynamicRange> getSupportedDynamicRanges(
+            @NonNull CameraInfoInternal cameraInfo) {
+        Set<UseCase> children = getChildren();
+
+        if (children.isEmpty()) {
+            return null;
+        }
+
+        Set<DynamicRange> intersectedRanges = null;
+
+        for (UseCase child : children) {
+            Set<DynamicRange> childSupportedRanges = child.getSupportedDynamicRanges(cameraInfo);
+
+            if (childSupportedRanges == null) {
+                continue;
+            }
+
+            if (intersectedRanges == null) {
+                // For the first child, initialize the set with the child supported ranges.
+                intersectedRanges = new HashSet<>(childSupportedRanges);
+            } else {
+                // For subsequent children, retain only the ranges also supported by this child.
+                intersectedRanges.retainAll(childSupportedRanges);
+            }
+        }
+
+        // If intersectedRanges is null here, it means all child also returned null.
+        return intersectedRanges;
     }
 }

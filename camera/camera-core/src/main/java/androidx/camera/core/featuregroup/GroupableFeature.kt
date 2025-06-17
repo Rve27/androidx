@@ -37,6 +37,7 @@ import androidx.camera.core.featuregroup.impl.feature.FpsRangeFeature
 import androidx.camera.core.featuregroup.impl.feature.ImageFormatFeature
 import androidx.camera.core.featuregroup.impl.feature.VideoStabilizationFeature
 import androidx.camera.core.featuregroup.impl.feature.VideoStabilizationFeature.StabilizationMode
+import androidx.camera.core.impl.CameraInfoInternal
 
 /**
  * Represents distinct, groupable camera functionalities that can be requested for a camera session.
@@ -67,6 +68,12 @@ internal constructor() {
     internal abstract val featureTypeInternal: FeatureTypeInternal
 
     public fun getFeatureType(): @FeatureType Int = featureTypeInternal.toFeatureType()
+
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public open fun isSupportedIndividually(
+        cameraInfoInternal: CameraInfoInternal,
+        sessionConfig: SessionConfig,
+    ): Boolean = true
 
     private fun FeatureTypeInternal.toFeatureType(): @FeatureType Int {
         return when (this) {

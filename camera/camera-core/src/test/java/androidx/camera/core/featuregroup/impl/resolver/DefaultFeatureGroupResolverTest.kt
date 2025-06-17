@@ -52,8 +52,6 @@ import androidx.camera.testing.impl.FakeStreamSpecsCalculator
 import androidx.camera.testing.impl.fakes.FakeCameraCoordinator
 import androidx.camera.testing.impl.fakes.FakeUseCase
 import androidx.camera.testing.impl.fakes.FakeUseCaseConfigFactory
-import androidx.camera.video.Recorder
-import androidx.camera.video.VideoCapture
 import androidx.testutils.assertThrows
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
@@ -97,6 +95,8 @@ class DefaultFeatureGroupResolverTest {
                     }
                 }
             )
+
+            supportedDynamicRanges = setOf(DynamicRange.SDR, DynamicRange.HLG_10_BIT)
         }
 
     private val defaultResolver = DefaultFeatureGroupResolver(fakeCameraInfo)
@@ -105,8 +105,7 @@ class DefaultFeatureGroupResolverTest {
     private val imageCapture = ImageCapture.Builder().build()
     private val unsupportedUseCase = FakeUseCase()
 
-    private val defaultUseCases =
-        listOf(preview, imageCapture, VideoCapture.withOutput(Recorder.Builder().build()))
+    private val defaultUseCases = listOf(preview, imageCapture)
 
     private val defaultPrivStreamSpec =
         FakeStreamSpecsCalculator.ExtendedStreamSpec(

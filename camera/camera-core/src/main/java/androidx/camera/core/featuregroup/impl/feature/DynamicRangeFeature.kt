@@ -18,9 +18,12 @@ package androidx.camera.core.featuregroup.impl.feature
 
 import androidx.camera.core.DynamicRange
 import androidx.camera.core.ExperimentalSessionConfig
+import androidx.camera.core.Logger
 import androidx.camera.core.Preview
+import androidx.camera.core.SessionConfig
 import androidx.camera.core.UseCase
 import androidx.camera.core.featuregroup.GroupableFeature
+import androidx.camera.core.impl.CameraInfoInternal
 
 /**
  * Denotes the dynamic range applied to all [UseCase]s which are not of image capture type in a
@@ -33,11 +36,51 @@ import androidx.camera.core.featuregroup.GroupableFeature
 internal class DynamicRangeFeature(val dynamicRange: DynamicRange) : GroupableFeature() {
     override val featureTypeInternal: FeatureTypeInternal = FeatureTypeInternal.DYNAMIC_RANGE
 
+    override fun isSupportedIndividually(
+        cameraInfoInternal: CameraInfoInternal,
+        sessionConfig: SessionConfig,
+    ): Boolean {
+        val cameraInfoSupportedDynamicRanges = cameraInfoInternal.supportedDynamicRanges
+        Logger.d(
+            TAG,
+            "isSupportedIndividually:" +
+                " cameraInfoSupportedDynamicRanges = $cameraInfoSupportedDynamicRanges" +
+                ", this = $this",
+        )
+
+        if (!cameraInfoSupportedDynamicRanges.contains(dynamicRange)) {
+            return false
+        }
+
+        for (useCase in sessionConfig.useCases) {
+            val useCaseSupportedDynamicRanges =
+                useCase.getSupportedDynamicRanges(cameraInfoInternal)
+
+            Logger.d(
+                TAG,
+                "isSupportedIndividually:" +
+                    " useCaseSupportedDynamicRanges = $useCaseSupportedDynamicRanges" +
+                    ", this = $this, useCases = $useCase",
+            )
+
+            if (
+                useCaseSupportedDynamicRanges != null &&
+                    !useCaseSupportedDynamicRanges.contains(dynamicRange)
+            ) {
+                return false
+            }
+        }
+
+        return true
+    }
+
     override fun toString(): String {
         return "DynamicRangeFeature(dynamicRange=$dynamicRange)"
     }
 
     companion object {
+        private const val TAG = "DynamicRangeFeature"
+
         @JvmField val DEFAULT_DYNAMIC_RANGE = DynamicRange.SDR
     }
 }

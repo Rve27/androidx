@@ -1254,6 +1254,26 @@ public abstract class UseCase {
         }
     }
 
+    /**
+     * Returns a set of supported dynamic ranges supported by this use case for the given camera.
+     *
+     * <p> A dynamic range not supported by the camera should never be supported by the use case.
+     * Furthermore, use cases may not support some dynamic ranges even if they are supported by the
+     * camera.
+     *
+     * <p> Returning a null value represents that this use case does not specify which dynamic
+     * ranges it supports and doesn't have any constraint for dynamic ranges.
+     *
+     * @param cameraInfo The {@link CameraInfoInternal} instance of a camera.
+     * @return A set of supported dynamic ranges, or {@code null} if this use case doesn't have any
+     * constraint about what dynamic ranges it can support.
+     */
+    @RestrictTo(Scope.LIBRARY_GROUP)
+    public @Nullable Set<@NonNull DynamicRange> getSupportedDynamicRanges(
+            @NonNull CameraInfoInternal cameraInfo) {
+        return null;
+    }
+
     enum State {
         /** Currently waiting for image data. */
         ACTIVE,

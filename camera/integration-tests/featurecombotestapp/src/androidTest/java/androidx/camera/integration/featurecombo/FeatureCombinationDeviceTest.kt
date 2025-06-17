@@ -16,10 +16,8 @@
 
 package androidx.camera.integration.featurecombo
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.graphics.SurfaceTexture
 import android.hardware.DataSpace
 import android.hardware.DataSpace.TRANSFER_HLG
@@ -57,9 +55,9 @@ import androidx.camera.testing.impl.Camera2CaptureCallbackImpl
 import androidx.camera.testing.impl.CameraPipeConfigTestRule
 import androidx.camera.testing.impl.CameraUtil
 import androidx.camera.testing.impl.GLUtil
-import androidx.camera.testing.impl.IgnoreProblematicDeviceRule.Companion.isMediumPhoneApi35Emulator
 import androidx.camera.testing.impl.SurfaceTextureProvider
 import androidx.camera.testing.impl.SurfaceTextureProvider.createSurfaceTextureProvider
+import androidx.camera.testing.impl.UltraHdrImageVerification.assertJpegUltraHdr
 import androidx.camera.testing.impl.WakelockEmptyActivityRule
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
 import androidx.camera.testing.impl.util.Camera2InteropUtil
@@ -67,7 +65,6 @@ import androidx.camera.video.Recorder
 import androidx.camera.video.VideoCapture
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.filters.LargeTest
-import androidx.test.rule.GrantPermissionRule
 import com.google.common.truth.Truth.assertThat
 import com.google.common.truth.Truth.assertWithMessage
 import java.util.concurrent.CountDownLatch
@@ -77,12 +74,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.After
-import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
@@ -110,14 +105,6 @@ class FeatureCombinationDeviceTest(
     @get:Rule
     val cameraPipeConfigTestRule =
         CameraPipeConfigTestRule(active = implName == CameraPipeConfig::class.simpleName)
-
-    @get:Rule
-    val externalStorageRule: GrantPermissionRule =
-        GrantPermissionRule.grant(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-
-    @get:Rule
-    val temporaryFolder =
-        TemporaryFolder(ApplicationProvider.getApplicationContext<Context>().cacheDir)
 
     @get:Rule val wakelockEmptyActivityRule = WakelockEmptyActivityRule()
 
@@ -184,10 +171,6 @@ class FeatureCombinationDeviceTest(
 
     @Test
     fun bindToLifecycle_hlg10_bindResultMatchesQueryResult(): Unit = runBlocking {
-        assumeFalse(
-            "Medium phone API 35 doesn't support HLG10 HDR properly despite camera framework API reporting it as supported",
-            isMediumPhoneApi35Emulator,
-        )
         testIfBindAndQueryApiResultsMatch(listOf(preview, videoCapture), setOf(HDR_HLG10))
     }
 
@@ -204,7 +187,7 @@ class FeatureCombinationDeviceTest(
         )
     }
 
-    // TODO: b/420254152 - Add @Test after fixing Ultra HDR capture test issues
+    @Test
     fun bindToLifecycle_jpegUltraHdr_bindResultMatchesQueryResult(): Unit = runBlocking {
         testIfBindAndQueryApiResultsMatch(listOf(preview, imageCapture), setOf(IMAGE_ULTRA_HDR))
     }
@@ -217,12 +200,6 @@ class FeatureCombinationDeviceTest(
     @Test
     fun bindToLifecycle_bothHdrAndPrvwStabilizationRequired_bindResultMatchesQueryResult(): Unit =
         runBlocking {
-            assumeFalse(
-                "Medium phone API 35 doesn't support HLG10 HDR properly despite camera" +
-                    " framework API reporting it as supported",
-                isMediumPhoneApi35Emulator,
-            )
-
             testIfBindAndQueryApiResultsMatch(
                 listOf(preview, videoCapture),
                 setOf(HDR_HLG10, PREVIEW_STABILIZATION),
@@ -232,12 +209,6 @@ class FeatureCombinationDeviceTest(
     @Test
     fun bindToLifecycle_moreThanTwoFeaturesRequired_bindResultMatchesQueryResult(): Unit =
         runBlocking {
-            assumeFalse(
-                "Medium phone API 35 doesn't support HLG10 HDR properly despite camera" +
-                    " framework API reporting it as supported",
-                isMediumPhoneApi35Emulator,
-            )
-
             testIfBindAndQueryApiResultsMatch(
                 listOf(preview, videoCapture),
                 setOf(HDR_HLG10, FPS_60, PREVIEW_STABILIZATION),
@@ -397,15 +368,7 @@ class FeatureCombinationDeviceTest(
 
         val imageCapture = useCases.filterIsInstance<ImageCapture>().first()
 
-        val saveLocation = temporaryFolder.newFile("test.jpg")
-        val outputFileOptions = ImageCapture.OutputFileOptions.Builder(saveLocation).build()
-
-        imageCapture.takePicture(outputFileOptions)
-
-        // Check gainmap exits.
-        val bitmap = BitmapFactory.decodeFile(saveLocation.absolutePath)
-        assertThat(bitmap).isNotNull()
-        assertThat(bitmap.hasGainmap()).isTrue()
+        imageCapture.takePicture().assertJpegUltraHdr()
     }
 
     private suspend fun <T> verifyCaptureResult(
