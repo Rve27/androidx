@@ -16,6 +16,7 @@
 
 package androidx.compose.foundation.demos
 
+import android.view.ViewTreeObserver
 import androidx.compose.foundation.border
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -33,6 +34,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -54,6 +56,8 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -68,6 +72,12 @@ fun InputDebuggerDemo() {
     }
     val focusRequester = remember { FocusRequester() }
     Column {
+        Column {
+            Text(
+                "LocalWindowInfo.current.isWindowFocused: ${LocalWindowInfo.current.isWindowFocused}"
+            )
+            Text("LocalView.current.isInTouchMode: ${currentIsInTouchMode()}")
+        }
         FlowRow {
             Button(onClick = { inputEventInfos.clear() }) { Text("Clear pointer events") }
             Button(onClick = { focusRequester.requestFocus() }) { Text("Focus input box") }
@@ -114,6 +124,18 @@ fun InputDebuggerDemo() {
             }
         }
     }
+}
+
+@Composable
+private fun currentIsInTouchMode(): Boolean {
+    val view = LocalView.current
+    var isInTouchMode by remember { mutableStateOf(view.isInTouchMode) }
+    DisposableEffect(view) {
+        val listener = ViewTreeObserver.OnTouchModeChangeListener { isInTouchMode = it }
+        view.viewTreeObserver.addOnTouchModeChangeListener(listener)
+        onDispose { view.viewTreeObserver.removeOnTouchModeChangeListener(listener) }
+    }
+    return isInTouchMode
 }
 
 /** An intermediate data representation for an input event that we are interested in */
