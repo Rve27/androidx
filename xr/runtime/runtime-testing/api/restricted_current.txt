@@ -52,8 +52,11 @@ package androidx.xr.runtime.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeComponent implements androidx.xr.runtime.internal.Component {
     ctor public FakeComponent();
+    method public final boolean getCanBeAttached();
     method public boolean onAttach(androidx.xr.runtime.internal.Entity entity);
     method public void onDetach(androidx.xr.runtime.internal.Entity entity);
+    method public final void setCanBeAttached(boolean);
+    property public final boolean canBeAttached;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeEntity extends androidx.xr.runtime.testing.FakeActivityPose implements androidx.xr.runtime.internal.Entity {
