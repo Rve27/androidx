@@ -902,9 +902,6 @@ package androidx.compose.runtime.internal {
 
   @androidx.compose.runtime.ComposeCompilerApi @kotlin.annotation.Repeatable @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.RUNTIME) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.FUNCTION}) public static @interface FunctionKeyMeta.Container {
     method public abstract androidx.compose.runtime.internal.FunctionKeyMeta[] value();
-    property public abstract int endOffset;
-    property public abstract int key;
-    property public abstract int startOffset;
   }
 
   @androidx.compose.runtime.ComposeCompilerApi @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets=kotlin.annotation.AnnotationTarget.CLASS) public @interface FunctionKeyMetaClass {
@@ -968,17 +965,13 @@ package androidx.compose.runtime.snapshots {
 
   public class MutableSnapshot extends androidx.compose.runtime.snapshots.Snapshot {
     method public androidx.compose.runtime.snapshots.SnapshotApplyResult apply();
-    method public kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit>? getReadObserver();
     method public boolean getReadOnly();
     method public androidx.compose.runtime.snapshots.Snapshot getRoot();
-    method public kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit>? getWriteObserver();
     method public boolean hasPendingChanges();
     method public androidx.compose.runtime.snapshots.MutableSnapshot takeNestedMutableSnapshot(optional kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit>? readObserver, optional kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit>? writeObserver);
     method public androidx.compose.runtime.snapshots.Snapshot takeNestedSnapshot(kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit>? readObserver);
-    property public kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit>? readObserver;
     property public boolean readOnly;
     property public androidx.compose.runtime.snapshots.Snapshot root;
-    property public kotlin.jvm.functions.Function1<java.lang.Object,kotlin.Unit>? writeObserver;
   }
 
   public fun interface ObserverHandle {

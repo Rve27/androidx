@@ -919,6 +919,7 @@ package androidx.compose.animation.core {
     method @BytecodeOnly public V getValueFromNanos(long, V, V, V);
     method @BytecodeOnly public V getVelocityFromNanos(long, V, V, V);
     property public float dampingRatio;
+    property public boolean isInfinite;
     property public float stiffness;
   }
 
