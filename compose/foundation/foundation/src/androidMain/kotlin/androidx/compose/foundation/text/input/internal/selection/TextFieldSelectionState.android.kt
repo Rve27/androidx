@@ -27,9 +27,9 @@ import androidx.compose.foundation.text.TextContextMenuItems.Cut
 import androidx.compose.foundation.text.TextContextMenuItems.Paste
 import androidx.compose.foundation.text.TextContextMenuItems.SelectAll
 import androidx.compose.foundation.text.TextItem
-import androidx.compose.foundation.text.contextmenu.addProcessedTextContextMenuItems
 import androidx.compose.foundation.text.contextmenu.builder.TextContextMenuBuilderScope
 import androidx.compose.foundation.text.contextmenu.modifier.addTextContextMenuComponentsWithContext
+import androidx.compose.foundation.text.selection.addPlatformTextContextMenuItems
 import androidx.compose.foundation.text.textItem
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
@@ -86,29 +86,32 @@ internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
         }
     }
 
-    with(state) {
-        separator()
-        textFieldSuspendItem(Cut, enabled = canCut()) { cut() }
-        textFieldSuspendItem(Copy, enabled = canCopy()) { copy(cancelSelection = textToolbarShown) }
-        textFieldSuspendItem(Paste, enabled = canPaste()) { paste() }
-        textFieldItem(
-            item = SelectAll,
-            enabled = canSelectAll(),
-            desiredState = TextToolbarState.Selection,
-            closePredicate = { !textToolbarShown },
-        ) {
-            selectAll()
+    addPlatformTextContextMenuItems(
+        context = context,
+        editable = state.editable,
+        text = state.textFieldState.visualText.text,
+        selection = state.textFieldState.visualText.selection,
+        platformSelectionBehaviors = state.platformSelectionBehaviors,
+    ) {
+        with(state) {
+            separator()
+            textFieldSuspendItem(Cut, enabled = canCut()) { cut() }
+            textFieldSuspendItem(Copy, enabled = canCopy()) {
+                copy(cancelSelection = textToolbarShown)
+            }
+            textFieldSuspendItem(Paste, enabled = canPaste()) { paste() }
+            textFieldItem(
+                item = SelectAll,
+                enabled = canSelectAll(),
+                desiredState = TextToolbarState.Selection,
+                closePredicate = { !textToolbarShown },
+            ) {
+                selectAll()
+            }
+            if (Build.VERSION.SDK_INT >= 26) {
+                textFieldItem(Autofill, enabled = canAutofill()) { autofill() }
+            }
+            separator()
         }
-        if (Build.VERSION.SDK_INT >= 26) {
-            textFieldItem(Autofill, enabled = canAutofill()) { autofill() }
-        }
-        separator()
     }
-
-    addProcessedTextContextMenuItems(
-        context,
-        state.editable,
-        state.textFieldState.visualText.text,
-        state.textFieldState.visualText.selection,
-    )
 }

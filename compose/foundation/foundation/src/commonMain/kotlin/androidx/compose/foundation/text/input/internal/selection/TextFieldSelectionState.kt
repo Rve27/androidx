@@ -128,7 +128,7 @@ internal class TextFieldSelectionState(
     private var isPassword: Boolean,
     private val toolbarRequester: ToolbarRequester,
     private val coroutineScope: CoroutineScope,
-    private val platformSelectionBehaviors: PlatformSelectionBehaviors?,
+    internal val platformSelectionBehaviors: PlatformSelectionBehaviors?,
 ) {
     /** [HapticFeedback] handle to perform haptic feedback. */
     private var hapticFeedBack: HapticFeedback? = null
