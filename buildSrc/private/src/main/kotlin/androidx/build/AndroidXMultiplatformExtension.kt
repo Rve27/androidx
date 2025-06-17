@@ -394,6 +394,7 @@ abstract class AndroidXMultiplatformExtension(val project: Project) {
         supportedPlatforms.add(PlatformIdentifier.ANDROID)
         return if (project.enableJvm()) {
             kotlinExtension.androidTarget {
+                publishLibraryVariants(Release.DEFAULT_PUBLISH_CONFIG)
                 // we need to allow instrumented test to depend on commonTest/jvmTest, which is not
                 // default.
                 // see https://youtrack.jetbrains.com/issue/KT-62594

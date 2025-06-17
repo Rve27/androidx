@@ -94,7 +94,6 @@ import org.gradle.api.artifacts.ComponentMetadataRule
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.configuration.BuildFeatures
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPlugin
@@ -141,9 +140,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
  * A plugin which enables all of the Gradle customizations for AndroidX. This plugin reacts to other
  * plugins being added and adds required and optional functionality.
  */
-abstract class AndroidXImplPlugin
-@Inject
-constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Project> {
+abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
     @get:Inject abstract val registry: BuildEventsListenerRegistry
     @get:Inject abstract val buildFeatures: BuildFeatures
 
@@ -208,11 +205,7 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
         }
 
         project.configureTaskTimeouts()
-        project.configureMavenArtifactUpload(
-            androidXExtension,
-            androidXKmpExtension,
-            componentFactory,
-        ) {
+        project.configureMavenArtifactUpload(androidXExtension, androidXKmpExtension) {
             if (buildFeatures.isIsolatedProjectsEnabled()) return@configureMavenArtifactUpload
             project.addCreateLibraryBuildInfoFileTasks(androidXExtension, androidXKmpExtension)
         }

@@ -37,7 +37,6 @@ import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
 import org.gradle.api.component.SoftwareComponent
-import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
@@ -52,12 +51,10 @@ import org.gradle.kotlin.dsl.findByType
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 
 fun Project.configureMavenArtifactUpload(
     androidXExtension: AndroidXExtension,
     androidXKmpExtension: AndroidXMultiplatformExtension,
-    componentFactory: SoftwareComponentFactory,
     afterConfigure: () -> Unit,
 ) {
     apply(mapOf("plugin" to "maven-publish"))
@@ -68,7 +65,6 @@ fun Project.configureMavenArtifactUpload(
                 androidXExtension,
                 androidXKmpExtension,
                 component,
-                componentFactory,
                 afterConfigure,
             )
             Release.register(this, androidXExtension)
@@ -127,7 +123,6 @@ private fun Project.configureComponentPublishing(
     extension: AndroidXExtension,
     androidxKmpExtension: AndroidXMultiplatformExtension,
     component: SoftwareComponent,
-    componentFactory: SoftwareComponentFactory,
     afterConfigure: () -> Unit,
 ) {
     val androidxGroup = validateCoordinatesAndGetGroup(extension)
@@ -176,7 +171,7 @@ private fun Project.configureComponentPublishing(
                 afterConfigure()
             } else {
                 if (project.isMultiplatformPublicationEnabled()) {
-                    configureMultiplatformPublication(componentFactory, afterConfigure)
+                    afterConfigure()
                 } else {
                     it.create<MavenPublication>("maven") { from(component) }
                     tasks.getByName("publishMavenPublicationToMavenRepository").doFirst {
@@ -369,20 +364,6 @@ fun verifyGradleMetadata(metadata: String) {
 
 private fun Project.isMultiplatformPublicationEnabled(): Boolean {
     return extensions.findByType<KotlinMultiplatformExtension>() != null
-}
-
-private fun Project.configureMultiplatformPublication(
-    componentFactory: SoftwareComponentFactory,
-    afterConfigure: () -> Unit,
-) {
-    val multiplatformExtension = extensions.findByType<KotlinMultiplatformExtension>()!!
-
-    multiplatformExtension.targets.configureEach { target ->
-        if (target is KotlinAndroidTarget) {
-            target.publishLibraryVariants(Release.DEFAULT_PUBLISH_CONFIG)
-        }
-    }
-    afterConfigure()
 }
 
 private fun Project.isValidReleaseComponent(component: SoftwareComponent) =
