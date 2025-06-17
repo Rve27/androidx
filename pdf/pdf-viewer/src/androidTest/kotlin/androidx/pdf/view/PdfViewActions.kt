@@ -127,7 +127,7 @@ private class ScrollPdfViewToPage : ViewAction {
 
     constructor(point: PdfPoint) {
         pageNum = point.pageNum
-        pointOnPage = point.pagePoint
+        pointOnPage = PointF(point.x, point.y)
     }
 
     override fun getConstraints(): Matcher<View> =

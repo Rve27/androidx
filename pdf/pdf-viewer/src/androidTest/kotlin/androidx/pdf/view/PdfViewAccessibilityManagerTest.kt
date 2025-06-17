@@ -76,7 +76,7 @@ class PdfViewAccessibilityManagerTest {
         activityScenario.close()
 
         // Reset the fast scroller visibility
-        pdfView.forcedFastScrollVisibility = true
+        pdfView.fastScrollVisibility = PdfView.FastScrollVisibility.ALWAYS_SHOW
         pdfView.lastFastScrollerVisibility = false
     }
 
@@ -129,7 +129,7 @@ class PdfViewAccessibilityManagerTest {
             .checkPagesAreVisible(firstVisiblePage = 0, visiblePages = 5)
 
         // Enabling Fast Scroller Visibility
-        pdfView.forcedFastScrollVisibility = true
+        pdfView.fastScrollVisibility = PdfView.FastScrollVisibility.ALWAYS_SHOW
         pdfView.lastFastScrollerVisibility = true
 
         val visiblePagesAndLinks = mutableListOf<Int>()
@@ -234,7 +234,7 @@ class PdfViewAccessibilityManagerTest {
         pdfDocument.waitForLayout(untilPage = 0)
 
         // Enabling Fast Scroller Visibility
-        pdfView.forcedFastScrollVisibility = true
+        pdfView.fastScrollVisibility = PdfView.FastScrollVisibility.ALWAYS_SHOW
         pdfView.lastFastScrollerVisibility = true
 
         val node = mock(AccessibilityNodeInfoCompat::class.java)
@@ -255,7 +255,7 @@ class PdfViewAccessibilityManagerTest {
         pdfDocument.waitForLayout(untilPage = 0)
 
         // Enabling Fast Scroller Visibility
-        pdfView.forcedFastScrollVisibility = true
+        pdfView.fastScrollVisibility = PdfView.FastScrollVisibility.ALWAYS_SHOW
         pdfView.lastFastScrollerVisibility = true
 
         val node = mock(AccessibilityNodeInfoCompat::class.java)
@@ -277,7 +277,7 @@ class PdfViewAccessibilityManagerTest {
             .checkPagesAreVisible(firstVisiblePage = 0, visiblePages = 5)
 
         // Enabling Fast Scroller Visibility
-        pdfView.forcedFastScrollVisibility = true
+        pdfView.fastScrollVisibility = PdfView.FastScrollVisibility.ALWAYS_SHOW
         pdfView.lastFastScrollerVisibility = true
 
         val visibleViews = mutableListOf<Int>()

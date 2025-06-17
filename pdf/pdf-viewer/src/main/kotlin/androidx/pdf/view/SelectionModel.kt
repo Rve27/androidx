@@ -88,14 +88,14 @@ internal constructor(
             val firstPage = selection.selectedContents.keyAt(0)
             val firstBound: PointF =
                 selection.selectedContents[firstPage].firstOrNull()?.bounds?.firstOrNull()?.let {
-                    PointF(it.pageRect.left, it.pageRect.bottom)
+                    PointF(it.left, it.bottom)
                 } ?: PointF(0f, 0f)
 
             // Finding the last selection bound of last page in the selection
             val lastPage = selection.selectedContents.keyAt(selection.selectedContents.size() - 1)
             val lastBound: PointF =
                 selection.selectedContents[lastPage].lastOrNull()?.bounds?.lastOrNull()?.let {
-                    PointF(it.pageRect.right, it.pageRect.bottom)
+                    PointF(it.right, it.bottom)
                 } ?: PointF(0f, 0f)
 
             val isRtl = newPageSelections.firstOrNull()?.start?.isRtl ?: false
@@ -158,14 +158,12 @@ internal constructor(
  */
 @SuppressLint("BanParcelableUsage")
 internal class UiSelectionBoundary(val location: PdfPoint, val isRtl: Boolean) : Parcelable {
-    constructor(
-        parcel: Parcel
-    ) : this(pdfPointFromParcel(parcel, PdfPoint::class.java.classLoader), parcel.readBoolean())
+    constructor(parcel: Parcel) : this(pdfPointFromParcel(parcel), parcel.readBoolean())
 
     override fun describeContents(): Int = 0
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
-        location.writeToParcel(dest, flags)
+        location.writeToParcel(dest)
         dest.writeBoolean(isRtl)
     }
 

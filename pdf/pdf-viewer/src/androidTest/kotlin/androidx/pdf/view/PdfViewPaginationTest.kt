@@ -504,8 +504,8 @@ class PdfViewPaginationTest {
 
                         checkEqualityWithTolerance(viewPoint, pointPair.second, tolerance = 0.5F)
                         checkEqualityWithTolerance(
-                            pdfPoint?.pagePoint,
-                            pointPair.first.pagePoint,
+                            pdfPoint?.let { PointF(it.x, it.y) },
+                            PointF(pointPair.first.x, pointPair.first.y),
                             tolerance = 0.5F,
                         )
                         assertThat(pdfPoint?.pageNum).isEqualTo(pointPair.first.pageNum)

@@ -76,7 +76,7 @@ class PdfViewFormFillingTest {
     fun testInteractionWithClickTypeFormWidget() = runTest {
         val fakePdfDocument =
             FakePdfDocument(
-                pages = List(10) { Point(100, 200) },
+                pages = List(10) { Point(DEFAULT_WIDTH, DEFAULT_HEIGHT) },
                 formType = PdfDocument.PDF_FORM_TYPE_ACRO_FORM,
                 pageFormWidgetInfos =
                     mapOf(
@@ -112,8 +112,7 @@ class PdfViewFormFillingTest {
         }
 
         pdfClickPoint = requireNotNull(pdfClickPoint)
-        val formWidgetClickPoint =
-            Point(pdfClickPoint.pagePoint.x.roundToInt(), pdfClickPoint.pagePoint.y.roundToInt())
+        val formWidgetClickPoint = Point(pdfClickPoint.x.roundToInt(), pdfClickPoint.y.roundToInt())
         // Confirm that fakePdfDocument.applyEdit is called.
         assertThat(fakePdfDocument.editHistory).hasSize(1)
         assertThat(fakePdfDocument.editHistory[0])
@@ -202,7 +201,7 @@ class PdfViewFormFillingTest {
 
     private fun getFakePdfDocumentInstance(formWidgetInfos: List<FormWidgetInfo>): FakePdfDocument {
         return FakePdfDocument(
-            pages = List(10) { Point(100, 200) },
+            pages = List(10) { Point(DEFAULT_WIDTH, DEFAULT_HEIGHT) },
             formType = PdfDocument.PDF_FORM_TYPE_ACRO_FORM,
             pageFormWidgetInfos = mapOf(0 to formWidgetInfos),
         )
@@ -238,5 +237,5 @@ class PdfViewFormFillingTest {
 
 /** Arbitrary fixed ID for PdfView */
 private const val PDF_VIEW_ID = 123456789
-private const val DEFAULT_WIDTH = 100
-private const val DEFAULT_HEIGHT = 200
+private const val DEFAULT_WIDTH = 200
+private const val DEFAULT_HEIGHT = 400

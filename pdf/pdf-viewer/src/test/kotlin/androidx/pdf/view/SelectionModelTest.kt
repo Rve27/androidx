@@ -65,7 +65,9 @@ class SelectionModelTest {
             )
         assertNotNull(combinedSelection?.documentSelection?.selection?.bounds)
         assertEquals(
-            combinedSelection?.documentSelection?.selection?.bounds?.map { it.pageRect },
+            combinedSelection?.documentSelection?.selection?.bounds?.map {
+                (RectF(it.left, it.top, it.right, it.bottom))
+            },
             newBounds,
         )
         assertEquals(
@@ -106,7 +108,9 @@ class SelectionModelTest {
 
         val expectedBounds = newBoundsPage1 + newBoundsPage2
         val resultBounds =
-            combinedSelection?.documentSelection?.selection?.bounds?.map { it.pageRect }
+            combinedSelection?.documentSelection?.selection?.bounds?.map {
+                (RectF(it.left, it.top, it.right, it.bottom))
+            }
         assertNotNull(resultBounds)
         assertEquals(expectedBounds.size, resultBounds?.size)
         assertEquals(expectedBounds, resultBounds)
@@ -184,10 +188,7 @@ class SelectionModelTest {
 
         assertNotNull(textSelection.bounds)
         var resultBounds: List<PdfRect> = textSelection.bounds
-        resultBounds =
-            resultBounds.sortedWith(
-                compareBy({ it.pageNum }, { it.pageRect.left }, { it.pageRect.top })
-            )
+        resultBounds = resultBounds.sortedWith(compareBy({ it.pageNum }, { it.left }, { it.top }))
 
         assertNotNull(resultBounds)
         assertEquals(expectedBounds.size, resultBounds.size)

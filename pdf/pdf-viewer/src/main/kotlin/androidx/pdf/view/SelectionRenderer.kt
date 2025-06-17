@@ -75,10 +75,7 @@ internal class SelectionRenderer(
             val startLoc = it.location
             if (startLoc.pageNum == pageNum) {
                 val pointInView =
-                    PointF(
-                        locationInView.left + startLoc.pagePoint.x,
-                        locationInView.top + startLoc.pagePoint.y,
-                    )
+                    PointF(locationInView.left + startLoc.x, locationInView.top + startLoc.y)
 
                 drawHandleAtPosition(canvas, pointInView, isRight = false xor it.isRtl, currentZoom)
             }
@@ -88,10 +85,7 @@ internal class SelectionRenderer(
             val endLoc = it.location
             if (endLoc.pageNum == pageNum) {
                 val pointInView =
-                    PointF(
-                        locationInView.left + endLoc.pagePoint.x,
-                        locationInView.top + endLoc.pagePoint.y,
-                    )
+                    PointF(locationInView.left + endLoc.x, locationInView.top + endLoc.y)
                 drawHandleAtPosition(canvas, pointInView, isRight = true xor it.isRtl, currentZoom)
             }
         }
@@ -123,7 +117,7 @@ internal class SelectionRenderer(
     }
 
     private fun drawBoundsOnPage(canvas: Canvas, bounds: PdfRect, pageLocationInView: RectF) {
-        val boundsRect = RectF(bounds.pageRect)
+        val boundsRect = RectF(bounds.left, bounds.top, bounds.right, bounds.bottom)
         boundsRect.offset(pageLocationInView.left, pageLocationInView.top)
         canvas.drawRect(boundsRect, BOUNDS_PAINT)
     }

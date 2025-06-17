@@ -62,7 +62,7 @@ internal class FormWidgetInteractionHandler(
         if (formWidgetInfo.readOnly) return
 
         val pageNum = touchPoint.pageNum
-        val pdfCoordinates = touchPoint.pagePoint
+        val pdfCoordinates = PointF(touchPoint.x, touchPoint.y)
         // switch case to delegate to the appropriate handler
         when (formWidgetInfo.widgetType) {
             FormWidgetInfo.WIDGET_TYPE_CHECKBOX,

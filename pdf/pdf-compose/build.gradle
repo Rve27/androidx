@@ -64,7 +64,7 @@ android {
 
 androidx {
     name = "androidx.pdf:pdf-compose"
-    type = SoftwareType.PUBLISHED_LIBRARY
+    type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
     inceptionYear = "2025"
     description = "Present PDF content using Jetpack Compose"
 }

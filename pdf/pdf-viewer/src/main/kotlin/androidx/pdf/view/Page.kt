@@ -251,7 +251,12 @@ internal class Page(
         for (highlight in highlights) {
             // Highlight locations are defined in content coordinates, compute their location
             // in View coordinates using locationInView
-            highlightRect.set(highlight.area.pageRect)
+            highlightRect.set(
+                highlight.area.left,
+                highlight.area.top,
+                highlight.area.right,
+                highlight.area.bottom,
+            )
             highlightRect.offset(locationInView.left, locationInView.top)
             highlightPaint.color = highlight.color
             canvas.drawRect(highlightRect, highlightPaint)

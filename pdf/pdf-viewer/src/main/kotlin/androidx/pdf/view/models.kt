@@ -21,15 +21,25 @@ import android.graphics.RectF
 import android.os.Parcel
 import androidx.annotation.ColorInt
 import androidx.annotation.RestrictTo
-import androidx.core.os.ParcelCompat
+import kotlin.Int
 
 /**
- * Represents a rectangle in PDF coordinates, where [pageNum] indicates a PDF page, and [pageRect]
- * indicates a [RectF] in PDF points within the page, with the origin existing at the top left
- * corner of the page.
+ * Represents a rectangle in PDF coordinates, where [pageNum] indicates a PDF page, and [left],
+ * [top], [right], and [bottom] indicate a rect in PDF points within the page, with the origin
+ * existing at the top left corner of the page.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-public class PdfRect(public val pageNum: Int, public val pageRect: RectF) {
+public class PdfRect(
+    public val pageNum: Int,
+    public val left: Float,
+    public val top: Float,
+    public val right: Float,
+    public val bottom: Float,
+) {
+    public constructor(
+        pageNum: Int,
+        pageRect: RectF,
+    ) : this(pageNum, pageRect.left, pageRect.top, pageRect.right, pageRect.bottom)
 
     init {
         require(pageNum >= 0) { "Invalid negative page" }
@@ -40,49 +50,64 @@ public class PdfRect(public val pageNum: Int, public val pageRect: RectF) {
         if (other == null || other !is PdfRect) return false
 
         if (other.pageNum != pageNum) return false
-        if (other.pageRect != pageRect) return false
+        if (other.left != left) return false
+        if (other.top != top) return false
+        if (other.right != right) return false
+        if (other.bottom != bottom) return false
+
         return true
     }
 
     override fun hashCode(): Int {
         var result = pageNum.hashCode()
-        result = 31 * result + pageRect.hashCode()
+        result = 31 * result + left.hashCode()
+        result = 31 * result + top.hashCode()
+        result = 31 * result + right.hashCode()
+        result = 31 * result + bottom.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "PdfRect: page $pageNum pageRect $pageRect"
+        return "PdfRect: page $pageNum area ($left, $top, $right, $bottom)"
     }
 }
 
 /**
- * Writes a [PdfRect] to [dest] with [flags].
+ * Writes a [PdfRect] to [dest].
  *
  * Not part of the public API because public APIs cannot be [android.os.Parcelable]
  */
-internal fun PdfRect.writeToParcel(dest: Parcel, flags: Int) {
+internal fun PdfRect.writeToParcel(dest: Parcel) {
     dest.writeInt(pageNum)
-    dest.writeParcelable(pageRect, flags)
+    dest.writeFloat(left)
+    dest.writeFloat(top)
+    dest.writeFloat(right)
+    dest.writeFloat(bottom)
 }
 
 /**
- * Reads a [PdfRect] from [source], using [loader].
+ * Reads a [PdfRect] from [source].
  *
  * Not part of the public API because public APIs cannot be [android.os.Parcelable]
  */
-internal fun pdfRectFromParcel(source: Parcel, loader: ClassLoader?): PdfRect {
+internal fun pdfRectFromParcel(source: Parcel): PdfRect {
     val pageNum = source.readInt()
-    val rect = requireNotNull(ParcelCompat.readParcelable(source, loader, RectF::class.java))
-    return PdfRect(pageNum, rect)
+    val left = source.readFloat()
+    val top = source.readFloat()
+    val right = source.readFloat()
+    val bottom = source.readFloat()
+    return PdfRect(pageNum, left, top, right, bottom)
 }
 
 /**
- * Represents a point in PDF coordinates, where [pageNum] indicates a 0-indexed PDF page, and
- * [pagePoint] indicates a [PointF] in PDF points within the page, with the origin existing at the
- * top left corner of the page.
+ * Represents a point in PDF coordinates, where [pageNum] indicates a 0-indexed PDF page, and ([x],
+ * [y]) indicates a point in PDF points within the page, with the origin existing at the top left
+ * corner of the page.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-public class PdfPoint(public val pageNum: Int, public val pagePoint: PointF) {
+public class PdfPoint(public val pageNum: Int, public val x: Float, public val y: Float) {
+
+    public constructor(pageNum: Int, pagePoint: PointF) : this(pageNum, pagePoint.x, pagePoint.y)
 
     init {
         require(pageNum >= 0) { "Invalid negative page" }
@@ -93,40 +118,44 @@ public class PdfPoint(public val pageNum: Int, public val pagePoint: PointF) {
         if (other == null || other !is PdfPoint) return false
 
         if (other.pageNum != pageNum) return false
-        if (other.pagePoint != pagePoint) return false
+        if (other.x != x) return false
+        if (other.y != y) return false
         return true
     }
 
     override fun hashCode(): Int {
         var result = pageNum.hashCode()
-        result = 31 * result + pagePoint.hashCode()
+        result = 31 * result + x.hashCode()
+        result = 31 * result + y.hashCode()
         return result
     }
 
     override fun toString(): String {
-        return "PdfPoint: page $pageNum pagePoint $pagePoint"
+        return "PdfPoint: page $pageNum pagePoint ($x, $y)"
     }
 }
 
 /**
- * Writes a [PdfPoint] to [dest] with [flags].
+ * Writes a [PdfPoint] to [dest].
  *
  * Not part of the public API because public APIs cannot be [android.os.Parcelable]
  */
-internal fun PdfPoint.writeToParcel(dest: Parcel, flags: Int) {
+internal fun PdfPoint.writeToParcel(dest: Parcel) {
     dest.writeInt(pageNum)
-    dest.writeParcelable(pagePoint, flags)
+    dest.writeFloat(x)
+    dest.writeFloat(y)
 }
 
 /**
- * Reads a [PdfPoint] from [source], using [loader].
+ * Reads a [PdfPoint] from [source].
  *
  * Not part of the public API because public APIs cannot be [android.os.Parcelable]
  */
-internal fun pdfPointFromParcel(source: Parcel, loader: ClassLoader?): PdfPoint {
+internal fun pdfPointFromParcel(source: Parcel): PdfPoint {
     val pageNum = source.readInt()
-    val pagePoint = requireNotNull(ParcelCompat.readParcelable(source, loader, PointF::class.java))
-    return PdfPoint(pageNum, pagePoint)
+    val x = source.readFloat()
+    val y = source.readFloat()
+    return PdfPoint(pageNum, x, y)
 }
 
 /** Represents an [area] that should be highlighted with [color]. */
@@ -154,12 +183,12 @@ public class Highlight(public val area: PdfRect, @ColorInt public val color: Int
 
     /** Deeply copies this [androidx.pdf.view.Highlight] */
     internal fun copy(): Highlight {
-        return Highlight(PdfRect(area.pageNum, RectF(area.pageRect)), color)
+        return Highlight(PdfRect(area.pageNum, area.left, area.top, area.right, area.bottom), color)
     }
 }
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 /** Represents PDF content that has been selected */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 public interface Selection {
     /**
      * The [PdfRect] bounds of this selection. May contain multiple [PdfRect] if this selection
@@ -195,29 +224,29 @@ public class TextSelection(public val text: String, override val bounds: List<Pd
 }
 
 /**
- * Writes a [TextSelection] to [dest] with [flags].
+ * Writes a [TextSelection] to [dest].
  *
  * Not part of the public API because public APIs cannot be [android.os.Parcelable]
  */
-internal fun TextSelection.writeToParcel(dest: Parcel, flags: Int) {
+internal fun TextSelection.writeToParcel(dest: Parcel) {
     dest.writeString(text)
     dest.writeInt(bounds.size)
     for (bound in bounds) {
-        bound.writeToParcel(dest, flags)
+        bound.writeToParcel(dest)
     }
 }
 
 /**
- * Reads a [TextSelection] from [source], using [loader].
+ * Reads a [TextSelection] from [source].
  *
  * Not part of the public API because public APIs cannot be [android.os.Parcelable]
  */
-internal fun textSelectionFromParcel(source: Parcel, loader: ClassLoader?): TextSelection {
+internal fun textSelectionFromParcel(source: Parcel): TextSelection {
     val text = requireNotNull(source.readString())
     val boundsSize = source.readInt()
     val bounds = mutableListOf<PdfRect>()
     for (i in 0 until boundsSize) {
-        bounds.add(pdfRectFromParcel(source, loader))
+        bounds.add(pdfRectFromParcel(source))
     }
     return TextSelection(text, bounds.toList())
 }

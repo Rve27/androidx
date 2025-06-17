@@ -194,7 +194,7 @@ internal class PageMetadataLoader(
     fun getViewRect(pdfRect: PdfRect, viewport: RectF): RectF? {
         if (pdfRect.pageNum > paginationModel.reach) return null
         val pageBounds = getPageLocation(pdfRect.pageNum, viewport)
-        val out = RectF(pdfRect.pageRect)
+        val out = RectF(pdfRect.left, pdfRect.top, pdfRect.right, pdfRect.bottom)
         out.offset(pageBounds.left, pageBounds.top)
         return out
     }

@@ -168,11 +168,11 @@ public class PdfViewerState(
      * Returns the View coordinate location of [pdfPoint], or null if that PDF content has not been
      * laid out yet.
      *
-     * Returns null if this [PdfViewerState] is not yet associated with a [PdfViewer], or if the
-     * [PdfViewer] is not associated with a [androidx.pdf.PdfDocument]
+     * Returns [Offset.Unspecified] if this [PdfViewerState] is not yet associated with a
+     * [PdfViewer], or if the [PdfViewer] is not associated with a [androidx.pdf.PdfDocument]
      */
     public fun toOffset(pdfPoint: PdfPoint): Offset? {
-        return pdfView?.pdfToViewPoint(pdfPoint)?.toOffset()
+        return pdfView?.pdfToViewPoint(pdfPoint)?.toOffset() ?: Offset.Unspecified
     }
 
     /** Centers the page at [pageNum] in the viewport. */
