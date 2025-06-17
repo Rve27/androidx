@@ -48,6 +48,7 @@ dependencies {
     implementation("androidx.core:core-remoteviews:1.1.0")
     implementation(project(":glance:glance-appwidget-proto"))
     implementation(libs.kotlinStdlib)
+    implementation("androidx.compose.ui:ui-util:1.6.5")
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinCoroutinesTest)
