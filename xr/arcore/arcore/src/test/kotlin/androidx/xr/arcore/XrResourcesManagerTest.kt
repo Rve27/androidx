@@ -51,7 +51,7 @@ class XrResourcesManagerTest {
     @Before
     fun setUp() {
         underTest = XrResourcesManager()
-        FakeRuntimeAnchor.anchorsCreated = 0
+        FakeRuntimeAnchor.anchorsCreatedCount = 0
     }
 
     @After
