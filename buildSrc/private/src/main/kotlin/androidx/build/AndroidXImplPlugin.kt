@@ -841,6 +841,17 @@ constructor(private val componentFactory: SoftwareComponentFactory) : Plugin<Pro
         project.extensions.getByType<PrivacySandboxSdkExtension>().apply {
             configureLocalAsbSigning(experimentalProperties, project.getKeystore())
         }
+        // Workaround for b/389890488
+        project.configurations.configureEach { configuration ->
+            if (configuration.isCanBeResolved) {
+                configuration.attributes { attributeContainer ->
+                    attributeContainer.attribute(
+                        BuildTypeAttr.ATTRIBUTE,
+                        project.objects.named(BuildTypeAttr::class.java, "release"),
+                    )
+                }
+            }
+        }
     }
 
     private fun configureLocalAsbSigning(
