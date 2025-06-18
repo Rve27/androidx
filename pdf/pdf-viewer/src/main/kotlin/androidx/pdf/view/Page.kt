@@ -263,9 +263,8 @@ internal class Page(
         }
 
         if (pdfFormFillingConfig.isFormFillingEnabled()) {
-            // TODO (b/420905226): Add handling for other widget types as well
             formWidgetInfos
-                ?.filter { it.widgetType == FormWidgetInfo.WIDGET_TYPE_TEXTFIELD }
+                ?.filter { !it.readOnly }
                 ?.forEach {
                     formWidgetHighlightRect.set(it.widgetRect)
                     formWidgetHighlightRect.offset(locationInView.left, locationInView.top)
