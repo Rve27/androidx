@@ -29,12 +29,12 @@ import android.view.View
  *
  * @see [android.app.sdksandbox.SandboxedSdkProvider]
  */
-abstract class SandboxedSdkProviderCompat {
+public abstract class SandboxedSdkProviderCompat {
     /**
      * Context previously set through [SandboxedSdkProviderCompat.attachContext]. This will return
      * null if no context has been previously set.
      */
-    var context: Context? = null
+    public var context: Context? = null
         private set
 
     /**
@@ -48,7 +48,7 @@ abstract class SandboxedSdkProviderCompat {
      * @throws IllegalStateException if a base context has already been set.
      * @see [android.app.sdksandbox.SandboxedSdkProvider.attachContext]
      */
-    fun attachContext(context: Context) {
+    public fun attachContext(context: Context) {
         check(this.context == null) { "Context already set" }
         this.context = context
     }
@@ -73,7 +73,7 @@ abstract class SandboxedSdkProviderCompat {
      * @see [android.app.sdksandbox.SandboxedSdkProvider.onLoadSdk]
      */
     @Throws(LoadSdkCompatException::class)
-    abstract fun onLoadSdk(params: Bundle): SandboxedSdkCompat
+    public abstract fun onLoadSdk(params: Bundle): SandboxedSdkCompat
 
     /**
      * Does the work needed for the SDK to free its resources before being unloaded.
@@ -86,7 +86,7 @@ abstract class SandboxedSdkProviderCompat {
      *
      * @see [android.app.sdksandbox.SandboxedSdkProvider.beforeUnloadSdk]
      */
-    open fun beforeUnloadSdk() {}
+    public open fun beforeUnloadSdk() {}
 
     /**
      * Requests a view to be remotely rendered to the client app process.
@@ -98,7 +98,7 @@ abstract class SandboxedSdkProviderCompat {
             "This method will no longer be supported." +
                 "Please consider using androidx.privacysandbox.ui library as an alternative"
     )
-    open fun getView(windowContext: Context, params: Bundle, width: Int, height: Int): View {
+    public open fun getView(windowContext: Context, params: Bundle, width: Int, height: Int): View {
         throw UnsupportedOperationException("This SDK doesn't support SurfaceView requests.")
     }
 }

@@ -42,7 +42,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.jetbrains.annotations.TestOnly
 
 /**
- * Compat version of [android.app.sdksandbox.sdkprovider.SdkSandboxController].
+ * Compat version of [android.app.public sdksandbox.sdkprovider.SdkSandboxController].
  *
  * Controller that is used by SDK loaded in the sandbox or locally to access information provided by
  * the sandbox environment.
@@ -53,9 +53,9 @@ import org.jetbrains.annotations.TestOnly
  * An instance can be obtained using [SdkSandboxControllerCompat.from]. The [Context] can be
  * obtained using [SandboxedSdkProviderCompat.context].
  *
- * @see [android.app.sdksandbox.sdkprovider.SdkSandboxController]
+ * @see [SdkSandboxController]
  */
-class SdkSandboxControllerCompat
+public class SdkSandboxControllerCompat
 internal constructor(private val controllerImpl: SandboxControllerImpl) {
 
     /**
@@ -69,7 +69,7 @@ internal constructor(private val controllerImpl: SandboxControllerImpl) {
      * @return [SandboxedSdkCompat] from SDK on a successful run.
      * @throws [LoadSdkCompatException] on fail.
      */
-    suspend fun loadSdk(sdkName: String, params: Bundle): SandboxedSdkCompat =
+    public suspend fun loadSdk(sdkName: String, params: Bundle): SandboxedSdkCompat =
         suspendCancellableCoroutine { continuation ->
             controllerImpl.loadSdk(
                 sdkName,
@@ -83,16 +83,16 @@ internal constructor(private val controllerImpl: SandboxControllerImpl) {
      * Fetches information about Sdks that are loaded in the sandbox or locally.
      *
      * @return List of [SandboxedSdkCompat] containing all currently loaded sdks
-     * @see [android.app.sdksandbox.sdkprovider.SdkSandboxController.getSandboxedSdks]
+     * @see [SdkSandboxController.getSandboxedSdks]
      */
-    fun getSandboxedSdks(): List<SandboxedSdkCompat> = controllerImpl.getSandboxedSdks()
+    public fun getSandboxedSdks(): List<SandboxedSdkCompat> = controllerImpl.getSandboxedSdks()
 
     /**
      * Fetches all [AppOwnedSdkSandboxInterfaceCompat] that are registered by the app.
      *
      * @return List of all currently registered [AppOwnedSdkSandboxInterfaceCompat]
      */
-    fun getAppOwnedSdkSandboxInterfaces(): List<AppOwnedSdkSandboxInterfaceCompat> =
+    public fun getAppOwnedSdkSandboxInterfaces(): List<AppOwnedSdkSandboxInterfaceCompat> =
         controllerImpl.getAppOwnedSdkSandboxInterfaces()
 
     /**
@@ -106,8 +106,9 @@ internal constructor(private val controllerImpl: SandboxControllerImpl) {
      * @return [IBinder] uniquely identify the passed [SdkSandboxActivityHandlerCompat]
      * @see SdkSandboxController.registerSdkSandboxActivityHandler
      */
-    fun registerSdkSandboxActivityHandler(handlerCompat: SdkSandboxActivityHandlerCompat): IBinder =
-        controllerImpl.registerSdkSandboxActivityHandler(handlerCompat)
+    public fun registerSdkSandboxActivityHandler(
+        handlerCompat: SdkSandboxActivityHandlerCompat
+    ): IBinder = controllerImpl.registerSdkSandboxActivityHandler(handlerCompat)
 
     /**
      * Registers a listener to be notified of changes in the client's
@@ -117,10 +118,10 @@ internal constructor(private val controllerImpl: SandboxControllerImpl) {
      * @param listenerCompat an implementation of [SdkSandboxClientImportanceListenerCompat] to
      *   register.
      */
-    fun registerSdkSandboxClientImportanceListener(
+    public fun registerSdkSandboxClientImportanceListener(
         executor: Executor,
         listenerCompat: SdkSandboxClientImportanceListenerCompat,
-    ) = controllerImpl.registerSdkSandboxClientImportanceListener(executor, listenerCompat)
+    ): Unit = controllerImpl.registerSdkSandboxClientImportanceListener(executor, listenerCompat)
 
     /**
      * Unregisters a listener previously registered using
@@ -129,9 +130,9 @@ internal constructor(private val controllerImpl: SandboxControllerImpl) {
      * @param listenerCompat an implementation of [SdkSandboxClientImportanceListenerCompat] to
      *   unregister.
      */
-    fun unregisterSdkSandboxClientImportanceListener(
+    public fun unregisterSdkSandboxClientImportanceListener(
         listenerCompat: SdkSandboxClientImportanceListenerCompat
-    ) = controllerImpl.unregisterSdkSandboxClientImportanceListener(listenerCompat)
+    ): Unit = controllerImpl.unregisterSdkSandboxClientImportanceListener(listenerCompat)
 
     /**
      * Unregister an already registered [SdkSandboxActivityHandlerCompat].
@@ -145,44 +146,52 @@ internal constructor(private val controllerImpl: SandboxControllerImpl) {
      * @param handlerCompat is the [SdkSandboxActivityHandlerCompat] to unregister.
      * @see SdkSandboxController.unregisterSdkSandboxActivityHandler
      */
-    fun unregisterSdkSandboxActivityHandler(handlerCompat: SdkSandboxActivityHandlerCompat) =
-        controllerImpl.unregisterSdkSandboxActivityHandler(handlerCompat)
+    public fun unregisterSdkSandboxActivityHandler(
+        handlerCompat: SdkSandboxActivityHandlerCompat
+    ): Unit = controllerImpl.unregisterSdkSandboxActivityHandler(handlerCompat)
 
     /**
      * Returns the package name of the client app.
      *
      * @return Package name of the client app.
      */
-    fun getClientPackageName(): String = controllerImpl.getClientPackageName()
+    public fun getClientPackageName(): String = controllerImpl.getClientPackageName()
 
     @RestrictTo(LIBRARY_GROUP)
-    interface SandboxControllerImpl {
+    public interface SandboxControllerImpl {
 
-        fun loadSdk(sdkName: String, params: Bundle, executor: Executor, callback: LoadSdkCallback)
+        public fun loadSdk(
+            sdkName: String,
+            params: Bundle,
+            executor: Executor,
+            callback: LoadSdkCallback,
+        )
 
-        fun getSandboxedSdks(): List<SandboxedSdkCompat>
+        public fun getSandboxedSdks(): List<SandboxedSdkCompat>
 
-        fun getAppOwnedSdkSandboxInterfaces(): List<AppOwnedSdkSandboxInterfaceCompat>
+        public fun getAppOwnedSdkSandboxInterfaces(): List<AppOwnedSdkSandboxInterfaceCompat>
 
-        fun registerSdkSandboxActivityHandler(
+        public fun registerSdkSandboxActivityHandler(
             handlerCompat: SdkSandboxActivityHandlerCompat
         ): IBinder
 
-        fun unregisterSdkSandboxActivityHandler(handlerCompat: SdkSandboxActivityHandlerCompat)
+        public fun unregisterSdkSandboxActivityHandler(
+            handlerCompat: SdkSandboxActivityHandlerCompat
+        )
 
-        fun getClientPackageName(): String
+        public fun getClientPackageName(): String
 
-        fun registerSdkSandboxClientImportanceListener(
+        public fun registerSdkSandboxClientImportanceListener(
             executor: Executor,
             listenerCompat: SdkSandboxClientImportanceListenerCompat,
         )
 
-        fun unregisterSdkSandboxClientImportanceListener(
+        public fun unregisterSdkSandboxClientImportanceListener(
             listenerCompat: SdkSandboxClientImportanceListenerCompat
         )
     }
 
-    companion object {
+    public companion object {
 
         private var localImpl: SandboxControllerImpl? = null
 
@@ -193,7 +202,7 @@ internal constructor(private val controllerImpl: SandboxControllerImpl) {
          * @return SdkSandboxControllerCompat object.
          */
         @JvmStatic
-        fun from(context: Context): SdkSandboxControllerCompat {
+        public fun from(context: Context): SdkSandboxControllerCompat {
             val clientVersion = Versions.CLIENT_VERSION
             if (clientVersion != null) {
                 val implFromClient =
@@ -214,14 +223,14 @@ internal constructor(private val controllerImpl: SandboxControllerImpl) {
         @JvmStatic
         @Keep
         @RestrictTo(LIBRARY_GROUP)
-        fun injectLocalImpl(impl: SandboxControllerImpl) {
+        public fun injectLocalImpl(impl: SandboxControllerImpl) {
             check(localImpl == null) { "Local implementation already injected" }
             localImpl = impl
         }
 
         @TestOnly
         @RestrictTo(LIBRARY_GROUP)
-        fun resetLocalImpl() {
+        public fun resetLocalImpl() {
             localImpl = null
         }
     }

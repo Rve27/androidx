@@ -31,7 +31,7 @@ import androidx.privacysandbox.sdkruntime.core.SandboxedSdkProviderCompat
  * Gets compat class name from asset "SandboxedSdkProviderCompatClassName.txt"
  */
 @RequiresApi(34)
-class SandboxedSdkProviderAdapter
+public class SandboxedSdkProviderAdapter
 internal constructor(private val classNameProvider: CompatClassNameProvider) :
     SandboxedSdkProvider() {
 
@@ -40,7 +40,7 @@ internal constructor(private val classNameProvider: CompatClassNameProvider) :
         fun getCompatProviderClassName(context: Context): String
     }
 
-    constructor() : this(DefaultClassNameProvider())
+    public constructor() : this(DefaultClassNameProvider())
 
     internal val delegate: SandboxedSdkProviderCompat by lazy {
         val currentContext = context!!

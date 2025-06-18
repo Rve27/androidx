@@ -31,7 +31,7 @@ import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerCo
  *
  * App should use [SdkSandboxManagerCompat.startSdkSandboxActivity] for starting activity.
  */
-class SdkActivity : ComponentActivity() {
+public class SdkActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

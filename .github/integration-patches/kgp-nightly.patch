@@ -515,9 +515,9 @@ index 0495ea8244d..a933575e679 100644
  
  plugins {
 @@ -66,4 +68,5 @@ androidx {
+     type = SoftwareType.PUBLISHED_LIBRARY
      inceptionYear = "2022"
      description = "show UI from a Runtime-aware SDK"
-     legacyDisableKotlinStrictApiMode = true
 +    kotlinTarget = KotlinTarget.KOTLIN_2_2
  }
 diff --git a/room/room-compiler-processing-testing/build.gradle b/room/room-compiler-processing-testing/build.gradle
