@@ -167,3 +167,5 @@ java\.net\.SocketException: Connection reset
 java\.io\.EOFException
 # b/425976715
 Warning: Unable to lock settings file \$GRADLE_USER_HOME/\.android/analytics\.settings.*
+# Develocity flake, reported via slack
+\[Resource\-Usage\] Problem extracting process name:.*
