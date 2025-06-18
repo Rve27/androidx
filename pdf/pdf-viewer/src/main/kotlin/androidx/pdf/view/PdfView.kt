@@ -93,7 +93,6 @@ import kotlinx.coroutines.launch
  * [View.getScaleX] / [View.getScaleY]. Scroll position is based on the [View.getScrollX] /
  * [View.getScrollY] properties.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public open class PdfView
 @JvmOverloads
 constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
@@ -188,6 +187,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     }
 
     /** Supply a [PdfDocument] to process the PDF content for rendering */
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var pdfDocument: PdfDocument? = null
         set(value) {
             checkMainThread()
@@ -325,7 +326,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     /** Listener interface to receive updates when the [currentSelection] changes */
     public interface OnSelectionChangedListener {
         /** Called when the [Selection] has changed */
-        public fun onSelectionChanged(previousSelection: Selection?, newSelection: Selection?)
+        public fun onSelectionChanged(newSelection: Selection?)
     }
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -645,9 +646,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         this.appliedHighlights = ArrayList(highlights.map { highlight -> highlight.copy() })
     }
 
-    private fun dispatchSelectionChanged(old: Selection?, new: Selection?) {
+    private fun dispatchSelectionChanged(new: Selection?) {
         for (listener in onSelectionChangedListeners) {
-            listener.onSelectionChanged(old, new)
+            listener.onSelectionChanged(new)
         }
     }
 
@@ -676,8 +677,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
      * content has been laid out at [viewPoint]
      */
     public fun viewToPdfPoint(viewPoint: PointF): PdfPoint? {
+        return viewToPdfPoint(viewPoint.x, viewPoint.y)
+    }
+
+    /**
+     * Returns the [PdfPoint] corresponding to ([x], [y])in View coordinates, or null if no PDF
+     * content has been laid out at that point.
+     */
+    public fun viewToPdfPoint(x: Float, y: Float): PdfPoint? {
         return pageMetadataLoader?.getPdfPointAt(
-            PointF(toContentX(viewPoint.x), toContentY(viewPoint.y)),
+            toContentX(x),
+            toContentY(y),
             getVisibleAreaInContentCoords(),
             scanAllPages = true,
         )
@@ -854,7 +864,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         if (event == null) return false
         val touchPoint =
             pageMetadataLoader?.getPdfPointAt(
-                PointF(toContentX(event.x), toContentY(event.y)),
+                toContentX(event.x),
+                toContentY(event.y),
                 getVisibleAreaInContentCoords(),
             )
 
@@ -1224,14 +1235,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     // Prevent 2 copies from running concurrently
                     selectionToJoin?.join()
                     launch { manager.selectionUiSignalBus.collect { onSelectionUiSignal(it) } }
-                    var prevSelection = currentSelection
                     launch {
                         manager.selectionModel.collect { newModel ->
-                            dispatchSelectionChanged(
-                                prevSelection,
-                                newModel?.documentSelection?.selection,
-                            )
-                            prevSelection = newModel?.documentSelection?.selection
+                            dispatchSelectionChanged(newModel?.documentSelection?.selection)
                         }
                     }
                 }
@@ -1667,6 +1673,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         get() = pageMetadataLoader?.paginationModel?.totalEstimatedHeight ?: 0f
 
     /** The default [ActionMode.Callback2] for selection */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public open class DefaultSelectionActionModeCallback(private val pdfView: PdfView) :
         ActionMode.Callback2() {
         @CallSuper
@@ -1693,7 +1700,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 return true
             } else if (item?.itemId == R.id.action_copy) {
                 // We can't copy the current selection if no text is selected
-                val text = (pdfView.currentSelection as? TextSelection)?.text ?: return false
+                val text =
+                    (pdfView.currentSelection as? TextSelection)?.textAsString() ?: return false
                 copyToClipboard(text)
                 pdfView.clearSelection()
                 return true
@@ -1926,7 +1934,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             val pageLayoutManager = pageMetadataLoader ?: return super.onLongPress(e)
             val touchPoint =
                 pageLayoutManager.getPdfPointAt(
-                    PointF(toContentX(e.x), toContentY(e.y)),
+                    toContentX(e.x),
+                    toContentY(e.y),
                     getVisibleAreaInContentCoords(),
                 ) ?: return super.onLongPress(e)
 
@@ -1999,7 +2008,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             val pageLayoutManager = pageMetadataLoader ?: return super.onSingleTapConfirmed(e)
             val touchPoint =
                 pageLayoutManager.getPdfPointAt(
-                    PointF(toContentX(e.x), toContentY(e.y)),
+                    toContentX(e.x),
+                    toContentY(e.y),
                     getVisibleAreaInContentCoords(),
                 ) ?: return super.onSingleTapConfirmed(e)
 

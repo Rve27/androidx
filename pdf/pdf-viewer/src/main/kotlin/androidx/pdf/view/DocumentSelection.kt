@@ -50,7 +50,7 @@ internal class DocumentSelection(val selectedContents: SparseArray<List<Selectio
             val textSelections = selections.filterIsInstance<TextSelection>()
             dest.writeInt(textSelections.size)
             for (selection in textSelections) {
-                selection.writeToParcel(dest)
+                selection.writeToParcel(dest, flags)
             }
         }
     }

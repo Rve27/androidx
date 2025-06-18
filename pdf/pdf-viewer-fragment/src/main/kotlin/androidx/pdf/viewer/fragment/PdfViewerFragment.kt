@@ -503,10 +503,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
          */
         _pdfView.addOnSelectionChangedListener(
             object : PdfView.OnSelectionChangedListener {
-                override fun onSelectionChanged(
-                    previousSelection: Selection?,
-                    newSelection: Selection?,
-                ) {
+                override fun onSelectionChanged(newSelection: Selection?) {
                     newSelection?.let { isTextSearchActive = false }
                 }
             }

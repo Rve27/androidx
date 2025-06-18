@@ -268,7 +268,7 @@ public class PdfViewerState(
             }
         }
 
-        override fun onSelectionChanged(previousSelection: Selection?, newSelection: Selection?) {
+        override fun onSelectionChanged(newSelection: Selection?) {
             currentSelection = newSelection
         }
     }

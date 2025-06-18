@@ -1,1 +1,138 @@
 // Signature format: 4.0
+package androidx.pdf.content {
+
+  public final class ExternalLink {
+    ctor public ExternalLink(android.net.Uri uri);
+    method public android.net.Uri getUri();
+    property public android.net.Uri uri;
+  }
+
+}
+
+package androidx.pdf.view {
+
+  public final class Highlight {
+    ctor public Highlight(androidx.pdf.view.PdfRect area, @ColorInt int color);
+    method public androidx.pdf.view.PdfRect getArea();
+    method public int getColor();
+    property public androidx.pdf.view.PdfRect area;
+    property @ColorInt public int color;
+  }
+
+  public final class PdfPoint {
+    ctor public PdfPoint(int pageNum, android.graphics.PointF pagePoint);
+    ctor public PdfPoint(int pageNum, float x, float y);
+    method public int getPageNum();
+    method public float getX();
+    method public float getY();
+    property public int pageNum;
+    property public float x;
+    property public float y;
+  }
+
+  public final class PdfRect {
+    ctor public PdfRect(int pageNum, android.graphics.RectF pageRect);
+    ctor public PdfRect(int pageNum, float left, float top, float right, float bottom);
+    method public float getBottom();
+    method public float getLeft();
+    method public int getPageNum();
+    method public float getRight();
+    method public float getTop();
+    property public float bottom;
+    property public float left;
+    property public int pageNum;
+    property public float right;
+    property public float top;
+  }
+
+  public class PdfView extends android.view.View {
+    ctor public PdfView(android.content.Context context);
+    ctor public PdfView(android.content.Context context, optional android.util.AttributeSet? attrs);
+    ctor public PdfView(android.content.Context context, optional android.util.AttributeSet? attrs, optional int defStyle);
+    method public final void addOnGestureStateChangedListener(androidx.pdf.view.PdfView.OnGestureStateChangedListener listener);
+    method public final void addOnSelectionChangedListener(androidx.pdf.view.PdfView.OnSelectionChangedListener listener);
+    method public final void addOnViewportChangedListener(androidx.pdf.view.PdfView.OnViewportChangedListener listener);
+    method public final void clearSelection();
+    method public final androidx.pdf.view.Selection? getCurrentSelection();
+    method public final android.graphics.drawable.Drawable getFastScrollPageIndicatorBackgroundDrawable();
+    method public final int getFastScrollPageIndicatorMarginEnd();
+    method public final android.graphics.drawable.Drawable getFastScrollVerticalThumbDrawable();
+    method public final int getFastScrollVerticalThumbMarginEnd();
+    method public final int getFirstVisiblePage();
+    method public final int getGestureState();
+    method public final float getMaxZoom();
+    method public final float getMinZoom();
+    method public final int getVisiblePagesCount();
+    method public final float getZoom();
+    method public final android.graphics.PointF? pdfToViewPoint(androidx.pdf.view.PdfPoint pdfPoint);
+    method public final void removeOnGestureStateChangedListener(androidx.pdf.view.PdfView.OnGestureStateChangedListener listener);
+    method public final void removeOnSelectionChangedListener(androidx.pdf.view.PdfView.OnSelectionChangedListener listener);
+    method public final void removeOnViewportChangedListener(androidx.pdf.view.PdfView.OnViewportChangedListener listener);
+    method public final void scrollToPage(int pageNum);
+    method public final void scrollToPosition(androidx.pdf.view.PdfPoint position);
+    method public final void setFastScrollPageIndicatorBackgroundDrawable(android.graphics.drawable.Drawable);
+    method public final void setFastScrollPageIndicatorMarginEnd(int);
+    method public final void setFastScrollVerticalThumbDrawable(android.graphics.drawable.Drawable);
+    method public final void setFastScrollVerticalThumbMarginEnd(int);
+    method public final void setHighlights(java.util.List<androidx.pdf.view.Highlight> highlights);
+    method public final void setLinkClickListener(androidx.pdf.view.PdfView.LinkClickListener? listener);
+    method public final void setMaxZoom(float);
+    method public final void setMinZoom(float);
+    method public final void setZoom(float);
+    method public final androidx.pdf.view.PdfPoint? viewToPdfPoint(android.graphics.PointF viewPoint);
+    method public final androidx.pdf.view.PdfPoint? viewToPdfPoint(float x, float y);
+    property public final androidx.pdf.view.Selection? currentSelection;
+    property public final android.graphics.drawable.Drawable fastScrollPageIndicatorBackgroundDrawable;
+    property public final int fastScrollPageIndicatorMarginEnd;
+    property public final android.graphics.drawable.Drawable fastScrollVerticalThumbDrawable;
+    property public final int fastScrollVerticalThumbMarginEnd;
+    property public final int firstVisiblePage;
+    property public final int gestureState;
+    property public final float maxZoom;
+    property public final float minZoom;
+    property public final int visiblePagesCount;
+    property public final float zoom;
+    field public static final androidx.pdf.view.PdfView.Companion Companion;
+    field public static final int GESTURE_STATE_IDLE = 0; // 0x0
+    field public static final int GESTURE_STATE_INTERACTING = 1; // 0x1
+    field public static final int GESTURE_STATE_SETTLING = 2; // 0x2
+  }
+
+  public static final class PdfView.Companion {
+    property public static int GESTURE_STATE_IDLE;
+    property public static int GESTURE_STATE_INTERACTING;
+    property public static int GESTURE_STATE_SETTLING;
+  }
+
+  public static interface PdfView.LinkClickListener {
+    method public boolean onLinkClicked(androidx.pdf.content.ExternalLink externalLink);
+  }
+
+  public static interface PdfView.OnGestureStateChangedListener {
+    method public void onGestureStateChanged(int newState);
+  }
+
+  public static interface PdfView.OnSelectionChangedListener {
+    method public void onSelectionChanged(androidx.pdf.view.Selection? newSelection);
+  }
+
+  public static interface PdfView.OnViewportChangedListener {
+    method public void onViewportChanged(int firstVisiblePage, int visiblePagesCount, android.util.SparseArray<android.graphics.RectF> pageLocations, float zoomLevel);
+  }
+
+  public interface Selection {
+    method public java.util.List<androidx.pdf.view.PdfRect> getBounds();
+    property public abstract java.util.List<androidx.pdf.view.PdfRect> bounds;
+  }
+
+  public final class TextSelection implements androidx.pdf.view.Selection {
+    ctor public TextSelection(CharSequence text, java.util.List<androidx.pdf.view.PdfRect> bounds);
+    method public java.util.List<androidx.pdf.view.PdfRect> getBounds();
+    method public CharSequence getText();
+    method public String textAsString();
+    property public java.util.List<androidx.pdf.view.PdfRect> bounds;
+    property public CharSequence text;
+  }
+
+}
+

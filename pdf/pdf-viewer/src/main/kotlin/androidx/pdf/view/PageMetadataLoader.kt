@@ -140,6 +140,36 @@ internal class PageMetadataLoader(
     }
 
     /**
+     * Returns the [PdfPoint] that exists at ([contentX], [contentY]), or null if no page content is
+     * laid out at that point.
+     *
+     * @param contentX the X content coordinate to check
+     * @param contentY the Y content coordinate to check
+     * @param viewport the current viewport in content coordinates
+     * @param scanAllPages true to scan pages outside the viewport
+     */
+    fun getPdfPointAt(
+        contentX: Float,
+        contentY: Float,
+        viewport: RectF,
+        scanAllPages: Boolean = false,
+    ): PdfPoint? {
+        for (pageIndex in visiblePages.lower..visiblePages.upper) {
+            findPointOnPage(pageIndex, viewport, contentX, contentY)?.let {
+                return it
+            }
+        }
+        if (!scanAllPages) return null
+        for (pageIndex in 0..paginationModel.reach) {
+            if (pageIndex in visiblePages.lower..visiblePages.upper) continue
+            findPointOnPage(pageIndex, viewport, contentX, contentY)?.let {
+                return it
+            }
+        }
+        return null
+    }
+
+    /**
      * Returns the [PdfPoint] that exists at [contentCoordinates], or null if no page content is
      * laid out at [contentCoordinates].
      *
@@ -155,14 +185,14 @@ internal class PageMetadataLoader(
         scanAllPages: Boolean = false,
     ): PdfPoint? {
         for (pageIndex in visiblePages.lower..visiblePages.upper) {
-            findPointOnPage(pageIndex, viewport, contentCoordinates)?.let {
+            findPointOnPage(pageIndex, viewport, contentCoordinates.x, contentCoordinates.y)?.let {
                 return it
             }
         }
         if (!scanAllPages) return null
         for (pageIndex in 0..paginationModel.reach) {
             if (pageIndex in visiblePages.lower..visiblePages.upper) continue
-            findPointOnPage(pageIndex, viewport, contentCoordinates)?.let {
+            findPointOnPage(pageIndex, viewport, contentCoordinates.x, contentCoordinates.y)?.let {
                 return it
             }
         }
@@ -172,17 +202,12 @@ internal class PageMetadataLoader(
     private fun findPointOnPage(
         pageNum: Int,
         viewport: RectF,
-        contentCoordinates: PointF,
+        contentX: Float,
+        contentY: Float,
     ): PdfPoint? {
         val pageBounds = getPageLocation(pageNum, viewport)
-        if (pageBounds.contains(contentCoordinates.x, contentCoordinates.y)) {
-            return PdfPoint(
-                pageNum,
-                PointF(
-                    contentCoordinates.x - pageBounds.left,
-                    contentCoordinates.y - pageBounds.top,
-                ),
-            )
+        if (pageBounds.contains(contentX, contentY)) {
+            return PdfPoint(pageNum, PointF(contentX - pageBounds.left, contentY - pageBounds.top))
         }
         return null
     }

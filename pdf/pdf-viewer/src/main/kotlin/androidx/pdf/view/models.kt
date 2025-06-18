@@ -19,8 +19,8 @@ package androidx.pdf.view
 import android.graphics.PointF
 import android.graphics.RectF
 import android.os.Parcel
+import android.text.TextUtils
 import androidx.annotation.ColorInt
-import androidx.annotation.RestrictTo
 import kotlin.Int
 
 /**
@@ -28,7 +28,6 @@ import kotlin.Int
  * [top], [right], and [bottom] indicate a rect in PDF points within the page, with the origin
  * existing at the top left corner of the page.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class PdfRect(
     public val pageNum: Int,
     public val left: Float,
@@ -104,7 +103,6 @@ internal fun pdfRectFromParcel(source: Parcel): PdfRect {
  * [y]) indicates a point in PDF points within the page, with the origin existing at the top left
  * corner of the page.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class PdfPoint(public val pageNum: Int, public val x: Float, public val y: Float) {
 
     public constructor(pageNum: Int, pagePoint: PointF) : this(pageNum, pagePoint.x, pagePoint.y)
@@ -159,7 +157,6 @@ internal fun pdfPointFromParcel(source: Parcel): PdfPoint {
 }
 
 /** Represents an [area] that should be highlighted with [color]. */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class Highlight(public val area: PdfRect, @ColorInt public val color: Int) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -188,7 +185,6 @@ public class Highlight(public val area: PdfRect, @ColorInt public val color: Int
 }
 
 /** Represents PDF content that has been selected */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public interface Selection {
     /**
      * The [PdfRect] bounds of this selection. May contain multiple [PdfRect] if this selection
@@ -199,9 +195,12 @@ public interface Selection {
 }
 
 /** Represents text content that has been selected */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
-public class TextSelection(public val text: String, override val bounds: List<PdfRect>) :
+public class TextSelection(public val text: CharSequence, override val bounds: List<PdfRect>) :
     Selection {
+
+    /** Returns [text] as a [String] */
+    public fun textAsString(): String = text.toString()
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || other !is TextSelection) return false
@@ -228,8 +227,8 @@ public class TextSelection(public val text: String, override val bounds: List<Pd
  *
  * Not part of the public API because public APIs cannot be [android.os.Parcelable]
  */
-internal fun TextSelection.writeToParcel(dest: Parcel) {
-    dest.writeString(text)
+internal fun TextSelection.writeToParcel(dest: Parcel, flags: Int) {
+    TextUtils.writeToParcel(text, dest, flags)
     dest.writeInt(bounds.size)
     for (bound in bounds) {
         bound.writeToParcel(dest)
@@ -242,7 +241,7 @@ internal fun TextSelection.writeToParcel(dest: Parcel) {
  * Not part of the public API because public APIs cannot be [android.os.Parcelable]
  */
 internal fun textSelectionFromParcel(source: Parcel): TextSelection {
-    val text = requireNotNull(source.readString())
+    val text = requireNotNull(TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(source))
     val boundsSize = source.readInt()
     val bounds = mutableListOf<PdfRect>()
     for (i in 0 until boundsSize) {
