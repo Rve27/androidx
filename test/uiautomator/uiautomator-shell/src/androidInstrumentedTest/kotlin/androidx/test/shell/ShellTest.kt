@@ -71,7 +71,7 @@ class ShellTest {
     fun killPid(): Unit =
         with(Shell.process()) {
             val pid =
-                with(Shell.command("echo pid:$$ ; exec sleep 100")) {
+                with(Shell.command("echo pid:$$ ; exec sleep 10")) {
                     stdOutStream
                         .bufferedReader()
                         .lineSequence()
@@ -80,8 +80,9 @@ class ShellTest {
                         .toInt()
                 }
 
+            assertThat(isProcessAlive(pid)).isTrue()
             killPid(pid = pid, signal = "SIGKILL")
-            assertThat(getPid("sleep 10")).isEqualTo(-1)
+            assertThat(isProcessAlive(pid)).isFalse()
         }
 
     @SuppressLint("BanThreadSleep")
