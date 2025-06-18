@@ -17,7 +17,11 @@
 package androidx.camera.compose
 
 import android.content.Context
+import android.hardware.camera2.CameraCaptureSession
+import android.hardware.camera2.CaptureRequest
+import android.hardware.camera2.TotalCaptureResult
 import androidx.camera.camera2.Camera2Config
+import androidx.camera.camera2.interop.Camera2Interop
 import androidx.camera.camera2.pipe.integration.CameraPipeConfig
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraXConfig
@@ -48,6 +52,7 @@ import androidx.test.filters.LargeTest
 import com.google.common.truth.Truth.assertThat
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -107,6 +112,8 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
             .onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG)
             .assertIsDisplayed()
             .assert(SemanticsMatcher.hasChild())
+
+        ensureCameraIsStreaming()
     }
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -206,6 +213,8 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
             .assertIsDisplayed()
             .assert(SemanticsMatcher.hasChild())
 
+        ensureCameraIsStreaming()
+
         // Remove the Viewfinder from the composition
         showContent = false
 
@@ -256,7 +265,26 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
 
             var fakeLifecycleOwner: FakeLifecycleOwner? = null
             try {
-                val preview = Preview.Builder().build()
+                val latestDeliveredFrameNumber = MutableStateFlow(-1L)
+                val preview =
+                    Preview.Builder()
+                        .also {
+                            Camera2Interop.Extender(it)
+                                .setSessionCaptureCallback(
+                                    object : CameraCaptureSession.CaptureCallback() {
+                                        override fun onCaptureCompleted(
+                                            session: CameraCaptureSession,
+                                            request: CaptureRequest,
+                                            result: TotalCaptureResult,
+                                        ) {
+                                            super.onCaptureCompleted(session, request, result)
+                                            latestDeliveredFrameNumber.value = result.frameNumber
+                                        }
+                                    }
+                                )
+                        }
+                        .build()
+
                 val surfaceRequests = MutableStateFlow<SurfaceRequest?>(null)
                 val resetPreviewSurfaceProvider =
                     suspend {
@@ -297,6 +325,7 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
                         resetPreviewSurfaceProvider = resetPreviewSurfaceProvider,
                         startCamera = startCamera,
                         coroutineContext = coroutineContext,
+                        lastFrames = latestDeliveredFrameNumber.asStateFlow(),
                     )
                 ) {
                     block()
@@ -317,7 +346,16 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
         val resetPreviewSurfaceProvider: suspend () -> Unit,
         val startCamera: suspend () -> Camera,
         override val coroutineContext: CoroutineContext,
-    ) : CoroutineScope
+        private val lastFrames: StateFlow<Long>,
+    ) : CoroutineScope {
+        suspend fun ensureCameraIsStreaming(timeout: Duration = 5.seconds) {
+            withTimeout(timeout) { lastFrames.take(NUM_FRAMES_TO_WAIT_FOR).collect {} }
+        }
+
+        companion object {
+            private const val NUM_FRAMES_TO_WAIT_FOR = 10
+        }
+    }
 }
 
 private fun ImplementationMode.swapMode(): ImplementationMode {
