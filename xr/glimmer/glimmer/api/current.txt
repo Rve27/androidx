@@ -32,6 +32,8 @@ package androidx.xr.glimmer {
   public final class ContentColorKt {
     method public static long calculateContentColor(long backgroundColor);
     method @BytecodeOnly public static long calculateContentColor-8_81llA(long);
+    method public static androidx.compose.ui.Modifier contentColorProvider(androidx.compose.ui.Modifier, long contentColor);
+    method @BytecodeOnly public static androidx.compose.ui.Modifier contentColorProvider-4WTKRHQ(androidx.compose.ui.Modifier, long);
   }
 
   @androidx.compose.runtime.Immutable public final class GlimmerTheme {
