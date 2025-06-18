@@ -22,6 +22,8 @@ import android.os.Build
 import androidx.annotation.IntDef
 import androidx.annotation.RequiresPermission
 import androidx.annotation.RestrictTo
+import androidx.appfunctions.AppFunctionManagerCompat.Companion.getInstance
+import androidx.appfunctions.AppFunctionManagerCompat.Companion.isExtensionLibraryAvailable
 import androidx.appfunctions.internal.AppFunctionManagerApi
 import androidx.appfunctions.internal.AppFunctionReader
 import androidx.appfunctions.internal.AppSearchAppFunctionReader
@@ -212,6 +214,43 @@ public constructor(
         /** The version shared across all schema defined in the legacy SDK. */
         private const val LEGACY_SDK_GLOBAL_SCHEMA_VERSION = 1L
 
+        private var _appFunctionReader: AppFunctionReader? = null
+        private var _appFunctionManagerApi: AppFunctionManagerApi? = null
+
+        private var _skipExtensionLibraryCheck = false
+
+        /**
+         * Allows overriding the [AppFunctionReader] used for constructing
+         * [AppFunctionManagerCompat] instance in [getInstance] with a different implementation.
+         *
+         * Only meant to be used internally by `AppFunctionTestRule`.
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun setAppFunctionReader(appFunctionReader: AppFunctionReader) {
+            _appFunctionReader = appFunctionReader
+        }
+
+        /**
+         * Allows overriding the [AppFunctionManagerApi] used for constructing
+         * [AppFunctionManagerCompat] instance in [getInstance] with a different implementation.
+         *
+         * Only meant to be used internally by `AppFunctionTestRule`.
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun setAppFunctionManagerApi(appFunctionManagerApi: AppFunctionManagerApi) {
+            _appFunctionManagerApi = appFunctionManagerApi
+        }
+
+        /**
+         * Allows skipping [isExtensionLibraryAvailable] check in [getInstance].
+         *
+         * Only meant to be used internally by `AppFunctionTestRule`.
+         */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public fun setSkipExtensionLibraryCheck(skipExtensionLibraryCheck: Boolean) {
+            _skipExtensionLibraryCheck = skipExtensionLibraryCheck
+        }
+
         /**
          * Checks whether the AppFunction extension library is available.
          *
@@ -219,6 +258,8 @@ public constructor(
          *   otherwise.
          */
         private fun isExtensionLibraryAvailable(): Boolean {
+            if (_skipExtensionLibraryCheck) return true
+
             return try {
                 Class.forName("com.android.extensions.appfunctions.AppFunctionManager")
                 true
@@ -244,11 +285,12 @@ public constructor(
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA -> {
                     AppFunctionManagerCompat(
                         context,
-                        AppSearchAppFunctionReader(
-                            context,
-                            Dependencies.schemaAppFunctionInventory,
-                        ),
-                        PlatformAppFunctionManagerApi(context),
+                        _appFunctionReader
+                            ?: AppSearchAppFunctionReader(
+                                context,
+                                Dependencies.schemaAppFunctionInventory,
+                            ),
+                        _appFunctionManagerApi ?: PlatformAppFunctionManagerApi(context),
                         Dependencies.translatorSelector,
                     )
                 }
@@ -256,11 +298,12 @@ public constructor(
                     isExtensionLibraryAvailable() -> {
                     AppFunctionManagerCompat(
                         context,
-                        AppSearchAppFunctionReader(
-                            context,
-                            Dependencies.schemaAppFunctionInventory,
-                        ),
-                        ExtensionAppFunctionManagerApi(context),
+                        _appFunctionReader
+                            ?: AppSearchAppFunctionReader(
+                                context,
+                                Dependencies.schemaAppFunctionInventory,
+                            ),
+                        _appFunctionManagerApi ?: ExtensionAppFunctionManagerApi(context),
                         Dependencies.translatorSelector,
                     )
                 }

@@ -26,6 +26,7 @@ import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,6 +35,8 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -42,17 +45,22 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(minSdk = Build.VERSION_CODES.TIRAMISU)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
-class AppFunctionTestEnvironmentTest {
+class AppFunctionTestRuleTest {
     private val context = InstrumentationRegistry.getInstrumentation().context
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-    private val appFunctionTestEnvironment = AppFunctionTestEnvironment(targetContext)
+    @get:Rule val appFunctionTestRule = AppFunctionTestRule(targetContext)
+
+    private lateinit var appFunctionManagerCompat: AppFunctionManagerCompat
+
+    @Before
+    fun setUp() {
+        appFunctionManagerCompat = assertNotNull(AppFunctionManagerCompat.getInstance(context))
+    }
 
     @Test
     fun returnedAppFunctionManagerCompat_observeApi_returnsAllAppFunctions() =
         runBlocking<Unit> {
-            val appFunctionManagerCompat = appFunctionTestEnvironment.getAppFunctionManagerCompat()
-
             val results =
                 appFunctionManagerCompat
                     .observeAppFunctions(
@@ -68,7 +76,6 @@ class AppFunctionTestEnvironmentTest {
     fun returnedAppFunctionManagerCompat_observeApi_returnsNewValueOnUpdate() =
         runBlocking<Unit> {
             val functionIdToTest = "androidx.appfunctions.testing.TestFunctions#disabledByDefault"
-            val appFunctionManagerCompat = appFunctionTestEnvironment.getAppFunctionManagerCompat()
             val appFunctionSearchFlow =
                 appFunctionManagerCompat.observeAppFunctions(
                     AppFunctionSearchSpec(packageNames = setOf(context.packageName))
@@ -102,7 +109,6 @@ class AppFunctionTestEnvironmentTest {
     fun returnedAppFunctionManagerCompat_currentPackage_enabledByDefault_modified_success() =
         runBlocking<Unit> {
             val functionId = "androidx.appfunctions.testing.TestFunctions#enabledByDefault"
-            val appFunctionManagerCompat = appFunctionTestEnvironment.getAppFunctionManagerCompat()
             assertThat(appFunctionManagerCompat.isAppFunctionEnabled(functionId)).isTrue()
 
             appFunctionManagerCompat.setAppFunctionEnabled(
@@ -117,7 +123,6 @@ class AppFunctionTestEnvironmentTest {
     fun returnedAppFunctionManagerCompat_currentPackage_disabledByDefault_modified_success() =
         runBlocking<Unit> {
             val functionId = "androidx.appfunctions.testing.TestFunctions#disabledByDefault"
-            val appFunctionManagerCompat = appFunctionTestEnvironment.getAppFunctionManagerCompat()
             assertThat(appFunctionManagerCompat.isAppFunctionEnabled(functionId)).isFalse()
 
             appFunctionManagerCompat.setAppFunctionEnabled(
@@ -131,7 +136,6 @@ class AppFunctionTestEnvironmentTest {
     @Test
     fun executeAppFunction_success() =
         runBlocking<Unit> {
-            val appFunctionManagerCompat = appFunctionTestEnvironment.getAppFunctionManagerCompat()
             val response =
                 appFunctionManagerCompat.executeAppFunction(
                     request =
@@ -158,7 +162,6 @@ class AppFunctionTestEnvironmentTest {
     fun returnedAppFunctionManagerCompat_currentPackage_disabledByDefault_modifiedAndRestoredToDefault_success() =
         runBlocking<Unit> {
             val functionId = "androidx.appfunctions.testing.TestFunctions#disabledByDefault"
-            val appFunctionManagerCompat = appFunctionTestEnvironment.getAppFunctionManagerCompat()
             assertThat(appFunctionManagerCompat.isAppFunctionEnabled(functionId)).isFalse()
 
             appFunctionManagerCompat.setAppFunctionEnabled(
