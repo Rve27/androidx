@@ -159,8 +159,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         // Perform different actions based on which plugins have been applied to the project.
         // Many of the actions overlap, ex. API tracking.
         project.plugins.configureEach { plugin ->
-            // PrivacySandboxSdkPlugin b/397703898, KotlinMultiplatformAndroidPlugin b/393137152
-            @Suppress("UnstableApiUsage")
             when (plugin) {
                 is JavaGradlePluginPlugin -> configureGradlePluginPlugin(project)
                 is JavaPlugin -> configureWithJavaPlugin(project, androidXExtension)
@@ -181,7 +179,8 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                         plugin,
                         androidXKmpExtension,
                     )
-                is PrivacySandboxSdkPlugin -> configureWithPrivacySandboxSdkPlugin(project)
+                is @Suppress("UnstableApiUsage") PrivacySandboxSdkPlugin -> // b/397703898
+                configureWithPrivacySandboxSdkPlugin(project)
                 is ProtobufPlugin -> configureProtobufPlugin(project)
             }
         }
@@ -429,7 +428,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                 project.plugins.hasPlugin(LibraryPlugin::class.java) ||
                     project.plugins.hasPlugin(AppPlugin::class.java) ||
                     project.plugins.hasPlugin(TestPlugin::class.java) ||
-                    @Suppress("UnstableApiUsage")
                     project.plugins.hasPlugin(KotlinMultiplatformAndroidPlugin::class.java)
             }
         val defaultJavaTargetVersion =

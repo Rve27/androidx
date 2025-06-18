@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("UnstableApiUsage") // b/393137152
-
 package androidx.build
 
 import androidx.build.clang.AndroidXClang
