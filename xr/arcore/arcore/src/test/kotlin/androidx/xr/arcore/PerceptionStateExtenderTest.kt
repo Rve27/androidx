@@ -231,6 +231,7 @@ class PerceptionStateExtenderTest {
         underTest.extend(coreState)
         check(coreState.perceptionState!!.viewCameras.isNotEmpty())
         check(coreState.perceptionState!!.viewCameras[0].state.value.pose == Pose())
+        check(coreState.perceptionState!!.viewCameras[0].state.value.localPose == Pose())
         check(
             coreState.perceptionState!!.viewCameras[0].state.value.fieldOfView ==
                 FieldOfView(0f, 0f, 0f, 0f)
@@ -249,6 +250,8 @@ class PerceptionStateExtenderTest {
 
         // assert
         assertThat(coreState2.perceptionState!!.viewCameras[0].state.value.pose)
+            .isEqualTo(expectedPose)
+        assertThat(coreState2.perceptionState!!.viewCameras[0].state.value.localPose)
             .isEqualTo(expectedPose)
         assertThat(coreState2.perceptionState!!.viewCameras[0].state.value.fieldOfView)
             .isEqualTo(expectedFov)

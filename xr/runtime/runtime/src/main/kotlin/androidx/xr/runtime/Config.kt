@@ -207,11 +207,14 @@ constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
     ) {
         public companion object {
-            /** Device pose will not be tracked. */
+            /**
+             * The device pose will not be tracked. In this mode, [androidx.xr.arcore.ViewCamera]
+             * will not emit updates to [androidx.xr.arcore.ViewCamera.State.pose].
+             */
             @JvmField public val DISABLED: DeviceTrackingMode = DeviceTrackingMode(0)
             /**
-             * Device pose will be tracked and the last known pose from the system at the time of
-             * runtime update will be provided. Note that there is generally a delay between the
+             * The device pose will be tracked and the last known pose from the system at the time
+             * of runtime update will be provided. Note that there is generally a delay between the
              * actual device pose and the pose provided by the system by the time of the update.
              */
             @JvmField public val LAST_KNOWN: DeviceTrackingMode = DeviceTrackingMode(1)
@@ -237,7 +240,7 @@ constructor(
         @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public val mode: Int
     ) {
         public companion object {
-            /** Head pose will not be tracked. */
+            /** The head pose is not updated. It remains at the origin (an identity pose). */
             @JvmField public val DISABLED: HeadTrackingMode = HeadTrackingMode(0)
             /**
              * Head pose will be tracked and the last known pose from the system at the time of

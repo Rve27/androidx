@@ -42,8 +42,10 @@ internal class PerceptionStateExtender : StateExtender {
         perceptionManager = runtime.perceptionManager
         xrResourcesManager.lifecycleManager = runtime.lifecycleManager
         xrResourcesManager.initiateHands(perceptionManager.leftHand, perceptionManager.rightHand)
-        xrResourcesManager.initiateArDevice(perceptionManager.arDevice)
-        xrResourcesManager.initiateViewCameras(perceptionManager.viewCameras)
+        xrResourcesManager.initiateArDeviceAndViewCameras(
+            perceptionManager.arDevice,
+            perceptionManager.viewCameras,
+        )
         xrResourcesManager.initiateEarth(perceptionManager.earth)
     }
 

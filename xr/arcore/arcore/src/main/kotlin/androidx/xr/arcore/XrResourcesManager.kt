@@ -75,12 +75,12 @@ internal class XrResourcesManager {
         _rightRuntimeHand = rightRuntimeHand
     }
 
-    internal fun initiateArDevice(runtimeArDevice: RuntimeArDevice) {
+    internal fun initiateArDeviceAndViewCameras(
+        runtimeArDevice: RuntimeArDevice,
+        runtimeViewCameras: List<RuntimeViewCamera>,
+    ) {
         arDevice = ArDevice(runtimeArDevice)
-    }
-
-    internal fun initiateViewCameras(runtimeViewCameras: List<RuntimeViewCamera>) {
-        viewCameras = runtimeViewCameras.map { ViewCamera(it) }
+        viewCameras = runtimeViewCameras.map { ViewCamera(it, runtimeArDevice) }
     }
 
     internal fun addUpdatable(updatable: Updatable) {
