@@ -32,6 +32,6 @@ import java.util.concurrent.Executor
 // API symmetrical
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 @OptIn(ExperimentalFeatures.SharedUiPresentationApi::class)
-public interface LocalSharedUiAdapter {
-    public fun openLocalSession(clientVersion: Int, clientExecutor: Executor, client: SessionClient)
+interface LocalSharedUiAdapter {
+    fun openLocalSession(clientVersion: Int, clientExecutor: Executor, client: SessionClient)
 }

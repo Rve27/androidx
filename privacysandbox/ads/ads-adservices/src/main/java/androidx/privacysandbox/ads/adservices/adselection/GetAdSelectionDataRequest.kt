@@ -43,10 +43,10 @@ import androidx.privacysandbox.ads.adservices.internal.AdServicesInfo
  */
 @OptIn(ExperimentalFeatures.Ext12OptIn::class, ExperimentalFeatures.Ext14OptIn::class)
 @ExperimentalFeatures.Ext10OptIn
-public class GetAdSelectionDataRequest
+class GetAdSelectionDataRequest
 @JvmOverloads
 public constructor(
-    public val seller: AdTechIdentifier,
+    val seller: AdTechIdentifier,
     // Note: public experimental properties are not allowed because the accessors will not appear
     // experimental to Java clients. There are public accessors for these properties below.
     @property:ExperimentalFeatures.Ext12OptIn private val coordinatorOriginUri: Uri? = null,
@@ -82,7 +82,7 @@ public constructor(
      * key.
      */
     @ExperimentalFeatures.Ext12OptIn
-    public fun getCoordinatorOriginUri(): Uri? {
+    fun getCoordinatorOriginUri(): Uri? {
         return coordinatorOriginUri
     }
 
@@ -91,7 +91,7 @@ public constructor(
      * optimize the payload.
      */
     @ExperimentalFeatures.Ext12OptIn
-    public fun getSellerConfiguration(): SellerConfiguration? {
+    fun getSellerConfiguration(): SellerConfiguration? {
         return sellerConfiguration
     }
 

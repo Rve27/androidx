@@ -29,9 +29,9 @@ import androidx.annotation.RestrictTo
  * features from this version should be specified (NO FUTURE CHANGES SUPPORTED).
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public enum class ClientApiVersion(
-    public val apiLevel: Int,
-    public val stable: Boolean = false,
+enum class ClientApiVersion(
+    val apiLevel: Int,
+    val stable: Boolean = false,
     private val newFeatures: Set<ClientFeature> = emptySet(),
 ) {
     V5__1_0_ALPHA13(apiLevel = 5),
@@ -49,28 +49,26 @@ public enum class ClientApiVersion(
      */
     FUTURE_VERSION(apiLevel = Int.MAX_VALUE);
 
-    public companion object {
+    companion object {
         /**
          * Minimal version of sdkruntime-client lib that could load SDK built with current version
          * of sdkruntime-provider lib.
          */
-        public val MIN_SUPPORTED_CLIENT_VERSION: ClientApiVersion = V6__1_0_ALPHA14
+        val MIN_SUPPORTED_CLIENT_VERSION = V6__1_0_ALPHA14
 
         /**
          * Minimal version of sdkruntime-provider lib that could be loaded by current version of
          * sdkruntime-client lib.
          */
-        public val MIN_SUPPORTED_SDK_VERSION: ClientApiVersion = values().minBy { v -> v.apiLevel }
+        val MIN_SUPPORTED_SDK_VERSION = values().minBy { v -> v.apiLevel }
 
-        public val CURRENT_VERSION: ClientApiVersion =
-            values().filter { v -> v != FUTURE_VERSION }.maxBy { v -> v.apiLevel }
+        val CURRENT_VERSION = values().filter { v -> v != FUTURE_VERSION }.maxBy { v -> v.apiLevel }
 
-        public val LATEST_STABLE_VERSION: ClientApiVersion =
-            values().filter { v -> v.stable }.maxBy { v -> v.apiLevel }
+        val LATEST_STABLE_VERSION = values().filter { v -> v.stable }.maxBy { v -> v.apiLevel }
 
         private val FEATURE_TO_VERSION_MAP = buildFeatureMap()
 
-        public fun minAvailableVersionFor(clientFeature: ClientFeature): ClientApiVersion {
+        fun minAvailableVersionFor(clientFeature: ClientFeature): ClientApiVersion {
             return FEATURE_TO_VERSION_MAP[clientFeature] ?: FUTURE_VERSION
         }
 

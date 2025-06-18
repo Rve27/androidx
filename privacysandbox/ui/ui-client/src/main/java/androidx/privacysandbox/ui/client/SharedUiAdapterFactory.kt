@@ -40,7 +40,7 @@ import java.util.concurrent.Executor
  */
 @SuppressLint("NullAnnotationGroup")
 @ExperimentalFeatures.SharedUiPresentationApi
-public object SharedUiAdapterFactory {
+object SharedUiAdapterFactory {
 
     private val uiAdapterFactoryDelegate =
         object : UiAdapterFactoryDelegate() {
@@ -57,7 +57,7 @@ public object SharedUiAdapterFactory {
      */
     @SuppressLint("NullAnnotationGroup")
     @ExperimentalFeatures.SharedUiPresentationApi
-    public fun createFromCoreLibInfo(coreLibInfo: Bundle): SharedUiAdapter {
+    fun createFromCoreLibInfo(coreLibInfo: Bundle): SharedUiAdapter {
         return if (
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
                 !uiAdapterFactoryDelegate.shouldUseLocalAdapter(coreLibInfo)

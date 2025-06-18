@@ -46,7 +46,7 @@ import kotlinx.coroutines.withContext
  * @param allowLaunch predicate called each time an activity is about to be launched by the SDK, the
  *   activity will only be launched if it returns true.
  */
-public fun <T> T.createManagedSdkActivityLauncher(
+fun <T> T.createManagedSdkActivityLauncher(
     allowLaunch: () -> Boolean
 ): LocalManagedSdkActivityLauncher<T> where T : Activity, T : LifecycleOwner {
     val cancellationJob = Job(parent = lifecycleScope.coroutineContext[Job])
@@ -76,7 +76,7 @@ public fun <T> T.createManagedSdkActivityLauncher(
  *   activity will only be launched if it returns true.
  * @see [createManagedSdkActivityLauncher]
  */
-public fun <T> T.createUnmanagedSdkActivityLauncher(
+fun <T> T.createUnmanagedSdkActivityLauncher(
     allowLaunch: () -> Boolean
 ): LocalUnmanagedSdkActivityLauncher<T> where T : Activity {
     return LocalUnmanagedSdkActivityLauncher(activity = this, allowLaunch = allowLaunch)
@@ -86,7 +86,7 @@ public fun <T> T.createUnmanagedSdkActivityLauncher(
  * Returns a [Bundle] with the information necessary to recreate this launcher. Possibly in a
  * different process.
  */
-public fun SdkActivityLauncher.toLauncherInfo(): Bundle {
+fun SdkActivityLauncher.toLauncherInfo(): Bundle {
     val binderDelegate = SdkActivityLauncherBinderDelegate(this)
     return Bundle().also { bundle ->
         bundle.putBinder(SDK_ACTIVITY_LAUNCHER_BINDER_KEY, binderDelegate)
@@ -100,7 +100,7 @@ public fun SdkActivityLauncher.toLauncherInfo(): Bundle {
  * @see LocalManagedSdkActivityLauncher
  * @see LocalUnmanagedSdkActivityLauncher
  */
-public interface LocalSdkActivityLauncher : SdkActivityLauncher {
+interface LocalSdkActivityLauncher : SdkActivityLauncher {
     /**
      * Clears references used to launch activities.
      *
@@ -109,7 +109,7 @@ public interface LocalSdkActivityLauncher : SdkActivityLauncher {
      *
      * Doesn't do anything if the launcher was already disposed of.
      */
-    public fun dispose()
+    fun dispose()
 }
 
 /**
@@ -119,7 +119,7 @@ public interface LocalSdkActivityLauncher : SdkActivityLauncher {
  *
  * It allows callers in the app process to dispose resources used to launch SDK activities.
  */
-public class LocalManagedSdkActivityLauncher<T>
+class LocalManagedSdkActivityLauncher<T>
 internal constructor(activity: T, allowLaunch: () -> Boolean, onDispose: () -> Unit) :
     LocalSdkActivityLauncher where T : Activity, T : LifecycleOwner {
     private val launcherDelegate =
@@ -139,7 +139,7 @@ internal constructor(activity: T, allowLaunch: () -> Boolean, onDispose: () -> U
      *
      * Doesn't do anything if the launcher was already disposed of.
      */
-    override fun dispose(): Unit = launcherDelegate.dispose()
+    override fun dispose() = launcherDelegate.dispose()
 }
 
 /**
@@ -148,7 +148,7 @@ internal constructor(activity: T, allowLaunch: () -> Boolean, onDispose: () -> U
  *
  * @see [LocalManagedSdkActivityLauncher]
  */
-public class LocalUnmanagedSdkActivityLauncher<T>
+class LocalUnmanagedSdkActivityLauncher<T>
 internal constructor(activity: T, allowLaunch: () -> Boolean) : LocalSdkActivityLauncher where
 T : Activity {
 
@@ -167,7 +167,7 @@ T : Activity {
      *
      * Doesn't do anything if the launcher was already disposed of.
      */
-    override fun dispose(): Unit = launcherDelegate.dispose()
+    override fun dispose() = launcherDelegate.dispose()
 }
 
 private class LocalSdkActivityLauncherDelegate<T>(

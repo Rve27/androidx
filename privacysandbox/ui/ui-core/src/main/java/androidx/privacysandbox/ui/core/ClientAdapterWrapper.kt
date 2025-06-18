@@ -24,7 +24,7 @@ import androidx.annotation.RestrictTo
  * of the various UI adapters.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface ClientAdapterWrapper {
+interface ClientAdapterWrapper {
     /** Provides the underlying Bundle with which the client side UI adapter was created. */
-    public fun getSourceBundle(): Bundle
+    fun getSourceBundle(): Bundle
 }

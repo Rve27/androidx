@@ -34,7 +34,7 @@ import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerCo
  *
  * @see SdkSandboxActivityHandler
  */
-public interface SdkSandboxActivityHandlerCompat {
+interface SdkSandboxActivityHandlerCompat {
 
     /**
      * Notifies SDK when an [Activity] gets created.
@@ -48,5 +48,5 @@ public interface SdkSandboxActivityHandlerCompat {
      * @param activityHolder the [ActivityHolder] which holds the [Activity] which gets created
      * @see SdkSandboxActivityHandler.onActivityCreated
      */
-    public fun onActivityCreated(activityHolder: ActivityHolder)
+    fun onActivityCreated(activityHolder: ActivityHolder)
 }

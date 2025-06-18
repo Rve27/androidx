@@ -68,4 +68,5 @@ androidx {
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2022"
     description = "write Java code to call PP APIs."
+    legacyDisableKotlinStrictApiMode = true
 }

@@ -31,8 +31,8 @@ import java.util.concurrent.Executor
 // TODO(b/414583128): Make LocalUiAdapter.openLocalSession and ISandboxedUiAdapter.openRemoteSession
 // API symmetrical
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public interface LocalUiAdapter {
-    public fun openLocalSession(
+interface LocalUiAdapter {
+    fun openLocalSession(
         clientVersion: Int,
         context: Context,
         sessionData: SessionData,

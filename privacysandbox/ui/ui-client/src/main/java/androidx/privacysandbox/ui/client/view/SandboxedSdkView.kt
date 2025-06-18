@@ -37,22 +37,22 @@ import androidx.tracing.trace
 import kotlin.math.min
 
 /** A listener for events relating to the SandboxedSdkView UI presentation. */
-public interface SandboxedSdkViewEventListener {
+interface SandboxedSdkViewEventListener {
     /**
      * Called when the UI is committed to the display. The UI might still not be visible to the user
      * at this point due to the SandboxedSdkView's properties. This is the point where the
      * SandboxedSdkView can be made visible to the user.
      */
-    public fun onUiDisplayed()
+    fun onUiDisplayed()
 
     /**
      * Called when an error occurs in the [SandboxedSdkView]'s UI session. Use [error].getMessage()
      * to get the error message from the UI provider.
      */
-    public fun onUiError(error: Throwable)
+    fun onUiError(error: Throwable)
 
     /** Called when the UI session of the [SandboxedSdkView] is closed. */
-    public fun onUiClosed()
+    fun onUiClosed()
 }
 
 /** A type of client that may get refresh requests (to re-establish a session) */
@@ -65,9 +65,8 @@ internal interface RefreshableSessionClient : SessionClient {
     fun onSessionRefreshRequested(callback: Consumer<Boolean>)
 }
 
-public class SandboxedSdkView
-@JvmOverloads
-constructor(context: Context, attrs: AttributeSet? = null) : ViewGroup(context, attrs) {
+class SandboxedSdkView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null) :
+    ViewGroup(context, attrs) {
     private companion object {
         private const val TAG = "SandboxedSdkView"
     }
@@ -104,7 +103,7 @@ constructor(context: Context, attrs: AttributeSet? = null) : ViewGroup(context, 
      *
      * To remove the eventListener, set the eventListener as null.
      */
-    public fun setEventListener(eventListener: SandboxedSdkViewEventListener?) {
+    fun setEventListener(eventListener: SandboxedSdkViewEventListener?) {
         this.eventListener = eventListener
     }
 
@@ -115,7 +114,7 @@ constructor(context: Context, attrs: AttributeSet? = null) : ViewGroup(context, 
      *   [SandboxedUiAdapter] is passed then it's no-op. If null value is passed then it closes any
      *   existing sessions.
      */
-    public fun setAdapter(sandboxedUiAdapter: SandboxedUiAdapter?) {
+    fun setAdapter(sandboxedUiAdapter: SandboxedUiAdapter?) {
         if (this.adapter === sandboxedUiAdapter) return
         client?.close()
         client = null
@@ -137,7 +136,7 @@ constructor(context: Context, attrs: AttributeSet? = null) : ViewGroup(context, 
      * surface will be visible.
      */
     @ExperimentalFeatures.ChangingContentUiZOrderApi
-    public fun orderProviderUiAboveClientUi(providerUiOnTop: Boolean) {
+    fun orderProviderUiAboveClientUi(providerUiOnTop: Boolean) {
         if (providerUiOnTop == isZOrderOnTop) return
         client?.notifyZOrderChanged(providerUiOnTop)
         isZOrderOnTop = providerUiOnTop
@@ -157,9 +156,7 @@ constructor(context: Context, attrs: AttributeSet? = null) : ViewGroup(context, 
      *   on window detachment. When false, it will follow the default behaviour that the session
      *   will be closed by SandboxedSdkView on window detachment.
      */
-    public fun preserveSessionOnWindowDetachment(
-        preserveSessionOnWindowDetachment: Boolean = true
-    ) {
+    fun preserveSessionOnWindowDetachment(preserveSessionOnWindowDetachment: Boolean = true) {
         this.closeSessionOnWindowDetachment = !preserveSessionOnWindowDetachment
     }
 

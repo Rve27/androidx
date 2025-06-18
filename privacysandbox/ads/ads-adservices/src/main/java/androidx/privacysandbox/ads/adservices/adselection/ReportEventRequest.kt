@@ -40,13 +40,13 @@ import androidx.privacysandbox.ads.adservices.internal.AdServicesInfo
  */
 @OptIn(ExperimentalFeatures.Ext10OptIn::class)
 @ExperimentalFeatures.Ext8OptIn
-public class ReportEventRequest
+class ReportEventRequest
 @JvmOverloads
 public constructor(
-    public val adSelectionId: Long,
-    public val eventKey: String,
-    public val eventData: String,
-    @ReportingDestination public val reportingDestinations: Int,
+    val adSelectionId: Long,
+    val eventKey: String,
+    val eventData: String,
+    @ReportingDestination val reportingDestinations: Int,
     // Note: public experimental properties are not allowed because the accessors will not appear
     // experimental to Java clients. There is a public accessor for this property below.
     @property:ExperimentalFeatures.Ext10OptIn private val inputEvent: InputEvent? = null,
@@ -63,7 +63,7 @@ public constructor(
 
     /** Gets the input event associated with the user interaction. */
     @ExperimentalFeatures.Ext10OptIn
-    public fun getInputEvent(): InputEvent? {
+    fun getInputEvent(): InputEvent? {
         return inputEvent
     }
 
@@ -105,12 +105,12 @@ public constructor(
                 Companion.FLAG_REPORTING_DESTINATION_BUYER,
             ],
     )
-    public annotation class ReportingDestination
+    annotation class ReportingDestination
 
-    public companion object {
-        public const val FLAG_REPORTING_DESTINATION_SELLER: Int =
+    companion object {
+        const val FLAG_REPORTING_DESTINATION_SELLER: Int =
             android.adservices.adselection.ReportEventRequest.FLAG_REPORTING_DESTINATION_SELLER
-        public const val FLAG_REPORTING_DESTINATION_BUYER: Int =
+        const val FLAG_REPORTING_DESTINATION_BUYER: Int =
             android.adservices.adselection.ReportEventRequest.FLAG_REPORTING_DESTINATION_BUYER
     }
 

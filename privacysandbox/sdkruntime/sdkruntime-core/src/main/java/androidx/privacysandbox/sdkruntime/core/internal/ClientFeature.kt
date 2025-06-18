@@ -24,7 +24,7 @@ import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerCo
  * ([ClientApiVersion]).
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public enum class ClientFeature {
+enum class ClientFeature {
     /**
      * Support for retrieving client app package name:
      * [SdkSandboxControllerCompat.getClientPackageName]
@@ -38,10 +38,10 @@ public enum class ClientFeature {
      */
     CLIENT_IMPORTANCE_LISTENER;
 
-    public val availableFrom: ClientApiVersion
+    val availableFrom: ClientApiVersion
         get() = ClientApiVersion.minAvailableVersionFor(this)
 
-    public fun isAvailable(apiLevel: Int): Boolean {
+    fun isAvailable(apiLevel: Int): Boolean {
         return apiLevel >= availableFrom.apiLevel
     }
 }

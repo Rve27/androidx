@@ -22,6 +22,6 @@ import androidx.privacysandbox.ui.core.ClientAdapterWrapper
 
 /** ui-client implementation of the interface for client side UI adapters. */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public open class ClientAdapter(public val adapterBundle: Bundle) : ClientAdapterWrapper {
+open class ClientAdapter(val adapterBundle: Bundle) : ClientAdapterWrapper {
     override fun getSourceBundle(): Bundle = adapterBundle
 }
