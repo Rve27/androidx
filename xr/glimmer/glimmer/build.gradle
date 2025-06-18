@@ -63,7 +63,7 @@ android {
 
 androidx {
     name = "Glimmer"
-    type = SoftwareType.SNAPSHOT_ONLY_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
+    type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
     inceptionYear = "2025"
     description = "Glimmer, the UI library for augmented Android XR experiences"
     addGoldenImageAssets()
