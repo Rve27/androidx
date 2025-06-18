@@ -165,3 +165,5 @@ Unable to release compile session, maybe daemon is already down.*
 java\.net\.ConnectException: Connection refused
 java\.net\.SocketException: Connection reset
 java\.io\.EOFException
+# b/425976715
+Warning: Unable to lock settings file \$GRADLE_USER_HOME/\.android/analytics\.settings.*
