@@ -370,19 +370,19 @@ public final class RuntimeUtilsTest {
     }
 
     @Test
-    public void getIsSpatialEnvironmentPreferenceActive_convertsFromExtensionState() {
+    public void getIsPreferredSpatialEnvironmentActive_convertsFromExtensionState() {
         assertThat(
-                        RuntimeUtils.getIsSpatialEnvironmentPreferenceActive(
+                        RuntimeUtils.getIsPreferredSpatialEnvironmentActive(
                                 EnvironmentVisibilityState.INVISIBLE))
                 .isFalse();
 
         assertThat(
-                        RuntimeUtils.getIsSpatialEnvironmentPreferenceActive(
+                        RuntimeUtils.getIsPreferredSpatialEnvironmentActive(
                                 EnvironmentVisibilityState.HOME_VISIBLE))
                 .isFalse();
 
         assertThat(
-                        RuntimeUtils.getIsSpatialEnvironmentPreferenceActive(
+                        RuntimeUtils.getIsPreferredSpatialEnvironmentActive(
                                 EnvironmentVisibilityState.APP_VISIBLE))
                 .isTrue();
     }

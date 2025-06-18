@@ -90,7 +90,7 @@ class SplitEngine : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        session.scene.spatialEnvironment.setPassthroughOpacityPreference(0.0f)
+        session.scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
 
         setContent {
             var title = intent.getStringExtra("TITLE")
@@ -100,20 +100,17 @@ class SplitEngine : ComponentActivity() {
     }
 
     private fun togglePassthrough(session: Session) {
-        val passthroughOpacity: Float =
-            session.scene.spatialEnvironment.getCurrentPassthroughOpacity()
+        val passthroughOpacity: Float = session.scene.spatialEnvironment.currentPassthroughOpacity
         Log.i("TogglePassthrough", "TogglePassthrough!")
         when (passthroughOpacity) {
-            0.0f -> session.scene.spatialEnvironment.setPassthroughOpacityPreference(1.0f)
-            1.0f -> session.scene.spatialEnvironment.setPassthroughOpacityPreference(0.0f)
+            0.0f -> session.scene.spatialEnvironment.preferredPassthroughOpacity = 1.0f
+            1.0f -> session.scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
         }
     }
 
     private fun setSkyboxAndGeometry(skybox: ExrImage?, geometry: GltfModel?) {
         spatialEnvironmentPreference = SpatialEnvironmentPreference(skybox, geometry)
-        session.scene.spatialEnvironment.setSpatialEnvironmentPreference(
-            spatialEnvironmentPreference
-        )
+        session.scene.spatialEnvironment.preferredSpatialEnvironment = spatialEnvironmentPreference
     }
 
     // TODO: b/324947709 - Refactor common @Composable code into a utility library for common usage

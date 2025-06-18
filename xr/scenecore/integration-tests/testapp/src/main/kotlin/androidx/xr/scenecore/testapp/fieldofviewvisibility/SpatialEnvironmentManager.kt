@@ -52,17 +52,15 @@ class SpatialEnvironmentManager(
         activity.findViewById<Button>(R.id.button_set_both_geometry_and_skybox).also {
             it.setOnClickListener {
                 mSpatialEnvironmentPreference = SpatialEnvironmentPreference(skybox, geometry)
-                val unused =
-                    session.scene.spatialEnvironment.setSpatialEnvironmentPreference(
-                        mSpatialEnvironmentPreference
-                    )
+                session.scene.spatialEnvironment.preferredSpatialEnvironment =
+                    mSpatialEnvironmentPreference
             }
         }
 
         activity.findViewById<Button>(R.id.button_revert_to_system_default_env).also {
             it.setOnClickListener {
                 mSpatialEnvironmentPreference = null
-                session.scene.spatialEnvironment.setSpatialEnvironmentPreference(null)
+                session.scene.spatialEnvironment.preferredSpatialEnvironment = null
             }
         }
     }

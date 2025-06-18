@@ -1350,45 +1350,27 @@ package androidx.xr.runtime.internal {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatialEnvironment {
-    method public void addOnPassthroughOpacityChangedListener(java.util.function.Consumer<java.lang.Float> listener);
-    method public void addOnSpatialEnvironmentChangedListener(java.util.function.Consumer<java.lang.Boolean> listener);
+    method public void addOnPassthroughOpacityChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Float> listener);
+    method public void addOnSpatialEnvironmentChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Boolean> listener);
     method public float getCurrentPassthroughOpacity();
-    method public Float? getPassthroughOpacityPreference();
-    method public androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? getSpatialEnvironmentPreference();
-    method public boolean isSpatialEnvironmentPreferenceActive();
+    method public float getPreferredPassthroughOpacity();
+    method public androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? getPreferredSpatialEnvironment();
+    method public boolean isPreferredSpatialEnvironmentActive();
     method public void removeOnPassthroughOpacityChangedListener(java.util.function.Consumer<java.lang.Float> listener);
     method public void removeOnSpatialEnvironmentChangedListener(java.util.function.Consumer<java.lang.Boolean> listener);
-    method public int setPassthroughOpacityPreference(Float? passthroughOpacityPreference);
-    method public int setSpatialEnvironmentPreference(androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? preference);
+    method public void setPreferredPassthroughOpacity(float);
+    method public void setPreferredSpatialEnvironment(androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference?);
     property public abstract float currentPassthroughOpacity;
-    property public abstract Float? passthroughOpacityPreference;
-    property public abstract androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? spatialEnvironmentPreference;
+    property public abstract boolean isPreferredSpatialEnvironmentActive;
+    property public abstract float preferredPassthroughOpacity;
+    property public abstract androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? preferredSpatialEnvironment;
+    field public static final androidx.xr.runtime.internal.SpatialEnvironment.Companion Companion;
+    field public static final float NO_PASSTHROUGH_OPACITY_PREFERENCE = (-1.0f/0.0f);
   }
 
-  @IntDef({androidx.xr.runtime.internal.SpatialEnvironment.SetPassthroughOpacityPreferenceResult.Companion.CHANGE_APPLIED, androidx.xr.runtime.internal.SpatialEnvironment.SetPassthroughOpacityPreferenceResult.Companion.CHANGE_PENDING}) @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.SOURCE) @kotlin.annotation.Target(allowedTargets=kotlin.annotation.AnnotationTarget.TYPE) public static @interface SpatialEnvironment.SetPassthroughOpacityPreferenceResult {
-    field public static final int CHANGE_APPLIED = 0; // 0x0
-    field public static final int CHANGE_PENDING = 1; // 0x1
-    field public static final androidx.xr.runtime.internal.SpatialEnvironment.SetPassthroughOpacityPreferenceResult.Companion Companion;
-  }
-
-  public static final class SpatialEnvironment.SetPassthroughOpacityPreferenceResult.Companion {
-    property public static int CHANGE_APPLIED;
-    property public static int CHANGE_PENDING;
-    field public static final int CHANGE_APPLIED = 0; // 0x0
-    field public static final int CHANGE_PENDING = 1; // 0x1
-  }
-
-  @IntDef({androidx.xr.runtime.internal.SpatialEnvironment.SetSpatialEnvironmentPreferenceResult.Companion.CHANGE_APPLIED, androidx.xr.runtime.internal.SpatialEnvironment.SetSpatialEnvironmentPreferenceResult.Companion.CHANGE_PENDING}) @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.SOURCE) @kotlin.annotation.Target(allowedTargets=kotlin.annotation.AnnotationTarget.TYPE) public static @interface SpatialEnvironment.SetSpatialEnvironmentPreferenceResult {
-    field public static final int CHANGE_APPLIED = 0; // 0x0
-    field public static final int CHANGE_PENDING = 1; // 0x1
-    field public static final androidx.xr.runtime.internal.SpatialEnvironment.SetSpatialEnvironmentPreferenceResult.Companion Companion;
-  }
-
-  public static final class SpatialEnvironment.SetSpatialEnvironmentPreferenceResult.Companion {
-    property public static int CHANGE_APPLIED;
-    property public static int CHANGE_PENDING;
-    field public static final int CHANGE_APPLIED = 0; // 0x0
-    field public static final int CHANGE_PENDING = 1; // 0x1
+  public static final class SpatialEnvironment.Companion {
+    property public static float NO_PASSTHROUGH_OPACITY_PREFERENCE;
+    field public static final float NO_PASSTHROUGH_OPACITY_PREFERENCE = (-1.0f/0.0f);
   }
 
   public static final class SpatialEnvironment.SpatialEnvironmentPreference {

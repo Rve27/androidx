@@ -536,19 +536,20 @@ package androidx.xr.runtime.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSpatialEnvironment implements androidx.xr.runtime.internal.SpatialEnvironment {
     ctor public FakeSpatialEnvironment();
-    method public void addOnPassthroughOpacityChangedListener(java.util.function.Consumer<java.lang.Float> listener);
-    method public void addOnSpatialEnvironmentChangedListener(java.util.function.Consumer<java.lang.Boolean> listener);
+    method public void addOnPassthroughOpacityChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Float> listener);
+    method public void addOnSpatialEnvironmentChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Boolean> listener);
     method public float getCurrentPassthroughOpacity();
-    method public Float? getPassthroughOpacityPreference();
-    method public androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? getSpatialEnvironmentPreference();
-    method public boolean isSpatialEnvironmentPreferenceActive();
+    method public float getPreferredPassthroughOpacity();
+    method public androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? getPreferredSpatialEnvironment();
+    method public boolean isPreferredSpatialEnvironmentActive();
     method public void removeOnPassthroughOpacityChangedListener(java.util.function.Consumer<java.lang.Float> listener);
     method public void removeOnSpatialEnvironmentChangedListener(java.util.function.Consumer<java.lang.Boolean> listener);
-    method public int setPassthroughOpacityPreference(Float? passthroughOpacityPreference);
-    method public int setSpatialEnvironmentPreference(androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? preference);
+    method public void setPreferredPassthroughOpacity(float);
+    method public void setPreferredSpatialEnvironment(androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference?);
     property public float currentPassthroughOpacity;
-    property public Float? passthroughOpacityPreference;
-    property public androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? spatialEnvironmentPreference;
+    property public boolean isPreferredSpatialEnvironmentActive;
+    property public float preferredPassthroughOpacity;
+    property public androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? preferredSpatialEnvironment;
   }
 
   public final class FakeSpatialModeChangeListener implements androidx.xr.runtime.internal.SpatialModeChangeListener {

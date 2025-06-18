@@ -755,68 +755,37 @@ package androidx.xr.scenecore {
     property public static int SPATIAL_CAPABILITY_UI;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialEnvironment {
+  public final class SpatialEnvironment {
     ctor public SpatialEnvironment(androidx.xr.runtime.internal.JxrPlatformAdapter runtime);
+    method public void addOnPassthroughOpacityChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Float> listener);
     method public void addOnPassthroughOpacityChangedListener(java.util.function.Consumer<java.lang.Float> listener);
+    method public void addOnSpatialEnvironmentChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Boolean> listener);
     method public void addOnSpatialEnvironmentChangedListener(java.util.function.Consumer<java.lang.Boolean> listener);
     method public float getCurrentPassthroughOpacity();
-    method @Deprecated public androidx.xr.scenecore.SpatialEnvironment.PassthroughMode getPassthroughMode();
-    method @Deprecated public float getPassthroughOpacity();
-    method public Float? getPassthroughOpacityPreference();
-    method public androidx.xr.scenecore.SpatialEnvironment.SpatialEnvironmentPreference? getSpatialEnvironmentPreference();
-    method public boolean isSpatialEnvironmentPreferenceActive();
+    method public float getPreferredPassthroughOpacity();
+    method public androidx.xr.scenecore.SpatialEnvironment.SpatialEnvironmentPreference? getPreferredSpatialEnvironment();
+    method public boolean isPreferredSpatialEnvironmentActive();
     method public void removeOnPassthroughOpacityChangedListener(java.util.function.Consumer<java.lang.Float> listener);
     method public void removeOnSpatialEnvironmentChangedListener(java.util.function.Consumer<java.lang.Boolean> listener);
-    method @Deprecated public void setGeometry(androidx.xr.scenecore.GltfModel? gltfModel);
-    method @Deprecated public void setPassthrough(androidx.xr.scenecore.SpatialEnvironment.PassthroughMode passthroughMode);
-    method @Deprecated public void setPassthroughOpacity(float passthroughOpacity);
-    method @com.google.errorprone.annotations.CanIgnoreReturnValue public androidx.xr.scenecore.SpatialEnvironment.SetPassthroughOpacityPreferenceResult setPassthroughOpacityPreference(Float? passthroughOpacityPreference);
-    method @Deprecated public void setSkybox(androidx.xr.scenecore.ExrImage? exrImage);
-    method @com.google.errorprone.annotations.CanIgnoreReturnValue public androidx.xr.scenecore.SpatialEnvironment.SetSpatialEnvironmentPreferenceResult setSpatialEnvironmentPreference(androidx.xr.scenecore.SpatialEnvironment.SpatialEnvironmentPreference? environmentPreference);
+    method public void setPreferredPassthroughOpacity(float);
+    method public void setPreferredSpatialEnvironment(androidx.xr.scenecore.SpatialEnvironment.SpatialEnvironmentPreference?);
+    property public float currentPassthroughOpacity;
+    property public boolean isPreferredSpatialEnvironmentActive;
+    property public float preferredPassthroughOpacity;
+    property public androidx.xr.scenecore.SpatialEnvironment.SpatialEnvironmentPreference? preferredSpatialEnvironment;
+    field public static final androidx.xr.scenecore.SpatialEnvironment.Companion Companion;
+    field public static final float NO_PASSTHROUGH_OPACITY_PREFERENCE = (-1.0f/0.0f);
   }
 
-  @Deprecated public static final class SpatialEnvironment.PassthroughMode {
-    method @Deprecated public int getValue();
-    property @Deprecated public int value;
-    field @Deprecated public static final androidx.xr.scenecore.SpatialEnvironment.PassthroughMode.Companion Companion;
-    field @Deprecated public static final androidx.xr.scenecore.SpatialEnvironment.PassthroughMode DISABLED;
-    field @Deprecated public static final androidx.xr.scenecore.SpatialEnvironment.PassthroughMode ENABLED;
-    field @Deprecated public static final androidx.xr.scenecore.SpatialEnvironment.PassthroughMode UNINITIALIZED;
-  }
-
-  @Deprecated public static final class SpatialEnvironment.PassthroughMode.Companion {
-    property @Deprecated public androidx.xr.scenecore.SpatialEnvironment.PassthroughMode DISABLED;
-    property @Deprecated public androidx.xr.scenecore.SpatialEnvironment.PassthroughMode ENABLED;
-    property @Deprecated public androidx.xr.scenecore.SpatialEnvironment.PassthroughMode UNINITIALIZED;
-  }
-
-  public static final class SpatialEnvironment.SetPassthroughOpacityPreferenceChangeApplied extends androidx.xr.scenecore.SpatialEnvironment.SetPassthroughOpacityPreferenceResult {
-    ctor public SpatialEnvironment.SetPassthroughOpacityPreferenceChangeApplied();
-  }
-
-  public static final class SpatialEnvironment.SetPassthroughOpacityPreferenceChangePending extends androidx.xr.scenecore.SpatialEnvironment.SetPassthroughOpacityPreferenceResult {
-    ctor public SpatialEnvironment.SetPassthroughOpacityPreferenceChangePending();
-  }
-
-  public abstract static sealed class SpatialEnvironment.SetPassthroughOpacityPreferenceResult {
-  }
-
-  public static final class SpatialEnvironment.SetSpatialEnvironmentPreferenceChangeApplied extends androidx.xr.scenecore.SpatialEnvironment.SetSpatialEnvironmentPreferenceResult {
-    ctor public SpatialEnvironment.SetSpatialEnvironmentPreferenceChangeApplied();
-  }
-
-  public static final class SpatialEnvironment.SetSpatialEnvironmentPreferenceChangePending extends androidx.xr.scenecore.SpatialEnvironment.SetSpatialEnvironmentPreferenceResult {
-    ctor public SpatialEnvironment.SetSpatialEnvironmentPreferenceChangePending();
-  }
-
-  public abstract static sealed class SpatialEnvironment.SetSpatialEnvironmentPreferenceResult {
+  public static final class SpatialEnvironment.Companion {
+    property public static float NO_PASSTHROUGH_OPACITY_PREFERENCE;
   }
 
   public static final class SpatialEnvironment.SpatialEnvironmentPreference {
     ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry);
-    ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, optional androidx.xr.scenecore.Material? geometryMaterial);
-    ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, optional androidx.xr.scenecore.Material? geometryMaterial, optional String? geometryMeshName);
-    ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, optional androidx.xr.scenecore.Material? geometryMaterial, optional String? geometryMeshName, optional String? geometryAnimationName);
+    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) internal SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, androidx.xr.scenecore.Material? geometryMaterial);
+    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) internal SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, androidx.xr.scenecore.Material? geometryMaterial, optional String? geometryMeshName);
+    ctor @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) internal SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, androidx.xr.scenecore.Material? geometryMaterial, optional String? geometryMeshName, optional String? geometryAnimationName);
     method public androidx.xr.scenecore.GltfModel? getGeometry();
     method public androidx.xr.scenecore.ExrImage? getSkybox();
     property public androidx.xr.scenecore.GltfModel? geometry;

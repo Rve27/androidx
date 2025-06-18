@@ -140,7 +140,7 @@ class VideoPlayerActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        session.scene.spatialEnvironment.setPassthroughOpacityPreference(0.0f)
+        session.scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
         setContent { Subspace { VideoOptionsContent(session) } }
     }
 
