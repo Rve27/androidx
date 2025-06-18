@@ -40,8 +40,12 @@ package androidx.xr.glimmer {
     ctor public GlimmerTheme();
     ctor public GlimmerTheme(optional androidx.xr.glimmer.Colors colors, optional androidx.xr.glimmer.Typography typography);
     method public androidx.xr.glimmer.Colors getColors();
+    method public androidx.xr.glimmer.IconSizes getIconSizes();
+    method public androidx.xr.glimmer.Shapes getShapes();
     method public androidx.xr.glimmer.Typography getTypography();
     property public androidx.xr.glimmer.Colors colors;
+    property public androidx.xr.glimmer.IconSizes iconSizes;
+    property public androidx.xr.glimmer.Shapes shapes;
     property public androidx.xr.glimmer.Typography typography;
     field public static final androidx.xr.glimmer.GlimmerTheme.Companion Companion;
   }
@@ -49,11 +53,17 @@ package androidx.xr.glimmer {
   public static final class GlimmerTheme.Companion {
     method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.Colors getColors();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.Colors getColors(androidx.compose.runtime.Composer?, int);
+    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.IconSizes getIconSizes();
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.IconSizes getIconSizes(androidx.compose.runtime.Composer?, int);
     method public androidx.compose.runtime.CompositionLocal<androidx.xr.glimmer.GlimmerTheme> getLocalGlimmerTheme();
+    method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.Shapes getShapes();
+    method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.Shapes getShapes(androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.Typography getTypography();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.Typography getTypography(androidx.compose.runtime.Composer?, int);
     property public androidx.compose.runtime.CompositionLocal<androidx.xr.glimmer.GlimmerTheme> LocalGlimmerTheme;
     property @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.Colors colors;
+    property @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.IconSizes iconSizes;
+    property @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.Shapes shapes;
     property @androidx.compose.runtime.Composable @androidx.compose.runtime.ReadOnlyComposable public androidx.xr.glimmer.Typography typography;
   }
 
@@ -75,6 +85,36 @@ package androidx.xr.glimmer {
     method @androidx.compose.runtime.Composable public static void Icon(androidx.compose.ui.graphics.vector.ImageVector imageVector, long tint, String? contentDescription, optional androidx.compose.ui.Modifier modifier);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void Icon-sW7UJKQ(androidx.compose.ui.graphics.ImageBitmap, long, String?, androidx.compose.ui.Modifier?, androidx.compose.runtime.Composer?, int, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableTarget(applier="androidx.compose.ui.UiComposable") public static void Icon-sW7UJKQ(androidx.compose.ui.graphics.vector.ImageVector, long, String?, androidx.compose.ui.Modifier?, androidx.compose.runtime.Composer?, int, int);
+    method public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.unit.Dp> getLocalIconSize();
+    property public static androidx.compose.runtime.ProvidableCompositionLocal<androidx.compose.ui.unit.Dp> LocalIconSize;
+  }
+
+  @androidx.compose.runtime.Immutable public final class IconSizes {
+    ctor public IconSizes();
+    ctor public IconSizes(optional float small, optional float medium, optional float large);
+    method public androidx.xr.glimmer.IconSizes copy(optional float small, optional float medium, optional float large);
+    method @BytecodeOnly public androidx.xr.glimmer.IconSizes copy-2z7ARbQ(float, float, float);
+    method public float getLarge();
+    method @BytecodeOnly public float getLarge-D9Ej5fM();
+    method public float getMedium();
+    method @BytecodeOnly public float getMedium-D9Ej5fM();
+    method public float getSmall();
+    method @BytecodeOnly public float getSmall-D9Ej5fM();
+    property public float large;
+    property public float medium;
+    property public float small;
+  }
+
+  @androidx.compose.runtime.Immutable public final class Shapes {
+    ctor public Shapes();
+    ctor public Shapes(optional androidx.compose.ui.graphics.Shape small, optional androidx.compose.ui.graphics.Shape medium, optional androidx.compose.ui.graphics.Shape large);
+    method public androidx.xr.glimmer.Shapes copy(optional androidx.compose.ui.graphics.Shape small, optional androidx.compose.ui.graphics.Shape medium, optional androidx.compose.ui.graphics.Shape large);
+    method public androidx.compose.ui.graphics.Shape getLarge();
+    method public androidx.compose.ui.graphics.Shape getMedium();
+    method public androidx.compose.ui.graphics.Shape getSmall();
+    property public androidx.compose.ui.graphics.Shape large;
+    property public androidx.compose.ui.graphics.Shape medium;
+    property public androidx.compose.ui.graphics.Shape small;
   }
 
   public final class SurfaceDefaults {
@@ -82,8 +122,6 @@ package androidx.xr.glimmer {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke border(androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke border(optional float width, optional long color);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.BorderStroke border-kbKKJSQ(float, long, androidx.compose.runtime.Composer?, int, int);
-    method public androidx.compose.ui.graphics.Shape getShape();
-    property public androidx.compose.ui.graphics.Shape Shape;
     field public static final androidx.xr.glimmer.SurfaceDefaults INSTANCE;
   }
 

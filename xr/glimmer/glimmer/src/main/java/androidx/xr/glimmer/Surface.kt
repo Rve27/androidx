@@ -34,7 +34,6 @@ import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -51,7 +50,6 @@ import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
-import androidx.xr.glimmer.SurfaceDefaults.Shape
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -100,7 +98,7 @@ import org.intellij.lang.annotations.Language
 @Composable
 public fun Modifier.surface(
     focusable: Boolean = true,
-    shape: Shape = SurfaceDefaults.Shape,
+    shape: Shape = GlimmerTheme.shapes.medium,
     color: Color = GlimmerTheme.colors.surface,
     contentColor: Color = calculateContentColor(color),
     border: BorderStroke? = SurfaceDefaults.border(),
@@ -148,7 +146,7 @@ public fun Modifier.surface(
 @Composable
 public fun Modifier.surface(
     enabled: Boolean = true,
-    shape: Shape = SurfaceDefaults.Shape,
+    shape: Shape = GlimmerTheme.shapes.medium,
     color: Color = GlimmerTheme.colors.surface,
     contentColor: Color = calculateContentColor(color),
     border: BorderStroke? = SurfaceDefaults.border(),
@@ -166,9 +164,6 @@ public fun Modifier.surface(
 
 /** Default values used for [surface]. */
 public object SurfaceDefaults {
-    /** The default [Shape] used for a [surface] */
-    public val Shape: Shape = RoundedCornerShape(40.dp)
-
     /**
      * Create the default [BorderStroke] used for a [surface]. Use the other overload in order to
      * change the width or color.

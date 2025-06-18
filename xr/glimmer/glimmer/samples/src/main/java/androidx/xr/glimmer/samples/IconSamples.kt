@@ -17,11 +17,15 @@
 package androidx.xr.glimmer.samples
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -36,10 +40,12 @@ import androidx.xr.glimmer.surface
 @Composable
 fun IconSampleUsage() {
     LazyColumn(
+        Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        item { Icon(FavoriteIcon, "Localized description") }
+        item { IconSizesSample() }
         item {
             Icon(
                 FavoriteIcon,
@@ -52,6 +58,20 @@ fun IconSampleUsage() {
                     .padding(12.dp),
             )
         }
+    }
+}
+
+@Composable
+fun IconSizesSample() {
+    val iconSizes = GlimmerTheme.iconSizes
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Icon(FavoriteIcon, "Localized description", Modifier.size(iconSizes.small))
+        // medium is also the default size, defining explicitly for clarity
+        Icon(FavoriteIcon, "Localized description", Modifier.size(iconSizes.medium))
+        Icon(FavoriteIcon, "Localized description", Modifier.size(iconSizes.large))
     }
 }
 
