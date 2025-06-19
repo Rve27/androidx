@@ -33,9 +33,12 @@ import androidx.camera.testing.impl.CameraUtil
 import androidx.camera.testing.impl.CameraUtil.PreTestCameraIdList
 import androidx.camera.testing.impl.fakes.FakeLifecycleOwner
 import androidx.camera.viewfinder.core.ImplementationMode
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -185,9 +188,10 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
     }
 
     @Test
-    fun removeViewfinder_andAddWithSameSurfaceRequest_invalidatesRequest() = runViewfinderTest {
-        var showContent by mutableStateOf(true)
+    fun removingViewfinder_andAddingWithSameSurfaceRequest_recovers() = runViewfinderTest {
+        val showViewfinderContent = mutableStateOf(true)
         composeTest.setContent {
+            var showContent by remember { showViewfinderContent }
             val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
             if (showContent) {
                 currentSurfaceRequest?.let { surfaceRequest ->
@@ -216,14 +220,14 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
         ensureCameraIsStreaming()
 
         // Remove the Viewfinder from the composition
-        showContent = false
+        showViewfinderContent.value = false
 
         composeTest.waitUntil(timeoutMillis = 5000) {
             composeTest.onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG).isNotDisplayed()
         }
 
         // Add the Viewfinder back to the composition
-        showContent = true
+        showViewfinderContent.value = true
 
         composeTest.awaitIdle()
 
@@ -238,8 +242,69 @@ class CameraXViewfinderTest(private val implName: String, private val cameraConf
                 surfaceRequests.filterNotNull().first { it != firstSurfaceRequest }
             }
 
+        ensureCameraIsStreaming()
+
         // A new surface request should have been created since the old one was invalidated
         assertThat(newSurfaceRequest).isNotNull()
+    }
+
+    @Test
+    fun movableContentOf_recoversAfterMove() = runViewfinderTest {
+        val moveViewfinderContent = mutableStateOf(false)
+        composeTest.setContent {
+            val currentSurfaceRequest: SurfaceRequest? by surfaceRequests.collectAsState()
+
+            Column {
+                val content = remember {
+                    movableContentOf {
+                        currentSurfaceRequest?.let { surfaceRequest ->
+                            CameraXViewfinder(
+                                surfaceRequest = surfaceRequest,
+                                implementationMode = ImplementationMode.EXTERNAL,
+                                modifier = Modifier.testTag(CAMERAX_VIEWFINDER_TEST_TAG),
+                            )
+                        }
+                    }
+                }
+
+                var moveContent by remember { moveViewfinderContent }
+
+                if (moveContent) {
+                    content()
+                } else {
+                    content()
+                }
+            }
+        }
+
+        // Start the camera
+        startCamera()
+
+        // Wait for first SurfaceRequest
+        surfaceRequests.filterNotNull().first()
+
+        composeTest.awaitIdle()
+
+        // CameraXViewfinder should now have a child Viewfinder
+        composeTest
+            .onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG)
+            .assertIsDisplayed()
+            .assert(SemanticsMatcher.hasChild())
+
+        ensureCameraIsStreaming()
+
+        // Move the content
+        moveViewfinderContent.value = true
+
+        composeTest.awaitIdle()
+
+        // CameraXViewfinder should still have a child Viewfinder
+        composeTest
+            .onNodeWithTag(CAMERAX_VIEWFINDER_TEST_TAG)
+            .assertIsDisplayed()
+            .assert(SemanticsMatcher.hasChild())
+
+        ensureCameraIsStreaming()
     }
 
     companion object {

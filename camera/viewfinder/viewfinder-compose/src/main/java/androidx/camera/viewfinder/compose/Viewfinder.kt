@@ -54,6 +54,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.util.fastRoundToInt
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
 
@@ -328,3 +329,24 @@ private class ViewfinderInitScopeImpl(val viewfinderSurfaceRequest: ViewfinderSu
         }
     }
 }
+
+/**
+ * Thrown within a [ViewfinderSurfaceSessionScope] of an [ViewfinderInitScope.onSurfaceSession]
+ * callback when the underlying [Surface] provided to the session has been replaced by the
+ * Viewfinder implementation.
+ *
+ * The Viewfinder attempts to keep a [ViewfinderSurfaceSessionScope] active for as long as possible.
+ * However, on certain older API levels or when specific Compose features like
+ * [androidx.compose.runtime.movableContentOf] are used with some Viewfinder implementations, the
+ * underlying `Surface` may need to be replaced even if the `Viewfinder` composable itself has not
+ * been disposed or recomposed with a new [ViewfinderSurfaceRequest].
+ *
+ * When a surface session is cancelled with this exception, it indicates that the current
+ * [ViewfinderSurfaceSessionScope] is no longer valid. Clients should expect that
+ * [ViewfinderInitScope.onSurfaceSession] will be invoked again shortly with a new, valid
+ * [ViewfinderSurfaceSessionScope] once the cancelled session fully completes.
+ *
+ * @see ViewfinderInitScope.onSurfaceSession
+ * @see ViewfinderSurfaceSessionScope
+ */
+internal class SurfaceReplacedCancellationException : CancellationException("Surface replaced")
