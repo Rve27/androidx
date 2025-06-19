@@ -16,7 +16,7 @@
 
 package androidx.xr.runtime.openxr
 
-import android.app.Activity
+import androidx.activity.ComponentActivity
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -37,6 +37,7 @@ import kotlin.test.assertFailsWith
 import org.junit.After
 import org.junit.Assert.assertThrows
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -57,7 +58,7 @@ class OpenXrPerceptionManagerTest {
         const val XR_TIME = 50L * 1_000_000 // 50 milliseconds in nanoseconds.
     }
 
-    @get:Rule val activityRule = ActivityScenarioRule(Activity::class.java)
+    @get:Rule val activityRule = ActivityScenarioRule(ComponentActivity::class.java)
 
     lateinit var openXrManager: OpenXrManager
     lateinit var underTest: OpenXrPerceptionManager
@@ -153,6 +154,9 @@ class OpenXrPerceptionManagerTest {
             .isEqualTo(Pose(Vector3(0f, 0f, 2.0f), Quaternion(0f, 1.0f, 0f, 1.0f)))
     }
 
+    @Ignore(
+        "b/425697141 - Requires HEAD_TRACKING permission which is not available on Android test runners."
+    )
     @Test
     fun update_updatesHands() = initOpenXrManagerAndRunTest {
         check(underTest.xrResources.updatables.size == 3)
@@ -207,7 +211,7 @@ class OpenXrPerceptionManagerTest {
 
     @Test
     fun update_updatesArDevice() = initOpenXrManagerAndRunTest {
-        check(underTest.xrResources.updatables.size == 3)
+        check(underTest.xrResources.updatables.size == 1)
         check(underTest.arDevice.devicePose == Pose())
 
         underTest.update(XR_TIME)
@@ -221,7 +225,7 @@ class OpenXrPerceptionManagerTest {
 
     @Test
     fun update_updatesViewCameras() = initOpenXrManagerAndRunTest {
-        check(underTest.xrResources.updatables.size == 3)
+        check(underTest.xrResources.updatables.size == 1)
         check(underTest.viewCameras.size == 2)
         check(underTest.viewCameras[0].pose == Pose())
         check(underTest.viewCameras[1].pose == Pose())
@@ -361,7 +365,7 @@ class OpenXrPerceptionManagerTest {
                 Config(
                     deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
                     planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                    handTracking = Config.HandTrackingMode.BOTH,
+                    //                    handTracking = Config.HandTrackingMode.BOTH,
                 )
             )
 

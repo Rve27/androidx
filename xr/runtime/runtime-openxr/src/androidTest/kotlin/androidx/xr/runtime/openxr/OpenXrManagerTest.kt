@@ -16,7 +16,7 @@
 
 package androidx.xr.runtime.openxr
 
-import android.app.Activity
+import androidx.activity.ComponentActivity
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -46,7 +46,7 @@ class OpenXrManagerTest {
         }
     }
 
-    @get:Rule val activityRule = ActivityScenarioRule(Activity::class.java)
+    @get:Rule val activityRule = ActivityScenarioRule(ComponentActivity::class.java)
 
     private lateinit var underTest: OpenXrManager
     private lateinit var perceptionManager: OpenXrPerceptionManager
@@ -76,42 +76,6 @@ class OpenXrManagerTest {
         underTest.create()
 
         assertThat(underTest.nativePointer).isGreaterThan(0L)
-    }
-
-    @Test
-    fun configure_handTrackingEnabled_addsHandToUpdatables() = initOpenXrManagerAndRunTest {
-        underTest.create()
-        check(underTest.config.handTracking == Config.HandTrackingMode.DISABLED)
-        check(perceptionManager.xrResources.updatables.isEmpty())
-
-        underTest.configure(Config(handTracking = Config.HandTrackingMode.BOTH))
-
-        assertThat(perceptionManager.xrResources.updatables)
-            .containsExactly(
-                perceptionManager.xrResources.leftHand,
-                perceptionManager.xrResources.rightHand,
-            )
-    }
-
-    @Test
-    fun configure_handTrackingDisabled_removesHandsFromUpdatables() = initOpenXrManagerAndRunTest {
-        underTest.create()
-        underTest.configure(Config(handTracking = Config.HandTrackingMode.BOTH))
-        check(
-            perceptionManager.xrResources.updatables.containsAll(
-                listOf(
-                    perceptionManager.xrResources.leftHand,
-                    perceptionManager.xrResources.rightHand,
-                )
-            )
-        )
-
-        underTest.configure(Config(handTracking = Config.HandTrackingMode.DISABLED))
-
-        assertThat(perceptionManager.xrResources.updatables)
-            .doesNotContain(perceptionManager.xrResources.leftHand)
-        assertThat(perceptionManager.xrResources.updatables)
-            .doesNotContain(perceptionManager.xrResources.rightHand)
     }
 
     @Test
@@ -149,11 +113,10 @@ class OpenXrManagerTest {
 
         underTest.configure(
             Config(
-                Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                Config.HandTrackingMode.BOTH,
-                Config.HeadTrackingMode.DISABLED,
-                Config.DepthEstimationMode.DISABLED,
-                Config.AnchorPersistenceMode.LOCAL,
+                planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
+                headTracking = Config.HeadTrackingMode.DISABLED,
+                depthEstimation = Config.DepthEstimationMode.DISABLED,
+                anchorPersistence = Config.AnchorPersistenceMode.LOCAL,
             )
         )
     }

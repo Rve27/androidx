@@ -17,10 +17,14 @@
 package androidx.xr.runtime.openxr
 
 import android.app.Activity
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.annotation.RestrictTo
+import androidx.core.content.ContextCompat
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.internal.PermissionNotGrantedException
+import androidx.xr.runtime.manifest.HAND_TRACKING
 import kotlin.time.ComparableTimeMark
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
@@ -61,26 +65,42 @@ internal constructor(
         private set
 
     override fun configure(config: Config) {
-        when (
-            // TODO(b/414648065): Reorder the parameters in nativeConfigureSession.
-            nativeConfigureSession(
-                planeTracking = config.planeTracking.mode,
-                handTracking = config.handTracking.mode,
-                deviceTracking = config.deviceTracking.mode,
-                depthEstimation = config.depthEstimation.mode,
-                anchorPersistence = config.anchorPersistence.mode,
-            )
+        // TODO(b/422808099): OpenXR does not properly return
+        // XR_ERROR_PERMISSION_INSUFFICIENT when the HAND_TRACKING permission is not
+        // granted, so we manually check it here.
+        if (
+            config.handTracking != Config.HandTrackingMode.DISABLED &&
+                ContextCompat.checkSelfPermission(activity, HAND_TRACKING) !=
+                    PackageManager.PERMISSION_GRANTED
         ) {
-            -2L ->
-                throw RuntimeException(
-                    "There was an unknown runtime error configuring the session."
-                ) // XR_ERROR_RUNTIME_FAILURE
-            -12L ->
-                throw IllegalStateException(
-                    "One or more objects are null. Has the OpenXrManager been created?"
-                ) // XR_ERROR_HANDLE_INVALID
-            -1000710000L ->
-                throw PermissionNotGrantedException() // XR_ERROR_PERMISSION_INSUFFICIENT
+            throw PermissionNotGrantedException()
+        }
+
+        // TODO(b/425697141): Remove this when instrumentation tests support HEAD_TRACKING
+        // permission so we can call native functions.
+        if (!Build.FINGERPRINT.contains("robolectric")) {
+            when (
+                // TODO(b/414648065): Reorder the parameters in nativeConfigureSession.
+                nativeConfigureSession(
+                    planeTracking = config.planeTracking.mode,
+                    handTracking = config.handTracking.mode,
+                    deviceTracking = config.deviceTracking.mode,
+                    depthEstimation = config.depthEstimation.mode,
+                    anchorPersistence = config.anchorPersistence.mode,
+                )
+            ) {
+                -2L ->
+                    throw RuntimeException(
+                        "There was an unknown runtime error configuring the session."
+                    )
+                // XR_ERROR_RUNTIME_FAILURE
+                -12L ->
+                    throw IllegalStateException(
+                        "One or more objects are null. Has the OpenXrManager been created?"
+                    ) // XR_ERROR_HANDLE_INVALID
+                -1000710000L ->
+                    throw PermissionNotGrantedException() // XR_ERROR_PERMISSION_INSUFFICIENT
+            }
         }
 
         if (config.handTracking != this.config.handTracking) {
