@@ -53,7 +53,6 @@ import androidx.camera.camera2.pipe.integration.adapter.ZslControl
 import androidx.camera.camera2.pipe.integration.compat.DynamicRangeProfilesCompat
 import androidx.camera.camera2.pipe.integration.compat.quirk.CameraQuirks
 import androidx.camera.camera2.pipe.integration.compat.quirk.CaptureSessionStuckQuirk
-import androidx.camera.camera2.pipe.integration.compat.quirk.CloseCameraDeviceOnCameraGraphCloseQuirk
 import androidx.camera.camera2.pipe.integration.compat.quirk.CloseCaptureSessionOnDisconnectQuirk
 import androidx.camera.camera2.pipe.integration.compat.quirk.CloseCaptureSessionOnVideoQuirk
 import androidx.camera.camera2.pipe.integration.compat.quirk.DeviceQuirks
@@ -61,6 +60,7 @@ import androidx.camera.camera2.pipe.integration.compat.quirk.DisableAbortCapture
 import androidx.camera.camera2.pipe.integration.compat.quirk.DisableAbortCapturesOnStopWithSessionProcessorQuirk
 import androidx.camera.camera2.pipe.integration.compat.quirk.FinalizeSessionOnCloseQuirk
 import androidx.camera.camera2.pipe.integration.compat.quirk.QuickSuccessiveImageCaptureFailsRepeatingRequestQuirk
+import androidx.camera.camera2.pipe.integration.compat.workaround.CloseCameraOnCameraGraphClose
 import androidx.camera.camera2.pipe.integration.compat.workaround.TemplateParamsOverride
 import androidx.camera.camera2.pipe.integration.config.CameraConfig
 import androidx.camera.camera2.pipe.integration.config.CameraScope
@@ -1239,7 +1239,7 @@ constructor(
                 }
 
             val shouldCloseCameraDeviceOnClose =
-                DeviceQuirks[CloseCameraDeviceOnCameraGraphCloseQuirk::class.java] != null
+                closeCameraOnCameraGraphClose.shouldCloseCameraDevice(isExtensions)
 
             val shouldAbortCapturesOnStop =
                 when {
@@ -1312,5 +1312,7 @@ constructor(
 
             return dynamicRangeProfile
         }
+
+        private val closeCameraOnCameraGraphClose = CloseCameraOnCameraGraphClose()
     }
 }

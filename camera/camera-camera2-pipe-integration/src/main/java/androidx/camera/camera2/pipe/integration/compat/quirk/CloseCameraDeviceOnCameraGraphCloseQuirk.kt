@@ -18,6 +18,7 @@ package androidx.camera.camera2.pipe.integration.compat.quirk
 
 import android.annotation.SuppressLint
 import android.os.Build
+import androidx.camera.camera2.pipe.integration.compat.quirk.Device.isXiaomiDevice
 import androidx.camera.core.impl.Quirk
 
 /**
@@ -27,7 +28,7 @@ import androidx.camera.core.impl.Quirk
  * the camera device.
  *
  * QuirkSummary
- * - Bug Id: 282871038, 369300443
+ * - Bug Id: 282871038, 369300443, 425588561
  * - Description: Instructs CameraPipe to close the camera device before creating a new capture
  *   session to avoid undesirable behaviors
  *
@@ -35,6 +36,15 @@ import androidx.camera.core.impl.Quirk
  */
 @SuppressLint("CameraXQuirksClassDetector")
 public class CloseCameraDeviceOnCameraGraphCloseQuirk : Quirk {
+
+    public fun shouldCloseCameraDevice(isExtensions: Boolean): Boolean =
+        if (isXiaomiProblematicDevice) {
+            // Xiaomi 14 Ultra needs to apply the quirk only when Extensions is enabled.
+            isExtensions
+        } else {
+            true
+        }
+
     public companion object {
         @JvmStatic
         public fun isEnabled(): Boolean {
@@ -51,8 +61,15 @@ public class CloseCameraDeviceOnCameraGraphCloseQuirk : Quirk {
                 // OplusHansManager actively "freezes" app processes, which means we cannot delay
                 // closing the camera device for any amount of time.
                 return true
+            } else if (isXiaomiProblematicDevice) {
+                // When Extensions is enabled, switching modes might cause the black screen issue.
+                // Applying this quirk when Extensions is enabled will fix it.
+                return true
             }
             return false
         }
+
+        private val isXiaomiProblematicDevice: Boolean =
+            isXiaomiDevice() && "aurora".equals(Build.DEVICE, ignoreCase = true) // Xiaomi 14 Ultra
     }
 }
