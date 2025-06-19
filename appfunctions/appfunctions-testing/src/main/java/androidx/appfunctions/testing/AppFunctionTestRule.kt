@@ -37,7 +37,7 @@ import org.junit.runners.model.Statement
  * automatically registered in this environment during initialization, provided the
  * `appfunctions-compiler` is applied to the test configuration.
  */
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 public class AppFunctionTestRule(private val context: Context) : TestRule {
     // TODO: b/418017070 - Dynamic registration and changing app function enabled state API(s).
     // TODO: b/418017070 - Support function execution.

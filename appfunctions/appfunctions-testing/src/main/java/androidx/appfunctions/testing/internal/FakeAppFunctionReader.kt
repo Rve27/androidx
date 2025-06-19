@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
-@RequiresApi(Build.VERSION_CODES.S)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 internal class FakeAppFunctionReader(context: Context) : AppFunctionReader {
 
     private val packageToFunctionMetadataMapState:

@@ -43,8 +43,8 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(minSdk = Build.VERSION_CODES.TIRAMISU)
-@SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
+@Config(minSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+@SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 class AppFunctionTestRuleTest {
     private val context = InstrumentationRegistry.getInstrumentation().context
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
