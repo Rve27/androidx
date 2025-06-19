@@ -1580,9 +1580,8 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
         int aspectRatio = mediaSpec.getVideoSpec().getAspectRatio();
         Map<Quality, Size> supportedQualityToSizeMap = getQualityToResolutionMap(videoCapabilities,
                 requestedDynamicRange);
-        List<Size> supportedResolutions = sessionType == SESSION_TYPE_HIGH_SPEED
-                ? cameraInfo.getSupportedHighSpeedResolutionsFor(targetFrameRate)
-                : cameraInfo.getSupportedResolutions(getImageFormat());
+        List<Size> supportedResolutions = getSupportedResolutions(cameraInfo, sessionType,
+                targetFrameRate);
         QualityRatioToResolutionsTable qualityRatioTable = new QualityRatioToResolutionsTable(
                 supportedResolutions, supportedQualityToSizeMap);
         // Use LinkedHashMap to maintain the order.
@@ -1620,6 +1619,20 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
     @NonNull
     private Range<Integer> getTargetFrameRate(@NonNull VideoCaptureConfig<T> useCaseConfig) {
         return requireNonNull(useCaseConfig.getTargetFrameRate(FRAME_RATE_RANGE_UNSPECIFIED));
+    }
+
+    private @NonNull List<Size> getSupportedResolutions(
+            @NonNull CameraInfoInternal cameraInfo, int sessionType,
+            @NonNull Range<Integer> targetFrameRate) {
+        List<Size> supportedResolutions;
+        if (sessionType == SESSION_TYPE_HIGH_SPEED) {
+            supportedResolutions = FRAME_RATE_RANGE_UNSPECIFIED.equals(targetFrameRate)
+                    ? cameraInfo.getSupportedHighSpeedResolutions()
+                    : cameraInfo.getSupportedHighSpeedResolutionsFor(targetFrameRate);
+        } else {
+            supportedResolutions = cameraInfo.getSupportedResolutions(getImageFormat());
+        }
+        return supportedResolutions;
     }
 
     private static @NonNull LinkedHashMap<Quality, List<Size>>
