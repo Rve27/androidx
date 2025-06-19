@@ -37,6 +37,7 @@ import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
+import androidx.pdf.models.ListItem
 import kotlin.random.Random
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -68,7 +69,7 @@ import kotlinx.coroutines.withTimeout
 @OpenForTesting
 internal open class FakePdfDocument(
     /** A list of (x, y) page dimensions in content coordinates */
-    private val pages: List<Point?> = listOf(),
+    internal val pages: List<Point?> = listOf(),
     override val formType: Int = PDF_FORM_TYPE_NONE,
     override val isLinearized: Boolean = false,
     private val searchResults: SparseArray<List<PageMatchBounds>> = SparseArray(),
@@ -251,6 +252,7 @@ internal open class FakePdfDocument(
         fun newInstance(): FakePdfDocument =
             FakePdfDocument(
                 pages = List(10) { Point(100, 200) },
+                formType = PdfDocument.PDF_FORM_TYPE_ACRO_FORM,
                 textContents =
                     List(10) { index ->
                         PdfPageTextContent(
@@ -283,6 +285,33 @@ internal open class FakePdfDocument(
                                         )
                                     ),
                             )
+                    ),
+                pageFormWidgetInfos =
+                    mapOf(
+                        0 to
+                            listOf(
+                                FormWidgetInfo(
+                                    widgetType = FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON,
+                                    widgetIndex = 0,
+                                    widgetRect = Rect(50, 500, 100, 600),
+                                    textValue = "false",
+                                    accessibilityLabel = "Radio",
+                                )
+                            ),
+                        1 to
+                            listOf(
+                                FormWidgetInfo(
+                                    widgetType = FormWidgetInfo.WIDGET_TYPE_LISTBOX,
+                                    widgetIndex = 0,
+                                    widgetRect = Rect(50, 400, 100, 550),
+                                    textValue = "Banana",
+                                    accessibilityLabel = "ListBox",
+                                    listItems =
+                                        listOf(ListItem("Apple", false), ListItem("Banana", false)),
+                                    multiSelect = true,
+                                    readOnly = true,
+                                )
+                            ),
                     ),
             )
     }

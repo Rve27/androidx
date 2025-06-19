@@ -108,6 +108,13 @@ internal class Page(
         }
 
     internal var formWidgetInfos: List<FormWidgetInfo>? = formWidgetInfos
+        private set(value) {
+            field = value
+            formWidgetIndexToInfoMap = value?.associateBy { it.widgetIndex }
+        }
+
+    internal var formWidgetIndexToInfoMap: Map<Int, FormWidgetInfo>? =
+        formWidgetInfos?.associateBy { it.widgetIndex }
         private set
 
     //  Checks if the content of this page within the specified visible area is fully rendered.

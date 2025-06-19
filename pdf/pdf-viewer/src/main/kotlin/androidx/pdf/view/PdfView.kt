@@ -1636,7 +1636,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private fun setAccessibility() {
         if (pageMetadataLoader != null && pageManager != null) {
             pdfViewAccessibilityManager =
-                PdfViewAccessibilityManager(this, pageMetadataLoader!!, pageManager!!) {
+                PdfViewAccessibilityManager(
+                    this,
+                    pageMetadataLoader!!,
+                    pageManager!!,
+                    formWidgetInteractionHandler!!,
+                ) {
                     fastScroller
                 }
             ViewCompat.setAccessibilityDelegate(this, pdfViewAccessibilityManager)
