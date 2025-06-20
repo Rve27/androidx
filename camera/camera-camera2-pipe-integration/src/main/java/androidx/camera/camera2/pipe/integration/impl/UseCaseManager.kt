@@ -800,6 +800,7 @@ constructor(
                         getCameraMode(),
                         useCase.currentConfig.inputFormat,
                         surfaceResolution,
+                        useCase.currentConfig.streamUseCase,
                     )
                 add(
                     AttachedSurfaceInfo.create(
@@ -841,6 +842,7 @@ constructor(
                             getCameraMode(),
                             useCase.currentConfig.inputFormat,
                             deferrableSurface.prescribedSize,
+                            useCase.currentConfig.streamUseCase,
                         )
                     )
                 }
@@ -852,6 +854,7 @@ constructor(
             getCameraMode(),
             meteringRepeating.imageFormat,
             meteringRepeating.attachedSurfaceResolution!!,
+            meteringRepeating.currentConfig.streamUseCase,
         )
 
     private fun Collection<UseCase>.surfaceCount(): Int =

@@ -35,6 +35,7 @@ import static androidx.camera.core.impl.UseCaseConfig.OPTION_DEFAULT_CAPTURE_CON
 import static androidx.camera.core.impl.UseCaseConfig.OPTION_DEFAULT_SESSION_CONFIG;
 import static androidx.camera.core.impl.UseCaseConfig.OPTION_HIGH_RESOLUTION_DISABLED;
 import static androidx.camera.core.impl.UseCaseConfig.OPTION_SESSION_CONFIG_UNPACKER;
+import static androidx.camera.core.impl.UseCaseConfig.OPTION_STREAM_USE_CASE;
 import static androidx.camera.core.impl.UseCaseConfig.OPTION_SURFACE_OCCUPANCY_PRIORITY;
 import static androidx.camera.core.impl.UseCaseConfig.OPTION_TARGET_FRAME_RATE;
 import static androidx.camera.core.impl.UseCaseConfig.OPTION_VIDEO_STABILIZATION_MODE;
@@ -109,6 +110,7 @@ import androidx.camera.core.impl.Observable.Observer;
 import androidx.camera.core.impl.OptionsBundle;
 import androidx.camera.core.impl.SessionConfig;
 import androidx.camera.core.impl.StreamSpec;
+import androidx.camera.core.impl.StreamUseCase;
 import androidx.camera.core.impl.Timebase;
 import androidx.camera.core.impl.UseCaseConfig;
 import androidx.camera.core.impl.UseCaseConfigFactory;
@@ -875,6 +877,7 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
     public static final class Defaults implements ConfigProvider<VideoCaptureConfig<?>> {
         /** Surface occupancy priority to this use case */
         private static final int DEFAULT_SURFACE_OCCUPANCY_PRIORITY = 5;
+        private static final StreamUseCase DEFAULT_STREAM_USE_CASE = StreamUseCase.VIDEO_RECORD;
         private static final VideoOutput DEFAULT_VIDEO_OUTPUT =
                 SurfaceRequest::willNotProvideSurface;
         private static final VideoCaptureConfig<?> DEFAULT_CONFIG;
@@ -894,6 +897,7 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
         static {
             Builder<?> builder = new Builder<>(DEFAULT_VIDEO_OUTPUT)
                     .setSurfaceOccupancyPriority(DEFAULT_SURFACE_OCCUPANCY_PRIORITY)
+                    .setStreamUseCase(DEFAULT_STREAM_USE_CASE)
                     .setVideoEncoderInfoFinder(DEFAULT_VIDEO_ENCODER_INFO_FINDER)
                     .setDynamicRange(DEFAULT_DYNAMIC_RANGE);
 
@@ -2276,6 +2280,13 @@ public final class VideoCapture<T extends VideoOutput> extends UseCase {
         public @NonNull Builder<T> setCaptureType(
                 UseCaseConfigFactory.@NonNull CaptureType captureType) {
             getMutableConfig().insertOption(OPTION_CAPTURE_TYPE, captureType);
+            return this;
+        }
+
+        @RestrictTo(Scope.LIBRARY_GROUP)
+        @Override
+        public @NonNull Builder<T> setStreamUseCase(@NonNull StreamUseCase streamUseCase) {
+            getMutableConfig().insertOption(OPTION_STREAM_USE_CASE, streamUseCase);
             return this;
         }
 
