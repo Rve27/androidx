@@ -302,6 +302,7 @@ internal fun BasicTextField(
             null
         }
     val toolbarRequester = remember { ToolbarRequesterImpl() }
+    val currentClipboard = LocalClipboard.current
     val textFieldSelectionState =
         remember(transformedState) {
             TextFieldSelectionState(
@@ -315,10 +316,10 @@ internal fun BasicTextField(
                 toolbarRequester = toolbarRequester,
                 coroutineScope = coroutineScope,
                 platformSelectionBehaviors = platformSelectionBehaviors,
+                clipboard = currentClipboard,
             )
         }
     val currentHapticFeedback = LocalHapticFeedback.current
-    val currentClipboard = LocalClipboard.current
     val currentTextToolbar = LocalTextToolbar.current
 
     val textToolbarHandler =

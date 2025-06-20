@@ -238,7 +238,7 @@ class TextFieldContextMenuTest : FocusedWindowTest {
 
         var value by mutableStateOf(TextFieldValue(text = text, selection = selection))
 
-        val clipboard = FakeClipboard(initialText = initialClipboardText, supportsClipEntry = true)
+        val clipboard = FakeClipboard(initialClipboardText)
 
         rule.setTextFieldTestContent {
             CompositionLocalProvider(LocalClipboard provides clipboard) {
@@ -533,7 +533,7 @@ class TextFieldContextMenuTest : FocusedWindowTest {
             if (isPassword) PasswordVisualTransformation() else VisualTransformation.None
 
         val clipboard =
-            FakeClipboard(supportsClipEntry = true).apply {
+            FakeClipboard().apply {
                 if (isEmptyClipboard) {
                     setClipEntry(null)
                 } else {
@@ -708,7 +708,7 @@ class TextFieldContextMenuTest : FocusedWindowTest {
 
         val state = TextFieldState(initialText = text, initialSelection = selection)
 
-        val clipboard = FakeClipboard(initialText = initialClipboardText, supportsClipEntry = true)
+        val clipboard = FakeClipboard(initialClipboardText)
 
         rule.setTextFieldTestContent {
             CompositionLocalProvider(LocalClipboard provides clipboard) {
@@ -979,7 +979,7 @@ class TextFieldContextMenuTest : FocusedWindowTest {
             )
 
         val clipboard =
-            FakeClipboard(supportsClipEntry = true).apply {
+            FakeClipboard().apply {
                 if (isEmptyClipboard) {
                     setClipEntry(null)
                 } else {

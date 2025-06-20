@@ -161,7 +161,7 @@ open class SelectionContainerContextMenuTest {
         text: String = defaultText,
         assertionBlock: suspend (Selection?, clipboard: Clipboard) -> Unit,
     ) {
-        val clipboard = FakeClipboard(initialText = initialClipboardText, supportsClipEntry = true)
+        val clipboard = FakeClipboard(initialClipboardText)
 
         var selection by mutableStateOf<Selection?>(null)
         rule.setContent {
@@ -286,7 +286,7 @@ open class SelectionContainerContextMenuTest {
     ) {
         val text = "Text Text Text"
 
-        val clipboard = FakeClipboard(initialText = "Clipboard Text", supportsClipEntry = true)
+        val clipboard = FakeClipboard("Clipboard Text")
 
         var selection by mutableStateOf<Selection?>(null)
 

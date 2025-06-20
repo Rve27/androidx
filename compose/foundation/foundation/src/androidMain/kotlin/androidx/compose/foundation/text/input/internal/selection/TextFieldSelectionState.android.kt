@@ -33,6 +33,7 @@ import androidx.compose.foundation.text.selection.addPlatformTextContextMenuItem
 import androidx.compose.foundation.text.textItem
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.Clipboard
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
@@ -113,5 +114,25 @@ internal actual fun Modifier.addBasicTextFieldTextContextMenuComponents(
             }
             separator()
         }
+    }
+}
+
+internal actual class ClipboardPasteState actual constructor(private val clipboard: Clipboard) {
+    private var _hasClip: Boolean = false
+    private var _hasText: Boolean = false
+
+    actual val hasText: Boolean
+        get() = _hasText
+
+    actual val hasClip: Boolean
+        get() = _hasClip
+
+    actual suspend fun update() {
+        // On Android, we don't need to read `clipEntry` to evaluate `canPaste`.
+        // Reading `clipEntry` directly can trigger a "App pasted from Clipboard" system warning.
+        _hasClip = clipboard.nativeClipboard.hasPrimaryClip()
+        _hasText =
+            _hasClip &&
+                clipboard.nativeClipboard.primaryClipDescription?.hasMimeType("text/*") == true
     }
 }
