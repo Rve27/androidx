@@ -118,6 +118,7 @@ androidXMultiplatform {
                 implementation(libs.testExtJunit)
                 implementation(libs.testRules)
                 implementation(libs.testRunner)
+                implementation(libs.espressoCore)
                 implementation(libs.truth)
             }
         }
