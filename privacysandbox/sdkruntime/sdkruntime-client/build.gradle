@@ -125,7 +125,6 @@ dependencies {
     androidTestImplementation(libs.dexmakerMockitoInline)
 
     androidTestBundleDex(project(":privacysandbox:sdkruntime:test-sdks:current"))
-    androidTestBundleDex(project(":privacysandbox:sdkruntime:test-sdks:v6"))
     androidTestBundleDex(project(":privacysandbox:sdkruntime:test-sdks:v7"))
 }
 

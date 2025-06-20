@@ -35,13 +35,13 @@ public enum class ClientApiVersion(
     private val newFeatures: Set<ClientFeature> = emptySet(),
 ) {
     V5__1_0_ALPHA13(apiLevel = 5),
-    V6__1_0_ALPHA14(
-        apiLevel = 6,
-        /** Temporary mark as stable to run tests for V6 and V7 */
+    V6__1_0_ALPHA14(apiLevel = 6, newFeatures = setOf(ClientFeature.GET_CLIENT_PACKAGE_NAME)),
+    V7__1_0_ALPHA16(
+        apiLevel = 7,
+        /** Temporary mark as stable to run cross version tests only for V7+ */
         stable = true,
-        newFeatures = setOf(ClientFeature.GET_CLIENT_PACKAGE_NAME),
+        newFeatures = setOf(ClientFeature.CLIENT_IMPORTANCE_LISTENER),
     ),
-    V7__1_0_ALPHA16(apiLevel = 7, newFeatures = setOf(ClientFeature.CLIENT_IMPORTANCE_LISTENER)),
 
     /**
      * Unreleased API version. Features not added to other versions will be automatically added here
