@@ -65,6 +65,7 @@ import androidx.xr.runtime.math.Vector3
 import androidx.xr.runtime.math.Vector4
 import com.google.androidxr.splitengine.SubspaceNode
 import com.google.common.util.concurrent.Futures.immediateFailedFuture
+import com.google.common.util.concurrent.Futures.immediateFuture
 import com.google.common.util.concurrent.ListenableFuture
 import java.time.Duration
 import java.util.UUID
@@ -139,7 +140,7 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
 
     @Suppress("AsyncSuffixFuture")
     override fun loadExrImageByAssetName(assetName: String): ListenableFuture<ExrImageResource> =
-        immediateFailedFuture<ExrImageResource>(NotImplementedError())
+        immediateFuture(FakeExrImageResource(0))
 
     @Suppress("AsyncSuffixFuture")
     override fun loadExrImageByByteArray(
