@@ -37,7 +37,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 
-// TODO: b/418017070 - Implement
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 internal class FakeAppFunctionManagerApi(
     private val context: Context,

@@ -39,8 +39,7 @@ import org.junit.runners.model.Statement
  */
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 public class AppFunctionTestRule(private val context: Context) : TestRule {
-    // TODO: b/418017070 - Dynamic registration and changing app function enabled state API(s).
-    // TODO: b/418017070 - Support function execution.
+    // TODO: b/426219836 - Dynamic registration and changing app function enabled state API(s).
     // TODO: b/425327400 - Move to use Robolectric shadows
 
     override fun apply(base: Statement?, description: Description?): Statement =
