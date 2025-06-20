@@ -44,7 +44,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.ExecutionException;
 
 @RunWith(AndroidJUnit4.class)
-public class ExrImageGuavaTest {
+public class GuavaExrImageTest {
     private Session mSession;
     private TestDispatcher mTestDispatcher;
 

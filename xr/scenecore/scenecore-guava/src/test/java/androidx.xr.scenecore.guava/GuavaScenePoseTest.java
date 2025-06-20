@@ -43,7 +43,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(AndroidJUnit4.class)
-public class ScenePoseGuavaTest {
+public class GuavaScenePoseTest {
     private Session mSession;
     private TestDispatcher mTestDispatcher;
     private Head mHead;
