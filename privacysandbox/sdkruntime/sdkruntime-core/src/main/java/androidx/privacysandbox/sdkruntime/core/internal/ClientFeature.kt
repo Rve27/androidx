@@ -17,6 +17,7 @@
 package androidx.privacysandbox.sdkruntime.core.internal
 
 import androidx.annotation.RestrictTo
+import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerBackendHolder
 import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerCompat
 
 /**
@@ -36,7 +37,10 @@ public enum class ClientFeature {
      * [SdkSandboxControllerCompat.registerSdkSandboxClientImportanceListener]
      * [SdkSandboxControllerCompat.unregisterSdkSandboxClientImportanceListener]
      */
-    CLIENT_IMPORTANCE_LISTENER;
+    CLIENT_IMPORTANCE_LISTENER,
+
+    /** Dedicated [SdkSandboxControllerBackendHolder] for setting local implementation. */
+    SDK_SANDBOX_CONTROLLER_BACKEND_HOLDER;
 
     public val availableFrom: ClientApiVersion
         get() = ClientApiVersion.minAvailableVersionFor(this)

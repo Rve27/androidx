@@ -33,13 +33,13 @@ import androidx.privacysandbox.sdkruntime.core.SdkSandboxClientImportanceListene
 import androidx.privacysandbox.sdkruntime.core.activity.ActivityHolder
 import androidx.privacysandbox.sdkruntime.core.activity.SdkSandboxActivityHandlerCompat
 import androidx.privacysandbox.sdkruntime.core.controller.LoadSdkCallback
-import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerCompat
+import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerBackend
 import java.util.concurrent.Executor
 
 /** Implementation that delegates to platform [SdkSandboxController] for Android U. */
 @RequiresApi(34)
 internal class PlatformUDCImpl(private val controller: SdkSandboxController, sdkContext: Context) :
-    SdkSandboxControllerCompat.SandboxControllerImpl {
+    SdkSandboxControllerBackend {
 
     private val appOwnedSdkProvider = AppOwnedSdkProvider.create(controller)
     private val sdkLoader = PlatformSdkLoader.create(controller)

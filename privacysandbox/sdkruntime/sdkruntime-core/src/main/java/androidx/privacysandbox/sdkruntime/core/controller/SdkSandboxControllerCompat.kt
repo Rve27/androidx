@@ -39,7 +39,6 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.suspendCancellableCoroutine
-import org.jetbrains.annotations.TestOnly
 
 /**
  * Compat version of [android.app.public sdksandbox.sdkprovider.SdkSandboxController].
@@ -56,7 +55,7 @@ import org.jetbrains.annotations.TestOnly
  * @see [SdkSandboxController]
  */
 public class SdkSandboxControllerCompat
-internal constructor(private val controllerImpl: SandboxControllerImpl) {
+internal constructor(private val controllerImpl: SdkSandboxControllerBackend) {
 
     /**
      * Load SDK in a SDK sandbox java process or locally.
@@ -192,9 +191,6 @@ internal constructor(private val controllerImpl: SandboxControllerImpl) {
     }
 
     public companion object {
-
-        private var localImpl: SandboxControllerImpl? = null
-
         /**
          * Creates [SdkSandboxControllerCompat].
          *
@@ -206,7 +202,7 @@ internal constructor(private val controllerImpl: SandboxControllerImpl) {
             val clientVersion = Versions.CLIENT_VERSION
             if (clientVersion != null) {
                 val implFromClient =
-                    localImpl
+                    SdkSandboxControllerBackendHolder.LOCAL_BACKEND
                         ?: throw UnsupportedOperationException(
                             "Shouldn't happen: No controller implementation available"
                         )
@@ -219,24 +215,18 @@ internal constructor(private val controllerImpl: SandboxControllerImpl) {
         /**
          * Inject implementation from client library. Implementation will be used only if loaded
          * locally. This method will be called from client side via reflection during loading SDK.
+         * New library versions should use [SdkSandboxControllerBackendHolder.injectLocalBackend].
          */
         @JvmStatic
         @Keep
         @RestrictTo(LIBRARY_GROUP)
         public fun injectLocalImpl(impl: SandboxControllerImpl) {
-            check(localImpl == null) { "Local implementation already injected" }
-            localImpl = impl
-        }
-
-        @TestOnly
-        @RestrictTo(LIBRARY_GROUP)
-        public fun resetLocalImpl() {
-            localImpl = null
+            SdkSandboxControllerBackendHolder.injectLegacyImpl(impl)
         }
     }
 
     private object PlatformImplFactory {
-        fun create(context: Context): SandboxControllerImpl {
+        fun create(context: Context): SdkSandboxControllerBackend {
             if (Build.VERSION.SDK_INT >= 34) {
                 return PlatformUDCImpl.from(context)
             }

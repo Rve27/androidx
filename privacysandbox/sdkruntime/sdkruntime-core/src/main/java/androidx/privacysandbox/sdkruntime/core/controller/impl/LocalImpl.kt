@@ -23,18 +23,18 @@ import androidx.privacysandbox.sdkruntime.core.SandboxedSdkCompat
 import androidx.privacysandbox.sdkruntime.core.SdkSandboxClientImportanceListenerCompat
 import androidx.privacysandbox.sdkruntime.core.activity.SdkSandboxActivityHandlerCompat
 import androidx.privacysandbox.sdkruntime.core.controller.LoadSdkCallback
-import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerCompat
+import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerBackend
 import androidx.privacysandbox.sdkruntime.core.internal.ClientFeature
 import java.util.concurrent.Executor
 
 /**
- * Wrapper for client provided implementation of [SdkSandboxControllerCompat]. Checks client version
- * to determine if method supported.
+ * Wrapper for client provided implementation of [SdkSandboxControllerBackend]. Checks client
+ * version to determine if method supported.
  */
 internal class LocalImpl(
-    private val implFromClient: SdkSandboxControllerCompat.SandboxControllerImpl,
+    private val implFromClient: SdkSandboxControllerBackend,
     private val clientVersion: Int,
-) : SdkSandboxControllerCompat.SandboxControllerImpl {
+) : SdkSandboxControllerBackend {
 
     override fun loadSdk(
         sdkName: String,
