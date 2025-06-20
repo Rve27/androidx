@@ -18,14 +18,37 @@ package androidx.xr.glimmer.list
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.assertHeightIsEqualTo
+import androidx.compose.ui.test.assertLeftPositionInRootIsEqualTo
+import androidx.compose.ui.test.assertTopPositionInRootIsEqualTo
+import androidx.compose.ui.test.assertWidthIsEqualTo
+import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.CoroutineScope
+import org.junit.Rule
 
 abstract class BaseListTestWithOrientation(protected val orientation: Orientation) {
 
-    protected val vertical: Boolean = orientation == Orientation.Vertical
+    @get:Rule val rule: ComposeContentTestRule = createComposeRule()
+
+    val vertical: Boolean
+        get() = orientation == Orientation.Vertical
+
+    lateinit var scope: CoroutineScope
 
     @Composable
     internal fun TestList(
@@ -37,6 +60,7 @@ abstract class BaseListTestWithOrientation(protected val orientation: Orientatio
         state: ListState = rememberListState(),
         itemsCount: Int = Int.MAX_VALUE,
         keyProvider: ((index: Int) -> Any)? = null,
+        contentPadding: PaddingValues = PaddingValues(),
         itemContent: @Composable (index: Int) -> Unit,
     ) {
         List(
@@ -47,8 +71,90 @@ abstract class BaseListTestWithOrientation(protected val orientation: Orientatio
             verticalAlignment = verticalAlignment,
             verticalArrangement = verticalArrangement,
             modifier = modifier.testTag(LIST_TEST_TAG),
+            contentPadding = contentPadding,
         ) {
             items(itemsCount, key = keyProvider) { index -> itemContent(index) }
+        }
+    }
+
+    @Stable
+    fun Modifier.mainAxisSize(size: Dp) =
+        if (vertical) {
+            this.height(size)
+        } else {
+            this.width(size)
+        }
+
+    @Stable
+    fun Modifier.fillCrossAxisSize() =
+        if (vertical) {
+            this.fillMaxWidth()
+        } else {
+            this.fillMaxHeight()
+        }
+
+    fun SemanticsNodeInteraction.assertMainAxisSizeIsEqualTo(expectedSize: Dp) =
+        if (vertical) {
+            assertHeightIsEqualTo(expectedSize)
+        } else {
+            assertWidthIsEqualTo(expectedSize)
+        }
+
+    fun SemanticsNodeInteraction.assertCrossAxisSizeIsEqualTo(expectedSize: Dp) =
+        if (vertical) {
+            assertWidthIsEqualTo(expectedSize)
+        } else {
+            assertHeightIsEqualTo(expectedSize)
+        }
+
+    fun SemanticsNodeInteraction.assertStartPositionInRootIsEqualTo(expectedStart: Dp) =
+        if (vertical) {
+            assertTopPositionInRootIsEqualTo(expectedStart)
+        } else {
+            assertLeftPositionInRootIsEqualTo(expectedStart)
+        }
+
+    fun SemanticsNodeInteraction.assertCrossAxisStartPositionInRootIsEqualTo(expectedStart: Dp) =
+        if (vertical) {
+            assertLeftPositionInRootIsEqualTo(expectedStart)
+        } else {
+            assertTopPositionInRootIsEqualTo(expectedStart)
+        }
+
+    fun PaddingValues(mainAxis: Dp = 0.dp, crossAxis: Dp = 0.dp) =
+        PaddingValues(
+            beforeContent = mainAxis,
+            afterContent = mainAxis,
+            beforeContentCrossAxis = crossAxis,
+            afterContentCrossAxis = crossAxis,
+        )
+
+    private fun PaddingValues(
+        beforeContent: Dp = 0.dp,
+        afterContent: Dp = 0.dp,
+        beforeContentCrossAxis: Dp = 0.dp,
+        afterContentCrossAxis: Dp = 0.dp,
+    ) =
+        if (vertical) {
+            androidx.compose.foundation.layout.PaddingValues(
+                start = beforeContentCrossAxis,
+                top = beforeContent,
+                end = afterContentCrossAxis,
+                bottom = afterContent,
+            )
+        } else {
+            androidx.compose.foundation.layout.PaddingValues(
+                start = beforeContent,
+                top = beforeContentCrossAxis,
+                end = afterContent,
+                bottom = afterContentCrossAxis,
+            )
+        }
+
+    protected fun ComposeContentTestRule.setContentAndSaveScope(content: @Composable () -> Unit) {
+        setContent {
+            scope = rememberCoroutineScope()
+            content()
         }
     }
 

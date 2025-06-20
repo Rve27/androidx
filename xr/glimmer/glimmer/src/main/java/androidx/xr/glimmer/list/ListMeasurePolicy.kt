@@ -93,7 +93,7 @@ internal fun rememberListMeasurePolicy(
 
             val measuredItemProvider =
                 GlimmerListMeasuredItemProvider(
-                    constraints = containerConstraints,
+                    constraints = layoutProperties.contentConstraints,
                     layoutProperties = layoutProperties,
                     itemProvider = itemProvider,
                     measureScope = this,

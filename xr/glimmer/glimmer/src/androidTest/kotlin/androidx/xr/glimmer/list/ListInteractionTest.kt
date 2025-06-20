@@ -20,8 +20,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.ui.layout.LocalPinnableContainer
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performScrollToIndex
@@ -29,7 +27,6 @@ import androidx.compose.ui.test.performScrollToKey
 import androidx.test.filters.MediumTest
 import androidx.xr.glimmer.Text
 import androidx.xr.glimmer.setGlimmerThemeContent
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -37,8 +34,6 @@ import org.junit.runners.Parameterized
 @MediumTest
 @RunWith(Parameterized::class)
 class ListInteractionTest(orientation: Orientation) : BaseListTestWithOrientation(orientation) {
-
-    @get:Rule val rule: ComposeContentTestRule = createComposeRule()
 
     @Test
     fun performScrollToIndex() {
