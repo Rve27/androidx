@@ -135,7 +135,12 @@ internal open class FakePdfDocument(
         stop: PointF,
     ): PageSelection {
         // TODO(b/376136631) provide a useful implementation when it's needed for testing
-        return PageSelection(0, SelectionBoundary(0), SelectionBoundary(0), listOf())
+        return PageSelection(
+            0,
+            SelectionBoundary(0),
+            SelectionBoundary(0),
+            listOf(PdfPageTextContent(listOf(RectF(0f, 0f, 10f, 10f)), "test")),
+        )
     }
 
     override suspend fun getSelectAllSelectionBounds(pageNumber: Int): PageSelection? {

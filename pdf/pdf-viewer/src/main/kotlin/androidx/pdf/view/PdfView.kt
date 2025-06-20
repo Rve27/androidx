@@ -16,6 +16,7 @@
 
 package androidx.pdf.view
 
+import android.R as androidR
 import android.animation.ValueAnimator
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -37,12 +38,12 @@ import android.util.SparseArray
 import android.view.ActionMode
 import android.view.KeyEvent
 import android.view.Menu
+import android.view.Menu.NONE
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.accessibility.AccessibilityManager
-import androidx.annotation.CallSuper
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
@@ -59,6 +60,10 @@ import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.models.FormWidgetInfo
+import androidx.pdf.selection.ContextMenuComponent
+import androidx.pdf.selection.PdfSelectionMenuKeys
+import androidx.pdf.selection.SelectionMenuComponent
+import androidx.pdf.selection.SelectionMenuSession
 import androidx.pdf.util.Accessibility
 import androidx.pdf.util.MathUtils
 import androidx.pdf.util.ZoomUtils
@@ -303,10 +308,29 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private var linkClickListener: LinkClickListener? = null
 
     /** The [ActionMode.Callback2] for selection */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public var selectionActionModeCallback: DefaultSelectionActionModeCallback =
+    private val selectionActionModeCallback: DefaultSelectionActionModeCallback =
         DefaultSelectionActionModeCallback(this)
+
+    /** Interface to customize the set of actions in the selection menu */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public interface SelectionMenuItemPreparer {
+        /**
+         * Customize the text selection menu, by adding items to or removing items from
+         * [components].
+         */
+        public fun onPrepareSelectionMenuItems(components: MutableList<ContextMenuComponent>)
+    }
+
+    private var selectionMenuItemPreparer: SelectionMenuItemPreparer? = null
+
+    /**
+     * The [SelectionMenuItemPreparer] for this View. If null, a default set of selection menu
+     * actions will be provided in all cases
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public fun setSelectionMenuItemPreparer(selectionMenuItemPreparer: SelectionMenuItemPreparer?) {
+        this.selectionMenuItemPreparer = selectionMenuItemPreparer
+    }
 
     /** The currently selected PDF content, as [Selection] */
     public val currentSelection: Selection?
@@ -1678,16 +1702,55 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         get() = pageMetadataLoader?.paginationModel?.totalEstimatedHeight ?: 0f
 
     /** The default [ActionMode.Callback2] for selection */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public open class DefaultSelectionActionModeCallback(private val pdfView: PdfView) :
-        ActionMode.Callback2() {
-        @CallSuper
+    private inner class DefaultSelectionActionModeCallback(private val pdfView: PdfView) :
+        ActionMode.Callback2(), SelectionMenuSession {
+
+        private val defaultMenuItems =
+            listOf<ContextMenuComponent>(
+                SelectionMenuComponent(
+                    key = PdfSelectionMenuKeys.CopyKey,
+                    label = context.getString(androidR.string.copy),
+                ) {
+                    // We can't copy the current selection if no text is selected
+                    val text = (currentSelection as? TextSelection)?.text
+                    if (text != null) copyToClipboard(text.toString())
+                    // close the context menu upon copy action
+                    close()
+                },
+                SelectionMenuComponent(
+                    key = PdfSelectionMenuKeys.SelectAllKey,
+                    label = context.getString(androidR.string.selectAll),
+                ) {
+                    val page = currentSelection?.bounds?.first()?.pageNum
+                    // We can't select all if we don't know what page the selection is on, or if
+                    // we don't know the size of that page
+                    if (page != null) selectionStateManager?.selectAllTextOnPageAsync(page)
+                },
+            )
+        private lateinit var selectionMenuItems: MutableList<ContextMenuComponent>
+
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             pdfView.selectionActionMode = mode
+            // Start afresh with the default menu items
+            selectionMenuItems = defaultMenuItems.toMutableList()
+            selectionMenuItemPreparer?.onPrepareSelectionMenuItems(selectionMenuItems)
 
-            // Inflate the menu resource providing context menu items.
-            val inflater = mode?.menuInflater
-            inflater?.inflate(R.menu.context_menu, menu)
+            selectionMenuItems.forEachIndexed { i, component ->
+                if (component is SelectionMenuComponent) {
+                    val menuItem =
+                        menu?.add(
+                            /* groupId = */ NONE,
+                            /* itemId = */ i,
+                            /* order = */ NONE,
+                            /* title = */ component.label,
+                        )
+                    component.contentDescription?.let { menuItem?.contentDescription = it }
+                    menuItem?.setOnMenuItemClickListener {
+                        component.onClick(this)
+                        true
+                    }
+                }
+            }
             return true
         }
 
@@ -1695,27 +1758,15 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             return false
         }
 
-        @CallSuper
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            if (item?.itemId == R.id.action_selectAll) {
-                // We can't select all if we don't know what page the selection is on, or if
-                // we don't know the size of that page
-                val page = pdfView.currentSelection?.bounds?.first()?.pageNum ?: return false
-                pdfView.selectionStateManager?.selectAllTextOnPageAsync(page)
-                return true
-            } else if (item?.itemId == R.id.action_copy) {
-                // We can't copy the current selection if no text is selected
-                val text =
-                    (pdfView.currentSelection as? TextSelection)?.textAsString() ?: return false
-                copyToClipboard(text)
-                pdfView.clearSelection()
-                return true
-            }
             return false
         }
 
+        override fun close() {
+            pdfView.clearSelection()
+        }
+
         private fun copyToClipboard(text: String) {
-            val context = pdfView.context
             val manager = context.getSystemService(ClipboardManager::class.java)
             val clip = ClipData.newPlainText(context.getString(R.string.clipboard_label), text)
             manager.setPrimaryClip(clip)
