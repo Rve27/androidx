@@ -455,6 +455,10 @@ public final class ImageCapture extends UseCase {
     @Override
     protected @NonNull UseCaseConfig<?> onMergeConfig(@NonNull CameraInfoInternal cameraInfo,
             UseCaseConfig.@NonNull Builder<?, ?, ?> builder) {
+        // Apply config like JPEG_R output format first so that configs like input format, dynamic
+        // range etc. can be set correctly later
+        applyFeatureGroupToConfig(builder);
+
         if (cameraInfo.getCameraQuirks().contains(SoftwareJpegEncodingPreferredQuirk.class)) {
             // Request software JPEG encoder if quirk exists on this device, and the software JPEG
             // option has not already been explicitly set.
@@ -513,8 +517,6 @@ public final class ImageCapture extends UseCase {
             }
         }
 
-        applyFeatureGroupToConfig(builder);
-
         return builder.getUseCaseConfig();
     }
 
@@ -550,12 +552,6 @@ public final class ImageCapture extends UseCase {
                 }
             }
 
-            int inputFormat = ImageFormat.JPEG;
-            if (imageCaptureOutputFormat == ImageCapture.OUTPUT_FORMAT_JPEG_ULTRA_HDR) {
-                inputFormat = ImageFormat.JPEG_R;
-            }
-
-            builder.getMutableConfig().insertOption(OPTION_INPUT_FORMAT, inputFormat);
             builder.getMutableConfig().insertOption(OPTION_OUTPUT_FORMAT, imageCaptureOutputFormat);
         }
     }
