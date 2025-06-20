@@ -273,7 +273,7 @@ public constructor(
          *
          * The AppFunction feature is supported,
          * * If SDK version is greater or equal to 36
-         * * If SDK version is greater or equal to 33 and the device implements App Function
+         * * If SDK version is greater or equal to 34 and the device implements App Function
          *   extension library.
          *
          * @return an instance of [AppFunctionManagerCompat] if the AppFunction feature is supported
@@ -294,7 +294,7 @@ public constructor(
                         Dependencies.translatorSelector,
                     )
                 }
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
                     isExtensionLibraryAvailable() -> {
                     AppFunctionManagerCompat(
                         context,
