@@ -21,6 +21,7 @@ import androidx.xr.runtime.internal.ActivityPose
 import androidx.xr.runtime.internal.ActivitySpace
 import androidx.xr.runtime.internal.Dimensions
 import androidx.xr.runtime.internal.HitTestResult
+import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.Vector3
 import com.google.common.util.concurrent.Futures.immediateFailedFuture
 import com.google.common.util.concurrent.ListenableFuture
@@ -43,4 +44,11 @@ public class FakeActivitySpace : ActivitySpace, FakeSystemSpaceEntity() {
         @ActivityPose.HitTestFilterValue hitTestFilter: Int,
         activityPose: ActivityPose,
     ): ListenableFuture<HitTestResult> = immediateFailedFuture(NotImplementedError())
+
+    override val recommendedContentBoxInFullSpace: BoundingBox
+        get() =
+            BoundingBox(
+                min = Vector3(-1.73f / 2, -1.61f / 2, -0.5f / 2),
+                max = Vector3(1.73f / 2, 1.61f / 2, 0.5f / 2),
+            )
 }

@@ -26,9 +26,11 @@ package androidx.xr.runtime.testing {
     ctor public FakeActivitySpace();
     method public void addOnBoundsChangedListener(androidx.xr.runtime.internal.ActivitySpace.OnBoundsChangedListener listener);
     method public androidx.xr.runtime.internal.Dimensions getBounds();
+    method public androidx.xr.runtime.math.BoundingBox getRecommendedContentBoxInFullSpace();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.HitTestResult> hitTestRelativeToActivityPose(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, @androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue int hitTestFilter, androidx.xr.runtime.internal.ActivityPose activityPose);
     method public void removeOnBoundsChangedListener(androidx.xr.runtime.internal.ActivitySpace.OnBoundsChangedListener listener);
     property public androidx.xr.runtime.internal.Dimensions bounds;
+    property public androidx.xr.runtime.math.BoundingBox recommendedContentBoxInFullSpace;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeAnchorEntity extends androidx.xr.runtime.testing.FakeSystemSpaceEntity implements androidx.xr.runtime.internal.AnchorEntity {

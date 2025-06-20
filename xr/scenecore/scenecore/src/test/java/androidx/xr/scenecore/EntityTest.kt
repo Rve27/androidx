@@ -47,6 +47,7 @@ import androidx.xr.runtime.internal.PixelDimensions as RtPixelDimensions
 import androidx.xr.runtime.internal.Space as RtSpace
 import androidx.xr.runtime.internal.SpatialCapabilities as RtSpatialCapabilities
 import androidx.xr.runtime.internal.SurfaceEntity as RtSurfaceEntity
+import androidx.xr.runtime.math.BoundingBox
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
@@ -240,6 +241,12 @@ class EntityTest {
         fun sendBoundsChanged(dimensions: RtDimensions) {
             boundsChangedListener?.onBoundsChanged(dimensions)
         }
+
+        override val recommendedContentBoxInFullSpace: BoundingBox =
+            BoundingBox(
+                min = Vector3(-1.73f / 2, -1.61f / 2, -0.5f / 2),
+                max = Vector3(1.73f / 2, 1.61f / 2, 0.5f / 2),
+            )
 
         override fun <T : RtComponent> getComponentsOfType(type: Class<out T>): List<T> =
             emptyList()
