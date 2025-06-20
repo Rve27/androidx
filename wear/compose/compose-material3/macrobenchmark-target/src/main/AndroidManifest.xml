@@ -258,6 +258,18 @@
         </activity>
 
         <activity
+            android:name=".PickerGroupActivity"
+            android:theme="@style/AppTheme"
+            android:exported="true">
+            <intent-filter>
+                <action android:name=
+                    "androidx.wear.compose.material3.macrobenchmark.target.PICKER_GROUP_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+
+        <activity
             android:name=".ScrollIndicatorActivity"
             android:theme="@style/AppTheme"
             android:exported="true">
