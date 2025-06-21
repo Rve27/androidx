@@ -927,7 +927,6 @@ package androidx.xr.compose.unit {
     property public inline boolean isSpecified;
     property public float value;
     field public static final androidx.xr.compose.unit.Meter.Companion Companion;
-    field @kotlin.PublishedApi internal static final float DP_PER_METER;
   }
 
   public static final class Meter.Companion {
