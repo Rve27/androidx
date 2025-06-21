@@ -533,7 +533,7 @@ package androidx.xr.runtime.internal {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ConfigurationNotSupportedException extends androidx.xr.runtime.internal.LifecycleException {
     ctor public ConfigurationNotSupportedException();
-    ctor public ConfigurationNotSupportedException(optional Throwable? cause);
+    ctor public ConfigurationNotSupportedException(optional String message, optional Throwable? cause);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class Dimensions {
