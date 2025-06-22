@@ -347,6 +347,7 @@ package androidx.xr.runtime.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeResizableComponent extends androidx.xr.runtime.testing.FakeComponent implements androidx.xr.runtime.internal.ResizableComponent {
     ctor public FakeResizableComponent();
+    ctor public FakeResizableComponent(optional androidx.xr.runtime.internal.Dimensions size, optional androidx.xr.runtime.internal.Dimensions minimumSize, optional androidx.xr.runtime.internal.Dimensions maximumSize, optional float fixedAspectRatio, optional boolean autoHideContent, optional boolean autoUpdateSize, optional boolean forceShowResizeOverlay);
     method public void addResizeEventListener(java.util.concurrent.Executor executor, androidx.xr.runtime.internal.ResizeEventListener resizeEventListener);
     method public boolean getAutoHideContent();
     method public boolean getAutoUpdateSize();
@@ -354,6 +355,7 @@ package androidx.xr.runtime.testing {
     method public boolean getForceShowResizeOverlay();
     method public androidx.xr.runtime.internal.Dimensions getMaximumSize();
     method public androidx.xr.runtime.internal.Dimensions getMinimumSize();
+    method public java.util.Map<androidx.xr.runtime.internal.ResizeEventListener,java.util.concurrent.Executor> getResizeEventListenersMap();
     method public androidx.xr.runtime.internal.Dimensions getSize();
     method public void removeResizeEventListener(androidx.xr.runtime.internal.ResizeEventListener resizeEventListener);
     method public void setAutoHideContent(boolean);
@@ -369,6 +371,7 @@ package androidx.xr.runtime.testing {
     property public boolean forceShowResizeOverlay;
     property public androidx.xr.runtime.internal.Dimensions maximumSize;
     property public androidx.xr.runtime.internal.Dimensions minimumSize;
+    property public java.util.Map<androidx.xr.runtime.internal.ResizeEventListener,java.util.concurrent.Executor> resizeEventListenersMap;
     property public androidx.xr.runtime.internal.Dimensions size;
   }
 
