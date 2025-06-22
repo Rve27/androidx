@@ -293,11 +293,13 @@ package androidx.xr.runtime.testing {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeMovableComponent extends androidx.xr.runtime.testing.FakeComponent implements androidx.xr.runtime.internal.MovableComponent {
     ctor public FakeMovableComponent();
     method public void addMoveEventListener(java.util.concurrent.Executor executor, androidx.xr.runtime.internal.MoveEventListener moveEventListener);
+    method public java.util.Map<androidx.xr.runtime.internal.MoveEventListener,java.util.concurrent.Executor> getMoveEventListenersMap();
     method public int getScaleWithDistanceMode();
     method public androidx.xr.runtime.internal.Dimensions getSize();
     method public void removeMoveEventListener(androidx.xr.runtime.internal.MoveEventListener moveEventListener);
     method public void setScaleWithDistanceMode(int);
     method public void setSize(androidx.xr.runtime.internal.Dimensions);
+    property public java.util.Map<androidx.xr.runtime.internal.MoveEventListener,java.util.concurrent.Executor> moveEventListenersMap;
     property public int scaleWithDistanceMode;
     property public androidx.xr.runtime.internal.Dimensions size;
   }
