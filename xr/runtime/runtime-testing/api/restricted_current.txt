@@ -37,6 +37,7 @@ package androidx.xr.runtime.testing {
     ctor public FakeAnchorEntity();
     method public long getNativePointer();
     method public int getState();
+    method public void onStateChanged(int newState);
     method public void setOnStateChangedListener(androidx.xr.runtime.internal.AnchorEntity.OnStateChangedListener onStateChangedListener);
     property public long nativePointer;
     property public int state;
