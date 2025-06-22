@@ -113,6 +113,10 @@ package androidx.xr.runtime.testing {
     property @androidx.xr.runtime.internal.GltfEntity.AnimationState public int animationState;
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeInteractableComponent extends androidx.xr.runtime.testing.FakeComponent implements androidx.xr.runtime.internal.InteractableComponent {
+    ctor public FakeInteractableComponent();
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeJxrPlatformAdapter implements androidx.xr.runtime.internal.JxrPlatformAdapter {
     ctor public FakeJxrPlatformAdapter();
     method public void addPerceivedResolutionChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.runtime.internal.PixelDimensions> listener);
@@ -343,6 +347,10 @@ package androidx.xr.runtime.testing {
     property public androidx.xr.runtime.internal.Hand? rightHand;
     property public java.util.List<androidx.xr.runtime.internal.Trackable> trackables;
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public java.util.List<androidx.xr.runtime.testing.FakeRuntimeViewCamera> viewCameras;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakePointerCaptureComponent extends androidx.xr.runtime.testing.FakeComponent implements androidx.xr.runtime.internal.PointerCaptureComponent {
+    ctor public FakePointerCaptureComponent();
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeResizableComponent extends androidx.xr.runtime.testing.FakeComponent implements androidx.xr.runtime.internal.ResizableComponent {
