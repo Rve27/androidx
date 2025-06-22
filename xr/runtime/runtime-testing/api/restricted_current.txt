@@ -375,6 +375,10 @@ package androidx.xr.runtime.testing {
     property public androidx.xr.runtime.internal.Dimensions size;
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) internal final class FakeResource implements androidx.xr.runtime.internal.ExrImageResource androidx.xr.runtime.internal.GltfModelResource androidx.xr.runtime.internal.MaterialResource androidx.xr.runtime.internal.Resource androidx.xr.runtime.internal.TextureResource {
+    ctor public FakeResource(long token);
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRuntime implements androidx.xr.runtime.internal.Runtime {
     ctor public FakeRuntime(androidx.xr.runtime.testing.FakeLifecycleManager lifecycleManager, androidx.xr.runtime.testing.FakePerceptionManager perceptionManager);
     method public androidx.xr.runtime.testing.FakeLifecycleManager component1();
