@@ -24,7 +24,6 @@ import androidx.build.hasAndroidMultiplatformPlugin
 import androidx.build.multiplatformExtension
 import androidx.build.registerAsComponentForKmpPublishing
 import androidx.build.registerAsComponentForPublishing
-import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.api.variant.LibraryVariant
 import com.google.gson.GsonBuilder
@@ -88,22 +87,8 @@ fun Project.configureSourceJarForAndroid(
     disableUnusedSourceJarTasks(disableNames)
 }
 
-fun Project.configureMultiplatformSourcesForAndroid(
-    variantName: String,
-    target: KotlinMultiplatformAndroidLibraryTarget,
-    samplesProjects: MutableCollection<Project>,
-) {
-    val sourceJar =
-        tasks.register("sourceJar${variantName.capitalize()}", Jar::class.java) { task ->
-            task.archiveClassifier.set("sources")
-            target.mainCompilation().allKotlinSourceSets.forEach { sourceSet ->
-                task.from(sourceSet.kotlin.srcDirs) { copySpec -> copySpec.into(sourceSet.name) }
-            }
-            task.duplicatesStrategy = DuplicatesStrategy.FAIL
-        }
-    registerSourcesVariant(sourceJar)
+fun Project.configureMultiplatformSourcesForAndroid(samplesProjects: MutableCollection<Project>) =
     registerSamplesLibraries(samplesProjects)
-}
 
 /** Sets up a source jar task for a Java library project. */
 fun Project.configureSourceJarForJava(samplesProjects: MutableCollection<Project>) {
@@ -295,6 +280,8 @@ private fun Project.registerSamplesLibraries(samplesProjects: MutableCollection<
             // used for --android source jars of KMP projects
             if (hasAndroidMultiplatformPlugin) {
                 publishingVariants += "$androidMultiplatformSourcesConfigurationName-published"
+                // sourcesConfigurationName is not used in AGP KMP publications
+                publishingVariants.remove(sourcesConfigurationName)
             } else if (hasAndroidJvmTarget) {
                 publishingVariants += "release${sourcesConfigurationName.capitalize()}"
             }
