@@ -221,6 +221,12 @@ public class SandboxedPdfDocument(
         return withDocument { document -> document.applyEdit(pageNum, record.toAndroidClass()) }
     }
 
+    override suspend fun write(destination: ParcelFileDescriptor) {
+        return withDocument { document ->
+            document.write(destination, /* removePasswordProtection= */ false)
+        }
+    }
+
     @WorkerThread
     override fun close() {
         isDocumentClosedExplicitly = true

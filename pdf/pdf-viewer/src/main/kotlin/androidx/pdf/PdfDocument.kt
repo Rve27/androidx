@@ -20,6 +20,7 @@ import android.graphics.Bitmap
 import android.graphics.PointF
 import android.graphics.Rect
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.util.Size
 import android.util.SparseArray
 import androidx.annotation.IntDef
@@ -33,6 +34,7 @@ import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo
 import java.io.Closeable
+import java.io.IOException
 import kotlin.jvm.Throws
 import kotlinx.coroutines.CancellationException
 
@@ -212,6 +214,14 @@ public interface PdfDocument : Closeable {
      *   indicated by the index, or if the index does not correspond to a widget on the page.
      */
     public suspend fun applyEdit(pageNum: Int, record: FormEditRecord): List<Rect>
+
+    /**
+     * Writes the contents of this [PdfDocument] to [destination] and closes the
+     * [ParcelFileDescriptor]
+     *
+     * @property destination The [ParcelFileDescriptor] to write to.
+     */
+    @Throws(IOException::class) public suspend fun write(destination: ParcelFileDescriptor)
 
     /**
      * Represents information about a single page in the PDF document.

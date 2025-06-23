@@ -137,6 +137,14 @@ internal class PdfDocumentRemoteImpl(
         return withPage(pageNum) { page -> page.applyEdit(editRecord) }
     }
 
+    override fun write(destination: ParcelFileDescriptor, removePasswordProtection: Boolean) {
+        try {
+            rendererAdapter.write(destination, removePasswordProtection)
+        } catch (exception: Exception) {
+            throw RuntimeException(exception)
+        }
+    }
+
     override fun isPdfLinearized(): Boolean {
         return rendererAdapter.isLinearized
     }

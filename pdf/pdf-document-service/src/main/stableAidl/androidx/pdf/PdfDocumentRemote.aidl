@@ -190,4 +190,12 @@ interface PdfDocumentRemote {
     * @return Rectangular areas of the page bitmap that have been invalidated by this action.
     */
     List<Rect> applyEdit(int pageNum, in FormEditRecord editRecord);
+
+    /**
+    * Writes the contents of the PdfDocument to the destination and closes the ParcelFileDescriptor.
+    *
+    * @param destination The ParcelFileDescriptor to write to.
+    * @param removePasswordProtection Whether to remove password protection from the document.
+    */
+    void write(in ParcelFileDescriptor destination, boolean removePasswordProtection);
 }
