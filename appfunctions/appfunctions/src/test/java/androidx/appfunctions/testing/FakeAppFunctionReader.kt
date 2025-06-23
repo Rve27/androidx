@@ -19,14 +19,19 @@ package androidx.appfunctions.testing
 import androidx.appfunctions.AppFunctionFunctionNotFoundException
 import androidx.appfunctions.AppFunctionSearchSpec
 import androidx.appfunctions.internal.AppFunctionReader
-import androidx.appfunctions.metadata.AppFunctionMetadata
+import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 
 class FakeAppFunctionReader : AppFunctionReader {
 
-    private val appFunctionMetadataMap = mutableMapOf<Pair<String, String>, AppFunctionMetadata>()
+    private val appFunctionMetadataMap =
+        mutableMapOf<Pair<String, String>, AppFunctionSchemaMetadata>()
 
-    fun addAppFunctionMetadata(metadata: AppFunctionMetadata) {
-        appFunctionMetadataMap[Pair(metadata.id, metadata.packageName)] = metadata
+    fun addAppFunctionMetadata(
+        functionId: String,
+        packageName: String,
+        metadata: AppFunctionSchemaMetadata,
+    ) {
+        appFunctionMetadataMap[Pair(functionId, packageName)] = metadata
     }
 
     fun clear() {
@@ -36,12 +41,12 @@ class FakeAppFunctionReader : AppFunctionReader {
     override fun searchAppFunctions(searchFunctionSpec: AppFunctionSearchSpec) =
         TODO("Not yet implemented")
 
-    override suspend fun getAppFunctionMetadata(
+    override suspend fun getAppFunctionSchemaMetadata(
         functionId: String,
         packageName: String,
-    ): AppFunctionMetadata {
+    ): AppFunctionSchemaMetadata? {
         val key = Pair(functionId, packageName)
         if (!appFunctionMetadataMap.containsKey(key)) throw AppFunctionFunctionNotFoundException()
-        return checkNotNull(appFunctionMetadataMap[key])
+        return appFunctionMetadataMap[key]
     }
 }

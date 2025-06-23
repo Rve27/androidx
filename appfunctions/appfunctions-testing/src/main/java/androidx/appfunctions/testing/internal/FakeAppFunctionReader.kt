@@ -25,6 +25,7 @@ import androidx.appfunctions.AppFunctionSearchSpec
 import androidx.appfunctions.internal.AppFunctionReader
 import androidx.appfunctions.internal.findImpl
 import androidx.appfunctions.metadata.AppFunctionMetadata
+import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
 import androidx.appfunctions.service.internal.AggregatedAppFunctionInventory
 import androidx.appfunctions.service.internal.AppFunctionInventory
@@ -92,9 +93,9 @@ internal class FakeAppFunctionReader(context: Context) : AppFunctionReader {
             }
         }
 
-    override suspend fun getAppFunctionMetadata(
-        functionId: String,
+    suspend fun getAppFunctionMetadata(
         packageName: String,
+        functionId: String,
     ): AppFunctionMetadata? =
         packageToFunctionMetadataMapState.value[packageName]
             ?.get(functionId)
@@ -118,6 +119,15 @@ internal class FakeAppFunctionReader(context: Context) : AppFunctionReader {
                     (existingPackageMap + (functionId to appFunctionStaticAndRuntimeMetadata)))
         }
     }
+
+    override suspend fun getAppFunctionSchemaMetadata(
+        functionId: String,
+        packageName: String,
+    ): AppFunctionSchemaMetadata? =
+        packageToFunctionMetadataMapState.value[packageName]
+            ?.get(functionId)
+            ?.staticMetadata
+            ?.schema
 }
 
 internal data class AppFunctionRuntimeMetadata(

@@ -71,7 +71,6 @@ data class OpenableNote(
     val content: List<String>,
     val owner: Owner,
     val attachments: List<Attachment>,
-    val modifiedTime: LocalDateTime? = null,
     override val intentToOpen: PendingIntent,
 ) : AppFunctionOpenable
 

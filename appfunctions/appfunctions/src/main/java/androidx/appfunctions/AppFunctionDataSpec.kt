@@ -17,7 +17,6 @@
 package androidx.appfunctions
 
 import android.app.PendingIntent
-import androidx.appfunctions.metadata.AppFunctionAllOfTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionDataTypeMetadata
@@ -61,30 +60,44 @@ internal abstract class AppFunctionDataSpec {
         val childDataType =
             getDataType(key)
                 ?: throw IllegalArgumentException("Value associated with $key is not an object")
-        return getPropertyObjectSpec(childDataType)
-    }
-
-    private fun getPropertyObjectSpec(type: AppFunctionDataTypeMetadata): AppFunctionDataSpec {
-        return when (type) {
+        return when (childDataType) {
             is AppFunctionArrayTypeMetadata -> {
-                getPropertyObjectSpec(type.itemType)
+                when (val itemType = childDataType.itemType) {
+                    is AppFunctionObjectTypeMetadata ->
+                        return ObjectSpec(itemType, componentMetadata)
+                    is AppFunctionReferenceTypeMetadata -> {
+                        val resolvedDataType =
+                            componentMetadata.dataTypes[itemType.referenceDataType]
+                        if (
+                            resolvedDataType == null ||
+                                resolvedDataType !is AppFunctionObjectTypeMetadata
+                        ) {
+                            throw IllegalArgumentException(
+                                "Unable to resolve the reference: " + itemType.referenceDataType
+                            )
+                        }
+                        ObjectSpec(resolvedDataType, componentMetadata)
+                    }
+                    else ->
+                        throw IllegalArgumentException(
+                            "Array itemType must be either an object or a reference"
+                        )
+                }
             }
             is AppFunctionObjectTypeMetadata -> {
-                ObjectSpec(type, componentMetadata)
+                ObjectSpec(childDataType, componentMetadata)
             }
             is AppFunctionReferenceTypeMetadata -> {
-                val resolvedDataType =
-                    componentMetadata.dataTypes[type.referenceDataType]
-                        ?: throw IllegalStateException(
-                            "Unable to resolve data type for ${type.referenceDataType}"
-                        )
-                getPropertyObjectSpec(resolvedDataType)
-            }
-            is AppFunctionAllOfTypeMetadata -> {
-                ObjectSpec(type.getPseudoObjectTypeMetadata(componentMetadata), componentMetadata)
+                val resolvedDataType = componentMetadata.dataTypes[childDataType.referenceDataType]
+                if (
+                    resolvedDataType == null || resolvedDataType !is AppFunctionObjectTypeMetadata
+                ) {
+                    throw IllegalArgumentException("Value associated with $key is not an object")
+                }
+                ObjectSpec(resolvedDataType, componentMetadata)
             }
             else -> {
-                throw IllegalStateException("Unexpected data type $type")
+                throw IllegalStateException("Unexpected data type $childDataType")
             }
         }
     }
