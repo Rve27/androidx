@@ -90,7 +90,7 @@ public val GlanceSessionManager: SessionManager = SessionManagerImpl(SessionWork
 public typealias InputDataFactory = SessionManagerImpl.(Session) -> Data
 
 @RestrictTo(LIBRARY_GROUP)
-public class SessionManagerImpl(
+public open class SessionManagerImpl(
     private val workerClass: Class<out ListenableWorker>,
     private val inputDataFactory: InputDataFactory = { session ->
         workDataOf(keyParam to session.key)

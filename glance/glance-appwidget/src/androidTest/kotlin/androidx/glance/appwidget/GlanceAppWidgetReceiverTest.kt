@@ -141,7 +141,7 @@ const val RECEIVER_TEST_TAG = "GAWRT" // shorten to avoid long tag lint
 
 @SdkSuppress(minSdkVersion = 29)
 @MediumTest
-class GlanceAppWidgetReceiverTest {
+open class GlanceAppWidgetReceiverTest {
     @get:Rule val mHostRule = AppWidgetHostRule()
 
     @get:Rule val mViewDumpRule = ViewHierarchyFailureWatcher()
