@@ -75,7 +75,7 @@ internal class FakeAppFunctionManagerApi(
     }
 
     override suspend fun isAppFunctionEnabled(packageName: String, functionId: String): Boolean =
-        appFunctionReader.getAppFunctionMetadata(packageName, functionId)?.isEnabled
+        appFunctionReader.getAppFunctionMetadata(functionId, packageName)?.isEnabled
             ?: throw AppFunctionFunctionNotFoundException(
                 "No function found with id: $functionId under package: $packageName"
             )

@@ -35,10 +35,10 @@ import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
 import java.time.LocalDateTime
+import kotlin.test.assertFailsWith
 import kotlin.test.assertIs
 import kotlinx.coroutines.flow.first
 import org.junit.After
-import org.junit.Assert.assertThrows
 import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeNotNull
 import org.junit.Assume.assumeTrue
@@ -618,6 +618,55 @@ class IntegrationTest {
     }
 
     @Test
+    fun executeAppFunction_schemaCreateNote_readInvalidFieldFail() = doBlocking {
+        val createNoteMetadata =
+            appFunctionManager
+                .observeAppFunctions(
+                    AppFunctionSearchSpec(
+                        packageNames = setOf(context.packageName),
+                        schemaCategory = "myNotes",
+                        schemaName = "createNote",
+                        minSchemaVersion = 2,
+                    )
+                )
+                .first()
+                .single()
+        val request =
+            ExecuteAppFunctionRequest(
+                functionIdentifier = createNoteMetadata.id,
+                targetPackageName = createNoteMetadata.packageName,
+                functionParameters =
+                    AppFunctionData.Builder(
+                            createNoteMetadata.parameters,
+                            createNoteMetadata.components,
+                        )
+                        .setAppFunctionData(
+                            "parameters",
+                            AppFunctionData.Builder(
+                                    requireTargetObjectTypeMetadata(
+                                        "parameters",
+                                        createNoteMetadata.parameters,
+                                        createNoteMetadata.components,
+                                    ),
+                                    createNoteMetadata.components,
+                                )
+                                .setString("title", "Test Title")
+                                .build(),
+                        )
+                        .build(),
+            )
+
+        val response = appFunctionManager.executeAppFunction(request)
+
+        assertIs<ExecuteAppFunctionResponse.Success>(response)
+        val resultNote =
+            response.returnValue
+                .getAppFunctionData(ExecuteAppFunctionResponse.Success.PROPERTY_RETURN_VALUE)
+                ?.getAppFunctionData("createdNote")
+        assertFailsWith<IllegalArgumentException> { resultNote?.getInt(("title")) }
+    }
+
+    @Test
     fun prepareAppFunctionData_wrongTopLevelParameterName_fail() = doBlocking {
         val createNoteMetadata =
             appFunctionManager
@@ -643,7 +692,7 @@ class IntegrationTest {
                 )
                 .setString("title", "Test Title")
                 .build()
-        assertThrows(IllegalArgumentException::class.java) {
+        assertFailsWith<IllegalArgumentException> {
             AppFunctionData.Builder(createNoteMetadata.parameters, createNoteMetadata.components)
                 .setAppFunctionData("wrongParameters", innerData)
         }
@@ -664,7 +713,7 @@ class IntegrationTest {
                 .first()
                 .single()
 
-        assertThrows(IllegalArgumentException::class.java) {
+        assertFailsWith<IllegalArgumentException> {
             AppFunctionData.Builder(
                     requireTargetObjectTypeMetadata(
                         "parameters",

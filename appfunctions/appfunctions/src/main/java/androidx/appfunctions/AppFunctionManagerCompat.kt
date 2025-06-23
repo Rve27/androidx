@@ -31,9 +31,9 @@ import androidx.appfunctions.internal.Dependencies
 import androidx.appfunctions.internal.ExtensionAppFunctionManagerApi
 import androidx.appfunctions.internal.NullTranslatorSelector
 import androidx.appfunctions.internal.PlatformAppFunctionManagerApi
+import androidx.appfunctions.internal.Translator
 import androidx.appfunctions.internal.TranslatorSelector
 import androidx.appfunctions.metadata.AppFunctionMetadata
-import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -111,10 +111,9 @@ public constructor(
     public suspend fun executeAppFunction(
         request: ExecuteAppFunctionRequest
     ): ExecuteAppFunctionResponse {
-
-        val schemaMetadata: AppFunctionSchemaMetadata? =
+        val functionMetadata: AppFunctionMetadata? =
             try {
-                appFunctionReader.getAppFunctionSchemaMetadata(
+                appFunctionReader.getAppFunctionMetadata(
                     functionId = request.functionIdentifier,
                     packageName = request.targetPackageName,
                 )
@@ -130,8 +129,8 @@ public constructor(
 
         // Translate the request when necessary by looking into the target schema version.
         val translator =
-            if (schemaMetadata?.version == LEGACY_SDK_GLOBAL_SCHEMA_VERSION) {
-                translatorSelector.getTranslator(schemaMetadata)
+            if (functionMetadata?.schema?.version == LEGACY_SDK_GLOBAL_SCHEMA_VERSION) {
+                translatorSelector.getTranslator(functionMetadata.schema)
             } else {
                 null
             }
@@ -146,14 +145,31 @@ public constructor(
 
         val executeAppFunctionResponse = appFunctionManagerApi.executeAppFunction(translatedRequest)
 
-        // Translate the response back to what the agent app expects.
-        val successResponse =
-            executeAppFunctionResponse as? ExecuteAppFunctionResponse.Success
-                ?: return executeAppFunctionResponse
-        return if (translator != null) {
-            successResponse.copy(translator.upgradeResponse(successResponse.returnValue))
+        return processResponse(translator, functionMetadata, executeAppFunctionResponse)
+    }
+
+    @Suppress("NewApi") // AppFunctionManagerCompat is only available when SDK >= 33
+    private fun processResponse(
+        translator: Translator?,
+        functionMetadata: AppFunctionMetadata?,
+        response: ExecuteAppFunctionResponse,
+    ): ExecuteAppFunctionResponse {
+        if (response !is ExecuteAppFunctionResponse.Success) {
+            return response
+        }
+
+        val currentVersionReturnValue =
+            translator?.upgradeResponse(response.returnValue) ?: response.returnValue
+
+        return if (functionMetadata == null) {
+            ExecuteAppFunctionResponse.Success(currentVersionReturnValue)
         } else {
-            successResponse
+            ExecuteAppFunctionResponse.Success(
+                currentVersionReturnValue.replaceSpecWith(
+                    functionMetadata.response,
+                    functionMetadata.components,
+                )
+            )
         }
     }
 
