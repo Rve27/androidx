@@ -200,6 +200,14 @@ internal class PageManager(
         pages.put(pageNum, page)
     }
 
+    fun maybeLoadFormWidgetMetadata() {
+        pages.valueIterator().forEach {
+            if (it.formWidgetInfos == null) {
+                it.maybeUpdateFormWidgetInfos()
+            }
+        }
+    }
+
     /** Updates the form widget information in the given [pageNum] when a edit is applied. */
     fun maybeUpdateFormWidgetMetadata(pageNum: Int) {
         pages[pageNum]?.maybeUpdateFormWidgetInfos()

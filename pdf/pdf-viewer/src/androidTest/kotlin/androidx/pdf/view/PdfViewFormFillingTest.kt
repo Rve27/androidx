@@ -199,6 +199,54 @@ class PdfViewFormFillingTest {
             )
     }
 
+    @Test
+    fun testReloadFormMetadataWhenFormFillingFlagChanged() = runTest {
+        val fakePdfDocument =
+            FakePdfDocument(
+                pages = List(2) { Point(100, 200) },
+                formType = PdfDocument.PDF_FORM_TYPE_ACRO_FORM,
+                pageFormWidgetInfos =
+                    mapOf(
+                        0 to
+                            listOf(
+                                FormWidgetInfo(
+                                    widgetType = FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON,
+                                    widgetIndex = 0,
+                                    widgetRect = Rect(10, 10, 100, 100),
+                                    textValue = "TextField",
+                                    accessibilityLabel = "TextField",
+                                )
+                            ),
+                        1 to
+                            listOf(
+                                FormWidgetInfo(
+                                    widgetType = FormWidgetInfo.WIDGET_TYPE_RADIOBUTTON,
+                                    widgetIndex = 0,
+                                    widgetRect = Rect(10, 10, 100, 100),
+                                    textValue = "true",
+                                    accessibilityLabel = "Radio",
+                                )
+                            ),
+                    ),
+            )
+        setupPdfView(fakePdfDocument = fakePdfDocument, enableFormFilling = false)
+        var pdfView: PdfView? = null
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            fakePdfDocument.waitForRender(untilPage = 0)
+            fakePdfDocument.waitForLayout(untilPage = 0)
+            Espresso.onView(withId(PDF_VIEW_ID)).check { view, noViewFoundException ->
+                view ?: throw noViewFoundException
+                pdfView = view as PdfView
+            }
+            fakePdfDocument.clearFormWidgetRequests()
+            pdfView?.isFormFillingEnabled = true
+            fakePdfDocument.waitForFormDataFetch(1)
+            close()
+        }
+        assertThat(fakePdfDocument.formWidgetRequests).hasSize(2)
+    }
+
     private fun getFakePdfDocumentInstance(formWidgetInfos: List<FormWidgetInfo>): FakePdfDocument {
         return FakePdfDocument(
             pages = List(10) { Point(DEFAULT_WIDTH, DEFAULT_HEIGHT) },

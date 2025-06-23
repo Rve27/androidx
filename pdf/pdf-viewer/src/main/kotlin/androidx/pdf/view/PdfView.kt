@@ -138,6 +138,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var isFormFillingEnabled: Boolean = false
+        set(value) {
+            if (field == value) return
+            field = value
+
+            if (value) {
+                pageManager?.maybeLoadFormWidgetMetadata()
+            }
+        }
 
     /** The maximum scaling factor that can be applied to this View using the [zoom] property */
     public var maxZoom: Float = DEFAULT_MAX_ZOOM
@@ -2075,8 +2083,10 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 if (handleExternalLinks(links, touchPointOnPage)) return true
             }
 
-            pageManager?.getWidgetAtTapPoint(touchPoint)?.let { widgets ->
-                if (handleTapOnFormWidget(widgets, touchPoint)) return true
+            if (isFormFillingEnabled) {
+                pageManager?.getWidgetAtTapPoint(touchPoint)?.let { widgets ->
+                    if (handleTapOnFormWidget(widgets, touchPoint)) return true
+                }
             }
 
             return super.onSingleTapConfirmed(e)

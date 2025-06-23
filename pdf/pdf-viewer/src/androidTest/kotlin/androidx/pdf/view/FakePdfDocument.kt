@@ -92,6 +92,14 @@ internal open class FakePdfDocument(
         _bitmapRequests.clear()
     }
 
+    private val _formWidgetRequests = mutableSetOf<Int>()
+    internal val formWidgetRequests: Set<Int>
+        get() = _formWidgetRequests.toSet()
+
+    internal fun clearFormWidgetRequests() {
+        _formWidgetRequests.clear()
+    }
+
     internal var editHistory: MutableList<FormEditRecord> = mutableListOf()
 
     override fun getPageBitmapSource(pageNumber: Int): PdfDocument.BitmapSource {
@@ -99,7 +107,12 @@ internal open class FakePdfDocument(
     }
 
     override suspend fun getFormWidgetInfos(pageNum: Int): List<FormWidgetInfo> {
+        logFormWidgetRequest(pageNum)
         return pageFormWidgetInfos[pageNum] ?: emptyList()
+    }
+
+    private fun logFormWidgetRequest(pageNum: Int) {
+        _formWidgetRequests.add(pageNum)
     }
 
     override suspend fun getFormWidgetInfos(pageNum: Int, types: IntArray): List<FormWidgetInfo> {
@@ -193,7 +206,7 @@ internal open class FakePdfDocument(
                 pageNum = pageNumber,
                 height = size.y,
                 width = size.x,
-                formWidgetInfos = pageFormWidgetInfos[pageNumber],
+                formWidgetInfos = getFormWidgetInfos(pageNumber),
             )
         }
         return PdfDocument.PageInfo(pageNumber, size.y, size.x)
@@ -381,6 +394,20 @@ internal suspend fun FakePdfDocument.waitForRender(untilPage: Int, timeoutMillis
     withContext(Dispatchers.Default.limitedParallelism(1)) {
         withTimeout(timeoutMillis) {
             while (!bitmapRequests.containsKeys(0..untilPage)) {
+                delay(100)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalCoroutinesApi::class)
+internal suspend fun FakePdfDocument.waitForFormDataFetch(
+    untilPage: Int,
+    timeoutMillis: Long = 1000,
+) {
+    withContext(Dispatchers.Default.limitedParallelism(1)) {
+        withTimeout(timeoutMillis) {
+            while (!(0..untilPage).all { pageNum -> formWidgetRequests.contains(pageNum) }) {
                 delay(100)
             }
         }
