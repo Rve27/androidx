@@ -52,7 +52,7 @@ import kotlin.math.abs
  *   [ListState.firstVisibleItemScrollOffset]
  */
 @Composable
-internal fun rememberListState(
+public fun rememberListState(
     initialFirstVisibleItemIndex: Int = 0,
     initialFirstVisibleItemScrollOffset: Int = 0,
 ): ListState =
@@ -69,15 +69,13 @@ internal fun rememberListState(
  * @param firstVisibleItemScrollOffset the initial value for
  *   [ListState.firstVisibleItemScrollOffset]
  */
-internal class ListState(firstVisibleItemIndex: Int = 0, firstVisibleItemScrollOffset: Int = 0) :
+public class ListState(firstVisibleItemIndex: Int = 0, firstVisibleItemScrollOffset: Int = 0) :
     ScrollableState {
 
     private val backingState = ScrollableState { -onScroll(-it) }
 
-    /**
-     * The holder class for the current scroll position. TODO(levima) Consider making this
-     * abstraction around "anchor item" instead of "first visible item".
-     */
+    // TODO: b/414961654 - Consider making this abstraction around "anchor item".
+    /** The holder class for the current scroll position. */
     private val scrollPosition =
         GlimmerListScrollPosition(firstVisibleItemIndex, firstVisibleItemScrollOffset)
 
@@ -277,7 +275,8 @@ internal class ListState(firstVisibleItemIndex: Int = 0, firstVisibleItemScrollO
     }
 
     public companion object {
-        public val Saver =
+        /** The default [Saver] implementation for [ListState]. */
+        public val Saver: Saver<ListState, Any> =
             listSaver(
                 save = { listOf(it.firstVisibleItemIndex, it.firstVisibleItemScrollOffset) },
                 restore = {

@@ -260,7 +260,7 @@ internal suspend fun LazyLayoutScrollScope.animateScrollToItem(
         // Once we're finished the animation, snap to the exact position to account for
         // rounding error (otherwise we tend to end up with the previous item scrolled the
         // tiniest bit onscreen)
-        // TODO: prevent temporarily scrolling *past* the item
+        // TODO: b/427148034 - Prevent temporarily scrolling *past* the item
         snapToItem(index = index, offset = scrollOffset)
     }
 }

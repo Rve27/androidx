@@ -17,12 +17,11 @@
 package androidx.xr.glimmer.list
 
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.util.fastSumBy
 
-/** Information about the layout of the [androidx.xr.glimmer.list.List]. */
-internal interface ListLayoutInfo {
+/** Information about the layout of the [VerticalList]. */
+public interface ListLayoutInfo {
     /** The list of [LazyListItemInfo] representing all the currently visible items. */
     public val visibleItemsInfo: List<LazyListItemInfo>
 

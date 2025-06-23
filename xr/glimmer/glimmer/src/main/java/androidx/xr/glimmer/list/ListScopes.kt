@@ -22,10 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableIntStateOf
 
-@Stable internal sealed interface ListItemScope
+/**
+ * Receiver scope being used by the item content parameter of [VerticalList]. It helps define
+ * scoped-based extensions that only apply to [VerticalList] items.
+ */
+@Stable public sealed interface ListItemScope
 
 /** Receiver scope which is used by [VerticalList]. */
-internal sealed interface ListScope {
+public sealed interface ListScope {
     /**
      * Adds a single item.
      *

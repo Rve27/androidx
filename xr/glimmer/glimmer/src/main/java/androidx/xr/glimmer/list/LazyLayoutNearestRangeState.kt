@@ -22,7 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.structuralEqualityPolicy
 
-// @TODO(levima) Remove this once upstreamed version is published b/415038029
+// TODO: b/415038029 - Remove this once upstreamed version is published.
 internal class LazyLayoutNearestRangeState(
     firstVisibleItem: Int,
     private val slidingWindowSize: Int,

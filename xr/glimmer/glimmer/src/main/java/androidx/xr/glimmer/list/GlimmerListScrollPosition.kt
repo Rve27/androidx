@@ -118,11 +118,10 @@ internal const val NearestItemsSlidingWindowSize = 30
 /** The minimum amount of items near the current first visible item we want to have mapping for. */
 internal const val NearestItemsExtraItemCount = 100
 
+// TODO: b/416199135 - Remove this once we release an upstreamed version.
 /**
  * Finds a position of the item with the given key in the lists. This logic allows us to detect when
  * there were items added or removed before our current first item.
- *
- * @TODO(levima) Remove this once we release an upstreamed version.
  */
 internal fun LazyLayoutItemProvider.findIndexByKey(key: Any?, lastKnownIndex: Int): Int {
     if (key == null || itemCount == 0) {

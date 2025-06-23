@@ -23,12 +23,13 @@ import androidx.compose.foundation.lazy.layout.LazyLayoutIntervalContent
 import androidx.compose.foundation.lazy.layout.getDefaultLazyLayoutKey
 import androidx.xr.glimmer.checkPrecondition
 
+// TODO: b/415038029 - Remove this once upstreamed version is published.
 /**
  * A key-index mapping used inside the
  * [androidx.compose.foundation.lazy.layout.LazyLayoutItemProvider]. It might not contain all items
  * in the lazy layout as optimization, but it must cover items the provider is requesting during
  * layout pass. See [NearestRangeKeyIndexMap] as sample implementation that samples items near
- * current viewport. // @TODO(levima) Remove this once upstreamed version is published b/415038029
+ * current viewport.
  */
 internal interface LazyLayoutKeyIndexMap {
     /** @return current index for given [key] or `-1` if not found. */

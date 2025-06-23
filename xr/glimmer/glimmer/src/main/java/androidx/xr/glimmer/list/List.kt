@@ -30,10 +30,15 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
 
 /**
- * The scrolling List that only composes and lays out the currently visible items. The [content]
- * block defines a DSL which allows you to emit items of different types. For example you can use
- * [ListScope.item] to add a single item and [ListScope.items] to add a list of items.
+ * This is a scrolling list component that only composes and lays out the currently visible items.
+ * It is based on [androidx.compose.foundation.lazy.LazyColumn], but with extra functionality and
+ * customized behavior required for Glimmer. Glimmer applications should always use VerticalList
+ * instead of LazyColumn to ensure correct behavior.
  *
+ * The [content] block defines a DSL which allows you to emit items of different types. For example
+ * you can use [ListScope.item] to add a single item and [ListScope.items] to add a list of items.
+ *
+ * @sample androidx.xr.glimmer.samples.VerticalListSample
  * @param modifier the modifier to apply to this layout.
  * @param state the state object to be used to control or observe the list's state.
  * @param contentPadding a padding around the whole content. This will add padding for the. content
@@ -48,7 +53,7 @@ import androidx.compose.ui.unit.dp
  *   [ListScope.item] to add a single item or [ListScope.items] to add a list of items.
  */
 @Composable
-internal fun VerticalList(
+public fun VerticalList(
     modifier: Modifier = Modifier,
     state: ListState = rememberListState(),
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -116,7 +121,7 @@ internal fun List(
     val semanticState = rememberGlimmerListSemanticState(state, orientation)
 
     val measurePolicy =
-        rememberListMeasurePolicy(
+        rememberGlimmerListMeasurePolicy(
             itemProviderLambda = itemProvider,
             state = state,
             contentPadding = contentPadding,

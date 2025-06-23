@@ -38,7 +38,7 @@ import androidx.compose.ui.util.fastForEach
 import kotlin.math.min
 
 @Composable
-internal fun rememberListMeasurePolicy(
+internal fun rememberGlimmerListMeasurePolicy(
     /** Items provider of the list. */
     itemProviderLambda: () -> GlimmerListItemProvider,
     /** The state of the list. */

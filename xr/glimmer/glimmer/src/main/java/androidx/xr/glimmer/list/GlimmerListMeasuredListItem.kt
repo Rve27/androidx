@@ -16,13 +16,36 @@
 
 package androidx.xr.glimmer.list
 
-import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.util.fastForEach
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.xr.glimmer.requirePrecondition
 import androidx.xr.glimmer.requirePreconditionNotNull
+
+/** Contains useful information about an individual item in a [VerticalList]. */
+public interface LazyListItemInfo {
+    /** The index of the item in the list. */
+    public val index: Int
+
+    /** The key of the item which was passed to the item() or items() function. */
+    public val key: Any
+
+    /**
+     * The main axis offset of the item in pixels. It is relative to the start of the lazy list
+     * container.
+     */
+    public val offset: Int
+
+    /**
+     * The main axis size of the item in pixels. Note that if you emit multiple layouts in the
+     * composable slot for the item then this size will be calculated as the sum of their sizes.
+     */
+    public val size: Int
+
+    /** The content type of the item which was passed to the item() or items() function. */
+    public val contentType: Any?
+}
 
 internal class GlimmerListMeasuredListItem(
     override val index: Int,
