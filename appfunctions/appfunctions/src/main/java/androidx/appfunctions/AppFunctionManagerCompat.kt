@@ -226,7 +226,7 @@ public constructor(
          * Only meant to be used internally by `AppFunctionTestRule`.
          */
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun setAppFunctionReader(appFunctionReader: AppFunctionReader) {
+        public fun setAppFunctionReader(appFunctionReader: AppFunctionReader?) {
             _appFunctionReader = appFunctionReader
         }
 
@@ -237,7 +237,7 @@ public constructor(
          * Only meant to be used internally by `AppFunctionTestRule`.
          */
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-        public fun setAppFunctionManagerApi(appFunctionManagerApi: AppFunctionManagerApi) {
+        public fun setAppFunctionManagerApi(appFunctionManagerApi: AppFunctionManagerApi?) {
             _appFunctionManagerApi = appFunctionManagerApi
         }
 

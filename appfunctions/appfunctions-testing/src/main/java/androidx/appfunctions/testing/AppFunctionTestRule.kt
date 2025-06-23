@@ -42,16 +42,25 @@ public class AppFunctionTestRule(private val context: Context) : TestRule {
     // TODO: b/426219836 - Dynamic registration and changing app function enabled state API(s).
     // TODO: b/425327400 - Move to use Robolectric shadows
 
+    private val appFunctionReader = FakeAppFunctionReader(context)
+    private val appFunctionManagerApi = FakeAppFunctionManagerApi(context, appFunctionReader)
+
+    init {
+        AppFunctionManagerCompat.setAppFunctionReader(appFunctionReader)
+        AppFunctionManagerCompat.setAppFunctionManagerApi(appFunctionManagerApi)
+        AppFunctionManagerCompat.setSkipExtensionLibraryCheck(true)
+    }
+
     override fun apply(base: Statement?, description: Description?): Statement =
         object : Statement() {
             override fun evaluate() {
-                val appFunctionReader = FakeAppFunctionReader(context)
-                val appFunctionManagerApi = FakeAppFunctionManagerApi(context, appFunctionReader)
-                AppFunctionManagerCompat.setAppFunctionReader(appFunctionReader)
-                AppFunctionManagerCompat.setAppFunctionManagerApi(appFunctionManagerApi)
-                AppFunctionManagerCompat.setSkipExtensionLibraryCheck(true)
-
-                base?.evaluate()
+                try {
+                    base?.evaluate()
+                } finally {
+                    AppFunctionManagerCompat.setAppFunctionReader(null)
+                    AppFunctionManagerCompat.setAppFunctionManagerApi(null)
+                    AppFunctionManagerCompat.setSkipExtensionLibraryCheck(false)
+                }
             }
         }
 }

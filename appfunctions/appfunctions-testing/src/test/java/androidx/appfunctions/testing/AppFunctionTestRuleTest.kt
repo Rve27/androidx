@@ -35,7 +35,6 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,12 +50,8 @@ class AppFunctionTestRuleTest {
 
     @get:Rule val appFunctionTestRule = AppFunctionTestRule(targetContext)
 
-    private lateinit var appFunctionManagerCompat: AppFunctionManagerCompat
-
-    @Before
-    fun setUp() {
-        appFunctionManagerCompat = assertNotNull(AppFunctionManagerCompat.getInstance(context))
-    }
+    private val appFunctionManagerCompat: AppFunctionManagerCompat =
+        assertNotNull(AppFunctionManagerCompat.getInstance(context))
 
     @Test
     fun returnedAppFunctionManagerCompat_observeApi_returnsAllAppFunctions() =
