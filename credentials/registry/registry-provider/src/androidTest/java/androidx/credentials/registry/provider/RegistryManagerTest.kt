@@ -59,7 +59,7 @@ class RegistryManagerTest {
     @Test
     fun clearCredentialRegistry_noOptionalModule_throws() =
         runBlocking<Unit> {
-            assertThrows<IllegalArgumentException> {
+            assertThrows<ClearCredentialRegistryConfigurationException> {
                 registryManager.clearCredentialRegistry(
                     ClearCredentialRegistryRequest(
                         deleteAll = false,

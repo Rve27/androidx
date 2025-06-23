@@ -118,14 +118,18 @@ public abstract class RegistryManager internal constructor() {
         request: ClearCredentialRegistryRequest
     ): ClearCredentialRegistryResponse = suspendCancellableCoroutine { continuation ->
         val callback =
-            object : CredentialManagerCallback<ClearCredentialRegistryResponse, Exception> {
+            object :
+                CredentialManagerCallback<
+                    ClearCredentialRegistryResponse,
+                    ClearCredentialRegistryException,
+                > {
                 override fun onResult(result: ClearCredentialRegistryResponse) {
                     if (continuation.isActive) {
                         continuation.resume(result)
                     }
                 }
 
-                override fun onError(e: Exception) {
+                override fun onError(e: ClearCredentialRegistryException) {
                     if (continuation.isActive) {
                         continuation.resumeWithException(e)
                     }
@@ -179,6 +183,10 @@ public abstract class RegistryManager internal constructor() {
     public abstract fun clearCredentialRegistryAsync(
         request: ClearCredentialRegistryRequest,
         executor: Executor,
-        callback: CredentialManagerCallback<ClearCredentialRegistryResponse, Exception>,
+        callback:
+            CredentialManagerCallback<
+                ClearCredentialRegistryResponse,
+                ClearCredentialRegistryException,
+            >,
     )
 }

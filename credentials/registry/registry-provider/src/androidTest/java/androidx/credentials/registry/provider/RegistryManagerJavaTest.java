@@ -82,12 +82,12 @@ public class RegistryManagerJavaTest {
                 new ClearCredentialRegistryRequest(true, null),
                 Runnable::run,
                 new CredentialManagerCallback<ClearCredentialRegistryResponse,
-                        Exception>() {
+                        ClearCredentialRegistryException>() {
                     @Override
                     public void onResult(ClearCredentialRegistryResponse result) {}
 
                     @Override
-                    public void onError(@NonNull Exception e) {
+                    public void onError(@NonNull ClearCredentialRegistryException e) {
                         resultCaptor.set(e);
                         latch.countDown();
                     }
@@ -95,7 +95,7 @@ public class RegistryManagerJavaTest {
         );
         latch.await(100L, TimeUnit.MILLISECONDS);
         assertThat(resultCaptor.get()).isInstanceOf(
-                IllegalArgumentException.class);
+                ClearCredentialRegistryConfigurationException.class);
     }
 
     @Test
