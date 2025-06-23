@@ -42,6 +42,10 @@ public enum class ClientApiVersion(
         stable = true,
         newFeatures = setOf(ClientFeature.CLIENT_IMPORTANCE_LISTENER),
     ),
+    V8__1_0_ALPHA18(
+        apiLevel = 8,
+        newFeatures = setOf(ClientFeature.SDK_SANDBOX_CONTROLLER_BACKEND_HOLDER),
+    ),
 
     /**
      * Unreleased API version. Features not added to other versions will be automatically added here

@@ -126,6 +126,7 @@ dependencies {
 
     androidTestBundleDex(project(":privacysandbox:sdkruntime:test-sdks:current"))
     androidTestBundleDex(project(":privacysandbox:sdkruntime:test-sdks:v7"))
+    androidTestBundleDex(project(":privacysandbox:sdkruntime:test-sdks:v8"))
 }
 
 android {
