@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<appfunctions>
+    <appfunction>
+        <id>com.testdata.FakeFreeFormFunction#fakeFreeFormFunction</id>
+        <enabledByDefault>true</enabledByDefault>
+        <description>
+ A fake free-form AppFunction to test the description element in the function's generated
+ metadata xml.
+
+ This kdoc consists of multiple paragraphs and is used as the function's description to the
+ agent.
+
+ @param appFunctionContext the AppFunction's context.
+ @param inputString the input string.
+ @return the output string.
+ @throws IllegalArgumentException if the inputString is in an incorrect format.
+</description>
+        <parameters>
+            <dataTypeMetadata>
+                <id>unused</id>
+                <isNullable>false</isNullable>
+                <type>8</type>
+            </dataTypeMetadata>
+            <id>unused</id>
+            <isRequired>true</isRequired>
+            <name>inputString</name>
+        </parameters>
+        <response>
+            <id>unused</id>
+            <valueType>
+                <id>unused</id>
+                <isNullable>false</isNullable>
+                <type>8</type>
+            </valueType>
+        </response>
+        <functionId>com.testdata.FakeFreeFormFunction#fakeFreeFormFunction</functionId>
+    </appfunction>
+    <AppFunctionComponentMetadataDocument>
+        <id>unused</id>
+    </AppFunctionComponentMetadataDocument>
+</appfunctions>
