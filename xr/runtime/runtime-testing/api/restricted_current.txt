@@ -328,6 +328,7 @@ package androidx.xr.runtime.testing {
     method public void detachAnchor(androidx.xr.runtime.internal.Anchor anchor);
     method public java.util.List<androidx.xr.runtime.internal.Anchor> getAnchors();
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.testing.FakeRuntimeArDevice getArDevice();
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public java.util.List<androidx.xr.runtime.internal.DepthMap> getDepthMaps();
     method public androidx.xr.runtime.internal.Earth getEarth();
     method public androidx.xr.runtime.internal.Hand? getLeftHand();
     method public java.util.List<java.util.UUID> getPersistedAnchorUuids();
@@ -343,6 +344,7 @@ package androidx.xr.runtime.testing {
     method public void unpersistAnchor(java.util.UUID uuid);
     property public java.util.List<androidx.xr.runtime.internal.Anchor> anchors;
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.testing.FakeRuntimeArDevice arDevice;
+    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public java.util.List<androidx.xr.runtime.internal.DepthMap> depthMaps;
     property public androidx.xr.runtime.internal.Earth earth;
     property public boolean isTrackingAvailable;
     property public androidx.xr.runtime.internal.Hand? leftHand;
@@ -442,6 +444,29 @@ package androidx.xr.runtime.testing {
   }
 
   public static final class FakeRuntimeArDevice.Companion {
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRuntimeDepthMap implements androidx.xr.runtime.internal.DepthMap {
+    ctor public FakeRuntimeDepthMap();
+    ctor public FakeRuntimeDepthMap(optional int width, optional int height, optional java.nio.FloatBuffer? rawDepthMap, optional java.nio.ByteBuffer? rawConfidenceMap, optional java.nio.FloatBuffer? smoothDepthMap, optional java.nio.ByteBuffer? smoothConfidenceMap);
+    method public int getHeight();
+    method public java.nio.ByteBuffer? getRawConfidenceMap();
+    method public java.nio.FloatBuffer? getRawDepthMap();
+    method public java.nio.ByteBuffer? getSmoothConfidenceMap();
+    method public java.nio.FloatBuffer? getSmoothDepthMap();
+    method public int getWidth();
+    method public void setHeight(int);
+    method public void setRawConfidenceMap(java.nio.ByteBuffer?);
+    method public void setRawDepthMap(java.nio.FloatBuffer?);
+    method public void setSmoothConfidenceMap(java.nio.ByteBuffer?);
+    method public void setSmoothDepthMap(java.nio.FloatBuffer?);
+    method public void setWidth(int);
+    property public int height;
+    property public java.nio.ByteBuffer? rawConfidenceMap;
+    property public java.nio.FloatBuffer? rawDepthMap;
+    property public java.nio.ByteBuffer? smoothConfidenceMap;
+    property public java.nio.FloatBuffer? smoothDepthMap;
+    property public int width;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRuntimeEarth implements androidx.xr.runtime.internal.Earth {

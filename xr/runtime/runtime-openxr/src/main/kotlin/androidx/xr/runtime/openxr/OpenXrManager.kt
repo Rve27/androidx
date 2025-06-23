@@ -22,6 +22,7 @@ import android.os.Build
 import androidx.annotation.RestrictTo
 import androidx.core.content.ContextCompat
 import androidx.xr.runtime.Config
+import androidx.xr.runtime.internal.ConfigurationNotSupportedException
 import androidx.xr.runtime.internal.LifecycleManager
 import androidx.xr.runtime.internal.PermissionNotGrantedException
 import androidx.xr.runtime.manifest.HAND_TRACKING
@@ -65,6 +66,12 @@ internal constructor(
         private set
 
     override fun configure(config: Config) {
+        if (config.depthEstimation == Config.DepthEstimationMode.SMOOTH_AND_RAW) {
+            throw ConfigurationNotSupportedException(
+                "Failed to configure session, runtime does not support raw and smooth depth simultaneously."
+            )
+        }
+
         // TODO(b/422808099): OpenXR does not properly return
         // XR_ERROR_PERMISSION_INSUFFICIENT when the HAND_TRACKING permission is not
         // granted, so we manually check it here.
@@ -125,6 +132,16 @@ internal constructor(
                     perceptionManager.xrResources.arDevice
                 )
             }
+        }
+
+        if (config.depthEstimation != this.config.depthEstimation) {
+            perceptionManager.xrResources.leftDepthMap.updateDepthEstimationMode(
+                config.depthEstimation
+            )
+            perceptionManager.xrResources.rightDepthMap.updateDepthEstimationMode(
+                config.depthEstimation
+            )
+            perceptionManager.depthEstimationMode = config.depthEstimation
         }
 
         this.config = config

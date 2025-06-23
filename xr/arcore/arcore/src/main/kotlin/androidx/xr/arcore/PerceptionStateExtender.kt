@@ -47,6 +47,7 @@ internal class PerceptionStateExtender : StateExtender {
             perceptionManager.viewCameras,
         )
         xrResourcesManager.initiateEarth(perceptionManager.earth)
+        xrResourcesManager.initiateDepthMaps(perceptionManager.depthMaps)
     }
 
     override suspend fun extend(coreState: CoreState) {
@@ -81,6 +82,7 @@ internal class PerceptionStateExtender : StateExtender {
                 xrResourcesManager.rightHand,
                 xrResourcesManager.arDevice,
                 xrResourcesManager.viewCameras,
+                xrResourcesManager.depthMaps,
             ),
         )
         timeMarkQueue.add(coreState.timeMark)

@@ -17,9 +17,11 @@
 package androidx.xr.runtime.openxr
 
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.Config
 import androidx.xr.runtime.internal.Anchor
 import androidx.xr.runtime.internal.AnchorInvalidUuidException
 import androidx.xr.runtime.internal.AnchorResourcesExhaustedException
+import androidx.xr.runtime.internal.DepthMap
 import androidx.xr.runtime.internal.Hand
 import androidx.xr.runtime.internal.HitResult
 import androidx.xr.runtime.internal.PerceptionManager
@@ -29,6 +31,7 @@ import androidx.xr.runtime.internal.ViewCamera
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Ray
 import androidx.xr.runtime.math.Vector3
+import java.nio.ByteBuffer
 import java.util.Arrays
 import java.util.UUID
 
@@ -110,6 +113,10 @@ internal constructor(private val timeSource: OpenXrTimeSource) : PerceptionManag
 
     override val earth: OpenXrEarth = xrResources.earth
 
+    override val depthMaps: List<DepthMap> =
+        listOf(xrResources.leftDepthMap, xrResources.rightDepthMap)
+    internal var depthEstimationMode = Config.DepthEstimationMode.DISABLED
+
     private var lastUpdateXrTime: Long = 0L
 
     /**
@@ -125,6 +132,12 @@ internal constructor(private val timeSource: OpenXrTimeSource) : PerceptionManag
         // View Cameras data are fetch within one JNI call, so they are updated separately.
         // TODO(b/421191332): Add the View Camera config and apply it for poseInUnboundedSpace.
         updateViewCameras(xrTime, false)
+
+        if (depthEstimationMode != Config.DepthEstimationMode.DISABLED) {
+            val depthMapBuffers = nativeGetDepthImagesDataBuffers(xrTime)
+            xrResources.leftDepthMap.update(depthMapBuffers)
+            xrResources.rightDepthMap.update(depthMapBuffers)
+        }
 
         lastUpdateXrTime = xrTime
     }
@@ -204,4 +217,6 @@ internal constructor(private val timeSource: OpenXrTimeSource) : PerceptionManag
         isHeadTrackingEnabled: Boolean,
         timestampNs: Long,
     ): Array<ViewCameraState>?
+
+    private external fun nativeGetDepthImagesDataBuffers(timestampNs: Long): Array<ByteBuffer>
 }

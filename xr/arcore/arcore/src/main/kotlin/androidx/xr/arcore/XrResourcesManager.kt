@@ -18,6 +18,7 @@ package androidx.xr.arcore
 
 import android.annotation.SuppressLint
 import androidx.xr.runtime.internal.ArDevice as RuntimeArDevice
+import androidx.xr.runtime.internal.DepthMap as RuntimeDepthMap
 import androidx.xr.runtime.internal.Earth as RuntimeEarth
 import androidx.xr.runtime.internal.Hand as RuntimeHand
 import androidx.xr.runtime.internal.LifecycleManager
@@ -66,6 +67,13 @@ internal class XrResourcesManager {
     val earth: Earth
         get() = checkNotNull(_earth)
 
+    /** The depth map data */
+    lateinit var _depthMaps: List<DepthMap>
+        private set
+
+    val depthMaps: List<DepthMap>
+        get() = if (::_depthMaps.isInitialized) _depthMaps else emptyList()
+
     internal fun initiateEarth(runtimeEarth: RuntimeEarth) {
         _earth = Earth(runtimeEarth, this)
     }
@@ -81,6 +89,10 @@ internal class XrResourcesManager {
     ) {
         arDevice = ArDevice(runtimeArDevice)
         viewCameras = runtimeViewCameras.map { ViewCamera(it, runtimeArDevice) }
+    }
+
+    internal fun initiateDepthMaps(runtimeDepthMaps: List<RuntimeDepthMap>) {
+        _depthMaps = runtimeDepthMaps.map { DepthMap(it) }
     }
 
     internal fun addUpdatable(updatable: Updatable) {
@@ -109,6 +121,10 @@ internal class XrResourcesManager {
         // unit tests.
         if (_earth != null) {
             earth.update()
+        }
+
+        for (depthMap in depthMaps) {
+            depthMap.update()
         }
     }
 

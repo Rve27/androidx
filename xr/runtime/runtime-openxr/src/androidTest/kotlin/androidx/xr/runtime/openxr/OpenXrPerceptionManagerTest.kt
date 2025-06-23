@@ -32,6 +32,8 @@ import androidx.xr.runtime.math.Quaternion
 import androidx.xr.runtime.math.Ray
 import androidx.xr.runtime.math.Vector3
 import com.google.common.truth.Truth.assertThat
+import java.nio.ByteBuffer
+import java.nio.FloatBuffer
 import java.util.UUID
 import kotlin.test.assertFailsWith
 import org.junit.After
@@ -244,6 +246,85 @@ class OpenXrPerceptionManagerTest {
         assertThat(viewCameras[1].pose)
             .isEqualTo(Pose(Vector3(0f, 2f, 0f), Quaternion(0f, 1.0f, 0f, 1.0f)))
         assertThat(viewCameras[1].fieldOfView).isEqualTo(FieldOfView(2f, 1f, 3f, 4f))
+    }
+
+    @Test
+    fun update_withRawOnlyConfig_updatesRawDepthMaps() = initOpenXrManagerAndRunTest {
+        check(underTest.depthMaps.size == 2)
+        check(underTest.depthMaps[0].width == 0)
+        check(underTest.depthMaps[0].height == 0)
+        check(underTest.depthMaps[0].rawDepthMap == null)
+        check(underTest.depthMaps[0].rawConfidenceMap == null)
+        check(underTest.depthMaps[0].smoothDepthMap == null)
+        check(underTest.depthMaps[0].smoothConfidenceMap == null)
+        check(underTest.depthMaps[1].width == 0)
+        check(underTest.depthMaps[1].height == 0)
+        check(underTest.depthMaps[1].rawDepthMap == null)
+        check(underTest.depthMaps[1].rawConfidenceMap == null)
+        check(underTest.depthMaps[1].smoothDepthMap == null)
+        check(underTest.depthMaps[1].smoothConfidenceMap == null)
+
+        openXrManager.configure(Config(depthEstimation = Config.DepthEstimationMode.RAW_ONLY))
+        underTest.update(XR_TIME)
+
+        assertThat(underTest.depthMaps[0].width).isEqualTo(80)
+        assertThat(underTest.depthMaps[0].height).isEqualTo(80)
+        // The expected values of the raw depth and confidence buffers come from kTestRawDepthData
+        // and kTestRawDepthConfidenceData in
+        // //third_party/jetpack_xr_natives/openxr/openxr_stub.cc.
+        val expectedRawDepthMap: FloatBuffer = FloatBuffer.wrap(FloatArray(6400) { 8.0f })
+        val expectedRawConfidenceMap: ByteBuffer = ByteBuffer.wrap(ByteArray(6400) { 100 })
+        assertThat(underTest.depthMaps[0].rawDepthMap).isEqualTo(expectedRawDepthMap)
+        assertThat(underTest.depthMaps[0].rawConfidenceMap).isEqualTo(expectedRawConfidenceMap)
+        assertThat(underTest.depthMaps[0].smoothDepthMap).isEqualTo(null)
+        assertThat(underTest.depthMaps[0].smoothConfidenceMap).isEqualTo(null)
+        assertThat(underTest.depthMaps[1].width).isEqualTo(80)
+        assertThat(underTest.depthMaps[1].height).isEqualTo(80)
+        assertThat(underTest.depthMaps[1].rawDepthMap).isEqualTo(expectedRawDepthMap)
+        assertThat(underTest.depthMaps[1].rawConfidenceMap).isEqualTo(expectedRawConfidenceMap)
+        assertThat(underTest.depthMaps[1].smoothDepthMap).isEqualTo(null)
+        assertThat(underTest.depthMaps[1].smoothConfidenceMap).isEqualTo(null)
+    }
+
+    @Test
+    fun update_withSmoothOnlyConfig_updatesSmoothDepthMaps() = initOpenXrManagerAndRunTest {
+        check(underTest.depthMaps.size == 2)
+        check(underTest.depthMaps[0].width == 0)
+        check(underTest.depthMaps[0].height == 0)
+        check(underTest.depthMaps[0].rawDepthMap == null)
+        check(underTest.depthMaps[0].rawConfidenceMap == null)
+        check(underTest.depthMaps[0].smoothDepthMap == null)
+        check(underTest.depthMaps[0].smoothConfidenceMap == null)
+        check(underTest.depthMaps[1].width == 0)
+        check(underTest.depthMaps[1].height == 0)
+        check(underTest.depthMaps[1].rawDepthMap == null)
+        check(underTest.depthMaps[1].rawConfidenceMap == null)
+        check(underTest.depthMaps[1].smoothDepthMap == null)
+        check(underTest.depthMaps[1].smoothConfidenceMap == null)
+
+        openXrManager.configure(Config(depthEstimation = Config.DepthEstimationMode.SMOOTH_ONLY))
+        underTest.update(XR_TIME)
+
+        assertThat(underTest.depthMaps[0].width).isEqualTo(80)
+        assertThat(underTest.depthMaps[0].height).isEqualTo(80)
+        // The expected values of the smooth depth and confidence buffers come from
+        // kTestSmoothDepthData and kTestSmoothDepthConfidenceData in
+        // //third_party/jetpack_xr_natives/openxr/openxr_stub.cc.
+        val expectedSmoothDepthMap: FloatBuffer = FloatBuffer.wrap(FloatArray(6400) { 10.0f })
+        val expectedSmoothConfidenceMap: ByteBuffer =
+            ByteBuffer.wrap(ByteArray(6400) { 200.toByte() })
+        assertThat(underTest.depthMaps[0].rawDepthMap).isEqualTo(null)
+        assertThat(underTest.depthMaps[0].rawConfidenceMap).isEqualTo(null)
+        assertThat(underTest.depthMaps[0].smoothDepthMap).isEqualTo(expectedSmoothDepthMap)
+        assertThat(underTest.depthMaps[0].smoothConfidenceMap)
+            .isEqualTo(expectedSmoothConfidenceMap)
+        assertThat(underTest.depthMaps[1].width).isEqualTo(80)
+        assertThat(underTest.depthMaps[1].height).isEqualTo(80)
+        assertThat(underTest.depthMaps[1].rawDepthMap).isEqualTo(null)
+        assertThat(underTest.depthMaps[1].rawConfidenceMap).isEqualTo(null)
+        assertThat(underTest.depthMaps[1].smoothDepthMap).isEqualTo(expectedSmoothDepthMap)
+        assertThat(underTest.depthMaps[1].smoothConfidenceMap)
+            .isEqualTo(expectedSmoothConfidenceMap)
     }
 
     @Test

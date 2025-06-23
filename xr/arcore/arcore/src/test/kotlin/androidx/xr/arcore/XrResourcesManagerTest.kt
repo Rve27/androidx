@@ -26,6 +26,7 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.testing.FakePerceptionManager
 import androidx.xr.runtime.testing.FakeRuntimeAnchor
 import androidx.xr.runtime.testing.FakeRuntimeArDevice
+import androidx.xr.runtime.testing.FakeRuntimeDepthMap
 import androidx.xr.runtime.testing.FakeRuntimeEarth
 import androidx.xr.runtime.testing.FakeRuntimeHand
 import androidx.xr.runtime.testing.FakeRuntimePlane
@@ -183,6 +184,21 @@ class XrResourcesManagerTest {
         underTest.update()
 
         assertThat(underTest.earth.state.value).isEqualTo(Earth.State.RUNNING)
+    }
+
+    @Test
+    fun update_updatesDepthMaps() = doBlocking {
+        val runtimeDepthMap = FakeRuntimeDepthMap()
+        underTest.initiateDepthMaps(listOf(runtimeDepthMap))
+        underTest.update()
+        check(underTest.depthMaps.size == 1)
+        check(underTest.depthMaps[0].state.value.width == 0)
+        val expectedWidth: Int = 100
+        runtimeDepthMap.width = expectedWidth
+
+        underTest.update()
+
+        assertThat(underTest.depthMaps[0].state.value.width).isEqualTo(expectedWidth)
     }
 
     private fun createTestSessionAndRunTest(testBody: () -> Unit) {

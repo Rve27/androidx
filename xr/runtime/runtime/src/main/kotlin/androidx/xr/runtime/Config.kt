@@ -263,7 +263,8 @@ constructor(
     /**
      * Feature that allows more accurate information about scene depth and meshes.
      *
-     * Setting this feature to [DepthEstimationMode.SMOOTH_AND_RAW] requires that the
+     * Setting this feature to any of [DepthEstimationMode.RAW_ONLY],
+     * [DepthEstimationMode.SMOOTH_ONLY] or [DepthEstimationMode.SMOOTH_AND_RAW] requires that the
      * `SCENE_UNDERSTANDING_FINE` Android permission is granted by the calling application.
      */
     public class DepthEstimationMode
@@ -277,11 +278,14 @@ constructor(
             /** Depth estimation will be enabled with raw depth and confidence. */
             @JvmField public val RAW_ONLY: DepthEstimationMode = DepthEstimationMode(1)
 
+            /** Depth estimation will be enabled with smooth depth and confidence. */
+            @JvmField public val SMOOTH_ONLY: DepthEstimationMode = DepthEstimationMode(2)
+
             /**
              * Depth estimation will be enabled with both raw and smooth depth and confidence. Note
              * that setting this mode will consume additional runtime resources.
              */
-            @JvmField public val SMOOTH_AND_RAW: DepthEstimationMode = DepthEstimationMode(2)
+            @JvmField public val SMOOTH_AND_RAW: DepthEstimationMode = DepthEstimationMode(3)
         }
 
         override fun toString(): String {
@@ -289,7 +293,8 @@ constructor(
                 when (mode) {
                     0 -> "DISABLED"
                     1 -> "RAW_ONLY"
-                    2 -> "SMOOTH_AND_RAW"
+                    2 -> "SMOOTH_ONLY"
+                    3 -> "SMOOTH_AND_RAW"
                     else -> "UNKNOWN"
                 }
         }
