@@ -212,6 +212,7 @@ internal class RecomposeScopeImpl(internal var owner: RecomposeScopeOwner?) :
         owner = null
         trackedInstances = null
         trackedDependencies = null
+        block = null
     }
 
     /**
