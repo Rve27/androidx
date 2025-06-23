@@ -35,6 +35,7 @@ import androidx.xr.runtime.internal.RuntimeFactory
 import androidx.xr.runtime.internal.UnsupportedDeviceException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.time.TimeSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -67,8 +68,7 @@ public constructor(
     public val sessionConnectors: List<SessionConnector> =
         loadProviders(SessionConnector::class.java, SESSION_CONNECTOR_PROVIDERS),
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    public val coroutineScope: CoroutineScope =
-        CoroutineScope(context = CoroutineContexts.Lightweight),
+    public val coroutineScope: CoroutineScope = CoroutineScope(context = EmptyCoroutineContext),
 ) {
     init {
         check(!activitySessionMap.containsKey(activity)) {
@@ -105,7 +105,7 @@ public constructor(
         @JvmStatic
         public fun create(
             activity: Activity,
-            coroutineContext: CoroutineContext = CoroutineContexts.Lightweight,
+            coroutineContext: CoroutineContext = EmptyCoroutineContext,
         ): SessionCreateResult = create(activity, coroutineContext, false)
 
         /**
@@ -127,7 +127,7 @@ public constructor(
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
         public fun create(
             activity: Activity,
-            coroutineContext: CoroutineContext = CoroutineContexts.Lightweight,
+            coroutineContext: CoroutineContext = EmptyCoroutineContext,
             unscaledGravityAlignedActivitySpace: Boolean = false,
         ): SessionCreateResult {
 
