@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,19 @@
 
 package androidx.paging
 
-class CombinedLoadStatesCapture {
-    private var lastEventsListIndex = -1
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
-    val events = mutableListOf<CombinedLoadStates>()
-
-    fun invoke(value: CombinedLoadStates) {
-        events.add(value)
+internal actual class SuspendingPagingSourceFactory<Key : Any, Value : Any>
+actual constructor(
+    private val dispatcher: CoroutineDispatcher,
+    private val delegate: () -> PagingSource<Key, Value>,
+) {
+    actual suspend fun create(): PagingSource<Key, Value> {
+        return withContext(dispatcher) { delegate() }
     }
 
-    fun newEvents(): List<CombinedLoadStates> {
-        return events.drop(lastEventsListIndex + 1).also { lastEventsListIndex = events.lastIndex }
+    actual fun invoke(): PagingSource<Key, Value> {
+        return delegate()
     }
 }

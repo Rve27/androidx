@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package androidx.paging
+package androidx.paging.internal
 
-class CombinedLoadStatesCapture {
-    private var lastEventsListIndex = -1
+import kotlinx.atomicfu.locks.reentrantLock
 
-    val events = mutableListOf<CombinedLoadStates>()
+internal actual class ReentrantLock {
+    val delegate = reentrantLock()
 
-    fun invoke(value: CombinedLoadStates) {
-        events.add(value)
+    actual fun lock() {
+        delegate.lock()
     }
 
-    fun newEvents(): List<CombinedLoadStates> {
-        return events.drop(lastEventsListIndex + 1).also { lastEventsListIndex = events.lastIndex }
+    actual fun unlock() {
+        delegate.unlock()
     }
 }

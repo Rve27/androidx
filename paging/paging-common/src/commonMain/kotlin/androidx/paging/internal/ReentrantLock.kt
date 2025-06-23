@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.paging
+package androidx.paging.internal
 
-class CombinedLoadStatesCapture {
-    private var lastEventsListIndex = -1
+internal expect class ReentrantLock constructor() {
+    fun lock()
 
-    val events = mutableListOf<CombinedLoadStates>()
-
-    fun invoke(value: CombinedLoadStates) {
-        events.add(value)
-    }
-
-    fun newEvents(): List<CombinedLoadStates> {
-        return events.drop(lastEventsListIndex + 1).also { lastEventsListIndex = events.lastIndex }
-    }
+    fun unlock()
 }

@@ -28,12 +28,6 @@ internal expect class CopyOnWriteArrayList<T>() : Iterable<T> {
     override fun iterator(): Iterator<T>
 }
 
-internal expect class ReentrantLock constructor() {
-    fun lock()
-
-    fun unlock()
-}
-
 internal expect class AtomicInt {
     constructor(initialValue: Int)
 
