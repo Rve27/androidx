@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,23 +31,19 @@ plugins {
 }
 
 dependencies {
-    api(libs.kotlinStdlib)
-    api("androidx.annotation:annotation:1.8.1")
-    api(project(":hilt:hilt-lifecycle-viewmodel"))
-    api("androidx.navigation:navigation-runtime:2.9.0")
+    implementation(libs.kotlinStdlib)
     api(libs.hiltAndroid)
 }
 
 androidx {
-    name = "Navigation Hilt Extension"
+    name = "ViewModel Hilt Extension"
     type = SoftwareType.PUBLISHED_LIBRARY
-    mavenVersion = LibraryVersions.HILT_NAVIGATION
-    inceptionYear = "2021"
-    description = "Android Navigation Hilt Extension"
-    legacyDisableKotlinStrictApiMode = true
+    mavenVersion = LibraryVersions.HILT
+    inceptionYear = "2025"
+    description = "ViewModel Hilt Extension"
 }
 
 android {
-    namespace = "androidx.hilt.navigation"
+    namespace = "androidx.hilt.lifecycle.viewmodel"
 }
 

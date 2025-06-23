@@ -32,7 +32,9 @@ import androidx.compose.ui.test.performClick
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentContainerView
-import androidx.hilt.navigation.HiltViewModelFactory
+import androidx.hilt.lifecycle.viewmodel.HiltViewModelFactory as createHiltViewModelFactory
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.HiltViewModelFactory as createNavHiltViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -59,11 +61,15 @@ import org.junit.runner.RunWith
 @LargeTest
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
-class HiltViewModelComposeTest {
+class HiltNavigationViewModelComposeTest {
 
     @get:Rule val testRule = HiltAndroidRule(this)
 
     @get:Rule val composeTestRule = createAndroidComposeRule<TestActivity>()
+
+    // TODO(kuanyingchou) Remove this after https://github.com/google/dagger/issues/3601 is
+    //  resolved.
+    @Inject @ApplicationContext lateinit var context: Context
 
     @Test
     fun verifyCurrentNavGraphViewModel() {
@@ -232,9 +238,10 @@ class HiltViewModelComposeTest {
             val navController = rememberNavController()
             NavHost(navController, startDestination = "Main") {
                 composable("Main") { navBackStackEntry ->
-                    firstFactory = HiltViewModelFactory(LocalContext.current, navBackStackEntry)
+                    firstFactory =
+                        createNavHiltViewModelFactory(LocalContext.current, navBackStackEntry)
                     secondFactory =
-                        HiltViewModelFactory(
+                        createHiltViewModelFactory(
                             LocalContext.current,
                             navBackStackEntry.defaultViewModelProviderFactory,
                         )
@@ -276,27 +283,14 @@ class HiltViewModelComposeTest {
     @AndroidEntryPoint class TestActivity : FragmentActivity()
 
     @HiltViewModel
-    class SimpleViewModel
-    @Inject
-    constructor(
-        val handle: SavedStateHandle,
-        val logger: MyLogger,
-        // TODO(kuanyingchou) Remove this after https://github.com/google/dagger/issues/3601 is
-        //  resolved.
-        @ApplicationContext val context: Context,
-    ) : ViewModel()
+    class SimpleViewModel @Inject constructor(val handle: SavedStateHandle, val logger: MyLogger) :
+        ViewModel()
 
     @HiltViewModel(assistedFactory = SimpleAssistedViewModel.Factory::class)
     class SimpleAssistedViewModel
     @AssistedInject
-    constructor(
-        val handle: SavedStateHandle,
-        val logger: MyLogger,
-        // TODO(kuanyingchou) Remove this after https://github.com/google/dagger/issues/3601 is
-        //  resolved.
-        @ApplicationContext val context: Context,
-        @Assisted val i: Int,
-    ) : ViewModel() {
+    constructor(val handle: SavedStateHandle, val logger: MyLogger, @Assisted val i: Int) :
+        ViewModel() {
         @AssistedFactory
         interface Factory {
             fun create(i: Int): SimpleAssistedViewModel

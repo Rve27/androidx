@@ -798,6 +798,8 @@ includeProject(":health:health-services-client-external-protobuf", [BuildType.MA
 includeProject(":heifwriter:heifwriter", [BuildType.MAIN])
 includeProject(":hilt:hilt-common", [BuildType.MAIN])
 includeProject(":hilt:hilt-compiler", [BuildType.MAIN])
+includeProject(":hilt:hilt-lifecycle-viewmodel", [BuildType.MAIN, BuildType.COMPOSE])
+includeProject(":hilt:hilt-lifecycle-viewmodel-compose", [BuildType.COMPOSE])
 includeProject(":hilt:hilt-navigation", [BuildType.MAIN, BuildType.COMPOSE])
 includeProject(":hilt:hilt-navigation-compose", [BuildType.COMPOSE])
 includeProject(":hilt:hilt-navigation-compose-samples", "hilt/hilt-navigation-compose/samples", [BuildType.COMPOSE])
