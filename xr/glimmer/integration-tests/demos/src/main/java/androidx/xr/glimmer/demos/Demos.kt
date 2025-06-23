@@ -32,6 +32,7 @@ val Demos =
             ComposableDemo("Surface") { SurfaceSampleUsage() },
             ComposableDemo("Icons") { IconSampleUsage() },
             DemoCategory("Focus", FocusDemos),
+            DemoCategory("List", ListDemos),
             ComposableDemo("Settings") { DemoSettings() },
         ),
     )
