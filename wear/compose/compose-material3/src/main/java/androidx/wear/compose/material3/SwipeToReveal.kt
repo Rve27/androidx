@@ -1144,8 +1144,17 @@ public class RevealState(initialValue: RevealValue) {
      * Animates to the [targetValue] with the animation spec provided.
      *
      * @param targetValue The target [RevealValue] where the [currentValue] will animate to.
+     * @throws IllegalStateException if the target [RevealValue] is not valid for current
+     *   [RevealState] instance.
      */
     public suspend fun animateTo(targetValue: RevealValue) {
+        check(
+            targetValue == Covered || anchoredDraggableState.anchors.hasPositionFor(targetValue)
+        ) {
+            "The RevealValue you're targeting isn't supported by current RevealState instance. " +
+                "Please ensure the RevealState was created with appropriate revealDirection or " +
+                "hasPartiallyRevealedState that supports the target RevealValue."
+        }
         // Cover the previously open component if revealing a different one
         if (targetValue != Covered) {
             resetLastState(this)

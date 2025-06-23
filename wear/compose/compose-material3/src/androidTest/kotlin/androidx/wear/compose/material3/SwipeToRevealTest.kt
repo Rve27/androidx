@@ -1153,6 +1153,61 @@ class SwipeToRevealTest {
         rule.runOnIdle { assertEquals(Covered, revealState.currentValue) }
     }
 
+    @Test()
+    fun onRtl_withPartiallyRevealedState_animateToLeftRevealing_throwsException() {
+        verifyAnimateToIllegalState(LeftRevealing)
+    }
+
+    @Test()
+    fun onRtl_withPartiallyRevealedState_animateToLeftRevealed_throwsException() {
+        verifyAnimateToIllegalState(LeftRevealed)
+    }
+
+    @Test()
+    fun onRtl_withNoPartiallyRevealedState_animateToRightRevealing_throwsException() {
+        verifyAnimateToIllegalState(targetValue = RightRevealing, hasPartiallyRevealedState = false)
+    }
+
+    @Test()
+    fun onBiDirectional_withNoPartiallyRevealedState_animateToLeftRevealing_throwsException() {
+        verifyAnimateToIllegalState(
+            targetValue = LeftRevealing,
+            revealDirection = Bidirectional,
+            hasPartiallyRevealedState = false,
+        )
+    }
+
+    @Test()
+    fun onBiDirectional_withNoPartiallyRevealedState_animateToRightRevealing_throwsException() {
+        verifyAnimateToIllegalState(
+            targetValue = RightRevealing,
+            revealDirection = Bidirectional,
+            hasPartiallyRevealedState = false,
+        )
+    }
+
+    private fun verifyAnimateToIllegalState(
+        targetValue: RevealValue,
+        revealDirection: RevealDirection = RightToLeft,
+        hasPartiallyRevealedState: Boolean = true,
+    ) {
+        lateinit var revealState: RevealState
+        rule.setContent {
+            revealState = rememberRevealState()
+            SwipeToRevealWithDefaults(
+                revealState = revealState,
+                revealDirection = revealDirection,
+                hasPartiallyRevealedState = hasPartiallyRevealedState,
+            )
+        }
+
+        assertThrows(IllegalStateException::class.java) {
+            // If use coroutineScope.launch, below block will run in parallel with test code, and we
+            // won't able to catch exception.
+            runBlocking { revealState.animateTo(targetValue) }
+        }
+    }
+
     @Composable
     fun SwipeToRevealWithTouchSlop(
         text: String = "other-item",

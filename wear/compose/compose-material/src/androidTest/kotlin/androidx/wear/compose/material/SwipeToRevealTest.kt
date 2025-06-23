@@ -53,7 +53,9 @@ import androidx.wear.compose.foundation.BasicSwipeToDismissBox
 import androidx.wear.compose.material.SwipeToRevealDefaults.createRevealAnchors
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
 
@@ -896,6 +898,30 @@ class SwipeToRevealTest {
         rule.onNodeWithTag(TEST_TAG).performTouchInput { swipeLeft() }
 
         assert(onPreScrollDispatch < 0) // Swiping left means the dispatch will be negative
+    }
+
+    @Test()
+    fun onRtl_animateToLeftRevealing() {
+        verifyIllegalAnimateTo(RevealValue.LeftRevealing)
+    }
+
+    @Test()
+    fun onRtl_animateToLeftRevealed() {
+        verifyIllegalAnimateTo(RevealValue.LeftRevealed)
+    }
+
+    private fun verifyIllegalAnimateTo(targetValue: RevealValue) {
+        lateinit var revealState: RevealState
+        rule.setContent {
+            revealState = rememberRevealState()
+            swipeToRevealWithDefaults(state = revealState)
+        }
+
+        assertThrows(IllegalStateException::class.java) {
+            // If use coroutineScope.launch, below block will run in parallel with test code, and we
+            // won't able to catch exception.
+            runBlocking { revealState.animateTo(targetValue) }
+        }
     }
 
     private fun verifyLastClickAction(
