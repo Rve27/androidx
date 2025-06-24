@@ -43,7 +43,6 @@ import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeNotNull
 import org.junit.Assume.assumeTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 
 @LargeTest
@@ -259,7 +258,6 @@ class IntegrationTest {
             .isEqualTo(expectedNote)
     }
 
-    @Ignore("b/399823985 - Fix AllOf validation")
     @Test
     fun executeAppFunction_createNote_withOpenableCapability_returnsNote() = doBlocking {
         val response =
@@ -302,7 +300,6 @@ class IntegrationTest {
             .isEqualTo(expectedNote)
     }
 
-    @Ignore("b/399823985: Fix AllOf validation")
     @Test
     fun executeAppFunction_createNote_withOpenableCapability_returnsOpenableNote() = doBlocking {
         val response =
