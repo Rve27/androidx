@@ -103,6 +103,7 @@ public constructor(
          */
         @JvmOverloads
         @JvmStatic
+        @Suppress("deprecation")
         public fun create(
             activity: Activity,
             coroutineContext: CoroutineContext = EmptyCoroutineContext,
@@ -118,17 +119,18 @@ public constructor(
          *   activity space for the session. When true, causes ActivitySpace for this Session to
          *   always be gravity aligned and to have a scale of [1 unit = 1 Meter]. Note that this
          *   might result in visual inconsistencies between HOME_SPACE and FULL_SPACE_MANAGED modes.
-         *   Defaults to False.
+         *   Defaults to True.
          * @return the result of the operation. Can be [SessionCreateSuccess], which contains the
          *   newly created session, or [SessionCreatePermissionsNotGranted] if the required
          *   permissions haven't been granted.
          */
         @JvmStatic
         @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+        @Deprecated("Will be deleted in a future release.")
         public fun create(
             activity: Activity,
             coroutineContext: CoroutineContext = EmptyCoroutineContext,
-            unscaledGravityAlignedActivitySpace: Boolean = false,
+            unscaledGravityAlignedActivitySpace: Boolean = true,
         ): SessionCreateResult {
 
             check(activity is LifecycleOwner) { "Unsupported Activity type: ${activity.javaClass}" }
