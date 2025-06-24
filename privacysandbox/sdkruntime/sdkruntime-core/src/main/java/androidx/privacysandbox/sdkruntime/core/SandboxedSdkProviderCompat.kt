@@ -17,7 +17,6 @@ package androidx.privacysandbox.sdkruntime.core
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 
 /**
  * Compat version of [android.app.sdksandbox.SandboxedSdkProvider].
@@ -87,18 +86,4 @@ public abstract class SandboxedSdkProviderCompat {
      * @see [android.app.sdksandbox.SandboxedSdkProvider.beforeUnloadSdk]
      */
     public open fun beforeUnloadSdk() {}
-
-    /**
-     * Requests a view to be remotely rendered to the client app process.
-     *
-     * @see [android.app.sdksandbox.SandboxedSdkProvider.getView]
-     */
-    @Deprecated(
-        message =
-            "This method will no longer be supported." +
-                "Please consider using androidx.privacysandbox.ui library as an alternative"
-    )
-    public open fun getView(windowContext: Context, params: Bundle, width: Int, height: Int): View {
-        throw UnsupportedOperationException("This SDK doesn't support SurfaceView requests.")
-    }
 }

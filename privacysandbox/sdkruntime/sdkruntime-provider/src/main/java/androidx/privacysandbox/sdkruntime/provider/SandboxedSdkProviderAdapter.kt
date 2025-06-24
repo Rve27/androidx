@@ -67,8 +67,7 @@ internal constructor(private val classNameProvider: CompatClassNameProvider) :
 
     @Suppress("OVERRIDE_DEPRECATION") // b/407503025
     override fun getView(windowContext: Context, params: Bundle, width: Int, height: Int): View {
-        @Suppress("DEPRECATION") // Do not break until complete removal
-        return delegate.getView(windowContext, params, width, height)
+        throw UnsupportedOperationException("This SDK doesn't support SurfaceView requests.")
     }
 
     private class DefaultClassNameProvider : CompatClassNameProvider {
