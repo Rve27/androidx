@@ -82,7 +82,7 @@ private fun IconPreview() {
 }
 
 /** Icon taken from material-icons-core */
-private val FavoriteIcon: ImageVector =
+internal val FavoriteIcon: ImageVector =
     ImageVector.Builder(
             name = "Favorite",
             defaultWidth = 24.dp,
