@@ -17,11 +17,11 @@
 import android.graphics.Point
 import android.graphics.RectF
 import android.util.SparseArray
+import androidx.pdf.PdfRect
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.content.SelectionBoundary
 import androidx.pdf.view.DocumentSelection
-import androidx.pdf.view.PdfRect
 import androidx.pdf.view.Selection
 import androidx.pdf.view.SelectionModel
 import androidx.pdf.view.TextSelection

@@ -23,6 +23,8 @@ import android.util.SparseArray
 import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfPoint
+import androidx.pdf.PdfRect
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.content.SelectionBoundary

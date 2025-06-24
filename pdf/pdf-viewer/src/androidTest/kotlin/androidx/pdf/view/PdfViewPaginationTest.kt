@@ -24,6 +24,7 @@ import android.view.View
 import android.view.View.MeasureSpec
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.pdf.PdfPoint
 import androidx.pdf.R
 import androidx.pdf.view.fastscroll.getDimensions
 import androidx.test.core.app.ActivityScenario

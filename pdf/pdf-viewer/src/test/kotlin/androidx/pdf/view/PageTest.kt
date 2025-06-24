@@ -22,6 +22,7 @@ import android.graphics.Point
 import android.graphics.Rect
 import android.graphics.RectF
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfRect
 import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.models.FormWidgetInfo
 import com.google.common.truth.Truth.assertThat

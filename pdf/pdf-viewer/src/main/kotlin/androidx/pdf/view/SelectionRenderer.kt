@@ -27,6 +27,7 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import androidx.annotation.VisibleForTesting
+import androidx.pdf.PdfRect
 import androidx.pdf.R
 import kotlin.math.roundToInt
 

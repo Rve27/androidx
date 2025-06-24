@@ -25,6 +25,8 @@ import android.graphics.Rect
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.util.SparseArray
+import androidx.pdf.PdfPoint
+import androidx.pdf.PdfRect
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Truth.assertThat
 import kotlin.collections.List

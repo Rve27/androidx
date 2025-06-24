@@ -20,6 +20,7 @@ import android.graphics.PointF
 import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.View
+import androidx.pdf.PdfPoint
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.ViewInteraction

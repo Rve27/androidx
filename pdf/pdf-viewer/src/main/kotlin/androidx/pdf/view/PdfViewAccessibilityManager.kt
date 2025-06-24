@@ -27,6 +27,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.graphics.toRectF
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.customview.widget.ExploreByTouchHelper
+import androidx.pdf.PdfPoint
 import androidx.pdf.R
 import androidx.pdf.content.PdfPageGotoLinkContent
 import androidx.pdf.content.PdfPageLinkContent

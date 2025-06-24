@@ -26,6 +26,7 @@ import android.view.MotionEvent
 import androidx.annotation.VisibleForTesting
 import androidx.core.util.forEach
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfPoint
 import androidx.pdf.content.PageSelection
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.exceptions.RequestMetadata

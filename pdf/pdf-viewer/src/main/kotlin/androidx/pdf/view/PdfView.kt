@@ -54,6 +54,7 @@ import androidx.core.util.keyIterator
 import androidx.core.util.valueIterator
 import androidx.core.view.ViewCompat
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfPoint
 import androidx.pdf.R
 import androidx.pdf.content.ExternalLink
 import androidx.pdf.event.PdfTrackingEvent

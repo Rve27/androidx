@@ -23,6 +23,8 @@ import android.os.Parcelable
 import androidx.annotation.VisibleForTesting
 import androidx.core.util.isEmpty
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfPoint
+import androidx.pdf.PdfRect
 import androidx.pdf.content.PageSelection
 import kotlin.collections.forEach
 

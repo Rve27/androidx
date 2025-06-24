@@ -16,63 +16,15 @@
 
 package androidx.pdf.view
 
-import android.graphics.PointF
-import android.graphics.RectF
 import android.os.Parcel
 import android.text.TextUtils
 import androidx.annotation.ColorInt
+import androidx.pdf.PdfPoint
+import androidx.pdf.PdfRect
 import kotlin.Int
 
 /**
- * Represents a rectangle in PDF coordinates, where [pageNum] indicates a PDF page, and [left],
- * [top], [right], and [bottom] indicate a rect in PDF points within the page, with the origin
- * existing at the top left corner of the page.
- */
-public class PdfRect(
-    public val pageNum: Int,
-    public val left: Float,
-    public val top: Float,
-    public val right: Float,
-    public val bottom: Float,
-) {
-    public constructor(
-        pageNum: Int,
-        pageRect: RectF,
-    ) : this(pageNum, pageRect.left, pageRect.top, pageRect.right, pageRect.bottom)
-
-    init {
-        require(pageNum >= 0) { "Invalid negative page" }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || other !is PdfRect) return false
-
-        if (other.pageNum != pageNum) return false
-        if (other.left != left) return false
-        if (other.top != top) return false
-        if (other.right != right) return false
-        if (other.bottom != bottom) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = pageNum.hashCode()
-        result = 31 * result + left.hashCode()
-        result = 31 * result + top.hashCode()
-        result = 31 * result + right.hashCode()
-        result = 31 * result + bottom.hashCode()
-        return result
-    }
-
-    override fun toString(): String {
-        return "PdfRect: page $pageNum area ($left, $top, $right, $bottom)"
-    }
-}
-
-/**
- * Writes a [PdfRect] to [dest].
+ * Writes a [androidx.pdf.PdfRect] to [dest].
  *
  * Not part of the public API because public APIs cannot be [android.os.Parcelable]
  */
@@ -99,42 +51,7 @@ internal fun pdfRectFromParcel(source: Parcel): PdfRect {
 }
 
 /**
- * Represents a point in PDF coordinates, where [pageNum] indicates a 0-indexed PDF page, and ([x],
- * [y]) indicates a point in PDF points within the page, with the origin existing at the top left
- * corner of the page.
- */
-public class PdfPoint(public val pageNum: Int, public val x: Float, public val y: Float) {
-
-    public constructor(pageNum: Int, pagePoint: PointF) : this(pageNum, pagePoint.x, pagePoint.y)
-
-    init {
-        require(pageNum >= 0) { "Invalid negative page" }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || other !is PdfPoint) return false
-
-        if (other.pageNum != pageNum) return false
-        if (other.x != x) return false
-        if (other.y != y) return false
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = pageNum.hashCode()
-        result = 31 * result + x.hashCode()
-        result = 31 * result + y.hashCode()
-        return result
-    }
-
-    override fun toString(): String {
-        return "PdfPoint: page $pageNum pagePoint ($x, $y)"
-    }
-}
-
-/**
- * Writes a [PdfPoint] to [dest].
+ * Writes a [androidx.pdf.PdfPoint] to [dest].
  *
  * Not part of the public API because public APIs cannot be [android.os.Parcelable]
  */

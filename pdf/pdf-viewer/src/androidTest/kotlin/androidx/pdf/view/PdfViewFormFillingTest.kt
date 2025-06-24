@@ -22,6 +22,7 @@ import android.graphics.Rect
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfPoint
 import androidx.pdf.R
 import androidx.pdf.models.FormEditRecord
 import androidx.pdf.models.FormWidgetInfo

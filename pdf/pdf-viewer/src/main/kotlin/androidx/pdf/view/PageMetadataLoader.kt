@@ -24,6 +24,8 @@ import android.util.Range
 import android.util.SparseArray
 import androidx.pdf.PdfDocument
 import androidx.pdf.PdfDocument.Companion.INCLUDE_FORM_WIDGET_INFO
+import androidx.pdf.PdfPoint
+import androidx.pdf.PdfRect
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.exceptions.RequestMetadata
 import androidx.pdf.util.PAGE_INFO_REQUEST_NAME
@@ -140,8 +142,8 @@ internal class PageMetadataLoader(
     }
 
     /**
-     * Returns the [PdfPoint] that exists at ([contentX], [contentY]), or null if no page content is
-     * laid out at that point.
+     * Returns the [androidx.pdf.PdfPoint] that exists at ([contentX], [contentY]), or null if no
+     * page content is laid out at that point.
      *
      * @param contentX the X content coordinate to check
      * @param contentY the Y content coordinate to check
@@ -213,8 +215,8 @@ internal class PageMetadataLoader(
     }
 
     /**
-     * Returns a View-relative [RectF] corresponding to a page-relative [PdfRect], or null if the
-     * page hasn't been laid out
+     * Returns a View-relative [RectF] corresponding to a page-relative [androidx.pdf.PdfRect], or
+     * null if the page hasn't been laid out
      */
     fun getViewRect(pdfRect: PdfRect, viewport: RectF): RectF? {
         if (pdfRect.pageNum > paginationModel.reach) return null

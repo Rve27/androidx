@@ -23,6 +23,7 @@ import android.graphics.RectF
 import android.os.DeadObjectException
 import androidx.core.graphics.toRectF
 import androidx.pdf.PdfDocument
+import androidx.pdf.PdfPoint
 import androidx.pdf.R
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.exceptions.RequestMetadata
