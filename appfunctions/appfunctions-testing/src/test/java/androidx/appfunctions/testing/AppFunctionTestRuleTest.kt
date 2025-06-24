@@ -57,7 +57,7 @@ class AppFunctionTestRuleTest {
     private val appFunctionManagerCompat: AppFunctionManagerCompat =
         assertNotNull(AppFunctionManagerCompat.getInstance(context))
 
-    @Test
+    @Test(timeout = 5000)
     fun returnedAppFunctionManagerCompat_observeApiNoFilter_returnsAllAppFunctions() =
         runBlocking<Unit> {
             val results =
@@ -69,7 +69,7 @@ class AppFunctionTestRuleTest {
             assertThat(results.single()).hasSize(8)
         }
 
-    @Test
+    @Test(timeout = 5000)
     fun returnedAppFunctionManagerCompat_observeApi_returnsNewValueOnUpdate() =
         runBlocking<Unit> {
             val functionIdToTest = "androidx.appfunctions.testing.TestFunctions#disabledByDefault"
@@ -102,7 +102,7 @@ class AppFunctionTestRuleTest {
                 .isTrue()
         }
 
-    @Test
+    @Test(timeout = 5000)
     fun returnedAppFunctionManagerCompat_filterBySchemaName_success() =
         runBlocking<Unit> {
             val results =
@@ -120,7 +120,7 @@ class AppFunctionTestRuleTest {
                 .containsExactly("androidx.appfunctions.testing.NotesFunctions#createNote")
         }
 
-    @Test
+    @Test(timeout = 5000)
     fun returnedAppFunctionManagerCompat_filterByPackageName_success() =
         runBlocking<Unit> {
             val results =
@@ -134,7 +134,7 @@ class AppFunctionTestRuleTest {
             assertThat(results.single()).hasSize(8)
         }
 
-    @Test
+    @Test(timeout = 5000)
     fun returnedAppFunctionManagerCompat_filterBySchemaCategory_success() =
         runBlocking<Unit> {
             val results =
@@ -152,7 +152,7 @@ class AppFunctionTestRuleTest {
                 .containsExactly("androidx.appfunctions.testing.NotesFunctions#createNote")
         }
 
-    @Test
+    @Test(timeout = 5000)
     fun returnedAppFunctionManagerCompat_filterByMinSchemaVersion_success() =
         runBlocking<Unit> {
             val results =
@@ -170,7 +170,7 @@ class AppFunctionTestRuleTest {
                 .containsExactly("androidx.appfunctions.testing.NotesFunctions#createNote")
         }
 
-    @Test
+    @Test(timeout = 5000)
     fun returnedAppFunctionManagerCompat_currentPackage_enabledByDefault_modified_success() =
         runBlocking<Unit> {
             val functionId = "androidx.appfunctions.testing.TestFunctions#enabledByDefault"
@@ -184,7 +184,7 @@ class AppFunctionTestRuleTest {
             assertThat(appFunctionManagerCompat.isAppFunctionEnabled(functionId)).isFalse()
         }
 
-    @Test
+    @Test(timeout = 5000)
     fun returnedAppFunctionManagerCompat_currentPackage_disabledByDefault_modified_success() =
         runBlocking<Unit> {
             val functionId = "androidx.appfunctions.testing.TestFunctions#disabledByDefault"
@@ -198,7 +198,7 @@ class AppFunctionTestRuleTest {
             assertThat(appFunctionManagerCompat.isAppFunctionEnabled(functionId)).isTrue()
         }
 
-    @Test
+    @Test(timeout = 5000)
     fun executeAppFunction_success() =
         runBlocking<Unit> {
             val response =
@@ -223,7 +223,7 @@ class AppFunctionTestRuleTest {
                 .isEqualTo(3)
         }
 
-    @Test
+    @Test(timeout = 5000)
     fun returnedAppFunctionManagerCompat_currentPackage_disabledByDefault_modifiedAndRestoredToDefault_success() =
         runBlocking<Unit> {
             val functionId = "androidx.appfunctions.testing.TestFunctions#disabledByDefault"
