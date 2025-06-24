@@ -51,6 +51,8 @@ internal class PageMetadataLoader(
     pageSpacingPx: Float = DEFAULT_PAGE_SPACING_PX,
     internal val paginationModel: PaginationModel =
         PaginationModel(pageSpacingPx, pdfDocument.pageCount, topPageMarginPx),
+    internal val pdfFormFillingState: PdfFormFillingState =
+        PdfFormFillingState(pdfDocument.pageCount),
     private val errorFlow: MutableSharedFlow<Throwable>,
     private val isFormFillingEnabled: Boolean = false,
 ) {
@@ -120,7 +122,7 @@ internal class PageMetadataLoader(
                         height = paginationModel.getPageSize(i).y,
                         width = paginationModel.getPageSize(i).x,
                         // TODO: b/410009335 Save and Restore formWidgetInfos across config changes
-                        formWidgetInfos = null,
+                        formWidgetInfos = pdfFormFillingState.getPageFormWidgetInfos(i),
                     )
                 )
             }
@@ -345,7 +347,13 @@ internal class PageMetadataLoader(
 
                     val size = Point(pageMetadata.width, pageMetadata.height)
                     // Add the value to the model before emitting, and on the main thread
-                    withContext(Dispatchers.Main) { paginationModel.addPage(pageNum, size) }
+                    withContext(Dispatchers.Main) {
+                        paginationModel.addPage(pageNum, size)
+                        pdfFormFillingState.addPageFormWidgetInfos(
+                            pageNum,
+                            pageMetadata.formWidgetInfos,
+                        )
+                    }
                     _pageInfos.emit(pageMetadata)
                 }
                 // TODO(b/409465579): Propagate custom exception from SandboxedPdfDocument to
