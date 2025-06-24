@@ -17,7 +17,7 @@
 package androidx.build
 
 import androidx.build.buildInfo.CreateLibraryBuildInfoFileTask
-import androidx.build.sources.sourcesConfigurationName
+import androidx.build.sources.PublishingVariant
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.LibraryPlugin
@@ -341,8 +341,11 @@ fun verifyGradleMetadata(metadata: String) {
         variantElement.asJsonObject
             .get("name")
             .asString
-            .contains(other = sourcesConfigurationName, ignoreCase = true)
-    } ?: throw Exception("The $sourcesConfigurationName variant must exist in the module file.")
+            .contains(other = PublishingVariant.SourcesElements.name, ignoreCase = true)
+    }
+        ?: throw Exception(
+            "The ${PublishingVariant.SourcesElements.name} variant must exist in the module file."
+        )
 }
 
 private fun Project.isMultiplatformPublicationEnabled(): Boolean {
