@@ -18,6 +18,7 @@ package androidx.privacysandbox.sdkruntime.core.controller.impl
 
 import android.os.Bundle
 import android.os.IBinder
+import androidx.annotation.RestrictTo
 import androidx.privacysandbox.sdkruntime.core.AppOwnedSdkSandboxInterfaceCompat
 import androidx.privacysandbox.sdkruntime.core.SandboxedSdkCompat
 import androidx.privacysandbox.sdkruntime.core.SdkSandboxClientImportanceListenerCompat
@@ -31,7 +32,9 @@ import java.util.concurrent.Executor
  * Wrapper for client provided implementation of [SdkSandboxControllerBackend]. Checks client
  * version to determine if method supported.
  */
-internal class LocalImpl(
+// TODO(b/426122358) Make it internal after finishing migration
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public class LocalImpl(
     private val implFromClient: SdkSandboxControllerBackend,
     private val clientVersion: Int,
 ) : SdkSandboxControllerBackend {

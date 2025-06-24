@@ -18,7 +18,6 @@ package androidx.privacysandbox.sdkruntime.core.internal
 
 import androidx.annotation.RestrictTo
 import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerBackendHolder
-import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerCompat
 
 /**
  * List of features using Client-Core internal API. Each feature available since particular
@@ -28,14 +27,15 @@ import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerCo
 public enum class ClientFeature {
     /**
      * Support for retrieving client app package name:
-     * [SdkSandboxControllerCompat.getClientPackageName]
+     * [androidx.privacysandbox.sdkruntime.provider.controller.SdkSandboxControllerCompat.getClientPackageName]
      */
     GET_CLIENT_PACKAGE_NAME,
 
     /**
      * Support for listening of client app foreground state:
-     * [SdkSandboxControllerCompat.registerSdkSandboxClientImportanceListener]
-     * [SdkSandboxControllerCompat.unregisterSdkSandboxClientImportanceListener]
+     *
+     * [androidx.privacysandbox.sdkruntime.provider.controller.SdkSandboxControllerCompat.registerSdkSandboxClientImportanceListener]
+     * [androidx.privacysandbox.sdkruntime.provider.controller.SdkSandboxControllerCompat.unregisterSdkSandboxClientImportanceListener]
      */
     CLIENT_IMPORTANCE_LISTENER,
 

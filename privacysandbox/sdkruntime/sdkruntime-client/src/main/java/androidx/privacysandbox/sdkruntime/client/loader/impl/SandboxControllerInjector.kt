@@ -27,7 +27,6 @@ import androidx.privacysandbox.sdkruntime.core.SdkSandboxClientImportanceListene
 import androidx.privacysandbox.sdkruntime.core.activity.SdkSandboxActivityHandlerCompat
 import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerBackend
 import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerBackendHolder
-import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerCompat
 import androidx.privacysandbox.sdkruntime.core.internal.ClientFeature
 import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
@@ -47,7 +46,9 @@ internal object SandboxControllerInjector {
      * 2) Retrieve [SdkSandboxControllerBackendHolder] class loaded by [sdkClassLoader]
      * 3) Create proxy that implements class from (1) and delegate to [controller]
      * 4) Call [SdkSandboxControllerBackendHolder.injectLocalBackend] on (2) with proxy from (3).
-     * 4) For legacy versions calls [SdkSandboxControllerCompat.injectLocalImpl] instead.
+     * 4) For legacy versions calls
+     *    [androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerCompat.injectLocalImpl]
+     *    instead.
      */
     @SuppressLint("BanUncheckedReflection") // using reflection on library classes
     fun inject(

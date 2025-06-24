@@ -31,6 +31,9 @@ plugins {
 
 dependencies {
     api(project(":privacysandbox:sdkruntime:sdkruntime-core"))
+    implementation("androidx.core:core:1.15.0")
+    implementation("androidx.core:core-ktx:1.15.0")
+    implementation("androidx.activity:activity:1.9.3")
 
     androidTestImplementation(libs.testCore)
     androidTestImplementation(libs.testExtJunit)

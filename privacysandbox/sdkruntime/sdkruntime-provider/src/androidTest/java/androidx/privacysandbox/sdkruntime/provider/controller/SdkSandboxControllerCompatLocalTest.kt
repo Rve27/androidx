@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.sdkruntime.core.controller
+package androidx.privacysandbox.sdkruntime.provider.controller
 
 import android.content.Context
 import android.os.Binder
@@ -27,13 +27,15 @@ import androidx.privacysandbox.sdkruntime.core.SdkSandboxClientImportanceListene
 import androidx.privacysandbox.sdkruntime.core.Versions
 import androidx.privacysandbox.sdkruntime.core.activity.ActivityHolder
 import androidx.privacysandbox.sdkruntime.core.activity.SdkSandboxActivityHandlerCompat
+import androidx.privacysandbox.sdkruntime.core.controller.LoadSdkCallback
+import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerBackend
+import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerBackendHolder
 import androidx.privacysandbox.sdkruntime.core.internal.ClientApiVersion
 import androidx.privacysandbox.sdkruntime.core.internal.ClientFeature
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Truth.assertThat
-import java.lang.reflect.Proxy
 import java.util.concurrent.Executor
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -68,26 +70,6 @@ class SdkSandboxControllerCompatLocalTest {
         Assert.assertThrows(UnsupportedOperationException::class.java) {
             SdkSandboxControllerCompat.from(context)
         }
-    }
-
-    @Test
-    fun injectLocalImpl_setBackendInSdkSandboxControllerBackendHolder() {
-        // Using proxy instead of mock to support tests on devices before API28.
-        // Other tests in project uses mockito inline to mock final classes and since require API28+
-        val controllerImplClass = SdkSandboxControllerCompat.SandboxControllerImpl::class.java
-        val noOpProxy =
-            Proxy.newProxyInstance(controllerImplClass.classLoader, arrayOf(controllerImplClass)) {
-                proxy,
-                method,
-                args ->
-                throw UnsupportedOperationException(
-                    "Unexpected method call (NoOp) object:$proxy, method: $method, args: $args"
-                )
-            } as SdkSandboxControllerCompat.SandboxControllerImpl
-
-        assertThat(SdkSandboxControllerBackendHolder.LOCAL_BACKEND).isNull()
-        SdkSandboxControllerCompat.injectLocalImpl(noOpProxy)
-        assertThat(SdkSandboxControllerBackendHolder.LOCAL_BACKEND).isNotNull()
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.sdkruntime.core.controller
+package androidx.privacysandbox.sdkruntime.provider.controller
 
 import android.app.sdksandbox.sdkprovider.SdkSandboxController
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import androidx.annotation.Keep
-import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
 import androidx.privacysandbox.sdkruntime.core.AppOwnedSdkSandboxInterfaceCompat
 import androidx.privacysandbox.sdkruntime.core.LoadSdkCompatException
 import androidx.privacysandbox.sdkruntime.core.SandboxedSdkCompat
@@ -31,6 +28,9 @@ import androidx.privacysandbox.sdkruntime.core.SandboxedSdkProviderCompat
 import androidx.privacysandbox.sdkruntime.core.SdkSandboxClientImportanceListenerCompat
 import androidx.privacysandbox.sdkruntime.core.Versions
 import androidx.privacysandbox.sdkruntime.core.activity.SdkSandboxActivityHandlerCompat
+import androidx.privacysandbox.sdkruntime.core.controller.LoadSdkCallback
+import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerBackend
+import androidx.privacysandbox.sdkruntime.core.controller.SdkSandboxControllerBackendHolder
 import androidx.privacysandbox.sdkruntime.core.controller.impl.LocalImpl
 import androidx.privacysandbox.sdkruntime.core.controller.impl.PlatformUDCImpl
 import java.util.concurrent.Executor
@@ -54,17 +54,6 @@ import kotlinx.coroutines.suspendCancellableCoroutine
  *
  * @see [SdkSandboxController]
  */
-@Deprecated(
-    message = "Use SdkSandboxControllerCompat from sdkruntime-provider library",
-    replaceWith =
-        ReplaceWith(
-            expression = "SdkSandboxControllerCompat",
-            imports =
-                arrayOf(
-                    "androidx.privacysandbox.sdkruntime.provider.controller.SdkSandboxControllerCompat"
-                ),
-        ),
-)
 public class SdkSandboxControllerCompat
 internal constructor(private val controllerImpl: SdkSandboxControllerBackend) {
 
@@ -167,40 +156,6 @@ internal constructor(private val controllerImpl: SdkSandboxControllerBackend) {
      */
     public fun getClientPackageName(): String = controllerImpl.getClientPackageName()
 
-    @RestrictTo(LIBRARY_GROUP)
-    public interface SandboxControllerImpl {
-
-        public fun loadSdk(
-            sdkName: String,
-            params: Bundle,
-            executor: Executor,
-            callback: LoadSdkCallback,
-        )
-
-        public fun getSandboxedSdks(): List<SandboxedSdkCompat>
-
-        public fun getAppOwnedSdkSandboxInterfaces(): List<AppOwnedSdkSandboxInterfaceCompat>
-
-        public fun registerSdkSandboxActivityHandler(
-            handlerCompat: SdkSandboxActivityHandlerCompat
-        ): IBinder
-
-        public fun unregisterSdkSandboxActivityHandler(
-            handlerCompat: SdkSandboxActivityHandlerCompat
-        )
-
-        public fun getClientPackageName(): String
-
-        public fun registerSdkSandboxClientImportanceListener(
-            executor: Executor,
-            listenerCompat: SdkSandboxClientImportanceListenerCompat,
-        )
-
-        public fun unregisterSdkSandboxClientImportanceListener(
-            listenerCompat: SdkSandboxClientImportanceListenerCompat
-        )
-    }
-
     public companion object {
         /**
          * Creates [SdkSandboxControllerCompat].
@@ -208,7 +163,6 @@ internal constructor(private val controllerImpl: SdkSandboxControllerBackend) {
          * @param context SDK context
          * @return SdkSandboxControllerCompat object.
          */
-        @Suppress("DEPRECATION")
         @JvmStatic
         public fun from(context: Context): SdkSandboxControllerCompat {
             val clientVersion = Versions.CLIENT_VERSION
@@ -222,60 +176,6 @@ internal constructor(private val controllerImpl: SdkSandboxControllerBackend) {
             }
             val platformImpl = PlatformImplFactory.create(context)
             return SdkSandboxControllerCompat(platformImpl)
-        }
-
-        /**
-         * Inject implementation from client library. Implementation will be used only if loaded
-         * locally. This method will be called from client side via reflection during loading SDK.
-         * New library versions should use [SdkSandboxControllerBackendHolder.injectLocalBackend].
-         */
-        @JvmStatic
-        @Keep
-        @RestrictTo(LIBRARY_GROUP)
-        public fun injectLocalImpl(impl: SandboxControllerImpl) {
-            SdkSandboxControllerBackendHolder.injectLocalBackend(LegacyBackend(impl))
-        }
-
-        /**
-         * When SDK loaded by old version of client library, converts legacy SandboxControllerImpl
-         * to [SdkSandboxControllerBackend].
-         */
-        private class LegacyBackend(private val legacyImpl: SandboxControllerImpl) :
-            SdkSandboxControllerBackend {
-
-            override fun loadSdk(
-                sdkName: String,
-                params: Bundle,
-                executor: Executor,
-                callback: LoadSdkCallback,
-            ): Unit = legacyImpl.loadSdk(sdkName, params, executor, callback)
-
-            override fun getSandboxedSdks(): List<SandboxedSdkCompat> =
-                legacyImpl.getSandboxedSdks()
-
-            override fun getAppOwnedSdkSandboxInterfaces():
-                List<AppOwnedSdkSandboxInterfaceCompat> =
-                legacyImpl.getAppOwnedSdkSandboxInterfaces()
-
-            override fun registerSdkSandboxActivityHandler(
-                handlerCompat: SdkSandboxActivityHandlerCompat
-            ): IBinder = legacyImpl.registerSdkSandboxActivityHandler(handlerCompat)
-
-            override fun unregisterSdkSandboxActivityHandler(
-                handlerCompat: SdkSandboxActivityHandlerCompat
-            ): Unit = legacyImpl.unregisterSdkSandboxActivityHandler(handlerCompat)
-
-            override fun getClientPackageName(): String = legacyImpl.getClientPackageName()
-
-            override fun registerSdkSandboxClientImportanceListener(
-                executor: Executor,
-                listenerCompat: SdkSandboxClientImportanceListenerCompat,
-            ): Unit =
-                legacyImpl.registerSdkSandboxClientImportanceListener(executor, listenerCompat)
-
-            override fun unregisterSdkSandboxClientImportanceListener(
-                listenerCompat: SdkSandboxClientImportanceListenerCompat
-            ): Unit = legacyImpl.unregisterSdkSandboxClientImportanceListener(listenerCompat)
         }
     }
 

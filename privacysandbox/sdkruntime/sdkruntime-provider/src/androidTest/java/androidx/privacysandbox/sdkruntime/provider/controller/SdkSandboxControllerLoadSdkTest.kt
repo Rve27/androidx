@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.sdkruntime.core.controller
+package androidx.privacysandbox.sdkruntime.provider.controller
 
 import android.app.sdksandbox.LoadSdkException
 import android.app.sdksandbox.SandboxedSdk
