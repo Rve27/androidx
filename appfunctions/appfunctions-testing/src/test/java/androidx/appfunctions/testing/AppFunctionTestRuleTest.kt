@@ -25,6 +25,7 @@ import androidx.appfunctions.ExecuteAppFunctionResponse
 import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.truth.Truth.assertThat
+import java.util.concurrent.TimeUnit
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlinx.coroutines.CoroutineScope
@@ -40,6 +41,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import org.robolectric.junit.rules.TimeoutRule
 
 @RunWith(RobolectricTestRunner::class)
 @Config(minSdk = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -49,6 +51,8 @@ class AppFunctionTestRuleTest {
     private val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
 
     @get:Rule val appFunctionTestRule = AppFunctionTestRule(targetContext)
+
+    @get:Rule val timeoutRule = TimeoutRule(10, TimeUnit.SECONDS)
 
     private val appFunctionManagerCompat: AppFunctionManagerCompat =
         assertNotNull(AppFunctionManagerCompat.getInstance(context))

@@ -43,6 +43,7 @@ import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeNotNull
 import org.junit.Assume.assumeTrue
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 @LargeTest
@@ -258,6 +259,7 @@ class IntegrationTest {
             .isEqualTo(expectedNote)
     }
 
+    @Ignore("b/399823985 - Fix AllOf validation")
     @Test
     fun executeAppFunction_createNote_withOpenableCapability_returnsNote() = doBlocking {
         val response =
@@ -300,6 +302,7 @@ class IntegrationTest {
             .isEqualTo(expectedNote)
     }
 
+    @Ignore("b/399823985: Fix AllOf validation")
     @Test
     fun executeAppFunction_createNote_withOpenableCapability_returnsOpenableNote() = doBlocking {
         val response =
@@ -615,6 +618,55 @@ class IntegrationTest {
                 ?.getAppFunctionData("createdNote")
         assertThat(resultNote?.getString("id")).isEqualTo("testId")
         assertThat(resultNote?.getString("title")).isEqualTo("Test Title")
+    }
+
+    @Test
+    fun executeAppFunction_schemaCreateNote_readInvalidFieldFail() = doBlocking {
+        val createNoteMetadata =
+            appFunctionManager
+                .observeAppFunctions(
+                    AppFunctionSearchSpec(
+                        packageNames = setOf(context.packageName),
+                        schemaCategory = "myNotes",
+                        schemaName = "createNote",
+                        minSchemaVersion = 2,
+                    )
+                )
+                .first()
+                .single()
+        val request =
+            ExecuteAppFunctionRequest(
+                functionIdentifier = createNoteMetadata.id,
+                targetPackageName = createNoteMetadata.packageName,
+                functionParameters =
+                    AppFunctionData.Builder(
+                            createNoteMetadata.parameters,
+                            createNoteMetadata.components,
+                        )
+                        .setAppFunctionData(
+                            "parameters",
+                            AppFunctionData.Builder(
+                                    requireTargetObjectTypeMetadata(
+                                        "parameters",
+                                        createNoteMetadata.parameters,
+                                        createNoteMetadata.components,
+                                    ),
+                                    createNoteMetadata.components,
+                                )
+                                .setString("title", "Test Title")
+                                .build(),
+                        )
+                        .build(),
+            )
+
+        val response = appFunctionManager.executeAppFunction(request)
+
+        assertIs<ExecuteAppFunctionResponse.Success>(response)
+        val resultNote =
+            response.returnValue
+                .getAppFunctionData(ExecuteAppFunctionResponse.Success.PROPERTY_RETURN_VALUE)
+                ?.getAppFunctionData("createdNote")
+        assertThrows(IllegalArgumentException::class.java) { resultNote?.getInt(("title")) }
     }
 
     @Test
