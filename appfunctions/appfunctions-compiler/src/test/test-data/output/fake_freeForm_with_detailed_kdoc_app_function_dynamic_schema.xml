@@ -1,7 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <appfunctions>
     <appfunction>
-        <id>com.testdata.FakeFreeFormFunction#fakeFreeFormFunction</id>
+        <id>com.testdata.FakeFreeFormFunction#fakeFreeFormFunction_isDescribedByKdoc_false</id>
+        <enabledByDefault>true</enabledByDefault>
+        <parameters>
+            <dataTypeMetadata>
+                <id>unused</id>
+                <isNullable>false</isNullable>
+                <type>8</type>
+            </dataTypeMetadata>
+            <id>unused</id>
+            <isRequired>true</isRequired>
+            <name>inputString</name>
+        </parameters>
+        <response>
+            <id>unused</id>
+            <valueType>
+                <id>unused</id>
+                <isNullable>false</isNullable>
+                <type>8</type>
+            </valueType>
+        </response>
+        <functionId>com.testdata.FakeFreeFormFunction#fakeFreeFormFunction_isDescribedByKdoc_false</functionId>
+    </appfunction>
+    <appfunction>
+        <id>com.testdata.FakeFreeFormFunction#fakeFreeFormFunction_isDescribedByKdoc_true</id>
         <enabledByDefault>true</enabledByDefault>
         <description>
  A fake free-form AppFunction to test the description element in the function's generated
@@ -33,7 +56,7 @@
                 <type>8</type>
             </valueType>
         </response>
-        <functionId>com.testdata.FakeFreeFormFunction#fakeFreeFormFunction</functionId>
+        <functionId>com.testdata.FakeFreeFormFunction#fakeFreeFormFunction_isDescribedByKdoc_true</functionId>
     </appfunction>
     <AppFunctionComponentMetadataDocument>
         <id>unused</id>

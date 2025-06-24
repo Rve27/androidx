@@ -231,7 +231,12 @@ data class AnnotatedAppFunctions(
                 parameters = parameterTypeMetadataList,
                 response = AppFunctionResponseMetadata(valueType = responseTypeMetadata),
                 components = AppFunctionComponentsMetadata(dataTypes = sharedDataTypeMap),
-                description = functionDeclaration.docString ?: "",
+                description =
+                    if (appFunctionAnnotationProperties.isDescribedByKdoc == true) {
+                        functionDeclaration.docString.orEmpty()
+                    } else {
+                        ""
+                    },
             )
         }
     }

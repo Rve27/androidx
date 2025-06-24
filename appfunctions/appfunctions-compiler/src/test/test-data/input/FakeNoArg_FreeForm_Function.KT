@@ -5,5 +5,6 @@ import androidx.appfunctions.AppFunctionContext
 
 class FakeNoArg {
     /** A free-form AppFunction without parameters. */
-    @AppFunction fun noArg(appFunctionContext: AppFunctionContext) {}
+    @AppFunction(isDescribedByKdoc = true)
+    fun noArg(appFunctionContext: AppFunctionContext) {}
 }

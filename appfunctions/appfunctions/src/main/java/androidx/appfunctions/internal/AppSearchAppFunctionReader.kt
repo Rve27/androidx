@@ -301,6 +301,7 @@ internal class AppSearchAppFunctionReader(
             parameters = parameterMetadata,
             response = responseMetadata,
             components = componentMetadata,
+            description = staticMetadataDocument.description ?: "",
         )
     }
 

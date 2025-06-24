@@ -68,6 +68,11 @@ class AppFunctionMetadataCreatorHelper {
                 AppFunctionAnnotation.PROPERTY_IS_ENABLED,
                 Boolean::class,
             )
+        val isDescribedByKdoc =
+            appFunctionAnnotation?.requirePropertyValueOfType(
+                AppFunctionAnnotation.PROPERTY_IS_DESCRIBED_BY_KDOC,
+                Boolean::class,
+            )
         val schemaCategory =
             schemaDefinitionAnnotation?.requirePropertyValueOfType(
                 AppFunctionSchemaDefinitionAnnotation.PROPERTY_CATEGORY,
@@ -86,7 +91,13 @@ class AppFunctionMetadataCreatorHelper {
                 )
                 ?.toLong()
 
-        return AppFunctionAnnotationProperties(enabled, schemaName, schemaVersion, schemaCategory)
+        return AppFunctionAnnotationProperties(
+            enabled,
+            isDescribedByKdoc,
+            schemaName,
+            schemaVersion,
+            schemaCategory,
+        )
     }
 
     /**
@@ -612,6 +623,7 @@ class AppFunctionMetadataCreatorHelper {
      */
     data class AppFunctionAnnotationProperties(
         val isEnabledByDefault: Boolean?,
+        val isDescribedByKdoc: Boolean?,
         val schemaName: String?,
         val schemaVersion: Long?,
         val schemaCategory: String?,
