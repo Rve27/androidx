@@ -58,7 +58,7 @@ internal actual class AtomicBoolean actual constructor(initialValue: Boolean) {
 
 internal actual class CopyOnWriteArrayList<T> : Iterable<T> {
     private var data: List<T> = emptyList()
-    private val lock = ReentrantLock()
+    private val lock = SynchronizedLock()
 
     actual override fun iterator(): Iterator<T> {
         return data.iterator()

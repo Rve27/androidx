@@ -94,12 +94,16 @@ androidXMultiplatform {
             dependsOn(nonJvmMain)
         }
 
-        darwinMain {
+        unixMain {
             dependsOn(nativeMain)
         }
 
+        darwinMain {
+            dependsOn(unixMain)
+        }
+
         linuxMain {
-            dependsOn(nativeMain)
+            dependsOn(unixMain)
         }
 
         webMain {

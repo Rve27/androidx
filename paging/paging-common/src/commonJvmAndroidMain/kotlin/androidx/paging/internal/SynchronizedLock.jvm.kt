@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,9 @@
 
 package androidx.paging.internal
 
-import kotlinx.atomicfu.locks.reentrantLock
+internal actual class SynchronizedLock {
 
-internal actual class ReentrantLock {
-    val delegate = reentrantLock()
-
-    actual fun lock() {
-        delegate.lock()
-    }
-
-    actual fun unlock() {
-        delegate.unlock()
+    actual inline fun <T> withLockImpl(block: () -> T): T {
+        return kotlin.synchronized(lock = this, block = block)
     }
 }
