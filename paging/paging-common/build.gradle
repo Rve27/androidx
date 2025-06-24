@@ -40,6 +40,7 @@ androidXMultiplatform {
     watchos()
     tvos()
     js()
+    wasmJs()
     androidLibrary {
         namespace = "androidx.paging.common"
     }
@@ -82,26 +83,6 @@ androidXMultiplatform {
             }
         }
 
-        jvmMain {
-            dependsOn(commonJvmAndroidMain)
-        }
-
-        jvmTest {
-            dependsOn(commonJvmAndroidTest)
-        }
-
-        androidMain {
-            dependsOn(commonJvmAndroidMain)
-        }
-
-        androidInstrumentedTest {
-            dependsOn(commonJvmAndroidTest)
-            dependencies {
-                implementation(libs.testRunner)
-                implementation(libs.mockitoAndroid5)
-            }
-        }
-
         nonJvmMain {
             dependsOn(commonMain)
             dependencies {
@@ -111,10 +92,6 @@ androidXMultiplatform {
 
         nativeMain {
             dependsOn(nonJvmMain)
-        }
-
-        nativeTest {
-            dependsOn(commonTest)
         }
 
         darwinMain {
@@ -136,6 +113,8 @@ androidXMultiplatform {
         jsMain {
             dependsOn(webMain)
             dependencies {
+                // For KotlinWasm/Js, versions of toolchain and stdlib need to be the same (2.1):
+                // https://youtrack.jetbrains.com/issue/KT-71032
                 implementation(libs.kotlinStdlibJs)
             }
         }
@@ -144,23 +123,47 @@ androidXMultiplatform {
             dependsOn(webTest)
         }
 
+        wasmJsMain {
+            dependsOn(webMain)
+            dependencies {
+                // For KotlinWasm/Js, versions of toolchain and stdlib need to be the same (2.1):
+                // https://youtrack.jetbrains.com/issue/KT-71032
+                implementation(libs.kotlinStdlibWasm)
+            }
+        }
+
+        wasmJsTest {
+            dependsOn(webTest)
+            dependencies {
+                implementation(libs.kotlinStdlibWasm)
+                implementation(libs.kotlinTestForWasmTests)
+            }
+        }
+
+        jvmTest {
+            dependsOn(commonJvmAndroidTest)
+        }
+
+        androidInstrumentedTest {
+            dependsOn(commonJvmAndroidTest)
+            dependencies {
+                implementation(libs.testRunner)
+                implementation(libs.mockitoAndroid5)
+            }
+        }
+
         targets.configureEach { target ->
-            if (target.platformType == KotlinPlatformType.native) {
+            if (target.platformType in [KotlinPlatformType.jvm, KotlinPlatformType.androidJvm] ) {
+                target.compilations["main"].defaultSourceSet.dependsOn(commonJvmAndroidMain)
+            } else if (target.platformType == KotlinPlatformType.native) {
                 target.compilations["main"].defaultSourceSet {
-                    def konanTargetFamily = target.konanTarget.family
-                    if (konanTargetFamily == Family.OSX ||
-                            konanTargetFamily == Family.IOS ||
-                            konanTargetFamily == Family.WATCHOS ||
-                            konanTargetFamily == Family.TVOS) {
+                    if (target.konanTarget.family.appleFamily) {
                         dependsOn(darwinMain)
-                    } else if (konanTargetFamily == Family.LINUX) {
+                    } else if (target.konanTarget.family == Family.LINUX) {
                         dependsOn(linuxMain)
                     } else {
                         throw new GradleException("unknown native target ${target}")
                     }
-                }
-                target.compilations["test"].defaultSourceSet {
-                    dependsOn(nativeTest)
                 }
             }
         }

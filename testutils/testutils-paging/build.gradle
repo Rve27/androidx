@@ -35,6 +35,7 @@ androidXMultiplatform {
     watchos()
     tvos()
     js()
+    wasmJs()
 
     sourceSets {
         commonMain {
@@ -49,6 +50,13 @@ androidXMultiplatform {
             dependsOn(commonMain)
             dependencies {
                 implementation(libs.kotlinStdlibJs)
+            }
+        }
+
+        wasmJsMain {
+            dependsOn(commonMain)
+            dependencies {
+                implementation(libs.kotlinStdlibWasm)
             }
         }
     }
