@@ -58,17 +58,15 @@ class AppFunctionTestRuleTest {
         assertNotNull(AppFunctionManagerCompat.getInstance(context))
 
     @Test
-    fun returnedAppFunctionManagerCompat_observeApi_returnsAllAppFunctions() =
+    fun returnedAppFunctionManagerCompat_observeApiNoFilter_returnsAllAppFunctions() =
         runBlocking<Unit> {
             val results =
                 appFunctionManagerCompat
-                    .observeAppFunctions(
-                        AppFunctionSearchSpec(packageNames = setOf(context.packageName))
-                    )
+                    .observeAppFunctions(AppFunctionSearchSpec())
                     .take(1)
                     .toList()
 
-            assertThat(results.single()).hasSize(7)
+            assertThat(results.single()).hasSize(8)
         }
 
     @Test
@@ -102,6 +100,74 @@ class AppFunctionTestRuleTest {
             // Assert next update has updated value.
             assertThat(emittedValues.replayCache[1].single { it.id == functionIdToTest }.isEnabled)
                 .isTrue()
+        }
+
+    @Test
+    fun returnedAppFunctionManagerCompat_filterBySchemaName_success() =
+        runBlocking<Unit> {
+            val results =
+                appFunctionManagerCompat
+                    .observeAppFunctions(
+                        AppFunctionSearchSpec(
+                            packageNames = setOf(context.packageName),
+                            schemaName = "createNote",
+                        )
+                    )
+                    .take(1)
+                    .toList()
+
+            assertThat(results.single().map { it.id })
+                .containsExactly("androidx.appfunctions.testing.NotesFunctions#createNote")
+        }
+
+    @Test
+    fun returnedAppFunctionManagerCompat_filterByPackageName_success() =
+        runBlocking<Unit> {
+            val results =
+                appFunctionManagerCompat
+                    .observeAppFunctions(
+                        AppFunctionSearchSpec(packageNames = setOf(context.packageName))
+                    )
+                    .take(1)
+                    .toList()
+
+            assertThat(results.single()).hasSize(8)
+        }
+
+    @Test
+    fun returnedAppFunctionManagerCompat_filterBySchemaCategory_success() =
+        runBlocking<Unit> {
+            val results =
+                appFunctionManagerCompat
+                    .observeAppFunctions(
+                        AppFunctionSearchSpec(
+                            packageNames = setOf(context.packageName),
+                            schemaCategory = "myNotes",
+                        )
+                    )
+                    .take(1)
+                    .toList()
+
+            assertThat(results.single().map { it.id })
+                .containsExactly("androidx.appfunctions.testing.NotesFunctions#createNote")
+        }
+
+    @Test
+    fun returnedAppFunctionManagerCompat_filterByMinSchemaVersion_success() =
+        runBlocking<Unit> {
+            val results =
+                appFunctionManagerCompat
+                    .observeAppFunctions(
+                        AppFunctionSearchSpec(
+                            packageNames = setOf(context.packageName),
+                            minSchemaVersion = 2,
+                        )
+                    )
+                    .take(1)
+                    .toList()
+
+            assertThat(results.single().map { it.id })
+                .containsExactly("androidx.appfunctions.testing.NotesFunctions#createNote")
         }
 
     @Test

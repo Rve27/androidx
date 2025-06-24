@@ -77,19 +77,46 @@ internal class FakeAppFunctionReader(context: Context) : AppFunctionReader {
         searchFunctionSpec: AppFunctionSearchSpec
     ): Flow<List<AppFunctionMetadata>> =
         packageToFunctionMetadataMapState.map { packageToFunctionMetadataMap ->
-            packageToFunctionMetadataMap.flatMap { (packageName, metadataMap) ->
-                metadataMap.values.map { metadata ->
-                    AppFunctionMetadata(
-                        id = metadata.staticMetadata.id,
-                        packageName = packageName,
-                        isEnabled = metadata.computeEffectivelyEnabled(),
-                        schema = metadata.staticMetadata.schema,
-                        parameters = metadata.staticMetadata.parameters,
-                        response = metadata.staticMetadata.response,
-                        components = metadata.staticMetadata.components,
-                    )
+            packageToFunctionMetadataMap
+                .filterKeys {
+                    searchFunctionSpec.packageNames == null ||
+                        it in checkNotNull(searchFunctionSpec.packageNames)
                 }
-            }
+                .flatMap { (packageName, metadataMap) ->
+                    metadataMap.values
+                        .filter {
+                            if (
+                                searchFunctionSpec.schemaName != null &&
+                                    searchFunctionSpec.schemaName != it.staticMetadata.schema?.name
+                            ) {
+                                return@filter false
+                            }
+
+                            if (
+                                searchFunctionSpec.schemaCategory != null &&
+                                    searchFunctionSpec.schemaCategory !=
+                                        it.staticMetadata.schema?.category
+                            ) {
+                                return@filter false
+                            }
+
+                            // minSchemaVersion == 0 is treated as unset and basically will evaluate
+                            // true for all objects.
+                            (it.staticMetadata.schema?.version ?: 0) >=
+                                searchFunctionSpec.minSchemaVersion
+                        }
+                        .map { metadata ->
+                            AppFunctionMetadata(
+                                id = metadata.staticMetadata.id,
+                                packageName = packageName,
+                                isEnabled = metadata.computeEffectivelyEnabled(),
+                                schema = metadata.staticMetadata.schema,
+                                parameters = metadata.staticMetadata.parameters,
+                                response = metadata.staticMetadata.response,
+                                components = metadata.staticMetadata.components,
+                            )
+                        }
+                }
         }
 
     override suspend fun getAppFunctionMetadata(
