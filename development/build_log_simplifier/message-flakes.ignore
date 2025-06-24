@@ -169,3 +169,5 @@ java\.io\.EOFException
 Warning: Unable to lock settings file \$GRADLE_USER_HOME/\.android/analytics\.settings.*
 # Develocity flake, reported via slack
 \[Resource\-Usage\] Problem extracting process name:.*
+# b/427504385
+ChromeHeadless has not captured in [0-9]+ ms, killing\.
