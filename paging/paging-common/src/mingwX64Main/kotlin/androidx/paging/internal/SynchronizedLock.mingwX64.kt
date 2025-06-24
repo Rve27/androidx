@@ -20,35 +20,34 @@ import kotlinx.cinterop.Arena
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.ptr
+import platform.posix.PTHREAD_MUTEX_RECURSIVE
 import platform.posix.pthread_mutex_destroy
 import platform.posix.pthread_mutex_init
 import platform.posix.pthread_mutex_lock
-import platform.posix.pthread_mutex_t
+import platform.posix.pthread_mutex_tVar
 import platform.posix.pthread_mutex_unlock
 import platform.posix.pthread_mutexattr_destroy
 import platform.posix.pthread_mutexattr_init
 import platform.posix.pthread_mutexattr_settype
-import platform.posix.pthread_mutexattr_t
+import platform.posix.pthread_mutexattr_tVar
+
+internal actual val PTHREAD_MUTEX_RECURSIVE: Int = PTHREAD_MUTEX_RECURSIVE
 
 @OptIn(ExperimentalForeignApi::class)
 internal actual class SynchronizedLockNativeImpl actual constructor() {
     private val arena = Arena()
-    private val attr: pthread_mutexattr_t = arena.alloc()
-    private val mutex: pthread_mutex_t = arena.alloc()
+    private val attr: pthread_mutexattr_tVar = arena.alloc()
+    private val mutex: pthread_mutex_tVar = arena.alloc()
 
     init {
         pthread_mutexattr_init(attr.ptr)
-        pthread_mutexattr_settype(attr.ptr, PTHREAD_MUTEX_RECURSIVE)
+        pthread_mutexattr_settype(attr.ptr, platform.posix.PTHREAD_MUTEX_RECURSIVE)
         pthread_mutex_init(mutex.ptr, attr.ptr)
     }
 
-    internal actual fun lock(): Int {
-        return pthread_mutex_lock(mutex.ptr)
-    }
+    internal actual fun lock(): Int = pthread_mutex_lock(mutex.ptr)
 
-    internal actual fun unlock(): Int {
-        return pthread_mutex_unlock(mutex.ptr)
-    }
+    internal actual fun unlock(): Int = pthread_mutex_unlock(mutex.ptr)
 
     internal actual fun destroy() {
         pthread_mutex_destroy(mutex.ptr)

@@ -29,9 +29,9 @@ import kotlinx.cinterop.ExperimentalForeignApi
 internal expect val PTHREAD_MUTEX_RECURSIVE: Int
 
 internal expect class SynchronizedLockNativeImpl() {
-    internal fun lock()
+    internal fun lock(): Int
 
-    internal fun unlock()
+    internal fun unlock(): Int
 
     internal fun destroy()
 }

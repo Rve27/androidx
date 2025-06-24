@@ -41,6 +41,7 @@ androidXMultiplatform {
     tvos()
     js()
     wasmJs()
+    mingwX64()
     androidLibrary {
         namespace = "androidx.paging.common"
     }
@@ -106,6 +107,10 @@ androidXMultiplatform {
             dependsOn(unixMain)
         }
 
+        mingwMain {
+            dependsOn(nativeMain)
+        }
+
         webMain {
             dependsOn(nonJvmMain)
         }
@@ -165,6 +170,8 @@ androidXMultiplatform {
                         dependsOn(darwinMain)
                     } else if (target.konanTarget.family == Family.LINUX) {
                         dependsOn(linuxMain)
+                    } else if (target.konanTarget.family == Family.MINGW) {
+                        dependsOn(mingwMain)
                     } else {
                         throw new GradleException("unknown native target ${target}")
                     }
