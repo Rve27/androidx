@@ -832,20 +832,18 @@ package androidx.xr.runtime.internal {
     method public void setMaterialOverride(androidx.xr.runtime.internal.MaterialResource material, String meshName);
     method public void startAnimation(boolean loop, String? animationName);
     method public void stopAnimation();
-    property @androidx.xr.runtime.internal.GltfEntity.AnimationState public abstract int animationState;
+    property @androidx.xr.runtime.internal.GltfEntity.AnimationStateValue public abstract int animationState;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static @interface GltfEntity.AnimationState {
-    field public static final androidx.xr.runtime.internal.GltfEntity.AnimationState.Companion Companion;
-    field public static final int PLAYING = 0; // 0x0
-    field public static final int STOPPED = 1; // 0x1
-  }
-
-  public static final class GltfEntity.AnimationState.Companion {
+  public static final class GltfEntity.AnimationState {
     property public static int PLAYING;
     property public static int STOPPED;
+    field public static final androidx.xr.runtime.internal.GltfEntity.AnimationState INSTANCE;
     field public static final int PLAYING = 0; // 0x0
     field public static final int STOPPED = 1; // 0x1
+  }
+
+  @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) public static @interface GltfEntity.AnimationStateValue {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface GltfModelResource extends androidx.xr.runtime.internal.Resource {

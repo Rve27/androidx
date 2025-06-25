@@ -116,7 +116,7 @@ package androidx.xr.runtime.testing {
     method public void setMaterialOverride(androidx.xr.runtime.internal.MaterialResource material, String meshName);
     method public void startAnimation(boolean loop, String? animationName);
     method public void stopAnimation();
-    property @androidx.xr.runtime.internal.GltfEntity.AnimationState public int animationState;
+    property @androidx.xr.runtime.internal.GltfEntity.AnimationStateValue public int animationState;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeInteractableComponent extends androidx.xr.runtime.testing.FakeComponent implements androidx.xr.runtime.internal.InteractableComponent {

@@ -59,8 +59,7 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     @ContentSecurityLevel
     private int mContentSecurityLevel = SurfaceEntity.ContentSecurityLevel.NONE;
 
-    @SuperSampling
-    private int mSuperSampling = SurfaceEntity.SuperSampling.DEFAULT;
+    @SuperSampling private int mSuperSampling = SurfaceEntity.SuperSampling.DEFAULT;
 
     private CanvasShape mCanvasShape;
     private float mFeatherRadiusX = 0.0f;
@@ -90,8 +89,7 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     }
 
     // Converts SurfaceEntity's SuperSampling to a boolean for Impress.
-    private static boolean toImpressSuperSampling(
-            @SuperSampling int superSampling) {
+    private static boolean toImpressSuperSampling(@SuperSampling int superSampling) {
         switch (superSampling) {
             case SuperSampling.NONE:
                 return false;

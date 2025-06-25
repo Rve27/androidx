@@ -205,14 +205,16 @@ package androidx.xr.scenecore {
     method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, java.nio.file.Path path, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.GltfModel>);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class GltfModelEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.GltfEntity> {
+  public final class GltfModelEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.GltfEntity> {
     method @MainThread public static androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model);
     method @MainThread public static androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model, optional androidx.xr.runtime.math.Pose pose);
     method public int getAnimationState();
-    method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material, String meshName);
-    method @MainThread public void startAnimation(boolean loop);
-    method @MainThread public void startAnimation(boolean loop, optional String? animationName);
+    method @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setMaterialOverride(androidx.xr.scenecore.Material material, String meshName);
+    method @MainThread public void startAnimation();
+    method @MainThread public void startAnimation(optional boolean loop);
+    method @MainThread public void startAnimation(boolean loop, String animationName);
     method @MainThread public void stopAnimation();
+    property public int animationState;
     field public static final androidx.xr.scenecore.GltfModelEntity.Companion Companion;
   }
 
