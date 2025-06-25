@@ -71,7 +71,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val parentWidth = MeasureSpec.getSize(widthMeasureSpec)
-        val availableWidth = parentWidth - paddingLeft - paddingRight
+        val availableWidth = parentWidth - paddingStart - paddingEnd
 
         var totalWidthUsed = 0
         var totalHeight = 0
@@ -135,31 +135,34 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         totalHeight = max(totalHeight, subtitleView.totalHeight)
 
         setMeasuredDimension(
-            resolveSize(totalWidthUsed + paddingLeft + paddingRight, widthMeasureSpec),
+            resolveSize(totalWidthUsed + paddingStart + paddingEnd, widthMeasureSpec),
             resolveSize(totalHeight + paddingTop + paddingBottom, heightMeasureSpec),
         )
     }
 
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        val parentHeight = b - t - paddingTop - paddingBottom
+        val availableHeight = b - t - paddingTop - paddingBottom
+        val parentPaddingTop = paddingTop
+        val parentWidth = r - l
+        val isLtr = layoutDirection == LAYOUT_DIRECTION_LTR
 
-        var currentLeft = paddingLeft
+        var currentStart = paddingStart
 
         fun View.layout() {
-            if (visibility != GONE) {
-                val top = paddingTop + (parentHeight - measuredHeight) / 2
-                currentLeft += marginLeft
-                layout(
-                    /* l = */ currentLeft,
-                    /* t = */ top,
-                    /* r = */ currentLeft + measuredWidth,
-                    /* b = */ top + measuredHeight,
-                )
-                currentLeft += measuredWidth + marginRight
-            }
+            if (visibility == GONE) return
+            // center aligned in parent's available height
+            val top = parentPaddingTop + (availableHeight - measuredHeight) / 2
+            currentStart += marginStart
+            val left = if (isLtr) currentStart else parentWidth - currentStart - measuredWidth
+            layout(
+                /* l = */ left,
+                /* t = */ top,
+                /* r = */ left + measuredWidth,
+                /* b = */ top + measuredHeight,
+            )
+            currentStart += measuredWidth + marginEnd
         }
 
-        // Layout start icon
         startIcon.layout()
         titleView.layout()
         subtitleView.layout()
@@ -182,16 +185,16 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
             get() = measuredWidth + marginHorizontal
 
         private val View.marginHorizontal: Int
-            get() = marginLeft + marginRight
+            get() = marginStart + marginEnd
 
         private val View.totalHeight: Int
             get() = measuredHeight + marginTop + marginBottom
 
-        private val View.marginLeft
-            get() = (layoutParams as? MarginLayoutParams)?.leftMargin ?: 0
+        private val View.marginStart
+            get() = (layoutParams as? MarginLayoutParams)?.marginStart ?: 0
 
-        private val View.marginRight
-            get() = (layoutParams as? MarginLayoutParams)?.rightMargin ?: 0
+        private val View.marginEnd
+            get() = (layoutParams as? MarginLayoutParams)?.marginEnd ?: 0
 
         private val View.marginTop
             get() = (layoutParams as? MarginLayoutParams)?.topMargin ?: 0
