@@ -1,9 +1,1 @@
 // Signature format: 4.0
-package androidx.xr.runtime.rxjava3 {
-
-  public final class Flows {
-    method public static <T> io.reactivex.rxjava3.core.Observable<T> toObservable(androidx.xr.runtime.Session session, kotlinx.coroutines.flow.Flow<? extends T> flow);
-  }
-
-}
-

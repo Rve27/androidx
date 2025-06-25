@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 The Android Open Source Project
+ * Copyright 2024 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 @file:JvmName("Coroutines")
 
-package androidx.xr.runtime.guava
+package androidx.xr.runtime.java
 
 import androidx.xr.runtime.Session
 import com.google.common.util.concurrent.ListenableFuture
@@ -25,15 +25,12 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.guava.future
 
 /**
- * Converts a coroutine created within the [session] to a
- * [com.google.common.util.concurrent.ListenableFuture].
+ * Converts a coroutine created within the [session] to a [ListenableFuture].
  *
- * The returned [com.google.common.util.concurrent.ListenableFuture] will be automatically cancelled
- * when the [session] is destroyed.
+ * The returned [ListenableFuture] will be automatically cancelled when the [session] is destroyed.
  *
- * @param session the [androidx.xr.runtime.Session] that originated the [coroutine].
- * @param coroutine the coroutine to convert to a
- *   [com.google.common.util.concurrent.ListenableFuture].
+ * @param session the [Session] that originated the [coroutine].
+ * @param coroutine the coroutine to convert to a [ListenableFuture].
  */
 @Suppress("AsyncSuffixFuture")
 public fun <T> toFuture(
