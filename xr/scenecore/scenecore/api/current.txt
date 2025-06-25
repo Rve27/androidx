@@ -1,6 +1,20 @@
 // Signature format: 4.0
 package androidx.xr.scenecore {
 
+  public final class ActivityPanelEntity extends androidx.xr.scenecore.PanelEntity implements androidx.xr.scenecore.Entity androidx.xr.scenecore.ScenePose {
+    method public static androidx.xr.scenecore.ActivityPanelEntity create(androidx.xr.runtime.Session session, androidx.xr.runtime.math.IntSize2d pixelDimensions, String name);
+    method public static androidx.xr.scenecore.ActivityPanelEntity create(androidx.xr.runtime.Session session, androidx.xr.runtime.math.IntSize2d pixelDimensions, String name, optional androidx.xr.runtime.math.Pose pose);
+    method public void launchActivity(android.content.Intent intent);
+    method public void launchActivity(android.content.Intent intent, optional android.os.Bundle? bundle);
+    method public void moveActivity(android.app.Activity activity);
+    field public static final androidx.xr.scenecore.ActivityPanelEntity.Companion Companion;
+  }
+
+  public static final class ActivityPanelEntity.Companion {
+    method public androidx.xr.scenecore.ActivityPanelEntity create(androidx.xr.runtime.Session session, androidx.xr.runtime.math.IntSize2d pixelDimensions, String name);
+    method public androidx.xr.scenecore.ActivityPanelEntity create(androidx.xr.runtime.Session session, androidx.xr.runtime.math.IntSize2d pixelDimensions, String name, optional androidx.xr.runtime.math.Pose pose);
+  }
+
   public final class CameraView implements androidx.xr.scenecore.ScenePose {
     method public androidx.xr.runtime.math.Pose getActivitySpacePose();
     method public androidx.xr.scenecore.CameraView.CameraType getCameraType();

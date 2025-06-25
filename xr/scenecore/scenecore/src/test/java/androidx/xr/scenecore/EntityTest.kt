@@ -18,7 +18,6 @@ package androidx.xr.scenecore
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Rect
 import android.os.Build
 import android.view.View
 import android.widget.TextView
@@ -1344,7 +1343,7 @@ class EntityTest {
             )
             .thenReturn(mock())
         @Suppress("UNUSED_VARIABLE")
-        val unused = ActivityPanelEntity.create(entitySession, Rect(0, 0, 640, 480), "test")
+        val unused = ActivityPanelEntity.create(entitySession, IntSize2d(640, 480), "test")
 
         verify(mockEntityPlatformAdapter)
             .createActivityPanelEntity(any(), any(), any(), any(), any())
