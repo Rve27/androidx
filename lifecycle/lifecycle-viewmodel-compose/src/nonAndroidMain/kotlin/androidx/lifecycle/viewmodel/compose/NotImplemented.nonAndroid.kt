@@ -16,9 +16,12 @@
 
 package androidx.lifecycle.viewmodel.compose
 
-import androidx.compose.runtime.Composable
-import androidx.lifecycle.ViewModelStoreOwner
-
-@Composable
-internal actual fun findDefaultViewModelStoreOwner(): ViewModelStoreOwner? =
-    implementedInJetBrainsFork()
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun implementedInJetBrainsFork(): Nothing =
+    throw NotImplementedError(
+        """
+        Implemented only in JetBrains fork.
+        Please use `org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose` package instead.
+        """
+            .trimIndent()
+    )
