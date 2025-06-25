@@ -90,6 +90,10 @@ private fun AppFunctionDataTypeMetadataDocument.toXmlElement(
             appendChild(doc.createElementWithTextNode("objectQualifiedName", it))
         }
 
+        if (!description.isEmpty()) {
+            appendChild(doc.createElementWithTextNode("description", description))
+        }
+
         for (property in properties) {
             appendChild(property.toXmlElement(doc, "properties"))
         }

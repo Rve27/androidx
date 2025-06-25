@@ -366,6 +366,7 @@ class AppFunctionMetadataCreatorHelper {
         }
         seenDataTypeQualifiers.add(serializableTypeQualifiedName)
 
+        val serializableDescription = appFunctionSerializableType.description
         val superTypesWithSerializableAnnotation =
             appFunctionSerializableType.findSuperTypesWithSerializableAnnotation()
         val superTypesWithCapabilityAnnotation =
@@ -385,6 +386,7 @@ class AppFunctionMetadataCreatorHelper {
                     seenDataTypeQualifiers,
                     resolvedAnnotatedSerializableProxies,
                     allowSerializableInterfaceTypes,
+                    serializableDescription,
                 ),
             )
         } else {
@@ -425,6 +427,7 @@ class AppFunctionMetadataCreatorHelper {
                             seenDataTypeQualifiers,
                             resolvedAnnotatedSerializableProxies,
                             allowSerializableInterfaceTypes,
+                            serializableDescription,
                         )
                     )
                 }
@@ -441,6 +444,7 @@ class AppFunctionMetadataCreatorHelper {
                             seenDataTypeQualifiers,
                             resolvedAnnotatedSerializableProxies,
                             allowSerializableInterfaceTypes,
+                            serializableDescription,
                         )
                     )
                 }
@@ -457,6 +461,7 @@ class AppFunctionMetadataCreatorHelper {
                     // default. This is because the outer ReferenceType to this shared type
                     // can add further constraint (i.e. non-null) if required.
                     isNullable = true,
+                    description = serializableDescription,
                 ),
             )
         }
@@ -495,6 +500,7 @@ class AppFunctionMetadataCreatorHelper {
         seenDataTypeQualifiers: MutableSet<String>,
         resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies,
         allowSerializableInterfaceTypes: Boolean,
+        serializableDescription: String,
     ): AppFunctionObjectTypeMetadata {
         val currentSerializableProperties: List<AppFunctionPropertyDeclaration> = buildList {
             for (property in currentPropertiesList) {
@@ -514,6 +520,7 @@ class AppFunctionMetadataCreatorHelper {
             seenDataTypeQualifiers,
             resolvedAnnotatedSerializableProxies,
             allowSerializableInterfaceTypes,
+            serializableDescription,
         )
     }
 
@@ -524,6 +531,7 @@ class AppFunctionMetadataCreatorHelper {
         seenDataTypeQualifiers: MutableSet<String>,
         resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies,
         allowSerializableInterfaceTypes: Boolean,
+        serializableDescription: String,
     ): AppFunctionObjectTypeMetadata {
         val requiredPropertiesList: MutableList<String> = mutableListOf()
         val appFunctionSerializablePropertiesMap: Map<String, AppFunctionDataTypeMetadata> =
@@ -549,6 +557,7 @@ class AppFunctionMetadataCreatorHelper {
             // This is because the outer ReferenceType to this shared type can add further
             // constraint (i.e. non-null) if required.
             isNullable = true,
+            description = serializableDescription,
         )
     }
 
