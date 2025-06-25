@@ -328,6 +328,33 @@ package androidx.xr.scenecore {
     method public void onSpatialModeChanged(androidx.xr.runtime.math.Pose recommendedPose, float recommendedScale);
   }
 
+  public final class SpatialPointerComponent implements androidx.xr.scenecore.Component {
+    method public static androidx.xr.scenecore.SpatialPointerComponent create(androidx.xr.runtime.Session session);
+    method public androidx.xr.scenecore.SpatialPointerIcon getSpatialPointerIcon();
+    method public boolean onAttach(androidx.xr.scenecore.Entity entity);
+    method public void onDetach(androidx.xr.scenecore.Entity entity);
+    method public void setSpatialPointerIcon(androidx.xr.scenecore.SpatialPointerIcon);
+    property public androidx.xr.scenecore.SpatialPointerIcon spatialPointerIcon;
+    field public static final androidx.xr.scenecore.SpatialPointerComponent.Companion Companion;
+  }
+
+  public static final class SpatialPointerComponent.Companion {
+    method public androidx.xr.scenecore.SpatialPointerComponent create(androidx.xr.runtime.Session session);
+  }
+
+  public final class SpatialPointerIcon {
+    field public static final androidx.xr.scenecore.SpatialPointerIcon CIRCLE;
+    field public static final androidx.xr.scenecore.SpatialPointerIcon.Companion Companion;
+    field public static final androidx.xr.scenecore.SpatialPointerIcon DEFAULT;
+    field public static final androidx.xr.scenecore.SpatialPointerIcon NONE;
+  }
+
+  public static final class SpatialPointerIcon.Companion {
+    property public androidx.xr.scenecore.SpatialPointerIcon CIRCLE;
+    property public androidx.xr.scenecore.SpatialPointerIcon DEFAULT;
+    property public androidx.xr.scenecore.SpatialPointerIcon NONE;
+  }
+
   public final class SpatialUser {
     ctor public SpatialUser(androidx.xr.runtime.internal.LifecycleManager lifecycleManager, androidx.xr.runtime.internal.JxrPlatformAdapter runtime);
     method public java.util.Map<androidx.xr.scenecore.CameraView.CameraType,androidx.xr.scenecore.CameraView> getCameraViews();

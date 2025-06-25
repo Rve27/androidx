@@ -36,7 +36,7 @@ import androidx.xr.scenecore.GltfModelEntity
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.SpatialPointerComponent
-import androidx.xr.scenecore.SpatialPointerIconNone
+import androidx.xr.scenecore.SpatialPointerIcon
 import androidx.xr.scenecore.scene
 import java.nio.file.Paths
 import kotlinx.coroutines.launch
@@ -131,7 +131,7 @@ class VisibilityTestActivity : AppCompatActivity() {
             _,
             isChecked: Boolean ->
             childPanel1PointerComponent.spatialPointerIcon =
-                if (isChecked) SpatialPointerIconNone else null
+                if (isChecked) SpatialPointerIcon.NONE else SpatialPointerIcon.DEFAULT
         }
         findViewById<Switch>(R.id.hide_panel2).setOnCheckedChangeListener { _, isChecked: Boolean ->
             childPanelEntity2?.setHidden(isChecked)

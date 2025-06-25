@@ -112,12 +112,12 @@ class SpatialPointerComponentTest {
         val pointerComponent = SpatialPointerComponent.create(session)
         assertThat(entity.addComponent(pointerComponent)).isTrue()
 
-        pointerComponent.spatialPointerIcon = SpatialPointerIconCircle
-        assertThat(pointerComponent.spatialPointerIcon).isEqualTo(SpatialPointerIconCircle)
-        pointerComponent.spatialPointerIcon = SpatialPointerIconNone
-        assertThat(pointerComponent.spatialPointerIcon).isEqualTo(SpatialPointerIconNone)
-        pointerComponent.spatialPointerIcon = null
-        assertThat(pointerComponent.spatialPointerIcon).isNull()
+        pointerComponent.spatialPointerIcon = SpatialPointerIcon.CIRCLE
+        assertThat(pointerComponent.spatialPointerIcon).isEqualTo(SpatialPointerIcon.CIRCLE)
+        pointerComponent.spatialPointerIcon = SpatialPointerIcon.NONE
+        assertThat(pointerComponent.spatialPointerIcon).isEqualTo(SpatialPointerIcon.NONE)
+        pointerComponent.spatialPointerIcon = SpatialPointerIcon.DEFAULT
+        assertThat(pointerComponent.spatialPointerIcon).isEqualTo(SpatialPointerIcon.DEFAULT)
     }
 
     @Test
@@ -131,10 +131,10 @@ class SpatialPointerComponentTest {
         val pointerComponent = SpatialPointerComponent.create(session)
         assertThat(entity.addComponent(pointerComponent)).isTrue()
 
-        assertThat(pointerComponent.spatialPointerIcon).isNull()
-        pointerComponent.spatialPointerIcon = SpatialPointerIconNone
-        assertThat(pointerComponent.spatialPointerIcon).isEqualTo(SpatialPointerIconNone)
+        assertThat(pointerComponent.spatialPointerIcon).isEqualTo(SpatialPointerIcon.DEFAULT)
+        pointerComponent.spatialPointerIcon = SpatialPointerIcon.NONE
+        assertThat(pointerComponent.spatialPointerIcon).isEqualTo(SpatialPointerIcon.NONE)
         entity.removeComponent(pointerComponent)
-        assertThat(pointerComponent.spatialPointerIcon).isNull()
+        assertThat(pointerComponent.spatialPointerIcon).isEqualTo(SpatialPointerIcon.DEFAULT)
     }
 }

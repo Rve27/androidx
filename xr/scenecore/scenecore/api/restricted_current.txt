@@ -804,13 +804,13 @@ package androidx.xr.scenecore {
     method public void onSpatialModeChanged(androidx.xr.runtime.math.Pose recommendedPose, float recommendedScale);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialPointerComponent implements androidx.xr.scenecore.Component {
+  public final class SpatialPointerComponent implements androidx.xr.scenecore.Component {
     method public static androidx.xr.scenecore.SpatialPointerComponent create(androidx.xr.runtime.Session session);
-    method public androidx.xr.scenecore.SpatialPointerIcon? getSpatialPointerIcon();
+    method public androidx.xr.scenecore.SpatialPointerIcon getSpatialPointerIcon();
     method public boolean onAttach(androidx.xr.scenecore.Entity entity);
     method public void onDetach(androidx.xr.scenecore.Entity entity);
-    method public void setSpatialPointerIcon(androidx.xr.scenecore.SpatialPointerIcon?);
-    property public androidx.xr.scenecore.SpatialPointerIcon? spatialPointerIcon;
+    method public void setSpatialPointerIcon(androidx.xr.scenecore.SpatialPointerIcon);
+    property public androidx.xr.scenecore.SpatialPointerIcon spatialPointerIcon;
     field public static final androidx.xr.scenecore.SpatialPointerComponent.Companion Companion;
   }
 
@@ -818,15 +818,17 @@ package androidx.xr.scenecore {
     method public androidx.xr.scenecore.SpatialPointerComponent create(androidx.xr.runtime.Session session);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public abstract sealed class SpatialPointerIcon {
+  public final class SpatialPointerIcon {
+    field public static final androidx.xr.scenecore.SpatialPointerIcon CIRCLE;
+    field public static final androidx.xr.scenecore.SpatialPointerIcon.Companion Companion;
+    field public static final androidx.xr.scenecore.SpatialPointerIcon DEFAULT;
+    field public static final androidx.xr.scenecore.SpatialPointerIcon NONE;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialPointerIconCircle extends androidx.xr.scenecore.SpatialPointerIcon {
-    field public static final androidx.xr.scenecore.SpatialPointerIconCircle INSTANCE;
-  }
-
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialPointerIconNone extends androidx.xr.scenecore.SpatialPointerIcon {
-    field public static final androidx.xr.scenecore.SpatialPointerIconNone INSTANCE;
+  public static final class SpatialPointerIcon.Companion {
+    property public androidx.xr.scenecore.SpatialPointerIcon CIRCLE;
+    property public androidx.xr.scenecore.SpatialPointerIcon DEFAULT;
+    property public androidx.xr.scenecore.SpatialPointerIcon NONE;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialSoundPool {
