@@ -25,11 +25,17 @@ package androidx.xr.runtime.testing {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeActivitySpace extends androidx.xr.runtime.testing.FakeSystemSpaceEntity implements androidx.xr.runtime.internal.ActivitySpace {
     ctor public FakeActivitySpace();
     method public void addOnBoundsChangedListener(androidx.xr.runtime.internal.ActivitySpace.OnBoundsChangedListener listener);
+    method public androidx.xr.runtime.internal.HitTestResult getActivitySpaceHitTestResult();
     method public androidx.xr.runtime.internal.Dimensions getBounds();
+    method public java.util.Set<androidx.xr.runtime.internal.ActivitySpace.OnBoundsChangedListener> getOnBoundsChangedListeners();
     method public androidx.xr.runtime.math.BoundingBox getRecommendedContentBoxInFullSpace();
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.HitTestResult> hitTestRelativeToActivityPose(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, @androidx.xr.runtime.internal.ActivityPose.HitTestFilterValue int hitTestFilter, androidx.xr.runtime.internal.ActivityPose activityPose);
+    method public void onBoundsChanged(androidx.xr.runtime.internal.Dimensions bounds);
     method public void removeOnBoundsChangedListener(androidx.xr.runtime.internal.ActivitySpace.OnBoundsChangedListener listener);
+    method public void setActivitySpaceHitTestResult(androidx.xr.runtime.internal.HitTestResult);
+    property public androidx.xr.runtime.internal.HitTestResult activitySpaceHitTestResult;
     property public androidx.xr.runtime.internal.Dimensions bounds;
+    property public java.util.Set<androidx.xr.runtime.internal.ActivitySpace.OnBoundsChangedListener> onBoundsChangedListeners;
     property public androidx.xr.runtime.math.BoundingBox recommendedContentBoxInFullSpace;
   }
 
