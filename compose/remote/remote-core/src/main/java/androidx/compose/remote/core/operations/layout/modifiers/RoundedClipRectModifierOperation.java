@@ -48,7 +48,7 @@ public class RoundedClipRectModifierOperation extends DrawBase4
      */
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         Maker m = RoundedClipRectModifierOperation::new;
-        read(m, buffer, operations);
+        read(buffer, operations, m);
     }
 
     /**
@@ -121,7 +121,10 @@ public class RoundedClipRectModifierOperation extends DrawBase4
 
     @Override
     public void layout(
-            @NonNull RemoteContext context, Component component, float width, float height) {
+            @NonNull RemoteContext context,
+            @NonNull Component component,
+            float width,
+            float height) {
         this.mWidth = width;
         this.mHeight = height;
     }

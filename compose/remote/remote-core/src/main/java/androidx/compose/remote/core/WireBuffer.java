@@ -445,7 +445,7 @@ public class WireBuffer {
      *
      * @return copy of the byte array cut to the current size
      */
-    public byte[] cloneBytes() {
+    public byte @NonNull [] cloneBytes() {
         return Arrays.copyOfRange(mBuffer, 0, mSize);
     }
 

@@ -39,7 +39,7 @@ public class DrawSector extends DrawBase6 {
      */
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         Maker m = DrawSector::new;
-        read(m, buffer, operations);
+        read(buffer, operations, m);
     }
 
     /**

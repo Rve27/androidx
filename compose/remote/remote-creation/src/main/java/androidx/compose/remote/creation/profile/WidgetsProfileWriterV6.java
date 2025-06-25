@@ -66,7 +66,7 @@ public class WidgetsProfileWriterV6 extends RemoteComposeWriter {
      * @param animation Array of floats that represents animation
      * @return NaN id of the result of the calculation
      */
-    public float floatExpression(@NonNull float[] value, @Nullable float[] animation) {
+    public float floatExpression(float @NonNull [] value, float @Nullable [] animation) {
         validateOps(value);
         return super.floatExpression(value, animation);
     }

@@ -39,7 +39,7 @@ public class DrawOval extends DrawBase4 {
      */
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         Maker m = DrawOval::new;
-        read(m, buffer, operations);
+        read(buffer, operations, m);
     }
 
     /**

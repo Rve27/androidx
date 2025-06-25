@@ -101,7 +101,7 @@ public class RemoteComposeState implements CollectionsAccess {
      * id.
      */
     public int cacheData(@NonNull Object item) {
-        int id = nextId();
+        int id = createNextId();
         mDataIntMap.put(item, id);
         mIntDataMap.put(id, item);
         return id;
@@ -112,7 +112,7 @@ public class RemoteComposeState implements CollectionsAccess {
      * id.
      */
     public int cacheData(@NonNull Object item, int type) {
-        int id = nextId(type);
+        int id = createNextId(type);
         mDataIntMap.put(item, id);
         mIntDataMap.put(id, item);
         return id;
@@ -198,7 +198,7 @@ public class RemoteComposeState implements CollectionsAccess {
 
     /** Insert an item in the cache */
     public int cacheFloat(float item) {
-        int id = nextId();
+        int id = createNextId();
         mFloatMap.put(id, item);
         mIntegerMap.put(id, (int) item);
         return id;
@@ -244,7 +244,7 @@ public class RemoteComposeState implements CollectionsAccess {
      * @return the id of the integer
      */
     public int cacheInteger(int item) {
-        int id = nextId();
+        int id = createNextId();
         mIntegerMap.put(id, item);
         mFloatMap.put(id, item);
         return id;
@@ -415,7 +415,7 @@ public class RemoteComposeState implements CollectionsAccess {
      *
      * @return next available id
      */
-    public int nextId() {
+    public int createNextId() {
         return mNextId++;
     }
 
@@ -425,7 +425,7 @@ public class RemoteComposeState implements CollectionsAccess {
      *
      * @return return a unique id in the set
      */
-    public int nextId(int type) {
+    public int createNextId(int type) {
         if (0 == type) {
             return mNextId++;
         }
@@ -480,15 +480,17 @@ public class RemoteComposeState implements CollectionsAccess {
      * @param context The context
      * @return The number of ops to update
      */
-    public int getOpsToUpdate(@NonNull RemoteContext context) {
+    public int getOpsToUpdate(@NonNull RemoteContext context, long currentTime) {
         if (mVarListeners.get(RemoteContext.ID_CONTINUOUS_SEC) != null) {
             return 1;
         }
         if (mVarListeners.get(RemoteContext.ID_TIME_IN_SEC) != null) {
-            return 1000;
+            int sub = (int) (currentTime % 1000);
+            return 1000 - sub;
         }
         if (mVarListeners.get(RemoteContext.ID_TIME_IN_MIN) != null) {
-            return 1000 * 60;
+            int sub = (int) (currentTime % 60000);
+            return 1000 * 60 - sub;
         }
         return -1;
     }

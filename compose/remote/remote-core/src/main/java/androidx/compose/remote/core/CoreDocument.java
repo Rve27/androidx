@@ -1158,7 +1158,7 @@ public class CoreDocument implements Serializable {
      */
     public boolean hasTouchListener() {
         boolean hasComponentsTouchListeners =
-                mRootLayoutComponent != null && mRootLayoutComponent.hasTouchListeners();
+                mRootLayoutComponent != null && mRootLayoutComponent.getHasTouchListeners();
         return hasComponentsTouchListeners || !mTouchListeners.isEmpty();
     }
 

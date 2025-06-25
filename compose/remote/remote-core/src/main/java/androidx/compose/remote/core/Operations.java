@@ -158,6 +158,8 @@ import java.util.HashMap;
 /** List of operations supported in a RemoteCompose document */
 public class Operations {
 
+    private Operations() {}
+
     ////////////////////////////////////////
     // Protocol
     ////////////////////////////////////////

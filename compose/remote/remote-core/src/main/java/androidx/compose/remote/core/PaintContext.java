@@ -451,7 +451,7 @@ public abstract class PaintContext {
      * @return true if in debug mode, false otherwise
      */
     public boolean isDebug() {
-        return mContext.isDebug();
+        return mContext.isBasicDebug();
     }
 
     /**

@@ -173,7 +173,9 @@ public class FloatExpression extends Operation
                 }
             }
             float lastComputedValue = mFloatAnimation.get(t - mLastChange);
-            if (lastComputedValue != mLastAnimatedValue) {
+
+            if (lastComputedValue != mLastAnimatedValue
+                    || t - mLastChange <= mFloatAnimation.getDuration()) {
                 mLastAnimatedValue = lastComputedValue;
                 context.loadFloat(mId, lastComputedValue);
                 context.needsRepaint();
@@ -181,7 +183,9 @@ public class FloatExpression extends Operation
             }
         } else if (mSpring != null) { // support damped spring animation
             float lastComputedValue = mSpring.get(t - mLastChange);
-            if (lastComputedValue != mLastAnimatedValue) {
+            float epsilon = 0.01f;
+            if (lastComputedValue != mLastAnimatedValue
+                    || Math.abs(mSpring.getTargetValue() - lastComputedValue) > epsilon) {
                 mLastAnimatedValue = lastComputedValue;
                 context.loadFloat(mId, lastComputedValue);
                 context.needsRepaint();

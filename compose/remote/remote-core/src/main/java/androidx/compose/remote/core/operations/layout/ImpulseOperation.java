@@ -65,7 +65,7 @@ public class ImpulseOperation extends PaintOperation implements VariableSupport,
     }
 
     @Override
-    public void registerListening(RemoteContext context) {
+    public void registerListening(@NonNull RemoteContext context) {
         if (mProcess == null) {
             System.out.println(".....");
             Operation last = mList.get(mList.size() - 1);
@@ -92,7 +92,7 @@ public class ImpulseOperation extends PaintOperation implements VariableSupport,
     }
 
     @Override
-    public void updateVariables(RemoteContext context) {
+    public void updateVariables(@NonNull RemoteContext context) {
 
         mOutDuration =
                 Float.isNaN(mDuration) ? context.getFloat(Utils.idFromNan(mDuration)) : mDuration;

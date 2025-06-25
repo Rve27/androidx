@@ -684,8 +684,7 @@ public class RemotePath {
      *
      * @return the array
      */
-    @NonNull
-    public float[] createFloatArray() {
+    public float @NonNull [] createFloatArray() {
         return Arrays.copyOf(mPath, mSize);
     }
 

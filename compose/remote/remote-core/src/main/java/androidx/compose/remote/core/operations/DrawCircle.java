@@ -39,7 +39,7 @@ public class DrawCircle extends DrawBase3 {
      */
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         Maker m = DrawCircle::new;
-        read(m, buffer, operations);
+        read(buffer, operations, m);
     }
 
     /**

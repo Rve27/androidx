@@ -41,6 +41,7 @@ import java.util.List;
 public class FloatFunctionCall extends PaintOperation implements VariableSupport {
     private static final int OP_CODE = Operations.FUNCTION_CALL;
     private static final String CLASS_NAME = "FunctionCall";
+    private static final int MAX_FLOAT_ARRAY_SIZE = 80;
     private final int mId;
     private final float[] mArgs;
     private final float[] mOutArgs;
@@ -140,6 +141,9 @@ public class FloatFunctionCall extends PaintOperation implements VariableSupport
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         int id = buffer.readInt();
         int argLen = buffer.readInt();
+        if (argLen > MAX_FLOAT_ARRAY_SIZE) {
+            throw new RuntimeException("array too big " + argLen);
+        }
         float[] args = null;
         if (argLen > 0) {
             args = new float[argLen];

@@ -40,7 +40,7 @@ public class MatrixTranslate extends DrawBase2 {
      */
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         Maker m = MatrixTranslate::new;
-        read(m, buffer, operations);
+        read(buffer, operations, m);
     }
 
     /**

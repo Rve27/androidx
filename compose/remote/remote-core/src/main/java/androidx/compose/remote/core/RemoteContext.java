@@ -356,7 +356,7 @@ public abstract class RemoteContext {
      *
      * @return true if we use the choreographer
      */
-    public boolean useChoreographer() {
+    public boolean getUseChoreographer() {
         return mUseChoreographer;
     }
 
@@ -457,7 +457,7 @@ public abstract class RemoteContext {
         return mDocument;
     }
 
-    public boolean isDebug() {
+    public boolean isBasicDebug() {
         return mDebug == 1;
     }
 
@@ -737,6 +737,12 @@ public abstract class RemoteContext {
 
     public static final int ID_FONT_SIZE = 33;
 
+    /** DAY OF THE YEAR 1-366 */
+    public static final int ID_DAY_OF_YEAR = 34;
+
+    /** The YEAR e.g. 2026 */
+    public static final int ID_YEAR = 35;
+
     public static final float FLOAT_DENSITY = Utils.asNan(ID_DENSITY);
 
     /** CONTINUOUS_SEC is seconds from midnight looping every hour 0-3600 */
@@ -759,6 +765,12 @@ public abstract class RemoteContext {
 
     /** DAY OF THE MONTH 1-31 */
     public static final float FLOAT_DAY_OF_MONTH = Utils.asNan(ID_DAY_OF_MONTH);
+
+    /** DAY OF THE YEAR 1-366 */
+    public static final float FLOAT_DAY_OF_YEAR = Utils.asNan(ID_DAY_OF_YEAR);
+
+    /** The YEAR e.g. 2026 */
+    public static final float FLOAT_YEAR = Utils.asNan(ID_YEAR);
 
     public static final float FLOAT_WINDOW_WIDTH = Utils.asNan(ID_WINDOW_WIDTH);
     public static final float FLOAT_WINDOW_HEIGHT = Utils.asNan(ID_WINDOW_HEIGHT);
@@ -868,6 +880,7 @@ public abstract class RemoteContext {
         int currentSeconds = minute * 60 + seconds;
         float sec = currentSeconds + dateTime.getNano() * 1E-9f;
         int day_week = dateTime.getDayOfWeek().getValue();
+        int day_month = dateTime.getDayOfMonth();
 
         ZoneId zone = ZoneId.systemDefault();
         OffsetDateTime offsetDateTime = dateTime.atZone(zone).toOffsetDateTime();
@@ -884,10 +897,15 @@ public abstract class RemoteContext {
             case ID_TIME_IN_HR:
                 return hour;
             case ID_CALENDAR_MONTH:
-            case ID_DAY_OF_MONTH:
                 return month;
+            case ID_DAY_OF_MONTH:
+                return day_month;
             case ID_WEEK_DAY:
                 return day_week;
+            case ID_DAY_OF_YEAR:
+                return dateTime.getDayOfYear();
+            case ID_YEAR:
+                return dateTime.getYear();
         }
         return fl;
     }

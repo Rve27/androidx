@@ -385,6 +385,8 @@ public class Component extends PaintOperation
         public static final int OVERRIDE_INVISIBLE = 64;
         public static final int CLEAR_OVERRIDE = 128;
 
+        private Visibility() {}
+
         /**
          * Returns a string representation of the field
          *

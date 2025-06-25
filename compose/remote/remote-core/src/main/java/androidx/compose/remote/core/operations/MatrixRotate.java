@@ -47,7 +47,7 @@ public class MatrixRotate extends DrawBase3 {
                         return new MatrixRotate(v1, v2, v3);
                     }
                 };
-        read(m, buffer, operations);
+        read(buffer, operations, m);
     }
 
     /**

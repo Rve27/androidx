@@ -41,7 +41,7 @@ public class MatrixSkew extends DrawBase2 {
      */
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         Maker m = MatrixSkew::new;
-        read(m, buffer, operations);
+        read(buffer, operations, m);
     }
 
     /**

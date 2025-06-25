@@ -21,6 +21,9 @@ import java.util.Arrays;
 
 /** Utilities for string manipulation */
 public class StringUtils {
+
+    private StringUtils() {}
+
     /**
      * Converts a float into a string. Providing a defined number of characters before and after the
      * decimal point.

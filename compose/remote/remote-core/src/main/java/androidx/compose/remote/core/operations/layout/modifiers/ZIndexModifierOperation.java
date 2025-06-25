@@ -113,7 +113,7 @@ public class ZIndexModifierOperation extends DecoratorModifierOperation {
      * @param buffer a WireBuffer
      * @param value the z-index value
      */
-    public static void apply(WireBuffer buffer, float value) {
+    public static void apply(@NonNull WireBuffer buffer, float value) {
         buffer.start(OP_CODE);
         buffer.writeFloat(value);
     }
@@ -124,7 +124,7 @@ public class ZIndexModifierOperation extends DecoratorModifierOperation {
      * @param buffer the buffer to read
      * @param operations the list of operations that will be added to
      */
-    public static void read(WireBuffer buffer, List<Operation> operations) {
+    public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         float value = buffer.readFloat();
         operations.add(new ZIndexModifierOperation(value));
     }
@@ -134,14 +134,18 @@ public class ZIndexModifierOperation extends DecoratorModifierOperation {
      *
      * @param doc to append the description to.
      */
-    public static void documentation(DocumentationBuilder doc) {
+    public static void documentation(@NonNull DocumentationBuilder doc) {
         doc.operation("Modifier Operations", OP_CODE, CLASS_NAME)
                 .description("define the Z-Index Modifier")
                 .field(FLOAT, "value", "");
     }
 
     @Override
-    public void layout(RemoteContext context, Component component, float width, float height) {}
+    public void layout(
+            @NonNull RemoteContext context,
+            @NonNull Component component,
+            float width,
+            float height) {}
 
     @Override
     public void serialize(@NonNull MapSerializer serializer) {

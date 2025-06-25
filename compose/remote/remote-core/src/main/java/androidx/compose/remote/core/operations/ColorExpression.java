@@ -517,6 +517,7 @@ public class ColorExpression extends Operation implements VariableSupport, Seria
                 serializer.add("startColor", mColor1, mOutColor1);
                 serializer.add("endColor", mColor2, mOutColor2);
                 serializer.add("startColor", mTween, mOutTween);
+                // TODO this is the wrong serialization for a tween
                 break;
             case HSV_MODE:
                 serializer.add("mode", "HSV");

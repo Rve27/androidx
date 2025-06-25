@@ -255,7 +255,10 @@ public class MarqueeModifierOperation extends DecoratorModifierOperation impleme
 
     @Override
     public void layout(
-            @NonNull RemoteContext context, Component component, float width, float height) {
+            @NonNull RemoteContext context,
+            @NonNull Component component,
+            float width,
+            float height) {
         mComponentWidth = width;
         mComponentHeight = height;
         if (component instanceof LayoutComponent) {

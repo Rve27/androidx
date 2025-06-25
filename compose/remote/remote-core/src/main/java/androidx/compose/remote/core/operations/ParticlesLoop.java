@@ -200,6 +200,10 @@ public class ParticlesLoop extends PaintOperation implements VariableSupport, Co
         int restartLen = buffer.readInt();
         float[] restart = null;
         if (restartLen > 0) {
+            if (restartLen > MAX_EQU_LENGTH) {
+                throw new RuntimeException(
+                        restartLen + " map entries more than max = " + MAX_EQU_LENGTH);
+            }
             restart = new float[restartLen];
             for (int i = 0; i < restartLen; i++) {
                 restart[i] = buffer.readFloat();
@@ -292,6 +296,7 @@ public class ParticlesLoop extends PaintOperation implements VariableSupport, Co
                 op.apply(context.getContext());
             }
         }
+        context.needsRepaint();
     }
 
     @Override

@@ -40,7 +40,7 @@ public class DrawArc extends DrawBase6 {
      */
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         Maker m = DrawArc::new;
-        read(m, buffer, operations);
+        read(buffer, operations, m);
     }
 
     /**

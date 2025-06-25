@@ -40,7 +40,7 @@ public class ClipRect extends DrawBase4 {
      */
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         Maker m = ClipRect::new;
-        read(m, buffer, operations);
+        read(buffer, operations, m);
     }
 
     /**

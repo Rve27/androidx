@@ -16,7 +16,11 @@
 package androidx.compose.remote.creation;
 
 import androidx.compose.remote.core.RemoteContext;
+import androidx.compose.remote.core.operations.ConditionalOperations;
 import androidx.compose.remote.core.operations.DrawTextAnchored;
+import androidx.compose.remote.core.operations.Header;
+import androidx.compose.remote.core.operations.TimeAttribute;
+import androidx.compose.remote.core.operations.layout.managers.TextLayout;
 import androidx.compose.remote.core.operations.utilities.AnimatedFloatExpression;
 import androidx.compose.remote.core.operations.utilities.ImageScaling;
 import androidx.compose.remote.core.operations.utilities.IntegerExpressionEvaluator;
@@ -487,6 +491,12 @@ public class Rc {
 
         /** The time in seconds since the epoch. */
         public static final long INT_EPOCH_SECOND = RemoteContext.INT_EPOCH_SECOND;
+
+        /** DAY OF THE YEAR 1-366 */
+        public static final float DAY_OF_YEAR = RemoteContext.FLOAT_DAY_OF_YEAR;
+
+        /** The Year e.g. 2025 */
+        public static final float YEAR = RemoteContext.FLOAT_YEAR;
     }
 
     /** Used for System wide variables like font size, window size, api level */
@@ -556,5 +566,139 @@ public class Rc {
 
         /** Ambient light level in SI lux */
         public static final float LIGHT = RemoteContext.FLOAT_LIGHT;
+    }
+
+    /** Use in configuration of RC doc headers */
+    public static class DocHeader {
+
+        /** the width of the document */
+        public static final short DOC_WIDTH = Header.DOC_WIDTH;
+
+        /** The height of the document */
+        public static final short DOC_HEIGHT = Header.DOC_HEIGHT;
+
+        /** The density at generation */
+        public static final short DOC_DENSITY_AT_GENERATION = Header.DOC_DENSITY_AT_GENERATION;
+
+        /** The desired FPS for the document */
+        public static final short DOC_DESIRED_FPS = Header.DOC_DESIRED_FPS;
+
+        /** The description of the contents of the document */
+        public static final short DOC_CONTENT_DESCRIPTION = Header.DOC_CONTENT_DESCRIPTION;
+
+        /** The source of the document */
+        public static final short DOC_SOURCE = Header.DOC_SOURCE;
+
+        /** The document is an update to the existing document */
+        public static final short DOC_DATA_UPDATE = Header.DOC_DATA_UPDATE;
+
+        /** integer host action id to call if exception occurs */
+        public static final short HOST_EXCEPTION_HANDLER = Header.HOST_EXCEPTION_HANDLER;
+
+        /** profiles */
+        public static final short DOC_PROFILES = Header.DOC_PROFILES;
+    }
+
+    /** Used in accessing attributes of time */
+    public static class TimeAttributes {
+        /** (value - currentTimeMillis) * 1E-3 */
+        public static final short TIME_FROM_NOW_SEC = TimeAttribute.TIME_FROM_NOW_SEC;
+
+        /** (value - currentTimeMillis) * 1E-3 / 60 */
+        public static final short TIME_FROM_NOW_MIN = TimeAttribute.TIME_FROM_NOW_MIN;
+
+        /** (value - currentTimeMillis) * 1E-3 / 3600 */
+        public static final short TIME_FROM_NOW_HR = TimeAttribute.TIME_FROM_NOW_HR;
+
+        /** (value - arg[0]) * 1E-3 */
+        public static final short TIME_FROM_ARG_SEC = TimeAttribute.TIME_FROM_ARG_SEC;
+
+        /** (value - arg[0]) * 1E-3 / 60 */
+        public static final short TIME_FROM_ARG_MIN = TimeAttribute.TIME_FROM_ARG_MIN;
+
+        /** (value - arg[0]) * 1E-3 / 3600 */
+        public static final short TIME_FROM_ARG_HR = TimeAttribute.TIME_FROM_ARG_HR;
+
+        /** second-of-minute */
+        public static final short TIME_IN_SEC = TimeAttribute.TIME_IN_SEC;
+
+        /** minute-of-hour */
+        public static final short TIME_IN_MIN = TimeAttribute.TIME_IN_MIN;
+
+        /** hour-of-day */
+        public static final short TIME_IN_HR = TimeAttribute.TIME_IN_HR;
+
+        /** day-of-month */
+        public static final short TIME_DAY_OF_MONTH = TimeAttribute.TIME_DAY_OF_MONTH;
+
+        /** month-of-year from 0 to 11 */
+        public static final short TIME_MONTH_VALUE = TimeAttribute.TIME_MONTH_VALUE;
+
+        /** day-of-week from 0 to 6 */
+        public static final short TIME_DAY_OF_WEEK = TimeAttribute.TIME_DAY_OF_WEEK;
+
+        /** the year */
+        public static final short TIME_YEAR = TimeAttribute.TIME_YEAR;
+
+        /** (value - doc_load_time) * 1E-3 */
+        public static final short TIME_FROM_LOAD_SEC = TimeAttribute.TIME_FROM_LOAD_SEC;
+    }
+
+    /** Constants for use in ConditionalOperations */
+    public static class Condition {
+
+        /** Equality comparison */
+        public static final byte EQ = ConditionalOperations.TYPE_EQ;
+
+        /** Not equal comparison */
+        public static final byte NEQ = ConditionalOperations.TYPE_NEQ;
+
+        /** Less than comparison */
+        public static final byte LT = ConditionalOperations.TYPE_LT;
+
+        /** Less than or equal comparison */
+        public static final byte LTE = ConditionalOperations.TYPE_LTE;
+
+        /** Greater than comparison */
+        public static final byte GT = ConditionalOperations.TYPE_GT;
+
+        /** Greater than or equal comparison */
+        public static final byte GTE = ConditionalOperations.TYPE_GTE;
+    }
+
+    /** used in TextLayout operations */
+    public static class Text {
+        /** align the text to the left */
+        public static final int ALIGN_LEFT = TextLayout.TEXT_ALIGN_LEFT;
+
+        /** align the text to the right */
+        public static final int ALIGN_RIGHT = TextLayout.TEXT_ALIGN_RIGHT;
+
+        /** align the text to the center */
+        public static final int ALIGN_CENTER = TextLayout.TEXT_ALIGN_CENTER;
+
+        /** align the text to the justify */
+        public static final int ALIGN_JUSTIFY = TextLayout.TEXT_ALIGN_JUSTIFY;
+
+        /** align the text to the start */
+        public static final int ALIGN_START = TextLayout.TEXT_ALIGN_START;
+
+        /** align the text to the end */
+        public static final int ALIGN_END = TextLayout.TEXT_ALIGN_END;
+
+        /** clip the text on overflow */
+        public static final int OVERFLOW_CLIP = TextLayout.OVERFLOW_CLIP;
+
+        /** show the text on overflow */
+        public static final int OVERFLOW_VISIBLE = TextLayout.OVERFLOW_VISIBLE;
+
+        /** ellipsis the text on overflow */
+        public static final int OVERFLOW_ELLIPSIS = TextLayout.OVERFLOW_ELLIPSIS;
+
+        /** start ellipsis the text on overflow */
+        public static final int OVERFLOW_START_ELLIPSIS = TextLayout.OVERFLOW_START_ELLIPSIS;
+
+        /** middle ellipsis the text on overflow */
+        public static final int OVERFLOW_MIDDLE_ELLIPSIS = TextLayout.OVERFLOW_MIDDLE_ELLIPSIS;
     }
 }

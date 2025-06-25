@@ -61,6 +61,9 @@ public class TimeVariables {
         int currentSeconds = minute * 60 + seconds;
         float sec = currentSeconds + dateTime.getNano() * 1E-9f;
         int day_week = dateTime.getDayOfWeek().getValue();
+        int day_of_month = dateTime.getDayOfMonth();
+        int day_of_year = dateTime.getDayOfYear();
+        int year = dateTime.getYear();
 
         OffsetDateTime offsetDateTime = dateTime.atZone(zoneId).toOffsetDateTime();
         ZoneOffset offset = offsetDateTime.getOffset();
@@ -74,8 +77,11 @@ public class TimeVariables {
         context.loadFloat(RemoteContext.ID_TIME_IN_MIN, currentMinute);
         context.loadFloat(RemoteContext.ID_TIME_IN_HR, hour);
         context.loadFloat(RemoteContext.ID_CALENDAR_MONTH, month);
-        context.loadFloat(RemoteContext.ID_DAY_OF_MONTH, month);
+        context.loadFloat(RemoteContext.ID_DAY_OF_MONTH, day_of_month); // Fixed 1.1
         context.loadFloat(RemoteContext.ID_WEEK_DAY, day_week);
+        context.loadFloat(RemoteContext.ID_DAY_OF_YEAR, day_of_year);
+        context.loadFloat(RemoteContext.ID_YEAR, year);
+
         context.loadFloat(
                 RemoteContext.ID_API_LEVEL,
                 CoreDocument.getDocumentApiLevel() + CoreDocument.BUILD);

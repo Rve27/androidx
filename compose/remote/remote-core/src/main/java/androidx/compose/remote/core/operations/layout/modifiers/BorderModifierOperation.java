@@ -128,7 +128,10 @@ public class BorderModifierOperation extends DecoratorModifierOperation {
 
     @Override
     public void layout(
-            @NonNull RemoteContext context, Component component, float width, float height) {
+            @NonNull RemoteContext context,
+            @NonNull Component component,
+            float width,
+            float height) {
         this.mWidth = width;
         this.mHeight = height;
     }

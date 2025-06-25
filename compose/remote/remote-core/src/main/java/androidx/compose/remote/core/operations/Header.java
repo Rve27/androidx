@@ -47,6 +47,7 @@ public class Header extends Operation implements RemoteComposeOperation {
     private static final int OP_CODE = Operations.HEADER;
     private static final String CLASS_NAME = "Header";
     private static final int MAGIC_NUMBER = 0x048C0000; // to uniquely identify the protocol
+    private static final int MAX_TABLE_SIZE = 1000;
 
     int mMajorVersion;
     int mMinorVersion;
@@ -117,6 +118,7 @@ public class Header extends Operation implements RemoteComposeOperation {
         DOC_CONTENT_DESCRIPTION,
         DOC_SOURCE,
         DOC_DATA_UPDATE,
+        HOST_EXCEPTION_HANDLER,
         DOC_PROFILES
     };
     private static final String[] KEY_NAMES = {
@@ -126,6 +128,8 @@ public class Header extends Operation implements RemoteComposeOperation {
         "DOC_DESIRED_FPS",
         "DOC_CONTENT_DESCRIPTION",
         "DOC_SOURCE",
+        "DOC_DATA_UPDATE",
+        "HOST_EXCEPTION_HANDLER",
         "DOC_PROFILES"
     };
 
@@ -519,6 +523,9 @@ public class Header extends Operation implements RemoteComposeOperation {
         } else {
             majorVersion &= 0xFFFF;
             int length = buffer.readInt();
+            if (length > MAX_TABLE_SIZE) {
+                throw new RuntimeException("Invalid table size " + length);
+            }
             short[] types = new short[length];
             Object[] values = new Object[length];
             readMap(buffer, types, values);

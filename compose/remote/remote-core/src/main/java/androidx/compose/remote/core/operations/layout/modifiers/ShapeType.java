@@ -17,9 +17,12 @@ package androidx.compose.remote.core.operations.layout.modifiers;
 
 /** Known shapes, used for modifiers (clip/background/border) */
 public class ShapeType {
+
     public static final int RECTANGLE = 0;
     public static final int CIRCLE = 1;
     public static final int ROUNDED_RECTANGLE = 2;
+
+    private ShapeType() {}
 
     /**
      * Returns a string representation of the value. Used during serialization.

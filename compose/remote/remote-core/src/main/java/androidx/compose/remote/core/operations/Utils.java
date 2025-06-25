@@ -19,6 +19,9 @@ import org.jspecify.annotations.NonNull;
 
 /** Utilities to be used across all core operations */
 public class Utils {
+
+    private Utils() {}
+
     /**
      * Convert an integer id into a float
      *
@@ -155,7 +158,7 @@ public class Utils {
      * @param str string to append
      * @return the string + (filename.xxx:line ).
      */
-    public static String logString(@NonNull String str) {
+    public static @NonNull String logString(@NonNull String str) {
         StackTraceElement s = new Throwable().getStackTrace()[1];
         return ("("
                 + s.getFileName()

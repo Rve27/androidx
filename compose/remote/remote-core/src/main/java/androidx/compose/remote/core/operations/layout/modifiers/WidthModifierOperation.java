@@ -26,6 +26,7 @@ import androidx.compose.remote.core.serialize.MapSerializer;
 import androidx.compose.remote.core.serialize.SerializeTags;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ import java.util.List;
 public class WidthModifierOperation extends DimensionModifierOperation {
     private static final int OP_CODE = Operations.MODIFIER_WIDTH;
     public static final String CLASS_NAME = "WidthModifierOperation";
-    private WidthInModifierOperation mWidthIn = null;
+    private @Nullable WidthInModifierOperation mWidthIn = null;
 
     /**
      * The name of the class
@@ -126,7 +127,7 @@ public class WidthModifierOperation extends DimensionModifierOperation {
      *
      * @param widthInConstraints width constraints
      */
-    public void setWidthIn(WidthInModifierOperation widthInConstraints) {
+    public void setWidthIn(@NonNull WidthInModifierOperation widthInConstraints) {
         mWidthIn = widthInConstraints;
     }
 
@@ -135,7 +136,7 @@ public class WidthModifierOperation extends DimensionModifierOperation {
      *
      * @return width in constraints
      */
-    public WidthInModifierOperation getWidthIn() {
+    public @Nullable WidthInModifierOperation getWidthIn() {
         return mWidthIn;
     }
 

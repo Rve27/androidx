@@ -274,7 +274,7 @@ public class RootLayoutComponent extends Component {
      *
      * @return true if listeners, false otherwise
      */
-    public boolean hasTouchListeners() {
+    public boolean getHasTouchListeners() {
         return mHasTouchListeners;
     }
 

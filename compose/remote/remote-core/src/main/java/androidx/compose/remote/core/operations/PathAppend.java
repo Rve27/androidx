@@ -39,6 +39,7 @@ import java.util.List;
 public class PathAppend extends PaintOperation implements VariableSupport, Serializable {
     private static final int OP_CODE = Operations.PATH_ADD;
     private static final String CLASS_NAME = "PathAppend";
+    private static final int MAX_PATH_BUFFER = 2000;
     int mInstanceId;
     float[] mFloatPath;
     float[] mOutputPath;
@@ -158,6 +159,9 @@ public class PathAppend extends PaintOperation implements VariableSupport, Seria
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         int id = buffer.readInt();
         int len = buffer.readInt();
+        if (len > MAX_PATH_BUFFER) {
+            throw new RuntimeException("path too long");
+        }
         float[] data = new float[len];
         for (int i = 0; i < data.length; i++) {
             data[i] = buffer.readFloat();

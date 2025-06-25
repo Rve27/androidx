@@ -136,7 +136,10 @@ public class RippleModifierOperation extends DecoratorModifierOperation implemen
 
     @Override
     public void layout(
-            @NonNull RemoteContext context, Component component, float width, float height) {
+            @NonNull RemoteContext context,
+            @NonNull Component component,
+            float width,
+            float height) {
         mWidth = width;
         mHeight = height;
     }
@@ -188,7 +191,11 @@ public class RippleModifierOperation extends DecoratorModifierOperation implemen
 
     @Override
     public void onTouchDown(
-            RemoteContext context, CoreDocument document, Component component, float x, float y) {
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
+            float x,
+            float y) {
         locationInWindow[0] = 0f;
         locationInWindow[1] = 0f;
         component.getLocationInWindow(locationInWindow);
@@ -199,9 +206,9 @@ public class RippleModifierOperation extends DecoratorModifierOperation implemen
 
     @Override
     public void onTouchUp(
-            RemoteContext context,
-            CoreDocument document,
-            Component component,
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
             float x,
             float y,
             float dx,
@@ -209,11 +216,19 @@ public class RippleModifierOperation extends DecoratorModifierOperation implemen
 
     @Override
     public void onTouchDrag(
-            RemoteContext context, CoreDocument document, Component component, float x, float y) {}
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
+            float x,
+            float y) {}
 
     @Override
     public void onTouchCancel(
-            RemoteContext context, CoreDocument document, Component component, float x, float y) {}
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
+            float x,
+            float y) {}
 
     @Override
     public void serialize(@NonNull MapSerializer serializer) {

@@ -97,12 +97,12 @@ public abstract class DrawBase3 extends PaintOperation implements VariableSuppor
     /**
      * Read this operation and add it to the list of operations
      *
-     * @param maker the maker of the operation
      * @param buffer the buffer to read
      * @param operations the list of operations to add to
+     * @param maker the maker of the operation
      */
     public static void read(
-            @NonNull Maker maker, @NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
+            @NonNull WireBuffer buffer, @NonNull List<Operation> operations, @NonNull Maker maker) {
         float v1 = buffer.readFloat();
         float v2 = buffer.readFloat();
         float v3 = buffer.readFloat();

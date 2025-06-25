@@ -46,7 +46,7 @@ public class CanvasOperations extends PaintOperation
     public CanvasOperations() {}
 
     @Override
-    public void registerListening(RemoteContext context) {
+    public void registerListening(@NonNull RemoteContext context) {
         for (Operation operation : mList) {
             if (operation instanceof VariableSupport) {
                 VariableSupport variableSupport = (VariableSupport) operation;
@@ -60,7 +60,7 @@ public class CanvasOperations extends PaintOperation
     }
 
     @Override
-    public void updateVariables(RemoteContext context) {
+    public void updateVariables(@NonNull RemoteContext context) {
         for (Operation operation : mList) {
             if (operation instanceof VariableSupport) {
                 VariableSupport variableSupport = (VariableSupport) operation;

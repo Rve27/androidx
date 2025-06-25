@@ -264,7 +264,11 @@ public class ScrollModifierOperation extends ListActionsOperation
     }
 
     @Override
-    public void layout(RemoteContext context, Component component, float width, float height) {
+    public void layout(
+            @NonNull RemoteContext context,
+            @NonNull Component component,
+            float width,
+            float height) {
         mWidth = width;
         mHeight = height;
         float max = mMaxScrollY;
@@ -283,7 +287,11 @@ public class ScrollModifierOperation extends ListActionsOperation
 
     @Override
     public void onTouchDown(
-            RemoteContext context, CoreDocument document, Component component, float x, float y) {
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
+            float x,
+            float y) {
         mTouchDownX = x;
         mTouchDownY = y;
         mInitialScrollX = mScrollX;
@@ -297,9 +305,9 @@ public class ScrollModifierOperation extends ListActionsOperation
 
     @Override
     public void onTouchUp(
-            RemoteContext context,
-            CoreDocument document,
-            Component component,
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
             float x,
             float y,
             float dx,
@@ -313,7 +321,11 @@ public class ScrollModifierOperation extends ListActionsOperation
 
     @Override
     public void onTouchDrag(
-            RemoteContext context, CoreDocument document, Component component, float x, float y) {
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
+            float x,
+            float y) {
         if (mTouchExpression != null) {
             mTouchExpression.updateVariables(context);
             mTouchExpression.touchDrag(context, x + mScrollX, y + mScrollY);
@@ -332,7 +344,11 @@ public class ScrollModifierOperation extends ListActionsOperation
 
     @Override
     public void onTouchCancel(
-            RemoteContext context, CoreDocument document, Component component, float x, float y) {}
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
+            float x,
+            float y) {}
 
     /**
      * Set the horizontal scroll dimension

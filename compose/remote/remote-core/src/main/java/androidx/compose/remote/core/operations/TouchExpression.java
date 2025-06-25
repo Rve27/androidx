@@ -53,7 +53,7 @@ public class TouchExpression extends Operation
     private float mDefValue;
     private float mOutDefValue;
     private int mId;
-    public float[] mSrcExp;
+    public float @Nullable [] mSrcExp;
     int mMode = 1; // 0 = delta, 1 = absolute
     float mMax = 1;
     float mMin = 1;
@@ -122,15 +122,15 @@ public class TouchExpression extends Operation
      */
     public TouchExpression(
             int id,
-            float[] exp,
+            float @NonNull [] exp,
             float defValue,
             float min,
             float max,
             int touchEffects,
             float velocityId,
             int stopMode,
-            float[] stopSpec,
-            float[] easingSpec) {
+            float @Nullable [] stopSpec,
+            float @Nullable [] easingSpec) {
         this.mId = id;
         this.mSrcExp = exp;
         mOutDefValue = mDefValue = defValue;
@@ -160,7 +160,7 @@ public class TouchExpression extends Operation
     }
 
     @Override
-    public void updateVariables(RemoteContext context) {
+    public void updateVariables(@NonNull RemoteContext context) {
         if (mPreCalcValue == null || mPreCalcValue.length != mSrcExp.length) {
             mPreCalcValue = new float[mSrcExp.length];
         }
@@ -213,7 +213,7 @@ public class TouchExpression extends Operation
     }
 
     @Override
-    public void registerListening(RemoteContext context) {
+    public void registerListening(@NonNull RemoteContext context) {
         if (Float.isNaN(mMax)) {
             context.listensTo(Utils.idFromNan(mMax), this);
         }
@@ -449,7 +449,7 @@ public class TouchExpression extends Operation
     float mDownTouchValue; // The calculated value at down
 
     @Override
-    public void touchDown(RemoteContext context, float x, float y) {
+    public void touchDown(@NonNull RemoteContext context, float x, float y) {
         if (!(x >= mScrLeft && x <= mScrRight && y >= mScrTop && y <= mScrBottom)) {
             Utils.log("NOT IN WINDOW " + x + ", " + y + " " + mScrLeft + ", " + mScrTop);
             return;
@@ -466,7 +466,7 @@ public class TouchExpression extends Operation
     }
 
     @Override
-    public void touchUp(RemoteContext context, float x, float y, float dx, float dy) {
+    public void touchUp(@NonNull RemoteContext context, float x, float y, float dx, float dy) {
         // calculate the slope (using small changes)
         if (!mTouchDown) {
             return;
@@ -501,7 +501,7 @@ public class TouchExpression extends Operation
     }
 
     @Override
-    public void touchDrag(RemoteContext context, float x, float y) {
+    public void touchDrag(@NonNull RemoteContext context, float x, float y) {
         if (!mTouchDown) {
             return;
         }
@@ -588,17 +588,17 @@ public class TouchExpression extends Operation
      * @param easingSpec the spec of when the object comes to an easing
      */
     public static void apply(
-            WireBuffer buffer,
+            @NonNull WireBuffer buffer,
             int id,
             float value,
             float min,
             float max,
             float velocityId,
             int touchEffects,
-            float[] exp,
+            float @NonNull [] exp,
             int touchMode,
-            float[] touchSpec,
-            float[] easingSpec) {
+            float @Nullable [] touchSpec,
+            float @Nullable [] easingSpec) {
         buffer.start(OP_CODE);
         buffer.writeInt(id);
         buffer.writeFloat(value);
@@ -686,7 +686,7 @@ public class TouchExpression extends Operation
      *
      * @param doc to append the description to.
      */
-    public static void documentation(DocumentationBuilder doc) {
+    public static void documentation(@NonNull DocumentationBuilder doc) {
         doc.operation("Expressions Operations", OP_CODE, CLASS_NAME)
                 .description("A Float expression")
                 .field(INT, "id", "The id of the Color")

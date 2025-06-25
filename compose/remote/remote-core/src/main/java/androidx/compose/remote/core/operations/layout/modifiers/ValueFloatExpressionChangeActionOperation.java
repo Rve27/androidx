@@ -84,7 +84,7 @@ public class ValueFloatExpressionChangeActionOperation extends Operation
     public void runAction(
             @NonNull RemoteContext context,
             @NonNull CoreDocument document,
-            Component component,
+            @NonNull Component component,
             float x,
             float y) {
         document.evaluateFloatExpression(mValueExpressionId, mTargetValueId, context);

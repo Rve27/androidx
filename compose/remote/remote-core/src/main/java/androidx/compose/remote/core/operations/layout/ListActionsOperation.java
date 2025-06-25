@@ -76,7 +76,11 @@ public abstract class ListActionsOperation extends PaintOperation
     public void paint(@NonNull PaintContext context) {}
 
     @Override
-    public void layout(RemoteContext context, Component component, float width, float height) {
+    public void layout(
+            @NonNull RemoteContext context,
+            @NonNull Component component,
+            float width,
+            float height) {
         mWidth = width;
         mHeight = height;
     }

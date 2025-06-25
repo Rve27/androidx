@@ -26,6 +26,7 @@ import androidx.compose.remote.core.serialize.MapSerializer;
 import androidx.compose.remote.core.serialize.SerializeTags;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ import java.util.List;
 public class HeightModifierOperation extends DimensionModifierOperation {
     private static final int OP_CODE = Operations.MODIFIER_HEIGHT;
     public static final String CLASS_NAME = "HeightModifierOperation";
-    private HeightInModifierOperation mHeightIn = null;
+    private @Nullable HeightInModifierOperation mHeightIn = null;
 
     /**
      * The name of the class
@@ -126,7 +127,7 @@ public class HeightModifierOperation extends DimensionModifierOperation {
      *
      * @param heightInConstraints height constraints
      */
-    public void setHeightIn(HeightInModifierOperation heightInConstraints) {
+    public void setHeightIn(@NonNull HeightInModifierOperation heightInConstraints) {
         mHeightIn = heightInConstraints;
     }
 
@@ -135,7 +136,7 @@ public class HeightModifierOperation extends DimensionModifierOperation {
      *
      * @return height in constraints
      */
-    public HeightInModifierOperation getHeightIn() {
+    public @Nullable HeightInModifierOperation getHeightIn() {
         return mHeightIn;
     }
 

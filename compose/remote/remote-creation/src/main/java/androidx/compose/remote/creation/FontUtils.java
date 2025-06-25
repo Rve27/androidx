@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class FontUtils {
+    private FontUtils() {}
 
     /**
      * Set the font on the paint

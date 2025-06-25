@@ -156,7 +156,11 @@ public class OffsetModifierOperation extends DecoratorModifierOperation {
     }
 
     @Override
-    public void layout(RemoteContext context, Component component, float width, float height) {}
+    public void layout(
+            @NonNull RemoteContext context,
+            @NonNull Component component,
+            float width,
+            float height) {}
 
     @Override
     public void serialize(@NonNull MapSerializer serializer) {

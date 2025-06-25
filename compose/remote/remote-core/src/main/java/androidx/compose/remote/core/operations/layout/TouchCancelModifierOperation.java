@@ -48,6 +48,9 @@ public class TouchCancelModifierOperation extends ListActionsOperation implement
 
     @Override
     public void apply(@NonNull RemoteContext context) {
+        if (context.getDocument() == null) {
+            return;
+        }
         RootLayoutComponent root = context.getDocument().getRootLayoutComponent();
         if (root != null) {
             root.setHasTouchListeners(true);
@@ -57,15 +60,19 @@ public class TouchCancelModifierOperation extends ListActionsOperation implement
 
     @Override
     public void onTouchDown(
-            RemoteContext context, CoreDocument document, Component component, float x, float y) {
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
+            float x,
+            float y) {
         // nothing
     }
 
     @Override
     public void onTouchUp(
-            RemoteContext context,
-            CoreDocument document,
-            Component component,
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
             float x,
             float y,
             float dx,
@@ -75,13 +82,21 @@ public class TouchCancelModifierOperation extends ListActionsOperation implement
 
     @Override
     public void onTouchCancel(
-            RemoteContext context, CoreDocument document, Component component, float x, float y) {
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
+            float x,
+            float y) {
         applyActions(context, document, component, x, y, true);
     }
 
     @Override
     public void onTouchDrag(
-            RemoteContext context, CoreDocument document, Component component, float x, float y) {
+            @NonNull RemoteContext context,
+            @NonNull CoreDocument document,
+            @NonNull Component component,
+            float x,
+            float y) {
         // nothing
     }
 
@@ -100,7 +115,7 @@ public class TouchCancelModifierOperation extends ListActionsOperation implement
      *
      * @param buffer a WireBuffer
      */
-    public static void apply(WireBuffer buffer) {
+    public static void apply(@NonNull WireBuffer buffer) {
         buffer.start(OP_CODE);
     }
 
@@ -110,7 +125,7 @@ public class TouchCancelModifierOperation extends ListActionsOperation implement
      * @param buffer the buffer to read
      * @param operations the list of operations that will be added to
      */
-    public static void read(WireBuffer buffer, List<Operation> operations) {
+    public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         operations.add(new TouchCancelModifierOperation());
     }
 
@@ -119,7 +134,7 @@ public class TouchCancelModifierOperation extends ListActionsOperation implement
      *
      * @param doc a DocumentationBuilder
      */
-    public static void documentation(DocumentationBuilder doc) {
+    public static void documentation(@NonNull DocumentationBuilder doc) {
         doc.operation("Modifier Operations", OP_CODE, name())
                 .description(
                         "Touch cancel modifier. This operation contains"

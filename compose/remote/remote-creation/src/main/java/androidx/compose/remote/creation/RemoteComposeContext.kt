@@ -663,7 +663,7 @@ public class RemoteComposeContext {
         return mRemoteWriter.floatExpression(*value)
     }
 
-    public fun floatExpression(value: FloatArray, animation: FloatArray?): Float {
+    public fun floatExpression(value: FloatArray, animation: FloatArray): Float {
         return mRemoteWriter.floatExpression(value, animation)
     }
 
