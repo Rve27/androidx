@@ -1074,6 +1074,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         if (scrollY <= 0) {
             state.contentCenterY = 0F
         }
+        state.isFormFillingEnabled = isFormFillingEnabled
         state.documentUri = pdfDocument?.uri
         state.paginationModel = pageMetadataLoader?.paginationModel
         state.pdfFormFillingState = pageMetadataLoader?.pdfFormFillingState
@@ -1212,6 +1213,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         } else {
             scrollToRestoredPosition(positionToRestore, localStateToRestore.zoom)
         }
+
+        isFormFillingEnabled = localStateToRestore.isFormFillingEnabled
         setAccessibility()
 
         stateToRestore = null
