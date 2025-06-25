@@ -33,7 +33,7 @@ plugins {
 dependencies {
     api(libs.kotlinStdlib)
     api(project(":xr:runtime:runtime"))
-    implementation(libs.kotlinCoroutinesRx3)
+    api(libs.kotlinCoroutinesRx3)
 
     testImplementation(libs.kotlinCoroutinesTest)
     testImplementation(project(":xr:runtime:runtime-testing"))
