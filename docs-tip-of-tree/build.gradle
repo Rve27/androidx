@@ -282,6 +282,7 @@ dependencies {
     docs(project(":palette:palette-ktx"))
     docs(project(":pdf:pdf-compose"))
     docs(project(":pdf:pdf-document-service"))
+    docs(project(":pdf:pdf-ink"))
     docs(project(":pdf:pdf-viewer"))
     docs(project(":pdf:pdf-viewer-fragment"))
     docs(project(":percentlayout:percentlayout"))
