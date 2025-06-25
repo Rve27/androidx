@@ -41,6 +41,7 @@ package androidx.xr.arcore.playservices {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ArCorePerceptionManager implements androidx.xr.runtime.internal.PerceptionManager {
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public suspend Object? checkVpsAvailability(double latitude, double longitude, kotlin.coroutines.Continuation<? super androidx.xr.runtime.VpsAvailabilityResult>);
     method public androidx.xr.runtime.internal.Anchor createAnchor(androidx.xr.runtime.math.Pose pose);
     method public androidx.xr.runtime.internal.ArDevice getArDevice();
     method public java.util.List<androidx.xr.runtime.internal.DepthMap> getDepthMaps();
