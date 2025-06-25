@@ -29,6 +29,7 @@ package androidx.webkit {
     method public boolean didCommitErrorPage();
     method public androidx.webkit.Page? getPage();
     method public int getStatusCode();
+    method public String getUrl();
     method public boolean isBack();
     method public boolean isForward();
     method public boolean isHistory();
