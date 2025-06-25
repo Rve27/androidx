@@ -16,50 +16,42 @@
 
 package androidx.xr.scenecore
 
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.Entity as RtEntity
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.math.Pose
 
+// TODO: b/427566816 - Fix HiddenSuperclass suppression
 /**
- * An Entity that itself has no content. ContentlessEntity is useful for organizing the placement,
- * movement of a group of SceneCore Entities.
+ * An [Entity] that contains no content, but can have an arbitrary number of children. GroupEntity
+ * is useful for organizing the placement and movement of a group of child SceneCore Entities.
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class ContentlessEntity
-private constructor(rtEntity: RtEntity, entityManager: EntityManager) :
+@Suppress("HiddenSuperclass") // BaseEntity is an internal class
+public class GroupEntity private constructor(rtEntity: RtEntity, entityManager: EntityManager) :
     BaseEntity<RtEntity>(rtEntity, entityManager) {
     public companion object {
-        /** Factory method to create ContentlessEntity entities. */
+        /** Factory method to create GroupEntity entities. */
         internal fun create(
             adapter: JxrPlatformAdapter,
             entityManager: EntityManager,
             name: String,
             pose: Pose = Pose.Identity,
         ): Entity =
-            ContentlessEntity(
-                adapter.createEntity(pose, name, adapter.activitySpaceRootImpl),
+            GroupEntity(
+                adapter.createGroupEntity(pose, name, adapter.activitySpaceRootImpl),
                 entityManager,
             )
 
         /**
-         * Public factory function for creating a content-less entity. This entity is used as a
-         * connection point for attaching children entities and managing them (i.e. setPose()) as a
-         * group.
+         * Public factory method for creating a [GroupEntity].
          *
-         * @param session Session to create the ContentlessEntity in.
+         * @param session Session to create the GroupEntity in.
          * @param name Name of the entity.
          * @param pose Initial pose of the entity.
          */
         @JvmOverloads
         @JvmStatic
         public fun create(session: Session, name: String, pose: Pose = Pose.Identity): Entity =
-            ContentlessEntity.create(
-                session.platformAdapter,
-                session.scene.entityManager,
-                name,
-                pose,
-            )
+            GroupEntity.create(session.platformAdapter, session.scene.entityManager, name, pose)
     }
 }

@@ -94,7 +94,7 @@ class EntityTest {
     private val mockPanelEntityImpl = mock<RtPanelEntity>()
     private val mockAnchorEntityImpl = mock<RtAnchorEntity>()
     private val mockActivityPanelEntity = mock<RtActivityPanelEntity>()
-    private val mockContentlessEntity = mock<RtEntity>()
+    private val mockGroupEntity = mock<RtEntity>()
     private val mockSurfaceEntity = mock<RtSurfaceEntity>()
     private val entityManager = EntityManager()
     private lateinit var session: Session
@@ -106,7 +106,7 @@ class EntityTest {
     private lateinit var panelEntity: PanelEntity
     private lateinit var anchorEntity: AnchorEntity
     private lateinit var activityPanelEntity: ActivityPanelEntity
-    private lateinit var contentlessEntity: Entity
+    private lateinit var groupEntity: Entity
     private lateinit var surfaceEntity: SurfaceEntity
 
     private val entityActivity =
@@ -302,8 +302,8 @@ class EntityTest {
         whenever(mockAnchorEntityImpl.state).thenReturn(RtAnchorEntity.State.UNANCHORED)
         whenever(mockPlatformAdapter.createActivityPanelEntity(any(), any(), any(), any(), any()))
             .thenReturn(mockActivityPanelEntity)
-        whenever(mockPlatformAdapter.createEntity(any(), any(), any()))
-            .thenReturn(mockContentlessEntity)
+        whenever(mockPlatformAdapter.createGroupEntity(any(), any(), any()))
+            .thenReturn(mockGroupEntity)
         whenever(mockPlatformAdapter.createSurfaceEntity(any(), any(), any(), any(), any(), any()))
             .thenReturn(mockSurfaceEntity)
         whenever(mockPlatformAdapter.mainPanelEntity).thenReturn(mockPanelEntityImpl)
@@ -341,7 +341,7 @@ class EntityTest {
                 "test",
                 activity,
             )
-        contentlessEntity = ContentlessEntity.create(mockPlatformAdapter, entityManager, "test")
+        groupEntity = GroupEntity.create(mockPlatformAdapter, entityManager, "test")
         surfaceEntity =
             SurfaceEntity.create(
                 lifecycleManager = lifecycleManager,
@@ -410,19 +410,19 @@ class EntityTest {
         whenever(mockActivityPanelEntity.parent).thenReturn(rtActivitySpace)
         whenever(mockPanelEntityImpl.parent).thenReturn(mockActivityPanelEntity)
         whenever(mockGltfModelEntityImpl.parent).thenReturn(mockPanelEntityImpl)
-        whenever(mockContentlessEntity.parent).thenReturn(mockGltfModelEntityImpl)
-        whenever(mockAnchorEntityImpl.parent).thenReturn(mockContentlessEntity)
+        whenever(mockGroupEntity.parent).thenReturn(mockGltfModelEntityImpl)
+        whenever(mockAnchorEntityImpl.parent).thenReturn(mockGroupEntity)
 
         assertThat(activityPanelEntity.parent).isEqualTo(activitySpace)
         assertThat(panelEntity.parent).isEqualTo(activityPanelEntity)
         assertThat(gltfModelEntity.parent).isEqualTo(panelEntity)
-        assertThat(contentlessEntity.parent).isEqualTo(gltfModelEntity)
-        assertThat(anchorEntity.parent).isEqualTo(contentlessEntity)
+        assertThat(groupEntity.parent).isEqualTo(gltfModelEntity)
+        assertThat(anchorEntity.parent).isEqualTo(groupEntity)
 
         verify(mockActivityPanelEntity).parent
         verify(mockPanelEntityImpl).parent
         verify(mockGltfModelEntityImpl).parent
-        verify(mockContentlessEntity).parent
+        verify(mockGroupEntity).parent
         verify(mockAnchorEntityImpl).parent
     }
 
@@ -431,19 +431,19 @@ class EntityTest {
         whenever(mockActivityPanelEntity.parent).thenReturn(null)
         whenever(mockPanelEntityImpl.parent).thenReturn(null)
         whenever(mockGltfModelEntityImpl.parent).thenReturn(null)
-        whenever(mockContentlessEntity.parent).thenReturn(null)
+        whenever(mockGroupEntity.parent).thenReturn(null)
         whenever(mockAnchorEntityImpl.parent).thenReturn(null)
 
         assertThat(activityPanelEntity.parent).isEqualTo(null)
         assertThat(panelEntity.parent).isEqualTo(null)
         assertThat(gltfModelEntity.parent).isEqualTo(null)
-        assertThat(contentlessEntity.parent).isEqualTo(null)
+        assertThat(groupEntity.parent).isEqualTo(null)
         assertThat(anchorEntity.parent).isEqualTo(null)
 
         verify(mockActivityPanelEntity).parent
         verify(mockPanelEntityImpl).parent
         verify(mockGltfModelEntityImpl).parent
-        verify(mockContentlessEntity).parent
+        verify(mockGroupEntity).parent
         verify(mockAnchorEntityImpl).parent
     }
 
@@ -519,14 +519,14 @@ class EntityTest {
         gltfModelEntity.setAlpha(alpha, Space.PARENT)
         anchorEntity.setAlpha(alpha, Space.ACTIVITY)
         activityPanelEntity.setAlpha(alpha, Space.REAL_WORLD)
-        contentlessEntity.setAlpha(alpha)
+        groupEntity.setAlpha(alpha)
         activitySpace.setAlpha(alpha)
 
         verify(mockPanelEntityImpl).setAlpha(alpha, RtSpace.PARENT)
         verify(mockGltfModelEntityImpl).setAlpha(alpha, RtSpace.PARENT)
         verify(mockAnchorEntityImpl).setAlpha(alpha, RtSpace.ACTIVITY)
         verify(mockActivityPanelEntity).setAlpha(alpha, RtSpace.REAL_WORLD)
-        verify(mockContentlessEntity).setAlpha(alpha, RtSpace.PARENT)
+        verify(mockGroupEntity).setAlpha(alpha, RtSpace.PARENT)
         assertThat(testActivitySpace.setAlphaCalled).isTrue()
     }
 
@@ -557,14 +557,14 @@ class EntityTest {
         gltfModelEntity.setHidden(true)
         anchorEntity.setHidden(true)
         activityPanelEntity.setHidden(false)
-        contentlessEntity.setHidden(false)
+        groupEntity.setHidden(false)
         activitySpace.setHidden(false)
 
         verify(mockPanelEntityImpl).setHidden(true)
         verify(mockGltfModelEntityImpl).setHidden(true)
         verify(mockAnchorEntityImpl).setHidden(true)
         verify(mockActivityPanelEntity).setHidden(false)
-        verify(mockContentlessEntity).setHidden(false)
+        verify(mockGroupEntity).setHidden(false)
         assertThat(testActivitySpace.setHiddenCalled).isTrue()
     }
 
@@ -598,7 +598,7 @@ class EntityTest {
         // by the runtime Entity.
         anchorEntity.setScale(scale, Space.ACTIVITY)
         activityPanelEntity.setScale(scale, Space.REAL_WORLD)
-        contentlessEntity.setScale(scale)
+        groupEntity.setScale(scale)
         // Note that in production we expect this to do nothing.
         activitySpace.setScale(scale)
 
@@ -606,7 +606,7 @@ class EntityTest {
         verify(mockGltfModelEntityImpl).setScale(any(), eq(RtSpace.PARENT))
         verify(mockAnchorEntityImpl).setScale(any(), eq(RtSpace.ACTIVITY))
         verify(mockActivityPanelEntity).setScale(any(), eq(RtSpace.REAL_WORLD))
-        verify(mockContentlessEntity).setScale(any(), eq(RtSpace.PARENT))
+        verify(mockGroupEntity).setScale(any(), eq(RtSpace.PARENT))
         assertThat(testActivitySpace.setScaleCalled).isTrue()
     }
 
@@ -641,20 +641,20 @@ class EntityTest {
         whenever(mockGltfModelEntityImpl.transformPoseTo(any(), any())).thenReturn(Pose())
         whenever(mockAnchorEntityImpl.transformPoseTo(any(), any())).thenReturn(Pose())
         whenever(mockActivityPanelEntity.transformPoseTo(any(), any())).thenReturn(Pose())
-        whenever(mockContentlessEntity.transformPoseTo(any(), any())).thenReturn(Pose())
+        whenever(mockGroupEntity.transformPoseTo(any(), any())).thenReturn(Pose())
         val pose = Pose.Identity
 
         assertThat(panelEntity.transformPoseTo(pose, panelEntity)).isEqualTo(pose)
         assertThat(gltfModelEntity.transformPoseTo(pose, panelEntity)).isEqualTo(pose)
         assertThat(anchorEntity.transformPoseTo(pose, panelEntity)).isEqualTo(pose)
         assertThat(activityPanelEntity.transformPoseTo(pose, panelEntity)).isEqualTo(pose)
-        assertThat(contentlessEntity.transformPoseTo(pose, panelEntity)).isEqualTo(pose)
+        assertThat(groupEntity.transformPoseTo(pose, panelEntity)).isEqualTo(pose)
 
         verify(mockPanelEntityImpl).transformPoseTo(any(), any())
         verify(mockGltfModelEntityImpl).transformPoseTo(any(), any())
         verify(mockAnchorEntityImpl).transformPoseTo(any(), any())
         verify(mockActivityPanelEntity).transformPoseTo(any(), any())
-        verify(mockContentlessEntity).transformPoseTo(any(), any())
+        verify(mockGroupEntity).transformPoseTo(any(), any())
     }
 
     @Test
@@ -865,19 +865,19 @@ class EntityTest {
     }
 
     @Test
-    fun contentlessEntity_isCreated() {
-        val entity = ContentlessEntity.create(session, "test")
+    fun groupEntity_isCreated() {
+        val entity = GroupEntity.create(session, "test")
         assertThat(entity).isNotNull()
     }
 
     @Test
-    fun contentlessEntity_canSetPose() {
-        val entity = ContentlessEntity.create(session, "test")
+    fun groupEntity_canSetPose() {
+        val entity = GroupEntity.create(session, "test")
         val setPose = Pose.Identity
         entity.setPose(setPose)
 
         val captor = argumentCaptor<Pose>()
-        verify(mockContentlessEntity).setPose(captor.capture(), eq(RtSpace.PARENT))
+        verify(mockGroupEntity).setPose(captor.capture(), eq(RtSpace.PARENT))
 
         val pose = captor.firstValue
         assertThat(pose.translation.x).isEqualTo(setPose.translation.x)
@@ -886,25 +886,25 @@ class EntityTest {
     }
 
     @Test
-    fun contentlessEntity_canGetPose() {
-        whenever(mockContentlessEntity.getPose(RtSpace.PARENT)).thenReturn(Pose())
+    fun groupEntity_canGetPose() {
+        whenever(mockGroupEntity.getPose(RtSpace.PARENT)).thenReturn(Pose())
 
-        val entity = ContentlessEntity.create(session, "test")
+        val entity = GroupEntity.create(session, "test")
         val pose = Pose.Identity
 
         assertThat(entity.getPose()).isEqualTo(pose)
-        verify(mockContentlessEntity).getPose(RtSpace.PARENT)
+        verify(mockGroupEntity).getPose(RtSpace.PARENT)
     }
 
     @Test
-    fun contentlessEntity_canGetActivitySpacePose() {
-        whenever(mockContentlessEntity.activitySpacePose).thenReturn(Pose())
+    fun groupEntity_canGetActivitySpacePose() {
+        whenever(mockGroupEntity.activitySpacePose).thenReturn(Pose())
 
-        val entity = ContentlessEntity.create(session, "test")
+        val entity = GroupEntity.create(session, "test")
         val pose = Pose.Identity
 
         assertThat(entity.activitySpacePose).isEqualTo(pose)
-        verify(mockContentlessEntity).activitySpacePose
+        verify(mockGroupEntity).activitySpacePose
     }
 
     @Test

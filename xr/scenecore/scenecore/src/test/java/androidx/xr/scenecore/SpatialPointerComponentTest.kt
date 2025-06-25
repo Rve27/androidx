@@ -50,7 +50,7 @@ class SpatialPointerComponentTest {
     private val mockActivitySpace = mock<RtActivitySpace>()
     private lateinit var session: Session
     private val entityManager = EntityManager()
-    private val mockContentlessEntity = mock<RtEntity>()
+    private val mockGroupEntity = mock<RtEntity>()
     private val mockPanelEntity = mock<RtPanelEntity>()
 
     @Before
@@ -62,7 +62,7 @@ class SpatialPointerComponentTest {
         whenever(mockRuntime.perceptionSpaceActivityPose).thenReturn(mock())
         whenever(mockRuntime.mainPanelEntity).thenReturn(mock())
         whenever(mockRuntime.spatialCapabilities).thenReturn(RtSpatialCapabilities(0))
-        whenever(mockRuntime.createEntity(any(), any(), any())).thenReturn(mockContentlessEntity)
+        whenever(mockRuntime.createGroupEntity(any(), any(), any())).thenReturn(mockGroupEntity)
 
         whenever(
                 mockRuntime.createPanelEntity(
@@ -94,7 +94,7 @@ class SpatialPointerComponentTest {
 
     @Test
     fun addSpatialPointerComponent_failsForNonPanelEntity() {
-        val entity = ContentlessEntity.create(session, "test")
+        val entity = GroupEntity.create(session, "test")
         assertThat(entity).isNotNull()
         val pointerComponent = SpatialPointerComponent.create(session)
 

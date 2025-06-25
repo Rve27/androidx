@@ -24,7 +24,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.disposableValueOf
 import androidx.xr.compose.platform.getValue
-import androidx.xr.compose.subspace.layout.CoreContentlessEntity
+import androidx.xr.compose.subspace.layout.CoreGroupEntity
 import androidx.xr.compose.subspace.layout.CorePanelEntity
 import androidx.xr.compose.subspace.layout.CoreSphereSurfaceEntity
 import androidx.xr.compose.subspace.layout.CoreSurfaceEntity
@@ -37,18 +37,15 @@ import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.scene
 
-/**
- * Creates a [CoreContentlessEntity] that is automatically disposed of when it leaves the
- * composition.
- */
+/** Creates a [CoreGroupEntity] that is automatically disposed of when it leaves the composition. */
 @Composable
 @PublishedApi
-internal fun rememberCoreContentlessEntity(
+internal fun rememberCoreGroupEntity(
     entityFactory: @DisallowComposableCalls Session.() -> Entity
-): CoreContentlessEntity {
+): CoreGroupEntity {
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val coreEntity by remember {
-        disposableValueOf(CoreContentlessEntity(session.entityFactory())) { it.dispose() }
+        disposableValueOf(CoreGroupEntity(session.entityFactory())) { it.dispose() }
     }
     return coreEntity
 }

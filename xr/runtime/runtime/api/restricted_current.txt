@@ -841,8 +841,8 @@ package androidx.xr.runtime.internal {
     method public androidx.xr.runtime.internal.AnchorEntity createAnchorEntity(androidx.xr.runtime.internal.Anchor anchor);
     method public androidx.xr.runtime.internal.AnchorEntity createAnchorEntity(androidx.xr.runtime.internal.Dimensions bounds, androidx.xr.runtime.internal.PlaneType planeType, androidx.xr.runtime.internal.PlaneSemantic planeSemantic, java.time.Duration searchTimeout);
     method public androidx.xr.runtime.internal.AnchorPlacement createAnchorPlacementForPlanes(java.util.Set<androidx.xr.runtime.internal.PlaneType> planeTypeFilter, java.util.Set<androidx.xr.runtime.internal.PlaneSemantic> planeSemanticFilter);
-    method public androidx.xr.runtime.internal.Entity createEntity(androidx.xr.runtime.math.Pose pose, String name, androidx.xr.runtime.internal.Entity parent);
     method public androidx.xr.runtime.internal.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose pose, androidx.xr.runtime.internal.GltfModelResource loadedGltf, androidx.xr.runtime.internal.Entity parentEntity);
+    method public androidx.xr.runtime.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose pose, String name, androidx.xr.runtime.internal.Entity parent);
     method public androidx.xr.runtime.internal.InteractableComponent createInteractableComponent(java.util.concurrent.Executor executor, androidx.xr.runtime.internal.InputEventListener listener);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource>? createKhronosPbrMaterial(androidx.xr.runtime.internal.KhronosPbrMaterialSpec spec);
     method public androidx.xr.runtime.internal.LoggingEntity createLoggingEntity(androidx.xr.runtime.math.Pose pose);

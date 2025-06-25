@@ -202,8 +202,8 @@ package androidx.xr.compose.testing {
     method @BytecodeOnly public androidx.xr.runtime.internal.AnchorEntity createAnchorEntity(androidx.xr.runtime.internal.Anchor);
     method @BytecodeOnly public androidx.xr.runtime.internal.AnchorEntity createAnchorEntity(androidx.xr.runtime.internal.Dimensions, androidx.xr.runtime.internal.PlaneType, androidx.xr.runtime.internal.PlaneSemantic, java.time.Duration);
     method @BytecodeOnly public androidx.xr.runtime.internal.AnchorPlacement createAnchorPlacementForPlanes(java.util.Set<androidx.xr.runtime.internal.PlaneType!>, java.util.Set<androidx.xr.runtime.internal.PlaneSemantic!>);
-    method @BytecodeOnly public androidx.xr.runtime.internal.Entity createEntity(androidx.xr.runtime.math.Pose, String, androidx.xr.runtime.internal.Entity);
     method @BytecodeOnly public androidx.xr.runtime.internal.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose, androidx.xr.runtime.internal.GltfModelResource, androidx.xr.runtime.internal.Entity);
+    method @BytecodeOnly public androidx.xr.runtime.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose, String, androidx.xr.runtime.internal.Entity);
     method @BytecodeOnly public androidx.xr.runtime.internal.InteractableComponent createInteractableComponent(java.util.concurrent.Executor, androidx.xr.runtime.internal.InputEventListener);
     method @BytecodeOnly public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource!>? createKhronosPbrMaterial(androidx.xr.runtime.internal.KhronosPbrMaterialSpec);
     method @BytecodeOnly public androidx.xr.runtime.internal.LoggingEntity createLoggingEntity(androidx.xr.runtime.math.Pose);

@@ -431,7 +431,7 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
 
     override fun createAnchorEntity(anchor: Anchor): AnchorEntity = FakeAnchorEntity()
 
-    override fun createEntity(pose: Pose, name: String, parent: Entity): Entity = FakeEntity()
+    override fun createGroupEntity(pose: Pose, name: String, parent: Entity): Entity = FakeEntity()
 
     override fun createSubspaceNodeEntity(
         subspaceNode: SubspaceNode,

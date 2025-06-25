@@ -131,17 +131,6 @@ package androidx.xr.scenecore {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void onDetach(androidx.xr.scenecore.Entity entity);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ContentlessEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.Entity> {
-    method public static androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name);
-    method public static androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name, optional androidx.xr.runtime.math.Pose pose);
-    field public static final androidx.xr.scenecore.ContentlessEntity.Companion Companion;
-  }
-
-  public static final class ContentlessEntity.Companion {
-    method public androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name);
-    method public androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name, optional androidx.xr.runtime.math.Pose pose);
-  }
-
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class CubeMapTexture extends androidx.xr.scenecore.Texture {
     method @MainThread public static androidx.xr.scenecore.CubeMapTexture borrowReflectionTexture(androidx.xr.runtime.Session session);
     field public static final androidx.xr.scenecore.CubeMapTexture.Companion Companion;
@@ -238,6 +227,17 @@ package androidx.xr.scenecore {
   public static final class GltfModelEntity.Companion {
     method @MainThread public androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model);
     method @MainThread public androidx.xr.scenecore.GltfModelEntity create(androidx.xr.runtime.Session session, androidx.xr.scenecore.GltfModel model, optional androidx.xr.runtime.math.Pose pose);
+  }
+
+  public final class GroupEntity extends androidx.xr.scenecore.BaseEntity<androidx.xr.runtime.internal.Entity> {
+    method public static androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name);
+    method public static androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name, optional androidx.xr.runtime.math.Pose pose);
+    field public static final androidx.xr.scenecore.GroupEntity.Companion Companion;
+  }
+
+  public static final class GroupEntity.Companion {
+    method public androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name);
+    method public androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name, optional androidx.xr.runtime.math.Pose pose);
   }
 
   public final class Head extends androidx.xr.scenecore.BaseScenePose<androidx.xr.runtime.internal.HeadActivityPose> {
@@ -1218,8 +1218,8 @@ package androidx.xr.scenecore.impl {
     method public androidx.xr.runtime.internal.AnchorEntity createAnchorEntity(androidx.xr.runtime.internal.Anchor);
     method public androidx.xr.runtime.internal.AnchorEntity createAnchorEntity(androidx.xr.runtime.internal.Dimensions, androidx.xr.runtime.internal.PlaneType, androidx.xr.runtime.internal.PlaneSemantic, java.time.Duration);
     method public androidx.xr.runtime.internal.AnchorPlacement createAnchorPlacementForPlanes(java.util.Set<androidx.xr.runtime.internal.PlaneType!>, java.util.Set<androidx.xr.runtime.internal.PlaneSemantic!>);
-    method public androidx.xr.runtime.internal.Entity createEntity(androidx.xr.runtime.math.Pose, String, androidx.xr.runtime.internal.Entity);
     method public androidx.xr.runtime.internal.GltfEntity createGltfEntity(androidx.xr.runtime.math.Pose, androidx.xr.runtime.internal.GltfModelResource, androidx.xr.runtime.internal.Entity?);
+    method public androidx.xr.runtime.internal.Entity createGroupEntity(androidx.xr.runtime.math.Pose, String, androidx.xr.runtime.internal.Entity);
     method public androidx.xr.runtime.internal.InteractableComponent createInteractableComponent(java.util.concurrent.Executor, androidx.xr.runtime.internal.InputEventListener);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource!>? createKhronosPbrMaterial(androidx.xr.runtime.internal.KhronosPbrMaterialSpec);
     method public androidx.xr.runtime.internal.LoggingEntity createLoggingEntity(androidx.xr.runtime.math.Pose);

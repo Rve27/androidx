@@ -148,7 +148,8 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
 
     @Override
     protected AndroidXrEntity createChildAndroidXrEntity() {
-        return (AndroidXrEntity) mTestRuntime.createEntity(new Pose(), "child", mActivitySpace);
+        return (AndroidXrEntity)
+                mTestRuntime.createGroupEntity(new Pose(), "child", mActivitySpace);
     }
 
     @Override

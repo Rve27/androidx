@@ -95,6 +95,42 @@ package androidx.xr.scenecore {
     method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, java.nio.file.Path path, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.GltfModel>);
   }
 
+  public final class GroupEntity implements androidx.xr.scenecore.Entity androidx.xr.scenecore.ScenePose {
+    method public void addChild(androidx.xr.scenecore.Entity child);
+    method public boolean addComponent(androidx.xr.scenecore.Component component);
+    method public static androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name);
+    method public static androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name, optional androidx.xr.runtime.math.Pose pose);
+    method public void dispose();
+    method public androidx.xr.runtime.math.Pose getActivitySpacePose();
+    method public float getAlpha(int relativeTo);
+    method public java.util.List<androidx.xr.scenecore.Component> getComponents();
+    method public <T extends androidx.xr.scenecore.Component> java.util.List<T> getComponentsOfType(Class<? extends T> type);
+    method public String getContentDescription();
+    method public androidx.xr.scenecore.Entity? getParent();
+    method public androidx.xr.runtime.math.Pose getPose(int relativeTo);
+    method public float getScale(int relativeTo);
+    method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
+    method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.HitTestResult> hitTestAsync(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter);
+    method @Deprecated public boolean isHidden(boolean includeParents);
+    method public void removeAllComponents();
+    method public void removeComponent(androidx.xr.scenecore.Component component);
+    method public void setAlpha(float alpha, int relativeTo);
+    method public void setContentDescription(String);
+    method @Deprecated public void setHidden(boolean hidden);
+    method public void setParent(androidx.xr.scenecore.Entity?);
+    method public void setPose(androidx.xr.runtime.math.Pose pose, int relativeTo);
+    method public void setScale(float scale, int relativeTo);
+    method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.ScenePose destination);
+    field public static final androidx.xr.scenecore.GroupEntity.Companion Companion;
+  }
+
+  public static final class GroupEntity.Companion {
+    method public androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name);
+    method public androidx.xr.scenecore.Entity create(androidx.xr.runtime.Session session, String name, optional androidx.xr.runtime.math.Pose pose);
+  }
+
   public final class Head implements androidx.xr.scenecore.ScenePose {
     method public androidx.xr.runtime.math.Pose getActivitySpacePose();
     method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);

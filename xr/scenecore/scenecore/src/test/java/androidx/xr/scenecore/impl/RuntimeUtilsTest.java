@@ -440,8 +440,8 @@ public final class RuntimeUtilsTest {
         EntityManager entityManager = new EntityManager();
         JxrPlatformAdapterAxr platformAdapter = createPlatformAdapter(entityManager);
         Entity testEntity =
-                platformAdapter.createEntity(
-                        new Pose(), "testContentLess", platformAdapter.getActivitySpace());
+                platformAdapter.createGroupEntity(
+                        new Pose(), "testGroup", platformAdapter.getActivitySpace());
         Node testNode = ((AndroidXrEntity) testEntity).getNode();
         entityManager.setEntityForNode(testNode, testEntity);
 
@@ -476,8 +476,8 @@ public final class RuntimeUtilsTest {
         EntityManager entityManager = new EntityManager();
         JxrPlatformAdapterAxr platformAdapter = createPlatformAdapter(entityManager);
         Entity testEntity =
-                platformAdapter.createEntity(
-                        new Pose(), "testContentLess", platformAdapter.getActivitySpace());
+                platformAdapter.createGroupEntity(
+                        new Pose(), "testGroup", platformAdapter.getActivitySpace());
         Node testNode = ((AndroidXrEntity) testEntity).getNode();
         entityManager.setEntityForNode(testNode, testEntity);
 
@@ -498,8 +498,8 @@ public final class RuntimeUtilsTest {
         EntityManager entityManager = new EntityManager();
         JxrPlatformAdapterAxr platformAdapter = createPlatformAdapter(entityManager);
         Entity testEntity =
-                platformAdapter.createEntity(
-                        new Pose(), "testContentLess", platformAdapter.getActivitySpace());
+                platformAdapter.createGroupEntity(
+                        new Pose(), "testGroup", platformAdapter.getActivitySpace());
         Node testNode = ((AndroidXrEntity) testEntity).getNode();
         entityManager.setEntityForNode(testNode, testEntity);
 
@@ -519,8 +519,8 @@ public final class RuntimeUtilsTest {
         EntityManager entityManager = new EntityManager();
         JxrPlatformAdapterAxr platformAdapter = createPlatformAdapter(entityManager);
         Entity testEntity =
-                platformAdapter.createEntity(
-                        new Pose(), "testContentLess", platformAdapter.getActivitySpace());
+                platformAdapter.createGroupEntity(
+                        new Pose(), "testGroup", platformAdapter.getActivitySpace());
         Node testNode = ((AndroidXrEntity) testEntity).getNode();
 
         float[] transformData = new float[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
@@ -541,8 +541,8 @@ public final class RuntimeUtilsTest {
         EntityManager entityManager = new EntityManager();
         JxrPlatformAdapterAxr platformAdapter = createPlatformAdapter(entityManager);
         Entity testEntity =
-                platformAdapter.createEntity(
-                        new Pose(), "testContentLess", platformAdapter.getActivitySpace());
+                platformAdapter.createGroupEntity(
+                        new Pose(), "testGroup", platformAdapter.getActivitySpace());
         Node testNode = ((AndroidXrEntity) testEntity).getNode();
         entityManager.setEntityForNode(testNode, testEntity);
 
