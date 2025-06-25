@@ -43,7 +43,7 @@ import java.time.ZoneOffset;
  */
 public abstract class RemoteContext {
     private static final int MAX_OP_COUNT = 20_000; // Maximum cmds per frame
-    private Clock mClock;
+    private @NonNull Clock mClock;
     protected @NonNull CoreDocument mDocument;
     public @NonNull RemoteComposeState mRemoteComposeState =
             new RemoteComposeState(); // todo, is this a valid use of RemoteComposeState -- bbade@
@@ -73,7 +73,7 @@ public abstract class RemoteContext {
         this(new SystemClock());
     }
 
-    public RemoteContext(Clock clock) {
+    public RemoteContext(@NonNull Clock clock) {
         this.mClock = clock;
         setDocLoadTime();
         mDocument = new CoreDocument(clock); // todo: is this a valid way to initialize? bbade@
@@ -236,7 +236,7 @@ public abstract class RemoteContext {
      * @param floatName the name of the float to override
      * @param value Override the default float
      */
-    public abstract void setNamedFloatOverride(String floatName, float value);
+    public abstract void setNamedFloatOverride(@NonNull String floatName, float value);
 
     /**
      * Allows to clear a named Float.
@@ -245,7 +245,7 @@ public abstract class RemoteContext {
      *
      * @param floatName the name of the float to override
      */
-    public abstract void clearNamedFloatOverride(String floatName);
+    public abstract void clearNamedFloatOverride(@NonNull String floatName);
 
     /**
      * Set the value of a named long. This modifies the content of a LongConstant
@@ -253,7 +253,7 @@ public abstract class RemoteContext {
      * @param name the name of the float to override
      * @param value Override the default float
      */
-    public abstract void setNamedLong(String name, long value);
+    public abstract void setNamedLong(@NonNull String name, long value);
 
     /**
      * Set the value of a named Object. This overrides the Object in the document
@@ -261,7 +261,7 @@ public abstract class RemoteContext {
      * @param dataName the name of the Object to override
      * @param value Override the default float
      */
-    public abstract void setNamedDataOverride(String dataName, Object value);
+    public abstract void setNamedDataOverride(@NonNull String dataName, @NonNull Object value);
 
     /**
      * Allows to clear a named Object.
@@ -270,7 +270,7 @@ public abstract class RemoteContext {
      *
      * @param dataName the name of the Object to override
      */
-    public abstract void clearNamedDataOverride(String dataName);
+    public abstract void clearNamedDataOverride(@NonNull String dataName);
 
     /**
      * Support Collections by registering this collection
@@ -312,7 +312,7 @@ public abstract class RemoteContext {
      * @param textId the text id of the action
      * @param value the value of the parameter
      */
-    public abstract void runNamedAction(int textId, Object value);
+    public abstract void runNamedAction(int textId, @NonNull Object value);
 
     /**
      * Put an object under an id
@@ -335,7 +335,7 @@ public abstract class RemoteContext {
      *
      * @param touchExpression the touch expression
      */
-    public void addTouchListener(TouchListener touchExpression) {}
+    public void addTouchListener(@NonNull TouchListener touchExpression) {}
 
     /**
      * Vibrate the device
@@ -369,11 +369,11 @@ public abstract class RemoteContext {
         mUseChoreographer = value;
     }
 
-    public Clock getClock() {
+    public @NonNull Clock getClock() {
         return mClock;
     }
 
-    public void setClock(Clock clock) {
+    public void setClock(@NonNull Clock clock) {
         this.mClock = clock;
     }
 
@@ -383,7 +383,7 @@ public abstract class RemoteContext {
      * @param fontId the id of the font
      * @param fontData the font data
      */
-    public void loadFont(int fontId, byte[] fontData) {
+    public void loadFont(int fontId, byte @NonNull [] fontData) {
         Object info = getObject(fontId);
         if (info != null) {
             FontInfo fi = (FontInfo) info;
@@ -403,7 +403,7 @@ public abstract class RemoteContext {
         public final byte[] mFontData;
 
         /** opaque cache of a font builder */
-        public Object fontBuilder = null;
+        public @Nullable Object fontBuilder = null;
 
         /**
          * Create a font info object
@@ -501,7 +501,7 @@ public abstract class RemoteContext {
             int width,
             int height,
             long capabilities,
-            IntMap<Object> properties) {
+            @NonNull IntMap<Object> properties) {
         mRemoteComposeState.setWindowWidth(width);
         mRemoteComposeState.setWindowHeight(height);
         mDocument.setVersion(majorVersion, minorVersion, patchVersion);

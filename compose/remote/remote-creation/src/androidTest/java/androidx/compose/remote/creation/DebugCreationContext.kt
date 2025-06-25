@@ -110,23 +110,23 @@ class DebugCreationContext : RemoteContext() {
         TODO("Not yet implemented")
     }
 
-    override fun setNamedFloatOverride(floatName: String?, value: Float) {
+    override fun setNamedFloatOverride(floatName: String, value: Float) {
         TODO("Not yet implemented")
     }
 
-    override fun clearNamedFloatOverride(floatName: String?) {
+    override fun clearNamedFloatOverride(floatName: String) {
         TODO("Not yet implemented")
     }
 
-    override fun setNamedLong(name: String?, value: Long) {
+    override fun setNamedLong(name: String, value: Long) {
         TODO("Not yet implemented")
     }
 
-    override fun setNamedDataOverride(dataName: String?, value: Any?) {
+    override fun setNamedDataOverride(dataName: String, value: Any) {
         TODO("Not yet implemented")
     }
 
-    override fun clearNamedDataOverride(dataName: String?) {
+    override fun clearNamedDataOverride(dataName: String) {
         TODO("Not yet implemented")
     }
 
@@ -138,7 +138,7 @@ class DebugCreationContext : RemoteContext() {
         TODO("Not yet implemented")
     }
 
-    override fun runNamedAction(textId: Int, value: Any?) {
+    override fun runNamedAction(textId: Int, value: Any) {
         TODO("Not yet implemented")
     }
 
@@ -474,7 +474,7 @@ class DebugCreationContext : RemoteContext() {
         width: Int,
         height: Int,
         capabilities: Long,
-        properties: IntMap<Any>?,
+        properties: IntMap<Any>,
     ) {
         stringBuilder.append(
             "header($majorVersion, $minorVersion, $patchVersion)" +

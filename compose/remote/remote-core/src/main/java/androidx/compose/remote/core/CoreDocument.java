@@ -1075,7 +1075,7 @@ public class CoreDocument implements Serializable {
      *
      * @param listener touch listener
      */
-    public void addTouchListener(TouchListener listener) {
+    public void addTouchListener(@NonNull TouchListener listener) {
         mTouchListeners.add(listener);
     }
 

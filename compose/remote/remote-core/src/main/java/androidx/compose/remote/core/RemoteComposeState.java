@@ -101,7 +101,7 @@ public class RemoteComposeState implements CollectionsAccess {
      * id.
      */
     public int cacheData(@NonNull Object item) {
-        int id = createNextId();
+        int id = getNextAvailableId();
         mDataIntMap.put(item, id);
         mIntDataMap.put(id, item);
         return id;
@@ -112,7 +112,7 @@ public class RemoteComposeState implements CollectionsAccess {
      * id.
      */
     public int cacheData(@NonNull Object item, int type) {
-        int id = createNextId(type);
+        int id = getNextAvailableId(type);
         mDataIntMap.put(item, id);
         mIntDataMap.put(id, item);
         return id;
@@ -138,22 +138,22 @@ public class RemoteComposeState implements CollectionsAccess {
     }
 
     /**
-     * Get the path asociated with the Data
+     * Get the path associated with the Data
      *
      * @param id of path
      * @return path object
      */
-    public Object getPath(int id) {
+    public @Nullable Object getPath(int id) {
         return mPathMap.get(id);
     }
 
     /**
      * Cache a path object. Object will be cleared if you update path data.
      *
-     * @param id number asociated with path
+     * @param id number associated with path
      * @param path the path object typically Android Path
      */
-    public void putPath(int id, Object path) {
+    public void putPath(int id, @NonNull Object path) {
         mPathMap.put(id, path);
     }
 
@@ -164,7 +164,7 @@ public class RemoteComposeState implements CollectionsAccess {
      * @param id the integer asociated with the data and path
      * @param data the array of floats that represents the path
      */
-    public void putPathData(int id, float[] data) {
+    public void putPathData(int id, float @NonNull [] data) {
         mPathData.put(id, data);
         mPathMap.remove(id);
     }
@@ -175,7 +175,7 @@ public class RemoteComposeState implements CollectionsAccess {
      * @param id number that represents the path
      * @return path data
      */
-    public float[] getPathData(int id) {
+    public float @Nullable [] getPathData(int id) {
         return mPathData.get(id);
     }
 
@@ -198,7 +198,7 @@ public class RemoteComposeState implements CollectionsAccess {
 
     /** Insert an item in the cache */
     public int cacheFloat(float item) {
-        int id = createNextId();
+        int id = getNextAvailableId();
         mFloatMap.put(id, item);
         mIntegerMap.put(id, (int) item);
         return id;
@@ -244,7 +244,7 @@ public class RemoteComposeState implements CollectionsAccess {
      * @return the id of the integer
      */
     public int cacheInteger(int item) {
-        int id = createNextId();
+        int id = getNextAvailableId();
         mIntegerMap.put(id, item);
         mFloatMap.put(id, item);
         return id;
@@ -415,7 +415,7 @@ public class RemoteComposeState implements CollectionsAccess {
      *
      * @return next available id
      */
-    public int createNextId() {
+    public int getNextAvailableId() {
         return mNextId++;
     }
 
@@ -425,7 +425,7 @@ public class RemoteComposeState implements CollectionsAccess {
      *
      * @return return a unique id in the set
      */
-    public int createNextId(int type) {
+    public int getNextAvailableId(int type) {
         if (0 == type) {
             return mNextId++;
         }

@@ -29,6 +29,7 @@ import androidx.compose.remote.core.serialize.MapSerializer;
 import androidx.compose.remote.core.types.LongConstant;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -96,7 +97,7 @@ public class TimeAttribute extends PaintOperation {
      * @param type the type of calculation
      * @param args the optional args
      */
-    public TimeAttribute(int id, int longId, short type, int[] args) {
+    public TimeAttribute(int id, int longId, short type, int @Nullable [] args) {
         this.mId = id;
         this.mTimeId = longId;
         this.mType = type;
@@ -165,7 +166,7 @@ public class TimeAttribute extends PaintOperation {
      * @param args the optional args
      */
     public static void apply(
-            @NonNull WireBuffer buffer, int id, int textId, short type, int[] args) {
+            @NonNull WireBuffer buffer, int id, int textId, short type, int @Nullable [] args) {
         buffer.start(OP_CODE);
         buffer.writeInt(id);
         buffer.writeInt(textId);

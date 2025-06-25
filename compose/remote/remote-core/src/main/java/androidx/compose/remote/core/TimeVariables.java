@@ -25,18 +25,18 @@ import java.time.ZoneOffset;
 
 /** This generates the standard system variables for time. */
 public class TimeVariables {
-    private Clock mClock;
+    private @NonNull Clock mClock;
 
     public TimeVariables() {
         this(new SystemClock());
     }
 
-    public TimeVariables(Clock clock) {
+    public TimeVariables(@NonNull Clock clock) {
         this.mClock = clock;
     }
 
     /** Returns the current clock. */
-    public Clock getClock() {
+    public @NonNull Clock getClock() {
         return mClock;
     }
 
@@ -45,7 +45,10 @@ public class TimeVariables {
      *
      * @param context
      */
-    public void updateTime(@NonNull RemoteContext context, ZoneId zoneId, LocalDateTime dateTime) {
+    public void updateTime(
+            @NonNull RemoteContext context,
+            @NonNull ZoneId zoneId,
+            @NonNull LocalDateTime dateTime) {
         // This define the time in the format
         // seconds run from Midnight=0 quantized to seconds hour 0..3599
         // minutes run from Midnight=0 quantized to minutes 0..1439

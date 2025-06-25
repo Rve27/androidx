@@ -279,7 +279,7 @@ public class GraphicsLayerModifierOperation extends DecoratorModifierOperation {
      * @param buffer a WireBuffer
      * @param values attributes of the layer
      */
-    public static void apply(WireBuffer buffer, HashMap<Integer, Object> values) {
+    public static void apply(@NonNull WireBuffer buffer, @NonNull HashMap<Integer, Object> values) {
         buffer.start(OP_CODE);
         int size = values.size();
         buffer.writeInt(size);
@@ -300,7 +300,7 @@ public class GraphicsLayerModifierOperation extends DecoratorModifierOperation {
      * @param type
      * @param value
      */
-    private static void writeIntAttribute(WireBuffer buffer, int type, int value) {
+    private static void writeIntAttribute(@NonNull WireBuffer buffer, int type, int value) {
         int tag = type | (DATA_TYPE_INT << 10);
         buffer.writeInt(tag);
         buffer.writeInt(value);
@@ -313,7 +313,7 @@ public class GraphicsLayerModifierOperation extends DecoratorModifierOperation {
      * @param type
      * @param value
      */
-    private static void writeFloatAttribute(WireBuffer buffer, int type, float value) {
+    private static void writeFloatAttribute(@NonNull WireBuffer buffer, int type, float value) {
         int tag = type | (DATA_TYPE_FLOAT << 10);
         buffer.writeInt(tag);
         buffer.writeFloat(value);
@@ -325,7 +325,7 @@ public class GraphicsLayerModifierOperation extends DecoratorModifierOperation {
      * @param buffer a WireBuffer
      * @param operations the list of operations read so far
      */
-    public static void read(WireBuffer buffer, List<Operation> operations) {
+    public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         int length = buffer.readInt();
         GraphicsLayerModifierOperation op = new GraphicsLayerModifierOperation();
         for (int i = 0; i < length; i++) {

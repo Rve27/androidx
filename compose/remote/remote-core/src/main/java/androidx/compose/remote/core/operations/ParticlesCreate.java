@@ -55,7 +55,8 @@ public class ParticlesCreate extends PaintOperation implements VariableSupport {
     private static final int MAX_EQU_LENGTH = 32;
     @NonNull AnimatedFloatExpression mExp = new AnimatedFloatExpression();
 
-    public ParticlesCreate(int id, int[] varId, float[][] values, int particleCount) {
+    public ParticlesCreate(
+            int id, int @NonNull [] varId, float @NonNull [][] values, int particleCount) {
         mId = id;
         mVarId = varId;
         mEquations = values;
@@ -236,15 +237,15 @@ public class ParticlesCreate extends PaintOperation implements VariableSupport {
         }
     }
 
-    public float[][] getParticles() {
+    public float @NonNull [][] getParticles() {
         return mParticles;
     }
 
-    public int[] getVariableIds() {
+    public int @NonNull [] getVariableIds() {
         return mVarId;
     }
 
-    public float[][] getEquations() {
+    public float @NonNull [][] getEquations() {
         return mOutEquations;
     }
 

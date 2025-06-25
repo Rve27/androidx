@@ -15,6 +15,8 @@
  */
 package androidx.compose.remote.core.operations.utilities.easing;
 
+import org.jspecify.annotations.NonNull;
+
 /**
  * This contains the class to provide the logic for an animation to come to a stop using a spring
  * model. String debug(String desc, float time); float getVelocity(float time); float
@@ -88,7 +90,7 @@ public class SpringStopEngine {
      *
      * @param parameters the parameters to use
      */
-    public SpringStopEngine(float[] parameters) {
+    public SpringStopEngine(float @NonNull [] parameters) {
         if (parameters[0] != 0) {
             throw new RuntimeException(" parameter[0] should be 0");
         }

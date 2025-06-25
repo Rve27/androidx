@@ -47,7 +47,7 @@ public class Rem extends Operation implements SerializableToString, Serializable
      *
      * @param from source to copy from
      */
-    public void update(Rem from) {
+    public void update(@NonNull Rem from) {
         mText = from.mText;
     }
 

@@ -18,6 +18,8 @@ package androidx.compose.remote.core;
 import androidx.compose.remote.core.operations.layout.Component;
 import androidx.compose.remote.core.semantics.ScrollableComponent;
 
+import org.jspecify.annotations.NonNull;
+
 /**
  * This interface defines a contract for objects that are aware of a {@link RemoteContext}.
  *
@@ -32,7 +34,7 @@ public interface RemoteContextActions {
      * @return {@code true} if the child with the given ID could be shown on screen; {@code false}
      *     otherwise.
      */
-    boolean showOnScreen(Component component);
+    boolean showOnScreen(@NonNull Component component);
 
     /**
      * Scrolls the content by the specified offset.
@@ -42,7 +44,7 @@ public interface RemoteContextActions {
      *     to the right, while negative values indicate scrolling up or to the left.
      * @return The offset value that was consumed by this component scrolling.
      */
-    int scrollByOffset(Component component, int offset);
+    int scrollByOffset(@NonNull Component component, int offset);
 
     /**
      * Scrolls the content in the specified direction.
@@ -51,7 +53,8 @@ public interface RemoteContextActions {
      * @param direction the direction to scroll
      * @return whether a scroll was possible
      */
-    boolean scrollDirection(Component component, ScrollableComponent.ScrollDirection direction);
+    boolean scrollDirection(
+            @NonNull Component component, ScrollableComponent.@NonNull ScrollDirection direction);
 
     /**
      * Perform a click on the given component
@@ -59,5 +62,6 @@ public interface RemoteContextActions {
      * @param component the component to click on
      * @return whether the event was handled
      */
-    boolean performClick(CoreDocument document, Component component, String metadata);
+    boolean performClick(
+            @NonNull CoreDocument document, @NonNull Component component, @NonNull String metadata);
 }

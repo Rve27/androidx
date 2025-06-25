@@ -15,6 +15,8 @@
  */
 package androidx.compose.remote.core;
 
+import org.jspecify.annotations.NonNull;
+
 import java.time.Clock;
 
 /** Extends java.time.Clock to allow controlling System.nanoTime for testing. */
@@ -29,7 +31,7 @@ public abstract class RemoteClock extends Clock {
      * Helper to get nanoTime from a Clock, to allow Clock to be passed in but use as a RemoteClock.
      * Falling back to System.nanoTime.
      */
-    public static long nanoTime(Clock clock) {
+    public static long nanoTime(@NonNull Clock clock) {
         if (clock instanceof RemoteClock) {
             return ((RemoteClock) clock).nanoTime();
         } else {

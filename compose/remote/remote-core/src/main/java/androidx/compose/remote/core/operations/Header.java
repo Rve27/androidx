@@ -331,7 +331,10 @@ public class Header extends Operation implements RemoteComposeOperation {
      * @param buffer
      */
     public static void apply(
-            @NonNull WireBuffer buffer, int apiLevel, short[] type, Object[] value) {
+            @NonNull WireBuffer buffer,
+            int apiLevel,
+            short @NonNull [] type,
+            Object @NonNull [] value) {
         buffer.start(OP_CODE);
         if (apiLevel == CoreDocument.DOCUMENT_API_LEVEL) {
             buffer.writeInt(MAJOR_VERSION | MAGIC_NUMBER); // major version number of the protocol

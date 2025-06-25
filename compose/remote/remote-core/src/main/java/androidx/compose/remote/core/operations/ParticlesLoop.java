@@ -73,7 +73,7 @@ public class ParticlesLoop extends PaintOperation implements VariableSupport, Co
      * @param restart the restart equation kills and restart when positive
      * @param values the loop equations
      */
-    public ParticlesLoop(int id, float[] restart, float[][] values) {
+    public ParticlesLoop(int id, float @Nullable [] restart, float @NonNull [][] values) {
         mId = id;
         mRestart = restart;
         if (restart != null) {

@@ -15,6 +15,8 @@
  */
 package androidx.compose.remote.core.operations.layout.modifiers;
 
+import org.jspecify.annotations.NonNull;
+
 /** Known shapes, used for modifiers (clip/background/border) */
 public class ShapeType {
 
@@ -30,7 +32,7 @@ public class ShapeType {
      * @param value
      * @return
      */
-    public static String getString(int value) {
+    public static @NonNull String getString(int value) {
         switch (value) {
             case ShapeType.RECTANGLE:
                 return "RECTANGLE";

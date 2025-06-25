@@ -199,7 +199,7 @@ public class RemoteComposeBuffer {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     /** Insert a header */
-    public void addHeader(short[] tags, Object[] values) {
+    public void addHeader(short @NonNull [] tags, Object @NonNull [] values) {
         Header.apply(mBuffer, mApiLevel, tags, values);
     }
 
@@ -433,11 +433,11 @@ public class RemoteComposeBuffer {
     /**
      * Records a bitmap font and returns an ID.
      *
-     * @oparam id the id to use
+     * @param id the id to use
      * @param glyphs The glyphs that define the bitmap font
      * @return id of the BitmapFont
      */
-    public int addBitmapFont(int id, BitmapFontData.Glyph[] glyphs) {
+    public int addBitmapFont(int id, BitmapFontData.Glyph @NonNull [] glyphs) {
         BitmapFontData.apply(mBuffer, id, glyphs);
         return id;
     }
@@ -522,7 +522,7 @@ public class RemoteComposeBuffer {
      * @param id id of the path to append to
      * @param path the path to append
      */
-    public void pathAppend(int id, float... path) {
+    public void pathAppend(int id, float @NonNull ... path) {
         PathAppend.apply(mBuffer, id, path);
     }
 
@@ -728,7 +728,7 @@ public class RemoteComposeBuffer {
      * @param pathData the path data
      * @return the id of the path on the wire
      */
-    public int addPathData(int id, float[] pathData) {
+    public int addPathData(int id, float @NonNull [] pathData) {
         PathData.apply(mBuffer, id, pathData);
         return id;
     }
@@ -1088,7 +1088,7 @@ public class RemoteComposeBuffer {
      *
      * @param value A RPN style float operation i.e. "4, 3, ADD" outputs 7
      */
-    public void addAnimatedFloat(int id, float... value) {
+    public void addAnimatedFloat(int id, float @NonNull ... value) {
         FloatExpression.apply(mBuffer, id, value, null);
     }
 
@@ -1122,10 +1122,10 @@ public class RemoteComposeBuffer {
             float max,
             float velocityId,
             int touchEffects,
-            float[] exp,
+            float @NonNull [] exp,
             int touchMode,
-            float[] touchSpec,
-            float[] easingSpec) {
+            float @Nullable [] touchSpec,
+            float @Nullable [] easingSpec) {
         TouchExpression.apply(
                 mBuffer,
                 id,
@@ -1517,7 +1517,7 @@ public class RemoteComposeBuffer {
      *
      * @param attributes
      */
-    public void addModifierGraphicsLayer(HashMap<Integer, Object> attributes) {
+    public void addModifierGraphicsLayer(@NonNull HashMap<Integer, Object> attributes) {
         GraphicsLayerModifierOperation.apply(mBuffer, attributes);
     }
 
@@ -1804,7 +1804,10 @@ public class RemoteComposeBuffer {
      * @param particleCount the number of particles to draw
      */
     public void addParticles(
-            int id, int[] varIds, float[][] initialExpressions, int particleCount) {
+            int id,
+            int @NonNull [] varIds,
+            float @NonNull [][] initialExpressions,
+            int particleCount) {
         ParticlesCreate.apply(mBuffer, id, varIds, initialExpressions, particleCount);
     }
 
@@ -1815,7 +1818,8 @@ public class RemoteComposeBuffer {
      * @param restart value on restart
      * @param expressions the expressions used to update the variables during the particles run
      */
-    public void addParticlesLoop(int id, float[] restart, float[][] expressions) {
+    public void addParticlesLoop(
+            int id, float @Nullable [] restart, float @NonNull [][] expressions) {
         ParticlesLoop.apply(mBuffer, id, restart, expressions);
     }
 
@@ -1828,7 +1832,7 @@ public class RemoteComposeBuffer {
      * @param fid The id of the function
      * @param args The arguments of the function
      */
-    public void defineFloatFunction(int fid, int[] args) {
+    public void defineFloatFunction(int fid, int @NonNull [] args) {
         FloatFunctionDefine.apply(mBuffer, fid, args);
     }
 
@@ -1843,7 +1847,7 @@ public class RemoteComposeBuffer {
      * @param id the id of the function to call
      * @param args the arguments of the function
      */
-    public void callFloatFunction(int id, float[] args) {
+    public void callFloatFunction(int id, float @Nullable [] args) {
         FloatFunctionCall.apply(mBuffer, id, args);
     }
 
@@ -1871,7 +1875,7 @@ public class RemoteComposeBuffer {
      * @param attribute the attribute to get
      * @param args the arguments of the function
      */
-    public void timeAttribute(int id, int timeId, short attribute, int... args) {
+    public void timeAttribute(int id, int timeId, short attribute, int @Nullable ... args) {
         TimeAttribute.apply(mBuffer, id, timeId, attribute, args);
     }
 
@@ -1889,7 +1893,7 @@ public class RemoteComposeBuffer {
      * @param data the image data
      * @return the image id
      */
-    public int storeBitmap(int imageId, int imageWidth, int imageHeight, byte[] data) {
+    public int storeBitmap(int imageId, int imageWidth, int imageHeight, byte @NonNull [] data) {
         BitmapData.apply(mBuffer, imageId, imageWidth, imageHeight, data); // todo: potential npe
         return imageId;
     }
@@ -1903,7 +1907,7 @@ public class RemoteComposeBuffer {
      * @param data the image data
      * @return the image id
      */
-    public int storeBitmapA8(int imageId, int imageWidth, int imageHeight, byte[] data) {
+    public int storeBitmapA8(int imageId, int imageWidth, int imageHeight, byte @NonNull [] data) {
         BitmapData.apply(
                 mBuffer,
                 imageId,
@@ -2014,7 +2018,7 @@ public class RemoteComposeBuffer {
      *
      * @param text text inserted into the document.
      */
-    public void rem(String text) {
+    public void rem(@NonNull String text) {
         Rem.apply(mBuffer, text);
     }
 
@@ -2036,7 +2040,7 @@ public class RemoteComposeBuffer {
      * @param values
      * @return
      */
-    public void addMatrixConst(int id, float[] values) {
+    public void addMatrixConst(int id, float @NonNull [] values) {
         MatrixConstant.apply(mBuffer, id, 0, values);
     }
 
@@ -2046,7 +2050,7 @@ public class RemoteComposeBuffer {
      * @param id the matrix expression id
      * @param exp matrix expression
      */
-    public void addMatrixExpression(int id, float[] exp) {
+    public void addMatrixExpression(int id, float @NonNull [] exp) {
         MatrixExpression.apply(mBuffer, id, 0, exp);
     }
 
@@ -2058,7 +2062,8 @@ public class RemoteComposeBuffer {
      * @param from vector to multiply
      * @param outId output vector
      */
-    public void addMatrixVectorMath(float matrixId, short type, float[] from, int[] outId) {
+    public void addMatrixVectorMath(
+            float matrixId, short type, float @NonNull [] from, int @NonNull [] outId) {
         MatrixVectorMath.apply(mBuffer, type, outId, Utils.idFromNan(matrixId), from);
     }
 

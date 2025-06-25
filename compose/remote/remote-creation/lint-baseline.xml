@@ -101,15 +101,6 @@
     </issue>
 
     <issue
-        id="PrivateConstructorForUtilityClass"
-        message="Utility class is missing private constructor"
-        errorLine1="public class FontUtils {"
-        errorLine2="             ~~~~~~~~~">
-        <location
-            file="src/main/java/androidx/compose/remote/creation/FontUtils.java"/>
-    </issue>
-
-    <issue
         id="UnknownNullness"
         message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
         errorLine1="    void write(RemoteComposeWriter writer);"

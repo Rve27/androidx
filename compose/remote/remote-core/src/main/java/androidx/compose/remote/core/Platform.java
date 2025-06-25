@@ -75,7 +75,7 @@ public interface Platform {
      * @param category
      * @param message
      */
-    void log(LogCategory category, String message);
+    void log(@NonNull LogCategory category, @NonNull String message);
 
     /**
      * Represents a precomputed text layout, for complex text painting / measuring / layout. Allows
@@ -126,6 +126,6 @@ public interface Platform {
                 }
 
                 @Override
-                public void log(LogCategory category, String message) {}
+                public void log(@NonNull LogCategory category, @NonNull String message) {}
             };
 }

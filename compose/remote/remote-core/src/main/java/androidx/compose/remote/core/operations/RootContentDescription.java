@@ -74,7 +74,7 @@ public class RootContentDescription extends Operation
     }
 
     @Override
-    public Integer getContentDescriptionId() {
+    public @NonNull Integer getContentDescriptionId() {
         return mContentDescription;
     }
 

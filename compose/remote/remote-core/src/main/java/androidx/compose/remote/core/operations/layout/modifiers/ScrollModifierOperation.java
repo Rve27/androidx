@@ -90,7 +90,7 @@ public class ScrollModifierOperation extends ListActionsOperation
      *
      * @param component
      */
-    public void inflate(Component component) {
+    public void inflate(@NonNull Component component) {
         for (Operation op : mList) {
             if (op instanceof TouchExpression) {
                 mTouchExpression = (TouchExpression) op;
@@ -214,7 +214,7 @@ public class ScrollModifierOperation extends ListActionsOperation
      * @param notchMax the maximum notch
      */
     public static void apply(
-            WireBuffer buffer, int direction, float position, float max, float notchMax) {
+            @NonNull WireBuffer buffer, int direction, float position, float max, float notchMax) {
         buffer.start(OP_CODE);
         buffer.writeInt(direction);
         buffer.writeFloat(position);
@@ -228,7 +228,7 @@ public class ScrollModifierOperation extends ListActionsOperation
      * @param buffer the buffer to read
      * @param operations the list of operations that will be added to
      */
-    public static void read(WireBuffer buffer, List<Operation> operations) {
+    public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
         int direction = buffer.readInt();
         float position = buffer.readFloat();
         float max = buffer.readFloat();
@@ -241,13 +241,13 @@ public class ScrollModifierOperation extends ListActionsOperation
      *
      * @param doc to append the description to.
      */
-    public static void documentation(DocumentationBuilder doc) {
+    public static void documentation(@NonNull DocumentationBuilder doc) {
         doc.operation("Modifier Operations", OP_CODE, CLASS_NAME)
                 .description("define a Scroll Modifier")
                 .field(INT, "direction", "");
     }
 
-    private float getMaxScrollPosition(Component component, int direction) {
+    private float getMaxScrollPosition(@NonNull Component component, int direction) {
         if (component instanceof LayoutComponent) {
             LayoutComponent layoutComponent = (LayoutComponent) component;
             int numChildren = layoutComponent.getChildrenComponents().size();
@@ -433,7 +433,7 @@ public class ScrollModifierOperation extends ListActionsOperation
     }
 
     @Override
-    public int scrollByOffset(RemoteContext context, int offset) {
+    public int scrollByOffset(@NonNull RemoteContext context, int offset) {
         // TODO work out how to avoid disabling this
         mTouchExpression = null;
 
@@ -446,7 +446,8 @@ public class ScrollModifierOperation extends ListActionsOperation
     }
 
     @Override
-    public boolean scrollDirection(RemoteContext context, ScrollDirection direction) {
+    public boolean scrollDirection(
+            @NonNull RemoteContext context, @NonNull ScrollDirection direction) {
         float offset = mHostDimension * 0.7f;
 
         if (direction == ScrollDirection.FORWARD
@@ -459,7 +460,7 @@ public class ScrollModifierOperation extends ListActionsOperation
     }
 
     @Override
-    public boolean showOnScreen(RemoteContext context, Component child) {
+    public boolean showOnScreen(@NonNull RemoteContext context, @NonNull Component child) {
         float[] locationInWindow = new float[2];
         child.getLocationInWindow(locationInWindow);
 

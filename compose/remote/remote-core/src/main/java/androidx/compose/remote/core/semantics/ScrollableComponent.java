@@ -18,6 +18,7 @@ package androidx.compose.remote.core.semantics;
 import androidx.compose.remote.core.RemoteContext;
 import androidx.compose.remote.core.operations.layout.Component;
 
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -45,7 +46,7 @@ public interface ScrollableComponent extends AccessibilitySemantics {
      *     to the right, while negative values indicate scrolling up or to the left.
      * @return The offset value that was consumed by this component scrolling.
      */
-    default int scrollByOffset(RemoteContext context, int offset) {
+    default int scrollByOffset(@NonNull RemoteContext context, int offset) {
         return offset;
     }
 
@@ -56,7 +57,8 @@ public interface ScrollableComponent extends AccessibilitySemantics {
      * @param direction the direction to scroll
      * @return whether a scroll was possible
      */
-    default boolean scrollDirection(RemoteContext context, ScrollDirection direction) {
+    default boolean scrollDirection(
+            @NonNull RemoteContext context, @NonNull ScrollDirection direction) {
         return false;
     }
 
@@ -68,7 +70,7 @@ public interface ScrollableComponent extends AccessibilitySemantics {
      * @return {@code true} if the child with the given ID could be shown on screen; {@code false}
      *     otherwise.
      */
-    default boolean showOnScreen(RemoteContext context, Component child) {
+    default boolean showOnScreen(@NonNull RemoteContext context, @NonNull Component child) {
         return false;
     }
 
