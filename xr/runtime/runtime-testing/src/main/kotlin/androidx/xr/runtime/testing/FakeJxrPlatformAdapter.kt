@@ -129,14 +129,13 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
 
     @Suppress("AsyncSuffixFuture")
     override fun loadGltfByAssetName(assetName: String): ListenableFuture<GltfModelResource> =
-        immediateFailedFuture<GltfModelResource>(NotImplementedError())
+        immediateFuture(FakeGltfModelResource(0))
 
     @Suppress("AsyncSuffixFuture")
     override fun loadGltfByByteArray(
         assetData: ByteArray,
         assetKey: String,
-    ): ListenableFuture<GltfModelResource> =
-        immediateFailedFuture<GltfModelResource>(NotImplementedError())
+    ): ListenableFuture<GltfModelResource> = immediateFuture(FakeGltfModelResource(0))
 
     @Suppress("AsyncSuffixFuture")
     override fun loadExrImageByAssetName(assetName: String): ListenableFuture<ExrImageResource> =
