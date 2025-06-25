@@ -18,7 +18,6 @@ package androidx.credentials.registry.provider
 
 import android.content.Context
 import android.os.CancellationSignal
-import androidx.annotation.RestrictTo
 import androidx.credentials.CredentialManagerCallback
 import java.util.concurrent.Executor
 import kotlin.coroutines.resume
@@ -113,7 +112,6 @@ public abstract class RegistryManager internal constructor() {
      *
      * @param request the request to specify clearing configurations
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
     public suspend fun clearCredentialRegistry(
         request: ClearCredentialRegistryRequest
     ): ClearCredentialRegistryResponse = suspendCancellableCoroutine { continuation ->
@@ -179,7 +177,6 @@ public abstract class RegistryManager internal constructor() {
      * @param executor the callback will take place on this executor
      * @param callback the callback invoked when the request succeeds or fails
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY)
     public abstract fun clearCredentialRegistryAsync(
         request: ClearCredentialRegistryRequest,
         executor: Executor,

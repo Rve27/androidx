@@ -79,7 +79,7 @@ public class RegistryManagerJavaTest {
         AtomicReference<Exception> resultCaptor = new AtomicReference<>();
 
         mRegistryManager.clearCredentialRegistryAsync(
-                new ClearCredentialRegistryRequest(true, null),
+                new ClearCredentialRegistryRequest(true),
                 Runnable::run,
                 new CredentialManagerCallback<ClearCredentialRegistryResponse,
                         ClearCredentialRegistryException>() {

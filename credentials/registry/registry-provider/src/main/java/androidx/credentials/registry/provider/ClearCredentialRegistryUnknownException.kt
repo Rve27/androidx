@@ -16,15 +16,12 @@
 
 package androidx.credentials.registry.provider
 
-import androidx.annotation.RestrictTo
-
 /**
- * Thrown when the [RegistryManager.registerCredentials] transaction fails with no more detailed
+ * Thrown when the [RegistryManager.clearCredentialRegistry] transaction fails with no more detailed
  * information.
  *
  * @param errorMessage the error message
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class ClearCredentialRegistryUnknownException(errorMessage: CharSequence? = null) :
     ClearCredentialRegistryException(
         type = TYPE_CLEAR_CREDENTIAL_REGISTRY_UNKNOWN_EXCEPTION,

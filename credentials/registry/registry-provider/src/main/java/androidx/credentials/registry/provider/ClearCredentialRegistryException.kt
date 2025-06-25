@@ -16,15 +16,12 @@
 
 package androidx.credentials.registry.provider
 
-import androidx.annotation.RestrictTo
-
 /**
  * Represents an error thrown during a [RegistryManager.clearCredentialRegistry] transaction.
  *
  * @property type the type of the error
  * @property errorMessage the error message
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public abstract class ClearCredentialRegistryException(
     public val type: String,
     public val errorMessage: CharSequence? = null,

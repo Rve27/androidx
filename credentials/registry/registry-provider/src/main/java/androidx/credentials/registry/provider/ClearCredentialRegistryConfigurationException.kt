@@ -16,12 +16,10 @@
 
 package androidx.credentials.registry.provider
 
-import androidx.annotation.RestrictTo
-
 /**
- * During the [RegistryManager.registerCredentials] transaction, this is thrown when configurations
- * are mismatched for the RegistryManager service, typically indicating the service provider
- * dependency is missing in the manifest or some system service is not enabled.
+ * During the [RegistryManager.clearCredentialRegistry] transaction, this is thrown when
+ * configurations are mismatched for the RegistryManager service, typically indicating the service
+ * provider dependency is missing in the manifest or some system service is not enabled.
  *
  * Please check your dependencies and make sure to include the intended service provider dependency.
  * For example, for devices with Play Services, the dependency
@@ -29,7 +27,6 @@ import androidx.annotation.RestrictTo
  *
  * @param errorMessage the error message
  */
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 public class ClearCredentialRegistryConfigurationException(errorMessage: CharSequence? = null) :
     ClearCredentialRegistryException(
         type = TYPE_CLEAR_CREDENTIAL_REGISTRY_CONFIGURATION_EXCEPTION,

@@ -84,11 +84,11 @@ public class RegistryManagerProviderPlayServicesImpl(private val context: Contex
     ) {
         val gmsRequest =
             ClearRegistryRequest(
-                deleteAll = request.deleteAll,
+                deleteAll = request.isDeleteAll,
                 clearTypedRegistryOption =
                     request.deletePerTypeConfig?.let {
                         ClearRegistryRequest.ClearTypedRegistryOption(
-                            deleteAllForType = it.deleteAll,
+                            deleteAllForType = it.isDeleteAll,
                             type = it.type,
                             deleteIdlessRegistry = false,
                             registryIds = it.registryIds,

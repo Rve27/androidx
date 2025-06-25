@@ -62,13 +62,12 @@ class RegistryManagerTest {
             assertThrows<ClearCredentialRegistryConfigurationException> {
                 registryManager.clearCredentialRegistry(
                     ClearCredentialRegistryRequest(
-                        deleteAll = false,
                         deletePerTypeConfig =
                             ClearCredentialRegistryRequest.PerTypeConfig(
-                                deleteAll = false,
+                                isDeleteAll = false,
                                 type = PasswordCredential.TYPE_PASSWORD_CREDENTIAL,
                                 registryIds = listOf("registry-id1", "registry-id2"),
-                            ),
+                            )
                     )
                 )
             }
