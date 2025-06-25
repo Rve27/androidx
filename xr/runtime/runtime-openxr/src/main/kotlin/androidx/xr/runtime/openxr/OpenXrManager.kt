@@ -58,6 +58,7 @@ internal constructor(
     override var config: Config =
         Config(
             Config.PlaneTrackingMode.DISABLED,
+            augmentedObjectCategories = listOf(),
             Config.HandTrackingMode.DISABLED,
             Config.DeviceTrackingMode.DISABLED,
             Config.DepthEstimationMode.DISABLED,
@@ -83,6 +84,15 @@ internal constructor(
             throw PermissionNotGrantedException()
         }
 
+        var objectLabels: MutableList<Long> = mutableListOf()
+        var objectMode: Int = 0
+
+        for (category in config.augmentedObjectCategories) {
+            objectLabels.add(nativeValueFromCategory(category))
+            // Set objectMode to 1 to indicate that object tracking is enabled.
+            objectMode = 1
+        }
+
         // TODO(b/425697141): Remove this when instrumentation tests support HEAD_TRACKING
         // permission so we can call native functions.
         if (!Build.FINGERPRINT.contains("robolectric")) {
@@ -93,8 +103,8 @@ internal constructor(
                     deviceTracking = config.deviceTracking.mode,
                     depthEstimation = config.depthEstimation.mode,
                     anchorPersistence = config.anchorPersistence.mode,
-                    objectTracking = 0,
-                    objectLabels = longArrayOf(),
+                    objectLabels = objectLabels.toLongArray(),
+                    objectTracking = objectMode,
                 )
             ) {
                 -2L ->
@@ -164,6 +174,10 @@ internal constructor(
 
         if (config.planeTracking != Config.PlaneTrackingMode.DISABLED) {
             perceptionManager.updatePlanes(xrTime)
+        }
+
+        if (!config.augmentedObjectCategories.isEmpty()) {
+            perceptionManager.updateAugmentedObjects(xrTime)
         }
 
         perceptionManager.update(xrTime)

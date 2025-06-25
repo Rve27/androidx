@@ -26,6 +26,7 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.testing.FakePerceptionManager
 import androidx.xr.runtime.testing.FakeRuntimeAnchor
 import androidx.xr.runtime.testing.FakeRuntimeArDevice
+import androidx.xr.runtime.testing.FakeRuntimeAugmentedObject
 import androidx.xr.runtime.testing.FakeRuntimeDepthMap
 import androidx.xr.runtime.testing.FakeRuntimeEarth
 import androidx.xr.runtime.testing.FakeRuntimeHand
@@ -147,6 +148,19 @@ class XrResourcesManagerTest {
         assertThat(underTest.trackablesMap[runtimeTrackable1]).isNull()
         assertThat(underTest.trackablesMap[runtimeTrackable2]).isNotNull()
         assertThat(underTest.trackablesMap[runtimeTrackable3]).isNotNull()
+    }
+
+    @Test
+    fun syncTrackables_handlesAugmentedObjects() {
+        val runtimeTrackable1 = FakeRuntimeAugmentedObject()
+        val runtimeTrackable2 = FakeRuntimeAugmentedObject()
+        val runtimeTrackable3 = FakeRuntimeAugmentedObject()
+
+        underTest.syncTrackables(listOf(runtimeTrackable1, runtimeTrackable2))
+
+        assertThat(underTest.trackablesMap[runtimeTrackable1]).isNotNull()
+        assertThat(underTest.trackablesMap[runtimeTrackable2]).isNotNull()
+        assertThat(underTest.trackablesMap[runtimeTrackable3]).isNull()
     }
 
     @Test

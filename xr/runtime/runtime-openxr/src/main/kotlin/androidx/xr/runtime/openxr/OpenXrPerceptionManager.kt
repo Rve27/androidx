@@ -142,6 +142,18 @@ internal constructor(private val timeSource: OpenXrTimeSource) : PerceptionManag
         lastUpdateXrTime = xrTime
     }
 
+    internal fun updateAugmentedObjects(xrTime: Long) {
+        val objects = nativeGetAugmentedObjects(xrTime)
+        // Add new objects to the list of trackables.
+        for (obj in objects) {
+            if (xrResources.trackablesMap.containsKey(obj)) continue
+
+            val trackable = OpenXrAugmentedObject(obj, timeSource, xrResources)
+            xrResources.addTrackable(obj, trackable)
+            xrResources.addUpdatable(trackable as Updatable)
+        }
+    }
+
     internal fun updatePlanes(xrTime: Long) {
         val planes = nativeGetPlanes()
         // Add new planes to the list of trackables.
@@ -191,6 +203,8 @@ internal constructor(private val timeSource: OpenXrTimeSource) : PerceptionManag
     }
 
     private external fun nativeCreateAnchor(pose: Pose, timestampNs: Long): Long
+
+    private external fun nativeGetAugmentedObjects(timestampNs: Long): LongArray
 
     private external fun nativeGetPlanes(): LongArray
 

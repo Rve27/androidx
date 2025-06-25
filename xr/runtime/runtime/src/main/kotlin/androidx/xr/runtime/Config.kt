@@ -38,6 +38,8 @@ public class Config
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 constructor(
     public val planeTracking: PlaneTrackingMode = PlaneTrackingMode.DISABLED,
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    public val augmentedObjectCategories: List<AugmentedObjectCategory> = listOf(),
     public val handTracking: HandTrackingMode = HandTrackingMode.DISABLED,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public val deviceTracking: DeviceTrackingMode = DeviceTrackingMode.DISABLED,
@@ -74,6 +76,7 @@ constructor(
         anchorPersistence: AnchorPersistenceMode = AnchorPersistenceMode.DISABLED,
     ) : this(
         planeTracking,
+        /* augmentedObjectCategories= */ listOf(),
         handTracking,
         headTracking.toDeviceTrackingMode(),
         depthEstimation,
@@ -94,6 +97,7 @@ constructor(
         if (depthEstimation != other.depthEstimation) return false
         if (anchorPersistence != other.anchorPersistence) return false
         if (geospatial != other.geospatial) return false
+        if (augmentedObjectCategories != other.augmentedObjectCategories) return false
 
         return true
     }
@@ -105,6 +109,7 @@ constructor(
         result = 31 * result + depthEstimation.hashCode()
         result = 31 * result + anchorPersistence.hashCode()
         result = 31 * result + geospatial.hashCode()
+        result = 31 * result + augmentedObjectCategories.hashCode()
         return result
     }
 
@@ -118,6 +123,7 @@ constructor(
     ): Config {
         return Config(
             planeTracking = planeTracking,
+            augmentedObjectCategories = this.augmentedObjectCategories,
             handTracking = handTracking,
             deviceTracking = headTracking.toDeviceTrackingMode(),
             depthEstimation = depthEstimation,
@@ -135,9 +141,11 @@ constructor(
         depthEstimation: DepthEstimationMode = this.depthEstimation,
         anchorPersistence: AnchorPersistenceMode = this.anchorPersistence,
         geospatial: GeospatialMode = this.geospatial,
+        augmentedObjectCategories: List<AugmentedObjectCategory> = this.augmentedObjectCategories,
     ): Config {
         return Config(
             planeTracking = planeTracking,
+            augmentedObjectCategories = augmentedObjectCategories,
             handTracking = handTracking,
             deviceTracking = deviceTracking,
             depthEstimation = depthEstimation,

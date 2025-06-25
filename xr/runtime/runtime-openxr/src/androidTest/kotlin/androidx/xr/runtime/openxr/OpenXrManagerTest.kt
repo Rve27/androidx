@@ -21,6 +21,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
+import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.internal.ConfigurationNotSupportedException
 import androidx.xr.runtime.internal.PermissionNotGrantedException
@@ -242,6 +243,36 @@ class OpenXrManagerTest {
                 Config(planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL)
             )
 
+            underTest.update()
+
+            assertThat(perceptionManager.trackables).isNotEmpty()
+        }
+    }
+
+    @Test
+    fun update_objectTrackingDisabled_doesNotUpdateTrackables() = initOpenXrManagerAndRunTest {
+        runTest {
+            underTest.create()
+            underTest.resume()
+            check(perceptionManager.trackables.isEmpty())
+            underTest.configure(Config())
+
+            underTest.update()
+
+            assertThat(perceptionManager.trackables).isEmpty()
+        }
+    }
+
+    @Test
+    fun update_objectTrackingEnabled_addsObjectToUpdatables() = initOpenXrManagerAndRunTest {
+        runTest {
+            underTest.create()
+            underTest.resume()
+            check(perceptionManager.xrResources.updatables.isEmpty())
+
+            underTest.configure(
+                Config(augmentedObjectCategories = listOf(AugmentedObjectCategory.KEYBOARD))
+            )
             underTest.update()
 
             assertThat(perceptionManager.trackables).isNotEmpty()

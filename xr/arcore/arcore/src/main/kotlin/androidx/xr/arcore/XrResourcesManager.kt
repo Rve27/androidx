@@ -18,6 +18,7 @@ package androidx.xr.arcore
 
 import android.annotation.SuppressLint
 import androidx.xr.runtime.internal.ArDevice as RuntimeArDevice
+import androidx.xr.runtime.internal.AugmentedObject as RuntimeObject
 import androidx.xr.runtime.internal.DepthMap as RuntimeDepthMap
 import androidx.xr.runtime.internal.Earth as RuntimeEarth
 import androidx.xr.runtime.internal.Hand as RuntimeHand
@@ -157,6 +158,7 @@ internal class XrResourcesManager {
         val trackable =
             when (runtimeTrackable) {
                 is RuntimePlane -> Plane(runtimeTrackable, this)
+                is RuntimeObject -> AugmentedObject(runtimeTrackable, this)
                 else ->
                     throw IllegalArgumentException(
                         "Unsupported trackable type: ${runtimeTrackable.javaClass}"
