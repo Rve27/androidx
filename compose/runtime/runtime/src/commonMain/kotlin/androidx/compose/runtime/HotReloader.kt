@@ -20,6 +20,7 @@ package androidx.compose.runtime
 
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP
+import kotlin.jvm.JvmName
 
 /**
  * Apply Code Changes will invoke the two functions before and after a code swap.
@@ -48,16 +49,22 @@ private class HotReloader {
         }
 
         @TestOnly
+        // b/426871325: required for LiveEdit compatibility
+        @JvmName("invalidateGroupsWithKey")
         internal fun invalidateGroupsWithKey(key: Int) {
             return Recomposer.invalidateGroupsWithKey(key)
         }
 
         @TestOnly
+        // b/426871325: required for LiveEdit compatibility
+        @JvmName("getCurrentErrors")
         internal fun getCurrentErrors(): List<RecomposerErrorInfo> {
             return Recomposer.getCurrentErrors()
         }
 
         @TestOnly
+        // b/426871325: required for LiveEdit compatibility
+        @JvmName("clearErrors")
         internal fun clearErrors() {
             return Recomposer.clearErrors()
         }
