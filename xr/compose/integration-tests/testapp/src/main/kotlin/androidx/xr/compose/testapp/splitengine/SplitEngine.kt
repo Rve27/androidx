@@ -263,11 +263,7 @@ class SplitEngine : ComponentActivity() {
                     ApiButton("Load Geometry Rocks", modifier) {
                         scope.launch {
                             rocksGeometry.value =
-                                GltfModel.createAsync(
-                                        session,
-                                        Paths.get("models", "GroundGeometry.glb"),
-                                    )
-                                    .await()
+                                GltfModel.create(session, Paths.get("models", "GroundGeometry.glb"))
                         }
                     }
 
@@ -311,8 +307,7 @@ class SplitEngine : ComponentActivity() {
                     ApiButton("Load\nGlimmer", modifier) {
                         scope.launch {
                             glimmerModel.value =
-                                GltfModel.createAsync(session, Paths.get("models", "l2a_pulse.glb"))
-                                    .await()
+                                GltfModel.create(session, Paths.get("models", "l2a_pulse.glb"))
                         }
                     }
 
@@ -359,11 +354,10 @@ class SplitEngine : ComponentActivity() {
                     ApiButton("Load Dragon Model", modifier) {
                         scope.launch {
                             dragonModel.value =
-                                GltfModel.createAsync(
-                                        session,
-                                        Paths.get("models", "Dragon_Evolved.gltf"),
-                                    )
-                                    .await()
+                                GltfModel.create(
+                                    session,
+                                    Paths.get("models", "Dragon_Evolved.gltf"),
+                                )
                         }
                     }
                     if (dragonModel.value != null) {

@@ -221,10 +221,8 @@ class EnvironmentActivity : AppCompatActivity() {
             ExrImage.createFromZipAsync(session!!, Paths.get("skyboxes", "GreySkybox.zip")).await()
         this.blueSkybox =
             ExrImage.createFromZipAsync(session!!, Paths.get("skyboxes", "BlueSkybox.zip")).await()
-        this.groundGeometry =
-            GltfModel.createAsync(session!!, Paths.get("models", "GroundGeometry.glb")).await()
-        this.rockGeometry =
-            GltfModel.createAsync(session!!, Paths.get("models", "RocksGeometry.glb")).await()
+        this.groundGeometry = GltfModel.create(session!!, Paths.get("models", "GroundGeometry.glb"))
+        this.rockGeometry = GltfModel.create(session!!, Paths.get("models", "RocksGeometry.glb"))
     }
 
     private fun setGeoAndSkybox(skybox: ExrImage?, geometry: GltfModel?) {

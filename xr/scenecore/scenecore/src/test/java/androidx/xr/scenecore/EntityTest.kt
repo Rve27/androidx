@@ -64,6 +64,7 @@ import java.util.function.Consumer
 import kotlin.test.assertFailsWith
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -259,7 +260,7 @@ class EntityTest {
 
     @RequiresApi(Build.VERSION_CODES.O)
     @Before
-    fun setUp() {
+    fun setUp() = runBlocking {
         whenever(mockEntityPlatformAdapter.spatialEnvironment).thenReturn(mock())
         val mockActivitySpace = mock<RtActivitySpace>()
         whenever(mockEntityPlatformAdapter.activitySpace).thenReturn(mockActivitySpace)
@@ -311,7 +312,7 @@ class EntityTest {
         lifecycleManager = session.runtime.lifecycleManager
         session.configure(Config(headTracking = Config.HeadTrackingMode.LAST_KNOWN))
         activitySpace = ActivitySpace.create(mockPlatformAdapter, entityManager)
-        gltfModel = GltfModel.createAsync(session, Paths.get("test.glb")).get()
+        gltfModel = GltfModel.create(session, Paths.get("test.glb"))
         gltfModelEntity = GltfModelEntity.create(mockPlatformAdapter, entityManager, gltfModel)
         panelEntity =
             PanelEntity.create(
@@ -1258,27 +1259,32 @@ class EntityTest {
 
     @Test
     fun createGltfResourceAsync_callsRuntimeLoadGltf() {
-        val mockGltfModelResource = mock<RtGltfModelResource>()
-        whenever(mockEntityPlatformAdapter.loadGltfByAssetName(anyString()))
-            .thenReturn(Futures.immediateFuture(mockGltfModelResource))
-        @Suppress("UNUSED_VARIABLE", "NewApi")
-        val unused = GltfModel.createAsync(entitySession, Paths.get("test.glb"))
+        runBlocking {
+            val mockGltfModelResource = mock<RtGltfModelResource>()
+            whenever(mockEntityPlatformAdapter.loadGltfByAssetName(anyString()))
+                .thenReturn(Futures.immediateFuture(mockGltfModelResource))
+            @Suppress("UNUSED_VARIABLE", "NewApi")
+            val unused = GltfModel.create(entitySession, Paths.get("test.glb"))
 
-        verify(mockEntityPlatformAdapter).loadGltfByAssetName("test.glb")
+            verify(mockEntityPlatformAdapter).loadGltfByAssetName("test.glb")
+        }
     }
 
     @Test
     fun createGltfEntity_callsRuntimeCreateGltfEntity() {
-        whenever(mockEntityPlatformAdapter.loadGltfByAssetName(anyString()))
-            .thenReturn(Futures.immediateFuture(mock()))
-        whenever(mockEntityPlatformAdapter.createGltfEntity(any(), any(), any())).thenReturn(mock())
-        @Suppress("NewApi")
-        val gltfModelFuture = GltfModel.createAsync(entitySession, Paths.get("test.glb"))
-        @Suppress("UNUSED_VARIABLE")
-        val unused = GltfModelEntity.create(entitySession, gltfModelFuture.get())
+        runBlocking {
+            whenever(mockEntityPlatformAdapter.loadGltfByAssetName(anyString()))
+                .thenReturn(Futures.immediateFuture(mock()))
+            whenever(mockEntityPlatformAdapter.createGltfEntity(any(), any(), any()))
+                .thenReturn(mock())
+            @Suppress("NewApi")
+            val gltfModel = GltfModel.create(entitySession, Paths.get("test.glb"))
+            @Suppress("UNUSED_VARIABLE")
+            val unused = GltfModelEntity.create(entitySession, gltfModel)
 
-        verify(mockEntityPlatformAdapter).loadGltfByAssetName(eq("test.glb"))
-        verify(mockEntityPlatformAdapter).createGltfEntity(any(), any(), any())
+            verify(mockEntityPlatformAdapter).loadGltfByAssetName(eq("test.glb"))
+            verify(mockEntityPlatformAdapter).createGltfEntity(any(), any(), any())
+        }
     }
 
     @Test

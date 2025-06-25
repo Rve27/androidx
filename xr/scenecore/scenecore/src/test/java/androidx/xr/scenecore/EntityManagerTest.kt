@@ -40,6 +40,7 @@ import com.google.common.util.concurrent.Futures
 import java.nio.file.Paths
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -259,9 +260,9 @@ class EntityManagerTest {
             )
     }
 
-    private fun createGltfEntity() {
+    private fun createGltfEntity() = runBlocking {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            gltfModel = GltfModel.createAsync(session, Paths.get("test.glb")).get()
+            gltfModel = GltfModel.create(session, Paths.get("test.glb"))
         }
         gltfModelEntity = GltfModelEntity.create(mockPlatformAdapter, entityManager, gltfModel)
     }
