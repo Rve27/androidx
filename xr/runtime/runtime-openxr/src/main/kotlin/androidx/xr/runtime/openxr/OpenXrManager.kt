@@ -87,13 +87,14 @@ internal constructor(
         // permission so we can call native functions.
         if (!Build.FINGERPRINT.contains("robolectric")) {
             when (
-                // TODO(b/414648065): Reorder the parameters in nativeConfigureSession.
                 nativeConfigureSession(
                     planeTracking = config.planeTracking.mode,
                     handTracking = config.handTracking.mode,
                     deviceTracking = config.deviceTracking.mode,
                     depthEstimation = config.depthEstimation.mode,
                     anchorPersistence = config.anchorPersistence.mode,
+                    objectTracking = 0,
+                    objectLabels = longArrayOf(),
                 )
             ) {
                 -2L ->
@@ -200,5 +201,7 @@ internal constructor(
         depthEstimation: Int,
         anchorPersistence: Int,
         faceTracking: Int = 0,
+        objectTracking: Int,
+        objectLabels: LongArray,
     ): Long
 }
