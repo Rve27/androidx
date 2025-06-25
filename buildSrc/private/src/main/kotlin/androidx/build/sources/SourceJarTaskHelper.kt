@@ -77,15 +77,9 @@ fun Project.configureSourceJarForAndroid(
 
     registerSamplesLibraries(samplesProjects, publishingVariants)
 
-    // b/272214715
     configurations.whenObjectAdded {
-        if (it.name == "debugSourcesElements" || it.name == "releaseSourcesElements") {
-            it.artifacts.whenObjectAdded { _ ->
-                it.attributes.attribute(
-                    DocsType.DOCS_TYPE_ATTRIBUTE,
-                    project.objects.named(DocsType::class.java, "fake-sources"),
-                )
-            }
+        if (it.name == "releaseSourcesElements") {
+            it.isCanBeConsumed = false
         }
     }
 
