@@ -29,6 +29,7 @@ import androidx.xr.runtime.internal.Anchor
 import androidx.xr.runtime.internal.AnchorNotTrackingException
 import androidx.xr.runtime.internal.ArDevice
 import androidx.xr.runtime.internal.DepthMap
+import androidx.xr.runtime.internal.Face
 import androidx.xr.runtime.internal.Hand
 import androidx.xr.runtime.internal.HitResult
 import androidx.xr.runtime.internal.PerceptionManager
@@ -209,6 +210,13 @@ internal constructor(private val timeSource: ArCoreTimeSource) : PerceptionManag
      * ARCore does not support hand tracking, so this property is always null.
      */
     override val rightHand: Hand? = null
+
+    /**
+     * Returns the face
+     *
+     * ARCore does not support face tracking, so this property is always null.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX) override val userFace: Face? = null
 
     /** Returns the [Earth] instance. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)

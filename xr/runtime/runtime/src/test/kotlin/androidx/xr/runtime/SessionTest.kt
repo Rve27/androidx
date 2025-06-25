@@ -225,7 +225,10 @@ class SessionTest {
 
         val result =
             underTest.configure(
-                underTest.config.copy(depthEstimation = Config.DepthEstimationMode.DISABLED)
+                underTest.config.copy(
+                    depthEstimation = Config.DepthEstimationMode.DISABLED,
+                    faceTracking = Config.FaceTrackingMode.DISABLED,
+                )
             )
 
         assertThat(result).isInstanceOf(SessionConfigurePermissionsNotGranted::class.java)

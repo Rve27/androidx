@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.arcore.apps.whitebox.depthmaps.DepthMapActivity
+import androidx.xr.arcore.apps.whitebox.facetracking.FaceTrackingActivity
 import androidx.xr.arcore.apps.whitebox.handtracking.HandTrackingActivity
 import androidx.xr.arcore.apps.whitebox.helloar.HelloArActivity
 import androidx.xr.arcore.apps.whitebox.persistentanchors.PersistentAnchorsActivity
@@ -117,6 +118,11 @@ fun WhiteboxSessionMenu() {
             onClick = { context.startActivity(Intent(context, DepthMapActivity::class.java)) }
         ) {
             Text("Depth Maps")
+        }
+        TextButton(
+            onClick = { context.startActivity(Intent(context, FaceTrackingActivity::class.java)) }
+        ) {
+            Text("Face Tracking")
         }
     }
 }
