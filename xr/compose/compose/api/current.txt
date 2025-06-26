@@ -331,6 +331,10 @@ package androidx.xr.compose.subspace.layout {
     method public void adjustParams(androidx.xr.compose.subspace.layout.ParentLayoutParamsAdjustable params);
   }
 
+  public final class ResizableKt {
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier resizable(androidx.xr.compose.subspace.layout.SubspaceModifier, optional boolean enabled, optional androidx.xr.compose.unit.DpVolumeSize minimumSize, optional androidx.xr.compose.unit.DpVolumeSize maximumSize, optional boolean maintainAspectRatio, optional kotlin.jvm.functions.Function1<? super androidx.xr.compose.unit.IntVolumeSize,java.lang.Boolean>? onSizeChange);
+  }
+
   public final class RotateKt {
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier rotate(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.runtime.math.Quaternion quaternion);
     method public static androidx.xr.compose.subspace.layout.SubspaceModifier rotate(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.runtime.math.Vector3 axisAngle, float rotation);
