@@ -400,7 +400,7 @@ class NavigationEventDispatcherTest {
         dispatcher1.addCallback(callback)
 
         val dispatcher2 = NavigationEventDispatcher {}
-        assertThrows(IllegalStateException::class) { dispatcher2.addCallback(callback) }
+        assertThrows(IllegalArgumentException::class) { dispatcher2.addCallback(callback) }
             .hasMessageThat()
             .contains("is already registered with a dispatcher")
     }
@@ -418,7 +418,7 @@ class NavigationEventDispatcherTest {
 
         val dispatcher = NavigationEventDispatcher {}
         dispatcher.addCallback(callback)
-        assertThrows(IllegalStateException::class) { dispatcher.addCallback(callback) }
+        assertThrows(IllegalArgumentException::class) { dispatcher.addCallback(callback) }
             .hasMessageThat()
             .contains("is already registered with a dispatcher")
     }

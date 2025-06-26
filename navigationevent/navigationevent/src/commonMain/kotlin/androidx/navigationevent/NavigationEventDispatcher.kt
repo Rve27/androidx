@@ -17,6 +17,8 @@
 package androidx.navigationevent
 
 import androidx.annotation.MainThread
+import androidx.navigationevent.NavigationEventPriority.Companion.Default
+import androidx.navigationevent.NavigationEventPriority.Companion.Overlay
 
 /**
  * Dispatcher that can be used to register [NavigationEventCallback] instances for handling the
@@ -90,26 +92,33 @@ public class NavigationEventDispatcher(
     public fun hasEnabledCallbacks(): Boolean = hasEnabledCallbacks
 
     /**
-     * Add a new [NavigationEventCallback]. Callbacks are invoked in the reverse order in which they
-     * are added, so this newly added [NavigationEventCallback] will be the first callback to be
-     * called.
+     * Adds a new [NavigationEventCallback] to receive navigation events.
      *
-     * To remove a callback, use [NavigationEventCallback.remove].
+     * **Callbacks are invoked based on [priority], and then by recency.** All [Overlay] callbacks
+     * are called before any [Default] callbacks. Within each priority group, callbacks are invoked
+     * in a Last-In, First-Out (LIFO) order—the most recently added callback is called first.
      *
-     * The callbacks provided will be invoked on the main thread.
+     * All callbacks are invoked on the main thread. To stop receiving events, a callback must be
+     * removed via [NavigationEventCallback.remove].
+     *
+     * @param callback The callback instance to be added.
+     * @param priority The priority of the callback, determining its invocation order relative to
+     *   others. See [NavigationEventPriority].
+     * @throws IllegalArgumentException if the given callback is already registered with a different
+     *   dispatcher.
      */
     @Suppress("PairedRegistration") // Callback is removed via `NavigationEventCallback.remove()`
     @MainThread
     public fun addCallback(
         callback: NavigationEventCallback,
-        priority: NavigationEventPriority = NavigationEventPriority.Default,
+        priority: NavigationEventPriority = Default,
     ) {
-        check(callback.dispatcher == null) {
+        require(callback.dispatcher == null) {
             "Callback '$callback' is already registered with a dispatcher"
         }
         when (priority) {
-            NavigationEventPriority.Overlay -> overlayCallbacks.addFirst(callback)
-            NavigationEventPriority.Default -> normalCallbacks.addFirst(callback)
+            Overlay -> overlayCallbacks.addFirst(callback)
+            Default -> normalCallbacks.addFirst(callback)
         }
 
         callback.dispatcher = this
