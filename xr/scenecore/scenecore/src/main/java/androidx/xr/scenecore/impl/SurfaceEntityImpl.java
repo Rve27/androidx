@@ -185,8 +185,12 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
 
     @Override
     public void setStereoMode(@StereoMode int mode) {
+        try {
+            mImpressApi.setStereoModeForStereoSurface(mEntityImpressNode, mode);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(e);
+        }
         mStereoMode = mode;
-        mImpressApi.setStereoModeForStereoSurface(mEntityImpressNode, mode);
     }
 
     @Override
@@ -209,7 +213,11 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
             }
             alphaMaskToken = ((TextureResourceImpl) alphaMask).getTextureToken();
         }
-        mImpressApi.setPrimaryAlphaMaskForStereoSurface(mEntityImpressNode, alphaMaskToken);
+        try {
+            mImpressApi.setPrimaryAlphaMaskForStereoSurface(mEntityImpressNode, alphaMaskToken);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
@@ -221,23 +229,34 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
             }
             alphaMaskToken = ((TextureResourceImpl) alphaMask).getTextureToken();
         }
-        mImpressApi.setAuxiliaryAlphaMaskForStereoSurface(mEntityImpressNode, alphaMaskToken);
+        try {
+            mImpressApi.setAuxiliaryAlphaMaskForStereoSurface(mEntityImpressNode, alphaMaskToken);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
     public Surface getSurface() {
-        // TODO Either cache the surface in the constructor, or change this interface
-        // to
+        // TODO Either cache the surface in the constructor, or change this interface to
         // return a Future.
-        return mImpressApi.getSurfaceFromStereoSurface(mEntityImpressNode);
+        try {
+          return mImpressApi.getSurfaceFromStereoSurface(mEntityImpressNode);
+        } catch (IllegalArgumentException e) {
+          throw new IllegalStateException(e);
+        }
     }
 
     @Override
     public void setFeatherRadiusX(float radius) {
         mFeatherRadiusX = radius;
-        // For now, we set both the left/right and top/bottom feather radius at the same time.
-        mImpressApi.setFeatherRadiusForStereoSurface(
+        try {
+            // For now, we set both the left/right and top/bottom feather radius at the same time.
+            mImpressApi.setFeatherRadiusForStereoSurface(
                 mEntityImpressNode, mFeatherRadiusX, mFeatherRadiusY);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
@@ -248,9 +267,13 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     @Override
     public void setFeatherRadiusY(float radius) {
         mFeatherRadiusY = radius;
-        // For now, we set both the left/right and top/bottom feather radius at the same time.
-        mImpressApi.setFeatherRadiusForStereoSurface(
-                mEntityImpressNode, mFeatherRadiusX, mFeatherRadiusY);
+      try {
+          // For now, we set both the left/right and top/bottom feather radius at the same time.
+          mImpressApi.setFeatherRadiusForStereoSurface(
+                  mEntityImpressNode, mFeatherRadiusX, mFeatherRadiusY);
+      } catch (IllegalArgumentException e) {
+          throw new IllegalStateException(e);
+      }
     }
 
     @Override
@@ -297,8 +320,12 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
         mColorRange = colorRange;
         mMaxContentLightLevel = maxCLL;
         mContentColorMetadataSet = true;
-        mImpressApi.setContentColorMetadataForStereoSurface(
-                mEntityImpressNode, colorSpace, colorTransfer, colorRange, maxCLL);
+        try {
+            mImpressApi.setContentColorMetadataForStereoSurface(
+                    mEntityImpressNode, colorSpace, colorTransfer, colorRange, maxCLL);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
