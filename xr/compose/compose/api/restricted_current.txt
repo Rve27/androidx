@@ -386,6 +386,7 @@ package androidx.xr.compose.subspace.layout {
   @kotlin.PublishedApi internal abstract sealed class CoreEntity implements androidx.xr.compose.subspace.layout.OpaqueEntity {
     method public final boolean addComponent(androidx.xr.scenecore.Component component);
     method public void dispose();
+    method protected final androidx.compose.ui.unit.Density? getDensity();
     method public final androidx.xr.scenecore.Entity getEntity();
     method protected final androidx.compose.runtime.MutableState<androidx.xr.compose.unit.IntVolumeSize> getMutableSize();
     method public androidx.xr.compose.subspace.layout.CoreEntity? getParent();
@@ -393,6 +394,7 @@ package androidx.xr.compose.subspace.layout {
     method public final void removeComponent(androidx.xr.scenecore.Component component);
     method public void setParent(androidx.xr.compose.subspace.layout.CoreEntity?);
     method public void setSize(androidx.xr.compose.unit.IntVolumeSize);
+    property protected final androidx.compose.ui.unit.Density? density;
     property public final androidx.xr.scenecore.Entity entity;
     property protected final androidx.compose.runtime.MutableState<androidx.xr.compose.unit.IntVolumeSize> mutableSize;
     property public androidx.xr.compose.subspace.layout.CoreEntity? parent;

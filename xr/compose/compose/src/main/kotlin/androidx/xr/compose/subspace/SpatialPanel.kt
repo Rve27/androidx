@@ -390,7 +390,8 @@ public fun MainPanel(
     shape: SpatialShape = SpatialPanelDefaults.shape,
 ) {
     val mainPanel = LocalCoreMainPanelEntity.current ?: return
-    LaunchedEffect(shape) { mainPanel.shape = shape }
+    val density = LocalDensity.current
+    LaunchedEffect(shape, density) { mainPanel.setShape(shape, density) }
 
     val view = LocalContext.current.getActivity().window?.decorView ?: LocalView.current
 

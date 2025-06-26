@@ -159,7 +159,8 @@ class SubspaceModifierNodeChainTest {
 
         // There should be multiple initial compositions as the SpatialPanel is attempting to size
         // itself and the state manager is initialized and settled.
-        var count = 4
+        var count = 5
+        composeTestRule.waitForIdle()
         assertThat(nodeCount).isEqualTo(count)
 
         // Trigger one recomposition.
