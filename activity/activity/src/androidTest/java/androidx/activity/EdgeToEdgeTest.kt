@@ -23,6 +23,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import androidx.testutils.withActivity
 import androidx.testutils.withUse
 import com.google.common.truth.Truth.assertThat
@@ -119,6 +120,7 @@ class EdgeToEdgeTest {
         }
     }
 
+    @SdkSuppress(maxSdkVersion = 34) // b/427246798
     @Suppress("DEPRECATION")
     @Test
     fun enableDark() {
@@ -156,6 +158,7 @@ class EdgeToEdgeTest {
         }
     }
 
+    @SdkSuppress(maxSdkVersion = 34) // b/427246798
     @Suppress("DEPRECATION")
     @Test
     fun enableLight() {

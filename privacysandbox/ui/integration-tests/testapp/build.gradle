@@ -28,7 +28,6 @@ android {
 
     defaultConfig {
         applicationId = "androidx.privacysandbox.ui.integration.testapp"
-        targetSdk = 35
     }
 
     buildTypes {

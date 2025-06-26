@@ -793,6 +793,7 @@ class DialogTest {
         assertThat(clicked).isFalse()
     }
 
+    @SdkSuppress(maxSdkVersion = 34) // b/427269985
     @Test
     fun dialogInsetsWhenDecorFitsSystemWindows() {
         var top = -1
@@ -918,8 +919,9 @@ class DialogTest {
     }
 
     @Test
+    // maxSdkVersion due to b/427269985
     // TODO(b/211022812): Remove SdkSuppress annotation once linked bug is fixed
-    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.S_V2)
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.S_V2, maxSdkVersion = 34)
     fun fullScreenDialogNotDefaultWidthDecorFitsMatchesContainerSize() {
         var mainContentWidth = 0
         var mainContentHeight = 0
