@@ -113,6 +113,9 @@ private fun AppFunctionNamedDataTypeMetadataDocument.toXmlElement(
         appendChild(dataTypeMetadata.toXmlElement(doc, "dataTypeMetadata"))
         appendChild(doc.createElementWithTextNode("id", id))
         appendChild(doc.createElementWithTextNode("name", name))
+        if (!description.isEmpty()) {
+            appendChild(doc.createElementWithTextNode("description", description))
+        }
     }
 
 private fun AppFunctionResponseMetadataDocument.toXmlElement(

@@ -33,6 +33,7 @@ import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSchema
 import androidx.appfunctions.compiler.core.metadata.AppFunctionAllOfTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionDataTypeMetadata
+import androidx.appfunctions.compiler.core.metadata.AppFunctionNamedDataTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionParameterMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionPrimitiveTypeMetadata
@@ -533,24 +534,25 @@ class AppFunctionMetadataCreatorHelper {
         allowSerializableInterfaceTypes: Boolean,
         serializableDescription: String,
     ): AppFunctionObjectTypeMetadata {
-        val requiredPropertiesList: MutableList<String> = mutableListOf()
-        val appFunctionSerializablePropertiesMap: Map<String, AppFunctionDataTypeMetadata> =
-            buildMap {
-                for (property in currentSerializableProperties) {
-                    val innerAppFunctionDataTypeMetadata =
+        val appFunctionSerializableProperties: List<AppFunctionNamedDataTypeMetadata> =
+            currentSerializableProperties.map { property ->
+                AppFunctionNamedDataTypeMetadata(
+                    name = property.name,
+                    dataTypeMetadata =
                         property.type.toAppFunctionDataTypeMetadata(
                             sharedDataTypeMap,
                             seenDataTypeQualifiers,
                             resolvedAnnotatedSerializableProxies,
                             allowSerializableInterfaceTypes,
-                        )
-                    put(property.name, innerAppFunctionDataTypeMetadata)
-                    // TODO(b/394553462): Parse required state from annotation.
-                    requiredPropertiesList.add(property.name)
-                }
+                        ),
+                    description = property.description,
+                )
             }
+        // TODO(b/394553462): Parse required state from annotation.
+        val requiredPropertiesList: List<String> =
+            currentSerializableProperties.map { property -> property.name }
         return AppFunctionObjectTypeMetadata(
-            properties = appFunctionSerializablePropertiesMap,
+            properties = appFunctionSerializableProperties,
             required = requiredPropertiesList,
             qualifiedName = serializableTypeQualifiedName,
             // Shared type should be the most permissive version (i.e. nullable) by default.
