@@ -381,7 +381,7 @@ public class Header extends Operation implements RemoteComposeOperation {
      * @return the header
      * @throws IOException if there is an error reading the header
      */
-    public static Header readDirect(InputStream is) throws IOException {
+    public static @NonNull Header readDirect(@NonNull InputStream is) throws IOException {
         DataInputStream stream = new DataInputStream(is);
         try {
 
@@ -554,7 +554,7 @@ public class Header extends Operation implements RemoteComposeOperation {
      * @return the header
      * @throws IOException if there is an error reading the header
      */
-    public static Header readDirect(@NonNull WireBuffer buffer) throws IOException {
+    public static @NonNull Header readDirect(@NonNull WireBuffer buffer) throws IOException {
         int index = buffer.getIndex();
         try {
 
@@ -697,7 +697,7 @@ public class Header extends Operation implements RemoteComposeOperation {
      *
      * @param document
      */
-    public void setVersion(CoreDocument document) {
+    public void setVersion(@NonNull CoreDocument document) {
         document.setHostExceptionID(getInt(HOST_EXCEPTION_HANDLER, 0));
         document.setUpdateDoc(getInt(DOC_DATA_UPDATE, 0) != 0);
         document.setVersion(mMajorVersion, mMinorVersion, mPatchVersion);

@@ -98,7 +98,7 @@ public class BitmapData extends Operation implements SerializableToString, Seria
      *
      * @param from the bitmap to copy
      */
-    public void update(BitmapData from) {
+    public void update(@NonNull BitmapData from) {
         this.mImageWidth = from.mImageWidth;
         this.mImageHeight = from.mImageHeight;
         this.mBitmap = from.mBitmap;
