@@ -69,6 +69,7 @@ import androidx.camera.core.impl.CameraMode;
 import androidx.camera.core.impl.CameraStateRegistry;
 import androidx.camera.core.impl.CaptureConfig;
 import androidx.camera.core.impl.DeferrableSurface;
+import androidx.camera.core.impl.ImageCaptureConfig;
 import androidx.camera.core.impl.ImmediateSurface;
 import androidx.camera.core.impl.LiveDataObservable;
 import androidx.camera.core.impl.Observable;
@@ -888,18 +889,27 @@ final class Camera2CameraImpl implements CameraInternal {
         }
     }
 
+    private boolean isMeteringRepeatingDisabled() {
+        boolean meteringRepeatingDisabled = false;
+        for (UseCaseAttachState.UseCaseAttachInfo useCaseInfo :
+                mUseCaseAttachState.getAttachedUseCaseInfo()) {
+            UseCaseConfig<?> useCaseConfig = useCaseInfo.getUseCaseConfig();
+            if (useCaseConfig instanceof ImageCaptureConfig) {
+                if (!((ImageCaptureConfig) useCaseConfig).isMeteringRepeatingEnabled()) {
+                    meteringRepeatingDisabled = true;
+                }
+            }
+        }
+        return meteringRepeatingDisabled;
+    }
+
     @VisibleForTesting
     boolean isMeteringRepeatingAttached() {
         try {
             return CallbackToFutureAdapter.<Boolean>getFuture(completer -> {
                 try {
                     mExecutor.execute(() -> {
-                        if (mMeteringRepeatingSession == null) {
-                            completer.set(false);
-                            return;
-                        }
-                        String id = getMeteringRepeatingId(mMeteringRepeatingSession);
-                        completer.set(mUseCaseAttachState.isUseCaseAttached(id));
+                        completer.set(isMeteringRepeatingAttachedInternal());
                     });
                 } catch (RejectedExecutionException e) {
                     completer.setException(new RuntimeException(
@@ -911,6 +921,14 @@ final class Camera2CameraImpl implements CameraInternal {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException("Unable to check if MeteringRepeating is attached.", e);
         }
+    }
+
+    private boolean isMeteringRepeatingAttachedInternal() {
+        if (mMeteringRepeatingSession == null) {
+            return false;
+        }
+        String id = getMeteringRepeatingId(mMeteringRepeatingSession);
+        return mUseCaseAttachState.isUseCaseAttached(id);
     }
 
     /**
@@ -1200,15 +1218,29 @@ final class Camera2CameraImpl implements CameraInternal {
 
     // Check if it need the repeating surface for ImageCapture only use case.
     private void addOrRemoveMeteringRepeatingUseCase() {
-        ValidatingBuilder validatingBuilder = mUseCaseAttachState.getAttachedBuilder();
-        SessionConfig sessionConfig = validatingBuilder.build();
-        CaptureConfig captureConfig = sessionConfig.getRepeatingCaptureConfig();
-        int sizeRepeatingSurfaces = captureConfig.getSurfaces().size();
-        int sizeSessionSurfaces = sessionConfig.getSurfaces().size();
+        SessionConfig sessionConfig = mUseCaseAttachState.getAttachedBuilder().build();
+        int repeatingSurfaceCount = sessionConfig.getRepeatingCaptureConfig().getSurfaces().size();
+        int allSurfaceCount = sessionConfig.getSurfaces().size();
+        boolean isRepeatingRequestMissing = false;
 
-        if (!sessionConfig.getSurfaces().isEmpty()) {
-            if (captureConfig.getSurfaces().isEmpty()) {
-                // Create the MeteringRepeating UseCase
+        if (isMeteringRepeatingAttachedInternal()) {
+            // Should remove the metering repeating if it's the only surface or there are other
+            // repeating surfaces.
+            boolean shouldRemoveMeteringRepeating =
+                    repeatingSurfaceCount != 1 || allSurfaceCount == 1;
+            if (shouldRemoveMeteringRepeating || isMeteringRepeatingRestricted(
+                    mMeteringRepeatingSession)) {
+                removeMeteringRepeating();
+                if (!shouldRemoveMeteringRepeating) {
+                    // The metering repeating is removed but shouldn't.
+                    isRepeatingRequestMissing = true;
+                }
+            }
+        } else {
+            // Should add the metering repeating if there are non-repeating surfaces without a
+            // repeating surface.
+            boolean shouldAddMeteringRepeating = repeatingSurfaceCount == 0 && allSurfaceCount > 0;
+            if (shouldAddMeteringRepeating) {
                 if (mMeteringRepeatingSession == null) {
                     mMeteringRepeatingSession = new MeteringRepeatingSession(
                             mCameraInfoInternal.getCameraCharacteristicsCompat(),
@@ -1230,41 +1262,30 @@ final class Camera2CameraImpl implements CameraInternal {
                                         ));
                             });
                 }
-                if (isSurfaceCombinationWithMeteringRepeatingSupported()) {
+                if (isMeteringRepeatingRestricted(mMeteringRepeatingSession)) {
+                    // The metering repeating is required but not added.
+                    isRepeatingRequestMissing = true;
+                } else {
                     addMeteringRepeating();
-                } else {
-                    Logger.e(TAG, "Failed to add a repeating surface, CameraControl and "
-                            + "ImageCapture may encounter issues due to the absence of repeating "
-                            + "surface. Please add a UseCase (Preview or ImageAnalysis) that can "
-                            + "provide a repeating surface for CameraControl and ImageCapture to "
-                            + "function properly.");
-                }
-            } else {
-                // There is mMeteringRepeating and attached, check to remove it or not.
-                if (sizeSessionSurfaces == 1 && sizeRepeatingSurfaces == 1) {
-                    // The only attached use case is MeteringRepeating, directly remove it.
-                    removeMeteringRepeating();
-                } else if (sizeRepeatingSurfaces >= 2) {
-                    // There are other repeating UseCases, remove the MeteringRepeating.
-                    removeMeteringRepeating();
-                } else if (mMeteringRepeatingSession != null
-                        && !isSurfaceCombinationWithMeteringRepeatingSupported()) {
-                    // Surface combination not supported, remove the MeteringRepeating if added.
-                    removeMeteringRepeating();
-                } else {
-                    // Other normal cases, do nothing.
-                    Logger.d(TAG, "No need to remove a previous mMeteringRepeating, "
-                            + "SessionConfig Surfaces: " + sizeSessionSurfaces + ", "
-                            + "CaptureConfig Surfaces: " + sizeRepeatingSurfaces);
                 }
             }
+        }
+
+        if (isRepeatingRequestMissing) {
+            mCameraControlInternal.setIsRepeatingRequestAvailable(false);
+            Logger.e(TAG, "The repeating surface is missing, CameraControl and "
+                    + "ImageCapture may encounter issues due to the absence of repeating "
+                    + "surface. Please add a UseCase (Preview or ImageAnalysis) that can "
+                    + "provide a repeating surface for CameraControl and ImageCapture to "
+                    + "function properly.");
         }
     }
 
     /**
      * Checks if adding {@link MeteringRepeatingSession} to current use cases is supported
      */
-    private boolean isSurfaceCombinationWithMeteringRepeatingSupported() {
+    private boolean isSurfaceCombinationWithMeteringRepeatingSupported(
+            @NonNull MeteringRepeatingSession meteringRepeatingSession) {
         List<AttachedSurfaceInfo> attachedSurfaces = new ArrayList<>();
         @CameraMode.Mode int cameraMode = getCameraMode();
 
@@ -1302,11 +1323,11 @@ final class Camera2CameraImpl implements CameraInternal {
             }
         }
 
-        Preconditions.checkNotNull(mMeteringRepeatingSession);
+        Preconditions.checkNotNull(meteringRepeatingSession);
 
         Map<UseCaseConfig<?>, List<Size>> useCaseConfigToSizeMap = new HashMap<>();
-        useCaseConfigToSizeMap.put(mMeteringRepeatingSession.getUseCaseConfig(),
-                Collections.singletonList(mMeteringRepeatingSession.getMeteringRepeatingSize()));
+        useCaseConfigToSizeMap.put(meteringRepeatingSession.getUseCaseConfig(),
+                Collections.singletonList(meteringRepeatingSession.getMeteringRepeatingSize()));
 
         try {
             // TODO: b/406367951 - Pass true for isFeatureComboInvocation param when
@@ -1320,6 +1341,13 @@ final class Camera2CameraImpl implements CameraInternal {
 
         debugLog("Surface combination with metering repeating supported!");
         return true;
+    }
+
+    private boolean isMeteringRepeatingRestricted(
+            @NonNull MeteringRepeatingSession meteringRepeatingSession) {
+        Preconditions.checkNotNull(meteringRepeatingSession);
+        return !isSurfaceCombinationWithMeteringRepeatingSupported(meteringRepeatingSession)
+                || isMeteringRepeatingDisabled();
     }
 
     private @CameraMode.Mode int getCameraMode() {

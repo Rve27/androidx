@@ -974,6 +974,14 @@ class ImageCaptureTest {
             .isSameInstanceAs(resolutionSelector)
     }
 
+    @Test
+    fun canSetMeteringRepeatingDisabled() {
+        val imageCapture = ImageCapture.Builder().setMeteringRepeatingEnabled(false).build()
+
+        assertThat((imageCapture.currentConfig as ImageCaptureConfig).isMeteringRepeatingEnabled)
+            .isFalse()
+    }
+
     @SdkSuppress(minSdkVersion = 23)
     @Test
     fun useMaximumSize_whenNotSettingPostviewResolutioSelector() {
