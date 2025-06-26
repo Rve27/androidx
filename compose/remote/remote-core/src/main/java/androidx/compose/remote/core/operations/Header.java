@@ -31,6 +31,7 @@ import androidx.compose.remote.core.documentation.DocumentationBuilder;
 import androidx.compose.remote.core.operations.utilities.IntMap;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class Header extends Operation implements RemoteComposeOperation {
     float mDensity = 3;
     long mCapabilities = 0;
     int mProfiles = 0;
-    private IntMap<Object> mProperties;
+    private @Nullable IntMap<Object> mProperties;
 
     /**
      * Get a property on the header
@@ -67,7 +68,10 @@ public class Header extends Operation implements RemoteComposeOperation {
      * @param property the property to get
      * @return the value of the property
      */
-    public Object get(short property) {
+    public @Nullable Object get(short property) {
+        if (mProperties == null) {
+            return null;
+        }
         return mProperties.get(property);
     }
 
@@ -168,7 +172,11 @@ public class Header extends Operation implements RemoteComposeOperation {
      * @param patchVersion the patch version of the RemoteCompose document API
      * @param properties the properties of the document
      */
-    public Header(int majorVersion, int minorVersion, int patchVersion, IntMap<Object> properties) {
+    public Header(
+            int majorVersion,
+            int minorVersion,
+            int patchVersion,
+            @Nullable IntMap<Object> properties) {
         this.mMajorVersion = majorVersion;
         this.mMinorVersion = minorVersion;
         this.mPatchVersion = patchVersion;

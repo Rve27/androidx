@@ -48,6 +48,7 @@ import androidx.compose.remote.core.operations.DrawSector;
 import androidx.compose.remote.core.operations.DrawText;
 import androidx.compose.remote.core.operations.DrawTextAnchored;
 import androidx.compose.remote.core.operations.DrawTextOnPath;
+import androidx.compose.remote.core.operations.DrawToBitmap;
 import androidx.compose.remote.core.operations.DrawTweenPath;
 import androidx.compose.remote.core.operations.FloatConstant;
 import androidx.compose.remote.core.operations.FloatExpression;
@@ -265,6 +266,7 @@ public class Operations {
     public static final int MATRIX_EXPRESSION = 187;
     public static final int MATRIX_VECTOR_MATH = 188;
     public static final int DATA_FONT = 189;
+    public static final int DRAW_TO_BITMAP = 190;
 
     ///////////////////////////////////////// ======================
 
@@ -430,6 +432,7 @@ public class Operations {
             sMapV7AndroidX.put(DRAW_BITMAP_TEXT_ANCHORED, DrawBitmapTextAnchored::read);
             sMapV7AndroidX.put(DATA_SHADER, ShaderData::read);
             sMapV7AndroidX.put(DATA_FONT, FontData::read);
+            sMapV7AndroidX.put(DRAW_TO_BITMAP, DrawToBitmap::read);
         }
         return sMapV7AndroidX;
     }

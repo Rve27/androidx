@@ -265,15 +265,6 @@
     <issue
         id="UnknownNullness"
         message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
-        errorLine1="    public void setProperties(IntMap&lt;Object> properties) {"
-        errorLine2="                              ~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/androidx/compose/remote/core/CoreDocument.java"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
         errorLine1="    public Object getProperty(short key) {"
         errorLine2="           ~~~~~~">
         <location
@@ -688,6 +679,15 @@
     <issue
         id="UnknownNullness"
         message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
+        errorLine1="    public void serialize(MapSerializer serializer) {"
+        errorLine2="                          ~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/androidx/compose/remote/core/operations/DrawToBitmap.java"/>
+    </issue>
+
+    <issue
+        id="UnknownNullness"
+        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
         errorLine1="    public static String getString(int value) {"
         errorLine2="                  ~~~~~~">
         <location
@@ -782,24 +782,6 @@
         errorLine2="                                     ~~~~~~~~~~~~~~~~~~~~">
         <location
             file="src/main/java/androidx/compose/remote/core/operations/layout/modifiers/GraphicsLayerModifierOperation.java"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
-        errorLine1="    public Object get(short property) {"
-        errorLine2="           ~~~~~~">
-        <location
-            file="src/main/java/androidx/compose/remote/core/operations/Header.java"/>
-    </issue>
-
-    <issue
-        id="UnknownNullness"
-        message="Unknown nullability; explicitly declare as `@Nullable` or `@NonNull` to improve Kotlin interoperability; see https://developer.android.com/kotlin/interop#nullability_annotations"
-        errorLine1="    public Header(int majorVersion, int minorVersion, int patchVersion, IntMap&lt;Object> properties) {"
-        errorLine2="                                                                        ~~~~~~~~~~~~~~">
-        <location
-            file="src/main/java/androidx/compose/remote/core/operations/Header.java"/>
     </issue>
 
     <issue

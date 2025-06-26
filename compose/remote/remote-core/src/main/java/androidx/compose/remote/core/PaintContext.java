@@ -528,4 +528,13 @@ public abstract class PaintContext {
      * @param flags flags
      */
     public abstract void matrixFromPath(int pathId, float fraction, float vOffset, int flags);
+
+    /**
+     * Redirect drawing to a bitmap (0 = back to main canvas)
+     *
+     * @param bitmapId id of bitmap to draw to or 0 to draw to the canvas
+     * @param mode flags support init of bitmap 0 = clear to color, 1 = no clear
+     * @param color set the initial color of the bitmap
+     */
+    public abstract void drawToBitmap(int bitmapId, int mode, int color);
 }

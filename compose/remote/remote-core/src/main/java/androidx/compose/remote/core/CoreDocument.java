@@ -113,7 +113,7 @@ public class CoreDocument implements Serializable {
 
     private int mLastId = 1; // last component id when inflating the file
 
-    private IntMap<Object> mDocProperties;
+    private @Nullable IntMap<Object> mDocProperties;
 
     boolean mFirstPaint = true;
     private boolean mIsUpdateDoc = false;
@@ -452,7 +452,7 @@ public class CoreDocument implements Serializable {
      *
      * @param properties the properties to set
      */
-    public void setProperties(IntMap<Object> properties) {
+    public void setProperties(@Nullable IntMap<Object> properties) {
         mDocProperties = properties;
     }
 
