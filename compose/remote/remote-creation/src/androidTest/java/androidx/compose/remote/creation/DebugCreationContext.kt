@@ -288,7 +288,7 @@ class DebugCreationContext : RemoteContext() {
                     stringBuilder.append("restorePaint\n")
                 }
 
-                override fun replacePaint(paint: PaintBundle?) {
+                override fun replacePaint(paint: PaintBundle) {
                     stringBuilder.append("replacePaint\n")
                 }
 

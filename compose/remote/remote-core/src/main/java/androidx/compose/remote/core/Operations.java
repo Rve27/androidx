@@ -152,6 +152,7 @@ import androidx.compose.remote.core.types.IntegerConstant;
 import androidx.compose.remote.core.types.LongConstant;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -399,7 +400,8 @@ public class Operations {
      * @param profiles
      * @return
      */
-    public static UniqueIntMap<CompanionOperation> getOperations(int apiLevel, int profiles) {
+    public static @Nullable UniqueIntMap<CompanionOperation> getOperations(
+            int apiLevel, int profiles) {
         switch (apiLevel) {
             case 7:
                 if (sMapV7 == null || !sMapV7.containsKey(profiles)) {
