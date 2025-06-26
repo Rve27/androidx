@@ -76,7 +76,9 @@ public class NavigationEventDispatcher(
      * all registered callbacks.
      */
     internal fun updateEnabledCallbacks() {
-        this.hasEnabledCallbacks = (overlayCallbacks + normalCallbacks).any { it.isEnabled }
+        // `any` and `||` are both efficient as they short-circuit on the first `true` result.
+        this.hasEnabledCallbacks =
+            overlayCallbacks.any { it.isEnabled } || normalCallbacks.any { it.isEnabled }
     }
 
     /**
