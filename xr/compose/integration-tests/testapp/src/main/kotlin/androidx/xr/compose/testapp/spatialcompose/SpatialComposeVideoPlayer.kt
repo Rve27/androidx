@@ -71,6 +71,7 @@ import androidx.xr.compose.subspace.layout.height
 import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.onPointSourceParams
+import androidx.xr.compose.subspace.layout.padding
 import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.testapp.ui.components.CommonTestScaffold
@@ -148,7 +149,10 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                     showBottomBar = true,
                     onClickBackArrow = { this@SpatialComposeVideoPlayer.finish() },
                 ) { padding ->
-                    Column(modifier = Modifier.background(Color.LightGray).fillMaxSize()) {
+                    Column(
+                        modifier =
+                            Modifier.background(Color.LightGray).fillMaxSize().padding(padding)
+                    ) {
                         BackHandler {
                             Log.i(
                                 "BackHandler",
