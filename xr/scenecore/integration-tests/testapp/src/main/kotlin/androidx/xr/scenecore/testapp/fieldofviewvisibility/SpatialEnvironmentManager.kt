@@ -70,12 +70,6 @@ class SpatialEnvironmentManager(
     private suspend fun loadExrImagesAndModels() {
         geometry = GltfModel.create(session, Paths.get("models", "GroundGeometry.glb"))
 
-        val blueSkyboxModelFuture =
-            ExrImage.createFromZipAsync(session, Paths.get("skyboxes", "BlueSkybox.zip"))
-        blueSkyboxModelFuture.addListener(
-            { skybox = blueSkyboxModelFuture.get() },
-            // This will cause the listener to be run on the UI thread
-            Runnable::run,
-        )
+        skybox = ExrImage.createFromZip(session, Paths.get("skyboxes", "BlueSkybox.zip"))
     }
 }

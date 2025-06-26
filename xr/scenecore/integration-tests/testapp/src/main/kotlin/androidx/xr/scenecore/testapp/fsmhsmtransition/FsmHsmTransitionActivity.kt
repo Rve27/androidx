@@ -49,7 +49,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.nio.file.Paths
 import java.util.concurrent.Executors
-import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 
 @SuppressLint("SetTextI18n", "RestrictedApi")
@@ -247,9 +246,7 @@ class FsmHsmTransitionActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            skybox =
-                ExrImage.createFromZipAsync(session!!, Paths.get("skyboxes", "BlueSkybox.zip"))
-                    .await()
+            skybox = ExrImage.createFromZip(session!!, Paths.get("skyboxes", "BlueSkybox.zip"))
         }
     }
 

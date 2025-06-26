@@ -212,24 +212,21 @@ class SplitEngineTestActivity : ComponentActivity() {
                 Text(text = "Split Engine APIs", fontSize = 50.sp)
                 Button(
                     onClick = {
-                        val skyboxTokenFuture: ListenableFuture<ExrImage> =
-                            ExrImage.createFromZipAsync(
-                                session,
-                                Paths.get("skyboxes", "BlueSkybox.zip"),
-                            )
-                        skyboxTokenFuture.addListener(
-                            {
-                                try {
-                                    blueSkybox.value = skyboxTokenFuture.get()
-                                } catch (e: Exception) {
-                                    Log.e(
-                                        "SplitEngineTestActivity",
-                                        "Failed to load BlueSkybox: " + e.message,
-                                    )
-                                }
-                            },
-                            Runnable::run,
-                        )
+                        lifecycleScope.launch {
+                            val skyboxToken: ExrImage =
+                                ExrImage.createFromZip(
+                                    session,
+                                    Paths.get("skyboxes", "BlueSkybox.zip"),
+                                )
+                            try {
+                                blueSkybox.value = skyboxToken
+                            } catch (e: Exception) {
+                                Log.e(
+                                    "SplitEngineTestActivity",
+                                    "Failed to load BlueSkybox: " + e.message,
+                                )
+                            }
+                        }
                     }
                 ) {
                     Text(text = "Load Skybox Blue", fontSize = 20.sp)

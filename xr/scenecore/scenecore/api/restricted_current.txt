@@ -172,9 +172,6 @@ package androidx.xr.scenecore {
     method @MainThread public static suspend Object? createFromZip(androidx.xr.runtime.Session session, android.net.Uri uri, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
     method @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static suspend Object? createFromZip(androidx.xr.runtime.Session session, byte[] assetData, String assetKey, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
     method @MainThread public static suspend Object? createFromZip(androidx.xr.runtime.Session session, java.nio.file.Path path, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
-    method @MainThread public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, android.net.Uri uri);
-    method @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, byte[] assetData, String assetKey);
-    method @MainThread public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, java.nio.file.Path path);
     method @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.scenecore.CubeMapTexture getReflectionTexture();
     field public static final androidx.xr.scenecore.ExrImage.Companion Companion;
   }
@@ -183,9 +180,6 @@ package androidx.xr.scenecore {
     method @MainThread public suspend Object? createFromZip(androidx.xr.runtime.Session session, android.net.Uri uri, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
     method @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public suspend Object? createFromZip(androidx.xr.runtime.Session session, byte[] assetData, String assetKey, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
     method @MainThread public suspend Object? createFromZip(androidx.xr.runtime.Session session, java.nio.file.Path path, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
-    method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, android.net.Uri uri);
-    method @MainThread @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, byte[] assetData, String assetKey);
-    method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.ExrImage> createFromZipAsync(androidx.xr.runtime.Session session, java.nio.file.Path path);
   }
 
   public final class GltfModel {

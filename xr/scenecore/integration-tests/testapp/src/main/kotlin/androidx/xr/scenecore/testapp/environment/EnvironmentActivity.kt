@@ -49,7 +49,6 @@ import com.google.android.material.slider.Slider
 import java.nio.file.Paths
 import java.text.DecimalFormat
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 
 @SuppressLint("SetTextI18n", "RestrictedApi")
@@ -217,10 +216,8 @@ class EnvironmentActivity : AppCompatActivity() {
     }
 
     private suspend fun loadExrImagesAndModels() {
-        this.greySkybox =
-            ExrImage.createFromZipAsync(session!!, Paths.get("skyboxes", "GreySkybox.zip")).await()
-        this.blueSkybox =
-            ExrImage.createFromZipAsync(session!!, Paths.get("skyboxes", "BlueSkybox.zip")).await()
+        this.greySkybox = ExrImage.createFromZip(session!!, Paths.get("skyboxes", "GreySkybox.zip"))
+        this.blueSkybox = ExrImage.createFromZip(session!!, Paths.get("skyboxes", "BlueSkybox.zip"))
         this.groundGeometry = GltfModel.create(session!!, Paths.get("models", "GroundGeometry.glb"))
         this.rockGeometry = GltfModel.create(session!!, Paths.get("models", "RocksGeometry.glb"))
     }

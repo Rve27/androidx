@@ -28,6 +28,7 @@ import android.widget.RadioGroup
 import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.FloatSize3d
@@ -40,10 +41,10 @@ import androidx.xr.scenecore.ResizableComponent
 import androidx.xr.scenecore.ResizeListener
 import androidx.xr.scenecore.SpatialEnvironment
 import androidx.xr.scenecore.scene
-import com.google.common.util.concurrent.ListenableFuture
 import java.nio.file.Paths
 import java.util.concurrent.Executors
 import java.util.function.Consumer
+import kotlinx.coroutines.launch
 
 class FSMAndHSMTransitionActivity : AppCompatActivity() {
 
@@ -52,9 +53,6 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
     private var resizableActive: Boolean = false
     private var movableActive: Boolean = false
     private var skyboxActive: Boolean = false
-    private val skyboxFuture: ListenableFuture<ExrImage> by lazy {
-        ExrImage.createFromZipAsync(session, Paths.get("skyboxes", "BlueSkybox.zip"))
-    }
     private var boundsListener = Consumer<FloatSize3d> {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,18 +93,17 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
         }
 
         val buttonLoadSkybox: Button = findViewById(R.id.buttonLoadSkybox)
-        skyboxFuture.addListener(
-            {
-                buttonLoadSkybox.setOnClickListener {
-                    session.scene.spatialEnvironment.preferredSpatialEnvironment =
-                        SpatialEnvironment.SpatialEnvironmentPreference(skyboxFuture.get(), null)
-                    skyboxActive = true
-                    updateLaunchInFSMWithEnvVisibility(buttonLaunchInFSMWithEnv)
-                    Log.i(TAG, "Loading skybox.")
-                }
-            },
-            Executors.newSingleThreadExecutor(),
-        )
+
+        lifecycleScope.launch {
+            val skybox = ExrImage.createFromZip(session, Paths.get("skyboxes", "BlueSkybox.zip"))
+            buttonLoadSkybox.setOnClickListener {
+                session.scene.spatialEnvironment.preferredSpatialEnvironment =
+                    SpatialEnvironment.SpatialEnvironmentPreference(skybox, null)
+                skyboxActive = true
+                updateLaunchInFSMWithEnvVisibility(buttonLaunchInFSMWithEnv)
+                Log.i(TAG, "Loading skybox.")
+            }
+        }
 
         val buttonRemoveSkybox: Button = findViewById(R.id.buttonRemoveSkybox)
         buttonRemoveSkybox.setOnClickListener {
