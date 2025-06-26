@@ -329,22 +329,17 @@ class OpenXrManagerTest {
             underTest.resume()
 
             // The OpenXR stub returns a different value for each call to [OpenXrTimeSource::read]
-            // in
-            // increments of 1000ns when `xrConvertTimespecTimeToTimeKHR` is executed. The first
-            // call
-            // returns 1000ns and is the value associated with [timeMark]. The second call returns
-            // 2000ns
-            // and is the value associated with [AbstractLongTimeSource::zero], which is calculated
-            // automatically with the first call to [OpenXrTimeSource::markNow].
+            // in increments of 1000ns when `xrConvertTimespecTimeToTimeKHR` is executed. The first
+            // call returns 1000ns and is the value associated with [timeMark]. The second call
+            // returns 2000ns and is the value associated with [AbstractLongTimeSource::zero],
+            // which is calculated automatically with the first call to [OpenXrTimeSource::markNow].
             // Note that this is just an idiosyncrasy of the test stub and not how OpenXR works in
-            // practice,
-            // where the second call would return an almost identical value to the first call's
-            // value.
+            // practice, where the second call would return an almost identical value to the first
+            // call's value.
             val timeMark = underTest.update()
 
             // The third call happens with the call to [elapsedNow] and returns 3000ns. Thus, the
-            // elapsed
-            // time is 3000ns (i.e. "now") -  1000ns (i.e. "the start time") = 2000ns.
+            // elapsed time is 3000ns (i.e. "now") -  1000ns (i.e. "the start time") = 2000ns.
             assertThat(timeMark.elapsedNow().inWholeNanoseconds).isEqualTo(2000L)
         }
     }
@@ -359,11 +354,12 @@ class OpenXrManagerTest {
     }
 
     @Test
-    fun pause_afterStop_throwsIllegalStateException() = initOpenXrManagerAndRunTest {
+    fun pause_withoutResume_doesNotDestroyNativeOpenXrManager() = initOpenXrManagerAndRunTest {
         underTest.create()
-        underTest.stop()
 
-        assertThrows(IllegalStateException::class.java) { underTest.pause() }
+        underTest.pause()
+
+        assertThat(underTest.nativePointer).isNotEqualTo(0L)
     }
 
     @Test
