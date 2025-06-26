@@ -151,7 +151,8 @@ package androidx.xr.compose.spatial {
 
   public final class SpatialDialogProperties {
     ctor public SpatialDialogProperties();
-    ctor public SpatialDialogProperties(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> backgroundContentAnimationSpec, optional float elevation);
+    ctor @BytecodeOnly public SpatialDialogProperties(boolean, boolean, boolean, androidx.compose.animation.core.FiniteAnimationSpec!, float, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @KotlinOnly public SpatialDialogProperties(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> backgroundContentAnimationSpec, optional androidx.compose.ui.unit.Dp elevation);
     method public androidx.xr.compose.spatial.SpatialDialogProperties copy(optional boolean dismissOnBackPress, optional boolean dismissOnClickOutside, optional boolean usePlatformDefaultWidth, optional androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> restingLevelAnimationSpec, optional float elevation);
     method @BytecodeOnly public androidx.xr.compose.spatial.SpatialDialogProperties copy-M2VBTUQ(boolean, boolean, boolean, androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float!>, float);
     method public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> getBackgroundContentAnimationSpec();
@@ -829,7 +830,8 @@ package androidx.xr.compose.subspace.node {
 package androidx.xr.compose.unit {
 
   public final class DpVolumeSize {
-    ctor public DpVolumeSize(float width, float height, float depth);
+    ctor @KotlinOnly public DpVolumeSize(androidx.compose.ui.unit.Dp width, androidx.compose.ui.unit.Dp height, androidx.compose.ui.unit.Dp depth);
+    ctor @BytecodeOnly public DpVolumeSize(float, float, float, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public float getDepth();
     method @BytecodeOnly public float getDepth-D9Ej5fM();
     method public float getHeight();
@@ -864,7 +866,7 @@ package androidx.xr.compose.unit {
   }
 
   @androidx.compose.runtime.Immutable @kotlin.jvm.JvmInline public final value class Meter implements java.lang.Comparable<androidx.xr.compose.unit.Meter> {
-    ctor public Meter(float value);
+    ctor @KotlinOnly public Meter(float value);
     method @BytecodeOnly public static androidx.xr.compose.unit.Meter! box-impl(float);
     method public int compareTo(float other);
     method @BytecodeOnly public int compareTo-355lp2w(float);

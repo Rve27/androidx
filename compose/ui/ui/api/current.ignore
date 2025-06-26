@@ -1,0 +1,15 @@
+// Baseline format: 1.0
+AddedMethod: androidx.compose.ui.graphics.vector.ImageVector.Builder#Builder(String, float, float, float, float, long, int, boolean, kotlin.jvm.internal.DefaultConstructorMarker):
+    Added constructor androidx.compose.ui.graphics.vector.ImageVector.Builder(String,float,float,float,float,long,int,boolean,kotlin.jvm.internal.DefaultConstructorMarker)
+AddedMethod: androidx.compose.ui.graphics.vector.ImageVector.Builder#Builder(String, float, float, float, float, long, int, kotlin.jvm.internal.DefaultConstructorMarker):
+    Added constructor androidx.compose.ui.graphics.vector.ImageVector.Builder(String,float,float,float,float,long,int,kotlin.jvm.internal.DefaultConstructorMarker)
+AddedMethod: androidx.compose.ui.input.pointer.HistoricalChange#HistoricalChange(long, long, kotlin.jvm.internal.DefaultConstructorMarker):
+    Added constructor androidx.compose.ui.input.pointer.HistoricalChange(long,long,kotlin.jvm.internal.DefaultConstructorMarker)
+AddedMethod: androidx.compose.ui.input.pointer.PointerInputChange#PointerInputChange(long, long, long, boolean, float, long, long, boolean, boolean, int, long, kotlin.jvm.internal.DefaultConstructorMarker):
+    Added constructor androidx.compose.ui.input.pointer.PointerInputChange(long,long,long,boolean,float,long,long,boolean,boolean,int,long,kotlin.jvm.internal.DefaultConstructorMarker)
+AddedMethod: androidx.compose.ui.input.pointer.PointerInputChange#PointerInputChange(long, long, long, boolean, long, long, boolean, androidx.compose.ui.input.pointer.ConsumedData, int, kotlin.jvm.internal.DefaultConstructorMarker):
+    Added constructor androidx.compose.ui.input.pointer.PointerInputChange(long,long,long,boolean,long,long,boolean,androidx.compose.ui.input.pointer.ConsumedData,int,kotlin.jvm.internal.DefaultConstructorMarker)
+AddedMethod: androidx.compose.ui.input.pointer.PointerInputChange#PointerInputChange(long, long, long, boolean, long, long, boolean, boolean, int, long, kotlin.jvm.internal.DefaultConstructorMarker):
+    Added constructor androidx.compose.ui.input.pointer.PointerInputChange(long,long,long,boolean,long,long,boolean,boolean,int,long,kotlin.jvm.internal.DefaultConstructorMarker)
+AddedMethod: androidx.compose.ui.node.DpTouchBoundsExpansion#DpTouchBoundsExpansion(float, float, float, float, boolean, kotlin.jvm.internal.DefaultConstructorMarker):
+    Added constructor androidx.compose.ui.node.DpTouchBoundsExpansion(float,float,float,float,boolean,kotlin.jvm.internal.DefaultConstructorMarker)

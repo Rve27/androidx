@@ -13,7 +13,8 @@ package androidx.compose.material3.adaptive.layout {
 
   @androidx.compose.runtime.Immutable public static final class AdaptStrategy.Levitate implements androidx.compose.material3.adaptive.layout.AdaptStrategy {
     ctor public AdaptStrategy.Levitate();
-    ctor public AdaptStrategy.Levitate(optional String strategy, optional androidx.compose.ui.Alignment alignment, optional androidx.compose.material3.adaptive.layout.Scrim? scrim);
+    ctor @KotlinOnly public AdaptStrategy.Levitate(optional androidx.compose.material3.adaptive.layout.AdaptStrategy.Levitate.Strategy strategy, optional androidx.compose.ui.Alignment alignment, optional androidx.compose.material3.adaptive.layout.Scrim? scrim);
+    ctor @BytecodeOnly public AdaptStrategy.Levitate(String!, androidx.compose.ui.Alignment!, androidx.compose.material3.adaptive.layout.Scrim!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.ui.Alignment getAlignment();
     method public androidx.compose.material3.adaptive.layout.Scrim? getScrim();
     method public String getStrategy();
@@ -384,8 +385,10 @@ package androidx.compose.material3.adaptive.layout {
   }
 
   @androidx.compose.runtime.Immutable public final class PaneScaffoldDirective {
-    ctor public PaneScaffoldDirective(int maxHorizontalPartitions, float horizontalPartitionSpacerSize, int maxVerticalPartitions, float verticalPartitionSpacerSize, float defaultPanePreferredWidth, float defaultPanePreferredHeight, java.util.List<androidx.compose.ui.geometry.Rect> excludedBounds);
-    ctor public PaneScaffoldDirective(int maxHorizontalPartitions, float horizontalPartitionSpacerSize, int maxVerticalPartitions, float verticalPartitionSpacerSize, float defaultPanePreferredWidth, java.util.List<androidx.compose.ui.geometry.Rect> excludedBounds);
+    ctor @KotlinOnly public PaneScaffoldDirective(int maxHorizontalPartitions, androidx.compose.ui.unit.Dp horizontalPartitionSpacerSize, int maxVerticalPartitions, androidx.compose.ui.unit.Dp verticalPartitionSpacerSize, androidx.compose.ui.unit.Dp defaultPanePreferredWidth, androidx.compose.ui.unit.Dp defaultPanePreferredHeight, java.util.List<androidx.compose.ui.geometry.Rect> excludedBounds);
+    ctor @KotlinOnly public PaneScaffoldDirective(int maxHorizontalPartitions, androidx.compose.ui.unit.Dp horizontalPartitionSpacerSize, int maxVerticalPartitions, androidx.compose.ui.unit.Dp verticalPartitionSpacerSize, androidx.compose.ui.unit.Dp defaultPanePreferredWidth, java.util.List<androidx.compose.ui.geometry.Rect> excludedBounds);
+    ctor @BytecodeOnly public PaneScaffoldDirective(int, float, int, float, float, float, java.util.List!, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public PaneScaffoldDirective(int, float, int, float, float, java.util.List!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @Deprecated public androidx.compose.material3.adaptive.layout.PaneScaffoldDirective copy(optional int maxHorizontalPartitions, optional float horizontalPartitionSpacerSize, optional int maxVerticalPartitions, optional float verticalPartitionSpacerSize, optional float defaultPanePreferredWidth, optional java.util.List<androidx.compose.ui.geometry.Rect> excludedBounds);
     method public androidx.compose.material3.adaptive.layout.PaneScaffoldDirective copy(optional int maxHorizontalPartitions, optional float horizontalPartitionSpacerSize, optional int maxVerticalPartitions, optional float verticalPartitionSpacerSize, optional float defaultPanePreferredWidth, optional java.util.List<androidx.compose.ui.geometry.Rect> excludedBounds, optional float defaultPanePreferredHeight);
     method @BytecodeOnly @Deprecated public androidx.compose.material3.adaptive.layout.PaneScaffoldDirective! copy-7PwrCCA(int, float, int, float, float, java.util.List!);
@@ -484,7 +487,8 @@ package androidx.compose.material3.adaptive.layout {
 
   @androidx.compose.runtime.Immutable public final class Scrim {
     ctor public Scrim();
-    ctor public Scrim(optional long color, optional kotlin.jvm.functions.Function0<kotlin.Unit>? onClick);
+    ctor @KotlinOnly public Scrim(optional androidx.compose.ui.graphics.Color color, optional kotlin.jvm.functions.Function0<kotlin.Unit>? onClick);
+    ctor @BytecodeOnly public Scrim(long, kotlin.jvm.functions.Function0!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public long getColor();
     method @BytecodeOnly public long getColor-0d7_KjU();
     method public kotlin.jvm.functions.Function0<kotlin.Unit>? getOnClick();

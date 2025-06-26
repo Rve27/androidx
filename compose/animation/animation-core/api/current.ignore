@@ -1,15 +1,9 @@
 // Baseline format: 1.0
-RemovedFromJava: androidx.compose.animation.core.VectorizedSpringSpec#getDurationNanos(V, V, V):
-    Source breaking change: method androidx.compose.animation.core.VectorizedSpringSpec.getDurationNanos(V,V,V) can no longer be resolved from Java source
-RemovedFromJava: androidx.compose.animation.core.VectorizedSpringSpec#getValueFromNanos(long, V, V, V):
-    Source breaking change: method androidx.compose.animation.core.VectorizedSpringSpec.getValueFromNanos(long,V,V,V) can no longer be resolved from Java source
-RemovedFromJava: androidx.compose.animation.core.VectorizedSpringSpec#getVelocityFromNanos(long, V, V, V):
-    Source breaking change: method androidx.compose.animation.core.VectorizedSpringSpec.getVelocityFromNanos(long,V,V,V) can no longer be resolved from Java source
-
-
-RemovedFromKotlin: androidx.compose.animation.core.VectorizedSpringSpec#getDurationNanos(V, V, V):
-    Source breaking change: method androidx.compose.animation.core.VectorizedSpringSpec.getDurationNanos(V,V,V) can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.animation.core.VectorizedSpringSpec#getValueFromNanos(long, V, V, V):
-    Source breaking change: method androidx.compose.animation.core.VectorizedSpringSpec.getValueFromNanos(long,V,V,V) can no longer be resolved from Kotlin source
-RemovedFromKotlin: androidx.compose.animation.core.VectorizedSpringSpec#getVelocityFromNanos(long, V, V, V):
-    Source breaking change: method androidx.compose.animation.core.VectorizedSpringSpec.getVelocityFromNanos(long,V,V,V) can no longer be resolved from Kotlin source
+AddedMethod: androidx.compose.animation.core.InfiniteRepeatableSpec#InfiniteRepeatableSpec(androidx.compose.animation.core.DurationBasedAnimationSpec, androidx.compose.animation.core.RepeatMode, long, kotlin.jvm.internal.DefaultConstructorMarker):
+    Added constructor androidx.compose.animation.core.InfiniteRepeatableSpec(androidx.compose.animation.core.DurationBasedAnimationSpec,androidx.compose.animation.core.RepeatMode,long,kotlin.jvm.internal.DefaultConstructorMarker)
+AddedMethod: androidx.compose.animation.core.RepeatableSpec#RepeatableSpec(int, androidx.compose.animation.core.DurationBasedAnimationSpec, androidx.compose.animation.core.RepeatMode, long, kotlin.jvm.internal.DefaultConstructorMarker):
+    Added constructor androidx.compose.animation.core.RepeatableSpec(int,androidx.compose.animation.core.DurationBasedAnimationSpec,androidx.compose.animation.core.RepeatMode,long,kotlin.jvm.internal.DefaultConstructorMarker)
+AddedMethod: androidx.compose.animation.core.VectorizedInfiniteRepeatableSpec#VectorizedInfiniteRepeatableSpec(androidx.compose.animation.core.VectorizedDurationBasedAnimationSpec, androidx.compose.animation.core.RepeatMode, long, kotlin.jvm.internal.DefaultConstructorMarker):
+    Added constructor androidx.compose.animation.core.VectorizedInfiniteRepeatableSpec(androidx.compose.animation.core.VectorizedDurationBasedAnimationSpec,androidx.compose.animation.core.RepeatMode,long,kotlin.jvm.internal.DefaultConstructorMarker)
+AddedMethod: androidx.compose.animation.core.VectorizedRepeatableSpec#VectorizedRepeatableSpec(int, androidx.compose.animation.core.VectorizedDurationBasedAnimationSpec, androidx.compose.animation.core.RepeatMode, long, kotlin.jvm.internal.DefaultConstructorMarker):
+    Added constructor androidx.compose.animation.core.VectorizedRepeatableSpec(int,androidx.compose.animation.core.VectorizedDurationBasedAnimationSpec,androidx.compose.animation.core.RepeatMode,long,kotlin.jvm.internal.DefaultConstructorMarker)

@@ -905,7 +905,7 @@ package androidx.constraintlayout.compose {
   @kotlin.jvm.JvmInline public final value class Span {
     ctor public Span(@IntRange(from=0L) int position, @IntRange(from=1L) int size);
     ctor public Span(@IntRange(from=0L) int position, @IntRange(from=1L) int rows, @IntRange(from=1L) int columns);
-    ctor public Span(String description);
+    ctor @KotlinOnly public Span(String description);
     method @BytecodeOnly public static androidx.constraintlayout.compose.Span! box-impl(String!);
     method @BytecodeOnly public static String constructor-impl(@IntRange(from=0L) int, @IntRange(from=1L) int);
     method @BytecodeOnly public static String constructor-impl(@IntRange(from=0L) int, @IntRange(from=1L) int, @IntRange(from=1L) int);

@@ -204,7 +204,8 @@ package androidx.wear.compose.material {
 
   @androidx.compose.runtime.Immutable @androidx.compose.runtime.Stable public final class Colors {
     ctor public Colors();
-    ctor public Colors(optional long primary, optional long primaryVariant, optional long secondary, optional long secondaryVariant, optional long background, optional long surface, optional long error, optional long onPrimary, optional long onSecondary, optional long onBackground, optional long onSurface, optional long onSurfaceVariant, optional long onError);
+    ctor @KotlinOnly public Colors(optional androidx.compose.ui.graphics.Color primary, optional androidx.compose.ui.graphics.Color primaryVariant, optional androidx.compose.ui.graphics.Color secondary, optional androidx.compose.ui.graphics.Color secondaryVariant, optional androidx.compose.ui.graphics.Color background, optional androidx.compose.ui.graphics.Color surface, optional androidx.compose.ui.graphics.Color error, optional androidx.compose.ui.graphics.Color onPrimary, optional androidx.compose.ui.graphics.Color onSecondary, optional androidx.compose.ui.graphics.Color onBackground, optional androidx.compose.ui.graphics.Color onSurface, optional androidx.compose.ui.graphics.Color onSurfaceVariant, optional androidx.compose.ui.graphics.Color onError);
+    ctor @BytecodeOnly public Colors(long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.wear.compose.material.Colors copy(optional long primary, optional long primaryVariant, optional long secondary, optional long secondaryVariant, optional long background, optional long surface, optional long error, optional long onPrimary, optional long onSecondary, optional long onBackground, optional long onSurface, optional long onSurfaceVariant, optional long onError);
     method @BytecodeOnly public androidx.wear.compose.material.Colors copy-daRQuJA(long, long, long, long, long, long, long, long, long, long, long, long, long);
     method public long getBackground();
@@ -289,7 +290,8 @@ package androidx.wear.compose.material {
   }
 
   @SuppressCompatibility @androidx.compose.runtime.Immutable @androidx.wear.compose.material.ExperimentalWearMaterialApi public final class FixedThreshold implements androidx.wear.compose.material.ThresholdConfig {
-    ctor public FixedThreshold(float offset);
+    ctor @KotlinOnly public FixedThreshold(androidx.compose.ui.unit.Dp offset);
+    ctor @BytecodeOnly public FixedThreshold(float, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public float computeThreshold(androidx.compose.ui.unit.Density, float fromValue, float toValue);
     method public androidx.wear.compose.material.FixedThreshold copy-0680j_4(float offset);
   }
@@ -1055,7 +1057,8 @@ package androidx.wear.compose.material {
   }
 
   @SuppressCompatibility @androidx.wear.compose.material.ExperimentalWearMaterialApi public final class SwipeToRevealActionColors {
-    ctor public SwipeToRevealActionColors(long primaryActionBackgroundColor, long primaryActionContentColor, long secondaryActionBackgroundColor, long secondaryActionContentColor, long undoActionBackgroundColor, long undoActionContentColor);
+    ctor @KotlinOnly public SwipeToRevealActionColors(androidx.compose.ui.graphics.Color primaryActionBackgroundColor, androidx.compose.ui.graphics.Color primaryActionContentColor, androidx.compose.ui.graphics.Color secondaryActionBackgroundColor, androidx.compose.ui.graphics.Color secondaryActionContentColor, androidx.compose.ui.graphics.Color undoActionBackgroundColor, androidx.compose.ui.graphics.Color undoActionContentColor);
+    ctor @BytecodeOnly public SwipeToRevealActionColors(long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public long getPrimaryActionBackgroundColor();
     method @BytecodeOnly public long getPrimaryActionBackgroundColor-0d7_KjU();
     method public long getPrimaryActionContentColor();
@@ -1349,7 +1352,7 @@ package androidx.wear.compose.material {
   }
 
   @kotlin.jvm.JvmInline public final value class VignettePosition {
-    ctor public VignettePosition(int key);
+    ctor @KotlinOnly public VignettePosition(int key);
     method @BytecodeOnly public static androidx.wear.compose.material.VignettePosition! box-impl(int);
     method @BytecodeOnly public static int constructor-impl(int);
     method @BytecodeOnly public int unbox-impl();

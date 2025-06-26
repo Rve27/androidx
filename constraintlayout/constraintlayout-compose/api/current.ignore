@@ -15,5 +15,9 @@ AddedAbstractMethod: androidx.constraintlayout.compose.VerticalAnchorable#linkTo
     Binary breaking change: Added method androidx.constraintlayout.compose.VerticalAnchorable.linkTo-VpY3zN4(androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor,float,float)
 
 
+RemovedFromBytecode: androidx.constraintlayout.compose.Span#Span(String):
+    Binary breaking change: constructor androidx.constraintlayout.compose.Span(String) has been removed from bytecode
+
+
 RemovedMethod: androidx.constraintlayout.compose.ConstrainedLayoutReference#getId():
     Binary breaking change: Removed method androidx.constraintlayout.compose.ConstrainedLayoutReference.getId()

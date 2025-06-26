@@ -21,7 +21,8 @@ package androidx.tv.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class Border {
-    ctor public Border(androidx.compose.foundation.BorderStroke border, optional float inset, optional androidx.compose.ui.graphics.Shape shape);
+    ctor @KotlinOnly public Border(androidx.compose.foundation.BorderStroke border, optional androidx.compose.ui.unit.Dp inset, optional androidx.compose.ui.graphics.Shape shape);
+    ctor @BytecodeOnly public Border(androidx.compose.foundation.BorderStroke!, float, androidx.compose.ui.graphics.Shape!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.tv.material3.Border copy(optional androidx.compose.foundation.BorderStroke? border, optional androidx.compose.ui.unit.Dp? inset, optional androidx.compose.ui.graphics.Shape? shape);
     method @BytecodeOnly public androidx.tv.material3.Border copy-ZCAqi1o(androidx.compose.foundation.BorderStroke?, androidx.compose.ui.unit.Dp?, androidx.compose.ui.graphics.Shape?);
     method public androidx.compose.foundation.BorderStroke getBorder();
@@ -190,7 +191,8 @@ package androidx.tv.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class CheckboxColors {
-    ctor public CheckboxColors(long checkedCheckmarkColor, long uncheckedCheckmarkColor, long checkedBoxColor, long uncheckedBoxColor, long disabledCheckedBoxColor, long disabledUncheckedBoxColor, long disabledIndeterminateBoxColor, long checkedBorderColor, long uncheckedBorderColor, long disabledBorderColor, long disabledUncheckedBorderColor, long disabledIndeterminateBorderColor);
+    ctor @KotlinOnly public CheckboxColors(androidx.compose.ui.graphics.Color checkedCheckmarkColor, androidx.compose.ui.graphics.Color uncheckedCheckmarkColor, androidx.compose.ui.graphics.Color checkedBoxColor, androidx.compose.ui.graphics.Color uncheckedBoxColor, androidx.compose.ui.graphics.Color disabledCheckedBoxColor, androidx.compose.ui.graphics.Color disabledUncheckedBoxColor, androidx.compose.ui.graphics.Color disabledIndeterminateBoxColor, androidx.compose.ui.graphics.Color checkedBorderColor, androidx.compose.ui.graphics.Color uncheckedBorderColor, androidx.compose.ui.graphics.Color disabledBorderColor, androidx.compose.ui.graphics.Color disabledUncheckedBorderColor, androidx.compose.ui.graphics.Color disabledIndeterminateBorderColor);
+    ctor @BytecodeOnly public CheckboxColors(long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.tv.material3.CheckboxColors copy(optional long checkedCheckmarkColor, optional long uncheckedCheckmarkColor, optional long checkedBoxColor, optional long uncheckedBoxColor, optional long disabledCheckedBoxColor, optional long disabledUncheckedBoxColor, optional long disabledIndeterminateBoxColor, optional long checkedBorderColor, optional long uncheckedBorderColor, optional long disabledBorderColor, optional long disabledUncheckedBorderColor, optional long disabledIndeterminateBorderColor);
     method @BytecodeOnly public androidx.tv.material3.CheckboxColors copy-2qZNXz8(long, long, long, long, long, long, long, long, long, long, long, long);
     method public long getCheckedBorderColor();
@@ -312,7 +314,8 @@ package androidx.tv.material3 {
   }
 
   @androidx.compose.runtime.Stable public final class ColorScheme {
-    ctor public ColorScheme(long primary, long onPrimary, long primaryContainer, long onPrimaryContainer, long inversePrimary, long secondary, long onSecondary, long secondaryContainer, long onSecondaryContainer, long tertiary, long onTertiary, long tertiaryContainer, long onTertiaryContainer, long background, long onBackground, long surface, long onSurface, long surfaceVariant, long onSurfaceVariant, long surfaceTint, long inverseSurface, long inverseOnSurface, long error, long onError, long errorContainer, long onErrorContainer, long border, long borderVariant, long scrim);
+    ctor @KotlinOnly public ColorScheme(androidx.compose.ui.graphics.Color primary, androidx.compose.ui.graphics.Color onPrimary, androidx.compose.ui.graphics.Color primaryContainer, androidx.compose.ui.graphics.Color onPrimaryContainer, androidx.compose.ui.graphics.Color inversePrimary, androidx.compose.ui.graphics.Color secondary, androidx.compose.ui.graphics.Color onSecondary, androidx.compose.ui.graphics.Color secondaryContainer, androidx.compose.ui.graphics.Color onSecondaryContainer, androidx.compose.ui.graphics.Color tertiary, androidx.compose.ui.graphics.Color onTertiary, androidx.compose.ui.graphics.Color tertiaryContainer, androidx.compose.ui.graphics.Color onTertiaryContainer, androidx.compose.ui.graphics.Color background, androidx.compose.ui.graphics.Color onBackground, androidx.compose.ui.graphics.Color surface, androidx.compose.ui.graphics.Color onSurface, androidx.compose.ui.graphics.Color surfaceVariant, androidx.compose.ui.graphics.Color onSurfaceVariant, androidx.compose.ui.graphics.Color surfaceTint, androidx.compose.ui.graphics.Color inverseSurface, androidx.compose.ui.graphics.Color inverseOnSurface, androidx.compose.ui.graphics.Color error, androidx.compose.ui.graphics.Color onError, androidx.compose.ui.graphics.Color errorContainer, androidx.compose.ui.graphics.Color onErrorContainer, androidx.compose.ui.graphics.Color border, androidx.compose.ui.graphics.Color borderVariant, androidx.compose.ui.graphics.Color scrim);
+    ctor @BytecodeOnly public ColorScheme(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.tv.material3.ColorScheme copy(optional long primary, optional long onPrimary, optional long primaryContainer, optional long onPrimaryContainer, optional long inversePrimary, optional long secondary, optional long onSecondary, optional long secondaryContainer, optional long onSecondaryContainer, optional long tertiary, optional long onTertiary, optional long tertiaryContainer, optional long onTertiaryContainer, optional long background, optional long onBackground, optional long surface, optional long onSurface, optional long surfaceVariant, optional long onSurfaceVariant, optional long surfaceTint, optional long inverseSurface, optional long inverseOnSurface, optional long error, optional long onError, optional long errorContainer, optional long onErrorContainer, optional long border, optional long borderVariant, optional long scrim);
     method @BytecodeOnly public androidx.tv.material3.ColorScheme copy-G1PFc-w(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long);
     method public long getBackground();
@@ -464,7 +467,8 @@ package androidx.tv.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class Glow {
-    ctor public Glow(long elevationColor, float elevation);
+    ctor @KotlinOnly public Glow(androidx.compose.ui.graphics.Color elevationColor, androidx.compose.ui.unit.Dp elevation);
+    ctor @BytecodeOnly public Glow(long, float, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.tv.material3.Glow copy(optional androidx.compose.ui.graphics.Color? glowColor, optional androidx.compose.ui.unit.Dp? glowElevation);
     method @BytecodeOnly public androidx.tv.material3.Glow copy-4CeajsE(androidx.compose.ui.graphics.Color?, androidx.compose.ui.unit.Dp?);
     method public float getElevation();
@@ -571,7 +575,8 @@ package androidx.tv.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class ListItemColors {
-    ctor public ListItemColors(long containerColor, long contentColor, long focusedContainerColor, long focusedContentColor, long pressedContainerColor, long pressedContentColor, long selectedContainerColor, long selectedContentColor, long disabledContainerColor, long disabledContentColor, long focusedSelectedContainerColor, long focusedSelectedContentColor, long pressedSelectedContainerColor, long pressedSelectedContentColor);
+    ctor @KotlinOnly public ListItemColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color contentColor, androidx.compose.ui.graphics.Color focusedContainerColor, androidx.compose.ui.graphics.Color focusedContentColor, androidx.compose.ui.graphics.Color pressedContainerColor, androidx.compose.ui.graphics.Color pressedContentColor, androidx.compose.ui.graphics.Color selectedContainerColor, androidx.compose.ui.graphics.Color selectedContentColor, androidx.compose.ui.graphics.Color disabledContainerColor, androidx.compose.ui.graphics.Color disabledContentColor, androidx.compose.ui.graphics.Color focusedSelectedContainerColor, androidx.compose.ui.graphics.Color focusedSelectedContentColor, androidx.compose.ui.graphics.Color pressedSelectedContainerColor, androidx.compose.ui.graphics.Color pressedSelectedContentColor);
+    ctor @BytecodeOnly public ListItemColors(long, long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public long getContainerColor();
     method @BytecodeOnly public long getContainerColor-0d7_KjU();
     method public long getContentColor();
@@ -745,7 +750,8 @@ package androidx.tv.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class NavigationDrawerItemColors {
-    ctor public NavigationDrawerItemColors(long containerColor, long contentColor, long inactiveContentColor, long focusedContainerColor, long focusedContentColor, long pressedContainerColor, long pressedContentColor, long selectedContainerColor, long selectedContentColor, long disabledContainerColor, long disabledContentColor, long disabledInactiveContentColor, long focusedSelectedContainerColor, long focusedSelectedContentColor, long pressedSelectedContainerColor, long pressedSelectedContentColor);
+    ctor @KotlinOnly public NavigationDrawerItemColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color contentColor, androidx.compose.ui.graphics.Color inactiveContentColor, androidx.compose.ui.graphics.Color focusedContainerColor, androidx.compose.ui.graphics.Color focusedContentColor, androidx.compose.ui.graphics.Color pressedContainerColor, androidx.compose.ui.graphics.Color pressedContentColor, androidx.compose.ui.graphics.Color selectedContainerColor, androidx.compose.ui.graphics.Color selectedContentColor, androidx.compose.ui.graphics.Color disabledContainerColor, androidx.compose.ui.graphics.Color disabledContentColor, androidx.compose.ui.graphics.Color disabledInactiveContentColor, androidx.compose.ui.graphics.Color focusedSelectedContainerColor, androidx.compose.ui.graphics.Color focusedSelectedContentColor, androidx.compose.ui.graphics.Color pressedSelectedContainerColor, androidx.compose.ui.graphics.Color pressedSelectedContentColor);
+    ctor @BytecodeOnly public NavigationDrawerItemColors(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public long getContainerColor();
     method @BytecodeOnly public long getContainerColor-0d7_KjU();
     method public long getContentColor();
@@ -975,7 +981,8 @@ package androidx.tv.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class RadioButtonColors {
-    ctor public RadioButtonColors(long selectedColor, long unselectedColor, long disabledSelectedColor, long disabledUnselectedColor);
+    ctor @KotlinOnly public RadioButtonColors(androidx.compose.ui.graphics.Color selectedColor, androidx.compose.ui.graphics.Color unselectedColor, androidx.compose.ui.graphics.Color disabledSelectedColor, androidx.compose.ui.graphics.Color disabledUnselectedColor);
+    ctor @BytecodeOnly public RadioButtonColors(long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.tv.material3.RadioButtonColors copy(optional long selectedColor, optional long unselectedColor, optional long disabledSelectedColor, optional long disabledUnselectedColor);
     method @BytecodeOnly public androidx.tv.material3.RadioButtonColors copy-jRlVdoo(long, long, long, long);
     method public long getDisabledSelectedColor();
@@ -1130,7 +1137,8 @@ package androidx.tv.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class SwitchColors {
-    ctor public SwitchColors(long checkedThumbColor, long checkedTrackColor, long checkedBorderColor, long checkedIconColor, long uncheckedThumbColor, long uncheckedTrackColor, long uncheckedBorderColor, long uncheckedIconColor, long disabledCheckedThumbColor, long disabledCheckedTrackColor, long disabledCheckedBorderColor, long disabledCheckedIconColor, long disabledUncheckedThumbColor, long disabledUncheckedTrackColor, long disabledUncheckedBorderColor, long disabledUncheckedIconColor);
+    ctor @KotlinOnly public SwitchColors(androidx.compose.ui.graphics.Color checkedThumbColor, androidx.compose.ui.graphics.Color checkedTrackColor, androidx.compose.ui.graphics.Color checkedBorderColor, androidx.compose.ui.graphics.Color checkedIconColor, androidx.compose.ui.graphics.Color uncheckedThumbColor, androidx.compose.ui.graphics.Color uncheckedTrackColor, androidx.compose.ui.graphics.Color uncheckedBorderColor, androidx.compose.ui.graphics.Color uncheckedIconColor, androidx.compose.ui.graphics.Color disabledCheckedThumbColor, androidx.compose.ui.graphics.Color disabledCheckedTrackColor, androidx.compose.ui.graphics.Color disabledCheckedBorderColor, androidx.compose.ui.graphics.Color disabledCheckedIconColor, androidx.compose.ui.graphics.Color disabledUncheckedThumbColor, androidx.compose.ui.graphics.Color disabledUncheckedTrackColor, androidx.compose.ui.graphics.Color disabledUncheckedBorderColor, androidx.compose.ui.graphics.Color disabledUncheckedIconColor);
+    ctor @BytecodeOnly public SwitchColors(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.tv.material3.SwitchColors copy(optional long checkedThumbColor, optional long checkedTrackColor, optional long checkedBorderColor, optional long checkedIconColor, optional long uncheckedThumbColor, optional long uncheckedTrackColor, optional long uncheckedBorderColor, optional long uncheckedIconColor, optional long disabledCheckedThumbColor, optional long disabledCheckedTrackColor, optional long disabledCheckedBorderColor, optional long disabledCheckedIconColor, optional long disabledUncheckedThumbColor, optional long disabledUncheckedTrackColor, optional long disabledUncheckedBorderColor, optional long disabledUncheckedIconColor);
     method @BytecodeOnly public androidx.tv.material3.SwitchColors copy-Q_H9qLU(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long);
     method public long getCheckedBorderColor();

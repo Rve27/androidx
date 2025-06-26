@@ -1240,7 +1240,7 @@ class ModalWideNavigationRailOverrideScope
 internal constructor(
     val modifier: Modifier,
     val state: WideNavigationRailState,
-    val shouldHideOnCollapse: Boolean,
+    @get:Suppress("GetterSetterNames") val shouldHideOnCollapse: Boolean,
     val collapsedShape: Shape,
     val expandedShape: Shape,
     val colors: WideNavigationRailColors,

@@ -2,7 +2,8 @@
 package androidx.compose.material3.adaptive.navigation3 {
 
   @SuppressCompatibility @androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi public final class ListDetailSceneStrategy<T> implements androidx.navigation3.ui.SceneStrategy<T> {
-    ctor public ListDetailSceneStrategy(String backNavigationBehavior, androidx.compose.material3.adaptive.layout.PaneScaffoldDirective directive);
+    ctor @KotlinOnly public <T> ListDetailSceneStrategy(androidx.compose.material3.adaptive.navigation.BackNavigationBehavior backNavigationBehavior, androidx.compose.material3.adaptive.layout.PaneScaffoldDirective directive);
+    ctor @BytecodeOnly public ListDetailSceneStrategy(String!, androidx.compose.material3.adaptive.layout.PaneScaffoldDirective!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @androidx.compose.runtime.Composable public androidx.navigation3.ui.Scene<T>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T>> entries, kotlin.jvm.functions.Function1<? super java.lang.Integer,kotlin.Unit> onBack);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.navigation3.ui.Scene<T!>? calculateScene(java.util.List<? extends androidx.navigation3.runtime.NavEntry<T!>!>, kotlin.jvm.functions.Function1<? super java.lang.Integer!,kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
     method public String getBackNavigationBehavior();

@@ -296,7 +296,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class ButtonColors {
-    ctor public ButtonColors(long containerColor, long contentColor, long disabledContainerColor, long disabledContentColor);
+    ctor @KotlinOnly public ButtonColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color contentColor, androidx.compose.ui.graphics.Color disabledContainerColor, androidx.compose.ui.graphics.Color disabledContentColor);
+    ctor @BytecodeOnly public ButtonColors(long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.ButtonColors copy(optional long containerColor, optional long contentColor, optional long disabledContainerColor, optional long disabledContentColor);
     method @BytecodeOnly public androidx.compose.material3.ButtonColors copy-jRlVdoo(long, long, long, long);
     method public long getContainerColor();
@@ -564,7 +565,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class CardColors {
-    ctor public CardColors(long containerColor, long contentColor, long disabledContainerColor, long disabledContentColor);
+    ctor @KotlinOnly public CardColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color contentColor, androidx.compose.ui.graphics.Color disabledContainerColor, androidx.compose.ui.graphics.Color disabledContentColor);
+    ctor @BytecodeOnly public CardColors(long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.CardColors copy(optional long containerColor, optional long contentColor, optional long disabledContainerColor, optional long disabledContentColor);
     method @BytecodeOnly public androidx.compose.material3.CardColors copy-jRlVdoo(long, long, long, long);
     method public long getContainerColor();
@@ -633,7 +635,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class CheckboxColors {
-    ctor public CheckboxColors(long checkedCheckmarkColor, long uncheckedCheckmarkColor, long checkedBoxColor, long uncheckedBoxColor, long disabledCheckedBoxColor, long disabledUncheckedBoxColor, long disabledIndeterminateBoxColor, long checkedBorderColor, long uncheckedBorderColor, long disabledBorderColor, long disabledUncheckedBorderColor, long disabledIndeterminateBorderColor);
+    ctor @KotlinOnly public CheckboxColors(androidx.compose.ui.graphics.Color checkedCheckmarkColor, androidx.compose.ui.graphics.Color uncheckedCheckmarkColor, androidx.compose.ui.graphics.Color checkedBoxColor, androidx.compose.ui.graphics.Color uncheckedBoxColor, androidx.compose.ui.graphics.Color disabledCheckedBoxColor, androidx.compose.ui.graphics.Color disabledUncheckedBoxColor, androidx.compose.ui.graphics.Color disabledIndeterminateBoxColor, androidx.compose.ui.graphics.Color checkedBorderColor, androidx.compose.ui.graphics.Color uncheckedBorderColor, androidx.compose.ui.graphics.Color disabledBorderColor, androidx.compose.ui.graphics.Color disabledUncheckedBorderColor, androidx.compose.ui.graphics.Color disabledIndeterminateBorderColor);
+    ctor @BytecodeOnly public CheckboxColors(long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.CheckboxColors copy(optional long checkedCheckmarkColor, optional long uncheckedCheckmarkColor, optional long checkedBoxColor, optional long uncheckedBoxColor, optional long disabledCheckedBoxColor, optional long disabledUncheckedBoxColor, optional long disabledIndeterminateBoxColor, optional long checkedBorderColor, optional long uncheckedBorderColor, optional long disabledBorderColor, optional long disabledUncheckedBorderColor, optional long disabledIndeterminateBorderColor);
     method @BytecodeOnly public androidx.compose.material3.CheckboxColors copy-2qZNXz8(long, long, long, long, long, long, long, long, long, long, long, long);
     method public long getCheckedBorderColor();
@@ -700,7 +703,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class ChipColors {
-    ctor public ChipColors(long containerColor, long labelColor, long leadingIconContentColor, long trailingIconContentColor, long disabledContainerColor, long disabledLabelColor, long disabledLeadingIconContentColor, long disabledTrailingIconContentColor);
+    ctor @KotlinOnly public ChipColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color labelColor, androidx.compose.ui.graphics.Color leadingIconContentColor, androidx.compose.ui.graphics.Color trailingIconContentColor, androidx.compose.ui.graphics.Color disabledContainerColor, androidx.compose.ui.graphics.Color disabledLabelColor, androidx.compose.ui.graphics.Color disabledLeadingIconContentColor, androidx.compose.ui.graphics.Color disabledTrailingIconContentColor);
+    ctor @BytecodeOnly public ChipColors(long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.ChipColors copy(optional long containerColor, optional long labelColor, optional long leadingIconContentColor, optional long trailingIconContentColor, optional long disabledContainerColor, optional long disabledLabelColor, optional long disabledLeadingIconContentColor, optional long disabledTrailingIconContentColor);
     method @BytecodeOnly public androidx.compose.material3.ChipColors copy-FD3wquc(long, long, long, long, long, long, long, long);
     method public long getContainerColor();
@@ -730,7 +734,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class ChipElevation {
-    ctor public ChipElevation(float elevation, float pressedElevation, float focusedElevation, float hoveredElevation, float draggedElevation, float disabledElevation);
+    ctor @KotlinOnly public ChipElevation(androidx.compose.ui.unit.Dp elevation, androidx.compose.ui.unit.Dp pressedElevation, androidx.compose.ui.unit.Dp focusedElevation, androidx.compose.ui.unit.Dp hoveredElevation, androidx.compose.ui.unit.Dp draggedElevation, androidx.compose.ui.unit.Dp disabledElevation);
+    ctor @BytecodeOnly public ChipElevation(float, float, float, float, float, float, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public float getDisabledElevation();
     method @BytecodeOnly public float getDisabledElevation-D9Ej5fM();
     method public float getDraggedElevation();
@@ -777,9 +782,12 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class ColorScheme {
-    ctor @Deprecated public ColorScheme(long primary, long onPrimary, long primaryContainer, long onPrimaryContainer, long inversePrimary, long secondary, long onSecondary, long secondaryContainer, long onSecondaryContainer, long tertiary, long onTertiary, long tertiaryContainer, long onTertiaryContainer, long background, long onBackground, long surface, long onSurface, long surfaceVariant, long onSurfaceVariant, long surfaceTint, long inverseSurface, long inverseOnSurface, long error, long onError, long errorContainer, long onErrorContainer, long outline, long outlineVariant, long scrim);
-    ctor @Deprecated public ColorScheme(long primary, long onPrimary, long primaryContainer, long onPrimaryContainer, long inversePrimary, long secondary, long onSecondary, long secondaryContainer, long onSecondaryContainer, long tertiary, long onTertiary, long tertiaryContainer, long onTertiaryContainer, long background, long onBackground, long surface, long onSurface, long surfaceVariant, long onSurfaceVariant, long surfaceTint, long inverseSurface, long inverseOnSurface, long error, long onError, long errorContainer, long onErrorContainer, long outline, long outlineVariant, long scrim, long surfaceBright, long surfaceDim, long surfaceContainer, long surfaceContainerHigh, long surfaceContainerHighest, long surfaceContainerLow, long surfaceContainerLowest);
-    ctor public ColorScheme(long primary, long onPrimary, long primaryContainer, long onPrimaryContainer, long inversePrimary, long secondary, long onSecondary, long secondaryContainer, long onSecondaryContainer, long tertiary, long onTertiary, long tertiaryContainer, long onTertiaryContainer, long background, long onBackground, long surface, long onSurface, long surfaceVariant, long onSurfaceVariant, long surfaceTint, long inverseSurface, long inverseOnSurface, long error, long onError, long errorContainer, long onErrorContainer, long outline, long outlineVariant, long scrim, long surfaceBright, long surfaceDim, long surfaceContainer, long surfaceContainerHigh, long surfaceContainerHighest, long surfaceContainerLow, long surfaceContainerLowest, long primaryFixed, long primaryFixedDim, long onPrimaryFixed, long onPrimaryFixedVariant, long secondaryFixed, long secondaryFixedDim, long onSecondaryFixed, long onSecondaryFixedVariant, long tertiaryFixed, long tertiaryFixedDim, long onTertiaryFixed, long onTertiaryFixedVariant);
+    ctor @KotlinOnly @Deprecated public ColorScheme(androidx.compose.ui.graphics.Color primary, androidx.compose.ui.graphics.Color onPrimary, androidx.compose.ui.graphics.Color primaryContainer, androidx.compose.ui.graphics.Color onPrimaryContainer, androidx.compose.ui.graphics.Color inversePrimary, androidx.compose.ui.graphics.Color secondary, androidx.compose.ui.graphics.Color onSecondary, androidx.compose.ui.graphics.Color secondaryContainer, androidx.compose.ui.graphics.Color onSecondaryContainer, androidx.compose.ui.graphics.Color tertiary, androidx.compose.ui.graphics.Color onTertiary, androidx.compose.ui.graphics.Color tertiaryContainer, androidx.compose.ui.graphics.Color onTertiaryContainer, androidx.compose.ui.graphics.Color background, androidx.compose.ui.graphics.Color onBackground, androidx.compose.ui.graphics.Color surface, androidx.compose.ui.graphics.Color onSurface, androidx.compose.ui.graphics.Color surfaceVariant, androidx.compose.ui.graphics.Color onSurfaceVariant, androidx.compose.ui.graphics.Color surfaceTint, androidx.compose.ui.graphics.Color inverseSurface, androidx.compose.ui.graphics.Color inverseOnSurface, androidx.compose.ui.graphics.Color error, androidx.compose.ui.graphics.Color onError, androidx.compose.ui.graphics.Color errorContainer, androidx.compose.ui.graphics.Color onErrorContainer, androidx.compose.ui.graphics.Color outline, androidx.compose.ui.graphics.Color outlineVariant, androidx.compose.ui.graphics.Color scrim);
+    ctor @KotlinOnly @Deprecated public ColorScheme(androidx.compose.ui.graphics.Color primary, androidx.compose.ui.graphics.Color onPrimary, androidx.compose.ui.graphics.Color primaryContainer, androidx.compose.ui.graphics.Color onPrimaryContainer, androidx.compose.ui.graphics.Color inversePrimary, androidx.compose.ui.graphics.Color secondary, androidx.compose.ui.graphics.Color onSecondary, androidx.compose.ui.graphics.Color secondaryContainer, androidx.compose.ui.graphics.Color onSecondaryContainer, androidx.compose.ui.graphics.Color tertiary, androidx.compose.ui.graphics.Color onTertiary, androidx.compose.ui.graphics.Color tertiaryContainer, androidx.compose.ui.graphics.Color onTertiaryContainer, androidx.compose.ui.graphics.Color background, androidx.compose.ui.graphics.Color onBackground, androidx.compose.ui.graphics.Color surface, androidx.compose.ui.graphics.Color onSurface, androidx.compose.ui.graphics.Color surfaceVariant, androidx.compose.ui.graphics.Color onSurfaceVariant, androidx.compose.ui.graphics.Color surfaceTint, androidx.compose.ui.graphics.Color inverseSurface, androidx.compose.ui.graphics.Color inverseOnSurface, androidx.compose.ui.graphics.Color error, androidx.compose.ui.graphics.Color onError, androidx.compose.ui.graphics.Color errorContainer, androidx.compose.ui.graphics.Color onErrorContainer, androidx.compose.ui.graphics.Color outline, androidx.compose.ui.graphics.Color outlineVariant, androidx.compose.ui.graphics.Color scrim, androidx.compose.ui.graphics.Color surfaceBright, androidx.compose.ui.graphics.Color surfaceDim, androidx.compose.ui.graphics.Color surfaceContainer, androidx.compose.ui.graphics.Color surfaceContainerHigh, androidx.compose.ui.graphics.Color surfaceContainerHighest, androidx.compose.ui.graphics.Color surfaceContainerLow, androidx.compose.ui.graphics.Color surfaceContainerLowest);
+    ctor @KotlinOnly public ColorScheme(androidx.compose.ui.graphics.Color primary, androidx.compose.ui.graphics.Color onPrimary, androidx.compose.ui.graphics.Color primaryContainer, androidx.compose.ui.graphics.Color onPrimaryContainer, androidx.compose.ui.graphics.Color inversePrimary, androidx.compose.ui.graphics.Color secondary, androidx.compose.ui.graphics.Color onSecondary, androidx.compose.ui.graphics.Color secondaryContainer, androidx.compose.ui.graphics.Color onSecondaryContainer, androidx.compose.ui.graphics.Color tertiary, androidx.compose.ui.graphics.Color onTertiary, androidx.compose.ui.graphics.Color tertiaryContainer, androidx.compose.ui.graphics.Color onTertiaryContainer, androidx.compose.ui.graphics.Color background, androidx.compose.ui.graphics.Color onBackground, androidx.compose.ui.graphics.Color surface, androidx.compose.ui.graphics.Color onSurface, androidx.compose.ui.graphics.Color surfaceVariant, androidx.compose.ui.graphics.Color onSurfaceVariant, androidx.compose.ui.graphics.Color surfaceTint, androidx.compose.ui.graphics.Color inverseSurface, androidx.compose.ui.graphics.Color inverseOnSurface, androidx.compose.ui.graphics.Color error, androidx.compose.ui.graphics.Color onError, androidx.compose.ui.graphics.Color errorContainer, androidx.compose.ui.graphics.Color onErrorContainer, androidx.compose.ui.graphics.Color outline, androidx.compose.ui.graphics.Color outlineVariant, androidx.compose.ui.graphics.Color scrim, androidx.compose.ui.graphics.Color surfaceBright, androidx.compose.ui.graphics.Color surfaceDim, androidx.compose.ui.graphics.Color surfaceContainer, androidx.compose.ui.graphics.Color surfaceContainerHigh, androidx.compose.ui.graphics.Color surfaceContainerHighest, androidx.compose.ui.graphics.Color surfaceContainerLow, androidx.compose.ui.graphics.Color surfaceContainerLowest, androidx.compose.ui.graphics.Color primaryFixed, androidx.compose.ui.graphics.Color primaryFixedDim, androidx.compose.ui.graphics.Color onPrimaryFixed, androidx.compose.ui.graphics.Color onPrimaryFixedVariant, androidx.compose.ui.graphics.Color secondaryFixed, androidx.compose.ui.graphics.Color secondaryFixedDim, androidx.compose.ui.graphics.Color onSecondaryFixed, androidx.compose.ui.graphics.Color onSecondaryFixedVariant, androidx.compose.ui.graphics.Color tertiaryFixed, androidx.compose.ui.graphics.Color tertiaryFixedDim, androidx.compose.ui.graphics.Color onTertiaryFixed, androidx.compose.ui.graphics.Color onTertiaryFixedVariant);
+    ctor @BytecodeOnly @Deprecated public ColorScheme(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly @Deprecated public ColorScheme(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public ColorScheme(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @Deprecated public androidx.compose.material3.ColorScheme copy(optional long primary, optional long onPrimary, optional long primaryContainer, optional long onPrimaryContainer, optional long inversePrimary, optional long secondary, optional long onSecondary, optional long secondaryContainer, optional long onSecondaryContainer, optional long tertiary, optional long onTertiary, optional long tertiaryContainer, optional long onTertiaryContainer, optional long background, optional long onBackground, optional long surface, optional long onSurface, optional long surfaceVariant, optional long onSurfaceVariant, optional long surfaceTint, optional long inverseSurface, optional long inverseOnSurface, optional long error, optional long onError, optional long errorContainer, optional long onErrorContainer, optional long outline, optional long outlineVariant, optional long scrim);
     method @Deprecated public androidx.compose.material3.ColorScheme copy(optional long primary, optional long onPrimary, optional long primaryContainer, optional long onPrimaryContainer, optional long inversePrimary, optional long secondary, optional long onSecondary, optional long secondaryContainer, optional long onSecondaryContainer, optional long tertiary, optional long onTertiary, optional long tertiaryContainer, optional long onTertiaryContainer, optional long background, optional long onBackground, optional long surface, optional long onSurface, optional long surfaceVariant, optional long onSurfaceVariant, optional long surfaceTint, optional long inverseSurface, optional long inverseOnSurface, optional long error, optional long onError, optional long errorContainer, optional long onErrorContainer, optional long outline, optional long outlineVariant, optional long scrim, optional long surfaceBright, optional long surfaceDim, optional long surfaceContainer, optional long surfaceContainerHigh, optional long surfaceContainerHighest, optional long surfaceContainerLow, optional long surfaceContainerLowest);
     method public androidx.compose.material3.ColorScheme copy(optional long primary, optional long onPrimary, optional long primaryContainer, optional long onPrimaryContainer, optional long inversePrimary, optional long secondary, optional long onSecondary, optional long secondaryContainer, optional long onSecondaryContainer, optional long tertiary, optional long onTertiary, optional long tertiaryContainer, optional long onTertiaryContainer, optional long background, optional long onBackground, optional long surface, optional long onSurface, optional long surfaceVariant, optional long onSurfaceVariant, optional long surfaceTint, optional long inverseSurface, optional long inverseOnSurface, optional long error, optional long onError, optional long errorContainer, optional long onErrorContainer, optional long outline, optional long outlineVariant, optional long scrim, optional long surfaceBright, optional long surfaceDim, optional long surfaceContainer, optional long surfaceContainerHigh, optional long surfaceContainerHighest, optional long surfaceContainerLow, optional long surfaceContainerLowest, optional long primaryFixed, optional long primaryFixedDim, optional long onPrimaryFixed, optional long onPrimaryFixedVariant, optional long secondaryFixed, optional long secondaryFixedDim, optional long onSecondaryFixed, optional long onSecondaryFixedVariant, optional long tertiaryFixed, optional long tertiaryFixedDim, optional long onTertiaryFixed, optional long onTertiaryFixedVariant);
@@ -962,7 +970,8 @@ package androidx.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Immutable public final class DatePickerColors {
-    ctor public DatePickerColors(long containerColor, long titleContentColor, long headlineContentColor, long weekdayContentColor, long subheadContentColor, long navigationContentColor, long yearContentColor, long disabledYearContentColor, long currentYearContentColor, long selectedYearContentColor, long disabledSelectedYearContentColor, long selectedYearContainerColor, long disabledSelectedYearContainerColor, long dayContentColor, long disabledDayContentColor, long selectedDayContentColor, long disabledSelectedDayContentColor, long selectedDayContainerColor, long disabledSelectedDayContainerColor, long todayContentColor, long todayDateBorderColor, long dayInSelectionRangeContainerColor, long dayInSelectionRangeContentColor, long dividerColor, androidx.compose.material3.TextFieldColors dateTextFieldColors);
+    ctor @KotlinOnly public DatePickerColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color titleContentColor, androidx.compose.ui.graphics.Color headlineContentColor, androidx.compose.ui.graphics.Color weekdayContentColor, androidx.compose.ui.graphics.Color subheadContentColor, androidx.compose.ui.graphics.Color navigationContentColor, androidx.compose.ui.graphics.Color yearContentColor, androidx.compose.ui.graphics.Color disabledYearContentColor, androidx.compose.ui.graphics.Color currentYearContentColor, androidx.compose.ui.graphics.Color selectedYearContentColor, androidx.compose.ui.graphics.Color disabledSelectedYearContentColor, androidx.compose.ui.graphics.Color selectedYearContainerColor, androidx.compose.ui.graphics.Color disabledSelectedYearContainerColor, androidx.compose.ui.graphics.Color dayContentColor, androidx.compose.ui.graphics.Color disabledDayContentColor, androidx.compose.ui.graphics.Color selectedDayContentColor, androidx.compose.ui.graphics.Color disabledSelectedDayContentColor, androidx.compose.ui.graphics.Color selectedDayContainerColor, androidx.compose.ui.graphics.Color disabledSelectedDayContainerColor, androidx.compose.ui.graphics.Color todayContentColor, androidx.compose.ui.graphics.Color todayDateBorderColor, androidx.compose.ui.graphics.Color dayInSelectionRangeContainerColor, androidx.compose.ui.graphics.Color dayInSelectionRangeContentColor, androidx.compose.ui.graphics.Color dividerColor, androidx.compose.material3.TextFieldColors dateTextFieldColors);
+    ctor @BytecodeOnly public DatePickerColors(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, androidx.compose.material3.TextFieldColors!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.DatePickerColors copy(optional long containerColor, optional long titleContentColor, optional long headlineContentColor, optional long weekdayContentColor, optional long subheadContentColor, optional long navigationContentColor, optional long yearContentColor, optional long disabledYearContentColor, optional long currentYearContentColor, optional long selectedYearContentColor, optional long disabledSelectedYearContentColor, optional long selectedYearContainerColor, optional long disabledSelectedYearContainerColor, optional long dayContentColor, optional long disabledDayContentColor, optional long selectedDayContentColor, optional long disabledSelectedDayContentColor, optional long selectedDayContainerColor, optional long disabledSelectedDayContainerColor, optional long todayContentColor, optional long todayDateBorderColor, optional long dayInSelectionRangeContainerColor, optional long dayInSelectionRangeContentColor, optional long dividerColor, optional androidx.compose.material3.TextFieldColors? dateTextFieldColors);
     method @BytecodeOnly public androidx.compose.material3.DatePickerColors copy-tNwlRmA(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, androidx.compose.material3.TextFieldColors?);
     method public long getContainerColor();
@@ -1287,7 +1296,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class DragHandleColors {
-    ctor public DragHandleColors(long color, long pressedColor, long draggedColor);
+    ctor @KotlinOnly public DragHandleColors(androidx.compose.ui.graphics.Color color, androidx.compose.ui.graphics.Color pressedColor, androidx.compose.ui.graphics.Color draggedColor);
+    ctor @BytecodeOnly public DragHandleColors(long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public long getColor();
     method @BytecodeOnly public long getColor-0d7_KjU();
     method public long getDraggedColor();
@@ -1315,7 +1325,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class DragHandleSizes {
-    ctor public DragHandleSizes(long size, long pressedSize, long draggedSize);
+    ctor @KotlinOnly public DragHandleSizes(androidx.compose.ui.unit.DpSize size, androidx.compose.ui.unit.DpSize pressedSize, androidx.compose.ui.unit.DpSize draggedSize);
+    ctor @BytecodeOnly public DragHandleSizes(long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public long getDraggedSize();
     method @BytecodeOnly public long getDraggedSize-MYxV2XQ();
     method public long getPressedSize();
@@ -1399,7 +1410,8 @@ package androidx.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public final class ExitAlwaysFloatingToolbarScrollBehavior implements androidx.compose.material3.FloatingToolbarScrollBehavior {
-    ctor public ExitAlwaysFloatingToolbarScrollBehavior(int exitDirection, androidx.compose.material3.FloatingToolbarState state, androidx.compose.animation.core.AnimationSpec<java.lang.Float> snapAnimationSpec, androidx.compose.animation.core.DecayAnimationSpec<java.lang.Float> flingAnimationSpec);
+    ctor @KotlinOnly public ExitAlwaysFloatingToolbarScrollBehavior(androidx.compose.material3.FloatingToolbarExitDirection exitDirection, androidx.compose.material3.FloatingToolbarState state, androidx.compose.animation.core.AnimationSpec<java.lang.Float> snapAnimationSpec, androidx.compose.animation.core.DecayAnimationSpec<java.lang.Float> flingAnimationSpec);
+    ctor @BytecodeOnly public ExitAlwaysFloatingToolbarScrollBehavior(int, androidx.compose.material3.FloatingToolbarState!, androidx.compose.animation.core.AnimationSpec!, androidx.compose.animation.core.DecayAnimationSpec!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.ui.Modifier floatingScrollBehavior(androidx.compose.ui.Modifier);
     method public int getExitDirection();
     method @BytecodeOnly public int getExitDirection-8LIK8-E();
@@ -1618,7 +1630,8 @@ package androidx.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Immutable public final class FloatingToolbarColors {
-    ctor public FloatingToolbarColors(long toolbarContainerColor, long toolbarContentColor, long fabContainerColor, long fabContentColor);
+    ctor @KotlinOnly public FloatingToolbarColors(androidx.compose.ui.graphics.Color toolbarContainerColor, androidx.compose.ui.graphics.Color toolbarContentColor, androidx.compose.ui.graphics.Color fabContainerColor, androidx.compose.ui.graphics.Color fabContentColor);
+    ctor @BytecodeOnly public FloatingToolbarColors(long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.FloatingToolbarColors copy(optional long toolbarContainerColor, optional long toolbarContentColor, optional long fabContainerColor, optional long fabContentColor);
     method @BytecodeOnly public androidx.compose.material3.FloatingToolbarColors copy-jRlVdoo(long, long, long, long);
     method public long getFabContainerColor();
@@ -1861,7 +1874,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class IconButtonColors {
-    ctor public IconButtonColors(long containerColor, long contentColor, long disabledContainerColor, long disabledContentColor);
+    ctor @KotlinOnly public IconButtonColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color contentColor, androidx.compose.ui.graphics.Color disabledContainerColor, androidx.compose.ui.graphics.Color disabledContentColor);
+    ctor @BytecodeOnly public IconButtonColors(long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.IconButtonColors copy(optional long containerColor, optional long contentColor, optional long disabledContainerColor, optional long disabledContentColor);
     method @BytecodeOnly public androidx.compose.material3.IconButtonColors copy-jRlVdoo(long, long, long, long);
     method public long getContainerColor();
@@ -2133,7 +2147,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class IconToggleButtonColors {
-    ctor public IconToggleButtonColors(long containerColor, long contentColor, long disabledContainerColor, long disabledContentColor, long checkedContainerColor, long checkedContentColor);
+    ctor @KotlinOnly public IconToggleButtonColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color contentColor, androidx.compose.ui.graphics.Color disabledContainerColor, androidx.compose.ui.graphics.Color disabledContentColor, androidx.compose.ui.graphics.Color checkedContainerColor, androidx.compose.ui.graphics.Color checkedContentColor);
+    ctor @BytecodeOnly public IconToggleButtonColors(long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.IconToggleButtonColors copy(optional long containerColor, optional long contentColor, optional long disabledContainerColor, optional long disabledContentColor, optional long checkedContainerColor, optional long checkedContentColor);
     method @BytecodeOnly public androidx.compose.material3.IconToggleButtonColors copy-tNS2XkQ(long, long, long, long, long, long);
     method public long getCheckedContainerColor();
@@ -2205,7 +2220,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class ListItemColors {
-    ctor public ListItemColors(long containerColor, long headlineColor, long leadingIconColor, long overlineColor, long supportingTextColor, long trailingIconColor, long disabledHeadlineColor, long disabledLeadingIconColor, long disabledTrailingIconColor);
+    ctor @KotlinOnly public ListItemColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color headlineColor, androidx.compose.ui.graphics.Color leadingIconColor, androidx.compose.ui.graphics.Color overlineColor, androidx.compose.ui.graphics.Color supportingTextColor, androidx.compose.ui.graphics.Color trailingIconColor, androidx.compose.ui.graphics.Color disabledHeadlineColor, androidx.compose.ui.graphics.Color disabledLeadingIconColor, androidx.compose.ui.graphics.Color disabledTrailingIconColor);
+    ctor @BytecodeOnly public ListItemColors(long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.ListItemColors copy(optional long containerColor, optional long headlineColor, optional long leadingIconColor, optional long overlineColor, optional long supportingTextColor, optional long trailingIconColor, optional long disabledHeadlineColor, optional long disabledLeadingIconColor, optional long disabledTrailingIconColor);
     method @BytecodeOnly public androidx.compose.material3.ListItemColors copy-5r9EGqc(long, long, long, long, long, long, long, long, long);
     method public long getContainerColor();
@@ -2437,7 +2453,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class MenuItemColors {
-    ctor public MenuItemColors(long textColor, long leadingIconColor, long trailingIconColor, long disabledTextColor, long disabledLeadingIconColor, long disabledTrailingIconColor);
+    ctor @KotlinOnly public MenuItemColors(androidx.compose.ui.graphics.Color textColor, androidx.compose.ui.graphics.Color leadingIconColor, androidx.compose.ui.graphics.Color trailingIconColor, androidx.compose.ui.graphics.Color disabledTextColor, androidx.compose.ui.graphics.Color disabledLeadingIconColor, androidx.compose.ui.graphics.Color disabledTrailingIconColor);
+    ctor @BytecodeOnly public MenuItemColors(long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.MenuItemColors copy(optional long textColor, optional long leadingIconColor, optional long trailingIconColor, optional long disabledTextColor, optional long disabledLeadingIconColor, optional long disabledTrailingIconColor);
     method @BytecodeOnly public androidx.compose.material3.MenuItemColors copy-tNS2XkQ(long, long, long, long, long, long);
     method public long getDisabledLeadingIconColor();
@@ -2574,7 +2591,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class NavigationBarItemColors {
-    ctor public NavigationBarItemColors(long selectedIconColor, long selectedTextColor, long selectedIndicatorColor, long unselectedIconColor, long unselectedTextColor, long disabledIconColor, long disabledTextColor);
+    ctor @KotlinOnly public NavigationBarItemColors(androidx.compose.ui.graphics.Color selectedIconColor, androidx.compose.ui.graphics.Color selectedTextColor, androidx.compose.ui.graphics.Color selectedIndicatorColor, androidx.compose.ui.graphics.Color unselectedIconColor, androidx.compose.ui.graphics.Color unselectedTextColor, androidx.compose.ui.graphics.Color disabledIconColor, androidx.compose.ui.graphics.Color disabledTextColor);
+    ctor @BytecodeOnly public NavigationBarItemColors(long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.NavigationBarItemColors copy(optional long selectedIconColor, optional long selectedTextColor, optional long selectedIndicatorColor, optional long unselectedIconColor, optional long unselectedTextColor, optional long disabledIconColor, optional long disabledTextColor);
     method @BytecodeOnly public androidx.compose.material3.NavigationBarItemColors copy-4JmcsL4(long, long, long, long, long, long, long);
     method public long getDisabledIconColor();
@@ -2685,7 +2703,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class NavigationItemColors {
-    ctor public NavigationItemColors(long selectedIconColor, long selectedTextColor, long selectedIndicatorColor, long unselectedIconColor, long unselectedTextColor, long disabledIconColor, long disabledTextColor);
+    ctor @KotlinOnly public NavigationItemColors(androidx.compose.ui.graphics.Color selectedIconColor, androidx.compose.ui.graphics.Color selectedTextColor, androidx.compose.ui.graphics.Color selectedIndicatorColor, androidx.compose.ui.graphics.Color unselectedIconColor, androidx.compose.ui.graphics.Color unselectedTextColor, androidx.compose.ui.graphics.Color disabledIconColor, androidx.compose.ui.graphics.Color disabledTextColor);
+    ctor @BytecodeOnly public NavigationItemColors(long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.NavigationItemColors copy(optional long selectedIconColor, optional long selectedTextColor, optional long selectedIndicatorColor, optional long unselectedIconColor, optional long unselectedTextColor, optional long disabledIconColor, optional long disabledTextColor);
     method @BytecodeOnly public androidx.compose.material3.NavigationItemColors copy-4JmcsL4(long, long, long, long, long, long, long);
     method public long getDisabledIconColor();
@@ -2741,7 +2760,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class NavigationRailItemColors {
-    ctor public NavigationRailItemColors(long selectedIconColor, long selectedTextColor, long selectedIndicatorColor, long unselectedIconColor, long unselectedTextColor, long disabledIconColor, long disabledTextColor);
+    ctor @KotlinOnly public NavigationRailItemColors(androidx.compose.ui.graphics.Color selectedIconColor, androidx.compose.ui.graphics.Color selectedTextColor, androidx.compose.ui.graphics.Color selectedIndicatorColor, androidx.compose.ui.graphics.Color unselectedIconColor, androidx.compose.ui.graphics.Color unselectedTextColor, androidx.compose.ui.graphics.Color disabledIconColor, androidx.compose.ui.graphics.Color disabledTextColor);
+    ctor @BytecodeOnly public NavigationRailItemColors(long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.NavigationRailItemColors copy(optional long selectedIconColor, optional long selectedTextColor, optional long selectedIndicatorColor, optional long unselectedIconColor, optional long unselectedTextColor, optional long disabledIconColor, optional long disabledTextColor);
     method @BytecodeOnly public androidx.compose.material3.NavigationRailItemColors copy-4JmcsL4(long, long, long, long, long, long, long);
     method public long getDisabledIconColor();
@@ -2929,7 +2949,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class RadioButtonColors {
-    ctor public RadioButtonColors(long selectedColor, long unselectedColor, long disabledSelectedColor, long disabledUnselectedColor);
+    ctor @KotlinOnly public RadioButtonColors(androidx.compose.ui.graphics.Color selectedColor, androidx.compose.ui.graphics.Color unselectedColor, androidx.compose.ui.graphics.Color disabledSelectedColor, androidx.compose.ui.graphics.Color disabledUnselectedColor);
+    ctor @BytecodeOnly public RadioButtonColors(long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.RadioButtonColors copy(optional long selectedColor, optional long unselectedColor, optional long disabledSelectedColor, optional long disabledUnselectedColor);
     method @BytecodeOnly public androidx.compose.material3.RadioButtonColors copy-jRlVdoo(long, long, long, long);
     method public long getDisabledSelectedColor();
@@ -2983,7 +3004,8 @@ package androidx.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Immutable @androidx.compose.runtime.Stable public final class RichTooltipColors {
-    ctor public RichTooltipColors(long containerColor, long contentColor, long titleContentColor, long actionContentColor);
+    ctor @KotlinOnly public RichTooltipColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color contentColor, androidx.compose.ui.graphics.Color titleContentColor, androidx.compose.ui.graphics.Color actionContentColor);
+    ctor @BytecodeOnly public RichTooltipColors(long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.RichTooltipColors copy(optional long containerColor, optional long contentColor, optional long titleContentColor, optional long actionContentColor);
     method @BytecodeOnly public androidx.compose.material3.RichTooltipColors copy-jRlVdoo(long, long, long, long);
     method public long getActionContentColor();
@@ -3002,7 +3024,8 @@ package androidx.compose.material3 {
 
   @androidx.compose.runtime.Immutable public final class RippleConfiguration {
     ctor public RippleConfiguration();
-    ctor public RippleConfiguration(optional long color, optional androidx.compose.material.ripple.RippleAlpha? rippleAlpha);
+    ctor @KotlinOnly public RippleConfiguration(optional androidx.compose.ui.graphics.Color color, optional androidx.compose.material.ripple.RippleAlpha? rippleAlpha);
+    ctor @BytecodeOnly public RippleConfiguration(long, androidx.compose.material.ripple.RippleAlpha!, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public long getColor();
     method @BytecodeOnly public long getColor-0d7_KjU();
     method public androidx.compose.material.ripple.RippleAlpha? getRippleAlpha();
@@ -3038,8 +3061,10 @@ package androidx.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Immutable public final class SearchBarColors {
-    ctor @Deprecated public SearchBarColors(long containerColor, long dividerColor);
-    ctor public SearchBarColors(long containerColor, long dividerColor, androidx.compose.material3.TextFieldColors inputFieldColors);
+    ctor @KotlinOnly @Deprecated public SearchBarColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color dividerColor);
+    ctor @KotlinOnly public SearchBarColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color dividerColor, androidx.compose.material3.TextFieldColors inputFieldColors);
+    ctor @BytecodeOnly public SearchBarColors(long, long, androidx.compose.material3.TextFieldColors!, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly @Deprecated public SearchBarColors(long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public long getContainerColor();
     method @BytecodeOnly public long getContainerColor-0d7_KjU();
     method public long getDividerColor();
@@ -3168,7 +3193,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class SegmentedButtonColors {
-    ctor public SegmentedButtonColors(long activeContainerColor, long activeContentColor, long activeBorderColor, long inactiveContainerColor, long inactiveContentColor, long inactiveBorderColor, long disabledActiveContainerColor, long disabledActiveContentColor, long disabledActiveBorderColor, long disabledInactiveContainerColor, long disabledInactiveContentColor, long disabledInactiveBorderColor);
+    ctor @KotlinOnly public SegmentedButtonColors(androidx.compose.ui.graphics.Color activeContainerColor, androidx.compose.ui.graphics.Color activeContentColor, androidx.compose.ui.graphics.Color activeBorderColor, androidx.compose.ui.graphics.Color inactiveContainerColor, androidx.compose.ui.graphics.Color inactiveContentColor, androidx.compose.ui.graphics.Color inactiveBorderColor, androidx.compose.ui.graphics.Color disabledActiveContainerColor, androidx.compose.ui.graphics.Color disabledActiveContentColor, androidx.compose.ui.graphics.Color disabledActiveBorderColor, androidx.compose.ui.graphics.Color disabledInactiveContainerColor, androidx.compose.ui.graphics.Color disabledInactiveContentColor, androidx.compose.ui.graphics.Color disabledInactiveBorderColor);
+    ctor @BytecodeOnly public SegmentedButtonColors(long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.SegmentedButtonColors copy(optional long activeContainerColor, optional long activeContentColor, optional long activeBorderColor, optional long inactiveContainerColor, optional long inactiveContentColor, optional long inactiveBorderColor, optional long disabledActiveContainerColor, optional long disabledActiveContentColor, optional long disabledActiveBorderColor, optional long disabledInactiveContainerColor, optional long disabledInactiveContentColor, optional long disabledInactiveBorderColor);
     method @BytecodeOnly public androidx.compose.material3.SegmentedButtonColors copy-2qZNXz8(long, long, long, long, long, long, long, long, long, long, long, long);
     method public long getActiveBorderColor();
@@ -3252,13 +3278,15 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class SelectableChipColors {
-    ctor public SelectableChipColors(long containerColor, long labelColor, long leadingIconColor, long trailingIconColor, long disabledContainerColor, long disabledLabelColor, long disabledLeadingIconColor, long disabledTrailingIconColor, long selectedContainerColor, long disabledSelectedContainerColor, long selectedLabelColor, long selectedLeadingIconColor, long selectedTrailingIconColor);
+    ctor @KotlinOnly public SelectableChipColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color labelColor, androidx.compose.ui.graphics.Color leadingIconColor, androidx.compose.ui.graphics.Color trailingIconColor, androidx.compose.ui.graphics.Color disabledContainerColor, androidx.compose.ui.graphics.Color disabledLabelColor, androidx.compose.ui.graphics.Color disabledLeadingIconColor, androidx.compose.ui.graphics.Color disabledTrailingIconColor, androidx.compose.ui.graphics.Color selectedContainerColor, androidx.compose.ui.graphics.Color disabledSelectedContainerColor, androidx.compose.ui.graphics.Color selectedLabelColor, androidx.compose.ui.graphics.Color selectedLeadingIconColor, androidx.compose.ui.graphics.Color selectedTrailingIconColor);
+    ctor @BytecodeOnly public SelectableChipColors(long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.SelectableChipColors copy(optional long containerColor, optional long labelColor, optional long leadingIconColor, optional long trailingIconColor, optional long disabledContainerColor, optional long disabledLabelColor, optional long disabledLeadingIconColor, optional long disabledTrailingIconColor, optional long selectedContainerColor, optional long disabledSelectedContainerColor, optional long selectedLabelColor, optional long selectedLeadingIconColor, optional long selectedTrailingIconColor);
     method @BytecodeOnly public androidx.compose.material3.SelectableChipColors copy-daRQuJA(long, long, long, long, long, long, long, long, long, long, long, long, long);
   }
 
   @androidx.compose.runtime.Immutable public final class SelectableChipElevation {
-    ctor public SelectableChipElevation(float elevation, float pressedElevation, float focusedElevation, float hoveredElevation, float draggedElevation, float disabledElevation);
+    ctor @KotlinOnly public SelectableChipElevation(androidx.compose.ui.unit.Dp elevation, androidx.compose.ui.unit.Dp pressedElevation, androidx.compose.ui.unit.Dp focusedElevation, androidx.compose.ui.unit.Dp hoveredElevation, androidx.compose.ui.unit.Dp draggedElevation, androidx.compose.ui.unit.Dp disabledElevation);
+    ctor @BytecodeOnly public SelectableChipElevation(float, float, float, float, float, float, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public float getDisabledElevation();
     method @BytecodeOnly public float getDisabledElevation-D9Ej5fM();
     method public float getDraggedElevation();
@@ -3329,7 +3357,7 @@ package androidx.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Stable public final class SheetState {
-    ctor @Deprecated public SheetState(boolean skipPartiallyExpanded, androidx.compose.ui.unit.Density density, optional androidx.compose.material3.SheetValue initialValue, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.SheetValue,java.lang.Boolean> confirmValueChange, optional boolean skipHiddenState);
+    ctor @BytecodeOnly @Deprecated public SheetState(boolean, androidx.compose.ui.unit.Density!, androidx.compose.material3.SheetValue!, kotlin.jvm.functions.Function1!, boolean);
     ctor public SheetState(boolean skipPartiallyExpanded, kotlin.jvm.functions.Function0<java.lang.Float> positionalThreshold, kotlin.jvm.functions.Function0<java.lang.Float> velocityThreshold, optional androidx.compose.material3.SheetValue initialValue, optional kotlin.jvm.functions.Function1<? super androidx.compose.material3.SheetValue,java.lang.Boolean> confirmValueChange, optional boolean skipHiddenState);
     method public suspend Object? expand(kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method public androidx.compose.material3.SheetValue getCurrentValue();
@@ -3470,7 +3498,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class SliderColors {
-    ctor public SliderColors(long thumbColor, long activeTrackColor, long activeTickColor, long inactiveTrackColor, long inactiveTickColor, long disabledThumbColor, long disabledActiveTrackColor, long disabledActiveTickColor, long disabledInactiveTrackColor, long disabledInactiveTickColor);
+    ctor @KotlinOnly public SliderColors(androidx.compose.ui.graphics.Color thumbColor, androidx.compose.ui.graphics.Color activeTrackColor, androidx.compose.ui.graphics.Color activeTickColor, androidx.compose.ui.graphics.Color inactiveTrackColor, androidx.compose.ui.graphics.Color inactiveTickColor, androidx.compose.ui.graphics.Color disabledThumbColor, androidx.compose.ui.graphics.Color disabledActiveTrackColor, androidx.compose.ui.graphics.Color disabledActiveTickColor, androidx.compose.ui.graphics.Color disabledInactiveTrackColor, androidx.compose.ui.graphics.Color disabledInactiveTickColor);
+    ctor @BytecodeOnly public SliderColors(long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.SliderColors copy(optional long thumbColor, optional long activeTrackColor, optional long activeTickColor, optional long inactiveTrackColor, optional long inactiveTickColor, optional long disabledThumbColor, optional long disabledActiveTrackColor, optional long disabledActiveTickColor, optional long disabledInactiveTrackColor, optional long disabledInactiveTickColor);
     method @BytecodeOnly public androidx.compose.material3.SliderColors copy--K518z4(long, long, long, long, long, long, long, long, long, long);
     method public long getActiveTickColor();
@@ -3902,7 +3931,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class SwitchColors {
-    ctor public SwitchColors(long checkedThumbColor, long checkedTrackColor, long checkedBorderColor, long checkedIconColor, long uncheckedThumbColor, long uncheckedTrackColor, long uncheckedBorderColor, long uncheckedIconColor, long disabledCheckedThumbColor, long disabledCheckedTrackColor, long disabledCheckedBorderColor, long disabledCheckedIconColor, long disabledUncheckedThumbColor, long disabledUncheckedTrackColor, long disabledUncheckedBorderColor, long disabledUncheckedIconColor);
+    ctor @KotlinOnly public SwitchColors(androidx.compose.ui.graphics.Color checkedThumbColor, androidx.compose.ui.graphics.Color checkedTrackColor, androidx.compose.ui.graphics.Color checkedBorderColor, androidx.compose.ui.graphics.Color checkedIconColor, androidx.compose.ui.graphics.Color uncheckedThumbColor, androidx.compose.ui.graphics.Color uncheckedTrackColor, androidx.compose.ui.graphics.Color uncheckedBorderColor, androidx.compose.ui.graphics.Color uncheckedIconColor, androidx.compose.ui.graphics.Color disabledCheckedThumbColor, androidx.compose.ui.graphics.Color disabledCheckedTrackColor, androidx.compose.ui.graphics.Color disabledCheckedBorderColor, androidx.compose.ui.graphics.Color disabledCheckedIconColor, androidx.compose.ui.graphics.Color disabledUncheckedThumbColor, androidx.compose.ui.graphics.Color disabledUncheckedTrackColor, androidx.compose.ui.graphics.Color disabledUncheckedBorderColor, androidx.compose.ui.graphics.Color disabledUncheckedIconColor);
+    ctor @BytecodeOnly public SwitchColors(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.SwitchColors copy(optional long checkedThumbColor, optional long checkedTrackColor, optional long checkedBorderColor, optional long checkedIconColor, optional long uncheckedThumbColor, optional long uncheckedTrackColor, optional long uncheckedBorderColor, optional long uncheckedIconColor, optional long disabledCheckedThumbColor, optional long disabledCheckedTrackColor, optional long disabledCheckedBorderColor, optional long disabledCheckedIconColor, optional long disabledUncheckedThumbColor, optional long disabledUncheckedTrackColor, optional long disabledUncheckedBorderColor, optional long disabledUncheckedIconColor);
     method @BytecodeOnly public androidx.compose.material3.SwitchColors copy-Q_H9qLU(long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long);
     method public long getCheckedBorderColor();
@@ -4055,7 +4085,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class TextFieldColors {
-    ctor public TextFieldColors(long focusedTextColor, long unfocusedTextColor, long disabledTextColor, long errorTextColor, long focusedContainerColor, long unfocusedContainerColor, long disabledContainerColor, long errorContainerColor, long cursorColor, long errorCursorColor, androidx.compose.foundation.text.selection.TextSelectionColors textSelectionColors, long focusedIndicatorColor, long unfocusedIndicatorColor, long disabledIndicatorColor, long errorIndicatorColor, long focusedLeadingIconColor, long unfocusedLeadingIconColor, long disabledLeadingIconColor, long errorLeadingIconColor, long focusedTrailingIconColor, long unfocusedTrailingIconColor, long disabledTrailingIconColor, long errorTrailingIconColor, long focusedLabelColor, long unfocusedLabelColor, long disabledLabelColor, long errorLabelColor, long focusedPlaceholderColor, long unfocusedPlaceholderColor, long disabledPlaceholderColor, long errorPlaceholderColor, long focusedSupportingTextColor, long unfocusedSupportingTextColor, long disabledSupportingTextColor, long errorSupportingTextColor, long focusedPrefixColor, long unfocusedPrefixColor, long disabledPrefixColor, long errorPrefixColor, long focusedSuffixColor, long unfocusedSuffixColor, long disabledSuffixColor, long errorSuffixColor);
+    ctor @KotlinOnly public TextFieldColors(androidx.compose.ui.graphics.Color focusedTextColor, androidx.compose.ui.graphics.Color unfocusedTextColor, androidx.compose.ui.graphics.Color disabledTextColor, androidx.compose.ui.graphics.Color errorTextColor, androidx.compose.ui.graphics.Color focusedContainerColor, androidx.compose.ui.graphics.Color unfocusedContainerColor, androidx.compose.ui.graphics.Color disabledContainerColor, androidx.compose.ui.graphics.Color errorContainerColor, androidx.compose.ui.graphics.Color cursorColor, androidx.compose.ui.graphics.Color errorCursorColor, androidx.compose.foundation.text.selection.TextSelectionColors textSelectionColors, androidx.compose.ui.graphics.Color focusedIndicatorColor, androidx.compose.ui.graphics.Color unfocusedIndicatorColor, androidx.compose.ui.graphics.Color disabledIndicatorColor, androidx.compose.ui.graphics.Color errorIndicatorColor, androidx.compose.ui.graphics.Color focusedLeadingIconColor, androidx.compose.ui.graphics.Color unfocusedLeadingIconColor, androidx.compose.ui.graphics.Color disabledLeadingIconColor, androidx.compose.ui.graphics.Color errorLeadingIconColor, androidx.compose.ui.graphics.Color focusedTrailingIconColor, androidx.compose.ui.graphics.Color unfocusedTrailingIconColor, androidx.compose.ui.graphics.Color disabledTrailingIconColor, androidx.compose.ui.graphics.Color errorTrailingIconColor, androidx.compose.ui.graphics.Color focusedLabelColor, androidx.compose.ui.graphics.Color unfocusedLabelColor, androidx.compose.ui.graphics.Color disabledLabelColor, androidx.compose.ui.graphics.Color errorLabelColor, androidx.compose.ui.graphics.Color focusedPlaceholderColor, androidx.compose.ui.graphics.Color unfocusedPlaceholderColor, androidx.compose.ui.graphics.Color disabledPlaceholderColor, androidx.compose.ui.graphics.Color errorPlaceholderColor, androidx.compose.ui.graphics.Color focusedSupportingTextColor, androidx.compose.ui.graphics.Color unfocusedSupportingTextColor, androidx.compose.ui.graphics.Color disabledSupportingTextColor, androidx.compose.ui.graphics.Color errorSupportingTextColor, androidx.compose.ui.graphics.Color focusedPrefixColor, androidx.compose.ui.graphics.Color unfocusedPrefixColor, androidx.compose.ui.graphics.Color disabledPrefixColor, androidx.compose.ui.graphics.Color errorPrefixColor, androidx.compose.ui.graphics.Color focusedSuffixColor, androidx.compose.ui.graphics.Color unfocusedSuffixColor, androidx.compose.ui.graphics.Color disabledSuffixColor, androidx.compose.ui.graphics.Color errorSuffixColor);
+    ctor @BytecodeOnly public TextFieldColors(long, long, long, long, long, long, long, long, long, long, androidx.compose.foundation.text.selection.TextSelectionColors!, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.TextFieldColors copy(optional long focusedTextColor, optional long unfocusedTextColor, optional long disabledTextColor, optional long errorTextColor, optional long focusedContainerColor, optional long unfocusedContainerColor, optional long disabledContainerColor, optional long errorContainerColor, optional long cursorColor, optional long errorCursorColor, optional androidx.compose.foundation.text.selection.TextSelectionColors? textSelectionColors, optional long focusedIndicatorColor, optional long unfocusedIndicatorColor, optional long disabledIndicatorColor, optional long errorIndicatorColor, optional long focusedLeadingIconColor, optional long unfocusedLeadingIconColor, optional long disabledLeadingIconColor, optional long errorLeadingIconColor, optional long focusedTrailingIconColor, optional long unfocusedTrailingIconColor, optional long disabledTrailingIconColor, optional long errorTrailingIconColor, optional long focusedLabelColor, optional long unfocusedLabelColor, optional long disabledLabelColor, optional long errorLabelColor, optional long focusedPlaceholderColor, optional long unfocusedPlaceholderColor, optional long disabledPlaceholderColor, optional long errorPlaceholderColor, optional long focusedSupportingTextColor, optional long unfocusedSupportingTextColor, optional long disabledSupportingTextColor, optional long errorSupportingTextColor, optional long focusedPrefixColor, optional long unfocusedPrefixColor, optional long disabledPrefixColor, optional long errorPrefixColor, optional long focusedSuffixColor, optional long unfocusedSuffixColor, optional long disabledSuffixColor, optional long errorSuffixColor);
     method @BytecodeOnly public androidx.compose.material3.TextFieldColors copy-ejIjP34(long, long, long, long, long, long, long, long, long, long, androidx.compose.foundation.text.selection.TextSelectionColors?, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long, long);
     method public long getCursorColor();
@@ -4300,7 +4331,8 @@ package androidx.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Immutable public final class TimePickerColors {
-    ctor public TimePickerColors(long clockDialColor, long selectorColor, long containerColor, long periodSelectorBorderColor, long clockDialSelectedContentColor, long clockDialUnselectedContentColor, long periodSelectorSelectedContainerColor, long periodSelectorUnselectedContainerColor, long periodSelectorSelectedContentColor, long periodSelectorUnselectedContentColor, long timeSelectorSelectedContainerColor, long timeSelectorUnselectedContainerColor, long timeSelectorSelectedContentColor, long timeSelectorUnselectedContentColor);
+    ctor @KotlinOnly public TimePickerColors(androidx.compose.ui.graphics.Color clockDialColor, androidx.compose.ui.graphics.Color selectorColor, androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color periodSelectorBorderColor, androidx.compose.ui.graphics.Color clockDialSelectedContentColor, androidx.compose.ui.graphics.Color clockDialUnselectedContentColor, androidx.compose.ui.graphics.Color periodSelectorSelectedContainerColor, androidx.compose.ui.graphics.Color periodSelectorUnselectedContainerColor, androidx.compose.ui.graphics.Color periodSelectorSelectedContentColor, androidx.compose.ui.graphics.Color periodSelectorUnselectedContentColor, androidx.compose.ui.graphics.Color timeSelectorSelectedContainerColor, androidx.compose.ui.graphics.Color timeSelectorUnselectedContainerColor, androidx.compose.ui.graphics.Color timeSelectorSelectedContentColor, androidx.compose.ui.graphics.Color timeSelectorUnselectedContentColor);
+    ctor @BytecodeOnly public TimePickerColors(long, long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.TimePickerColors copy(optional long clockDialColor, optional long selectorColor, optional long containerColor, optional long periodSelectorBorderColor, optional long clockDialSelectedContentColor, optional long clockDialUnselectedContentColor, optional long periodSelectorSelectedContainerColor, optional long periodSelectorUnselectedContainerColor, optional long periodSelectorSelectedContentColor, optional long periodSelectorUnselectedContentColor, optional long timeSelectorSelectedContainerColor, optional long timeSelectorUnselectedContainerColor, optional long timeSelectorSelectedContentColor, optional long timeSelectorUnselectedContentColor);
     method @BytecodeOnly public androidx.compose.material3.TimePickerColors copy-dVHXu7A(long, long, long, long, long, long, long, long, long, long, long, long, long, long);
     method public long getClockDialColor();
@@ -4456,7 +4488,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class ToggleButtonColors {
-    ctor public ToggleButtonColors(long containerColor, long contentColor, long disabledContainerColor, long disabledContentColor, long checkedContainerColor, long checkedContentColor);
+    ctor @KotlinOnly public ToggleButtonColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color contentColor, androidx.compose.ui.graphics.Color disabledContainerColor, androidx.compose.ui.graphics.Color disabledContentColor, androidx.compose.ui.graphics.Color checkedContainerColor, androidx.compose.ui.graphics.Color checkedContentColor);
+    ctor @BytecodeOnly public ToggleButtonColors(long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.ToggleButtonColors copy(optional long containerColor, optional long contentColor, optional long disabledContainerColor, optional long disabledContentColor, optional long checkedContainerColor, optional long checkedContentColor);
     method @BytecodeOnly public androidx.compose.material3.ToggleButtonColors copy-tNS2XkQ(long, long, long, long, long, long);
     method public long getCheckedContainerColor();
@@ -4697,8 +4730,10 @@ package androidx.compose.material3 {
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Stable public final class TopAppBarColors {
-    ctor @Deprecated public TopAppBarColors(long containerColor, long scrolledContainerColor, long navigationIconContentColor, long titleContentColor, long actionIconContentColor);
-    ctor public TopAppBarColors(long containerColor, long scrolledContainerColor, long navigationIconContentColor, long titleContentColor, long actionIconContentColor, long subtitleContentColor);
+    ctor @KotlinOnly @Deprecated public TopAppBarColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color scrolledContainerColor, androidx.compose.ui.graphics.Color navigationIconContentColor, androidx.compose.ui.graphics.Color titleContentColor, androidx.compose.ui.graphics.Color actionIconContentColor);
+    ctor @KotlinOnly public TopAppBarColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color scrolledContainerColor, androidx.compose.ui.graphics.Color navigationIconContentColor, androidx.compose.ui.graphics.Color titleContentColor, androidx.compose.ui.graphics.Color actionIconContentColor, androidx.compose.ui.graphics.Color subtitleContentColor);
+    ctor @BytecodeOnly @Deprecated public TopAppBarColors(long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
+    ctor @BytecodeOnly public TopAppBarColors(long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.TopAppBarColors copy(optional long containerColor, optional long scrolledContainerColor, optional long navigationIconContentColor, optional long titleContentColor, optional long actionIconContentColor, optional long subtitleContentColor);
     method @BytecodeOnly public androidx.compose.material3.TopAppBarColors copy-tNS2XkQ(long, long, long, long, long, long);
     method public long getActionIconContentColor();
@@ -5079,7 +5114,8 @@ package androidx.compose.material3 {
   }
 
   @androidx.compose.runtime.Immutable public final class WideNavigationRailColors {
-    ctor public WideNavigationRailColors(long containerColor, long contentColor, long modalContainerColor, long modalScrimColor);
+    ctor @KotlinOnly public WideNavigationRailColors(androidx.compose.ui.graphics.Color containerColor, androidx.compose.ui.graphics.Color contentColor, androidx.compose.ui.graphics.Color modalContainerColor, androidx.compose.ui.graphics.Color modalScrimColor);
+    ctor @BytecodeOnly public WideNavigationRailColors(long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.compose.material3.WideNavigationRailColors copy(optional long containerColor, optional long contentColor, optional long modalContainerColor, optional long modalScrimColor);
     method @BytecodeOnly public androidx.compose.material3.WideNavigationRailColors copy-jRlVdoo(long, long, long, long);
     method public long getContainerColor();
