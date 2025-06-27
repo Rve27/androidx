@@ -16,10 +16,7 @@
 
 package androidx.pdf.view
 
-import android.R as androidR
 import android.animation.ValueAnimator
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -37,9 +34,6 @@ import android.util.Range
 import android.util.SparseArray
 import android.view.ActionMode
 import android.view.KeyEvent
-import android.view.Menu
-import android.view.Menu.NONE
-import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
@@ -62,9 +56,7 @@ import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.exceptions.RequestFailedException
 import androidx.pdf.models.FormWidgetInfo
 import androidx.pdf.selection.ContextMenuComponent
-import androidx.pdf.selection.PdfSelectionMenuKeys
-import androidx.pdf.selection.SelectionMenuComponent
-import androidx.pdf.selection.SelectionMenuSession
+import androidx.pdf.selection.SelectionActionModeCallback
 import androidx.pdf.util.Accessibility
 import androidx.pdf.util.MathUtils
 import androidx.pdf.util.ZoomUtils
@@ -315,8 +307,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private var linkClickListener: LinkClickListener? = null
 
     /** The [ActionMode.Callback2] for selection */
-    private val selectionActionModeCallback: DefaultSelectionActionModeCallback =
-        DefaultSelectionActionModeCallback(this)
+    private val selectionActionModeCallback: SelectionActionModeCallback =
+        SelectionActionModeCallback(this)
 
     /** Interface to customize the set of actions in the selection menu */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -328,7 +320,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         public fun onPrepareSelectionMenuItems(components: MutableList<ContextMenuComponent>)
     }
 
-    private var selectionMenuItemPreparer: SelectionMenuItemPreparer? = null
+    internal var selectionMenuItemPreparer: SelectionMenuItemPreparer? = null
+        private set
 
     /**
      * The [SelectionMenuItemPreparer] for this View. If null, a default set of selection menu
@@ -374,7 +367,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     internal var backgroundScope: CoroutineScope =
         CoroutineScope(Executors.newFixedThreadPool(5).asCoroutineDispatcher() + SupervisorJob())
 
-    private var pageMetadataLoader: PageMetadataLoader? = null
+    internal var pageMetadataLoader: PageMetadataLoader? = null
+        private set
+
     private var pageManager: PageManager? = null
     private var formWidgetInteractionHandler: FormWidgetInteractionHandler? = null
     private var layoutInfoCollector: Job? = null
@@ -535,10 +530,18 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
     private var selectionStateManager: SelectionStateManager? = null
     private val selectionRenderer = SelectionRenderer(context)
-    private var selectionActionMode: ActionMode? = null
 
     // True if the zoom was calculated before the layouting completed and needs to be recalculated
     private var pendingZoomRecalculation = false
+
+    /**
+     * Selects all text on the specified page asynchronously.
+     *
+     * @param pageNum The number of the page to select text from.
+     */
+    internal fun selectAllTextOnPage(pageNum: Int) {
+        selectionStateManager?.selectAllTextOnPageAsync(pageNum)
+    }
 
     /**
      * Scrolls to the 0-indexed [pageNum], optionally animating the scroll
@@ -1338,11 +1341,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 invalidate()
             }
             is SelectionUiSignal.ToggleActionMode -> {
-                if (signal.show && selectionActionMode == null && currentSelection != null) {
+                if (
+                    signal.show &&
+                        selectionActionModeCallback.actionMode == null &&
+                        currentSelection != null
+                ) {
                     startActionMode(selectionActionModeCallback, ActionMode.TYPE_FLOATING)
                 } else if (!signal.show) {
-                    selectionActionMode?.finish()
-                    selectionActionMode = null
+                    selectionActionModeCallback.finish()
                 }
             }
         }
@@ -1501,7 +1507,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private fun updateSelectionActionModeVisibility() {
         if (selectionIsVisible() && gestureState == GESTURE_STATE_IDLE) {
             selectionStateManager?.maybeShowActionMode()
-            selectionActionMode?.invalidateContentRect()
+            selectionActionModeCallback.actionMode?.invalidateContentRect()
         } else {
             selectionStateManager?.maybeHideActionMode()
         }
@@ -1716,130 +1722,12 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     internal val contentHeight: Float
         get() = pageMetadataLoader?.paginationModel?.totalEstimatedHeight ?: 0f
 
-    /** The default [ActionMode.Callback2] for selection */
-    private inner class DefaultSelectionActionModeCallback(private val pdfView: PdfView) :
-        ActionMode.Callback2(), SelectionMenuSession {
-
-        private val defaultMenuItems =
-            listOf<ContextMenuComponent>(
-                SelectionMenuComponent(
-                    key = PdfSelectionMenuKeys.CopyKey,
-                    label = context.getString(androidR.string.copy),
-                ) {
-                    // We can't copy the current selection if no text is selected
-                    val text = (currentSelection as? TextSelection)?.text
-                    if (text != null) copyToClipboard(text.toString())
-                    // close the context menu upon copy action
-                    close()
-                },
-                SelectionMenuComponent(
-                    key = PdfSelectionMenuKeys.SelectAllKey,
-                    label = context.getString(androidR.string.selectAll),
-                ) {
-                    val page = currentSelection?.bounds?.first()?.pageNum
-                    // We can't select all if we don't know what page the selection is on, or if
-                    // we don't know the size of that page
-                    if (page != null) selectionStateManager?.selectAllTextOnPageAsync(page)
-                },
-            )
-        private lateinit var selectionMenuItems: MutableList<ContextMenuComponent>
-
-        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            pdfView.selectionActionMode = mode
-            // Start afresh with the default menu items
-            selectionMenuItems = defaultMenuItems.toMutableList()
-            selectionMenuItemPreparer?.onPrepareSelectionMenuItems(selectionMenuItems)
-
-            selectionMenuItems.forEachIndexed { i, component ->
-                if (component is SelectionMenuComponent) {
-                    val menuItem =
-                        menu?.add(
-                            /* groupId = */ NONE,
-                            /* itemId = */ i,
-                            /* order = */ NONE,
-                            /* title = */ component.label,
-                        )
-                    component.contentDescription?.let { menuItem?.contentDescription = it }
-                    menuItem?.setOnMenuItemClickListener {
-                        component.onClick(this)
-                        true
-                    }
-                }
-            }
-            return true
-        }
-
-        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-            return false
-        }
-
-        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-            return false
-        }
-
-        override fun close() {
-            pdfView.clearSelection()
-        }
-
-        private fun copyToClipboard(text: String) {
-            val manager = context.getSystemService(ClipboardManager::class.java)
-            val clip = ClipData.newPlainText(context.getString(R.string.clipboard_label), text)
-            manager.setPrimaryClip(clip)
-        }
-
-        override fun onDestroyActionMode(mode: ActionMode?) {
-            // No-op
-        }
-
-        override fun onGetContentRect(mode: ActionMode?, view: View?, outRect: Rect?) {
-            // If we don't know about page layout, defer to the default implementation
-            val localPageLayoutManager =
-                pdfView.pageMetadataLoader ?: return super.onGetContentRect(mode, view, outRect)
-            val viewport = pdfView.getVisibleAreaInContentCoords()
-            val firstSelection = pdfView.currentSelection?.bounds?.firstOrNull()
-            val lastSelection = pdfView.currentSelection?.bounds?.lastOrNull()
-
-            // Try to position the context menu near the first selection if it's visible
-            if (firstSelection != null) {
-                // Copy bounds to avoid mutating the real data
-                val boundsInView = localPageLayoutManager.getViewRect(firstSelection, viewport)
-                if (
-                    boundsInView?.let {
-                        viewport.intersects(it.left, it.top, it.right, it.bottom)
-                    } == true
-                ) {
-                    outRect?.set(pdfView.toViewRect(boundsInView))
-                    return
-                }
-            }
-
-            // Else, try to position the context menu near the last selection if it's visible
-            if (lastSelection != null) {
-                // Copy bounds to avoid mutating the real data
-                val boundsInView = localPageLayoutManager.getViewRect(lastSelection, viewport)
-                if (
-                    boundsInView?.let {
-                        viewport.intersects(it.left, it.top, it.right, it.bottom)
-                    } == true
-                ) {
-                    outRect?.set(pdfView.toViewRect(boundsInView))
-                    return
-                }
-            }
-
-            // Else, center the context menu in view
-            val centerX = (pdfView.x + pdfView.width / 2).roundToInt()
-            val centerY = (pdfView.y + pdfView.height / 2).roundToInt()
-            outRect?.set(centerX, centerY, centerX + 1, centerY + 1)
-        }
-    }
-
     /** Returns a new [Rect] representing [contentRect] in View coordinates */
-    private fun toViewRect(contentRect: RectF): Rect =
+    internal fun toViewRect(contentRect: RectF): Rect =
         toViewRect(contentRect.left, contentRect.top, contentRect.right, contentRect.bottom)
 
     /** Returns a new [Rect] representing [contentRect] in View coordinates */
-    private fun toViewRect(contentRect: Rect): Rect =
+    internal fun toViewRect(contentRect: Rect): Rect =
         toViewRect(contentRect.left, contentRect.top, contentRect.right, contentRect.bottom)
 
     private fun toViewRect(left: Number, top: Number, right: Number, bottom: Number): Rect {
