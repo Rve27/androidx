@@ -69,10 +69,14 @@ import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.width
 import androidx.xr.compose.testapp.animation.Animation
 import androidx.xr.compose.testapp.curvedlayout.CurvedLayout
+import androidx.xr.compose.testapp.depthstacking.DepthStacking
 import androidx.xr.compose.testapp.modechange.ModeChange
 import androidx.xr.compose.testapp.movable.MovableActivity
 import androidx.xr.compose.testapp.movablescalable.MovableScalable
+import androidx.xr.compose.testapp.nestedsubspace.NestedSubspace
+import androidx.xr.compose.testapp.panelvolume.PanelVolume
 import androidx.xr.compose.testapp.permissionsdialog.PermissionsDialog
+import androidx.xr.compose.testapp.resizablepanel.ResizablePanel
 import androidx.xr.compose.testapp.rotation.Rotation
 import androidx.xr.compose.testapp.spatialcompose.SpatialCompose
 import androidx.xr.compose.testapp.spatialelevation.SpatialElevation
@@ -265,6 +269,21 @@ class MainActivity : ComponentActivity() {
                     TestCaseColumnRowItem(getString(R.string.movable_scalable_panel_test)) {
                         startTest<MovableScalable>()
                     }
+                    TestCaseBlankRow("THE FOLLOWING ARE JXR COMPOSE DEVELOPER TESTS")
+                    TestCaseColumnRowItem(
+                        getString(R.string.depthstacking_modifier_order_test_case)
+                    ) {
+                        startTest<DepthStacking>()
+                    }
+                    TestCaseColumnRowItem(getString(R.string.nested_subspace_test_case)) {
+                        startTest<NestedSubspace>()
+                    }
+                    TestCaseColumnRowItem(getString(R.string.panel_volume_test_case)) {
+                        startTest<PanelVolume>()
+                    }
+                    TestCaseColumnRowItem(getString(R.string.resizable_panel_test_case)) {
+                        startTest<ResizablePanel>()
+                    }
                 }
             }
         }
@@ -287,6 +306,25 @@ class MainActivity : ComponentActivity() {
             )
             Box(modifier = Modifier.weight(1.5f)) { TestCaseButton("Run Test", onClick) }
         }
+    }
+
+    @Composable
+    private fun TestCaseBlankRow(label: String) {
+        Box(modifier = Modifier.background(Color.LightGray)) {
+            Row(
+                modifier = Modifier.padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    label,
+                    modifier = Modifier.weight(3.5f),
+                    fontSize = 22.sp,
+                    textAlign = TextAlign.Center,
+                    color = Color.Black,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(1.dp).background(Purple80).fillMaxWidth())
     }
 
     private inline fun <reified T> startTest(title: String? = null) {
