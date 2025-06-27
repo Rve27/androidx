@@ -389,7 +389,7 @@ internal suspend fun <T> ListenableFuture<T>.awaitSuspending(): T {
     return deferred.await()
 }
 
-internal object DirectExecutor : Executor {
+private object DirectExecutor : Executor {
     override fun execute(command: Runnable) {
         command.run()
     }

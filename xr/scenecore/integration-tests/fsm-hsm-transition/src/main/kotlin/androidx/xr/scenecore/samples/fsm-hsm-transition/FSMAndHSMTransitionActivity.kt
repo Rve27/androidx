@@ -163,7 +163,7 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
                     "OnBoundsChanged called on Activity Space with dimensions: $dimensionsString",
                 )
             }
-        session.scene.activitySpace.addOnBoundsChangedListener(boundsListener)
+        session.scene.activitySpace.addBoundsChangedListener(boundsListener)
 
         val resizableComponent = ResizableComponent.create(session)
         resizableComponent.addResizeListener(
@@ -206,7 +206,7 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        session.scene.activitySpace.removeOnBoundsChangedListener(boundsListener)
+        session.scene.activitySpace.removeBoundsChangedListener(boundsListener)
     }
 
     private fun createIntent(): Pair<Intent, Bundle> {
