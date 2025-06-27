@@ -132,6 +132,7 @@ import androidx.compose.ui.input.InputModeManagerImpl
 import androidx.compose.ui.input.indirect.AndroidIndirectTouchEvent
 import androidx.compose.ui.input.indirect.IndirectTouchEvent
 import androidx.compose.ui.input.indirect.convertActionToIndirectTouchEventType
+import androidx.compose.ui.input.indirect.indirectScrollAxis
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyEventType.Companion.KeyDown
 import androidx.compose.ui.input.key.onKeyEvent
@@ -2208,8 +2209,10 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                             position = Offset(motionEvent.x, motionEvent.y),
                             uptimeMillis = motionEvent.eventTime,
                             type = convertActionToIndirectTouchEventType(motionEvent.actionMasked),
+                            primaryAxis = indirectScrollAxis(motionEvent),
                             nativeEvent = motionEvent,
                         )
+
                     val handled =
                         focusOwner.dispatchIndirectTouchEvent(indirectTouchEvent) {
                             super.dispatchGenericMotionEvent(motionEvent)

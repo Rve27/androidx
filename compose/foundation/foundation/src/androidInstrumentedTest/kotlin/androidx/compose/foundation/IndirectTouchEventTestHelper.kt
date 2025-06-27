@@ -23,6 +23,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.indirect.IndirectTouchEvent
 import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.performIndirectTouchEvent
+import androidx.core.view.InputDeviceCompat.SOURCE_TOUCH_NAVIGATION
 
 /** Synthetically range the x movements from 1000 to 0 */
 @OptIn(ExperimentalIndirectTouchTypeApi::class)
@@ -78,6 +79,7 @@ internal fun SemanticsNodeInteraction.sendIndirectTouchMoveEvents(
                 Offset.Zero.y,
                 0,
             )
+        move.source = SOURCE_TOUCH_NAVIGATION
         if (it != stepCount - 1) {
             currentTime1 += delayTimeMills
             currentValue1 += sign * stepSize
@@ -101,6 +103,7 @@ internal fun SemanticsNodeInteraction.sendIndirectTouchReleaseEvent(
             Offset.Zero.y,
             0,
         )
+    up.source = SOURCE_TOUCH_NAVIGATION
     performIndirectTouchEvent(IndirectTouchEvent(up))
 }
 
@@ -118,6 +121,7 @@ internal fun SemanticsNodeInteraction.sendIndirectTouchPressEvent(
             Offset.Zero.y,
             0,
         )
+    down.source = SOURCE_TOUCH_NAVIGATION
     performIndirectTouchEvent(IndirectTouchEvent(down))
 }
 

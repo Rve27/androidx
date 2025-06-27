@@ -1473,7 +1473,8 @@ package androidx.compose.ui.input {
 package androidx.compose.ui.input.indirect {
 
   public final class AndroidIndirectTouchEvent_androidKt {
-    method @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi public static androidx.compose.ui.input.indirect.IndirectTouchEvent IndirectTouchEvent(android.view.MotionEvent motionEvent);
+    method @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi public static androidx.compose.ui.input.indirect.IndirectTouchEvent IndirectTouchEvent(android.view.MotionEvent motionEvent, optional int primaryAxis);
+    method @BytecodeOnly @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi public static androidx.compose.ui.input.indirect.IndirectTouchEvent IndirectTouchEvent-CvxRKY0(android.view.MotionEvent, int);
     method @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi public static android.view.MotionEvent getNativeEvent(androidx.compose.ui.input.indirect.IndirectTouchEvent);
     property @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi public static android.view.MotionEvent androidx.compose.ui.input.indirect.IndirectTouchEvent.nativeEvent;
   }
@@ -1481,12 +1482,33 @@ package androidx.compose.ui.input.indirect {
   @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi public sealed interface IndirectTouchEvent {
     method public long getPosition();
     method @BytecodeOnly public long getPosition-F1C5BW0();
+    method public int getPrimaryAxis();
+    method @BytecodeOnly public int getPrimaryAxis-rpdSsPU();
     method public int getType();
     method @BytecodeOnly public int getType-LxEHWp8();
     method public long getUptimeMillis();
     property public abstract long position;
+    property public abstract int primaryAxis;
     property public abstract int type;
     property public abstract long uptimeMillis;
+  }
+
+  @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi @kotlin.jvm.JvmInline public final value class IndirectTouchEventPrimaryAxis {
+    method @BytecodeOnly public static androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryAxis! box-impl(int);
+    method @BytecodeOnly public int unbox-impl();
+    field public static final androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryAxis.Companion Companion;
+  }
+
+  @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi public static final class IndirectTouchEventPrimaryAxis.Companion {
+    method public int getUnspecified();
+    method @BytecodeOnly public int getUnspecified-rpdSsPU();
+    method public int getX();
+    method @BytecodeOnly public int getX-rpdSsPU();
+    method public int getY();
+    method @BytecodeOnly public int getY-rpdSsPU();
+    property public int Unspecified;
+    property public int X;
+    property public int Y;
   }
 
   @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi @kotlin.jvm.JvmInline public final value class IndirectTouchEventType {
