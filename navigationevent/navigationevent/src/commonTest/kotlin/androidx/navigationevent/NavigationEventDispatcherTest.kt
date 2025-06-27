@@ -422,4 +422,63 @@ class NavigationEventDispatcherTest {
             .hasMessageThat()
             .contains("is already registered with a dispatcher")
     }
+
+    @Test
+    fun removing_callbacks_in_progress_does_not_throw_concurrent_exception() {
+        val history = mutableListOf<String>()
+        val dispatcher = NavigationEventDispatcher()
+
+        val callback1 =
+            object : NavigationEventCallback(isEnabled = true) {
+                override fun onEventStarted(event: NavigationEvent) {
+                    history += "callback1 onEventStarted"
+                }
+
+                override fun onEventProgressed(event: NavigationEvent) {
+                    history += "callback1 onEventProgressed"
+                }
+            }
+
+        val callback2 =
+            object : NavigationEventCallback(isEnabled = true, isPassThrough = true) {
+                override fun onEventStarted(event: NavigationEvent) {
+                    history += "callback2 onEventStarted"
+                }
+
+                override fun onEventProgressed(event: NavigationEvent) {
+                    history += "callback2 onEventProgressed"
+                }
+            }
+
+        val callback3 =
+            object : NavigationEventCallback(isEnabled = true, isPassThrough = true) {
+                override fun onEventStarted(event: NavigationEvent) {
+                    history += "callback3 onEventStarted"
+                }
+
+                override fun onEventProgressed(event: NavigationEvent) {
+                    history += "callback3 onEventProgressed"
+                    dispatcher.removeCallback(this)
+                }
+            }
+
+        dispatcher.addCallback(callback1)
+        dispatcher.addCallback(callback2)
+        dispatcher.addCallback(callback3)
+
+        val event = NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT)
+        dispatcher.dispatchOnStarted(event)
+        dispatcher.dispatchOnProgressed(event)
+
+        assertThat(history)
+            .containsExactly(
+                "callback3 onEventStarted",
+                "callback2 onEventStarted",
+                "callback1 onEventStarted",
+                "callback3 onEventProgressed",
+                "callback2 onEventProgressed",
+                "callback1 onEventProgressed",
+            )
+            .inOrder()
+    }
 }
