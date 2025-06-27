@@ -60,7 +60,7 @@ internal class DataBridgeProxy(val dataBridgeClient: DataBridgeClient) : IDataBr
     ) {
         val scope = CoroutineScope(Dispatchers.IO)
         scope.launch {
-            var keys = getKeyList(keyNames, data.map { it.type })
+            val keys = getKeyList(keyNames, data.map { it.type })
             val keyValueMap =
                 keys
                     .zip(data) { key, valueInternal -> key to valueInternal.value }
@@ -97,6 +97,21 @@ internal class DataBridgeProxy(val dataBridgeClient: DataBridgeClient) : IDataBr
         }
     }
 
+    private fun processSuccessResultEntry(key: Key, result: Result<Any?>): ResultInternal {
+        val value = result.getOrNull()
+        return ResultInternal(
+            keyName = key.name,
+            exceptionName = null,
+            exceptionMessage = null,
+            valueInternal =
+                ValueInternal(
+                    type = key.type.toString(),
+                    isValueNull = value == null,
+                    value = value,
+                ),
+        )
+    }
+
     private fun getKeyList(keyNames: List<String>, keyTypes: List<String>): List<Key> {
         return keyNames.zip(keyTypes).map { (name, typeString) ->
             when (typeString) {
@@ -111,21 +126,6 @@ internal class DataBridgeProxy(val dataBridgeClient: DataBridgeClient) : IDataBr
                 else -> throw IllegalStateException("$typeString is not a valid key type")
             }
         }
-    }
-
-    private fun processSuccessResultEntry(key: Key, result: Result<Any?>): ResultInternal {
-        val value = result.getOrNull()
-        return ResultInternal(
-            keyName = key.name,
-            exceptionName = null,
-            exceptionMessage = null,
-            valueInternal =
-                ValueInternal(
-                    type = key.type.toString(),
-                    isValueNull = value == null,
-                    value = value,
-                ),
-        )
     }
 
     private fun processFailedResultEntry(key: Key, result: Result<Any?>): ResultInternal {
