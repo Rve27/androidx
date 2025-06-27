@@ -201,8 +201,6 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     }
 
     /** Supply a [PdfDocument] to process the PDF content for rendering */
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var pdfDocument: PdfDocument? = null
         set(value) {
             checkMainThread()
