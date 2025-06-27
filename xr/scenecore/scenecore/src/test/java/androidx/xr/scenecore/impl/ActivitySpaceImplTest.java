@@ -208,7 +208,7 @@ public final class ActivitySpaceImplTest extends SystemSpaceEntityImplTest {
     }
 
     @Test
-    public void removeBoundsChangedListener_happyPath() {
+    public void removeOnBoundsChangedListener_happyPath() {
         ActivitySpace.OnBoundsChangedListener listener =
                 Mockito.mock(ActivitySpace.OnBoundsChangedListener.class);
 
