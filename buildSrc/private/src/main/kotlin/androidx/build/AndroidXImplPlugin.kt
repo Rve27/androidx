@@ -51,7 +51,6 @@ import com.android.build.api.dsl.AarMetadata
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.KotlinMultiplatformAndroidDeviceTestCompilation
-import com.android.build.api.dsl.KotlinMultiplatformAndroidHostTestCompilation
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryTarget
 import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.dsl.PrivacySandboxSdkExtension
@@ -729,10 +728,11 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             finalizeDsl {
                 it.aarMetadata.configure(it.compileSdk)
                 it.lint.targetSdk = project.defaultAndroidConfig.targetSdk
+                // When b/409613130 is fixed, set it.testOptions.targetSdk =
+                // project.defaultAndroidConfig.targetSdk
                 project.setUpBlankProguardFileForKmpAarIfNeeded(
                     kotlinMultiplatformAndroidTarget.optimization.consumerKeepRules
                 )
-                kotlinMultiplatformAndroidTarget.configureTargetSdkForTests(it.compileSdk)
             }
         }
 
@@ -800,23 +800,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                 .wiredWithFiles(RepackagingTask::aarFile, RepackagingTask::output)
                 .toTransform(SingleArtifact.AAR)
         }
-    }
-
-    // TODO(b/425976012): Set targetSdkForTests to project.defaultAndroidConfig.targetSdk
-    private fun KotlinMultiplatformAndroidLibraryTarget.configureTargetSdkForTests(
-        compileSdk: Int?
-    ) {
-        checkNotNull(compileSdk) {
-            "compileSdk must be set for tests. call `configureTargetSdkForTests` in the `finalizeDsl` block"
-        }
-        compilations
-            .withType(KotlinMultiplatformAndroidDeviceTestCompilation::class.java)
-            .configureEach { it.targetSdk { version = release(compileSdk) } }
-
-        // TODO(b/425976012): Robolectric does not support API Level 36 yet
-        compilations
-            .withType(KotlinMultiplatformAndroidHostTestCompilation::class.java)
-            .configureEach { it.targetSdk { version = release(compileSdk.coerceAtMost(35)) } }
     }
 
     private fun configureProtobufPlugin(project: Project) {
