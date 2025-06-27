@@ -16,6 +16,9 @@
 
 package androidx.compose.foundation
 
+import android.view.View
+import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.Orientation.Horizontal
 import androidx.compose.foundation.gestures.Orientation.Vertical
@@ -28,6 +31,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +44,7 @@ import androidx.compose.ui.focus.FocusDirection.Companion.Previous
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.SemanticsNodeInteraction
@@ -55,12 +60,15 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.test.filters.MediumTest
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -72,8 +80,8 @@ import org.junit.runners.Parameterized
  */
 @MediumTest
 @RunWith(Parameterized::class)
-class ScrollableFocusableInteractionTest(
-    private val orientation: Orientation,
+class ScrollFocusableInteractionTest(
+    private val orientationLayoutDirection: OrientationLayoutDirection,
     private val reverseScrolling: Boolean,
 ) {
     companion object {
@@ -82,10 +90,12 @@ class ScrollableFocusableInteractionTest(
         @Parameterized.Parameters(name = "{0} reverseScrolling={1}")
         fun initParameters() =
             arrayOf(
-                arrayOf(Vertical, true),
-                arrayOf(Vertical, false),
-                arrayOf(Horizontal, true),
-                arrayOf(Horizontal, false),
+                arrayOf(OrientationLayoutDirection.Vertical, false),
+                arrayOf(OrientationLayoutDirection.HorizontalLtr, false),
+                arrayOf(OrientationLayoutDirection.HorizontalRtl, false),
+                arrayOf(OrientationLayoutDirection.Vertical, true),
+                arrayOf(OrientationLayoutDirection.HorizontalLtr, true),
+                arrayOf(OrientationLayoutDirection.HorizontalRtl, true),
             )
     }
 
@@ -94,6 +104,14 @@ class ScrollableFocusableInteractionTest(
     private val scrollableAreaTag = "scrollableArea"
     private val focusableTag = "focusable"
     private val scrollState = ScrollState(initial = 0)
+    // Only use this boolean for layout positioning assertions. All placing and other considerations
+    // should still rely on `reverseScrolling` parameter.
+    private val reverseLayout =
+        if (reverseScrolling) {
+            orientationLayoutDirection != OrientationLayoutDirection.HorizontalRtl
+        } else {
+            orientationLayoutDirection == OrientationLayoutDirection.HorizontalRtl
+        }
     private lateinit var focusManager: FocusManager
 
     @Before
@@ -119,7 +137,7 @@ class ScrollableFocusableInteractionTest(
         requestFocusAndScrollToTop()
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(if (reverseScrolling) 0.toDp() else 90.toDp())
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 90.toDp())
             .assertIsDisplayed()
             .assertIsFocused()
 
@@ -128,7 +146,122 @@ class ScrollableFocusableInteractionTest(
 
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(if (reverseScrolling) 0.toDp() else 40.toDp())
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 40.toDp())
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun scrollsFocusedAndroidViewIntoView_whenFullyInViewAndBecomesFullyHidden() {
+        var viewportSize by mutableStateOf(100.toDp())
+
+        rule.setContent {
+            ScrollableRowOrColumn(size = viewportSize) {
+                // Put a focusable at the end of the viewport.
+                WithSpacerBefore(size = 90.toDp()) {
+                    AndroidView(
+                        factory = {
+                            View(it).apply {
+                                isFocusable = true
+                                isFocusableInTouchMode = true
+                                layoutParams =
+                                    ViewGroup.LayoutParams(
+                                        ViewGroup.LayoutParams.MATCH_PARENT,
+                                        ViewGroup.LayoutParams.MATCH_PARENT,
+                                    )
+                            }
+                        },
+                        modifier =
+                            Modifier.testTag(focusableTag)
+                                .size(10.toDp())
+                                .border(1.dp, Color.White)
+                                .focusable(),
+                    )
+                }
+            }
+        }
+        requestFocusAndScrollToTop()
+        rule
+            .onNodeWithTag(focusableTag)
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 90.toDp())
+            .assertIsDisplayed()
+            .assertIsFocused()
+
+        // Act: Shrink the viewport.
+        viewportSize = 50.toDp()
+
+        rule
+            .onNodeWithTag(focusableTag)
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 40.toDp())
+            .assertIsDisplayed()
+    }
+
+    @Ignore // Enable when focus area calculation is fixed for AndroidViews.
+    @Test
+    fun scrollsFocusedSubAndroidViewIntoView_whenFullyInViewAndBecomesFullyHidden() {
+        var viewportSize by mutableStateOf(100.toDp())
+
+        rule.setContent {
+            ScrollableRowOrColumn(size = viewportSize) {
+                // Put a focusable at the end of the viewport.
+                WithSpacerBefore(size = 90.toDp()) {
+                    AndroidView(
+                        factory = { context ->
+                            LinearLayout(context).apply {
+                                orientation = LinearLayout.VERTICAL
+                                layoutParams =
+                                    ViewGroup.LayoutParams(
+                                        ViewGroup.LayoutParams.MATCH_PARENT,
+                                        ViewGroup.LayoutParams.MATCH_PARENT,
+                                    )
+                                // 10.toDp() height
+                                addView(
+                                    View(context).apply {
+                                        layoutParams =
+                                            LinearLayout.LayoutParams(
+                                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                                0,
+                                                1f,
+                                            )
+                                    }
+                                )
+                                // 10.toDp() height
+                                addView(
+                                    View(context).apply {
+                                        isFocusable = true
+                                        isFocusableInTouchMode = true
+                                        layoutParams =
+                                            LinearLayout.LayoutParams(
+                                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                                0,
+                                                1f,
+                                            )
+                                    }
+                                )
+                            }
+                        },
+                        modifier =
+                            Modifier.testTag(focusableTag)
+                                .size(20.toDp())
+                                .border(1.dp, Color.White)
+                                .focusable(),
+                    )
+                }
+            }
+        }
+        // AndroidView itself will have 20.toDp() height but the focusable part is still 10.toDp()
+        requestFocusAndScrollToTop()
+        rule
+            .onNodeWithTag(focusableTag)
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 90.toDp())
+            .assertIsDisplayed()
+            .assertIsFocused()
+
+        // Act: Shrink the viewport.
+        viewportSize = 50.toDp()
+
+        rule
+            .onNodeWithTag(focusableTag)
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 40.toDp())
             .assertIsDisplayed()
     }
 
@@ -145,7 +278,7 @@ class ScrollableFocusableInteractionTest(
         requestFocusAndScrollToTop()
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(if (reverseScrolling) 0.toDp() else 90.toDp())
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 90.toDp())
             .assertIsDisplayed()
             .assertIsFocused()
 
@@ -154,7 +287,7 @@ class ScrollableFocusableInteractionTest(
 
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(if (reverseScrolling) 0.toDp() else 85.toDp())
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 85.toDp())
             .assertIsDisplayed()
     }
 
@@ -171,9 +304,7 @@ class ScrollableFocusableInteractionTest(
         requestFocusAndScrollToTop()
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(
-                if (reverseScrolling) (-5).toDp() else 90.toDp()
-            )
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) (-5).toDp() else 90.toDp())
             .assertIsDisplayed()
             .assertIsFocused()
 
@@ -183,7 +314,7 @@ class ScrollableFocusableInteractionTest(
         rule
             .onNodeWithTag(focusableTag)
             .assertScrollAxisPositionInRootIsEqualTo(
-                if (reverseScrolling) (-5 - 4).toDp() else 90.toDp()
+                if (reverseLayout) (-5 - 4).toDp() else 90.toDp()
             )
             .assertIsDisplayed()
     }
@@ -200,9 +331,7 @@ class ScrollableFocusableInteractionTest(
         requestFocusAndScrollToTop()
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(
-                if (reverseScrolling) (-5).toDp() else 90.toDp()
-            )
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) (-5).toDp() else 90.toDp())
             .assertIsDisplayed()
             .assertIsFocused()
 
@@ -214,7 +343,7 @@ class ScrollableFocusableInteractionTest(
             .assertScrollAxisPositionInRootIsEqualTo(
                 // When reversing scrolling, shrinking the viewport will move the child as well by
                 // the amount it shrunk – 5px.
-                if (reverseScrolling) (-5 - 5).toDp() else 90.toDp()
+                if (reverseLayout) (-5 - 5).toDp() else 90.toDp()
             )
             .assertIsNotDisplayed()
     }
@@ -244,7 +373,7 @@ class ScrollableFocusableInteractionTest(
         requestFocusAndScrollToTop()
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(if (reverseScrolling) 0.toDp() else 90.toDp())
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 90.toDp())
             .assertIsDisplayed()
             .assertIsFocused()
 
@@ -252,7 +381,7 @@ class ScrollableFocusableInteractionTest(
 
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(if (reverseScrolling) 0.toDp() else 30.toDp())
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 30.toDp())
             .assertIsDisplayed()
     }
 
@@ -269,7 +398,7 @@ class ScrollableFocusableInteractionTest(
         requestFocusAndScrollToTop()
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(if (reverseScrolling) 0.toDp() else 90.toDp())
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 90.toDp())
             .assertIsDisplayed()
             .assertIsFocused()
 
@@ -313,7 +442,7 @@ class ScrollableFocusableInteractionTest(
         requestFocusAndScrollToTop()
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(if (reverseScrolling) 0.toDp() else 90.toDp())
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 90.toDp())
             .assertIsDisplayed()
             .assertIsFocused()
 
@@ -364,9 +493,7 @@ class ScrollableFocusableInteractionTest(
 
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(
-                if (reverseScrolling) (-10).toDp() else gapSize
-            )
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) (-10).toDp() else gapSize)
             .assertIsNotDisplayed()
             .assertIsFocused()
 
@@ -378,7 +505,7 @@ class ScrollableFocusableInteractionTest(
             .onNodeWithTag(focusableTag)
             .assertScrollAxisPositionInRootIsEqualTo(
                 // Focusable size minus the change in viewport size.
-                if (reverseScrolling) (-10 - 50).toDp() else gapSize
+                if (reverseLayout) (-10 - 50).toDp() else gapSize
             )
             .assertIsNotDisplayed()
     }
@@ -395,7 +522,7 @@ class ScrollableFocusableInteractionTest(
         }
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(if (reverseScrolling) 0.toDp() else 90.toDp())
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 90.toDp())
             .assertIsDisplayed()
             .assertIsNotFocused()
 
@@ -404,9 +531,7 @@ class ScrollableFocusableInteractionTest(
 
         rule
             .onNodeWithTag(focusableTag)
-            .assertScrollAxisPositionInRootIsEqualTo(
-                if (reverseScrolling) (-50).toDp() else 90.toDp()
-            )
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) (-50).toDp() else 90.toDp())
             .assertIsNotDisplayed()
     }
 
@@ -439,7 +564,7 @@ class ScrollableFocusableInteractionTest(
         rule
             .onNodeWithTag(focusableTag)
             .assertScrollAxisPositionInRootIsEqualTo(
-                if (reverseScrolling) -itemSize / 2 else initialViewPortSize - (itemSize / 2)
+                if (reverseLayout) -itemSize / 2 else initialViewPortSize - (itemSize / 2)
             )
             .assertIsDisplayed()
             .assertIsFocused()
@@ -497,6 +622,36 @@ class ScrollableFocusableInteractionTest(
 
         rule.onNodeWithTag(focusable1).assertIsDisplayed()
         rule.onNodeWithTag(focusable2).assertIsNotDisplayed()
+    }
+
+    @Test
+    fun scrollsFocusedFocusableIntoView_whenViewportShrinksMultipleTimes() {
+        var viewportSize by mutableStateOf(100.toDp())
+
+        rule.setContent {
+            ScrollableRowOrColumn(size = viewportSize) {
+                // Put a focusable at the end of the viewport.
+                WithSpacerBefore(size = 90.toDp()) { TestFocusable(size = 10.toDp()) }
+            }
+        }
+        requestFocusAndScrollToTop()
+        rule
+            .onNodeWithTag(focusableTag)
+            .assertScrollAxisPositionInRootIsEqualTo(if (reverseLayout) 0.toDp() else 90.toDp())
+            .assertIsDisplayed()
+            .assertIsFocused()
+
+        // Act: Shrink the viewport continuously.
+        repeat(5) {
+            viewportSize -= 10.toDp()
+
+            rule
+                .onNodeWithTag(focusableTag)
+                .assertScrollAxisPositionInRootIsEqualTo(
+                    if (reverseLayout) 0.toDp() else (90 - ((it + 1) * 10)).toDp()
+                )
+                .assertIsDisplayed()
+        }
     }
 
     @Test
@@ -572,33 +727,38 @@ class ScrollableFocusableInteractionTest(
     private fun ScrollableRowOrColumn(size: Dp, content: @Composable () -> Unit) {
         val modifier = Modifier.testTag(scrollableAreaTag).size(size).border(2.toDp(), Color.Black)
 
-        when (orientation) {
-            Vertical -> {
-                Column(
-                    // Uses scrollable under the hood.
-                    modifier.verticalScroll(
-                        state = scrollState,
-                        reverseScrolling = reverseScrolling,
-                    )
-                ) {
-                    content()
+        val layoutDirection =
+            if (orientationLayoutDirection.isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr
+
+        CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
+            when (orientationLayoutDirection.orientation) {
+                Vertical -> {
+                    Column(
+                        // Uses scrollable under the hood.
+                        modifier.verticalScroll(
+                            state = scrollState,
+                            reverseScrolling = reverseScrolling,
+                        )
+                    ) {
+                        content()
+                    }
                 }
-            }
-            Horizontal -> {
-                Row(
-                    // Uses scrollable under the hood.
-                    modifier.horizontalScroll(
-                        state = scrollState,
-                        reverseScrolling = reverseScrolling,
-                    )
-                ) {
-                    content()
+                Horizontal -> {
+                    Row(
+                        // Uses scrollable under the hood.
+                        modifier.horizontalScroll(
+                            state = scrollState,
+                            reverseScrolling = reverseScrolling,
+                        )
+                    ) {
+                        content()
+                    }
                 }
             }
         }
     }
 
-    /** Places a spacer before or after [content], depending on [reverseScrolling]. */
+    /** Places a spacer before or after [content], depending on [reverseLayout]. */
     @Composable
     fun WithSpacerBefore(size: Dp, content: @Composable () -> Unit) {
         if (!reverseScrolling) {
@@ -647,8 +807,14 @@ class ScrollableFocusableInteractionTest(
     }
 
     private fun SemanticsNodeInteraction.assertScrollAxisPositionInRootIsEqualTo(expected: Dp) =
-        when (orientation) {
+        when (orientationLayoutDirection.orientation) {
             Vertical -> assertTopPositionInRootIsEqualTo(expected)
             Horizontal -> assertLeftPositionInRootIsEqualTo(expected)
         }
+}
+
+enum class OrientationLayoutDirection(val orientation: Orientation, val isRtl: Boolean) {
+    Vertical(Orientation.Vertical, false),
+    HorizontalLtr(Orientation.Horizontal, false),
+    HorizontalRtl(Orientation.Horizontal, true),
 }

@@ -147,6 +147,7 @@ package androidx.compose.foundation {
     property public boolean isAutomaticNestedPrefetchEnabled;
     property public boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
     property public boolean isFlingContinuationAtBoundsEnabled;
+    property public boolean isKeepInViewFocusObservationChangeEnabled;
     property public boolean isNewContextMenuEnabled;
     property public boolean isNonComposedClickableEnabled;
     property public boolean isNonSuspendingPointerInputInClickableEnabled;
@@ -160,6 +161,7 @@ package androidx.compose.foundation {
     field public static boolean isAutomaticNestedPrefetchEnabled;
     field public static boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
     field public static boolean isFlingContinuationAtBoundsEnabled;
+    field public static boolean isKeepInViewFocusObservationChangeEnabled;
     field public static boolean isNewContextMenuEnabled;
     field public static boolean isNonComposedClickableEnabled;
     field public static boolean isNonSuspendingPointerInputInClickableEnabled;

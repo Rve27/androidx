@@ -22,6 +22,7 @@ import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateDecay
 import androidx.compose.animation.rememberSplineBasedDecay
 import androidx.compose.animation.splineBasedDecay
+import androidx.compose.foundation.ComposeFoundationFlags
 import androidx.compose.foundation.ComposeFoundationFlags.isFlingContinuationAtBoundsEnabled
 import androidx.compose.foundation.ComposeFoundationFlags.isOnScrollChangedCallbackEnabled
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -43,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.focus.FocusTargetModifierNode
 import androidx.compose.ui.focus.Focusability
+import androidx.compose.ui.focus.getFocusedRect
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEvent
@@ -307,9 +309,18 @@ internal class ScrollableNode(
     private val nestedScrollConnection =
         ScrollableNestedScrollConnection(enabled = enabled, scrollingLogic = scrollingLogic)
 
+    private val focusTargetModifierNode =
+        delegate(FocusTargetModifierNode(focusability = Focusability.Never))
+
     private val contentInViewNode =
         delegate(
-            ContentInViewNode(orientation, scrollingLogic, reverseDirection, bringIntoViewSpec)
+            ContentInViewNode(
+                orientation = orientation,
+                scrollingLogic = scrollingLogic,
+                reverseDirection = reverseDirection,
+                bringIntoViewSpec = bringIntoViewSpec,
+                getFocusedRect = { focusTargetModifierNode.getFocusedRect() },
+            )
         )
 
     private var scrollByAction: ((x: Float, y: Float) -> Boolean)? = null
@@ -322,9 +333,13 @@ internal class ScrollableNode(
         delegate(nestedScrollModifierNode(nestedScrollConnection, nestedScrollDispatcher))
 
         /** Focus scrolling */
-        delegate(FocusTargetModifierNode(focusability = Focusability.Never))
         delegate(BringIntoViewResponderNode(contentInViewNode))
-        delegate(FocusedBoundsObserverNode { contentInViewNode.onFocusBoundsChanged(it) })
+        if (
+            @OptIn(ExperimentalFoundationApi::class)
+            !ComposeFoundationFlags.isKeepInViewFocusObservationChangeEnabled
+        ) {
+            delegate(FocusedBoundsObserverNode { contentInViewNode.onFocusBoundsChanged(it) })
+        }
     }
 
     override fun dispatchScrollDeltaInfo(delta: Offset) {
