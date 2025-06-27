@@ -65,7 +65,7 @@ package androidx.health.connect.client {
   public interface HealthConnectFeatures {
     method public int getFeatureStatus(int feature);
     field public static final androidx.health.connect.client.HealthConnectFeatures.Companion Companion;
-    field @SuppressCompatibility @androidx.health.connect.client.feature.ExperimentalMindfulnessSessionApi public static final int FEATURE_MINDFULNESS_SESSION = 5; // 0x5
+    field public static final int FEATURE_MINDFULNESS_SESSION = 5; // 0x5
     field @SuppressCompatibility @androidx.health.connect.client.feature.ExperimentalPersonalHealthRecordApi public static final int FEATURE_PERSONAL_HEALTH_RECORD = 6; // 0x6
     field public static final int FEATURE_PLANNED_EXERCISE = 3; // 0x3
     field public static final int FEATURE_READ_HEALTH_DATA_HISTORY = 4; // 0x4
@@ -76,7 +76,7 @@ package androidx.health.connect.client {
   }
 
   public static final class HealthConnectFeatures.Companion {
-    property @SuppressCompatibility @androidx.health.connect.client.feature.ExperimentalMindfulnessSessionApi public static int FEATURE_MINDFULNESS_SESSION;
+    property public static int FEATURE_MINDFULNESS_SESSION;
     property @SuppressCompatibility @androidx.health.connect.client.feature.ExperimentalPersonalHealthRecordApi public static int FEATURE_PERSONAL_HEALTH_RECORD;
     property public static int FEATURE_PLANNED_EXERCISE;
     property public static int FEATURE_READ_HEALTH_DATA_HISTORY;
@@ -84,7 +84,7 @@ package androidx.health.connect.client {
     property public static int FEATURE_SKIN_TEMPERATURE;
     property public static int FEATURE_STATUS_AVAILABLE;
     property public static int FEATURE_STATUS_UNAVAILABLE;
-    field @SuppressCompatibility @androidx.health.connect.client.feature.ExperimentalMindfulnessSessionApi public static final int FEATURE_MINDFULNESS_SESSION = 5; // 0x5
+    field public static final int FEATURE_MINDFULNESS_SESSION = 5; // 0x5
     field @SuppressCompatibility @androidx.health.connect.client.feature.ExperimentalPersonalHealthRecordApi public static final int FEATURE_PERSONAL_HEALTH_RECORD = 6; // 0x6
     field public static final int FEATURE_PLANNED_EXERCISE = 3; // 0x3
     field public static final int FEATURE_READ_HEALTH_DATA_HISTORY = 4; // 0x4
@@ -178,9 +178,6 @@ package androidx.health.connect.client.contracts {
 }
 
 package androidx.health.connect.client.feature {
-
-  @SuppressCompatibility @kotlin.RequiresOptIn(message="This is an experimental API for mindfulness session records, part of experimental Health Connect APIs and could change in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalMindfulnessSessionApi {
-  }
 
   @SuppressCompatibility @kotlin.RequiresOptIn(message="This is a part of the Personal Health Record experimental Health Connect APIs and could change in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalPersonalHealthRecordApi {
   }
@@ -1407,7 +1404,7 @@ package androidx.health.connect.client.records {
     property public java.time.ZoneOffset? startZoneOffset;
   }
 
-  @SuppressCompatibility @androidx.health.connect.client.feature.ExperimentalMindfulnessSessionApi public final class MindfulnessSessionRecord implements androidx.health.connect.client.records.IntervalRecord {
+  public final class MindfulnessSessionRecord implements androidx.health.connect.client.records.IntervalRecord {
     ctor public MindfulnessSessionRecord(java.time.Instant startTime, java.time.ZoneOffset? startZoneOffset, java.time.Instant endTime, java.time.ZoneOffset? endZoneOffset, androidx.health.connect.client.records.metadata.Metadata metadata, int mindfulnessSessionType, optional String? title, optional String? notes);
     method public java.time.Instant getEndTime();
     method public java.time.ZoneOffset? getEndZoneOffset();
