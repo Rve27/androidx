@@ -18,9 +18,14 @@ package androidx.privacysandbox.databridge.client
 
 import android.content.Context
 import androidx.privacysandbox.databridge.core.Key
+import androidx.privacysandbox.databridge.core.KeyUpdateCallback
 import androidx.privacysandbox.sdkruntime.client.SdkSandboxManagerCompat
 import androidx.test.core.app.ApplicationProvider
 import com.google.common.truth.Expect
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.Executor
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertSame
@@ -56,6 +61,8 @@ class DataBridgeClientTest {
             stringSetKey,
             byteArrayKey,
         )
+
+    private val currentThreadExecutor = Executor { command -> command.run() }
 
     @Rule @JvmField val expect = Expect.create()
 
@@ -402,6 +409,134 @@ class DataBridgeClientTest {
         }
     }
 
+    @Test
+    fun testRegisterKeyUpdates_oneCallback_oneKey() = runBlocking {
+        val callback = KeyUpdateCallbackImpl()
+
+        callback.initializeLatch(listOf(intKey))
+        dataBridgeClient.registerKeyUpdateCallback(setOf(intKey), currentThreadExecutor, callback)
+        verifyCountAndValue(callback, intKey, 1, null)
+
+        callback.initializeLatch(listOf(intKey))
+        dataBridgeClient.setValue(intKey, 123)
+        verifyCountAndValue(callback, intKey, 2, 123)
+
+        callback.initializeLatch(listOf(intKey))
+        dataBridgeClient.removeValue(intKey)
+        verifyCountAndValue(callback, intKey, 3, null)
+
+        dataBridgeClient.unregisterKeyUpdateCallback(callback)
+    }
+
+    @Test
+    fun testRegisterKeyUpdates_oneCallback_multipleKeys_registeredMultipleTimes() = runBlocking {
+        val callback = KeyUpdateCallbackImpl()
+
+        callback.initializeLatch(listOf(intKey))
+        dataBridgeClient.registerKeyUpdateCallback(setOf(intKey), currentThreadExecutor, callback)
+        verifyCountAndValue(callback, intKey, 1, null)
+
+        callback.initializeLatch(listOf(intKey))
+        dataBridgeClient.setValue(intKey, 123)
+        verifyCountAndValue(callback, intKey, 2, 123)
+
+        callback.initializeLatch(listOf(intKey))
+        dataBridgeClient.removeValue(intKey)
+        verifyCountAndValue(callback, intKey, 3, null)
+
+        callback.initializeLatch(listOf(stringKey))
+        dataBridgeClient.registerKeyUpdateCallback(
+            setOf(stringKey),
+            currentThreadExecutor,
+            callback,
+        )
+        verifyCountAndValue(callback, stringKey, 1, null)
+
+        callback.initializeLatch(listOf(stringKey))
+        dataBridgeClient.setValue(stringKey, "stringValue")
+        verifyCountAndValue(callback, stringKey, 2, "stringValue")
+
+        dataBridgeClient.unregisterKeyUpdateCallback(callback)
+    }
+
+    @Test
+    fun testRegisterKeyUpdates_oneCallback_multipleKeys() = runBlocking {
+        val callback = KeyUpdateCallbackImpl()
+
+        callback.initializeLatch(listOf(intKey, stringKey))
+        dataBridgeClient.registerKeyUpdateCallback(
+            setOf(intKey, stringKey),
+            currentThreadExecutor,
+            callback,
+        )
+        verifyCountAndValue(callback, intKey, 1, null)
+        verifyCountAndValue(callback, stringKey, 1, null)
+
+        callback.initializeLatch(listOf(intKey, stringKey))
+        dataBridgeClient.setValues(mapOf(intKey to 123, stringKey to "stringValue"))
+        verifyCountAndValue(callback, intKey, 2, 123)
+        verifyCountAndValue(callback, stringKey, 2, "stringValue")
+
+        callback.initializeLatch(listOf(intKey, stringKey))
+        dataBridgeClient.removeValues(setOf(intKey, stringKey))
+        verifyCountAndValue(callback, intKey, 3, null)
+        verifyCountAndValue(callback, stringKey, 3, null)
+
+        dataBridgeClient.unregisterKeyUpdateCallback(callback)
+    }
+
+    @Test
+    fun testRegisterKeyUpdates_multipleCallbacks_multipleKeys() = runBlocking {
+        val callback1 = KeyUpdateCallbackImpl()
+        val callback2 = KeyUpdateCallbackImpl()
+
+        callback1.initializeLatch(listOf(intKey, stringKey))
+        dataBridgeClient.registerKeyUpdateCallback(
+            setOf(intKey, stringKey),
+            currentThreadExecutor,
+            callback1,
+        )
+        verifyCountAndValue(callback1, stringKey, 1, null)
+
+        callback2.initializeLatch(listOf(doubleKey, stringKey))
+        dataBridgeClient.registerKeyUpdateCallback(
+            setOf(doubleKey, stringKey),
+            currentThreadExecutor,
+            callback2,
+        )
+        verifyCountAndValue(callback2, stringKey, 1, null)
+
+        callback1.initializeLatch(listOf(stringKey))
+        callback2.initializeLatch(listOf(stringKey))
+        dataBridgeClient.setValue(stringKey, "stringValue")
+        verifyCountAndValue(callback1, stringKey, 2, "stringValue")
+        verifyCountAndValue(callback2, stringKey, 2, "stringValue")
+
+        dataBridgeClient.unregisterKeyUpdateCallback(callback1)
+        dataBridgeClient.unregisterKeyUpdateCallback(callback2)
+    }
+
+    @Test(expected = TimeoutException::class)
+    fun testUnregisterKeyUpdates() = runBlocking {
+        val callback = KeyUpdateCallbackImpl()
+
+        callback.initializeLatch(listOf(intKey))
+        dataBridgeClient.registerKeyUpdateCallback(setOf(intKey), currentThreadExecutor, callback)
+        verifyCountAndValue(callback, intKey, 1, null)
+
+        callback.initializeLatch(listOf(intKey))
+        dataBridgeClient.setValue(intKey, 123)
+        verifyCountAndValue(callback, intKey, 2, 123)
+
+        dataBridgeClient.unregisterKeyUpdateCallback(callback)
+        callback.initializeLatch(listOf(intKey))
+        dataBridgeClient.setValue(intKey, 11)
+
+        // This throws a TimeoutException exception because it CountDownLatch.awaits returns a
+        // boolean as the callback has been unregistered
+        val unused = callback.getCounterForKey(intKey)
+    }
+
     private suspend fun expectKeySetSuccessfully(key: Key, value: Any) {
         dataBridgeClient.setValue(key, value)
         val res = dataBridgeClient.getValue(key)
@@ -421,5 +556,56 @@ class DataBridgeClientTest {
         expect.that(result.isSuccess).isTrue()
 
         expect.that(result.getOrNull()).isNull()
+    }
+
+    class KeyUpdateCallbackImpl : KeyUpdateCallback {
+        private var keyUpdatedCounterMap = mutableMapOf<Key, Int>()
+        private var keyToValueMap = mutableMapOf<Key, Any?>()
+        // The latch will be used to ensure that the counter value and the value has been updated.
+        // Wait for the latch in [getCounterForKey] or [getValueForKey] to ensure that the
+        // [onKeyUpdated] function has been called
+        private val latchMap = mutableMapOf<Key, CountDownLatch>()
+
+        override fun onKeyUpdated(key: Key, value: Any?) {
+            val counter = keyUpdatedCounterMap[key]
+            keyUpdatedCounterMap[key] = if (counter == null) 1 else counter + 1
+
+            keyToValueMap[key] = value
+            latchMap[key]?.countDown()
+        }
+
+        fun initializeLatch(keys: List<Key>) {
+            keys.forEach { key -> latchMap[key] = CountDownLatch(1) }
+        }
+
+        fun getCounterForKey(key: Key): Int {
+            val res = latchMap[key]?.await(5, TimeUnit.SECONDS)
+            res?.let {
+                if (!it) {
+                    throw TimeoutException()
+                }
+            }
+            return keyUpdatedCounterMap[key] ?: 0
+        }
+
+        fun getValueForKey(key: Key): Any? {
+            val res = latchMap[key]?.await(5, TimeUnit.SECONDS)
+            res?.let {
+                if (!it) {
+                    throw TimeoutException()
+                }
+            }
+            return keyToValueMap[key]
+        }
+    }
+
+    private fun verifyCountAndValue(
+        callback: KeyUpdateCallbackImpl,
+        key: Key,
+        count: Int,
+        value: Any?,
+    ) {
+        expect.that(callback.getCounterForKey(key)).isEqualTo(count)
+        expect.that(callback.getValueForKey(key)).isEqualTo(value)
     }
 }
