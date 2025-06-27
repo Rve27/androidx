@@ -110,7 +110,7 @@ class TransformationTestsActivity : AppCompatActivity() {
             "onActivitySpaceUpdatedCount",
             (++onActivitySpaceUpdatedCount).toString(),
         )
-        session.scene.activitySpace.setOnSpaceUpdatedListener({
+        session.scene.activitySpace.addOnSpaceUpdatedListener {
             // Use lifecycleScope to update the UI view in the same thread it was created in
             lifecycleScope.launch {
                 activitySpaceDebugPanel.view.setLine(
@@ -118,7 +118,7 @@ class TransformationTestsActivity : AppCompatActivity() {
                     (++onActivitySpaceUpdatedCount).toString(),
                 )
             }
-        })
+        }
         onAnchorSpaceUpdatedCount = 0
         anchor!!.setOnSpaceUpdatedListener({
             // Use lifecycleScope to update the UI view in the same thread it was created in

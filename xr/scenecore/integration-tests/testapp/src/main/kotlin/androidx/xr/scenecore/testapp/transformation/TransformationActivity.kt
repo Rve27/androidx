@@ -191,15 +191,12 @@ class TransformationActivity : AppCompatActivity() {
                     "onActivitySpaceUpdatedCount",
                     (++onActivitySpaceUpdatedCount).toString(),
                 )
-                session!!
-                    .scene
-                    .activitySpace
-                    .setOnSpaceUpdatedListener({
-                        it.view.setLine(
-                            "onActivitySpaceUpdatedCount",
-                            (++onActivitySpaceUpdatedCount).toString(),
-                        )
-                    })
+                session!!.scene.activitySpace.addOnSpaceUpdatedListener {
+                    it.view.setLine(
+                        "onActivitySpaceUpdatedCount",
+                        (++onActivitySpaceUpdatedCount).toString(),
+                    )
+                }
             }
     }
 
