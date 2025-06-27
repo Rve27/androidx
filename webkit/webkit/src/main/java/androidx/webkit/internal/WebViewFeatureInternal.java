@@ -16,6 +16,7 @@
 
 package androidx.webkit.internal;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
@@ -74,6 +75,7 @@ import java.util.regex.Pattern;
  * Enum representing a WebView feature, this provides functionality for determining whether a
  * feature is supported by the current framework and/or WebView APK.
  */
+@SuppressLint("UnsafeOptInUsageError") // Prevent lint errors from experimental feature names.
 public class WebViewFeatureInternal {
     /**
      * This feature covers
