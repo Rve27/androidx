@@ -401,3 +401,9 @@ Calculating task graph as configuration cache cannot be reused because the set o
 # b/414775532
 # > Task :compose-hero-benchmarks:poxedex-compose:app:kspReleaseKotlin
 w: \[ksp\] LibraryGlideModules \[\] are included more than once, keeping only one\!
+# b/427710686
+# > Task :camera:integration-tests:camera-testapp-core:processDebugUnitTestManifest
+# > Task :camera:integration-tests:camera-testapp-diagnose:processDebugUnitTestManifest
+package="androidx\.camera\.integration\.[^"]+" found in source AndroidManifest\.xml: \$OUT_DIR/androidx/camera/integration-tests/camera-testapp-[^/]+/build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest\.xml\.
+Setting the namespace via the package attribute in the source AndroidManifest\.xml is no longer supported, and the value is ignored\.
+Recommendation: remove package="androidx\.camera\.integration\.[^"]+" from the source AndroidManifest\.xml: \$OUT_DIR/androidx/camera/integration-tests/camera-testapp-[^/]+/build/intermediates/merged_manifest/debug/processDebugMainManifest/AndroidManifest\.xml\.
