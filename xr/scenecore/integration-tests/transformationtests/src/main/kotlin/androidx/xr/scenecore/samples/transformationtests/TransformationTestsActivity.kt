@@ -57,6 +57,9 @@ class TransformationTestsActivity : AppCompatActivity() {
     private val session by lazy { (Session.create(this) as SessionCreateSuccess).session }
 
     private var anchor: AnchorEntity? = null
+    private lateinit var sunDragon: GltfModelEntity
+    private lateinit var planetDragon: GltfModelEntity
+    private lateinit var moonDragon: GltfModelEntity
     private var moveableActive = false
     private var debugTextPanelsToUpdate = mutableListOf<DebugTextPanel>()
     private val pauseSwitch by lazy { findViewById<Switch>(R.id.switchPause) }
@@ -240,6 +243,13 @@ class TransformationTestsActivity : AppCompatActivity() {
 
         view.setLine("worldSpacePose", trackedEntity.activitySpacePose.toFormattedString())
         view.setLine("worldSpaceScale", trackedEntity.getScale(Space.REAL_WORLD).toString())
+        if (
+            trackedEntity == sunDragon ||
+                trackedEntity == planetDragon ||
+                trackedEntity == moonDragon
+        ) {
+            view.setLine("local scale", trackedEntity.getScale(Space.PARENT).toString())
+        }
 
         val activitySpacePose =
             trackedEntity.transformPoseTo(Pose.Identity, session.scene.activitySpace)
@@ -270,15 +280,15 @@ class TransformationTestsActivity : AppCompatActivity() {
     }
 
     private fun createModelSolarSystem(session: Session, model: GltfModel) {
-        val sunDragon = GltfModelEntity.create(session, model, Pose(Vector3(-0.5f, 3f, -9f)))
+        sunDragon = GltfModelEntity.create(session, model, Pose(Vector3(-0.5f, 3f, -9f)))
         sunDragon.setScale(3f)
         sunDragon.parent = session.scene.activitySpace
 
-        val planetDragon = GltfModelEntity.create(session, model, Pose(Vector3(-1f, 3f, -9f)))
+        planetDragon = GltfModelEntity.create(session, model, Pose(Vector3(-1f, 3f, -9f)))
         planetDragon.setScale(0.5f)
         planetDragon.parent = sunDragon
 
-        val moonDragon = GltfModelEntity.create(session, model, Pose(Vector3(-1.5f, 3f, -9f)))
+        moonDragon = GltfModelEntity.create(session, model, Pose(Vector3(-1.5f, 3f, -9f)))
         moonDragon.setScale(0.5f)
         moonDragon.parent = planetDragon
 

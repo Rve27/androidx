@@ -216,6 +216,13 @@ class TransformationActivity : AppCompatActivity() {
 
         view.setLine("worldSpacePose", trackedEntity.activitySpacePose.toFormattedString())
         view.setLine("worldSpaceScale", trackedEntity.getScale().toString())
+        if (
+            trackedEntity == sunEntity ||
+                trackedEntity == planetEntity ||
+                trackedEntity == moonEntity
+        ) {
+            view.setLine("local scale", trackedEntity.getScale(Space.PARENT).toString())
+        }
 
         val activitySpacePose =
             trackedEntity.transformPoseTo(Pose.Identity, session!!.scene.activitySpace)
