@@ -57,7 +57,6 @@ public class GltfEntityImplTest {
     private final SplitEngineSubspaceManager mSplitEngineSubspaceManager =
             Mockito.mock(SplitEngineSubspaceManager.class);
     private GltfEntityImpl mGltfEntity;
-
     @Before
     public void setUp() throws ExecutionException, InterruptedException {
         ActivityController<Activity> activityController = Robolectric.buildActivity(Activity.class);
@@ -79,16 +78,18 @@ public class GltfEntityImplTest {
                         /* unscaledGravityAlignedActivitySpace = */ false,
                         mExecutor);
 
-        mGltfEntity = createGltfEntity();
+        mGltfEntity = createGltfEntity(activity);
     }
 
-    private GltfEntityImpl createGltfEntity() throws ExecutionException, InterruptedException {
+    private GltfEntityImpl createGltfEntity(Activity activity)
+            throws ExecutionException, InterruptedException {
         long modelToken = -1;
         ListenableFuture<Long> modelTokenFuture =
                 mFakeImpressApi.loadGltfAsset("FakeGltfAsset.glb");
         modelToken = modelTokenFuture.get();
         GltfModelResourceImpl modelResource = new GltfModelResourceImpl(modelToken);
         return new GltfEntityImpl(
+                activity,
                 modelResource,
                 mActivitySpace,
                 mFakeImpressApi,

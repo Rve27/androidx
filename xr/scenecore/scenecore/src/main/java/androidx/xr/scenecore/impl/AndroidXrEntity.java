@@ -16,6 +16,7 @@
 
 package androidx.xr.scenecore.impl;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.xr.runtime.internal.ActivitySpace;
@@ -70,10 +71,12 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
     private ReformOptions mReformOptions;
 
     AndroidXrEntity(
+            Context context,
             Node node,
             XrExtensions extensions,
             EntityManager entityManager,
             ScheduledExecutorService executor) {
+        super(context);
         mNode = node;
         mExtensions = extensions;
         mEntityManager = entityManager;
@@ -204,7 +207,7 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
     public void setParent(Entity parent) {
         if ((parent != null) && !(parent instanceof AndroidXrEntity)) {
             Log.e(
-                    "RealityCoreRuntime",
+                    "SceneCore",
                     "Cannot set non-AndroidXrEntity as a parent of a AndroidXrEntity");
             return;
         }

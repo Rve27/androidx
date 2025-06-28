@@ -66,7 +66,7 @@ final class PanelEntityImpl extends BasePanelEntity implements PanelEntity {
             PixelDimensions surfaceDimensionsPx,
             @NonNull String name,
             ScheduledExecutorService executor) {
-        super(node, extensions, entityManager, executor);
+        super(context, node, extensions, entityManager, executor);
 
         View reparentedView = maybeReparentView(view, name, context);
         mSurfaceControlViewHost =
@@ -85,7 +85,7 @@ final class PanelEntityImpl extends BasePanelEntity implements PanelEntity {
             Dimensions surfaceDimensions,
             @NonNull String name,
             ScheduledExecutorService executor) {
-        super(node, extensions, entityManager, executor);
+        super(context, node, extensions, entityManager, executor);
         float unscaledPixelDensity = getDefaultPixelDensity();
         PixelDimensions surfaceDimensionsPx =
                 new PixelDimensions(

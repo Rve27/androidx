@@ -16,6 +16,7 @@
 
 package androidx.xr.scenecore.impl;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.xr.runtime.internal.Entity;
@@ -50,6 +51,7 @@ class GltfEntityImpl extends AndroidXrEntity implements GltfEntity {
     @AnimationStateValue private int mAnimationState = AnimationState.STOPPED;
 
     GltfEntityImpl(
+            Context context,
             GltfModelResourceImpl gltfModelResource,
             Entity parentEntity,
             ImpressApi impressApi,
@@ -57,7 +59,7 @@ class GltfEntityImpl extends AndroidXrEntity implements GltfEntity {
             XrExtensions extensions,
             EntityManager entityManager,
             ScheduledExecutorService executor) {
-        super(extensions.createNode(), extensions, entityManager, executor);
+        super(context, extensions.createNode(), extensions, entityManager, executor);
         mImpressApi = impressApi;
         mSplitEngineSubspaceManager = splitEngineSubspaceManager;
         setParent(parentEntity);

@@ -294,6 +294,7 @@ public class EntityManagerTest {
         GltfModelResourceImpl model = new GltfModelResourceImpl(modelToken);
         GltfEntityImpl gltfEntity =
                 new GltfEntityImpl(
+                        mActivity,
                         model,
                         mActivitySpaceRoot,
                         mFakeImpressApi,
@@ -337,6 +338,7 @@ public class EntityManagerTest {
     private AnchorEntity createAnchorEntity() {
         AnchorEntityImpl anchorEntity =
                 AnchorEntityImpl.createSemanticAnchor(
+                        mActivity,
                         mAnchorEntityNode,
                         new Dimensions(1f, 1f, 1f),
                         PlaneType.VERTICAL,

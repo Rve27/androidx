@@ -18,6 +18,7 @@ package androidx.xr.scenecore.impl;
 
 import static java.lang.Math.max;
 
+import android.content.Context;
 import android.os.SystemClock;
 import android.util.Log;
 import android.util.Pair;
@@ -483,8 +484,13 @@ class MovableComponentImpl implements MovableComponent {
             PlaneData anchorablePlaneData,
             AnchorPlacementImpl anchorPlacement,
             Long dataTimeNs) {
+        Context entityContext = null;
+        if (mEntity instanceof AndroidXrEntity) {
+            entityContext = ((AndroidXrEntity) mEntity).getContext();
+        }
         AnchorEntityImpl anchorEntity =
                 AnchorEntityImpl.createAnchorFromPlane(
+                        entityContext,
                         mExtensions.createNode(),
                         plane,
                         new Pose(),

@@ -646,7 +646,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
 
     @Override
     public @NonNull LoggingEntity createLoggingEntity(@NonNull Pose pose) {
-        LoggingEntityImpl entity = new LoggingEntityImpl();
+        LoggingEntityImpl entity = new LoggingEntityImpl(mActivity);
         entity.setPose(pose, Space.PARENT);
         return entity;
     }
@@ -1723,6 +1723,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
         activityPanel.setWindowBounds(windowBoundsRect);
         ActivityPanelEntityImpl activityPanelEntity =
                 new ActivityPanelEntityImpl(
+                        hostActivity,
                         activityPanel.getNode(),
                         name,
                         mExtensions,
@@ -1743,6 +1744,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
             @NonNull Duration searchTimeout) {
         Node node = mExtensions.createNode();
         return AnchorEntityImpl.createSemanticAnchor(
+                mActivity,
                 node,
                 bounds,
                 planeType,
@@ -1760,6 +1762,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
     public @NonNull AnchorEntity createAnchorEntity(@NonNull Anchor anchor) {
         Node node = mExtensions.createNode();
         return AnchorEntityImpl.createAnchorFromRuntimeAnchor(
+                mActivity,
                 node,
                 anchor,
                 getActivitySpace(),
@@ -1779,7 +1782,8 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
         }
 
         // This entity is used to back JXR Core's GroupEntity.
-        Entity entity = new AndroidXrEntity(node, mExtensions, mEntityManager, mExecutor) {};
+        Entity entity =
+                new AndroidXrEntity(mActivity, node, mExtensions, mEntityManager, mExecutor) {};
         entity.setParent(parent);
         entity.setPose(pose, Space.PARENT);
         return entity;
@@ -1790,6 +1794,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
             @NonNull UUID uuid, @NonNull Duration searchTimeout) {
         Node node = mExtensions.createNode();
         return AnchorEntityImpl.createPersistedAnchor(
+                mActivity,
                 node,
                 uuid,
                 searchTimeout,
@@ -1946,6 +1951,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
 
         SurfaceEntity entity =
                 new SurfaceEntityImpl(
+                        mActivity,
                         parentEntity,
                         mImpressApi,
                         mSplitEngineSubspaceManager,
@@ -1971,6 +1977,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
         }
         GltfEntity entity =
                 new GltfEntityImpl(
+                        mActivity,
                         (GltfModelResourceImpl) model,
                         parentEntity,
                         mImpressApi,
@@ -2057,6 +2064,7 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
             @NonNull SubspaceNode subspaceNode, @NonNull Dimensions size) {
         SubspaceNodeEntityImpl subspaceNodeEntity =
                 new SubspaceNodeEntityImpl(
+                        mActivity,
                         mExtensions,
                         mEntityManager,
                         mExecutor,

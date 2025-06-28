@@ -16,6 +16,7 @@
 
 package androidx.xr.scenecore.impl;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.Surface;
 
@@ -106,6 +107,7 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     }
 
     SurfaceEntityImpl(
+            Context context,
             Entity parentEntity,
             ImpressApi impressApi,
             SplitEngineSubspaceManager splitEngineSubspaceManager,
@@ -116,7 +118,7 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
             CanvasShape canvasShape,
             @ContentSecurityLevel int contentSecurityLevel,
             @SuperSampling int superSampling) {
-        super(extensions.createNode(), extensions, entityManager, executor);
+        super(context, extensions.createNode(), extensions, entityManager, executor);
         mImpressApi = impressApi;
         mSplitEngineSubspaceManager = splitEngineSubspaceManager;
         mStereoMode = stereoMode;

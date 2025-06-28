@@ -265,7 +265,11 @@ internal constructor(
 
     private val componentList = mutableListOf<Component>()
 
-    override var contentDescription: String = ""
+    override var contentDescription: String
+        get() = rtEntity.contentDescription
+        set(value) {
+            rtEntity.contentDescription = value
+        }
 
     override var parent: Entity?
         get() = rtEntity.parent?.let { entityManager.getEntityForRtEntity(it) }

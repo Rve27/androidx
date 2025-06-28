@@ -126,6 +126,7 @@ public final class SurfaceEntityImplTest {
 
         mSurfaceEntity =
                 new SurfaceEntityImpl(
+                        mActivity,
                         parentEntity,
                         impressApi,
                         splitEngineSubspaceManager,

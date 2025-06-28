@@ -333,6 +333,9 @@ class SubspaceComposableApp : ComponentActivity() {
             }
         var arrows by remember { mutableStateOf<GltfModel?>(null) }
         val gltfEntity = arrows?.let { remember { GltfModelEntity.create(session, it) } }
+        if (gltfEntity != null) {
+            gltfEntity!!.contentDescription = "Showing arrows"
+        }
 
         LaunchedEffect(Unit) {
             arrows = GltfModel.create(session, Paths.get("models", "xyzArrows.glb"))
@@ -359,6 +362,7 @@ class SubspaceComposableApp : ComponentActivity() {
                 val q = Quaternion(qX, qY, qZ, qW)
 
                 gltfEntity.setPose(Pose(rotation = q))
+                gltfEntity!!.contentDescription = "Animating arrows"
             }
 
             Volume(modifier) { gltfEntity.parent = it }

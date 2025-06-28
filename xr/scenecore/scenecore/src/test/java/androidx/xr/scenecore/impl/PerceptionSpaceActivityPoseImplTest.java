@@ -93,6 +93,7 @@ public final class PerceptionSpaceActivityPoseImplTest {
         }
         GltfModelResourceImpl model = new GltfModelResourceImpl(modelToken);
         return new GltfEntityImpl(
+                mActivity,
                 model,
                 mActivitySpace,
                 mFakeImpressApi,
