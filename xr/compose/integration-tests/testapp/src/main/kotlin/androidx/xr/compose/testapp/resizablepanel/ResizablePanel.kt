@@ -49,9 +49,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.compose.spatial.Subspace
-import androidx.xr.compose.subspace.MainPanel
+import androidx.xr.compose.subspace.SpatialActivityPanel
 import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialLayoutSpacer
+import androidx.xr.compose.subspace.SpatialMainPanel
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.SpatialRow
 import androidx.xr.compose.subspace.SubspaceComposable
@@ -160,7 +161,7 @@ class ResizablePanel : ComponentActivity() {
                     val intent = Intent(this@ResizablePanel, AnotherActivity::class.java)
                     intent.putExtra("TITLE", "Activity Panel")
                     intent.putExtra("INSIDE_TEXT", "Resizable Activity Panel")
-                    SpatialPanel(
+                    SpatialActivityPanel(
                         intent = intent,
                         modifier =
                             panelSize
@@ -178,7 +179,9 @@ class ResizablePanel : ComponentActivity() {
 
             // MainPanel
             SpatialRow(modifier = SubspaceModifier.fillMaxWidth()) {
-                MainPanel(modifier = SubspaceModifier.width(640.dp).height(480.dp).resizable(true))
+                SpatialMainPanel(
+                    modifier = SubspaceModifier.width(640.dp).height(480.dp).resizable(true)
+                )
             }
         }
     }
