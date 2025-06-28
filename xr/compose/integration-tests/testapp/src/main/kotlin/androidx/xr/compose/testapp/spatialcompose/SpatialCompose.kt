@@ -67,11 +67,13 @@ import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.OrbiterOffsetType
 import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.ExperimentalSubspaceVolumeApi
-import androidx.xr.compose.subspace.MainPanel
 import androidx.xr.compose.subspace.SceneCoreEntity
+import androidx.xr.compose.subspace.SpatialActivityPanel
+import androidx.xr.compose.subspace.SpatialAndroidViewPanel
 import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialCurvedRow
 import androidx.xr.compose.subspace.SpatialLayoutSpacer
+import androidx.xr.compose.subspace.SpatialMainPanel
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.SubspaceComposable
 import androidx.xr.compose.subspace.layout.SpatialAlignment
@@ -234,12 +236,12 @@ class SpatialCompose : ComponentActivity() {
                             .testTag("CenterColumn"),
                     alignment = SpatialAlignment.TopCenter,
                 ) {
-                    MainPanel(modifier = SubspaceModifier.fillMaxWidth().height(600.dp))
+                    SpatialMainPanel(modifier = SubspaceModifier.fillMaxWidth().height(600.dp))
                     val intent = Intent(this@SpatialCompose, AnotherActivity::class.java)
                     intent.putExtra("SHOW_BOTTOM_BAR", true)
                     intent.putExtra("TITLE", "Top Bar")
                     intent.putExtra("BOTTOM_BAR_TEXT", "Bottom Bar")
-                    SpatialPanel(
+                    SpatialActivityPanel(
                         intent = intent,
                         modifier =
                             SubspaceModifier.width(800.dp)
@@ -352,7 +354,7 @@ class SpatialCompose : ComponentActivity() {
             }
         }
 
-        SpatialPanel(factory = { textView }, modifier = modifier)
+        SpatialAndroidViewPanel(factory = { textView }, modifier = modifier)
     }
 
     @OptIn(ExperimentalSubspaceVolumeApi::class)

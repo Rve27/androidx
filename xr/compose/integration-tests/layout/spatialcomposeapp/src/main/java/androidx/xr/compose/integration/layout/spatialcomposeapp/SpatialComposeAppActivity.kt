@@ -71,11 +71,13 @@ import androidx.xr.compose.spatial.Orbiter
 import androidx.xr.compose.spatial.OrbiterOffsetType
 import androidx.xr.compose.spatial.SpatialElevationLevel
 import androidx.xr.compose.spatial.Subspace
-import androidx.xr.compose.subspace.MainPanel
 import androidx.xr.compose.subspace.SceneCoreEntity
+import androidx.xr.compose.subspace.SpatialActivityPanel
+import androidx.xr.compose.subspace.SpatialAndroidViewPanel
 import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialCurvedRow
 import androidx.xr.compose.subspace.SpatialLayoutSpacer
+import androidx.xr.compose.subspace.SpatialMainPanel
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.SubspaceComposable
 import androidx.xr.compose.subspace.layout.SpatialAlignment
@@ -212,8 +214,8 @@ class SpatialComposeAppActivity : ComponentActivity() {
                         SubspaceModifier.weight(0.6f).fillMaxHeight().padding(horizontal = 20.dp),
                     alignment = SpatialAlignment.TopCenter,
                 ) {
-                    MainPanel(modifier = SubspaceModifier.weight(1f).fillMaxWidth())
-                    SpatialPanel(
+                    SpatialMainPanel(modifier = SubspaceModifier.weight(1f).fillMaxWidth())
+                    SpatialActivityPanel(
                         modifier = SubspaceModifier.height(400.dp).fillMaxWidth(),
                         intent = Intent(this@SpatialComposeAppActivity, AnotherActivity::class.java),
                     )
@@ -323,7 +325,7 @@ class SpatialComposeAppActivity : ComponentActivity() {
     @SuppressLint("SetTextI18n")
     @Composable
     fun ViewBasedAppPanel(modifier: SubspaceModifier = SubspaceModifier, text: String = "") {
-        SpatialPanel(
+        SpatialAndroidViewPanel(
             factory = { context ->
                 TextView(context).apply {
                     setPadding(16, 16, 16, 16)
