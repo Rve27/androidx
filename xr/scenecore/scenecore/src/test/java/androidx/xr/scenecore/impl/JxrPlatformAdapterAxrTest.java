@@ -645,23 +645,6 @@ public final class JxrPlatformAdapterAxrTest {
     }
 
     @Test
-    public void getHeadPoseInOpenXrUnboundedSpace_returnsNullWhenPerceptionSessionUninitialized() {
-        when(mPerceptionLibrary.getSession()).thenReturn(null);
-        assertThat(mRuntime.getHeadPoseInOpenXrUnboundedSpace()).isNull();
-    }
-
-    @Test
-    public void getHeadPoseInOpenXrUnboundedSpace_returnsPose() {
-        when(mSession.getHeadPose())
-                .thenReturn(
-                        new androidx.xr.scenecore.impl.perception.Pose(1f, 1f, 1f, 0f, 0f, 0f, 1f));
-        when(mPerceptionLibrary.getSession()).thenReturn(mSession);
-        assertPose(
-                mRuntime.getHeadPoseInOpenXrUnboundedSpace(),
-                new Pose(new Vector3(1f, 1f, 1f), new Quaternion(0f, 0f, 0f, 1f)));
-    }
-
-    @Test
     public void
             getStereoViewsInOpenXrUnboundedSpace_returnsNullWhenPerceptionSessionUninitialized() {
         when(mPerceptionLibrary.getSession()).thenReturn(null);

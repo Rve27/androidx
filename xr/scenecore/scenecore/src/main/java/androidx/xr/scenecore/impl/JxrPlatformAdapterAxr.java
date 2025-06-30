@@ -693,19 +693,6 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
     }
 
     /**
-     * Get the user's current head pose relative to @c XR_REFERENCE_SPACE_TYPE_UNBOUNDED_ANDROID.
-     */
-    // TODO(b/349180723): Refactor to a streaming based approach.
-    public @Nullable Pose getHeadPoseInOpenXrUnboundedSpace() {
-        Session session = mPerceptionLibrary.getSession();
-        if (session == null) {
-            Log.w(TAG, "Perception session is uninitialized, returning null head pose.");
-            return null;
-        }
-        return RuntimeUtils.fromPerceptionPose(Objects.requireNonNull(session.getHeadPose()));
-    }
-
-    /**
      * Get the user's current eye views relative to @c XR_REFERENCE_SPACE_TYPE_UNBOUNDED_ANDROID.
      */
     public @Nullable ViewProjections getStereoViewsInOpenXrUnboundedSpace() {
