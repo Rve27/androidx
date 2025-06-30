@@ -1513,6 +1513,7 @@ public final class CustomTabsIntent {
          * @see CustomTabsIntent#OPEN_IN_BROWSER_STATE_DEFAULT
          * @see CustomTabsIntent#OPEN_IN_BROWSER_STATE_ON
          * @see CustomTabsIntent#OPEN_IN_BROWSER_STATE_OFF
+         * @throws IllegalArgumentException when an invalid option is provided.
          */
         @ExperimentalOpenInBrowser
         public @NonNull Builder setOpenInBrowserButtonState(
