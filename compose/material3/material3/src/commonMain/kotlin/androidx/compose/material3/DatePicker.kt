@@ -96,6 +96,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -1549,19 +1550,19 @@ internal fun DisplayModeToggleButton(
 ) {
     CompositionLocalProvider(LocalContentColor provides colors.headlineContentColor) {
         if (displayMode == DisplayMode.Picker) {
-            IconButton(onClick = { onDisplayModeChange(DisplayMode.Input) }, modifier = modifier) {
-                Icon(
-                    imageVector = Icons.Filled.Edit,
-                    contentDescription = getString(Strings.DatePickerSwitchToInputMode),
-                )
-            }
+            IconButtonWithTooltip(
+                onClick = { onDisplayModeChange(DisplayMode.Input) },
+                modifier = modifier,
+                icon = Icons.Filled.Edit,
+                contentDescription = getString(Strings.DatePickerSwitchToInputMode),
+            )
         } else {
-            IconButton(onClick = { onDisplayModeChange(DisplayMode.Picker) }, modifier = modifier) {
-                Icon(
-                    imageVector = Icons.Filled.DateRange,
-                    contentDescription = getString(Strings.DatePickerSwitchToCalendarMode),
-                )
-            }
+            IconButtonWithTooltip(
+                onClick = { onDisplayModeChange(DisplayMode.Picker) },
+                modifier = modifier,
+                icon = Icons.Filled.DateRange,
+                contentDescription = getString(Strings.DatePickerSwitchToCalendarMode),
+            )
         }
     }
 }
@@ -2371,18 +2372,19 @@ private fun MonthsNavigation(
         if (!yearPickerVisible) {
             CompositionLocalProvider(LocalContentColor provides colors.navigationContentColor) {
                 Row {
-                    IconButton(onClick = onPreviousClicked, enabled = previousAvailable) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = getString(Strings.DatePickerSwitchToPreviousMonth),
-                        )
-                    }
-                    IconButton(onClick = onNextClicked, enabled = nextAvailable) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                            contentDescription = getString(Strings.DatePickerSwitchToNextMonth),
-                        )
-                    }
+                    IconButtonWithTooltip(
+                        onClick = onPreviousClicked,
+                        enabled = previousAvailable,
+                        icon = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = getString(Strings.DatePickerSwitchToPreviousMonth),
+                    )
+
+                    IconButtonWithTooltip(
+                        onClick = onNextClicked,
+                        enabled = nextAvailable,
+                        icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = getString(Strings.DatePickerSwitchToNextMonth),
+                    )
                 }
             }
         }
@@ -2417,6 +2419,26 @@ private fun YearPickerMenuButton(
                 },
             Modifier.rotate(if (expanded) 180f else 0f),
         )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun IconButtonWithTooltip(
+    onClick: () -> Unit,
+    icon: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+        tooltip = { PlainTooltip { Text(contentDescription) } },
+        state = rememberTooltipState(),
+    ) {
+        IconButton(onClick = onClick, modifier = modifier, enabled = enabled) {
+            Icon(imageVector = icon, contentDescription = contentDescription)
+        }
     }
 }
 

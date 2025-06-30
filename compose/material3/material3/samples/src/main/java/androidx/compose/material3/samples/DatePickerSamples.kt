@@ -40,16 +40,20 @@ import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.getSelectedDate
 import androidx.compose.material3.getSelectedEndDate
 import androidx.compose.material3.getSelectedStartDate
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDateRangePickerState
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
@@ -251,8 +255,14 @@ fun DateRangePickerSample() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            IconButton(onClick = { /* dismiss the UI */ }) {
-                Icon(Icons.Filled.Close, contentDescription = "Localized description")
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                tooltip = { PlainTooltip { Text("Close") } },
+                state = rememberTooltipState(),
+            ) {
+                IconButton(onClick = { /* dismiss the UI */ }) {
+                    Icon(Icons.Filled.Close, contentDescription = "Close")
+                }
             }
             TextButton(
                 onClick = {
@@ -297,8 +307,14 @@ fun DateRangePickerApi26Sample() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            IconButton(onClick = { /* dismiss the UI */ }) {
-                Icon(Icons.Filled.Close, contentDescription = "Localized description")
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                tooltip = { PlainTooltip { Text("Close") } },
+                state = rememberTooltipState(),
+            ) {
+                IconButton(onClick = { /* dismiss the UI */ }) {
+                    Icon(Icons.Filled.Close, contentDescription = "Close")
+                }
             }
             TextButton(
                 onClick = {
