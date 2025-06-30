@@ -109,11 +109,14 @@ private fun configureJvmTestTask(project: Project, task: Test) {
         )
     }
 
-    // https://github.com/robolectric/robolectric/issues/7456
     task.jvmArgs =
         listOf(
+            // https://github.com/robolectric/robolectric/issues/7456
             "--add-opens=java.base/java.lang=ALL-UNNAMED",
             "--add-opens=java.base/java.util=ALL-UNNAMED",
             "--add-opens=java.base/java.io=ALL-UNNAMED",
+            // Speculative fix for b/428257656
+            "-XX:CompileCommand=quiet",
+            "-XX:CompileCommand=exclude,android/icu/util/Calendar,${"$$"}robo${"$$"}android_icu_util_Calendar${"$"}createInstance",
         )
 }
