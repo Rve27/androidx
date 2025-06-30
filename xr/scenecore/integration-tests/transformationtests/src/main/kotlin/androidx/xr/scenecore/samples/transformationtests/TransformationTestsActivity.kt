@@ -163,13 +163,7 @@ class TransformationTestsActivity : AppCompatActivity() {
 
     private fun setupMovableMainPanel() {
         mainActivityDebugView.setName("Main Panel")
-        val movableComponent =
-            MovableComponent.create(
-                session,
-                systemMovable = true,
-                scaleInZ = false,
-                anchorPlacement = setOf(),
-            )
+        val movableComponent = MovableComponent.createSystemMovable(session, scaleInZ = false)
         val movablePanelSwitch = findViewById<Switch>(R.id.switchMovePanel)
         movablePanelSwitch.setOnCheckedChangeListener { _, isChecked ->
             when (isChecked) {

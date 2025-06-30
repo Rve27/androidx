@@ -192,7 +192,7 @@ class SplitEngineTestActivity : ComponentActivity() {
                     // move the
                     // main panel around.
                     if (movableComponentMP.value == null) {
-                        movableComponentMP.value = MovableComponent.create(session)
+                        movableComponentMP.value = MovableComponent.createSystemMovable(session)
                         val unused =
                             session.scene.mainPanelEntity.addComponent(movableComponentMP.value!!)
                     }

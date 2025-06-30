@@ -86,8 +86,7 @@ class HeadLockedUiActivity : AppCompatActivity() {
 
         // Set the main panel size and make the main panel movable.
         mSession.scene.mainPanelEntity.sizeInPixels = IntSize2d(width = 1500, height = 1100)
-        val movableComponent =
-            MovableComponent.create(mSession, systemMovable = true, scaleInZ = false)
+        val movableComponent = MovableComponent.createSystemMovable(mSession, scaleInZ = false)
         val unused = mSession.scene.mainPanelEntity.addComponent(movableComponent)
 
         // Create the debug panel with info on the tracked entity

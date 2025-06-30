@@ -120,7 +120,7 @@ class FsmHsmTransitionActivity : AppCompatActivity() {
 
         // Movable switch
         findViewById<SwitchMaterial>(R.id.switch_movable_in_fsm).also {
-            val movableComponent = MovableComponent.create(session!!)
+            val movableComponent = MovableComponent.createSystemMovable(session!!)
             it.setOnCheckedChangeListener { _, isOn ->
                 movableComponent.size = session!!.scene.mainPanelEntity.size.to3d()
                 when (isOn) {

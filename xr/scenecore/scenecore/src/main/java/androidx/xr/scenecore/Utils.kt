@@ -99,7 +99,7 @@ internal fun RtPixelDimensions.toIntSize2d(): IntSize2d {
     return IntSize2d(width, height)
 }
 
-/** Extension function that converts [Int] to [JxrPlatformAdapter.PlaneType]. */
+/** Extension function that converts [Int] to [JxrPlatformAdapter.planeOrientation]. */
 internal fun Int.toRtPlaneType(): RtPlaneType {
     return when (this) {
         PlaneOrientation.HORIZONTAL -> RtPlaneType.HORIZONTAL
@@ -200,12 +200,13 @@ internal fun Set<AnchorPlacement>.toRtAnchorPlacement(
 ): Set<RtAnchorPlacement> {
     val rtAnchorPlacementSet = HashSet<RtAnchorPlacement>()
     for (placement in this) {
-        val planeTypeFilter = placement.planeTypeFilter.map { it.toRtPlaneType() }.toMutableSet()
+        val planeOrientationFilter =
+            placement.anchorablePlaneOrientations.map { it.toRtPlaneType() }.toMutableSet()
         val planeSemanticFilter =
-            placement.planeSemanticFilter.map { it.toRtPlaneSemantic() }.toMutableSet()
+            placement.anchorablePlaneSemanticTypes.map { it.toRtPlaneSemantic() }.toMutableSet()
 
         val rtAnchorPlacement =
-            runtime.createAnchorPlacementForPlanes(planeTypeFilter, planeSemanticFilter)
+            runtime.createAnchorPlacementForPlanes(planeOrientationFilter, planeSemanticFilter)
         rtAnchorPlacementSet.add(rtAnchorPlacement)
     }
     return rtAnchorPlacementSet

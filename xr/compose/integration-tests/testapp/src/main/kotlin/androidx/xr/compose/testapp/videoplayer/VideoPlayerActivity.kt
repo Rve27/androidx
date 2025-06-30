@@ -286,7 +286,7 @@ class VideoPlayerActivity : ComponentActivity() {
     private fun SystemApisCard(session: Session) {
         val movableComponentMP = remember { mutableStateOf<MovableComponent?>(null) }
         if (movableComponentMP.value == null) {
-            movableComponentMP.value = MovableComponent.create(session)
+            movableComponentMP.value = MovableComponent.createSystemMovable(session)
             session.scene.mainPanelEntity.addComponent(movableComponentMP.value!!)
         }
         Card(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
@@ -637,7 +637,7 @@ class VideoPlayerActivity : ComponentActivity() {
                 SurfaceEntity.create(session, stereoMode, pose, canvasShape, surfaceContentLevel)
             // Make the video player movable (to make it easier to look at it from different
             // angles and distances)
-            movableComponent = MovableComponent.create(session)
+            movableComponent = MovableComponent.createSystemMovable(session)
             // The quad has a radius of 1.0 meters
             movableComponent!!.size = FloatSize3d(1.0f, 1.0f, 1.0f)
             // component?.size = coordinates.size.toDimensionsInMeters(density)

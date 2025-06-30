@@ -186,7 +186,7 @@ class SplitEngine : ComponentActivity() {
                     ApiButton("Switch to FSM", modifier) {
                         session.scene.requestFullSpaceMode()
                         if (movableComponentMP.value == null) {
-                            movableComponentMP.value = MovableComponent.create(session)
+                            movableComponentMP.value = MovableComponent.createSystemMovable(session)
                             session.scene.mainPanelEntity.addComponent(movableComponentMP.value!!)
                         }
                     }

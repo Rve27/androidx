@@ -184,7 +184,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
         // Set up the MoveableComponent so the user can move the Main Panel out of the way of
         // video canvases which appear behind it.
         if (movableComponentMP == null) {
-            movableComponentMP = MovableComponent.create(session)
+            movableComponentMP = MovableComponent.createSystemMovable(session)
             val unused = session.scene.mainPanelEntity.addComponent(movableComponentMP!!)
         }
 
@@ -652,7 +652,7 @@ class VideoPlayerTestActivity : ComponentActivity() {
                         )
                     // Make the video player movable (to make it easier to look at it from different
                     // angles and distances) (only on quad canvas)
-                    movableComponent = MovableComponent.create(session)
+                    movableComponent = MovableComponent.createSystemMovable(session)
                     // The quad has a radius of 1.0 meters
                     movableComponent!!.size = FloatSize3d(1.0f, 1.0f, 1.0f)
 

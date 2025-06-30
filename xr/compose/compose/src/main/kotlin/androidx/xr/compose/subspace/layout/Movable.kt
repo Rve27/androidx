@@ -33,8 +33,8 @@ import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Ray
 import androidx.xr.scenecore.Entity
+import androidx.xr.scenecore.EntityMoveListener
 import androidx.xr.scenecore.MovableComponent
-import androidx.xr.scenecore.MoveListener
 import androidx.xr.scenecore.PanelEntity
 import java.util.concurrent.Executor
 import kotlinx.coroutines.Dispatchers
@@ -238,7 +238,7 @@ internal class MovableNode(
     CompositionLocalConsumerSubspaceModifierNode,
     CoreEntityNode,
     LayoutCoordinatesAwareModifierNode,
-    MoveListener,
+    EntityMoveListener,
     SubspaceLayoutModifierNode {
     private inline val density: Density
         get() = currentValueOf(LocalDensity)
@@ -298,11 +298,16 @@ internal class MovableNode(
     /** Enables the MovableComponent for this CoreEntity. */
     private fun enableComponent() {
         check(component == null) { "MovableComponent already enabled." }
-        component = MovableComponent.create(session, systemMovable = false)
+        component =
+            MovableComponent.createCustomMovable(
+                session = session,
+                scaleInZ = true,
+                executor = MainExecutor,
+                entityMoveListener = this,
+            )
         check(component?.let { coreEntity.addComponent(it) } == true) {
             "Could not add MovableComponent to Core Entity."
         }
-        component?.addMoveListener(MainExecutor, this)
     }
 
     /**

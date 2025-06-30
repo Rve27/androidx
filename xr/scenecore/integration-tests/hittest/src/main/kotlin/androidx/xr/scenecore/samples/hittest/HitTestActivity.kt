@@ -61,7 +61,7 @@ class HitTestActivity : AppCompatActivity() {
                 Pose(Vector3(0f, -0.5f, 0.5f)),
             )
         panelEntity.parent = session.scene.activitySpace
-        val movableComponent = MovableComponent.create(session)
+        val movableComponent = MovableComponent.createSystemMovable(session)
         if (!panelEntity.addComponent(movableComponent)) {
             Log.e("HitTestActivity", "Error adding MovableComponent to panelEntity")
         }

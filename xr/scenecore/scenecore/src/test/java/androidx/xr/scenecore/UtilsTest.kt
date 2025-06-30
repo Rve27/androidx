@@ -598,10 +598,13 @@ class UtilsTest {
             .thenReturn(mockAnchorPlacement2)
 
         val anchorPlacement1 =
-            AnchorPlacement.createForPlanes(planeTypeFilter = setOf(PlaneOrientation.HORIZONTAL))
+            AnchorPlacement.createForPlanes(
+                anchorablePlaneOrientations = setOf(PlaneOrientation.HORIZONTAL)
+            )
         val anchorPlacement2 =
             AnchorPlacement.createForPlanes(
-                planeSemanticFilter = setOf(PlaneSemanticType.WALL, PlaneSemanticType.FLOOR)
+                anchorablePlaneSemanticTypes =
+                    setOf(PlaneSemanticType.WALL, PlaneSemanticType.FLOOR)
             )
 
         val rtPlacementSet =

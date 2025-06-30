@@ -253,13 +253,7 @@ class TransformationActivity : AppCompatActivity() {
     }
 
     private fun switchMainPanelMovement(switchState: Boolean) {
-        val movableComponent =
-            MovableComponent.create(
-                session!!,
-                systemMovable = true,
-                scaleInZ = false,
-                anchorPlacement = setOf(),
-            )
+        val movableComponent = MovableComponent.createSystemMovable(session!!, scaleInZ = false)
         if (switchState) {
             movableActive.value = session!!.scene.mainPanelEntity.addComponent(movableComponent)
         } else {

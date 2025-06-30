@@ -412,7 +412,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                     )
                 // Make the video player movable (to make it easier to look at it from different
                 // angles and distances)
-                movableComponent = MovableComponent.create(session)
+                movableComponent = MovableComponent.createSystemMovable(session)
 
                 // The quad has a radius of 1.0 meters
                 movableComponent!!.size = FloatSize3d(1.0f, 1.0f, 1.0f)
@@ -630,7 +630,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
     fun SurfaceEntityUI(session: Session) {
         val movableComponentMP = remember { mutableStateOf<MovableComponent?>(null) }
         val videoPaused = remember { mutableStateOf(false) }
-        movableComponentMP.value = MovableComponent.create(session)
+        movableComponentMP.value = MovableComponent.createSystemMovable(session)
         @Suppress("UNUSED_VARIABLE")
         val unused = session.scene.mainPanelEntity.addComponent(movableComponentMP.value!!)
         val videoPlaying = videoPlayingState.value

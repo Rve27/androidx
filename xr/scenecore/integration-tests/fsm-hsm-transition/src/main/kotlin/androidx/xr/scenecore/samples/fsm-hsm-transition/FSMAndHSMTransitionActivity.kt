@@ -176,7 +176,7 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
                 }
             },
         )
-        val movableComponent = MovableComponent.create(session)
+        val movableComponent = MovableComponent.createSystemMovable(session)
 
         val switchMovable: Switch = findViewById(R.id.movableSwitch)
         switchMovable.setOnCheckedChangeListener { _, isChecked ->
