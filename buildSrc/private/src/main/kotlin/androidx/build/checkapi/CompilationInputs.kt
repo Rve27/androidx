@@ -168,7 +168,7 @@ internal sealed interface CompilationInputs {
                     checkNotNull(compilations.findByName(compilationName)) {
                         """
                     Cannot find $compilationName compilation configuration of $name in
-                    ${project.parent}.
+                    ${project.path}.
                     Available compilations: ${compilations.joinToString(", ") { it.name }}
                     """
                             .trimIndent()
