@@ -1113,19 +1113,8 @@ public class WebSettingsCompat {
     }
 
     /**
-     * Denotes that the BackForwardCache API surface is experimental.
-     * It may change without warning.
-     */
-    @Retention(RetentionPolicy.CLASS)
-    @Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE})
-    @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
-    public @interface ExperimentalBackForwardCache {
-    }
-
-    /**
      * Enables <a href="https://developer.chrome.com/blog/back-forward-cache">BackForwardCache</a>
      * for the given {@link WebSettings}.
-     * This API is experimental, it may change in the future without notice. Please use accordingly.
      *
      * <p>
      * This method should only be called if
@@ -1138,7 +1127,6 @@ public class WebSettingsCompat {
      */
     @RequiresFeature(name = WebViewFeature.BACK_FORWARD_CACHE,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
-    @ExperimentalBackForwardCache
     public static void setBackForwardCacheEnabled(@NonNull WebSettings settings,
             boolean backForwardCacheEnabled) {
         final ApiFeature.NoFramework feature = WebViewFeatureInternal.BACK_FORWARD_CACHE;
@@ -1151,7 +1139,6 @@ public class WebSettingsCompat {
 
     /**
      * Get the current status of BackForwardCache for this {@link WebSettings}.
-     * This API is experimental, it may change in the future without notice. Please use accordingly.
      *
      * <p>
      * This method should only be called if
@@ -1163,7 +1150,6 @@ public class WebSettingsCompat {
      */
     @RequiresFeature(name = WebViewFeature.BACK_FORWARD_CACHE,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
-    @ExperimentalBackForwardCache
     public static boolean getBackForwardCacheEnabled(@NonNull WebSettings settings) {
         final ApiFeature.NoFramework feature = WebViewFeatureInternal.BACK_FORWARD_CACHE;
         if (feature.isSupportedByWebView()) {
