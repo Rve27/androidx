@@ -27,6 +27,7 @@ import android.content.pm.PackageInstaller
 import android.os.Build
 import androidx.appfunctions.core.AppFunctionMetadataTestHelper
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
+import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 import androidx.test.filters.SdkSuppress
@@ -332,7 +333,7 @@ class AppFunctionManagerCompatTest {
                     }
             )
 
-        val appFunctions =
+        val appFunctions: List<AppFunctionMetadata> =
             appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first().flatMap {
                 it.appFunctions
             }
@@ -349,8 +350,10 @@ class AppFunctionManagerCompatTest {
             installApk(ADDITIONAL_APK_FILE)
             val searchFunctionSpec = AppFunctionSearchSpec()
 
-            val appFunctions =
-                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first()
+            val appFunctions: List<AppFunctionMetadata> =
+                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first().flatMap {
+                    it.appFunctions
+                }
 
             assertThat(appFunctions)
                 .containsAtLeast(
@@ -375,8 +378,10 @@ class AppFunctionManagerCompatTest {
                     packageNames = setOf(context.packageName, ADDITIONAL_APP_PACKAGE)
                 )
 
-            val appFunctions =
-                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first()
+            val appFunctions: List<AppFunctionMetadata> =
+                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first().flatMap {
+                    it.appFunctions
+                }
 
             assertThat(appFunctions)
                 .containsExactly(
@@ -401,8 +406,10 @@ class AppFunctionManagerCompatTest {
                     packageNames = setOf(context.packageName, ADDITIONAL_APP_PACKAGE)
                 )
 
-            val appFunctions =
-                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first()
+            val appFunctions: List<AppFunctionMetadata> =
+                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first().flatMap {
+                    it.appFunctions
+                }
 
             assertThat(appFunctions)
                 .containsExactly(
@@ -421,8 +428,10 @@ class AppFunctionManagerCompatTest {
             val searchFunctionSpec =
                 AppFunctionSearchSpec(packageNames = setOf(context.packageName))
 
-            val appFunctions =
-                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first()
+            val appFunctions: List<AppFunctionMetadata> =
+                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first().flatMap {
+                    it.appFunctions
+                }
 
             assertThat(appFunctions)
                 .containsExactly(
@@ -444,8 +453,10 @@ class AppFunctionManagerCompatTest {
             val searchFunctionSpec =
                 AppFunctionSearchSpec(packageNames = setOf(context.packageName))
 
-            val appFunctions =
-                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first()
+            val appFunctions: List<AppFunctionMetadata> =
+                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first().flatMap {
+                    it.appFunctions
+                }
 
             assertThat(appFunctions)
                 .containsExactly(
@@ -460,8 +471,10 @@ class AppFunctionManagerCompatTest {
         runBlocking<Unit> {
             val searchFunctionSpec = AppFunctionSearchSpec(schemaName = "print")
 
-            val appFunctions =
-                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first()
+            val appFunctions: List<AppFunctionMetadata> =
+                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first().flatMap {
+                    it.appFunctions
+                }
 
             assertThat(appFunctions)
                 .containsAtLeast(
@@ -476,8 +489,10 @@ class AppFunctionManagerCompatTest {
         runBlocking<Unit> {
             val searchFunctionSpec = AppFunctionSearchSpec(schemaCategory = "media")
 
-            val appFunctions =
-                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first()
+            val appFunctions: List<AppFunctionMetadata> =
+                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first().flatMap {
+                    it.appFunctions
+                }
 
             assertThat(appFunctions)
                 .containsAtLeast(
@@ -491,8 +506,10 @@ class AppFunctionManagerCompatTest {
         runBlocking<Unit> {
             val searchFunctionSpec = AppFunctionSearchSpec(minSchemaVersion = 2)
 
-            val appFunctions =
-                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first()
+            val appFunctions: List<AppFunctionMetadata> =
+                appFunctionManagerCompat.observeAppFunctions(searchFunctionSpec).first().flatMap {
+                    it.appFunctions
+                }
 
             assertThat(appFunctions)
                 .contains(AppFunctionMetadataTestHelper.FunctionMetadata.MEDIA_SCHEMA2_PRINT)
