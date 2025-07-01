@@ -19,9 +19,7 @@ package androidx.xr.glimmer {
   }
 
   public static final class ButtonSize.Companion {
-    method public int getLarge();
     method @BytecodeOnly public int getLarge-pDRnaFY();
-    method public int getMedium();
     method @BytecodeOnly public int getMedium-pDRnaFY();
     property public int Large;
     property public int Medium;
@@ -33,19 +31,12 @@ package androidx.xr.glimmer {
     ctor @BytecodeOnly public Colors(long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.xr.glimmer.Colors copy(optional long primary, optional long secondary, optional long positive, optional long negative, optional long surface, optional long outline, optional long outlineVariant);
     method @BytecodeOnly public androidx.xr.glimmer.Colors copy-4JmcsL4(long, long, long, long, long, long, long);
-    method public long getNegative();
     method @BytecodeOnly public long getNegative-0d7_KjU();
-    method public long getOutline();
     method @BytecodeOnly public long getOutline-0d7_KjU();
-    method public long getOutlineVariant();
     method @BytecodeOnly public long getOutlineVariant-0d7_KjU();
-    method public long getPositive();
     method @BytecodeOnly public long getPositive-0d7_KjU();
-    method public long getPrimary();
     method @BytecodeOnly public long getPrimary-0d7_KjU();
-    method public long getSecondary();
     method @BytecodeOnly public long getSecondary-0d7_KjU();
-    method public long getSurface();
     method @BytecodeOnly public long getSurface-0d7_KjU();
     property public long negative;
     property public long outline;
@@ -122,11 +113,8 @@ package androidx.xr.glimmer {
     ctor @BytecodeOnly public IconSizes(float, float, float, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.xr.glimmer.IconSizes copy(optional float small, optional float medium, optional float large);
     method @BytecodeOnly public androidx.xr.glimmer.IconSizes copy-2z7ARbQ(float, float, float);
-    method public float getLarge();
     method @BytecodeOnly public float getLarge-D9Ej5fM();
-    method public float getMedium();
     method @BytecodeOnly public float getMedium-D9Ej5fM();
-    method public float getSmall();
     method @BytecodeOnly public float getSmall-D9Ej5fM();
     property public float large;
     property public float medium;
@@ -219,7 +207,6 @@ package androidx.xr.glimmer.list {
     method public boolean getReverseLayout();
     method public int getTotalItemsCount();
     method public int getViewportEndOffset();
-    method public long getViewportSize();
     method @BytecodeOnly public long getViewportSize-YbymL2g();
     method public int getViewportStartOffset();
     method public java.util.List<androidx.xr.glimmer.list.LazyListItemInfo> getVisibleItemsInfo();

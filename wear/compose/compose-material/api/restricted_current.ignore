@@ -1,0 +1,123 @@
+// Baseline format: 1.0
+RemovedDeprecatedMethod: androidx.wear.compose.material.ScalingLazyListAnchorType.Companion#getItemCenter():
+    Binary breaking change: Removed deprecated method androidx.wear.compose.material.ScalingLazyListAnchorType.Companion.getItemCenter()
+RemovedDeprecatedMethod: androidx.wear.compose.material.ScalingLazyListAnchorType.Companion#getItemStart():
+    Binary breaking change: Removed deprecated method androidx.wear.compose.material.ScalingLazyListAnchorType.Companion.getItemStart()
+RemovedDeprecatedMethod: androidx.wear.compose.material.ScalingLazyListLayoutInfo#getViewportSize():
+    Binary breaking change: Removed deprecated method androidx.wear.compose.material.ScalingLazyListLayoutInfo.getViewportSize()
+RemovedDeprecatedMethod: androidx.wear.compose.material.SwipeToDismissBoxDefaults#getEdgeWidth():
+    Binary breaking change: Removed deprecated method androidx.wear.compose.material.SwipeToDismissBoxDefaults.getEdgeWidth()
+
+
+RemovedMethod: androidx.wear.compose.material.ButtonDefaults#getCompactButtonBackgroundPadding():
+    Binary breaking change: Removed method androidx.wear.compose.material.ButtonDefaults.getCompactButtonBackgroundPadding()
+RemovedMethod: androidx.wear.compose.material.ButtonDefaults#getDefaultButtonSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ButtonDefaults.getDefaultButtonSize()
+RemovedMethod: androidx.wear.compose.material.ButtonDefaults#getDefaultIconSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ButtonDefaults.getDefaultIconSize()
+RemovedMethod: androidx.wear.compose.material.ButtonDefaults#getExtraSmallButtonSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ButtonDefaults.getExtraSmallButtonSize()
+RemovedMethod: androidx.wear.compose.material.ButtonDefaults#getLargeButtonSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ButtonDefaults.getLargeButtonSize()
+RemovedMethod: androidx.wear.compose.material.ButtonDefaults#getLargeIconSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ButtonDefaults.getLargeIconSize()
+RemovedMethod: androidx.wear.compose.material.ButtonDefaults#getSmallButtonSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ButtonDefaults.getSmallButtonSize()
+RemovedMethod: androidx.wear.compose.material.ButtonDefaults#getSmallIconSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ButtonDefaults.getSmallIconSize()
+RemovedMethod: androidx.wear.compose.material.CardDefaults#getAppImageSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.CardDefaults.getAppImageSize()
+RemovedMethod: androidx.wear.compose.material.ChipDefaults#getChipHorizontalPadding():
+    Binary breaking change: Removed method androidx.wear.compose.material.ChipDefaults.getChipHorizontalPadding()
+RemovedMethod: androidx.wear.compose.material.ChipDefaults#getChipVerticalPadding():
+    Binary breaking change: Removed method androidx.wear.compose.material.ChipDefaults.getChipVerticalPadding()
+RemovedMethod: androidx.wear.compose.material.ChipDefaults#getCompactChipHeight():
+    Binary breaking change: Removed method androidx.wear.compose.material.ChipDefaults.getCompactChipHeight()
+RemovedMethod: androidx.wear.compose.material.ChipDefaults#getCompactChipHorizontalPadding():
+    Binary breaking change: Removed method androidx.wear.compose.material.ChipDefaults.getCompactChipHorizontalPadding()
+RemovedMethod: androidx.wear.compose.material.ChipDefaults#getCompactChipVerticalPadding():
+    Binary breaking change: Removed method androidx.wear.compose.material.ChipDefaults.getCompactChipVerticalPadding()
+RemovedMethod: androidx.wear.compose.material.ChipDefaults#getHeight():
+    Binary breaking change: Removed method androidx.wear.compose.material.ChipDefaults.getHeight()
+RemovedMethod: androidx.wear.compose.material.ChipDefaults#getIconSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ChipDefaults.getIconSize()
+RemovedMethod: androidx.wear.compose.material.ChipDefaults#getLargeIconSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ChipDefaults.getLargeIconSize()
+RemovedMethod: androidx.wear.compose.material.ChipDefaults#getSmallIconSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ChipDefaults.getSmallIconSize()
+RemovedMethod: androidx.wear.compose.material.Colors#getBackground():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getBackground()
+RemovedMethod: androidx.wear.compose.material.Colors#getError():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getError()
+RemovedMethod: androidx.wear.compose.material.Colors#getOnBackground():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getOnBackground()
+RemovedMethod: androidx.wear.compose.material.Colors#getOnError():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getOnError()
+RemovedMethod: androidx.wear.compose.material.Colors#getOnPrimary():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getOnPrimary()
+RemovedMethod: androidx.wear.compose.material.Colors#getOnSecondary():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getOnSecondary()
+RemovedMethod: androidx.wear.compose.material.Colors#getOnSurface():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getOnSurface()
+RemovedMethod: androidx.wear.compose.material.Colors#getOnSurfaceVariant():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getOnSurfaceVariant()
+RemovedMethod: androidx.wear.compose.material.Colors#getPrimary():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getPrimary()
+RemovedMethod: androidx.wear.compose.material.Colors#getPrimaryVariant():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getPrimaryVariant()
+RemovedMethod: androidx.wear.compose.material.Colors#getSecondary():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getSecondary()
+RemovedMethod: androidx.wear.compose.material.Colors#getSecondaryVariant():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getSecondaryVariant()
+RemovedMethod: androidx.wear.compose.material.Colors#getSurface():
+    Binary breaking change: Removed method androidx.wear.compose.material.Colors.getSurface()
+RemovedMethod: androidx.wear.compose.material.PageIndicatorStyle.Companion#getCurved():
+    Binary breaking change: Removed method androidx.wear.compose.material.PageIndicatorStyle.Companion.getCurved()
+RemovedMethod: androidx.wear.compose.material.PageIndicatorStyle.Companion#getLinear():
+    Binary breaking change: Removed method androidx.wear.compose.material.PageIndicatorStyle.Companion.getLinear()
+RemovedMethod: androidx.wear.compose.material.PositionIndicatorAlignment.Companion#getEnd():
+    Binary breaking change: Removed method androidx.wear.compose.material.PositionIndicatorAlignment.Companion.getEnd()
+RemovedMethod: androidx.wear.compose.material.PositionIndicatorAlignment.Companion#getLeft():
+    Binary breaking change: Removed method androidx.wear.compose.material.PositionIndicatorAlignment.Companion.getLeft()
+RemovedMethod: androidx.wear.compose.material.PositionIndicatorAlignment.Companion#getOppositeRsb():
+    Binary breaking change: Removed method androidx.wear.compose.material.PositionIndicatorAlignment.Companion.getOppositeRsb()
+RemovedMethod: androidx.wear.compose.material.PositionIndicatorAlignment.Companion#getRight():
+    Binary breaking change: Removed method androidx.wear.compose.material.PositionIndicatorAlignment.Companion.getRight()
+RemovedMethod: androidx.wear.compose.material.PositionIndicatorVisibility.Companion#getAutoHide():
+    Binary breaking change: Removed method androidx.wear.compose.material.PositionIndicatorVisibility.Companion.getAutoHide()
+RemovedMethod: androidx.wear.compose.material.PositionIndicatorVisibility.Companion#getHide():
+    Binary breaking change: Removed method androidx.wear.compose.material.PositionIndicatorVisibility.Companion.getHide()
+RemovedMethod: androidx.wear.compose.material.PositionIndicatorVisibility.Companion#getShow():
+    Binary breaking change: Removed method androidx.wear.compose.material.PositionIndicatorVisibility.Companion.getShow()
+RemovedMethod: androidx.wear.compose.material.ProgressIndicatorDefaults#getFullScreenStrokeWidth():
+    Binary breaking change: Removed method androidx.wear.compose.material.ProgressIndicatorDefaults.getFullScreenStrokeWidth()
+RemovedMethod: androidx.wear.compose.material.ProgressIndicatorDefaults#getIndeterminateStrokeWidth():
+    Binary breaking change: Removed method androidx.wear.compose.material.ProgressIndicatorDefaults.getIndeterminateStrokeWidth()
+RemovedMethod: androidx.wear.compose.material.ProgressIndicatorDefaults#getStrokeWidth():
+    Binary breaking change: Removed method androidx.wear.compose.material.ProgressIndicatorDefaults.getStrokeWidth()
+RemovedMethod: androidx.wear.compose.material.SelectableChipDefaults#getHeight():
+    Binary breaking change: Removed method androidx.wear.compose.material.SelectableChipDefaults.getHeight()
+RemovedMethod: androidx.wear.compose.material.SelectableChipDefaults#getIconSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.SelectableChipDefaults.getIconSize()
+RemovedMethod: androidx.wear.compose.material.ToggleButtonDefaults#getDefaultIconSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ToggleButtonDefaults.getDefaultIconSize()
+RemovedMethod: androidx.wear.compose.material.ToggleButtonDefaults#getDefaultRole():
+    Binary breaking change: Removed method androidx.wear.compose.material.ToggleButtonDefaults.getDefaultRole()
+RemovedMethod: androidx.wear.compose.material.ToggleButtonDefaults#getDefaultToggleButtonSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ToggleButtonDefaults.getDefaultToggleButtonSize()
+RemovedMethod: androidx.wear.compose.material.ToggleButtonDefaults#getSmallIconSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ToggleButtonDefaults.getSmallIconSize()
+RemovedMethod: androidx.wear.compose.material.ToggleButtonDefaults#getSmallToggleButtonSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ToggleButtonDefaults.getSmallToggleButtonSize()
+RemovedMethod: androidx.wear.compose.material.ToggleChipDefaults#getHeight():
+    Binary breaking change: Removed method androidx.wear.compose.material.ToggleChipDefaults.getHeight()
+RemovedMethod: androidx.wear.compose.material.ToggleChipDefaults#getIconSize():
+    Binary breaking change: Removed method androidx.wear.compose.material.ToggleChipDefaults.getIconSize()
+RemovedMethod: androidx.wear.compose.material.ToggleChipDefaults#getSwitchUncheckedIconColor():
+    Binary breaking change: Removed method androidx.wear.compose.material.ToggleChipDefaults.getSwitchUncheckedIconColor()
+RemovedMethod: androidx.wear.compose.material.VignettePosition.Companion#getBottom():
+    Binary breaking change: Removed method androidx.wear.compose.material.VignettePosition.Companion.getBottom()
+RemovedMethod: androidx.wear.compose.material.VignettePosition.Companion#getTop():
+    Binary breaking change: Removed method androidx.wear.compose.material.VignettePosition.Companion.getTop()
+RemovedMethod: androidx.wear.compose.material.VignettePosition.Companion#getTopAndBottom():
+    Binary breaking change: Removed method androidx.wear.compose.material.VignettePosition.Companion.getTopAndBottom()

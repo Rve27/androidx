@@ -91,7 +91,6 @@ package androidx.xr.compose.spatial {
   }
 
   public final class OrbiterDefaults {
-    method public float getElevation();
     method @BytecodeOnly public float getElevation-D9Ej5fM();
     method public androidx.xr.compose.subspace.layout.SpatialShape getShape();
     property public float Elevation;
@@ -113,11 +112,8 @@ package androidx.xr.compose.spatial {
   }
 
   public static final class OrbiterOffsetType.Companion {
-    method public int getInnerEdge();
     method @BytecodeOnly public int getInnerEdge-daoJdME();
-    method public int getOuterEdge();
     method @BytecodeOnly public int getOuterEdge-daoJdME();
-    method public int getOverlap();
     method @BytecodeOnly public int getOverlap-daoJdME();
     property public int InnerEdge;
     property public int OuterEdge;
@@ -138,7 +134,6 @@ package androidx.xr.compose.spatial {
     method public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> getBackgroundContentAnimationSpec();
     method public boolean getDismissOnBackPress();
     method public boolean getDismissOnClickOutside();
-    method public float getElevation();
     method @BytecodeOnly public float getElevation-D9Ej5fM();
     method public boolean getUsePlatformDefaultWidth();
     property public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> backgroundContentAnimationSpec;
@@ -154,21 +149,13 @@ package androidx.xr.compose.spatial {
   }
 
   public final class SpatialElevationLevel {
-    method public float getActivityDefault();
     method @BytecodeOnly public float getActivityDefault-D9Ej5fM();
-    method public float getDialogDefault();
     method @BytecodeOnly public float getDialogDefault-D9Ej5fM();
-    method public float getLevel0();
     method @BytecodeOnly public float getLevel0-D9Ej5fM();
-    method public float getLevel1();
     method @BytecodeOnly public float getLevel1-D9Ej5fM();
-    method public float getLevel2();
     method @BytecodeOnly public float getLevel2-D9Ej5fM();
-    method public float getLevel3();
     method @BytecodeOnly public float getLevel3-D9Ej5fM();
-    method public float getLevel4();
     method @BytecodeOnly public float getLevel4-D9Ej5fM();
-    method public float getLevel5();
     method @BytecodeOnly public float getLevel5-D9Ej5fM();
     property public float ActivityDefault;
     property public float DialogDefault;
@@ -234,7 +221,6 @@ package androidx.xr.compose.subspace {
   }
 
   public final class SpatialCurvedRowDefaults {
-    method public float getCurveRadius();
     method @BytecodeOnly public float getCurveRadius-D9Ej5fM();
     property public float curveRadius;
     field public static final androidx.xr.compose.subspace.SpatialCurvedRowDefaults INSTANCE;
@@ -682,11 +668,8 @@ package androidx.xr.compose.unit {
   public final class DpVolumeSize {
     ctor @KotlinOnly public DpVolumeSize(androidx.compose.ui.unit.Dp width, androidx.compose.ui.unit.Dp height, androidx.compose.ui.unit.Dp depth);
     ctor @BytecodeOnly public DpVolumeSize(float, float, float, kotlin.jvm.internal.DefaultConstructorMarker!);
-    method public float getDepth();
     method @BytecodeOnly public float getDepth-D9Ej5fM();
-    method public float getHeight();
     method @BytecodeOnly public float getHeight-D9Ej5fM();
-    method public float getWidth();
     method @BytecodeOnly public float getWidth-D9Ej5fM();
     property public float depth;
     property public float height;
@@ -763,27 +746,16 @@ package androidx.xr.compose.unit {
   public static final class Meter.Companion {
     method public inline float fromPixel(float px, androidx.compose.ui.unit.Density density);
     method @BytecodeOnly public float fromPixel-e1Hw3dI(float, androidx.compose.ui.unit.Density);
-    method public float getCentimeters(double);
-    method public float getCentimeters(float);
-    method public float getCentimeters(int);
     method @BytecodeOnly public float getCentimeters-zRPQRcA(double);
     method @BytecodeOnly public float getCentimeters-zRPQRcA(float);
     method @BytecodeOnly public float getCentimeters-zRPQRcA(int);
-    method public float getInfinity();
     method @BytecodeOnly public float getInfinity-sx7laI0();
-    method public float getMeters(double);
-    method public float getMeters(float);
-    method public float getMeters(int);
     method @BytecodeOnly public float getMeters-zRPQRcA(double);
     method @BytecodeOnly public float getMeters-zRPQRcA(float);
     method @BytecodeOnly public float getMeters-zRPQRcA(int);
-    method public float getMillimeters(double);
-    method public float getMillimeters(float);
-    method public float getMillimeters(int);
     method @BytecodeOnly public float getMillimeters-zRPQRcA(double);
     method @BytecodeOnly public float getMillimeters-zRPQRcA(float);
     method @BytecodeOnly public float getMillimeters-zRPQRcA(int);
-    method public float getNaN();
     method @BytecodeOnly public float getNaN-sx7laI0();
     property public float Infinity;
     property public float NaN;

@@ -283,9 +283,7 @@ package androidx.glance.layout {
   public final class Alignment {
     ctor @KotlinOnly public Alignment(androidx.glance.layout.Alignment.Horizontal horizontal, androidx.glance.layout.Alignment.Vertical vertical);
     ctor @BytecodeOnly public Alignment(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
-    method public int getHorizontal();
     method @BytecodeOnly public int getHorizontal-PGIyAqw();
-    method public int getVertical();
     method @BytecodeOnly public int getVertical-mnfRV0w();
     property public int horizontal;
     property public int vertical;
@@ -293,23 +291,17 @@ package androidx.glance.layout {
   }
 
   public static final class Alignment.Companion {
-    method public int getBottom();
     method @BytecodeOnly public int getBottom-mnfRV0w();
     method public androidx.glance.layout.Alignment getBottomCenter();
     method public androidx.glance.layout.Alignment getBottomEnd();
     method public androidx.glance.layout.Alignment getBottomStart();
     method public androidx.glance.layout.Alignment getCenter();
     method public androidx.glance.layout.Alignment getCenterEnd();
-    method public int getCenterHorizontally();
     method @BytecodeOnly public int getCenterHorizontally-PGIyAqw();
     method public androidx.glance.layout.Alignment getCenterStart();
-    method public int getCenterVertically();
     method @BytecodeOnly public int getCenterVertically-mnfRV0w();
-    method public int getEnd();
     method @BytecodeOnly public int getEnd-PGIyAqw();
-    method public int getStart();
     method @BytecodeOnly public int getStart-PGIyAqw();
-    method public int getTop();
     method @BytecodeOnly public int getTop-mnfRV0w();
     method public androidx.glance.layout.Alignment getTopCenter();
     method public androidx.glance.layout.Alignment getTopEnd();
@@ -338,11 +330,8 @@ package androidx.glance.layout {
   }
 
   public static final class Alignment.Horizontal.Companion {
-    method public int getCenterHorizontally();
     method @BytecodeOnly public int getCenterHorizontally-PGIyAqw();
-    method public int getEnd();
     method @BytecodeOnly public int getEnd-PGIyAqw();
-    method public int getStart();
     method @BytecodeOnly public int getStart-PGIyAqw();
     property public int CenterHorizontally;
     property public int End;
@@ -356,11 +345,8 @@ package androidx.glance.layout {
   }
 
   public static final class Alignment.Vertical.Companion {
-    method public int getBottom();
     method @BytecodeOnly public int getBottom-mnfRV0w();
-    method public int getCenterVertically();
     method @BytecodeOnly public int getCenterVertically-mnfRV0w();
-    method public int getTop();
     method @BytecodeOnly public int getTop-mnfRV0w();
     property public int Bottom;
     property public int CenterVertically;
@@ -390,11 +376,8 @@ package androidx.glance.layout {
   }
 
   public static final class ContentScale.Companion {
-    method public int getCrop();
     method @BytecodeOnly public int getCrop-Ae3V0ko();
-    method public int getFillBounds();
     method @BytecodeOnly public int getFillBounds-Ae3V0ko();
-    method public int getFit();
     method @BytecodeOnly public int getFit-Ae3V0ko();
     property public int Crop;
     property public int FillBounds;
@@ -539,9 +522,7 @@ package androidx.glance.text {
   }
 
   public static final class FontStyle.Companion {
-    method public int getItalic();
     method @BytecodeOnly public int getItalic-zT8OX4g();
-    method public int getNormal();
     method @BytecodeOnly public int getNormal-zT8OX4g();
     method public java.util.List<androidx.glance.text.FontStyle> values();
     property public int Italic;
@@ -557,11 +538,8 @@ package androidx.glance.text {
   }
 
   public static final class FontWeight.Companion {
-    method public int getBold();
     method @BytecodeOnly public int getBold-WjrlUT0();
-    method public int getMedium();
     method @BytecodeOnly public int getMedium-WjrlUT0();
-    method public int getNormal();
     method @BytecodeOnly public int getNormal-WjrlUT0();
     property public int Bold;
     property public int Medium;
@@ -575,15 +553,10 @@ package androidx.glance.text {
   }
 
   public static final class TextAlign.Companion {
-    method public int getCenter();
     method @BytecodeOnly public int getCenter-ROrN78o();
-    method public int getEnd();
     method @BytecodeOnly public int getEnd-ROrN78o();
-    method public int getLeft();
     method @BytecodeOnly public int getLeft-ROrN78o();
-    method public int getRight();
     method @BytecodeOnly public int getRight-ROrN78o();
-    method public int getStart();
     method @BytecodeOnly public int getStart-ROrN78o();
     method public java.util.List<androidx.glance.text.TextAlign> values();
     property public int Center;
@@ -606,11 +579,8 @@ package androidx.glance.text {
   public static final class TextDecoration.Companion {
     method public int combine(java.util.List<androidx.glance.text.TextDecoration> decorations);
     method @BytecodeOnly public int combine-6pcTslc(java.util.List<androidx.glance.text.TextDecoration!>);
-    method public int getLineThrough();
     method @BytecodeOnly public int getLineThrough-ObZ5V_A();
-    method public int getNone();
     method @BytecodeOnly public int getNone-ObZ5V_A();
-    method public int getUnderline();
     method @BytecodeOnly public int getUnderline-ObZ5V_A();
     property public int LineThrough;
     property public int None;
@@ -637,15 +607,10 @@ package androidx.glance.text {
     method @BytecodeOnly public androidx.glance.text.TextStyle copy-KmPxOYk(androidx.glance.unit.ColorProvider, androidx.compose.ui.unit.TextUnit?, androidx.glance.text.FontWeight?, androidx.glance.text.FontStyle?, androidx.glance.text.TextAlign?, androidx.glance.text.TextDecoration?, androidx.glance.text.FontFamily?);
     method public androidx.glance.unit.ColorProvider getColor();
     method public androidx.glance.text.FontFamily? getFontFamily();
-    method public androidx.compose.ui.unit.TextUnit? getFontSize();
     method @BytecodeOnly public androidx.compose.ui.unit.TextUnit? getFontSize-U3a4LBI();
-    method public androidx.glance.text.FontStyle? getFontStyle();
     method @BytecodeOnly public androidx.glance.text.FontStyle? getFontStyle-xuO1esU();
-    method public androidx.glance.text.FontWeight? getFontWeight();
     method @BytecodeOnly public androidx.glance.text.FontWeight? getFontWeight-pJbD0qI();
-    method public androidx.glance.text.TextAlign? getTextAlign();
     method @BytecodeOnly public androidx.glance.text.TextAlign? getTextAlign-B6tg0O8();
-    method public androidx.glance.text.TextDecoration? getTextDecoration();
     method @BytecodeOnly public androidx.glance.text.TextDecoration? getTextDecoration-W4vNVHs();
     property public androidx.glance.unit.ColorProvider color;
     property public androidx.glance.text.FontFamily? fontFamily;

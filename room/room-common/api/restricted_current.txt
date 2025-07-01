@@ -338,8 +338,6 @@ package androidx.room {
   }
 
   public static final class OnConflictStrategy.Companion {
-    method @Deprecated public static int getFAIL();
-    method @Deprecated public static int getROLLBACK();
     property public static int ABORT;
     property @Deprecated public static int FAIL;
     property public static int IGNORE;
@@ -466,7 +464,6 @@ package androidx.room {
   }
 
   public static final class RoomWarnings.Companion {
-    method @Deprecated public static String getCURSOR_MISMATCH();
     property public static String AMBIGUOUS_COLUMN_IN_RESULT;
     property public static String CANNOT_CREATE_VERIFICATION_DATABASE;
     property @Deprecated public static String CURSOR_MISMATCH;

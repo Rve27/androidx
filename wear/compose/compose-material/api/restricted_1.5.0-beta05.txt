@@ -23,21 +23,13 @@ package androidx.wear.compose.material {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material.ButtonBorder buttonBorder(androidx.compose.foundation.BorderStroke?, androidx.compose.foundation.BorderStroke?, androidx.compose.runtime.Composer?, int, int);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material.ButtonColors buttonColors(optional long backgroundColor, optional long contentColor, optional long disabledBackgroundColor, optional long disabledContentColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material.ButtonColors buttonColors-ro_MJ88(long, long, long, long, androidx.compose.runtime.Composer?, int, int);
-    method public float getCompactButtonBackgroundPadding();
     method @BytecodeOnly public float getCompactButtonBackgroundPadding-D9Ej5fM();
-    method public float getDefaultButtonSize();
     method @BytecodeOnly public float getDefaultButtonSize-D9Ej5fM();
-    method public float getDefaultIconSize();
     method @BytecodeOnly public float getDefaultIconSize-D9Ej5fM();
-    method public float getExtraSmallButtonSize();
     method @BytecodeOnly public float getExtraSmallButtonSize-D9Ej5fM();
-    method public float getLargeButtonSize();
     method @BytecodeOnly public float getLargeButtonSize-D9Ej5fM();
-    method public float getLargeIconSize();
     method @BytecodeOnly public float getLargeIconSize-D9Ej5fM();
-    method public float getSmallButtonSize();
     method @BytecodeOnly public float getSmallButtonSize-D9Ej5fM();
-    method public float getSmallIconSize();
     method @BytecodeOnly public float getSmallIconSize-D9Ej5fM();
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material.ButtonColors iconButtonColors(optional long contentColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material.ButtonColors iconButtonColors-Iv8Zu3U(long, androidx.compose.runtime.Composer?, int, int);
@@ -78,7 +70,6 @@ package androidx.wear.compose.material {
   public final class CardDefaults {
     method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.painter.Painter cardBackgroundPainter(optional long startBackgroundColor, optional long endBackgroundColor, optional androidx.compose.ui.unit.LayoutDirection gradientDirection);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.painter.Painter cardBackgroundPainter-Klgx-Pg(long, long, androidx.compose.ui.unit.LayoutDirection?, androidx.compose.runtime.Composer?, int, int);
-    method public float getAppImageSize();
     method @BytecodeOnly public float getAppImageSize-D9Ej5fM();
     method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
     method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.painter.Painter imageWithScrimBackgroundPainter(androidx.compose.ui.graphics.painter.Painter backgroundImagePainter, optional androidx.compose.ui.graphics.Brush backgroundImageScrimBrush);
@@ -135,26 +126,17 @@ package androidx.wear.compose.material {
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material.ChipColors chipColors(optional long backgroundColor, optional long contentColor, optional long secondaryContentColor, optional long iconColor, optional long disabledBackgroundColor, optional long disabledContentColor, optional long disabledSecondaryContentColor, optional long disabledIconColor);
     method @BytecodeOnly @SuppressCompatibility @androidx.wear.compose.material.ExperimentalWearMaterialApi public androidx.wear.compose.material.ChipColors chipColors-_rQONyM(androidx.compose.ui.graphics.painter.Painter, long, long, long, androidx.compose.ui.graphics.painter.Painter, long, long, long);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material.ChipColors chipColors-oq7We08(long, long, long, long, long, long, long, long, androidx.compose.runtime.Composer?, int, int);
-    method public float getChipHorizontalPadding();
     method @BytecodeOnly public float getChipHorizontalPadding-D9Ej5fM();
-    method public float getChipVerticalPadding();
     method @BytecodeOnly public float getChipVerticalPadding-D9Ej5fM();
     method public androidx.compose.foundation.layout.PaddingValues getCompactChipContentPadding();
-    method public float getCompactChipHeight();
     method @BytecodeOnly public float getCompactChipHeight-D9Ej5fM();
-    method public float getCompactChipHorizontalPadding();
     method @BytecodeOnly public float getCompactChipHorizontalPadding-D9Ej5fM();
     method public androidx.compose.foundation.layout.PaddingValues getCompactChipTapTargetPadding();
-    method public float getCompactChipVerticalPadding();
     method @BytecodeOnly public float getCompactChipVerticalPadding-D9Ej5fM();
     method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
-    method public float getHeight();
     method @BytecodeOnly public float getHeight-D9Ej5fM();
-    method public float getIconSize();
     method @BytecodeOnly public float getIconSize-D9Ej5fM();
-    method public float getLargeIconSize();
     method @BytecodeOnly public float getLargeIconSize-D9Ej5fM();
-    method public float getSmallIconSize();
     method @BytecodeOnly public float getSmallIconSize-D9Ej5fM();
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material.ChipColors gradientBackgroundChipColors(optional long startBackgroundColor, optional long endBackgroundColor, optional long contentColor, optional long secondaryContentColor, optional long iconColor, optional androidx.compose.ui.unit.LayoutDirection gradientDirection);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material.ChipColors gradientBackgroundChipColors-O8qE4YA(long, long, long, long, long, androidx.compose.ui.unit.LayoutDirection?, androidx.compose.runtime.Composer?, int, int);
@@ -208,31 +190,18 @@ package androidx.wear.compose.material {
     ctor @BytecodeOnly public Colors(long, long, long, long, long, long, long, long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public androidx.wear.compose.material.Colors copy(optional long primary, optional long primaryVariant, optional long secondary, optional long secondaryVariant, optional long background, optional long surface, optional long error, optional long onPrimary, optional long onSecondary, optional long onBackground, optional long onSurface, optional long onSurfaceVariant, optional long onError);
     method @BytecodeOnly public androidx.wear.compose.material.Colors copy-daRQuJA(long, long, long, long, long, long, long, long, long, long, long, long, long);
-    method public long getBackground();
     method @BytecodeOnly public long getBackground-0d7_KjU();
-    method public long getError();
     method @BytecodeOnly public long getError-0d7_KjU();
-    method public long getOnBackground();
     method @BytecodeOnly public long getOnBackground-0d7_KjU();
-    method public long getOnError();
     method @BytecodeOnly public long getOnError-0d7_KjU();
-    method public long getOnPrimary();
     method @BytecodeOnly public long getOnPrimary-0d7_KjU();
-    method public long getOnSecondary();
     method @BytecodeOnly public long getOnSecondary-0d7_KjU();
-    method public long getOnSurface();
     method @BytecodeOnly public long getOnSurface-0d7_KjU();
-    method public long getOnSurfaceVariant();
     method @BytecodeOnly public long getOnSurfaceVariant-0d7_KjU();
-    method public long getPrimary();
     method @BytecodeOnly public long getPrimary-0d7_KjU();
-    method public long getPrimaryVariant();
     method @BytecodeOnly public long getPrimaryVariant-0d7_KjU();
-    method public long getSecondary();
     method @BytecodeOnly public long getSecondary-0d7_KjU();
-    method public long getSecondaryVariant();
     method @BytecodeOnly public long getSecondaryVariant-0d7_KjU();
-    method public long getSurface();
     method @BytecodeOnly public long getSurface-0d7_KjU();
     property public long background;
     property public long error;
@@ -380,9 +349,7 @@ package androidx.wear.compose.material {
   }
 
   public static final class PageIndicatorStyle.Companion {
-    method public int getCurved();
     method @BytecodeOnly public int getCurved-wm_g0bU();
-    method public int getLinear();
     method @BytecodeOnly public int getLinear-wm_g0bU();
     property public int Curved;
     property public int Linear;
@@ -521,13 +488,9 @@ package androidx.wear.compose.material {
   }
 
   public static final class PositionIndicatorAlignment.Companion {
-    method public int getEnd();
     method @BytecodeOnly public int getEnd-9eXhFxw();
-    method public int getLeft();
     method @BytecodeOnly public int getLeft-9eXhFxw();
-    method public int getOppositeRsb();
     method @BytecodeOnly public int getOppositeRsb-9eXhFxw();
-    method public int getRight();
     method @BytecodeOnly public int getRight-9eXhFxw();
     property public int End;
     property public int Left;
@@ -583,11 +546,8 @@ package androidx.wear.compose.material {
   }
 
   public static final class PositionIndicatorVisibility.Companion {
-    method public int getAutoHide();
     method @BytecodeOnly public int getAutoHide-GLQwCHQ();
-    method public int getHide();
     method @BytecodeOnly public int getHide-GLQwCHQ();
-    method public int getShow();
     method @BytecodeOnly public int getShow-GLQwCHQ();
     property public int AutoHide;
     property public int Hide;
@@ -595,12 +555,9 @@ package androidx.wear.compose.material {
   }
 
   public final class ProgressIndicatorDefaults {
-    method public float getFullScreenStrokeWidth();
     method @BytecodeOnly public float getFullScreenStrokeWidth-D9Ej5fM();
-    method public float getIndeterminateStrokeWidth();
     method @BytecodeOnly public float getIndeterminateStrokeWidth-D9Ej5fM();
     method public androidx.compose.animation.core.SpringSpec<java.lang.Float> getProgressAnimationSpec();
-    method public float getStrokeWidth();
     method @BytecodeOnly public float getStrokeWidth-D9Ej5fM();
     property public float FullScreenStrokeWidth;
     property public float IndeterminateStrokeWidth;
@@ -649,13 +606,9 @@ package androidx.wear.compose.material {
   }
 
   public static final class RevealActionType.Companion {
-    method public int getNone();
     method @BytecodeOnly public int getNone-q4j9Tlc();
-    method public int getPrimaryAction();
     method @BytecodeOnly public int getPrimaryAction-q4j9Tlc();
-    method public int getSecondaryAction();
     method @BytecodeOnly public int getSecondaryAction-q4j9Tlc();
-    method public int getUndoAction();
     method @BytecodeOnly public int getUndoAction-q4j9Tlc();
     property public int None;
     property public int PrimaryAction;
@@ -672,9 +625,7 @@ package androidx.wear.compose.material {
   }
 
   public static final class RevealDirection.Companion {
-    method public int getBoth();
     method @BytecodeOnly public int getBoth-idLvUIo();
-    method public int getRightToLeft();
     method @BytecodeOnly public int getRightToLeft-idLvUIo();
     property public int Both;
     property public int RightToLeft;
@@ -683,18 +634,14 @@ package androidx.wear.compose.material {
   @SuppressCompatibility @androidx.wear.compose.material.ExperimentalWearMaterialApi public final class RevealState {
     method public suspend Object? animateTo(int targetValue, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @BytecodeOnly public Object? animateTo-wC0jyIs(int, kotlin.coroutines.Continuation<? super kotlin.Unit!>);
-    method public int getCurrentValue();
     method @BytecodeOnly public int getCurrentValue-ddmf4Cg();
-    method public int getLastActionType();
     method @BytecodeOnly public int getLastActionType-q4j9Tlc();
     method public float getOffset();
     method public float getRevealThreshold();
     method public java.util.Map<androidx.wear.compose.material.RevealValue,java.lang.Float> getSwipeAnchors();
-    method public int getTargetValue();
     method @BytecodeOnly public int getTargetValue-ddmf4Cg();
     method public androidx.compose.runtime.MutableFloatState getWidth();
     method public boolean isAnimationRunning();
-    method public void setLastActionType(int);
     method @BytecodeOnly public void setLastActionType-9y-wu-0(int);
     method public suspend Object? snapTo(int targetValue, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     method @BytecodeOnly public Object? snapTo-wC0jyIs(int, kotlin.coroutines.Continuation<? super kotlin.Unit!>);
@@ -717,15 +664,10 @@ package androidx.wear.compose.material {
   }
 
   public static final class RevealValue.Companion {
-    method public int getCovered();
     method @BytecodeOnly public int getCovered-ddmf4Cg();
-    method public int getLeftRevealed();
     method @BytecodeOnly public int getLeftRevealed-ddmf4Cg();
-    method public int getLeftRevealing();
     method @BytecodeOnly public int getLeftRevealing-ddmf4Cg();
-    method public int getRightRevealed();
     method @BytecodeOnly public int getRightRevealed-ddmf4Cg();
-    method public int getRightRevealing();
     method @BytecodeOnly public int getRightRevealing-ddmf4Cg();
     property public int Covered;
     property public int LeftRevealed;
@@ -773,9 +715,7 @@ package androidx.wear.compose.material {
   }
 
   @Deprecated public static final class ScalingLazyListAnchorType.Companion {
-    method @Deprecated public int getItemCenter();
     method @BytecodeOnly @Deprecated public int getItemCenter-hvgbs18();
-    method @Deprecated public int getItemStart();
     method @BytecodeOnly @Deprecated public int getItemStart-hvgbs18();
     property @Deprecated public int ItemCenter;
     property @Deprecated public int ItemStart;
@@ -815,7 +755,6 @@ package androidx.wear.compose.material {
     method @Deprecated public boolean getReverseLayout();
     method @Deprecated public int getTotalItemsCount();
     method @Deprecated public int getViewportEndOffset();
-    method @Deprecated public long getViewportSize();
     method @BytecodeOnly @Deprecated public long getViewportSize-YbymL2g();
     method @Deprecated public int getViewportStartOffset();
     method @Deprecated public java.util.List<androidx.wear.compose.material.ScalingLazyListItemInfo> getVisibleItemsInfo();
@@ -915,9 +854,7 @@ package androidx.wear.compose.material {
 
   public final class SelectableChipDefaults {
     method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
-    method public float getHeight();
     method @BytecodeOnly public float getHeight-D9Ej5fM();
-    method public float getIconSize();
     method @BytecodeOnly public float getIconSize-D9Ej5fM();
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material.SelectableChipColors selectableChipColors(optional long selectedStartBackgroundColor, optional long selectedEndBackgroundColor, optional long selectedContentColor, optional long selectedSecondaryContentColor, optional long selectedSelectionControlColor, optional long unselectedStartBackgroundColor, optional long unselectedEndBackgroundColor, optional long unselectedContentColor, optional long unselectedSecondaryContentColor, optional long unselectedSelectionControlColor, optional androidx.compose.ui.unit.LayoutDirection gradientDirection);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material.SelectableChipColors selectableChipColors-r6VPBpI(long, long, long, long, long, long, long, long, long, long, androidx.compose.ui.unit.LayoutDirection?, androidx.compose.runtime.Composer?, int, int, int);
@@ -1012,7 +949,6 @@ package androidx.wear.compose.material {
 
   @Deprecated @androidx.compose.runtime.Stable public final class SwipeToDismissBoxDefaults {
     method @Deprecated public androidx.compose.animation.core.SpringSpec<java.lang.Float> getAnimationSpec();
-    method @Deprecated public float getEdgeWidth();
     method @BytecodeOnly @Deprecated public float getEdgeWidth-D9Ej5fM();
     property @Deprecated public androidx.compose.animation.core.SpringSpec<java.lang.Float> AnimationSpec;
     property @Deprecated public float EdgeWidth;
@@ -1059,17 +995,11 @@ package androidx.wear.compose.material {
   @SuppressCompatibility @androidx.wear.compose.material.ExperimentalWearMaterialApi public final class SwipeToRevealActionColors {
     ctor @KotlinOnly public SwipeToRevealActionColors(androidx.compose.ui.graphics.Color primaryActionBackgroundColor, androidx.compose.ui.graphics.Color primaryActionContentColor, androidx.compose.ui.graphics.Color secondaryActionBackgroundColor, androidx.compose.ui.graphics.Color secondaryActionContentColor, androidx.compose.ui.graphics.Color undoActionBackgroundColor, androidx.compose.ui.graphics.Color undoActionContentColor);
     ctor @BytecodeOnly public SwipeToRevealActionColors(long, long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
-    method public long getPrimaryActionBackgroundColor();
     method @BytecodeOnly public long getPrimaryActionBackgroundColor-0d7_KjU();
-    method public long getPrimaryActionContentColor();
     method @BytecodeOnly public long getPrimaryActionContentColor-0d7_KjU();
-    method public long getSecondaryActionBackgroundColor();
     method @BytecodeOnly public long getSecondaryActionBackgroundColor-0d7_KjU();
-    method public long getSecondaryActionContentColor();
     method @BytecodeOnly public long getSecondaryActionContentColor-0d7_KjU();
-    method public long getUndoActionBackgroundColor();
     method @BytecodeOnly public long getUndoActionBackgroundColor-0d7_KjU();
-    method public long getUndoActionContentColor();
     method @BytecodeOnly public long getUndoActionContentColor-0d7_KjU();
     property public long primaryActionBackgroundColor;
     property public long primaryActionContentColor;
@@ -1114,7 +1044,6 @@ package androidx.wear.compose.material {
 
   @SuppressCompatibility @androidx.wear.compose.material.ExperimentalWearMaterialApi public final class SwipeableDefaults {
     method public androidx.compose.animation.core.SpringSpec<java.lang.Float> getAnimationSpec();
-    method public float getVelocityThreshold();
     method @BytecodeOnly public float getVelocityThreshold-D9Ej5fM();
     method public androidx.wear.compose.material.ResistanceConfig? resistanceConfig(java.util.Set<java.lang.Float> anchors, optional float factorAtMin, optional float factorAtMax);
     property public androidx.compose.animation.core.SpringSpec<java.lang.Float> AnimationSpec;
@@ -1228,15 +1157,10 @@ package androidx.wear.compose.material {
   }
 
   public final class ToggleButtonDefaults {
-    method public float getDefaultIconSize();
     method @BytecodeOnly public float getDefaultIconSize-D9Ej5fM();
-    method public int getDefaultRole();
     method @BytecodeOnly public int getDefaultRole-o7Vup1c();
-    method public float getDefaultToggleButtonSize();
     method @BytecodeOnly public float getDefaultToggleButtonSize-D9Ej5fM();
-    method public float getSmallIconSize();
     method @BytecodeOnly public float getSmallIconSize-D9Ej5fM();
-    method public float getSmallToggleButtonSize();
     method @BytecodeOnly public float getSmallToggleButtonSize-D9Ej5fM();
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material.ToggleButtonColors toggleButtonColors(optional long checkedBackgroundColor, optional long checkedContentColor, optional long disabledCheckedBackgroundColor, optional long disabledCheckedContentColor, optional long uncheckedBackgroundColor, optional long uncheckedContentColor, optional long disabledUncheckedBackgroundColor, optional long disabledUncheckedContentColor);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.wear.compose.material.ToggleButtonColors toggleButtonColors-oq7We08(long, long, long, long, long, long, long, long, androidx.compose.runtime.Composer?, int, int);
@@ -1272,13 +1196,10 @@ package androidx.wear.compose.material {
     method public androidx.compose.ui.graphics.vector.ImageVector checkboxIcon(boolean checked);
     method public androidx.compose.ui.graphics.vector.ImageVector getCheckboxOn();
     method public androidx.compose.foundation.layout.PaddingValues getContentPadding();
-    method public float getHeight();
     method @BytecodeOnly public float getHeight-D9Ej5fM();
-    method public float getIconSize();
     method @BytecodeOnly public float getIconSize-D9Ej5fM();
     method public androidx.compose.ui.graphics.vector.ImageVector getRadioOff();
     method public androidx.compose.ui.graphics.vector.ImageVector getRadioOn();
-    method @androidx.compose.runtime.Composable public long getSwitchUncheckedIconColor();
     method @BytecodeOnly @androidx.compose.runtime.Composable public long getSwitchUncheckedIconColor(androidx.compose.runtime.Composer?, int);
     method public androidx.compose.ui.graphics.vector.ImageVector radioIcon(boolean checked);
     method @androidx.compose.runtime.Composable public androidx.wear.compose.material.SplitToggleChipColors splitToggleChipColors(optional long backgroundColor, optional long contentColor, optional long secondaryContentColor, optional long checkedToggleControlColor, optional long uncheckedToggleControlColor, optional long splitBackgroundOverlayColor);
@@ -1292,7 +1213,7 @@ package androidx.wear.compose.material {
     property public float IconSize;
     property public androidx.compose.ui.graphics.vector.ImageVector RadioOff;
     property public androidx.compose.ui.graphics.vector.ImageVector RadioOn;
-    property @androidx.compose.runtime.Composable public long SwitchUncheckedIconColor;
+    property public long SwitchUncheckedIconColor;
     field public static final androidx.wear.compose.material.ToggleChipDefaults INSTANCE;
   }
 
@@ -1360,11 +1281,8 @@ package androidx.wear.compose.material {
   }
 
   public static final class VignettePosition.Companion {
-    method public int getBottom();
     method @BytecodeOnly public int getBottom-GuQh5Jg();
-    method public int getTop();
     method @BytecodeOnly public int getTop-GuQh5Jg();
-    method public int getTopAndBottom();
     method @BytecodeOnly public int getTopAndBottom-GuQh5Jg();
     property public int Bottom;
     property public int Top;

@@ -2,10 +2,6 @@
 package androidx.compose.ui.tooling.preview {
 
   public final class Devices {
-    method @Deprecated public static String getWEAR_OS_LARGE_ROUND();
-    method @Deprecated public static String getWEAR_OS_RECT();
-    method @Deprecated public static String getWEAR_OS_SMALL_ROUND();
-    method @Deprecated public static String getWEAR_OS_SQUARE();
     property public static String AUTOMOTIVE_1024p;
     property public static String DEFAULT;
     property public static String DESKTOP;

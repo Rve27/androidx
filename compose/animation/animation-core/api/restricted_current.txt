@@ -237,7 +237,6 @@ package androidx.compose.animation.core {
     method public int getDelayMillis();
     method public int getDurationMillis();
     method public androidx.compose.animation.core.Easing getEasing();
-    method public int getMode();
     method @BytecodeOnly public int getMode--9T-Mq4();
     method public <V extends androidx.compose.animation.core.AnimationVector> androidx.compose.animation.core.VectorizedDurationBasedAnimationSpec<V> vectorize(androidx.compose.animation.core.TwoWayConverter<T,V> converter);
     property public int delayMillis;
@@ -253,11 +252,8 @@ package androidx.compose.animation.core {
   }
 
   public static final class ArcMode.Companion {
-    method public int getArcAbove();
     method @BytecodeOnly public int getArcAbove--9T-Mq4();
-    method public int getArcBelow();
     method @BytecodeOnly public int getArcBelow--9T-Mq4();
-    method public int getArcLinear();
     method @BytecodeOnly public int getArcLinear--9T-Mq4();
     property public int ArcAbove;
     property public int ArcBelow;
@@ -474,7 +470,6 @@ package androidx.compose.animation.core {
     ctor @BytecodeOnly public InfiniteRepeatableSpec(androidx.compose.animation.core.DurationBasedAnimationSpec!, androidx.compose.animation.core.RepeatMode!, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @KotlinOnly public InfiniteRepeatableSpec(androidx.compose.animation.core.DurationBasedAnimationSpec<T> animation, optional androidx.compose.animation.core.RepeatMode repeatMode, optional androidx.compose.animation.core.StartOffset initialStartOffset);
     method public androidx.compose.animation.core.DurationBasedAnimationSpec<T> getAnimation();
-    method public long getInitialStartOffset();
     method @BytecodeOnly public long getInitialStartOffset-Rmkjzm4();
     method public androidx.compose.animation.core.RepeatMode getRepeatMode();
     method public <V extends androidx.compose.animation.core.AnimationVector> androidx.compose.animation.core.VectorizedAnimationSpec<V> vectorize(androidx.compose.animation.core.TwoWayConverter<T,V> converter);
@@ -593,7 +588,6 @@ package androidx.compose.animation.core {
     ctor @BytecodeOnly public RepeatableSpec(int, androidx.compose.animation.core.DurationBasedAnimationSpec!, androidx.compose.animation.core.RepeatMode!, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @KotlinOnly public RepeatableSpec(int iterations, androidx.compose.animation.core.DurationBasedAnimationSpec<T> animation, optional androidx.compose.animation.core.RepeatMode repeatMode, optional androidx.compose.animation.core.StartOffset initialStartOffset);
     method public androidx.compose.animation.core.DurationBasedAnimationSpec<T> getAnimation();
-    method public long getInitialStartOffset();
     method @BytecodeOnly public long getInitialStartOffset-Rmkjzm4();
     method public int getIterations();
     method public androidx.compose.animation.core.RepeatMode getRepeatMode();
@@ -679,9 +673,7 @@ package androidx.compose.animation.core {
   }
 
   public static final class StartOffsetType.Companion {
-    method public int getDelay();
     method @BytecodeOnly public int getDelay-Eo1U57Q();
-    method public int getFastForward();
     method @BytecodeOnly public int getFastForward-Eo1U57Q();
     property public int Delay;
     property public int FastForward;
@@ -942,13 +934,13 @@ package androidx.compose.animation.core {
   }
 
   public final class VisibilityThresholdsKt {
-    method public static long getVisibilityThreshold(androidx.compose.ui.geometry.Offset.Companion);
+    method @BytecodeOnly public static long getVisibilityThreshold(androidx.compose.ui.geometry.Offset.Companion);
     method public static androidx.compose.ui.geometry.Rect getVisibilityThreshold(androidx.compose.ui.geometry.Rect.Companion);
-    method public static long getVisibilityThreshold(androidx.compose.ui.geometry.Size.Companion);
-    method public static float getVisibilityThreshold(androidx.compose.ui.unit.Dp.Companion);
-    method public static long getVisibilityThreshold(androidx.compose.ui.unit.DpOffset.Companion);
-    method public static long getVisibilityThreshold(androidx.compose.ui.unit.IntOffset.Companion);
-    method public static long getVisibilityThreshold(androidx.compose.ui.unit.IntSize.Companion);
+    method @BytecodeOnly public static long getVisibilityThreshold(androidx.compose.ui.geometry.Size.Companion);
+    method @BytecodeOnly public static float getVisibilityThreshold(androidx.compose.ui.unit.Dp.Companion);
+    method @BytecodeOnly public static long getVisibilityThreshold(androidx.compose.ui.unit.DpOffset.Companion);
+    method @BytecodeOnly public static long getVisibilityThreshold(androidx.compose.ui.unit.IntOffset.Companion);
+    method @BytecodeOnly public static long getVisibilityThreshold(androidx.compose.ui.unit.IntSize.Companion);
     method public static int getVisibilityThreshold(kotlin.jvm.internal.IntCompanionObject);
     property public static long androidx.compose.ui.unit.IntOffset.Companion.VisibilityThreshold;
     property public static long androidx.compose.ui.geometry.Offset.Companion.VisibilityThreshold;

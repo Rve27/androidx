@@ -20,12 +20,9 @@ package androidx.compose.material3.windowsizeclass {
 
   public static final class WindowHeightSizeClass.Companion {
     method public java.util.Set<androidx.compose.material3.windowsizeclass.WindowHeightSizeClass> getAllSizeClasses();
-    method public int getCompact();
     method @BytecodeOnly public int getCompact-Pt018CI();
     method public java.util.Set<androidx.compose.material3.windowsizeclass.WindowHeightSizeClass> getDefaultSizeClasses();
-    method public int getExpanded();
     method @BytecodeOnly public int getExpanded-Pt018CI();
-    method public int getMedium();
     method @BytecodeOnly public int getMedium-Pt018CI();
     property public java.util.Set<androidx.compose.material3.windowsizeclass.WindowHeightSizeClass> AllSizeClasses;
     property public int Compact;
@@ -35,9 +32,7 @@ package androidx.compose.material3.windowsizeclass {
   }
 
   @androidx.compose.runtime.Immutable public final class WindowSizeClass {
-    method public int getHeightSizeClass();
     method @BytecodeOnly public int getHeightSizeClass-Pt018CI();
-    method public int getWidthSizeClass();
     method @BytecodeOnly public int getWidthSizeClass-Y0FxcvE();
     property public int heightSizeClass;
     property public int widthSizeClass;
@@ -60,12 +55,9 @@ package androidx.compose.material3.windowsizeclass {
 
   public static final class WindowWidthSizeClass.Companion {
     method public java.util.Set<androidx.compose.material3.windowsizeclass.WindowWidthSizeClass> getAllSizeClasses();
-    method public int getCompact();
     method @BytecodeOnly public int getCompact-Y0FxcvE();
     method public java.util.Set<androidx.compose.material3.windowsizeclass.WindowWidthSizeClass> getDefaultSizeClasses();
-    method public int getExpanded();
     method @BytecodeOnly public int getExpanded-Y0FxcvE();
-    method public int getMedium();
     method @BytecodeOnly public int getMedium-Y0FxcvE();
     property public java.util.Set<androidx.compose.material3.windowsizeclass.WindowWidthSizeClass> AllSizeClasses;
     property public int Compact;

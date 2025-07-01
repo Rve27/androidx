@@ -36,7 +36,6 @@ package androidx.compose.ui.geometry {
   }
 
   public static final class CornerRadius.Companion {
-    method public long getZero();
     method @BytecodeOnly public long getZero-kKHJgLs();
     property @androidx.compose.runtime.Stable public long Zero;
   }
@@ -74,31 +73,21 @@ package androidx.compose.ui.geometry {
     method @BytecodeOnly public boolean contains-k-4lQ0M(long);
     method public void deflate(float delta);
     method public float getBottom();
-    method public long getBottomCenter();
     method @BytecodeOnly public long getBottomCenter-F1C5BW0();
-    method public long getBottomLeft();
     method @BytecodeOnly public long getBottomLeft-F1C5BW0();
-    method public long getBottomRight();
     method @BytecodeOnly public long getBottomRight-F1C5BW0();
-    method public long getCenter();
     method @BytecodeOnly public long getCenter-F1C5BW0();
-    method public long getCenterLeft();
     method @BytecodeOnly public long getCenterLeft-F1C5BW0();
-    method public long getCenterRight();
     method @BytecodeOnly public long getCenterRight-F1C5BW0();
     method public inline float getHeight();
     method public float getLeft();
     method public float getMaxDimension();
     method public float getMinDimension();
     method public float getRight();
-    method public long getSize();
     method @BytecodeOnly public long getSize-NH-jbRc();
     method public float getTop();
-    method public long getTopCenter();
     method @BytecodeOnly public long getTopCenter-F1C5BW0();
-    method public long getTopLeft();
     method @BytecodeOnly public long getTopLeft-F1C5BW0();
-    method public long getTopRight();
     method @BytecodeOnly public long getTopRight-F1C5BW0();
     method public inline float getWidth();
     method public void inflate(float delta);
@@ -188,11 +177,8 @@ package androidx.compose.ui.geometry {
   }
 
   public static final class Offset.Companion {
-    method public long getInfinite();
     method @BytecodeOnly public long getInfinite-F1C5BW0();
-    method public long getUnspecified();
     method @BytecodeOnly public long getUnspecified-F1C5BW0();
-    method public long getZero();
     method @BytecodeOnly public long getZero-F1C5BW0();
     property @androidx.compose.runtime.Stable public long Infinite;
     property @androidx.compose.runtime.Stable public long Unspecified;
@@ -201,11 +187,8 @@ package androidx.compose.ui.geometry {
 
   public final class OffsetKt {
     method @androidx.compose.runtime.Stable public static inline long Offset(float x, float y);
-    method public static inline boolean isFinite(long);
     method @BytecodeOnly public static boolean isFinite-k-4lQ0M(long);
-    method public static inline boolean isSpecified(long);
     method @BytecodeOnly public static boolean isSpecified-k-4lQ0M(long);
-    method public static inline boolean isUnspecified(long);
     method @BytecodeOnly public static boolean isUnspecified-k-4lQ0M(long);
     method @androidx.compose.runtime.Stable public static long lerp(long start, long stop, float fraction);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long lerp-Wko1d7g(long, long, float);
@@ -227,31 +210,21 @@ package androidx.compose.ui.geometry {
     method public androidx.compose.ui.geometry.Rect copy(optional float left, optional float top, optional float right, optional float bottom);
     method @androidx.compose.runtime.Stable public androidx.compose.ui.geometry.Rect deflate(float delta);
     method public float getBottom();
-    method public long getBottomCenter();
     method @BytecodeOnly public long getBottomCenter-F1C5BW0();
-    method public long getBottomLeft();
     method @BytecodeOnly public long getBottomLeft-F1C5BW0();
-    method public long getBottomRight();
     method @BytecodeOnly public long getBottomRight-F1C5BW0();
-    method public long getCenter();
     method @BytecodeOnly public long getCenter-F1C5BW0();
-    method public long getCenterLeft();
     method @BytecodeOnly public long getCenterLeft-F1C5BW0();
-    method public long getCenterRight();
     method @BytecodeOnly public long getCenterRight-F1C5BW0();
     method public inline float getHeight();
     method public float getLeft();
     method public float getMaxDimension();
     method public float getMinDimension();
     method public float getRight();
-    method public long getSize();
     method @BytecodeOnly public long getSize-NH-jbRc();
     method public float getTop();
-    method public long getTopCenter();
     method @BytecodeOnly public long getTopCenter-F1C5BW0();
-    method public long getTopLeft();
     method @BytecodeOnly public long getTopLeft-F1C5BW0();
-    method public long getTopRight();
     method @BytecodeOnly public long getTopRight-F1C5BW0();
     method public inline float getWidth();
     method @androidx.compose.runtime.Stable public androidx.compose.ui.geometry.Rect inflate(float delta);
@@ -310,25 +283,21 @@ package androidx.compose.ui.geometry {
     method public float component2();
     method public float component3();
     method public float component4();
-    method public long component5-kKHJgLs();
-    method public long component6-kKHJgLs();
-    method public long component7-kKHJgLs();
-    method public long component8-kKHJgLs();
+    method @BytecodeOnly public long component5-kKHJgLs();
+    method @BytecodeOnly public long component6-kKHJgLs();
+    method @BytecodeOnly public long component7-kKHJgLs();
+    method @BytecodeOnly public long component8-kKHJgLs();
     method public operator boolean contains(long point);
     method @BytecodeOnly public boolean contains-k-4lQ0M(long);
     method public androidx.compose.ui.geometry.RoundRect copy-MDFrsts(float left, float top, float right, float bottom, long topLeftCornerRadius, long topRightCornerRadius, long bottomRightCornerRadius, long bottomLeftCornerRadius);
     method public float getBottom();
-    method public long getBottomLeftCornerRadius();
     method @BytecodeOnly public long getBottomLeftCornerRadius-kKHJgLs();
-    method public long getBottomRightCornerRadius();
     method @BytecodeOnly public long getBottomRightCornerRadius-kKHJgLs();
     method public float getHeight();
     method public float getLeft();
     method public float getRight();
     method public float getTop();
-    method public long getTopLeftCornerRadius();
     method @BytecodeOnly public long getTopLeftCornerRadius-kKHJgLs();
-    method public long getTopRightCornerRadius();
     method @BytecodeOnly public long getTopRightCornerRadius-kKHJgLs();
     method public float getWidth();
     method public static androidx.compose.ui.geometry.RoundRect getZero();
@@ -360,7 +329,7 @@ package androidx.compose.ui.geometry {
     method @BytecodeOnly public static androidx.compose.ui.geometry.RoundRect RoundRect-gG7oq9Y(float, float, float, float, long);
     method @BytecodeOnly public static androidx.compose.ui.geometry.RoundRect RoundRect-sniSvfs(androidx.compose.ui.geometry.Rect, long);
     method public static androidx.compose.ui.geometry.Rect getBoundingRect(androidx.compose.ui.geometry.RoundRect);
-    method public static long getCenter(androidx.compose.ui.geometry.RoundRect);
+    method @BytecodeOnly public static long getCenter(androidx.compose.ui.geometry.RoundRect);
     method public static float getMaxDimension(androidx.compose.ui.geometry.RoundRect);
     method public static float getMinDimension(androidx.compose.ui.geometry.RoundRect);
     method public static androidx.compose.ui.geometry.Rect getSafeInnerRect(androidx.compose.ui.geometry.RoundRect);
@@ -417,9 +386,7 @@ package androidx.compose.ui.geometry {
   }
 
   public static final class Size.Companion {
-    method public long getUnspecified();
     method @BytecodeOnly public long getUnspecified-NH-jbRc();
-    method public long getZero();
     method @BytecodeOnly public long getZero-NH-jbRc();
     property @androidx.compose.runtime.Stable public long Unspecified;
     property @androidx.compose.runtime.Stable public long Zero;
@@ -427,11 +394,8 @@ package androidx.compose.ui.geometry {
 
   public final class SizeKt {
     method @androidx.compose.runtime.Stable public static inline long Size(float width, float height);
-    method public static long getCenter(long);
     method @BytecodeOnly public static long getCenter-uvyYCjk(long);
-    method public static inline boolean isSpecified(long);
     method @BytecodeOnly public static boolean isSpecified-uvyYCjk(long);
-    method public static inline boolean isUnspecified(long);
     method @BytecodeOnly public static boolean isUnspecified-uvyYCjk(long);
     method @androidx.compose.runtime.Stable public static long lerp(long start, long stop, float fraction);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long lerp-VgWVRYQ(long, long, float);

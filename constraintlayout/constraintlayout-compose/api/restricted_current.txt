@@ -91,11 +91,8 @@ package androidx.constraintlayout.compose {
     method public float getScaleY();
     method public androidx.constraintlayout.compose.VerticalAnchorable getStart();
     method public androidx.constraintlayout.compose.HorizontalAnchorable getTop();
-    method public float getTranslationX();
     method @BytecodeOnly public float getTranslationX-D9Ej5fM();
-    method public float getTranslationY();
     method @BytecodeOnly public float getTranslationY-D9Ej5fM();
-    method public float getTranslationZ();
     method @BytecodeOnly public float getTranslationZ-D9Ej5fM();
     method public float getVerticalBias();
     method public float getVerticalChainWeight();
@@ -120,11 +117,8 @@ package androidx.constraintlayout.compose {
     method public void setRotationZ(float);
     method public void setScaleX(float);
     method public void setScaleY(float);
-    method public void setTranslationX(float);
     method @BytecodeOnly public void setTranslationX-0680j_4(float);
-    method public void setTranslationY(float);
     method @BytecodeOnly public void setTranslationY-0680j_4(float);
-    method public void setTranslationZ(float);
     method @BytecodeOnly public void setTranslationZ-0680j_4(float);
     method public void setVerticalBias(float);
     method public void setVerticalChainWeight(float);
@@ -417,9 +411,7 @@ package androidx.constraintlayout.compose {
   }
 
   public static final class DebugFlags.Companion {
-    method public int getAll();
     method @BytecodeOnly public int getAll-bfy_xzQ();
-    method public int getNone();
     method @BytecodeOnly public int getNone-bfy_xzQ();
     property public int All;
     property public int None;
@@ -538,9 +530,7 @@ package androidx.constraintlayout.compose {
   }
 
   public static final class GridFlag.Companion {
-    method public int getNone();
     method @BytecodeOnly public int getNone-dTRCCdc();
-    method public int getPlaceLayoutsOnSpansFirst();
     method @BytecodeOnly public int getPlaceLayoutsOnSpansFirst-dTRCCdc();
     property public int None;
     property public int PlaceLayoutsOnSpansFirst;
@@ -618,11 +608,8 @@ package androidx.constraintlayout.compose {
     method public float getRotationZ();
     method public float getScaleX();
     method public float getScaleY();
-    method public float getTranslationX();
     method @BytecodeOnly public float getTranslationX-D9Ej5fM();
-    method public float getTranslationY();
     method @BytecodeOnly public float getTranslationY-D9Ej5fM();
-    method public float getTranslationZ();
     method @BytecodeOnly public float getTranslationZ-D9Ej5fM();
     method public void setAlpha(float);
     method public void setRotationX(float);
@@ -630,11 +617,8 @@ package androidx.constraintlayout.compose {
     method public void setRotationZ(float);
     method public void setScaleX(float);
     method public void setScaleY(float);
-    method public void setTranslationX(float);
     method @BytecodeOnly public void setTranslationX-0680j_4(float);
-    method public void setTranslationY(float);
     method @BytecodeOnly public void setTranslationY-0680j_4(float);
-    method public void setTranslationZ(float);
     method @BytecodeOnly public void setTranslationZ-0680j_4(float);
     property public float alpha;
     property public float rotationX;
@@ -661,11 +645,8 @@ package androidx.constraintlayout.compose {
     method public float getRotationZ();
     method public float getScaleX();
     method public float getScaleY();
-    method public float getTranslationX();
     method @BytecodeOnly public float getTranslationX-D9Ej5fM();
-    method public float getTranslationY();
     method @BytecodeOnly public float getTranslationY-D9Ej5fM();
-    method public float getTranslationZ();
     method @BytecodeOnly public float getTranslationZ-D9Ej5fM();
     method public void setAlpha(float);
     method public void setOffset(float);
@@ -676,11 +657,8 @@ package androidx.constraintlayout.compose {
     method public void setRotationZ(float);
     method public void setScaleX(float);
     method public void setScaleY(float);
-    method public void setTranslationX(float);
     method @BytecodeOnly public void setTranslationX-0680j_4(float);
-    method public void setTranslationY(float);
     method @BytecodeOnly public void setTranslationY-0680j_4(float);
-    method public void setTranslationZ(float);
     method @BytecodeOnly public void setTranslationZ-0680j_4(float);
     property public float alpha;
     property public float offset;
@@ -1069,10 +1047,8 @@ package androidx.constraintlayout.compose {
     ctor public State(androidx.compose.ui.unit.Density density);
     method public androidx.compose.ui.unit.Density getDensity();
     method @Deprecated public androidx.compose.ui.unit.LayoutDirection getLayoutDirection();
-    method public long getRootIncomingConstraints();
     method @BytecodeOnly public long getRootIncomingConstraints-msEJaDk();
     method @Deprecated public void setLayoutDirection(androidx.compose.ui.unit.LayoutDirection);
-    method public void setRootIncomingConstraints(long);
     method @BytecodeOnly public void setRootIncomingConstraints-BRTryo0(long);
     property public androidx.compose.ui.unit.Density density;
     property @Deprecated public androidx.compose.ui.unit.LayoutDirection layoutDirection;

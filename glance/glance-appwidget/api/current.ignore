@@ -11,3 +11,5 @@ AddedAbstractMethod: androidx.glance.appwidget.lazy.LazyVerticalGridScope#items(
 
 RemovedMethod: androidx.glance.appwidget.lazy.GridCells.Adaptive#Adaptive(float):
     Binary breaking change: Removed constructor androidx.glance.appwidget.lazy.GridCells.Adaptive(float)
+RemovedMethod: androidx.glance.appwidget.lazy.GridCells.Adaptive#getMinSize():
+    Binary breaking change: Removed method androidx.glance.appwidget.lazy.GridCells.Adaptive.getMinSize()

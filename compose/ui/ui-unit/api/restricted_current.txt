@@ -130,11 +130,8 @@ package androidx.compose.ui.unit {
   }
 
   public static final class Dp.Companion {
-    method public float getHairline();
     method @BytecodeOnly public float getHairline-D9Ej5fM();
-    method public float getInfinity();
     method @BytecodeOnly public float getInfinity-D9Ej5fM();
-    method public float getUnspecified();
     method @BytecodeOnly public float getUnspecified-D9Ej5fM();
     property @androidx.compose.runtime.Stable public float Hairline;
     property @androidx.compose.runtime.Stable public float Infinity;
@@ -152,25 +149,17 @@ package androidx.compose.ui.unit {
     method @BytecodeOnly @androidx.compose.runtime.Stable public static float coerceAtMost-YgX7TsA(float, float);
     method @androidx.compose.runtime.Stable public static inline float coerceIn(float, float minimumValue, float maximumValue);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static float coerceIn-2z7ARbQ(float, float, float);
-    method public static long getCenter(long);
     method @BytecodeOnly public static long getCenter-EaSLcWc(long);
-    method public static inline float getDp(double);
-    method public static inline float getDp(float);
-    method public static inline float getDp(int);
-    method public static inline float getHeight(androidx.compose.ui.unit.DpRect);
-    method public static inline long getSize(androidx.compose.ui.unit.DpRect);
-    method public static inline float getWidth(androidx.compose.ui.unit.DpRect);
-    method public static inline boolean isFinite(float);
+    method @BytecodeOnly public static float getDp(double);
+    method @BytecodeOnly public static float getDp(float);
+    method @BytecodeOnly public static float getDp(int);
+    method @BytecodeOnly public static float getHeight(androidx.compose.ui.unit.DpRect);
+    method @BytecodeOnly public static long getSize(androidx.compose.ui.unit.DpRect);
+    method @BytecodeOnly public static float getWidth(androidx.compose.ui.unit.DpRect);
     method @BytecodeOnly public static boolean isFinite-0680j_4(float);
-    method public static inline boolean isSpecified(float);
-    method public static inline boolean isSpecified(long);
-    method public static inline boolean isSpecified(long);
     method @BytecodeOnly public static boolean isSpecified-0680j_4(float);
     method @BytecodeOnly public static boolean isSpecified-EaSLcWc(long);
     method @BytecodeOnly public static boolean isSpecified-jo-Fl9I(long);
-    method public static inline boolean isUnspecified(float);
-    method public static inline boolean isUnspecified(long);
-    method public static inline boolean isUnspecified(long);
     method @BytecodeOnly public static boolean isUnspecified-0680j_4(float);
     method @BytecodeOnly public static boolean isUnspecified-EaSLcWc(long);
     method @BytecodeOnly public static boolean isUnspecified-jo-Fl9I(long);
@@ -237,9 +226,7 @@ package androidx.compose.ui.unit {
   }
 
   public static final class DpOffset.Companion {
-    method public long getUnspecified();
     method @BytecodeOnly public long getUnspecified-RKDOV3M();
-    method public long getZero();
     method @BytecodeOnly public long getZero-RKDOV3M();
     property public long Unspecified;
     property public long Zero;
@@ -250,18 +237,14 @@ package androidx.compose.ui.unit {
     ctor @KotlinOnly public DpRect(androidx.compose.ui.unit.DpOffset origin, androidx.compose.ui.unit.DpSize size);
     ctor @BytecodeOnly public DpRect(float, float, float, float, kotlin.jvm.internal.DefaultConstructorMarker!);
     ctor @BytecodeOnly public DpRect(long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
-    method public float component1-D9Ej5fM();
-    method public float component2-D9Ej5fM();
-    method public float component3-D9Ej5fM();
-    method public float component4-D9Ej5fM();
+    method @BytecodeOnly public float component1-D9Ej5fM();
+    method @BytecodeOnly public float component2-D9Ej5fM();
+    method @BytecodeOnly public float component3-D9Ej5fM();
+    method @BytecodeOnly public float component4-D9Ej5fM();
     method public androidx.compose.ui.unit.DpRect copy-a9UjIt4(float left, float top, float right, float bottom);
-    method public float getBottom();
     method @BytecodeOnly public float getBottom-D9Ej5fM();
-    method public float getLeft();
     method @BytecodeOnly public float getLeft-D9Ej5fM();
-    method public float getRight();
     method @BytecodeOnly public float getRight-D9Ej5fM();
-    method public float getTop();
     method @BytecodeOnly public float getTop-D9Ej5fM();
     property @androidx.compose.runtime.Stable public float bottom;
     property @androidx.compose.runtime.Stable public float left;
@@ -303,9 +286,7 @@ package androidx.compose.ui.unit {
   }
 
   public static final class DpSize.Companion {
-    method public long getUnspecified();
     method @BytecodeOnly public long getUnspecified-MYxV2XQ();
-    method public long getZero();
     method @BytecodeOnly public long getZero-MYxV2XQ();
     property public long Unspecified;
     property public long Zero;
@@ -356,9 +337,7 @@ package androidx.compose.ui.unit {
   }
 
   public static final class IntOffset.Companion {
-    method public long getMax();
     method @BytecodeOnly public long getMax-nOcc-ac();
-    method public long getZero();
     method @BytecodeOnly public long getZero-nOcc-ac();
     property public long Max;
     property public long Zero;
@@ -393,31 +372,21 @@ package androidx.compose.ui.unit {
     method public androidx.compose.ui.unit.IntRect copy(optional int left, optional int top, optional int right, optional int bottom);
     method @androidx.compose.runtime.Stable public androidx.compose.ui.unit.IntRect deflate(int delta);
     method public int getBottom();
-    method public long getBottomCenter();
     method @BytecodeOnly public long getBottomCenter-nOcc-ac();
-    method public long getBottomLeft();
     method @BytecodeOnly public long getBottomLeft-nOcc-ac();
-    method public long getBottomRight();
     method @BytecodeOnly public long getBottomRight-nOcc-ac();
-    method public long getCenter();
     method @BytecodeOnly public long getCenter-nOcc-ac();
-    method public long getCenterLeft();
     method @BytecodeOnly public long getCenterLeft-nOcc-ac();
-    method public long getCenterRight();
     method @BytecodeOnly public long getCenterRight-nOcc-ac();
     method public int getHeight();
     method public int getLeft();
     method public int getMaxDimension();
     method public int getMinDimension();
     method public int getRight();
-    method public long getSize();
     method @BytecodeOnly public long getSize-YbymL2g();
     method public int getTop();
-    method public long getTopCenter();
     method @BytecodeOnly public long getTopCenter-nOcc-ac();
-    method public long getTopLeft();
     method @BytecodeOnly public long getTopLeft-nOcc-ac();
-    method public long getTopRight();
     method @BytecodeOnly public long getTopRight-nOcc-ac();
     method public int getWidth();
     method @androidx.compose.runtime.Stable public androidx.compose.ui.unit.IntRect inflate(int delta);
@@ -489,14 +458,12 @@ package androidx.compose.ui.unit {
   }
 
   public static final class IntSize.Companion {
-    method public long getZero();
     method @BytecodeOnly public long getZero-YbymL2g();
     property public long Zero;
   }
 
   public final class IntSizeKt {
     method @androidx.compose.runtime.Stable public static inline long IntSize(int width, int height);
-    method public static long getCenter(long);
     method @BytecodeOnly public static long getCenter-ozmzZPI(long);
     method @androidx.compose.runtime.Stable public static long roundToIntSize(long);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long roundToIntSize-uvyYCjk(long);
@@ -549,7 +516,6 @@ package androidx.compose.ui.unit {
   }
 
   public static final class TextUnit.Companion {
-    method public long getUnspecified();
     method @BytecodeOnly public long getUnspecified-XSAIIZE();
     property @androidx.compose.runtime.Stable public long Unspecified;
   }
@@ -563,15 +529,13 @@ package androidx.compose.ui.unit {
     method @BytecodeOnly @kotlin.PublishedApi internal static void checkArithmetic--R2X_6o(long);
     method @BytecodeOnly @kotlin.PublishedApi internal static void checkArithmetic-NB67dxo(long, long);
     method @BytecodeOnly @kotlin.PublishedApi internal static void checkArithmetic-vU-0ePk(long, long, long);
-    method public static long getEm(double);
-    method public static long getEm(float);
-    method public static long getEm(int);
-    method public static long getSp(double);
-    method public static long getSp(float);
-    method public static long getSp(int);
-    method public static inline boolean isSpecified(long);
+    method @BytecodeOnly public static long getEm(double);
+    method @BytecodeOnly public static long getEm(float);
+    method @BytecodeOnly public static long getEm(int);
+    method @BytecodeOnly public static long getSp(double);
+    method @BytecodeOnly public static long getSp(float);
+    method @BytecodeOnly public static long getSp(int);
     method @BytecodeOnly public static boolean isSpecified--R2X_6o(long);
-    method public static inline boolean isUnspecified(long);
     method @BytecodeOnly public static boolean isUnspecified--R2X_6o(long);
     method @androidx.compose.runtime.Stable public static long lerp(long start, long stop, float fraction);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long lerp-C3pnCVY(long, long, float);
@@ -603,11 +567,8 @@ package androidx.compose.ui.unit {
   }
 
   public static final class TextUnitType.Companion {
-    method public long getEm();
     method @BytecodeOnly public long getEm-UIouoOA();
-    method public long getSp();
     method @BytecodeOnly public long getSp-UIouoOA();
-    method public long getUnspecified();
     method @BytecodeOnly public long getUnspecified-UIouoOA();
     property public long Em;
     property public long Sp;
@@ -643,7 +604,6 @@ package androidx.compose.ui.unit {
   }
 
   public static final class Velocity.Companion {
-    method public long getZero();
     method @BytecodeOnly public long getZero-9UxMQ8M();
     property @androidx.compose.runtime.Stable public long Zero;
   }

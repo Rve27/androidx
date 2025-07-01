@@ -1,0 +1,67 @@
+// Baseline format: 1.0
+RemovedMethod: androidx.wear.compose.foundation.AnchorType.Companion#getCenter():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.AnchorType.Companion.getCenter()
+RemovedMethod: androidx.wear.compose.foundation.AnchorType.Companion#getEnd():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.AnchorType.Companion.getEnd()
+RemovedMethod: androidx.wear.compose.foundation.AnchorType.Companion#getStart():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.AnchorType.Companion.getStart()
+RemovedMethod: androidx.wear.compose.foundation.CurvedAlignment.Angular.Companion#getCenter():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedAlignment.Angular.Companion.getCenter()
+RemovedMethod: androidx.wear.compose.foundation.CurvedAlignment.Angular.Companion#getEnd():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedAlignment.Angular.Companion.getEnd()
+RemovedMethod: androidx.wear.compose.foundation.CurvedAlignment.Angular.Companion#getStart():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedAlignment.Angular.Companion.getStart()
+RemovedMethod: androidx.wear.compose.foundation.CurvedAlignment.Radial.Companion#getCenter():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedAlignment.Radial.Companion.getCenter()
+RemovedMethod: androidx.wear.compose.foundation.CurvedAlignment.Radial.Companion#getInner():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedAlignment.Radial.Companion.getInner()
+RemovedMethod: androidx.wear.compose.foundation.CurvedAlignment.Radial.Companion#getOuter():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedAlignment.Radial.Companion.getOuter()
+RemovedMethod: androidx.wear.compose.foundation.CurvedDirection.Angular.Companion#getClockwise():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedDirection.Angular.Companion.getClockwise()
+RemovedMethod: androidx.wear.compose.foundation.CurvedDirection.Angular.Companion#getCounterClockwise():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedDirection.Angular.Companion.getCounterClockwise()
+RemovedMethod: androidx.wear.compose.foundation.CurvedDirection.Angular.Companion#getNormal():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedDirection.Angular.Companion.getNormal()
+RemovedMethod: androidx.wear.compose.foundation.CurvedDirection.Angular.Companion#getReversed():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedDirection.Angular.Companion.getReversed()
+RemovedMethod: androidx.wear.compose.foundation.CurvedDirection.Radial.Companion#getInsideOut():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedDirection.Radial.Companion.getInsideOut()
+RemovedMethod: androidx.wear.compose.foundation.CurvedDirection.Radial.Companion#getOutsideIn():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedDirection.Radial.Companion.getOutsideIn()
+RemovedMethod: androidx.wear.compose.foundation.CurvedTextStyle#getBackground():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedTextStyle.getBackground()
+RemovedMethod: androidx.wear.compose.foundation.CurvedTextStyle#getColor():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedTextStyle.getColor()
+RemovedMethod: androidx.wear.compose.foundation.CurvedTextStyle#getFontSize():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedTextStyle.getFontSize()
+RemovedMethod: androidx.wear.compose.foundation.CurvedTextStyle#getFontStyle():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedTextStyle.getFontStyle()
+RemovedMethod: androidx.wear.compose.foundation.CurvedTextStyle#getFontSynthesis():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedTextStyle.getFontSynthesis()
+RemovedMethod: androidx.wear.compose.foundation.CurvedTextStyle#getLetterSpacing():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedTextStyle.getLetterSpacing()
+RemovedMethod: androidx.wear.compose.foundation.CurvedTextStyle#getLetterSpacingCounterClockwise():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedTextStyle.getLetterSpacingCounterClockwise()
+RemovedMethod: androidx.wear.compose.foundation.CurvedTextStyle#getLineHeight():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.CurvedTextStyle.getLineHeight()
+RemovedMethod: androidx.wear.compose.foundation.SwipeToDismissBoxDefaults#getEdgeWidth():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.SwipeToDismissBoxDefaults.getEdgeWidth()
+RemovedMethod: androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType.Companion#getItemCenter():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType.Companion.getItemCenter()
+RemovedMethod: androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType.Companion#getItemStart():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType.Companion.getItemStart()
+RemovedMethod: androidx.wear.compose.foundation.lazy.ScalingLazyListLayoutInfo#getAnchorType():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.lazy.ScalingLazyListLayoutInfo.getAnchorType()
+RemovedMethod: androidx.wear.compose.foundation.lazy.ScalingLazyListLayoutInfo#getViewportSize():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.lazy.ScalingLazyListLayoutInfo.getViewportSize()
+RemovedMethod: androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope#getScrollProgress(androidx.compose.ui.graphics.GraphicsLayerScope):
+    Binary breaking change: Removed method androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope.getScrollProgress(androidx.compose.ui.graphics.GraphicsLayerScope)
+RemovedMethod: androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope#getScrollProgress(androidx.compose.ui.graphics.drawscope.DrawScope):
+    Binary breaking change: Removed method androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScope.getScrollProgress(androidx.compose.ui.graphics.drawscope.DrawScope)
+RemovedMethod: androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress.Companion#getUnspecified():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress.Companion.getUnspecified()
+RemovedMethod: androidx.wear.compose.foundation.lazy.TransformingLazyColumnLayoutInfo#getViewportSize():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.lazy.TransformingLazyColumnLayoutInfo.getViewportSize()
+RemovedMethod: androidx.wear.compose.foundation.lazy.TransformingLazyColumnVisibleItemInfo#getScrollProgress():
+    Binary breaking change: Removed method androidx.wear.compose.foundation.lazy.TransformingLazyColumnVisibleItemInfo.getScrollProgress()
