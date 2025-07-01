@@ -846,6 +846,13 @@ class SwipeToRevealTest {
     }
 
     @Test
+    fun onSwipeRight_withPartiallyRevealedState_stateToCovered() {
+        verifyGesture(initialRevealValue = RightRevealing, expectedRevealValue = Covered) {
+            swipeRight(startX = width / 2f)
+        }
+    }
+
+    @Test
     fun onPrimaryActionClick_doesNotTriggerOnSwipePrimaryAction() {
         var onPrimaryActionClick = false
         var onSwipePrimaryAction = false
