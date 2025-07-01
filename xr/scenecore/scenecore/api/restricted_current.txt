@@ -264,44 +264,25 @@ package androidx.xr.scenecore {
     field public static final int UNKNOWN = 0; // 0x0
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class InputEvent {
-    ctor public InputEvent(int source, int pointerType, long timestamp, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int action, optional androidx.xr.scenecore.InputEvent.HitInfo? hitInfo, optional androidx.xr.scenecore.InputEvent.HitInfo? secondaryHitInfo);
+  public final class InputEvent {
+    ctor public InputEvent(int source, int pointerType, long timestamp, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int action, optional java.util.List<androidx.xr.scenecore.InputEvent.HitInfo> hitInfoList);
     method public int getAction();
     method public androidx.xr.runtime.math.Vector3 getDirection();
-    method public androidx.xr.scenecore.InputEvent.HitInfo? getHitInfo();
+    method public java.util.List<androidx.xr.scenecore.InputEvent.HitInfo> getHitInfoList();
     method public androidx.xr.runtime.math.Vector3 getOrigin();
     method public int getPointerType();
-    method public androidx.xr.scenecore.InputEvent.HitInfo? getSecondaryHitInfo();
     method public int getSource();
     method public long getTimestamp();
     property public int action;
     property public androidx.xr.runtime.math.Vector3 direction;
-    property public androidx.xr.scenecore.InputEvent.HitInfo? hitInfo;
+    property public java.util.List<androidx.xr.scenecore.InputEvent.HitInfo> hitInfoList;
     property public androidx.xr.runtime.math.Vector3 origin;
     property public int pointerType;
-    property public androidx.xr.scenecore.InputEvent.HitInfo? secondaryHitInfo;
     property public int source;
     property public long timestamp;
-    field public static final int ACTION_CANCEL = 3; // 0x3
-    field public static final int ACTION_DOWN = 0; // 0x0
-    field public static final int ACTION_HOVER_ENTER = 5; // 0x5
-    field public static final int ACTION_HOVER_EXIT = 6; // 0x6
-    field public static final int ACTION_HOVER_MOVE = 4; // 0x4
-    field public static final int ACTION_MOVE = 2; // 0x2
-    field public static final int ACTION_UP = 1; // 0x1
-    field public static final androidx.xr.scenecore.InputEvent.Companion Companion;
-    field public static final int POINTER_TYPE_DEFAULT = 0; // 0x0
-    field public static final int POINTER_TYPE_LEFT = 1; // 0x1
-    field public static final int POINTER_TYPE_RIGHT = 2; // 0x2
-    field public static final int SOURCE_CONTROLLER = 2; // 0x2
-    field public static final int SOURCE_GAZE_AND_GESTURE = 5; // 0x5
-    field public static final int SOURCE_HANDS = 3; // 0x3
-    field public static final int SOURCE_HEAD = 1; // 0x1
-    field public static final int SOURCE_MOUSE = 4; // 0x4
-    field public static final int SOURCE_UNKNOWN = 0; // 0x0
   }
 
-  public static final class InputEvent.Companion {
+  public static final class InputEvent.Action {
     property public static int ACTION_CANCEL;
     property public static int ACTION_DOWN;
     property public static int ACTION_HOVER_ENTER;
@@ -309,15 +290,14 @@ package androidx.xr.scenecore {
     property public static int ACTION_HOVER_MOVE;
     property public static int ACTION_MOVE;
     property public static int ACTION_UP;
-    property public static int POINTER_TYPE_DEFAULT;
-    property public static int POINTER_TYPE_LEFT;
-    property public static int POINTER_TYPE_RIGHT;
-    property public static int SOURCE_CONTROLLER;
-    property public static int SOURCE_GAZE_AND_GESTURE;
-    property public static int SOURCE_HANDS;
-    property public static int SOURCE_HEAD;
-    property public static int SOURCE_MOUSE;
-    property public static int SOURCE_UNKNOWN;
+    field public static final int ACTION_CANCEL = 3; // 0x3
+    field public static final int ACTION_DOWN = 0; // 0x0
+    field public static final int ACTION_HOVER_ENTER = 5; // 0x5
+    field public static final int ACTION_HOVER_EXIT = 6; // 0x6
+    field public static final int ACTION_HOVER_MOVE = 4; // 0x4
+    field public static final int ACTION_MOVE = 2; // 0x2
+    field public static final int ACTION_UP = 1; // 0x1
+    field public static final androidx.xr.scenecore.InputEvent.Action INSTANCE;
   }
 
   public static final class InputEvent.HitInfo {
@@ -330,11 +310,38 @@ package androidx.xr.scenecore {
     property public androidx.xr.runtime.math.Matrix4 transform;
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public fun interface InputEventListener {
+  public static final class InputEvent.Pointer {
+    property public static int POINTER_TYPE_DEFAULT;
+    property public static int POINTER_TYPE_LEFT;
+    property public static int POINTER_TYPE_RIGHT;
+    field public static final androidx.xr.scenecore.InputEvent.Pointer INSTANCE;
+    field public static final int POINTER_TYPE_DEFAULT = 0; // 0x0
+    field public static final int POINTER_TYPE_LEFT = 1; // 0x1
+    field public static final int POINTER_TYPE_RIGHT = 2; // 0x2
+  }
+
+  public static final class InputEvent.Source {
+    property public static int SOURCE_CONTROLLER;
+    property public static int SOURCE_GAZE_AND_GESTURE;
+    property public static int SOURCE_HANDS;
+    property public static int SOURCE_HEAD;
+    property public static int SOURCE_MOUSE;
+    property public static int SOURCE_UNKNOWN;
+    field public static final androidx.xr.scenecore.InputEvent.Source INSTANCE;
+    field public static final int SOURCE_CONTROLLER = 2; // 0x2
+    field public static final int SOURCE_GAZE_AND_GESTURE = 5; // 0x5
+    field public static final int SOURCE_HANDS = 3; // 0x3
+    field public static final int SOURCE_HEAD = 1; // 0x1
+    field public static final int SOURCE_MOUSE = 4; // 0x4
+    field public static final int SOURCE_UNKNOWN = 0; // 0x0
+  }
+
+  public fun interface InputEventListener {
     method public void onInputEvent(androidx.xr.scenecore.InputEvent inputEvent);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class InteractableComponent implements androidx.xr.scenecore.Component {
+  public final class InteractableComponent implements androidx.xr.scenecore.Component {
+    method public static androidx.xr.scenecore.InteractableComponent create(androidx.xr.runtime.Session session, androidx.xr.scenecore.InputEventListener inputEventListener);
     method public static androidx.xr.scenecore.InteractableComponent create(androidx.xr.runtime.Session session, java.util.concurrent.Executor executor, androidx.xr.scenecore.InputEventListener inputEventListener);
     method public boolean onAttach(androidx.xr.scenecore.Entity entity);
     method public void onDetach(androidx.xr.scenecore.Entity entity);
@@ -342,6 +349,7 @@ package androidx.xr.scenecore {
   }
 
   public static final class InteractableComponent.Companion {
+    method public androidx.xr.scenecore.InteractableComponent create(androidx.xr.runtime.Session session, androidx.xr.scenecore.InputEventListener inputEventListener);
     method public androidx.xr.scenecore.InteractableComponent create(androidx.xr.runtime.Session session, java.util.concurrent.Executor executor, androidx.xr.scenecore.InputEventListener inputEventListener);
   }
 

@@ -908,69 +908,75 @@ package androidx.xr.runtime.internal {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class InputEvent {
-    ctor public InputEvent(int source, int pointerType, long timestamp, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int action, androidx.xr.runtime.internal.InputEvent.Companion.HitInfo? hitInfo, androidx.xr.runtime.internal.InputEvent.Companion.HitInfo? secondaryHitInfo);
+    ctor public InputEvent(int source, int pointerType, long timestamp, androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int action, optional java.util.List<androidx.xr.runtime.internal.InputEvent.HitInfo> hitInfoList);
     method public int getAction();
     method public androidx.xr.runtime.math.Vector3 getDirection();
-    method public androidx.xr.runtime.internal.InputEvent.Companion.HitInfo? getHitInfo();
+    method public java.util.List<androidx.xr.runtime.internal.InputEvent.HitInfo> getHitInfoList();
     method public androidx.xr.runtime.math.Vector3 getOrigin();
     method public int getPointerType();
-    method public androidx.xr.runtime.internal.InputEvent.Companion.HitInfo? getSecondaryHitInfo();
     method public int getSource();
     method public long getTimestamp();
     property public int action;
     property public androidx.xr.runtime.math.Vector3 direction;
-    property public androidx.xr.runtime.internal.InputEvent.Companion.HitInfo? hitInfo;
+    property public java.util.List<androidx.xr.runtime.internal.InputEvent.HitInfo> hitInfoList;
     property public androidx.xr.runtime.math.Vector3 origin;
     property public int pointerType;
-    property public androidx.xr.runtime.internal.InputEvent.Companion.HitInfo? secondaryHitInfo;
     property public int source;
     property public long timestamp;
-    field public static final int ACTION_CANCEL = 3; // 0x3
-    field public static final int ACTION_DOWN = 0; // 0x0
-    field public static final int ACTION_HOVER_ENTER = 5; // 0x5
-    field public static final int ACTION_HOVER_EXIT = 6; // 0x6
-    field public static final int ACTION_HOVER_MOVE = 4; // 0x4
-    field public static final int ACTION_MOVE = 2; // 0x2
-    field public static final int ACTION_UP = 1; // 0x1
-    field public static final androidx.xr.runtime.internal.InputEvent.Companion Companion;
-    field public static final int POINTER_TYPE_DEFAULT = 0; // 0x0
-    field public static final int POINTER_TYPE_LEFT = 1; // 0x1
-    field public static final int POINTER_TYPE_RIGHT = 2; // 0x2
-    field public static final int SOURCE_CONTROLLER = 2; // 0x2
-    field public static final int SOURCE_GAZE_AND_GESTURE = 5; // 0x5
-    field public static final int SOURCE_HANDS = 3; // 0x3
-    field public static final int SOURCE_HEAD = 1; // 0x1
-    field public static final int SOURCE_MOUSE = 4; // 0x4
-    field public static final int SOURCE_UNKNOWN = 0; // 0x0
   }
 
-  public static final class InputEvent.Companion {
-    property public static int ACTION_CANCEL;
-    property public static int ACTION_DOWN;
-    property public static int ACTION_HOVER_ENTER;
-    property public static int ACTION_HOVER_EXIT;
-    property public static int ACTION_HOVER_MOVE;
-    property public static int ACTION_MOVE;
-    property public static int ACTION_UP;
-    property public static int POINTER_TYPE_DEFAULT;
-    property public static int POINTER_TYPE_LEFT;
-    property public static int POINTER_TYPE_RIGHT;
-    property public static int SOURCE_CONTROLLER;
-    property public static int SOURCE_GAZE_AND_GESTURE;
-    property public static int SOURCE_HANDS;
-    property public static int SOURCE_HEAD;
-    property public static int SOURCE_MOUSE;
-    property public static int SOURCE_UNKNOWN;
+  public static final class InputEvent.Action {
+    property public static int CANCEL;
+    property public static int DOWN;
+    property public static int HOVER_ENTER;
+    property public static int HOVER_EXIT;
+    property public static int HOVER_MOVE;
+    property public static int MOVE;
+    property public static int UP;
+    field public static final int CANCEL = 3; // 0x3
+    field public static final int DOWN = 0; // 0x0
+    field public static final int HOVER_ENTER = 5; // 0x5
+    field public static final int HOVER_EXIT = 6; // 0x6
+    field public static final int HOVER_MOVE = 4; // 0x4
+    field public static final androidx.xr.runtime.internal.InputEvent.Action INSTANCE;
+    field public static final int MOVE = 2; // 0x2
+    field public static final int UP = 1; // 0x1
   }
 
-  public static final class InputEvent.Companion.HitInfo {
-    ctor public InputEvent.Companion.HitInfo(androidx.xr.runtime.internal.Entity inputEntity, androidx.xr.runtime.math.Vector3? hitPosition, androidx.xr.runtime.math.Matrix4 transform);
+  public static final class InputEvent.HitInfo {
+    ctor public InputEvent.HitInfo(androidx.xr.runtime.internal.Entity inputEntity, androidx.xr.runtime.math.Vector3? hitPosition, androidx.xr.runtime.math.Matrix4 transform);
     method public androidx.xr.runtime.math.Vector3? getHitPosition();
     method public androidx.xr.runtime.internal.Entity getInputEntity();
     method public androidx.xr.runtime.math.Matrix4 getTransform();
     property public androidx.xr.runtime.math.Vector3? hitPosition;
     property public androidx.xr.runtime.internal.Entity inputEntity;
     property public androidx.xr.runtime.math.Matrix4 transform;
+  }
+
+  public static final class InputEvent.Pointer {
+    property public static int DEFAULT;
+    property public static int LEFT;
+    property public static int RIGHT;
+    field public static final int DEFAULT = 0; // 0x0
+    field public static final androidx.xr.runtime.internal.InputEvent.Pointer INSTANCE;
+    field public static final int LEFT = 1; // 0x1
+    field public static final int RIGHT = 2; // 0x2
+  }
+
+  public static final class InputEvent.Source {
+    property public static int CONTROLLER;
+    property public static int GAZE_AND_GESTURE;
+    property public static int HANDS;
+    property public static int HEAD;
+    property public static int MOUSE;
+    property public static int UNKNOWN;
+    field public static final int CONTROLLER = 2; // 0x2
+    field public static final int GAZE_AND_GESTURE = 5; // 0x5
+    field public static final int HANDS = 3; // 0x3
+    field public static final int HEAD = 1; // 0x1
+    field public static final androidx.xr.runtime.internal.InputEvent.Source INSTANCE;
+    field public static final int MOUSE = 4; // 0x4
+    field public static final int UNKNOWN = 0; // 0x0
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public fun interface InputEventListener {

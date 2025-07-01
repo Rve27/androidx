@@ -339,7 +339,7 @@ class InputMoveResizeTestActivity : AppCompatActivity() {
         val everythingPanelInteractableComponent =
             InteractableComponent.create(session!!, executor) {
                 Log.i(TAG, "input event $it")
-                if (it.action == InputEvent.ACTION_DOWN) {
+                if (it.action == InputEvent.Action.ACTION_DOWN) {
                     changeTextAndBGColor(everythingPanelView.findViewById(R.id.textView))
                 }
             }
@@ -435,7 +435,7 @@ class InputMoveResizeTestActivity : AppCompatActivity() {
         val interactableComponent =
             InteractableComponent.create(session!!, mainExecutor) {
                 Log.i(TAG, "input event $it")
-                if (it.action == InputEvent.ACTION_DOWN) {
+                if (it.action == InputEvent.Action.ACTION_DOWN) {
                     changeTextAndBGColor(interactablePanelTextView)
                 }
             }

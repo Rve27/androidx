@@ -243,9 +243,9 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
         // TODO Either cache the surface in the constructor, or change this interface to
         // return a Future.
         try {
-          return mImpressApi.getSurfaceFromStereoSurface(mEntityImpressNode);
+            return mImpressApi.getSurfaceFromStereoSurface(mEntityImpressNode);
         } catch (IllegalArgumentException e) {
-          throw new IllegalStateException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -255,7 +255,7 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
         try {
             // For now, we set both the left/right and top/bottom feather radius at the same time.
             mImpressApi.setFeatherRadiusForStereoSurface(
-                mEntityImpressNode, mFeatherRadiusX, mFeatherRadiusY);
+                    mEntityImpressNode, mFeatherRadiusX, mFeatherRadiusY);
         } catch (IllegalArgumentException e) {
             throw new IllegalStateException(e);
         }
@@ -269,13 +269,13 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     @Override
     public void setFeatherRadiusY(float radius) {
         mFeatherRadiusY = radius;
-      try {
-          // For now, we set both the left/right and top/bottom feather radius at the same time.
-          mImpressApi.setFeatherRadiusForStereoSurface(
-                  mEntityImpressNode, mFeatherRadiusX, mFeatherRadiusY);
-      } catch (IllegalArgumentException e) {
-          throw new IllegalStateException(e);
-      }
+        try {
+            // For now, we set both the left/right and top/bottom feather radius at the same time.
+            mImpressApi.setFeatherRadiusForStereoSurface(
+                    mEntityImpressNode, mFeatherRadiusX, mFeatherRadiusY);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override

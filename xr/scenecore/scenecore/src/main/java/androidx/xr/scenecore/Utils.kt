@@ -26,7 +26,7 @@ import androidx.xr.runtime.internal.Dimensions as RtDimensions
 import androidx.xr.runtime.internal.HitTestResult as RtHitTestResult
 import androidx.xr.runtime.internal.HitTestResult.HitTestSurfaceType as RtHitTestSurfaceType
 import androidx.xr.runtime.internal.InputEvent as RtInputEvent
-import androidx.xr.runtime.internal.InputEvent.Companion.HitInfo as RtHitInfo
+import androidx.xr.runtime.internal.InputEvent.HitInfo as RtHitInfo
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.KhronosPbrMaterialSpec as RtKhronosPbrMaterialSpec
 import androidx.xr.runtime.internal.MoveEvent as RtMoveEvent
@@ -164,6 +164,8 @@ internal fun RtHitInfo.toHitInfo(entityManager: EntityManager): HitInfo? {
 
 /** Extension function that converts a [RtInputEvent] to a [InputEvent]. */
 internal fun RtInputEvent.toInputEvent(entityManager: EntityManager): InputEvent {
+    val hitInfos = mutableListOf<HitInfo>()
+    hitInfoList.forEach { it.toHitInfo(entityManager)?.let { element -> hitInfos.add(element) } }
     return InputEvent(
         source.toInputEventSource(),
         pointerType.toInputEventPointerType(),
@@ -171,8 +173,7 @@ internal fun RtInputEvent.toInputEvent(entityManager: EntityManager): InputEvent
         origin,
         direction,
         action.toInputEventAction(),
-        hitInfo?.toHitInfo(entityManager),
-        secondaryHitInfo?.toHitInfo(entityManager),
+        hitInfos,
     )
 }
 
@@ -235,27 +236,27 @@ internal fun Int.toResizeState(): Int {
     }
 }
 
-/** Extension function that converts a [Int] to [InputEvent.Source]. */
-@InputEvent.Source
+/** Extension function that converts a [Int] to [InputEvent.SourceValue]. */
+@InputEvent.SourceValue
 internal fun Int.toInputEventSource(): Int {
     return when (this) {
-        RtInputEvent.SOURCE_UNKNOWN -> InputEvent.SOURCE_UNKNOWN
-        RtInputEvent.SOURCE_HEAD -> InputEvent.SOURCE_HEAD
-        RtInputEvent.SOURCE_CONTROLLER -> InputEvent.SOURCE_CONTROLLER
-        RtInputEvent.SOURCE_HANDS -> InputEvent.SOURCE_HANDS
-        RtInputEvent.SOURCE_MOUSE -> InputEvent.SOURCE_MOUSE
-        RtInputEvent.SOURCE_GAZE_AND_GESTURE -> InputEvent.SOURCE_GAZE_AND_GESTURE
+        RtInputEvent.Source.UNKNOWN -> InputEvent.Source.SOURCE_UNKNOWN
+        RtInputEvent.Source.HEAD -> InputEvent.Source.SOURCE_HEAD
+        RtInputEvent.Source.CONTROLLER -> InputEvent.Source.SOURCE_CONTROLLER
+        RtInputEvent.Source.HANDS -> InputEvent.Source.SOURCE_HANDS
+        RtInputEvent.Source.MOUSE -> InputEvent.Source.SOURCE_MOUSE
+        RtInputEvent.Source.GAZE_AND_GESTURE -> InputEvent.Source.SOURCE_GAZE_AND_GESTURE
         else -> error("Unknown Input Event Source: $this")
     }
 }
 
-/** Extension function that converts a [Int] to [InputEvent.PointerType]. */
+/** Extension function that converts a [Int] to [InputEvent.Pointer]. */
 @InputEvent.PointerType
 internal fun Int.toInputEventPointerType(): Int {
     return when (this) {
-        RtInputEvent.POINTER_TYPE_DEFAULT -> InputEvent.POINTER_TYPE_DEFAULT
-        RtInputEvent.POINTER_TYPE_LEFT -> InputEvent.POINTER_TYPE_LEFT
-        RtInputEvent.POINTER_TYPE_RIGHT -> InputEvent.POINTER_TYPE_RIGHT
+        RtInputEvent.Pointer.DEFAULT -> InputEvent.Pointer.POINTER_TYPE_DEFAULT
+        RtInputEvent.Pointer.LEFT -> InputEvent.Pointer.POINTER_TYPE_LEFT
+        RtInputEvent.Pointer.RIGHT -> InputEvent.Pointer.POINTER_TYPE_RIGHT
         else -> error("Unknown Input Event Pointer Type: $this")
     }
 }
@@ -278,17 +279,17 @@ internal fun Int.toSpatialVisibilityValue(): Int {
     }
 }
 
-/** Extension function that converts a [Int] to [InputEvent.Action]. */
-@InputEvent.Action
+/** Extension function that converts a [Int] to [InputEvent.ActionValue]. */
+@InputEvent.ActionValue
 internal fun Int.toInputEventAction(): Int {
     return when (this) {
-        RtInputEvent.ACTION_DOWN -> InputEvent.ACTION_DOWN
-        RtInputEvent.ACTION_UP -> InputEvent.ACTION_UP
-        RtInputEvent.ACTION_MOVE -> InputEvent.ACTION_MOVE
-        RtInputEvent.ACTION_CANCEL -> InputEvent.ACTION_CANCEL
-        RtInputEvent.ACTION_HOVER_MOVE -> InputEvent.ACTION_HOVER_MOVE
-        RtInputEvent.ACTION_HOVER_ENTER -> InputEvent.ACTION_HOVER_ENTER
-        RtInputEvent.ACTION_HOVER_EXIT -> InputEvent.ACTION_HOVER_EXIT
+        RtInputEvent.Action.DOWN -> InputEvent.Action.ACTION_DOWN
+        RtInputEvent.Action.UP -> InputEvent.Action.ACTION_UP
+        RtInputEvent.Action.MOVE -> InputEvent.Action.ACTION_MOVE
+        RtInputEvent.Action.CANCEL -> InputEvent.Action.ACTION_CANCEL
+        RtInputEvent.Action.HOVER_MOVE -> InputEvent.Action.ACTION_HOVER_MOVE
+        RtInputEvent.Action.HOVER_ENTER -> InputEvent.Action.ACTION_HOVER_ENTER
+        RtInputEvent.Action.HOVER_EXIT -> InputEvent.Action.ACTION_HOVER_EXIT
         else -> error("Unknown Input Event Action: $this")
     }
 }

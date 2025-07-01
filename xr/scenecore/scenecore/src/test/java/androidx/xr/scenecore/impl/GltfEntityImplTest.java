@@ -75,7 +75,7 @@ public class GltfEntityImplTest {
                         mXrExtensions,
                         mEntityManager,
                         () -> mXrExtensions.getSpatialState(activity),
-                        /* unscaledGravityAlignedActivitySpace = */ false,
+                        /* unscaledGravityAlignedActivitySpace= */ false,
                         mExecutor);
 
         mGltfEntity = createGltfEntity(activity);
@@ -114,14 +114,14 @@ public class GltfEntityImplTest {
 
     @Test
     public void startAnimation_startsAnimation() {
-        mGltfEntity.startAnimation(/* looping = */ true, "test_animation");
+        mGltfEntity.startAnimation(/* looping= */ true, "test_animation");
 
         assertThat(mGltfEntity.getAnimationState()).isEqualTo(GltfEntity.AnimationState.PLAYING);
     }
 
     @Test
     public void stopAnimation_stopsAnimation() {
-        mGltfEntity.startAnimation(/* looping = */ true, "test_animation");
+        mGltfEntity.startAnimation(/* looping= */ true, "test_animation");
 
         assertThat(mGltfEntity.getAnimationState()).isEqualTo(GltfEntity.AnimationState.PLAYING);
 
@@ -132,21 +132,21 @@ public class GltfEntityImplTest {
 
     @Test
     public void setMaterialOverrideGltfEntity_materialOverridesMesh() throws Exception {
-        MaterialResource material = createWaterMaterial(/* isAlphaMapVersion = */ false);
+        MaterialResource material = createWaterMaterial(/* isAlphaMapVersion= */ false);
 
         assertThat(material).isNotNull();
 
         mGltfEntity.setMaterialOverride(material, "fake_mesh_name");
 
         assertThat(
-                mFakeImpressApi.getImpressNodes().keySet().stream()
-                        .filter(
-                                node ->
-                                        node.getMaterialOverride() != null
-                                                && node.getMaterialOverride().getType()
-                                                == FakeImpressApiImpl.MaterialData
-                                                .Type.WATER)
-                        .toArray())
+                        mFakeImpressApi.getImpressNodes().keySet().stream()
+                                .filter(
+                                        node ->
+                                                node.getMaterialOverride() != null
+                                                        && node.getMaterialOverride().getType()
+                                                                == FakeImpressApiImpl.MaterialData
+                                                                        .Type.WATER)
+                                .toArray())
                 .hasLength(1);
     }
 

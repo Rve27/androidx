@@ -51,22 +51,28 @@ class ResizableComponentImpl implements ResizableComponent {
     Consumer<ReformEvent> mReformEventConsumer;
     private Entity mEntity = null;
     private Dimensions mCurrentSize = null;
+
     /** Follows scenecore/ResizableComponent.create document, the default minimum size is 0. */
     private final Dimensions mMinimumSize = new Dimensions(0.0f, 0.0f, 0.0f);
+
     @NonNull private Dimensions mMinSize = mMinimumSize;
+
     /** Follows scenecore/ResizableComponent.create document, the default maximum size is 10. */
     private final Dimensions mMaximumSize = new Dimensions(10.0f, 10.0f, 10.0f);
+
     @NonNull private Dimensions mMaxSize = mMaximumSize;
     private float mFixedAspectRatio = 0.0f;
     private boolean mAutoHideContent = true;
     private boolean mAutoUpdateSize = true;
     private boolean mForceShowResizeOverlay = false;
     private final Dimensions mMinimumValidSize = new Dimensions(0.01f, 0.01f, 0.0f);
+
     /**
-     * Follows scenecore/ResizableComponent.size document, the default size is 1.
-     * If ResizableComponent is attached to a panel, use the panel size as default size.
+     * Follows scenecore/ResizableComponent.size document, the default size is 1. If
+     * ResizableComponent is attached to a panel, use the panel size as default size.
      */
     private Dimensions mDefaultSize = new Dimensions(1f, 1f, 1f);
+
     private Dimensions mLastValidSizeForResize = mDefaultSize;
 
     ResizableComponentImpl(
@@ -74,7 +80,8 @@ class ResizableComponentImpl implements ResizableComponent {
             XrExtensions extensions,
             @NonNull Dimensions minSize,
             @NonNull Dimensions maxSize) {
-        if (isSizeWellFormed(minSize) && isSizeWellFormed(maxSize)
+        if (isSizeWellFormed(minSize)
+                && isSizeWellFormed(maxSize)
                 && minSize.width < maxSize.width
                 && minSize.height < maxSize.height
                 && minSize.depth <= maxSize.depth) { // allows min/max depth to be equal
@@ -288,11 +295,12 @@ class ResizableComponentImpl implements ResizableComponent {
                     if (reformEvent.getType() != ReformEvent.REFORM_TYPE_RESIZE) {
                         return;
                     }
-                    Dimensions newSize = getSanitizedSizeForResize(
-                            new Dimensions(
-                                    reformEvent.getProposedSize().x,
-                                    reformEvent.getProposedSize().y,
-                                    reformEvent.getProposedSize().z));
+                    Dimensions newSize =
+                            getSanitizedSizeForResize(
+                                    new Dimensions(
+                                            reformEvent.getProposedSize().x,
+                                            reformEvent.getProposedSize().y,
+                                            reformEvent.getProposedSize().z));
                     if (mAutoUpdateSize) {
                         // Update the resize affordance size.
                         setSize(newSize);
@@ -365,8 +373,8 @@ class ResizableComponentImpl implements ResizableComponent {
     }
 
     /**
-     * Checks that the Dimensions object is not null, its values are not NaN, and it meets a
-     * minimum system-level size.
+     * Checks that the Dimensions object is not null, its values are not NaN, and it meets a minimum
+     * system-level size.
      */
     private boolean isSizeWellFormed(Dimensions size) {
         return size != null

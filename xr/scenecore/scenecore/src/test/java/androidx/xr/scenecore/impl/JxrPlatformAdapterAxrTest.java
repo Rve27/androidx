@@ -1781,9 +1781,12 @@ public final class JxrPlatformAdapterAxrTest {
         ArgumentCaptor<InputEvent> inputEventCaptor = ArgumentCaptor.forClass(InputEvent.class);
         verify(mockConsumer).onInputEvent(inputEventCaptor.capture());
         InputEvent capturedEvent = inputEventCaptor.getValue();
-        assertThat(capturedEvent.getHitInfo()).isNotNull();
-        assertThat(capturedEvent.getHitInfo().getInputEntity()).isEqualTo(panelEntity);
-        assertThat(capturedEvent.getHitInfo().getHitPosition()).isEqualTo(new Vector3(1, 2, 3));
+        assertThat(capturedEvent.getHitInfoList()).isNotEmpty();
+
+        InputEvent.HitInfo hitInfo = capturedEvent.getHitInfoList().get(0);
+
+        assertThat(hitInfo.getInputEntity()).isEqualTo(panelEntity);
+        assertThat(hitInfo.getHitPosition()).isEqualTo(new Vector3(1, 2, 3));
     }
 
     @Test
