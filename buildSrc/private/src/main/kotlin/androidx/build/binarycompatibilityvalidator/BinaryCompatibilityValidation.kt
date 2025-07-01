@@ -124,7 +124,8 @@ class BinaryCompatibilityValidation(
         val extractKlibAbi =
             project.extractKlibAbiTask(projectAbiDir, klibExtractedFileDir, runtimeClasspath)
         val extractedProjectFile = extractKlibAbi.map { it.outputAbiFile }
-        val checkKlibAbi = project.checkKlibAbiTask(extractedProjectFile, generatedAndMergedApiFile)
+        val checkKlibAbi =
+            project.checkKlibAbiTask(extractedProjectFile, generatedAndMergedApiFile, projectAbiDir)
         val checkKlibAbiRelease =
             project.checkKlibAbiReleaseTask(
                 generatedAndMergedApiFile,
@@ -151,6 +152,7 @@ class BinaryCompatibilityValidation(
     private fun Project.checkKlibAbiTask(
         projectApiFile: Provider<RegularFileProperty>,
         generatedApiFile: Provider<RegularFileProperty>,
+        projectAbiDir: Directory,
     ) =
         project.tasks.register(
             CHECK_NAME.appendCapitalized(NATIVE_SUFFIX),
@@ -158,6 +160,7 @@ class BinaryCompatibilityValidation(
         ) {
             it.checkedInDump = projectApiFile
             it.builtDump = generatedApiFile
+            it.projectAbiDir.set(projectAbiDir)
             it.group = ABI_GROUP_NAME
             it.cacheEvenIfNoOutputs()
             it.shouldWriteVersionedApiFile.set(project.shouldWriteVersionedApiFile())
