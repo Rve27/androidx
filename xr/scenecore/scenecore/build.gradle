@@ -78,7 +78,7 @@ dependencies {
 android {
     defaultConfig {
         consumerProguardFiles 'proguard-rules.pro'
-        minSdkVersion 24
+        minSdk = 24
     }
     sourceSets {
         test {

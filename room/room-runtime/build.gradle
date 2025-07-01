@@ -61,7 +61,7 @@ androidXMultiplatform {
             )
         }
         stableAidl {
-            version 1
+            version = 1
         }
         compilations.withType(KotlinMultiplatformAndroidHostTestCompilation) {
             it.returnDefaultValues = true
