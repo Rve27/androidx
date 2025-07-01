@@ -16,7 +16,10 @@
 
 package androidx.credentials
 
+import android.util.Log
 import androidx.annotation.RestrictTo
+import androidx.credentials.internal.isValidBase64Url
+import org.json.JSONObject
 
 /**
  * A request to signal that a credential ID was not recognized by the relying party.
@@ -29,14 +32,49 @@ import androidx.annotation.RestrictTo
  *   throw a SecurityException if android.permission.CREDENTIAL_MANAGER_SET_ORIGIN is not present)
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-class SignalUnknownCredentialStateRequest(requestJson: String, origin: String? = null) :
+class SignalUnknownCredentialRequest(requestJson: String, origin: String? = null) :
     SignalCredentialStateRequest(
         SIGNAL_UNKNOWN_CREDENTIAL_STATE_REQUEST_TYPE,
         requestJson,
         origin,
     ) {
+    init {
+        require(isValidRequestJson(requestJson)) {
+            "Structural/type validation failed for JSON: '${requestJson}'"
+        }
+    }
+
     internal companion object {
         internal const val SIGNAL_UNKNOWN_CREDENTIAL_STATE_REQUEST_TYPE =
             "androidx.credentials.SIGNAL_UNKNOWN_CREDENTIAL_STATE_REQUEST_TYPE"
+
+        private const val TAG = "SignalUnknownRequest"
+        private const val RP_ID_KEY = "rpId"
+        private const val CREDENTIAL_ID_KEY = "credentialId"
+        private val REQUIRED_KEYS = listOf<String>(RP_ID_KEY, CREDENTIAL_ID_KEY)
+
+        /** Utility function to verify if the request Json is valid. */
+        fun isValidRequestJson(requestJson: String): Boolean {
+            try {
+                val jsonObject = JSONObject(requestJson)
+                for (key in REQUIRED_KEYS) {
+                    if (!jsonObject.has(key)) {
+                        Log.e(TAG, "Request json is missing required key $key")
+                        return false
+                    }
+                }
+
+                if (!isValidBase64Url(jsonObject.getString(CREDENTIAL_ID_KEY))) {
+                    Log.e(TAG, "Credential ID is not in base64 url format")
+                    return false
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Structural/type validation failed for JSON: '${requestJson}'. Error: ${e.message}",
+                )
+            }
+            return true
+        }
     }
 }

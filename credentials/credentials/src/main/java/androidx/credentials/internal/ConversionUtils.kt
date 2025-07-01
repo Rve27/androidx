@@ -135,3 +135,9 @@ fun toJetpackCreateException(
         }
     }
 }
+
+@RestrictTo(RestrictTo.Scope.LIBRARY)
+fun isValidBase64Url(s: String): Boolean {
+    val base64UrlRegex = Regex("^[A-Za-z0-9\\-_]*\$")
+    return s.matches(base64UrlRegex)
+}

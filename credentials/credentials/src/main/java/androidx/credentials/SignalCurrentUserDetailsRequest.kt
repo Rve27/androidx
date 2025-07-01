@@ -16,7 +16,10 @@
 
 package androidx.credentials
 
+import android.util.Log
 import androidx.annotation.RestrictTo
+import androidx.credentials.internal.isValidBase64Url
+import org.json.JSONObject
 
 /**
  * A request to signal the user's current name and display name.
@@ -29,14 +32,51 @@ import androidx.annotation.RestrictTo
  *   throw a SecurityException if android.permission.CREDENTIAL_MANAGER_SET_ORIGIN is not present)
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-class SignalCurrentUserDetailsCredentialRequest(requestJson: String, origin: String? = null) :
+class SignalCurrentUserDetailsRequest(requestJson: String, origin: String? = null) :
     SignalCredentialStateRequest(
         SIGNAL_CURRENT_USER_DETAILS_STATE_REQUEST_TYPE,
         requestJson,
         origin,
     ) {
+    init {
+        require(isValidRequestJson(requestJson)) {
+            "Structural/type validation failed for JSON: '${requestJson}'"
+        }
+    }
+
     internal companion object {
         internal const val SIGNAL_CURRENT_USER_DETAILS_STATE_REQUEST_TYPE =
             "androidx.credentials.SIGNAL_CURRENT_USER_DETAILS_STATE_REQUEST_TYPE"
+        private const val TAG = "SignalUserDetailsReq"
+        private const val RP_ID_KEY = "rpId"
+        private const val USER_ID_KEY = "userId"
+        private const val NAME_KEY = "name"
+        private const val DISPLAY_NAME_KEY = "displayName"
+        private val REQUIRED_KEYS =
+            listOf<String>(RP_ID_KEY, USER_ID_KEY, NAME_KEY, DISPLAY_NAME_KEY)
+
+        /** Utility function to verify if the request Json is valid. */
+        fun isValidRequestJson(requestJson: String): Boolean {
+            try {
+                val jsonObject = JSONObject(requestJson)
+                for (key in REQUIRED_KEYS) {
+                    if (!jsonObject.has(key)) {
+                        Log.e(TAG, "Request json is missing required key $key")
+                        return false
+                    }
+                }
+
+                if (!isValidBase64Url(jsonObject.getString(USER_ID_KEY))) {
+                    Log.e(TAG, "User Id is not in base64 url format")
+                    return false
+                }
+            } catch (e: Exception) {
+                Log.e(
+                    TAG,
+                    "Structural/type validation failed for JSON: '${requestJson}'. Error: ${e.message}",
+                )
+            }
+            return true
+        }
     }
 }
