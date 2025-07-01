@@ -21,7 +21,6 @@ import android.content.ContentResolver.SCHEME_FILE
 import android.content.Context
 import android.content.res.Resources.ID_NULL
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -38,7 +37,6 @@ import android.widget.LinearLayout.GONE
 import android.widget.LinearLayout.VISIBLE
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.annotation.RequiresExtension
 import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.core.os.OperationCanceledException
@@ -104,7 +102,6 @@ import kotlinx.coroutines.launch
  *
  * @see documentUri
  */
-@RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
 public open class PdfViewerFragment constructor() : Fragment() {
 
     /**
