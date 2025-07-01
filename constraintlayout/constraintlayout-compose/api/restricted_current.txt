@@ -195,23 +195,23 @@ package androidx.constraintlayout.compose {
     method @BytecodeOnly public final androidx.constraintlayout.compose.ConstrainedLayoutReference createFlow-IkjhEj4(androidx.constraintlayout.compose.LayoutReference![], boolean, float, float, int, float, androidx.constraintlayout.compose.Wrap, androidx.constraintlayout.compose.VerticalAlign, androidx.constraintlayout.compose.HorizontalAlign, float, float, androidx.constraintlayout.compose.FlowStyle, androidx.constraintlayout.compose.FlowStyle);
     method public final androidx.constraintlayout.compose.ConstrainedLayoutReference createGrid(androidx.constraintlayout.compose.LayoutReference[] elements, @IntRange(from=1L) int rows, @IntRange(from=1L) int columns, optional boolean isHorizontalArrangement, optional float verticalSpacing, optional float horizontalSpacing, optional float[] rowWeights, optional float[] columnWeights, optional androidx.constraintlayout.compose.Skip[] skips, optional androidx.constraintlayout.compose.Span[] spans, optional int flags);
     method @BytecodeOnly public final androidx.constraintlayout.compose.ConstrainedLayoutReference createGrid-Hu23Yyw(androidx.constraintlayout.compose.LayoutReference![], @IntRange(from=1L) int, @IntRange(from=1L) int, boolean, float, float, float[], float[], androidx.constraintlayout.compose.Skip![], androidx.constraintlayout.compose.Span![], int);
-    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromAbsoluteLeft(float offset);
     method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromAbsoluteLeft(float fraction);
+    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromAbsoluteLeft(float offset);
     method @BytecodeOnly public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromAbsoluteLeft-0680j_4(float);
-    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromAbsoluteRight(float offset);
     method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromAbsoluteRight(float fraction);
+    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromAbsoluteRight(float offset);
     method @BytecodeOnly public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromAbsoluteRight-0680j_4(float);
-    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.HorizontalAnchor createGuidelineFromBottom(float offset);
     method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.HorizontalAnchor createGuidelineFromBottom(float fraction);
+    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.HorizontalAnchor createGuidelineFromBottom(float offset);
     method @BytecodeOnly public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.HorizontalAnchor createGuidelineFromBottom-0680j_4(float);
-    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromEnd(float offset);
     method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromEnd(float fraction);
+    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromEnd(float offset);
     method @BytecodeOnly public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromEnd-0680j_4(float);
-    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromStart(float offset);
     method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromStart(float fraction);
+    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromStart(float offset);
     method @BytecodeOnly public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor createGuidelineFromStart-0680j_4(float);
-    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.HorizontalAnchor createGuidelineFromTop(float offset);
     method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.HorizontalAnchor createGuidelineFromTop(float fraction);
+    method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.HorizontalAnchor createGuidelineFromTop(float offset);
     method @BytecodeOnly public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.HorizontalAnchor createGuidelineFromTop-0680j_4(float);
     method public final androidx.constraintlayout.compose.HorizontalChainReference createHorizontalChain(androidx.constraintlayout.compose.LayoutReference[] elements, optional androidx.constraintlayout.compose.ChainStyle chainStyle);
     method public final androidx.constraintlayout.compose.ConstrainedLayoutReference createRow(androidx.constraintlayout.compose.LayoutReference[] elements, optional float spacing, optional float[] weights);
@@ -221,8 +221,11 @@ package androidx.constraintlayout.compose {
     method public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.HorizontalAnchor createTopBarrier(androidx.constraintlayout.compose.LayoutReference[] elements, optional float margin);
     method @BytecodeOnly public final androidx.constraintlayout.compose.ConstraintLayoutBaseScope.HorizontalAnchor createTopBarrier-3ABfNKs(androidx.constraintlayout.compose.LayoutReference![], float);
     method public final androidx.constraintlayout.compose.VerticalChainReference createVerticalChain(androidx.constraintlayout.compose.LayoutReference[] elements, optional androidx.constraintlayout.compose.ChainStyle chainStyle);
+    method @BytecodeOnly @kotlin.PublishedApi internal final androidx.constraintlayout.core.parser.CLObject getContainerObject();
+    method @BytecodeOnly @kotlin.PublishedApi internal final int getHelpersHashCode();
     method @Deprecated protected final java.util.List<kotlin.jvm.functions.Function1<androidx.constraintlayout.compose.State,kotlin.Unit>> getTasks();
     method public void reset();
+    method @BytecodeOnly @kotlin.PublishedApi internal final void setHelpersHashCode(int);
     method public final androidx.constraintlayout.compose.LayoutReference withChainParams(androidx.constraintlayout.compose.LayoutReference, optional float startMargin, optional float topMargin, optional float endMargin, optional float bottomMargin, optional float startGoneMargin, optional float topGoneMargin, optional float endGoneMargin, optional float bottomGoneMargin, optional float weight);
     method @BytecodeOnly public final androidx.constraintlayout.compose.LayoutReference withChainParams-ouYQatA(androidx.constraintlayout.compose.LayoutReference, float, float, float, float, float, float, float, float, float);
     method public final androidx.constraintlayout.compose.LayoutReference withHorizontalChainParams(androidx.constraintlayout.compose.LayoutReference, optional float startMargin, optional float endMargin, optional float startGoneMargin, optional float endGoneMargin, optional float weight);
@@ -297,6 +300,8 @@ package androidx.constraintlayout.compose {
     method @androidx.compose.runtime.Stable public androidx.compose.ui.Modifier constrainAs(androidx.compose.ui.Modifier, androidx.constraintlayout.compose.ConstrainedLayoutReference ref, kotlin.jvm.functions.Function1<? super androidx.constraintlayout.compose.ConstrainScope,kotlin.Unit> constrainBlock);
     method public androidx.constraintlayout.compose.ConstrainedLayoutReference createRef();
     method @androidx.compose.runtime.Stable public androidx.constraintlayout.compose.ConstraintLayoutScope.ConstrainedLayoutReferences createRefs();
+    method @BytecodeOnly @kotlin.PublishedApi internal boolean isAnimateChanges();
+    method @BytecodeOnly @kotlin.PublishedApi internal void setAnimateChanges(boolean);
     property @kotlin.PublishedApi internal boolean isAnimateChanges;
     field @kotlin.PublishedApi internal boolean isAnimateChanges;
   }
@@ -397,7 +402,7 @@ package androidx.constraintlayout.compose {
   }
 
   @kotlin.jvm.JvmInline public final value class DebugFlags {
-    ctor public DebugFlags(optional boolean showBounds, optional boolean showPaths, optional boolean showKeyPositions);
+    ctor @KotlinOnly public DebugFlags(optional boolean showBounds, optional boolean showPaths, optional boolean showKeyPositions);
     method @BytecodeOnly public static androidx.constraintlayout.compose.DebugFlags! box-impl(int);
     method @BytecodeOnly public static int constructor-impl(boolean, boolean, boolean);
     method @BytecodeOnly public static boolean getShowBounds-impl(int);
@@ -1003,8 +1008,8 @@ package androidx.constraintlayout.compose {
   }
 
   @kotlin.jvm.JvmInline public final value class Skip {
-    ctor public Skip(@IntRange(from=0L) int position, @IntRange(from=1L) int size);
-    ctor public Skip(@IntRange(from=0L) int position, @IntRange(from=1L) int rows, @IntRange(from=1L) int columns);
+    ctor @KotlinOnly public Skip(@IntRange(from=0L) int position, @IntRange(from=1L) int size);
+    ctor @KotlinOnly public Skip(@IntRange(from=0L) int position, @IntRange(from=1L) int rows, @IntRange(from=1L) int columns);
     method @BytecodeOnly public static androidx.constraintlayout.compose.Skip! box-impl(String!);
     method @BytecodeOnly public static String constructor-impl(@IntRange(from=0L) int, @IntRange(from=1L) int);
     method @BytecodeOnly public static String constructor-impl(@IntRange(from=0L) int, @IntRange(from=1L) int, @IntRange(from=1L) int);
@@ -1014,8 +1019,8 @@ package androidx.constraintlayout.compose {
   }
 
   @kotlin.jvm.JvmInline public final value class Span {
-    ctor public Span(@IntRange(from=0L) int position, @IntRange(from=1L) int size);
-    ctor public Span(@IntRange(from=0L) int position, @IntRange(from=1L) int rows, @IntRange(from=1L) int columns);
+    ctor @KotlinOnly public Span(@IntRange(from=0L) int position, @IntRange(from=1L) int size);
+    ctor @KotlinOnly public Span(@IntRange(from=0L) int position, @IntRange(from=1L) int rows, @IntRange(from=1L) int columns);
     ctor @KotlinOnly public Span(String description);
     method @BytecodeOnly public static androidx.constraintlayout.compose.Span! box-impl(String!);
     method @BytecodeOnly public static String constructor-impl(@IntRange(from=0L) int, @IntRange(from=1L) int);

@@ -678,7 +678,7 @@ package androidx.compose.runtime {
   }
 
   @kotlin.jvm.JvmInline public final value class SkippableUpdater<T> {
-    ctor @KotlinOnly public SkippableUpdater(androidx.compose.runtime.Composer composer);
+    ctor @KotlinOnly public <T> SkippableUpdater(androidx.compose.runtime.Composer composer);
     method @BytecodeOnly public static androidx.compose.runtime.SkippableUpdater! box-impl(androidx.compose.runtime.Composer!);
     method @BytecodeOnly public static <T> androidx.compose.runtime.Composer constructor-impl(androidx.compose.runtime.Composer);
     method @BytecodeOnly public androidx.compose.runtime.Composer! unbox-impl();
@@ -758,7 +758,7 @@ package androidx.compose.runtime {
   }
 
   @kotlin.jvm.JvmInline public final value class Updater<T> {
-    ctor @KotlinOnly public Updater(androidx.compose.runtime.Composer composer);
+    ctor @KotlinOnly public <T> Updater(androidx.compose.runtime.Composer composer);
     method @BytecodeOnly public static androidx.compose.runtime.Updater! box-impl(androidx.compose.runtime.Composer!);
     method @BytecodeOnly public static <T> androidx.compose.runtime.Composer constructor-impl(androidx.compose.runtime.Composer);
     method public void init(kotlin.jvm.functions.Function1<? super T,kotlin.Unit> block);
@@ -1137,7 +1137,7 @@ package androidx.compose.runtime.snapshots {
     method public boolean containsKey(K key);
     method public boolean containsValue(V value);
     method @BytecodeOnly public java.util.Set<java.util.Map.Entry<K!,V!>!>! entrySet();
-    method public V? get(Object key);
+    method public V? get(K key);
     method public java.util.Set<java.util.Map.Entry<K,V>> getEntries();
     method public androidx.compose.runtime.snapshots.StateRecord getFirstStateRecord();
     method public java.util.Set<K> getKeys();
@@ -1148,7 +1148,7 @@ package androidx.compose.runtime.snapshots {
     method public void prependStateRecord(androidx.compose.runtime.snapshots.StateRecord value);
     method public V? put(K key, V value);
     method public void putAll(java.util.Map<? extends K,? extends V> from);
-    method public V? remove(Object key);
+    method public V? remove(K key);
     method @BytecodeOnly public int size();
     method public java.util.Map<K,V> toMap();
     method @BytecodeOnly public java.util.Collection<V!>! values();

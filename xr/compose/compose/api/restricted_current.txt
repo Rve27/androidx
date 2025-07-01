@@ -891,6 +891,7 @@ package androidx.xr.compose.unit {
     method @BytecodeOnly public float getCentimeters-zRPQRcA(double);
     method @BytecodeOnly public float getCentimeters-zRPQRcA(float);
     method @BytecodeOnly public float getCentimeters-zRPQRcA(int);
+    method @BytecodeOnly @kotlin.PublishedApi internal float getDP_PER_METER();
     method @BytecodeOnly public float getInfinity-sx7laI0();
     method @BytecodeOnly public float getMeters-zRPQRcA(double);
     method @BytecodeOnly public float getMeters-zRPQRcA(float);

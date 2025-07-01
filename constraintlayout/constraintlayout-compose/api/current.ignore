@@ -15,8 +15,32 @@ AddedAbstractMethod: androidx.constraintlayout.compose.VerticalAnchorable#linkTo
     Binary breaking change: Added method androidx.constraintlayout.compose.VerticalAnchorable.linkTo-VpY3zN4(androidx.constraintlayout.compose.ConstraintLayoutBaseScope.VerticalAnchor,float,float)
 
 
+ParameterNameChange: androidx.constraintlayout.compose.ConstraintLayoutBaseScope#createGuidelineFromAbsoluteLeft(float) parameter #0:
+    Source breaking change: Attempted to change parameter name from offset to fraction in method androidx.constraintlayout.compose.ConstraintLayoutBaseScope.createGuidelineFromAbsoluteLeft
+ParameterNameChange: androidx.constraintlayout.compose.ConstraintLayoutBaseScope#createGuidelineFromAbsoluteRight(float) parameter #0:
+    Source breaking change: Attempted to change parameter name from offset to fraction in method androidx.constraintlayout.compose.ConstraintLayoutBaseScope.createGuidelineFromAbsoluteRight
+ParameterNameChange: androidx.constraintlayout.compose.ConstraintLayoutBaseScope#createGuidelineFromBottom(float) parameter #0:
+    Source breaking change: Attempted to change parameter name from offset to fraction in method androidx.constraintlayout.compose.ConstraintLayoutBaseScope.createGuidelineFromBottom
+ParameterNameChange: androidx.constraintlayout.compose.ConstraintLayoutBaseScope#createGuidelineFromEnd(float) parameter #0:
+    Source breaking change: Attempted to change parameter name from offset to fraction in method androidx.constraintlayout.compose.ConstraintLayoutBaseScope.createGuidelineFromEnd
+ParameterNameChange: androidx.constraintlayout.compose.ConstraintLayoutBaseScope#createGuidelineFromStart(float) parameter #0:
+    Source breaking change: Attempted to change parameter name from offset to fraction in method androidx.constraintlayout.compose.ConstraintLayoutBaseScope.createGuidelineFromStart
+ParameterNameChange: androidx.constraintlayout.compose.ConstraintLayoutBaseScope#createGuidelineFromTop(float) parameter #0:
+    Source breaking change: Attempted to change parameter name from offset to fraction in method androidx.constraintlayout.compose.ConstraintLayoutBaseScope.createGuidelineFromTop
+
+
+RemovedFromBytecode: androidx.constraintlayout.compose.DebugFlags#DebugFlags(boolean, boolean, boolean):
+    Binary breaking change: constructor androidx.constraintlayout.compose.DebugFlags(boolean,boolean,boolean) has been removed from bytecode
+RemovedFromBytecode: androidx.constraintlayout.compose.Skip#Skip(int, int):
+    Binary breaking change: constructor androidx.constraintlayout.compose.Skip(int,int) has been removed from bytecode
+RemovedFromBytecode: androidx.constraintlayout.compose.Skip#Skip(int, int, int):
+    Binary breaking change: constructor androidx.constraintlayout.compose.Skip(int,int,int) has been removed from bytecode
 RemovedFromBytecode: androidx.constraintlayout.compose.Span#Span(String):
     Binary breaking change: constructor androidx.constraintlayout.compose.Span(String) has been removed from bytecode
+RemovedFromBytecode: androidx.constraintlayout.compose.Span#Span(int, int):
+    Binary breaking change: constructor androidx.constraintlayout.compose.Span(int,int) has been removed from bytecode
+RemovedFromBytecode: androidx.constraintlayout.compose.Span#Span(int, int, int):
+    Binary breaking change: constructor androidx.constraintlayout.compose.Span(int,int,int) has been removed from bytecode
 
 
 RemovedMethod: androidx.constraintlayout.compose.ConstrainScope#getTranslationX():

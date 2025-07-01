@@ -657,7 +657,7 @@ package androidx.wear.compose.foundation.lazy {
   }
 
   @kotlin.jvm.JvmInline public final value class TransformingLazyColumnItemScrollProgress {
-    ctor public TransformingLazyColumnItemScrollProgress(float topOffsetFraction, float bottomOffsetFraction);
+    ctor @KotlinOnly public TransformingLazyColumnItemScrollProgress(float topOffsetFraction, float bottomOffsetFraction);
     method @BytecodeOnly public static androidx.wear.compose.foundation.lazy.TransformingLazyColumnItemScrollProgress! box-impl(long);
     method @BytecodeOnly public static long constructor-impl(float, float);
     method @BytecodeOnly public static float getBottomOffsetFraction-impl(long);

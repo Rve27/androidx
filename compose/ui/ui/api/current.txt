@@ -770,8 +770,8 @@ package androidx.compose.ui.focus {
     method public boolean getCanFocus();
     method public default androidx.compose.ui.focus.FocusRequester getDown();
     method public default androidx.compose.ui.focus.FocusRequester getEnd();
-    method @Deprecated @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public default kotlin.jvm.functions.Function1<androidx.compose.ui.focus.FocusDirection,androidx.compose.ui.focus.FocusRequester> getEnter();
-    method @Deprecated @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public default kotlin.jvm.functions.Function1<androidx.compose.ui.focus.FocusDirection,androidx.compose.ui.focus.FocusRequester> getExit();
+    method @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public default kotlin.jvm.functions.Function1<androidx.compose.ui.focus.FocusDirection,androidx.compose.ui.focus.FocusRequester> getEnter();
+    method @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public default kotlin.jvm.functions.Function1<androidx.compose.ui.focus.FocusDirection,androidx.compose.ui.focus.FocusRequester> getExit();
     method public default androidx.compose.ui.focus.FocusRequester getLeft();
     method public default androidx.compose.ui.focus.FocusRequester getNext();
     method public default kotlin.jvm.functions.Function1<androidx.compose.ui.focus.FocusEnterExitScope,kotlin.Unit> getOnEnter();
@@ -796,8 +796,8 @@ package androidx.compose.ui.focus {
     property public abstract boolean canFocus;
     property public default androidx.compose.ui.focus.FocusRequester down;
     property public default androidx.compose.ui.focus.FocusRequester end;
-    property @Deprecated @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public default kotlin.jvm.functions.Function1<androidx.compose.ui.focus.FocusDirection,androidx.compose.ui.focus.FocusRequester> enter;
-    property @Deprecated @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public default kotlin.jvm.functions.Function1<androidx.compose.ui.focus.FocusDirection,androidx.compose.ui.focus.FocusRequester> exit;
+    property @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public default kotlin.jvm.functions.Function1<androidx.compose.ui.focus.FocusDirection,androidx.compose.ui.focus.FocusRequester> enter;
+    property @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public default kotlin.jvm.functions.Function1<androidx.compose.ui.focus.FocusDirection,androidx.compose.ui.focus.FocusRequester> exit;
     property public default androidx.compose.ui.focus.FocusRequester left;
     property public default androidx.compose.ui.focus.FocusRequester next;
     property public default kotlin.jvm.functions.Function1<androidx.compose.ui.focus.FocusEnterExitScope,kotlin.Unit> onEnter;
@@ -3386,7 +3386,7 @@ package androidx.compose.ui.node {
     method @BytecodeOnly public float component3-D9Ej5fM();
     method @BytecodeOnly public float component4-D9Ej5fM();
     method public boolean component5();
-    method public androidx.compose.ui.node.DpTouchBoundsExpansion copy-lDy3nrA(float start, float top, float end, float bottom, boolean isLayoutDirectionAware);
+    method @BytecodeOnly public androidx.compose.ui.node.DpTouchBoundsExpansion copy-lDy3nrA(float, float, float, float, boolean);
     method @BytecodeOnly public float getBottom-D9Ej5fM();
     method @BytecodeOnly public float getEnd-D9Ej5fM();
     method @BytecodeOnly public float getStart-D9Ej5fM();

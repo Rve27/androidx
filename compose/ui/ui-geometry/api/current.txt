@@ -268,7 +268,7 @@ package androidx.compose.ui.geometry {
     method @BytecodeOnly public long component8-kKHJgLs();
     method public operator boolean contains(long point);
     method @BytecodeOnly public boolean contains-k-4lQ0M(long);
-    method public androidx.compose.ui.geometry.RoundRect copy-MDFrsts(float left, float top, float right, float bottom, long topLeftCornerRadius, long topRightCornerRadius, long bottomRightCornerRadius, long bottomLeftCornerRadius);
+    method @BytecodeOnly public androidx.compose.ui.geometry.RoundRect copy-MDFrsts(float, float, float, float, long, long, long, long);
     method public float getBottom();
     method @BytecodeOnly public long getBottomLeftCornerRadius-kKHJgLs();
     method @BytecodeOnly public long getBottomRightCornerRadius-kKHJgLs();

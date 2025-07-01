@@ -241,7 +241,7 @@ package androidx.compose.ui.unit {
     method @BytecodeOnly public float component2-D9Ej5fM();
     method @BytecodeOnly public float component3-D9Ej5fM();
     method @BytecodeOnly public float component4-D9Ej5fM();
-    method public androidx.compose.ui.unit.DpRect copy-a9UjIt4(float left, float top, float right, float bottom);
+    method @BytecodeOnly public androidx.compose.ui.unit.DpRect copy-a9UjIt4(float, float, float, float);
     method @BytecodeOnly public float getBottom-D9Ej5fM();
     method @BytecodeOnly public float getLeft-D9Ej5fM();
     method @BytecodeOnly public float getRight-D9Ej5fM();

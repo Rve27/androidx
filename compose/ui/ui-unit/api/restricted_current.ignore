@@ -19,6 +19,8 @@ RemovedFromKotlin: androidx.compose.ui.unit.DpRect#component3-D9Ej5fM():
     Source breaking change: method androidx.compose.ui.unit.DpRect.component3-D9Ej5fM() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.ui.unit.DpRect#component4-D9Ej5fM():
     Source breaking change: method androidx.compose.ui.unit.DpRect.component4-D9Ej5fM() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.ui.unit.DpRect#copy-a9UjIt4(float, float, float, float):
+    Source breaking change: method androidx.compose.ui.unit.DpRect.copy-a9UjIt4(float,float,float,float) can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.ui.unit.TextUnitKt#getEm(double):
     Source breaking change: method androidx.compose.ui.unit.TextUnitKt.getEm(double) can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.ui.unit.TextUnitKt#getEm(float):

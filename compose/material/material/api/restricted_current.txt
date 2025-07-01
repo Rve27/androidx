@@ -557,7 +557,7 @@ package androidx.compose.material {
     ctor @KotlinOnly @Deprecated public FixedThreshold(androidx.compose.ui.unit.Dp offset);
     ctor @BytecodeOnly @Deprecated public FixedThreshold(float, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @Deprecated public float computeThreshold(androidx.compose.ui.unit.Density, float fromValue, float toValue);
-    method @Deprecated public androidx.compose.material.FixedThreshold copy-0680j_4(float offset);
+    method @BytecodeOnly @Deprecated public androidx.compose.material.FixedThreshold copy-0680j_4(float);
   }
 
   public final class FloatingActionButtonDefaults {

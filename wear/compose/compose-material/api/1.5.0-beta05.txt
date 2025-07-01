@@ -262,7 +262,7 @@ package androidx.wear.compose.material {
     ctor @KotlinOnly public FixedThreshold(androidx.compose.ui.unit.Dp offset);
     ctor @BytecodeOnly public FixedThreshold(float, kotlin.jvm.internal.DefaultConstructorMarker!);
     method public float computeThreshold(androidx.compose.ui.unit.Density, float fromValue, float toValue);
-    method public androidx.wear.compose.material.FixedThreshold copy-0680j_4(float offset);
+    method @BytecodeOnly public androidx.wear.compose.material.FixedThreshold copy-0680j_4(float);
   }
 
   @SuppressCompatibility @androidx.compose.runtime.Immutable @androidx.wear.compose.material.ExperimentalWearMaterialApi public final class FractionalThreshold implements androidx.wear.compose.material.ThresholdConfig {

@@ -7,6 +7,8 @@ RemovedFromKotlin: androidx.compose.ui.geometry.RoundRect#component7-kKHJgLs():
     Source breaking change: method androidx.compose.ui.geometry.RoundRect.component7-kKHJgLs() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.ui.geometry.RoundRect#component8-kKHJgLs():
     Source breaking change: method androidx.compose.ui.geometry.RoundRect.component8-kKHJgLs() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.ui.geometry.RoundRect#copy-MDFrsts(float, float, float, float, long, long, long, long):
+    Source breaking change: method androidx.compose.ui.geometry.RoundRect.copy-MDFrsts(float,float,float,float,long,long,long,long) can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.ui.geometry.RoundRectKt#getCenter(androidx.compose.ui.geometry.RoundRect):
     Source breaking change: method androidx.compose.ui.geometry.RoundRectKt.getCenter(androidx.compose.ui.geometry.RoundRect) can no longer be resolved from Kotlin source
 

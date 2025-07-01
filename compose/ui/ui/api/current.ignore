@@ -31,6 +31,8 @@ RemovedFromKotlin: androidx.compose.ui.node.DpTouchBoundsExpansion#component3-D9
     Source breaking change: method androidx.compose.ui.node.DpTouchBoundsExpansion.component3-D9Ej5fM() can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.ui.node.DpTouchBoundsExpansion#component4-D9Ej5fM():
     Source breaking change: method androidx.compose.ui.node.DpTouchBoundsExpansion.component4-D9Ej5fM() can no longer be resolved from Kotlin source
+RemovedFromKotlin: androidx.compose.ui.node.DpTouchBoundsExpansion#copy-lDy3nrA(float, float, float, float, boolean):
+    Source breaking change: method androidx.compose.ui.node.DpTouchBoundsExpansion.copy-lDy3nrA(float,float,float,float,boolean) can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.ui.semantics.SemanticsPropertiesKt#getImeAction(androidx.compose.ui.semantics.SemanticsPropertyReceiver):
     Source breaking change: method androidx.compose.ui.semantics.SemanticsPropertiesKt.getImeAction(androidx.compose.ui.semantics.SemanticsPropertyReceiver) can no longer be resolved from Kotlin source
 RemovedFromKotlin: androidx.compose.ui.semantics.SemanticsPropertiesKt#getLiveRegion(androidx.compose.ui.semantics.SemanticsPropertyReceiver):
