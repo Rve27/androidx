@@ -63,8 +63,7 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     @SuperSampling private int mSuperSampling = SurfaceEntity.SuperSampling.DEFAULT;
 
     private CanvasShape mCanvasShape;
-    private float mFeatherRadiusX = 0.0f;
-    private float mFeatherRadiusY = 0.0f;
+    private EdgeFeather mEdgeFeather;
     private boolean mContentColorMetadataSet = false;
     @ColorSpace private int mColorSpace = SurfaceEntity.ColorSpace.BT709;
     @ColorTransfer private int mColorTransfer = SurfaceEntity.ColorTransfer.SRGB;
@@ -138,18 +137,26 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
             transaction.setParent(mSubspace.getSubspaceNode(), mNode).apply();
         }
 
-        // This is broken up into two steps to limit the size of the Impress Surface
-        mEntityImpressNode =
-                mImpressApi.createStereoSurface(
-                        stereoMode,
-                        toImpressContentSecurityLevel(mContentSecurityLevel),
-                        toImpressSuperSampling(mSuperSampling));
+        try {
+            // This is broken up into two steps to limit the size of the Impress Surface
+            mEntityImpressNode =
+                    mImpressApi.createStereoSurface(
+                            stereoMode,
+                            toImpressContentSecurityLevel(mContentSecurityLevel),
+                            toImpressSuperSampling(mSuperSampling));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(e);
+        }
         setCanvasShape(mCanvasShape);
 
         // The CPM node hierarchy is: Entity CPM node --- parent of ---> Subspace CPM node.
         // The Impress node hierarchy is: Subspace Impress node --- parent of ---> Entity Impress
         // node.
-        impressApi.setImpressNodeParent(mEntityImpressNode, mSubspaceImpressNode);
+        try {
+            impressApi.setImpressNodeParent(mEntityImpressNode, mSubspaceImpressNode);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
@@ -163,18 +170,58 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
 
         if (mCanvasShape instanceof CanvasShape.Quad) {
             CanvasShape.Quad q = (CanvasShape.Quad) mCanvasShape;
-            mImpressApi.setStereoSurfaceEntityCanvasShapeQuad(
-                    mEntityImpressNode, q.getWidth(), q.getHeight());
+            try {
+                mImpressApi.setStereoSurfaceEntityCanvasShapeQuad(
+                        mEntityImpressNode, q.getWidth(), q.getHeight());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalStateException(e);
+            }
         } else if (mCanvasShape instanceof CanvasShape.Vr360Sphere) {
             CanvasShape.Vr360Sphere s = (CanvasShape.Vr360Sphere) mCanvasShape;
-            mImpressApi.setStereoSurfaceEntityCanvasShapeSphere(mEntityImpressNode, s.getRadius());
+            try {
+                mImpressApi.setStereoSurfaceEntityCanvasShapeSphere(mEntityImpressNode,
+                                                                    s.getRadius());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalStateException(e);
+            }
         } else if (mCanvasShape instanceof CanvasShape.Vr180Hemisphere) {
             CanvasShape.Vr180Hemisphere h = (CanvasShape.Vr180Hemisphere) mCanvasShape;
-            mImpressApi.setStereoSurfaceEntityCanvasShapeHemisphere(
-                    mEntityImpressNode, h.getRadius());
+            try {
+                mImpressApi.setStereoSurfaceEntityCanvasShapeHemisphere(mEntityImpressNode,
+                                                                        h.getRadius());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalStateException(e);
+            }
         } else {
             throw new IllegalArgumentException("Unsupported canvas shape: " + mCanvasShape);
         }
+    }
+
+    @Override
+    public void setEdgeFeather(EdgeFeather edgeFeather) {
+        mEdgeFeather = edgeFeather;
+        if (mEdgeFeather instanceof EdgeFeather.SmoothFeather) {
+            EdgeFeather.SmoothFeather s = (EdgeFeather.SmoothFeather) mEdgeFeather;
+            try {
+                mImpressApi.setFeatherRadiusForStereoSurface(
+                        mEntityImpressNode, s.getLeftRight(), s.getTopBottom());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalStateException(e);
+            }
+        } else if (mEdgeFeather instanceof EdgeFeather.SolidEdge) {
+            try {
+                mImpressApi.setFeatherRadiusForStereoSurface(mEntityImpressNode, 0.0f, 0.0f);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalStateException(e);
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported edge feather: " + mEdgeFeather);
+        }
+    }
+
+    @Override
+    public EdgeFeather getEdgeFeather() {
+        return mEdgeFeather;
     }
 
     @SuppressWarnings("ObjectToString")
@@ -243,44 +290,10 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
         // TODO Either cache the surface in the constructor, or change this interface to
         // return a Future.
         try {
-            return mImpressApi.getSurfaceFromStereoSurface(mEntityImpressNode);
+          return mImpressApi.getSurfaceFromStereoSurface(mEntityImpressNode);
         } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(e);
+          throw new IllegalStateException(e);
         }
-    }
-
-    @Override
-    public void setFeatherRadiusX(float radius) {
-        mFeatherRadiusX = radius;
-        try {
-            // For now, we set both the left/right and top/bottom feather radius at the same time.
-            mImpressApi.setFeatherRadiusForStereoSurface(
-                    mEntityImpressNode, mFeatherRadiusX, mFeatherRadiusY);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    @Override
-    public float getFeatherRadiusX() {
-        return mFeatherRadiusX;
-    }
-
-    @Override
-    public void setFeatherRadiusY(float radius) {
-        mFeatherRadiusY = radius;
-        try {
-            // For now, we set both the left/right and top/bottom feather radius at the same time.
-            mImpressApi.setFeatherRadiusForStereoSurface(
-                    mEntityImpressNode, mFeatherRadiusX, mFeatherRadiusY);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
-    @Override
-    public float getFeatherRadiusY() {
-        return mFeatherRadiusY;
     }
 
     @Override
@@ -341,9 +354,8 @@ final class SurfaceEntityImpl extends AndroidXrEntity implements SurfaceEntity {
     }
 
     // Note this returns the Impress node for the entity, not the subspace. The subspace Impress
-    // node
-    // is the parent of the entity Impress node.
-    int getEntityImpressNode() {
+    // node is the parent of the entity Impress node.
+    public int getEntityImpressNode() {
         return mEntityImpressNode;
     }
 

@@ -912,8 +912,7 @@ package androidx.xr.scenecore {
     method public androidx.xr.scenecore.SurfaceEntity.CanvasShape getCanvasShape();
     method public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata? getContentColorMetadata();
     method public androidx.xr.runtime.math.FloatSize3d getDimensions();
-    method public float getFeatherRadiusX();
-    method public float getFeatherRadiusY();
+    method public androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams getEdgeFeather();
     method public androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution();
     method public androidx.xr.scenecore.Texture? getPrimaryAlphaMaskTexture();
     method public int getStereoMode();
@@ -921,16 +920,14 @@ package androidx.xr.scenecore {
     method @MainThread public void setAuxiliaryAlphaMaskTexture(androidx.xr.scenecore.Texture?);
     method @MainThread public void setCanvasShape(androidx.xr.scenecore.SurfaceEntity.CanvasShape);
     method @MainThread public void setContentColorMetadata(androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata?);
-    method @MainThread public void setFeatherRadiusX(float);
-    method @MainThread public void setFeatherRadiusY(float);
+    method @MainThread public void setEdgeFeather(androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams);
     method @MainThread public void setPrimaryAlphaMaskTexture(androidx.xr.scenecore.Texture?);
     method @MainThread public void setStereoMode(int);
     property public androidx.xr.scenecore.Texture? auxiliaryAlphaMaskTexture;
     property public androidx.xr.scenecore.SurfaceEntity.CanvasShape canvasShape;
     property public androidx.xr.scenecore.SurfaceEntity.ContentColorMetadata? contentColorMetadata;
     property public androidx.xr.runtime.math.FloatSize3d dimensions;
-    property public float featherRadiusX;
-    property public float featherRadiusY;
+    property public androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams edgeFeather;
     property public androidx.xr.scenecore.Texture? primaryAlphaMaskTexture;
     property public int stereoMode;
     field public static final androidx.xr.scenecore.SurfaceEntity.Companion Companion;
@@ -1041,6 +1038,22 @@ package androidx.xr.scenecore {
     field public static final androidx.xr.scenecore.SurfaceEntity.ContentSecurityLevel INSTANCE;
     field public static final int NONE = 0; // 0x0
     field public static final int PROTECTED = 1; // 0x1
+  }
+
+  public abstract static class SurfaceEntity.EdgeFeatheringParams {
+  }
+
+  public static final class SurfaceEntity.EdgeFeatheringParams.SmoothFeather extends androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams {
+    ctor public SurfaceEntity.EdgeFeatheringParams.SmoothFeather();
+    ctor public SurfaceEntity.EdgeFeatheringParams.SmoothFeather(optional @FloatRange(from=0.0, to=0.5) float leftRight, optional @FloatRange(from=0.0, to=0.5) float topBottom);
+    method public float getLeftRight();
+    method public float getTopBottom();
+    property @FloatRange(from=0.0, to=0.5) public float leftRight;
+    property @FloatRange(from=0.0, to=0.5) public float topBottom;
+  }
+
+  public static final class SurfaceEntity.EdgeFeatheringParams.SolidEdge extends androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams {
+    ctor public SurfaceEntity.EdgeFeatheringParams.SolidEdge();
   }
 
   public static final class SurfaceEntity.StereoMode {

@@ -1672,8 +1672,7 @@ package androidx.xr.runtime.internal {
     method public int getColorTransfer();
     method public boolean getContentColorMetadataSet();
     method public androidx.xr.runtime.internal.Dimensions getDimensions();
-    method public float getFeatherRadiusX();
-    method public float getFeatherRadiusY();
+    method public androidx.xr.runtime.internal.SurfaceEntity.EdgeFeather getEdgeFeather();
     method public int getMaxCLL();
     method public androidx.xr.runtime.internal.PerceivedResolutionResult getPerceivedResolution();
     method public int getStereoMode();
@@ -1682,8 +1681,7 @@ package androidx.xr.runtime.internal {
     method public void setAuxiliaryAlphaMaskTexture(androidx.xr.runtime.internal.TextureResource? alphaMask);
     method public void setCanvasShape(androidx.xr.runtime.internal.SurfaceEntity.CanvasShape);
     method public void setContentColorMetadata(int colorSpace, int colorTransfer, int colorRange, int maxCLL);
-    method public void setFeatherRadiusX(float);
-    method public void setFeatherRadiusY(float);
+    method public void setEdgeFeather(androidx.xr.runtime.internal.SurfaceEntity.EdgeFeather);
     method public void setPrimaryAlphaMaskTexture(androidx.xr.runtime.internal.TextureResource? alphaMask);
     method public void setStereoMode(int);
     property public abstract androidx.xr.runtime.internal.SurfaceEntity.CanvasShape canvasShape;
@@ -1692,8 +1690,7 @@ package androidx.xr.runtime.internal {
     property public abstract int colorTransfer;
     property public abstract boolean contentColorMetadataSet;
     property public abstract androidx.xr.runtime.internal.Dimensions dimensions;
-    property public abstract float featherRadiusX;
-    property public abstract float featherRadiusY;
+    property public abstract androidx.xr.runtime.internal.SurfaceEntity.EdgeFeather edgeFeather;
     property public abstract int maxCLL;
     property public abstract int stereoMode;
     property public abstract android.view.Surface surface;
@@ -1807,6 +1804,21 @@ package androidx.xr.runtime.internal {
     property public static int PROTECTED;
     field public static final int NONE = 0; // 0x0
     field public static final int PROTECTED = 1; // 0x1
+  }
+
+  public static interface SurfaceEntity.EdgeFeather {
+  }
+
+  public static final class SurfaceEntity.EdgeFeather.SmoothFeather implements androidx.xr.runtime.internal.SurfaceEntity.EdgeFeather {
+    ctor public SurfaceEntity.EdgeFeather.SmoothFeather(float leftRight, float topBottom);
+    method public float getLeftRight();
+    method public float getTopBottom();
+    property public float leftRight;
+    property public float topBottom;
+  }
+
+  public static final class SurfaceEntity.EdgeFeather.SolidEdge implements androidx.xr.runtime.internal.SurfaceEntity.EdgeFeather {
+    ctor public SurfaceEntity.EdgeFeather.SolidEdge();
   }
 
   @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME) public static @interface SurfaceEntity.StereoMode {

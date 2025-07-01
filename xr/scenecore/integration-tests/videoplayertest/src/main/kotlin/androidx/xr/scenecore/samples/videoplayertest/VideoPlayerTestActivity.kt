@@ -422,7 +422,11 @@ class VideoPlayerTestActivity : ComponentActivity() {
                         value = featherRadiusX,
                         onValueChange = {
                             featherRadiusX = it
-                            surfaceEntity!!.featherRadiusX = featherRadiusX
+                            surfaceEntity!!.edgeFeather =
+                                SurfaceEntity.EdgeFeatheringParams.SmoothFeather(
+                                    featherRadiusX,
+                                    featherRadiusY,
+                                )
                         },
                         valueRange = 0.0f..0.5f,
                     )
@@ -430,7 +434,11 @@ class VideoPlayerTestActivity : ComponentActivity() {
                         value = featherRadiusY,
                         onValueChange = {
                             featherRadiusY = it
-                            surfaceEntity!!.featherRadiusY = featherRadiusY
+                            surfaceEntity!!.edgeFeather =
+                                SurfaceEntity.EdgeFeatheringParams.SmoothFeather(
+                                    featherRadiusX,
+                                    featherRadiusY,
+                                )
                         },
                         valueRange = 0.0f..0.5f,
                     )

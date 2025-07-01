@@ -306,10 +306,11 @@ internal class CoreSurfaceEntity(
 
     private fun updateFeathering() {
         (currentFeatheringEffect as? SpatialSmoothFeatheringEffect)?.let {
-            surfaceEntity.featherRadiusY =
-                it.size.toWidthPercent(size.width.toFloat(), localDensity)
-            surfaceEntity.featherRadiusX =
-                it.size.toHeightPercent(size.height.toFloat(), localDensity)
+            surfaceEntity.edgeFeather =
+                SurfaceEntity.EdgeFeatheringParams.SmoothFeather(
+                    it.size.toWidthPercent(size.width.toFloat(), localDensity),
+                    it.size.toHeightPercent(size.height.toFloat(), localDensity),
+                )
         }
     }
 }
@@ -407,15 +408,16 @@ internal class CoreSphereSurfaceEntity(
     private fun updateFeathering() {
         val semicircleArcLength = Meter((radius * PI).toFloat()).toPx(localDensity)
         (currentFeatheringEffect as? SpatialSmoothFeatheringEffect)?.let {
-            surfaceEntity.featherRadiusX =
+            val radiusX =
                 it.size.toWidthPercent(
                     if (surfaceEntity.canvasShape is SurfaceEntity.CanvasShape.Vr180Hemisphere)
                         semicircleArcLength / 2
                     else semicircleArcLength,
                     localDensity,
                 )
-            surfaceEntity.featherRadiusY =
-                it.size.toHeightPercent(semicircleArcLength, localDensity)
+            val radiusY = it.size.toHeightPercent(semicircleArcLength, localDensity)
+            surfaceEntity.edgeFeather =
+                SurfaceEntity.EdgeFeatheringParams.SmoothFeather(radiusX, radiusY)
         }
     }
 }
