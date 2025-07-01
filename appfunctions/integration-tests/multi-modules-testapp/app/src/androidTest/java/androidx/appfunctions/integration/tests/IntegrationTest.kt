@@ -580,6 +580,7 @@ class IntegrationTest {
                     )
                 )
                 .first()
+                .flatMap { it.appFunctions }
                 .single()
         val request =
             ExecuteAppFunctionRequest(
@@ -630,6 +631,7 @@ class IntegrationTest {
                     )
                 )
                 .first()
+                .flatMap { it.appFunctions }
                 .single()
         val request =
             ExecuteAppFunctionRequest(
@@ -679,6 +681,7 @@ class IntegrationTest {
                     )
                 )
                 .first()
+                .flatMap { it.appFunctions }
                 .single()
 
         val innerData =
@@ -711,6 +714,7 @@ class IntegrationTest {
                     )
                 )
                 .first()
+                .flatMap { it.appFunctions }
                 .single()
 
         assertThrows(IllegalArgumentException::class.java) {
