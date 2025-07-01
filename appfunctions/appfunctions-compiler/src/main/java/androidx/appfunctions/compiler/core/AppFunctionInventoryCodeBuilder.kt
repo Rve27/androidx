@@ -20,7 +20,6 @@ import androidx.appfunctions.compiler.core.metadata.AppFunctionAllOfTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionDataTypeMetadata
-import androidx.appfunctions.compiler.core.metadata.AppFunctionNamedDataTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionParameterMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionPrimitiveTypeMetadata
@@ -659,7 +658,7 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
     private fun addPropertyForObjectPropertiesMap(
         propertyName: String,
         functionMetadataObjectClassBuilder: TypeSpec.Builder,
-        properties: List<AppFunctionNamedDataTypeMetadata>,
+        propertiesMap: Map<String, AppFunctionDataTypeMetadata>,
     ) {
         functionMetadataObjectClassBuilder.addProperty(
             PropertySpec.builder(
@@ -675,39 +674,39 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
                     buildCodeBlock {
                         addStatement("mapOf(")
                         indent()
-                        for (property in properties) {
+                        for ((objectPropertyName, objectPropertyTypeMetadata) in propertiesMap) {
                             val dataTypeVariableName =
-                                propertyName + "_${property.name.uppercase()}"
-                            when (property.dataTypeMetadata) {
+                                propertyName + "_${objectPropertyName.uppercase()}"
+                            when (objectPropertyTypeMetadata) {
                                 is AppFunctionPrimitiveTypeMetadata ->
                                     addPropertyForPrimitiveTypeMetadata(
                                         dataTypeVariableName,
                                         functionMetadataObjectClassBuilder,
-                                        property.dataTypeMetadata,
+                                        objectPropertyTypeMetadata,
                                     )
                                 is AppFunctionArrayTypeMetadata ->
                                     addPropertyForArrayTypeMetadata(
                                         dataTypeVariableName,
                                         functionMetadataObjectClassBuilder,
-                                        property.dataTypeMetadata,
+                                        objectPropertyTypeMetadata,
                                     )
                                 is AppFunctionObjectTypeMetadata ->
                                     addPropertyForObjectTypeMetadata(
                                         dataTypeVariableName,
                                         functionMetadataObjectClassBuilder,
-                                        property.dataTypeMetadata,
+                                        objectPropertyTypeMetadata,
                                     )
                                 is AppFunctionReferenceTypeMetadata ->
                                     addPropertyForReferenceTypeMetadata(
                                         dataTypeVariableName,
                                         functionMetadataObjectClassBuilder,
-                                        property.dataTypeMetadata,
+                                        objectPropertyTypeMetadata,
                                     )
                                 else -> {
                                     // TODO provide KSNode to improve error message
                                     throw ProcessingException(
                                         "Unable to build metadata for unknown object property " +
-                                            "datatype: $property.dataTypeMetadata",
+                                            "datatype: $objectPropertyTypeMetadata",
                                         null,
                                     )
                                 }
@@ -717,7 +716,7 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
                                 %S to %L,
                                 """
                                     .trimIndent(),
-                                property.name,
+                                objectPropertyName,
                                 dataTypeVariableName,
                             )
                         }

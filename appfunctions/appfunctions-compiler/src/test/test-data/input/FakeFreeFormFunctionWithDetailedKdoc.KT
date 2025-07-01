@@ -64,45 +64,64 @@ class FakeFreeFormFunctions {
         return input.data
     }
 
-    /** Tests the description elements for the input serializable's properties. */
+    /** Tests the description elements for serializable's parametrized properties. */
     @AppFunction(isDescribedByKdoc = true)
     fun fakeFreeFormFunction_withParametrizedTypes(
         appFunctionContext: AppFunctionContext,
         parametrizedTypesInput: InputWithParametrizedTypes,
     ) {}
+
+    /** Tests the description elements for serializable's repeated properties. */
+    @AppFunction(isDescribedByKdoc = true)
+    fun fakeFreeFormFunction_withRepeatedTypes(
+        appFunctionContext: AppFunctionContext,
+        parametrizedTypesInput: InputWithRepeatedTypes,
+    ) {}
 }
 
-/** A test input to the free-form function. */
+/** A test input class to the free-form function. */
 @AppFunctionSerializable
 open class InputToFakeFreeFormFunction(
-    /** A string input. */
+    /** A string param. */
     open val data: String,
 )
 
 /** A child class of [InputToFakeFreeFormFunction]. */
 @AppFunctionSerializable
-open class DerivedInputToFakeFreeFormFunction(
-    /** A derived string input. */
+class DerivedInputToFakeFreeFormFunction(
+    /** A derived string param. */
     override val data: String,
-    /** An int input. */
-    open val anotherData: Int,
+    /** An int param. */
+    val anotherData: Int,
 ) : InputToFakeFreeFormFunction(data)
 
 /** An input class with parametrized types */
 @AppFunctionSerializable
-open class InputWithParametrizedTypes(
-    /** Example parametrized primitive. */
+class InputWithParametrizedTypes(
+    /** Parametrized primitive param. */
     val parametrizedInt: Optional<Int>,
-    /** Example parametrized nullable primitive. */
+    /** Parametrized nullable primitive param. */
     val parametrizedNullableInt: Optional<Int?>,
-    /** Example parametrized entity. */
+    /** Parametrized entity param. */
     val parametrizedSerializable: Optional<InputToFakeFreeFormFunction>,
-    /** Example parametrized nullable entity. */
+    /** Parametrized nullable entity param. */
     val parametrizedNullableSerializable: Optional<InputToFakeFreeFormFunction?>,
 )
 
-/** A generic serializable. */
-@AppFunctionSerializable data class Optional<T>(
+/** An input class with repeated params. */
+@AppFunctionSerializable
+class InputWithRepeatedTypes(
+    /** Primitive array param. */
+    val intArray: IntArray,
+    /** String list param. */
+    val stringList: List<String>,
+    /** Serializable list param. */
+    val serializableList: List<InputToFakeFreeFormFunction>,
+)
+
+/** A generic serializable class. */
+@AppFunctionSerializable
+data class Optional<T>(
     /** The value. */
     val value: T
 )

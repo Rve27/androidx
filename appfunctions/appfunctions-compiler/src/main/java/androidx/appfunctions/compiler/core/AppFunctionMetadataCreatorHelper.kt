@@ -33,7 +33,6 @@ import androidx.appfunctions.compiler.core.IntrospectionHelper.AppFunctionSchema
 import androidx.appfunctions.compiler.core.metadata.AppFunctionAllOfTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionDataTypeMetadata
-import androidx.appfunctions.compiler.core.metadata.AppFunctionNamedDataTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionParameterMetadata
 import androidx.appfunctions.compiler.core.metadata.AppFunctionPrimitiveTypeMetadata
@@ -138,6 +137,9 @@ class AppFunctionMetadataCreatorHelper {
                         seenDataTypeQualifiers,
                         resolvedAnnotatedSerializableProxies,
                         allowSerializableInterfaceTypes,
+                        // Parameter description will be provided through
+                        // AppFunctionParameterMetadata.
+                        description = "",
                     )
 
             add(
@@ -146,6 +148,7 @@ class AppFunctionMetadataCreatorHelper {
                     // TODO(b/394553462): Parse required state from annotation.
                     isRequired = true,
                     dataType = dataTypeMetadata,
+                    // TODO(b/428155914): Add parameter description.
                 )
             )
         }
@@ -179,6 +182,8 @@ class AppFunctionMetadataCreatorHelper {
             seenDataTypeQualifiers,
             resolvedAnnotatedSerializableProxies,
             allowSerializableInterfaceTypes,
+            // Response description will be provided through AppFunctionResponseMetadata.
+            description = "",
         )
     }
 
@@ -187,6 +192,7 @@ class AppFunctionMetadataCreatorHelper {
         seenDataTypeQualifiers: MutableSet<String>,
         resolvedAnnotatedSerializableProxies: ResolvedAnnotatedSerializableProxies,
         allowSerializableInterfaceTypes: Boolean,
+        description: String,
     ): AppFunctionDataTypeMetadata {
         val appFunctionTypeReference = AppFunctionTypeReference(this)
         return when (appFunctionTypeReference.typeCategory) {
@@ -194,6 +200,7 @@ class AppFunctionMetadataCreatorHelper {
                 AppFunctionPrimitiveTypeMetadata(
                     type = appFunctionTypeReference.toAppFunctionDataType(),
                     isNullable = appFunctionTypeReference.isNullable,
+                    description = description,
                 )
             PRIMITIVE_ARRAY ->
                 AppFunctionArrayTypeMetadata(
@@ -201,8 +208,10 @@ class AppFunctionMetadataCreatorHelper {
                         AppFunctionPrimitiveTypeMetadata(
                             type = appFunctionTypeReference.determineArrayItemType(),
                             isNullable = false,
+                            description = "",
                         ),
                     isNullable = appFunctionTypeReference.isNullable,
+                    description = description,
                 )
             PRIMITIVE_LIST ->
                 AppFunctionArrayTypeMetadata(
@@ -212,8 +221,10 @@ class AppFunctionMetadataCreatorHelper {
                             isNullable =
                                 AppFunctionTypeReference(appFunctionTypeReference.itemTypeReference)
                                     .isNullable,
+                            description = "",
                         ),
                     isNullable = appFunctionTypeReference.isNullable,
+                    description = description,
                 )
             SERIALIZABLE_INTERFACE_SINGULAR,
             SERIALIZABLE_SINGULAR -> {
@@ -236,6 +247,7 @@ class AppFunctionMetadataCreatorHelper {
                 AppFunctionReferenceTypeMetadata(
                     referenceDataType = annotatedAppFunctionSerializable.jvmQualifiedName,
                     isNullable = appFunctionTypeReference.isNullable,
+                    description = description,
                 )
             }
             SERIALIZABLE_INTERFACE_LIST,
@@ -263,8 +275,10 @@ class AppFunctionMetadataCreatorHelper {
                             isNullable =
                                 AppFunctionTypeReference(appFunctionTypeReference.itemTypeReference)
                                     .isNullable,
+                            description = "",
                         ),
                     isNullable = appFunctionTypeReference.isNullable,
+                    description = description,
                 )
             }
             SERIALIZABLE_PROXY_SINGULAR -> {
@@ -290,6 +304,7 @@ class AppFunctionMetadataCreatorHelper {
                             .ignoreNullable()
                             .toString(),
                     isNullable = appFunctionTypeReference.isNullable,
+                    description = description,
                 )
             }
             SERIALIZABLE_PROXY_LIST -> {
@@ -319,8 +334,10 @@ class AppFunctionMetadataCreatorHelper {
                             isNullable =
                                 AppFunctionTypeReference(appFunctionTypeReference.itemTypeReference)
                                     .isNullable,
+                            description = "",
                         ),
                     isNullable = appFunctionTypeReference.isNullable,
+                    description = description,
                 )
             }
         }
@@ -411,6 +428,9 @@ class AppFunctionMetadataCreatorHelper {
                             // default. This is because the outer AllOfType to this shared type
                             // can add further constraint (i.e. non-null) if required.
                             isNullable = true,
+                            // Description is already covered in the superclass's corresponding
+                            // AppFunctionObjectTypeMetadata.
+                            description = "",
                         )
                     )
                 }
@@ -534,25 +554,25 @@ class AppFunctionMetadataCreatorHelper {
         allowSerializableInterfaceTypes: Boolean,
         serializableDescription: String,
     ): AppFunctionObjectTypeMetadata {
-        val appFunctionSerializableProperties: List<AppFunctionNamedDataTypeMetadata> =
-            currentSerializableProperties.map { property ->
-                AppFunctionNamedDataTypeMetadata(
-                    name = property.name,
-                    dataTypeMetadata =
+        val requiredPropertiesList: MutableList<String> = mutableListOf()
+        val appFunctionSerializablePropertiesMap: Map<String, AppFunctionDataTypeMetadata> =
+            buildMap {
+                for (property in currentSerializableProperties) {
+                    val innerAppFunctionDataTypeMetadata =
                         property.type.toAppFunctionDataTypeMetadata(
                             sharedDataTypeMap,
                             seenDataTypeQualifiers,
                             resolvedAnnotatedSerializableProxies,
                             allowSerializableInterfaceTypes,
-                        ),
-                    description = property.description,
-                )
+                            property.description,
+                        )
+                    put(property.name, innerAppFunctionDataTypeMetadata)
+                    // TODO(b/394553462): Parse required state from annotation.
+                    requiredPropertiesList.add(property.name)
+                }
             }
-        // TODO(b/394553462): Parse required state from annotation.
-        val requiredPropertiesList: List<String> =
-            currentSerializableProperties.map { property -> property.name }
         return AppFunctionObjectTypeMetadata(
-            properties = appFunctionSerializableProperties,
+            properties = appFunctionSerializablePropertiesMap,
             required = requiredPropertiesList,
             qualifiedName = serializableTypeQualifiedName,
             // Shared type should be the most permissive version (i.e. nullable) by default.
