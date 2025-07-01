@@ -1116,6 +1116,13 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
 
         @Suppress("deprecation") // TODO(aurimas): migrate to new API
         project.afterEvaluate {
+            check(
+                !androidXExtension.shouldPublish() || !compileOptions.isCoreLibraryDesugaringEnabled
+            ) {
+                "AndroidX libraries are not permitted to use core library desugaring as it " +
+                    "forces library users to also enable core library desugaring."
+            }
+
             val minSdkVersion = defaultConfig.minSdk!!
             check(minSdkVersion >= defaultMinSdk) {
                 "minSdkVersion $minSdkVersion lower than the default of $defaultMinSdk"
