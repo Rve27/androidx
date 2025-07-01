@@ -605,6 +605,20 @@ class SliderScreenshotTest {
         assertSliderAgainstGolden("rangeSlider_middle_no_gap")
     }
 
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+    @Test
+    fun rangeSliderTest_middle_no_external_corner() {
+        rule.setMaterialContent(lightColorScheme()) {
+            Box(wrap.testTag(wrapperTestTag)) {
+                RangeSlider(
+                    state = remember { RangeSliderState(0.5f, 1f) },
+                    track = { SliderDefaults.Track(rangeSliderState = it, trackCornerSize = 0.dp) },
+                )
+            }
+        }
+        assertSliderAgainstGolden("rangeSlider_middle_no_external_corner")
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     @Test
     fun rangeSliderTest_middle_no_inside_corner() {
