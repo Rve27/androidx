@@ -1,4 +1,16 @@
 // Baseline format: 1.0
+AddedAbstractMethod: androidx.compose.material3.DatePickerState#getDisplayMode-jFl-4v0():
+    Binary breaking change: Added method androidx.compose.material3.DatePickerState.getDisplayMode-jFl-4v0()
+AddedAbstractMethod: androidx.compose.material3.DatePickerState#getLocale():
+    Binary breaking change: Added method androidx.compose.material3.DatePickerState.getLocale()
+AddedAbstractMethod: androidx.compose.material3.DatePickerState#setDisplayMode-vCnGnXg(int):
+    Binary breaking change: Added method androidx.compose.material3.DatePickerState.setDisplayMode-vCnGnXg(int)
+AddedAbstractMethod: androidx.compose.material3.DateRangePickerState#getDisplayMode-jFl-4v0():
+    Binary breaking change: Added method androidx.compose.material3.DateRangePickerState.getDisplayMode-jFl-4v0()
+AddedAbstractMethod: androidx.compose.material3.DateRangePickerState#getLocale():
+    Binary breaking change: Added method androidx.compose.material3.DateRangePickerState.getLocale()
+AddedAbstractMethod: androidx.compose.material3.DateRangePickerState#setDisplayMode-vCnGnXg(int):
+    Binary breaking change: Added method androidx.compose.material3.DateRangePickerState.setDisplayMode-vCnGnXg(int)
 AddedAbstractMethod: androidx.compose.material3.NavigationDrawerItemColors#badgeColor(boolean, androidx.compose.runtime.Composer, int):
     Binary breaking change: Added method androidx.compose.material3.NavigationDrawerItemColors.badgeColor(boolean,androidx.compose.runtime.Composer,int)
 AddedAbstractMethod: androidx.compose.material3.NavigationDrawerItemColors#containerColor(boolean, androidx.compose.runtime.Composer, int):

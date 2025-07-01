@@ -77,7 +77,6 @@ import java.util.Calendar
 import java.util.TimeZone
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Sampled
 @Composable
@@ -119,7 +118,6 @@ fun DatePickerApi26Sample() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Sampled
 @Composable
@@ -173,7 +171,6 @@ fun DatePickerDialogSample() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Sampled
 @Composable
@@ -218,7 +215,6 @@ fun DatePickerWithDateSelectableDatesSample() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Sampled
 @Composable
@@ -333,7 +329,6 @@ fun DateRangePickerApi26Sample() {
 }
 
 @RequiresApi(Build.VERSION_CODES.N)
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Sampled
 @Composable

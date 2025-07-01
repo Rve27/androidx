@@ -49,7 +49,6 @@ import org.junit.runners.Parameterized
 @RunWith(Parameterized::class)
 @LargeTest
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class)
 class DateRangePickerScreenshotTest(private val scheme: ColorSchemeWrapper) {
 
     @get:Rule val rule = createComposeRule()
