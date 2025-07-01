@@ -80,9 +80,11 @@ import androidx.xr.compose.subspace.SpatialLayoutSpacer
 import androidx.xr.compose.subspace.SpatialMainPanel
 import androidx.xr.compose.subspace.SpatialPanel
 import androidx.xr.compose.subspace.SubspaceComposable
+import androidx.xr.compose.subspace.layout.PlaneOrientation
 import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SpatialRoundedCornerShape
 import androidx.xr.compose.subspace.layout.SubspaceModifier
+import androidx.xr.compose.subspace.layout.anchorable
 import androidx.xr.compose.subspace.layout.aspectRatio
 import androidx.xr.compose.subspace.layout.depth
 import androidx.xr.compose.subspace.layout.fillMaxHeight
@@ -118,7 +120,6 @@ class SpatialComposeAppActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
             // 2D Content rendered to the MainPanel
             MainPanelContent()
@@ -185,6 +186,7 @@ class SpatialComposeAppActivity : ComponentActivity() {
     fun PanelGrid(modifier: SubspaceModifier = SubspaceModifier) {
         val sidePanelModifier = SubspaceModifier
         val curveRadius = 1025.dp
+
         SpatialColumn(modifier) {
             SpatialCurvedRow(alignment = SpatialAlignment.BottomCenter, curveRadius = curveRadius) {
                 SpatialColumn(modifier = SubspaceModifier.weight(0.2f).fillMaxHeight()) {
@@ -203,7 +205,12 @@ class SpatialComposeAppActivity : ComponentActivity() {
                     }
 
                     AppPanel(modifier = sidePanelModifier, text = "Panel Top Left")
-                    SpatialLayoutSpacer(modifier = SubspaceModifier.height(20.dp))
+                    SpatialLayoutSpacer(modifier = SubspaceModifier.height(40.dp))
+                    AnchorPanel(
+                        modifier = SubspaceModifier.height(200.dp),
+                        text = "Anchorable Panel",
+                    )
+                    SpatialLayoutSpacer(modifier = SubspaceModifier.height(40.dp))
                     ViewBasedAppPanel(
                         modifier = sidePanelModifier,
                         text = "Panel Bottom Left (View)",
@@ -222,7 +229,7 @@ class SpatialComposeAppActivity : ComponentActivity() {
                 }
                 SpatialColumn(modifier = SubspaceModifier.weight(0.2f).fillMaxHeight()) {
                     AppPanel(modifier = sidePanelModifier, text = "Panel Top Right")
-                    SpatialLayoutSpacer(modifier = SubspaceModifier.height(20.dp))
+                    SpatialLayoutSpacer(modifier = SubspaceModifier.height(40.dp))
                     AppPanel(modifier = sidePanelModifier, text = "Panel Bottom Right")
                     SpatialLayoutSpacer(modifier = SubspaceModifier.height(30.dp))
                     AspectRatioPanel()
@@ -290,6 +297,24 @@ class SpatialComposeAppActivity : ComponentActivity() {
                             if (moveResizeLocked) "Enable Move/Resize" else "Disable Move/Resize",
                     )
                 }
+            }
+        }
+    }
+
+    @SubspaceComposable
+    @Composable
+    fun AnchorPanel(modifier: SubspaceModifier = SubspaceModifier, text: String = "") {
+        // TODO(b/424834805): It's possible to have multiple movable overloads in place which are
+        // not compatible with each other.
+        SpatialPanel(
+            modifier = modifier.anchorable(anchorPlaneOrientations = setOf(PlaneOrientation.Any))
+        ) {
+            Column(
+                modifier = Modifier.background(Color.LightGray).padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(text)
             }
         }
     }

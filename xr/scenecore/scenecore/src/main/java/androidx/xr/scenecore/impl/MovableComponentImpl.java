@@ -262,7 +262,8 @@ class MovableComponentImpl implements MovableComponent {
                                         reformEvent.getProposedPosition(),
                                         reformEvent.getProposedOrientation());
                     }
-                    Vector3 newScale = RuntimeUtils.getVector3(reformEvent.getProposedScale());
+                    Vector3 newScale = mScaleInZ
+                            ? RuntimeUtils.getVector3(reformEvent.getProposedScale()) : mLastScale;
                     Entity disposeEntity = null;
 
                     Entity parent = updatedParent;
@@ -576,11 +577,11 @@ class MovableComponentImpl implements MovableComponent {
         if (!shouldRenderPlaneShadow()) {
             return;
         }
-        mPanelShadowRenderer.updatePanelPose(proposedPose, planePose, (PanelEntityImpl) mEntity);
+        mPanelShadowRenderer.updatePanelPose(proposedPose, planePose, (BasePanelEntity) mEntity);
     }
 
     private boolean shouldRenderPlaneShadow() {
-        return mEntity instanceof PanelEntityImpl && mSystemMovable;
+        return mEntity instanceof BasePanelEntity && mSystemMovable;
     }
 
     // Checks if there is a created anchor entity and if it should be disposed. If so, disposes of
