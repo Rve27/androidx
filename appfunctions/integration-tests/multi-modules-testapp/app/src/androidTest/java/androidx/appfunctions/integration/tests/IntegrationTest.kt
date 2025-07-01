@@ -28,6 +28,7 @@ import androidx.appfunctions.integration.tests.AppSearchMetadataHelper.isDynamic
 import androidx.appfunctions.integration.tests.TestUtil.doBlocking
 import androidx.appfunctions.integration.tests.TestUtil.retryAssert
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
+import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
 import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
@@ -102,7 +103,10 @@ class IntegrationTest {
         assumeTrue(isDynamicIndexerAvailable(context))
         val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
 
-        val appFunctions = appFunctionManager.observeAppFunctions(searchFunctionSpec).first()
+        val appFunctions: List<AppFunctionMetadata> =
+            appFunctionManager.observeAppFunctions(searchFunctionSpec).first().flatMap {
+                it.appFunctions
+            }
 
         assertThat(appFunctions).hasSize(13)
     }
@@ -112,7 +116,10 @@ class IntegrationTest {
         assumeFalse(isDynamicIndexerAvailable(context))
         val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
 
-        val appFunctions = appFunctionManager.observeAppFunctions(searchFunctionSpec).first()
+        val appFunctions: List<AppFunctionMetadata> =
+            appFunctionManager.observeAppFunctions(searchFunctionSpec).first().flatMap {
+                it.appFunctions
+            }
 
         assertThat(appFunctions).hasSize(1)
     }
