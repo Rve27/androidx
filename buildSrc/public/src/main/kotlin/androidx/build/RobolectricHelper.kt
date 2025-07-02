@@ -115,8 +115,9 @@ private fun configureJvmTestTask(project: Project, task: Test) {
             "--add-opens=java.base/java.lang=ALL-UNNAMED",
             "--add-opens=java.base/java.util=ALL-UNNAMED",
             "--add-opens=java.base/java.io=ALL-UNNAMED",
-            // Speculative fix for b/428257656
+            // Speculative fixes for b/428257656
             "-XX:CompileCommand=quiet",
             "-XX:CompileCommand=exclude,android/icu/util/Calendar,${"$$"}robo${"$$"}android_icu_util_Calendar${"$"}createInstance",
+            "-XX:CompileCommand=exclude,android/widget/FrameLayout,${"$$"}robo${"$$"}android_widget_FrameLayout${"$"}layoutChildren",
         )
 }
