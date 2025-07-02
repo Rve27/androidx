@@ -134,6 +134,7 @@ fun RichTooltipSample() {
                 Text(richTooltipText)
             }
         },
+        hasAction = true,
         state = tooltipState,
     ) {
         IconButton(onClick = { /* Icon button's click event */ }) {
@@ -163,6 +164,7 @@ fun RichTooltipWithManualInvocationSample() {
                     Text(richTooltipText)
                 }
             },
+            hasAction = true,
             state = tooltipState,
         ) {
             Icon(imageVector = Icons.Filled.Info, contentDescription = "Localized Description")
@@ -195,6 +197,7 @@ fun RichTooltipWithCaretSample() {
                 Text(richTooltipText)
             }
         },
+        hasAction = true,
         state = tooltipState,
     ) {
         IconButton(onClick = { /* Icon button's click event */ }) {
@@ -224,6 +227,7 @@ fun RichTooltipWithCustomCaretSample() {
                 Text(richTooltipText)
             }
         },
+        hasAction = true,
         state = tooltipState,
     ) {
         IconButton(onClick = { /* Icon button's click event */ }) {
