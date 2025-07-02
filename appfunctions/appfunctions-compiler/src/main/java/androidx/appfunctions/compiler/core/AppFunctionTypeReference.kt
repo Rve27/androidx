@@ -72,9 +72,6 @@ class AppFunctionTypeReference(val selfTypeReference: KSTypeReference) {
      */
     val isNullable: Boolean by lazy { selfTypeReference.toTypeName().isNullable }
 
-    /** A description of the type reference and its intended use. */
-    val description: String by lazy { selfTypeReference.resolve().declaration.docString ?: "" }
-
     /**
      * The type reference of the list element if the type reference is a list.
      *

@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <appfunctions>
     <appfunction>
+        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_inputClassDescribedByKdoc_false</id>
+        <enabledByDefault>true</enabledByDefault>
+        <description>
+ Tests that the input class description is empty when class's isDescribedByKdoc = false,
+</description>
+        <parameters>
+            <dataTypeMetadata>
+                <dataTypeReference>com.testdata.NotDescribedByKdoc</dataTypeReference>
+                <id>unused</id>
+                <isNullable>false</isNullable>
+                <type>11</type>
+            </dataTypeMetadata>
+            <id>unused</id>
+            <isRequired>true</isRequired>
+            <name>notDescribedByKdoc</name>
+        </parameters>
+        <response>
+            <id>unused</id>
+            <valueType>
+                <id>unused</id>
+                <isNullable>false</isNullable>
+                <type>0</type>
+            </valueType>
+        </response>
+        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_inputClassDescribedByKdoc_false</functionId>
+    </appfunction>
+    <appfunction>
         <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_false</id>
         <enabledByDefault>true</enabledByDefault>
         <parameters>
@@ -147,6 +174,26 @@
         <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_withRepeatedTypes</functionId>
     </appfunction>
     <AppFunctionComponentMetadataDocument>
+        <dataTypes>
+            <dataTypeMetadata>
+                <id>unused</id>
+                <isNullable>true</isNullable>
+                <objectQualifiedName>com.testdata.NotDescribedByKdoc</objectQualifiedName>
+                <properties>
+                    <dataTypeMetadata>
+                        <id>unused</id>
+                        <isNullable>false</isNullable>
+                        <type>7</type>
+                    </dataTypeMetadata>
+                    <id>unused</id>
+                    <name>param</name>
+                </properties>
+                <required>param</required>
+                <type>3</type>
+            </dataTypeMetadata>
+            <id>unused</id>
+            <name>com.testdata.NotDescribedByKdoc</name>
+        </dataTypes>
         <dataTypes>
             <dataTypeMetadata>
                 <id>unused</id>

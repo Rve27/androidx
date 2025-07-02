@@ -173,6 +173,9 @@ package androidx.appfunctions {
   }
 
   @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets=kotlin.annotation.AnnotationTarget.CLASS) public @interface AppFunctionSerializable {
+    ctor @KotlinOnly public AppFunctionSerializable(optional boolean isDescribedByKdoc);
+    method public abstract boolean isDescribedByKdoc() default false;
+    property public abstract boolean isDescribedByKdoc;
   }
 
   public abstract class AppFunctionSystemException extends androidx.appfunctions.AppFunctionException {
@@ -229,6 +232,7 @@ package androidx.appfunctions.metadata {
 
   public final class AppFunctionAllOfTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {
     ctor public AppFunctionAllOfTypeMetadata(java.util.List<? extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata> matchAll, String? qualifiedName, boolean isNullable);
+    ctor public AppFunctionAllOfTypeMetadata(java.util.List<? extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata> matchAll, String? qualifiedName, boolean isNullable, optional String description);
     method public java.util.List<androidx.appfunctions.metadata.AppFunctionDataTypeMetadata> getMatchAll();
     method public String? getQualifiedName();
     property public java.util.List<androidx.appfunctions.metadata.AppFunctionDataTypeMetadata> matchAll;
@@ -241,6 +245,7 @@ package androidx.appfunctions.metadata {
 
   public final class AppFunctionArrayTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {
     ctor public AppFunctionArrayTypeMetadata(androidx.appfunctions.metadata.AppFunctionDataTypeMetadata itemType, boolean isNullable);
+    ctor public AppFunctionArrayTypeMetadata(androidx.appfunctions.metadata.AppFunctionDataTypeMetadata itemType, boolean isNullable, optional String description);
     method public androidx.appfunctions.metadata.AppFunctionDataTypeMetadata getItemType();
     property public androidx.appfunctions.metadata.AppFunctionDataTypeMetadata itemType;
     field public static final androidx.appfunctions.metadata.AppFunctionArrayTypeMetadata.Companion Companion;
@@ -257,7 +262,9 @@ package androidx.appfunctions.metadata {
   }
 
   public abstract class AppFunctionDataTypeMetadata {
+    method public final String getDescription();
     method public final boolean isNullable();
+    property public final String description;
     property public final boolean isNullable;
     field public static final androidx.appfunctions.metadata.AppFunctionDataTypeMetadata.Companion Companion;
   }
@@ -289,6 +296,7 @@ package androidx.appfunctions.metadata {
 
   public final class AppFunctionObjectTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {
     ctor public AppFunctionObjectTypeMetadata(java.util.Map<java.lang.String,? extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata> properties, java.util.List<java.lang.String> required, String? qualifiedName, boolean isNullable);
+    ctor public AppFunctionObjectTypeMetadata(java.util.Map<java.lang.String,? extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata> properties, java.util.List<java.lang.String> required, String? qualifiedName, boolean isNullable, optional String description);
     method public java.util.Map<java.lang.String,androidx.appfunctions.metadata.AppFunctionDataTypeMetadata> getProperties();
     method public String? getQualifiedName();
     method public java.util.List<java.lang.String> getRequired();
@@ -321,6 +329,7 @@ package androidx.appfunctions.metadata {
 
   public final class AppFunctionPrimitiveTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {
     ctor public AppFunctionPrimitiveTypeMetadata(int type, boolean isNullable);
+    ctor public AppFunctionPrimitiveTypeMetadata(int type, boolean isNullable, optional String description);
     method public int getType();
     property public int type;
     field public static final androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata.Companion Companion;
@@ -349,6 +358,7 @@ package androidx.appfunctions.metadata {
 
   public final class AppFunctionReferenceTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {
     ctor public AppFunctionReferenceTypeMetadata(String referenceDataType, boolean isNullable);
+    ctor public AppFunctionReferenceTypeMetadata(String referenceDataType, boolean isNullable, optional String description);
     method public String getReferenceDataType();
     property public String referenceDataType;
     field public static final androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata.Companion Companion;

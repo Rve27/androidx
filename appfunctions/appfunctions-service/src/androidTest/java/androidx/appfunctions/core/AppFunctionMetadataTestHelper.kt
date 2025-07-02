@@ -20,6 +20,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appfunctions.internal.readAll
+import androidx.appfunctions.metadata.AppFunctionAllOfTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadataDocument
@@ -161,6 +162,23 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                                 required = listOf("nested"),
                                 qualifiedName = "com.testdata.RecursiveSerializable",
                                 isNullable = true,
+                                description = "Description of com.testdata.RecursiveSerializable",
+                            ),
+                        )
+                        put(
+                            "com.testdata.DerivedSerializable",
+                            AppFunctionAllOfTypeMetadata(
+                                matchAll =
+                                    listOf(
+                                        AppFunctionReferenceTypeMetadata(
+                                            referenceDataType =
+                                                "com.testdata.RecursiveSerializable",
+                                            isNullable = true,
+                                        )
+                                    ),
+                                qualifiedName = "com.testdata.DerivedSerializable",
+                                isNullable = true,
+                                description = "A child class of [RecursiveSerializable].",
                             ),
                         )
                     }

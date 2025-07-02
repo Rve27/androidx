@@ -29,8 +29,17 @@ data class AppFunctionPropertyDeclaration(
 ) {
     /** Creates an [AppFunctionPropertyDeclaration] from [KSPropertyDeclaration]. */
     constructor(
-        property: KSPropertyDeclaration
-    ) : this(checkNotNull(property.simpleName).asString(), property.type, property.docString ?: "")
+        property: KSPropertyDeclaration,
+        isDescribedByKdoc: Boolean,
+    ) : this(
+        checkNotNull(property.simpleName).asString(),
+        property.type,
+        if (isDescribedByKdoc) {
+            property.docString.orEmpty()
+        } else {
+            ""
+        },
+    )
 
     /** Indicates whether the [type] is a generic type or not. */
     val isGenericType: Boolean by lazy { type.resolve().declaration is KSTypeParameter }

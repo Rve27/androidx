@@ -441,7 +441,12 @@ class AppFunctionMetadataCreatorHelper {
                             checkNotNull(capabilitySuperType.toClassName().canonicalName),
                             capabilitySuperType
                                 .getDeclaredProperties()
-                                .map { AppFunctionPropertyDeclaration(it) }
+                                .map {
+                                    AppFunctionPropertyDeclaration(
+                                        property = it,
+                                        isDescribedByKdoc = false,
+                                    )
+                                }
                                 .toList(),
                             unvisitedSerializableProperties,
                             sharedDataTypeMap,

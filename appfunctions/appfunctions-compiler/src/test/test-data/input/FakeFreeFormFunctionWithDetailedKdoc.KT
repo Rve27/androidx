@@ -77,17 +77,26 @@ class FakeFreeFormFunctions {
         appFunctionContext: AppFunctionContext,
         parametrizedTypesInput: InputWithRepeatedTypes,
     ) {}
+
+    /**
+     * Tests that the input class description is empty when class's isDescribedByKdoc = false,
+     */
+    @AppFunction(isDescribedByKdoc = true)
+    fun fakeFreeFormFunction_inputClassDescribedByKdoc_false(
+        appFunctionContext: AppFunctionContext,
+        notDescribedByKdoc: NotDescribedByKdoc,
+    ) {}
 }
 
 /** A test input class to the free-form function. */
-@AppFunctionSerializable
+@AppFunctionSerializable(isDescribedByKdoc = true)
 open class InputToFakeFreeFormFunction(
     /** A string param. */
     open val data: String,
 )
 
 /** A child class of [InputToFakeFreeFormFunction]. */
-@AppFunctionSerializable
+@AppFunctionSerializable(isDescribedByKdoc = true)
 class DerivedInputToFakeFreeFormFunction(
     /** A derived string param. */
     override val data: String,
@@ -96,7 +105,7 @@ class DerivedInputToFakeFreeFormFunction(
 ) : InputToFakeFreeFormFunction(data)
 
 /** An input class with parametrized types */
-@AppFunctionSerializable
+@AppFunctionSerializable(isDescribedByKdoc = true)
 class InputWithParametrizedTypes(
     /** Parametrized primitive param. */
     val parametrizedInt: Optional<Int>,
@@ -109,7 +118,7 @@ class InputWithParametrizedTypes(
 )
 
 /** An input class with repeated params. */
-@AppFunctionSerializable
+@AppFunctionSerializable(isDescribedByKdoc = true)
 class InputWithRepeatedTypes(
     /** Primitive array param. */
     val intArray: IntArray,
@@ -120,8 +129,15 @@ class InputWithRepeatedTypes(
 )
 
 /** A generic serializable class. */
-@AppFunctionSerializable
+@AppFunctionSerializable(isDescribedByKdoc = true)
 data class Optional<T>(
     /** The value. */
     val value: T
+)
+
+/** Class description. Should be ignored. */
+@AppFunctionSerializable(isDescribedByKdoc = false)
+class NotDescribedByKdoc(
+    /** Property description. Should be ignored. */
+    val param: Int,
 )

@@ -26,6 +26,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageInstaller
 import android.os.Build
 import androidx.appfunctions.core.AppFunctionMetadataTestHelper
+import androidx.appfunctions.metadata.AppFunctionAllOfTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
@@ -328,6 +329,23 @@ class AppFunctionManagerCompatTest {
                                 required = listOf("nested"),
                                 qualifiedName = "com.testdata.RecursiveSerializable",
                                 isNullable = true,
+                                description = "Description of com.testdata.RecursiveSerializable",
+                            ),
+                        )
+                        put(
+                            "com.testdata.DerivedSerializable",
+                            AppFunctionAllOfTypeMetadata(
+                                matchAll =
+                                    listOf(
+                                        AppFunctionReferenceTypeMetadata(
+                                            referenceDataType =
+                                                "com.testdata.RecursiveSerializable",
+                                            isNullable = true,
+                                        )
+                                    ),
+                                qualifiedName = "com.testdata.DerivedSerializable",
+                                isNullable = true,
+                                description = "A child class of [RecursiveSerializable].",
                             ),
                         )
                     }

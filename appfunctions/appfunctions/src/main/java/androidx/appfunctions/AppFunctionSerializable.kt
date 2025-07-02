@@ -90,4 +90,15 @@ package androidx.appfunctions
 // Use BINARY here so that the annotation is kept around at the aggregation stage.
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS)
-public annotation class AppFunctionSerializable
+public annotation class AppFunctionSerializable(
+    /**
+     * Whether to use the serializable's KDoc as the type's description to the agent. The default
+     * value is `false`.
+     *
+     * If set to `true`, the serializable's KDoc will be set as the type's
+     * [androidx.appfunctions.metadata.AppFunctionDataTypeMetadata.description]. The class's
+     * properties' KDoc will also be set as their corresponding descriptions. The caller will use
+     * the descriptions to interpret when and how to use the class and its properties.
+     */
+    public val isDescribedByKdoc: Boolean = false
+)
