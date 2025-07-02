@@ -79,7 +79,6 @@ dependencies {
     kmpDocs("androidx.compose.material3.adaptive:adaptive-render-strategy:1.1.0-alpha05")
     kmpDocs("androidx.compose.material3:material3:1.4.0-alpha17")
     kmpDocs("androidx.compose.material3:material3-adaptive-navigation-suite:1.4.0-alpha17")
-    kmpDocs("androidx.compose.material3:material3-common:1.0.0-alpha01")
     kmpDocs("androidx.compose.material3:material3-window-size-class:1.4.0-alpha17")
     kmpDocs("androidx.compose.material:material:1.9.0-beta02")
     kmpDocs("androidx.compose.material:material-icons-core:1.7.8")
