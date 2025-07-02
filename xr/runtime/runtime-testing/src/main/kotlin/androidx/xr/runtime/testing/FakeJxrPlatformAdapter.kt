@@ -21,6 +21,8 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.SubspaceNodeHolder
+import androidx.xr.runtime.TypeHolder
 import androidx.xr.runtime.internal.ActivityPanelEntity
 import androidx.xr.runtime.internal.ActivitySpace
 import androidx.xr.runtime.internal.Anchor
@@ -434,9 +436,13 @@ public class FakeJxrPlatformAdapter : JxrPlatformAdapter {
     override fun createGroupEntity(pose: Pose, name: String, parent: Entity): Entity = FakeEntity()
 
     override fun createSubspaceNodeEntity(
-        subspaceNode: SubspaceNode,
+        subspaceNodeHolder: SubspaceNodeHolder<*>,
         size: Dimensions,
-    ): SubspaceNodeEntity = FakeSubspaceNodeEntity(subspaceNode, size)
+    ): SubspaceNodeEntity =
+        FakeSubspaceNodeEntity(
+            TypeHolder.assertGetValue(subspaceNodeHolder, SubspaceNode::class.java),
+            size,
+        )
 
     @Suppress("ExecutorRegistration")
     override fun createInteractableComponent(

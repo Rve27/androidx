@@ -30,6 +30,7 @@ import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
 import androidx.concurrent.futures.ResolvableFuture;
 import androidx.core.util.Pair;
+import androidx.xr.runtime.SubspaceNodeHolder;
 import androidx.xr.runtime.internal.ActivityPanelEntity;
 import androidx.xr.runtime.internal.ActivitySpace;
 import androidx.xr.runtime.internal.Anchor;
@@ -65,6 +66,7 @@ import androidx.xr.runtime.internal.SpatialEnvironment;
 import androidx.xr.runtime.internal.SpatialModeChangeListener;
 import androidx.xr.runtime.internal.SpatialPointerComponent;
 import androidx.xr.runtime.internal.SpatialVisibility;
+import androidx.xr.runtime.internal.SubspaceNodeEntity;
 import androidx.xr.runtime.internal.SurfaceEntity;
 import androidx.xr.runtime.internal.TextureResource;
 import androidx.xr.runtime.internal.TextureSampler;
@@ -2047,15 +2049,16 @@ public class JxrPlatformAdapterAxr implements JxrPlatformAdapter {
     }
 
     @Override
-    public @NonNull SubspaceNodeEntityImpl createSubspaceNodeEntity(
-            @NonNull SubspaceNode subspaceNode, @NonNull Dimensions size) {
+    public @NonNull SubspaceNodeEntity createSubspaceNodeEntity(
+            @NonNull SubspaceNodeHolder<?> subspaceNodeHolder, @NonNull Dimensions size) {
         SubspaceNodeEntityImpl subspaceNodeEntity =
                 new SubspaceNodeEntityImpl(
                         mActivity,
                         mExtensions,
                         mEntityManager,
                         mExecutor,
-                        subspaceNode.getSubspaceNode(),
+                        SubspaceNodeHolder.assertGetValue(
+                            subspaceNodeHolder, SubspaceNode.class).getSubspaceNode(),
                         size);
         subspaceNodeEntity.setParent(mActivitySpace);
         return subspaceNodeEntity;

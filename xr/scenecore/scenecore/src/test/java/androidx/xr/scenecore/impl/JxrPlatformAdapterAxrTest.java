@@ -51,6 +51,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 
 import androidx.test.rule.GrantPermissionRule;
+import androidx.xr.runtime.SubspaceNodeHolder;
 import androidx.xr.runtime.internal.ActivitySpace;
 import androidx.xr.runtime.internal.AnchorEntity;
 import androidx.xr.runtime.internal.AnchorEntity.State;
@@ -81,6 +82,7 @@ import androidx.xr.runtime.internal.SpatialEnvironment;
 import androidx.xr.runtime.internal.SpatialModeChangeListener;
 import androidx.xr.runtime.internal.SpatialPointerComponent;
 import androidx.xr.runtime.internal.SpatialVisibility;
+import androidx.xr.runtime.internal.SubspaceNodeEntity;
 import androidx.xr.runtime.internal.SurfaceEntity;
 import androidx.xr.runtime.internal.TextureResource;
 import androidx.xr.runtime.internal.TextureSampler;
@@ -2763,5 +2765,19 @@ public final class JxrPlatformAdapterAxrTest {
         ShadowSpatialState.extract(spatialState).setSceneParentTransform(new Mat4f(new float[16]));
         mRuntime.onSpatialStateChanged(spatialState);
         verify(mockSpatialModeChangeListener).onSpatialModeChanged(any(), any());
+    }
+
+    @Test
+    public void createSubspaceNodeEntity_returnSubspaceNodeEntity() {
+        Dimensions size = new Dimensions(1.0f, 2.0f, 3.0f);
+        Node node = mXrExtensions.createNode();
+        SubspaceNode subspaceNode = new SubspaceNode(SUBSPACE_ID + 1, node);
+        SubspaceNodeHolder<?> holder = new SubspaceNodeHolder<>(subspaceNode, SubspaceNode.class);
+        SubspaceNodeEntity entity = mRuntime.createSubspaceNodeEntity(holder, size);
+
+        assertThat(entity).isNotNull();
+        assertThat(mNodeRepository.getScale(node).x).isEqualTo(size.width);
+        assertThat(mNodeRepository.getScale(node).y).isEqualTo(size.height);
+        assertThat(mNodeRepository.getScale(node).z).isEqualTo(size.depth);
     }
 }
