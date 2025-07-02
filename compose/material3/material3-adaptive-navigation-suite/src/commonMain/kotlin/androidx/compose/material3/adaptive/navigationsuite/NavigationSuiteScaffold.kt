@@ -34,7 +34,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DrawerDefaults
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -595,7 +594,6 @@ fun NavigationSuiteScaffoldLayout(
  * @param content the content inside the current navigation component, typically
  *   [NavigationSuiteItem]s
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NavigationSuite(
     navigationSuiteType: NavigationSuiteType,
@@ -722,7 +720,6 @@ fun NavigationSuite(
  * @param content the content inside the current navigation component, typically
  *   [NavigationSuiteScope.item]s
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NavigationSuite(
     modifier: Modifier = Modifier,
@@ -861,7 +858,6 @@ fun NavigationSuite(
  *   preview the item in different states. Note that if `null` is provided, interactions will still
  *   happen internally.
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NavigationSuiteItem(
     selected: Boolean,
@@ -892,7 +888,6 @@ fun NavigationSuiteItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun NavigationSuiteItem(
     isNavigationSuite: Boolean,
@@ -1269,7 +1264,6 @@ object NavigationSuiteDefaults {
      *   [PermanentDrawerSheet]
      * @param navigationDrawerContentColor the default content color for the [PermanentDrawerSheet]
      */
-    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Composable
     fun colors(
         shortNavigationBarContentColor: Color = ShortNavigationBarDefaults.contentColor,
@@ -1312,7 +1306,6 @@ object NavigationSuiteDefaults {
      *   [PermanentDrawerSheet]
      * @param navigationDrawerContentColor the default content color for the [PermanentDrawerSheet]
      */
-    @OptIn(ExperimentalMaterial3ExpressiveApi::class)
     @Deprecated(
         message =
             "Deprecated in favor of colors with shortNavigationBar*Color and " +
@@ -1492,7 +1485,6 @@ internal class NavigationSuiteScaffoldStateImpl(var initialValue: NavigationSuit
 }
 
 @Composable
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 private fun Modifier.navigationSuiteScaffoldConsumeWindowInsets(
     navigationSuiteType: NavigationSuiteType,
     state: NavigationSuiteScaffoldState,

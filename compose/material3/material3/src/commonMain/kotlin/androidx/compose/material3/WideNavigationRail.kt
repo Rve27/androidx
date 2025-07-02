@@ -158,7 +158,6 @@ import kotlinx.coroutines.launch
  * @param content the content of this wide navigation rail, typically [WideNavigationRailItem]s
  */
 @OptIn(ExperimentalMaterial3ComponentOverrideApi::class)
-@ExperimentalMaterial3ExpressiveApi
 @Composable
 fun WideNavigationRail(
     modifier: Modifier = Modifier,
@@ -191,7 +190,6 @@ fun WideNavigationRail(
  * [WideNavigationRailOverride] used when no override is specified.
  */
 @ExperimentalMaterial3ComponentOverrideApi
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 object DefaultWideNavigationRailOverride : WideNavigationRailOverride {
     @Composable
     override fun WideNavigationRailOverrideScope.WideNavigationRail() {
@@ -465,7 +463,6 @@ private fun WideNavigationRailLayout(
  * @param content the content of this modal wide navigation rail, usually [WideNavigationRailItem]s
  */
 @OptIn(ExperimentalMaterial3ComponentOverrideApi::class)
-@ExperimentalMaterial3ExpressiveApi
 @Composable
 fun ModalWideNavigationRail(
     modifier: Modifier = Modifier,
@@ -505,7 +502,6 @@ fun ModalWideNavigationRail(
  *
  * [ModalWideNavigationRailOverride] used when no override is specified.
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @ExperimentalMaterial3ComponentOverrideApi
 object DefaultModalWideNavigationRailOverride : ModalWideNavigationRailOverride {
     @Composable
@@ -681,7 +677,6 @@ object DefaultModalWideNavigationRailOverride : ModalWideNavigationRailOverride 
  *   preview the item in different states. Note that if `null` is provided, interactions will still
  *   happen internally.
  */
-@ExperimentalMaterial3ExpressiveApi
 @Composable
 fun WideNavigationRailItem(
     selected: Boolean,
@@ -785,7 +780,6 @@ class WideNavigationRailColors(
 }
 
 /** Defaults used in [WideNavigationRail]. */
-@ExperimentalMaterial3ExpressiveApi
 object WideNavigationRailDefaults {
     /** Default container shape of a wide navigation rail. */
     val containerShape: Shape
@@ -859,7 +853,6 @@ object WideNavigationRailDefaults {
 }
 
 /** Defaults used in [WideNavigationRailItem]. */
-@ExperimentalMaterial3ExpressiveApi
 object WideNavigationRailItemDefaults {
     /**
      * The default icon position of a [WideNavigationRailItem] given whether the associated
@@ -932,7 +925,6 @@ object WideNavigationRailItemDefaults {
 
 /** Default values for [ModalWideNavigationRail]. */
 @Immutable
-@ExperimentalMaterial3ExpressiveApi
 object ModalWideNavigationRailDefaults {
 
     /** Properties used to customize the window behavior of a [ModalWideNavigationRail]. */
@@ -940,17 +932,14 @@ object ModalWideNavigationRailDefaults {
         createDefaultModalWideNavigationRailProperties()
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 internal expect fun createDefaultModalWideNavigationRailProperties():
     ModalWideNavigationRailProperties
 
 @Immutable
-@ExperimentalMaterial3ExpressiveApi
 expect class ModalWideNavigationRailProperties(shouldDismissOnBackPress: Boolean = true) {
     val shouldDismissOnBackPress: Boolean
 }
 
-@ExperimentalMaterial3ExpressiveApi
 @Composable
 internal expect fun ModalWideNavigationRailDialog(
     onDismissRequest: () -> Unit,
@@ -961,7 +950,6 @@ internal expect fun ModalWideNavigationRailDialog(
     content: @Composable () -> Unit,
 )
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun ModalWideNavigationRailContent(
     expanded: Boolean,
@@ -1181,7 +1169,6 @@ interface WideNavigationRailOverride {
  * @param content the content of this wide navigation rail, typically [WideNavigationRailItem]s
  */
 @ExperimentalMaterial3ComponentOverrideApi
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 class WideNavigationRailOverrideScope
 internal constructor(
     val modifier: Modifier,
@@ -1235,7 +1222,6 @@ interface ModalWideNavigationRailOverride {
  * @param content the content of this modal wide navigation rail, usually [WideNavigationRailItem]s
  */
 @ExperimentalMaterial3ComponentOverrideApi
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 class ModalWideNavigationRailOverrideScope
 internal constructor(
     val modifier: Modifier,

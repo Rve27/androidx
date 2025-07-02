@@ -82,7 +82,6 @@ class ModalWideNavigationRailScreenshotTest {
     }
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DefaultModalWideNavigationRail() {
     ModalWideNavigationRail(

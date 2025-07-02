@@ -52,7 +52,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /** Tests for [ModalWideNavigationRail. */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 class ModalWideNavigationRailTest {

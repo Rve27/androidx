@@ -51,7 +51,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @LargeTest
 @RunWith(Parameterized::class)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
@@ -278,7 +277,6 @@ class WideNavigationRailScreenshotTest(private val scheme: TestWrapper) {
  * @param withHeader when true, shows a [FloatingActionButton] as the header
  * @param setUnselectedItemsAsDisabled when true, marks unselected items as disabled
  */
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun DefaultWideNavigationRail(
     interactionSource: MutableInteractionSource,
