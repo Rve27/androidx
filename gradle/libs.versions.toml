@@ -250,7 +250,7 @@ media3TestUtils = { module = "androidx.media3:media3-test-utils", version.ref = 
 media3Transformer = { module = "androidx.media3:media3-transformer", version.ref = "media3" }
 media3Ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 metalava = { module = "com.android.tools.metalava:metalava", version.ref = "metalava" }
-mlkitBarcode = { module = "com.google.mlkit:barcode-scanning", version = "17.0.2" }
+mlkitBarcode = { module = "com.google.mlkit:barcode-scanning", version = "17.3.0" }
 mockitoCore = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 mockitoCore4 = { module = "org.mockito:mockito-core", version = "4.8.0" }
 mockitoAndroid = { module = "org.mockito:mockito-android", version.ref = "mockito" }

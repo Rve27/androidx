@@ -83,6 +83,7 @@ dependencies {
         exclude group: "androidx.fragment"
         exclude group: "androidx.core"
         exclude group: "androidx.exifinterface"
+        exclude group: "androidx.appcompat"
     }
     // camera-testing added as 'implementation' dependency to include camera-testing activity in APK
     implementation(project(":camera:camera-testing")) {
@@ -127,8 +128,16 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel:2.3.1'
     implementation libs.androidx.annotation
     implementation libs.androidx.core
-    androidTestImplementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:18.0.0'
-    androidTestImplementation 'com.google.mlkit:barcode-scanning-common:17.0.0'
+    androidTestImplementation("com.google.android.gms:play-services-mlkit-barcode-scanning:18.0.0") {
+        exclude group: "androidx.core"
+        exclude group: "androidx.exifinterface"
+        exclude group: "androidx.appcompat"
+    }
+    androidTestImplementation("com.google.mlkit:barcode-scanning-common:17.0.0") {
+        exclude group: "androidx.core"
+        exclude group: "androidx.exifinterface"
+        exclude group: "androidx.appcompat"
+    }
     androidTestImplementation 'com.google.mlkit:vision-interfaces:16.0.0'
     androidTestImplementation libs.hamcrestCore
     androidTestImplementation libs.junit
