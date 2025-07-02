@@ -21,8 +21,8 @@ package androidx.xr.glimmer {
   public static final class ButtonSize.Companion {
     method @BytecodeOnly public int getLarge-pDRnaFY();
     method @BytecodeOnly public int getMedium-pDRnaFY();
-    property public int Large;
-    property public int Medium;
+    property public androidx.xr.glimmer.ButtonSize Large;
+    property public androidx.xr.glimmer.ButtonSize Medium;
   }
 
   @androidx.compose.runtime.Immutable public final class Colors {
@@ -38,13 +38,13 @@ package androidx.xr.glimmer {
     method @BytecodeOnly public long getPrimary-0d7_KjU();
     method @BytecodeOnly public long getSecondary-0d7_KjU();
     method @BytecodeOnly public long getSurface-0d7_KjU();
-    property public long negative;
-    property public long outline;
-    property public long outlineVariant;
-    property public long positive;
-    property public long primary;
-    property public long secondary;
-    property public long surface;
+    property public androidx.compose.ui.graphics.Color negative;
+    property public androidx.compose.ui.graphics.Color outline;
+    property public androidx.compose.ui.graphics.Color outlineVariant;
+    property public androidx.compose.ui.graphics.Color positive;
+    property public androidx.compose.ui.graphics.Color primary;
+    property public androidx.compose.ui.graphics.Color secondary;
+    property public androidx.compose.ui.graphics.Color surface;
   }
 
   public final class ContentColorKt {
@@ -116,9 +116,9 @@ package androidx.xr.glimmer {
     method @BytecodeOnly public float getLarge-D9Ej5fM();
     method @BytecodeOnly public float getMedium-D9Ej5fM();
     method @BytecodeOnly public float getSmall-D9Ej5fM();
-    property public float large;
-    property public float medium;
-    property public float small;
+    property public androidx.compose.ui.unit.Dp large;
+    property public androidx.compose.ui.unit.Dp medium;
+    property public androidx.compose.ui.unit.Dp small;
   }
 
   public final class ListItemDefaults {
@@ -230,7 +230,7 @@ package androidx.xr.glimmer.list {
     property public abstract boolean reverseLayout;
     property public abstract int totalItemsCount;
     property public abstract int viewportEndOffset;
-    property public abstract long viewportSize;
+    property public abstract androidx.compose.ui.unit.IntSize viewportSize;
     property public abstract int viewportStartOffset;
     property public abstract java.util.List<androidx.xr.glimmer.list.LazyListItemInfo> visibleItemsInfo;
   }

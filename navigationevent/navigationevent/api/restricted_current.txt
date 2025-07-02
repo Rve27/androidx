@@ -65,8 +65,8 @@ package androidx.navigationevent {
   public static final class NavigationEventPriority.Companion {
     method @BytecodeOnly public int getDefault-b1THaJE();
     method @BytecodeOnly public int getOverlay-b1THaJE();
-    property public int Default;
-    property public int Overlay;
+    property public androidx.navigationevent.NavigationEventPriority Default;
+    property public androidx.navigationevent.NavigationEventPriority Overlay;
   }
 
   public final class NavigationInputHandler {

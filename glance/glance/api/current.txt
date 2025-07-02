@@ -285,8 +285,8 @@ package androidx.glance.layout {
     ctor @BytecodeOnly public Alignment(int, int, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @BytecodeOnly public int getHorizontal-PGIyAqw();
     method @BytecodeOnly public int getVertical-mnfRV0w();
-    property public int horizontal;
-    property public int vertical;
+    property public androidx.glance.layout.Alignment.Horizontal horizontal;
+    property public androidx.glance.layout.Alignment.Vertical vertical;
     field public static final androidx.glance.layout.Alignment.Companion Companion;
   }
 
@@ -306,18 +306,18 @@ package androidx.glance.layout {
     method public androidx.glance.layout.Alignment getTopCenter();
     method public androidx.glance.layout.Alignment getTopEnd();
     method public androidx.glance.layout.Alignment getTopStart();
-    property public int Bottom;
+    property public androidx.glance.layout.Alignment.Vertical Bottom;
     property public androidx.glance.layout.Alignment BottomCenter;
     property public androidx.glance.layout.Alignment BottomEnd;
     property public androidx.glance.layout.Alignment BottomStart;
     property public androidx.glance.layout.Alignment Center;
     property public androidx.glance.layout.Alignment CenterEnd;
-    property public int CenterHorizontally;
+    property public androidx.glance.layout.Alignment.Horizontal CenterHorizontally;
     property public androidx.glance.layout.Alignment CenterStart;
-    property public int CenterVertically;
-    property public int End;
-    property public int Start;
-    property public int Top;
+    property public androidx.glance.layout.Alignment.Vertical CenterVertically;
+    property public androidx.glance.layout.Alignment.Horizontal End;
+    property public androidx.glance.layout.Alignment.Horizontal Start;
+    property public androidx.glance.layout.Alignment.Vertical Top;
     property public androidx.glance.layout.Alignment TopCenter;
     property public androidx.glance.layout.Alignment TopEnd;
     property public androidx.glance.layout.Alignment TopStart;
@@ -333,9 +333,9 @@ package androidx.glance.layout {
     method @BytecodeOnly public int getCenterHorizontally-PGIyAqw();
     method @BytecodeOnly public int getEnd-PGIyAqw();
     method @BytecodeOnly public int getStart-PGIyAqw();
-    property public int CenterHorizontally;
-    property public int End;
-    property public int Start;
+    property public androidx.glance.layout.Alignment.Horizontal CenterHorizontally;
+    property public androidx.glance.layout.Alignment.Horizontal End;
+    property public androidx.glance.layout.Alignment.Horizontal Start;
   }
 
   @kotlin.jvm.JvmInline public static final value class Alignment.Vertical {
@@ -348,9 +348,9 @@ package androidx.glance.layout {
     method @BytecodeOnly public int getBottom-mnfRV0w();
     method @BytecodeOnly public int getCenterVertically-mnfRV0w();
     method @BytecodeOnly public int getTop-mnfRV0w();
-    property public int Bottom;
-    property public int CenterVertically;
-    property public int Top;
+    property public androidx.glance.layout.Alignment.Vertical Bottom;
+    property public androidx.glance.layout.Alignment.Vertical CenterVertically;
+    property public androidx.glance.layout.Alignment.Vertical Top;
   }
 
   public final class BoxKt {
@@ -379,9 +379,9 @@ package androidx.glance.layout {
     method @BytecodeOnly public int getCrop-Ae3V0ko();
     method @BytecodeOnly public int getFillBounds-Ae3V0ko();
     method @BytecodeOnly public int getFit-Ae3V0ko();
-    property public int Crop;
-    property public int FillBounds;
-    property public int Fit;
+    property public androidx.glance.layout.ContentScale Crop;
+    property public androidx.glance.layout.ContentScale FillBounds;
+    property public androidx.glance.layout.ContentScale Fit;
   }
 
   public final class PaddingKt {
@@ -525,8 +525,8 @@ package androidx.glance.text {
     method @BytecodeOnly public int getItalic-zT8OX4g();
     method @BytecodeOnly public int getNormal-zT8OX4g();
     method public java.util.List<androidx.glance.text.FontStyle> values();
-    property public int Italic;
-    property public int Normal;
+    property public androidx.glance.text.FontStyle Italic;
+    property public androidx.glance.text.FontStyle Normal;
   }
 
   @kotlin.jvm.JvmInline public final value class FontWeight {
@@ -541,9 +541,9 @@ package androidx.glance.text {
     method @BytecodeOnly public int getBold-WjrlUT0();
     method @BytecodeOnly public int getMedium-WjrlUT0();
     method @BytecodeOnly public int getNormal-WjrlUT0();
-    property public int Bold;
-    property public int Medium;
-    property public int Normal;
+    property public androidx.glance.text.FontWeight Bold;
+    property public androidx.glance.text.FontWeight Medium;
+    property public androidx.glance.text.FontWeight Normal;
   }
 
   @kotlin.jvm.JvmInline public final value class TextAlign {
@@ -559,11 +559,11 @@ package androidx.glance.text {
     method @BytecodeOnly public int getRight-ROrN78o();
     method @BytecodeOnly public int getStart-ROrN78o();
     method public java.util.List<androidx.glance.text.TextAlign> values();
-    property public int Center;
-    property public int End;
-    property public int Left;
-    property public int Right;
-    property public int Start;
+    property public androidx.glance.text.TextAlign Center;
+    property public androidx.glance.text.TextAlign End;
+    property public androidx.glance.text.TextAlign Left;
+    property public androidx.glance.text.TextAlign Right;
+    property public androidx.glance.text.TextAlign Start;
   }
 
   @kotlin.jvm.JvmInline public final value class TextDecoration {
@@ -582,9 +582,9 @@ package androidx.glance.text {
     method @BytecodeOnly public int getLineThrough-ObZ5V_A();
     method @BytecodeOnly public int getNone-ObZ5V_A();
     method @BytecodeOnly public int getUnderline-ObZ5V_A();
-    property public int LineThrough;
-    property public int None;
-    property public int Underline;
+    property public androidx.glance.text.TextDecoration LineThrough;
+    property public androidx.glance.text.TextDecoration None;
+    property public androidx.glance.text.TextDecoration Underline;
   }
 
   public final class TextDefaults {

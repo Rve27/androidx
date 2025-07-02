@@ -247,7 +247,7 @@ package androidx.compose.ui.test {
   @Deprecated public final class GestureScope {
     ctor @Deprecated public GestureScope(androidx.compose.ui.semantics.SemanticsNode node, androidx.compose.ui.test.TestContext testContext);
     method @BytecodeOnly @Deprecated public long getVisibleSize-YbymL2g();
-    property @Deprecated public long visibleSize;
+    property @Deprecated public androidx.compose.ui.unit.IntSize visibleSize;
   }
 
   public final class GestureScopeKt {
@@ -310,21 +310,21 @@ package androidx.compose.ui.test {
     method @BytecodeOnly @Deprecated public static void swipeWithVelocity-5iVPX68(androidx.compose.ui.test.GestureScope, long, long, float, long);
     method @Deprecated public static void up(androidx.compose.ui.test.GestureScope, optional int pointerId);
     property @Deprecated public static inline float androidx.compose.ui.test.GestureScope.bottom;
-    property @Deprecated public static long androidx.compose.ui.test.GestureScope.bottomCenter;
-    property @Deprecated public static long androidx.compose.ui.test.GestureScope.bottomLeft;
-    property @Deprecated public static long androidx.compose.ui.test.GestureScope.bottomRight;
-    property @Deprecated public static long androidx.compose.ui.test.GestureScope.center;
-    property @Deprecated public static long androidx.compose.ui.test.GestureScope.centerLeft;
-    property @Deprecated public static long androidx.compose.ui.test.GestureScope.centerRight;
+    property @Deprecated public static androidx.compose.ui.geometry.Offset androidx.compose.ui.test.GestureScope.bottomCenter;
+    property @Deprecated public static androidx.compose.ui.geometry.Offset androidx.compose.ui.test.GestureScope.bottomLeft;
+    property @Deprecated public static androidx.compose.ui.geometry.Offset androidx.compose.ui.test.GestureScope.bottomRight;
+    property @Deprecated public static androidx.compose.ui.geometry.Offset androidx.compose.ui.test.GestureScope.center;
+    property @Deprecated public static androidx.compose.ui.geometry.Offset androidx.compose.ui.test.GestureScope.centerLeft;
+    property @Deprecated public static androidx.compose.ui.geometry.Offset androidx.compose.ui.test.GestureScope.centerRight;
     property @Deprecated public static inline float androidx.compose.ui.test.GestureScope.centerX;
     property @Deprecated public static inline float androidx.compose.ui.test.GestureScope.centerY;
     property @Deprecated public static inline int androidx.compose.ui.test.GestureScope.height;
     property @Deprecated public static inline float androidx.compose.ui.test.GestureScope.left;
     property @Deprecated public static inline float androidx.compose.ui.test.GestureScope.right;
     property @Deprecated public static inline float androidx.compose.ui.test.GestureScope.top;
-    property @Deprecated public static long androidx.compose.ui.test.GestureScope.topCenter;
-    property @Deprecated public static long androidx.compose.ui.test.GestureScope.topLeft;
-    property @Deprecated public static long androidx.compose.ui.test.GestureScope.topRight;
+    property @Deprecated public static androidx.compose.ui.geometry.Offset androidx.compose.ui.test.GestureScope.topCenter;
+    property @Deprecated public static androidx.compose.ui.geometry.Offset androidx.compose.ui.test.GestureScope.topLeft;
+    property @Deprecated public static androidx.compose.ui.geometry.Offset androidx.compose.ui.test.GestureScope.topRight;
     property @Deprecated public static inline int androidx.compose.ui.test.GestureScope.width;
   }
 
@@ -370,12 +370,12 @@ package androidx.compose.ui.test {
     method public default long percentOffset(optional float x, optional float y);
     method @BytecodeOnly public default long percentOffset-dBAh8RU(float, float);
     property public default float bottom;
-    property public default long bottomCenter;
-    property public default long bottomLeft;
-    property public default long bottomRight;
-    property public default long center;
-    property public default long centerLeft;
-    property public default long centerRight;
+    property public default androidx.compose.ui.geometry.Offset bottomCenter;
+    property public default androidx.compose.ui.geometry.Offset bottomLeft;
+    property public default androidx.compose.ui.geometry.Offset bottomRight;
+    property public default androidx.compose.ui.geometry.Offset center;
+    property public default androidx.compose.ui.geometry.Offset centerLeft;
+    property public default androidx.compose.ui.geometry.Offset centerRight;
     property public default float centerX;
     property public default float centerY;
     property public default long eventPeriodMillis;
@@ -383,11 +383,11 @@ package androidx.compose.ui.test {
     property public default float left;
     property public default float right;
     property public default float top;
-    property public default long topCenter;
-    property public default long topLeft;
-    property public default long topRight;
+    property public default androidx.compose.ui.geometry.Offset topCenter;
+    property public default androidx.compose.ui.geometry.Offset topLeft;
+    property public default androidx.compose.ui.geometry.Offset topRight;
     property public abstract androidx.compose.ui.platform.ViewConfiguration viewConfiguration;
-    property public abstract long visibleSize;
+    property public abstract androidx.compose.ui.unit.IntSize visibleSize;
     property public default int width;
   }
 
@@ -447,9 +447,9 @@ package androidx.compose.ui.test {
     method @BytecodeOnly public int getNoKeys--uOuvaM();
     method @BytecodeOnly public int getQwerty--uOuvaM();
     method @BytecodeOnly public int getTwelveKey--uOuvaM();
-    property public int NoKeys;
-    property public int Qwerty;
-    property public int TwelveKey;
+    property public androidx.compose.ui.test.KeyboardType NoKeys;
+    property public androidx.compose.ui.test.KeyboardType Qwerty;
+    property public androidx.compose.ui.test.KeyboardType TwelveKey;
   }
 
   @kotlin.jvm.JvmDefaultWithCompatibility public interface MainTestClock {
@@ -477,9 +477,9 @@ package androidx.compose.ui.test {
     method @BytecodeOnly public int getPrimary-ipIFwKQ();
     method @BytecodeOnly public int getSecondary-ipIFwKQ();
     method @BytecodeOnly public int getTertiary-ipIFwKQ();
-    property public int Primary;
-    property public int Secondary;
-    property public int Tertiary;
+    property public androidx.compose.ui.test.MouseButton Primary;
+    property public androidx.compose.ui.test.MouseButton Secondary;
+    property public androidx.compose.ui.test.MouseButton Tertiary;
   }
 
   public interface MouseInjectionScope extends androidx.compose.ui.test.InjectionScope {
@@ -503,7 +503,7 @@ package androidx.compose.ui.test {
     method @BytecodeOnly public default void updatePointerBy-k-4lQ0M(long);
     method public void updatePointerTo(long position);
     method @BytecodeOnly public void updatePointerTo-k-4lQ0M(long);
-    property public abstract long currentPosition;
+    property public abstract androidx.compose.ui.geometry.Offset currentPosition;
   }
 
   public final class MouseInjectionScopeKt {
@@ -548,10 +548,10 @@ package androidx.compose.ui.test {
     method @BytecodeOnly public int getNoNav-2KYgJvY();
     method @BytecodeOnly public int getTrackball-2KYgJvY();
     method @BytecodeOnly public int getWheel-2KYgJvY();
-    property public int Dpad;
-    property public int NoNav;
-    property public int Trackball;
-    property public int Wheel;
+    property public androidx.compose.ui.test.NavigationType Dpad;
+    property public androidx.compose.ui.test.NavigationType NoNav;
+    property public androidx.compose.ui.test.NavigationType Trackball;
+    property public androidx.compose.ui.test.NavigationType Wheel;
   }
 
   public final class OutputKt {
@@ -582,8 +582,8 @@ package androidx.compose.ui.test {
   public static final class ScrollWheel.Companion {
     method @BytecodeOnly public int getHorizontal-LTdd5XU();
     method @BytecodeOnly public int getVertical-LTdd5XU();
-    property public int Horizontal;
-    property public int Vertical;
+    property public androidx.compose.ui.test.ScrollWheel Horizontal;
+    property public androidx.compose.ui.test.ScrollWheel Vertical;
   }
 
   public final class SelectionResult {
@@ -758,13 +758,13 @@ package androidx.compose.ui.test {
     method @BytecodeOnly public int getTelevision-ZjwGzpQ();
     method @BytecodeOnly public int getVrHeadset-ZjwGzpQ();
     method @BytecodeOnly public int getWatch-ZjwGzpQ();
-    property public int Appliance;
-    property public int Car;
-    property public int Desk;
-    property public int Normal;
-    property public int Television;
-    property public int VrHeadset;
-    property public int Watch;
+    property public androidx.compose.ui.test.UiModeType Appliance;
+    property public androidx.compose.ui.test.UiModeType Car;
+    property public androidx.compose.ui.test.UiModeType Desk;
+    property public androidx.compose.ui.test.UiModeType Normal;
+    property public androidx.compose.ui.test.UiModeType Television;
+    property public androidx.compose.ui.test.UiModeType VrHeadset;
+    property public androidx.compose.ui.test.UiModeType Watch;
   }
 
 }

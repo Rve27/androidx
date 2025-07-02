@@ -138,9 +138,9 @@ package androidx.constraintlayout.compose {
     property public float scaleY;
     property public androidx.constraintlayout.compose.VerticalAnchorable start;
     property public androidx.constraintlayout.compose.HorizontalAnchorable top;
-    property public float translationX;
-    property public float translationY;
-    property public float translationZ;
+    property public androidx.compose.ui.unit.Dp translationX;
+    property public androidx.compose.ui.unit.Dp translationY;
+    property public androidx.compose.ui.unit.Dp translationZ;
     property @FloatRange(from=0.0, to=1.0) public float verticalBias;
     property public float verticalChainWeight;
     property public androidx.constraintlayout.compose.Visibility visibility;
@@ -388,8 +388,8 @@ package androidx.constraintlayout.compose {
   public static final class DebugFlags.Companion {
     method @BytecodeOnly public int getAll-bfy_xzQ();
     method @BytecodeOnly public int getNone-bfy_xzQ();
-    property public int All;
-    property public int None;
+    property public androidx.constraintlayout.compose.DebugFlags All;
+    property public androidx.constraintlayout.compose.DebugFlags None;
   }
 
   public final class DesignElements {
@@ -486,8 +486,8 @@ package androidx.constraintlayout.compose {
   public static final class GridFlag.Companion {
     method @BytecodeOnly public int getNone-dTRCCdc();
     method @BytecodeOnly public int getPlaceLayoutsOnSpansFirst-dTRCCdc();
-    property public int None;
-    property public int PlaceLayoutsOnSpansFirst;
+    property public androidx.constraintlayout.compose.GridFlag None;
+    property public androidx.constraintlayout.compose.GridFlag PlaceLayoutsOnSpansFirst;
   }
 
   @androidx.compose.runtime.Immutable public final class HorizontalAlign {
@@ -580,9 +580,9 @@ package androidx.constraintlayout.compose {
     property public float rotationZ;
     property public float scaleX;
     property public float scaleY;
-    property public float translationX;
-    property public float translationY;
-    property public float translationZ;
+    property public androidx.compose.ui.unit.Dp translationX;
+    property public androidx.compose.ui.unit.Dp translationY;
+    property public androidx.compose.ui.unit.Dp translationZ;
   }
 
   @SuppressCompatibility @androidx.compose.foundation.layout.LayoutScopeMarker @androidx.constraintlayout.compose.ExperimentalMotionApi public final class KeyAttributesScope extends androidx.constraintlayout.compose.BaseKeyFramesScope {
@@ -623,9 +623,9 @@ package androidx.constraintlayout.compose {
     property public float rotationZ;
     property public float scaleX;
     property public float scaleY;
-    property public float translationX;
-    property public float translationY;
-    property public float translationZ;
+    property public androidx.compose.ui.unit.Dp translationX;
+    property public androidx.compose.ui.unit.Dp translationY;
+    property public androidx.compose.ui.unit.Dp translationZ;
   }
 
   @SuppressCompatibility @androidx.compose.foundation.layout.LayoutScopeMarker @androidx.constraintlayout.compose.ExperimentalMotionApi public final class KeyCyclesScope extends androidx.constraintlayout.compose.BaseKeyFramesScope {
@@ -919,7 +919,7 @@ package androidx.constraintlayout.compose {
     method @BytecodeOnly public void setRootIncomingConstraints-BRTryo0(long);
     property public androidx.compose.ui.unit.Density density;
     property @Deprecated public androidx.compose.ui.unit.LayoutDirection layoutDirection;
-    property public long rootIncomingConstraints;
+    property public androidx.compose.ui.unit.Constraints rootIncomingConstraints;
   }
 
   @SuppressCompatibility @androidx.constraintlayout.compose.ExperimentalMotionApi public final class SwipeDirection {

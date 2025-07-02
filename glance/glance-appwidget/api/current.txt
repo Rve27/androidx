@@ -330,7 +330,7 @@ package androidx.glance.appwidget.lazy {
     ctor @KotlinOnly public GridCells.Adaptive(androidx.compose.ui.unit.Dp minSize);
     ctor @BytecodeOnly public GridCells.Adaptive(float, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @BytecodeOnly public float getMinSize-D9Ej5fM();
-    property public float minSize;
+    property public androidx.compose.ui.unit.Dp minSize;
   }
 
   public static final class GridCells.Fixed extends androidx.glance.appwidget.lazy.GridCells {

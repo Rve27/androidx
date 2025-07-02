@@ -93,7 +93,7 @@ package androidx.xr.compose.spatial {
   public final class OrbiterDefaults {
     method @BytecodeOnly public float getElevation-D9Ej5fM();
     method public androidx.xr.compose.subspace.layout.SpatialShape getShape();
-    property public float Elevation;
+    property public androidx.compose.ui.unit.Dp Elevation;
     property public androidx.xr.compose.subspace.layout.SpatialShape Shape;
     field public static final androidx.xr.compose.spatial.OrbiterDefaults INSTANCE;
   }
@@ -115,9 +115,9 @@ package androidx.xr.compose.spatial {
     method @BytecodeOnly public int getInnerEdge-daoJdME();
     method @BytecodeOnly public int getOuterEdge-daoJdME();
     method @BytecodeOnly public int getOverlap-daoJdME();
-    property public int InnerEdge;
-    property public int OuterEdge;
-    property public int Overlap;
+    property public androidx.xr.compose.spatial.OrbiterOffsetType InnerEdge;
+    property public androidx.xr.compose.spatial.OrbiterOffsetType OuterEdge;
+    property public androidx.xr.compose.spatial.OrbiterOffsetType Overlap;
   }
 
   public final class SpatialDialogKt {
@@ -139,7 +139,7 @@ package androidx.xr.compose.spatial {
     property public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> backgroundContentAnimationSpec;
     property public boolean dismissOnBackPress;
     property public boolean dismissOnClickOutside;
-    property public float elevation;
+    property public androidx.compose.ui.unit.Dp elevation;
     property public boolean usePlatformDefaultWidth;
   }
 
@@ -157,14 +157,14 @@ package androidx.xr.compose.spatial {
     method @BytecodeOnly public float getLevel3-D9Ej5fM();
     method @BytecodeOnly public float getLevel4-D9Ej5fM();
     method @BytecodeOnly public float getLevel5-D9Ej5fM();
-    property public float ActivityDefault;
-    property public float DialogDefault;
-    property public float Level0;
-    property public float Level1;
-    property public float Level2;
-    property public float Level3;
-    property public float Level4;
-    property public float Level5;
+    property public androidx.compose.ui.unit.Dp ActivityDefault;
+    property public androidx.compose.ui.unit.Dp DialogDefault;
+    property public androidx.compose.ui.unit.Dp Level0;
+    property public androidx.compose.ui.unit.Dp Level1;
+    property public androidx.compose.ui.unit.Dp Level2;
+    property public androidx.compose.ui.unit.Dp Level3;
+    property public androidx.compose.ui.unit.Dp Level4;
+    property public androidx.compose.ui.unit.Dp Level5;
     field public static final androidx.xr.compose.spatial.SpatialElevationLevel INSTANCE;
   }
 
@@ -222,7 +222,7 @@ package androidx.xr.compose.subspace {
 
   public final class SpatialCurvedRowDefaults {
     method @BytecodeOnly public float getCurveRadius-D9Ej5fM();
-    property public float curveRadius;
+    property public androidx.compose.ui.unit.Dp curveRadius;
     field public static final androidx.xr.compose.subspace.SpatialCurvedRowDefaults INSTANCE;
   }
 
@@ -671,9 +671,9 @@ package androidx.xr.compose.unit {
     method @BytecodeOnly public float getDepth-D9Ej5fM();
     method @BytecodeOnly public float getHeight-D9Ej5fM();
     method @BytecodeOnly public float getWidth-D9Ej5fM();
-    property public float depth;
-    property public float height;
-    property public float width;
+    property public androidx.compose.ui.unit.Dp depth;
+    property public androidx.compose.ui.unit.Dp height;
+    property public androidx.compose.ui.unit.Dp width;
     field public static final androidx.xr.compose.unit.DpVolumeSize.Companion Companion;
   }
 
@@ -757,17 +757,17 @@ package androidx.xr.compose.unit {
     method @BytecodeOnly public float getMillimeters-zRPQRcA(float);
     method @BytecodeOnly public float getMillimeters-zRPQRcA(int);
     method @BytecodeOnly public float getNaN-sx7laI0();
-    property public float Infinity;
-    property public float NaN;
-    property public float int.centimeters;
-    property public float float.centimeters;
-    property public float double.centimeters;
-    property public float int.meters;
-    property public float float.meters;
-    property public float double.meters;
-    property public float int.millimeters;
-    property public float float.millimeters;
-    property public float double.millimeters;
+    property public androidx.xr.compose.unit.Meter Infinity;
+    property public androidx.xr.compose.unit.Meter NaN;
+    property public androidx.xr.compose.unit.Meter int.centimeters;
+    property public androidx.xr.compose.unit.Meter float.centimeters;
+    property public androidx.xr.compose.unit.Meter double.centimeters;
+    property public androidx.xr.compose.unit.Meter int.meters;
+    property public androidx.xr.compose.unit.Meter float.meters;
+    property public androidx.xr.compose.unit.Meter double.meters;
+    property public androidx.xr.compose.unit.Meter int.millimeters;
+    property public androidx.xr.compose.unit.Meter float.millimeters;
+    property public androidx.xr.compose.unit.Meter double.millimeters;
   }
 
   public final class MeterKt {

@@ -9,7 +9,7 @@ package androidx.ink.brush.compose {
     method @BytecodeOnly public static long getComposeColor(androidx.ink.brush.Brush);
     method public static androidx.ink.brush.Brush.Builder setComposeColor(androidx.ink.brush.Brush.Builder, long color);
     method @BytecodeOnly public static androidx.ink.brush.Brush.Builder setComposeColor-4WTKRHQ(androidx.ink.brush.Brush.Builder, long);
-    property public static long androidx.ink.brush.Brush.composeColor;
+    property public static androidx.compose.ui.graphics.Color androidx.ink.brush.Brush.composeColor;
   }
 
 }

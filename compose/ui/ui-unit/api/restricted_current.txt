@@ -133,9 +133,9 @@ package androidx.compose.ui.unit {
     method @BytecodeOnly public float getHairline-D9Ej5fM();
     method @BytecodeOnly public float getInfinity-D9Ej5fM();
     method @BytecodeOnly public float getUnspecified-D9Ej5fM();
-    property @androidx.compose.runtime.Stable public float Hairline;
-    property @androidx.compose.runtime.Stable public float Infinity;
-    property @androidx.compose.runtime.Stable public float Unspecified;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Dp Hairline;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Dp Infinity;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Dp Unspecified;
   }
 
   public final class DpKt {
@@ -189,20 +189,20 @@ package androidx.compose.ui.unit {
     method @BytecodeOnly @androidx.compose.runtime.Stable public static float times-3ABfNKs(int, float);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long times-6HolHcs(float, long);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long times-6HolHcs(int, long);
-    property @androidx.compose.runtime.Stable public static long long.center;
-    property @androidx.compose.runtime.Stable public static inline float int.dp;
-    property @androidx.compose.runtime.Stable public static inline float double.dp;
-    property @androidx.compose.runtime.Stable public static inline float float.dp;
-    property @androidx.compose.runtime.Stable public static inline float androidx.compose.ui.unit.DpRect.height;
-    property @androidx.compose.runtime.Stable public static inline boolean float.isFinite;
-    property @androidx.compose.runtime.Stable public static inline boolean float.isSpecified;
-    property @androidx.compose.runtime.Stable public static inline boolean long.isSpecified;
-    property @androidx.compose.runtime.Stable public static inline boolean long.isSpecified;
-    property @androidx.compose.runtime.Stable public static inline boolean float.isUnspecified;
-    property @androidx.compose.runtime.Stable public static inline boolean long.isUnspecified;
-    property @androidx.compose.runtime.Stable public static inline boolean long.isUnspecified;
-    property @androidx.compose.runtime.Stable public static inline long androidx.compose.ui.unit.DpRect.size;
-    property @androidx.compose.runtime.Stable public static inline float androidx.compose.ui.unit.DpRect.width;
+    property @androidx.compose.runtime.Stable public static androidx.compose.ui.unit.DpOffset androidx.compose.ui.unit.DpSize.center;
+    property @androidx.compose.runtime.Stable public static inline androidx.compose.ui.unit.Dp int.dp;
+    property @androidx.compose.runtime.Stable public static inline androidx.compose.ui.unit.Dp double.dp;
+    property @androidx.compose.runtime.Stable public static inline androidx.compose.ui.unit.Dp float.dp;
+    property @androidx.compose.runtime.Stable public static inline androidx.compose.ui.unit.Dp androidx.compose.ui.unit.DpRect.height;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.unit.Dp.isFinite;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.unit.Dp.isSpecified;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.unit.DpOffset.isSpecified;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.unit.DpSize.isSpecified;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.unit.Dp.isUnspecified;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.unit.DpOffset.isUnspecified;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.unit.DpSize.isUnspecified;
+    property @androidx.compose.runtime.Stable public static inline androidx.compose.ui.unit.DpSize androidx.compose.ui.unit.DpRect.size;
+    property @androidx.compose.runtime.Stable public static inline androidx.compose.ui.unit.Dp androidx.compose.ui.unit.DpRect.width;
   }
 
   @androidx.compose.runtime.Immutable @kotlin.jvm.JvmInline public final value class DpOffset {
@@ -220,16 +220,16 @@ package androidx.compose.ui.unit {
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long plus-CB-Mgk4(long, long);
     method @BytecodeOnly public long unbox-impl();
     property public long packedValue;
-    property @androidx.compose.runtime.Stable public float x;
-    property @androidx.compose.runtime.Stable public float y;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Dp x;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Dp y;
     field public static final androidx.compose.ui.unit.DpOffset.Companion Companion;
   }
 
   public static final class DpOffset.Companion {
     method @BytecodeOnly public long getUnspecified-RKDOV3M();
     method @BytecodeOnly public long getZero-RKDOV3M();
-    property public long Unspecified;
-    property public long Zero;
+    property public androidx.compose.ui.unit.DpOffset Unspecified;
+    property public androidx.compose.ui.unit.DpOffset Zero;
   }
 
   @androidx.compose.runtime.Immutable public final class DpRect {
@@ -246,10 +246,10 @@ package androidx.compose.ui.unit {
     method @BytecodeOnly public float getLeft-D9Ej5fM();
     method @BytecodeOnly public float getRight-D9Ej5fM();
     method @BytecodeOnly public float getTop-D9Ej5fM();
-    property @androidx.compose.runtime.Stable public float bottom;
-    property @androidx.compose.runtime.Stable public float left;
-    property @androidx.compose.runtime.Stable public float right;
-    property @androidx.compose.runtime.Stable public float top;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Dp bottom;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Dp left;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Dp right;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Dp top;
     field public static final androidx.compose.ui.unit.DpRect.Companion Companion;
   }
 
@@ -279,17 +279,17 @@ package androidx.compose.ui.unit {
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long times-Gh9hcWk(long, float);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long times-Gh9hcWk(long, int);
     method @BytecodeOnly public long unbox-impl();
-    property @androidx.compose.runtime.Stable public float height;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Dp height;
     property @kotlin.PublishedApi internal long packedValue;
-    property @androidx.compose.runtime.Stable public float width;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Dp width;
     field public static final androidx.compose.ui.unit.DpSize.Companion Companion;
   }
 
   public static final class DpSize.Companion {
     method @BytecodeOnly public long getUnspecified-MYxV2XQ();
     method @BytecodeOnly public long getZero-MYxV2XQ();
-    property public long Unspecified;
-    property public long Zero;
+    property public androidx.compose.ui.unit.DpSize Unspecified;
+    property public androidx.compose.ui.unit.DpSize Zero;
   }
 
   @SuppressCompatibility @kotlin.RequiresOptIn(message="This API is experimental and is likely to change in the future.") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public @interface ExperimentalUnitApi {
@@ -339,8 +339,8 @@ package androidx.compose.ui.unit {
   public static final class IntOffset.Companion {
     method @BytecodeOnly public long getMax-nOcc-ac();
     method @BytecodeOnly public long getZero-nOcc-ac();
-    property public long Max;
-    property public long Zero;
+    property public androidx.compose.ui.unit.IntOffset Max;
+    property public androidx.compose.ui.unit.IntOffset Zero;
   }
 
   public final class IntOffsetKt {
@@ -397,23 +397,23 @@ package androidx.compose.ui.unit {
     method @androidx.compose.runtime.Stable public androidx.compose.ui.unit.IntRect translate(long offset);
     method @BytecodeOnly @androidx.compose.runtime.Stable public androidx.compose.ui.unit.IntRect translate--gyyYBs(long);
     property @androidx.compose.runtime.Stable public int bottom;
-    property public long bottomCenter;
-    property public long bottomLeft;
-    property public long bottomRight;
-    property public long center;
-    property public long centerLeft;
-    property public long centerRight;
+    property public androidx.compose.ui.unit.IntOffset bottomCenter;
+    property public androidx.compose.ui.unit.IntOffset bottomLeft;
+    property public androidx.compose.ui.unit.IntOffset bottomRight;
+    property public androidx.compose.ui.unit.IntOffset center;
+    property public androidx.compose.ui.unit.IntOffset centerLeft;
+    property public androidx.compose.ui.unit.IntOffset centerRight;
     property @androidx.compose.runtime.Stable public int height;
     property @androidx.compose.runtime.Stable public boolean isEmpty;
     property @androidx.compose.runtime.Stable public int left;
     property public int maxDimension;
     property public int minDimension;
     property @androidx.compose.runtime.Stable public int right;
-    property @androidx.compose.runtime.Stable public long size;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.IntSize size;
     property @androidx.compose.runtime.Stable public int top;
-    property public long topCenter;
-    property public long topLeft;
-    property public long topRight;
+    property public androidx.compose.ui.unit.IntOffset topCenter;
+    property public androidx.compose.ui.unit.IntOffset topLeft;
+    property public androidx.compose.ui.unit.IntOffset topRight;
     property @androidx.compose.runtime.Stable public int width;
     field public static final androidx.compose.ui.unit.IntRect.Companion Companion;
   }
@@ -459,7 +459,7 @@ package androidx.compose.ui.unit {
 
   public static final class IntSize.Companion {
     method @BytecodeOnly public long getZero-YbymL2g();
-    property public long Zero;
+    property public androidx.compose.ui.unit.IntSize Zero;
   }
 
   public final class IntSizeKt {
@@ -475,7 +475,7 @@ package androidx.compose.ui.unit {
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long toIntSize-uvyYCjk(long);
     method @androidx.compose.runtime.Stable public static long toSize(long);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long toSize-ozmzZPI(long);
-    property @androidx.compose.runtime.Stable public static long long.center;
+    property @androidx.compose.runtime.Stable public static androidx.compose.ui.unit.IntOffset androidx.compose.ui.unit.IntSize.center;
   }
 
   public enum LayoutDirection {
@@ -510,14 +510,14 @@ package androidx.compose.ui.unit {
     property public boolean isEm;
     property public boolean isSp;
     property @kotlin.PublishedApi internal long rawType;
-    property public long type;
+    property public androidx.compose.ui.unit.TextUnitType type;
     property public float value;
     field public static final androidx.compose.ui.unit.TextUnit.Companion Companion;
   }
 
   public static final class TextUnit.Companion {
     method @BytecodeOnly public long getUnspecified-XSAIIZE();
-    property @androidx.compose.runtime.Stable public long Unspecified;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.TextUnit Unspecified;
   }
 
   public final class TextUnitKt {
@@ -548,14 +548,14 @@ package androidx.compose.ui.unit {
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long times-mpE4wyQ(double, long);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long times-mpE4wyQ(float, long);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long times-mpE4wyQ(int, long);
-    property @androidx.compose.runtime.Stable public static long float.em;
-    property @androidx.compose.runtime.Stable public static long double.em;
-    property @androidx.compose.runtime.Stable public static long int.em;
-    property @androidx.compose.runtime.Stable public static inline boolean long.isSpecified;
-    property @androidx.compose.runtime.Stable public static inline boolean long.isUnspecified;
-    property @androidx.compose.runtime.Stable public static long float.sp;
-    property @androidx.compose.runtime.Stable public static long double.sp;
-    property @androidx.compose.runtime.Stable public static long int.sp;
+    property @androidx.compose.runtime.Stable public static androidx.compose.ui.unit.TextUnit float.em;
+    property @androidx.compose.runtime.Stable public static androidx.compose.ui.unit.TextUnit double.em;
+    property @androidx.compose.runtime.Stable public static androidx.compose.ui.unit.TextUnit int.em;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.unit.TextUnit.isSpecified;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.unit.TextUnit.isUnspecified;
+    property @androidx.compose.runtime.Stable public static androidx.compose.ui.unit.TextUnit float.sp;
+    property @androidx.compose.runtime.Stable public static androidx.compose.ui.unit.TextUnit double.sp;
+    property @androidx.compose.runtime.Stable public static androidx.compose.ui.unit.TextUnit int.sp;
   }
 
   @kotlin.jvm.JvmInline public final value class TextUnitType {
@@ -570,9 +570,9 @@ package androidx.compose.ui.unit {
     method @BytecodeOnly public long getEm-UIouoOA();
     method @BytecodeOnly public long getSp-UIouoOA();
     method @BytecodeOnly public long getUnspecified-UIouoOA();
-    property public long Em;
-    property public long Sp;
-    property public long Unspecified;
+    property public androidx.compose.ui.unit.TextUnitType Em;
+    property public androidx.compose.ui.unit.TextUnitType Sp;
+    property public androidx.compose.ui.unit.TextUnitType Unspecified;
   }
 
   @androidx.compose.runtime.Immutable @kotlin.jvm.JvmInline public final value class Velocity {
@@ -605,7 +605,7 @@ package androidx.compose.ui.unit {
 
   public static final class Velocity.Companion {
     method @BytecodeOnly public long getZero-9UxMQ8M();
-    property @androidx.compose.runtime.Stable public long Zero;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.unit.Velocity Zero;
   }
 
   public final class VelocityKt {

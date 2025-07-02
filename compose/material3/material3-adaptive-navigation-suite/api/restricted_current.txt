@@ -20,14 +20,14 @@ package androidx.compose.material3.adaptive.navigationsuite {
     method @BytecodeOnly public long getShortNavigationBarContainerColor-0d7_KjU();
     method @BytecodeOnly public long getShortNavigationBarContentColor-0d7_KjU();
     method public androidx.compose.material3.WideNavigationRailColors getWideNavigationRailColors();
-    property public long navigationBarContainerColor;
-    property public long navigationBarContentColor;
-    property public long navigationDrawerContainerColor;
-    property public long navigationDrawerContentColor;
-    property public long navigationRailContainerColor;
-    property public long navigationRailContentColor;
-    property public long shortNavigationBarContainerColor;
-    property public long shortNavigationBarContentColor;
+    property public androidx.compose.ui.graphics.Color navigationBarContainerColor;
+    property public androidx.compose.ui.graphics.Color navigationBarContentColor;
+    property public androidx.compose.ui.graphics.Color navigationDrawerContainerColor;
+    property public androidx.compose.ui.graphics.Color navigationDrawerContentColor;
+    property public androidx.compose.ui.graphics.Color navigationRailContainerColor;
+    property public androidx.compose.ui.graphics.Color navigationRailContentColor;
+    property public androidx.compose.ui.graphics.Color shortNavigationBarContainerColor;
+    property public androidx.compose.ui.graphics.Color shortNavigationBarContentColor;
     property public androidx.compose.material3.WideNavigationRailColors wideNavigationRailColors;
   }
 
@@ -61,8 +61,8 @@ package androidx.compose.material3.adaptive.navigationsuite {
     method public androidx.compose.ui.Alignment.Horizontal getPrimaryActionContentAlignment();
     method public String navigationSuiteType(androidx.compose.material3.adaptive.WindowAdaptiveInfo adaptiveInfo);
     method @BytecodeOnly public String navigationSuiteType-JYfApLo(androidx.compose.material3.adaptive.WindowAdaptiveInfo);
-    property public long containerColor;
-    property public long contentColor;
+    property public androidx.compose.ui.graphics.Color containerColor;
+    property public androidx.compose.ui.graphics.Color contentColor;
     property public androidx.compose.ui.Alignment.Horizontal primaryActionContentAlignment;
     field public static final androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults INSTANCE;
   }
@@ -113,10 +113,10 @@ package androidx.compose.material3.adaptive.navigationsuite {
     method public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors getNavigationSuiteColors();
     method public kotlin.jvm.functions.Function1<androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope,kotlin.Unit> getNavigationSuiteItems();
     method public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldState getState();
-    property public long containerColor;
+    property public androidx.compose.ui.graphics.Color containerColor;
     property public kotlin.jvm.functions.Function0<kotlin.Unit> content;
-    property public long contentColor;
-    property public String layoutType;
+    property public androidx.compose.ui.graphics.Color contentColor;
+    property public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType layoutType;
     property public androidx.compose.ui.Modifier modifier;
     property public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteColors navigationSuiteColors;
     property public kotlin.jvm.functions.Function1<androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope,kotlin.Unit> navigationSuiteItems;
@@ -161,14 +161,14 @@ package androidx.compose.material3.adaptive.navigationsuite {
     method @BytecodeOnly public String getShortNavigationBarMedium-QfFTkUs();
     method @BytecodeOnly public String getWideNavigationRailCollapsed-QfFTkUs();
     method @BytecodeOnly public String getWideNavigationRailExpanded-QfFTkUs();
-    property public String NavigationBar;
-    property public String NavigationDrawer;
-    property public String NavigationRail;
-    property public String None;
-    property public String ShortNavigationBarCompact;
-    property public String ShortNavigationBarMedium;
-    property public String WideNavigationRailCollapsed;
-    property public String WideNavigationRailExpanded;
+    property public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType NavigationBar;
+    property public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType NavigationDrawer;
+    property public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType NavigationRail;
+    property public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType None;
+    property public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType ShortNavigationBarCompact;
+    property public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType ShortNavigationBarMedium;
+    property public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType WideNavigationRailCollapsed;
+    property public androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType WideNavigationRailExpanded;
   }
 
 }

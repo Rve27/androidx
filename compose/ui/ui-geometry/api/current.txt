@@ -37,7 +37,7 @@ package androidx.compose.ui.geometry {
 
   public static final class CornerRadius.Companion {
     method @BytecodeOnly public long getZero-kKHJgLs();
-    property @androidx.compose.runtime.Stable public long Zero;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.geometry.CornerRadius Zero;
   }
 
   public final class CornerRadiusKt {
@@ -85,12 +85,12 @@ package androidx.compose.ui.geometry {
     method public void translate(long offset);
     method @BytecodeOnly public void translate-k-4lQ0M(long);
     property public float bottom;
-    property public long bottomCenter;
-    property public long bottomLeft;
-    property public long bottomRight;
-    property public long center;
-    property public long centerLeft;
-    property public long centerRight;
+    property public androidx.compose.ui.geometry.Offset bottomCenter;
+    property public androidx.compose.ui.geometry.Offset bottomLeft;
+    property public androidx.compose.ui.geometry.Offset bottomRight;
+    property public androidx.compose.ui.geometry.Offset center;
+    property public androidx.compose.ui.geometry.Offset centerLeft;
+    property public androidx.compose.ui.geometry.Offset centerRight;
     property public inline float height;
     property public boolean isEmpty;
     property public boolean isFinite;
@@ -99,11 +99,11 @@ package androidx.compose.ui.geometry {
     property public float maxDimension;
     property public float minDimension;
     property public float right;
-    property public long size;
+    property public androidx.compose.ui.geometry.Size size;
     property public float top;
-    property public long topCenter;
-    property public long topLeft;
-    property public long topRight;
+    property public androidx.compose.ui.geometry.Offset topCenter;
+    property public androidx.compose.ui.geometry.Offset topLeft;
+    property public androidx.compose.ui.geometry.Offset topRight;
     property public inline float width;
   }
 
@@ -159,9 +159,9 @@ package androidx.compose.ui.geometry {
     method @BytecodeOnly public long getInfinite-F1C5BW0();
     method @BytecodeOnly public long getUnspecified-F1C5BW0();
     method @BytecodeOnly public long getZero-F1C5BW0();
-    property @androidx.compose.runtime.Stable public long Infinite;
-    property @androidx.compose.runtime.Stable public long Unspecified;
-    property @androidx.compose.runtime.Stable public long Zero;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.geometry.Offset Infinite;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.geometry.Offset Unspecified;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.geometry.Offset Zero;
   }
 
   public final class OffsetKt {
@@ -173,9 +173,9 @@ package androidx.compose.ui.geometry {
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long lerp-Wko1d7g(long, long, float);
     method public static inline long takeOrElse(long, kotlin.jvm.functions.Function0<androidx.compose.ui.geometry.Offset> block);
     method @BytecodeOnly public static long takeOrElse-3MmeM6k(long, kotlin.jvm.functions.Function0<androidx.compose.ui.geometry.Offset!>);
-    property @androidx.compose.runtime.Stable public static inline boolean long.isFinite;
-    property @androidx.compose.runtime.Stable public static inline boolean long.isSpecified;
-    property @androidx.compose.runtime.Stable public static inline boolean long.isUnspecified;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.geometry.Offset.isFinite;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.geometry.Offset.isSpecified;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.geometry.Offset.isUnspecified;
   }
 
   @androidx.compose.runtime.Immutable public final class Rect {
@@ -217,12 +217,12 @@ package androidx.compose.ui.geometry {
     method @androidx.compose.runtime.Stable public androidx.compose.ui.geometry.Rect translate(long offset);
     method @BytecodeOnly @androidx.compose.runtime.Stable public androidx.compose.ui.geometry.Rect translate-k-4lQ0M(long);
     property @androidx.compose.runtime.Stable public float bottom;
-    property public long bottomCenter;
-    property public long bottomLeft;
-    property public long bottomRight;
-    property public long center;
-    property public long centerLeft;
-    property public long centerRight;
+    property public androidx.compose.ui.geometry.Offset bottomCenter;
+    property public androidx.compose.ui.geometry.Offset bottomLeft;
+    property public androidx.compose.ui.geometry.Offset bottomRight;
+    property public androidx.compose.ui.geometry.Offset center;
+    property public androidx.compose.ui.geometry.Offset centerLeft;
+    property public androidx.compose.ui.geometry.Offset centerRight;
     property @androidx.compose.runtime.Stable public inline float height;
     property @androidx.compose.runtime.Stable public boolean isEmpty;
     property @androidx.compose.runtime.Stable public boolean isFinite;
@@ -231,11 +231,11 @@ package androidx.compose.ui.geometry {
     property public float maxDimension;
     property public float minDimension;
     property @androidx.compose.runtime.Stable public float right;
-    property @androidx.compose.runtime.Stable public long size;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.geometry.Size size;
     property @androidx.compose.runtime.Stable public float top;
-    property public long topCenter;
-    property public long topLeft;
-    property public long topRight;
+    property public androidx.compose.ui.geometry.Offset topCenter;
+    property public androidx.compose.ui.geometry.Offset topLeft;
+    property public androidx.compose.ui.geometry.Offset topRight;
     property @androidx.compose.runtime.Stable public inline float width;
     field public static final androidx.compose.ui.geometry.Rect.Companion Companion;
   }
@@ -281,14 +281,14 @@ package androidx.compose.ui.geometry {
     method public float getWidth();
     method public static androidx.compose.ui.geometry.RoundRect getZero();
     property public float bottom;
-    property public long bottomLeftCornerRadius;
-    property public long bottomRightCornerRadius;
+    property public androidx.compose.ui.geometry.CornerRadius bottomLeftCornerRadius;
+    property public androidx.compose.ui.geometry.CornerRadius bottomRightCornerRadius;
     property public float height;
     property public float left;
     property public float right;
     property public float top;
-    property public long topLeftCornerRadius;
-    property public long topRightCornerRadius;
+    property public androidx.compose.ui.geometry.CornerRadius topLeftCornerRadius;
+    property public androidx.compose.ui.geometry.CornerRadius topRightCornerRadius;
     property public float width;
     field public static final androidx.compose.ui.geometry.RoundRect.Companion Companion;
   }
@@ -322,7 +322,7 @@ package androidx.compose.ui.geometry {
     method public static androidx.compose.ui.geometry.RoundRect translate(androidx.compose.ui.geometry.RoundRect, long offset);
     method @BytecodeOnly public static androidx.compose.ui.geometry.RoundRect translate-Uv8p0NA(androidx.compose.ui.geometry.RoundRect, long);
     property public static androidx.compose.ui.geometry.Rect androidx.compose.ui.geometry.RoundRect.boundingRect;
-    property public static long androidx.compose.ui.geometry.RoundRect.center;
+    property public static androidx.compose.ui.geometry.Offset androidx.compose.ui.geometry.RoundRect.center;
     property public static boolean androidx.compose.ui.geometry.RoundRect.isCircle;
     property public static boolean androidx.compose.ui.geometry.RoundRect.isEllipse;
     property public static boolean androidx.compose.ui.geometry.RoundRect.isEmpty;
@@ -367,8 +367,8 @@ package androidx.compose.ui.geometry {
   public static final class Size.Companion {
     method @BytecodeOnly public long getUnspecified-NH-jbRc();
     method @BytecodeOnly public long getZero-NH-jbRc();
-    property @androidx.compose.runtime.Stable public long Unspecified;
-    property @androidx.compose.runtime.Stable public long Zero;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.geometry.Size Unspecified;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.geometry.Size Zero;
   }
 
   public final class SizeKt {
@@ -388,9 +388,9 @@ package androidx.compose.ui.geometry {
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long times-d16Qtg0(int, long);
     method @androidx.compose.runtime.Stable public static androidx.compose.ui.geometry.Rect toRect(long);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static androidx.compose.ui.geometry.Rect toRect-uvyYCjk(long);
-    property @androidx.compose.runtime.Stable public static long long.center;
-    property @androidx.compose.runtime.Stable public static inline boolean long.isSpecified;
-    property @androidx.compose.runtime.Stable public static inline boolean long.isUnspecified;
+    property @androidx.compose.runtime.Stable public static androidx.compose.ui.geometry.Offset androidx.compose.ui.geometry.Size.center;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.geometry.Size.isSpecified;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.geometry.Size.isUnspecified;
   }
 
 }

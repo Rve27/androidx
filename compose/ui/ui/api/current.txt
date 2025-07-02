@@ -189,9 +189,9 @@ package androidx.compose.ui {
     method @BytecodeOnly public float getDefault-NSsRyOo();
     method @BytecodeOnly public float getHigh-NSsRyOo();
     method @BytecodeOnly public float getNormal-NSsRyOo();
-    property public float Default;
-    property public float High;
-    property public float Normal;
+    property public androidx.compose.ui.FrameRateCategory Default;
+    property public androidx.compose.ui.FrameRateCategory High;
+    property public androidx.compose.ui.FrameRateCategory Normal;
   }
 
   public final class FrameRateKt {
@@ -554,8 +554,8 @@ package androidx.compose.ui.draw {
   public static final class BlurredEdgeTreatment.Companion {
     method @BytecodeOnly public androidx.compose.ui.graphics.Shape getRectangle---Goahg();
     method @BytecodeOnly public androidx.compose.ui.graphics.Shape getUnbounded---Goahg();
-    property public androidx.compose.ui.graphics.Shape Rectangle;
-    property public androidx.compose.ui.graphics.Shape Unbounded;
+    property public androidx.compose.ui.draw.BlurredEdgeTreatment Rectangle;
+    property public androidx.compose.ui.draw.BlurredEdgeTreatment Unbounded;
   }
 
   public interface BuildDrawCacheParams {
@@ -564,7 +564,7 @@ package androidx.compose.ui.draw {
     method @BytecodeOnly public long getSize-NH-jbRc();
     property public abstract androidx.compose.ui.unit.Density density;
     property public abstract androidx.compose.ui.unit.LayoutDirection layoutDirection;
-    property public abstract long size;
+    property public abstract androidx.compose.ui.geometry.Size size;
   }
 
   public sealed interface CacheDrawModifierNode extends androidx.compose.ui.node.DrawModifierNode {
@@ -585,7 +585,7 @@ package androidx.compose.ui.draw {
     property public float density;
     property public float fontScale;
     property public androidx.compose.ui.unit.LayoutDirection layoutDirection;
-    property public long size;
+    property public androidx.compose.ui.geometry.Size size;
   }
 
   public final class ClipKt {
@@ -657,10 +657,10 @@ package androidx.compose.ui.draw {
     method public void setRadius(float);
     method public void setSpread(float);
     property public abstract float alpha;
-    property public abstract int blendMode;
+    property public abstract androidx.compose.ui.graphics.BlendMode blendMode;
     property public abstract androidx.compose.ui.graphics.Brush? brush;
-    property public abstract long color;
-    property public abstract long offset;
+    property public abstract androidx.compose.ui.graphics.Color color;
+    property public abstract androidx.compose.ui.geometry.Offset offset;
     property public abstract float radius;
     property public abstract float spread;
   }
@@ -688,21 +688,21 @@ package androidx.compose.ui.focus {
     method @BytecodeOnly public int getPrevious-dhqQ-8s();
     method @BytecodeOnly public int getRight-dhqQ-8s();
     method @BytecodeOnly public int getUp-dhqQ-8s();
-    property public int Down;
-    property public int Enter;
-    property public int Exit;
-    property public int Left;
-    property public int Next;
-    property public int Previous;
-    property public int Right;
-    property public int Up;
+    property public androidx.compose.ui.focus.FocusDirection Down;
+    property public androidx.compose.ui.focus.FocusDirection Enter;
+    property public androidx.compose.ui.focus.FocusDirection Exit;
+    property public androidx.compose.ui.focus.FocusDirection Left;
+    property public androidx.compose.ui.focus.FocusDirection Next;
+    property public androidx.compose.ui.focus.FocusDirection Previous;
+    property public androidx.compose.ui.focus.FocusDirection Right;
+    property public androidx.compose.ui.focus.FocusDirection Up;
   }
 
   public sealed interface FocusEnterExitScope {
     method @Deprecated @SuppressCompatibility @androidx.compose.ui.ExperimentalComposeUiApi public default void cancelFocus();
     method public void cancelFocusChange();
     method @BytecodeOnly public int getRequestedFocusDirection-dhqQ-8s();
-    property public abstract int requestedFocusDirection;
+    property public abstract androidx.compose.ui.focus.FocusDirection requestedFocusDirection;
   }
 
   @Deprecated @kotlin.jvm.JvmDefaultWithCompatibility public interface FocusEventModifier extends androidx.compose.ui.Modifier.Element {
@@ -902,7 +902,7 @@ package androidx.compose.ui.focus {
     method @BytecodeOnly public boolean requestFocus-3ESFkO8(int);
     method @BytecodeOnly public void setFocusability-josRg5g(int);
     property public abstract androidx.compose.ui.focus.FocusState focusState;
-    property public abstract int focusability;
+    property public abstract androidx.compose.ui.focus.Focusability focusability;
   }
 
   public final class FocusTargetModifierNodeKt {
@@ -922,9 +922,9 @@ package androidx.compose.ui.focus {
     method @BytecodeOnly public int getAlways-LCbbffg();
     method @BytecodeOnly public int getNever-LCbbffg();
     method @BytecodeOnly public int getSystemDefined-LCbbffg();
-    property public int Always;
-    property public int Never;
-    property public int SystemDefined;
+    property public androidx.compose.ui.focus.Focusability Always;
+    property public androidx.compose.ui.focus.Focusability Never;
+    property public androidx.compose.ui.focus.Focusability SystemDefined;
   }
 
 }
@@ -941,9 +941,9 @@ package androidx.compose.ui.graphics {
     method @BytecodeOnly public int getAuto--NrFUSI();
     method @BytecodeOnly public int getModulateAlpha--NrFUSI();
     method @BytecodeOnly public int getOffscreen--NrFUSI();
-    property public int Auto;
-    property public int ModulateAlpha;
-    property public int Offscreen;
+    property public androidx.compose.ui.graphics.CompositingStrategy Auto;
+    property public androidx.compose.ui.graphics.CompositingStrategy ModulateAlpha;
+    property public androidx.compose.ui.graphics.CompositingStrategy Offscreen;
   }
 
   public final class GraphicsLayerModifierKt {
@@ -1002,12 +1002,12 @@ package androidx.compose.ui.graphics {
     method public void setTranslationX(float);
     method public void setTranslationY(float);
     property public abstract float alpha;
-    property public default long ambientShadowColor;
-    property public default int blendMode;
+    property public default androidx.compose.ui.graphics.Color ambientShadowColor;
+    property public default androidx.compose.ui.graphics.BlendMode blendMode;
     property public abstract float cameraDistance;
     property public abstract boolean clip;
     property public default androidx.compose.ui.graphics.ColorFilter? colorFilter;
-    property public default int compositingStrategy;
+    property public default androidx.compose.ui.graphics.CompositingStrategy compositingStrategy;
     property public default androidx.compose.ui.graphics.RenderEffect? renderEffect;
     property public abstract float rotationX;
     property public abstract float rotationY;
@@ -1016,9 +1016,9 @@ package androidx.compose.ui.graphics {
     property public abstract float scaleY;
     property public abstract float shadowElevation;
     property public abstract androidx.compose.ui.graphics.Shape shape;
-    property public default long size;
-    property public default long spotShadowColor;
-    property public abstract long transformOrigin;
+    property public default androidx.compose.ui.geometry.Size size;
+    property public default androidx.compose.ui.graphics.Color spotShadowColor;
+    property public abstract androidx.compose.ui.graphics.TransformOrigin transformOrigin;
     property public abstract float translationX;
     property public abstract float translationY;
   }
@@ -1029,7 +1029,7 @@ package androidx.compose.ui.graphics {
     method @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableOpenTarget(index=0xffffffff) public static androidx.compose.ui.graphics.layer.GraphicsLayer rememberGraphicsLayer();
     method @BytecodeOnly @androidx.compose.runtime.Composable @androidx.compose.runtime.ComposableOpenTarget(index=0xffffffff) public static androidx.compose.ui.graphics.layer.GraphicsLayer rememberGraphicsLayer(androidx.compose.runtime.Composer?, int);
     property public static float DefaultCameraDistance;
-    property public static long DefaultShadowColor;
+    property public static androidx.compose.ui.graphics.Color DefaultShadowColor;
     field public static final float DefaultCameraDistance = 8.0f;
   }
 
@@ -1051,7 +1051,7 @@ package androidx.compose.ui.graphics {
 
   public static final class TransformOrigin.Companion {
     method @BytecodeOnly public long getCenter-SzJe1aQ();
-    property public long Center;
+    property public androidx.compose.ui.graphics.TransformOrigin Center;
   }
 
   public final class TransformOriginKt {
@@ -1073,12 +1073,12 @@ package androidx.compose.ui.graphics.vector {
     method public float getViewportHeight();
     method public float getViewportWidth();
     property public boolean autoMirror;
-    property public float defaultHeight;
-    property public float defaultWidth;
+    property public androidx.compose.ui.unit.Dp defaultHeight;
+    property public androidx.compose.ui.unit.Dp defaultWidth;
     property public String name;
     property public androidx.compose.ui.graphics.vector.VectorGroup root;
-    property public int tintBlendMode;
-    property public long tintColor;
+    property public androidx.compose.ui.graphics.BlendMode tintBlendMode;
+    property public androidx.compose.ui.graphics.Color tintColor;
     property public float viewportHeight;
     property public float viewportWidth;
     field public static final androidx.compose.ui.graphics.vector.ImageVector.Companion Companion;
@@ -1167,7 +1167,7 @@ package androidx.compose.ui.graphics.vector {
     method @BytecodeOnly public static int getDefaultTintBlendMode();
     method @BytecodeOnly public static long getDefaultTintColor();
     method public static java.util.List<androidx.compose.ui.graphics.vector.PathNode> getEmptyPath();
-    property public static int DefaultFillType;
+    property public static androidx.compose.ui.graphics.PathFillType DefaultFillType;
     property public static String DefaultGroupName;
     property public static String DefaultPathName;
     property public static float DefaultPivotX;
@@ -1175,12 +1175,12 @@ package androidx.compose.ui.graphics.vector {
     property public static float DefaultRotation;
     property public static float DefaultScaleX;
     property public static float DefaultScaleY;
-    property public static int DefaultStrokeLineCap;
-    property public static int DefaultStrokeLineJoin;
+    property public static androidx.compose.ui.graphics.StrokeCap DefaultStrokeLineCap;
+    property public static androidx.compose.ui.graphics.StrokeJoin DefaultStrokeLineJoin;
     property public static float DefaultStrokeLineMiter;
     property public static float DefaultStrokeLineWidth;
-    property public static int DefaultTintBlendMode;
-    property public static long DefaultTintColor;
+    property public static androidx.compose.ui.graphics.BlendMode DefaultTintBlendMode;
+    property public static androidx.compose.ui.graphics.Color DefaultTintColor;
     property public static float DefaultTranslationX;
     property public static float DefaultTranslationY;
     property public static float DefaultTrimPathEnd;
@@ -1209,7 +1209,7 @@ package androidx.compose.ui.graphics.vector {
   public final class VectorPainter extends androidx.compose.ui.graphics.painter.Painter {
     method @BytecodeOnly public long getIntrinsicSize-NH-jbRc();
     method protected void onDraw(androidx.compose.ui.graphics.drawscope.DrawScope);
-    property public long intrinsicSize;
+    property public androidx.compose.ui.geometry.Size intrinsicSize;
   }
 
   public final class VectorPainterKt {
@@ -1244,11 +1244,11 @@ package androidx.compose.ui.graphics.vector {
     property public float fillAlpha;
     property public String name;
     property public java.util.List<androidx.compose.ui.graphics.vector.PathNode> pathData;
-    property public int pathFillType;
+    property public androidx.compose.ui.graphics.PathFillType pathFillType;
     property public androidx.compose.ui.graphics.Brush? stroke;
     property public float strokeAlpha;
-    property public int strokeLineCap;
-    property public int strokeLineJoin;
+    property public androidx.compose.ui.graphics.StrokeCap strokeLineCap;
+    property public androidx.compose.ui.graphics.StrokeJoin strokeLineJoin;
     property public float strokeLineMiter;
     property public float strokeLineWidth;
     property public float trimPathEnd;
@@ -1355,19 +1355,19 @@ package androidx.compose.ui.hapticfeedback {
     method @BytecodeOnly public int getToggleOn-5zf0vsI();
     method @BytecodeOnly public int getVirtualKey-5zf0vsI();
     method public java.util.List<androidx.compose.ui.hapticfeedback.HapticFeedbackType> values();
-    property public int Confirm;
-    property public int ContextClick;
-    property public int GestureEnd;
-    property public int GestureThresholdActivate;
-    property public int KeyboardTap;
-    property public int LongPress;
-    property public int Reject;
-    property public int SegmentFrequentTick;
-    property public int SegmentTick;
-    property public int TextHandleMove;
-    property public int ToggleOff;
-    property public int ToggleOn;
-    property public int VirtualKey;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType Confirm;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType ContextClick;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType GestureEnd;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType GestureThresholdActivate;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType KeyboardTap;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType LongPress;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType Reject;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType SegmentFrequentTick;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType SegmentTick;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType TextHandleMove;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType ToggleOff;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType ToggleOn;
+    property public androidx.compose.ui.hapticfeedback.HapticFeedbackType VirtualKey;
   }
 
 }
@@ -1383,15 +1383,15 @@ package androidx.compose.ui.input {
   public static final class InputMode.Companion {
     method @BytecodeOnly public int getKeyboard-aOaMEAU();
     method @BytecodeOnly public int getTouch-aOaMEAU();
-    property public int Keyboard;
-    property public int Touch;
+    property public androidx.compose.ui.input.InputMode Keyboard;
+    property public androidx.compose.ui.input.InputMode Touch;
   }
 
   public interface InputModeManager {
     method @BytecodeOnly public int getInputMode-aOaMEAU();
     method public boolean requestInputMode(int inputMode);
     method @BytecodeOnly public boolean requestInputMode-iuPiT84(int);
-    property public abstract int inputMode;
+    property public abstract androidx.compose.ui.input.InputMode inputMode;
   }
 
 }
@@ -1410,9 +1410,9 @@ package androidx.compose.ui.input.indirect {
     method @BytecodeOnly public int getPrimaryAxis-rpdSsPU();
     method @BytecodeOnly public int getType-LxEHWp8();
     method public long getUptimeMillis();
-    property public abstract long position;
-    property public abstract int primaryAxis;
-    property public abstract int type;
+    property public abstract androidx.compose.ui.geometry.Offset position;
+    property public abstract androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryAxis primaryAxis;
+    property public abstract androidx.compose.ui.input.indirect.IndirectTouchEventType type;
     property public abstract long uptimeMillis;
   }
 
@@ -1426,9 +1426,9 @@ package androidx.compose.ui.input.indirect {
     method @BytecodeOnly public int getUnspecified-rpdSsPU();
     method @BytecodeOnly public int getX-rpdSsPU();
     method @BytecodeOnly public int getY-rpdSsPU();
-    property public int Unspecified;
-    property public int X;
-    property public int Y;
+    property public androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryAxis Unspecified;
+    property public androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryAxis X;
+    property public androidx.compose.ui.input.indirect.IndirectTouchEventPrimaryAxis Y;
   }
 
   @SuppressCompatibility @androidx.compose.ui.ExperimentalIndirectTouchTypeApi @kotlin.jvm.JvmInline public final value class IndirectTouchEventType {
@@ -1442,10 +1442,10 @@ package androidx.compose.ui.input.indirect {
     method @BytecodeOnly public int getPress-LxEHWp8();
     method @BytecodeOnly public int getRelease-LxEHWp8();
     method @BytecodeOnly public int getUnknown-LxEHWp8();
-    property public int Move;
-    property public int Press;
-    property public int Release;
-    property public int Unknown;
+    property public androidx.compose.ui.input.indirect.IndirectTouchEventType Move;
+    property public androidx.compose.ui.input.indirect.IndirectTouchEventType Press;
+    property public androidx.compose.ui.input.indirect.IndirectTouchEventType Release;
+    property public androidx.compose.ui.input.indirect.IndirectTouchEventType Unknown;
   }
 
   public final class IndirectTouchInputModifierKt {
@@ -1760,293 +1760,293 @@ package androidx.compose.ui.input.key {
     method @BytecodeOnly public long getZero-EK5gGoQ();
     method @BytecodeOnly public long getZoomIn-EK5gGoQ();
     method @BytecodeOnly public long getZoomOut-EK5gGoQ();
-    property public long A;
-    property public long AllApps;
-    property public long AltLeft;
-    property public long AltRight;
-    property public long Apostrophe;
-    property public long AppSwitch;
-    property public long Assist;
-    property public long At;
-    property public long AvReceiverInput;
-    property public long AvReceiverPower;
-    property public long B;
-    property public long Back;
-    property public long Backslash;
-    property public long Backspace;
-    property public long Bookmark;
-    property public long Break;
-    property public long BrightnessDown;
-    property public long BrightnessUp;
-    property public long Browser;
-    property public long Button1;
-    property public long Button10;
-    property public long Button11;
-    property public long Button12;
-    property public long Button13;
-    property public long Button14;
-    property public long Button15;
-    property public long Button16;
-    property public long Button2;
-    property public long Button3;
-    property public long Button4;
-    property public long Button5;
-    property public long Button6;
-    property public long Button7;
-    property public long Button8;
-    property public long Button9;
-    property public long ButtonA;
-    property public long ButtonB;
-    property public long ButtonC;
-    property public long ButtonL1;
-    property public long ButtonL2;
-    property public long ButtonMode;
-    property public long ButtonR1;
-    property public long ButtonR2;
-    property public long ButtonSelect;
-    property public long ButtonStart;
-    property public long ButtonThumbLeft;
-    property public long ButtonThumbRight;
-    property public long ButtonX;
-    property public long ButtonY;
-    property public long ButtonZ;
-    property public long C;
-    property public long Calculator;
-    property public long Calendar;
-    property public long Call;
-    property public long Camera;
-    property public long CapsLock;
-    property public long Captions;
-    property public long ChannelDown;
-    property public long ChannelUp;
-    property public long Clear;
-    property public long Comma;
-    property public long Contacts;
-    property public long Copy;
-    property public long CtrlLeft;
-    property public long CtrlRight;
-    property public long Cut;
-    property public long D;
-    property public long Delete;
-    property public long DirectionCenter;
-    property public long DirectionDown;
-    property public long DirectionDownLeft;
-    property public long DirectionDownRight;
-    property public long DirectionLeft;
-    property public long DirectionRight;
-    property public long DirectionUp;
-    property public long DirectionUpLeft;
-    property public long DirectionUpRight;
-    property public long Dvr;
-    property public long E;
-    property public long Eight;
-    property public long Eisu;
-    property public long EndCall;
-    property public long Enter;
-    property public long Envelope;
-    property public long Equals;
-    property public long Escape;
-    property public long F;
-    property public long F1;
-    property public long F10;
-    property public long F11;
-    property public long F12;
-    property public long F2;
-    property public long F3;
-    property public long F4;
-    property public long F5;
-    property public long F6;
-    property public long F7;
-    property public long F8;
-    property public long F9;
-    property public long Five;
-    property public long Focus;
-    property public long Forward;
-    property public long Four;
-    property public long Function;
-    property public long G;
-    property public long Grave;
-    property public long Guide;
-    property public long H;
-    property public long HeadsetHook;
-    property public long Help;
-    property public long Henkan;
-    property public long Home;
-    property public long I;
-    property public long Info;
-    property public long Insert;
-    property public long J;
-    property public long K;
-    property public long Kana;
-    property public long KatakanaHiragana;
-    property public long L;
-    property public long LanguageSwitch;
-    property public long LastChannel;
-    property public long LeftBracket;
-    property public long M;
-    property public long MannerMode;
-    property public long MediaAudioTrack;
-    property public long MediaClose;
-    property public long MediaEject;
-    property public long MediaFastForward;
-    property public long MediaNext;
-    property public long MediaPause;
-    property public long MediaPlay;
-    property public long MediaPlayPause;
-    property public long MediaPrevious;
-    property public long MediaRecord;
-    property public long MediaRewind;
-    property public long MediaSkipBackward;
-    property public long MediaSkipForward;
-    property public long MediaStepBackward;
-    property public long MediaStepForward;
-    property public long MediaStop;
-    property public long MediaTopMenu;
-    property public long Menu;
-    property public long MetaLeft;
-    property public long MetaRight;
-    property public long MicrophoneMute;
-    property public long Minus;
-    property public long MoveEnd;
-    property public long MoveHome;
-    property public long Muhenkan;
-    property public long Multiply;
-    property public long Music;
-    property public long N;
-    property public long NavigateIn;
-    property public long NavigateNext;
-    property public long NavigateOut;
-    property public long NavigatePrevious;
-    property public long Nine;
-    property public long Notification;
-    property public long NumLock;
-    property public long NumPad0;
-    property public long NumPad1;
-    property public long NumPad2;
-    property public long NumPad3;
-    property public long NumPad4;
-    property public long NumPad5;
-    property public long NumPad6;
-    property public long NumPad7;
-    property public long NumPad8;
-    property public long NumPad9;
-    property public long NumPadAdd;
-    property public long NumPadComma;
-    property public long NumPadDivide;
-    property public long NumPadDot;
-    property public long NumPadEnter;
-    property public long NumPadEquals;
-    property public long NumPadLeftParenthesis;
-    property public long NumPadMultiply;
-    property public long NumPadRightParenthesis;
-    property public long NumPadSubtract;
-    property public long Number;
-    property public long O;
-    property public long One;
-    property public long P;
-    property public long PageDown;
-    property public long PageUp;
-    property public long Pairing;
-    property public long Paste;
-    property public long Period;
-    property public long PictureSymbols;
-    property public long Plus;
-    property public long Pound;
-    property public long Power;
-    property public long PrintScreen;
-    property public long ProfileSwitch;
-    property public long ProgramBlue;
-    property public long ProgramGreen;
-    property public long ProgramRed;
-    property public long ProgramYellow;
-    property public long Q;
-    property public long R;
-    property public long Refresh;
-    property public long RightBracket;
-    property public long Ro;
-    property public long S;
-    property public long ScrollLock;
-    property public long Search;
-    property public long Semicolon;
-    property public long SetTopBoxInput;
-    property public long SetTopBoxPower;
-    property public long Settings;
-    property public long Seven;
-    property public long ShiftLeft;
-    property public long ShiftRight;
-    property public long Six;
-    property public long Slash;
-    property public long Sleep;
-    property public long SoftLeft;
-    property public long SoftRight;
-    property public long SoftSleep;
-    property public long Spacebar;
-    property public long Stem1;
-    property public long Stem2;
-    property public long Stem3;
-    property public long StemPrimary;
-    property public long SwitchCharset;
-    property public long Symbol;
-    property public long SystemNavigationDown;
-    property public long SystemNavigationLeft;
-    property public long SystemNavigationRight;
-    property public long SystemNavigationUp;
-    property public long T;
-    property public long Tab;
-    property public long Three;
-    property public long ThumbsDown;
-    property public long ThumbsUp;
-    property public long Toggle2D3D;
-    property public long Tv;
-    property public long TvAntennaCable;
-    property public long TvAudioDescription;
-    property public long TvAudioDescriptionMixingVolumeDown;
-    property public long TvAudioDescriptionMixingVolumeUp;
-    property public long TvContentsMenu;
-    property public long TvDataService;
-    property public long TvInput;
-    property public long TvInputComponent1;
-    property public long TvInputComponent2;
-    property public long TvInputComposite1;
-    property public long TvInputComposite2;
-    property public long TvInputHdmi1;
-    property public long TvInputHdmi2;
-    property public long TvInputHdmi3;
-    property public long TvInputHdmi4;
-    property public long TvInputVga1;
-    property public long TvMediaContextMenu;
-    property public long TvNetwork;
-    property public long TvNumberEntry;
-    property public long TvPower;
-    property public long TvRadioService;
-    property public long TvSatellite;
-    property public long TvSatelliteBs;
-    property public long TvSatelliteCs;
-    property public long TvSatelliteService;
-    property public long TvTeletext;
-    property public long TvTerrestrialAnalog;
-    property public long TvTerrestrialDigital;
-    property public long TvTimerProgramming;
-    property public long TvZoomMode;
-    property public long Two;
-    property public long U;
-    property public long Unknown;
-    property public long V;
-    property public long VoiceAssist;
-    property public long VolumeDown;
-    property public long VolumeMute;
-    property public long VolumeUp;
-    property public long W;
-    property public long WakeUp;
-    property public long Window;
-    property public long X;
-    property public long Y;
-    property public long Yen;
-    property public long Z;
-    property public long ZenkakuHankaru;
-    property public long Zero;
-    property public long ZoomIn;
-    property public long ZoomOut;
+    property public androidx.compose.ui.input.key.Key A;
+    property public androidx.compose.ui.input.key.Key AllApps;
+    property public androidx.compose.ui.input.key.Key AltLeft;
+    property public androidx.compose.ui.input.key.Key AltRight;
+    property public androidx.compose.ui.input.key.Key Apostrophe;
+    property public androidx.compose.ui.input.key.Key AppSwitch;
+    property public androidx.compose.ui.input.key.Key Assist;
+    property public androidx.compose.ui.input.key.Key At;
+    property public androidx.compose.ui.input.key.Key AvReceiverInput;
+    property public androidx.compose.ui.input.key.Key AvReceiverPower;
+    property public androidx.compose.ui.input.key.Key B;
+    property public androidx.compose.ui.input.key.Key Back;
+    property public androidx.compose.ui.input.key.Key Backslash;
+    property public androidx.compose.ui.input.key.Key Backspace;
+    property public androidx.compose.ui.input.key.Key Bookmark;
+    property public androidx.compose.ui.input.key.Key Break;
+    property public androidx.compose.ui.input.key.Key BrightnessDown;
+    property public androidx.compose.ui.input.key.Key BrightnessUp;
+    property public androidx.compose.ui.input.key.Key Browser;
+    property public androidx.compose.ui.input.key.Key Button1;
+    property public androidx.compose.ui.input.key.Key Button10;
+    property public androidx.compose.ui.input.key.Key Button11;
+    property public androidx.compose.ui.input.key.Key Button12;
+    property public androidx.compose.ui.input.key.Key Button13;
+    property public androidx.compose.ui.input.key.Key Button14;
+    property public androidx.compose.ui.input.key.Key Button15;
+    property public androidx.compose.ui.input.key.Key Button16;
+    property public androidx.compose.ui.input.key.Key Button2;
+    property public androidx.compose.ui.input.key.Key Button3;
+    property public androidx.compose.ui.input.key.Key Button4;
+    property public androidx.compose.ui.input.key.Key Button5;
+    property public androidx.compose.ui.input.key.Key Button6;
+    property public androidx.compose.ui.input.key.Key Button7;
+    property public androidx.compose.ui.input.key.Key Button8;
+    property public androidx.compose.ui.input.key.Key Button9;
+    property public androidx.compose.ui.input.key.Key ButtonA;
+    property public androidx.compose.ui.input.key.Key ButtonB;
+    property public androidx.compose.ui.input.key.Key ButtonC;
+    property public androidx.compose.ui.input.key.Key ButtonL1;
+    property public androidx.compose.ui.input.key.Key ButtonL2;
+    property public androidx.compose.ui.input.key.Key ButtonMode;
+    property public androidx.compose.ui.input.key.Key ButtonR1;
+    property public androidx.compose.ui.input.key.Key ButtonR2;
+    property public androidx.compose.ui.input.key.Key ButtonSelect;
+    property public androidx.compose.ui.input.key.Key ButtonStart;
+    property public androidx.compose.ui.input.key.Key ButtonThumbLeft;
+    property public androidx.compose.ui.input.key.Key ButtonThumbRight;
+    property public androidx.compose.ui.input.key.Key ButtonX;
+    property public androidx.compose.ui.input.key.Key ButtonY;
+    property public androidx.compose.ui.input.key.Key ButtonZ;
+    property public androidx.compose.ui.input.key.Key C;
+    property public androidx.compose.ui.input.key.Key Calculator;
+    property public androidx.compose.ui.input.key.Key Calendar;
+    property public androidx.compose.ui.input.key.Key Call;
+    property public androidx.compose.ui.input.key.Key Camera;
+    property public androidx.compose.ui.input.key.Key CapsLock;
+    property public androidx.compose.ui.input.key.Key Captions;
+    property public androidx.compose.ui.input.key.Key ChannelDown;
+    property public androidx.compose.ui.input.key.Key ChannelUp;
+    property public androidx.compose.ui.input.key.Key Clear;
+    property public androidx.compose.ui.input.key.Key Comma;
+    property public androidx.compose.ui.input.key.Key Contacts;
+    property public androidx.compose.ui.input.key.Key Copy;
+    property public androidx.compose.ui.input.key.Key CtrlLeft;
+    property public androidx.compose.ui.input.key.Key CtrlRight;
+    property public androidx.compose.ui.input.key.Key Cut;
+    property public androidx.compose.ui.input.key.Key D;
+    property public androidx.compose.ui.input.key.Key Delete;
+    property public androidx.compose.ui.input.key.Key DirectionCenter;
+    property public androidx.compose.ui.input.key.Key DirectionDown;
+    property public androidx.compose.ui.input.key.Key DirectionDownLeft;
+    property public androidx.compose.ui.input.key.Key DirectionDownRight;
+    property public androidx.compose.ui.input.key.Key DirectionLeft;
+    property public androidx.compose.ui.input.key.Key DirectionRight;
+    property public androidx.compose.ui.input.key.Key DirectionUp;
+    property public androidx.compose.ui.input.key.Key DirectionUpLeft;
+    property public androidx.compose.ui.input.key.Key DirectionUpRight;
+    property public androidx.compose.ui.input.key.Key Dvr;
+    property public androidx.compose.ui.input.key.Key E;
+    property public androidx.compose.ui.input.key.Key Eight;
+    property public androidx.compose.ui.input.key.Key Eisu;
+    property public androidx.compose.ui.input.key.Key EndCall;
+    property public androidx.compose.ui.input.key.Key Enter;
+    property public androidx.compose.ui.input.key.Key Envelope;
+    property public androidx.compose.ui.input.key.Key Equals;
+    property public androidx.compose.ui.input.key.Key Escape;
+    property public androidx.compose.ui.input.key.Key F;
+    property public androidx.compose.ui.input.key.Key F1;
+    property public androidx.compose.ui.input.key.Key F10;
+    property public androidx.compose.ui.input.key.Key F11;
+    property public androidx.compose.ui.input.key.Key F12;
+    property public androidx.compose.ui.input.key.Key F2;
+    property public androidx.compose.ui.input.key.Key F3;
+    property public androidx.compose.ui.input.key.Key F4;
+    property public androidx.compose.ui.input.key.Key F5;
+    property public androidx.compose.ui.input.key.Key F6;
+    property public androidx.compose.ui.input.key.Key F7;
+    property public androidx.compose.ui.input.key.Key F8;
+    property public androidx.compose.ui.input.key.Key F9;
+    property public androidx.compose.ui.input.key.Key Five;
+    property public androidx.compose.ui.input.key.Key Focus;
+    property public androidx.compose.ui.input.key.Key Forward;
+    property public androidx.compose.ui.input.key.Key Four;
+    property public androidx.compose.ui.input.key.Key Function;
+    property public androidx.compose.ui.input.key.Key G;
+    property public androidx.compose.ui.input.key.Key Grave;
+    property public androidx.compose.ui.input.key.Key Guide;
+    property public androidx.compose.ui.input.key.Key H;
+    property public androidx.compose.ui.input.key.Key HeadsetHook;
+    property public androidx.compose.ui.input.key.Key Help;
+    property public androidx.compose.ui.input.key.Key Henkan;
+    property public androidx.compose.ui.input.key.Key Home;
+    property public androidx.compose.ui.input.key.Key I;
+    property public androidx.compose.ui.input.key.Key Info;
+    property public androidx.compose.ui.input.key.Key Insert;
+    property public androidx.compose.ui.input.key.Key J;
+    property public androidx.compose.ui.input.key.Key K;
+    property public androidx.compose.ui.input.key.Key Kana;
+    property public androidx.compose.ui.input.key.Key KatakanaHiragana;
+    property public androidx.compose.ui.input.key.Key L;
+    property public androidx.compose.ui.input.key.Key LanguageSwitch;
+    property public androidx.compose.ui.input.key.Key LastChannel;
+    property public androidx.compose.ui.input.key.Key LeftBracket;
+    property public androidx.compose.ui.input.key.Key M;
+    property public androidx.compose.ui.input.key.Key MannerMode;
+    property public androidx.compose.ui.input.key.Key MediaAudioTrack;
+    property public androidx.compose.ui.input.key.Key MediaClose;
+    property public androidx.compose.ui.input.key.Key MediaEject;
+    property public androidx.compose.ui.input.key.Key MediaFastForward;
+    property public androidx.compose.ui.input.key.Key MediaNext;
+    property public androidx.compose.ui.input.key.Key MediaPause;
+    property public androidx.compose.ui.input.key.Key MediaPlay;
+    property public androidx.compose.ui.input.key.Key MediaPlayPause;
+    property public androidx.compose.ui.input.key.Key MediaPrevious;
+    property public androidx.compose.ui.input.key.Key MediaRecord;
+    property public androidx.compose.ui.input.key.Key MediaRewind;
+    property public androidx.compose.ui.input.key.Key MediaSkipBackward;
+    property public androidx.compose.ui.input.key.Key MediaSkipForward;
+    property public androidx.compose.ui.input.key.Key MediaStepBackward;
+    property public androidx.compose.ui.input.key.Key MediaStepForward;
+    property public androidx.compose.ui.input.key.Key MediaStop;
+    property public androidx.compose.ui.input.key.Key MediaTopMenu;
+    property public androidx.compose.ui.input.key.Key Menu;
+    property public androidx.compose.ui.input.key.Key MetaLeft;
+    property public androidx.compose.ui.input.key.Key MetaRight;
+    property public androidx.compose.ui.input.key.Key MicrophoneMute;
+    property public androidx.compose.ui.input.key.Key Minus;
+    property public androidx.compose.ui.input.key.Key MoveEnd;
+    property public androidx.compose.ui.input.key.Key MoveHome;
+    property public androidx.compose.ui.input.key.Key Muhenkan;
+    property public androidx.compose.ui.input.key.Key Multiply;
+    property public androidx.compose.ui.input.key.Key Music;
+    property public androidx.compose.ui.input.key.Key N;
+    property public androidx.compose.ui.input.key.Key NavigateIn;
+    property public androidx.compose.ui.input.key.Key NavigateNext;
+    property public androidx.compose.ui.input.key.Key NavigateOut;
+    property public androidx.compose.ui.input.key.Key NavigatePrevious;
+    property public androidx.compose.ui.input.key.Key Nine;
+    property public androidx.compose.ui.input.key.Key Notification;
+    property public androidx.compose.ui.input.key.Key NumLock;
+    property public androidx.compose.ui.input.key.Key NumPad0;
+    property public androidx.compose.ui.input.key.Key NumPad1;
+    property public androidx.compose.ui.input.key.Key NumPad2;
+    property public androidx.compose.ui.input.key.Key NumPad3;
+    property public androidx.compose.ui.input.key.Key NumPad4;
+    property public androidx.compose.ui.input.key.Key NumPad5;
+    property public androidx.compose.ui.input.key.Key NumPad6;
+    property public androidx.compose.ui.input.key.Key NumPad7;
+    property public androidx.compose.ui.input.key.Key NumPad8;
+    property public androidx.compose.ui.input.key.Key NumPad9;
+    property public androidx.compose.ui.input.key.Key NumPadAdd;
+    property public androidx.compose.ui.input.key.Key NumPadComma;
+    property public androidx.compose.ui.input.key.Key NumPadDivide;
+    property public androidx.compose.ui.input.key.Key NumPadDot;
+    property public androidx.compose.ui.input.key.Key NumPadEnter;
+    property public androidx.compose.ui.input.key.Key NumPadEquals;
+    property public androidx.compose.ui.input.key.Key NumPadLeftParenthesis;
+    property public androidx.compose.ui.input.key.Key NumPadMultiply;
+    property public androidx.compose.ui.input.key.Key NumPadRightParenthesis;
+    property public androidx.compose.ui.input.key.Key NumPadSubtract;
+    property public androidx.compose.ui.input.key.Key Number;
+    property public androidx.compose.ui.input.key.Key O;
+    property public androidx.compose.ui.input.key.Key One;
+    property public androidx.compose.ui.input.key.Key P;
+    property public androidx.compose.ui.input.key.Key PageDown;
+    property public androidx.compose.ui.input.key.Key PageUp;
+    property public androidx.compose.ui.input.key.Key Pairing;
+    property public androidx.compose.ui.input.key.Key Paste;
+    property public androidx.compose.ui.input.key.Key Period;
+    property public androidx.compose.ui.input.key.Key PictureSymbols;
+    property public androidx.compose.ui.input.key.Key Plus;
+    property public androidx.compose.ui.input.key.Key Pound;
+    property public androidx.compose.ui.input.key.Key Power;
+    property public androidx.compose.ui.input.key.Key PrintScreen;
+    property public androidx.compose.ui.input.key.Key ProfileSwitch;
+    property public androidx.compose.ui.input.key.Key ProgramBlue;
+    property public androidx.compose.ui.input.key.Key ProgramGreen;
+    property public androidx.compose.ui.input.key.Key ProgramRed;
+    property public androidx.compose.ui.input.key.Key ProgramYellow;
+    property public androidx.compose.ui.input.key.Key Q;
+    property public androidx.compose.ui.input.key.Key R;
+    property public androidx.compose.ui.input.key.Key Refresh;
+    property public androidx.compose.ui.input.key.Key RightBracket;
+    property public androidx.compose.ui.input.key.Key Ro;
+    property public androidx.compose.ui.input.key.Key S;
+    property public androidx.compose.ui.input.key.Key ScrollLock;
+    property public androidx.compose.ui.input.key.Key Search;
+    property public androidx.compose.ui.input.key.Key Semicolon;
+    property public androidx.compose.ui.input.key.Key SetTopBoxInput;
+    property public androidx.compose.ui.input.key.Key SetTopBoxPower;
+    property public androidx.compose.ui.input.key.Key Settings;
+    property public androidx.compose.ui.input.key.Key Seven;
+    property public androidx.compose.ui.input.key.Key ShiftLeft;
+    property public androidx.compose.ui.input.key.Key ShiftRight;
+    property public androidx.compose.ui.input.key.Key Six;
+    property public androidx.compose.ui.input.key.Key Slash;
+    property public androidx.compose.ui.input.key.Key Sleep;
+    property public androidx.compose.ui.input.key.Key SoftLeft;
+    property public androidx.compose.ui.input.key.Key SoftRight;
+    property public androidx.compose.ui.input.key.Key SoftSleep;
+    property public androidx.compose.ui.input.key.Key Spacebar;
+    property public androidx.compose.ui.input.key.Key Stem1;
+    property public androidx.compose.ui.input.key.Key Stem2;
+    property public androidx.compose.ui.input.key.Key Stem3;
+    property public androidx.compose.ui.input.key.Key StemPrimary;
+    property public androidx.compose.ui.input.key.Key SwitchCharset;
+    property public androidx.compose.ui.input.key.Key Symbol;
+    property public androidx.compose.ui.input.key.Key SystemNavigationDown;
+    property public androidx.compose.ui.input.key.Key SystemNavigationLeft;
+    property public androidx.compose.ui.input.key.Key SystemNavigationRight;
+    property public androidx.compose.ui.input.key.Key SystemNavigationUp;
+    property public androidx.compose.ui.input.key.Key T;
+    property public androidx.compose.ui.input.key.Key Tab;
+    property public androidx.compose.ui.input.key.Key Three;
+    property public androidx.compose.ui.input.key.Key ThumbsDown;
+    property public androidx.compose.ui.input.key.Key ThumbsUp;
+    property public androidx.compose.ui.input.key.Key Toggle2D3D;
+    property public androidx.compose.ui.input.key.Key Tv;
+    property public androidx.compose.ui.input.key.Key TvAntennaCable;
+    property public androidx.compose.ui.input.key.Key TvAudioDescription;
+    property public androidx.compose.ui.input.key.Key TvAudioDescriptionMixingVolumeDown;
+    property public androidx.compose.ui.input.key.Key TvAudioDescriptionMixingVolumeUp;
+    property public androidx.compose.ui.input.key.Key TvContentsMenu;
+    property public androidx.compose.ui.input.key.Key TvDataService;
+    property public androidx.compose.ui.input.key.Key TvInput;
+    property public androidx.compose.ui.input.key.Key TvInputComponent1;
+    property public androidx.compose.ui.input.key.Key TvInputComponent2;
+    property public androidx.compose.ui.input.key.Key TvInputComposite1;
+    property public androidx.compose.ui.input.key.Key TvInputComposite2;
+    property public androidx.compose.ui.input.key.Key TvInputHdmi1;
+    property public androidx.compose.ui.input.key.Key TvInputHdmi2;
+    property public androidx.compose.ui.input.key.Key TvInputHdmi3;
+    property public androidx.compose.ui.input.key.Key TvInputHdmi4;
+    property public androidx.compose.ui.input.key.Key TvInputVga1;
+    property public androidx.compose.ui.input.key.Key TvMediaContextMenu;
+    property public androidx.compose.ui.input.key.Key TvNetwork;
+    property public androidx.compose.ui.input.key.Key TvNumberEntry;
+    property public androidx.compose.ui.input.key.Key TvPower;
+    property public androidx.compose.ui.input.key.Key TvRadioService;
+    property public androidx.compose.ui.input.key.Key TvSatellite;
+    property public androidx.compose.ui.input.key.Key TvSatelliteBs;
+    property public androidx.compose.ui.input.key.Key TvSatelliteCs;
+    property public androidx.compose.ui.input.key.Key TvSatelliteService;
+    property public androidx.compose.ui.input.key.Key TvTeletext;
+    property public androidx.compose.ui.input.key.Key TvTerrestrialAnalog;
+    property public androidx.compose.ui.input.key.Key TvTerrestrialDigital;
+    property public androidx.compose.ui.input.key.Key TvTimerProgramming;
+    property public androidx.compose.ui.input.key.Key TvZoomMode;
+    property public androidx.compose.ui.input.key.Key Two;
+    property public androidx.compose.ui.input.key.Key U;
+    property public androidx.compose.ui.input.key.Key Unknown;
+    property public androidx.compose.ui.input.key.Key V;
+    property public androidx.compose.ui.input.key.Key VoiceAssist;
+    property public androidx.compose.ui.input.key.Key VolumeDown;
+    property public androidx.compose.ui.input.key.Key VolumeMute;
+    property public androidx.compose.ui.input.key.Key VolumeUp;
+    property public androidx.compose.ui.input.key.Key W;
+    property public androidx.compose.ui.input.key.Key WakeUp;
+    property public androidx.compose.ui.input.key.Key Window;
+    property public androidx.compose.ui.input.key.Key X;
+    property public androidx.compose.ui.input.key.Key Y;
+    property public androidx.compose.ui.input.key.Key Yen;
+    property public androidx.compose.ui.input.key.Key Z;
+    property public androidx.compose.ui.input.key.Key ZenkakuHankaru;
+    property public androidx.compose.ui.input.key.Key Zero;
+    property public androidx.compose.ui.input.key.Key ZoomIn;
+    property public androidx.compose.ui.input.key.Key ZoomOut;
   }
 
   @kotlin.jvm.JvmInline public final value class KeyEvent {
@@ -2068,9 +2068,9 @@ package androidx.compose.ui.input.key {
     method @BytecodeOnly public int getKeyDown-CS__XNY();
     method @BytecodeOnly public int getKeyUp-CS__XNY();
     method @BytecodeOnly public int getUnknown-CS__XNY();
-    property public int KeyDown;
-    property public int KeyUp;
-    property public int Unknown;
+    property public androidx.compose.ui.input.key.KeyEventType KeyDown;
+    property public androidx.compose.ui.input.key.KeyEventType KeyUp;
+    property public androidx.compose.ui.input.key.KeyEventType Unknown;
   }
 
   public final class KeyEvent_androidKt {
@@ -2081,13 +2081,13 @@ package androidx.compose.ui.input.key {
     method @BytecodeOnly public static boolean isCtrlPressed-ZmokQxo(android.view.KeyEvent);
     method @BytecodeOnly public static boolean isMetaPressed-ZmokQxo(android.view.KeyEvent);
     method @BytecodeOnly public static boolean isShiftPressed-ZmokQxo(android.view.KeyEvent);
-    property public static boolean android.view.KeyEvent.isAltPressed;
-    property public static boolean android.view.KeyEvent.isCtrlPressed;
-    property public static boolean android.view.KeyEvent.isMetaPressed;
-    property public static boolean android.view.KeyEvent.isShiftPressed;
-    property public static long android.view.KeyEvent.key;
-    property public static int android.view.KeyEvent.type;
-    property public static int android.view.KeyEvent.utf16CodePoint;
+    property public static boolean androidx.compose.ui.input.key.KeyEvent.isAltPressed;
+    property public static boolean androidx.compose.ui.input.key.KeyEvent.isCtrlPressed;
+    property public static boolean androidx.compose.ui.input.key.KeyEvent.isMetaPressed;
+    property public static boolean androidx.compose.ui.input.key.KeyEvent.isShiftPressed;
+    property public static androidx.compose.ui.input.key.Key androidx.compose.ui.input.key.KeyEvent.key;
+    property public static androidx.compose.ui.input.key.KeyEventType androidx.compose.ui.input.key.KeyEvent.type;
+    property public static int androidx.compose.ui.input.key.KeyEvent.utf16CodePoint;
   }
 
   public final class KeyInputModifierKt {
@@ -2105,7 +2105,7 @@ package androidx.compose.ui.input.key {
   public final class Key_androidKt {
     method public static long Key(int nativeKeyCode);
     method @BytecodeOnly public static int getNativeKeyCode-YVgTNJs(long);
-    property public static int long.nativeKeyCode;
+    property public static int androidx.compose.ui.input.key.Key.nativeKeyCode;
   }
 
   public interface SoftKeyboardInterceptionModifierNode extends androidx.compose.ui.node.DelegatableNode {
@@ -2170,12 +2170,12 @@ package androidx.compose.ui.input.nestedscroll {
     method @BytecodeOnly public int getSideEffect-WNlRxjI();
     method @BytecodeOnly public int getUserInput-WNlRxjI();
     method @BytecodeOnly @Deprecated public int getWheel-WNlRxjI();
-    property @Deprecated public int Drag;
-    property @Deprecated public int Fling;
-    property @Deprecated public int Relocate;
-    property public int SideEffect;
-    property public int UserInput;
-    property @Deprecated public int Wheel;
+    property @Deprecated public androidx.compose.ui.input.nestedscroll.NestedScrollSource Drag;
+    property @Deprecated public androidx.compose.ui.input.nestedscroll.NestedScrollSource Fling;
+    property @Deprecated public androidx.compose.ui.input.nestedscroll.NestedScrollSource Relocate;
+    property public androidx.compose.ui.input.nestedscroll.NestedScrollSource SideEffect;
+    property public androidx.compose.ui.input.nestedscroll.NestedScrollSource UserInput;
+    property @Deprecated public androidx.compose.ui.input.nestedscroll.NestedScrollSource Wheel;
   }
 
 }
@@ -2191,8 +2191,8 @@ package androidx.compose.ui.input.pointer {
     method public default suspend <T> Object? withTimeout(long timeMillis, kotlin.jvm.functions.Function2<? super androidx.compose.ui.input.pointer.AwaitPointerEventScope,? super kotlin.coroutines.Continuation<? super T>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super T>);
     method public default suspend <T> Object? withTimeoutOrNull(long timeMillis, kotlin.jvm.functions.Function2<? super androidx.compose.ui.input.pointer.AwaitPointerEventScope,? super kotlin.coroutines.Continuation<? super T>,? extends java.lang.Object?> block, kotlin.coroutines.Continuation<? super T?>);
     property public abstract androidx.compose.ui.input.pointer.PointerEvent currentEvent;
-    property public default long extendedTouchPadding;
-    property public abstract long size;
+    property public default androidx.compose.ui.geometry.Size extendedTouchPadding;
+    property public abstract androidx.compose.ui.unit.IntSize size;
     property public abstract androidx.compose.ui.platform.ViewConfiguration viewConfiguration;
   }
 
@@ -2212,7 +2212,7 @@ package androidx.compose.ui.input.pointer {
     ctor @BytecodeOnly public HistoricalChange(long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @BytecodeOnly public long getPosition-F1C5BW0();
     method public long getUptimeMillis();
-    property public long position;
+    property public androidx.compose.ui.geometry.Offset position;
     property public long uptimeMillis;
   }
 
@@ -2233,12 +2233,12 @@ package androidx.compose.ui.input.pointer {
     method @BytecodeOnly public int getKeyboardModifiers-k7X9c1A();
     method public android.view.MotionEvent? getMotionEvent();
     method @BytecodeOnly public int getType-7fucELk();
-    property public int buttons;
+    property public androidx.compose.ui.input.pointer.PointerButtons buttons;
     property public java.util.List<androidx.compose.ui.input.pointer.PointerInputChange> changes;
     property public int classification;
-    property public int keyboardModifiers;
+    property public androidx.compose.ui.input.pointer.PointerKeyboardModifiers keyboardModifiers;
     property public android.view.MotionEvent? motionEvent;
-    property public int type;
+    property public androidx.compose.ui.input.pointer.PointerEventType type;
   }
 
   public final class PointerEventKt {
@@ -2285,13 +2285,13 @@ package androidx.compose.ui.input.pointer {
     method @BytecodeOnly public int getRelease-7fucELk();
     method @BytecodeOnly public int getScroll-7fucELk();
     method @BytecodeOnly public int getUnknown-7fucELk();
-    property public int Enter;
-    property public int Exit;
-    property public int Move;
-    property public int Press;
-    property public int Release;
-    property public int Scroll;
-    property public int Unknown;
+    property public androidx.compose.ui.input.pointer.PointerEventType Enter;
+    property public androidx.compose.ui.input.pointer.PointerEventType Exit;
+    property public androidx.compose.ui.input.pointer.PointerEventType Move;
+    property public androidx.compose.ui.input.pointer.PointerEventType Press;
+    property public androidx.compose.ui.input.pointer.PointerEventType Release;
+    property public androidx.compose.ui.input.pointer.PointerEventType Scroll;
+    property public androidx.compose.ui.input.pointer.PointerEventType Unknown;
   }
 
   public final class PointerEvent_androidKt {
@@ -2317,22 +2317,22 @@ package androidx.compose.ui.input.pointer {
     method @BytecodeOnly public static boolean isShiftPressed-5xRPYO0(int);
     method @BytecodeOnly public static boolean isSymPressed-5xRPYO0(int);
     method @BytecodeOnly public static boolean isTertiaryPressed-aHzCx-E(int);
-    property public static boolean int.areAnyPressed;
-    property public static boolean int.isAltGraphPressed;
-    property public static boolean int.isAltPressed;
-    property public static boolean int.isBackPressed;
-    property public static boolean int.isCapsLockOn;
-    property public static boolean int.isCtrlPressed;
-    property public static boolean int.isForwardPressed;
-    property public static boolean int.isFunctionPressed;
-    property public static boolean int.isMetaPressed;
-    property public static boolean int.isNumLockOn;
-    property public static boolean int.isPrimaryPressed;
-    property public static boolean int.isScrollLockOn;
-    property public static boolean int.isSecondaryPressed;
-    property public static boolean int.isShiftPressed;
-    property public static boolean int.isSymPressed;
-    property public static boolean int.isTertiaryPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerButtons.areAnyPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerKeyboardModifiers.isAltGraphPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerKeyboardModifiers.isAltPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerButtons.isBackPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerKeyboardModifiers.isCapsLockOn;
+    property public static boolean androidx.compose.ui.input.pointer.PointerKeyboardModifiers.isCtrlPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerButtons.isForwardPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerKeyboardModifiers.isFunctionPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerKeyboardModifiers.isMetaPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerKeyboardModifiers.isNumLockOn;
+    property public static boolean androidx.compose.ui.input.pointer.PointerButtons.isPrimaryPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerKeyboardModifiers.isScrollLockOn;
+    property public static boolean androidx.compose.ui.input.pointer.PointerButtons.isSecondaryPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerKeyboardModifiers.isShiftPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerKeyboardModifiers.isSymPressed;
+    property public static boolean androidx.compose.ui.input.pointer.PointerButtons.isTertiaryPressed;
   }
 
   @androidx.compose.runtime.Stable public interface PointerIcon {
@@ -2403,16 +2403,16 @@ package androidx.compose.ui.input.pointer {
     method public boolean isConsumed();
     property @Deprecated public androidx.compose.ui.input.pointer.ConsumedData consumed;
     property public java.util.List<androidx.compose.ui.input.pointer.HistoricalChange> historical;
-    property public long id;
+    property public androidx.compose.ui.input.pointer.PointerId id;
     property public boolean isConsumed;
-    property public long position;
+    property public androidx.compose.ui.geometry.Offset position;
     property public boolean pressed;
     property public float pressure;
-    property public long previousPosition;
+    property public androidx.compose.ui.geometry.Offset previousPosition;
     property public boolean previousPressed;
     property public long previousUptimeMillis;
-    property public long scrollDelta;
-    property public int type;
+    property public androidx.compose.ui.geometry.Offset scrollDelta;
+    property public androidx.compose.ui.input.pointer.PointerType type;
     property public long uptimeMillis;
   }
 
@@ -2430,7 +2430,7 @@ package androidx.compose.ui.input.pointer {
     method @BytecodeOnly public abstract void onPointerEvent-H0pRuoY(androidx.compose.ui.input.pointer.PointerEvent, androidx.compose.ui.input.pointer.PointerEventPass, long);
     property public boolean interceptOutOfBoundsChildEvents;
     property public boolean shareWithSiblings;
-    property public final long size;
+    property public final androidx.compose.ui.unit.IntSize size;
   }
 
   @kotlin.jvm.JvmDefaultWithCompatibility public interface PointerInputModifier extends androidx.compose.ui.Modifier.Element {
@@ -2445,9 +2445,9 @@ package androidx.compose.ui.input.pointer {
     method @BytecodeOnly public long getSize-YbymL2g();
     method public androidx.compose.ui.platform.ViewConfiguration getViewConfiguration();
     method public default void setInterceptOutOfBoundsChildEvents(boolean);
-    property public default long extendedTouchPadding;
+    property public default androidx.compose.ui.geometry.Size extendedTouchPadding;
     property public default boolean interceptOutOfBoundsChildEvents;
-    property public abstract long size;
+    property public abstract androidx.compose.ui.unit.IntSize size;
     property public abstract androidx.compose.ui.platform.ViewConfiguration viewConfiguration;
   }
 
@@ -2475,11 +2475,11 @@ package androidx.compose.ui.input.pointer {
     method @BytecodeOnly public int getStylus-T8wyACA();
     method @BytecodeOnly public int getTouch-T8wyACA();
     method @BytecodeOnly public int getUnknown-T8wyACA();
-    property public int Eraser;
-    property public int Mouse;
-    property public int Stylus;
-    property public int Touch;
-    property public int Unknown;
+    property public androidx.compose.ui.input.pointer.PointerType Eraser;
+    property public androidx.compose.ui.input.pointer.PointerType Mouse;
+    property public androidx.compose.ui.input.pointer.PointerType Stylus;
+    property public androidx.compose.ui.input.pointer.PointerType Touch;
+    property public androidx.compose.ui.input.pointer.PointerType Unknown;
   }
 
   public final class RequestDisallowInterceptTouchEvent implements kotlin.jvm.functions.Function1<java.lang.Boolean,kotlin.Unit> {
@@ -2597,8 +2597,8 @@ package androidx.compose.ui.layout {
   public sealed interface ApproachIntrinsicMeasureScope extends androidx.compose.ui.layout.IntrinsicMeasureScope {
     method @BytecodeOnly public long getLookaheadConstraints-msEJaDk();
     method @BytecodeOnly public long getLookaheadSize-YbymL2g();
-    property public abstract long lookaheadConstraints;
-    property public abstract long lookaheadSize;
+    property public abstract androidx.compose.ui.unit.Constraints lookaheadConstraints;
+    property public abstract androidx.compose.ui.unit.IntSize lookaheadSize;
   }
 
   public interface ApproachLayoutModifierNode extends androidx.compose.ui.node.LayoutModifierNode {
@@ -2641,12 +2641,12 @@ package androidx.compose.ui.layout {
     method @BytecodeOnly public int getBelow-hoxUOeE();
     method @BytecodeOnly public int getLeft-hoxUOeE();
     method @BytecodeOnly public int getRight-hoxUOeE();
-    property public int Above;
-    property public int After;
-    property public int Before;
-    property public int Below;
-    property public int Left;
-    property public int Right;
+    property public androidx.compose.ui.layout.BeyondBoundsLayout.LayoutDirection Above;
+    property public androidx.compose.ui.layout.BeyondBoundsLayout.LayoutDirection After;
+    property public androidx.compose.ui.layout.BeyondBoundsLayout.LayoutDirection Before;
+    property public androidx.compose.ui.layout.BeyondBoundsLayout.LayoutDirection Below;
+    property public androidx.compose.ui.layout.BeyondBoundsLayout.LayoutDirection Left;
+    property public androidx.compose.ui.layout.BeyondBoundsLayout.LayoutDirection Right;
   }
 
   public final class BeyondBoundsLayoutKt {
@@ -2767,7 +2767,7 @@ package androidx.compose.ui.layout {
     property public abstract androidx.compose.ui.layout.LayoutCoordinates? parentCoordinates;
     property public abstract androidx.compose.ui.layout.LayoutCoordinates? parentLayoutCoordinates;
     property public abstract java.util.Set<androidx.compose.ui.layout.AlignmentLine> providedAlignmentLines;
-    property public abstract long size;
+    property public abstract androidx.compose.ui.unit.IntSize size;
   }
 
   public final class LayoutCoordinatesKt {
@@ -2998,12 +2998,12 @@ package androidx.compose.ui.layout {
     method @BytecodeOnly protected abstract void placeAt-f8xVGno(long, float, kotlin.jvm.functions.Function1<? super androidx.compose.ui.graphics.GraphicsLayerScope!,kotlin.Unit!>?);
     method @BytecodeOnly protected final void setMeasuredSize-ozmzZPI(long);
     method @BytecodeOnly protected final void setMeasurementConstraints-BRTryo0(long);
-    property protected final long apparentToRealOffset;
+    property protected final androidx.compose.ui.unit.IntOffset apparentToRealOffset;
     property public final int height;
     property public int measuredHeight;
-    property protected final long measuredSize;
+    property protected final androidx.compose.ui.unit.IntSize measuredSize;
     property public int measuredWidth;
-    property protected final long measurementConstraints;
+    property protected final androidx.compose.ui.unit.Constraints measurementConstraints;
     property public final int width;
   }
 
@@ -3109,7 +3109,7 @@ package androidx.compose.ui.layout {
 
   public static final class ScaleFactor.Companion {
     method @BytecodeOnly public long getUnspecified-_hLwfpc();
-    property @androidx.compose.runtime.Stable public long Unspecified;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.layout.ScaleFactor Unspecified;
   }
 
   public final class ScaleFactorKt {
@@ -3126,8 +3126,8 @@ package androidx.compose.ui.layout {
     method @androidx.compose.runtime.Stable public static operator long times(long, long size);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long times-UQTWf7w(long, long);
     method @BytecodeOnly @androidx.compose.runtime.Stable public static long times-m-w2e94(long, long);
-    property @androidx.compose.runtime.Stable public static inline boolean long.isSpecified;
-    property @androidx.compose.runtime.Stable public static inline boolean long.isUnspecified;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.layout.ScaleFactor.isSpecified;
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.layout.ScaleFactor.isUnspecified;
   }
 
   public final class SubcomposeLayoutKt {
@@ -3394,11 +3394,11 @@ package androidx.compose.ui.node {
     method public boolean isLayoutDirectionAware();
     method public long roundToTouchBoundsExpansion(androidx.compose.ui.unit.Density density);
     method @BytecodeOnly public long roundToTouchBoundsExpansion-TW6G1oQ(androidx.compose.ui.unit.Density);
-    property public float bottom;
-    property public float end;
+    property public androidx.compose.ui.unit.Dp bottom;
+    property public androidx.compose.ui.unit.Dp end;
     property public boolean isLayoutDirectionAware;
-    property public float start;
-    property public float top;
+    property public androidx.compose.ui.unit.Dp start;
+    property public androidx.compose.ui.unit.Dp top;
     field public static final androidx.compose.ui.node.DpTouchBoundsExpansion.Companion Companion;
   }
 
@@ -3488,7 +3488,7 @@ package androidx.compose.ui.node {
     method @BytecodeOnly public void onPointerEvent-H0pRuoY(androidx.compose.ui.input.pointer.PointerEvent, androidx.compose.ui.input.pointer.PointerEventPass, long);
     method public default void onViewConfigurationChange();
     method public default boolean sharePointerInputWithSiblings();
-    property public default long touchBoundsExpansion;
+    property public default androidx.compose.ui.node.TouchBoundsExpansion touchBoundsExpansion;
   }
 
   public final class Ref<T> {
@@ -3552,7 +3552,7 @@ package androidx.compose.ui.node {
     method public long Absolute(optional int left, optional int top, optional int right, optional int bottom);
     method @BytecodeOnly public long Absolute-vsh68fg(int, int, int, int);
     method @BytecodeOnly public long getNone-RZrCHBk();
-    property public long None;
+    property public androidx.compose.ui.node.TouchBoundsExpansion None;
   }
 
   public final class TouchBoundsExpansionKt {
@@ -3966,7 +3966,7 @@ package androidx.compose.ui.platform {
     property public abstract long longPressTimeoutMillis;
     property public default float maximumFlingVelocity;
     property public default float minimumFlingVelocity;
-    property public default long minimumTouchTargetSize;
+    property public default androidx.compose.ui.unit.DpSize minimumTouchTargetSize;
     property public abstract float touchSlop;
   }
 
@@ -3998,9 +3998,9 @@ package androidx.compose.ui.platform {
     method @BytecodeOnly public default long getContainerSize-YbymL2g();
     method @BytecodeOnly public default int getKeyboardModifiers-k7X9c1A();
     method public boolean isWindowFocused();
-    property public default long containerSize;
+    property public default androidx.compose.ui.unit.IntSize containerSize;
     property public abstract boolean isWindowFocused;
-    property public default int keyboardModifiers;
+    property public default androidx.compose.ui.input.pointer.PointerKeyboardModifiers keyboardModifiers;
   }
 
   @SuppressCompatibility @androidx.compose.ui.InternalComposeUiApi public fun interface WindowRecomposerFactory {
@@ -4147,8 +4147,8 @@ package androidx.compose.ui.semantics {
   public static final class LiveRegionMode.Companion {
     method @BytecodeOnly public int getAssertive-0phEisY();
     method @BytecodeOnly public int getPolite-0phEisY();
-    property public int Assertive;
-    property public int Polite;
+    property public androidx.compose.ui.semantics.LiveRegionMode Assertive;
+    property public androidx.compose.ui.semantics.LiveRegionMode Polite;
   }
 
   public final class ProgressBarRangeInfo {
@@ -4183,15 +4183,15 @@ package androidx.compose.ui.semantics {
     method @BytecodeOnly public int getSwitch-o7Vup1c();
     method @BytecodeOnly public int getTab-o7Vup1c();
     method @BytecodeOnly public int getValuePicker-o7Vup1c();
-    property public int Button;
-    property public int Carousel;
-    property public int Checkbox;
-    property public int DropdownList;
-    property public int Image;
-    property public int RadioButton;
-    property public int Switch;
-    property public int Tab;
-    property public int ValuePicker;
+    property public androidx.compose.ui.semantics.Role Button;
+    property public androidx.compose.ui.semantics.Role Carousel;
+    property public androidx.compose.ui.semantics.Role Checkbox;
+    property public androidx.compose.ui.semantics.Role DropdownList;
+    property public androidx.compose.ui.semantics.Role Image;
+    property public androidx.compose.ui.semantics.Role RadioButton;
+    property public androidx.compose.ui.semantics.Role Switch;
+    property public androidx.compose.ui.semantics.Role Tab;
+    property public androidx.compose.ui.semantics.Role ValuePicker;
   }
 
   public final class ScrollAxisRange {
@@ -4325,11 +4325,11 @@ package androidx.compose.ui.semantics {
     property public androidx.compose.ui.layout.LayoutInfo layoutInfo;
     property public boolean mergingEnabled;
     property public androidx.compose.ui.semantics.SemanticsNode? parent;
-    property public long positionInRoot;
-    property public long positionInWindow;
-    property public long positionOnScreen;
+    property public androidx.compose.ui.geometry.Offset positionInRoot;
+    property public androidx.compose.ui.geometry.Offset positionInWindow;
+    property public androidx.compose.ui.geometry.Offset positionOnScreen;
     property public androidx.compose.ui.node.RootForTest? root;
-    property public long size;
+    property public androidx.compose.ui.unit.IntSize size;
     property public androidx.compose.ui.geometry.Rect touchBoundsInRoot;
   }
 
@@ -4550,24 +4550,24 @@ package androidx.compose.ui.semantics {
     property public static androidx.compose.ui.text.AnnotatedString androidx.compose.ui.semantics.SemanticsPropertyReceiver.editableText;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.focused;
     property public static androidx.compose.ui.semantics.ScrollAxisRange androidx.compose.ui.semantics.SemanticsPropertyReceiver.horizontalScrollAxisRange;
-    property @Deprecated public static int androidx.compose.ui.semantics.SemanticsPropertyReceiver.imeAction;
+    property @Deprecated public static androidx.compose.ui.text.input.ImeAction androidx.compose.ui.semantics.SemanticsPropertyReceiver.imeAction;
     property public static androidx.compose.ui.text.AnnotatedString androidx.compose.ui.semantics.SemanticsPropertyReceiver.inputText;
     property @Deprecated public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isContainer;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isEditable;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isSensitiveData;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isShowingTextSubstitution;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.isTraversalGroup;
-    property public static int androidx.compose.ui.semantics.SemanticsPropertyReceiver.liveRegion;
+    property public static androidx.compose.ui.semantics.LiveRegionMode androidx.compose.ui.semantics.SemanticsPropertyReceiver.liveRegion;
     property public static int androidx.compose.ui.semantics.SemanticsPropertyReceiver.maxTextLength;
     property public static String androidx.compose.ui.semantics.SemanticsPropertyReceiver.paneTitle;
     property public static androidx.compose.ui.semantics.ProgressBarRangeInfo androidx.compose.ui.semantics.SemanticsPropertyReceiver.progressBarRangeInfo;
-    property public static int androidx.compose.ui.semantics.SemanticsPropertyReceiver.role;
+    property public static androidx.compose.ui.semantics.Role androidx.compose.ui.semantics.SemanticsPropertyReceiver.role;
     property public static boolean androidx.compose.ui.semantics.SemanticsPropertyReceiver.selected;
     property public static androidx.compose.ui.graphics.Shape androidx.compose.ui.semantics.SemanticsPropertyReceiver.shape;
     property public static String androidx.compose.ui.semantics.SemanticsPropertyReceiver.stateDescription;
     property public static String androidx.compose.ui.semantics.SemanticsPropertyReceiver.testTag;
     property public static androidx.compose.ui.text.AnnotatedString androidx.compose.ui.semantics.SemanticsPropertyReceiver.text;
-    property public static long androidx.compose.ui.semantics.SemanticsPropertyReceiver.textSelectionRange;
+    property public static androidx.compose.ui.text.TextRange androidx.compose.ui.semantics.SemanticsPropertyReceiver.textSelectionRange;
     property public static androidx.compose.ui.text.AnnotatedString androidx.compose.ui.semantics.SemanticsPropertyReceiver.textSubstitution;
     property public static androidx.compose.ui.state.ToggleableState androidx.compose.ui.semantics.SemanticsPropertyReceiver.toggleableState;
     property public static float androidx.compose.ui.semantics.SemanticsPropertyReceiver.traversalIndex;
@@ -4620,9 +4620,9 @@ package androidx.compose.ui.spatial {
     property public androidx.compose.ui.unit.IntRect boundsInScreen;
     property public androidx.compose.ui.unit.IntRect boundsInWindow;
     property public int height;
-    property public long positionInRoot;
-    property public long positionInScreen;
-    property public long positionInWindow;
+    property public androidx.compose.ui.unit.IntOffset positionInRoot;
+    property public androidx.compose.ui.unit.IntOffset positionInScreen;
+    property public androidx.compose.ui.unit.IntOffset positionInWindow;
     property public int width;
   }
 

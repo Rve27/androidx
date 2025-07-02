@@ -242,7 +242,7 @@ package androidx.compose.animation.core {
     property public int delayMillis;
     property public int durationMillis;
     property public androidx.compose.animation.core.Easing easing;
-    property public int mode;
+    property public androidx.compose.animation.core.ArcMode mode;
   }
 
   @kotlin.jvm.JvmInline public final value class ArcMode {
@@ -255,9 +255,9 @@ package androidx.compose.animation.core {
     method @BytecodeOnly public int getArcAbove--9T-Mq4();
     method @BytecodeOnly public int getArcBelow--9T-Mq4();
     method @BytecodeOnly public int getArcLinear--9T-Mq4();
-    property public int ArcAbove;
-    property public int ArcBelow;
-    property public int ArcLinear;
+    property public androidx.compose.animation.core.ArcMode ArcAbove;
+    property public androidx.compose.animation.core.ArcMode ArcBelow;
+    property public androidx.compose.animation.core.ArcMode ArcLinear;
   }
 
   @androidx.compose.runtime.Immutable public final class CubicBezierEasing implements androidx.compose.animation.core.Easing {
@@ -474,7 +474,7 @@ package androidx.compose.animation.core {
     method public androidx.compose.animation.core.RepeatMode getRepeatMode();
     method public <V extends androidx.compose.animation.core.AnimationVector> androidx.compose.animation.core.VectorizedAnimationSpec<V> vectorize(androidx.compose.animation.core.TwoWayConverter<T,V> converter);
     property public androidx.compose.animation.core.DurationBasedAnimationSpec<T> animation;
-    property public long initialStartOffset;
+    property public androidx.compose.animation.core.StartOffset initialStartOffset;
     property public androidx.compose.animation.core.RepeatMode repeatMode;
   }
 
@@ -593,7 +593,7 @@ package androidx.compose.animation.core {
     method public androidx.compose.animation.core.RepeatMode getRepeatMode();
     method public <V extends androidx.compose.animation.core.AnimationVector> androidx.compose.animation.core.VectorizedFiniteAnimationSpec<V> vectorize(androidx.compose.animation.core.TwoWayConverter<T,V> converter);
     property public androidx.compose.animation.core.DurationBasedAnimationSpec<T> animation;
-    property public long initialStartOffset;
+    property public androidx.compose.animation.core.StartOffset initialStartOffset;
     property public int iterations;
     property public androidx.compose.animation.core.RepeatMode repeatMode;
   }
@@ -663,7 +663,7 @@ package androidx.compose.animation.core {
     method @BytecodeOnly public static int getOffsetType-Eo1U57Q(long);
     method @BytecodeOnly public long unbox-impl();
     property public int offsetMillis;
-    property public int offsetType;
+    property public androidx.compose.animation.core.StartOffsetType offsetType;
   }
 
   @kotlin.jvm.JvmInline public final value class StartOffsetType {
@@ -675,8 +675,8 @@ package androidx.compose.animation.core {
   public static final class StartOffsetType.Companion {
     method @BytecodeOnly public int getDelay-Eo1U57Q();
     method @BytecodeOnly public int getFastForward-Eo1U57Q();
-    property public int Delay;
-    property public int FastForward;
+    property public androidx.compose.animation.core.StartOffsetType Delay;
+    property public androidx.compose.animation.core.StartOffsetType FastForward;
   }
 
   public final class SuspendAnimationKt {
@@ -935,13 +935,13 @@ package androidx.compose.animation.core {
     method @BytecodeOnly public static long getVisibilityThreshold(androidx.compose.ui.unit.IntOffset.Companion);
     method @BytecodeOnly public static long getVisibilityThreshold(androidx.compose.ui.unit.IntSize.Companion);
     method public static int getVisibilityThreshold(kotlin.jvm.internal.IntCompanionObject);
-    property public static long androidx.compose.ui.unit.IntOffset.Companion.VisibilityThreshold;
-    property public static long androidx.compose.ui.geometry.Offset.Companion.VisibilityThreshold;
+    property public static androidx.compose.ui.unit.IntOffset androidx.compose.ui.unit.IntOffset.Companion.VisibilityThreshold;
+    property public static androidx.compose.ui.geometry.Offset androidx.compose.ui.geometry.Offset.Companion.VisibilityThreshold;
     property public static int kotlin.jvm.internal.IntCompanionObject.VisibilityThreshold;
-    property public static float androidx.compose.ui.unit.Dp.Companion.VisibilityThreshold;
-    property public static long androidx.compose.ui.unit.DpOffset.Companion.VisibilityThreshold;
-    property public static long androidx.compose.ui.geometry.Size.Companion.VisibilityThreshold;
-    property public static long androidx.compose.ui.unit.IntSize.Companion.VisibilityThreshold;
+    property public static androidx.compose.ui.unit.Dp androidx.compose.ui.unit.Dp.Companion.VisibilityThreshold;
+    property public static androidx.compose.ui.unit.DpOffset androidx.compose.ui.unit.DpOffset.Companion.VisibilityThreshold;
+    property public static androidx.compose.ui.geometry.Size androidx.compose.ui.geometry.Size.Companion.VisibilityThreshold;
+    property public static androidx.compose.ui.unit.IntSize androidx.compose.ui.unit.IntSize.Companion.VisibilityThreshold;
     property public static androidx.compose.ui.geometry.Rect androidx.compose.ui.geometry.Rect.Companion.VisibilityThreshold;
   }
 

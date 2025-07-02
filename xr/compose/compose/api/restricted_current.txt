@@ -113,7 +113,7 @@ package androidx.xr.compose.spatial {
   public final class OrbiterDefaults {
     method @BytecodeOnly public float getElevation-D9Ej5fM();
     method public androidx.xr.compose.subspace.layout.SpatialShape getShape();
-    property public float Elevation;
+    property public androidx.compose.ui.unit.Dp Elevation;
     property public androidx.xr.compose.subspace.layout.SpatialShape Shape;
     field public static final androidx.xr.compose.spatial.OrbiterDefaults INSTANCE;
   }
@@ -135,9 +135,9 @@ package androidx.xr.compose.spatial {
     method @BytecodeOnly public int getInnerEdge-daoJdME();
     method @BytecodeOnly public int getOuterEdge-daoJdME();
     method @BytecodeOnly public int getOverlap-daoJdME();
-    property public int InnerEdge;
-    property public int OuterEdge;
-    property public int Overlap;
+    property public androidx.xr.compose.spatial.OrbiterOffsetType InnerEdge;
+    property public androidx.xr.compose.spatial.OrbiterOffsetType OuterEdge;
+    property public androidx.xr.compose.spatial.OrbiterOffsetType Overlap;
   }
 
   public final class SpatialDialogKt {
@@ -159,7 +159,7 @@ package androidx.xr.compose.spatial {
     property public androidx.compose.animation.core.FiniteAnimationSpec<java.lang.Float> backgroundContentAnimationSpec;
     property public boolean dismissOnBackPress;
     property public boolean dismissOnClickOutside;
-    property public float elevation;
+    property public androidx.compose.ui.unit.Dp elevation;
     property public boolean usePlatformDefaultWidth;
   }
 
@@ -177,14 +177,14 @@ package androidx.xr.compose.spatial {
     method @BytecodeOnly public float getLevel3-D9Ej5fM();
     method @BytecodeOnly public float getLevel4-D9Ej5fM();
     method @BytecodeOnly public float getLevel5-D9Ej5fM();
-    property public float ActivityDefault;
-    property public float DialogDefault;
-    property public float Level0;
-    property public float Level1;
-    property public float Level2;
-    property public float Level3;
-    property public float Level4;
-    property public float Level5;
+    property public androidx.compose.ui.unit.Dp ActivityDefault;
+    property public androidx.compose.ui.unit.Dp DialogDefault;
+    property public androidx.compose.ui.unit.Dp Level0;
+    property public androidx.compose.ui.unit.Dp Level1;
+    property public androidx.compose.ui.unit.Dp Level2;
+    property public androidx.compose.ui.unit.Dp Level3;
+    property public androidx.compose.ui.unit.Dp Level4;
+    property public androidx.compose.ui.unit.Dp Level5;
     field public static final androidx.xr.compose.spatial.SpatialElevationLevel INSTANCE;
   }
 
@@ -248,13 +248,13 @@ package androidx.xr.compose.subspace {
 
   public final class SpatialCurvedRowDefaults {
     method @BytecodeOnly public float getCurveRadius-D9Ej5fM();
-    property public float curveRadius;
+    property public androidx.compose.ui.unit.Dp curveRadius;
     field public static final androidx.xr.compose.subspace.SpatialCurvedRowDefaults INSTANCE;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SpatialExternalSurfaceDefaults {
     method @BytecodeOnly public float getSphereRadius-D9Ej5fM();
-    property public float sphereRadius;
+    property public androidx.compose.ui.unit.Dp sphereRadius;
     field public static final androidx.xr.compose.subspace.SpatialExternalSurfaceDefaults INSTANCE;
   }
 
@@ -319,9 +319,9 @@ package androidx.xr.compose.subspace {
     method @BytecodeOnly public int getMono-M5JOj60();
     method @BytecodeOnly public int getSideBySide-M5JOj60();
     method @BytecodeOnly public int getTopBottom-M5JOj60();
-    property public int Mono;
-    property public int SideBySide;
-    property public int TopBottom;
+    property public androidx.xr.compose.subspace.StereoMode Mono;
+    property public androidx.xr.compose.subspace.StereoMode SideBySide;
+    property public androidx.xr.compose.subspace.StereoMode TopBottom;
   }
 
   @androidx.compose.runtime.ComposableTargetMarker(description="Subspace Composable") @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets={kotlin.annotation.AnnotationTarget.FILE, kotlin.annotation.AnnotationTarget.FUNCTION, kotlin.annotation.AnnotationTarget.PROPERTY_GETTER, kotlin.annotation.AnnotationTarget.TYPE, kotlin.annotation.AnnotationTarget.TYPE_PARAMETER}) public @interface SubspaceComposable {
@@ -338,8 +338,8 @@ package androidx.xr.compose.subspace {
   public static final class SurfaceProtection.Companion {
     method @BytecodeOnly public int getNone-ZtmP4lc();
     method @BytecodeOnly public int getProtected-ZtmP4lc();
-    property public int None;
-    property public int Protected;
+    property public androidx.xr.compose.subspace.SurfaceProtection None;
+    property public androidx.xr.compose.subspace.SurfaceProtection Protected;
   }
 
   public final class VolumeKt {
@@ -452,9 +452,9 @@ package androidx.xr.compose.subspace.layout {
     method @BytecodeOnly public int getAny-rnqRDCc();
     method @BytecodeOnly public int getHorizontal-rnqRDCc();
     method @BytecodeOnly public int getVertical-rnqRDCc();
-    property public int Any;
-    property public int Horizontal;
-    property public int Vertical;
+    property public androidx.xr.compose.subspace.layout.PlaneOrientation Any;
+    property public androidx.xr.compose.subspace.layout.PlaneOrientation Horizontal;
+    property public androidx.xr.compose.subspace.layout.PlaneOrientation Vertical;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) @kotlin.jvm.JvmInline public final value class PlaneSemantic {
@@ -469,11 +469,11 @@ package androidx.xr.compose.subspace.layout {
     method @BytecodeOnly public int getFloor-FWya8ks();
     method @BytecodeOnly public int getTable-FWya8ks();
     method @BytecodeOnly public int getWall-FWya8ks();
-    property public int Any;
-    property public int Ceiling;
-    property public int Floor;
-    property public int Table;
-    property public int Wall;
+    property public androidx.xr.compose.subspace.layout.PlaneSemantic Any;
+    property public androidx.xr.compose.subspace.layout.PlaneSemantic Ceiling;
+    property public androidx.xr.compose.subspace.layout.PlaneSemantic Floor;
+    property public androidx.xr.compose.subspace.layout.PlaneSemantic Table;
+    property public androidx.xr.compose.subspace.layout.PlaneSemantic Wall;
   }
 
   public final class PointerHoverIconKt {
@@ -848,9 +848,9 @@ package androidx.xr.compose.unit {
     method @BytecodeOnly public float getDepth-D9Ej5fM();
     method @BytecodeOnly public float getHeight-D9Ej5fM();
     method @BytecodeOnly public float getWidth-D9Ej5fM();
-    property public float depth;
-    property public float height;
-    property public float width;
+    property public androidx.compose.ui.unit.Dp depth;
+    property public androidx.compose.ui.unit.Dp height;
+    property public androidx.compose.ui.unit.Dp width;
     field public static final androidx.xr.compose.unit.DpVolumeSize.Companion Companion;
   }
 
@@ -936,17 +936,17 @@ package androidx.xr.compose.unit {
     method @BytecodeOnly public float getMillimeters-zRPQRcA(int);
     method @BytecodeOnly public float getNaN-sx7laI0();
     property @kotlin.PublishedApi internal float DP_PER_METER;
-    property public float Infinity;
-    property public float NaN;
-    property public float int.centimeters;
-    property public float float.centimeters;
-    property public float double.centimeters;
-    property public float int.meters;
-    property public float float.meters;
-    property public float double.meters;
-    property public float int.millimeters;
-    property public float float.millimeters;
-    property public float double.millimeters;
+    property public androidx.xr.compose.unit.Meter Infinity;
+    property public androidx.xr.compose.unit.Meter NaN;
+    property public androidx.xr.compose.unit.Meter int.centimeters;
+    property public androidx.xr.compose.unit.Meter float.centimeters;
+    property public androidx.xr.compose.unit.Meter double.centimeters;
+    property public androidx.xr.compose.unit.Meter int.meters;
+    property public androidx.xr.compose.unit.Meter float.meters;
+    property public androidx.xr.compose.unit.Meter double.meters;
+    property public androidx.xr.compose.unit.Meter int.millimeters;
+    property public androidx.xr.compose.unit.Meter float.millimeters;
+    property public androidx.xr.compose.unit.Meter double.millimeters;
   }
 
   public final class MeterKt {

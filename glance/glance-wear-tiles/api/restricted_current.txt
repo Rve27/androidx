@@ -101,9 +101,9 @@ package androidx.glance.wear.tiles.curved {
     method @BytecodeOnly public int getCenter-TqGwu_4();
     method @BytecodeOnly public int getEnd-TqGwu_4();
     method @BytecodeOnly public int getStart-TqGwu_4();
-    property public int Center;
-    property public int End;
-    property public int Start;
+    property public androidx.glance.wear.tiles.curved.AnchorType Center;
+    property public androidx.glance.wear.tiles.curved.AnchorType End;
+    property public androidx.glance.wear.tiles.curved.AnchorType Start;
   }
 
   public final class CombinedGlanceCurvedModifier implements androidx.glance.wear.tiles.curved.GlanceCurvedModifier {
@@ -187,9 +187,9 @@ package androidx.glance.wear.tiles.curved {
     method @BytecodeOnly public int getCenter-pFUpIe8();
     method @BytecodeOnly public int getInner-pFUpIe8();
     method @BytecodeOnly public int getOuter-pFUpIe8();
-    property public int Center;
-    property public int Inner;
-    property public int Outer;
+    property public androidx.glance.wear.tiles.curved.RadialAlignment Center;
+    property public androidx.glance.wear.tiles.curved.RadialAlignment Inner;
+    property public androidx.glance.wear.tiles.curved.RadialAlignment Outer;
   }
 
 }
