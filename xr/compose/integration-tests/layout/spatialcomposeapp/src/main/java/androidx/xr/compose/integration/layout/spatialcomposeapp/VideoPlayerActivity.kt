@@ -794,24 +794,24 @@ class VideoPlayerActivity : ComponentActivity() {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Button(
                     onClick = {
-                        surfaceEntity!!.canvasShape = SurfaceEntity.CanvasShape.Quad(1.0f, 1.0f)
-                        // Move the Quad-shaped canvas to a spot in front of the User.
-                        surfaceEntity!!.setPose(
-                            session.scene.spatialUser.head?.transformPoseTo(
-                                Pose(
-                                    Vector3(0.0f, 0.0f, -1.5f),
-                                    Quaternion(0.0f, 0.0f, 0.0f, 1.0f),
-                                ),
-                                session.scene.activitySpace,
-                            )!!
-                        )
+                        val videoHeight = exoPlayer?.videoSize?.height
+                        val videoWidth = exoPlayer?.videoSize?.width
+                        val canvasHeight =
+                            if (videoHeight != null && videoWidth != null) {
+                                videoHeight.toFloat() / videoWidth.toFloat()
+                            } else {
+                                1.0f
+                            }
+
+                        surfaceEntity!!.canvasShape =
+                            SurfaceEntity.CanvasShape.Quad(1.0f, canvasHeight)
                     }
                 ) {
                     Text(text = "Set Quad", fontSize = 10.sp)
                 }
                 Button(
                     onClick = {
-                        surfaceEntity!!.canvasShape = SurfaceEntity.CanvasShape.Vr360Sphere(1.0f)
+                        surfaceEntity!!.canvasShape = SurfaceEntity.CanvasShape.Vr360Sphere(5.0f)
                     }
                 ) {
                     Text(text = "Set Vr360", fontSize = 10.sp)
@@ -819,7 +819,7 @@ class VideoPlayerActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         surfaceEntity!!.canvasShape =
-                            SurfaceEntity.CanvasShape.Vr180Hemisphere(1.0f)
+                            SurfaceEntity.CanvasShape.Vr180Hemisphere(5.0f)
                     }
                 ) {
                     Text(text = "Set Vr180", fontSize = 10.sp)
