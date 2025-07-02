@@ -19,6 +19,7 @@ package androidx.xr.scenecore.testapp.environment
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -105,9 +106,9 @@ class EnvironmentActivity : AppCompatActivity() {
         createEventLogRecyclerView()
 
         // Toggle passthrough
-        findViewById<Button>(R.id.environment_toggle_passthrough).setOnClickListener {
-            togglePassthrough()
-        }
+        val togglePassthroughButton = findViewById<Button>(R.id.environment_toggle_passthrough)
+        togglePassthroughButton.setOnClickListener { togglePassthrough() }
+        togglePassthroughButton.visibility = View.GONE
 
         // Event listeners
         addSpatialEventListeners()
@@ -249,14 +250,27 @@ class EnvironmentActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n", "RestrictedApi")
     private fun manageOpacity() {
         val opacityTextView = findViewById<TextView>(R.id.sliderValueTextView)
+        passthroughOpacityPreference.value = 0.0f
+        session!!.scene.spatialEnvironment.preferredPassthroughOpacity =
+            passthroughOpacityPreference.value
+        currentPassthroughOpacity.value =
+            session!!.scene.spatialEnvironment.currentPassthroughOpacity
+        opacityTextView.text =
+            opacityValueText(passthroughOpacityPreference.value, currentPassthroughOpacity.value)
+
         val opacitySlider = findViewById<Slider>(R.id.environment_mySlider)
         opacitySlider.addOnChangeListener { _, value, _ ->
             session!!.scene.spatialEnvironment.preferredPassthroughOpacity = value
             passthroughOpacityPreference.value = value
-            opacityTextView.text = opacityValueText(value, currentPassthroughOpacity.value)
+            currentPassthroughOpacity.value =
+                session!!.scene.spatialEnvironment.currentPassthroughOpacity
+            opacityTextView.text =
+                opacityValueText(
+                    passthroughOpacityPreference.value,
+                    currentPassthroughOpacity.value,
+                )
         }
 
-        session!!.scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
         session!!.scene.spatialEnvironment.addOnPassthroughOpacityChangedListener { newOpacity ->
             currentPassthroughOpacity.value = newOpacity
             opacityTextView.text =
@@ -266,7 +280,11 @@ class EnvironmentActivity : AppCompatActivity() {
                 )
             addEvent(
                 EventType.OPACITY_CHANGED,
-                "Opacity preference: ${passthroughOpacityPreference.value}, Current opacity: $newOpacity",
+                opacityValueText(
+                    passthroughOpacityPreference.value,
+                    currentPassthroughOpacity.value,
+                    ", ",
+                ),
             )
         }
 
@@ -275,7 +293,23 @@ class EnvironmentActivity : AppCompatActivity() {
         unsetOpacityPrefButton.setOnClickListener {
             session!!.scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
             opacitySlider.value = 0f
-            opacityTextView.text = opacityValueText(0f, 0f)
+            passthroughOpacityPreference.value =
+                session!!.scene.spatialEnvironment.preferredPassthroughOpacity
+            currentPassthroughOpacity.value =
+                session!!.scene.spatialEnvironment.currentPassthroughOpacity
+            opacityTextView.text =
+                opacityValueText(
+                    passthroughOpacityPreference.value,
+                    currentPassthroughOpacity.value,
+                )
+            addEvent(
+                EventType.OPACITY_CHANGED,
+                opacityValueText(
+                    passthroughOpacityPreference.value,
+                    currentPassthroughOpacity.value,
+                    ", ",
+                ),
+            )
         }
     }
 
@@ -308,10 +342,14 @@ class EnvironmentActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun opacityValueText(preference: Float, actual: Float): String {
+    private fun opacityValueText(
+        preference: Float,
+        actual: Float,
+        separator: String = "\n",
+    ): String {
         val decimalFormat = DecimalFormat("#.##")
         val p = decimalFormat.format(preference)
         val a = decimalFormat.format(actual)
-        return "Opacity Preference: $p\nCurrent Actual Opacity: $a"
+        return "Opacity Preference: $p" + separator + "Current Actual Opacity: $a"
     }
 }
