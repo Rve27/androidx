@@ -190,6 +190,7 @@ public class MediaRouter2Test {
 
     @Test
     @MediumTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.S)
     public void selectRoute_withSelectedMr2Route_shouldBeNoOp() throws Exception {
         String descriptorId = StubMediaRoute2ProviderService.MR2_ROUTE_ID1;
         String mr2DescriptorId = getMediaRoute2DescriptorId(descriptorId);
@@ -238,6 +239,7 @@ public class MediaRouter2Test {
 
     @Test
     @MediumTest
+    @SdkSuppress(minSdkVersion = Build.VERSION_CODES.S)
     public void selectRoute_withSelectingMr2Route_shouldBeNoOp() throws Exception {
         String descriptorId = StubMediaRoute2ProviderService.MR2_ROUTE_ID1;
         String mr2DescriptorId = getMediaRoute2DescriptorId(descriptorId);
