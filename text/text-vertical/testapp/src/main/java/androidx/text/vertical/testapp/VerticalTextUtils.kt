@@ -28,6 +28,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.isSpecified
+import androidx.text.vertical.FontShearSpan
+import androidx.text.vertical.FontShearSpan.Companion.DEFAULT_FONT_SHEAR
 import androidx.text.vertical.RubySpan
 import androidx.text.vertical.TextOrientationSpan
 
@@ -105,6 +107,12 @@ class VerticalTextBuilder {
         block: @Composable VerticalTextBuilder.() -> R,
     ): R =
         withSpan(TextStyleSpan(fontSize, textColor, backgroundColor, LocalDensity.current), block)
+
+    @Composable
+    fun <R : Any> withFontShear(
+        fontShear: Float = DEFAULT_FONT_SHEAR,
+        block: @Composable VerticalTextBuilder.() -> R,
+    ): R = withSpan(FontShearSpan(fontShear), block)
 
     var result = SpannableStringBuilder()
 }

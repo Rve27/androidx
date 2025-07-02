@@ -231,6 +231,8 @@ fun ComplexText(paint: TextPaint, modifier: Modifier = Modifier) {
                 }
             )
             text("年もよろしくお願いいたします。")
+
+            withFontShear { text("日本語の斜体はEnglishのItalicとは少し違います。") }
         },
         paint,
         modifier,

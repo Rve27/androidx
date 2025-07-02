@@ -1,6 +1,21 @@
 // Signature format: 4.0
 package androidx.text.vertical {
 
+  public final class FontShearSpan extends android.text.style.MetricAffectingSpan {
+    ctor public FontShearSpan();
+    ctor public FontShearSpan(optional float fontShear);
+    method public float getFontShear();
+    method public void updateDrawState(android.text.TextPaint? p0);
+    method public void updateMeasureState(android.text.TextPaint p0);
+    property public float fontShear;
+    field public static final androidx.text.vertical.FontShearSpan.Companion Companion;
+    field public static final float DEFAULT_FONT_SHEAR = 0.1678842f;
+  }
+
+  public static final class FontShearSpan.Companion {
+    property public static float DEFAULT_FONT_SHEAR;
+  }
+
   public final class RubySpan {
     method public int getOrientation();
     method public CharSequence getText();
