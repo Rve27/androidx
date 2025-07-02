@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package androidx.xr.scenecore.impl;
 
 import android.content.Context;

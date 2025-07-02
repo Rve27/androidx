@@ -206,9 +206,7 @@ abstract class AndroidXrEntity extends BaseEntity implements Entity {
     @Override
     public void setParent(Entity parent) {
         if ((parent != null) && !(parent instanceof AndroidXrEntity)) {
-            Log.e(
-                    "SceneCore",
-                    "Cannot set non-AndroidXrEntity as a parent of a AndroidXrEntity");
+            Log.e("SceneCore", "Cannot set non-AndroidXrEntity as a parent of a AndroidXrEntity");
             return;
         }
         super.setParent(parent);

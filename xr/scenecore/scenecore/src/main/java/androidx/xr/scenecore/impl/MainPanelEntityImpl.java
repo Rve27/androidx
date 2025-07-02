@@ -90,10 +90,6 @@ final class MainPanelEntityImpl extends BasePanelEntity implements PanelEntity {
         super.setSizeInPixels(dimensions);
         // TODO: b/376934871 - Check async results.
         mExtensions.setMainWindowSize(
-                getActivity(),
-                dimensions.width,
-                dimensions.height,
-                Runnable::run,
-                (result) -> {});
+                getActivity(), dimensions.width, dimensions.height, Runnable::run, (result) -> {});
     }
 }

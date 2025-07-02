@@ -70,22 +70,20 @@ abstract class BaseEntity extends BaseActivityPose implements Entity {
     private View getAccessibilityView() {
         Activity activity = getActivity();
         if (activity == null) {
-            Log.w("SceneCore",
-                        "Activity is not set and unable to create accessibility view");
+            Log.w("SceneCore", "Activity is not set and unable to create accessibility view");
             return null;
         }
         if (mAccessibilityLayout == null) {
             ViewGroup mainLayout = (ViewGroup) activity.getWindow().getDecorView();
             mAccessibilityLayout = new FrameLayout(activity);
-            mAccessibilityLayout.setLayoutParams(
-                new FrameLayout.LayoutParams(1, 1));
+            mAccessibilityLayout.setLayoutParams(new FrameLayout.LayoutParams(1, 1));
             mainLayout.addView(mAccessibilityLayout);
         }
-        //There should be only one child as per this design
+        // There should be only one child as per this design
         if (mAccessibilityLayout.getChildCount() > 0) {
             return mAccessibilityLayout.getChildAt(0);
         }
-        //If the no view exists create one
+        // If the no view exists create one
         View view = new View(activity);
         view.setFocusable(true);
         view.setFocusableInTouchMode(true);
