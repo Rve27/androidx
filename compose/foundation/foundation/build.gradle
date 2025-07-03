@@ -24,16 +24,22 @@
 
 import androidx.build.SoftwareType
 import androidx.build.PlatformIdentifier
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("AndroidXPlugin")
-    id("com.android.library")
     id("AndroidXComposePlugin")
 }
 
 androidXMultiplatform {
-    androidTarget()
+    androidLibrary {
+        compileSdk = 35
+        namespace = "androidx.compose.foundation"
+        optimization {
+            it.consumerKeepRules.publish = true
+            it.consumerKeepRules.files.add(new File("proguard-rules.pro"))
+        }
+        androidResources.enable = true
+    }
     jvmStubs()
     linuxX64Stubs()
 
@@ -137,14 +143,6 @@ androidXMultiplatform {
 dependencies {
     lintChecks(project(":compose:foundation:foundation-lint"))
     lintPublish(project(":compose:foundation:foundation-lint"))
-}
-
-android {
-    compileSdk = 35
-    namespace = "androidx.compose.foundation"
-    buildTypes.configureEach {
-        consumerProguardFiles("proguard-rules.pro")
-    }
 }
 
 androidx {
