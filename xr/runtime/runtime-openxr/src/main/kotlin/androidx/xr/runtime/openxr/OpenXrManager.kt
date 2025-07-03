@@ -114,8 +114,11 @@ internal constructor(
                 -2L ->
                     throw RuntimeException(
                         "There was an unknown runtime error configuring the session."
-                    )
-                // XR_ERROR_RUNTIME_FAILURE
+                    ) // XR_ERROR_RUNTIME_FAILURE
+                -8L ->
+                    throw ConfigurationNotSupportedException(
+                        "Feature not supported."
+                    ) // XR_ERROR_FEATURE_UNSUPPORTED
                 -12L ->
                     throw IllegalStateException(
                         "One or more objects are null. Has the OpenXrManager been created?"
