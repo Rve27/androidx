@@ -1105,7 +1105,9 @@ package androidx.compose.ui.text.font {
 
   @kotlin.jvm.JvmInline public final value class FontSynthesis {
     method @BytecodeOnly public static androidx.compose.ui.text.font.FontSynthesis! box-impl(int);
+    method public int getValue();
     method @BytecodeOnly public int unbox-impl();
+    property public int value;
     field public static final androidx.compose.ui.text.font.FontSynthesis.Companion Companion;
   }
 
@@ -1114,6 +1116,8 @@ package androidx.compose.ui.text.font {
     method @BytecodeOnly public int getNone-GVVA2EU();
     method @BytecodeOnly public int getStyle-GVVA2EU();
     method @BytecodeOnly public int getWeight-GVVA2EU();
+    method public int valueOf(int value);
+    method @BytecodeOnly public int valueOf-9CiegCU(int);
     property public androidx.compose.ui.text.font.FontSynthesis All;
     property public androidx.compose.ui.text.font.FontSynthesis None;
     property public androidx.compose.ui.text.font.FontSynthesis Style;
@@ -1642,7 +1646,11 @@ package androidx.compose.ui.text.style {
     method @BytecodeOnly public static androidx.compose.ui.text.style.BaselineShift! box-impl(float);
     method @BytecodeOnly public static float constructor-impl(float);
     method public float getMultiplier();
+    method @BytecodeOnly public static boolean isSpecified-impl(float);
+    method public inline float takeOrElse(kotlin.jvm.functions.Function0<androidx.compose.ui.text.style.BaselineShift> default);
+    method @BytecodeOnly public static float takeOrElse-IkE-C00(float, kotlin.jvm.functions.Function0<androidx.compose.ui.text.style.BaselineShift!>);
     method @BytecodeOnly public float unbox-impl();
+    property public boolean isSpecified;
     property public float multiplier;
     field public static final androidx.compose.ui.text.style.BaselineShift.Companion Companion;
   }
@@ -1651,9 +1659,11 @@ package androidx.compose.ui.text.style {
     method @BytecodeOnly public float getNone-y9eOQZs();
     method @BytecodeOnly public float getSubscript-y9eOQZs();
     method @BytecodeOnly public float getSuperscript-y9eOQZs();
+    method @BytecodeOnly public float getUnspecified-y9eOQZs();
     property @androidx.compose.runtime.Stable public androidx.compose.ui.text.style.BaselineShift None;
     property @androidx.compose.runtime.Stable public androidx.compose.ui.text.style.BaselineShift Subscript;
     property @androidx.compose.runtime.Stable public androidx.compose.ui.text.style.BaselineShift Superscript;
+    property @androidx.compose.runtime.Stable public androidx.compose.ui.text.style.BaselineShift Unspecified;
   }
 
   public final class BaselineShiftKt {
@@ -1663,7 +1673,11 @@ package androidx.compose.ui.text.style {
 
   @kotlin.jvm.JvmInline public final value class Hyphens {
     method @BytecodeOnly public static androidx.compose.ui.text.style.Hyphens! box-impl(int);
+    method public int getValue();
+    method @BytecodeOnly public static boolean isSpecified-impl(int);
     method @BytecodeOnly public int unbox-impl();
+    property public boolean isSpecified;
+    property public int value;
     field public static final androidx.compose.ui.text.style.Hyphens.Companion Companion;
   }
 
@@ -1671,6 +1685,8 @@ package androidx.compose.ui.text.style {
     method @BytecodeOnly public int getAuto-vmbZdU8();
     method @BytecodeOnly public int getNone-vmbZdU8();
     method @BytecodeOnly public int getUnspecified-vmbZdU8();
+    method public int valueOf(int value);
+    method @BytecodeOnly public int valueOf-kPa1_AA(int);
     property public androidx.compose.ui.text.style.Hyphens Auto;
     property public androidx.compose.ui.text.style.Hyphens None;
     property public androidx.compose.ui.text.style.Hyphens Unspecified;
@@ -1754,6 +1770,11 @@ package androidx.compose.ui.text.style {
     property public androidx.compose.ui.text.style.LineBreak.WordBreak Unspecified;
   }
 
+  public final class LineBreakKt {
+    method @BytecodeOnly public static boolean isSpecified-CZqVlQI(int);
+    property @androidx.compose.runtime.Stable public static inline boolean androidx.compose.ui.text.style.LineBreak.isSpecified;
+  }
+
   public final class LineHeightStyle {
     ctor @KotlinOnly public LineHeightStyle(androidx.compose.ui.text.style.LineHeightStyle.Alignment alignment, androidx.compose.ui.text.style.LineHeightStyle.Trim trim);
     ctor @KotlinOnly public LineHeightStyle(androidx.compose.ui.text.style.LineHeightStyle.Alignment alignment, androidx.compose.ui.text.style.LineHeightStyle.Trim trim, androidx.compose.ui.text.style.LineHeightStyle.Mode mode);
@@ -1831,7 +1852,11 @@ package androidx.compose.ui.text.style {
 
   @kotlin.jvm.JvmInline public final value class TextAlign {
     method @BytecodeOnly public static androidx.compose.ui.text.style.TextAlign! box-impl(int);
+    method public int getValue();
+    method @BytecodeOnly public static boolean isSpecified-impl(int);
     method @BytecodeOnly public int unbox-impl();
+    property public boolean isSpecified;
+    property public int value;
     field public static final androidx.compose.ui.text.style.TextAlign.Companion Companion;
   }
 
@@ -1843,6 +1868,8 @@ package androidx.compose.ui.text.style {
     method @BytecodeOnly public int getRight-e0LSkKk();
     method @BytecodeOnly public int getStart-e0LSkKk();
     method @BytecodeOnly public int getUnspecified-e0LSkKk();
+    method public int valueOf(int value);
+    method @BytecodeOnly public int valueOf-IgVj0fw(int);
     method public java.util.List<androidx.compose.ui.text.style.TextAlign> values();
     property public androidx.compose.ui.text.style.TextAlign Center;
     property public androidx.compose.ui.text.style.TextAlign End;
@@ -1866,6 +1893,7 @@ package androidx.compose.ui.text.style {
     method public androidx.compose.ui.text.style.TextDecoration getLineThrough();
     method public androidx.compose.ui.text.style.TextDecoration getNone();
     method public androidx.compose.ui.text.style.TextDecoration getUnderline();
+    method public androidx.compose.ui.text.style.TextDecoration valueOf(int mask);
     property @androidx.compose.runtime.Stable public androidx.compose.ui.text.style.TextDecoration LineThrough;
     property @androidx.compose.runtime.Stable public androidx.compose.ui.text.style.TextDecoration None;
     property @androidx.compose.runtime.Stable public androidx.compose.ui.text.style.TextDecoration Underline;
@@ -1873,7 +1901,11 @@ package androidx.compose.ui.text.style {
 
   @kotlin.jvm.JvmInline public final value class TextDirection {
     method @BytecodeOnly public static androidx.compose.ui.text.style.TextDirection! box-impl(int);
+    method public int getValue();
+    method @BytecodeOnly public static boolean isSpecified-impl(int);
     method @BytecodeOnly public int unbox-impl();
+    property public boolean isSpecified;
+    property public int value;
     field public static final androidx.compose.ui.text.style.TextDirection.Companion Companion;
   }
 
@@ -1884,6 +1916,8 @@ package androidx.compose.ui.text.style {
     method @BytecodeOnly public int getLtr-s_7X-co();
     method @BytecodeOnly public int getRtl-s_7X-co();
     method @BytecodeOnly public int getUnspecified-s_7X-co();
+    method public int valueOf(int value);
+    method @BytecodeOnly public int valueOf-E8nx0Ws(int);
     property public androidx.compose.ui.text.style.TextDirection Content;
     property public androidx.compose.ui.text.style.TextDirection ContentOrLtr;
     property public androidx.compose.ui.text.style.TextDirection ContentOrRtl;
