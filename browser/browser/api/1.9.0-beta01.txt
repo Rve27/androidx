@@ -243,6 +243,7 @@ package androidx.browser.customtabs {
     method public static boolean isCloseButtonEnabled(android.content.Intent);
     method public static boolean isDownloadButtonEnabled(android.content.Intent);
     method public boolean isEphemeralBrowsingEnabled();
+    method @SuppressCompatibility @androidx.browser.customtabs.ExperimentalInitialNavigationCanLeaveBrowser public static boolean isInitialNavigationAllowedToLeaveBrowser(android.content.Intent);
     method public static boolean isSendToExternalDefaultHandlerEnabled(android.content.Intent);
     method public void launchUrl(android.content.Context, android.net.Uri);
     method public static android.content.Intent setAlwaysUseBrowserUI(android.content.Intent?);
@@ -297,6 +298,7 @@ package androidx.browser.customtabs {
     field public static final String EXTRA_EXIT_ANIMATION_BUNDLE = "android.support.customtabs.extra.EXIT_ANIMATION_BUNDLE";
     field public static final String EXTRA_INITIAL_ACTIVITY_HEIGHT_PX = "androidx.browser.customtabs.extra.INITIAL_ACTIVITY_HEIGHT_PX";
     field public static final String EXTRA_INITIAL_ACTIVITY_WIDTH_PX = "androidx.browser.customtabs.extra.INITIAL_ACTIVITY_WIDTH_PX";
+    field @SuppressCompatibility @androidx.browser.customtabs.ExperimentalInitialNavigationCanLeaveBrowser public static final String EXTRA_INITIAL_NAVIGATION_CAN_LEAVE_BROWSER = "androidx.browser.customtabs.extra.INITIAL_NAVIGATION_CAN_LEAVE_BROWSER";
     field public static final String EXTRA_MENU_ITEMS = "android.support.customtabs.extra.MENU_ITEMS";
     field public static final String EXTRA_NAVIGATION_BAR_COLOR = "androidx.browser.customtabs.extra.NAVIGATION_BAR_COLOR";
     field public static final String EXTRA_NAVIGATION_BAR_DIVIDER_COLOR = "androidx.browser.customtabs.extra.NAVIGATION_BAR_DIVIDER_COLOR";
@@ -367,6 +369,7 @@ package androidx.browser.customtabs {
     method public androidx.browser.customtabs.CustomTabsIntent.Builder setInitialActivityHeightPx(@Dimension(unit=androidx.annotation.Dimension.PX) int);
     method public androidx.browser.customtabs.CustomTabsIntent.Builder setInitialActivityHeightPx(@Dimension(unit=androidx.annotation.Dimension.PX) int, int);
     method public androidx.browser.customtabs.CustomTabsIntent.Builder setInitialActivityWidthPx(@Dimension(unit=androidx.annotation.Dimension.PX) int);
+    method @SuppressCompatibility @androidx.browser.customtabs.ExperimentalInitialNavigationCanLeaveBrowser public androidx.browser.customtabs.CustomTabsIntent.Builder setInitialNavigationAllowedToLeaveBrowser(boolean);
     method public androidx.browser.customtabs.CustomTabsIntent.Builder setInstantAppsEnabled(boolean);
     method @Deprecated public androidx.browser.customtabs.CustomTabsIntent.Builder setNavigationBarColor(@ColorInt int);
     method @Deprecated public androidx.browser.customtabs.CustomTabsIntent.Builder setNavigationBarDividerColor(@ColorInt int);
@@ -476,6 +479,9 @@ package androidx.browser.customtabs {
   }
 
   @SuppressCompatibility @RequiresOptIn(level=androidx.annotation.RequiresOptIn.Level.WARNING) @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.CLASS) public @interface ExperimentalCustomContentAction {
+  }
+
+  @SuppressCompatibility @RequiresOptIn(level=androidx.annotation.RequiresOptIn.Level.WARNING) @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.CLASS) public @interface ExperimentalInitialNavigationCanLeaveBrowser {
   }
 
   @SuppressCompatibility @RequiresOptIn(level=androidx.annotation.RequiresOptIn.Level.WARNING) @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.CLASS) public @interface ExperimentalOpenInBrowser {

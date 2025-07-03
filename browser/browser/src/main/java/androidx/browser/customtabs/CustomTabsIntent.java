@@ -212,7 +212,8 @@ public final class CustomTabsIntent {
             "org.chromium.chrome.browser.customtabs.EXTRA_DISABLE_DOWNLOAD_BUTTON";
 
     /**
-     * Extra to favor sending initial urls to external handler apps, if possible.
+     * Extra to favor sending redirects off of the initial URL to external handler apps, if
+     * possible.
      *
      * A Custom Tab Intent from a Custom Tab session will always have the package set,
      * so the Intent will always be to the browser. This extra can be used to allow
@@ -220,6 +221,15 @@ public final class CustomTabsIntent {
      */
     public static final String EXTRA_SEND_TO_EXTERNAL_DEFAULT_HANDLER =
             "android.support.customtabs.extra.SEND_TO_EXTERNAL_HANDLER";
+
+    /**
+     * Extra to favor the Custom Tab forwarding the initial URL sent to the Custom Tab to the
+     * default handling app for that URL instead of loading it (including following any
+     * redirects) in the Custom Tab.
+     */
+    @ExperimentalInitialNavigationCanLeaveBrowser
+    public static final String EXTRA_INITIAL_NAVIGATION_CAN_LEAVE_BROWSER =
+            "androidx.browser.customtabs.extra.INITIAL_NAVIGATION_CAN_LEAVE_BROWSER";
 
     /**
      * Extra that specifies the target locale the Translate UI should be triggered with.
@@ -1552,13 +1562,32 @@ public final class CustomTabsIntent {
         }
 
         /**
-         * Enables sending initial urls to external handler apps, if possible.
+         * Enables sending any redirects off of the initial URL sent to the Custom Tab to default
+         * handling apps. Unless #EXTRA_INITIAL_NAVIGATION_CAN_LEAVE_BROWSER is also set, the
+         * initial URL will still always load in the Custom Tab.
          *
          * @param enabled Whether to send urls to external handler.
          * @see CustomTabsIntent#EXTRA_SEND_TO_EXTERNAL_DEFAULT_HANDLER
          */
         public @NonNull Builder setSendToExternalDefaultHandlerEnabled(boolean enabled) {
             mIntent.putExtra(EXTRA_SEND_TO_EXTERNAL_DEFAULT_HANDLER, enabled);
+            return this;
+        }
+
+        /**
+         * Allows the Custom Tab to forward the initial URL sent to the Custom Tab to the default
+         * handling app for that URL instead of loading it (including following any redirects) in
+         * the Custom Tab.
+         * <p>
+         * Note: This is not the default behavior. The default for this is to be set to false.
+         *
+         * @param enabled Whether the initial URL sent to the custom tab should be sent to the
+         *                default handling app for that URL.
+         * @see CustomTabsIntent#EXTRA_INITIAL_NAVIGATION_CAN_LEAVE_BROWSER
+         */
+        @ExperimentalInitialNavigationCanLeaveBrowser
+        public @NonNull Builder setInitialNavigationAllowedToLeaveBrowser(boolean enabled) {
+            mIntent.putExtra(EXTRA_INITIAL_NAVIGATION_CAN_LEAVE_BROWSER, enabled);
             return this;
         }
 
@@ -2024,6 +2053,16 @@ public final class CustomTabsIntent {
      */
     public static boolean isSendToExternalDefaultHandlerEnabled(@NonNull Intent intent) {
         return intent.getBooleanExtra(EXTRA_SEND_TO_EXTERNAL_DEFAULT_HANDLER, false);
+    }
+
+    /**
+     * @return Whether the initial URL sent to the custom tab should be sent to the default
+     * handling app for that URL.
+     * @see CustomTabsIntent#EXTRA_INITIAL_NAVIGATION_CAN_LEAVE_BROWSER
+     */
+    @ExperimentalInitialNavigationCanLeaveBrowser
+    public static boolean isInitialNavigationAllowedToLeaveBrowser(@NonNull Intent intent) {
+        return intent.getBooleanExtra(EXTRA_INITIAL_NAVIGATION_CAN_LEAVE_BROWSER, false);
     }
 
     /**

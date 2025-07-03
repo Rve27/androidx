@@ -1076,4 +1076,14 @@ public class CustomTabsIntentTest {
         assertEquals(1, actions.size()); // Only the valid one should be parsed
         assertEquals(1512, actions.get(0).getId());
     }
+
+    @Test
+    public void testInitialNavigationAllowedToLeaveBrowser() {
+        Intent intent = new CustomTabsIntent.Builder().build().intent;
+        assertFalse(CustomTabsIntent.isInitialNavigationAllowedToLeaveBrowser(intent));
+
+        intent = new CustomTabsIntent.Builder().setInitialNavigationAllowedToLeaveBrowser(
+                true).build().intent;
+        assertTrue(CustomTabsIntent.isInitialNavigationAllowedToLeaveBrowser(intent));
+    }
 }
