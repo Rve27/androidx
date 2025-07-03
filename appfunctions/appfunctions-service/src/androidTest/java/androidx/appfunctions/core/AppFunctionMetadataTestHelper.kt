@@ -21,6 +21,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.appfunctions.internal.readAll
 import androidx.appfunctions.metadata.AppFunctionAllOfTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionAppMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadataDocument
@@ -332,5 +333,16 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
     companion object {
         private const val RETRY_LIMIT = 5
         private const val RETRY_DELAY_MS = 500L
+
+        val TEST_APP_METADATA =
+            AppFunctionAppMetadata(
+                description =
+                    "* Use noSchema_enabledByDefault and noSchema_disabledByDefault for testing setAppFunctionEnabled API and enabledByDefault behavior. " +
+                        "* Use noSchema_executionSucceed for testing successful execution. " +
+                        "* Use noSchema_executionFail for testing execution failure. " +
+                        "* Use notesSchema_print and mediaSchema_print for schema-based enabled functions. " +
+                        "* Use mediaSchema2_print for testing a schema function disabled by default.",
+                displayDescription = "Test AppFunctionManagerCompat API(s)",
+            )
     }
 }

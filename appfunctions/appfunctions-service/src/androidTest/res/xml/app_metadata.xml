@@ -13,13 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
-    <application>
-        <property
-            android:name="android.app.appfunctions.app_metadata"
-            android:resource="@xml/app_metadata" />
-    </application>
-
-</manifest>
+<AppFunctionAppMetadata xmlns:appfn="http://schemas.android.com/apk/res-auto"
+    appfn:description="* Use noSchema_enabledByDefault and noSchema_disabledByDefault for testing setAppFunctionEnabled API and enabledByDefault behavior.
+* Use noSchema_executionSucceed for testing successful execution.
+* Use noSchema_executionFail for testing execution failure.
+* Use notesSchema_print and mediaSchema_print for schema-based enabled functions.
+* Use mediaSchema2_print for testing a schema function disabled by default."
+    appfn:displayDescription="@string/description" />

@@ -243,6 +243,15 @@ package androidx.appfunctions.metadata {
   public static final class AppFunctionAllOfTypeMetadata.Companion {
   }
 
+  public final class AppFunctionAppMetadata {
+    ctor public AppFunctionAppMetadata();
+    ctor public AppFunctionAppMetadata(optional String description, optional String displayDescription);
+    method public String getDescription();
+    method public String getDisplayDescription();
+    property public String description;
+    property public String displayDescription;
+  }
+
   public final class AppFunctionArrayTypeMetadata extends androidx.appfunctions.metadata.AppFunctionDataTypeMetadata {
     ctor public AppFunctionArrayTypeMetadata(androidx.appfunctions.metadata.AppFunctionDataTypeMetadata itemType, boolean isNullable);
     ctor public AppFunctionArrayTypeMetadata(androidx.appfunctions.metadata.AppFunctionDataTypeMetadata itemType, boolean isNullable, optional String description);
@@ -313,6 +322,7 @@ package androidx.appfunctions.metadata {
     ctor public AppFunctionPackageMetadata(String packageName, java.util.List<androidx.appfunctions.metadata.AppFunctionMetadata> appFunctions);
     method public java.util.List<androidx.appfunctions.metadata.AppFunctionMetadata> getAppFunctions();
     method public String getPackageName();
+    method @RequiresApi(android.os.Build.VERSION_CODES.S) @WorkerThread public androidx.appfunctions.metadata.AppFunctionAppMetadata? resolveAppFunctionAppMetadata(android.content.Context context);
     property public java.util.List<androidx.appfunctions.metadata.AppFunctionMetadata> appFunctions;
     property public String packageName;
   }
