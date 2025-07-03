@@ -199,8 +199,8 @@ import androidx.compose.ui.util.trace
 import androidx.compose.ui.viewinterop.AndroidViewHolder
 import androidx.compose.ui.viewinterop.InteropView
 import androidx.core.view.AccessibilityDelegateCompat
-import androidx.core.view.InputDeviceCompat.SOURCE_CLASS_POINTER
 import androidx.core.view.InputDeviceCompat.SOURCE_ROTARY_ENCODER
+import androidx.core.view.InputDeviceCompat.SOURCE_TOUCH_NAVIGATION
 import androidx.core.view.MotionEventCompat.AXIS_SCROLL
 import androidx.core.view.ViewCompat
 import androidx.core.view.ViewConfigurationCompat.getScaledHorizontalScrollFactor
@@ -2203,7 +2203,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                 }
             else -> {
                 @OptIn(ExperimentalIndirectTouchTypeApi::class)
-                if (!motionEvent.isFromSource(SOURCE_CLASS_POINTER)) {
+                if (motionEvent.isFromSource(SOURCE_TOUCH_NAVIGATION)) {
                     val indirectTouchEvent =
                         AndroidIndirectTouchEvent(
                             position = Offset(motionEvent.x, motionEvent.y),
