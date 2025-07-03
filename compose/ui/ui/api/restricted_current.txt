@@ -3417,6 +3417,8 @@ package androidx.compose.ui.node {
   public final class DelegatableNodeKt {
     method public static void dispatchOnScrollChanged(androidx.compose.ui.node.DelegatableNode, long delta);
     method @BytecodeOnly public static void dispatchOnScrollChanged-Uv8p0NA(androidx.compose.ui.node.DelegatableNode, long);
+    method public static void invalidateDrawForSubtree(androidx.compose.ui.node.DelegatableNode);
+    method public static void invalidateLayoutForSubtree(androidx.compose.ui.node.DelegatableNode);
     method public static void invalidateSubtree(androidx.compose.ui.node.DelegatableNode);
     method public static void requestAutofill(androidx.compose.ui.node.DelegatableNode);
     method public static androidx.compose.ui.unit.Density requireDensity(androidx.compose.ui.node.DelegatableNode);
@@ -3470,6 +3472,7 @@ package androidx.compose.ui.node {
   }
 
   public final class DrawModifierNodeKt {
+    method public static void dispatchDraw(androidx.compose.ui.node.DelegatableNode, androidx.compose.ui.graphics.drawscope.ContentDrawScope scope);
     method public static void invalidateDraw(androidx.compose.ui.node.DrawModifierNode);
   }
 
@@ -3504,6 +3507,7 @@ package androidx.compose.ui.node {
     method public static void invalidateMeasurement(androidx.compose.ui.node.LayoutModifierNode);
     method public static void invalidatePlacement(androidx.compose.ui.node.LayoutModifierNode);
     method public static void remeasureSync(androidx.compose.ui.node.LayoutModifierNode);
+    method public static void updateLayerBlock(androidx.compose.ui.node.LayoutModifierNode, kotlin.jvm.functions.Function1<? super androidx.compose.ui.graphics.GraphicsLayerScope,kotlin.Unit>? layerBlock);
   }
 
   public abstract class ModifierNodeElement<N extends androidx.compose.ui.Modifier.Node> implements androidx.compose.ui.platform.InspectableValue androidx.compose.ui.Modifier.Element {

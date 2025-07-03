@@ -24,9 +24,8 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.node.LayoutModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
-import androidx.compose.ui.node.Nodes
 import androidx.compose.ui.node.SemanticsModifierNode
-import androidx.compose.ui.node.requireCoordinator
+import androidx.compose.ui.node.updateLayerBlock
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
@@ -705,11 +704,7 @@ internal class BlockGraphicsLayerModifier(var layerBlock: GraphicsLayerScope.() 
 
     override val isImportantForBounds = false
 
-    fun invalidateLayerBlock() {
-        requireCoordinator(Nodes.Layout)
-            .wrapped
-            ?.updateLayerBlock(layerBlock, forceUpdateLayerParameters = true)
-    }
+    fun invalidateLayerBlock() = updateLayerBlock(layerBlock)
 
     override fun MeasureScope.measure(
         measurable: Measurable,
@@ -781,11 +776,7 @@ private class SimpleGraphicsLayerModifier(
         colorFilter = this@SimpleGraphicsLayerModifier.colorFilter
     }
 
-    fun invalidateLayerBlock() {
-        requireCoordinator(Nodes.Layout)
-            .wrapped
-            ?.updateLayerBlock(this.layerBlock, forceUpdateLayerParameters = true)
-    }
+    fun invalidateLayerBlock() = updateLayerBlock(layerBlock)
 
     override fun MeasureScope.measure(
         measurable: Measurable,
