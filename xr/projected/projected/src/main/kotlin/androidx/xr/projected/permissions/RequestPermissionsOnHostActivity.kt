@@ -58,8 +58,9 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
 
     private lateinit var requests: List<PermissionRequest>
     private lateinit var resultReceiver: ResultReceiver
-    private val permissionResults = Bundle()
+    private lateinit var permissionResults: Bundle
     private var nextRequestIndex = 0
+    private var pendingUserAction = false
 
     /**
      * Holds the current request that requires a rationale to be shown. When this is non-null, the
@@ -112,7 +113,19 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
             }
         }
 
-        handleNextRequest()
+        nextRequestIndex =
+            savedInstanceState?.getInt(INSTANCE_STATE_NEXT_REQUEST_INDEX_KEY, nextRequestIndex)
+                ?: nextRequestIndex
+        permissionResults =
+            savedInstanceState?.getBundle(INSTANCE_STATE_PERMISSION_RESULTS_KEY) ?: Bundle()
+        pendingUserAction =
+            savedInstanceState?.getBoolean(
+                INSTANCE_STATE_PENDING_USER_ACTION_KEY,
+                pendingUserAction,
+            ) ?: pendingUserAction
+        if (!pendingUserAction) {
+            handleNextRequest()
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -121,8 +134,18 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
         grantResults: IntArray,
         deviceId: Int,
     ) {
+        pendingUserAction = false
         recordPermissionResult(requestCode, permissions, grantResults)
         handleNextRequest()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.apply {
+            putInt(INSTANCE_STATE_NEXT_REQUEST_INDEX_KEY, nextRequestIndex)
+            putBundle(INSTANCE_STATE_PERMISSION_RESULTS_KEY, permissionResults)
+            putBoolean(INSTANCE_STATE_PENDING_USER_ACTION_KEY, pendingUserAction)
+        }
     }
 
     private fun handleNextRequest() {
@@ -137,6 +160,7 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
                 nextRequestIndex,
                 request.deviceId,
             )
+            pendingUserAction = true
             nextRequestIndex++
         } else {
             rationaleRequest = request
@@ -154,6 +178,7 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
         // Hide the rationale UI before showing the system permission dialog.
         rationaleRequest = null
         requestPermissions(request.permissions.toTypedArray(), nextRequestIndex, request.deviceId)
+        pendingUserAction = true
         nextRequestIndex++
     }
 
@@ -253,6 +278,9 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
     }
 
     private companion object {
+        private const val INSTANCE_STATE_NEXT_REQUEST_INDEX_KEY = "nextRequestIndex"
+        private const val INSTANCE_STATE_PERMISSION_RESULTS_KEY = "permissionResults"
+        private const val INSTANCE_STATE_PENDING_USER_ACTION_KEY = "pendingUserAction"
         private val DEVICE_SCOPED_PERMISSIONS =
             setOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
 

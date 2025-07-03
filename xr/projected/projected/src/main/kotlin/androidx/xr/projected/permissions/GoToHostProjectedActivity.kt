@@ -47,21 +47,45 @@ public class GoToHostProjectedActivity :
         super.onCreate(savedInstanceState)
         setContent { GlimmerTheme { Ui() } }
 
-        permissionResultReceiver = PermissionResultReceiver(Handler(Looper.getMainLooper()))
-        permissionResultReceiver.localCallback = this
-        val activityOptions =
-            ActivityOptions.makeBasic().setLaunchDisplayId(Display.DEFAULT_DISPLAY)
-        startActivity(
-            Intent()
-                .setClass(this, RequestPermissionsOnHostActivity::class.java)
-                .putExtras(intent)
-                .putExtra(EXTRA_RESULT_RECEIVER, permissionResultReceiver)
-                .addFlags(
-                    Intent.FLAG_ACTIVITY_NEW_TASK or
-                        Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
-                        Intent.FLAG_ACTIVITY_SINGLE_TOP
-                ),
-            activityOptions.toBundle(),
+        val storedPermissionResultReceiver =
+            savedInstanceState?.getParcelable(
+                INSTANCE_STATE_PERMISSION_RESULT_RECEIVER_KEY,
+                PermissionResultReceiver::class.java,
+            )
+
+        if (storedPermissionResultReceiver != null) {
+            // This activity instance is re-created, e.g. from a configuration change
+            permissionResultReceiver =
+                storedPermissionResultReceiver.apply {
+                    localCallback = this@GoToHostProjectedActivity
+                }
+        } else {
+            permissionResultReceiver =
+                PermissionResultReceiver(Handler(Looper.getMainLooper())).apply {
+                    localCallback = this@GoToHostProjectedActivity
+                }
+            val activityOptions =
+                ActivityOptions.makeBasic().setLaunchDisplayId(Display.DEFAULT_DISPLAY)
+            startActivity(
+                Intent()
+                    .setClass(this, RequestPermissionsOnHostActivity::class.java)
+                    .putExtras(intent)
+                    .putExtra(EXTRA_RESULT_RECEIVER, permissionResultReceiver)
+                    .addFlags(
+                        Intent.FLAG_ACTIVITY_NEW_TASK or
+                            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
+                            Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    ),
+                activityOptions.toBundle(),
+            )
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(
+            INSTANCE_STATE_PERMISSION_RESULT_RECEIVER_KEY,
+            permissionResultReceiver,
         )
     }
 
@@ -92,6 +116,7 @@ public class GoToHostProjectedActivity :
     }
 
     internal companion object {
+        private const val INSTANCE_STATE_PERMISSION_RESULT_RECEIVER_KEY = "permissionResultReceiver"
         internal const val EXTRA_RESULT_RECEIVER =
             "androidx.xr.projected.permissions.extra.RESULT_RECEIVER"
     }
