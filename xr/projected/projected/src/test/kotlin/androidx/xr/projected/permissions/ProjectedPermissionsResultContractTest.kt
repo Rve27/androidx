@@ -358,6 +358,218 @@ class ProjectedPermissionsResultContractTest {
         }
     }
 
+    @Test
+    fun requestDeviceScopedPermissions_requestsPermissionsForBothHostAndProjectedDevice() {
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions =
+                        listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
+                    rationale = null,
+                )
+            )
+        ) { activity, projectedActivityScenario ->
+            // first request
+            var request = getLastRequestedPermission(activity)!!
+            assertThat(request.requestedPermissions.toList())
+                .containsExactly(Manifest.permission.CAMERA)
+            assertThat(request.deviceId).isEqualTo(Context.DEVICE_ID_DEFAULT)
+            acceptPermissionsRequestFor(request, activity)
+            // second request
+            request = getLastRequestedPermission(activity)!!
+            assertThat(request.requestedPermissions.toList())
+                .containsExactly(Manifest.permission.CAMERA)
+            assertThat(request.deviceId).isEqualTo(virtualDevice.deviceId)
+            acceptPermissionsRequestFor(request, activity)
+            // third request
+            request = getLastRequestedPermission(activity)!!
+            assertThat(request.requestedPermissions.toList())
+                .containsExactly(Manifest.permission.RECORD_AUDIO)
+            assertThat(request.deviceId).isEqualTo(Context.DEVICE_ID_DEFAULT)
+            acceptPermissionsRequestFor(request, activity)
+            // fourth request
+            request = getLastRequestedPermission(activity)!!
+            assertThat(request.requestedPermissions.toList())
+                .containsExactly(Manifest.permission.RECORD_AUDIO)
+            assertThat(request.deviceId).isEqualTo(virtualDevice.deviceId)
+            acceptPermissionsRequestFor(request, activity)
+            // verify results sent to the app
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(
+                    mapOf(
+                        Manifest.permission.CAMERA to true,
+                        Manifest.permission.RECORD_AUDIO to true,
+                    )
+                )
+        }
+    }
+
+    @Test
+    fun requestDeviceScopedPermissions_userAcceptsHostPermissionButDeclinesProjected_sendsDeclineToApp() {
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.CAMERA),
+                    rationale = null,
+                )
+            )
+        ) { activity, projectedActivityScenario ->
+            var request = getLastRequestedPermission(activity)!!
+
+            acceptPermissionsRequestFor(request, activity)
+            request = getLastRequestedPermission(activity)!!
+            declinePermissionsRequestFor(request, activity)
+
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(mapOf(Manifest.permission.CAMERA to false))
+        }
+    }
+
+    @Test
+    fun requestDeviceScopedPermissions_userDeclinesHostPermissionAndAcceptsProjected_sendsDeclineToApp() {
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.CAMERA),
+                    rationale = null,
+                )
+            )
+        ) { activity, projectedActivityScenario ->
+            var request = getLastRequestedPermission(activity)!!
+
+            declinePermissionsRequestFor(request, activity)
+            request = getLastRequestedPermission(activity)!!
+            acceptPermissionsRequestFor(request, activity)
+
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(mapOf(Manifest.permission.CAMERA to false))
+        }
+    }
+
+    @Test
+    fun multipleRequests_sendsCorrectResult() {
+        // This test verifies a user journey with multiple requests, which some accepted, some
+        // declined,
+        // and some rejected at the rationale screen.
+        val continueButtonText = appContext.getString(R.string.continue_button)
+        val cancelButtonText = appContext.getString(R.string.cancel_button)
+
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.CAMERA),
+                    rationale = "My rationale 1",
+                ),
+                ProjectedPermissionsRequestParams(
+                    permissions =
+                        listOf(
+                            Manifest.permission.RECORD_AUDIO,
+                            Manifest.permission.BLUETOOTH_CONNECT,
+                        ),
+                    rationale = "My rationale 2",
+                ),
+                ProjectedPermissionsRequestParams(
+                    permissions =
+                        listOf(
+                            Manifest.permission.READ_CALENDAR,
+                            Manifest.permission.READ_CONTACTS,
+                        ),
+                    rationale = "My rationale 3",
+                ),
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                    rationale = null,
+                ),
+            )
+        ) { activity, projectedActivityScenario ->
+            composeTestRule.onNodeWithText("My rationale 1").assertIsDisplayed()
+            // user rejects camera permission at rationale screen
+            composeTestRule.onNodeWithText(cancelButtonText).performClick()
+            composeTestRule.onNodeWithText("My rationale 2").assertIsDisplayed()
+            // user continues
+            composeTestRule.onNodeWithText(continueButtonText).performClick()
+            var request = getLastRequestedPermission(activity)!!
+            // RECORD_AUDIO is device-scoped, so separate requests for host and projected device are
+            // made
+            assertThat(request.requestedPermissions.toList())
+                .containsExactly(Manifest.permission.RECORD_AUDIO)
+            assertThat(request.deviceId).isEqualTo(Context.DEVICE_ID_DEFAULT)
+            // user declines host's audio permission
+            declinePermissionsRequestFor(request, activity)
+            request = getLastRequestedPermission(activity)!!
+            assertThat(request.requestedPermissions.toList())
+                .containsExactly(Manifest.permission.RECORD_AUDIO)
+            assertThat(request.deviceId).isEqualTo(virtualDevice.deviceId)
+            // user accepts projected's device audio permission
+            acceptPermissionsRequestFor(request, activity)
+            request = getLastRequestedPermission(activity)!!
+            assertThat(request.requestedPermissions.toList())
+                .containsExactly(Manifest.permission.BLUETOOTH_CONNECT)
+            // user accepts bluetooth permission
+            acceptPermissionsRequestFor(request, activity)
+            composeTestRule.onNodeWithText("My rationale 3").assertIsDisplayed()
+            // user continues, declines the calendar permission, and grants the contacts permission
+            composeTestRule.onNodeWithText(continueButtonText).performClick()
+            request = getLastRequestedPermission(activity)!!
+            assertThat(request.requestedPermissions.toList())
+                .containsExactly(
+                    Manifest.permission.READ_CALENDAR,
+                    Manifest.permission.READ_CONTACTS,
+                )
+            respondToPermissionsRequest(
+                request,
+                activity,
+                intArrayOf(PackageManager.PERMISSION_DENIED, PackageManager.PERMISSION_GRANTED),
+            )
+            // the fourth request is immediately made because it does not have a rationale
+            request = getLastRequestedPermission(activity)!!
+            assertThat(request.requestedPermissions.toList())
+                .containsExactly(Manifest.permission.ACCESS_COARSE_LOCATION)
+            // user accepts the location permission
+            acceptPermissionsRequestFor(request, activity)
+
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(
+                    mapOf(
+                        Manifest.permission.CAMERA to false,
+                        Manifest.permission.RECORD_AUDIO to false,
+                        Manifest.permission.BLUETOOTH_CONNECT to true,
+                        Manifest.permission.READ_CALENDAR to false,
+                        Manifest.permission.READ_CONTACTS to true,
+                        Manifest.permission.ACCESS_COARSE_LOCATION to true,
+                    )
+                )
+        }
+    }
+
     private fun acceptPermissionsRequestFor(request: PermissionsRequest, activity: Activity) {
         respondToPermissionsRequest(
             request,
