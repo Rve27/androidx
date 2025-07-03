@@ -17,6 +17,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
+        <activity android:name="androidx.xr.projected.permissions.RequestPermissionsOnHostActivity"
+            android:label="@string/request_permission_on_host_activity_label"
+            android:theme="@style/Theme.AppCompat.DayNight"
+            android:exported="false">
+        </activity>
         <activity
             android:name="androidx.xr.projected.permissions.GoToHostProjectedActivity"
             android:exported="false"

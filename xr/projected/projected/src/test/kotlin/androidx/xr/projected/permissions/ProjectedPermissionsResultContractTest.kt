@@ -17,27 +17,48 @@
 package androidx.xr.projected.permissions
 
 import android.Manifest
+import android.app.Activity
+import android.app.Application
 import android.companion.virtual.VirtualDevice
 import android.companion.virtual.VirtualDeviceManager
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.xr.projected.R
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.util.ReflectionHelpers
-import org.robolectric.util.ReflectionHelpers.ClassParameter
 
+/**
+ * This test class contains tests that span across [ProjectedPermissionsResultContract],
+ * [GoToHostProjectedActivity], and [RequestPermissionsOnHostActivity].
+ */
 @RunWith(AndroidJUnit4::class)
 @Config(minSdk = Build.VERSION_CODES.VANILLA_ICE_CREAM)
 class ProjectedPermissionsResultContractTest {
 
-    private val appContext: Context = getApplicationContext()
+    private val appContext: Application = getApplicationContext()
     private val virtualDeviceManager = appContext.getSystemService(VirtualDeviceManager::class.java)
     private lateinit var virtualDevice: VirtualDevice
+
+    @get:Rule val composeTestRule = createEmptyComposeRule()
+
+    private val deviceScopedContext: Context by lazy {
+        appContext.createDeviceContext(virtualDevice.deviceId)
+    }
 
     @Before
     fun setUp() {
@@ -52,11 +73,369 @@ class ProjectedPermissionsResultContractTest {
         val intent =
             ProjectedPermissionsResultContract()
                 .createIntent(deviceScopedContext, listOf(REQUEST_DATA_1, REQUEST_DATA_2))
-
         assertThat(intent.component!!.packageName).isEqualTo(appContext.packageName)
         assertThat(intent.component!!.className)
             .isEqualTo(GoToHostProjectedActivity::class.java.name)
     }
+
+    @Test
+    fun launchProjectedActivity_startsHostActivity() {
+        val projectedActivityIntent =
+            ProjectedPermissionsResultContract()
+                .createIntent(deviceScopedContext, listOf(REQUEST_DATA_1, REQUEST_DATA_2))
+
+        ActivityScenario.launchActivityForResult<GoToHostProjectedActivity>(projectedActivityIntent)
+            .use { _ ->
+                val startedActivityIntent = shadowOf(appContext).nextStartedActivity
+                assertThat(startedActivityIntent.component!!.packageName)
+                    .isEqualTo(appContext.packageName)
+                assertThat(startedActivityIntent.component!!.className)
+                    .isEqualTo(RequestPermissionsOnHostActivity::class.java.name)
+            }
+    }
+
+    @Test
+    fun launchHostActivity_noRationaleProvided_requestsPermissionsImmediately() {
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = null,
+                )
+            )
+        ) { activity, _ ->
+            val request = getLastRequestedPermission(activity)!!
+            assertThat(request.requestedPermissions.toList())
+                .isEqualTo(NOT_DEVICE_SCOPED_PERMISSIONS)
+            assertThat(request.deviceId).isEqualTo(Context.DEVICE_ID_DEFAULT)
+        }
+    }
+
+    @Test
+    fun launchHostActivity_rationaleProvided_requestsPermissionsOnlyAfterUserAcceptsRationale() {
+        launchHostActivity(
+            listOf(ProjectedPermissionsRequestParams(NOT_DEVICE_SCOPED_PERMISSIONS, "My rationale"))
+        ) { activity, _ ->
+            var request = getLastRequestedPermission(activity)
+            // verify that no request is made
+            assertThat(request).isNull()
+
+            val continueButtonText = appContext.getString(R.string.continue_button)
+            val cancelButtonText = appContext.getString(R.string.cancel_button)
+
+            // verify that the rationale text and buttons are visible
+            composeTestRule.onNodeWithText("My rationale").assertIsDisplayed()
+            composeTestRule.onNodeWithText(continueButtonText).assertIsDisplayed()
+            composeTestRule.onNodeWithText(cancelButtonText).assertIsDisplayed()
+
+            // user taps on continue button
+            composeTestRule.onNodeWithText(continueButtonText).performClick()
+
+            // verify that the correct request is made
+            request = getLastRequestedPermission(activity)!!
+            assertThat(request.requestedPermissions.toList())
+                .isEqualTo(NOT_DEVICE_SCOPED_PERMISSIONS)
+            assertThat(request.deviceId).isEqualTo(Context.DEVICE_ID_DEFAULT)
+        }
+    }
+
+    @Test
+    fun userAcceptsPermissionDialog_sendsPermissionResultToAppActivity() {
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = null,
+                )
+            )
+        ) { activity, projectedActivityScenario ->
+            val permissionRequest = getLastRequestedPermission(activity)!!
+
+            // Simulates the user accepting the requests
+            acceptPermissionsRequestFor(permissionRequest, activity)
+
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(
+                    mapOf(
+                        NOT_DEVICE_SCOPED_PERMISSIONS[0] to true,
+                        NOT_DEVICE_SCOPED_PERMISSIONS[1] to true,
+                    )
+                )
+        }
+    }
+
+    @Test
+    fun userDeclinesPermissionDialog_sendsPermissionResultToAppActivity() {
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = null,
+                )
+            )
+        ) { activity, projectedActivityScenario ->
+            val permissionRequest = getLastRequestedPermission(activity)!!
+
+            // Simulates the user declining the requests
+            declinePermissionsRequestFor(permissionRequest, activity)
+
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(
+                    mapOf(
+                        NOT_DEVICE_SCOPED_PERMISSIONS[0] to false,
+                        NOT_DEVICE_SCOPED_PERMISSIONS[1] to false,
+                    )
+                )
+        }
+    }
+
+    @Test
+    fun userRejectsRationale_sendsPermissionResultToAppActivity() {
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = "My rationale",
+                )
+            )
+        ) { activity, projectedActivityScenario ->
+            // user rejects rationale
+            val cancelButtonText = appContext.getString(R.string.cancel_button)
+            composeTestRule.onNodeWithText(cancelButtonText).performClick()
+
+            val request = getLastRequestedPermission(activity)
+            assertThat(request).isNull()
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(
+                    mapOf(
+                        NOT_DEVICE_SCOPED_PERMISSIONS[0] to false,
+                        NOT_DEVICE_SCOPED_PERMISSIONS[1] to false,
+                    )
+                )
+        }
+    }
+
+    @Test
+    fun userRejectsRationale_rejectsAllPermissionsWhenNoOtherRequestHasRationale() {
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.CAMERA),
+                    rationale = "My rationale",
+                ),
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = null,
+                ),
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.RECORD_AUDIO),
+                    rationale = null,
+                ),
+            )
+        ) { activity, projectedActivityScenario ->
+            // user rejects rationale
+            val cancelButtonText = appContext.getString(R.string.cancel_button)
+            composeTestRule.onNodeWithText(cancelButtonText).performClick()
+
+            val request = getLastRequestedPermission(activity)
+            assertThat(request).isNull()
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(
+                    mapOf(
+                        NOT_DEVICE_SCOPED_PERMISSIONS[0] to false,
+                        NOT_DEVICE_SCOPED_PERMISSIONS[1] to false,
+                        Manifest.permission.CAMERA to false,
+                        Manifest.permission.RECORD_AUDIO to false,
+                    )
+                )
+        }
+    }
+
+    @Test
+    fun userRejectsRationale_rejectsAllPermissionsUntilNextRequestHasRationale() {
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.CAMERA),
+                    rationale = "My rationale 1",
+                ),
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+                    rationale = null,
+                ),
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.RECORD_AUDIO),
+                    rationale = null,
+                ),
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.READ_CALENDAR),
+                    rationale = "My rationale 2",
+                ),
+            )
+        ) { activity, projectedActivityScenario ->
+            val continueButtonText = appContext.getString(R.string.continue_button)
+            val cancelButtonText = appContext.getString(R.string.cancel_button)
+
+            // user taps on cancel button for the first rationale
+            composeTestRule.onNodeWithText(cancelButtonText).performClick()
+
+            // verify that the user is presented with the next rationale screen
+            composeTestRule.onNodeWithText("My rationale 2").assertIsDisplayed()
+            composeTestRule.onNodeWithText(continueButtonText).assertIsDisplayed()
+            composeTestRule.onNodeWithText(cancelButtonText).assertIsDisplayed()
+
+            // user taps on continue for the second rationale
+            composeTestRule.onNodeWithText(continueButtonText).performClick()
+
+            val permissionRequest = getLastRequestedPermission(activity)!!
+            // Simulates the user accepting the request
+            acceptPermissionsRequestFor(permissionRequest, activity)
+
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(
+                    mapOf(
+                        Manifest.permission.CAMERA to false,
+                        Manifest.permission.ACCESS_COARSE_LOCATION to false,
+                        Manifest.permission.RECORD_AUDIO to false,
+                        Manifest.permission.READ_CALENDAR to true,
+                    )
+                )
+        }
+    }
+
+    @Test
+    fun afterUserActsOnPermissionDialog_finishesBothHostAndProjectedActivity() {
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = null,
+                )
+            )
+        ) { activity, projectedActivityScenario ->
+            val permissionRequest = getLastRequestedPermission(activity)!!
+
+            // Simulates the user accepting the requests
+            acceptPermissionsRequestFor(permissionRequest, activity)
+
+            assertThat(activity.isFinishing).isTrue()
+            projectedActivityScenario.onActivity { assertThat(it.isFinishing).isTrue() }
+        }
+    }
+
+    private fun acceptPermissionsRequestFor(request: PermissionsRequest, activity: Activity) {
+        respondToPermissionsRequest(
+            request,
+            activity,
+            IntArray(request.requestedPermissions.size) { PackageManager.PERMISSION_GRANTED },
+        )
+    }
+
+    private fun declinePermissionsRequestFor(request: PermissionsRequest, activity: Activity) {
+        respondToPermissionsRequest(
+            request,
+            activity,
+            IntArray(request.requestedPermissions.size) { PackageManager.PERMISSION_DENIED },
+        )
+    }
+
+    private fun respondToPermissionsRequest(
+        request: PermissionsRequest,
+        activity: Activity,
+        results: IntArray,
+    ) {
+        val response = Intent()
+        response.putExtra(EXTRA_REQUEST_PERMISSIONS_NAMES, request.requestedPermissions)
+        response.putExtra(EXTRA_REQUEST_PERMISSIONS_RESULTS, results)
+        response.putExtra(EXTRA_REQUEST_PERMISSIONS_DEVICE_ID, request.deviceId)
+        shadowOf(activity).receiveResult(request.requestIntent, Activity.RESULT_OK, response)
+    }
+
+    private fun getLastRequestedPermission(activity: Activity): PermissionsRequest? {
+        // We use this method instead of ShadowActivity#getLastRequestedPermission because that
+        // method
+        // does not work with the new Activity#requestPermissions(String[], int, int) API yet.
+        val intentForResult = shadowOf(activity).nextStartedActivityForResult
+        if (intentForResult == null) {
+            return null
+        }
+        val permissions =
+            intentForResult.intent.getStringArrayExtra(EXTRA_REQUEST_PERMISSIONS_NAMES)
+        if (permissions == null) {
+            // the captured intentForResult is not for a permission request
+            return null
+        }
+        return PermissionsRequest(
+            intentForResult.intent.getStringArrayExtra(EXTRA_REQUEST_PERMISSIONS_NAMES)!!,
+            intentForResult.requestCode,
+            intentForResult.intent.getIntExtra(
+                EXTRA_REQUEST_PERMISSIONS_DEVICE_ID,
+                Context.DEVICE_ID_DEFAULT,
+            ),
+            intentForResult.intent,
+        )
+    }
+
+    private fun launchHostActivity(
+        requestDataList: List<ProjectedPermissionsRequestParams>,
+        block:
+            (RequestPermissionsOnHostActivity, ActivityScenario<GoToHostProjectedActivity>) -> Unit,
+    ) {
+        val projectedActivityIntent =
+            ProjectedPermissionsResultContract().createIntent(deviceScopedContext, requestDataList)
+        ActivityScenario.launchActivityForResult<GoToHostProjectedActivity>(projectedActivityIntent)
+            .use { projectedActivityScenario ->
+                val hostActivityIntent = shadowOf(appContext).nextStartedActivity
+                ActivityScenario.launch<RequestPermissionsOnHostActivity>(hostActivityIntent).use {
+                    scenario ->
+                    scenario.onActivity { hostActivity ->
+                        block(hostActivity, projectedActivityScenario)
+                    }
+                }
+            }
+    }
+
+    private data class PermissionsRequest(
+        val requestedPermissions: Array<String>,
+        val requestCode: Int,
+        val deviceId: Int,
+        val requestIntent: Intent, // we need the request intent to use ShadowActivity#receiveResult
+    )
 
     private fun createVirtualDevice() {
         val virtualDeviceParamsBuilderClass =
@@ -69,19 +448,27 @@ class ProjectedPermissionsResultContractTest {
             ReflectionHelpers.callInstanceMethod(
                 virtualDeviceParamsBuilder,
                 "setName",
-                ClassParameter(String::class.java, "ProjectionDevice"),
+                ReflectionHelpers.ClassParameter(String::class.java, "ProjectionDevice"),
             )
         virtualDeviceParamsBuilder =
             ReflectionHelpers.callInstanceMethod(virtualDeviceParamsBuilder, "build")
         ReflectionHelpers.callInstanceMethod<Any?>(
             virtualDeviceManager,
             "createVirtualDevice",
-            ClassParameter(Int::class.javaPrimitiveType, 1),
-            ClassParameter(virtualDeviceParamsClass, virtualDeviceParamsBuilder),
+            ReflectionHelpers.ClassParameter(Int::class.javaPrimitiveType, 1),
+            ReflectionHelpers.ClassParameter(virtualDeviceParamsClass, virtualDeviceParamsBuilder),
         )
     }
 
     private companion object {
+        const val EXTRA_REQUEST_PERMISSIONS_NAMES =
+            "android.content.pm.extra.REQUEST_PERMISSIONS_NAMES"
+        const val EXTRA_REQUEST_PERMISSIONS_RESULTS =
+            "android.content.pm.extra.REQUEST_PERMISSIONS_RESULTS"
+        const val EXTRA_REQUEST_PERMISSIONS_DEVICE_ID =
+            "android.content.pm.extra.REQUEST_PERMISSIONS_DEVICE_ID"
+        val NOT_DEVICE_SCOPED_PERMISSIONS =
+            listOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_CALENDAR)
         val REQUEST_DATA_1 =
             ProjectedPermissionsRequestParams(
                 permissions =
@@ -90,7 +477,7 @@ class ProjectedPermissionsResultContractTest {
             )
         val REQUEST_DATA_2 =
             ProjectedPermissionsRequestParams(
-                permissions = listOf(Manifest.permission.RECORD_AUDIO),
+                listOf(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO),
                 rationale = "My rationale 2",
             )
     }

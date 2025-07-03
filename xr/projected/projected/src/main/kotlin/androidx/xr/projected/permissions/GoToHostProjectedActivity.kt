@@ -16,7 +16,12 @@
 
 package androidx.xr.projected.permissions
 
+import android.app.ActivityOptions
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.Display
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RestrictTo
@@ -33,11 +38,49 @@ import androidx.xr.projected.R
  */
 @Suppress("ForbiddenSuperClass")
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-public class GoToHostProjectedActivity : ComponentActivity() {
+public class GoToHostProjectedActivity :
+    ComponentActivity(), PermissionResultReceiver.PermissionResultCallback {
+
+    private lateinit var permissionResultReceiver: PermissionResultReceiver
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent { GlimmerTheme { Ui() } }
+
+        permissionResultReceiver = PermissionResultReceiver(Handler(Looper.getMainLooper()))
+        permissionResultReceiver.localCallback = this
+        val activityOptions =
+            ActivityOptions.makeBasic().setLaunchDisplayId(Display.DEFAULT_DISPLAY)
+        startActivity(
+            Intent()
+                .setClass(this, RequestPermissionsOnHostActivity::class.java)
+                .putExtras(intent)
+                .putExtra(EXTRA_RESULT_RECEIVER, permissionResultReceiver)
+                .addFlags(
+                    Intent.FLAG_ACTIVITY_NEW_TASK or
+                        Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP
+                ),
+            activityOptions.toBundle(),
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        permissionResultReceiver.localCallback = null
+    }
+
+    // This is called when the permissionResultReceiver is invoked by the host activity.
+    override fun onPermissionResult(permissionResults: Bundle) {
+        setResult(
+            RESULT_OK,
+            Intent()
+                .putExtra(
+                    ProjectedPermissionsResultContract.EXTRA_PERMISSION_RESULTS,
+                    permissionResults,
+                ),
+        )
+        finish()
     }
 
     @Composable
@@ -46,5 +89,10 @@ public class GoToHostProjectedActivity : ComponentActivity() {
             text = stringResource(R.string.go_to_host_projected_activity_text),
             textAlign = TextAlign.Center,
         )
+    }
+
+    internal companion object {
+        internal const val EXTRA_RESULT_RECEIVER =
+            "androidx.xr.projected.permissions.extra.RESULT_RECEIVER"
     }
 }
