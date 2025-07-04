@@ -23,6 +23,7 @@ import android.os.Bundle
 import android.os.ResultReceiver
 import androidx.activity.compose.setContent
 import androidx.annotation.RestrictTo
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -63,6 +64,7 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
     private var nextRequestIndex = 0
     private var pendingUserAction = false
     private var resultSent = false
+    private var isInitialized = false
 
     /**
      * Holds the current request that requires a rationale to be shown. When this is non-null, the
@@ -76,6 +78,23 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
             finish()
             return
         }
+        initialize(savedInstanceState)
+    }
+
+    private fun initialize(savedInstanceState: Bundle?) {
+        rationaleRequest = null
+
+        resultSent = false
+        nextRequestIndex =
+            savedInstanceState?.getInt(INSTANCE_STATE_NEXT_REQUEST_INDEX_KEY, nextRequestIndex) ?: 0
+
+        permissionResults =
+            savedInstanceState?.getBundle(INSTANCE_STATE_PERMISSION_RESULTS_KEY) ?: Bundle()
+        pendingUserAction =
+            savedInstanceState?.getBoolean(
+                INSTANCE_STATE_PENDING_USER_ACTION_KEY,
+                pendingUserAction,
+            ) == true
 
         val resultReceiverNullable =
             intent.getParcelableExtra(
@@ -132,6 +151,7 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
         if (!pendingUserAction) {
             handleNextRequest()
         }
+        isInitialized = true
     }
 
     override fun onRequestPermissionsResult(
@@ -154,17 +174,23 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent) {
+    @VisibleForTesting
+    public override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         if (intent.getBooleanExtra(GoToHostProjectedActivity.EXTRA_SHOULD_FINISH, false)) {
             finish()
             return
         }
+        // The user launched another activity that requests permissions. Send the results for the
+        // previous request intent.
+        sendResults()
+        setIntent(intent)
+        initialize(savedInstanceState = null)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if (isFinishing && !resultSent) {
+        if (isInitialized && isFinishing && !resultSent) {
             // pendingUserAction means the user is presented with the system's permission dialog.
             // Although nextRequestIndex has already advanced, the user has not acted on this
             // request, so we label it as rejected.
@@ -173,7 +199,7 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
             for (i in currentRequestIndex until requests.size) {
                 recordRejection(i)
             }
-            sendResultsAndFinish()
+            sendResults()
         }
     }
 
@@ -197,10 +223,14 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
     }
 
     private fun sendResultsAndFinish() {
+        sendResults()
+        finish()
+    }
+
+    private fun sendResults() {
         // the resultCode is unused
         resultReceiver.send(/* resultCode= */ 0, permissionResults)
         resultSent = true
-        finish()
     }
 
     private fun onContinue() {

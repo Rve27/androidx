@@ -18,6 +18,7 @@ package androidx.xr.projected.permissions
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityOptions
 import android.app.Application
 import android.companion.virtual.VirtualDevice
 import android.companion.virtual.VirtualDeviceManager
@@ -41,6 +42,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import org.robolectric.shadows.ShadowDisplayManager
 import org.robolectric.util.ReflectionHelpers
 
 /**
@@ -60,6 +62,9 @@ class ProjectedPermissionsResultContractTest {
     private val deviceScopedContext: Context by lazy {
         appContext.createDeviceContext(virtualDevice.deviceId)
     }
+    private val projectedDisplayId = ShadowDisplayManager.addDisplay("")
+    private val projectedActivityOptions =
+        ActivityOptions.makeBasic().setLaunchDisplayId(projectedDisplayId)
 
     @Before
     fun setUp() {
@@ -937,7 +942,7 @@ class ProjectedPermissionsResultContractTest {
                 ProjectedPermissionsRequestParams(listOf(Manifest.permission.CAMERA), null),
             )
         ) { hostActivityScenario, projectedActivityScenario ->
-            hostActivityScenario.onActivity() { activity ->
+            hostActivityScenario.onActivity { activity ->
                 val request = getLastRequestedPermission(activity)!!
                 // simulate the user accepting the request
                 acceptPermissionsRequestFor(request, activity)
@@ -964,6 +969,228 @@ class ProjectedPermissionsResultContractTest {
                     )
                 )
         }
+    }
+
+    @Test
+    fun newHostActivityIntent_sendsResultsToPreviousAppActivity() {
+        // When a projected activity requests permissions, we should cancel any outstanding requests
+        // from a previous projected activity of the same app
+        val permissionResultList1 =
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = null,
+                ),
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.RECORD_AUDIO),
+                    rationale = "my rationale",
+                ),
+            )
+        val permissionResultList2 =
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.CAMERA),
+                    rationale = null,
+                )
+            )
+        // Launch the first projected activity and host activity
+        launchHostActivity(permissionResultList1) { hostActivity, firstProjectedActivityScenario ->
+            val permissionRequest = getLastRequestedPermission(hostActivity)!!
+            // Simulates the user accepting the requests
+            acceptPermissionsRequestFor(permissionRequest, hostActivity)
+            // user launches another projected activity from the same app, and that activity
+            // launches a new GoToHostProjectedActivity
+            ActivityScenario.launchActivityForResult<GoToHostProjectedActivity>(
+                    ProjectedPermissionsResultContract()
+                        .createIntent(deviceScopedContext, permissionResultList2)
+                )
+                .use { _ ->
+                    // The projected activity launches a new host activity intent, which triggers
+                    // the host activity's onNewIntent method.
+                    val newHostActivityIntent = shadowOf(appContext).nextStartedActivity
+                    hostActivity.onNewIntent(newHostActivityIntent)
+                    // Verify that the first app projected activity receives the results for the
+                    // permissions acted on by the user
+                    val resultReceivedByFirstAppActivity = firstProjectedActivityScenario.result
+                    assertThat(
+                            ProjectedPermissionsResultContract()
+                                .parseResult(
+                                    resultReceivedByFirstAppActivity.resultCode,
+                                    resultReceivedByFirstAppActivity.resultData,
+                                )
+                        )
+                        .isEqualTo(
+                            mapOf(
+                                NOT_DEVICE_SCOPED_PERMISSIONS[0] to true,
+                                NOT_DEVICE_SCOPED_PERMISSIONS[1] to true,
+                            )
+                        )
+                }
+        }
+    }
+
+    @Test
+    fun newHostActivityIntent_requestsNewPermissionsAndSendNewResultsToNewAppActivity() {
+        // When a projected activity requests permissions, even if there is an outstanding request
+        // from a previous projected activity of the same app, the new request should work
+        val permissionResultList1 =
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = null,
+                ),
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.RECORD_AUDIO),
+                    rationale = "my rationale",
+                ),
+            )
+        val permissionResultList2 =
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.BLUETOOTH_CONNECT),
+                    rationale = null,
+                )
+            )
+        // Launch the first projected activity and host activity
+        launchHostActivity(permissionResultList1) { hostActivity, _ ->
+            val permissionRequest = getLastRequestedPermission(hostActivity)!!
+            // Simulates the user accepting the requests
+            acceptPermissionsRequestFor(permissionRequest, hostActivity)
+            // user launches another projected activity from the same app, and that activity
+            // launches a new GoToHostProjectedActivity
+            ActivityScenario.launchActivityForResult<GoToHostProjectedActivity>(
+                    ProjectedPermissionsResultContract()
+                        .createIntent(deviceScopedContext, permissionResultList2)
+                )
+                .use { secondProjectedActivityScenario ->
+                    // The projected activity launches a new host activity intent, which triggers
+                    // the host activity's onNewIntent method.
+                    val newHostActivityIntent = shadowOf(appContext).nextStartedActivity
+                    hostActivity.onNewIntent(newHostActivityIntent)
+                    val request = getLastRequestedPermission(hostActivity)!!
+                    // verify the correct permission from permissionResultList2 is requested
+                    assertThat(request.requestedPermissions)
+                        .isEqualTo(arrayOf(Manifest.permission.BLUETOOTH_CONNECT))
+                    assertThat(request.deviceId).isEqualTo(Context.DEVICE_ID_DEFAULT)
+                    // simulate the user accepting the request
+                    acceptPermissionsRequestFor(request, hostActivity)
+                    // verify results sent to the new app activity
+                    val resultReceivedByAppActivity = secondProjectedActivityScenario.result
+                    assertThat(
+                            ProjectedPermissionsResultContract()
+                                .parseResult(
+                                    resultReceivedByAppActivity.resultCode,
+                                    resultReceivedByAppActivity.resultData,
+                                )
+                        )
+                        .isEqualTo(mapOf(Manifest.permission.BLUETOOTH_CONNECT to true))
+                }
+        }
+    }
+
+    @Test
+    fun newHostActivityIntentWithRationale_requestsNewPermissionsAndSendNewResultsToNewAppActivity() {
+        // This test involves:
+        // 1. User launching a projected activity that launches the GoToHostProjectedActivity
+        // 2. User launching a second projected activity that launches a second
+        // GoToHostProjectedActivity
+        // 3. The user interacting with the permission dialogs on the host
+        // The actual launch order should be GoToHostProjectedActivity1 ->
+        // RequestPermissionsOnHostActivity -> GoToHostProjectedActivity2 ->
+        // RequestPermissionsOnHostActivity newIntent
+        // To make sure Compose checks the UI elements on RequestPermissionsOnHostActivity rather
+        // than the projected activity, we launch the two projected activities first, then launch
+        // the host activity.
+        val permissionResultList1 =
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = "rationale 1",
+                ),
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.RECORD_AUDIO),
+                    rationale = "rationale 2",
+                ),
+            )
+        val permissionResultList2 =
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = listOf(Manifest.permission.BLUETOOTH_CONNECT),
+                    rationale = "rationale 3",
+                )
+            )
+        val projectedActivityIntent1 =
+            ProjectedPermissionsResultContract()
+                .createIntent(deviceScopedContext, permissionResultList1)
+        // launch projected activity 1
+        ActivityScenario.launchActivityForResult<GoToHostProjectedActivity>(
+                projectedActivityIntent1,
+                projectedActivityOptions.toBundle(),
+            )
+            .use { _ ->
+                val hostActivityIntent1 = shadowOf(appContext).nextStartedActivity
+                val projectedActivityIntent2 =
+                    ProjectedPermissionsResultContract()
+                        .createIntent(deviceScopedContext, permissionResultList2)
+                // launch projected activity 2
+                ActivityScenario.launchActivityForResult<GoToHostProjectedActivity>(
+                        projectedActivityIntent2,
+                        projectedActivityOptions.toBundle(),
+                    )
+                    .use { projectedActivityScenario2 ->
+                        val hostActivityIntent2 = shadowOf(appContext).nextStartedActivity
+                        // launch host activity using the Intent from projected activity 1
+                        ActivityScenario.launch<RequestPermissionsOnHostActivity>(
+                                hostActivityIntent1
+                            )
+                            .use { hostActivityScenario ->
+                                hostActivityScenario.onActivity { hostActivity ->
+                                    // Projected activity 2 launches a new host activity intent,
+                                    // which triggers the host activity's onNewIntent method.
+                                    hostActivity.onNewIntent(hostActivityIntent2)
+                                }
+
+                                // Get button texts for Compose finders
+                                val continueButtonText =
+                                    appContext.getString(R.string.continue_button)
+                                val cancelButtonText = appContext.getString(R.string.cancel_button)
+
+                                // Verify that the new rationale is displayed
+                                composeTestRule.onNodeWithText("rationale 3").assertIsDisplayed()
+                                composeTestRule
+                                    .onNodeWithText(continueButtonText)
+                                    .assertIsDisplayed()
+                                composeTestRule.onNodeWithText(cancelButtonText).assertIsDisplayed()
+
+                                // user taps on continue button
+                                composeTestRule.onNodeWithText(continueButtonText).performClick()
+
+                                hostActivityScenario.onActivity { hostActivity ->
+                                    // verify that the correct request is made
+                                    val request = getLastRequestedPermission(hostActivity)!!
+                                    assertThat(request.requestedPermissions)
+                                        .isEqualTo(arrayOf(Manifest.permission.BLUETOOTH_CONNECT))
+                                    assertThat(request.deviceId)
+                                        .isEqualTo(Context.DEVICE_ID_DEFAULT)
+                                    // simulate the user accepting the request
+                                    acceptPermissionsRequestFor(request, hostActivity)
+                                    // verify results sent to the new app activity
+                                    val resultReceivedByAppActivity =
+                                        projectedActivityScenario2.result
+                                    assertThat(
+                                            ProjectedPermissionsResultContract()
+                                                .parseResult(
+                                                    resultReceivedByAppActivity.resultCode,
+                                                    resultReceivedByAppActivity.resultData,
+                                                )
+                                        )
+                                        .isEqualTo(
+                                            mapOf(Manifest.permission.BLUETOOTH_CONNECT to true)
+                                        )
+                                }
+                            }
+                    }
+            }
     }
 
     private fun acceptPermissionsRequestFor(request: PermissionsRequest, activity: Activity) {
