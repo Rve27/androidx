@@ -713,6 +713,46 @@ class GraphicsLayerSemanticsTest {
         }
     }
 
+    @Test
+    @SdkSuppress(minSdkVersion = 26)
+    fun alphaChange_invalidatesSemanticsVisibility() {
+        // Arrange.
+        var alpha by mutableStateOf(0f)
+        rule.setContentWithAccessibilityEnabled {
+            Box(Modifier.size(10.dp).graphicsLayer(alpha = alpha).testTag(tag))
+        }
+        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
+        rule.runOnIdle { assertThat(info.isVisibleToUser).isFalse() }
+
+        // Act.
+        rule.runOnIdle { alpha = 1f }
+        val info2 = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
+
+        // Assert.
+        rule.runOnIdle { assertThat(info2.isVisibleToUser).isTrue() }
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = 26)
+    fun block_alphaChange_invalidatesSemanticsVisibility() {
+        // Arrange.
+        var alpha by mutableStateOf(0f)
+        rule.setContentWithAccessibilityEnabled {
+            Box(Modifier.size(10.dp).graphicsLayer { this.alpha = alpha }.testTag(tag))
+        }
+        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
+        rule.runOnIdle { assertThat(info.isVisibleToUser).isFalse() }
+
+        // Act.
+        rule.runOnIdle { alpha = 1f }
+        val info2 = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
+
+        // Assert.
+        rule.runOnIdle { assertThat(info2.isVisibleToUser).isTrue() }
+    }
+
     private class InsetRectangle(val insetPx: Int) : Shape {
         override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density) =
             Outline.Generic(
