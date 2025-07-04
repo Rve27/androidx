@@ -301,8 +301,12 @@ package androidx.xr.runtime.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeMediaPlayerExtensionsWrapper implements androidx.xr.runtime.internal.MediaPlayerExtensionsWrapper {
     ctor public FakeMediaPlayerExtensionsWrapper();
+    method public java.util.Map<android.media.MediaPlayer,androidx.xr.runtime.internal.PointSourceParams> getPointSourceParams();
+    method public java.util.Map<android.media.MediaPlayer,androidx.xr.runtime.internal.SoundFieldAttributes> getSoundFieldAttributes();
     method public void setPointSourceParams(android.media.MediaPlayer mediaPlayer, androidx.xr.runtime.internal.PointSourceParams params);
     method public void setSoundFieldAttributes(android.media.MediaPlayer mediaPlayer, androidx.xr.runtime.internal.SoundFieldAttributes attributes);
+    property public java.util.Map<android.media.MediaPlayer,androidx.xr.runtime.internal.PointSourceParams> pointSourceParams;
+    property public java.util.Map<android.media.MediaPlayer,androidx.xr.runtime.internal.SoundFieldAttributes> soundFieldAttributes;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeMovableComponent extends androidx.xr.runtime.testing.FakeComponent implements androidx.xr.runtime.internal.MovableComponent {
