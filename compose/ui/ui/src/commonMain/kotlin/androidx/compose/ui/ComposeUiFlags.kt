@@ -160,4 +160,7 @@ object ComposeUiFlags {
     @Suppress("MutableBareField")
     @JvmField
     var isNestedScrollDispatcherNodeFixEnabled: Boolean = true
+
+    /** This flag enables setting the shape semantics property in the graphicsLayer modifiers. */
+    @Suppress("MutableBareField") @JvmField var isGraphicsLayerShapeSemanticsEnabled: Boolean = true
 }
