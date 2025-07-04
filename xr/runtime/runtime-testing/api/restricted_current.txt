@@ -676,10 +676,12 @@ package androidx.xr.runtime.testing {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSubspaceNodeEntity extends androidx.xr.runtime.testing.FakeEntity implements androidx.xr.runtime.internal.SubspaceNodeEntity {
-    ctor public FakeSubspaceNodeEntity(com.google.androidxr.splitengine.SubspaceNode subspaceNode, androidx.xr.runtime.internal.Dimensions size);
+    ctor public FakeSubspaceNodeEntity(com.google.androidxr.splitengine.SubspaceNode subspaceNode, optional androidx.xr.runtime.internal.Dimensions size);
     method public androidx.xr.runtime.internal.Dimensions getSize();
+    method public com.google.androidxr.splitengine.SubspaceNode getSubspaceNode();
     method public void setSize(androidx.xr.runtime.internal.Dimensions);
     property public androidx.xr.runtime.internal.Dimensions size;
+    property public com.google.androidxr.splitengine.SubspaceNode subspaceNode;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSurfaceEntity extends androidx.xr.runtime.testing.FakeEntity implements androidx.xr.runtime.internal.SurfaceEntity {

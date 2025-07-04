@@ -16,14 +16,27 @@
 
 package androidx.xr.runtime.testing
 
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.internal.Dimensions
-import androidx.xr.runtime.internal.SubspaceNodeEntity
+import com.android.extensions.xr.node.Node
 import com.google.androidxr.splitengine.SubspaceNode
+import com.google.common.truth.Truth.assertThat
+import org.junit.Test
 
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public class FakeSubspaceNodeEntity(
-    public val subspaceNode: SubspaceNode,
-    /** The size of the [SubspaceNodeEntity] in meters, in unscaled local space. */
-    public override var size: Dimensions = Dimensions(2f, 1f, 0f),
-) : SubspaceNodeEntity, FakeEntity()
+class FakeSubspaceNodeEntityTest {
+    private lateinit var underTest: FakeSubspaceNodeEntity
+
+    @Test
+    fun constructor_returnInitialValues() {
+        // Arrange
+        val subspaceNode = SubspaceNode(0, Node())
+        val expectedSize = Dimensions(3f, 2f, 1f)
+
+        // Act
+        underTest = FakeSubspaceNodeEntity(subspaceNode, expectedSize)
+
+        // Assert
+        assertThat(underTest.subspaceNode).isEqualTo(subspaceNode)
+        // Default size of FakeSubspaceNodeEntity is (2f, 1f, 0f)
+        assertThat(underTest.size).isEqualTo(expectedSize)
+    }
+}
