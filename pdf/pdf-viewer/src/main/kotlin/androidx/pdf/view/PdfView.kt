@@ -436,6 +436,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     private val gestureHandler = ZoomScrollGestureHandler()
     private val gestureTracker = GestureTracker(context).apply { delegate = gestureHandler }
 
+    private val externalInputManager = PdfViewExternalInputManager(this)
+
     private val scroller = RelativeScroller(context)
     /** Whether we are in a fling movement. This is used to detect the end of that movement */
     private var isFling = false
@@ -804,9 +806,21 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             super.dispatchHoverEvent(event)
     }
 
+    /**
+     * Prioritizes standard keyboard shortcuts over accessibility-specific handling of certain keys.
+     * This ensures a consistent experience for all users, where shortcuts like D-pad scrolling work
+     * irrespective of whether accessibility is enabled or not, as both [externalInputManager] and
+     * [pdfViewAccessibilityManager] are capable of handling certain key events.
+     */
     override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
-        return event?.let { pdfViewAccessibilityManager?.dispatchKeyEvent(it) } == true ||
-            super.dispatchKeyEvent(event)
+        // Accessibility services can register to filter key events and handle their own shortcuts
+        // before the event reaches the application. If a key event is received here, it means the
+        // accessibility service has chosen to not handle it. Therefore, we can safely let the
+        // ExternalInputManager handle the key event.
+        return event?.let {
+            externalInputManager.handleKeyEvent(it) ||
+                pdfViewAccessibilityManager?.dispatchKeyEvent(it) ?: false
+        } ?: false || super.dispatchKeyEvent(event)
     }
 
     override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
@@ -853,6 +867,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     toViewCoord(contentCoord = contentHeight, zoom = zoom, scroll = 0),
             )
         }
+    }
+
+    override fun onGenericMotionEvent(event: MotionEvent?): Boolean {
+        return event?.let { externalInputManager.handleMouseEvent(event) } ?: false ||
+            super.onGenericMotionEvent(event)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
@@ -1710,11 +1729,11 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
     }
 
     /** The height of the viewport, minus padding */
-    private val viewportHeight: Int
+    internal val viewportHeight: Int
         get() = bottom - top - paddingBottom - paddingTop
 
     /** The width of the viewport, minus padding */
-    private val viewportWidth: Int
+    internal val viewportWidth: Int
         get() = right - left - paddingRight - paddingLeft
 
     /**
