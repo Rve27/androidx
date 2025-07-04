@@ -62,6 +62,7 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
     private lateinit var permissionResults: Bundle
     private var nextRequestIndex = 0
     private var pendingUserAction = false
+    private var resultSent = false
 
     /**
      * Holds the current request that requires a rationale to be shown. When this is non-null, the
@@ -161,6 +162,21 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        if (isFinishing && !resultSent) {
+            // pendingUserAction means the user is presented with the system's permission dialog.
+            // Although nextRequestIndex has already advanced, the user has not acted on this
+            // request, so we label it as rejected.
+            val currentRequestIndex =
+                if (pendingUserAction) (nextRequestIndex - 1) else nextRequestIndex
+            for (i in currentRequestIndex until requests.size) {
+                recordRejection(i)
+            }
+            sendResultsAndFinish()
+        }
+    }
+
     private fun handleNextRequest() {
         if (nextRequestIndex >= requests.size) {
             sendResultsAndFinish()
@@ -183,6 +199,7 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
     private fun sendResultsAndFinish() {
         // the resultCode is unused
         resultReceiver.send(/* resultCode= */ 0, permissionResults)
+        resultSent = true
         finish()
     }
 

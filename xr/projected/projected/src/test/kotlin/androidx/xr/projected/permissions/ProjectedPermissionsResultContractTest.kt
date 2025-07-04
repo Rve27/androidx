@@ -844,6 +844,128 @@ class ProjectedPermissionsResultContractTest {
         }
     }
 
+    @Test
+    fun userQuitsHostActivity_finishesProjectedActivity() {
+        launchHostActivityWithActivityScenarioCallback(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = null,
+                )
+            )
+        ) { hostActivityScenario, projectedActivityScenario ->
+
+            // ActivityScenario finishes the activity when moving it to the DESTROYED state. We use
+            // this to simulate a user quitting the host activity.
+            hostActivityScenario.moveToState(State.DESTROYED)
+
+            projectedActivityScenario.onActivity { projectedActivity ->
+                assertThat(projectedActivity.isFinishing).isTrue()
+            }
+        }
+    }
+
+    @Test
+    fun userQuitsHostActivity_noPermissionResultYet_sendsAllPermissionsDeclinedResultToApp() {
+        launchHostActivityWithActivityScenarioCallback(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = null,
+                )
+            )
+        ) { hostActivityScenario, projectedActivityScenario ->
+
+            // ActivityScenario finishes the activity when moving it to the DESTROYED state. We use
+            // this to simulate a user quitting the host activity.
+            hostActivityScenario.moveToState(State.DESTROYED)
+
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(
+                    mapOf(
+                        NOT_DEVICE_SCOPED_PERMISSIONS[0] to false,
+                        NOT_DEVICE_SCOPED_PERMISSIONS[1] to false,
+                    )
+                )
+        }
+    }
+
+    @Test
+    fun userQuitsHostActivityAtRationaleScreen_noPermissionResultYet_sendsAllPermissionsDeclinedResultToApp() {
+        launchHostActivityWithActivityScenarioCallback(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = "my rationale",
+                )
+            )
+        ) { hostActivityScenario, projectedActivityScenario ->
+
+            // ActivityScenario finishes the activity when moving it to the DESTROYED state. We use
+            // this to simulate a user quitting the host activity.
+            hostActivityScenario.moveToState(State.DESTROYED)
+
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(
+                    mapOf(
+                        NOT_DEVICE_SCOPED_PERMISSIONS[0] to false,
+                        NOT_DEVICE_SCOPED_PERMISSIONS[1] to false,
+                    )
+                )
+        }
+    }
+
+    @Test
+    fun userQuitsHostActivityAfterGrantingFirstPermission_sendsCorrectPermissionsResultToApp() {
+        launchHostActivityWithActivityScenarioCallback(
+            listOf(
+                ProjectedPermissionsRequestParams(NOT_DEVICE_SCOPED_PERMISSIONS, null),
+                ProjectedPermissionsRequestParams(listOf(Manifest.permission.CAMERA), null),
+            )
+        ) { hostActivityScenario, projectedActivityScenario ->
+            hostActivityScenario.onActivity() { activity ->
+                val request = getLastRequestedPermission(activity)!!
+                // simulate the user accepting the request
+                acceptPermissionsRequestFor(request, activity)
+            }
+
+            // ActivityScenario finishes the activity when moving it to the DESTROYED state. We use
+            // this to simulate a user quitting the host activity.
+            hostActivityScenario.moveToState(State.DESTROYED)
+
+            val resultReceivedByAppActivity = projectedActivityScenario.result
+            // Accepted permissions are returned as granted, skipped ones are declined
+            assertThat(
+                    ProjectedPermissionsResultContract()
+                        .parseResult(
+                            resultReceivedByAppActivity.resultCode,
+                            resultReceivedByAppActivity.resultData,
+                        )
+                )
+                .isEqualTo(
+                    mapOf(
+                        NOT_DEVICE_SCOPED_PERMISSIONS[0] to true,
+                        NOT_DEVICE_SCOPED_PERMISSIONS[1] to true,
+                        Manifest.permission.CAMERA to false,
+                    )
+                )
+        }
+    }
+
     private fun acceptPermissionsRequestFor(request: PermissionsRequest, activity: Activity) {
         respondToPermissionsRequest(
             request,
