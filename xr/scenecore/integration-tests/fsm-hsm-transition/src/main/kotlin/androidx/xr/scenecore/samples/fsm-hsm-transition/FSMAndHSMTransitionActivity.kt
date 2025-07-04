@@ -212,7 +212,7 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
     private fun createIntent(): Pair<Intent, Bundle> {
         val intent = Intent()
         intent.setComponent(ComponentName("com.android.settings", "com.android.settings.Settings"))
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
         return Pair(intent, ActivityOptions.makeBasic().toBundle())
     }
 

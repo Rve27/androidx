@@ -228,6 +228,15 @@ class FsmHsmTransitionActivity : AppCompatActivity() {
             }
         }
 
+        // Launch settings app with environment inherited
+        findViewById<Button>(R.id.button_launch_settings_app_with_env_inherited).also {
+            it.setOnClickListener {
+                var (intent, bundle) = createIntent()
+                bundle = session!!.scene.setFullSpaceModeWithEnvironmentInherited(bundle)
+                startActivity(intent, bundle)
+            }
+        }
+
         // Add bounds check listener for activity space bounds
         session!!.scene.activitySpace.addOnBoundsChangedListener { dimensions ->
             val dimsString =
