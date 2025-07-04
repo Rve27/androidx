@@ -17,6 +17,7 @@
 package androidx.xr.projected.permissions
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.ResultReceiver
@@ -70,6 +71,10 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (intent.getBooleanExtra(GoToHostProjectedActivity.EXTRA_SHOULD_FINISH, false)) {
+            finish()
+            return
+        }
 
         val resultReceiverNullable =
             intent.getParcelableExtra(
@@ -145,6 +150,14 @@ public class RequestPermissionsOnHostActivity : AppCompatActivity() {
             putInt(INSTANCE_STATE_NEXT_REQUEST_INDEX_KEY, nextRequestIndex)
             putBundle(INSTANCE_STATE_PERMISSION_RESULTS_KEY, permissionResults)
             putBoolean(INSTANCE_STATE_PENDING_USER_ACTION_KEY, pendingUserAction)
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.getBooleanExtra(GoToHostProjectedActivity.EXTRA_SHOULD_FINISH, false)) {
+            finish()
+            return
         }
     }
 

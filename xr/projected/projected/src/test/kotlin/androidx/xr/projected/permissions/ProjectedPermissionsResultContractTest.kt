@@ -29,6 +29,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.Lifecycle.State
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -808,6 +809,38 @@ class ProjectedPermissionsResultContractTest {
                         )
                     )
             }
+        }
+    }
+
+    @Test
+    fun userQuitsProjectedActivity_finishesHostActivity() {
+        launchHostActivity(
+            listOf(
+                ProjectedPermissionsRequestParams(
+                    permissions = NOT_DEVICE_SCOPED_PERMISSIONS,
+                    rationale = null,
+                )
+            )
+        ) { _, projectedActivityScenario ->
+
+            // ActivityScenario finishes the activity when moving it to the DESTROYED state. We use
+            // this to simulate a user quitting the projected activity.
+            projectedActivityScenario.moveToState(State.DESTROYED)
+
+            // Robolectric does not respect FLAG_ACTIVITY_SINGLE_TOP. When we launch the
+            // newHostActivityIntent below, onNewIntent is not called on the existing host activity.
+            // Therefore, we can only verify that the intent is for the correct class and contains
+            // the correct extras.
+            val newHostActivityIntent = shadowOf(appContext).nextStartedActivity
+            assertThat(newHostActivityIntent.component!!.className)
+                .isEqualTo(RequestPermissionsOnHostActivity::class.java.name)
+            assertThat(
+                    newHostActivityIntent.getBooleanExtra(
+                        GoToHostProjectedActivity.EXTRA_SHOULD_FINISH,
+                        false,
+                    )
+                )
+                .isTrue()
         }
     }
 

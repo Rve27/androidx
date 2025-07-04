@@ -42,6 +42,7 @@ public class GoToHostProjectedActivity :
     ComponentActivity(), PermissionResultReceiver.PermissionResultCallback {
 
     private lateinit var permissionResultReceiver: PermissionResultReceiver
+    @Volatile private var resultReceived = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,14 +69,10 @@ public class GoToHostProjectedActivity :
                 ActivityOptions.makeBasic().setLaunchDisplayId(Display.DEFAULT_DISPLAY)
             startActivity(
                 Intent()
-                    .setClass(this, RequestPermissionsOnHostActivity::class.java)
+                    .setClass(this, HOST_ACTIVITY_CLASS)
                     .putExtras(intent)
                     .putExtra(EXTRA_RESULT_RECEIVER, permissionResultReceiver)
-                    .addFlags(
-                        Intent.FLAG_ACTIVITY_NEW_TASK or
-                            Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
-                            Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    ),
+                    .addFlags(LAUNCH_HOST_ACTIVITY_FLAGS),
                 activityOptions.toBundle(),
             )
         }
@@ -92,6 +89,9 @@ public class GoToHostProjectedActivity :
     override fun onDestroy() {
         super.onDestroy()
         permissionResultReceiver.localCallback = null
+        if (isFinishing && !resultReceived) {
+            finishHostActivity()
+        }
     }
 
     // This is called when the permissionResultReceiver is invoked by the host activity.
@@ -104,7 +104,20 @@ public class GoToHostProjectedActivity :
                     permissionResults,
                 ),
         )
+        resultReceived = true
         finish()
+    }
+
+    private fun finishHostActivity() {
+        val activityOptions =
+            ActivityOptions.makeBasic().setLaunchDisplayId(Display.DEFAULT_DISPLAY)
+        startActivity(
+            Intent()
+                .setClass(this, HOST_ACTIVITY_CLASS)
+                .putExtra(EXTRA_SHOULD_FINISH, true)
+                .addFlags(LAUNCH_HOST_ACTIVITY_FLAGS),
+            activityOptions.toBundle(),
+        )
     }
 
     @Composable
@@ -117,7 +130,14 @@ public class GoToHostProjectedActivity :
 
     internal companion object {
         private const val INSTANCE_STATE_PERMISSION_RESULT_RECEIVER_KEY = "permissionResultReceiver"
+        private const val LAUNCH_HOST_ACTIVITY_FLAGS =
+            Intent.FLAG_ACTIVITY_NEW_TASK or
+                Intent.FLAG_ACTIVITY_REORDER_TO_FRONT or
+                Intent.FLAG_ACTIVITY_SINGLE_TOP
+        private val HOST_ACTIVITY_CLASS = RequestPermissionsOnHostActivity::class.java
         internal const val EXTRA_RESULT_RECEIVER =
             "androidx.xr.projected.permissions.extra.RESULT_RECEIVER"
+        internal const val EXTRA_SHOULD_FINISH =
+            "androidx.xr.projected.permissions.extra.SHOULD_FINISH"
     }
 }
