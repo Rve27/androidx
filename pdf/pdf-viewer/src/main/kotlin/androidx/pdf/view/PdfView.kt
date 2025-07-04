@@ -136,7 +136,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             field = value
 
             if (value) {
-                pageManager?.maybeLoadFormWidgetMetadata()
+                formWidgetMetadataLoader?.let { loader ->
+                    pageManager?.maybeLoadFormWidgetMetadata(loader)
+                }
             }
         }
 
@@ -372,6 +374,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
 
     private var pageManager: PageManager? = null
     private var formWidgetInteractionHandler: FormWidgetInteractionHandler? = null
+    private var formWidgetMetadataLoader: FormWidgetMetadataLoader? = null
     private var layoutInfoCollector: Job? = null
     private var pageSignalCollector: Job? = null
     private var selectionStateCollector: Job? = null
@@ -1297,7 +1300,9 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                                 currentZoom = zoom,
                                 areasToUpdate = it.second,
                             )
-                            pageManager?.maybeUpdateFormWidgetMetadata(it.first)
+                            formWidgetMetadataLoader?.let { loader ->
+                                pageManager?.maybeUpdateFormWidgetMetadata(it.first, loader)
+                            }
                         }
                     }
                 }
@@ -1438,6 +1443,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                     pageMetadataLoader = pageMetadataLoader,
                 )
             setAccessibility()
+        }
+
+        /* PageMetadataLoader must have been initialized either with the restored state
+        or with the default state (if [maybeRestoreState] return false) */
+        pageMetadataLoader?.let { pageMetadataLoader ->
+            formWidgetMetadataLoader =
+                FormWidgetMetadataLoader(
+                    localPdfDocument,
+                    pageMetadataLoader.pdfFormFillingState,
+                    errorFlow,
+                )
         }
 
         // If not, we'll start doing this when we _are_ attached to a visible window
