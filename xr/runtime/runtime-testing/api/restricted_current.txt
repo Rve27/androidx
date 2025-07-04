@@ -3,8 +3,14 @@ package androidx.xr.runtime.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeActivityPanelEntity extends androidx.xr.runtime.testing.FakePanelEntity implements androidx.xr.runtime.internal.ActivityPanelEntity {
     ctor public FakeActivityPanelEntity();
+    method public android.os.Bundle? getLaunchBundle();
+    method public android.content.Intent getLaunchIntent();
+    method public android.app.Activity getMovedActivity();
     method public void launchActivity(android.content.Intent intent, android.os.Bundle? bundle);
     method public void moveActivity(android.app.Activity activity);
+    property public android.os.Bundle? launchBundle;
+    property public android.content.Intent launchIntent;
+    property public android.app.Activity movedActivity;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeActivityPose implements androidx.xr.runtime.internal.ActivityPose {
