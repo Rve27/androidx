@@ -266,7 +266,11 @@ open class AnnotatedAppFunctionSerializable(
 
         return primaryConstructorProperties.mapNotNull { valueParameter ->
             allProperties[valueParameter.name?.asString()]?.let {
-                AppFunctionPropertyDeclaration(it, isDescribedByKdoc)
+                AppFunctionPropertyDeclaration(
+                    it,
+                    isDescribedByKdoc,
+                    isRequired = !valueParameter.hasDefault,
+                )
             }
         }
     }

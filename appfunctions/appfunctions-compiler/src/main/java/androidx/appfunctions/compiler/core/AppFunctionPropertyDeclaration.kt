@@ -26,11 +26,13 @@ data class AppFunctionPropertyDeclaration(
     val name: String,
     val type: KSTypeReference,
     val description: String,
+    val isRequired: Boolean,
 ) {
     /** Creates an [AppFunctionPropertyDeclaration] from [KSPropertyDeclaration]. */
     constructor(
         property: KSPropertyDeclaration,
         isDescribedByKdoc: Boolean,
+        isRequired: Boolean,
     ) : this(
         checkNotNull(property.simpleName).asString(),
         property.type,
@@ -39,6 +41,7 @@ data class AppFunctionPropertyDeclaration(
         } else {
             ""
         },
+        isRequired,
     )
 
     /** Indicates whether the [type] is a generic type or not. */

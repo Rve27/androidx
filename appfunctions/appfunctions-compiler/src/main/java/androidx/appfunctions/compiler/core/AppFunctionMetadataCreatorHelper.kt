@@ -145,8 +145,7 @@ class AppFunctionMetadataCreatorHelper {
             add(
                 AppFunctionParameterMetadata(
                     name = checkNotNull(parameter.name).asString(),
-                    // TODO(b/394553462): Parse required state from annotation.
-                    isRequired = true,
+                    isRequired = !parameter.hasDefault,
                     dataType = dataTypeMetadata,
                     // TODO(b/428155914): Add parameter description.
                 )
@@ -445,6 +444,10 @@ class AppFunctionMetadataCreatorHelper {
                                     AppFunctionPropertyDeclaration(
                                         property = it,
                                         isDescribedByKdoc = false,
+                                        // Property from interface is always required as there is
+                                        // no existing API to tell if the interface property has
+                                        // default value or not.
+                                        isRequired = true,
                                     )
                                 }
                                 .toList(),
@@ -572,8 +575,9 @@ class AppFunctionMetadataCreatorHelper {
                             property.description,
                         )
                     put(property.name, innerAppFunctionDataTypeMetadata)
-                    // TODO(b/394553462): Parse required state from annotation.
-                    requiredPropertiesList.add(property.name)
+                    if (property.isRequired) {
+                        requiredPropertiesList.add(property.name)
+                    }
                 }
             }
         return AppFunctionObjectTypeMetadata(

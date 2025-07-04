@@ -108,7 +108,7 @@ class IntegrationTest {
                 it.appFunctions
             }
 
-        assertThat(appFunctions).hasSize(13)
+        assertThat(appFunctions).hasSize(14)
     }
 
     @Test
@@ -737,6 +737,137 @@ class IntegrationTest {
                 .build()
         }
     }
+
+    @Test
+    fun echoClassWithOptionalValues_allValuesProvided_shouldNotReturnDefault() = doBlocking {
+        val classWithOptionalValues =
+            ClassWithOptionalValues(
+                optionalNonNullInt = 1,
+                optionalNullableInt = 2,
+                optionalNonNullLong = 100L,
+                optionalNullableLong = 200L,
+                optionalNonNullBoolean = true,
+                optionalNullableBoolean = true,
+                optionalNonNullFloat = 10.5f,
+                optionalNullableFloat = 20.5f,
+                optionalNonNullDouble = 100.5,
+                optionalNullableDouble = 200.5,
+                optionalNullableString = "Initialized String",
+                optionalNullableSerializable = Owner("John"),
+                optionalNullableProxySerializable = LocalDateTime.now(),
+                optionalNonNullIntArray = intArrayOf(1, 2, 3),
+                optionalNullableIntArray = intArrayOf(4, 5, 6),
+                optionalNonNullLongArray = longArrayOf(1L, 2L, 3L),
+                optionalNullableLongArray = longArrayOf(4L, 5L, 6L),
+                optionalNonNullBooleanArray = booleanArrayOf(true, false),
+                optionalNullableBooleanArray = booleanArrayOf(false, true),
+                optionalNonNullFloatArray = floatArrayOf(1.1f, 2.2f),
+                optionalNullableFloatArray = floatArrayOf(3.3f, 4.4f),
+                optionalNonNullDoubleArray = doubleArrayOf(11.1, 22.2),
+                optionalNullableDoubleArray = doubleArrayOf(33.3, 44.4),
+                optionalNonNullByteArray = byteArrayOf(1, 0, 1),
+                optionalNullableByteArray = byteArrayOf(0, 1, 0),
+                optionalNonNullListString = listOf("A", "B", "C"),
+                optionalNullableListString = listOf("D", "E", "F"),
+                optionalNonNullSerializableList = listOf(Owner("Alice"), Owner("Bob")),
+                optionalNullableSerializableList = listOf(Owner("Charlie")),
+                optionalNonNullProxySerializableList = listOf(LocalDateTime.now().minusDays(1)),
+                optionalNullableProxySerializableList = listOf(LocalDateTime.now().plusDays(1)),
+            )
+
+        val response =
+            appFunctionManager.executeAppFunction(
+                request =
+                    ExecuteAppFunctionRequest(
+                        context.packageName,
+                        "androidx.appfunctions.integration.tests.TestFunctions#echoClassWithOptionalValues",
+                        AppFunctionData.Builder("")
+                            .setAppFunctionData(
+                                "classWithOptionalValues",
+                                AppFunctionData.serialize(
+                                    classWithOptionalValues,
+                                    ClassWithOptionalValues::class.java,
+                                ),
+                            )
+                            .build(),
+                    )
+            )
+
+        val successResponse = assertIs<ExecuteAppFunctionResponse.Success>(response)
+        assertThat(
+                checkNotNull(
+                        successResponse.returnValue.getAppFunctionData(
+                            ExecuteAppFunctionResponse.Success.PROPERTY_RETURN_VALUE
+                        )
+                    )
+                    .deserialize(ClassWithOptionalValues::class.java)
+            )
+            .isEqualTo(classWithOptionalValues)
+    }
+
+    @Test
+    fun echoClassWithOptionalValues_noValueProvided_shouldReturnAppFunctionDefinedDefault() =
+        doBlocking {
+            val response =
+                appFunctionManager.executeAppFunction(
+                    request =
+                        ExecuteAppFunctionRequest(
+                            context.packageName,
+                            "androidx.appfunctions.integration.tests.TestFunctions#echoClassWithOptionalValues",
+                            AppFunctionData.Builder("")
+                                .setAppFunctionData(
+                                    "classWithOptionalValues",
+                                    AppFunctionData.Builder("").build(),
+                                )
+                                .build(),
+                        )
+                )
+
+            val successResponse = assertIs<ExecuteAppFunctionResponse.Success>(response)
+            assertThat(
+                    checkNotNull(
+                            successResponse.returnValue.getAppFunctionData(
+                                ExecuteAppFunctionResponse.Success.PROPERTY_RETURN_VALUE
+                            )
+                        )
+                        .deserialize(ClassWithOptionalValues::class.java)
+                )
+                .isEqualTo(
+                    ClassWithOptionalValues(
+                        optionalNonNullInt = 0,
+                        optionalNullableInt = null,
+                        optionalNonNullLong = 0L,
+                        optionalNullableLong = null,
+                        optionalNonNullBoolean = false,
+                        optionalNullableBoolean = null,
+                        optionalNonNullFloat = 0.0f,
+                        optionalNullableFloat = null,
+                        optionalNonNullDouble = 0.0,
+                        optionalNullableDouble = null,
+                        optionalNullableString = null,
+                        optionalNullableSerializable = null,
+                        optionalNullableProxySerializable = null,
+                        optionalNonNullIntArray = intArrayOf(),
+                        optionalNullableIntArray = null,
+                        optionalNonNullLongArray = longArrayOf(),
+                        optionalNullableLongArray = null,
+                        optionalNonNullBooleanArray = booleanArrayOf(),
+                        optionalNullableBooleanArray = null,
+                        optionalNonNullFloatArray = floatArrayOf(),
+                        optionalNullableFloatArray = null,
+                        optionalNonNullDoubleArray = doubleArrayOf(),
+                        optionalNullableDoubleArray = null,
+                        optionalNonNullByteArray = byteArrayOf(),
+                        optionalNullableByteArray = null,
+                        optionalNonNullListString = listOf(),
+                        optionalNullableListString = null,
+                        optionalNonNullSerializableList = listOf(),
+                        optionalNullableSerializableList = null,
+                        optionalNonNullProxySerializableList = listOf(),
+                        optionalNullableProxySerializableList = null,
+                    )
+                )
+        }
 
     /**
      * Requires that [parameters] contains the [AppFunctionObjectTypeMetadata] under

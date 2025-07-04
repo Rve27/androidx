@@ -255,10 +255,6 @@ public class `$FunctionWithGenericSerializable_AppFunctionInventory` : AppFuncti
 
     private val COM_TESTDATA_UPDATENOTEPARAMS_OBJECT_DATA_TYPE_REQUIRED_PROPERTIES_LIST:
         List<String> = listOf(
-      "title",
-      "nullableTitle",
-      "attachments",
-      "nullableAttachments",
     )
 
     private val COM_TESTDATA_UPDATENOTEPARAMS_OBJECT_DATA_TYPE: AppFunctionObjectTypeMetadata =
