@@ -1925,6 +1925,29 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         formFillingEditText?.let { formWidgetInteractionHandler?.commitEditTextValue(it) }
     }
 
+    private val shouldShowFormFillingTooltip: Boolean
+        get() = isFormFillingTooltipEnabled && isFormFillingEnabled && isPdfValidForm
+
+    private val isPdfValidForm: Boolean
+        get() = pdfDocument?.formType != PdfDocument.PDF_FORM_TYPE_NONE
+
+    private fun getFirstVisibleAndEditableFormWidget(): Pair<Int, FormWidgetInfo>? {
+        val localPageMetadataLoader = pageMetadataLoader ?: return null
+        val visiblePageAreas = localPageMetadataLoader.visiblePageAreas
+
+        visiblePageAreas.keyIterator().forEach { pageNum ->
+            val editableFormWidgetsInPage =
+                pageManager?.pages[pageNum]?.formWidgetInfos?.filter { !it.readOnly }
+
+            editableFormWidgetsInPage?.forEach { widget ->
+                if (visiblePageAreas.get(pageNum).contains(widget.widgetRect.toRectF())) {
+                    return Pair(pageNum, widget)
+                }
+            }
+        }
+        return null
+    }
+
     /** The height of the viewport, minus padding */
     internal val viewportHeight: Int
         get() = bottom - top - paddingBottom - paddingTop
