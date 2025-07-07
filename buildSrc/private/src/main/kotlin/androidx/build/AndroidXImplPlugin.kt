@@ -1561,10 +1561,9 @@ private fun Configuration.isTest(): Boolean = name.lowercase().contains("test")
 internal fun Configuration.isPublished(): Boolean =
     !isTest() && !name.lowercase().contains("metadata") && !name.endsWith("CInterop")
 
-val Project.androidExtension: AndroidComponentsExtension<*, *, *>
+internal val Project.androidExtension: AndroidComponentsExtension<*, *, *>
     get() =
-        extensions.findByType<LibraryAndroidComponentsExtension>()
-            ?: extensions.findByType<ApplicationAndroidComponentsExtension>()
+        extensions.findByType<KotlinMultiplatformAndroidComponentsExtension>()
             ?: throw IllegalArgumentException("Failed to find any registered Android extension")
 
 val Project.multiplatformExtension
