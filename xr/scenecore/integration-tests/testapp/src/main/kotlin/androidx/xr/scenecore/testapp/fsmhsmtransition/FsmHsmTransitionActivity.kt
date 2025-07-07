@@ -223,7 +223,7 @@ class FsmHsmTransitionActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button_launch_settings_app).also {
             it.setOnClickListener {
                 var (intent, bundle) = createIntent()
-                bundle = session!!.scene.setFullSpaceMode(bundle)
+                bundle = session!!.scene.configureBundleForFullSpaceModeLaunch(bundle)
                 startActivity(intent, bundle)
             }
         }
@@ -232,7 +232,10 @@ class FsmHsmTransitionActivity : AppCompatActivity() {
         findViewById<Button>(R.id.button_launch_settings_app_with_env_inherited).also {
             it.setOnClickListener {
                 var (intent, bundle) = createIntent()
-                bundle = session!!.scene.setFullSpaceModeWithEnvironmentInherited(bundle)
+                bundle =
+                    session!!
+                        .scene
+                        .configureBundleForFullSpaceModeLaunchWithEnvironmentInherited(bundle)
                 startActivity(intent, bundle)
             }
         }
