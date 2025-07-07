@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.testapp.fieldofviewvisibility
+package androidx.xr.scenecore.testapp.common.managers
 
 import android.widget.Button
 import android.widget.RadioGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
@@ -27,12 +28,14 @@ import androidx.xr.scenecore.testapp.R
 import kotlinx.coroutines.flow.MutableStateFlow
 
 /** Manage the UI for the Surface Entity. */
-class SurfaceEntityManager(private val session: Session, activity: FieldOfViewVisibilityActivity) {
+class SurfaceEntityManager(private val session: Session, activity: AppCompatActivity) {
+    private val onEntityChangedCallbacks = mutableListOf<(SurfaceEntity?) -> Unit>()
     private val _surfaceEntityFlow = MutableStateFlow<SurfaceEntity?>(null)
     var surfaceEntity: SurfaceEntity?
         get() = _surfaceEntityFlow.value
         set(value) {
             _surfaceEntityFlow.value = value
+            for (callback in onEntityChangedCallbacks) callback(_surfaceEntityFlow.value)
         }
 
     private var mMovableComponent: MovableComponent? = null // movable component for surfaceEntity
@@ -111,4 +114,9 @@ class SurfaceEntityManager(private val session: Session, activity: FieldOfViewVi
         createSurfaceEntityButton.isEnabled = (surfaceEntity == null)
         destroySurfaceEntityButton.isEnabled = (surfaceEntity != null)
     }
+
+    fun AddOnEntityChangedListener(callback: (SurfaceEntity?) -> Unit) =
+        onEntityChangedCallbacks.add(callback)
+
+    fun ClearListeners() = onEntityChangedCallbacks.clear()
 }

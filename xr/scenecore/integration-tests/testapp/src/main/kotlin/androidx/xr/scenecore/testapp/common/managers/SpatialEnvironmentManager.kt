@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.testapp.fieldofviewvisibility
+package androidx.xr.scenecore.testapp.common.managers
 
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.xr.runtime.Session
 import androidx.xr.scenecore.ExrImage
 import androidx.xr.scenecore.GltfModel
-import androidx.xr.scenecore.SpatialEnvironment.SpatialEnvironmentPreference
+import androidx.xr.scenecore.SpatialEnvironment
 import androidx.xr.scenecore.scene
 import androidx.xr.scenecore.testapp.R
 import java.nio.file.Paths
@@ -31,9 +32,10 @@ import kotlinx.coroutines.launch
 /** Manage the UI for the Spatial Environment. */
 class SpatialEnvironmentManager(
     private val session: Session,
-    private val activity: FieldOfViewVisibilityActivity,
+    private val activity: AppCompatActivity,
 ) {
-    private var mSpatialEnvironmentPreference: SpatialEnvironmentPreference? = null
+    private var mSpatialEnvironmentPreference: SpatialEnvironment.SpatialEnvironmentPreference? =
+        null
     private val _geometryFlow = MutableStateFlow<GltfModel?>(null)
     private var geometry: GltfModel?
         get() = _geometryFlow.value
@@ -53,7 +55,8 @@ class SpatialEnvironmentManager(
 
         activity.findViewById<Button>(R.id.button_set_both_geometry_and_skybox).also {
             it.setOnClickListener {
-                mSpatialEnvironmentPreference = SpatialEnvironmentPreference(skybox, geometry)
+                mSpatialEnvironmentPreference =
+                    SpatialEnvironment.SpatialEnvironmentPreference(skybox, geometry)
                 session.scene.spatialEnvironment.preferredSpatialEnvironment =
                     mSpatialEnvironmentPreference
             }

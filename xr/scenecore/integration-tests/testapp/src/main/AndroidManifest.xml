@@ -83,6 +83,9 @@
         <activity
             android:name=".hittest.HitTestActivity"
             android:exported="true" />
+        <activity
+            android:name=".accessibilitytest.AccessibilityTestActivity"
+            android:exported="true" />
         <property
             android:name="android.window.PROPERTY_XR_ACTIVITY_START_MODE"
             android:value="XR_ACTIVITY_START_MODE_FULL_SPACE_MANAGED" />

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.testapp.fieldofviewvisibility
+package androidx.xr.scenecore.testapp.common.managers
 
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.Pose
@@ -29,7 +30,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 /** Manages the UI for the GLTF entity. */
-class GltfManager(private val session: Session, activity: FieldOfViewVisibilityActivity) {
+class GltfManager(private val session: Session, activity: AppCompatActivity) {
     private val mSession = session
     private val _mGltfModelFlow = MutableStateFlow<GltfModel?>(null)
     var mGltfModel: GltfModel?
@@ -38,11 +39,13 @@ class GltfManager(private val session: Session, activity: FieldOfViewVisibilityA
             _mGltfModelFlow.value = value
         }
 
+    private val onEntityChangedCallbacks = mutableListOf<(GltfModelEntity?) -> Unit>()
     private val _mGltfModelEntityFlow = MutableStateFlow<GltfModelEntity?>(null)
     var mGltfModelEntity: GltfModelEntity?
         get() = _mGltfModelEntityFlow.value
         set(value) {
             _mGltfModelEntityFlow.value = value
+            for (callback in onEntityChangedCallbacks) callback(_mGltfModelEntityFlow.value)
         }
 
     private val _modelIsEnabledFlow = MutableStateFlow<Boolean>(true)
@@ -104,4 +107,9 @@ class GltfManager(private val session: Session, activity: FieldOfViewVisibilityA
         createGltfEntityButton.isEnabled = (mGltfModelEntity == null && mGltfModel != null)
         destroyGltfEntityButton.isEnabled = (mGltfModelEntity != null)
     }
+
+    fun AddOnEntityChangedListener(callback: (GltfModelEntity?) -> Unit) =
+        onEntityChangedCallbacks.add(callback)
+
+    fun ClearListeners() = onEntityChangedCallbacks.clear()
 }
