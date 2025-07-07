@@ -29,7 +29,7 @@ interface Interpolatable {
     /**
      * This method is defined such that a value of [t] being 1.0 means that the interpolation has
      * finished, meaning that this method should return either [other] (or something equivalent to
-     * [other]), 1.0 meaning that the interpolation has not started, returning `this` (or something
+     * [other]), 0.0 meaning that the interpolation has not started, returning `this` (or something
      * equivalent to `this`), and values in between meaning that the interpolation is at the
      * relevant point on the timeline between `this` and [other]. The interpolation can be
      * extrapolated beyond 0.0 and 1.0, so negative values and values greater than 1.0 are valid.
