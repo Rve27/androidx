@@ -165,6 +165,14 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             }
         }
 
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    /**
+     * Used to determine whether a promotional tooltip for form-filling will be displayed or not
+     * when the user opens a PDF which is a form and form-filling is enabled.
+     */
+    public var isFormFillingTooltipEnabled: Boolean = false
+
     /** The maximum scaling factor that can be applied to this View using the [zoom] property */
     public var maxZoom: Float = DEFAULT_MAX_ZOOM
 
@@ -1191,6 +1199,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
             state.contentCenterY = 0F
         }
         state.isFormFillingEnabled = isFormFillingEnabled
+        state.isFormFillingTooltipEnabled = isFormFillingTooltipEnabled
         state.documentUri = pdfDocument?.uri
         state.paginationModel = pageMetadataLoader?.paginationModel
         state.pdfFormFillingState = pageMetadataLoader?.pdfFormFillingState
@@ -1332,6 +1341,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         }
 
         isFormFillingEnabled = localStateToRestore.isFormFillingEnabled
+        isFormFillingTooltipEnabled = localStateToRestore.isFormFillingTooltipEnabled
         setAccessibility()
 
         restoreFormFillingState()

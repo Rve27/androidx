@@ -31,6 +31,7 @@ internal class PdfViewSavedState : AbsSavedState {
     var contentCenterY: Float = 0F
     var zoom: Float = 1F
     var isFormFillingEnabled: Boolean = false
+    var isFormFillingTooltipEnabled: Boolean = false
     var documentUri: Uri? = null
     var paginationModel: PaginationModel? = null
     var pdfFormFillingState: PdfFormFillingState? = null
@@ -66,6 +67,7 @@ internal class PdfViewSavedState : AbsSavedState {
         zoom = parcel.readFloat()
         viewWidth = parcel.readInt()
         isFormFillingEnabled = parcel.readBoolean()
+        isFormFillingTooltipEnabled = parcel.readBoolean()
         documentUri = ParcelCompat.readParcelable(parcel, loader, Uri::class.java)
         paginationModel = ParcelCompat.readParcelable(parcel, loader, PaginationModel::class.java)
         pdfFormFillingState =
@@ -81,6 +83,7 @@ internal class PdfViewSavedState : AbsSavedState {
         dest.writeFloat(zoom)
         dest.writeInt(viewWidth)
         dest.writeBoolean(isFormFillingEnabled)
+        dest.writeBoolean(isFormFillingTooltipEnabled)
         dest.writeParcelable(documentUri, flags)
         dest.writeParcelable(paginationModel, flags)
         dest.writeParcelable(pdfFormFillingState, flags)
