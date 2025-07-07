@@ -477,7 +477,7 @@ package androidx.xr.compose.subspace.layout {
   }
 
   public final class PointerHoverIconKt {
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public static androidx.xr.compose.subspace.layout.SubspaceModifier pointerHoverIcon(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.scenecore.SpatialPointerIcon icon);
+    method public static androidx.xr.compose.subspace.layout.SubspaceModifier pointerHoverIcon(androidx.xr.compose.subspace.layout.SubspaceModifier, androidx.xr.scenecore.SpatialPointerIcon icon);
   }
 
   public final class ResizableKt {
