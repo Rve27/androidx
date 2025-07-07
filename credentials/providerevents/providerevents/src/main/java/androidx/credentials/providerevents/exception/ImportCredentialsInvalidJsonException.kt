@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.credentials.providerevents.transfer
+package androidx.credentials.providerevents.exception
 
-/** A request for the state of the provider's credentials that can be exported */
-public class CredentialTransferCapabilitiesRequest()
+/** The request json cannot be read because it is written in invalid format */
+public class ImportCredentialsInvalidJsonException(errorMessage: CharSequence? = null) :
+    ImportCredentialsException(TYPE_IMPORT_CREDENTIALS_INVALID_JSON_EXCEPTION, errorMessage) {
+    internal companion object {
+        internal const val TYPE_IMPORT_CREDENTIALS_INVALID_JSON_EXCEPTION: String =
+            "androidx.credentials.providerevents.exception.TYPE_IMPORT_CREDENTIALS_INVALID_JSON_EXCEPTION"
+    }
+}

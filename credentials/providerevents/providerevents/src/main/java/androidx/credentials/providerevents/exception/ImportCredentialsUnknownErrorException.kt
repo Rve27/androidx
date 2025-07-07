@@ -14,7 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.credentials.providerevents.transfer
+package androidx.credentials.providerevents.exception
 
-/** A request for the state of the provider's credentials that can be exported */
-public class CredentialTransferCapabilitiesRequest()
+/** The credential json cannot be returned due to unknown error */
+public class ImportCredentialsUnknownErrorException(errorMessage: CharSequence? = null) :
+    ImportCredentialsException(TYPE_IMPORT_CREDENTIALS_UNKNOWN_ERROR_EXCEPTION, errorMessage) {
+    internal companion object {
+        internal const val TYPE_IMPORT_CREDENTIALS_UNKNOWN_ERROR_EXCEPTION: String =
+            "androidx.credentials.providerevents.exception.TYPE_IMPORT_CREDENTIALS_UNKNOWN_ERROR_EXCEPTION"
+    }
+}

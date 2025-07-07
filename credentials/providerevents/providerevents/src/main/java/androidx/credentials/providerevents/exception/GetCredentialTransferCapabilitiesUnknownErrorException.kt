@@ -16,15 +16,17 @@
 
 package androidx.credentials.providerevents.exception
 
-import androidx.annotation.RestrictTo
-
-/**
- * Represents an error thrown when the provider is requested to return the transfer capabilities.
- */
-public abstract class GetCredentialTransferCapabilitiesException
-@JvmOverloads
-internal constructor(
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP) public open val type: String,
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-    public open val errorMessage: CharSequence? = null,
-) : Exception(errorMessage?.toString())
+/** The request cannot be processed due to unknown error */
+public class GetCredentialTransferCapabilitiesUnknownErrorException(
+    errorMessage: CharSequence? = null
+) :
+    GetCredentialTransferCapabilitiesException(
+        TYPE_GET_CREDENTIAL_TRANSFER_CAPABILITIES_UNKNOWN_ERROR_EXCEPTION,
+        errorMessage,
+    ) {
+    internal companion object {
+        internal const val TYPE_GET_CREDENTIAL_TRANSFER_CAPABILITIES_UNKNOWN_ERROR_EXCEPTION:
+            String =
+            "androidx.credentials.providerevents.exception.TYPE_GET_CREDENTIAL_TRANSFER_CAPABILITIES_UNKNOWN_ERROR_EXCEPTION"
+    }
+}
