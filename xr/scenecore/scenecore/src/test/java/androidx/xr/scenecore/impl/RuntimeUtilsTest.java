@@ -53,6 +53,7 @@ import androidx.xr.runtime.math.Pose;
 import androidx.xr.runtime.math.Quaternion;
 import androidx.xr.runtime.math.Vector3;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
+import androidx.xr.scenecore.impl.impress.FakeImpressApiImpl;
 import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
 import androidx.xr.scenecore.impl.perception.Plane;
 import androidx.xr.scenecore.impl.perception.Session;
@@ -71,7 +72,6 @@ import com.android.extensions.xr.space.ShadowSpatialCapabilities;
 import com.android.extensions.xr.space.VisibilityState;
 
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.apibindings.FakeImpressApiImpl;
 import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
 
 import org.junit.Rule;
