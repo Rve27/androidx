@@ -732,7 +732,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                 project.setUpBlankProguardFileForKmpAarIfNeeded(
                     kotlinMultiplatformAndroidTarget.optimization.consumerKeepRules
                 )
-                kotlinMultiplatformAndroidTarget.configureTargetSdkForTests(it.compileSdk)
             }
         }
 
@@ -1206,6 +1205,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
             defaultSourceSetName = "androidInstrumentedTest"
             sourceSetTreeName = "test"
         }
+        configureTargetSdkForTests(project.defaultAndroidConfig.targetSdk)
 
         // validate that SDK versions haven't been altered during evaluation
         project.afterEvaluate {
@@ -1224,19 +1224,17 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
     }
 
     // TODO(b/425976012): Set targetSdkForTests to project.defaultAndroidConfig.targetSdk
-    private fun KotlinMultiplatformAndroidLibraryTarget.configureTargetSdkForTests(
-        compileSdk: Int?
-    ) {
-        checkNotNull(compileSdk) {
-            "compileSdk must be set for tests. call `configureTargetSdkForTests` in the `finalizeDsl` block"
+    private fun KotlinMultiplatformAndroidLibraryTarget.configureTargetSdkForTests(version: Int?) {
+        checkNotNull(version) {
+            "version must be set for tests. call `configureTargetSdkForTests` in the `finalizeDsl` block"
         }
         compilations
             .withType(KotlinMultiplatformAndroidDeviceTestCompilation::class.java)
-            .configureEach { it.targetSdk { version = release(compileSdk) } }
+            .configureEach { it.targetSdk { this.version = release(version) } }
 
         compilations
             .withType(KotlinMultiplatformAndroidHostTestCompilation::class.java)
-            .configureEach { it.targetSdk { version = release(compileSdk.coerceAtMost(35)) } }
+            .configureEach { it.targetSdk { this.version = release(version.coerceAtMost(35)) } }
     }
 
     /**
