@@ -47,13 +47,15 @@ import kotlin.math.max
 @PublishedApi
 internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
 
+    // This parameter is null for Composables without a layout, such as Orbiters and Spatial
+    // Dialogs.
     internal var layout: SubspaceLayoutNode? = null
         set(value) {
             field = value
             updateEntityPose()
         }
 
-    protected val density: Density?
+    private val density: Density?
         get() = layout?.density
 
     internal open fun updateEntityPose() {
@@ -177,6 +179,9 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
     CoreEntity(panelEntity), MovableCoreEntity, ResizableCoreEntity {
     override var overrideSize: IntVolumeSize? = null
 
+    // Density set from setShape.
+    private var shapeDensity: Density? = null
+
     /**
      * The size of the [CoreBasePanelEntity] in pixels.
      *
@@ -207,10 +212,7 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
             if (super.size != nextSize) {
                 super.size = nextSize
                 panelEntity.sizeInPixels = IntSize2d(size.width, size.height)
-
-                if (density != null) {
-                    updateShape(density!!)
-                }
+                shapeDensity?.let { updateShape(it) }
             }
         }
 
@@ -232,6 +234,7 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
     /* Sets the [SpatialShape] of this [CoreBasePanelEntity] and updates the shape */
     fun setShape(shape: SpatialShape, density: Density) {
         this.shape = shape
+        this.shapeDensity = density
         updateShape(density)
     }
 
