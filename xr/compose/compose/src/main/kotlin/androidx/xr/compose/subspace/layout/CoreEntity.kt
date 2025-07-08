@@ -17,7 +17,10 @@
 package androidx.xr.compose.subspace.layout
 
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.unit.Density
 import androidx.xr.compose.subspace.SceneCoreEntitySizeAdapter
 import androidx.xr.compose.subspace.SpatialPanelDefaults
@@ -27,6 +30,7 @@ import androidx.xr.compose.unit.Meter
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.IntSize2d
 import androidx.xr.runtime.math.Pose
+import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.Component
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.GroupEntity
@@ -41,7 +45,7 @@ import kotlin.math.max
  * Entities from SceneCore.
  */
 @PublishedApi
-internal sealed class CoreEntity(public val entity: Entity) : OpaqueEntity {
+internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
 
     internal var layout: SubspaceLayoutNode? = null
         set(value) {
@@ -56,32 +60,36 @@ internal sealed class CoreEntity(public val entity: Entity) : OpaqueEntity {
         val density = density ?: return
 
         // Compose XR uses pixels, SceneCore uses meters.
-        val corePose =
-            layout?.measurableLayout?.poseInParentEntity?.convertPixelsToMeters(density)
-                ?: Pose.Identity
+        val corePose = layoutPoseInPixels.convertPixelsToMeters(density)
         if (entity.getPose() != corePose) {
             entity.setPose(corePose)
         }
     }
 
-    public open fun dispose() {
+    open val layoutPoseInPixels
+        get() = layout?.measurableLayout?.poseInParentEntity ?: Pose.Identity
+
+    open fun dispose() {
         entity.dispose()
     }
 
     /**
-     * The backing value for the size of the [CoreEntity] in pixels. It uses a MutableState object
-     * so that recompositions can be triggered on size changes.
+     * The volume size of the [CoreEntity] in pixels. Reading this value may trigger recomposition.
      */
-    protected val mutableSize = mutableStateOf(IntVolumeSize.Zero)
+    var mutableSize by mutableStateOf(IntVolumeSize.Zero)
+        private set
 
-    /** The volume size of the [CoreEntity] in pixels. */
-    public open var size: IntVolumeSize
-        get() = mutableSize.value
+    /**
+     * The volume size of the [CoreEntity] in pixels. Reading this value will not trigger
+     * recomposition.
+     */
+    open var size: IntVolumeSize
+        get() = Snapshot.withoutReadObservation { mutableSize }
         set(value) {
-            if (mutableSize.value == value) {
+            if (Snapshot.withoutReadObservation { mutableSize } == value) {
                 return
             }
-            mutableSize.value = value
+            mutableSize = value
         }
 
     /**
@@ -110,7 +118,7 @@ internal sealed class CoreEntity(public val entity: Entity) : OpaqueEntity {
             field = value
         }
 
-    public open var parent: CoreEntity? = null
+    open var parent: CoreEntity? = null
         set(value) {
             field = value
 
@@ -137,7 +145,7 @@ internal sealed class CoreEntity(public val entity: Entity) : OpaqueEntity {
      * @param component The [Component] to add.
      * @return true if the component was added successfully, false otherwise.
      */
-    public fun addComponent(component: Component): Boolean {
+    fun addComponent(component: Component): Boolean {
         return entity.addComponent(component)
     }
 
@@ -146,7 +154,7 @@ internal sealed class CoreEntity(public val entity: Entity) : OpaqueEntity {
      *
      * @param component The [Component] to remove.
      */
-    public fun removeComponent(component: Component) {
+    fun removeComponent(component: Component) {
         entity.removeComponent(component)
     }
 }
@@ -222,7 +230,7 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
     private var shape: SpatialShape = SpatialPanelDefaults.shape
 
     /* Sets the [SpatialShape] of this [CoreBasePanelEntity] and updates the shape */
-    public fun setShape(shape: SpatialShape, density: Density) {
+    fun setShape(shape: SpatialShape, density: Density) {
         this.shape = shape
         updateShape(density)
     }
@@ -357,21 +365,14 @@ internal class CoreSphereSurfaceEntity(
     private val localDensity: Density
         get() = layout?.density ?: initialDensity
 
-    override fun updateEntityPose() {
-        if (headPose == null) {
-            Log.w("CoreSphereSurfaceEntity", "Positioning Sphere without head Pose.")
-            super.updateEntityPose()
-        } else {
-            // Center the sphere around the user and apply any corePose adjustment
-            val corePose =
-                layout?.measurableLayout?.poseInParentEntity?.convertPixelsToMeters(localDensity)
-                    ?: Pose.Identity
-            val poseFromHead = corePose.copy(corePose.translation.plus(headPose.translation))
-            if (entity.getPose() != poseFromHead) {
-                entity.setPose(poseFromHead)
+    override val layoutPoseInPixels: Pose
+        get() =
+            super.layoutPoseInPixels.let {
+                it.copy(
+                    it.translation +
+                        (headPose?.translation?.convertMetersToPixels(localDensity) ?: Vector3())
+                )
             }
-        }
-    }
 
     /** The parent of spheres is always scene.activitySpaceRoot. Setting this has no affect. */
     override var parent: CoreEntity? = null
@@ -430,7 +431,7 @@ internal interface ResizableCoreEntity {
      * This value is used to override the layout size of the [CoreEntity] when it is resizable. When
      * this value is null, the layout size of the [CoreEntity] is used.
      */
-    public var overrideSize: IntVolumeSize?
+    var overrideSize: IntVolumeSize?
 }
 
 /** [CoreEntity] types that implement this interface may have the MovableComponent attached. */
