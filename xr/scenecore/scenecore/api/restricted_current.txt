@@ -354,7 +354,7 @@ package androidx.xr.scenecore {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class KhronosPbrMaterial extends androidx.xr.scenecore.Material {
-    method @MainThread public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.KhronosPbrMaterial> create(androidx.xr.runtime.Session session, androidx.xr.scenecore.KhronosPbrMaterialSpec spec);
+    method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, androidx.xr.scenecore.KhronosPbrMaterialSpec spec, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
     method @MainThread public void dispose();
     method @MainThread public void setAlphaCutoff(float alphaCutoff);
     method @MainThread public void setAmbientOcclusionFactor(float factor);
@@ -389,7 +389,7 @@ package androidx.xr.scenecore {
   }
 
   public static final class KhronosPbrMaterial.Companion {
-    method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.KhronosPbrMaterial> create(androidx.xr.runtime.Session session, androidx.xr.scenecore.KhronosPbrMaterialSpec spec);
+    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, androidx.xr.scenecore.KhronosPbrMaterialSpec spec, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.KhronosPbrMaterial>);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class KhronosPbrMaterialSpec {
@@ -1092,13 +1092,13 @@ package androidx.xr.scenecore {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class Texture {
-    method @MainThread public static final com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.Texture> create(androidx.xr.runtime.Session session, String name, androidx.xr.scenecore.TextureSampler sampler);
+    method @MainThread public static final suspend Object? create(androidx.xr.runtime.Session session, java.nio.file.Path path, androidx.xr.scenecore.TextureSampler sampler, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.Texture>);
     method @MainThread public void dispose();
     field public static final androidx.xr.scenecore.Texture.Companion Companion;
   }
 
   public static final class Texture.Companion {
-    method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.Texture> create(androidx.xr.runtime.Session session, String name, androidx.xr.scenecore.TextureSampler sampler);
+    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, java.nio.file.Path path, androidx.xr.scenecore.TextureSampler sampler, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.Texture>);
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class TextureSampler {
@@ -1205,7 +1205,7 @@ package androidx.xr.scenecore {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class WaterMaterial extends androidx.xr.scenecore.Material {
-    method @MainThread public static com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.WaterMaterial> create(androidx.xr.runtime.Session session, boolean isAlphaMapVersion);
+    method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, boolean isAlphaMapVersion, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.WaterMaterial>);
     method @MainThread public void dispose();
     method @MainThread public void setAlphaMap(androidx.xr.scenecore.Texture alphaMap);
     method @MainThread public void setAlphaStepMultiplier(float alphaStepMultiplier);
@@ -1219,7 +1219,7 @@ package androidx.xr.scenecore {
   }
 
   public static final class WaterMaterial.Companion {
-    method @MainThread public com.google.common.util.concurrent.ListenableFuture<androidx.xr.scenecore.WaterMaterial> create(androidx.xr.runtime.Session session, boolean isAlphaMapVersion);
+    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, boolean isAlphaMapVersion, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.WaterMaterial>);
   }
 
 }
