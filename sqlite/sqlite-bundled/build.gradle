@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
     id("AndroidXPlugin")
+    id("com.android.library")
 }
 
 apply(from: "PrepareSqliteSourcesTask.groovy")
@@ -177,13 +178,7 @@ androidXMultiplatform {
         configureTargets(requiredNativeTargets)
     }
 
-    androidLibrary {
-        namespace = "androidx.sqlite.driver.bundled"
-        optimization {
-            it.consumerKeepRules.publish = true
-            it.consumerKeepRules.files.add(new File("src/androidMain/proguard-rules.pro"))
-        }
-        androidResources.enable = true
+    androidTarget() {
         addNativeLibrariesToJniLibs(it, jvmArtJniImplementation)
     }
     ios()
@@ -243,6 +238,13 @@ androidXMultiplatform {
                 }
             }
         }
+    }
+}
+
+android {
+    namespace = "androidx.sqlite.driver.bundled"
+    buildTypes.configureEach {
+        consumerProguardFiles("src/androidMain/proguard-rules.pro")
     }
 }
 
