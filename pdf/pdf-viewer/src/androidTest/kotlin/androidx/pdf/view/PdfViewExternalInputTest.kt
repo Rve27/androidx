@@ -500,77 +500,7 @@ class PdfViewExternalInputTest {
         Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(expectedZoom)
     }
 
-    @Test
-    fun testCtrlPlusMouseScrollUp_zoomsOut() {
-        var zoomAfter = 0f
-        var expectedZoom = 0f
-
-        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
-            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
-                .check { view, _ ->
-                    val pdfView = view as PdfView
-                    pdfView.post { pdfView.requestFocus() }
-
-                    val baselineZoom =
-                        ZoomUtils.calculateZoomToFit(
-                            pdfView.viewportWidth.toFloat(),
-                            pdfView.viewportHeight.toFloat(),
-                            pdfView.contentWidth,
-                            1f,
-                        )
-                    val currentZoomLevel = 1.10f
-                    pdfView.zoom = baselineZoom * currentZoomLevel
-
-                    val previousZoomLevel = 1.0f
-                    expectedZoom = baselineZoom * previousZoomLevel
-                }
-                .perform(scrollMouseWheel(1.0f, 0f, KeyEvent.META_CTRL_ON))
-                .check { view, _ ->
-                    val pdfView = view as PdfView
-                    zoomAfter = pdfView.zoom
-                }
-            close()
-        }
-
-        Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(expectedZoom)
-    }
-
-    @Test
-    fun testCtrlPlusMouseScrollDown_zoomsIn() {
-        var zoomAfter = 0f
-        var expectedZoom = 0f
-
-        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
-            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
-                .check { view, _ ->
-                    val pdfView = view as PdfView
-                    pdfView.post { pdfView.requestFocus() }
-
-                    val baselineZoom =
-                        ZoomUtils.calculateZoomToFit(
-                            pdfView.viewportWidth.toFloat(),
-                            pdfView.viewportHeight.toFloat(),
-                            pdfView.contentWidth,
-                            1f,
-                        )
-                    val currentZoomLevel = 1.0f
-                    pdfView.zoom = baselineZoom * currentZoomLevel
-
-                    val nextZoomLevel = 1.10f
-                    expectedZoom = baselineZoom * nextZoomLevel
-                }
-                .perform(scrollMouseWheel(-1.0f, 0f, KeyEvent.META_CTRL_ON))
-                .check { view, _ ->
-                    val pdfView = view as PdfView
-                    zoomAfter = pdfView.zoom
-                }
-            close()
-        }
-
-        Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(expectedZoom)
-    }
-
-    private fun scrollMouseWheel(vscroll: Float, hscroll: Float, metaState: Int = 0): ViewAction {
+    private fun scrollMouseWheel(vscroll: Float, hscroll: Float): ViewAction {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View> {
                 return ViewMatchers.isAssignableFrom(PdfView::class.java)
@@ -601,7 +531,7 @@ class PdfViewExternalInputTest {
                         1, // pointerCount
                         pointerProperties,
                         pointerCoords,
-                        metaState,
+                        0, // metaState
                         0, // buttonState
                         1f, // xPrecision
                         1f, // yPrecision

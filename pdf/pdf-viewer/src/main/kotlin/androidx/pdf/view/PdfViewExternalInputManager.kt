@@ -97,16 +97,9 @@ internal class PdfViewExternalInputManager(pdfView: PdfView) {
 
         if (event.action == MotionEvent.ACTION_SCROLL) {
             val vscroll = event.getAxisValue(MotionEvent.AXIS_VSCROLL)
-            val isCtrlPressed = event.metaState and KeyEvent.META_CTRL_ON != 0
             when {
-                vscroll > 0 -> {
-                    if (isCtrlPressed) mouseActionHandler.zoomOut(event.x, event.y)
-                    else mouseActionHandler.scrollUp()
-                }
-                vscroll < 0 -> {
-                    if (isCtrlPressed) mouseActionHandler.zoomIn(event.x, event.y)
-                    else mouseActionHandler.scrollDown()
-                }
+                vscroll > 0 -> mouseActionHandler.scrollUp()
+                vscroll < 0 -> mouseActionHandler.scrollDown()
             }
 
             val hscroll = event.getAxisValue(MotionEvent.AXIS_HSCROLL)

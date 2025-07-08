@@ -54,7 +54,16 @@ internal abstract class PdfViewExternalInputHandler(val pdfView: PdfView) {
         pdfView.scrollBy(scrollAmount, 0)
     }
 
-    fun zoomIn(x: Float, y: Float) {
+    private fun zoomToCenterTop(newZoom: Float) {
+        val effectiveNewZoom = MathUtils.clamp(newZoom, pdfView.minZoom, pdfView.maxZoom)
+        with(pdfView) {
+            val centreTopX = (left + right) / 2f
+            val centreTopY = top.toFloat()
+            zoomTo(effectiveNewZoom, centreTopX, centreTopY)
+        }
+    }
+
+    fun zoomIn() {
         val baselineZoom =
             ZoomUtils.calculateZoomToFit(
                 pdfView.viewportWidth.toFloat(),
@@ -69,10 +78,10 @@ internal abstract class PdfViewExternalInputHandler(val pdfView: PdfView) {
                 ZOOM_LEVELS,
                 pdfView.maxZoom,
             )
-        applyZoom(newZoom, x, y)
+        zoomToCenterTop(newZoom)
     }
 
-    fun zoomOut(x: Float, y: Float) {
+    fun zoomOut() {
         val baselineZoom =
             ZoomUtils.calculateZoomToFit(
                 pdfView.viewportWidth.toFloat(),
@@ -87,12 +96,7 @@ internal abstract class PdfViewExternalInputHandler(val pdfView: PdfView) {
                 ZOOM_LEVELS,
                 pdfView.minZoom,
             )
-        applyZoom(newZoom, x, y)
-    }
-
-    private fun applyZoom(newZoom: Float, x: Float, y: Float) {
-        val effectiveNewZoom = MathUtils.clamp(newZoom, pdfView.minZoom, pdfView.maxZoom)
-        pdfView.zoomTo(effectiveNewZoom, x, y)
+        zoomToCenterTop(newZoom)
     }
 
     private companion object {
