@@ -255,6 +255,7 @@ dependencies {
     kmpDocs(project(":navigation:navigation-common"))
     kmpDocs(project(":navigationevent:navigationevent"))
     kmpDocs(project(":navigationevent:navigationevent-compose"))
+    kmpDocs(project(":navigationevent:navigationevent-testing"))
     docs(project(":navigation:navigation-common-ktx"))
     kmpDocs(project(":navigation:navigation-compose"))
     docs(project(":navigation:navigation-dynamic-features-fragment"))

@@ -32,10 +32,9 @@ plugins {
 androidXMultiplatform {
     androidLibrary {
         compileSdk = 36
-        namespace = "androidx.navigationevent"
-        androidResources.enable = true
+        namespace = "androidx.navigationevent.testing"
     }
-    desktop()
+    jvm()
     mac()
     linux()
     ios()
@@ -48,44 +47,10 @@ androidXMultiplatform {
     defaultPlatform(PlatformIdentifier.ANDROID)
 
     sourceSets {
-        configureEach {
-            languageSettings.optIn("kotlin.contracts.ExperimentalContracts")
-        }
-
         commonMain {
             dependencies {
                 implementation(libs.kotlinStdlib)
-                api("androidx.annotation:annotation:1.9.1")
-            }
-        }
-
-        commonTest {
-            dependencies {
-                implementation(libs.kotlinTest)
-                implementation(project(":navigationevent:navigationevent-testing"))
-                implementation(project(":kruth:kruth"))
-            }
-        }
-
-        androidMain {
-            dependsOn(commonMain)
-            dependencies {
-                implementation("androidx.core:core-viewtree:1.0.0")
-            }
-        }
-
-        androidInstrumentedTest {
-            dependsOn(commonTest)
-            dependencies {
-                runtimeOnly(libs.kotlinTestJunit)
-                implementation(libs.junit)
-                implementation(libs.espressoCore)
-                implementation(libs.hamcrestCore)
-                implementation(libs.testCore)
-                implementation(libs.testExtJunit)
-                implementation(libs.testExtTruth)
-                implementation(libs.testRules)
-                implementation(libs.testRunner)
+                api(project(":navigationevent:navigationevent"))
             }
         }
 
@@ -93,12 +58,6 @@ androidXMultiplatform {
             dependsOn(commonMain)
             dependencies {
                 implementation(libs.kotlinStdlibWasm)
-            }
-        }
-
-        wasmJsTest {
-            dependencies {
-                implementation(libs.kotlinTestForWasmTests)
             }
         }
 
@@ -112,9 +71,8 @@ androidXMultiplatform {
 }
 
 androidx {
-    name = "Navigation Event"
+    name = "Navigation Event Testing"
     type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
     inceptionYear = "2025"
-    description = "Provides APIs to easily intercept platform navigation events, including " +
-            "swipes and clicks, to provide a consistent API surface for handling these events."
+    description = "Testing utilities for 'navigationevent' artifact"
 }
