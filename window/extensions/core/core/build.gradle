@@ -45,12 +45,6 @@ android {
     namespace = "androidx.window.extensions.core"
 }
 
-tasks.withType(KotlinCompile).configureEach {
-    kotlinOptions {
-        freeCompilerArgs += ["-Xjvm-default=all"]
-    }
-}
-
 androidx {
     name = "WindowManager Core Extensions"
     type = SoftwareType.PUBLISHED_LIBRARY
