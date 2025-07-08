@@ -16,7 +16,6 @@
 
 package androidx.wear.compose.material3
 
-import android.os.Build
 import androidx.compose.foundation.layout.size
 import androidx.compose.testutils.assertAgainstGolden
 import androidx.compose.ui.Modifier
@@ -38,7 +37,7 @@ import org.junit.runner.RunWith
 
 @MediumTest
 @RunWith(TestParameterInjector::class)
-@SdkSuppress(minSdkVersion = Build.VERSION_CODES.P)
+@SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
 class OpenOnPhoneDialogScreenshotTest {
     @get:Rule val rule = createComposeRule()
 

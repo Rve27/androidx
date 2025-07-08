@@ -16,7 +16,6 @@
 
 package androidx.wear.compose.material3.test
 
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -62,7 +61,7 @@ import org.junit.rules.TestName
 import org.junit.runner.RunWith
 
 @MediumTest
-@SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
+@SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
 @RunWith(TestParameterInjector::class)
 class StepperScreenshotTest {
     @get:Rule val rule = createComposeRule()

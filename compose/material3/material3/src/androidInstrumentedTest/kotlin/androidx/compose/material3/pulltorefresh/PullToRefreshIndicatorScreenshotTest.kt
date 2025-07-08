@@ -16,7 +16,6 @@
 
 package androidx.compose.material3.pulltorefresh
 
-import android.os.Build
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.CircularAnimationProgressDuration
@@ -45,7 +44,7 @@ import org.junit.runners.Parameterized
 @OptIn(ExperimentalMaterial3Api::class)
 @LargeTest
 @RunWith(Parameterized::class)
-@SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
+@SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
 class PullRefreshIndicatorScreenshotTest(private val scheme: ColorSchemeWrapper) {
     @get:Rule val rule = createComposeRule()
 
