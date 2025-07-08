@@ -2232,14 +2232,18 @@ package androidx.compose.material3 {
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Immutable public final class ModalBottomSheetProperties {
     ctor public ModalBottomSheetProperties();
-    ctor public ModalBottomSheetProperties(optional androidx.compose.ui.window.SecureFlagPolicy securePolicy, optional boolean shouldDismissOnBackPress);
-    ctor @Deprecated public ModalBottomSheetProperties(androidx.compose.ui.window.SecureFlagPolicy securePolicy, boolean isFocusable, boolean shouldDismissOnBackPress);
-    ctor public ModalBottomSheetProperties(optional boolean shouldDismissOnBackPress);
-    ctor public ModalBottomSheetProperties(boolean isAppearanceLightStatusBars, boolean isAppearanceLightNavigationBars, optional androidx.compose.ui.window.SecureFlagPolicy securePolicy, optional boolean shouldDismissOnBackPress);
+    ctor @BytecodeOnly @Deprecated public ModalBottomSheetProperties(androidx.compose.ui.window.SecureFlagPolicy!, boolean);
+    ctor public ModalBottomSheetProperties(optional androidx.compose.ui.window.SecureFlagPolicy securePolicy, optional boolean shouldDismissOnBackPress, optional boolean shouldDismissOnClickOutside);
+    ctor @BytecodeOnly @Deprecated public ModalBottomSheetProperties(boolean);
+    ctor public ModalBottomSheetProperties(optional boolean shouldDismissOnBackPress, optional boolean shouldDismissOnClickOutside);
+    ctor @BytecodeOnly @Deprecated public ModalBottomSheetProperties(boolean, boolean, androidx.compose.ui.window.SecureFlagPolicy!, boolean);
+    ctor public ModalBottomSheetProperties(boolean isAppearanceLightStatusBars, boolean isAppearanceLightNavigationBars, optional androidx.compose.ui.window.SecureFlagPolicy securePolicy, optional boolean shouldDismissOnBackPress, optional boolean shouldDismissOnClickOutside);
     method public androidx.compose.ui.window.SecureFlagPolicy getSecurePolicy();
     method public boolean getShouldDismissOnBackPress();
+    method public boolean shouldDismissOnClickOutside();
     property public androidx.compose.ui.window.SecureFlagPolicy securePolicy;
     property public boolean shouldDismissOnBackPress;
+    property public boolean shouldDismissOnClickOutside;
   }
 
   public final class ModalBottomSheet_androidKt {

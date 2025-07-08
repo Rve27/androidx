@@ -1112,11 +1112,14 @@ final class androidx.compose.material3/MenuItemColors { // androidx.compose.mate
 }
 
 final class androidx.compose.material3/ModalBottomSheetProperties { // androidx.compose.material3/ModalBottomSheetProperties|null[0]
-    constructor <init>(kotlin/Boolean = ...) // androidx.compose.material3/ModalBottomSheetProperties.<init>|<init>(kotlin.Boolean){}[0]
+    constructor <init>(kotlin/Boolean = ..., kotlin/Boolean = ...) // androidx.compose.material3/ModalBottomSheetProperties.<init>|<init>(kotlin.Boolean;kotlin.Boolean){}[0]
+    constructor <init>(kotlin/Boolean) // androidx.compose.material3/ModalBottomSheetProperties.<init>|<init>(kotlin.Boolean){}[0]
     constructor <init>(kotlin/Boolean, kotlin/Boolean, kotlin/Boolean) // androidx.compose.material3/ModalBottomSheetProperties.<init>|<init>(kotlin.Boolean;kotlin.Boolean;kotlin.Boolean){}[0]
 
     final val shouldDismissOnBackPress // androidx.compose.material3/ModalBottomSheetProperties.shouldDismissOnBackPress|{}shouldDismissOnBackPress[0]
         final fun <get-shouldDismissOnBackPress>(): kotlin/Boolean // androidx.compose.material3/ModalBottomSheetProperties.shouldDismissOnBackPress.<get-shouldDismissOnBackPress>|<get-shouldDismissOnBackPress>(){}[0]
+    final val shouldDismissOnClickOutside // androidx.compose.material3/ModalBottomSheetProperties.shouldDismissOnClickOutside|{}shouldDismissOnClickOutside[0]
+        final fun <get-shouldDismissOnClickOutside>(): kotlin/Boolean // androidx.compose.material3/ModalBottomSheetProperties.shouldDismissOnClickOutside.<get-shouldDismissOnClickOutside>|<get-shouldDismissOnClickOutside>(){}[0]
 }
 
 final class androidx.compose.material3/ModalWideNavigationRailOverrideScope { // androidx.compose.material3/ModalWideNavigationRailOverrideScope|null[0]
