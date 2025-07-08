@@ -56,5 +56,4 @@ androidx {
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2022"
     description = "The Core APIs for Window Manager Library Extensions"
-    legacyDisableKotlinStrictApiMode = true
 }
