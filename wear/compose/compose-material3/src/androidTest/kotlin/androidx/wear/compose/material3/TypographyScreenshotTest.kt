@@ -428,7 +428,7 @@ class TypographyScreenshotTest {
 
     private fun verifyTypographyScreenshot(content: @Composable () -> Unit) {
         rule.verifyScreenshot(
-            methodName = testName.goldenIdentifier(),
+            testName = testName,
             screenshotRule = screenshotRule,
             content = { content() },
         )

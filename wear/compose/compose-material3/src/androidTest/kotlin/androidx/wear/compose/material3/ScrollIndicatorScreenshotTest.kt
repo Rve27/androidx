@@ -154,10 +154,7 @@ class ScrollIndicatorScreenshotTest {
 
         rule.waitForIdle()
 
-        rule
-            .onNodeWithTag(TEST_TAG)
-            .captureToImage()
-            .assertAgainstGolden(screenshotRule, testName.methodName)
+        rule.verifyScreenshot(testName, screenshotRule)
     }
 
     private fun position_indicator_position_test(

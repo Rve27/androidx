@@ -221,7 +221,7 @@ class TimeTextScreenshotTest {
 
     private fun verifyScreenshot(content: @Composable () -> Unit) {
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             content = {
                 val screenSize = LocalContext.current.resources.configuration.smallestScreenWidthDp

@@ -23,16 +23,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.testutils.assertAgainstGolden
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.DeviceConfigurationOverride
 import androidx.compose.ui.test.LayoutDirection
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.test.filters.MediumTest
@@ -110,13 +107,7 @@ class PagerScaffoldScreenshotTest {
         }
         rule.waitForIdle()
 
-        val screenshot = rule.onNodeWithTag(TEST_TAG).captureToImage()
-
-        if (GENERATE_SCREENSHOTS) {
-            screenshot.writeToDevice(testName.goldenIdentifier())
-        }
-
-        screenshot.assertAgainstGolden(screenshotRule, testName.goldenIdentifier())
+        rule.verifyScreenshot(testName, screenshotRule)
     }
 
     private fun verifyVerticalPagerScaffold(
@@ -164,23 +155,6 @@ class PagerScaffoldScreenshotTest {
         }
         rule.waitForIdle()
 
-        val screenshot = rule.onNodeWithTag(TEST_TAG).captureToImage()
-
-        if (GENERATE_SCREENSHOTS) {
-            screenshot.writeToDevice(testName.goldenIdentifier())
-        }
-
-        screenshot.assertAgainstGolden(screenshotRule, testName.goldenIdentifier())
+        rule.verifyScreenshot(testName, screenshotRule)
     }
 }
-
-// To re-generate screenshots locally:
-// 1) Set GENERATE_SCREENSHOTS = true
-// 2) Run the tests on a Medium Phone API 35 emulator
-// 3) Run the following commands:
-// adb pull storage/emulated/0/Android/data/androidx.wear.compose.material3.test/cache/screenshots \
-//     ../../golden/wear/compose/compose-material3
-// mv ../../golden/wear/compose/compose-material3/screenshots/* \
-//     ../../golden/wear/compose/compose-material3
-// rmdir ../../golden/wear/compose/compose-material3/screenshots
-private const val GENERATE_SCREENSHOTS = false

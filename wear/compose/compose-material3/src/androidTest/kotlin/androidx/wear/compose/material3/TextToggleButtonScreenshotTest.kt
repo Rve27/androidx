@@ -49,7 +49,7 @@ class TextToggleButtonScreenshotTest {
     @Test
     fun textToggleButtonEnabledAndChecked() =
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             content = { sampleTextToggleButton() },
         )
@@ -57,7 +57,7 @@ class TextToggleButtonScreenshotTest {
     @Test
     fun textToggleButtonEnabledAndUnchecked() =
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             content = { sampleTextToggleButton(checked = false) },
         )
@@ -65,7 +65,7 @@ class TextToggleButtonScreenshotTest {
     @Test
     fun textToggleButtonDisabledAndChecked() =
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             content = { sampleTextToggleButton(enabled = false) },
         )
@@ -73,7 +73,7 @@ class TextToggleButtonScreenshotTest {
     @Test
     fun textToggleButtonDisabledAndUnchecked() =
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             content = { sampleTextToggleButton(enabled = false, checked = false) },
         )
@@ -81,7 +81,7 @@ class TextToggleButtonScreenshotTest {
     @Test
     fun textToggleButtonWithOffset() =
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             content = { sampleTextToggleButton(modifier = Modifier.offset(10.dp)) },
         )
@@ -90,7 +90,7 @@ class TextToggleButtonScreenshotTest {
     @Test
     fun animatedTextToggleButtonPressed() =
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             content = {
                 val interactionSource = remember {
@@ -109,7 +109,7 @@ class TextToggleButtonScreenshotTest {
     @Test
     fun animatedTextToggleButtonChecked() =
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             content = {
                 sampleTextToggleButton(
@@ -122,7 +122,7 @@ class TextToggleButtonScreenshotTest {
     @Test
     fun animatedTextToggleButtonUnchecked() =
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             content = {
                 sampleTextToggleButton(

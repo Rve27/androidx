@@ -43,13 +43,13 @@ class ListHeaderScreenshotTest {
 
     @Test
     fun listheader() =
-        rule.verifyScreenshot(methodName = testName.methodName, screenshotRule = screenshotRule) {
+        rule.verifyScreenshot(testName = testName, screenshotRule = screenshotRule) {
             ListHeader(modifier = Modifier.testTag(TEST_TAG)) { Text("Header") }
         }
 
     @Test
     fun listheader_multiline() =
-        rule.verifyScreenshot(methodName = testName.methodName, screenshotRule = screenshotRule) {
+        rule.verifyScreenshot(testName = testName, screenshotRule = screenshotRule) {
             ListHeader(modifier = Modifier.testTag(TEST_TAG)) {
                 Text(
                     "Header should be center-aligned over multiple lines and so this heading is quite long"
@@ -59,13 +59,13 @@ class ListHeaderScreenshotTest {
 
     @Test
     fun listsubheader_textonly() =
-        rule.verifyScreenshot(methodName = testName.methodName, screenshotRule = screenshotRule) {
+        rule.verifyScreenshot(testName = testName, screenshotRule = screenshotRule) {
             ListSubHeader(modifier = Modifier.testTag(TEST_TAG)) { Text("Subheader") }
         }
 
     @Test
     fun listsubheader_textonly_multiline() =
-        rule.verifyScreenshot(methodName = testName.methodName, screenshotRule = screenshotRule) {
+        rule.verifyScreenshot(testName = testName, screenshotRule = screenshotRule) {
             ListSubHeader(modifier = Modifier.testTag(TEST_TAG)) {
                 Text(
                     "Subheader should be start-aligned over multiple lines and so this heading is quite long"
@@ -76,7 +76,7 @@ class ListHeaderScreenshotTest {
     @Test
     fun listsubheader_textonly_rtl() =
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             layoutDirection = LayoutDirection.Rtl,
         ) {
@@ -86,7 +86,7 @@ class ListHeaderScreenshotTest {
     @Test
     fun listsubheader_text_and_icon() =
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             layoutDirection = LayoutDirection.Ltr,
         ) {
@@ -100,7 +100,7 @@ class ListHeaderScreenshotTest {
     @Test
     fun listsubheader_text_and_icon_rtl() =
         rule.verifyScreenshot(
-            methodName = testName.methodName,
+            testName = testName,
             screenshotRule = screenshotRule,
             layoutDirection = LayoutDirection.Rtl,
         ) {
