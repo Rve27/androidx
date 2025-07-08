@@ -62,6 +62,23 @@ internal class PdfViewExternalInputManager(pdfView: PdfView) {
                 keyboardActionHandler.scrollRight()
                 true
             }
+            KeyEvent.KEYCODE_PLUS,
+            KeyEvent.KEYCODE_EQUALS -> {
+                if (event.isCtrlPressed) {
+                    keyboardActionHandler.zoomIn()
+                    true
+                } else {
+                    false
+                }
+            }
+            KeyEvent.KEYCODE_MINUS -> {
+                if (event.isCtrlPressed) {
+                    keyboardActionHandler.zoomOut()
+                    true
+                } else {
+                    false
+                }
+            }
             else -> false
         }
     }

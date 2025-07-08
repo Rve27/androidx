@@ -22,4 +22,33 @@ internal object ExternalInputUtils {
     fun calculateScroll(viewportDimension: Int, scrollFactor: Int): Int {
         return (viewportDimension.toFloat() / scrollFactor).roundToInt()
     }
+
+    fun calculateGreaterZoom(
+        currentZoom: Float,
+        baselineZoom: Float,
+        zoomLevels: List<Float>,
+        maxAbsoluteZoom: Float,
+    ): Float {
+        val currentZoomLevel = (currentZoom / baselineZoom)
+        // Add a small tolerance to ensure a distinct zoom step overcome float inaccuracies.
+        // If no higher level is found, return the absolute max
+        val zoomFactor =
+            zoomLevels.firstOrNull { it > currentZoomLevel + 0.01f } ?: return maxAbsoluteZoom
+        return zoomFactor * baselineZoom
+    }
+
+    fun calculateSmallerZoom(
+        currentZoom: Float,
+        baselineZoom: Float,
+        zoomLevels: List<Float>,
+        minAbsoluteZoom: Float,
+    ): Float {
+        val currentZoomLevel = (currentZoom / baselineZoom)
+        // Add a small tolerance to ensure a distinct zoom step overcome float inaccuracies.
+        // If no smaller level is found, return the absolute min
+        val zoomFactor =
+            zoomLevels.reversed().firstOrNull { it < currentZoomLevel - 0.01f }
+                ?: return minAbsoluteZoom
+        return zoomFactor * baselineZoom
+    }
 }

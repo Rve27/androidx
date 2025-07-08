@@ -16,6 +16,9 @@
 
 package androidx.pdf.view
 
+import androidx.pdf.util.MathUtils
+import androidx.pdf.util.ZoomUtils
+
 /**
  * This abstract class provides common functionality for handling external input shortcuts.
  *
@@ -49,5 +52,81 @@ internal abstract class PdfViewExternalInputHandler(val pdfView: PdfView) {
         val scrollAmount =
             ExternalInputUtils.calculateScroll(pdfView.viewportWidth, horizontalScrollFactor)
         pdfView.scrollBy(scrollAmount, 0)
+    }
+
+    private fun zoomToCenterTop(newZoom: Float) {
+        val effectiveNewZoom = MathUtils.clamp(newZoom, pdfView.minZoom, pdfView.maxZoom)
+        with(pdfView) {
+            val centreTopX = (left + right) / 2f
+            val centreTopY = top.toFloat()
+            zoomTo(effectiveNewZoom, centreTopX, centreTopY)
+        }
+    }
+
+    fun zoomIn() {
+        val baselineZoom =
+            ZoomUtils.calculateZoomToFit(
+                pdfView.viewportWidth.toFloat(),
+                pdfView.viewportHeight.toFloat(),
+                pdfView.contentWidth,
+                1.0f,
+            )
+        val newZoom =
+            ExternalInputUtils.calculateGreaterZoom(
+                pdfView.zoom,
+                baselineZoom,
+                ZOOM_LEVELS,
+                pdfView.maxZoom,
+            )
+        zoomToCenterTop(newZoom)
+    }
+
+    fun zoomOut() {
+        val baselineZoom =
+            ZoomUtils.calculateZoomToFit(
+                pdfView.viewportWidth.toFloat(),
+                pdfView.viewportHeight.toFloat(),
+                pdfView.contentWidth,
+                1.0f,
+            )
+        val newZoom =
+            ExternalInputUtils.calculateSmallerZoom(
+                pdfView.zoom,
+                baselineZoom,
+                ZOOM_LEVELS,
+                pdfView.minZoom,
+            )
+        zoomToCenterTop(newZoom)
+    }
+
+    private companion object {
+        val ZOOM_LEVELS =
+            listOf(
+                0.25f,
+                0.33f,
+                0.50f,
+                0.67f,
+                0.75f,
+                0.80f,
+                0.90f,
+                1.0f,
+                1.10f,
+                1.25f,
+                1.50f,
+                1.75f,
+                2.0f,
+                2.50f,
+                3.0f,
+                4.0f,
+                5.0f,
+                6.0f,
+                7.0f,
+                8.0f,
+                10.0f,
+                12.0f,
+                16.0f,
+                20.0f,
+                25.0f,
+            )
     }
 }

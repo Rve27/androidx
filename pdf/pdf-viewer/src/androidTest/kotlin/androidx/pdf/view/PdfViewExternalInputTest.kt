@@ -24,10 +24,12 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.pdf.util.ZoomUtils
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.action.EspressoKey
 import androidx.test.espresso.action.GeneralLocation
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.ViewMatchers
@@ -372,6 +374,132 @@ class PdfViewExternalInputTest {
         Truth.assertThat(scrollAfter.y).isEqualTo(scrollBefore.y)
     }
 
+    @Test
+    fun testCtrlEquals_zoomsIn() {
+        var zoomAfter = 0f
+        var expectedZoom = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    val baselineZoom =
+                        ZoomUtils.calculateZoomToFit(
+                            pdfView.viewportWidth.toFloat(),
+                            pdfView.viewportHeight.toFloat(),
+                            pdfView.contentWidth,
+                            1f,
+                        )
+                    val currentZoomLevel = 1.0f
+                    pdfView.zoom = baselineZoom * currentZoomLevel
+
+                    val nextZoomLevel = 1.10f
+                    expectedZoom = baselineZoom * nextZoomLevel
+                }
+                .perform(
+                    ViewActions.pressKey(
+                        EspressoKey.Builder()
+                            .withKeyCode(KeyEvent.KEYCODE_EQUALS)
+                            .withCtrlPressed(true)
+                            .build()
+                    )
+                )
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    zoomAfter = pdfView.zoom
+                }
+            close()
+        }
+
+        Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(expectedZoom)
+    }
+
+    @Test
+    fun testCtrlPlus_zoomsIn() {
+        var zoomAfter = 0f
+        var expectedZoom = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    val baselineZoom =
+                        ZoomUtils.calculateZoomToFit(
+                            pdfView.viewportWidth.toFloat(),
+                            pdfView.viewportHeight.toFloat(),
+                            pdfView.contentWidth,
+                            1f,
+                        )
+                    val currentZoomLevel = 1.0f
+                    pdfView.zoom = baselineZoom * currentZoomLevel
+
+                    val nextZoomLevel = 1.10f
+                    expectedZoom = baselineZoom * nextZoomLevel
+                }
+                .perform(
+                    ViewActions.pressKey(
+                        EspressoKey.Builder()
+                            .withKeyCode(KeyEvent.KEYCODE_PLUS)
+                            .withCtrlPressed(true)
+                            .build()
+                    )
+                )
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    zoomAfter = pdfView.zoom
+                }
+            close()
+        }
+
+        Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(expectedZoom)
+    }
+
+    @Test
+    fun testCtrlMinus_zoomsOut() {
+        var zoomAfter = 0f
+        var expectedZoom = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    val baselineZoom =
+                        ZoomUtils.calculateZoomToFit(
+                            pdfView.viewportWidth.toFloat(),
+                            pdfView.viewportHeight.toFloat(),
+                            pdfView.contentWidth,
+                            1f,
+                        )
+                    val currentZoomLevel = 1.10f
+                    pdfView.zoom = baselineZoom * currentZoomLevel
+
+                    val previousZoomLevel = 1.0f
+                    expectedZoom = baselineZoom * previousZoomLevel
+                }
+                .perform(
+                    ViewActions.pressKey(
+                        EspressoKey.Builder()
+                            .withKeyCode(KeyEvent.KEYCODE_MINUS)
+                            .withCtrlPressed(true)
+                            .build()
+                    )
+                )
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    zoomAfter = pdfView.zoom
+                }
+            close()
+        }
+
+        Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(expectedZoom)
+    }
+
     private fun scrollMouseWheel(vscroll: Float, hscroll: Float): ViewAction {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View> {
@@ -420,6 +548,7 @@ class PdfViewExternalInputTest {
     private companion object {
         /** Arbitrary fixed ID for PdfView */
         private const val PDF_VIEW_ID = 123456789
+        private const val ZOOM_DIFFERENCE_TOLERANCE = 0.001f
         const val KEYBOARD_VERTICAL_SCROLL_FACTOR = 20
         const val KEYBOARD_HORIZONTAL_SCROLL_FACTOR = 20
         const val MOUSE_VERTICAL_SCROLL_FACTOR = 14

@@ -168,4 +168,76 @@ class PdfViewExternalInputManagerTest {
 
         assertThat(handled).isFalse()
     }
+
+    @Test
+    fun handleKeyEvent_ctrlPlus_callsZoomInAndReturnsTrue() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_PLUS)
+        whenever(event.isCtrlPressed).thenReturn(true)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isTrue()
+    }
+
+    @Test
+    fun handleKeyEvent_ctrlEquals_callsZoomInAndReturnsTrue() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_EQUALS)
+        whenever(event.isCtrlPressed).thenReturn(true)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isTrue()
+    }
+
+    @Test
+    fun handleKeyEvent_ctrlMinus_callsZoomOutAndReturnsTrue() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_MINUS)
+        whenever(event.isCtrlPressed).thenReturn(true)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isTrue()
+    }
+
+    @Test
+    fun handleKeyEvent_plusWithoutCtrl_isNotHandledAndReturnsFalse() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_PLUS)
+        whenever(event.isCtrlPressed).thenReturn(false)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isFalse()
+    }
+
+    @Test
+    fun handleKeyEvent_equalsWithoutCtrl_isNotHandledAndReturnsFalse() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_EQUALS)
+        whenever(event.isCtrlPressed).thenReturn(false)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isFalse()
+    }
+
+    @Test
+    fun handleKeyEvent_minusWithoutCtrl_isNotHandledAndReturnsFalse() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_MINUS)
+        whenever(event.isCtrlPressed).thenReturn(false)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isFalse()
+    }
 }
