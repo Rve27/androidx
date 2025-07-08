@@ -20,7 +20,6 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.unit.Density
 import androidx.xr.compose.subspace.SceneCoreEntitySizeAdapter
 import androidx.xr.compose.subspace.SpatialPanelDefaults
@@ -85,12 +84,12 @@ internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
      * The volume size of the [CoreEntity] in pixels. Reading this value will not trigger
      * recomposition.
      */
-    open var size: IntVolumeSize
-        get() = Snapshot.withoutReadObservation { mutableSize }
+    open var size: IntVolumeSize = IntVolumeSize.Zero
         set(value) {
-            if (Snapshot.withoutReadObservation { mutableSize } == value) {
+            if (field == value) {
                 return
             }
+            field = value
             mutableSize = value
         }
 
