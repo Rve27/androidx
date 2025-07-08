@@ -27,6 +27,7 @@ import androidx.camera.camera2.internal.compat.CameraManagerCompat;
 import androidx.camera.camera2.internal.concurrent.Camera2CameraCoordinator;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraUnavailableException;
+import androidx.camera.core.CameraXConfig;
 import androidx.camera.core.InitializationException;
 import androidx.camera.core.Logger;
 import androidx.camera.core.concurrent.CameraCoordinator;
@@ -64,13 +65,14 @@ public final class Camera2CameraFactory implements CameraFactory {
     private final long mCameraOpenRetryMaxTimeoutInMs;
     private final Map<String, Camera2CameraInfoImpl> mCameraInfos = new HashMap<>();
     private final StreamSpecsCalculator mStreamSpecsCalculator;
+    private final @Nullable CameraXConfig mCameraXConfig;
 
     @VisibleForTesting
     public Camera2CameraFactory(@NonNull Context context,
             @NonNull CameraThreadConfig threadConfig,
             @Nullable CameraSelector availableCamerasSelector,
             long cameraOpenRetryMaxTimeoutInMs) throws InitializationException {
-        this(context, threadConfig, availableCamerasSelector, cameraOpenRetryMaxTimeoutInMs,
+        this(context, threadConfig, availableCamerasSelector, cameraOpenRetryMaxTimeoutInMs, null,
                 NO_OP_STREAM_SPECS_CALCULATOR);
     }
 
@@ -79,7 +81,9 @@ public final class Camera2CameraFactory implements CameraFactory {
             @NonNull CameraThreadConfig threadConfig,
             @Nullable CameraSelector availableCamerasSelector,
             long cameraOpenRetryMaxTimeoutInMs,
-            @NonNull StreamSpecsCalculator streamSpecsCalculator) throws InitializationException {
+            @Nullable CameraXConfig cameraXConfig,
+            @NonNull StreamSpecsCalculator streamSpecsCalculator)
+            throws InitializationException {
         mContext = context;
         mThreadConfig = threadConfig;
         mCameraManager = CameraManagerCompat.from(context, mThreadConfig.getSchedulerHandler());
@@ -94,6 +98,7 @@ public final class Camera2CameraFactory implements CameraFactory {
         mCameraCoordinator.addListener(mCameraStateRegistry);
         mCameraOpenRetryMaxTimeoutInMs = cameraOpenRetryMaxTimeoutInMs;
         mStreamSpecsCalculator = streamSpecsCalculator;
+        mCameraXConfig = cameraXConfig;
     }
 
     @Override
@@ -111,7 +116,8 @@ public final class Camera2CameraFactory implements CameraFactory {
                 mThreadConfig.getCameraExecutor(),
                 mThreadConfig.getSchedulerHandler(),
                 mDisplayInfoManager,
-                mCameraOpenRetryMaxTimeoutInMs);
+                mCameraOpenRetryMaxTimeoutInMs,
+                mCameraXConfig);
     }
 
     Camera2CameraInfoImpl getCameraInfo(@NonNull String cameraId)

@@ -674,6 +674,7 @@ class CameraXInitRetryTest {
                 _: CameraThreadConfig?,
                 _: CameraSelector?,
                 _: Long,
+                _: CameraXConfig?,
                 _: StreamSpecsCalculator ->
                 cameraFactory
             }

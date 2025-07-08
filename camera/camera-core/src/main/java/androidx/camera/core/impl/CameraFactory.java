@@ -16,10 +16,12 @@
 
 package androidx.camera.core.impl;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraUnavailableException;
+import androidx.camera.core.CameraXConfig;
 import androidx.camera.core.InitializationException;
 import androidx.camera.core.concurrent.CameraCoordinator;
 import androidx.camera.core.internal.StreamSpecsCalculator;
@@ -47,14 +49,17 @@ public interface CameraFactory {
          *                                      be loaded and available to CameraX.
          * @param cameraOpenRetryMaxTimeoutInMs the max timeout for camera open retry.
          * @param streamSpecsCalculator         the {@link StreamSpecsCalculator} instance to use.
+         * @param cameraXConfig                 the {@link CameraXConfig} to configure the camera.
          * @return the factory instance
          * @throws InitializationException if it fails to create the factory.
          */
+        @SuppressLint("LambdaLast")
         @NonNull
         CameraFactory newInstance(@NonNull Context context,
                 @NonNull CameraThreadConfig threadConfig,
                 @Nullable CameraSelector availableCamerasLimiter,
                 long cameraOpenRetryMaxTimeoutInMs,
+                @Nullable CameraXConfig cameraXConfig,
                 @NonNull StreamSpecsCalculator streamSpecsCalculator)
                 throws InitializationException;
     }

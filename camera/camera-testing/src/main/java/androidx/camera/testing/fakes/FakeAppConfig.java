@@ -62,7 +62,7 @@ public final class FakeAppConfig {
         FakeCameraFactory cameraFactory = createCameraFactory(availableCamerasSelector);
 
         final CameraFactory.Provider cameraFactoryProvider =
-                (ignored1, ignored2, ignored3, ignore4, streamSpecsCalculator) -> cameraFactory;
+                (ignored0, ignored1, ignored2, ignore3, ignored4, ignored5) -> cameraFactory;
 
         final CameraDeviceSurfaceManager.Provider surfaceManagerProvider =
                 (ignored1, ignored2, ignored3) -> new FakeCameraDeviceSurfaceManager();

@@ -50,9 +50,12 @@ import androidx.camera.camera2.internal.compat.quirk.DeviceQuirks;
 import androidx.camera.camera2.internal.compat.quirk.LegacyCameraOutputConfigNullPointerQuirk;
 import androidx.camera.camera2.internal.compat.quirk.LegacyCameraSurfaceCleanupQuirk;
 import androidx.camera.camera2.internal.compat.workaround.CloseCameraBeforeCreateNewSession;
+import androidx.camera.camera2.interop.Camera2CaptureRequestConfigurator;
+import androidx.camera.camera2.interop.Camera2CaptureRequestConfiguratorKt;
 import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.CameraState;
 import androidx.camera.core.CameraUnavailableException;
+import androidx.camera.core.CameraXConfig;
 import androidx.camera.core.DynamicRange;
 import androidx.camera.core.Logger;
 import androidx.camera.core.Preview;
@@ -193,6 +196,7 @@ final class Camera2CameraImpl implements CameraInternal {
     final @NonNull CameraCoordinator mCameraCoordinator;
     final @NonNull CameraStateRegistry mCameraStateRegistry;
 
+    private final @Nullable CameraXConfig mCameraXConfig;
     private final boolean mShouldCloseCameraBeforeCreateNewSession;
     private final boolean mConfigAndCloseQuirk;
     private boolean mIsConfigAndCloseRequired = false;
@@ -249,7 +253,9 @@ final class Camera2CameraImpl implements CameraInternal {
             @NonNull Executor executor,
             @NonNull Handler schedulerHandler,
             @NonNull DisplayInfoManager displayInfoManager,
-            long cameraOpenRetryMaxTimeoutInMs) throws CameraUnavailableException {
+            long cameraOpenRetryMaxTimeoutInMs,
+            @Nullable CameraXConfig cameraXConfig)
+            throws CameraUnavailableException {
         mCameraManager = cameraManager;
         mCameraCoordinator = cameraCoordinator;
         mCameraStateRegistry = cameraStateRegistry;
@@ -262,6 +268,7 @@ final class Camera2CameraImpl implements CameraInternal {
         mCameraStateMachine = new CameraStateMachine(cameraStateRegistry);
         mCaptureSessionRepository = new CaptureSessionRepository(mExecutor);
         mDisplayInfoManager = displayInfoManager;
+        mCameraXConfig = cameraXConfig;
 
         try {
             mCameraCharacteristicsCompat =
@@ -319,13 +326,19 @@ final class Camera2CameraImpl implements CameraInternal {
 
     private @NonNull CaptureSessionInterface newCaptureSession() {
         synchronized (mLock) {
+            Camera2CaptureRequestConfigurator captureRequestConfigurator =
+                    mCameraXConfig == null ? null
+                            : Camera2CaptureRequestConfiguratorKt
+                                    .getCamera2CaptureRequestConfigurator(mCameraXConfig);
             if (mSessionProcessor == null) {
                 return new CaptureSession(mDynamicRangesCompat,
-                        mCameraInfoInternal.getCameraQuirks());
+                        mCameraInfoInternal.getCameraQuirks(),
+                        captureRequestConfigurator);
             } else {
                 return new ProcessingCaptureSession(mSessionProcessor,
                         mCameraInfoInternal, mDynamicRangesCompat, mExecutor,
-                        mScheduledExecutorService);
+                        mScheduledExecutorService,
+                        captureRequestConfigurator);
             }
         }
     }

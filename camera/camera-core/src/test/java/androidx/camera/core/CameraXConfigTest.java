@@ -128,7 +128,7 @@ public class CameraXConfigTest {
     }
 
     @Test
-    public void canSetGetQuirkSettings() {
+    public void canGetGetQuirkSettings() {
         QuirkSettings quirkSettings = QuirkSettings.withAllQuirksDisabled();
         CameraXConfig cameraXConfig = new CameraXConfig.Builder()
                 .setQuirkSettings(quirkSettings)
