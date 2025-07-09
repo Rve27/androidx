@@ -72,7 +72,6 @@ import androidx.camera.core.impl.CameraMode;
 import androidx.camera.core.impl.CameraStateRegistry;
 import androidx.camera.core.impl.CaptureConfig;
 import androidx.camera.core.impl.DeferrableSurface;
-import androidx.camera.core.impl.ImageCaptureConfig;
 import androidx.camera.core.impl.ImmediateSurface;
 import androidx.camera.core.impl.LiveDataObservable;
 import androidx.camera.core.impl.Observable;
@@ -903,17 +902,7 @@ final class Camera2CameraImpl implements CameraInternal {
     }
 
     private boolean isMeteringRepeatingDisabled() {
-        boolean meteringRepeatingDisabled = false;
-        for (UseCaseAttachState.UseCaseAttachInfo useCaseInfo :
-                mUseCaseAttachState.getAttachedUseCaseInfo()) {
-            UseCaseConfig<?> useCaseConfig = useCaseInfo.getUseCaseConfig();
-            if (useCaseConfig instanceof ImageCaptureConfig) {
-                if (!((ImageCaptureConfig) useCaseConfig).isMeteringRepeatingEnabled()) {
-                    meteringRepeatingDisabled = true;
-                }
-            }
-        }
-        return meteringRepeatingDisabled;
+        return mCameraXConfig != null && !mCameraXConfig.isRepeatingStreamForced();
     }
 
     @VisibleForTesting
@@ -1234,7 +1223,7 @@ final class Camera2CameraImpl implements CameraInternal {
         SessionConfig sessionConfig = mUseCaseAttachState.getAttachedBuilder().build();
         int repeatingSurfaceCount = sessionConfig.getRepeatingCaptureConfig().getSurfaces().size();
         int allSurfaceCount = sessionConfig.getSurfaces().size();
-        boolean isRepeatingRequestMissing = false;
+        boolean isRepeatingRequestAvailable = true;
 
         if (isMeteringRepeatingAttachedInternal()) {
             // Should remove the metering repeating if it's the only surface or there are other
@@ -1246,7 +1235,7 @@ final class Camera2CameraImpl implements CameraInternal {
                 removeMeteringRepeating();
                 if (!shouldRemoveMeteringRepeating) {
                     // The metering repeating is removed but shouldn't.
-                    isRepeatingRequestMissing = true;
+                    isRepeatingRequestAvailable = false;
                 }
             }
         } else {
@@ -1277,15 +1266,15 @@ final class Camera2CameraImpl implements CameraInternal {
                 }
                 if (isMeteringRepeatingRestricted(mMeteringRepeatingSession)) {
                     // The metering repeating is required but not added.
-                    isRepeatingRequestMissing = true;
+                    isRepeatingRequestAvailable = false;
                 } else {
                     addMeteringRepeating();
                 }
             }
         }
 
-        if (isRepeatingRequestMissing) {
-            mCameraControlInternal.setIsRepeatingRequestAvailable(false);
+        mCameraControlInternal.setIsRepeatingRequestAvailable(isRepeatingRequestAvailable);
+        if (!isRepeatingRequestAvailable) {
             Logger.e(TAG, "The repeating surface is missing, CameraControl and "
                     + "ImageCapture may encounter issues due to the absence of repeating "
                     + "surface. Please add a UseCase (Preview or ImageAnalysis) that can "
