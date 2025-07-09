@@ -510,6 +510,7 @@ package androidx.xr.runtime.testing {
     method public androidx.xr.runtime.internal.Dimensions getSize();
     method public androidx.xr.runtime.internal.PixelDimensions getSizeInPixels();
     method public void setCornerRadius(float);
+    method public final void setPerceivedResolution(androidx.xr.runtime.internal.PerceivedResolutionResult perceivedResolution);
     method public void setSize(androidx.xr.runtime.internal.Dimensions);
     method public void setSizeInPixels(androidx.xr.runtime.internal.PixelDimensions);
     property public float cornerRadius;
