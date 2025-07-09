@@ -38,8 +38,6 @@ androidXMultiplatform {
     mac()
     linux()
     ios()
-    tvos()
-    watchos()
 
     defaultPlatform(PlatformIdentifier.JVM)
 
