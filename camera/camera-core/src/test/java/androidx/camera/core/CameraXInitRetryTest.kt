@@ -35,6 +35,7 @@ import androidx.camera.core.impl.CameraFactory
 import androidx.camera.core.impl.CameraFactory.Provider
 import androidx.camera.core.impl.CameraInternal
 import androidx.camera.core.impl.CameraThreadConfig
+import androidx.camera.core.impl.Observable
 import androidx.camera.core.impl.UseCaseConfigFactory
 import androidx.camera.core.impl.utils.ContextUtilTest
 import androidx.camera.core.internal.StreamSpecsCalculator
@@ -557,6 +558,15 @@ class CameraXInitRetryTest {
                                 }
 
                                 override fun getCameraManager(): Any? {
+                                    throw testException
+                                }
+
+                                override fun getCameraPresenceSource():
+                                    Observable<List<CameraIdentifier?>?> {
+                                    throw testException
+                                }
+
+                                override fun onCameraIdsUpdated(cameraIds: List<String?>) {
                                     throw testException
                                 }
                             }

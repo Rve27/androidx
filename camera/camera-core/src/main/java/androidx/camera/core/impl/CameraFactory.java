@@ -19,6 +19,7 @@ package androidx.camera.core.impl;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
+import androidx.camera.core.CameraIdentifier;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraUnavailableException;
 import androidx.camera.core.CameraXConfig;
@@ -29,12 +30,14 @@ import androidx.camera.core.internal.StreamSpecsCalculator;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 /**
  * The factory class that creates {@link CameraInternal} instances.
  */
-public interface CameraFactory {
+public interface CameraFactory extends CameraPresenceMonitor {
 
     /**
      * Interface for deferring creation of a CameraFactory.
@@ -98,6 +101,31 @@ public interface CameraFactory {
      * other implementation.
      */
     @Nullable Object getCameraManager();
+
+    /**
+     * Gets the observable source for camera availability.
+     *
+     * <p>This method returns an {@link Observable} that provides the definitive, filtered list of
+     * {@link CameraIdentifier}s for cameras that are currently available and ready to be used by
+     * CameraX. The list has already been processed by any configured {@link CameraSelector}
+     * limiters and compatibility filters.
+     *
+     * <p>An observer will receive an update whenever this list of available cameras changes. This
+     * can occur due to physical events (e.g., a USB camera is connected or disconnected) or
+     * changes in system state that affect camera access.
+     *
+     * <p>Upon adding an observer via {@link Observable#addObserver(Executor, Observable.Observer)},
+     * it will be immediately notified with the current list of available cameras. The observer
+     * should also handle the {@link Observable.Observer#onError(Throwable)} callback, which may be
+     * triggered if the underlying camera system encounters a critical failure.
+     *
+     * @return A non-null {@link Observable} instance that emits lists of available cameras.
+     * @see CameraPresenceProvider
+     * @see Observable
+     * @see CameraIdentifier
+     */
+    @NonNull
+    Observable<List<CameraIdentifier>> getCameraPresenceSource();
 
     /**
      * Instructs the CameraFactory to shut down, releasing all its held resources like threads.
