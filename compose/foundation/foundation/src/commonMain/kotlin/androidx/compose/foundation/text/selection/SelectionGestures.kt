@@ -97,111 +97,12 @@ internal fun Modifier.updateSelectionTouchMode(updateTouchMode: (Boolean) -> Uni
         }
     }
 
-internal fun Modifier.selectionGestureInput(
-    mouseSelectionObserver: MouseSelectionObserver,
-    textDragObserver: TextDragObserver,
-) =
-    this.pointerInput(mouseSelectionObserver, textDragObserver) {
-        val clicksCounter = ClicksCounter(viewConfiguration)
-        awaitEachGesture {
-            val down = awaitDown()
-            if (
-                down.isPrecisePointer &&
-                    down.buttons.isPrimaryPressed &&
-                    down.changes.fastAll { !it.isConsumed }
-            ) {
-                mouseSelection(mouseSelectionObserver, clicksCounter, down)
-            } else if (!down.isPrecisePointer) {
-                touchSelection(textDragObserver, down)
-            }
-        }
-    }
-
-private suspend fun AwaitPointerEventScope.touchSelection(
-    observer: TextDragObserver,
-    down: PointerEvent,
-) {
-    try {
-        val firstDown = down.changes.first()
-        val drag = awaitLongPressOrCancellation(firstDown.id)
-        if (drag != null && distanceIsTolerable(viewConfiguration, firstDown, drag)) {
-            observer.onStart(drag.position)
-            if (
-                drag(drag.id) {
-                    observer.onDrag(it.positionChange())
-                    it.consume()
-                }
-            ) {
-                // consume up if we quit drag gracefully with the up
-                currentEvent.changes.fastForEach { if (it.changedToUp()) it.consume() }
-                observer.onStop()
-            } else {
-                observer.onCancel()
-            }
-        }
-    } catch (c: CancellationException) {
-        observer.onCancel()
-        throw c
-    }
-}
-
-private suspend fun AwaitPointerEventScope.mouseSelection(
-    observer: MouseSelectionObserver,
-    clicksCounter: ClicksCounter,
-    down: PointerEvent,
-) {
-    clicksCounter.update(down)
-    val downChange = down.changes[0]
-    if (down.isShiftPressed) {
-        val started = observer.onExtend(downChange.position)
-        if (started) {
-            val shouldConsumeUp =
-                drag(downChange.id) {
-                    if (observer.onExtendDrag(it.position)) {
-                        it.consume()
-                    }
-                }
-
-            if (shouldConsumeUp) {
-                currentEvent.changes.fastForEach { if (it.changedToUp()) it.consume() }
-            }
-
-            observer.onDragDone()
-        }
-    } else {
-        val selectionAdjustment =
-            when (clicksCounter.clicks) {
-                1 -> SelectionAdjustment.None
-                2 -> SelectionAdjustment.Word
-                else -> SelectionAdjustment.Paragraph
-            }
-
-        val started =
-            observer.onStart(downChange.position, selectionAdjustment, clicksCounter.clicks)
-        if (started) {
-            var dragConsumed = selectionAdjustment != SelectionAdjustment.None
-            val shouldConsumeUp =
-                drag(downChange.id) {
-                    if (observer.onDrag(it.position, selectionAdjustment)) {
-                        it.consume()
-                        dragConsumed = true
-                    }
-                }
-
-            if (shouldConsumeUp && dragConsumed) {
-                currentEvent.changes.fastForEach { if (it.changedToUp()) it.consume() }
-            }
-
-            observer.onDragDone()
-        }
-    }
-}
-
 /**
  * Gesture handler for mouse and touch. Determines whether this is mouse or touch based on the first
  * down, then uses the gesture handler for that input type, delegating to the appropriate observer.
+ * This handler is used by all text selection surfaces; SelectionContainer, BTF1, and BTF2.
  */
-internal suspend fun PointerInputScope.selectionGesturePointerInputBtf2(
+internal suspend fun PointerInputScope.awaitSelectionGestures(
     mouseSelectionObserver: MouseSelectionObserver,
     textDragObserver: TextDragObserver,
 ) {
@@ -215,7 +116,7 @@ internal suspend fun PointerInputScope.selectionGesturePointerInputBtf2(
                 downEvent.buttons.isPrimaryPressed &&
                 downEvent.changes.fastAll { !it.isConsumed }
         ) {
-            mouseSelectionBtf2(mouseSelectionObserver, clicksCounter, downEvent)
+            mouseSelection(mouseSelectionObserver, clicksCounter, downEvent)
         } else if (!isPrecise) {
             when (clicksCounter.clicks) {
                 1 -> touchSelectionFirstPress(textDragObserver, downEvent)
@@ -343,7 +244,7 @@ private suspend fun AwaitPointerEventScope.touchSelectionSubsequentPress(
 }
 
 /** Gesture handler for mouse selection. */
-private suspend fun AwaitPointerEventScope.mouseSelectionBtf2(
+private suspend fun AwaitPointerEventScope.mouseSelection(
     observer: MouseSelectionObserver,
     clicksCounter: ClicksCounter,
     down: PointerEvent,
@@ -380,7 +281,6 @@ private suspend fun AwaitPointerEventScope.mouseSelectionBtf2(
             observer.onStart(downChange.position, selectionAdjustment, clicksCounter.clicks)
         if (started) {
             try {
-                downChange.consume()
                 var dragConsumed = selectionAdjustment != SelectionAdjustment.None
                 val shouldConsumeUp =
                     drag(downChange.id) {

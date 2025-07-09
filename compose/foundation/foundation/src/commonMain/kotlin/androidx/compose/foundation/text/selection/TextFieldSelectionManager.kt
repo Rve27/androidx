@@ -255,6 +255,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
     internal val touchSelectionObserver =
         object : TextDragObserver {
             private var isLongPressSelectionOnly = true
+            private var runningSelection: TextRange? = null
 
             override fun onDown(point: Offset) {
                 // Not supported for long-press-drag.
@@ -313,6 +314,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                     // When char based selection is used, we want to ensure we snap the
                     // beginning offset to the start word boundary of the first selected word.
                     dragBeginSelection = adjustedStartSelection
+                    runningSelection = adjustedStartSelection
                 }
 
                 // don't set selection handle state until drag ends
@@ -393,6 +395,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                             )
                         }
 
+                    runningSelection = newSelection
                     if (newSelection != dragBeginSelection) {
                         isLongPressSelectionOnly = false
                     }
@@ -409,7 +412,7 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                 currentDragPosition = null
                 updateFloatingToolbar(show = true)
 
-                val collapsed = value.selection.collapsed
+                val collapsed = runningSelection?.collapsed ?: value.selection.collapsed
                 setHandleState(if (collapsed) Cursor else Selection)
                 state?.showSelectionHandleStart =
                     !collapsed && isSelectionHandleInVisibleBound(isStartHandle = true)

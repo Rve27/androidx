@@ -42,9 +42,9 @@ import androidx.compose.foundation.text.selection.SimpleLayout
 import androidx.compose.foundation.text.selection.TextFieldSelectionHandle
 import androidx.compose.foundation.text.selection.TextFieldSelectionManager
 import androidx.compose.foundation.text.selection.addBasicTextFieldTextContextMenuComponents
+import androidx.compose.foundation.text.selection.awaitSelectionGestures
 import androidx.compose.foundation.text.selection.isSelectionHandleInVisibleBound
 import androidx.compose.foundation.text.selection.rememberPlatformSelectionBehaviors
-import androidx.compose.foundation.text.selection.selectionGestureInput
 import androidx.compose.foundation.text.selection.textFieldMagnifier
 import androidx.compose.foundation.text.selection.updateSelectionTouchMode
 import androidx.compose.runtime.Composable
@@ -403,10 +403,12 @@ internal fun CoreTextField(
                     }
                 }
             }
-            .selectionGestureInput(
-                mouseSelectionObserver = manager.mouseSelectionObserver,
-                textDragObserver = manager.touchSelectionObserver,
-            )
+            .pointerInput(manager.mouseSelectionObserver, manager.touchSelectionObserver) {
+                awaitSelectionGestures(
+                    manager.mouseSelectionObserver,
+                    manager.touchSelectionObserver,
+                )
+            }
             .pointerHoverIcon(PointerIcon.Text)
 
     val drawModifier =

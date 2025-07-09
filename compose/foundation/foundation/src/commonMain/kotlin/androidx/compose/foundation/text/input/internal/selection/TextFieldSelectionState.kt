@@ -29,7 +29,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.internal.checkPreconditionNotNull
-import androidx.compose.foundation.internal.hasText
 import androidx.compose.foundation.internal.isAutofillAvailable
 import androidx.compose.foundation.internal.readText
 import androidx.compose.foundation.internal.toClipEntry
@@ -65,12 +64,12 @@ import androidx.compose.foundation.text.selection.MouseSelectionObserver
 import androidx.compose.foundation.text.selection.PlatformSelectionBehaviors
 import androidx.compose.foundation.text.selection.SelectionAdjustment
 import androidx.compose.foundation.text.selection.SelectionLayout
+import androidx.compose.foundation.text.selection.awaitSelectionGestures
 import androidx.compose.foundation.text.selection.containsInclusive
 import androidx.compose.foundation.text.selection.getAdjustedCoordinates
 import androidx.compose.foundation.text.selection.getSelectionHandleCoordinates
 import androidx.compose.foundation.text.selection.getTextFieldSelectionLayout
 import androidx.compose.foundation.text.selection.isPrecisePointer
-import androidx.compose.foundation.text.selection.selectionGesturePointerInputBtf2
 import androidx.compose.foundation.text.selection.visibleBounds
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -678,7 +677,7 @@ internal class TextFieldSelectionState(
      *   exception is the first mouse down does immediately place the cursor at the position.
      */
     suspend fun PointerInputScope.textFieldSelectionGestures(requestFocus: () -> Unit) {
-        selectionGesturePointerInputBtf2(
+        awaitSelectionGestures(
             mouseSelectionObserver = TextFieldMouseSelectionObserver(requestFocus),
             textDragObserver = TextFieldTextDragObserver(requestFocus),
         )
