@@ -85,6 +85,17 @@ class ProgressIndicatorScreenshotTest {
         }
 
     @Test
+    fun progress_indicator_small_value(@TestParameter screenSize: ScreenSize) =
+        verifyProgressIndicatorScreenshot(screenSize = screenSize) {
+            CircularProgressIndicator(
+                progress = { 0.01f },
+                modifier = Modifier.aspectRatio(1f).testTag(TEST_TAG),
+                startAngle = 120f,
+                endAngle = 60f,
+            )
+        }
+
+    @Test
     fun progress_indicator_wrapping_media_button(@TestParameter screenSize: ScreenSize) {
         verifyProgressIndicatorScreenshot(screenSize = screenSize) {
             val progressPadding = 4.dp
@@ -173,7 +184,7 @@ class ProgressIndicatorScreenshotTest {
     @Test
     fun circular_progress_indicator_content(@TestParameter screenSize: ScreenSize) =
         verifyProgressIndicatorScreenshot(screenSize = screenSize) {
-            CircularProgressIndicatorStatic(
+            DrawCircularProgressIndicator(
                 progress = 0.25f,
                 modifier = Modifier.aspectRatio(1f).testTag(TEST_TAG),
                 startAngle = 120f,
@@ -184,7 +195,7 @@ class ProgressIndicatorScreenshotTest {
     @Test
     fun circular_progress_indicator_content_overflow(@TestParameter screenSize: ScreenSize) =
         verifyProgressIndicatorScreenshot(screenSize = screenSize) {
-            CircularProgressIndicatorStatic(
+            DrawCircularProgressIndicator(
                 progress = 1.2f,
                 modifier = Modifier.aspectRatio(1f).testTag(TEST_TAG),
                 startAngle = 120f,
@@ -196,7 +207,7 @@ class ProgressIndicatorScreenshotTest {
     @Test
     fun circular_progress_indicator_content_disabled(@TestParameter screenSize: ScreenSize) =
         verifyProgressIndicatorScreenshot(screenSize = screenSize) {
-            CircularProgressIndicatorStatic(
+            DrawCircularProgressIndicator(
                 progress = 0.25f,
                 modifier = Modifier.aspectRatio(1f).testTag(TEST_TAG),
                 startAngle = 120f,
@@ -208,7 +219,7 @@ class ProgressIndicatorScreenshotTest {
     @Test
     fun circular_progress_indicator_content_custom_color(@TestParameter screenSize: ScreenSize) =
         verifyProgressIndicatorScreenshot(screenSize = screenSize) {
-            CircularProgressIndicatorStatic(
+            DrawCircularProgressIndicator(
                 progress = 0.75f,
                 modifier = Modifier.size(200.dp).testTag(TEST_TAG),
                 startAngle = 120f,
