@@ -939,15 +939,47 @@ object WideNavigationRailDefaults {
         containerColor: Color = WideNavigationRailDefaults.containerColor,
         contentColor: Color = contentColorFor(containerColor),
         modalContainerColor: Color = NavigationRailExpandedTokens.ModalContainerColor.value,
+        modalScrimColor: Color =
+            ScrimTokens.ContainerColor.value.copy(ScrimTokens.ContainerOpacity),
         modalContentColor: Color = contentColorFor(modalContainerColor),
+    ): WideNavigationRailColors =
+        MaterialTheme.colorScheme.defaultWideWideNavigationRailColors.copy(
+            containerColor = containerColor,
+            contentColor = contentColor,
+            modalContainerColor = modalContainerColor,
+            modalScrimColor = modalScrimColor,
+            modalContentColor = modalContentColor,
+        )
+
+    /**
+     * Creates a [WideNavigationRailColors] with the provided colors according to the Material
+     * specification.
+     *
+     * @param containerColor the color used for the background of a non-modal wide navigation rail.
+     * @param contentColor the preferred color for content inside a wide navigation rail. Defaults
+     *   to either the matching content color for [containerColor], or to the current
+     *   [LocalContentColor] if [containerColor] is not a color from the theme
+     * @param modalContainerColor the color used for the background of a modal wide navigation rail.
+     * @param modalScrimColor the color used for the scrim overlay for background content of a modal
+     *   wide navigation rail
+     */
+    @Deprecated(
+        message = "Deprecated in favor of function with modalContentColor parameter",
+        level = DeprecationLevel.HIDDEN,
+    )
+    @Composable
+    fun colors(
+        containerColor: Color = WideNavigationRailDefaults.containerColor,
+        contentColor: Color = contentColorFor(containerColor),
+        modalContainerColor: Color = NavigationRailExpandedTokens.ModalContainerColor.value,
         modalScrimColor: Color = ScrimTokens.ContainerColor.value.copy(ScrimTokens.ContainerOpacity),
     ): WideNavigationRailColors =
         MaterialTheme.colorScheme.defaultWideWideNavigationRailColors.copy(
             containerColor = containerColor,
             contentColor = contentColor,
             modalContainerColor = modalContainerColor,
-            modalContentColor = modalContentColor,
             modalScrimColor = modalScrimColor,
+            modalContentColor = contentColorFor(modalContainerColor),
         )
 
     private val containerColor: Color

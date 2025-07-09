@@ -4610,7 +4610,9 @@ package androidx.compose.material3 {
   public final class WideNavigationRailDefaults {
     method @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors(androidx.compose.runtime.Composer?, int);
-    method @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors(optional long containerColor, optional long contentColor, optional long modalContainerColor, optional long modalContentColor, optional long modalScrimColor);
+    method @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors(optional long containerColor, optional long contentColor, optional long modalContainerColor, optional long modalScrimColor);
+    method @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors(optional long containerColor, optional long contentColor, optional long modalContainerColor, optional long modalScrimColor, optional long modalContentColor);
+    method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors! colors-ro_MJ88(long, long, long, long, androidx.compose.runtime.Composer!, int, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors-zjMxDiM(long, long, long, long, long, androidx.compose.runtime.Composer?, int, int);
     method public androidx.compose.foundation.layout.Arrangement.Vertical getArrangement();
     method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getContainerShape();
