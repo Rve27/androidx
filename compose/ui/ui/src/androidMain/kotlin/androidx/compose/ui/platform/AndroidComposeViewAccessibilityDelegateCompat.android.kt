@@ -68,6 +68,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.internal.checkPreconditionNotNull
 import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.node.HitTestResult
@@ -1784,7 +1785,7 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
             info.extras.putInt(extraDataKey, node.id)
         } else if (extraDataKey == ExtraDataShapeTypeKey) {
             node.unmergedConfig.getOrNull(SemanticsProperties.Shape)?.let { shape ->
-                val shapeBounds = getShapeBounds(node, shape)
+                val shapeBounds = getShapeBounds(node, info.boundsInScreen, shape)
                 val outline = shape.createOutline(shapeBounds.size, node.layoutInfo.layoutDirection)
                 // We set not only the shape type but also the shape data itself, as an
                 // optimization, since we already need to create an Outline to get the shape type
@@ -1819,7 +1820,7 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
             }
         } else if (extraDataKey == ExtraDataShapeRectKey) {
             node.unmergedConfig.getOrNull(SemanticsProperties.Shape)?.let { shape ->
-                val shapeBounds = getShapeBounds(node, shape)
+                val shapeBounds = getShapeBounds(node, info.boundsInScreen, shape)
                 shape
                     .createOutline(shapeBounds.size, node.layoutInfo.layoutDirection)
                     .toAndroidRect(shapeBounds.left, shapeBounds.top)
@@ -1827,7 +1828,7 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
             }
         } else if (extraDataKey == ExtraDataShapeRectCornersKey) {
             node.unmergedConfig.getOrNull(SemanticsProperties.Shape)?.let { shape ->
-                val shapeBounds = getShapeBounds(node, shape)
+                val shapeBounds = getShapeBounds(node, info.boundsInScreen, shape)
                 shape
                     .createOutline(shapeBounds.size, node.layoutInfo.layoutDirection)
                     .toCornerArray()
@@ -1837,7 +1838,7 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
             }
         } else if (extraDataKey == ExtraDataShapeRegionKey) {
             node.unmergedConfig.getOrNull(SemanticsProperties.Shape)?.let { shape ->
-                val shapeBounds = getShapeBounds(node, shape)
+                val shapeBounds = getShapeBounds(node, info.boundsInScreen, shape)
                 shape
                     .createOutline(shapeBounds.size, node.layoutInfo.layoutDirection)
                     .toRegion(shapeBounds.left, shapeBounds.top)
@@ -1863,7 +1864,18 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
         }
     }
 
-    private fun getShapeBounds(node: SemanticsNode, shape: Shape): Rect {
+    private val AccessibilityNodeInfoCompat.boundsInScreen: AndroidRect
+        get() {
+            val boundsInScreen = AndroidRect()
+            getBoundsInScreen(boundsInScreen)
+            return boundsInScreen
+        }
+
+    private fun getShapeBounds(
+        node: SemanticsNode,
+        nodeBoundsInScreen: AndroidRect,
+        shape: Shape,
+    ): Rect {
         val shapeNodeMatcher =
             object : SemanticsPropertyReceiver {
                 var hasMatchedShape: Boolean = false
@@ -1887,14 +1899,13 @@ internal class AndroidComposeViewAccessibilityDelegateCompat(val view: AndroidCo
         }
         return shapeSemanticsModifierNode
             .requireLayoutCoordinates()
-            .boundsInWindow(clipBounds = false)
-            .toBoundsInLayoutNode(layoutNode)
+            .boundsInRoot()
+            .toBoundsRelativeToNodeBounds(nodeBoundsInScreen)
     }
 
-    private fun Rect.toBoundsInLayoutNode(layoutNode: LayoutNode): Rect {
-        val outerBounds = layoutNode.outerCoordinator.boundsInWindow(clipBounds = false)
-        val leftOffset = this.left - outerBounds.left
-        val topOffset = this.top - outerBounds.top
+    private fun Rect.toBoundsRelativeToNodeBounds(nodeBoundsInScreen: AndroidRect): Rect {
+        val leftOffset = this.left - nodeBoundsInScreen.left
+        val topOffset = this.top - nodeBoundsInScreen.top
         return Rect(
             left = leftOffset,
             top = topOffset,

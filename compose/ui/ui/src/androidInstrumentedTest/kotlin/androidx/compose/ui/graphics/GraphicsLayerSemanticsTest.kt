@@ -131,6 +131,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             assertThat(info.extras.containsKey(ExtraDataShapeRectKey)).isTrue()
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
+                .toScreenBounds(info.boundsInScreen)
                 .assertBoundsEqualTo(left = 0.dp, top = 0.dp, right = 10.dp, bottom = 10.dp)
         }
     }
@@ -161,6 +162,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             assertThat(info.extras.containsKey(ExtraDataShapeRectKey)).isTrue()
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
+                .toScreenBounds(info.boundsInScreen)
                 .assertBoundsEqualTo(left = 0.dp, top = 0.dp, right = 10.dp, bottom = 10.dp)
             assertThat(info.extras.containsKey(ExtraDataShapeRectCornersKey)).isTrue()
             val corners = info.extras.getFloatArray(ExtraDataShapeRectCornersKey)!!
@@ -204,7 +206,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             assertThat(info.extras.containsKey(ExtraDataShapeRegionKey)).isTrue()
             info.extras
                 .getRegionParcelable(ExtraDataShapeRegionKey)
-                .bounds
+                .toScreenBounds(info.boundsInScreen)
                 .assertBoundsEqualTo(left = 0.dp, top = 0.dp, right = 10.dp, bottom = 10.dp)
         }
     }
@@ -235,7 +237,8 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             assertThat(info.extras.containsKey(ExtraDataShapeRectKey)).isTrue()
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
-                .assertBoundsEqualTo(left = 1.dp, top = 2.dp, right = 9.dp, bottom = 8.dp)
+                .toScreenBounds(info.boundsInScreen)
+                .assertBoundsEqualTo(left = 11.dp, top = 12.dp, right = 19.dp, bottom = 18.dp)
         }
     }
 
@@ -269,7 +272,8 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             assertThat(info.extras.containsKey(ExtraDataShapeRectKey)).isTrue()
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
-                .assertBoundsEqualTo(left = 1.dp, top = 2.dp, right = 9.dp, bottom = 8.dp)
+                .toScreenBounds(info.boundsInScreen)
+                .assertBoundsEqualTo(left = 11.dp, top = 12.dp, right = 19.dp, bottom = 18.dp)
             assertThat(info.extras.containsKey(ExtraDataShapeRectCornersKey)).isTrue()
             val corners = info.extras.getFloatArray(ExtraDataShapeRectCornersKey)!!
             with(rule.density) {
@@ -316,8 +320,8 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             assertThat(info.extras.containsKey(ExtraDataShapeRegionKey)).isTrue()
             info.extras
                 .getRegionParcelable(ExtraDataShapeRegionKey)
-                .bounds
-                .assertBoundsEqualTo(left = 1.dp, top = 2.dp, right = 9.dp, bottom = 8.dp)
+                .toScreenBounds(info.boundsInScreen)
+                .assertBoundsEqualTo(left = 11.dp, top = 12.dp, right = 19.dp, bottom = 18.dp)
         }
     }
 
@@ -341,7 +345,10 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
         // Assert.
         rule.runOnIdle {
             assertThat(info.extras.containsKey(ExtraDataShapeRegionKey)).isTrue()
-            val regionBounds = info.extras.getRegionParcelable(ExtraDataShapeRegionKey).bounds
+            val regionBounds =
+                info.extras
+                    .getRegionParcelable(ExtraDataShapeRegionKey)
+                    .toScreenBounds(info.boundsInScreen)
             with(rule.density) {
                 assertThat(regionBounds.left).isEqualTo(1)
                 assertThat(regionBounds.top).isEqualTo(1)
@@ -361,7 +368,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
                     Modifier.size(10.dp)
                         .padding(horizontal = 1.dp, vertical = 2.dp)
                         .parameterizedGraphicsLayer(
-                            shape = InsetRectangle(insetPx = 1),
+                            shape = InsetRectangle(insetPx = 3),
                             clip = true,
                         )
                         .padding(2.dp)
@@ -378,12 +385,15 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
         // Assert.
         rule.runOnIdle {
             assertThat(info.extras.containsKey(ExtraDataShapeRegionKey)).isTrue()
-            val regionBounds = info.extras.getRegionParcelable(ExtraDataShapeRegionKey).bounds
+            val regionBounds =
+                info.extras
+                    .getRegionParcelable(ExtraDataShapeRegionKey)
+                    .toScreenBounds(info.boundsInScreen)
             with(rule.density) {
-                assertThat(regionBounds.left).isEqualTo(1.dp.roundToPx() + 1)
-                assertThat(regionBounds.top).isEqualTo(2.dp.roundToPx() + 1)
-                regionBounds.right.toDp().assertIsEqualTo(9.dp)
-                regionBounds.bottom.toDp().assertIsEqualTo(8.dp)
+                assertThat(regionBounds.left - 11.dp.toPx() - 3).isLessThan(0.5f)
+                assertThat(regionBounds.top - 12.dp.toPx() - 3).isLessThan(0.5f)
+                regionBounds.right.toDp().assertIsEqualTo(19.dp)
+                regionBounds.bottom.toDp().assertIsEqualTo(18.dp)
             }
         }
     }
@@ -411,7 +421,38 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             assertThat(info.extras.containsKey(ExtraDataShapeRectKey)).isTrue()
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
+                .toScreenBounds(info.boundsInScreen)
                 .assertBoundsEqualTo(left = (-5).dp, top = 0.dp, right = 5.dp, bottom = 10.dp)
+        }
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = 26)
+    fun multipleShapes_outerShapeWins() {
+        // Arrange.
+        rule.setContentWithAccessibilityEnabled {
+            Box(
+                Modifier.size(10.dp)
+                    .padding(2.dp)
+                    .parameterizedGraphicsLayer(shape = CutCornerShape(2.dp), clip = true)
+                    .padding(2.dp)
+                    .parameterizedGraphicsLayer(shape = RectangleShape, clip = true)
+                    .testTag(tag)
+            )
+        }
+        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
+
+        // Act.
+        addExtraDataToAccessibilityNodeInfo(virtualViewId, info, ExtraDataShapeRegionKey)
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(info.extras.containsKey(ExtraDataShapeRegionKey)).isTrue()
+            info.extras
+                .getRegionParcelable(ExtraDataShapeRegionKey)
+                .toScreenBounds(info.boundsInScreen)
+                .assertBoundsEqualTo(left = 2.dp, top = 2.dp, right = 8.dp, bottom = 8.dp)
         }
     }
 
@@ -687,6 +728,22 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
     private fun Bundle.getRegionParcelable(key: String): Region {
         @Suppress("DEPRECATION")
         return getParcelable(key)!!
+    }
+
+    private val AccessibilityNodeInfoCompat.boundsInScreen: Rect
+        get() {
+            val boundsInScreen = Rect()
+            getBoundsInScreen(boundsInScreen)
+            return boundsInScreen
+        }
+
+    private fun Rect.toScreenBounds(nodeBoundsInScreen: Rect): Rect = apply {
+        offset(nodeBoundsInScreen.left, nodeBoundsInScreen.top)
+    }
+
+    private fun Region.toScreenBounds(nodeBoundsInScreen: Rect): Rect {
+        translate(nodeBoundsInScreen.left, nodeBoundsInScreen.top)
+        return bounds
     }
 
     private fun Rect.assertBoundsEqualTo(left: Dp, top: Dp, right: Dp, bottom: Dp) {

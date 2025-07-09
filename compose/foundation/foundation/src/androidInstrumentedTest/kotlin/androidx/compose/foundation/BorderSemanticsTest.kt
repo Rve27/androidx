@@ -90,6 +90,7 @@ class BorderSemanticsTest {
             assertThat(info.extras.containsKey(ExtraDataShapeRectKey)).isTrue()
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
+                .toScreenBounds(info.boundsInScreen)
                 .assertBoundsEqualTo(left = 0.dp, top = 0.dp, right = 10.dp, bottom = 10.dp)
         }
     }
@@ -127,6 +128,7 @@ class BorderSemanticsTest {
             assertThat(info.extras.containsKey(ExtraDataShapeRectKey)).isTrue()
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
+                .toScreenBounds(info.boundsInScreen)
                 .assertBoundsEqualTo(left = 0.dp, top = 0.dp, right = 10.dp, bottom = 10.dp)
 
             assertThat(info.extras.containsKey(ExtraDataShapeRectCornersKey)).isTrue()
@@ -173,7 +175,7 @@ class BorderSemanticsTest {
             assertThat(info.extras.containsKey(ExtraDataShapeRegionKey)).isTrue()
             info.extras
                 .getRegionParcelable(ExtraDataShapeRegionKey)
-                .bounds
+                .toScreenBounds(info.boundsInScreen)
                 .assertBoundsEqualTo(left = 0.dp, top = 0.dp, right = 10.dp, bottom = 10.dp)
         }
     }
@@ -206,7 +208,8 @@ class BorderSemanticsTest {
             assertThat(info.extras.containsKey(ExtraDataShapeRectKey)).isTrue()
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
-                .assertBoundsEqualTo(left = 1.dp, top = 2.dp, right = 9.dp, bottom = 8.dp)
+                .toScreenBounds(info.boundsInScreen)
+                .assertBoundsEqualTo(left = 11.dp, top = 12.dp, right = 19.dp, bottom = 18.dp)
         }
     }
 
@@ -247,7 +250,8 @@ class BorderSemanticsTest {
             assertThat(info.extras.containsKey(ExtraDataShapeRectKey)).isTrue()
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
-                .assertBoundsEqualTo(left = 1.dp, top = 2.dp, right = 9.dp, bottom = 8.dp)
+                .toScreenBounds(info.boundsInScreen)
+                .assertBoundsEqualTo(left = 11.dp, top = 12.dp, right = 19.dp, bottom = 18.dp)
 
             assertThat(info.extras.containsKey(ExtraDataShapeRectCornersKey)).isTrue()
             val corners = info.extras.getFloatArray(ExtraDataShapeRectCornersKey)!!
@@ -297,8 +301,8 @@ class BorderSemanticsTest {
             assertThat(info.extras.containsKey(ExtraDataShapeRegionKey)).isTrue()
             info.extras
                 .getRegionParcelable(ExtraDataShapeRegionKey)
-                .bounds
-                .assertBoundsEqualTo(left = 1.dp, top = 2.dp, right = 9.dp, bottom = 8.dp)
+                .toScreenBounds(info.boundsInScreen)
+                .assertBoundsEqualTo(left = 11.dp, top = 12.dp, right = 19.dp, bottom = 18.dp)
         }
     }
 
@@ -404,6 +408,22 @@ class BorderSemanticsTest {
     private fun Bundle.getRegionParcelable(key: String): Region {
         @Suppress("DEPRECATION")
         return getParcelable(key)!!
+    }
+
+    private val AccessibilityNodeInfoCompat.boundsInScreen: Rect
+        get() {
+            val boundsInScreen = Rect()
+            getBoundsInScreen(boundsInScreen)
+            return boundsInScreen
+        }
+
+    private fun Rect.toScreenBounds(nodeBoundsInScreen: Rect): Rect = apply {
+        offset(nodeBoundsInScreen.left, nodeBoundsInScreen.top)
+    }
+
+    private fun Region.toScreenBounds(nodeBoundsInScreen: Rect): Rect {
+        translate(nodeBoundsInScreen.left, nodeBoundsInScreen.top)
+        return bounds
     }
 
     private fun Rect.assertBoundsEqualTo(left: Dp, top: Dp, right: Dp, bottom: Dp) {
