@@ -136,8 +136,13 @@ public interface CameraBackend {
     /** Disconnects all active Cameras. */
     public fun disconnectAll()
 
-    /** Performs initialization for checking if a [CameraGraph.Config] is supported. */
-    public suspend fun prewarmGraphConfigQuery(cameraId: CameraId): CameraDeviceSetupCompat?
+    /**
+     * Performs initialization for checking if a [CameraGraph.Config] is supported. The default
+     * implementation returns null for backward compatibility.
+     */
+    public suspend fun prewarmGraphConfigQuery(cameraId: CameraId): CameraDeviceSetupCompat? {
+        return null
+    }
 
     /**
      * Checks if a [CameraGraph.Config] is supported by the device.
@@ -146,9 +151,12 @@ public interface CameraBackend {
      * return [ConfigQueryResult.UNKNOWN].
      *
      * @param graphConfig The camera graph configuration to validate.
-     * @return A [ConfigQueryResult] indicating whether the configuration is supported.
+     * @return A [ConfigQueryResult] indicating whether the configuration is supported. The default
+     *   implementation returns UNKNOWN for backward compatibility.
      */
-    public suspend fun isConfigSupported(graphConfig: CameraGraph.Config): ConfigQueryResult
+    public suspend fun isConfigSupported(graphConfig: CameraGraph.Config): ConfigQueryResult {
+        return ConfigQueryResult.UNKNOWN
+    }
 }
 
 /**
