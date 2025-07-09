@@ -67,19 +67,38 @@ public class SandboxedPdfLoader(
     internal var testingConnection: PdfServiceConnection? = null
 
     override suspend fun openDocument(uri: Uri, password: String?): PdfDocument {
+        val connection = connect(uri)
+
+        return withContext(resolveCoroutineContext(coroutineContext)) {
+            val pfd = openFileDescriptor(uri)
+            openDocumentInternal(uri, pfd, password, connection)
+        }
+    }
+
+    override suspend fun openDocument(
+        uri: Uri,
+        fileDescriptor: ParcelFileDescriptor,
+        password: String?,
+    ): PdfDocument {
+        val connection = connect(uri)
+
+        return withContext(resolveCoroutineContext(coroutineContext)) {
+            openDocumentInternal(uri, fileDescriptor, password, connection)
+        }
+    }
+
+    private suspend fun connect(uri: Uri): PdfServiceConnection {
         val connection: PdfServiceConnection =
             testingConnection ?: PdfServiceConnectionImpl(context)
         if (!connection.isConnected) {
             connection.connect(uri)
         }
-
-        return withContext(resolveCoroutineContext(coroutineContext)) {
-            openDocumentUri(uri, password, connection)
-        }
+        return connection
     }
 
-    private fun openDocumentUri(
+    private fun openDocumentInternal(
         uri: Uri,
+        pfd: ParcelFileDescriptor,
         password: String?,
         connection: PdfServiceConnection,
     ): PdfDocument {
@@ -88,8 +107,7 @@ public class SandboxedPdfLoader(
                 ?: throw IllegalStateException(
                     "Binder interface not available for loading the document!"
                 )
-        val pfd = openFileDescriptor(uri)
-        val status = PdfLoadingStatus.values()[binder.openPdfDocument(pfd, password)]
+        val status = PdfLoadingStatus.entries[binder.openPdfDocument(pfd, password)]
 
         if (status != PdfLoadingStatus.SUCCESS) {
             handlePdfLoadingError(pfd, status)
