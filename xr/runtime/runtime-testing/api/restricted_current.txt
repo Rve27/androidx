@@ -70,7 +70,10 @@ package androidx.xr.runtime.testing {
     method public int getCameraType();
     method public androidx.xr.runtime.internal.PixelDimensions getDisplayResolutionInPixels();
     method public androidx.xr.runtime.internal.CameraViewActivityPose.Fov getFov();
-    property public int cameraType;
+    method public void setCameraType(int);
+    method public void setDisplayResolutionInPixels(androidx.xr.runtime.internal.PixelDimensions);
+    method public void setFov(androidx.xr.runtime.internal.CameraViewActivityPose.Fov);
+    property @androidx.xr.runtime.internal.CameraViewActivityPose.CameraType public int cameraType;
     property public androidx.xr.runtime.internal.PixelDimensions displayResolutionInPixels;
     property public androidx.xr.runtime.internal.CameraViewActivityPose.Fov fov;
   }
@@ -123,6 +126,10 @@ package androidx.xr.runtime.testing {
     method public void startAnimation(boolean loop, String? animationName);
     method public void stopAnimation();
     property @androidx.xr.runtime.internal.GltfEntity.AnimationStateValue public int animationState;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeHeadActivityPose extends androidx.xr.runtime.testing.FakeActivityPose implements androidx.xr.runtime.internal.HeadActivityPose {
+    ctor public FakeHeadActivityPose();
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeInteractableComponent extends androidx.xr.runtime.testing.FakeComponent implements androidx.xr.runtime.internal.InteractableComponent {
@@ -371,6 +378,10 @@ package androidx.xr.runtime.testing {
     property public java.util.List<androidx.xr.runtime.internal.Trackable> trackables;
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public androidx.xr.runtime.internal.Face? userFace;
     property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public java.util.List<androidx.xr.runtime.testing.FakeRuntimeViewCamera> viewCameras;
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakePerceptionSpaceActivityPose extends androidx.xr.runtime.testing.FakeActivityPose implements androidx.xr.runtime.internal.PerceptionSpaceActivityPose {
+    ctor public FakePerceptionSpaceActivityPose();
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakePointerCaptureComponent extends androidx.xr.runtime.testing.FakeComponent implements androidx.xr.runtime.internal.PointerCaptureComponent {
