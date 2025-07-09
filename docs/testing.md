@@ -113,7 +113,7 @@ Here is an example of a minimal screenshot test for compose material.
 ```
 @LargeTest
 @RunWith(JUnit4::class)
-@SdkSuppress(minSdkVersion = 35, maxSdkVersion = 35)
+@SdkSuppress(minSdkVersion = Build.VERSION_CODES.O)
 class CheckboxScreenshotTest {
     @get:Rule val composeTestRule = createComposeRule()
     @get:Rule val screenshotRule = AndroidXScreenshotTestRule(GOLDEN_MATERIAL)
