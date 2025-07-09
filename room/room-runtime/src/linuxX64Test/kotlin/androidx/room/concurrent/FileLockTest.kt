@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,12 +37,16 @@ import platform.posix.timeval
 import platform.posix.usleep
 import platform.posix.waitpid
 
+/**
+ * Validates [FileLock] behaviour in a multi-process environment using [fork]. Forking is not
+ * available in watchOS or tvOS hence why this test is in the linux test sources.
+ */
 @OptIn(ExperimentalForeignApi::class)
 class FileLockTest {
 
-    private val testFile = "/tmp/test-${Random.nextInt()}.db"
-    private val parentLogFile = "/tmp/test-${Random.nextInt()}-parent"
-    private val childLogFile = "/tmp/test-${Random.nextInt()}-child"
+    private val testFile = "/tmp/test-${Random.Default.nextInt()}.db"
+    private val parentLogFile = "/tmp/test-${Random.Default.nextInt()}-parent"
+    private val childLogFile = "/tmp/test-${Random.Default.nextInt()}-child"
 
     @BeforeTest
     fun before() {
