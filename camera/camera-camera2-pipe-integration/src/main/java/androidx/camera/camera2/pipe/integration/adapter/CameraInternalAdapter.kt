@@ -33,8 +33,6 @@ import androidx.camera.core.impl.SessionProcessor
 import com.google.common.util.concurrent.ListenableFuture
 import javax.inject.Inject
 import kotlinx.atomicfu.atomic
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
@@ -93,9 +91,11 @@ constructor(
 
     override fun release(): ListenableFuture<Void> {
         return threads.scope
-            .launch { useCaseManager.close() }
+            .launch {
+                useCaseManager.close()
+                threads.scope.cancel()
+            }
             .asListenableFuture()
-            .apply { addListener({ threads.scope.cancel() }, Dispatchers.Default.asExecutor()) }
     }
 
     override fun getCameraInfoInternal(): CameraInfoInternal = cameraInfo
