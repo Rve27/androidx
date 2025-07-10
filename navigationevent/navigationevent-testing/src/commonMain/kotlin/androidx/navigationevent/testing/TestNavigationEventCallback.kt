@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.navigationevent
+package androidx.navigationevent.testing
+
+import androidx.navigationevent.NavigationEvent
+import androidx.navigationevent.NavigationEventCallback
 
 /**
  * A test implementation of [NavigationEventCallback] that records received events and invocation
@@ -32,7 +35,7 @@ package androidx.navigationevent
  * @param onEventCancelled An optional lambda to execute when `onEventCancelled` is called.
  * @param onEventCompleted An optional lambda to execute when `onEventCompleted` is called.
  */
-internal class TestNavigationEventCallback(
+public class TestNavigationEventCallback(
     isEnabled: Boolean = true,
     isPassThrough: Boolean = false,
     private val onEventStarted: TestNavigationEventCallback.(event: NavigationEvent) -> Unit = {},
@@ -45,29 +48,29 @@ internal class TestNavigationEventCallback(
     private val _startedEvents = mutableListOf<NavigationEvent>()
 
     /** A [List] of all events received by the [onEventStarted] callback. */
-    val startedEvents: List<NavigationEvent>
+    public val startedEvents: List<NavigationEvent>
         get() = _startedEvents.toList()
 
     /** The number of times [onEventStarted] has been invoked. */
-    val startedInvocations: Int
+    public val startedInvocations: Int
         get() = _startedEvents.size
 
     private val _progressedEvents = mutableListOf<NavigationEvent>()
 
     /** A [List] of all events received by the [onEventProgressed] callback. */
-    val progressedEvents: List<NavigationEvent>
+    public val progressedEvents: List<NavigationEvent>
         get() = _progressedEvents.toList()
 
     /** The number of times [progressedInvocations] has been invoked. */
-    val progressedInvocations: Int
+    public val progressedInvocations: Int
         get() = _progressedEvents.size
 
     /** The number of times [completedInvocations] has been invoked. */
-    var completedInvocations: Int = 0
+    public var completedInvocations: Int = 0
         private set
 
     /** The number of times [cancelledInvocations] has been invoked. */
-    var cancelledInvocations: Int = 0
+    public var cancelledInvocations: Int = 0
         private set
 
     override fun onEventStarted(event: NavigationEvent) {

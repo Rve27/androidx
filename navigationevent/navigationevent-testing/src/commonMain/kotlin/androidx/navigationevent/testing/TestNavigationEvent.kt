@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package androidx.navigationevent
+package androidx.navigationevent.testing
 
+import androidx.annotation.FloatRange
+import androidx.navigationevent.NavigationEvent
 import androidx.navigationevent.NavigationEvent.Companion.EDGE_NONE
 import androidx.navigationevent.NavigationEvent.SwipeEdge
 
@@ -25,18 +27,19 @@ import androidx.navigationevent.NavigationEvent.SwipeEdge
  * This function provides a convenient way to construct a [NavigationEvent] with default values,
  * useful for unit tests where you need to simulate a navigation gesture.
  *
- * @param touchX The X coordinate of the touch event, defaulting to 0.1F.
- * @param touchY The Y coordinate of the touch event, defaulting to 0.1F.
- * @param progress The progress of the navigation gesture, defaulting to 0.1F. This typically ranges
- *   from 0.0F to 1.0F, representing the completion of the gesture.
+ * @param touchX The absolute X coordinate of the touch event, defaulting to 0.0F.
+ * @param touchY The absolute Y coordinate of the touch event, defaulting to 0.0F.
+ * @param progress The progress of the navigation gesture, defaulting to 0.0F. This ranges from 0.0F
+ *   to 1.0F, representing the completion of the gesture.
  * @param swipeEdge The edge from which the swipe originated, defaulting to [EDGE_NONE].
  * @param frameTimeMillis The timestamp of the event in milliseconds, defaulting to 0.
  * @return A new [NavigationEvent] instance configured with the provided parameters.
  */
-internal fun TestNavigationEvent(
-    touchX: Float = 0.1F,
-    touchY: Float = 0.1F,
-    progress: Float = 0.1F,
+@Suppress("FunctionName")
+public fun TestNavigationEvent(
+    @FloatRange(from = 0.0) touchX: Float = 0.0F,
+    @FloatRange(from = 0.0) touchY: Float = 0.0F,
+    @FloatRange(from = 0.0, to = 1.0) progress: Float = 0.0F,
     swipeEdge: @SwipeEdge Int = EDGE_NONE,
     frameTimeMillis: Long = 0,
 ): NavigationEvent {
