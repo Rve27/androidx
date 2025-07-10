@@ -251,7 +251,6 @@ class ComposeViewTest {
         )
     }
 
-    @Ignore("Disable Broken test: b/187962859")
     @Test
     fun paddingsAreNotIgnored() {
         var globalBounds = Rect.Zero
@@ -264,7 +263,7 @@ class ComposeViewTest {
                 Box(
                     Modifier.testTag("box").fillMaxSize().onGloballyPositioned {
                         val position = IntArray(2)
-                        composeView.getLocationOnScreen(position)
+                        composeView.getLocationInWindow(position)
                         globalBounds =
                             it.boundsInWindow()
                                 .translate(-position[0].toFloat(), -position[1].toFloat())
