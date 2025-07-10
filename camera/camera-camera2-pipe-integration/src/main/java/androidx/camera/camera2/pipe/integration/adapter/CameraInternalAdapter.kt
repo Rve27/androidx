@@ -141,5 +141,24 @@ constructor(
         useCaseManager.sessionProcessor = sessionProcessor
     }
 
+    /**
+     * Handles the camera being physically removed.
+     *
+     * This method immediately updates the public camera state to CLOSED with a ERROR_CAMERA_REMOVED
+     * error, and then asynchronously triggers the cleanup of all internal resources, such as the
+     * CameraGraph.
+     */
+    override fun onRemoved() {
+        debug { "$this received removed signal. Cleaning up." }
+        threads.scope.launch {
+            // 1. Immediately update the public state via the state adapter.
+            cameraStateAdapter.onRemoved()
+
+            // 2. Asynchronously clean up all resources by closing the UseCaseManager,
+            // which in turn closes the CameraGraph.
+            useCaseManager.close()
+        }
+    }
+
     override fun toString(): String = "CameraInternalAdapter<$cameraId($debugId)>"
 }
