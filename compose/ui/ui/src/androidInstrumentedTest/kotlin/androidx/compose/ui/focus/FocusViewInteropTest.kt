@@ -24,6 +24,7 @@ import android.view.KeyEvent as AndroidKeyEvent
 import android.view.KeyEvent.ACTION_DOWN
 import android.view.KeyEvent.META_SHIFT_ON as Shift
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.BaseInputConnection
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
@@ -63,6 +64,7 @@ import androidx.compose.ui.focus.FocusDirection.Companion.Previous
 import androidx.compose.ui.focus.FocusDirection.Companion.Right
 import androidx.compose.ui.focus.FocusDirection.Companion.Up
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.input.InputMode.Companion.Touch
 import androidx.compose.ui.input.InputModeManager
 import androidx.compose.ui.input.key.Key
@@ -133,6 +135,70 @@ class FocusViewInteropTest {
         rule.waitUntil { hasFocus }
 
         assertThat(view.getFocusedRect()).isEqualTo(IntRect(30, 40, 40, 60))
+    }
+
+    @Test
+    fun getFocusedRect_reportsFocusArea_whenFocused_andCustomFocusAreaDefined() {
+        val focusRequester = FocusRequester()
+        lateinit var view: View
+        rule.setContent {
+            view = LocalView.current
+            CompositionLocalProvider(LocalDensity provides Density(density = 1f)) {
+                Box(
+                    Modifier.size(90.dp, 100.dp)
+                        .wrapContentSize(align = Alignment.TopStart)
+                        .focusProperties { focusRect = Rect(30f, 40f, 40f, 60f) }
+                        .focusRequester(focusRequester)
+                        .focusable()
+                )
+            }
+        }
+        rule.runOnIdle { focusRequester.requestFocus() }
+
+        assertThat(view.getFocusedRect()).isEqualTo(IntRect(30, 40, 40, 60))
+    }
+
+    @Test
+    fun getFocusedRect_reportsAndroidViewDynamicFocusedRect() {
+        lateinit var embeddedView: View
+        var hasFocus = false
+        var focusedRectOfView = AndroidRect(0, 10, 20, 30)
+        lateinit var view: View
+        rule.setContent {
+            view = LocalView.current
+            CompositionLocalProvider(LocalDensity provides Density(density = 1f)) {
+                AndroidView(
+                    factory = {
+                        object : View(it) {
+                                init {
+                                    layoutParams =
+                                        ViewGroup.LayoutParams(
+                                            ViewGroup.LayoutParams.MATCH_PARENT,
+                                            ViewGroup.LayoutParams.MATCH_PARENT,
+                                        )
+                                    isFocusable = true
+                                    isFocusableInTouchMode = true
+                                }
+
+                                override fun getFocusedRect(r: AndroidRect?) {
+                                    r?.set(focusedRectOfView)
+                                }
+                            }
+                            .also { embeddedView = it }
+                    },
+                    Modifier.size(100.dp, 100.dp).onFocusChanged { hasFocus = it.hasFocus },
+                )
+            }
+        }
+        rule.runOnIdle { embeddedView.requestFocus() }
+
+        rule.waitUntil { hasFocus }
+
+        assertThat(view.getFocusedRect()).isEqualTo(IntRect(0, 10, 20, 30))
+
+        focusedRectOfView = AndroidRect(30, 40, 50, 60)
+
+        assertThat(view.getFocusedRect()).isEqualTo(IntRect(30, 40, 50, 60))
     }
 
     @Test

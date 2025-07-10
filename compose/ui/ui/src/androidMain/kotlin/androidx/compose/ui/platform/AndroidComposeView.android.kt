@@ -105,7 +105,7 @@ import androidx.compose.ui.focus.FocusOwner
 import androidx.compose.ui.focus.FocusOwnerImpl
 import androidx.compose.ui.focus.FocusTargetNode
 import androidx.compose.ui.focus.PlatformFocusOwner
-import androidx.compose.ui.focus.calculateBoundingRectRelativeTo
+import androidx.compose.ui.focus.calculateFocusRectRelativeTo
 import androidx.compose.ui.focus.focusRect
 import androidx.compose.ui.focus.is1dFocusSearch
 import androidx.compose.ui.focus.isBetterCandidate
@@ -468,7 +468,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         if (isFocused) {
             focusOwner.getFocusRect()
         } else {
-            findFocus()?.calculateBoundingRectRelativeTo(this)
+            findFocus()?.calculateFocusRectRelativeTo(this)
         }
 
     // TODO(b/177931787) : Consider creating a KeyInputManager like we have for FocusManager so
@@ -1148,9 +1148,9 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
         // Find the next composable using FocusOwner.
         val focusedBounds =
             if (focused === this) {
-                focusOwner.getFocusRect() ?: focused.calculateBoundingRectRelativeTo(this)
+                focusOwner.getFocusRect() ?: focused.calculateFocusRectRelativeTo(this)
             } else {
-                focused.calculateBoundingRectRelativeTo(this)
+                focused.calculateFocusRectRelativeTo(this)
             }
         val focusDirection = toFocusDirection(direction) ?: Down
         var focusTarget: FocusTargetNode? = null
@@ -1182,7 +1182,7 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
             }
             isBetterCandidate(
                 focusTarget.focusRect(),
-                nextView.calculateBoundingRectRelativeTo(this),
+                nextView.calculateFocusRectRelativeTo(this),
                 focusedBounds,
                 focusDirection,
             ) -> this // Compose focus is better than View focus.
