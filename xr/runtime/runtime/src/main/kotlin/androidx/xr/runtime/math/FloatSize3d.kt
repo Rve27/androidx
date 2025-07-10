@@ -16,37 +16,6 @@
 
 package androidx.xr.runtime.math
 
-/** Size of a 2d object represented as a Float, such as the dimensions of a panel in meters. */
-public class FloatSize2d(public val width: Float = 0f, public val height: Float = 0f) {
-    override fun toString(): String {
-        return super.toString() + ": w $width x h $height"
-    }
-
-    /**
-     * Returns a new [FloatSize3d] with the same `width` and `height` of this [FloatSize2d], and the
-     * given `depth`.
-     */
-    public fun to3d(depth: Float = 0f): FloatSize3d = FloatSize3d(width, height, depth)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as FloatSize3d
-
-        if (width != other.width) return false
-        if (height != other.height) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = width.hashCode()
-        result = 31 * result + height.hashCode()
-        return result
-    }
-}
-
 /**
  * Size of a 3d object represented as a Float, such as the dimensions of a spatial volume in meters.
  */
@@ -80,31 +49,6 @@ public class FloatSize3d(
         var result = width.hashCode()
         result = 31 * result + height.hashCode()
         result = 31 * result + depth.hashCode()
-        return result
-    }
-}
-
-/** Size of a 2d object represented as an Int, such as the dimensions of the panel in pixels. */
-public class IntSize2d(public val width: Int = 0, public val height: Int = 0) {
-    override fun toString(): String {
-        return super.toString() + ": w $width x h $height"
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as IntSize2d
-
-        if (width != other.width) return false
-        if (height != other.height) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = width
-        result = 31 * result + height
         return result
     }
 }
