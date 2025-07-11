@@ -95,6 +95,13 @@ if run ./gradlew --ci "$@"; then
   echo build passed
 else
   if [ "$DIAGNOSE" == "true" ]; then
+    # Lets store some data for debugging b/430983364
+    zipFile=privacysandboxout.zip
+    echo "zipping privacysandbox out"
+    rm -f "$DIST_DIR/$zipFile"
+    zip -q -r "$DIST_DIR/$zipFile" "$OUT_DIR/androidx/privacysandbox/"
+    echo "done zipping privacysandbox out"
+
     # see if diagnose-build-failure.sh can identify the root cauase
     echo "running diagnose-build-failure.sh, see build.log" >&2
     # Specify a short timeout in case we're running on a remote server, so we don't take too long.
