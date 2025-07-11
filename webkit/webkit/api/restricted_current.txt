@@ -630,12 +630,14 @@ package androidx.webkit {
 
   @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public final class WebViewStartUpConfig {
     method public java.util.concurrent.Executor getBackgroundExecutor();
+    method public java.util.Set<java.lang.String!>? getProfilesToLoadDuringStartup();
     method public boolean shouldRunUiThreadStartUpTasks();
   }
 
   @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalAsyncStartUp public static final class WebViewStartUpConfig.Builder {
     ctor public WebViewStartUpConfig.Builder(java.util.concurrent.Executor);
     method public androidx.webkit.WebViewStartUpConfig build();
+    method public androidx.webkit.WebViewStartUpConfig.Builder setProfilesToLoadDuringStartup(java.util.Set<java.lang.String!>);
     method public androidx.webkit.WebViewStartUpConfig.Builder setShouldRunUiThreadStartUpTasks(boolean);
   }
 
