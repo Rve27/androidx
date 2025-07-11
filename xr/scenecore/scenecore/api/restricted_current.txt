@@ -562,7 +562,7 @@ package androidx.xr.scenecore {
     field public static final int WALL = 0; // 0x0
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class PointSourceParams {
+  public final class PointSourceParams {
     ctor public PointSourceParams(androidx.xr.scenecore.Entity entity);
   }
 

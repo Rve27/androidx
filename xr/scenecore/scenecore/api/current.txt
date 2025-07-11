@@ -547,6 +547,10 @@ package androidx.xr.scenecore {
     field public static final int WALL = 0; // 0x0
   }
 
+  public final class PointSourceParams {
+    ctor public PointSourceParams(androidx.xr.scenecore.Entity entity);
+  }
+
   public final class Scene {
     ctor public Scene();
     method public void addSpatialCapabilitiesChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
