@@ -2251,13 +2251,10 @@ package androidx.compose.material3 {
     method @BytecodeOnly @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3Api @androidx.compose.runtime.Composable public static void ModalBottomSheet-dYc4hso(kotlin.jvm.functions.Function0!, androidx.compose.ui.Modifier!, androidx.compose.material3.SheetState!, float, androidx.compose.ui.graphics.Shape!, long, long, float, long, kotlin.jvm.functions.Function2!, androidx.compose.foundation.layout.WindowInsets!, androidx.compose.material3.ModalBottomSheetProperties!, kotlin.jvm.functions.Function3!, androidx.compose.runtime.Composer!, int, int, int);
   }
 
-  @androidx.compose.runtime.Immutable public final class ModalWideNavigationRailDefaults {
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getContainerShape();
-    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getContainerShape(androidx.compose.runtime.Composer?, int);
-    method public androidx.compose.material3.ModalWideNavigationRailProperties getProperties();
-    property public androidx.compose.material3.ModalWideNavigationRailProperties Properties;
-    property @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape containerShape;
-    field public static final androidx.compose.material3.ModalWideNavigationRailDefaults INSTANCE;
+  @Deprecated @androidx.compose.runtime.Immutable public final class ModalWideNavigationRailDefaults {
+    method @BytecodeOnly @Deprecated public androidx.compose.material3.ModalWideNavigationRailProperties! getProperties();
+    property @Deprecated public androidx.compose.material3.ModalWideNavigationRailProperties Properties;
+    field @Deprecated public static final androidx.compose.material3.ModalWideNavigationRailDefaults INSTANCE;
   }
 
   @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ComponentOverrideApi public interface ModalWideNavigationRailOverride {
@@ -4615,14 +4612,24 @@ package androidx.compose.material3 {
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors! colors-ro_MJ88(long, long, long, long, androidx.compose.runtime.Composer!, int, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors-zjMxDiM(long, long, long, long, long, androidx.compose.runtime.Composer?, int, int);
     method public androidx.compose.foundation.layout.Arrangement.Vertical getArrangement();
-    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getContainerShape();
-    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getContainerShape(androidx.compose.runtime.Composer?, int);
+    method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape! getContainerShape(androidx.compose.runtime.Composer!, int);
+    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getModalCollapsedShape();
+    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getModalCollapsedShape(androidx.compose.runtime.Composer?, int);
     method @BytecodeOnly @Deprecated @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape! getModalContainerShape(androidx.compose.runtime.Composer!, int);
+    method public androidx.compose.material3.ModalWideNavigationRailProperties getModalExpandedProperties();
+    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getModalExpandedShape();
+    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getModalExpandedShape(androidx.compose.runtime.Composer?, int);
+    method @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape();
+    method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getShape(androidx.compose.runtime.Composer?, int);
     method @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getWindowInsets();
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets getWindowInsets(androidx.compose.runtime.Composer?, int);
+    property public androidx.compose.material3.ModalWideNavigationRailProperties ModalExpandedProperties;
     property public androidx.compose.foundation.layout.Arrangement.Vertical arrangement;
-    property @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape containerShape;
+    property @Deprecated public androidx.compose.ui.graphics.Shape containerShape;
+    property @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape modalCollapsedShape;
     property @Deprecated public androidx.compose.ui.graphics.Shape modalContainerShape;
+    property @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape modalExpandedShape;
+    property @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape shape;
     property @androidx.compose.runtime.Composable public androidx.compose.foundation.layout.WindowInsets windowInsets;
     field public static final androidx.compose.material3.WideNavigationRailDefaults INSTANCE;
   }

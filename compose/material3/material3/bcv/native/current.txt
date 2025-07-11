@@ -3053,8 +3053,6 @@ final object androidx.compose.material3/ModalBottomSheetDefaults { // androidx.c
 final object androidx.compose.material3/ModalWideNavigationRailDefaults { // androidx.compose.material3/ModalWideNavigationRailDefaults|null[0]
     final val Properties // androidx.compose.material3/ModalWideNavigationRailDefaults.Properties|{}Properties[0]
         final fun <get-Properties>(): androidx.compose.material3/ModalWideNavigationRailProperties // androidx.compose.material3/ModalWideNavigationRailDefaults.Properties.<get-Properties>|<get-Properties>(){}[0]
-    final val containerShape // androidx.compose.material3/ModalWideNavigationRailDefaults.containerShape|{}containerShape[0]
-        final fun <get-containerShape>(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.ui.graphics/Shape // androidx.compose.material3/ModalWideNavigationRailDefaults.containerShape.<get-containerShape>|<get-containerShape>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 }
 
 final object androidx.compose.material3/NavigationBarDefaults { // androidx.compose.material3/NavigationBarDefaults|null[0]
@@ -3666,12 +3664,20 @@ final object androidx.compose.material3/WavyProgressIndicatorDefaults { // andro
 }
 
 final object androidx.compose.material3/WideNavigationRailDefaults { // androidx.compose.material3/WideNavigationRailDefaults|null[0]
+    final val ModalExpandedProperties // androidx.compose.material3/WideNavigationRailDefaults.ModalExpandedProperties|{}ModalExpandedProperties[0]
+        final fun <get-ModalExpandedProperties>(): androidx.compose.material3/ModalWideNavigationRailProperties // androidx.compose.material3/WideNavigationRailDefaults.ModalExpandedProperties.<get-ModalExpandedProperties>|<get-ModalExpandedProperties>(){}[0]
     final val arrangement // androidx.compose.material3/WideNavigationRailDefaults.arrangement|{}arrangement[0]
         final fun <get-arrangement>(): androidx.compose.foundation.layout/Arrangement.Vertical // androidx.compose.material3/WideNavigationRailDefaults.arrangement.<get-arrangement>|<get-arrangement>(){}[0]
     final val containerShape // androidx.compose.material3/WideNavigationRailDefaults.containerShape|{}containerShape[0]
         final fun <get-containerShape>(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.ui.graphics/Shape // androidx.compose.material3/WideNavigationRailDefaults.containerShape.<get-containerShape>|<get-containerShape>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+    final val modalCollapsedShape // androidx.compose.material3/WideNavigationRailDefaults.modalCollapsedShape|{}modalCollapsedShape[0]
+        final fun <get-modalCollapsedShape>(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.ui.graphics/Shape // androidx.compose.material3/WideNavigationRailDefaults.modalCollapsedShape.<get-modalCollapsedShape>|<get-modalCollapsedShape>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
     final val modalContainerShape // androidx.compose.material3/WideNavigationRailDefaults.modalContainerShape|{}modalContainerShape[0]
         final fun <get-modalContainerShape>(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.ui.graphics/Shape // androidx.compose.material3/WideNavigationRailDefaults.modalContainerShape.<get-modalContainerShape>|<get-modalContainerShape>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+    final val modalExpandedShape // androidx.compose.material3/WideNavigationRailDefaults.modalExpandedShape|{}modalExpandedShape[0]
+        final fun <get-modalExpandedShape>(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.ui.graphics/Shape // androidx.compose.material3/WideNavigationRailDefaults.modalExpandedShape.<get-modalExpandedShape>|<get-modalExpandedShape>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
+    final val shape // androidx.compose.material3/WideNavigationRailDefaults.shape|{}shape[0]
+        final fun <get-shape>(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.ui.graphics/Shape // androidx.compose.material3/WideNavigationRailDefaults.shape.<get-shape>|<get-shape>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
     final val windowInsets // androidx.compose.material3/WideNavigationRailDefaults.windowInsets|{}windowInsets[0]
         final fun <get-windowInsets>(androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.foundation.layout/WindowInsets // androidx.compose.material3/WideNavigationRailDefaults.windowInsets.<get-windowInsets>|<get-windowInsets>(androidx.compose.runtime.Composer?;kotlin.Int){}[0]
 
