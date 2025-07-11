@@ -32,7 +32,7 @@ plugins {
 dependencies {
     implementation(gradleKotlinDsl())
     implementation(gradleApi())
-    implementation(libs.androidGradlePlugin)
+    implementation(libs.androidGradlePluginApi)
     implementation(libs.kotlinStdlib)
     implementation(libs.protobufGradlePlugin)
     implementation(libs.shadow)
