@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,18 @@
 
 package androidx.test.uiautomator.testapp;
 
-import android.graphics.Point;
+import android.app.Activity;
 import android.os.Bundle;
-import android.view.Display;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
 import org.jspecify.annotations.Nullable;
 
-public class HorizontalScrollTestActivity extends TestActivity {
+/** Base test activity. */
+public class TestActivity extends Activity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.horizontal_scroll_test_activity);
-
-        // Get the size of the screen.
-        Display display = getWindowManager().getDefaultDisplay();
-        Point displaySize = new Point();
-        display.getSize(displaySize);
-
-        // Set up the scrolling layout whose width is two times of the screen width.
-        RelativeLayout layout = findViewById(R.id.relative_layout);
-        layout.setLayoutParams(new FrameLayout.LayoutParams(displaySize.x * 2, displaySize.y));
+        // Add margins for system bars in edge-to-edge mode.
+        EdgeToEdge.applyMargins(this);
     }
 }
