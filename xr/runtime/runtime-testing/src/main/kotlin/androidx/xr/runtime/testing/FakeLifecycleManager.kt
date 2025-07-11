@@ -63,8 +63,10 @@ public class FakeLifecycleManager(
     /** If false, [configure] will throw an Exception if the config enables PlaneTracking. */
     @get:JvmName("shouldSupportPlaneTracking") public var shouldSupportPlaneTracking: Boolean = true
 
-    /** If false, configure() will throw an exception if the config enables FaceTracking */
+    /** If false, [configure] will throw an exception if the config enables FaceTracking */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @set:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     @get:JvmName("shouldSupportFaceTracking")
     public var shouldSupportFaceTracking: Boolean = true
 
