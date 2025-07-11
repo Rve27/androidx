@@ -227,6 +227,9 @@ public open class PdfViewerFragment constructor() : Fragment() {
      */
     @Suppress("UNUSED_PARAMETER") public open fun onLoadDocumentError(error: Throwable) {}
 
+    /** Invoked when the password dialog is requested (i.e., becomes visible). */
+    @VisibleForTesting internal open fun onPasswordRequestedState() {}
+
     private val documentViewModel: PdfDocumentViewModel by viewModels {
         PdfDocumentViewModel.Factory
     }
@@ -666,6 +669,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
     private fun handlePasswordRequested(uiState: PasswordRequested) {
         requestPassword(uiState.passwordFailed)
         setViewVisibility(pdfView = GONE, loadingView = GONE, errorView = GONE)
+        onPasswordRequestedState()
         // Utilize retry param to show incorrect password on PasswordDialog
     }
 

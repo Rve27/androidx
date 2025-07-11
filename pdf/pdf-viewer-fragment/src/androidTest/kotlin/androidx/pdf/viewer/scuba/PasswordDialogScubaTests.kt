@@ -25,15 +25,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.pdf.viewer.FragmentUtils.scenarioLoadDocument
 import androidx.pdf.viewer.TestPdfViewerFragment
 import androidx.pdf.viewer.fragment.R
-import androidx.pdf.viewer.scuba.ScubaConstants.FILE_PASSWORD_DIALOG_KEYBOARD_LANDSCAPE
-import androidx.pdf.viewer.scuba.ScubaConstants.FILE_PASSWORD_DIALOG_KEYBOARD_PORTRAIT
+import androidx.pdf.viewer.scuba.ScubaConstants.FILE_PASSWORD_DIALOG_VISIBLE_WITH_KEYBOARD_LANDSCAPE
+import androidx.pdf.viewer.scuba.ScubaConstants.FILE_PASSWORD_DIALOG_VISIBLE_WITH_KEYBOARD_PORTRAIT
 import androidx.pdf.viewer.scuba.ScubaConstants.SCREENSHOT_GOLDEN_DIRECTORY
+import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers
+import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -41,7 +42,6 @@ import androidx.test.filters.LargeTest
 import androidx.test.filters.SdkSuppress
 import androidx.test.screenshot.AndroidXScreenshotTestRule
 import org.junit.After
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -107,22 +107,14 @@ class PasswordDialogScubaTests {
             onView(withId(R.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
         }
 
-        // Decrement idling resource to indicate loading done
-        // Manually decrementing idling resource because in this case the callback never arrives
-        // unless a password is entered, causing Espresso to timeout without this.
-        scenario.onFragment { fragment ->
-            fragment.pdfLoadingIdlingResource.decrement()
-            assertNull(fragment.documentError)
-        }
-
-        onView(withId(androidx.pdf.R.id.password)).inRoot(RootMatchers.isDialog()).perform(click())
-        onView(withId(androidx.pdf.R.id.password))
+        onView(withId(androidx.pdf.R.id.pdf_password_layout))
             .inRoot(RootMatchers.isDialog())
-            .perform(typeText("password"))
+            .check(matches(isCompletelyDisplayed()))
+            .perform(click())
 
-        // Capture a screenshot. This image will include the password dialog,
-        // and its contents
-        assertFullScreenshot(screenshotRule, FILE_PASSWORD_DIALOG_KEYBOARD_PORTRAIT)
+        Espresso.onIdle()
+
+        assertFullScreenshot(screenshotRule, FILE_PASSWORD_DIALOG_VISIBLE_WITH_KEYBOARD_PORTRAIT)
     }
 
     /**
@@ -143,21 +135,13 @@ class PasswordDialogScubaTests {
             onView(withId(R.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
         }
 
-        // Decrement idling resource to indicate loading done
-        // Manually decrementing idling resource because in this case the callback never arrives
-        // unless a password is entered, causing Espresso to timeout without this.
-        scenario.onFragment { fragment ->
-            fragment.pdfLoadingIdlingResource.decrement()
-            assertNull(fragment.documentError)
-        }
-
-        onView(withId(androidx.pdf.R.id.password)).inRoot(RootMatchers.isDialog()).perform(click())
-        onView(withId(androidx.pdf.R.id.password))
+        onView(withId(androidx.pdf.R.id.pdf_password_layout))
             .inRoot(RootMatchers.isDialog())
-            .perform(typeText("password"))
+            .check(matches(isCompletelyDisplayed()))
+            .perform(click())
 
-        // Capture a screenshot. This image will include the password dialog,
-        // and its contents
-        assertFullScreenshot(screenshotRule, FILE_PASSWORD_DIALOG_KEYBOARD_LANDSCAPE)
+        Espresso.onIdle()
+
+        assertFullScreenshot(screenshotRule, FILE_PASSWORD_DIALOG_VISIBLE_WITH_KEYBOARD_LANDSCAPE)
     }
 }
