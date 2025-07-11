@@ -262,6 +262,7 @@ public constructor(
 
         private val RUNTIME_FACTORY_PROVIDERS =
             listOf(
+                "androidx.xr.arcore.playservices.ArCoreRuntimeFactory",
                 "androidx.xr.runtime.openxr.OpenXrRuntimeFactory",
                 "androidx.xr.runtime.testing.FakeRuntimeFactory",
             )
