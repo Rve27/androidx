@@ -171,6 +171,7 @@ package androidx.xr.arcore {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class Earth {
+    method public static suspend Object? checkVpsAvailability(androidx.xr.runtime.Session session, double latitude, double longitude, kotlin.coroutines.Continuation<? super androidx.xr.runtime.VpsAvailabilityResult>);
     method public androidx.xr.arcore.AnchorCreateResult createAnchor(double latitude, double longitude, double altitude, androidx.xr.runtime.math.Quaternion eastUpSouthQuaternion);
     method public suspend Object? createAnchorOnSurface(double latitude, double longitude, double altitudeAboveSurface, androidx.xr.runtime.math.Quaternion eastUpSouthQuaternion, androidx.xr.arcore.Earth.Surface surface, kotlin.coroutines.Continuation<? super androidx.xr.arcore.AnchorCreateResult>);
     method public androidx.xr.arcore.CreateGeospatialPoseFromPoseResult createGeospatialPoseFromDevicePose();
@@ -184,6 +185,7 @@ package androidx.xr.arcore {
   }
 
   public static final class Earth.Companion {
+    method public suspend Object? checkVpsAvailability(androidx.xr.runtime.Session session, double latitude, double longitude, kotlin.coroutines.Continuation<? super androidx.xr.runtime.VpsAvailabilityResult>);
     method public androidx.xr.arcore.Earth getInstance(androidx.xr.runtime.Session session);
   }
 

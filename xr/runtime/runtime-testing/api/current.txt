@@ -49,6 +49,7 @@ package androidx.xr.runtime.testing {
     ctor public FakePerceptionManager();
     method public void addHitResult(androidx.xr.runtime.internal.HitResult hitResult);
     method public void addTrackable(androidx.xr.runtime.internal.Trackable trackable);
+    method public suspend Object? checkVpsAvailability(double latitude, double longitude, kotlin.coroutines.Continuation<? super androidx.xr.runtime.VpsAvailabilityResult>);
     method public void clearHitResults();
     method public void clearTrackables();
     method public androidx.xr.runtime.internal.Anchor createAnchor(androidx.xr.runtime.math.Pose pose);
