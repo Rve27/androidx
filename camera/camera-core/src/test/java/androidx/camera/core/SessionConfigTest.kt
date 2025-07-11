@@ -30,6 +30,7 @@ import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_HIGH_SPEED
 import androidx.camera.core.impl.SessionConfig.SESSION_TYPE_REGULAR
 import androidx.camera.core.impl.StreamSpec.FRAME_RATE_RANGE_UNSPECIFIED
 import androidx.camera.core.impl.utils.executor.CameraXExecutors.directExecutor
+import androidx.camera.testing.fakes.FakeCamera
 import androidx.camera.testing.impl.fakes.FakeSurfaceEffect
 import androidx.camera.testing.impl.fakes.FakeSurfaceProcessor
 import androidx.testutils.assertThrows
@@ -100,6 +101,27 @@ class SessionConfigTest {
         assertThat(sessionConfig.requiredFeatureGroup).isEmpty()
         assertThat(sessionConfig.preferredFeatureGroup).isEmpty()
         assertThat(sessionConfig.isLegacy).isFalse()
+    }
+
+    @Test
+    fun sessionConfig_frameRateRangeSetOnSessionConfigAndUseCase_IllegalArgumentExceptionThrown() {
+        val useCase = Preview.Builder().setTargetFrameRate(frameRateRange).build()
+        assertThrows<IllegalArgumentException> {
+            SessionConfig(useCases = listOf(useCase), frameRateRange = frameRateRange)
+        }
+    }
+
+    @Test
+    fun sessionConfig_useCaseHasFrameRateAfterBinding_noExceptionThrown() {
+        val useCase = Preview.Builder().build()
+
+        // Binding UseCase with an arbitrary frame rate.
+        val configWithFrameRate = Preview.Builder().setTargetFrameRate(Range(15, 15)).useCaseConfig
+        useCase.bindToCamera(FakeCamera(), null, null, configWithFrameRate)
+        assertThat(useCase.currentConfig.hasTargetFrameRate()).isTrue()
+
+        // No exception is thrown.
+        SessionConfig(useCases = listOf(useCase), frameRateRange = frameRateRange)
     }
 
     @Test

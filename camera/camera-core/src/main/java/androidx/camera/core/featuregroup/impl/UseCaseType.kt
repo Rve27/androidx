@@ -151,8 +151,7 @@ public enum class UseCaseType(
 
         private fun UseCase.isDynamicRangeConfiguredByApp() = appConfig.hasDynamicRange()
 
-        private fun UseCase.isFpsRangeConfiguredByApp() =
-            appConfig.containsOption(UseCaseConfig.OPTION_TARGET_FRAME_RATE)
+        private fun UseCase.isFpsRangeConfiguredByApp() = appConfig.hasTargetFrameRate()
 
         private fun UseCase.isStabilizationModeConfiguredByApp() =
             appConfig.containsOption(UseCaseConfig.OPTION_PREVIEW_STABILIZATION_MODE) ||

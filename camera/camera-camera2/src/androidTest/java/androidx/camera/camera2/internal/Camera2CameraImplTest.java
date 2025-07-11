@@ -1066,7 +1066,7 @@ public final class Camera2CameraImplTest {
         StreamSpec.Builder builder = StreamSpec.builder(
                 new Size(640, 480)).setImplementationOptions(
                 StreamUseCaseUtil.getStreamSpecImplementationOptions(config));
-        if (config.getTargetFrameRate(null) != null) {
+        if (config.hasTargetFrameRate()) {
             builder.setExpectedFrameRateRange(config.getTargetFrameRate());
         }
         if (config.hasDynamicRange()) {

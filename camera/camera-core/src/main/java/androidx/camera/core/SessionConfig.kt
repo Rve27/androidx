@@ -67,14 +67,16 @@ import java.util.concurrent.Executor
  *   `SessionConfig` binding (i.e. when calling
  *   `androidx.camera.lifecycle.ProcessCameraProvider.bindToLifecycle` or
  *   `androidx.camera.lifecycle.LifecycleCameraProvider.bindToLifecycle`). When this value is set,
- *   any target frame rate set on individual [UseCase] will be ignored during `SessionConfig`
- *   binding. If this value is not set, the default is [FRAME_RATE_RANGE_UNSPECIFIED], which means
- *   no specific frame rate. The range defines the acceptable minimum and maximum frame rate for the
- *   camera session. A **dynamic range** (e.g., `[15, 30]`) allows the camera to adjust its frame
- *   rate within the bounds, which will benefit **previewing in low light** by enabling longer
- *   exposures for brighter, less noisy images; conversely, a **fixed range** (e.g., `[30, 30]`)
- *   ensures a stable frame rate crucial for **video recording**, though it can lead to darker,
- *   noisier video in low light due to shorter exposure times.
+ *   no individual [UseCase] can have a target frame rate set (e.g., via
+ *   [Preview.Builder.setTargetFrameRate] or `VideoCapture.Builder.setTargetFrameRate`); doing so
+ *   will result in an [IllegalArgumentException]. If this value is not set, the default is
+ *   [FRAME_RATE_RANGE_UNSPECIFIED], which means no specific frame rate. The range defines the
+ *   acceptable minimum and maximum frame rate for the camera session. A **dynamic range** (e.g.,
+ *   `[15, 30]`) allows the camera to adjust its frame rate within the bounds, which will benefit
+ *   **previewing in low light** by enabling longer exposures for brighter, less noisy images;
+ *   conversely, a **fixed range** (e.g., `[30, 30]`) ensures a stable frame rate crucial for
+ *   **video recording**, though it can lead to darker, noisier video in low light due to shorter
+ *   exposure times.
  * @throws IllegalArgumentException If the combination of config options are conflicting or
  *   unsupported.
  * @See androidx.camera.lifecycle.ProcessCameraProvider.bindToLifecycle
@@ -114,11 +116,26 @@ constructor(
         private set
 
     init {
+        validateFrameRate()
         validateFeatureGroups()
     }
 
     /** Creates the SessionConfig from use cases only. */
     public constructor(vararg useCases: UseCase) : this(useCases.toList())
+
+    private fun validateFrameRate() {
+        if (frameRateRange == FRAME_RATE_RANGE_UNSPECIFIED) {
+            return
+        }
+        for (useCase in useCases) {
+            require(!useCase.appConfig.hasTargetFrameRate()) {
+                "Can't set target frame rate on a UseCase (by " +
+                    "Preview.Builder.setTargetFrameRate() or " +
+                    "VideoCapture.Builder.setTargetFrameRate()) if the frame rate range has " +
+                    "already been set in the SessionConfig."
+            }
+        }
+    }
 
     private fun validateFeatureGroups() {
         if (requiredFeatureGroup.isEmpty() && preferredFeatureGroup.isEmpty()) {
