@@ -16,14 +16,29 @@
 
 package androidx.core.backported.fixes
 
-/** List of all known issue reportable by [BackportedFixManager] */
+/**
+ * A public issue from the [Google Issue Tracker](https://issuetracker.google.com) with a fix that
+ * may be backported.
+ *
+ * [BackportedFixManager.isFixed] will report if the issue is fixed on a device.
+ *
+ * The `id` and `alias` of a known issue come from the list of approved backported fixes in the
+ * Android Compatibility Test source directory
+ * [cts/backported_fixes/approved](https://cs.android.com/android/platform/superproject/+/android-latest-release:cts/backported_fixes/approved/).
+ * [KnownIssues] contains constants for all issues in the approved list.
+ *
+ * @property id The public id of this issue in the
+ *   [Google Issue Tracker](https://issuetracker.google.com)
+ * @property alias The alias for this issue, if one exists.
+ * @param precondition A function that returns true if the issue applies to a device.
+ */
 internal class KnownIssue
-private constructor(
+internal constructor(
 
     /**
      * The public id of this issue in the [Google Issue Tracker](https://issuetracker.google.com)
      */
-    val id: Long,
+    internal val id: Long,
     /**
      * The alias for this issue, if one exists.
      *
@@ -32,7 +47,16 @@ private constructor(
      * The value 0 indicates there is no alias for this issue. Non-zero alias values are unique
      * across all known issues.
      */
-    val alias: Int,
+    internal val alias: Int,
+    /**
+     * A function that returns true if the issue applies to a device.
+     *
+     * Override if the issue should only apply to specific brands, models or other static
+     * properties.
+     *
+     * Defaults to true for all devices.
+     */
+    internal val precondition: () -> Boolean = { true },
 ) {
     // TODO b/381266031 - Make public
     // TODO b/381267367 - Add link to public list issues
@@ -42,45 +66,15 @@ private constructor(
      */
     internal val url = "https://issuetracker.google.com/issues/$id"
 
-    override fun equals(other: Any?) = other is KnownIssue && id == other.id
+    override fun equals(other: Any?): Boolean = other is KnownIssue && id == other.id
 
-    override fun hashCode() = id.hashCode()
+    override fun hashCode(): Int = id.hashCode()
 
     override fun toString(): String {
         return if (alias == 0) {
             "$id without alias"
         } else {
             "$id with alias $alias"
-        }
-    }
-
-    companion object {
-        // keep-sorted start newline_separated=yes sticky_prefixes=/*
-        /** Sample known issue that is always fixed on a device. */
-        @JvmField val KI_350037023 = KnownIssue(350037023L, 1)
-
-        /** Sample known issue that is never fixed on a device. */
-        @JvmField val KI_350037348 = KnownIssue(350037348L, 3)
-
-        /** Sample known issue that is only applies to robolectric devices */
-        @JvmField val KI_372917199 = KnownIssue(372917199L, 2)
-
-        // keep-sorted end
-
-        private val values by lazy {
-            listOf(
-                // keep-sorted start
-                KI_350037023,
-                KI_350037348,
-                KI_372917199,
-                // keep-sorted end
-            )
-        }
-
-        /** List of all known issues */
-        @JvmStatic
-        internal fun values(): List<KnownIssue> {
-            return values
         }
     }
 }
