@@ -24,6 +24,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.pdf.featureflag.PdfFeatureFlags
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.UiController
@@ -63,11 +64,13 @@ class PdfViewExternalInputTest {
             )
             activity.setContentView(container)
         }
+        PdfFeatureFlags.isExternalHardwareInteractionEnabled = true
     }
 
     @After
     fun tearDown() {
         PdfViewTestActivity.onCreateCallback = {}
+        PdfFeatureFlags.isExternalHardwareInteractionEnabled = false
     }
 
     @Test
