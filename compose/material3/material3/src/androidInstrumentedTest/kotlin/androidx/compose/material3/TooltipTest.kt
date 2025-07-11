@@ -466,7 +466,10 @@ class TooltipTest {
 
         // Plain tooltip positioning
         lateinit var positionProvider: PopupPositionProvider
-        rule.setContent { positionProvider = TooltipDefaults.rememberTooltipPositionProvider() }
+        rule.setContent {
+            positionProvider =
+                TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above)
+        }
 
         val tooltipPosition =
             positionProvider.calculatePosition(
@@ -499,7 +502,10 @@ class TooltipTest {
 
         // Rich tooltip positioning
         lateinit var positionProvider: PopupPositionProvider
-        rule.setContent { positionProvider = TooltipDefaults.rememberTooltipPositionProvider() }
+        rule.setContent {
+            positionProvider =
+                TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above)
+        }
 
         val tooltipPosition =
             positionProvider.calculatePosition(
@@ -520,7 +526,8 @@ class TooltipTest {
         var anchorBounds = Rect.Zero
         rule.setContent {
             TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
                 state = rememberTooltipState(initialIsVisible = true, isPersistent = true),
                 tooltip = {
                     PlainTooltip(
@@ -565,7 +572,8 @@ class TooltipTest {
         var anchorBounds = Rect.Zero
         rule.setContent {
             TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
                 state = rememberTooltipState(initialIsVisible = true, isPersistent = true),
                 tooltip = {
                     PlainTooltip(
@@ -616,7 +624,8 @@ class TooltipTest {
             topState = rememberTooltipState(isPersistent = true)
             bottomState = rememberTooltipState(isPersistent = true)
             TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
                 tooltip = {
                     RichTooltip(
                         title = {
@@ -637,7 +646,8 @@ class TooltipTest {
             scope.launch { topState.show() }
 
             TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
                 tooltip = {
                     RichTooltip(
                         title = {
@@ -680,7 +690,8 @@ class TooltipTest {
             val scope = rememberCoroutineScope()
             topState = rememberTooltipState(isPersistent = true, mutatorMutex = MutatorMutex())
             TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
                 tooltip = {
                     RichTooltip(
                         title = {
@@ -702,7 +713,8 @@ class TooltipTest {
 
             bottomState = rememberTooltipState(isPersistent = true, mutatorMutex = MutatorMutex())
             TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
                 tooltip = {
                     RichTooltip(
                         title = {
@@ -742,7 +754,8 @@ class TooltipTest {
         tooltipState: TooltipState = rememberTooltipState(),
     ) {
         TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+            positionProvider =
+                TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
             tooltip = {
                 PlainTooltip(
                     modifier = modifier.testTag(ContainerTestTag),
@@ -764,7 +777,8 @@ class TooltipTest {
         tooltipState: TooltipState = rememberTooltipState(action != null),
     ) {
         TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+            positionProvider =
+                TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
             tooltip = {
                 RichTooltip(
                     title = title,
@@ -783,7 +797,8 @@ class TooltipTest {
     fun plainTooltip_withClickable_hasCorrectSemantics() {
         rule.setMaterialContent(lightColorScheme()) {
             TooltipBox(
-                positionProvider = TooltipDefaults.rememberTooltipPositionProvider(),
+                positionProvider =
+                    TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
                 tooltip = {
                     PlainTooltip(
                         modifier = Modifier.testTag(ContainerTestTag),

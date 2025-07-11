@@ -85,6 +85,7 @@ class NestedSubspace : ComponentActivity() {
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 val plainTooltipState = remember { TooltipState() }
+                                @Suppress("DEPRECATION")
                                 TooltipBox(
                                     positionProvider =
                                         TooltipDefaults.rememberTooltipPositionProvider(),
