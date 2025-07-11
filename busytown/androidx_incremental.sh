@@ -102,8 +102,7 @@ if ! impl/check_translations.sh; then
   EXIT_VALUE=1
 else
     # Run Gradle
-    # ksp.incremental.log=true is there for debugging b/430983364
-    if impl/build.sh $DIAGNOSE_ARG buildOnServer createAllArchives checkExternalLicenses listTaskOutputs exportSboms -Pksp.incremental.log=true \
+    if impl/build.sh $DIAGNOSE_ARG buildOnServer createAllArchives checkExternalLicenses listTaskOutputs exportSboms \
         "$@"; then
     echo build succeeded
     EXIT_VALUE=0
