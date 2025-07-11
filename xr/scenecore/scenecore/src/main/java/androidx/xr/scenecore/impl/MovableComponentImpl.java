@@ -262,8 +262,10 @@ class MovableComponentImpl implements MovableComponent {
                                         reformEvent.getProposedPosition(),
                                         reformEvent.getProposedOrientation());
                     }
-                    Vector3 newScale = mScaleInZ
-                            ? RuntimeUtils.getVector3(reformEvent.getProposedScale()) : mLastScale;
+                    Vector3 newScale =
+                            mScaleInZ
+                                    ? RuntimeUtils.getVector3(reformEvent.getProposedScale())
+                                    : mLastScale;
                     Entity disposeEntity = null;
 
                     Entity parent = updatedParent;
