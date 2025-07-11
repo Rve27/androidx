@@ -67,8 +67,6 @@ import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetCompos
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetCoreEntity
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetMeasurePolicy
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetModifier
-import androidx.xr.compose.unit.IntVolumeSize
-import androidx.xr.compose.unit.Meter
 import androidx.xr.compose.unit.Meter.Companion.millimeters
 import androidx.xr.runtime.math.FloatSize2d
 import androidx.xr.runtime.math.IntSize2d
@@ -76,7 +74,6 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.ActivityPanelEntity
 import androidx.xr.scenecore.PanelEntity
-import kotlin.math.roundToInt
 
 private const val DEFAULT_SIZE_PX = 400
 
@@ -405,29 +402,28 @@ public fun SpatialActivityPanel(
                     }
                 }
 
-            val scrimWidth = Meter.fromPixel(activityPanelEntity.size.width, density)
-            val scrimHeight = Meter.fromPixel(activityPanelEntity.size.height, density)
-            val scrimPanelEntity =
-                rememberCorePanelEntity(shape = shape) {
-                    PanelEntity.create(
-                            session = session,
-                            view = scrimView,
-                            dimensions = FloatSize2d(scrimWidth.toM(), scrimHeight.toM()),
-                            name = entityName("ScrimPanel"),
-                            pose = Pose.Identity,
-                        )
-                        .apply {
-                            parent = corePanelEntity.entity
-                            setPose(Pose(translation = Vector3(0f, 0f, 3.millimeters.toM())))
-                        }
+            val scrimPanelEntity by
+                remember(session, corePanelEntity.entity, scrimView) {
+                    disposableValueOf(
+                        PanelEntity.create(
+                                session = session,
+                                view = scrimView,
+                                dimensions = activityPanelEntity.size,
+                                name = entityName("ScrimPanel"),
+                                pose = Pose.Identity,
+                            )
+                            .apply {
+                                parent = corePanelEntity.entity
+                                setPose(Pose(translation = Vector3(0f, 0f, 3.millimeters.toM())))
+                            }
+                    ) {
+                        it.dispose()
+                    }
                 }
+
             SideEffect {
-                scrimPanelEntity.size =
-                    IntVolumeSize(
-                        activityPanelEntity.size.width.roundToInt(),
-                        activityPanelEntity.size.height.roundToInt(),
-                        0,
-                    )
+                scrimPanelEntity.size = activityPanelEntity.size
+                scrimPanelEntity.cornerRadius = activityPanelEntity.cornerRadius
             }
         }
     }
