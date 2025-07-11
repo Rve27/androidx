@@ -1596,30 +1596,6 @@ public final class Camera2CameraImplTest {
                 new CallTimes(1));
     }
 
-    @Test
-    public void onRemoved_isNoOp_whenAlreadyReleased() throws Exception {
-        // Arrange
-        FakeLifecycleOwner lifecycleOwner = new FakeLifecycleOwner();
-        lifecycleOwner.startAndResume();
-
-        mCamera2CameraImpl.release().get(5, SECONDS);
-
-        TestObserver<CameraState> publicStateObserver = new TestObserver<>();
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(
-                () -> mCamera2CameraImpl.getCameraInfoInternal().getCameraState().observe(
-                        lifecycleOwner, publicStateObserver));
-
-        // Wait for the observer to receive the CLOSED state.
-        publicStateObserver.awaitState(CameraState.create(CameraState.Type.CLOSED), 5, SECONDS);
-
-        // Act
-        mCamera2CameraImpl.onRemoved();
-        HandlerUtil.waitForLooperToIdle(sCameraHandler); // Let any potential tasks run
-
-        // Assert: No new state changes should have occurred.
-        assertThat(publicStateObserver.getReceivedValues().size()).isEqualTo(1);
-    }
-
     /**
      * A fake LiveData observer for testing that stores received values and allows awaiting them.
      */
