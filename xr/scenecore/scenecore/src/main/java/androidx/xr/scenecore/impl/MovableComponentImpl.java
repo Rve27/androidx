@@ -378,6 +378,16 @@ class MovableComponentImpl implements MovableComponent {
             if (planeData == null) {
                 continue;
             }
+            // Ignore the plane if the Pose is invalid.
+            if (planeData.centerPose.tx() == 0
+                    && planeData.centerPose.ty() == 0
+                    && planeData.centerPose.tz() == 0
+                    && planeData.centerPose.qx() == 0
+                    && planeData.centerPose.qy() == 0
+                    && planeData.centerPose.qz() == 0
+                    && planeData.centerPose.qw() == 0) {
+                continue;
+            }
             Pose planePoseUpdate = updatePoseForPlane(planeData, updatedPoseInOpenXr);
             if (planePoseUpdate == null) {
                 continue;
