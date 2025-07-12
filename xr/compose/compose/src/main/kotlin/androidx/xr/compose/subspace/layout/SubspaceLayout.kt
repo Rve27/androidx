@@ -20,6 +20,7 @@ import androidx.compose.runtime.Applier
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposeNode
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.currentComposer
 import androidx.xr.compose.platform.LocalOpaqueEntity
 import androidx.xr.compose.subspace.SubspaceComposable
@@ -30,6 +31,8 @@ import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetCoreEn
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetMeasurePolicy
 import androidx.xr.compose.subspace.node.ComposeSubspaceNode.Companion.SetModifier
 import androidx.xr.compose.subspace.rememberCoreGroupEntity
+import androidx.xr.runtime.Session
+import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.GroupEntity
 
 /**
@@ -112,7 +115,7 @@ public inline fun SubspaceLayout(
             "Subspace composition. Please ensure that this component is in a Subspace or " +
             " is a child of another SubspaceComposable."
     }
-    val coreEntity = rememberCoreGroupEntity {
+    val coreEntity = rememberOpaqueEntity {
         GroupEntity.create(session = this, name = entityName("Entity"))
     }
     val compositionLocalMap = currentComposer.currentCompositionLocalMap
@@ -129,6 +132,13 @@ public inline fun SubspaceLayout(
         content = { CompositionLocalProvider(LocalOpaqueEntity provides coreEntity) { content() } },
     )
 }
+
+/** Creates a [CoreGroupEntity] that is automatically disposed of when it leaves the composition. */
+@Composable
+@PublishedApi
+internal fun rememberOpaqueEntity(
+    entityFactory: @DisallowComposableCalls Session.() -> Entity
+): OpaqueEntity = rememberCoreGroupEntity(entityFactory)
 
 /**
  * [SubspaceLayout] is the main core component for layout for "leaf" nodes. It can be used to

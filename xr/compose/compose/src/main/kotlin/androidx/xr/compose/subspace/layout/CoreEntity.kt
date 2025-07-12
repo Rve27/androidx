@@ -43,7 +43,6 @@ import kotlin.math.max
  * Wrapper class for Entities from SceneCore to provide convenience methods for working with
  * Entities from SceneCore.
  */
-@PublishedApi
 internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
 
     // This parameter is null for Composables without a layout, such as Orbiters and Spatial
@@ -161,7 +160,6 @@ internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
 }
 
 /** Wrapper class for group entities from SceneCore. */
-@PublishedApi
 internal class CoreGroupEntity(entity: Entity) : CoreEntity(entity) {
     init {
         require(entity is GroupEntity) {
