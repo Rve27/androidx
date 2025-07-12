@@ -873,6 +873,7 @@ package androidx.xr.runtime.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSurfaceEntity extends androidx.xr.runtime.testing.FakeEntity implements androidx.xr.runtime.internal.SurfaceEntity {
     ctor public FakeSurfaceEntity();
+    method public androidx.xr.runtime.internal.TextureResource? getAuxiliaryAlphaMask();
     method public androidx.xr.runtime.internal.SurfaceEntity.CanvasShape getCanvasShape();
     method public int getColorRange();
     method public int getColorSpace();
@@ -880,21 +881,24 @@ package androidx.xr.runtime.testing {
     method public boolean getContentColorMetadataSet();
     method public androidx.xr.runtime.internal.Dimensions getDimensions();
     method public androidx.xr.runtime.internal.SurfaceEntity.EdgeFeather getEdgeFeather();
+    method public boolean getMContentColorMetadataSet();
     method public int getMaxCLL();
     method public androidx.xr.runtime.internal.PerceivedResolutionResult getPerceivedResolution();
+    method public androidx.xr.runtime.internal.PerceivedResolutionResult getPerceivedResolutionResult();
+    method public androidx.xr.runtime.internal.TextureResource? getPrimaryAlphaMask();
     method public int getStereoMode();
     method public android.view.Surface getSurface();
     method public void resetContentColorMetadata();
     method public void setAuxiliaryAlphaMaskTexture(androidx.xr.runtime.internal.TextureResource? alphaMask);
     method public void setCanvasShape(androidx.xr.runtime.internal.SurfaceEntity.CanvasShape);
-    method public void setColorRange(int);
-    method public void setColorSpace(int);
-    method public void setColorTransfer(int);
     method public void setContentColorMetadata(int colorSpace, int colorTransfer, int colorRange, int maxCLL);
     method public void setEdgeFeather(androidx.xr.runtime.internal.SurfaceEntity.EdgeFeather);
-    method public void setMaxCLL(int);
+    method public void setMContentColorMetadataSet(boolean);
+    method public void setPerceivedResolutionResult(androidx.xr.runtime.internal.PerceivedResolutionResult);
     method public void setPrimaryAlphaMaskTexture(androidx.xr.runtime.internal.TextureResource? alphaMask);
     method public void setStereoMode(int);
+    method public void setSurface(android.view.Surface surface);
+    property public androidx.xr.runtime.internal.TextureResource? auxiliaryAlphaMask;
     property public androidx.xr.runtime.internal.SurfaceEntity.CanvasShape canvasShape;
     property public int colorRange;
     property public int colorSpace;
@@ -902,7 +906,10 @@ package androidx.xr.runtime.testing {
     property public boolean contentColorMetadataSet;
     property public androidx.xr.runtime.internal.Dimensions dimensions;
     property public androidx.xr.runtime.internal.SurfaceEntity.EdgeFeather edgeFeather;
+    property public boolean mContentColorMetadataSet;
     property public int maxCLL;
+    property public androidx.xr.runtime.internal.PerceivedResolutionResult perceivedResolutionResult;
+    property public androidx.xr.runtime.internal.TextureResource? primaryAlphaMask;
     property public int stereoMode;
     property public android.view.Surface surface;
   }
