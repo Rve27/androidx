@@ -130,7 +130,7 @@ public interface Profile {
     }
 
     /**
-     * Starts a URL prefetch request. Must be called from the UI thread.
+     * Starts a URL prefetch request.
      * <p>
      * All WebViews associated with this Profile will use a URL request
      * matching algorithm during execution of all variants of
@@ -165,7 +165,7 @@ public interface Profile {
      */
     @RequiresFeature(name = WebViewFeature.PROFILE_URL_PREFETCH,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
-    @UiThread
+    @AnyThread
     @ExperimentalUrlPrefetch
     void prefetchUrlAsync(@NonNull String url,
             @Nullable CancellationSignal cancellationSignal,
@@ -173,7 +173,7 @@ public interface Profile {
             @NonNull OutcomeReceiverCompat<Void, PrefetchException> operationCallback);
 
     /**
-     * Starts a URL prefetch request. Must be called from the UI thread.
+     * Starts a URL prefetch request.
      * <p>
      * All WebViews associated with this Profile will use a URL request
      * matching algorithm during execution of all variants of
@@ -209,7 +209,7 @@ public interface Profile {
      */
     @RequiresFeature(name = WebViewFeature.PROFILE_URL_PREFETCH,
             enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
-    @UiThread
+    @AnyThread
     @ExperimentalUrlPrefetch
     void prefetchUrlAsync(@NonNull String url,
             @Nullable CancellationSignal cancellationSignal,
