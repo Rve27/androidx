@@ -183,4 +183,7 @@ object ComposeUiFlags {
 
     /** This flag enables setting the shape semantics property in the graphicsLayer modifiers. */
     @Suppress("MutableBareField") @JvmField var isGraphicsLayerShapeSemanticsEnabled: Boolean = true
+
+    /** Flag for enabling the performance optimization for content capture. */
+    @Suppress("MutableBareField") @JvmField var isContentCaptureOptimizationEnabled: Boolean = true
 }
