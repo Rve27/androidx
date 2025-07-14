@@ -53,8 +53,6 @@ private val DefaultDensity = Density(1f)
  * subspace.
  *
  * This class is based on [androidx.compose.ui.node.LayoutNode].
- *
- * TODO(b/330925589): Write unit tests.
  */
 internal class SubspaceLayoutNode : ComposeSubspaceNode {
     /**
