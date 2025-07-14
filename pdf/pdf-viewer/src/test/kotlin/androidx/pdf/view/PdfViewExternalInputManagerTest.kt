@@ -105,6 +105,54 @@ class PdfViewExternalInputManagerTest {
     }
 
     @Test
+    fun handleKeyEvent_ctrlZero_callsZoomToBaselineAndReturnsTrue() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_0)
+        whenever(event.isCtrlPressed).thenReturn(true)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isTrue()
+    }
+
+    @Test
+    fun handleKeyEvent_ctrlNumpadZero_callsZoomToBaselineAndReturnsTrue() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_NUMPAD_0)
+        whenever(event.isCtrlPressed).thenReturn(true)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isTrue()
+    }
+
+    @Test
+    fun handleKeyEvent_zeroWithoutCtrl_isNotHandledAndReturnsFalse() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_0)
+        whenever(event.isCtrlPressed).thenReturn(false)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isFalse()
+    }
+
+    @Test
+    fun handleKeyEvent_numpadZeroWithoutCtrl_isNotHandledAndReturnsFalse() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_NUMPAD_0)
+        whenever(event.isCtrlPressed).thenReturn(false)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isFalse()
+    }
+
+    @Test
     fun handleKeyEvent_ctrlMinus_callsZoomOutAndReturnsTrue() {
         val event = mock<KeyEvent>()
         whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)

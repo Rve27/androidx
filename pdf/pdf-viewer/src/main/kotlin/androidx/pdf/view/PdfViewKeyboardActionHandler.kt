@@ -27,16 +27,22 @@ internal class PdfViewKeyboardActionHandler(pdfView: PdfView) :
     override val horizontalScrollFactor = HORIZONTAL_SCROLL_FACTOR
     override val verticalScrollFactor = VERTICAL_SCROLL_FACTOR
 
+    private val pivotX: Float
+        get() = (pdfView.left + pdfView.right) / 2f
+
+    private val pivotY: Float
+        get() = pdfView.top.toFloat()
+
     fun zoomIn() {
-        val pivotX = (pdfView.left + pdfView.right) / 2f
-        val pivotY = pdfView.top.toFloat()
         zoomIn(pivotX, pivotY)
     }
 
     fun zoomOut() {
-        val pivotX = (pdfView.left + pdfView.right) / 2f
-        val pivotY = pdfView.top.toFloat()
         zoomOut(pivotX, pivotY)
+    }
+
+    fun zoomToDefault() {
+        applyZoom(pdfView.getDefaultZoom(), pivotX, pivotY)
     }
 
     private companion object {

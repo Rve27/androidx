@@ -377,6 +377,138 @@ class PdfViewExternalInputTest {
     }
 
     @Test
+    fun testCtrlZero_ifZoomAboveBaseline_zoomsToDefault() {
+        var defaultZoom = 0f
+        var zoomAfter = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    defaultZoom = pdfView.getDefaultZoom()
+
+                    pdfView.zoom = pdfView.maxZoom
+                }
+                .perform(
+                    ViewActions.pressKey(
+                        EspressoKey.Builder()
+                            .withKeyCode(KeyEvent.KEYCODE_0)
+                            .withCtrlPressed(true)
+                            .build()
+                    )
+                )
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+
+                    zoomAfter = pdfView.zoom
+                }
+            close()
+        }
+        Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(defaultZoom)
+    }
+
+    @Test
+    fun testCtrlZero_ifZoomBelowBaseline_zoomsToBaseline() {
+        var defaultZoom = 0f
+        var zoomAfter = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    defaultZoom = pdfView.getDefaultZoom()
+
+                    pdfView.zoom = pdfView.minZoom
+                }
+                .perform(
+                    ViewActions.pressKey(
+                        EspressoKey.Builder()
+                            .withKeyCode(KeyEvent.KEYCODE_0)
+                            .withCtrlPressed(true)
+                            .build()
+                    )
+                )
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+
+                    zoomAfter = pdfView.zoom
+                }
+            close()
+        }
+        Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(defaultZoom)
+    }
+
+    @Test
+    fun testCtrlNumpadZero_ifZoomAboveBaseline_zoomsToBaseline() {
+        var defaultZoom = 0f
+        var zoomAfter = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    defaultZoom = pdfView.getDefaultZoom()
+
+                    pdfView.zoom = pdfView.maxZoom
+                }
+                .perform(
+                    ViewActions.pressKey(
+                        EspressoKey.Builder()
+                            .withKeyCode(KeyEvent.KEYCODE_0)
+                            .withCtrlPressed(true)
+                            .build()
+                    )
+                )
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+
+                    zoomAfter = pdfView.zoom
+                }
+            close()
+        }
+        Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(defaultZoom)
+    }
+
+    @Test
+    fun testCtrlNumpadZero_ifZoomBelowBaseline_zoomsToBaseline() {
+        var defaultZoom = 0f
+        var zoomAfter = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    defaultZoom = pdfView.getDefaultZoom()
+
+                    pdfView.zoom = pdfView.minZoom
+                }
+                .perform(
+                    ViewActions.pressKey(
+                        EspressoKey.Builder()
+                            .withKeyCode(KeyEvent.KEYCODE_0)
+                            .withCtrlPressed(true)
+                            .build()
+                    )
+                )
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+
+                    zoomAfter = pdfView.zoom
+                }
+            close()
+        }
+        Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(defaultZoom)
+    }
+
+    @Test
     fun testCtrlEquals_zoomsIn() {
         var zoomBefore = 0f
         var zoomAfter = 0f

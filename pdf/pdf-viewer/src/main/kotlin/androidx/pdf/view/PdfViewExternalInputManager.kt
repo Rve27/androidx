@@ -46,6 +46,14 @@ internal class PdfViewExternalInputManager(pdfView: PdfView) {
             return false
         }
         return when (event.keyCode) {
+            KeyEvent.KEYCODE_0,
+            KeyEvent.KEYCODE_NUMPAD_0 -> {
+                if (event.isCtrlPressed) {
+                    keyboardActionHandler.zoomToDefault()
+                    return true
+                }
+                false
+            }
             KeyEvent.KEYCODE_DPAD_DOWN -> {
                 keyboardActionHandler.scrollDown()
                 true
@@ -65,19 +73,17 @@ internal class PdfViewExternalInputManager(pdfView: PdfView) {
             KeyEvent.KEYCODE_MINUS -> {
                 if (event.isCtrlPressed) {
                     keyboardActionHandler.zoomOut()
-                    true
-                } else {
-                    false
+                    return true
                 }
+                false
             }
             KeyEvent.KEYCODE_EQUALS,
             KeyEvent.KEYCODE_PLUS -> {
                 if (event.isCtrlPressed) {
                     keyboardActionHandler.zoomIn()
-                    true
-                } else {
-                    false
+                    return true
                 }
+                false
             }
             else -> false
         }

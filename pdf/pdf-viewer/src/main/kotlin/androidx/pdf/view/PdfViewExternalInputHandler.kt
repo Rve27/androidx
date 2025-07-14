@@ -41,16 +41,16 @@ internal abstract class PdfViewExternalInputHandler(val pdfView: PdfView) {
         pdfView.scrollBy(-scrollAmount, 0)
     }
 
-    fun scrollUp() {
-        val scrollAmount =
-            ExternalInputUtils.calculateScroll(pdfView.viewportHeight, verticalScrollFactor)
-        pdfView.scrollBy(0, -scrollAmount)
-    }
-
     fun scrollRight() {
         val scrollAmount =
             ExternalInputUtils.calculateScroll(pdfView.viewportWidth, horizontalScrollFactor)
         pdfView.scrollBy(scrollAmount, 0)
+    }
+
+    fun scrollUp() {
+        val scrollAmount =
+            ExternalInputUtils.calculateScroll(pdfView.viewportHeight, verticalScrollFactor)
+        pdfView.scrollBy(0, -scrollAmount)
     }
 
     fun zoomIn(x: Float, y: Float) {
@@ -75,7 +75,7 @@ internal abstract class PdfViewExternalInputHandler(val pdfView: PdfView) {
         applyZoom(newZoom, x, y)
     }
 
-    private fun applyZoom(newZoom: Float, x: Float, y: Float) {
+    protected fun applyZoom(newZoom: Float, x: Float, y: Float) {
         val effectiveNewZoom = MathUtils.clamp(newZoom, pdfView.minZoom, pdfView.maxZoom)
         pdfView.zoomTo(effectiveNewZoom, x, y)
     }
