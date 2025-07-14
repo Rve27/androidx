@@ -97,7 +97,6 @@ internal data class InputConfigData(val width: Int, val height: Int, val format:
  * require the CameraCaptureSession to be finalized or updated.
  */
 internal interface OutputConfigurationWrapper : UnsafeWrapper {
-    val outputConfiguration: OutputConfiguration?
     /**
      * This method will return null if the output configuration was created without a Surface, and
      * until addSurface is called for the first time.
@@ -315,7 +314,6 @@ internal class AndroidOutputConfiguration(
         }
     }
 
-    override val outputConfiguration: OutputConfiguration = output
     override val surface: Surface? = output.surface
     override val surfaces: List<Surface>
         get() {

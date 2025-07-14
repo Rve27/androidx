@@ -19,6 +19,7 @@ package androidx.camera.camera2.pipe.compat
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CaptureRequest
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.RestrictTo
 import androidx.camera.camera2.pipe.CameraId
 import androidx.camera.camera2.pipe.internal.CameraErrorListener
@@ -29,20 +30,18 @@ import androidx.camera.camera2.pipe.internal.CameraErrorListener
  * This allows CameraPipe to interact with the setup object in a version-agnostic way.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-internal interface AndroidCameraDeviceSetupWrapper {
+internal interface Camera2DeviceSetupWrapper {
     fun createCaptureRequest(templateType: Int): CaptureRequest.Builder?
 }
 
-internal class AndroidCameraDeviceSetup(
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+internal class Camera2DeviceSetup(
     private val cameraDeviceSetup: CameraDevice.CameraDeviceSetup,
     private val cameraId: CameraId,
     private val cameraErrorListener: CameraErrorListener,
-) : AndroidCameraDeviceSetupWrapper {
-
+) : Camera2DeviceSetupWrapper {
     override fun createCaptureRequest(templateType: Int): CaptureRequest.Builder? =
         catchAndReportCameraExceptions(cameraId, cameraErrorListener) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-                Api35Compat.createCaptureRequest(cameraDeviceSetup, templateType)
-            } else null
+            cameraDeviceSetup.createCaptureRequest(templateType)
         }
 }

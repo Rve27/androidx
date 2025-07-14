@@ -571,16 +571,16 @@ internal object Api35Compat {
      *
      * @param cameraManager The framework CameraManager instance.
      * @param cameraId The ID of the camera to set up.
-     * @return An [AndroidCameraDeviceSetupWrapper] instance, or null if the setup fails.
+     * @return An [Camera2DeviceSetupWrapper] instance, or null if the setup fails.
      */
     @JvmStatic
     fun getCameraDeviceSetup(
         cameraManager: CameraManager,
         cameraId: CameraId,
         cameraErrorListener: CameraErrorListener,
-    ): AndroidCameraDeviceSetupWrapper {
+    ): Camera2DeviceSetupWrapper {
         val cameraDeviceSetup = cameraManager.getCameraDeviceSetup(cameraId.value)
-        return AndroidCameraDeviceSetup(cameraDeviceSetup, cameraId, cameraErrorListener)
+        return Camera2DeviceSetup(cameraDeviceSetup, cameraId, cameraErrorListener)
     }
 
     /**
@@ -598,16 +598,8 @@ internal object Api35Compat {
     @JvmStatic
     fun newSessionConfiguration(
         sessionType: Int,
-        outputs: List<OutputConfiguration?>,
+        outputs: List<OutputConfiguration>,
     ): SessionConfiguration {
         return SessionConfiguration(sessionType, outputs)
-    }
-
-    @JvmStatic
-    fun createCaptureRequest(
-        cameraDeviceSetup: CameraDevice.CameraDeviceSetup,
-        templateType: Int,
-    ): CaptureRequest.Builder {
-        return cameraDeviceSetup.createCaptureRequest(templateType)
     }
 }
