@@ -20,6 +20,9 @@ import android.graphics.Rect
 import android.graphics.Region
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -38,6 +41,7 @@ import androidx.compose.ui.platform.AndroidComposeViewAccessibilityDelegateCompa
 import androidx.compose.ui.platform.AndroidComposeViewAccessibilityDelegateCompat.Companion.ExtraDataShapeRectCornersKey
 import androidx.compose.ui.platform.AndroidComposeViewAccessibilityDelegateCompat.Companion.ExtraDataShapeRectKey
 import androidx.compose.ui.platform.AndroidComposeViewAccessibilityDelegateCompat.Companion.ExtraDataShapeRegionKey
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -45,7 +49,7 @@ import androidx.compose.ui.semantics.semanticsId
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -77,8 +81,8 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
         fun parameters() = ModifierVariant.entries.toTypedArray()
     }
 
-    @get:Rule val rule = createComposeRule()
-    private val tag = "semantics-test-tag"
+    @get:Rule val rule = createAndroidComposeRule<ComponentActivity>()
+    private val testTag = "semantics-test-tag"
     private lateinit var androidComposeView: AndroidComposeView
 
     @Test
@@ -87,12 +91,12 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             Box(
                 Modifier.size(10.dp)
                     .parameterizedGraphicsLayer(shape = RectangleShape, clip = true)
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
 
         rule
-            .onNodeWithTag(tag)
+            .onNodeWithTag(testTag)
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Shape, RectangleShape))
     }
 
@@ -102,11 +106,13 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             Box(
                 Modifier.size(10.dp)
                     .parameterizedGraphicsLayer(shape = RectangleShape, clip = false)
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
 
-        rule.onNodeWithTag(tag).assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Shape))
+        rule
+            .onNodeWithTag(testTag)
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Shape))
     }
 
     @Test
@@ -117,10 +123,10 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             Box(
                 Modifier.size(10.dp)
                     .parameterizedGraphicsLayer(shape = RectangleShape, clip = true)
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
 
         // Act.
@@ -147,10 +153,10 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
                         shape = RoundedCornerShape(1.dp, 2.dp, 3.dp, 4.dp),
                         clip = true,
                     )
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
 
         // Act.
@@ -192,10 +198,10 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             Box(
                 Modifier.size(10.dp)
                     .parameterizedGraphicsLayer(shape = CutCornerShape(2.dp), clip = true)
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
 
         // Act.
@@ -222,11 +228,11 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
                         .padding(horizontal = 1.dp, vertical = 2.dp)
                         .parameterizedGraphicsLayer(shape = RectangleShape, clip = true)
                         .padding(2.dp)
-                        .testTag(tag)
+                        .testTag(testTag)
                 )
             }
         }
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
 
         // Act.
@@ -256,11 +262,11 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
                             clip = true,
                         )
                         .padding(2.dp)
-                        .testTag(tag)
+                        .testTag(testTag)
                 )
             }
         }
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
 
         // Act.
@@ -305,11 +311,11 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
                         .padding(horizontal = 1.dp, vertical = 2.dp)
                         .parameterizedGraphicsLayer(shape = CutCornerShape(2.dp), clip = true)
                         .padding(2.dp)
-                        .testTag(tag)
+                        .testTag(testTag)
                 )
             }
         }
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
 
         // Act.
@@ -333,10 +339,10 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             Box(
                 Modifier.size(10.dp)
                     .parameterizedGraphicsLayer(shape = InsetRectangle(insetPx = 1), clip = true)
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
 
         // Act.
@@ -372,11 +378,11 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
                             clip = true,
                         )
                         .padding(2.dp)
-                        .testTag(tag)
+                        .testTag(testTag)
                 )
             }
         }
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
 
         // Act.
@@ -407,10 +413,10 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
                 Modifier.size(10.dp)
                     .offset(x = (-5).dp)
                     .parameterizedGraphicsLayer(shape = RectangleShape, clip = true)
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
 
         // Act.
@@ -428,6 +434,55 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
 
     @Test
     @SdkSuppress(minSdkVersion = 26)
+    fun viewInterop_shapePositionRespectsHostViewPosition() {
+        // Arrange.
+        rule.activityRule.scenario.onActivity { activity ->
+            val paddedRootView =
+                FrameLayout(activity).apply {
+                    val padding = 10.dp.toPxInt(rule.density)
+                    setPadding(padding, padding, padding, padding)
+                    setBackgroundColor(android.graphics.Color.MAGENTA)
+                }
+            val composeHostView =
+                ComposeView(activity).apply {
+                    setContent {
+                        androidComposeView = LocalView.current as AndroidComposeView
+                        with(androidComposeView.composeAccessibilityDelegate) {
+                            accessibilityForceEnabledForTesting = true
+                            onSendAccessibilityEvent = { false }
+                        }
+                        Box(Modifier.size(100.dp).padding(10.dp).background(Color.Green)) {
+                            Box(
+                                Modifier.size(10.dp)
+                                    .padding(horizontal = 1.dp, vertical = 2.dp)
+                                    .parameterizedGraphicsLayer(shape = RectangleShape, clip = true)
+                                    .padding(2.dp)
+                                    .testTag(testTag)
+                            )
+                        }
+                    }
+                }
+            paddedRootView.addView(composeHostView)
+            activity.setContentView(paddedRootView)
+        }
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
+        val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
+
+        // Act.
+        addExtraDataToAccessibilityNodeInfo(virtualViewId, info, ExtraDataShapeRectKey)
+
+        // Assert.
+        rule.runOnIdle {
+            assertThat(info.extras.containsKey(ExtraDataShapeRectKey)).isTrue()
+            info.extras
+                .getRectParcelable(ExtraDataShapeRectKey)
+                .toScreenBounds(info.boundsInScreen)
+                .assertBoundsEqualTo(left = 21.dp, top = 22.dp, right = 29.dp, bottom = 28.dp)
+        }
+    }
+
+    @Test
+    @SdkSuppress(minSdkVersion = 26)
     fun multipleShapes_outerShapeWins() {
         // Arrange.
         rule.setContentWithAccessibilityEnabled {
@@ -437,10 +492,10 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
                     .parameterizedGraphicsLayer(shape = CutCornerShape(2.dp), clip = true)
                     .padding(2.dp)
                     .parameterizedGraphicsLayer(shape = RectangleShape, clip = true)
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
 
         // Act.
@@ -465,11 +520,13 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             Box(
                 Modifier.size(10.dp)
                     .parameterizedGraphicsLayer(shape = RoundedCornerShape(1.dp), clip = shouldClip)
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
-        rule.onNodeWithTag(tag).assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Shape))
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        rule
+            .onNodeWithTag(testTag)
+            .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Shape))
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
         addExtraDataToAccessibilityNodeInfo(virtualViewId, info, ExtraDataShapeRectKey)
         rule.runOnIdle {
@@ -487,7 +544,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
 
         // Assert.
         rule
-            .onNodeWithTag(tag)
+            .onNodeWithTag(testTag)
             .assert(
                 SemanticsMatcher.expectValue(SemanticsProperties.Shape, RoundedCornerShape(1.dp))
             )
@@ -508,13 +565,13 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             Box(
                 Modifier.size(10.dp)
                     .parameterizedGraphicsLayer(shape = currentShape, clip = true)
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
         rule
-            .onNodeWithTag(tag)
+            .onNodeWithTag(testTag)
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Shape, RectangleShape))
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
         addExtraDataToAccessibilityNodeInfo(virtualViewId, info, ExtraDataShapeRectKey)
         rule.runOnIdle {
@@ -530,7 +587,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
 
         // Assert.
         rule
-            .onNodeWithTag(tag)
+            .onNodeWithTag(testTag)
             .assert(
                 SemanticsMatcher.expectValue(SemanticsProperties.Shape, RoundedCornerShape(1.dp))
             )
@@ -551,15 +608,15 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             Box(
                 Modifier.size(10.dp)
                     .parameterizedGraphicsLayer(shape = currentShape, clip = true)
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
         rule
-            .onNodeWithTag(tag)
+            .onNodeWithTag(testTag)
             .assert(
                 SemanticsMatcher.expectValue(SemanticsProperties.Shape, RoundedCornerShape(1.dp))
             )
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
         addExtraDataToAccessibilityNodeInfo(virtualViewId, info, ExtraDataShapeRectKey)
         addExtraDataToAccessibilityNodeInfo(virtualViewId, info, ExtraDataShapeRectCornersKey)
@@ -578,7 +635,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
 
         // Assert.
         rule
-            .onNodeWithTag(tag)
+            .onNodeWithTag(testTag)
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Shape, RectangleShape))
         rule.runOnIdle {
             assertThat(info2.availableExtraData.contains(ExtraDataShapeRectKey)).isTrue()
@@ -596,15 +653,15 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             Box(
                 Modifier.size(10.dp)
                     .parameterizedGraphicsLayer(shape = currentShape, clip = true)
-                    .testTag(tag)
+                    .testTag(testTag)
             )
         }
         rule
-            .onNodeWithTag(tag)
+            .onNodeWithTag(testTag)
             .assert(
                 SemanticsMatcher.expectValue(SemanticsProperties.Shape, RoundedCornerShape(1.dp))
             )
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
         addExtraDataToAccessibilityNodeInfo(virtualViewId, info, ExtraDataShapeRectKey)
         addExtraDataToAccessibilityNodeInfo(virtualViewId, info, ExtraDataShapeRectCornersKey)
@@ -624,7 +681,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
 
         // Assert.
         rule
-            .onNodeWithTag(tag)
+            .onNodeWithTag(testTag)
             .assert(SemanticsMatcher.expectValue(SemanticsProperties.Shape, CutCornerShape(1.dp)))
         rule.runOnIdle {
             assertThat(info2.availableExtraData.contains(ExtraDataShapeRegionKey)).isTrue()
@@ -640,9 +697,9 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
         // Arrange.
         var alpha by mutableStateOf(0f)
         rule.setContentWithAccessibilityEnabled {
-            Box(Modifier.size(10.dp).parameterizedGraphicsLayer(alpha = alpha).testTag(tag))
+            Box(Modifier.size(10.dp).parameterizedGraphicsLayer(alpha = alpha).testTag(testTag))
         }
-        val virtualViewId = rule.onNodeWithTag(tag).semanticsId()
+        val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
         rule.runOnIdle { assertThat(info.isVisibleToUser).isFalse() }
 
@@ -736,6 +793,8 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             getBoundsInScreen(boundsInScreen)
             return boundsInScreen
         }
+
+    private fun Dp.toPxInt(density: Density): Int = with(density) { this@toPxInt.toPx().toInt() }
 
     private fun Rect.toScreenBounds(nodeBoundsInScreen: Rect): Rect = apply {
         offset(nodeBoundsInScreen.left, nodeBoundsInScreen.top)
