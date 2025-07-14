@@ -16,6 +16,7 @@
 
 package androidx.xr.compose.integration.layout.animationexplorationapp
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,6 +24,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,6 +57,9 @@ import androidx.xr.compose.subspace.layout.testTag
 import androidx.xr.compose.subspace.layout.width
 
 class AnimationExplorationApp : ComponentActivity() {
+    private inline fun <reified T : ComponentActivity> startActivity() {
+        startActivity(Intent(this, T::class.java))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +79,17 @@ class AnimationExplorationApp : ComponentActivity() {
                         .border(width = 3.dp, color = Color.Black),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(text = "Main Panel content")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement =
+                        Arrangement.spacedBy(20.dp, alignment = Alignment.CenterVertically),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(text = "Main Panel content")
+                    Button(onClick = { startActivity<SampleAnimationsActivity>() }) {
+                        Text("Show sample animations")
+                    }
+                }
             }
 
             // 3D content.
