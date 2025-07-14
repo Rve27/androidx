@@ -51,7 +51,7 @@ public final class TileData extends ProtoParcelable {
                     (bytes, extras, version) -> new TileData(bytes, extras, version));
 
     public TileData(byte @NonNull [] tile, int version) {
-        super(tile, version);
+        this(tile, /* extras= */ null, version);
     }
 
     public TileData(byte @NonNull [] tile, @Nullable Bundle extras, int version) {
