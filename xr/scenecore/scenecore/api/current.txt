@@ -627,7 +627,6 @@ package androidx.xr.scenecore {
   }
 
   public final class SpatialEnvironment {
-    ctor public SpatialEnvironment(androidx.xr.runtime.internal.JxrPlatformAdapter runtime);
     method public void addOnPassthroughOpacityChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Float> listener);
     method public void addOnPassthroughOpacityChangedListener(java.util.function.Consumer<java.lang.Float> listener);
     method public void addOnSpatialEnvironmentChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Boolean> listener);
