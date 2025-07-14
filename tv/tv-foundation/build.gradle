@@ -36,7 +36,7 @@ dependencies {
     api(libs.kotlinStdlib)
     api("androidx.annotation:annotation:1.9.1")
 
-    val composeVersion = "1.7.6"
+    def composeVersion = "1.7.6"
     api("androidx.compose.foundation:foundation:$composeVersion")
     api("androidx.compose.runtime:runtime:$composeVersion")
     api("androidx.compose.ui:ui:$composeVersion")
@@ -60,7 +60,7 @@ android {
 androidx {
     name = "TV Foundation"
     type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
-    mavenVersion = LibraryVersions["TV"]
+    mavenVersion = LibraryVersions.TV
     inceptionYear = "2022"
     description = "This library makes it easier for developers" +
             "to write Jetpack Compose applications for TV devices by providing " +

@@ -37,7 +37,7 @@ dependencies {
 
     api("androidx.annotation:annotation:1.9.1")
 
-    val composeVersion = "1.8.2"
+    def composeVersion = "1.8.2"
     api("androidx.compose.animation:animation:$composeVersion")
     api("androidx.compose.foundation:foundation:$composeVersion")
     api("androidx.compose.foundation:foundation-layout:$composeVersion")
@@ -67,7 +67,7 @@ android {
 androidx {
     name = "TV Material"
     type = SoftwareType.PUBLISHED_LIBRARY_ONLY_USED_BY_KOTLIN_CONSUMERS
-    mavenVersion = LibraryVersions["TV_MATERIAL"]
+    mavenVersion = LibraryVersions.TV_MATERIAL
     inceptionYear = "2022"
     description = "build TV applications using controls that adhere to Material Design Language."
     legacyDisableKotlinStrictApiMode = true
