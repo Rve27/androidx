@@ -98,7 +98,7 @@ import kotlinx.coroutines.withTimeout
  *   but assistive-tech users will need to swipe or drag to get to the first element of the
  *   component.
  * @param enableUserInput [Boolean] which determines if this TooltipBox will handle long press and
- *   mouse hover to trigger the tooltip through the state provided.
+ *   mouse hover, and keyboard focus to trigger the tooltip through the state provided.
  * @param content the composable that the tooltip will anchor to.
  */
 @Deprecated(
@@ -290,8 +290,8 @@ fun TooltipBox(
  *   but assistive-tech users will need to swipe or drag to get to the first element of the
  *   component. For certain a11y cases, such as when the tooltip has an action and Talkback is on,
  *   focusable will be forced to true to allow for the correct a11y behavior.
- * @param enableUserInput [Boolean] which determines if this TooltipBox will handle long press and
- *   mouse hover to trigger the tooltip through the state provided.
+ * @param enableUserInput [Boolean] which determines if this TooltipBox will handle long press and,
+ *   mouse hover, and keyboard focus to trigger the tooltip through the state provided.
  * @param hasAction whether the associated tooltip contains an action.
  * @param content the composable that the tooltip will anchor to.
  */
@@ -1197,6 +1197,9 @@ private class TooltipStateImpl(
     /** Dismiss the tooltip associated with this [TooltipState] if it's currently being shown. */
     override fun dismiss() {
         transition.targetState = false
+        if (isPersistent) {
+            job?.cancel()
+        }
     }
 
     /** Cleans up [mutatorMutex] when the tooltip associated with this state leaves Composition. */
