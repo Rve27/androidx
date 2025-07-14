@@ -50,10 +50,8 @@ import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.android.controller.ActivityController
-import org.robolectric.annotation.LooperMode
 
 @RunWith(AndroidJUnit4::class)
-@LooperMode(LooperMode.Mode.PAUSED)
 class SessionTest {
     private lateinit var underTest: Session
     private lateinit var activityController: ActivityController<ComponentActivity>
