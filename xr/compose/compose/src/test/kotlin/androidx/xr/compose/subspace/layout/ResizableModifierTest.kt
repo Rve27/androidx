@@ -51,11 +51,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/**
- * Tests for [Resizable] modifier.
- *
- * TODO(b/354723161): Add tests for minimum and maximum size.
- */
+/** Tests for [Resizable] modifier. */
 @RunWith(AndroidJUnit4::class)
 class ResizableModifierTest {
     @get:Rule val composeTestRule = createAndroidComposeRule<SubspaceTestingActivity>()
