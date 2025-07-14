@@ -99,7 +99,7 @@ class UserInteractionBenchmark(private val ciTestConfigType: String, private val
                     ), // for sandbox process
                     SdkSandboxCrossProcessLatencyMetric(
                         beginPointName = "ContentView#onTouchEvent",
-                        endPointName = "ProviderViewWrapper#scheduleMotionEventProcessing",
+                        endPointName = "BinderAdapterDelegate#notifyMotionEvent",
                         eventName = eventName,
                     ),
                 ),

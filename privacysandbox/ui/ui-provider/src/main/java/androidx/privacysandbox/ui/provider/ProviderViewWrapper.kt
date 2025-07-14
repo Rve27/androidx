@@ -24,7 +24,6 @@ import android.view.MotionEvent
 import android.widget.FrameLayout
 import androidx.annotation.RequiresApi
 import androidx.privacysandbox.ui.core.IMotionEventTransferCallback
-import androidx.tracing.trace
 
 /**
  * A container [FrameLayout] that wraps the provider content view.
@@ -83,7 +82,6 @@ internal class ProviderViewWrapper(context: Context) : FrameLayout(context) {
             }
         dispatchMessage.isAsynchronous = true
 
-        trace("ProviderViewWrapper#scheduleMotionEventProcessing", {})
         eventDispatchHandler?.sendMessageAtTime(
             dispatchMessage,
             eventTargetFrameTime + TRANSFERRED_EVENT_DISPATCH_DELAY_MS,
