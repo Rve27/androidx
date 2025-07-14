@@ -29,6 +29,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.action.EspressoKey
 import androidx.test.espresso.action.GeneralLocation
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.matcher.ViewMatchers
@@ -71,45 +72,6 @@ class PdfViewExternalInputTest {
     fun tearDown() {
         PdfViewTestActivity.onCreateCallback = {}
         PdfFeatureFlags.isExternalHardwareInteractionEnabled = false
-    }
-
-    @Test
-    fun testDpadUp_scrollsUp() {
-        var scrollBefore = Point(Int.MAX_VALUE, Int.MAX_VALUE)
-        var scrollAfter = Point(Int.MIN_VALUE, Int.MIN_VALUE)
-        var viewportHeight = 0
-        val initialScrollY = 500
-
-        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
-            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
-                .check { view, _ ->
-                    val pdfView = view as PdfView
-                    // Request focus to receive key events.
-                    pdfView.post { pdfView.requestFocus() }
-                    // Zoom in to ensure the content is larger than the view, making it scrollable.
-                    pdfView.zoom = 2.0f
-                    // Scroll down initially so there is space to scroll up.
-                    pdfView.scrollTo(pdfView.scrollX, initialScrollY)
-                    scrollBefore = Point(pdfView.scrollX, pdfView.scrollY)
-                    viewportHeight = pdfView.viewportHeight
-                }
-                .perform(ViewActions.pressKey(KeyEvent.KEYCODE_DPAD_UP))
-                .check { view, _ ->
-                    val pdfView = view as PdfView
-                    scrollAfter = Point(pdfView.scrollX, pdfView.scrollY)
-                }
-            close()
-        }
-
-        // Calculate the expected scroll distance based on the helper utility.
-        val expectedScrollDelta =
-            ExternalInputUtils.calculateScroll(viewportHeight, KEYBOARD_VERTICAL_SCROLL_FACTOR)
-
-        // Verify that the view scrolled vertically by the correct amount.
-        Truth.assertThat(scrollAfter.y - scrollBefore.y).isEqualTo(-expectedScrollDelta)
-
-        // Verify that the view did not scroll horizontally.
-        Truth.assertThat(scrollAfter.x).isEqualTo(scrollBefore.x)
     }
 
     @Test
@@ -228,7 +190,7 @@ class PdfViewExternalInputTest {
     }
 
     @Test
-    fun testMouseScrollUp_scrollsUp() {
+    fun testDpadUp_scrollsUp() {
         var scrollBefore = Point(Int.MAX_VALUE, Int.MAX_VALUE)
         var scrollAfter = Point(Int.MIN_VALUE, Int.MIN_VALUE)
         var viewportHeight = 0
@@ -238,6 +200,8 @@ class PdfViewExternalInputTest {
             Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
                 .check { view, _ ->
                     val pdfView = view as PdfView
+                    // Request focus to receive key events.
+                    pdfView.post { pdfView.requestFocus() }
                     // Zoom in to ensure the content is larger than the view, making it scrollable.
                     pdfView.zoom = 2.0f
                     // Scroll down initially so there is space to scroll up.
@@ -245,8 +209,7 @@ class PdfViewExternalInputTest {
                     scrollBefore = Point(pdfView.scrollX, pdfView.scrollY)
                     viewportHeight = pdfView.viewportHeight
                 }
-                // Positive vscroll for scroll up
-                .perform(scrollMouseWheel(1.0f, 0f))
+                .perform(ViewActions.pressKey(KeyEvent.KEYCODE_DPAD_UP))
                 .check { view, _ ->
                     val pdfView = view as PdfView
                     scrollAfter = Point(pdfView.scrollX, pdfView.scrollY)
@@ -256,10 +219,11 @@ class PdfViewExternalInputTest {
 
         // Calculate the expected scroll distance based on the helper utility.
         val expectedScrollDelta =
-            ExternalInputUtils.calculateScroll(viewportHeight, MOUSE_VERTICAL_SCROLL_FACTOR)
+            ExternalInputUtils.calculateScroll(viewportHeight, KEYBOARD_VERTICAL_SCROLL_FACTOR)
 
         // Verify that the view scrolled vertically by the correct amount.
         Truth.assertThat(scrollAfter.y - scrollBefore.y).isEqualTo(-expectedScrollDelta)
+
         // Verify that the view did not scroll horizontally.
         Truth.assertThat(scrollAfter.x).isEqualTo(scrollBefore.x)
     }
@@ -301,43 +265,6 @@ class PdfViewExternalInputTest {
     }
 
     @Test
-    fun testMouseScrollRight_scrollsRight() {
-        var scrollBefore = Point(Int.MAX_VALUE, Int.MAX_VALUE)
-        var scrollAfter = Point(Int.MIN_VALUE, Int.MIN_VALUE)
-        var viewportWidth = 0
-
-        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
-            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
-                .check { view, _ ->
-                    val pdfView = view as PdfView
-                    // Zoom in to ensure the content is larger than the view, making it scrollable.
-                    pdfView.zoom = 2.0f
-                    // Ensure we are at the far left to have space to scroll right.
-                    pdfView.scrollTo(0, pdfView.scrollY)
-                    scrollBefore = Point(pdfView.scrollX, pdfView.scrollY)
-                    viewportWidth = pdfView.viewportWidth
-                }
-                // Positive hscroll for scroll right
-                .perform(scrollMouseWheel(0f, 1.0f))
-                .check { view, _ ->
-                    val pdfView = view as PdfView
-                    scrollAfter = Point(pdfView.scrollX, pdfView.scrollY)
-                }
-            close()
-        }
-
-        // Calculate the expected scroll distance based on the helper utility.
-        val expectedScrollDelta =
-            ExternalInputUtils.calculateScroll(viewportWidth, MOUSE_HORIZONTAL_SCROLL_FACTOR)
-
-        // Verify that the view scrolled horizontally by the correct amount.
-        Truth.assertThat(scrollAfter.x - scrollBefore.x).isEqualTo(expectedScrollDelta)
-
-        // Verify that the view did not scroll vertically.
-        Truth.assertThat(scrollAfter.y).isEqualTo(scrollBefore.y)
-    }
-
-    @Test
     fun testMouseScrollLeft_scrollsLeft() {
         var scrollBefore = Point(Int.MAX_VALUE, Int.MAX_VALUE)
         var scrollAfter = Point(Int.MIN_VALUE, Int.MIN_VALUE)
@@ -375,7 +302,262 @@ class PdfViewExternalInputTest {
         Truth.assertThat(scrollAfter.y).isEqualTo(scrollBefore.y)
     }
 
-    private fun scrollMouseWheel(vscroll: Float, hscroll: Float): ViewAction {
+    @Test
+    fun testMouseScrollRight_scrollsRight() {
+        var scrollBefore = Point(Int.MAX_VALUE, Int.MAX_VALUE)
+        var scrollAfter = Point(Int.MIN_VALUE, Int.MIN_VALUE)
+        var viewportWidth = 0
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    // Zoom in to ensure the content is larger than the view, making it scrollable.
+                    pdfView.zoom = 2.0f
+                    // Ensure we are at the far left to have space to scroll right.
+                    pdfView.scrollTo(0, pdfView.scrollY)
+                    scrollBefore = Point(pdfView.scrollX, pdfView.scrollY)
+                    viewportWidth = pdfView.viewportWidth
+                }
+                // Positive hscroll for scroll right
+                .perform(scrollMouseWheel(0f, 1.0f))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    scrollAfter = Point(pdfView.scrollX, pdfView.scrollY)
+                }
+            close()
+        }
+
+        // Calculate the expected scroll distance based on the helper utility.
+        val expectedScrollDelta =
+            ExternalInputUtils.calculateScroll(viewportWidth, MOUSE_HORIZONTAL_SCROLL_FACTOR)
+
+        // Verify that the view scrolled horizontally by the correct amount.
+        Truth.assertThat(scrollAfter.x - scrollBefore.x).isEqualTo(expectedScrollDelta)
+
+        // Verify that the view did not scroll vertically.
+        Truth.assertThat(scrollAfter.y).isEqualTo(scrollBefore.y)
+    }
+
+    @Test
+    fun testMouseScrollUp_scrollsUp() {
+        var scrollBefore = Point(Int.MAX_VALUE, Int.MAX_VALUE)
+        var scrollAfter = Point(Int.MIN_VALUE, Int.MIN_VALUE)
+        var viewportHeight = 0
+        val initialScrollY = 500
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    // Zoom in to ensure the content is larger than the view, making it scrollable.
+                    pdfView.zoom = 2.0f
+                    // Scroll down initially so there is space to scroll up.
+                    pdfView.scrollTo(pdfView.scrollX, initialScrollY)
+                    scrollBefore = Point(pdfView.scrollX, pdfView.scrollY)
+                    viewportHeight = pdfView.viewportHeight
+                }
+                // Positive vscroll for scroll up
+                .perform(scrollMouseWheel(1.0f, 0f))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    scrollAfter = Point(pdfView.scrollX, pdfView.scrollY)
+                }
+            close()
+        }
+
+        // Calculate the expected scroll distance based on the helper utility.
+        val expectedScrollDelta =
+            ExternalInputUtils.calculateScroll(viewportHeight, MOUSE_VERTICAL_SCROLL_FACTOR)
+
+        // Verify that the view scrolled vertically by the correct amount.
+        Truth.assertThat(scrollAfter.y - scrollBefore.y).isEqualTo(-expectedScrollDelta)
+        // Verify that the view did not scroll horizontally.
+        Truth.assertThat(scrollAfter.x).isEqualTo(scrollBefore.x)
+    }
+
+    @Test
+    fun testCtrlEquals_zoomsIn() {
+        var zoomBefore = 0f
+        var zoomAfter = 0f
+        var maxZoom = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    zoomBefore = pdfView.zoom
+                }
+                .perform(
+                    ViewActions.pressKey(
+                        EspressoKey.Builder()
+                            .withKeyCode(KeyEvent.KEYCODE_EQUALS)
+                            .withCtrlPressed(true)
+                            .build()
+                    )
+                )
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+
+                    zoomAfter = pdfView.zoom
+                    maxZoom = pdfView.maxZoom
+                }
+            close()
+        }
+
+        // zoomAfter should be greater than zoomBefore only if zoomBefore is smaller than maxZoom
+        if (zoomBefore < maxZoom) {
+            Truth.assertThat(zoomAfter).isGreaterThan(zoomBefore)
+        } else {
+            Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(maxZoom)
+        }
+    }
+
+    @Test
+    fun testCtrlPlus_zoomsIn() {
+        var zoomBefore = 0f
+        var zoomAfter = 0f
+        var maxZoom = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    zoomBefore = pdfView.zoom
+                }
+                .perform(
+                    ViewActions.pressKey(
+                        EspressoKey.Builder()
+                            .withKeyCode(KeyEvent.KEYCODE_PLUS)
+                            .withCtrlPressed(true)
+                            .build()
+                    )
+                )
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+
+                    zoomAfter = pdfView.zoom
+                    maxZoom = pdfView.maxZoom
+                }
+            close()
+        }
+
+        // zoomAfter should be greater than zoomBefore only if zoomBefore is smaller than maxZoom
+        if (zoomBefore < maxZoom) {
+            Truth.assertThat(zoomAfter).isGreaterThan(zoomBefore)
+        } else {
+            Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(maxZoom)
+        }
+    }
+
+    @Test
+    fun testCtrlMinus_zoomsOut() {
+        var zoomBefore = 0f
+        var zoomAfter = 0f
+        var minZoom = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    zoomBefore = pdfView.zoom
+                }
+                .perform(
+                    ViewActions.pressKey(
+                        EspressoKey.Builder()
+                            .withKeyCode(KeyEvent.KEYCODE_MINUS)
+                            .withCtrlPressed(true)
+                            .build()
+                    )
+                )
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+
+                    zoomAfter = pdfView.zoom
+                    minZoom = pdfView.minZoom
+                }
+            close()
+        }
+
+        // zoomAfter should be smaller than zoomBefore only if zoomBefore is greater than minZoom
+        if (zoomBefore > minZoom) {
+            Truth.assertThat(zoomBefore).isGreaterThan(zoomAfter)
+        } else {
+            Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(minZoom)
+        }
+    }
+
+    @Test
+    fun testCtrlPlusMouseScrollDown_zoomsIn() {
+        var zoomBefore = 0f
+        var zoomAfter = 0f
+        var maxZoom = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    zoomBefore = pdfView.zoom
+                }
+                .perform(scrollMouseWheel(-1.0f, 0f, KeyEvent.META_CTRL_ON))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+
+                    zoomAfter = pdfView.zoom
+                    maxZoom = pdfView.maxZoom
+                }
+            close()
+        }
+
+        // zoomAfter should be greater than zoomBefore only if zoomBefore is smaller than maxZoom
+        if (zoomBefore < maxZoom) {
+            Truth.assertThat(zoomAfter).isGreaterThan(zoomBefore)
+        } else {
+            Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(maxZoom)
+        }
+    }
+
+    @Test
+    fun testCtrlPlusMouseScrollUp_zoomsOut() {
+        var zoomBefore = 0f
+        var zoomAfter = 0f
+        var minZoom = 0f
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+
+                    zoomBefore = pdfView.zoom
+                }
+                .perform(scrollMouseWheel(1.0f, 0f, KeyEvent.META_CTRL_ON))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+
+                    zoomAfter = pdfView.zoom
+                    minZoom = pdfView.minZoom
+                }
+            close()
+        }
+
+        // zoomAfter should be smaller than zoomBefore only if zoomBefore is greater than minZoom
+        if (zoomBefore > minZoom) {
+            Truth.assertThat(zoomBefore).isGreaterThan(zoomAfter)
+        } else {
+            Truth.assertThat(zoomAfter).isWithin(ZOOM_DIFFERENCE_TOLERANCE).of(minZoom)
+        }
+    }
+
+    private fun scrollMouseWheel(vscroll: Float, hscroll: Float, metaState: Int = 0): ViewAction {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View> {
                 return ViewMatchers.isAssignableFrom(PdfView::class.java)
@@ -406,7 +588,7 @@ class PdfViewExternalInputTest {
                         1, // pointerCount
                         pointerProperties,
                         pointerCoords,
-                        0, // metaState
+                        metaState,
                         0, // buttonState
                         1f, // xPrecision
                         1f, // yPrecision
@@ -423,6 +605,7 @@ class PdfViewExternalInputTest {
     private companion object {
         /** Arbitrary fixed ID for PdfView */
         private const val PDF_VIEW_ID = 123456789
+        private const val ZOOM_DIFFERENCE_TOLERANCE = 0.001f
         const val KEYBOARD_VERTICAL_SCROLL_FACTOR = 20
         const val KEYBOARD_HORIZONTAL_SCROLL_FACTOR = 20
         const val MOUSE_VERTICAL_SCROLL_FACTOR = 14
