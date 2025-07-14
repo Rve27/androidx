@@ -437,7 +437,7 @@ public abstract class TileService extends Service {
                                             callback.updateTileData(
                                                     new TileData(
                                                             tile.toByteArray(),
-                                                            TileData.VERSION_PROTOBUF));
+                                                            TileData.VERSION_PROTOBUF_1));
                                         } catch (ExecutionException
                                                 | InterruptedException
                                                 | CancellationException ex) {
