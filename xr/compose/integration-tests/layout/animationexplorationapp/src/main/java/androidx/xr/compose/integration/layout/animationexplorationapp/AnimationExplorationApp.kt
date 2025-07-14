@@ -53,7 +53,6 @@ import androidx.xr.compose.subspace.layout.offset
 import androidx.xr.compose.subspace.layout.scale
 import androidx.xr.compose.subspace.layout.testTag
 import androidx.xr.compose.subspace.layout.width
-import kotlinx.coroutines.launch
 
 class AnimationExplorationApp : ComponentActivity() {
 
@@ -65,7 +64,7 @@ class AnimationExplorationApp : ComponentActivity() {
             val toggleSidePanel: () -> Unit = { updateShowSidePanel(!showSidePanel) }
             val desiredWidth = 300.dp
             val desiredHeight = 150.dp
-            val zOffset = -30.dp
+            val zOffset = (-30).dp
 
             // Main Panel content.
             Box(
@@ -85,7 +84,16 @@ class AnimationExplorationApp : ComponentActivity() {
                     val mainPanelAnimatedScale = remember { Animatable(1.0f) }
 
                     LaunchedEffect(Unit) {
-                        launch { animatedAlpha.animateTo(1.0f, animationSpec = tween(2000)) }
+                        animatedAlpha.animateTo(1.0f, animationSpec = tween(2000))
+                    }
+                    LaunchedEffect(showSidePanel) {
+                        if (showSidePanel) {
+                            mainPanelAnimatedScale.animateTo(0.01f, animationSpec = tween(10))
+                            mainPanelAnimatedScale.animateTo(2.0f, animationSpec = tween(2000))
+                            mainPanelAnimatedScale.animateTo(1.0f, animationSpec = tween(2000))
+                        } else {
+                            mainPanelAnimatedScale.animateTo(1.0f, animationSpec = tween(500))
+                        }
                     }
 
                     SpatialMainPanel(
@@ -115,14 +123,7 @@ class AnimationExplorationApp : ComponentActivity() {
 
                     if (showSidePanel) {
                         val sidePanelAnimatedScale = remember { Animatable(0.01f) }
-
-                        LaunchedEffect(Unit) {
-                            mainPanelAnimatedScale.animateTo(0.01f, animationSpec = tween(10))
-                            mainPanelAnimatedScale.animateTo(2.0f, animationSpec = tween(2000))
-                            mainPanelAnimatedScale.animateTo(1.0f, animationSpec = tween(2000))
-                        }
-
-                        LaunchedEffect(Unit) {
+                        LaunchedEffect(true) {
                             sidePanelAnimatedScale.animateTo(2.0f, animationSpec = tween(2000))
                             sidePanelAnimatedScale.animateTo(1.0f, animationSpec = tween(2000))
                         }
