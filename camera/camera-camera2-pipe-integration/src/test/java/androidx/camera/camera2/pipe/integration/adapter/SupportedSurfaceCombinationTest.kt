@@ -62,6 +62,7 @@ import androidx.camera.camera2.pipe.integration.internal.HDR10_UNCONSTRAINED
 import androidx.camera.camera2.pipe.integration.internal.HLG10_CONSTRAINED
 import androidx.camera.camera2.pipe.integration.internal.HLG10_SDR_CONSTRAINED
 import androidx.camera.camera2.pipe.integration.internal.HLG10_UNCONSTRAINED
+import androidx.camera.camera2.pipe.integration.internal.HighSpeedResolver
 import androidx.camera.camera2.pipe.integration.internal.LATENCY_NONE
 import androidx.camera.camera2.pipe.integration.internal.StreamUseCaseUtil
 import androidx.camera.camera2.pipe.testing.FakeCameraBackend
@@ -3970,6 +3971,26 @@ class SupportedSurfaceCombinationTest {
             useCaseExpectedResultMap,
             useCasesOutputSizesMap = useCasesOutputSizesMap,
             compareExpectedFps = Range.create(240, 240),
+        )
+    }
+
+    @Config(minSdk = Build.VERSION_CODES.M)
+    @Test
+    fun getSuggestedStreamSpec_highSpeed_noTargetFps_useDefaultFps() {
+        val sessionType = SESSION_TYPE_HIGH_SPEED
+        val previewUseCase = createUseCase(CaptureType.PREVIEW, sessionType = sessionType)
+        val videoUseCase = createUseCase(CaptureType.VIDEO_CAPTURE, sessionType = sessionType)
+        val useCasesOutputSizesMap =
+            mapOf(
+                previewUseCase to listOf(RESOLUTION_720P),
+                videoUseCase to listOf(RESOLUTION_720P),
+            )
+        val useCaseExpectedResultMap =
+            mapOf(previewUseCase to RESOLUTION_720P, videoUseCase to RESOLUTION_720P)
+        getSuggestedSpecsAndVerifyForHighSpeed(
+            useCaseExpectedResultMap,
+            useCasesOutputSizesMap = useCasesOutputSizesMap,
+            compareExpectedFps = HighSpeedResolver.DEFAULT_FPS,
         )
     }
 
