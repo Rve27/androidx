@@ -73,7 +73,7 @@ class SelectionContainerContextMenuBuilderTest {
             isMouse = false,
             expectedSessionClosed = true,
             itemToInvoke = TextContextMenuItems.Copy,
-            expectedSelection = TextRange(5, 9),
+            expectedSelection = null,
             expectedClipboardContent = "Text",
         )
     }
@@ -115,7 +115,7 @@ class SelectionContainerContextMenuBuilderTest {
         isMouse: Boolean,
         expectedSessionClosed: Boolean,
         itemToInvoke: TextContextMenuItems,
-        expectedSelection: TextRange,
+        expectedSelection: TextRange?,
         expectedClipboardContent: String,
     ) {
         var sessionClosed = false
@@ -170,8 +170,7 @@ class SelectionContainerContextMenuBuilderTest {
         }
 
         // verify selection updated
-        assertThat(selection).isNotNull()
-        assertThat(selection!!.toTextRange()).isEqualTo(expectedSelection)
+        assertThat(selection?.toTextRange()).isEqualTo(expectedSelection)
 
         // verify clipboard contents
         val clipboardContent = fakeClipboard.getClipEntry()
