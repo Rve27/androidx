@@ -17,12 +17,19 @@
 package androidx.core.backported.fixes
 
 /**
- * Reports the status of a known issue on this device.
+ * Reports if a [Known Issue] is fixed on a device.
+ *
+ * Use this class to guard code against a known issue when it is not fixed.
+ *
+ * [KnownIssues] has the complete list of known issues, including sample code to guard against the
+ * issue.
  *
  * @param resolver a function that takes a [KnownIssue] and returns its [Status] on this device.
  *   This parameter is only used for testing. In normal flows, the empty constructor should be used.
  */
-internal class BackportedFixManager(private val resolver: StatusResolver) {
+public class BackportedFixManager(private val resolver: StatusResolver) {
+    // TODO: b/381266031 - include a sample in the class doc
+
     /** Creates a BackportedFixManager object using the default lookup strategy. */
     public constructor() :
         this(
@@ -33,9 +40,11 @@ internal class BackportedFixManager(private val resolver: StatusResolver) {
     /**
      * Is the known issue fixed on this device.
      *
+     * An issue is fixed if its status is [Status.Fixed] or [Status.NotApplicable].
+     *
      * @param ki The known issue to check.
      */
-    internal fun isFixed(ki: KnownIssue): Boolean {
+    public fun isFixed(ki: KnownIssue): Boolean {
         return when (getStatus(ki)) {
             Status.Unknown -> false
             Status.Fixed -> true
@@ -49,14 +58,11 @@ internal class BackportedFixManager(private val resolver: StatusResolver) {
      *
      * @param ki The known issue to check.
      */
-    internal fun getStatus(ki: KnownIssue): Status {
+    public fun getStatus(ki: KnownIssue): Status {
         return if (ki.precondition.invoke()) {
-            resolver.invoke(ki)
+            resolver.getStatus(ki)
         } else {
             Status.NotApplicable
         }
     }
 }
-
-/** Function that takes a [KnownIssue] and returns its [Status] on this device. */
-internal typealias StatusResolver = (KnownIssue) -> Status

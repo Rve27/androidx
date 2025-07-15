@@ -16,62 +16,71 @@
 
 package androidx.core.backported.fixes
 
+import androidx.annotation.IntRange
+
 /**
  * A public issue from the [Google Issue Tracker](https://issuetracker.google.com) with a fix that
  * may be backported.
  *
+ * Some known issues are specific to certain form factors or even particular devices, not merely a
+ * function of the OS version or the security patch level.
+ *
  * [BackportedFixManager.isFixed] will report if the issue is fixed on a device.
  *
- * The `id` and `alias` of a known issue come from the list of approved backported fixes in the
- * Android Compatibility Test source directory
+ * [KnownIssues] contains constants for all issues in the Android Compatibility Test source
+ * directory
  * [cts/backported_fixes/approved](https://cs.android.com/android/platform/superproject/+/android-latest-release:cts/backported_fixes/approved/).
- * [KnownIssues] contains constants for all issues in the approved list.
  *
  * @property id The public id of this issue in the
  *   [Google Issue Tracker](https://issuetracker.google.com)
- * @property alias The alias for this issue, if one exists.
- * @param precondition A function that returns true if the issue applies to a device.
  */
-internal class KnownIssue
+public class KnownIssue
 internal constructor(
 
     /**
      * The public id of this issue in the [Google Issue Tracker](https://issuetracker.google.com)
+     *
+     * Details of the issue can be found at the Google issue tracker using this id.
+     *
+     * Ids 1 to 1023 are reserved so an 'id' never overlap with an internal `alias`.
      */
-    internal val id: Long,
+    @IntRange(from = 1024) public val id: Long,
+
     /**
      * The alias for this issue, if one exists.
      *
-     * Known issues can have at most one alias.
+     * The alias is used by the on device data store for known issues.
      *
-     * The value 0 indicates there is no alias for this issue. Non-zero alias values are unique
-     * across all known issues.
+     * A non null alias is unique across all known issues.
      */
-    internal val alias: Int,
+    @IntRange(from = 1, to = 1023) internal val alias: Int?,
+
     /**
      * A function that returns true if the issue applies to a device.
      *
      * Override if the issue should only apply to specific brands, models or other static
      * properties.
      *
+     * When the precondition is false. [BackportedFixManager.getStatus] will return
+     * [Status.NotApplicable].
+     *
      * Defaults to true for all devices.
      */
     internal val precondition: () -> Boolean = { true },
 ) {
-    // TODO b/381266031 - Make public
     // TODO b/381267367 - Add link to public list issues
 
     /**
      * The url to the [Google Issue Tracker](https://issuetracker.google.com) for this known issue.
      */
-    internal val url = "https://issuetracker.google.com/issues/$id"
+    public val url: String = "https://issuetracker.google.com/issues/$id"
 
     override fun equals(other: Any?): Boolean = other is KnownIssue && id == other.id
 
     override fun hashCode(): Int = id.hashCode()
 
     override fun toString(): String {
-        return if (alias == 0) {
+        return if (alias == null) {
             "$id without alias"
         } else {
             "$id with alias $alias"

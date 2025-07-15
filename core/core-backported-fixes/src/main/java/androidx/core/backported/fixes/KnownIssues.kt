@@ -21,22 +21,30 @@ import android.os.Build
 /**
  * List of all known issues reportable by [BackportedFixManager].
  *
- * The `id` and `alias` of a known issue come from the list of approved backported fixes in the
+ * These are critical issues with fixes that are backported to existing android releases and are
+ * reasonable for app developers to guard a code block with []BackportedFixManager.isFixed].
+ *
+ * Each known issue includes sample usage.
+ *
+ * The `id` and `alias` of a known issue comes from the list of approved backported fixes in the
  * Android Compatibility Test source directory
  * [cts/backported_fixes/approved](https://cs.android.com/android/platform/superproject/+/android-latest-release:cts/backported_fixes/approved/).
  */
-internal class KnownIssues private constructor() {
-    companion object {
+public sealed class KnownIssues {
+    // TODO: b/381266031 - include samples for each
+    public companion object {
 
-        /** Sample known issue that is always fixed on a device. */
-        @JvmField internal val KI_350037023 = KnownIssue(350037023L, 1)
+        // sort the known issues by alias
 
-        /** Sample known issue that is never fixed on a device. */
-        @JvmField internal val KI_350037348 = KnownIssue(350037348L, 3)
+        /** **TEST ONLY** known issue that is always fixed on a device. */
+        @JvmField public val KI_350037023: KnownIssue = KnownIssue(350037023L, 1)
 
-        /** Sample known issue that is only applies to robolectric devices */
+        /** **TEST ONLY** known issue that is only applies to robolectric devices */
         @JvmField
-        internal val KI_372917199 =
+        public val KI_372917199: KnownIssue =
             KnownIssue(372917199L, 2) { (Build.BRAND.equals("robolectric")) }
+
+        /** **TEST ONLY** known issue that is never fixed on a device. */
+        @JvmField public val KI_350037348: KnownIssue = KnownIssue(350037348L, 3)
     }
 }

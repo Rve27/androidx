@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,13 @@
 
 package androidx.core.backported.fixes
 
-/** Status of a [KnownIssue] on a device. */
-public enum class Status {
-    // TODO: b/381267367 - add methods to convert to/from @BackportedFixStatus when available.
+/** Resolves the [Status] of a [KnownIssue] a device. */
+public interface StatusResolver {
 
-    /** The status of the known issue on this device is not known. */
-    Unknown,
-
-    /** The known issue is fixed on this device. */
-    Fixed,
-
-    /** The known issue is not applicable to this device. */
-    NotApplicable,
-
-    /** The known issues is not fixed on this device. */
-    NotFixed,
+    /**
+     * Get the status of a known issue on this device.
+     *
+     * @param ki The known issue.
+     */
+    public fun getStatus(ki: KnownIssue): Status
 }
