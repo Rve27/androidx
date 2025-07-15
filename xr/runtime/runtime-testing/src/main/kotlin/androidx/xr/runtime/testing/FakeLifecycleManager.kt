@@ -21,7 +21,6 @@ import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.internal.ConfigurationNotSupportedException
 import androidx.xr.runtime.internal.LifecycleManager
-import androidx.xr.runtime.internal.PermissionNotGrantedException
 import kotlin.time.ComparableTimeMark
 import kotlin.time.TestTimeSource
 import kotlinx.coroutines.sync.Semaphore
@@ -72,7 +71,7 @@ public class FakeLifecycleManager(
 
     override fun create() {
         check(state == State.NOT_INITIALIZED)
-        if (!hasCreatePermission) throw PermissionNotGrantedException()
+        if (!hasCreatePermission) throw SecurityException()
         if (FakeRuntimeFactory.lifecycleCreateException != null) {
             // FakeRuntimeFactory will continue to throw exception on subsequent tests unless
             // cleared.
@@ -110,7 +109,7 @@ public class FakeLifecycleManager(
             throw ConfigurationNotSupportedException()
         }
 
-        if (hasMissingPermission) throw PermissionNotGrantedException()
+        if (hasMissingPermission) throw SecurityException()
         this.config = config
     }
 
