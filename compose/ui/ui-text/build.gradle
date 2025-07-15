@@ -117,6 +117,7 @@ androidXMultiplatform {
                 implementation(libs.mockitoCore)
                 implementation(libs.truth)
                 implementation(libs.mockitoKotlin)
+                implementation(libs.kotlinReflect)
             }
         }
 
