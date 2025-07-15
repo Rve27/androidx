@@ -875,16 +875,16 @@ public class MutableScatterSet<E>(initialCapacity: Int = DefaultScatterCapacity)
      *   `true`, the element is kept in the set, otherwise it is removed.
      * @return `true` if this set was modified, `false` otherwise.
      */
-    public fun retainAll(predicate: (E) -> Boolean): Boolean {
+    public inline fun retainAll(predicate: (E) -> Boolean): Boolean {
         val elements = elements
-        val startSize = _size
+        val startSize = size
         forEachIndex { index ->
             @Suppress("UNCHECKED_CAST")
             if (!predicate(elements[index] as E)) {
                 removeElementAt(index)
             }
         }
-        return startSize != _size
+        return startSize != size
     }
 
     @PublishedApi
