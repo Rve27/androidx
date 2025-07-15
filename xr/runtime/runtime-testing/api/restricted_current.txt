@@ -81,10 +81,16 @@ package androidx.xr.runtime.testing {
     ctor public FakeAudioTrackExtensionsWrapper();
     method public androidx.xr.runtime.internal.PointSourceParams? getPointSourceParams(android.media.AudioTrack track);
     method public androidx.xr.runtime.internal.SoundFieldAttributes? getSoundFieldAttributes(android.media.AudioTrack track);
+    method public java.util.Map<android.media.AudioTrack,androidx.xr.runtime.internal.SoundFieldAttributes?> getSoundFieldAttributesMap();
     method @androidx.xr.runtime.internal.SpatializerConstants.SourceType public int getSpatialSourceType(android.media.AudioTrack track);
+    method public java.util.Map<android.media.AudioTrack,java.lang.Integer> getSpatialSourceTypeMap();
     method public void setPointSourceParams(android.media.AudioTrack track, androidx.xr.runtime.internal.PointSourceParams params);
     method public android.media.AudioTrack.Builder setPointSourceParams(android.media.AudioTrack.Builder builder, androidx.xr.runtime.internal.PointSourceParams params);
     method public android.media.AudioTrack.Builder setSoundFieldAttributes(android.media.AudioTrack.Builder builder, androidx.xr.runtime.internal.SoundFieldAttributes attributes);
+    method public void setSoundFieldAttributesMap(java.util.Map<android.media.AudioTrack,androidx.xr.runtime.internal.SoundFieldAttributes?>);
+    method public void setSpatialSourceTypeMap(java.util.Map<android.media.AudioTrack,java.lang.Integer>);
+    property public java.util.Map<android.media.AudioTrack,androidx.xr.runtime.internal.SoundFieldAttributes?> soundFieldAttributesMap;
+    property public java.util.Map<android.media.AudioTrack,java.lang.Integer> spatialSourceTypeMap;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public class FakeCameraViewActivityPose extends androidx.xr.runtime.testing.FakeActivityPose implements androidx.xr.runtime.internal.CameraViewActivityPose {
