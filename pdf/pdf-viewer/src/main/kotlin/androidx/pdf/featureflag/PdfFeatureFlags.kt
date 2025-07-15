@@ -31,4 +31,7 @@ import androidx.annotation.RestrictTo
 public object PdfFeatureFlags {
     // Toggles handling of external hardware events like keyboard and mouse shortcuts.
     public var isExternalHardwareInteractionEnabled: Boolean = false
+
+    // Toggles availability of smart action contextual menu components for text selection.
+    public var isSmartActionMenuComponentEnabled: Boolean = false
 }
