@@ -36,7 +36,6 @@ import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.SpatialColumn
 import androidx.xr.compose.subspace.SpatialCurvedRow
 import androidx.xr.compose.subspace.SpatialPanel
-import androidx.xr.compose.subspace.layout.SpatialAlignment
 import androidx.xr.compose.subspace.layout.SubspaceModifier
 import androidx.xr.compose.subspace.layout.fillMaxSize
 import androidx.xr.compose.subspace.layout.movable
@@ -60,44 +59,32 @@ class SampleAnimationsActivity : ComponentActivity() {
 
             Subspace {
                 SpatialCurvedRow(modifier = SubspaceModifier.fillMaxSize(), curveRadius = 1025.dp) {
-                    SpatialColumn(
-                        modifier = SubspaceModifier.padding(30.dp),
-                        alignment = SpatialAlignment.Center,
+                    SpatialPanel(
+                        modifier = SubspaceModifier.resizable(true).movable(true).padding(50.dp)
                     ) {
-                        SpatialPanel(modifier = SubspaceModifier.resizable(true).movable(true)) {
-                            Column(
-                                modifier =
-                                    Modifier.background(Color.LightGray)
-                                        .fillMaxSize()
-                                        .padding(20.dp),
-                                verticalArrangement = Arrangement.spacedBy(20.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
+                        Column(
+                            modifier = Modifier.background(Color.LightGray).padding(20.dp),
+                            verticalArrangement = Arrangement.spacedBy(20.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Button(
+                                onClick = { setAnimationStyle(AnimationStyle.SequentialExample) }
                             ) {
-                                Button(
-                                    onClick = {
-                                        setAnimationStyle(AnimationStyle.SequentialExample)
-                                    }
-                                ) {
-                                    Text(text = "Sequential animation")
-                                }
-                                Button(
-                                    onClick = {
-                                        setAnimationStyle(AnimationStyle.ConcurrentExample1)
-                                    }
-                                ) {
-                                    Text(text = "Concurrent animation")
-                                }
-                                Button(
-                                    onClick = {
-                                        setAnimationStyle(AnimationStyle.ConcurrentExample2)
-                                    }
-                                ) {
-                                    Text(text = "Concurrent animation 2")
-                                }
+                                Text(text = "Sequential animation")
+                            }
+                            Button(
+                                onClick = { setAnimationStyle(AnimationStyle.ConcurrentExample1) }
+                            ) {
+                                Text(text = "Concurrent animation")
+                            }
+                            Button(
+                                onClick = { setAnimationStyle(AnimationStyle.ConcurrentExample2) }
+                            ) {
+                                Text(text = "Concurrent animation 2")
                             }
                         }
                     }
-                    SpatialColumn(modifier = SubspaceModifier.padding(30.dp)) {
+                    SpatialColumn(modifier = SubspaceModifier.padding(50.dp)) {
                         when (animationStyle) {
                             AnimationStyle.SequentialExample -> {
                                 SequentialAnimationExample()
