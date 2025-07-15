@@ -90,7 +90,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -564,7 +563,6 @@ class ComposeViewTest {
         assertNotNull("test did not run", result?.getOrThrow())
     }
 
-    @Ignore // b/260006789
     @Test
     fun canScrollVerticallyDown_returnsTrue_onlyAfterDownEventInScrollable() {
         lateinit var composeView: View
@@ -584,7 +582,6 @@ class ComposeViewTest {
         rule.runOnIdle { composeView.assertCanScroll(down = true) }
     }
 
-    @Ignore // b/260006789
     @Test
     fun canScrollVerticallyUp_returnsTrue_onlyAfterDownEventInScrollable() {
         lateinit var composeView: View
@@ -604,7 +601,6 @@ class ComposeViewTest {
         rule.runOnIdle { composeView.assertCanScroll(up = true) }
     }
 
-    @Ignore // b/260006789
     @Test
     fun canScrollVertically_returnsFalse_afterDownEventOutsideScrollable() {
         lateinit var composeView: View
@@ -623,7 +619,6 @@ class ComposeViewTest {
         rule.runOnIdle { composeView.assertCanScroll() }
     }
 
-    @Ignore // b/260006789
     @Test
     fun canScrollHorizontallyRight_returnsTrue_onlyAfterDownEventInScrollable() {
         lateinit var composeView: View
