@@ -825,8 +825,8 @@ package androidx.compose.ui.focus {
   }
 
   public static final class FocusProperties.Companion {
-    method public androidx.compose.ui.geometry.Rect getDefaultFocusRect();
-    property public androidx.compose.ui.geometry.Rect DefaultFocusRect;
+    method public androidx.compose.ui.geometry.Rect getUnsetFocusRect();
+    property public androidx.compose.ui.geometry.Rect UnsetFocusRect;
   }
 
   public final class FocusPropertiesKt {

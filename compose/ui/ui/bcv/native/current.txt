@@ -309,8 +309,8 @@ abstract interface androidx.compose.ui.focus/FocusProperties { // androidx.compo
         open fun <set-up>(androidx.compose.ui.focus/FocusRequester) // androidx.compose.ui.focus/FocusProperties.up.<set-up>|<set-up>(androidx.compose.ui.focus.FocusRequester){}[0]
 
     final object Companion { // androidx.compose.ui.focus/FocusProperties.Companion|null[0]
-        final val DefaultFocusRect // androidx.compose.ui.focus/FocusProperties.Companion.DefaultFocusRect|{}DefaultFocusRect[0]
-            final fun <get-DefaultFocusRect>(): androidx.compose.ui.geometry/Rect // androidx.compose.ui.focus/FocusProperties.Companion.DefaultFocusRect.<get-DefaultFocusRect>|<get-DefaultFocusRect>(){}[0]
+        final val UnsetFocusRect // androidx.compose.ui.focus/FocusProperties.Companion.UnsetFocusRect|{}UnsetFocusRect[0]
+            final fun <get-UnsetFocusRect>(): androidx.compose.ui.geometry/Rect // androidx.compose.ui.focus/FocusProperties.Companion.UnsetFocusRect.<get-UnsetFocusRect>|<get-UnsetFocusRect>(){}[0]
     }
 }
 

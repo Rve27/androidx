@@ -42,6 +42,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.autofill.ContentDataType
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusProperties
+import androidx.compose.ui.focus.FocusPropertiesModifierNode
 import androidx.compose.ui.graphics.drawscope.ContentDrawScope
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.KeyInputModifierNode
@@ -196,7 +198,8 @@ internal class TextFieldDecoratorModifierNode(
     CompositionLocalConsumerModifierNode,
     ModifierLocalModifierNode,
     ObserverModifierNode,
-    LayoutAwareModifierNode {
+    LayoutAwareModifierNode,
+    FocusPropertiesModifierNode {
 
     init {
         textFieldSelectionState.requestAutofillAction = { requestAutofill() }
@@ -675,6 +678,10 @@ internal class TextFieldDecoratorModifierNode(
             toolbarAndHandlesVisibilityObserverJob?.cancel()
             toolbarAndHandlesVisibilityObserverJob = null
         }
+    }
+
+    override fun applyFocusProperties(focusProperties: FocusProperties) {
+        focusProperties.focusRect = textFieldSelectionState.getFocusRect()
     }
 
     override fun onAttach() {

@@ -22,7 +22,7 @@ import androidx.compose.ui.focus.CustomDestinationResult.None
 import androidx.compose.ui.focus.CustomDestinationResult.RedirectCancelled
 import androidx.compose.ui.focus.CustomDestinationResult.Redirected
 import androidx.compose.ui.focus.FocusDirection.Companion.Exit
-import androidx.compose.ui.focus.FocusProperties.Companion.DefaultFocusRect
+import androidx.compose.ui.focus.FocusProperties.Companion.UnsetFocusRect
 import androidx.compose.ui.focus.FocusRequester.Companion.Cancel
 import androidx.compose.ui.focus.FocusRequester.Companion.Redirect
 import androidx.compose.ui.focus.FocusStateImpl.Active
@@ -225,7 +225,7 @@ internal class FocusTargetNode(
     internal fun fetchFocusRect(relativeCoordinates: LayoutCoordinates? = null): Rect {
         val customRect = fetchFocusProperties().focusRect
         // Take the derived value only if it is not the default.
-        if (customRect !== DefaultFocusRect) {
+        if (customRect !== UnsetFocusRect) {
             if (relativeCoordinates == null) return customRect
 
             return customRect.translate(
