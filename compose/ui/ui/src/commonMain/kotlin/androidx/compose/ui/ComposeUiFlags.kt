@@ -181,6 +181,11 @@ object ComposeUiFlags {
     @JvmField
     var isNestedScrollDispatcherNodeFixEnabled: Boolean = true
 
+    /** Flag for enabling indirect touch event navigation gestures in Compose. */
+    @Suppress("MutableBareField")
+    @JvmField
+    var isIndirectTouchNavigationGestureDetectorEnabled: Boolean = true
+
     /** This flag enables setting the shape semantics property in the graphicsLayer modifiers. */
     @Suppress("MutableBareField") @JvmField var isGraphicsLayerShapeSemanticsEnabled: Boolean = true
 

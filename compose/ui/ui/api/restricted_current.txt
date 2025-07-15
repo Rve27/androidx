@@ -143,6 +143,7 @@ package androidx.compose.ui {
     property @Deprecated public boolean isFocusActionExitsTouchModeEnabled;
     property public boolean isGraphicsLayerShapeSemanticsEnabled;
     property public boolean isIgnoreInvalidPrevFocusRectEnabled;
+    property public boolean isIndirectTouchNavigationGestureDetectorEnabled;
     property public boolean isNestedScrollDispatcherNodeFixEnabled;
     property public boolean isNestedScrollInteropPostFlingFixEnabled;
     property @Deprecated public boolean isNoPinningInFocusRestorationEnabled;
@@ -162,6 +163,7 @@ package androidx.compose.ui {
     field @Deprecated public static boolean isFocusActionExitsTouchModeEnabled;
     field public static boolean isGraphicsLayerShapeSemanticsEnabled;
     field public static boolean isIgnoreInvalidPrevFocusRectEnabled;
+    field public static boolean isIndirectTouchNavigationGestureDetectorEnabled;
     field public static boolean isNestedScrollDispatcherNodeFixEnabled;
     field public static boolean isNestedScrollInteropPostFlingFixEnabled;
     field @Deprecated public static boolean isNoPinningInFocusRestorationEnabled;

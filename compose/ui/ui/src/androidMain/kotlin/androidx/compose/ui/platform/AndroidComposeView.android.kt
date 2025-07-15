@@ -36,6 +36,7 @@ import android.os.SystemClock
 import android.util.LongSparseArray
 import android.util.SparseArray
 import android.view.FocusFinder
+import android.view.GestureDetector
 import android.view.InputDevice
 import android.view.KeyEvent as AndroidKeyEvent
 import android.view.MotionEvent
@@ -78,6 +79,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.ComposeUiFlags
 import androidx.compose.ui.ComposeUiFlags.isAdaptiveRefreshRateEnabled
+import androidx.compose.ui.ComposeUiFlags.isIndirectTouchNavigationGestureDetectorEnabled
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ExperimentalIndirectTouchTypeApi
 import androidx.compose.ui.InternalComposeUiApi
@@ -219,6 +221,7 @@ import java.lang.reflect.Method
 import java.util.ArrayList
 import java.util.function.Consumer
 import kotlin.coroutines.CoroutineContext
+import kotlin.math.abs
 
 /** Allows tests to inject a custom [PlatformTextInputService]. */
 internal var platformTextInputServiceInterceptor:
@@ -982,6 +985,14 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     /** Set to `true` when [sendHoverExitEvent] has been posted. */
     private var hoverExitReceived = false
+
+    // Enables event stream tracking for indirect touch navigation gestures.
+    private var indirectTouchNavigationGestureDetectorActiveForEventStream = false
+    // Determines scroll/swipe to next or previous focusable element for indirect touch events.
+    private val indirectTouchNavigationGestureDetector =
+        IndirectTouchNavigationGestureDetector(context) { direction ->
+            focusOwner.moveFocus(direction)
+        }
 
     /** Callback for [measureAndLayout] to update the pointer position 150ms after layout. */
     private val resendMotionEventOnLayout: () -> Unit = {
@@ -2446,7 +2457,28 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
                             super.dispatchGenericMotionEvent(motionEvent)
                         }
 
-                    if (handled) return true
+                    if (handled) {
+                        // Turns off all navigation gestures for this event stream since an app is
+                        // handling the event stream.
+                        indirectTouchNavigationGestureDetectorActiveForEventStream = false
+                        return true
+                    } else {
+                        @OptIn(ExperimentalComposeUiApi::class)
+                        if (isIndirectTouchNavigationGestureDetectorEnabled) { // Flag for feature
+                            if (motionEvent.action == ACTION_DOWN) {
+                                // Starts tracking only with ACTION_DOWN (start of event stream).
+                                indirectTouchNavigationGestureDetectorActiveForEventStream = true
+                            }
+
+                            if (indirectTouchNavigationGestureDetectorActiveForEventStream) {
+                                indirectTouchNavigationGestureDetector.onTouchEvent(motionEvent)
+                            }
+                            // If the isIndirectTouchNavigationGestureDetectorEnabled flag is
+                            // enabled, it means that we don't want to pass the event up to the
+                            // platform's handler for SOURCE_TOUCH_NAVIGATION, so we return true.
+                            return true
+                        }
+                    }
                 }
 
                 // If focus owner did not handle, rely on ViewGroup to handle.
@@ -3547,5 +3579,50 @@ private object Api35Impl {
     @DoNotInline
     fun setRequestedFrameRate(view: View, frameRate: Float) {
         view.requestedFrameRate = frameRate
+    }
+}
+
+internal class IndirectTouchNavigationGestureDetector(
+    context: Context,
+    private val onMoveFocus: (FocusDirection) -> Unit,
+) {
+    private val gestureDetector: GestureDetector =
+        GestureDetector(
+            context,
+            object : GestureDetector.OnGestureListener {
+                override fun onDown(e: MotionEvent) = true
+
+                override fun onShowPress(e: MotionEvent) {}
+
+                override fun onSingleTapUp(e: MotionEvent): Boolean = true
+
+                override fun onScroll(
+                    e1: MotionEvent?,
+                    e2: MotionEvent,
+                    distanceX: Float,
+                    distanceY: Float,
+                ) = true
+
+                override fun onLongPress(e: MotionEvent) {}
+
+                override fun onFling(
+                    e1: MotionEvent?,
+                    e2: MotionEvent,
+                    velocityX: Float,
+                    velocityY: Float,
+                ): Boolean {
+                    // TODO: Take axis into account: aosp/3668952
+                    if (abs(velocityX) > abs(velocityY)) {
+                        val direction =
+                            if (velocityX > 0f) FocusDirection.Next else FocusDirection.Previous
+                        onMoveFocus(direction)
+                    }
+                    return true
+                }
+            },
+        )
+
+    fun onTouchEvent(event: MotionEvent): Boolean {
+        return gestureDetector.onTouchEvent(event)
     }
 }
