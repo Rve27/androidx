@@ -316,9 +316,11 @@ class VectorTest {
         rule.setContent { VectorTrim() }
 
         takeScreenShot(200).apply {
-            assertEquals(Color.Yellow.toArgb(), getPixel(25, 100))
-            assertEquals(Color.Blue.toArgb(), getPixel(100, 100))
-            assertEquals(Color.Yellow.toArgb(), getPixel(175, 100))
+            fun colorToHexString(color: Int): String = String.format("#%08X", color)
+
+            assertEquals("#FFFFFF00", colorToHexString(getPixel(25, 100)))
+            assertEquals("#FF0000FF", colorToHexString(getPixel(100, 100)))
+            assertEquals("#FFFFFF00", colorToHexString(getPixel(175, 100)))
         }
     }
 
