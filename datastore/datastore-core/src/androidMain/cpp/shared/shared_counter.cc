@@ -22,7 +22,7 @@
 #include <cstdint>
 #include <functional>
 
-#include "shared_counter.h"
+#include "../shared_counter.h"
 
 namespace {
 constexpr int NUM_BYTES = 4;
@@ -34,8 +34,8 @@ static_assert(sizeof(std::atomic<uint32_t>) == NUM_BYTES,
 // Atomics are safe to use across processes as they are lock free, because atomic operations on
 // the same memory location via two different addresses will communicate atomically. See more
 // details at http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2427.html#DiscussLockFree
-static_assert(std::atomic<uint32_t>::is_always_lock_free == true,
-              "atomic<uint32_t> is not always lock free");
+static_assert(std::atomic<uint32_t>::is_always_lock_free,
+              "atomic<uint32_t> is not always lock-free");
 
 namespace datastore {
 
