@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.creation.profile;
+package androidx.compose.remote.player.view.action;
 
-import androidx.compose.remote.creation.RemoteComposeWriter;
+import androidx.compose.remote.player.view.state.StateUpdater;
 
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
-/** Interface representing the constructor for a RemoteComposeWriter (used in {@link Profile}) */
-public interface ProfileFactory {
+/** An interface for handling named actions. */
+public interface NamedActionHandler {
     /**
-     * Returns a valid RemoteComposeWriter
+     * Execute a named action
      *
-     * @param width original width of the document
-     * @param height original height of the document
-     * @param contentDescription content description
-     * @param profile operation profiles used by this document
-     * @return a valid RemoteComposeWriter
+     * @param name
+     * @param value
+     * @param stateUpdater
      */
-    @NonNull RemoteComposeWriter create(
-            int width, int height, @NonNull String contentDescription, @NonNull Profile profile);
+    void execute(@NonNull String name, @Nullable Object value, StateUpdater stateUpdater);
 }

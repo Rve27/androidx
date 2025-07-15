@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.player.view.accessibility;
+package androidx.compose.remote.player.view.accessibility.platform;
 
 import android.view.View;
 
@@ -21,6 +21,8 @@ import androidx.compose.remote.core.CoreDocument;
 import androidx.compose.remote.core.RemoteContextActions;
 import androidx.compose.remote.core.operations.layout.Component;
 import androidx.compose.remote.core.semantics.AccessibilitySemantics;
+import androidx.compose.remote.player.view.accessibility.CoreDocumentAccessibility;
+import androidx.compose.remote.player.view.accessibility.RemoteComposeAccessibilityRegistrar;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 

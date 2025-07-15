@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.player.view.accessibility;
+package androidx.compose.remote.player.view.accessibility.platform;
 
 import android.graphics.Rect;
 import android.view.View;
 
 import androidx.compose.remote.core.operations.RootContentBehavior;
 import androidx.compose.remote.core.semantics.ScrollableComponent;
+import androidx.compose.remote.player.view.accessibility.BaseSemanticNodeApplier;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat.AccessibilityActionCompat;
 
@@ -85,8 +86,12 @@ public class AndroidxSemanticNodeApplier
         nodeInfo.setContentDescription(description);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void setBoundsInScreen(AccessibilityNodeInfoCompat nodeInfo, Rect bounds) {
+        // setBoundsInParent() is a deprecated method, however
+        // ExploreByTouchHelper.createNodeForChild() relies on the bounds in parent being set.
+        nodeInfo.setBoundsInParent(new Rect(0, 0, 1, 1));
         nodeInfo.setBoundsInScreen(bounds);
     }
 

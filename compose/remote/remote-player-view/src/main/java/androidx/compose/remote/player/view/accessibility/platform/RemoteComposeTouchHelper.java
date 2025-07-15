@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package androidx.compose.remote.player.view.accessibility;
+package androidx.compose.remote.player.view.accessibility.platform;
+
+import androidx.compose.remote.player.view.accessibility.RemoteComposeAccessibilityRegistrar;
 
 public class RemoteComposeTouchHelper {
     public static final RemoteComposeAccessibilityRegistrar REGISTRAR =

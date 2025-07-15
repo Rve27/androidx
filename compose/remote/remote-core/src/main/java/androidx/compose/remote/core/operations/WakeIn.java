@@ -19,6 +19,8 @@ import androidx.compose.remote.core.Operation;
 import androidx.compose.remote.core.Operations;
 import androidx.compose.remote.core.PaintContext;
 import androidx.compose.remote.core.PaintOperation;
+import androidx.compose.remote.core.RemoteContext;
+import androidx.compose.remote.core.VariableSupport;
 import androidx.compose.remote.core.WireBuffer;
 import androidx.compose.remote.core.documentation.DocumentationBuilder;
 import androidx.compose.remote.core.documentation.DocumentedOperation;
@@ -29,25 +31,46 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-/** Draw to a bitmap. This command redirects drawing to a bitmap. */
-public class DrawToBitmap extends PaintOperation implements Serializable {
-    private static final int OP_CODE = Operations.DRAW_TO_BITMAP;
-    private static final String CLASS_NAME = "DrawToBitmap";
-    private final int mBitmapId;
-    private final int mMode;
-    private final int mColor;
+/** WakeIn operation */
+public class WakeIn extends PaintOperation implements VariableSupport, Serializable {
+    private static final int OP_CODE = Operations.WAKE_IN;
+    private static final String CLASS_NAME = "WakeIn";
 
-    public static final int MODE_NO_INITIALIZE = 1;
+    float mWake;
+    float mWakeOut;
 
-    public DrawToBitmap(int bitmapId, int mode, int color) {
-        mBitmapId = bitmapId;
-        mMode = mode;
-        mColor = color;
+    String mLastString;
+
+    public static final int ANCHOR_TEXT_RTL = 1;
+    public static final int ANCHOR_MONOSPACE_MEASURE = 2;
+    public static final int MEASURE_EVERY_TIME = 4;
+
+    public WakeIn(float wake) {
+        mWake = wake;
+        mWakeOut = wake;
+    }
+
+    @Override
+    public void updateVariables(@NonNull RemoteContext context) {
+        mWakeOut = Float.isNaN(mWake) ? context.getFloat(Utils.idFromNan(mWake)) : mWake;
+    }
+
+    @Override
+    public void registerListening(@NonNull RemoteContext context) {
+        if (Float.isNaN(mWake)) {
+            context.listensTo(Utils.idFromNan(mWake), this);
+        }
     }
 
     @Override
     public void write(@NonNull WireBuffer buffer) {
-        apply(buffer, mBitmapId, mMode, mColor);
+        apply(buffer, mWake);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "DrawTextAnchored [" + Utils.floatToString(mWake, mWakeOut);
     }
 
     /**
@@ -57,17 +80,9 @@ public class DrawToBitmap extends PaintOperation implements Serializable {
      * @param operations the list of operations that will be added to
      */
     public static void read(@NonNull WireBuffer buffer, @NonNull List<Operation> operations) {
-        int bitmapId = buffer.readInt();
-        int mode = buffer.readInt();
-        int color = buffer.readInt();
-        DrawToBitmap op = new DrawToBitmap(bitmapId, mode, color);
+        float wake = buffer.readFloat();
+        WakeIn op = new WakeIn(wake);
         operations.add(op);
-    }
-
-    @NonNull
-    @Override
-    public String toString() {
-        return "DrawToBitmap";
     }
 
     /**
@@ -90,18 +105,14 @@ public class DrawToBitmap extends PaintOperation implements Serializable {
     }
 
     /**
-     * add a matrix restore operation to the buffer
+     * Writes out the operation to the buffer
      *
-     * @param buffer the buffer to add to
-     * @param bitmapId the id of the bitmap to draw to
-     * @param mode
-     * @param color
+     * @param buffer the buffer to write to
+     * @param wake the value to write
      */
-    public static void apply(@NonNull WireBuffer buffer, int bitmapId, int mode, int color) {
+    public static void apply(@NonNull WireBuffer buffer, float wake) {
         buffer.start(OP_CODE);
-        buffer.writeInt(bitmapId);
-        buffer.writeInt(mode);
-        buffer.writeInt(color);
+        buffer.writeFloat(wake);
     }
 
     /**
@@ -110,23 +121,18 @@ public class DrawToBitmap extends PaintOperation implements Serializable {
      * @param doc to append the description to.
      */
     public static void documentation(@NonNull DocumentationBuilder doc) {
-        doc.operation("Canvas Operations", OP_CODE, CLASS_NAME)
-                .description("Draw to a bitmap")
-                .field(
-                        DocumentedOperation.INT,
-                        "bitmapId",
-                        "The bitmap to draw to or 0 to draw to the canvas")
-                .field(DocumentedOperation.INT, "mode", "Flags to support configuration of bitmap")
-                .field(DocumentedOperation.INT, "color", "set the initial of the bitmap");
+        doc.operation("Draw Operations", OP_CODE, CLASS_NAME)
+                .description("Wake up the render loop after a certain amount of time")
+                .field(DocumentedOperation.FLOAT, "wakeSec", "The time in seconds to wake up");
     }
 
     @Override
     public void paint(@NonNull PaintContext context) {
-        context.drawToBitmap(mBitmapId, mMode, mColor);
+        context.wakeIn(mWakeOut);
     }
 
     @Override
     public void serialize(@NonNull MapSerializer serializer) {
-        serializer.addType(CLASS_NAME).add("bitmapId", mBitmapId);
+        serializer.addType(CLASS_NAME).add("wake", mWake);
     }
 }
