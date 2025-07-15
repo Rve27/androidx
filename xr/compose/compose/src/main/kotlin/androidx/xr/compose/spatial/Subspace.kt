@@ -17,6 +17,7 @@
 package androidx.xr.compose.spatial
 
 import androidx.activity.ComponentActivity
+import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableOpenTarget
 import androidx.compose.runtime.CompositionLocalProvider
@@ -182,11 +183,11 @@ public fun ApplicationSubspace(
 private fun ApplicationSubspace(
     activity: ComponentActivity,
     constraints: VolumeConstraints?,
+    subspaceRootNode: Entity? = LocalSubspaceRootNode.current,
     content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit,
 ) {
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val compositionContext = rememberCompositionContext()
-    val subspaceRootNode = LocalSubspaceRootNode.current
     val scene by remember {
         session.scene.mainPanelEntity.setEnabled(false)
         val subspaceRoot = GroupEntity.create(session, "SubspaceRoot")
@@ -333,5 +334,62 @@ private fun NestedSubspace(
         }
 
         layout(measuredSize.width, measuredSize.height) {}
+    }
+}
+
+/**
+ * A [Subspace] that does not match the scaling, alignment, and placement suggested by the system.
+ * Instead it will align itself to gravity (perpendicular to the floor) and have a scale value equal
+ * to the scale of the [androidx.xr.scenecore.ActivitySpace] of the application (1:1 with OpenXR
+ * Unbounded Reference Space).
+ *
+ * [GravityAlignedSubspace] should be used to create a topmost [Subspace] in your application's
+ * spatial UI hierarchy.
+ *
+ * @param constraints The volume constraints to apply to this [GravityAlignedSubspace]. If `null`
+ *   (the default), the recommended content box constraints from the system will be used.
+ * @param content The 3D content to render within this Subspace.
+ * @throws [IllegalStateException] - If the activity in which it is hosted is not a
+ *   [ComponentActivity]
+ *
+ * A composable that performs no operation and renders nothing in non-XR environments (e.g., phones
+ * and tablets).
+ *
+ * For conditionally rendering content based on the environment, see
+ * [androidx.xr.compose.platform.SpatialConfiguration].
+ *
+ * TODO(b/431767697): Constraints should be a SubspaceModifier
+ */
+@Composable
+@ComposableOpenTarget(index = -1)
+@Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
+public fun GravityAlignedSubspace(
+    constraints: VolumeConstraints? = null,
+    content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit,
+) {
+
+    val currentActivity = LocalContext.current.getActivity()
+
+    val activity =
+        LocalContext.current.getActivity() as? ComponentActivity
+            ?: throw IllegalStateException(
+                "Expected a ComponentActivity, but found: $currentActivity"
+            )
+
+    // If we are not in XR, do nothing
+    if (!LocalSpatialConfiguration.current.hasXrSpatialFeature) return
+
+    if (LocalIsInApplicationSubspace.current) {
+        throw IllegalStateException(
+            "GravityAlignedSubspace cannot be nested within another Subspace."
+        )
+    } else {
+        ApplicationSubspace(
+            activity = activity,
+            constraints = constraints,
+            subspaceRootNode = null,
+            content = content,
+        )
     }
 }
