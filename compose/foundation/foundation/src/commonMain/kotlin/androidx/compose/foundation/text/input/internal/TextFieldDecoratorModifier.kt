@@ -31,11 +31,14 @@ import androidx.compose.foundation.text.Handle
 import androidx.compose.foundation.text.KeyCommand
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.LocalAutofillHighlightBrush
 import androidx.compose.foundation.text.LocalAutofillHighlightColor
+import androidx.compose.foundation.text.autofillHighlightColor
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.KeyboardActionHandler
 import androidx.compose.foundation.text.input.internal.selection.TextFieldSelectionState
 import androidx.compose.foundation.text.input.internal.selection.TextToolbarState
+import androidx.compose.foundation.text.resolveAutofillHighlight
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -409,7 +412,15 @@ internal class TextFieldDecoratorModifierNode(
         // Autofill highlight is drawn on top of the content — this way the coloring appears over
         // any Material background applied.
         if (autofillHighlightOn) {
-            drawRect(color = currentValueOf(LocalAutofillHighlightColor))
+            @Suppress("DEPRECATION")
+            drawRect(
+                brush =
+                    resolveAutofillHighlight(
+                        brush = currentValueOf(LocalAutofillHighlightBrush),
+                        color = currentValueOf(LocalAutofillHighlightColor),
+                        defaultColor = autofillHighlightColor(),
+                    )
+            )
         }
     }
 
