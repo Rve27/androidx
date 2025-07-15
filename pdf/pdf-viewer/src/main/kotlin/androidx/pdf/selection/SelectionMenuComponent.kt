@@ -31,8 +31,6 @@ public object PdfSelectionMenuKeys {
     public object CopyKey
 
     public object SelectAllKey
-
-    public object SmartActionKey
 }
 
 /**
@@ -93,7 +91,7 @@ internal class SmartSelectionMenuComponent(
     public val label: String,
     public val contentDescription: String? = null,
     public val leadingIcon: Drawable? = null,
-    public val onClick: SelectionMenuSession.(pdfView: PdfView) -> Unit,
+    public val onClick: SelectionMenuSession.() -> Unit,
 ) : ContextMenuComponent(key)
 
 /** Represents an active session of an open selection menu. */

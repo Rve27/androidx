@@ -1379,7 +1379,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
                 ) {
                     startActionMode(selectionActionModeCallback, ActionMode.TYPE_FLOATING)
                 } else if (!signal.show) {
-                    selectionActionModeCallback.close()
+                    selectionActionModeCallback.finish()
                 }
             }
         }

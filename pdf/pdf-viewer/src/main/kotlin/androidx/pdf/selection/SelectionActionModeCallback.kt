@@ -45,8 +45,6 @@ internal class SelectionActionModeCallback(private val pdfView: PdfView) :
                 if (text != null) ClipboardUtils.copyToClipboard(context, text.toString())
                 // close the context menu upon copy action
                 close()
-                // After completion of action the selection should be cleared.
-                pdfView.clearSelection()
             },
             DefaultSelectionMenuComponent(
                 key = PdfSelectionMenuKeys.SelectAllKey,
@@ -57,22 +55,13 @@ internal class SelectionActionModeCallback(private val pdfView: PdfView) :
                 // we don't know the size of that page
                 if (page != null) {
                     // Action mode for old selection should be closed which will be triggered
-                    // after select all is completed.
-                    close()
+                    // after select all is completed with current selection.
+                    finish()
                     pdfView.selectAllTextOnPage(page)
                 }
             },
         )
     private lateinit var selectionMenuItems: MutableList<ContextMenuComponent>
-
-    override fun close() {
-        actionMode?.finish()
-        actionMode = null
-    }
-
-    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
-        return false
-    }
 
     override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
         actionMode = mode
@@ -82,20 +71,6 @@ internal class SelectionActionModeCallback(private val pdfView: PdfView) :
 
         selectionMenuItems.forEachIndexed { index, component ->
             when (component) {
-                is DefaultSelectionMenuComponent -> {
-                    val menuItem =
-                        menu?.add(
-                            /* groupId = */ Menu.NONE,
-                            /* itemId = */ Menu.NONE,
-                            /* order = */ Menu.NONE,
-                            /* title = */ component.label,
-                        )
-                    component.contentDescription?.let { menuItem?.contentDescription = it }
-                    menuItem?.setOnMenuItemClickListener {
-                        component.onClick(this, pdfView)
-                        true
-                    }
-                }
                 is SelectionMenuComponent -> {
                     val menuItem =
                         menu?.add(
@@ -107,6 +82,20 @@ internal class SelectionActionModeCallback(private val pdfView: PdfView) :
                     component.contentDescription?.let { menuItem?.contentDescription = it }
                     menuItem?.setOnMenuItemClickListener {
                         component.onClick(this)
+                        true
+                    }
+                }
+                is DefaultSelectionMenuComponent -> {
+                    val menuItem =
+                        menu?.add(
+                            /* groupId = */ Menu.NONE,
+                            /* itemId = */ Menu.NONE,
+                            /* order = */ Menu.NONE,
+                            /* title = */ component.label,
+                        )
+                    component.contentDescription?.let { menuItem?.contentDescription = it }
+                    menuItem?.setOnMenuItemClickListener {
+                        component.onClick(this, pdfView)
                         true
                     }
                 }
@@ -124,13 +113,25 @@ internal class SelectionActionModeCallback(private val pdfView: PdfView) :
                     component.contentDescription?.let { menuItem?.contentDescription = it }
                     component.leadingIcon?.let { menuItem?.icon = it }
                     menuItem?.setOnMenuItemClickListener {
-                        component.onClick(this, pdfView)
+                        component.onClick(this)
                         true
                     }
                 }
             }
         }
         return true
+    }
+
+    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+        return false
+    }
+
+    override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+        return false
+    }
+
+    override fun close() {
+        pdfView.clearSelection()
     }
 
     override fun onDestroyActionMode(mode: ActionMode?) {
@@ -177,7 +178,8 @@ internal class SelectionActionModeCallback(private val pdfView: PdfView) :
         outRect?.set(centerX, centerY, centerX + 1, centerY + 1)
     }
 
-    override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
-        return false
+    internal fun finish() {
+        actionMode?.finish()
+        actionMode = null
     }
 }
