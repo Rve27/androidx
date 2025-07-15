@@ -75,7 +75,7 @@ constructor(
 
     @GuardedBy("lock")
     private val camera2DeviceSetupWrapperCache =
-        mutableMapOf<CameraId, Deferred<Camera2DeviceSetupWrapper>>()
+        mutableMapOf<CameraId, Deferred<Camera2DeviceSetupWrapper?>>()
 
     private val minimumCameraCount = estimateMinInternalCameraCount(packageManager)
 
@@ -91,7 +91,14 @@ constructor(
         cameraDeviceSetupCompatFactoryProvider.get()
     }
 
-    suspend fun getOrInitializeDeviceSetupCompat(cameraId: CameraId): CameraDeviceSetupCompat {
+    /**
+     * Retrieves a cached or new [CameraDeviceSetupCompat], returning `null` on failure.
+     *
+     * Failed initialization attempts are removed from the cache to allow for retries, which may
+     * succeed if the failure was due to a transient state (e.g. CameraAccessException).
+     */
+    suspend fun getOrInitializeDeviceSetupCompat(cameraId: CameraId): CameraDeviceSetupCompat? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.VANILLA_ICE_CREAM) return null
         val deferred =
             synchronized(lock) {
                 cameraDeviceSetupCache.getOrPut(cameraId) {
@@ -105,26 +112,53 @@ constructor(
                     }
                 }
             }
-        val result = deferred.await()
-        return checkNotNull(result) { "Failed to initialize CameraDeviceSetupCompat for $cameraId" }
+
+        val deferredResult = deferred.await()
+
+        if (deferredResult == null) {
+            Log.debug { "Removing null CameraDeviceSetupCompat from cache for $cameraId" }
+            synchronized(lock) { cameraDeviceSetupCache.remove(cameraId, deferred) }
+        }
+        return deferredResult
     }
 
+    /**
+     * Retrieves a cached or new [Camera2DeviceSetupWrapper], returning `null` on failure.
+     *
+     * Failed initialization attempts are removed from the cache to allow for retries, which may
+     * succeed if the failure was due to a transient state (e.g. CameraAccessException).
+     */
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-    suspend fun getOrInitializeDeviceSetupWrapper(cameraId: CameraId): Camera2DeviceSetupWrapper {
+    suspend fun getOrInitializeDeviceSetupWrapper(cameraId: CameraId): Camera2DeviceSetupWrapper? {
         val deferred =
             synchronized(lock) {
                 camera2DeviceSetupWrapperCache.getOrPut(cameraId) {
                     scope.async(threads.backgroundDispatcher) {
+                        val isSupported =
+                            catchAndReportCameraExceptions(cameraId, cameraErrorListener) {
+                                cameraManager.get().isCameraDeviceSetupSupported(cameraId.value)
+                            }
+
+                        if (isSupported != true) {
+                            return@async null
+                        }
                         Log.debug { "Initializing CameraDeviceSetup for $cameraId" }
-                        Api35Compat.getCameraDeviceSetup(
-                            cameraManager.get(),
-                            cameraId,
-                            cameraErrorListener,
-                        )
+                        catchAndReportCameraExceptions(cameraId, cameraErrorListener) {
+                                cameraManager.get().getCameraDeviceSetup(cameraId.value)
+                            }
+                            ?.let { cameraDeviceSetup ->
+                                Camera2DeviceSetup(cameraDeviceSetup, cameraId, cameraErrorListener)
+                            }
                     }
                 }
             }
-        return deferred.await()
+        val deferredResult = deferred.await()
+
+        if (deferredResult == null) {
+            Log.debug { "Removing null camera2DeviceSetupWrapper from cache for $cameraId" }
+            synchronized(lock) { camera2DeviceSetupWrapperCache.remove(cameraId, deferred) }
+        }
+        return deferredResult
     }
 
     suspend fun getCameraIds(): List<CameraId> {

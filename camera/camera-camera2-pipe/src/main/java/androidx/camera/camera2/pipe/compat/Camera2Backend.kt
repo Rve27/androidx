@@ -125,10 +125,10 @@ constructor(
                 buildOutputConfiguration(graphConfig),
             )
 
-        val cameraDeviceSetup =
+        val cameraDeviceSetup: Camera2DeviceSetupWrapper? =
             camera2DeviceCache.getOrInitializeDeviceSetupWrapper(graphConfig.camera)
         val requestBuilder =
-            cameraDeviceSetup.createCaptureRequest(graphConfig.sessionTemplate.value)
+            cameraDeviceSetup?.createCaptureRequest(graphConfig.sessionTemplate.value)
 
         requestBuilder?.let {
             for ((key, value) in graphConfig.sessionParameters) {
@@ -138,8 +138,11 @@ constructor(
             Api28Compat.setSessionParameters(sessionConfig, requestBuilder.build())
         }
         val configQueryResultValue =
-            cameraDeviceSetupCompat.isSessionConfigurationSupported(sessionConfig).supported
-        return ConfigQueryResult(configQueryResultValue)
+            cameraDeviceSetupCompat?.isSessionConfigurationSupported(sessionConfig)?.supported
+        if (configQueryResultValue != null) {
+            return ConfigQueryResult(configQueryResultValue)
+        }
+        return ConfigQueryResult.UNKNOWN
     }
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)

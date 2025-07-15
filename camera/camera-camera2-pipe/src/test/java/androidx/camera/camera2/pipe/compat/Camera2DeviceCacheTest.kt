@@ -567,6 +567,12 @@ class Camera2DeviceCacheTest {
 
             whenever(mockDeviceSetupFactoryProvider.get()).thenReturn(mockDeviceSetupFactory)
             whenever(
+                    fakeCameraManagerProvider.fakeCameraManager.isCameraDeviceSetupSupported(
+                        cameraId.value
+                    )
+                )
+                .thenReturn(true)
+            whenever(
                     fakeCameraManagerProvider.fakeCameraManager.getCameraDeviceSetup(cameraId.value)
                 )
                 .thenReturn(mockCameraDeviceSetup)
