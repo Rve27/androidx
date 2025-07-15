@@ -140,20 +140,6 @@ public class ProfileImpl implements Profile {
 
     @Profile.ExperimentalUrlPrefetch
     @Override
-    public void clearPrefetchAsync(@NonNull String url,
-            @NonNull Executor callbackExecutor,
-            @NonNull OutcomeReceiverCompat<Void, PrefetchException> callback) {
-        ApiFeature.NoFramework feature = WebViewFeatureInternal.PROFILE_URL_PREFETCH;
-        if (feature.isSupportedByWebView()) {
-            mProfileImpl.clearPrefetch(url, callbackExecutor,
-                    PrefetchOperationCallbackAdapter.buildInvocationHandler(callback));
-        } else {
-            throw WebViewFeatureInternal.getUnsupportedOperationException();
-        }
-    }
-
-    @Profile.ExperimentalUrlPrefetch
-    @Override
     public void setSpeculativeLoadingConfig(
             @NonNull SpeculativeLoadingConfig speculativeLoadingConfig) {
         ApiFeature.NoFramework feature = WebViewFeatureInternal.SPECULATIVE_LOADING_CONFIG;

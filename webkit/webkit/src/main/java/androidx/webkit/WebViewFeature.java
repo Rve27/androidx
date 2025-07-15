@@ -607,7 +607,7 @@ public class WebViewFeature {
     public static final String MUTE_AUDIO = "MUTE_AUDIO";
 
     /**
-     * Feature for {@link #isFeatureSupported(String)}
+     * Feature for {@link #isFeatureSupported(String)}.
      * This feature covers
      * {@link WebSettingsCompat#setWebAuthenticationSupport(WebSettings, int)}
      * {@link WebSettingsCompat#getWebAuthenticationSupport(WebSettings)}
@@ -636,10 +636,9 @@ public class WebViewFeature {
      * This feature covers
      * {@link Profile#prefetchUrlAsync(String, CancellationSignal, Executor, SpeculativeLoadingParameters, OutcomeReceiverCompat)}
      * {@link Profile#prefetchUrlAsync(String, CancellationSignal, Executor, OutcomeReceiverCompat)}
-     * {@link Profile#clearPrefetchAsync(String, Executor, OutcomeReceiverCompat)}
      */
     @Profile.ExperimentalUrlPrefetch
-    public static final String PROFILE_URL_PREFETCH = "PREFETCH_URL_V5";
+    public static final String PROFILE_URL_PREFETCH = "PREFETCH_URL_V6";
 
     /**
      * Feature for {@link #isFeatureSupported(String)}.
