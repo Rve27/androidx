@@ -51,6 +51,7 @@ public class FakePerceptionManager : PerceptionManager, AnchorHolder {
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     override val userFace: Face? = FakeRuntimeFace()
 
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     override val earth: Earth = FakeRuntimeEarth()
 
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
@@ -101,6 +102,7 @@ public class FakePerceptionManager : PerceptionManager, AnchorHolder {
         anchor.uuid?.let { anchorUuids.remove(it) }
     }
 
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     override suspend fun checkVpsAvailability(
         latitude: Double,
         longitude: Double,

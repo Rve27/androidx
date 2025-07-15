@@ -50,6 +50,7 @@ public interface PerceptionManager {
     public fun unpersistAnchor(uuid: UUID)
 
     /** Checks the VPS availability at the given location. */
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public suspend fun checkVpsAvailability(
         latitude: Double,
         longitude: Double,
