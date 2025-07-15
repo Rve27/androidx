@@ -91,7 +91,10 @@ internal class AnchorRenderer(
                             val perceptionRayPose =
                                 session.scene.activitySpace.transformPoseTo(
                                     Pose(
-                                        event.origin,
+                                        // Moving the origin of the ray back so that it can collide
+                                        // with the plane since otherwise the starting point will be
+                                        // on the plane and will not register a hit.
+                                        event.origin + event.direction,
                                         Quaternion.fromLookTowards(event.direction, up),
                                     ),
                                     session.scene.perceptionSpace,
