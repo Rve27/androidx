@@ -62,7 +62,14 @@ public class Profile {
                     CoreDocument.DOCUMENT_API_LEVEL,
                     Operations.PROFILE_ANDROIDX,
                     new AndroidxPlatformServices(),
-                    RemoteComposeWriter::obtain);
+                    (width, height, contentDescription, profile) ->
+                            new RemoteComposeWriter(
+                                    width,
+                                    height,
+                                    contentDescription,
+                                    CoreDocument.DOCUMENT_API_LEVEL,
+                                    Operations.PROFILE_ANDROIDX,
+                                    profile.getPlatform()));
 
     /**
      * Profile constructor
@@ -113,12 +120,7 @@ public class Profile {
      * @return a valid RemoteComposeWriter
      */
     public @NonNull RemoteComposeWriter create(int width, int height, @NonNull String description) {
-        return mFactory.create(
-                width,
-                height,
-                description,
-                new Profile(
-                        mApiLevel, mOperationsProfiles, mPlatform, RemoteComposeWriter::obtain));
+        return mFactory.create(width, height, description, this);
     }
 
     /**
