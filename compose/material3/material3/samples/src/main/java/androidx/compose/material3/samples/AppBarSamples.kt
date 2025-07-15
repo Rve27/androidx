@@ -215,21 +215,11 @@ fun SimpleTopAppBarWithAdaptiveActions() {
                             }
                         },
                     ) {
-                        // TODO: These icons should have tooltips.
                         items.forEachIndexed { index, item ->
                             clickableItem(
                                 onClick = {},
                                 icon = {
-                                    TooltipBox(
-                                        positionProvider =
-                                            TooltipDefaults.rememberTooltipPositionProvider(
-                                                TooltipAnchorPosition.Above
-                                            ),
-                                        tooltip = { PlainTooltip { Text(item) } },
-                                        state = rememberTooltipState(),
-                                    ) {
-                                        Icon(imageVector = icons[index], contentDescription = item)
-                                    }
+                                    Icon(imageVector = icons[index], contentDescription = item)
                                 },
                                 label = item,
                             )
@@ -1504,22 +1494,10 @@ fun BottomAppBarWithOverflow() {
                 }
             }
         ) {
-            // TODO: These items should have tooltips.
             items.forEachIndexed { index, item ->
                 clickableItem(
                     onClick = { /* doSomething() */ },
-                    icon = {
-                        TooltipBox(
-                            positionProvider =
-                                TooltipDefaults.rememberTooltipPositionProvider(
-                                    TooltipAnchorPosition.Above
-                                ),
-                            tooltip = { PlainTooltip { Text(item) } },
-                            state = rememberTooltipState(),
-                        ) {
-                            Icon(icons[index], contentDescription = item)
-                        }
-                    },
+                    icon = { Icon(icons[index], contentDescription = item) },
                     label = item,
                 )
             }
