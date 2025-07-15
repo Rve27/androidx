@@ -288,4 +288,28 @@ class PdfViewExternalInputManagerTest {
 
         assertThat(handled).isFalse()
     }
+
+    @Test
+    fun handleKeyEvent_ctrlC_ReturnsTrue() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_C)
+        whenever(event.isCtrlPressed).thenReturn(true)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isTrue()
+    }
+
+    @Test
+    fun handleKeyEvent_CtrlC_isNotHandledAndReturnsFalse() {
+        val event = mock<KeyEvent>()
+        whenever(event.action).thenReturn(KeyEvent.ACTION_DOWN)
+        whenever(event.keyCode).thenReturn(KeyEvent.KEYCODE_C)
+        whenever(event.isCtrlPressed).thenReturn(false)
+
+        val handled = externalInputManager.handleKeyEvent(event)
+
+        assertThat(handled).isFalse()
+    }
 }

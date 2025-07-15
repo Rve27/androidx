@@ -153,17 +153,23 @@ internal open class FakePdfDocument(
         stop: PointF,
     ): PageSelection {
         // TODO(b/376136631) provide a useful implementation when it's needed for testing
+        val selectedTextContents =
+            if (textContents.isEmpty()) {
+                listOf(PdfPageTextContent(listOf(RectF(0f, 0f, 10f, 10f)), "test"))
+            } else {
+                listOf(textContents[pageNumber])
+            }
         return PageSelection(
-            0,
+            pageNumber,
             SelectionBoundary(0),
             SelectionBoundary(0),
-            listOf(PdfPageTextContent(listOf(RectF(0f, 0f, 10f, 10f)), "test")),
+            selectedTextContents,
         )
     }
 
     override suspend fun getSelectAllSelectionBounds(pageNumber: Int): PageSelection? {
         return PageSelection(
-            0,
+            pageNumber,
             SelectionBoundary(0),
             SelectionBoundary(Int.MAX_VALUE),
             listOf(textContents[pageNumber]),

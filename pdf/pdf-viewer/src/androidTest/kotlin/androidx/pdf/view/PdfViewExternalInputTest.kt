@@ -16,7 +16,9 @@
 
 package androidx.pdf.view
 
+import android.content.ClipboardManager
 import android.graphics.Point
+import android.graphics.RectF
 import android.os.SystemClock
 import android.view.InputDevice
 import android.view.KeyEvent
@@ -24,6 +26,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.pdf.content.PdfPageTextContent
 import androidx.pdf.featureflag.PdfFeatureFlags
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso
@@ -32,6 +35,7 @@ import androidx.test.espresso.ViewAction
 import androidx.test.espresso.action.EspressoKey
 import androidx.test.espresso.action.GeneralLocation
 import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.longClick
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -48,7 +52,12 @@ class PdfViewExternalInputTest {
 
     @Before
     fun setUp() {
-        val fakePdfDocument = FakePdfDocument(List(10) { Point(2000, 4000) })
+        val textContents =
+            FAKE_PAGE_TEXT.map { text ->
+                PdfPageTextContent(listOf(RectF(0f, 0f, 2000f, 4000f)), text)
+            }
+        val fakePdfDocument =
+            FakePdfDocument(pages = List(10) { Point(2000, 4000) }, textContents = textContents)
         PdfViewTestActivity.onCreateCallback = { activity ->
             val container = FrameLayout(activity)
             container.addView(
@@ -689,6 +698,52 @@ class PdfViewExternalInputTest {
         }
     }
 
+    @Test
+    fun testCtrlC_copiesSelectionToClipboardAndClearsSelection() {
+        val expectedSelectedText = FAKE_PAGE_TEXT[0]
+
+        with(ActivityScenario.launch(PdfViewTestActivity::class.java)) {
+            Espresso.onView(ViewMatchers.withId(PDF_VIEW_ID))
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    pdfView.post { pdfView.requestFocus() }
+                }
+                // Create a selection by long-pressing the center of the view.
+                .perform(longClick())
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    // Verify that the long press selected the correct word.
+                    val selectedText =
+                        (pdfView.currentSelection as? TextSelection)?.text?.toString()
+                    Truth.assertThat(selectedText).isEqualTo(expectedSelectedText)
+                }
+                // Perform the Ctrl+C key press.
+                .perform(
+                    ViewActions.pressKey(
+                        EspressoKey.Builder()
+                            .withKeyCode(KeyEvent.KEYCODE_C)
+                            .withCtrlPressed(true)
+                            .build()
+                    )
+                )
+                .check { view, _ ->
+                    val pdfView = view as PdfView
+                    val clipboard = pdfView.context.getSystemService(ClipboardManager::class.java)
+
+                    // Verify the clipboard content.
+                    val clip = clipboard.primaryClip
+                    Truth.assertThat(clip).isNotNull()
+                    Truth.assertThat(clip!!.itemCount).isGreaterThan(0)
+                    val clipboardText = clip.getItemAt(0).text
+                    Truth.assertThat(clipboardText).isEqualTo(expectedSelectedText)
+
+                    // Verify that the selection was cleared after copying.
+                    Truth.assertThat(pdfView.currentSelection).isNull()
+                }
+            close()
+        }
+    }
+
     private fun scrollMouseWheel(vscroll: Float, hscroll: Float, metaState: Int = 0): ViewAction {
         return object : ViewAction {
             override fun getConstraints(): Matcher<View> {
@@ -742,5 +797,7 @@ class PdfViewExternalInputTest {
         const val KEYBOARD_HORIZONTAL_SCROLL_FACTOR = 20
         const val MOUSE_VERTICAL_SCROLL_FACTOR = 14
         const val MOUSE_HORIZONTAL_SCROLL_FACTOR = 14
+        // A map of page numbers to their text content for the fake document.
+        val FAKE_PAGE_TEXT = (0..9).map { "FAKE_PAGE_TEXT $it" }
     }
 }

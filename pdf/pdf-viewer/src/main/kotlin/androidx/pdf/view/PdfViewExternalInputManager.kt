@@ -54,6 +54,14 @@ internal class PdfViewExternalInputManager(pdfView: PdfView) {
                 }
                 false
             }
+            KeyEvent.KEYCODE_C -> {
+                if (event.isCtrlPressed) {
+                    keyboardActionHandler.copySelection()
+                    true
+                } else {
+                    false
+                }
+            }
             KeyEvent.KEYCODE_DPAD_DOWN -> {
                 keyboardActionHandler.scrollDown()
                 true

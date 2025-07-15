@@ -16,6 +16,8 @@
 
 package androidx.pdf.view
 
+import androidx.pdf.util.ClipboardUtils
+
 /**
  * Performs actions in response to keyboard shortcuts detected by [PdfViewExternalInputManager]
  *
@@ -32,6 +34,12 @@ internal class PdfViewKeyboardActionHandler(pdfView: PdfView) :
 
     private val pivotY: Float
         get() = pdfView.top.toFloat()
+
+    fun copySelection() {
+        val text = (pdfView.currentSelection as? TextSelection)?.text ?: return
+        ClipboardUtils.copyToClipboard(pdfView.context, text.toString())
+        pdfView.clearSelection()
+    }
 
     fun zoomIn() {
         zoomIn(pivotX, pivotY)
