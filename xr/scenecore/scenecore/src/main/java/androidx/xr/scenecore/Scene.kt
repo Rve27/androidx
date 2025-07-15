@@ -367,8 +367,8 @@ public class Scene : SessionConnector {
      * This API only checks if the bounding box of all rendered content (even if partially
      * transparent) is within the user's field of view. Content not rendered due to full
      * transparency (alpha=0) or being hidden is not considered. If the entities in the scene or any
-     * of their ancestors are hidden using [Entity.setHidden] (hidden=true) or if the entities are
-     * turned fully transparent using [Entity.setAlpha] (alpha=0.0), then the SpatialVisibility
+     * of their ancestors are hidden using [Entity.setEnabled] (enabled=false) or if the entities
+     * are turned fully transparent using [Entity.setAlpha] (alpha=0.0), then the SpatialVisibility
      * checks will return [SpatialVisibility.SPATIAL_VISIBILITY_OUTSIDE_FIELD_OF_VIEW].
      *
      * The listener is invoked on the provided [Executor].
@@ -402,8 +402,8 @@ public class Scene : SessionConnector {
      * This API only checks if the bounding box of all rendered content (even if partially
      * transparent) is within the user's field of view. Content not rendered due to full
      * transparency (alpha=0) or being hidden is not considered. If the entities in the scene or any
-     * of their ancestors are hidden using [Entity.setHidden] (hidden=true) or if the entities are
-     * turned fully transparent using [Entity.setAlpha] (alpha=0.0), then the SpatialVisibility
+     * of their ancestors are hidden using [Entity.setEnabled] (enabled=false) or if the entities
+     * are turned fully transparent using [Entity.setAlpha] (alpha=0.0), then the SpatialVisibility
      * checks will return [SpatialVisibility.SPATIAL_VISIBILITY_OUTSIDE_FIELD_OF_VIEW].
      *
      * There can only be one listener set at a time. If a new listener is set, the previous listener

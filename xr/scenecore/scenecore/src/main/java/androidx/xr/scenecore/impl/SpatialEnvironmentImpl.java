@@ -378,7 +378,7 @@ final class SpatialEnvironmentImpl implements SpatialEnvironment, Consumer<Consu
                         if (mUseSplitEngine && !(newGeometry instanceof GltfModelResourceImpl)) {
                             throw new IllegalArgumentException(
                                     "SplitEngine is enabled but the preferred geometry is not of"
-                                        + " type GltfModelResourceImpl.");
+                                            + " type GltfModelResourceImpl.");
                         }
                     }
 
