@@ -198,34 +198,14 @@ final class SpatialEnvironmentImpl implements SpatialEnvironment, Consumer<Consu
         return changedSpatialStates;
     }
 
-    /** Flushes passthrough Node state to XrExtensions. */
-    private void applyPassthroughChange(float opacityVal) {
-        if (opacityVal > 0.0f) {
-            try (NodeTransaction transaction = mXrExtensions.createNodeTransaction()) {
-                transaction
-                        .setPassthroughState(
-                                mPassthroughNode, opacityVal, PassthroughState.PASSTHROUGH_MODE_MAX)
-                        .apply();
-            }
-        } else {
-            try (NodeTransaction transaction = mXrExtensions.createNodeTransaction()) {
-                transaction
-                        .setPassthroughState(
-                                mPassthroughNode,
-                                /* passthroughOpacity= */ 0.0f,
-                                PassthroughState.PASSTHROUGH_MODE_OFF)
-                        .apply();
-            }
-        }
-    }
-
     @Override
     @CanIgnoreReturnValue
     public void setPreferredPassthroughOpacity(float opacity) {
         // To work around floating-point precision issues, the opacity preference is documented to
         // clamp to 0.0f if it is set below 1% opacity and it clamps to 1.0f if it is set above 99%
         // opacity.
-
+        // TODO: b/3692012 - Publicly document the passthrough opacity threshold values with
+        // constants
         float newPassthroughOpacityPreference =
                 opacity == NO_PASSTHROUGH_OPACITY_PREFERENCE
                         ? NO_PASSTHROUGH_OPACITY_PREFERENCE
@@ -237,15 +217,26 @@ final class SpatialEnvironmentImpl implements SpatialEnvironment, Consumer<Consu
 
         mPassthroughOpacityPreference = newPassthroughOpacityPreference;
 
-        // to this method when they are removed
-
         // Passthrough should be enabled only if the user has explicitly set the
-        // PassthroughOpacityPreference to a valid and non-zero value, otherwise disabled.
-        if (mPassthroughOpacityPreference != NO_PASSTHROUGH_OPACITY_PREFERENCE
-                && mPassthroughOpacityPreference != 0.0f) {
-            applyPassthroughChange(mPassthroughOpacityPreference);
+        // PassthroughOpacityPreference to a valid value, otherwise disabled.
+        if (mPassthroughOpacityPreference != NO_PASSTHROUGH_OPACITY_PREFERENCE) {
+            try (NodeTransaction transaction = mXrExtensions.createNodeTransaction()) {
+                transaction
+                        .setPassthroughState(
+                                mPassthroughNode,
+                                mPassthroughOpacityPreference,
+                                PassthroughState.PASSTHROUGH_MODE_MAX)
+                        .apply();
+            }
         } else {
-            applyPassthroughChange(0.0f);
+            try (NodeTransaction transaction = mXrExtensions.createNodeTransaction()) {
+                transaction
+                        .setPassthroughState(
+                                mPassthroughNode,
+                                0.0f, // not show the app passthrough
+                                PassthroughState.PASSTHROUGH_MODE_OFF)
+                        .apply();
+            }
         }
     }
 
