@@ -19,8 +19,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.pdf.view.PdfView
-        android:id="@+id/pdfView"
+    <androidx.pdf.view.PdfContentLayout
+        android:id="@+id/pdfContentLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingStart="@dimen/pdf_horizontal_padding"

@@ -54,6 +54,7 @@ import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
 import androidx.pdf.util.AnnotationUtils
 import androidx.pdf.util.Uris
+import androidx.pdf.view.PdfContentLayout
 import androidx.pdf.view.PdfView
 import androidx.pdf.view.Selection
 import androidx.pdf.view.ToolBoxView
@@ -246,6 +247,9 @@ public open class PdfViewerFragment constructor() : Fragment() {
     protected val toolboxView: ToolBoxView
         @RestrictTo(RestrictTo.Scope.LIBRARY) get() = _toolboxView
 
+    protected val pdfContainer: PdfContentLayout
+        @RestrictTo(RestrictTo.Scope.LIBRARY) get() = _pdfContainer
+
     @RestrictTo(RestrictTo.Scope.LIBRARY)
     protected fun setAnnotationIntentResolvability(value: Boolean) {
         isAnnotationIntentResolvable = value
@@ -254,6 +258,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
     private lateinit var _pdfView: PdfView
     private lateinit var _pdfSearchView: PdfSearchView
     private lateinit var _toolboxView: ToolBoxView
+    private lateinit var _pdfContainer: PdfContentLayout
     private lateinit var errorView: TextView
     private lateinit var loadingView: ProgressBar
     private lateinit var pdfViewManager: PdfViewManager
@@ -343,11 +348,12 @@ public open class PdfViewerFragment constructor() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(view) {
-            _pdfView = findViewById(R.id.pdfView)
             errorView = findViewById(R.id.errorTextView)
             loadingView = findViewById(R.id.pdfLoadingProgressBar)
+            _pdfContainer = findViewById(R.id.pdfContentLayout)
             _pdfSearchView = findViewById(R.id.pdfSearchView)
             _toolboxView = findViewById(R.id.toolBoxView)
+            _pdfView = pdfContainer.pdfView
         }
         val gestureDetector =
             GestureDetector(
