@@ -34,7 +34,6 @@ import androidx.xr.compose.subspace.SpatialActivityPanel
 import androidx.xr.compose.subspace.SpatialAndroidViewPanel
 import androidx.xr.compose.subspace.SpatialMainPanel
 import androidx.xr.compose.subspace.SpatialPanel
-import androidx.xr.compose.subspace.node.SubspaceModifierNodeElement
 import androidx.xr.compose.testing.SubspaceTestingActivity
 import androidx.xr.compose.testing.TestSetup
 import androidx.xr.compose.testing.onSubspaceNodeWithTag
@@ -59,23 +58,6 @@ class CoreEntityTest {
     @get:Rule val expectedLogMessagesRule = ExpectedLogMessagesRule()
 
     private class SpatialPanelActivity : ComponentActivity() {}
-
-    private class ForceZeroRenderSizeElement :
-        SubspaceModifierNodeElement<ForceZeroRenderSizeNode>() {
-        override fun create() = ForceZeroRenderSizeNode()
-
-        override fun update(node: ForceZeroRenderSizeNode) {}
-
-        override fun hashCode(): Int = javaClass.hashCode()
-
-        override fun equals(other: Any?): Boolean = other is ForceZeroRenderSizeElement
-    }
-
-    private class ForceZeroRenderSizeNode : SubspaceModifier.Node(), CoreEntityNode {
-        override fun CoreEntityScope.modifyCoreEntity() {
-            setRenderedSize(IntVolumeSize.Zero)
-        }
-    }
 
     @Test
     fun coreEntity_coreGroupEntity_shouldThrowIfNotGroupEntity() {
@@ -307,108 +289,6 @@ class CoreEntityTest {
         val panelSceneCoreEntity = panelNode.semanticsEntity as PanelEntity?
         assertNotNull(panelSceneCoreEntity)
         assertThat(panelSceneCoreEntity.isEnabled()).isFalse()
-        expectedLogMessagesRule.expectLogMessage(
-            Log.WARN,
-            "CoreBasePanelEntity",
-            containsString("The panel will be hidden."),
-        )
-    }
-
-    @Test
-    fun coreBasePanelEntity_androidViewPanelResizableZeroSizeOverride_shouldBeDisabledAndNotCrash() {
-        composeTestRule.setContent {
-            TestSetup {
-                ApplicationSubspace {
-                    SpatialAndroidViewPanel(
-                        factory = { View(it) },
-                        SubspaceModifier.testTag("panel")
-                            .resizable()
-                            .then(ForceZeroRenderSizeElement()),
-                    )
-                }
-            }
-        }
-        composeTestRule.waitForIdle()
-
-        val panelNode = composeTestRule.onSubspaceNodeWithTag("panel").fetchSemanticsNode()
-        val panelSceneCoreEntity = panelNode.semanticsEntity as? PanelEntity
-        assertThat(checkNotNull(panelSceneCoreEntity).isEnabled()).isFalse()
-        expectedLogMessagesRule.expectLogMessage(
-            Log.WARN,
-            "CoreBasePanelEntity",
-            containsString("The panel will be hidden."),
-        )
-    }
-
-    @Test
-    fun coreBasePanelEntity_contentBasedPanelResizableZeroSizeOverride_shouldBeDisabledAndNotCrash() {
-        composeTestRule.setContent {
-            TestSetup {
-                ApplicationSubspace {
-                    SpatialPanel(
-                        SubspaceModifier.testTag("panel")
-                            .resizable()
-                            .then(ForceZeroRenderSizeElement())
-                    ) {}
-                }
-            }
-        }
-        composeTestRule.waitForIdle()
-
-        val panelNode = composeTestRule.onSubspaceNodeWithTag("panel").fetchSemanticsNode()
-        val panelSceneCoreEntity = panelNode.semanticsEntity as? PanelEntity
-        assertThat(checkNotNull(panelSceneCoreEntity).isEnabled()).isFalse()
-        expectedLogMessagesRule.expectLogMessage(
-            Log.WARN,
-            "CoreBasePanelEntity",
-            containsString("The panel will be hidden."),
-        )
-    }
-
-    @Test
-    fun coreBasePanelEntity_mainPanelResizableAndZeroSizeOverride_shouldBeDisabledAndNotCrash() {
-        composeTestRule.setContent {
-            TestSetup {
-                ApplicationSubspace {
-                    SpatialMainPanel(
-                        SubspaceModifier.testTag("mainPanel")
-                            .resizable()
-                            .then(ForceZeroRenderSizeElement())
-                    )
-                }
-            }
-        }
-        composeTestRule.waitForIdle()
-
-        val mainPanelNode = composeTestRule.onSubspaceNodeWithTag("mainPanel").fetchSemanticsNode()
-        val mainPanelSceneCoreEntity = mainPanelNode.semanticsEntity as? PanelEntity
-        assertThat(checkNotNull(mainPanelSceneCoreEntity).isEnabled()).isFalse()
-        expectedLogMessagesRule.expectLogMessage(
-            Log.WARN,
-            "CoreBasePanelEntity",
-            containsString("The panel will be hidden."),
-        )
-    }
-
-    @Test
-    fun coreBasePanelEntity_intentBasedPanelResizableZeroSizeOverride_shouldBeDisabledAndNotCrash() {
-        composeTestRule.setContent {
-            TestSetup {
-                ApplicationSubspace {
-                    SpatialActivityPanel(
-                        intent = Intent(composeTestRule.activity, SpatialPanelActivity::class.java),
-                        SubspaceModifier.testTag("panel")
-                            .resizable()
-                            .then(ForceZeroRenderSizeElement()),
-                    )
-                }
-            }
-        }
-        composeTestRule.waitForIdle()
-
-        val panelNode = composeTestRule.onSubspaceNodeWithTag("panel").fetchSemanticsNode()
-        val panelSceneCoreEntity = panelNode.semanticsEntity as? PanelEntity
-        assertThat(checkNotNull(panelSceneCoreEntity).isEnabled()).isFalse()
         expectedLogMessagesRule.expectLogMessage(
             Log.WARN,
             "CoreBasePanelEntity",

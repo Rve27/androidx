@@ -174,8 +174,6 @@ internal class CoreGroupEntity(entity: Entity) : CoreEntity(entity) {
  */
 internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) :
     CoreEntity(panelEntity), MovableCoreEntity, ResizableCoreEntity {
-    override var overrideSize: IntVolumeSize? = null
-
     // Density set from setShape.
     private var shapeDensity: Density? = null
 
@@ -191,20 +189,18 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
     override var size: IntVolumeSize
         get() = super.size
         set(value) {
-            var nextSize = overrideSize ?: value
+            hidden =
+                if (value.width <= 0 || value.height <= 0) {
+                    Log.w(
+                        "CoreBasePanelEntity",
+                        "Setting the panel size to 0 or less. The panel will be hidden.",
+                    )
+                    true
+                } else {
+                    false
+                }
 
-            val shouldHide = nextSize.width <= 0 || nextSize.height <= 0
-
-            if (shouldHide) {
-                Log.w(
-                    "CoreBasePanelEntity",
-                    "Setting the panel size to 0 or less. The panel will be hidden.",
-                )
-            }
-            hidden = shouldHide
-
-            nextSize =
-                IntVolumeSize(max(nextSize.width, 1), max(nextSize.height, 1), nextSize.depth)
+            val nextSize = IntVolumeSize(max(value.width, 1), max(value.height, 1), value.depth)
 
             if (super.size != nextSize) {
                 super.size = nextSize
@@ -293,9 +289,8 @@ internal class CoreSurfaceEntity(
     override var size: IntVolumeSize
         get() = super.size
         set(value) {
-            val nextSize = overrideSize ?: value
-            if (super.size != nextSize) {
-                super.size = nextSize
+            if (super.size != value) {
+                super.size = value
                 surfaceEntity.canvasShape =
                     SurfaceEntity.CanvasShape.Quad(
                         Meter.fromPixel(size.width.toFloat(), localDensity).value,
@@ -304,8 +299,6 @@ internal class CoreSurfaceEntity(
                 updateFeathering()
             }
         }
-
-    override var overrideSize: IntVolumeSize? = null
 
     internal fun setFeatheringEffect(featheringEffect: SpatialFeatheringEffect) {
         currentFeatheringEffect = featheringEffect
@@ -424,15 +417,7 @@ internal class CoreSphereSurfaceEntity(
 }
 
 /** [CoreEntity] types that implement this interface may have the ResizableComponent attached. */
-internal interface ResizableCoreEntity {
-    /**
-     * The size of the [CoreEntity] in pixels.
-     *
-     * This value is used to override the layout size of the [CoreEntity] when it is resizable. When
-     * this value is null, the layout size of the [CoreEntity] is used.
-     */
-    var overrideSize: IntVolumeSize?
-}
+internal interface ResizableCoreEntity
 
 /** [CoreEntity] types that implement this interface may have the MovableComponent attached. */
 internal interface MovableCoreEntity
