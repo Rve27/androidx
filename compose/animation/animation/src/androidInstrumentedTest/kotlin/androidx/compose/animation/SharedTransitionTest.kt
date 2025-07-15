@@ -20,7 +20,7 @@ package androidx.compose.animation
 
 import androidx.compose.animation.SharedTransitionScope.PlaceHolderSize.Companion.animatedSize
 import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.RemeasureToBounds
-import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.ScaleToBounds
+import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.scaleToBounds
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.SeekableTransitionState
 import androidx.compose.animation.core.Transition
@@ -1848,7 +1848,7 @@ class SharedTransitionTest {
                                         this,
                                         enter = EnterTransition.None,
                                         exit = ExitTransition.None,
-                                        resizeMode = ScaleToBounds(ContentScale.Fit),
+                                        resizeMode = scaleToBounds(ContentScale.Fit),
                                         boundsTransform = boundsTransform,
                                         placeHolderSize = animatedSize,
                                     )
@@ -1862,7 +1862,7 @@ class SharedTransitionTest {
                                         this,
                                         enter = EnterTransition.None,
                                         exit = ExitTransition.None,
-                                        resizeMode = ScaleToBounds(ContentScale.Fit),
+                                        resizeMode = scaleToBounds(ContentScale.Fit),
                                         boundsTransform = boundsTransform,
                                         placeHolderSize = animatedSize,
                                     )
@@ -1950,7 +1950,7 @@ class SharedTransitionTest {
                                         this,
                                         EnterTransition.None,
                                         ExitTransition.None,
-                                        resizeMode = ScaleToBounds(ContentScale.FillHeight),
+                                        resizeMode = scaleToBounds(ContentScale.FillHeight),
                                         boundsTransform = boundsTransform,
                                         placeHolderSize = animatedSize,
                                     )
@@ -1964,7 +1964,7 @@ class SharedTransitionTest {
                                         this,
                                         EnterTransition.None,
                                         ExitTransition.None,
-                                        resizeMode = ScaleToBounds(ContentScale.FillWidth),
+                                        resizeMode = scaleToBounds(ContentScale.FillWidth),
                                         boundsTransform = boundsTransform,
                                         placeHolderSize = animatedSize,
                                     )
@@ -2063,7 +2063,7 @@ class SharedTransitionTest {
                                         EnterTransition.None,
                                         ExitTransition.None,
                                         resizeMode =
-                                            ScaleToBounds(ContentScale.Fit, Alignment.TopStart),
+                                            scaleToBounds(ContentScale.Fit, Alignment.TopStart),
                                         boundsTransform = boundsTransform,
                                         placeHolderSize = animatedSize,
                                     )
@@ -2078,7 +2078,7 @@ class SharedTransitionTest {
                                         EnterTransition.None,
                                         ExitTransition.None,
                                         resizeMode =
-                                            ScaleToBounds(ContentScale.Fit, Alignment.BottomStart),
+                                            scaleToBounds(ContentScale.Fit, Alignment.BottomStart),
                                         boundsTransform = boundsTransform,
                                         placeHolderSize = animatedSize,
                                     )
@@ -2166,7 +2166,7 @@ class SharedTransitionTest {
                                         this,
                                         EnterTransition.None,
                                         ExitTransition.None,
-                                        resizeMode = ScaleToBounds(ContentScale.Crop),
+                                        resizeMode = scaleToBounds(ContentScale.Crop),
                                         boundsTransform = boundsTransform,
                                         placeHolderSize = animatedSize,
                                     )
@@ -2180,7 +2180,7 @@ class SharedTransitionTest {
                                         this,
                                         EnterTransition.None,
                                         ExitTransition.None,
-                                        resizeMode = ScaleToBounds(ContentScale.FillWidth),
+                                        resizeMode = scaleToBounds(ContentScale.FillWidth),
                                         boundsTransform = boundsTransform,
                                         placeHolderSize = animatedSize,
                                     )
@@ -2318,7 +2318,7 @@ class SharedTransitionTest {
                                                     rememberSharedContentState(key = id),
                                                     this@AnimatedContent,
                                                     boundsTransform = boundsTransform,
-                                                    resizeMode = ScaleToBounds(ContentScale.Fit),
+                                                    resizeMode = scaleToBounds(ContentScale.Fit),
                                                 )
                                                 .size(200.dp, 50.dp)
                                                 .background(
@@ -2345,7 +2345,7 @@ class SharedTransitionTest {
                                         rememberSharedContentState(key = selected),
                                         this@AnimatedContent,
                                         boundsTransform = boundsTransform,
-                                        resizeMode = ScaleToBounds(ContentScale.Fit),
+                                        resizeMode = scaleToBounds(ContentScale.Fit),
                                     )
                                     .size(100.dp)
                                     .onPlaced {
@@ -2863,11 +2863,11 @@ class SharedTransitionTest {
         alignments.forEach { alignment ->
             contentScales.forEach { contentScale ->
                 assertTrue(
-                    ScaleToBounds(contentScale, alignment) ===
-                        ScaleToBounds(contentScale, alignment)
+                    scaleToBounds(contentScale, alignment) ===
+                        scaleToBounds(contentScale, alignment)
                 )
-                assertFalse(prev === ScaleToBounds(contentScale, alignment))
-                prev = ScaleToBounds(contentScale, alignment)
+                assertFalse(prev === scaleToBounds(contentScale, alignment))
+                prev = scaleToBounds(contentScale, alignment)
             }
         }
 
@@ -2889,10 +2889,10 @@ class SharedTransitionTest {
                 }
             }
 
-        assertFalse(ScaleToBounds(customContentScale) === ScaleToBounds(customContentScale))
+        assertFalse(scaleToBounds(customContentScale) === scaleToBounds(customContentScale))
         assertFalse(
-            ScaleToBounds(alignment = customAlignment) ===
-                ScaleToBounds(alignment = customAlignment)
+            scaleToBounds(alignment = customAlignment) ===
+                scaleToBounds(alignment = customAlignment)
         )
     }
 
