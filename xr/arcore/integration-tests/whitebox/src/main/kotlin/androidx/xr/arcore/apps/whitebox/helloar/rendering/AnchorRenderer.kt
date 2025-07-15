@@ -91,16 +91,13 @@ internal class AnchorRenderer(
                             val perceptionRayPose =
                                 session.scene.activitySpace.transformPoseTo(
                                     Pose(
-                                        // Moving the origin of the ray back so that it can collide
-                                        // with the plane since otherwise the starting point will be
-                                        // on the plane and will not register a hit.
-                                        event.origin + event.direction,
+                                        event.origin,
                                         Quaternion.fromLookTowards(event.direction, up),
                                     ),
                                     session.scene.perceptionSpace,
                                 )
                             val perceptionRay =
-                                Ray(perceptionRayPose.translation, perceptionRayPose.forward)
+                                Ray(perceptionRayPose.translation, perceptionRayPose.backward)
                             hitTest(session, perceptionRay)
                                 .firstOrNull {
                                     // TODO(b/372054517): Re-enable creating anchors on Unknown
