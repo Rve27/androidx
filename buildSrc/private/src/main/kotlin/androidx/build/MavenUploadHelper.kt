@@ -138,12 +138,7 @@ private fun Project.configureComponentPublishing(
         for ((mavenCoordinates, projectPath) in projectModules) {
             project.findProject(projectPath)?.let { project ->
                 if (project.plugins.hasPlugin(LibraryPlugin::class.java)) {
-                    if (project.plugins.hasPlugin(KotlinMultiplatformPluginWrapper::class.java)) {
-                        // For KMP projects, android AAR is published under -android
-                        androidxAndroidProjects.add("$mavenCoordinates-android")
-                    } else {
-                        androidxAndroidProjects.add(mavenCoordinates)
-                    }
+                    androidxAndroidProjects.add(mavenCoordinates)
                 }
                 if (project.hasAndroidMultiplatformPlugin()) {
                     androidxAndroidProjects.add("$mavenCoordinates-android")

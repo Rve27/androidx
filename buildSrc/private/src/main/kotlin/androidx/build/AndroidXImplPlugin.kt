@@ -128,8 +128,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -443,13 +441,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
                         // it.compileTaskProvider.configure { it.compilerOptions.jvmTarget.set(JT) }
                     }
                 }
-                targets.withType<KotlinAndroidTarget>().configureEach { target ->
-                    target.compilations.configureEach {
-                        it.compileTaskProvider.configure { task ->
-                            task.compilerOptions.jvmTarget.set(defaultJvmTarget)
-                        }
-                    }
-                }
                 targets.withType(KotlinJvmTarget::class.java).configureEach { target ->
                     val defaultTargetVersionForNonAndroidTargets =
                         project.provider {
@@ -662,11 +653,6 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     private fun Project.enforceDeviceTestsForMultiplatform() {
         project.multiplatformExtension?.let {
-            it.targets.withType(KotlinAndroidTarget::class.java).configureEach { androidTarget ->
-                androidTarget.instrumentedTestVariant {
-                    sourceSetTree.set(KotlinSourceSetTree.test)
-                }
-            }
             val commonTestSourceSet = it.sourceSets.getByName("commonTest")
             val androidInstrumentedTestSourceSet =
                 it.sourceSets.getByName("androidInstrumentedTest")
