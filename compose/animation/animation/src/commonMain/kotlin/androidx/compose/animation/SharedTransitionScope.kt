@@ -71,10 +71,12 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.LookaheadScope
+import androidx.compose.ui.layout.approachLayout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.round
 import androidx.compose.ui.util.fastForEach
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -328,6 +330,64 @@ public interface SharedTransitionScope : LookaheadScope {
      * @sample androidx.compose.animation.samples.NestedSharedBoundsSample
      */
     public fun Modifier.skipToLookaheadSize(): Modifier
+
+    /**
+     * A modifier that anchors a layout at the target position obtained from the lookahead pass
+     * during shared element transitions.
+     *
+     * This modifier ensures that a layout maintains its target position determined by the lookahead
+     * layout pass, preventing it from being influenced by layout changes in the tree during shared
+     * element transitions. This is particularly useful for preventing unwanted movement or
+     * repositioning of elements during animated transitions.
+     *
+     * **Important**: [skipToLookaheadPosition] anchors the layout at the lookahead position
+     * **relative to** the [SharedTransitionLayout]. It does NOT necessarily anchor the layout
+     * within the window. More specifically, if a [SharedTransitionLayout] re-positions itself, any
+     * child layout using `skipToLookaheadPosition` will move along with it. If it is desirable to
+     * anchor a layout relative to a window, it's recommended to set up [SharedTransitionLayout] in
+     * a way that it does not change position in the window.
+     *
+     * Note: [skipToLookaheadPosition] by default is only enabled via [isEnabled] lambda during a
+     * shared transition. It is recommended to enable it only when necessary. When active, it
+     * counteracts its ancestor layout's movement, which can incur extra placement pass costs if the
+     * parent layout frequently moves (e.g., during scrolling or animation).
+     *
+     * @sample androidx.compose.animation.samples.SharedElementClipRevealSample
+     * @param isEnabled A lambda that determines when the modifier should be active. Defaults to `{
+     *   isTransitionActive }`, which enables the modifier only during active shared element
+     *   transitions
+     * @see SharedTransitionLayout
+     * @see sharedBounds
+     * @see sharedElement
+     * @see skipToLookaheadSize
+     */
+    public fun Modifier.skipToLookaheadPosition(
+        isEnabled: () -> Boolean = { isTransitionActive }
+    ): Modifier =
+        this.approachLayout(
+            isMeasurementApproachInProgress = { false },
+            isPlacementApproachInProgress = { isEnabled() },
+        ) { m, c ->
+            m.measure(c).run {
+                layout(width, height) {
+                    if (isEnabled()) {
+                        coordinates?.let {
+                            val target = lookaheadScopeCoordinates.localLookaheadPositionOf(it)
+                            val actual = lookaheadScopeCoordinates.localPositionOf(it)
+                            val delta = target - actual
+
+                            val offset =
+                                it.localPositionOf(lookaheadScopeCoordinates, delta) -
+                                    it.localPositionOf(lookaheadScopeCoordinates)
+
+                            place(offset.round())
+                        } ?: place(0, 0)
+                    } else {
+                        place(0, 0)
+                    }
+                }
+            }
+        }
 
     /**
      * Renders the content in the [SharedTransitionScope]'s overlay, where shared content (i.e.
