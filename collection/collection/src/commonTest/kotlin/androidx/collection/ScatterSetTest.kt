@@ -551,13 +551,30 @@ class ScatterSetTest {
     @Test
     fun hashCodeAddValues() {
         val set = mutableScatterSetOf<String?>()
-        assertEquals(217, set.hashCode())
+        assertEquals(0, set.hashCode())
         set += null
-        assertEquals(218, set.hashCode())
+        assertEquals(0, set.hashCode())
         set += "Hello"
         val h1 = set.hashCode()
         set += "World"
         assertNotEquals(h1, set.hashCode())
+    }
+
+    @Test
+    fun hashCodeWithSelfElement() {
+        val set = mutableScatterSetOf<Any?>()
+        set += "Hello"
+        set += set
+        assertNotEquals(0, set.hashCode())
+    }
+
+    @Test
+    fun hashCodeDoesNotUseCapacity() {
+        val set1 = MutableScatterSet<String>(initialCapacity = 10)
+        set1 += "Hello"
+        val set2 = MutableScatterSet<String>(initialCapacity = 100)
+        set2 += "Hello"
+        assertEquals(set1.hashCode(), set2.hashCode())
     }
 
     @Test
@@ -779,11 +796,11 @@ class ScatterSetTest {
     @Test
     fun asSetHashCodeAddValues() {
         val set = mutableScatterSetOf<String?>()
-        assertEquals(217, set.asSet().hashCode())
-        assertEquals(217, set.asMutableSet().hashCode())
+        assertEquals(0, set.asSet().hashCode())
+        assertEquals(0, set.asMutableSet().hashCode())
         set += null
-        assertEquals(218, set.asSet().hashCode())
-        assertEquals(218, set.asMutableSet().hashCode())
+        assertEquals(0, set.asSet().hashCode())
+        assertEquals(0, set.asMutableSet().hashCode())
 
         set += "Hello"
         val h1 = set.hashCode()

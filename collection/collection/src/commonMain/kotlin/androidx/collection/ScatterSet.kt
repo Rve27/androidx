@@ -327,8 +327,7 @@ public sealed class ScatterSet<E> {
      * zero.
      */
     public override fun hashCode(): Int {
-        var hash = _capacity
-        hash = 31 * hash + _size
+        var hash = 0
 
         forEach { element ->
             if (element != this) {
