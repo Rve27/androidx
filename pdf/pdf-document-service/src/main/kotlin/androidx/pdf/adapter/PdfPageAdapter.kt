@@ -127,49 +127,49 @@ internal class PdfPageAdapter(private val page: PdfRenderer.Page) : PdfPage {
     }
 
     @SuppressLint("NewApi")
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    @RequiresExtension(extension = Build.VERSION_CODES.VANILLA_ICE_CREAM, version = 18)
     override fun getPageObjects(): List<Pair<Int, PdfPageObject>> {
         return page.pageObjects
     }
 
     @SuppressLint("NewApi")
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    @RequiresExtension(extension = Build.VERSION_CODES.VANILLA_ICE_CREAM, version = 18)
     override fun addPageObject(pageObject: PdfPageObject): Int {
         return page.addPageObject(pageObject)
     }
 
     @SuppressLint("NewApi")
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    @RequiresExtension(extension = Build.VERSION_CODES.VANILLA_ICE_CREAM, version = 18)
     override fun updatePageObject(objectId: Int, pageObject: PdfPageObject): Boolean {
         return page.updatePageObject(objectId, pageObject)
     }
 
     @SuppressLint("NewApi")
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    @RequiresExtension(extension = Build.VERSION_CODES.VANILLA_ICE_CREAM, version = 18)
     override fun removePageObject(objectId: Int) {
         page.removePageObject(objectId)
     }
 
     @SuppressLint("NewApi")
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    @RequiresExtension(extension = Build.VERSION_CODES.VANILLA_ICE_CREAM, version = 18)
     override fun getPageAnnotations(): List<Pair<Int, PdfAnnotation>> {
         return page.pageAnnotations
     }
 
     @SuppressLint("NewApi")
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    @RequiresExtension(extension = Build.VERSION_CODES.VANILLA_ICE_CREAM, version = 18)
     override fun addPageAnnotation(annotation: PdfAnnotation): Int {
         return page.addPageAnnotation(annotation)
     }
 
     @SuppressLint("NewApi")
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    @RequiresExtension(extension = Build.VERSION_CODES.VANILLA_ICE_CREAM, version = 18)
     override fun updatePageAnnotation(annotationId: Int, annotation: PdfAnnotation): Boolean {
         return page.updatePageAnnotation(annotationId, annotation)
     }
 
     @SuppressLint("NewApi")
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 18)
+    @RequiresExtension(extension = Build.VERSION_CODES.VANILLA_ICE_CREAM, version = 18)
     override fun removePageAnnotation(annotationId: Int) {
         page.removePageAnnotation(annotationId)
     }
