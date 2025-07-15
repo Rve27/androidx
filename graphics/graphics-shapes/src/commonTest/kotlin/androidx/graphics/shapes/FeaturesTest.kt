@@ -16,19 +16,15 @@
 
 package androidx.graphics.shapes
 
-import androidx.test.filters.SmallTest
-import org.junit.Assert.assertThrows
-import org.junit.Test
+import androidx.kruth.assertThrows
+import kotlin.test.Test
 
-@SmallTest
 class FeaturesTest {
     @Test
     fun cannotBuildEmptyFeatures() {
-        assertThrows(IllegalArgumentException::class.java) { Feature.buildConvexCorner(listOf()) }
-        assertThrows(IllegalArgumentException::class.java) { Feature.buildConcaveCorner(listOf()) }
-        assertThrows(IllegalArgumentException::class.java) {
-            Feature.buildIgnorableFeature(listOf())
-        }
+        assertThrows(IllegalArgumentException::class) { Feature.buildConvexCorner(listOf()) }
+        assertThrows(IllegalArgumentException::class) { Feature.buildConcaveCorner(listOf()) }
+        assertThrows(IllegalArgumentException::class) { Feature.buildIgnorableFeature(listOf()) }
     }
 
     @Test
@@ -36,13 +32,13 @@ class FeaturesTest {
         val cubic1 = Cubic.straightLine(0f, 0f, 1f, 1f)
         val cubic2 = Cubic.straightLine(10f, 10f, 11f, 11f)
 
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(IllegalArgumentException::class) {
             Feature.buildConvexCorner(listOf(cubic1, cubic2))
         }
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(IllegalArgumentException::class) {
             Feature.buildConcaveCorner(listOf(cubic1, cubic2))
         }
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(IllegalArgumentException::class) {
             Feature.buildIgnorableFeature(listOf(cubic1, cubic2))
         }
     }

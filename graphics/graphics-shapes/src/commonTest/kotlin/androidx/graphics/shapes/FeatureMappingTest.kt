@@ -16,56 +16,49 @@
 
 package androidx.graphics.shapes
 
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlinx.test.IgnoreJsTarget
 
-class FeatureMappingTest {
+open class FeatureMappingTest {
     private val triangleWithRoundings = RoundedPolygon(3, rounding = CornerRounding(0.2f))
-    private val triangle = RoundedPolygon(3)
+    protected val triangle = RoundedPolygon(3)
     private val square = RoundedPolygon(4)
-    private val squareRotated = RoundedPolygon(4).transformed(pointRotator(45f))
 
     @Test
     fun featureMappingTriangles() =
         verifyMapping(triangleWithRoundings, triangle) { distances ->
-            distances.forEach { assert(it < 0.1f) }
+            distances.forEach { assertTrue(it < 0.1f) }
         }
 
     @Test
     fun featureMappingTriangleToSquare() =
         verifyMapping(triangle, square) { distances ->
             // We have one exact match (both have points at 0 degrees), and 2 close ones
-            assert(distances.size == 3)
+            assertEquals(3, distances.size)
             assertEqualish(distances[0], distances[1])
-            assert(distances[0] < 0.3f)
-            assert(distances[2] < 1e-6f)
+            assertTrue(distances[0] < 0.3f)
+            assertTrue(distances[2] < 1e-6f)
         }
 
     @Test
     fun featureMappingSquareToTriangle() =
         verifyMapping(square, triangle) { distances ->
             // We have one exact match (both have points at 0 degrees), and 2 close ones
-            assert(distances.size == 3)
+            assertEquals(3, distances.size)
 
             assertEqualish(distances[0], distances[1])
-            assert(distances[0] < 0.3f)
-            assert(distances[2] < 1e-6f)
+            assertTrue(distances[0] < 0.3f)
+            assertTrue(distances[2] < 1e-6f)
         }
 
+    // FIXME Due to float rounding issue it fails with
+    //  "There can't be two features with the same progress"
+    @IgnoreJsTarget
     @Test
-    fun featureMappingSquareRotatedToTriangle() =
-        verifyMapping(squareRotated, triangle) { distances ->
-            // We have a very bad mapping (the triangle vertex just in the middle of one of the
-            // square's sides) and 2 decent ones.
-            assert(distances.size == 3)
-
-            assert(distances[0] > 0.5f)
-            assertEqualish(distances[1], distances[2])
-            assert(distances[2] < 0.1f)
-        }
-
-    @Test
-    fun featureMappingDoesntCrash() {
-        // Verify that complicated shapes can me matched (this used to crash before).
+    fun featureMappingDoesNotCrash() {
+        // Verify that complicated shapes can be matched (this used to crash before).
         val checkmark =
             RoundedPolygon(
                     floatArrayOf(
@@ -95,14 +88,14 @@ class FeatureMappingTest {
                 .normalized()
         verifyMapping(checkmark, verySunny) {
             // Most vertices on the checkmark map to a feature in the second shape.
-            assert(it.size >= 6)
+            assertTrue(it.size >= 6)
 
             // And they are close enough
-            assert(it[0] < 0.15f)
+            assertTrue(it[0] < 0.15f)
         }
     }
 
-    private fun verifyMapping(
+    protected fun verifyMapping(
         p1: RoundedPolygon,
         p2: RoundedPolygon,
         validator: (List<Float>) -> Unit,

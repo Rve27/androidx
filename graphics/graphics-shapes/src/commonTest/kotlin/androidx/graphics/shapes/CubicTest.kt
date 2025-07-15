@@ -16,14 +16,12 @@
 
 package androidx.graphics.shapes
 
-import androidx.test.filters.SmallTest
 import kotlin.math.max
 import kotlin.math.min
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-@SmallTest
 class CubicTest {
 
     // These points create a roughly circular arc in the upper-right quadrant around (0,0)

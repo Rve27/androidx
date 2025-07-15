@@ -16,13 +16,11 @@
 
 package androidx.graphics.shapes
 
-import androidx.test.filters.SmallTest
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
-@SmallTest
 class PolygonValidationTest {
     private val pentagonPoints =
         floatArrayOf(0.2f, 0.0f, 0.8f, 0.0f, 1.0f, 0.6f, 0.5f, 1.0f, 0.0f, 0.6f)

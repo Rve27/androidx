@@ -16,13 +16,10 @@
 
 package androidx.graphics.shapes
 
-import android.graphics.Matrix
-import androidx.test.filters.SmallTest
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-@SmallTest
 class PolygonTest {
     val square = RoundedPolygon(4)
     val roundedSquare = RoundedPolygon(4, rounding = CornerRounding(.2f))
@@ -105,10 +102,10 @@ class PolygonTest {
         bounds = roundedSquare.calculateBounds()
         betterBounds = roundedSquare.calculateBounds(approximate = false)
         assertTrue(
+            betterBounds[2] - betterBounds[0] < bounds[2] - bounds[0],
             "bounds ${bounds[0]}, ${bounds[1]}, ${bounds[2]}, ${bounds[3]}, " +
                 "betterBounds = ${betterBounds[0]}, ${betterBounds[1]}, ${betterBounds[2]}, " +
                 "${betterBounds[3]}",
-            betterBounds[2] - betterBounds[0] < bounds[2] - bounds[0],
         )
 
         bounds = pentagon.calculateBounds()
@@ -177,41 +174,13 @@ class PolygonTest {
     }
 
     @Test
-    fun transformKeepsContiguousAnchorsEqual() {
-        val poly =
-            RoundedPolygon(radius = 1f, numVertices = 4, rounding = CornerRounding(7 / 15f))
-                .transformed(
-                    Matrix().apply {
-                        postRotate(45f)
-                        postScale(648f, 648f)
-                        postTranslate(540f, 1212f)
-                    }
-                )
-        poly.cubics.indices.forEach { i ->
-            // It has to be the same point
-            assertEquals(
-                "Failed at X, index $i",
-                poly.cubics[i].anchor1X,
-                poly.cubics[(i + 1) % poly.cubics.size].anchor0X,
-                0f,
-            )
-            assertEquals(
-                "Failed at Y, index $i",
-                poly.cubics[i].anchor1Y,
-                poly.cubics[(i + 1) % poly.cubics.size].anchor0Y,
-                0f,
-            )
-        }
-    }
-
-    @Test
     fun emptyPolygonTest() {
         val poly = RoundedPolygon(6, radius = 0f, rounding = CornerRounding(0.1f))
-        assert(poly.cubics.size == 1)
+        assertEquals(1, poly.cubics.size)
 
         val stillEmpty = poly.transformed(scaleTransform(10f, 20f))
-        assert(stillEmpty.cubics.size == 1)
-        assert(stillEmpty.cubics.first().zeroLength())
+        assertEquals(1, stillEmpty.cubics.size)
+        assertTrue(stillEmpty.cubics.first().zeroLength())
     }
 
     @Test

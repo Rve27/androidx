@@ -16,16 +16,12 @@
 
 package androidx.graphics.shapes
 
-import androidx.test.filters.SmallTest
-import kotlin.AssertionError
+import androidx.kruth.assertThrows
 import kotlin.math.sqrt
-import org.junit.Assert
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 /** Tests the utility shape-creating functions like Circle and Star */
-@SmallTest
 class ShapesTest {
 
     private val Zero = Point(0f, 0f)
@@ -87,7 +83,7 @@ class ShapesTest {
 
     @Test
     fun circleTest() {
-        Assert.assertThrows(IllegalArgumentException::class.java) { RoundedPolygon.circle(2) }
+        assertThrows(IllegalArgumentException::class) { RoundedPolygon.circle(2) }
 
         val circle = RoundedPolygon.circle()
         assertCircleShape(circle.cubics)
@@ -179,7 +175,7 @@ class ShapesTest {
         star = RoundedPolygon.star(4, innerRadius = .5f, perVertexRounding = perVtxRounded)
         assertInBounds(star.cubics, min, max)
 
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(IllegalArgumentException::class) {
             star = RoundedPolygon.star(6, innerRadius = .5f, perVertexRounding = perVtxRounded)
         }
     }

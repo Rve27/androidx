@@ -16,12 +16,10 @@
 
 package androidx.graphics.shapes
 
-import androidx.test.filters.SmallTest
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
-import org.junit.Test
+import androidx.kruth.assertThrows
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
-@SmallTest
 class RoundedPolygonTest {
 
     val rounding = CornerRounding(.1f)
@@ -29,7 +27,7 @@ class RoundedPolygonTest {
 
     @Test
     fun numVertsConstructorTest() {
-        assertThrows(IllegalArgumentException::class.java) { RoundedPolygon(2) }
+        assertThrows(IllegalArgumentException::class) { RoundedPolygon(2) }
 
         val square = RoundedPolygon(4)
         var min = Point(-1f, -1f)
@@ -60,7 +58,7 @@ class RoundedPolygonTest {
         val p3 = Point(0f, -1f)
         val verts = floatArrayOf(p0.x, p0.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
 
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(IllegalArgumentException::class) {
             RoundedPolygon(floatArrayOf(p0.x, p0.y, p1.x, p1.y))
         }
 
@@ -99,16 +97,16 @@ class RoundedPolygonTest {
 
     @Test
     fun featuresConstructorThrowsForTooFewFeatures() {
-        assertThrows(IllegalArgumentException::class.java) { RoundedPolygon(listOf()) }
+        assertThrows(IllegalArgumentException::class) { RoundedPolygon(listOf()) }
         val corner = Feature.Corner(listOf(Cubic.empty(0f, 0f)))
-        assertThrows(IllegalArgumentException::class.java) { RoundedPolygon(listOf(corner)) }
+        assertThrows(IllegalArgumentException::class) { RoundedPolygon(listOf(corner)) }
     }
 
     @Test
     fun featuresConstructorThrowsForNonContinuousFeatures() {
         val cubic1 = Cubic.straightLine(0f, 0f, 1f, 0f)
         val cubic2 = Cubic.straightLine(10f, 10f, 20f, 20f)
-        assertThrows(IllegalArgumentException::class.java) {
+        assertThrows(IllegalArgumentException::class) {
             RoundedPolygon(listOf(Feature.buildEdge(cubic1), Feature.buildEdge(cubic2)))
         }
     }

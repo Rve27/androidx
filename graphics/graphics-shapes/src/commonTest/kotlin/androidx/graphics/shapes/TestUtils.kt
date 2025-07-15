@@ -16,20 +16,17 @@
 
 package androidx.graphics.shapes
 
-import android.graphics.Bitmap
-import android.graphics.Matrix
-import androidx.core.graphics.get
 import kotlin.math.abs
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 private val Epsilon = 1e-4f
 
 // Test equality within Epsilon
 internal fun assertPointsEqualish(expected: Point, actual: Point) {
     val msg = "$expected vs. $actual"
-    assertEquals(msg, expected.x, actual.x, Epsilon)
-    assertEquals(msg, expected.y, actual.y, Epsilon)
+    assertEquals(expected.x, actual.x, Epsilon, msg)
+    assertEquals(expected.y, actual.y, Epsilon, msg)
 }
 
 internal fun equalish(f0: Float, f1: Float, epsilon: Float): Boolean {
@@ -102,7 +99,7 @@ internal fun assertPointLessish(expected: Point, actual: Point) {
 }
 
 internal fun assertEqualish(expected: Float, actual: Float, message: String? = null) {
-    assertEquals(message ?: "", expected, actual, Epsilon)
+    assertEquals(expected, actual, Epsilon, message)
 }
 
 internal fun assertInBounds(shape: List<Cubic>, minPoint: Point, maxPoint: Point) {
@@ -120,29 +117,10 @@ internal fun assertInBounds(shape: List<Cubic>, minPoint: Point, maxPoint: Point
 
 internal fun identityTransform() = PointTransformer { x, y -> TransformResult(x, y) }
 
-internal fun pointRotator(angle: Float): PointTransformer {
-    val matrix = Matrix().apply { setRotate(angle) }
-    return PointTransformer { x, y ->
-        val point = floatArrayOf(x, y)
-        matrix.mapPoints(point)
-        TransformResult(point[0], point[1])
-    }
-}
-
 internal fun scaleTransform(sx: Float, sy: Float) = PointTransformer { x, y ->
     TransformResult(x * sx, y * sy)
 }
 
 internal fun translateTransform(dx: Float, dy: Float) = PointTransformer { x, y ->
     TransformResult(x + dx, y + dy)
-}
-
-internal fun assertBitmapsEqual(b0: Bitmap, b1: Bitmap) {
-    assertEquals(b0.width, b1.width)
-    assertEquals(b0.height, b1.height)
-    for (row in 0 until b0.height) {
-        for (col in 0 until b0.width) {
-            assertEquals("Pixels at ($col, $row) not equal", b0.get(col, row), b1.get(col, row))
-        }
-    }
 }

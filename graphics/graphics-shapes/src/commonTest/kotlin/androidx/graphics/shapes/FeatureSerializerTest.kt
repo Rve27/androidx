@@ -16,32 +16,32 @@
 
 package androidx.graphics.shapes
 
-import androidx.test.filters.SmallTest
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
-import org.junit.Test
+import androidx.kruth.assertThrows
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlinx.test.IgnoreJsTarget
+import kotlinx.test.IgnoreWasmTarget
 
-@SmallTest
 class FeatureSerializerTest {
     @Test
     fun throwsForEmptyParse() {
         val serialized = ""
 
-        assertThrows(IllegalArgumentException::class.java) { FeatureSerializer.parse(serialized) }
+        assertThrows(IllegalArgumentException::class) { FeatureSerializer.parse(serialized) }
     }
 
     @Test
     fun throwsForBlankParse() {
         val serialized = "                    "
 
-        assertThrows(IllegalArgumentException::class.java) { FeatureSerializer.parse(serialized) }
+        assertThrows(IllegalArgumentException::class) { FeatureSerializer.parse(serialized) }
     }
 
     @Test
     fun throwsForOnlyVersionNoTags() {
         val serialized = "V1                    "
 
-        assertThrows(IllegalArgumentException::class.java) { FeatureSerializer.parse(serialized) }
+        assertThrows(IllegalArgumentException::class) { FeatureSerializer.parse(serialized) }
     }
 
     @Test
@@ -51,38 +51,38 @@ class FeatureSerializerTest {
         val serialized2 = "V1o1,1,2,2,3,3,4,4,5,5,6,6"
         val serialized3 = "V1o1,1,2,2,3,3,4,4n4,4"
 
-        assertThrows(IllegalArgumentException::class.java) { FeatureSerializer.parse(serialized0) }
-        assertThrows(IllegalArgumentException::class.java) { FeatureSerializer.parse(serialized1) }
-        assertThrows(IllegalArgumentException::class.java) { FeatureSerializer.parse(serialized2) }
-        assertThrows(IllegalArgumentException::class.java) { FeatureSerializer.parse(serialized3) }
+        assertThrows(IllegalArgumentException::class) { FeatureSerializer.parse(serialized0) }
+        assertThrows(IllegalArgumentException::class) { FeatureSerializer.parse(serialized1) }
+        assertThrows(IllegalArgumentException::class) { FeatureSerializer.parse(serialized2) }
+        assertThrows(IllegalArgumentException::class) { FeatureSerializer.parse(serialized3) }
     }
 
     @Test
     fun throwsForWrongSeparator() {
         val serialized = "V1o1 1 2 2 3 3 4 4"
 
-        assertThrows(IllegalArgumentException::class.java) { FeatureSerializer.parse(serialized) }
+        assertThrows(IllegalArgumentException::class) { FeatureSerializer.parse(serialized) }
     }
 
     @Test
     fun throwsForNonNumbers() {
         val serialized = "V1o1,1,two,2,3,three,4,4"
 
-        assertThrows(IllegalArgumentException::class.java) { FeatureSerializer.parse(serialized) }
+        assertThrows(IllegalArgumentException::class) { FeatureSerializer.parse(serialized) }
     }
 
     @Test
     fun throwsWhenTagNotFirst() {
         val serialized = "V11,1,2,2,3,4,4,4o"
 
-        assertThrows(IllegalArgumentException::class.java) { FeatureSerializer.parse(serialized) }
+        assertThrows(IllegalArgumentException::class) { FeatureSerializer.parse(serialized) }
     }
 
     @Test
     fun throwsWhenCoordinatesAndTagSeparated() {
         val serialized = "V1o,1,1,2,2,3,4,4,4"
 
-        assertThrows(IllegalArgumentException::class.java) { FeatureSerializer.parse(serialized) }
+        assertThrows(IllegalArgumentException::class) { FeatureSerializer.parse(serialized) }
     }
 
     @Test
@@ -258,6 +258,8 @@ class FeatureSerializerTest {
         assertEquals(expected, actual)
     }
 
+    @IgnoreJsTarget // FIXME Due to float rounding issue it produces different string
+    @IgnoreWasmTarget // FIXME Due to float rounding issue it produces different string
     @Test
     fun serializesEdgeWithSingleCubicAndFloats() {
         val expected = "V1n1.1,1.1,2.12,2.12,3.123,3.123,4.1234,4.1234"
@@ -312,6 +314,7 @@ class FeatureSerializerTest {
         assertEquals(expected, actual)
     }
 
+    @IgnoreJsTarget // FIXME Due to float rounding issue it produces different string
     @Test
     fun serializesConvexCornerWithALotOfCubics() {
         val expected =
@@ -322,6 +325,7 @@ class FeatureSerializerTest {
         assertEquals(expected, actual)
     }
 
+    @IgnoreJsTarget // FIXME Due to float rounding issue it produces different string
     @Test
     fun serializesMultipleFeaturesWithMultipleCubics() {
         val expected = "V1n1,1,2,2,3,3,4,4x4,4,5,5,6,6,7,7o7,7,8,8,9,9,10,10"

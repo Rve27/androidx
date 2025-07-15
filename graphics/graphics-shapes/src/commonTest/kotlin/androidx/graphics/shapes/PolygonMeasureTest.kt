@@ -16,14 +16,12 @@
 
 package androidx.graphics.shapes
 
-import androidx.test.filters.SmallTest
 import kotlin.math.PI
 import kotlin.math.sqrt
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
-@SmallTest
 class PolygonMeasureTest {
     private val measurer = LengthMeasurer()
 
@@ -199,9 +197,10 @@ class PolygonMeasureTest {
         }
 
         measuredPolygon.features.forEachIndexed { index, progressableFeature ->
-            assert(progressableFeature.progress >= 0f && progressableFeature.progress < 1f) {
-                "Feature #$index has invalid progress: ${progressableFeature.progress}"
-            }
+            assertTrue(
+                progressableFeature.progress >= 0f && progressableFeature.progress < 1f,
+                "Feature #$index has invalid progress: ${progressableFeature.progress}",
+            )
         }
 
         extraChecks(measuredPolygon)

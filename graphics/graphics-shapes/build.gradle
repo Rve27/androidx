@@ -22,8 +22,9 @@
  * modifying its settings.
  */
 
-import androidx.build.SoftwareType
 import androidx.build.PlatformIdentifier
+import androidx.build.SoftwareType
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 plugins {
     id("AndroidXPlugin")
@@ -39,6 +40,9 @@ androidXMultiplatform {
     watchos()
     tvos()
     mac()
+    mingwX64()
+    js()
+    wasmJs()
 
     defaultPlatform(PlatformIdentifier.ANDROID)
 
@@ -46,20 +50,25 @@ androidXMultiplatform {
         commonMain {
             dependencies {
                 implementation(libs.kotlinStdlib)
-                implementation("androidx.collection:collection:1.4.5")
+                implementation("androidx.collection:collection:1.5.0")
                 implementation("androidx.annotation:annotation:1.9.1")
             }
         }
 
         commonTest {
             dependencies {
+                // https://youtrack.jetbrains.com/issue/KT-71032
+                implementation(libs.kotlinTestForWasmTests)
+                implementation(project(":kruth:kruth"))
             }
         }
 
         jvmMain {
             dependsOn(commonMain)
-            dependencies {
-            }
+        }
+
+        jvmTest {
+            dependsOn(commonTest)
         }
 
         androidMain {
@@ -70,31 +79,71 @@ androidXMultiplatform {
             }
         }
 
-        desktopMain {
-            dependsOn(jvmMain)
-        }
-
-        nativeMain {
-            dependsOn(commonMain)
-        }
-
         androidInstrumentedTest {
-            dependsOn(commonTest)
+            dependsOn(jvmTest)
             dependencies {
                 implementation(libs.testRules)
                 implementation(libs.testRunner)
                 implementation(libs.junit)
-                implementation(libs.truth)
-                implementation(libs.dexmakerMockitoInlineExtended)
-                implementation(libs.mockitoKotlin)
+            }
+        }
+
+        desktopMain {
+            dependsOn(jvmMain)
+        }
+
+        desktopTest {
+            dependsOn(jvmTest)
+        }
+
+        nonJvmMain {
+            dependsOn(commonMain)
+        }
+
+        nonJvmTest {
+            dependsOn(commonTest)
+        }
+
+        nativeMain {
+            dependsOn(nonJvmMain)
+        }
+
+        nativeTest {
+            dependsOn(nonJvmTest)
+        }
+
+        jsMain {
+            dependsOn(nonJvmMain)
+            dependencies {
+                implementation(libs.kotlinStdlibJs)
+            }
+        }
+
+        jsTest {
+            dependencies {
+                implementation(libs.kotlinStdlibJs)
+                implementation(libs.kotlinTestJs)
+            }
+        }
+
+        wasmJsMain {
+            dependsOn(nonJvmMain)
+            dependencies {
+                implementation(libs.kotlinStdlibWasm)
+            }
+        }
+
+        wasmJsTest {
+            dependencies {
+                implementation(libs.kotlinStdlibWasm)
+                implementation(libs.kotlinTestWasm)
             }
         }
 
         targets.configureEach { target ->
-            if (target.platformType == org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.native) {
-                target.compilations["main"].defaultSourceSet {
-                    dependsOn(nativeMain)
-                }
+            if (target.platformType == KotlinPlatformType.native) {
+                target.compilations["main"].defaultSourceSet.dependsOn(nativeMain)
+                target.compilations["test"].defaultSourceSet.dependsOn(nativeTest)
             }
         }
     }
