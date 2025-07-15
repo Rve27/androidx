@@ -330,11 +330,3 @@ internal class AugmentedObjectRenderer(val session: Session, val coroutineScope:
         }
     }
 }
-
-private operator fun FloatSize3d.div(divisor: Float): FloatSize3d {
-    return FloatSize3d(this.width / divisor, this.height / divisor, this.depth / divisor)
-}
-
-private operator fun FloatSize3d.times(scalar: Float): FloatSize3d {
-    return FloatSize3d(this.width * scalar, this.height * scalar, this.depth * scalar)
-}
