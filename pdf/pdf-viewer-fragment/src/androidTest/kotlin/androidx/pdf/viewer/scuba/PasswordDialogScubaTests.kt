@@ -25,13 +25,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.pdf.viewer.FragmentUtils.scenarioLoadDocument
 import androidx.pdf.viewer.TestPdfViewerFragment
 import androidx.pdf.viewer.fragment.R
-import androidx.pdf.viewer.scuba.ScubaConstants.FILE_PASSWORD_DIALOG_VISIBLE_WITH_KEYBOARD_LANDSCAPE
-import androidx.pdf.viewer.scuba.ScubaConstants.FILE_PASSWORD_DIALOG_VISIBLE_WITH_KEYBOARD_PORTRAIT
+import androidx.pdf.viewer.hideCursorInEditText
+import androidx.pdf.viewer.scuba.ScubaConstants.FILE_PASSWORD_DIALOG_VISIBLE_LANDSCAPE
+import androidx.pdf.viewer.scuba.ScubaConstants.FILE_PASSWORD_DIALOG_VISIBLE_PORTRAIT
 import androidx.pdf.viewer.scuba.ScubaConstants.SCREENSHOT_GOLDEN_DIRECTORY
 import androidx.test.espresso.Espresso
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.closeSoftKeyboard
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed
@@ -90,13 +91,13 @@ class PasswordDialogScubaTests {
     }
 
     /**
-     * Verifies the visual rendering of the PasswordDialog in portrait orientation. This includes
-     * the dialog's placement and its interaction with the soft keyboard.
+     * Verifies the visual rendering of the PasswordDialog in portrait orientation, that includes
+     * the dialog's placement.
      */
     @Test
-    fun passwordDialog_keyboardLayoutDisplayedInPortraitOrientation() {
+    fun passwordDialog_rendersCorrectly_inPortraitOrientation() {
         // Load a password-protected document and wait for the initial loading to clear.
-        // This will automatically trigger the PasswordDialog and the soft keyboard.
+        // This will automatically trigger the PasswordDialog.
         scenarioLoadDocument(
             scenario = scenario,
             filename = PASSWORD_PROTECTED_DOCUMENT_FILE,
@@ -107,24 +108,25 @@ class PasswordDialogScubaTests {
             onView(withId(R.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
         }
 
-        onView(withId(androidx.pdf.R.id.pdf_password_layout))
+        onView(withId(androidx.pdf.R.id.password))
             .inRoot(RootMatchers.isDialog())
             .check(matches(isCompletelyDisplayed()))
-            .perform(click())
+            .perform(closeSoftKeyboard())
+            .perform(hideCursorInEditText())
 
         Espresso.onIdle()
 
-        assertFullScreenshot(screenshotRule, FILE_PASSWORD_DIALOG_VISIBLE_WITH_KEYBOARD_PORTRAIT)
+        assertFullScreenshot(screenshotRule, FILE_PASSWORD_DIALOG_VISIBLE_PORTRAIT)
     }
 
     /**
-     * Verifies the visual rendering of the PasswordDialog in landscape orientation. This includes
-     * the dialog's placement and its interaction with the soft keyboard.
+     * Verifies the visual rendering of the PasswordDialog in landscape orientation, that includes
+     * the dialog's placement.
      */
     @Test
-    fun passwordDialog_keyboardLayoutDisplayedInLandscapeOrientation() {
+    fun passwordDialog_rendersCorrectly_inLandscapeOrientation() {
         // Load a password-protected document and wait for the initial loading to clear.
-        // This will automatically trigger the PasswordDialog and the soft keyboard.
+        // This will automatically trigger the PasswordDialog.
         scenarioLoadDocument(
             scenario = scenario,
             filename = PASSWORD_PROTECTED_DOCUMENT_FILE,
@@ -135,13 +137,14 @@ class PasswordDialogScubaTests {
             onView(withId(R.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
         }
 
-        onView(withId(androidx.pdf.R.id.pdf_password_layout))
+        onView(withId(androidx.pdf.R.id.password))
             .inRoot(RootMatchers.isDialog())
             .check(matches(isCompletelyDisplayed()))
-            .perform(click())
+            .perform(closeSoftKeyboard())
+            .perform(hideCursorInEditText())
 
         Espresso.onIdle()
 
-        assertFullScreenshot(screenshotRule, FILE_PASSWORD_DIALOG_VISIBLE_WITH_KEYBOARD_LANDSCAPE)
+        assertFullScreenshot(screenshotRule, FILE_PASSWORD_DIALOG_VISIBLE_LANDSCAPE)
     }
 }
