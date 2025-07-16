@@ -218,6 +218,29 @@ public interface Profile {
             @NonNull OutcomeReceiverCompat<Void, PrefetchException> operationCallback);
 
     /**
+     * Removes a cached prefetch response for the provided url
+     * if it exists, otherwise does nothing.
+     * <p>
+     * Calling this does not guarantee that the prefetched response will
+     * not be served to a WebView before it is cleared.
+     * <p>
+     *
+     * @param url               the url associated with the prefetch request. Should be
+     *                          an exact match with the URL passed to {@link #prefetchUrlAsync}.
+     * @param callbackExecutor  the executor to resolve the callback with.
+     * @param operationCallback runs when the clear operation is complete Or and error occurred
+     *                          during it.
+     * @throws IllegalArgumentException if the url or callback is null.
+     */
+    @RequiresFeature(name = WebViewFeature.PROFILE_URL_PREFETCH,
+            enforcement = "androidx.webkit.WebViewFeature#isFeatureSupported")
+    @UiThread
+    @ExperimentalUrlPrefetch
+    void clearPrefetchAsync(@NonNull String url,
+            @NonNull Executor callbackExecutor,
+            @NonNull OutcomeReceiverCompat<Void, PrefetchException> operationCallback);
+
+    /**
      * Sets the {@link SpeculativeLoadingConfig} for the current profile session.
      * These configurations will be applied to any Prefetch requests made after they are set;
      * they will not be applied to in-flight requests.

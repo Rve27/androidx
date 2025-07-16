@@ -87,6 +87,7 @@ package androidx.webkit {
   public interface Profile {
     method @RequiresFeature(name=androidx.webkit.WebViewFeature.ORIGIN_MATCHED_HEADERS, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") @UiThread public void clearAllOriginMatchedHeaders();
     method @RequiresFeature(name=androidx.webkit.WebViewFeature.ORIGIN_MATCHED_HEADERS, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") @UiThread public void clearOriginMatchedHeader(String);
+    method @SuppressCompatibility @RequiresFeature(name=androidx.webkit.WebViewFeature.PROFILE_URL_PREFETCH, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") @UiThread @androidx.webkit.Profile.ExperimentalUrlPrefetch public void clearPrefetchAsync(String, java.util.concurrent.Executor, androidx.core.os.OutcomeReceiverCompat<java.lang.Void!,androidx.webkit.PrefetchException!>);
     method @AnyThread @RequiresFeature(name=androidx.webkit.WebViewFeature.MULTI_PROFILE, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") public android.webkit.CookieManager getCookieManager();
     method @AnyThread @RequiresFeature(name=androidx.webkit.WebViewFeature.MULTI_PROFILE, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") public android.webkit.GeolocationPermissions getGeolocationPermissions();
     method @AnyThread @RequiresFeature(name=androidx.webkit.WebViewFeature.MULTI_PROFILE, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") public String getName();
@@ -550,7 +551,7 @@ package androidx.webkit {
     field public static final String PAYMENT_REQUEST = "PAYMENT_REQUEST";
     field public static final String POST_WEB_MESSAGE = "POST_WEB_MESSAGE";
     field @SuppressCompatibility @androidx.webkit.WebViewCompat.ExperimentalUrlPrerender public static final String PRERENDER_WITH_URL = "PRERENDER_URL_V2";
-    field @SuppressCompatibility @androidx.webkit.Profile.ExperimentalUrlPrefetch public static final String PROFILE_URL_PREFETCH = "PREFETCH_URL_V6";
+    field @SuppressCompatibility @androidx.webkit.Profile.ExperimentalUrlPrefetch public static final String PROFILE_URL_PREFETCH = "PREFETCH_URL_V5";
     field public static final String PROXY_OVERRIDE = "PROXY_OVERRIDE";
     field public static final String PROXY_OVERRIDE_REVERSE_BYPASS = "PROXY_OVERRIDE_REVERSE_BYPASS";
     field public static final String RECEIVE_HTTP_ERROR = "RECEIVE_HTTP_ERROR";
