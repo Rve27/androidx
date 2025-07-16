@@ -32,9 +32,8 @@ import androidx.xr.compose.unit.toIntVolumeSize
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.Pose
-import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.ResizableComponent
-import androidx.xr.scenecore.ResizeListener
+import androidx.xr.scenecore.ResizeEvent
 import java.util.concurrent.Executor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
@@ -130,7 +129,6 @@ internal class ResizableNode(
     SubspaceModifier.Node(),
     CompositionLocalConsumerSubspaceModifierNode,
     CoreEntityNode,
-    ResizeListener,
     SubspaceLayoutModifierNode {
     private inline val density: Density
         get() = currentValueOf(LocalDensity)
@@ -148,7 +146,10 @@ internal class ResizableNode(
     private var isComponentAttached: Boolean = false
 
     private val component: ResizableComponent by lazy {
-        ResizableComponent.create(session).also { it.addResizeListener(MainExecutor, this) }
+        ResizableComponent.create(session = session, executor = MainExecutor) {
+            resizeEvent: ResizeEvent ->
+            handleResizeEvent(resizeEvent)
+        }
     }
 
     /** Updates the resizable state of this CoreEntity. */
@@ -174,13 +175,13 @@ internal class ResizableNode(
         }
 
         minimumSize.toDimensionsInMeters().let {
-            if (component.minimumSize != it) {
-                component.minimumSize = it
+            if (component.minimumEntitySize != it) {
+                component.minimumEntitySize = it
             }
         }
         maximumSize.toDimensionsInMeters().let {
-            if (component.maximumSize != it) {
-                component.maximumSize = it
+            if (component.maximumEntitySize != it) {
+                component.maximumEntitySize = it
             }
         }
     }
@@ -203,17 +204,17 @@ internal class ResizableNode(
         }
     }
 
-    override fun onResizeStart(entity: Entity, originalSize: FloatSize3d) {
-        component.fixedAspectRatio =
-            if (maintainAspectRatio) getAspectRatioY(originalSize) else 0.0f
-    }
-
     /**
      * During a resize, the size of the entity does not change, only its reform window. We do not
-     * need to respond to every event, e.g., onResizeUpdate, like we do for Movable.
+     * need to respond to every event, e.g., RESIZE_STATE_ONGOING, like we do for Movable.
      */
-    override fun onResizeEnd(entity: Entity, finalSize: FloatSize3d) {
-        resizeListener(finalSize)
+    fun handleResizeEvent(resizeEvent: ResizeEvent) {
+        if (resizeEvent.resizeState == ResizeEvent.ResizeState.RESIZE_STATE_START) {
+            component.fixedAspectRatio =
+                if (maintainAspectRatio) getAspectRatioY(resizeEvent.newSize) else 0.0f
+        } else if (resizeEvent.resizeState == ResizeEvent.ResizeState.RESIZE_STATE_END) {
+            resizeListener(resizeEvent.newSize)
+        }
     }
 
     /**
@@ -262,7 +263,7 @@ internal class ResizableNode(
                 )
             }
 
-        component.size =
+        component.affordanceSize =
             IntVolumeSize(
                     placeable.measuredWidth,
                     placeable.measuredHeight,

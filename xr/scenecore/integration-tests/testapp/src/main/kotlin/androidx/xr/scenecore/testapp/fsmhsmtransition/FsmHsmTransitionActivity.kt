@@ -33,14 +33,12 @@ import androidx.cardview.widget.CardView
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
-import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.ExrImage
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.ResizableComponent
-import androidx.xr.scenecore.ResizeListener
+import androidx.xr.scenecore.ResizeEvent
 import androidx.xr.scenecore.SpatialEnvironment
 import androidx.xr.scenecore.SpatialWindow
 import androidx.xr.scenecore.scene
@@ -50,6 +48,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.switchmaterial.SwitchMaterial
 import java.nio.file.Paths
 import java.util.concurrent.Executors
+import java.util.function.Consumer
 import kotlinx.coroutines.launch
 
 @SuppressLint("SetTextI18n", "RestrictedApi")
@@ -139,21 +138,24 @@ class FsmHsmTransitionActivity : AppCompatActivity() {
         // Resizeable switch
         findViewById<SwitchMaterial>(R.id.switch_resizeable_in_fsm).also {
             val resizableComponent =
-                ResizableComponent.create(session!!).also { component ->
-                    component.addResizeListener(
-                        Executors.newSingleThreadExecutor(),
-                        object : ResizeListener {
-                            override fun onResizeEnd(entity: Entity, finalSize: FloatSize3d) {
-                                Log.i(TAG, "resize event $finalSize")
-                                (entity as PanelEntity).size = finalSize.to2d()
+                ResizableComponent.create(
+                    session!!,
+                    executor = Executors.newSingleThreadExecutor(),
+                    resizeEventListener =
+                        Consumer<ResizeEvent> { resizeEvent: ResizeEvent ->
+                            if (
+                                resizeEvent.resizeState == ResizeEvent.ResizeState.RESIZE_STATE_END
+                            ) {
+                                Log.i(TAG, "resize event ${resizeEvent.newSize}")
+                                (resizeEvent.entity as PanelEntity).size =
+                                    resizeEvent.newSize.to2d()
                                 findViewById<TextView>(R.id.text_main_panel_dimensions_value).text =
                                     mainPanelPixelDimensionsString()
                             }
                         },
-                    )
-                }
+                )
             it.setOnCheckedChangeListener { _, isOn ->
-                resizableComponent.size = session!!.scene.mainPanelEntity.size.to3d()
+                resizableComponent.affordanceSize = session!!.scene.mainPanelEntity.size.to3d()
                 when (isOn) {
                     true ->
                         resizableActive =

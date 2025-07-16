@@ -581,49 +581,67 @@ package androidx.xr.scenecore {
     field public static final int POINTER_CAPTURE_STOPPED = 2; // 0x2
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class ResizableComponent implements androidx.xr.scenecore.Component {
-    method public void addResizeListener(androidx.xr.scenecore.ResizeListener resizeListener);
-    method public void addResizeListener(java.util.concurrent.Executor executor, androidx.xr.scenecore.ResizeListener resizeListener);
-    method public static androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session);
-    method public static androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.FloatSize3d minimumSize);
-    method public static androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.FloatSize3d minimumSize, optional androidx.xr.runtime.math.FloatSize3d maximumSize);
-    method public boolean getAutoHideContent();
-    method public boolean getAutoUpdateSize();
+  public final class ResizableComponent implements androidx.xr.scenecore.Component {
+    method public void addResizeEventListener(optional java.util.concurrent.Executor executor, java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
+    method public void addResizeEventListener(java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
+    method public static androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.FloatSize3d minimumSize, optional androidx.xr.runtime.math.FloatSize3d maximumSize, optional java.util.concurrent.Executor executor, java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
+    method public static androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.FloatSize3d minimumSize, optional androidx.xr.runtime.math.FloatSize3d maximumSize, java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
+    method public static androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.FloatSize3d minimumSize, java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
+    method public static androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
+    method public androidx.xr.runtime.math.FloatSize3d getAffordanceSize();
     method public float getFixedAspectRatio();
-    method public boolean getForceShowResizeOverlay();
-    method public androidx.xr.runtime.math.FloatSize3d getMaximumSize();
-    method public androidx.xr.runtime.math.FloatSize3d getMinimumSize();
-    method public androidx.xr.runtime.math.FloatSize3d getSize();
+    method public androidx.xr.runtime.math.FloatSize3d getMaximumEntitySize();
+    method public androidx.xr.runtime.math.FloatSize3d getMinimumEntitySize();
     method public boolean onAttach(androidx.xr.scenecore.Entity entity);
     method public void onDetach(androidx.xr.scenecore.Entity entity);
-    method public void removeResizeListener(androidx.xr.scenecore.ResizeListener resizeListener);
-    method public void setAutoHideContent(boolean);
-    method public void setAutoUpdateSize(boolean);
+    method public void removeResizeEventListener(java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
+    method public void setAffordanceSize(androidx.xr.runtime.math.FloatSize3d);
     method public void setFixedAspectRatio(float);
-    method public void setForceShowResizeOverlay(boolean);
-    method public void setMaximumSize(androidx.xr.runtime.math.FloatSize3d);
-    method public void setMinimumSize(androidx.xr.runtime.math.FloatSize3d);
-    method public void setSize(androidx.xr.runtime.math.FloatSize3d);
-    property public boolean autoHideContent;
-    property public boolean autoUpdateSize;
-    property public float fixedAspectRatio;
-    property public boolean forceShowResizeOverlay;
-    property public androidx.xr.runtime.math.FloatSize3d maximumSize;
-    property public androidx.xr.runtime.math.FloatSize3d minimumSize;
-    property public androidx.xr.runtime.math.FloatSize3d size;
+    method public void setMaximumEntitySize(androidx.xr.runtime.math.FloatSize3d);
+    method public void setMinimumEntitySize(androidx.xr.runtime.math.FloatSize3d);
+    method public void setShouldAlwaysShowOverlay(boolean);
+    method public void setShouldAutoHideContent(boolean);
+    method public void setShouldAutoUpdateOverlay(boolean);
+    method public boolean shouldAlwaysShowOverlay();
+    method public boolean shouldAutoHideContent();
+    method public boolean shouldAutoUpdateOverlay();
+    property public androidx.xr.runtime.math.FloatSize3d affordanceSize;
+    property @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public float fixedAspectRatio;
+    property public androidx.xr.runtime.math.FloatSize3d maximumEntitySize;
+    property public androidx.xr.runtime.math.FloatSize3d minimumEntitySize;
+    property public boolean shouldAlwaysShowOverlay;
+    property public boolean shouldAutoHideContent;
+    property @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public boolean shouldAutoUpdateOverlay;
     field public static final androidx.xr.scenecore.ResizableComponent.Companion Companion;
   }
 
   public static final class ResizableComponent.Companion {
-    method public androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session);
-    method public androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.FloatSize3d minimumSize);
-    method public androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.FloatSize3d minimumSize, optional androidx.xr.runtime.math.FloatSize3d maximumSize);
+    method public androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.FloatSize3d minimumSize, optional androidx.xr.runtime.math.FloatSize3d maximumSize, optional java.util.concurrent.Executor executor, java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
+    method public androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.FloatSize3d minimumSize, optional androidx.xr.runtime.math.FloatSize3d maximumSize, java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
+    method public androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, optional androidx.xr.runtime.math.FloatSize3d minimumSize, java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
+    method public androidx.xr.scenecore.ResizableComponent create(androidx.xr.runtime.Session session, java.util.function.Consumer<androidx.xr.scenecore.ResizeEvent> resizeEventListener);
   }
 
-  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface ResizeListener {
-    method public default void onResizeEnd(androidx.xr.scenecore.Entity entity, androidx.xr.runtime.math.FloatSize3d finalSize);
-    method public default void onResizeStart(androidx.xr.scenecore.Entity entity, androidx.xr.runtime.math.FloatSize3d originalSize);
-    method public default void onResizeUpdate(androidx.xr.scenecore.Entity entity, androidx.xr.runtime.math.FloatSize3d newSize);
+  public final class ResizeEvent {
+    ctor public ResizeEvent(androidx.xr.scenecore.Entity entity, int resizeState, androidx.xr.runtime.math.FloatSize3d newSize);
+    method public androidx.xr.scenecore.Entity getEntity();
+    method public androidx.xr.runtime.math.FloatSize3d getNewSize();
+    method public int getResizeState();
+    property public androidx.xr.scenecore.Entity entity;
+    property public androidx.xr.runtime.math.FloatSize3d newSize;
+    property public int resizeState;
+  }
+
+  public static final class ResizeEvent.ResizeState {
+    property public static int RESIZE_STATE_END;
+    property public static int RESIZE_STATE_ONGOING;
+    property public static int RESIZE_STATE_START;
+    property public static int RESIZE_STATE_UNKNOWN;
+    field public static final androidx.xr.scenecore.ResizeEvent.ResizeState INSTANCE;
+    field public static final int RESIZE_STATE_END = 3; // 0x3
+    field public static final int RESIZE_STATE_ONGOING = 2; // 0x2
+    field public static final int RESIZE_STATE_START = 1; // 0x1
+    field public static final int RESIZE_STATE_UNKNOWN = 0; // 0x0
   }
 
   public final class Scene implements androidx.xr.runtime.SessionConnector {

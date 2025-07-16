@@ -33,12 +33,11 @@ import androidx.xr.runtime.Session
 import androidx.xr.runtime.SessionCreateSuccess
 import androidx.xr.runtime.math.FloatSize3d
 import androidx.xr.runtime.math.IntSize2d
-import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.ExrImage
 import androidx.xr.scenecore.MovableComponent
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.ResizableComponent
-import androidx.xr.scenecore.ResizeListener
+import androidx.xr.scenecore.ResizeEvent
 import androidx.xr.scenecore.SpatialEnvironment
 import androidx.xr.scenecore.SpatialWindow
 import androidx.xr.scenecore.scene
@@ -167,17 +166,18 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
             }
         session.scene.activitySpace.addOnBoundsChangedListener(boundsListener)
 
-        val resizableComponent = ResizableComponent.create(session)
-        resizableComponent.addResizeListener(
-            Executors.newSingleThreadExecutor(),
-            object : ResizeListener {
-                override fun onResizeEnd(entity: Entity, finalSize: FloatSize3d) {
-                    Log.i(TAG, "resize event $finalSize")
-                    (entity as PanelEntity).size = finalSize.to2d()
-                    textMainPanelPixelDimensions.text = mainPanelPixelDimensionsString()
-                }
-            },
-        )
+        val resizableComponent =
+            ResizableComponent.create(
+                session,
+                executor = Executors.newSingleThreadExecutor(),
+                resizeEventListener =
+                    Consumer<ResizeEvent> { resizeEvent: ResizeEvent ->
+                        if (resizeEvent.resizeState == ResizeEvent.ResizeState.RESIZE_STATE_END)
+                            Log.i(TAG, "resize event ${resizeEvent.newSize}")
+                        (resizeEvent.entity as PanelEntity).size = resizeEvent.newSize.to2d()
+                        textMainPanelPixelDimensions.text = mainPanelPixelDimensionsString()
+                    },
+            )
         val movableComponent = MovableComponent.createSystemMovable(session)
 
         val switchMovable: Switch = findViewById(R.id.movableSwitch)
@@ -194,7 +194,7 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
 
         val switchResizable: Switch = findViewById(R.id.resizableSwitch)
         switchResizable.setOnCheckedChangeListener { _, isChecked ->
-            resizableComponent.size = session.scene.mainPanelEntity.size.to3d()
+            resizableComponent.affordanceSize = session.scene.mainPanelEntity.size.to3d()
             when (isChecked) {
                 true ->
                     resizableActive = session.scene.mainPanelEntity.addComponent(resizableComponent)
