@@ -21,32 +21,126 @@ import androidx.navigationevent.NavigationEventPriority.Companion.Default
 import androidx.navigationevent.NavigationEventPriority.Companion.Overlay
 
 /**
- * Creates a [NavigationEventDispatcher] instance.
+ * A dispatcher for navigation events that can be organized hierarchically.
  *
- * This dispatcher acts as a localized entry point for registering [NavigationEventCallback]
- * instances and triggering navigation events within a specific part of your application (e.g., a
- * composable or a fragment). It delegates the actual event processing and callback management to a
- * [NavigationEventProcessor] that is shared across all parent-child dispatchers.
+ * This class acts as a localized entry point for registering [NavigationEventCallback] instances
+ * and dispatching navigation events within a specific UI scope, such as a composable or a fragment.
  *
+ * Dispatchers can be linked in a parent-child hierarchy. This structure allows for a sophisticated
+ * system where nested UI components can handle navigation events independently while still
+ * respecting the state of their parent. The core logic is delegated to a single, shared
+ * [NavigationEventProcessor] instance across the entire hierarchy, ensuring consistent event
+ * handling.
+ *
+ * It is important to call [dispose] when the owner of this dispatcher is destroyed (e.g., in a
+ * `DisposableEffect`) to unregister callbacks and prevent memory leaks.
+ */
+public class NavigationEventDispatcher
+/**
+ * The primary, internal constructor for `NavigationEventDispatcher`.
+ *
+ * All public constructors delegate to this one to perform the actual initialization.
+ *
+ * @param parentDispatcher An optional reference to a parent [NavigationEventDispatcher]. Providing
+ *   a parent allows this dispatcher to participate in a hierarchical event system, sharing the same
+ *   underlying [NavigationEventProcessor] as its parent. If `null`, this dispatcher acts as the
+ *   root of its own event handling hierarchy.
  * @param fallbackOnBackPressed An optional lambda to be invoked if a navigation event completes and
  *   no registered [NavigationEventCallback] handles it. This provides a default "back" action.
  * @param onHasEnabledCallbacksChanged An optional lambda that will be called whenever the global
  *   state of whether there are any enabled callback changes.
  */
-public class NavigationEventDispatcher(
-    private val fallbackOnBackPressed: (() -> Unit)? = null,
-    private val onHasEnabledCallbacksChanged: ((Boolean) -> Unit)? = null,
+private constructor(
+    private var parentDispatcher: NavigationEventDispatcher?,
+    private val fallbackOnBackPressed: (() -> Unit)?,
+    private val onHasEnabledCallbacksChanged: ((Boolean) -> Unit)?,
 ) {
 
     /**
-     * The internal, shared processor responsible for managing all registered
-     * [NavigationEventCallback]s and orchestrating the actual event dispatching across all
-     * [NavigationEventDispatcher] instances. This ensures consistent ordering and state for all
-     * navigation events.
+     * Creates a **root** `NavigationEventDispatcher`.
+     *
+     * This constructor is used to establish the top-level dispatcher for a new navigation
+     * hierarchy, typically within a scope like an `Activity` or a top-level composable. It creates
+     * its own internal [NavigationEventProcessor].
+     *
+     * @param fallbackOnBackPressed An optional lambda to be invoked if a navigation event completes
+     *   and no registered [NavigationEventCallback] handles it. This provides a default "back"
+     *   action for the entire hierarchy.
+     * @param onHasEnabledCallbacksChanged An optional lambda that will be called whenever the
+     *   global state of whether there are any enabled callbacks changes.
      */
-    internal val sharedProcessor: NavigationEventProcessor = NavigationEventProcessor()
+    public constructor(
+        fallbackOnBackPressed: (() -> Unit)? = null,
+        onHasEnabledCallbacksChanged: ((Boolean) -> Unit)? = null,
+    ) : this(
+        parentDispatcher = null,
+        fallbackOnBackPressed = fallbackOnBackPressed,
+        onHasEnabledCallbacksChanged = onHasEnabledCallbacksChanged,
+    )
+
+    /**
+     * Creates a **child** `NavigationEventDispatcher` linked to a parent.
+     *
+     * This constructor is used to create nested dispatchers within an existing hierarchy. The new
+     * dispatcher will share the same underlying [NavigationEventProcessor] as its parent, allowing
+     * it to participate in the same event stream.
+     *
+     * @param parentDispatcher The parent `NavigationEventDispatcher` to which this new dispatcher
+     *   will be attached.
+     */
+    public constructor(
+        parentDispatcher: NavigationEventDispatcher
+    ) : this(
+        parentDispatcher = parentDispatcher,
+        fallbackOnBackPressed = null,
+        onHasEnabledCallbacksChanged = null,
+    )
+
+    /**
+     * The internal, shared [NavigationEventProcessor] responsible for managing all registered
+     * [NavigationEventCallback]s and orchestrating event dispatching.
+     *
+     * This processor ensures consistent ordering and state for all navigation events across the
+     * application's hierarchy. It is initialized in one of two ways:
+     * - If a [parentDispatcher] is provided, this dispatcher will share its parent's processor,
+     *   allowing for a hierarchical event handling structure where child dispatchers defer to their
+     *   parents for core event management.
+     * - If no [parentDispatcher] is provided (i.e., this is a root dispatcher), a new
+     *   [NavigationEventProcessor] instance is created, becoming the root of its own event handling
+     *   tree.
+     */
+    internal val sharedProcessor: NavigationEventProcessor =
+        parentDispatcher?.sharedProcessor ?: NavigationEventProcessor()
+
+    /**
+     * A collection of child [NavigationEventDispatcher] instances that have registered with this
+     * dispatcher.
+     *
+     * This set helps establish and maintain the hierarchical structure of dispatchers, allowing
+     * parent dispatchers to be aware of their direct children.
+     *
+     * **This is primarily for cleanup when this dispatcher is no longer needed.**
+     */
+    internal val childDispatchers = mutableSetOf<NavigationEventDispatcher>()
+
+    /**
+     * A set of [NavigationEventCallback] instances directly registered with *this specific*
+     * [NavigationEventDispatcher] instance.
+     *
+     * While the actual event processing and global callback management happen in the
+     * [sharedProcessor], this set provides a localized record of callbacks owned by this particular
+     * dispatcher.
+     *
+     * **This is primarily for cleanup when this dispatcher is no longer needed.**
+     */
+    private val callbacks = mutableSetOf<NavigationEventCallback>()
 
     init {
+        // If a parent dispatcher is provided, register this dispatcher as its child.
+        // This establishes the hierarchical relationship and ensures the parent is aware
+        // of its direct descendants for proper event propagation and cleanup.
+        parentDispatcher?.childDispatchers += this
+
         // If a lambda for changes in enabled callbacks is provided, register it with the
         // shared processor. This allows this specific dispatcher instance (or its consumers)
         // to be notified of global changes in the callback enablement state.
@@ -105,10 +199,12 @@ public class NavigationEventDispatcher(
         priority: NavigationEventPriority = Default,
     ) {
         sharedProcessor.addCallback(dispatcher = this, callback, priority)
+        callbacks += callback
     }
 
     internal fun removeCallback(callback: NavigationEventCallback) {
         sharedProcessor.removeCallback(callback)
+        callbacks -= callback
     }
 
     /**
@@ -149,5 +245,58 @@ public class NavigationEventDispatcher(
     @MainThread
     public fun dispatchOnCancelled() {
         sharedProcessor.dispatchOnCancelled()
+    }
+
+    /**
+     * Removes this dispatcher and its entire chain of descendants from the hierarchy.
+     *
+     * This is the primary cleanup method and should be called when the component owning this
+     * dispatcher is destroyed (e.g., in `DisposableEffect` in Compose).
+     *
+     * Calling this method triggers a comprehensive, iterative cleanup:
+     * 1. It unregisters this dispatcher's [onHasEnabledCallbacksChanged] listener from the shared
+     *    processor.
+     * 2. It iteratively processes and disposes of all child dispatchers and their descendants,
+     *    ensuring a complete top-down cleanup of the entire sub-hierarchy without recursion.
+     * 3. It removes all [NavigationEventCallback] instances directly registered with *this
+     *    specific* dispatcher from the shared [NavigationEventProcessor], preventing memory leaks
+     *    and ensuring callbacks are no longer active.
+     * 4. Finally, it removes itself from its parent's list of children, if a parent exists.
+     */
+    @MainThread
+    public fun dispose() {
+        if (onHasEnabledCallbacksChanged != null) {
+            sharedProcessor.removeOnHasEnabledCallbacksChangedCallback(onHasEnabledCallbacksChanged)
+        }
+
+        // Iteratively dispose of all child dispatchers and their sub-hierarchies. We use a mutable
+        // list as a work queue to process dispatchers.
+        val dispatchersToDispose = ArrayDeque<NavigationEventDispatcher>()
+        dispatchersToDispose += this // Start the queue with 'this' dispatcher itself.
+
+        while (dispatchersToDispose.isNotEmpty()) {
+            val currentDispatcher = dispatchersToDispose.removeFirst()
+
+            // Add 'currentDispatcher's children to the queue before processing 'currentDispatcher's
+            // own cleanup. This ensures a complete traversal of the sub-hierarchy.
+            dispatchersToDispose += currentDispatcher.childDispatchers
+
+            // Remove callbacks directly owned by the currentDispatcher from the shared processor.
+            for (callback in currentDispatcher.callbacks.toList()) {
+                // Always use the public API for removal. This ensures the component's internal
+                // state is handled correctly and prevents unexpected behavior.
+                callback.remove()
+            }
+            currentDispatcher.callbacks.clear() // Clear local tracking for currentDispatcher
+
+            // Clear the currentDispatcher's local tracking of its children, as they are either
+            // added to the queue or have been processed.
+            currentDispatcher.childDispatchers.clear()
+
+            // Remove the currentDispatcher from its parent's list of children.
+            // This step breaks upward references in the hierarchy.
+            currentDispatcher.parentDispatcher?.childDispatchers?.remove(currentDispatcher)
+            currentDispatcher.parentDispatcher = null // Clear local parent reference
+        }
     }
 }
