@@ -42,6 +42,7 @@ import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.ResizableComponent
 import androidx.xr.scenecore.ResizeListener
 import androidx.xr.scenecore.SpatialEnvironment
+import androidx.xr.scenecore.SpatialWindow
 import androidx.xr.scenecore.scene
 import androidx.xr.scenecore.testapp.R
 import androidx.xr.scenecore.testapp.common.createSession
@@ -201,7 +202,7 @@ class FsmHsmTransitionActivity : AppCompatActivity() {
         }
 
         // No aspect ratio preferences initially
-        session!!.scene.setPreferredAspectRatio(this, 0.0f)
+        SpatialWindow.setPreferredAspectRatio(session!!, this, 0.0f)
 
         // Make components visible per mode
         findViewById<RadioButton>(R.id.choice_any_aspect_ratio_in_hsm).isChecked = true
@@ -215,7 +216,7 @@ class FsmHsmTransitionActivity : AppCompatActivity() {
                     }
                 // Note: If currently in FSM, the ratio will be applied
                 // when the mode switches back to HSM.
-                session!!.scene.setPreferredAspectRatio(this, ratio)
+                SpatialWindow.setPreferredAspectRatio(session!!, this, ratio)
             }
         }
 

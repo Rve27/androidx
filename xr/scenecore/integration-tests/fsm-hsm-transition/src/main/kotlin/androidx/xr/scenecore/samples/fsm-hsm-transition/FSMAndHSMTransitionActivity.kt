@@ -40,6 +40,7 @@ import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.ResizableComponent
 import androidx.xr.scenecore.ResizeListener
 import androidx.xr.scenecore.SpatialEnvironment
+import androidx.xr.scenecore.SpatialWindow
 import androidx.xr.scenecore.scene
 import java.nio.file.Paths
 import java.util.concurrent.Executors
@@ -129,9 +130,9 @@ class FSMAndHSMTransitionActivity : AppCompatActivity() {
                 }
             // Note: If currently in FSM, the ratio will be applied when the mode switches back to
             // HSM.
-            session.scene.setPreferredAspectRatio(this, ratio)
+            SpatialWindow.setPreferredAspectRatio(session, this, ratio)
         }
-        session.scene.setPreferredAspectRatio(this, 0.0f) // no preferences initially
+        SpatialWindow.setPreferredAspectRatio(session, this, 0.0f) // no preferences initially
 
         val resizePortraitFsm: Button = findViewById(R.id.resizePortraitFsm)
         resizePortraitFsm.setOnClickListener {

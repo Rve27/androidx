@@ -326,26 +326,6 @@ public class Scene : SessionConnector {
     ): Bundle = platformAdapter.setFullSpaceModeWithEnvironmentInherited(bundle)
 
     /**
-     * Sets a preferred main panel aspect ratio for Home Space Mode.
-     *
-     * The ratio is only applied to the [Activity]. If the activity launches another activity in the
-     * same task, the ratio is not applied to the new activity. Also, while the activity is in Full
-     * Space Mode, the preference is temporarily ignored.
-     *
-     * If the activity's current aspect ratio differs from the `preferredRatio`, the panel is
-     * automatically resized. This resizing preserves the panel's area. To avoid runtime resizing,
-     * consider specifying the desired aspect ratio in your AndroidManifest.xml. This ensures your
-     * activity launches with the preferred aspect ratio from the start.
-     *
-     * @param activity the activity for which to set the preference.
-     * @param preferredRatio the aspect ratio determined by taking the panel's width over its
-     *   height. A value <= 0.0f means there are no preferences.
-     */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-    public fun setPreferredAspectRatio(activity: Activity, preferredRatio: Float): Unit =
-        platformAdapter.setPreferredAspectRatio(activity, preferredRatio)
-
-    /**
      * Returns all entities of the given type or its subtypes.
      *
      * @param type the type of [Entity] to return.

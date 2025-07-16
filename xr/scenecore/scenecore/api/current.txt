@@ -725,5 +725,12 @@ package androidx.xr.scenecore {
     field public static final int SPATIAL_VISIBILITY_WITHIN_FIELD_OF_VIEW = 3; // 0x3
   }
 
+  public final class SpatialWindow {
+    method public void setPreferredAspectRatio(androidx.xr.runtime.Session session, android.app.Activity activity, float preferredRatio);
+    property public static float NO_PREFERRED_ASPECT_RATIO;
+    field public static final androidx.xr.scenecore.SpatialWindow INSTANCE;
+    field public static final float NO_PREFERRED_ASPECT_RATIO = -1.0f;
+  }
+
 }
 

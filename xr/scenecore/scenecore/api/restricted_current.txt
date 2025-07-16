@@ -651,7 +651,6 @@ package androidx.xr.scenecore {
     method public void requestHomeSpaceMode();
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public boolean setKeyEntity(androidx.xr.scenecore.Entity? entity);
     method public void setPanelClippingConfig(androidx.xr.scenecore.PanelClippingConfig);
-    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setPreferredAspectRatio(android.app.Activity activity, float preferredRatio);
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void setSpatialModeChangeListener(androidx.xr.scenecore.SpatialModeChangeListener);
     method public void setSpatialVisibilityChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<java.lang.Integer> listener);
     method public void setSpatialVisibilityChangedListener(java.util.function.Consumer<java.lang.Integer> listener);
@@ -865,6 +864,13 @@ package androidx.xr.scenecore {
     field public static final int SPATIAL_VISIBILITY_PARTIALLY_WITHIN_FIELD_OF_VIEW = 2; // 0x2
     field public static final int SPATIAL_VISIBILITY_UNKNOWN = 0; // 0x0
     field public static final int SPATIAL_VISIBILITY_WITHIN_FIELD_OF_VIEW = 3; // 0x3
+  }
+
+  public final class SpatialWindow {
+    method public void setPreferredAspectRatio(androidx.xr.runtime.Session session, android.app.Activity activity, float preferredRatio);
+    property public static float NO_PREFERRED_ASPECT_RATIO;
+    field public static final androidx.xr.scenecore.SpatialWindow INSTANCE;
+    field public static final float NO_PREFERRED_ASPECT_RATIO = -1.0f;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SpatializerConstants {
