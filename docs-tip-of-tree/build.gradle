@@ -331,6 +331,7 @@ dependencies {
     docs(project(":safeparcel:safeparcel"))
     kmpDocs(project(":savedstate:savedstate"))
     kmpDocs(project(":savedstate:savedstate-compose"))
+    kmpDocs(project(":savedstate:savedstate-testing"))
     docs(project(":savedstate:savedstate-ktx"))
     docs(project(":security:security-app-authenticator"))
     docs(project(":security:security-app-authenticator-testing"))
