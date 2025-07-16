@@ -17,6 +17,7 @@
 package androidx.navigationevent
 
 import androidx.kruth.assertThat
+import androidx.kruth.assertThrows
 import androidx.navigationevent.testing.TestNavigationEvent
 import androidx.navigationevent.testing.TestNavigationEventCallback
 import kotlin.test.Test
@@ -160,55 +161,45 @@ class NavigationEventHierarchyTest {
     }
 
     @Test
-    fun dispose_whenCalledOnParent_thenNoCallbacksReceiveEvents() {
-        // Given a parent and child, both with callbacks
+    fun dispose_whenCalledOnParent_cascadesAndThrowsExceptionOnUse() {
+        // Given a parent and child dispatcher
         val parentDispatcher = NavigationEventDispatcher()
         val childDispatcher = NavigationEventDispatcher(parentDispatcher)
-        val parentCallback = TestNavigationEventCallback()
-        val childCallback = TestNavigationEventCallback()
-        parentDispatcher.addCallback(parentCallback)
-        childDispatcher.addCallback(childCallback)
 
-        // When parent is disposed
+        // When the parent is disposed
         parentDispatcher.dispose()
 
-        // Then dispatching an event from either should result in no callbacks being invoked
+        // Then attempting to use either dispatcher throws an exception
         val event = TestNavigationEvent()
-        parentDispatcher.dispatchOnStarted(event)
-        childDispatcher.dispatchOnStarted(
-            event
-        ) // Attempting to dispatch from child, though its processor is now "gone"
-
-        assertThat(parentCallback.startedInvocations).isEqualTo(0)
-        assertThat(childCallback.startedInvocations).isEqualTo(0)
+        assertThrows<IllegalStateException> { parentDispatcher.dispatchOnStarted(event) }
+            .hasMessageThat()
+            .contains("has already been disposed")
+        assertThrows<IllegalStateException> { childDispatcher.dispatchOnStarted(event) }
+            .hasMessageThat()
+            .contains("has already been disposed")
     }
 
     @Test
-    fun dispose_whenCalledOnGrandparent_thenCascadesToAllDescendantsAndNoCallbacksReceiveEvents() {
-        // Given a three-level hierarchy, each with a callback
+    fun dispose_whenCalledOnGrandparent_cascadesAndThrowsExceptionOnUse() {
+        // Given a three-level dispatcher hierarchy
         val grandparentDispatcher = NavigationEventDispatcher()
         val parentDispatcher = NavigationEventDispatcher(grandparentDispatcher)
         val childDispatcher = NavigationEventDispatcher(parentDispatcher)
-        val grandparentCallback = TestNavigationEventCallback()
-        val parentCallback = TestNavigationEventCallback()
-        val childCallback = TestNavigationEventCallback()
-
-        grandparentDispatcher.addCallback(grandparentCallback)
-        parentDispatcher.addCallback(parentCallback)
-        childDispatcher.addCallback(childCallback)
 
         // When the grandparent is disposed
         grandparentDispatcher.dispose()
 
-        // Then dispatching an event from any level should result in no callbacks being invoked
+        // Then attempting to use any dispatcher in the hierarchy throws an exception
         val event = TestNavigationEvent()
-        grandparentDispatcher.dispatchOnStarted(event)
-        parentDispatcher.dispatchOnStarted(event)
-        childDispatcher.dispatchOnStarted(event)
-
-        assertThat(grandparentCallback.startedInvocations).isEqualTo(0)
-        assertThat(parentCallback.startedInvocations).isEqualTo(0)
-        assertThat(childCallback.startedInvocations).isEqualTo(0)
+        assertThrows<IllegalStateException> { grandparentDispatcher.dispatchOnStarted(event) }
+            .hasMessageThat()
+            .contains("has already been disposed")
+        assertThrows<IllegalStateException> { parentDispatcher.dispatchOnStarted(event) }
+            .hasMessageThat()
+            .contains("has already been disposed")
+        assertThrows<IllegalStateException> { childDispatcher.dispatchOnStarted(event) }
+            .hasMessageThat()
+            .contains("has already been disposed")
     }
 
     @Test
@@ -463,5 +454,97 @@ class NavigationEventHierarchyTest {
         dispatcher.dispatchOnStarted(reEnabledEvent)
 
         assertThat(callback.startedInvocations).isEqualTo(1)
+    }
+
+    @Test
+    fun addCallback_onDisposedDispatcher_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.dispose()
+
+        // Adding a callback to a disposed dispatcher should fail.
+        assertThrows<IllegalStateException> {
+                dispatcher.addCallback(TestNavigationEventCallback())
+            }
+            .hasMessageThat()
+            .contains("has already been disposed")
+    }
+
+    @Test
+    fun dispatchOnStarted_onDisposedDispatcher_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.dispose()
+
+        // Dispatching on a disposed dispatcher should fail.
+        assertThrows<IllegalStateException> { dispatcher.dispatchOnStarted(TestNavigationEvent()) }
+            .hasMessageThat()
+            .contains("has already been disposed")
+    }
+
+    @Test
+    fun dispatchOnProgressed_onDisposedDispatcher_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.dispose()
+
+        // Dispatching on a disposed dispatcher should fail.
+        assertThrows<IllegalStateException> {
+                dispatcher.dispatchOnProgressed(TestNavigationEvent())
+            }
+            .hasMessageThat()
+            .contains("has already been disposed")
+    }
+
+    @Test
+    fun dispatchOnCompleted_onDisposedDispatcher_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.dispose()
+
+        // Dispatching on a disposed dispatcher should fail.
+        assertThrows<IllegalStateException> { dispatcher.dispatchOnCompleted() }
+            .hasMessageThat()
+            .contains("has already been disposed")
+    }
+
+    @Test
+    fun dispatchOnCancelled_onDisposedDispatcher_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.dispose()
+
+        // Dispatching on a disposed dispatcher should fail.
+        assertThrows<IllegalStateException> { dispatcher.dispatchOnCancelled() }
+            .hasMessageThat()
+            .contains("has already been disposed")
+    }
+
+    @Test
+    fun dispose_onDisposedDispatcher_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.dispose() // First disposal is fine.
+
+        // Disposing an already-disposed dispatcher should fail.
+        assertThrows<IllegalStateException> { dispatcher.dispose() }
+            .hasMessageThat()
+            .contains("has already been disposed")
+    }
+
+    @Test
+    fun dispose_enabled_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.dispose() // First disposal is fine.
+
+        // Enabling an already-disposed dispatcher should fail.
+        assertThrows<IllegalStateException> { dispatcher.isEnabled = false }
+            .hasMessageThat()
+            .contains("has already been disposed")
+    }
+
+    @Test
+    fun dispose_disabled_throwsException() {
+        val dispatcher = NavigationEventDispatcher()
+        dispatcher.dispose() // First disposal is fine.
+
+        // disabling an already-disposed dispatcher should fail.
+        assertThrows<IllegalStateException> { dispatcher.isEnabled = false }
+            .hasMessageThat()
+            .contains("has already been disposed")
     }
 }

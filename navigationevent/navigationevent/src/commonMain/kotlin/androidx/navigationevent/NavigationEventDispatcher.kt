@@ -97,6 +97,17 @@ private constructor(
     )
 
     /**
+     * Returns `true` if this dispatcher is in a terminal state and can no longer be used.
+     *
+     * A dispatcher is considered disposed if it has been explicitly disposed or if its
+     * [parentDispatcher] has been disposed. This state is checked by [checkInvariants] to prevent
+     * use-after-dispose errors.
+     */
+    internal var isDisposed: Boolean = false
+        get() = if (parentDispatcher?.isDisposed == true) true else field
+        private set // The setter is private and should only be modified by the dispose() method.
+
+    /**
      * Controls whether this dispatcher is active and will process navigation events.
      *
      * A dispatcher's effective enabled state is hierarchical. It depends on both its own local
@@ -119,6 +130,8 @@ private constructor(
     public var isEnabled: Boolean = true
         get() = if (parentDispatcher?.isEnabled == false) false else field
         set(value) {
+            checkInvariants()
+
             // Only proceed if the enabled state is actually changing to avoid redundant work.
             if (field == value) return
 
@@ -221,6 +234,7 @@ private constructor(
      *   others. See [NavigationEventPriority].
      * @throws IllegalArgumentException if the given callback is already registered with a different
      *   dispatcher.
+     * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @Suppress("PairedRegistration") // Callback is removed via `NavigationEventCallback.remove()`
     @MainThread
@@ -228,6 +242,8 @@ private constructor(
         callback: NavigationEventCallback,
         priority: NavigationEventPriority = Default,
     ) {
+        checkInvariants()
+
         sharedProcessor.addCallback(dispatcher = this, callback, priority)
         callbacks += callback
     }
@@ -242,9 +258,12 @@ private constructor(
      * delegated to the shared [NavigationEventProcessor].
      *
      * @param event [NavigationEvent] to dispatch to the callbacks.
+     * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
     public fun dispatchOnStarted(event: NavigationEvent) {
+        checkInvariants()
+
         if (!isEnabled) return
         sharedProcessor.dispatchOnStarted(event)
     }
@@ -254,9 +273,12 @@ private constructor(
      * is delegated to the shared [NavigationEventProcessor].
      *
      * @param event [NavigationEvent] to dispatch to the callbacks.
+     * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
     public fun dispatchOnProgressed(event: NavigationEvent) {
+        checkInvariants()
+
         if (!isEnabled) return
         sharedProcessor.dispatchOnProgressed(event)
     }
@@ -264,9 +286,13 @@ private constructor(
     /**
      * Dispatch an [NavigationEventCallback.onEventCompleted] event. This call is delegated to the
      * shared [NavigationEventProcessor], passing the fallback action.
+     *
+     * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
     public fun dispatchOnCompleted() {
+        checkInvariants()
+
         if (!isEnabled) return
         sharedProcessor.dispatchOnCompleted(fallbackOnBackPressed)
     }
@@ -274,9 +300,13 @@ private constructor(
     /**
      * Dispatch an [NavigationEventCallback.onEventCancelled] event. This call is delegated to the
      * shared [NavigationEventProcessor].
+     *
+     * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
     public fun dispatchOnCancelled() {
+        checkInvariants()
+
         if (!isEnabled) return
         sharedProcessor.dispatchOnCancelled()
     }
@@ -287,6 +317,8 @@ private constructor(
      * This is the primary cleanup method and should be called when the component owning this
      * dispatcher is destroyed (e.g., in `DisposableEffect` in Compose).
      *
+     * This is a **terminal** operation; once a dispatcher is disposed, it cannot be reused.
+     *
      * Calling this method triggers a comprehensive, iterative cleanup:
      * 1. It unregisters this dispatcher's [onHasEnabledCallbacksChanged] listener from the shared
      *    processor.
@@ -296,9 +328,14 @@ private constructor(
      *    specific* dispatcher from the shared [NavigationEventProcessor], preventing memory leaks
      *    and ensuring callbacks are no longer active.
      * 4. Finally, it removes itself from its parent's list of children, if a parent exists.
+     *
+     * @throws IllegalStateException if the dispatcher has already been disposed.
      */
     @MainThread
     public fun dispose() {
+        checkInvariants()
+        isDisposed = true // Set immediately to block potential re-entrant calls.
+
         if (onHasEnabledCallbacksChanged != null) {
             sharedProcessor.removeOnHasEnabledCallbacksChangedCallback(onHasEnabledCallbacksChanged)
         }
@@ -310,6 +347,9 @@ private constructor(
 
         while (dispatchersToDispose.isNotEmpty()) {
             val currentDispatcher = dispatchersToDispose.removeFirst()
+
+            // Set immediately to prevent changes (like adding new children) while we tear it down.
+            currentDispatcher.isDisposed = true
 
             // Add 'currentDispatcher's children to the queue before processing 'currentDispatcher's
             // own cleanup. This ensures a complete traversal of the sub-hierarchy.
@@ -331,6 +371,18 @@ private constructor(
             // This step breaks upward references in the hierarchy.
             currentDispatcher.parentDispatcher?.childDispatchers?.remove(currentDispatcher)
             currentDispatcher.parentDispatcher = null // Clear local parent reference
+        }
+    }
+
+    /**
+     * Checks that the dispatcher has not already been disposed, guarding against use-after-dispose
+     * errors or double-disposal.
+     *
+     * @throws IllegalStateException if [isDisposed] is true.
+     */
+    private fun checkInvariants() {
+        check(!isDisposed) {
+            "This NavigationEventDispatcher has already been disposed and cannot be used."
         }
     }
 }
