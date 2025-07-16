@@ -26,7 +26,6 @@ import com.android.utils.forEach
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.stream.JsonWriter
-import java.io.File
 import java.io.StringWriter
 import org.dom4j.Element
 import org.dom4j.io.XMLWriter
@@ -123,8 +122,6 @@ private fun Project.configureComponentPublishing(
     afterConfigure: () -> Unit,
 ) {
     val androidxGroup = validateCoordinatesAndGetGroup(extension)
-    val projectArchiveDir =
-        File(getRepositoryDirectory(), "${androidxGroup.group.replace('.', '/')}/$name")
     group = androidxGroup.group
 
     /*
@@ -157,18 +154,12 @@ private fun Project.configureComponentPublishing(
             if (appliesJavaGradlePluginPlugin()) {
                 // The 'java-gradle-plugin' will also add to the 'pluginMaven' publication
                 it.create<MavenPublication>("pluginMaven")
-                tasks.getByName("publishPluginMavenPublicationToMavenRepository").doFirst {
-                    removePreviouslyUploadedArchives(projectArchiveDir)
-                }
                 afterConfigure()
             } else {
                 if (project.isMultiplatformPublicationEnabled()) {
                     afterConfigure()
                 } else {
                     it.create<MavenPublication>("maven") { from(component) }
-                    tasks.getByName("publishMavenPublicationToMavenRepository").doFirst {
-                        removePreviouslyUploadedArchives(projectArchiveDir)
-                    }
                     afterConfigure()
                 }
             }
@@ -372,15 +363,6 @@ private fun Project.validateCoordinatesAndGetGroup(extension: AndroidXExtension)
         throw Exception("Your artifactId must start with '$strippedGroupId'. (currently is $name)")
     }
     return mavenGroup
-}
-
-/**
- * Delete any existing archives, so that developers don't get confused/surprised by the presence of
- * old versions. Additionally, deleting old versions makes it more convenient to iterate over all
- * existing archives without visiting archives having old versions too
- */
-private fun removePreviouslyUploadedArchives(projectArchiveDir: File) {
-    projectArchiveDir.deleteRecursively()
 }
 
 private fun Project.addInformativeMetadata(extension: AndroidXExtension, pom: MavenPom) {
