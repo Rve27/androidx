@@ -18,10 +18,11 @@ package androidx.xr.compose.spatial
 
 import androidx.activity.ComponentActivity
 import androidx.annotation.RestrictTo
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableOpenTarget
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.compositionLocalWithComputedDefaultOf
 import androidx.compose.runtime.currentComposer
@@ -31,13 +32,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntSize
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.xr.compose.platform.LocalComposeXrOwners
@@ -61,7 +61,6 @@ import androidx.xr.runtime.math.Pose
 import androidx.xr.scenecore.Entity
 import androidx.xr.scenecore.GroupEntity
 import androidx.xr.scenecore.scene
-import kotlinx.coroutines.android.awaitFrame
 
 private val LocalIsInApplicationSubspace: ProvidableCompositionLocal<Boolean> =
     compositionLocalWithComputedDefaultOf {
@@ -276,34 +275,27 @@ private fun NestedSubspace(content: @Composable @SubspaceComposable SpatialBoxSc
             subspaceRoot.dispose()
         }
     }
-    var measuredSize by remember { mutableStateOf(IntVolumeSize.Zero) }
-    var contentOffset by remember { mutableStateOf(Offset.Zero) }
+    var subspaceContentPixelSize by remember { mutableStateOf(IntSize.Zero) }
     val viewSize = LocalView.current.size
     val density = LocalDensity.current
+    val placeholderDpSize =
+        subspaceContentPixelSize.run { with(density) { DpSize(width.toDp(), height.toDp()) } }
 
-    LaunchedEffect(measuredSize, contentOffset, viewSize, density) {
-        subspaceRootContainer.setPose(
-            calculatePose(
-                contentOffset,
-                viewSize,
-                measuredSize.run { IntSize(width, height) },
-                density,
-            )
-        )
-        // We need to wait for a single frame to ensure that the pose changes are batched to the
-        // root container before we show it.
-        if (!subspaceRootContainer.isEnabled(false) && awaitFrame() > 0) {
-            subspaceRootContainer.setEnabled(true)
-        }
-    }
-
-    Layout(modifier = Modifier.onGloballyPositioned { contentOffset = it.positionInRoot() }) {
-        _,
-        constraints ->
+    // Render a Spacer in a Layout such that the measurable passed to the 2D layout has the same
+    // size as the content in the SubspaceLayout, but the SubspaceLayout gets the constraints
+    // unaffected by its own size. This also triggers recomposition but prevents state reads in the
+    // layout block.
+    // This allows us to get the final 2D coordinates from the placement block (`layout{...}`) and
+    // call `setPose` in the same frame, therefore it offers a better sync between the 3D pose and
+    // the 2D layout pass.
+    Layout(
+        content = { Spacer(Modifier.size(placeholderDpSize.width, placeholderDpSize.height)) }
+    ) { measurables, constraints ->
+        // We set the scene content here so the 3D content has access to the 2D constraints.
         scene.setContent {
-            SubspaceLayout(content = { SpatialBox(content = content) }) { measurables, _ ->
+            SubspaceLayout(content = { SpatialBox(content = content) }) { subspaceMeasurables, _ ->
                 val placeables =
-                    measurables.map {
+                    subspaceMeasurables.map {
                         it.measure(
                             VolumeConstraints(
                                 minWidth = constraints.minWidth,
@@ -311,34 +303,50 @@ private fun NestedSubspace(content: @Composable @SubspaceComposable SpatialBoxSc
                                 minHeight = constraints.minHeight,
                                 maxHeight = constraints.maxHeight,
                                 // TODO(b/366564066) Nested Subspaces should get their depth
-                                // constraints from
-                                // the parent Subspace
+                                // constraints from the parent Subspace
                                 minDepth = 0,
                                 maxDepth = Int.MAX_VALUE,
                             )
                         )
                     }
-                measuredSize =
+                val measuredContentVolume =
                     IntVolumeSize(
-                        width = placeables.maxOf { it.measuredWidth },
-                        height = placeables.maxOf { it.measuredHeight },
-                        depth = placeables.maxOf { it.measuredDepth },
-                    )
-                layout(measuredSize.width, measuredSize.height, measuredSize.depth) {
-                    placeables.forEach { it.place(Pose.Identity) }
-                    subspaceRootContainer.setPose(
-                        calculatePose(
-                            contentOffset,
-                            viewSize,
-                            measuredSize.run { IntSize(width, height) },
-                            density,
+                            width = placeables.maxOf { it.measuredWidth },
+                            height = placeables.maxOf { it.measuredHeight },
+                            depth = placeables.maxOf { it.measuredDepth },
                         )
-                    )
+                        .apply { subspaceContentPixelSize = IntSize(width, height) }
+                layout(
+                    measuredContentVolume.width,
+                    measuredContentVolume.height,
+                    measuredContentVolume.depth,
+                ) {
+                    placeables.forEach { it.place(Pose.Identity) }
                 }
             }
         }
 
-        layout(measuredSize.width, measuredSize.height) {}
+        // We only expect one measurable here, which is the Spacer we added above. We don't actually
+        // need to place the spacer though since we are just using it for size.
+        val placeable = measurables[0].measure(constraints)
+        val measuredPlaceholderSize = IntSize(placeable.width, placeable.height)
+        layout(measuredPlaceholderSize.width, measuredPlaceholderSize.height) {
+
+            // Here we determine the correct position for the 3D content and place the root node.
+            // This ensures tighter coordination between the 2D and 3D placement. Note that this is
+            // still imperfect as rendering is not explicitly synchronized.
+            if (measuredPlaceholderSize != IntSize.Zero) {
+                val contentOffset = coordinates?.positionInRoot() ?: return@layout
+                val nextPose =
+                    calculatePose(contentOffset, viewSize, measuredPlaceholderSize, density)
+                if (subspaceRootContainer.getPose() != nextPose) {
+                    subspaceRootContainer.setPose(nextPose)
+                    if (!subspaceRootContainer.isEnabled(false)) {
+                        subspaceRootContainer.setEnabled(true)
+                    }
+                }
+            }
+        }
     }
 }
 
