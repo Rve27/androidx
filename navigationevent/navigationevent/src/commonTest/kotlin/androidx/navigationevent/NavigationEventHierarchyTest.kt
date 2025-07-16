@@ -210,4 +210,190 @@ class NavigationEventHierarchyTest {
         assertThat(parentCallback.startedInvocations).isEqualTo(0)
         assertThat(childCallback.startedInvocations).isEqualTo(0)
     }
+
+    @Test
+    fun isEnabled_whenSetToTrue_thenEventsAreDispatched() {
+        // Given a dispatcher
+        val dispatcher = NavigationEventDispatcher()
+        val callback = TestNavigationEventCallback()
+        dispatcher.addCallback(callback)
+
+        // When the dispatcher is enabled
+        dispatcher.isEnabled = true
+
+        // Then dispatching an event should trigger the callback
+        val event = TestNavigationEvent()
+        dispatcher.dispatchOnStarted(event)
+        assertThat(callback.startedInvocations).isEqualTo(1)
+    }
+
+    @Test
+    fun isEnabled_whenSetToFalse_thenNoCallbacksAreDispatched() {
+        // Given a dispatcher with an enabled callback
+        val dispatcher = NavigationEventDispatcher()
+        val callback = TestNavigationEventCallback(isEnabled = true)
+        dispatcher.addCallback(callback)
+
+        // When the dispatcher is disabled
+        dispatcher.isEnabled = false
+
+        // Then dispatching an event should not trigger the callback
+        val event = TestNavigationEvent()
+        dispatcher.dispatchOnStarted(event)
+        assertThat(callback.startedInvocations).isEqualTo(0)
+    }
+
+    @Test
+    fun isEnabled_whenParentIsDisabled_thenChildDoesNotDispatchEvents() {
+        // Given a parent and child dispatcher, both with callbacks
+        val parentDispatcher = NavigationEventDispatcher()
+        val childDispatcher = NavigationEventDispatcher(parentDispatcher)
+        val parentCallback = TestNavigationEventCallback()
+        val childCallback = TestNavigationEventCallback()
+        parentDispatcher.addCallback(parentCallback)
+        childDispatcher.addCallback(childCallback)
+
+        // When the parent is disabled
+        parentDispatcher.isEnabled = false
+
+        // Then dispatching an event from the child should not invoke any callbacks,
+        // because the parent's disabled state propagates.
+        val event = TestNavigationEvent()
+        childDispatcher.dispatchOnStarted(event)
+
+        assertThat(parentCallback.startedInvocations).isEqualTo(0)
+        assertThat(childCallback.startedInvocations).isEqualTo(0)
+    }
+
+    @Test
+    fun isEnabled_whenChildIsLocallyDisabled_thenChildDoesNotDispatchEvents() {
+        // Given a parent (enabled) and child, both with callbacks
+        val parentDispatcher = NavigationEventDispatcher()
+        val childDispatcher = NavigationEventDispatcher(parentDispatcher)
+        val parentCallback = TestNavigationEventCallback()
+        val childCallback = TestNavigationEventCallback()
+        parentDispatcher.addCallback(parentCallback)
+        childDispatcher.addCallback(childCallback)
+
+        // When child is locally disabled
+        childDispatcher.isEnabled = false
+
+        // Then dispatching an event from the child should not trigger its callback.
+        // The parent's callback should still be invokable via the parent directly.
+        val event = TestNavigationEvent()
+        childDispatcher.dispatchOnStarted(event)
+
+        assertThat(childCallback.startedInvocations).isEqualTo(0)
+        assertThat(parentCallback.startedInvocations)
+            .isEqualTo(0) // Parent's callback should still fire via parent
+    }
+
+    @Test
+    fun isEnabled_whenDisabledParentIsReEnabled_thenChildDispatchesEventsAgain() {
+        // Given a disabled parent and a locally-enabled child, both with callbacks
+        val parentDispatcher = NavigationEventDispatcher()
+        val childDispatcher = NavigationEventDispatcher(parentDispatcher)
+        val parentCallback = TestNavigationEventCallback()
+        val childCallback = TestNavigationEventCallback()
+        parentDispatcher.addCallback(parentCallback)
+        childDispatcher.addCallback(childCallback)
+
+        parentDispatcher.isEnabled = false // Initial state: parent (and thus child) disabled
+        // Verify pre-condition (no dispatch before re-enabling)
+        val initialEvent = TestNavigationEvent()
+        childDispatcher.dispatchOnStarted(initialEvent)
+        assertThat(childCallback.startedInvocations).isEqualTo(0)
+
+        // When the parent is re-enabled
+        parentDispatcher.isEnabled = true
+
+        // Then the child should now dispatch events
+        val reEnabledEvent = TestNavigationEvent()
+        childDispatcher.dispatchOnStarted(reEnabledEvent)
+        assertThat(childCallback.startedInvocations).isEqualTo(1)
+        assertThat(parentCallback.startedInvocations)
+            .isEqualTo(0) // Parent's callback is still LIFO behind child
+    }
+
+    @Test
+    fun isEnabled_whenDisabledParentIsReEnabled_thenChildCallbacksReceiveEventsAgain() {
+        // Given a disabled parent and a locally-enabled child, both with callbacks
+        val parentDispatcher = NavigationEventDispatcher()
+        val childDispatcher = NavigationEventDispatcher(parentDispatcher)
+        val parentCallback = TestNavigationEventCallback()
+        val childCallback = TestNavigationEventCallback()
+        parentDispatcher.addCallback(parentCallback)
+        childDispatcher.addCallback(childCallback)
+
+        parentDispatcher.isEnabled = false // Initial state: parent (and thus child) disabled
+        // Verify pre-condition (no dispatch before re-enabling)
+        val initialEvent = TestNavigationEvent()
+        parentDispatcher.dispatchOnStarted(initialEvent)
+        assertThat(parentCallback.startedInvocations).isEqualTo(0)
+        assertThat(childCallback.startedInvocations).isEqualTo(0)
+
+        // When the parent is re-enabled
+        parentDispatcher.isEnabled = true
+
+        // Then the child should now dispatch events
+        val reEnabledEvent = TestNavigationEvent()
+        parentDispatcher.dispatchOnStarted(reEnabledEvent)
+        assertThat(parentCallback.startedInvocations)
+            .isEqualTo(0) // Parent's callback is still LIFO behind child
+        assertThat(childCallback.startedInvocations).isEqualTo(1)
+    }
+
+    @Test
+    fun isEnabled_whenGrandparentIsDisabled_thenGrandchildDoesNotDispatchEvents() {
+        // Given a three-level hierarchy, each with a callback
+        val grandparentDispatcher = NavigationEventDispatcher()
+        val parentDispatcher = NavigationEventDispatcher(grandparentDispatcher)
+        val childDispatcher = NavigationEventDispatcher(parentDispatcher)
+        val grandparentCallback = TestNavigationEventCallback()
+        val parentCallback = TestNavigationEventCallback()
+        val childCallback = TestNavigationEventCallback()
+
+        grandparentDispatcher.addCallback(grandparentCallback)
+        parentDispatcher.addCallback(parentCallback)
+        childDispatcher.addCallback(childCallback)
+
+        // When the grandparent is disabled
+        grandparentDispatcher.isEnabled = false
+
+        // Then dispatching an event from the grandchild should result in no callbacks being
+        // invoked, as the disabled state cascades down.
+        val event = TestNavigationEvent()
+        childDispatcher.dispatchOnStarted(event)
+
+        assertThat(grandparentCallback.startedInvocations).isEqualTo(0)
+        assertThat(parentCallback.startedInvocations).isEqualTo(0)
+        assertThat(childCallback.startedInvocations).isEqualTo(0)
+    }
+
+    @Test
+    fun isEnabled_whenGrandparentIsDisabled_thenGrandchildCallbackDoesNotReceiveEvents() {
+        // Given a three-level hierarchy, each with a callback
+        val grandparentDispatcher = NavigationEventDispatcher()
+        val parentDispatcher = NavigationEventDispatcher(grandparentDispatcher)
+        val childDispatcher = NavigationEventDispatcher(parentDispatcher)
+        val grandparentCallback = TestNavigationEventCallback()
+        val parentCallback = TestNavigationEventCallback()
+        val childCallback = TestNavigationEventCallback()
+
+        grandparentDispatcher.addCallback(grandparentCallback)
+        parentDispatcher.addCallback(parentCallback)
+        childDispatcher.addCallback(childCallback)
+
+        // When the grandparent is disabled
+        grandparentDispatcher.isEnabled = false
+
+        // Then dispatching an event from the grandparent should result in no callbacks being
+        // invoked, as the disabled state cascades down.
+        val event = TestNavigationEvent()
+        grandparentDispatcher.dispatchOnStarted(event)
+
+        assertThat(grandparentCallback.startedInvocations).isEqualTo(0)
+        assertThat(parentCallback.startedInvocations).isEqualTo(0)
+        assertThat(childCallback.startedInvocations).isEqualTo(0)
+    }
 }

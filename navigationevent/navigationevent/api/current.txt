@@ -50,6 +50,9 @@ package androidx.navigationevent {
     method @MainThread public void dispatchOnStarted(androidx.navigationevent.NavigationEvent event);
     method @MainThread public void dispose();
     method public boolean hasEnabledCallbacks();
+    method public boolean isEnabled();
+    method public void setEnabled(boolean);
+    property public boolean isEnabled;
   }
 
   public interface NavigationEventDispatcherOwner {

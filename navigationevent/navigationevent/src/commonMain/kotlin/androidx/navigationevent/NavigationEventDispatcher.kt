@@ -97,6 +97,36 @@ private constructor(
     )
 
     /**
+     * Controls whether this dispatcher is active and will process navigation events.
+     *
+     * A dispatcher's effective enabled state is hierarchical. It depends on both its own local
+     * `isEnabled` state and the state of its parent.
+     *
+     * **Getting the value**:
+     * - This will return `false` if the `parentDispatcher` exists and its `isEnabled` state is
+     *   `false`, regardless of this dispatcher's own setting. This provides a simple way to disable
+     *   an entire branch of a navigation hierarchy by disabling its root.
+     * - If there is no parent or the parent is enabled, it will return the local value of this
+     *   property (`true` by default).
+     *
+     * **Setting the value**:
+     * - This only updates the local enabled state for this specific dispatcher. The getter will
+     *   always re-evaluate the effective state based on the parent.
+     *
+     * For this dispatcher to be truly active, its local `isEnabled` property must be `true`, and
+     * the `isEnabled` properties of all its ancestors must also be `true`.
+     */
+    public var isEnabled: Boolean = true
+        get() = if (parentDispatcher?.isEnabled == false) false else field
+        set(value) {
+            // Only proceed if the enabled state is actually changing to avoid redundant work.
+            if (field == value) return
+
+            field = value
+            updateEnabledCallbacks()
+        }
+
+    /**
      * The internal, shared [NavigationEventProcessor] responsible for managing all registered
      * [NavigationEventCallback]s and orchestrating event dispatching.
      *
@@ -215,6 +245,7 @@ private constructor(
      */
     @MainThread
     public fun dispatchOnStarted(event: NavigationEvent) {
+        if (!isEnabled) return
         sharedProcessor.dispatchOnStarted(event)
     }
 
@@ -226,6 +257,7 @@ private constructor(
      */
     @MainThread
     public fun dispatchOnProgressed(event: NavigationEvent) {
+        if (!isEnabled) return
         sharedProcessor.dispatchOnProgressed(event)
     }
 
@@ -235,6 +267,7 @@ private constructor(
      */
     @MainThread
     public fun dispatchOnCompleted() {
+        if (!isEnabled) return
         sharedProcessor.dispatchOnCompleted(fallbackOnBackPressed)
     }
 
@@ -244,6 +277,7 @@ private constructor(
      */
     @MainThread
     public fun dispatchOnCancelled() {
+        if (!isEnabled) return
         sharedProcessor.dispatchOnCancelled()
     }
 
