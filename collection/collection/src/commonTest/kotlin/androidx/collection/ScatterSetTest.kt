@@ -561,14 +561,6 @@ class ScatterSetTest {
     }
 
     @Test
-    fun hashCodeWithSelfElement() {
-        val set = mutableScatterSetOf<Any?>()
-        set += "Hello"
-        set += set
-        assertNotEquals(0, set.hashCode())
-    }
-
-    @Test
     fun hashCodeDoesNotUseCapacity() {
         val set1 = MutableScatterSet<String>(initialCapacity = 10)
         set1 += "Hello"

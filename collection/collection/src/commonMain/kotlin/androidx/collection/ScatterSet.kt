@@ -329,11 +329,7 @@ public sealed class ScatterSet<E> {
     public override fun hashCode(): Int {
         var hash = 0
 
-        forEach { element ->
-            if (element != this) {
-                hash += element.hashCode()
-            }
-        }
+        forEach { element -> hash += element.hashCode() }
 
         return hash
     }
