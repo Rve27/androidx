@@ -16,7 +16,6 @@
 
 package androidx.xr.compose.spatial
 
-import android.content.ContextWrapper
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
@@ -25,7 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertTextContains
@@ -35,7 +33,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.SceneManager
@@ -1197,23 +1194,5 @@ class SubspaceTest {
         val subspaceRootContainer2 = assertNotNull(subspaceRootEntity2.parent)
 
         assertThat(subspaceRootContainer).isEqualTo(subspaceRootContainer2)
-    }
-
-    @Test
-    fun gravityAlignedSubspace_componentActivity_asAnotherActivity_throwsError() {
-        val fakeContext = ContextWrapper(ApplicationProvider.getApplicationContext())
-        assertFailsWith<IllegalStateException>(
-            message = "GravityAlignedSubspace cannot be created in any other Activity"
-        ) {
-            composeTestRule.setContent {
-                TestSetup {
-                    CompositionLocalProvider(LocalContext provides fakeContext) {
-                        GravityAlignedSubspace(constraints = VolumeConstraints()) {
-                            SpatialPanel() {}
-                        }
-                    }
-                }
-            }
-        }
     }
 }

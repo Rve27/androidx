@@ -39,13 +39,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.IntSize
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.xr.compose.platform.LocalComposeXrOwners
 import androidx.xr.compose.platform.LocalCoreEntity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.LocalSpatialConfiguration
 import androidx.xr.compose.platform.SpatialComposeScene
 import androidx.xr.compose.platform.disposableValueOf
-import androidx.xr.compose.platform.getActivity
 import androidx.xr.compose.platform.getValue
 import androidx.xr.compose.subspace.SpatialBox
 import androidx.xr.compose.subspace.SpatialBoxScope
@@ -101,8 +101,6 @@ internal val LocalSubspaceRootNode: ProvidableCompositionLocal<Entity?> =
 @ComposableOpenTarget(index = -1)
 @Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
 public fun Subspace(content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit) {
-    val activity = LocalContext.current.getActivity() as? ComponentActivity ?: return
-
     // If not in XR, do nothing
     if (!LocalSpatialConfiguration.current.hasXrSpatialFeature) return
 
@@ -110,9 +108,9 @@ public fun Subspace(content: @Composable @SubspaceComposable SpatialBoxScope.() 
         // We are already in a Subspace, so we can just render the content directly
         SpatialBox(content = content)
     } else if (LocalIsInApplicationSubspace.current) {
-        NestedSubspace(activity, content)
+        NestedSubspace(content)
     } else {
-        ApplicationSubspace(activity = activity, constraints = null, content = content)
+        ApplicationSubspace(content = content)
     }
 }
 
@@ -152,9 +150,7 @@ public fun ApplicationSubspace(
     constraints: VolumeConstraints? = null,
     content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit,
 ) {
-    val activity = LocalContext.current.getActivity() as? ComponentActivity ?: return
-
-    // If we are not in XR, do nothing
+    // If not in XR, do nothing
     if (!LocalSpatialConfiguration.current.hasXrSpatialFeature) return
 
     if (currentComposer.applier is SubspaceNodeApplier) {
@@ -163,7 +159,11 @@ public fun ApplicationSubspace(
     } else if (LocalIsInApplicationSubspace.current) {
         throw IllegalStateException("ApplicationSubspace cannot be nested within another Subspace.")
     } else {
-        ApplicationSubspace(activity = activity, constraints = constraints, content = content)
+        ApplicationSubspace(
+            constraints = constraints,
+            subspaceRootNode = LocalSubspaceRootNode.current,
+            content = content,
+        )
     }
 }
 
@@ -181,11 +181,12 @@ public fun ApplicationSubspace(
  */
 @Composable
 private fun ApplicationSubspace(
-    activity: ComponentActivity,
     constraints: VolumeConstraints?,
     subspaceRootNode: Entity? = LocalSubspaceRootNode.current,
     content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit,
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val compositionContext = rememberCompositionContext()
     val scene by remember {
@@ -194,7 +195,8 @@ private fun ApplicationSubspace(
         subspaceRootNode?.let { subspaceRoot.parent = it }
         disposableValueOf(
             SpatialComposeScene(
-                ownerActivity = activity,
+                lifecycleOwner = lifecycleOwner,
+                context = context,
                 jxrSession = session,
                 parentCompositionContext = compositionContext,
                 rootEntity = CoreGroupEntity(subspaceRoot),
@@ -236,10 +238,12 @@ private fun ApplicationSubspace(
 }
 
 @Composable
-private fun NestedSubspace(
-    activity: ComponentActivity,
-    content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit,
-) {
+private fun NestedSubspace(content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit) {
+    // If not in XR, do nothing
+    if (!LocalSpatialConfiguration.current.hasXrSpatialFeature) return
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
     val session = checkNotNull(LocalSession.current) { "session must be initialized" }
     val compositionContext = rememberCompositionContext()
     val coreEntity = checkNotNull(LocalCoreEntity.current) { "CoreEntity unavailable for subspace" }
@@ -261,7 +265,8 @@ private fun NestedSubspace(
             GroupEntity.create(session, "SubspaceRoot").apply { parent = subspaceRootContainer }
         disposableValueOf(
             SpatialComposeScene(
-                ownerActivity = activity,
+                lifecycleOwner = lifecycleOwner,
+                context = context,
                 jxrSession = session,
                 parentCompositionContext = compositionContext,
                 rootEntity = CoreGroupEntity(subspaceRoot),
@@ -368,15 +373,6 @@ public fun GravityAlignedSubspace(
     constraints: VolumeConstraints? = null,
     content: @Composable @SubspaceComposable SpatialBoxScope.() -> Unit,
 ) {
-
-    val currentActivity = LocalContext.current.getActivity()
-
-    val activity =
-        LocalContext.current.getActivity() as? ComponentActivity
-            ?: throw IllegalStateException(
-                "Expected a ComponentActivity, but found: $currentActivity"
-            )
-
     // If we are not in XR, do nothing
     if (!LocalSpatialConfiguration.current.hasXrSpatialFeature) return
 
@@ -385,11 +381,6 @@ public fun GravityAlignedSubspace(
             "GravityAlignedSubspace cannot be nested within another Subspace."
         )
     } else {
-        ApplicationSubspace(
-            activity = activity,
-            constraints = constraints,
-            subspaceRootNode = null,
-            content = content,
-        )
+        ApplicationSubspace(constraints = constraints, subspaceRootNode = null, content = content)
     }
 }
