@@ -4,6 +4,9 @@ import androidx.appfunctions.AppFunctionContext
 import androidx.appfunctions.AppFunctionSerializable
 import androidx.appfunctions.service.AppFunction
 
+/**
+ * Tests the generation of descriptions elements for app functions and serializable classes.
+ */
 class FakeFreeFormFunctions {
     /**
      * A fake free-form AppFunction to test the description element in the function's generated
@@ -13,16 +16,16 @@ class FakeFreeFormFunctions {
      * agent.
      *
      * @param appFunctionContext the AppFunction's context.
-     * @param input an input AppFunctionSerializable.
+     * @param serializableParam an input AppFunctionSerializable.
      * @return a string.
-     * @throws IllegalArgumentException if the inputString is in an incorrect format.
+     * @throws IllegalArgumentException if the parameters have an incorrect format.
      */
     @AppFunction(isDescribedByKdoc = true)
     fun fakeFreeFormFunction_isDescribedByKdoc_true(
         appFunctionContext: AppFunctionContext,
-        input: InputToFakeFreeFormFunction,
+        serializableParam: InputToFakeFreeFormFunction,
     ): String {
-        return input.data
+        return serializableParam.data
     }
 
     /**
@@ -78,9 +81,7 @@ class FakeFreeFormFunctions {
         parametrizedTypesInput: InputWithRepeatedTypes,
     ) {}
 
-    /**
-     * Tests that the input class description is empty when class's isDescribedByKdoc = false,
-     */
+    /** Tests that the input class description is empty when class's isDescribedByKdoc = false. */
     @AppFunction(isDescribedByKdoc = true)
     fun fakeFreeFormFunction_inputClassDescribedByKdoc_false(
         appFunctionContext: AppFunctionContext,
@@ -92,7 +93,7 @@ class FakeFreeFormFunctions {
 @AppFunctionSerializable(isDescribedByKdoc = true)
 open class InputToFakeFreeFormFunction(
     /** A string param. */
-    open val data: String,
+    open val data: String
 )
 
 /** A child class of [InputToFakeFreeFormFunction]. */
@@ -139,5 +140,5 @@ data class Optional<T>(
 @AppFunctionSerializable(isDescribedByKdoc = false)
 class NotDescribedByKdoc(
     /** Property description. Should be ignored. */
-    val param: Int,
+    val param: Int
 )
