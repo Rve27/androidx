@@ -1109,6 +1109,7 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) :
         state.documentUri = pdfDocument?.uri
         state.paginationModel = pageMetadataLoader?.paginationModel
         state.pdfFormFillingState = pageMetadataLoader?.pdfFormFillingState
+        state.pdfFormEditRecords = pdfDocument?.formEditRecords
         state.selectionModel = selectionStateManager?.selectionModel?.value
         return state
     }
