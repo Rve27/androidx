@@ -218,7 +218,6 @@ import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.findViewTreeSavedStateRegistryOwner
 import java.lang.reflect.Method
-import java.util.ArrayList
 import java.util.function.Consumer
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.abs
@@ -800,7 +799,11 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
     // on a different position, but also in the position of each of the grandparents as all these
     // positions add up to final global position)
     private val globalLayoutListener =
-        ViewTreeObserver.OnGlobalLayoutListener { updatePositionCacheAndDispatch() }
+        ViewTreeObserver.OnGlobalLayoutListener {
+            // make sure that we use an updated window position and matrix
+            lastMatrixRecalculationAnimationTime = 0
+            updatePositionCacheAndDispatch()
+        }
 
     // executed when a scrolling container like ScrollView of RecyclerView performed the scroll,
     // this could affect our global position
