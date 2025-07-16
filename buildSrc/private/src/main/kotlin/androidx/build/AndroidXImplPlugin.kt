@@ -786,6 +786,7 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
 
     @Suppress("UnstableApiUsage") // usage of PrivacySandboxSdkExtension b/397703898
     private fun configureWithPrivacySandboxSdkPlugin(project: Project) {
+        project.tasks.register("check")
         project.extensions.getByType<PrivacySandboxSdkExtension>().apply {
             configureLocalAsbSigning(experimentalProperties, project.getKeystore())
         }

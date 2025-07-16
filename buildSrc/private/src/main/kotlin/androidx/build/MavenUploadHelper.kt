@@ -77,25 +77,19 @@ fun Project.configureMavenArtifactUpload(
             }
         }
     }
-    // validate that all libraries that should be published actually get registered.
-    gradle.taskGraph.whenReady {
+    // validate that all libraries that should be published actually get tasks registered.
+    // named() will throw UnknownTaskException if the task is not registered.
+    gradle.taskGraph.whenReady { graph ->
         if (releaseTaskShouldBeRegistered(androidXExtension)) {
-            validateTaskIsRegistered(Release.PROJECT_ARCHIVE_ZIP_TASK_NAME)
+            tasks.named(Release.PROJECT_ARCHIVE_ZIP_TASK_NAME)
         }
         if (buildInfoTaskShouldBeRegistered(androidXExtension)) {
             if (!androidXExtension.isIsolatedProjectsEnabled()) {
-                validateTaskIsRegistered(CreateLibraryBuildInfoFileTask.TASK_NAME)
+                tasks.named(CreateLibraryBuildInfoFileTask.TASK_NAME)
             }
         }
     }
 }
-
-private fun Project.validateTaskIsRegistered(taskName: String) =
-    tasks.findByName(taskName)
-        ?: throw GradleException(
-            "Project $name is configured for publishing, but a '$taskName' task was never " +
-                "registered. This is likely a bug in AndroidX plugin configuration."
-        )
 
 private fun Project.releaseTaskShouldBeRegistered(extension: AndroidXExtension): Boolean {
     if (plugins.hasPlugin(AppPlugin::class.java)) {
