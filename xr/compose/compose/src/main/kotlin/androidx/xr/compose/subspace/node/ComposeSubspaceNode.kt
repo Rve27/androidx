@@ -69,8 +69,6 @@ internal interface ComposeSubspaceNode {
         /**
          * Sets the [SubspaceModifier] for the given [ComposeSubspaceNode].
          *
-         * Note: [SetCoreEntity] should be called before.
-         *
          * @param modifier the [SubspaceModifier] to be applied.
          */
         val SetModifier: ComposeSubspaceNode.(SubspaceModifier) -> Unit = { this.modifier = it }

@@ -205,8 +205,6 @@ private fun <T : View> AndroidViewPanel(
             set(compositionLocalMap, SetCompositionLocalMap)
             set(measurePolicy, SetMeasurePolicy)
             set(corePanelEntity, SetCoreEntity)
-            // TODO(b/390674036) Remove call-order dependency between SetCoreEntity and SetModifier
-            // Execute SetModifier after SetCoreEntity, it depends on CoreEntity.
             set(modifier, SetModifier)
             update(view)
         },

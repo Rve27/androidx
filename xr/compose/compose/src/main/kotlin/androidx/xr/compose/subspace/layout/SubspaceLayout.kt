@@ -125,8 +125,6 @@ public inline fun SubspaceLayout(
             set(compositionLocalMap, SetCompositionLocalMap)
             set(measurePolicy, SetMeasurePolicy)
             set(coreEntity, SetCoreEntity)
-            // TODO(b/390674036) Remove call-order dependency between SetCoreEntity and SetModifier
-            // Execute SetModifier after SetCoreEntity, it depends on CoreEntity.
             set(modifier, SetModifier)
         },
         content = { CompositionLocalProvider(LocalOpaqueEntity provides coreEntity) { content() } },
@@ -174,8 +172,6 @@ internal inline fun SubspaceLayout(
             set(compositionLocalMap, SetCompositionLocalMap)
             set(measurePolicy, SetMeasurePolicy)
             set(coreEntity, SetCoreEntity)
-            // TODO(b/390674036) Remove call-order dependency between SetCoreEntity and SetModifier
-            // Execute SetModifier after SetCoreEntity, it depends on CoreEntity.
             set(modifier, SetModifier)
         },
     )
@@ -220,8 +216,6 @@ internal inline fun SubspaceLayout(
             set(compositionLocalMap, SetCompositionLocalMap)
             set(measurePolicy, SetMeasurePolicy)
             set(coreEntity, SetCoreEntity)
-            // TODO(b/390674036) Remove call-order dependency between SetCoreEntity and SetModifier
-            // Execute SetModifier after SetCoreEntity, it depends on CoreEntity.
             set(modifier, SetModifier)
         },
         content = { CompositionLocalProvider(LocalOpaqueEntity provides coreEntity) { content() } },
