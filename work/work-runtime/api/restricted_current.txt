@@ -66,7 +66,7 @@ package androidx.work {
     method @SuppressCompatibility @androidx.work.ExperimentalConfigurationApi public androidx.work.Configuration.Builder setMarkingJobsAsImportantWhileForeground(boolean markAsImportant);
     method public androidx.work.Configuration.Builder setMaxSchedulerLimit(int maxSchedulerLimit);
     method public androidx.work.Configuration.Builder setMinimumLoggingLevel(int loggingLevel);
-    method public androidx.work.Configuration.Builder setRemoteSessionTimeoutMillis(long timeoutMillis);
+    method public androidx.work.Configuration.Builder setRemoteSessionTimeoutMillis(@IntRange(from=0L, to=1200000L) long timeoutMillis);
     method public androidx.work.Configuration.Builder setRunnableScheduler(androidx.work.RunnableScheduler runnableScheduler);
     method public androidx.work.Configuration.Builder setSchedulingExceptionHandler(androidx.core.util.Consumer<java.lang.Throwable> schedulingExceptionHandler);
     method public androidx.work.Configuration.Builder setTaskExecutor(java.util.concurrent.Executor taskExecutor);

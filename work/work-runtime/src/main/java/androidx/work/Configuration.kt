@@ -547,7 +547,9 @@ public class Configuration internal constructor(builder: Builder) {
          * @param timeoutMillis Timeout in milliseconds before the session unbinds
          * @return This [Builder] instance
          */
-        public fun setRemoteSessionTimeoutMillis(timeoutMillis: Long): Builder {
+        public fun setRemoteSessionTimeoutMillis(
+            @IntRange(from = 0, to = MAX_SESSION_TIMEOUT_MILLIS) timeoutMillis: Long
+        ): Builder {
             require(timeoutMillis >= 0) { "The remote session timeout must not be negative." }
             remoteSessionTimeoutMillis = timeoutMillis.coerceAtMost(MAX_SESSION_TIMEOUT_MILLIS)
             return this
