@@ -341,7 +341,7 @@ public class FeatureCombinationQueryImpl(
     }
 
     internal companion object {
-        private const val TAG = "FeatureCombinationQuery"
+        private const val TAG = "FeatureCombinationQueryImpl"
 
         private val NO_OP_CALLBACK =
             object : CameraCaptureSession.StateCallback() {

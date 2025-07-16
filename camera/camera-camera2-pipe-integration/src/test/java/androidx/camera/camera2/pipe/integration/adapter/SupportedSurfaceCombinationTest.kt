@@ -65,6 +65,7 @@ import androidx.camera.camera2.pipe.integration.internal.HLG10_UNCONSTRAINED
 import androidx.camera.camera2.pipe.integration.internal.HighSpeedResolver
 import androidx.camera.camera2.pipe.integration.internal.LATENCY_NONE
 import androidx.camera.camera2.pipe.integration.internal.StreamUseCaseUtil
+import androidx.camera.camera2.pipe.testing.CameraPipeSimulator
 import androidx.camera.camera2.pipe.testing.FakeCameraBackend
 import androidx.camera.camera2.pipe.testing.FakeCameraDevices
 import androidx.camera.camera2.pipe.testing.FakeCameraMetadata
@@ -137,6 +138,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeUnit
 import kotlin.math.floor
+import kotlinx.coroutines.test.TestScope
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -4857,6 +4859,8 @@ class SupportedSurfaceCombinationTest {
                     mapOf(FakeCameraBackend.FAKE_CAMERA_BACKEND_ID to listOf(fakeCameraMetadata)),
             )
         whenever(mockCameraAppComponent.getCameraDevices()).thenReturn(fakeCameraDevices)
+        whenever(mockCameraAppComponent.getCameraPipe())
+            .thenReturn(CameraPipeSimulator.create(TestScope(), context))
         cameraFactory!!.cameraManager = mockCameraAppComponent
         val cameraXConfig =
             CameraXConfig.Builder.fromConfig(CameraPipeConfig.defaultConfig())

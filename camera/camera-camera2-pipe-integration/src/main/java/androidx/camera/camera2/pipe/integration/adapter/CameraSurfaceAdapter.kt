@@ -18,6 +18,7 @@ package androidx.camera.camera2.pipe.integration.adapter
 
 import android.content.Context
 import android.hardware.camera2.CameraCharacteristics
+import android.os.Build
 import android.util.Size
 import androidx.camera.camera2.pipe.CameraId
 import androidx.camera.camera2.pipe.CameraPipe
@@ -29,6 +30,7 @@ import androidx.camera.camera2.pipe.integration.compat.quirk.CameraQuirks
 import androidx.camera.camera2.pipe.integration.compat.workaround.OutputSizesCorrector
 import androidx.camera.camera2.pipe.integration.config.CameraAppComponent
 import androidx.camera.camera2.pipe.integration.config.CameraModule
+import androidx.camera.camera2.pipe.integration.impl.FeatureCombinationQueryImpl
 import androidx.camera.core.featuregroup.impl.FeatureCombinationQuery
 import androidx.camera.core.impl.AttachedSurfaceInfo
 import androidx.camera.core.impl.CameraDeviceSurfaceManager
@@ -83,8 +85,17 @@ public class CameraSurfaceAdapter(
                         context,
                         cameraMetadata,
                         CameraModule.provideEncoderProfilesProvider(cameraId, cameraQuirks),
-                        // TODO: Create and use a proper impl. of FeatureCombinationQuery
-                        FeatureCombinationQuery.NO_OP_FEATURE_COMBINATION_QUERY,
+                        // TODO: b/417839748 - Decide on the appropriate API level for CameraX
+                        //  feature combo API
+                        if (Build.VERSION.SDK_INT >= 35) {
+                            FeatureCombinationQueryImpl(
+                                cameraMetadata,
+                                component.getCameraPipe(),
+                                cameraQuirks,
+                            )
+                        } else {
+                            FeatureCombinationQuery.NO_OP_FEATURE_COMBINATION_QUERY
+                        },
                     )
             } catch (_: DoNotDisturbException) {
                 Log.error {
