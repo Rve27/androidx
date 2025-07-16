@@ -36,15 +36,27 @@ public sealed class KnownIssues {
 
         // sort the known issues by alias
 
-        /** **TEST ONLY** known issue that is always fixed on a device. */
+        /**
+         * **TEST ONLY** known issue that is always fixed on a device.
+         *
+         * @sample androidx.core.backported.fixes.samples.ki350037023
+         */
         @JvmField public val KI_350037023: KnownIssue = KnownIssue(350037023L, 1)
 
-        /** **TEST ONLY** known issue that is only applies to robolectric devices */
+        /**
+         * **TEST ONLY** known issue that only applies to robolectric devices
+         *
+         * @sample androidx.core.backported.fixes.samples.ki372917199
+         */
         @JvmField
         public val KI_372917199: KnownIssue =
             KnownIssue(372917199L, 2) { (Build.BRAND.equals("robolectric")) }
 
-        /** **TEST ONLY** known issue that is never fixed on a device. */
+        /**
+         * **TEST ONLY** known issue that is never fixed on a device.
+         *
+         * @sample androidx.core.backported.fixes.samples.ki350037348
+         */
         @JvmField public val KI_350037348: KnownIssue = KnownIssue(350037348L, 3)
     }
 }

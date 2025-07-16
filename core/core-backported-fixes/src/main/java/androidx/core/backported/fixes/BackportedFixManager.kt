@@ -19,7 +19,9 @@ package androidx.core.backported.fixes
 /**
  * Reports if a [Known Issue] is fixed on a device.
  *
- * Use this class to guard code against a known issue when it is not fixed.
+ * Use this class to guard code against a known issue when the issue is not fixed.
+ *
+ * @sample androidx.core.backported.fixes.samples.ki350037348
  *
  * [KnownIssues] has the complete list of known issues, including sample code to guard against the
  * issue.
@@ -28,7 +30,6 @@ package androidx.core.backported.fixes
  *   This parameter is only used for testing. In normal flows, the empty constructor should be used.
  */
 public class BackportedFixManager(private val resolver: StatusResolver) {
-    // TODO: b/381266031 - include a sample in the class doc
 
     /** Creates a BackportedFixManager object using the default lookup strategy. */
     public constructor() :
