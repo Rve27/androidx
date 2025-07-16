@@ -368,15 +368,19 @@ private class BinderAdapterDelegate(
 
             override fun notifyMotionEvent(
                 motionEvent: MotionEvent,
-                eventTargetFrameTime: Long,
+                eventTargetTime: Long,
                 eventTransferCallback: IMotionEventTransferCallback?,
             ) {
                 providerViewWrapper.scheduleMotionEventProcessing(
                     motionEvent,
-                    eventTargetFrameTime,
+                    eventTargetTime,
                     eventTransferCallback,
                 )
                 trace("BinderAdapterDelegate#notifyMotionEvent", {})
+            }
+
+            override fun notifyHoverEvent(hoverEvent: MotionEvent, eventTargetTime: Long) {
+                providerViewWrapper.scheduleHoverEventProcessing(hoverEvent, eventTargetTime)
             }
 
             override fun close() {

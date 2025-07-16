@@ -65,13 +65,24 @@ internal class ContentView(
             currentGestureMotionEventTransferCallback = null
         }
 
-        val eventTargetFrameTime = AnimationUtils.currentAnimationTimeMillis()
         remoteSessionController.notifyMotionEvent(
             motionEvent,
-            eventTargetFrameTime,
+            getFrameTimeForBatchedInputOrCurrentTimeForUnBatchedInput(),
             currentGestureMotionEventTransferCallback,
         )
         return true
+    }
+
+    override fun onHoverEvent(hoverEvent: MotionEvent): Boolean {
+        remoteSessionController.notifyHoverEvent(
+            hoverEvent,
+            getFrameTimeForBatchedInputOrCurrentTimeForUnBatchedInput(),
+        )
+        return true
+    }
+
+    private fun getFrameTimeForBatchedInputOrCurrentTimeForUnBatchedInput(): Long {
+        return AnimationUtils.currentAnimationTimeMillis()
     }
 
     inner class MotionEventTransferCallbackProxy() : IMotionEventTransferCallback.Stub() {
