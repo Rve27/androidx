@@ -718,7 +718,7 @@ class SemanticsTests {
         rule
             .onNodeWithTag(TestTag)
             .assertDoesNotHaveProperty(SemanticsProperties.ContentDescription)
-        rule.onNodeWithContentDescription(label) // assert exists
+        rule.onNodeWithContentDescription(label).assertExists()
     }
 
     @Test

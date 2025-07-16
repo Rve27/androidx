@@ -233,13 +233,13 @@ package androidx.compose.ui.test {
   }
 
   public final class FindersKt {
-    method public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onAllNodesWithContentDescription(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String label, optional boolean substring, optional boolean ignoreCase, optional boolean useUnmergedTree);
-    method public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onAllNodesWithTag(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String testTag, optional boolean useUnmergedTree);
-    method public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onAllNodesWithText(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String text, optional boolean substring, optional boolean ignoreCase, optional boolean useUnmergedTree);
-    method public static androidx.compose.ui.test.SemanticsNodeInteraction onNodeWithContentDescription(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String label, optional boolean substring, optional boolean ignoreCase, optional boolean useUnmergedTree);
-    method public static androidx.compose.ui.test.SemanticsNodeInteraction onNodeWithTag(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String testTag, optional boolean useUnmergedTree);
-    method public static androidx.compose.ui.test.SemanticsNodeInteraction onNodeWithText(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String text, optional boolean substring, optional boolean ignoreCase, optional boolean useUnmergedTree);
-    method public static androidx.compose.ui.test.SemanticsNodeInteraction onRoot(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, optional boolean useUnmergedTree);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onAllNodesWithContentDescription(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String label, optional boolean substring, optional boolean ignoreCase, optional boolean useUnmergedTree);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onAllNodesWithTag(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String testTag, optional boolean useUnmergedTree);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onAllNodesWithText(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String text, optional boolean substring, optional boolean ignoreCase, optional boolean useUnmergedTree);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteraction onNodeWithContentDescription(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String label, optional boolean substring, optional boolean ignoreCase, optional boolean useUnmergedTree);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteraction onNodeWithTag(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String testTag, optional boolean useUnmergedTree);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteraction onNodeWithText(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, String text, optional boolean substring, optional boolean ignoreCase, optional boolean useUnmergedTree);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteraction onRoot(androidx.compose.ui.test.SemanticsNodeInteractionsProvider, optional boolean useUnmergedTree);
   }
 
   @Deprecated public final class GestureScope {
@@ -592,17 +592,17 @@ package androidx.compose.ui.test {
   }
 
   public final class SelectorsKt {
-    method public static androidx.compose.ui.test.SemanticsNodeInteractionCollection filter(androidx.compose.ui.test.SemanticsNodeInteractionCollection, androidx.compose.ui.test.SemanticsMatcher matcher);
-    method public static androidx.compose.ui.test.SemanticsNodeInteraction filterToOne(androidx.compose.ui.test.SemanticsNodeInteractionCollection, androidx.compose.ui.test.SemanticsMatcher matcher);
-    method public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onAncestors(androidx.compose.ui.test.SemanticsNodeInteraction);
-    method public static androidx.compose.ui.test.SemanticsNodeInteraction onChild(androidx.compose.ui.test.SemanticsNodeInteraction);
-    method public static androidx.compose.ui.test.SemanticsNodeInteraction onChildAt(androidx.compose.ui.test.SemanticsNodeInteraction, int index);
-    method public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onChildren(androidx.compose.ui.test.SemanticsNodeInteraction);
-    method public static androidx.compose.ui.test.SemanticsNodeInteraction onFirst(androidx.compose.ui.test.SemanticsNodeInteractionCollection);
-    method public static androidx.compose.ui.test.SemanticsNodeInteraction onLast(androidx.compose.ui.test.SemanticsNodeInteractionCollection);
-    method public static androidx.compose.ui.test.SemanticsNodeInteraction onParent(androidx.compose.ui.test.SemanticsNodeInteraction);
-    method public static androidx.compose.ui.test.SemanticsNodeInteraction onSibling(androidx.compose.ui.test.SemanticsNodeInteraction);
-    method public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onSiblings(androidx.compose.ui.test.SemanticsNodeInteraction);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteractionCollection filter(androidx.compose.ui.test.SemanticsNodeInteractionCollection, androidx.compose.ui.test.SemanticsMatcher matcher);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteraction filterToOne(androidx.compose.ui.test.SemanticsNodeInteractionCollection, androidx.compose.ui.test.SemanticsMatcher matcher);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onAncestors(androidx.compose.ui.test.SemanticsNodeInteraction);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteraction onChild(androidx.compose.ui.test.SemanticsNodeInteraction);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteraction onChildAt(androidx.compose.ui.test.SemanticsNodeInteraction, int index);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onChildren(androidx.compose.ui.test.SemanticsNodeInteraction);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteraction onFirst(androidx.compose.ui.test.SemanticsNodeInteractionCollection);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteraction onLast(androidx.compose.ui.test.SemanticsNodeInteractionCollection);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteraction onParent(androidx.compose.ui.test.SemanticsNodeInteraction);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteraction onSibling(androidx.compose.ui.test.SemanticsNodeInteraction);
+    method @CheckResult public static androidx.compose.ui.test.SemanticsNodeInteractionCollection onSiblings(androidx.compose.ui.test.SemanticsNodeInteraction);
   }
 
   public final class SemanticsMatcher {
@@ -640,8 +640,8 @@ package androidx.compose.ui.test {
   }
 
   @kotlin.jvm.JvmDefaultWithCompatibility public interface SemanticsNodeInteractionsProvider {
-    method public androidx.compose.ui.test.SemanticsNodeInteractionCollection onAllNodes(androidx.compose.ui.test.SemanticsMatcher matcher, optional boolean useUnmergedTree);
-    method public androidx.compose.ui.test.SemanticsNodeInteraction onNode(androidx.compose.ui.test.SemanticsMatcher matcher, optional boolean useUnmergedTree);
+    method @CheckResult public androidx.compose.ui.test.SemanticsNodeInteractionCollection onAllNodes(androidx.compose.ui.test.SemanticsMatcher matcher, optional boolean useUnmergedTree);
+    method @CheckResult public androidx.compose.ui.test.SemanticsNodeInteraction onNode(androidx.compose.ui.test.SemanticsMatcher matcher, optional boolean useUnmergedTree);
   }
 
   public final class SemanticsSelector {
