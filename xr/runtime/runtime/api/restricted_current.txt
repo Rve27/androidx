@@ -824,12 +824,14 @@ package androidx.xr.runtime.internal {
     field public static final androidx.xr.runtime.internal.Feature.Companion Companion;
     field public static final androidx.xr.runtime.internal.Feature FULLSTACK;
     field public static final androidx.xr.runtime.internal.Feature OPEN_XR;
+    field public static final androidx.xr.runtime.internal.Feature PROJECTED;
     field public static final androidx.xr.runtime.internal.Feature SPATIAL;
   }
 
   public static final class Feature.Companion {
     property public androidx.xr.runtime.internal.Feature FULLSTACK;
     property public androidx.xr.runtime.internal.Feature OPEN_XR;
+    property public androidx.xr.runtime.internal.Feature PROJECTED;
     property public androidx.xr.runtime.internal.Feature SPATIAL;
   }
 

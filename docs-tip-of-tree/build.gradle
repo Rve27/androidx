@@ -427,6 +427,7 @@ dependencies {
     docs(project(":xr:arcore:arcore-guava"))
     docs(project(":xr:arcore:arcore-play-services"))
     docs(project(":xr:arcore:arcore-rxjava3"))
+    docs(project(":xr:arcore:arcore-projected"))
     docs(project(":xr:compose:compose"))
     docs(project(":xr:compose:compose-testing"))
     docs(project(":xr:compose:material3:material3"))
