@@ -61,6 +61,7 @@ import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import androidx.test.filters.MediumTest
 import androidx.test.filters.SdkSuppress
 import com.google.common.truth.Truth.assertThat
+import kotlin.math.roundToInt
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -84,6 +85,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
     @get:Rule val rule = createAndroidComposeRule<ComponentActivity>()
     private val testTag = "semantics-test-tag"
     private lateinit var androidComposeView: AndroidComposeView
+    private lateinit var rootView: View
 
     @Test
     fun shape_clip_setsShapeSemanticsProperty() {
@@ -138,6 +140,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
                 .toScreenBounds(info.boundsInScreen)
+                .subtractRootViewOffset()
                 .assertBoundsEqualTo(left = 0.dp, top = 0.dp, right = 10.dp, bottom = 10.dp)
         }
     }
@@ -169,6 +172,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
                 .toScreenBounds(info.boundsInScreen)
+                .subtractRootViewOffset()
                 .assertBoundsEqualTo(left = 0.dp, top = 0.dp, right = 10.dp, bottom = 10.dp)
             assertThat(info.extras.containsKey(ExtraDataShapeRectCornersKey)).isTrue()
             val corners = info.extras.getFloatArray(ExtraDataShapeRectCornersKey)!!
@@ -213,6 +217,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             info.extras
                 .getRegionParcelable(ExtraDataShapeRegionKey)
                 .toScreenBounds(info.boundsInScreen)
+                .subtractRootViewOffset()
                 .assertBoundsEqualTo(left = 0.dp, top = 0.dp, right = 10.dp, bottom = 10.dp)
         }
     }
@@ -244,6 +249,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
                 .toScreenBounds(info.boundsInScreen)
+                .subtractRootViewOffset()
                 .assertBoundsEqualTo(left = 11.dp, top = 12.dp, right = 19.dp, bottom = 18.dp)
         }
     }
@@ -279,6 +285,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
                 .toScreenBounds(info.boundsInScreen)
+                .subtractRootViewOffset()
                 .assertBoundsEqualTo(left = 11.dp, top = 12.dp, right = 19.dp, bottom = 18.dp)
             assertThat(info.extras.containsKey(ExtraDataShapeRectCornersKey)).isTrue()
             val corners = info.extras.getFloatArray(ExtraDataShapeRectCornersKey)!!
@@ -327,6 +334,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             info.extras
                 .getRegionParcelable(ExtraDataShapeRegionKey)
                 .toScreenBounds(info.boundsInScreen)
+                .subtractRootViewOffset()
                 .assertBoundsEqualTo(left = 11.dp, top = 12.dp, right = 19.dp, bottom = 18.dp)
         }
     }
@@ -355,6 +363,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
                 info.extras
                     .getRegionParcelable(ExtraDataShapeRegionKey)
                     .toScreenBounds(info.boundsInScreen)
+                    .subtractRootViewOffset()
             with(rule.density) {
                 assertThat(regionBounds.left).isEqualTo(1)
                 assertThat(regionBounds.top).isEqualTo(1)
@@ -395,9 +404,10 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
                 info.extras
                     .getRegionParcelable(ExtraDataShapeRegionKey)
                     .toScreenBounds(info.boundsInScreen)
+                    .subtractRootViewOffset()
             with(rule.density) {
-                assertThat(regionBounds.left - 11.dp.toPx() - 3).isLessThan(0.5f)
-                assertThat(regionBounds.top - 12.dp.toPx() - 3).isLessThan(0.5f)
+                assertThat(regionBounds.left - 11.dp.toPx() - 3).isLessThan(0.5.dp.toPx())
+                assertThat(regionBounds.top - 12.dp.toPx() - 3).isLessThan(0.5.dp.toPx())
                 regionBounds.right.toDp().assertIsEqualTo(19.dp)
                 regionBounds.bottom.toDp().assertIsEqualTo(18.dp)
             }
@@ -428,6 +438,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
                 .toScreenBounds(info.boundsInScreen)
+                .subtractRootViewOffset()
                 .assertBoundsEqualTo(left = (-5).dp, top = 0.dp, right = 5.dp, bottom = 10.dp)
         }
     }
@@ -464,6 +475,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
                 }
             paddedRootView.addView(composeHostView)
             activity.setContentView(paddedRootView)
+            rootView = paddedRootView
         }
         val virtualViewId = rule.onNodeWithTag(testTag).semanticsId()
         val info = rule.runOnIdle { androidComposeView.createAccessibilityNodeInfo(virtualViewId) }
@@ -477,6 +489,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             info.extras
                 .getRectParcelable(ExtraDataShapeRectKey)
                 .toScreenBounds(info.boundsInScreen)
+                .subtractRootViewOffset()
                 .assertBoundsEqualTo(left = 21.dp, top = 22.dp, right = 29.dp, bottom = 28.dp)
         }
     }
@@ -507,6 +520,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
             info.extras
                 .getRegionParcelable(ExtraDataShapeRegionKey)
                 .toScreenBounds(info.boundsInScreen)
+                .subtractRootViewOffset()
                 .assertBoundsEqualTo(left = 2.dp, top = 2.dp, right = 8.dp, bottom = 8.dp)
         }
     }
@@ -744,6 +758,7 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
         content: @Composable () -> Unit
     ) {
         setContent {
+            rootView = LocalView.current
             androidComposeView = LocalView.current as AndroidComposeView
             with(androidComposeView.composeAccessibilityDelegate) {
                 accessibilityForceEnabledForTesting = true
@@ -803,6 +818,14 @@ class GraphicsLayerSemanticsTest(private val modifierVariant: ModifierVariant) {
     private fun Region.toScreenBounds(nodeBoundsInScreen: Rect): Rect {
         translate(nodeBoundsInScreen.left, nodeBoundsInScreen.top)
         return bounds
+    }
+
+    private fun Rect.subtractRootViewOffset(): Rect = apply {
+        val positionArray = intArrayOf(0, 0)
+        rootView.getLocationOnScreen(positionArray)
+        val screenX = positionArray[0].toFloat()
+        val screenY = positionArray[1].toFloat()
+        offset(-screenX.roundToInt(), -screenY.roundToInt())
     }
 
     private fun Rect.assertBoundsEqualTo(left: Dp, top: Dp, right: Dp, bottom: Dp) {
