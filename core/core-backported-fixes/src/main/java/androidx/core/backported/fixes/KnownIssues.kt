@@ -58,5 +58,21 @@ public sealed class KnownIssues {
          * @sample androidx.core.backported.fixes.samples.ki350037348
          */
         @JvmField public val KI_350037348: KnownIssue = KnownIssue(350037348L, 3)
+
+        /**
+         * Abnormal color tone when capturing `JPEG-R` images on some Pixel devices.
+         *
+         * Fix by using `JPEG` outputs until this KI is resolved.
+         *
+         * @sample androidx.core.backported.fixes.samples.ki398591036
+         *
+         * Full details are at https://issuetracker.google.com/issues/398591036
+         */
+        @JvmField
+        public val KI_398591036: KnownIssue =
+            KnownIssue(398591036L, 5) {
+                // This known issue only applies to Pixel devices.
+                (Build.BRAND.equals("google"))
+            }
     }
 }

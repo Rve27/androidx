@@ -52,3 +52,14 @@ fun ki372917199() {
         println("Goodbye")
     }
 }
+
+@Sampled
+fun ki398591036() {
+    val bf = BackportedFixManager()
+    val format =
+        if (bf.isFixed(KnownIssues.KI_398591036)) {
+            "JPEG-R"
+        } else {
+            "JPEG"
+        }
+}
