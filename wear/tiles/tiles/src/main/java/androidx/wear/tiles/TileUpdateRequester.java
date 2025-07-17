@@ -31,8 +31,8 @@ public interface TileUpdateRequester {
      * specific tile id.
      *
      * <p>If sdk version is API 36 or lower, or the tile id is invalid (i.e. doesn't exist or is not
-     * owned by your package); tile id will be ignored and this method will be equivalent to
-     * {@link #requestUpdate(Class)}.
+     * owned by your package); tile id will be ignored and this method will be equivalent to {@link
+     * #requestUpdate(Class)}.
      *
      * @param tileService The Tile Service to request an update from.
      * @param tileId The id of the tile to request an update from.

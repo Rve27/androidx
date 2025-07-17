@@ -937,6 +937,7 @@ package androidx.wear.tiles {
     method public androidx.wear.protolayout.DeviceParametersBuilders.DeviceParameters getDeviceConfiguration();
     method @Deprecated public androidx.wear.tiles.DeviceParametersBuilders.DeviceParameters? getDeviceParameters();
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=600) public java.time.Instant getLastVisibleTime();
+    method public androidx.wear.protolayout.ProtoLayoutScope getScope();
     method @Deprecated public androidx.wear.tiles.StateBuilders.State? getState();
     method public int getTileId();
   }

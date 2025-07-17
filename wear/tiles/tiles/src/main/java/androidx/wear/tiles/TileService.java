@@ -33,6 +33,7 @@ import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
 import androidx.concurrent.futures.CallbackToFutureAdapter;
 import androidx.concurrent.futures.ResolvableFuture;
+import androidx.wear.protolayout.ProtoLayoutScope;
 import androidx.wear.protolayout.ResourceBuilders.Resources;
 import androidx.wear.protolayout.expression.VersionBuilders;
 import androidx.wear.protolayout.expression.proto.VersionProto.VersionInfo;
@@ -62,7 +63,9 @@ import org.jspecify.annotations.Nullable;
 import java.lang.ref.WeakReference;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -144,6 +147,34 @@ public abstract class TileService extends Service {
     private static final TimeSourceClockImpl sTimeSourceClock = new TimeSourceClockImpl();
 
     private static Boolean sUseWearSdkImpl;
+
+    /**
+     * Map of all {@link ProtoLayoutScope} for the tile instances this service has.
+     *
+     * <p>This field is **not** thread safe and should only be accessed from main thread.
+     */
+    private final Map<Integer, ProtoLayoutScope> mScopes = new HashMap<>();
+
+    /**
+     * Returns {@link ProtoLayoutScope} for the tile instance with the given ID. If the scope
+     * doesn't exist, a new one will be created.
+     *
+     * <p>This method is not thread safe and should be called only from main thread.
+     */
+    @MainThread
+    @NonNull ProtoLayoutScope getScope(int tileId) {
+        return mScopes.computeIfAbsent(tileId, id -> new ProtoLayoutScope());
+    }
+
+    /**
+     * Removes the {@link ProtoLayoutScope} for the tile instance with the given ID.
+     *
+     * <p>This method is not thread safe and should be called only from main thread.
+     */
+    @MainThread
+    void removeScope(int tileId) {
+        mScopes.remove(tileId);
+    }
 
     /**
      * Called when the system is requesting a new timeline from this Tile Provider. The returned
@@ -418,7 +449,10 @@ public abstract class TileService extends Service {
                                 tileRequestProtoBuilder.setDeviceConfiguration(deviceParams);
                             }
 
-                            tileRequest = TileRequest.fromProto(tileRequestProtoBuilder.build());
+                            tileRequest =
+                                    TileRequest.fromProto(
+                                            tileRequestProtoBuilder.build(),
+                                            tileService.getScope(tileId));
                         } catch (InvalidProtocolBufferException ex) {
                             Log.e(TAG, "Error deserializing TileRequest payload.", ex);
                             return;
@@ -637,6 +671,7 @@ public abstract class TileService extends Service {
 
                                 tileService.markTileAsInactiveLegacy(evt.getTileId());
                                 tileService.onTileRemoveEvent(evt);
+                                tileService.removeScope(evt.getTileId());
                             } catch (InvalidProtocolBufferException ex) {
                                 Log.e(TAG, "Error deserializing TileRemoveEvent payload.", ex);
                             }
