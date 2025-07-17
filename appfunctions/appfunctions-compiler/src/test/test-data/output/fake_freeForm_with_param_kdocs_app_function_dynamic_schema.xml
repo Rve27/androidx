@@ -112,6 +112,33 @@
         </response>
         <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_isDescribedByKdoc_true</functionId>
     </appfunction>
+    <appfunction>
+        <id>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_onlyKnownTagsSkipped</id>
+        <enabledByDefault>true</enabledByDefault>
+        <description>A fake free-form AppFunction to test descriptions in parameter metadata.
+
+ @fakeCustomTag Custom tag's content.</description>
+        <parameters>
+            <dataTypeMetadata>
+                <id>unused</id>
+                <isNullable>false</isNullable>
+                <type>7</type>
+            </dataTypeMetadata>
+            <id>unused</id>
+            <isRequired>true</isRequired>
+            <name>intParam</name>
+            <description>an input integer.</description>
+        </parameters>
+        <response>
+            <id>unused</id>
+            <valueType>
+                <id>unused</id>
+                <isNullable>false</isNullable>
+                <type>8</type>
+            </valueType>
+        </response>
+        <functionId>com.testdata.FakeFreeFormFunctions#fakeFreeFormFunction_onlyKnownTagsSkipped</functionId>
+    </appfunction>
     <AppFunctionComponentMetadataDocument>
         <id>unused</id>
     </AppFunctionComponentMetadataDocument>

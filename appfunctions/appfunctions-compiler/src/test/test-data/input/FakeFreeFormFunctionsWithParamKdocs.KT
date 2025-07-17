@@ -79,4 +79,21 @@ class FakeFreeFormFunctions {
     ): String {
         return "response"
     }
+
+    /**
+     * A fake free-form AppFunction to test descriptions in parameter metadata.
+     *
+     * @param appFunctionContext the AppFunction's context.
+     * @param intParam an input integer.
+     * @fakeCustomTag Custom tag's content.
+     * @return a string.
+     * @throws IllegalArgumentException if the parameters have an incorrect format.
+     */
+    @AppFunction(isDescribedByKdoc = true)
+    fun fakeFreeFormFunction_onlyKnownTagsSkipped(
+        appFunctionContext: AppFunctionContext,
+        intParam: Int,
+    ): String {
+        return "response"
+    }
 }

@@ -248,7 +248,7 @@ data class AnnotatedAppFunctions(
                 components = AppFunctionComponentsMetadata(dataTypes = sharedDataTypeMap),
                 description =
                     if (appFunctionAnnotationProperties.isDescribedByKdoc == true) {
-                        functionDeclaration.sanitizeKdoc()
+                        functionDeclaration.sanitizeKDoc()
                     } else {
                         ""
                     },

@@ -53,27 +53,45 @@ class DocstringUtilsTest {
     }
 
     @Test
-    fun stripParamTagsFromKdoc_multiLineDescription() {
-        assertThat(sanitizeKdoc(MULTI_LINE_PARAM_DESCRIPTION_DOCSTRING))
+    fun sanitizeKDoc_multiLineDescription() {
+        assertThat(sanitizeKDoc(MULTI_LINE_PARAM_DESCRIPTION_DOCSTRING))
             .isEqualTo("Fake docstring to test param descriptions.")
     }
 
     @Test
-    fun stripParamTagsFromKdoc_multipleParameters() {
-        assertThat(sanitizeKdoc(MULTI_PARAM_DESCRIPTIONS_DOCSTRING))
+    fun sanitizeKDoc_multipleParameters() {
+        assertThat(sanitizeKDoc(MULTI_PARAM_DESCRIPTIONS_DOCSTRING))
             .isEqualTo("Fake docstring to test param descriptions.")
     }
 
     @Test
-    fun stripParamTagsFromKdoc_multipleTags() {
-        assertThat(sanitizeKdoc(MULTI_TAG_DOCSTRING))
+    fun sanitizeKDoc_multipleTags() {
+        assertThat(sanitizeKDoc(MULTI_TAG_DOCSTRING))
             .isEqualTo("Fake docstring to test param descriptions.")
     }
 
     @Test
-    fun stripParamTagsFromKdoc_noParams() {
-        assertThat(sanitizeKdoc(NO_PARAMS_DOCSTRING))
+    fun sanitizeKDoc_customTag() {
+        assertThat(sanitizeKDoc(CUSTOM_TAG_DOCSTRING))
+            .isEqualTo(
+                """
+                    Fake docstring to test param descriptions.
+                    
+                    @customTag Custom tag content."""
+                    .trimIndent()
+            )
+    }
+
+    @Test
+    fun sanitizeKDoc_noParams() {
+        assertThat(sanitizeKDoc(NO_PARAMS_DOCSTRING))
             .isEqualTo("Fake docstring to test param descriptions.")
+    }
+
+    @Test
+    fun sanitizeKDoc_nonTagAtUsage() {
+        assertThat(sanitizeKDoc(NON_TAG_AT_USAGE_DOCSTRING))
+            .isEqualTo(NON_TAG_AT_USAGE_DOCSTRING.trim())
     }
 
     companion object {
@@ -94,10 +112,26 @@ ullamco laboris nisi ut aliquip ex ea commodo consequat."""
         private const val MULTI_TAG_DOCSTRING =
             """Fake docstring to test param descriptions.
 
+@constructor Constructor description.
+@receiver Receiver description.
 @param input1 First parameter.
 @param input2 Second parameter.
-@throws IllegalArgumentException
+@property property description.
+@return The response description.
+@throws IllegalArgumentException when some condition happens.
+@exception IllegalArgumentException
+@sample sample content
+@author Author Name
+@since 1990
+@suppress ...
 @see anotherFunction"""
+
+        private const val CUSTOM_TAG_DOCSTRING =
+            """Fake docstring to test param descriptions.
+
+@param input A parameter.
+@customTag Custom tag content.
+@throws IllegalArgumentException"""
 
         private const val NO_PARAMS_DOCSTRING =
             """Fake docstring to test param descriptions.
@@ -115,5 +149,11 @@ First parameter.
 Second parameter.
 
 @see Something else."""
+
+        private const val NON_TAG_AT_USAGE_DOCSTRING =
+            """Fake SendEmail app function description.
+        
+Sends an email to email address in format xx@gmail.com
+    """
     }
 }

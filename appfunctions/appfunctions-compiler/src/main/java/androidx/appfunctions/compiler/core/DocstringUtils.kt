@@ -21,8 +21,11 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 
 private const val PARAM_TAG_REGEX_PATTERN = """^@param\s+(\w+)\s*(.*)"""
 private const val ANY_TAG_REGEX_PATTERN = """^@\w+.*"""
+private const val KOTLIN_SUPPORTED_TAGS_PATTERN =
+    """^@(param|return|constructor|receiver|property|throws|exception|sample|see|author|since|suppress)\b.*"""
 private val PARAM_TAG_REGEX = Regex(PARAM_TAG_REGEX_PATTERN)
 private val ANY_TAG_REGEX = Regex(ANY_TAG_REGEX_PATTERN)
+private val KOTLIN_SUPPORTED_TAGS = Regex(KOTLIN_SUPPORTED_TAGS_PATTERN)
 
 /**
  * Returns a mapping of parameter name to parameter description, where the parameter's description
@@ -83,29 +86,47 @@ internal fun getParamDescriptionsFromKDoc(docString: String): Map<String, String
     return descriptionMap
 }
 
-/** Returns the function's docstring with all of the tags stripped out. */
-// TODO(b/431765277): remove @return tags too when they are extracted to
-//  AppFunctionResponseMetadata.
-fun KSFunctionDeclaration.sanitizeKdoc(): String {
+/**
+ * Returns the function's docstring with all of the kotlin supported tags stripped out. Any content
+ * preceding block tags is considered part of the previous tag's content and is stripped in case of
+ * kotlin supported tags.
+ */
+fun KSFunctionDeclaration.sanitizeKDoc(): String {
     return if (docString != null) {
-        sanitizeKdoc(checkNotNull(docString))
+        sanitizeKDoc(checkNotNull(docString))
     } else {
         ""
     }
 }
 
-/** The input docString is expected to be stripped from any "/**", "*/" or "*". */
+/**
+ * The input docString is expected to be stripped from any "/**", "*/" or "*". Any content preceding
+ * block tags is considered part of the previous tag's content and is stripped in case of kotlin
+ * supported tags.
+ */
 @VisibleForTesting
-internal fun sanitizeKdoc(docString: String): String {
+internal fun sanitizeKDoc(docString: String): String {
     val resultLines = mutableListOf<String>()
+    var skippingTagDescription = false
 
     for (line in docString.lines()) {
         val trimmedLine = line.trim()
 
-        if (ANY_TAG_REGEX.matches(trimmedLine)) {
-            break
-        } else {
-            resultLines.add(line)
+        when {
+            KOTLIN_SUPPORTED_TAGS.matches(trimmedLine) -> {
+                skippingTagDescription = true
+            }
+
+            skippingTagDescription &&
+                ANY_TAG_REGEX.matches(trimmedLine) &&
+                !KOTLIN_SUPPORTED_TAGS.matches(trimmedLine) -> {
+                skippingTagDescription = false
+                resultLines.add(line)
+            }
+
+            !skippingTagDescription -> {
+                resultLines.add(line)
+            }
         }
     }
 
