@@ -534,7 +534,7 @@ class ScatterSetTest {
             set.joinToString(),
         )
         assertEquals(
-            "x${order[0]}, ${order[1]}, ${order[2]}...",
+            "x${order[0]}, ${order[1]}, ${order[2]}, ...y",
             set.joinToString(prefix = "x", postfix = "y", limit = 3),
         )
         assertEquals(
@@ -543,7 +543,7 @@ class ScatterSetTest {
         )
         val names = arrayOf("one", "two", "three", "four", "five")
         assertEquals(
-            "${names[order[0]]}, ${names[order[1]]}, ${names[order[2]]}...",
+            "${names[order[0]]}, ${names[order[1]]}, ${names[order[2]]}, ...",
             set.joinToString(limit = 3) { names[it] },
         )
     }
