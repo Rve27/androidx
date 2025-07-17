@@ -789,6 +789,10 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         project.tasks.register("check")
         project.extensions.getByType<PrivacySandboxSdkExtension>().apply {
             configureLocalAsbSigning(experimentalProperties, project.getKeystore())
+            compileSdk = project.defaultAndroidConfig.compileSdk
+            minSdk = project.defaultAndroidConfig.minSdk
+            buildToolsVersion = project.defaultAndroidConfig.buildToolsVersion
+            bundle { setVersion(1, 0, 0) }
         }
         // Workaround for b/389890488
         project.configurations.configureEach { configuration ->
