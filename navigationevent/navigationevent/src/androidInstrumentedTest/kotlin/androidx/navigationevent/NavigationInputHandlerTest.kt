@@ -48,9 +48,7 @@ class NavigationInputHandlerTest {
             }
 
         val dispatcher = NavigationEventDispatcher {}
-        val inputHandler = NavigationInputHandler(dispatcher)
-
-        inputHandler.setOnBackInvokedDispatcher(invoker)
+        NavigationInputHandler(dispatcher, invoker)
 
         val callback =
             object : NavigationEventCallback(true) {
@@ -82,9 +80,8 @@ class NavigationInputHandlerTest {
             }
 
         val dispatcher = NavigationEventDispatcher {}
-        val inputHandler = NavigationInputHandler(dispatcher)
 
-        inputHandler.setOnBackInvokedDispatcher(invoker)
+        NavigationInputHandler(dispatcher, invoker)
 
         val callback =
             object : NavigationEventCallback(true) {
@@ -139,9 +136,7 @@ class NavigationInputHandlerTest {
                 override fun onEventCompleted() {}
             }
 
-        val inputHandler = NavigationInputHandler(dispatcher)
-
-        inputHandler.setOnBackInvokedDispatcher(invoker)
+        NavigationInputHandler(dispatcher, invoker)
 
         dispatcher.addCallback(callback)
 
@@ -180,9 +175,7 @@ class NavigationInputHandlerTest {
 
         dispatcher.addCallback(callback)
 
-        val inputHandler = NavigationInputHandler(dispatcher)
-
-        inputHandler.setOnBackInvokedDispatcher(invoker)
+        NavigationInputHandler(dispatcher, invoker)
 
         assertThat(registerCount).isEqualTo(1)
 
@@ -207,9 +200,8 @@ class NavigationInputHandlerTest {
             }
 
         val dispatcher = NavigationEventDispatcher {}
-        val inputHandler = NavigationInputHandler(dispatcher)
 
-        inputHandler.setOnBackInvokedDispatcher(invoker)
+        val inputHandler = NavigationInputHandler(dispatcher, invoker)
 
         var startedCount = 0
         var progressedCount = 0
@@ -235,13 +227,13 @@ class NavigationInputHandlerTest {
 
         assertThat(registerCount).isEqualTo(1)
 
-        dispatcher.dispatchOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
         assertThat(startedCount).isEqualTo(1)
 
-        dispatcher.dispatchOnProgressed(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnProgressed(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
         assertThat(progressedCount).isEqualTo(1)
 
-        dispatcher.dispatchOnCancelled()
+        inputHandler.sendOnCancelled()
         assertThat(cancelledCount).isEqualTo(1)
 
         callback.remove()
@@ -265,9 +257,8 @@ class NavigationInputHandlerTest {
             }
 
         val dispatcher = NavigationEventDispatcher {}
-        val inputHandler = NavigationInputHandler(dispatcher)
 
-        inputHandler.setOnBackInvokedDispatcher(invoker)
+        val inputHandler = NavigationInputHandler(dispatcher, invoker)
 
         var cancelledCount = 0
         val callback =
@@ -287,7 +278,7 @@ class NavigationInputHandlerTest {
 
         assertThat(registerCount).isEqualTo(1)
 
-        dispatcher.dispatchOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
 
         callback.remove()
         assertThat(cancelledCount).isEqualTo(1)
@@ -311,9 +302,8 @@ class NavigationInputHandlerTest {
             }
 
         val dispatcher = NavigationEventDispatcher {}
-        val inputHandler = NavigationInputHandler(dispatcher)
 
-        inputHandler.setOnBackInvokedDispatcher(invoker)
+        val inputHandler = NavigationInputHandler(dispatcher, invoker)
 
         var cancelledCount = 0
         val callback =
@@ -335,7 +325,7 @@ class NavigationInputHandlerTest {
 
         assertThat(registerCount).isEqualTo(1)
 
-        dispatcher.dispatchOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
 
         assertThat(cancelledCount).isEqualTo(1)
 
@@ -358,9 +348,8 @@ class NavigationInputHandlerTest {
             }
 
         val dispatcher = NavigationEventDispatcher {}
-        val inputHandler = NavigationInputHandler(dispatcher)
 
-        inputHandler.setOnBackInvokedDispatcher(invoker)
+        val inputHandler = NavigationInputHandler(dispatcher, invoker)
 
         var completedCount = 0
         val callback =
@@ -380,7 +369,7 @@ class NavigationInputHandlerTest {
 
         assertThat(registerCount).isEqualTo(1)
 
-        dispatcher.dispatchOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
 
         dispatcher.addCallback(
             object : NavigationEventCallback(true) {
@@ -388,7 +377,7 @@ class NavigationInputHandlerTest {
             }
         )
 
-        dispatcher.dispatchOnCompleted()
+        inputHandler.sendOnCompleted()
 
         assertThat(completedCount).isEqualTo(1)
     }
@@ -409,9 +398,7 @@ class NavigationInputHandlerTest {
             }
 
         val dispatcher = NavigationEventDispatcher {}
-        val inputHandler = NavigationInputHandler(dispatcher)
-
-        inputHandler.setOnBackInvokedDispatcher(invoker)
+        val inputHandler = NavigationInputHandler(dispatcher, invoker)
 
         var cancelledCount = 0
         val callback1 =
@@ -431,7 +418,7 @@ class NavigationInputHandlerTest {
 
         assertThat(registerCount).isEqualTo(1)
 
-        dispatcher.dispatchOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
 
         var startedCount2 = 0
 
@@ -444,7 +431,7 @@ class NavigationInputHandlerTest {
 
         dispatcher.addCallback(callback2)
 
-        dispatcher.dispatchOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
 
         assertThat(registerCount).isEqualTo(1)
 

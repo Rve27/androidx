@@ -26,6 +26,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigationevent.NavigationEventCallback
 import androidx.navigationevent.NavigationEventDispatcher
+import androidx.navigationevent.NavigationEventInputHandler
 import androidx.navigationevent.NavigationInputHandler
 
 /**
@@ -80,6 +81,8 @@ class OnBackPressedDispatcher(
         )
     }
 
+    private val manualDispatchInputHandler by lazy { NavigationEventInputHandler(eventDispatcher) }
+
     @JvmOverloads
     constructor(fallbackOnBackPressed: Runnable? = null) : this(fallbackOnBackPressed, null)
 
@@ -90,7 +93,7 @@ class OnBackPressedDispatcher(
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun setOnBackInvokedDispatcher(invoker: OnBackInvokedDispatcher) {
-        NavigationInputHandler(eventDispatcher).setOnBackInvokedDispatcher(invoker)
+        NavigationInputHandler(eventDispatcher, invoker)
     }
 
     /**
@@ -197,13 +200,13 @@ class OnBackPressedDispatcher(
     @VisibleForTesting
     @MainThread
     fun dispatchOnBackStarted(backEvent: BackEventCompat) {
-        eventDispatcher.dispatchOnStarted(backEvent.toNavigationEvent())
+        manualDispatchInputHandler.sendOnStarted(backEvent.toNavigationEvent())
     }
 
     @VisibleForTesting
     @MainThread
     fun dispatchOnBackProgressed(backEvent: BackEventCompat) {
-        eventDispatcher.dispatchOnProgressed(backEvent.toNavigationEvent())
+        manualDispatchInputHandler.sendOnProgressed(backEvent.toNavigationEvent())
     }
 
     /**
@@ -216,13 +219,13 @@ class OnBackPressedDispatcher(
      */
     @MainThread
     fun onBackPressed() {
-        eventDispatcher.dispatchOnCompleted()
+        manualDispatchInputHandler.sendOnCompleted()
     }
 
     @VisibleForTesting
     @MainThread
     fun dispatchOnBackCancelled() {
-        eventDispatcher.dispatchOnCancelled()
+        manualDispatchInputHandler.sendOnCancelled()
     }
 }
 
