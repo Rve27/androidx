@@ -100,6 +100,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".spatialcompose.NonCustomizableVideoPlayer"
+            android:configChanges="screenSize|smallestScreenSize|orientation|screenLayout"
+            android:enableOnBackInvokedCallback="true"
+            android:exported="true">
+        </activity>
        <activity
            android:name=".videoplayer.VideoPlayerActivity"
            android:exported="true"

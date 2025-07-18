@@ -229,7 +229,7 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                     modifier = modifier.rotate(Vector3(z = 1f), 15f)
                 }
                 SpatialExternalSurface180Hemisphere(
-                    modifier = SubspaceModifier.offset(z = animatedOffset.value.dp),
+                    modifier = modifier,
                     stereoMode = stereoMode,
                     radius = animatedRadius.value.dp,
                     featheringEffect = getFeatheringEffect(featheringValue, featheringType),
