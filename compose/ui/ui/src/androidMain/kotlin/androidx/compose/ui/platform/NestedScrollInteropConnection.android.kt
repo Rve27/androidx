@@ -21,7 +21,6 @@ package androidx.compose.ui.platform
 import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ComposeUiFlags.isNestedScrollInteropPostFlingFixEnabled
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -152,113 +151,6 @@ internal class NestedScrollInteropConnection(
     }
 }
 
-internal class LegacyNestedScrollInteropConnection(private val view: View) :
-    NestedScrollConnection {
-
-    private val nestedScrollChildHelper =
-        NestedScrollingChildHelper(view).apply { isNestedScrollingEnabled = true }
-
-    private val consumedScrollCache = IntArray(2)
-
-    init {
-        // Enables nested scrolling for the root view [AndroidComposeView].
-        // Like in Compose, nested scrolling is a default implementation
-        ViewCompat.setNestedScrollingEnabled(view, true)
-    }
-
-    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        // Using the return of startNestedScroll to determine if nested scrolling will happen.
-        if (nestedScrollChildHelper.startNestedScroll(available.scrollAxes, source.toViewType())) {
-            // reuse
-            consumedScrollCache.fill(0)
-
-            nestedScrollChildHelper.dispatchNestedPreScroll(
-                composeToViewOffset(available.x),
-                composeToViewOffset(available.y),
-                consumedScrollCache,
-                null,
-                source.toViewType(),
-            )
-
-            return toOffset(consumedScrollCache, available)
-        }
-
-        return Offset.Zero
-    }
-
-    override fun onPostScroll(
-        consumed: Offset,
-        available: Offset,
-        source: NestedScrollSource,
-    ): Offset {
-        // Using the return of startNestedScroll to determine if nested scrolling will happen.
-        if (nestedScrollChildHelper.startNestedScroll(available.scrollAxes, source.toViewType())) {
-            consumedScrollCache.fill(0)
-
-            nestedScrollChildHelper.dispatchNestedScroll(
-                composeToViewOffset(consumed.x),
-                composeToViewOffset(consumed.y),
-                composeToViewOffset(available.x),
-                composeToViewOffset(available.y),
-                null,
-                source.toViewType(),
-                consumedScrollCache,
-            )
-
-            return toOffset(consumedScrollCache, available)
-        }
-
-        return Offset.Zero
-    }
-
-    override suspend fun onPreFling(available: Velocity): Velocity {
-        val result =
-            if (
-                nestedScrollChildHelper.dispatchNestedPreFling(
-                    available.x.toViewVelocity(),
-                    available.y.toViewVelocity(),
-                )
-            ) {
-                available
-            } else {
-                Velocity.Zero
-            }
-
-        interruptOngoingScrolls()
-
-        return result
-    }
-
-    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-        val result =
-            if (
-                nestedScrollChildHelper.dispatchNestedFling(
-                    available.x.toViewVelocity(),
-                    available.y.toViewVelocity(),
-                    true,
-                )
-            ) {
-                available
-            } else {
-                Velocity.Zero
-            }
-
-        interruptOngoingScrolls()
-
-        return result
-    }
-
-    private fun interruptOngoingScrolls() {
-        if (nestedScrollChildHelper.hasNestedScrollingParent(TYPE_TOUCH)) {
-            nestedScrollChildHelper.stopNestedScroll(TYPE_TOUCH)
-        }
-
-        if (nestedScrollChildHelper.hasNestedScrollingParent(TYPE_NON_TOUCH)) {
-            nestedScrollChildHelper.stopNestedScroll(TYPE_NON_TOUCH)
-        }
-    }
-}
-
 // Relative ceil for rounding. Ceiling away from zero to avoid missing scrolling deltas to rounding
 // issues.
 private fun Float.ceilAwayFromZero(): Float = if (this >= 0) ceil(this) else floor(this)
@@ -355,10 +247,6 @@ fun rememberNestedScrollInteropConnection(
 ): NestedScrollConnection {
     val viewConfiguration = LocalViewConfiguration.current
     return remember(hostView, viewConfiguration) {
-        if (isNestedScrollInteropPostFlingFixEnabled) {
-            NestedScrollInteropConnection(hostView, viewConfiguration.minimumFlingVelocity)
-        } else {
-            LegacyNestedScrollInteropConnection(hostView)
-        }
+        NestedScrollInteropConnection(hostView, viewConfiguration.minimumFlingVelocity)
     }
 }
