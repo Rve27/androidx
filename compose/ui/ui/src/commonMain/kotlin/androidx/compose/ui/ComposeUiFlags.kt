@@ -170,4 +170,13 @@ object ComposeUiFlags {
 
     /** Flag for enabling the performance optimization for content capture. */
     @Suppress("MutableBareField") @JvmField var isContentCaptureOptimizationEnabled: Boolean = true
+
+    /**
+     * Flag for enabling nested scroll interop fix for propagating integers, this fixes an issue
+     * with interop between compose and views nested scroll where small deltas with the wrong sign
+     * were being scaled up due to the rounding used.
+     */
+    @Suppress("MutableBareField")
+    @JvmField
+    var isNestedScrollInteropIntegerPropagationEnabled: Boolean = true
 }
