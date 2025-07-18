@@ -36,6 +36,8 @@ import androidx.xr.scenecore.GroupEntity
 import androidx.xr.scenecore.PanelEntity
 import androidx.xr.scenecore.SurfaceEntity
 import androidx.xr.scenecore.scene
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import kotlin.math.PI
 
 /**
@@ -52,7 +54,7 @@ internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
             updateEntityPose()
         }
 
-    private val density: Density?
+    protected val density: Density?
         get() = layout?.density
 
     internal open fun updateEntityPose() {
@@ -111,7 +113,7 @@ internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
      * Entity. This does not affect layout and other content will be laid out according to the
      * original scale of the entity.
      */
-    internal var scale = 1f
+    internal open var scale = 1f
         set(value) {
             if (field != value) {
                 entity.setScale(value)
@@ -186,6 +188,26 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
     // Density set from setShape.
     private var shapeDensity: Density? = null
 
+    override var scale = 1f
+        set(value) {
+            if (field != value) {
+                CoreExecutor.submit { entity.setScale(value) }
+            }
+            field = value
+        }
+
+    override fun updateEntityPose() {
+        val density = density ?: return
+
+        // Compose XR uses pixels, SceneCore uses meters.
+        val corePose = layoutPoseInPixels.convertPixelsToMeters(density)
+        CoreExecutor.submit {
+            if (entity.getPose() != corePose) {
+                entity.setPose(corePose)
+            }
+        }
+    }
+
     /**
      * The size of the [CoreBasePanelEntity] in pixels.
      *
@@ -243,6 +265,10 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
                 shape.computeCornerRadius(size.width.toFloat(), size.height.toFloat(), density)
             panelEntity.cornerRadius = Meter.fromPixel(radius, density).toM()
         }
+    }
+
+    private companion object {
+        val CoreExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     }
 }
 
