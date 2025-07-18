@@ -44,8 +44,6 @@ const val zipComposeMetricsTaskName = "zipComposeCompilerMetrics"
 /** Plugin to apply common configuration for Compose projects. */
 class AndroidXComposeImplPlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        val extension =
-            project.extensions.create<AndroidXComposeExtension>("androidxCompose", project)
         project.plugins.configureEach { plugin ->
             when (plugin) {
                 is AppPlugin,
@@ -60,7 +58,7 @@ class AndroidXComposeImplPlugin : Plugin<Project> {
                         .finalizeDsl { project.configureAndroidCommonOptions(it.lint) }
                 }
                 is KotlinBasePluginWrapper -> {
-                    configureComposeCompilerPlugin(project, extension)
+                    configureComposeCompilerPlugin(project)
                 }
             }
         }
@@ -132,11 +130,8 @@ class AndroidXComposeImplPlugin : Plugin<Project> {
 
 private const val COMPILER_PLUGIN_CONFIGURATION = "kotlinPlugin"
 
-private fun configureComposeCompilerPlugin(project: Project, extension: AndroidXComposeExtension) {
+private fun configureComposeCompilerPlugin(project: Project) {
     project.afterEvaluate {
-        // If a project has opted-out of Compose compiler plugin, don't add it
-        if (!extension.composeCompilerPluginEnabled) return@afterEvaluate
-
         // Create configuration that we'll use to load Compose compiler plugin
         val configuration =
             project.configurations.create(COMPILER_PLUGIN_CONFIGURATION) {

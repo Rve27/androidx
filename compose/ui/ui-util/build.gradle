@@ -48,6 +48,7 @@ androidXMultiplatform {
             dependencies {
                 implementation(libs.kotlinStdlib)
                 implementation("androidx.collection:collection:1.4.3")
+                implementation(project(":compose:runtime:runtime"))
             }
         }
 
@@ -107,8 +108,4 @@ androidx {
     inceptionYear = "2020"
     description = "Internal Compose utilities used by other modules"
     legacyDisableKotlinStrictApiMode = true
-}
-
-androidxCompose {
-    composeCompilerPluginEnabled = false
 }
