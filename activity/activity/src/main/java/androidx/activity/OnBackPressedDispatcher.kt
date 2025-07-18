@@ -27,7 +27,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigationevent.NavigationEventCallback
 import androidx.navigationevent.NavigationEventDispatcher
 import androidx.navigationevent.NavigationEventInputHandler
-import androidx.navigationevent.NavigationInputHandler
+import androidx.navigationevent.OnBackInvokedInputHandler
 
 /**
  * Dispatcher that can be used to register [OnBackPressedCallback] instances for handling the
@@ -93,7 +93,7 @@ class OnBackPressedDispatcher(
      */
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun setOnBackInvokedDispatcher(invoker: OnBackInvokedDispatcher) {
-        NavigationInputHandler(eventDispatcher, invoker)
+        OnBackInvokedInputHandler(eventDispatcher, invoker)
     }
 
     /**

@@ -80,8 +80,8 @@ package androidx.navigationevent {
     property public androidx.navigationevent.NavigationEventPriority Overlay;
   }
 
-  @RequiresApi(33) public final class NavigationInputHandler extends androidx.navigationevent.NavigationEventInputHandler {
-    ctor public NavigationInputHandler(androidx.navigationevent.NavigationEventDispatcher dispatcher, android.window.OnBackInvokedDispatcher onBackInvokedDispatcher);
+  @RequiresApi(33) public final class OnBackInvokedInputHandler extends androidx.navigationevent.NavigationEventInputHandler {
+    ctor public OnBackInvokedInputHandler(androidx.navigationevent.NavigationEventDispatcher dispatcher, android.window.OnBackInvokedDispatcher onBackInvokedDispatcher);
   }
 
   public final class ViewTreeNavigationEventDispatcherOwner_androidKt {

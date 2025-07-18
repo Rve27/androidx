@@ -30,7 +30,7 @@ import org.junit.runner.RunWith
 @SmallTest
 @RunWith(AndroidJUnit4::class)
 @SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
-class NavigationInputHandlerTest {
+class OnBackInvokedInputHandlerTest {
 
     @Test
     fun testSimpleInvoker() {
@@ -48,7 +48,7 @@ class NavigationInputHandlerTest {
             }
 
         val dispatcher = NavigationEventDispatcher {}
-        NavigationInputHandler(dispatcher, invoker)
+        OnBackInvokedInputHandler(dispatcher, invoker)
 
         val callback =
             object : NavigationEventCallback(true) {
@@ -81,7 +81,7 @@ class NavigationInputHandlerTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        NavigationInputHandler(dispatcher, invoker)
+        OnBackInvokedInputHandler(dispatcher, invoker)
 
         val callback =
             object : NavigationEventCallback(true) {
@@ -136,7 +136,7 @@ class NavigationInputHandlerTest {
                 override fun onEventCompleted() {}
             }
 
-        NavigationInputHandler(dispatcher, invoker)
+        OnBackInvokedInputHandler(dispatcher, invoker)
 
         dispatcher.addCallback(callback)
 
@@ -175,7 +175,7 @@ class NavigationInputHandlerTest {
 
         dispatcher.addCallback(callback)
 
-        NavigationInputHandler(dispatcher, invoker)
+        OnBackInvokedInputHandler(dispatcher, invoker)
 
         assertThat(registerCount).isEqualTo(1)
 
@@ -201,7 +201,7 @@ class NavigationInputHandlerTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val inputHandler = NavigationInputHandler(dispatcher, invoker)
+        val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
 
         var startedCount = 0
         var progressedCount = 0
@@ -258,7 +258,7 @@ class NavigationInputHandlerTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val inputHandler = NavigationInputHandler(dispatcher, invoker)
+        val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
 
         var cancelledCount = 0
         val callback =
@@ -303,7 +303,7 @@ class NavigationInputHandlerTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val inputHandler = NavigationInputHandler(dispatcher, invoker)
+        val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
 
         var cancelledCount = 0
         val callback =
@@ -349,7 +349,7 @@ class NavigationInputHandlerTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val inputHandler = NavigationInputHandler(dispatcher, invoker)
+        val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
 
         var completedCount = 0
         val callback =
@@ -398,7 +398,7 @@ class NavigationInputHandlerTest {
             }
 
         val dispatcher = NavigationEventDispatcher {}
-        val inputHandler = NavigationInputHandler(dispatcher, invoker)
+        val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
 
         var cancelledCount = 0
         val callback1 =
