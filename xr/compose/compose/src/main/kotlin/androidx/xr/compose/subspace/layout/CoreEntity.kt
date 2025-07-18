@@ -131,25 +131,21 @@ internal sealed class CoreEntity(val entity: Entity) : OpaqueEntity {
             field = value
         }
 
+    // SceneCore parents all newly-created non-Anchor entities under a world
+    // space point of reference for the activity space, which we save for future
+    // use.
+    private val originalParent: Entity? = entity.parent
+
     open var parent: CoreEntity? = null
         set(value) {
             field = value
-
-            // Leave SceneCore's parent as-is if we're trying to clear it out. SceneCore
-            // parents all
-            // newly-created non-Anchor entities under a world space point of reference for the
-            // activity
-            // space, but we don't have access to it. To maintain this parent-is-not-null property,
-            // we use
-            // this hack to keep the original parent, even if it's not technically correct when
-            // we're
-            // trying to reparent a node. The correct parent will be set on the "set" part of the
-            // reparent.
-            //
-            // TODO(b/356952297): Remove this hack once we can save and restore the original parent.
-            if (value == null) return
-
-            entity.parent = value.entity
+            if (value == null) {
+                // When the Compose-level parent is set to null, restore the original parent
+                // (saved during the initial creation)
+                entity.parent = originalParent
+            } else {
+                entity.parent = value.entity
+            }
         }
 
     /**
