@@ -85,11 +85,13 @@ class AppFunctionMetadataTest {
                     name = "prop1",
                     isRequired = false,
                     dataType = primitiveTypeInt,
+                    description = "test int parameter",
                 ),
                 AppFunctionParameterMetadata(
                     name = "prop2",
                     isRequired = true,
                     dataType = primitiveTypeLong,
+                    description = "test long parameter",
                 ),
             )
         val response =

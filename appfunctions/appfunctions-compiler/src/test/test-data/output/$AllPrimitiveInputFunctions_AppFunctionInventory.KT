@@ -61,7 +61,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "intParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_INTPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_INTPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -112,7 +113,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "longParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_LONGPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_LONGPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -163,7 +165,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "floatParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_FLOATPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_FLOATPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -214,7 +217,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "doubleParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_DOUBLEPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_DOUBLEPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -265,7 +269,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "booleanParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_BOOLEANPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_BOOLEANPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -316,7 +321,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "stringParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_STRINGPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_STRINGPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -367,7 +373,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "intParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_INTPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_INTPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -418,7 +425,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "longParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_LONGPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_LONGPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -469,7 +477,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "floatParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_FLOATPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_FLOATPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -520,7 +529,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "doubleParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_DOUBLEPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_DOUBLEPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -571,7 +581,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "booleanParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_BOOLEANPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_BOOLEANPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -622,7 +633,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "stringParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_STRINGPARAM_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_STRINGPARAM_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -680,7 +692,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "intArrayParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_INTARRAYPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_INTARRAYPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -738,7 +751,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "longArrayParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_LONGARRAYPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_LONGARRAYPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -796,7 +810,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "floatArrayParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_FLOATARRAYPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_FLOATARRAYPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -854,7 +869,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "doubleArrayParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_DOUBLEARRAYPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_DOUBLEARRAYPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -912,7 +928,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "booleanArrayParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_BOOLEANARRAYPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_BOOLEANARRAYPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -970,7 +987,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "stringListParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_STRINGLISTPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_STRINGLISTPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -1028,7 +1046,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "intArrayParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_INTARRAYPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_INTARRAYPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -1086,7 +1105,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "longArrayParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_LONGARRAYPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_LONGARRAYPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -1144,7 +1164,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "floatArrayParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_FLOATARRAYPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_FLOATARRAYPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -1202,7 +1223,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "doubleArrayParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_DOUBLEARRAYPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_DOUBLEARRAYPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -1260,7 +1282,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "booleanArrayParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_BOOLEANARRAYPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_BOOLEANARRAYPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -1318,7 +1341,8 @@ public class `$AllPrimitiveInputFunctions_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "stringListParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_STRINGLISTPARAM_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_STRINGLISTPARAM_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(

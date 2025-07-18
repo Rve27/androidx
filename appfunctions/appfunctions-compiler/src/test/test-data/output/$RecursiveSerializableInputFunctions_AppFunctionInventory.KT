@@ -44,7 +44,8 @@ public class `$RecursiveSerializableInputFunctions_AppFunctionInventory` : AppFu
         AppFunctionParameterMetadata(
             name = "serializable",
             isRequired = true,
-            dataType = PARAMETER_METADATA_SERIALIZABLE_REFERENCE_DATA_TYPE
+            dataType = PARAMETER_METADATA_SERIALIZABLE_REFERENCE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -129,7 +130,8 @@ public class `$RecursiveSerializableInputFunctions_AppFunctionInventory` : AppFu
         AppFunctionParameterMetadata(
             name = "serializable",
             isRequired = true,
-            dataType = PARAMETER_METADATA_SERIALIZABLE_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_SERIALIZABLE_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -214,7 +216,8 @@ public class `$RecursiveSerializableInputFunctions_AppFunctionInventory` : AppFu
         AppFunctionParameterMetadata(
             name = "serializable",
             isRequired = true,
-            dataType = PARAMETER_METADATA_SERIALIZABLE_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_SERIALIZABLE_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -292,7 +295,8 @@ public class `$RecursiveSerializableInputFunctions_AppFunctionInventory` : AppFu
         AppFunctionParameterMetadata(
             name = "serializable",
             isRequired = true,
-            dataType = PARAMETER_METADATA_SERIALIZABLE_REFERENCE_DATA_TYPE
+            dataType = PARAMETER_METADATA_SERIALIZABLE_REFERENCE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(

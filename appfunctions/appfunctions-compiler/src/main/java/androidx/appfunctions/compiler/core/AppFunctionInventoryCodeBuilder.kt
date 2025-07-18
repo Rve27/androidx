@@ -397,7 +397,8 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
                             %T(
                                 name = %S,
                                 isRequired = %L,
-                                dataType = %L
+                                dataType = %L,
+                                description = %S,
                             )
                             """
                                 .trimIndent(),
@@ -405,6 +406,7 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
                             parameterMetadata.name,
                             parameterMetadata.isRequired,
                             datatypeVariableName,
+                            parameterMetadata.description,
                         )
                     }
                 )

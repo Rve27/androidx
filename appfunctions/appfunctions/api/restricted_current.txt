@@ -336,11 +336,13 @@ package androidx.appfunctions.metadata {
   }
 
   public final class AppFunctionParameterMetadata {
-    ctor public AppFunctionParameterMetadata(String name, boolean isRequired, androidx.appfunctions.metadata.AppFunctionDataTypeMetadata dataType);
+    ctor public AppFunctionParameterMetadata(String name, boolean isRequired, androidx.appfunctions.metadata.AppFunctionDataTypeMetadata dataType, optional String description);
     method public androidx.appfunctions.metadata.AppFunctionDataTypeMetadata getDataType();
+    method public String getDescription();
     method public String getName();
     method public boolean isRequired();
     property public androidx.appfunctions.metadata.AppFunctionDataTypeMetadata dataType;
+    property public String description;
     property public boolean isRequired;
     property public String name;
   }

@@ -26,6 +26,7 @@ import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadata
 import androidx.appfunctions.metadata.AppFunctionMetadataDocument
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionParameterMetadata
 import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
@@ -210,7 +211,19 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                 isEnabled = true,
                 description = "Test function without schema, enabled by default.",
                 schema = null,
-                parameters = emptyList(),
+                parameters =
+                    listOf(
+                        AppFunctionParameterMetadata(
+                            name = "intParam",
+                            isRequired = true,
+                            dataType =
+                                AppFunctionPrimitiveTypeMetadata(
+                                    isNullable = false,
+                                    type = AppFunctionPrimitiveTypeMetadata.TYPE_INT,
+                                ),
+                            description = "an input integer.",
+                        )
+                    ),
                 response =
                     AppFunctionResponseMetadata(
                         valueType =

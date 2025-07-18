@@ -28,12 +28,14 @@ class AppFunctionParameterMetadataTest {
                 name = "parameter1",
                 isRequired = true,
                 dataType = AppFunctionPrimitiveTypeMetadata(type = TYPE_INT, isNullable = false),
+                description = "test int parameter",
             )
         val parameter1b =
             AppFunctionParameterMetadata(
                 name = "parameter1",
                 isRequired = true,
                 dataType = AppFunctionPrimitiveTypeMetadata(type = TYPE_INT, isNullable = false),
+                description = "test int parameter",
             )
         val parameter2 =
             AppFunctionParameterMetadata(
@@ -47,6 +49,7 @@ class AppFunctionParameterMetadataTest {
                         isNullable = true,
                         description = "",
                     ),
+                description = "test object parameter",
             )
 
         assertThat(parameter1a).isEqualTo(parameter1b)
@@ -62,6 +65,7 @@ class AppFunctionParameterMetadataTest {
                 name = "parameter1",
                 isRequired = false,
                 dataType = AppFunctionPrimitiveTypeMetadata(type = TYPE_INT, isNullable = false),
+                description = "test int parameter",
             )
 
         val document = parameter.toAppFunctionParameterMetadataDocument()
@@ -73,6 +77,7 @@ class AppFunctionParameterMetadataTest {
                     isRequired = false,
                     dataTypeMetadata =
                         AppFunctionDataTypeMetadataDocument(type = TYPE_INT, isNullable = false),
+                    description = "test int parameter",
                 )
             )
     }
@@ -85,6 +90,7 @@ class AppFunctionParameterMetadataTest {
                 isRequired = false,
                 dataTypeMetadata =
                     AppFunctionDataTypeMetadataDocument(type = TYPE_INT, isNullable = false),
+                description = "test int parameter",
             )
 
         val parameterMetadata = parameterMetadataDocument.toAppFunctionParameterMetadata()
@@ -94,7 +100,9 @@ class AppFunctionParameterMetadataTest {
                 AppFunctionParameterMetadata(
                     name = "parameter1",
                     isRequired = false,
-                    dataType = AppFunctionPrimitiveTypeMetadata(type = TYPE_INT, isNullable = false),
+                    dataType =
+                        AppFunctionPrimitiveTypeMetadata(type = TYPE_INT, isNullable = false),
+                    description = "test int parameter",
                 )
             )
     }

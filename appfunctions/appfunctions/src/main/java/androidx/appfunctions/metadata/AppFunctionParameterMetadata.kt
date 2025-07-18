@@ -27,6 +27,8 @@ public class AppFunctionParameterMetadata(
     public val isRequired: Boolean,
     /** The data type of the parameter. */
     public val dataType: AppFunctionDataTypeMetadata,
+    /** A description of the parameter and its intended use. */
+    public val description: String = "",
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -37,6 +39,7 @@ public class AppFunctionParameterMetadata(
         if (name != other.name) return false
         if (isRequired != other.isRequired) return false
         if (dataType != other.dataType) return false
+        if (description != other.description) return false
 
         return true
     }
@@ -45,6 +48,7 @@ public class AppFunctionParameterMetadata(
         var result = name.hashCode()
         result = 31 * result + isRequired.hashCode()
         result = 31 * result + dataType.hashCode()
+        result = 31 * result + description.hashCode()
         return result
     }
 
@@ -52,7 +56,8 @@ public class AppFunctionParameterMetadata(
         return "AppFunctionParameterMetadata(" +
             "name=$name, " +
             "isRequired=$isRequired, " +
-            "dataType=$dataType" +
+            "dataType=$dataType," +
+            "description=$description" +
             ")"
     }
 
@@ -62,6 +67,7 @@ public class AppFunctionParameterMetadata(
             name = name,
             isRequired = isRequired,
             dataTypeMetadata = dataType.toAppFunctionDataTypeMetadataDocument(),
+            description = description,
         )
     }
 }
@@ -75,11 +81,13 @@ public data class AppFunctionParameterMetadataDocument(
     @Document.StringProperty public val name: String,
     @Document.BooleanProperty public val isRequired: Boolean,
     @Document.DocumentProperty public val dataTypeMetadata: AppFunctionDataTypeMetadataDocument,
+    @Document.StringProperty public val description: String = "",
 ) {
     public fun toAppFunctionParameterMetadata(): AppFunctionParameterMetadata =
         AppFunctionParameterMetadata(
             name = name,
             isRequired = isRequired,
             dataType = dataTypeMetadata.toAppFunctionDataTypeMetadata(),
+            description = description,
         )
 }

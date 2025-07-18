@@ -41,7 +41,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg1",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG1_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG1_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG2_PRIMITIVE_DATA_TYPE: AppFunctionPrimitiveTypeMetadata =
@@ -55,7 +56,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg2",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG2_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG2_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG3_PRIMITIVE_DATA_TYPE: AppFunctionPrimitiveTypeMetadata =
@@ -69,7 +71,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg3",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG3_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG3_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG4_PRIMITIVE_DATA_TYPE: AppFunctionPrimitiveTypeMetadata =
@@ -83,7 +86,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg4",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG4_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG4_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG5_PRIMITIVE_DATA_TYPE: AppFunctionPrimitiveTypeMetadata =
@@ -97,7 +101,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg5",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG5_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG5_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG6_PRIMITIVE_DATA_TYPE: AppFunctionPrimitiveTypeMetadata =
@@ -111,7 +116,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg6",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG6_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG6_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -175,7 +181,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg1",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG1_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG1_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG2_ARRAY_DATA_TYPE_PRIMITIVE_ITEM_TYPE:
@@ -196,7 +203,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg2",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG2_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG2_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG3_ARRAY_DATA_TYPE_PRIMITIVE_ITEM_TYPE:
@@ -217,7 +225,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg3",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG3_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG3_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG4_ARRAY_DATA_TYPE_PRIMITIVE_ITEM_TYPE:
@@ -238,7 +247,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg4",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG4_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG4_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG5_ARRAY_DATA_TYPE_PRIMITIVE_ITEM_TYPE:
@@ -259,7 +269,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg5",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG5_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG5_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG6_ARRAY_DATA_TYPE_PRIMITIVE_ITEM_TYPE:
@@ -280,7 +291,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg6",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG6_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG6_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG7_ARRAY_DATA_TYPE_PRIMITIVE_ITEM_TYPE:
@@ -301,7 +313,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg7",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG7_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG7_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_ARG8_ARRAY_DATA_TYPE_PRIMITIVE_ITEM_TYPE:
@@ -322,7 +335,8 @@ public class `$FakeAllPrimitiveParamsImpl_AppFunctionInventory` : AppFunctionInv
         AppFunctionParameterMetadata(
             name = "arg8",
             isRequired = true,
-            dataType = PARAMETER_METADATA_ARG8_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_ARG8_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(

@@ -42,7 +42,8 @@ public class `$FunctionWithSerializableProxyInput_AppFunctionInventory` : AppFun
         AppFunctionParameterMetadata(
             name = "localDateTime",
             isRequired = true,
-            dataType = PARAMETER_METADATA_LOCALDATETIME_REFERENCE_DATA_TYPE
+            dataType = PARAMETER_METADATA_LOCALDATETIME_REFERENCE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -174,7 +175,8 @@ public class `$FunctionWithSerializableProxyInput_AppFunctionInventory` : AppFun
         AppFunctionParameterMetadata(
             name = "serializableWithProxyType",
             isRequired = true,
-            dataType = PARAMETER_METADATA_SERIALIZABLEWITHPROXYTYPE_REFERENCE_DATA_TYPE
+            dataType = PARAMETER_METADATA_SERIALIZABLEWITHPROXYTYPE_REFERENCE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(

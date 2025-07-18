@@ -38,7 +38,8 @@ public class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
         AppFunctionParameterMetadata(
             name = "parameters",
             isRequired = true,
-            dataType = PARAMETER_METADATA_PARAMETERS_REFERENCE_DATA_TYPE
+            dataType = PARAMETER_METADATA_PARAMETERS_REFERENCE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
@@ -157,7 +158,8 @@ public class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
         AppFunctionParameterMetadata(
             name = "parameters",
             isRequired = true,
-            dataType = PARAMETER_METADATA_PARAMETERS_REFERENCE_DATA_TYPE
+            dataType = PARAMETER_METADATA_PARAMETERS_REFERENCE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(

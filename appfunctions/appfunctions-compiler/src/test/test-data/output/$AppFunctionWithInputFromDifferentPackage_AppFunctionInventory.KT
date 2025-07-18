@@ -44,7 +44,8 @@ public class `$AppFunctionWithInputFromDifferentPackage_AppFunctionInventory` : 
         AppFunctionParameterMetadata(
             name = "input",
             isRequired = true,
-            dataType = PARAMETER_METADATA_INPUT_REFERENCE_DATA_TYPE
+            dataType = PARAMETER_METADATA_INPUT_REFERENCE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_INPUTLIST_ARRAY_DATA_TYPE_REFERENCE_ITEM_TYPE:
@@ -65,7 +66,8 @@ public class `$AppFunctionWithInputFromDifferentPackage_AppFunctionInventory` : 
         AppFunctionParameterMetadata(
             name = "inputList",
             isRequired = true,
-            dataType = PARAMETER_METADATA_INPUTLIST_ARRAY_DATA_TYPE
+            dataType = PARAMETER_METADATA_INPUTLIST_ARRAY_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(

@@ -40,7 +40,8 @@ public class `$FunctionWithGenericSerializable_AppFunctionInventory` : AppFuncti
         AppFunctionParameterMetadata(
             name = "params",
             isRequired = true,
-            dataType = PARAMETER_METADATA_PARAMS_REFERENCE_DATA_TYPE
+            dataType = PARAMETER_METADATA_PARAMS_REFERENCE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_TOPLEVELGENERICPARAM_REFERENCE_DATA_TYPE:
@@ -54,7 +55,8 @@ public class `$FunctionWithGenericSerializable_AppFunctionInventory` : AppFuncti
         AppFunctionParameterMetadata(
             name = "topLevelGenericParam",
             isRequired = true,
-            dataType = PARAMETER_METADATA_TOPLEVELGENERICPARAM_REFERENCE_DATA_TYPE
+            dataType = PARAMETER_METADATA_TOPLEVELGENERICPARAM_REFERENCE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(

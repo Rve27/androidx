@@ -39,7 +39,8 @@ public class `$FunctionWithEmptySerializable_AppFunctionInventory` : AppFunction
         AppFunctionParameterMetadata(
             name = "empty",
             isRequired = true,
-            dataType = PARAMETER_METADATA_EMPTY_REFERENCE_DATA_TYPE
+            dataType = PARAMETER_METADATA_EMPTY_REFERENCE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(

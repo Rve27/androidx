@@ -38,7 +38,8 @@ public class `$ParcelablePrimitiveFunctions_AppFunctionInventory` : AppFunctionI
         AppFunctionParameterMetadata(
             name = "pendingIntent",
             isRequired = true,
-            dataType = PARAMETER_METADATA_PENDINGINTENT_PRIMITIVE_DATA_TYPE
+            dataType = PARAMETER_METADATA_PENDINGINTENT_PRIMITIVE_DATA_TYPE,
+            description = "",
         )
 
     private val PARAMETER_METADATA_LIST: List<AppFunctionParameterMetadata> = listOf(
