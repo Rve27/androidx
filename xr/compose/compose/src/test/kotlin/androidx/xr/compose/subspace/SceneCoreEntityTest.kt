@@ -421,8 +421,8 @@ class SceneCoreEntityTest {
             .assertHeightIsEqualTo(200.dp)
     }
 
-    @Ignore // b/427806050
     @Test
+    @Ignore("b/430291253 - behavior is different in presubmit after moving to targetSdk 35")
     fun sceneCoreEntity_factoryAndUpdate_areCalledTheAppropriateNumberOfTimes() {
         var factoryCalled = 0
         var updateCalled = 0

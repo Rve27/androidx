@@ -89,7 +89,7 @@ class CoreEntityTest {
     }
 
     @Test
-    @Ignore("b/430291253 - behavior is different in presubmit")
+    @Ignore("b/430291253 - behavior is different in presubmit after moving to targetSdk 35")
     fun coreEntity_size_shouldNotTriggerRecomposition() {
         var size = 100
         var sizeCount = 0
