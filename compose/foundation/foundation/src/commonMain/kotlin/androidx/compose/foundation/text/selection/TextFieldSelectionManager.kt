@@ -21,7 +21,6 @@ import androidx.compose.foundation.ComposeFoundationFlags
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.contextmenu.ContextMenuScope
 import androidx.compose.foundation.contextmenu.ContextMenuState
-import androidx.compose.foundation.internal.checkPreconditionNotNull
 import androidx.compose.foundation.internal.isAutofillAvailable
 import androidx.compose.foundation.internal.isReadSupported
 import androidx.compose.foundation.internal.isWriteSupported
@@ -247,9 +246,12 @@ internal class TextFieldSelectionManager(val undoManager: UndoManager? = null) {
                         },
                         onHide = { textToolbarShownViaProvider = false },
                         computeContentBounds = { destinationCoordinates ->
+                            // We have to compute the root bounds first even if layoutCoordinates is
+                            // null, so that the Snapshot reads can be correctly recorded.
                             val rootBounds = getContentRect()
                             val localCoordinates =
-                                checkPreconditionNotNull(state?.layoutCoordinates)
+                                state?.layoutCoordinates
+                                    ?: return@textContextMenuToolbarHandler null
                             translateRootToDestination(
                                 rootContentBounds = rootBounds,
                                 localCoordinates = localCoordinates,
