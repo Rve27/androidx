@@ -19,6 +19,7 @@ package androidx.xr.scenecore
 import android.annotation.SuppressLint
 import android.net.Uri
 import androidx.annotation.MainThread
+import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.ExrImageResource as RtExrImage
 import androidx.xr.runtime.internal.JxrPlatformAdapter
@@ -46,6 +47,7 @@ internal constructor(internal val image: RtExrImage, internal val session: Sessi
      *   image was not preprocessed.
      */
     @MainThread
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public fun getReflectionTexture(): CubeMapTexture {
         if (session == null) {
             throw IllegalStateException(
@@ -146,6 +148,7 @@ internal constructor(internal val image: RtExrImage, internal val session: Sessi
          */
         @MainThread
         @JvmStatic
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
         public suspend fun createFromZip(
             session: Session,
             assetData: ByteArray,

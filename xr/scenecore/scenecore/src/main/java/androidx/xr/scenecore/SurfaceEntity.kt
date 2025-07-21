@@ -50,8 +50,9 @@ import androidx.xr.runtime.math.Pose
  *   secondary view of the surface. This is only used for interleaved stereo content. If null, the
  *   alpha mask will be disabled.
  * @property edgeFeather The [EdgeFeather] which describes the edge fading effects for the surface.
+ * @property contentColorMetadata The [ContentColorMetadata] of the content (nullable).
  */
-@Suppress("HiddenSuperclass")
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class SurfaceEntity
 private constructor(
     private val lifecycleManager: LifecycleManager,
@@ -130,7 +131,6 @@ private constructor(
      *
      * See https://developer.android.com/reference/android/media/MediaDrm for more details.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public object ContentSecurityLevel {
         // The Surface content is not secured. DRM content can not be decoded into this Surface.
         // Screen captures of the SurfaceEntity will show the Surface content.
@@ -149,7 +149,6 @@ private constructor(
      * Specifies whether super sampling should be enabled for this surface. Super sampling can
      * improve text clarity at a performance cost.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public object SuperSampling {
         // Super sampling is disabled.
         public const val NONE: Int = 0
@@ -196,14 +195,11 @@ private constructor(
      * @param colorRange The color range of the content.
      * @param maxCLL The maximum content light level of the content (in nits).
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public class ContentColorMetadata(
-        @get:Suppress("MethodNameUnits")
-        @ColorSpaceValue
-        public val colorSpace: Int = ColorSpace.BT709,
+        @ColorSpaceValue public val colorSpace: Int = ColorSpace.BT709,
         @ColorTransferValue public val colorTransfer: Int = ColorTransfer.SRGB,
         @ColorRangeValue public val colorRange: Int = ColorRange.FULL,
-        @get:Suppress("AcronymName") public val maxCLL: Int = Companion.maxCLLUnknown,
+        public val maxCLL: Int = Companion.maxCLLUnknown,
     ) {
 
         /**
@@ -332,10 +328,8 @@ private constructor(
                 StereoMode.TOP_BOTTOM -> RtSurfaceEntity.StereoMode.TOP_BOTTOM
                 StereoMode.MULTIVIEW_LEFT_PRIMARY ->
                     RtSurfaceEntity.StereoMode.MULTIVIEW_LEFT_PRIMARY
-
                 StereoMode.MULTIVIEW_RIGHT_PRIMARY ->
                     RtSurfaceEntity.StereoMode.MULTIVIEW_RIGHT_PRIMARY
-
                 else -> RtSurfaceEntity.StereoMode.SIDE_BY_SIDE
             }
         }
@@ -387,13 +381,10 @@ private constructor(
                 when (canvasShape) {
                     is CanvasShape.Quad ->
                         RtSurfaceEntity.CanvasShape.Quad(canvasShape.width, canvasShape.height)
-
                     is CanvasShape.Vr360Sphere ->
                         RtSurfaceEntity.CanvasShape.Vr360Sphere(canvasShape.radius)
-
                     is CanvasShape.Vr180Hemisphere ->
                         RtSurfaceEntity.CanvasShape.Vr180Hemisphere(canvasShape.radius)
-
                     else -> throw IllegalArgumentException("Unsupported canvas shape: $canvasShape")
                 }
             val surfaceEntity =
@@ -432,8 +423,8 @@ private constructor(
          * @return a SurfaceEntity instance
          */
         @MainThread
+        @JvmOverloads
         @JvmStatic
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
         public fun create(
             session: Session,
             stereoMode: Int = SurfaceEntity.StereoMode.SIDE_BY_SIDE,
@@ -453,39 +444,6 @@ private constructor(
                 contentSecurityLevel,
                 contentColorMetadata,
                 superSampling,
-            )
-
-        /**
-         * Public factory function for a SurfaceEntity.
-         *
-         * This method must be called from the main thread.
-         * https://developer.android.com/guide/components/processes-and-threads
-         *
-         * @param session Session to create the SurfaceEntity in.
-         * @param stereoMode Stereo mode for the surface.
-         * @param pose Pose of this entity relative to its parent, default value is Identity.
-         * @param canvasShape The [CanvasShape] which describes the spatialized shape of the canvas.
-         * @return a SurfaceEntity instance
-         */
-        @MainThread
-        @JvmOverloads
-        @JvmStatic
-        public fun create(
-            session: Session,
-            stereoMode: Int = SurfaceEntity.StereoMode.SIDE_BY_SIDE,
-            pose: Pose = Pose.Identity,
-            canvasShape: CanvasShape = CanvasShape.Quad(1.0f, 1.0f),
-        ): SurfaceEntity =
-            SurfaceEntity.create(
-                session.runtime.lifecycleManager,
-                session.platformAdapter,
-                session.scene.entityManager,
-                stereoMode,
-                pose,
-                canvasShape,
-                ContentSecurityLevel.NONE,
-                contentColorMetadata = null,
-                SuperSampling.DEFAULT,
             )
     }
 
@@ -612,7 +570,6 @@ private constructor(
      * @throws IllegalStateException when setting this value if the Entity has been disposed.
      */
     public var contentColorMetadata: ContentColorMetadata?
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
         get() {
             checkDisposed()
             return if (!rtEntity.contentColorMetadataSet) {
@@ -627,7 +584,6 @@ private constructor(
             }
         }
         @MainThread
-        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
         set(value) {
             checkDisposed()
             if (value == null) {

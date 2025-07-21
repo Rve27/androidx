@@ -18,6 +18,7 @@ package androidx.xr.scenecore
 
 import androidx.annotation.IntDef
 import androidx.annotation.MainThread
+import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.GltfEntity as RtGltfEntity
 import androidx.xr.runtime.internal.JxrPlatformAdapter
@@ -168,6 +169,7 @@ private constructor(rtEntity: RtGltfEntity, entityManager: EntityManager) :
      * @param meshName The name of the mesh to use the material for.
      */
     @MainThread
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public fun setMaterialOverride(material: Material, meshName: String) {
         rtEntity.setMaterialOverride(material.material!!, meshName)
     }

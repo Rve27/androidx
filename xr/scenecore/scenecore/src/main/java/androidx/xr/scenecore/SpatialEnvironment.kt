@@ -18,6 +18,7 @@
 
 package androidx.xr.scenecore
 
+import androidx.annotation.RestrictTo
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.SpatialEnvironment as RtSpatialEnvironment
 import androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference as RtSpatialEnvironmentPreference
@@ -96,6 +97,7 @@ public class SpatialEnvironment internal constructor(private val runtime: JxrPla
          * @throws IllegalStateException if the material is not properly set up and if the geometry
          *   glTF model does not contain the mesh or the animation name.
          */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
         @JvmOverloads
         public constructor(
             skybox: ExrImage?,
