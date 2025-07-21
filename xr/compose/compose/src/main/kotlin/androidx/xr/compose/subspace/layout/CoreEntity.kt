@@ -16,6 +16,7 @@
 
 package androidx.xr.compose.subspace.layout
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -381,6 +382,21 @@ internal class CoreSphereSurfaceEntity(
             }
         }
 
+    private var isDisposed = false
+
+    override fun dispose() {
+        isDisposed = true
+        super.dispose()
+    }
+
+    internal var isBoundaryAvailable = true
+        set(value) {
+            if (field != value) {
+                field = value
+                updateFeathering()
+            }
+        }
+
     private var currentFeatheringEffect: SpatialFeatheringEffect = ZeroFeatheringEffect
 
     // Layout's density is automatically updated during a configuration change, and may differ from
@@ -429,7 +445,25 @@ internal class CoreSphereSurfaceEntity(
         updateFeathering()
     }
 
+    // When there is no boundary, we need a feathering value higher than 50 on 360 Surfaces to not
+    // obstruct the user's vision, hence we need the lint suppression.
+    @SuppressLint("Range")
     private fun updateFeathering() {
+        if (isDisposed) {
+            // At the Compose level, dispose calls happen before we clear passthrough listeners,
+            // and since those passthrough listeners update feathering, this is at risk of being
+            // executed after the Entity is already disposed.
+            return
+        }
+
+        if (
+            !isBoundaryAvailable &&
+                surfaceEntity.canvasShape is SurfaceEntity.CanvasShape.Vr360Sphere
+        ) {
+            surfaceEntity.edgeFeather = SurfaceEntity.EdgeFeatheringParams.SmoothFeather(0.7f, 0.7f)
+            return
+        }
+
         val semicircleArcLength = Meter((radius * PI).toFloat()).toPx(localDensity)
         (currentFeatheringEffect as? SpatialSmoothFeatheringEffect)?.let {
             val radiusX =
