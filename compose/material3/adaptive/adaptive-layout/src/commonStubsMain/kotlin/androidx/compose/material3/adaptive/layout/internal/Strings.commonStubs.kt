@@ -14,30 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.compose.material3.adaptive.layout
+package androidx.compose.material3.adaptive.layout.internal
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import kotlin.jvm.JvmInline
-
-@Composable
-@ReadOnlyComposable
-internal actual fun getString(string: Strings): String = implementedInJetBrainsFork()
-
-@Composable
-@ReadOnlyComposable
-internal actual fun getString(string: Strings, vararg formatArgs: Any): String =
-    implementedInJetBrainsFork()
-
-internal actual fun CompositionLocalConsumerModifierNode.getString(string: Strings): String =
-    implementedInJetBrainsFork()
-
-internal actual fun CompositionLocalConsumerModifierNode.getString(
-    string: Strings,
-    vararg formatArgs: Any,
-): String = implementedInJetBrainsFork()
 
 @JvmInline
 @Immutable
@@ -57,3 +40,20 @@ internal actual value class Strings(val value: Int) {
             implementedInJetBrainsFork()
     }
 }
+
+@Composable
+@ReadOnlyComposable
+internal actual fun getString(string: Strings): String = implementedInJetBrainsFork()
+
+@Composable
+@ReadOnlyComposable
+internal actual fun getString(string: Strings, vararg formatArgs: Any): String =
+    implementedInJetBrainsFork()
+
+internal actual fun CompositionLocalConsumerModifierNode.getString(string: Strings): String =
+    implementedInJetBrainsFork()
+
+internal actual fun CompositionLocalConsumerModifierNode.getString(
+    string: Strings,
+    vararg formatArgs: Any,
+): String = implementedInJetBrainsFork()
