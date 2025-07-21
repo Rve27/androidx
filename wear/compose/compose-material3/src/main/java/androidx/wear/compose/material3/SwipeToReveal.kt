@@ -69,6 +69,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -77,6 +78,7 @@ import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.takeOrElse
@@ -84,10 +86,12 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.findRootCoordinates
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -150,6 +154,12 @@ import kotlinx.coroutines.launch
  * recommended to always use the default undo button height as created by
  * [SwipeToRevealScope.UndoActionButton].
  *
+ * If [hasPartiallyRevealedState] = true, [RevealState] should be reset to [RevealValue.Covered] by
+ * the caller when scrolling occurs. This is because the revealed actions are vertically centered on
+ * the visible part of the content when the actions are revealed and, if the [RevealState] is not
+ * reset to [RevealValue.Covered], actions for tall items would appear off-center when the list is
+ * scrolled. See the code samples for examples.
+ *
  * If [revealDirection] is set to [RevealDirection.Bidirectional], the actions revealed on swipe are
  * the same on both sides.
  *
@@ -161,18 +171,21 @@ import kotlinx.coroutines.launch
  *
  * @sample androidx.wear.compose.material3.samples.SwipeToRevealSingleActionCardSample
  *
- * Example of [SwipeToReveal] that only executes the primary action when fully swiped (and does not
- * settle after partially revealing the action).
+ * Example of [SwipeToReveal] with a [TransformingLazyColumn], including resetting the [RevealState]
+ * to [RevealValue.Covered] when scrolling:
  *
- * @sample androidx.wear.compose.material3.samples.SwipeToRevealNoPartiallyRevealedStateSample
+ * @sample androidx.wear.compose.material3.samples.SwipeToRevealWithTransformingLazyColumnSample
  *
- * Example of [SwipeToReveal] with a [TransformingLazyColumn]
+ * Example of [SwipeToReveal] with a [ScalingLazyColumn], including resetting the [RevealState] to
+ * [RevealValue.Covered] when scrolling:
  *
- * @sample androidx.wear.compose.material3.samples.SwipeToRevealWithTransformingLazyColumnResetOnScrollSample
+ * @sample androidx.wear.compose.material3.samples.SwipeToRevealWithScalingLazyColumnSample
  *
- * Example of [SwipeToReveal] with a [ScalingLazyColumn]
+ * Example of [SwipeToReveal] with a [ScalingLazyColumn] that only executes the primary action when
+ * fully swiped (and does not settle after partially revealing the action) by setting
+ * [hasPartiallyRevealedState] = false (so [RevealState] does not need to be reset when scrolling):
  *
- * @sample androidx.wear.compose.material3.samples.SwipeToRevealWithScalingLazyColumnResetOnScrollSample
+ * @sample androidx.wear.compose.material3.samples.SwipeToRevealNoPartialRevealWithScalingLazyColumnSample
  * @param primaryAction The primary action of this component.
  *   [SwipeToRevealScope.PrimaryActionButton] should be used to create a button for this slot. If
  *   [undoPrimaryAction] is provided, the undo button will be displayed after [SwipeToReveal] has
@@ -515,9 +528,11 @@ public fun SwipeToReveal(
                                         ),
                                     label = "RevealedContentAlpha",
                                 )
+                            var revealedContentHeight by remember { mutableIntStateOf(0) }
                             Row(
                                 modifier =
                                     Modifier.graphicsLayer { alpha = revealedContentAlpha.value }
+                                        .onSizeChanged { revealedContentHeight = it.height }
                                         .layout { measurable, constraints ->
                                             val placeable =
                                                 measurable.measure(
@@ -531,8 +546,13 @@ public fun SwipeToReveal(
                                                                 .roundToInt()
                                                     )
                                                 )
+                                            val yOffset =
+                                                calculateVerticalOffsetBasedOnScreenPosition(
+                                                    revealedContentHeight,
+                                                    globalPosition,
+                                                )
                                             layout(placeable.width, placeable.height) {
-                                                placeable.placeRelative(0, 0)
+                                                placeable.placeRelative(0, yOffset)
                                             }
                                         },
                                 horizontalArrangement = Arrangement.Absolute.Right,
@@ -1349,6 +1369,37 @@ private fun fadeOutUndo(): ContentTransform =
         initialContentExit =
             fadeOut(animationSpec = tween(durationMillis = SHORT_ANIMATION, easing = LinearEasing)),
     )
+
+private fun calculateVerticalOffsetBasedOnScreenPosition(
+    childHeight: Int,
+    globalPosition: LayoutCoordinates?,
+): Int {
+    if (globalPosition == null || !globalPosition.positionOnScreen().isSpecified) {
+        return 0
+    }
+    val positionOnScreen = globalPosition.positionOnScreen()
+    val boundsInWindow = globalPosition.boundsInWindow()
+    val parentTop = positionOnScreen.y.toInt()
+    val parentHeight = globalPosition.size.height
+    val parentBottom = parentTop + parentHeight
+    if (parentTop >= boundsInWindow.top && parentBottom <= boundsInWindow.bottom) {
+        // Don't offset if the item is fully on screen
+        return 0
+    }
+
+    // Avoid going outside parent bounds
+    val minCenter = parentTop + childHeight / 2
+    val maxCenter = parentTop + parentHeight - childHeight / 2
+    if (maxCenter < minCenter) {
+        // Odd case where child (action button) is bigger than the parent (the swiped item),
+        // and this would cause an exception from the coerceIn below.
+        return 0
+    }
+
+    val desiredCenter = boundsInWindow.center.y.toInt().coerceIn(minCenter, maxCenter)
+    val actualCenter = parentTop + parentHeight / 2
+    return desiredCenter - actualCenter
+}
 
 private fun startFadeInFraction(hasSecondaryAction: Boolean) =
     if (hasSecondaryAction) {
