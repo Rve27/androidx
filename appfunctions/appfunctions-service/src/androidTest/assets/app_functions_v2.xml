@@ -23,6 +23,7 @@
                 <isNullable>false</isNullable>
                 <type>0</type>
             </valueType>
+            <description>The function's response</description>
         </response>
     </appfunction>
     <appfunction>

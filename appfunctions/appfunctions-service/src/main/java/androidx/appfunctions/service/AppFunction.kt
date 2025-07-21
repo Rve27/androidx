@@ -96,6 +96,9 @@ public annotation class AppFunction(
      * - The function's parameters'
      *   [androidx.appfunctions.metadata.AppFunctionParameterMetadata.description] from the KDoc's
      *   `@param` tags.
+     * - The function's response's
+     *   [androidx.appfunctions.metadata.AppFunctionResponseMetadata.description] from the KDoc's
+     *   `@return` tags.
      *
      * Example:
      * ```kotlin
@@ -117,6 +120,7 @@ public annotation class AppFunction(
      * - `title`'s `AppFunctionParameterMetadata.description` will be: "The title of the note."
      * - `content`'s `AppFunctionParameterMetadata.description` will be: "The main body or text of
      *   the note."
+     * - `AppFunctionResponseMetadata.description` will be: "The created note."
      */
     public val isDescribedByKdoc: Boolean = false,
 )

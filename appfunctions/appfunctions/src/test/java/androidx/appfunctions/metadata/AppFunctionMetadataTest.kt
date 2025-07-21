@@ -30,9 +30,11 @@ class AppFunctionMetadataTest {
         val parameters = emptyList<AppFunctionParameterMetadata>()
         val response =
             AppFunctionResponseMetadata(
-                valueType = AppFunctionPrimitiveTypeMetadata(type = TYPE_STRING, isNullable = false)
+                valueType =
+                    AppFunctionPrimitiveTypeMetadata(type = TYPE_STRING, isNullable = false),
+                description = "The response description",
             )
-        val description = "Test description"
+        val description = "The function's description"
 
         val metadata1 =
             AppFunctionMetadata(
@@ -96,7 +98,9 @@ class AppFunctionMetadataTest {
             )
         val response =
             AppFunctionResponseMetadata(
-                valueType = AppFunctionPrimitiveTypeMetadata(type = TYPE_STRING, isNullable = false)
+                valueType =
+                    AppFunctionPrimitiveTypeMetadata(type = TYPE_STRING, isNullable = false),
+                description = "The response description",
             )
         val primitiveType1 = AppFunctionPrimitiveTypeMetadata(TYPE_INT, false)
         val primitiveType2 = AppFunctionPrimitiveTypeMetadata(TYPE_STRING, true)
@@ -104,7 +108,7 @@ class AppFunctionMetadataTest {
             AppFunctionComponentsMetadata(
                 mapOf("dataType1" to primitiveType1, "dataType2" to primitiveType2)
             )
-        val description = "Test description"
+        val description = "The function's description"
         val appFunctionMetadata =
             CompileTimeAppFunctionMetadata(
                 id = id,

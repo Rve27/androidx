@@ -43,7 +43,8 @@ public class `$NestedDerivedSerializableOutputFunctions_AppFunctionInventory` : 
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = REFERENCE_RESPONSE_VALUE_TYPE
+            valueType = REFERENCE_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_NESTEDBASESERIALIZABLE_OBJECT_DATA_TYPE_PROPERTIES_MAP_STRINGBASENAME:
@@ -200,7 +201,8 @@ public class `$NestedDerivedSerializableOutputFunctions_AppFunctionInventory` : 
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = ARRAY_RESPONSE_VALUE_TYPE
+            valueType = ARRAY_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_NESTEDBASESERIALIZABLE_OBJECT_DATA_TYPE_PROPERTIES_MAP_STRINGBASENAME:

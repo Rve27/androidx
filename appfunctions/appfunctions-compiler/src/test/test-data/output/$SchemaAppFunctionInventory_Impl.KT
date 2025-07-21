@@ -54,7 +54,8 @@ public class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = REFERENCE_RESPONSE_VALUE_TYPE
+            valueType = REFERENCE_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_SHOWNOTEFUNCTION_PARAMETERS_OBJECT_DATA_TYPE_PROPERTIES_MAP_NOTEID:
@@ -174,7 +175,8 @@ public class `$SchemaAppFunctionInventory_Impl` : SchemaAppFunctionInventory() {
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = REFERENCE_RESPONSE_VALUE_TYPE
+            valueType = REFERENCE_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_SETFIELD_KOTLIN_STRING__OBJECT_DATA_TYPE_PROPERTIES_MAP_VALUE:

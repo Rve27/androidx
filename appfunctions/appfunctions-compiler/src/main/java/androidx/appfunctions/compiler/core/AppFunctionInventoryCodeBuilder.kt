@@ -282,12 +282,14 @@ class AppFunctionInventoryCodeBuilder(private val inventoryClassBuilder: TypeSpe
                         addStatement(
                             """
                             %T(
-                                valueType = %L
+                                valueType = %L,
+                                description = %S
                             )
                             """
                                 .trimIndent(),
                             IntrospectionHelper.APP_FUNCTION_RESPONSE_METADATA_CLASS,
                             responseMetadataValueTypeName,
+                            appFunctionResponseMetadata.description,
                         )
                     }
                 )

@@ -230,7 +230,8 @@ internal class AppFunctionMetadataTestHelper(private val context: Context) {
                             AppFunctionPrimitiveTypeMetadata(
                                 type = AppFunctionPrimitiveTypeMetadata.TYPE_UNIT,
                                 isNullable = false,
-                            )
+                            ),
+                        description = "The function's response",
                     ),
                 components = sharedComponents,
             )

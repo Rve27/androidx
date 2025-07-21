@@ -45,7 +45,8 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = REFERENCE_RESPONSE_VALUE_TYPE
+            valueType = REFERENCE_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_0_PROPERTIES_MAP_STRINGTOOPEN:
@@ -176,7 +177,8 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = ARRAY_RESPONSE_VALUE_TYPE
+            valueType = ARRAY_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_0_PROPERTIES_MAP_STRINGTOOPEN:
@@ -307,7 +309,8 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = ARRAY_RESPONSE_VALUE_TYPE
+            valueType = ARRAY_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_0_PROPERTIES_MAP_STRINGTOOPEN:
@@ -431,7 +434,8 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = REFERENCE_RESPONSE_VALUE_TYPE
+            valueType = REFERENCE_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_0_PROPERTIES_MAP_STRINGTOOPEN:

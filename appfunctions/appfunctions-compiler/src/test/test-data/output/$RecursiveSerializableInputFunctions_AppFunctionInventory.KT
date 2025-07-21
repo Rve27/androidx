@@ -60,7 +60,8 @@ public class `$RecursiveSerializableInputFunctions_AppFunctionInventory` : AppFu
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = PRIMITIVE_RESPONSE_VALUE_TYPE
+            valueType = PRIMITIVE_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_RECURSIVESERIALIZABLE_OBJECT_DATA_TYPE_PROPERTIES_MAP_NESTED:
@@ -146,7 +147,8 @@ public class `$RecursiveSerializableInputFunctions_AppFunctionInventory` : AppFu
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = PRIMITIVE_RESPONSE_VALUE_TYPE
+            valueType = PRIMITIVE_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_RECURSIVESERIALIZABLE_OBJECT_DATA_TYPE_PROPERTIES_MAP_NESTED:
@@ -232,7 +234,8 @@ public class `$RecursiveSerializableInputFunctions_AppFunctionInventory` : AppFu
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = PRIMITIVE_RESPONSE_VALUE_TYPE
+            valueType = PRIMITIVE_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_RECURSIVESERIALIZABLE_OBJECT_DATA_TYPE_PROPERTIES_MAP_NESTED:
@@ -311,7 +314,8 @@ public class `$RecursiveSerializableInputFunctions_AppFunctionInventory` : AppFu
         )
 
     private val RESPONSE_METADATA: AppFunctionResponseMetadata = AppFunctionResponseMetadata(
-            valueType = PRIMITIVE_RESPONSE_VALUE_TYPE
+            valueType = PRIMITIVE_RESPONSE_VALUE_TYPE,
+            description = ""
         )
 
     private val COM_TESTDATA_RECURSIVESERIALIZABLE_OBJECT_DATA_TYPE_PROPERTIES_MAP_NESTED:

@@ -389,7 +389,10 @@ package androidx.appfunctions.metadata {
 
   public final class AppFunctionResponseMetadata {
     ctor public AppFunctionResponseMetadata(androidx.appfunctions.metadata.AppFunctionDataTypeMetadata valueType);
+    ctor public AppFunctionResponseMetadata(androidx.appfunctions.metadata.AppFunctionDataTypeMetadata valueType, optional String description);
+    method public String getDescription();
     method public androidx.appfunctions.metadata.AppFunctionDataTypeMetadata getValueType();
+    property public String description;
     property public androidx.appfunctions.metadata.AppFunctionDataTypeMetadata valueType;
   }
 
