@@ -20,14 +20,16 @@ import androidx.annotation.RestrictTo
 import androidx.appsearch.annotation.Document
 
 /** Represent a function parameter. */
-public class AppFunctionParameterMetadata(
+public class AppFunctionParameterMetadata
+@JvmOverloads
+constructor(
     /** The name of the parameter. */
     public val name: String,
     /** Determines whether this parameter is mandatory. */
     public val isRequired: Boolean,
     /** The data type of the parameter. */
     public val dataType: AppFunctionDataTypeMetadata,
-    /** A description of the parameter and its intended use. */
+    /** Describes the parameter's intended use within the AppFunction, consumed by the LLM. */
     public val description: String = "",
 ) {
     override fun equals(other: Any?): Boolean {
