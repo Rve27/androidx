@@ -4654,7 +4654,7 @@ package androidx.compose.material3 {
     ctor @BytecodeOnly public WideNavigationRailColors(long, long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker!);
     method @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.material3.WideNavigationRailColors copy(optional long containerColor, optional long contentColor, optional long modalContainerColor, optional long modalScrimColor);
     method public androidx.compose.material3.WideNavigationRailColors copy(optional long containerColor, optional long contentColor, optional long modalContainerColor, optional long modalScrimColor, optional long modalContentColor);
-    method @BytecodeOnly @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.material3.WideNavigationRailColors copy-jRlVdoo(long, long, long, long);
+    method @BytecodeOnly @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi public androidx.compose.material3.WideNavigationRailColors! copy-jRlVdoo(long, long, long, long);
     method @BytecodeOnly public androidx.compose.material3.WideNavigationRailColors copy-t635Npw(long, long, long, long, long);
     method @BytecodeOnly public long getContainerColor-0d7_KjU();
     method @BytecodeOnly public long getContentColor-0d7_KjU();
@@ -4673,7 +4673,7 @@ package androidx.compose.material3 {
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors(androidx.compose.runtime.Composer?, int);
     method @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors(optional long containerColor, optional long contentColor, optional long modalContainerColor, optional long modalScrimColor);
     method @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors(optional long containerColor, optional long contentColor, optional long modalContainerColor, optional long modalScrimColor, optional long modalContentColor);
-    method @BytecodeOnly @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors-ro_MJ88(long, long, long, long, androidx.compose.runtime.Composer?, int, int);
+    method @BytecodeOnly @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors! colors-ro_MJ88(long, long, long, long, androidx.compose.runtime.Composer!, int, int);
     method @BytecodeOnly @androidx.compose.runtime.Composable public androidx.compose.material3.WideNavigationRailColors colors-zjMxDiM(long, long, long, long, long, androidx.compose.runtime.Composer?, int, int);
     method public androidx.compose.foundation.layout.Arrangement.Vertical getArrangement();
     method @Deprecated @SuppressCompatibility @androidx.compose.material3.ExperimentalMaterial3ExpressiveApi @androidx.compose.runtime.Composable public androidx.compose.ui.graphics.Shape getContainerShape();

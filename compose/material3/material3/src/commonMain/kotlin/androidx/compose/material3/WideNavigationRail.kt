@@ -854,12 +854,7 @@ constructor(
      */
     @Deprecated(
         message = "Deprecated in favor of function with modalContentColor parameter",
-        replaceWith =
-            ReplaceWith(
-                "copy(containerColor, contentColor, modalContainerColor, modalScrimColor, " +
-                    "modalContentColor)"
-            ),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.HIDDEN,
     )
     @ExperimentalMaterial3ExpressiveApi
     fun copy(
@@ -981,12 +976,7 @@ object WideNavigationRailDefaults {
      */
     @Deprecated(
         message = "Deprecated in favor of function with modalContentColor parameter",
-        replaceWith =
-            ReplaceWith(
-                "colors(containerColor, contentColor, modalContainerColor, modalScrimColor, " +
-                    "modalContentColor)"
-            ),
-        level = DeprecationLevel.WARNING,
+        level = DeprecationLevel.HIDDEN,
     )
     @ExperimentalMaterial3ExpressiveApi
     @Composable
