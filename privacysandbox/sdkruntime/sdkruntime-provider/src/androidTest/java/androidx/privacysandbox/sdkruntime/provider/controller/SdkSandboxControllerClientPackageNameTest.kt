@@ -53,7 +53,8 @@ class SdkSandboxControllerClientPackageNameTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 34)
+    // maxSdkVersion due to b/430688215
+    @SdkSuppress(minSdkVersion = 34, maxSdkVersion = 34)
     @RequiresExtension(extension = SdkExtensions.AD_SERVICES, version = 8)
     fun getClientPackageName_withApiAvailable_returnsResultFromPlatformApi() {
         Assume.assumeTrue(

@@ -51,7 +51,8 @@ class SdkSandboxControllerAppOwnedInterfacesTest {
 
     @Test
     @RequiresExtension(extension = SdkExtensions.AD_SERVICES, version = 8)
-    @SdkSuppress(minSdkVersion = 34)
+    // maxSdkVersion due to b/430688215
+    @SdkSuppress(minSdkVersion = 34, maxSdkVersion = 34)
     fun getAppOwnedSdkSandboxInterfaces_whenApiAvailable_delegateToPlatform() {
         assumeTrue("Requires AppOwnedInterfaces API available", isAppOwnedInterfacesApiAvailable())
 

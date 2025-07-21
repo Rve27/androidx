@@ -58,7 +58,8 @@ class SdkSandboxControllerLoadSdkTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 34)
+    // maxSdkVersion due to b/430688215
+    @SdkSuppress(minSdkVersion = 34, maxSdkVersion = 34)
     @RequiresExtension(extension = SdkExtensions.AD_SERVICES, version = 10)
     fun loadSdk_withLoadSdkApiAvailable_returnResultFromPlatformLoadSdk() {
         assumeTrue("Requires LoadSdk API available", isLoadSdkApiAvailable())
@@ -77,7 +78,8 @@ class SdkSandboxControllerLoadSdkTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 34)
+    // maxSdkVersion due to b/430688215
+    @SdkSuppress(minSdkVersion = 34, maxSdkVersion = 34)
     @RequiresExtension(extension = SdkExtensions.AD_SERVICES, version = 10)
     fun loadSdk_withLoadSdkApiAvailable_rethrowsExceptionFromPlatformLoadSdk() {
         assumeTrue("Requires LoadSdk API available", isLoadSdkApiAvailable())
