@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,8 +42,7 @@ import androidx.xr.arcore.perceptionState
 import androidx.xr.arcore.testapp.common.BackToMainActivityButton
 import androidx.xr.arcore.testapp.common.SessionLifecycleHelper
 import androidx.xr.arcore.testapp.common.TrackablesList
-import androidx.xr.arcore.testapp.helloar.rendering.AnchorRenderer
-import androidx.xr.arcore.testapp.helloar.rendering.PlaneRenderer
+import androidx.xr.arcore.testapp.helloar.rendering.AugmentedObjectRenderer
 import androidx.xr.arcore.testapp.ui.theme.GoogleYellow
 import androidx.xr.compose.spatial.Subspace
 import androidx.xr.compose.subspace.SpatialPanel
@@ -52,16 +51,15 @@ import androidx.xr.compose.subspace.layout.movable
 import androidx.xr.compose.subspace.layout.resizable
 import androidx.xr.compose.subspace.layout.size
 import androidx.xr.compose.unit.DpVolumeSize
+import androidx.xr.runtime.AugmentedObjectCategory
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Session
 
-class HelloArActivity : ComponentActivity() {
+class HelloArObjectActivity : ComponentActivity() {
 
     private lateinit var session: Session
     private lateinit var sessionHelper: SessionLifecycleHelper
-
-    private lateinit var planeRenderer: PlaneRenderer
-    private lateinit var anchorRenderer: AnchorRenderer
+    private lateinit var augmentedObjectRenderer: AugmentedObjectRenderer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,16 +69,19 @@ class HelloArActivity : ComponentActivity() {
             SessionLifecycleHelper(
                 this,
                 Config(
-                    planeTracking = Config.PlaneTrackingMode.HORIZONTAL_AND_VERTICAL,
-                    headTracking = Config.HeadTrackingMode.LAST_KNOWN,
+                    deviceTracking = Config.DeviceTrackingMode.LAST_KNOWN,
+                    augmentedObjectCategories =
+                        listOf(
+                            AugmentedObjectCategory.KEYBOARD,
+                            AugmentedObjectCategory.MOUSE,
+                            AugmentedObjectCategory.LAPTOP,
+                        ),
                 ),
                 onSessionAvailable = { session ->
                     this.session = session
 
-                    planeRenderer = PlaneRenderer(session, lifecycleScope)
-                    anchorRenderer = AnchorRenderer(this, planeRenderer, session, lifecycleScope)
-                    lifecycle.addObserver(planeRenderer)
-                    lifecycle.addObserver(anchorRenderer)
+                    augmentedObjectRenderer = AugmentedObjectRenderer(session, lifecycleScope)
+                    lifecycle.addObserver(augmentedObjectRenderer)
 
                     setContent {
                         Subspace {
@@ -90,7 +91,7 @@ class HelloArActivity : ComponentActivity() {
                                         .movable()
                                         .resizable()
                             ) {
-                                HelloWorld(session)
+                                HelloObjects(session)
                             }
                         }
                     }
@@ -100,11 +101,11 @@ class HelloArActivity : ComponentActivity() {
     }
 
     @Composable
-    fun HelloWorld(session: Session) {
+    fun HelloObjects(session: Session) {
         val state by session.state.collectAsStateWithLifecycle()
         val perceptionState = state.perceptionState
         var title = intent.getStringExtra("TITLE")
-        if (title == null) title = "Hello AR"
+        if (title == null) title = "Hello AR Object"
         Scaffold(
             modifier = Modifier.fillMaxSize().padding(0.dp),
             topBar = {
@@ -126,33 +127,11 @@ class HelloArActivity : ComponentActivity() {
             },
         ) { innerPadding ->
             Column(modifier = Modifier.padding(innerPadding).background(color = Color.White)) {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        modifier = Modifier.padding(start = 10.dp).weight(1f),
-                        text = "CoreState:",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 10.dp).weight(3f),
-                        text = "${state.timeMark}",
-                        fontSize = 20.sp,
-                    )
-                }
-
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        modifier = Modifier.padding(start = 10.dp).weight(1f),
-                        text = "Trackables:",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-
+                Text(text = "CoreState: ${state.timeMark}")
                 if (perceptionState != null) {
                     TrackablesList(perceptionState.trackables.toList())
                 } else {
-                    Text(text = "PerceptionState is null.", fontSize = 22.sp)
+                    Text("PerceptionState is null.")
                 }
             }
         }
