@@ -17,7 +17,6 @@
 package androidx.xr.scenecore
 
 import androidx.annotation.MainThread
-import androidx.annotation.RestrictTo
 import androidx.concurrent.futures.ResolvableFuture
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.JxrPlatformAdapter
@@ -28,7 +27,6 @@ import java.nio.file.Path
 
 /** [Texture] represents a texture that can be used with materials. */
 @Suppress("NotCloseable")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public open class Texture
 internal constructor(
     internal val texture: RtTextureResource,

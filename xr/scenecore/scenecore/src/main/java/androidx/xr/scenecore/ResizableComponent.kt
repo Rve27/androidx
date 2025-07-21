@@ -18,7 +18,6 @@
 
 package androidx.xr.scenecore
 
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Session
 import androidx.xr.runtime.internal.JxrPlatformAdapter
 import androidx.xr.runtime.internal.ResizeEventListener as RtResizeEventListener
@@ -97,7 +96,6 @@ private constructor(
      * the [Consumer<ResizeEvent>] the next time the user resizes the [Entity] through the reform
      * UI.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public var fixedAspectRatio: Float = 0.0f
         set(value) {
             if (field != value) {
@@ -123,7 +121,6 @@ private constructor(
      * Whether the size of the resize overlay should be automatically updated to match the proposed
      * size as resize events are received.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     @get:JvmName("shouldAutoUpdateOverlay")
     public var shouldAutoUpdateOverlay: Boolean = true
         set(value) {

@@ -17,11 +17,9 @@
 package androidx.xr.scenecore
 
 import android.media.AudioTrack
-import androidx.annotation.RestrictTo
 import androidx.xr.runtime.Session
 
 @Suppress("ClassShouldBeObject")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class SpatialAudioTrack {
 
     public companion object {
@@ -111,7 +109,6 @@ public class SpatialAudioTrack {
 
 /** Provides spatial audio extensions on the platform [AudioTrack.Builder] class. */
 @Suppress("ClassShouldBeObject", "MissingBuildMethod", "TopLevelBuilder")
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public class SpatialAudioTrackBuilder private constructor() {
 
     public companion object {

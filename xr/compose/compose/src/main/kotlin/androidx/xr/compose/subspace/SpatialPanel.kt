@@ -21,7 +21,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import android.view.View.MeasureSpec
-import androidx.annotation.RestrictTo
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -313,7 +312,6 @@ public fun SpatialPanel(
  */
 @Composable
 @SubspaceComposable
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public fun SpatialMainPanel(
     modifier: SubspaceModifier = SubspaceModifier,
     shape: SpatialShape = SpatialPanelDefaults.shape,

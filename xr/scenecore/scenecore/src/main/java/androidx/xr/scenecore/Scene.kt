@@ -282,7 +282,6 @@ public class Scene : SessionConnector {
      * @param bundle the input bundle to set with the Full Space Mode flag.
      * @return the input bundle with the Full Space Mode flag set.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public fun configureBundleForFullSpaceModeLaunch(bundle: Bundle): Bundle =
         platformAdapter.setFullSpaceMode(bundle)
 
@@ -320,7 +319,6 @@ public class Scene : SessionConnector {
      *   flag.
      * @return the input bundle with the inherit Full Space Mode flag set.
      */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
     public fun configureBundleForFullSpaceModeLaunchWithEnvironmentInherited(
         bundle: Bundle
     ): Bundle = platformAdapter.setFullSpaceModeWithEnvironmentInherited(bundle)

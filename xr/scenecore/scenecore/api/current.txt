@@ -143,6 +143,15 @@ package androidx.xr.scenecore {
   public interface Component {
   }
 
+  public final class CubeMapTexture extends androidx.xr.scenecore.Texture {
+    method @MainThread public static androidx.xr.scenecore.CubeMapTexture borrowReflectionTexture(androidx.xr.runtime.Session session);
+    field public static final androidx.xr.scenecore.CubeMapTexture.Companion Companion;
+  }
+
+  public static final class CubeMapTexture.Companion {
+    method @MainThread public androidx.xr.scenecore.CubeMapTexture borrowReflectionTexture(androidx.xr.runtime.Session session);
+  }
+
   public interface Entity extends androidx.xr.scenecore.ScenePose {
     method public void addChild(androidx.xr.scenecore.Entity child);
     method public boolean addComponent(androidx.xr.scenecore.Component component);
@@ -181,12 +190,15 @@ package androidx.xr.scenecore {
 
   public final class ExrImage {
     method @MainThread public static suspend Object? createFromZip(androidx.xr.runtime.Session session, android.net.Uri uri, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
+    method @MainThread public static suspend Object? createFromZip(androidx.xr.runtime.Session session, byte[] assetData, String assetKey, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
     method @MainThread public static suspend Object? createFromZip(androidx.xr.runtime.Session session, java.nio.file.Path path, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
+    method @MainThread public androidx.xr.scenecore.CubeMapTexture getReflectionTexture();
     field public static final androidx.xr.scenecore.ExrImage.Companion Companion;
   }
 
   public static final class ExrImage.Companion {
     method @MainThread public suspend Object? createFromZip(androidx.xr.runtime.Session session, android.net.Uri uri, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
+    method @MainThread public suspend Object? createFromZip(androidx.xr.runtime.Session session, byte[] assetData, String assetKey, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
     method @MainThread public suspend Object? createFromZip(androidx.xr.runtime.Session session, java.nio.file.Path path, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.ExrImage>);
   }
 
@@ -224,6 +236,7 @@ package androidx.xr.scenecore {
     method public void setAlpha(float alpha, int relativeTo);
     method public void setContentDescription(CharSequence);
     method public void setEnabled(boolean enabled);
+    method @MainThread public void setMaterialOverride(androidx.xr.scenecore.Material material, String meshName);
     method public void setParent(androidx.xr.scenecore.Entity?);
     method public void setPose(androidx.xr.runtime.math.Pose pose, int relativeTo);
     method public void setScale(float scale, int relativeTo);
@@ -405,6 +418,10 @@ package androidx.xr.scenecore {
   }
 
   public static final class MainPanelEntity.Companion {
+  }
+
+  public class Material {
+    ctor public Material(androidx.xr.runtime.internal.MaterialResource? material);
   }
 
   public final class MovableComponent implements androidx.xr.scenecore.Component {
@@ -591,10 +608,12 @@ package androidx.xr.scenecore {
     method public boolean shouldAutoHideContent();
     method public boolean shouldAutoUpdateOverlay();
     property public androidx.xr.runtime.math.FloatSize3d affordanceSize;
+    property public float fixedAspectRatio;
     property public androidx.xr.runtime.math.FloatSize3d maximumEntitySize;
     property public androidx.xr.runtime.math.FloatSize3d minimumEntitySize;
     property public boolean shouldAlwaysShowOverlay;
     property public boolean shouldAutoHideContent;
+    property public boolean shouldAutoUpdateOverlay;
     field public static final androidx.xr.scenecore.ResizableComponent.Companion Companion;
   }
 
@@ -632,6 +651,8 @@ package androidx.xr.scenecore {
     method public void addSpatialCapabilitiesChangedListener(java.util.concurrent.Executor callbackExecutor, java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
     method public void addSpatialCapabilitiesChangedListener(java.util.function.Consumer<androidx.xr.scenecore.SpatialCapabilities> listener);
     method public void clearSpatialVisibilityChangedListener();
+    method public android.os.Bundle configureBundleForFullSpaceModeLaunch(android.os.Bundle bundle);
+    method public android.os.Bundle configureBundleForFullSpaceModeLaunchWithEnvironmentInherited(android.os.Bundle bundle);
     method public <T extends androidx.xr.scenecore.Entity> java.util.List<T> getEntitiesOfType(Class<? extends T> type);
     method public androidx.xr.scenecore.MainPanelEntity getMainPanelEntity();
     method public androidx.xr.scenecore.PanelClippingConfig getPanelClippingConfig();
@@ -674,12 +695,46 @@ package androidx.xr.scenecore {
     property public static androidx.xr.scenecore.Scene androidx.xr.runtime.Session.scene;
   }
 
+  public final class SoundFieldAttributes {
+    ctor public SoundFieldAttributes(int order);
+    method public int getOrder();
+    property public int order;
+    field public static final String TAG = "SoundFieldAttributes";
+  }
+
   public final class Space {
     property public static int ACTIVITY;
     property public static int PARENT;
     field public static final int ACTIVITY = 1; // 0x1
     field public static final androidx.xr.scenecore.Space INSTANCE;
     field public static final int PARENT = 0; // 0x0
+  }
+
+  public final class SpatialAudioTrack {
+    ctor public SpatialAudioTrack();
+    method public static androidx.xr.scenecore.PointSourceParams? getPointSourceParams(androidx.xr.runtime.Session session, android.media.AudioTrack track);
+    method public static androidx.xr.scenecore.SoundFieldAttributes? getSoundFieldAttributes(androidx.xr.runtime.Session session, android.media.AudioTrack track);
+    method public static int getSpatialSourceType(androidx.xr.runtime.Session session, android.media.AudioTrack track);
+    method public static void setPointSourceParams(androidx.xr.runtime.Session session, android.media.AudioTrack track, androidx.xr.scenecore.PointSourceParams params);
+    field public static final androidx.xr.scenecore.SpatialAudioTrack.Companion Companion;
+  }
+
+  public static final class SpatialAudioTrack.Companion {
+    method public androidx.xr.scenecore.PointSourceParams? getPointSourceParams(androidx.xr.runtime.Session session, android.media.AudioTrack track);
+    method public androidx.xr.scenecore.SoundFieldAttributes? getSoundFieldAttributes(androidx.xr.runtime.Session session, android.media.AudioTrack track);
+    method public int getSpatialSourceType(androidx.xr.runtime.Session session, android.media.AudioTrack track);
+    method public void setPointSourceParams(androidx.xr.runtime.Session session, android.media.AudioTrack track, androidx.xr.scenecore.PointSourceParams params);
+  }
+
+  public final class SpatialAudioTrackBuilder {
+    method public static android.media.AudioTrack.Builder setPointSourceParams(androidx.xr.runtime.Session session, android.media.AudioTrack.Builder builder, androidx.xr.scenecore.PointSourceParams params);
+    method public static android.media.AudioTrack.Builder setSoundFieldAttributes(androidx.xr.runtime.Session session, android.media.AudioTrack.Builder builder, androidx.xr.scenecore.SoundFieldAttributes attributes);
+    field public static final androidx.xr.scenecore.SpatialAudioTrackBuilder.Companion Companion;
+  }
+
+  public static final class SpatialAudioTrackBuilder.Companion {
+    method public android.media.AudioTrack.Builder setPointSourceParams(androidx.xr.runtime.Session session, android.media.AudioTrack.Builder builder, androidx.xr.scenecore.PointSourceParams params);
+    method public android.media.AudioTrack.Builder setSoundFieldAttributes(androidx.xr.runtime.Session session, android.media.AudioTrack.Builder builder, androidx.xr.scenecore.SoundFieldAttributes attributes);
   }
 
   public final class SpatialCapabilities {
@@ -729,10 +784,25 @@ package androidx.xr.scenecore {
 
   public static final class SpatialEnvironment.SpatialEnvironmentPreference {
     ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry);
+    ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, androidx.xr.scenecore.Material? geometryMaterial);
+    ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, androidx.xr.scenecore.Material? geometryMaterial, optional String? geometryMeshName);
+    ctor public SpatialEnvironment.SpatialEnvironmentPreference(androidx.xr.scenecore.ExrImage? skybox, androidx.xr.scenecore.GltfModel? geometry, androidx.xr.scenecore.Material? geometryMaterial, optional String? geometryMeshName, optional String? geometryAnimationName);
     method public androidx.xr.scenecore.GltfModel? getGeometry();
     method public androidx.xr.scenecore.ExrImage? getSkybox();
     property public androidx.xr.scenecore.GltfModel? geometry;
     property public androidx.xr.scenecore.ExrImage? skybox;
+  }
+
+  public final class SpatialMediaPlayer {
+    ctor public SpatialMediaPlayer();
+    method public static void setPointSourceParams(androidx.xr.runtime.Session session, android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.PointSourceParams params);
+    method public static void setSoundFieldAttributes(androidx.xr.runtime.Session session, android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.SoundFieldAttributes attributes);
+    field public static final androidx.xr.scenecore.SpatialMediaPlayer.Companion Companion;
+  }
+
+  public static final class SpatialMediaPlayer.Companion {
+    method public void setPointSourceParams(androidx.xr.runtime.Session session, android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.PointSourceParams params);
+    method public void setSoundFieldAttributes(androidx.xr.runtime.Session session, android.media.MediaPlayer mediaPlayer, androidx.xr.scenecore.SoundFieldAttributes attributes);
   }
 
   public fun interface SpatialModeChangeListener {
@@ -766,6 +836,19 @@ package androidx.xr.scenecore {
     property public androidx.xr.scenecore.SpatialPointerIcon NONE;
   }
 
+  public final class SpatialSoundPool {
+    method public static int getSpatialSourceType(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int streamId);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.PointSourceParams params, float volume, int priority, int loop, float rate);
+    method public static int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.SoundFieldAttributes attributes, float volume, int priority, int loop, float rate);
+    field public static final androidx.xr.scenecore.SpatialSoundPool.Companion Companion;
+  }
+
+  public static final class SpatialSoundPool.Companion {
+    method public int getSpatialSourceType(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int streamId);
+    method public int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.PointSourceParams params, float volume, int priority, int loop, float rate);
+    method public int play(androidx.xr.runtime.Session session, android.media.SoundPool soundPool, int soundID, androidx.xr.scenecore.SoundFieldAttributes attributes, float volume, int priority, int loop, float rate);
+  }
+
   public final class SpatialUser {
     ctor public SpatialUser(androidx.xr.runtime.internal.LifecycleManager lifecycleManager, androidx.xr.runtime.internal.JxrPlatformAdapter runtime);
     method public java.util.Map<androidx.xr.scenecore.CameraView.CameraType,androidx.xr.scenecore.CameraView> getCameraViews();
@@ -791,6 +874,277 @@ package androidx.xr.scenecore {
     property public static float NO_PREFERRED_ASPECT_RATIO;
     field public static final androidx.xr.scenecore.SpatialWindow INSTANCE;
     field public static final float NO_PREFERRED_ASPECT_RATIO = -1.0f;
+  }
+
+  public interface SpatializerConstants {
+    field public static final int AMBISONICS_ORDER_FIRST_ORDER = 0; // 0x0
+    field public static final int AMBISONICS_ORDER_SECOND_ORDER = 1; // 0x1
+    field public static final int AMBISONICS_ORDER_THIRD_ORDER = 2; // 0x2
+    field public static final androidx.xr.scenecore.SpatializerConstants.Companion Companion;
+    field public static final int SOURCE_TYPE_BYPASS = 0; // 0x0
+    field public static final int SOURCE_TYPE_POINT_SOURCE = 1; // 0x1
+    field public static final int SOURCE_TYPE_SOUND_FIELD = 2; // 0x2
+  }
+
+  public static final class SpatializerConstants.Companion {
+    property public static int AMBISONICS_ORDER_FIRST_ORDER;
+    property public static int AMBISONICS_ORDER_SECOND_ORDER;
+    property public static int AMBISONICS_ORDER_THIRD_ORDER;
+    property public static int SOURCE_TYPE_BYPASS;
+    property public static int SOURCE_TYPE_POINT_SOURCE;
+    property public static int SOURCE_TYPE_SOUND_FIELD;
+    field public static final int AMBISONICS_ORDER_FIRST_ORDER = 0; // 0x0
+    field public static final int AMBISONICS_ORDER_SECOND_ORDER = 1; // 0x1
+    field public static final int AMBISONICS_ORDER_THIRD_ORDER = 2; // 0x2
+    field public static final int SOURCE_TYPE_BYPASS = 0; // 0x0
+    field public static final int SOURCE_TYPE_POINT_SOURCE = 1; // 0x1
+    field public static final int SOURCE_TYPE_SOUND_FIELD = 2; // 0x2
+  }
+
+  public final class SurfaceEntity implements androidx.xr.scenecore.Entity androidx.xr.scenecore.ScenePose {
+    method public void addChild(androidx.xr.scenecore.Entity child);
+    method public boolean addComponent(androidx.xr.scenecore.Component component);
+    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session);
+    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode);
+    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose);
+    method @MainThread public static androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.CanvasShape canvasShape);
+    method public void dispose();
+    method public androidx.xr.runtime.math.Pose getActivitySpacePose();
+    method public float getAlpha(int relativeTo);
+    method public androidx.xr.scenecore.Texture? getAuxiliaryAlphaMaskTexture();
+    method public androidx.xr.scenecore.SurfaceEntity.CanvasShape getCanvasShape();
+    method public java.util.List<androidx.xr.scenecore.Component> getComponents();
+    method public <T extends androidx.xr.scenecore.Component> java.util.List<T> getComponentsOfType(Class<? extends T> type);
+    method public CharSequence getContentDescription();
+    method public androidx.xr.runtime.math.FloatSize3d getDimensions();
+    method public androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams getEdgeFeather();
+    method public androidx.xr.scenecore.Entity? getParent();
+    method public androidx.xr.scenecore.PerceivedResolutionResult getPerceivedResolution();
+    method public androidx.xr.runtime.math.Pose getPose(int relativeTo);
+    method public androidx.xr.scenecore.Texture? getPrimaryAlphaMaskTexture();
+    method public float getScale(int relativeTo);
+    method public int getStereoMode();
+    method @MainThread public android.view.Surface getSurface();
+    method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, int hitTestFilter, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
+    method public suspend Object? hitTest(androidx.xr.runtime.math.Vector3 origin, androidx.xr.runtime.math.Vector3 direction, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.HitTestResult>);
+    method public boolean isEnabled(boolean includeParents);
+    method public void removeAllComponents();
+    method public void removeComponent(androidx.xr.scenecore.Component component);
+    method public void setAlpha(float alpha, int relativeTo);
+    method @MainThread public void setAuxiliaryAlphaMaskTexture(androidx.xr.scenecore.Texture?);
+    method @MainThread public void setCanvasShape(androidx.xr.scenecore.SurfaceEntity.CanvasShape);
+    method public void setContentDescription(CharSequence);
+    method @MainThread public void setEdgeFeather(androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams);
+    method public void setEnabled(boolean enabled);
+    method public void setParent(androidx.xr.scenecore.Entity?);
+    method public void setPose(androidx.xr.runtime.math.Pose pose, int relativeTo);
+    method @MainThread public void setPrimaryAlphaMaskTexture(androidx.xr.scenecore.Texture?);
+    method public void setScale(float scale, int relativeTo);
+    method @MainThread public void setStereoMode(int);
+    method public androidx.xr.runtime.math.Pose transformPoseTo(androidx.xr.runtime.math.Pose pose, androidx.xr.scenecore.ScenePose destination);
+    property public androidx.xr.scenecore.Texture? auxiliaryAlphaMaskTexture;
+    property public androidx.xr.scenecore.SurfaceEntity.CanvasShape canvasShape;
+    property public androidx.xr.runtime.math.FloatSize3d dimensions;
+    property public androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams edgeFeather;
+    property public androidx.xr.scenecore.Texture? primaryAlphaMaskTexture;
+    property public int stereoMode;
+    field public static final androidx.xr.scenecore.SurfaceEntity.Companion Companion;
+  }
+
+  public abstract static class SurfaceEntity.CanvasShape {
+    method public androidx.xr.runtime.math.FloatSize3d getDimensions();
+    property public androidx.xr.runtime.math.FloatSize3d dimensions;
+  }
+
+  public static final class SurfaceEntity.CanvasShape.Quad extends androidx.xr.scenecore.SurfaceEntity.CanvasShape {
+    ctor public SurfaceEntity.CanvasShape.Quad(float width, float height);
+    method public float getHeight();
+    method public float getWidth();
+    property public androidx.xr.runtime.math.FloatSize3d dimensions;
+    property public float height;
+    property public float width;
+  }
+
+  public static final class SurfaceEntity.CanvasShape.Vr180Hemisphere extends androidx.xr.scenecore.SurfaceEntity.CanvasShape {
+    ctor public SurfaceEntity.CanvasShape.Vr180Hemisphere(float radius);
+    method public float getRadius();
+    property public androidx.xr.runtime.math.FloatSize3d dimensions;
+    property public float radius;
+  }
+
+  public static final class SurfaceEntity.CanvasShape.Vr360Sphere extends androidx.xr.scenecore.SurfaceEntity.CanvasShape {
+    ctor public SurfaceEntity.CanvasShape.Vr360Sphere(float radius);
+    method public float getRadius();
+    property public androidx.xr.runtime.math.FloatSize3d dimensions;
+    property public float radius;
+  }
+
+  public static final class SurfaceEntity.Companion {
+    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session);
+    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode);
+    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose);
+    method @MainThread public androidx.xr.scenecore.SurfaceEntity create(androidx.xr.runtime.Session session, optional int stereoMode, optional androidx.xr.runtime.math.Pose pose, optional androidx.xr.scenecore.SurfaceEntity.CanvasShape canvasShape);
+  }
+
+  public abstract static class SurfaceEntity.EdgeFeatheringParams {
+  }
+
+  public static final class SurfaceEntity.EdgeFeatheringParams.SmoothFeather extends androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams {
+    ctor public SurfaceEntity.EdgeFeatheringParams.SmoothFeather();
+    ctor public SurfaceEntity.EdgeFeatheringParams.SmoothFeather(optional @FloatRange(from=0.0, to=0.5) float leftRight, optional @FloatRange(from=0.0, to=0.5) float topBottom);
+    method public float getLeftRight();
+    method public float getTopBottom();
+    property @FloatRange(from=0.0, to=0.5) public float leftRight;
+    property @FloatRange(from=0.0, to=0.5) public float topBottom;
+  }
+
+  public static final class SurfaceEntity.EdgeFeatheringParams.SolidEdge extends androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams {
+    ctor public SurfaceEntity.EdgeFeatheringParams.SolidEdge();
+  }
+
+  public static final class SurfaceEntity.StereoMode {
+    property public static int MONO;
+    property public static int MULTIVIEW_LEFT_PRIMARY;
+    property public static int MULTIVIEW_RIGHT_PRIMARY;
+    property public static int SIDE_BY_SIDE;
+    property public static int TOP_BOTTOM;
+    field public static final androidx.xr.scenecore.SurfaceEntity.StereoMode INSTANCE;
+    field public static final int MONO = 0; // 0x0
+    field public static final int MULTIVIEW_LEFT_PRIMARY = 4; // 0x4
+    field public static final int MULTIVIEW_RIGHT_PRIMARY = 5; // 0x5
+    field public static final int SIDE_BY_SIDE = 2; // 0x2
+    field public static final int TOP_BOTTOM = 1; // 0x1
+  }
+
+  public class Texture {
+    method @MainThread public static final suspend Object? create(androidx.xr.runtime.Session session, java.nio.file.Path path, androidx.xr.scenecore.TextureSampler sampler, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.Texture>);
+    method @MainThread public void dispose();
+    field public static final androidx.xr.scenecore.Texture.Companion Companion;
+  }
+
+  public static final class Texture.Companion {
+    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, java.nio.file.Path path, androidx.xr.scenecore.TextureSampler sampler, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.Texture>);
+  }
+
+  public final class TextureSampler {
+    method public static androidx.xr.scenecore.TextureSampler create();
+    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter);
+    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter);
+    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS);
+    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT);
+    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR);
+    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode);
+    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode, optional int compareFunc);
+    method public static androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode, optional int compareFunc, optional int anisotropyLog2);
+    method public int getAnisotropyLog2();
+    method public int getCompareFunc();
+    method public int getCompareMode();
+    method public int getMagFilter();
+    method public int getMinFilter();
+    method public int getWrapModeR();
+    method public int getWrapModeS();
+    method public int getWrapModeT();
+    property public int anisotropyLog2;
+    property public int compareFunc;
+    property public int compareMode;
+    property public int magFilter;
+    property public int minFilter;
+    property public int wrapModeR;
+    property public int wrapModeS;
+    property public int wrapModeT;
+    field public static final androidx.xr.scenecore.TextureSampler.Companion Companion;
+  }
+
+  public static final class TextureSampler.Companion {
+    method public androidx.xr.scenecore.TextureSampler create();
+    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter);
+    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter);
+    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS);
+    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT);
+    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR);
+    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode);
+    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode, optional int compareFunc);
+    method public androidx.xr.scenecore.TextureSampler create(optional int minFilter, optional int magFilter, optional int wrapModeS, optional int wrapModeT, optional int wrapModeR, optional int compareMode, optional int compareFunc, optional int anisotropyLog2);
+  }
+
+  public static final class TextureSampler.CompareFunc {
+    property public static int A;
+    property public static int E;
+    property public static int G;
+    property public static int GE;
+    property public static int L;
+    property public static int LE;
+    property public static int N;
+    property public static int NE;
+    field public static final int A = 6; // 0x6
+    field public static final int E = 4; // 0x4
+    field public static final int G = 3; // 0x3
+    field public static final int GE = 1; // 0x1
+    field public static final androidx.xr.scenecore.TextureSampler.CompareFunc INSTANCE;
+    field public static final int L = 2; // 0x2
+    field public static final int LE = 0; // 0x0
+    field public static final int N = 7; // 0x7
+    field public static final int NE = 5; // 0x5
+  }
+
+  public static final class TextureSampler.CompareMode {
+    property public static int COMPARE_TO_TEXTURE;
+    property public static int NONE;
+    field public static final int COMPARE_TO_TEXTURE = 1; // 0x1
+    field public static final androidx.xr.scenecore.TextureSampler.CompareMode INSTANCE;
+    field public static final int NONE = 0; // 0x0
+  }
+
+  public static final class TextureSampler.MagFilter {
+    property public static int LINEAR;
+    property public static int NEAREST;
+    field public static final androidx.xr.scenecore.TextureSampler.MagFilter INSTANCE;
+    field public static final int LINEAR = 1; // 0x1
+    field public static final int NEAREST = 0; // 0x0
+  }
+
+  public static final class TextureSampler.MinFilter {
+    property public static int LINEAR;
+    property public static int LINEAR_MIPMAP_LINEAR;
+    property public static int LINEAR_MIPMAP_NEAREST;
+    property public static int NEAREST;
+    property public static int NEAREST_MIPMAP_LINEAR;
+    property public static int NEAREST_MIPMAP_NEAREST;
+    field public static final androidx.xr.scenecore.TextureSampler.MinFilter INSTANCE;
+    field public static final int LINEAR = 1; // 0x1
+    field public static final int LINEAR_MIPMAP_LINEAR = 5; // 0x5
+    field public static final int LINEAR_MIPMAP_NEAREST = 3; // 0x3
+    field public static final int NEAREST = 0; // 0x0
+    field public static final int NEAREST_MIPMAP_LINEAR = 4; // 0x4
+    field public static final int NEAREST_MIPMAP_NEAREST = 2; // 0x2
+  }
+
+  public static final class TextureSampler.WrapMode {
+    property public static int CLAMP_TO_EDGE;
+    property public static int MIRRORED_REPEAT;
+    property public static int REPEAT;
+    field public static final int CLAMP_TO_EDGE = 0; // 0x0
+    field public static final androidx.xr.scenecore.TextureSampler.WrapMode INSTANCE;
+    field public static final int MIRRORED_REPEAT = 2; // 0x2
+    field public static final int REPEAT = 1; // 0x1
+  }
+
+  public final class WaterMaterial extends androidx.xr.scenecore.Material {
+    method @MainThread public static suspend Object? create(androidx.xr.runtime.Session session, boolean isAlphaMapVersion, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.WaterMaterial>);
+    method @MainThread public void dispose();
+    method @MainThread public void setAlphaMap(androidx.xr.scenecore.Texture alphaMap);
+    method @MainThread public void setAlphaStepMultiplier(float alphaStepMultiplier);
+    method @MainThread public void setNormalBoundary(float normalBoundary);
+    method @MainThread public void setNormalMap(androidx.xr.scenecore.Texture normalMap);
+    method @MainThread public void setNormalSpeed(float normalSpeed);
+    method @MainThread public void setNormalTiling(float normalTiling);
+    method @MainThread public void setNormalZ(float normalZ);
+    method @MainThread public void setReflectionMap(androidx.xr.scenecore.CubeMapTexture reflectionMap);
+    field public static final androidx.xr.scenecore.WaterMaterial.Companion Companion;
+  }
+
+  public static final class WaterMaterial.Companion {
+    method @MainThread public suspend Object? create(androidx.xr.runtime.Session session, boolean isAlphaMapVersion, kotlin.coroutines.Continuation<? super androidx.xr.scenecore.WaterMaterial>);
   }
 
 }
