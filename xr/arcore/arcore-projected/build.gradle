@@ -51,7 +51,7 @@ android {
 
 androidx {
     name = "XR Projected ARCore"
-    type = SoftwareType.PUBLISHED_LIBRARY
+    type = SoftwareType.SNAPSHOT_ONLY_LIBRARY_WITH_API_TASKS
     inceptionYear = "2025"
-    description = "An implementation of the XR Perception APIs using Projected Glasses runtime."
+    description = "An implementation of the XR Perception APIs using the XR Projected SDK."
 }
