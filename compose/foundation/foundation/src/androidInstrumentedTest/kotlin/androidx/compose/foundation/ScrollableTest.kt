@@ -1523,7 +1523,7 @@ class ScrollableTest {
             ScrollableState(
                 consumeScrollDelta = {
                     val expected = lastReceivedPreScrollAvailable * (1 - preConsumeFraction)
-                    assertThat(it - expected).isWithin(0.01f)
+                    assertThat(it).isWithin(0.01f).of(expected)
                     value += it
                     it
                 }
@@ -1585,7 +1585,7 @@ class ScrollableTest {
             ScrollableState(
                 consumeScrollDelta = {
                     val expected = lastReceivedPreScrollAvailable * (1 - preConsumeFraction)
-                    assertThat(it - expected).isWithin(0.01f)
+                    assertThat(it).isWithin(0.01f).of(expected)
                     value += it
                     it
                 }
@@ -3849,7 +3849,7 @@ internal class ScrollableContainerReaderNodeElement(val hasScrollableBlock: (Boo
 
         other as ScrollableContainerReaderNodeElement
 
-        if (hasScrollableBlock != other.hasScrollableBlock) return false
+        if (hasScrollableBlock !== other.hasScrollableBlock) return false
 
         return true
     }

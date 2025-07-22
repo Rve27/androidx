@@ -599,8 +599,8 @@ class Scrollable2DTest {
             Scrollable2DState(
                 consumeScrollDelta = {
                     val expected = lastReceivedPreScrollAvailable * (1 - preConsumeFraction)
-                    assertThat((it - expected).x).isWithin(0.01f)
-                    assertThat((it - expected).y).isWithin(0.01f)
+                    assertThat(it.x).isWithin(0.01f).of(expected.x)
+                    assertThat(it.y).isWithin(0.01f).of(expected.y)
                     value += it
                     it
                 }
@@ -758,8 +758,8 @@ class Scrollable2DTest {
                         Offset(50f, 50f),
                         NestedScrollSource.UserInput,
                     )
-                assertThat((consumed - expectedConsumed).x).isWithin(0.001f)
-                assertThat((consumed - expectedConsumed).y).isWithin(0.001f)
+                assertThat(consumed.x).isWithin(0.001f).of(expectedConsumed.x)
+                assertThat(consumed.y).isWithin(0.001f).of(expectedConsumed.y)
                 value
             }
 
