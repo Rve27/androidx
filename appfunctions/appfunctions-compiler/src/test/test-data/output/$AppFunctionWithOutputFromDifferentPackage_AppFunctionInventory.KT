@@ -3,12 +3,13 @@ package com.testdata
 import androidx.appfunctions.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionDataTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionLongTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
-import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
+import androidx.appfunctions.metadata.AppFunctionStringTypeMetadata
 import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
 import androidx.appfunctions.service.`internal`.AppFunctionInventory
 import javax.`annotation`.processing.Generated
@@ -50,8 +51,7 @@ public class `$AppFunctionWithOutputFromDifferentPackage_AppFunctionInventory` :
         )
 
     private val COM_TESTDATA_DIFFERENTPACKAGE_DIFFPACKAGESERIALIZABLE_OBJECT_DATA_TYPE_PROPERTIES_MAP_LONGPARAM:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 6,
+        AppFunctionLongTypeMetadata = AppFunctionLongTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -122,8 +122,7 @@ public class `$AppFunctionWithOutputFromDifferentPackage_AppFunctionInventory` :
         )
 
     private val COM_TESTDATA_ANOTHERDIFFERENTPACKAGE_ANOTHERDIFFPACKAGESERIALIZABLE_OBJECT_DATA_TYPE_PROPERTIES_MAP_STRINGPARAM:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 8,
+        AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
             description = ""
         )

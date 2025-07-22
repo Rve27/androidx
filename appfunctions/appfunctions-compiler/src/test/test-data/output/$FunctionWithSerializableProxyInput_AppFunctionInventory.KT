@@ -3,12 +3,14 @@ package com.testdata
 import androidx.appfunctions.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionDataTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionIntTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
-import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
+import androidx.appfunctions.metadata.AppFunctionStringTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionUnitTypeMetadata
 import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
 import androidx.appfunctions.service.`internal`.AppFunctionInventory
 import javax.`annotation`.processing.Generated
@@ -50,9 +52,8 @@ public class `$FunctionWithSerializableProxyInput_AppFunctionInventory` : AppFun
       LOCALDATETIME_PARAMETER_METADATA,
     )
 
-    private val PRIMITIVE_RESPONSE_VALUE_TYPE: AppFunctionPrimitiveTypeMetadata =
-        AppFunctionPrimitiveTypeMetadata(
-            type = 0,
+    private val PRIMITIVE_RESPONSE_VALUE_TYPE: AppFunctionUnitTypeMetadata =
+        AppFunctionUnitTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -63,50 +64,43 @@ public class `$FunctionWithSerializableProxyInput_AppFunctionInventory` : AppFun
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_YEAR:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_MONTH:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_DAYOFMONTH:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_HOUR:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_MINUTE:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_SECOND:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_NANOOFSECOND:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -184,9 +178,8 @@ public class `$FunctionWithSerializableProxyInput_AppFunctionInventory` : AppFun
       SERIALIZABLEWITHPROXYTYPE_PARAMETER_METADATA,
     )
 
-    private val PRIMITIVE_RESPONSE_VALUE_TYPE: AppFunctionPrimitiveTypeMetadata =
-        AppFunctionPrimitiveTypeMetadata(
-            type = 0,
+    private val PRIMITIVE_RESPONSE_VALUE_TYPE: AppFunctionUnitTypeMetadata =
+        AppFunctionUnitTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -197,50 +190,43 @@ public class `$FunctionWithSerializableProxyInput_AppFunctionInventory` : AppFun
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_YEAR:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_MONTH:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_DAYOFMONTH:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_HOUR:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_MINUTE:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_SECOND:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
 
     private val JAVA_TIME_LOCALDATETIME_OBJECT_DATA_TYPE_PROPERTIES_MAP_NANOOFSECOND:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -277,8 +263,7 @@ public class `$FunctionWithSerializableProxyInput_AppFunctionInventory` : AppFun
         )
 
     private val ANDROID_NET_URI_OBJECT_DATA_TYPE_PROPERTIES_MAP_URISTRING:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 8,
+        AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
             description = ""
         )

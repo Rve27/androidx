@@ -3,12 +3,14 @@ package com.testdata
 import androidx.appfunctions.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionDataTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionIntTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
-import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
+import androidx.appfunctions.metadata.AppFunctionStringTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionUnitTypeMetadata
 import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
 import androidx.appfunctions.service.`internal`.AppFunctionInventory
 import javax.`annotation`.processing.Generated
@@ -64,9 +66,8 @@ public class `$FunctionWithGenericSerializable_AppFunctionInventory` : AppFuncti
       TOPLEVELGENERICPARAM_PARAMETER_METADATA,
     )
 
-    private val PRIMITIVE_RESPONSE_VALUE_TYPE: AppFunctionPrimitiveTypeMetadata =
-        AppFunctionPrimitiveTypeMetadata(
-            type = 0,
+    private val PRIMITIVE_RESPONSE_VALUE_TYPE: AppFunctionUnitTypeMetadata =
+        AppFunctionUnitTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -77,8 +78,7 @@ public class `$FunctionWithGenericSerializable_AppFunctionInventory` : AppFuncti
         )
 
     private val COM_TESTDATA_SETFIELD_KOTLIN_STRING__OBJECT_DATA_TYPE_PROPERTIES_MAP_VALUE:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 8,
+        AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -103,8 +103,7 @@ public class `$FunctionWithGenericSerializable_AppFunctionInventory` : AppFuncti
         )
 
     private val COM_TESTDATA_SETFIELD_KOTLIN_STRING_NULLABLE__OBJECT_DATA_TYPE_PROPERTIES_MAP_VALUE:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 8,
+        AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = true,
             description = ""
         )
@@ -129,8 +128,7 @@ public class `$FunctionWithGenericSerializable_AppFunctionInventory` : AppFuncti
         )
 
     private val COM_TESTDATA_ATTACHMENT_OBJECT_DATA_TYPE_PROPERTIES_MAP_URI:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 8,
+        AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -270,8 +268,7 @@ public class `$FunctionWithGenericSerializable_AppFunctionInventory` : AppFuncti
         )
 
     private val COM_TESTDATA_SETFIELD_KOTLIN_INT__OBJECT_DATA_TYPE_PROPERTIES_MAP_VALUE:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 7,
+        AppFunctionIntTypeMetadata = AppFunctionIntTypeMetadata(
             isNullable = false,
             description = ""
         )

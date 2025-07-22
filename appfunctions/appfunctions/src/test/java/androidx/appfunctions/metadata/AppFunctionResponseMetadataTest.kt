@@ -16,7 +16,7 @@
 
 package androidx.appfunctions.metadata
 
-import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata.Companion.TYPE_INT
+import androidx.appfunctions.metadata.AppFunctionDataTypeMetadata.Companion.TYPE_INT
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -26,7 +26,7 @@ class AppFunctionResponseMetadataTest {
     fun appFunctionResponseMetadata_toAppFunctionResponseMetadataDocument_returnsCorrectDocument() {
         val responseMetadata =
             AppFunctionResponseMetadata(
-                valueType = AppFunctionPrimitiveTypeMetadata(type = TYPE_INT, isNullable = false),
+                valueType = AppFunctionIntTypeMetadata(isNullable = false),
                 description = "Test response description",
             )
 
@@ -36,7 +36,10 @@ class AppFunctionResponseMetadataTest {
             .isEqualTo(
                 AppFunctionResponseMetadataDocument(
                     valueType =
-                        AppFunctionDataTypeMetadataDocument(type = TYPE_INT, isNullable = false),
+                        AppFunctionDataTypeMetadataDocument(
+                            type = AppFunctionDataTypeMetadata.TYPE_INT,
+                            isNullable = false,
+                        ),
                     description = "Test response description",
                 )
             )
@@ -56,8 +59,7 @@ class AppFunctionResponseMetadataTest {
         assertThat(responseMetadata)
             .isEqualTo(
                 AppFunctionResponseMetadata(
-                    valueType =
-                        AppFunctionPrimitiveTypeMetadata(type = TYPE_INT, isNullable = false),
+                    valueType = AppFunctionIntTypeMetadata(false),
                     description = "Test response description",
                 )
             )

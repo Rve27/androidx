@@ -4,12 +4,13 @@ import androidx.appfunctions.metadata.AppFunctionAllOfTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionArrayTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionComponentsMetadata
 import androidx.appfunctions.metadata.AppFunctionDataTypeMetadata
+import androidx.appfunctions.metadata.AppFunctionLongTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionObjectTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionParameterMetadata
-import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionReferenceTypeMetadata
 import androidx.appfunctions.metadata.AppFunctionResponseMetadata
 import androidx.appfunctions.metadata.AppFunctionSchemaMetadata
+import androidx.appfunctions.metadata.AppFunctionStringTypeMetadata
 import androidx.appfunctions.metadata.CompileTimeAppFunctionMetadata
 import androidx.appfunctions.service.`internal`.AppFunctionInventory
 import javax.`annotation`.processing.Generated
@@ -50,8 +51,7 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_0_PROPERTIES_MAP_STRINGTOOPEN:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 8,
+        AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -76,8 +76,7 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_1_PROPERTIES_MAP_AGE:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 6,
+        AppFunctionLongTypeMetadata = AppFunctionLongTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -182,8 +181,7 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_0_PROPERTIES_MAP_STRINGTOOPEN:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 8,
+        AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -208,8 +206,7 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_1_PROPERTIES_MAP_AGE:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 6,
+        AppFunctionLongTypeMetadata = AppFunctionLongTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -314,8 +311,7 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_0_PROPERTIES_MAP_STRINGTOOPEN:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 8,
+        AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -340,8 +336,7 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_1_PROPERTIES_MAP_AGE:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 6,
+        AppFunctionLongTypeMetadata = AppFunctionLongTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -439,8 +434,7 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_0_PROPERTIES_MAP_STRINGTOOPEN:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 8,
+        AppFunctionStringTypeMetadata = AppFunctionStringTypeMetadata(
             isNullable = false,
             description = ""
         )
@@ -465,8 +459,7 @@ public class `$DerivedSerializableOutputFunctions_AppFunctionInventory` : AppFun
         )
 
     private val COM_TESTDATA_LONGBASESERIALIZABLE_ALL_OF_DATA_TYPE_MATCH_ALL_LIST_ITEM_1_PROPERTIES_MAP_AGE:
-        AppFunctionPrimitiveTypeMetadata = AppFunctionPrimitiveTypeMetadata(
-            type = 6,
+        AppFunctionLongTypeMetadata = AppFunctionLongTypeMetadata(
             isNullable = false,
             description = ""
         )

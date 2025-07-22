@@ -15,9 +15,6 @@
  */
 package androidx.appfunctions.metadata
 
-import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata.Companion.TYPE_INT
-import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata.Companion.TYPE_LONG
-import androidx.appfunctions.metadata.AppFunctionPrimitiveTypeMetadata.Companion.TYPE_STRING
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
@@ -30,8 +27,7 @@ class AppFunctionMetadataTest {
         val parameters = emptyList<AppFunctionParameterMetadata>()
         val response =
             AppFunctionResponseMetadata(
-                valueType =
-                    AppFunctionPrimitiveTypeMetadata(type = TYPE_STRING, isNullable = false),
+                valueType = AppFunctionStringTypeMetadata(false),
                 description = "The response description",
             )
         val description = "The function's description"
@@ -79,8 +75,8 @@ class AppFunctionMetadataTest {
         val isEnabledByDefault = true
         val schemaMetadata =
             AppFunctionSchemaMetadata(category = "testCategory", name = "testName", version = 1L)
-        val primitiveTypeInt = AppFunctionPrimitiveTypeMetadata(TYPE_INT, true)
-        val primitiveTypeLong = AppFunctionPrimitiveTypeMetadata(TYPE_LONG, true)
+        val primitiveTypeInt = AppFunctionIntTypeMetadata(true)
+        val primitiveTypeLong = AppFunctionLongTypeMetadata(true)
         val parameters =
             listOf<AppFunctionParameterMetadata>(
                 AppFunctionParameterMetadata(
@@ -98,12 +94,11 @@ class AppFunctionMetadataTest {
             )
         val response =
             AppFunctionResponseMetadata(
-                valueType =
-                    AppFunctionPrimitiveTypeMetadata(type = TYPE_STRING, isNullable = false),
+                valueType = AppFunctionStringTypeMetadata(false),
                 description = "The response description",
             )
-        val primitiveType1 = AppFunctionPrimitiveTypeMetadata(TYPE_INT, false)
-        val primitiveType2 = AppFunctionPrimitiveTypeMetadata(TYPE_STRING, true)
+        val primitiveType1 = AppFunctionIntTypeMetadata(false)
+        val primitiveType2 = AppFunctionStringTypeMetadata(true)
         val components =
             AppFunctionComponentsMetadata(
                 mapOf("dataType1" to primitiveType1, "dataType2" to primitiveType2)
