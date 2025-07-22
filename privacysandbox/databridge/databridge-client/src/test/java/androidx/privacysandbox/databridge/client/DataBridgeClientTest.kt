@@ -397,17 +397,15 @@ class DataBridgeClientTest {
     fun testRegisterKeyUpdates_oneCallback_oneKey() = runBlocking {
         val callback = KeyUpdateCallbackImpl()
 
-        callback.initializeLatch(listOf(intKey))
         dataBridgeClient.registerKeyUpdateCallback(setOf(intKey), currentThreadExecutor, callback)
-        verifyCountAndValue(callback, intKey, 1, null)
 
         callback.initializeLatch(listOf(intKey))
         dataBridgeClient.setValue(intKey, 123)
-        verifyCountAndValue(callback, intKey, 2, 123)
+        verifyCountAndValue(callback, intKey, 1, 123)
 
         callback.initializeLatch(listOf(intKey))
         dataBridgeClient.removeValue(intKey)
-        verifyCountAndValue(callback, intKey, 3, null)
+        verifyCountAndValue(callback, intKey, 2, null)
 
         dataBridgeClient.unregisterKeyUpdateCallback(callback)
     }
@@ -416,29 +414,25 @@ class DataBridgeClientTest {
     fun testRegisterKeyUpdates_oneCallback_multipleKeys_registeredMultipleTimes() = runBlocking {
         val callback = KeyUpdateCallbackImpl()
 
-        callback.initializeLatch(listOf(intKey))
         dataBridgeClient.registerKeyUpdateCallback(setOf(intKey), currentThreadExecutor, callback)
-        verifyCountAndValue(callback, intKey, 1, null)
 
         callback.initializeLatch(listOf(intKey))
         dataBridgeClient.setValue(intKey, 123)
-        verifyCountAndValue(callback, intKey, 2, 123)
+        verifyCountAndValue(callback, intKey, 1, 123)
 
         callback.initializeLatch(listOf(intKey))
         dataBridgeClient.removeValue(intKey)
-        verifyCountAndValue(callback, intKey, 3, null)
+        verifyCountAndValue(callback, intKey, 2, null)
 
-        callback.initializeLatch(listOf(stringKey))
         dataBridgeClient.registerKeyUpdateCallback(
             setOf(stringKey),
             currentThreadExecutor,
             callback,
         )
-        verifyCountAndValue(callback, stringKey, 1, null)
 
         callback.initializeLatch(listOf(stringKey))
         dataBridgeClient.setValue(stringKey, "stringValue")
-        verifyCountAndValue(callback, stringKey, 2, "stringValue")
+        verifyCountAndValue(callback, stringKey, 1, "stringValue")
 
         dataBridgeClient.unregisterKeyUpdateCallback(callback)
     }
@@ -447,24 +441,21 @@ class DataBridgeClientTest {
     fun testRegisterKeyUpdates_oneCallback_multipleKeys() = runBlocking {
         val callback = KeyUpdateCallbackImpl()
 
-        callback.initializeLatch(listOf(intKey, stringKey))
         dataBridgeClient.registerKeyUpdateCallback(
             setOf(intKey, stringKey),
             currentThreadExecutor,
             callback,
         )
-        verifyCountAndValue(callback, intKey, 1, null)
-        verifyCountAndValue(callback, stringKey, 1, null)
 
         callback.initializeLatch(listOf(intKey, stringKey))
         dataBridgeClient.setValues(mapOf(intKey to 123, stringKey to "stringValue"))
-        verifyCountAndValue(callback, intKey, 2, 123)
-        verifyCountAndValue(callback, stringKey, 2, "stringValue")
+        verifyCountAndValue(callback, intKey, 1, 123)
+        verifyCountAndValue(callback, stringKey, 1, "stringValue")
 
         callback.initializeLatch(listOf(intKey, stringKey))
         dataBridgeClient.removeValues(setOf(intKey, stringKey))
-        verifyCountAndValue(callback, intKey, 3, null)
-        verifyCountAndValue(callback, stringKey, 3, null)
+        verifyCountAndValue(callback, intKey, 2, null)
+        verifyCountAndValue(callback, stringKey, 2, null)
 
         dataBridgeClient.unregisterKeyUpdateCallback(callback)
     }
@@ -474,27 +465,23 @@ class DataBridgeClientTest {
         val callback1 = KeyUpdateCallbackImpl()
         val callback2 = KeyUpdateCallbackImpl()
 
-        callback1.initializeLatch(listOf(intKey, stringKey))
         dataBridgeClient.registerKeyUpdateCallback(
             setOf(intKey, stringKey),
             currentThreadExecutor,
             callback1,
         )
-        verifyCountAndValue(callback1, stringKey, 1, null)
 
-        callback2.initializeLatch(listOf(doubleKey, stringKey))
         dataBridgeClient.registerKeyUpdateCallback(
             setOf(doubleKey, stringKey),
             currentThreadExecutor,
             callback2,
         )
-        verifyCountAndValue(callback2, stringKey, 1, null)
 
         callback1.initializeLatch(listOf(stringKey))
         callback2.initializeLatch(listOf(stringKey))
         dataBridgeClient.setValue(stringKey, "stringValue")
-        verifyCountAndValue(callback1, stringKey, 2, "stringValue")
-        verifyCountAndValue(callback2, stringKey, 2, "stringValue")
+        verifyCountAndValue(callback1, stringKey, 1, "stringValue")
+        verifyCountAndValue(callback2, stringKey, 1, "stringValue")
 
         dataBridgeClient.unregisterKeyUpdateCallback(callback1)
         dataBridgeClient.unregisterKeyUpdateCallback(callback2)

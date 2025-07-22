@@ -39,10 +39,7 @@ import androidx.privacysandbox.sdkruntime.client.SdkSandboxManagerCompat
 import androidx.privacysandbox.sdkruntime.core.AppOwnedSdkSandboxInterfaceCompat
 import java.lang.ClassCastException
 import java.util.concurrent.Executor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 
 /**
  * This class provides APIs for the app process to access the data.
@@ -347,16 +344,6 @@ public abstract class DataBridgeClient private constructor() {
 
                 if (!keyUpdateCallbackWithExecutorForKey.contains(keyUpdateCallbackWithExecutor)) {
                     keyUpdateCallbackWithExecutorForKey.add(keyUpdateCallbackWithExecutor)
-                }
-
-                val scope = CoroutineScope(Dispatchers.IO)
-                scope.launch {
-                    val result = getValue(key)
-                    executor.execute {
-                        if (result.isSuccess) {
-                            callback.onKeyUpdated(key, result.getOrNull())
-                        }
-                    }
                 }
             }
         }

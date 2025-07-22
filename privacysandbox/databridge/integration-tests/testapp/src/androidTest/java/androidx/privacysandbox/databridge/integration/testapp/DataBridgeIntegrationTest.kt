@@ -236,29 +236,25 @@ class DataBridgeIntegrationTest {
         val callback1 = KeyUpdateCallbackImpl()
         val callback2 = KeyUpdateCallbackImpl()
 
-        callback1.initializeLatch(listOf(intKey, stringKey))
         getActivity()
             .registerKeyUpdateCallbackFromApp(
                 setOf(intKey, stringKey),
                 currentThreadExecutor,
                 callback1,
             )
-        verifyCountAndValue(callback1, stringKey, 1, null)
 
-        callback2.initializeLatch(listOf(doubleKey, stringKey))
         getActivity()
             .registerKeyUpdateCallbackFromApp(
                 setOf(doubleKey, stringKey),
                 currentThreadExecutor,
                 callback2,
             )
-        verifyCountAndValue(callback2, stringKey, 1, null)
 
         callback1.initializeLatch(listOf(stringKey))
         callback2.initializeLatch(listOf(stringKey))
         getActivity().setValuesFromApp(mapOf(stringKey to "stringValue"))
-        verifyCountAndValue(callback1, stringKey, 2, "stringValue")
-        verifyCountAndValue(callback2, stringKey, 2, "stringValue")
+        verifyCountAndValue(callback1, stringKey, 1, "stringValue")
+        verifyCountAndValue(callback2, stringKey, 1, "stringValue")
 
         getActivity().unregisterKeyUpdateCallbackFromApp(callback1)
         getActivity().unregisterKeyUpdateCallbackFromApp(callback2)
@@ -268,14 +264,12 @@ class DataBridgeIntegrationTest {
     fun testUnregisterKeyUpdates() = runTest {
         val callback = KeyUpdateCallbackImpl()
 
-        callback.initializeLatch(listOf(intKey))
         getActivity()
             .registerKeyUpdateCallbackFromApp(setOf(intKey), currentThreadExecutor, callback)
-        verifyCountAndValue(callback, intKey, 1, null)
 
         callback.initializeLatch(listOf(intKey))
         getActivity().setValuesFromApp(mapOf(intKey to 123))
-        verifyCountAndValue(callback, intKey, 2, 123)
+        verifyCountAndValue(callback, intKey, 1, 123)
 
         getActivity().unregisterKeyUpdateCallbackFromApp(callback)
         callback.initializeLatch(listOf(intKey))
