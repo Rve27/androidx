@@ -42,6 +42,8 @@ dependencies {
     implementation("androidx.profileinstaller:profileinstaller:1.4.1")
 
     androidTestImplementation(project(":internal-testutils-runtime"))
+    androidTestImplementation(project(":internal-testutils-truth"))
+    androidTestImplementation(libs.kotlinCoroutinesTest)
     androidTestImplementation(libs.truth)
     androidTestImplementation(libs.testExtJunit)
     androidTestImplementation(libs.espressoCore)
