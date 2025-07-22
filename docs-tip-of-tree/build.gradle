@@ -444,6 +444,7 @@ dependencies {
     docs(project(":xr:scenecore:scenecore"))
     docs(project(":xr:scenecore:scenecore-guava"))
     docs(project(":xr:scenecore:scenecore-spatial-core"))
+    docs(project(":xr:scenecore:scenecore-spatial-rendering"))
     docs(project(":xr:scenecore:scenecore-testing"))
 }
 afterEvaluate {

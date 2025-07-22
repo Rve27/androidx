@@ -570,6 +570,20 @@ package androidx.xr.runtime.testing {
     ctor public FakePointerCaptureComponent(optional java.util.concurrent.Executor? executor, optional androidx.xr.runtime.internal.PointerCaptureComponent.StateListener? stateListener);
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRenderingRuntime implements androidx.xr.runtime.internal.RenderingRuntime {
+    ctor public FakeRenderingRuntime(androidx.xr.runtime.internal.SceneRuntime sceneRuntime, android.app.Activity activity);
+    method public void dispose();
+    method public void startRenderer();
+    method public void stopRenderer();
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRenderingRuntimeFactory implements androidx.xr.runtime.internal.RenderingRuntimeFactory {
+    ctor public FakeRenderingRuntimeFactory();
+    method public androidx.xr.runtime.internal.RenderingRuntime create(androidx.xr.runtime.internal.SceneRuntime sceneRuntime, android.app.Activity activity);
+    method public java.util.Set<androidx.xr.runtime.internal.Feature> getRequirements();
+    property public java.util.Set<androidx.xr.runtime.internal.Feature> requirements;
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeResizableComponent extends androidx.xr.runtime.testing.FakeComponent implements androidx.xr.runtime.internal.ResizableComponent {
     ctor public FakeResizableComponent();
     ctor public FakeResizableComponent(optional androidx.xr.runtime.internal.Dimensions size, optional androidx.xr.runtime.internal.Dimensions minimumSize, optional androidx.xr.runtime.internal.Dimensions maximumSize, optional float fixedAspectRatio, optional boolean autoHideContent, optional boolean autoUpdateSize, optional boolean forceShowResizeOverlay);
