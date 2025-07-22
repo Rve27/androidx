@@ -38,17 +38,39 @@ import org.jetbrains.kotlin.library.abi.AbiValueParameter
 import org.jetbrains.kotlin.library.abi.AbiVariance
 import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
 import org.jetbrains.kotlin.library.abi.LibraryAbi
+import org.jetbrains.kotlin.library.abi.LibraryAbiReader
 
 @OptIn(ExperimentalLibraryAbiReader::class)
 class BinaryCompatibilityChecker(
     private val newLibraryAbi: LibraryAbi,
     private val oldLibraryAbi: LibraryAbi,
+    private val dependencies: Collection<File>,
 ) {
+
+    private val declarationsProvidedByCompiler by lazy {
+        FictionalFunctionAbiBuilder.build().allDeclarations().associateBy { it.asTypeString() }
+    }
+    private val dependencyDeclarations by lazy {
+        declarationsProvidedByCompiler +
+            dependencies
+                .flatMap {
+                    try {
+                        LibraryAbiReader.readAbiInfo(it)
+                            .allDeclarations()
+                            .filterIsInstance<AbiClass>()
+                    } catch (e: IllegalArgumentException) {
+                        // Malformed library, probably missing IR and can't be used
+                        listOf()
+                    }
+                }
+                .associateBy { it.asTypeString() }
+    }
+
     private val newLibraryDeclarations by lazy {
-        newLibraryAbi.allDeclarations().associateBy { it.asTypeString() }
+        dependencyDeclarations + newLibraryAbi.allDeclarations().associateBy { it.asTypeString() }
     }
     private val oldLibraryDeclarations by lazy {
-        oldLibraryAbi.allDeclarations().associateBy { it.asTypeString() }
+        dependencyDeclarations + oldLibraryAbi.allDeclarations().associateBy { it.asTypeString() }
     }
 
     private fun checkBinariesAreCompatible(
@@ -273,8 +295,9 @@ class BinaryCompatibilityChecker(
                 .toMutableMap()
         superTypes
             .map {
-                // we should throw here if we can't find the class in the package/dependencies
-                oldLibraryDeclarations[it.asString()]
+                oldLibraryDeclarations.getOrElse(it.className.toString()) {
+                    throw IllegalStateException("Missing declaration ${it.asString()}")
+                }
             }
             .filterIsInstance<AbiClass>()
             .flatMap { it.allMethodsIncludingInherited(oldLibraryDeclarations, baseClass) }
@@ -423,6 +446,7 @@ class BinaryCompatibilityChecker(
             baselines: Set<String> = emptySet(),
             validate: Boolean = true,
             shouldFreeze: Boolean = false,
+            dependencies: Map<String, Collection<File>> = mapOf(),
         ): List<CompatibilityError> {
             val errors = CompatibilityErrors(baselines, "meta")
             val removedTargets = oldLibraries.keys - newLibraries.keys
@@ -455,7 +479,11 @@ class BinaryCompatibilityChecker(
                         ?: return@flatMap emptyList()
                 val oldLib = oldLibraries[target]!!
                 val errorsForTarget = CompatibilityErrors(baselines, target)
-                BinaryCompatibilityChecker(newLib, oldLib)
+                val dependenciesForTarget =
+                    dependencies.getOrElse(target) {
+                        throw IllegalStateException("Dependencies missing for target $target")
+                    }
+                BinaryCompatibilityChecker(newLib, oldLib, dependenciesForTarget)
                     .checkBinariesAreCompatible(errorsForTarget, validate, shouldFreeze)
             }
         }
@@ -466,6 +494,7 @@ class BinaryCompatibilityChecker(
             baselineFile: File?,
             validate: Boolean = true,
             shouldFreeze: Boolean = false,
+            dependencies: Map<String, Collection<File>> = mapOf(),
         ) =
             checkAllBinariesAreCompatible(
                 newLibraries,
@@ -473,6 +502,7 @@ class BinaryCompatibilityChecker(
                 baselineFile?.asBaselineErrors() ?: emptySet(),
                 validate,
                 shouldFreeze,
+                dependencies,
             )
     }
 }

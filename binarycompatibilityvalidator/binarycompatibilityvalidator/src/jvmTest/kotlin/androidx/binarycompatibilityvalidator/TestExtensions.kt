@@ -20,5 +20,5 @@ import java.io.File
 import kotlin.io.path.Path
 
 fun getJavaResource(fileName: String): File {
-    return Path("src", "test", "resources", fileName).toFile()
+    return Path("src", "jvmTest", "resources", fileName).toFile()
 }

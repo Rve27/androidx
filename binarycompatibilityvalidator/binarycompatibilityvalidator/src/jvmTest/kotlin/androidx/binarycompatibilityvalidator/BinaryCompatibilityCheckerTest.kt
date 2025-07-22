@@ -17,6 +17,7 @@
 package androidx.binarycompatibilityvalidator
 
 import com.google.common.truth.Truth.assertThat
+import java.io.File
 import kotlin.test.Ignore
 import kotlin.test.assertFailsWith
 import kotlinx.validation.ExperimentalBCVApi
@@ -26,12 +27,20 @@ import org.jetbrains.kotlin.library.abi.ExperimentalLibraryAbiReader
 import org.jetbrains.kotlin.library.abi.LibraryAbiReader
 import org.junit.Test
 
+private const val KOTLIN_STDLIB_PROPERTY = "kotlin.stdlib.klib.dir"
+
 @OptIn(ExperimentalLibraryAbiReader::class, ExperimentalBCVApi::class)
 class BinaryCompatibilityCheckerTest {
     private val klibFile by lazy { getJavaResource("collection.klib") }
     private val validBaselineFile by lazy { getJavaResource("valid_baseline.txt") }
     private val invalidBaselineFile by lazy { getJavaResource("invalid_baseline_file.txt") }
     private val invalidBaselineFormatFile by lazy { getJavaResource("invalid_baseline_format.txt") }
+    private val stdlibKlib: File by lazy {
+        val klibDir =
+            System.getProperty(KOTLIN_STDLIB_PROPERTY)
+                ?: throw IllegalStateException("Property '$KOTLIN_STDLIB_PROPERTY' must be set")
+        File(klibDir)
+    }
 
     @Test
     fun klibDumpIsCompatibleWithItself() {
@@ -48,6 +57,7 @@ class BinaryCompatibilityCheckerTest {
         BinaryCompatibilityChecker.checkAllBinariesAreCompatible(
             mapOf("linuxX64" to libraryAbi),
             parsedLibraryAbis,
+            dependencies = mapOf("linuxX64" to setOf(stdlibKlib)),
         )
     }
 
@@ -76,6 +86,7 @@ class BinaryCompatibilityCheckerTest {
             KlibDumpParser(currentDump).parse(),
             KlibDumpParser(previousDump).parse(),
             shouldFreeze = false,
+            dependencies = mapOf("linux" to emptySet(), "ios" to emptySet()),
         )
     }
 
@@ -91,6 +102,7 @@ class BinaryCompatibilityCheckerTest {
                     KlibDumpParser(currentDump).parse(),
                     KlibDumpParser(previousDump).parse(),
                     shouldFreeze = true,
+                    dependencies = mapOf("linux" to emptySet(), "ios" to emptySet()),
                 )
             }
         assertThat(e.message).contains("[ios]: Target was added")
@@ -1617,6 +1629,15 @@ class BinaryCompatibilityCheckerTest {
     }
 
     @Test
+    fun classesCanExtendCompilerProvidedInterfaces() {
+        val text =
+            """
+        abstract interface <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> my.lib/MyFun : kotlin/Function2<#A, #B, #C>
+        """
+        testBeforeAndAfterIsCompatible(text, text)
+    }
+
+    @Test
     fun removedTargets() {
         val beforeText = createDumpText("", listOf("iosX64", "linuxX64"))
         val afterText = createDumpText("", listOf("linuxX64"))
@@ -1641,6 +1662,7 @@ class BinaryCompatibilityCheckerTest {
             afterLibs,
             beforeLibs,
             setOf("[iosX64]: Target was removed"),
+            dependencies = mapOf("iosX64" to emptySet(), "linuxX64" to emptySet()),
         )
     }
 
@@ -1663,6 +1685,7 @@ class BinaryCompatibilityCheckerTest {
                 KlibDumpParser(beforeText).parse(),
                 baselines = emptySet(),
                 validate = false,
+                dependencies = mapOf("myTarget" to emptySet()),
             )
         assertThat(errors)
             .isEqualTo(
@@ -1728,6 +1751,7 @@ class BinaryCompatibilityCheckerTest {
             afterLibs,
             beforeLibs,
             validBaselineFile,
+            dependencies = mapOf("linuxX64" to emptySet(), "iosX64" to emptySet()),
         )
     }
 
@@ -1756,7 +1780,7 @@ class BinaryCompatibilityCheckerTest {
             }
         assertThat(e.message)
             .contains(
-                "Failed to parse baseline version from 'src/test/resources/invalid_baseline_file.txt'"
+                "Failed to parse baseline version from 'src/jvmTest/resources/invalid_baseline_file.txt'"
             )
     }
 
@@ -1799,6 +1823,7 @@ class BinaryCompatibilityCheckerTest {
             beforeLibs,
             baselines,
             shouldFreeze = shouldFreeze,
+            dependencies = mapOf("iosX64" to setOf(stdlibKlib), "linuxX64" to setOf(stdlibKlib)),
         )
     }
 
