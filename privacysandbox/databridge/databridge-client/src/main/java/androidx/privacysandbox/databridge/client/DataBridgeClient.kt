@@ -180,10 +180,6 @@ public abstract class DataBridgeClient private constructor() {
             registerAppOwnedSdkSandboxInterface(context, this)
         }
 
-        private val keyGuard = Any()
-
-        @GuardedBy("keyGuard") private val keysLock = mutableMapOf<Key, Any>()
-
         @GuardedBy("keyToKeyUpdateCallbackWithExecutorMap")
         private val keyToKeyUpdateCallbackWithExecutorMap =
             mutableMapOf<Key, MutableList<KeyUpdateCallbackWithExecutor>>()
@@ -299,19 +295,15 @@ public abstract class DataBridgeClient private constructor() {
 
         override fun unregisterKeyUpdateCallback(callback: KeyUpdateCallback) {
             val keysToRemoveFromMap = mutableListOf<Key>()
-
-            keyToKeyUpdateCallbackWithExecutorMap.forEach { (key, keyUpdateCallbackWithExecutorList)
-                ->
-                synchronized(getLockForKey(key)) {
+            synchronized(keyToKeyUpdateCallbackWithExecutorMap) {
+                keyToKeyUpdateCallbackWithExecutorMap.forEach {
+                    (key, keyUpdateCallbackWithExecutorList) ->
                     keyUpdateCallbackWithExecutorList.removeAll { it.keyUpdateCallback == callback }
 
                     if (keyUpdateCallbackWithExecutorList.isEmpty()) {
                         keysToRemoveFromMap.add(key)
                     }
                 }
-            }
-
-            synchronized(keyGuard) {
                 keysToRemoveFromMap.forEach { key ->
                     keyToKeyUpdateCallbackWithExecutorMap.remove(key)
                 }
@@ -346,12 +338,16 @@ public abstract class DataBridgeClient private constructor() {
         }
 
         private fun registerCallback(key: Key, callback: KeyUpdateCallback, executor: Executor) {
-            synchronized(getLockForKey(key)) {
+            synchronized(keyToKeyUpdateCallbackWithExecutorMap) {
                 val keyUpdateCallbackWithExecutor =
                     KeyUpdateCallbackWithExecutor(callback, executor)
-                keyToKeyUpdateCallbackWithExecutorMap
-                    .getOrPut(key) { mutableListOf() }
-                    .add(keyUpdateCallbackWithExecutor)
+
+                val keyUpdateCallbackWithExecutorForKey =
+                    keyToKeyUpdateCallbackWithExecutorMap.getOrPut(key) { mutableListOf() }
+
+                if (!keyUpdateCallbackWithExecutorForKey.contains(keyUpdateCallbackWithExecutor)) {
+                    keyUpdateCallbackWithExecutorForKey.add(keyUpdateCallbackWithExecutor)
+                }
 
                 val scope = CoroutineScope(Dispatchers.IO)
                 scope.launch {
@@ -366,14 +362,7 @@ public abstract class DataBridgeClient private constructor() {
         }
 
         private fun sendKeyUpdates(key: Key, value: Any?) {
-            if (
-                !keyToKeyUpdateCallbackWithExecutorMap.containsKey(key) ||
-                    !keysLock.containsKey(key)
-            ) {
-                return
-            }
-
-            synchronized(keysLock[key]!!) {
+            synchronized(keyToKeyUpdateCallbackWithExecutorMap) {
                 keyToKeyUpdateCallbackWithExecutorMap[key]?.forEach { keyUpdateCallbackWithExecutor
                     ->
                     keyUpdateCallbackWithExecutor.executor.execute {
@@ -381,15 +370,6 @@ public abstract class DataBridgeClient private constructor() {
                     }
                 }
             }
-        }
-
-        private fun getLockForKey(key: Key): Any {
-            synchronized(keyGuard) {
-                if (!keysLock.containsKey(key)) {
-                    keysLock[key] = Any()
-                }
-            }
-            return keysLock[key]!!
         }
     }
 }
