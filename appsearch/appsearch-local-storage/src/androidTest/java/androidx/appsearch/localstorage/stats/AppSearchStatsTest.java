@@ -22,6 +22,8 @@ import androidx.appsearch.app.AppSearchResult;
 import androidx.appsearch.stats.BaseStats;
 import androidx.appsearch.stats.SchemaMigrationStats;
 
+import com.google.android.icing.proto.PersistType;
+
 import org.junit.Test;
 
 public class AppSearchStatsTest {
@@ -857,5 +859,90 @@ public class AppSearchStatsTest {
                 .build();
         // Can only be set once for non-negative latency.
         assertThat(oStats.getJavaLockAcquisitionLatencyMillis()).isEqualTo(10);
+    }
+
+    public void testAppSearchStats_PersistToDiskStats() {
+        int triggerCallType = 1;
+        PersistType.Code persistType = PersistType.Code.FULL;
+        int nativeLatencyMillis = 3;
+        int blobStorePersistLatencyMillis = 4;
+        int documentStoreTotalPersistLatencyMillis = 5;
+        int documentStoreComponentsPersistLatencyMillis = 6;
+        int documentStoreChecksumUpdateLatencyMillis = 7;
+        int documentLogChecksumUpdateLatencyMillis = 8;
+        int documentLogDataSyncLatencyMillis = 9;
+        int schemaStorePersistLatencyMillis = 10;
+        int indexPersistLatencyMillis = 11;
+        int integerIndexPersistLatencyMillis = 12;
+        int qualifiedIdJoinIndexPersistLatencyMillis = 13;
+        int embeddingIndexPersistLatencyMillis = 14;
+        int javaLockAcquisitionLatencyMillis = 101;
+        int lastWriteOperation = 102;
+        int lastWriteOperationLatencyMillis = 103;
+        int getVmLatencyMillis = 104;
+        int enabledFeatures = 1;
+
+        final PersistToDiskStats pStats = new PersistToDiskStats.Builder(
+                TEST_PACKAGE_NAME, triggerCallType)
+                .setStatusCode(TEST_STATUS_CODE)
+                .setTotalLatencyMillis(TEST_TOTAL_LATENCY_MILLIS)
+                .setPersistType(persistType)
+                .setNativeLatencyMillis(nativeLatencyMillis)
+                .setNativeBlobStorePersistLatencyMillis(blobStorePersistLatencyMillis)
+                .setNativeDocumentStoreTotalPersistLatencyMillis(
+                        documentStoreTotalPersistLatencyMillis)
+                .setNativeDocumentStoreComponentsPersistLatencyMillis(
+                        documentStoreComponentsPersistLatencyMillis)
+                .setNativeDocumentStoreChecksumUpdateLatencyMillis(
+                        documentStoreChecksumUpdateLatencyMillis)
+                .setNativeDocumentLogChecksumUpdateLatencyMillis(
+                        documentLogChecksumUpdateLatencyMillis)
+                .setNativeDocumentLogDataSyncLatencyMillis(documentLogDataSyncLatencyMillis)
+                .setNativeSchemaStorePersistLatencyMillis(schemaStorePersistLatencyMillis)
+                .setNativeIndexPersistLatencyMillis(indexPersistLatencyMillis)
+                .setNativeIntegerIndexPersistLatencyMillis(integerIndexPersistLatencyMillis)
+                .setNativeQualifiedIdJoinIndexPersistLatencyMillis(
+                        qualifiedIdJoinIndexPersistLatencyMillis)
+                .setNativeEmbeddingIndexPersistLatencyMillis(embeddingIndexPersistLatencyMillis)
+                .setJavaLockAcquisitionLatencyMillis(javaLockAcquisitionLatencyMillis)
+                .setLastWriteOperation(lastWriteOperation)
+                .setLastWriteOperationLatencyMillis(lastWriteOperationLatencyMillis)
+                .setGetVmLatencyMillis(getVmLatencyMillis)
+                .setLaunchVMEnabled(true)
+                .build();
+
+        assertThat(pStats.getPackageName()).isEqualTo(TEST_PACKAGE_NAME);
+        assertThat(pStats.getTriggerCallType()).isEqualTo(triggerCallType);
+        assertThat(pStats.getStatusCode()).isEqualTo(TEST_STATUS_CODE);
+        assertThat(pStats.getTotalLatencyMillis()).isEqualTo(TEST_TOTAL_LATENCY_MILLIS);
+        assertThat(pStats.getNativeLatencyMillis()).isEqualTo(nativeLatencyMillis);
+        assertThat(pStats.getBlobStorePersistLatencyMillis())
+                .isEqualTo(blobStorePersistLatencyMillis);
+        assertThat(pStats.getDocumentStoreTotalPersistLatencyMillis())
+                .isEqualTo(documentStoreTotalPersistLatencyMillis);
+        assertThat(pStats.getDocumentStoreComponentsPersistLatencyMillis())
+                .isEqualTo(documentStoreComponentsPersistLatencyMillis);
+        assertThat(pStats.getDocumentStoreChecksumUpdateLatencyMillis())
+                .isEqualTo(documentStoreChecksumUpdateLatencyMillis);
+        assertThat(pStats.getDocumentLogChecksumUpdateLatencyMillis())
+                .isEqualTo(documentLogChecksumUpdateLatencyMillis);
+        assertThat(pStats.getDocumentLogDataSyncLatencyMillis())
+                .isEqualTo(documentLogDataSyncLatencyMillis);
+        assertThat(pStats.getSchemaStorePersistLatencyMillis())
+                .isEqualTo(schemaStorePersistLatencyMillis);
+        assertThat(pStats.getIndexPersistLatencyMillis()).isEqualTo(indexPersistLatencyMillis);
+        assertThat(pStats.getIntegerIndexPersistLatencyMillis())
+                .isEqualTo(integerIndexPersistLatencyMillis);
+        assertThat(pStats.getQualifiedIdJoinIndexPersistLatencyMillis())
+                .isEqualTo(qualifiedIdJoinIndexPersistLatencyMillis);
+        assertThat(pStats.getEmbeddingIndexPersistLatencyMillis())
+                .isEqualTo(embeddingIndexPersistLatencyMillis);
+
+        assertThat(pStats.getJavaLockAcquisitionLatencyMillis())
+                .isEqualTo(javaLockAcquisitionLatencyMillis);
+        assertThat(pStats.getLastWriteOperation()).isEqualTo(lastWriteOperation);
+        assertThat(pStats.getLastWriteOperationLatencyMillis())
+                .isEqualTo(lastWriteOperationLatencyMillis);
+        assertThat(pStats.getGetVmLatencyMillis()).isEqualTo(getVmLatencyMillis);
     }
 }

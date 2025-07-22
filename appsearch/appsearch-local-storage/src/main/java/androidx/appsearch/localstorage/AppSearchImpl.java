@@ -73,6 +73,7 @@ import androidx.appsearch.localstorage.converter.TypePropertyPathToProtoConverte
 import androidx.appsearch.localstorage.stats.CallStats;
 import androidx.appsearch.localstorage.stats.InitializeStats;
 import androidx.appsearch.localstorage.stats.OptimizeStats;
+import androidx.appsearch.localstorage.stats.PersistToDiskStats;
 import androidx.appsearch.localstorage.stats.PutDocumentStats;
 import androidx.appsearch.localstorage.stats.QueryStats;
 import androidx.appsearch.localstorage.stats.RemoveStats;
@@ -609,7 +610,8 @@ public final class AppSearchImpl implements Closeable {
             if (mClosedLocked) {
                 return;
             }
-            persistToDisk(PersistType.Code.FULL);
+            persistToDisk(/*callingPackageName=*/null, BaseStats.CALL_TYPE_CLOSE,
+                    PersistType.Code.FULL, /*logger=*/null);
             LogUtil.piiTrace(TAG, "icingSearchEngine.close, request");
             mIcingSearchEngineLocked.close();
             LogUtil.piiTrace(TAG, "icingSearchEngine.close, response");
@@ -3779,12 +3781,27 @@ public final class AppSearchImpl implements Closeable {
      *                    prevent data loss without needing data recovery.
      * @throws AppSearchException on any error that AppSearch persist data to disk.
      */
-    public void persistToDisk(PersistType.@NonNull Code persistType) throws AppSearchException {
+    public void persistToDisk(@Nullable String callingPackageName,
+            @BaseStats.CallType int triggerCallType,
+            PersistType.@NonNull Code persistType,
+            @Nullable AppSearchLogger logger) throws AppSearchException {
+        PersistToDiskStats.Builder statsBuilder = null;
+        long totalLatencyStartMillis = SystemClock.elapsedRealtime();
         long javaLockAcquisitionEndTimeMillis = 0;
         mReadWriteLock.writeLock().lock();
         try {
             javaLockAcquisitionEndTimeMillis = SystemClock.elapsedRealtime();
             throwIfClosedLocked();
+            if (logger != null) {
+                statsBuilder = new PersistToDiskStats.Builder(callingPackageName, triggerCallType)
+                        .setJavaLockAcquisitionLatencyMillis(
+                                (int) (javaLockAcquisitionEndTimeMillis
+                                        - totalLatencyStartMillis))
+                        .setLastWriteOperation(mLastWriteOperationLocked)
+                        .setLastWriteOperationLatencyMillis(
+                                mLastWriteOperationLatencyMillisLocked)
+                                .setLaunchVMEnabled(mIsVMEnabled);
+            }
 
             LogUtil.piiTrace(TAG, "persistToDisk, request", persistType);
             PersistToDiskResultProto persistToDiskResultProto =
@@ -3794,12 +3811,24 @@ public final class AppSearchImpl implements Closeable {
                     "persistToDisk, response",
                     persistToDiskResultProto.getStatus(),
                     persistToDiskResultProto);
+            if (statsBuilder != null) {
+                AppSearchLoggerHelper.copyNativeStats(persistToDiskResultProto.getPersistStats(),
+                        statsBuilder);
+                statsBuilder.setStatusCode(statusProtoToResultCode(
+                        persistToDiskResultProto.getStatus()))
+                        .setTotalLatencyMillis(
+                                (int) (SystemClock.elapsedRealtime() - totalLatencyStartMillis));
+            }
             checkSuccess(persistToDiskResultProto.getStatus());
         } finally {
             mLastWriteOperationLocked = BaseStats.CALL_TYPE_FLUSH;
             mLastWriteOperationLatencyMillisLocked =
                     (int) (SystemClock.elapsedRealtime() - javaLockAcquisitionEndTimeMillis);
             mReadWriteLock.writeLock().unlock();
+
+            if (logger != null) {
+                logger.logStats(statsBuilder.build());
+            }
         }
     }
 

@@ -66,6 +66,7 @@ import androidx.appsearch.exceptions.AppSearchException;
 import androidx.appsearch.flags.Flags;
 import androidx.appsearch.localstorage.stats.InitializeStats;
 import androidx.appsearch.localstorage.stats.OptimizeStats;
+import androidx.appsearch.localstorage.stats.PersistToDiskStats;
 import androidx.appsearch.localstorage.stats.PutDocumentStats;
 import androidx.appsearch.localstorage.stats.QueryStats;
 import androidx.appsearch.localstorage.stats.RemoveStats;
@@ -3662,7 +3663,8 @@ public class AppSearchImplTest {
         writePfd.close();
         mAppSearchImpl.commitBlob("package", "db1", handle);
 
-        mAppSearchImpl.persistToDisk(PersistType.Code.FULL);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_COMMIT_BLOB,
+                PersistType.Code.FULL, /*logger=*/null);
 
         // Optimize remove the expired orphan blob.
         mAppSearchImpl.optimize(/*builder=*/null);
@@ -3732,7 +3734,8 @@ public class AppSearchImplTest {
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null);
 
-        mAppSearchImpl.persistToDisk(PersistType.Code.FULL);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.FULL, /*logger=*/null);
 
         // Optimize won't remove the blob since it has reference document.
         mAppSearchImpl.optimize(/*builder=*/null);
@@ -5122,7 +5125,8 @@ public class AppSearchImplTest {
                 "package", "database"));
 
         assertThrows(IllegalStateException.class, () -> mAppSearchImpl.persistToDisk(
-                PersistType.Code.FULL));
+                "package", BaseStats.CALL_TYPE_COMMIT_BLOB,
+                PersistType.Code.FULL, /*logger=*/null));
     }
 
     @Test
@@ -5148,7 +5152,8 @@ public class AppSearchImplTest {
                 document,
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.LITE);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.LITE, /*logger=*/null);
 
         GenericDocument getResult = mAppSearchImpl.getDocument("package", "database", "namespace1",
                 "id1",
@@ -5215,7 +5220,8 @@ public class AppSearchImplTest {
                 document2,
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.LITE);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.LITE, /*logger=*/null);
 
         GenericDocument getResult = mAppSearchImpl.getDocument("package", "database", "namespace1",
                 "id1",
@@ -5228,7 +5234,8 @@ public class AppSearchImplTest {
 
         // Delete the first document
         mAppSearchImpl.remove("package", "database", "namespace1", "id1", /*statsBuilder=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.LITE);
+        mAppSearchImpl.persistToDisk("package",
+                BaseStats.CALL_TYPE_REMOVE_DOCUMENT_BY_ID, PersistType.Code.LITE, /*logger=*/null);
         assertThrows(AppSearchException.class, () -> mAppSearchImpl.getDocument("package",
                 "database",
                 "namespace1",
@@ -5304,7 +5311,8 @@ public class AppSearchImplTest {
                 document2,
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.LITE);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.LITE, /*logger=*/null);
 
         GenericDocument getResult = mAppSearchImpl.getDocument("package", "database", "namespace1",
                 "id1",
@@ -5319,7 +5327,9 @@ public class AppSearchImplTest {
         mAppSearchImpl.removeByQuery("package", "database", "",
                 new SearchSpec.Builder().addFilterNamespaces("namespace1").setTermMatch(
                         SearchSpec.TERM_MATCH_EXACT_ONLY).build(), /*statsBuilder=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.LITE);
+        mAppSearchImpl.persistToDisk("package",
+                BaseStats.CALL_TYPE_REMOVE_DOCUMENTS_BY_SEARCH,
+                PersistType.Code.LITE, /*logger=*/null);
         assertThrows(AppSearchException.class, () -> mAppSearchImpl.getDocument("package",
                 "database",
                 "namespace1",
@@ -5387,7 +5397,8 @@ public class AppSearchImplTest {
                 document,
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.RECOVERY_PROOF);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.RECOVERY_PROOF, /*logger=*/null);
 
         GenericDocument getResult = mAppSearchImpl.getDocument("package", "database", "namespace1",
                 "id1",
@@ -5454,7 +5465,8 @@ public class AppSearchImplTest {
                 document2,
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.RECOVERY_PROOF);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.RECOVERY_PROOF, /*logger=*/null);
 
         GenericDocument getResult = mAppSearchImpl.getDocument("package", "database", "namespace1",
                 "id1",
@@ -5467,7 +5479,9 @@ public class AppSearchImplTest {
 
         // Delete the first document
         mAppSearchImpl.remove("package", "database", "namespace1", "id1", /*statsBuilder=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.RECOVERY_PROOF);
+        mAppSearchImpl.persistToDisk("package",
+                BaseStats.CALL_TYPE_REMOVE_DOCUMENT_BY_ID,
+                PersistType.Code.RECOVERY_PROOF, /*logger=*/null);
         assertThrows(AppSearchException.class, () -> mAppSearchImpl.getDocument("package",
                 "database",
                 "namespace1",
@@ -5543,7 +5557,8 @@ public class AppSearchImplTest {
                 document2,
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.RECOVERY_PROOF);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.RECOVERY_PROOF, /*logger=*/null);
 
         GenericDocument getResult = mAppSearchImpl.getDocument("package", "database", "namespace1",
                 "id1",
@@ -5558,7 +5573,9 @@ public class AppSearchImplTest {
         mAppSearchImpl.removeByQuery("package", "database", "",
                 new SearchSpec.Builder().addFilterNamespaces("namespace1").setTermMatch(
                         SearchSpec.TERM_MATCH_EXACT_ONLY).build(), /*statsBuilder=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.RECOVERY_PROOF);
+        mAppSearchImpl.persistToDisk("package",
+                BaseStats.CALL_TYPE_REMOVE_DOCUMENTS_BY_SEARCH,
+                PersistType.Code.RECOVERY_PROOF, /*logger=*/null);
         assertThrows(AppSearchException.class, () -> mAppSearchImpl.getDocument("package",
                 "database",
                 "namespace1",
@@ -6103,7 +6120,8 @@ public class AppSearchImplTest {
         assertThat(setSchemaStats.getLastWriteOperation()).isEqualTo(BaseStats.CALL_TYPE_OPTIMIZE);
 
         // Flush and check the last write operation
-        mAppSearchImpl.persistToDisk(PersistType.Code.FULL);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.FULL, /*logger=*/null);
         internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
                 schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
                 /*version=*/ 0, setSchemaStatsBuilder);
@@ -6182,6 +6200,27 @@ public class AppSearchImplTest {
         setSchemaStats = setSchemaStatsBuilder.build();
         assertThat(setSchemaStats.getLastWriteOperation())
                 .isEqualTo(BaseStats.CALL_TYPE_SET_BLOB_VISIBILITY);
+    }
+
+    @Test
+    public void testPersistToDiskStats() throws Exception {
+        final List<PersistToDiskStats> loggedStats = new ArrayList<>();
+        AppSearchLogger fakeLogger = new AppSearchLogger() {
+            @Override
+            public void logStats(@NonNull PersistToDiskStats stats) {
+                loggedStats.add(stats);
+                assertThat(stats.getPackageName()).isEqualTo("testPackage");
+                assertThat(stats.getTriggerCallType()).isEqualTo(BaseStats.CALL_TYPE_PUT_DOCUMENTS);
+                assertThat(stats.getPersistType()).isEqualTo(PersistType.Code.FULL);
+                assertThat(stats.getStatusCode()).isEqualTo(AppSearchResult.RESULT_OK);
+            }
+        };
+
+        mAppSearchImpl.persistToDisk("testPackage",
+                BaseStats.CALL_TYPE_PUT_DOCUMENTS,
+                PersistType.Code.FULL,
+                fakeLogger);
+        assertThat(loggedStats).hasSize(1);
     }
 
     @Test
@@ -8044,7 +8083,8 @@ public class AppSearchImplTest {
                 document,
                 /*sendChangeNotifications=*/false,
                 /*logger=*/null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.LITE);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.LITE, /*logger=*/null);
 
         AppSearchException e = assertThrows(AppSearchException.class, () ->
                 mAppSearchImpl.globalGetDocument(
@@ -8097,7 +8137,8 @@ public class AppSearchImplTest {
                 document,
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.LITE);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.LITE, /*logger=*/null);
 
         GenericDocument getResult = mAppSearchImpl.globalGetDocument(
                 "package",
@@ -8148,7 +8189,8 @@ public class AppSearchImplTest {
                 document,
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.LITE);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.LITE, /*logger=*/null);
 
         AppSearchException e = assertThrows(AppSearchException.class, () ->
                 mAppSearchImpl.globalGetDocument(
@@ -8213,7 +8255,8 @@ public class AppSearchImplTest {
                 document,
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.LITE);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.LITE, /*logger=*/null);
 
         AppSearchException unauthorizedException = assertThrows(AppSearchException.class, () ->
                 mAppSearchImpl.globalGetDocument(
@@ -10293,7 +10336,8 @@ public class AppSearchImplTest {
                 /*sendChangeNotifications=*/ false,
                 /*logger=*/ null);
         mAppSearchImpl.optimize(/*builder=*/ null);
-        mAppSearchImpl.persistToDisk(PersistType.Code.LITE);
+        mAppSearchImpl.persistToDisk("package", BaseStats.CALL_TYPE_PUT_DOCUMENT,
+                PersistType.Code.LITE, /*logger=*/null);
 
         // Record storage size (the document should be compressed)
         StorageInfoProto storageInfo = mAppSearchImpl.getRawStorageInfoProto();
