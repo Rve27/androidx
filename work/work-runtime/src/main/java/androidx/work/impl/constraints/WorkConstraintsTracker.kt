@@ -270,8 +270,8 @@ private object SharedNetworkCallback : ConnectivityManager.NetworkCallback() {
 
     override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
         Logger.get().debug(TAG, "NetworkRequestConstraintController onCapabilitiesChanged callback")
-        synchronized(requestsLock) { requests.entries.toList() }
-            .forEach { (onConstraintState, request) ->
+        synchronized(requestsLock) {
+            requests.entries.forEach { (onConstraintState, request) ->
                 onConstraintState(
                     if (request.canBeSatisfiedBy(networkCapabilities)) {
                         ConstraintsMet
@@ -280,12 +280,14 @@ private object SharedNetworkCallback : ConnectivityManager.NetworkCallback() {
                     }
                 )
             }
+        }
     }
 
     override fun onLost(network: Network) {
         Logger.get().debug(TAG, "NetworkRequestConstraintController onLost callback")
-        synchronized(requestsLock) { requests.keys.toList() }
-            .forEach { it(ConstraintsNotMet(STOP_REASON_CONSTRAINT_CONNECTIVITY)) }
+        synchronized(requestsLock) {
+            requests.keys.forEach { it(ConstraintsNotMet(STOP_REASON_CONSTRAINT_CONNECTIVITY)) }
+        }
     }
 
     fun addCallback(
@@ -301,6 +303,17 @@ private object SharedNetworkCallback : ConnectivityManager.NetworkCallback() {
                     .debug(TAG, "NetworkRequestConstraintController register shared callback")
                 connManager.registerDefaultNetworkCallback(this)
             }
+            // onCapabilitiesChanged is only guaranteed to be called the first time we register
+            // so we need to send the current constraint state immediately for the initial value
+            Logger.get().debug(TAG, "NetworkRequestConstraintController send initial capabilities")
+            val currentCapabilities = connManager.getNetworkCapabilities(connManager.activeNetwork)
+            onConstraintState(
+                if (networkRequest.canBeSatisfiedBy(currentCapabilities)) {
+                    ConstraintsMet
+                } else {
+                    ConstraintsNotMet(STOP_REASON_CONSTRAINT_CONNECTIVITY)
+                }
+            )
         }
         return {
             synchronized(requestsLock) {
