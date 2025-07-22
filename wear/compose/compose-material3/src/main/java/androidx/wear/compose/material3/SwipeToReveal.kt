@@ -95,6 +95,7 @@ import androidx.compose.ui.layout.positionOnScreen
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.semantics.ScrollAxisRange
 import androidx.compose.ui.semantics.horizontalScrollAxisRange
@@ -103,6 +104,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.GestureInclusion
 import androidx.wear.compose.material3.ButtonDefaults.buttonColors
@@ -249,6 +251,8 @@ public fun SwipeToReveal(
         },
     content: @Composable () -> Unit,
 ) {
+    val direction = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1 else 1
+
     if (revealDirection == RightToLeft) {
         require(
             revealState.currentValue != LeftRevealing && revealState.currentValue != LeftRevealed
@@ -350,13 +354,10 @@ public fun SwipeToReveal(
                                         if (secondaryAction == null && !hasPartiallyRevealedState) {
                                             null
                                         } else {
-                                            val anchorSideMultiplier =
-                                                if (anchor == RightRevealing) -1 else 1
-
                                             val result =
                                                 (anchorWidthPx / screenWidthPx) *
                                                     width *
-                                                    anchorSideMultiplier
+                                                    anchorSideMultiplier(anchor, direction)
 
                                             if (anchor == RightRevealing) {
                                                 revealState.revealThreshold = abs(result)
@@ -367,9 +368,7 @@ public fun SwipeToReveal(
                                     }
                                     LeftRevealed,
                                     RightRevealed -> {
-                                        val anchorSideMultiplier =
-                                            if (anchor == RightRevealed) -1 else 1
-                                        width * anchorSideMultiplier
+                                        width * anchorSideMultiplier(anchor, direction)
                                     }
                                     else -> null
                                 }?.let { anchor at it }
@@ -408,7 +407,7 @@ public fun SwipeToReveal(
         ) {
             val canSwipeRight = revealDirection == Bidirectional
 
-            val swipingRight by remember { derivedStateOf { revealState.offset > 0 } }
+            val swipingRight by remember { derivedStateOf { revealState.offset * direction > 0 } }
 
             // Don't draw actions on the left side if the user cannot swipe right, and they are
             // currently swiping right
@@ -603,7 +602,7 @@ public fun SwipeToReveal(
             Row(
                 modifier =
                     Modifier.absoluteOffset {
-                        val xOffset = revealState.requireOffset().roundToInt()
+                        val xOffset = revealState.requireOffset().roundToInt() * direction
                         IntOffset(
                             x = if (canSwipeRight) xOffset else xOffset.coerceAtMost(0),
                             y = 0,
@@ -826,6 +825,7 @@ internal fun ActionButton(
     modifier: Modifier = Modifier,
     shouldSetLastActionType: Boolean = false,
 ) {
+    val direction = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1 else 1
     val containerColor =
         action.containerColor.takeOrElse {
             when (revealActionType) {
@@ -898,7 +898,7 @@ internal fun ActionButton(
                         if (shouldSetLastActionType) {
                             revealState.lastActionType = revealActionType
                             revealState.animateTo(
-                                if (revealState.offset > 0) {
+                                if (revealState.offset * direction > 0) {
                                     LeftRevealed
                                 } else {
                                     RightRevealed
@@ -1414,6 +1414,9 @@ private fun endFadeInFraction(hasSecondaryAction: Boolean) =
     } else {
         SINGLE_ICON_FADE_IN_END_THRESHOLD_AS_SCREEN_WIDTH_PERCENTAGE
     }
+
+private fun anchorSideMultiplier(anchor: RevealValue, direction: Int) =
+    direction * (if (anchor == RightRevealing || anchor == RightRevealed) -1 else 1)
 
 /**
  * Copy from [androidx.compose.foundation.gestures.anchoredDraggableFlingBehavior], overriding the
