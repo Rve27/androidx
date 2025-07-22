@@ -1484,6 +1484,14 @@ package androidx.xr.runtime.internal {
     method public androidx.xr.runtime.internal.Runtime createRuntime(android.app.Activity activity);
   }
 
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SceneRuntime {
+    method public void dispose();
+  }
+
+  @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SceneRuntimeFactory extends androidx.xr.runtime.internal.Service {
+    method public androidx.xr.runtime.internal.SceneRuntime create(android.app.Activity activity);
+  }
+
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Service {
     method public java.util.Set<androidx.xr.runtime.internal.Feature> getRequirements();
     property public abstract java.util.Set<androidx.xr.runtime.internal.Feature> requirements;
