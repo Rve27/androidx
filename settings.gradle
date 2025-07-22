@@ -957,6 +957,8 @@ includeProject(":privacysandbox:ondevicepersonalization:ondevicepersonalization-
 includeProject(":privacysandbox:plugins:plugins-privacysandbox-library", [BuildType.MAIN])
 includeProject(":privacysandbox:sdkruntime:integration-tests:testaidl", [BuildType.MAIN])
 includeProject(":privacysandbox:sdkruntime:integration-tests:macrobenchmark", [BuildType.MAIN])
+includeProject(":privacysandbox:sdkruntime:integration-tests:mediateesdk", [BuildType.MAIN])
+includeProject(":privacysandbox:sdkruntime:integration-tests:mediateesdk-asb", [BuildType.MAIN])
 includeProject(":privacysandbox:sdkruntime:integration-tests:testapp", [BuildType.MAIN])
 includeProject(":privacysandbox:sdkruntime:integration-tests:testsdk", [BuildType.MAIN])
 includeProject(":privacysandbox:sdkruntime:integration-tests:testsdk-asb", [BuildType.MAIN])
