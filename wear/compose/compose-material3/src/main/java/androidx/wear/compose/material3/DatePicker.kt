@@ -237,22 +237,26 @@ public fun DatePicker(
 
         // Allow more room for the initial instruction heading under TalkBck
         val maxTextLines = if (selectedIndex == null) 2 else 1
-        val textPaddingPercentage = 24f
+        val textPaddingPercentage = 30f
+        val topPadding = if (selectedIndex == null) 0.dp else 14.dp
+        val headingHeight = 38.dp - topPadding
 
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(Modifier.height(14.dp))
+            Spacer(Modifier.height(topPadding))
             FadeLabel(
                 text = heading,
                 animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
                 modifier =
-                    Modifier.padding(
+                    Modifier.height(headingHeight)
+                        .padding(
                             horizontal =
                                 PaddingDefaults.horizontalContentPadding(textPaddingPercentage)
                         )
                         .fillMaxWidth()
+                        .align(Alignment.CenterHorizontally)
                         .semantics(mergeDescendants = true) { heading() },
                 color = colors.pickerLabelColor,
                 style = labelTextStyle,

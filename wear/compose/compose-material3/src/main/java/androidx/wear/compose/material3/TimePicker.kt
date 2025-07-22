@@ -191,13 +191,19 @@ public fun TimePicker(
     }
 
     Box(modifier = modifier.fillMaxSize().alpha(fullyDrawn.value)) {
+
+        // Allow more room for the initial instruction heading under TalkBack
+        val maxTextLines = if (selectedIndex == null) 2 else 1
+        val textPaddingPercentage = 30f
+        val topPadding = if (selectedIndex == null) 0.dp else 14.dp
+        val headingHeight = 38.dp - topPadding
+
         Column(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Spacer(Modifier.height(if (selectedIndex == null) 6.dp else 14.dp))
-
+            Spacer(Modifier.height(topPadding))
             val focusedPicker = FocusableElements(selectedIndex)
             FontScaleIndependent {
                 val styles = getTimePickerStyles(timePickerType, thirdPicker)
@@ -212,16 +218,11 @@ public fun TimePicker(
                         }
                     } ?: if (touchExplorationServicesEnabled) instructionHeadingString else ""
 
-                // Allow more room for the initial instruction heading under TalkBack
-                val maxTextLines = if (selectedIndex == null) 2 else 1
-                val textPaddingPercentage = 30f
-                val textModifier = if (selectedIndex == null) Modifier else Modifier.height(24.dp)
-
                 FadeLabel(
                     text = heading,
                     animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
                     modifier =
-                        textModifier
+                        Modifier.height(headingHeight)
                             .padding(
                                 horizontal =
                                     PaddingDefaults.horizontalContentPadding(textPaddingPercentage)
