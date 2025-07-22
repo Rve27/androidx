@@ -78,6 +78,7 @@ import androidx.appsearch.localstorage.visibilitystore.VisibilityToDocumentConve
 import androidx.appsearch.observer.DocumentChangeInfo;
 import androidx.appsearch.observer.ObserverSpec;
 import androidx.appsearch.observer.SchemaChangeInfo;
+import androidx.appsearch.stats.BaseStats;
 import androidx.appsearch.testutil.AppSearchEmail;
 import androidx.appsearch.testutil.AppSearchTestUtils;
 import androidx.appsearch.testutil.TestObserverCallback;
@@ -5985,6 +5986,202 @@ public class AppSearchImplTest {
         mAppSearchImpl.optimize(optimizeStatsBuilder);
         OptimizeStats optimizeStats = optimizeStatsBuilder.build();
         assertThat(optimizeStats.getEnabledFeatures()).isEqualTo(noLaunchFeature);
+    }
+
+    @Test
+    public void testLastWriteOperationStats() throws Exception {
+        mAppSearchImpl = AppSearchImpl.create(
+                mAppSearchDir,
+                mUnlimitedConfig,
+                /*=initStatsBuilder*/null,
+                /*visibilityChecker=*/ null,
+                new JetpackRevocableFileDescriptorStore(mUnlimitedConfig),
+                /*icingSearchEngine=*/ null,
+                ALWAYS_OPTIMIZE);
+
+        // Set a schema and check last write operation is Initialize
+        List<AppSearchSchema> schemas =
+                Collections.singletonList(new AppSearchSchema.Builder("type").build());
+        SetSchemaStats.Builder setSchemaStatsBuilder = new SetSchemaStats.Builder(
+                "package", "database");
+        InternalSetSchemaResponse internalSetSchemaResponse = mAppSearchImpl.setSchema(
+                "package",
+                "database",
+                schemas,
+                /*visibilityConfigs=*/ Collections.emptyList(),
+                /*forceOverride=*/ false,
+                /*version=*/ 0,
+                setSchemaStatsBuilder);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        SetSchemaStats setSchemaStats = setSchemaStatsBuilder.build();
+        assertThat(setSchemaStats.getLastWriteOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_INITIALIZE);
+
+        // Put a document and check last write operation is SetSchema
+        AppSearchLogger fakeLogger = new AppSearchLogger() {
+            @Override
+            public void logStats(@NonNull SetSchemaStats stats) {
+                assertThat(stats.getLastWriteOperation()).isEqualTo(BaseStats.CALL_TYPE_SET_SCHEMA);
+            }
+        };
+        GenericDocument document =
+                new GenericDocument.Builder<>("namespace", "id", "type").build();
+        mAppSearchImpl.putDocument(
+                "package",
+                "database",
+                document,
+                /*sendChangeNotifications=*/ false,
+                fakeLogger);
+
+        // Batch put a document and check last write operation is PUT_DOCUMENT
+        fakeLogger = new AppSearchLogger() {
+            @Override
+            public void logStats(@NonNull PutDocumentStats stats) {
+                assertThat(stats.getLastWriteOperation()).isEqualTo(
+                        BaseStats.CALL_TYPE_PUT_DOCUMENT);
+            }
+        };
+        List<GenericDocument> documents = new ArrayList<>();
+        documents.add(document);
+        AppSearchBatchResult.Builder<String, Void> resultBuilder =
+                new AppSearchBatchResult.Builder<>();
+        mAppSearchImpl.batchPutDocuments(
+                "package",
+                "database",
+                documents,
+                resultBuilder,
+                /*sendChangeNotifications=*/ false,
+                fakeLogger,
+                PersistType.Code.LITE);
+
+        // Search document and check last write operation is PUT_DOCUMENTS
+        fakeLogger = new AppSearchLogger() {
+            @Override
+            public void logStats(@NonNull QueryStats stats) {
+                assertThat(stats.getLastWriteOperation()).isEqualTo(
+                        BaseStats.CALL_TYPE_PUT_DOCUMENTS);
+            }
+        };
+        mAppSearchImpl.query(
+                "package", "database", "",
+                new SearchSpec.Builder().build(), fakeLogger);
+
+        // Report usage
+        mAppSearchImpl.reportUsage("package", "database", "namespace",
+                "id", /*usageTimestampMillis=*/ 10, /*systemUsage=*/ false);
+
+        // Remove document and check last write operation is REPORT_USAGE
+        RemoveStats.Builder removeStatsBuilder = new RemoveStats.Builder(
+                "package", "database");
+        mAppSearchImpl.remove("package", "database", "namespace",
+                "id", removeStatsBuilder);
+        RemoveStats removeStats = removeStatsBuilder.build();
+        assertThat(removeStats.getLastWriteOperation()).isEqualTo(BaseStats.CALL_TYPE_REPORT_USAGE);
+
+        // RemoveByQuery and check last write operation is REMOVE_DOCUMENT_BY_ID
+        removeStatsBuilder = new RemoveStats.Builder(
+                "package", "database");
+        mAppSearchImpl.removeByQuery("package", "database", "",
+                new SearchSpec.Builder().build(), removeStatsBuilder);
+        removeStats = removeStatsBuilder.build();
+        assertThat(removeStats.getLastWriteOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_REMOVE_DOCUMENT_BY_ID);
+
+        // Optimize to check the last write operation is REMOVE_DOCUMENTS_BY_SEARCH
+        OptimizeStats.Builder optimizeStatsBuilder = new OptimizeStats.Builder();
+        mAppSearchImpl.optimize(optimizeStatsBuilder);
+        OptimizeStats optimizeStats = optimizeStatsBuilder.build();
+        assertThat(optimizeStats.getLastWriteOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_REMOVE_DOCUMENTS_BY_SEARCH);
+
+        // Use SetSchema Stats to check the last write operation is Optimize
+        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
+                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
+                /*version=*/ 0, setSchemaStatsBuilder);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        setSchemaStats = setSchemaStatsBuilder.build();
+        assertThat(setSchemaStats.getLastWriteOperation()).isEqualTo(BaseStats.CALL_TYPE_OPTIMIZE);
+
+        // Flush and check the last write operation
+        mAppSearchImpl.persistToDisk(PersistType.Code.FULL);
+        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
+                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
+                /*version=*/ 0, setSchemaStatsBuilder);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        setSchemaStats = setSchemaStatsBuilder.build();
+        assertThat(setSchemaStats.getLastWriteOperation()).isEqualTo(BaseStats.CALL_TYPE_FLUSH);
+
+        // Clear package data and check the last write operation
+        mAppSearchImpl.clearPackageData("nonExistPackage");
+        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
+                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
+                /*version=*/ 0, setSchemaStatsBuilder);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        setSchemaStats = setSchemaStatsBuilder.build();
+        assertThat(setSchemaStats.getLastWriteOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_PRUNE_PACKAGE_DATA);
+
+        // Write blob and check the last write operation
+        AppSearchBlobHandle handle = AppSearchBlobHandle.createWithSha256(
+                /*digest=*/ new byte[32], "package", "db1", "ns");
+        try {
+            mAppSearchImpl.openWriteBlob("package", "database", handle);
+        } catch (Exception e) {
+            // We don't care whether the write blob is success or not, just want to verify the last
+            // write operation.
+        }
+        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
+                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
+                /*version=*/ 0, setSchemaStatsBuilder);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        setSchemaStats = setSchemaStatsBuilder.build();
+        assertThat(setSchemaStats.getLastWriteOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_OPEN_WRITE_BLOB);
+
+        // Commit blob and check the last write operation
+        try {
+            mAppSearchImpl.commitBlob("package", "database", handle);
+        } catch (Exception e) {
+            // We don't care whether the write blob is success or not, just want to verify the last
+            // write operation.
+        }
+        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
+                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
+                /*version=*/ 0, setSchemaStatsBuilder);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        setSchemaStats = setSchemaStatsBuilder.build();
+        assertThat(setSchemaStats.getLastWriteOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_COMMIT_BLOB);
+
+        // Remove blob and check the last write operation
+        try {
+            mAppSearchImpl.removeBlob("package", "database", handle);
+        } catch (Exception e) {
+            // We don't care whether the write blob is success or not, just want to verify the last
+            // write operation.
+        }
+        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
+                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
+                /*version=*/ 0, setSchemaStatsBuilder);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        setSchemaStats = setSchemaStatsBuilder.build();
+        assertThat(setSchemaStats.getLastWriteOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_REMOVE_BLOB);
+
+        // Set blob visibility and check the last write operation
+        try {
+            mAppSearchImpl.setBlobNamespaceVisibility("package", "database", ImmutableList.of());
+        } catch (Exception e) {
+            // We don't care whether the write blob is success or not, just want to verify the last
+            // write operation.
+        }
+        internalSetSchemaResponse = mAppSearchImpl.setSchema("package", "database",
+                schemas, /*visibilityConfigs=*/ Collections.emptyList(), /*forceOverride=*/ false,
+                /*version=*/ 0, setSchemaStatsBuilder);
+        assertThat(internalSetSchemaResponse.isSuccess()).isTrue();
+        setSchemaStats = setSchemaStatsBuilder.build();
+        assertThat(setSchemaStats.getLastWriteOperation())
+                .isEqualTo(BaseStats.CALL_TYPE_SET_BLOB_VISIBILITY);
     }
 
     @Test
