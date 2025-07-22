@@ -269,6 +269,7 @@ public final class AppSearchLoggerHelper {
                 .setIndexIncompatibleTypeChangeCount(
                         fromProto.getIndexIncompatibleChangedSchemaTypesCount())
                 .setBackwardsIncompatibleTypeChangeCount(
-                        fromProto.getIncompatibleSchemaTypesCount());
+                        fromProto.getIncompatibleSchemaTypesCount())
+                .setGetVmLatencyMillis(fromProto.getGetVmLatencyMs());
     }
 }

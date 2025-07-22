@@ -173,6 +173,8 @@ public class BaseStats {
     @CallType
     private final int mLastWriteOperation;
     private final int mLastWriteOperationLatencyMillis;
+    // The latency of get the VM instance.
+    int mGetVmLatencyMillis;
 
     protected BaseStats(@NonNull Builder<?> builder) {
         Preconditions.checkNotNull(builder);
@@ -180,6 +182,7 @@ public class BaseStats {
         mJavaLockAcquisitionLatencyMillis = builder.mJavaLockAcquisitionLatencyMillis;
         mLastWriteOperation = builder.mLastWriteOperation;
         mLastWriteOperationLatencyMillis = builder.mLastWriteOperationLatencyMillis;
+        mGetVmLatencyMillis = builder.mGetVmLatencyMillis;
     }
 
     /** Returns the bitmask representing the enabled features. */
@@ -201,6 +204,11 @@ public class BaseStats {
     /** Returns time passed while waiting to acquire the lock during Java function calls */
     public int getJavaLockAcquisitionLatencyMillis() {
         return mJavaLockAcquisitionLatencyMillis;
+    }
+
+    /** Returns time passed while get the vm instance. */
+    public int getGetVmLatencyMillis() {
+        return mGetVmLatencyMillis;
     }
 
     /**
@@ -229,6 +237,8 @@ public class BaseStats {
         int mLastWriteOperation;
         // The latency of the last mutation call holds the write lock in AppSearch.
         int mLastWriteOperationLatencyMillis;
+        // The latency of get the VM instance.
+        int mGetVmLatencyMillis;
 
         /** Creates a new {@link BaseStats.Builder}. */
         @SuppressWarnings("unchecked")
@@ -269,6 +279,14 @@ public class BaseStats {
             mLastWriteOperationLatencyMillis = lastWriteOperationLatencyMillis;
             return mBuilderTypeInstance;
         }
+
+        /**  Sets latency for last write operation which hold the write lock in milliseconds. */
+        @CanIgnoreReturnValue
+        public @NonNull BuilderType setGetVmLatencyMillis(int getVmLatencyMillis) {
+            mGetVmLatencyMillis = getVmLatencyMillis;
+            return mBuilderTypeInstance;
+        }
+
 
         /** Builds the {@link BaseStats} instance. */
         public @NonNull BaseStats build() {

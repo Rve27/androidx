@@ -60,6 +60,9 @@ public class CallStats extends BaseStats {
     private final int mNumOperationsSucceeded;
     private final int mNumOperationsFailed;
     private final long mCallReceivedTimestampMillis;
+    @CallType
+    int mLastCallTypeHoldExecutor;
+    int mExecutorAcquisitionLatencyMillis;
 
     CallStats(@NonNull Builder builder) {
         super(builder);
@@ -72,6 +75,8 @@ public class CallStats extends BaseStats {
         mNumOperationsSucceeded = builder.mNumOperationsSucceeded;
         mNumOperationsFailed = builder.mNumOperationsFailed;
         mCallReceivedTimestampMillis = builder.mCallReceivedTimestampMillis;
+        mLastCallTypeHoldExecutor = builder.mLastCallTypeHoldExecutor;
+        mExecutorAcquisitionLatencyMillis = builder.mExecutorAcquisitionLatencyMillis;
     }
 
     /** Returns calling package name. */
@@ -146,6 +151,15 @@ public class CallStats extends BaseStats {
         return mCallReceivedTimestampMillis;
     }
 
+    /** Gets the last call type that hold the executor */
+    public int getLastCallTypeHoldExecutor() {
+        return mLastCallTypeHoldExecutor;
+    }
+
+    /** Gets total latency for creating or waiting the user executor. */
+    public int getExecutorAcquisitionLatencyMillis() {
+        return mExecutorAcquisitionLatencyMillis;
+    }
     /** Builder for {@link CallStats}. */
     public static class Builder extends BaseStats.Builder<CallStats.Builder> {
         @Nullable String mPackageName;
@@ -159,6 +173,9 @@ public class CallStats extends BaseStats {
         int mNumOperationsSucceeded;
         int mNumOperationsFailed;
         long mCallReceivedTimestampMillis;
+        @CallType
+        int mLastCallTypeHoldExecutor;
+        int mExecutorAcquisitionLatencyMillis;
 
         /** Sets the PackageName used by the session. */
         @CanIgnoreReturnValue
@@ -245,6 +262,21 @@ public class CallStats extends BaseStats {
         @CanIgnoreReturnValue
         public @NonNull Builder setCallReceivedTimestampMillis(long callReceivedTimestampMillis) {
             mCallReceivedTimestampMillis = callReceivedTimestampMillis;
+            return this;
+        }
+
+        /** Sets total latency for creating or waiting the user executor. */
+        @CanIgnoreReturnValue
+        public @NonNull Builder setLastCallTypeHoldExecutor(@CallType int callType) {
+            mLastCallTypeHoldExecutor = callType;
+            return this;
+        }
+
+        /** Sets the last call type that hold the executor */
+        @CanIgnoreReturnValue
+        public @NonNull Builder setExecutorAcquisitionLatencyMillis(
+                int executorAcquisitionLatencyMillis) {
+            mExecutorAcquisitionLatencyMillis = executorAcquisitionLatencyMillis;
             return this;
         }
 

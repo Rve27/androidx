@@ -412,7 +412,8 @@ public final class AppSearchImpl implements Closeable {
                                     statusProtoToResultCode(initializeResultProto.getStatus()))
                             // TODO(b/173532925) how to get DeSyncs value
                             .setHasDeSync(false)
-                            .setLaunchVMEnabled(mIsVMEnabled);
+                            .setLaunchVMEnabled(mIsVMEnabled)
+                            .setGetVmLatencyMillis(initializeResultProto.getGetVmLatencyMs());
                     AppSearchLoggerHelper.copyNativeStats(
                             initializeResultProto.getInitializeStats(), initStatsBuilder);
                     if (isVMEnabled()) {
@@ -1612,7 +1613,8 @@ public final class AppSearchImpl implements Closeable {
                             PutDocumentStats.Builder pStatsBuilder =
                                     statsNotFilteredOut.get(statsIndex);
                             pStatsBuilder.setStatusCode(
-                                    statusProtoToResultCode(putResultProto.getStatus()));
+                                    statusProtoToResultCode(putResultProto.getStatus()))
+                                    .setGetVmLatencyMillis(putResultProto.getGetVmLatencyMs());
                             AppSearchLoggerHelper.copyNativeStats(
                                     putResultProto.getPutDocumentStats(), pStatsBuilder);
                         } else {
@@ -1780,7 +1782,8 @@ public final class AppSearchImpl implements Closeable {
                                         - generateDocumentProtoStartTimeMillis))
                         .setRewriteDocumentTypesLatencyMillis(
                                 (int) (rewriteDocumentTypeEndTimeMillis
-                                        - rewriteDocumentTypeStartTimeMillis));
+                                        - rewriteDocumentTypeStartTimeMillis))
+                        .setGetVmLatencyMillis(putResultProto.getGetVmLatencyMs());
                 AppSearchLoggerHelper.copyNativeStats(putResultProto.getPutDocumentStats(),
                         pStatsBuilder);
             }
@@ -2767,7 +2770,8 @@ public final class AppSearchImpl implements Closeable {
         if (sStatsBuilder != null) {
             sStatsBuilder.setRewriteSearchResultLatencyMillis(
                     (int) (SystemClock.elapsedRealtime()
-                            - rewriteSearchResultLatencyStartMillis));
+                            - rewriteSearchResultLatencyStartMillis))
+                    .setGetVmLatencyMillis(searchResultProto.getGetVmLatencyMs());
         }
         return searchResultPage;
     }
@@ -3112,7 +3116,8 @@ public final class AppSearchImpl implements Closeable {
             if (sStatsBuilder != null) {
                 sStatsBuilder.setRewriteSearchResultLatencyMillis(
                         (int) (SystemClock.elapsedRealtime()
-                                - rewriteSearchResultLatencyStartMillis));
+                                - rewriteSearchResultLatencyStartMillis))
+                        .setGetVmLatencyMillis(searchResultProto.getGetVmLatencyMs());
             }
             return searchResultPage;
         } finally {
@@ -4482,7 +4487,8 @@ public final class AppSearchImpl implements Closeable {
                         .setJavaLockAcquisitionLatencyMillis(javaLockAcquisitionLatencyMillis)
                         .setLastWriteOperation(mLastWriteOperationLocked)
                         .setLastWriteOperationLatencyMillis(mLastWriteOperationLatencyMillisLocked)
-                        .setLaunchVMEnabled(mIsVMEnabled);
+                        .setLaunchVMEnabled(mIsVMEnabled)
+                        .setGetVmLatencyMillis(optimizeResultProto.getGetVmLatencyMs());
                 AppSearchLoggerHelper.copyNativeStats(optimizeResultProto.getOptimizeStats(),
                         statsBuilder);
             }

@@ -129,6 +129,7 @@ public class AppSearchStatsTest {
         final int javaLockAcquisitionLatencyMillis = 15;
         final int lastWriteOperation = 16;
         final int lastWriteOperationLatencyMillis = 17;
+        final int getVmLatencyMillis = 18;
         final PutDocumentStats.Builder pStatsBuilder =
                 new PutDocumentStats.Builder(TEST_PACKAGE_NAME, TEST_DATA_BASE)
                         .setStatusCode(TEST_STATUS_CODE)
@@ -151,7 +152,8 @@ public class AppSearchStatsTest {
                         .setEmbeddingIndexLatencyMillis(embeddingIndexLatencyMillis)
                         .setJavaLockAcquisitionLatencyMillis(javaLockAcquisitionLatencyMillis)
                         .setLastWriteOperation(lastWriteOperation)
-                        .setLastWriteOperationLatencyMillis(lastWriteOperationLatencyMillis);
+                        .setLastWriteOperationLatencyMillis(lastWriteOperationLatencyMillis)
+                        .setGetVmLatencyMillis(getVmLatencyMillis);
 
         final PutDocumentStats pStats = pStatsBuilder.build();
 
@@ -191,6 +193,7 @@ public class AppSearchStatsTest {
         assertThat(pStats.getLastWriteOperation()).isEqualTo(lastWriteOperation);
         assertThat(pStats.getLastWriteOperationLatencyMillis())
                 .isEqualTo(lastWriteOperationLatencyMillis);
+        assertThat(pStats.getGetVmLatencyMillis()).isEqualTo(getVmLatencyMillis);
     }
 
     @Test
@@ -218,6 +221,7 @@ public class AppSearchStatsTest {
         final int javaLockAcquisitionLatencyMillis = 13;
         final int lastWriteOperation = 14;
         final int lastWriteOperationLatencyMillis = 15;
+        int getVmLatencyMillis = 16;
 
         final InitializeStats.Builder iStatsBuilder = new InitializeStats.Builder()
                 .setStatusCode(TEST_STATUS_CODE)
@@ -247,7 +251,8 @@ public class AppSearchStatsTest {
                 .setNativeNumFailedReindexedDocuments(numFailedReindexedDocuments)
                 .setJavaLockAcquisitionLatencyMillis(javaLockAcquisitionLatencyMillis)
                 .setLastWriteOperation(lastWriteOperation)
-                .setLastWriteOperationLatencyMillis(lastWriteOperationLatencyMillis);
+                .setLastWriteOperationLatencyMillis(lastWriteOperationLatencyMillis)
+                .setGetVmLatencyMillis(getVmLatencyMillis);
         final InitializeStats iStats = iStatsBuilder.build();
 
         assertThat(iStats.getStatusCode()).isEqualTo(TEST_STATUS_CODE);
@@ -293,6 +298,7 @@ public class AppSearchStatsTest {
         assertThat(iStats.getLastWriteOperation()).isEqualTo(lastWriteOperation);
         assertThat(iStats.getLastWriteOperationLatencyMillis())
                 .isEqualTo(lastWriteOperationLatencyMillis);
+        assertThat(iStats.getGetVmLatencyMillis()).isEqualTo(getVmLatencyMillis);
     }
 
     @Test
@@ -437,6 +443,7 @@ public class AppSearchStatsTest {
         int firstNativeCallLatencyMillis = 221;
         int lastWriteOperation = 222;
         int lastWriteOperationLatencyMillis = 223;
+        int getVmLatencyMillis = 224;
 
         final QueryStats.Builder qStatsBuilder = new QueryStats.Builder(visibilityScope,
                 TEST_PACKAGE_NAME)
@@ -470,7 +477,8 @@ public class AppSearchStatsTest {
                 .setAdditionalPageRetrievalLatencyMillis(additionalPagesRetrievalLatency)
                 .setFirstNativeCallLatency(firstNativeCallLatencyMillis)
                 .setLastWriteOperation(lastWriteOperation)
-                .setLastWriteOperationLatencyMillis(lastWriteOperationLatencyMillis);
+                .setLastWriteOperationLatencyMillis(lastWriteOperationLatencyMillis)
+                .setGetVmLatencyMillis(getVmLatencyMillis);
         final QueryStats qStats = qStatsBuilder.build();
 
         assertThat(qStats.getEnabledFeatures()).isEqualTo(enabledFeatures);
@@ -559,6 +567,7 @@ public class AppSearchStatsTest {
                 + "query_processor_parser_consume_query_latency=113,\n"
                 + "query_processor_query_visitor_latency=114}}";
         assertThat(qStats.toString()).isEqualTo(expectedString);
+        assertThat(qStats.getGetVmLatencyMillis()).isEqualTo(getVmLatencyMillis);
     }
 
     @Test
@@ -584,6 +593,7 @@ public class AppSearchStatsTest {
         int sendNotificationLatencyMillis = 18;
         int lastWriteOperation = 19;
         int lastWriteOperationLatencyMillis = 20;
+        int getVmLatencyMillis = 21;
         int enabledFeatures = 1;
         SetSchemaStats sStats = new SetSchemaStats.Builder(TEST_PACKAGE_NAME, TEST_DATA_BASE)
                 .setStatusCode(TEST_STATUS_CODE)
@@ -613,6 +623,7 @@ public class AppSearchStatsTest {
                 .setJavaLockAcquisitionLatencyMillis(javaLockAcquisitionLatencyMillis)
                 .setLastWriteOperation(lastWriteOperation)
                 .setLastWriteOperationLatencyMillis(lastWriteOperationLatencyMillis)
+                .setGetVmLatencyMillis(getVmLatencyMillis)
                 .build();
 
         assertThat(sStats.getPackageName()).isEqualTo(TEST_PACKAGE_NAME);
@@ -658,6 +669,7 @@ public class AppSearchStatsTest {
         assertThat(sStats.getLastWriteOperation()).isEqualTo(lastWriteOperation);
         assertThat(sStats.getLastWriteOperationLatencyMillis())
                 .isEqualTo(lastWriteOperationLatencyMillis);
+        assertThat(sStats.getGetVmLatencyMillis()).isEqualTo(getVmLatencyMillis);
     }
 
     @Test
@@ -721,6 +733,7 @@ public class AppSearchStatsTest {
         int javaLockAcquisitionLatencyMillis = 10;
         int lastWriteOperation = 11;
         int lastWriteOperationLatencyMillis = 12;
+        int getVmLatencyMillis = 13;
 
         final RemoveStats rStats = new RemoveStats.Builder(TEST_PACKAGE_NAME,
                 TEST_DATA_BASE)
@@ -739,6 +752,7 @@ public class AppSearchStatsTest {
                 .setJavaLockAcquisitionLatencyMillis(javaLockAcquisitionLatencyMillis)
                 .setLastWriteOperation(lastWriteOperation)
                 .setLastWriteOperationLatencyMillis(lastWriteOperationLatencyMillis)
+                .setGetVmLatencyMillis(getVmLatencyMillis)
                 .build();
 
 
@@ -762,6 +776,7 @@ public class AppSearchStatsTest {
         assertThat(rStats.getLastWriteOperation()).isEqualTo(lastWriteOperation);
         assertThat(rStats.getLastWriteOperationLatencyMillis())
                 .isEqualTo(lastWriteOperationLatencyMillis);
+        assertThat(rStats.getGetVmLatencyMillis()).isEqualTo(getVmLatencyMillis);
     }
 
     @Test
@@ -782,6 +797,7 @@ public class AppSearchStatsTest {
         int javaLockAcquisitionLatencyMillis = 9;
         int lastWriteOperation = 10;
         int lastWriteOperationLatencyMillis = 11;
+        int getVmLatencyMillis = 12;
 
         final OptimizeStats oStats = new OptimizeStats.Builder()
                 .setStatusCode(TEST_STATUS_CODE)
@@ -802,6 +818,7 @@ public class AppSearchStatsTest {
                 .setJavaLockAcquisitionLatencyMillis(javaLockAcquisitionLatencyMillis)
                 .setLastWriteOperation(lastWriteOperation)
                 .setLastWriteOperationLatencyMillis(lastWriteOperationLatencyMillis)
+                .setGetVmLatencyMillis(getVmLatencyMillis)
                 .build();
 
         assertThat(oStats.getStatusCode()).isEqualTo(TEST_STATUS_CODE);
@@ -828,6 +845,7 @@ public class AppSearchStatsTest {
         assertThat(oStats.getLastWriteOperation()).isEqualTo(lastWriteOperation);
         assertThat(oStats.getLastWriteOperationLatencyMillis())
                 .isEqualTo(lastWriteOperationLatencyMillis);
+        assertThat(oStats.getGetVmLatencyMillis()).isEqualTo(getVmLatencyMillis);
     }
 
     @Test
