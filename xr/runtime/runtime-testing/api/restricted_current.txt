@@ -834,8 +834,10 @@ package androidx.xr.runtime.testing {
     method public void addOnPassthroughOpacityChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Float> listener);
     method public void addOnSpatialEnvironmentChangedListener(java.util.concurrent.Executor executor, java.util.function.Consumer<java.lang.Boolean> listener);
     method public float getCurrentPassthroughOpacity();
+    method public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<java.lang.Float>> getPassthroughOpacityChangedListenerMap();
     method public float getPreferredPassthroughOpacity();
     method public androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? getPreferredSpatialEnvironment();
+    method public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<java.lang.Boolean>> getSpatialEnvironmentChangedListenerMap();
     method public boolean isPreferredSpatialEnvironmentActive();
     method public void removeOnPassthroughOpacityChangedListener(java.util.function.Consumer<java.lang.Float> listener);
     method public void removeOnSpatialEnvironmentChangedListener(java.util.function.Consumer<java.lang.Boolean> listener);
@@ -843,8 +845,10 @@ package androidx.xr.runtime.testing {
     method public void setPreferredSpatialEnvironment(androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference?);
     property public float currentPassthroughOpacity;
     property public boolean isPreferredSpatialEnvironmentActive;
+    property public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<java.lang.Float>> passthroughOpacityChangedListenerMap;
     property public float preferredPassthroughOpacity;
     property public androidx.xr.runtime.internal.SpatialEnvironment.SpatialEnvironmentPreference? preferredSpatialEnvironment;
+    property public java.util.Map<java.util.concurrent.Executor,java.util.function.Consumer<java.lang.Boolean>> spatialEnvironmentChangedListenerMap;
   }
 
   public final class FakeSpatialModeChangeListener implements androidx.xr.runtime.internal.SpatialModeChangeListener {
