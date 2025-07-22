@@ -104,6 +104,18 @@ class AndroidXComposeImplPlugin : Plugin<Project> {
                     disable.add("ListIterator")
                     disable.add("PrimitiveInCollection")
                 }
+
+                // Disable lambda creation in subcompose check in projects where we're less
+                // concerned about performance.
+                if (
+                    androidXExtension.type == SoftwareType.TEST_APPLICATION ||
+                        androidXExtension.type == SoftwareType.PUBLISHED_KOTLIN_ONLY_TEST_LIBRARY ||
+                        androidXExtension.type == SoftwareType.PUBLISHED_TEST_LIBRARY ||
+                        androidXExtension.type == SoftwareType.SAMPLES ||
+                        androidXExtension.type == SoftwareType.UNSET
+                ) {
+                    disable.add("ComposableLambdaInMeasurePolicy")
+                }
             }
 
             if (!allowMissingLintProject()) {
