@@ -1538,10 +1538,11 @@ private class RotaryInputNode(
         updateScrollLogic()
         coroutineScope.launch {
             flow.collectLatest { event ->
-                val (orientation: Orientation, deltaInPixels: Float) =
-                    if (event.verticalScrollPixels != 0.0f)
-                        Pair(Vertical, event.verticalScrollPixels)
-                    else Pair(Horizontal, event.horizontalScrollPixels)
+                val treatAsVerticalEvent = event.verticalScrollPixels != 0.0f
+                val orientation: Orientation = if (treatAsVerticalEvent) Vertical else Horizontal
+                val deltaInPixels =
+                    if (treatAsVerticalEvent) event.verticalScrollPixels
+                    else event.horizontalScrollPixels
                 debugLog {
                     "Scroll event received: " +
                         "delta:$deltaInPixels, timestamp:${event.uptimeMillis}"
