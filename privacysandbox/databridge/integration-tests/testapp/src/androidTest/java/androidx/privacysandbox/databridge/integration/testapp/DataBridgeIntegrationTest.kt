@@ -22,6 +22,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.google.common.truth.Expect
+import java.util.UUID
 import java.util.concurrent.Executor
 import java.util.concurrent.TimeoutException
 import kotlin.coroutines.resume
@@ -261,7 +262,7 @@ class DataBridgeIntegrationTest {
     }
 
     @Test(expected = TimeoutException::class)
-    fun testUnregisterKeyUpdates() = runTest {
+    fun testUnregisterKeyUpdatesFromApp() = runTest {
         val callback = KeyUpdateCallbackImpl()
 
         getActivity()
@@ -278,6 +279,62 @@ class DataBridgeIntegrationTest {
         // This throws a TimeoutException exception because it CountDownLatch.awaits returns a
         // boolean as the callback has been unregistered
         val unused = callback.getCounterForKey(intKey)
+    }
+
+    @Test
+    fun testRegisterKeyUpdateCallbackFromSdk() = runTest {
+        val uuid1 = UUID.randomUUID().toString()
+        val uuid2 = UUID.randomUUID().toString()
+
+        val callback1 = KeyUpdateCallbackImpl()
+        val callback2 = KeyUpdateCallbackImpl()
+
+        getActivity()
+            .registerKeyUpdateCallbackFromSdk(
+                uuid1,
+                setOf(intKey, stringKey),
+                currentThreadExecutor,
+                callback1,
+            )
+
+        getActivity()
+            .registerKeyUpdateCallbackFromSdk(
+                uuid2,
+                setOf(doubleKey, stringKey),
+                currentThreadExecutor,
+                callback2,
+            )
+
+        callback1.initializeLatch(listOf(stringKey))
+        callback2.initializeLatch(listOf(stringKey))
+        getActivity().setValuesFromApp(mapOf(stringKey to "stringValue"))
+
+        verifyCountAndValue(callback1, stringKey, 1, "stringValue")
+        verifyCountAndValue(callback2, stringKey, 1, "stringValue")
+
+        getActivity().unregisterKeyUpdateCallbackFromSdk(uuid1, callback1)
+        getActivity().unregisterKeyUpdateCallbackFromSdk(uuid2, callback2)
+    }
+
+    @Test(expected = TimeoutException::class)
+    fun testUnregisterKeyUpdatesFromSdk() = runTest {
+        val uuid = UUID.randomUUID().toString()
+        val callback = KeyUpdateCallbackImpl()
+
+        getActivity()
+            .registerKeyUpdateCallbackFromSdk(uuid, setOf(intKey), currentThreadExecutor, callback)
+
+        callback.initializeLatch(listOf(intKey))
+        getActivity().setValuesFromApp(mapOf(intKey to 123))
+        verifyCountAndValue(callback, intKey, 1, 123)
+
+        getActivity().unregisterKeyUpdateCallbackFromSdk(uuid, callback)
+        callback.initializeLatch(listOf(intKey))
+        getActivity().setValuesFromApp(mapOf(intKey to 11))
+
+        // This throws a TimeoutException exception because it CountDownLatch.awaits returns a
+        // boolean as the callback has been unregistered
+        val unused = callback.getValueForKey(intKey)
     }
 
     private fun verifySuccessfulResult(result: Result<Any?>, expectedVal: Any?) {

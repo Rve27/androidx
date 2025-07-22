@@ -20,9 +20,11 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.privacysandbox.databridge.core.Key
 import androidx.privacysandbox.databridge.core.KeyUpdateCallback
+import androidx.privacysandbox.databridge.integration.testsdk.SdkKeyUpdateCallback
 import androidx.privacysandbox.databridge.integration.testsdk.TestSdk
 import androidx.privacysandbox.databridge.integration.testutils.fromKeyValue
 import androidx.privacysandbox.databridge.integration.testutils.toKeyResultPair
+import androidx.privacysandbox.databridge.integration.testutils.toKeyValuePair
 import java.util.concurrent.Executor
 
 class MainActivity : AppCompatActivity() {
@@ -88,5 +90,48 @@ class MainActivity : AppCompatActivity() {
 
     internal fun unregisterKeyUpdateCallbackFromApp(callback: KeyUpdateCallback) {
         testAppApi.unregisterKeyUpdateCallback(callback)
+    }
+
+    val keyUpdateCallbackToSdkKeyUpdateCallbackMap =
+        mutableMapOf<KeyUpdateCallback, SdkKeyUpdateCallbackImpl>()
+
+    internal fun registerKeyUpdateCallbackFromSdk(
+        uuid: String,
+        keys: Set<Key>,
+        executor: Executor,
+        callback: KeyUpdateCallback,
+    ) {
+        val (keyNames, keyTypes) = keys.map { it.name to it.type.toString() }.unzip()
+        if (!keyUpdateCallbackToSdkKeyUpdateCallbackMap.containsKey(callback)) {
+            keyUpdateCallbackToSdkKeyUpdateCallbackMap[callback] =
+                SdkKeyUpdateCallbackImpl(executor, callback)
+        }
+        testAppApi.sdk!!.registerKeyUpdateCallback(
+            uuid,
+            keyNames,
+            keyTypes,
+            keyUpdateCallbackToSdkKeyUpdateCallbackMap[callback]!!,
+        )
+    }
+
+    internal fun unregisterKeyUpdateCallbackFromSdk(uuid: String, callback: KeyUpdateCallback) {
+        if (!keyUpdateCallbackToSdkKeyUpdateCallbackMap.containsKey(callback)) {
+            return
+        }
+        testAppApi.sdk!!.unregisterKeyUpdateCallback(
+            uuid,
+            keyUpdateCallbackToSdkKeyUpdateCallbackMap[callback]!!,
+        )
+        keyUpdateCallbackToSdkKeyUpdateCallbackMap.remove(callback)
+    }
+
+    class SdkKeyUpdateCallbackImpl(val executor: Executor, val callback: KeyUpdateCallback) :
+        SdkKeyUpdateCallback {
+        override fun onKeyUpdated(keyName: String, keyType: String, value: Bundle) {
+            executor.execute {
+                val keyValuePair = value.toKeyValuePair(keyName, keyType)
+                executor.execute { callback.onKeyUpdated(keyValuePair.first, keyValuePair.second) }
+            }
+        }
     }
 }
