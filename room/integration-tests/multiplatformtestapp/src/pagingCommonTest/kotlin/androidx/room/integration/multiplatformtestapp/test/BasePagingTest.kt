@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,22 @@ package androidx.room.integration.multiplatformtestapp.test
 
 import androidx.kruth.assertThat
 import androidx.paging.PagingSource
-import androidx.paging.PagingSource.LoadResult
+import androidx.room.ColumnInfo
+import androidx.room.ConstructedBy
+import androidx.room.Dao
+import androidx.room.Database
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Relation
+import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
+import androidx.room.Transaction
 import kotlin.test.Test
 import kotlinx.coroutines.test.runTest
 
 abstract class BasePagingTest {
 
-    abstract fun getRoomDatabase(): SampleDatabase
+    abstract fun getRoomDatabase(): PagingDatabase
 
     @Test
     fun pagingQuery() = runTest {
@@ -32,10 +41,9 @@ abstract class BasePagingTest {
         val entity1 = SampleEntity(1, 1)
         val entity2 = SampleEntity(2, 2)
         val sampleEntities = listOf(entity1, entity2)
-        val dao = db.dao()
 
-        dao.insertSampleEntityList(sampleEntities)
-        val pagingSource = dao.getAllIds()
+        db.pagingDao().insertSampleEntityList(sampleEntities)
+        val pagingSource = db.pagingDao().getAllIds()
 
         val onlyLoadFirst =
             pagingSource.load(
@@ -44,7 +52,7 @@ abstract class BasePagingTest {
                     loadSize = 1,
                     placeholdersEnabled = true,
                 )
-            ) as LoadResult.Page
+            ) as PagingSource.LoadResult.Page
         assertThat(onlyLoadFirst.data).containsExactly(entity1)
 
         val loadAll =
@@ -54,7 +62,7 @@ abstract class BasePagingTest {
                     loadSize = 2,
                     placeholdersEnabled = true,
                 )
-            ) as LoadResult.Page
+            ) as PagingSource.LoadResult.Page
         assertThat(loadAll.data).containsExactlyElementsIn(sampleEntities)
     }
 
@@ -65,10 +73,9 @@ abstract class BasePagingTest {
         val entity2 = SampleEntity(2, 2)
         val entity3 = SampleEntity(3, 3)
         val sampleEntities = listOf(entity1, entity2, entity3)
-        val dao = db.dao()
 
-        dao.insertSampleEntityList(sampleEntities)
-        val pagingSource = dao.getAllIdsWithArgs(1)
+        db.pagingDao().insertSampleEntityList(sampleEntities)
+        val pagingSource = db.pagingDao().getAllIdsWithArgs(1)
 
         val onlyLoadFirst =
             pagingSource.load(
@@ -77,7 +84,7 @@ abstract class BasePagingTest {
                     loadSize = 1,
                     placeholdersEnabled = true,
                 )
-            ) as LoadResult.Page
+            ) as PagingSource.LoadResult.Page
         assertThat(onlyLoadFirst.data).containsExactly(entity2)
 
         val loadAll =
@@ -87,7 +94,40 @@ abstract class BasePagingTest {
                     loadSize = 2,
                     placeholdersEnabled = true,
                 )
-            ) as LoadResult.Page
+            ) as PagingSource.LoadResult.Page
         assertThat(loadAll.data).containsExactlyElementsIn(listOf(entity2, entity3))
     }
+
+    @Database(
+        entities = [SampleEntity::class, SampleEntity2::class, SampleEntity3::class],
+        version = 1,
+        exportSchema = false,
+    )
+    @ConstructedBy(PagingDatabaseConstructor::class)
+    abstract class PagingDatabase : RoomDatabase() {
+        abstract fun pagingDao(): PagingDao
+    }
+
+    @Dao
+    interface PagingDao {
+
+        @Insert suspend fun insertSampleEntityList(entities: List<SampleEntity>)
+
+        @Transaction
+        @Query("SELECT * FROM SampleEntity3")
+        fun getPagingSourceRelation(): PagingSource<Int, SampleRelation>
+
+        data class SampleRelation(
+            val pk3: Long,
+            @ColumnInfo(defaultValue = "0") val data3: Long,
+            @Relation(parentColumn = "pk3", entityColumn = "pk3") val relationEntity: SampleEntity3,
+        )
+
+        @Query("SELECT * FROM SampleEntity") fun getAllIds(): PagingSource<Int, SampleEntity>
+
+        @Query("SELECT * FROM SampleEntity WHERE pk > :gt ORDER BY pk ASC")
+        fun getAllIdsWithArgs(gt: Long): PagingSource<Int, SampleEntity>
+    }
 }
+
+expect object PagingDatabaseConstructor : RoomDatabaseConstructor<BasePagingTest.PagingDatabase>

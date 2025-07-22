@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,37 @@ package androidx.room.integration.multiplatformtestapp.test
 
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import kotlin.io.path.createTempFile
+import kotlin.random.Random
+import kotlin.test.AfterTest
+import kotlin.test.BeforeTest
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import platform.posix.remove
 
 class PagingTest : BasePagingTest() {
 
+    private val filename = "/tmp/test-${Random.Default.nextInt()}.db"
+
     override fun getRoomDatabase(): PagingDatabase {
-        val tempFile = createTempFile("test.db").also { it.toFile().deleteOnExit() }
-        return Room.databaseBuilder<PagingDatabase>(name = tempFile.toString())
+        return Room.databaseBuilder<PagingDatabase>(name = filename)
             .setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
+    }
+
+    @BeforeTest
+    fun before() {
+        deleteDatabaseFile()
+    }
+
+    @AfterTest
+    fun after() {
+        deleteDatabaseFile()
+    }
+
+    private fun deleteDatabaseFile() {
+        remove(filename)
+        remove("$filename-wal")
+        remove("$filename-shm")
     }
 }

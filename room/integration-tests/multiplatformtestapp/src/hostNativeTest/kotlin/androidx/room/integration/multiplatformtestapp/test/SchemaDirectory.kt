@@ -16,13 +16,10 @@
 
 package androidx.room.integration.multiplatformtestapp.test
 
-import platform.Foundation.NSBundle
-
 /**
  * Gets the schema directory path for tests with [androidx.room.testing.MigrationTestHelper].
  *
- * For iOS, it will be the main resource directory in the bundle.
+ * For native (host OS targets), it will be the directory in the project.
  */
-internal actual fun getSchemaDirectoryPath(): String {
-    return checkNotNull(NSBundle.mainBundle().resourcePath) + "/schemas-ksp"
-}
+// TODO(b/329526300): Investigate native resources for placing schemas.
+internal actual fun getSchemaDirectoryPath(): String = "schemas-ksp"
