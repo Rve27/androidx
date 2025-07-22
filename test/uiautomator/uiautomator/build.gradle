@@ -52,10 +52,6 @@ android {
     useLibrary "android.test.base"
     useLibrary "android.test.mock"
     namespace = "androidx.test.uiautomator"
-
-    defaultConfig {
-        consumerProguardFiles 'proguard-rules.pro'
-    }
 }
 
 /**
