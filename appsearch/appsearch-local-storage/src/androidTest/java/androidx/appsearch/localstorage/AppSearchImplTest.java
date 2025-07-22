@@ -1222,7 +1222,7 @@ public class AppSearchImplTest {
     @RequiresFlagsEnabled({
             Flags.FLAG_ENABLE_RESET_VISIBILITY_STORE,
             Flags.FLAG_ENABLE_DATABASE_SCOPED_SCHEMA_OPERATIONS})
-    public void testResetBlobStore() throws Exception {
+    public void testResetVisibilityStore() throws Exception {
         // Setup Icing mock to success to all calls in initialize expect the setSchema call of
         // VisibilityStore.
         InitializeResultProto okInit =

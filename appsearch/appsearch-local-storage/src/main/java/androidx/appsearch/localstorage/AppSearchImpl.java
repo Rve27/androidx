@@ -220,6 +220,7 @@ public final class AppSearchImpl implements Closeable {
     @VisibleForTesting
     IcingSearchEngineInterface mIcingSearchEngineLocked;
     private final boolean mIsVMEnabled;
+    private final boolean mResetVisibilityStore;
 
     private boolean mIsIcingSchemaDatabaseEnabled = false;
 
@@ -384,6 +385,7 @@ public final class AppSearchImpl implements Closeable {
                 mIsIcingSchemaDatabaseEnabled = true;
                 maxInitRetries = 2;
             }
+            mResetVisibilityStore = Flags.enableResetVisibilityStore() || mIsVMEnabled;
 
             // The core initialization procedure. If any part of this fails, we bail into
             // resetLocked(), deleting all data (but hopefully allowing AppSearchImpl to come up).
@@ -536,13 +538,14 @@ public final class AppSearchImpl implements Closeable {
                                     - prepareSchemaAndNamespacesLatencyStartMillis));
                 }
 
-                LogUtil.piiTrace(TAG, "Init completed successfully");
-
-                if (Flags.enableResetVisibilityStore()) {
+                if (mResetVisibilityStore) {
+                    // Move initialize Visibility Store in the try-catch reset block. We will
+                    // trigger reset if we cannot create Visibility Store properly.
                     visibilityStoreMap = initializeVisibilityStore(mRevocableFileDescriptorStore,
                             initStatsBuilder);
                 }
 
+                LogUtil.piiTrace(TAG, "Init completed successfully");
             } catch (AppSearchException e) {
                 // Some error. Reset and see if it fixes it.
                 Log.e(TAG, "Error initializing, attempting to reset IcingSearchEngine.", e);
@@ -550,10 +553,16 @@ public final class AppSearchImpl implements Closeable {
                     initStatsBuilder.setStatusCode(e.getResultCode());
                 }
                 resetLocked(initStatsBuilder);
-                if (Flags.enableResetVisibilityStore()) {
+                if (mResetVisibilityStore) {
+                    // After reset Icing, we should build and initialize VisibilityStore as well.
                     visibilityStoreMap = initializeVisibilityStore(mRevocableFileDescriptorStore,
                             initStatsBuilder);
                 }
+            }
+            if (!mResetVisibilityStore) {
+                // Keep the old behaviour when flags are off.
+                visibilityStoreMap = initializeVisibilityStore(mRevocableFileDescriptorStore,
+                        initStatsBuilder);
             }
             mDocumentVisibilityStoreLocked = visibilityStoreMap.get(
                     VisibilityStore.DOCUMENT_VISIBILITY_DATABASE_NAME);
