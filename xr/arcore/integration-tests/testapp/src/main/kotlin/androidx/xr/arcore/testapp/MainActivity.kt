@@ -61,6 +61,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.xr.arcore.testapp.common.TestCaseButton
 import androidx.xr.arcore.testapp.depthmaps.DepthMapActivity
+import androidx.xr.arcore.testapp.facetracking.FaceTrackingActivity
 import androidx.xr.arcore.testapp.handtracking.HandTrackingActivity
 import androidx.xr.arcore.testapp.helloar.HelloArObjectActivity
 import androidx.xr.arcore.testapp.helloar.HelloArPlaneActivity
@@ -163,9 +164,6 @@ class MainActivity : ComponentActivity() {
                     startTest<HelloArPlaneActivity>(it)
                 }
                 TestCaseColumnRowItem(R.string.hit_test) { startTest<HelloArPlaneActivity>(it) }
-                TestCaseColumnRowItem(R.string.object_tracking) {
-                    startTest<HelloArObjectActivity>(it)
-                }
                 TestCaseColumnRowItem(R.string.device_tracking_test) {
                     startTest<PersistentAnchorsActivity>(it)
                 }
@@ -181,7 +179,13 @@ class MainActivity : ComponentActivity() {
                 TestCaseColumnRowItem(R.string.hand_tracking) {
                     startTest<HandTrackingActivity>(it)
                 }
+                TestCaseColumnRowItem(R.string.face_tracking) {
+                    startTest<FaceTrackingActivity>(it)
+                }
                 TestCaseColumnRowItem(R.string.depth_maps) { startTest<DepthMapActivity>(it) }
+                TestCaseColumnRowItem(R.string.object_tracking) {
+                    startTest<HelloArObjectActivity>(it)
+                }
             }
         }
     }
