@@ -338,7 +338,7 @@ class CoreEntityTest {
                 composeTestRule.onSubspaceNodeWithTag("panel").fetchSemanticsNode().semanticsEntity
                     as? PanelEntity
             )
-        assertThat(panelEntity.sizeInPixels).isEqualTo(IntSize2d(1, 1))
+        assertThat(panelEntity.sizeInPixels).isEqualTo(IntSize2d(0, 0))
         assertThat(panelEntity.isEnabled()).isFalse()
 
         size = 100.dp

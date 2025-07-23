@@ -223,8 +223,7 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
         set(value) {
             if (super.size != value) {
                 super.size = value
-                panelEntity.sizeInPixels =
-                    IntSize2d(value.width.coerceAtLeast(1), value.height.coerceAtLeast(1))
+                panelEntity.sizeInPixels = IntSize2d(size.width, size.height)
                 shapeDensity?.let { updateShape(it) }
             }
             updateEntityEnabledState()
