@@ -509,7 +509,7 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
         switch (relativeTo) {
             case Space.PARENT:
                 throw new UnsupportedOperationException(
-                    "AnchorEntity is a root space and it does not have a parent.");
+                        "AnchorEntity is a root space and it does not have a parent.");
             case Space.ACTIVITY:
                 return getPoseInActivitySpace();
             case Space.REAL_WORLD:
@@ -534,7 +534,7 @@ class AnchorEntityImpl extends SystemSpaceEntityImpl implements AnchorEntity {
         switch (relativeTo) {
             case Space.PARENT:
                 throw new UnsupportedOperationException(
-                    "AnchorEntity is a root space and it does not have a parent.");
+                        "AnchorEntity is a root space and it does not have a parent.");
             case Space.ACTIVITY:
                 return getActivitySpaceScale();
             case Space.REAL_WORLD:

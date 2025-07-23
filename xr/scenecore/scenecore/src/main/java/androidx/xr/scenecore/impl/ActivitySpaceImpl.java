@@ -103,7 +103,7 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
         switch (relativeTo) {
             case Space.PARENT:
                 throw new UnsupportedOperationException(
-                    "ActivitySpace is a root space and it does not have a parent.");
+                        "ActivitySpace is a root space and it does not have a parent.");
             case Space.ACTIVITY:
                 return getPoseInActivitySpace();
             case Space.REAL_WORLD:
@@ -154,7 +154,7 @@ final class ActivitySpaceImpl extends SystemSpaceEntityImpl implements ActivityS
         switch (relativeTo) {
             case Space.PARENT:
                 throw new UnsupportedOperationException(
-                    "ActivitySpace is a root space and it does not have a parent.");
+                        "ActivitySpace is a root space and it does not have a parent.");
             case Space.ACTIVITY:
                 return getActivitySpaceScale();
             case Space.REAL_WORLD:
