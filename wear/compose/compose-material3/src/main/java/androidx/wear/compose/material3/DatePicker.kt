@@ -193,7 +193,24 @@ public fun DatePicker(
         }
     }
 
-    val shortMonthNames = remember { getMonthNames("MMM") }
+    val locale = LocalConfiguration.current.locales[0]
+    val monthPattern =
+        remember(locale) {
+            val yearPattern = DateFormat.getBestDateTimePattern(locale, "y")
+            // REVISED, SAFER HEURISTIC:
+            // Check if the pattern contains any letter that isn't 'y'. This correctly
+            // identifies linguistic markers like '年', '년', 'г', etc., while safely
+            // ignoring spaces or simple punctuation.
+            val useNumericMonth = yearPattern.any { it.isLetter() && it != 'y' }
+
+            if (useNumericMonth) {
+                "MM"
+            } else {
+                "MMM"
+            }
+        }
+
+    val shortMonthNames = remember(monthPattern) { getMonthNames(monthPattern) }
     val fullMonthNames = remember { getMonthNames("MMMM") }
     val yearContentDescription = {
         createDescriptionDatePicker(selectedIndex, datePickerState.selectedYear, yearString)
