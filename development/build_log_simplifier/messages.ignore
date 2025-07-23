@@ -402,3 +402,5 @@ Calculating task graph as configuration cache cannot be reused because the set o
 # b/414775532
 # > Task :compose-hero-benchmarks:poxedex-compose:app:kspReleaseKotlin
 w: \[ksp\] LibraryGlideModules \[\] are included more than once, keeping only one\!
+# > Tracing - Driver warnings (https://youtrack.jetbrains.com/issue/KTIJ-22326)
+w[:] file[:]//[$]SUPPORT/tracing/.* This code uses error suppression for 'OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE'.*
