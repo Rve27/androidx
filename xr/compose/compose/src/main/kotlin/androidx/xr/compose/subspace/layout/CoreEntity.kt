@@ -286,7 +286,8 @@ internal class CoreMainPanelEntity(session: Session) :
     CoreBasePanelEntity(session.scene.mainPanelEntity) {
 
     override fun dispose() {
-        // Do not call super.dispose() because we don't want to dispose the main panel entity.
+        // Set the parent to null so the main panel is not disposed when its parent is disposed.
+        parent = null
     }
 
     override fun equals(other: Any?): Boolean {

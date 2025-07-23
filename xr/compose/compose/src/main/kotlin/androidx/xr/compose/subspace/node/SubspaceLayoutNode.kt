@@ -231,6 +231,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
         nodes.runOnDetach()
         ignoreRelayoutRequests { children.forEach { child -> child.detach() } }
         nodes.markAsDetached()
+        coreEntity?.dispose()
 
         owner.onDetach(this)
         this.owner = null

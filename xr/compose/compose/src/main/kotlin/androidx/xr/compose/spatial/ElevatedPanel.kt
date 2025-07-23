@@ -131,6 +131,8 @@ internal fun ElevatedPanel(
         }
     }
 
+    DisposableEffect(panelEntity) { onDispose { panelEntity.dispose() } }
+
     LaunchedEffect(pose) {
         if (pose != null) {
             panelEntity.entity.setPose(pose)
