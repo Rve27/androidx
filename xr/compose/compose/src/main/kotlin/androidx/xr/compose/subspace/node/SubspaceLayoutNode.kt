@@ -16,7 +16,6 @@
 
 package androidx.xr.compose.subspace.node
 
-import android.view.Choreographer
 import androidx.compose.runtime.CompositionLocalMap
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.SemanticsConfiguration
@@ -246,8 +245,7 @@ internal class SubspaceLayoutNode : ComposeSubspaceNode {
 
     internal fun requestRelayout() {
         if (!ignoreRelayoutRequests) {
-            val frameCallback = Choreographer.FrameCallback { owner?.requestRelayout() }
-            Choreographer.getInstance().postFrameCallback(frameCallback)
+            owner?.requestRelayout()
         }
     }
 
