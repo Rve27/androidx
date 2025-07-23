@@ -250,7 +250,10 @@ public fun SpatialExternalSurface(
  * canvas, and if a stereoscopic StereoMode is specified, then the User will see left and right eye
  * content mapped to the appropriate display. This is an environment-like Composable that will
  * appear centered around the user's head position. If head tracking isn't already configured, an
- * attempt will be made to configure it.
+ * attempt will be made to configure it. While this Composable is active, a temporary preferred
+ * environment will be set, if one isn't already set, to put the user inside a boundary. In cases
+ * where the user has not consented to the boundary or if passthrough is ever fully enabled, a
+ * transparent feathered surface will display instead.
  *
  * Note that this Surface does not capture input events. It is also not currently possible to
  * synchronize StereoMode changes with application rendering or video decoding.
@@ -389,40 +392,37 @@ private fun SpatialExternalSurfaceSphere(
         onDispose { instance.executeOnDestroy() }
     }
 
-    // Sets a black environment for 360 video if a custom one isn't set. With a custom background at
-    // 0 passthrough, the app will minimize if the user leaves the boundary for an extended time.
-    if (!isHemisphere) {
-        DisposableEffect(Unit) {
-            val session = checkNotNull(session) { "Session is required" }
-            var temporaryEnvironmentSet = false
-            val previousPassthrough = session.scene.spatialEnvironment.preferredPassthroughOpacity
+    // Sets a black environment if a custom one isn't set. With a custom background at 0
+    // passthrough set, the system will minimize the application if the user leaves the boundary for
+    // an extended time.
+    DisposableEffect(Unit) {
+        val session = checkNotNull(session) { "Session is required" }
+        var temporaryEnvironmentSet = false
+        val previousPassthrough = session.scene.spatialEnvironment.preferredPassthroughOpacity
 
-            if (session.scene.spatialEnvironment.preferredSpatialEnvironment == null) {
-                session.scene.spatialEnvironment.preferredSpatialEnvironment =
-                    SpatialEnvironment.SpatialEnvironmentPreference(skybox = null, geometry = null)
-                temporaryEnvironmentSet = true
-            }
+        if (session.scene.spatialEnvironment.preferredSpatialEnvironment == null) {
+            session.scene.spatialEnvironment.preferredSpatialEnvironment =
+                SpatialEnvironment.SpatialEnvironmentPreference(skybox = null, geometry = null)
+            temporaryEnvironmentSet = true
+        }
 
-            // Since we lack better boundary APIs at the moment, we will correlate full
-            // passthrough being on as an indication that boundary is unavailable, as we set
-            // passthrough to 0 if boundary is available.
-            val passthroughListener = { passthrough: Float ->
-                coreSurfaceEntity.isBoundaryAvailable = passthrough != 1.0f
-            }
-            session.scene.spatialEnvironment.addOnPassthroughOpacityChangedListener(
+        // Since we lack better boundary APIs at the moment, we will correlate full
+        // passthrough being on as an indication that boundary is unavailable, as we set
+        // passthrough to 0 if boundary is available.
+        val passthroughListener = { passthrough: Float ->
+            coreSurfaceEntity.isBoundaryAvailable = passthrough != 1.0f
+        }
+        session.scene.spatialEnvironment.addOnPassthroughOpacityChangedListener(passthroughListener)
+        session.scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
+
+        onDispose {
+            session.scene.spatialEnvironment.removeOnPassthroughOpacityChangedListener(
                 passthroughListener
             )
-            session.scene.spatialEnvironment.preferredPassthroughOpacity = 0.0f
-
-            onDispose {
-                session.scene.spatialEnvironment.removeOnPassthroughOpacityChangedListener(
-                    passthroughListener
-                )
-                if (temporaryEnvironmentSet) {
-                    session.scene.spatialEnvironment.preferredSpatialEnvironment = null
-                }
-                session.scene.spatialEnvironment.preferredPassthroughOpacity = previousPassthrough
+            if (temporaryEnvironmentSet) {
+                session.scene.spatialEnvironment.preferredSpatialEnvironment = null
             }
+            session.scene.spatialEnvironment.preferredPassthroughOpacity = previousPassthrough
         }
     }
 

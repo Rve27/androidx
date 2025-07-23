@@ -456,28 +456,31 @@ internal class CoreSphereSurfaceEntity(
             return
         }
 
-        if (
-            !isBoundaryAvailable &&
-                surfaceEntity.canvasShape is SurfaceEntity.CanvasShape.Vr360Sphere
-        ) {
-            surfaceEntity.edgeFeather = SurfaceEntity.EdgeFeatheringParams.SmoothFeather(0.7f, 0.7f)
-            return
-        }
-
-        val semicircleArcLength = Meter((radius * PI).toFloat()).toPx(localDensity)
-        (currentFeatheringEffect as? SpatialSmoothFeatheringEffect)?.let {
-            val radiusX =
-                it.size.toWidthPercent(
-                    if (surfaceEntity.canvasShape is SurfaceEntity.CanvasShape.Vr180Hemisphere)
-                        semicircleArcLength / 2
-                    else semicircleArcLength,
-                    localDensity,
-                )
-            val radiusY = it.size.toHeightPercent(semicircleArcLength, localDensity)
-            surfaceEntity.edgeFeather =
-                SurfaceEntity.EdgeFeatheringParams.SmoothFeather(radiusX, radiusY)
-        }
+        surfaceEntity.edgeFeather =
+            if (!isBoundaryAvailable) {
+                val radius = if (isHemisphere) 0.5f else 0.7f
+                SurfaceEntity.EdgeFeatheringParams.SmoothFeather(radius, radius)
+            } else {
+                val semicircleArcLength = Meter((radius * PI).toFloat()).toPx(localDensity)
+                (currentFeatheringEffect as? SpatialSmoothFeatheringEffect)?.let {
+                    val radiusX =
+                        it.size.toWidthPercent(
+                            if (
+                                surfaceEntity.canvasShape
+                                    is SurfaceEntity.CanvasShape.Vr180Hemisphere
+                            )
+                                semicircleArcLength / 2
+                            else semicircleArcLength,
+                            localDensity,
+                        )
+                    val radiusY = it.size.toHeightPercent(semicircleArcLength, localDensity)
+                    SurfaceEntity.EdgeFeatheringParams.SmoothFeather(radiusX, radiusY)
+                }
+            } ?: surfaceEntity.edgeFeather
     }
+
+    private val isHemisphere
+        get() = surfaceEntity.canvasShape is SurfaceEntity.CanvasShape.Vr180Hemisphere
 }
 
 /** [CoreEntity] types that implement this interface may have the ResizableComponent attached. */
