@@ -77,7 +77,7 @@ import org.junit.runner.RunWith
 
 @MediumTest
 @RunWith(AndroidJUnit4::class)
-class ListItemTest {
+class CardTest {
     @get:Rule val rule = createComposeRule()
 
     // Enter non-touch mode for tests, so that clickables can be focused.
@@ -91,11 +91,11 @@ class ListItemTest {
     @Test
     fun semantics() {
         rule.setGlimmerThemeContent {
-            Box { ListItem(modifier = Modifier.testTag("listItem")) { Text("Primary Label") } }
+            Box { Card(modifier = Modifier.testTag("card")) { Text("This is a card") } }
         }
 
         rule
-            .onNodeWithTag("listItem")
+            .onNodeWithTag("card")
             .assert(isFocusable())
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Role))
     }
@@ -104,14 +104,12 @@ class ListItemTest {
     fun semantics_clickable() {
         rule.setGlimmerThemeContent {
             Box {
-                ListItem(modifier = Modifier.testTag("listItem"), onClick = {}) {
-                    Text("Primary Label")
-                }
+                Card(modifier = Modifier.testTag("card"), onClick = {}) { Text("This is a card") }
             }
         }
 
         rule
-            .onNodeWithTag("listItem")
+            .onNodeWithTag("card")
             .assert(isFocusable())
             .assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Role))
             .assertHasClickAction()
@@ -125,14 +123,14 @@ class ListItemTest {
         rule.setGlimmerThemeContent {
             GlimmerTheme(Colors(surface = surfaceColor)) {
                 expectedShape = GlimmerTheme.shapes.medium
-                ListItem(modifier = Modifier.testTag("listItem"), border = null) {
+                Card(modifier = Modifier.testTag("card"), border = null) {
                     Box(Modifier.size(100.dp, 100.dp))
                 }
             }
         }
 
         rule
-            .onNodeWithTag("listItem")
+            .onNodeWithTag("card")
             .captureToImage()
             .assertShape(
                 density = rule.density,
@@ -145,55 +143,53 @@ class ListItemTest {
 
     @Test
     fun setsLocalTextStyle() {
-        lateinit var actualPrimaryLabelTextStyle: TextStyle
-        lateinit var expectedPrimaryLabelTextStyle: TextStyle
+        lateinit var actualTitleTextStyle: TextStyle
+        lateinit var actualSubtitleTextStyle: TextStyle
+        lateinit var actualContentTextStyle: TextStyle
+        lateinit var expectedTitleTextStyle: TextStyle
+        lateinit var expectedSubtitleTextStyle: TextStyle
+        lateinit var expectedContentTextStyle: TextStyle
         rule.setGlimmerThemeContent {
-            expectedPrimaryLabelTextStyle = GlimmerTheme.typography.bodySmall
-            ListItem { actualPrimaryLabelTextStyle = LocalTextStyle.current }
-        }
-
-        rule.runOnIdle {
-            assertThat(actualPrimaryLabelTextStyle).isEqualTo(expectedPrimaryLabelTextStyle)
-        }
-    }
-
-    @Test
-    fun setsLocalTextStyle_withSupportingLabel() {
-        lateinit var actualPrimaryLabelTextStyle: TextStyle
-        lateinit var actualSupportingLabelTextStyle: TextStyle
-        lateinit var expectedPrimaryLabelTextStyle: TextStyle
-        lateinit var expectedSupportingLabelTextStyle: TextStyle
-        rule.setGlimmerThemeContent {
-            expectedPrimaryLabelTextStyle = GlimmerTheme.typography.titleSmall
-            expectedSupportingLabelTextStyle = GlimmerTheme.typography.bodySmall
-            ListItem(
-                supportingLabel = { actualSupportingLabelTextStyle = LocalTextStyle.current }
+            expectedTitleTextStyle = GlimmerTheme.typography.bodyMedium
+            expectedSubtitleTextStyle = GlimmerTheme.typography.bodySmall
+            expectedContentTextStyle = GlimmerTheme.typography.bodySmall
+            Card(
+                title = { actualTitleTextStyle = LocalTextStyle.current },
+                subtitle = { actualSubtitleTextStyle = LocalTextStyle.current },
             ) {
-                actualPrimaryLabelTextStyle = LocalTextStyle.current
+                actualContentTextStyle = LocalTextStyle.current
             }
         }
 
         rule.runOnIdle {
-            assertThat(actualPrimaryLabelTextStyle).isEqualTo(expectedPrimaryLabelTextStyle)
-            assertThat(actualSupportingLabelTextStyle).isEqualTo(expectedSupportingLabelTextStyle)
+            assertThat(actualTitleTextStyle).isEqualTo(expectedTitleTextStyle)
+            assertThat(actualSubtitleTextStyle).isEqualTo(expectedSubtitleTextStyle)
+            assertThat(actualContentTextStyle).isEqualTo(expectedContentTextStyle)
         }
     }
 
     @Test
     fun setsContentColor() {
         var primary = Color.Unspecified
+        var titleContentColor = Color.Unspecified
+        var subtitleContentColor = Color.Unspecified
         var leadingIconContentColor = Color.Unspecified
         var trailingIconContentColor = Color.Unspecified
-        var primaryLabelContentColor = Color.Unspecified
-        var supportingLabelContentColor = Color.Unspecified
+        var contentContentColor = Color.Unspecified
         rule.setGlimmerThemeContent {
             primary = GlimmerTheme.colors.primary
-            ListItem(
-                supportingLabel = {
+            Card(
+                title = {
                     Box(
                         DelegatableNodeProviderElement {
-                            supportingLabelContentColor =
-                                it?.currentContentColor() ?: Color.Unspecified
+                            titleContentColor = it?.currentContentColor() ?: Color.Unspecified
+                        }
+                    )
+                },
+                subtitle = {
+                    Box(
+                        DelegatableNodeProviderElement {
+                            subtitleContentColor = it?.currentContentColor() ?: Color.Unspecified
                         }
                     )
                 },
@@ -215,17 +211,18 @@ class ListItemTest {
             ) {
                 Box(
                     DelegatableNodeProviderElement {
-                        primaryLabelContentColor = it?.currentContentColor() ?: Color.Unspecified
+                        contentContentColor = it?.currentContentColor() ?: Color.Unspecified
                     }
                 )
             }
         }
 
         rule.runOnIdle {
+            assertThat(titleContentColor).isEqualTo(Color.White)
+            assertThat(subtitleContentColor).isEqualTo(Color.White)
             assertThat(leadingIconContentColor).isEqualTo(primary)
             assertThat(trailingIconContentColor).isEqualTo(primary)
-            assertThat(primaryLabelContentColor).isEqualTo(Color.White)
-            assertThat(supportingLabelContentColor).isEqualTo(Color.White)
+            assertThat(contentContentColor).isEqualTo(Color.White)
         }
     }
 
@@ -236,7 +233,7 @@ class ListItemTest {
         var expectedIconSize: Dp? = null
         rule.setGlimmerThemeContent {
             expectedIconSize = GlimmerTheme.iconSizes.large
-            ListItem(
+            Card(
                 leadingIcon = { actualLeadingIconSize = LocalIconSize.current },
                 trailingIcon = { actualTrailingIconSize = LocalIconSize.current },
             ) {}
@@ -258,11 +255,11 @@ class ListItemTest {
         rule.setGlimmerThemeContent {
             scope = rememberCoroutineScope()
             Box {
-                ListItem(
-                    modifier = Modifier.testTag("listItem").focusRequester(focusRequester),
+                Card(
+                    modifier = Modifier.testTag("card").focusRequester(focusRequester),
                     interactionSource = interactionSource,
                 ) {
-                    Text("Primary Label")
+                    Text("This is a card")
                 }
                 Box(Modifier.size(100.dp).focusRequester(otherFocusRequester).focusTarget())
             }
@@ -303,12 +300,12 @@ class ListItemTest {
         rule.setGlimmerThemeContent {
             scope = rememberCoroutineScope()
             Box {
-                ListItem(
-                    modifier = Modifier.testTag("listItem").focusRequester(focusRequester),
+                Card(
+                    modifier = Modifier.testTag("card").focusRequester(focusRequester),
                     interactionSource = interactionSource,
                     onClick = {},
                 ) {
-                    Text("Primary Label")
+                    Text("This is a card")
                 }
             }
         }
@@ -333,7 +330,7 @@ class ListItemTest {
                 0,
             )
         down.source = SOURCE_TOUCH_NAVIGATION
-        rule.onNodeWithTag("listItem").performIndirectTouchEvent(IndirectTouchEvent(down))
+        rule.onNodeWithTag("card").performIndirectTouchEvent(IndirectTouchEvent(down))
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(1)
@@ -350,7 +347,7 @@ class ListItemTest {
                 0,
             )
         up.source = SOURCE_TOUCH_NAVIGATION
-        rule.onNodeWithTag("listItem").performIndirectTouchEvent(IndirectTouchEvent(up))
+        rule.onNodeWithTag("card").performIndirectTouchEvent(IndirectTouchEvent(up))
 
         rule.runOnIdle {
             assertThat(interactions).hasSize(2)
@@ -366,94 +363,104 @@ class ListItemTest {
         rule.setGlimmerThemeContent {
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
-                ListItem(modifier = Modifier.testTag("listItem")) {
-                    Text("Primary Label", modifier = Modifier.testTag("primaryLabel"))
+                Card(modifier = Modifier.testTag("card")) {
+                    Text("This is a card", modifier = Modifier.testTag("content"))
                 }
             }
         }
 
         val spacerBounds =
             rule.onNodeWithTag("spacer", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val primaryLabelBounds =
-            rule.onNodeWithTag("primaryLabel", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val listItemBounds =
-            rule.onNodeWithTag("listItem", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val contentBounds =
+            rule.onNodeWithTag("content", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val cardBounds =
+            rule.onNodeWithTag("card", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
-        // Label should typically be center aligned for list items without a supporting label, since
-        // the minimum height of the item should be larger than the height of the labels
-        (((listItemBounds.height - primaryLabelBounds.height) / 2f) + listItemBounds.top)
-            .assertIsEqualTo(
-                primaryLabelBounds.top,
-                "Padding between top of list item and top of primary label.",
-            )
+        // Content should typically be center aligned for cards without a title / subtitle, since
+        // the minimum height of the item should be larger than the height of the text
+        (((cardBounds.height - contentBounds.height) / 2f) + cardBounds.top).assertIsEqualTo(
+            contentBounds.top,
+            "Padding between top of card and top of content.",
+        )
 
-        (primaryLabelBounds.left - listItemBounds.left).assertIsEqualTo(
+        (contentBounds.left - cardBounds.left).assertIsEqualTo(
             24.dp,
-            "Padding between the start of the list item and the start of the primary label.",
+            "Padding between the start of the card and the start of the content.",
         )
 
         // The width should fill the max width, like with the spacer
-        listItemBounds.width.assertIsEqualTo(spacerBounds.width, "width of list item.")
-        listItemBounds.height.assertIsEqualTo(72.dp, "height of list item.")
+        cardBounds.width.assertIsEqualTo(spacerBounds.width, "width of card.")
+        cardBounds.height.assertIsEqualTo(80.dp, "height of card.")
     }
 
     @Test
-    fun positioning_supportingLabel() {
+    fun positioning_titleAndSubtitle() {
         rule.setGlimmerThemeContent {
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
-                ListItem(
-                    modifier = Modifier.testTag("listItem"),
-                    supportingLabel = {
-                        Text("Supporting Label", modifier = Modifier.testTag("supportingLabel"))
-                    },
+                Card(
+                    modifier = Modifier.testTag("card"),
+                    title = { Text("Title", modifier = Modifier.testTag("title")) },
+                    subtitle = { Text("Subtitle", modifier = Modifier.testTag("subtitle")) },
                 ) {
-                    Text("Primary Label", modifier = Modifier.testTag("primaryLabel"))
+                    Text("This is a card", modifier = Modifier.testTag("content"))
                 }
             }
         }
 
         val spacerBounds =
             rule.onNodeWithTag("spacer", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val primaryLabelBounds =
-            rule.onNodeWithTag("primaryLabel", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val supportingLabelBounds =
-            rule.onNodeWithTag("supportingLabel", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val listItemBounds =
-            rule.onNodeWithTag("listItem", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val contentBounds =
+            rule.onNodeWithTag("content", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val titleBounds =
+            rule.onNodeWithTag("title", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val subtitleBounds =
+            rule.onNodeWithTag("subtitle", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val cardBounds =
+            rule.onNodeWithTag("card", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
-        // Label should be top aligned when the height of the primary and supporting labels is
-        // greater than minimum list item height
-        (primaryLabelBounds.top - listItemBounds.top).assertIsEqualTo(
-            20.dp,
-            "Padding between top of list item and top of primary label.",
-        )
-
-        (primaryLabelBounds.left - listItemBounds.left).assertIsEqualTo(
+        // Title should be top aligned when the height of the content, title, and subtitle is
+        // greater than minimum card height
+        (titleBounds.top - cardBounds.top).assertIsEqualTo(
             24.dp,
-            "Padding between the start of the list item and the start of the primary label.",
+            "Padding between top of card and top of title.",
         )
 
-        (supportingLabelBounds.left - listItemBounds.left).assertIsEqualTo(
+        (titleBounds.left - cardBounds.left).assertIsEqualTo(
             24.dp,
-            "Padding between the start of the list item and the start of the supporting label.",
+            "Padding between the start of the card and the start of the title.",
         )
 
-        primaryLabelBounds.bottom.assertIsEqualTo(
-            supportingLabelBounds.top,
-            "Padding between the bottom of the primary label and the top of the supporting label.",
+        (subtitleBounds.left - cardBounds.left).assertIsEqualTo(
+            24.dp,
+            "Padding between the start of the card and the start of the subtitle.",
         )
 
-        (listItemBounds.bottom - supportingLabelBounds.bottom).assertIsEqualTo(
-            20.dp,
-            "Padding between bottom of list item and bottom of supporting label.",
+        (contentBounds.left - cardBounds.left).assertIsEqualTo(
+            24.dp,
+            "Padding between the start of the card and the start of the content.",
+        )
+
+        titleBounds.bottom.assertIsEqualTo(
+            subtitleBounds.top - 3.dp,
+            "Padding between the bottom of the title and the top of the subtitle.",
+        )
+
+        subtitleBounds.bottom.assertIsEqualTo(
+            contentBounds.top - 3.dp,
+            "Padding between the bottom of the subtitle and the top of the content.",
+        )
+
+        (cardBounds.bottom - contentBounds.bottom).assertIsEqualTo(
+            24.dp,
+            "Padding between bottom of card and bottom of content.",
         )
 
         // The width should fill the max width, like with the spacer
-        listItemBounds.width.assertIsEqualTo(spacerBounds.width, "width of list item.")
-        // Supporting label will likely make the item taller than the minimum height, so just assert
-        // we are at least the minimum height
-        assertThat(listItemBounds.height.value).isAtLeast(72)
+        cardBounds.width.assertIsEqualTo(spacerBounds.width, "width of card.")
+        // Title and subtitle will likely make the item taller than the minimum height, so just
+        // assert we are at least the minimum height
+        assertThat(cardBounds.height.value).isAtLeast(80)
     }
 
     @Test
@@ -461,8 +468,8 @@ class ListItemTest {
         rule.setGlimmerThemeContent {
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
-                ListItem(
-                    modifier = Modifier.testTag("listItem"),
+                Card(
+                    modifier = Modifier.testTag("card"),
                     leadingIcon = {
                         Icon(
                             FavoriteIcon,
@@ -478,73 +485,71 @@ class ListItemTest {
                         )
                     },
                 ) {
-                    Text("Primary Label", modifier = Modifier.testTag("primaryLabel"))
+                    Text("This is a card", modifier = Modifier.testTag("content"))
                 }
             }
         }
 
         val spacerBounds =
             rule.onNodeWithTag("spacer", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val primaryLabelBounds =
-            rule.onNodeWithTag("primaryLabel", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val contentBounds =
+            rule.onNodeWithTag("content", useUnmergedTree = true).getUnclippedBoundsInRoot()
         val leadingIconBounds =
             rule.onNodeWithTag("leadingIcon", useUnmergedTree = true).getUnclippedBoundsInRoot()
         val trailingIconBounds =
             rule.onNodeWithTag("trailingIcon", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val listItemBounds =
-            rule.onNodeWithTag("listItem", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val cardBounds =
+            rule.onNodeWithTag("card", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
-        (leadingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            20.dp,
-            "Padding between top of list item and top of leading icon.",
-        )
-
-        (leadingIconBounds.left - listItemBounds.left).assertIsEqualTo(
+        (leadingIconBounds.top - cardBounds.top).assertIsEqualTo(
             24.dp,
-            "Padding between start of list item and start of leading icon.",
+            "Padding between top of card and top of leading icon.",
         )
 
-        // Label should typically be center aligned for list items without a supporting label, since
-        // the minimum height of the item should be larger than the height of the labels
-        (((listItemBounds.height - primaryLabelBounds.height) / 2f) + listItemBounds.top)
-            .assertIsEqualTo(
-                primaryLabelBounds.top,
-                "Padding between top of list item and top of primary label.",
-            )
+        (leadingIconBounds.left - cardBounds.left).assertIsEqualTo(
+            24.dp,
+            "Padding between start of card and start of leading icon.",
+        )
 
-        (primaryLabelBounds.left - leadingIconBounds.right).assertIsEqualTo(
+        // Content should typically be center aligned for cards without title / subtitle, since
+        // the minimum height of the item should be larger than the height of the content
+        (((cardBounds.height - contentBounds.height) / 2f) + cardBounds.top).assertIsEqualTo(
+            contentBounds.top,
+            "Padding between top of card and top of content.",
+        )
+
+        (contentBounds.left - leadingIconBounds.right).assertIsEqualTo(
             12.dp,
-            "Padding between end of leading icon and start of primary label.",
+            "Padding between end of leading icon and start of content.",
         )
 
-        (trailingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            20.dp,
-            "Padding between top of list item and top of trailing icon.",
-        )
-
-        (listItemBounds.right - trailingIconBounds.right).assertIsEqualTo(
+        (trailingIconBounds.top - cardBounds.top).assertIsEqualTo(
             24.dp,
-            "Padding between end of trailing icon and end of list item.",
+            "Padding between top of card and top of trailing icon.",
+        )
+
+        (cardBounds.right - trailingIconBounds.right).assertIsEqualTo(
+            24.dp,
+            "Padding between end of trailing icon and end of card.",
         )
 
         // The width should fill the max width, like with the spacer
-        listItemBounds.width.assertIsEqualTo(spacerBounds.width, "width of list item.")
-        listItemBounds.height.assertIsEqualTo(
-            /* vertical padding * 2 + icon height*/ (20 + 20 + 56).dp,
-            "height of list item.",
+        cardBounds.width.assertIsEqualTo(spacerBounds.width, "width of card.")
+        cardBounds.height.assertIsEqualTo(
+            /* vertical padding * 2 + icon height*/ (24 + 24 + 56).dp,
+            "height of card.",
         )
     }
 
     @Test
-    fun positioning_supportingLabel_withIcons() {
+    fun positioning_titleAndSubtitle_withIcons() {
         rule.setGlimmerThemeContent {
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
-                ListItem(
-                    modifier = Modifier.testTag("listItem"),
-                    supportingLabel = {
-                        Text("Supporting Label", modifier = Modifier.testTag("supportingLabel"))
-                    },
+                Card(
+                    modifier = Modifier.testTag("card"),
+                    title = { Text("Title", modifier = Modifier.testTag("title")) },
+                    subtitle = { Text("Subtitle", modifier = Modifier.testTag("subtitle")) },
                     leadingIcon = {
                         Icon(
                             FavoriteIcon,
@@ -560,88 +565,99 @@ class ListItemTest {
                         )
                     },
                 ) {
-                    Text("Primary Label", modifier = Modifier.testTag("primaryLabel"))
+                    Text("This is a card", modifier = Modifier.testTag("content"))
                 }
             }
         }
 
         val spacerBounds =
             rule.onNodeWithTag("spacer", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val primaryLabelBounds =
-            rule.onNodeWithTag("primaryLabel", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val supportingLabelBounds =
-            rule.onNodeWithTag("supportingLabel", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val contentBounds =
+            rule.onNodeWithTag("content", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val titleBounds =
+            rule.onNodeWithTag("title", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val subtitleBounds =
+            rule.onNodeWithTag("subtitle", useUnmergedTree = true).getUnclippedBoundsInRoot()
         val leadingIconBounds =
             rule.onNodeWithTag("leadingIcon", useUnmergedTree = true).getUnclippedBoundsInRoot()
         val trailingIconBounds =
             rule.onNodeWithTag("trailingIcon", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val listItemBounds =
-            rule.onNodeWithTag("listItem", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val cardBounds =
+            rule.onNodeWithTag("card", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
-        (leadingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            20.dp,
-            "Padding between top of list item and top of leading icon.",
-        )
-
-        (leadingIconBounds.left - listItemBounds.left).assertIsEqualTo(
+        (leadingIconBounds.top - cardBounds.top).assertIsEqualTo(
             24.dp,
-            "Padding between start of list item and start of leading icon.",
+            "Padding between top of card and top of leading icon.",
         )
 
-        // Label should be top aligned when the height of the primary and supporting labels is
-        // greater than minimum list item height
-        (primaryLabelBounds.top - listItemBounds.top).assertIsEqualTo(
-            20.dp,
-            "Padding between top of list item and top of primary label.",
-        )
-
-        (primaryLabelBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            12.dp,
-            "Padding between end of leading icon and start of primary label.",
-        )
-
-        (supportingLabelBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            12.dp,
-            "Padding between end of leading icon and start of supporting label.",
-        )
-
-        primaryLabelBounds.bottom.assertIsEqualTo(
-            supportingLabelBounds.top,
-            "Padding between the bottom of the primary label and the top of the supporting label.",
-        )
-
-        (listItemBounds.bottom - supportingLabelBounds.bottom).assertIsEqualTo(
-            20.dp,
-            "Padding between bottom of list item and bottom of supporting label.",
-        )
-
-        (trailingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            20.dp,
-            "Padding between top of list item and top of trailing icon.",
-        )
-
-        (listItemBounds.right - trailingIconBounds.right).assertIsEqualTo(
+        (leadingIconBounds.left - cardBounds.left).assertIsEqualTo(
             24.dp,
-            "Padding between end of trailing icon and end of list item.",
+            "Padding between start of card and start of leading icon.",
+        )
+
+        // Title should be top aligned when the height of the content, title, and subtitle is
+        // greater than minimum card height
+        (titleBounds.top - cardBounds.top).assertIsEqualTo(
+            24.dp,
+            "Padding between top of card and top of title.",
+        )
+
+        (titleBounds.left - leadingIconBounds.right).assertIsEqualTo(
+            12.dp,
+            "Padding between end of leading icon and start of title.",
+        )
+
+        (subtitleBounds.left - leadingIconBounds.right).assertIsEqualTo(
+            12.dp,
+            "Padding between end of leading icon and start of subtitle.",
+        )
+
+        (contentBounds.left - leadingIconBounds.right).assertIsEqualTo(
+            12.dp,
+            "Padding between end of leading icon and start of content.",
+        )
+
+        titleBounds.bottom.assertIsEqualTo(
+            subtitleBounds.top - 3.dp,
+            "Padding between the bottom of the title and the top of the subtitle.",
+        )
+
+        subtitleBounds.bottom.assertIsEqualTo(
+            contentBounds.top - 3.dp,
+            "Padding between the bottom of the subtitle and the top of the content.",
+        )
+
+        (cardBounds.bottom - contentBounds.bottom).assertIsEqualTo(
+            24.dp,
+            "Padding between bottom of card and bottom of content.",
+        )
+
+        (trailingIconBounds.top - cardBounds.top).assertIsEqualTo(
+            24.dp,
+            "Padding between top of card and top of trailing icon.",
+        )
+
+        (cardBounds.right - trailingIconBounds.right).assertIsEqualTo(
+            24.dp,
+            "Padding between end of trailing icon and end of card.",
         )
 
         // The width should fill the max width, like with the spacer
-        listItemBounds.width.assertIsEqualTo(spacerBounds.width, "width of list item.")
-        // Supporting label will likely make the item taller than the minimum height, so just assert
-        // we are at least the minimum height
-        assertThat(listItemBounds.height.value).isAtLeast(72)
+        cardBounds.width.assertIsEqualTo(spacerBounds.width, "width of card.")
+        // Title and subtitle will likely make the item taller than the minimum height, so just
+        // assert we are at least the minimum height
+        assertThat(cardBounds.height.value).isAtLeast(80)
     }
 
     @Test
-    fun positioning_supportingLabel_withIcons_longText() {
+    fun positioning_titleAndSubtitle_withIcons_longText() {
         rule.setGlimmerThemeContent {
             Column {
                 Spacer(Modifier.height(10.dp).fillMaxWidth().testTag("spacer"))
-                ListItem(
-                    modifier = Modifier.testTag("listItem"),
-                    supportingLabel = {
-                        Text("Supporting Label", modifier = Modifier.testTag("supportingLabel"))
-                    },
+                Card(
+                    modifier = Modifier.testTag("card"),
+                    title = { Text("Title", modifier = Modifier.testTag("title")) },
+                    subtitle = { Text("Subtitle", modifier = Modifier.testTag("subtitle")) },
                     leadingIcon = {
                         Icon(
                             FavoriteIcon,
@@ -657,92 +673,101 @@ class ListItemTest {
                         )
                     },
                 ) {
-                    Text(
-                        "Primary label with some very long text that will wrap to multiple lines",
-                        modifier = Modifier.testTag("primaryLabel"),
-                    )
+                    Text("This is a card", modifier = Modifier.testTag("content"))
                 }
             }
         }
 
         val spacerBounds =
             rule.onNodeWithTag("spacer", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val primaryLabelBounds =
-            rule.onNodeWithTag("primaryLabel", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val supportingLabelBounds =
-            rule.onNodeWithTag("supportingLabel", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val contentBounds =
+            rule.onNodeWithTag("content", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val titleBounds =
+            rule.onNodeWithTag("title", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val subtitleBounds =
+            rule.onNodeWithTag("subtitle", useUnmergedTree = true).getUnclippedBoundsInRoot()
         val leadingIconBounds =
             rule.onNodeWithTag("leadingIcon", useUnmergedTree = true).getUnclippedBoundsInRoot()
         val trailingIconBounds =
             rule.onNodeWithTag("trailingIcon", useUnmergedTree = true).getUnclippedBoundsInRoot()
-        val listItemBounds =
-            rule.onNodeWithTag("listItem", useUnmergedTree = true).getUnclippedBoundsInRoot()
+        val cardBounds =
+            rule.onNodeWithTag("card", useUnmergedTree = true).getUnclippedBoundsInRoot()
 
-        (leadingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            20.dp,
-            "Padding between top of list item and top of leading icon.",
-        )
-
-        (leadingIconBounds.left - listItemBounds.left).assertIsEqualTo(
+        (leadingIconBounds.top - cardBounds.top).assertIsEqualTo(
             24.dp,
-            "Padding between start of list item and start of leading icon.",
+            "Padding between top of card and top of leading icon.",
         )
 
-        // Label should be top aligned when the height of the primary and supporting labels is
-        // greater than minimum list item height
-        (primaryLabelBounds.top - listItemBounds.top).assertIsEqualTo(
-            20.dp,
-            "Padding between top of list item and top of primary label.",
-        )
-
-        (primaryLabelBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            12.dp,
-            "Padding between end of leading icon and start of primary label.",
-        )
-
-        (supportingLabelBounds.left - leadingIconBounds.right).assertIsEqualTo(
-            12.dp,
-            "Padding between end of leading icon and start of supporting label.",
-        )
-
-        primaryLabelBounds.bottom.assertIsEqualTo(
-            supportingLabelBounds.top,
-            "Padding between the bottom of the primary label and the top of the supporting label.",
-        )
-
-        (listItemBounds.bottom - supportingLabelBounds.bottom).assertIsEqualTo(
-            20.dp,
-            "Padding between bottom of list item and bottom of supporting label.",
-        )
-
-        (trailingIconBounds.top - listItemBounds.top).assertIsEqualTo(
-            20.dp,
-            "Padding between top of list item and top of trailing icon.",
-        )
-
-        (listItemBounds.right - trailingIconBounds.right).assertIsEqualTo(
+        (leadingIconBounds.left - cardBounds.left).assertIsEqualTo(
             24.dp,
-            "Padding between end of trailing icon and end of list item.",
+            "Padding between start of card and start of leading icon.",
+        )
+
+        // Title should be top aligned when the height of the content, title, and subtitle is
+        // greater than minimum card height
+        (titleBounds.top - cardBounds.top).assertIsEqualTo(
+            24.dp,
+            "Padding between top of card and top of title.",
+        )
+
+        (titleBounds.left - leadingIconBounds.right).assertIsEqualTo(
+            12.dp,
+            "Padding between end of leading icon and start of title.",
+        )
+
+        (subtitleBounds.left - leadingIconBounds.right).assertIsEqualTo(
+            12.dp,
+            "Padding between end of leading icon and start of subtitle.",
+        )
+
+        (contentBounds.left - leadingIconBounds.right).assertIsEqualTo(
+            12.dp,
+            "Padding between end of leading icon and start of content.",
+        )
+
+        titleBounds.bottom.assertIsEqualTo(
+            subtitleBounds.top - 3.dp,
+            "Padding between the bottom of the title and the top of the subtitle.",
+        )
+
+        subtitleBounds.bottom.assertIsEqualTo(
+            contentBounds.top - 3.dp,
+            "Padding between the bottom of the subtitle and the top of the content.",
+        )
+
+        (cardBounds.bottom - contentBounds.bottom).assertIsEqualTo(
+            24.dp,
+            "Padding between bottom of card and bottom of content.",
+        )
+
+        (trailingIconBounds.top - cardBounds.top).assertIsEqualTo(
+            24.dp,
+            "Padding between top of card and top of trailing icon.",
+        )
+
+        (cardBounds.right - trailingIconBounds.right).assertIsEqualTo(
+            24.dp,
+            "Padding between end of trailing icon and end of card.",
         )
 
         // The width should fill the max width, like with the spacer
-        listItemBounds.width.assertIsEqualTo(spacerBounds.width, "width of list item.")
-        assertThat(listItemBounds.height.value).isAtLeast(72)
+        cardBounds.width.assertIsEqualTo(spacerBounds.width, "width of card.")
+        assertThat(cardBounds.height.value).isAtLeast(80)
     }
 
     @Test
     fun minHeightCanBeOverridden() {
         rule.setGlimmerThemeContent {
-            ListItem(
+            Card(
                 contentPadding = PaddingValues(),
-                modifier = Modifier.requiredHeightIn(15.dp).testTag("listItem"),
+                modifier = Modifier.requiredHeightIn(30.dp).testTag("card"),
             ) {
                 Spacer(Modifier.requiredSize(10.dp))
             }
         }
 
-        rule.onNodeWithTag("listItem").apply {
-            with(getBoundsInRoot()) { height.assertIsEqualTo(15.dp, "height") }
+        rule.onNodeWithTag("card").apply {
+            with(getBoundsInRoot()) { height.assertIsEqualTo(30.dp, "height") }
         }
     }
 }
