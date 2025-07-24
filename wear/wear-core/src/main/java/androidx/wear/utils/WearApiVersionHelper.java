@@ -263,6 +263,8 @@ public final class WearApiVersionHelper {
      *                          <li>{@link #WEAR_TIRAMISU_3}
      *                          <li>{@link #WEAR_TIRAMISU_4}
      *                          <li>{@link #WEAR_UDC_1}
+     *                          <li>{@link #WEAR_VIC_1}
+     *                          <li>{@link #WEAR_BAKLAVA_0}
      *                          <li>etc
      *                        </ul>.
      *                        {@code IllegalArgumentException} will result for any other value.
