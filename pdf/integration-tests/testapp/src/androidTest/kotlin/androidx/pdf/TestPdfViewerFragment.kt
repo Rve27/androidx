@@ -28,6 +28,7 @@ import androidx.annotation.RequiresExtension
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.pdf.content.ExternalLink
 import androidx.pdf.idlingresource.PdfIdlingResource
 import androidx.pdf.testapp.R
@@ -84,6 +85,14 @@ internal class TestPdfViewerFragment : PdfViewerFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         search = hostView?.findViewById(R.id.host_Search)
+
+        hostView?.let { container ->
+            ViewCompat.setOnApplyWindowInsetsListener(container) { v, insets ->
+                val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+                v.updatePadding(top = systemBars.top, bottom = systemBars.bottom)
+                insets
+            }
+        }
 
         // Show/hide the search button based on initial toolbox visibility
         if (isToolboxVisible) search?.show() else search?.hide()
