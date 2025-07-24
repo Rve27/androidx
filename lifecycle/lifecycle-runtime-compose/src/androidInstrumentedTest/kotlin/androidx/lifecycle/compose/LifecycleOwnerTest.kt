@@ -44,7 +44,7 @@ class LifecycleOwnerTest {
         lateinit var childLifecycleOwner: LifecycleOwner
 
         rule.setContent {
-            LifecycleOwner(parentLifecycleOwner = parentLifecycleOwner) {
+            LifecycleOwner(parent = parentLifecycleOwner) {
                 childLifecycleOwner = LocalLifecycleOwner.current
             }
         }
@@ -61,7 +61,7 @@ class LifecycleOwnerTest {
         lateinit var childLifecycle: Lifecycle
 
         rule.setContent {
-            LifecycleOwner(parentLifecycleOwner = parentLifecycleOwner) {
+            LifecycleOwner(parent = parentLifecycleOwner) {
                 childLifecycle = LocalLifecycleOwner.current.lifecycle
             }
         }
@@ -86,10 +86,7 @@ class LifecycleOwnerTest {
         lateinit var childLifecycle: Lifecycle
 
         rule.setContent {
-            LifecycleOwner(
-                maxLifecycle = State.STARTED,
-                parentLifecycleOwner = parentLifecycleOwner,
-            ) {
+            LifecycleOwner(maxLifecycle = State.STARTED, parent = parentLifecycleOwner) {
                 childLifecycle = LocalLifecycleOwner.current.lifecycle
             }
         }
@@ -105,10 +102,7 @@ class LifecycleOwnerTest {
         var maxLifecycle by mutableStateOf(State.STARTED)
 
         rule.setContent {
-            LifecycleOwner(
-                maxLifecycle = maxLifecycle,
-                parentLifecycleOwner = parentLifecycleOwner,
-            ) {
+            LifecycleOwner(maxLifecycle = maxLifecycle, parent = parentLifecycleOwner) {
                 childLifecycle = LocalLifecycleOwner.current.lifecycle
             }
         }
@@ -130,7 +124,7 @@ class LifecycleOwnerTest {
 
         rule.setContent {
             if (showContent) {
-                LifecycleOwner(parentLifecycleOwner = parentLifecycleOwner) {}
+                LifecycleOwner(parent = parentLifecycleOwner) {}
             }
         }
 
@@ -152,7 +146,7 @@ class LifecycleOwnerTest {
 
         rule.setContent {
             if (showContent) {
-                LifecycleOwner(parentLifecycleOwner = parentLifecycleOwner) {
+                LifecycleOwner(parent = parentLifecycleOwner) {
                     childLifecycle = LocalLifecycleOwner.current.lifecycle
                 }
             }
@@ -177,9 +171,7 @@ class LifecycleOwnerTest {
         lateinit var rootLifecycle: Lifecycle
 
         rule.setContent {
-            LifecycleOwner(parentLifecycleOwner = null) {
-                rootLifecycle = LocalLifecycleOwner.current.lifecycle
-            }
+            LifecycleOwner(parent = null) { rootLifecycle = LocalLifecycleOwner.current.lifecycle }
         }
 
         rule.awaitIdle()
@@ -193,7 +185,7 @@ class LifecycleOwnerTest {
         lateinit var rootLifecycle: Lifecycle
 
         rule.setContent {
-            LifecycleOwner(parentLifecycleOwner = null, maxLifecycle = State.STARTED) {
+            LifecycleOwner(parent = null, maxLifecycle = State.STARTED) {
                 rootLifecycle = LocalLifecycleOwner.current.lifecycle
             }
         }
@@ -211,7 +203,7 @@ class LifecycleOwnerTest {
 
         rule.setContent {
             if (showContent) {
-                LifecycleOwner(parentLifecycleOwner = null) {
+                LifecycleOwner(parent = null) {
                     rootLifecycle = LocalLifecycleOwner.current.lifecycle
                 }
             }

@@ -44,41 +44,41 @@ import androidx.lifecycle.LifecycleRegistry
  * When the composable leaves the composition, the child lifecycle will be moved to [DESTROYED].
  * This ensures the child is properly cleaned up even if it is referenced outside the composition.
  *
- * **Null parent:** If [parentLifecycleOwner] is **EXPLICITLY** `null`, this creates a root
- * lifecycle that runs independently and manages its own state.
+ * **Null parent:** If [parent] is **EXPLICITLY** `null`, this creates a root lifecycle that runs
+ * independently and manages its own state.
  *
  * @param maxLifecycle The maximum [Lifecycle.State] this child lifecycle is allowed to enter.
  *   Defaults to [RESUMED].
- * @param parentLifecycleOwner The [LifecycleOwner] to use as the parent, or null if it is a root.
- *   Defaults to the [LocalLifecycleOwner].
+ * @param parent The [LifecycleOwner] to use as the parent, or null if it is a root. Defaults to the
+ *   [LocalLifecycleOwner].
  * @param content The composable content that will be scoped to the new child lifecycle.
  */
 @Composable
 public fun LifecycleOwner(
     maxLifecycle: State = RESUMED,
-    parentLifecycleOwner: LifecycleOwner? = LocalLifecycleOwner.current,
+    parent: LifecycleOwner? = LocalLifecycleOwner.current,
     content: @Composable () -> Unit,
 ) {
-    val localLifecycleOwner = remember(parentLifecycleOwner) { ComposeLifecycleOwner() }
+    val localLifecycleOwner = remember(parent) { ComposeLifecycleOwner() }
 
     // Pass LifecycleEvents from the parent down to the child.
-    DisposableEffect(localLifecycleOwner, parentLifecycleOwner) {
+    DisposableEffect(localLifecycleOwner, parent) {
         val observer = LifecycleEventObserver { _, event ->
             // Connect parent's events to the child lifecycle.
             localLifecycleOwner.handleLifecycleEvent(event)
         }
 
         // Add observer only if there is a parent.
-        parentLifecycleOwner?.lifecycle?.addObserver(observer)
+        parent?.lifecycle?.addObserver(observer)
 
-        if (parentLifecycleOwner == null) {
+        if (parent == null) {
             // No parent: manually mark this lifecycle as RESUMED.
             localLifecycleOwner.handleLifecycleEvent(event = ON_RESUME)
         }
 
         onDispose {
             // Remove observer if it was added (has a parent).
-            parentLifecycleOwner?.lifecycle?.removeObserver(observer)
+            parent?.lifecycle?.removeObserver(observer)
 
             // Manually dispatch ON_DESTROY. This ensures that any code holding a reference to this
             // from outside a composition is notified that it has been permanently destroyed.
