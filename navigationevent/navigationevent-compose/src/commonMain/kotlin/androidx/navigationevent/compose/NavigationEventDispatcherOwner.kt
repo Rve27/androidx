@@ -42,21 +42,19 @@ import androidx.navigationevent.NavigationEventInputHandler
  *
  * @param enabled A lambda to dynamically control if the dispatcher is active. When `false`, this
  *   dispatcher and any of its children will ignore navigation events. Defaults to `true`.
- * @param parentNavigationEventDispatcherOwner The parent owner to link to. Defaults to the owner
- *   found in the current composition (`LocalNavigationEventDispatcherOwner`).
+ * @param parent The parent owner to link to. Defaults to the owner found in the current composition
+ *   (`LocalNavigationEventDispatcherOwner`).
  * @param content The child composable content that will receive the new dispatcher.
  */
 @Composable
 public fun NavigationEventDispatcherOwner(
     enabled: () -> Boolean = { true },
-    parentNavigationEventDispatcherOwner: NavigationEventDispatcherOwner? =
-        LocalNavigationEventDispatcherOwner.current,
+    parent: NavigationEventDispatcherOwner? = LocalNavigationEventDispatcherOwner.current,
     content: @Composable () -> Unit,
 ) {
     val localDispatcher = remember {
         // If a parent dispatcher exists, link to it. Otherwise, create a new root dispatcher.
-        parentNavigationEventDispatcherOwner?.navigationEventDispatcher
-            ?: NavigationEventDispatcher()
+        parent?.navigationEventDispatcher ?: NavigationEventDispatcher()
     }
 
     // Use LaunchedEffect to sync the enabled state only when it changes.
