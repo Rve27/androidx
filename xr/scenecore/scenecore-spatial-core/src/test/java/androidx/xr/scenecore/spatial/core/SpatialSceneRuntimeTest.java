@@ -44,6 +44,7 @@ public class SpatialSceneRuntimeTest {
     private static final int OPEN_XR_REFERENCE_SPACE_TYPE = 1;
     Activity mActivity;
     private SpatialSceneRuntime mRuntime;
+    private final EntityManager mEntityManager = new EntityManager();
     private final NodeRepository mNodeRepository = NodeRepository.getInstance();
     private final @NonNull XrExtensions mXrExtensions =
             Objects.requireNonNull(XrExtensionsProvider.getXrExtensions());
@@ -59,7 +60,8 @@ public class SpatialSceneRuntimeTest {
         mRuntime = SpatialSceneRuntime.create(
                 mActivity,
                 mFakeExecutor,
-                mXrExtensions);
+                mXrExtensions,
+                mEntityManager);
     }
 
     @After

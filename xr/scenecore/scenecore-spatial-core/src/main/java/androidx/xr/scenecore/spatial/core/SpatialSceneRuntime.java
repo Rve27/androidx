@@ -42,11 +42,13 @@ class SpatialSceneRuntime implements SceneRuntime {
     private final Node mSceneRootNode;
     private final Node mTaskWindowLeashNode;
     private boolean mIsDisposed;
+    private final EntityManager mEntityManager;
 
     private SpatialSceneRuntime(
             @NonNull Activity activity,
             ScheduledExecutorService executor,
             XrExtensions extensions,
+            EntityManager entityManager,
             Node sceneRootNode,
             Node taskWindowLeashNode) {
         mActivity = activity;
@@ -54,12 +56,14 @@ class SpatialSceneRuntime implements SceneRuntime {
         mExtensions = extensions;
         mSceneRootNode = sceneRootNode;
         mTaskWindowLeashNode = taskWindowLeashNode;
+        mEntityManager = entityManager;
     }
 
     static SpatialSceneRuntime create(
             Activity activity,
             ScheduledExecutorService executor,
-            XrExtensions extensions) {
+            XrExtensions extensions,
+            EntityManager entityManager) {
         Node sceneRootNode = extensions.createNode();
         Node taskWindowLeashNode = extensions.createNode();
         // TODO: b/376934871 - Check async results.
@@ -76,10 +80,12 @@ class SpatialSceneRuntime implements SceneRuntime {
                     .setName(taskWindowLeashNode, "MainPanelAndTaskWindowLeashNode")
                     .apply();
         }
+        Objects.requireNonNull(entityManager);
         return new SpatialSceneRuntime(
                 activity,
                 executor,
                 extensions,
+                entityManager,
                 sceneRootNode,
                 taskWindowLeashNode);
     }
@@ -91,7 +97,8 @@ class SpatialSceneRuntime implements SceneRuntime {
         return create(
                 activity,
                 executor,
-                Objects.requireNonNull(XrExtensionsProvider.getXrExtensions()));
+                Objects.requireNonNull(XrExtensionsProvider.getXrExtensions()),
+                new EntityManager());
     }
 
     @Override
@@ -100,7 +107,7 @@ class SpatialSceneRuntime implements SceneRuntime {
             return;
         }
         mActivity = null;
-
+        mEntityManager.clear();
         mIsDisposed = true;
     }
 

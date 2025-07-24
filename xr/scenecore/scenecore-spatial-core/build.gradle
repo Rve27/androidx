@@ -41,6 +41,7 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)
+    testImplementation(libs.mockitoCore)
     testImplementation("org.robolectric:robolectric")
     testImplementation(project(":xr:scenecore:scenecore-testing"))
 
