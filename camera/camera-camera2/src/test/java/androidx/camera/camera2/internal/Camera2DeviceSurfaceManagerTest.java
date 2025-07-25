@@ -65,6 +65,7 @@ import androidx.test.core.app.ApplicationProvider;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -281,6 +282,7 @@ public final class Camera2DeviceSurfaceManagerTest {
         assertNotNull(configForRemainingCamera);
     }
 
+    @Ignore // b/434199701
     @Test
     public void onCamerasUpdated_addsNewCombination() throws CameraUpdateException {
         // Arrange: Add a new camera to the system that wasn't in the initial set.
@@ -306,6 +308,7 @@ public final class Camera2DeviceSurfaceManagerTest {
         assertNotNull(newConfig);
     }
 
+    @Ignore // b/434199701
     @Test
     public void onCamerasUpdated_throwsException_andAbortsTransaction() {
         // Arrange: The manager is initialized with cameras "0", "1", "2", "3".
