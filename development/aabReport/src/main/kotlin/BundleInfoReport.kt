@@ -84,7 +84,7 @@ fun BundleInfo.reportProblems() {
                 .trimIndent()
         )
     }
-    if (r8MetadataFileInfo == null) {
+    if (r8JsonFileInfo == null) {
         println(
             """
                 NOTE - MISSING R8 METADATA
@@ -102,8 +102,8 @@ fun BundleInfo.reportProblems() {
         )
     }
     if (
-        r8MetadataFileInfo != null &&
-            r8MetadataFileInfo.dexShas.toSet() != dexInfo.map { it.sha256 }.toSet()
+        r8JsonFileInfo != null &&
+            r8JsonFileInfo.dexShas.toSet() != dexInfo.map { it.sha256 }.toSet()
     ) {
         println(
             """
@@ -120,7 +120,7 @@ fun BundleInfo.reportProblems() {
                 .trimIndent()
         )
     }
-    if (mappingFileInfo == null && r8MetadataFileInfo == null) {
+    if (mappingFileInfo == null && r8JsonFileInfo == null) {
         // TODO: consider looking for dex R8 marker with backend=dex as fallback
         println(
             """
@@ -135,18 +135,18 @@ fun BundleInfo.reportProblems() {
                 .trimIndent()
         )
     } else if (
-        r8MetadataFileInfo != null &&
-            (!r8MetadataFileInfo.shrinkingEnabled ||
-                !r8MetadataFileInfo.obfuscationEnabled ||
-                !r8MetadataFileInfo.optimizationEnabled)
+        r8JsonFileInfo != null &&
+            (!r8JsonFileInfo.shrinkingEnabled ||
+                !r8JsonFileInfo.obfuscationEnabled ||
+                !r8JsonFileInfo.optimizationEnabled)
     ) {
         println(
             """
                 WARNING - R8 - PRIMARY OPTIMIZATION
                     Application missing one of the following primary optimization flags from R8:
-                      shrinking enabled    = ${r8MetadataFileInfo.shrinkingEnabled}
-                      obfuscation enabled  = ${r8MetadataFileInfo.obfuscationEnabled}
-                      optimization enabled = ${r8MetadataFileInfo.optimizationEnabled}
+                      shrinking enabled    = ${r8JsonFileInfo.shrinkingEnabled}
+                      obfuscation enabled  = ${r8JsonFileInfo.obfuscationEnabled}
+                      optimization enabled = ${r8JsonFileInfo.optimizationEnabled}
                     IMPACT:
                           This will significantly reduce performance and increase memory usage of
                           this application.

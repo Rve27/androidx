@@ -16,6 +16,11 @@
 
 package androidx.bundle
 
+import androidx.bundle.AppMetadataPropsInfo.Companion.csvEntries
+import androidx.bundle.DexInfo.Companion.csvEntries
+import androidx.bundle.MappingFileInfo.Companion.csvEntries
+import androidx.bundle.ProfileDexInfo.Companion.csvEntries
+import androidx.bundle.R8JsonFileInfo.Companion.csvEntries
 import com.android.tools.build.libraries.metadata.AppDependencies
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -30,9 +35,20 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import kotlin.collections.map
 
-class MappingFileInfo()
+/** Separator for CSV output within entries (such as multiple dex SHAs in one column) */
+val INTERNAL_CSV_SEPARATOR = "--"
 
-data class R8MetadataFileInfo(
+class MappingFileInfo() {
+    companion object {
+        fun MappingFileInfo?.csvEntries(): List<String> {
+            return listOf((this != null).toString())
+        }
+
+        val CSV_TITLES = listOf("mapping_file_present")
+    }
+}
+
+data class R8JsonFileInfo(
     val dexShas: Set<String>,
     val optimizationEnabled: Boolean,
     val obfuscationEnabled: Boolean,
@@ -40,14 +56,14 @@ data class R8MetadataFileInfo(
 ) {
     companion object {
         @Suppress("UNCHECKED_CAST")
-        fun fromJson(src: InputStream): R8MetadataFileInfo {
+        fun fromJson(src: InputStream): R8JsonFileInfo {
             val gson = Gson()
             val mapType = object : TypeToken<Map<String, Any>>() {}.type
             val metadata = gson.fromJson<Map<String, Any>>(src.bufferedReader().readText(), mapType)
 
             val options = (metadata["options"] as Map<String, Any>?)!!
 
-            return R8MetadataFileInfo(
+            return R8JsonFileInfo(
                 dexShas =
                     (metadata["dexFiles"] as List<Map<String, Any>>)
                         .map { it["checksum"] as String }
@@ -55,6 +71,25 @@ data class R8MetadataFileInfo(
                 optimizationEnabled = options["isObfuscationEnabled"] as Boolean,
                 obfuscationEnabled = options["isObfuscationEnabled"] as Boolean,
                 shrinkingEnabled = options["isShrinkingEnabled"] as Boolean,
+            )
+        }
+
+        val CSV_TITLES =
+            listOf(
+                "r8json_metadata",
+                "r8json_sortedDexChecksumsSha256",
+                "r8json_optimizationEnabled",
+                "r8json_obfuscationEnabled",
+                "r8json_shrinkingEnabled",
+            )
+
+        fun R8JsonFileInfo?.csvEntries(): List<String> {
+            return listOf(
+                if (this == null) "false" else "true",
+                this?.dexShas?.sorted()?.joinToString(separator = INTERNAL_CSV_SEPARATOR) ?: "null",
+                this?.optimizationEnabled.toString(),
+                this?.obfuscationEnabled.toString(),
+                this?.shrinkingEnabled.toString(),
             )
         }
     }
@@ -96,6 +131,71 @@ data class DexInfo(
 
             // 4. Return the results in the data class.
             return DexInfo(entryName = entryName, crc32 = crc32Hex, sha256 = sha256Hex)
+        }
+
+        val CSV_TITLES =
+            listOf("dex_names", "dex_sortedChecksumsSha256", "dex_sortedChecksumsCrc32")
+
+        fun List<DexInfo>.csvEntries(): List<String> {
+            return listOf(
+                // NOTE: we individually sort each of these, so they aren't associated with each
+                // other, but they are easy to compare when joined
+                joinToString(INTERNAL_CSV_SEPARATOR) { it.entryName },
+                this.map { it.sha256 }.sorted().joinToString(INTERNAL_CSV_SEPARATOR),
+                this.map { it.crc32 }.sorted().joinToString(INTERNAL_CSV_SEPARATOR),
+            )
+        }
+    }
+}
+
+data class AppMetadataPropsInfo(
+    val appMetadataVersion: String,
+    val androidGradlePluginVersion: String,
+) {
+    companion object {
+        const val LOCATION_META_INF =
+            "base/root/META-INF/com/android/build/gradle/app-metadata.properties"
+        const val LOCATION_BUNDLE_METADATA =
+            "BUNDLE-METADATA/com.android.tools.build.gradle/app-metadata.properties"
+
+        fun from(src: InputStream): AppMetadataPropsInfo {
+            var appMetadataVersion = ""
+            var androidGradlePluginVersion = ""
+            src.bufferedReader().readText().lines().forEach {
+                val entries = it.trim().split("=")
+                if (entries.size == 2) {
+                    if (entries[0] == "appMetadataVersion") {
+                        appMetadataVersion = entries[1]
+                    } else if (entries[0] == "androidGradlePluginVersion") {
+                        androidGradlePluginVersion = entries[1]
+                    }
+                }
+            }
+            return AppMetadataPropsInfo(
+                appMetadataVersion = appMetadataVersion,
+                androidGradlePluginVersion = androidGradlePluginVersion,
+            )
+        }
+
+        val CSV_TITLES_META_INF =
+            listOf(
+                "appMetadataPropsLegacy_present",
+                "appMetadataPropsLegacy_version",
+                "appMetadataPropsLegacy_agpVerson",
+            )
+        val CSV_TITLES_BUNDLE =
+            listOf(
+                "appMetadataProps_present",
+                "appMetadataProps_version",
+                "appMetadataProps_agpVerson",
+            )
+
+        fun AppMetadataPropsInfo?.csvEntries(): List<String> {
+            return if (this == null) {
+                listOf("FALSE, null, null")
+            } else {
+                listOf("TRUE, $appMetadataVersion, $androidGradlePluginVersion")
+            }
         }
     }
 }
@@ -254,6 +354,19 @@ data class ProfileDexInfo(
 
                 dataStream.readUncompressedBody(numberOfDexFiles)
             }
+
+        val CSV_TITLES = listOf("profile_present", "profile_dexSortedChecksumsCrc32")
+
+        fun List<ProfileDexInfo>?.csvEntries(): List<String> {
+            return if (this == null) {
+                listOf("FALSE", "null")
+            } else {
+                listOf(
+                    "TRUE",
+                    map { it.dexChecksumCrc32 }.sorted().joinToString(INTERNAL_CSV_SEPARATOR),
+                )
+            }
+        }
     }
 }
 
@@ -263,22 +376,47 @@ data class BundleInfo(
     val profileDexInfo: List<ProfileDexInfo>,
     val dexInfo: List<DexInfo>,
     val mappingFileInfo: MappingFileInfo?,
-    val r8MetadataFileInfo: R8MetadataFileInfo?,
+    val r8JsonFileInfo: R8JsonFileInfo?,
     val dotVersionFiles: Map<String, String>, // map maven coordinates -> version number
     val appBundleDependencies: AppDependencies?,
+    val appMetadataPropsInfoMetaInf: AppMetadataPropsInfo?,
+    val appMetadataPropsInfoBundleMetadata: AppMetadataPropsInfo?,
 ) {
+    fun toCsvLine(): String {
+        return (listOf(path) +
+                profileDexInfo.csvEntries() +
+                dexInfo.csvEntries() +
+                mappingFileInfo.csvEntries() +
+                r8JsonFileInfo.csvEntries() +
+                appMetadataPropsInfoBundleMetadata.csvEntries() +
+                appMetadataPropsInfoMetaInf.csvEntries())
+            .joinToString(separator = ", ")
+    }
+
     companion object {
-        fun from(path: String): BundleInfo {
-            return FileInputStream(File(path)).use { from(path, it) }
+        val CSV_HEADER =
+            (listOf("path") +
+                    ProfileDexInfo.CSV_TITLES +
+                    DexInfo.CSV_TITLES +
+                    MappingFileInfo.CSV_TITLES +
+                    R8JsonFileInfo.CSV_TITLES +
+                    AppMetadataPropsInfo.CSV_TITLES_BUNDLE +
+                    AppMetadataPropsInfo.CSV_TITLES_META_INF)
+                .joinToString(", ")
+
+        fun from(file: File): BundleInfo {
+            return FileInputStream(file).use { from(file.path, it) }
         }
 
         fun from(path: String, inputStream: InputStream): BundleInfo {
             val dexInfo = mutableListOf<DexInfo>()
             val dotVersionFiles = mutableMapOf<String, String>()
             var mappingFileInfo: MappingFileInfo? = null
-            var r8MetadataFileInfo: R8MetadataFileInfo? = null
+            var r8MetadataFileInfo: R8JsonFileInfo? = null
             var appDependencies: AppDependencies? = null
             var profileDexInfo = emptyList<ProfileDexInfo>()
+            var appMetadataPropsInfoMetaInf: AppMetadataPropsInfo? = null
+            var appMetadataPropsInfoBundleMetadata: AppMetadataPropsInfo? = null
             ZipInputStream(inputStream).use { zis ->
                 var entry: ZipEntry? = zis.nextEntry
 
@@ -300,7 +438,7 @@ data class BundleInfo(
                         }
 
                         entry.name == BundlePaths.R8_METADATA_LOCATION -> {
-                            r8MetadataFileInfo = R8MetadataFileInfo.fromJson(zis)
+                            r8MetadataFileInfo = R8JsonFileInfo.fromJson(zis)
                         }
 
                         entry.name == BundlePaths.DEPENDENCIES_PB_LOCATION -> {
@@ -309,6 +447,14 @@ data class BundleInfo(
 
                         entry.name == BundlePaths.PROGUARD_MAP_LOCATION -> {
                             mappingFileInfo = MappingFileInfo()
+                        }
+
+                        entry.name == AppMetadataPropsInfo.LOCATION_BUNDLE_METADATA -> {
+                            appMetadataPropsInfoBundleMetadata = AppMetadataPropsInfo.from(zis)
+                        }
+
+                        entry.name == AppMetadataPropsInfo.LOCATION_META_INF -> {
+                            appMetadataPropsInfoMetaInf = AppMetadataPropsInfo.from(zis)
                         }
                     }
                     entry = zis.nextEntry
@@ -331,9 +477,11 @@ data class BundleInfo(
                 profileDexInfo = profileDexInfo,
                 dexInfo = dexInfo,
                 mappingFileInfo = mappingFileInfo,
-                r8MetadataFileInfo = r8MetadataFileInfo,
+                r8JsonFileInfo = r8MetadataFileInfo,
                 dotVersionFiles = dotVersionFiles,
                 appBundleDependencies = appDependencies,
+                appMetadataPropsInfoMetaInf = appMetadataPropsInfoMetaInf,
+                appMetadataPropsInfoBundleMetadata = appMetadataPropsInfoBundleMetadata,
             )
         }
     }
