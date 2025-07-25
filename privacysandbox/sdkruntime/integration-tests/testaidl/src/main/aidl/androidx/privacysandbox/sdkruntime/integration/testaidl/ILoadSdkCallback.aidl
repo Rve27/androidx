@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,8 @@
 package androidx.privacysandbox.sdkruntime.integration.testaidl;
 
 import androidx.privacysandbox.sdkruntime.integration.testaidl.LoadedSdkInfo;
-import androidx.privacysandbox.sdkruntime.integration.testaidl.ILoadSdkCallback;
 
-interface ISdkApi {
-    String doSomething(String param);
-
-    oneway void loadSdk(in String sdkName, in Bundle params, in ILoadSdkCallback callback);
-
-    List<LoadedSdkInfo> getSandboxedSdks();
-    List<LoadedSdkInfo> getAppOwnedSdks();
-
-    List<String> callDoSomethingOnSandboxedSdks(String param);
-    List<String> callDoSomethingOnAppOwnedSdks(String param);
+oneway interface ILoadSdkCallback {
+    void onSuccess(in LoadedSdkInfo loadedSdk);
+    void onFailure(String error);
 }
