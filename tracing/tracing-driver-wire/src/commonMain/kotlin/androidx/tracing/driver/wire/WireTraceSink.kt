@@ -31,6 +31,7 @@ import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import okio.BufferedSink
 
@@ -148,7 +149,7 @@ public class WireTraceSink(
         synchronized(drainLock) {
             drainRequested = false
             // Mark resumeDrain as consumed because the Coroutines Machinery might still consider
-            // the Continuation as resumed after drainQueue() completes. This was the Atomics
+            // the Continuation as resumed after drainQueue() completes. This way the signal
             // drainRequested, and the Continuation resumeDrain are in sync.
             resumeDrain = null
         }
