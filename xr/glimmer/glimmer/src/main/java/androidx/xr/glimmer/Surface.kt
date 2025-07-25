@@ -420,7 +420,9 @@ private class SurfaceNode(
             val progress = focusedHighlightProgress
             if (progress > 0f) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    val rotationRadians = focusedHighlightRotationProgress * Math.TAU
+                    val rotationRadians =
+                        FocusedHighlightRotationStartAngleRadians +
+                            focusedHighlightRotationProgress * Math.TAU
                     shader =
                         HighlightShaderHelper.configureShader(
                             shader = shader,
@@ -485,7 +487,9 @@ private val FocusedHighlightExitAnimationSpec: AnimationSpec<Float> =
     tween(200, easing = FastOutSlowInEasing)
 
 private val FocusedHighlightRotationAnimationSpec: AnimationSpec<Float> =
-    tween(durationMillis = 7000, easing = LinearOutSlowInEasing, delayMillis = 300)
+    tween(durationMillis = 3_000, easing = LinearOutSlowInEasing, delayMillis = 300)
+
+private val FocusedHighlightRotationStartAngleRadians: Double = Math.toRadians(40.0)
 
 private val PressedOverlayColor = Color.White
 
