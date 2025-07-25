@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.xr.scenecore.impl;
+package androidx.xr.scenecore.spatial.core;
 
 import androidx.xr.runtime.internal.ActivityPose;
 import androidx.xr.runtime.internal.HitTestResult;
@@ -26,9 +26,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Base implementation of JXRCore ActivityPose.
+ * Base implementation of SceneCore ActivityPose.
  *
- * <p>A ActivityPose is an object that has a pose in the activity space.
+ * <p>A ActivityPose is an object that has a pose in the world space.
  */
 abstract class BaseActivityPose implements ActivityPose {
     @Override

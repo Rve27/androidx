@@ -17,16 +17,26 @@
 package androidx.xr.scenecore.spatial.core;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
+import static com.google.common.util.concurrent.Futures.immediateFuture;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import android.app.Activity;
 
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
+import androidx.xr.scenecore.impl.perception.PerceptionLibrary;
+import androidx.xr.scenecore.impl.perception.Session;
+import androidx.xr.scenecore.impl.perception.exceptions.FailedToInitializeException;
 import androidx.xr.scenecore.testing.FakeScheduledExecutorService;
 
 import com.android.extensions.xr.ShadowXrExtensions;
 import com.android.extensions.xr.XrExtensions;
 import com.android.extensions.xr.node.Node;
 import com.android.extensions.xr.node.NodeRepository;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 import org.jspecify.annotations.NonNull;
 import org.junit.After;
@@ -45,6 +55,9 @@ public class SpatialSceneRuntimeTest {
     Activity mActivity;
     private SpatialSceneRuntime mRuntime;
     private final EntityManager mEntityManager = new EntityManager();
+    private final PerceptionLibrary mPerceptionLibrary = mock(PerceptionLibrary.class);
+    private final Session mSession = mock(Session.class);
+
     private final NodeRepository mNodeRepository = NodeRepository.getInstance();
     private final @NonNull XrExtensions mXrExtensions =
             Objects.requireNonNull(XrExtensionsProvider.getXrExtensions());
@@ -56,12 +69,17 @@ public class SpatialSceneRuntimeTest {
 
         ShadowXrExtensions.extract(mXrExtensions)
                 .setOpenXrWorldSpaceType(OPEN_XR_REFERENCE_SPACE_TYPE);
+        when(mPerceptionLibrary.initSession(mActivity, OPEN_XR_REFERENCE_SPACE_TYPE, mFakeExecutor))
+                .thenReturn(immediateFuture(mSession));
+        when(mPerceptionLibrary.getActivity()).thenReturn(mActivity);
 
-        mRuntime = SpatialSceneRuntime.create(
-                mActivity,
-                mFakeExecutor,
-                mXrExtensions,
-                mEntityManager);
+        mRuntime =
+                SpatialSceneRuntime.create(
+                        mActivity,
+                        mFakeExecutor,
+                        mXrExtensions,
+                        mEntityManager,
+                        mPerceptionLibrary);
     }
 
     @After
@@ -86,5 +104,26 @@ public class SpatialSceneRuntimeTest {
         assertThat(mNodeRepository.getName(taskWindowLeashNode))
                 .isEqualTo("MainPanelAndTaskWindowLeashNode");
         assertThat(mNodeRepository.getParent(taskWindowLeashNode)).isEqualTo(rootNode);
+    }
+
+    @Test
+    public void initRuntimePerceptionFailure() {
+        ListenableFuture<Session> sessionFuture =
+                immediateFailedFuture(
+                        new FailedToInitializeException("Failed to initialize a session."));
+        when(mPerceptionLibrary.initSession(mActivity, OPEN_XR_REFERENCE_SPACE_TYPE, mFakeExecutor))
+                .thenReturn(sessionFuture);
+
+        mRuntime =
+                SpatialSceneRuntime.create(
+                        mActivity,
+                        mFakeExecutor,
+                        mXrExtensions,
+                        new EntityManager(),
+                        mPerceptionLibrary);
+
+        // The perception library failed to initialize a session, but the runtime should still be
+        // created.
+        assertThat(mRuntime).isNotNull();
     }
 }
