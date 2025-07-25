@@ -15,6 +15,10 @@
  */
 package androidx.compose.remote.player.view.platform;
 
+import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+
+import androidx.annotation.RestrictTo;
+
 import android.graphics.Bitmap;
 import android.graphics.Path;
 import android.graphics.PathIterator;
@@ -31,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
 /** Services that are needed to be provided by the platform during encoding. */
+@RestrictTo(LIBRARY_GROUP)
 public class AndroidPlatformServices implements Platform {
     private static final String LOG_TAG = "RemoteCompose";
 

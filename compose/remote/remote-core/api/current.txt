@@ -804,13 +804,6 @@ package androidx.compose.remote.core {
     field public final int mFontId;
   }
 
-  public interface RemoteContextActions {
-    method public boolean performClick(androidx.compose.remote.core.CoreDocument, androidx.compose.remote.core.operations.layout.Component, String);
-    method public int scrollByOffset(androidx.compose.remote.core.operations.layout.Component, int);
-    method public boolean scrollDirection(androidx.compose.remote.core.operations.layout.Component, androidx.compose.remote.core.semantics.ScrollableComponent.ScrollDirection);
-    method public boolean showOnScreen(androidx.compose.remote.core.operations.layout.Component);
-  }
-
   public interface SerializableToString {
     method public void serializeToString(int, androidx.compose.remote.core.operations.utilities.StringSerializer);
   }

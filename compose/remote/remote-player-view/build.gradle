@@ -39,6 +39,7 @@ android {
 }
 
 dependencies {
+    api("androidx.annotation:annotation:1.8.1")
     api(libs.jspecify)
     implementation(project(":compose:remote:remote-core"))
     implementation(project(":customview:customview"))
