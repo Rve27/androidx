@@ -1334,13 +1334,13 @@ package androidx.xr.runtime.internal {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface Plane extends androidx.xr.runtime.internal.Trackable {
     method public androidx.xr.runtime.math.Pose getCenterPose();
-    method public androidx.xr.runtime.math.Vector2 getExtents();
+    method public androidx.xr.runtime.math.FloatSize2d getExtents();
     method public androidx.xr.runtime.internal.Plane.Label getLabel();
     method public androidx.xr.runtime.internal.Plane? getSubsumedBy();
     method public androidx.xr.runtime.internal.Plane.Type getType();
     method public java.util.List<androidx.xr.runtime.math.Vector2> getVertices();
     property public abstract androidx.xr.runtime.math.Pose centerPose;
-    property public abstract androidx.xr.runtime.math.Vector2 extents;
+    property public abstract androidx.xr.runtime.math.FloatSize2d extents;
     property public abstract androidx.xr.runtime.internal.Plane.Label label;
     property public abstract androidx.xr.runtime.internal.Plane? subsumedBy;
     property public abstract androidx.xr.runtime.internal.Plane.Type type;
