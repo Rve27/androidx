@@ -36,7 +36,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Implementation of a subset of core RealityCore Entity functionality. */
+/** Implementation of a subset of core SceneCore Entity functionality. */
 abstract class BaseEntity extends BaseActivityPose implements Entity {
     private final List<Entity> mChildren = new ArrayList<>();
     private final List<Component> mComponentList = new ArrayList<>();
