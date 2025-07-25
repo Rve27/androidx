@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.sdkruntime.core.controller.impl
+package androidx.privacysandbox.sdkruntime.provider.controller.impl
 
 import android.app.sdksandbox.sdkprovider.SdkSandboxClientImportanceListener
 import android.app.sdksandbox.sdkprovider.SdkSandboxController

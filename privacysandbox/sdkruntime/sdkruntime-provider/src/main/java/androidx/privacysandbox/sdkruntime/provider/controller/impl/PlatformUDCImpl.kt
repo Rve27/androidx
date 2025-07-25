@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 The Android Open Source Project
+ * Copyright 2025 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package androidx.privacysandbox.sdkruntime.core.controller.impl
+package androidx.privacysandbox.sdkruntime.provider.controller.impl
 
 import android.app.Activity
 import android.app.Application
@@ -25,7 +25,6 @@ import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.OnBackPressedDispatcher
 import androidx.annotation.RequiresApi
-import androidx.annotation.RestrictTo
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleRegistry
 import androidx.privacysandbox.sdkruntime.core.AppOwnedSdkSandboxInterfaceCompat
@@ -39,9 +38,7 @@ import java.util.concurrent.Executor
 
 /** Implementation that delegates to platform [SdkSandboxController] for Android U. */
 @RequiresApi(34)
-// TODO(b/426122358) Make it internal after finishing migration
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public class PlatformUDCImpl(private val controller: SdkSandboxController, sdkContext: Context) :
+internal class PlatformUDCImpl(private val controller: SdkSandboxController, sdkContext: Context) :
     SdkSandboxControllerBackend {
 
     private val appOwnedSdkProvider = AppOwnedSdkProvider.create(controller)
