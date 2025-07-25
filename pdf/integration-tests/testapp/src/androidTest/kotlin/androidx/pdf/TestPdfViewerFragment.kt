@@ -165,12 +165,16 @@ internal class TestPdfViewerFragment : PdfViewerFragment {
     }
 
     override fun onLinkClicked(externalLink: ExternalLink): Boolean {
-        requireActivity().runOnUiThread {
-            AlertDialog.Builder(requireContext())
-                .setTitle("Handled by custom link handler")
-                .setMessage(externalLink.uri.toString())
-                .setPositiveButton("OK", null)
-                .show()
+        if (shouldOverrideLinkHandling) {
+            requireActivity().runOnUiThread {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Handled by custom link handler")
+                    .setMessage(externalLink.uri.toString())
+                    .setPositiveButton("OK", null)
+                    .show()
+            }
+        } else {
+            super.onLinkClicked(externalLink)
         }
         // true = handled, false = use default behavior
         return shouldOverrideLinkHandling
