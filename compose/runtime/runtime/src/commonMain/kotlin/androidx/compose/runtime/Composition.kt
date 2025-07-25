@@ -1099,8 +1099,14 @@ internal class CompositionImpl(
         rememberManager.prepare(abandonSet, composer.errorContext)
         try {
             if (changes.isEmpty()) return
-            trace("Compose:applyChanges") {
-                val applier = pendingPausedComposition?.pausableApplier ?: applier
+            val applier = pendingPausedComposition?.pausableApplier ?: applier
+            val traceName =
+                if (applier == pendingPausedComposition?.pausableApplier) {
+                    "Compose:recordChanges"
+                } else {
+                    "Compose:applyChanges"
+                }
+            trace(traceName) {
                 val rememberManager = pendingPausedComposition?.rememberManager ?: rememberManager
                 applier.onBeginChanges()
 

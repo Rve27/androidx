@@ -34,6 +34,7 @@ import androidx.compose.runtime.RecordingApplier.Companion.REUSE
 import androidx.compose.runtime.RecordingApplier.Companion.UP
 import androidx.compose.runtime.internal.AtomicReference
 import androidx.compose.runtime.internal.RememberEventDispatcher
+import androidx.compose.runtime.internal.trace
 import androidx.compose.runtime.platform.SynchronizedObject
 import androidx.compose.runtime.platform.synchronized
 import kotlin.math.min
@@ -323,15 +324,17 @@ internal class PausedCompositionImpl(
     }
 
     private fun applyChanges() {
-        synchronized(lock) {
-            @Suppress("UNCHECKED_CAST")
-            try {
-                pausableApplier.playTo(applier as Applier<Any?>, rememberManager)
-                rememberManager.dispatchRememberObservers()
-                rememberManager.dispatchSideEffects()
-            } finally {
-                rememberManager.dispatchAbandons()
-                composition.pausedCompositionFinished(null)
+        trace("PausedComposition:applyChanges") {
+            synchronized(lock) {
+                @Suppress("UNCHECKED_CAST")
+                try {
+                    pausableApplier.playTo(applier as Applier<Any?>, rememberManager)
+                    rememberManager.dispatchRememberObservers()
+                    rememberManager.dispatchSideEffects()
+                } finally {
+                    rememberManager.dispatchAbandons()
+                    composition.pausedCompositionFinished(null)
+                }
             }
         }
     }
