@@ -545,8 +545,6 @@ public open class PdfViewerFragment constructor() : Fragment() {
 
     private fun setupSearchViewListeners(searchView: PdfSearchView) {
         with(searchView) {
-            onSearchClosed = { isTextSearchActive = false }
-
             searchQueryBox.addTextChangedListener(searchQueryTextWatcher)
 
             searchQueryBox.setOnEditorActionListener { _, actionId, _ ->
