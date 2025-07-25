@@ -23,14 +23,14 @@ plugins {
 }
 
 androidx {
-    name = "Remote Compose Creation"
-    type = SoftwareType.PUBLISHED_LIBRARY
+    name = "Remote Compose Internal Test Utils"
+    type = SoftwareType.INTERNAL_TEST_LIBRARY
     inceptionYear = "2024"
-    description = "Provides a procedural API to create RemoteCompose documents"
+    description = "Remote Compose internal test utils"
 }
 
 android {
-    namespace = "androidx.compose.remote.creation"
+    namespace = "androidx.compose.remote.serialization"
     compileSdk = 35
     defaultConfig {
        minSdk = 22
@@ -39,7 +39,8 @@ android {
 
 dependencies {
     api(libs.jspecify)
+    api(libs.junit)
+    api(libs.truth)
     implementation(project(":compose:remote:remote-core"))
-    implementation(project(":graphics:graphics-path"))
-    testImplementation(libs.junit)
+    implementation("org.yaml:snakeyaml:2.4")
 }
