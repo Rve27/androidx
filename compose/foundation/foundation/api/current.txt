@@ -140,6 +140,7 @@ package androidx.compose.foundation {
   @SuppressCompatibility @androidx.compose.foundation.ExperimentalFoundationApi public final class ComposeFoundationFlags {
     property public boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
     property public boolean isKeepInViewFocusObservationChangeEnabled;
+    property public boolean isMouseWheel1DAxisLockingEnabled;
     property public boolean isNewContextMenuEnabled;
     property public boolean isNonComposedClickableEnabled;
     property public boolean isNonSuspendingPointerInputInClickableEnabled;
@@ -150,6 +151,7 @@ package androidx.compose.foundation {
     field public static final androidx.compose.foundation.ComposeFoundationFlags INSTANCE;
     field public static boolean isDetectTapGesturesImmediateCoroutineDispatchEnabled;
     field public static boolean isKeepInViewFocusObservationChangeEnabled;
+    field public static boolean isMouseWheel1DAxisLockingEnabled;
     field public static boolean isNewContextMenuEnabled;
     field public static boolean isNonComposedClickableEnabled;
     field public static boolean isNonSuspendingPointerInputInClickableEnabled;

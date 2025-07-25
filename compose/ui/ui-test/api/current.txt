@@ -492,7 +492,9 @@ package androidx.compose.ui.test {
     method public void release(optional int button);
     method @BytecodeOnly public void release-SMKQcqU(int);
     method public void scroll(float delta, optional int scrollWheel);
+    method public default void scroll(long offset);
     method @BytecodeOnly public void scroll-I7Dg0i0(float, int);
+    method @BytecodeOnly public default void scroll-k-4lQ0M(long);
     method public default void updatePointerBy(long delta);
     method @BytecodeOnly public default void updatePointerBy-k-4lQ0M(long);
     method public void updatePointerTo(long position);
