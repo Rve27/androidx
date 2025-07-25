@@ -126,4 +126,13 @@ object ComposeFoundationFlags {
     @Suppress("MutableBareField")
     @JvmField
     var isKeepInViewFocusObservationChangeEnabled: Boolean = true
+
+    /**
+     * With this flag on we don't use suspend pointer input as part of drag related modifiers as an
+     * optimization. This will affect [androidx.compose.foundation.gestures.scrollable],
+     * [androidx.compose.foundation.gestures.draggable],
+     * [androidx.compose.foundation.gestures.draggable2D] and
+     * [androidx.compose.foundation.gestures.anchoredDraggable].
+     */
+    @Suppress("MutableBareField") @JvmField var isNonSuspendingPointerInputInDraggableEnabled = true
 }

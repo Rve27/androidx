@@ -279,7 +279,6 @@ internal class ScrollableNode(
     ),
     KeyInputModifierNode,
     SemanticsModifierNode,
-    CompositionLocalConsumerModifierNode,
     OnScrollChangedDispatcher {
 
     override val shouldAutoInvalidate: Boolean = false
