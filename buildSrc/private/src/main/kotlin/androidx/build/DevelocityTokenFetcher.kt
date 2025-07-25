@@ -19,12 +19,15 @@ package androidx.build
 import com.google.cloud.secretmanager.v1.SecretManagerServiceClient
 import com.google.cloud.secretmanager.v1.SecretVersionName
 import java.io.File
+import org.gradle.api.Project
+import org.gradle.api.provider.ValueSource
+import org.gradle.api.provider.ValueSourceParameters
 
 /**
  * If the user hasn't set up develocity on this machine then fetch a shared key to enable it for
  * them.
  */
-internal fun fetchDevelocityKeysIfNeeded() {
+internal fun Project.fetchDevelocityKeysIfNeeded() {
     // We are in CI, so we should not fetch these keys
     if (System.getenv("BUILD_NUMBER") != null) return
 
@@ -37,16 +40,31 @@ internal fun fetchDevelocityKeysIfNeeded() {
     if (keys.exists()) return
 
     keys.parentFile.mkdirs()
-    try {
-        SecretManagerServiceClient.create().use { manager ->
-            val secretVersionName =
-                SecretVersionName.of("androidx-ge", "develocity-token", "latest")
-            val response = manager.accessSecretVersion(secretVersionName)
-            val value = response.payload.data.toStringUtf8()
-            keys.writeText(value)
+
+    val keysProvider = providers.of(DevelocityKeysValueSource::class.java) {}
+    keys.writeText(keysProvider.get())
+}
+
+/**
+ * Using a ValueSource to fetch Develocity keys because the SecretManagerServiceClient on Macs use
+ * external processes (such as codesign and install_name_tool) and that is not allowed when
+ * configuration cache is enabled without wrapping those calls in a ValueSource.
+ */
+internal abstract class DevelocityKeysValueSource :
+    ValueSource<String, ValueSourceParameters.None> {
+    override fun obtain(): String? {
+        var value: String? = null
+        try {
+            SecretManagerServiceClient.create().use { manager ->
+                val secretVersionName =
+                    SecretVersionName.of("androidx-ge", "develocity-token", "latest")
+                val response = manager.accessSecretVersion(secretVersionName)
+                value = response.payload.data.toStringUtf8()
+            }
+        } catch (e: Exception) {
+            println("Failed to fetch develocity keys")
+            e.printStackTrace()
         }
-    } catch (e: Exception) {
-        println("Failed to fetch develocity keys")
-        e.printStackTrace()
+        return value
     }
 }
