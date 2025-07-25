@@ -25,6 +25,10 @@ ChangedDefault: androidx.compose.material3.pulltorefresh.PullToRefreshState#isAn
     Binary breaking change: Method androidx.compose.material3.pulltorefresh.PullToRefreshState.isAnimating has changed 'default' qualifier
 
 
+ParameterNameChange: androidx.compose.material3.pulltorefresh.PullToRefreshDefaults#Indicator(androidx.compose.material3.pulltorefresh.PullToRefreshState, boolean, androidx.compose.ui.Modifier, long, long, float) parameter #5:
+    Source breaking change: Attempted to change parameter name from threshold to maxDistance in method androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+
+
 RemovedClass: androidx.compose.material3.ExposedDropdownMenu_androidKt:
     Binary breaking change: Removed class androidx.compose.material3.ExposedDropdownMenu_androidKt
 RemovedClass: androidx.compose.material3.MenuAnchorType:
