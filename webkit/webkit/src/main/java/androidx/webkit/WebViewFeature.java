@@ -109,6 +109,7 @@ public class WebViewFeature {
             GET_COOKIE_INFO,
             REQUESTED_WITH_HEADER_ALLOW_LIST,
             USER_AGENT_METADATA,
+            USER_AGENT_METADATA_FORM_FACTORS,
             MULTI_PROFILE,
             ATTRIBUTION_REGISTRATION_BEHAVIOR,
             WEBVIEW_MEDIA_INTEGRITY_API_STATUS,
@@ -563,6 +564,16 @@ public class WebViewFeature {
      * {@link WebSettingsCompat#setUserAgentMetadata(WebSettings, UserAgentMetadata)}.
      */
     public static final String USER_AGENT_METADATA = "USER_AGENT_METADATA";
+
+    /**
+     * Feature for {@link #isFeatureSupported(String)}.
+     * This feature covers
+     * {@link UserAgentMetadata.Builder#setFormFactors(List)}, and
+     * {@link UserAgentMetadata#getFormFactors()}.
+     *
+     */
+    public static final String USER_AGENT_METADATA_FORM_FACTORS =
+            "USER_AGENT_METADATA_FORM_FACTORS";
 
     /**
      * Feature for {@link #isFeatureSupported(String)}.

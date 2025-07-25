@@ -31,6 +31,7 @@ import android.webkit.WebView;
 
 import androidx.annotation.RestrictTo;
 import androidx.annotation.VisibleForTesting;
+import androidx.core.content.pm.PackageInfoCompat;
 import androidx.webkit.Navigation;
 import androidx.webkit.Page;
 import androidx.webkit.PrerenderOperationCallback;
@@ -563,6 +564,27 @@ public class WebViewFeatureInternal {
     public static final ApiFeature.NoFramework USER_AGENT_METADATA =
             new ApiFeature.NoFramework(WebViewFeature.USER_AGENT_METADATA,
                     Features.USER_AGENT_METADATA);
+
+    /**
+     * This feature covers
+     * {@link androidx.webkit.UserAgentMetadata.Builder#setFormFactors(List)}, and
+     * {@link androidx.webkit.UserAgentMetadata#getFormFactors()}.
+     */
+    public static final ApiFeature.NoFramework USER_AGENT_METADATA_FORM_FACTORS =
+            new ApiFeature.NoFramework(WebViewFeature.USER_AGENT_METADATA_FORM_FACTORS,
+                    Features.USER_AGENT_METADATA) {
+                @Override
+                public boolean isSupportedByWebView() {
+                    if (!super.isSupportedByWebView()) {
+                        return false;
+                    }
+                    PackageInfo info = WebViewCompat.getCurrentLoadedWebViewPackage();
+                    if (info == null) return false;
+                    // Since version 124.0.6367.0 (crrev.com/c/5374782), Chromium WebView has
+                    // supported override form factor client hint.
+                    return PackageInfoCompat.getLongVersionCode(info) >= 6367_000_00L;
+                }
+            };
 
     /**
      * This feature covers

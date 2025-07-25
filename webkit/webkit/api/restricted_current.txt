@@ -259,6 +259,7 @@ package androidx.webkit {
     method public String? getArchitecture();
     method public int getBitness();
     method public java.util.List<androidx.webkit.UserAgentMetadata.BrandVersion!> getBrandVersionList();
+    method @RequiresFeature(name=androidx.webkit.WebViewFeature.USER_AGENT_METADATA_FORM_FACTORS, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") public java.util.List<java.lang.String!> getFormFactors();
     method public String? getFullVersion();
     method public String? getModel();
     method public String? getPlatform();
@@ -266,6 +267,13 @@ package androidx.webkit {
     method public boolean isMobile();
     method public boolean isWow64();
     field public static final int BITNESS_DEFAULT = 0; // 0x0
+    field public static final String FORM_FACTOR_AUTOMOTIVE = "Automotive";
+    field public static final String FORM_FACTOR_DESKTOP = "Desktop";
+    field public static final String FORM_FACTOR_EINK = "EInk";
+    field public static final String FORM_FACTOR_MOBILE = "Mobile";
+    field public static final String FORM_FACTOR_TABLET = "Tablet";
+    field public static final String FORM_FACTOR_WATCH = "Watch";
+    field public static final String FORM_FACTOR_XR = "XR";
   }
 
   public static final class UserAgentMetadata.BrandVersion {
@@ -290,6 +298,7 @@ package androidx.webkit {
     method public androidx.webkit.UserAgentMetadata.Builder setArchitecture(String?);
     method public androidx.webkit.UserAgentMetadata.Builder setBitness(int);
     method public androidx.webkit.UserAgentMetadata.Builder setBrandVersionList(java.util.List<androidx.webkit.UserAgentMetadata.BrandVersion!>);
+    method @RequiresFeature(name=androidx.webkit.WebViewFeature.USER_AGENT_METADATA_FORM_FACTORS, enforcement="androidx.webkit.WebViewFeature#isFeatureSupported") public androidx.webkit.UserAgentMetadata.Builder setFormFactors(java.util.List<java.lang.String!>);
     method public androidx.webkit.UserAgentMetadata.Builder setFullVersion(String?);
     method public androidx.webkit.UserAgentMetadata.Builder setMobile(boolean);
     method public androidx.webkit.UserAgentMetadata.Builder setModel(String?);
@@ -584,6 +593,7 @@ package androidx.webkit {
     field public static final String START_SAFE_BROWSING = "START_SAFE_BROWSING";
     field public static final String TRACING_CONTROLLER_BASIC_USAGE = "TRACING_CONTROLLER_BASIC_USAGE";
     field public static final String USER_AGENT_METADATA = "USER_AGENT_METADATA";
+    field public static final String USER_AGENT_METADATA_FORM_FACTORS = "USER_AGENT_METADATA_FORM_FACTORS";
     field public static final String VISUAL_STATE_CALLBACK = "VISUAL_STATE_CALLBACK";
     field @SuppressCompatibility @androidx.webkit.Profile.ExperimentalWarmUpRendererProcess public static final String WARM_UP_RENDERER_PROCESS = "WARM_UP_RENDERER_PROCESS";
     field public static final String WEBVIEW_MEDIA_INTEGRITY_API_STATUS = "WEBVIEW_MEDIA_INTEGRITY_API_STATUS";
