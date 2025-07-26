@@ -48,10 +48,10 @@ package androidx.xr.runtime.openxr {
     method public void update(long xrTime);
     property public android.os.IBinder anchorToken;
     property public long nativePointer;
-    property @GuardedBy("lock") public androidx.xr.runtime.internal.Anchor.PersistenceState persistenceState;
+    property public androidx.xr.runtime.internal.Anchor.PersistenceState persistenceState;
     property public androidx.xr.runtime.math.Pose pose;
     property public androidx.xr.runtime.TrackingState trackingState;
-    property @GuardedBy("lock") public java.util.UUID? uuid;
+    property public java.util.UUID? uuid;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class OpenXrAugmentedObject implements androidx.xr.runtime.internal.AugmentedObject {

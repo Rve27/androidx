@@ -238,8 +238,8 @@ package androidx.room {
     method @Deprecated public void setTransactionSuccessful();
     property public androidx.room.InvalidationTracker invalidationTracker;
     property public boolean isOpen;
-    property @Deprecated @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) protected final java.util.List<androidx.room.RoomDatabase.Callback>? mCallbacks;
-    property @Deprecated @kotlin.jvm.Volatile protected final androidx.sqlite.db.SupportSQLiteDatabase? mDatabase;
+    property @Deprecated protected final java.util.List<androidx.room.RoomDatabase.Callback>? mCallbacks;
+    property @Deprecated protected final androidx.sqlite.db.SupportSQLiteDatabase? mDatabase;
     property public androidx.sqlite.db.SupportSQLiteOpenHelper openHelper;
     property public java.util.concurrent.Executor queryExecutor;
     property public java.util.concurrent.Executor transactionExecutor;
@@ -294,7 +294,7 @@ package androidx.room {
   }
 
   public static final class RoomDatabase.Companion {
-    property @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public static int MAX_BIND_PARAMETER_CNT;
+    property public static int MAX_BIND_PARAMETER_CNT;
   }
 
   public enum RoomDatabase.JournalMode {

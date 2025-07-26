@@ -592,9 +592,9 @@ package androidx.wear.compose.material {
     method public float getBasis();
     method public float getFactorAtMax();
     method public float getFactorAtMin();
-    property @FloatRange(from=0.0, fromInclusive=false) public float basis;
-    property @FloatRange(from=0.0) public float factorAtMax;
-    property @FloatRange(from=0.0) public float factorAtMin;
+    property public float basis;
+    property public float factorAtMax;
+    property public float factorAtMin;
   }
 
   @SuppressCompatibility @androidx.wear.compose.material.ExperimentalWearMaterialApi @kotlin.jvm.JvmInline public final value class RevealActionType {
@@ -942,7 +942,7 @@ package androidx.wear.compose.material {
     method public float getFraction();
     method public T getFrom();
     method public T getTo();
-    property @FloatRange(from=0.0, to=1.0) public float fraction;
+    property public float fraction;
     property public T from;
     property public T to;
   }

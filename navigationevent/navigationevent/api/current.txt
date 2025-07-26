@@ -9,10 +9,10 @@ package androidx.navigationevent {
     method public float getTouchX();
     method public float getTouchY();
     property public long frameTimeMillis;
-    property @FloatRange(from=0.0, to=1.0) public float progress;
+    property public float progress;
     property public int swipeEdge;
-    property @FloatRange(from=0.0) public float touchX;
-    property @FloatRange(from=0.0) public float touchY;
+    property public float touchX;
+    property public float touchY;
     field public static final androidx.navigationevent.NavigationEvent.Companion Companion;
     field public static final int EDGE_LEFT = 0; // 0x0
     field public static final int EDGE_NONE = 2; // 0x2

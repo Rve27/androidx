@@ -1639,8 +1639,8 @@ package androidx.wear.protolayout.types {
     ctor public LayoutColor(@ColorInt int staticArgb, optional @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=200) androidx.wear.protolayout.expression.DynamicBuilders.DynamicColor? dynamicArgb);
     method public androidx.wear.protolayout.expression.DynamicBuilders.DynamicColor? getDynamicArgb();
     method public int getStaticArgb();
-    property @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=200) public androidx.wear.protolayout.expression.DynamicBuilders.DynamicColor? dynamicArgb;
-    property @ColorInt public int staticArgb;
+    property public androidx.wear.protolayout.expression.DynamicBuilders.DynamicColor? dynamicArgb;
+    property public int staticArgb;
   }
 
   public final class LayoutColorUtil {

@@ -606,12 +606,12 @@ package androidx.xr.scenecore {
     method public boolean shouldAutoHideContent();
     method public boolean shouldAutoUpdateOverlay();
     property public androidx.xr.runtime.math.FloatSize3d affordanceSize;
-    property @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public float fixedAspectRatio;
+    property public float fixedAspectRatio;
     property public androidx.xr.runtime.math.FloatSize3d maximumEntitySize;
     property public androidx.xr.runtime.math.FloatSize3d minimumEntitySize;
     property public boolean shouldAlwaysShowOverlay;
     property public boolean shouldAutoHideContent;
-    property @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public boolean shouldAutoUpdateOverlay;
+    property public boolean shouldAutoUpdateOverlay;
     field public static final androidx.xr.scenecore.ResizableComponent.Companion Companion;
   }
 
@@ -715,7 +715,7 @@ package androidx.xr.scenecore {
   public final class Space {
     property public static int ACTIVITY;
     property public static int PARENT;
-    property @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public static int REAL_WORLD;
+    property public static int REAL_WORLD;
     field public static final int ACTIVITY = 1; // 0x1
     field public static final androidx.xr.scenecore.Space INSTANCE;
     field public static final int PARENT = 0; // 0x0
@@ -1078,8 +1078,8 @@ package androidx.xr.scenecore {
     ctor public SurfaceEntity.EdgeFeatheringParams.SmoothFeather(optional @FloatRange(from=0.0, to=0.5) float leftRight, optional @FloatRange(from=0.0, to=0.5) float topBottom);
     method public float getLeftRight();
     method public float getTopBottom();
-    property @FloatRange(from=0.0, to=0.5) public float leftRight;
-    property @FloatRange(from=0.0, to=0.5) public float topBottom;
+    property public float leftRight;
+    property public float topBottom;
   }
 
   public static final class SurfaceEntity.EdgeFeatheringParams.SolidEdge extends androidx.xr.scenecore.SurfaceEntity.EdgeFeatheringParams {

@@ -60,11 +60,11 @@ package androidx.xr.arcore.playservices {
     method public void unpersistAnchor(java.util.UUID uuid);
     property public androidx.xr.runtime.internal.ArDevice arDevice;
     property public java.util.List<androidx.xr.runtime.internal.DepthMap> depthMaps;
-    property @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public androidx.xr.arcore.playservices.ArCoreEarth earth;
+    property public androidx.xr.arcore.playservices.ArCoreEarth earth;
     property public androidx.xr.runtime.internal.Hand? leftHand;
     property public androidx.xr.runtime.internal.Hand? rightHand;
     property public java.util.Collection<androidx.xr.runtime.internal.Trackable> trackables;
-    property @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public androidx.xr.runtime.internal.Face? userFace;
+    property public androidx.xr.runtime.internal.Face? userFace;
     property public java.util.List<androidx.xr.runtime.internal.ViewCamera> viewCameras;
   }
 

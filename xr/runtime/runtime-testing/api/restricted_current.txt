@@ -465,7 +465,7 @@ package androidx.xr.runtime.testing {
     property public androidx.xr.runtime.Config config;
     property public boolean hasCreatePermission;
     property public boolean hasMissingPermission;
-    property @RestrictTo({androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX}) public boolean shouldSupportFaceTracking;
+    property @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public boolean shouldSupportFaceTracking;
     property public boolean shouldSupportPlaneTracking;
     property public androidx.xr.runtime.testing.FakeLifecycleManager.State state;
     property public kotlin.time.TestTimeSource timeSource;

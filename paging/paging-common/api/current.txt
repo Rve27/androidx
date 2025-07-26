@@ -111,8 +111,8 @@ package androidx.paging {
     method public int getPlaceholdersBefore();
     method public int getSize();
     property public java.util.List<T> items;
-    property @IntRange(from=0L) public int placeholdersAfter;
-    property @IntRange(from=0L) public int placeholdersBefore;
+    property public int placeholdersAfter;
+    property public int placeholdersBefore;
     property public int size;
   }
 
@@ -315,11 +315,11 @@ package androidx.paging {
     ctor public PagingConfig(int pageSize, optional @IntRange(from=0L) int prefetchDistance, optional boolean enablePlaceholders, optional @IntRange(from=1L) int initialLoadSize, optional @IntRange(from=2L) int maxSize);
     ctor public PagingConfig(int pageSize, optional @IntRange(from=0L) int prefetchDistance, optional boolean enablePlaceholders, optional @IntRange(from=1L) int initialLoadSize, optional @IntRange(from=2L) int maxSize, optional int jumpThreshold);
     property public boolean enablePlaceholders;
-    property @IntRange(from=1L) public int initialLoadSize;
+    property public int initialLoadSize;
     property public int jumpThreshold;
-    property @IntRange(from=2L) public int maxSize;
+    property public int maxSize;
     property public int pageSize;
-    property @IntRange(from=0L) public int prefetchDistance;
+    property public int prefetchDistance;
     field public static final androidx.paging.PagingConfig.Companion Companion;
     field public static final int MAX_SIZE_UNBOUNDED = 2147483647; // 0x7fffffff
     field public final boolean enablePlaceholders;
@@ -522,8 +522,8 @@ package androidx.paging {
     method public Key? getPrevKey();
     method public java.util.Iterator<Value> iterator();
     property public java.util.List<Value> data;
-    property @IntRange(from=androidx.paging.PagingSource.LoadResult.Page.COUNT_UNDEFINED.toLong()) public int itemsAfter;
-    property @IntRange(from=androidx.paging.PagingSource.LoadResult.Page.COUNT_UNDEFINED.toLong()) public int itemsBefore;
+    property public int itemsAfter;
+    property public int itemsBefore;
     property public Key? nextKey;
     property public Key? prevKey;
     field public static final int COUNT_UNDEFINED = -2147483648; // 0x80000000

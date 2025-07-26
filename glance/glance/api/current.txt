@@ -148,7 +148,7 @@ package androidx.glance.action {
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.glance.GlanceModifier clickable(androidx.glance.GlanceModifier, String?, @DrawableRes int, kotlin.jvm.functions.Function0<kotlin.Unit!>, androidx.compose.runtime.Composer?, int, int);
     method @androidx.compose.runtime.Composable public static androidx.glance.GlanceModifier clickable(androidx.glance.GlanceModifier, kotlin.jvm.functions.Function0<kotlin.Unit> block);
     method @BytecodeOnly @androidx.compose.runtime.Composable public static androidx.glance.GlanceModifier clickable(androidx.glance.GlanceModifier, kotlin.jvm.functions.Function0<kotlin.Unit!>, androidx.compose.runtime.Composer?, int);
-    property @DrawableRes public static int NoRippleOverride;
+    property public static int NoRippleOverride;
     field @DrawableRes public static final int NoRippleOverride = 0; // 0x0
   }
 

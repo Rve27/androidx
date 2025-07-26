@@ -164,7 +164,7 @@ package androidx.core.haptics.signal {
     method public float getAmplitudeScale();
     method public int getType();
     method public androidx.core.haptics.signal.CompositionSignal.PrimitiveAtom withAmplitudeScale(@FloatRange(from=0.0, to=1.0) float newAmplitudeScale);
-    property @FloatRange(from=0.0, to=1.0) public float amplitudeScale;
+    property public float amplitudeScale;
     property public int type;
     field public static final int CLICK = 1; // 0x1
     field public static final androidx.core.haptics.signal.CompositionSignal.PrimitiveAtom.Companion Companion;

@@ -100,7 +100,7 @@ package androidx.text.vertical {
     method public CharSequence getText();
     method @Px public float getWidth();
     property public int end;
-    property @Px public float height;
+    property public float height;
     property public int orientation;
     property public android.text.TextPaint paint;
     property public int start;

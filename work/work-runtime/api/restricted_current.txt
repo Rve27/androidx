@@ -41,7 +41,7 @@ package androidx.work {
     property public androidx.work.InputMergerFactory inputMergerFactory;
     property public int maxJobSchedulerId;
     property public int minJobSchedulerId;
-    property @IntRange(from=0L, to=1200000L) public long remoteSessionTimeoutMillis;
+    property public long remoteSessionTimeoutMillis;
     property public androidx.work.RunnableScheduler runnableScheduler;
     property public androidx.core.util.Consumer<java.lang.Throwable>? schedulingExceptionHandler;
     property public java.util.concurrent.Executor taskExecutor;
@@ -99,11 +99,11 @@ package androidx.work {
     method public boolean requiresCharging();
     method @RequiresApi(23) public boolean requiresDeviceIdle();
     method public boolean requiresStorageNotLow();
-    property @RequiresApi(24) @androidx.room.ColumnInfo(name="trigger_max_content_delay") public long contentTriggerMaxDelayMillis;
-    property @RequiresApi(24) @androidx.room.ColumnInfo(name="trigger_content_update_delay") public long contentTriggerUpdateDelayMillis;
-    property @RequiresApi(24) @androidx.room.ColumnInfo(name="content_uri_triggers") public java.util.Set<androidx.work.Constraints.ContentUriTrigger> contentUriTriggers;
+    property @RequiresApi(24) public long contentTriggerMaxDelayMillis;
+    property @RequiresApi(24) public long contentTriggerUpdateDelayMillis;
+    property @RequiresApi(24) public java.util.Set<androidx.work.Constraints.ContentUriTrigger> contentUriTriggers;
     property @RequiresApi(21) public android.net.NetworkRequest? requiredNetworkRequest;
-    property @androidx.room.ColumnInfo(name="required_network_type") public androidx.work.NetworkType requiredNetworkType;
+    property public androidx.work.NetworkType requiredNetworkType;
     field public static final androidx.work.Constraints.Companion Companion;
     field public static final androidx.work.Constraints NONE;
   }

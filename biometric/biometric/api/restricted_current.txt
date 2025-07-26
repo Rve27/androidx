@@ -20,7 +20,7 @@ package androidx.biometric {
     property public boolean isConfirmationRequired;
     property @RequiresPermission(android.Manifest.permission.SET_BIOMETRIC_DIALOG_ADVANCED) public android.graphics.Bitmap? logoBitmap;
     property @RequiresPermission(android.Manifest.permission.SET_BIOMETRIC_DIALOG_ADVANCED) public String? logoDescription;
-    property @DrawableRes @RequiresPermission(android.Manifest.permission.SET_BIOMETRIC_DIALOG_ADVANCED) public int logoRes;
+    property @RequiresPermission(android.Manifest.permission.SET_BIOMETRIC_DIALOG_ADVANCED) public int logoRes;
     property public androidx.biometric.AuthenticationRequest.Biometric.Strength minStrength;
     property public String? subtitle;
     property public String title;

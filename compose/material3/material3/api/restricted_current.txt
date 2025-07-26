@@ -2692,7 +2692,7 @@ package androidx.compose.material3 {
     property public float activeRangeEnd;
     property public float activeRangeStart;
     property public kotlin.jvm.functions.Function0<kotlin.Unit>? onValueChangeFinished;
-    property @IntRange(from=0L) public int steps;
+    property public int steps;
     property public kotlin.ranges.ClosedFloatingPointRange<java.lang.Float> valueRange;
     field public static final androidx.compose.material3.RangeSliderState.Companion Companion;
   }
@@ -3268,7 +3268,7 @@ package androidx.compose.material3 {
     property public kotlin.jvm.functions.Function1<java.lang.Float,kotlin.Unit>? onValueChange;
     property public kotlin.jvm.functions.Function0<kotlin.Unit>? onValueChangeFinished;
     property public boolean shouldAutoSnap;
-    property @IntRange(from=0L) public int steps;
+    property public int steps;
     property public float value;
     property public kotlin.ranges.ClosedFloatingPointRange<java.lang.Float> valueRange;
     field public static final androidx.compose.material3.SliderState.Companion Companion;

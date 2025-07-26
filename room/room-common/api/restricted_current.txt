@@ -69,13 +69,13 @@ package androidx.room {
     property public static int BLOB;
     property public static String INHERIT_FIELD_NAME;
     property public static int INTEGER;
-    property @RequiresApi(21) public static int LOCALIZED;
+    property public static int LOCALIZED;
     property public static int NOCASE;
     property public static int REAL;
     property public static int RTRIM;
     property public static int TEXT;
     property public static int UNDEFINED;
-    property @RequiresApi(21) public static int UNICODE;
+    property public static int UNICODE;
     property public static int UNSPECIFIED;
     property public static String VALUE_UNSPECIFIED;
     field public static final int BINARY = 2; // 0x2
@@ -251,7 +251,7 @@ package androidx.room {
     property public static String TOKENIZER_ICU;
     property public static String TOKENIZER_PORTER;
     property public static String TOKENIZER_SIMPLE;
-    property @RequiresApi(21) public static String TOKENIZER_UNICODE61;
+    property public static String TOKENIZER_UNICODE61;
     field public static final androidx.room.FtsOptions INSTANCE;
     field public static final String TOKENIZER_ICU = "icu";
     field public static final String TOKENIZER_PORTER = "porter";

@@ -908,7 +908,7 @@ package androidx.xr.runtime.internal {
     property public float distance;
     property public androidx.xr.runtime.math.Vector3? hitPosition;
     property public androidx.xr.runtime.math.Vector3? surfaceNormal;
-    property @androidx.xr.runtime.internal.HitTestResult.HitTestSurfaceTypeValue public int surfaceType;
+    property public int surfaceType;
   }
 
   public static final class HitTestResult.HitTestSurfaceType {
@@ -1120,9 +1120,9 @@ package androidx.xr.runtime.internal {
     method public int getBlendMode();
     method public int getDoubleSidedMode();
     method public int getLightingModel();
-    property @androidx.xr.runtime.internal.KhronosPbrMaterialSpec.BlendMode public int blendMode;
-    property @androidx.xr.runtime.internal.KhronosPbrMaterialSpec.DoubleSidedMode public int doubleSidedMode;
-    property @androidx.xr.runtime.internal.KhronosPbrMaterialSpec.LightingModel public int lightingModel;
+    property public int blendMode;
+    property public int doubleSidedMode;
+    property public int lightingModel;
     field public static final androidx.xr.runtime.internal.KhronosPbrMaterialSpec.Companion Companion;
     field public static final int DOUBLE_SIDED = 1; // 0x1
     field public static final int LIT = 0; // 0x0
@@ -1510,7 +1510,7 @@ package androidx.xr.runtime.internal {
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class SoundFieldAttributes {
     ctor public SoundFieldAttributes(@androidx.xr.runtime.internal.SpatializerConstants.AmbisonicsOrder int ambisonicsOrder);
     method public int getAmbisonicsOrder();
-    property @androidx.xr.runtime.internal.SpatializerConstants.AmbisonicsOrder public int ambisonicsOrder;
+    property public int ambisonicsOrder;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface SoundPoolExtensionsWrapper {
@@ -1902,14 +1902,14 @@ package androidx.xr.runtime.internal {
     method public int getWrapModeR();
     method public int getWrapModeS();
     method public int getWrapModeT();
-    property @androidx.xr.runtime.internal.TextureSampler.WrapMode public int anisotropyLog2;
-    property @androidx.xr.runtime.internal.TextureSampler.WrapMode public int compareFunc;
-    property @androidx.xr.runtime.internal.TextureSampler.WrapMode public int compareMode;
-    property @androidx.xr.runtime.internal.TextureSampler.WrapMode public int magFilter;
-    property @androidx.xr.runtime.internal.TextureSampler.WrapMode public int minFilter;
-    property @androidx.xr.runtime.internal.TextureSampler.WrapMode public int wrapModeR;
-    property @androidx.xr.runtime.internal.TextureSampler.WrapMode public int wrapModeS;
-    property @androidx.xr.runtime.internal.TextureSampler.WrapMode public int wrapModeT;
+    property public int anisotropyLog2;
+    property public int compareFunc;
+    property public int compareMode;
+    property public int magFilter;
+    property public int minFilter;
+    property public int wrapModeR;
+    property public int wrapModeS;
+    property public int wrapModeT;
     field public static final int A = 6; // 0x6
     field public static final int CLAMP_TO_EDGE = 0; // 0x0
     field public static final int COMPARE_TO_TEXTURE = 1; // 0x1

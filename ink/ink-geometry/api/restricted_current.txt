@@ -43,10 +43,10 @@ package androidx.ink.geometry {
     method @FloatRange(from=0.0, to=androidx.ink.geometry.Angle.FULL_TURN_RADIANS_DOUBLE) @androidx.ink.geometry.AngleRadiansFloat public static float normalized(@androidx.ink.geometry.AngleRadiansFloat float radians);
     method @FloatRange(from=-3.141592653589793, to=androidx.ink.geometry.Angle.HALF_TURN_RADIANS_DOUBLE) @androidx.ink.geometry.AngleRadiansFloat public static float normalizedAboutZero(@androidx.ink.geometry.AngleRadiansFloat float radians);
     method @androidx.ink.geometry.AngleDegreesFloat public static float radiansToDegrees(@androidx.ink.geometry.AngleRadiansFloat float radians);
-    property @androidx.ink.geometry.AngleRadiansFloat public float FULL_TURN_RADIANS;
-    property @androidx.ink.geometry.AngleRadiansFloat public float HALF_TURN_RADIANS;
-    property @androidx.ink.geometry.AngleRadiansFloat public float QUARTER_TURN_RADIANS;
-    property @androidx.ink.geometry.AngleRadiansFloat public float ZERO;
+    property public float FULL_TURN_RADIANS;
+    property public float HALF_TURN_RADIANS;
+    property public float QUARTER_TURN_RADIANS;
+    property public float ZERO;
     field @androidx.ink.geometry.AngleRadiansFloat public static final float FULL_TURN_RADIANS;
     field @androidx.ink.geometry.AngleRadiansFloat public static final float HALF_TURN_RADIANS;
     field public static final androidx.ink.geometry.Angle INSTANCE;
@@ -147,7 +147,7 @@ package androidx.ink.geometry {
     method public float getWidth();
     property public androidx.ink.geometry.ImmutableVec center;
     property public float height;
-    property @androidx.ink.geometry.AngleRadiansFloat public float rotation;
+    property public float rotation;
     property public float shearFactor;
     property public float width;
     field public static final androidx.ink.geometry.ImmutableParallelogram.Companion Companion;

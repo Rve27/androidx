@@ -208,7 +208,7 @@ package androidx.compose.material3.adaptive.layout {
     method @BytecodeOnly @androidx.compose.runtime.Composable public String getDescription(androidx.compose.runtime.Composer?, int);
     method public float getProportion();
     property @androidx.compose.runtime.Composable public String description;
-    property @FloatRange(from=0.0, to=1.0) public float proportion;
+    property public float proportion;
   }
 
   public final class PaneExpansionDraggableModifierKt {
