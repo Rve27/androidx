@@ -459,6 +459,18 @@ package androidx.compose.ui.autofill {
     method public static androidx.compose.ui.autofill.ContentType ContentType(String contentHint);
   }
 
+  public interface FillableData {
+    method public default Boolean? getBool();
+    method public default CharSequence? getCharSequence();
+    method public default Integer? getInt();
+  }
+
+  public final class FillableData_androidKt {
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static androidx.compose.ui.autofill.FillableData FillableData(boolean booleanValue);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static androidx.compose.ui.autofill.FillableData FillableData(int intValue);
+    method @RequiresApi(android.os.Build.VERSION_CODES.O) public static androidx.compose.ui.autofill.FillableData FillableData(CharSequence charSequenceValue);
+  }
+
 }
 
 package androidx.compose.ui.contentcapture {

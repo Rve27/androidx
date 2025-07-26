@@ -189,6 +189,12 @@ abstract interface androidx.compose.ui.autofill/Autofill { // androidx.compose.u
     abstract fun requestAutofillForNode(androidx.compose.ui.autofill/AutofillNode) // androidx.compose.ui.autofill/Autofill.requestAutofillForNode|requestAutofillForNode(androidx.compose.ui.autofill.AutofillNode){}[0]
 }
 
+abstract interface androidx.compose.ui.autofill/FillableData { // androidx.compose.ui.autofill/FillableData|null[0]
+    open fun getBool(): kotlin/Boolean? // androidx.compose.ui.autofill/FillableData.getBool|getBool(){}[0]
+    open fun getCharSequence(): kotlin/CharSequence? // androidx.compose.ui.autofill/FillableData.getCharSequence|getCharSequence(){}[0]
+    open fun getInt(): kotlin/Int? // androidx.compose.ui.autofill/FillableData.getInt|getInt(){}[0]
+}
+
 abstract interface androidx.compose.ui.draganddrop/DragAndDropModifierNode : androidx.compose.ui.draganddrop/DragAndDropTarget, androidx.compose.ui.node/DelegatableNode { // androidx.compose.ui.draganddrop/DragAndDropModifierNode|null[0]
     abstract fun acceptDragAndDropTransfer(androidx.compose.ui.draganddrop/DragAndDropEvent): kotlin/Boolean // androidx.compose.ui.draganddrop/DragAndDropModifierNode.acceptDragAndDropTransfer|acceptDragAndDropTransfer(androidx.compose.ui.draganddrop.DragAndDropEvent){}[0]
     abstract fun drag(androidx.compose.ui.draganddrop/DragAndDropTransferData, androidx.compose.ui.geometry/Size, kotlin/Function1<androidx.compose.ui.graphics.drawscope/DrawScope, kotlin/Unit>) // androidx.compose.ui.draganddrop/DragAndDropModifierNode.drag|drag(androidx.compose.ui.draganddrop.DragAndDropTransferData;androidx.compose.ui.geometry.Size;kotlin.Function1<androidx.compose.ui.graphics.drawscope.DrawScope,kotlin.Unit>){}[0]
