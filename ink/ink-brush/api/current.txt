@@ -70,7 +70,6 @@ package androidx.ink.brush {
   }
 
   public final class InputToolType {
-    property public int value;
     field public static final androidx.ink.brush.InputToolType.Companion Companion;
     field public static final androidx.ink.brush.InputToolType MOUSE;
     field public static final androidx.ink.brush.InputToolType STYLUS;

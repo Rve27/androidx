@@ -16,7 +16,6 @@ package androidx.room {
     property public final androidx.room.RoomDatabase.JournalMode journalMode;
     property public final androidx.room.RoomDatabase.MigrationContainer migrationContainer;
     property public final boolean multiInstanceInvalidation;
-    property public final android.content.Intent? multiInstanceInvalidationServiceIntent;
     property public final String? name;
     property public final androidx.room.RoomDatabase.PrepackagedDatabaseCallback? prepackagedDatabaseCallback;
     property public final kotlin.coroutines.CoroutineContext? queryCoroutineContext;
