@@ -32,5 +32,5 @@ androidx {
     name = "Remote Compose Core"
     type = SoftwareType.PUBLISHED_LIBRARY
     inceptionYear = "2024"
-    description = "Under Development"
+    description = "Java core for RemoteCompose document player"
 }
