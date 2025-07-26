@@ -323,8 +323,8 @@ package androidx.navigation {
     method @KotlinOnly public final inline <reified T> void setStartDestination();
     method public final void setStartDestination(int startDestId);
     method public final void setStartDestination(String startDestRoute);
-    method @kotlin.jvm.JvmSynthetic public final <T> void setStartDestination(kotlin.reflect.KClass<T> startDestRoute);
-    method @kotlin.jvm.JvmSynthetic public final <T> void setStartDestination(T startDestRoute);
+    method @InaccessibleFromJava @kotlin.jvm.JvmSynthetic public final <T> void setStartDestination(kotlin.reflect.KClass<T> startDestRoute);
+    method @InaccessibleFromJava @kotlin.jvm.JvmSynthetic public final <T> void setStartDestination(T startDestRoute);
     property @IdRes public final int startDestinationId;
     property public final String? startDestinationRoute;
     field public static final androidx.navigation.NavGraph.Companion Companion;

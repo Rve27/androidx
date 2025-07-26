@@ -60,7 +60,7 @@ package androidx.camera.viewfinder.core {
     ctor public ViewfinderSurfaceRequest(int width, int height);
     ctor public ViewfinderSurfaceRequest(int width, int height, optional androidx.camera.viewfinder.core.ImplementationMode? implementationMode);
     ctor public ViewfinderSurfaceRequest(int width, int height, optional androidx.camera.viewfinder.core.ImplementationMode? implementationMode, optional String? requestId);
-    method @kotlin.jvm.JvmSynthetic public androidx.camera.viewfinder.core.ViewfinderSurfaceRequest copy(optional int width, optional int height, optional androidx.camera.viewfinder.core.ImplementationMode? implementationMode, optional String? requestId);
+    method @InaccessibleFromJava @kotlin.jvm.JvmSynthetic public androidx.camera.viewfinder.core.ViewfinderSurfaceRequest copy(optional int width, optional int height, optional androidx.camera.viewfinder.core.ImplementationMode? implementationMode, optional String? requestId);
     method public int getHeight();
     method public androidx.camera.viewfinder.core.ImplementationMode? getImplementationMode();
     method public String? getRequestId();
