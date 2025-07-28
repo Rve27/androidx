@@ -576,6 +576,7 @@ package androidx.xr.runtime.testing {
     method public void destroyWaterMaterial(androidx.xr.runtime.internal.MaterialResource material);
     method public void dispose();
     method public java.util.List<androidx.xr.runtime.testing.FakeRenderingRuntime.FakeWaterMaterial> getCreatedWaterMaterials();
+    method public void setReflectionMapOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.internal.TextureResource reflectionMap);
     method public void startRenderer();
     method public void stopRenderer();
     property public java.util.List<androidx.xr.runtime.testing.FakeRenderingRuntime.FakeWaterMaterial> createdWaterMaterials;

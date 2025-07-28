@@ -46,6 +46,17 @@ public interface RenderingRuntime {
     /** Destroys the given water material resource. */
     public fun destroyWaterMaterial(material: MaterialResource)
 
+    /**
+     * Sets the reflection map texture for the water material.
+     *
+     * @param material The handle of the water material to be updated.
+     * @param reflectionMap The handle of the texture to be used as the reflection map.
+     */
+    public fun setReflectionMapOnWaterMaterial(
+        material: MaterialResource,
+        reflectionMap: TextureResource,
+    )
+
     /** Starts the renderer. */
     public fun startRenderer()
 

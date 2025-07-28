@@ -79,6 +79,13 @@ public class FakeRenderingRuntime(
         createdWaterMaterials.remove(material)
     }
 
+    override fun setReflectionMapOnWaterMaterial(
+        material: MaterialResource,
+        reflectionMap: TextureResource,
+    ) {
+        (material as? FakeWaterMaterial)?.reflectionMap = reflectionMap
+    }
+
     override fun startRenderer() {}
 
     override fun stopRenderer() {}

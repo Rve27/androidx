@@ -24,6 +24,7 @@ import androidx.concurrent.futures.ResolvableFuture;
 import androidx.xr.runtime.internal.MaterialResource;
 import androidx.xr.runtime.internal.RenderingRuntime;
 import androidx.xr.runtime.internal.SceneRuntime;
+import androidx.xr.runtime.internal.TextureResource;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
 import androidx.xr.scenecore.impl.impress.ImpressApi;
 import androidx.xr.scenecore.impl.impress.ImpressApiImpl;
@@ -170,6 +171,20 @@ class SpatialRenderingRuntime implements RenderingRuntime {
             throw new IllegalArgumentException("MaterialResource is not a MaterialResourceImpl");
         }
         mImpressApi.destroyNativeObject(((MaterialResourceImpl) material).getMaterialToken());
+    }
+
+    @Override
+    public void setReflectionMapOnWaterMaterial(
+            @NonNull MaterialResource material, @NonNull TextureResource reflectionMap) {
+        if (!(material instanceof MaterialResourceImpl)) {
+            throw new IllegalArgumentException("MaterialResource is not a MaterialResourceImpl");
+        }
+        if (!(reflectionMap instanceof TextureResourceImpl)) {
+            throw new IllegalArgumentException("TextureResource is not a TextureResourceImpl");
+        }
+        mImpressApi.setReflectionMapOnWaterMaterial(
+                ((MaterialResourceImpl) material).getMaterialToken(),
+                ((TextureResourceImpl) reflectionMap).getTextureToken());
     }
 
     @Override
