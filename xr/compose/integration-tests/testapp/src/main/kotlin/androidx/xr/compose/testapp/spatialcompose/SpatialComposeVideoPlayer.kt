@@ -416,23 +416,31 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                                         val text =
                                             "Current stereo mode: " +
                                                 when (stereoMode) {
-                                                    StereoMode.Mono -> {
-                                                        "Mono"
-                                                    }
-
                                                     StereoMode.TopBottom -> {
                                                         "Top Bottom"
                                                     }
 
-                                                    else -> {
+                                                    StereoMode.SideBySide -> {
                                                         "Side by Side"
+                                                    }
+
+                                                    StereoMode.MultiviewLeftPrimary -> {
+                                                        "Multiview Left Primary"
+                                                    }
+
+                                                    StereoMode.MultiviewRightPrimary -> {
+                                                        "Multiview Right Primary"
+                                                    }
+
+                                                    else -> {
+                                                        "Mono"
                                                     }
                                                 }
 
                                         Text(text)
 
                                         Row(
-                                            modifier = Modifier.padding(vertical = 16.dp),
+                                            modifier = Modifier.padding(top = 16.dp),
                                             verticalAlignment = Alignment.CenterVertically,
                                         ) {
                                             Button(onClick = { stereoMode = StereoMode.Mono }) {
@@ -448,6 +456,26 @@ class SpatialComposeVideoPlayer : ComponentActivity() {
                                                 onClick = { stereoMode = StereoMode.SideBySide }
                                             ) {
                                                 Text("Side by Side")
+                                            }
+                                            Row(
+                                                modifier = Modifier.padding(bottom = 16.dp),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                            ) {
+                                                Button(
+                                                    onClick = {
+                                                        stereoMode = StereoMode.MultiviewLeftPrimary
+                                                    }
+                                                ) {
+                                                    Text("Multiview Left Primary")
+                                                }
+                                                Button(
+                                                    onClick = {
+                                                        stereoMode =
+                                                            StereoMode.MultiviewRightPrimary
+                                                    }
+                                                ) {
+                                                    Text("Multiview Right Primary")
+                                                }
                                             }
                                         }
 

@@ -317,9 +317,13 @@ package androidx.xr.compose.subspace {
 
   public static final class StereoMode.Companion {
     method @BytecodeOnly public int getMono-M5JOj60();
+    method @BytecodeOnly public int getMultiviewLeftPrimary-M5JOj60();
+    method @BytecodeOnly public int getMultiviewRightPrimary-M5JOj60();
     method @BytecodeOnly public int getSideBySide-M5JOj60();
     method @BytecodeOnly public int getTopBottom-M5JOj60();
     property public androidx.xr.compose.subspace.StereoMode Mono;
+    property public androidx.xr.compose.subspace.StereoMode MultiviewLeftPrimary;
+    property public androidx.xr.compose.subspace.StereoMode MultiviewRightPrimary;
     property public androidx.xr.compose.subspace.StereoMode SideBySide;
     property public androidx.xr.compose.subspace.StereoMode TopBottom;
   }

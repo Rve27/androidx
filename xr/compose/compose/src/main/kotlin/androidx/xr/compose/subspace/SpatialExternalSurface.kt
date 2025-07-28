@@ -152,6 +152,18 @@ public value class StereoMode private constructor(public val value: Int) {
         public val TopBottom: StereoMode = StereoMode(SurfaceEntity.StereoMode.TOP_BOTTOM)
         /** The [left, right] halves of the surface will map to [left, right] eyes. */
         public val SideBySide: StereoMode = StereoMode(SurfaceEntity.StereoMode.SIDE_BY_SIDE)
+        /**
+         * For displaying mv-hevc video format, [base, secondary] view layers will map to
+         * [left, right] eyes.
+         */
+        public val MultiviewLeftPrimary: StereoMode =
+            StereoMode(SurfaceEntity.StereoMode.MULTIVIEW_LEFT_PRIMARY)
+        /**
+         * For displaying mv-hevc video format, [base, secondary] view layers will map to
+         * [right, left] eyes.
+         */
+        public val MultiviewRightPrimary: StereoMode =
+            StereoMode(SurfaceEntity.StereoMode.MULTIVIEW_RIGHT_PRIMARY)
     }
 }
 
