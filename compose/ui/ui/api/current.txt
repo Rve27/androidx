@@ -138,6 +138,7 @@ package androidx.compose.ui {
     property public boolean areWindowInsetsRulersEnabled;
     property public boolean isAdaptiveRefreshRateEnabled;
     property public boolean isBypassUnfocusableComposeViewEnabled;
+    property public boolean isClearFocusOnPointerDownEnabled;
     property @Deprecated public boolean isClearFocusOnResetEnabled;
     property public boolean isContentCaptureOptimizationEnabled;
     property @Deprecated public boolean isFocusActionExitsTouchModeEnabled;
@@ -156,6 +157,7 @@ package androidx.compose.ui {
     field public static boolean areWindowInsetsRulersEnabled;
     field public static boolean isAdaptiveRefreshRateEnabled;
     field public static boolean isBypassUnfocusableComposeViewEnabled;
+    field public static boolean isClearFocusOnPointerDownEnabled;
     field @Deprecated public static boolean isClearFocusOnResetEnabled;
     field public static boolean isContentCaptureOptimizationEnabled;
     field @Deprecated public static boolean isFocusActionExitsTouchModeEnabled;
@@ -3641,12 +3643,15 @@ package androidx.compose.ui.platform {
     method public final boolean getHasComposition();
     method protected boolean getShouldCreateCompositionOnAttachedToWindow();
     method @SuppressCompatibility @androidx.compose.ui.InternalComposeUiApi public final boolean getShowLayoutBounds();
+    method public final boolean isClearFocusOnPointerDownEnabled();
     method protected final void onLayout(boolean changed, int left, int top, int right, int bottom);
     method protected final void onMeasure(int widthMeasureSpec, int heightMeasureSpec);
+    method public final void setClearFocusOnPointerDownEnabled(boolean);
     method public final void setParentCompositionContext(androidx.compose.runtime.CompositionContext? parent);
     method @SuppressCompatibility @androidx.compose.ui.InternalComposeUiApi public final void setShowLayoutBounds(boolean);
     method public final void setViewCompositionStrategy(androidx.compose.ui.platform.ViewCompositionStrategy strategy);
     property public final boolean hasComposition;
+    property public final boolean isClearFocusOnPointerDownEnabled;
     property protected boolean shouldCreateCompositionOnAttachedToWindow;
     property @SuppressCompatibility @androidx.compose.ui.InternalComposeUiApi public final boolean showLayoutBounds;
   }

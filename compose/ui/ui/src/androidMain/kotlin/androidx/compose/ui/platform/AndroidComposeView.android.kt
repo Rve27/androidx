@@ -160,6 +160,7 @@ import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.PlacementScope
 import androidx.compose.ui.layout.RootMeasurePolicy
 import androidx.compose.ui.layout.applyWindowInsetsRulers
+import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.modifier.ModifierLocalManager
 import androidx.compose.ui.node.InternalCoreApi
@@ -174,6 +175,7 @@ import androidx.compose.ui.node.OwnedLayer
 import androidx.compose.ui.node.Owner
 import androidx.compose.ui.node.OwnerSnapshotObserver
 import androidx.compose.ui.node.RootForTest
+import androidx.compose.ui.node.requireLayoutCoordinates
 import androidx.compose.ui.node.requireLayoutNode
 import androidx.compose.ui.node.visitSubtree
 import androidx.compose.ui.platform.MotionEventVerifierApi29.isValidMotionEvent
@@ -671,6 +673,10 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
     private val motionEventAdapter = MotionEventAdapter()
     private val pointerInputEventProcessor = PointerInputEventProcessor(root)
+
+    /** The parent [AbstractComposeView], casted and cached lazily when used. */
+    private val parentAbstractComposeView: AbstractComposeView? by
+        lazy(LazyThreadSafetyMode.NONE) { this.parent as? AbstractComposeView }
 
     /**
      * Used for updating LocalConfiguration when configuration changes - consume LocalConfiguration
@@ -2530,6 +2536,36 @@ internal class AndroidComposeView(context: Context, coroutineContext: CoroutineC
 
         if (processResult.anyMovementConsumed) {
             parent.requestDisallowInterceptTouchEvent(true)
+        }
+
+        // Implement tap-to-clear focus _after_ handling this motion event
+        // This allows focus to cleanly move from A to B if this motion event causes B to take
+        // focus, instead of clearing focus entirely first, and then requesting focus on B after
+        // this doesn't consume the motion event
+        val isDown =
+            motionEvent.actionMasked == ACTION_DOWN ||
+                motionEvent.actionMasked == ACTION_POINTER_DOWN
+        val isFromMouseOrTouchpad =
+            motionEvent.isFromSource(InputDevice.SOURCE_MOUSE) ||
+                motionEvent.isFromSource(InputDevice.SOURCE_TOUCHPAD)
+        if (isDown && isFromMouseOrTouchpad) {
+            if (parentAbstractComposeView?.isClearFocusOnPointerDownEnabled == true) {
+                val activeFocusTargetNode = focusOwner.activeFocusTargetNode
+                if (activeFocusTargetNode != null) {
+                    val focusedNodeBounds =
+                        activeFocusTargetNode.requireLayoutCoordinates().boundsInRoot()
+                    // Only clear focus if the motion event doesn't fall inside the bounds
+                    // of the node that is currently focused
+                    // Note that we don't use the current focusRect which can be different
+                    // than the bounds of the currently focused node.
+                    // If a focusable node is choosing to have the focusRect be different than
+                    // its own bounds, we shouldn't clear focus from it if the down event
+                    // occurs over that node.
+                    if (!focusedNodeBounds.contains(Offset(motionEvent.x, motionEvent.y))) {
+                        focusOwner.clearFocus()
+                    }
+                }
+            }
         }
 
         return processResult.dispatchedToAPointerInputModifier
