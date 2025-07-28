@@ -287,6 +287,10 @@ public final class Flags {
     public static final String FLAG_ENABLE_RESET_VISIBILITY_STORE =
             FLAG_PREFIX + "enable_reset_visibility_store";
 
+    /** Enables passing down filters to child iterators for optimized DocHitInfo retrieval. */
+    public static final String FLAG_ENABLE_PASSING_FILTER_TO_CHILDREN =
+            FLAG_PREFIX + "enable_passing_filter_to_children";
+
     // Whether the features should be enabled.
     //
     // In Jetpack, those should always return true.
@@ -621,6 +625,14 @@ public final class Flags {
      * Whether to enable reset visibility store during initialization.
      */
     public static boolean enableResetVisibilityStore() {
+        return true;
+    }
+
+    /**
+     * Whether to enable passing down filters to child iterators for optimized DocHitInfo
+     * retrieval.
+     */
+    public static boolean enablePassingFilterToChildren() {
         return true;
     }
 }
