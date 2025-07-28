@@ -40,9 +40,9 @@ import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 
-internal data class RenderInTransitionOverlayNodeElement(
+internal class RenderInTransitionOverlayNodeElement(
     var sharedTransitionScope: SharedTransitionScopeImpl,
-    var renderInOverlay: () -> Boolean,
+    var renderInOverlay: SharedTransitionScope.() -> Boolean,
     val zIndexInOverlay: Float,
     val clipInOverlay: (LayoutDirection, Density) -> Path?,
 ) : ModifierNodeElement<RenderInTransitionOverlayNode>() {
@@ -87,7 +87,7 @@ internal data class RenderInTransitionOverlayNodeElement(
 
 internal class RenderInTransitionOverlayNode(
     var sharedScope: SharedTransitionScopeImpl,
-    var renderInOverlay: () -> Boolean,
+    var renderInOverlay: SharedTransitionScope.() -> Boolean,
     zIndexInOverlay: Float,
     var clipInOverlay: (LayoutDirection, Density) -> Path?,
 ) : Modifier.Node(), DrawModifierNode, ModifierLocalModifierNode {
@@ -104,7 +104,7 @@ internal class RenderInTransitionOverlayNode(
             get() = this@RenderInTransitionOverlayNode.zIndexInOverlay
 
         override fun drawInOverlay(drawScope: DrawScope) {
-            if (renderInOverlay()) {
+            if (sharedScope.renderInOverlay()) {
                 with(drawScope) {
                     val (x, y) =
                         sharedScope.root.localPositionOf(
@@ -127,7 +127,7 @@ internal class RenderInTransitionOverlayNode(
     override fun ContentDrawScope.draw() {
         val layer = requireNotNull(layer) { "Error: layer never initialized" }
         layer.record { this@draw.drawContent() }
-        if (!renderInOverlay()) {
+        if (!sharedScope.renderInOverlay()) {
             drawLayer(layer)
         }
     }
