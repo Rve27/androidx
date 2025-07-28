@@ -31,6 +31,7 @@ import android.webkit.WebView;
 
 import androidx.annotation.RestrictTo;
 import androidx.annotation.StringDef;
+import androidx.core.os.OutcomeReceiverCompat;
 import androidx.webkit.internal.WebViewFeatureInternal;
 
 import org.jspecify.annotations.NonNull;
@@ -671,10 +672,8 @@ public class WebViewFeature {
     /**
      * Feature for {@link #isFeatureSupported(String)}.
      * This feature covers
-     * {@link androidx.webkit.WebViewCompat#prerenderUrl(WebView, String, CancellationSignal,
-     * Executor, SpeculativeLoadingParameters, PrerenderOperationCallback)}}
+     * {@link androidx.webkit.WebViewCompat#prerenderUrlAsync(WebView, String, CancellationSignal, Executor, PrerenderOperationCallback)}}
      */
-    @WebViewCompat.ExperimentalUrlPrerender
     public static final String PRERENDER_WITH_URL = "PRERENDER_URL_V2";
 
     /**
