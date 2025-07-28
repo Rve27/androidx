@@ -41,16 +41,24 @@ import androidx.navigationevent.NavigationEventInputHandler
  * When used to create a root dispatcher, you must use a [NavigationEventInputHandler] to send it
  * events. Otherwise, the dispatcher will be detached and will not receive events.
  *
+ * **Null parent:** If [parent] is **EXPLICITLY** `null`, this creates a root dispatcher that runs
+ * independently. By default, it requires a parent from the [LocalNavigationEventDispatcherOwner]
+ * and will throw an [IllegalStateException] if one is not present.
+ *
  * @param enabled A lambda to dynamically control if the dispatcher is active. When `false`, this
  *   dispatcher and any of its children will ignore navigation events. Defaults to `true`.
- * @param parent The parent owner to link to. Defaults to the owner found in the current composition
- *   (`LocalNavigationEventDispatcherOwner`).
+ * @param parent The [NavigationEventDispatcherOwner] to use as the parent, or `null` if it is a
+ *   root. Defaults to the owner from [LocalNavigationEventDispatcherOwner].
  * @param content The child composable content that will receive the new dispatcher.
  */
 @Composable
 public fun NavigationEventDispatcherOwner(
     enabled: () -> Boolean = { true },
-    parent: NavigationEventDispatcherOwner? = LocalNavigationEventDispatcherOwner.current,
+    parent: NavigationEventDispatcherOwner? =
+        checkNotNull(LocalNavigationEventDispatcherOwner.current) {
+            "No NavigationEventDispatcherOwner provided in LocalNavigationEventDispatcherOwner. " +
+                "If you intended to create a root dispatcher, explicitly pass null as the parent."
+        },
     content: @Composable () -> Unit,
 ) {
     val localDispatcher = remember {

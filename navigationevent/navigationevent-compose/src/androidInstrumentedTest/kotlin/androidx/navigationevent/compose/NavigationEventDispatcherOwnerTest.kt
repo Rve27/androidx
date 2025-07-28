@@ -153,7 +153,7 @@ internal class NavigationEventDispatcherOwnerTest {
             // By placing the owner at the root of the composition without a parent provider,
             // it's expected to create a new "root" dispatcher. This is the top-most
             // parent in a potential navigation hierarchy.
-            NavigationEventDispatcherOwner {
+            NavigationEventDispatcherOwner(parent = null) {
                 rootOwner = LocalNavigationEventDispatcherOwner.current!!
             }
         }
@@ -180,7 +180,7 @@ internal class NavigationEventDispatcherOwnerTest {
         rule.setContent {
             if (showContent) {
                 // This owner is a root since it has no parent in the composition.
-                NavigationEventDispatcherOwner {
+                NavigationEventDispatcherOwner(parent = null) {
                     rootOwner = LocalNavigationEventDispatcherOwner.current!!
                 }
             }
@@ -208,7 +208,7 @@ internal class NavigationEventDispatcherOwnerTest {
         rule.setContent {
             // The enabled state should work just as well for a root dispatcher
             // as it does for a child.
-            NavigationEventDispatcherOwner(enabled = { enabled }) {
+            NavigationEventDispatcherOwner(parent = null, enabled = { enabled }) {
                 rootOwner = LocalNavigationEventDispatcherOwner.current!!
             }
         }
@@ -230,5 +230,20 @@ internal class NavigationEventDispatcherOwnerTest {
         assertThat(callback.progressedInvocations).isEqualTo(0)
         assertThat(callback.completedInvocations).isEqualTo(0)
         assertThat(callback.cancelledInvocations).isEqualTo(0)
+    }
+
+    @Test
+    fun navigationEventDispatcherOwner_asRoot_whenNoExplicitlyNullParent_thenThrows() {
+        assertThrows<IllegalStateException> {
+                rule.setContent {
+                    // Attempt to create a dispatcher owner without a parent in the composition.
+                    // This should fail because the default parent is non-nullable.
+                    NavigationEventDispatcherOwner {}
+                }
+            }
+            .hasMessageThat()
+            .contains(
+                "No NavigationEventDispatcherOwner provided in LocalNavigationEventDispatcherOwner"
+            )
     }
 }
