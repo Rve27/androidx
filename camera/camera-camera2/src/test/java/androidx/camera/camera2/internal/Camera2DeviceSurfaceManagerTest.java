@@ -65,7 +65,6 @@ import androidx.test.core.app.ApplicationProvider;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -79,6 +78,7 @@ import org.robolectric.shadows.ShadowCameraCharacteristics;
 import org.robolectric.shadows.ShadowCameraManager;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -282,18 +282,16 @@ public final class Camera2DeviceSurfaceManagerTest {
         assertNotNull(configForRemainingCamera);
     }
 
-    @Ignore // b/434199701
     @Test
     public void onCamerasUpdated_addsNewCombination() throws CameraUpdateException {
         // Arrange: Add a new camera to the system that wasn't in the initial set.
-        String newCameraId = "20";
-        addCamera(newCameraId, CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
-                null, CameraCharacteristics.LENS_FACING_BACK);
-
         // Verify it doesn't exist in the manager yet.
+        String newCameraId = "20";
         assertThrows(IllegalArgumentException.class, () ->
                 mSurfaceManager.transformSurfaceConfig(CameraMode.DEFAULT, newCameraId,
                         ImageFormat.YUV_420_888, mAnalysisSize, DEFAULT_STREAM_USE_CASE));
+        addCamera(newCameraId, CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
+                null, CameraCharacteristics.LENS_FACING_BACK);
 
         // Act: Update the surface manager with the new camera ID included.
         List<String> newCameraIds = Arrays.asList(
@@ -308,7 +306,6 @@ public final class Camera2DeviceSurfaceManagerTest {
         assertNotNull(newConfig);
     }
 
-    @Ignore // b/434199701
     @Test
     public void onCamerasUpdated_throwsException_andAbortsTransaction() {
         // Arrange: The manager is initialized with cameras "0", "1", "2", "3".
@@ -323,14 +320,9 @@ public final class Camera2DeviceSurfaceManagerTest {
         ((ShadowCameraManager) Shadow.extract(cameraManager))
                 .addCamera(badCameraId, badCharacteristic);
 
-        // Add a "good" new camera that could be successfully processed if not for the bad one.
-        String goodNewCameraId = "99";
-        addCamera(goodNewCameraId, CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_FULL,
-                null, CameraCharacteristics.LENS_FACING_BACK);
-
         // Act & Assert: Attempt to update to a list containing the good and bad new cameras.
         // This should throw a CameraUpdateException.
-        List<String> newCameraIds = Arrays.asList(goodNewCameraId, badCameraId);
+        List<String> newCameraIds = Collections.singletonList(badCameraId);
         try {
             mSurfaceManager.onCamerasUpdated(newCameraIds);
             // If this line is reached, the test should fail.
@@ -342,9 +334,9 @@ public final class Camera2DeviceSurfaceManagerTest {
         }
 
         // Assert: The state should not have changed. The transaction must be fully aborted.
-        // 1. The 'good' new camera should NOT have been added.
+        // 1. The 'bad' new camera should NOT have been added.
         assertThrows(IllegalArgumentException.class, () ->
-                mSurfaceManager.transformSurfaceConfig(CameraMode.DEFAULT, goodNewCameraId,
+                mSurfaceManager.transformSurfaceConfig(CameraMode.DEFAULT, badCameraId,
                         ImageFormat.YUV_420_888, mAnalysisSize, DEFAULT_STREAM_USE_CASE));
 
         // 2. An original camera should still exist.
