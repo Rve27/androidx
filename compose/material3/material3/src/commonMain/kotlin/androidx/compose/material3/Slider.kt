@@ -829,6 +829,8 @@ private fun SliderImpl(
                     reverseDirection,
                     state.onValueChange,
                     state.onValueChangeFinished,
+                    state.isRtl,
+                    state.orientation == Vertical,
                 )
                 .then(press)
                 .then(drag),
@@ -911,6 +913,8 @@ private fun Modifier.slideOnKeyEvents(
     reverseDirection: Boolean,
     onValueChangeState: ((Float) -> Unit)?,
     onValueChangeFinishedState: (() -> Unit)?,
+    isRtl: Boolean,
+    isVertical: Boolean,
 ): Modifier {
     require(steps >= 0) { "steps should be >= 0" }
     return this.onKeyEvent {
@@ -926,44 +930,82 @@ private fun Modifier.slideOnKeyEvents(
                 val actualSteps = if (steps > 0) steps + 1 else 100
                 val delta = rangeLength / actualSteps
                 val sign = if (reverseDirection) -1 else 1
-                when (it.key) {
-                    Key.DirectionUp -> {
-                        onValueChangeState((value + sign * delta).coerceIn(valueRange))
-                        true
+
+                if (it.key == Key.MoveHome) {
+                    onValueChangeState(valueRange.start)
+                    return@onKeyEvent true
+                } else if (it.key == Key.MoveEnd) {
+                    onValueChangeState(valueRange.endInclusive)
+                    return@onKeyEvent true
+                }
+                if (isVertical) {
+                    val signForLeftRight = if (isRtl) -1 else 1
+                    when (it.key) {
+                        Key.DirectionUp -> {
+                            onValueChangeState((value - sign * delta).coerceIn(valueRange))
+                            return@onKeyEvent true
+                        }
+                        Key.DirectionDown -> {
+                            onValueChangeState((value + sign * delta).coerceIn(valueRange))
+                            return@onKeyEvent true
+                        }
+                        Key.DirectionRight -> {
+                            onValueChangeState(
+                                (value + signForLeftRight * delta).coerceIn(valueRange)
+                            )
+                            return@onKeyEvent true
+                        }
+                        Key.DirectionLeft -> {
+                            onValueChangeState(
+                                (value - signForLeftRight * delta).coerceIn(valueRange)
+                            )
+                            return@onKeyEvent true
+                        }
+                        Key.PageUp -> {
+                            val page = (actualSteps / 10).coerceIn(1, 10)
+                            onValueChangeState((value - page * sign * delta).coerceIn(valueRange))
+                            return@onKeyEvent true
+                        }
+                        Key.PageDown -> {
+                            val page = (actualSteps / 10).coerceIn(1, 10)
+                            onValueChangeState((value + page * sign * delta).coerceIn(valueRange))
+                            return@onKeyEvent true
+                        }
+                        else -> return@onKeyEvent false
                     }
-                    Key.DirectionDown -> {
-                        onValueChangeState((value - sign * delta).coerceIn(valueRange))
-                        true
+                } else {
+                    when (it.key) {
+                        Key.DirectionRight -> {
+                            onValueChangeState((value + sign * delta).coerceIn(valueRange))
+                            return@onKeyEvent true
+                        }
+                        Key.DirectionLeft -> {
+                            onValueChangeState((value - sign * delta).coerceIn(valueRange))
+                            return@onKeyEvent true
+                        }
+                        Key.DirectionUp -> {
+                            onValueChangeState((value + delta).coerceIn(valueRange))
+                            return@onKeyEvent true
+                        }
+                        Key.DirectionDown -> {
+                            onValueChangeState((value - delta).coerceIn(valueRange))
+                            return@onKeyEvent true
+                        }
+                        Key.PageUp -> {
+                            val page = (actualSteps / 10).coerceIn(1, 10)
+                            onValueChangeState((value + page * delta).coerceIn(valueRange))
+                            return@onKeyEvent true
+                        }
+                        Key.PageDown -> {
+                            val page = (actualSteps / 10).coerceIn(1, 10)
+                            onValueChangeState((value - page * delta).coerceIn(valueRange))
+                            return@onKeyEvent true
+                        }
+                        else -> return@onKeyEvent false
                     }
-                    Key.DirectionRight -> {
-                        onValueChangeState((value + sign * delta).coerceIn(valueRange))
-                        true
-                    }
-                    Key.DirectionLeft -> {
-                        onValueChangeState((value - sign * delta).coerceIn(valueRange))
-                        true
-                    }
-                    Key.MoveHome -> {
-                        onValueChangeState(valueRange.start)
-                        true
-                    }
-                    Key.MoveEnd -> {
-                        onValueChangeState(valueRange.endInclusive)
-                        true
-                    }
-                    Key.PageUp -> {
-                        val page = (actualSteps / 10).coerceIn(1, 10)
-                        onValueChangeState((value - page * delta).coerceIn(valueRange))
-                        true
-                    }
-                    Key.PageDown -> {
-                        val page = (actualSteps / 10).coerceIn(1, 10)
-                        onValueChangeState((value + page * delta).coerceIn(valueRange))
-                        true
-                    }
-                    else -> false
                 }
             }
+
             KeyEventType.KeyUp -> {
                 when (it.key) {
                     Key.DirectionUp,
@@ -975,12 +1017,13 @@ private fun Modifier.slideOnKeyEvents(
                     Key.PageUp,
                     Key.PageDown -> {
                         onValueChangeFinishedState?.invoke()
-                        true
+                        return@onKeyEvent true
                     }
-                    else -> false
+                    else -> return@onKeyEvent false
                 }
             }
-            else -> false
+
+            else -> return@onKeyEvent false
         }
     }
 }
