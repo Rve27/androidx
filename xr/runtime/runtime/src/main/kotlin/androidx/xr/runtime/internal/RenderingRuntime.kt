@@ -65,6 +65,14 @@ public interface RenderingRuntime {
      */
     public fun setNormalMapOnWaterMaterial(material: MaterialResource, normalMap: TextureResource)
 
+    /**
+     * Sets the normal tiling for the water material.
+     *
+     * @param material The handle of the water material to be updated.
+     * @param normalTiling The tiling to use for the normal map.
+     */
+    public fun setNormalTilingOnWaterMaterial(material: MaterialResource, normalTiling: Float)
+
     /** Starts the renderer. */
     public fun startRenderer()
 

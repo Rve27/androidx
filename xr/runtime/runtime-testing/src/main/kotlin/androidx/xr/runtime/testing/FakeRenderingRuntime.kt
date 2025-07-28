@@ -93,6 +93,10 @@ public class FakeRenderingRuntime(
         (material as? FakeWaterMaterial)?.normalMap = normalMap
     }
 
+    override fun setNormalTilingOnWaterMaterial(material: MaterialResource, normalTiling: Float) {
+        (material as? FakeWaterMaterial)?.normalTiling = normalTiling
+    }
+
     override fun startRenderer() {}
 
     override fun stopRenderer() {}
