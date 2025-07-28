@@ -98,6 +98,16 @@ public class LocalesUpdateActivity extends BaseTestActivity {
         return mEffectiveConfiguration;
     }
 
+    @Nullable Configuration getLastViewConfigurationChangeAndClear() {
+        return ((ConfigurationChangeWatchingView) findViewById(R.id.configuration_change_watcher))
+                .getLastConfigurationChangeAndClear();
+    }
+
+    @Nullable Configuration getViewEffectiveConfiguration() {
+        return ((ConfigurationChangeWatchingView) findViewById(R.id.configuration_change_watcher))
+                .getEffectiveConfiguration();
+    }
+
     LocaleListCompat getLastLocalesAndReset() {
         final LocaleListCompat locales = mLastLocales;
         mLastLocales = LocaleListCompat.getEmptyLocaleList();
