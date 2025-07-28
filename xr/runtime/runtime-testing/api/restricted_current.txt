@@ -850,9 +850,14 @@ package androidx.xr.runtime.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSoundPoolExtensionsWrapper implements androidx.xr.runtime.internal.SoundPoolExtensionsWrapper {
     ctor public FakeSoundPoolExtensionsWrapper();
+    method public int getSourceType();
     method @androidx.xr.runtime.internal.SpatializerConstants.SourceType public int getSpatialSourceType(android.media.SoundPool soundPool, int streamId);
     method public int play(android.media.SoundPool soundPool, int soundId, androidx.xr.runtime.internal.PointSourceParams params, float volume, int priority, int loop, float rate);
     method public int play(android.media.SoundPool soundPool, int soundId, androidx.xr.runtime.internal.SoundFieldAttributes attributes, float volume, int priority, int loop, float rate);
+    method public void setPlayAsPointSourceResult(int result);
+    method public void setPlayAsSoundFieldResult(int result);
+    method public void setSourceType(int);
+    property @androidx.xr.runtime.internal.SpatializerConstants.SourceType public int sourceType;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeSpatialEnvironment implements androidx.xr.runtime.internal.SpatialEnvironment {
