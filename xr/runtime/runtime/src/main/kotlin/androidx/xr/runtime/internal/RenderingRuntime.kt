@@ -17,6 +17,7 @@
 package androidx.xr.runtime.internal
 
 import androidx.annotation.RestrictTo
+import com.google.common.util.concurrent.ListenableFuture
 
 /**
  * RenderingRuntime encapsulates all the platform-specific rendering-related operations. Its
@@ -31,6 +32,20 @@ import androidx.annotation.RestrictTo
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
 public interface RenderingRuntime {
+    /**
+     * Creates a water material by querying it from the system's built-in materials. The future
+     * returned by this method will fire listeners on the UI thread if Runnable::run is supplied.
+     *
+     * @param isAlphaMapVersion True if the water material should be the alpha map version.
+     * @return A ListenableFuture containing a WaterMaterial backed by an imp::WaterMaterial. The
+     *   WaterMaterial can be destroyed by passing it to destroyNativeObject.
+     */
+    @Suppress("AsyncSuffixFuture")
+    public fun createWaterMaterial(isAlphaMapVersion: Boolean): ListenableFuture<MaterialResource>
+
+    /** Destroys the given water material resource. */
+    public fun destroyWaterMaterial(material: MaterialResource)
+
     /** Starts the renderer. */
     public fun startRenderer()
 

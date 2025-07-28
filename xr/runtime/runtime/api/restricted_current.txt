@@ -1421,6 +1421,8 @@ package androidx.xr.runtime.internal {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RenderingRuntime {
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource> createWaterMaterial(boolean isAlphaMapVersion);
+    method public void destroyWaterMaterial(androidx.xr.runtime.internal.MaterialResource material);
     method public void dispose();
     method public void startRenderer();
     method public void stopRenderer();

@@ -572,9 +572,43 @@ package androidx.xr.runtime.testing {
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRenderingRuntime implements androidx.xr.runtime.internal.RenderingRuntime {
     ctor public FakeRenderingRuntime(androidx.xr.runtime.internal.SceneRuntime sceneRuntime, android.app.Activity activity);
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource> createWaterMaterial(boolean isAlphaMapVersion);
+    method public void destroyWaterMaterial(androidx.xr.runtime.internal.MaterialResource material);
     method public void dispose();
+    method public java.util.List<androidx.xr.runtime.testing.FakeRenderingRuntime.FakeWaterMaterial> getCreatedWaterMaterials();
     method public void startRenderer();
     method public void stopRenderer();
+    property public java.util.List<androidx.xr.runtime.testing.FakeRenderingRuntime.FakeWaterMaterial> createdWaterMaterials;
+  }
+
+  public static final class FakeRenderingRuntime.FakeWaterMaterial implements androidx.xr.runtime.internal.MaterialResource {
+    ctor public FakeRenderingRuntime.FakeWaterMaterial(boolean isAlphaMapVersion);
+    method public androidx.xr.runtime.internal.TextureResource? getAlphaMap();
+    method public float getAlphaStepMultiplier();
+    method public float getNormalBoundary();
+    method public androidx.xr.runtime.internal.TextureResource? getNormalMap();
+    method public float getNormalSpeed();
+    method public float getNormalTiling();
+    method public float getNormalZ();
+    method public androidx.xr.runtime.internal.TextureResource? getReflectionMap();
+    method public boolean isAlphaMapVersion();
+    method public void setAlphaMap(androidx.xr.runtime.internal.TextureResource?);
+    method public void setAlphaStepMultiplier(float);
+    method public void setNormalBoundary(float);
+    method public void setNormalMap(androidx.xr.runtime.internal.TextureResource?);
+    method public void setNormalSpeed(float);
+    method public void setNormalTiling(float);
+    method public void setNormalZ(float);
+    method public void setReflectionMap(androidx.xr.runtime.internal.TextureResource?);
+    property public androidx.xr.runtime.internal.TextureResource? alphaMap;
+    property public float alphaStepMultiplier;
+    property public boolean isAlphaMapVersion;
+    property public float normalBoundary;
+    property public androidx.xr.runtime.internal.TextureResource? normalMap;
+    property public float normalSpeed;
+    property public float normalTiling;
+    property public float normalZ;
+    property public androidx.xr.runtime.internal.TextureResource? reflectionMap;
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public final class FakeRenderingRuntimeFactory implements androidx.xr.runtime.internal.RenderingRuntimeFactory {

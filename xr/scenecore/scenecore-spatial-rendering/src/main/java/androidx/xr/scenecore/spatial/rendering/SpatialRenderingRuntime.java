@@ -17,19 +17,24 @@
 package androidx.xr.scenecore.spatial.rendering;
 
 import android.app.Activity;
+import android.os.Looper;
 
 import androidx.annotation.VisibleForTesting;
+import androidx.concurrent.futures.ResolvableFuture;
+import androidx.xr.runtime.internal.MaterialResource;
 import androidx.xr.runtime.internal.RenderingRuntime;
 import androidx.xr.runtime.internal.SceneRuntime;
 import androidx.xr.scenecore.impl.extensions.XrExtensionsProvider;
+import androidx.xr.scenecore.impl.impress.ImpressApi;
+import androidx.xr.scenecore.impl.impress.ImpressApiImpl;
+import androidx.xr.scenecore.impl.impress.WaterMaterial;
 
 import com.android.extensions.xr.XrExtensions;
 
 import com.google.androidxr.splitengine.SplitEngineSubspaceManager;
-import com.google.ar.imp.apibindings.ImpressApi;
-import com.google.ar.imp.apibindings.ImpressApiImpl;
 import com.google.ar.imp.view.splitengine.ImpSplitEngine;
 import com.google.ar.imp.view.splitengine.ImpSplitEngineRenderer;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -113,6 +118,60 @@ class SpatialRenderingRuntime implements RenderingRuntime {
         return SpatialRenderingRuntime.create(sceneRuntime, activity, null, null, null);
     }
 
+    private static MaterialResourceImpl getMaterialResourceFromToken(long token) {
+        return new MaterialResourceImpl(token);
+    }
+
+    // ResolvableFuture is marked as RestrictTo(LIBRARY_GROUP_PREFIX), which is intended for classes
+    // within AndroidX. We're in the process of migrating to AndroidX. Without suppressing this
+    // warning, however, we get a build error - go/bugpattern/RestrictTo.
+    @SuppressWarnings({"RestrictTo", "AsyncSuffixFuture"})
+    @Override
+    public @NonNull ListenableFuture<MaterialResource> createWaterMaterial(
+            boolean isAlphaMapVersion) {
+        ResolvableFuture<MaterialResource> materialResourceFuture = ResolvableFuture.create();
+        // TODO:b/374216912 - Consider calling setFuture() here to catch if the application calls
+        // cancel() on the return value from this function, so we can propagate the cancelation
+        // message to the Impress API.
+
+        if (!Looper.getMainLooper().isCurrentThread()) {
+            throw new IllegalStateException("This method must be called on the main thread.");
+        }
+
+        ListenableFuture<WaterMaterial> materialFuture;
+        materialFuture = mImpressApi.createWaterMaterial(isAlphaMapVersion);
+
+        materialFuture.addListener(
+                () -> {
+                    try {
+                        WaterMaterial material = materialFuture.get();
+                        materialResourceFuture.set(
+                                getMaterialResourceFromToken(material.getNativeHandle()));
+                    } catch (Exception e) {
+                        if (e instanceof InterruptedException) {
+                            Thread.currentThread().interrupt();
+                        }
+                        materialResourceFuture.setException(e);
+                    }
+                },
+                // It's convenient for the main application for us to dispatch their listeners on
+                // the main thread, because they are required to call back to Impress from there,
+                // and it's likely that they will want to call back into the SDK to create entities
+                // from within a listener. We defensively post to the main thread here, but in
+                // practice this should not cause a thread hop because the Impress API already
+                // dispatches its callbacks to the main thread.
+                mActivity::runOnUiThread);
+        return materialResourceFuture;
+    }
+
+    @Override
+    public void destroyWaterMaterial(@NonNull MaterialResource material) {
+        if (!(material instanceof MaterialResourceImpl)) {
+            throw new IllegalArgumentException("MaterialResource is not a MaterialResourceImpl");
+        }
+        mImpressApi.destroyNativeObject(((MaterialResourceImpl) material).getMaterialToken());
+    }
+
     @Override
     public void startRenderer() {
         if (mSplitEngineRenderer == null || mFrameLoopStarted) {
@@ -137,6 +196,9 @@ class SpatialRenderingRuntime implements RenderingRuntime {
             return;
         }
         stopRenderer();
+        mImpressApi.clearPreferredEnvironmentIblAsset();
+        mImpressApi.disposeAllResources();
+
         mActivity = null;
         if (mSplitEngineRenderer != null && mSplitEngineSubspaceManager != null) {
             mSplitEngineSubspaceManager.destroy();
