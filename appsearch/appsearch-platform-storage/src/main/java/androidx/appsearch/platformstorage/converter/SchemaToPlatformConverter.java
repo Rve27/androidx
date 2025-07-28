@@ -240,12 +240,6 @@ public final class SchemaToPlatformConverter {
             }
             AppSearchSchema.EmbeddingPropertyConfig embeddingProperty =
                     (AppSearchSchema.EmbeddingPropertyConfig) jetpackProperty;
-            if (embeddingProperty.getQuantizationType()
-                    != AppSearchSchema.EmbeddingPropertyConfig.QUANTIZATION_TYPE_NONE) {
-                // TODO(b/359959345): Remove this once embedding quantization is available.
-                throw new UnsupportedOperationException(Features.SCHEMA_EMBEDDING_QUANTIZATION
-                        + " is not available on this AppSearch implementation.");
-            }
             return ApiHelperForB.createPlatformEmbeddingPropertyConfig(embeddingProperty);
         } else if (jetpackProperty instanceof AppSearchSchema.BlobHandlePropertyConfig) {
             // TODO(b/273591938): Remove this once blob APIs are available.
@@ -338,7 +332,6 @@ public final class SchemaToPlatformConverter {
             return jetpackBuilder.build();
         } else if (AppSearchVersionUtil.isAtLeastB() && platformProperty
                 instanceof android.app.appsearch.AppSearchSchema.EmbeddingPropertyConfig) {
-            // TODO(b/359959345): Update quantization once it becomes available in platform.
             android.app.appsearch.AppSearchSchema.EmbeddingPropertyConfig embeddingProperty =
                     (android.app.appsearch.AppSearchSchema
                             .EmbeddingPropertyConfig) platformProperty;
@@ -452,6 +445,7 @@ public final class SchemaToPlatformConverter {
 
         @DoNotInline
         @SuppressLint("WrongConstant")
+        @OptIn(markerClass = ExperimentalAppSearchApi.class)
         static android.app.appsearch.AppSearchSchema.PropertyConfig
                 createPlatformEmbeddingPropertyConfig(
                 AppSearchSchema.@NonNull EmbeddingPropertyConfig jetpackEmbeddingProperty) {
@@ -459,11 +453,13 @@ public final class SchemaToPlatformConverter {
                     jetpackEmbeddingProperty.getName())
                     .setCardinality(jetpackEmbeddingProperty.getCardinality())
                     .setIndexingType(jetpackEmbeddingProperty.getIndexingType())
+                    .setQuantizationType(jetpackEmbeddingProperty.getQuantizationType())
                     .build();
         }
 
         @DoNotInline
         @SuppressLint("WrongConstant")
+        @OptIn(markerClass = ExperimentalAppSearchApi.class)
         static AppSearchSchema.EmbeddingPropertyConfig createJetpackEmbeddingPropertyConfig(
                 android.app.appsearch.AppSearchSchema.@NonNull EmbeddingPropertyConfig
                         platformEmbeddingProperty) {
@@ -471,6 +467,7 @@ public final class SchemaToPlatformConverter {
                     platformEmbeddingProperty.getName())
                     .setCardinality(platformEmbeddingProperty.getCardinality())
                     .setIndexingType(platformEmbeddingProperty.getIndexingType())
+                    .setQuantizationType(platformEmbeddingProperty.getQuantizationType())
                     .build();
         }
     }
