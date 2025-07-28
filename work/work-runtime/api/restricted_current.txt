@@ -93,7 +93,7 @@ package androidx.work {
     method @RequiresApi(24) public long getContentTriggerMaxDelayMillis();
     method @RequiresApi(24) public long getContentTriggerUpdateDelayMillis();
     method @RequiresApi(24) public java.util.Set<androidx.work.Constraints.ContentUriTrigger> getContentUriTriggers();
-    method @RequiresApi(21) public android.net.NetworkRequest? getRequiredNetworkRequest();
+    method public android.net.NetworkRequest? getRequiredNetworkRequest();
     method public androidx.work.NetworkType getRequiredNetworkType();
     method public boolean requiresBatteryNotLow();
     method public boolean requiresCharging();
@@ -102,7 +102,7 @@ package androidx.work {
     property @RequiresApi(24) public long contentTriggerMaxDelayMillis;
     property @RequiresApi(24) public long contentTriggerUpdateDelayMillis;
     property @RequiresApi(24) public java.util.Set<androidx.work.Constraints.ContentUriTrigger> contentUriTriggers;
-    property @RequiresApi(21) public android.net.NetworkRequest? requiredNetworkRequest;
+    property public android.net.NetworkRequest? requiredNetworkRequest;
     property public androidx.work.NetworkType requiredNetworkType;
     field public static final androidx.work.Constraints.Companion Companion;
     field public static final androidx.work.Constraints NONE;
@@ -112,7 +112,7 @@ package androidx.work {
     ctor public Constraints.Builder();
     method @RequiresApi(24) public androidx.work.Constraints.Builder addContentUriTrigger(android.net.Uri uri, boolean triggerForDescendants);
     method public androidx.work.Constraints build();
-    method @RequiresApi(21) public androidx.work.Constraints.Builder setRequiredNetworkRequest(android.net.NetworkRequest networkRequest, androidx.work.NetworkType networkType);
+    method public androidx.work.Constraints.Builder setRequiredNetworkRequest(android.net.NetworkRequest networkRequest, androidx.work.NetworkType networkType);
     method public androidx.work.Constraints.Builder setRequiredNetworkType(androidx.work.NetworkType networkType);
     method public androidx.work.Constraints.Builder setRequiresBatteryNotLow(boolean requiresBatteryNotLow);
     method public androidx.work.Constraints.Builder setRequiresCharging(boolean requiresCharging);

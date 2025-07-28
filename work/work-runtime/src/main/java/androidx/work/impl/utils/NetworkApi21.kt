@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-@file:RequiresApi(21)
 @file:JvmName("NetworkApi21")
 
 package androidx.work.impl.utils
@@ -22,7 +21,6 @@ import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
 import android.net.Network
 import android.net.NetworkCapabilities
-import androidx.annotation.RequiresApi
 
 internal fun ConnectivityManager.unregisterNetworkCallbackCompat(networkCallback: NetworkCallback) =
     unregisterNetworkCallback(networkCallback)

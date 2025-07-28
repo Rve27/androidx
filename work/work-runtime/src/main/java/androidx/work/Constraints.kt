@@ -47,7 +47,6 @@ public class Constraints {
      * `NetworkRequest`-s with `NetworkSpecifier` set aren't supported, as well as `NetworkRequest`
      * with `setIncludeOtherUidNetworks` set. passed.
      */
-    @get:RequiresApi(21) // NetworkRequest class is available since 21
     public val requiredNetworkRequest: NetworkRequest?
         get() = requiredNetworkRequestCompat.networkRequest
 
@@ -402,7 +401,6 @@ public class Constraints {
          * @param networkType The type of network required for t
          * @return The current [Builder]
          */
-        @RequiresApi(21)
         public fun setRequiredNetworkRequest(
             networkRequest: NetworkRequest,
             networkType: NetworkType,

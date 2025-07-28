@@ -113,7 +113,6 @@ public object WorkDatabasePathHelper {
     }
 }
 
-@RequiresApi(21)
 internal object Api21Impl {
     fun getNoBackupFilesDir(context: Context): File {
         return context.noBackupFilesDir
