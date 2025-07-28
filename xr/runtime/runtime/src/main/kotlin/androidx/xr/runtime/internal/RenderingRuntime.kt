@@ -57,6 +57,14 @@ public interface RenderingRuntime {
         reflectionMap: TextureResource,
     )
 
+    /**
+     * Sets the normal map texture for the water material.
+     *
+     * @param material The handle of the water material to be updated.
+     * @param normalMap The handle of the texture to be used as the normal map.
+     */
+    public fun setNormalMapOnWaterMaterial(material: MaterialResource, normalMap: TextureResource)
+
     /** Starts the renderer. */
     public fun startRenderer()
 

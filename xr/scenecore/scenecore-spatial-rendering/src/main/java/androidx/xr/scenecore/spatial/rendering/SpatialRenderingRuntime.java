@@ -188,6 +188,20 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     }
 
     @Override
+    public void setNormalMapOnWaterMaterial(
+            @NonNull MaterialResource material, @NonNull TextureResource normalMap) {
+        if (!(material instanceof MaterialResourceImpl)) {
+            throw new IllegalArgumentException("MaterialResource is not a MaterialResourceImpl");
+        }
+        if (!(normalMap instanceof TextureResourceImpl)) {
+            throw new IllegalArgumentException("TextureResource is not a TextureResourceImpl");
+        }
+        mImpressApi.setNormalMapOnWaterMaterial(
+                ((MaterialResourceImpl) material).getMaterialToken(),
+                ((TextureResourceImpl) normalMap).getTextureToken());
+    }
+
+    @Override
     public void startRenderer() {
         if (mSplitEngineRenderer == null || mFrameLoopStarted) {
             return;

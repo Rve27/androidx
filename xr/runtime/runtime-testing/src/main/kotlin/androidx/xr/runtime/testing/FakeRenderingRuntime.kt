@@ -86,6 +86,13 @@ public class FakeRenderingRuntime(
         (material as? FakeWaterMaterial)?.reflectionMap = reflectionMap
     }
 
+    override fun setNormalMapOnWaterMaterial(
+        material: MaterialResource,
+        normalMap: TextureResource,
+    ) {
+        (material as? FakeWaterMaterial)?.normalMap = normalMap
+    }
+
     override fun startRenderer() {}
 
     override fun stopRenderer() {}
