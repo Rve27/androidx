@@ -97,6 +97,10 @@ public class FakeRenderingRuntime(
         (material as? FakeWaterMaterial)?.normalTiling = normalTiling
     }
 
+    override fun setNormalSpeedOnWaterMaterial(material: MaterialResource, normalSpeed: Float) {
+        (material as? FakeWaterMaterial)?.normalSpeed = normalSpeed
+    }
+
     override fun startRenderer() {}
 
     override fun stopRenderer() {}
