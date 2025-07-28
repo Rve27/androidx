@@ -22,14 +22,14 @@ import android.os.Parcelable
 import androidx.annotation.RestrictTo
 
 /**
- * Represents a savedEdit, containing its [EditId] and [PdfAnnotation].
+ * Represents a value class specific [PdfAnnotation] associated with a particular [EditId].
  *
  * @param editId The [EditId] is unique identifier for the edit.
  * @param annotation The [PdfAnnotation] that was saved.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 @SuppressLint("BanParcelableUsage")
-public class SavedEdit(public val editId: EditId, public val annotation: PdfAnnotation) :
+public class PdfAnnotationData(public val editId: EditId, public val annotation: PdfAnnotation) :
     Parcelable {
     override fun describeContents(): Int = 0
 
@@ -41,17 +41,17 @@ public class SavedEdit(public val editId: EditId, public val annotation: PdfAnno
 
     public companion object {
 
-        /** Creator for generating instances of [SavedEdit] from a [Parcel]. */
+        /** Creator for generating instances of [PdfAnnotationData] from a [Parcel]. */
         @JvmField
-        public val CREATOR: Parcelable.Creator<SavedEdit> =
-            object : Parcelable.Creator<SavedEdit> {
-                override fun createFromParcel(parcel: Parcel): SavedEdit {
+        public val CREATOR: Parcelable.Creator<PdfAnnotationData> =
+            object : Parcelable.Creator<PdfAnnotationData> {
+                override fun createFromParcel(parcel: Parcel): PdfAnnotationData {
                     val editId = EditId.CREATOR.createFromParcel(parcel)
                     val annotation = PdfAnnotation.CREATOR.createFromParcel(parcel)
-                    return SavedEdit(editId, annotation)
+                    return PdfAnnotationData(editId, annotation)
                 }
 
-                override fun newArray(size: Int): Array<out SavedEdit?> {
+                override fun newArray(size: Int): Array<out PdfAnnotationData?> {
                     return arrayOfNulls(size)
                 }
             }

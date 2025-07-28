@@ -22,7 +22,7 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.VisibleForTesting
 import androidx.pdf.annotation.models.EditId
 import androidx.pdf.annotation.models.PdfAnnotation
-import androidx.pdf.annotation.models.SavedEdit
+import androidx.pdf.annotation.models.PdfAnnotationData
 import java.util.UUID
 
 /**
@@ -37,7 +37,7 @@ import java.util.UUID
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 public class SimpleAnnotationEditsDraftState(
     pfd: ParcelFileDescriptor,
-    private val editState: SparseArray<MutableMap<EditId, SavedEdit>> = SparseArray(),
+    private val editState: SparseArray<MutableMap<EditId, PdfAnnotationData>> = SparseArray(),
 ) : AnnotationEditsDraftState(pfd) {
 
     /**
@@ -53,10 +53,10 @@ public class SimpleAnnotationEditsDraftState(
      * Retrieves a list of saved annotations for a given page number.
      *
      * @param pageNum The page number to retrieve edits for.
-     * @return A list of [SavedEdit] objects for the specified page, or an empty list if no edits
-     *   exist.
+     * @return A list of [PdfAnnotationData] objects for the specified page, or an empty list if no
+     *   edits exist.
      */
-    override fun getEdits(pageNum: Int): List<SavedEdit> {
+    override fun getEdits(pageNum: Int): List<PdfAnnotationData> {
         val pageEdits = editState.get(pageNum) ?: return emptyList()
         return pageEdits.values.toList()
     }
@@ -74,7 +74,7 @@ public class SimpleAnnotationEditsDraftState(
 
         // creates a new editId for the given page number
         val editId = getNewEditId(pageNum)
-        pageEdits[editId] = SavedEdit(editId, annotation)
+        pageEdits[editId] = PdfAnnotationData(editId, annotation)
         editState.put(pageNum, pageEdits)
 
         return editId
@@ -107,7 +107,7 @@ public class SimpleAnnotationEditsDraftState(
     override fun updateEdit(editId: EditId, annotation: PdfAnnotation): PdfAnnotation {
         val pageEdits = getPageEditsForId(editId)
 
-        pageEdits[editId] = SavedEdit(editId, annotation)
+        pageEdits[editId] = PdfAnnotationData(editId, annotation)
         return annotation
     }
 
@@ -119,14 +119,14 @@ public class SimpleAnnotationEditsDraftState(
      * @throws NoSuchElementException if the edit with the given ID is not found.
      */
     @VisibleForTesting
-    public fun getPageEditsForId(editId: EditId): MutableMap<EditId, SavedEdit> {
+    public fun getPageEditsForId(editId: EditId): MutableMap<EditId, PdfAnnotationData> {
         val errorMessage = "Edit with ID $editId not found."
 
         val pageEdits = editState.get(editId.pageNum) ?: throw NoSuchElementException(errorMessage)
         if (!pageEdits.containsKey(editId)) {
             throw NoSuchElementException(errorMessage)
         }
-        // Return the map of EditId to SavedEdit for the given page number
+        // Return the map of EditId to PdfAnnotationData for the given page number
         return pageEdits
     }
 

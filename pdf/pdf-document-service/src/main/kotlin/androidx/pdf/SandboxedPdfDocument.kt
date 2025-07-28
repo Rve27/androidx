@@ -34,6 +34,10 @@ import androidx.pdf.PdfDocument.BitmapSource
 import androidx.pdf.PdfDocument.Companion.INCLUDE_FORM_WIDGET_INFO
 import androidx.pdf.PdfDocument.DocumentClosedException
 import androidx.pdf.PdfDocument.PdfPageContent
+import androidx.pdf.annotation.EditablePdfDocument
+import androidx.pdf.annotation.models.AnnotationResult
+import androidx.pdf.annotation.models.PdfAnnotation
+import androidx.pdf.annotation.models.PdfAnnotationData
 import androidx.pdf.content.PageMatchBounds
 import androidx.pdf.content.PageSelection
 import androidx.pdf.content.SelectionBoundary
@@ -86,7 +90,7 @@ public class SandboxedPdfDocument(
     override val pageCount: Int,
     override val isLinearized: Boolean,
     override val formType: Int,
-) : PdfDocument {
+) : EditablePdfDocument() {
 
     public override val formEditRecords: List<FormEditRecord>
         get() = _formEditRecords.toList()
@@ -378,6 +382,21 @@ public class SandboxedPdfDocument(
 
             return@withContext result
         }
+    }
+
+    override suspend fun getAnnotationsForPage(pageNum: Int): List<PdfAnnotation> {
+        // TODO: b/434620738 - Return getAnnotations for page based on source
+        return listOf()
+    }
+
+    override suspend fun applyEdits(annotations: List<PdfAnnotationData>): AnnotationResult {
+        // TODO: b/434620410 - Return success list after getting success IDs from service
+        return AnnotationResult(listOf(), listOf())
+    }
+
+    override suspend fun applyEdits(sourcePfd: ParcelFileDescriptor): AnnotationResult {
+        // TODO: b/434620300 - Return success list after getting success IDs from service
+        return AnnotationResult(listOf(), listOf())
     }
 
     private companion object {
