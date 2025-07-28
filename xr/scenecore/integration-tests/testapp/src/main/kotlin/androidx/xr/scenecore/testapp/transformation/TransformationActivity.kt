@@ -207,9 +207,8 @@ class TransformationActivity : AppCompatActivity() {
                 "getPose is not allowed with Space.PARENT on this Entity: ${e.message}"
             }
         view.setLine("localPose", localPose)
-
+        view.setLine("activitySpacePose", trackedEntity.getPose(Space.ACTIVITY).toFormattedString())
         view.setLine("worldSpacePose", trackedEntity.getPose(Space.REAL_WORLD).toFormattedString())
-        view.setLine("worldSpaceScale", trackedEntity.getScale(Space.REAL_WORLD).toString())
 
         val localScale =
             try {
@@ -218,6 +217,8 @@ class TransformationActivity : AppCompatActivity() {
                 "getScale is not allowed with Space.PARENT on this Entity ${e.message}"
             }
         view.setLine("local scale", localScale.toString())
+        view.setLine("activitySpaceScale", trackedEntity.getScale(Space.ACTIVITY).toString())
+        view.setLine("worldSpaceScale", trackedEntity.getScale(Space.REAL_WORLD).toString())
 
         val activitySpacePose =
             trackedEntity.transformPoseTo(Pose.Identity, session!!.scene.activitySpace)
