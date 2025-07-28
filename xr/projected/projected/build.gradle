@@ -59,7 +59,7 @@ android {
         aidl = true
     }
     defaultConfig {
-        minSdk = 35
+        minSdk = 23
     }
     buildTypes.configureEach {
         stableAidl {
