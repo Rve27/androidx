@@ -35,10 +35,19 @@ import java.util.UUID
  * @param pfd The [ParcelFileDescriptor] for saving the draft state.
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-public class SimpleAnnotationEditsDraftState(pfd: ParcelFileDescriptor) :
-    AnnotationEditsDraftState(pfd) {
+public class SimpleAnnotationEditsDraftState(
+    pfd: ParcelFileDescriptor,
+    private val editState: SparseArray<MutableMap<EditId, SavedEdit>> = SparseArray(),
+) : AnnotationEditsDraftState(pfd) {
 
-    private val editState: SparseArray<MutableMap<EditId, SavedEdit>> = SparseArray()
+    /**
+     * Creates a shallow copy of the current [SimpleAnnotationEditsDraftState].
+     *
+     * @return A new [SimpleAnnotationEditsDraftState] instance with the same `pfd` and `editState`.
+     */
+    public fun copy(): SimpleAnnotationEditsDraftState {
+        return SimpleAnnotationEditsDraftState(pfd, editState)
+    }
 
     /**
      * Retrieves a list of saved annotations for a given page number.
