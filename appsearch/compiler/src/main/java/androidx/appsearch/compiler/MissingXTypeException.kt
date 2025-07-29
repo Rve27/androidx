@@ -13,14 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package androidx.appsearch.compiler
 
-package androidx.appsearch.compiler;
-
-import androidx.annotation.RestrictTo;
-
-import org.jspecify.annotations.NonNull;
-
-import javax.lang.model.element.Element;
+import androidx.annotation.RestrictTo
+import androidx.room.compiler.processing.XElement
 
 /**
  * An exception thrown from the appsearch annotation processor to indicate a type element is not
@@ -29,15 +25,5 @@ import javax.lang.model.element.Element;
  * @exportToFramework:hide
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-final class MissingTypeException extends Exception {
-    private final @NonNull Element mTypeElement;
-
-    MissingTypeException(@NonNull Element typeElement) {
-        super("Type " + typeElement.getSimpleName() + " is not present");
-        mTypeElement = typeElement;
-    }
-
-    @NonNull Element getTypeName() {
-        return mTypeElement;
-    }
-}
+internal class MissingXTypeException(typeName: XElement) :
+    Exception("Type ${typeName.name} is not present")
