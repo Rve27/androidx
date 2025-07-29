@@ -62,16 +62,19 @@ data class AnnotatedAppFunctions(
      * @throws SymbolNotReadyException if any related nodes are not ready for processing yet.
      */
     fun validate(): AnnotatedAppFunctions {
-        if (!classDeclaration.validate()) {
-            throw SymbolNotReadyException(
-                "AppFunction enclosing class not ready for processing yet",
-                classDeclaration,
-            )
-        }
         for (appFunction in appFunctionDeclarations) {
-            if (!appFunction.validate()) {
+            for (parameter in appFunction.parameters) {
+                if (!parameter.validate()) {
+                    throw SymbolNotReadyException(
+                        "AppFunction parameter ($parameter) not ready for processing yet",
+                        appFunction,
+                    )
+                }
+            }
+
+            if (appFunction.returnType?.validate() == false) {
                 throw SymbolNotReadyException(
-                    "AppFunction method not ready for processing yet",
+                    "AppFunction return type not ready for processing yet",
                     appFunction,
                 )
             }
