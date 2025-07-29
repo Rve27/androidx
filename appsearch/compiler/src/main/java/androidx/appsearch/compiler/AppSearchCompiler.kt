@@ -210,22 +210,18 @@ private class AppSearchCompileStep(private val env: XProcessingEnv) : XProcessin
                     // Generated class is not found.
                     throw MissingXTypeException(element)
                 } else {
-                    DocumentModel.createAutoValueModel(
-                        env.toJavac(),
-                        element.toJavac(),
-                        generatedElement.toJavac(),
-                    )
+                    DocumentModel.createAutoValueModel(env, element, generatedElement)
                 }
             } else {
                 // Non-AutoValue AppSearch Document class.
-                DocumentModel.createPojoModel(env.toJavac(), element.toJavac())
+                DocumentModel.createPojoModel(env, element)
             }
 
-        val generator = CodeGenerator(env.toJavac(), model, restrictGeneratedCodeToLibOption)
+        val generator = CodeGenerator(env, model, restrictGeneratedCodeToLibOption)
         try {
             writeJavaFile(generator.createJavaFile())
         } catch (e: IOException) {
-            val pe = ProcessingException("Failed to write output", model.classElement)
+            val pe = XProcessingException("Failed to write output", model.classElement)
             pe.initCause(e)
             throw pe
         }
