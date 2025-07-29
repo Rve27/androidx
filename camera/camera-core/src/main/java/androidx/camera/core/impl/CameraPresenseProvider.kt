@@ -20,7 +20,6 @@ import androidx.annotation.GuardedBy
 import androidx.camera.core.CameraIdentifier
 import androidx.camera.core.CameraPresenceListener
 import androidx.camera.core.CameraState
-import androidx.camera.core.InitializationException
 import androidx.camera.core.Logger
 import androidx.camera.core.impl.annotation.ExecutedBy
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
@@ -110,7 +109,7 @@ public class CameraPresenceProvider(private val backgroundExecutor: Executor) {
             val rawIdStrings = rawCameraIdentifiers?.map { it.internalId } ?: emptyList()
             try {
                 factory.onCameraIdsUpdated(rawIdStrings)
-            } catch (e: InitializationException) {
+            } catch (e: Exception) {
                 Logger.e(TAG, "CameraFactory failed to update. Triggering refresh.", e)
                 sourcePresenceObservable?.fetchData()
                 return
