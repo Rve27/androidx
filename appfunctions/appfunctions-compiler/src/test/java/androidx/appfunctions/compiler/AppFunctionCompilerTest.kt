@@ -779,6 +779,7 @@ class AppFunctionCompilerTest {
                         "AllPrimitiveInputFunctions.KT",
                         "SimpleFunction.KT",
                         "SimpleFunctionDiffPackage.KT",
+                        "FakeFreeFormFunctionsWithDetailedKdocs.KT",
                     )
             )
 

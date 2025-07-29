@@ -65,6 +65,7 @@ object IntrospectionHelper {
         val CLASS_NAME = ClassName(APP_FUNCTIONS_PACKAGE_NAME, "AppFunctionComponentRegistry")
         const val PROPERTY_COMPONENT_CATEGORY = "componentCategory"
         const val PROPERTY_COMPONENT_NAMES = "componentNames"
+        const val PROPERTY_COMPONENT_DOCSTRINGS = "componentDocStrings"
 
         object Category {
             const val INVENTORY = "INVENTORY"

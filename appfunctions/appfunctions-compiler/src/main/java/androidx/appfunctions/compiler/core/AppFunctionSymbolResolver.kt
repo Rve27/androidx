@@ -153,11 +153,12 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
      * including those are already processed.
      */
     fun getAnnotatedAppFunctionsFromAllModules(): List<AnnotatedAppFunctions> {
-        return filterAppFunctionComponentQualifiedNames(
-                AppFunctionComponentRegistryAnnotation.Category.FUNCTION
-            )
-            .map { componentName ->
-                val ksName = resolver.getKSNameFromString(componentName)
+        val filteredAppFunctionComponents =
+            filterAppFunctionComponent(AppFunctionComponentRegistryAnnotation.Category.FUNCTION)
+
+        return filteredAppFunctionComponents
+            .map { component ->
+                val ksName = resolver.getKSNameFromString(component.qualifiedName)
                 val functionDeclarations = resolver.getFunctionDeclarationsByName(ksName).toList()
                 if (functionDeclarations.isEmpty()) {
                     throw ProcessingException(
@@ -181,17 +182,20 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
                     )
             }
             .map { (classDeclaration, appFunctionsDeclarations) ->
-                AnnotatedAppFunctions(classDeclaration, appFunctionsDeclarations).validate()
+                AnnotatedAppFunctions(
+                        classDeclaration,
+                        appFunctionsDeclarations,
+                        filteredAppFunctionComponents.associate { it.qualifiedName to it.docString },
+                    )
+                    .validate()
             }
     }
 
     /** Gets generated AppFunctionInventory implementations. */
     fun getGeneratedAppFunctionInventories(): List<KSClassDeclaration> {
-        return filterAppFunctionComponentQualifiedNames(
-                AppFunctionComponentRegistryAnnotation.Category.INVENTORY
-            )
-            .map { componentName ->
-                val ksName = resolver.getKSNameFromString(componentName)
+        return filterAppFunctionComponent(AppFunctionComponentRegistryAnnotation.Category.INVENTORY)
+            .map { component ->
+                val ksName = resolver.getKSNameFromString(component.qualifiedName)
                 resolver.getClassDeclarationByName(ksName)
                     ?: throw ProcessingException(
                         "Unable to find KSClassDeclaration for ${ksName.asString()}",
@@ -202,11 +206,9 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
 
     /** Gets generated AppFunctionInvoker implementations. */
     fun getGeneratedAppFunctionInvokers(): List<KSClassDeclaration> {
-        return filterAppFunctionComponentQualifiedNames(
-                AppFunctionComponentRegistryAnnotation.Category.INVOKER
-            )
-            .map { componentName ->
-                val ksName = resolver.getKSNameFromString(componentName)
+        return filterAppFunctionComponent(AppFunctionComponentRegistryAnnotation.Category.INVOKER)
+            .map { component ->
+                val ksName = resolver.getKSNameFromString(component.qualifiedName)
                 resolver.getClassDeclarationByName(ksName)
                     ?: throw ProcessingException(
                         "Unable to find KSClassDeclaration for ${ksName.asString()}",
@@ -217,11 +219,11 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
 
     /** Gets all @AppFunctionSchemaDefinition from all modules. */
     fun getAppFunctionSchemaDefinitionFromAllModules(): List<AnnotatedAppFunctionSchemaDefinition> {
-        return filterAppFunctionComponentQualifiedNames(
+        return filterAppFunctionComponent(
                 AppFunctionComponentRegistryAnnotation.Category.SCHEMA_DEFINITION
             )
-            .map { componentName ->
-                val ksName = resolver.getKSNameFromString(componentName)
+            .map { component ->
+                val ksName = resolver.getKSNameFromString(component.qualifiedName)
                 val classDeclaration =
                     resolver.getClassDeclarationByName(ksName)
                         ?: throw ProcessingException(
@@ -233,30 +235,64 @@ class AppFunctionSymbolResolver(private val resolver: Resolver) {
     }
 
     @OptIn(KspExperimental::class)
-    private fun filterAppFunctionComponentQualifiedNames(
+    private fun filterAppFunctionComponent(
         filterComponentCategory: String
-    ): List<String> {
+    ): List<AppFunctionComponentRegistryGenerator.AppFunctionComponent> {
         return resolver
             .getDeclarationsFromPackage(APP_FUNCTIONS_AGGREGATED_DEPS_PACKAGE_NAME)
             .flatMap { node ->
                 val registryAnnotation =
                     node.annotations.findAnnotation(
                         AppFunctionComponentRegistryAnnotation.CLASS_NAME
-                    ) ?: return@flatMap emptyList<String>()
+                    ) ?: return@flatMap emptyList()
                 val componentCategory =
                     registryAnnotation.requirePropertyValueOfType(
                         AppFunctionComponentRegistryAnnotation.PROPERTY_COMPONENT_CATEGORY,
                         String::class,
                     )
+
+                if (componentCategory != filterComponentCategory) {
+                    return@flatMap emptyList()
+                }
+
                 val componentNames =
-                    registryAnnotation.requirePropertyValueOfType(
-                        AppFunctionComponentRegistryAnnotation.PROPERTY_COMPONENT_NAMES,
-                        List::class,
+                    registryAnnotation
+                        .requirePropertyValueOfType(
+                            AppFunctionComponentRegistryAnnotation.PROPERTY_COMPONENT_NAMES,
+                            List::class,
+                        )
+                        .filterIsInstance<String>()
+
+                // Only functions require component docstrings.
+                if (
+                    filterComponentCategory !=
+                        AppFunctionComponentRegistryAnnotation.Category.FUNCTION
+                ) {
+                    return@flatMap componentNames
+                        .map { qualifiedName ->
+                            AppFunctionComponentRegistryGenerator.AppFunctionComponent(
+                                qualifiedName = qualifiedName
+                            )
+                        }
+                        .toList()
+                }
+
+                val componentDocStrings =
+                    registryAnnotation
+                        .requirePropertyValueOfType(
+                            AppFunctionComponentRegistryAnnotation.PROPERTY_COMPONENT_DOCSTRINGS,
+                            List::class,
+                        )
+                        .filterIsInstance<String>()
+
+                check(componentDocStrings.size == componentNames.size) {
+                    "Function's componentDocStrings must have the same size as componentNames."
+                }
+                return@flatMap componentNames.indices.map { index ->
+                    AppFunctionComponentRegistryGenerator.AppFunctionComponent(
+                        qualifiedName = componentNames[index],
+                        docString = componentDocStrings[index],
                     )
-                return@flatMap if (componentCategory == filterComponentCategory) {
-                    componentNames.filterIsInstance<String>()
-                } else {
-                    emptyList<String>()
                 }
             }
             .toList()

@@ -23,7 +23,14 @@ import androidx.appfunctions.service.AppFunction
 
 @Suppress("UNUSED_PARAMETER")
 class TestFunctions2 {
-    @AppFunction
+    /**
+     * Concatenates the two given strings.
+     *
+     * @param str1 The first string.
+     * @param str2 The second string.
+     * @return The result of concatenating the two strings.
+     */
+    @AppFunction(isDescribedByKdoc = true)
     fun concat(appFunctionContext: AppFunctionContext, str1: String, str2: String) = str1 + str2
 
     @AppFunction

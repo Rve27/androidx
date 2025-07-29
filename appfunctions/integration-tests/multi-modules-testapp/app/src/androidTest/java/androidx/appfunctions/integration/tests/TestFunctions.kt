@@ -240,7 +240,14 @@ data class FilesData(
 
 @Suppress("UNUSED_PARAMETER")
 class TestFunctions {
-    @AppFunction
+    /**
+     * Returns the sum of the given two numbers.
+     *
+     * @param num1 The first number.
+     * @param num2 The second number.
+     * @return The sum of the two numbers.
+     */
+    @AppFunction(isDescribedByKdoc = true)
     fun add(appFunctionContext: AppFunctionContext, num1: Long, num2: Long) = num1 + num2
 
     @AppFunction

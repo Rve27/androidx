@@ -116,6 +116,50 @@ class IntegrationTest {
     }
 
     @Test
+    fun searchAllAppFunctions_populatesFunctionDescriptions_withDynamicIndexer() = doBlocking {
+        val expectedAppFunctionDescriptions =
+            mapOf(
+                "androidx.appfunctions.integration.tests.TestFunctions#add" to
+                    "Returns the sum of the given two numbers.",
+                "androidx.appfunctions.integration.testapp.library.TestFunctions2#concat" to
+                    "Concatenates the two given strings.",
+            )
+        val expectedParamDescriptions =
+            mapOf(
+                "androidx.appfunctions.integration.tests.TestFunctions#add" to
+                    listOf("The first number.", "The second number."),
+                "androidx.appfunctions.integration.testapp.library.TestFunctions2#concat" to
+                    listOf("The first string.", "The second string."),
+            )
+        val expectedResponseDescriptions =
+            mapOf(
+                "androidx.appfunctions.integration.tests.TestFunctions#add" to
+                    "The sum of the two numbers.",
+                "androidx.appfunctions.integration.testapp.library.TestFunctions2#concat" to
+                    "The result of concatenating the two strings.",
+            )
+
+        assumeTrue(isDynamicIndexerAvailable(context))
+        val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
+
+        val appFunctions: List<AppFunctionMetadata> =
+            appFunctionManager
+                .observeAppFunctions(searchFunctionSpec)
+                .first()
+                .flatMap { it.appFunctions }
+                .filter { it -> it.id in expectedAppFunctionDescriptions.keys }
+
+        for (appFunction in appFunctions) {
+            assertThat(expectedAppFunctionDescriptions[appFunction.id])
+                .isEqualTo(appFunction.description)
+            assertThat(expectedParamDescriptions[appFunction.id])
+                .containsExactlyElementsIn(appFunction.parameters.map { it.description })
+            assertThat(expectedResponseDescriptions[appFunction.id])
+                .isEqualTo(appFunction.response.description)
+        }
+    }
+
+    @Test
     fun searchAllAppFunctions_returnsAllSchemaAppFunction_withLegacyIndexer() = doBlocking {
         assumeFalse(isDynamicIndexerAvailable(context))
         val searchFunctionSpec = AppFunctionSearchSpec(packageNames = setOf(context.packageName))
