@@ -92,6 +92,14 @@ public interface RenderingRuntime {
         alphaStepMultiplier: Float,
     )
 
+    /**
+     * Sets the alpha map for the water material.
+     *
+     * @param material The handle of the water material to be updated.
+     * @param alphaMap The handle of the texture to be used as the alpha map.
+     */
+    public fun setAlphaMapOnWaterMaterial(material: MaterialResource, alphaMap: TextureResource)
+
     /** Starts the renderer. */
     public fun startRenderer()
 

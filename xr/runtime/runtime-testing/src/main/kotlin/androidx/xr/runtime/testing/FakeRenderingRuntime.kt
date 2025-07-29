@@ -108,6 +108,10 @@ public class FakeRenderingRuntime(
         (material as? FakeWaterMaterial)?.alphaStepMultiplier = alphaStepMultiplier
     }
 
+    override fun setAlphaMapOnWaterMaterial(material: MaterialResource, alphaMap: TextureResource) {
+        (material as? FakeWaterMaterial)?.alphaMap = alphaMap
+    }
+
     override fun startRenderer() {}
 
     override fun stopRenderer() {}
