@@ -16,8 +16,11 @@
 
 package com.example.androidx.preference;
 
+import static android.os.Build.VERSION_CODES.LOLLIPOP;
+
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.leanback.preference.LeanbackPreferenceFragmentCompat;
@@ -30,6 +33,7 @@ import androidx.preference.PreferenceScreen;
 /**
  * Demo activity using a LeanbackSettingsFragmentCompat to display a preference hierarchy.
  */
+@RequiresApi(LOLLIPOP)
 public class LeanbackPreferences extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -92,6 +92,7 @@ public class SupportSQLiteCompat private constructor() {
 
     /** Helper for accessing functions that require SDK version 21 and higher. */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    @RequiresApi(21)
     public object Api21Impl {
         /**
          * Returns the absolute path to the directory on the filesystem.

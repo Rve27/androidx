@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListUpdateCallback
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import androidx.testutils.MainDispatcherRule
 import androidx.testutils.TestDispatcher
 import com.google.common.truth.Truth.assertThat
@@ -95,6 +96,7 @@ class AsyncPagingDataDifferTest {
             workerDispatcher = Dispatchers.Main,
         )
 
+    @SdkSuppress(minSdkVersion = 21) // b/189492631
     @Test
     fun performDiff_fastPathLoadStates() =
         testScope.runTest {
@@ -160,6 +162,7 @@ class AsyncPagingDataDifferTest {
             )
         }
 
+    @SdkSuppress(minSdkVersion = 21) // b/189492631
     @Test
     fun performDiff_fastPathLoadStatesFlow() =
         testScope.runTest {
@@ -355,6 +358,7 @@ class AsyncPagingDataDifferTest {
             }
         }
 
+    @SdkSuppress(minSdkVersion = 21) // b/189492631
     @Test
     fun submitData_guaranteesOrder() =
         testScope.runTest {
@@ -569,6 +573,7 @@ class AsyncPagingDataDifferTest {
      * tests already validate that but it is still good to have an integration test to clarify end
      * to end expected behavior. Repro for b/1987328.
      */
+    @SdkSuppress(minSdkVersion = 21) // b/189492631
     @Test
     fun refreshEventsAreImmediate_cached() =
         testScope.runTest {
@@ -605,6 +610,7 @@ class AsyncPagingDataDifferTest {
             job.cancelAndJoin()
         }
 
+    @SdkSuppress(minSdkVersion = 21) // b/189492631
     @Test
     fun loadStateFlowSynchronouslyUpdates() =
         testScope.runTest {

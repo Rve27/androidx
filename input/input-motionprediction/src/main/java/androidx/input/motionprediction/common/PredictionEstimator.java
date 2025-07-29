@@ -35,6 +35,7 @@ import androidx.annotation.RestrictTo;
 @RestrictTo(LIBRARY)
 public class PredictionEstimator {
     private static final int MAX_PREDICTION_MS = 32;
+    private static final int LEGACY_FRAME_TIME_MS = 16;
     private static final int MS_IN_A_SECOND = 1000;
 
     private long mLastEventTime = -1;
@@ -75,12 +76,15 @@ public class PredictionEstimator {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return Api23Impl.getFastestFrameTimeMs(defaultDisplay);
-        } else {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return Api21Impl.getFastestFrameTimeMs(defaultDisplay);
+        } else {
+            return LEGACY_FRAME_TIME_MS;
         }
     }
 
     @SuppressWarnings("deprecation")
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     static class Api21Impl {
         private Api21Impl() {
             // Not instantiable

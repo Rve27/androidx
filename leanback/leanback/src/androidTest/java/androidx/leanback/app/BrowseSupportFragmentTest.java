@@ -90,8 +90,14 @@ public class BrowseSupportFragmentTest {
         PollingCheck.waitFor(WAIT_TRANSIITON_TIMEOUT, new PollingCheck.PollingCheckCondition() {
             @Override
             public boolean canProceed() {
-                return mActivity.getBrowseTestSupportFragment() != null
-                        && mActivity.getBrowseTestSupportFragment().mEntranceTransitionEnded;
+                if (Build.VERSION.SDK_INT >= 21) {
+                    return mActivity.getBrowseTestSupportFragment() != null
+                            && mActivity.getBrowseTestSupportFragment().mEntranceTransitionEnded;
+                } else {
+                    // when entrance transition not supported, wait main fragment loaded.
+                    return mActivity.getBrowseTestSupportFragment() != null
+                            && mActivity.getBrowseTestSupportFragment().getMainFragment() != null;
+                }
             }
         });
     }

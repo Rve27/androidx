@@ -17,6 +17,7 @@
 package androidx.room
 
 import androidx.annotation.IntDef
+import androidx.annotation.RequiresApi
 
 /**
  * Allows specific customization about the column associated with this property.
@@ -110,6 +111,7 @@ public annotation class ColumnInfo(
     @Retention(AnnotationRetention.BINARY)
     public annotation class SQLiteTypeAffinity
 
+    @RequiresApi(21)
     @IntDef(UNSPECIFIED, BINARY, NOCASE, RTRIM, LOCALIZED, UNICODE)
     @Retention(AnnotationRetention.BINARY)
     public annotation class Collate
@@ -190,14 +192,14 @@ public annotation class ColumnInfo(
          *
          * @see collate()
          */
-        public const val LOCALIZED: Int = 5
+        @RequiresApi(21) public const val LOCALIZED: Int = 5
 
         /**
          * Collation sequence that uses Unicode Collation Algorithm.
          *
          * @see collate()
          */
-        public const val UNICODE: Int = 6
+        @RequiresApi(21) public const val UNICODE: Int = 6
 
         /** A constant for [defaultValue()] that makes the column to have no default value. */
         public const val VALUE_UNSPECIFIED: String = "[value-unspecified]"

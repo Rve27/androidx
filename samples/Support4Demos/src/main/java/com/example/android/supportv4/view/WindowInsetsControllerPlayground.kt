@@ -41,6 +41,7 @@ import android.widget.CheckBox
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.ToggleButton
+import androidx.annotation.RequiresApi
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
@@ -61,6 +62,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 @SuppressLint("InlinedApi")
+@RequiresApi(21)
 class WindowInsetsControllerPlayground : Activity() {
 
     private val TAG: String = "WindowInsets_Playground"

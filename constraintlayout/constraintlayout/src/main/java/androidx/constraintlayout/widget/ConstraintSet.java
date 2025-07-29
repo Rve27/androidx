@@ -22,6 +22,8 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.content.res.XmlResourceParser;
 import android.graphics.Color;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.SparseArray;
@@ -828,9 +830,11 @@ public class ConstraintSet {
 
                 constraint.transform.translationX = view.getTranslationX();
                 constraint.transform.translationY = view.getTranslationY();
-                constraint.transform.translationZ = view.getTranslationZ();
-                if (constraint.transform.applyElevation) {
-                    constraint.transform.elevation = view.getElevation();
+                if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                    constraint.transform.translationZ = view.getTranslationZ();
+                    if (constraint.transform.applyElevation) {
+                        constraint.transform.elevation = view.getElevation();
+                    }
                 }
             }
         }
@@ -1915,11 +1919,15 @@ public class ConstraintSet {
                         translationY = a.getDimension(attr, translationY);
                         break;
                     case TRANSLATION_Z:
-                        translationZ = a.getDimension(attr, translationZ);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            translationZ = a.getDimension(attr, translationZ);
+                        }
                         break;
                     case ELEVATION:
-                        applyElevation = true;
-                        elevation = a.getDimension(attr, elevation);
+                        if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                            applyElevation = true;
+                            elevation = a.getDimension(attr, elevation);
+                        }
                         break;
                 }
             }
@@ -2528,9 +2536,11 @@ public class ConstraintSet {
 
             constraint.transform.translationX = view.getTranslationX();
             constraint.transform.translationY = view.getTranslationY();
-            constraint.transform.translationZ = view.getTranslationZ();
-            if (constraint.transform.applyElevation) {
-                constraint.transform.elevation = view.getElevation();
+            if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                constraint.transform.translationZ = view.getTranslationZ();
+                if (constraint.transform.applyElevation) {
+                    constraint.transform.elevation = view.getElevation();
+                }
             }
             if (view instanceof Barrier) {
                 Barrier barrier = ((Barrier) view);
@@ -2748,9 +2758,11 @@ public class ConstraintSet {
                 }
                 view.setTranslationX(constraint.transform.translationX);
                 view.setTranslationY(constraint.transform.translationY);
-                view.setTranslationZ(constraint.transform.translationZ);
-                if (constraint.transform.applyElevation) {
-                    view.setElevation(constraint.transform.elevation);
+                if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                    view.setTranslationZ(constraint.transform.translationZ);
+                    if (constraint.transform.applyElevation) {
+                        view.setElevation(constraint.transform.elevation);
+                    }
                 }
             } else {
                 Log.v(TAG, "WARNING NO CONSTRAINTS for view " + id);
@@ -3651,7 +3663,9 @@ public class ConstraintSet {
      * @param apply  true if this constraint set applies elevation to this view
      */
     public void setApplyElevation(int viewId, boolean apply) {
-        get(viewId).transform.applyElevation = apply;
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            get(viewId).transform.applyElevation = apply;
+        }
     }
 
     /**
@@ -3661,8 +3675,10 @@ public class ConstraintSet {
      * @param elevation the elevation
      */
     public void setElevation(int viewId, float elevation) {
-        get(viewId).transform.elevation = elevation;
-        get(viewId).transform.applyElevation = true;
+        if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+            get(viewId).transform.elevation = elevation;
+            get(viewId).transform.applyElevation = true;
+        }
     }
 
     /**
@@ -3794,7 +3810,9 @@ public class ConstraintSet {
      * @param translationZ the translationZ
      */
     public void setTranslationZ(int viewId, float translationZ) {
-        get(viewId).transform.translationZ = translationZ;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            get(viewId).transform.translationZ = translationZ;
+        }
     }
 
     /**
@@ -4835,8 +4853,10 @@ public class ConstraintSet {
                     delta.add(ALPHA, a.getFloat(attr, c.propertySet.alpha));
                     break;
                 case ELEVATION:
-                    delta.add(ELEVATION, true);
-                    delta.add(ELEVATION, a.getDimension(attr, c.transform.elevation));
+                    if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                        delta.add(ELEVATION, true);
+                        delta.add(ELEVATION, a.getDimension(attr, c.transform.elevation));
+                    }
                     break;
                 case ROTATION:
                     delta.add(ROTATION, a.getFloat(attr, c.transform.rotation));
@@ -4866,7 +4886,9 @@ public class ConstraintSet {
                     delta.add(TRANSLATION_Y, a.getDimension(attr, c.transform.translationY));
                     break;
                 case TRANSLATION_Z:
-                    delta.add(TRANSLATION_Z, a.getDimension(attr, c.transform.translationZ));
+                    if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                        delta.add(TRANSLATION_Z, a.getDimension(attr, c.transform.translationZ));
+                    }
                     break;
                 case TRANSFORM_PIVOT_TARGET:
                     delta.add(TRANSFORM_PIVOT_TARGET,
@@ -5542,8 +5564,10 @@ public class ConstraintSet {
                     c.propertySet.alpha = a.getFloat(attr, c.propertySet.alpha);
                     break;
                 case ELEVATION:
-                    c.transform.applyElevation = true;
-                    c.transform.elevation = a.getDimension(attr, c.transform.elevation);
+                    if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                        c.transform.applyElevation = true;
+                        c.transform.elevation = a.getDimension(attr, c.transform.elevation);
+                    }
                     break;
                 case ROTATION:
                     c.transform.rotation = a.getFloat(attr, c.transform.rotation);
@@ -5573,7 +5597,9 @@ public class ConstraintSet {
                     c.transform.translationY = a.getDimension(attr, c.transform.translationY);
                     break;
                 case TRANSLATION_Z:
-                    c.transform.translationZ = a.getDimension(attr, c.transform.translationZ);
+                    if (Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
+                        c.transform.translationZ = a.getDimension(attr, c.transform.translationZ);
+                    }
                     break;
                 case TRANSFORM_PIVOT_TARGET:
                     c.transform.transformPivotTarget =

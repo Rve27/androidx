@@ -17,6 +17,7 @@
 package androidx.constraintlayout.motion.widget;
 
 import android.graphics.Rect;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 
@@ -204,7 +205,9 @@ class MotionConstrainedPoint implements Comparable<MotionConstrainedPoint> {
         this.mVisibility = view.getVisibility();
         this.mAlpha = (view.getVisibility() != View.VISIBLE) ? 0.0f : view.getAlpha();
         this.mApplyElevation = false; // TODO figure a way to cache parameters
-        this.mElevation = view.getElevation();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            this.mElevation = view.getElevation();
+        }
         this.mRotation = view.getRotation();
         this.mRotationX = view.getRotationX();
         this.rotationY = view.getRotationY();
@@ -214,7 +217,9 @@ class MotionConstrainedPoint implements Comparable<MotionConstrainedPoint> {
         this.mPivotY = view.getPivotY();
         this.mTranslationX = view.getTranslationX();
         this.mTranslationY = view.getTranslationY();
-        this.mTranslationZ = view.getTranslationZ();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            this.mTranslationZ = view.getTranslationZ();
+        }
     }
 
     public void applyParameters(ConstraintSet.Constraint c) {

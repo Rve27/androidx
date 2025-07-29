@@ -29,6 +29,7 @@ import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
+import androidx.annotation.RequiresApi;
 import androidx.annotation.RestrictTo;
 import androidx.leanback.R;
 import androidx.leanback.widget.Parallax;
@@ -40,6 +41,7 @@ import androidx.leanback.widget.Parallax;
  * and ParallaxTransition are using same duration and startDelay.
  *
  */
+@RequiresApi(21)
 @RestrictTo(LIBRARY_GROUP_PREFIX)
 public class ParallaxTransition extends Visibility {
 

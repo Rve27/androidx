@@ -17,6 +17,7 @@
 package androidx.recyclerview.widget;
 
 import android.graphics.Canvas;
+import android.os.Build;
 import android.view.View;
 
 import androidx.core.view.ViewCompat;
@@ -41,13 +42,15 @@ class ItemTouchUIUtilImpl implements ItemTouchUIUtil {
             int actionState,
             boolean isCurrentlyActive
     ) {
-        if (isCurrentlyActive) {
-            Object originalElevation = view.getTag(R.id.item_touch_helper_previous_elevation);
-            if (originalElevation == null) {
-                originalElevation = ViewCompat.getElevation(view);
-                float newElevation = 1f + findMaxElevation(recyclerView, view);
-                ViewCompat.setElevation(view, newElevation);
-                view.setTag(R.id.item_touch_helper_previous_elevation, originalElevation);
+        if (Build.VERSION.SDK_INT >= 21) {
+            if (isCurrentlyActive) {
+                Object originalElevation = view.getTag(R.id.item_touch_helper_previous_elevation);
+                if (originalElevation == null) {
+                    originalElevation = ViewCompat.getElevation(view);
+                    float newElevation = 1f + findMaxElevation(recyclerView, view);
+                    ViewCompat.setElevation(view, newElevation);
+                    view.setTag(R.id.item_touch_helper_previous_elevation, originalElevation);
+                }
             }
         }
 
@@ -85,11 +88,13 @@ class ItemTouchUIUtilImpl implements ItemTouchUIUtil {
 
     @Override
     public void clearView(@NonNull View view) {
-        final Object tag = view.getTag(R.id.item_touch_helper_previous_elevation);
-        if (tag instanceof Float) {
-            ViewCompat.setElevation(view, (Float) tag);
+        if (Build.VERSION.SDK_INT >= 21) {
+            final Object tag = view.getTag(R.id.item_touch_helper_previous_elevation);
+            if (tag instanceof Float) {
+                ViewCompat.setElevation(view, (Float) tag);
+            }
+            view.setTag(R.id.item_touch_helper_previous_elevation, null);
         }
-        view.setTag(R.id.item_touch_helper_previous_elevation, null);
 
         view.setTranslationX(0f);
         view.setTranslationY(0f);

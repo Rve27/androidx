@@ -40,8 +40,10 @@ class ViewUtils {
             IMPL = new ViewUtilsApi23();
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             IMPL = new ViewUtilsApi22();
-        } else {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             IMPL = new ViewUtilsApi21();
+        } else {
+            IMPL = new ViewUtilsApi19();
         }
     }
 

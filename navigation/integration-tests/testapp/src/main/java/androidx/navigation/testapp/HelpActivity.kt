@@ -16,6 +16,7 @@
 
 package androidx.navigation.testapp
 
+import android.os.Build
 import android.os.Bundle
 import android.transition.Fade
 import android.view.LayoutInflater
@@ -43,11 +44,13 @@ class HelpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_help)
-        val fade = Fade()
-        fade.excludeTarget(android.R.id.statusBarBackground, true)
-        fade.excludeTarget(android.R.id.navigationBarBackground, true)
-        window.exitTransition = fade
-        window.enterTransition = fade
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            val fade = Fade()
+            fade.excludeTarget(android.R.id.statusBarBackground, true)
+            fade.excludeTarget(android.R.id.navigationBarBackground, true)
+            window.exitTransition = fade
+            window.enterTransition = fade
+        }
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)

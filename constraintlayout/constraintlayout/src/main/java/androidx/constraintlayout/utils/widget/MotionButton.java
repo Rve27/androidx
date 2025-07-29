@@ -22,10 +22,12 @@ import android.graphics.Canvas;
 import android.graphics.Outline;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.R;
 
 import org.jspecify.annotations.NonNull;
@@ -83,9 +85,13 @@ public class MotionButton extends androidx.appcompat.widget.AppCompatButton {
             for (int i = 0; i < count; i++) {
                 int attr = a.getIndex(i);
                 if (attr == R.styleable.ImageFilterView_round) {
-                    setRound(a.getDimension(attr, 0));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        setRound(a.getDimension(attr, 0));
+                    }
                 } else if (attr == R.styleable.ImageFilterView_roundPercent) {
-                    setRoundPercent(a.getFloat(attr, 0));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        setRoundPercent(a.getFloat(attr, 0));
+                    }
                 }
             }
             a.recycle();
@@ -98,6 +104,7 @@ public class MotionButton extends androidx.appcompat.widget.AppCompatButton {
      *
      * @param round the radius of curvature as a fraction of the smaller width
      */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public void setRoundPercent(float round) {
         boolean change = (mRoundPercent != round);
         mRoundPercent = round;
@@ -108,19 +115,21 @@ public class MotionButton extends androidx.appcompat.widget.AppCompatButton {
             if (mRect == null) {
                 mRect = new RectF();
             }
-            if (mViewOutlineProvider == null) {
-                mViewOutlineProvider = new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        int w = getWidth();
-                        int h = getHeight();
-                        float r = Math.min(w, h) * mRoundPercent / 2;
-                        outline.setRoundRect(0, 0, w, h, r);
-                    }
-                };
-                setOutlineProvider(mViewOutlineProvider);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (mViewOutlineProvider == null) {
+                    mViewOutlineProvider = new ViewOutlineProvider() {
+                        @Override
+                        public void getOutline(View view, Outline outline) {
+                            int w = getWidth();
+                            int h = getHeight();
+                            float r = Math.min(w, h) * mRoundPercent / 2;
+                            outline.setRoundRect(0, 0, w, h, r);
+                        }
+                    };
+                    setOutlineProvider(mViewOutlineProvider);
+                }
+                setClipToOutline(true);
             }
-            setClipToOutline(true);
             int w = getWidth();
             int h = getHeight();
             float r = Math.min(w, h) * mRoundPercent / 2;
@@ -128,10 +137,14 @@ public class MotionButton extends androidx.appcompat.widget.AppCompatButton {
             mPath.reset();
             mPath.addRoundRect(mRect, r, r, Path.Direction.CW);
         } else {
-            setClipToOutline(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                setClipToOutline(false);
+            }
         }
         if (change) {
-            invalidateOutline();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                invalidateOutline();
+            }
         }
 
     }
@@ -141,6 +154,7 @@ public class MotionButton extends androidx.appcompat.widget.AppCompatButton {
      *
      * @param round the radius of curvature  NaN = default meaning roundPercent in effect
      */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public void setRound(float round) {
         if (Float.isNaN(round)) {
             mRound = round;
@@ -159,29 +173,35 @@ public class MotionButton extends androidx.appcompat.widget.AppCompatButton {
             if (mRect == null) {
                 mRect = new RectF();
             }
-            if (mViewOutlineProvider == null) {
-                mViewOutlineProvider = new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        int w = getWidth();
-                        int h = getHeight();
-                        outline.setRoundRect(0, 0, w, h, mRound);
-                    }
-                };
-                setOutlineProvider(mViewOutlineProvider);
-            }
-            setClipToOutline(true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (mViewOutlineProvider == null) {
+                    mViewOutlineProvider = new ViewOutlineProvider() {
+                        @Override
+                        public void getOutline(View view, Outline outline) {
+                            int w = getWidth();
+                            int h = getHeight();
+                            outline.setRoundRect(0, 0, w, h, mRound);
+                        }
+                    };
+                    setOutlineProvider(mViewOutlineProvider);
+                }
+                setClipToOutline(true);
 
+            }
             int w = getWidth();
             int h = getHeight();
             mRect.set(0, 0, w, h);
             mPath.reset();
             mPath.addRoundRect(mRect, mRound, mRound, Path.Direction.CW);
         } else {
-            setClipToOutline(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                setClipToOutline(false);
+            }
         }
         if (change) {
-            invalidateOutline();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                invalidateOutline();
+            }
         }
 
     }
@@ -206,6 +226,17 @@ public class MotionButton extends androidx.appcompat.widget.AppCompatButton {
 
     @Override
     public void draw(@NonNull Canvas canvas) {
+        boolean clip = false;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            if (mRound != 0.0f && mPath != null) {
+                clip = true;
+                canvas.save();
+                canvas.clipPath(mPath);
+            }
+        }
         super.draw(canvas);
+        if (clip) {
+            canvas.restore();
+        }
     }
 }

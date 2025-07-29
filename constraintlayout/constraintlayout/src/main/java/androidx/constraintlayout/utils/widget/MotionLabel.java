@@ -32,6 +32,7 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.Layout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -41,6 +42,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.motion.widget.Debug;
 import androidx.constraintlayout.motion.widget.FloatLayout;
 import androidx.constraintlayout.widget.R;
@@ -154,10 +156,14 @@ public class MotionLabel extends View implements FloatLayout {
                     mTextFillColor = a.getColor(attr, mTextFillColor);
                 } else if (attr == R.styleable.MotionLabel_borderRound) {
                     mRound = a.getDimension(attr, mRound);
-                    setRound(mRound);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        setRound(mRound);
+                    }
                 } else if (attr == R.styleable.MotionLabel_borderRoundPercent) {
                     mRoundPercent = a.getFloat(attr, mRoundPercent);
-                    setRoundPercent(mRoundPercent);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        setRoundPercent(mRoundPercent);
+                    }
                 } else if (attr == R.styleable.MotionLabel_android_gravity) {
                     setGravity(a.getInt(attr, -1));
                 } else if (attr == R.styleable.MotionLabel_android_autoSizeTextType) {
@@ -692,6 +698,7 @@ public class MotionLabel extends View implements FloatLayout {
      *
      * @param round the radius of curvature as a fraction of the smaller width
      */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public void setRoundPercent(float round) {
         boolean change = (mRoundPercent != round);
         mRoundPercent = round;
@@ -702,19 +709,21 @@ public class MotionLabel extends View implements FloatLayout {
             if (mRect == null) {
                 mRect = new RectF();
             }
-            if (mViewOutlineProvider == null) {
-                mViewOutlineProvider = new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        int w = getWidth();
-                        int h = getHeight();
-                        float r = Math.min(w, h) * mRoundPercent / 2;
-                        outline.setRoundRect(0, 0, w, h, r);
-                    }
-                };
-                setOutlineProvider(mViewOutlineProvider);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (mViewOutlineProvider == null) {
+                    mViewOutlineProvider = new ViewOutlineProvider() {
+                        @Override
+                        public void getOutline(View view, Outline outline) {
+                            int w = getWidth();
+                            int h = getHeight();
+                            float r = Math.min(w, h) * mRoundPercent / 2;
+                            outline.setRoundRect(0, 0, w, h, r);
+                        }
+                    };
+                    setOutlineProvider(mViewOutlineProvider);
+                }
+                setClipToOutline(true);
             }
-            setClipToOutline(true);
             int w = getWidth();
             int h = getHeight();
             float r = Math.min(w, h) * mRoundPercent / 2;
@@ -722,10 +731,14 @@ public class MotionLabel extends View implements FloatLayout {
             mPath.reset();
             mPath.addRoundRect(mRect, r, r, Path.Direction.CW);
         } else {
-            setClipToOutline(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                setClipToOutline(false);
+            }
         }
         if (change) {
-            invalidateOutline();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                invalidateOutline();
+            }
         }
     }
 
@@ -734,6 +747,7 @@ public class MotionLabel extends View implements FloatLayout {
      *
      * @param round the radius of curvature  NaN = default meaning roundPercent in effect
      */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public void setRound(float round) {
         if (Float.isNaN(round)) {
             mRound = round;
@@ -752,29 +766,35 @@ public class MotionLabel extends View implements FloatLayout {
             if (mRect == null) {
                 mRect = new RectF();
             }
-            if (mViewOutlineProvider == null) {
-                mViewOutlineProvider = new ViewOutlineProvider() {
-                    @Override
-                    public void getOutline(View view, Outline outline) {
-                        int w = getWidth();
-                        int h = getHeight();
-                        outline.setRoundRect(0, 0, w, h, mRound);
-                    }
-                };
-                setOutlineProvider(mViewOutlineProvider);
-            }
-            setClipToOutline(true);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                if (mViewOutlineProvider == null) {
+                    mViewOutlineProvider = new ViewOutlineProvider() {
+                        @Override
+                        public void getOutline(View view, Outline outline) {
+                            int w = getWidth();
+                            int h = getHeight();
+                            outline.setRoundRect(0, 0, w, h, mRound);
+                        }
+                    };
+                    setOutlineProvider(mViewOutlineProvider);
+                }
+                setClipToOutline(true);
 
+            }
             int w = getWidth();
             int h = getHeight();
             mRect.set(0, 0, w, h);
             mPath.reset();
             mPath.addRoundRect(mRect, mRound, mRound, Path.Direction.CW);
         } else {
-            setClipToOutline(false);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                setClipToOutline(false);
+            }
         }
         if (change) {
-            invalidateOutline();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                invalidateOutline();
+            }
         }
 
     }

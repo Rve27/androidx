@@ -73,11 +73,13 @@ class ShellTest {
         }
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun executeScriptCaptureStdout_trivial() {
         Assert.assertEquals("foo\n", Shell.executeScriptCaptureStdout("echo foo"))
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun executeScriptCaptureStdoutStderr_trivial() {
         Assert.assertEquals(
@@ -86,6 +88,7 @@ class ShellTest {
         )
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun executeScriptCaptureStdoutStderr_stderrFirstLine() {
         Assert.assertEquals(
@@ -100,6 +103,7 @@ class ShellTest {
         )
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun executeScriptCaptureStdoutStderr_invalidCommand() {
         val shellOutput = Shell.executeScriptCaptureStdoutStderr("invalidCommand")
@@ -154,6 +158,7 @@ class ShellTest {
         )
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun executeScriptCaptureStdout_multilineRedirect() {
         Assert.assertEquals(
@@ -200,6 +205,7 @@ class ShellTest {
         )
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun createRunnableExecutable_simpleScript() {
         val path =
@@ -214,6 +220,7 @@ class ShellTest {
         }
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun isPackageAlive() {
         // this package is certainly alive...
@@ -223,12 +230,14 @@ class ShellTest {
         assertNotNull(Shell.isPackageAlive(Packages.FAKE))
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun pidof() {
         assertNotNull(pidof(Packages.TEST))
         assertNull(pidof(Packages.FAKE))
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun isPidAlive() {
         val pid = pidof(Packages.TEST)!!
@@ -335,12 +344,14 @@ class ShellTest {
         assertFalse(backgroundProcess2.isAlive())
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun getRunningSubPackages() {
         assertEquals(emptyList(), Shell.getRunningProcessesForPackage("not.a.real.packagename"))
         assertEquals(listOf(Packages.TEST), Shell.getRunningProcessesForPackage(Packages.TEST))
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun checkRootStatus() {
         if (Shell.isSessionRooted()) {
@@ -365,6 +376,7 @@ class ShellTest {
         script.cleanUp()
     }
 
+    @SdkSuppress(minSdkVersion = 21)
     @Test
     fun getChecksum() {
         val emptyPaths = listOf("/data/local/tmp/emptyfile1", "/data/local/tmp/emptyfile2")

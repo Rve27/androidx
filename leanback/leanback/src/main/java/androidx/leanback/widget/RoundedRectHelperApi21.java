@@ -18,6 +18,9 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 
+import androidx.annotation.RequiresApi;
+
+@RequiresApi(21)
 class RoundedRectHelperApi21 {
 
     private static SparseArray<ViewOutlineProvider> sRoundedRectProvider;

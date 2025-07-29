@@ -26,8 +26,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
-import androidx.activity.SystemBarStyle.Companion.dark
-import androidx.activity.SystemBarStyle.Companion.light
 import androidx.annotation.ColorInt
 import androidx.annotation.DoNotInline
 import androidx.annotation.RequiresApi
@@ -93,7 +91,13 @@ fun ComponentActivity.enableEdgeToEdge(
                 EdgeToEdgeApi26()
             } else if (Build.VERSION.SDK_INT >= 23) {
                 EdgeToEdgeApi23()
-            } else EdgeToEdgeApi21().also { Impl = it }
+            } else
+                if (Build.VERSION.SDK_INT >= 21) {
+                        EdgeToEdgeApi21()
+                    } else {
+                        EdgeToEdgeBase()
+                    }
+                    .also { Impl = it }
     impl.setUp(
         statusBarStyle,
         navigationBarStyle,
@@ -234,6 +238,7 @@ private open class EdgeToEdgeBase : EdgeToEdgeImpl {
     }
 }
 
+@RequiresApi(21)
 private class EdgeToEdgeApi21 : EdgeToEdgeBase() {
 
     @Suppress("DEPRECATION")

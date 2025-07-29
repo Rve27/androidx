@@ -85,7 +85,10 @@ public abstract class VirtualLayout extends ConstraintHelper {
             if (parent instanceof ConstraintLayout) {
                 ConstraintLayout container = (ConstraintLayout) parent;
                 int visibility = getVisibility();
-                float elevation = getElevation();
+                float elevation = 0;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                    elevation = getElevation();
+                }
                 for (int i = 0; i < mCount; i++) {
                     int id = mIds[i];
                     View view = container.getViewById(id);
@@ -94,7 +97,9 @@ public abstract class VirtualLayout extends ConstraintHelper {
                             view.setVisibility(visibility);
                         }
                         if (mApplyElevationOnAttach) {
-                            if (elevation > 0) {
+                            if (elevation > 0
+                                    && android.os.Build.VERSION.SDK_INT
+                                    >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                                 view.setTranslationZ(view.getTranslationZ() + elevation);
                             }
                         }

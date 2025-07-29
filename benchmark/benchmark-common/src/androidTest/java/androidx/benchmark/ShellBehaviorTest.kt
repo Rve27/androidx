@@ -20,6 +20,7 @@ import android.os.Build
 import android.os.Process
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
+import androidx.test.filters.SdkSuppress
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -33,6 +34,7 @@ import org.junit.runner.RunWith
  * implementations, please add to [ShellTest].
  */
 @MediumTest
+@SdkSuppress(minSdkVersion = 21)
 @RunWith(AndroidJUnit4::class)
 class ShellBehaviorTest {
 

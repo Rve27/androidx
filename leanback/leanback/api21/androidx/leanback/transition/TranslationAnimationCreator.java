@@ -12,6 +12,7 @@ import android.transition.Transition.TransitionListener;
 import android.transition.TransitionValues;
 import android.view.View;
 
+import androidx.annotation.RequiresApi;
 import androidx.annotation.RestrictTo;
 import androidx.leanback.R;
 
@@ -20,6 +21,7 @@ import androidx.leanback.R;
  * position to the end position. It takes into account the canceled position so that it
  * will not blink out or shift suddenly when the transition is interrupted.
  */
+@RequiresApi(21)
 @RestrictTo(LIBRARY_GROUP_PREFIX)
 class TranslationAnimationCreator {
 

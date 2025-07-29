@@ -16,6 +16,7 @@
 
 package androidx.constraintlayout.widget;
 
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -461,7 +462,9 @@ public class ConstraintProperties {
      * @return this
      */
     public ConstraintProperties elevation(float elevation) {
-        mView.setElevation(elevation);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mView.setElevation(elevation);
+        }
         return this;
     }
 
@@ -597,7 +600,9 @@ public class ConstraintProperties {
      * @return this
      */
     public ConstraintProperties translationZ(float translationZ) {
-        mView.setTranslationZ(translationZ);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mView.setTranslationZ(translationZ);
+        }
         return this;
     }
 

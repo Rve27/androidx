@@ -29,6 +29,7 @@ import android.util.Size;
 import android.util.SizeF;
 import android.util.SparseBooleanArray;
 
+import androidx.annotation.RequiresApi;
 import androidx.annotation.RestrictTo;
 import androidx.collection.ArrayMap;
 import androidx.collection.ArraySet;
@@ -511,6 +512,7 @@ public abstract class VersionedParcel {
      * Flatten a Size into the parcel at the current dataPosition(),
      * growing dataCapacity() if needed.
      */
+    @RequiresApi(21)
     public void writeSize(@Nullable Size val, int fieldId) {
         setOutputField(fieldId);
         Api21Impl.writeSize(this, val);
@@ -520,6 +522,7 @@ public abstract class VersionedParcel {
      * Flatten a SizeF into the parcel at the current dataPosition(),
      * growing dataCapacity() if needed.
      */
+    @RequiresApi(21)
     public void writeSizeF(@Nullable SizeF val, int fieldId) {
         setOutputField(fieldId);
         Api21Impl.writeSizeF(this, val);
@@ -1236,6 +1239,7 @@ public abstract class VersionedParcel {
     /**
      * Read a Size from the parcel at the current dataPosition().
      */
+    @RequiresApi(21)
     public @Nullable Size readSize(@Nullable Size def, int fieldId) {
         if (!readField(fieldId)) {
             return def;
@@ -1246,6 +1250,7 @@ public abstract class VersionedParcel {
     /**
      * Read a SizeF from the parcel at the current dataPosition().
      */
+    @RequiresApi(21)
     public @Nullable SizeF readSizeF(@Nullable SizeF def, int fieldId) {
         if (!readField(fieldId)) {
             return def;
@@ -1632,6 +1637,7 @@ public abstract class VersionedParcel {
         }
     }
 
+    @RequiresApi(21)
     private static final class Api21Impl {
         static void writeSize(@NonNull VersionedParcel self, @Nullable Size val) {
             self.writeBoolean(val != null);

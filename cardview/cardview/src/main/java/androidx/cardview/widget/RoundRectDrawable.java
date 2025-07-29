@@ -28,6 +28,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
+import androidx.annotation.RequiresApi;
+
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -37,6 +39,7 @@ import org.jspecify.annotations.Nullable;
  * <p>
  * Simpler and uses less resources compared to GradientDrawable or ShapeDrawable.
  */
+@RequiresApi(21)
 class RoundRectDrawable extends Drawable {
     private float mRadius;
     private final Paint mPaint;

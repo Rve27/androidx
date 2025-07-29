@@ -5356,11 +5356,17 @@ public class GridWidgetTest {
         });
         // When not allowing jumping out both end, handle action scroll backward/forward to block
         // it.
-        assertTrue(hasAction(info1,
-                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_RIGHT));
-        assertTrue(hasAction(info1,
-                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_LEFT));
-
+        if (Build.VERSION.SDK_INT >= 21) {
+            assertTrue(hasAction(info1,
+                    AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_RIGHT));
+            assertTrue(hasAction(info1,
+                    AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_LEFT));
+        } else {
+            assertTrue(hasAction(info1,
+                    AccessibilityNodeInfoCompat.ACTION_SCROLL_FORWARD));
+            assertTrue(hasAction(info1,
+                    AccessibilityNodeInfoCompat.ACTION_SCROLL_BACKWARD));
+        }
         final AccessibilityNodeInfoCompat info2 = AccessibilityNodeInfoCompat.obtain();
         // Test allowing focus to jump out at front when reaching front.
         mLayoutManager.setFocusOutAllowed(/* throughFront= */ true,
@@ -5501,10 +5507,15 @@ public class GridWidgetTest {
                 delegateCompat.onInitializeAccessibilityNodeInfo(mGridView, info);
             }
         });
-        assertFalse(hasAction(info,
-                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_UP));
-        assertTrue(hasAction(info,
-                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_DOWN));
+        if (Build.VERSION.SDK_INT >= 21) {
+            assertFalse(hasAction(info,
+                    AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_UP));
+            assertTrue(hasAction(info,
+                    AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_DOWN));
+        } else {
+            assertFalse(hasAction(info, AccessibilityNodeInfoCompat.ACTION_SCROLL_BACKWARD));
+            assertTrue(hasAction(info, AccessibilityNodeInfoCompat.ACTION_SCROLL_FORWARD));
+        }
 
         setSelectedPosition(numItems - 1);
         final AccessibilityNodeInfoCompat info2 = AccessibilityNodeInfoCompat.obtain();
@@ -5514,10 +5525,15 @@ public class GridWidgetTest {
                 delegateCompat.onInitializeAccessibilityNodeInfo(mGridView, info2);
             }
         });
-        assertTrue(hasAction(info2,
-                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_UP));
-        assertFalse(hasAction(info2,
-                AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_DOWN));
+        if (Build.VERSION.SDK_INT >= 21) {
+            assertTrue(hasAction(info2,
+                    AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_UP));
+            assertFalse(hasAction(info2,
+                    AccessibilityNodeInfoCompat.AccessibilityActionCompat.ACTION_SCROLL_DOWN));
+        } else {
+            assertTrue(hasAction(info2, AccessibilityNodeInfoCompat.ACTION_SCROLL_BACKWARD));
+            assertFalse(hasAction(info2, AccessibilityNodeInfoCompat.ACTION_SCROLL_FORWARD));
+        }
     }
 
     @Test
@@ -5555,16 +5571,21 @@ public class GridWidgetTest {
         assertEquals(RecyclerView.SCROLL_STATE_IDLE, mGridView.getScrollState());
     }
     private boolean hasAction(AccessibilityNodeInfoCompat info, Object action) {
-        AccessibilityNodeInfoCompat.AccessibilityActionCompat convertedAction =
-                (AccessibilityNodeInfoCompat.AccessibilityActionCompat) action;
-        List<AccessibilityNodeInfoCompat.AccessibilityActionCompat> actions =
-                info.getActionList();
-        for (int i = 0; i < actions.size(); i++) {
-            if (actions.get(i).getId() == convertedAction.getId()) {
-                return true;
+        if (Build.VERSION.SDK_INT >= 21) {
+            AccessibilityNodeInfoCompat.AccessibilityActionCompat convertedAction =
+                    (AccessibilityNodeInfoCompat.AccessibilityActionCompat) action;
+            List<AccessibilityNodeInfoCompat.AccessibilityActionCompat> actions =
+                    info.getActionList();
+            for (int i = 0; i < actions.size(); i++) {
+                if (actions.get(i).getId() == convertedAction.getId()) {
+                    return true;
+                }
             }
+            return false;
+        } else {
+            int convertedAction = (int) action;
+            return ((info.getActions() & convertedAction) != 0);
         }
-        return false;
     }
 
     private void setUpActivityForScrollingTest(final boolean isRTL, boolean isHorizontal,
