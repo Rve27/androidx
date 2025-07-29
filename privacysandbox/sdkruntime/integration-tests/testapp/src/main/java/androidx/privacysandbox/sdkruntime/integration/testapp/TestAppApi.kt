@@ -20,12 +20,14 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.privacysandbox.sdkruntime.client.SdkSandboxManagerCompat
+import androidx.privacysandbox.sdkruntime.client.SdkSandboxProcessDeathCallbackCompat
 import androidx.privacysandbox.sdkruntime.core.AppOwnedSdkSandboxInterfaceCompat
 import androidx.privacysandbox.sdkruntime.core.SandboxedSdkCompat
 import androidx.privacysandbox.sdkruntime.core.SandboxedSdkInfo
 import androidx.privacysandbox.sdkruntime.integration.testaidl.IMediateeSdkApi
 import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkApi
 import androidx.privacysandbox.sdkruntime.integration.testaidl.LoadedSdkInfo
+import kotlinx.coroutines.Runnable
 
 /**
  * Wrapper around test app functionality.
@@ -35,6 +37,9 @@ import androidx.privacysandbox.sdkruntime.integration.testaidl.LoadedSdkInfo
 class TestAppApi(appContext: Context) {
 
     private val sdkSandboxManager = SdkSandboxManagerCompat.from(appContext)
+
+    private val registeredSandboxDeathCallbacks =
+        mutableSetOf<SdkSandboxProcessDeathCallbackCompat>()
 
     suspend fun loadTestSdk(params: Bundle = Bundle()): ISdkApi {
         val loadedSdk = loadSdk(TEST_SDK_NAME, params)
@@ -77,6 +82,20 @@ class TestAppApi(appContext: Context) {
         sdkSandboxManager.unregisterAppOwnedSdkSandboxInterface(appOwnedSdkName)
     }
 
+    fun registerSandboxDeathCallback(callback: SdkSandboxProcessDeathCallbackCompat) {
+        sdkSandboxManager.addSdkSandboxProcessDeathCallback(Runnable::run, callback)
+        synchronized(registeredSandboxDeathCallbacks) {
+            registeredSandboxDeathCallbacks.add(callback)
+        }
+    }
+
+    fun unregisterSandboxDeathCallback(callback: SdkSandboxProcessDeathCallbackCompat) {
+        sdkSandboxManager.removeSdkSandboxProcessDeathCallback(callback)
+        synchronized(registeredSandboxDeathCallbacks) {
+            registeredSandboxDeathCallbacks.remove(callback)
+        }
+    }
+
     fun getSandboxedSdks(): List<LoadedSdkInfo> {
         return sdkSandboxManager.getSandboxedSdks().map { sdk ->
             LoadedSdkInfo(
@@ -110,6 +129,14 @@ class TestAppApi(appContext: Context) {
             .mapNotNull(SandboxedSdkCompat::getSdkInfo)
             .map(SandboxedSdkInfo::name)
             .forEach(sdkSandboxManager::unloadSdk)
+
+        // Remove all SandboxDeath callbacks
+        synchronized(registeredSandboxDeathCallbacks) {
+            registeredSandboxDeathCallbacks.forEach(
+                sdkSandboxManager::removeSdkSandboxProcessDeathCallback
+            )
+            registeredSandboxDeathCallbacks.clear()
+        }
     }
 
     companion object {

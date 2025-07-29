@@ -23,6 +23,10 @@
     <string name="cuj_list">CUJs list</string>
     <string name="sandbox_sdks_cuj">Loaded Sdks CUJ</string>
     <string name="app_sdks_cuj">AppOwned Sdks CUJ</string>
+    <string name="sandbox_death_cuj">Sandbox Death CUJ</string>
+    <string name="register_sandbox_death_callback">Register DeathCallback</string>
+    <string name="unregister_sandbox_death_callback">Unregister DeathCallback</string>
+    <string name="trigger_sandbox_death">SDK: Kill Sandbox Process</string>
     <string name="register_app_sdk">Register AppOwned SDK</string>
     <string name="unregister_app_sdk">Unregister AppOwned SDK</string>
     <string name="get_sandboxed_sdks_from_app">Get Sandboxed Sdks</string>

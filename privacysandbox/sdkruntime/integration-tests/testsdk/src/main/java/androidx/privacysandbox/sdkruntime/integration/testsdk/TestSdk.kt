@@ -18,6 +18,7 @@ package androidx.privacysandbox.sdkruntime.integration.testsdk
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Process
 import android.util.Log
 import androidx.privacysandbox.sdkruntime.core.LoadSdkCompatException
 import androidx.privacysandbox.sdkruntime.integration.callDoSomething
@@ -84,6 +85,10 @@ class TestSdk(private val sdkContext: Context) : ISdkApi.Stub() {
         return SdkSandboxControllerCompat.from(sdkContext)
             .getAppOwnedSdkSandboxInterfaces()
             .mapNotNull { callDoSomething(it.getInterface(), param) }
+    }
+
+    override fun triggerSandboxDeath() {
+        Process.killProcess(Process.myPid())
     }
 
     companion object {

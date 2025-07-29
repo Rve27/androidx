@@ -21,4 +21,7 @@
     <item
         android:id="@+id/itemAppSdksCuj"
         android:title="@string/app_sdks_cuj" />
+    <item
+        android:id="@+id/itemSandboxDeathCuj"
+        android:title="@string/sandbox_death_cuj" />
 </menu>

@@ -29,4 +29,6 @@ interface ISdkApi {
 
     List<String> callDoSomethingOnSandboxedSdks(String param);
     List<String> callDoSomethingOnAppOwnedSdks(String param);
+
+    oneway void triggerSandboxDeath();
 }
