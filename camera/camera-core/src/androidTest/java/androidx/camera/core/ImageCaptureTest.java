@@ -77,7 +77,6 @@ import java.util.concurrent.TimeUnit;
  */
 @MediumTest
 @RunWith(AndroidJUnit4.class)
-@SdkSuppress(minSdkVersion = 21)
 public class ImageCaptureTest {
 
     private CameraUseCaseAdapter mCameraUseCaseAdapter;

@@ -21,7 +21,6 @@ import android.graphics.Point
 import android.hardware.display.DisplayManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -32,7 +31,6 @@ import org.junit.runner.RunWith
 @SmallTest
 @Suppress("DEPRECATION") // getRealSize
 @RunWith(AndroidJUnit4::class)
-@SdkSuppress(minSdkVersion = 21)
 class DisplayInfoManagerTest {
     private val displayInfoManager = DisplayInfoManager(ApplicationProvider.getApplicationContext())
 

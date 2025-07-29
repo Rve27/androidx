@@ -68,7 +68,6 @@ import org.junit.runner.RunWith
 /** Unit tests for [DefaultSurfaceProcessor]. */
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-@SdkSuppress(minSdkVersion = 21)
 class DefaultSurfaceProcessorTest {
 
     companion object {
@@ -313,7 +312,7 @@ class DefaultSurfaceProcessorTest {
     @Test
     fun render(): Unit = runBlocking { testRender(OutputType.IMAGE_READER) }
 
-    @SdkSuppress(minSdkVersion = 21, maxSdkVersion = 22)
+    @SdkSuppress(maxSdkVersion = 22)
     @Test
     fun renderBelowApi23(): Unit = runBlocking { testRender(OutputType.SURFACE_TEXTURE) }
 
@@ -327,7 +326,7 @@ class DefaultSurfaceProcessorTest {
         )
     }
 
-    @SdkSuppress(minSdkVersion = 21, maxSdkVersion = 22)
+    @SdkSuppress(maxSdkVersion = 22)
     @Test
     fun renderByCustomShaderBelowApi23(): Unit = runBlocking {
         val shaderProviderOverride = createCustomShaderProvider()

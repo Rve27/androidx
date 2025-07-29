@@ -62,7 +62,6 @@ import java.util.concurrent.Executor;
  */
 @SmallTest
 @RunWith(AndroidJUnit4.class)
-@SdkSuppress(minSdkVersion = 21)
 public class ImageAnalysisAbstractAnalyzerTest {
     private static final int WIDTH = 8;
     private static final int HEIGHT = 4;
@@ -199,7 +198,7 @@ public class ImageAnalysisAbstractAnalyzerTest {
         }
     }
 
-    @SdkSuppress(maxSdkVersion = 22, minSdkVersion = 21)
+    @SdkSuppress(maxSdkVersion = 22)
     @Test
     public void analysisRunWhenRotateYUVMaxSdk22() throws ExecutionException, InterruptedException {
         // Arrange.

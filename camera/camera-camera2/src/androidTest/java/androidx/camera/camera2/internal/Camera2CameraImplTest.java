@@ -154,7 +154,6 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 @LargeTest
 @RunWith(AndroidJUnit4.class)
-@SdkSuppress(minSdkVersion = 21)
 public final class Camera2CameraImplTest {
     @CameraSelector.LensFacing
     private static final int DEFAULT_LENS_FACING = CameraSelector.LENS_FACING_BACK;

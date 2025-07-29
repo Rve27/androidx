@@ -92,7 +92,6 @@ import org.junit.runners.Parameterized
 
 @SmallTest
 @RunWith(Parameterized::class)
-@SdkSuppress(minSdkVersion = 21)
 @kotlin.OptIn(ExperimentalSessionConfig::class)
 class ProcessCameraProviderTest(
     private val implName: String,

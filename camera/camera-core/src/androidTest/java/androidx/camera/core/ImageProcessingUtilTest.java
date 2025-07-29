@@ -70,7 +70,6 @@ import java.nio.IntBuffer;
  */
 @SmallTest
 @RunWith(AndroidJUnit4.class)
-@SdkSuppress(minSdkVersion = 21)
 public class ImageProcessingUtilTest {
 
     private static final int WIDTH = 8;

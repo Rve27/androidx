@@ -105,7 +105,6 @@ import org.junit.runners.Parameterized
 
 @LargeTest
 @RunWith(Parameterized::class)
-@SdkSuppress(minSdkVersion = 21)
 class PreviewTest(private val implName: String, private val cameraConfig: CameraXConfig) {
     @get:Rule
     val cameraPipeConfigTestRule =
@@ -1507,7 +1506,7 @@ class PreviewTest(private val implName: String, private val cameraConfig: Camera
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 21, maxSdkVersion = 32)
+    @SdkSuppress(maxSdkVersion = 32)
     fun setMirrorModeIsNoOp_priorToAPI33() = runBlocking {
         // Skip for b/404348154
         assumeFalse("Skip test for API 26.", Build.VERSION.SDK_INT == 26)

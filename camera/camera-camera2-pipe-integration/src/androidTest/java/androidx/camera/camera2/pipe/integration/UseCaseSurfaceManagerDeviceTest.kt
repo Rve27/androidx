@@ -70,7 +70,6 @@ import org.junit.runner.RunWith
 
 @LargeTest
 @RunWith(AndroidJUnit4::class)
-@SdkSuppress(minSdkVersion = 21)
 class UseCaseSurfaceManagerDeviceTest {
 
     @get:Rule

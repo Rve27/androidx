@@ -64,7 +64,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-@SdkSuppress(minSdkVersion = 21)
 class OpenGlRendererTest {
 
     companion object {
@@ -336,7 +335,7 @@ class OpenGlRendererTest {
     @Test
     fun render(): Unit = runBlocking(glDispatcher) { testRender(OutputType.IMAGE_READER) }
 
-    @SdkSuppress(minSdkVersion = 21, maxSdkVersion = 22)
+    @SdkSuppress(maxSdkVersion = 22)
     @Test
     fun renderBelowApi23(): Unit =
         runBlocking(glDispatcher) { testRender(OutputType.SURFACE_TEXTURE) }
@@ -378,7 +377,7 @@ class OpenGlRendererTest {
             )
         }
 
-    @SdkSuppress(minSdkVersion = 21, maxSdkVersion = 22)
+    @SdkSuppress(maxSdkVersion = 22)
     @Test
     fun renderByCustomShaderBelowApi23(): Unit =
         runBlocking(glDispatcher) {
