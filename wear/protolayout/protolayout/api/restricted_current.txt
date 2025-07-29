@@ -1326,6 +1326,7 @@ package androidx.wear.protolayout {
 
   @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=500) public static final class ResourceBuilders.AndroidLottieResourceByResId {
     method public androidx.wear.protolayout.expression.DynamicBuilders.DynamicFloat? getProgress();
+    method public java.util.List<androidx.wear.protolayout.ResourceBuilders.LottieProperty!> getProperties();
     method @RawRes public int getRawResourceId();
     method public androidx.wear.protolayout.TriggerBuilders.Trigger? getStartTrigger();
   }
@@ -1334,6 +1335,7 @@ package androidx.wear.protolayout {
     ctor @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=500) public ResourceBuilders.AndroidLottieResourceByResId.Builder(@RawRes int);
     method public androidx.wear.protolayout.ResourceBuilders.AndroidLottieResourceByResId build();
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=500) public androidx.wear.protolayout.ResourceBuilders.AndroidLottieResourceByResId.Builder setProgress(androidx.wear.protolayout.expression.DynamicBuilders.DynamicFloat);
+    method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=600) public androidx.wear.protolayout.ResourceBuilders.AndroidLottieResourceByResId.Builder setProperties(androidx.wear.protolayout.ResourceBuilders.LottieProperty!...);
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=500) public androidx.wear.protolayout.ResourceBuilders.AndroidLottieResourceByResId.Builder setStartTrigger(androidx.wear.protolayout.TriggerBuilders.Trigger);
   }
 
@@ -1383,6 +1385,10 @@ package androidx.wear.protolayout {
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.ResourceBuilders.InlineImageResource.Builder setFormat(int);
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.ResourceBuilders.InlineImageResource.Builder setHeightPx(@Dimension(unit=androidx.annotation.Dimension.PX) int);
     method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public androidx.wear.protolayout.ResourceBuilders.InlineImageResource.Builder setWidthPx(@Dimension(unit=androidx.annotation.Dimension.PX) int);
+  }
+
+  @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=600) public abstract static class ResourceBuilders.LottieProperty {
+    method @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=600) public static androidx.wear.protolayout.ResourceBuilders.LottieProperty colorForSlot(String, androidx.wear.protolayout.ColorBuilders.ColorProp);
   }
 
   @androidx.wear.protolayout.expression.RequiresSchemaVersion(major=1, minor=0) public static final class ResourceBuilders.Resources {

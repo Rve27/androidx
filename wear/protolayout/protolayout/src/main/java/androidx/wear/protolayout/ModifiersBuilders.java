@@ -535,15 +535,15 @@ public final class ModifiersBuilders {
              * <p>Note that this method is mutually exclusive with {@code #setOnClick(Action)}, the
              * later method call will override the previous one.
              *
-             * @throws IllegalArgumentException if the builder is not constructed with
-             *     {@link #Builder(ProtoLayoutScope, String)}.
+             * @throws IllegalArgumentException if the builder is not constructed with {@link
+             *     #Builder(ProtoLayoutScope, String)}.
              */
             @RequiresSchemaVersion(major = 1, minor = 600)
             public @NonNull Builder setOnClick(@NonNull PendingIntent pendingIntent) {
                 if (mScope == null) {
                     throw new IllegalStateException(
                             "Clickable.Builder.setOnClick(PendingIntent) needs to be called with"
-                                + " constructor that accepts ProtoLayoutScope.");
+                                    + " constructor that accepts ProtoLayoutScope.");
                 }
                 setOnClick(new PendingIntentAction.Builder().build());
                 mPendingIntent = pendingIntent;

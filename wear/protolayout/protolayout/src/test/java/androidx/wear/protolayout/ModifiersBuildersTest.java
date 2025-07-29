@@ -302,8 +302,8 @@ public class ModifiersBuildersTest {
         assertThat(clickable.getOnClick()).isInstanceOf(PendingIntentAction.class);
         assertThat(collectedPendingIntents.containsKey(clickableId)).isTrue();
         assertThat(
-                BundleCompat.getParcelable(
-                        collectedPendingIntents, clickableId, PendingIntent.class))
+                        BundleCompat.getParcelable(
+                                collectedPendingIntents, clickableId, PendingIntent.class))
                 .isEqualTo(TEST_PENDING_INTENT);
     }
 
