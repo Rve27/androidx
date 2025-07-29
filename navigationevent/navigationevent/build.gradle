@@ -93,6 +93,7 @@ androidXMultiplatform {
             dependsOn(commonMain)
             dependencies {
                 implementation(libs.kotlinStdlibWasm)
+                implementation(libs.kotlinXw3c)
             }
         }
 
