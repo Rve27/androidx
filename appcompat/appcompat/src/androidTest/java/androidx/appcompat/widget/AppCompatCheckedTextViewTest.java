@@ -15,8 +15,6 @@
  */
 package androidx.appcompat.widget;
 
-import static android.os.Build.VERSION.SDK_INT;
-
 import static androidx.appcompat.testutils.TestUtilsActions.setEnabled;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -97,12 +95,9 @@ public class AppCompatCheckedTextViewTest extends AppCompatBaseViewTest<
 
         // Then this drawable should be an animated-selector
         // i.e. compat version has precedence
-        if (SDK_INT >= 21) {
-            assertTrue(checkMark instanceof AnimatedStateListDrawableCompat
-                    || checkMark instanceof AnimatedStateListDrawable);
-        } else {
-            assertTrue(checkMark instanceof AnimatedStateListDrawableCompat);
-        }
+        assertTrue(checkMark instanceof AnimatedStateListDrawableCompat
+                || checkMark instanceof AnimatedStateListDrawable);
+
     }
 
     /* Max SDK as we use this test to verify the fallback behavior in situations where the ASLD

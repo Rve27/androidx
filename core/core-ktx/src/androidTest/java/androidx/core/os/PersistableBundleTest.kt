@@ -29,7 +29,6 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-@SdkSuppress(minSdkVersion = 21)
 @SmallTest
 class PersistableBundleTest {
     @Suppress("DEPRECATION")

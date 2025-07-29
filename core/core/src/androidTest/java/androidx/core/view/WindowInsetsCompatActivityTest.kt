@@ -21,7 +21,6 @@ import android.os.Build
 import android.view.View
 import android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN
 import android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
-import androidx.annotation.RequiresApi
 import androidx.core.graphics.Insets
 import androidx.core.test.R
 import androidx.core.view.WindowInsetsCompat.Type
@@ -294,7 +293,6 @@ public class WindowInsetsCompatActivityTest(private val softInputMode: Int) {
 
     @Test
     @Ignore("IME tests are inherently flaky, but still useful for local testing.")
-    @SdkSuppress(minSdkVersion = 21)
     public fun rootInsets_no_ime() {
         scenario.onActivity { activity ->
             WindowCompat.setDecorFitsSystemWindows(activity.window, false)
@@ -362,7 +360,6 @@ public class WindowInsetsCompatActivityTest(private val softInputMode: Int) {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 21)
     public fun root_insets_not_null() {
         val container: View = scenario.withActivity { findViewById(R.id.container) }
         val rootWindowInsets = ViewCompat.getRootWindowInsets(container)
@@ -402,7 +399,6 @@ private fun View.doAndAwaitNextInsets(action: (View) -> Unit): WindowInsetsCompa
     return received.get()
 }
 
-@RequiresApi(20)
 private fun View.requestAndAwaitInsets(): WindowInsetsCompat {
     val latch = CountDownLatch(1)
     val received = AtomicReference<WindowInsetsCompat>()

@@ -182,7 +182,7 @@ public abstract class BaseBasicsTestCase<A extends BaseTestActivity> {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 21, maxSdkVersion = 34) // b/427246833
+    @SdkSuppress(maxSdkVersion = 34) // b/427246833
     public void testOnApplyWindowInsetsReachesContent() throws Throwable {
         final A activity = mActivityTestRule.getActivity();
         if (!canShowSystemUi(activity)) {

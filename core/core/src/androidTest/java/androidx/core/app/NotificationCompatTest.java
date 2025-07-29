@@ -371,11 +371,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
 
         Notification notification = builder.setColor(Color.GREEN).build();
-        if (Build.VERSION.SDK_INT >= 21) {
-            assertEquals(Color.GREEN, NotificationCompat.getColor(notification));
-        } else {
-            assertEquals(Color.TRANSPARENT, NotificationCompat.getColor(notification));
-        }
+        assertEquals(Color.GREEN, NotificationCompat.getColor(notification));
     }
 
     @Test
@@ -411,13 +407,8 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext);
 
         Notification n = builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC).build();
-        if (Build.VERSION.SDK_INT >= 21) {
-            assertEquals(NotificationCompat.VISIBILITY_PUBLIC,
-                    NotificationCompat.getVisibility(n));
-        } else {
-            assertEquals(NotificationCompat.VISIBILITY_PRIVATE,
-                    NotificationCompat.getVisibility(n));
-        }
+        assertEquals(NotificationCompat.VISIBILITY_PUBLIC,
+                NotificationCompat.getVisibility(n));
     }
 
     @Test
@@ -426,14 +417,9 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         Notification pub = builder.setContentTitle("public title").build();
         Notification priv = builder.setContentTitle("private title").setPublicVersion(pub).build();
 
-        if (Build.VERSION.SDK_INT >= 21) {
-            assertNull(NotificationCompat.getPublicVersion(pub));
-            assertNotSame(pub, NotificationCompat.getPublicVersion(priv));
-            assertNotificationEquals(pub, NotificationCompat.getPublicVersion(priv));
-        } else {
-            assertNull(NotificationCompat.getPublicVersion(pub));
-            assertNull(NotificationCompat.getPublicVersion(priv));
-        }
+        assertNull(NotificationCompat.getPublicVersion(pub));
+        assertNotSame(pub, NotificationCompat.getPublicVersion(priv));
+        assertNotificationEquals(pub, NotificationCompat.getPublicVersion(priv));
     }
 
     /**
@@ -1546,7 +1532,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 21)
     public void testHasAudioAttributesFrom21() throws Throwable {
         Notification n = new NotificationCompat.Builder(mActivityTestRule.getActivity())
                 .setSound(Uri.EMPTY)
@@ -3133,7 +3118,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         }
     }
 
-    @SdkSuppress(minSdkVersion = 21, maxSdkVersion = 27)
+    @SdkSuppress(maxSdkVersion = 27)
     @Test
     public void testCallStyle_callStyleLegacyNotificationImportantPeopleUri() {
         PendingIntent answerIntent = createIntent("answer");
@@ -3194,7 +3179,7 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
         assertTrue(foundPerson);
     }
 
-    @SdkSuppress(minSdkVersion = 21, maxSdkVersion = 30)
+    @SdkSuppress(maxSdkVersion = 30)
     @Test
     public void testCallStyle_callStyleLegacySetsCategory() {
         PendingIntent answerIntent = createIntent("answer");
@@ -3298,7 +3283,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
                     .build();
 
     @Test
-    @SdkSuppress(minSdkVersion = 21)
     public void getInvisibleActions() {
         Notification notification =
                 newNotificationBuilder().addInvisibleAction(TEST_INVISIBLE_ACTION).build();
@@ -3306,7 +3290,6 @@ public class NotificationCompatTest extends BaseInstrumentationTestCase<TestActi
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 21)
     public void getInvisibleActions_withCarExtender() {
         NotificationCompat.CarExtender carExtender = new NotificationCompat.CarExtender();
         Notification notification = newNotificationBuilder()

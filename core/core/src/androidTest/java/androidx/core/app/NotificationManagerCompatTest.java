@@ -529,7 +529,6 @@ public class NotificationManagerCompatTest {
         assertEquals(IMPORTANCE_DEFAULT, result.getImportance());
     }
 
-    @SdkSuppress(minSdkVersion = 21)
     @Test
     public void testCreateNotificationChannelCompatWithParams() {
         String channelId = genUniqueId(TYPE_CHANNEL);

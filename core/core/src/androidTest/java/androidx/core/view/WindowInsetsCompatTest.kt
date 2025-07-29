@@ -41,7 +41,6 @@ class WindowInsetsCompatTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 21)
     public fun inset_systemWindow() {
         val start = Insets.of(12, 34, 35, 31)
         val insets = WindowInsetsCompat.Builder().setSystemWindowInsets(start).build()
@@ -54,7 +53,6 @@ class WindowInsetsCompatTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 21)
     public fun inset_systemWindow_largeValues() {
         val start = Insets.of(12, 34, 35, 31)
         val insets = WindowInsetsCompat.Builder().setSystemWindowInsets(start).build()
@@ -69,7 +67,6 @@ class WindowInsetsCompatTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 21)
     public fun inset_systemBars() {
         val start = Insets.of(12, 34, 35, 31)
         val insets = WindowInsetsCompat.Builder().setInsets(Type.systemBars(), start).build()
@@ -82,7 +79,6 @@ class WindowInsetsCompatTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 21)
     public fun inset_systemBars_largeValues() {
         val start = Insets.of(12, 34, 35, 31)
         val insets = WindowInsetsCompat.Builder().setInsets(Type.systemBars(), start).build()
@@ -96,7 +92,6 @@ class WindowInsetsCompatTest {
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 21)
     public fun inset_set_ime_insets() {
         val start = Insets.of(10, 11, 12, 13)
         val insets =
@@ -338,7 +333,6 @@ class WindowInsetsCompatTest {
         assertEquals(result.hashCode(), result2.hashCode())
     }
 
-    @SdkSuppress(minSdkVersion = 21) // b/189492236
     @Test
     public fun set_only_navigation_bar_insets() {
         val insets =

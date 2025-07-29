@@ -274,7 +274,6 @@ public class ContextCompatTest extends BaseInstrumentationTestCase<ThemedYellowA
     }
 
     @Test
-    @SdkSuppress(minSdkVersion = 21)
     public void getSystemServiceNameApi21() {
         assertEquals(APPWIDGET_SERVICE,
                 ContextCompat.getSystemServiceName(mContext, AppWidgetManager.class));
