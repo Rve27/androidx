@@ -108,6 +108,30 @@ public interface RenderingRuntime {
      */
     public fun setNormalZOnWaterMaterial(material: MaterialResource, normalZ: Float)
 
+    /**
+     * Sets the normal boundary for the water material.
+     *
+     * @param material The handle of the water material to be updated.
+     * @param normalBoundary The normal boundary to use for the water material.
+     */
+    public fun setNormalBoundaryOnWaterMaterial(material: MaterialResource, normalBoundary: Float)
+
+    /**
+     * Creates a Khronos PBR material by querying it from the system's built-in materials. The
+     * future returned by this method will fire listeners on the UI thread if Runnable::run is
+     * supplied.
+     */
+    public fun createKhronosPbrMaterial(
+        spec: KhronosPbrMaterialSpec
+    ): ListenableFuture<MaterialResource>?
+
+    /**
+     * Destroys the given Khronos PBR material resource.
+     *
+     * @param material The KhronosPbrMaterial to destroy.
+     */
+    public fun destroyKhronosPbrMaterial(material: MaterialResource)
+
     /** Starts the renderer. */
     public fun startRenderer()
 

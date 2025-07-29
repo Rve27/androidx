@@ -1421,11 +1421,14 @@ package androidx.xr.runtime.internal {
   }
 
   @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public interface RenderingRuntime {
+    method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource>? createKhronosPbrMaterial(androidx.xr.runtime.internal.KhronosPbrMaterialSpec spec);
     method public com.google.common.util.concurrent.ListenableFuture<androidx.xr.runtime.internal.MaterialResource> createWaterMaterial(boolean isAlphaMapVersion);
+    method public void destroyKhronosPbrMaterial(androidx.xr.runtime.internal.MaterialResource material);
     method public void destroyWaterMaterial(androidx.xr.runtime.internal.MaterialResource material);
     method public void dispose();
     method public void setAlphaMapOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.internal.TextureResource alphaMap);
     method public void setAlphaStepMultiplierOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, float alphaStepMultiplier);
+    method public void setNormalBoundaryOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, float normalBoundary);
     method public void setNormalMapOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, androidx.xr.runtime.internal.TextureResource normalMap);
     method public void setNormalSpeedOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, float normalSpeed);
     method public void setNormalTilingOnWaterMaterial(androidx.xr.runtime.internal.MaterialResource material, float normalTiling);

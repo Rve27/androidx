@@ -18,10 +18,14 @@ package androidx.xr.runtime.testing
 
 import android.app.Activity
 import androidx.annotation.RestrictTo
+import androidx.xr.runtime.internal.KhronosPbrMaterialSpec
 import androidx.xr.runtime.internal.MaterialResource
 import androidx.xr.runtime.internal.RenderingRuntime
 import androidx.xr.runtime.internal.SceneRuntime
 import androidx.xr.runtime.internal.TextureResource
+import androidx.xr.runtime.math.Matrix3
+import androidx.xr.runtime.math.Vector3
+import androidx.xr.runtime.math.Vector4
 import com.google.common.util.concurrent.Futures.immediateFuture
 import com.google.common.util.concurrent.ListenableFuture
 
@@ -65,6 +69,58 @@ public class FakeRenderingRuntime(
      */
     public val createdWaterMaterials: MutableList<FakeWaterMaterial> =
         mutableListOf<FakeWaterMaterial>()
+
+    /**
+     * For test purposes only.
+     *
+     * A fake implementation of [MaterialResource] used to simulate a Khronos PBR material within
+     * the test environment.
+     *
+     * <p>Instances of this class are created by [createKhronosPbrMaterial]. Tests can inspect the
+     * public properties of this class (e.g., [baseColorTexture], [metallicFactor]) to confirm that
+     * the code under test correctly configures the material's attributes according to the provided
+     * specification.
+     *
+     * @param spec The [KhronosPbrMaterialSpec] provided during creation, which defines the initial
+     *   configuration of the material.
+     */
+    public class FakeKhronosPbrMaterial(public val spec: KhronosPbrMaterialSpec) :
+        MaterialResource {
+        public var baseColorTexture: TextureResource? = null
+        public var baseColorUvTransform: Matrix3? = null
+        public var baseColorFactors: Vector4? = null
+        public var metallicRoughnessTexture: TextureResource? = null
+        public var metallicRoughnessUvTransform: Matrix3? = null
+        public var metallicFactor: Float? = null
+        public var roughnessFactor: Float? = null
+        public var normalTexture: TextureResource? = null
+        public var normalUvTransform: Matrix3? = null
+        public var normalFactor: Float? = null
+        public var ambientOcclusionTexture: TextureResource? = null
+        public var ambientOcclusionUvTransform: Matrix3? = null
+        public var ambientOcclusionFactor: Float? = null
+        public var emissiveTexture: TextureResource? = null
+        public var emissiveUvTransform: Matrix3? = null
+        public var emissiveFactors: Vector3? = null
+        public var clearcoatTexture: TextureResource? = null
+        public var clearcoatNormalTexture: TextureResource? = null
+        public var clearcoatRoughnessTexture: TextureResource? = null
+        public var clearcoatIntensity: Float? = null
+        public var clearcoatRoughness: Float? = null
+        public var clearcoatNormalFactor: Float? = null
+        public var sheenColorTexture: TextureResource? = null
+        public var sheenColorFactors: Vector3? = null
+        public var sheenRoughnessTexture: TextureResource? = null
+        public var sheenRoughnessFactor: Float? = null
+        public var transmissionTexture: TextureResource? = null
+        public var transmissionUvTransform: Matrix3? = null
+        public var transmissionFactor: Float? = null
+        public var indexOfRefraction: Float? = null
+        public var alphaCutoff: Float? = null
+    }
+
+    public val createdKhronosPbrMaterials: MutableList<FakeKhronosPbrMaterial> =
+        mutableListOf<FakeKhronosPbrMaterial>()
 
     @Suppress("AsyncSuffixFuture")
     override fun createWaterMaterial(
@@ -114,6 +170,26 @@ public class FakeRenderingRuntime(
 
     override fun setNormalZOnWaterMaterial(material: MaterialResource, normalZ: Float) {
         (material as? FakeWaterMaterial)?.normalZ = normalZ
+    }
+
+    override fun setNormalBoundaryOnWaterMaterial(
+        material: MaterialResource,
+        normalBoundary: Float,
+    ) {
+        (material as? FakeWaterMaterial)?.normalBoundary = normalBoundary
+    }
+
+    @Suppress("AsyncSuffixFuture")
+    override fun createKhronosPbrMaterial(
+        spec: KhronosPbrMaterialSpec
+    ): ListenableFuture<MaterialResource>? {
+        val newMaterial = FakeKhronosPbrMaterial(spec)
+        createdKhronosPbrMaterials.add(newMaterial)
+        return immediateFuture(newMaterial)
+    }
+
+    override fun destroyKhronosPbrMaterial(material: MaterialResource) {
+        createdKhronosPbrMaterials.remove(material)
     }
 
     override fun startRenderer() {}
