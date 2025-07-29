@@ -50,18 +50,18 @@ package androidx.room {
     field public static final androidx.room.ColumnInfo.Companion Companion;
     field public static final String INHERIT_FIELD_NAME = "[field-name]";
     field public static final int INTEGER = 3; // 0x3
-    field @RequiresApi(21) public static final int LOCALIZED = 5; // 0x5
+    field public static final int LOCALIZED = 5; // 0x5
     field public static final int NOCASE = 3; // 0x3
     field public static final int REAL = 4; // 0x4
     field public static final int RTRIM = 4; // 0x4
     field public static final int TEXT = 2; // 0x2
     field public static final int UNDEFINED = 1; // 0x1
-    field @RequiresApi(21) public static final int UNICODE = 6; // 0x6
+    field public static final int UNICODE = 6; // 0x6
     field public static final int UNSPECIFIED = 1; // 0x1
     field public static final String VALUE_UNSPECIFIED = "[value-unspecified]";
   }
 
-  @IntDef({androidx.room.ColumnInfo.UNSPECIFIED, androidx.room.ColumnInfo.BINARY, androidx.room.ColumnInfo.NOCASE, androidx.room.ColumnInfo.RTRIM, androidx.room.ColumnInfo.LOCALIZED, androidx.room.ColumnInfo.UNICODE}) @RequiresApi(21) @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public static @interface ColumnInfo.Collate {
+  @IntDef({androidx.room.ColumnInfo.UNSPECIFIED, androidx.room.ColumnInfo.BINARY, androidx.room.ColumnInfo.NOCASE, androidx.room.ColumnInfo.RTRIM, androidx.room.ColumnInfo.LOCALIZED, androidx.room.ColumnInfo.UNICODE}) @kotlin.annotation.Retention(kotlin.annotation.AnnotationRetention.BINARY) public static @interface ColumnInfo.Collate {
   }
 
   public static final class ColumnInfo.Companion {
@@ -82,13 +82,13 @@ package androidx.room {
     field public static final int BLOB = 5; // 0x5
     field public static final String INHERIT_FIELD_NAME = "[field-name]";
     field public static final int INTEGER = 3; // 0x3
-    field @RequiresApi(21) public static final int LOCALIZED = 5; // 0x5
+    field public static final int LOCALIZED = 5; // 0x5
     field public static final int NOCASE = 3; // 0x3
     field public static final int REAL = 4; // 0x4
     field public static final int RTRIM = 4; // 0x4
     field public static final int TEXT = 2; // 0x2
     field public static final int UNDEFINED = 1; // 0x1
-    field @RequiresApi(21) public static final int UNICODE = 6; // 0x6
+    field public static final int UNICODE = 6; // 0x6
     field public static final int UNSPECIFIED = 1; // 0x1
     field public static final String VALUE_UNSPECIFIED = "[value-unspecified]";
   }
@@ -256,7 +256,7 @@ package androidx.room {
     field public static final String TOKENIZER_ICU = "icu";
     field public static final String TOKENIZER_PORTER = "porter";
     field public static final String TOKENIZER_SIMPLE = "simple";
-    field @RequiresApi(21) public static final String TOKENIZER_UNICODE61 = "unicode61";
+    field public static final String TOKENIZER_UNICODE61 = "unicode61";
   }
 
   public enum FtsOptions.MatchInfo {

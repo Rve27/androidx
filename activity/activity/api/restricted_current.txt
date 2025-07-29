@@ -410,7 +410,7 @@ package androidx.activity.result.contract {
     method public final android.net.Uri? parseResult(int resultCode, android.content.Intent? intent);
   }
 
-  @RequiresApi(21) public static class ActivityResultContracts.OpenDocumentTree extends androidx.activity.result.contract.ActivityResultContract<android.net.Uri?,android.net.Uri?> {
+  public static class ActivityResultContracts.OpenDocumentTree extends androidx.activity.result.contract.ActivityResultContract<android.net.Uri?,android.net.Uri?> {
     ctor public ActivityResultContracts.OpenDocumentTree();
     method @CallSuper public android.content.Intent createIntent(android.content.Context context, android.net.Uri? input);
     method public final androidx.activity.result.contract.ActivityResultContract.SynchronousResult<android.net.Uri?>? getSynchronousResult(android.content.Context context, android.net.Uri? input);
