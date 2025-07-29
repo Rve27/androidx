@@ -50,7 +50,6 @@ import androidx.xr.compose.platform.LocalDialogManager
 import androidx.xr.compose.platform.LocalOpaqueEntity
 import androidx.xr.compose.platform.LocalSession
 import androidx.xr.compose.platform.disposableValueOf
-import androidx.xr.compose.platform.getActivity
 import androidx.xr.compose.platform.getValue
 import androidx.xr.compose.subspace.layout.CorePanelEntity
 import androidx.xr.compose.subspace.layout.SpatialRoundedCornerShape
@@ -284,15 +283,10 @@ public fun SpatialMainPanel(
 ) {
     val mainPanel = LocalCoreMainPanelEntity.current ?: return
     val density = LocalDensity.current
+    val view = LocalView.current
+
     LaunchedEffect(shape, density) { mainPanel.setShape(shape, density) }
 
-    val view = LocalContext.current.getActivity().window?.decorView ?: LocalView.current
-
-    // When the mainPanel enters the compose hierarchy, we can't directly set the mainPanel.hidden
-    // to false here because the hidden state is a subcomponent of the size calculation, see
-    // [SubspaceLayoutNode.MeasureLayout.placeAt] and [CoreEntity.size].
-    // This means hidden will be set after layout completes, on the first frame when the mainPanel
-    // enters the Compose hierarchy.
     DisposableEffect(mainPanel) {
         // mainPanel will initially be enabled when an Activity is created, but must be re-enabled
         // if removed and re-added to the Compose layout.
