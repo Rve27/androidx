@@ -21,8 +21,8 @@ package androidx.xr.scenecore.guava
 import android.net.Uri
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
+import androidx.concurrent.futures.SuspendToFutureAdapter
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.guava.toFuture
 import androidx.xr.scenecore.GltfModel
 import com.google.common.util.concurrent.ListenableFuture
 import java.nio.file.Path
@@ -43,7 +43,9 @@ import java.nio.file.Path
  */
 @MainThread
 public fun createGltfModelAsync(session: Session, path: Path): ListenableFuture<GltfModel> =
-    toFuture(session) { GltfModel.create(session, path) }
+    SuspendToFutureAdapter.launchFuture(session.coroutineScope.coroutineContext, true) {
+        GltfModel.create(session, path)
+    }
 
 /**
  * Public factory for a GltfModel, where the glTF is asynchronously loaded from a [Uri].
@@ -57,7 +59,9 @@ public fun createGltfModelAsync(session: Session, path: Path): ListenableFuture<
  */
 @MainThread
 public fun createGltfModelAsync(session: Session, uri: Uri): ListenableFuture<GltfModel> =
-    toFuture(session) { GltfModel.create(session, uri) }
+    SuspendToFutureAdapter.launchFuture(session.coroutineScope.coroutineContext, true) {
+        GltfModel.create(session, uri)
+    }
 
 /**
  * Public factory for a GltfModel, where the glTF is asynchronously loaded.
@@ -78,4 +82,9 @@ public fun createGltfModelAsync(
     assetData: ByteArray,
     assetKey: String,
 ): ListenableFuture<GltfModel> =
-    toFuture(session) { GltfModel.create(session, assetData, assetKey) }
+    SuspendToFutureAdapter.launchFuture(
+        context = session.coroutineScope.coroutineContext,
+        launchUndispatched = true,
+    ) {
+        GltfModel.create(session, assetData, assetKey)
+    }

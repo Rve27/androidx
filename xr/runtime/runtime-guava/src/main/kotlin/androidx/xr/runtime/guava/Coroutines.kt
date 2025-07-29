@@ -18,11 +18,10 @@
 
 package androidx.xr.runtime.guava
 
+import androidx.concurrent.futures.SuspendToFutureAdapter
 import androidx.xr.runtime.Session
 import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.guava.future
 
 /**
  * Converts a coroutine created within the [session] to a
@@ -40,8 +39,4 @@ public fun <T> toFuture(
     session: Session,
     coroutine: suspend CoroutineScope.() -> T,
 ): ListenableFuture<T> =
-    session.coroutineScope.future(
-        session.coroutineScope.coroutineContext,
-        CoroutineStart.DEFAULT,
-        coroutine,
-    )
+    SuspendToFutureAdapter.launchFuture(session.coroutineScope.coroutineContext, true, coroutine)

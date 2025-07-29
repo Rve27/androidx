@@ -18,8 +18,8 @@
 
 package androidx.xr.scenecore.guava
 
+import androidx.concurrent.futures.SuspendToFutureAdapter
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.guava.toFuture
 import androidx.xr.runtime.math.Vector3
 import androidx.xr.scenecore.HitTestResult
 import androidx.xr.scenecore.ScenePose
@@ -59,4 +59,10 @@ public fun ScenePose.hitTestAsync(
     origin: Vector3,
     direction: Vector3,
     @ScenePose.HitTestFilterValue hitTestFilter: Int,
-): ListenableFuture<HitTestResult> = toFuture(session) { hitTest(origin, direction, hitTestFilter) }
+): ListenableFuture<HitTestResult> =
+    SuspendToFutureAdapter.launchFuture(
+        context = session.coroutineScope.coroutineContext,
+        launchUndispatched = true,
+    ) {
+        hitTest(origin, direction, hitTestFilter)
+    }

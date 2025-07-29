@@ -21,8 +21,8 @@ package androidx.xr.scenecore.guava
 import android.net.Uri
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
+import androidx.concurrent.futures.SuspendToFutureAdapter
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.guava.toFuture
 import androidx.xr.scenecore.ExrImage
 import com.google.common.util.concurrent.ListenableFuture
 import java.nio.file.Path
@@ -46,7 +46,9 @@ import java.nio.file.Path
  */
 @MainThread
 public fun createExrImageFromZipAsync(session: Session, path: Path): ListenableFuture<ExrImage> =
-    toFuture(session) { ExrImage.createFromZip(session, path) }
+    SuspendToFutureAdapter.launchFuture(session.coroutineScope.coroutineContext, true) {
+        ExrImage.createFromZip(session, path)
+    }
 
 /**
  * Public factory for an ExrImage, asynchronously loading a preprocessed skybox from a [Uri].
@@ -64,7 +66,9 @@ public fun createExrImageFromZipAsync(session: Session, path: Path): ListenableF
  */
 @MainThread
 public fun createExrImageFromZipAsync(session: Session, uri: Uri): ListenableFuture<ExrImage> =
-    toFuture(session) { ExrImage.createFromZip(session, uri) }
+    SuspendToFutureAdapter.launchFuture(session.coroutineScope.coroutineContext, true) {
+        ExrImage.createFromZip(session, uri)
+    }
 
 /**
  * Public factory function for a preprocessed EXRImage, where the preprocessed EXRImage is
@@ -88,4 +92,9 @@ public fun createExrImageFromZipAsync(
     assetData: ByteArray,
     assetKey: String,
 ): ListenableFuture<ExrImage> =
-    toFuture(session) { ExrImage.createFromZip(session, assetData, assetKey) }
+    SuspendToFutureAdapter.launchFuture(
+        context = session.coroutineScope.coroutineContext,
+        launchUndispatched = true,
+    ) {
+        ExrImage.createFromZip(session, assetData, assetKey)
+    }

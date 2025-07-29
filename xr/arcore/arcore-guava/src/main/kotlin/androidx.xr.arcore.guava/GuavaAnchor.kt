@@ -18,9 +18,9 @@
 
 package androidx.xr.arcore.guava
 
+import androidx.concurrent.futures.SuspendToFutureAdapter
 import androidx.xr.arcore.Anchor
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.guava.toFuture
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.UUID
 
@@ -33,7 +33,17 @@ import java.util.UUID
  *   anchor (e.g. ran out of memory).
  */
 public fun Anchor.persistAsync(session: Session): ListenableFuture<UUID> =
-    toFuture(session) { persist() }
+    SuspendToFutureAdapter.launchFuture(
+        context = session.coroutineScope.coroutineContext,
+        launchUndispatched = true,
+    ) {
+        persist()
+    }
 
 internal fun Anchor.updateAsync(session: Session): ListenableFuture<Unit> =
-    toFuture(session) { update() }
+    SuspendToFutureAdapter.launchFuture(
+        context = session.coroutineScope.coroutineContext,
+        launchUndispatched = true,
+    ) {
+        update()
+    }

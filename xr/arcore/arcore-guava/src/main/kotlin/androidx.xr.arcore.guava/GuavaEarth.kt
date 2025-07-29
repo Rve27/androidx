@@ -18,6 +18,7 @@
 
 package androidx.xr.arcore.guava
 
+import androidx.concurrent.futures.SuspendToFutureAdapter
 import androidx.xr.arcore.Anchor
 import androidx.xr.arcore.AnchorCreateIllegalState
 import androidx.xr.arcore.AnchorCreateResourcesExhausted
@@ -26,7 +27,6 @@ import androidx.xr.arcore.Earth
 import androidx.xr.arcore.Earth.Surface
 import androidx.xr.runtime.Config
 import androidx.xr.runtime.Session
-import androidx.xr.runtime.guava.toFuture
 import androidx.xr.runtime.math.Quaternion
 import com.google.common.util.concurrent.ListenableFuture
 
@@ -80,7 +80,10 @@ public fun Earth.createAnchorOnSurfaceAsync(
     eastUpSouthQuaternion: Quaternion,
     surface: Surface,
 ): ListenableFuture<AnchorCreateResult> =
-    toFuture(session) {
+    SuspendToFutureAdapter.launchFuture(
+        context = session.coroutineScope.coroutineContext,
+        launchUndispatched = true,
+    ) {
         createAnchorOnSurface(
             latitude,
             longitude,
