@@ -101,7 +101,11 @@ public class ExtraSupportedSurfaceCombinationsContainerTest {
         // Tests for FULL Samsung devices
         data.add(new Object[]{new Config("Samsung", null, "SCG25", "0",
                 createLevel3PrivPrivYuvSubsetConfiguration())});
-        data.add(new Object[]{new Config("Samsung", null, "SM-S9210", "1",
+        data.add(new Object[]{new Config("Samsung", null, "SCG25", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SM-S9210", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SM-S9213", "1",
                 createLevel3PrivPrivYuvSubsetConfiguration())});
         data.add(new Object[]{new Config("Samsung", null, "SM-S926B", "0",
                 createLevel3PrivPrivYuvSubsetConfiguration())});
@@ -109,7 +113,51 @@ public class ExtraSupportedSurfaceCombinationsContainerTest {
                 createLevel3PrivPrivYuvSubsetConfiguration())});
         data.add(new Object[]{new Config("Samsung", null, "SM-S928U1", "0",
                 createLevel3PrivPrivYuvSubsetConfiguration())});
-        data.add(new Object[]{new Config("Samsung", null, "SM-S928B", "1",
+        data.add(new Object[]{new Config("Samsung", null, "SM-S928U", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SC-51E", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SC-51E", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SC-52E", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SC-52E", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SCG26", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SCG26", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SM-S931U", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SM-S931B", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SM-S936U", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SM-S936L", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SM-S937", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SM-S937U", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SM-S938N", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SM-S938R", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SCG31", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SCG31", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SCG32", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SCG32", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SC-51F", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SC-51F", "1",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SC-52F", "0",
+                createLevel3PrivPrivYuvSubsetConfiguration())});
+        data.add(new Object[]{new Config("Samsung", null, "SC-52F", "1",
                 createLevel3PrivPrivYuvSubsetConfiguration())});
 
         // Other cases
