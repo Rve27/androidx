@@ -17,9 +17,10 @@
 package androidx.navigationevent
 
 import android.os.Build
-import android.window.BackEvent.EDGE_LEFT
 import android.window.OnBackInvokedCallback
 import android.window.OnBackInvokedDispatcher
+import androidx.navigationevent.testing.TestNavigationEvent
+import androidx.navigationevent.testing.TestNavigationEventCallback
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
@@ -50,10 +51,7 @@ class OnBackInvokedInputHandlerTest {
         val dispatcher = NavigationEventDispatcher {}
         OnBackInvokedInputHandler(dispatcher, invoker)
 
-        val callback =
-            object : NavigationEventCallback(true) {
-                override fun onEventCompleted() {}
-            }
+        val callback = TestNavigationEventCallback()
 
         dispatcher.addCallback(callback)
 
@@ -83,10 +81,7 @@ class OnBackInvokedInputHandlerTest {
 
         OnBackInvokedInputHandler(dispatcher, invoker)
 
-        val callback =
-            object : NavigationEventCallback(true) {
-                override fun onEventCompleted() {}
-            }
+        val callback = TestNavigationEventCallback()
 
         dispatcher.addCallback(callback)
 
@@ -103,15 +98,14 @@ class OnBackInvokedInputHandlerTest {
 
     @Test
     fun testCallbackEnabledDisabled() {
-        val callback =
-            object : NavigationEventCallback(false) {
-                override fun onEventCompleted() {
-                    TODO("Not yet implemented")
-                }
-            }
+        val callback = TestNavigationEventCallback(isEnabled = false)
+        assertThat(callback.isEnabled).isFalse()
 
         callback.isEnabled = true
+        assertThat(callback.isEnabled).isTrue()
+
         callback.isEnabled = false
+        assertThat(callback.isEnabled).isFalse()
     }
 
     @Test
@@ -131,10 +125,7 @@ class OnBackInvokedInputHandlerTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val callback =
-            object : NavigationEventCallback(false) {
-                override fun onEventCompleted() {}
-            }
+        val callback = TestNavigationEventCallback(isEnabled = false)
 
         OnBackInvokedInputHandler(dispatcher, invoker)
 
@@ -168,10 +159,7 @@ class OnBackInvokedInputHandlerTest {
 
         val dispatcher = NavigationEventDispatcher {}
 
-        val callback =
-            object : NavigationEventCallback(true) {
-                override fun onEventCompleted() {}
-            }
+        val callback = TestNavigationEventCallback()
 
         dispatcher.addCallback(callback)
 
@@ -203,38 +191,20 @@ class OnBackInvokedInputHandlerTest {
 
         val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
 
-        var startedCount = 0
-        var progressedCount = 0
-        var cancelledCount = 0
-        val callback =
-            object : NavigationEventCallback(true) {
-                override fun onEventStarted(event: NavigationEvent) {
-                    startedCount++
-                }
-
-                override fun onEventProgressed(event: NavigationEvent) {
-                    progressedCount++
-                }
-
-                override fun onEventCompleted() {}
-
-                override fun onEventCancelled() {
-                    cancelledCount++
-                }
-            }
+        val callback = TestNavigationEventCallback()
 
         dispatcher.addCallback(callback)
 
         assertThat(registerCount).isEqualTo(1)
 
-        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
-        assertThat(startedCount).isEqualTo(1)
+        inputHandler.sendOnStarted(TestNavigationEvent())
+        assertThat(callback.startedInvocations).isEqualTo(1)
 
-        inputHandler.sendOnProgressed(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
-        assertThat(progressedCount).isEqualTo(1)
+        inputHandler.sendOnProgressed(TestNavigationEvent())
+        assertThat(callback.progressedInvocations).isEqualTo(1)
 
         inputHandler.sendOnCancelled()
-        assertThat(cancelledCount).isEqualTo(1)
+        assertThat(callback.cancelledInvocations).isEqualTo(1)
 
         callback.remove()
 
@@ -260,28 +230,16 @@ class OnBackInvokedInputHandlerTest {
 
         val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
 
-        var cancelledCount = 0
-        val callback =
-            object : NavigationEventCallback(true) {
-                override fun onEventStarted(event: NavigationEvent) {}
-
-                override fun onEventProgressed(event: NavigationEvent) {}
-
-                override fun onEventCompleted() {}
-
-                override fun onEventCancelled() {
-                    cancelledCount++
-                }
-            }
+        val callback = TestNavigationEventCallback()
 
         dispatcher.addCallback(callback)
 
         assertThat(registerCount).isEqualTo(1)
 
-        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnStarted(TestNavigationEvent())
 
         callback.remove()
-        assertThat(cancelledCount).isEqualTo(1)
+        assertThat(callback.cancelledInvocations).isEqualTo(1)
 
         assertThat(unregisterCount).isEqualTo(1)
     }
@@ -305,29 +263,15 @@ class OnBackInvokedInputHandlerTest {
 
         val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
 
-        var cancelledCount = 0
-        val callback =
-            object : NavigationEventCallback(true) {
-                override fun onEventStarted(event: NavigationEvent) {
-                    this.remove()
-                }
-
-                override fun onEventProgressed(event: NavigationEvent) {}
-
-                override fun onEventCompleted() {}
-
-                override fun onEventCancelled() {
-                    cancelledCount++
-                }
-            }
+        val callback = TestNavigationEventCallback(onEventStarted = { remove() })
 
         dispatcher.addCallback(callback)
 
         assertThat(registerCount).isEqualTo(1)
 
-        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnStarted(TestNavigationEvent())
 
-        assertThat(cancelledCount).isEqualTo(1)
+        assertThat(callback.cancelledInvocations).isEqualTo(1)
 
         assertThat(unregisterCount).isEqualTo(1)
     }
@@ -351,35 +295,19 @@ class OnBackInvokedInputHandlerTest {
 
         val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
 
-        var completedCount = 0
-        val callback =
-            object : NavigationEventCallback(true) {
-                override fun onEventStarted(event: NavigationEvent) {}
-
-                override fun onEventProgressed(event: NavigationEvent) {}
-
-                override fun onEventCompleted() {
-                    completedCount++
-                }
-
-                override fun onEventCancelled() {}
-            }
+        val callback = TestNavigationEventCallback()
 
         dispatcher.addCallback(callback)
 
         assertThat(registerCount).isEqualTo(1)
 
-        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnStarted(TestNavigationEvent())
 
-        dispatcher.addCallback(
-            object : NavigationEventCallback(true) {
-                override fun onEventCompleted() {}
-            }
-        )
+        dispatcher.addCallback(TestNavigationEventCallback())
 
         inputHandler.sendOnCompleted()
 
-        assertThat(completedCount).isEqualTo(1)
+        assertThat(callback.completedInvocations).isEqualTo(1)
     }
 
     @Test
@@ -400,43 +328,24 @@ class OnBackInvokedInputHandlerTest {
         val dispatcher = NavigationEventDispatcher {}
         val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
 
-        var cancelledCount = 0
-        val callback1 =
-            object : NavigationEventCallback(true) {
-                override fun onEventStarted(event: NavigationEvent) {}
-
-                override fun onEventProgressed(event: NavigationEvent) {}
-
-                override fun onEventCompleted() {}
-
-                override fun onEventCancelled() {
-                    cancelledCount++
-                }
-            }
+        val callback1 = TestNavigationEventCallback()
 
         dispatcher.addCallback(callback1)
 
         assertThat(registerCount).isEqualTo(1)
 
-        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnStarted(TestNavigationEvent())
 
-        var startedCount2 = 0
-
-        val callback2 =
-            object : NavigationEventCallback(true) {
-                override fun onEventStarted(event: NavigationEvent) {
-                    startedCount2++
-                }
-            }
+        val callback2 = TestNavigationEventCallback()
 
         dispatcher.addCallback(callback2)
 
-        inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, EDGE_LEFT))
+        inputHandler.sendOnStarted(TestNavigationEvent())
 
         assertThat(registerCount).isEqualTo(1)
 
-        assertThat(cancelledCount).isEqualTo(1)
+        assertThat(callback1.cancelledInvocations).isEqualTo(1)
 
-        assertThat(startedCount2).isEqualTo(1)
+        assertThat(callback2.startedInvocations).isEqualTo(1)
     }
 }
