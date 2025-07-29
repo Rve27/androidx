@@ -12,10 +12,7 @@ abstract interface androidx.navigationevent/NavigationEventDispatcherOwner { // 
 }
 
 abstract class androidx.navigationevent/NavigationEventCallback { // androidx.navigationevent/NavigationEventCallback|null[0]
-    constructor <init>(kotlin/Boolean, kotlin/Boolean = ...) // androidx.navigationevent/NavigationEventCallback.<init>|<init>(kotlin.Boolean;kotlin.Boolean){}[0]
-
-    final val isPassThrough // androidx.navigationevent/NavigationEventCallback.isPassThrough|{}isPassThrough[0]
-        final fun <get-isPassThrough>(): kotlin/Boolean // androidx.navigationevent/NavigationEventCallback.isPassThrough.<get-isPassThrough>|<get-isPassThrough>(){}[0]
+    constructor <init>(kotlin/Boolean) // androidx.navigationevent/NavigationEventCallback.<init>|<init>(kotlin.Boolean){}[0]
 
     final var isEnabled // androidx.navigationevent/NavigationEventCallback.isEnabled|{}isEnabled[0]
         final fun <get-isEnabled>(): kotlin/Boolean // androidx.navigationevent/NavigationEventCallback.isEnabled.<get-isEnabled>|<get-isEnabled>(){}[0]

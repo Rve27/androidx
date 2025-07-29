@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,19 +21,10 @@ package androidx.navigationevent
  *
  * This class maintains its own [isEnabled] state and will only receive callbacks when enabled.
  *
- * @param isEnabled The enabled state for this callback.
- * @param isPassThrough Whether this callback should consume the events from
- *   [NavigationEventDispatcher] or allow it to continue.
+ * @param isEnabled The initial enabled state for this callback.
  * @see NavigationEventDispatcher
  */
-public abstract class NavigationEventCallback(
-    isEnabled: Boolean,
-    /**
-     * Whether this callback should consume the events from [NavigationEventDispatcher] or allow it
-     * to continue.
-     */
-    public val isPassThrough: Boolean = false,
-) {
+public abstract class NavigationEventCallback(isEnabled: Boolean) {
 
     /**
      * Controls whether this callback is active and should be considered for event dispatching.
@@ -68,6 +59,10 @@ public abstract class NavigationEventCallback(
 
     internal var dispatcher: NavigationEventDispatcher? = null
 
+    /**
+     * Removes this callback from the [NavigationEventDispatcher] it is registered with. If the
+     * callback is not registered, this call does nothing.
+     */
     public fun remove() {
         dispatcher?.removeCallback(this)
     }

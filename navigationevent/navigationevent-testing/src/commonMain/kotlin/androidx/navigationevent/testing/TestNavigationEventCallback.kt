@@ -28,8 +28,6 @@ import androidx.navigationevent.NavigationEventCallback
  * callback is fired.
  *
  * @param isEnabled Determines if the callback should process events. Defaults to `true`.
- * @param isPassThrough If `true`, events are passed to the next callback in the chain. Defaults to
- *   `false`.
  * @param onEventStarted An optional lambda to execute when `onEventStarted` is called.
  * @param onEventProgressed An optional lambda to execute when `onEventProgressed` is called.
  * @param onEventCancelled An optional lambda to execute when `onEventCancelled` is called.
@@ -37,13 +35,12 @@ import androidx.navigationevent.NavigationEventCallback
  */
 public class TestNavigationEventCallback(
     isEnabled: Boolean = true,
-    isPassThrough: Boolean = false,
     private val onEventStarted: TestNavigationEventCallback.(event: NavigationEvent) -> Unit = {},
     private val onEventProgressed: TestNavigationEventCallback.(event: NavigationEvent) -> Unit =
         {},
     private val onEventCancelled: TestNavigationEventCallback.() -> Unit = {},
     private val onEventCompleted: TestNavigationEventCallback.() -> Unit = {},
-) : NavigationEventCallback(isEnabled, isPassThrough) {
+) : NavigationEventCallback(isEnabled) {
 
     private val _startedEvents = mutableListOf<NavigationEvent>()
 

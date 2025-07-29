@@ -249,24 +249,6 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun dispatch_whenAllEnabledCallbacksArePassThrough_thenFallbackIsNotInvoked() {
-        var fallbackCalled = false
-        val dispatcher =
-            NavigationEventDispatcher(fallbackOnBackPressed = { fallbackCalled = true })
-        val callback1 = TestNavigationEventCallback(isPassThrough = true)
-        val callback2 = TestNavigationEventCallback(isPassThrough = true)
-        dispatcher.addCallback(callback1)
-        dispatcher.addCallback(callback2)
-
-        val inputHandler = NavigationEventInputHandler(dispatcher)
-        inputHandler.sendOnCompleted()
-
-        assertThat(callback1.completedInvocations).isEqualTo(1)
-        assertThat(callback2.completedInvocations).isEqualTo(1)
-        assertThat(fallbackCalled).isFalse()
-    }
-
-    @Test
     fun dispatch_whenOverlayCallbackExists_thenOverlaySupersedesDefault() {
         val dispatcher = NavigationEventDispatcher()
         val overlayCallback = TestNavigationEventCallback()
@@ -303,23 +285,6 @@ class NavigationEventDispatcherTest {
     }
 
     @Test
-    fun dispatch_whenPassThroughOverlayCallbackExists_thenBothCallbacksAreInvoked() {
-        val dispatcher = NavigationEventDispatcher()
-        val overlayCallback = TestNavigationEventCallback(isPassThrough = true)
-        val normalCallback = TestNavigationEventCallback()
-
-        dispatcher.addCallback(normalCallback, NavigationEventPriority.Default)
-        dispatcher.addCallback(overlayCallback, NavigationEventPriority.Overlay)
-
-        val inputHandler = NavigationEventInputHandler(dispatcher)
-        inputHandler.sendOnCompleted()
-
-        // Both callbacks should be invoked because the overlay callback is pass-through.
-        assertThat(overlayCallback.completedInvocations).isEqualTo(1)
-        assertThat(normalCallback.completedInvocations).isEqualTo(1)
-    }
-
-    @Test
     fun addCallback_whenCallbackIsRegisteredWithAnotherDispatcher_thenThrowsException() {
         val callback = TestNavigationEventCallback()
         val dispatcher1 = NavigationEventDispatcher()
@@ -340,40 +305,6 @@ class NavigationEventDispatcherTest {
         assertThrows<IllegalArgumentException> { dispatcher.addCallback(callback) }
             .hasMessageThat()
             .contains("is already registered with a dispatcher")
-    }
-
-    @Test
-    fun dispatch_whenCallbackIsRemovedDuringDispatch_thenDoesNotThrowException() {
-        val dispatcher = NavigationEventDispatcher()
-
-        val callback1 = TestNavigationEventCallback(isPassThrough = true)
-        val callback2 = TestNavigationEventCallback(isPassThrough = true)
-        val callback3 =
-            TestNavigationEventCallback(
-                isPassThrough = true,
-                // The important part of this test is that removing a callback during dispatch
-                // does not cause a crash.
-                onEventProgressed = { remove() },
-            )
-        dispatcher.addCallback(callback1)
-        dispatcher.addCallback(callback2)
-        dispatcher.addCallback(callback3)
-
-        val event = TestNavigationEvent()
-        val inputHandler = NavigationEventInputHandler(dispatcher)
-        inputHandler.sendOnStarted(event)
-        // This should not throw a ConcurrentModificationException.
-        inputHandler.sendOnProgressed(event)
-
-        // All 3 callbacks should have started.
-        assertThat(callback1.startedInvocations).isEqualTo(1)
-        assertThat(callback2.startedInvocations).isEqualTo(1)
-        assertThat(callback3.startedInvocations).isEqualTo(1)
-
-        // All 3 should have also received the progress event, even though one removed itself.
-        assertThat(callback1.progressedInvocations).isEqualTo(1)
-        assertThat(callback2.progressedInvocations).isEqualTo(1)
-        assertThat(callback3.progressedInvocations).isEqualTo(1)
     }
 
     @Test

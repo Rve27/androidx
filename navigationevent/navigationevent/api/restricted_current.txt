@@ -26,9 +26,8 @@ package androidx.navigationevent {
   }
 
   public abstract class NavigationEventCallback {
-    ctor public NavigationEventCallback(boolean isEnabled, optional boolean isPassThrough);
+    ctor public NavigationEventCallback(boolean isEnabled);
     method public final boolean isEnabled();
-    method public final boolean isPassThrough();
     method public void onEventCancelled();
     method public void onEventCompleted();
     method public void onEventProgressed(androidx.navigationevent.NavigationEvent event);
@@ -36,7 +35,6 @@ package androidx.navigationevent {
     method public final void remove();
     method public final void setEnabled(boolean);
     property public final boolean isEnabled;
-    property public final boolean isPassThrough;
   }
 
   public final class NavigationEventDispatcher {
