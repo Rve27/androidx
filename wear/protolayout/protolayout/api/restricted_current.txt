@@ -1290,6 +1290,7 @@ package androidx.wear.protolayout {
     method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public void clear();
     method public android.os.Bundle collectPendingIntents();
     method public androidx.wear.protolayout.ResourceBuilders.Resources collectResources();
+    method @RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX) public boolean hasResources();
   }
 
   public final class ResourceBuilders {

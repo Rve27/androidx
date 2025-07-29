@@ -40,9 +40,7 @@ import java.util.Objects
  * This class is not thread safe and should only be used from one thread, [MainThread].
  */
 @MainThread
-public class ProtoLayoutScope
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP_PREFIX)
-public constructor() {
+public class ProtoLayoutScope @RestrictTo(Scope.LIBRARY_GROUP_PREFIX) public constructor() {
     /**
      * Maps String key to the [ImageResource] type describing it in ProtoLayout terms.
      *
@@ -118,6 +116,9 @@ public constructor() {
         resources.clear()
         pendingIntents.clear()
     }
+
+    /** Returns whether this scope has any registered [Resources] or not. */
+    @RestrictTo(Scope.LIBRARY_GROUP_PREFIX) public fun hasResources() = !resources.isEmpty()
 
     /**
      * Generates String version of hash codes for all [resources].
