@@ -427,18 +427,6 @@ public final class ModifiersBuilders {
             }
 
             /**
-             * Sets the action to perform when the element this modifier is attached to is clicked.
-             */
-            @RequiresSchemaVersion(major = 1, minor = 0)
-            public @NonNull Builder setOnClick(@NonNull Action onClick) {
-                mImpl.setOnClick(onClick.toActionProto());
-                mFingerprint.recordPropertyUpdate(
-                        2, checkNotNull(onClick.getFingerprint()).aggregateValueAsInt());
-                mPendingIntent = null;
-                return this;
-            }
-
-            /**
              * Sets the minimum width of the clickable area.
              *
              * <p>The default value is 48dp, following the Material design accessibility guideline.
@@ -500,7 +488,7 @@ public final class ModifiersBuilders {
                 return this;
             }
 
-            private @Nullable final ProtoLayoutScope mScope;
+            private final @Nullable ProtoLayoutScope mScope;
             private @Nullable PendingIntent mPendingIntent = null;
 
             /**
@@ -526,6 +514,18 @@ public final class ModifiersBuilders {
             public Builder(@NonNull ProtoLayoutScope scope, @NonNull String clickableId) {
                 this.mScope = scope;
                 setId(clickableId);
+            }
+
+            /**
+             * Sets the action to perform when the element this modifier is attached to is clicked.
+             */
+            @RequiresSchemaVersion(major = 1, minor = 0)
+            public @NonNull Builder setOnClick(@NonNull Action onClick) {
+                mImpl.setOnClick(onClick.toActionProto());
+                mFingerprint.recordPropertyUpdate(
+                        2, checkNotNull(onClick.getFingerprint()).aggregateValueAsInt());
+                mPendingIntent = null;
+                return this;
             }
 
             /**

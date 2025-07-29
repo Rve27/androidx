@@ -106,8 +106,10 @@ public constructor() {
      *
      * Bundle contains (key, value) pairs of [android.os.Parcelable], where `key` is String ID
      * corresponding to the [ModifiersBuilders.Clickable] ID, and `value` is [PendingIntent].
+     *
+     * PendingIntent is registered when building a [ModifiersBuilders.Clickable] which sets a
+     * [PendingIntent] as its click response.
      */
-    // TODO: b/427954838 - Add example API in KDocs on where this is registered.
     public fun collectPendingIntents(): Bundle = pendingIntents.clone() as Bundle
 
     /** Clears mappings for resources and pending intents. */
