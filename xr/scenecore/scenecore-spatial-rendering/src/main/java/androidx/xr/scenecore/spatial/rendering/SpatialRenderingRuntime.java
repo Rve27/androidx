@@ -246,6 +246,16 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     }
 
     @Override
+    public void setNormalZOnWaterMaterial(@NonNull MaterialResource material, float normalZ) {
+        if (!(material instanceof MaterialResourceImpl)) {
+            throw new IllegalArgumentException("MaterialResource is not a MaterialResourceImpl");
+        }
+        mImpressApi.setNormalZOnWaterMaterial(
+                ((MaterialResourceImpl) material).getMaterialToken(), normalZ);
+    }
+
+
+    @Override
     public void startRenderer() {
         if (mSplitEngineRenderer == null || mFrameLoopStarted) {
             return;

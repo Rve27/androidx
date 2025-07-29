@@ -100,6 +100,14 @@ public interface RenderingRuntime {
      */
     public fun setAlphaMapOnWaterMaterial(material: MaterialResource, alphaMap: TextureResource)
 
+    /**
+     * Sets the normal z for the water material.
+     *
+     * @param material The handle of the water material to be updated.
+     * @param normalZ The normal z to use for the water material.
+     */
+    public fun setNormalZOnWaterMaterial(material: MaterialResource, normalZ: Float)
+
     /** Starts the renderer. */
     public fun startRenderer()
 

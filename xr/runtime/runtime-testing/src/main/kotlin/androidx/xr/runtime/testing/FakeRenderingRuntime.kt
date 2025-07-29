@@ -112,6 +112,10 @@ public class FakeRenderingRuntime(
         (material as? FakeWaterMaterial)?.alphaMap = alphaMap
     }
 
+    override fun setNormalZOnWaterMaterial(material: MaterialResource, normalZ: Float) {
+        (material as? FakeWaterMaterial)?.normalZ = normalZ
+    }
+
     override fun startRenderer() {}
 
     override fun stopRenderer() {}
