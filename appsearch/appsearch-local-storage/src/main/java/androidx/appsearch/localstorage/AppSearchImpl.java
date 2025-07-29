@@ -1501,9 +1501,54 @@ public final class AppSearchImpl implements Closeable {
         }
     }
 
+    /**
+     * Creates a {@link DocumentProto} from a {@link GenericDocument}.
+     *
+     * @param packageName   name of the calling package
+     * @param databaseName  database name
+     * @param doc           a {@link GenericDocument}
+     * @param statsBuilder  {@link PutDocumentStats.Builder} to hold the stats for creating
+     *                      {@link DocumentProto}.
+     */
+    @NonNull
+    public static DocumentProto createDocumentProto(
+            @NonNull String packageName,
+            @NonNull String databaseName,
+            @NonNull GenericDocument doc,
+            PutDocumentStats.@Nullable Builder statsBuilder) {
+        long generateDocumentProtoStartTimeMillis = 0;
+        long generateDocumentProtoEndTimeMillis = 0;
+        long rewriteDocumentTypeStartTimeMillis = 0;
+        long rewriteDocumentTypeEndTimeMillis = 0;
+        String prefix = createPrefix(packageName, databaseName);
+
+        // Generate Document Proto
+        generateDocumentProtoStartTimeMillis = SystemClock.elapsedRealtime();
+        DocumentProto.Builder documentBuilder =
+                GenericDocumentToProtoConverter.toDocumentProto(doc).toBuilder();
+        generateDocumentProtoEndTimeMillis = SystemClock.elapsedRealtime();
+
+        // Rewrite Document Type
+        rewriteDocumentTypeStartTimeMillis = SystemClock.elapsedRealtime();
+        addPrefixToDocument(documentBuilder, prefix);
+        rewriteDocumentTypeEndTimeMillis = SystemClock.elapsedRealtime();
+        DocumentProto finalDocument = documentBuilder.build();
+
+        if (statsBuilder != null) {
+            statsBuilder
+                    .setGenerateDocumentProtoLatencyMillis(
+                            (int) (generateDocumentProtoEndTimeMillis
+                                    - generateDocumentProtoStartTimeMillis))
+                    .setRewriteDocumentTypesLatencyMillis(
+                            (int) (rewriteDocumentTypeEndTimeMillis
+                                    - rewriteDocumentTypeStartTimeMillis));
+        }
+
+        return finalDocument;
+    }
 
     /**
-     * Adds a list of documents to the AppSearch index.
+     * Adds a list of {@link GenericDocument} to the AppSearch index.
      *
      * <p>This method belongs to mutate group.
      *
@@ -1528,6 +1573,60 @@ public final class AppSearchImpl implements Closeable {
             @Nullable AppSearchLogger logger,
             PersistType.@NonNull Code persistType,
             CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
+        List<DocumentProto> docProtos = new ArrayList<>();
+        List<PutDocumentStats.Builder> statsBuilders = new ArrayList<>();
+
+        for (int i = 0; i < documents.size(); ++i) {
+            PutDocumentStats.Builder pStatsBuilder =
+                    new PutDocumentStats.Builder(packageName, databaseName);
+            docProtos.add(createDocumentProto(packageName, databaseName,
+                    documents.get(i), pStatsBuilder));
+            statsBuilders.add(pStatsBuilder);
+        }
+
+        batchPutDocuments(packageName,
+                databaseName,
+                docProtos,
+                statsBuilders,
+                batchResultBuilder,
+                sendChangeNotifications,
+                logger,
+                persistType,
+                callStatsBuilder);
+    }
+
+    /**
+     * Adds a list of {@link DocumentProto} to the AppSearch index.
+     *
+     * <p>This method belongs to mutate group.
+     *
+     * @param packageName             The package name that owns this document.
+     * @param databaseName            The databaseName this document resides in.
+     * @param documents               A list of {@link DocumentProto} to index.
+     * @param statsBuilders           The corresponding {@link PutDocumentStats.Builder} to
+     *                                the documents.
+     * @param batchResultBuilder      The builder for returning the batch result.
+     * @param sendChangeNotifications Whether to dispatch
+     *                                {@link DocumentChangeInfo}
+     *                                messages to observers for this change.
+     * @param persistType             The persist type used to call PersistToDisk inside Icing at
+     *                                the end of the Put request. If UNKNOWN, PersistToDisk will not
+     *                                be called. See also {@link #persistToDisk(PersistType.Code)}.
+     * @throws AppSearchException on IcingSearchEngine error.
+     */
+    public void batchPutDocuments(
+            @NonNull String packageName,
+            @NonNull String databaseName,
+            @NonNull List<DocumentProto> documents,
+            @NonNull List<PutDocumentStats.Builder> statsBuilders,
+            AppSearchBatchResult.@Nullable Builder<String, Void> batchResultBuilder,
+            boolean sendChangeNotifications,
+            @Nullable AppSearchLogger logger,
+            PersistType.@NonNull Code persistType,
+            CallStats.@Nullable Builder callStatsBuilder) throws AppSearchException {
+        Preconditions.checkArgument(documents.size() == statsBuilders.size(),
+                "documents and statsBuilders should have same size");
+
         // All the stats we want to print. This may not be necessary,
         // but just to keep the behavior same as before.
         // Use list instead of map as same id can appear more than once.
@@ -1550,9 +1649,9 @@ public final class AppSearchImpl implements Closeable {
             PutDocumentRequest.Builder currentBatchBuilder =
                     PutDocumentRequest.newBuilder().setPersistType(PersistType.Code.UNKNOWN);
             for (int i = 0; i < documents.size(); ++i) {
-                String docId = documents.get(i).getId();
-                PutDocumentStats.Builder pStatsBuilder =
-                        new PutDocumentStats.Builder(packageName, databaseName)
+                DocumentProto finalDocument = documents.get(i);
+                String docId = finalDocument.getUri();
+                PutDocumentStats.Builder pStatsBuilder = statsBuilders.get(i)
                                 .setLaunchVMEnabled(mIsVMEnabled)
                                 .setJavaLockAcquisitionLatencyMillis(
                                         (int) (javaLockAcquisitionEndTimeMillis
@@ -1564,24 +1663,7 @@ public final class AppSearchImpl implements Closeable {
                 // same as before, we will save all the stats created.
                 allStatsList.add(pStatsBuilder);
 
-                long generateDocumentProtoStartTimeMillis = 0;
-                long generateDocumentProtoEndTimeMillis = 0;
-                long rewriteDocumentTypeStartTimeMillis = 0;
-                long rewriteDocumentTypeEndTimeMillis = 0;
                 try {
-                    // Generate Document Proto
-                    generateDocumentProtoStartTimeMillis = SystemClock.elapsedRealtime();
-                    DocumentProto.Builder documentBuilder =
-                            GenericDocumentToProtoConverter.toDocumentProto(documents.get(i))
-                                    .toBuilder();
-                    generateDocumentProtoEndTimeMillis = SystemClock.elapsedRealtime();
-
-                    // Rewrite Document Type
-                    rewriteDocumentTypeStartTimeMillis = SystemClock.elapsedRealtime();
-                    addPrefixToDocument(documentBuilder, prefix);
-                    rewriteDocumentTypeEndTimeMillis = SystemClock.elapsedRealtime();
-                    DocumentProto finalDocument = documentBuilder.build();
-
                     // Check limits
                     int serializedSizeBytes = finalDocument.getSerializedSize();
                     enforceLimitConfigLocked(packageName, docId, serializedSizeBytes,
@@ -1614,21 +1696,6 @@ public final class AppSearchImpl implements Closeable {
                     if (batchResultBuilder != null) {
                         batchResultBuilder.setResult(docId, throwableToFailedResult(t));
                     }
-                } finally {
-                    //
-                    // At this point, the doc has either been put in the requestProto, or error
-                    // result be put in batchResultBuilder.
-                    //
-
-                    pStatsBuilder
-                            .setGenerateDocumentProtoLatencyMillis(
-                                    (int)
-                                            (generateDocumentProtoEndTimeMillis
-                                                    - generateDocumentProtoStartTimeMillis))
-                            .setRewriteDocumentTypesLatencyMillis(
-                                    (int)
-                                            (rewriteDocumentTypeEndTimeMillis
-                                                    - rewriteDocumentTypeStartTimeMillis));
                 }
             }
 
