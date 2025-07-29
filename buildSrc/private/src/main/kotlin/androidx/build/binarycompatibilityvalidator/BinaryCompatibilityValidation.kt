@@ -25,7 +25,9 @@ import androidx.build.checkapi.getBcvFileDirectory
 import androidx.build.checkapi.getBuiltBcvFileDirectory
 import androidx.build.checkapi.getRequiredCompatibilityApiFileFromDir
 import androidx.build.checkapi.shouldWriteVersionedApiFile
+import androidx.build.getDistributionDirectory
 import androidx.build.getLibraryByName
+import androidx.build.getSupportRootFolder
 import androidx.build.metalava.UpdateApiTask
 import androidx.build.uptodatedness.cacheEvenIfNoOutputs
 import androidx.build.version
@@ -162,9 +164,19 @@ class BinaryCompatibilityValidation(
             it.checkedInDump = projectApiFile
             it.builtDump = generatedApiFile
             it.projectAbiDir.set(projectAbiDir)
+            it.debugOutFile.set(
+                project.getDistributionDirectory().let { outDir ->
+                    val projectDirPath =
+                        project.projectDir.path.removePrefix(
+                            project.getSupportRootFolder().path + "/"
+                        )
+                    // e.g. out/bcv/foo/bar/bar
+                    outDir.resolve("bcv").resolve(projectDirPath).resolve("actual_current.txt")
+                }
+            )
             it.group = ABI_GROUP_NAME
             it.cacheEvenIfNoOutputs()
-            it.shouldWriteVersionedApiFile.set(project.shouldWriteVersionedApiFile())
+            it.shouldWriteVersionedAbiFile.set(project.shouldWriteVersionedApiFile())
             it.version.set(projectVersion.toString())
         }
 
