@@ -222,6 +222,16 @@ class SpatialRenderingRuntime implements RenderingRuntime {
     }
 
     @Override
+    public void setAlphaStepMultiplierOnWaterMaterial(
+            @NonNull MaterialResource material, float alphaStepMultiplier) {
+        if (!(material instanceof MaterialResourceImpl)) {
+            throw new IllegalArgumentException("MaterialResource is not a MaterialResourceImpl");
+        }
+        mImpressApi.setAlphaStepMultiplierOnWaterMaterial(
+                ((MaterialResourceImpl) material).getMaterialToken(), alphaStepMultiplier);
+    }
+
+    @Override
     public void startRenderer() {
         if (mSplitEngineRenderer == null || mFrameLoopStarted) {
             return;

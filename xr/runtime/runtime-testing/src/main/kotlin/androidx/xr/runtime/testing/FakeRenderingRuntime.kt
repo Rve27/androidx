@@ -101,6 +101,13 @@ public class FakeRenderingRuntime(
         (material as? FakeWaterMaterial)?.normalSpeed = normalSpeed
     }
 
+    override fun setAlphaStepMultiplierOnWaterMaterial(
+        material: MaterialResource,
+        alphaStepMultiplier: Float,
+    ) {
+        (material as? FakeWaterMaterial)?.alphaStepMultiplier = alphaStepMultiplier
+    }
+
     override fun startRenderer() {}
 
     override fun stopRenderer() {}

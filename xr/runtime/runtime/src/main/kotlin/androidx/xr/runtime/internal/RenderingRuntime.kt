@@ -81,6 +81,17 @@ public interface RenderingRuntime {
      */
     public fun setNormalSpeedOnWaterMaterial(material: MaterialResource, normalSpeed: Float)
 
+    /**
+     * Sets the alpha step multiplier for the water material.
+     *
+     * @param material The handle of the water material to be updated.
+     * @param alphaStepMultiplier The alpha step multiplier to use for the water material.
+     */
+    public fun setAlphaStepMultiplierOnWaterMaterial(
+        material: MaterialResource,
+        alphaStepMultiplier: Float,
+    )
+
     /** Starts the renderer. */
     public fun startRenderer()
 
