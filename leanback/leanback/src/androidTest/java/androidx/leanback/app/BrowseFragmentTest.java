@@ -93,14 +93,8 @@ public class BrowseFragmentTest {
         PollingCheck.waitFor(WAIT_TRANSIITON_TIMEOUT, new PollingCheck.PollingCheckCondition() {
             @Override
             public boolean canProceed() {
-                if (Build.VERSION.SDK_INT >= 21) {
-                    return mActivity.getBrowseTestFragment() != null
-                            && mActivity.getBrowseTestFragment().mEntranceTransitionEnded;
-                } else {
-                    // when entrance transition not supported, wait main fragment loaded.
-                    return mActivity.getBrowseTestFragment() != null
-                            && mActivity.getBrowseTestFragment().getMainFragment() != null;
-                }
+                return mActivity.getBrowseTestFragment() != null
+                        && mActivity.getBrowseTestFragment().mEntranceTransitionEnded;
             }
         });
     }
