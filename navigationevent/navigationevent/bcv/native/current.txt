@@ -80,6 +80,15 @@ final class androidx.navigationevent/NavigationEventDispatcher { // androidx.nav
     final fun hasEnabledCallbacks(): kotlin/Boolean // androidx.navigationevent/NavigationEventDispatcher.hasEnabledCallbacks|hasEnabledCallbacks(){}[0]
 }
 
+final class androidx.navigationevent/NavigationEventInputHandler : androidx.navigationevent/AbstractNavigationEventInputHandler { // androidx.navigationevent/NavigationEventInputHandler|null[0]
+    constructor <init>(androidx.navigationevent/NavigationEventDispatcher) // androidx.navigationevent/NavigationEventInputHandler.<init>|<init>(androidx.navigationevent.NavigationEventDispatcher){}[0]
+
+    final fun sendOnCancelled() // androidx.navigationevent/NavigationEventInputHandler.sendOnCancelled|sendOnCancelled(){}[0]
+    final fun sendOnCompleted() // androidx.navigationevent/NavigationEventInputHandler.sendOnCompleted|sendOnCompleted(){}[0]
+    final fun sendOnProgressed(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventInputHandler.sendOnProgressed|sendOnProgressed(androidx.navigationevent.NavigationEvent){}[0]
+    final fun sendOnStarted(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventInputHandler.sendOnStarted|sendOnStarted(androidx.navigationevent.NavigationEvent){}[0]
+}
+
 final value class androidx.navigationevent/NavigationEventPriority { // androidx.navigationevent/NavigationEventPriority|null[0]
     final fun equals(kotlin/Any?): kotlin/Boolean // androidx.navigationevent/NavigationEventPriority.equals|equals(kotlin.Any?){}[0]
     final fun hashCode(): kotlin/Int // androidx.navigationevent/NavigationEventPriority.hashCode|hashCode(){}[0]
@@ -91,13 +100,4 @@ final value class androidx.navigationevent/NavigationEventPriority { // androidx
         final val Overlay // androidx.navigationevent/NavigationEventPriority.Companion.Overlay|{}Overlay[0]
             final fun <get-Overlay>(): androidx.navigationevent/NavigationEventPriority // androidx.navigationevent/NavigationEventPriority.Companion.Overlay.<get-Overlay>|<get-Overlay>(){}[0]
     }
-}
-
-open class androidx.navigationevent/NavigationEventInputHandler : androidx.navigationevent/AbstractNavigationEventInputHandler { // androidx.navigationevent/NavigationEventInputHandler|null[0]
-    constructor <init>(androidx.navigationevent/NavigationEventDispatcher) // androidx.navigationevent/NavigationEventInputHandler.<init>|<init>(androidx.navigationevent.NavigationEventDispatcher){}[0]
-
-    final fun sendOnCancelled() // androidx.navigationevent/NavigationEventInputHandler.sendOnCancelled|sendOnCancelled(){}[0]
-    final fun sendOnCompleted() // androidx.navigationevent/NavigationEventInputHandler.sendOnCompleted|sendOnCompleted(){}[0]
-    final fun sendOnProgressed(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventInputHandler.sendOnProgressed|sendOnProgressed(androidx.navigationevent.NavigationEvent){}[0]
-    final fun sendOnStarted(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventInputHandler.sendOnStarted|sendOnStarted(androidx.navigationevent.NavigationEvent){}[0]
 }

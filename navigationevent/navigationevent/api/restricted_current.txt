@@ -63,12 +63,12 @@ package androidx.navigationevent {
     property public abstract androidx.navigationevent.NavigationEventDispatcher navigationEventDispatcher;
   }
 
-  public class NavigationEventInputHandler extends androidx.navigationevent.AbstractNavigationEventInputHandler {
+  public final class NavigationEventInputHandler extends androidx.navigationevent.AbstractNavigationEventInputHandler {
     ctor public NavigationEventInputHandler(androidx.navigationevent.NavigationEventDispatcher dispatcher);
-    method @MainThread public final void sendOnCancelled();
-    method @MainThread public final void sendOnCompleted();
-    method @MainThread public final void sendOnProgressed(androidx.navigationevent.NavigationEvent event);
-    method @MainThread public final void sendOnStarted(androidx.navigationevent.NavigationEvent event);
+    method @MainThread public void sendOnCancelled();
+    method @MainThread public void sendOnCompleted();
+    method @MainThread public void sendOnProgressed(androidx.navigationevent.NavigationEvent event);
+    method @MainThread public void sendOnStarted(androidx.navigationevent.NavigationEvent event);
   }
 
   @kotlin.jvm.JvmInline public final value class NavigationEventPriority {
@@ -84,7 +84,7 @@ package androidx.navigationevent {
     property public androidx.navigationevent.NavigationEventPriority Overlay;
   }
 
-  @RequiresApi(33) public final class OnBackInvokedInputHandler extends androidx.navigationevent.NavigationEventInputHandler {
+  @RequiresApi(33) public final class OnBackInvokedInputHandler extends androidx.navigationevent.AbstractNavigationEventInputHandler {
     ctor public OnBackInvokedInputHandler(androidx.navigationevent.NavigationEventDispatcher dispatcher, android.window.OnBackInvokedDispatcher onBackInvokedDispatcher);
   }
 

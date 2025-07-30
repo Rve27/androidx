@@ -28,7 +28,7 @@ import androidx.annotation.RequiresApi
 public class OnBackInvokedInputHandler(
     dispatcher: NavigationEventDispatcher,
     private val onBackInvokedDispatcher: OnBackInvokedDispatcher,
-) : NavigationEventInputHandler(dispatcher) {
+) : AbstractNavigationEventInputHandler(dispatcher) {
     private val onBackInvokedCallback: OnBackInvokedCallback =
         if (Build.VERSION.SDK_INT == 33) {
             OnBackInvokedCallback { dispatchOnCompleted() }

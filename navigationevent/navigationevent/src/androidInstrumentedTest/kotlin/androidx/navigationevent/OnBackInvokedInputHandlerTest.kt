@@ -16,10 +16,6 @@
 
 package androidx.navigationevent
 
-import android.os.Build
-import android.window.OnBackInvokedCallback
-import android.window.OnBackInvokedDispatcher
-import androidx.navigationevent.testing.TestNavigationEvent
 import androidx.navigationevent.testing.TestNavigationEventCallback
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
@@ -30,23 +26,12 @@ import org.junit.runner.RunWith
 
 @SmallTest
 @RunWith(AndroidJUnit4::class)
-@SdkSuppress(minSdkVersion = Build.VERSION_CODES.TIRAMISU)
+@SdkSuppress(minSdkVersion = 33)
 class OnBackInvokedInputHandlerTest {
 
     @Test
     fun testSimpleInvoker() {
-        var registerCount = 0
-        var unregisterCount = 0
-        val invoker =
-            object : OnBackInvokedDispatcher {
-                override fun registerOnBackInvokedCallback(p0: Int, p1: OnBackInvokedCallback) {
-                    registerCount++
-                }
-
-                override fun unregisterOnBackInvokedCallback(p0: OnBackInvokedCallback) {
-                    unregisterCount++
-                }
-            }
+        val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
         OnBackInvokedInputHandler(dispatcher, invoker)
@@ -55,27 +40,16 @@ class OnBackInvokedInputHandlerTest {
 
         dispatcher.addCallback(callback)
 
-        assertThat(registerCount).isEqualTo(1)
+        assertThat(invoker.registerCount).isEqualTo(1)
 
         callback.remove()
 
-        assertThat(unregisterCount).isEqualTo(1)
+        assertThat(invoker.unregisterCount).isEqualTo(1)
     }
 
     @Test
     fun testInvokerEnableDisable() {
-        var registerCount = 0
-        var unregisterCount = 0
-        val invoker =
-            object : OnBackInvokedDispatcher {
-                override fun registerOnBackInvokedCallback(p0: Int, p1: OnBackInvokedCallback) {
-                    registerCount++
-                }
-
-                override fun unregisterOnBackInvokedCallback(p0: OnBackInvokedCallback) {
-                    unregisterCount++
-                }
-            }
+        val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
 
@@ -85,15 +59,15 @@ class OnBackInvokedInputHandlerTest {
 
         dispatcher.addCallback(callback)
 
-        assertThat(registerCount).isEqualTo(1)
+        assertThat(invoker.registerCount).isEqualTo(1)
 
         callback.isEnabled = false
 
-        assertThat(unregisterCount).isEqualTo(1)
+        assertThat(invoker.unregisterCount).isEqualTo(1)
 
         callback.isEnabled = true
 
-        assertThat(registerCount).isEqualTo(2)
+        assertThat(invoker.registerCount).isEqualTo(2)
     }
 
     @Test
@@ -110,18 +84,7 @@ class OnBackInvokedInputHandlerTest {
 
     @Test
     fun testInvokerAddDisabledCallback() {
-        var registerCount = 0
-        var unregisterCount = 0
-        val invoker =
-            object : OnBackInvokedDispatcher {
-                override fun registerOnBackInvokedCallback(p0: Int, p1: OnBackInvokedCallback) {
-                    registerCount++
-                }
-
-                override fun unregisterOnBackInvokedCallback(p0: OnBackInvokedCallback) {
-                    unregisterCount++
-                }
-            }
+        val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
 
@@ -131,31 +94,20 @@ class OnBackInvokedInputHandlerTest {
 
         dispatcher.addCallback(callback)
 
-        assertThat(registerCount).isEqualTo(0)
+        assertThat(invoker.registerCount).isEqualTo(0)
 
         callback.isEnabled = true
 
-        assertThat(registerCount).isEqualTo(1)
+        assertThat(invoker.registerCount).isEqualTo(1)
 
         callback.isEnabled = false
 
-        assertThat(unregisterCount).isEqualTo(1)
+        assertThat(invoker.unregisterCount).isEqualTo(1)
     }
 
     @Test
     fun testInvokerAddEnabledCallbackBeforeSet() {
-        var registerCount = 0
-        var unregisterCount = 0
-        val invoker =
-            object : OnBackInvokedDispatcher {
-                override fun registerOnBackInvokedCallback(p0: Int, p1: OnBackInvokedCallback) {
-                    registerCount++
-                }
-
-                override fun unregisterOnBackInvokedCallback(p0: OnBackInvokedCallback) {
-                    unregisterCount++
-                }
-            }
+        val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
 
@@ -165,27 +117,17 @@ class OnBackInvokedInputHandlerTest {
 
         OnBackInvokedInputHandler(dispatcher, invoker)
 
-        assertThat(registerCount).isEqualTo(1)
+        assertThat(invoker.registerCount).isEqualTo(1)
 
         callback.isEnabled = false
 
-        assertThat(unregisterCount).isEqualTo(1)
+        assertThat(invoker.unregisterCount).isEqualTo(1)
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 34)
     fun testSimpleAnimatedCallback() {
-        var registerCount = 0
-        var unregisterCount = 0
-        val invoker =
-            object : OnBackInvokedDispatcher {
-                override fun registerOnBackInvokedCallback(p0: Int, p1: OnBackInvokedCallback) {
-                    registerCount++
-                }
-
-                override fun unregisterOnBackInvokedCallback(p0: OnBackInvokedCallback) {
-                    unregisterCount++
-                }
-            }
+        val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
 
@@ -195,36 +137,26 @@ class OnBackInvokedInputHandlerTest {
 
         dispatcher.addCallback(callback)
 
-        assertThat(registerCount).isEqualTo(1)
+        assertThat(invoker.registerCount).isEqualTo(1)
 
-        inputHandler.sendOnStarted(TestNavigationEvent())
+        invoker.dispatchOnBackStarted(TestBackEvent())
         assertThat(callback.startedInvocations).isEqualTo(1)
 
-        inputHandler.sendOnProgressed(TestNavigationEvent())
+        invoker.dispatchOnBackProgressed(TestBackEvent())
         assertThat(callback.progressedInvocations).isEqualTo(1)
 
-        inputHandler.sendOnCancelled()
+        invoker.dispatchOnBackCancelled()
         assertThat(callback.cancelledInvocations).isEqualTo(1)
 
         callback.remove()
 
-        assertThat(unregisterCount).isEqualTo(1)
+        assertThat(invoker.unregisterCount).isEqualTo(1)
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 34)
     fun testSimpleAnimatedCallbackRemovedCancel() {
-        var registerCount = 0
-        var unregisterCount = 0
-        val invoker =
-            object : OnBackInvokedDispatcher {
-                override fun registerOnBackInvokedCallback(p0: Int, p1: OnBackInvokedCallback) {
-                    registerCount++
-                }
-
-                override fun unregisterOnBackInvokedCallback(p0: OnBackInvokedCallback) {
-                    unregisterCount++
-                }
-            }
+        val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
 
@@ -234,30 +166,20 @@ class OnBackInvokedInputHandlerTest {
 
         dispatcher.addCallback(callback)
 
-        assertThat(registerCount).isEqualTo(1)
+        assertThat(invoker.registerCount).isEqualTo(1)
 
-        inputHandler.sendOnStarted(TestNavigationEvent())
+        invoker.dispatchOnBackStarted(TestBackEvent())
 
         callback.remove()
         assertThat(callback.cancelledInvocations).isEqualTo(1)
 
-        assertThat(unregisterCount).isEqualTo(1)
+        assertThat(invoker.unregisterCount).isEqualTo(1)
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 34)
     fun testSimpleAnimatedCallbackRemovedCancelInHandleOnStarted() {
-        var registerCount = 0
-        var unregisterCount = 0
-        val invoker =
-            object : OnBackInvokedDispatcher {
-                override fun registerOnBackInvokedCallback(p0: Int, p1: OnBackInvokedCallback) {
-                    registerCount++
-                }
-
-                override fun unregisterOnBackInvokedCallback(p0: OnBackInvokedCallback) {
-                    unregisterCount++
-                }
-            }
+        val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
 
@@ -267,30 +189,19 @@ class OnBackInvokedInputHandlerTest {
 
         dispatcher.addCallback(callback)
 
-        assertThat(registerCount).isEqualTo(1)
+        assertThat(invoker.registerCount).isEqualTo(1)
 
-        inputHandler.sendOnStarted(TestNavigationEvent())
+        invoker.dispatchOnBackStarted(TestBackEvent())
 
         assertThat(callback.cancelledInvocations).isEqualTo(1)
 
-        assertThat(unregisterCount).isEqualTo(1)
+        assertThat(invoker.unregisterCount).isEqualTo(1)
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 34)
     fun testSimpleAnimatedCallbackAddedContinue() {
-        var registerCount = 0
-        var unregisterCount = 0
-        val invoker =
-            object : OnBackInvokedDispatcher {
-                override fun registerOnBackInvokedCallback(p0: Int, p1: OnBackInvokedCallback) {
-                    registerCount++
-                }
-
-                override fun unregisterOnBackInvokedCallback(p0: OnBackInvokedCallback) {
-                    unregisterCount++
-                }
-            }
-
+        val invoker = TestOnBackInvokedDispatcher()
         val dispatcher = NavigationEventDispatcher {}
 
         val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
@@ -299,31 +210,21 @@ class OnBackInvokedInputHandlerTest {
 
         dispatcher.addCallback(callback)
 
-        assertThat(registerCount).isEqualTo(1)
+        assertThat(invoker.registerCount).isEqualTo(1)
 
-        inputHandler.sendOnStarted(TestNavigationEvent())
+        invoker.dispatchOnBackStarted(TestBackEvent())
 
         dispatcher.addCallback(TestNavigationEventCallback())
 
-        inputHandler.sendOnCompleted()
+        invoker.dispatchOnBackInvoked()
 
         assertThat(callback.completedInvocations).isEqualTo(1)
     }
 
     @Test
+    @SdkSuppress(minSdkVersion = 34)
     fun testDoubleStartCallbackCausesCancel() {
-        var registerCount = 0
-        var unregisterCount = 0
-        val invoker =
-            object : OnBackInvokedDispatcher {
-                override fun registerOnBackInvokedCallback(p0: Int, p1: OnBackInvokedCallback) {
-                    registerCount++
-                }
-
-                override fun unregisterOnBackInvokedCallback(p0: OnBackInvokedCallback) {
-                    unregisterCount++
-                }
-            }
+        val invoker = TestOnBackInvokedDispatcher()
 
         val dispatcher = NavigationEventDispatcher {}
         val inputHandler = OnBackInvokedInputHandler(dispatcher, invoker)
@@ -332,17 +233,17 @@ class OnBackInvokedInputHandlerTest {
 
         dispatcher.addCallback(callback1)
 
-        assertThat(registerCount).isEqualTo(1)
+        assertThat(invoker.registerCount).isEqualTo(1)
 
-        inputHandler.sendOnStarted(TestNavigationEvent())
+        invoker.dispatchOnBackStarted(TestBackEvent())
 
         val callback2 = TestNavigationEventCallback()
 
         dispatcher.addCallback(callback2)
 
-        inputHandler.sendOnStarted(TestNavigationEvent())
+        invoker.dispatchOnBackStarted(TestBackEvent())
 
-        assertThat(registerCount).isEqualTo(1)
+        assertThat(invoker.registerCount).isEqualTo(1)
 
         assertThat(callback1.cancelledInvocations).isEqualTo(1)
 
