@@ -25,7 +25,7 @@ buildscript {
 
     dependencies {
         // upgrade protobuf to be compatible with AGP
-        classpath("com.google.protobuf:protobuf-java:3.22.3")
+        classpath("com.google.protobuf:protobuf-java:3.25.5")
         classpath("com.gradle:develocity-gradle-plugin:4.1")
         classpath("com.gradle:common-custom-user-data-gradle-plugin:2.3")
         classpath("androidx.build.gradle.gcpbuildcache:gcpbuildcache:1.0.0")
