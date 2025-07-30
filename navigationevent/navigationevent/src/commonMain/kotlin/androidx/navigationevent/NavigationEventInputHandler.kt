@@ -26,22 +26,22 @@ import androidx.annotation.MainThread
 public class NavigationEventInputHandler(dispatcher: NavigationEventDispatcher) :
     AbstractNavigationEventInputHandler(dispatcher) {
     @MainThread
-    public fun sendOnStarted(event: NavigationEvent) {
+    public fun handleOnStarted(event: NavigationEvent) {
         dispatchOnStarted(event)
     }
 
     @MainThread
-    public fun sendOnProgressed(event: NavigationEvent) {
+    public fun handleOnProgressed(event: NavigationEvent) {
         dispatchOnProgressed(event)
     }
 
     @MainThread
-    public fun sendOnCompleted() {
+    public fun handleOnCompleted() {
         dispatchOnCompleted()
     }
 
     @MainThread
-    public fun sendOnCancelled() {
+    public fun handleOnCancelled() {
         dispatchOnCancelled()
     }
 }

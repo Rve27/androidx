@@ -187,13 +187,13 @@ class NavDisplayPredictiveBackTest {
         assertThat(composeTestRule.onNodeWithText("numberOnScreen2: 4").isDisplayed()).isTrue()
 
         composeTestRule.runOnIdle {
-            inputHandler.sendOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, BackEvent.EDGE_LEFT))
-            inputHandler.sendOnProgressed(NavigationEvent(0.1F, 0.1F, 0.5F, BackEvent.EDGE_LEFT))
+            inputHandler.handleOnStarted(NavigationEvent(0.1F, 0.1F, 0.1F, BackEvent.EDGE_LEFT))
+            inputHandler.handleOnProgressed(NavigationEvent(0.1F, 0.1F, 0.5F, BackEvent.EDGE_LEFT))
         }
 
         composeTestRule.waitForIdle()
 
-        composeTestRule.runOnIdle { inputHandler.sendOnCompleted() }
+        composeTestRule.runOnIdle { inputHandler.handleOnCompleted() }
 
         composeTestRule.runOnIdle {
             assertWithMessage("The number should be restored")

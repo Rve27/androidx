@@ -65,10 +65,10 @@ package androidx.navigationevent {
 
   public final class NavigationEventInputHandler extends androidx.navigationevent.AbstractNavigationEventInputHandler {
     ctor public NavigationEventInputHandler(androidx.navigationevent.NavigationEventDispatcher dispatcher);
-    method @MainThread public void sendOnCancelled();
-    method @MainThread public void sendOnCompleted();
-    method @MainThread public void sendOnProgressed(androidx.navigationevent.NavigationEvent event);
-    method @MainThread public void sendOnStarted(androidx.navigationevent.NavigationEvent event);
+    method @MainThread public void handleOnCancelled();
+    method @MainThread public void handleOnCompleted();
+    method @MainThread public void handleOnProgressed(androidx.navigationevent.NavigationEvent event);
+    method @MainThread public void handleOnStarted(androidx.navigationevent.NavigationEvent event);
   }
 
   @kotlin.jvm.JvmInline public final value class NavigationEventPriority {

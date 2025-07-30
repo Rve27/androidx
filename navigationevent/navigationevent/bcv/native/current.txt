@@ -83,10 +83,10 @@ final class androidx.navigationevent/NavigationEventDispatcher { // androidx.nav
 final class androidx.navigationevent/NavigationEventInputHandler : androidx.navigationevent/AbstractNavigationEventInputHandler { // androidx.navigationevent/NavigationEventInputHandler|null[0]
     constructor <init>(androidx.navigationevent/NavigationEventDispatcher) // androidx.navigationevent/NavigationEventInputHandler.<init>|<init>(androidx.navigationevent.NavigationEventDispatcher){}[0]
 
-    final fun sendOnCancelled() // androidx.navigationevent/NavigationEventInputHandler.sendOnCancelled|sendOnCancelled(){}[0]
-    final fun sendOnCompleted() // androidx.navigationevent/NavigationEventInputHandler.sendOnCompleted|sendOnCompleted(){}[0]
-    final fun sendOnProgressed(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventInputHandler.sendOnProgressed|sendOnProgressed(androidx.navigationevent.NavigationEvent){}[0]
-    final fun sendOnStarted(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventInputHandler.sendOnStarted|sendOnStarted(androidx.navigationevent.NavigationEvent){}[0]
+    final fun handleOnCancelled() // androidx.navigationevent/NavigationEventInputHandler.handleOnCancelled|handleOnCancelled(){}[0]
+    final fun handleOnCompleted() // androidx.navigationevent/NavigationEventInputHandler.handleOnCompleted|handleOnCompleted(){}[0]
+    final fun handleOnProgressed(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventInputHandler.handleOnProgressed|handleOnProgressed(androidx.navigationevent.NavigationEvent){}[0]
+    final fun handleOnStarted(androidx.navigationevent/NavigationEvent) // androidx.navigationevent/NavigationEventInputHandler.handleOnStarted|handleOnStarted(androidx.navigationevent.NavigationEvent){}[0]
 }
 
 final value class androidx.navigationevent/NavigationEventPriority { // androidx.navigationevent/NavigationEventPriority|null[0]
