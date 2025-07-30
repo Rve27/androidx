@@ -791,6 +791,20 @@ class AppFunctionCompilerTest {
     }
 
     @Test
+    fun testGenerateSerializableComponentRegistry() {
+        val report =
+            compilationTestHelper.compileAll(
+                sourceFileNames = listOf("FakeFreeFormFunctionsWithDetailedKdocs.KT")
+            )
+
+        compilationTestHelper.assertSuccessWithSourceContent(
+            report = report,
+            expectGeneratedSourceFileName = "${'$'}Main_SerializableComponentRegistry.kt",
+            goldenFileName = "${'$'}Main_SerializableComponentRegistry.KT",
+        )
+    }
+
+    @Test
     fun testGenerateAggregateInventoryImpl() {
         val report =
             compilationTestHelper.compileAll(

@@ -75,6 +75,7 @@ public annotation class AppFunctionComponentRegistry(
     AppFunctionComponentCategory.INVOKER,
     AppFunctionComponentCategory.FUNCTION,
     AppFunctionComponentCategory.SCHEMA_DEFINITION,
+    AppFunctionComponentCategory.SERIALIZABLE,
 )
 @Retention(AnnotationRetention.SOURCE)
 internal annotation class AppFunctionComponentCategory {
@@ -91,7 +92,9 @@ internal annotation class AppFunctionComponentCategory {
         const val INVOKER: String = "INVOKER"
         /**
          * The components in function category are used to generate the asset XML file for platform
-         * indexer to index available functions from the app.
+         * indexer to index available functions from the app. Their
+         * [AppFunctionComponentRegistry.componentDocStrings] are used to populate the function,
+         * parameter and response description elements in the XML file.
          */
         const val FUNCTION: String = "FUNCTION"
 
@@ -100,5 +103,12 @@ internal annotation class AppFunctionComponentCategory {
          * function metadata based on the schema.
          */
         const val SCHEMA_DEFINITION: String = "SCHEMA_DEFINITION"
+
+        /**
+         * The components in serializable category provide the data type description elements in the
+         * common components in the indexer's XML file through
+         * [AppFunctionComponentRegistry.componentDocStrings].
+         */
+        const val SERIALIZABLE: String = "SERIALIZABLE"
     }
 }

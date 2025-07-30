@@ -72,6 +72,7 @@ object IntrospectionHelper {
             const val INVOKER = "INVOKER"
             const val FUNCTION = "FUNCTION"
             const val SCHEMA_DEFINITION = "SCHEMA_DEFINITION"
+            const val SERIALIZABLE = "SERIALIZABLE"
         }
     }
 

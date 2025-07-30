@@ -82,7 +82,10 @@ class AppFunctionComponentRegistryGenerator(private val codeGenerator: CodeGener
                         add("]")
                     }
                 )
-        if (category == AppFunctionComponentRegistryAnnotation.Category.FUNCTION) {
+        if (
+            category == AppFunctionComponentRegistryAnnotation.Category.FUNCTION ||
+                category == AppFunctionComponentRegistryAnnotation.Category.SERIALIZABLE
+        ) {
             annotationBuilder.addMember(
                 buildCodeBlock {
                     addStatement(

@@ -90,9 +90,35 @@ class AppFunctionComponentRegistryProcessor(private val codeGenerator: CodeGener
         hasProcessed = true
 
         generateFunctionComponentRegistry(resolver)
+        generateSerializableComponentRegistry(resolver)
         generateSchemaDefinitionComponentRegistry(resolver)
 
         return emptyList()
+    }
+
+    @OptIn(KspExperimental::class)
+    private fun generateSerializableComponentRegistry(resolver: Resolver) {
+        val annotatedSerializables =
+            AppFunctionSymbolResolver(resolver).resolveAnnotatedAppFunctionSerializables()
+        val serializableComponents =
+            annotatedSerializables.map { annotatedSerializable ->
+                AppFunctionComponent(
+                    qualifiedName = annotatedSerializable.jvmQualifiedName,
+                    docString =
+                        if (annotatedSerializable.isDescribedByKdoc) {
+                            annotatedSerializable.description
+                        } else {
+                            ""
+                        },
+                )
+            }
+
+        AppFunctionComponentRegistryGenerator(codeGenerator)
+            .generateRegistry(
+                resolver.getModuleName().asString(),
+                AppFunctionComponentRegistryAnnotation.Category.SERIALIZABLE,
+                serializableComponents,
+            )
     }
 
     @OptIn(KspExperimental::class)
