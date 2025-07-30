@@ -24,7 +24,7 @@ import androidx.annotation.RestrictTo
 import androidx.credentials.CreateCredentialResponse
 import androidx.credentials.provider.CallingAppInfo
 import androidx.credentials.provider.ProviderCreateCredentialRequest
-import androidx.credentials.provider.ProviderSignalCredentialStateRequest
+import androidx.credentials.providerevents.signal.ProviderSignalCredentialStateRequest
 import androidx.credentials.providerevents.transfer.CredentialTransferCapabilitiesRequest
 import androidx.credentials.providerevents.transfer.ExportCredentialsRequest
 import androidx.credentials.providerevents.transfer.ImportCredentialsRequest
@@ -102,13 +102,18 @@ public class ConversionUtils {
             if (callingAppInfo == null) {
                 return null
             }
-            val signalRequest =
-                androidx.credentials.SignalCredentialStateRequest.createFrom(
-                    request.type,
-                    request.requestData,
-                    request.origin,
-                )
-            return ProviderSignalCredentialStateRequest(signalRequest, callingAppInfo)
+            var signalRequest: androidx.credentials.SignalCredentialStateRequest? = null
+            try {
+                signalRequest =
+                    androidx.credentials.SignalCredentialStateRequest.createFrom(
+                        request.type,
+                        request.requestData,
+                        request.origin,
+                    )
+            } catch (e: IllegalArgumentException) {
+                Log.e(TAG, e.message ?: "Signal request conversion failed")
+            }
+            return ProviderSignalCredentialStateRequest(signalRequest!!, callingAppInfo)
         }
 
         @Suppress("RestrictedApiAndroidX")

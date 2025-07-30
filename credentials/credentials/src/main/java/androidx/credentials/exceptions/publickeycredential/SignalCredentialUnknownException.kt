@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package androidx.credentials
+package androidx.credentials.exceptions.publickeycredential
 
 /**
- * Received by calling apps on successful propagation of a signal credential state request to the
- * user's credential providers.
+ * This is thrown when the signal credential state operation failed with no more detailed
+ * information.
  *
- * This is an empty response and simply indicates the signal request has been successfully passed to
- * the providers.
+ * @see androidx.credentials.CredentialManager
  */
-class SignalCredentialStateResponse {}
+class SignalCredentialUnknownException
+@JvmOverloads
+constructor(errorMessage: CharSequence? = null) :
+    SignalCredentialStateException(TYPE_SIGNAL_CREDENTIAL_STATE_UNKNOWN_EXCEPTION, errorMessage) {
+    internal companion object {
+        internal const val TYPE_SIGNAL_CREDENTIAL_STATE_UNKNOWN_EXCEPTION =
+            "androidx.credentials.SignalCredentialStateException.TYPE_UNKNOWN"
+    }
+}

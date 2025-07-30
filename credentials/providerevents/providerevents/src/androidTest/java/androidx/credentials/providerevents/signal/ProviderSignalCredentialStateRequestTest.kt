@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package androidx.credentials.provider
+package androidx.credentials.providerevents.signal
 
-import android.os.Bundle
 import androidx.credentials.SignalUnknownCredentialRequest
-import androidx.credentials.assertEquals
-import androidx.credentials.getTestCallingAppInfo
+import androidx.credentials.providerevents.getTestCallingAppInfo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SdkSuppress
 import androidx.test.filters.SmallTest
-import androidx.testutils.assertThrows
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -40,31 +37,5 @@ class ProviderSignalCredentialStateRequestTest {
             )
 
         ProviderSignalCredentialStateRequest(request, getTestCallingAppInfo("origin"))
-    }
-
-    @Test
-    fun bundleConversion_success() {
-        val request =
-            ProviderSignalCredentialStateRequest(
-                SignalUnknownCredentialRequest(
-                    requestJson = "{\"rpId\":\"example.com\",\"credentialId\":\"Zm9vYmFy\"}",
-                    origin = "origin",
-                ),
-                getTestCallingAppInfo("origin"),
-            )
-
-        val actualRequest =
-            ProviderSignalCredentialStateRequest.fromBundle(
-                ProviderSignalCredentialStateRequest.asBundle(request)
-            )
-
-        assertEquals(request, actualRequest)
-    }
-
-    @Test
-    fun bundleConversion_emptyBundle_throws() {
-        assertThrows(IllegalArgumentException::class.java) {
-            ProviderSignalCredentialStateRequest.fromBundle(Bundle())
-        }
     }
 }
