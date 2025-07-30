@@ -137,6 +137,7 @@ internal class CameraGraphImplTest {
             graphId,
             CameraGraphParametersImpl(sessionLock, fakeGraphProcessor, testScope),
             sessionLock,
+            testScope,
         )
     private val stream1: CameraStream =
         checkNotNull(cameraGraph.streams[stream1Config]) {
