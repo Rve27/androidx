@@ -19,29 +19,36 @@ package androidx.navigationevent
 import androidx.annotation.MainThread
 
 /**
- * An input handler that can send events to a [NavigationEventDispatcher].
+ * An abstract input handler that can send events to a [NavigationEventDispatcher].
  *
  * @param dispatcher The [NavigationEventDispatcher] to send events to.
  */
-public open class NavigationEventInputHandler(dispatcher: NavigationEventDispatcher) :
-    AbstractNavigationEventInputHandler(dispatcher) {
+public abstract class AbstractNavigationEventInputHandler(
+    private val dispatcher: NavigationEventDispatcher
+) {
+    @Suppress("PairedRegistration")
     @MainThread
-    public fun sendOnStarted(event: NavigationEvent) {
-        dispatchOnStarted(event)
+    protected fun addOnHasEnabledCallbacksChangedCallback(callback: (Boolean) -> Unit) {
+        dispatcher.addOnHasEnabledCallbacksChangedCallback(callback)
     }
 
     @MainThread
-    public fun sendOnProgressed(event: NavigationEvent) {
-        dispatchOnProgressed(event)
+    protected fun dispatchOnStarted(event: NavigationEvent) {
+        dispatcher.dispatchOnStarted(event)
     }
 
     @MainThread
-    public fun sendOnCompleted() {
-        dispatchOnCompleted()
+    protected fun dispatchOnProgressed(event: NavigationEvent) {
+        dispatcher.dispatchOnProgressed(event)
     }
 
     @MainThread
-    public fun sendOnCancelled() {
-        dispatchOnCancelled()
+    protected fun dispatchOnCancelled() {
+        dispatcher.dispatchOnCancelled()
+    }
+
+    @MainThread
+    protected fun dispatchOnCompleted() {
+        dispatcher.dispatchOnCompleted()
     }
 }

@@ -199,7 +199,7 @@ private constructor(
      * @param callback The callback to invoke when the enabled state changes.
      */
     @Suppress("PairedRegistration") // No removal for now.
-    public fun addOnHasEnabledCallbacksChangedCallback(callback: (Boolean) -> Unit) {
+    internal fun addOnHasEnabledCallbacksChangedCallback(callback: (Boolean) -> Unit) {
         sharedProcessor.addOnHasEnabledCallbacksChangedCallback(callback)
     }
 
