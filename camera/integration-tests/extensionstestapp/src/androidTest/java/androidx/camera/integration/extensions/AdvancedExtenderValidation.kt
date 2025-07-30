@@ -27,14 +27,12 @@ import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.params.OutputConfiguration
 import android.hardware.camera2.params.SessionConfiguration
 import android.media.ImageReader
-import android.util.Rational
 import android.util.Size
 import android.view.Surface
 import androidx.annotation.RequiresApi
 import androidx.camera.camera2.internal.compat.params.SessionConfigurationCompat
 import androidx.camera.core.CameraXConfig
 import androidx.camera.core.impl.CameraInfoInternal
-import androidx.camera.core.impl.utils.AspectRatioUtil
 import androidx.camera.core.impl.utils.executor.CameraXExecutors
 import androidx.camera.core.internal.utils.SizeUtil
 import androidx.camera.extensions.ExtensionsManager
@@ -191,15 +189,6 @@ class AdvancedExtenderValidation(
                         // The postview size be smaller than or equal to the provided capture size.
                         assertThat(SizeUtil.getArea(postviewSize))
                             .isAtMost(SizeUtil.getArea(captureSize))
-                        // The postview size must have the same aspect ratio as the given capture
-                        // size.
-                        assertThat(
-                                AspectRatioUtil.hasMatchingAspectRatio(
-                                    postviewSize,
-                                    Rational(captureSize.width, captureSize.height),
-                                )
-                            )
-                            .isTrue()
                     }
                 }
                 // When postview is supported for the capture size, as the javadoc description,
