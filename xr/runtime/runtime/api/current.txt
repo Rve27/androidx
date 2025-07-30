@@ -305,6 +305,7 @@ package androidx.xr.runtime.math {
     method public androidx.xr.runtime.math.Matrix4 getTranspose();
     method public boolean isTrs();
     method public operator androidx.xr.runtime.math.Matrix4 times(androidx.xr.runtime.math.Matrix4 other);
+    method public androidx.xr.runtime.math.Matrix4 unscaled();
     property public float[] data;
     property public androidx.xr.runtime.math.Matrix4 inverse;
     property public boolean isTrs;
