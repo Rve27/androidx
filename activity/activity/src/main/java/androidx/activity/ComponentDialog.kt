@@ -115,8 +115,13 @@ constructor(context: Context, @StyleRes themeResId: Int = 0) :
     override val navigationEventDispatcher: NavigationEventDispatcher
         get() = onBackPressedDispatcher.eventDispatcher
 
-    @Suppress("OVERRIDE_DEPRECATION") // b/407493719
     @CallSuper
+    @Deprecated(
+        """This method has been deprecated in favor of using the
+      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.
+      The OnBackPressedDispatcher controls how back button events are dispatched
+      to one or more {@link OnBackPressedCallback} objects."""
+    )
     override fun onBackPressed() {
         onBackPressedInputHandler.sendOnCompleted()
     }

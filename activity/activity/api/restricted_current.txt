@@ -96,7 +96,6 @@ package androidx.activity {
     method public final androidx.activity.OnBackPressedDispatcher getOnBackPressedDispatcher();
     method public androidx.savedstate.SavedStateRegistry getSavedStateRegistry();
     method @CallSuper public void initializeViewTreeOwners();
-    method @CallSuper public void onBackPressed();
     property public androidx.lifecycle.Lifecycle lifecycle;
     property public androidx.navigationevent.NavigationEventDispatcher navigationEventDispatcher;
     property public final androidx.activity.OnBackPressedDispatcher onBackPressedDispatcher;
