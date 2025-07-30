@@ -18,6 +18,7 @@ package androidx.privacysandbox.sdkruntime.integration.testapp
 
 import android.content.Context
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import androidx.privacysandbox.sdkruntime.client.SdkSandboxManagerCompat
 import androidx.privacysandbox.sdkruntime.client.SdkSandboxProcessDeathCallbackCompat
@@ -52,11 +53,21 @@ class TestAppApi(appContext: Context) {
     }
 
     suspend fun getOrLoadTestSdk(): ISdkApi {
-        var loadedSdk = getSandboxedSdks().firstOrNull { it.sdkName == TEST_SDK_NAME }?.sdkInterface
-        if (loadedSdk == null) {
-            loadedSdk = loadSdk(TEST_SDK_NAME).getInterface()!!
+        val sdkInterface = getOrLoadSdk(TEST_SDK_NAME)
+        return ISdkApi.Stub.asInterface(sdkInterface)
+    }
+
+    suspend fun getOrLoadMediateeSdk(): IMediateeSdkApi {
+        val sdkInterface = getOrLoadSdk(MEDIATEE_SDK_NAME)
+        return IMediateeSdkApi.Stub.asInterface(sdkInterface)
+    }
+
+    suspend fun getOrLoadSdk(sdkName: String): IBinder {
+        val loadedSdk = getSandboxedSdks().firstOrNull { it.sdkName == sdkName }?.sdkInterface
+        if (loadedSdk != null) {
+            return loadedSdk
         }
-        return ISdkApi.Stub.asInterface(loadedSdk)
+        return loadSdk(sdkName).getInterface()!!
     }
 
     suspend fun loadSdk(sdkName: String, params: Bundle = Bundle()): SandboxedSdkCompat {

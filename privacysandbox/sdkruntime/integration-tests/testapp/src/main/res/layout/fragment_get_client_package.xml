@@ -14,20 +14,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/itemLoadedSdksCuj"
-        android:title="@string/sandbox_sdks_cuj" />
-    <item
-        android:id="@+id/itemAppSdksCuj"
-        android:title="@string/app_sdks_cuj" />
-    <item
-        android:id="@+id/itemSandboxDeathCuj"
-        android:title="@string/sandbox_death_cuj" />
-    <item
-        android:id="@+id/itemClientPackageCuj"
-        android:title="@string/get_client_package_cuj" />
-    <item
-        android:id="@+id/itemSdkContextCuj"
-        android:title="@string/sdk_context_cuj" />
-</menu>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/getClientPackageNameButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/get_client_package_name"
+        android:textAllCaps="false"/>
+
+</LinearLayout>

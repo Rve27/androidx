@@ -31,4 +31,9 @@ interface ISdkApi {
     List<String> callDoSomethingOnAppOwnedSdks(String param);
 
     oneway void triggerSandboxDeath();
+
+    String getClientPackageName();
+
+    void writeToFile(String filename, String data);
+    @nullable String readFromFile(String filename);
 }

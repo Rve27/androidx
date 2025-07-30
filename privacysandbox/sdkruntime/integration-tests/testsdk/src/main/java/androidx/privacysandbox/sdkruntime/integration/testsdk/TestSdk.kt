@@ -26,6 +26,9 @@ import androidx.privacysandbox.sdkruntime.integration.testaidl.ILoadSdkCallback
 import androidx.privacysandbox.sdkruntime.integration.testaidl.ISdkApi
 import androidx.privacysandbox.sdkruntime.integration.testaidl.LoadedSdkInfo
 import androidx.privacysandbox.sdkruntime.provider.controller.SdkSandboxControllerCompat
+import java.io.DataInputStream
+import java.io.DataOutputStream
+import java.io.FileNotFoundException
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
@@ -89,6 +92,27 @@ class TestSdk(private val sdkContext: Context) : ISdkApi.Stub() {
 
     override fun triggerSandboxDeath() {
         Process.killProcess(Process.myPid())
+    }
+
+    override fun getClientPackageName(): String {
+        return SdkSandboxControllerCompat.from(sdkContext).getClientPackageName()
+    }
+
+    override fun writeToFile(filename: String, data: String) {
+        sdkContext.openFileOutput(filename, Context.MODE_PRIVATE).use { outputStream ->
+            DataOutputStream(outputStream).use { dataStream -> dataStream.writeUTF(data) }
+        }
+    }
+
+    override fun readFromFile(filename: String): String? {
+        try {
+            return sdkContext.openFileInput(filename).use { inputStream ->
+                inputStream
+                DataInputStream(inputStream).use { dataStream -> dataStream.readUTF() }
+            }
+        } catch (_: FileNotFoundException) {
+            return null
+        }
     }
 
     companion object {
