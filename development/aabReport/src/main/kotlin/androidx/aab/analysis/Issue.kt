@@ -68,7 +68,7 @@ object BaselineProfileIssues {
                     .trimIndent(),
         )
 
-    fun AnalyzedBundleInfo.ProfileAnalysis.getPartlyCorruptedProfileIssue() =
+    fun ProfileAnalysis.getPartlyCorruptedProfileIssue() =
         Issue(
             severity = Issue.Severity.ERROR,
             title = "PARTIALLY CORRUPTED BASELINE PROFILE",
