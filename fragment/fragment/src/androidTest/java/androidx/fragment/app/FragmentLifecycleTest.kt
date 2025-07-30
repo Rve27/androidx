@@ -1573,7 +1573,7 @@ class FragmentLifecycleTest {
             setHasOptionsMenu(true)
         }
 
-        @Suppress("OVERRIDE_DEPRECATION") // b/407500169
+        @Deprecated("Deprecated in Fragment")
         override fun onPrepareOptionsMenu(menu: Menu) {
             onPrepareOptionsMenuCalled = true
             assertThat(context).isNotNull()
