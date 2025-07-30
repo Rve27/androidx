@@ -436,7 +436,6 @@ dependencies {
     docs(project(":xr:compose:material3:material3"))
     docs(project(":xr:glimmer:glimmer"))
     docs(project(":xr:runtime:runtime"))
-    docs(project(":xr:runtime:runtime-guava"))
     docs(project(":xr:runtime:runtime-manifest"))
     docs(project(":xr:runtime:runtime-openxr"))
     docs(project(":xr:runtime:runtime-rxjava3"))

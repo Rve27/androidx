@@ -1258,7 +1258,6 @@ includeProject(":xr:glimmer:glimmer:glimmer-samples", "xr/glimmer/glimmer/sample
 includeProject(":xr:glimmer:integration-tests:demos", [BuildType.COMPOSE])
 includeProject(":xr:projected:projected", [BuildType.XR])
 includeProject(":xr:runtime:runtime", [BuildType.XR])
-includeProject(":xr:runtime:runtime-guava", [BuildType.XR])
 includeProject(":xr:runtime:runtime-manifest", [BuildType.XR])
 includeProject(":xr:runtime:runtime-openxr", [BuildType.XR])
 includeProject(":xr:runtime:runtime-rxjava3", [BuildType.XR])
