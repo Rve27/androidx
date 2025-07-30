@@ -16,9 +16,17 @@
 
 package androidx.xr.projected;
 
-import androidx.xr.projected.SupportedCaptureAudioConfig;
-
 @JavaPassthrough(annotation="@androidx.annotation.RestrictTo(androidx.annotation.RestrictTo.Scope.LIBRARY)")
-interface IProjectedService {
-  SupportedCaptureAudioConfig[] getSupportedCaptureAudioConfigs();
+parcelable SupportedCaptureAudioConfig {
+  /**
+   * Supported audio source type. Valid values are defined in {@link
+   * android.media.MediaRecorder.AudioSource}.
+   */
+  int sourceType;
+
+  /** An array of supported sample rates in Hz. */
+  int[] sampleRatesHz;
+
+  /** An array of supported number of channels. */
+  int[] channelCounts;
 }
