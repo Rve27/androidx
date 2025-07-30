@@ -44,6 +44,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.os.OperationCanceledException
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_CONTINUE_ON_SUBTREE
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -76,6 +77,7 @@ import androidx.pdf.viewer.fragment.toolbox.ToolboxGestureEventProcessor.MotionE
 import androidx.pdf.viewer.fragment.toolbox.ToolboxGestureEventProcessor.ToolboxGestureDelegate
 import androidx.pdf.viewer.fragment.util.getCenter
 import androidx.pdf.viewer.fragment.view.PdfViewManager
+import androidx.window.layout.WindowMetricsCalculator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -357,6 +359,23 @@ public open class PdfViewerFragment constructor() : Fragment() {
             _toolboxView = findViewById(R.id.toolBoxView)
             _pdfView = pdfContainer.pdfView
         }
+
+        val windowMetrics =
+            WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(requireActivity())
+
+        val windowWidthPx = windowMetrics.bounds.width()
+        val density = resources.displayMetrics.density
+        val windowWidthDp = windowWidthPx / density
+
+        val dimenResId =
+            if (windowWidthDp >= 840) {
+                androidx.pdf.R.dimen.pdf_horizontal_padding_w840dp
+            } else {
+                androidx.pdf.R.dimen.pdf_horizontal_padding
+            }
+        val paddingPx = resources.getDimensionPixelSize(dimenResId)
+        _pdfContainer.updatePadding(left = paddingPx, right = paddingPx)
+
         val gestureDetector =
             GestureDetector(
                 activity,
