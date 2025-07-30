@@ -446,7 +446,7 @@ class SpatialCompose : ComponentActivity() {
             modifier = SubspaceModifier.fillMaxWidth().height(1000.dp).aspectRatio(aspectRatioValue)
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().background(Color.LightGray).padding(16.dp),
+                modifier = Modifier.fillMaxSize().background(Color.LightGray).padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
