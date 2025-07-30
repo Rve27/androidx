@@ -55,6 +55,7 @@ androidXMultiplatform {
         commonMain {
             dependencies {
                 implementation(libs.kotlinStdlib)
+                implementation(libs.kotlinCoroutinesCore)
                 api("androidx.annotation:annotation:1.9.1")
             }
         }
@@ -62,6 +63,7 @@ androidXMultiplatform {
         commonTest {
             dependencies {
                 implementation(libs.kotlinTest)
+                implementation(libs.kotlinCoroutinesTest)
                 implementation(project(":navigationevent:navigationevent-testing"))
                 implementation(project(":kruth:kruth"))
             }
@@ -70,6 +72,7 @@ androidXMultiplatform {
         androidMain {
             dependsOn(commonMain)
             dependencies {
+                implementation(libs.kotlinCoroutinesAndroid)
                 implementation("androidx.core:core-viewtree:1.0.0")
             }
         }
