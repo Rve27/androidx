@@ -20,5 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigationevent.NavigationEventDispatcherOwner
 
 @Composable
-internal actual fun findViewTreeNavigationEventDispatcherOwner(): NavigationEventDispatcherOwner? =
-    implementedInJetBrainsFork()
+internal actual fun findViewTreeNavigationEventDispatcherOwner(): NavigationEventDispatcherOwner? {
+    // For non-Android platforms (e.g., Desktop, Web), the concept of a
+    // 'ViewTree' doesn't exist in the same way. Therefore, returns null.
+    return null
+}
