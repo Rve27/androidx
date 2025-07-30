@@ -33,10 +33,14 @@ import androidx.pdf.content.ExternalLink
 import androidx.pdf.idlingresource.PdfIdlingResource
 import androidx.pdf.testapp.R
 import androidx.pdf.view.PdfView
+import androidx.pdf.view.Selection
 import androidx.pdf.viewer.fragment.PdfStylingOptions
 import androidx.pdf.viewer.fragment.PdfViewerFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.UUID
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * A subclass fragment from [PdfViewerFragment] to include [androidx.test.espresso.IdlingResource]
@@ -56,6 +60,10 @@ internal class TestPdfViewerFragment : PdfViewerFragment {
         PdfIdlingResource(PDF_SEARCH_VIEW_VISIBLE_RESOURCE_NAME)
     private var hostView: FrameLayout? = null
     private var search: FloatingActionButton? = null
+
+    private val _currentSelection = MutableStateFlow<Selection?>(null)
+    val currentSelection: StateFlow<Selection?>
+        get() = _currentSelection.asStateFlow()
 
     private var gestureStateChangedListener: PdfView.OnGestureStateChangedListener? = null
 
@@ -132,6 +140,18 @@ internal class TestPdfViewerFragment : PdfViewerFragment {
                     }
                 }
             )
+    }
+
+    @OptIn(ExperimentalPdfApi::class)
+    override fun onPdfViewCreated(pdfView: PdfView) {
+        super.onPdfViewCreated(pdfView)
+        pdfView.addOnSelectionChangedListener(
+            object : PdfView.OnSelectionChangedListener {
+                override fun onSelectionChanged(newSelection: Selection?) {
+                    _currentSelection.value = newSelection
+                }
+            }
+        )
     }
 
     fun setIsAnnotationIntentResolvable(value: Boolean) {

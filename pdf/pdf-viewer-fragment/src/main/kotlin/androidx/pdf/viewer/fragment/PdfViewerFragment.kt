@@ -51,6 +51,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.withStarted
+import androidx.pdf.ExperimentalPdfApi
 import androidx.pdf.content.ExternalLink
 import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
@@ -235,6 +236,22 @@ public open class PdfViewerFragment constructor() : Fragment() {
     /** Invoked when the password dialog is requested (i.e., becomes visible). */
     @VisibleForTesting internal open fun onPasswordRequestedState() {}
 
+    /**
+     * Invoked when underlying [PdfView] implementation has been created. This allows subclasses to
+     * configure [PdfView] and set listeners for appropriate callbacks.
+     *
+     * <p>[PdfView.pdfDocument] is internally managed by fragment and setting any arbitrary
+     * [androidx.pdf.PdfDocument] is not supported. </p>
+     *
+     * <p> The [PdfView] is owned and managed by [PdfViewerFragment]. Clients should not directly
+     * modify the view in response to user interactions, as this may interfere with the fragment’s
+     * internal behavior and event handling. </p>
+     *
+     * @param pdfView: The [PdfView] instance created by
+     *   [androidx.pdf.viewer.fragment.PdfViewerFragment].
+     */
+    @ExperimentalPdfApi public open fun onPdfViewCreated(pdfView: PdfView) {}
+
     private val documentViewModel: PdfDocumentViewModel by viewModels {
         PdfDocumentViewModel.Factory
     }
@@ -349,6 +366,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
         return inflater.inflate(R.layout.pdf_viewer_fragment, container, false)
     }
 
+    @OptIn(ExperimentalPdfApi::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         with(view) {
@@ -427,6 +445,9 @@ public open class PdfViewerFragment constructor() : Fragment() {
         if (stylingOptions != null) {
             applyPdfViewStyledAttributes(stylingOptions.containerStyleResId)
         }
+        // Call onPdfViewCreated last to allow host apps to override any internal PdfView listeners
+        // set by fragment.
+        onPdfViewCreated(pdfView)
     }
 
     private fun applyPdfViewStyledAttributes(resId: Int) {

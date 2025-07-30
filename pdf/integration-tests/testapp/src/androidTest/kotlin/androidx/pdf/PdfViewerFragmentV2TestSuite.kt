@@ -71,6 +71,8 @@ import androidx.test.filters.SdkSuppress
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiSelector
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -700,6 +702,48 @@ class PdfViewerFragmentV2TestSuite {
         assertTrue(pdfView.currentSelection?.bounds?.size in expectedSelectionBoundsSizeRange)
         assertEquals(pdfView.currentSelection?.bounds?.firstOrNull()?.pageNum, 0)
         assertEquals(pdfView.currentSelection?.bounds?.lastOrNull()?.pageNum, 1)
+    }
+
+    @Test
+    fun testPdfView_selectionChangeListenerInvoked_uponChangingSelection() {
+        // Load the document and assert loading view is displayed
+        scenarioLoadDocument(
+            scenario = scenario,
+            filename = TEST_DOCUMENT_SELECT,
+            nextState = Lifecycle.State.STARTED,
+            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+        ) {
+            onView(withId(PdfR.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
+        }
+
+        Espresso.onIdle()
+        scenario.onFragment { fragment ->
+            Preconditions.checkArgument(
+                fragment.documentLoaded,
+                "Unable to load document due to ${fragment.documentError?.message}",
+            )
+
+            // Assert currentSelection is null, before any selection is made.
+            assertNull(fragment.currentSelection.value)
+        }
+
+        // The exact View position of any piece of text will vary by device, scroll position, zoom
+        // level, etc. Act on an absolute PDF coordinate that's known to contain text instead.
+        val pdfPointWithText = PdfPoint(pageNum = 0, pagePoint = PointF(297.22455F, 619.1273F))
+        onView(withId(R.id.pdfView)).perform(clickOnPdfPoint(pdfPointWithText, Tap.LONG))
+
+        // Since we're selecting only a single word, expectedBoundsSize = 1
+        val expectedSelectionBoundsSize = 1
+        scenario.onFragment { fragment ->
+            runTest {
+                // Fetch the first selection updated as a result of long click
+                val selection = fragment.currentSelection.first { it != null }
+
+                assertNotNull(selection)
+                assertNotNull(selection?.bounds)
+                assertEquals(expectedSelectionBoundsSize, selection?.bounds?.size)
+            }
+        }
     }
 
     private fun longPressSelection(
