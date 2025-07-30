@@ -6,7 +6,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
-group = 'androidx.bundle'
+group = 'androidx.aab'
 version = '1.0-SNAPSHOT'
 
 repositories {
@@ -25,7 +25,7 @@ dependencies {
 }
 
 application {
-    mainClass = 'androidx.bundle.MainKt'
+    mainClass = 'androidx.aab.cli.MainKt'
 }
 
 test {

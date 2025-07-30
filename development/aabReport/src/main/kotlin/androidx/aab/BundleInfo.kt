@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package androidx.bundle
+package androidx.aab
 
-import androidx.bundle.AppMetadataPropsInfo.Companion.csvEntries
-import androidx.bundle.DexInfo.Companion.csvEntries
-import androidx.bundle.MappingFileInfo.Companion.csvEntries
-import androidx.bundle.ProfileDexInfo.Companion.csvEntries
-import androidx.bundle.R8JsonFileInfo.Companion.csvEntries
+import androidx.aab.AppMetadataPropsInfo.Companion.csvEntries
+import androidx.aab.DexInfo.Companion.csvEntries
+import androidx.aab.MappingFileInfo.Companion.csvEntries
+import androidx.aab.ProfileInfo.Companion.csvEntries
+import androidx.aab.R8JsonFileInfo.Companion.csvEntries
+import androidx.aab.cli.VERBOSE
 import com.android.tools.build.libraries.metadata.AppDependencies
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
+import java.lang.Byte
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.zip.CRC32
@@ -36,10 +38,13 @@ import java.util.zip.ZipInputStream
 import kotlin.collections.map
 
 /** Separator for CSV output within entries (such as multiple dex SHAs in one column) */
-val INTERNAL_CSV_SEPARATOR = "--"
+const val INTERNAL_CSV_SEPARATOR = "--"
 
 class MappingFileInfo() {
     companion object {
+        const val BUNDLE_LOCATION =
+            "BUNDLE-METADATA/com.android.tools.build.obfuscation/proguard.map"
+
         fun MappingFileInfo?.csvEntries(): List<String> {
             return listOf((this != null).toString())
         }
@@ -55,6 +60,8 @@ data class R8JsonFileInfo(
     val shrinkingEnabled: Boolean,
 ) {
     companion object {
+        const val BUNDLE_LOCATION = "BUNDLE-METADATA/com.android.tools/r8.json"
+
         @Suppress("UNCHECKED_CAST")
         fun fromJson(src: InputStream): R8JsonFileInfo {
             val gson = Gson()
@@ -152,10 +159,18 @@ data class AppMetadataPropsInfo(
     val appMetadataVersion: String,
     val androidGradlePluginVersion: String,
 ) {
+    fun agpAtLeast(targetMajor: Int, targetMinor: Int): Boolean {
+        val components = androidGradlePluginVersion.split(".")
+        val currentMajor = components[0].toInt()
+        val currentMinor = components[1].toInt()
+        return currentMajor > targetMajor ||
+            (currentMajor == targetMajor && currentMinor >= targetMinor)
+    }
+
     companion object {
-        const val LOCATION_META_INF =
+        const val BUNDLE_LOCATION_META_INF =
             "base/root/META-INF/com/android/build/gradle/app-metadata.properties"
-        const val LOCATION_BUNDLE_METADATA =
+        const val BUNDLE_LOCATION_METADATA =
             "BUNDLE-METADATA/com.android.tools.build.gradle/app-metadata.properties"
 
         fun from(src: InputStream): AppMetadataPropsInfo {
@@ -200,18 +215,14 @@ data class AppMetadataPropsInfo(
     }
 }
 
-data class ProfileDexInfo(
-    val profileKeySize: Int,
-    val typeIdSetSize: Int,
-    val hotMethodRegionSize: Long,
-    val dexChecksumCrc32: String,
-    val numMethodIds: Long,
-    val profileKey: String,
-) {
+data class ProfileInfo(val dexInfoList: List<DexInfo>) {
+    data class DexInfo(val checksumCrc32: String)
 
     // lovingly lifted from
     // profgen/src/main/kotlin/com/android/tools/profgen/ArtProfileSerializer.kt and friends
     companion object {
+        const val BUNDLE_LOCATION = "BUNDLE-METADATA/com.android.tools.build.profiles/baseline.prof"
+
         internal fun byteArrayOf(vararg chars: Char) =
             ByteArray(chars.size) { chars[it].code.toByte() }
 
@@ -256,7 +267,7 @@ data class ProfileDexInfo(
             var value: Long = 0
             for (k in 0 until numberOfBytes) {
                 val next = buffer[k].toUByte().toLong()
-                value += next shl k * java.lang.Byte.SIZE
+                value += next shl k * Byte.SIZE
             }
             return value
         }
@@ -314,33 +325,35 @@ data class ProfileDexInfo(
             return result
         }
 
-        private fun InputStream.readUncompressedBody(numberOfDexFiles: Int): List<ProfileDexInfo> {
+        private fun InputStream.readUncompressedBody(numberOfDexFiles: Int): ProfileInfo {
             // If the uncompressed profile data stream is empty then we have nothing more to do.
             if (available() == 0) {
-                return emptyList()
+                return ProfileInfo(emptyList())
             }
             // Read the dex file line headers.
-            return List(numberOfDexFiles) {
-                val profileKeySize = readUInt16()
-                val typeIdSetSize = readUInt16()
-                val hotMethodRegionSize = readUInt32()
-                val dexChecksum = readUInt32()
-                val numMethodIds = readUInt32()
-                val profileKey = readString(profileKeySize)
-                ProfileDexInfo(
-                    profileKeySize = profileKeySize,
-                    typeIdSetSize = typeIdSetSize,
-                    hotMethodRegionSize = hotMethodRegionSize,
-                    dexChecksumCrc32 = dexChecksum.toInt().toHexString(),
-                    numMethodIds = numMethodIds,
-                    profileKey = profileKey,
-                )
-            }
+            return ProfileInfo(
+                List(numberOfDexFiles) {
+                    val profileKeySize = readUInt16()
+                    val typeIdSetSize = readUInt16()
+                    val hotMethodRegionSize = readUInt32()
+                    val dexChecksum = readUInt32()
+                    val numMethodIds = readUInt32()
+                    val profileKey = readString(profileKeySize)
+                    DexInfo(
+                        // profileKeySize = profileKeySize,
+                        // typeIdSetSize = typeIdSetSize,
+                        // hotMethodRegionSize = hotMethodRegionSize,
+                        checksumCrc32 = dexChecksum.toInt().toHexString()
+                        // numMethodIds = numMethodIds,
+                        // profileKey = profileKey,
+                    )
+                }
+            )
 
-            // TODO: consider more verification here!
+            // TODO: consider more verification of profiles here!
         }
 
-        fun readFromProfile(src: InputStream): List<ProfileDexInfo> =
+        fun readFromProfile(src: InputStream): ProfileInfo =
             with(src) {
                 readAndCheckProfileVersion() // read 8
                 val numberOfDexFiles = readUInt8()
@@ -357,13 +370,16 @@ data class ProfileDexInfo(
 
         val CSV_TITLES = listOf("profile_present", "profile_dexSortedChecksumsCrc32")
 
-        fun List<ProfileDexInfo>?.csvEntries(): List<String> {
+        fun ProfileInfo?.csvEntries(): List<String> {
             return if (this == null) {
                 listOf("FALSE", "null")
             } else {
                 listOf(
                     "TRUE",
-                    map { it.dexChecksumCrc32 }.sorted().joinToString(INTERNAL_CSV_SEPARATOR),
+                    dexInfoList
+                        .map { it.checksumCrc32 }
+                        .sorted()
+                        .joinToString(INTERNAL_CSV_SEPARATOR),
                 )
             }
         }
@@ -371,9 +387,8 @@ data class ProfileDexInfo(
 }
 
 data class BundleInfo(
-    // TODO: add AGP version here too
     val path: String,
-    val profileDexInfo: List<ProfileDexInfo>,
+    val profileInfo: ProfileInfo?,
     val dexInfo: List<DexInfo>,
     val mappingFileInfo: MappingFileInfo?,
     val r8JsonFileInfo: R8JsonFileInfo?,
@@ -384,7 +399,7 @@ data class BundleInfo(
 ) {
     fun toCsvLine(): String {
         return (listOf(path) +
-                profileDexInfo.csvEntries() +
+                profileInfo.csvEntries() +
                 dexInfo.csvEntries() +
                 mappingFileInfo.csvEntries() +
                 r8JsonFileInfo.csvEntries() +
@@ -396,13 +411,17 @@ data class BundleInfo(
     companion object {
         val CSV_HEADER =
             (listOf("path") +
-                    ProfileDexInfo.CSV_TITLES +
+                    ProfileInfo.CSV_TITLES +
                     DexInfo.CSV_TITLES +
                     MappingFileInfo.CSV_TITLES +
                     R8JsonFileInfo.CSV_TITLES +
                     AppMetadataPropsInfo.CSV_TITLES_BUNDLE +
                     AppMetadataPropsInfo.CSV_TITLES_META_INF)
                 .joinToString(", ")
+
+        // TODO: Move to wrapper object
+        const val DEPENDENCIES_PB_LOCATION =
+            "BUNDLE-METADATA/com.android.tools.build.libraries/dependencies.pb"
 
         fun from(file: File): BundleInfo {
             return FileInputStream(file).use { from(file.path, it) }
@@ -414,7 +433,7 @@ data class BundleInfo(
             var mappingFileInfo: MappingFileInfo? = null
             var r8MetadataFileInfo: R8JsonFileInfo? = null
             var appDependencies: AppDependencies? = null
-            var profileDexInfo = emptyList<ProfileDexInfo>()
+            var profileInfo: ProfileInfo? = null
             var appMetadataPropsInfoMetaInf: AppMetadataPropsInfo? = null
             var appMetadataPropsInfoBundleMetadata: AppMetadataPropsInfo? = null
             ZipInputStream(inputStream).use { zis ->
@@ -429,31 +448,31 @@ data class BundleInfo(
                             dexInfo.add(DexInfo.from(entry.name, zis))
                         }
 
-                        entry.name == BundlePaths.BASELINE_PROF_LOCATION -> {
-                            profileDexInfo = ProfileDexInfo.readFromProfile(zis)
+                        entry.name == ProfileInfo.BUNDLE_LOCATION -> {
+                            profileInfo = ProfileInfo.readFromProfile(zis)
                         }
 
                         entry.name.endsWith(".version") && entry.name.contains("/META-INF/") -> {
                             dotVersionFiles[entry.name] = zis.bufferedReader().readText().trim()
                         }
 
-                        entry.name == BundlePaths.R8_METADATA_LOCATION -> {
+                        entry.name == R8JsonFileInfo.BUNDLE_LOCATION -> {
                             r8MetadataFileInfo = R8JsonFileInfo.fromJson(zis)
                         }
 
-                        entry.name == BundlePaths.DEPENDENCIES_PB_LOCATION -> {
+                        entry.name == DEPENDENCIES_PB_LOCATION -> {
                             appDependencies = AppDependencies.ADAPTER.decode(zis)
                         }
 
-                        entry.name == BundlePaths.PROGUARD_MAP_LOCATION -> {
+                        entry.name == MappingFileInfo.BUNDLE_LOCATION -> {
                             mappingFileInfo = MappingFileInfo()
                         }
 
-                        entry.name == AppMetadataPropsInfo.LOCATION_BUNDLE_METADATA -> {
+                        entry.name == AppMetadataPropsInfo.BUNDLE_LOCATION_METADATA -> {
                             appMetadataPropsInfoBundleMetadata = AppMetadataPropsInfo.from(zis)
                         }
 
-                        entry.name == AppMetadataPropsInfo.LOCATION_META_INF -> {
+                        entry.name == AppMetadataPropsInfo.BUNDLE_LOCATION_META_INF -> {
                             appMetadataPropsInfoMetaInf = AppMetadataPropsInfo.from(zis)
                         }
                     }
@@ -474,7 +493,7 @@ data class BundleInfo(
 
             return BundleInfo(
                 path = path,
-                profileDexInfo = profileDexInfo,
+                profileInfo = profileInfo,
                 dexInfo = dexInfo,
                 mappingFileInfo = mappingFileInfo,
                 r8JsonFileInfo = r8MetadataFileInfo,
