@@ -243,7 +243,9 @@ internal class LayoutModifierNodeCoordinator(
         // get(line), to obtain the position of the alignment line the coordinator currently needs
         // our position in order ot know how to offset the value we provided).
         if (isShallowPlacing) return
-        onPlaced()
+        if (!isPlacingForAlignment) {
+            onPlaced()
+        }
         approachMeasureScope?.let {
             with(it.approachNode) {
                 val approachComplete =
