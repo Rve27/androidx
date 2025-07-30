@@ -435,10 +435,10 @@ abstract class AndroidXImplPlugin @Inject constructor() : Plugin<Project> {
         if (plugin is KotlinMultiplatformPluginWrapper) {
             project.extensions.getByType<KotlinMultiplatformExtension>().apply {
                 targets.withType<KotlinMultiplatformAndroidLibraryTarget>().configureEach { t ->
-                    t.compilations.configureEach {
-                        @Suppress("Deprecation") // Deprecated-replacement-not-yet-ready b/379315244
-                        it.compilerOptions.options.jvmTarget.set(defaultJvmTarget)
-                        // it.compileTaskProvider.configure { it.compilerOptions.jvmTarget.set(JT) }
+                    t.compilations.configureEach { compilation ->
+                        compilation.compileTaskProvider.configure {
+                            it.compilerOptions.jvmTarget.set(defaultJvmTarget)
+                        }
                     }
                 }
                 targets.withType(KotlinJvmTarget::class.java).configureEach { target ->
