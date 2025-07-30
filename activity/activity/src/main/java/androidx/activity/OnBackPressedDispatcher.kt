@@ -70,7 +70,7 @@ class OnBackPressedDispatcher(
      * which provides a KMP-compatible API while preserving behavior compatibility with existing
      * callback mechanisms.
      *
-     * @see [OnBackPressedCallback.eventCallback]
+     * @see [OnBackPressedCallback.eventCallbacks]
      */
     internal val eventDispatcher: NavigationEventDispatcher by lazy {
         NavigationEventDispatcher(
