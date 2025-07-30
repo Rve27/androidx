@@ -30,13 +30,10 @@ import androidx.compose.runtime.Applier
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposeNode
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.currentComposer
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.UiComposable
 import androidx.compose.ui.input.pointer.pointerInput
@@ -286,13 +283,6 @@ public fun SpatialMainPanel(
     val view = LocalView.current
 
     LaunchedEffect(shape, density) { mainPanel.setShape(shape, density) }
-
-    DisposableEffect(mainPanel) {
-        // mainPanel will initially be enabled when an Activity is created, but must be re-enabled
-        // if removed and re-added to the Compose layout.
-        mainPanel.enabled = true
-        onDispose { mainPanel.enabled = false }
-    }
 
     SubspaceLayout(modifier = modifier, coreEntity = mainPanel) { _, constraints ->
         val width = view.measuredWidth.coerceIn(constraints.minWidth, constraints.maxWidth)

@@ -17,7 +17,6 @@
 package androidx.xr.compose.subspace.layout
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -226,25 +225,20 @@ internal sealed class CoreBasePanelEntity(private val panelEntity: PanelEntity) 
                 panelEntity.sizeInPixels = IntSize2d(size.width, size.height)
                 shapeDensity?.let { updateShape(it) }
             }
+
             updateEntityEnabledState()
         }
 
-    // Store the intended enabled state so we can refer to it in updateEntityEnabledState.
-    override var enabled: Boolean = true
-        set(value) {
-            field = value
-            updateEntityEnabledState()
-        }
-
-    /** Update the entity enabled state based on the intended enabled state and the panel size. */
+    /**
+     * Update the entity enabled state based on the panel size.
+     *
+     * In Compose for XR, layout measurement dictates entity size and visibility. The visibility
+     * state is dictated by the Compose layout size measurement. This means visibility will be set
+     * after layout completes. See [SubspaceLayoutNode.SubspaceMeasurableLayout.placeAt] and
+     * [CoreBasePanelEntity.size].
+     */
     private fun updateEntityEnabledState() {
-        if (enabled && (size.width <= 0 || size.height <= 0)) {
-            Log.w(
-                "CoreBasePanelEntity",
-                "Setting the panel size to 0 or less. The panel will be hidden.",
-            )
-        }
-        super.enabled = enabled && size.width > 0 && size.height > 0
+        super.enabled = size.width > 0 && size.height > 0
     }
 
     /** The [SpatialShape] of this [CoreBasePanelEntity]. */
@@ -286,6 +280,11 @@ internal class CoreMainPanelEntity(session: Session) :
     CoreBasePanelEntity(session.scene.mainPanelEntity) {
 
     override fun dispose() {
+        // [CoreMainPanelEntity] is backed by SceneCore “Main Panel Entity” which is never deleted
+        // even if [androidx.xr.compose.subspace.SpatialMainPanel] is disposed. Therefore we just
+        // disable the main panel entity to turn off it's visibility.
+        enabled = false
+
         // Set the parent to null so the main panel is not disposed when its parent is disposed.
         parent = null
     }
