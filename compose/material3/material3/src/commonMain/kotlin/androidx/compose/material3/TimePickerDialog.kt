@@ -267,9 +267,9 @@ object TimePickerDialogDefaults {
         val contentDescription =
             getString(
                 if (displayMode == TimePickerDisplayMode.Picker) {
-                    Strings.TimePickerToggleTouch
-                } else {
                     Strings.TimePickerToggleKeyboard
+                } else {
+                    Strings.TimePickerToggleTouch
                 }
             )
         TooltipBox(
