@@ -52,6 +52,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.withStarted
 import androidx.pdf.ExperimentalPdfApi
+import androidx.pdf.PdfDocument
 import androidx.pdf.content.ExternalLink
 import androidx.pdf.event.PdfTrackingEvent
 import androidx.pdf.event.RequestFailureEvent
@@ -219,6 +220,16 @@ public open class PdfViewerFragment constructor() : Fragment() {
      * main thread.
      */
     public open fun onLoadDocumentSuccess() {}
+
+    /**
+     * Called when the document has been parsed and processed.
+     *
+     * <p>Note that this callback is dispatched only when the fragment is fully created and not yet
+     * destroyed, i.e., after [onCreate] has fully run and before [onDestroy] runs, and only on the
+     * main thread.
+     */
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
+    protected open fun onLoadDocumentSuccess(document: PdfDocument) {}
 
     /**
      * Invoked when a problem arises during the loading process of the PDF document. This callback
@@ -736,6 +747,7 @@ public open class PdfViewerFragment constructor() : Fragment() {
 
     private fun handleDocumentLoaded(uiState: DocumentLoaded) {
         dismissPasswordDialog()
+        onLoadDocumentSuccess(uiState.pdfDocument)
         onLoadDocumentSuccess()
         _pdfView.pdfDocument = uiState.pdfDocument
         _toolboxView.setPdfDocument(uiState.pdfDocument)

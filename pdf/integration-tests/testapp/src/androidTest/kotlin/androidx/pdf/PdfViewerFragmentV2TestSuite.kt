@@ -317,6 +317,31 @@ class PdfViewerFragmentV2TestSuite {
     }
 
     @Test
+    fun testPdfViewerFragment_whenDocumentLoaded_shouldCallOnLoadDocumentSuccess() {
+        scenarioLoadDocument(
+            scenario = scenario,
+            filename = TEST_DOCUMENT_FILE,
+            nextState = Lifecycle.State.STARTED,
+            orientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT,
+        ) {
+            // Loading view assertion
+            onView(withId(PdfR.id.pdfLoadingProgressBar)).check(matches(isDisplayed()))
+        }
+
+        Espresso.onIdle()
+        scenario.onFragment {
+            Preconditions.checkArgument(
+                it.documentLoaded,
+                "Unable to load document due to ${it.documentError?.message}",
+            )
+            Preconditions.checkArgument(
+                it.pdfDocument != null,
+                "PdfDocument cannot be null if the document is loaded.",
+            )
+        }
+    }
+
+    @Test
     fun testPdfViewerFragment_whenFindInFileIsVisible_scrubberShouldBeInvisible() {
         scenarioLoadDocument(
             scenario = scenario,

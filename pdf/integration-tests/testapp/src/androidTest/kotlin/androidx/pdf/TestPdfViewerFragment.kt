@@ -67,6 +67,7 @@ internal class TestPdfViewerFragment : PdfViewerFragment {
 
     private var gestureStateChangedListener: PdfView.OnGestureStateChangedListener? = null
 
+    var pdfDocument: PdfDocument? = null
     var documentLoaded = false
     var documentError: Throwable? = null
 
@@ -177,6 +178,10 @@ internal class TestPdfViewerFragment : PdfViewerFragment {
     override fun onLoadDocumentSuccess() {
         documentLoaded = true
         pdfLoadingIdlingResource.decrement()
+    }
+
+    override fun onLoadDocumentSuccess(document: PdfDocument) {
+        pdfDocument = document
     }
 
     override fun onLoadDocumentError(error: Throwable) {
