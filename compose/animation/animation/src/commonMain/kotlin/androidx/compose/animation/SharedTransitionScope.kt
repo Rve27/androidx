@@ -190,7 +190,7 @@ private class SharedTransitionScopeRootModifierNode(sharedScope: SharedTransitio
                 if (!isLookingAhead) {
                     sharedScope.root = coords
                 } else {
-                    sharedScope.nullableLookaheadRoot = coords
+                    sharedScope.lookaheadRoot = coords
                 }
             }
             p.place(0, 0)
@@ -1312,17 +1312,33 @@ internal constructor(lookaheadScope: LookaheadScope, val coroutineScope: Corouti
                 it.userState = sharedContentState
             }
 
-    internal lateinit var root: LayoutCoordinates
-    internal val lookaheadRoot: LayoutCoordinates
+    internal var root: LayoutCoordinates
         get() =
-            requireNotNull(nullableLookaheadRoot) {
+            requireNotNull(_nullableRoot) {
                 "Error: Uninitialized LayoutCoordinates." +
                     " Please make sure when using the SharedTransitionScope composable function," +
                     " the modifier passed to the child content is being used, or use" +
                     " SharedTransitionLayout instead."
             }
+        set(value) {
+            _nullableRoot = value
+        }
 
-    internal var nullableLookaheadRoot: LayoutCoordinates? = null
+    private var _nullableRoot: LayoutCoordinates? = null
+
+    internal var lookaheadRoot: LayoutCoordinates
+        get() =
+            requireNotNull(_nullableLookaheadRoot) {
+                "Error: Uninitialized LayoutCoordinates." +
+                    " Please make sure when using the SharedTransitionScope composable function," +
+                    " the modifier passed to the child content is being used, or use" +
+                    " SharedTransitionLayout instead."
+            }
+        set(value) {
+            _nullableLookaheadRoot = value
+        }
+
+    private var _nullableLookaheadRoot: LayoutCoordinates? = null
 
     // TODO: Use MutableObjectList and impl sort
     private val renderers = mutableStateListOf<LayerRenderer>()
