@@ -58,15 +58,15 @@ public class TestNavigationEventCallback(
     public val progressedEvents: List<NavigationEvent>
         get() = _progressedEvents.toList()
 
-    /** The number of times [progressedInvocations] has been invoked. */
+    /** The number of times [onEventProgressed] has been invoked. */
     public val progressedInvocations: Int
         get() = _progressedEvents.size
 
-    /** The number of times [completedInvocations] has been invoked. */
+    /** The number of times [onEventCompleted] has been invoked. */
     public var completedInvocations: Int = 0
         private set
 
-    /** The number of times [cancelledInvocations] has been invoked. */
+    /** The number of times [onEventCancelled] has been invoked. */
     public var cancelledInvocations: Int = 0
         private set
 
