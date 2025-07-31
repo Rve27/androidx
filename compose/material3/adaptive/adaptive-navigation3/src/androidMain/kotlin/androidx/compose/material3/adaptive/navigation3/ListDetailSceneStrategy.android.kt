@@ -87,15 +87,18 @@ public class ListDetailSceneStrategy<T : Any>(
 
         var detailPlaceholder: (@Composable ThreePaneScaffoldScope.() -> Unit)? = null
 
-        for ((index, entry) in entries.withIndex()) {
-            val paneMetadata = entry.metadata[ListDetailRoleKey] as? PaneMetadata
-            if (paneMetadata != null && paneMetadata.sceneKey == sceneKey) {
-                scaffoldEntryIndices.add(index)
-                scaffoldEntries.add(entry)
+        var idx = entries.lastIndex
+        while (idx >= 0 && entries[idx].isListDetailEntry()) {
+            val entry = entries[idx]
+            val paneMetadata = entry.metadata[ListDetailRoleKey] as PaneMetadata
+            if (paneMetadata.sceneKey == sceneKey) {
+                scaffoldEntryIndices.add(idx)
+                scaffoldEntries.add(0, entry)
                 if (paneMetadata is ListMetadata) {
                     detailPlaceholder = paneMetadata.detailPlaceholder
                 }
             }
+            idx--
         }
 
         if (scaffoldEntries.isEmpty()) return null
